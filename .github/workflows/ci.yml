@@ -1,6 +1,8 @@
 name: CI
 
 on:
+  merge_group:
+    types: [checks_requested]
   push:
     branches:
       - 'latest'
@@ -444,6 +446,9 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
     needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test ]
     if: cancelled() != true
     steps:

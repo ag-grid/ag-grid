@@ -120,10 +120,9 @@ import {
     ALWAYS_SYNC_GLOBAL_EVENTS,
     _registerModule,
     RowApiModule,
-    _GET_ALL_EVENTS,
+    _PUBLIC_EVENT_HANDLERS_MAP,
     _GET_ALL_GRID_OPTIONS,
     _combineAttributesAndGridOptions,
-    _getCallbackForEvent,
     _processOnChange,
     _warn,
     createGrid,
@@ -148,11 +147,11 @@ _GET_ALL_GRID_OPTIONS()
         watch(
             () => propsAsRefs[propertyName],
             (oldValue: any, newValue: any) => {
-              if((propertyName === "rowData" && !emittingRowData.value) ||
-                  propertyName !== "rowData") {
-                processChanges(propertyName, oldValue, newValue);
-              }
-              emittingRowData.value = false;
+                if((propertyName === "rowData" && !emittingRowData.value) ||
+                    propertyName !== "rowData") {
+                    processChanges(propertyName, oldValue, newValue);
+                }
+                emittingRowData.value = false;
             },
             { deep: true }
         );
@@ -171,8 +170,8 @@ watch(
     (newValue: any, oldValue: any) => {
         if (gridCreated.value) {
             if(!emittingRowData.value) {
-              rowDataUpdating.value = true;
-              processChanges('rowData', deepToRaw(newValue), deepToRaw(oldValue));
+                rowDataUpdating.value = true;
+                processChanges('rowData', deepToRaw(newValue), deepToRaw(oldValue));
             }
             emittingRowData.value = false
         }
@@ -190,7 +189,7 @@ const thisInstance = getCurrentInstance();
 const updateModelIfUsed = (eventType: string) => {
     if (gridReadyFired.value && ROW_DATA_EVENTS.has(eventType)) {
         if (thisInstance?.vnode?.props?.["onUpdate:modelValue"]) {
-          emitRowModel();
+            emitRowModel();
         }
     }
 };
@@ -280,7 +279,9 @@ onMounted(() => {
     const gridOptions = markRaw(
         _combineAttributesAndGridOptions(deepToRaw<GridOptions<TData>>(props.gridOptions), props, [
             ..._GET_ALL_GRID_OPTIONS(),
-            ..._GET_ALL_EVENTS().map((event) => _getCallbackForEvent(event)),
+            // we could have replaced it with GRID_OPTIONS_VALIDATORS().allProperties,
+            // but that prevents tree shaking of validation code in Vue
+            ...Object.values(_PUBLIC_EVENT_HANDLERS_MAP),
         ])
     );
 
