@@ -161,7 +161,6 @@ export class CellKeyboardListenerFeature extends BeanStub {
         editSvc?.startEditing(rowNode, cellCtrl?.column, KeyCode.F2, true, event);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     private onEscapeKeyDown(event: KeyboardEvent): void {
         const {
             cellCtrl,

@@ -21,7 +21,6 @@ import {
     _resolveRowController,
 } from './utils/controllers';
 import {
-    _destroyEditor,
     _destroyEditors,
     _purgeUnchangedEdits,
     _refreshEditorOnColDefChanged,
