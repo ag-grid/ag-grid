@@ -9,14 +9,13 @@ import {
     _getRowViewportClass,
 } from 'ag-grid-community';
 
-import { BeansContext, RenderModeContext } from '../beansContext';
+import { BeansContext } from '../beansContext';
 import useReactCommentEffect from '../reactComment';
 import { agFlushSync, classesList, getNextValueIfDifferent } from '../utils';
 import RowComp from './rowComp';
 
 const RowContainerComp = ({ name }: { name: RowContainerName }) => {
     const { context, gos } = useContext(BeansContext);
-    const { rows: mode } = useContext(RenderModeContext);
     const containerOptions = useMemo(() => _getRowContainerOptions(name), [name]);
 
     const eViewport = useRef<HTMLDivElement | null>(null);
@@ -55,25 +54,12 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
         return eViewport.current == null && eContainer.current == null && eSpanContainer.current == null;
     }, []);
 
-    const rowsChanged = useRef<any>(() => {});
-    const sub = useCallback((onStoreChange: any) => {
-        rowsChanged.current = onStoreChange;
-        return () => {
-            rowsChanged.current = () => {};
-        };
-    }, []);
-    const rowCtrlsSync = useSyncExternalStore(sub, () => {
-        return prevRowCtrlsRef.current;
-    });
-
-    const rowCtrlsMerged = mode === 'uses' ? rowCtrlsSync : rowCtrlsOrdered;
-
     const setRef = useCallback(() => {
         if (areElementsRemoved()) {
             rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
         }
         if (areElementsReady()) {
-            const updateRowCtrlsOrderedFlushSync = (useFlushSync: boolean) => {
+            const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
                 const next = getNextValueIfDifferent(
                     prevRowCtrlsRef.current,
                     rowCtrlsRef.current,
@@ -84,33 +70,6 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
                     agFlushSync(useFlushSync, () => setRowCtrlsOrdered(next));
                 }
             };
-            const updateRowCtrlsOrderedPlain = (_useFlushSync: boolean) => {
-                const next = getNextValueIfDifferent(
-                    prevRowCtrlsRef.current,
-                    rowCtrlsRef.current,
-                    domOrderRef.current
-                )!;
-                if (next !== prevRowCtrlsRef.current) {
-                    prevRowCtrlsRef.current = next;
-                    agFlushSync(false, () => setRowCtrlsOrdered(next));
-                }
-            };
-            const updateRowCtrlsOrderedUses = (_useFlushSync: boolean) => {
-                const next = getNextValueIfDifferent(
-                    prevRowCtrlsRef.current,
-                    rowCtrlsRef.current,
-                    domOrderRef.current
-                )!;
-                if (next !== prevRowCtrlsRef.current) {
-                    prevRowCtrlsRef.current = next;
-                    rowsChanged.current();
-                }
-            };
-            const updateRowCtrlsOrdered = {
-                flushSync: updateRowCtrlsOrderedFlushSync,
-                plain: updateRowCtrlsOrderedPlain,
-                uses: updateRowCtrlsOrderedUses,
-            }[mode];
 
             const updateSpannedRowCtrlsOrdered = (useFlushSync: boolean) => {
                 const next = getNextValueIfDifferent(
@@ -199,7 +158,7 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
 
     const buildContainer = () => (
         <div className={containerClasses} ref={setContainerRef} role={'rowgroup'}>
-            {rowCtrlsMerged.map((rowCtrl) => (
+            {rowCtrlsOrdered.map((rowCtrl) => (
                 <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
             ))}
         </div>

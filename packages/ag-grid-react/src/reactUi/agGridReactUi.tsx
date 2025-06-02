@@ -242,7 +242,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
 
     return (
         <div style={style} className={props.className} ref={setRef}>
-            <RenderModeContext.Provider value={props.renderMode ?? { cells: 'flushSync', rows: 'flushSync' }}>
+            <RenderModeContext.Provider value={props.renderMode ?? 'flushSync'}>
                 {context && !context.isDestroyed() ? <GridComp context={context} /> : null}
                 {portalManager.current?.getPortals() ?? null}
             </RenderModeContext.Provider>

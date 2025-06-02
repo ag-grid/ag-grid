@@ -30,7 +30,7 @@ export interface AgGridReactProps<TData = any> extends GridOptions<TData> {
     /** @deprecated v33.3 AgGridReact does not accept children so this property will be removed. */
     children?: any;
 
-    renderMode?: { cells: RenderMode; rows: RenderMode };
+    renderMode?: RenderMode;
 }
 
 export interface InternalAgGridReactProps<TData = any> extends AgGridReactProps<TData> {

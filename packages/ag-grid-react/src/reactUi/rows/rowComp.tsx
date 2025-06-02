@@ -19,7 +19,7 @@ import { agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../u
 
 const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
     const { context, gos } = useContext(BeansContext);
-    const { cells: mode } = useContext(RenderModeContext);
+    const mode = useContext(RenderModeContext);
     const compBean = useRef<_EmptyBean>();
 
     const domOrderRef = useRef<boolean>(rowCtrl.getDomOrder());

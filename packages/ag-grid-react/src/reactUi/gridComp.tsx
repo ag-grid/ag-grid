@@ -48,7 +48,7 @@ const GridComp = ({ context }: GridCompProps) => {
         done.current = true;
         console.log('GridComp render mode: ', mode);
         const valid = ['flushSync', 'uses', 'plain'];
-        if (!valid.includes(mode.cells) || !valid.includes(mode.rows)) {
+        if (!valid.includes(mode)) {
             throw new Error('AG Grid: Invalid render mode: ' + mode + ' Valid values are: ' + valid.join(', '));
         }
     }
