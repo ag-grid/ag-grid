@@ -13,8 +13,6 @@ import type { GroupingRowNode, IRowGroupingStrategy } from './rowHierarchyUtils'
 export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'groupStage' as const;
 
-    public step: ClientSideRowModelStage = 'group';
-
     public refreshProps: Set<keyof GridOptions<any>> = new Set([
         'groupDefaultExpanded',
         'groupAllowUnbalanced',
@@ -25,6 +23,8 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
         'treeDataChildrenField',
         'treeDataParentIdField',
     ]);
+
+    public step: ClientSideRowModelStage = 'group';
 
     private approach: GroupingApproach | null = null;
     private strategyBeanName: string | null = null;
