@@ -249,15 +249,14 @@ export class EditService extends BeanStub implements NamedBean {
                 if (isEnter) {
                     _syncModelsFromEditors(this.beans);
                 } else {
-                    this.model.clearPendingValue(rowNode!, column!);
-                    // _destroyEditor(this.beans, { rowNode: rowNode!, column: column! });
+                    this.strategy?.clearPendingEditors?.(rowNode, column);
                 }
-
-                pendingUpdates = this.model.getPendingUpdates();
 
                 _destroyEditors(this.beans, this.model.getPendingCellIds());
 
                 event.preventDefault();
+
+                pendingUpdates = this.model.getPendingUpdates();
             }
         } else {
             _syncModelsFromEditors(this.beans);

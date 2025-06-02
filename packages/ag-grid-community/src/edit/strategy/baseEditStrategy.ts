@@ -26,6 +26,9 @@ export abstract class BaseEditStrategy extends BeanStub {
         rowNode: IRowNode<any> | undefined,
         column: Column<any> | undefined
     ): boolean;
+
+    public abstract clearPendingEditors(rowNode?: IRowNode, column?: Column): void;
+
     beanName: BeanName | undefined;
     protected editModel: EditModelService;
 

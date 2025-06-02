@@ -73,9 +73,11 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return false;
         }
 
-        const edits = Array.from(this.editModel.getPendingUpdateRow(rowNode)?.values() || []);
+        return this.editModel.hasPending(rowNode);
+    }
 
-        return edits.some((edit) => edit.state === 'editing');
+    public clearPendingEditors(rowNode?: IRowNode, _column?: Column): void {
+        this.editModel.clearPendingValue(rowNode, undefined);
     }
 
     public override startEditing(

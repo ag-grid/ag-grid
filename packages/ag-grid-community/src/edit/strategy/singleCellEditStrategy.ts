@@ -41,7 +41,11 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return false;
         }
 
-        return this.editModel.getPendingUpdate(rowNode, column)?.state === 'editing';
+        return this.editModel.hasPending(rowNode, column);
+    }
+
+    public clearPendingEditors(rowNode?: IRowNode, column?: Column): void {
+        this.editModel.clearPendingValue(rowNode, column);
     }
 
     public startEditing(

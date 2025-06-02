@@ -95,11 +95,23 @@ export class EditModelService extends BeanStub implements NamedBean {
         this.getPendingUpdateRow(rowNode)!.set(column, { newValue, oldValue, state });
     }
 
-    public clearPendingValue(rowNode: IRowNode, column: Column): void {
-        const existing = this.getPendingUpdate(rowNode, column);
-        if (existing) {
-            existing.newValue = existing.oldValue;
-            existing.state = 'changed';
+    public clearPendingValue(rowNode?: IRowNode, column?: Column): void {
+        if (rowNode) {
+            if (column) {
+                const existing = this.getPendingUpdate(rowNode, column);
+                if (existing) {
+                    existing.newValue = existing.oldValue;
+                    existing.state = 'changed';
+                }
+            } else {
+                const rowUpdateMap = this.getPendingUpdateRow(rowNode);
+                if (rowUpdateMap) {
+                    rowUpdateMap.forEach((cellData) => {
+                        cellData.newValue = cellData.oldValue;
+                        cellData.state = 'changed';
+                    });
+                }
+            }
         }
     }
 
