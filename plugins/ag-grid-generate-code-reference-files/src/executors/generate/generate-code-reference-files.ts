@@ -611,7 +611,6 @@ export function getGridApi(gridApiFile: string) {
             h.types.forEach((t) => {
                 const typeName = formatNode(t.expression, srcFile);
                 const typeNode = findNode(typeName, srcFile);
-
                 if (!typeNode) {
                     errors.push(`Could not find base interface for ${typeName}`);
                 } else {
@@ -629,7 +628,7 @@ export function getGridApi(gridApiFile: string) {
     ts.forEachChild(gridApi, (n) => addType('GridApi', n));
 
     if (errors.length > 0) {
-        throw new Error(`getGridApi validation failures:\n  ${errors.join('\n  ')}`);
+        throw new Error('getGridApi validation failed:\n' + errors.join('\n'));
     }
 
     return members;
