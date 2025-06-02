@@ -154,7 +154,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         batchEdit?: boolean,
         suppressFlash?: boolean
     ): void {
-        cellCtrl?.comp.toggleCss('ag-cell-batch-edit', (newState && batchEdit) ?? false);
+        cellCtrl?.comp?.toggleCss('ag-cell-batch-edit', (newState && batchEdit) ?? false);
 
         // force refresh if the cell also uses a renderer for edits
         cellCtrl?.refreshCell({
