@@ -503,22 +503,21 @@ const CellComp = ({
         cssManager.current!.toggleCss('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
     });
 
-    const showContents = () => (
-        <>
-            {renderDetails != null &&
-                editDetails == null &&
-                jsxShowValue(
-                    renderDetails,
-                    renderKey,
-                    instanceId,
-                    cellRendererRef,
-                    showCellWrapper,
-                    reactCellRendererStateless,
-                    setCellValueRef
-                )}
-            {editDetails != null && jsxEditValue(editDetails, setCellEditorRef, eGui.current!, cellCtrl, jsEditorComp)}
-        </>
-    );
+    const showContents = () => {
+        if (editDetails != null) {
+            return jsxEditValue(editDetails, setCellEditorRef, eGui.current!, cellCtrl, jsEditorComp);
+        } else if (renderDetails != null) {
+            return jsxShowValue(
+                renderDetails,
+                renderKey,
+                instanceId,
+                cellRendererRef,
+                showCellWrapper,
+                reactCellRendererStateless,
+                setCellValueRef
+            );
+        }
+    };
 
     const renderCell = () => (
         <div ref={setGuiRef} style={userStyles} role={cellAriaRole} col-id={colIdSanitised}>
