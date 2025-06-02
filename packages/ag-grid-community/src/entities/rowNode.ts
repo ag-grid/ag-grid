@@ -179,8 +179,12 @@ export class RowNode<TData = any>
     /** Number of children and grand children. */
     public allChildrenCount: number | null;
 
-    /** Children mapped by the pivot columns or group key */
-    public childrenMapped: { [key: string]: any } | null = null;
+    /**
+     * - For PivotStage is a record object, containing the children mapped by the pivot columns or group key
+     * - For GroupStrategy is a Record<string, RowNode<TData>>, containing the children of this group mapped by the group key.
+     * - For TreeStrategy is used to temporarily store the path to the node from the root, when using getDataPath
+     */
+    public childrenMapped: { [key: string]: any } | string | null = null;
 
     /**
      * Parent RowNode for tree data.

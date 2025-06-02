@@ -15,12 +15,12 @@ export interface IRowGroupingStrategy<TData = any> extends Bean {
 }
 
 export interface GroupingRowNode<TData = any> extends RowNode<TData> {
-    parent: GroupingRowNode<TData> | null;
-    allLeafChildren: GroupingRowNode<TData>[] | null;
-    childrenAfterGroup: GroupingRowNode<TData>[] | null;
-    treeParent: GroupingRowNode<TData> | null;
+    parent: this | null;
+    allLeafChildren: this[] | null;
+    childrenAfterGroup: this[] | null;
+    treeParent: this | null;
     treeNodeFlags: number;
-    sibling: GroupingRowNode<TData>;
+    sibling: this;
     sourceRowIndex: number;
 }
 

@@ -321,8 +321,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             // because of the while loop below, it's possible we already moved the node,
             // so double check before trying to remove again.
             const mapKey = this.getChildrenMappedKey(rowNode.key!, rowNode.rowGroupColumn);
-            const parentRowNode = rowNode.parent;
-            const groupAlreadyRemoved = parentRowNode?.childrenMapped ? !parentRowNode.childrenMapped[mapKey] : true;
+            const parentChildrenMapped = rowNode.parent?.childrenMapped as Record<string, RowNode> | null | undefined;
+            const groupAlreadyRemoved = parentChildrenMapped ? !parentChildrenMapped[mapKey] : true;
 
             if (groupAlreadyRemoved) {
                 // if not linked, then group was already removed
@@ -371,8 +371,9 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             }
         }
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
-        if (child.parent?.childrenMapped) {
-            delete child.parent.childrenMapped[mapKey];
+        const childParentChildrenMapped = child.parent?.childrenMapped as Record<string, RowNode> | null | undefined;
+        if (childParentChildrenMapped) {
+            delete childParentChildrenMapped[mapKey];
         }
         // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
         // remove, if rowTop is still present, the rowComp thinks it's just moved position.
@@ -384,7 +385,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
      * This is idempotent, but relies on the `key` field being the same throughout a RowNode's lifetime
      */
     private addToParent(child: RowNode, parent: GroupingRowNode) {
-        const childrenMapped = (parent.childrenMapped ??= {});
+        const childrenMapped = (parent.childrenMapped ??= {}) as Record<string, RowNode>;
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
         if (childrenMapped[mapKey] !== child) {
             childrenMapped[mapKey] = child;
@@ -531,7 +532,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         details: GroupingDetails
     ): RowNode {
         const key = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
-        let nextNode = parentGroup?.childrenMapped?.[key];
+        const parentChildrenMapped = parentGroup?.childrenMapped as Record<string, RowNode> | null | undefined;
+        let nextNode = parentChildrenMapped?.[key];
 
         if (!nextNode) {
             nextNode = this.createGroup(groupInfo, parentGroup, level, details);

@@ -470,12 +470,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 if (treeParent !== null && (node.treeNodeFlags & FLAG_CHANGED) === 0) {
                     let pathKey = node.key!;
                     let current = treeParent;
-                    while (current && current !== rootNode) {
-                        if (current === node) {
-                            _warn(270, { id: node.id!, parentId: current.id ?? '' }); // Cycle detected
-                            node.treeParent = rootNode; // Re-parent to root
-                            break;
-                        }
+                    while (current && current !== rootNode && current !== node) {
                         pathKey = PATH_KEY_SEPARATOR + pathKey;
                         const existingPathKey = current.childrenMapped;
                         if (existingPathKey !== null) {
@@ -485,12 +480,14 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                         pathKey = current.key! + pathKey;
                         current = current.treeParent!;
                     }
-                    node.childrenMapped = pathKey as any; // Cache the path key for faster access
-                    const existing = nodesByPath.get(pathKey);
-                    if (existing === undefined) {
-                        nodesByPath.set(pathKey, node);
-                    } else if (existing !== node) {
-                        dupPaths = this.duplicatedPath(nodesByPath, dupPaths, existing, node);
+                    if (current !== node) {
+                        node.childrenMapped = pathKey; // Cache the path key for faster access
+                        const existing = nodesByPath.get(pathKey);
+                        if (existing === undefined) {
+                            nodesByPath.set(pathKey, node);
+                        } else if (existing !== node) {
+                            dupPaths = this.duplicatedPath(nodesByPath, dupPaths, existing, node);
+                        }
                     }
                 }
             }
@@ -513,7 +510,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                     node.treeNodeFlags |= FLAG_CHANGED;
                 }
                 const pathKey = path.join(PATH_KEY_SEPARATOR);
-                node.childrenMapped = pathKey as any; // Cache the path key for faster access
+                node.childrenMapped = pathKey; // Cache the path key for faster access
                 const existing = nodesByPath.get(pathKey);
                 if (existing === undefined) {
                     nodesByPath.set(pathKey, node);
@@ -537,7 +534,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         existing: GroupingRowNode<TData>,
         node: GroupingRowNode<TData>
     ): Map<string, GroupingRowNode<TData>[]> | undefined {
-        const pathKey = node.childrenMapped as unknown as string;
+        const pathKey = node.childrenMapped! as string;
         if (node.sourceRowIndex < existing.sourceRowIndex) {
             existing.childrenMapped = null; // Clear the cached path key for the existing node
             nodesByPath.set(pathKey, node); // We choose the node with the lowest sourceRowIndex
@@ -562,11 +559,12 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         // think about same key or empty filler nodes. We want to still allow an unconstrained drag and drop of nodes in the tree,
         // String slice is highly optimized in modern JS engines, as it will be just a view of the original string and has low GC pressure.
         for (const node of nodesByPath.values()) {
-            const pathKey = node.childrenMapped as unknown as string;
-            node.childrenMapped = null;
             if (node.treeParent !== null) {
                 continue; // Already processed
             }
+
+            const pathKey = node.childrenMapped! as string;
+            node.childrenMapped = null;
 
             // Collect separators positions, fast string split without allocations
             let segmentsLen = 0;
