@@ -22,6 +22,7 @@ import {
 } from './utils/controllers';
 import {
     _destroyEditor,
+    _destroyEditors,
     _refreshEditorOnColDefChanged,
     _syncModelFromEditor,
     _syncModelsFromEditors,
@@ -245,10 +246,12 @@ export class EditService extends BeanStub implements NamedBean {
                     _syncModelsFromEditors(this.beans);
                 } else {
                     this.model.removePendingEdit(rowNode!, column!);
+                    _destroyEditor(this.beans, { rowNode: rowNode!, column: column! });
                 }
+
                 pendingUpdates = this.model.getPendingUpdates();
 
-                _destroyEditor(this.beans, { rowNode: rowNode!, column: column! });
+                _destroyEditors(this.beans, this.model.getPendingCellIds());
 
                 event.preventDefault();
             }

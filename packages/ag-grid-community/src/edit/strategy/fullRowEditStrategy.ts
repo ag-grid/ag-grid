@@ -1,13 +1,13 @@
 import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import type { CellFocusedEvent } from '../../events';
+import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { CellIdPositions } from '../editModelService';
-import { _resolveControllers, _resolveRowController } from '../utils/controllers';
-import { _setupEditor, _syncModelsFromEditors } from '../utils/editors';
+import { _resolveRowController } from '../utils/controllers';
+import { _setupEditor } from '../utils/editors';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class FullRowEditStrategy extends BaseEditStrategy {
@@ -120,25 +120,26 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     }
 
     public onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
-        const { focusSvc } = this.beans;
-        const { rowIndex, rowPinned, column } = event;
+        const { rowIndex } = event;
+        const previous = (event as any)['previousParams']! as CommonCellFocusParams;
 
-        const rowFocused = focusSvc.isRowFocused(rowIndex!, rowPinned);
+        if (previous?.rowIndex === rowIndex || event.sourceEvent instanceof KeyboardEvent) {
+            return;
+        }
 
-        const { rowCtrl, cellCtrl } = _resolveControllers(this.beans, {
-            rowIndex,
-            column,
-        });
+        if (this.beans.editSvc?.isEditing()) {
+            const result = this.beans.editSvc?.stopEditing(undefined, undefined, undefined, undefined, false, 'ui');
 
-        _syncModelsFromEditors(this.beans);
-
-        // if we are editing, then moving the focus out of a row will stop editing
-        if (
-            !rowFocused &&
-            this.editModel.hasPending(rowCtrl!.rowNode, cellCtrl?.column) &&
-            !this.beans.editSvc?.batchEditing
-        ) {
-            this.beans.editSvc?.stopEditing(rowCtrl!.rowNode, cellCtrl?.column);
+            // editSvc didn't handle the stopEditing, we need to do more ourselves
+            if (!result) {
+                if (this.beans.editSvc?.batchEditing) {
+                    // close editors, but don't stop editing in batch mode
+                    this.beans.editSvc?.cleanupEditors();
+                } else {
+                    // if not batch editing, then we stop editing the cell
+                    this.beans.editSvc?.stopEditing(undefined, undefined, undefined, undefined, false, 'api');
+                }
+            }
         }
     }
 
@@ -182,9 +183,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 _setupEditor(this.beans, nextCell.rowNode, nextCell.column, undefined, true);
             }
             this.setFocusInOnEditor(nextCell);
-            nextCell.focusCell();
+            nextCell.focusCell(false, event);
         } else {
-            nextCell.focusCell(true);
+            nextCell.focusCell(true, event);
         }
 
         return true;

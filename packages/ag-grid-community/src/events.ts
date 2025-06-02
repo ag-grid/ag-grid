@@ -743,6 +743,8 @@ export interface CellFocusedParams extends CommonCellFocusParams {
     preventScrollOnBrowserFocus?: boolean;
     /** Previous focused cell params */
     previousCellFocus?: CellFocusedParams;
+    /** Initiating event, if any */
+    sourceEvent?: Event;
 }
 
 export interface HeaderFocusedParams {

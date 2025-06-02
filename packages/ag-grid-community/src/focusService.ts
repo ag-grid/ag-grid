@@ -240,7 +240,14 @@ export class FocusService extends BeanStub implements NamedBean {
         // as focus has been set, reset the flag
         this.setFocusRecovered();
 
-        const { column, rowIndex, rowPinned, forceBrowserFocus = false, preventScrollOnBrowserFocus = false } = params;
+        const {
+            column,
+            rowIndex,
+            rowPinned,
+            forceBrowserFocus = false,
+            preventScrollOnBrowserFocus = false,
+            sourceEvent,
+        } = params;
 
         const gridColumn = this.colModel.getCol(column!);
 
@@ -266,6 +273,7 @@ export class FocusService extends BeanStub implements NamedBean {
             ...(this.previousCellFocusParams && { previousParams: this.previousCellFocusParams }),
             forceBrowserFocus,
             preventScrollOnBrowserFocus,
+            sourceEvent,
         });
 
         this.previousCellFocusParams = focusEventParams;

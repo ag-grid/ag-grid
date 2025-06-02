@@ -145,7 +145,7 @@ export class CellMouseListenerFeature extends BeanStub {
             const forceBrowserFocus =
                 (_isBrowserSafari() || shouldFocus) && !editing && !_isFocusableFormField(target) && !containsWidget;
 
-            cellCtrl.focusCell(forceBrowserFocus);
+            cellCtrl.focusCell(forceBrowserFocus, mouseEvent);
         }
 
         // if shift clicking, and a range exists, we keep the focus on the cell that started the
@@ -171,6 +171,7 @@ export class CellMouseListenerFeature extends BeanStub {
                     rowPinned,
                     forceBrowserFocus: true,
                     preventScrollOnBrowserFocus: true,
+                    sourceEvent: mouseEvent,
                 });
             }
         }

@@ -633,10 +633,11 @@ export class CellCtrl extends BeanStub {
         return this.rangeFeature != null;
     }
 
-    public focusCell(forceBrowserFocus = false): void {
+    public focusCell(forceBrowserFocus = false, sourceEvent?: Event): void {
         this.beans.focusSvc.setFocusedCell({
             ...this.getFocusedCellPosition(),
             forceBrowserFocus,
+            sourceEvent,
         });
     }
 
