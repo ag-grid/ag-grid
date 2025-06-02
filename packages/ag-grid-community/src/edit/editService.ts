@@ -244,7 +244,7 @@ export class EditService extends BeanStub implements NamedBean {
                 if (isEnter) {
                     _syncModelsFromEditors(this.beans);
                 } else {
-                    this.model.clearPendingValue(rowNode!, column!);
+                    this.model.removePendingEdit(rowNode!, column!);
                 }
                 pendingUpdates = this.model.getPendingUpdates();
 
