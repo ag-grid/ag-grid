@@ -506,6 +506,7 @@ const CellComp = ({
     const showContents = () => (
         <>
             {renderDetails != null &&
+                editDetails == null &&
                 jsxShowValue(
                     renderDetails,
                     renderKey,
