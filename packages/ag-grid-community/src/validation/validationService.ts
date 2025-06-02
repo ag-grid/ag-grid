@@ -218,27 +218,27 @@ export class ValidationService extends BeanStub implements NamedBean {
             .join('\n           '); // make multiple messages easier to read
     }
 
-    private checkProperties<T extends object>(
-        object: T,
+    private checkProperties<K extends string, O extends Record<K, any>>(
+        object: O,
         exceptions: string[], // deprecated properties generally
         validProperties: string[], // properties to recommend
         containerName: string,
         docsUrl?: string
-    ): void {
+    ) {
         // Vue adds these properties to all objects, so we ignore them when checking for invalid properties
         const VUE_FRAMEWORK_PROPS = ['__ob__', '__v_skip', '__metadata__'];
 
-        const invalidProperties: { [p: string]: string[] } = _fuzzyCheckStrings(
-            Object.getOwnPropertyNames(object),
+        const invalidProperties = _fuzzyCheckStrings(
+            Object.getOwnPropertyNames(object) as K[],
             [...VUE_FRAMEWORK_PROPS, ...exceptions, ...validProperties],
             validProperties
         );
 
-        const invalidPropertiesKeys = Object.keys(invalidProperties);
+        const invalidPropertiesKeys = Object.keys(invalidProperties) as K[];
 
         for (const key of invalidPropertiesKeys) {
             const value = invalidProperties[key];
-            let message = `invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}.`;
+            let message = `invalid ${containerName} property '${key as string}' did you mean any of these: ${value.slice(0, 8).join(', ')}.`;
             if (validProperties.includes('context')) {
                 message += `\nIf you are trying to annotate ${containerName} with application data, use the '${containerName}.context' property instead.`;
             }
@@ -256,13 +256,13 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 }
 
-export function _fuzzyCheckStrings(
-    inputValues: string[],
+export function _fuzzyCheckStrings<V extends string>(
+    inputValues: V[],
     validValues: string[],
     allSuggestions: string[]
-): { [p: string]: string[] } {
-    const fuzzyMatches: { [p: string]: string[] } = {};
-    const invalidInputs: string[] = inputValues.filter(
+): { [p in V]: string[] } {
+    const fuzzyMatches = {} as { [p in V]: string[] };
+    const invalidInputs = inputValues.filter(
         (inputValue) => !validValues.some((validValue) => validValue === inputValue)
     );
 

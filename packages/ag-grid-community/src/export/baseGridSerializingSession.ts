@@ -117,6 +117,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 const { value, valueFormatted } = valueService.getValueForDisplay(
                     isFullWidthGroup ? undefined : column, // full width group doesn't have a column
                     pointer,
+                    true,
                     true
                 );
                 concatenatedGroupValue = ` -> ${valueFormatted ?? value ?? ''}${concatenatedGroupValue}`;
@@ -129,7 +130,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             };
         }
 
-        const { value, valueFormatted } = valueService.getValueForDisplay(column, node, true);
+        const { value, valueFormatted } = valueService.getValueForDisplay(column, node, true, true);
         return {
             value: value ?? '',
             valueFormatted,

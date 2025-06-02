@@ -104,7 +104,8 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
         const { displayedNode, value } = groupValue;
 
         const groupedCol = displayedNode.rowGroupColumn as AgColumn;
-        const isShowingGroupCell = groupedCol && column?.isRowGroupDisplayed(groupedCol.colId);
+        const isFullWidthGroup = displayedNode.group && !column;
+        const isShowingGroupCell = groupedCol && (isFullWidthGroup || column?.isRowGroupDisplayed(groupedCol.colId));
         // for grouped cells; try to use the underlying col formatter
         if (isShowingGroupCell) {
             // if exporting, check if we should use the value formatter for export
