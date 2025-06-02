@@ -33,6 +33,17 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         return this.rowNode !== rowNode || this.column !== column;
     }
 
+    public override shouldAcceptMidBatchInteractions(
+        rowNode: IRowNode | undefined,
+        column: Column | undefined
+    ): boolean {
+        if (!rowNode || !column) {
+            return false;
+        }
+
+        return this.editModel.getPendingUpdate(rowNode, column)?.state === 'editing';
+    }
+
     public startEditing(
         rowNode: IRowNode,
         column: Column,

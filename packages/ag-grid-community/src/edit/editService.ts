@@ -23,6 +23,7 @@ import {
 import {
     _destroyEditor,
     _destroyEditors,
+    _purgeUnchangedEdits,
     _refreshEditorOnColDefChanged,
     _syncModelFromEditor,
     _syncModelsFromEditors,
@@ -239,7 +240,7 @@ export class EditService extends BeanStub implements NamedBean {
         } else if (
             event instanceof KeyboardEvent &&
             this.batchEditing &&
-            this.model.getPendingUpdate(rowNode!, column!)?.state === 'editing'
+            this.strategy?.shouldAcceptMidBatchInteractions(rowNode, column)
         ) {
             // handle mid-batch edit interactions
             const isEnter = key === KeyCode.ENTER;
@@ -249,8 +250,8 @@ export class EditService extends BeanStub implements NamedBean {
                 if (isEnter) {
                     _syncModelsFromEditors(this.beans);
                 } else {
-                    this.model.removePendingEdit(rowNode!, column!);
-                    _destroyEditor(this.beans, { rowNode: rowNode!, column: column! });
+                    this.model.clearPendingValue(rowNode!, column!);
+                    // _destroyEditor(this.beans, { rowNode: rowNode!, column: column! });
                 }
 
                 pendingUpdates = this.model.getPendingUpdates();
@@ -270,6 +271,8 @@ export class EditService extends BeanStub implements NamedBean {
 
         // update editing styles
         this.updateCells(pendingUpdates, forcedState, true, true);
+
+        _purgeUnchangedEdits(this.beans);
 
         // force refresh of all row cells as custom renderers may depend on multiple cell values
         this.refreshAllRows(pendingUpdates, this.includeParents);

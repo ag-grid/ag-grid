@@ -65,6 +65,19 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         return rowNode !== this.rowNode;
     }
 
+    public override shouldAcceptMidBatchInteractions(
+        rowNode: IRowNode | undefined,
+        _column: Column | undefined
+    ): boolean {
+        if (!rowNode) {
+            return false;
+        }
+
+        const edits = Array.from(this.editModel.getPendingUpdateRow(rowNode)?.values() || []);
+
+        return edits.some((edit) => edit.state === 'editing');
+    }
+
     public override startEditing(
         rowNode: IRowNode,
         column?: Column,

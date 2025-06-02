@@ -22,6 +22,10 @@ import {
 } from '../utils/editors';
 
 export abstract class BaseEditStrategy extends BeanStub {
+    public abstract shouldAcceptMidBatchInteractions(
+        rowNode: IRowNode<any> | undefined,
+        column: Column<any> | undefined
+    ): boolean;
     beanName: BeanName | undefined;
     protected editModel: EditModelService;
 
