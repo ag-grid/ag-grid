@@ -119,7 +119,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         return true;
     }
 
-    public onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
+    public override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
         const { rowIndex } = event;
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
 
@@ -127,20 +127,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return;
         }
 
-        if (this.beans.editSvc?.isEditing()) {
-            const result = this.beans.editSvc?.stopEditing(undefined, undefined, undefined, undefined, false, 'ui');
-
-            // editSvc didn't handle the stopEditing, we need to do more ourselves
-            if (!result) {
-                if (this.beans.editSvc?.batchEditing) {
-                    // close editors, but don't stop editing in batch mode
-                    this.beans.editSvc?.cleanupEditors();
-                } else {
-                    // if not batch editing, then we stop editing the cell
-                    this.beans.editSvc?.stopEditing(undefined, undefined, undefined, undefined, false, 'api');
-                }
-            }
-        }
+        super.onCellFocusChanged(event);
     }
 
     // returns null if no navigation should be performed

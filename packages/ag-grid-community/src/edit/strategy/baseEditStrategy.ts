@@ -34,7 +34,22 @@ export abstract class BaseEditStrategy extends BeanStub {
         silent?: boolean
     ): boolean;
 
-    public abstract onCellFocusChanged(_event: CellFocusedEvent<any, any>): void;
+    public onCellFocusChanged(_event: CellFocusedEvent<any, any>): void {
+        if (this.beans.editSvc?.isEditing()) {
+            const result = this.beans.editSvc?.stopEditing(undefined, undefined, undefined, undefined, false, 'ui');
+
+            // editSvc didn't handle the stopEditing, we need to do more ourselves
+            if (!result) {
+                if (this.beans.editSvc?.batchEditing) {
+                    // close editors, but don't stop editing in batch mode
+                    this.beans.editSvc?.cleanupEditors();
+                } else {
+                    // if not batch editing, then we stop editing the cell
+                    this.beans.editSvc?.stopEditing(undefined, undefined, undefined, undefined, false, 'api');
+                }
+            }
+        }
+    }
 
     public abstract moveToNextEditingCell(
         previousCell: CellCtrl,
