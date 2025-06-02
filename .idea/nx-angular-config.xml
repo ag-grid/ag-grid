@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="NxAngularConfigService" workspaceLocation="file://$PROJECT_DIR$/nx.json">
+    <projects>
+      <project name="@ag-grid-community/locale" file="file://$PROJECT_DIR$/community-modules/locale/project.json" />
+      <project name="@ag-grid-community/styles" file="file://$PROJECT_DIR$/community-modules/styles/project.json" />
+      <project name="ag-behavioural-testing" file="file://$PROJECT_DIR$/testing/behavioural/project.json" />
+      <project name="ag-grid-angular" file="file://$PROJECT_DIR$/packages/ag-grid-angular/project.json" />
+      <project name="ag-grid-community" file="file://$PROJECT_DIR$/packages/ag-grid-community/project.json" />
+      <project name="ag-grid-docs" file="file://$PROJECT_DIR$/documentation/ag-grid-docs/project.json" />
+      <project name="ag-grid-enterprise" file="file://$PROJECT_DIR$/packages/ag-grid-enterprise/project.json" />
+      <project name="ag-grid-generate-code-reference-files" file="file://$PROJECT_DIR$/plugins/ag-grid-generate-code-reference-files/project.json" />
+      <project name="ag-grid-generate-example-files" file="file://$PROJECT_DIR$/plugins/ag-grid-generate-example-files/project.json" />
+      <project name="ag-grid-module-size" file="file://$PROJECT_DIR$/testing/module-size/project.json" />
+      <project name="ag-grid-module-size-angular" file="file://$PROJECT_DIR$/testing/module-size-angular/project.json" />
+      <project name="ag-grid-react" file="file://$PROJECT_DIR$/packages/ag-grid-react/project.json" />
+      <project name="ag-grid-task-autogen" file="file://$PROJECT_DIR$/plugins/ag-grid-task-autogen/project.json" />
+      <project name="ag-grid-vue3" file="file://$PROJECT_DIR$/packages/ag-grid-vue3/project.json" />
+      <project name="ag-shared" file="file://$PROJECT_DIR$/external/ag-shared/project.json" />
+      <project name="ag-website-shared" file="file://$PROJECT_DIR$/external/ag-website-shared/project.json" />
+      <project name="all" file="file://$PROJECT_DIR$/utilities/all/project.json" />
+      <project name="angular-package-tests" file="file://$PROJECT_DIR$/testing/angular-package-tests/project.json" />
+      <project name="react-package-tests" file="file://$PROJECT_DIR$/testing/react-package-tests/project.json" />
+      <project name="vue-package-tests" file="file://$PROJECT_DIR$/testing/vue-package-tests/project.json" />
+    </projects>
+  </component>
+</project>

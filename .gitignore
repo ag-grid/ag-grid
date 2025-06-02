@@ -1,4 +1,9 @@
-.idea
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/codeStyles/codeStyleConfig.xml
+.idea/codeStyles/Project.xml
+.idea/encodings.xml
+/.idea/atlassian-ide-plugin.xml
 .vscode
 
 vite.config.ts.timestamp-*.mjs
