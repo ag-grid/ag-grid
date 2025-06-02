@@ -125,7 +125,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private processCellKeyboardEvent(cellCtrl: CellCtrl, eventName: string, keyboardEvent: KeyboardEvent): void {
         const { rowNode, column } = cellCtrl;
-        const editing = this.beans.editSvc?.isEditing(rowNode, column) ?? false;
+        const editing = this.beans.editSvc?.isEditing(rowNode, column, undefined, true) ?? false;
 
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(
             this.gos,
@@ -268,7 +268,9 @@ export class RowContainerEventsFeature extends BeanStub {
 
         const { cellCtrl } = this.getControlsForEventTarget(event.target);
 
-        if (this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column)) {
+        const editing = this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column, undefined, true) ?? false;
+
+        if (editing) {
             return;
         }
 
@@ -283,7 +285,9 @@ export class RowContainerEventsFeature extends BeanStub {
 
         const { cellCtrl } = this.getControlsForEventTarget(event.target);
 
-        if (this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column)) {
+        const editing = this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column, undefined, true) ?? false;
+
+        if (editing) {
             return;
         }
 
@@ -294,7 +298,9 @@ export class RowContainerEventsFeature extends BeanStub {
     private onCtrlAndV(clipboardSvc: IClipboardService | undefined, event: KeyboardEvent): void {
         const { cellCtrl } = this.getControlsForEventTarget(event.target);
 
-        if (this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column)) {
+        const editing = this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column, undefined, true) ?? false;
+
+        if (editing) {
             return;
         }
 

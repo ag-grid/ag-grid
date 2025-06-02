@@ -131,8 +131,13 @@ export class EditService extends BeanStub implements NamedBean {
         return this.strategy?.shouldCancelEditing?.(rowNode, column, key, event, source) ?? null;
     }
 
-    public isEditing(rowNode?: IRowNode | null, column?: Column | null, checkSiblings = false): boolean {
-        return this.model.hasPending(rowNode, column, checkSiblings) ?? false;
+    public isEditing(
+        rowNode?: IRowNode | null,
+        column?: Column | null,
+        checkSiblings = false,
+        withOpenEditor = false
+    ): boolean {
+        return this.model.hasPending(rowNode, column, checkSiblings, undefined, withOpenEditor) ?? false;
     }
 
     /** @return whether to prevent default on event */

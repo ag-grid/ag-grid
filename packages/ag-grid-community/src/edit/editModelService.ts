@@ -171,13 +171,18 @@ export class EditModelService extends BeanStub implements NamedBean {
         rowNode?: IRowNode | null,
         column?: Column | null,
         checkSiblings: boolean = false,
-        includeParents: boolean = false
+        includeParents: boolean = false,
+        withOpenEditors: boolean = false
     ): boolean {
         if (rowNode) {
             const rowEdits = this.getPendingUpdateRow(rowNode);
             if (!rowEdits) {
                 return false;
             } else if (column) {
+                if (withOpenEditors) {
+                    const cellData = this.getPendingUpdate(rowNode, column);
+                    return cellData ? cellData.state === 'editing' : false;
+                }
                 return rowEdits.has(column) ?? false;
             } else if (rowEdits.size !== 0) {
                 return true;
