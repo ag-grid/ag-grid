@@ -354,6 +354,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public getEditingCellPositions(): EditingCellPosition[] {
+        _purgeUnchangedEdits(this.beans);
         return this.beans.editSvc?.model.getPendingCellPositions() ?? [];
     }
 
