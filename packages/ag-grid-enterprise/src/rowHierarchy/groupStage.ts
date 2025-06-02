@@ -36,14 +36,14 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
 
     private createStrategy(): IRowGroupingStrategy<TData> | undefined {
         const { beans, approach } = this;
-        let beanName: 'treeGroupStrategy' | 'groupStrategy' | undefined;
+        let beanName: 'treeParentIdStrategy' | 'groupStrategy' | undefined;
         switch (approach) {
             case 'group':
                 beanName = 'groupStrategy';
                 break;
             case 'treeNested':
             case 'treeSelfRef':
-                beanName = 'treeGroupStrategy';
+                beanName = 'treeParentIdStrategy';
                 break;
         }
         if (beanName) {
