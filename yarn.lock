@@ -26516,7 +26516,7 @@ typescript-eslint@^8.0.1:
     "@typescript-eslint/parser" "8.20.0"
     "@typescript-eslint/utils" "8.20.0"
 
-typescript@^5.4.5, typescript@^5.5.3, typescript@^5.5.4:
+typescript@^5.4.5, typescript@^5.5.3:
   version "5.7.3"
   resolved "http://52.50.158.57:4873/typescript/-/typescript-5.7.3.tgz#919b44a7dbb8583a9b856d162be24a54bf80073e"
   integrity sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==
