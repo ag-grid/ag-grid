@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, GridReadyEvent, RowDataUpdatedEvent } from 'ag-grid-community';
 import { ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -32,12 +32,20 @@ const gridOptions: GridOptions<IOlympicData> = {
         initialWidth: 100,
     },
     rowData: [],
+    onRowDataUpdated(event: RowDataUpdatedEvent<IOlympicData, any>) {
+        console.log(event);
+    },
+    onBodyScrollEnd(event) {
+        console.log(event);
+    },
 };
 
 function outputText(time?: number) {
-    const text = `Time taken: ${time ? Math.round(time) + 'ms' : ''}`;
-    console.log(text);
-    document.querySelector<HTMLElement>('#output')!.innerText = text;
+    if (time) {
+        console.log('Time taken:', Math.round(time), time ? 'ms' : '');
+        document.querySelector<HTMLElement>('#output')!.innerText =
+            `Time taken: ${time ? Math.round(time) + 'ms' : ''}`;
+    }
 }
 
 function onClearData() {
