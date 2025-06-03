@@ -1,8 +1,13 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import type { IFloatingFilterAngularComp } from 'ag-grid-angular';
-import type { IFloatingFilterParams, ISimpleFilter } from 'ag-grid-community';
+import { IFloatingFilterDisplayAngularComp } from 'ag-grid-angular';
+import {
+    FloatingFilterDisplayParams,
+    ICombinedSimpleModel,
+    NumberFilterModel,
+    isCombinedFilterModel,
+} from 'ag-grid-community';
 
 export interface CustomParams {
     color: string;
@@ -20,12 +25,16 @@ export interface CustomParams {
             (input)="onInputBoxChanged()"
         />`,
 })
-export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp {
-    params!: IFloatingFilterParams<ISimpleFilter> & CustomParams;
+export class NumberFloatingFilterComponent implements IFloatingFilterDisplayAngularComp {
+    params!: FloatingFilterDisplayParams<any, any, NumberFilterModel | ICombinedSimpleModel<NumberFilterModel>> &
+        CustomParams;
     currentValue: number | null | string = null;
     style: any;
 
-    agInit(params: IFloatingFilterParams<ISimpleFilter> & CustomParams): void {
+    agInit(
+        params: FloatingFilterDisplayParams<any, any, NumberFilterModel | ICombinedSimpleModel<NumberFilterModel>> &
+            CustomParams
+    ): void {
         this.params = params;
 
         this.style = {
@@ -33,27 +42,35 @@ export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp
         };
     }
 
-    onParentModelChanged(parentModel: any) {
-        // When the filter is empty we will receive a null value here
-        if (!parentModel) {
-            this.currentValue = null;
-        } else {
-            this.currentValue = parentModel.filter;
+    refresh(
+        params: FloatingFilterDisplayParams<any, any, NumberFilterModel | ICombinedSimpleModel<NumberFilterModel>> &
+            CustomParams
+    ): void {
+        this.params = params;
+        // if the update is from the floating filter, we don't need to update the UI
+        if (params.source !== 'ui') {
+            const model = params.model;
+            if (model == null) {
+                this.currentValue = null;
+            } else {
+                const value = isCombinedFilterModel(model) ? model.conditions[0]?.filter : model.filter;
+                this.currentValue = String(value);
+            }
         }
     }
 
     onInputBoxChanged() {
         if (!this.currentValue) {
             // Remove the filter
-            this.params.parentFilterInstance((instance) => {
-                instance.onFloatingFilterChanged(null, null);
-            });
+            this.params.onModelChange(null);
             return;
         }
 
         this.currentValue = Number(this.currentValue);
-        this.params.parentFilterInstance((instance: any) => {
-            instance.onFloatingFilterChanged('greaterThan', this.currentValue);
+        this.params.onModelChange({
+            filterType: 'number',
+            type: 'greaterThan',
+            filter: this.currentValue,
         });
     }
 }

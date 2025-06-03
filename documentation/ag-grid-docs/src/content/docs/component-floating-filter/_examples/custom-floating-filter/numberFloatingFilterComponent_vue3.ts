@@ -1,3 +1,5 @@
+import { isCombinedFilterModel } from 'ag-grid-community';
+
 export default {
     template: `
       <span>
@@ -14,24 +16,31 @@ export default {
         onInputBoxChanged() {
             if (this.currentValue === '') {
                 // Remove the filter
-                this.params.parentFilterInstance((instance) => {
-                    instance.onFloatingFilterChanged(null, null);
-                });
+                this.params.onModelChange(null);
                 return;
             }
 
-            this.params.parentFilterInstance((instance) => {
-                instance.onFloatingFilterChanged('greaterThan', this.currentValue);
+            this.params.onModelChange({
+                filterType: 'number',
+                type: 'greaterThan',
+                filter: Number(this.currentValue),
             });
         },
 
-        onParentModelChanged(parentModel) {
-            // When the filter is empty we will receive a null value here
-            if (!parentModel) {
-                this.currentValue = '';
-            } else {
-                this.currentValue = parentModel.filter;
+        refresh(params) {
+            // if the update is from the floating filter, we don't need to update the UI
+            if (params.source !== 'ui') {
+                const model = params.model;
+                if (model == null) {
+                    this.currentValue = '';
+                } else {
+                    const value = isCombinedFilterModel(model) ? model.conditions[0]?.filter : model.filter;
+                    this.currentValue = String(value);
+                }
             }
         },
+    },
+    mounted: function () {
+        this.refresh(this.params);
     },
 };

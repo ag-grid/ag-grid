@@ -1,19 +1,9 @@
-import type { IFilterOptionDef } from '../../../interfaces/iFilter';
-import type { LocaleTextFunc } from '../../../misc/locale/localeUtils';
 import { _dateToFormattedString, _parseDateTimeFromString } from '../../../utils/date';
-import type { OptionsFactory } from '../optionsFactory';
+import type { IFilterOptionDef } from '../iSimpleFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
-import type { DateFilterModel, DateFilterParams } from './iDateFilter';
+import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
-export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
-    constructor(
-        private dateFilterParams: DateFilterParams,
-        getLocaleTextFunc: () => LocaleTextFunc,
-        optionsFactory: OptionsFactory
-    ) {
-        super(getLocaleTextFunc, optionsFactory);
-    }
-
+export class DateFilterModelFormatter extends SimpleFilterModelFormatter<IDateFilterParams> {
     protected conditionToString(condition: DateFilterModel, options?: IFilterOptionDef): string {
         const { type } = condition;
         const { numberOfInputs } = options || {};
@@ -22,7 +12,7 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
         const dateFrom = _parseDateTimeFromString(condition.dateFrom);
         const dateTo = _parseDateTimeFromString(condition.dateTo);
 
-        const format = this.dateFilterParams.inRangeFloatingFilterDateFormat;
+        const format = this.filterParams.inRangeFloatingFilterDateFormat;
         if (isRange) {
             const formattedFrom = dateFrom !== null ? _dateToFormattedString(dateFrom, format) : 'null';
             const formattedTo = dateTo !== null ? _dateToFormattedString(dateTo, format) : 'null';
@@ -35,10 +25,5 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
 
         // cater for when the type doesn't need a value
         return `${type}`;
-    }
-
-    public override updateParams(params: { dateFilterParams: DateFilterParams; optionsFactory: OptionsFactory }): void {
-        super.updateParams(params);
-        this.dateFilterParams = params.dateFilterParams;
     }
 }

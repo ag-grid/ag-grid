@@ -8,3 +8,16 @@
     flex: 1 1 0px;
     width: 100%;
 }
+
+.partial-match-filter {
+    padding: 12px;
+    width: 200px;
+}
+
+.partial-match-filter > div:first-child {
+    font-weight: bold;
+}
+
+.partial-match-filter > div:not(:last-child) {
+    margin-bottom: 8px;
+}

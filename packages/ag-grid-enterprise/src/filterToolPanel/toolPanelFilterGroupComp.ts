@@ -66,6 +66,7 @@ export class ToolPanelFilterGroupComp extends Component {
             filterComp.getGui().style.setProperty('--ag-indentation-level', String(depth + 1));
         });
 
+        const column = this.showingColumn ? (this.columnGroup as AgColumn) : undefined;
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
                 getGui: () => this.getGui(),
@@ -74,6 +75,8 @@ export class ToolPanelFilterGroupComp extends Component {
                     gos,
                     () => filterGroupComp.getGui().querySelector('.ag-group-title') as HTMLElement | undefined
                 ),
+                getColDef: column ? () => column.getColDef() : undefined,
+                getColumn: column ? () => column : undefined,
             } as ITooltipCtrl)
         );
 
@@ -106,14 +109,8 @@ export class ToolPanelFilterGroupComp extends Component {
         this.filterGroupComp.addCssClassToTitleBar(cssClass);
     }
 
-    public refreshFilters(isDisplayed: boolean) {
-        this.childFilterComps.forEach((filterComp) => {
-            if (filterComp instanceof ToolPanelFilterGroupComp) {
-                filterComp.refreshFilters(isDisplayed);
-            } else {
-                filterComp.refreshFilter(isDisplayed);
-            }
-        });
+    public onPanelHidden() {
+        this.childFilterComps.forEach((filterComp) => filterComp.onPanelHidden());
     }
 
     public isColumnGroup(): boolean {

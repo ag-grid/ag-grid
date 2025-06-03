@@ -81,6 +81,8 @@ export const INITIAL_GRID_OPTION_KEYS = {
     suppressSetFilterByDefault: true,
     getDataPath: true,
     enableCellSpan: true,
+    enableFilterHandlers: true,
+    filterHandlers: true,
 };
 
 type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;

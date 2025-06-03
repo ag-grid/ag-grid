@@ -1,6 +1,18 @@
-import type { IFilterOptionDef, IFilterParams, ProvidedFilterModel } from '../../interfaces/iFilter';
+import type { IFilterParams } from '../../interfaces/iFilter';
 import type { IFloatingFilterParent } from '../floating/floatingFilter';
-import type { IProvidedFilter, IProvidedFilterParams } from './iProvidedFilter';
+import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from './iProvidedFilter';
+import type { OptionsFactory } from './optionsFactory';
+
+export interface IFilterOptionDef {
+    /** A unique key that does not clash with the built-in filter keys. */
+    displayKey: string;
+    /** Display name for the filter. Can be replaced by a locale-specific value using a `localeTextFunc`. */
+    displayName: string;
+    /** Custom filter logic that returns a boolean based on the `filterValues` and `cellValue`. */
+    predicate?: (filterValues: any[], cellValue: any) => boolean;
+    /** Number of inputs to display for this option. Defaults to `1` if unspecified. */
+    numberOfInputs?: 0 | 1 | 2;
+}
 
 export type JoinOperator = 'AND' | 'OR';
 /** Interface contract for the public aspects of the SimpleFilter implementation(s). */
@@ -24,16 +36,16 @@ export interface IFilterPlaceholderFunctionParams {
     placeholder: string;
 }
 export type FilterPlaceholderFunction = (params: IFilterPlaceholderFunctionParams) => string;
+
 /**
  * Parameters provided by the grid to the `init` method of a `SimpleFilter`.
  * Do not use in `colDef.filterParams` - see `ISimpleFilterParams` instead.
  */
-
 export type SimpleFilterParams<TData = any> = ISimpleFilterParams & IFilterParams<TData>;
+
 /**
  * Common parameters in `colDef.filterParams` used by all simple filters. Extended by the specific filter types.
  */
-
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     /**
      * Array of filter options to present to the user.
@@ -94,4 +106,15 @@ export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends Prov
     conditions: M[];
 }
 
+export function isCombinedFilterModel<M extends ISimpleFilterModel>(
+    model: M | ICombinedSimpleModel<M>
+): model is ICombinedSimpleModel<M> {
+    return !!(model as ICombinedSimpleModel<M>).operator;
+}
+
 export type Tuple<T> = (T | null)[];
+
+export type MapValuesFromSimpleFilterModel<TModel extends ISimpleFilterModel, TValue> = (
+    filterModel: TModel | null,
+    optionsFactory: OptionsFactory
+) => Tuple<TValue>;

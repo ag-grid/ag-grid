@@ -26,6 +26,12 @@ To run in watch mode
 nx test ag-behavioural-testing -- -w
 ```
 
+To execute benchmarks
+
+```sh
+nx benchmark ag-behavioural-testing
+```
+
 ## References:
 
 -   https://www.youtube.com/watch?v=EZ05e7EMOLM

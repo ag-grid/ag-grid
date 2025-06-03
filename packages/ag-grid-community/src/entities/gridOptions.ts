@@ -57,8 +57,10 @@ import type {
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
+    FilterUiChangedEvent,
     FindChangedEvent,
     FirstDataRenderedEvent,
+    FloatingFilterUiChangedEvent,
     FullWidthCellKeyDownEvent,
     GridColumnsChangedEvent,
     GridPreDestroyedEvent,
@@ -164,6 +166,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
+import type { CreateFilterHandlerFunc } from '../interfaces/iFilter';
 import type { FindOptions } from '../interfaces/iFind';
 import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
@@ -701,6 +704,18 @@ export interface GridOptions<TData = any> {
      * @agModule TextFilterModule / NumberFilterModule / DateFilterModule / MultiFilterModule / CustomFilterModule
      */
     suppressSetFilterByDefault?: boolean;
+    /**
+     * Enable filter handlers for custom filter components.
+     * Requires all custom filters need to be implemented using handlers.
+     * @initial
+     */
+    enableFilterHandlers?: boolean;
+    /**
+     * A map of filter handler key to filter handler function.
+     * Allows for filter handler keys to be used in `colDef.filter.handler`.
+     * @initial
+     */
+    filterHandlers?: { [key: string]: CreateFilterHandlerFunc };
 
     // *** Integrated Charts *** //
     /**
@@ -2394,6 +2409,14 @@ export interface GridOptions<TData = any> {
      * Filter was modified but not applied. Used when filters have 'Apply' buttons.
      */
     onFilterModified?(event: FilterModifiedEvent<TData>): void;
+    /**
+     * Filter UI was modified (when using `enableFilterHandlers = true`).
+     */
+    onFilterUiChanged?(event: FilterUiChangedEvent<TData>): void;
+    /**
+     * Floating filter UI modified (when using `enableFilterHandlers = true`.
+     */
+    onFloatingFilterUiChanged?(event: FloatingFilterUiChangedEvent<TData>): void;
     /**
      * Advanced Filter Builder visibility has changed (opened or closed).
      */

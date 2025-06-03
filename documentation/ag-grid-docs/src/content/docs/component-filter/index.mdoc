@@ -12,16 +12,37 @@ Filter components allow you to add your own filter types to AG Grid. Use them wh
 {% /videoSection %}
 {% /if %}
 
-The example below shows two custom filters. The first is on the `Athlete` column and demonstrates a filter with "fuzzy" matching and the second is on the `Year` column with preset options.
+The example below shows a custom filter on the `Athlete` column with "fuzzy" matching.
 
-{% gridExampleRunner title="Filter Component" name="custom-filter" /%}
+{% gridExampleRunner title="Custom Filter Component" name="custom-filter" /%}
 
 ## Implementing a Filter Component
+
+To configure custom filters, first enable the grid option `enableFilterHandlers`.
+
+{% note %}
+If you do not enable the grid option `enableFilterHandlers`, it is still possible to use custom filters, however this will involve embedding your filter logic into the custom component, and is not recommended. See [Legacy Filter Component](./component-filter-legacy/).
+{% /note %}
+
+Implementing a custom filter requires two parts:
+- The custom filter component which will be displayed to the user.
+- The the logic to run the filter.
+
+{% if isFramework("react") %}
+Custom filter components are controlled components, which receive a filter model as part of the props, and pass model updates back to the grid via the `onModelChange` callback.
+{%/if %}
+
+{% if isFramework("javascript", "angular", "vue") %}
+The custom filter component receives a filter model as part of the params (which is updated when the `refresh` method is called). When the model is changed via the UI, it should pass model updates back to the grid via the `onModelChange` callback.
+{%/if %}
+
+A filter model of `null` means that no filter is applied (the filter displays as inactive). Note that the filter is applied immediately when `onModelChange` is called. This behaviour can be changed by [Using Buttons](#using-buttons).
 
 {% partial file="./_component-interface-javascript.mdoc" /%}
 {% partial file="./_component-interface-angular.mdoc" /%}
 {% partial file="./_component-interface-react.mdoc" /%}
 {% partial file="./_component-interface-vue.mdoc" /%}
+
 
 ## Custom Filter Parameters
 
@@ -37,54 +58,127 @@ will be additionally added to the params object, overriding items of the same na
 
 {% if isFramework("vue") %}
 When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and
-row values available to you via `this.params` - the interface for what is provided is documented below.
+row values available to you via `this.params` - the interface for which is provided is documented below.
 
 If custom params are provided via the `colDef.filterParams` property, these
 will be additionally added to the params object, overriding items of the same name if a name clash exists.
 {% /if %}
 
 {% if isFramework("javascript", "angular", "vue") %}
-{% interfaceDocumentation interfaceName="IFilterParams" /%}
-{% /if %}
-
-{% if isFramework("javascript", "angular", "vue") %}
-### IDoesFilterPassParams
-
-The method `doesFilterPass(params)` takes the following as a parameter:
-{% /if %}
-
-{% if isFramework("javascript", "angular", "vue") %}
-{% interfaceDocumentation interfaceName="IDoesFilterPassParams" /%}
+{% interfaceDocumentation interfaceName="FilterDisplayParams" /%}
 {% /if %}
 
 {% if isFramework("react") %}
 ### Filter Props
 
-The following props are passed to the custom filter components (`CustomFilterProps` interface). If custom props are provided via the `colDef.filterParams` property, these will be additionally added to the props object, overriding items of the same name if a name clash exists.
+The following props are passed to the custom filter components (`CustomFilterDisplayProps` interface). If custom props are provided via the `colDef.filterParams` property, these will be additionally added to the props object, overriding items of the same name if a name clash exists.
 {% /if %}
 
 {% if isFramework("react") %}
-{% interfaceDocumentation interfaceName="CustomFilterProps" config={ "description": "" } /%}
+{% interfaceDocumentation interfaceName="CustomFilterDisplayProps" config={ "description": "" } /%}
 {% /if %}
 
 {% if isFramework("react") %}
 ### Filter Callbacks
 
-The following callbacks can be passed to the `useGridFilter` hook (`CustomFilterCallbacks` interface). The hook must be used for filters to work. The `doesFilterPass` callback is mandatory, but all others are optional.
+The following callbacks can be passed to the `useGridFilterDisplay` hook (`CustomFilterDisplayCallbacks` interface). All the callbacks are optional. The hook only needs to be used if callbacks are provided.
 
-Note that `doesFilterPass` is only called with the [Client-Side Row Model](./row-models/). If being used exclusively with other row models, it can just return `true` as the filtering logic is performed on the server.
 {% /if %}
 
 {% if isFramework("react") %}
-{% interfaceDocumentation interfaceName="CustomFilterCallbacks" config={ "description": "" } /%}
+{% interfaceDocumentation interfaceName="CustomFilterDisplayCallbacks" config={ "description": "" } /%}
 {% /if %}
+
+## Filter Logic
+
+The logic to run the filter can be provided in one of two ways:
+- As a `doesFilterPass` callback for simple filter cases.
+- As a filter handler object for more complex filter cases.
+
+The logic is passed via the `filter` property along with the custom component as a `ColumnFilter` object.
+
+{% interfaceDocumentation interfaceName="ColumnFilter" config={ "description": "" } /%}
+
+{% note %}
+The filter logic is only used with the [Client-Side Row Model](./row-models/). If being used exclusively with other row models, it does not need to be provided as the filtering logic is performed on the server. If a handler is provided, it will still be instantiated, but `doesFilterPass` will not be called.
+{% /note %}
+
+### doesFilterPass Callback
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'year',
+            filter: {
+                component: YearFilter, // custom filter component
+                doesFilterPass: (params) => {
+                    // evaluate filter for row here
+                    return model === params.handlerParams.getValue(params.node);
+                },
+            },
+        }
+    ],
+}
+```
+
+The callback `doesFilterPass(params)` will be called for each row when filtering is performed (and the filter is active), and takes the following as a parameter:
+
+{% interfaceDocumentation interfaceName="DoesFilterPassParams" config={ "description": "" } /%}
+
+### Filter Handler
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'year',
+            filter: {
+                component: YearFilter, // custom filter component
+                handler: (params) => ({
+                    doesFilterPass: (params) => {
+                        // evaluate filter for row here
+                        return passes;
+                    },
+                    // other handler methods
+                }),
+            },
+        }
+    ],
+}
+```
+
+The filter handler function should return a `FilterHandler` which will be created when the filter is active. The `doesFilterPass` method on the evaluator will be called for each row when filtering is performed (and the filter is active).
+
+The filter handler is useful for when the filter model needs parsing to allow for fast comparison of values. The handler is passed the latest filter model via the `init` / `refresh` methods, which can then process the model before `doesFilterPass` is called.
+
+{% interfaceDocumentation interfaceName="FilterHandler" config={ "description": "" } /%}
+
+## Using Buttons
+
+It is possible to use the [Filter Buttons](./filter-applying/) for grid-provided filters with custom filter components.
+
+{% gridExampleRunner title="Filter Buttons" name="custom-filter-buttons" /%}
+
+The example above demonstrates using filters with buttons via the same custom filter component:
+- The **Year Default** column does not use buttons.
+- The **Year Apply** column uses the apply button, and additionally closes the filter popup on apply.
+- The **Year Reset** column uses the reset button, which will set the filter back to the default model and apply it.
+
+The buttons are configured by passing additional parameters to the filter (interface `FilterWrapperParams`).
+
+{% interfaceDocumentation interfaceName="FilterWrapperParams" names=["buttons", "closeOnApply"] config={ "description": "" } /%}
+
+When the buttons are pressed, the custom filter `state` parameter will be updated via the `refresh(params)` method, with `state.model` being the model that should be displayed in the filter.
+
+With the `Apply` button present, the filter component no longer needs to call `onModelChange` as the grid will apply the model when the button is clicked (although it can still be called if the component wants to apply a model in some other way). Instead, the filter component will call `onStateChange` with the model that is currently displayed in the filter component. This is the model that the grid will apply when the button is clicked. If the filter is being used without buttons, it can also call `onAction('apply')` to apply the model set via the state.
 
 ## Associating Floating Filter
 
 If you create your own filter you have two options to get floating filters working for that filter:
 
 1. You can create your own [Custom Floating Filter](./component-floating-filter/).
-1. You can implement the `getModelAsString()` method in your custom filter. If you implement this method and don't provide a custom floating filter, AG Grid will automatically provide a read-only version of a floating filter. See [Custom Filter And Read-Only Floating Filter](./component-floating-filter/#example-custom-filter-and-read-only-floating-filter).
+1. You can implement the `getModelAsString()` method on your filter evaluator. If you implement this method and don't provide a custom floating filter, AG Grid will automatically provide a read-only version of a floating filter. See [Custom Filter And Read-Only Floating Filter](./component-floating-filter/#example-custom-filter-and-read-only-floating-filter).
 
 If you don't provide either of these two options for your custom filter, the display area for the floating filter will be empty.
 
@@ -101,12 +195,14 @@ There are two ways you can get fix this problem:
 ## Accessing the Component Instance
 
 {% if isFramework("angular", "vue", "javascript") %}
-AG Grid allows you to get a reference to the filter instances via the `api.getColumnFilterInstance(colKey)` method.
+AG Grid allows you to get a reference to the filter component instances via the `api.getColumnFilterInstance(colKey)` method.
 {% /if %}
 
 {% if isFramework("react") %}
-AG Grid allows you to get a reference to the filter instances via `api.getColumnFilterInstance(colKey)`. This returns a wrapper component that matches the provided grid filter components that implement `IFilter`. To get the React custom filter component, the helper function `getInstance` can be used with this. As React components are created asynchronously, it is necessary to use a callback for both methods.
+AG Grid allows you to get a reference to the filter component instances via `api.getColumnFilterInstance(colKey)`. This returns a wrapper component that matches the provided grid filter components that implement `FilterDisplay`. To get the React custom filter component, the helper function `getInstance` can be used with this. As React components are created asynchronously, it is necessary to use a callback for both methods.
 {% /if %}
+
+Similarly, you can get a reference to the filter evaluator via `api.getColumnFilterEvaluator(colKey)`.
 
 {% if isFramework("angular") %}
 ```ts
@@ -117,7 +213,7 @@ AG Grid allows you to get a reference to the filter instances via `api.getColumn
         Filter: <input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
     `
 })
-class PartialMatchFilterComponent implements IFilterAngularComp {
+class PartialMatchFilterComponent implements IFilterDisplayAngularComp {
     ... // standard filter methods hidden
 
     // put a custom method on the filter

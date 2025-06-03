@@ -1,8 +1,8 @@
-import type { IFilterOptionDef } from '../../../interfaces/iFilter';
+import type { IFilterOptionDef } from '../iSimpleFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
-import type { TextFilterModel } from './iTextFilter';
+import type { ITextFilterParams, TextFilterModel } from './iTextFilter';
 
-export class TextFilterModelFormatter extends SimpleFilterModelFormatter {
+export class TextFilterModelFormatter extends SimpleFilterModelFormatter<ITextFilterParams> {
     protected conditionToString(condition: TextFilterModel, options?: IFilterOptionDef): string {
         const { numberOfInputs } = options || {};
         const { filter, filterTo, type } = condition;

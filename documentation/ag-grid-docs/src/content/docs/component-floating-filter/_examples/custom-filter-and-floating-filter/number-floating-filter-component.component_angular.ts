@@ -1,43 +1,49 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import type { IFloatingFilterAngularComp } from 'ag-grid-angular';
-import type { IFloatingFilterParams } from 'ag-grid-community';
+import { IFloatingFilterDisplayAngularComp } from 'ag-grid-angular';
+import { FloatingFilterDisplayParams } from 'ag-grid-community';
 
+export interface CustomParams {
+    color: string;
+}
 @Component({
     standalone: true,
     imports: [FormsModule],
     template: `&gt;
-        <input style="width: 30px" type="number" min="0" [(ngModel)]="currentValue" (input)="onInputBoxChanged()" />`,
+        <input
+            [style.borderColor]="params.color"
+            style="width: 30px;"
+            type="number"
+            min="0"
+            [(ngModel)]="currentValue"
+            (input)="onInputBoxChanged()"
+        />`,
 })
-export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp {
-    params!: IFloatingFilterParams;
-    currentValue: number | null | string = null;
+export class NumberFloatingFilterComponent implements IFloatingFilterDisplayAngularComp {
+    params!: FloatingFilterDisplayParams<any, any, number> & CustomParams;
+    currentValue: string = '';
+    style: any;
 
-    agInit(params: IFloatingFilterParams): void {
+    agInit(params: FloatingFilterDisplayParams<any, any, number> & CustomParams): void {
         this.params = params;
+
+        this.style = {
+            color: params.color,
+        };
     }
 
-    onParentModelChanged(parentModel: any) {
-        // When the filter is empty we will receive a null value here
-        if (parentModel == null) {
-            this.currentValue = null;
-        } else {
-            this.currentValue = parentModel;
+    refresh(params: FloatingFilterDisplayParams<any, any, number> & CustomParams): void {
+        this.params = params;
+        // if the update is from the floating filter, we don't need to update the UI
+        if (params.source !== 'ui') {
+            const model = params.model;
+            this.currentValue = model == null ? '' : String(model);
         }
     }
 
     onInputBoxChanged() {
-        if (this.currentValue == null) {
-            // Remove the filter
-            this.params.parentFilterInstance((instance: any) => {
-                instance.myMethodForTakingValueFromFloatingFilter(null);
-            });
-            return;
-        }
-
-        this.params.parentFilterInstance((instance: any) => {
-            instance.myMethodForTakingValueFromFloatingFilter(this.currentValue);
-        });
+        const newValue = this.currentValue ?? '';
+        this.params.onModelChange(newValue === '' ? null : Number(newValue));
     }
 }

@@ -1,36 +1,30 @@
 export default {
     template: `
       <span>
-        &gt; <input style="width: 30px" type="number" min="0" v-model="currentValue" v-on:input="onInputBoxChanged()"/>
+        &gt; <input v-bind:style="{ borderColor: params.color, width: '30px' }" type="number" min="0" v-model="currentValue"
+             v-on:input="onInputBoxChanged()"/>
       </span>
     `,
     data: function () {
         return {
-            currentValue: null,
+            currentValue: '',
         };
     },
     methods: {
         onInputBoxChanged() {
-            if (this.currentValue === '') {
-                // Remove the filter
-                this.params.parentFilterInstance((instance) => {
-                    instance.myMethodForTakingValueFromFloatingFilter(null);
-                });
-                return;
-            }
-
-            this.params.parentFilterInstance((instance) => {
-                instance.myMethodForTakingValueFromFloatingFilter(this.currentValue);
-            });
+            const newValue = this.currentValue;
+            this.params.onModelChange(newValue === '' ? null : Number(newValue));
         },
 
-        onParentModelChanged(parentModel) {
-            // When the filter is empty we will receive a null value here
-            if (parentModel == null) {
-                this.currentValue = '';
-            } else {
-                this.currentValue = parentModel;
+        refresh(params) {
+            // if the update is from the floating filter, we don't need to update the UI
+            if (params.source !== 'ui') {
+                const model = params.model;
+                this.currentValue = model == null ? '' : String(model);
             }
         },
+    },
+    mounted: function () {
+        this.refresh(this.params);
     },
 };

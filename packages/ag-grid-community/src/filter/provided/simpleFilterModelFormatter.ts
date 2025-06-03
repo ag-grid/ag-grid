@@ -1,13 +1,14 @@
-import type { IFilterOptionDef, ProvidedFilterModel } from '../../interfaces/iFilter';
 import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
-import type { ICombinedSimpleModel, ISimpleFilterModel } from './iSimpleFilter';
+import type { ProvidedFilterModel } from './iProvidedFilter';
+import type { ICombinedSimpleModel, IFilterOptionDef, ISimpleFilterModel, ISimpleFilterParams } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
-export abstract class SimpleFilterModelFormatter<TValue = any> {
+export abstract class SimpleFilterModelFormatter<TFilterParams extends ISimpleFilterParams, TValue = any> {
     constructor(
         private readonly getLocaleTextFunc: () => LocaleTextFunc,
         private optionsFactory: OptionsFactory,
+        protected filterParams: TFilterParams,
         protected readonly valueFormatter?: (value: TValue | null) => string | null
     ) {}
 
@@ -48,8 +49,10 @@ export abstract class SimpleFilterModelFormatter<TValue = any> {
     // creates text equivalent of FilterModel. if it's a combined model, this takes just one condition.
     protected abstract conditionToString(condition: ProvidedFilterModel, opts?: IFilterOptionDef): string;
 
-    public updateParams(params: { optionsFactory: OptionsFactory }) {
-        this.optionsFactory = params.optionsFactory;
+    public updateParams(params: { optionsFactory: OptionsFactory; filterParams: TFilterParams }) {
+        const { optionsFactory, filterParams } = params;
+        this.optionsFactory = optionsFactory;
+        this.filterParams = filterParams;
     }
 
     protected formatValue(value?: TValue | null): string {

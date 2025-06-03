@@ -1,67 +1,70 @@
-import type { ElementRef } from '@angular/core';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
-import type { IFilterAngularComp } from 'ag-grid-angular';
-import type { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from 'ag-grid-community';
+import type { IFilterDisplayAngularComp } from 'ag-grid-angular';
+import type { FilterDisplayParams, FilterWrapperParams, IAfterGuiAttachedParams } from 'ag-grid-community';
+
+let id = 1;
 
 @Component({
     standalone: true,
-    template: ` <div class="year-filter">
-        <label>
-            <input
-                #eFilterAll
-                type="radio"
-                name="isFilterActive"
-                [checked]="!isActive"
-                (change)="toggleFilter(false)"
-            />
-            All
-        </label>
-        <label>
-            <input type="radio" name="isFilterActive" [checked]="isActive" (change)="toggleFilter(true)" /> After 2004
-        </label>
-    </div>`,
+    imports: [FormsModule],
+    template: `
+        <div class="year-filter">
+            <div>Select Year Range</div>
+            <label>
+                <input
+                    #rbAllYears
+                    type="radio"
+                    [name]="name"
+                    [(ngModel)]="year"
+                    (ngModelChange)="updateFilter()"
+                    [value]="'All'"
+                />
+                All
+            </label>
+            <label>
+                <input
+                    type="radio"
+                    [name]="name"
+                    [(ngModel)]="year"
+                    (ngModelChange)="updateFilter()"
+                    [value]="'2010'"
+                />
+                Since 2010
+            </label>
+        </div>
+    `,
 })
-export class YearFilter implements IFilterAngularComp {
-    @ViewChild('eFilterAll') eFilterAll!: ElementRef;
+export class YearFilter implements IFilterDisplayAngularComp<any, any, true> {
+    @ViewChild('rbAllYears') rbAllYears!: ElementRef;
 
-    params!: IFilterParams;
-    isActive!: boolean;
+    name = `year${id++}`;
+    params!: FilterDisplayParams<any, any, true> & FilterWrapperParams;
+    year = 'All';
 
-    // called on init
-    agInit(params: IFilterParams): void {
+    agInit(params: FilterDisplayParams<any, any, true> & FilterWrapperParams): void {
         this.params = params;
-        this.isActive = false;
+        this.refresh(params);
     }
 
-    toggleFilter(isFilterActive: boolean): void {
-        this.isActive = isFilterActive;
-        this.params.filterChangedCallback();
+    refresh(newParams: FilterDisplayParams<any, any, true> & FilterWrapperParams): boolean {
+        const currentValue = this.year === '2010' || null;
+        const newValue = newParams.model;
+        if (newValue !== currentValue) {
+            this.year = newValue ? '2010' : 'All';
+        }
+        return true;
     }
 
-    doesFilterPass(params: IDoesFilterPassParams): boolean {
-        return params.data.year > 2004;
-    }
-
-    isFilterActive(): boolean {
-        return this.isActive;
-    }
-
-    getModel(): boolean | null {
-        return this.isFilterActive() || null;
-    }
-
-    setModel(model: any): void {
-        this.toggleFilter(!!model);
-    }
-
-    onFloatingFilterChanged(value: any): void {
-        this.setModel(value);
+    updateFilter() {
+        this.params.onModelChange(this.year === '2010' || null);
     }
 
     afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         if (!params?.suppressFocus) {
-            this.eFilterAll.nativeElement.focus();
+            // focus the input element for keyboard navigation
+            this.rbAllYears!.nativeElement.focus();
         }
     }
 }

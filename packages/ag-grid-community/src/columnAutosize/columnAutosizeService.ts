@@ -526,7 +526,7 @@ function normaliseColumnWidth(
     }
 
     const maxWidth = limits.maxWidth ?? column.getMaxWidth();
-    if (column.isGreaterThanMax(newWidth)) {
+    if (newWidth > maxWidth) {
         newWidth = maxWidth;
     }
 

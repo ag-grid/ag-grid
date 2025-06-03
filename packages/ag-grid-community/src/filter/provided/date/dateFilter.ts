@@ -1,40 +1,42 @@
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _createElement } from '../../../utils/dom';
 import { _warn } from '../../../validation/logging';
 import type { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
-import type { Comparator } from '../iScalarFilter';
-import type { ISimpleFilterModel, Tuple } from '../iSimpleFilter';
-import { ScalarFilter } from '../scalarFilter';
+import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
+import { SimpleFilter } from '../simpleFilter';
 import { removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
-import { DateFilterModelFormatter } from './dateFilterModelFormatter';
-import type { DateFilterModel, DateFilterParams } from './iDateFilter';
+import { mapValuesFromDateFilterModel } from './dateFilterUtils';
+import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
 const DEFAULT_MIN_YEAR = 1000;
 const DEFAULT_MAX_YEAR = Infinity;
 
-export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrapper> {
+/** temporary type until `DateFilterParams` is updated as breaking change */
+type DateFilterDisplayParams = IDateFilterParams &
+    FilterDisplayParams<any, any, DateFilterModel | ICombinedSimpleModel<DateFilterModel>>;
+
+export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrapper, DateFilterDisplayParams> {
     private readonly eConditionPanelsFrom: HTMLElement[] = [];
     private readonly eConditionPanelsTo: HTMLElement[] = [];
 
     private readonly dateConditionFromComps: DateCompWrapper[] = [];
     private readonly dateConditionToComps: DateCompWrapper[] = [];
 
-    private dateFilterParams: DateFilterParams;
     private minValidYear: number = DEFAULT_MIN_YEAR;
     private maxValidYear: number = DEFAULT_MAX_YEAR;
     private minValidDate: Date | null = null;
     private maxValidDate: Date | null = null;
-    private filterModelFormatter: DateFilterModelFormatter;
 
     public readonly filterType = 'date' as const;
 
     constructor() {
-        super('dateFilter');
+        super('dateFilter', mapValuesFromDateFilterModel, DEFAULT_DATE_FILTER_OPTIONS);
     }
 
     public override afterGuiAttached(params?: IAfterGuiAttachedParams): void {
@@ -43,40 +45,14 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         this.dateConditionFromComps[0].afterGuiAttached(params);
     }
 
-    protected mapValuesFromModel(filterModel: DateFilterModel | null): Tuple<Date> {
-        // unlike the other filters, we do two things here:
-        // 1) allow for different attribute names (same as done for other filters) (eg the 'from' and 'to'
-        //    are in different locations in Date and Number filter models)
-        // 2) convert the type (because Date filter uses Dates, however model is 'string')
-        //
-        // NOTE: The conversion of string to date also removes the timezone - i.e. when user picks
-        //       a date from the UI, it will have timezone info in it. This is lost when creating
-        //       the model. When we recreate the date again here, it's without a timezone.
-        const { dateFrom, dateTo, type } = filterModel || {};
-        return [
-            (dateFrom && _parseDateTimeFromString(dateFrom)) || null,
-            (dateTo && _parseDateTimeFromString(dateTo)) || null,
-        ].slice(0, this.getNumberOfInputs(type));
-    }
+    protected override commonUpdateSimpleParams(params: DateFilterDisplayParams): void {
+        super.commonUpdateSimpleParams(params);
 
-    protected comparator(): Comparator<Date> {
-        return this.dateFilterParams.comparator ?? defaultDateComparator;
-    }
-
-    protected override isValid(value: any): boolean {
-        const isValidDate = this.dateFilterParams.isValidDate;
-        return !isValidDate || isValidDate(value);
-    }
-
-    protected override setParams(params: DateFilterParams): void {
-        this.dateFilterParams = params;
-
-        super.setParams(params);
-
-        const yearParser = (param: keyof DateFilterParams, fallback: number) => {
-            if (params[param] != null) {
-                if (!isNaN(params[param])) {
-                    return params[param] == null ? fallback : Number(params[param]);
+        const yearParser = (param: 'minValidYear' | 'maxValidYear', fallback: number) => {
+            const value = params[param];
+            if (value != null) {
+                if (!isNaN(value)) {
+                    return value == null ? fallback : Number(value);
                 } else {
                     _warn(82, { param });
                 }
@@ -85,48 +61,40 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
             return fallback;
         };
 
-        this.minValidYear = yearParser('minValidYear', DEFAULT_MIN_YEAR);
-        this.maxValidYear = yearParser('maxValidYear', DEFAULT_MAX_YEAR);
+        const minValidYear = yearParser('minValidYear', DEFAULT_MIN_YEAR);
+        const maxValidYear = yearParser('maxValidYear', DEFAULT_MAX_YEAR);
+        this.minValidYear = minValidYear;
+        this.maxValidYear = maxValidYear;
 
-        if (this.minValidYear > this.maxValidYear) {
+        if (minValidYear > maxValidYear) {
             _warn(83);
         }
 
-        this.minValidDate = params.minValidDate
-            ? params.minValidDate instanceof Date
-                ? params.minValidDate
-                : _parseDateTimeFromString(params.minValidDate)
-            : null;
+        const { minValidDate, maxValidDate } = params;
 
-        this.maxValidDate = params.maxValidDate
-            ? params.maxValidDate instanceof Date
-                ? params.maxValidDate
-                : _parseDateTimeFromString(params.maxValidDate)
-            : null;
+        const parsedMinValidDate = minValidDate instanceof Date ? minValidDate : _parseDateTimeFromString(minValidDate);
+        this.minValidDate = parsedMinValidDate;
 
-        if (this.minValidDate && this.maxValidDate && this.minValidDate > this.maxValidDate) {
+        const parsedMaxValidDate = maxValidDate instanceof Date ? maxValidDate : _parseDateTimeFromString(maxValidDate);
+        this.maxValidDate = parsedMaxValidDate;
+
+        if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate > parsedMaxValidDate) {
             _warn(84);
         }
-
-        this.filterModelFormatter = new DateFilterModelFormatter(
-            this.dateFilterParams,
-            this.getLocaleTextFunc.bind(this),
-            this.optionsFactory
-        );
     }
 
     createDateCompWrapper(element: HTMLElement): DateCompWrapper {
         const {
             beans: { userCompFactory, context, gos },
-            dateFilterParams,
+            params,
         } = this;
         const dateCompWrapper = new DateCompWrapper(
             context,
             userCompFactory,
-            dateFilterParams.colDef,
+            params.colDef,
             _addGridCommonParams<IDateParams>(gos, {
                 onDateChanged: () => this.onUiChanged(),
-                filterParams: dateFilterParams,
+                filterParams: params as any,
                 location: 'filter',
             }),
             element
@@ -147,11 +115,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         element.setDisabled(disabled);
     }
 
-    protected getDefaultFilterOptions(): string[] {
-        return DEFAULT_DATE_FILTER_OPTIONS;
-    }
-
-    protected createValueElement(): HTMLElement {
+    protected createEValue(): HTMLElement {
         const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body' });
 
         this.createFromToElement(eCondition, this.eConditionPanelsFrom, this.dateConditionFromComps, 'from');
@@ -172,7 +136,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         dateConditionComps.push(this.createDateCompWrapper(eConditionPanel));
     }
 
-    protected removeValueElements(startPosition: number, deleteCount?: number): void {
+    protected removeEValues(startPosition: number, deleteCount?: number): void {
         this.removeDateComps(this.dateConditionFromComps, startPosition, deleteCount);
         this.removeDateComps(this.dateConditionToComps, startPosition, deleteCount);
         removeItems(this.eConditionPanelsFrom, startPosition, deleteCount);
@@ -296,22 +260,4 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         }
         return super.translate(key);
     }
-
-    public getModelAsString(model: ISimpleFilterModel): string {
-        return this.filterModelFormatter.getModelAsString(model) ?? '';
-    }
-}
-
-function defaultDateComparator(filterDate: Date, cellValue: any): number {
-    // The default comparator assumes that the cellValue is a date
-    const cellAsDate = cellValue as Date;
-
-    if (cellAsDate < filterDate) {
-        return -1;
-    }
-    if (cellAsDate > filterDate) {
-        return 1;
-    }
-
-    return 0;
 }

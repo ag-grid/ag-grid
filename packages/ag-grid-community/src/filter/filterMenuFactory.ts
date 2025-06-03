@@ -12,7 +12,7 @@ import { _createElement, _isVisible } from '../utils/dom';
 import { _findNextFocusableElement, _findTabbableParent, _focusInto } from '../utils/focus';
 import { _error } from '../validation/logging';
 import type { PopupService } from '../widgets/popupService';
-import { FilterWrapperComp } from './filterWrapperComp';
+import { FilterComp } from './filterComp';
 
 export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFactory {
     beanName = 'filterMenuFactory' as const;
@@ -25,7 +25,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
 
     private hidePopup: () => void;
     private tabListener: null | (() => null);
-    private activeMenu?: FilterWrapperComp;
+    private activeMenu?: FilterComp;
 
     public hideActiveMenu(): void {
         this.hidePopup?.();
@@ -109,7 +109,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         isLegacyMenuEnabled: boolean,
         onClosedCallback?: () => void
     ): void {
-        const comp = column ? this.createBean(new FilterWrapperComp(column, 'COLUMN_MENU')) : undefined;
+        const comp = column ? this.createBean(new FilterComp(column, 'COLUMN_MENU')) : undefined;
         this.activeMenu = comp;
         if (!comp?.hasFilter() || !column) {
             _error(57);
