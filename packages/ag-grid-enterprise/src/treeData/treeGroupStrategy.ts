@@ -73,7 +73,13 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
         const hasUpdates = !!changedRowNodes && this.flagUpdatedNodes(changedRowNodes);
         if (fullReload || hasUpdates) {
-            this.load(params, approach, fullReload);
+            if (approach === 'treeNested') {
+                this.loadNested(params, fullReload);
+            } else if (approach === 'treeSelfRef') {
+                this.loadSelfRef(params, fullReload);
+            } else {
+                this.loadDataPath(params, fullReload);
+            }
         }
 
         const rootAllLeafChildren = rootNode.allLeafChildren!;
@@ -381,17 +387,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 
-    /** Called when there is data to be loaded, or because full reload or because there are changed rows */
-    private load(params: StageExecuteParams<TData>, approach: GroupingApproach, fullReload: boolean): void {
-        if (approach === 'treeNested') {
-            this.loadNested(params, fullReload);
-        } else if (approach === 'treeSelfRef') {
-            this.loadSelfRef(params, fullReload);
-        } else {
-            this.loadDataPath(params, fullReload);
-        }
-    }
-
     /** Load the tree structure for nested groups, aka children property */
     private loadNested({ rowNode: rootNode, changedRowNodes }: StageExecuteParams<TData>, fullReload: boolean): void {
         if (fullReload || !changedRowNodes) {
@@ -467,49 +462,24 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             for (let i = 0; i < allLeafChildrenLen; ++i) {
                 const node = allLeafChildren[i];
                 const treeParent = node.treeParent;
-                if (treeParent !== null && (node.treeNodeFlags & FLAG_CHANGED) === 0) {
-                    let pathKey = node.key!;
-                    let current = treeParent;
-                    while (current && current !== rootNode && current !== node) {
-                        pathKey = PATH_KEY_SEPARATOR + pathKey;
-                        const existingPathKey = current.childrenMapped;
-                        if (existingPathKey !== null) {
-                            pathKey = existingPathKey + pathKey;
-                            break; // We found the path key in the parent as it was already processed
-                        }
-                        pathKey = current.key! + pathKey;
-                        current = current.treeParent!;
-                    }
-                    if (current !== node) {
-                        node.childrenMapped = pathKey; // Cache the path key for faster access
-                        const existing = nodesByPath.get(pathKey);
-                        if (existing === undefined) {
-                            nodesByPath.set(pathKey, node);
-                        } else if (existing !== node) {
-                            dupPaths = this.duplicatedPath(nodesByPath, dupPaths, existing, node);
-                        }
-                    }
-                }
-            }
-        }
-
-        const getDataPath = this.gos.get('getDataPath');
-        for (let i = 0; i < allLeafChildrenLen; ++i) {
-            const node = allLeafChildren[i];
-            if (fullReload || node.treeParent === null || (node.treeNodeFlags & FLAG_CHANGED) !== 0) {
-                const path = getDataPath ? getDataPath(node.data!) : [node.id!];
-                const pathLen = path?.length;
-                if (!pathLen) {
-                    _warn(185, { data: node.data });
+                if (treeParent === null || (node.treeNodeFlags & FLAG_CHANGED) !== 0) {
                     continue;
                 }
-                const key = path[pathLen - 1];
-                if (node.key !== key) {
-                    node.key = key;
-                    node.groupData = null;
-                    node.treeNodeFlags |= FLAG_CHANGED;
+                let pathKey = node.key!;
+                let current = treeParent;
+                while (current && current !== rootNode && current !== node) {
+                    pathKey = PATH_KEY_SEPARATOR + pathKey;
+                    const existingPathKey = current.childrenMapped;
+                    if (existingPathKey !== null) {
+                        pathKey = existingPathKey + pathKey;
+                        break; // We found the path key in the parent as it was already processed
+                    }
+                    pathKey = current.key! + pathKey;
+                    current = current.treeParent!;
                 }
-                const pathKey = path.join(PATH_KEY_SEPARATOR);
+                if (current === node) {
+                    continue;
+                }
                 node.childrenMapped = pathKey; // Cache the path key for faster access
                 const existing = nodesByPath.get(pathKey);
                 if (existing === undefined) {
@@ -518,11 +488,38 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                     dupPaths = this.duplicatedPath(nodesByPath, dupPaths, existing, node);
                 }
             }
-            node.treeParent = null; // Reset the treeParent to be re-set later
+        }
+
+        const getDataPath = this.gos.get('getDataPath');
+        for (let i = 0; i < allLeafChildrenLen; ++i) {
+            const node = allLeafChildren[i];
+            if (!fullReload && node.treeParent !== null && (node.treeNodeFlags & FLAG_CHANGED) === 0) {
+                continue;
+            }
+            const path = getDataPath ? getDataPath(node.data!) : [node.id!];
+            const pathLen = path?.length;
+            if (!pathLen) {
+                _warn(185, { data: node.data });
+                continue;
+            }
+            const key = path[pathLen - 1];
+            if (node.key !== key) {
+                node.key = key;
+                node.groupData = null;
+                node.treeNodeFlags |= FLAG_CHANGED;
+            }
+            const pathKey = path.join(PATH_KEY_SEPARATOR);
+            node.childrenMapped = pathKey; // Cache the path key for faster access
+            const existing = nodesByPath.get(pathKey);
+            if (existing === undefined) {
+                nodesByPath.set(pathKey, node);
+            } else if (existing !== node) {
+                dupPaths = this.duplicatedPath(nodesByPath, dupPaths, existing, node);
+            }
         }
 
         if (dupPaths) {
-            this.warnDuplicatePaths(dupPaths);
+            this.processDuplicatePaths(dupPaths);
         }
         this.buildFromPaths(rootNode, nodesByPath);
         this.destroyFillerRows(false);
@@ -536,8 +533,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     ): Map<string, GroupingRowNode<TData>[]> | undefined {
         const pathKey = node.childrenMapped! as string;
         if (node.sourceRowIndex < existing.sourceRowIndex) {
-            existing.childrenMapped = null; // Clear the cached path key for the existing node
-            nodesByPath.set(pathKey, node); // We choose the node with the lowest sourceRowIndex
+            nodesByPath.set(pathKey, node); // choose the node with the lowest sourceRowIndex
         }
         const duplicates = (dupPaths ??= new Map()).get(pathKey);
         if (duplicates === undefined) {
@@ -558,13 +554,13 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         // Also, the presence of map of children per node would make some drag and drop operation impossible or very hard to maintain,
         // think about same key or empty filler nodes. We want to still allow an unconstrained drag and drop of nodes in the tree,
         // String slice is highly optimized in modern JS engines, as it will be just a view of the original string and has low GC pressure.
-        for (const node of nodesByPath.values()) {
-            if (node.treeParent !== null) {
-                continue; // Already processed
+        const allLeafChildren = rootNode.allLeafChildren!;
+        for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
+            const node = allLeafChildren[i];
+            const pathKey = node.childrenMapped as string | null;
+            if (pathKey === null) {
+                continue; // Already processed or duplicated path
             }
-
-            const pathKey = node.childrenMapped! as string;
-            node.childrenMapped = null;
 
             // Collect separators positions, fast string split without allocations
             let segmentsLen = 0;
@@ -597,19 +593,31 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 if (current === undefined) {
                     current = this.getOrCreateFiller(treeParent, pathKey.slice(start, end), level);
                     nodesByPath.set(subPath, current);
+                } else {
+                    current.treeParent = treeParent;
+                    current.childrenMapped = null;
                 }
-                current.treeParent = treeParent;
                 treeParent = current;
             }
 
-            node.treeParent = treeParent; // Link the final leaf node to the last parent
+            node.treeParent = treeParent;
+            node.childrenMapped = null;
         }
     }
 
-    private warnDuplicatePaths(duplicatePaths: Map<string, GroupingRowNode<TData>[]>): void {
+    private processDuplicatePaths(duplicatePaths: Map<string, GroupingRowNode<TData>[]>): void {
         for (const duplicates of duplicatePaths.values()) {
-            const row = duplicates.sort((a, b) => a.sourceRowIndex - b.sourceRowIndex)[0];
-            _warn(186, { rowId: row.id, rowData: row.data, duplicateRowsData: duplicates.slice(1).map((x) => x.data) });
+            duplicates.sort(compareSourceRowIndex);
+            const len = duplicates.length;
+            const duplicateRowsData = new Array(len - 1);
+            for (let i = 1; i < len; ++i) {
+                const node = duplicates[i];
+                node.childrenMapped = null;
+                node.treeParent = null;
+                duplicateRowsData[i - 1] = node.data;
+            }
+            const first = duplicates[0];
+            _warn(186, { rowId: first.id, rowData: first.data, duplicateRowsData });
         }
     }
 
@@ -626,7 +634,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 } else {
                     node.treeNodeFlags &= ~FLAG_FILLER_NODE; // Reset the flag
                 }
-                node.childrenMapped = null; // Clear the cached path key
             }
             if (fillerNodesById.size === 0) {
                 this.fillerNodesById = null;
@@ -651,6 +658,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             node.group = true;
             node.leafGroup = false;
             node.rowGroupIndex = null;
+            node.treeParent = treeParent;
             fillerNodesById.set(id, node);
         }
         node.treeNodeFlags |= FLAG_FILLER_NODE; // Mark as used filler node
@@ -713,3 +721,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 }
+
+const compareSourceRowIndex = <TData>(a: RowNode<TData>, b: RowNode<TData>): number =>
+    a.sourceRowIndex - b.sourceRowIndex;
