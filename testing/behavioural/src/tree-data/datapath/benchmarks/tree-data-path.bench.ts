@@ -138,7 +138,7 @@ function buildUpdatedRowData(rows: TreeDataPathData[], prng = new SimplePRNG(0x3
         };
     }
 
-    const maxAdds = Math.floor(rowCount * 0.15);
+    const maxAdds = Math.floor(rowCount * 0.13);
     for (let i = 0; i < maxAdds; i++) {
         const newParentRow = prng.nextInt(0, rowCount - 1);
 
