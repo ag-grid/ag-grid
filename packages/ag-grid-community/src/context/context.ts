@@ -73,6 +73,7 @@ import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsSe
 import type { IShowRowGroupColsValueService } from '../interfaces/iShowRowGroupColsValueService';
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStickyRowService } from '../interfaces/iStickyRows';
+import type { ITestIdService } from '../interfaces/iTestIdService';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { IRowNumbersService } from '../interfaces/rowNumbers';
@@ -344,6 +345,7 @@ export interface CoreBeanCollection {
     multiFilter?: IMultiFilterService;
     filterPanelSvc?: IFilterPanelService;
     selectableFilter?: ISelectableFilterService;
+    testIdSvc?: ITestIdService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -535,4 +537,5 @@ export type BeanName =
     | 'rowSpanSvc'
     | 'spannedRowRenderer'
     | 'showRowGroupColValueSvc'
-    | 'rowDropHighlightSvc';
+    | 'rowDropHighlightSvc'
+    | 'testIdSvc';

@@ -1232,6 +1232,7 @@ export { TooltipModule } from './tooltip/tooltipModule';
 export { LocaleModule } from './misc/locale/localeModule';
 export { RowAutoHeightModule } from './rendering/row/rowAutoHeightModule';
 export { SharedExportModule as _SharedExportModule } from './export/exportModule';
+export { TestingModule } from './testing/testingModule';
 export { AllCommunityModule } from './allCommunityModule';
 
 //  events
