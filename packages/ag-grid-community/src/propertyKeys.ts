@@ -104,6 +104,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'autoSizeStrategy',
     'selectionColumnDef',
     'findOptions',
+    'filterHandlers',
 ];
 
 // only used internally
@@ -315,6 +316,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'maintainColumnOrder',
     'enableStrictPivotColumnOrder',
     'suppressSetFilterByDefault',
+    'enableFilterHandlers',
 ];
 
 // Used in example generation

@@ -2,19 +2,19 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDef, ValueGetterParams } from '../entities/colDef';
+import type { ColDef, ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
 
 export class FilterValueService extends BeanStub implements NamedBean {
     beanName: BeanName = 'filterValueSvc';
 
-    public getValue(column: AgColumn, rowNode?: IRowNode | null) {
+    public getValue(column: AgColumn, rowNode?: IRowNode | null, filterValueGetterOverride?: string | ValueGetterFunc) {
         if (!rowNode) {
             return;
         }
         const colDef = column.getColDef();
-        const { filterValueGetter } = colDef;
+        const filterValueGetter = filterValueGetterOverride ?? colDef.filterValueGetter;
         if (filterValueGetter) {
             return this.executeFilterValueGetter(filterValueGetter, rowNode.data, column, rowNode, colDef);
         }

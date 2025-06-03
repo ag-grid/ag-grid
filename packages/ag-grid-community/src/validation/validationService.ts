@@ -1,7 +1,7 @@
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, UserComponentName } from '../context/context';
+import type { BeanCollection, DynamicBeanName, UserComponentName } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
@@ -14,8 +14,9 @@ import type { IconName, IconValue } from '../utils/icon';
 import { validateApiFunction } from './apiFunctionValidator';
 import type { ErrorId, GetErrorParams } from './errorMessages/errorText';
 import { getError } from './errorMessages/errorText';
-import { _error, _warn, provideValidationServiceLogger } from './logging';
+import { _errMsg, _error, _warn, provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
+import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
@@ -69,6 +70,18 @@ export class ValidationService extends BeanStub implements NamedBean {
             });
         }
     }
+
+    public missingDynamicBean(beanName: DynamicBeanName): string | undefined {
+        const moduleName = DYNAMIC_BEAN_MODULES[beanName];
+        return moduleName
+            ? _errMsg(200, {
+                  ...this.gos.getModuleErrorParams(),
+                  moduleName,
+                  reasonOrId: beanName,
+              })
+            : undefined;
+    }
+
     public checkRowEvents(eventType: RowNodeEventType): void {
         if (DEPRECATED_ROW_NODE_EVENTS.has(eventType)) {
             _warn(10, { eventType });

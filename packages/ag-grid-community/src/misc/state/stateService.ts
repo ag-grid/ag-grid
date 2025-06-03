@@ -249,10 +249,11 @@ export class StateService extends BeanStub implements NamedBean {
             this.updateRowGroupExpansionStateTimer = 0;
             updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState());
         };
+        const updateFilterState = () => updateCachedState('filter', this.getFilterState());
 
-        const gos = this.gos;
+        const { gos, colFilter } = this.beans;
         this.addManagedEventListeners({
-            filterChanged: () => updateCachedState('filter', this.getFilterState()),
+            filterChanged: updateFilterState,
             rowGroupOpened: () => this.onRowGroupOpenedDebounced(),
             expandOrCollapseAll: updateRowGroupExpansionState,
             // `groupDefaultExpanded`/`isGroupOpenByDefault` updates expansion state without an expansion event
@@ -273,6 +274,11 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             },
         });
+        if (colFilter) {
+            this.addManagedListeners(colFilter, {
+                filterStateChanged: updateFilterState,
+            });
+        }
     }
 
     private setFirstDataRenderedState(
@@ -572,15 +578,22 @@ export class StateService extends BeanStub implements NamedBean {
         if (filterModel && Object.keys(filterModel).length === 0) {
             filterModel = undefined;
         }
+        const columnFilterState = filterManager?.getFilterState();
         const advancedFilterModel = filterManager?.getAdvFilterModel() ?? undefined;
-        return filterModel || advancedFilterModel ? { filterModel, advancedFilterModel } : undefined;
+        return filterModel || advancedFilterModel || columnFilterState
+            ? { filterModel, columnFilterState, advancedFilterModel }
+            : undefined;
     }
 
     private setFilterState(filterState?: FilterState): void {
         const filterManager = this.beans.filterManager;
-        const { filterModel, advancedFilterModel } = filterState ?? { filterModel: null, advancedFilterModel: null };
-        if (filterModel !== undefined) {
-            filterManager?.setFilterModel(filterModel ?? null, 'columnFilter', true);
+        const { filterModel, columnFilterState, advancedFilterModel } = filterState ?? {
+            filterModel: null,
+            columnFilterState: null,
+            advancedFilterModel: null,
+        };
+        if (filterModel !== undefined || columnFilterState !== undefined) {
+            filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, 'columnFilter');
         }
         if (advancedFilterModel !== undefined) {
             filterManager?.setAdvFilterModel(advancedFilterModel ?? null, 'advancedFilter');

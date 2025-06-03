@@ -5,6 +5,7 @@ import type { ContextParams, SingletonBean } from './context/context';
 import { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import type { GridOptions } from './entities/gridOptions';
+import { GlobalGridOptions } from './globalGridOptions';
 import { GridComp } from './gridComp/gridComp';
 import { CommunityCoreModule } from './gridCoreModule';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
@@ -25,7 +26,6 @@ import {
 } from './modules/moduleRegistry';
 import { _createElement } from './utils/dom';
 import { _missing } from './utils/generic';
-import { _mergeDeep } from './utils/object';
 import { NoModulesRegisteredError, missingRowModelTypeError } from './validation/errorMessages/errorText';
 import { _error, _logPreInitErr } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
@@ -53,72 +53,6 @@ export interface Params {
      * Modules to be registered directly with this grid instance.
      */
     modules?: Module[];
-}
-
-class GlobalGridOptions {
-    static gridOptions: GridOptions | undefined = undefined;
-    static mergeStrategy: GlobalGridOptionsMergeStrategy = 'shallow';
-
-    /**
-     * @param providedOptions
-     * @returns Shallow copy of the provided options with global options merged in.
-     */
-    static applyGlobalGridOptions(providedOptions: GridOptions): GridOptions {
-        if (!GlobalGridOptions.gridOptions) {
-            // No global options provided, return a shallow copy of the provided options
-            return { ...providedOptions };
-        }
-
-        let mergedGridOps: GridOptions = {};
-        // Merge deep to avoid leaking changes to the global options
-        _mergeDeep(mergedGridOps, GlobalGridOptions.gridOptions, true, true);
-        if (GlobalGridOptions.mergeStrategy === 'deep') {
-            _mergeDeep(mergedGridOps, providedOptions, true, true);
-        } else {
-            // Shallow copy so that provided object properties completely override global options
-            mergedGridOps = { ...mergedGridOps, ...providedOptions };
-        }
-
-        if (GlobalGridOptions.gridOptions.context) {
-            // Ensure context reference is maintained if it was provided
-            mergedGridOps.context = GlobalGridOptions.gridOptions.context;
-        }
-        if (providedOptions.context) {
-            if (GlobalGridOptions.mergeStrategy === 'deep' && mergedGridOps.context) {
-                // Merge global context properties into the provided context whilst maintaining provided context reference
-                _mergeDeep(providedOptions.context, mergedGridOps.context, true, true);
-            }
-            mergedGridOps.context = providedOptions.context;
-        }
-
-        return mergedGridOps;
-    }
-}
-
-/**
- * When providing global grid options, specify how they should be merged with the grid options provided to individual grids.
- * - `deep` will merge the global options into the provided options deeply, with provided options taking precedence.
- * - `shallow` will merge the global options with the provided options shallowly, with provided options taking precedence.
- * @default 'shallow'
- * @param gridOptions - global grid options
- */
-export type GlobalGridOptionsMergeStrategy = 'deep' | 'shallow';
-
-/**
- * Provide gridOptions that will be shared by all grid instances.
- * Individually defined GridOptions will take precedence over global options.
- * @param gridOptions - global grid options
- */
-export function provideGlobalGridOptions(
-    gridOptions: GridOptions,
-    mergeStrategy: GlobalGridOptionsMergeStrategy = 'shallow'
-): void {
-    GlobalGridOptions.gridOptions = gridOptions;
-    GlobalGridOptions.mergeStrategy = mergeStrategy;
-}
-
-export function _getGlobalGridOption<K extends keyof GridOptions>(gridOption: K): GridOptions[K] {
-    return GlobalGridOptions.gridOptions?.[gridOption];
 }
 
 // **NOTE** If updating this JsDoc please also update the re-exported createGrid in main-umd-shared.ts

@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 
-import type { IFloatingFilterAngularComp } from 'ag-grid-angular';
-import type { IFloatingFilterParams } from 'ag-grid-community';
-
-import type { YearFilter } from './year-filter.component_angular';
+import type { IFloatingFilterDisplayAngularComp } from 'ag-grid-angular';
+import type { FloatingFilterDisplayParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
@@ -14,26 +12,29 @@ import type { YearFilter } from './year-filter.component_angular';
         </label>
         <label>
             <input type="radio" name="isFloatingFilterActive" [checked]="isActive" (change)="toggleFilter(true)" />
-            After 2004
+            After 2010
         </label>
     </div>`,
 })
-export class YearFloatingFilter implements IFloatingFilterAngularComp<YearFilter> {
-    params!: IFloatingFilterParams<YearFilter>;
-    isActive!: boolean;
+export class YearFloatingFilter implements IFloatingFilterDisplayAngularComp {
+    params!: FloatingFilterDisplayParams<any, any, boolean>;
+    isActive: boolean = false;
 
     // called on init
-    agInit(params: IFloatingFilterParams<YearFilter>): void {
+    agInit(params: FloatingFilterDisplayParams<any, any, boolean>): void {
+        this.refresh(params);
+    }
+
+    refresh(params: FloatingFilterDisplayParams<any, any, boolean>): void {
         this.params = params;
-        this.isActive = false;
+        // if the update is from the floating filter, we don't need to update the UI
+        if (params.source !== 'ui') {
+            this.isActive = !!params.model;
+        }
     }
 
     toggleFilter(isFilterActive: boolean): void {
         this.isActive = isFilterActive;
-        this.params.parentFilterInstance((instance) => instance.onFloatingFilterChanged(isFilterActive));
-    }
-
-    onParentModelChanged(model: any): void {
-        this.isActive = !!model;
+        this.params.onModelChange(isFilterActive || null);
     }
 }

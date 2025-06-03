@@ -1,4 +1,4 @@
-import type { ICellEditor, IFilter, IStatusPanel, IToolPanel } from 'ag-grid-community';
+import type { FilterDisplay, ICellEditor, IFilter, IStatusPanel, IToolPanel } from 'ag-grid-community';
 import { AgPromise, _warn } from 'ag-grid-community';
 
 /**
@@ -7,8 +7,9 @@ import { AgPromise, _warn } from 'ag-grid-community';
  * @param callback Callback which is provided the underlying React custom component
  */
 export function getInstance<
-    TGridComponent extends IFilter | IToolPanel | ICellEditor | IStatusPanel =
+    TGridComponent extends IFilter | FilterDisplay | IToolPanel | ICellEditor | IStatusPanel =
         | IFilter
+        | FilterDisplay
         | IToolPanel
         | ICellEditor
         | IStatusPanel,

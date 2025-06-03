@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, DoesFilterPassParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
@@ -8,7 +8,6 @@ import {
 } from 'ag-grid-community';
 
 import { PersonFilter } from './personFilter_typescript';
-import { YearFilter } from './yearFilter_typescript';
 
 ModuleRegistry.registerModules([
     CustomFilterModule,
@@ -16,11 +15,31 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
+function doesFilterPass({ model, node, handlerParams }: DoesFilterPassParams<any, any, string>): boolean {
+    // make sure each word passes separately, ie search for firstname, lastname
+    let passed = true;
+    model
+        .toLowerCase()
+        .split(' ')
+        .forEach((filterWord) => {
+            const value = handlerParams.getValue(node);
+            if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
+                passed = false;
+            }
+        });
+
+    return passed;
+}
+
 const columnDefs: ColDef[] = [
-    { field: 'athlete', minWidth: 150, filter: PersonFilter },
-    { field: 'year', minWidth: 130, filter: YearFilter },
+    {
+        field: 'athlete',
+        minWidth: 150,
+        filter: { component: PersonFilter, doesFilterPass },
+    },
     { field: 'country', minWidth: 150 },
     { field: 'sport' },
+    { field: 'year', minWidth: 130 },
     { field: 'gold' },
     { field: 'silver' },
     { field: 'bronze' },
@@ -35,6 +54,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
     columnDefs: columnDefs,
+    enableFilterHandlers: true,
 };
 
 // setup the grid after the page has finished loading

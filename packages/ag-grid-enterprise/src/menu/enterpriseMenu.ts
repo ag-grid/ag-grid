@@ -17,7 +17,7 @@ import {
     AgPromise,
     BeanStub,
     Component,
-    FilterWrapperComp,
+    FilterComp,
     RefPlaceholder,
     _createElement,
     _createIconNoSpan,
@@ -371,7 +371,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
     private tabFactories: { [p: string]: () => TabbedItem } = {};
     private includeChecks: { [p: string]: () => boolean } = {};
 
-    private filterComp?: FilterWrapperComp | null;
+    private filterComp?: FilterComp | null;
 
     constructor(
         private readonly column: AgColumn | undefined,
@@ -521,7 +521,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
     }
 
     private createFilterPanel(): TabbedItem {
-        const comp = this.column ? this.createBean(new FilterWrapperComp(this.column, 'COLUMN_MENU')) : null;
+        const comp = this.column ? this.createBean(new FilterComp(this.column, 'COLUMN_MENU')) : null;
         this.filterComp = comp;
         if (!comp?.hasFilter()) {
             _error(119);

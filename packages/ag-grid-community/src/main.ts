@@ -180,9 +180,7 @@ export {
 export {
     IFilterDef,
     IFilterParams,
-    IFilterOptionDef,
     IDoesFilterPassParams,
-    ProvidedFilterModel,
     IFilter,
     IFilterComp,
     IFilterType,
@@ -190,6 +188,23 @@ export {
     FilterModel,
     BaseFilter,
     BaseFilterParams,
+    FilterDisplayParams,
+    FilterDisplaySource,
+    FilterHandler,
+    DoesFilterPassParams,
+    CreateFilterHandlerFunc,
+    CreateFilterHandlerFuncParams,
+    FilterHandlerParams,
+    FilterHandlerBaseParams,
+    FilterHandlerSource,
+    FilterDisplayState,
+    FilterWrapperParams,
+    FilterAction,
+    FilterDisplay,
+    SharedFilterUi,
+    FilterDisplayComp,
+    ColumnFilter,
+    ColumnFilterState,
 } from './interfaces/iFilter';
 export {
     ISetFilter,
@@ -201,10 +216,19 @@ export {
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
     ISetFilterTreeListTooltipParams,
+    SetFilterHandler,
+    SetFilterUi,
+    SetFilterUiChangedEvent,
 } from './interfaces/iSetFilter';
 export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';
 export { FilterRequestSource } from './filter/iColumnFilter';
+export {
+    _refreshHandlerAndUi,
+    _updateFilterModel,
+    _refreshFilterUi,
+    _getFilterModel,
+} from './filter/columnFilterUtils';
 export {
     IMultiFilter,
     IMultiFilterModel,
@@ -213,9 +237,18 @@ export {
     MultiFilterParams,
     IMultiFilterDef,
 } from './interfaces/iMultiFilter';
+export { IMultiFilterService } from './interfaces/iMultiFilterService';
+export { FilterComp } from './filter/filterComp';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
+export { FilterButtonComp } from './filter/filterButtonComp';
+export { _getFilterParamsForDataType, _getDefaultSimpleFilter } from './filter/filterDataTypeUtils';
 
-export { IProvidedFilter, IProvidedFilterParams, ProvidedFilterParams } from './filter/provided/iProvidedFilter';
+export {
+    IProvidedFilter,
+    IProvidedFilterParams,
+    ProvidedFilterParams,
+    ProvidedFilterModel,
+} from './filter/provided/iProvidedFilter';
 export { ProvidedFilter } from './filter/provided/providedFilter';
 export {
     ISimpleFilter,
@@ -227,6 +260,8 @@ export {
     JoinOperator,
     IFilterPlaceholderFunctionParams,
     FilterPlaceholderFunction,
+    IFilterOptionDef,
+    isCombinedFilterModel,
 } from './filter/provided/iSimpleFilter';
 export { IScalarFilterParams, ScalarFilterParams } from './filter/provided/iScalarFilter';
 
@@ -254,13 +289,17 @@ export {
     IFloatingFilter,
     IFloatingFilterParams,
     IFloatingFilterComp,
-    BaseFloatingFilterChange,
     IFloatingFilterParent,
     IFloatingFilterParentCallback,
     BaseFloatingFilter,
+    FloatingFilterDisplayParams,
+    FloatingFilterDisplay,
+    FloatingFilterDisplayComp,
 } from './filter/floating/floatingFilter';
 export type { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
+
+export { IGroupFilterService } from './interfaces/iGroupFilterService';
 
 export {
     AdvancedFilterModel,
@@ -614,15 +653,8 @@ export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export type { CellNavigationService } from './navigation/cellNavigationService';
 export { KeyCode } from './constants/keyCode';
-export {
-    GridParams,
-    Params,
-    GridCoreCreator,
-    createGrid,
-    provideGlobalGridOptions,
-    GlobalGridOptionsMergeStrategy,
-    _getGlobalGridOption,
-} from './grid';
+export { GridParams, Params, GridCoreCreator, createGrid } from './grid';
+export { provideGlobalGridOptions, GlobalGridOptionsMergeStrategy, _getGlobalGridOption } from './globalGridOptions';
 export {
     GridApi,
     DetailGridInfo,
@@ -701,6 +733,7 @@ export {
     _isUsingNewCellSelectionAPI,
     _isGroupRowsSticky,
     _getGroupingApproach,
+    _getGridOption,
 } from './gridOptionsUtils';
 export type { GroupingApproach } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
@@ -851,6 +884,8 @@ export {
     ValueParserLiteFunc,
     ValueParserLiteParams,
     BaseCellDataType,
+    CoreDataTypeDefinition,
+    DataTypeFormatValueFunc,
 } from './entities/dataType';
 export type { DataTypeService } from './columns/dataTypeService';
 export {

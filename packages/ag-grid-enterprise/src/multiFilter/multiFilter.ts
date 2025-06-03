@@ -1,113 +1,87 @@
 import type {
     AgColumn,
-    ContainerType,
-    IAfterGuiAttachedParams,
+    FilterAction,
+    FilterDisplayParams,
+    FilterDisplayState,
+    FilterHandler,
+    FilterHandlerBaseParams,
     IDoesFilterPassParams,
     IFilterComp,
     IFilterParams,
     IMultiFilter,
     IMultiFilterDef,
     IMultiFilterModel,
+    IMultiFilterParams,
     MultiFilterParams,
     ProvidedFilterModel,
     RowNode,
+    UserCompDetails,
 } from 'ag-grid-community';
 import {
     AgPromise,
-    KeyCode,
+    FilterWrapperComp,
+    LocalEventService,
     ProvidedFilter,
-    TabGuardComp,
-    _createElement,
-    _focusInto,
-    _getActiveDomElement,
-    _getFilterDetails,
-    _isNothingFocused,
+    _getFilterModel,
+    _refreshFilterUi,
+    _refreshHandlerAndUi,
     _removeFromArray,
-    _setAriaRole,
+    _updateFilterModel,
 } from 'ag-grid-community';
 
-import { AgGroupComponent } from '../widgets/agGroupComponent';
-import type { MenuItemActivatedEvent } from '../widgets/agMenuItemComponent';
-import { AgMenuItemComponent } from '../widgets/agMenuItemComponent';
-import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
+import type { BaseFilterComponent } from './baseMultiFilter';
+import { BaseMultiFilter } from './baseMultiFilter';
+import {
+    getFilterModelForIndex,
+    getMultiFilterDefs,
+    getUpdatedMultiFilterModel,
+    updateGetValue,
+} from './multiFilterUtil';
 
-export function getMultiFilterDefs(params: MultiFilterParams): IMultiFilterDef[] {
-    const { filters } = params;
-
-    return filters && filters.length > 0
-        ? filters
-        : [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
+interface MultiFilterWrapper {
+    filter: IFilterComp;
+    comp: BaseFilterComponent;
+    /** only set for handlers */
+    filterParams?: FilterDisplayParams;
+    handler?: FilterHandler;
+    handlerParams?: FilterHandlerBaseParams;
+    /** only set for handlers */
+    model?: any;
+    state?: FilterDisplayState;
 }
 
-function _forEachReverse<T>(list: T[] | null | undefined, action: (value: T, index: number) => void): void {
-    if (list == null) {
-        return;
-    }
+/** temporary type until `MultiFilterParams` is updated as breaking change */
+type MultiFilterDisplayParams = IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>;
 
-    for (let i = list.length - 1; i >= 0; i--) {
-        action(list[i], i);
-    }
-}
-
-function getFilterTitle(filter: IFilterComp, filterDef: IMultiFilterDef): string {
-    if (filterDef.title != null) {
-        return filterDef.title;
-    }
-
-    return filter instanceof ProvidedFilter ? filter.getFilterTitle() : 'Filter';
-}
-
-export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
+// This version of multi filter is only used when `enableFilterHandlers = false`
+export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements IFilterComp, IMultiFilter {
     public readonly filterType = 'multi' as const;
 
-    private params: MultiFilterParams;
-    private filterDefs: IMultiFilterDef[] = [];
-    private filters: IFilterComp[] | null = [];
-    private guiDestroyFuncs: (() => void)[] = [];
-    // this could be the accordion/sub menu element depending on the display type
-    private filterGuis: HTMLElement[] = [];
-    private column: AgColumn;
+    private params: MultiFilterDisplayParams;
+    private wrappers: (MultiFilterWrapper | null)[] = [];
     private filterChangedCallback: ((additionalEventAttributes?: any) => void) | null;
-    private lastOpenedInContainer?: ContainerType;
     private activeFilterIndices: number[] = [];
-    private lastActivatedMenuItem: AgMenuItemComponent | null = null;
-    private hidePopup?: () => void;
 
     private afterFiltersReadyFuncs: (() => void)[] = [];
 
-    constructor() {
-        super({ tag: 'div', cls: 'ag-multi-filter ag-menu-list-compact' });
-    }
-
-    public postConstruct() {
-        this.initialiseTabGuard({
-            onFocusIn: (e) => this.onFocusIn(e),
-        });
-    }
-
     public init(params: MultiFilterParams): AgPromise<void> {
-        this.params = params;
+        this.params = params as unknown as MultiFilterDisplayParams;
         this.filterDefs = getMultiFilterDefs(params);
 
-        const { column, filterChangedCallback } = params;
+        const initialModel = _getFilterModel(this.beans.colFilter!.model, params.column.getColId());
 
-        this.column = column as AgColumn;
+        const { filterChangedCallback } = params;
+
         this.filterChangedCallback = filterChangedCallback;
 
-        const filterPromises: AgPromise<IFilterComp>[] = [];
-
-        this.filterDefs.forEach((filterDef, index) => {
-            const filterPromise = this.createFilter(filterDef, index);
-
-            if (filterPromise != null) {
-                filterPromises.push(filterPromise);
-            }
-        });
+        const filterPromises = this.filterDefs.map((filterDef, index) =>
+            this.createFilter(filterDef, index, initialModel)
+        );
 
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
         return new AgPromise<void>((resolve) => {
-            AgPromise.all(filterPromises).then((filters) => {
-                this.filters = filters as IFilterComp[];
+            AgPromise.all(filterPromises).then((wrappers) => {
+                this.wrappers = wrappers!;
                 this.refreshGui('columnMenu').then(() => {
                     resolve();
                 });
@@ -118,152 +92,25 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         });
     }
 
-    private refreshGui(container: ContainerType): AgPromise<void> {
-        if (container === this.lastOpenedInContainer) {
-            return AgPromise.resolve();
-        }
-
-        this.tabGuardFeature.removeAllChildrenExceptTabGuards();
-        this.destroyChildren();
-
-        return AgPromise.all(
-            this.filters!.map((filter, index) => {
-                const filterDef = this.filterDefs[index];
-                const filterTitle = getFilterTitle(filter, filterDef);
-                let filterGuiPromise: AgPromise<HTMLElement>;
-
-                if (filterDef.display === 'subMenu' && container !== 'toolPanel') {
-                    // prevent sub-menu being used in tool panel
-                    filterGuiPromise = this.insertFilterMenu(filter, filterTitle).then((menuItem) =>
-                        menuItem!.getGui()
-                    );
-                } else if (filterDef.display === 'subMenu' || filterDef.display === 'accordion') {
-                    // sub-menus should appear as groups in the tool panel
-                    const group = this.insertFilterGroup(filter, filterTitle);
-
-                    filterGuiPromise = AgPromise.resolve(group.getGui());
-                } else {
-                    // display inline
-                    filterGuiPromise = AgPromise.resolve(filter.getGui());
-                }
-
-                return filterGuiPromise;
-            })
-        ).then((filterGuis) => {
-            filterGuis!.forEach((filterGui, index) => {
-                if (index > 0) {
-                    this.appendChild(_createElement({ tag: 'div', cls: 'ag-filter-separator' }));
-                }
-                this.appendChild(filterGui!);
-            });
-            this.filterGuis = filterGuis as HTMLElement[];
-            this.lastOpenedInContainer = container;
-        });
-    }
-
-    private destroyChildren() {
-        this.guiDestroyFuncs.forEach((func) => func());
-        this.guiDestroyFuncs.length = 0;
-        this.filterGuis.length = 0;
-    }
-
-    private insertFilterMenu(filter: IFilterComp, name: string): AgPromise<AgMenuItemComponent> {
-        const menuItem = this.createBean(new AgMenuItemComponent());
-        return menuItem
-            .init({
-                menuItemDef: {
-                    name,
-                    subMenu: [],
-                    subMenuRole: 'dialog',
-                    cssClasses: ['ag-multi-filter-menu-item'],
-                    menuItem: AgMenuItemRenderer,
-                    menuItemParams: {
-                        cssClassPrefix: 'ag-compact-menu-option',
-                        isCompact: true,
-                    },
-                },
-                level: 0,
-                isAnotherSubMenuOpen: () => false,
-                childComponent: filter,
-                contextParams: {
-                    column: null,
-                    node: null,
-                    value: null,
-                },
-            })
-            .then(() => {
-                menuItem.setParentComponent(this);
-
-                this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
-
-                this.addManagedListeners(menuItem, {
-                    menuItemActivated: (event: MenuItemActivatedEvent) => {
-                        if (this.lastActivatedMenuItem && this.lastActivatedMenuItem !== event.menuItem) {
-                            this.lastActivatedMenuItem.deactivate();
-                        }
-
-                        this.lastActivatedMenuItem = event.menuItem;
-                    },
-                });
-
-                const menuItemGui = menuItem.getGui();
-                menuItem.addManagedElementListeners(menuItemGui, {
-                    // `AgMenuList` normally handles keyboard navigation, so need to do here
-                    keydown: (e: KeyboardEvent) => {
-                        const { key } = e;
-                        switch (key) {
-                            case KeyCode.UP:
-                            case KeyCode.RIGHT:
-                            case KeyCode.DOWN:
-                            case KeyCode.LEFT:
-                                e.preventDefault();
-                                if (key === KeyCode.RIGHT) {
-                                    menuItem.openSubMenu(true);
-                                }
-                                break;
-                        }
-                    },
-                    focusin: () => menuItem.activate(),
-                    focusout: () => {
-                        if (!menuItem.isSubMenuOpen() && !menuItem.isSubMenuOpening()) {
-                            menuItem.deactivate();
-                        }
-                    },
-                });
-
-                return menuItem;
-            });
-    }
-
-    private insertFilterGroup(filter: IFilterComp, title: string): AgGroupComponent {
-        const group = this.createBean(
-            new AgGroupComponent({
-                title,
-                cssIdentifier: 'multi-filter',
-            })
-        );
-
-        this.guiDestroyFuncs.push(() => this.destroyBean(group));
-
-        group.addItem(filter.getGui());
-        group.toggleGroupExpand(false);
-
-        if (filter.afterGuiAttached) {
-            group.addManagedListeners(group, {
-                expanded: () =>
-                    filter.afterGuiAttached!({
-                        container: this.lastOpenedInContainer!,
-                        suppressFocus: true,
-                        hidePopup: this.hidePopup,
-                    }),
-            });
-        }
-
-        return group;
+    public refresh(params: IFilterParams): boolean {
+        // multi filter has never been reactive. Implementing this would require extracting
+        // even more logic from ColumnFilterService to determine if the filter has changed.
+        // Just update the params for the latest model.
+        this.params = params as unknown as MultiFilterDisplayParams;
+        return true;
     }
 
     public isFilterActive(): boolean {
-        return this.filters!.some((filter) => filter.isFilterActive());
+        return this.wrappers.some((wrapper) => {
+            if (!wrapper) {
+                return false;
+            }
+            const { filter, handler, model } = wrapper;
+            if (handler) {
+                return model != null;
+            }
+            return filter.isFilterActive();
+        });
     }
 
     public getLastActiveFilterIndex(): number | null {
@@ -271,25 +118,35 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         return activeFilterIndices.length > 0 ? activeFilterIndices[activeFilterIndices.length - 1] : null;
     }
 
-    public doesFilterPass(params: IDoesFilterPassParams, filterToSkip?: IFilterComp): boolean {
-        let rowPasses = true;
-
-        this.filters!.forEach((filter) => {
-            if (!rowPasses || filter === filterToSkip || !filter.isFilterActive()) {
-                return;
+    public doesFilterPass(params: IDoesFilterPassParams, indexToSkip?: number): boolean {
+        return this.wrappers.every((wrapper, index) => {
+            if (!wrapper || (indexToSkip != null && index === indexToSkip)) {
+                return true;
             }
-
-            rowPasses = filter.doesFilterPass(params);
+            const { handler, filter, model } = wrapper;
+            if (handler && model != null) {
+                return handler.doesFilterPass({
+                    ...params,
+                    model,
+                    handlerParams: wrapper.handlerParams!,
+                });
+            }
+            return !filter.isFilterActive() || filter.doesFilterPass(params);
         });
-
-        return rowPasses;
     }
 
     public getModelFromUi(): IMultiFilterModel | null {
         const model: IMultiFilterModel = {
             filterType: this.filterType,
-            filterModels: this.filters!.map((filter) => {
-                const providedFilter = filter as ProvidedFilter<IMultiFilterModel, unknown>;
+            filterModels: this.wrappers.map((wrapper) => {
+                if (!wrapper) {
+                    return null;
+                }
+                const providedFilter = wrapper.filter as ProvidedFilter<
+                    IMultiFilterModel,
+                    unknown,
+                    MultiFilterDisplayParams
+                >;
 
                 if (typeof providedFilter.getModelFromUi === 'function') {
                     return providedFilter.getModelFromUi();
@@ -309,12 +166,15 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
         const model: IMultiFilterModel = {
             filterType: this.filterType,
-            filterModels: this.filters!.map((filter) => {
-                if (filter.isFilterActive()) {
-                    return filter.getModel();
+            filterModels: this.wrappers.map((wrapper) => {
+                if (!wrapper) {
+                    return null;
                 }
-
-                return null;
+                const { filter, handler, model } = wrapper;
+                if (handler) {
+                    return model;
+                }
+                return filter.isFilterActive() ? filter.getModel() : null;
             }),
         };
 
@@ -329,34 +189,47 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             });
         };
 
-        let promises: AgPromise<void>[] = [];
+        const promises: AgPromise<void>[] = [];
 
-        if (model == null) {
-            promises = this.filters!.map((filter: IFilterComp, index: number) => {
-                const res = setFilterModel(filter, null).then(() => {
-                    this.updateActiveList(index);
-                });
-                return res;
-            })!;
-        } else {
-            this.filters!.forEach((filter, index) => {
-                const filterModel = model.filterModels!.length > index ? model.filterModels![index] : null;
-                const res = setFilterModel(filter, filterModel).then(() => {
-                    this.updateActiveList(index);
-                });
-                promises.push(res);
-            });
-        }
-
+        this.wrappers.forEach((wrapper, index) => {
+            if (!wrapper) {
+                return;
+            }
+            const modelForFilter = getFilterModelForIndex(model, index);
+            const { filter, filterParams, handler, handlerParams, state } = wrapper;
+            if (handler) {
+                promises.push(
+                    _refreshHandlerAndUi(
+                        () => AgPromise.resolve({ filter: filter as any, filterParams: filterParams as any }),
+                        handler,
+                        handlerParams!,
+                        modelForFilter,
+                        state ?? { model: modelForFilter },
+                        'api'
+                    ).then(() => {
+                        this.updateActiveListForHandler(index, modelForFilter);
+                    })
+                );
+            } else {
+                promises.push(
+                    setFilterModel(filter, modelForFilter).then(() => {
+                        this.updateActiveListForFilter(index, filter);
+                    })
+                );
+            }
+        });
         return AgPromise.all(promises).then(() => {});
     }
 
     public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
         let result = false;
 
-        this.filters!.forEach((filter) => {
-            if (filter instanceof ProvidedFilter) {
-                result = filter.applyModel(source) || result;
+        this.wrappers.forEach((wrapper) => {
+            if (wrapper) {
+                const filter = wrapper.filter;
+                if (filter instanceof ProvidedFilter) {
+                    result = filter.applyModel(source) || result;
+                }
             }
         });
 
@@ -364,191 +237,290 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     }
 
     public getChildFilterInstance(index: number): IFilterComp | undefined {
-        return this.filters![index];
-    }
-
-    public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        let refreshPromise: AgPromise<void>;
-        if (params) {
-            this.hidePopup = params.hidePopup;
-            refreshPromise = this.refreshGui(params.container!);
-        } else {
-            this.hidePopup = undefined;
-            refreshPromise = AgPromise.resolve();
-        }
-
-        const suppressFocus = params?.suppressFocus;
-
-        refreshPromise.then(() => {
-            const { filterDefs, filters, filterGuis, beans } = this;
-            // don't want to focus later if focus suppressed
-            let hasFocused = !!suppressFocus;
-            if (filterDefs) {
-                _forEachReverse(filterDefs, (filterDef, index) => {
-                    const isFirst = index === 0;
-                    const notInlineDisplayType = filterDef.display && filterDef.display !== 'inline';
-                    const suppressFocusForFilter = suppressFocus || !isFirst || notInlineDisplayType;
-                    const afterGuiAttachedParams = { ...(params ?? {}), suppressFocus: suppressFocusForFilter };
-                    const filter = filters?.[index];
-                    if (filter) {
-                        this.executeFunctionIfExistsOnFilter(filter, 'afterGuiAttached', afterGuiAttachedParams);
-                        if (isFirst && !suppressFocusForFilter) {
-                            hasFocused = true;
-                        }
-                    }
-                    if (!suppressFocus && isFirst && notInlineDisplayType) {
-                        // focus the first filter container instead (accordion/sub menu)
-                        const filterGui = filterGuis[index];
-                        if (filterGui) {
-                            if (!_focusInto(filterGui)) {
-                                // menu item contains no focusable elements but is focusable itself
-                                filterGui.focus({ preventScroll: true });
-                            }
-                            hasFocused = true;
-                        }
-                    }
-                });
-            }
-
-            const activeEl = _getActiveDomElement(beans);
-
-            // if we haven't focused the first item in the filter, we might run into two scenarios:
-            // 1 - we are loading the filter for the first time and the component isn't ready,
-            //     which means the document will have focus.
-            // 2 - The focus will be somewhere inside the component due to auto focus
-            // In both cases we need to force the focus somewhere valid but outside the filter.
-            if (!hasFocused && (_isNothingFocused(beans) || this.getGui().contains(activeEl))) {
-                // reset focus to the top of the container, and blur
-                this.forceFocusOutOfContainer(true);
-            }
-        });
-    }
-
-    public afterGuiDetached(): void {
-        this.executeFunctionIfExists('afterGuiDetached');
-    }
-
-    public onAnyFilterChanged(): void {
-        this.executeFunctionIfExists('onAnyFilterChanged');
-    }
-
-    public onNewRowsLoaded(): void {
-        this.executeFunctionIfExists('onNewRowsLoaded');
+        return this.wrappers[index]?.filter;
     }
 
     public override destroy(): void {
-        this.filters!.forEach((filter) => this.destroyBean(filter));
+        this.wrappers.forEach((wrapper) => {
+            this.destroyBean(wrapper?.filter);
+            this.destroyBean(wrapper?.handler);
+        });
 
-        this.filters!.length = 0;
-        this.destroyChildren();
-        this.hidePopup = undefined;
+        this.wrappers.length = 0;
 
         super.destroy();
     }
 
-    private executeFunctionIfExists<T extends IFilterComp>(name: keyof T, ...params: any[]): void {
-        // The first filter is always the "dominant" one. By iterating in reverse order we ensure the first filter
-        // always gets the last say
-        _forEachReverse(this.filters, (filter) => {
-            this.executeFunctionIfExistsOnFilter(filter as T, name, params);
+    protected override getFilterWrappers(): (MultiFilterWrapper | null)[] {
+        return this.wrappers;
+    }
+
+    protected override getFilterFromWrapper(wrapper: MultiFilterWrapper): IFilterComp<any> {
+        return wrapper.filter;
+    }
+
+    protected override getCompFromWrapper(wrapper: MultiFilterWrapper): BaseFilterComponent {
+        return wrapper.comp;
+    }
+
+    protected override executeOnWrapper(
+        wrapper: MultiFilterWrapper,
+        name: 'onAnyFilterChanged' | 'onNewRowsLoaded'
+    ): void {
+        wrapper.handler?.[name]?.();
+    }
+
+    private createFilter(
+        filterDef: IMultiFilterDef,
+        index: number,
+        initialModel: IMultiFilterModel | null
+    ): AgPromise<MultiFilterWrapper | null> {
+        const column = this.params.column as AgColumn;
+
+        let initialModelForFilter: any = null;
+        let createWrapperComp: ((filter: IFilterComp<any> | null) => FilterWrapperComp) | undefined;
+        const beans = this.beans;
+
+        const {
+            compDetails,
+            handler,
+            handlerParams: originalHandlerParams,
+            createFilterUi,
+        } = beans.colFilter!.createFilterInstance(
+            column,
+            filterDef,
+            'agTextColumnFilter',
+            (defaultParams, isHandler) => {
+                const updatedParams = {
+                    ...defaultParams,
+                    filterChangedCallback: isHandler
+                        ? () => {}
+                        : (additionalEventAttributes?: any) => {
+                              this.executeWhenAllFiltersReady(() =>
+                                  this.onFilterModelChanged(index, additionalEventAttributes)
+                              );
+                          },
+                    doesRowPassOtherFilter: (node: RowNode) =>
+                        defaultParams.doesRowPassOtherFilter(node) &&
+                        this.doesFilterPass({ node, data: node.data }, index),
+                    getValue: updateGetValue(beans, column, filterDef, defaultParams.getValue),
+                };
+                if (isHandler) {
+                    initialModelForFilter = getFilterModelForIndex(initialModel, index);
+                    createWrapperComp = this.updateDisplayParams(
+                        updatedParams as unknown as FilterDisplayParams,
+                        index,
+                        initialModelForFilter,
+                        () => compDetails,
+                        () => handler!
+                    );
+                }
+                return updatedParams;
+            }
+        );
+
+        if (!createFilterUi) {
+            return AgPromise.resolve(null);
+        }
+
+        let handlerParams: FilterHandlerBaseParams | undefined;
+        if (handler) {
+            const { onModelChange, doesRowPassOtherFilter, getValue } = originalHandlerParams!;
+            handlerParams = {
+                ...originalHandlerParams!,
+                onModelChange: (newModel, additionalEventAttributes) =>
+                    onModelChange(
+                        getUpdatedMultiFilterModel(this.params.model, this.wrappers.length, newModel, index),
+                        additionalEventAttributes
+                    ),
+                doesRowPassOtherFilter: (node) =>
+                    doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, index),
+
+                getValue: updateGetValue(beans, column, filterDef, getValue),
+            };
+            handler.init?.({ ...handlerParams, model: initialModelForFilter, source: 'init' });
+        }
+
+        return createFilterUi().then((filter) => {
+            if (!handler) {
+                return { filter: filter!, comp: filter! };
+            }
+            const filterParams = compDetails?.params;
+            const comp = createWrapperComp!(filter);
+            return {
+                filter: filter!,
+                comp,
+                filterParams,
+                handler,
+                handlerParams,
+                model: initialModelForFilter,
+            };
         });
     }
 
-    private executeFunctionIfExistsOnFilter<T extends IFilterComp>(filter: T, name: keyof T, ...params: any[]): void {
-        const func = filter[name];
-
-        if (typeof func === 'function') {
-            func.apply(filter, params);
-        }
-    }
-
-    private createFilter(filterDef: IMultiFilterDef, index: number): AgPromise<IFilterComp> | null {
-        const { filterModifiedCallback, doesRowPassOtherFilter } = this.params;
-        const { filterManager, userCompFactory } = this.beans;
-
-        let filterInstance: IFilterComp;
-
-        const filterParams: IFilterParams = {
-            ...filterManager!.createFilterParams(this.column, this.column.getColDef()),
-            filterModifiedCallback,
-            filterChangedCallback: (additionalEventAttributes) => {
-                this.executeWhenAllFiltersReady(() => this.filterChanged(index, additionalEventAttributes));
-            },
-            doesRowPassOtherFilter: (node: RowNode) =>
-                doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, filterInstance),
-        };
-
-        const compDetails = _getFilterDetails(userCompFactory, filterDef, filterParams, 'agTextColumnFilter');
-        if (!compDetails) {
-            return null;
-        }
-        const filterPromise = compDetails.newAgStackInstance();
-
-        filterPromise.then((filter) => {
-            if (!filter) {
+    private updateDisplayParams(
+        displayParams: FilterDisplayParams,
+        index: number,
+        initialModelForFilter: any,
+        getCompDetails: () => UserCompDetails | null,
+        getHandler: () => FilterHandler
+    ): (filter: IFilterComp<any> | null) => FilterWrapperComp {
+        const column = this.params.column as AgColumn;
+        const eventSvc: LocalEventService<'filterParamsChanged' | 'filterStateChanged' | 'filterAction'> =
+            new LocalEventService();
+        displayParams.model = initialModelForFilter;
+        displayParams.state = { model: initialModelForFilter };
+        displayParams.onModelChange = (model, additionalEventAttributes?: any) => {
+            const wrapper = this.wrappers[index];
+            if (!wrapper) {
                 return;
             }
-
-            filterInstance = filter;
-            if (filterDef.display === 'subMenu') {
-                const eGui = filter.getGui();
-                _setAriaRole(eGui, 'dialog');
+            _refreshHandlerAndUi(
+                () =>
+                    AgPromise.resolve({
+                        filter: wrapper.filter as any,
+                        filterParams: wrapper.filterParams as any,
+                    }),
+                wrapper.handler!,
+                wrapper.handlerParams!,
+                model,
+                wrapper.state ?? { model },
+                'ui'
+            ).then(() => {
+                wrapper.model = model;
+                this.onHandlerModelChanged(index, model, additionalEventAttributes);
+            });
+        };
+        displayParams.getHandler = getHandler;
+        const updateState = (wrapper: MultiFilterWrapper, state: FilterDisplayState) => {
+            wrapper.state = state;
+            eventSvc.dispatchEvent({
+                type: 'filterStateChanged',
+                column,
+                state,
+            });
+            this;
+        };
+        displayParams.onStateChange = (state) => {
+            const wrapper = this.wrappers[index];
+            if (!wrapper) {
+                return;
             }
-        });
+            updateState(wrapper, state);
+            _refreshFilterUi(wrapper.filter as any, wrapper.filterParams!, wrapper.model ?? null, state, 'ui');
+        };
+        const updateModel = (_column: AgColumn, action: FilterAction, additionalEventAttributes?: any) => {
+            const wrapper = this.wrappers[index];
+            if (!wrapper) {
+                return;
+            }
+            const getModel = () => wrapper?.model ?? null;
+            _updateFilterModel(
+                action,
+                () => {
+                    const promise = AgPromise.resolve(wrapper.filter as any);
+                    return {
+                        created: true,
+                        filterParams: wrapper.filterParams!,
+                        compDetails: getCompDetails()!,
+                        create: () => promise,
+                        promise,
+                    };
+                },
+                getModel,
+                () => wrapper?.state ?? { model: getModel() },
+                (state) => updateState(wrapper, state),
+                (newModel) => wrapper.filterParams?.onModelChange(newModel, additionalEventAttributes)
+            );
+        };
+        displayParams.onAction = (action, additionalEventAttributes, event) => {
+            updateModel(column, action, additionalEventAttributes);
+            eventSvc.dispatchEvent({
+                type: 'filterAction',
+                column,
+                action,
+                event,
+            });
+        };
 
-        return filterPromise;
+        return (filter: IFilterComp<any> | null) => {
+            const filterParams = getCompDetails()?.params;
+            return this.createManagedBean(
+                new FilterWrapperComp(
+                    column,
+                    {
+                        comp: filter!,
+                        params: filterParams!,
+                        isHandler: true,
+                    },
+                    eventSvc,
+                    updateModel
+                )
+            );
+        };
     }
 
     private executeWhenAllFiltersReady(action: () => void): void {
-        if ((this.filters?.length ?? 0) > 0) {
+        if ((this.wrappers?.length ?? 0) > 0) {
             action();
         } else {
             this.afterFiltersReadyFuncs.push(action);
         }
     }
 
-    private updateActiveList(index: number): void {
-        const { filters, activeFilterIndices } = this;
-        const changedFilter = filters![index];
+    private updateActiveListForFilter(index: number, filter?: IFilterComp): void {
+        this.updateActiveList(index, () => filter?.isFilterActive());
+    }
 
-        _removeFromArray(activeFilterIndices, index);
+    private updateActiveListForHandler(index: number, model?: any): void {
+        this.updateActiveList(index, () => model != null);
+    }
 
-        if (changedFilter.isFilterActive()) {
+    private updateActiveList(index: number, isActive: () => boolean | undefined): void {
+        const activeFilterIndices = this.activeFilterIndices;
+        _removeFromArray(this.activeFilterIndices, index);
+
+        if (isActive()) {
             activeFilterIndices.push(index);
         }
     }
 
+    /** Only called for non-handlers */
+    private onFilterModelChanged(index: number, additionalEventAttributes: any): void {
+        this.updateActiveListForFilter(index, this.wrappers[index]?.filter);
+
+        this.filterChanged(index, additionalEventAttributes);
+    }
+
+    private onHandlerModelChanged(index: number, model: any, additionalEventAttributes?: any): void {
+        this.updateActiveListForHandler(index, model);
+
+        this.filterChanged(index, additionalEventAttributes);
+    }
+
     private filterChanged(index: number, additionalEventAttributes: any): void {
-        this.updateActiveList(index);
-
         this.filterChangedCallback!(additionalEventAttributes);
-        const changedFilter = this.filters![index];
 
-        this.filters!.forEach((filter) => {
-            if (filter === changedFilter) {
+        this.wrappers.forEach((wrapper, childIndex) => {
+            if (index === childIndex || !wrapper) {
                 return;
             }
 
+            const { filter, handler } = wrapper;
+
+            handler?.onAnyFilterChanged?.();
             if (typeof filter.onAnyFilterChanged === 'function') {
                 filter.onAnyFilterChanged();
             }
         });
     }
 
-    protected onFocusIn(e: FocusEvent): void {
-        const lastActivatedMenuItem = this.lastActivatedMenuItem;
-        if (lastActivatedMenuItem != null && !lastActivatedMenuItem.getGui().contains(e.target as HTMLElement)) {
-            lastActivatedMenuItem.deactivate();
-            this.lastActivatedMenuItem = null;
-        }
-    }
-
-    getModelAsString(model: IMultiFilterModel): string {
-        if (!this.filters || !model?.filterModels?.length) {
+    public getModelAsString(model: IMultiFilterModel): string {
+        if (!model?.filterModels?.length) {
             return '';
         }
         const lastActiveIndex = this.getLastActiveFilterIndex() ?? 0;
-        const activeFilter = this.filters[lastActiveIndex];
-        return activeFilter.getModelAsString?.(model.filterModels[lastActiveIndex]) ?? '';
+        const activeFilter = this.wrappers[lastActiveIndex]?.filter;
+        return activeFilter?.getModelAsString?.(model.filterModels[lastActiveIndex]) ?? '';
     }
 }

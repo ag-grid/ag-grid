@@ -1,0 +1,28 @@
+.person-filter {
+    padding: 12px;
+    width: 200px;
+}
+
+.person-filter > div:first-child {
+    font-weight: bold;
+}
+
+.person-filter > div:not(:last-child) {
+    margin-bottom: 8px;
+}
+
+.year-filter {
+    width: 200px;
+}
+
+.year-filter > * {
+    margin: 8px 12px;
+}
+
+.year-filter > div:first-child {
+    font-weight: bold;
+}
+
+.year-filter > label {
+    display: inline-block;
+}

@@ -1,10 +1,8 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, DoesFilterPassParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
     ModuleRegistry,
-    NumberFilterModule,
-    TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
@@ -13,37 +11,57 @@ import { NumberFilterComponent } from './numberFilterComponent_typescript';
 import { NumberFloatingFilterComponent } from './numberFloatingFilterComponent_typescript';
 
 ModuleRegistry.registerModules([
-    NumberFilterModule,
     ClientSideRowModelModule,
-    TextFilterModule,
     CustomFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
+function doesFilterPass({ node, model, handlerParams }: DoesFilterPassParams<any, any, number>): boolean {
+    const value = handlerParams.getValue(node);
+
+    if (value == null) {
+        return true;
+    }
+
+    return value > model;
+}
+
 const columnDefs: ColDef[] = [
-    { field: 'athlete', filter: 'agTextColumnFilter' },
+    { field: 'athlete' },
     {
         field: 'gold',
         floatingFilterComponent: NumberFloatingFilterComponent,
-        filter: NumberFilterComponent,
+        floatingFilterComponentParams: {
+            color: 'gold',
+        },
+        filter: { component: NumberFilterComponent, doesFilterPass },
         suppressFloatingFilterButton: true,
     },
     {
         field: 'silver',
         floatingFilterComponent: NumberFloatingFilterComponent,
-        filter: NumberFilterComponent,
+        floatingFilterComponentParams: {
+            color: 'silver',
+        },
+        filter: { component: NumberFilterComponent, doesFilterPass },
         suppressFloatingFilterButton: true,
     },
     {
         field: 'bronze',
         floatingFilterComponent: NumberFloatingFilterComponent,
-        filter: NumberFilterComponent,
+        floatingFilterComponentParams: {
+            color: '#CD7F32',
+        },
+        filter: { component: NumberFilterComponent, doesFilterPass },
         suppressFloatingFilterButton: true,
     },
     {
         field: 'total',
         floatingFilterComponent: NumberFloatingFilterComponent,
-        filter: NumberFilterComponent,
+        floatingFilterComponentParams: {
+            color: 'unset',
+        },
+        filter: { component: NumberFilterComponent, doesFilterPass },
         suppressFloatingFilterButton: true,
     },
 ];
@@ -54,11 +72,11 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        filter: true,
         floatingFilter: true,
     },
-    columnDefs: columnDefs,
+    columnDefs,
     rowData: null,
+    enableFilterHandlers: true,
 };
 
 // setup the grid after the page has finished loading

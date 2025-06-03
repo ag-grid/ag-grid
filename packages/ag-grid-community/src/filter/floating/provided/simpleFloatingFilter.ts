@@ -1,33 +1,46 @@
 import type { AgColumn } from '../../../entities/agColumn';
 import type { FilterChangedEvent } from '../../../events';
-import type { ProvidedFilterModel } from '../../../interfaces/iFilter';
+import type { LocaleTextFunc } from '../../../misc/locale/localeUtils';
 import { Component } from '../../../widgets/component';
-import type { ProvidedFilterParams } from '../../provided/iProvidedFilter';
-import type { ScalarFilterParams } from '../../provided/iScalarFilter';
+import type { IProvidedFilterParams, ProvidedFilterModel } from '../../provided/iProvidedFilter';
 import type {
     ICombinedSimpleModel,
     ISimpleFilter,
     ISimpleFilterModel,
     ISimpleFilterModelType,
+    ISimpleFilterParams,
 } from '../../provided/iSimpleFilter';
 import { OptionsFactory } from '../../provided/optionsFactory';
 import type { SimpleFilterModelFormatter } from '../../provided/simpleFilterModelFormatter';
-import type { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
+import type { FloatingFilterDisplayParams, IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 
-export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp<ISimpleFilter> {
-    // this method is on IFloatingFilterComp. because it's not implemented at this level, we have to
-    // define it as an abstract method. it gets implemented in sub classes.
-    public abstract onParentModelChanged(model: ProvidedFilterModel, event: FilterChangedEvent): void;
+export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams<ISimpleFilter>>
+    extends Component
+    implements IFloatingFilterComp<ISimpleFilter>
+{
+    protected abstract onModelUpdated(model: ProvidedFilterModel): void;
 
-    protected abstract getDefaultOptions(): string[];
+    protected abstract readonly defaultOptions: string[];
     protected abstract setEditable(editable: boolean): void;
 
-    protected abstract filterModelFormatter: SimpleFilterModelFormatter;
+    protected filterModelFormatter: SimpleFilterModelFormatter<ISimpleFilterParams>;
+
+    protected params: TParams;
 
     protected lastType: string | null | undefined;
     protected optionsFactory: OptionsFactory;
     protected readOnly: boolean;
     protected defaultDebounceMs: number = 0;
+
+    protected reactive: boolean;
+
+    protected abstract readonly filterType: 'text' | 'number' | 'date';
+
+    protected abstract readonly FilterModelFormatterClass: new (
+        getLocaleTextFunc: () => LocaleTextFunc,
+        optionsFactory: OptionsFactory,
+        filterParams: ISimpleFilterParams
+    ) => SimpleFilterModelFormatter<ISimpleFilterParams>;
 
     protected setLastTypeFromModel(model: ProvidedFilterModel): void {
         // if no model provided by the parent filter use default
@@ -69,24 +82,42 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         return this.isTypeEditable(simpleModel.type);
     }
 
-    public init(params: IFloatingFilterParams): void {
+    public init(params: TParams): void {
+        this.params = params;
+        const reactive = this.gos.get('enableFilterHandlers');
+        this.reactive = reactive;
+        this.setParams(params);
+
+        if (reactive) {
+            const reactiveParams = params as unknown as FloatingFilterDisplayParams;
+            this.onModelUpdated(reactiveParams.model);
+        }
+    }
+
+    protected setParams(params: TParams): void {
+        const optionsFactory = new OptionsFactory();
+        this.optionsFactory = optionsFactory;
+        optionsFactory.init(params.filterParams as ISimpleFilterParams, this.defaultOptions);
+
+        this.filterModelFormatter = new this.FilterModelFormatterClass(
+            this.getLocaleTextFunc.bind(this),
+            optionsFactory,
+            params.filterParams as ISimpleFilterParams
+        );
+
         this.setSimpleParams(params, false);
     }
 
-    private setSimpleParams(params: IFloatingFilterParams, update: boolean = true): void {
-        const optionsFactory = new OptionsFactory();
-        this.optionsFactory = optionsFactory;
-        optionsFactory.init(params.filterParams as ScalarFilterParams, this.getDefaultOptions());
-
-        const defaultOption = optionsFactory.defaultOption;
+    private setSimpleParams(params: TParams, update: boolean = true): void {
+        const defaultOption = this.optionsFactory.defaultOption;
         // Initial call
         if (!update) {
             this.lastType = defaultOption;
         }
 
-        // readOnly is a property of ProvidedFilterParams - we need to find a better (type-safe)
+        // readOnly is a property of IProvidedFilterParams - we need to find a better (type-safe)
         // way to support reading this in the future.
-        this.readOnly = !!(params.filterParams as ProvidedFilterParams).readOnly;
+        this.readOnly = !!(params.filterParams as IProvidedFilterParams).readOnly;
 
         // we are editable if:
         // 1) there is a type (user has configured filter wrong if not type)
@@ -96,8 +127,45 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         this.setEditable(editable);
     }
 
-    public refresh(params: IFloatingFilterParams): void {
+    public refresh(params: TParams): void {
+        this.params = params;
+        const reactiveParams = params as unknown as FloatingFilterDisplayParams;
+        const reactive = this.reactive;
+        if (!reactive || reactiveParams.source === 'colDef') {
+            this.updateParams(params);
+        }
+
+        if (reactive) {
+            const { source, model } = reactiveParams;
+            if (source === 'dataChanged' || source === 'ui') {
+                return;
+            }
+            this.onModelUpdated(model);
+        }
+    }
+
+    protected updateParams(params: TParams): void {
+        const optionsFactory = this.optionsFactory;
+        optionsFactory.refresh(params.filterParams as ISimpleFilterParams, this.defaultOptions);
+
         this.setSimpleParams(params);
+
+        this.filterModelFormatter.updateParams({
+            optionsFactory,
+            filterParams: params.filterParams as ISimpleFilterParams,
+        });
+    }
+
+    public onParentModelChanged(model: ProvidedFilterModel, event: FilterChangedEvent): void {
+        // We don't want to update the floating filter if the floating filter caused the change,
+        // because the UI is already in sync. if we didn't do this, the UI would behave strangely
+        // as it would be updating as the user is typing.
+        // This is similar for data changes, which don't affect simple floating filters
+        if (event?.afterFloatingFilter || event?.afterDataChange) {
+            return;
+        }
+
+        this.onModelUpdated(model);
     }
 
     private hasSingleInput(filterType: string) {
