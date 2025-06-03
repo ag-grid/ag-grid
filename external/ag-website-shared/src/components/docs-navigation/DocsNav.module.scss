@@ -134,7 +134,7 @@
     background-color: var(--color-border-secondary);
 }
 
-.groupTitle {
+button.groupTitle {
     position: relative;
     width: 100%;
     padding-left: calc(var(--indent-size) + var(--indent-initial-offset));
