@@ -1,7 +1,7 @@
 ---
 import { DevTools } from '@ag-website-shared/components/dev-tools/DevTools';
 import { getEntry, type CollectionEntry } from 'astro:content';
-import '@design-system/design-system.scss';
+import dsStylesUrl from '@design-system/design-system.scss?url';
 import SiteHeader from '@ag-website-shared/components/site-header/SiteHeader.astro';
 import { getFavIconsData, getAppleTouchIconsData } from '@utils/favicons';
 import { getIsProduction, getIsArchive, getIsStaging, getIsDev } from '@utils/env';
@@ -84,6 +84,9 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
                 />
             )
         }
+
+        <!-- Import all global design system CSS -->
+        <link rel="preload" href={dsStylesUrl} as="style" />
 
         <!-- Facebook Meta Tags -->
         <meta property="og:url" content={canonicalUrl} />
