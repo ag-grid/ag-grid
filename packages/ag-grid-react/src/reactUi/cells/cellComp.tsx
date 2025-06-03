@@ -1,5 +1,14 @@
 import type { MutableRefObject } from 'react';
-import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, {
+    memo,
+    startTransition,
+    useCallback,
+    useContext,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 
 import type {
     CellCtrl,
@@ -403,17 +412,26 @@ const CellComp = ({
             getParentOfValue: () => eCellValue.current ?? eCellWrapper.current ?? eGui.current,
 
             setRenderDetails: (compDetails, value, force) => {
-                setRenderDetails((prev) => {
-                    if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
-                        return {
-                            value,
-                            compDetails,
-                            force,
-                        };
-                    } else {
-                        return prev;
-                    }
-                });
+                const setDetails = () => {
+                    setRenderDetails((prev) => {
+                        if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
+                            return {
+                                value,
+                                compDetails,
+                                force,
+                            };
+                        } else {
+                            return prev;
+                        }
+                    });
+                };
+                if (compDetails?.params?.renderAsync) {
+                    startTransition(() => {
+                        setDetails();
+                    });
+                } else {
+                    setDetails();
+                }
             },
 
             setEditDetails: (compDetails, popup, popupPosition, reactiveCustomComponents) => {
