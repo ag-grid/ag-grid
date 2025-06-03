@@ -86,7 +86,7 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
         }
 
         <!-- Import all global design system CSS -->
-        <link rel="preload" href={dsStylesUrl} as="style" />
+        <link rel="stylesheet" href={dsStylesUrl} />
 
         <!-- Facebook Meta Tags -->
         <meta property="og:url" content={canonicalUrl} />
