@@ -1,14 +1,5 @@
 import type { MutableRefObject } from 'react';
-import React, {
-    memo,
-    startTransition,
-    useCallback,
-    useContext,
-    useLayoutEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import type {
     CellCtrl,
@@ -27,7 +18,7 @@ import { CustomContext } from '../../shared/customComp/customContext';
 import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
-import { isComponentStateless } from '../utils';
+import { agStartTransition, isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 
@@ -426,9 +417,7 @@ const CellComp = ({
                     });
                 };
                 if (compDetails?.params?.renderAsync) {
-                    startTransition(() => {
-                        setDetails();
-                    });
+                    agStartTransition(setDetails);
                 } else {
                     setDetails();
                 }

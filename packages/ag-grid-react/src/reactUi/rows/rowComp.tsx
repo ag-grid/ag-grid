@@ -1,5 +1,4 @@
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useSyncExternalStore } from 'react';
 
 import type {
     CellCtrl,
@@ -80,18 +79,19 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         cssManager.current = new CssClassManager(() => eGui.current);
     }
 
+    let cellCtrlsMerged = cellCtrls;
     const cellsChanged = useRef<any>(() => {});
-    const sub = useCallback((onStoreChange: any) => {
-        cellsChanged.current = onStoreChange;
-        return () => {
-            cellsChanged.current = () => {};
-        };
-    }, []);
-    const cellCtrlsSync = useSyncExternalStore(sub, () => {
-        return cellCtrlsRef.current;
-    });
-
-    const cellCtrlsMerged = mode === 'uses' ? cellCtrlsSync : cellCtrls;
+    if (mode === 'uses' && React.useSyncExternalStore) {
+        const sub = useCallback((onStoreChange: any) => {
+            cellsChanged.current = onStoreChange;
+            return () => {
+                cellsChanged.current = () => {};
+            };
+        }, []);
+        cellCtrlsMerged = React.useSyncExternalStore(sub, () => {
+            return cellCtrlsRef.current;
+        });
+    }
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
