@@ -16,6 +16,7 @@ import RowComp from './rowComp';
 
 const RowContainerComp = ({ name }: { name: RowContainerName }) => {
     const { context, gos } = useContext(BeansContext);
+
     const containerOptions = useMemo(() => _getRowContainerOptions(name), [name]);
 
     const eViewport = useRef<HTMLDivElement | null>(null);
