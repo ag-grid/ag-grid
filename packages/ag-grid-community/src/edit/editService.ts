@@ -323,7 +323,7 @@ export class EditService extends BeanStub implements NamedBean {
 
                 const cellCtrl = _resolveCellController(this.beans, { rowNode, column });
 
-                const valueChanged = newValue !== UNEDITED && _valuesDiffer({ newValue, oldValue });
+                const valueChanged = _valuesDiffer({ newValue, oldValue });
 
                 if (!cancel && valueChanged) {
                     // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection

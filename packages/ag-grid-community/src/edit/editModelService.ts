@@ -185,14 +185,21 @@ export class EditModelService extends BeanStub implements NamedBean {
                 }
                 return rowEdits.has(column) ?? false;
             } else if (rowEdits.size !== 0) {
+                if (withOpenEditors) {
+                    return Array.from(rowEdits.values()).some(({ state }) => state === 'editing');
+                }
                 return true;
             }
 
-            return checkSiblings
-                ? !!_getSiblingRows(this.beans, rowNode, false, includeParents).find((sibling) =>
-                      this.hasPending(sibling, column, false, includeParents)
-                  )
-                : rowEdits.size > 0;
+            return (
+                checkSiblings &&
+                !!_getSiblingRows(this.beans, rowNode, false, includeParents).find((sibling) =>
+                    this.hasPending(sibling, column, false, includeParents)
+                )
+            );
+        }
+        if (withOpenEditors) {
+            return this.getPendingCellIds().some(({ state }: any) => state === 'editing');
         }
         return this.pendingUpdates.size > 0;
     }

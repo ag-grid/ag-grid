@@ -16,7 +16,7 @@ import type { CellPosition } from '../interfaces/iCellPosition';
 import { _warn } from '../validation/logging';
 import type { PendingUpdates } from './editModelService';
 import { _resolveControllers } from './utils/controllers';
-import { _valuesDiffer } from './utils/editors';
+import { UNEDITED, _valuesDiffer } from './utils/editors';
 
 export function undoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.undo('api');
@@ -60,6 +60,11 @@ export function getEditingCells(beans: BeanCollection, params: GetEditingCellsPa
     const pendingPositions: EditingCellPosition[] = [];
     pendingUpdates?.forEach((rowUpdateMap, { rowIndex, rowPinned }) => {
         rowUpdateMap.forEach(({ newValue, oldValue, state }, column) => {
+            if (newValue === UNEDITED) {
+                // filter out internal details, let null through as that indicates cleared cell value
+                return;
+            }
+
             if (state === 'changed' && !params?.includePending) {
                 return; // skip changed cells if not requested
             }
@@ -120,6 +125,11 @@ export function setEditingCells(
         if (!rowMap) {
             rowMap = new Map();
             pendingUpdates.set(rowNode, rowMap);
+        }
+
+        // translate undefined to unedited, don't translate null as that means cell was cleared
+        if (newValue === undefined) {
+            newValue = UNEDITED;
         }
 
         rowMap.set(col, { newValue, oldValue, state: state ?? 'changed' });

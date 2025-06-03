@@ -1,4 +1,5 @@
 import type { BeanName } from '../../context/context';
+import { _getRowNode } from '../../entities/positionUtils';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
@@ -100,10 +101,21 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
     }
 
     public override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
-        const { rowIndex, column } = event;
-        const previous = (event as any)['previousParams']! as CommonCellFocusParams;
+        const { colModel, editSvc } = this.beans;
+        const { rowIndex, column, rowPinned } = event;
+        const rowNode = _getRowNode(this.beans, { rowIndex: rowIndex!, rowPinned });
+        const curColId = _getColId(column);
+        const curCol = colModel.getCol(curColId);
 
-        if (previous?.rowIndex === rowIndex && _getColId(previous?.column) === _getColId(column)) {
+        const previous = (event as any)['previousParams']! as CommonCellFocusParams;
+        const prevColId = _getColId(previous.column);
+
+        if (previous?.rowIndex === rowIndex && prevColId === curColId && previous?.rowPinned === rowPinned) {
+            return;
+        }
+
+        if (editSvc?.isEditing(rowNode, curCol, false, true)) {
+            // editor is already active, so we don't need to do anything
             return;
         }
 

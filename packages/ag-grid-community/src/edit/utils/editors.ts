@@ -58,8 +58,8 @@ export function _setupEditors(
     return startedCompDetails;
 }
 
-export function _valuesDiffer(cell: Pick<EditedCell, 'newValue' | 'oldValue'>): boolean {
-    return `${cell.newValue ?? ''}` !== `${cell.oldValue ?? ''}`;
+export function _valuesDiffer({ newValue, oldValue }: Pick<EditedCell, 'newValue' | 'oldValue'>): boolean {
+    return newValue !== UNEDITED && `${newValue ?? ''}` !== `${oldValue ?? ''}`;
 }
 
 export function _setupEditor(
@@ -184,7 +184,7 @@ export function _purgeUnchangedEdits(beans: BeanCollection): void {
     beans.editModelSvc?.getPendingUpdates().forEach((rowUpdateMap, rowNode) => {
         const removedRowCells: CellIdPositions[] = [];
         rowUpdateMap.forEach((cellData, column) => {
-            if (cellData.newValue === UNEDITED || (!_valuesDiffer(cellData) && cellData.state !== 'editing')) {
+            if (cellData.newValue !== UNEDITED && !_valuesDiffer(cellData) && cellData.state !== 'editing') {
                 // remove edits where the pending is equal to the old value
                 beans.editModelSvc?.removePendingEdit(rowNode, column);
                 removedRowCells.push({ rowNode, column });
@@ -253,13 +253,12 @@ export function _syncModelFromEditor(
     const cellCtrl = _resolveCellController(beans, { rowNode, column });
     const hasEditor = !!cellCtrl?.comp?.getCellEditor();
 
-    beans.editModelSvc?.setPendingValue(
-        rowNode,
-        column,
-        newValue ?? UNEDITED,
-        oldValue,
-        hasEditor ? 'editing' : 'changed'
-    );
+    // Only handle undefined, null is used to indicate a cleared cell value
+    if (newValue === undefined) {
+        newValue = UNEDITED;
+    }
+
+    beans.editModelSvc?.setPendingValue(rowNode, column, newValue, oldValue, hasEditor ? 'editing' : 'changed');
 }
 
 export function _destroyEditors(beans: BeanCollection, cellPositions: CellIdPositions[]): void {
