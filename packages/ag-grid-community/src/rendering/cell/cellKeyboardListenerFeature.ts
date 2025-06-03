@@ -66,7 +66,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     private onNavigationKeyDown(event: KeyboardEvent, key: string): void {
         const { cellCtrl, beans, rowNode } = this;
-        if (beans.editSvc?.isEditing(rowNode, cellCtrl?.column)) {
+        if (beans.editSvc?.isEditing(rowNode, cellCtrl?.column, false, true)) {
             return;
         }
 
