@@ -1,7 +1,7 @@
 import type { BenchOptions } from 'vitest';
 import { bench, suite } from 'vitest';
 
-import type { GridOptions } from 'ag-grid-community';
+import type { GridApi } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
@@ -12,46 +12,47 @@ suite('treeData with getDataPath', () => {
         modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, TreeDataModule],
     });
 
-    beforeEach(() => {
-        gridsManager.reset();
-    });
-
-    afterEach(() => {
-        gridsManager.reset();
-    });
+    let api!: GridApi<TreeDataPathData>;
 
     const rowData = buildRandomTreeDataPath(20000);
     const rowData1 = buildUpdatedRowData(rowData);
 
-    const getRowId = ({ data }: { data: { id: string } }) => data.id;
-    const getDataPath = (data: { path: string[] }) => data.path;
-
-    const gridOptions: GridOptions = {
-        columnDefs: [],
-        autoGroupColumnDef: { headerName: 'Path' },
-        rowData,
-        treeData: true,
-        groupDefaultExpanded: -1,
-        getDataPath,
-        getRowId,
+    const benchOptions: BenchOptions = {
+        throws: true,
+        setup: () => {
+            api = gridsManager.createGrid('G', {
+                columnDefs: [],
+                autoGroupColumnDef: { headerName: 'Path' },
+                rowData: [],
+                treeData: true,
+                groupDefaultExpanded: -1,
+                getDataPath: (data: { path: string[] }) => data.path,
+                getRowId: ({ data }: { data: { id: string } }) => data.id,
+            });
+        },
+        teardown: () => {
+            gridsManager.reset();
+            api = undefined!;
+        },
     };
-
-    const benchOptions: BenchOptions = { throws: true };
 
     bench(
         'build from scratch',
         () => {
-            gridsManager.reset();
-            gridsManager.createGrid('G', gridOptions);
+            api.setGridOption('rowData', []);
+            api.setGridOption('rowData', rowData);
         },
         benchOptions
     );
 
-    bench('update row data', () => {
-        gridsManager.reset();
-        const api = gridsManager.createGrid('G', gridOptions);
-        api.setGridOption('rowData', rowData1);
-    });
+    bench(
+        'update rowData',
+        () => {
+            api.setGridOption('rowData', rowData);
+            api.setGridOption('rowData', rowData1);
+        },
+        benchOptions
+    );
 });
 
 interface TreeDataPathData {
