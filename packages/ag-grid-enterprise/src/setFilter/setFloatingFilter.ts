@@ -1,9 +1,8 @@
 import type {
     AgColumn,
     AgInputTextField,
-    BeanCollection,
-    ColumnNameService,
     ElementParams,
+    FloatingFilterDisplayParams,
     IFloatingFilter,
     IFloatingFilterParams,
     SetFilterModel,
@@ -11,7 +10,7 @@ import type {
 import { AgInputTextFieldSelector, Component, RefPlaceholder, _error } from 'ag-grid-community';
 
 import { SetFilter } from './setFilter';
-import { SetFilterModelFormatter } from './setFilterModelFormatter';
+import type { SetFilterHandler } from './setFilterHandler';
 
 const SetFloatingFilterElement: ElementParams = {
     tag: 'div',
@@ -26,16 +25,10 @@ const SetFloatingFilterElement: ElementParams = {
 };
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
-    private colNames: ColumnNameService;
     private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
-
-    public wireBeans(beans: BeanCollection) {
-        this.colNames = beans.colNames;
-    }
 
     private params: IFloatingFilterParams;
     private availableValuesListenerAdded = false;
-    private readonly filterModelFormatter = new SetFilterModelFormatter();
 
     constructor() {
         super(SetFloatingFilterElement, [AgInputTextFieldSelector]);
@@ -50,10 +43,15 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     }
 
     private setParams(params: IFloatingFilterParams): void {
-        const displayName = this.colNames.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
+        const displayName = this.beans.colNames.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
         const translate = this.getLocaleTextFunc();
 
         this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
+
+        if (this.gos.get('enableFilterHandlers')) {
+            const reactiveParams = params as unknown as FloatingFilterDisplayParams;
+            this.updateFloatingFilterText(reactiveParams.model);
+        }
     }
 
     public refresh(params: IFloatingFilterParams): void {
@@ -61,7 +59,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         this.setParams(params);
     }
 
-    public onParentModelChanged(parentModel: SetFilterModel): void {
+    public onParentModelChanged(parentModel: SetFilterModel | null): void {
         this.updateFloatingFilterText(parentModel);
     }
 
@@ -77,31 +75,46 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     }
 
     private addAvailableValuesListener(): void {
-        this.parentSetFilterInstance((setFilter) => {
-            const setValueModel = setFilter.getValueModel();
-
-            if (!setValueModel) {
-                return;
-            }
-
+        const addListener = (handler: SetFilterHandler<V>) => {
             // unlike other filters, what we show in the floating filter can be different, even
             // if another filter changes. this is due to how set filter restricts its values based
             // on selections in other filters, e.g. if you filter Language to English, then the set filter
             // on Country will only show English speaking countries. Thus the list of items to show
             // in the floating filter can change.
-            this.addManagedListeners(setValueModel, { availableValuesChanged: () => this.updateFloatingFilterText() });
-        });
+            this.addManagedListeners(handler.valueModel, {
+                availableValuesChanged: () => this.updateFloatingFilterText(handler.params.model),
+            });
+        };
+        if (this.gos.get('enableFilterHandlers')) {
+            addListener((this.params as unknown as FloatingFilterDisplayParams).getHandler() as SetFilterHandler<V>);
+        } else {
+            this.parentSetFilterInstance((setFilter) => {
+                addListener(setFilter.handler);
+            });
+        }
 
         this.availableValuesListenerAdded = true;
     }
 
-    private updateFloatingFilterText(parentModel?: SetFilterModel | null): void {
+    private updateFloatingFilterText(parentModel: SetFilterModel | null): void {
         if (!this.availableValuesListenerAdded) {
             this.addAvailableValuesListener();
         }
 
-        this.parentSetFilterInstance((setFilter) => {
-            this.eFloatingFilterText.setValue(this.filterModelFormatter.getModelAsString(parentModel, setFilter));
-        });
+        if (parentModel == null) {
+            this.eFloatingFilterText.setValue('');
+        } else {
+            if (this.gos.get('enableFilterHandlers')) {
+                this.eFloatingFilterText.setValue(
+                    (this.params as unknown as FloatingFilterDisplayParams)
+                        .getHandler()
+                        .getModelAsString?.(parentModel) ?? ''
+                );
+            } else {
+                this.parentSetFilterInstance((setFilter) => {
+                    this.eFloatingFilterText.setValue(setFilter.getModelAsString(parentModel));
+                });
+            }
+        }
     }
 }

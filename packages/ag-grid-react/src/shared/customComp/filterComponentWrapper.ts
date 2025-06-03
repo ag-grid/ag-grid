@@ -54,7 +54,7 @@ export class FilterComponentWrapper
     }
 
     protected override getOptionalMethods(): string[] {
-        return ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onAnyFilterChanged'];
+        return ['afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onAnyFilterChanged'];
     }
 
     protected override setMethods(methods: CustomFilterCallbacks): void {
@@ -88,7 +88,6 @@ export class FilterComponentWrapper
         props.onUiChange = this.onUiChange;
         // remove props in IFilterParams but not CustomFilterProps
         delete (props as any).filterChangedCallback;
-        delete (props as any).filterModifiedCallback;
         return props;
     }
 }

@@ -9,47 +9,24 @@ export default {
     `,
     data: function () {
         return {
-            filterText: null,
+            filterText: '',
         };
     },
     watch: {
-        filterText(newFilterText, oldFilterText) {
-            this.params.filterChangedCallback();
+        filterText(newFilterText) {
+            this.params.onModelChange(newFilterText === '' ? null : Number(newFilterText));
         },
     },
     methods: {
-        isFilterActive() {
-            return (
-                this.filterText !== null &&
-                this.filterText !== undefined &&
-                this.filterText !== '' &&
-                this.isNumeric(this.filterText)
-            );
-        },
-
-        doesFilterPass(params) {
-            const value = this.params.getValue(params.node);
-
-            if (this.isFilterActive()) {
-                if (value == null) return false;
-                return Number(value) > Number(this.filterText);
+        refresh(params) {
+            // if the update is from the floating filter, we don't need to update the UI
+            if (params.source !== 'ui') {
+                this.filterText = String(params.model ?? '');
             }
+            return true;
         },
-
-        isNumeric(n) {
-            return !isNaN(parseFloat(n)) && isFinite(n);
-        },
-
-        getModel() {
-            return this.isFilterActive() ? Number(this.filterText) : null;
-        },
-
-        setModel(model) {
-            this.filterText = model;
-        },
-
-        getModelAsString() {
-            return this.isFilterActive() ? '>' + this.filterText : '';
-        },
+    },
+    mounted: function () {
+        this.refresh(this.params);
     },
 };

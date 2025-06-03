@@ -1,6 +1,7 @@
 import type { _ColumnFilterGridApi, _FilterGridApi, _QuickFilterGridApi } from '../api/gridApi';
 import { FilterStage } from '../clientSideRowModel/filterStage';
 import { HeaderFilterCellCtrl } from '../headerRendering/cells/floatingFilter/headerFilterCellCtrl';
+import type { FilterWrapperParams } from '../interfaces/iFilter';
 import type { _ModuleWithApi } from '../interfaces/iModule';
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { SharedMenuModule } from '../misc/menu/sharedMenuModule';
@@ -9,6 +10,7 @@ import { PopupModule } from '../widgets/popupModule';
 import { columnFiltersCSS } from './column-filters.css-GENERATED';
 import {
     destroyFilter,
+    getColumnFilterHandler,
     getColumnFilterInstance,
     getColumnFilterModel,
     getFilterModel,
@@ -24,11 +26,14 @@ import { FilterMenuFactory } from './filterMenuFactory';
 import { FilterValueService } from './filterValueService';
 import { ReadOnlyFloatingFilter } from './floating/provided/readOnlyFloatingFilter';
 import { DateFilter } from './provided/date/dateFilter';
+import { DateFilterHandler } from './provided/date/dateFilterHandler';
 import { DateFloatingFilter } from './provided/date/dateFloatingFilter';
 import { DefaultDateComponent } from './provided/date/defaultDateComponent';
 import { NumberFilter } from './provided/number/numberFilter';
+import { NumberFilterHandler } from './provided/number/numberFilterHandler';
 import { NumberFloatingFilter } from './provided/number/numberFloatingFilter';
 import { TextFilter } from './provided/text/textFilter';
+import { TextFilterHandler } from './provided/text/textFilterHandler';
 import { TextFloatingFilter } from './provided/text/textFloatingFilter';
 import { getQuickFilter, isQuickFilterPresent, resetQuickFilter } from './quickFilterApi';
 import { QuickFilterService } from './quickFilterService';
@@ -90,6 +95,7 @@ export const ColumnFilterModule: _ModuleWithApi<_ColumnFilterGridApi> = {
         getColumnFilterModel,
         setColumnFilterModel,
         showColumnFilter,
+        getColumnFilterHandler,
     },
     dependsOn: [FilterCoreModule, PopupModule, FilterValueModule, SharedMenuModule],
 };
@@ -112,8 +118,16 @@ export const TextFilterModule: _ModuleWithoutApi = {
     version: VERSION,
     dependsOn: [ColumnFilterModule],
     userComponents: {
-        agTextColumnFilter: TextFilter,
+        agTextColumnFilter: {
+            classImp: TextFilter,
+            params: {
+                useForm: true,
+            } as FilterWrapperParams,
+        },
         agTextColumnFloatingFilter: TextFloatingFilter,
+    },
+    dynamicBeans: {
+        agTextColumnFilterHandler: TextFilterHandler,
     },
 };
 
@@ -125,8 +139,16 @@ export const NumberFilterModule: _ModuleWithoutApi = {
     version: VERSION,
     dependsOn: [ColumnFilterModule],
     userComponents: {
-        agNumberColumnFilter: NumberFilter,
+        agNumberColumnFilter: {
+            classImp: NumberFilter,
+            params: {
+                useForm: true,
+            } as FilterWrapperParams,
+        },
         agNumberColumnFloatingFilter: NumberFloatingFilter,
+    },
+    dynamicBeans: {
+        agNumberColumnFilterHandler: NumberFilterHandler,
     },
 };
 
@@ -138,9 +160,17 @@ export const DateFilterModule: _ModuleWithoutApi = {
     version: VERSION,
     dependsOn: [ColumnFilterModule],
     userComponents: {
-        agDateColumnFilter: DateFilter,
+        agDateColumnFilter: {
+            classImp: DateFilter,
+            params: {
+                useForm: true,
+            } as FilterWrapperParams,
+        },
         agDateInput: DefaultDateComponent,
         agDateColumnFloatingFilter: DateFloatingFilter,
+    },
+    dynamicBeans: {
+        agDateColumnFilterHandler: DateFilterHandler,
     },
 };
 

@@ -1,4 +1,5 @@
 import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect } from 'react';
 
 import type {
     HeaderFilterCellCtrl,
@@ -11,6 +12,7 @@ import { AgPromise, _EmptyBean } from 'ag-grid-community';
 
 import { CustomContext } from '../../shared/customComp/customContext';
 import { FloatingFilterComponentProxy } from '../../shared/customComp/floatingFilterComponentProxy';
+import { FloatingFilterDisplayComponentProxy } from '../../shared/customComp/floatingFilterDisplayComponentProxy';
 import type { CustomFloatingFilterCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
@@ -102,21 +104,23 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
     }, [userCompDetails]);
 
     const reactiveCustomComponents = useMemo(() => gos.get('reactiveCustomComponents'), []);
-    const floatingFilterCompProxy = useMemo(() => {
-        if (userCompDetails) {
+    const enableFilterHandlers = useMemo(() => gos.get('enableFilterHandlers'), []);
+    const floatingFilterCompProxy = useRef<FloatingFilterComponentProxy | FloatingFilterDisplayComponentProxy>();
+    useEffect(() => {
+        if (userCompDetails?.componentFromFramework) {
             if (reactiveCustomComponents) {
-                const compProxy = new FloatingFilterComponentProxy(userCompDetails!.params, () =>
-                    setRenderKey((prev) => prev + 1)
-                );
-                userCompRef(compProxy);
-                return compProxy;
-            } else if (userCompDetails.componentFromFramework) {
+                const ProxyClass = enableFilterHandlers
+                    ? FloatingFilterDisplayComponentProxy
+                    : FloatingFilterComponentProxy;
+                const compProxy = new ProxyClass(userCompDetails!.params, () => setRenderKey((prev) => prev + 1));
+                userCompRef(compProxy as IFloatingFilter);
+                floatingFilterCompProxy.current = compProxy;
+            } else {
                 warnReactiveCustomComponents();
             }
         }
-        return undefined;
     }, [userCompDetails]);
-    const floatingFilterProps = floatingFilterCompProxy?.getProps();
+    const floatingFilterProps = floatingFilterCompProxy.current?.getProps();
 
     const reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
@@ -131,7 +135,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
                     <CustomContext.Provider
                         value={{
                             setMethods: (methods: CustomFloatingFilterCallbacks) =>
-                                floatingFilterCompProxy!.setMethods(methods),
+                                floatingFilterCompProxy.current!.setMethods(methods),
                         }}
                     >
                         <UserCompClass {...floatingFilterProps!} />

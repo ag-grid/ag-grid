@@ -1,8 +1,6 @@
 {% if isFramework("react") %}
 Custom floating filter components are controlled components, which receive a filter model as part of the props, and pass model updates back to the grid via the `onModelChange` callback. A filter model of `null` means that no filter is applied (the filter displays as inactive). Note that the filter is applied immediately when `onModelChange` is called.
-{% /if %}
 
-{% if isFramework("react") %}
 ```jsx
 export default ({ model, onModelChange }) => {
     return (
@@ -16,34 +14,18 @@ export default ({ model, onModelChange }) => {
     );
 }
 ```
-{% /if %}
 
-{% if isFramework("react") %}
-{% note %}
-In previous versions of the grid, custom components were declared in an imperative way. See [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option) for details on how to migrate to the current format.
-{% /note %}
-{% /if %}
-
-{% if isFramework("react") %}
 ## Custom Floating Filter Parameters
-{% /if %}
 
-{% if isFramework("react") %}
 ### Floating Filter Props
 
-The following props are passed to the custom floating filter components (`CustomFloatingFilterProps` interface). If custom props are provided via the `colDef.floatingFilterParams` property, these will be additionally added to the props object, overriding items of the same name if a name clash exists.
-{% /if %}
+The following props are passed to the custom floating filter components (`CustomFloatingFilterDisplayProps` interface). If custom props are provided via the `colDef.floatingFilterParams` property, these will be additionally added to the props object, overriding items of the same name if a name clash exists.
 
-{% if isFramework("react") %}
-{% interfaceDocumentation interfaceName="CustomFloatingFilterProps" config={ "description": "" } /%}
-{% /if %}
+{% interfaceDocumentation interfaceName="CustomFloatingFilterDisplayProps" config={ "description": "" } /%}
 
-{% if isFramework("react") %}
 ### Floating Filter Callbacks
 
 The following callbacks can be passed to the `useGridFloatingFilter` hook (`CustomFloatingFilterCallbacks` interface). All the callbacks are optional, and the hook only needs to be used if callbacks are provided.
-{% /if %}
 
-{% if isFramework("react") %}
 {% interfaceDocumentation interfaceName="CustomFloatingFilterCallbacks" config={ "description": "" } /%}
 {% /if %}

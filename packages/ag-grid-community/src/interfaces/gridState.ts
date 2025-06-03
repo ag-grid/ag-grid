@@ -1,12 +1,22 @@
 import type { CellRangeType } from './IRangeService';
 import type { AdvancedFilterModel } from './advancedFilterModel';
-import type { FilterModel } from './iFilter';
+import type { ColumnFilterState, FilterModel } from './iFilter';
 import type { RowPosition } from './iRowPosition';
 import type { SortModelItem } from './iSortModelItem';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './selectionState';
 
 export interface FilterState {
+    /**
+     * Filter model for Column Filters
+     */
     filterModel?: FilterModel;
+    /**
+     * State for Column Filters
+     */
+    columnFilterState?: ColumnFilterState;
+    /**
+     * Filter model for Advanced Filter
+     */
     advancedFilterModel?: AdvancedFilterModel;
 }
 

@@ -55,7 +55,9 @@ import type { IExpansionService } from '../interfaces/iExpansionService';
 import type { IFindService } from '../interfaces/iFind';
 import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import type { IGroupFilterService } from '../interfaces/iGroupFilterService';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
+import type { IMultiFilterService } from '../interfaces/iMultiFilterService';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
@@ -127,8 +129,15 @@ export type DynamicBeanName =
     | 'rangeHandle'
     | 'tooltipFeature'
     | 'groupStrategy'
+    | 'treeParentIdStrategy'
     | 'treeGroupStrategy'
-    | 'rowNumberRowResizer';
+    | 'rowNumberRowResizer'
+    | 'agSetColumnFilterHandler'
+    | 'agMultiColumnFilterHandler'
+    | 'agGroupColumnFilterHandler'
+    | 'agNumberColumnFilterHandler'
+    | 'agDateColumnFilterHandler'
+    | 'agTextColumnFilterHandler';
 
 export type UserComponentName =
     | 'agDragAndDropImage'
@@ -182,13 +191,27 @@ export type UserComponentName =
     | 'agFindCellRenderer';
 
 export type ClassImp = new (...args: []) => object;
-export type ComponentMeta =
-    | ClassImp
-    | {
-          classImp: ClassImp;
-          /** Default params for provided components */
-          params?: any;
-      };
+
+interface ComponentMetaWithParams {
+    classImp: ClassImp;
+    /** Default params for provided components */
+    params?: any;
+    /** Update params for provided components before they are created */
+    processParams?: ProcessParamsFunc;
+}
+interface ComponentMetaFunc {
+    getComp: (beans: BeanCollection) => ClassImp | ComponentMetaWithParams;
+}
+
+export function isComponentMetaFunc(
+    componentMeta: ClassImp | ComponentMetaWithParams | ComponentMetaFunc
+): componentMeta is ComponentMetaFunc {
+    return typeof componentMeta === 'object' && !!(componentMeta as ComponentMetaFunc).getComp;
+}
+
+export type ComponentMeta = ClassImp | ComponentMetaWithParams | ComponentMetaFunc;
+
+export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
 
 export interface CoreBeanCollection {
     context: Context;
@@ -313,6 +336,8 @@ export interface CoreBeanCollection {
     rowSpanSvc?: RowSpanService;
     spannedRowRenderer?: SpannedRowRenderer;
     findSvc?: IFindService;
+    groupFilter?: IGroupFilterService;
+    multiFilter?: IMultiFilterService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -431,6 +456,7 @@ export type BeanName =
     | 'gos'
     | 'gridOptionsWrapper'
     | 'gridSerializer'
+    | 'groupFilter'
     | 'groupStage'
     | 'headerNavigation'
     | 'horizontalResizeSvc'
@@ -441,6 +467,7 @@ export type BeanName =
     | 'menuItemMapper'
     | 'menuSvc'
     | 'menuUtils'
+    | 'multiFilter'
     | 'navigation'
     | 'overlays'
     | 'paginationAutoPageSizeSvc'

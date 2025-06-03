@@ -1,14 +1,13 @@
-import type { FilterChangedEvent } from '../../../events';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
-import { _parseDateTimeFromString } from '../../../utils/date';
+import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import type { ElementParams } from '../../../utils/dom';
 import { _setDisplayed } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { RefPlaceholder } from '../../../widgets/component';
-import type { IFloatingFilterParams } from '../../floating/floatingFilter';
+import type { FloatingFilterDisplayParams, IFloatingFilterParams } from '../../floating/floatingFilter';
 import { getDebounceMs } from '../../floating/provided/providedFilterUtils';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import type { ISimpleFilterModel } from '../iSimpleFilter';
@@ -31,49 +30,31 @@ const DateFloatingFilterElement: ElementParams = {
     ],
 };
 
-export class DateFloatingFilter extends SimpleFloatingFilter {
+export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterParams<DateFilter>> {
     private readonly eReadOnlyText: AgInputTextField = RefPlaceholder;
     private readonly eDateWrapper: HTMLInputElement = RefPlaceholder;
 
+    protected readonly FilterModelFormatterClass = DateFilterModelFormatter;
     private dateComp: DateCompWrapper;
-    private params: IFloatingFilterParams<DateFilter>;
-    private filterParams: DateFilterParams;
-    protected filterModelFormatter: DateFilterModelFormatter;
+    protected readonly filterType = 'date';
+    protected readonly defaultOptions = DEFAULT_DATE_FILTER_OPTIONS;
 
     constructor() {
         super(DateFloatingFilterElement, [AgInputTextFieldSelector]);
     }
 
-    protected getDefaultOptions(): string[] {
-        return DEFAULT_DATE_FILTER_OPTIONS;
-    }
-
-    public override init(params: IFloatingFilterParams<DateFilter>): void {
-        super.init(params);
-        this.params = params;
-        this.filterParams = params.filterParams;
+    protected override setParams(params: IFloatingFilterParams<DateFilter>): void {
+        super.setParams(params);
 
         this.createDateComponent();
-        this.filterModelFormatter = new DateFilterModelFormatter(
-            this.filterParams,
-            this.getLocaleTextFunc.bind(this),
-            this.optionsFactory
-        );
         const translate = this.getLocaleTextFunc();
         this.eReadOnlyText.setDisabled(true).setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
     }
 
-    public override refresh(params: IFloatingFilterParams<DateFilter>): void {
-        super.refresh(params);
-        this.params = params;
-        this.filterParams = params.filterParams;
-
+    protected override updateParams(params: IFloatingFilterParams<DateFilter, any, any>): void {
+        super.updateParams(params);
         this.dateComp.updateParams(this.getDateComponentParams());
 
-        this.filterModelFormatter.updateParams({
-            optionsFactory: this.optionsFactory,
-            dateFilterParams: this.filterParams,
-        });
         this.updateCompOnModelChange(params.currentParentModel());
     }
 
@@ -98,15 +79,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         _setDisplayed(this.eReadOnlyText.getGui(), !editable);
     }
 
-    public onParentModelChanged(model: ISimpleFilterModel, event: FilterChangedEvent): void {
-        // We don't want to update the floating filter if the floating filter caused the change,
-        // because the UI is already in sync. if we didn't do this, the UI would behave strangely
-        // as it would be updating as the user is typing.
-        // This is similar for data changes, which don't affect provided date floating filters
-        if (event?.afterFloatingFilter || event?.afterDataChange) {
-            return;
-        }
-
+    protected onModelUpdated(model: ISimpleFilterModel): void {
         super.setLastTypeFromModel(model);
         this.updateCompOnModelChange(model);
     }
@@ -114,16 +87,33 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     private onDateChanged(): void {
         const filterValueDate = this.dateComp.getDate();
 
-        this.params.parentFilterInstance((filterInstance) => {
-            if (filterInstance) {
-                filterInstance.onFloatingFilterChanged(this.lastType || null, filterValueDate);
-            }
-        });
+        if (this.reactive) {
+            const reactiveParams = this.params as unknown as FloatingFilterDisplayParams<any, any, DateFilterModel>;
+            reactiveParams.onUiChange();
+
+            const model = reactiveParams.model;
+            const filterValueText = _serialiseDate(filterValueDate);
+            const newModel =
+                filterValueText == null
+                    ? null
+                    : ({
+                          ...(model ?? {
+                              filterType: this.filterType,
+                              type: this.lastType ?? this.optionsFactory.defaultOption,
+                          }),
+                          dateFrom: filterValueText,
+                      } as DateFilterModel);
+            reactiveParams.onModelChange(newModel, { afterFloatingFilter: true });
+        } else {
+            this.params.parentFilterInstance((filterInstance) => {
+                filterInstance?.onFloatingFilterChanged(this.lastType || null, filterValueDate);
+            });
+        }
     }
 
     private getDateComponentParams(): IDateParams {
         const { filterParams } = this.params;
-        const debounceMs = getDebounceMs(filterParams, this.defaultDebounceMs);
+        const debounceMs = getDebounceMs(filterParams as DateFilterParams, this.defaultDebounceMs);
         return _addGridCommonParams(this.gos, {
             onDateChanged: _debounce(this, this.onDateChanged.bind(this), debounceMs),
             filterParams,

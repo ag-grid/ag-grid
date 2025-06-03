@@ -1,4 +1,8 @@
 import type {
+    FilterDisplay,
+    FilterDisplayParams,
+    FloatingFilterDisplay,
+    FloatingFilterDisplayParams,
     ICellEditor,
     ICellEditorParams,
     ICellEditorRendererParams,
@@ -47,6 +51,10 @@ export interface IFloatingFilterAngularComp<P = any>
     extends AgFrameworkComponent<IFloatingFilterParams<P>>,
         IFloatingFilter {}
 
+export interface IFloatingFilterDisplayAngularComp<TData = any, TContext = any, TModel = any, TCustomParams = object>
+    extends AgFrameworkComponent<FloatingFilterDisplayParams<TData, TContext, TModel, TCustomParams>>,
+        FloatingFilterDisplay<TData, TContext, TModel, TCustomParams> {}
+
 export interface IDateAngularComp extends AgFrameworkComponent<IDateParams>, IDate {}
 
 export interface IDragAndDropImageAngularComponent
@@ -54,6 +62,10 @@ export interface IDragAndDropImageAngularComponent
         IDragAndDropImage {}
 
 export interface IFilterAngularComp extends AgFrameworkComponent<IFilterParams>, IFilter {}
+
+export interface IFilterDisplayAngularComp<TData = any, TContext = any, TModel = any, TState = any>
+    extends AgFrameworkComponent<FilterDisplayParams<TData, TContext, TModel, TState>>,
+        FilterDisplay<TData, TContext, TModel, TState> {}
 
 export interface ICellRendererAngularComp extends AgFrameworkComponent<ICellRendererParams>, ICellRenderer {}
 

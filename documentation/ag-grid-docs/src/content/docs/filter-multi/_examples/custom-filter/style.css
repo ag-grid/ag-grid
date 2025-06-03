@@ -10,11 +10,17 @@
 }
 
 .year-filter {
-    display: flex;
-    justify-content: center;
-    width: 100%;
+    width: 200px;
 }
 
-.year-filter label {
-    padding: 0.5rem;
+.year-filter > * {
+    margin: 8px 12px;
+}
+
+.year-filter > div:first-child {
+    font-weight: bold;
+}
+
+.year-filter > label {
+    display: inline-block;
 }

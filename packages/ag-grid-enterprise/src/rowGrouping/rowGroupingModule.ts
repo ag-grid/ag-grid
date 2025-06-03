@@ -11,6 +11,8 @@ import {
 import { VERSION } from '../version';
 import { AgGridHeaderDropZonesSelector } from './columnDropZones/agGridHeaderDropZones';
 import { GroupFilter } from './groupFilter/groupFilter';
+import { GroupFilterHandler } from './groupFilter/groupFilterHandler';
+import { GroupFilterService } from './groupFilter/groupFilterService';
 import { GroupFloatingFilterComp } from './groupFilter/groupFloatingFilter';
 import { GroupStrategy } from './groupStrategy/groupStrategy';
 import {
@@ -76,5 +78,9 @@ export const GroupFilterModule: _ModuleWithoutApi = {
     moduleName: 'GroupFilter',
     version: VERSION,
     userComponents: { agGroupColumnFilter: GroupFilter, agGroupColumnFloatingFilter: GroupFloatingFilterComp },
+    beans: [GroupFilterService],
+    dynamicBeans: {
+        agGroupColumnFilterHandler: GroupFilterHandler,
+    },
     dependsOn: [EnterpriseCoreModule, _ColumnFilterModule],
 };

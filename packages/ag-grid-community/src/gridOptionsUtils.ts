@@ -17,6 +17,9 @@ import type {
 } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
 import type { ComponentStateChangedEvent, GridOptionsChangedEvent } from './events';
+import { _getGlobalGridOption } from './globalGridOptions';
+import type { GridOptionOrDefault } from './gridOptionsDefault';
+import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
 import type {
     ExtractParamsFromCallback,
     ExtractReturnTypeFromCallback,
@@ -740,4 +743,16 @@ export function _getGroupingApproach(gos: GridOptionsService): GroupingApproach 
         return 'treePath';
     }
     return 'group';
+}
+
+/** Used for before GridOptionsService is initialised */
+export function _getGridOption<K extends keyof GridOptions>(
+    providedGridOptions: GridOptions,
+    gridOption: K
+): GridOptionOrDefault<K> {
+    return (
+        providedGridOptions[gridOption] ??
+        _getGlobalGridOption(gridOption) ??
+        (GRID_OPTION_DEFAULTS[gridOption as keyof typeof GRID_OPTION_DEFAULTS] as any)
+    );
 }

@@ -43,7 +43,7 @@ export interface SetFilterModelTreeItem {
     filterPasses: boolean;
     available: boolean;
     expanded?: boolean;
-    children?: SetFilterModelTreeItem[];
+    children?: Map<string | null, SetFilterModelTreeItem>;
     key?: string | null;
     parentTreeKeys: (string | null)[];
 }
