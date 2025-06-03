@@ -37,9 +37,8 @@ suite('treeData with getDataPath', () => {
     };
 
     bench(
-        'build from scratch',
+        'build from scratch ' + rowData.length + ' rows',
         () => {
-            console.error('build from scratch');
             api.setGridOption('rowData', []);
             api.setGridOption('rowData', rowData);
         },
@@ -47,9 +46,8 @@ suite('treeData with getDataPath', () => {
     );
 
     bench(
-        'update rowData',
+        'update rowData ' + rowData1.length + ' rows',
         () => {
-            console.error('updt');
             api.setGridOption('rowData', rowData);
             api.setGridOption('rowData', rowData1);
         },
@@ -122,7 +120,7 @@ function buildUpdatedRowData(rows: TreeDataPathData[], prng = new SimplePRNG(0x3
     }
     rowCount = rows.length;
 
-    const maxMove = Math.floor(rowCount * 0.1);
+    const maxMove = Math.floor(rowCount * 0.18);
     for (let i = 0; i < maxMove; i++) {
         const indexToMove = prng.nextInt(0, rowCount - 1);
         const newParentRow = prng.nextInt(0, rowCount - 1);
@@ -140,7 +138,7 @@ function buildUpdatedRowData(rows: TreeDataPathData[], prng = new SimplePRNG(0x3
         };
     }
 
-    const maxAdds = Math.floor(rowCount * 0.1);
+    const maxAdds = Math.floor(rowCount * 0.13);
     for (let i = 0; i < maxAdds; i++) {
         const newParentRow = prng.nextInt(0, rowCount - 1);
 
