@@ -11,6 +11,7 @@
     "ag-grid-community": "33.3.0",
     "ag-grid-enterprise": "33.3.0",
     "ag-grid-react": "33.3.0",
+    "@vitest/coverage-v8": "2.1.6",
     "@vitejs/plugin-react": "^4.4.1",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.6",

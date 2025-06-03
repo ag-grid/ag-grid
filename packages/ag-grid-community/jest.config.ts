@@ -49,4 +49,6 @@ export default {
             ...commonConfig,
         },
     ],
+    collectCoverage: true,
+    collectCoverageFrom: ['src/**/*.ts'],
 };

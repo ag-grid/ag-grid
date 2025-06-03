@@ -31,6 +31,14 @@ export default defineConfig({
         environment: 'jsdom',
         setupFiles: './vitest.setup.js',
         reporters: ['default'],
+        coverage: {
+            enabled: true,
+            all: true,
+            reportsDirectory: './coverage',
+            reporter: ['text', 'lcov', 'json'],
+            exclude: ['**/*.test.ts', '**/*.spec.ts'],
+            allowExternal: true,
+        },
     },
     resolve: {
         alias: resolveAlias,
