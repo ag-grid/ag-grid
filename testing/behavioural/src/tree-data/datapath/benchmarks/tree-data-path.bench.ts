@@ -20,7 +20,7 @@ suite('treeData with getDataPath', () => {
     const benchOptions: BenchOptions = {
         throws: true,
         setup: () => {
-            api = gridsManager.createGrid('G', {
+            api ??= gridsManager.createGrid('G', {
                 columnDefs: [],
                 autoGroupColumnDef: { headerName: 'Path' },
                 rowData: [],
@@ -39,6 +39,7 @@ suite('treeData with getDataPath', () => {
     bench(
         'build from scratch',
         () => {
+            console.error('build from scratch');
             api.setGridOption('rowData', []);
             api.setGridOption('rowData', rowData);
         },
@@ -48,6 +49,7 @@ suite('treeData with getDataPath', () => {
     bench(
         'update rowData',
         () => {
+            console.error('updt');
             api.setGridOption('rowData', rowData);
             api.setGridOption('rowData', rowData1);
         },
