@@ -108,10 +108,12 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         const curCol = colModel.getCol(curColId);
 
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
-        const prevColId = _getColId(previous.column);
+        if (previous) {
+            const prevColId = _getColId(previous.column);
 
-        if (previous?.rowIndex === rowIndex && prevColId === curColId && previous?.rowPinned === rowPinned) {
-            return;
+            if (previous?.rowIndex === rowIndex && prevColId === curColId && previous?.rowPinned === rowPinned) {
+                return;
+            }
         }
 
         if (editSvc?.isEditing(rowNode, curCol, false, true)) {

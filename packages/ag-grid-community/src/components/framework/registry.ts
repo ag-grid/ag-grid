@@ -127,7 +127,7 @@ export class Registry extends BeanStub implements NamedBean {
     public createDynamicBean<T>(name: DynamicBeanName, mandatory: boolean, ...args: any[]): T | undefined {
         if (!this.dynamicBeans) {
             // this happens when a module tries to init a dynamic bean during module initialization lifecycle
-            throw new Error(_errMsg(278, { name }));
+            throw new Error(_errMsg(279, { name }));
         }
 
         const BeanClass = this.dynamicBeans[name];
