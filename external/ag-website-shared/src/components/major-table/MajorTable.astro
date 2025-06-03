@@ -1,9 +1,12 @@
 ---
 import { getEntry, type CollectionEntry } from 'astro:content';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { getChangelogUrl } from '@ag-website-shared/utils/getChangelogUrl';
 import { getDocumentationArchiveUrl } from '@ag-website-shared/utils/getArchiveUrl';
+import { FRAMEWORK_REDIRECT_PATH } from '@constants';
+import { pathJoin } from '@utils/pathJoin';
 
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import styles from './MajorTable.module.scss';
@@ -46,7 +49,10 @@ const versions = isMigration ? allVersions.filter(filterMigrations) : allVersion
             const docsUrl = !isMigration
                 ? getDocumentationArchiveUrl({ site: library, version: version.version })
                 : null;
-            const notesPath = !isMigration && version.notesPath ? version.notesPath : null;
+            const notesPath =
+                !isMigration && version.notesPath
+                    ? urlWithBaseUrl(pathJoin(FRAMEWORK_REDIRECT_PATH, version.notesPath))
+                    : null;
 
             return (
                 <tr class={versionType === 'Patch' ? styles.isPatch : ''}>
