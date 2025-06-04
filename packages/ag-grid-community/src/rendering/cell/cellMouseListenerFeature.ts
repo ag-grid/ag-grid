@@ -135,7 +135,7 @@ export class CellMouseListenerFeature extends BeanStub {
             return;
         }
 
-        if (!shiftKey || !hasRanges) {
+        if (mouseEvent.type !== 'touchstart' && (!shiftKey || !hasRanges)) {
             const isEnableCellTextSelection = gos.get('enableCellTextSelection');
             // when `enableCellTextSelection` is true, we call prevent default on `mousedown`
             // within the row dragger to block text selection while dragging, but the cell
