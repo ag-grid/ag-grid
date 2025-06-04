@@ -123,6 +123,11 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     private api: GridApi;
     private gridId: string;
 
+    // Used to hold user events until the grid is ready
+    // Required to support React 19 StrictMode. See IFrameworkOverrides.runWhenReadyAsync but also is likely a good idea that onGridReady is the first event fired.
+    private gridReadyFired = false;
+    private queueEvents: { eventName: AgEventType; event: any }[] = [];
+
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
         this.eGridDiv = beans.eGridDiv;
@@ -153,6 +158,11 @@ export class GridOptionsService extends BeanStub implements NamedBean {
                 this.updateGridOptions({ options, force: true, source: 'gridOptionsUpdated' });
             },
         });
+    }
+
+    public override destroy(): void {
+        super.destroy();
+        this.queueEvents = [];
     }
 
     /**
@@ -275,12 +285,26 @@ export class GridOptionsService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const eventHandlerName = ComponentUtil.getCallbackForEvent(eventName);
-            const eventHandler = (this.gridOptions as any)[eventHandlerName];
-            if (typeof eventHandler === 'function') {
-                this.frameworkOverrides.wrapOutgoing(() => {
-                    eventHandler(event);
-                });
+            const fireEvent = (name: AgEventType, e: any) => {
+                const eventHandler = (this.gridOptions as any)[ComponentUtil.getCallbackForEvent(name)];
+                if (typeof eventHandler === 'function') {
+                    this.frameworkOverrides.wrapOutgoing(() => eventHandler(event));
+                }
+            };
+
+            if (this.gridReadyFired) {
+                fireEvent(eventName, event);
+            } else {
+                if (eventName === 'gridReady') {
+                    fireEvent(eventName, event);
+                    this.gridReadyFired = true;
+                    for (const q of this.queueEvents) {
+                        fireEvent(q.eventName, q.event);
+                    }
+                    this.queueEvents = [];
+                } else {
+                    this.queueEvents.push({ eventName, event });
+                }
             }
         };
     };
