@@ -25,7 +25,7 @@ jobs:
         with:
           args: --sarif-file-output=snyk-security.sarif --all-projects --severity-threshold=high
       - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: snyk-security.sarif
 
@@ -45,6 +45,6 @@ jobs:
           command: code test
           args: --sarif-file-output=snyk-code-security.sarif --severity-threshold=high
       - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: snyk-code-security.sarif
