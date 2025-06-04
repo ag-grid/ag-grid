@@ -48,7 +48,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             filterParams: {
                 filters: [
                     {
-                        filter: { component: YearFilter, doesFilterPass },
+                        filter: { component: YearFilter, doesFilterPass: doesFilterPass },
                         floatingFilterComponent: YearFloatingFilter,
                     },
                     {

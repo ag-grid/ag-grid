@@ -28,13 +28,13 @@ const columnDefs: ColDef[] = [
         field: 'year',
         headerName: 'Year Default',
         minWidth: 130,
-        filter: { component: YearFilter, doesFilterPass },
+        filter: { component: YearFilter, doesFilterPass: doesFilterPass },
     },
     {
         field: 'year',
         headerName: 'Year Apply',
         minWidth: 130,
-        filter: { component: YearFilter, doesFilterPass },
+        filter: { component: YearFilter, doesFilterPass: doesFilterPass },
         filterParams: {
             useForm: true,
             buttons: ['apply'],
@@ -45,7 +45,7 @@ const columnDefs: ColDef[] = [
         field: 'year',
         headerName: 'Year Reset',
         minWidth: 130,
-        filter: { component: YearFilter, doesFilterPass },
+        filter: { component: YearFilter, doesFilterPass: doesFilterPass },
         filterParams: {
             buttons: ['reset'],
         },
