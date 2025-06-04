@@ -17,7 +17,7 @@ export async function getBrowserCommunications(page: Page) {
     };
 }
 
-export const waitFor = async <T>(getterOrTimeout: (() => T) | number, page?: Page, smart = false) => {
+export const waitFor = async <T>(getterOrTimeout: (() => T) | number, page?: Page, smart = false, timer = 5000) => {
     if (typeof getterOrTimeout === 'number') {
         return new Promise<void>((resolve) => setTimeout(resolve, getterOrTimeout));
     }
@@ -33,7 +33,7 @@ export const waitFor = async <T>(getterOrTimeout: (() => T) | number, page?: Pag
         const timeout = setTimeout(() => {
             clearInterval(interval);
             reject(new Error('waitFor timed out doing getter: ' + getterOrTimeout.toString()));
-        }, 5000);
+        }, timer);
         const interval = setInterval(async () => {
             const res = await getterOrTimeout();
             if (res) {
@@ -47,6 +47,7 @@ export const waitFor = async <T>(getterOrTimeout: (() => T) | number, page?: Pag
 
 export const gotoAndGetComms = async (page: Page, url: string) => {
     const msgs = await getBrowserCommunications(page);
+    await page.setViewportSize({ width: 1920, height: 1080 });
     await page.goto(url, { waitUntil: 'networkidle' });
     return msgs;
 };

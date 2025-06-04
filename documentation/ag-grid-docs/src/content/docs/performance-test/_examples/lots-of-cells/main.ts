@@ -32,12 +32,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         initialWidth: 100,
     },
     rowData: [],
-    onRowDataUpdated(event: RowDataUpdatedEvent<IOlympicData, any>) {
-        console.log(event);
-    },
-    onBodyScrollEnd(event) {
-        console.log(event);
-    },
 };
 
 function outputText(time?: number) {
