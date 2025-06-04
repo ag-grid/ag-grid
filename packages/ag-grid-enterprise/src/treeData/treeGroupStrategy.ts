@@ -62,6 +62,10 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         this.parentIdGetter = null;
     }
 
+    public getFiller(id: string): RowNode<TData> | undefined {
+        return this.fillerNodesById?.get(id);
+    }
+
     public execute(params: StageExecuteParams<TData>, approach: GroupingApproach) {
         const { changedRowNodes, changedPath, afterColumnsChanged } = params;
         this.checkGroupColsUpdated(afterColumnsChanged);
@@ -110,10 +114,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
         }
 
-        let preprocessedCount = 0;
-        for (let i = 0; i < allLeafChildrenLen; ++i) {
-            preprocessedCount += this.preprocessRow(rootAllLeafChildren[i]);
-        }
+        const preprocessedCount = this.preprocessRows(rootNode);
 
         this.deselectHiddenNodes(treeChanged || fullReload);
 
@@ -197,35 +198,46 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 
-    private preprocessRow(row: GroupingRowNode<TData>): number {
-        const parent = row.treeParent;
-        if (parent === null) {
-            return 0; // Row is hidden
-        }
+    private preprocessRows(rootNode: GroupingRowNode<TData>): number {
+        const rootAllLeafChildren = rootNode.allLeafChildren!;
+        const allLeafChildrenLen = rootAllLeafChildren.length;
+        const groupColsChanged = this.groupColsChanged;
+        let preprocessedCount = 0;
+        for (let i = 0; i < allLeafChildrenLen; ++i) {
+            let current = rootAllLeafChildren[i];
+            while (current !== null) {
+                const parent: GroupingRowNode<TData> | null = current.treeParent;
+                if (parent === null) {
+                    break;
+                }
 
-        let count = 1;
-        let parentFlags = parent.treeNodeFlags;
-        if (!parent.data && (parentFlags & FLAG_FILLER_NODE) === 0 && parent.treeParent !== null) {
-            parent.treeNodeFlags = parentFlags |= FLAG_FILLER_NODE | (row.treeNodeFlags & FLAG_CHANGED); // Mark as processed
-            count += this.preprocessRow(parent); // Preprocess the filler row if it exists and is not already processed
-        }
+                // Insert `current` into parent.childrenAfterGroup[] at current length
+                ++preprocessedCount;
+                let parentFlags = parent.treeNodeFlags;
+                const parentChildren = parent.childrenAfterGroup!;
+                const indexInParent = parentFlags & MASK_CHILDREN_LEN;
+                parentFlags = (parentFlags & ~MASK_CHILDREN_LEN) | (indexInParent + 1);
 
-        // Write the row in the parent children array at the right incremental index
-        const parentChildren = parent.childrenAfterGroup!;
-        const indexInParent = parentFlags & MASK_CHILDREN_LEN;
-        parentFlags = (parentFlags & ~MASK_CHILDREN_LEN) | (indexInParent + 1);
-        if (parentFlags & FLAG_CHILDREN_CHANGED || parentChildren[indexInParent] !== row) {
-            parentChildren[indexInParent] = row;
-            parentFlags |= FLAG_CHILDREN_CHANGED;
-        }
-        parent.treeNodeFlags = parentFlags;
+                if (parentFlags & FLAG_CHILDREN_CHANGED || parentChildren[indexInParent] !== current) {
+                    parentChildren[indexInParent] = current;
+                    parentFlags |= FLAG_CHILDREN_CHANGED;
+                }
+                parent.treeNodeFlags = parentFlags;
 
-        if (!row.groupData || this.groupColsChanged) {
-            row.treeNodeFlags |= FLAG_CHANGED;
-            this.setGroupData(row, row.key!);
-        }
+                if (!current.groupData || groupColsChanged) {
+                    current.treeNodeFlags |= FLAG_CHANGED;
+                    this.setGroupData(current, current.key!);
+                }
 
-        return count;
+                if (parent.data || (parent.treeNodeFlags & FLAG_FILLER_NODE) !== 0 || parent.treeParent === null) {
+                    break; // Continue up only if parent is a non-processed filler
+                }
+
+                parent.treeNodeFlags |= FLAG_FILLER_NODE | (current.treeNodeFlags & FLAG_CHANGED); // Mark filler as processed
+                current = parent;
+            }
+        }
+        return preprocessedCount & ~FLAG_CHILDREN_CHANGED; // Clear the children changed flag
     }
 
     private traverseRoot(rootNode: GroupingRowNode<TData>, activeChangedPath: ChangedPath | undefined): number {
@@ -350,7 +362,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         return isGroupOpenByDefault(params) == true;
     }
 
-    /** Handle cycles in a tree. Is not optimal for performance but this is an edge case that shouldn't happen. */
+    /** Handle cycles in a tree. Is not optimal for performance but this is an edge case that shouldn't happen as is a warning. */
     private handleCycles(rootNode: GroupingRowNode<TData>) {
         const marked = new Set<GroupingRowNode<TData>>();
         const mark = (row: GroupingRowNode<TData>): boolean => {

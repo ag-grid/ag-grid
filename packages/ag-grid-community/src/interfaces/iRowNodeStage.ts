@@ -21,3 +21,7 @@ export interface IRowNodeStage<TResult = any, TData = any> {
     refreshProps: Set<keyof GridOptions>;
     execute(params: StageExecuteParams<TData>): TResult;
 }
+
+export interface IRowGroupStage<TResult = any, TData = any> extends IRowNodeStage<TResult, TData> {
+    getFiller(id: string): RowNode<TData> | undefined;
+}

@@ -77,6 +77,20 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     private oldGroupingDetails: GroupingDetails;
     private oldGroupDisplayColIds: string;
 
+    public getFiller(id: string): RowNode | undefined {
+        // only one users complained about getRowNode not working for groups, after years of
+        // this working for normal rows. so have done quick implementation. if users complain
+        // about performance, then GroupStrategy should store / manage created groups in a map,
+        // which is a chunk of work.
+        let res: RowNode | undefined = undefined;
+        this.beans.rowModel.forEachNode((node) => {
+            if (node.id === id) {
+                res = node;
+            }
+        });
+        return res;
+    }
+
     public execute(params: StageExecuteParams): void {
         const details = this.createGroupingDetails(params);
 

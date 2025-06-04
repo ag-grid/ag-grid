@@ -2,15 +2,16 @@ import type {
     ClientSideRowModelStage,
     GridOptions,
     GroupingApproach,
-    IRowNodeStage,
+    IRowGroupStage,
     NamedBean,
+    RowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
 import { BeanStub, _getGroupingApproach } from 'ag-grid-community';
 
 import type { GroupingRowNode, IRowGroupingStrategy } from './rowHierarchyUtils';
 
-export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeStage {
+export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupStage {
     beanName = 'groupStage' as const;
 
     public refreshProps: Set<keyof GridOptions<any>> = new Set([
@@ -29,6 +30,11 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
     private approach: GroupingApproach | null = null;
     private strategyBeanName: string | null = null;
     private strategy: IRowGroupingStrategy<TData> | undefined = undefined;
+
+    /** Gets a filler row by id */
+    public getFiller(id: string): RowNode<TData> | undefined {
+        return this.strategy?.getFiller(id);
+    }
 
     public override destroy(): void {
         super.destroy();

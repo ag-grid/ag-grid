@@ -12,6 +12,7 @@ import type {
 export interface IRowGroupingStrategy<TData = any> extends Bean {
     execute(params: StageExecuteParams<TData>, approach: GroupingApproach): void;
     reset?(): void;
+    getFiller(id: string): RowNode<TData> | undefined;
 }
 
 export interface GroupingRowNode<TData = any> extends RowNode<TData> {

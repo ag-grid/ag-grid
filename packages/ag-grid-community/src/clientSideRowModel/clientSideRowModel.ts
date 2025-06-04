@@ -21,7 +21,7 @@ import type {
     RefreshModelParams,
 } from '../interfaces/iClientSideRowModel';
 import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
-import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
+import type { IRowGroupStage, IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _EmptyArray, _last } from '../utils/array';
@@ -54,7 +54,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private flattenStage?: IRowNodeStage<RowNode[]>;
 
     // enterprise stages
-    private groupStage?: IRowNodeStage;
+    private groupStage?: IRowGroupStage;
     private aggStage?: IRowNodeStage;
     private pivotStage?: IRowNodeStage;
     private filterAggStage?: IRowNodeStage;
@@ -1016,24 +1016,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public getRowNode(id: string): RowNode | undefined {
-        // although id is typed a string, this could be called by the user, and they could have passed a number
-        const idIsGroup = typeof id == 'string' && id.indexOf(ROW_ID_PREFIX_ROW_GROUP) == 0;
-
-        if (idIsGroup) {
-            // only one users complained about getRowNode not working for groups, after years of
-            // this working for normal rows. so have done quick implementation. if users complain
-            // about performance, then GroupStage should store / manage created groups in a map,
-            // which is a chunk of work.
-            let res: RowNode | undefined = undefined;
-            this.forEachNode((node) => {
-                if (node.id === id) {
-                    res = node;
-                }
-            });
-            return res;
+        const found = this.nodeManager.getRowNode(id);
+        if (typeof found === 'object') {
+            return found; // we check for typeof object to avoid returning things from Object.prototype
         }
-
-        return this.nodeManager.getRowNode(id);
+        // although id is typed a string, this could be called by the user, and they could have passed a number
+        const idIsGroup = typeof id == 'string' && id.indexOf(ROW_ID_PREFIX_ROW_GROUP) === 0;
+        return idIsGroup ? this.groupStage?.getFiller(id) : undefined;
     }
 
     public batchUpdateRowData(
