@@ -153,11 +153,13 @@ export class CheckboxSelectionComponent extends Component {
         const visible = selectable || checkboxes;
 
         const so = gos.get('rowSelection');
-        const hideDisabledCheckboxes =
-            so && typeof so !== 'string' ? _getHideDisabledCheckboxes(so) : !column?.getColDef().showDisabledCheckboxes;
+        const showDisabledCheckboxes =
+            so && typeof so !== 'string'
+                ? !_getHideDisabledCheckboxes(so)
+                : !!column?.getColDef().showDisabledCheckboxes;
 
-        this.setVisible(visible && (disabled ? !hideDisabledCheckboxes : true));
-        this.setDisplayed(visible && (disabled ? !hideDisabledCheckboxes : true));
+        this.setVisible(visible && (disabled ? showDisabledCheckboxes : true));
+        this.setDisplayed(visible && (disabled ? showDisabledCheckboxes : true));
         if (visible) {
             this.eCheckbox.setDisabled(disabled);
         }
