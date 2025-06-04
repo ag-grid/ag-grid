@@ -12,6 +12,16 @@ on:
       branches: ["AG-3390-snyk-gha"]
 
 jobs:
+  security:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/security') || github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@main
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
   code-security:
     runs-on: ubuntu-latest
     permissions:
@@ -19,7 +29,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/security') || github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@main
-      - name: Run Snyk to check for vulnerabilities
+      - name: Run Snyk SAST security code scan
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
