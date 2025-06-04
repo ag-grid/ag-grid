@@ -78,7 +78,7 @@ const versions = isMigration ? allVersions.filter(filterMigrations) : allVersion
 
                     {!isMigration && (
                         <>
-                            <td class={styles.links}>
+                            <td class={styles.otherLinks}>
                                 {notesPath ? (
                                     <a href={notesPath}>
                                         Release Notes
@@ -92,7 +92,7 @@ const versions = isMigration ? allVersions.filter(filterMigrations) : allVersion
                                 )}
                             </td>
 
-                            <td>
+                            <td class={styles.docsLinks}>
                                 <a href={docsUrl}>
                                     <span class={'text-monospace'}>{version.version}</span> Documentation{' '}
                                     <Icon name="arrowRight" />
