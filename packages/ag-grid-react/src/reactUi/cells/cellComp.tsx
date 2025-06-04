@@ -11,13 +11,13 @@ import type {
     ICellRendererComp,
     UserCompDetails,
 } from 'ag-grid-community';
-import { CssClassManager, _EmptyBean, _removeFromParent } from 'ag-grid-community';
+import { CssClassManager, _EmptyBean, _errMsg, _removeFromParent } from 'ag-grid-community';
 
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
 import { CustomContext } from '../../shared/customComp/customContext';
 import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
-import { BeansContext } from '../beansContext';
+import { BeansContext, EnableDeferRenderContext } from '../beansContext';
 import { agStartTransition, isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
@@ -179,6 +179,8 @@ const CellComp = ({
     editingRow: boolean;
 }) => {
     const beans = useContext(BeansContext);
+    const enableCellDeferRender = useContext(EnableDeferRenderContext);
+
     const { context } = beans;
     const {
         column: { colIdSanitised },
@@ -416,8 +418,13 @@ const CellComp = ({
                         }
                     });
                 };
-                if (compDetails?.params?.renderAsync) {
-                    agStartTransition(setDetails);
+                if (compDetails?.params?.deferRender) {
+                    if (!enableCellDeferRender) {
+                        _errMsg(279);
+                        setDetails();
+                    } else {
+                        agStartTransition(setDetails);
+                    }
                 } else {
                     setDetails();
                 }

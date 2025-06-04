@@ -1,7 +1,5 @@
 import type { GridApi, GridOptions, Module } from 'ag-grid-community';
 
-import type { RenderMode } from '../reactUi/beansContext';
-
 export interface AgGridReactProps<TData = any> extends GridOptions<TData> {
     gridOptions?: GridOptions<TData>;
     /**
@@ -30,7 +28,8 @@ export interface AgGridReactProps<TData = any> extends GridOptions<TData> {
     /** @deprecated v33.3 AgGridReact does not accept children so this property will be removed. */
     children?: any;
 
-    renderMode?: RenderMode;
+    /** Enables support for `cellRendererParams.deferRender` */
+    enableCellDeferRender?: boolean;
 }
 
 export interface InternalAgGridReactProps<TData = any> extends AgGridReactProps<TData> {

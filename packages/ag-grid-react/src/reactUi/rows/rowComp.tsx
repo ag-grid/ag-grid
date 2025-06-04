@@ -11,14 +11,16 @@ import type {
 } from 'ag-grid-community';
 import { CssClassManager, _EmptyBean } from 'ag-grid-community';
 
-import { BeansContext, RenderModeContext } from '../beansContext';
+import { BeansContext, EnableDeferRenderContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
 import { agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
 const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
     const { context, gos } = useContext(BeansContext);
-    const mode = useContext(RenderModeContext);
+
+    const enableCellDeferRender = useContext(EnableDeferRenderContext);
+
     const compBean = useRef<_EmptyBean>();
 
     const domOrderRef = useRef<boolean>(rowCtrl.getDomOrder());
@@ -81,7 +83,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
     let cellCtrlsMerged = cellCtrls;
     const cellsChanged = useRef<any>(() => {});
-    if (mode === 'uses' && React.useSyncExternalStore) {
+    if (enableCellDeferRender) {
         const sub = useCallback((onStoreChange: any) => {
             cellsChanged.current = onStoreChange;
             return () => {
@@ -127,29 +129,14 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: (next, useFlushSync) => {
-                if (mode === 'flushSync') {
-                    prevCellCtrlsRef.current = cellCtrlsRef.current;
-
-                    const nextCells = getNextValueIfDifferent(prevCellCtrlsRef.current, next, domOrderRef.current);
-                    if (nextCells !== prevCellCtrlsRef.current) {
-                        cellCtrlsRef.current = nextCells;
-                        agFlushSync(useFlushSync, () => setCellCtrls(nextCells));
-                    }
-                } else if (mode === 'uses') {
-                    prevCellCtrlsRef.current = cellCtrlsRef.current;
-
-                    const nextCells = getNextValueIfDifferent(prevCellCtrlsRef.current, next, domOrderRef.current);
-                    if (nextCells !== prevCellCtrlsRef.current) {
-                        cellCtrlsRef.current = nextCells;
+                prevCellCtrlsRef.current = cellCtrlsRef.current;
+                const nextCells = getNextValueIfDifferent(prevCellCtrlsRef.current, next, domOrderRef.current);
+                if (nextCells !== prevCellCtrlsRef.current) {
+                    cellCtrlsRef.current = nextCells;
+                    if (enableCellDeferRender) {
                         cellsChanged.current();
-                    }
-                } else if (mode === 'plain') {
-                    prevCellCtrlsRef.current = cellCtrlsRef.current;
-                    cellCtrlsRef.current = next;
-
-                    const nextCells = getNextValueIfDifferent(prevCellCtrlsRef.current, next, domOrderRef.current);
-                    if (nextCells !== prevCellCtrlsRef.current) {
-                        agFlushSync(false, () => setCellCtrls(nextCells));
+                    } else {
+                        agFlushSync(useFlushSync, () => setCellCtrls(nextCells));
                     }
                 }
             },
