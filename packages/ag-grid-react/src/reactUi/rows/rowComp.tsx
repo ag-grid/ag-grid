@@ -112,10 +112,10 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: (next, useFlushSync) => {
                 prevCellCtrlsRef.current = cellCtrlsRef.current;
-                cellCtrlsRef.current = next;
 
                 const nextCells = getNextValueIfDifferent(prevCellCtrlsRef.current, next, domOrderRef.current);
                 if (nextCells !== prevCellCtrlsRef.current) {
+                    cellCtrlsRef.current = nextCells;
                     agFlushSync(useFlushSync, () => setCellCtrls(nextCells));
                 }
             },
