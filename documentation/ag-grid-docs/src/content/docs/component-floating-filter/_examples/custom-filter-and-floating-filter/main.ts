@@ -34,7 +34,7 @@ const columnDefs: ColDef[] = [
         floatingFilterComponentParams: {
             color: 'gold',
         },
-        filter: { component: NumberFilterComponent, doesFilterPass },
+        filter: { component: NumberFilterComponent, doesFilterPass: doesFilterPass },
         suppressFloatingFilterButton: true,
     },
     {
@@ -43,7 +43,7 @@ const columnDefs: ColDef[] = [
         floatingFilterComponentParams: {
             color: 'silver',
         },
-        filter: { component: NumberFilterComponent, doesFilterPass },
+        filter: { component: NumberFilterComponent, doesFilterPass: doesFilterPass },
         suppressFloatingFilterButton: true,
     },
     {
@@ -52,7 +52,7 @@ const columnDefs: ColDef[] = [
         floatingFilterComponentParams: {
             color: '#CD7F32',
         },
-        filter: { component: NumberFilterComponent, doesFilterPass },
+        filter: { component: NumberFilterComponent, doesFilterPass: doesFilterPass },
         suppressFloatingFilterButton: true,
     },
     {
@@ -61,7 +61,7 @@ const columnDefs: ColDef[] = [
         floatingFilterComponentParams: {
             color: 'unset',
         },
-        filter: { component: NumberFilterComponent, doesFilterPass },
+        filter: { component: NumberFilterComponent, doesFilterPass: doesFilterPass },
         suppressFloatingFilterButton: true,
     },
 ];

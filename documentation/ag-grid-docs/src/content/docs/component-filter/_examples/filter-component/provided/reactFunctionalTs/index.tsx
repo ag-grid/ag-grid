@@ -41,7 +41,7 @@ const GridExample = () => {
         { field: 'row' },
         {
             field: 'name',
-            filter: { component: PartialMatchFilter, doesFilterPass },
+            filter: { component: PartialMatchFilter, doesFilterPass: doesFilterPass },
         },
     ]);
     const defaultColDef = useMemo<ColDef>(() => {
