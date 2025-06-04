@@ -1,0 +1,23 @@
+name: Security
+
+on:
+    issue_comment:
+        types: [created]
+    workflow_dispatch: {}
+    schedule:
+        - cron: '0 0 * * *' # Run daily at midnight UTC
+
+jobs:
+  code-security:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/security') || github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@main
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+         command: code test
