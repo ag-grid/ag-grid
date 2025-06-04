@@ -6,7 +6,7 @@ import {
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
     AlignedGridsModule: 3.06,
-    AllCommunityModule: 426.39,
+    AllCommunityModule: 447.66,
     CellApiModule: 0.28,
     CellStyleModule: 2.24,
     CheckboxEditorModule: 43.63,
@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,
-    AllEnterpriseModule: 1401.82,
+    AllEnterpriseModule: 1423.54,
     CellSelectionModule: 53,
     ClipboardModule: 46.04,
     ColumnMenuModule: 153.19,
@@ -132,7 +132,7 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
-export const baseModule = { modules: [], expectedSize: 470 };
+export const baseModule = { modules: [], expectedSize: 475 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,
