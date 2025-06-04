@@ -1,4 +1,4 @@
-import { get } from 'http';
+import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
 import type {
     CellEditingStartedEvent,
@@ -33,8 +33,10 @@ import {
     ContextMenuModule,
     ExcelExportModule,
     FiltersToolPanelModule,
+    IntegratedChartsModule,
     PivotModule,
     RowGroupingPanelModule,
+    StatusBarModule,
 } from 'ag-grid-enterprise';
 
 import { getData } from './data';
@@ -57,6 +59,8 @@ ModuleRegistry.registerModules([
     RowDragModule,
     AggregationModule,
     ClientSideRowModelApiModule,
+    StatusBarModule,
+    IntegratedChartsModule.with(AgChartsEnterpriseModule),
     ValidationModule /* Development Only */,
 ]);
 
@@ -136,6 +140,8 @@ const gridOptions: GridOptions = {
             mode: 'fill',
         },
     },
+    enableCharts: true,
+
     rowDragManaged: true,
     enableRowPinning: true,
     groupDisplayType: 'multipleColumns',
@@ -149,7 +155,17 @@ const gridOptions: GridOptions = {
             return 'bottom';
         }
     },
+    rowSelection: { mode: 'multiRow' },
     suppressAggFuncInHeader: true,
+    statusBar: {
+        statusPanels: [
+            { statusPanel: 'agTotalAndFilteredRowCountComponent' },
+            { statusPanel: 'agTotalRowCountComponent' },
+            { statusPanel: 'agFilteredRowCountComponent' },
+            { statusPanel: 'agSelectedRowCountComponent' },
+            { statusPanel: 'agAggregationComponent' },
+        ],
+    },
     onRowEditingStarted: (event: RowEditingStartedEvent) => {
         console.log('rowEditingStarted');
     },
@@ -212,6 +228,18 @@ function toggleBatch() {
     document.getElementById('batchEditingApi')!.style.display = batch ? 'none' : 'unset';
 }
 
+function createChart() {
+    gridApi!.createRangeChart({
+        chartType: 'groupedColumn',
+        cellRange: {
+            rowStartIndex: 12,
+            rowEndIndex: 14,
+            columns: ['mood', 'age'],
+        },
+        // other options...
+    });
+}
+
 function setEditingCells(clearValues: boolean = false) {
     const pendingEdits: EditingCellPosition[] = [
         {
@@ -225,6 +253,18 @@ function setEditingCells(clearValues: boolean = false) {
             rowPinned: undefined,
             colKey: 'age',
             state: 'editing',
+        },
+        {
+            rowIndex: 14,
+            rowPinned: undefined,
+            newValue: 100,
+            colKey: 'age',
+        },
+        {
+            rowIndex: 14,
+            rowPinned: undefined,
+            newValue: 'Ecstatic',
+            colKey: 'mood',
         },
         {
             rowIndex: 1,

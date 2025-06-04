@@ -259,6 +259,10 @@ export function _syncModelFromEditor(
     }
 
     beans.editModelSvc?.setPendingValue(rowNode, column, newValue, oldValue, hasEditor ? 'editing' : 'changed');
+
+    beans.eventSvc.dispatchEvent({
+        type: 'cellEditValuesChanged',
+    });
 }
 
 export function _destroyEditors(beans: BeanCollection, cellPositions: CellIdPositions[]): void {

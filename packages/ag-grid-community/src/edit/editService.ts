@@ -283,6 +283,11 @@ export class EditService extends BeanStub implements NamedBean {
 
         this.isStopping = false;
 
+        // Integrated charts listen to this event to update the chart data
+        this.beans.eventSvc.dispatchEvent({
+            type: 'cellEditValuesChanged',
+        });
+
         return res;
     }
 
@@ -357,6 +362,9 @@ export class EditService extends BeanStub implements NamedBean {
     public setPendingUpdates(updates: PendingUpdates): void {
         this.strategy ??= this.createStrategy();
         this.strategy?.setPendingUpdates(updates);
+        this.beans.eventSvc.dispatchEvent({
+            type: 'cellEditValuesChanged',
+        });
     }
 
     public getEditingCellPositions(): EditingCellPosition[] {
