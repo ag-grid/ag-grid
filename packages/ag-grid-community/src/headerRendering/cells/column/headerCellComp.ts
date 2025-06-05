@@ -3,7 +3,7 @@ import type { IHeaderComp } from '../../../interfaces/iHeader';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
 import type { ElementParams } from '../../../utils/dom';
-import { _addStylesToElement } from '../../../utils/dom';
+import { _addOrRemoveAttributes, _addStylesToElement } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
@@ -59,6 +59,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
             getUserCompInstance: () => this.headerComp,
             refreshSelectAllGui,
             removeSelectAllGui: () => this.ctrl.getSelectAllGui()?.remove(),
+            setAttributes: (attrs) => _addOrRemoveAttributes(eGui, attrs),
         };
 
         this.ctrl.setComp(compProxy, this.getGui(), this.eResize, this.eHeaderCompWrapper, undefined);

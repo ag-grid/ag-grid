@@ -291,10 +291,6 @@ const CellComp = ({
                 setDetails();
             },
 
-            setTestId: (node, column) => {
-                beans.testIdSvc?.setTestId(eRef, { component: 'ag-cell', node, column });
-            },
-
             setEditDetails: (compDetails, popup, popupPosition, reactiveCustomComponents) => {
                 if (compDetails) {
                     let compProxy = undefined;

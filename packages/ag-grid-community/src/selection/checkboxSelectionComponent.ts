@@ -79,12 +79,6 @@ export class CheckboxSelectionComponent extends Component {
         this.column = params.column;
         this.overrides = params.overrides;
 
-        this.beans.testIdSvc?.setTestId(this.eCheckbox.getGui(), {
-            component: 'ag-checkbox',
-            node: this.rowNode,
-            column: this.column,
-        });
-
         this.onSelectionChanged();
 
         this.addManagedListeners(this.eCheckbox.getInputElement(), {

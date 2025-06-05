@@ -84,7 +84,6 @@ export interface ICellComp {
         reactiveCustomComponents?: boolean
     ): void;
     refreshEditStyles: (editing: boolean, isPopup: boolean) => void;
-    setTestId(rowNode: RowNode, column: AgColumn): void;
 }
 
 export const DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
@@ -280,8 +279,6 @@ export class CellCtrl extends BeanStub {
             this.onCompAttachedFuncs.forEach((func) => func());
             this.onCompAttachedFuncs = [];
         }
-
-        comp.setTestId(this.rowNode, this.column);
     }
 
     private setupAutoHeight(eCellWrapper: HTMLElement | undefined, compBean: BeanStub): void {

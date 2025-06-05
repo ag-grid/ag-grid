@@ -125,8 +125,6 @@ export class CellComp extends Component {
             getCellRenderer: () => this.cellRenderer || null,
             getParentOfValue: () => this.getParentOfValue(),
             refreshEditStyles: (editing, isPopup) => this.refreshEditStyles(editing, isPopup),
-            setTestId: (node, column) =>
-                this.beans.testIdSvc?.setTestId(this.eCell, { component: 'ag-cell', node, column }),
         };
 
         cellCtrl.setComp(compProxy, cellDiv, wrapperDiv, this.eCellWrapper, printLayout, editingCell, undefined);

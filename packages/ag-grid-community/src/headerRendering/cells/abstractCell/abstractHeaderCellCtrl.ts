@@ -21,6 +21,7 @@ let instanceIdSequence = 0;
 export interface IAbstractHeaderCellComp {
     toggleCss(cssClassName: string, on: boolean): void;
     setUserStyles(styles: HeaderStyle): void;
+    setAttributes(attrs: Record<string, string | number | null | undefined>): void;
 }
 
 export interface IHeaderResizeFeature {
@@ -44,7 +45,7 @@ export abstract class AbstractHeaderCellCtrl<
 
     public eGui: HTMLElement;
     protected resizeFeature: TFeature | null = null;
-    protected comp: TComp;
+    public comp: TComp;
 
     public lastFocusEvent: KeyboardEvent | null = null;
 

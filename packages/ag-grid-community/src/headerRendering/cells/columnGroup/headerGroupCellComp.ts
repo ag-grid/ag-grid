@@ -1,7 +1,7 @@
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import type { ElementParams } from '../../../utils/dom';
-import { _addStylesToElement, _setDisplayed } from '../../../utils/dom';
+import { _addOrRemoveAttributes, _addStylesToElement, _setDisplayed } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
@@ -58,6 +58,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
             setAriaExpanded: (expanded: 'true' | 'false' | undefined) => setAttribute('aria-expanded', expanded),
             setUserCompDetails: (details) => this.setUserCompDetails(details),
             getUserCompInstance: () => this.headerGroupComp,
+            setAttributes: (attrs) => _addOrRemoveAttributes(eGui, attrs),
         };
 
         this.ctrl.setComp(compProxy, eGui, this.eResize, this.eHeaderCompWrapper, undefined);
