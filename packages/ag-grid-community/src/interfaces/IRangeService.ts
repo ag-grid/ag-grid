@@ -48,6 +48,7 @@ export interface IRangeService {
         column: AgColumn | AgColumnGroup,
         headerComp: IAbstractHeaderCellComp
     ): void;
+    forEachRowInRange(cellRange: CellRange, callback: (row: RowPosition) => void): void;
 }
 
 export enum CellRangeType {

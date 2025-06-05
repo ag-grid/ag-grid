@@ -124,6 +124,12 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const { editSvc, navigation } = beans;
         const editing = editSvc?.isEditing(rowNode, cellCtrl?.column);
         if (editing) {
+            if (this.isCtrlEnter(e)) {
+                // bulk edit, apply currently editing value to all selected cells
+                editSvc?.applyBulkEdit(rowNode, cellCtrl?.column, this.beans?.rangeSvc?.getCellRanges());
+                return;
+            }
+
             editSvc?.stopEditing(
                 rowNode,
                 cellCtrl?.column,
@@ -149,6 +155,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 }
             }
         }
+    }
+    isCtrlEnter(e: KeyboardEvent) {
+        return (e.ctrlKey || e.metaKey) && e.key === KeyCode.ENTER;
     }
 
     private onF2KeyDown(event: KeyboardEvent): void {

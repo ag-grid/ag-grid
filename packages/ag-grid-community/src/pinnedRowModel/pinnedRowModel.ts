@@ -81,6 +81,14 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
         return this.inner.getPinnedBottomRow(index);
     }
 
+    public getPinnedRow(index: number, pinned: RowPinnedType): RowNode | undefined {
+        if (pinned === 'top') {
+            return this.inner.getPinnedTopRow(index);
+        } else if (pinned === 'bottom') {
+            return this.inner.getPinnedBottomRow(index);
+        }
+    }
+
     public forEachPinnedRow(
         container: NonNullable<RowPinnedType>,
         callback: (node: RowNode, index: number) => void
