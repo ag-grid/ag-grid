@@ -47,12 +47,12 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function autoSizeAll(skipHeader: boolean) {
-    const allColumnIds: string[] = [];
+    const colIds: string[] = [];
     gridApi!.getColumns()!.forEach((column) => {
-        allColumnIds.push(column.getId());
+        colIds.push(column.getId());
     });
 
-    gridApi!.autoSizeColumns(allColumnIds, skipHeader);
+    gridApi!.autoSizeColumns({ colIds, skipHeader });
 }
 
 // setup the grid after the page has finished loading
