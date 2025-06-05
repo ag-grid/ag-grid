@@ -34,16 +34,6 @@
                         {
                             "title": "Installing Enterprise Licence",
                             "path": "license-install"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Migration",
-                            "path": "migration"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Codemods",
-                            "path": "codemods"
                         }
                     ]
                 },
@@ -126,14 +116,9 @@
                     ]
                 },
                 {
-                    "title": "Compatibility & Security",
+                    "title": "Security & Browsers",
                     "type": "group",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Compatibility",
-                            "path": "compatibility"
-                        },
                         {
                             "type": "item",
                             "title": "Security",
@@ -143,6 +128,42 @@
                             "type": "item",
                             "title": "Supported Browsers",
                             "path": "supported-browsers"
+                        }
+                    ]
+                },
+                {
+                    "title": "AG Grid Versions",
+                    "type": "group",
+                    "children": [
+                        {
+                            "type": "item",
+                            "title": "Release History",
+                            "path": "../release-history/"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Changelog",
+                            "path": "../changelog/"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Pipeline",
+                            "path": "../pipeline/"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Migration",
+                            "path": "migration"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Codemods",
+                            "path": "codemods"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Compatibility",
+                            "path": "compatibility"
                         }
                     ]
                 }
