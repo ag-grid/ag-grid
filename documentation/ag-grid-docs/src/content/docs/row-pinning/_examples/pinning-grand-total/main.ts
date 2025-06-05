@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions, RowPinnedType } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -74,12 +74,19 @@ function setGrandTotalRowPinned(api: GridApi<IOlympicData>, value: GridOptions['
     api.setGridOption('grandTotalRowPinned', value);
 }
 
-function setIsRowPinned(api: GridApi<IOlympicData>, value: RowPinnedType) {
-    api.setGridOption('isRowPinned', (node) => {
+function useIsRowPinned() {
+    setGrandTotalRowPinned(gridApi, undefined);
+    gridApi.setGridOption('isRowPinned', (node) => {
         if (node.level === -1 && node.footer) {
-            return value;
+            return 'top';
         }
     });
+}
+
+function reset() {
+    gridApi.setGridOption('isRowPinned', undefined);
+    updateGrandTotalRow();
+    updateGrandTotalRowPinned();
 }
 
 function updateGrandTotalRow() {
