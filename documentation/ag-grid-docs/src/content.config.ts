@@ -285,7 +285,7 @@ const aboutPage = defineCollection({
         ),
     }),
 });
-    
+
 const legacyReleaseNotes = defineCollection({
     loader: glob({ base: './src/content/legacy-release-notes', pattern: 'legacy-release-notes.json' }),
     schema: z.array(
@@ -297,6 +297,10 @@ const legacyReleaseNotes = defineCollection({
             deprecations: z.string().optional(),
         })
     ),
+});
+
+const whatsNewContent = defineCollection({
+    loader: glob({ pattern: '**/[^_]*.mdoc', base: './src/content/whats-new' }),
 });
 
 export const collections = {
@@ -316,13 +320,8 @@ export const collections = {
     siteHeader,
     seedProjects,
     reactLandingPage,
-<<<<<<< HEAD
     contentApi,
-<<<<<<< HEAD
     aboutPage,
-=======
-=======
     legacyReleaseNotes,
->>>>>>> f852ea0b14 (AG-14969 - Generate new legacy release notes page)
->>>>>>> 6177fc4d04 (AG-14969 - Generate new legacy release notes page)
+    whatsNewContent,
 };

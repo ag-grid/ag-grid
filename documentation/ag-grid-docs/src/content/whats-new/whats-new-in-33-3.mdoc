@@ -1,0 +1,52 @@
+# What's New in AG Grid 33.3
+
+_Author: Kiril Matev_  
+_Date: 13 May 2025_
+
+AG Grid Enterprise 33.3 is a minor release that introduces several new features and enhancements, improving performance and stability.
+
+Key additions in this release:
+
+1. Row Pinning
+2. Row Height Resizing
+3. Grand Total Row Pinning
+4. Scroll Column Into View
+5. Performance Improvements
+
+Please note that AG Grid 33.3 has no breaking changes from AG Grid 33.x. If you're already using AG Grid 33.x, this upgrade doesn't require any changes to your codebase.
+
+We recommend reviewing the release notes when planning to update to this version.
+
+## Row Pinning
+
+AG Grid 33.3 adds row pinning functionality, allowing end-users to pin rows at the top or bottom of the grid viewport using the context menu or via API. Pinned rows support the full range of features like unpinned rows—they can be selected, sorted, and filtered according to the currently applied column sort and filter conditions.
+
+## Row Height Resizing
+
+This release enables row height resizing by end-users. Users can adjust the row height to suit the data shown in the grid or specific use cases, making the grid row rendering more flexible and adaptable to various scenarios.
+
+## Grand Total Row Pinning
+
+AG Grid 33.3 allows pinning the grand total row, enabling it to be displayed as pinned, either allowing the end-user to unpin it or not, depending on the requirements of your use case.
+
+## Scroll Column Into View
+
+Improvements to the columns tool panel feature allow users to scroll any visible and non-collapsed column into view when not in pivot mode. This enables end-users to easily bring the column they need into view when the grid has a horizontal scrollbar and displays many columns.
+
+## Performance Improvements
+
+AG Grid 33.3 significantly speeds up column generation, especially important when pivoting, as a large number of pivot columns can be generated based on distinct values in the pivoted columns. New column generation is much faster after adding, reordering, or removing pivot and aggregation columns, or changing certain pivot-related grid options.
+
+Additionally, performance improvements have been made in cell flashing after a data update, allowing the grid to support a higher volume of transactions with cell flashing.
+
+These enhancements are part of our ongoing efforts to improve rendering performance and UI responsiveness, enabling users to interact with even larger datasets in the grid.
+
+## Summary
+
+AG Grid 33.3 is an important minor version—it adds key end-user features and improvements in performance and stability. We highly recommend upgrading to this new version to benefit from these enhancements.
+
+We suggest reviewing the release notes when planning to upgrade and seeing the full list of changes in our changelog.
+
+As always, we’re keen to help you upgrade and to hear your feedback.
+
+Happy coding!
