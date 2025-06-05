@@ -292,7 +292,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         } = this;
 
         const syncWithFilter = (event: ColumnEvent | null) => {
-            if (event?.source === 'filterDestroyed' && !this.isAlive()) {
+            if (event?.source === 'filterDestroyed' && (!this.isAlive() || !colFilter?.isAlive())) {
                 return;
             }
             const compPromise = this.comp.getFloatingFilterComp();
