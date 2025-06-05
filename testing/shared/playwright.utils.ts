@@ -51,7 +51,6 @@ export const waitFor = async <T>(
 
 export const gotoAndGetComms = async (page: Page, url: string) => {
     const msgs = await getBrowserCommunications(page);
-    await page.setViewportSize({ width: 1920, height: 1080 });
     await page.goto(url, { waitUntil: 'networkidle' });
     return msgs;
 };

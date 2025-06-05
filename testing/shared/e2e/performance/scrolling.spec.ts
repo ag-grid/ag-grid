@@ -2,13 +2,11 @@ import { expect, test } from '@playwright/test';
 
 import { computeStats, gotoAndGetComms, waitFor } from '../../playwright.utils';
 
-test.describe.configure({ timeout: 120_000 });
-const ITERATIONS_FOR_AVERAGE = 10;
+test.describe.configure({ timeout: 10 * 60_000 });
+const ITERATIONS = 50;
 
 test.describe(`Performance Test - compare performance of setting data between current prod and staging: 'Lots of Cells'`, () => {
-    test(`should load and compare performance between staging and prod, ${ITERATIONS_FOR_AVERAGE} iterations`, async ({
-        page,
-    }) => {
+    test(`should load and compare performance between staging and prod, ${ITERATIONS} iterations`, async ({ page }) => {
         const pairsOfUrls = [
             [
                 'https://ag-grid.com/examples/performance-test/lots-of-cells/typescript/',
@@ -26,13 +24,12 @@ test.describe(`Performance Test - compare performance of setting data between cu
             for (const url of urls) {
                 result[url] ||= [];
 
-                await gotoAndGetComms(page, url);
-
-                for (let i = 0; i < ITERATIONS_FOR_AVERAGE; i++) {
+                for (let i = 0; i < ITERATIONS; i++) {
+                    await gotoAndGetComms(page, url);
                     const noise = (await waitFor(() => performance.getEntriesByType('long-animation-frame'), page))
                         .length;
 
-                    void page.getByText('Set Data').click();
+                    await page.getByText('Set Data').click();
 
                     await waitFor(() =>
                         page.textContent('.ag-body-viewport').then((text) => !text.includes('No Rows To Show'))
@@ -42,7 +39,6 @@ test.describe(`Performance Test - compare performance of setting data between cu
                         .map((pe) => pe.duration);
 
                     result[url].push(...durations);
-                    await page.reload({ waitUntil: 'networkidle' });
                 }
             }
 
