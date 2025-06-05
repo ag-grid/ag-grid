@@ -558,7 +558,7 @@ export class EditService extends BeanStub implements NamedBean {
         _syncModelsFromEditors(this.beans);
 
         const pendingUpdates: PendingUpdates = this.model.getPendingUpdates(true);
-        const newValue = pendingUpdates.get(rowNode)?.get(column!)?.newValue;
+        const pendingValue = pendingUpdates.get(rowNode)?.get(column!)?.newValue;
 
         cellRanges.forEach((range: CellRange) => {
             this.beans.rangeSvc?.forEachRowInRange(range, (position: RowPosition) => {
@@ -574,9 +574,17 @@ export class EditService extends BeanStub implements NamedBean {
                     }
 
                     if (this.isCellEditable(rowNode, column, 'api')) {
+                        const oldValue = this.beans.valueSvc.getValue(column as AgColumn, rowNode, true, 'api');
+                        const newValue = this.beans.valueSvc.parseValue(
+                            column as AgColumn,
+                            rowNode ?? null,
+                            pendingValue,
+                            oldValue
+                        );
+
                         rowUpdate.set(column, {
                             newValue,
-                            oldValue: this.beans.valueSvc.getValue(column as AgColumn, rowNode, true, 'api'),
+                            oldValue,
                             state: 'changed',
                         });
                     }
