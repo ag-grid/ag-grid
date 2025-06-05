@@ -6,7 +6,18 @@ test.describe.configure({ timeout: 15 * 60_000 });
 const ITERATIONS = 50;
 
 test.describe(`Performance Test - compare performance of setting data between current prod and staging: 'Lots of Cells'`, () => {
-    test(`should load and compare performance between staging and prod, ${ITERATIONS} iterations`, async ({ page }) => {
+    test(`should load and compare performance between staging and prod, ${ITERATIONS} iterations`, async ({
+        page,
+        context,
+    }) => {
+        await context.addCookies([
+            {
+                name: 'paccept',
+                value: '2025-06-05T14:29:37.754Z',
+                domain: '.run.plnkr.co',
+                path: '/preview/*',
+            },
+        ]);
         const pairsOfUrls: [string, string][] = [
             [
                 'https://ag-grid.com/examples/performance-test/lots-of-cells/typescript/',
