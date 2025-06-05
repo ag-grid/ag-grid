@@ -151,7 +151,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         const beans = this.beans;
 
         const measureHeight = (timesCalled: number) => {
-            if (cellCtrl.editing) {
+            if (this.beans.editSvc?.isEditing(rowNode, column)) {
                 return;
             }
             // because of the retry's below, it's possible the retry's go beyond

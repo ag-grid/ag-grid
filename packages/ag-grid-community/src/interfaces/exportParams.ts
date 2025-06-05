@@ -67,6 +67,11 @@ export interface BaseExportParams {
     skipPinnedBottom?: boolean;
 
     /**
+     * Set to `true` to export pending edit values, which are the values that have been changed but not yet committed.
+     */
+    includePendingEdits?: boolean;
+
+    /**
      * A callback function that will be invoked once per row in the grid. Return true to omit the row from the export.
      */
     shouldRowBeSkipped?(params: ShouldRowBeSkippedParams): boolean;

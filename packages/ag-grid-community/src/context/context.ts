@@ -24,8 +24,8 @@ import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import type { DragService } from '../dragAndDrop/dragService';
 import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeService';
 import type { RowDragService } from '../dragAndDrop/rowDragService';
+import type { EditModelService } from '../edit/editModelService';
 import type { EditService } from '../edit/editService';
-import type { RowEditService } from '../edit/rowEditService';
 import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
 import type { EventService } from '../eventService';
@@ -41,6 +41,7 @@ import type { GridOptionsService } from '../gridOptionsService';
 import type { RowNodeBlockLoader } from '../infiniteRowModel/rowNodeBlockLoader';
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService } from '../interfaces/IRangeService';
+import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
@@ -129,8 +130,8 @@ export type DynamicBeanName =
     | 'rangeHandle'
     | 'tooltipFeature'
     | 'groupStrategy'
-    | 'treeParentIdStrategy'
     | 'treeGroupStrategy'
+    | EditStrategyType
     | 'rowNumberRowResizer'
     | 'agSetColumnFilterHandler'
     | 'agMultiColumnFilterHandler'
@@ -295,7 +296,7 @@ export interface CoreBeanCollection {
     enterpriseMenuFactory?: IMenuFactory;
     contextMenuSvc?: IContextMenuService;
     editSvc?: EditService;
-    rowEditSvc?: RowEditService;
+    editModelSvc?: EditModelService;
     alignedGridsSvc?: AlignedGridsService;
     paginationAutoPageSizeSvc?: PaginationAutoPageSizeService;
     pagination?: PaginationService;
@@ -423,6 +424,7 @@ export type BeanName =
     | 'dragAndDrop'
     | 'dragSvc'
     | 'editSvc'
+    | 'editModelSvc'
     | 'excelCreator'
     | 'enterpriseMenuFactory'
     | 'environment'

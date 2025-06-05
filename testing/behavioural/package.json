@@ -4,24 +4,24 @@
   "private": true,
   "description": "Behavioural unit testing for ag-Grid",
   "dependencies": {
-    "tslib": "^2.7.0"
+    "tslib": "^2.8.1"
   },
   "type": "module",
   "devDependencies": {
     "ag-grid-community": "33.3.0",
     "ag-grid-enterprise": "33.3.0",
     "ag-grid-react": "33.3.0",
-    "@vitejs/plugin-react": "^4.4.1",
-    "@types/react": "^18.3.20",
-    "@types/react-dom": "^18.3.6",
+    "@vitejs/plugin-react": "^4.5.1",
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "typescript": "^5.5.4",
-    "vitest": "2.1.6",
+    "typescript": "~5.6.2",
+    "vitest": "2.1.9",
     "xlsx": "^0.18.5"
   },
   "repository": {

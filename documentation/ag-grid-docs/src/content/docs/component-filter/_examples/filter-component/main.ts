@@ -32,7 +32,7 @@ const columnDefs: ColDef[] = [
     { field: 'row' },
     {
         field: 'name',
-        filter: { component: PartialMatchFilter, doesFilterPass },
+        filter: { component: PartialMatchFilter, doesFilterPass: doesFilterPass },
     },
 ];
 

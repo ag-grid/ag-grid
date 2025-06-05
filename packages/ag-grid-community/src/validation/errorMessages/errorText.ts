@@ -1,4 +1,4 @@
-import type { UserComponentName } from '../../context/context';
+import type { DynamicBeanName, UserComponentName } from '../../context/context';
 import type { Column } from '../../interfaces/iColumn';
 import type {
     CommunityModuleName,
@@ -685,7 +685,9 @@ export const AG_GRID_ERRORS = {
     277: ({ colId }: { colId: string }) =>
         `'enableFilterHandlers' is set to true, but column '${colId}' does not have 'filter.doesFilterPass' or 'filter.handler' set.` as const,
     278: ({ colId }: { colId: string }) => `Unable to create filter handler for column '${colId}'` as const,
-    279: () =>
+    279: ({ name }: { name: DynamicBeanName }) =>
+        `Unable to create dynamic bean '${name}' during module init lifecycle, dynamic beans must be initialised on first use.` as const,
+    280: () =>
         'To use `cellRendererParams.deferRender` you must set the grid option `enableCellDeferRender=true` and use React version >=v18.' as const,
 };
 

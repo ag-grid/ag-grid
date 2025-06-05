@@ -35,7 +35,7 @@ const columnDefs: ColDef[] = [
     {
         field: 'athlete',
         minWidth: 150,
-        filter: { component: PersonFilter, doesFilterPass },
+        filter: { component: PersonFilter, doesFilterPass: doesFilterPass },
     },
     { field: 'country', minWidth: 150 },
     { field: 'sport' },

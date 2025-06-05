@@ -17,7 +17,7 @@ import { showJsComp } from '../jsComp';
 import { agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
 const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
-    const { context, gos } = useContext(BeansContext);
+    const { context, gos, editSvc } = useContext(BeansContext);
 
     const enableCellDeferRender = useContext(EnableDeferRenderContext);
 
@@ -192,7 +192,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         cellCtrlsMerged?.map((cellCtrl) => (
             <CellComp
                 cellCtrl={cellCtrl}
-                editingRow={rowCtrl.editing}
+                editingRow={editSvc?.isEditing(rowCtrl.rowNode) ?? false}
                 printLayout={rowCtrl.printLayout}
                 key={cellCtrl.instanceId}
             />

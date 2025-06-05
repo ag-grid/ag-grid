@@ -175,6 +175,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         stickyTopOffsetChanged: StickyTopOffsetChangedEvent<TData, TContext>;
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
         rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
+        cellEditValuesChanged: CellEditValuesChangedEvent<TData, TContext>;
     }
 >;
 
@@ -741,6 +742,10 @@ export interface CellFocusedParams extends CommonCellFocusParams {
     forceBrowserFocus?: boolean;
     /** When `forceBrowserFocus` is `true`, should scroll be prevented */
     preventScrollOnBrowserFocus?: boolean;
+    /** Previous focused cell params */
+    previousCellFocus?: CellFocusedParams;
+    /** Initiating event, if any */
+    sourceEvent?: Event;
 }
 
 export interface HeaderFocusedParams {
@@ -1050,6 +1055,9 @@ export interface CellValueChangedEvent<TData = any, TValue = any>
     newValue: TValue | null | undefined;
     source: string | undefined;
 }
+
+export interface CellEditValuesChangedEvent<TData = any, TValue = any>
+    extends AgGlobalEvent<'cellEditValuesChanged', TData, TValue> {}
 
 export interface CellEditRequestEvent<TData = any, TValue = any>
     extends CellWithDataEvent<'cellEditRequest', TData, TValue> {
