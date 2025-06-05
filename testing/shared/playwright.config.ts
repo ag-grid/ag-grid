@@ -18,7 +18,7 @@ if (fw === 'angular') {
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig({
+const config = defineConfig({
     testDir: './e2e',
     /* Run tests in files in parallel */
     fullyParallel: true,
@@ -65,12 +65,15 @@ export default defineConfig({
             },
         },
     ],
+});
 
-    /* Run your local dev server before starting the tests */
-    webServer: {
+if (!process.env.NO_SERVER) {
+    config /* Run your local dev server before starting the tests */.webServer = {
         command,
         url: baseURL,
         reuseExistingServer: !process.env.CI,
         ignoreHTTPSErrors: true,
-    },
-});
+    };
+}
+
+export default config;
