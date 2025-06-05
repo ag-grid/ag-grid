@@ -10,14 +10,6 @@ test.describe(`Performance Test - compare performance of setting data between cu
         page,
         context,
     }) => {
-        await context.addCookies([
-            {
-                name: 'paccept',
-                value: '2025-06-05T14:29:37.754Z',
-                domain: '.run.plnkr.co',
-                path: '/preview/*',
-            },
-        ]);
         const pairsOfUrls: [string, string][] = [
             [
                 'https://ag-grid.com/examples/performance-test/lots-of-cells/typescript/',
@@ -44,13 +36,21 @@ test.describe(`Performance Test - compare performance of setting data between cu
                 result[url] ||= [];
 
                 for (let i = 0; i < ITERATIONS; i++) {
+                    await context.clearCookies();
+                    await context.addCookies([
+                        {
+                            name: 'paccept',
+                            value: new Date().toISOString(),
+                            domain: '.run.plnkr.co',
+                            path: new URL(url).pathname,
+                        },
+                    ]);
                     await gotoAndGetComms(page, url);
                     const noise = (await waitFor(() => performance.getEntriesByType('long-animation-frame'), page))
                         .length;
 
                     await page.getByText('Set Data').click();
-
-                    await waitFor(() => page.textContent('body').then((text) => text.includes('Athlete')));
+                    await waitFor(() => document.body.textContent.includes('Athlete'), page);
                     const durations = (await waitFor(() => performance.getEntriesByType('long-animation-frame'), page))
                         .slice(noise)
                         .map((pe) => pe.duration);
