@@ -35,7 +35,7 @@ const config = defineConfig({
     use: {
         /* Base URL to use in actions like `await page.goto('/')`. */
         baseURL,
-        headless: !!process.env.CI,
+        headless: !!(process.env.PW_HEADLESS ?? process.env.CI),
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: 'on-first-retry',

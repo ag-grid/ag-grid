@@ -2,12 +2,12 @@ import { test } from '@playwright/test';
 
 import { computeStats, gotoAndGetComms, waitFor } from '../../playwright.utils';
 
-test.describe.configure({ timeout: 10 * 60_000 });
-const ITERATIONS = 10;
+test.describe.configure({ timeout: 15 * 60_000 });
+const ITERATIONS = 50;
 
 test.describe(`Performance Test - compare performance of setting data between current prod and staging: 'Lots of Cells'`, () => {
     test(`should load and compare performance between staging and prod, ${ITERATIONS} iterations`, async ({ page }) => {
-        const pairsOfUrls = [
+        const pairsOfUrls: [string, string][] = [
             [
                 'https://ag-grid.com/examples/performance-test/lots-of-cells/typescript/',
                 'https://grid-staging.ag-grid.com/examples/performance-test/lots-of-cells/typescript/',
@@ -49,20 +49,42 @@ test.describe(`Performance Test - compare performance of setting data between cu
             }
 
             const stats = Object.fromEntries(
-                Object.entries(result).map(([url, durations]) => [url, computeStats(durations)])
+                Object.entries(result).map(([url, durations]) => {
+                    const stats: {
+                        average: number;
+                        filteredCount: number;
+                        marginOfError: number;
+                        originalCount: number;
+                        stdDev: number;
+                    } = computeStats(durations);
+                    return [url, stats];
+                })
             );
 
-            const diffPercent = ((stats[urls[0]].average - stats[urls[1]].average) / stats[urls[0]].average) * 100;
-            console.log(`${urls[0]}:`, stats[urls[0]]);
-            console.log(`${urls[1]}:`, stats[urls[1]]);
-            console.log(`Difference: ${diffPercent.toFixed(2)}%`);
-            if (diffPercent > 0) {
-                console.log(`${urls[0]} was slower than ${urls[1]} by ${diffPercent.toFixed(2)}%`);
-            } else if (diffPercent < 0) {
-                console.log(`${urls[0]} was faster than ${urls[1]} by ${Math.abs(diffPercent).toFixed(2)}%`);
-            } else {
-                console.log(`${urls[0]} and ${urls[1]} had the same average performance`);
-            }
+            reportStats(urls, stats);
         }
     });
 });
+
+function reportStats<T extends string>(urls: [T, T], stats: Record<T, ReturnType<typeof computeStats>>) {
+    const s1 = stats[urls[0]];
+    const s2 = stats[urls[1]];
+
+    // Calculate which is slower and by how much
+    const diff = s1.average - s2.average;
+    const slower = diff > 0 ? urls[0] : urls[1];
+    const faster = diff > 0 ? urls[1] : urls[0];
+    const percentDiff = (Math.abs(diff) / Math.min(s1.average, s2.average)) * 100;
+
+    // Calculate average margin of error
+    const marginOfError = ((s1.marginOfError + s2.marginOfError) / 2).toFixed(2);
+
+    // Build message
+    console.log(`${slower} is slower than ${faster} by ${percentDiff.toFixed(1)}% ± ${marginOfError}`);
+    console.log(
+        `${urls[0]} → avg: ${s1.average.toFixed(2)}ms ±${s1.marginOfError.toFixed(2)}, stdDev: ${s1.stdDev.toFixed(2)}, count: ${s1.filteredCount}/${s1.originalCount}`
+    );
+    console.log(
+        `${urls[1]} → avg: ${s2.average.toFixed(2)}ms ±${s2.marginOfError.toFixed(2)}, stdDev: ${s2.stdDev.toFixed(2)}, count: ${s2.filteredCount}/${s2.originalCount}`
+    );
+}
