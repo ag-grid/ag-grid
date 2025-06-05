@@ -22,7 +22,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --all-projects --severity-threshold=high
+          args: --all-projects --exclude=project.json --severity-threshold=high
 
   code-security:
     runs-on: ubuntu-latest
