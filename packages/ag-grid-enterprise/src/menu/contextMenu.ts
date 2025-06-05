@@ -90,10 +90,12 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             const enableRowPinning = gos.get('enableRowPinning');
             const isRowPinnable = gos.get('isRowPinnable');
             const grandTotalRow = gos.get('grandTotalRow');
+            const grandTotalRowPinned = gos.get('grandTotalRowPinned');
             if (enableRowPinning) {
                 const isGroupTotalRow = node.level > -1 && node.footer;
                 const isGrandTotalRow = node.level === -1 && node.footer;
-                const isGrandTotalRowFixed = grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
+                const isGrandTotalRowFixed =
+                    grandTotalRowPinned != null || grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
 
                 // We do not allow pinning of group total rows. As such, only show pinning related menu options for
                 // grand total rows that are not fixed in place, and normal rows that are not group total rows.

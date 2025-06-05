@@ -18,7 +18,8 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
 
         if (isRootNode) {
             const grandTotal = includeFooterNodes && _getGrandTotalRow(this.gos);
-            if (_positionMatchesGrandTotalRow(position, grandTotal)) {
+            const grandTotalPinned = includeFooterNodes && this.gos.get('grandTotalRowPinned');
+            if (_positionMatchesGrandTotalRow(position, grandTotal, grandTotalPinned)) {
                 _createRowNodeFooter(node, this.beans);
                 callback(node.sibling, index++);
             }
@@ -110,8 +111,13 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
 
 function _positionMatchesGrandTotalRow(
     position: 'top' | 'bottom',
-    grandTotaRow: GridOptions['grandTotalRow'] | false
+    grandTotaRow: GridOptions['grandTotalRow'] | false,
+    grandTotalRowPinned: GridOptions['grandTotalRowPinned'] | false
 ): boolean {
+    if (grandTotalRowPinned) {
+        return grandTotalRowPinned === position;
+    }
+
     switch (grandTotaRow) {
         case 'top':
         case 'pinnedTop':

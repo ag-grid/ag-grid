@@ -69,7 +69,7 @@ export class PinnedRows {
     }
 
     public sort(): void {
-        const { sortSvc, rowNodeSorter } = this.beans;
+        const { sortSvc, rowNodeSorter, gos } = this.beans;
         const sortOptions = sortSvc?.getSortOptions() ?? [];
         // first remove the grand total row so it doesn't get sorted
         const grandTotalNode = _removeGrandTotalRow(this.order);
@@ -78,8 +78,13 @@ export class PinnedRows {
         this.order = rowNodeSorter?.doFullSort(this.order, sortOptions) ?? this.order;
         // post-sort re-insert the grand total row in the correct place
         if (!grandTotalNode) return;
-        const grandTotalRow = this.beans.gos.get('grandTotalRow');
-        if (grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom') {
+        const grandTotalRow = gos.get('grandTotalRow');
+        const grandTotalRowPinned = gos.get('grandTotalRowPinned');
+        if (grandTotalRowPinned === 'top') {
+            this.order.unshift(grandTotalNode);
+        } else if (grandTotalRowPinned === 'bottom') {
+            this.order.push(grandTotalNode);
+        } else if (grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom') {
             this.order.push(grandTotalNode);
         } else {
             this.order.unshift(grandTotalNode);

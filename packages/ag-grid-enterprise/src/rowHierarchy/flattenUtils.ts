@@ -12,6 +12,7 @@ export interface FlattenDetails {
     groupHideParentOfSingleChild: GridOptions['groupHideParentOfSingleChild'];
     isGroupMultiAutoColumn: boolean;
     grandTotalRow: GridOptions['grandTotalRow'];
+    grandTotalRowPinned: GridOptions['grandTotalRowPinned'];
     groupTotalRow: (params: WithoutGridCommon<GetGroupIncludeFooterParams<any, any>>) => 'top' | 'bottom' | undefined;
 }
 
@@ -28,6 +29,7 @@ export function _getFlattenDetails(gos: GridOptionsService): FlattenDetails {
         isGroupMultiAutoColumn: _isGroupMultiAutoColumn(gos),
         hideOpenParents: gos.get('groupHideOpenParents'),
         grandTotalRow: _getGrandTotalRow(gos),
+        grandTotalRowPinned: gos.get('grandTotalRowPinned'),
         groupTotalRow: _getGroupTotalRowCallback(gos),
     };
 }
