@@ -1,7 +1,7 @@
 name: Security
 
 env:
-  SECURITY_IGNORE_LIST: "project.json,markdoc-migration,ag-grid-angular,ag-grid-enterprise,ag-grid-vue3,ag-grid-generate-code-reference-files,ag-grid-generate-example-files,module-size,module-size-angular"
+  SECURITY_IGNORE_LIST: "ag-grid-angular,ag-grid-enterprise,ag-grid-vue3,ag-grid-generate-code-reference-files,ag-grid-generate-example-files,module-size,module-size-angular"
 
 on:
     issue_comment:
@@ -27,7 +27,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --all-projects --severity-threshold=high --exclude=${{ env.SECURITY_IGNORE_LIST }}
+          args: --all-projects --severity-threshold=high --exclude=project.json,${{ env.SECURITY_IGNORE_LIST }}
 
   code-security:
     runs-on: ubuntu-latest
