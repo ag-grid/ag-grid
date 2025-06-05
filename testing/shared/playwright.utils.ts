@@ -17,15 +17,19 @@ export async function getBrowserCommunications(page: Page) {
     };
 }
 
-export const waitFor = async <T>(getterOrTimeout: (() => T) | number, page?: Page, smart = false, timer = 5000) => {
+export const waitFor = async <T>(
+    getterOrTimeout: (() => T) | number,
+    page?: Page,
+    options = { smart: false, timer: 5000 }
+): Promise<T> => {
     if (typeof getterOrTimeout === 'number') {
-        return new Promise<void>((resolve) => setTimeout(resolve, getterOrTimeout));
+        return new Promise((resolve) => setTimeout(resolve, getterOrTimeout));
     }
-
+    const { smart, timer } = options;
     if (page) {
         await page.waitForFunction(getterOrTimeout);
         if (smart) {
-            return page.evaluateHandle(getterOrTimeout);
+            return page.evaluateHandle(getterOrTimeout) as Promise<T>;
         }
         return page.evaluate(getterOrTimeout);
     }

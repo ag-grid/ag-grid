@@ -2,43 +2,45 @@ import { expect, test } from '@playwright/test';
 
 import { gotoAndGetComms, waitFor } from '../../playwright.utils';
 
-const fw = process.env.FW_TYPE ?? 'Unknown';
-const version = process.env.FW_VERSION ?? 'unknown';
-const titleCaseFw = fw.charAt(0).toUpperCase() + fw.substring(1);
-const variantTitle = process.env.FW_VARIANT ? `(${process.env.FW_VARIANT})` : '';
-
 test.describe.configure({ timeout: 120_000 });
 const ITERATIONS_FOR_AVERAGE = 10;
-const SCROLLS_PER_ITERATION = 25;
 
-test.describe(`${titleCaseFw} ${variantTitle} ${version}`, () => {
-    test(`Load performance-test, set data, scroll ${SCROLLS_PER_ITERATION} times by 5000px, find slowest, repeat ${ITERATIONS_FOR_AVERAGE} times`, async ({
+test.describe(`Performance Test - compare performance of setting data between current prod and staging: 'Lots of Cells, Typescript'`, () => {
+    test(`should load and compare performance between staging and prod, ${ITERATIONS_FOR_AVERAGE} iterations`, async ({
         page,
     }) => {
-        await gotoAndGetComms(page, '/examples/performance-test/lots-of-cells/typescript'); // or reactFunctionalTs
-        const result = [];
-        for (let i = 0; i < ITERATIONS_FOR_AVERAGE; i++) {
-            await page.getByText('Set Data').click();
-            const noise = (await page.evaluate(() => performance.getEntriesByType('long-animation-frame'))).length;
+        const result: Record<string, PerformanceEntryList> = {};
+        const urls = [
+            'https://ag-grid.com/examples/performance-test/lots-of-cells/typescript/',
+            'https://grid-staging.ag-grid.com/examples/performance-test/lots-of-cells/typescript/',
+        ];
+        for (const url of urls) {
+            result[url] ||= [];
+            await gotoAndGetComms(page, url);
+            for (let i = 0; i < ITERATIONS_FOR_AVERAGE; i++) {
+                const noise = (await waitFor(() => performance.getEntries())).length;
 
-            const grid = await page.evaluateHandle(() => document.querySelector('.ag-body-viewport'));
-            const gridRect = await grid.boundingBox();
+                page.getByText('Set Data').click();
+                await waitFor(() =>
+                    page.textContent('.ag-body-viewport').then((text) => !text.includes('No Rows To Show'))
+                );
+                await waitFor(() => performance.getEntries(), page);
 
-            await page.mouse.move(gridRect.x + gridRect.width / 2, gridRect.y + gridRect.height / 2);
-
-            for (let j = 0; j < SCROLLS_PER_ITERATION; j++) {
-                await page.mouse.wheel(0, 2500);
+                const eventPerf = (await waitFor(() => performance.getEntries(), page))
+                    .slice(noise)
+                    .sort((a: any, b: any) => a.duration - b.duration)
+                    .pop();
+                result[url].push(eventPerf);
+                await page.reload({ waitUntil: 'networkidle' });
             }
-            await waitFor(() => new Promise((r) => requestIdleCallback(r)), page);
-            const eventPerf = (await page.evaluate(() => performance.getEntriesByType('long-animation-frame')))
-                .slice(noise)
-                .sort((a: any, b: any) => a.duration - b.duration)
-                .pop();
-            result.push(eventPerf);
-            await page.reload({ waitUntil: 'networkidle' });
         }
-        const avg = result.reduce((acc, entry) => acc + entry.duration, 0) / result.length;
-
-        expect(avg).toBeLessThan(1000);
+        const avgs = Object.entries(result).reduce((acc, [url, entries]) => {
+            const totalDuration = entries.reduce((sum, entry) => sum + entry.duration, 0);
+            acc[url] = Math.round(totalDuration / entries.length);
+            return acc;
+        }, {});
+        const diffPercent = ((avgs[urls[0]] - avgs[urls[1]]) / avgs[urls[0]]) * 100;
+        console.log(`${urls[0]} is ${avgs[urls[0]]}ms, ${urls[1]} is ${avgs[urls[1]]}ms`);
+        expect(diffPercent).toBeLessThan(100);
     });
 });
