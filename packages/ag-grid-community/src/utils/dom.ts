@@ -467,6 +467,7 @@ type RoleType =
     | 'button'
     | 'columnheader'
     | 'gridcell'
+    | 'heading'
     | 'menu'
     | 'option'
     | 'presentation'

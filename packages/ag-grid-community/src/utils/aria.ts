@@ -165,8 +165,12 @@ export function _setAriaChecked(element: Element, checked?: boolean) {
     _setAriaAttribute(element, 'checked', checked === undefined ? 'mixed' : checked);
 }
 
-export function _setAriaControls(controllerElement: Element, controlledElement: Element) {
-    _toggleAriaAttribute(controllerElement, 'controls', controlledElement.id);
+export function _setAriaControls(controllerElement: Element, controlledId?: string | null) {
+    _toggleAriaAttribute(controllerElement, 'controls', controlledId);
+}
+
+export function _setAriaControlsAndLabel(controllerElement: Element, controlledElement: Element) {
+    _setAriaControls(controllerElement, controlledElement.id);
     _setAriaLabelledBy(controlledElement, controllerElement.id);
 }
 

@@ -29,4 +29,5 @@ export const FILTER_LOCALE_TEXT = {
     andCondition: 'AND',
     orCondition: 'OR',
     dateFormatOoo: 'yyyy-mm-dd',
+    filterSummaryInactive: 'is (All)',
 };

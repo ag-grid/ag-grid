@@ -15,20 +15,19 @@ export abstract class SimpleFilterModelFormatter<TFilterParams extends ISimpleFi
     // used by:
     // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.
     // 2) DateFloatingFilter: Only when read only (as we show text rather than a date picker when read only)
-    public getModelAsString(model: ISimpleFilterModel | null): string | null {
+    public getModelAsString(model: ISimpleFilterModel | null, source?: 'floating' | 'filterToolPanel'): string | null {
+        const translate = this.getLocaleTextFunc();
+        const translateFromLookup = (key: keyof typeof FILTER_LOCALE_TEXT) => translate(key, FILTER_LOCALE_TEXT[key]);
         if (!model) {
-            return null;
+            return source === 'filterToolPanel' ? translateFromLookup('filterSummaryInactive') : null;
         }
         const isCombined = (model as any).operator != null;
-        const translate = this.getLocaleTextFunc();
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
             const conditions = combinedModel.conditions ?? [];
             const customOptions = conditions.map((condition) => this.getModelAsString(condition));
             const joinOperatorTranslateKey = combinedModel.operator === 'AND' ? 'andCondition' : 'orCondition';
-            return customOptions.join(
-                ` ${translate(joinOperatorTranslateKey, FILTER_LOCALE_TEXT[joinOperatorTranslateKey])} `
-            );
+            return customOptions.join(` ${translateFromLookup(joinOperatorTranslateKey)} `);
         } else if (model.type === 'blank' || model.type === 'notBlank') {
             return translate(model.type, model.type);
         } else {

@@ -113,8 +113,11 @@ export abstract class SimpleFilterHandler<
         return models[combineFunction]((m) => this.individualConditionPasses(params, m, cellValue));
     }
 
-    public getModelAsString(model: TModel | ICombinedSimpleModel<TModel> | null): string {
-        return this.filterModelFormatter.getModelAsString(model) ?? '';
+    public getModelAsString(
+        model: TModel | ICombinedSimpleModel<TModel> | null,
+        source?: 'floating' | 'filterToolPanel'
+    ): string {
+        return this.filterModelFormatter.getModelAsString(model, source) ?? '';
     }
 
     protected validateModel(

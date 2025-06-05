@@ -8,6 +8,7 @@ export const DEFAULT_LOCALE_TEXT = {
     noMatches: 'No matches.',
     ariaSearchFilterValues: 'Search filter values',
     ariaFilterList: 'Filter List',
+    filterSummaryInactive: 'is (All)',
 } as const;
 
 export type ISetFilterLocaleText = typeof DEFAULT_LOCALE_TEXT;

@@ -20,7 +20,7 @@ import {
     _focusNextGridCoreContainer,
     _getActiveDomElement,
     _removeFromParent,
-    _setAriaControls,
+    _setAriaControlsAndLabel,
     _warn,
 } from 'ag-grid-community';
 
@@ -332,7 +332,7 @@ export class AgSideBar extends Component implements ISideBar {
 
         const button = this.sideBarButtons.addButtonComp(def);
 
-        _setAriaControls(button.eToggleButton, wrapperGui);
+        _setAriaControlsAndLabel(button.eToggleButton, wrapperGui);
     }
 
     public refresh(): void {

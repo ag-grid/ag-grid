@@ -164,11 +164,11 @@ export class SetFilterHandler<TValue = string>
         );
     }
 
-    public getModelAsString(model: SetFilterModel | null): string {
+    public getModelAsString(model: SetFilterModel | null, source?: 'floating' | 'filterToolPanel'): string {
         const { values } = model ?? {};
 
         if (values == null) {
-            return '';
+            return source === 'filterToolPanel' ? translateForSetFilter(this, 'filterSummaryInactive') : '';
         }
 
         const availableKeys = this.valueModel.getAvailableKeys(values);

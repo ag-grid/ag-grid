@@ -5,6 +5,7 @@ import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { SideBarModule } from '../sideBar/sideBarModule';
 import { VERSION } from '../version';
 import { FiltersToolPanel } from './filtersToolPanel';
+import { WrapperToolPanel } from './newFilterToolPanel/wrapperToolPanel';
 
 /**
  * @feature Accessories -> Filters Tool Panel
@@ -13,6 +14,20 @@ export const FiltersToolPanelModule: _ModuleWithoutApi = {
     moduleName: 'FiltersToolPanel',
     version: VERSION,
     userComponents: { agFiltersToolPanel: FiltersToolPanel },
+    icons: {
+        // filter tool panel tab
+        filtersToolPanel: 'filter',
+    },
+    dependsOn: [SideBarModule, EnterpriseCoreModule, _ColumnFilterModule],
+};
+
+/**
+ * @feature Accessories -> New Filters Tool Panel
+ */
+export const NewFiltersToolPanelModule: _ModuleWithoutApi = {
+    moduleName: 'NewFiltersToolPanel',
+    version: VERSION,
+    userComponents: { agNewFiltersToolPanel: WrapperToolPanel },
     icons: {
         // filter tool panel tab
         filtersToolPanel: 'filter',

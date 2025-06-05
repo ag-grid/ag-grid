@@ -4,7 +4,7 @@ import {
     _createElement,
     _requestAnimationFrame,
     _setAriaActiveDescendant,
-    _setAriaControls,
+    _setAriaControlsAndLabel,
     _setAriaLabel,
 } from 'ag-grid-community';
 
@@ -71,7 +71,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const ariaLabel = translate(pickerAriaLabelKey, pickerAriaLabelValue);
 
         _setAriaLabel(eListAriaEl, ariaLabel);
-        _setAriaControls(this.richSelectWrapper, eListAriaEl);
+        _setAriaControlsAndLabel(this.richSelectWrapper, eListAriaEl);
     }
 
     public override navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {

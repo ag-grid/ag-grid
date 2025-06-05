@@ -48,7 +48,7 @@ export interface FilterHandler<TData = any, TContext = any, TModel = any, TCusto
      * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
      * filter.
      */
-    getModelAsString?(model: TModel | null): string;
+    getModelAsString?(model: TModel | null, source?: 'floating' | 'filterToolPanel'): string;
     /** Optional: Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */
     destroy?(): void;
 }

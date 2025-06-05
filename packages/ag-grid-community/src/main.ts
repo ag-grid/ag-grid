@@ -1038,6 +1038,7 @@ export {
     _setAriaLabelledBy,
     _setAriaChecked,
     _setAriaControls,
+    _setAriaControlsAndLabel,
     _setAriaRole,
     _setAriaColIndex,
     _setAriaColSpan,

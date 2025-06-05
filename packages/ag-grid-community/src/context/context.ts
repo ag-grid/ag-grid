@@ -179,6 +179,7 @@ export type UserComponentName =
     | 'agMenuItem'
     | 'agColumnsToolPanel'
     | 'agFiltersToolPanel'
+    | 'agNewFiltersToolPanel'
     | 'agGroupRowRenderer'
     | 'agGroupCellRenderer'
     | 'agDetailCellRenderer'
