@@ -1459,7 +1459,7 @@ export interface GridOptions<TData = any> {
      * Pin the grand total row to the top of bottom of the grid. Requires `grandTotalRow` to be set.
      * When multiple rows are pinned, the grid uses `grandTotalRow` to determine whether the grand total row should be
      * displayed first or last in the list of pinned rows.
-     * @agModule `RowGroupingModule` / `PinnedRowModule`
+     * @agModule `PinnedRowModule`
      */
     grandTotalRowPinned?: 'top' | 'bottom';
 

@@ -79,12 +79,7 @@ export class PinnedRows {
         // post-sort re-insert the grand total row in the correct place
         if (!grandTotalNode) return;
         const grandTotalRow = gos.get('grandTotalRow');
-        const grandTotalRowPinned = gos.get('grandTotalRowPinned');
-        if (grandTotalRowPinned === 'top') {
-            this.order.unshift(grandTotalNode);
-        } else if (grandTotalRowPinned === 'bottom') {
-            this.order.push(grandTotalNode);
-        } else if (grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom') {
+        if (grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom') {
             this.order.push(grandTotalNode);
         } else {
             this.order.unshift(grandTotalNode);

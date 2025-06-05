@@ -37,15 +37,17 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             this.dispatchRowPinnedEvents();
         };
 
+        const onModelUpdated = () => {
+            this.tryToEmptyQueues();
+            this.pinGrandTotalRow();
+            this.forContainers((container) => container.hide(shouldHide));
+            this.refreshRowPositions();
+            this.dispatchRowPinnedEvents();
+        };
+
         this.addManagedEventListeners({
             gridStylesChanged: this.onGridStylesChanges.bind(this),
-            modelUpdated: () => {
-                this.tryToEmptyQueues();
-                this.pinGrandTotalRow();
-                this.forContainers((container) => container.hide(shouldHide));
-                this.refreshRowPositions();
-                this.dispatchRowPinnedEvents();
-            },
+            modelUpdated: onModelUpdated,
             columnRowGroupChanged: () => {
                 this.forContainers(removeGroupRows);
                 this.refreshRowPositions();
@@ -70,9 +72,13 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             grandTotalRow: GridOptions['grandTotalRow'],
             grandTotalRowPinned: GridOptions['grandTotalRowPinned']
         ) => {
-            this._grandTotalPinned =
+            const newValue =
                 grandTotalRowPinned ??
                 (grandTotalRow === 'pinnedBottom' ? 'bottom' : grandTotalRow === 'pinnedTop' ? 'top' : null);
+            if (newValue != this._grandTotalPinned) {
+                this._grandTotalPinned = newValue;
+                onModelUpdated();
+            }
         };
 
         this.addManagedPropertyListener('grandTotalRow', ({ currentValue }) => {
@@ -407,7 +413,7 @@ function _createPinnedSibling(beans: BeanCollection, rowNode: RowNode, floating:
     return sibling;
 }
 
-/** Expect to be passed the pinned node, not the original node. Therefore `sibling` is the original. */
+/** Expect to be passed the pinned node, not the original node. Therefore `pinnedSibling` is the original. */
 function _destroyRowNodeSibling(rowNode: RowNode): void {
     if (!rowNode.pinnedSibling) {
         return;
@@ -434,16 +440,13 @@ function removeGroupRows(set: PinnedRows) {
         }
     });
 
-    rowsToRemove.forEach((node) => {
-        set.delete(node);
-    });
+    rowsToRemove.forEach((node) => set.delete(node));
 }
 
 function getSpannedRows(beans: BeanCollection, rowNode: RowNode, column: AgColumn) {
     const { rowSpanSvc } = beans;
     const isCellSpanning = (column && rowSpanSvc?.isCellSpanning(column, rowNode)) ?? false;
     if (column && isCellSpanning) {
-        const span = rowSpanSvc?.getCellSpan(column, rowNode);
-        if (span) return Array.from(span.spannedNodes);
+        return rowSpanSvc?.getCellSpan(column, rowNode)?.spannedNodes;
     }
 }
