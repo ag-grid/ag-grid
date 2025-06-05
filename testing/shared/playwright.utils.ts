@@ -55,3 +55,23 @@ export const gotoAndGetComms = async (page: Page, url: string) => {
     await page.goto(url, { waitUntil: 'networkidle' });
     return msgs;
 };
+
+export const computeStats = (times: number[]) => {
+    const sorted = times.slice().sort((a, b) => a - b);
+    const q1 = sorted[Math.floor(sorted.length / 4)];
+    const q3 = sorted[Math.floor((sorted.length * 3) / 4)];
+    const iqr = q3 - q1;
+    const lower = q1 - 1.5 * iqr;
+    const upper = q3 + 1.5 * iqr;
+    const filtered = sorted.filter((t) => t >= lower && t <= upper);
+    const avg = filtered.reduce((sum, v) => sum + v, 0) / filtered.length;
+    const stdDev = Math.sqrt(filtered.reduce((sum, v) => sum + Math.pow(v - avg, 2), 0) / filtered.length);
+    const marginOfError = (1.96 * stdDev) / Math.sqrt(filtered.length);
+    return {
+        average: Math.round(avg),
+        stdDev: Math.round(stdDev),
+        marginOfError: Math.round(marginOfError),
+        filteredCount: filtered.length,
+        originalCount: times.length,
+    };
+};
