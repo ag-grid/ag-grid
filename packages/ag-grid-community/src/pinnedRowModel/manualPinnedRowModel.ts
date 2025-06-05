@@ -1,6 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { GridOptions } from '../entities/gridOptions';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED } from '../entities/rowNode';
 import type { RowNode } from '../entities/rowNode';
 import { _createRowNodeSibling } from '../entities/rowNodeUtils';
@@ -65,9 +66,21 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             this.dispatchRowPinnedEvents();
         });
 
-        this.addManagedPropertyListener('grandTotalRow', ({ currentValue }) => {
+        const onGrandTotalRowChanged = (
+            grandTotalRow: GridOptions['grandTotalRow'],
+            grandTotalRowPinned: GridOptions['grandTotalRowPinned']
+        ) => {
             this._grandTotalPinned =
-                currentValue === 'pinnedBottom' ? 'bottom' : currentValue === 'pinnedTop' ? 'top' : null;
+                grandTotalRowPinned ??
+                (grandTotalRow === 'pinnedBottom' ? 'bottom' : grandTotalRow === 'pinnedTop' ? 'top' : null);
+        };
+
+        this.addManagedPropertyListener('grandTotalRow', ({ currentValue }) => {
+            onGrandTotalRowChanged(currentValue, gos.get('grandTotalRowPinned'));
+        });
+
+        this.addManagedPropertyListener('grandTotalRowPinned', ({ currentValue }) => {
+            onGrandTotalRowChanged(gos.get('grandTotalRow'), currentValue);
         });
 
         this.addManagedPropertyListener('isRowPinned', runIsRowPinned);
