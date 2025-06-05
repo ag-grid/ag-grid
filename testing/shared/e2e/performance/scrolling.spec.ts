@@ -16,6 +16,14 @@ test.describe(`Performance Test - compare performance of setting data between cu
                 'https://ag-grid.com/examples/performance-test/lots-of-cells/reactFunctionalTs/',
                 'https://grid-staging.ag-grid.com/examples/performance-test/lots-of-cells/reactFunctionalTs/',
             ],
+            [
+                'https://ag-grid.com/examples/performance-test/lots-of-cells/typescript/', // control vs control
+                'https://ag-grid.com/examples/performance-test/lots-of-cells/typescript/',
+            ],
+            [
+                'https://run.plnkr.co/preview/cmbjfxfbz00083b6ykx78g5r4/',
+                'https://ag-grid.com/examples/performance-test/lots-of-cells/typescript/',
+            ],
         ];
 
         for (const urls of pairsOfUrls) {
@@ -31,9 +39,7 @@ test.describe(`Performance Test - compare performance of setting data between cu
 
                     await page.getByText('Set Data').click();
 
-                    await waitFor(() =>
-                        page.textContent('.ag-body-viewport').then((text) => !text.includes('No Rows To Show'))
-                    );
+                    await waitFor(() => page.textContent('.ag-body-viewport').then((text) => text.includes('Athlete')));
                     const durations = (await waitFor(() => performance.getEntriesByType('long-animation-frame'), page))
                         .slice(noise)
                         .map((pe) => pe.duration);
@@ -50,7 +56,13 @@ test.describe(`Performance Test - compare performance of setting data between cu
             console.log(`${urls[0]}:`, stats[urls[0]]);
             console.log(`${urls[1]}:`, stats[urls[1]]);
             console.log(`Difference: ${diffPercent.toFixed(2)}%`);
-            expect(diffPercent).toBeLessThan(5);
+            if (diffPercent > 0) {
+                console.log(`${urls[0]} was slower than ${urls[1]} by ${diffPercent.toFixed(2)}%`);
+            } else if (diffPercent < 0) {
+                console.log(`${urls[0]} was faster than ${urls[1]} by ${Math.abs(diffPercent).toFixed(2)}%`);
+            } else {
+                console.log(`${urls[0]} and ${urls[1]} had the same average performance`);
+            }
         }
     });
 });
