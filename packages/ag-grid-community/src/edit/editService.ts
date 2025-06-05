@@ -575,12 +575,17 @@ export class EditService extends BeanStub implements NamedBean {
 
                     if (this.isCellEditable(rowNode, column, 'api')) {
                         const oldValue = this.beans.valueSvc.getValue(column as AgColumn, rowNode, true, 'api');
-                        const newValue = this.beans.valueSvc.parseValue(
+                        let newValue = this.beans.valueSvc.parseValue(
                             column as AgColumn,
                             rowNode ?? null,
                             pendingValue,
                             oldValue
                         );
+
+                        if (Number.isNaN(newValue)) {
+                            // non-number was bulk edited into a number column
+                            newValue = null;
+                        }
 
                         rowUpdate.set(column, {
                             newValue,
