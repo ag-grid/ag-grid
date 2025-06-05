@@ -399,7 +399,6 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 column,
                 state,
             });
-            this;
         };
         displayParams.onStateChange = (state) => {
             const wrapper = this.wrappers[index];
