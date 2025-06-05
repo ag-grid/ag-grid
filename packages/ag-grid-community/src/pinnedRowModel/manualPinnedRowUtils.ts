@@ -1,6 +1,6 @@
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
-import { _isServerSideRowModel } from '../gridOptionsUtils';
+import { _getGrandTotalRow, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import { _removeFromArray } from '../utils/array';
 
@@ -78,7 +78,7 @@ export class PinnedRows {
         this.order = rowNodeSorter?.doFullSort(this.order, sortOptions) ?? this.order;
         // post-sort re-insert the grand total row in the correct place
         if (!grandTotalNode) return;
-        const grandTotalRow = gos.get('grandTotalRow');
+        const grandTotalRow = _getGrandTotalRow(gos);
         if (grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom') {
             this.order.push(grandTotalNode);
         } else {

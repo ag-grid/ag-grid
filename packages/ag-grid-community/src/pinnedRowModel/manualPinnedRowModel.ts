@@ -6,7 +6,12 @@ import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED } from '../entiti
 import type { RowNode } from '../entities/rowNode';
 import { _createRowNodeSibling } from '../entities/rowNodeUtils';
 import type { CssVariablesChanged } from '../events';
-import { _getRowHeightForNode, _isClientSideRowModel } from '../gridOptionsUtils';
+import {
+    _getGrandTotalRow,
+    _getGrandTotalRowPinned,
+    _getRowHeightForNode,
+    _isClientSideRowModel,
+} from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
@@ -80,11 +85,11 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         };
 
         this.addManagedPropertyListener('grandTotalRow', ({ currentValue }) => {
-            onGrandTotalRowChanged(currentValue, gos.get('grandTotalRowPinned'));
+            onGrandTotalRowChanged(currentValue, _getGrandTotalRowPinned(gos));
         });
 
         this.addManagedPropertyListener('grandTotalRowPinned', ({ currentValue }) => {
-            onGrandTotalRowChanged(gos.get('grandTotalRow'), currentValue);
+            onGrandTotalRowChanged(_getGrandTotalRow(gos), currentValue);
         });
 
         this.addManagedPropertyListener('isRowPinned', runIsRowPinned);
