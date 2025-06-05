@@ -74,3 +74,33 @@ export const computeStats = (times: number[]) => {
         originalCount: times.length,
     };
 };
+export type Variant = {
+    url: string;
+    version: string;
+};
+
+export function reportStats([control, variant]: string[], stats: Record<string, ReturnType<typeof computeStats>>) {
+    const s1 = stats[control];
+    const s2 = stats[variant];
+
+    const diff = s1.average - s2.average;
+    const slower = diff > 0 ? control : variant;
+    const faster = diff < 0 ? variant : control;
+    const percentDiff = (Math.abs(diff) / Math.min(s1.average, s2.average)) * 100;
+
+    const moe1Percent = (s1.marginOfError / s1.average) * 100;
+    const moe2Percent = (s2.marginOfError / s2.average) * 100;
+    const avgMoEPercent = ((moe1Percent + moe2Percent) / 2).toFixed(2);
+
+    if (diff === 0) {
+        console.log(`Both versions are equal: ${control} and ${variant}`);
+    } else {
+        console.log(`${slower} is slower than ${faster} by ${percentDiff.toFixed(1)}% ± ${avgMoEPercent}%`);
+    }
+    console.log(
+        `${control} → avg: ${s1.average.toFixed(2)}ms (±${moe1Percent.toFixed(2)}%), stdDev: ${s1.stdDev.toFixed(2)}, count: ${s1.filteredCount}/${s1.originalCount}`
+    );
+    console.log(
+        `${variant} → avg: ${s2.average.toFixed(2)}ms (±${moe2Percent.toFixed(2)}%), stdDev: ${s2.stdDev.toFixed(2)}, count: ${s2.filteredCount}/${s2.originalCount}`
+    );
+}
