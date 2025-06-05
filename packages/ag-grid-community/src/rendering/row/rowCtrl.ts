@@ -100,9 +100,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private active = true;
 
-    public stoppingRowEdit: boolean;
-    /** full row editing */
-    public editing: boolean;
     private rowFocused: boolean;
 
     private centerCellCtrls: CellCtrlListAndMap = { list: [], map: {} };
@@ -223,11 +220,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const focusableElement = this.fullWidthGui?.element;
         if (focusableElement) {
             // when cell is created, if it should be focus the grid should take focus from the focused cell
-            if (
-                !this.editing &&
-                focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned) &&
-                focusSvc.shouldTakeFocus()
-            ) {
+            const editing = this.beans.editSvc?.isEditing(this.rowNode);
+            if (!editing && focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned) && focusSvc.shouldTakeFocus()) {
                 setTimeout(() => focusableElement.focus({ preventScroll: true }), 0);
             }
         }
@@ -666,7 +660,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const KEEP_CELL = false;
 
         // always remove the cell if it's not rendered or if it's in the wrong pinned location
-        const { column } = cellCtrl;
+        const { column, rowNode } = cellCtrl;
         if (column.getPinned() != nextContainerPinned) {
             return REMOVE_CELL;
         }
@@ -677,8 +671,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         // we want to try and keep editing and focused cells
-        const { editing } = cellCtrl;
-        const { visibleCols } = this.beans;
+        const { visibleCols, editSvc } = this.beans;
+        const editing = editSvc?.isEditing(rowNode, column);
         const focused = cellCtrl.isCellFocused();
 
         const mightWantToKeepCell = editing || focused;
@@ -857,6 +851,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {
+        this.refreshRow({
+            suppressFlash: !event.update,
+            newData: !event.update,
+        });
+    }
+
+    public refreshRow(params: { suppressFlash?: boolean; newData?: boolean; forceRefresh?: boolean }): void {
         // if the row is rendered incorrectly, as the requirements for whether this is a FW row have changed, we force re-render this row.
         const fullWidthChanged = this.isFullWidth() !== !!this.isNodeFullWidthCell();
         if (fullWidthChanged) {
@@ -876,12 +877,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells
-        this.getAllCellCtrls().forEach((cellCtrl) =>
-            cellCtrl.refreshCell({
-                suppressFlash: !event.update,
-                newData: !event.update,
-            })
-        );
+        this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.refreshCell(params));
 
         // as data has changed update the dom row id attributes
         this.allRowGuis.forEach((gui) => {
@@ -1622,9 +1618,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public destroySecondPass(): void {
         this.allRowGuis.length = 0;
 
-        // if we are editing, destroying the row will stop editing
-        this.beans.editSvc?.stopRowEditing(this);
-
         const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
             ctrls.list.forEach((c) => c.destroy());
             return { list: [], map: {} };
@@ -1643,17 +1636,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onCellFocusChanged(): void {
-        const { focusSvc, editSvc } = this.beans;
+        const { focusSvc } = this.beans;
         const rowFocused = focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
 
         if (rowFocused !== this.rowFocused) {
             this.rowFocused = rowFocused;
             this.setFocusedClasses();
-        }
-
-        // if we are editing, then moving the focus out of a row will stop editing
-        if (!rowFocused && this.editing) {
-            editSvc?.stopRowEditing(this, false);
         }
     }
 
@@ -1774,7 +1762,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // infrequently used feature so we don't need to do this most
         // of the time
         this.getAllCellCtrls().forEach((cellCtrl) => {
-            if (cellCtrl.getColSpanningList().indexOf(column) >= 0) {
+            if (cellCtrl?.getColSpanningList().indexOf(column) >= 0) {
                 res = cellCtrl;
             }
         });

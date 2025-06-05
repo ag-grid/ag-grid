@@ -452,6 +452,15 @@ const CellComp = ({
                     });
                 }
             },
+            refreshEditStyles: (editing, isPopup) => {
+                if (!eGui.current) {
+                    return;
+                }
+                cssManager.current!.toggleCss('ag-cell-value', !showCellWrapper);
+                cssManager.current!.toggleCss('ag-cell-inline-editing', !!editing && !isPopup);
+                cssManager.current!.toggleCss('ag-cell-popup-editing', !!editing && !!isPopup);
+                cssManager.current!.toggleCss('ag-cell-not-inline-editing', !editing || !!isPopup);
+            },
         };
 
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
@@ -492,24 +501,23 @@ const CellComp = ({
         cssManager.current!.toggleCss('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
         cssManager.current!.toggleCss('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
         cssManager.current!.toggleCss('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
-        cellCtrl.setInlineEditingCss();
     });
 
-    const showContents = () => (
-        <>
-            {renderDetails != null &&
-                jsxShowValue(
-                    renderDetails,
-                    renderKey,
-                    instanceId,
-                    cellRendererRef,
-                    showCellWrapper,
-                    reactCellRendererStateless,
-                    setCellValueRef
-                )}
-            {editDetails != null && jsxEditValue(editDetails, setCellEditorRef, eGui.current!, cellCtrl, jsEditorComp)}
-        </>
-    );
+    const showContents = () => {
+        if (editDetails != null) {
+            return jsxEditValue(editDetails, setCellEditorRef, eGui.current!, cellCtrl, jsEditorComp);
+        } else if (renderDetails != null) {
+            return jsxShowValue(
+                renderDetails,
+                renderKey,
+                instanceId,
+                cellRendererRef,
+                showCellWrapper,
+                reactCellRendererStateless,
+                setCellValueRef
+            );
+        }
+    };
 
     const renderCell = () => (
         <div ref={setGuiRef} style={userStyles} role={cellAriaRole} col-id={colIdSanitised}>
