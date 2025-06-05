@@ -56,7 +56,7 @@
     "astro": "5.4.0",
     "cheerio": "^1.0.0",
     "classnames": "^2.5.1",
-    "codesandbox": "2.2.3",
+    "codesandbox-import-utils": "2.2.3",
     "downshift": "^9.0.6",
     "fast-xml-parser": "^4.4.1",
     "gif-frames": "^1.0.1",

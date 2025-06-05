@@ -2,7 +2,7 @@ import type { InternalFramework } from '@ag-grid-types';
 import type { FileContents } from '@components/example-generator/types';
 import { EXAMPLE_STYLE_FILE_NAME } from '@constants';
 import { isReactInternalFramework } from '@utils/framework';
-import { getParameters } from 'codesandbox/lib/api/define';
+import { getParameters } from 'codesandbox-import-utils/lib/api/define';
 
 type SandboxFiles = Parameters<typeof getParameters>[0]['files'];
 
