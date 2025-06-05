@@ -1,7 +1,7 @@
 name: Security
 
 env:
-  SECURITY_IGNORE_LIST: "documentation/ag-grid-docs/scripts/markdoc-migration/package.json,packages/ag-grid-angular/projects/ag-grid-angular/package.json,packages/ag-grid-enterprise/package.json,packages/ag-grid-vue3/package.json,plugins/ag-grid-generate-code-reference-files/package.json,plugins/ag-grid-generate-example-files/package.json,testing/module-size/package.json,testing/module-size-angular/package.json"
+  SECURITY_IGNORE_LIST: "project.json,markdoc-migration,ag-grid-angular,ag-grid-enterprise,ag-grid-vue3,ag-grid-generate-code-reference-files,ag-grid-generate-example-files,module-size,module-size-angular"
 
 on:
     issue_comment:
@@ -20,12 +20,14 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/security') || github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@main
+      - name: Echo SECURITY_IGNORE_LIST
+        run: echo ${{ env.SECURITY_IGNORE_LIST }}
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --all-projects --exclude=project.json --severity-threshold=high --exclude=${{ vars.SECURITY_IGNORE_LIST }}
+          args: --all-projects --severity-threshold=high --exclude=${{ env.SECURITY_IGNORE_LIST }}
 
   code-security:
     runs-on: ubuntu-latest
