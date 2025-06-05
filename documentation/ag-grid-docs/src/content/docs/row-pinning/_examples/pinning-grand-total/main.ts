@@ -37,13 +37,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowData: null,
     enableRowPinning: true,
     onFirstDataRendered: () => {
-        const value = getGrandTotalRow();
-        if (value === 'isRowPinned') {
-            setGrandTotalRow(gridApi, 'bottom');
-            setIsRowPinned(gridApi, 'top');
-        } else {
-            setGrandTotalRow(gridApi, value);
-        }
+        updateGrandTotalRow();
+        updateGrandTotalRowPinned();
     },
     theme: themeQuartz.withParams({
         pinnedRowBorder: {
@@ -63,13 +58,20 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function getGrandTotalRow() {
-    return document.querySelector<HTMLSelectElement>('#select-grand-total-row')?.value as
-        | GridOptions['grandTotalRow']
-        | 'isRowPinned';
+    return document.querySelector<HTMLSelectElement>('#select-grand-total-row')?.value as GridOptions['grandTotalRow'];
 }
 
 function setGrandTotalRow(api: GridApi<IOlympicData>, value: GridOptions['grandTotalRow']) {
     api.setGridOption('grandTotalRow', value);
+}
+
+function getGrandTotalRowPinned() {
+    return document.querySelector<HTMLSelectElement>('#select-grand-total-row-pinned')
+        ?.value as GridOptions['grandTotalRowPinned'];
+}
+
+function setGrandTotalRowPinned(api: GridApi<IOlympicData>, value: GridOptions['grandTotalRowPinned']) {
+    api.setGridOption('grandTotalRowPinned', value);
 }
 
 function setIsRowPinned(api: GridApi<IOlympicData>, value: RowPinnedType) {
@@ -80,12 +82,11 @@ function setIsRowPinned(api: GridApi<IOlympicData>, value: RowPinnedType) {
     });
 }
 
-function update() {
+function updateGrandTotalRow() {
     const value = getGrandTotalRow();
-    if (value === 'isRowPinned') {
-        setGrandTotalRow(gridApi, 'bottom');
-        setIsRowPinned(gridApi, 'top');
-    } else {
-        setGrandTotalRow(gridApi, value);
-    }
+    setGrandTotalRow(gridApi, value);
+}
+
+function updateGrandTotalRowPinned() {
+    setGrandTotalRowPinned(gridApi, getGrandTotalRowPinned());
 }
