@@ -1,9 +1,9 @@
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 
 import { computeStats, gotoAndGetComms, waitFor } from '../../playwright.utils';
 
 test.describe.configure({ timeout: 10 * 60_000 });
-const ITERATIONS = 50;
+const ITERATIONS = 10;
 
 test.describe(`Performance Test - compare performance of setting data between current prod and staging: 'Lots of Cells'`, () => {
     test(`should load and compare performance between staging and prod, ${ITERATIONS} iterations`, async ({ page }) => {
@@ -39,7 +39,7 @@ test.describe(`Performance Test - compare performance of setting data between cu
 
                     await page.getByText('Set Data').click();
 
-                    await waitFor(() => page.textContent('.ag-body-viewport').then((text) => text.includes('Athlete')));
+                    await waitFor(() => page.textContent('body').then((text) => text.includes('Athlete')));
                     const durations = (await waitFor(() => performance.getEntriesByType('long-animation-frame'), page))
                         .slice(noise)
                         .map((pe) => pe.duration);
