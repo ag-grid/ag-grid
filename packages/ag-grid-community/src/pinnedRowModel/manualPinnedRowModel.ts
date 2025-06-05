@@ -212,23 +212,11 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     public getPinnedTopTotalHeight(): number {
-        const size = this.top.size();
-        if (size === 0) return 0;
-
-        const node = this.top.getByIndex(size - 1);
-        if (node === undefined) return 0;
-
-        return node.rowTop! + node.rowHeight!;
+        return getTotalHeight(this.top);
     }
 
     public getPinnedBottomTotalHeight(): number {
-        const size = this.bottom.size();
-        if (size === 0) return 0;
-
-        const node = this.bottom.getByIndex(size - 1);
-        if (node === undefined) return 0;
-
-        return node.rowTop! + node.rowHeight!;
+        return getTotalHeight(this.bottom);
     }
 
     public getPinnedTopRowCount(): number {
@@ -311,13 +299,13 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     private pinGrandTotalRow() {
-        const rowModel = this.beans.rowModel;
-        if (!_isClientSideRowModel(this.gos, rowModel)) return;
+        const { beans, _grandTotalPinned: float } = this;
+        const { rowModel, gos } = beans;
+        if (!_isClientSideRowModel(gos, rowModel)) return;
 
         const sibling = rowModel.rootNode?.sibling;
         if (!sibling) return;
 
-        const float = this._grandTotalPinned;
         const pinnedSibling = sibling.pinnedSibling;
         const container = pinnedSibling && this.findPinnedRowNode(pinnedSibling);
         if (!float) {
@@ -333,7 +321,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 _destroyRowNodeSibling(pinnedSibling);
             }
             if (!container || container.floating !== float) {
-                const newPinnedSibling = _createPinnedSibling(this.beans, sibling, float);
+                const newPinnedSibling = _createPinnedSibling(beans, sibling, float);
                 this.getContainer(float).add(newPinnedSibling);
             }
         }
@@ -341,10 +329,11 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
     private onGridStylesChanges(e: CssVariablesChanged) {
         if (e.rowHeightChanged) {
-            const estimateRowHeight = (rowNode: RowNode) => {
-                rowNode.setRowHeight(rowNode.rowHeight, true);
-            };
-            this.forContainers((container) => container.forEach(estimateRowHeight));
+            this.forContainers((container) =>
+                container.forEach((rowNode: RowNode) => {
+                    rowNode.setRowHeight(rowNode.rowHeight, true);
+                })
+            );
         }
     }
 
@@ -451,4 +440,14 @@ function refreshCSRM({ gos, rowModel }: BeanCollection) {
     if (_isClientSideRowModel(gos, rowModel)) {
         rowModel.refreshModel({ step: 'map' });
     }
+}
+
+function getTotalHeight(container: PinnedRows): number {
+    const size = container.size();
+    if (size === 0) return 0;
+
+    const node = container.getByIndex(size - 1);
+    if (node === undefined) return 0;
+
+    return node.rowTop! + node.rowHeight!;
 }
