@@ -1,25 +1,17 @@
 import { Component, NgZone } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 
 import type {
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
     ColDef,
-    GridApi,
     GridOptions,
     Module,
     NewValueParams,
 } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
-import {
-    CellEditingStartedEvent,
-    CellEditingStoppedEvent,
-    RowEditingStartedEvent,
-    RowEditingStoppedEvent,
-} from 'ag-grid-community';
 import { MenuModule } from 'ag-grid-enterprise';
 
 import { AgGridAngular } from '../ag-grid-angular.component';
@@ -60,7 +52,7 @@ export class GridWrapperComponent {
     ];
 
     gridOptions: GridOptions = {
-        getContextMenuItems: (_params) => {
+        getContextMenuItems: (_params: any) => {
             return [
                 {
                     name: 'Custom Menu Item',
