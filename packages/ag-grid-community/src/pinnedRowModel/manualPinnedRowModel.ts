@@ -37,17 +37,15 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             this.dispatchRowPinnedEvents();
         };
 
-        const onModelUpdated = () => {
-            this.tryToEmptyQueues();
-            this.pinGrandTotalRow();
-            this.forContainers((container) => container.hide(shouldHide));
-            this.refreshRowPositions();
-            this.dispatchRowPinnedEvents();
-        };
-
         this.addManagedEventListeners({
             gridStylesChanged: this.onGridStylesChanges.bind(this),
-            modelUpdated: onModelUpdated,
+            modelUpdated: () => {
+                this.tryToEmptyQueues();
+                this.pinGrandTotalRow();
+                this.forContainers((container) => container.hide(shouldHide));
+                this.refreshRowPositions();
+                this.dispatchRowPinnedEvents();
+            },
             columnRowGroupChanged: () => {
                 this.forContainers(removeGroupRows);
                 this.refreshRowPositions();
@@ -77,7 +75,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 (grandTotalRow === 'pinnedBottom' ? 'bottom' : grandTotalRow === 'pinnedTop' ? 'top' : null);
             if (newValue != this._grandTotalPinned) {
                 this._grandTotalPinned = newValue;
-                onModelUpdated();
+                refreshCSRM(this.beans);
             }
         };
 
@@ -123,9 +121,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         // on the root node.
         if (rowNode.footer && rowNode.level === -1) {
             this._grandTotalPinned = float;
-            if (_isClientSideRowModel(this.gos, this.beans.rowModel)) {
-                this.beans.rowModel.refreshModel({ step: 'map' });
-            }
+            refreshCSRM(this.beans);
             return;
         }
 
@@ -448,5 +444,11 @@ function getSpannedRows(beans: BeanCollection, rowNode: RowNode, column: AgColum
     const isCellSpanning = (column && rowSpanSvc?.isCellSpanning(column, rowNode)) ?? false;
     if (column && isCellSpanning) {
         return rowSpanSvc?.getCellSpan(column, rowNode)?.spannedNodes;
+    }
+}
+
+function refreshCSRM({ gos, rowModel }: BeanCollection) {
+    if (_isClientSideRowModel(gos, rowModel)) {
+        rowModel.refreshModel({ step: 'map' });
     }
 }
