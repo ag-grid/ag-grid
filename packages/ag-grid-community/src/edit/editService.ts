@@ -2,17 +2,20 @@ import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import { _getRowNode } from '../entities/positionUtils';
 import type { AgEventType } from '../eventTypes';
+import type { CellRange } from '../interfaces/IRangeService';
 import type { EditingCellPosition, ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
+import type { RowPosition } from '../interfaces/iRowPosition';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { _createCellEvent } from '../rendering/cell/cellEvent';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
-import type { EditModelService, PendingUpdates } from './editModelService';
+import type { EditModelService, PendingUpdateRow, PendingUpdates } from './editModelService';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import {
     _addStopEditingWhenGridLosesFocus,
@@ -541,5 +544,77 @@ export class EditService extends BeanStub implements NamedBean {
         type: 'rowEditingStarted' | 'rowEditingStopped'
     ): void {
         this.strategy?.dispatchRowEvent(rowNode, type);
+    }
+
+    public applyBulkEdit(
+        rowNode: IRowNode,
+        column: Column | undefined | null,
+        cellRanges: CellRange[] | undefined
+    ): void {
+        if (!cellRanges || cellRanges.length === 0) {
+            return;
+        }
+
+        _syncModelsFromEditors(this.beans);
+
+        const pendingUpdates: PendingUpdates = this.model.getPendingUpdates(true);
+        const pendingValue = pendingUpdates.get(rowNode)?.get(column!)?.newValue;
+
+        cellRanges.forEach((range: CellRange) => {
+            this.beans.rangeSvc?.forEachRowInRange(range, (position: RowPosition) => {
+                const rowNode = _getRowNode(this.beans, position);
+                if (rowNode === undefined) {
+                    return;
+                }
+
+                const rowUpdate: PendingUpdateRow = pendingUpdates.get(rowNode) ?? new Map();
+                for (const column of range.columns) {
+                    if (!column) {
+                        continue;
+                    }
+
+                    if (this.isCellEditable(rowNode, column, 'api')) {
+                        const oldValue = this.beans.valueSvc.getValue(column as AgColumn, rowNode, true, 'api');
+                        let newValue = this.beans.valueSvc.parseValue(
+                            column as AgColumn,
+                            rowNode ?? null,
+                            pendingValue,
+                            oldValue
+                        );
+
+                        if (Number.isNaN(newValue)) {
+                            // non-number was bulk edited into a number column
+                            newValue = null;
+                        }
+
+                        rowUpdate.set(column, {
+                            newValue,
+                            oldValue,
+                            state: 'changed',
+                        });
+                    }
+                }
+                if (rowUpdate.size > 0) {
+                    pendingUpdates.set(rowNode, rowUpdate);
+                }
+            });
+
+            this.beans.editSvc?.setPendingUpdates(pendingUpdates);
+
+            // update editing styles
+            this.updateCells(pendingUpdates, undefined, true, true);
+
+            if (this.batchEditing) {
+                this.cleanupEditors();
+
+                _purgeUnchangedEdits(this.beans);
+
+                // force refresh of all row cells as custom renderers may depend on multiple cell values
+                this.refreshAllRows(pendingUpdates, this.includeParents);
+                return;
+            }
+
+            this.stopEditing(undefined, undefined, undefined, undefined, false, 'api');
+        });
     }
 }

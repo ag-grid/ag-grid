@@ -100,11 +100,14 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     private onBackspaceOrDeleteKeyDown(key: string, event: KeyboardEvent): void {
         const { cellCtrl, beans, rowNode } = this;
-        const { gos, rangeSvc, eventSvc } = beans;
+        const { gos, rangeSvc, eventSvc, editSvc } = beans;
 
         eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
 
-        if (_isDeleteKey(key, gos.get('enableCellEditingOnBackspace'))) {
+        if (
+            _isDeleteKey(key, gos.get('enableCellEditingOnBackspace')) &&
+            !editSvc?.isEditing(rowNode, cellCtrl?.column, false, true)
+        ) {
             if (rangeSvc && _isCellSelectionEnabled(gos)) {
                 rangeSvc.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             } else if (cellCtrl.isCellEditable()) {
@@ -124,6 +127,12 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const { editSvc, navigation } = beans;
         const editing = editSvc?.isEditing(rowNode, cellCtrl?.column);
         if (editing) {
+            if (this.isCtrlEnter(e)) {
+                // bulk edit, apply currently editing value to all selected cells
+                editSvc?.applyBulkEdit(rowNode, cellCtrl?.column, this.beans?.rangeSvc?.getCellRanges());
+                return;
+            }
+
             editSvc?.stopEditing(
                 rowNode,
                 cellCtrl?.column,
@@ -149,6 +158,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 }
             }
         }
+    }
+    isCtrlEnter(e: KeyboardEvent) {
+        return (e.ctrlKey || e.metaKey) && e.key === KeyCode.ENTER;
     }
 
     private onF2KeyDown(event: KeyboardEvent): void {

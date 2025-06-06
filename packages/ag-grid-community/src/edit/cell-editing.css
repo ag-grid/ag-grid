@@ -41,5 +41,6 @@
 
 .ag-cell-batch-edit,
 .ag-row-batch-edit {
-    background-color: #dcb58b;
+    background-color: rgb(220 181 139 / 20%);
+    color: rgb(66 47 0 / 100%);
 }
