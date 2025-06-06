@@ -1022,7 +1022,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
         // although id is typed a string, this could be called by the user, and they could have passed a number
         const idIsGroup = typeof id == 'string' && id.indexOf(ROW_ID_PREFIX_ROW_GROUP) === 0;
-        return idIsGroup ? this.groupStage?.getFiller(id) : undefined;
+        return idIsGroup ? this.groupStage?.getNode(id) : undefined;
     }
 
     public batchUpdateRowData(

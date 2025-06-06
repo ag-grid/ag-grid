@@ -23,5 +23,5 @@ export interface IRowNodeStage<TResult = any, TData = any> {
 }
 
 export interface IRowGroupStage<TResult = any, TData = any> extends IRowNodeStage<TResult, TData> {
-    getFiller(id: string): RowNode<TData> | undefined;
+    getNode(id: string): RowNode<TData> | undefined;
 }
