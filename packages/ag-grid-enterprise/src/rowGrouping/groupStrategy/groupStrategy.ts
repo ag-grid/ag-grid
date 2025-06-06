@@ -335,7 +335,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             // because of the while loop below, it's possible we already moved the node,
             // so double check before trying to remove again.
             const mapKey = this.getChildrenMappedKey(rowNode.key!, rowNode.rowGroupColumn);
-            const parentChildrenMapped = rowNode.parent?.childrenMapped as Record<string, RowNode> | null | undefined;
+            const parentChildrenMapped = rowNode.parent?.childrenMapped;
             const groupAlreadyRemoved = parentChildrenMapped ? !parentChildrenMapped[mapKey] : true;
 
             if (groupAlreadyRemoved) {
@@ -385,7 +385,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             }
         }
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
-        const childParentChildrenMapped = child.parent?.childrenMapped as Record<string, RowNode> | null | undefined;
+        const childParentChildrenMapped = child.parent?.childrenMapped;
         if (childParentChildrenMapped) {
             delete childParentChildrenMapped[mapKey];
         }
@@ -399,7 +399,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
      * This is idempotent, but relies on the `key` field being the same throughout a RowNode's lifetime
      */
     private addToParent(child: RowNode, parent: GroupingRowNode) {
-        const childrenMapped = (parent.childrenMapped ??= {}) as Record<string, RowNode>;
+        const childrenMapped = (parent.childrenMapped ??= {});
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
         if (childrenMapped[mapKey] !== child) {
             childrenMapped[mapKey] = child;
@@ -546,7 +546,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         details: GroupingDetails
     ): RowNode {
         const key = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
-        const parentChildrenMapped = parentGroup?.childrenMapped as Record<string, RowNode> | null | undefined;
+        const parentChildrenMapped = parentGroup?.childrenMapped;
         let nextNode = parentChildrenMapped?.[key];
 
         if (!nextNode) {
