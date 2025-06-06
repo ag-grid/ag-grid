@@ -30,6 +30,21 @@
           "update": true
         }
       }
+    },
+    "benchmark": {
+      "command": "vitest bench --run",
+      "dependsOn": ["ag-grid-community:build:css", "ag-grid-enterprise:build:css"],
+      "options": {
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "watch": {
+          "watch": true
+        },
+        "update": {
+          "update": true
+        }
+      }
     }
   },
   "tags": ["test", "module"]

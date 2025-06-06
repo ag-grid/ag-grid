@@ -577,6 +577,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     public redrawRows(rowNodes?: IRowNode[]): void {
+        const { editSvc } = this.beans;
+        if (editSvc?.isEditing()) {
+            if (editSvc.batchEditing) {
+                editSvc.cleanupEditors();
+            } else {
+                editSvc.stopEditing(undefined, undefined, undefined, undefined, undefined, 'api');
+            }
+        }
+
         // if no row nodes provided, then refresh everything
         const partialRefresh = rowNodes != null;
 
@@ -642,6 +651,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // if a cell was focused before, ensure focus now.
         if (focusedCell != null) {
             this.restoreFocusedCell(focusedCell);
+        }
+
+        if (this.beans.editSvc?.isEditing()) {
+            this.beans.editSvc.updateCells();
         }
 
         this.releaseLockOnRefresh();
@@ -1041,18 +1054,19 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         const pagination = this.beans.pagination;
         // if focus should be on a row, ensure the row is rendered.
-        const focusedRow = this.beans.focusSvc?.getFocusedCell()?.rowIndex;
+        const focusedRowIndex = this.beans.focusSvc?.getFocusedCell()?.rowIndex;
         if (
-            focusedRow != null &&
-            (focusedRow < this.firstRenderedRow || focusedRow > this.lastRenderedRow) &&
-            (!pagination || pagination.isRowInPage(focusedRow))
+            focusedRowIndex != null &&
+            (focusedRowIndex < this.firstRenderedRow || focusedRowIndex > this.lastRenderedRow) &&
+            (!pagination || pagination.isRowInPage(focusedRowIndex)) &&
+            focusedRowIndex < this.rowModel.getRowCount()
         ) {
-            indexesToDraw.push(focusedRow);
+            indexesToDraw.push(focusedRowIndex);
         }
 
         const checkRowToDraw = (rowComp: RowCtrl) => {
             const index = rowComp.rowNode.rowIndex;
-            if (index == null || index === focusedRow) {
+            if (index == null || index === focusedRowIndex) {
                 return;
             }
             if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
@@ -1449,7 +1463,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const rowNode = rowCtrl.rowNode;
 
         const rowHasFocus = this.focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned);
-        const rowIsEditing = rowCtrl.editing;
+        const rowIsEditing = this.beans.editSvc?.isEditing(rowNode) ?? false;
         const rowIsDetail = rowNode.detail;
 
         const mightWantToKeepRow = rowHasFocus || rowIsEditing || rowIsDetail;

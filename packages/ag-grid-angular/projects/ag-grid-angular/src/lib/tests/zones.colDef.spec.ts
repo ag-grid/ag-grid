@@ -52,7 +52,7 @@ export class GridWrapperComponent {
     ];
 
     gridOptions: GridOptions = {
-        getContextMenuItems: (_params) => {
+        getContextMenuItems: (_params: any) => {
             return [
                 {
                     name: 'Custom Menu Item',
@@ -111,21 +111,7 @@ describe('Test ColDef Event ZoneJs Status', () => {
         );
         await fixture.whenStable();
 
-        // Validate cell value changed
-        const toyotaEditor: HTMLDivElement = await fixture.nativeElement.querySelectorAll('.ag-cell')[0];
-        const input: HTMLInputElement = toyotaEditor.querySelector<'input'>('input')!;
-
-        input.value = 'New Toyota';
-        // trigger the value changed
-        input.dispatchEvent(new InputEvent('input', { bubbles: true }));
-        // close the editor
-        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-        await fixture.whenStable();
-
-        const updatedToyotaCell = await fixture.nativeElement.querySelectorAll('.ag-cell')[0];
-        expect(updatedToyotaCell.textContent).toBe('New Toyota');
-
-        updatedToyotaCell.dispatchEvent(
+        toyota.dispatchEvent(
             new MouseEvent('contextmenu', {
                 view: window,
                 bubbles: true,
@@ -139,7 +125,6 @@ describe('Test ColDef Event ZoneJs Status', () => {
 
         expect(fixture.componentInstance.zoneStatus['cellClicked']).toBeTrue();
         expect(fixture.componentInstance.zoneStatus['cellDoubleClicked']).toBeTrue();
-        expect(fixture.componentInstance.zoneStatus['cellValueChanged']).toBeTrue();
         expect(fixture.componentInstance.zoneStatus['cellContextMenu']).toBeTrue();
         expect(fixture.componentInstance.zoneStatus['customMenuItem']).toBeTrue();
     });

@@ -90,7 +90,9 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         cellMouseOut: CellMouseOutEvent<TData, TContext>;
         filterChanged: FilterChangedEvent<TData, TContext>;
         filterModified: FilterModifiedEvent<TData, TContext>;
+        filterUiChanged: FilterUiChangedEvent<TData, TContext>;
         filterOpened: FilterOpenedEvent<TData, TContext>;
+        floatingFilterUiChanged: FloatingFilterUiChangedEvent<TData, TContext>;
         advancedFilterBuilderVisibleChanged: AdvancedFilterBuilderVisibleChangedEvent<TData, TContext>;
         sortChanged: SortChangedEvent<TData, TContext>;
         virtualRowRemoved: VirtualRowRemovedEvent<TData, TContext>;
@@ -174,6 +176,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
         rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
         resetColumns: ResetColumnsEvent<TData, TContext>;
+        cellEditValuesChanged: CellEditValuesChangedEvent<TData, TContext>;
     }
 >;
 
@@ -381,6 +384,11 @@ export interface FilterModifiedEvent<TData = any, TContext = any>
     column: Column;
 }
 
+export interface FilterUiChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'filterUiChanged', TData, TContext> {
+    column: Column;
+}
+
 export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGlobalEvent<'filterOpened', TData, TContext> {
     /** Column / ProvidedColumnGroup that contains the filter */
     column: Column | ProvidedColumnGroup;
@@ -388,6 +396,11 @@ export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGlobal
     source: FilterRequestSource;
     /** Parent element of the filter */
     eGui: HTMLElement;
+}
+
+export interface FloatingFilterUiChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'floatingFilterUiChanged', TData, TContext> {
+    column: Column;
 }
 
 // internal event
@@ -730,6 +743,10 @@ export interface CellFocusedParams extends CommonCellFocusParams {
     forceBrowserFocus?: boolean;
     /** When `forceBrowserFocus` is `true`, should scroll be prevented */
     preventScrollOnBrowserFocus?: boolean;
+    /** Previous focused cell params */
+    previousCellFocus?: CellFocusedParams;
+    /** Initiating event, if any */
+    sourceEvent?: Event;
 }
 
 export interface HeaderFocusedParams {
@@ -1039,6 +1056,9 @@ export interface CellValueChangedEvent<TData = any, TValue = any>
     newValue: TValue | null | undefined;
     source: string | undefined;
 }
+
+export interface CellEditValuesChangedEvent<TData = any, TValue = any>
+    extends AgGlobalEvent<'cellEditValuesChanged', TData, TValue> {}
 
 export interface CellEditRequestEvent<TData = any, TValue = any>
     extends CellWithDataEvent<'cellEditRequest', TData, TValue> {

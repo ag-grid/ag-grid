@@ -1,72 +1,34 @@
+import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/dom';
 import { _makeNull } from '../../../utils/generic';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import type { Comparator } from '../iScalarFilter';
-import type { ISimpleFilterModel, Tuple } from '../iSimpleFilter';
-import { ScalarFilter } from '../scalarFilter';
-import type { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
-import type { NumberFilterModel, NumberFilterParams } from './iNumberFilter';
+import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
+import { SimpleFilter } from '../simpleFilter';
+import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
 import { DEFAULT_NUMBER_FILTER_OPTIONS } from './numberFilterConstants';
-import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
-import { getAllowedCharPattern } from './numberFilterUtils';
+import { getAllowedCharPattern, mapValuesFromNumberFilterModel, processNumberFilterValue } from './numberFilterUtils';
 
-export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
+/** temporary type until `NumberFilterParams` is updated as breaking change */
+type NumberFilterDisplayParams = INumberFilterParams &
+    FilterDisplayParams<any, any, NumberFilterModel | ICombinedSimpleModel<NumberFilterModel>>;
+
+export class NumberFilter extends SimpleFilter<
+    NumberFilterModel,
+    number,
+    AgInputTextField | AgInputNumberField,
+    NumberFilterDisplayParams
+> {
     private readonly eValuesFrom: (AgInputTextField | AgInputNumberField)[] = [];
     private readonly eValuesTo: (AgInputTextField | AgInputNumberField)[] = [];
-
-    private numberFilterParams: NumberFilterParams;
-    private filterModelFormatter: SimpleFilterModelFormatter;
 
     public readonly filterType = 'number' as const;
 
     constructor() {
-        super('numberFilter');
-    }
-
-    override refresh(params: NumberFilterParams): boolean {
-        if (this.numberFilterParams.allowedCharPattern !== params.allowedCharPattern) {
-            return false;
-        }
-
-        return super.refresh(params);
-    }
-
-    protected mapValuesFromModel(filterModel: NumberFilterModel | null): Tuple<number> {
-        const { filter, filterTo, type } = filterModel || {};
-        return [this.processValue(filter), this.processValue(filterTo)].slice(0, this.getNumberOfInputs(type));
+        super('numberFilter', mapValuesFromNumberFilterModel, DEFAULT_NUMBER_FILTER_OPTIONS);
     }
 
     protected override defaultDebounceMs: number = 500;
-
-    protected comparator(): Comparator<number> {
-        return (left: number, right: number): number => {
-            if (left === right) {
-                return 0;
-            }
-
-            return left < right ? 1 : -1;
-        };
-    }
-
-    protected override isValid(value: number): boolean {
-        return !isNaN(value);
-    }
-
-    protected override setParams(params: NumberFilterParams): void {
-        this.numberFilterParams = params;
-
-        super.setParams(params);
-        this.filterModelFormatter = new NumberFilterModelFormatter(
-            this.getLocaleTextFunc.bind(this),
-            this.optionsFactory,
-            this.numberFilterParams.numberFormatter
-        );
-    }
-
-    protected getDefaultFilterOptions(): string[] {
-        return DEFAULT_NUMBER_FILTER_OPTIONS;
-    }
 
     protected override setElementValue(
         element: AgInputTextField | AgInputNumberField,
@@ -74,13 +36,13 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         fromFloatingFilter?: boolean
     ): void {
         // values from floating filter are directly from the input, not from the model
-        const { numberFormatter } = this.numberFilterParams;
+        const { numberFormatter } = this.params;
         const valueToSet = !fromFloatingFilter && numberFormatter ? numberFormatter(value ?? null) : value;
         super.setElementValue(element, valueToSet as any);
     }
 
-    protected createValueElement(): HTMLElement {
-        const allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);
+    protected createEValue(): HTMLElement {
+        const allowedCharPattern = getAllowedCharPattern(this.params);
 
         const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body', role: 'presentation' });
 
@@ -105,7 +67,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         eCondition.appendChild(eValue.getGui());
     }
 
-    protected removeValueElements(startPosition: number, deleteCount?: number): void {
+    protected removeEValues(startPosition: number, deleteCount?: number): void {
         const removeComps = (eGui: (AgInputTextField | AgInputNumberField)[]) =>
             this.removeComponents(eGui, startPosition, deleteCount);
 
@@ -117,7 +79,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         const result: Tuple<number> = [];
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
             if (index < numberOfInputs) {
-                result.push(this.processValue(this.stringToFloat(element.getValue())));
+                result.push(processNumberFilterValue(this.stringToFloat(element.getValue())));
             }
         });
 
@@ -128,13 +90,6 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return (
             aSimple.filter === bSimple.filter && aSimple.filterTo === bSimple.filterTo && aSimple.type === bSimple.type
         );
-    }
-
-    private processValue(value?: number | null): number | null {
-        if (value == null) {
-            return null;
-        }
-        return isNaN(value) ? null : value;
     }
 
     private stringToFloat(value?: string | number | null): number | null {
@@ -148,7 +103,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
             filterText = null;
         }
 
-        const numberParser = this.numberFilterParams.numberParser;
+        const numberParser = this.params.numberParser;
         if (numberParser) {
             return numberParser(filterText);
         }
@@ -180,10 +135,6 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
             return [null, null];
         }
         return [eValuesFrom[position], eValuesTo[position]];
-    }
-
-    public getModelAsString(model: ISimpleFilterModel): string {
-        return this.filterModelFormatter.getModelAsString(model) ?? '';
     }
 
     protected override hasInvalidInputs(): boolean {

@@ -13,17 +13,24 @@ import { NumberCellEditor } from './cellEditors/numberCellEditor';
 import { SelectCellEditor } from './cellEditors/selectCellEditor';
 import { TextCellEditor } from './cellEditors/textCellEditor';
 import {
+    batchEditingEnabled,
+    disableBatchEditing,
+    enableBatchEditing,
     getCellEditorInstances,
     getCurrentRedoSize,
     getCurrentUndoSize,
     getEditingCells,
+    isEditing,
     redoCellEditing,
+    setEditingCells,
     startEditingCell,
     stopEditing,
     undoCellEditing,
 } from './editApi';
+import { EditModelService } from './editModelService';
 import { EditService } from './editService';
-import { RowEditService } from './rowEditService';
+import { FullRowEditStrategy } from './strategy/fullRowEditStrategy';
+import { SingleCellEditStrategy } from './strategy/singleCellEditStrategy';
 
 /**
  * @internal
@@ -31,12 +38,21 @@ import { RowEditService } from './rowEditService';
 export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
     moduleName: 'EditCore',
     version: VERSION,
-    beans: [EditService, RowEditService],
+    beans: [EditModelService, EditService],
     apiFunctions: {
-        getCellEditorInstances,
         getEditingCells,
-        stopEditing,
+        getCellEditorInstances,
         startEditingCell,
+        stopEditing,
+        isEditing,
+        setEditingCells,
+        enableBatchEditing,
+        disableBatchEditing,
+        batchEditingEnabled,
+    },
+    dynamicBeans: {
+        singleCell: SingleCellEditStrategy,
+        fullRow: FullRowEditStrategy,
     },
     dependsOn: [PopupModule],
     css: [cellEditingCSS],

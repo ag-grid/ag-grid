@@ -78,6 +78,7 @@ export class CsvCreator
             processRowGroupCallback,
             suppressQuotes,
             columnSeparator,
+            includePendingEdits,
         } = params!;
 
         return new CsvSerializingSession({
@@ -92,6 +93,7 @@ export class CsvCreator
             suppressQuotes: suppressQuotes || false,
             columnSeparator: columnSeparator || ',',
             rowGroupColsSvc,
+            includePendingEdits,
         });
     }
 

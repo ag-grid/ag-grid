@@ -9,10 +9,12 @@ import type {
     ColGroupDef,
     ColTypeDef,
     Column,
+    CreateFilterHandlerFunc,
     CsvExportParams,
     DataTypeDefinition,
     DefaultChartMenuItem,
     DomLayoutType,
+    EditStrategyType,
     ExcelExportParams,
     ExcelStyle,
     FillOperationParams,
@@ -141,8 +143,10 @@ import type {
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
+    FilterUiChangedEvent,
     FindChangedEvent,
     FirstDataRenderedEvent,
+    FloatingFilterUiChangedEvent,
     FullWidthCellKeyDownEvent,
     GridColumnsChangedEvent,
     GridPreDestroyedEvent,
@@ -460,7 +464,7 @@ export interface Props<TData> {
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
-    editType?: 'fullRow' | undefined,
+    editType?: EditStrategyType | undefined,
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
          * @default false
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
@@ -617,6 +621,16 @@ export interface Props<TData> {
          * @agModule TextFilterModule / NumberFilterModule / DateFilterModule / MultiFilterModule / CustomFilterModule
          */
     suppressSetFilterByDefault?: boolean | undefined,
+    /** Enable filter handlers for custom filter components.
+         * Requires all custom filters need to be implemented using handlers.
+         * @initial
+         */
+    enableFilterHandlers?: boolean | undefined,
+    /** A map of filter handler key to filter handler function.
+         * Allows for filter handler keys to be used in `colDef.filter.handler`.
+         * @initial
+         */
+    filterHandlers?: { [key: string]: CreateFilterHandlerFunc } | undefined,
     /** Set to `true` to Enable Charts.
          * @default false
          * @agModule `IntegratedChartsModule`
@@ -1779,6 +1793,8 @@ export interface Props<TData> {
    'onFilter-opened'?: FilterOpenedEvent<TData>,
    'onFilter-changed'?: FilterChangedEvent<TData>,
    'onFilter-modified'?: FilterModifiedEvent<TData>,
+   'onFilter-ui-changed'?: FilterUiChangedEvent<TData>,
+   'onFloating-filter-ui-changed'?: FloatingFilterUiChangedEvent<TData>,
    'onAdvanced-filter-builder-visible-changed'?: AdvancedFilterBuilderVisibleChangedEvent<TData>,
    'onFind-changed'?: FindChangedEvent<TData>,
    'onChart-created'?: ChartCreatedEvent<TData>,
@@ -1926,6 +1942,8 @@ export function getProps() {
         advancedFilterBuilderParams: undefined,
         suppressAdvancedFilterEval: undefined,
         suppressSetFilterByDefault: undefined,
+        enableFilterHandlers: undefined,
+        filterHandlers: undefined,
         enableCharts: undefined,
         chartThemes: undefined,
         customChartThemes: undefined,
@@ -2228,7 +2246,9 @@ export function getProps() {
         'onCell-mouse-out': undefined,
         'onFilter-changed': undefined,
         'onFilter-modified': undefined,
+        'onFilter-ui-changed': undefined,
         'onFilter-opened': undefined,
+        'onFloating-filter-ui-changed': undefined,
         'onAdvanced-filter-builder-visible-changed': undefined,
         'onSort-changed': undefined,
         'onVirtual-row-removed': undefined,

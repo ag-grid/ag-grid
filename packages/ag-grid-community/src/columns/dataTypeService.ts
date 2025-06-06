@@ -477,6 +477,20 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
     }
 
+    public postProcess(colDef: ColDef): void {
+        const cellDataType = colDef.cellDataType;
+        if (!cellDataType) {
+            return;
+        }
+        const { dataTypeDefinitions, beans, formatValueFuncs } = this;
+        const dataTypeDefinition = dataTypeDefinitions[cellDataType as string];
+        beans.colFilter?.setColDefPropsForDataType(
+            colDef,
+            dataTypeDefinition,
+            formatValueFuncs[cellDataType as string]
+        );
+    }
+
     // noinspection JSUnusedGlobalSymbols
     public getFormatValue(cellDataType: string): DataTypeFormatValueFunc | undefined {
         return this.formatValueFuncs[cellDataType];
@@ -562,8 +576,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
             formatValue,
         });
         Object.assign(colDef, partialColDef);
-
-        this.beans.filterManager?.setColDefPropertiesForDataType(colDef, dataTypeDefinition, formatValue);
     }
 
     private getDateObjectTypeDef<T extends 'date' | 'dateTime'>(baseDataType: T) {

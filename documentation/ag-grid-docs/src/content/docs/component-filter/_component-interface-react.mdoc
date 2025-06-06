@@ -1,20 +1,6 @@
 {% if isFramework("react") %}
-Custom filter components are controlled components, which receive a filter model as part of the props, and pass model updates back to the grid via the `onModelChange` callback. A filter model of `null` means that no filter is applied (the filter displays as inactive). Note that the filter is applied immediately when `onModelChange` is called.
-
-To implement the filtering logic, a custom filter needs to implement the `doesFilterPass` callback, and provide it to the `useGridFilter` hook.
-{% /if %}
-
-{% if isFramework("react") %}
 ```jsx
 export default ({ model, onModelChange, getValue }) => {
-    const doesFilterPass = useCallback(({ node }) => {
-        // filtering logic
-        return getValue(node).contains(model);
-    }, [model]);
-
-    // register filter callbacks with the grid
-    useGridFilter({ doesFilterPass });
-
     return (
         <div>
             <input
@@ -26,10 +12,4 @@ export default ({ model, onModelChange, getValue }) => {
     );
 }
 ```
-{% /if %}
-
-{% if isFramework("react") %}
-{% note %}
-In previous versions of the grid, custom components were declared in an imperative way. See [Migrating to Use reactiveCustomComponents](./upgrading-to-ag-grid-31-1/#migrating-custom-components-to-use-reactivecustomcomponents-option) for details on how to migrate to the current format.
-{% /note %}
 {% /if %}

@@ -10,6 +10,8 @@ import type {
     BaseMenuItem,
     BaseMenuItemParams,
     BaseToolPanelParams,
+    FilterDisplayParams,
+    FloatingFilterDisplayParams,
     ICellEditorParams,
     ICellRendererParams,
     IDetailCellRendererParams,
@@ -24,6 +26,7 @@ import type {
     INoRowsOverlayParams,
     IStatusPanelParams,
     ITooltipParams,
+    SharedFilterUi,
 } from 'ag-grid-community';
 
 import { CustomContext } from './customContext';
@@ -64,6 +67,10 @@ export interface CustomFilterProps<TData = any, TContext = any, TModel = any>
     onUiChange: () => void;
 }
 
+/** Props provided to custom filter components when `enableFilterHandlers = true` */
+export interface CustomFilterDisplayProps<TData = any, TContext = any, TModel = any>
+    extends FilterDisplayParams<TData, TContext, TModel> {}
+
 /** Props provided to custom floating filter components */
 export interface CustomFloatingFilterProps<P = IFilter, TData = any, TContext = any, TModel = any>
     extends IFloatingFilterParams<P, TData, TContext> {
@@ -72,6 +79,10 @@ export interface CustomFloatingFilterProps<P = IFilter, TData = any, TContext = 
     /** Callback that should be called every time the model in the component changes. */
     onModelChange: (model: TModel | null) => void;
 }
+
+/** Props provided to custom floating filter components when `enableFilterHandlers = true` */
+export interface CustomFloatingFilterDisplayProps<TData = any, TContext = any, TModel = any, TCustomParams = object>
+    extends FloatingFilterDisplayParams<TData, TContext, TModel, TCustomParams> {}
 
 /** Props provided to custom tool panel components */
 export interface CustomToolPanelProps<TData = any, TContext = any, TState = any>
@@ -159,6 +170,9 @@ export interface CustomDateCallbacks extends BaseDate {}
 /** Callbacks for custom filter components */
 export interface CustomFilterCallbacks extends BaseFilter {}
 
+/** Callbacks for custom filter components when using `enableFilterHandlers = true` */
+export interface CustomFilterDisplayCallbacks extends SharedFilterUi {}
+
 /** Callbacks for custom floating filter components */
 export interface CustomFloatingFilterCallbacks extends BaseFloatingFilter {}
 
@@ -184,6 +198,11 @@ export function useGridDate(callbacks: CustomDateCallbacks): void {
 
 /** Hook to allow custom filter component callbacks to be provided to the grid */
 export function useGridFilter(callbacks: CustomFilterCallbacks): void {
+    return useGridCustomComponent(callbacks);
+}
+
+/** Hook to allow custom filter component callbacks to be provided to the grid when using `enableFilterHandlers = true` */
+export function useGridFilterDisplay(callbacks: CustomFilterDisplayCallbacks): void {
     return useGridCustomComponent(callbacks);
 }
 

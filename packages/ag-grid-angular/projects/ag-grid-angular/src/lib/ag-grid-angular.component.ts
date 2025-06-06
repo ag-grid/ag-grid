@@ -66,6 +66,7 @@ import type {
     ColumnVisibleEvent,
     ComponentStateChangedEvent,
     ContextMenuVisibleChangedEvent,
+    CreateFilterHandlerFunc,
     CsvExportParams,
     CutEndEvent,
     CutStartEvent,
@@ -76,6 +77,7 @@ import type {
     DragCancelledEvent,
     DragStartedEvent,
     DragStoppedEvent,
+    EditStrategyType,
     ExcelExportParams,
     ExcelStyle,
     ExpandOrCollapseAllEvent,
@@ -85,9 +87,11 @@ import type {
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
+    FilterUiChangedEvent,
     FindChangedEvent,
     FindOptions,
     FirstDataRenderedEvent,
+    FloatingFilterUiChangedEvent,
     FocusGridInnerElementParams,
     FullWidthCellKeyDownEvent,
     GetChartMenuItems,
@@ -635,7 +639,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
-    @Input() public editType: 'fullRow' | undefined = undefined;
+    @Input() public editType: EditStrategyType | undefined = undefined;
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
      * @default false
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
@@ -796,6 +800,16 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule TextFilterModule / NumberFilterModule / DateFilterModule / MultiFilterModule / CustomFilterModule
      */
     @Input({ transform: booleanAttribute }) public suppressSetFilterByDefault: boolean | undefined = undefined;
+    /** Enable filter handlers for custom filter components.
+     * Requires all custom filters need to be implemented using handlers.
+     * @initial
+     */
+    @Input({ transform: booleanAttribute }) public enableFilterHandlers: boolean | undefined = undefined;
+    /** A map of filter handler key to filter handler function.
+     * Allows for filter handler keys to be used in `colDef.filter.handler`.
+     * @initial
+     */
+    @Input() public filterHandlers: { [key: string]: CreateFilterHandlerFunc } | undefined = undefined;
     /** Set to `true` to Enable Charts.
      * @default false
      * @agModule `IntegratedChartsModule`
@@ -2167,6 +2181,16 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public filterModified: EventEmitter<FilterModifiedEvent<TData>> = new EventEmitter<
         FilterModifiedEvent<TData>
+    >();
+    /** Filter UI was modified (when using `enableFilterHandlers = true`).
+     */
+    @Output() public filterUiChanged: EventEmitter<FilterUiChangedEvent<TData>> = new EventEmitter<
+        FilterUiChangedEvent<TData>
+    >();
+    /** Floating filter UI modified (when using `enableFilterHandlers = true`.
+     */
+    @Output() public floatingFilterUiChanged: EventEmitter<FloatingFilterUiChangedEvent<TData>> = new EventEmitter<
+        FloatingFilterUiChangedEvent<TData>
     >();
     /** Advanced Filter Builder visibility has changed (opened or closed).
      */

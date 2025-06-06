@@ -17,7 +17,7 @@ import { showJsComp } from '../jsComp';
 import { agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
 const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
-    const { context, gos } = useContext(BeansContext);
+    const { context, gos, editSvc } = useContext(BeansContext);
     const compBean = useRef<_EmptyBean>();
 
     const domOrderRef = useRef<boolean>(rowCtrl.getDomOrder());
@@ -112,10 +112,10 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: (next, useFlushSync) => {
                 prevCellCtrlsRef.current = cellCtrlsRef.current;
-                cellCtrlsRef.current = next;
 
                 const nextCells = getNextValueIfDifferent(prevCellCtrlsRef.current, next, domOrderRef.current);
                 if (nextCells !== prevCellCtrlsRef.current) {
+                    cellCtrlsRef.current = nextCells;
                     agFlushSync(useFlushSync, () => setCellCtrls(nextCells));
                 }
             },
@@ -171,7 +171,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         cellCtrls?.map((cellCtrl) => (
             <CellComp
                 cellCtrl={cellCtrl}
-                editingRow={rowCtrl.editing}
+                editingRow={editSvc?.isEditing(rowCtrl.rowNode) ?? false}
                 printLayout={rowCtrl.printLayout}
                 key={cellCtrl.instanceId}
             />

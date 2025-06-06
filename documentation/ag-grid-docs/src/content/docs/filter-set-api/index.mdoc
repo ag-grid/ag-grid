@@ -7,7 +7,7 @@ This section describes how the Set Filter can be controlled programmatically usi
 
 ## Set Filter Model
 
-Get and set the state of the Set Filter by getting and setting the model on the filter instance.
+Get and set the state of the Set Filter by getting and setting the model on the grid API.
 
 ```js
 // get filter model
@@ -26,7 +26,18 @@ The filter model contains an array of string values where each item in the array
 
 ## Set Filter API
 
-The Set Filter instance can be retrieved via the `getColumnFilterInstance` API method.
+The Set Filter values can be updated via the Set Filter Handler:
+
+```{% frameworkTransform=true %}
+// get filter handler
+const countryFilterHandler = api.getColumnFilterHandler('country');
+```
+
+The `SetFilterHandler` interface defines the public API for the Set Filter Handler.
+
+{% interfaceDocumentation interfaceName="SetFilterHandler" /%}
+
+The Mini Filter get by interacted with via the Set Filter instance:
 
 ```{% frameworkTransform=true %}
 // get filter instance
@@ -35,17 +46,11 @@ api.getColumnFilterInstance('country').then(countryFilterComponent => {
 });
 ```
 
-The `ISetFilter` interface defines the public API for the Set Filter.
+The `SetFilterUi` interface defines the public API for the Set Filter component.
 
-{% interfaceDocumentation interfaceName="ISetFilter" overrideSrc="filter-set-api/i-set-filter.json" exclude=["getModelFromUi", "applyModel", "doesFilterPass", "onNewRowsLoaded", "onAnyFilterChanged", "getModelAsString"] /%}
+{% interfaceDocumentation interfaceName="SetFilterUi"  /%}
 
-It is important to note that when updating the Set Filter through the API, it is up to the developer to call `filterInstance.applyModel()` to apply the changes that have been made to the model and then `api.onFilterChanged()` at the end of the interaction with the filter.
-
-If no call is made to `filterInstance.applyModel()` then the filter UI will show any changes, but they won't be reflected in the filter model. This will appear as if the user never hit the Apply Button (regardless of whether the Apply Button is active or not).
-
-If no call to `api.onFilterChanged()` is provided the grid will still show the data relevant to the filter before it was updated through the API.
-
-In the example below, you can see how the filter for the Athlete column is modified through the API and how at the end of the interaction a call to `api.onFilterChanged()` is performed.
+In the example below, you can see how the filter for the Athlete column is modified through the API.
 
 {% gridExampleRunner title="Set Filter API" name="set-filter-api"  exampleHeight=570 /%}
 

@@ -10,7 +10,15 @@ import type {
 import type { IDateComp, IDateParams } from '../../interfaces/dateComponent';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { AgGridCommon } from '../../interfaces/iCommon';
-import type { IFilterComp, IFilterDef, IFilterParams } from '../../interfaces/iFilter';
+import type { IComponent } from '../../interfaces/iComponent';
+import { isColumnFilterComp } from '../../interfaces/iFilter';
+import type {
+    IFilterComp,
+    IFilterDef,
+    IFilterParams,
+    SharedFilterParams,
+    SharedFilterUi,
+} from '../../interfaces/iFilter';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { IHeaderComp, IHeaderParams, IInnerHeaderComponent } from '../../interfaces/iHeader';
 import type { ILoadingCellRendererComp } from '../../interfaces/iLoadingCellRenderer';
@@ -239,12 +247,19 @@ export function _getCellEditorDetails(
 /**
  * @param defaultFilter provided filters only
  */
-export function _getFilterDetails(
+export function _getFilterDetails<TFilter extends SharedFilterUi & IComponent<SharedFilterParams> = IFilterComp>(
     userCompFactory: UserComponentFactory,
     def: IFilterDef,
-    params: IFilterParams,
+    params: SharedFilterParams,
     defaultFilter: string
-): UserCompDetails<IFilterComp> | undefined {
+): UserCompDetails<TFilter> | undefined {
+    const filter = def.filter;
+    if (isColumnFilterComp(filter)) {
+        def = {
+            filter: filter.component,
+            filterParams: def.filterParams,
+        };
+    }
     return userCompFactory.getCompDetails(def, FilterComponent, defaultFilter, params, true);
 }
 
@@ -295,7 +310,7 @@ export function _getFilterCompKeys(frameworkOverrides: IFrameworkOverrides, def:
 
 export function _mergeFilterParamsWithApplicationProvidedParams(
     userCompFactory: UserComponentFactory,
-    defObject: ColDef,
+    defObject: IFilterDef,
     paramsFromGrid: IFilterParams
 ): IFilterParams {
     return userCompFactory.mergeParams(defObject, FilterComponent, paramsFromGrid);

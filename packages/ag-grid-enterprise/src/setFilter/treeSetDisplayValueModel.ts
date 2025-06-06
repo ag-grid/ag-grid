@@ -6,7 +6,7 @@ import { SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSe
 
 export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     /** all displayed items in a tree structure */
-    private allDisplayedItemsTree: SetFilterModelTreeItem[] = [];
+    private allDisplayedItemsTree: Map<string | null, SetFilterModelTreeItem> = new Map();
     /** all displayed items flattened and filtered */
     private activeDisplayedItemsFlat: SetFilterModelTreeItem[] = [];
 
@@ -35,7 +35,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     constructor(
         private readonly formatter: TextFormatter,
-        private readonly treeListPathGetter?: (value: V | null) => string[] | null,
+        private treeListPathGetter?: (value: V | null) => string[] | null,
         private treeListFormatter?: (
             pathKey: string | null,
             level: number,
@@ -44,9 +44,11 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         private readonly treeDataOrGrouping?: boolean
     ) {}
 
-    public updateOnParamsChange(
+    public updateParams(
+        treeListPathGetter?: (value: V | null) => string[] | null,
         treeListFormatter?: (pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string
     ) {
+        this.treeListPathGetter = treeListPathGetter;
         this.treeListFormatter = treeListFormatter;
     }
 
@@ -94,41 +96,53 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         allKeys: Iterable<string | null>,
         availableKeys: Set<string | null>
     ): void {
-        this.allDisplayedItemsTree = [];
-        this.groupsExist = false;
+        const allDisplayedItemsTree = new Map<string | null, SetFilterModelTreeItem>();
+        this.allDisplayedItemsTree = allDisplayedItemsTree;
+        let groupsExist = false;
 
         const treeListPathGetter = this.getTreeListPathGetter(getValue, availableKeys);
         for (const key of allKeys) {
             const value = getValue(key)!;
             const dataPath = treeListPathGetter(value) ?? [null];
-            if (dataPath.length > 1) {
-                this.groupsExist = true;
+            const dataPathLength = dataPath.length;
+            if (dataPathLength > 1) {
+                groupsExist = true;
             }
             const available = availableKeys.has(key);
-            let children: SetFilterModelTreeItem[] | undefined = this.allDisplayedItemsTree;
+            let children: Map<string | null, SetFilterModelTreeItem> | undefined = allDisplayedItemsTree;
             let item: SetFilterModelTreeItem | undefined;
             let parentTreeKeys: (string | null)[] = [];
-            dataPath.forEach((treeKey: string | null, depth: number) => {
+            for (let depth = 0; depth < dataPathLength; depth++) {
+                const treeKey = dataPath[depth];
                 if (!children) {
-                    children = [];
+                    children = new Map();
                     item!.children = children;
                 }
-                item = children.find((child) => child.treeKey?.toUpperCase() === treeKey?.toUpperCase());
+                const treeKeyUpper = treeKey?.toUpperCase() ?? null;
+                item = children.get(treeKeyUpper);
                 if (!item) {
-                    item = { treeKey, depth, filterPasses: true, expanded: false, available, parentTreeKeys };
+                    item = {
+                        treeKey,
+                        depth,
+                        filterPasses: true,
+                        expanded: false,
+                        available,
+                        parentTreeKeys,
+                    };
                     if (depth === dataPath.length - 1) {
                         item.key = key;
                     }
-                    children.push(item);
+                    children.set(treeKeyUpper, item);
                 }
-                children = item.children;
+                children = item.children!;
                 parentTreeKeys = [...parentTreeKeys, treeKey];
-            });
+            }
         }
+        this.groupsExist = groupsExist;
         // update the parent availability based on the children
         this.updateAvailable(availableKeys);
 
-        this.selectAllItem.children = this.allDisplayedItemsTree;
+        this.selectAllItem.children = allDisplayedItemsTree;
         this.selectAllItem.expanded = false;
     }
 
@@ -163,32 +177,35 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     private flattenItems(): void {
         this.activeDisplayedItemsFlat = [];
-        const recursivelyFlattenDisplayedItems = (items: SetFilterModelTreeItem[]) => {
-            items.forEach((item) => {
+        const recursivelyFlattenDisplayedItems = (items: Map<string | null, SetFilterModelTreeItem>) => {
+            for (const item of items.values()) {
                 if (!item.filterPasses || !item.available) {
-                    return;
+                    continue;
                 }
                 this.activeDisplayedItemsFlat.push(item);
                 if (item.children && item.expanded) {
                     recursivelyFlattenDisplayedItems(item.children);
                 }
-            });
+            }
         };
         recursivelyFlattenDisplayedItems(this.allDisplayedItemsTree);
     }
 
     private resetFilter(): void {
         const recursiveFilterReset = (item: SetFilterModelTreeItem) => {
-            if (item.children) {
-                item.children.forEach((child) => {
+            const children = item.children;
+            if (children) {
+                for (const child of children.values()) {
                     recursiveFilterReset(child);
-                });
+                }
             }
 
             item.filterPasses = true;
         };
 
-        this.allDisplayedItemsTree.forEach((item) => recursiveFilterReset(item));
+        for (const item of this.allDisplayedItemsTree.values()) {
+            recursiveFilterReset(item);
+        }
     }
 
     private updateFilter(matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean): void {
@@ -209,9 +226,9 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
             );
         };
 
-        this.allDisplayedItemsTree.forEach((item) =>
-            this.recursiveItemCheck(item, false, passesFilter, 'filterPasses')
-        );
+        for (const item of this.allDisplayedItemsTree.values()) {
+            this.recursiveItemCheck(item, false, passesFilter, 'filterPasses');
+        }
     }
 
     public getDisplayedValueCount(): number {
@@ -238,14 +255,15 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     public forEachDisplayedKey(func: (key: string | null) => void): void {
         const recursiveForEachItem = (item: SetFilterModelTreeItem, topParentExpanded: boolean) => {
-            if (item.children) {
+            const children = item.children;
+            if (children) {
                 if (!item.expanded || !topParentExpanded) {
                     // if the parent is not expanded, we need to iterate the entire tree
-                    item.children.forEach((child) => {
+                    for (const child of children.values()) {
                         if (child.filterPasses) {
                             recursiveForEachItem(child, false);
                         }
-                    });
+                    }
                 }
             } else {
                 func(item.key!);
@@ -257,15 +275,16 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     public someDisplayedKey(func: (key: string | null) => boolean): boolean {
         const recursiveSomeItem = (item: SetFilterModelTreeItem, topParentExpanded: boolean): boolean => {
-            if (item.children) {
+            const children = item.children;
+            if (children) {
                 if (!item.expanded || !topParentExpanded) {
                     // if the parent is not expanded, we need to iterate the entire tree
-                    return item.children.some((child) => {
-                        if (child.filterPasses) {
-                            return recursiveSomeItem(child, false);
+                    for (const child of children.values()) {
+                        if (child.filterPasses && recursiveSomeItem(child, false)) {
+                            return true;
                         }
-                        return false;
-                    });
+                    }
+                    return false;
                 }
             } else {
                 return func(item.key!);
@@ -287,11 +306,11 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     private updateExpandAll(): void {
         const recursiveExpansionCheck = (
-            items: SetFilterModelTreeItem[],
+            items: Map<string | null, SetFilterModelTreeItem>,
             someTrue: boolean,
             someFalse: boolean
         ): boolean | undefined => {
-            for (const item of items) {
+            for (const item of items.values()) {
                 if (!item.filterPasses || !item.available || !item.children) {
                     continue;
                 }
@@ -325,8 +344,9 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         itemProp: 'filterPasses' | 'available'
     ): boolean {
         let atLeastOneChildPassed = false;
-        if (item.children) {
-            item.children.forEach((child) => {
+        const children = item.children;
+        if (children) {
+            for (const child of children.values()) {
                 const childPasses = this.recursiveItemCheck(
                     child,
                     parentPasses || checkFunction(item),
@@ -334,7 +354,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
                     itemProp
                 );
                 atLeastOneChildPassed = atLeastOneChildPassed || childPasses;
-            });
+            }
         }
 
         const itemPasses = parentPasses || atLeastOneChildPassed || checkFunction(item);
@@ -345,6 +365,8 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     private updateAvailable(availableKeys: Set<string | null>) {
         const isAvailable = (item: SetFilterModelTreeItem) => availableKeys.has(item.key!);
 
-        this.allDisplayedItemsTree.forEach((item) => this.recursiveItemCheck(item, false, isAvailable, 'available'));
+        for (const item of this.allDisplayedItemsTree.values()) {
+            this.recursiveItemCheck(item, false, isAvailable, 'available');
+        }
     }
 }

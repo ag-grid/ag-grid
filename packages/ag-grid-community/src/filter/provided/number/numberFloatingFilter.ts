@@ -80,34 +80,22 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
     }
 }
 
-export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterModel> {
-    protected filterModelFormatter: NumberFilterModelFormatter;
+export class NumberFloatingFilter extends TextInputFloatingFilter<INumberFloatingFilterParams, NumberFilterModel> {
+    protected readonly FilterModelFormatterClass = NumberFilterModelFormatter;
     private allowedCharPattern: string | null;
+    protected readonly filterType = 'number';
+    protected readonly defaultOptions = DEFAULT_NUMBER_FILTER_OPTIONS;
 
-    public override init(params: INumberFloatingFilterParams): void {
-        super.init(params);
-        this.filterModelFormatter = new NumberFilterModelFormatter(
-            this.getLocaleTextFunc.bind(this),
-            this.optionsFactory,
-            (params.filterParams as NumberFilterParams)?.numberFormatter
-        );
-    }
-
-    public override refresh(params: INumberFloatingFilterParams): void {
-        const allowedCharPattern = getAllowedCharPattern(params.filterParams);
+    protected override updateParams(params: INumberFloatingFilterParams): void {
+        const allowedCharPattern = getAllowedCharPattern(params.filterParams as NumberFilterParams);
         if (allowedCharPattern !== this.allowedCharPattern) {
             this.recreateFloatingFilterInputService(params);
         }
-        super.refresh(params);
-        this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
-    }
-
-    protected getDefaultOptions(): string[] {
-        return DEFAULT_NUMBER_FILTER_OPTIONS;
+        super.updateParams(params);
     }
 
     protected createFloatingFilterInputService(params: INumberFloatingFilterParams): FloatingFilterInputService {
-        this.allowedCharPattern = getAllowedCharPattern(params.filterParams);
+        this.allowedCharPattern = getAllowedCharPattern(params.filterParams as NumberFilterParams);
         if (this.allowedCharPattern) {
             // need to use text input
             return this.createManagedBean(
@@ -117,5 +105,9 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
             );
         }
         return this.createManagedBean(new FloatingFilterNumberInputService());
+    }
+
+    protected override convertValue<TValue>(value: string | null | undefined): TValue | null {
+        return value ? (Number(value) as TValue) : null;
     }
 }

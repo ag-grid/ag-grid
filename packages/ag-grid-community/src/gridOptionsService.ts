@@ -4,18 +4,18 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { ColDef, ColGroupDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
-import type { AgEventType } from './eventTypes';
+import type { AgEventType, AgPublicEventType } from './eventTypes';
 import type { AgEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
 import type { GridOptionOrDefault } from './gridOptionsDefault';
 import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
-import { _getCallbackForEvent } from './gridOptionsUtils';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { ModuleName, ValidationModuleName } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { LocalEventService } from './localEventService';
 import { _areModulesGridScoped, _isModuleRegistered, _isUmd } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
+import { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 import { _logIfDebug } from './utils/function';
 import { _exists } from './utils/generic';
 import type { MissingModuleErrors } from './validation/errorMessages/errorText';
@@ -107,7 +107,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     // Used to hold user events until the grid is ready
     // Required to support React 19 StrictMode. See IFrameworkOverrides.runWhenReadyAsync but also is likely a good idea that onGridReady is the first event fired.
     private gridReadyFired = false;
-    private queueEvents: { eventName: AgEventType; event: any }[] = [];
+    private queueEvents: { eventName: AgPublicEventType; event: any }[] = [];
 
     // This is quicker then having code call gridOptionsService.get('context')
     private get gridOptionsContext() {
@@ -226,10 +226,17 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         });
     }
 
-    addPropertyEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
+    public addPropertyEventListener<K extends keyof GridOptions>(
+        key: K,
+        listener: PropertyValueChangedListener<K>
+    ): void {
         this.propEventSvc.addEventListener(key, listener as any);
     }
-    removePropertyEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
+
+    public removePropertyEventListener<K extends keyof GridOptions>(
+        key: K,
+        listener: PropertyValueChangedListener<K>
+    ): void {
         this.propEventSvc.removeEventListener(key, listener as any);
     }
 
@@ -237,7 +244,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     // It forces events defined in GridOptionsService.alwaysSyncGlobalEvents to be fired synchronously.
     // This is required for events such as GridPreDestroyed.
     // Other events can be fired asynchronously or synchronously depending on config.
-    globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
+    private globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
         return (eventName: AgEventType, event?: any) => {
             // prevent events from being fired _after_ the grid has been destroyed
             if (!this.isAlive()) {
@@ -249,8 +256,13 @@ export class GridOptionsService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const fireEvent = (name: AgEventType, e: any) => {
-                const eventHandler = (this.gridOptions as any)[_getCallbackForEvent(name)];
+            if (!isPublicEventHandler(eventName)) {
+                return;
+            }
+
+            const fireEvent = (name: AgPublicEventType, e: any) => {
+                const eventHandlerName = _PUBLIC_EVENT_HANDLERS_MAP[name];
+                const eventHandler = this.gridOptions[eventHandlerName];
                 if (typeof eventHandler === 'function') {
                     this.beans.frameworkOverrides.wrapOutgoing(() => eventHandler(e));
                 }
@@ -351,4 +363,8 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     public isModuleRegistered(moduleName: ModuleName): boolean {
         return _isModuleRegistered(moduleName, this.gridId, this.get('rowModelType'));
     }
+}
+
+function isPublicEventHandler(eventName: AgEventType): eventName is AgPublicEventType {
+    return !!_PUBLIC_EVENT_HANDLERS_MAP[eventName as AgPublicEventType];
 }

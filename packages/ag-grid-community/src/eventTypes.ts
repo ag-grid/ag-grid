@@ -67,7 +67,9 @@ export const _PUBLIC_EVENTS = [
     'cellMouseOut',
     'filterChanged',
     'filterModified',
+    'filterUiChanged',
     'filterOpened',
+    'floatingFilterUiChanged',
     'advancedFilterBuilderVisibleChanged',
     'sortChanged',
     'virtualRowRemoved',
@@ -156,6 +158,7 @@ export const _INTERNAL_EVENTS = [
     'overlayExclusiveChanged',
     'beforeRefreshModel',
     'rowNodeDataChanged',
+    'cellEditValuesChanged',
 ] as const;
 
 // We define as a callback to help with tree shaking (esbuild)

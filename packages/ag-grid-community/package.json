@@ -119,7 +119,7 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "ag-charts-types": "11.3.0-beta.20250526"
+    "ag-charts-types": "11.3.1-beta.20250602"
   },
   "devDependencies": {
     "source-map-loader": "^5.0.0",
