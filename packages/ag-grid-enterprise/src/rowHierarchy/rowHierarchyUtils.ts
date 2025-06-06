@@ -11,8 +11,12 @@ import type {
 
 export interface IRowGroupingStrategy<TData = any> extends Bean {
     execute(params: StageExecuteParams<TData>, approach: GroupingApproach): void;
+
+    /** Called to reset the state when the strategy changes */
     reset?(): void;
-    getFiller(id: string): RowNode<TData> | undefined;
+
+    /** Gets a group or a filler node, as those nodes do not exists in ClientSideNodeManager */
+    getNode(id: string): RowNode<TData> | undefined;
 }
 
 export interface GroupingRowNode<TData = any> extends RowNode<TData> {

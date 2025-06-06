@@ -33,7 +33,7 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
 
     /** Gets a filler row by id */
     public getFiller(id: string): RowNode<TData> | undefined {
-        return this.strategy?.getFiller(id);
+        return this.strategy?.getNode(id);
     }
 
     public override destroy(): void {

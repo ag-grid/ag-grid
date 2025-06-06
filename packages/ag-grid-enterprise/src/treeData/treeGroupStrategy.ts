@@ -67,7 +67,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         this.parentIdGetter = null;
     }
 
-    public getFiller(id: string): RowNode<TData> | undefined {
+    public getNode(id: string): RowNode<TData> | undefined {
         return this.fillerNodesById?.get(id);
     }
 
