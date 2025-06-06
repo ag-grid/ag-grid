@@ -67,7 +67,7 @@ const config = defineConfig({
     ],
 });
 
-if (!process.env.NO_SERVER) {
+if (!process.env.PW_NO_SERVER) {
     config /* Run your local dev server before starting the tests */.webServer = {
         command,
         url: baseURL,
