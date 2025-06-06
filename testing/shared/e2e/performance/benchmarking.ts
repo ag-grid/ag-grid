@@ -4,7 +4,7 @@ import { test } from '@playwright/test';
 import { gotoUrl, waitFor } from '../../playwright.utils';
 
 export type Benchmarking = 'typescript' | 'reactFunctionalTs';
-export type CustomVersion = `v${number}`;
+export type CustomVersion = `${number}.${number}.${number}`;
 export type Version = 'prod' | 'staging' | 'local' | CustomVersion;
 export type Entry<T> = T extends readonly (infer U)[] ? U : T extends object ? T[keyof T] : T;
 
@@ -17,6 +17,7 @@ export type Describe = {
 
 export type TestCase = {
     name: string;
+    skip?: boolean;
     framework: Benchmarking;
     control: Variant;
     variant: Variant;
@@ -35,6 +36,10 @@ const knownUrls: Record<Version, string> = {
     staging: 'https://grid-staging.ag-grid.com',
     prod: 'https://www.ag-grid.com',
 };
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const getCdnUrl = (pkg: string, version: CustomVersion) =>
+    `https://cdn.jsdelivr.net/npm/${pkg}@${version}/dist/${pkg}.min.js`;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _getPlnkrCookies = (url: string) => [
@@ -65,18 +70,27 @@ const computeStats = (times: number[]) => {
             originalCount: 0,
         };
     }
+    function getPercentile(sorted: number[], p: number): number {
+        const idx = (sorted.length - 1) * p;
+        const lower = Math.floor(idx);
+        const upper = Math.ceil(idx);
+        const weight = idx - lower;
+
+        if (upper >= sorted.length) return sorted[lower]; // edge case: p = 1
+        return sorted[lower] * (1 - weight) + sorted[upper] * weight;
+    }
 
     const sorted = times.slice().sort((a, b) => a - b);
-    const q1 = sorted[Math.floor(sorted.length / 4)];
-    const q3 = sorted[Math.floor((sorted.length * 3) / 4)];
+    const q1 = getPercentile(sorted, 0.25);
+    const q3 = getPercentile(sorted, 0.75);
     const iqr = q3 - q1;
     const lower = q1 - 1.5 * iqr;
     const upper = q3 + 1.5 * iqr;
     const filtered = sorted.filter((t) => t >= lower && t <= upper);
-    const base = filtered.length ? filtered : sorted;
+    const base = filtered.length >= 5 ? filtered : sorted;
 
     const avg = base.reduce((sum, v) => sum + v, 0) / base.length;
-    const stdDev = Math.sqrt(base.reduce((sum, v) => sum + Math.pow(v - avg, 2), 0) / base.length);
+    const stdDev = Math.sqrt(base.reduce((sum, v) => sum + Math.pow(v - avg, 2), 0) / (base.length - 1));
     const marginOfError = (1.96 * stdDev) / Math.sqrt(base.length);
 
     return {
@@ -107,10 +121,10 @@ function reportStats(stats: { [k: string]: ReturnType<typeof computeStats> }) {
         console.log(`Both versions are equal: ${control} and ${variant}`);
     } else if (!isSignificant) {
         console.log(
-            `${slower} appears ${percentDiff.toFixed(1)}% slower than ${faster}, but result is statistically insignificant (Â±${avgMoEPercent}%)`
+            `${slower} appears ${percentDiff.toFixed(1)}% slower than ${faster}, but result is statistically insignificant (±${avgMoEPercent}%)`
         );
     } else {
-        console.log(`${slower} is slower than ${faster} by ${percentDiff.toFixed(1)}% Â± ${avgMoEPercent}%`);
+        console.log(`${slower} is slower than ${faster} by ${percentDiff.toFixed(1)}% ± ${avgMoEPercent}%`);
     }
     console.log(
         `${control} → avg: ${s1.average.toFixed(2)}ms (±${moe1Percent.toFixed(2)}%), stdDev: ${s1.stdDev.toFixed(2)}, count: ${s1.filteredCount}/${s1.originalCount}`
@@ -145,32 +159,35 @@ export default function (name: string, describe: Describe) {
     test.describe.configure({ timeout: describe.timeout || 3 * 60_000, mode: 'serial' });
     return test.describe(name, () => {
         describe.testCases.forEach((testCase) => {
-            test(`Running ${testCase.name} with ${testCase.framework}`, async ({ page, context }) => {
-                const result: Record<string, number[]> = {};
-                const metricsGetter = testCase.metrics
-                    ? (metrics: TestCase['metrics']) => performance.getEntriesByType(metrics)
-                    : () => performance.getEntries();
-                for (const variant of [testCase.control, testCase.variant]) {
-                    if (variant.cookies) {
-                        await context.clearCookies();
-                        await context.addCookies(variant.cookies);
+            (testCase.skip ? test.skip : test)(
+                `Running ${testCase.name} with ${testCase.framework}`,
+                async ({ page, context }) => {
+                    const result: Record<string, number[]> = {};
+                    const metricsGetter = testCase.metrics
+                        ? (metrics: TestCase['metrics']) => performance.getEntriesByType(metrics)
+                        : () => performance.getEntries();
+                    for (const variant of [testCase.control, testCase.variant]) {
+                        if (variant.cookies) {
+                            await context.clearCookies();
+                            await context.addCookies(variant.cookies);
+                        }
+                        await gotoUrl(page, getUrl(testCase, variant));
+                        result[variant.version] ||= [];
+                        for (let i = 0; i < describe.iterations; i++) {
+                            await testCase.setup(page);
+                            const noise = (await waitFor(metricsGetter, page, { args: [testCase.metrics] })).length;
+                            await testCase.actions(page);
+                            (await waitFor(metricsGetter, page, { args: [testCase.metrics] }))
+                                .slice(noise)
+                                .map((pe) => result[variant.version].push(pe.duration));
+                        }
                     }
-                    await gotoUrl(page, getUrl(testCase, variant));
-                    result[variant.version] ||= [];
-                    for (let i = 0; i < describe.iterations; i++) {
-                        await testCase.setup(page);
-                        const noise = (await waitFor(metricsGetter, page, { args: [testCase.metrics] })).length;
-                        await testCase.actions(page);
-                        (await waitFor(metricsGetter, page, { args: [testCase.metrics] }))
-                            .slice(noise)
-                            .map((pe) => result[variant.version].push(pe.duration));
-                    }
+                    const stats = Object.fromEntries(
+                        Object.entries(result).map(([version, durations]) => [version, computeStats(durations)])
+                    );
+                    reportStats(stats);
                 }
-                const stats = Object.fromEntries(
-                    Object.entries(result).map(([version, durations]) => [version, computeStats(durations)])
-                );
-                reportStats(stats);
-            });
+            );
         });
     });
 }

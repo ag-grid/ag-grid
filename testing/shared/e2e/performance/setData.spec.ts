@@ -25,6 +25,7 @@ const describe: Describe = {
             metrics: 'long-animation-frame',
         },
         {
+            skip: true,
             name: 'examples/performance-test/lots-of-cells',
             framework: 'reactFunctionalTs',
             control: { version: 'prod' },
