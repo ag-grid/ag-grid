@@ -1,0 +1,56 @@
+---
+version: 33.0.0
+date: 11 December 2024
+---
+
+# What's New in AG Grid 33
+
+AG Grid 33 is a key major version which enables significant bundle size reduction via modularisation. It also fully commits to the new theming API as default, adds new features across the grid together with improvements in developer experience, accessibility and performance:
+
+1. [Bundle Size Reduction via Modularisation](https://www.ag-grid.com/react-data-grid/modules/?ref=blog.ag-grid.com)
+2. [Context Menu Async Items](https://www.ag-grid.com/react-data-grid/context-menu/?ref=blog.ag-grid.com#context-menu-example)
+3. [Customisation of Default Column Header Content](https://www.ag-grid.com/react-data-grid/column-headers/?ref=blog.ag-grid.com#inner-header-component)
+4. [Theming API Improvements](https://www.ag-grid.com/react-data-grid/theming/?ref=blog.ag-grid.com)
+5. Native Support for Vue 3 Composition API
+
+Please note that AG Grid 33 has breaking changes from AG Grid 32.X. We're providing [Codemods](https://www.ag-grid.com/react-data-grid/upgrading-to-ag-grid-33/?ref=blog.ag-grid.com#codemods) to help you upgrade by automating the migration process as much as possible.
+
+Please review the [migration guide](https://www.ag-grid.com/react-data-grid/upgrading-to-ag-grid-33/?ref=blog.ag-grid.com) when planning to update to this version.
+
+## Bundle Size Reduction
+
+AG Grid 33 modularises the grid which allows you to import only the modules you need for the features you're using. This enables a significant reduction in bundle size which will vary between 20-40% depending on the features you're using.
+
+This significant improvement required changes in the way the grid is imported on a page, which are [covered in the migration guide](https://www.ag-grid.com/react-data-grid/upgrading-to-ag-grid-33/?ref=blog.ag-grid.com#changes-to-modules).
+
+We're providing a [module selector](https://www.ag-grid.com/react-data-grid/modules/?ref=blog.ag-grid.com) to help you find the modules you need and generates the necessary import code. This way you can start using the new modules and benefit from the bundle size reduction and improved loading times for AG Grid.
+
+See this [documented here](https://www.ag-grid.com/react-data-grid/upgrading-to-ag-grid-33/?ref=blog.ag-grid.com#changes-to-modules) and illustrated below:
+
+## Context Menu Async Items
+
+AG Grid 33 allows providing menu items for the [context menu asynchronously](https://www.ag-grid.com/react-data-grid/context-menu/?ref=blog.ag-grid.com#context-menu-example). This allows to make the context menu items dynamically populated by querying a remote service. For example, a call to a remote service can find out what actions a user is entitled to perform and provide the appropriate context menu items.
+
+Please see this [documented here](https://www.ag-grid.com/react-data-grid/context-menu/?ref=blog.ag-grid.com#context-menu-example).
+
+## Customisation of Default Header Content
+
+AG Grid 33 allows to provide custom [column header](https://www.ag-grid.com/react-data-grid/column-headers/?ref=blog.ag-grid.com#inner-header-component) and [group column header](https://www.ag-grid.com/react-data-grid/column-groups/?ref=blog.ag-grid.com#inner-header-group-component) content to quickly set the appearance of column headers. This enables the customisation of cell content while using the built-in [default column header](https://www.ag-grid.com/react-data-grid/column-headers/?ref=blog.ag-grid.com#top) and [group column header](https://www.ag-grid.com/react-data-grid/column-groups/?ref=blog.ag-grid.com) features such as a filter buttons, column menu button, etc.
+
+See this [documented here](https://www.ag-grid.com/react-data-grid/column-headers/?ref=blog.ag-grid.com#inner-header-component) and shown below in the Age and Gold column headers:
+
+## Theming API
+
+AG Grid 33 fully commits to the [Theming API](https://www.ag-grid.com/react-data-grid/theming/?ref=blog.ag-grid.com) which was introduced in v32.3 and makes it the default theming method. This enables the dynamic manipulation of themes at runtime, full integration of themes built using the [Theme Builder](https://www.ag-grid.com/theme-builder/?ref=blog.ag-grid.com) and easy customisation via [theme parameters](https://www.ag-grid.com/react-data-grid/theming-parameters/?ref=blog.ag-grid.com) and [theme parts](https://www.ag-grid.com/react-data-grid/theming-parts/?ref=blog.ag-grid.com).
+
+This makes theming your grids a lot easier and allows you to easily adjust themes on a granular level at runtime depending the grid cell content.
+
+Please the migration process to the Theming API [documented here](https://www.ag-grid.com/react-data-grid/theming-migration/?ref=blog.ag-grid.com#updating-your-app-for-v33).
+
+## Native Support for Vue 3 Composition API
+
+AG Grid 33 provides native support for [Vue 3 Composition API](https://vuejs.org/guide/extras/composition-api-faq.html?ref=blog.ag-grid.com#what-is-composition-api). This allows you to use AG Grid and Vue 3 with confidence and to integrate the rich capabilities offered by the Composition API directly in AG Grid.
+
+## Summary
+
+AG Grid 33 is a key major version - it modularises the grid to enable a reduction in bundle size, adds end-user features and improvements in developer experience, accessibility and quality.

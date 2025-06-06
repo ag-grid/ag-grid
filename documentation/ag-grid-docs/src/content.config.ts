@@ -3,6 +3,7 @@ import { FRAMEWORKS } from '@constants';
 // array of objects
 import { glob } from 'astro/loaders';
 import { defineCollection, z } from 'astro:content';
+import { version } from 'os';
 
 const framework = z.enum(FRAMEWORKS as any);
 
@@ -301,6 +302,10 @@ const legacyReleaseNotes = defineCollection({
 
 const whatsNewContent = defineCollection({
     loader: glob({ pattern: '**/[^_]*.mdoc', base: './src/content/whats-new' }),
+    schema: z.object({
+        version: z.string(),
+        date: z.string(),
+    }),
 });
 
 export const collections = {
