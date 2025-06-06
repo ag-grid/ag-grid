@@ -1,6 +1,7 @@
 import type { _DragGridApi } from '../api/gridApi';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { DndSourceComp } from '../rendering/dndSourceComp';
+import { SharedRowHighlightModule } from '../rowHighlight/rowHighlightModule';
 import { VERSION } from '../version';
 import { DragAndDropImageComponent } from './dragAndDropImageComponent';
 import { DragAndDropService } from './dragAndDropService';
@@ -41,7 +42,7 @@ export const SharedDragAndDropModule: _ModuleWithoutApi = {
     moduleName: 'SharedDragAndDrop',
     version: VERSION,
     beans: [DragAndDropService],
-    dependsOn: [DragModule],
+    dependsOn: [DragModule, SharedRowHighlightModule],
     userComponents: {
         agDragAndDropImage: DragAndDropImageComponent,
     },

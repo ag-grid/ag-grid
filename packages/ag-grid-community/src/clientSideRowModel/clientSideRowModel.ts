@@ -3,7 +3,6 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
-import type { RowHighlightPosition } from '../entities/rowNode';
 import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
 import {
@@ -79,7 +78,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
     private nodeManager: IClientSideNodeManager<any>;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
-    private lastHighlightedRow: RowNode | null = null;
     private applyAsyncTransactionsTimeout: number | undefined;
     /** Has the start method been called */
     private started: boolean = false;
@@ -431,32 +429,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         };
 
         recurse(this.rootNode);
-    }
-
-    public clearHighlight(): void {
-        const last = this.lastHighlightedRow;
-        if (last) {
-            last.highlighted = null;
-            last.dispatchRowEvent('rowHighlightChanged');
-            this.lastHighlightedRow = null;
-        }
-    }
-
-    public highlightRow(row: RowNode, highlight: RowHighlightPosition): void {
-        const nodeChanged = row !== this.lastHighlightedRow;
-        const highlightChanged = highlight !== row.highlighted;
-        if (nodeChanged || highlightChanged) {
-            if (nodeChanged) {
-                this.clearHighlight();
-            }
-            row.highlighted = highlight;
-            row.dispatchRowEvent('rowHighlightChanged');
-            this.lastHighlightedRow = row;
-        }
-    }
-
-    public getLastHighlightedRowNode(): RowNode | null {
-        return this.lastHighlightedRow;
     }
 
     public isLastRowIndexKnown(): boolean {
@@ -1240,7 +1212,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         super.destroy();
 
         // Forcefully deallocate memory
-        this.clearHighlight();
         this.started = false;
         this.rootNode = null;
         this.nodeManager = null!;

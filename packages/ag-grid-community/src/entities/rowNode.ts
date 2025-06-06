@@ -38,8 +38,6 @@ export const ROW_ID_PREFIX_BOTTOM_PINNED = 'b-';
 
 let OBJECT_ID_SEQUENCE = 0;
 
-export type RowHighlightPosition = 'Above' | 'Below';
-
 export class RowNode<TData = any>
     implements IEventEmitter<RowNodeEventType>, IAgEventEmitter<RowNodeEventType>, IRowNode<TData>
 {
@@ -271,8 +269,6 @@ export class RowNode<TData = any>
 
     /** `true` when nodes with the same id are being removed and added as part of the same batch transaction */
     public alreadyRendered = false;
-
-    public highlighted: RowHighlightPosition | null = null;
 
     private hovered: boolean = false;
 

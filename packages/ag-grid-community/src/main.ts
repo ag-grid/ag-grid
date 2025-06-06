@@ -1165,6 +1165,8 @@ export {
     CustomEditorModule,
 } from './edit/editModule';
 export type { EditStrategyType } from './interfaces/editStrategyType';
+export type { RowHighlightPosition } from './rowHighlight/rowHighlightPosition';
+export { RowHighlightModule } from './rowHighlight/rowHighlightModule';
 export {
     RowSelectionModule,
     SharedRowSelectionModule as _SharedRowSelectionModule,

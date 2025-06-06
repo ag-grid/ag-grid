@@ -1,5 +1,5 @@
 import type { ValidationModuleName } from '../interfaces/iModule';
-import type { _FindApi } from './gridApi';
+import type { _FindApi, _RowHighlightGridApi } from './gridApi';
 import type {
     GridApi,
     _AdvancedFilterGridApi,
@@ -75,6 +75,10 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     ...mod<_StateGridApi>('GridState', {
         getState: 0,
         setState: 0,
+    }),
+    ...mod<_RowHighlightGridApi<any>>('RowHighlight', {
+        getHighlightedRow: 0,
+        setHighlightedRow: 0,
     }),
     ...mod<_RowSelectionGridApi<any>>('SharedRowSelection', {
         setNodesSelected: 0,

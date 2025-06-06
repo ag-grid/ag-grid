@@ -905,14 +905,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onRowNodeHighlightChanged(): void {
-        const highlighted = this.rowNode.highlighted;
+        const rowHighlightSvc = this.beans.rowHighlightSvc;
+        const highlighted = rowHighlightSvc?.row === this.rowNode ? rowHighlightSvc.position : null;
 
-        this.allRowGuis.forEach((gui) => {
-            const aboveOn = highlighted === 'Above';
-            const belowOn = highlighted === 'Below';
+        for (const gui of this.allRowGuis) {
+            const aboveOn = highlighted === 'above';
+            const belowOn = highlighted === 'below';
             gui.rowComp.toggleCss('ag-row-highlight-above', aboveOn);
             gui.rowComp.toggleCss('ag-row-highlight-below', belowOn);
-        });
+        }
     }
 
     private postProcessRowDragging(): void {

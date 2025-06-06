@@ -1,6 +1,6 @@
 import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import type { GridOptions } from '../entities/gridOptions';
-import type { RowHighlightPosition, RowNode } from '../entities/rowNode';
+import type { RowNode } from '../entities/rowNode';
 import type { ChangedPath } from '../utils/changedPath';
 import type { IRowModel } from './iRowModel';
 import type { RowDataTransaction } from './rowDataTransaction';
@@ -53,9 +53,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     flushAsyncTransactions(): void;
     doAggregate(changedPath?: ChangedPath): void;
     getTopLevelNodes(): RowNode[] | null;
-    clearHighlight(): void;
-    highlightRow(rowNode: RowNode, highlight: RowHighlightPosition): void;
-    getLastHighlightedRowNode(): RowNode | null;
     isRowDataLoaded(): boolean;
 
     /**

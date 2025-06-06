@@ -64,6 +64,7 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
 import type { GetCellRendererInstancesParams, ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
+import type { RowHighlightPosition } from '../rowHighlight/rowHighlightPosition';
 
 export interface DetailGridInfo {
     /**
@@ -125,6 +126,21 @@ export interface _CoreGridApi<TData = any> {
      * Check if a Module is registered with the current grid instance via its equivalent string name.
      */
     isModuleRegistered(moduleName: AgModuleName): boolean;
+}
+
+export interface _RowHighlightGridApi<TData = any> {
+    /** Gets the currently highlighted row */
+    getHighlightedRow(): IRowNode<TData> | undefined;
+
+    /**
+     * Sets the current highlighted row
+     * @param rowNode - The row node to highlight, or the id of the row, or `null` to clear the highlight.
+     * @param position - The position of the highlight, or `null` to clear the highlight.
+     */
+    setHighlightedRow(
+        rowNode: string | IRowNode<TData> | null | undefined,
+        position: RowHighlightPosition | '' | false | null
+    ): void;
 }
 
 export interface _RowSelectionGridApi<TData = any> {
@@ -1795,6 +1811,7 @@ export interface _AdvancedFilterGridApi {
 export interface GridApi<TData = any>
     extends _CoreGridApi<TData>,
         _StateGridApi,
+        _RowHighlightGridApi<TData>,
         _RowSelectionGridApi<TData>,
         _RowGridApi<TData>,
         _ScrollGridApi<TData>,

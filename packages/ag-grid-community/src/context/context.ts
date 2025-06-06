@@ -41,6 +41,7 @@ import type { GridOptionsService } from '../gridOptionsService';
 import type { RowNodeBlockLoader } from '../infiniteRowModel/rowNodeBlockLoader';
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService } from '../interfaces/IRangeService';
+import type { IRowHighlightService } from '../interfaces/IRowHighlightService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
@@ -339,6 +340,7 @@ export interface CoreBeanCollection {
     findSvc?: IFindService;
     groupFilter?: IGroupFilterService;
     multiFilter?: IMultiFilterService;
+    rowHighlightSvc?: IRowHighlightService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -494,6 +496,7 @@ export type BeanName =
     | 'rowNodeBlockLoader'
     | 'rowNodeSorter'
     | 'rowRenderer'
+    | 'rowHighlightSvc'
     | 'rowStyleSvc'
     | 'scrollVisibleSvc'
     | 'selectionController'
