@@ -1,6 +1,8 @@
 import { waitFor } from '../../playwright.utils';
-import type { Describe } from './framework';
-import test from './framework';
+import type { Describe } from './benchmarking';
+import test from './benchmarking';
+
+const athleteCheck = (isPresent?: boolean) => isPresent === document.body.textContent.includes('Athlete');
 
 const describe: Describe = {
     name: 'Compare performance of setting data',
@@ -14,10 +16,11 @@ const describe: Describe = {
             variant: { version: 'staging' },
             setup: async (page) => {
                 await page.getByText('Clear').click();
+                await waitFor(athleteCheck, page);
             },
             actions: async (page) => {
                 await page.getByText('Set Data').click();
-                await waitFor(() => document.body.textContent.includes('Athlete'), page);
+                await waitFor(athleteCheck, page, { args: [true] });
             },
             metrics: 'long-animation-frame',
         },
@@ -28,10 +31,11 @@ const describe: Describe = {
             variant: { version: 'staging' },
             setup: async (page) => {
                 await page.getByText('Clear').click();
+                await waitFor(athleteCheck, page);
             },
             actions: async (page) => {
                 await page.getByText('Set Data').click();
-                await waitFor(() => document.body.textContent.includes('Athlete'), page);
+                await waitFor(athleteCheck, page, { args: [true] });
             },
             metrics: 'long-animation-frame',
         },
