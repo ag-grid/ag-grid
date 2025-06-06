@@ -181,7 +181,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         const fillerNodesById = this.fillerNodesById;
         if (fillerNodesById) {
             for (const node of fillerNodesById.values()) {
-                if ((node.treeNodeFlags & MASK_CHILDREN_LEN) === 0) {
+                if (node.treeParent === null || (node.treeNodeFlags & MASK_CHILDREN_LEN) === 0) {
                     fillerNodesById.delete(node.id!); // This filler node is unused
                     this.hideRow(node);
                 }
