@@ -5,7 +5,7 @@ import type { ElementParams } from '../utils/dom';
 import { _clearElement, _createElement, _setDisabled } from '../utils/dom';
 import { _warn } from '../validation/logging';
 import { Component } from '../widgets/component';
-import { FILTER_LOCALE_TEXT } from './filterLocaleText';
+import { translateForFilter } from './filterLocaleText';
 
 export interface FilterButtonEvent extends AgEvent<FilterAction> {
     event?: Event;
@@ -42,11 +42,9 @@ export class FilterButtonComp extends Component<FilterAction> {
         // to the DOM once. This is much faster than appending each button individually.
         const fragment = document.createDocumentFragment();
 
-        const translate = this.getLocaleTextFunc();
-
         const addButton = (type: FilterAction): void => {
             const localeKey = `${type}Filter` as const;
-            const text = type ? translate(localeKey, FILTER_LOCALE_TEXT[localeKey]) : undefined;
+            const text = type ? translateForFilter(this, localeKey) : undefined;
             const clickListener = (event?: Event) => {
                 this.dispatchLocalEvent<FilterButtonEvent>({
                     type,

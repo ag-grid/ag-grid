@@ -1,13 +1,31 @@
-import type { IFilterOptionDef } from '../iSimpleFilter';
+import type { FilterLocaleTextKey } from '../../filterLocaleText';
+import type { ISimpleFilterModelType } from '../iSimpleFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import type { ITextFilterParams, TextFilterModel } from './iTextFilter';
 
 export class TextFilterModelFormatter extends SimpleFilterModelFormatter<ITextFilterParams> {
-    protected conditionToString(condition: TextFilterModel, options?: IFilterOptionDef): string {
-        const { numberOfInputs } = options || {};
+    protected conditionToString(
+        condition: TextFilterModel,
+        forToolPanel: boolean,
+        isRange: boolean,
+        customDisplayKey: string | undefined,
+        customDisplayName: string | undefined
+    ): string {
         const { filter, filterTo, type } = condition;
 
-        const isRange = type == 'inRange' || numberOfInputs === 2;
+        if (forToolPanel) {
+            const valueForToolPanel = this.conditionForToolPanel(
+                type,
+                isRange,
+                () => `"${filter}"`,
+                () => `"${filterTo}"`,
+                customDisplayKey,
+                customDisplayName
+            );
+            if (valueForToolPanel != null) {
+                return valueForToolPanel;
+            }
+        }
 
         if (isRange) {
             return `${filter}-${filterTo}`;
@@ -19,5 +37,26 @@ export class TextFilterModelFormatter extends SimpleFilterModelFormatter<ITextFi
         }
 
         return `${type}`;
+    }
+
+    protected override getTypeKey(type: ISimpleFilterModelType | null | undefined): FilterLocaleTextKey | null {
+        const addPrefix = <T extends string>(suffix: T) => `filterSummary${suffix}` as const;
+        switch (type) {
+            case 'contains':
+                return addPrefix('Contains');
+            case 'notContains':
+                return addPrefix('NotContains');
+            case 'equals':
+                return addPrefix('TextEquals');
+            case 'notEqual':
+                return addPrefix('TextNotEqual');
+            case 'startsWith':
+                return addPrefix('StartsWith');
+            case 'endsWith':
+                return addPrefix('EndsWith');
+            case 'inRange':
+                return addPrefix('InRange');
+        }
+        return null;
     }
 }

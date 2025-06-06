@@ -1,4 +1,4 @@
-import type { ElementParams } from 'ag-grid-community';
+import type { ElementParams, FilterOpenedEvent } from 'ag-grid-community';
 import {
     Component,
     RefPlaceholder,
@@ -82,6 +82,7 @@ export class FilterCardComp extends Component {
         this.addManagedElementListeners(this.eDelete, {
             click: () => this.filterStateService.removeFilter(this.id),
         });
+        this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
     }
 
     public refresh(newState: FilterPanelFilterState): void {
@@ -142,6 +143,13 @@ export class FilterCardComp extends Component {
         const ariaLabel = expanded ? null : `${state.name} ${state.summary}`;
         _setAriaLabel(eExpand, ariaLabel);
         _setAriaExpanded(eExpand, expanded);
+    }
+
+    private onFilterOpened(event: FilterOpenedEvent): void {
+        const { state, filterStateService, id } = this;
+        if (event.source === 'COLUMN_MENU' && event.column === state?.column && state?.expanded) {
+            filterStateService.expandFilter(id, false);
+        }
     }
 
     public override destroy(): void {

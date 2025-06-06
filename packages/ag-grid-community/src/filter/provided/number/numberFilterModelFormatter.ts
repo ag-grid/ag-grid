@@ -1,24 +1,39 @@
-import type { LocaleTextFunc } from '../../../misc/locale/localeUtils';
-import type { IFilterOptionDef } from '../iSimpleFilter';
+import type { FilterLocaleTextKey } from '../../filterLocaleText';
+import type { ISimpleFilterModelType } from '../iSimpleFilter';
 import type { OptionsFactory } from '../optionsFactory';
+import { getScalarFilterTypeKey } from '../scalarFilterUtils';
 import { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
 
 export class NumberFilterModelFormatter extends SimpleFilterModelFormatter<INumberFilterParams, number> {
-    constructor(
-        getLocaleTextFunc: () => LocaleTextFunc,
-        optionsFactory: OptionsFactory,
-        filterParams: INumberFilterParams
-    ) {
-        super(getLocaleTextFunc, optionsFactory, filterParams, filterParams.numberFormatter);
+    constructor(optionsFactory: OptionsFactory, filterParams: INumberFilterParams) {
+        super(optionsFactory, filterParams, filterParams.numberFormatter);
     }
 
-    protected conditionToString(condition: NumberFilterModel, options?: IFilterOptionDef): string {
-        const { numberOfInputs } = options || {};
+    protected conditionToString(
+        condition: NumberFilterModel,
+        forToolPanel: boolean,
+        isRange: boolean,
+        customDisplayKey: string | undefined,
+        customDisplayName: string | undefined
+    ): string {
         const { filter, filterTo, type } = condition;
 
-        const isRange = type == 'inRange' || numberOfInputs === 2;
         const formatValue = this.formatValue.bind(this);
+
+        if (forToolPanel) {
+            const valueForToolPanel = this.conditionForToolPanel(
+                type,
+                isRange,
+                () => formatValue(filter),
+                () => formatValue(filterTo),
+                customDisplayKey,
+                customDisplayName
+            );
+            if (valueForToolPanel != null) {
+                return valueForToolPanel;
+            }
+        }
 
         if (isRange) {
             return `${formatValue(filter)}-${formatValue(filterTo)}`;
@@ -30,5 +45,9 @@ export class NumberFilterModelFormatter extends SimpleFilterModelFormatter<INumb
         }
 
         return `${type}`;
+    }
+
+    protected override getTypeKey(type: ISimpleFilterModelType | null | undefined): FilterLocaleTextKey | null {
+        return getScalarFilterTypeKey(type);
     }
 }

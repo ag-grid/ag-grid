@@ -1,4 +1,4 @@
-import { _removeFromParent } from 'ag-grid-community';
+import { _removeFromParent, _translate } from 'ag-grid-community';
 import type { BeanStub } from 'ag-grid-community';
 
 const DEFAULT_LOCALE_TEXT = {
@@ -6,10 +6,8 @@ const DEFAULT_LOCALE_TEXT = {
     ariaLabelDeleteFilterCard: 'Delete Filter',
 } as const;
 
-type FilterPanelLocaleText = typeof DEFAULT_LOCALE_TEXT;
-
-export function translateForFilterPanel(bean: BeanStub<any>, key: keyof FilterPanelLocaleText): string {
-    return bean.getLocaleTextFunc()(key, DEFAULT_LOCALE_TEXT[key]);
+export function translateForFilterPanel(bean: BeanStub<any>, key: keyof typeof DEFAULT_LOCALE_TEXT): string {
+    return _translate(bean, DEFAULT_LOCALE_TEXT, key);
 }
 
 export function compareAndUpdateListsInDom(

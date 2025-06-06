@@ -12,7 +12,7 @@ import { AgRadioButton } from '../../widgets/agRadioButton';
 import { AgSelect } from '../../widgets/agSelect';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
-import type { FILTER_LOCALE_TEXT } from '../filterLocaleText';
+import type { FilterLocaleTextKey } from '../filterLocaleText';
 import type {
     ICombinedSimpleModel,
     IFilterOptionDef,
@@ -74,7 +74,7 @@ export abstract class SimpleFilter<
     protected optionsFactory: OptionsFactory;
 
     constructor(
-        filterNameKey: keyof typeof FILTER_LOCALE_TEXT,
+        filterNameKey: FilterLocaleTextKey,
         private readonly mapValuesFromModel: MapValuesFromSimpleFilterModel<M, V>,
         private readonly defaultOptions: string[]
     ) {
@@ -372,7 +372,7 @@ export abstract class SimpleFilter<
     }
 
     private createBoilerplateListOption(option: string): ListOption {
-        return { value: option, text: this.translate(option as keyof typeof FILTER_LOCALE_TEXT) };
+        return { value: option, text: this.translate(option as FilterLocaleTextKey) };
     }
 
     private createCustomListOption(option: IFilterOptionDef): ListOption {
@@ -382,7 +382,7 @@ export abstract class SimpleFilter<
             value: displayKey,
             text: customOption
                 ? this.getLocaleTextFunc()(customOption.displayKey, customOption.displayName)
-                : this.translate(displayKey as keyof typeof FILTER_LOCALE_TEXT),
+                : this.translate(displayKey as FilterLocaleTextKey),
         };
     }
 
@@ -585,7 +585,7 @@ export abstract class SimpleFilter<
         return this.params.getHandler()?.getModelAsString?.(model) ?? '';
     }
 
-    private getPlaceholderText(defaultPlaceholder: keyof typeof FILTER_LOCALE_TEXT, position: number): string {
+    private getPlaceholderText(defaultPlaceholder: FilterLocaleTextKey, position: number): string {
         let placeholder = this.translate(defaultPlaceholder);
         if (typeof this.filterPlaceholder === 'function') {
             const filterOptionKey = this.eTypes[position].getValue() as ISimpleFilterModelType;

@@ -9,6 +9,9 @@ export const DEFAULT_LOCALE_TEXT = {
     ariaSearchFilterValues: 'Search filter values',
     ariaFilterList: 'Filter List',
     filterSummaryInactive: 'is (All)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: (variableValues: string[]) => `is (${variableValues[0]})`,
+    filterSummaryListLong: (variableValues: string[]) => `is (${variableValues[0]}) and ${variableValues[1]} more`,
 } as const;
 
-export type ISetFilterLocaleText = typeof DEFAULT_LOCALE_TEXT;
+export type SetFilterLocaleTextKey = keyof typeof DEFAULT_LOCALE_TEXT;

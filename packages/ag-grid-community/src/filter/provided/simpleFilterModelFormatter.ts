@@ -1,35 +1,47 @@
-import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
-import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
+import { BeanStub } from '../../context/beanStub';
+import type { FilterLocaleTextKey } from '../filterLocaleText';
+import { translateForFilter } from '../filterLocaleText';
 import type { ProvidedFilterModel } from './iProvidedFilter';
-import type { ICombinedSimpleModel, IFilterOptionDef, ISimpleFilterModel, ISimpleFilterParams } from './iSimpleFilter';
+import type {
+    ICombinedSimpleModel,
+    ISimpleFilterModel,
+    ISimpleFilterModelType,
+    ISimpleFilterParams,
+} from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
-export abstract class SimpleFilterModelFormatter<TFilterParams extends ISimpleFilterParams, TValue = any> {
+export abstract class SimpleFilterModelFormatter<
+    TFilterParams extends ISimpleFilterParams,
+    TValue = any,
+> extends BeanStub {
     constructor(
-        private readonly getLocaleTextFunc: () => LocaleTextFunc,
         private optionsFactory: OptionsFactory,
         protected filterParams: TFilterParams,
         protected readonly valueFormatter?: (value: TValue | null) => string | null
-    ) {}
+    ) {
+        super();
+    }
 
     // used by:
     // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.
     // 2) DateFloatingFilter: Only when read only (as we show text rather than a date picker when read only)
     public getModelAsString(model: ISimpleFilterModel | null, source?: 'floating' | 'filterToolPanel'): string | null {
         const translate = this.getLocaleTextFunc();
-        const translateFromLookup = (key: keyof typeof FILTER_LOCALE_TEXT) => translate(key, FILTER_LOCALE_TEXT[key]);
+        const forToolPanel = source === 'filterToolPanel';
         if (!model) {
-            return source === 'filterToolPanel' ? translateFromLookup('filterSummaryInactive') : null;
+            return forToolPanel ? translateForFilter(this, 'filterSummaryInactive') : null;
         }
         const isCombined = (model as any).operator != null;
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
             const conditions = combinedModel.conditions ?? [];
-            const customOptions = conditions.map((condition) => this.getModelAsString(condition));
+            const customOptions = conditions.map((condition) => this.getModelAsString(condition, source));
             const joinOperatorTranslateKey = combinedModel.operator === 'AND' ? 'andCondition' : 'orCondition';
-            return customOptions.join(` ${translateFromLookup(joinOperatorTranslateKey)} `);
+            return customOptions.join(` ${translateForFilter(this, joinOperatorTranslateKey)} `);
         } else if (model.type === 'blank' || model.type === 'notBlank') {
-            return translate(model.type, model.type);
+            return forToolPanel
+                ? translateForFilter(this, model.type === 'blank' ? 'filterSummaryBlank' : 'filterSummaryNotBlank')
+                : translate(model.type, model.type);
         } else {
             const condition = model as ISimpleFilterModel;
             const customOption = this.optionsFactory.getCustomOption(condition.type);
@@ -38,21 +50,61 @@ export abstract class SimpleFilterModelFormatter<TFilterParams extends ISimpleFi
             // of displaying the `from` value, as it wouldn't be relevant
             const { displayKey, displayName, numberOfInputs } = customOption || {};
             if (displayKey && displayName && numberOfInputs === 0) {
-                translate(displayKey, displayName);
-                return displayName;
+                return translate(displayKey, displayName);
             }
-            return this.conditionToString(condition, customOption);
+            return this.conditionToString(
+                condition,
+                forToolPanel,
+                condition.type === 'inRange' || numberOfInputs === 2,
+                displayKey,
+                displayName
+            );
         }
     }
 
     // creates text equivalent of FilterModel. if it's a combined model, this takes just one condition.
-    protected abstract conditionToString(condition: ProvidedFilterModel, opts?: IFilterOptionDef): string;
+    protected abstract conditionToString(
+        condition: ProvidedFilterModel,
+        forToolPanel: boolean,
+        isRange: boolean,
+        customDisplayKey: string | undefined,
+        customDisplayName: string | undefined
+    ): string;
 
     public updateParams(params: { optionsFactory: OptionsFactory; filterParams: TFilterParams }) {
         const { optionsFactory, filterParams } = params;
         this.optionsFactory = optionsFactory;
         this.filterParams = filterParams;
     }
+
+    protected conditionForToolPanel(
+        type: ISimpleFilterModelType | null | undefined,
+        isRange: boolean,
+        getFilter: () => string,
+        getFilterTo: () => string,
+        customDisplayKey: string | undefined,
+        customDisplayName: string | undefined
+    ): string | null {
+        let typeValue: string | undefined;
+        const typeKey = this.getTypeKey(type);
+        if (typeKey) {
+            typeValue = translateForFilter(this, typeKey);
+        }
+        if (customDisplayKey && customDisplayName) {
+            typeValue = this.getLocaleTextFunc()(customDisplayKey, customDisplayName);
+        }
+        if (typeValue != null) {
+            // 0 inputs covered by parent
+            if (isRange) {
+                return `${typeValue} ${translateForFilter(this, 'filterSummaryInRangeValues', [getFilter(), getFilterTo()])}`;
+            } else {
+                return `${typeValue} ${getFilter()}`;
+            }
+        }
+        return null;
+    }
+
+    protected abstract getTypeKey(type: ISimpleFilterModelType | null | undefined): FilterLocaleTextKey | null;
 
     protected formatValue(value?: TValue | null): string {
         const valueFormatter = this.valueFormatter;

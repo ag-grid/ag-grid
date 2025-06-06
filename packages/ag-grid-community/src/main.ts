@@ -746,7 +746,7 @@ export { GridCtrl, IGridComp } from './gridComp/gridCtrl';
 export type { SortService } from './sort/sortService';
 export { SortModelItem } from './interfaces/iSortModelItem';
 export { LocaleService } from './misc/locale/localeService';
-export { _getLocaleTextFunc, LocaleTextFunc } from './misc/locale/localeUtils';
+export { _getLocaleTextFunc, LocaleTextFunc, _translate } from './misc/locale/localeUtils';
 export type { ValueService } from './valueService/valueService';
 export type { ValueCache } from './valueService/valueCache';
 export type { ExpressionService } from './valueService/expressionService';

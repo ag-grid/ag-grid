@@ -13,7 +13,8 @@ import type { AgPromise } from '../../utils/promise';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
-import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
+import type { FilterLocaleTextKey } from '../filterLocaleText';
+import { translateForFilter } from '../filterLocaleText';
 import { getDebounceMs, isUseApplyButton } from '../floating/provided/providedFilterUtils';
 import type {
     IProvidedFilter,
@@ -54,7 +55,7 @@ export abstract class ProvidedFilter<
     private positionableFeature: PositionableFeature | undefined;
 
     constructor(
-        private readonly filterNameKey: keyof typeof FILTER_LOCALE_TEXT,
+        private readonly filterNameKey: FilterLocaleTextKey,
         private readonly cssIdentifier: string
     ) {
         super();
@@ -282,8 +283,8 @@ export abstract class ProvidedFilter<
         super.destroy();
     }
 
-    protected translate(key: keyof typeof FILTER_LOCALE_TEXT): string {
-        return this.getLocaleTextFunc()(key, FILTER_LOCALE_TEXT[key]);
+    protected translate(key: FilterLocaleTextKey): string {
+        return translateForFilter(this, key);
     }
 
     // override to control positionable feature
