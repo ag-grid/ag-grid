@@ -27,32 +27,45 @@ export async function getBrowserCommunications(page: Page): Promise<BrowserCommu
     };
 }
 
-export const waitFor = async <T, A extends (string | boolean | number)[]>(
-    getterOrTimeout: ((...args: A) => T) | number,
+export const waitForTimeout = async (timeout: number): Promise<void> => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+};
+
+export const waitFor = async <T>(
+    getterOrTimeout: (...args: any[]) => T,
     page?: Page,
-    options: { smart?: boolean; timer?: number; args: A } = { smart: false, timer: 5000, args: [] as A }
-): Promise<T> => {
-    if (typeof getterOrTimeout === 'number') {
-        return new Promise((resolve) => setTimeout(resolve, getterOrTimeout));
+    options: {
+        smart?: boolean;
+        timeout?: number;
+        args?: Parameters<typeof getterOrTimeout>;
+        allowFailure?: boolean;
+    } = {
+        smart: false,
+        timeout: 5000,
+        args: [],
+        allowFailure: false,
     }
-    const { smart, timer } = options;
+): Promise<T> => {
+    const { smart, timeout } = options;
     if (page) {
         if (smart) {
-            return page.evaluateHandle(getterOrTimeout as any, options.args) as Promise<T>;
+            return page.evaluateHandle(getterOrTimeout, options.args ?? []) as Promise<T>;
         }
-        return page.evaluate(getterOrTimeout as any, options.args);
+        return page.evaluate(getterOrTimeout as any, options.args ?? []);
     }
-    return new Promise<T>((resolve, reject) => {
-        const timeout = setTimeout(() => {
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
             clearInterval(interval);
-            reject(new Error('waitFor timed out doing getter: ' + getterOrTimeout.toString()));
-        }, timer);
+            (options.allowFailure ? resolve : reject)(
+                new Error('waitFor timed out doing getter: ' + getterOrTimeout.toString())
+            );
+        }, timeout ?? 5000);
         const interval = setInterval(async () => {
-            const res = await getterOrTimeout(...options.args);
+            const res = await getterOrTimeout(...(options.args ?? []));
             if (res) {
                 clearInterval(interval);
                 resolve(res);
-                clearTimeout(timeout);
+                clearTimeout(timer);
             }
         }, 20);
     });
