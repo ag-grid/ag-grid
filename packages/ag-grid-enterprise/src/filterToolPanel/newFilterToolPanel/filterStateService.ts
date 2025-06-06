@@ -137,14 +137,22 @@ export class FilterStateService
 
     private updateFilterStates(): void {
         const filterModel = this.beans.colFilter!.getModel();
-        for (const colId of Object.keys(filterModel)) {
-            const existingState = this.states.get(colId);
+        const processedIds = new Set<string>();
+        for (const id of Object.keys(filterModel)) {
+            const existingState = this.states.get(id);
             if (!existingState) {
-                this.createFilter(colId);
+                this.createFilter(id);
             } else {
                 existingState.refresh?.();
             }
+            processedIds.add(id);
         }
+        this.states.forEach((state, id) => {
+            if (!processedIds.has(id)) {
+                // filters which have no model
+                state.refresh?.();
+            }
+        });
         this.dispatchStatesUpdates();
     }
 
