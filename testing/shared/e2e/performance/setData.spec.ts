@@ -2,12 +2,13 @@ import { waitFor } from '../../playwright.utils';
 import type { Describe } from './benchmarking';
 import test from './benchmarking';
 
-const athleteCheck = (isPresent?: boolean) => isPresent === document.body.textContent.includes('Athlete');
+const noRowsCheck = () => document.body.textContent.includes('No rows to show');
+const athleteCheck = () => document.body.textContent.includes('Athlete');
 
 const describe: Describe = {
     name: 'Compare performance of setting data',
-    iterations: 50,
-    timeout: 15 * 60_000, // 15 minutes
+    timeout: 30 * 60_000,
+    minIterations: 10,
     testCases: [
         {
             name: 'examples/performance-test/lots-of-cells',
@@ -16,11 +17,11 @@ const describe: Describe = {
             variant: { version: 'staging' },
             setup: async (page) => {
                 await page.getByText('Clear').click();
-                await waitFor(athleteCheck, page);
+                await waitFor(noRowsCheck, page);
             },
             actions: async (page) => {
                 await page.getByText('Set Data').click();
-                await waitFor(athleteCheck, page, { args: [true] });
+                await waitFor(athleteCheck, page);
             },
             metrics: 'long-animation-frame',
         },
@@ -32,15 +33,15 @@ const describe: Describe = {
             variant: { version: 'staging' },
             setup: async (page) => {
                 await page.getByText('Clear').click();
-                await waitFor(athleteCheck, page);
+                await waitFor(noRowsCheck, page);
             },
             actions: async (page) => {
                 await page.getByText('Set Data').click();
-                await waitFor(athleteCheck, page, { args: [true] });
+                await waitFor(athleteCheck, page);
             },
             metrics: 'long-animation-frame',
         },
     ],
 };
 
-test(`Performance Test - ${describe.name} - ${describe.iterations} iterations`, describe);
+test(`Performance Test - ${describe.name}`, describe);
