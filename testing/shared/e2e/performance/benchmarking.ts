@@ -214,7 +214,7 @@ export default function (name: string, describe: Describe) {
             (testCase.skip ? test.skip : test)(
                 `Running ${testCase.name} with ${testCase.framework}`,
                 async ({ page, context }) => {
-                    console.log(`Start time: ${new Date().toISOString()}`);
+                    console.log(`Start time: ${(testStartTime = new Date()).toISOString()}`);
                     const result: Record<string, number[]> = {};
                     const metricsGetter = () =>
                         waitFor(
