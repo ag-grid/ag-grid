@@ -138,8 +138,11 @@ export class FilterStateService
     private updateFilterStates(): void {
         const filterModel = this.beans.colFilter!.getModel();
         for (const colId of Object.keys(filterModel)) {
-            if (!this.states.has(colId)) {
+            const existingState = this.states.get(colId);
+            if (!existingState) {
                 this.createFilter(colId);
+            } else {
+                existingState.refresh?.();
             }
         }
         this.dispatchStatesUpdates();
