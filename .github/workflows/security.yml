@@ -1,7 +1,9 @@
 name: Security
 
 env:
-  SECURITY_IGNORE_LIST: "ag-grid-angular,ag-grid-enterprise,ag-grid-vue3,ag-grid-generate-code-reference-files,ag-grid-generate-example-files,module-size,module-size-angular"
+  # Ignore `project.json` as snyk thinks it is a dot net project
+  SECURITY_BASE_IGNORE_LIST: ".nx,project.json"
+  SECURITY_PACKAGE_IGNORE_LIST: "ag-grid-angular,ag-grid-enterprise,ag-grid-vue3,ag-grid-generate-code-reference-files,ag-grid-generate-example-files,module-size,module-size-angular"
 
 on:
     issue_comment:
@@ -21,13 +23,13 @@ jobs:
     steps:
       - uses: actions/checkout@main
       - name: Echo SECURITY_IGNORE_LIST
-        run: echo ${{ env.SECURITY_IGNORE_LIST }}
+        run: echo "SECURITY_BASE_IGNORE_LIST: ${{ env.SECURITY_BASE_IGNORE_LIST }}\nSECURITY_PACKAGE_IGNORE_LIST: ${{ env.SECURITY_PACKAGE_IGNORE_LIST }}"
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --all-projects --severity-threshold=high --exclude=project.json,${{ env.SECURITY_IGNORE_LIST }}
+          args: --all-projects --severity-threshold=high --exclude=${{ env.SECURITY_BASE_IGNORE_LIST }},${{ env.SECURITY_PACKAGE_IGNORE_LIST }}
 
   code-security:
     runs-on: ubuntu-latest
