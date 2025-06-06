@@ -20,15 +20,11 @@ on:
     workflow_dispatch:
     schedule:
       - cron: '0 0 * * *' # Run daily at midnight UTC
-    push:
-      branches: ["AG-3390-snyk-gha"]
-    pull_request:
-      branches: ["AG-3390-snyk-gha"]
 
 jobs:
   security-all-projects:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/security') || github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'pull_request'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/security') || github.event_name == 'schedule'
     steps:
       - uses: actions/checkout@main
       - name: Echo ignore lists
@@ -44,7 +40,7 @@ jobs:
 
   security-ignored-paths:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/security') || github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'pull_request'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/security') || github.event_name == 'schedule'
     steps:
       - uses: actions/checkout@main
       - name: Echo ignore lists
@@ -78,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/security') || github.event_name == 'schedule' || github.event_name == 'push' || github.event_name == 'pull_request'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/security') || github.event_name == 'schedule'
     steps:
       - uses: actions/checkout@main
       - name: Run Snyk SAST security code scan
