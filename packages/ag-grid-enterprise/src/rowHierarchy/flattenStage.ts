@@ -47,7 +47,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
 
         // we do not want the footer total if the grid is empty
         const atLeastOneRowPresent = result.length > 0;
-        const grandTotalRow = details.grandTotalRow;
+        const { grandTotalRow, grandTotalRowPinned } = details;
 
         const includeGrandTotalRow =
             !showRootNode &&
@@ -58,8 +58,9 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
         if (includeGrandTotalRow) {
             _createRowNodeFooter(rootNode, this.beans);
             // want to not render the footer row here if pinned via grid options
-            if (grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop') {
-                this.beans.pinnedRowModel?.setGrandTotalPinned(grandTotalRow === 'pinnedBottom' ? 'bottom' : 'top');
+            if (grandTotalRowPinned || grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop') {
+                const float = grandTotalRowPinned ?? (grandTotalRow === 'pinnedBottom' ? 'bottom' : 'top');
+                this.beans.pinnedRowModel?.setGrandTotalPinned(float);
             } else {
                 const addToTop = grandTotalRow === 'top';
                 this.addRowNodeToRowsToDisplay(details, rootNode.sibling, result, 0, addToTop);

@@ -345,7 +345,8 @@
         "columnHeaderMouseLeave": {},
         "columnHeaderClicked": {},
         "columnHeaderContextMenu": {},
-        "pivotMaxColumnsExceeded": {}
+        "pivotMaxColumnsExceeded": {},
+        "resetColumns": {}
     },
     "rowGrouping": {
         "meta": {

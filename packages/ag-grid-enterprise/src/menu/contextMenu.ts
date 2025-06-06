@@ -23,6 +23,9 @@ import {
     _createIconNoSpan,
     _exists,
     _focusInto,
+    _getEnableRowPinning,
+    _getGrandTotalRow,
+    _getGrandTotalRowPinned,
     _getPageBody,
     _getRootNode,
     _isIOSUserAgent,
@@ -87,13 +90,15 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         // if user clicks a cell
         if (_exists(node)) {
-            const enableRowPinning = gos.get('enableRowPinning');
+            const enableRowPinning = _getEnableRowPinning(gos);
             const isRowPinnable = gos.get('isRowPinnable');
-            const grandTotalRow = gos.get('grandTotalRow');
+            const grandTotalRow = _getGrandTotalRow(gos);
+            const grandTotalRowPinned = _getGrandTotalRowPinned(gos);
             if (enableRowPinning) {
                 const isGroupTotalRow = node.level > -1 && node.footer;
                 const isGrandTotalRow = node.level === -1 && node.footer;
-                const isGrandTotalRowFixed = grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
+                const isGrandTotalRowFixed =
+                    grandTotalRowPinned != null || grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
 
                 // We do not allow pinning of group total rows. As such, only show pinning related menu options for
                 // grand total rows that are not fixed in place, and normal rows that are not group total rows.

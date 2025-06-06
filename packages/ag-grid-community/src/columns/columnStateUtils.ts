@@ -3,8 +3,9 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
 import type { EventService } from '../eventService';
-import type { ColumnEvent, ColumnEventType } from '../events';
+import type { ColumnEvent, ColumnEventType, ResetColumnsEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _areEqual, _removeFromArray } from '../utils/array';
@@ -270,7 +271,8 @@ export function _applyColumnState(
 }
 
 export function _resetColumnState(beans: BeanCollection, source: ColumnEventType): void {
-    const { colModel, autoColSvc, selectionColSvc } = beans;
+    const { colModel, autoColSvc, selectionColSvc, eventSvc, gos } = beans;
+
     const primaryCols = colModel.getColDefCols();
     if (!primaryCols?.length) {
         return;
@@ -319,6 +321,8 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
 
     // apply the new order when all the cols have been created & are available
     _applyColumnState(beans, { state: orderedColState, applyOrder: true }, source);
+
+    eventSvc.dispatchEvent(_addGridCommonParams<ResetColumnsEvent>(gos, { type: 'resetColumns', source }));
 }
 
 /**
