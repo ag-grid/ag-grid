@@ -106,14 +106,15 @@
         padding-top: var(--ag-widget-container-vertical-padding);
         padding-bottom: var(--ag-widget-container-vertical-padding);
         border: solid var(--ag-border-width) var(--ag-border-color);
+        border-radius: var(--ag-border-radius);
         background-color: var(--ag-background-color);
 
         .ag-simple-filter-body-wrapper {
-            padding: 0 var(--ag-widget-container-horizontal-padding);
+            padding: var(--ag-widget-vertical-spacing) var(--ag-widget-container-horizontal-padding) 0;
         }
 
         .ag-mini-filter {
-            margin-top: 0;
+            margin-top: var(--ag-widget-vertical-spacing);
             margin-left: var(--ag-widget-container-horizontal-padding);
             margin-right: var(--ag-widget-container-horizontal-padding);
         }
@@ -157,23 +158,44 @@
         align-items: center;
     }
 
-    .ag-filter-card-summary {
-        margin-left: var(--ag-widget-container-horizontal-padding);
-        margin-right: var(--ag-widget-container-horizontal-padding);
+    .ag-filter-card-expand,
+    .ag-filter-card-delete,
+    .ag-filter-add-button {
+        border-radius: var(--ag-button-border-radius);
+        background: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
     }
 
+    .ag-filter-card-summary,
     .ag-filter-type-select {
-        margin-bottom: var(--ag-widget-vertical-spacing);
         margin-left: var(--ag-widget-container-horizontal-padding);
         margin-right: var(--ag-widget-container-horizontal-padding);
     }
 
     .ag-filter-card-add {
-        padding: var(--ag-grid-size);
+        padding: 0;
+    }
 
-        .ag-picker-field-wrapper {
-            border: 0;
-            background-color: transparent;
-        }
+    .ag-filter-add-button {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+        align-items: center;
+    }
+
+    .ag-filter-add-button-label {
+        @include ag.unthemed-rtl(
+            (
+                margin-left: var(--ag-spacing),
+            )
+        );
+    }
+
+    .ag-filter-add-select {
+        border: 0;
     }
 }

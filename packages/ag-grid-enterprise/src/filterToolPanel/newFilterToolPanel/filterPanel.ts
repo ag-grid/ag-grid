@@ -59,23 +59,6 @@ export class FilterPanel extends Component {
 
         this.filters = newFilters;
 
-        const addFilterOptions = this.filterStateService
-            .getAvailableFilters()
-            .map(({ id: value, name: text }) => ({ value, text }));
-
-        if (addFilterOptions.length) {
-            let addFilterComp = this.addFilterComp;
-            if (!addFilterComp) {
-                addFilterComp = this.createBean(new AddFilterComp(addFilterOptions));
-                this.addFilterComp = addFilterComp;
-                addFilterComp.addManagedListeners(addFilterComp, {
-                    filterSelected: ({ id }) => filterStateService.addFilter(id),
-                });
-            }
-            addFilterComp.refresh(addFilterOptions);
-            eNewItems.push(addFilterComp.getGui());
-        }
-
         const compsToDestroy: Component[] = [];
         existingFilters.forEach((existingFilter, id) => {
             ePrevItems.push(existingFilter.getGui());
@@ -83,6 +66,27 @@ export class FilterPanel extends Component {
                 compsToDestroy.push(existingFilter);
             }
         });
+
+        let addFilterComp = this.addFilterComp;
+        if (addFilterComp) {
+            ePrevItems.push(addFilterComp.getGui());
+        }
+
+        const addFilterOptions = this.filterStateService.getAvailableFilters();
+
+        if (addFilterOptions.length) {
+            if (!addFilterComp) {
+                addFilterComp = this.createBean(new AddFilterComp(addFilterOptions));
+                addFilterComp.addManagedListeners(addFilterComp, {
+                    filterSelected: ({ id }) => filterStateService.addFilter(id),
+                });
+            }
+            addFilterComp.refresh(addFilterOptions);
+            eNewItems.push(addFilterComp.getGui());
+        } else {
+            addFilterComp = this.destroyBean(addFilterComp);
+        }
+        this.addFilterComp = addFilterComp;
 
         compareAndUpdateListsInDom(eContainer, eNewItems, ePrevItems);
 

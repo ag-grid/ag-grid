@@ -3,6 +3,7 @@ import type { BeanStub } from 'ag-grid-community';
 
 const DEFAULT_LOCALE_TEXT = {
     addFilterCard: 'Add Filter',
+    ariaLabelAddFilterField: 'Add Filter Field',
     ariaLabelDeleteFilterCard: 'Delete Filter',
 } as const;
 

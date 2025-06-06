@@ -11,14 +11,15 @@
     padding-top: var(--ag-widget-container-vertical-padding);
     padding-bottom: var(--ag-widget-container-vertical-padding);
     border: solid var(--ag-border-width) var(--ag-border-color);
+    border-radius: var(--ag-border-radius);
     background-color: var(--ag-background-color);
 
     :where(.ag-simple-filter-body-wrapper) {
-        padding: 0 var(--ag-widget-container-horizontal-padding);
+        padding: var(--ag-widget-vertical-spacing) var(--ag-widget-container-horizontal-padding) 0;
     }
 
     :where(.ag-mini-filter) {
-        margin-top: 0;
+        margin-top: var(--ag-widget-vertical-spacing);
         margin-left: var(--ag-widget-container-horizontal-padding);
         margin-right: var(--ag-widget-container-horizontal-padding);
     }
@@ -33,7 +34,7 @@
     margin-bottom: var(--ag-widget-container-vertical-padding);
 
     & > *:where(:not(:last-child)) {
-        margin-right: var(--ag-grid-size);
+        margin-right: var(--ag-spacing);
     }
 }
 
@@ -49,22 +50,34 @@
     align-items: center;
 }
 
-.ag-filter-card-summary {
-    margin-left: var(--ag-widget-container-horizontal-padding);
-    margin-right: var(--ag-widget-container-horizontal-padding);
+.ag-filter-card-expand,
+.ag-filter-card-delete {
+    border-radius: var(--ag-button-border-radius);
 }
 
+.ag-filter-card-summary,
 .ag-filter-type-select {
-    margin-bottom: var(--ag-widget-vertical-spacing);
     margin-left: var(--ag-widget-container-horizontal-padding);
     margin-right: var(--ag-widget-container-horizontal-padding);
 }
 
 .ag-filter-card-add {
-    padding: var(--ag-grid-size);
+    padding: 0;
+}
 
-    :where(.ag-picker-field-wrapper) {
-        border: 0;
-        background-color: transparent;
-    }
+.ag-filter-add-button {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+    align-items: center;
+    border-radius: var(--ag-button-border-radius);
+}
+
+.ag-filter-add-button-label {
+    margin-left: var(--ag-spacing);
+}
+
+.ag-filter-add-select {
+    border: 0;
 }

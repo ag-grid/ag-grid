@@ -31,6 +31,10 @@ export const NewFiltersToolPanelModule: _ModuleWithoutApi = {
     icons: {
         // filter tool panel tab
         filtersToolPanel: 'filter',
+        // open icon for rich select
+        richSelectOpen: 'small-down',
+        // remove for rich select editor pills
+        richSelectRemove: 'cancel',
     },
     dependsOn: [SideBarModule, EnterpriseCoreModule, _ColumnFilterModule],
 };
