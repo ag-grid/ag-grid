@@ -35,23 +35,25 @@ export const waitFor = async <T>(
     getterOrTimeout: (...args: any[]) => T,
     page?: Page,
     options: {
-        smart?: boolean;
         timeout?: number;
         args?: Parameters<typeof getterOrTimeout>;
         allowFailure?: boolean;
+        smart?: boolean;
     } = {
-        smart: false,
         timeout: 5000,
         args: [],
         allowFailure: false,
+        smart: false,
     }
 ): Promise<T> => {
-    const { smart, timeout } = options;
+    const { timeout } = options;
     if (page) {
-        if (smart) {
-            return page.evaluateHandle(getterOrTimeout, options.args ?? []) as Promise<T>;
+        const handle = await page.waitForFunction(getterOrTimeout, options.args ?? [], { timeout });
+        if (options.smart) {
+            return handle as T; // todo this type assertion is a workaround, ideally we should handle the type more gracefully
+        } else {
+            return handle.jsonValue();
         }
-        return page.evaluate(getterOrTimeout as any, options.args ?? []);
     }
     return new Promise((resolve, reject) => {
         const timer = setTimeout(() => {

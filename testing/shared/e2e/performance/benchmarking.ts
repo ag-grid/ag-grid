@@ -85,15 +85,6 @@ function getUrl(testCase: TestCase, variant: Variant) {
  * - Original count (before filtering)
  */
 const computeStats = (times: number[]) => {
-    if (!times.length) {
-        return {
-            average: 0,
-            stdDev: 0,
-            marginOfError: 0,
-            filteredCount: 0,
-            originalCount: 0,
-        };
-    }
     function getPercentile(sorted: number[], p: number): number {
         const idx = (sorted.length - 1) * p;
         const lower = Math.floor(idx);
@@ -143,14 +134,14 @@ function isSignificant(diff: number, moe1: number, moe2: number) {
  * Reports the statistics of the performance test results.
  * Returns true if the results are significant, false otherwise.
  */
-function reportStats(stats: Record<string, ReturnType<typeof computeStats>>) {
-    const [control, variant] = Object.keys(stats);
-    const s1 = stats[control];
-    const s2 = stats[variant];
+function reportStats(stats: Record<string, ReturnType<typeof computeStats>>, testCase: TestCase): boolean {
+    const [v1, v2] = Object.keys(stats);
+    const s1 = stats[v1];
+    const s2 = stats[v2];
 
     const diff = s1.average - s2.average;
-    const slower = diff > 0 ? control : variant;
-    const faster = diff > 0 ? variant : control;
+    const slower = diff > 0 ? testCase.control.version : testCase.variant.version;
+    const faster = diff > 0 ? testCase.variant.version : testCase.control.version;
     const percentDiff = (Math.abs(diff) / Math.min(s1.average, s2.average)) * 100;
 
     const moe1Percent = (s1.marginOfError / s1.average) * 100;
@@ -170,17 +161,17 @@ function reportStats(stats: Record<string, ReturnType<typeof computeStats>>) {
         return false;
     }
     if (diff === 0) {
-        console.log(`Both versions are equal: ${control} and ${variant} (${percentString})`);
+        console.log(`Both versions are equal: ${testCase[v1].version} and ${testCase[v2].version} (${percentString})`);
     } else {
         console.log(`${slower} is slower than ${faster} by ${percentString} (${numbersString})`);
     }
 
     console.log('--- Details: ---');
     console.log(
-        `${control} → avg: ${s1.average.toFixed(2)}ms (±${s1.marginOfError.toFixed(2)}), stdDev: ${s1.stdDev.toFixed(2)}, count: ${s1.filteredCount}/${s1.originalCount}`
+        `${testCase[v1].version} → avg: ${s1.average.toFixed(2)}ms (±${s1.marginOfError.toFixed(2)}), stdDev: ${s1.stdDev.toFixed(2)}, count: ${s1.filteredCount}/${s1.originalCount}`
     );
     console.log(
-        `${variant} → avg: ${s2.average.toFixed(2)}ms (±${s2.marginOfError.toFixed(2)}), stdDev: ${s2.stdDev.toFixed(2)}, count: ${s2.filteredCount}/${s2.originalCount}`
+        `${testCase[v2].version} → avg: ${s2.average.toFixed(2)}ms (±${s2.marginOfError.toFixed(2)}), stdDev: ${s2.stdDev.toFixed(2)}, count: ${s2.filteredCount}/${s2.originalCount}`
     );
     return significant;
 }
@@ -210,12 +201,12 @@ export default function (name: string, describe: Describe) {
     test.describe.configure({ timeout: describe.timeout || 3 * 60_000, mode: 'serial' });
     let testStartTime: Date | undefined;
     return test.describe(name, () => {
-        describe.testCases.forEach((testCase) => {
+        describe.testCases.forEach((testCase, i) => {
             (testCase.skip ? test.skip : test)(
-                `Running ${testCase.name} with ${testCase.framework}`,
+                `${i + 1} Running ${testCase.name} with ${testCase.framework}`,
                 async ({ page, context }) => {
                     console.log(`Start time: ${(testStartTime = new Date()).toISOString()}`);
-                    const result: Record<string, number[]> = {};
+                    const result = {} as Record<'control' | 'variant', number[]>;
                     const metricsGetter = () =>
                         waitFor(
                             testCase.metrics
@@ -226,23 +217,25 @@ export default function (name: string, describe: Describe) {
                         );
                     let isSignificant = false;
                     do {
-                        for (const variant of [testCase.control, testCase.variant]) {
+                        for (const variantName of ['control', 'variant'] as const) {
+                            const variant = testCase[variantName];
                             if (variant.cookies) {
                                 await context.clearCookies();
                                 await context.addCookies(variant.cookies);
                             }
                             await gotoUrl(page, getUrl(testCase, variant));
-                            result[variant.version] ||= [];
+                            result[variantName] ||= [];
                             for (let i = 0; i < (describe.minIterations ?? 10) + 3; i++) {
                                 await testCase.setup(page);
                                 const noiseEntries = await metricsGetter();
                                 await testCase.actions(page);
-                                if (i > 3) { // warmup iterations
+                                if (i > 3) {
+                                    // warmup iterations
                                     const performanceEntries = await metricsGetter();
                                     const duration = performanceEntries
                                         .slice(noiseEntries.length)
                                         .reduce((acc, pe) => acc + pe.duration, 0);
-                                    result[variant.version].push(duration);
+                                    result[variantName].push(duration);
                                 }
                             }
                         }
@@ -254,10 +247,8 @@ export default function (name: string, describe: Describe) {
                         const stats = Object.fromEntries(
                             Object.entries(result).map(([version, durations]) => [version, computeStats(durations)])
                         );
-                        isSignificant = reportStats(stats);
-                    } while (
-                        !(isSignificant || result[testCase.control.version].length > (describe.maxIterations ?? 1000))
-                    ); // run until we do 1000 iterations or results are significant
+                        isSignificant = reportStats(stats, testCase);
+                    } while (!(isSignificant || result['control'].length > (describe.maxIterations ?? 1000))); // run until we do 1000 iterations or results are significant
                     console.log(
                         `End time: ${new Date().toISOString()}`,
                         `Took: ${(new Date().getTime() - testStartTime.getTime()) / 1000} seconds`
