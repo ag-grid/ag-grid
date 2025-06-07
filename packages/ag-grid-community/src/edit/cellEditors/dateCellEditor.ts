@@ -22,6 +22,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     public getTemplate(): ElementParams {
         return DateCellElement;
     }
+
     public getAgComponents() {
         return [AgInputDateFieldSelector];
     }
@@ -30,18 +31,47 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         this.eInput = eInput;
         this.params = params;
         const { min, max, step } = params;
+
         if (min != null) {
             eInput.setMin(min);
         }
+
         if (max != null) {
             eInput.setMax(max);
         }
+
         if (step != null) {
             eInput.setStep(step);
         }
     }
 
-    getValue(): Date | null | undefined {
+    public getErrors(): string[] | null {
+        const value = this.getValue();
+        const { params } = this;
+        const { min, max, validate } = params;
+        let internalErrors: string[] | null = [];
+
+        if (value instanceof Date && !isNaN(value.getTime())) {
+            if (min instanceof Date && value < min) {
+                internalErrors.push(`Date must be after ${min.toLocaleDateString()}`);
+            }
+            if (max instanceof Date && value > max) {
+                internalErrors.push(`Date must be before ${max.toLocaleDateString()}`);
+            }
+        }
+
+        if (!internalErrors.length) {
+            internalErrors = null;
+        }
+
+        if (validate) {
+            return validate({ value, cellEditorParams: params, internalErrors });
+        }
+
+        return internalErrors;
+    }
+
+    public getValue(): Date | null | undefined {
         const { eInput, params } = this;
         const value = eInput.getDate();
         if (!_exists(value) && !_exists(params.value)) {

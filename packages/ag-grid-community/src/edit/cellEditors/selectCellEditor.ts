@@ -1,7 +1,7 @@
 import { KeyCode } from '../../constants/keyCode';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorComp, ICellEditorParams, ICellEditorValidationError } from '../../interfaces/iCellEditor';
 import type { ElementParams } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
 import { _warn } from '../../validation/logging';
@@ -30,8 +30,8 @@ const SelectCellElement: ElementParams = {
 };
 export class SelectCellEditor extends PopupComponent implements ICellEditorComp {
     private focusAfterAttached: boolean;
-
     private valueSvc: ValueService;
+    private params: SelectCellEditorParams;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
@@ -120,5 +120,46 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
 
     public override isPopup() {
         return false;
+    }
+
+    private getErrors() {
+        const { params } = this;
+        const { values, validate } = params;
+        const value = this.getValue();
+        let internalErrors: string[] | null = [];
+
+        if (values && !values.includes(value)) {
+            internalErrors.push(`Invalid selection.`);
+        } else {
+            internalErrors = null;
+        }
+
+        if (validate) {
+            return validate({
+                value,
+                internalErrors,
+                cellEditorParams: params,
+            });
+        }
+
+        return internalErrors;
+    }
+
+    public validateEdit(): ICellEditorValidationError | null {
+        const { params, eSelect } = this;
+        const {
+            column,
+            node: { rowIndex, rowPinned },
+        } = params;
+
+        const messages = this.getErrors();
+
+        eSelect.toggleCss('ag-invalid', !!messages);
+
+        if (!messages) {
+            return null;
+        }
+
+        return { rowIndex: rowIndex!, rowPinned, column, messages };
     }
 }

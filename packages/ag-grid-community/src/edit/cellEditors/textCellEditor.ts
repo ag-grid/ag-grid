@@ -20,6 +20,7 @@ class TextCellEditorInput<TValue = any>
     public getTemplate(): ElementParams {
         return TextCellEditorElement;
     }
+
     public getAgComponents() {
         return [AgInputTextFieldSelector];
     }
@@ -31,6 +32,27 @@ class TextCellEditorInput<TValue = any>
         if (maxLength != null) {
             eInput.setMaxLength(maxLength);
         }
+    }
+
+    public getErrors(): string[] | null {
+        const value = this.getValue();
+        const { params } = this;
+        const { maxLength, validate } = params;
+        let internalErrors: string[] | null = [];
+
+        if (maxLength != null && typeof value === 'string' && value.length > maxLength) {
+            internalErrors.push(`Must be ${maxLength} characters or fewer.`);
+        }
+
+        if (!internalErrors.length) {
+            internalErrors = null;
+        }
+
+        if (validate) {
+            return validate?.({ value, cellEditorParams: params, internalErrors });
+        }
+
+        return internalErrors;
     }
 
     public getValue(): TValue | null | undefined {

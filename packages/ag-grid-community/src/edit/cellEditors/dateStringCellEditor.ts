@@ -23,6 +23,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     public getTemplate(): ElementParams {
         return DateStringCellElement;
     }
+
     public getAgComponents() {
         return [AgInputDateFieldSelector];
     }
@@ -31,15 +32,58 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         this.eInput = eInput;
         this.params = params;
         const { min, max, step } = params;
+
         if (min != null) {
             eInput.setMin(min);
         }
+
         if (max != null) {
             eInput.setMax(max);
         }
+
         if (step != null) {
             eInput.setStep(step);
         }
+    }
+
+    public getErrors(): string[] | null {
+        const { eInput, params } = this;
+        const raw = eInput.getInputElement().value;
+        const value = this.formatDate(this.parseDate(raw ?? undefined));
+        const { min, max, validate } = params;
+        let internalErrors: string[] | null = [];
+
+        if (value) {
+            const date = new Date(value);
+
+            if (min) {
+                const minDate = new Date(min);
+                if (date < minDate) {
+                    internalErrors.push(`Date must be after ${minDate.toLocaleDateString()}`);
+                }
+            }
+
+            if (max) {
+                const maxDate = new Date(max);
+                if (date > maxDate) {
+                    internalErrors.push(`Date must be before ${maxDate.toLocaleDateString()}`);
+                }
+            }
+        }
+
+        if (!internalErrors.length) {
+            internalErrors = null;
+        }
+
+        if (validate) {
+            return validate?.({
+                value: this.getValue(),
+                cellEditorParams: params,
+                internalErrors,
+            });
+        }
+
+        return internalErrors;
     }
 
     public getValue(): string | null | undefined {

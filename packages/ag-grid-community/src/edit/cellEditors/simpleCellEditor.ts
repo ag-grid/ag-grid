@@ -1,5 +1,10 @@
 import { KeyCode } from '../../constants/keyCode';
-import type { DefaultProvidedCellEditorParams, ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type {
+    DefaultProvidedCellEditorParams,
+    ICellEditorComp,
+    ICellEditorParams,
+    ICellEditorValidationError,
+} from '../../interfaces/iCellEditor';
 import { _isBrowserSafari } from '../../utils/browser';
 import type { AgInputDateFieldParams } from '../../widgets/agInputDateField';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
@@ -119,5 +124,24 @@ export class SimpleCellEditor<
 
     public override isPopup() {
         return false;
+    }
+
+    public validateEdit(): ICellEditorValidationError | null {
+        const {
+            cellEditorInput,
+            eInput,
+            params: {
+                column,
+                node: { rowIndex, rowPinned },
+            },
+        } = this;
+        const messages = cellEditorInput.getErrors();
+        eInput.toggleCss('ag-invalid', !!messages);
+
+        if (!messages) {
+            return null;
+        }
+
+        return { rowIndex: rowIndex!, rowPinned, column, messages };
     }
 }

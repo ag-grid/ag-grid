@@ -1,4 +1,4 @@
-import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorComp, ICellEditorParams, ICellEditorValidationError } from '../../interfaces/iCellEditor';
 import { _getAriaCheckboxStateName } from '../../utils/aria';
 import type { ElementParams } from '../../utils/dom';
 import type { AgCheckbox } from '../../widgets/agCheckbox';
@@ -65,5 +65,36 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
         const stateName = _getAriaCheckboxStateName(translate, isSelected);
         const ariaLabel = translate('ariaToggleCellValue', 'Press SPACE to toggle cell value');
         this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
+    }
+
+    private getErrors() {
+        const { params } = this;
+        const { validate } = params;
+        const value = this.getValue();
+        const internalErrors: string[] | null = null;
+
+        return validate?.({
+            value,
+            internalErrors,
+            cellEditorParams: params,
+        });
+    }
+
+    public validateEdit(): ICellEditorValidationError | null {
+        const { params, eCheckbox } = this;
+        const {
+            column,
+            node: { rowIndex, rowPinned },
+        } = params;
+
+        const messages = this.getErrors();
+
+        eCheckbox.toggleCss('ag-invalid', !!messages);
+
+        if (!messages) {
+            return null;
+        }
+
+        return { rowIndex: rowIndex!, rowPinned, column, messages };
     }
 }

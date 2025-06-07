@@ -49,6 +49,36 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         }
     }
 
+    public getErrors(): string[] | null {
+        const value = this.getValue();
+        const { params } = this;
+        const { min, max, validate } = params;
+        let internalErrors: string[] | null = [];
+
+        if (typeof value === 'number') {
+            if (min != null && value < min) {
+                internalErrors.push(`Must be greater than or equal to ${min}.`);
+            }
+            if (max != null && value > max) {
+                internalErrors.push(`Must be less than or equal to ${max}.`);
+            }
+        }
+
+        if (!internalErrors.length) {
+            internalErrors = null;
+        }
+
+        if (validate) {
+            return validate({
+                value,
+                cellEditorParams: params,
+                internalErrors,
+            });
+        }
+
+        return internalErrors;
+    }
+
     private preventStepping(e: KeyboardEvent): void {
         if (e.key === KeyCode.UP || e.key === KeyCode.DOWN) {
             e.preventDefault();

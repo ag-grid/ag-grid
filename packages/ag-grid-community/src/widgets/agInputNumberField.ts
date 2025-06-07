@@ -62,15 +62,6 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
             value = this.adjustPrecision(value);
         }
 
-        const val = parseFloat(value);
-
-        const { min, max } = this;
-        if (min != null && val < min) {
-            value = min.toString();
-        } else if (max != null && val > max) {
-            value = max.toString();
-        }
-
         return value;
     }
 

@@ -61,6 +61,12 @@ export interface ICellEditor<TValue = any> extends BaseCellEditor {
      * cell value visible. If this method is not present, the default is "over".
      */
     getPopupPosition?(): 'over' | 'under' | undefined;
+
+    /**
+     * Optional: Validates the cell editor.
+     * @returns `null` if the editor is valid, or an object with `column` and `message` if invalid.
+     */
+    validateEdit?(): ICellEditorValidationError | null;
 }
 
 export interface ICellEditorParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -97,11 +103,24 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
     parseValue: (value: string) => TValue | null | undefined;
     /** Utility function to format a value using the column's `colDef.valueFormatter` */
     formatValue: (value: TValue | null | undefined) => string;
+    /**
+     * Optional validation callback that runs after editing is finished.
+     * Return a string for error message, or `null` if the value is valid.
+     */
+    validate?: (params: {
+        value: TValue | null | undefined;
+        internalErrors: string[] | null;
+        cellEditorParams: ICellEditorParams<TData, TValue, TContext>;
+    }) => string[] | null;
 }
 
-export interface ICellEditorComp<TData = any, TValue = any, TContext = any>
-    extends ICellEditor<TValue>,
-        IPopupComponent<ICellEditorParams<TData, TValue, TContext>> {}
+export interface ICellEditorComp<
+    TData = any,
+    TValue = any,
+    TContext = any,
+    TParams = ICellEditorParams<TData, TValue, TContext>,
+> extends ICellEditor<TValue>,
+        IPopupComponent<TParams> {}
 
 /** This is only used internally within the grid */
 export interface DefaultProvidedCellEditorParams {
@@ -137,4 +156,9 @@ export interface EditingCellPosition extends RowPosition {
 
     /** Current editing state */
     state?: 'editing' | 'changed';
+}
+
+export interface ICellEditorValidationError extends RowPosition {
+    column: Column;
+    messages: string[];
 }

@@ -1,8 +1,14 @@
+import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
-import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type {
+    GetCellEditorInstancesParams,
+    ICellEditor,
+    ICellEditorComp,
+    ICellEditorParams,
+} from '../../interfaces/iCellEditor';
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
@@ -11,6 +17,23 @@ import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
+
+export function getCellEditorInstances<TData = any>(
+    beans: BeanCollection,
+    params: GetCellEditorInstancesParams<TData> = {}
+): ICellEditor[] {
+    const res: ICellEditor[] = [];
+
+    beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) => {
+        const cellEditor = cellCtrl.comp?.getCellEditor() as ICellEditor;
+
+        if (cellEditor) {
+            res.push(_unwrapUserComp(cellEditor));
+        }
+    });
+
+    return res;
+}
 
 export function _setupEditors(
     beans: BeanCollection,

@@ -1,7 +1,8 @@
 import type {
     FieldPickerValueSelectedEvent,
-    ICellEditor,
+    ICellEditorComp,
     ICellEditorParams,
+    ICellEditorValidationError,
     KeyCreatorParams,
     RichCellEditorParams,
     RichSelectParams,
@@ -10,7 +11,10 @@ import { PopupComponent, _addGridCommonParams, _missing, _warn } from 'ag-grid-c
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 
-export class RichSelectCellEditor<TData = any, TValue = any> extends PopupComponent implements ICellEditor<TValue> {
+export class RichSelectCellEditor<TData = any, TValue = any, TContext = any>
+    extends PopupComponent
+    implements ICellEditorComp<TData, TValue, TContext, RichCellEditorParams<TData, TValue, TContext>>
+{
     private params: RichCellEditorParams<TData, TValue>;
     private focusAfterAttached: boolean;
     private richSelect: AgRichSelect<TValue>;
@@ -23,15 +27,15 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
     public init(params: RichCellEditorParams<TData, TValue>): void {
         this.params = params;
 
-        const { cellStartedEdit, values, eventKey } = params;
+        const { cellStartedEdit, values, eventKey } = this.params;
 
         if (_missing(values)) {
             _warn(180);
         }
 
         const { params: richSelectParams, valuesPromise } = this.buildRichSelectParams();
-
         const richSelect = this.createManagedBean(new AgRichSelect<TValue>(richSelectParams));
+
         this.richSelect = richSelect;
         richSelect.addCss('ag-cell-editor');
         this.appendChild(richSelect);
@@ -216,5 +220,34 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
 
     public override isPopup(): boolean {
         return false;
+    }
+
+    private getErrors() {
+        const { params } = this;
+        const { validate } = params;
+
+        return validate?.({
+            value: this.getValue(),
+            internalErrors: null,
+            cellEditorParams: params as unknown as ICellEditorParams<TData, TValue, TContext>,
+        });
+    }
+
+    public validateEdit(): ICellEditorValidationError | null {
+        const { params, richSelect } = this;
+        const {
+            column,
+            node: { rowIndex, rowPinned },
+        } = params;
+
+        const messages = this.getErrors();
+
+        richSelect.toggleCss('ag-invalid', !!messages);
+
+        if (!messages) {
+            return null;
+        }
+
+        return { rowIndex: rowIndex!, rowPinned, column, messages };
     }
 }

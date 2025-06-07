@@ -1,5 +1,5 @@
 import { KeyCode } from '../../constants/keyCode';
-import type { ICellEditorComp } from '../../interfaces/iCellEditor';
+import type { ICellEditorComp, ICellEditorValidationError } from '../../interfaces/iCellEditor';
 import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import type { AgInputTextArea } from '../../widgets/agInputTextArea';
@@ -77,5 +77,48 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
             return params.value;
         }
         return params.parseValue(value!);
+    }
+
+    private getErrors() {
+        const { params } = this;
+        const { maxLength, validate } = params;
+        const value = this.getValue();
+        let internalErrors: string[] | null = [];
+
+        if (typeof value === 'string' && maxLength != null && value.length > maxLength) {
+            internalErrors.push(`Must be ${maxLength} characters or fewer.`);
+        }
+
+        if (!internalErrors.length) {
+            internalErrors = null;
+        }
+
+        if (validate) {
+            return validate({
+                value,
+                internalErrors,
+                cellEditorParams: params,
+            });
+        }
+
+        return internalErrors;
+    }
+
+    public validateEdit(): ICellEditorValidationError | null {
+        const { params, eTextArea } = this;
+        const {
+            column,
+            node: { rowIndex, rowPinned },
+        } = params;
+
+        const messages = this.getErrors();
+
+        eTextArea.toggleCss('ag-invalid', !!messages);
+
+        if (!messages) {
+            return null;
+        }
+
+        return { rowIndex: rowIndex!, rowPinned, column, messages };
     }
 }
