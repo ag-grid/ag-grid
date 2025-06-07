@@ -160,21 +160,21 @@ function reportStats(stats: Record<string, ReturnType<typeof computeStats>>, tes
 
     if (!significant) {
         console.log(
-            `\n${yellow('Result is statistically insignificant (')}${green(percentString)}, ${blue(s1.filteredCount + '/' + s1.originalCount)})${yellow('. Running more iterations...\n')}`
+            `\n${yellow('Result is statistically insignificant (')}${green(percentString)}, ${blue(`${s1.filteredCount}/${s1.originalCount}`)})${yellow('. Running more iterations...\n')}`
         );
         return false;
     }
 
     let resultMessage = '';
-    if (percentDiff <= 1) {
-        resultMessage = `${cyan('Both')}${magenta(testCase[v1].version)} and ${magenta(testCase[v2].version)}${cyan(' seem to be equal: ')}${green(percentString)} (${numbersString}).\n${yellow(
+    if (percentDiff <= 2) {
+        resultMessage = `${cyan('Both')} ${magenta(testCase[v1].version)} and ${magenta(testCase[v2].version)}${cyan(' seem to be equal: ')}${green(percentString)} (${numbersString}).\n${yellow(
             'Even though the data is statistically significant, it is safer to re-run the test with more iterations to confirm.'
         )}`;
     } else {
         resultMessage = `${magenta(slower)}${cyan(' is slower than ')}${magenta(faster)}${cyan(' by ')}${green(percentString)} (${numbersString})`;
     }
 
-    console.log(`${bgBlue.white.bold(' Performance Comparison Results ')}`);
+    console.log(`${bgBlue.black.bold(' Performance Comparison Results ')}`);
     console.log(resultMessage);
     console.log(`${bgGreen.black.bold(' Details: ')}`);
 
@@ -182,7 +182,7 @@ function reportStats(stats: Record<string, ReturnType<typeof computeStats>>, tes
         ${blue('Version:')} ${magenta(version)}
         ${green('Average time:')} ${stats.average.toFixed(2)}ms (±${yellow(stats.marginOfError.toFixed(2))})
         ${green('StdDev:')} ${stats.stdDev.toFixed(2)}
-        ${green('Count:')} ${blue(`${stats.filteredCount}/${stats.originalCount}`)}`;
+        ${green('Sample size:')} ${blue(`${stats.filteredCount}/${stats.originalCount}`)}`;
 
     console.log(detailsFormat(testCase[v1].version, s1));
     console.log(`${detailsFormat(testCase[v2].version, s2)}`);
