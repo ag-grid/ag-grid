@@ -58,9 +58,11 @@ export const waitFor = async <T>(
     return new Promise((resolve, reject) => {
         const timer = setTimeout(() => {
             clearInterval(interval);
-            (options.allowFailure ? resolve : reject)(
-                new Error('waitFor timed out doing: ' + getterOrTimeout.toString())
-            );
+            if (options.allowFailure) {
+                console.log(`waitFor timed out doing: ${getterOrTimeout.toString()}, but was allowed to resolve`);
+                return resolve(undefined);
+            }
+            return reject(new Error(`waitFor timed out doing: ${getterOrTimeout.toString()}`));
         }, timeout ?? 5000);
         const interval = setInterval(async () => {
             const res = await getterOrTimeout(...(options.args ?? []));
