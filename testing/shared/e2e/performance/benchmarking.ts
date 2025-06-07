@@ -1,5 +1,6 @@
 import type { BrowserContext, Page } from '@playwright/test';
 import { test } from '@playwright/test';
+import * as chalk_ from 'chalk';
 
 import { gotoUrl, waitFor } from '../../playwright.utils';
 
@@ -49,6 +50,9 @@ const knownUrls: Record<Version, string> = {
     staging: 'https://grid-staging.ag-grid.com',
     prod: 'https://www.ag-grid.com',
 };
+
+// @ts-expect-error chalk is a CommonJS module, but we use it as an ESM module
+const { yellow, green, blue, cyan, magenta, bgBlue, bgGreen } = chalk_.default;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getCdnUrl = (pkg: string, version: CustomVersion) =>
@@ -156,26 +160,33 @@ function reportStats(stats: Record<string, ReturnType<typeof computeStats>>, tes
 
     if (!significant) {
         console.log(
-            `Result is statistically insignificant (${percentString}, ${s1.filteredCount}/${s1.originalCount}), running more iterations...`
+            `\n${yellow('Result is statistically insignificant (')}${green(percentString)}, ${blue(s1.filteredCount + '/' + s1.originalCount)})${yellow('. Running more iterations...\n')}`
         );
         return false;
     }
+
+    let resultMessage = '';
     if (percentDiff <= 1) {
-        console.log(
-            `Both ${testCase[v1].version} and ${testCase[v2].version} seem to be equal: ${percentString} (${numbersString}).\n` +
-                `Even though the data is statistically significant, it is safer to re-run the test with more iterations to confirm.`
-        );
+        resultMessage = `${cyan('Both')}${magenta(testCase[v1].version)} and ${magenta(testCase[v2].version)}${cyan(' seem to be equal: ')}${green(percentString)} (${numbersString}).\n${yellow(
+            'Even though the data is statistically significant, it is safer to re-run the test with more iterations to confirm.'
+        )}`;
     } else {
-        console.log(`${slower} is slower than ${faster} by ${percentString} (${numbersString})`);
+        resultMessage = `${magenta(slower)}${cyan(' is slower than ')}${magenta(faster)}${cyan(' by ')}${green(percentString)} (${numbersString})`;
     }
 
-    console.log('--- Details: ---');
-    console.log(
-        `${testCase[v1].version} → avg: ${s1.average.toFixed(2)}ms (±${s1.marginOfError.toFixed(2)}), stdDev: ${s1.stdDev.toFixed(2)}, count: ${s1.filteredCount}/${s1.originalCount}`
-    );
-    console.log(
-        `${testCase[v2].version} → avg: ${s2.average.toFixed(2)}ms (±${s2.marginOfError.toFixed(2)}), stdDev: ${s2.stdDev.toFixed(2)}, count: ${s2.filteredCount}/${s2.originalCount}`
-    );
+    console.log(`${bgBlue.white.bold(' Performance Comparison Results ')}`);
+    console.log(resultMessage);
+    console.log(`${bgGreen.black.bold(' Details: ')}`);
+
+    const detailsFormat = (version: string, stats: ReturnType<typeof computeStats>) => `
+        ${blue('Version:')} ${magenta(version)}
+        ${green('Average time:')} ${stats.average.toFixed(2)}ms (±${yellow(stats.marginOfError.toFixed(2))})
+        ${green('StdDev:')} ${stats.stdDev.toFixed(2)}
+        ${green('Count:')} ${blue(`${stats.filteredCount}/${stats.originalCount}`)}`;
+
+    console.log(detailsFormat(testCase[v1].version, s1));
+    console.log(`${detailsFormat(testCase[v2].version, s2)}`);
+
     return significant;
 }
 
@@ -228,7 +239,7 @@ export default function (name: string, describe: Describe) {
                             }
                             await gotoUrl(page, getUrl(testCase, variant));
                             result[variantName] ||= [];
-                            for (let i = 0; i < (describe.minIterations ?? 10) + 3; i++) {
+                            for (let i = 0; i < (Math.max(describe.minIterations, 3) ?? 10) + 3; i++) {
                                 await testCase.setup(page);
                                 const noiseEntries = await metricsGetter();
                                 await testCase.actions(page);
