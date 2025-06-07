@@ -1,11 +1,10 @@
 import { waitFor } from '../../playwright.utils';
-import type { Describe } from './benchmarking';
 import test from './benchmarking';
 
 const noRowsCheck = () => document.body.textContent.includes('No Rows To Show');
 const athleteCheck = () => document.body.textContent.includes('Athlete');
 
-const describe: Describe = {
+test(`Performance Test - ${describe.name}`, {
     name: 'Compare performance of setting data',
     timeout: 45 * 60_000,
     minIterations: 100,
@@ -56,6 +55,4 @@ const describe: Describe = {
             metrics: 'long-animation-frame',
         },
     ],
-};
-
-test(`Performance Test - ${describe.name}`, describe);
+});
