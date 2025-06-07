@@ -4,7 +4,7 @@ import * as chalk_ from 'chalk';
 
 import { gotoUrl, waitFor } from '../../playwright.utils';
 
-export type Benchmarking = 'typescript' | 'reactFunctionalTs';
+export type Framework = 'typescript' | 'reactFunctionalTs';
 export type CustomVersion = `${number}.${number}.${number}`;
 export type Version = 'prod' | 'staging' | 'local' | CustomVersion;
 export type Entry<T> = T extends readonly (infer U)[] ? U : T extends object ? T[keyof T] : T;
@@ -13,7 +13,6 @@ export type Entry<T> = T extends readonly (infer U)[] ? U : T extends object ? T
  * Describes a performance benchmarking test suite.
  */
 export type Describe = {
-    name: string;
     minIterations?: number; // default is 10, also used as an inner loop iteration count
     maxIterations?: number; // default is 1000
     testCases: TestCase[];
@@ -27,7 +26,7 @@ export type TestCase = {
     name: string;
     /** @deprecated don't forget to re-enable your test */
     skip?: boolean;
-    framework: Benchmarking;
+    framework: Framework;
     control: Variant;
     variant: Variant;
     setup: (page: Page) => Promise<void>;
@@ -166,7 +165,7 @@ function reportStats(stats: Record<string, ReturnType<typeof computeStats>>, tes
     }
 
     let resultMessage = '';
-    if (percentDiff <= 2) {
+    if (percentDiff - avgMoEPercent <= 2) {
         resultMessage = `${cyan('Both')} ${magenta(testCase[v1].version)} and ${magenta(testCase[v2].version)}${cyan(` seem to be equal (${slower} is slightly slower than ${faster}): `)}${green(percentString)} (${numbersString}).\n${yellow(
             'Even though the data is statistically significant, it is safer to re-run the test with more iterations to confirm.'
         )}`;
