@@ -167,7 +167,7 @@ function reportStats(stats: Record<string, ReturnType<typeof computeStats>>, tes
 
     let resultMessage = '';
     if (percentDiff <= 2) {
-        resultMessage = `${cyan('Both')} ${magenta(testCase[v1].version)} and ${magenta(testCase[v2].version)}${cyan(' seem to be equal: ')}${green(percentString)} (${numbersString}).\n${yellow(
+        resultMessage = `${cyan('Both')} ${magenta(testCase[v1].version)} and ${magenta(testCase[v2].version)}${cyan(` seem to be equal (${slower} is slightly slower than ${faster}): `)}${green(percentString)} (${numbersString}).\n${yellow(
             'Even though the data is statistically significant, it is safer to re-run the test with more iterations to confirm.'
         )}`;
     } else {
