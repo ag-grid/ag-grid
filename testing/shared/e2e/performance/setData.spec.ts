@@ -7,8 +7,8 @@ const athleteCheck = () => document.body.textContent.includes('Athlete');
 
 const describe: Describe = {
     name: 'Compare performance of setting data',
-    timeout: 30 * 60_000,
-    minIterations: 50,
+    timeout: 45 * 60_000,
+    minIterations: 100,
     testCases: [
         {
             name: 'examples/performance-test/lots-of-cells',
@@ -26,7 +26,6 @@ const describe: Describe = {
             metrics: 'long-animation-frame',
         },
         {
-            skip: true,
             name: 'examples/performance-test/lots-of-cells',
             framework: 'typescript',
             control: { version: 'prod' },
@@ -42,7 +41,6 @@ const describe: Describe = {
             metrics: 'long-animation-frame',
         },
         {
-            skip: true,
             name: 'examples/performance-test/lots-of-cells',
             framework: 'reactFunctionalTs',
             control: { version: 'prod' },

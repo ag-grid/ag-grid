@@ -160,8 +160,11 @@ function reportStats(stats: Record<string, ReturnType<typeof computeStats>>, tes
         );
         return false;
     }
-    if (diff === 0) {
-        console.log(`Both versions are equal: ${testCase[v1].version} and ${testCase[v2].version} (${percentString})`);
+    if (percentDiff <= 1) {
+        console.log(
+            `Both ${testCase[v1].version} and ${testCase[v2].version} seem to be equal: ${percentString} (${numbersString}).\n` +
+                `Even though the data is statistically significant, it is safer to re-run the test with more iterations to confirm.`
+        );
     } else {
         console.log(`${slower} is slower than ${faster} by ${percentString} (${numbersString})`);
     }
