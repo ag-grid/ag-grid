@@ -16,7 +16,7 @@ export async function getBrowserCommunications(page: Page): Promise<BrowserCommu
         consoleMsgs.push({
             type: msg.type(),
             text: msg.text(),
-            args: msg.args().map((arg) => arg.jsonValue),
+            args: msg.args().map((arg) => arg.jsonValue()),
         });
     });
     return {
@@ -59,7 +59,7 @@ export const waitFor = async <T>(
         const timer = setTimeout(() => {
             clearInterval(interval);
             (options.allowFailure ? resolve : reject)(
-                new Error('waitFor timed out doing getter: ' + getterOrTimeout.toString())
+                new Error('waitFor timed out doing: ' + getterOrTimeout.toString())
             );
         }, timeout ?? 5000);
         const interval = setInterval(async () => {
