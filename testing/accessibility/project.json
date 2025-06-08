@@ -7,19 +7,13 @@
     "setup": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "playwright install",
-          "npm run download-examples",
-          "mkdir -p e2e",
-          "npm run generate-tests"
-        ],
+        "commands": ["playwright install", "npm run download-examples", "mkdir -p e2e", "npm run generate-tests"],
         "cwd": "testing/accessibility"
       }
     },
     "test:e2e:accessibility": {
       "executor": "nx:run-script",
-      "dependsOn": [
-      ],
+      "dependsOn": [],
       "options": {
         "script": "playwright test"
       }

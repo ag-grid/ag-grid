@@ -1,22 +1,21 @@
-import {readFileSync, writeFileSync} from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 
 type Example = {
-    pageName: string,
-    exampleName: string,
-    internalFramework: "vanilla" | "typescript" | "angular" | "reactFunctional" | "reactFunctionalTs" | "vue2"
-}
+    pageName: string;
+    exampleName: string;
+    internalFramework: 'vanilla' | 'typescript' | 'angular' | 'reactFunctional' | 'reactFunctionalTs' | 'vue2';
+};
 
-const baseUrl = "https://grid-staging.ag-grid.com/examples/";
+const baseUrl = 'https://grid-staging.ag-grid.com/examples/';
 
 const examplesFile: Example[] = JSON.parse(readFileSync('./all-examples.json', 'utf8'));
-const examplesToProcess = examplesFile.filter(example => example.internalFramework === 'vanilla');
+const examplesToProcess = examplesFile.filter((example) => example.internalFramework === 'vanilla');
 const examplesByPageName = examplesToProcess.reduce((acc, example: Example) => {
     const { pageName } = example;
     acc[pageName] = acc[pageName] || [];
     acc[pageName] = [...acc[pageName], example];
     return acc;
 }, {});
-
 
 const TEST_TEMPLATE = `
 import { test, expect } from '@playwright/test';
@@ -42,18 +41,20 @@ const TEST_CASE_TEMPLATE = `
         expect(criticalViolations).toHaveLength(0);
     });`;
 
-Object.keys(examplesByPageName).forEach(pageName => {
-    let pageExamples = TEST_TEMPLATE.replace("@EXAMPLE_PAGE_NAME@", pageName);
+Object.keys(examplesByPageName).forEach((pageName) => {
+    let pageExamples = TEST_TEMPLATE.replace('@EXAMPLE_PAGE_NAME@', pageName);
 
-    examplesByPageName[pageName].forEach(example => {
+    examplesByPageName[pageName].forEach((example) => {
         const { exampleName, internalFramework } = example;
-        const testCase = TEST_CASE_TEMPLATE.replace("@EXAMPLE_NAME@", exampleName)
-            .replace("@EXAMPLE_URL@", `${baseUrl}${pageName}/${exampleName}/${internalFramework}/`);
+        const testCase = TEST_CASE_TEMPLATE.replace('@EXAMPLE_NAME@', exampleName).replace(
+            '@EXAMPLE_URL@',
+            `${baseUrl}${pageName}/${exampleName}/${internalFramework}/`
+        );
 
-        pageExamples = pageExamples.replace("@TEST_CASE@", testCase + "\n@TEST_CASE@");
-    })
+        pageExamples = pageExamples.replace('@TEST_CASE@', testCase + '\n@TEST_CASE@');
+    });
 
-    pageExamples = pageExamples.replace("@TEST_CASE@", "");
+    pageExamples = pageExamples.replace('@TEST_CASE@', '');
 
     writeFileSync(`./e2e/${pageName}.spec.js`, pageExamples, 'utf8');
 });
