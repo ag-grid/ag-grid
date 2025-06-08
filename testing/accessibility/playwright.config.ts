@@ -23,7 +23,7 @@ export default defineConfig({
         //     },
         // ],
         ['junit', { outputFile: '../../reports/ag-accessibility-e2e.xml' }],
-        ['line']//,
+        ['line'], //,
         // ['json', { outputFile: '../../reports/ag-accessibility-e2e.json' }],
     ],
     outputDir: '../../reports/ag-grid-accessibility-e2e-reports/',

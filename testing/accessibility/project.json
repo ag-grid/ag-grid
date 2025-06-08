@@ -7,7 +7,12 @@
     "setup": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["playwright install", "npm run download-examples", "mkdir -p e2e", "npm run generate-tests"],
+        "commands": [
+          "npx playwright install --with-deps chromium",
+          "npm run download-examples",
+          "mkdir -p e2e",
+          "npm run generate-tests"
+        ],
         "cwd": "testing/accessibility"
       }
     },
