@@ -32,6 +32,9 @@ plugins/ag-grid-generate-code-reference-files/dist
 plugins/ag-grid-generate-example-files/dist
 plugins/ag-grid-task-autogen/dist
 
+testing/accessibility/all-examples.json
+testing/accessibility/e2e
+
 # latest only
 dist
 
