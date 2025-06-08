@@ -30,7 +30,7 @@ export interface IEditModelService {
 
     setEdit(position: Required<EditPosition>, edit: EditValue): void;
     setEditMap(edits: EditMap): void;
-    setState(position: Required<EditPosition>, state: EditState): void;
+    setState(position: EditPosition, state: EditState): void;
 
     clearEditValue(position: EditPosition): void;
     clear(): void;

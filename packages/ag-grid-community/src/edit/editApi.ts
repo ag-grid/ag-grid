@@ -60,7 +60,7 @@ export function getEditingCells(beans: BeanCollection, params: GetEditingCellsPa
     const positions: EditingCellPosition[] = [];
     edits?.forEach((editRow, { rowIndex, rowPinned }) => {
         editRow.forEach(({ newValue, oldValue, state }, column) => {
-            if (newValue === UNEDITED) {
+            if (newValue === UNEDITED || !_valuesDiffer({ newValue, oldValue })) {
                 // filter out internal details, let null through as that indicates cleared cell value
                 return;
             }

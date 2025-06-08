@@ -251,11 +251,7 @@ export function _syncFromEditor(
         newValue = UNEDITED;
     }
 
-    if (_valuesDiffer({ newValue, oldValue })) {
-        beans.editModelSvc?.setEdit(position, { newValue, oldValue, state: hasEditor ? 'editing' : 'changed' });
-    } else {
-        beans.editModelSvc?.removeEdits(position);
-    }
+    beans.editModelSvc?.setEdit(position, { newValue, oldValue, state: hasEditor ? 'editing' : 'changed' });
 
     beans.eventSvc.dispatchEvent({
         type: 'cellEditValuesChanged',
@@ -266,7 +262,7 @@ export function _destroyEditors(beans: BeanCollection, edits: Required<EditPosit
     edits.forEach((cellPosition) => _destroyEditor(beans, cellPosition));
 }
 
-export function _destroyEditor(beans: BeanCollection, edit: Required<EditPosition>): void {
+export function _destroyEditor(beans: BeanCollection, edit?: EditPosition): void {
     const cellCtrl = _getCellCtrl(beans, edit);
     if (!cellCtrl) {
         return;
@@ -279,7 +275,7 @@ export function _destroyEditor(beans: BeanCollection, edit: Required<EditPositio
     cellCtrl?.updateAndFormatValue(false);
     cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });
 
-    if (beans.editModelSvc?.hasEdits(edit)) {
+    if (beans.editModelSvc?.hasEdits(edit) && edit && edit?.rowNode && edit?.column) {
         beans.editModelSvc?.setState(edit, 'changed');
     }
 }

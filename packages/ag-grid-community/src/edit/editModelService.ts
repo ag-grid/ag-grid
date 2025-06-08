@@ -97,7 +97,10 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         }
     }
 
-    public setState(position: Required<EditPosition>, state: EditState): void {
+    public setState(position: EditPosition, state: EditState): void {
+        if (!position.rowNode || !position.column) {
+            return;
+        }
         const editRow = this.getEditRow(position) ?? new Map();
 
         const edit = editRow.get(position.column);
