@@ -13,7 +13,7 @@
     },
     "test:e2e:accessibility": {
       "executor": "nx:run-script",
-      "dependsOn": [],
+      "dependsOn": ["setup"],
       "options": {
         "script": "playwright test"
       }
