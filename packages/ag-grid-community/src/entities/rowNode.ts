@@ -492,7 +492,7 @@ export class RowNode<TData = any>
      * @returns `true` if the value was changed, otherwise `false`.
      */
     public setDataValue(colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
-        const { colModel, valueSvc, gos, selectionSvc } = this.beans;
+        const { colModel, valueSvc, gos, selectionSvc, editSvc } = this.beans;
 
         // if in pivot mode, grid columns wont include primary columns
         const column = typeof colKey !== 'string' ? colKey : colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
@@ -525,8 +525,8 @@ export class RowNode<TData = any>
             return false;
         }
 
-        if (this.beans.editSvc) {
-            const result = this.beans.editSvc.setDataValue(this, colKey, newValue, eventSource);
+        if (editSvc) {
+            const result = editSvc.setDataValue({ rowNode: this, column }, newValue, eventSource);
 
             if (result != null) {
                 return result;

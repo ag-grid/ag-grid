@@ -244,10 +244,10 @@ export class CellRangeFeature implements ICellRangeFeature {
         }
 
         const cellRange = _last(cellRanges);
-        const { cellPosition, column, rowNode } = this.cellCtrl;
+        const { cellPosition, column } = this.cellCtrl;
         const isFillHandleAvailable = _isFillHandleEnabled(gos) && !column.isSuppressFillHandle();
         const isRangeHandleAvailable = _isRangeHandleEnabled(gos);
-        const isCellEditing = editSvc?.isEditing(rowNode, column);
+        const isCellEditing = editSvc?.isEditing(this.cellCtrl);
 
         let handleIsAvailable = rangesLen === 1 && !isCellEditing && (isFillHandleAvailable || isRangeHandleAvailable);
 

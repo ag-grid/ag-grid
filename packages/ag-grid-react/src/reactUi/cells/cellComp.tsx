@@ -456,10 +456,12 @@ const CellComp = ({
                 if (!eGui.current) {
                     return;
                 }
-                cssManager.current!.toggleCss('ag-cell-value', !showCellWrapper);
-                cssManager.current!.toggleCss('ag-cell-inline-editing', !!editing && !isPopup);
-                cssManager.current!.toggleCss('ag-cell-popup-editing', !!editing && !!isPopup);
-                cssManager.current!.toggleCss('ag-cell-not-inline-editing', !editing || !!isPopup);
+
+                const { current } = cssManager;
+                current!.toggleCss('ag-cell-value', !showCellWrapper);
+                current!.toggleCss('ag-cell-inline-editing', !!editing && !isPopup);
+                current!.toggleCss('ag-cell-popup-editing', !!editing && !!isPopup);
+                current!.toggleCss('ag-cell-not-inline-editing', !editing || !!isPopup);
             },
         };
 
@@ -497,10 +499,12 @@ const CellComp = ({
         if (!eGui.current) {
             return;
         }
-        cssManager.current!.toggleCss('ag-cell-value', !showCellWrapper);
-        cssManager.current!.toggleCss('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
-        cssManager.current!.toggleCss('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
-        cssManager.current!.toggleCss('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
+
+        const { current } = cssManager;
+        current!.toggleCss('ag-cell-value', !showCellWrapper);
+        current!.toggleCss('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
+        current!.toggleCss('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
+        current!.toggleCss('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
     });
 
     const showContents = () => {

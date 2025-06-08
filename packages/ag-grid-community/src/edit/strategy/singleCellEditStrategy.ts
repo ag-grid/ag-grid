@@ -1,7 +1,9 @@
 import type { BeanName } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
 import { _getRowNode } from '../../entities/positionUtils';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
+import type { EditPosition, EditRowPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getColId } from '../utils/controllers';
@@ -13,17 +15,18 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
     private rowNode?: IRowNode | null;
     private column?: Column | null;
 
-    public override shouldStopEditing(
-        rowNode?: IRowNode | undefined,
-        column?: Column | undefined,
+    public override shouldStop(
+        position: Required<EditPosition>,
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        const res = super.shouldStopEditing(rowNode, column, key, event, source);
+        const res = super.shouldStop(position, key, event, source);
         if (res !== null) {
             return res;
         }
+
+        const { rowNode, column } = position;
 
         if ((!this.rowNode || !this.column) && rowNode && column) {
             return null;
@@ -34,65 +37,41 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         return this.rowNode !== rowNode || this.column !== column;
     }
 
-    public override shouldAcceptMidBatchInteractions(
-        rowNode: IRowNode | undefined,
-        column: Column | undefined
-    ): boolean {
-        if (!rowNode || !column) {
-            return false;
-        }
-
-        return this.editModel.hasPending(rowNode, column);
+    public override midBatchAllowed(position?: EditPosition): boolean {
+        return this.model.hasEdits(position);
     }
 
-    public clearPendingEditors(rowNode?: IRowNode, column?: Column): void {
-        this.editModel.clearPendingValue(rowNode, column);
-    }
-
-    public startEditing(
-        rowNode: IRowNode,
-        column: Column,
+    public start(
+        position: Required<EditPosition>,
         key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null,
         _source: 'api' | 'ui' = 'ui',
         silent?: boolean
-    ): boolean {
-        if (this.rowNode !== rowNode || this.column !== column) {
+    ): void {
+        if (this.rowNode !== position.rowNode || this.column !== position.column) {
             super.cleanupEditors();
         }
 
-        this.rowNode = rowNode;
-        this.column = column;
+        this.rowNode = position.rowNode;
+        this.column = position.column;
 
-        this.editModel.startEditing(rowNode, column);
+        this.model.start(position);
         if (!silent) {
-            this.dispatchCellEvent(rowNode, column, event, 'cellEditingStarted');
+            this.dispatchCellEvent(position, event, 'cellEditingStarted');
         }
 
-        return this.setupEditors(
-            [
-                {
-                    rowNode,
-                    column,
-                },
-            ],
-            rowNode,
-            column,
-            key,
-            true,
-            event
-        );
+        this.setupEditors([position], position, key, true, event);
     }
 
     public override dispatchRowEvent(
-        _rowNode: IRowNode<any> | null | undefined,
+        _position: EditRowPosition,
         _type: 'rowEditingStarted' | 'rowEditingStopped'
     ): void {
         // NOP - single cell edit strategy does not dispatch row events
     }
 
-    public override stopEditing(): boolean {
-        super.stopEditing();
+    public override stop(): boolean {
+        super.stop();
 
         this.rowNode = undefined;
         this.column = undefined;
@@ -116,7 +95,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             }
         }
 
-        if (editSvc?.isEditing(rowNode, curCol, false, true)) {
+        if (editSvc?.isEditing({ rowNode, column: curCol as AgColumn }, { withOpenEditor: true })) {
             // editor is already active, so we don't need to do anything
             return;
         }
@@ -154,7 +133,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         nextCell.focusCell(false);
 
-        this.beans.editSvc?.startEditing(nextCell.rowNode, nextCell.column, null, true, event, source);
+        this.editSvc.startEditing(nextCell, { startedEdit: true, event, source });
 
         return true;
     }
