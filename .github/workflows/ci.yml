@@ -158,7 +158,7 @@ jobs:
           echo "bundle Test matrix determined to be: ${bundle_matrix}"
 
           accessiblity_count=4
-          e2e_accessiblity_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${accessiblity_count})
+          e2e_accessiblity_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 ${accessiblity_count})
           echo "e2e_accessiblity_matrix=${e2e_accessiblity_matrix}" >> $GITHUB_OUTPUT
           echo "e2e_accessiblity_count=${accessiblity_count}" >> $GITHUB_OUTPUT
           echo "e2e accessiblity matrix determined to be: ${e2e_accessiblity_matrix}"
