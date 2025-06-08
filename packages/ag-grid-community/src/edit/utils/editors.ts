@@ -99,13 +99,15 @@ export function _setupEditor(
             ? compDetails.popupPositionFromSelector
             : colDef.cellEditorPopupPosition;
 
-    cellCtrl.editCompDetails = compDetails;
-    cellCtrl.comp?.setEditDetails(compDetails, popup, popupLocation, beans.gos.get('reactiveCustomComponents'));
+    if (cellCtrl) {
+        cellCtrl.editCompDetails = compDetails;
+        cellCtrl.comp?.setEditDetails(compDetails, popup, popupLocation, beans.gos.get('reactiveCustomComponents'));
+    }
 
     return compDetails;
 }
 
-function _valueFromEditor(cancel: boolean, cellComp: ICellComp): { newValue?: any; newValueExists: boolean } {
+function _valueFromEditor(cancel: boolean, cellComp?: ICellComp): { newValue?: any; newValueExists: boolean } {
     const noValueResult = { newValueExists: false };
 
     if (cancel) {
@@ -139,16 +141,14 @@ function _createEditorParams(
     cellStartedEdit?: boolean | null
 ): ICellEditorParams {
     const { valueSvc, gos, editSvc } = beans;
-    const cellCtrl = _getCellCtrl(beans, position)!;
-    const {
-        cellPosition: { rowIndex },
-    } = cellCtrl;
+    const cellCtrl = _getCellCtrl(beans, position);
+    const rowIndex = position.rowNode?.rowIndex ?? undefined;
     const batchEdit = editSvc?.batch;
 
     const agColumn = beans.colModel.getCol(position.column.getId())!;
     const { rowNode, column } = position;
 
-    const initialNewValue = editSvc?.getCellDataValue(position) ?? _valueFromEditor(false, cellCtrl.comp)?.newValue;
+    const initialNewValue = editSvc?.getCellDataValue(position) ?? _valueFromEditor(false, cellCtrl?.comp)?.newValue;
     const value =
         initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
 
@@ -161,16 +161,16 @@ function _createEditorParams(
         node: rowNode,
         data: rowNode.data,
         cellStartedEdit: cellStartedEdit ?? false,
-        onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
-        stopEditing: (suppressNavigateAfterEdit) => {
+        onKeyDown: cellCtrl?.onKeyDown.bind(cellCtrl),
+        stopEditing: (suppressNavigateAfterEdit: boolean) => {
             editSvc!.stopEditing(position, { source: batchEdit ? 'ui' : 'api', suppressNavigateAfterEdit });
             _destroyEditor(beans, position);
             editSvc?.updateCells();
         },
-        eGridCell: cellCtrl.eGui,
-        parseValue: (newValue: any) => valueSvc.parseValue(agColumn, rowNode, newValue, cellCtrl.value),
-        formatValue: cellCtrl.formatValue.bind(cellCtrl),
-    });
+        eGridCell: cellCtrl?.eGui,
+        parseValue: (newValue: any) => valueSvc.parseValue(agColumn, rowNode, newValue, cellCtrl?.value),
+        formatValue: cellCtrl?.formatValue.bind(cellCtrl),
+    } as ICellEditorParams);
 }
 
 export function _purgeUnchangedEdits(beans: BeanCollection): void {
