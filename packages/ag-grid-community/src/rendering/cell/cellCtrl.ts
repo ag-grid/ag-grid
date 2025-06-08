@@ -651,8 +651,6 @@ export class CellCtrl extends BeanStub {
     private restoreFocus(waitForRender = false): void {
         const {
             beans: { editSvc, focusSvc },
-            rowNode,
-            column,
             comp,
         } = this;
         if (!comp || editSvc?.isEditing(this) || !this.isCellFocused() || !focusSvc.shouldTakeFocus()) {
