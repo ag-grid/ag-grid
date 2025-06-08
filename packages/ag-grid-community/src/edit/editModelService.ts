@@ -82,23 +82,16 @@ export class EditModelService extends BeanStub implements NamedBean {
                     edit.state = 'changed';
                 }
             } else {
-                const editRow = this.getEditRow(position);
-                if (editRow) {
-                    editRow.forEach((cellData) => {
-                        cellData.newValue = cellData.oldValue;
-                        cellData.state = 'changed';
-                    });
-                }
+                this.getEditRow(position)?.forEach((cellData) => {
+                    cellData.newValue = cellData.oldValue;
+                    cellData.state = 'changed';
+                });
             }
         }
     }
 
     public setState(position: Required<EditPosition>, state: EditState): void {
         const editRow = this.getEditRow(position) ?? new Map();
-
-        if (!editRow) {
-            this.edits.set(position.rowNode, editRow);
-        }
 
         const edit = editRow.get(position.column);
         if (edit) {
@@ -172,8 +165,11 @@ export class EditModelService extends BeanStub implements NamedBean {
         const map = this.getEditRow(position) ?? new Map<Column, EditValue>();
         const { rowNode, column } = position;
         if (column && !map.has(column)) {
-            const oldValue = this.beans.valueSvc.getValue(column as AgColumn, rowNode, true, 'api');
-            map.set(column, { newValue: UNEDITED, oldValue, state: 'editing' });
+            map.set(column, {
+                newValue: UNEDITED,
+                oldValue: this.beans.valueSvc.getValue(column as AgColumn, rowNode, true, 'api'),
+                state: 'editing',
+            });
         }
         this.edits.set(rowNode, map);
     }
