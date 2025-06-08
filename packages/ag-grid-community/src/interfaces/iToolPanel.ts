@@ -1,5 +1,6 @@
 import type { AgGridCommon } from './iCommon';
 import type { IComponent } from './iComponent';
+import type { FilterAction } from './iFilter';
 
 export interface BaseToolPanelParams<TData = any, TContext = any, TState = any> extends AgGridCommon<TData, TContext> {
     /** The tool-panel-specific initial state as provided in grid options if applicable */
@@ -60,4 +61,6 @@ export interface IToolPanelFiltersCompParams {
     suppressFilterSearch: boolean;
     /** Suppress updating the layout of columns as they are rearranged in the grid */
     suppressSyncLayoutWithGrid: boolean;
+    /** Allows global buttons to be provided to the filter tool panel */
+    buttons?: FilterAction[];
 }

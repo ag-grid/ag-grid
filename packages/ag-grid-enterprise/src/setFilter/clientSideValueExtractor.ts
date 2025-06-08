@@ -1,39 +1,27 @@
-import type {
-    AgColumn,
-    AgEventType,
-    IClientSideRowModel,
-    IColsService,
-    RowNode,
-    SetFilterParams,
-    ValueService,
-} from 'ag-grid-community';
+import type { AgColumn, IClientSideRowModel, RowNode } from 'ag-grid-community';
 import { AgPromise, _makeNull } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import { processDataPath } from './setFilterUtils';
 
 /** @param V type of value in the Set Filter */
-export class ClientSideValuesExtractor<V> {
+export class ClientSideValuesExtractor<V> extends BeanStub {
     constructor(
-        private readonly rowModel: IClientSideRowModel,
-        private readonly filterParams: SetFilterParams<any, V>,
         private readonly createKey: (value: V | null | undefined, node?: RowNode) => string | null,
         private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
-        private readonly valueSvc: ValueService,
-        private readonly treeDataOrGrouping: boolean,
-        private readonly treeData: boolean,
-        private readonly groupAllowUnbalanced: boolean,
-        private readonly addManagedEventListeners: (
-            handlers: Partial<Record<AgEventType, (event?: any) => void>>
-        ) => (() => null)[],
-        private readonly rowGroupColsSvc?: IColsService
-    ) {}
+        private readonly getValue: (node: RowNode) => V | null | undefined,
+        private readonly isTreeDataOrGrouping: () => boolean,
+        private readonly isTreeData: () => boolean
+    ) {
+        super();
+    }
 
     public extractUniqueValuesAsync(
         predicate: (node: RowNode) => boolean,
         existingValues?: Map<string | null, V | null>
     ): AgPromise<Map<string | null, V | null>> {
         return new AgPromise((resolve) => {
-            if (this.rowModel.isRowDataLoaded()) {
+            if ((this.beans.rowModel as IClientSideRowModel).isRowDataLoaded()) {
                 resolve(this.extractUniqueValues(predicate, existingValues));
             } else {
                 const [destroyFunc] = this.addManagedEventListeners({
@@ -53,8 +41,10 @@ export class ClientSideValuesExtractor<V> {
         const values: Map<string | null, V | null> = new Map();
         const existingFormattedKeys = this.extractExistingFormattedKeys(existingValues);
         const formattedKeys: Set<string | null> = new Set();
-        const treeData = this.treeData;
-        const groupedCols = this.rowGroupColsSvc?.columns;
+        const treeData = this.isTreeData();
+        const treeDataOrGrouping = this.isTreeDataOrGrouping();
+        const groupedCols = this.beans.rowGroupColsSvc?.columns;
+        const groupAllowUnbalanced = this.gos.get('groupAllowUnbalanced');
 
         const addValue = (unformattedKey: string | null, value: V | null | undefined) => {
             const formattedKey = this.caseFormat(unformattedKey);
@@ -73,13 +63,13 @@ export class ClientSideValuesExtractor<V> {
             }
         };
 
-        this.rowModel.forEachLeafNode((node) => {
+        (this.beans.rowModel as IClientSideRowModel).forEachLeafNode((node) => {
             // only pull values from rows that have data. this means we skip filler group nodes.
             if (!node.data || !predicate(node)) {
                 return;
             }
-            if (this.treeDataOrGrouping) {
-                this.addValueForTreeDataOrGrouping(node, treeData, groupedCols, addValue);
+            if (treeDataOrGrouping) {
+                this.addValueForTreeDataOrGrouping(node, treeData, groupedCols, addValue, groupAllowUnbalanced);
                 return;
             }
 
@@ -104,7 +94,8 @@ export class ClientSideValuesExtractor<V> {
         node: RowNode,
         treeData: boolean,
         groupedCols: AgColumn[] = [],
-        addValue: (unformattedKey: string | null, value: V | null) => void
+        addValue: (unformattedKey: string | null, value: V | null) => void,
+        groupAllowUnbalanced: boolean
     ): void {
         let dataPath: string[] | null;
         if (treeData) {
@@ -113,15 +104,11 @@ export class ClientSideValuesExtractor<V> {
             }
             dataPath = node.getRoute() ?? [node.key ?? node.id!];
         } else {
-            dataPath = groupedCols.map((groupCol) => this.valueSvc.getKeyForNode(groupCol, node));
+            dataPath = groupedCols.map((groupCol) => this.beans.valueSvc.getKeyForNode(groupCol, node));
             dataPath.push(this.getValue(node) as any);
         }
-        const processedDataPath = processDataPath(dataPath, treeData, this.groupAllowUnbalanced);
+        const processedDataPath = processDataPath(dataPath, treeData, groupAllowUnbalanced);
         addValue(this.createKey(processedDataPath as any), processedDataPath as any);
-    }
-
-    private getValue(node: RowNode): V | null | undefined {
-        return this.filterParams.getValue(node);
     }
 
     private extractExistingFormattedKeys(

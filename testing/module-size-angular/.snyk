@@ -1,0 +1,15 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+    SNYK-JS-WEBPACKDEVSERVER-10300775:
+        - ag-grid-angular > @angular-devkit/build-angular > webpack-dev-server:
+              reason: Only used for calculating module size and is dev only
+              expires: 2026-06-05T14:36:23.501Z
+              created: 2025-06-06T14:47:25.226Z
+    SNYK-JS-VITE-9653016:
+        - angular-devkit/build-angular > @angular/build > vite:
+              reason: Only used for calculating module size and is dev only
+              expires: 2026-06-05T14:36:23.501Z
+              created: 2025-06-06T14:47:25.226Z
+patch: {}

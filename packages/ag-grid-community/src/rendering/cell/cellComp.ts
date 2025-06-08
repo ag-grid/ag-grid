@@ -69,6 +69,7 @@ export class CellComp extends Component {
     ) {
         super();
         this.beans = beans;
+        this.gos = beans.gos;
         this.column = cellCtrl.column;
         this.rowNode = cellCtrl.rowNode;
         this.eRow = eRow;
@@ -123,6 +124,7 @@ export class CellComp extends Component {
             getCellEditor: () => this.cellEditor || null,
             getCellRenderer: () => this.cellRenderer || null,
             getParentOfValue: () => this.getParentOfValue(),
+            refreshEditStyles: (editing, isPopup) => this.refreshEditStyles(editing, isPopup),
         };
 
         cellCtrl.setComp(compProxy, cellDiv, wrapperDiv, this.eCellWrapper, printLayout, editingRow, undefined);
@@ -439,13 +441,11 @@ export class CellComp extends Component {
         this.cellCtrl.cellEditorAttached();
     }
 
-    private refreshEditStyles(editing: boolean, isPopup?: boolean): void {
+    public refreshEditStyles(editing: boolean, isPopup?: boolean): void {
         const { cellCssManager } = this;
         cellCssManager.toggleCss('ag-cell-inline-editing', editing && !isPopup);
         cellCssManager.toggleCss('ag-cell-popup-editing', editing && !!isPopup);
         cellCssManager.toggleCss('ag-cell-not-inline-editing', !editing || !!isPopup);
-
-        this.cellCtrl.setInlineEditingCss();
     }
 
     private addInCellEditor(): void {
@@ -468,7 +468,7 @@ export class CellComp extends Component {
     }
 
     private addPopupCellEditor(params: ICellEditorParams, position?: 'over' | 'under'): void {
-        const { gos, context, editSvc, popupSvc, localeSvc } = this.beans;
+        const { gos, context, popupSvc, localeSvc, editSvc } = this.beans;
         if (gos.get('editType') === 'fullRow') {
             //popup cellEditor does not work with fullRowEdit
             _warn(98);
@@ -532,8 +532,6 @@ export class CellComp extends Component {
     //
     // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
     public override destroy(): void {
-        this.cellCtrl.stopEditing();
-
         this.destroyRenderer();
         this.destroyEditor();
         this.removeControls();

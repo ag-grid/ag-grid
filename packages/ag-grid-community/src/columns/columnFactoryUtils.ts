@@ -378,7 +378,11 @@ export function _addColumnDefaultAndTypes(
         );
     }
 
-    dataTypeSvc?.validateColDef(res);
+    if (dataTypeSvc) {
+        dataTypeSvc.postProcess(res);
+        dataTypeSvc.validateColDef(res);
+    }
+
     gos.validateColDef(res, colId, isAutoCol);
 
     return res;

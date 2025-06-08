@@ -11,6 +11,7 @@ import type {
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
     KeyCreatorParams,
+    RowGroupingRowNode,
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,
@@ -383,14 +384,13 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     /**
      * This is idempotent, but relies on the `key` field being the same throughout a RowNode's lifetime
      */
-    private addToParent(child: RowNode, parent: RowNode | null) {
+    private addToParent(child: RowNode, parent: RowGroupingRowNode) {
+        const childrenMapped = (parent.childrenMapped ??= {});
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
-        if (parent?.childrenMapped) {
-            if (parent.childrenMapped[mapKey] !== child) {
-                parent.childrenMapped[mapKey] = child;
-                parent.childrenAfterGroup!.push(child);
-                setRowNodeGroup(parent, this.beans, true); // calls `.updateHasChildren` internally
-            }
+        if (childrenMapped[mapKey] !== child) {
+            childrenMapped[mapKey] = child;
+            (parent.childrenAfterGroup ??= []).push(child);
+            setRowNodeGroup(parent, this.beans, true); // calls `.updateHasChildren` internally
         }
     }
 

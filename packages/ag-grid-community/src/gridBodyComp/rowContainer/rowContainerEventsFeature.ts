@@ -124,7 +124,8 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private processCellKeyboardEvent(cellCtrl: CellCtrl, eventName: string, keyboardEvent: KeyboardEvent): void {
-        const { rowNode, column, editing } = cellCtrl;
+        const { rowNode, column } = cellCtrl;
+        const editing = this.beans.editSvc?.isEditing(rowNode, column, undefined, true) ?? false;
 
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(
             this.gos,
@@ -145,7 +146,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 }
 
                 // perform clipboard and undo / redo operations
-                this.doGridOperations(keyboardEvent, cellCtrl.editing);
+                this.doGridOperations(keyboardEvent, editing);
 
                 if (_isEventFromPrintableCharacter(keyboardEvent)) {
                     cellCtrl.processCharacter(keyboardEvent);
@@ -265,9 +266,11 @@ export class RowContainerEventsFeature extends BeanStub {
             return;
         }
 
-        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
+        const { cellCtrl } = this.getControlsForEventTarget(event.target);
 
-        if (cellCtrl?.editing || rowCtrl?.editing) {
+        const editing = this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column, undefined, true) ?? false;
+
+        if (editing) {
             return;
         }
 
@@ -280,9 +283,11 @@ export class RowContainerEventsFeature extends BeanStub {
             return;
         }
 
-        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
+        const { cellCtrl } = this.getControlsForEventTarget(event.target);
 
-        if (cellCtrl?.editing || rowCtrl?.editing) {
+        const editing = this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column, undefined, true) ?? false;
+
+        if (editing) {
             return;
         }
 
@@ -291,11 +296,14 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndV(clipboardSvc: IClipboardService | undefined, event: KeyboardEvent): void {
-        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
+        const { cellCtrl } = this.getControlsForEventTarget(event.target);
 
-        if (cellCtrl?.editing || rowCtrl?.editing) {
+        const editing = this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column, undefined, true) ?? false;
+
+        if (editing) {
             return;
         }
+
         if (clipboardSvc && !this.gos.get('suppressClipboardPaste')) {
             clipboardSvc.pasteFromClipboard();
         }

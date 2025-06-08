@@ -87,13 +87,13 @@ Pinned rows can be selected just as normal rows can be selected. The selection s
 ## Pinning the Grand Total Row
 The [Grand Total Rows](./aggregation-total-rows/#enabling-a-grand-total-row) can be pinned in two ways. 
 
-1. Setting the value of the `grandTotalRow` grid option to either `'pinnedTop'` or `'pinnedBottom'`.
+1. Setting the value of the `grandTotalRowPinned` grid option to either `'top'` or `'bottom'`.
 2. Manually pin the grand total row via the context menu when `grandTotalRow` is either `'top'` or `'bottom'`.
 3. Return `'top'` or `'bottom'` from the `isRowPinned` callback when it's called on the grand total row node.
 
 {% gridExampleRunner title="Pinning Grand Total Row" name="pinning-grand-total" exampleHeight=650 /%}
 
-Note that when `grandTotalRow` is `'pinnedTop'` or `'pinnedBottom'` the user is not able to unpin the grand total row.
+Note that when `grandTotalRowPinned` is `'top'` or `'bottom'` the user is not able to unpin the grand total row.
 
 ## Providing Pinned Row Data
 

@@ -332,7 +332,7 @@ export class AgColumn<TValue = any>
     }
 
     public isCellEditable(rowNode: IRowNode): boolean {
-        return this.beans.editSvc?.isCellEditable(this, rowNode) ?? false;
+        return this.beans.editSvc?.isCellEditable(rowNode, this) ?? false;
     }
 
     public isSuppressFillHandle(): boolean {

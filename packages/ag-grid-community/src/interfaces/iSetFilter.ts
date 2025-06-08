@@ -1,10 +1,11 @@
 import type { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
-import type { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/iProvidedFilter';
+import type { FilterUiChangedEvent } from '../events';
+import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
 import type { AgPromise } from '../utils/promise';
 import type { AgGridCommon } from './iCommon';
-import type { IFilterParams, ProvidedFilterModel } from './iFilter';
+import type { IFilterParams } from './iFilter';
 
 export type SetFilterModelValue = (string | null)[];
 export interface SetFilterModel extends ProvidedFilterModel {
@@ -13,8 +14,7 @@ export interface SetFilterModel extends ProvidedFilterModel {
 }
 
 /**
- * Interface contract for the public aspects of the SetFilter implementation.
- * @param V type of value in the Set Filter
+ * @deprecated v34 Use `SetFilterUi` for the filter UI component, and `SetFilterHandler` for the filter handler.
  */
 export interface ISetFilter<V = string> extends IProvidedFilter {
     readonly filterType: 'set';
@@ -63,6 +63,36 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
 
     /** Returns the current UI state (potentially un-applied). */
     getModelFromUi(): SetFilterModel | null;
+}
+
+export interface SetFilterHandler<TValue = string> {
+    /** Returns the full list of unique keys used by the Set Filter. */
+    getFilterKeys(): SetFilterModelValue;
+
+    /** Returns the full list of unique values used by the Set Filter. */
+    getFilterValues(): (TValue | null)[];
+
+    /** Sets the values used in the Set Filter on the fly. */
+    setFilterValues(values: (TValue | null)[]): void;
+    /**
+     * Refreshes the values shown in the filter from the original source. For example, if a
+     * callback was provided, the callback will be executed again and the filter will refresh using
+     * the values returned.
+     */
+    refreshFilterValues(): void;
+    /**
+     * Resets the Set Filter to use values from the grid, rather than any values that have been
+     * provided directly.
+     */
+    resetFilterValues(): void;
+}
+
+export interface SetFilterUi {
+    /** Returns the current mini-filter text. */
+    getMiniFilter(): string | null;
+
+    /** Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup). */
+    setMiniFilter(newMiniFilter: string | null): void;
 }
 
 /**
@@ -215,4 +245,8 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
 export interface ISetFilterTreeListTooltipParams extends ITooltipParams {
     /** Level of the tree (starting at 0). */
     level: number;
+}
+
+export interface SetFilterUiChangedEvent<TData = any, TContext = any> extends FilterUiChangedEvent<TData, TContext> {
+    miniFilterValue?: string | null;
 }

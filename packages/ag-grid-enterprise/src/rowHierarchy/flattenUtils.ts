@@ -5,13 +5,19 @@ import type {
     RowNode,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { _getGrandTotalRow, _getGroupTotalRowCallback, _isGroupMultiAutoColumn } from 'ag-grid-community';
+import {
+    _getGrandTotalRow,
+    _getGrandTotalRowPinned,
+    _getGroupTotalRowCallback,
+    _isGroupMultiAutoColumn,
+} from 'ag-grid-community';
 
 export interface FlattenDetails {
     hideOpenParents: boolean;
     groupHideParentOfSingleChild: GridOptions['groupHideParentOfSingleChild'];
     isGroupMultiAutoColumn: boolean;
     grandTotalRow: GridOptions['grandTotalRow'];
+    grandTotalRowPinned: GridOptions['grandTotalRowPinned'];
     groupTotalRow: (params: WithoutGridCommon<GetGroupIncludeFooterParams<any, any>>) => 'top' | 'bottom' | undefined;
 }
 
@@ -28,6 +34,7 @@ export function _getFlattenDetails(gos: GridOptionsService): FlattenDetails {
         isGroupMultiAutoColumn: _isGroupMultiAutoColumn(gos),
         hideOpenParents: gos.get('groupHideOpenParents'),
         grandTotalRow: _getGrandTotalRow(gos),
+        grandTotalRowPinned: _getGrandTotalRowPinned(gos),
         groupTotalRow: _getGroupTotalRowCallback(gos),
     };
 }

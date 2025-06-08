@@ -1,12 +1,29 @@
 <div class="example-wrapper">
     <div class="example-header">
-        <select id="select-grand-total-row" onchange="update()">
-            <option value="pinnedBottom">pinnedBottom</option>
-            <option value="pinnedTop">pinnedTop</option>
-            <option value="bottom">bottom</option>
-            <option value="top">top</option>
-            <option value="isRowPinned">isRowPinned</option>
-        </select>
+        <div class="example-control-group example-selectors">
+            <span class="example-control">
+                <label for="select-grand-total-row"> grandTotalRow: </label>
+                <select id="select-grand-total-row" onchange="updateGrandTotalRow()">
+                    <option value="bottom">bottom</option>
+                    <option value="top">top</option>
+                </select>
+            </span>
+            <span class="example-control">
+                <label for="select-grand-total-row-pinned"> grandTotalRowPinned: </label>
+                <select id="select-grand-total-row-pinned" onchange="updateGrandTotalRowPinned()">
+                    <option value="bottom">bottom</option>
+                    <option value="top">top</option>
+                </select>
+            </span>
+        </div>
+        <div class="example-control-group example-buttons">
+            <span class="example-control">
+                <button onclick="useIsRowPinned()">Use isRowPinned</button>
+            </span>
+            <span class="example-control">
+                <button onclick="reset()">Reset</button>
+            </span>
+        </div>
     </div>
     <div id="myGrid" style="height: 100%"></div>
 </div>

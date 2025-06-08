@@ -3,8 +3,8 @@ import type {
     GridApi,
     GridOptions,
     ICellRendererParams,
-    ISetFilter,
     ISetFilterParams,
+    SetFilterHandler,
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
@@ -81,25 +81,20 @@ function getModel(type: string) {
 }
 
 function setFilterValues(type: string) {
-    gridApi!.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then((instance) => {
-        instance!.setFilterValues(MANGLED_COLOURS);
-        instance!.applyModel();
-        gridApi!.onFilterChanged();
-    });
+    const handler = gridApi!.getColumnFilterHandler<SetFilterHandler>(FILTER_TYPES[type]);
+    handler!.setFilterValues(MANGLED_COLOURS);
 }
 
 function getValues(type: string) {
-    gridApi!.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then((instance) => {
-        console.log(JSON.stringify(instance!.getFilterValues(), null, 2));
-    });
+    const handler = gridApi!.getColumnFilterHandler<SetFilterHandler>(FILTER_TYPES[type]);
+    console.log(JSON.stringify(handler!.getFilterValues(), null, 2));
 }
 
 function reset(type: string) {
-    gridApi!.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then((instance) => {
-        instance!.resetFilterValues();
-        instance!.setModel(null).then(() => {
-            gridApi!.onFilterChanged();
-        });
+    const handler = gridApi!.getColumnFilterHandler<SetFilterHandler>(FILTER_TYPES[type]);
+    handler!.resetFilterValues();
+    gridApi!.setColumnFilterModel(FILTER_TYPES[type], null).then(() => {
+        gridApi!.onFilterChanged();
     });
 }
 

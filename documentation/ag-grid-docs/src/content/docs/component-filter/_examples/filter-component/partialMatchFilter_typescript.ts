@@ -1,61 +1,50 @@
-import type { IDoesFilterPassParams, IFilterComp, IFilterParams } from 'ag-grid-community';
+import type { FilterDisplay, FilterDisplayParams, IAfterGuiAttachedParams } from 'ag-grid-community';
 
-export class PartialMatchFilter implements IFilterComp {
-    filterParams!: IFilterParams;
+export class PartialMatchFilter implements FilterDisplay<any, any, string> {
     gui!: HTMLDivElement;
-    filterText: string = '';
     eFilterText!: HTMLInputElement;
 
-    init(params: IFilterParams): void {
-        this.filterParams = params;
+    init(params: FilterDisplayParams<any, any, string>) {
         this.gui = document.createElement('div');
-        this.gui.style.borderRadius = '5px';
-        this.gui.style.width = '200px';
-        this.gui.style.height = '50px';
-        this.gui.style.padding = '10px';
-        this.gui.innerHTML = `Partial Match Filter: <input id="filterText" type="text" style="height: 20px" />`;
+        this.gui.innerHTML = `<div class="partial-match-filter">
+                <div>Partial Match Filter</div>
+                <div>
+                    <input type="text" id="filterText" />
+                </div>
+            </div>
+        `;
         this.eFilterText = this.gui.querySelector('#filterText')!;
+
+        this.refresh(params);
+
         const listener = (event: any) => {
-            this.filterText = event.target.value;
-            params.filterChangedCallback();
+            const value = event.target.value;
+            params.onModelChange(value == null || value === '' ? null : value);
         };
+
         this.eFilterText.addEventListener('changed', listener);
         this.eFilterText.addEventListener('paste', listener);
         this.eFilterText.addEventListener('input', listener);
     }
 
-    isFilterActive(): boolean {
-        return this.filterText != null && this.filterText !== '';
-    }
-
-    doesFilterPass(params: IDoesFilterPassParams): boolean {
-        const { node } = params;
-        const value = this.filterParams.getValue(node).toString().toLowerCase();
-
-        return this.filterText
-            .toLowerCase()
-            .split(' ')
-            .every((filterWord) => value.indexOf(filterWord) >= 0);
-    }
-
-    getModel() {
-        if (!this.isFilterActive()) {
-            return null;
+    refresh(newParams: FilterDisplayParams<any, any, string, any>): boolean {
+        const currentValue = this.eFilterText.value;
+        const newValue = newParams.model ?? '';
+        if (newValue !== currentValue) {
+            this.eFilterText.value = newValue;
         }
-
-        return { value: this.filterText };
+        return true;
     }
 
-    setModel(model: any): void {
-        this.eFilterText.value = model == null ? '' : model.value;
-    }
-
-    getGui(): HTMLElement {
+    getGui() {
         return this.gui;
     }
 
-    afterGuiAttached() {
-        this.eFilterText.focus();
+    afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        if (!params?.suppressFocus) {
+            // focus the input element for keyboard navigation
+            this.eFilterText.focus();
+        }
     }
 
     componentMethod(message: string): void {

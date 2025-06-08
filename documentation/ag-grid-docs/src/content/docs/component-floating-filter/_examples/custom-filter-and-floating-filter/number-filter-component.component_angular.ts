@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import type { IFilterAngularComp } from 'ag-grid-angular';
-import type { IDoesFilterPassParams, IFilterParams } from 'ag-grid-community';
+import { IFilterDisplayAngularComp } from 'ag-grid-angular';
+import { FilterDisplayParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
@@ -23,55 +23,25 @@ import type { IDoesFilterPassParams, IFilterParams } from 'ag-grid-community';
         </div>
     `,
 })
-export class NumberFilterComponent implements IFilterAngularComp {
-    filterParams!: IFilterParams;
-    filterText: number | null | string = null;
+export class NumberFilterComponent implements IFilterDisplayAngularComp<any, any, number> {
+    filterParams!: FilterDisplayParams<any, any, number>;
+    filterText: string = '';
 
-    agInit(params: IFilterParams): void {
+    agInit(params: FilterDisplayParams<any, any, number>): void {
+        this.refresh(params);
+    }
+
+    refresh(params: FilterDisplayParams<any, any, number>): boolean {
         this.filterParams = params;
-    }
-
-    doesFilterPass(params: IDoesFilterPassParams) {
-        if (!this.isFilterActive()) {
-            return true;
+        // if the update is from the floating filter, we don't need to update the UI
+        if (params.source !== 'ui') {
+            this.filterText = String(params.model ?? '');
         }
-
-        const { node } = params;
-
-        const value = this.filterParams.getValue(node);
-
-        if (value == null) return false;
-        return Number(value) > Number(this.filterText);
-    }
-
-    isFilterActive() {
-        return (
-            this.filterText !== null &&
-            this.filterText !== undefined &&
-            this.filterText !== '' &&
-            this.isNumeric(this.filterText)
-        );
-    }
-
-    isNumeric(n: any) {
-        return !isNaN(parseFloat(n)) && isFinite(n);
-    }
-
-    getModel() {
-        return this.isFilterActive() ? Number(this.filterText) : null;
-    }
-
-    setModel(model: any) {
-        this.filterText = model;
-        this.filterParams.filterChangedCallback();
-    }
-
-    myMethodForTakingValueFromFloatingFilter(value: any) {
-        this.filterText = value;
-        this.filterParams.filterChangedCallback();
+        return true;
     }
 
     onInputBoxChanged() {
-        this.filterParams.filterChangedCallback();
+        const newValue = this.filterText;
+        this.filterParams.onModelChange(newValue === '' ? null : Number(newValue));
     }
 }

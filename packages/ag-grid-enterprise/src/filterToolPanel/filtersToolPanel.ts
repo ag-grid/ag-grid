@@ -8,8 +8,9 @@ import type {
     IToolPanelFiltersCompParams,
     IToolPanelParams,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, _addGridCommonParams } from 'ag-grid-community';
+import { Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
 
+import { AgFiltersToolPanelButtons } from './agFiltersToolPanelButtons';
 import type { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
 import { AgFiltersToolPanelHeaderSelector } from './agFiltersToolPanelHeader';
 import type { AgFiltersToolPanelList } from './agFiltersToolPanelList';
@@ -32,6 +33,8 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     private readonly filtersToolPanelHeaderPanel: AgFiltersToolPanelHeader = RefPlaceholder;
     private readonly filtersToolPanelListPanel: AgFiltersToolPanelList = RefPlaceholder;
 
+    private buttonPanel?: AgFiltersToolPanelButtons;
+
     private initialised = false;
     private params: ToolPanelFiltersCompParams;
     private listenerDestroyFuncs: (() => void)[] = [];
@@ -50,11 +53,11 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
         this.initialised = true;
 
-        const defaultParams: Partial<ToolPanelFiltersCompParams> = _addGridCommonParams(this.gos, {
+        const defaultParams: IToolPanelFiltersCompParams = {
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,
-        });
+        };
         const newParams = {
             ...defaultParams,
             ...params,
@@ -65,11 +68,25 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         filtersToolPanelHeaderPanel.init(newParams);
         filtersToolPanelListPanel.init(newParams);
 
-        const hideExpand = newParams.suppressExpandAll;
-        const hideSearch = newParams.suppressFilterSearch;
+        const { suppressExpandAll: hideExpand, suppressFilterSearch: hideSearch, buttons } = newParams;
 
         if (hideExpand && hideSearch) {
             filtersToolPanelHeaderPanel.setDisplayed(false);
+        }
+
+        let buttonPanel = this.buttonPanel;
+        if (buttons) {
+            if (!buttonPanel) {
+                buttonPanel = this.createBean(new AgFiltersToolPanelButtons());
+                this.appendChild(buttonPanel.getGui());
+                this.buttonPanel = buttonPanel;
+            }
+            buttonPanel.refresh(buttons);
+        } else {
+            if (buttonPanel) {
+                _removeFromParent(buttonPanel.getGui());
+                this.buttonPanel = this.destroyBean(buttonPanel);
+            }
         }
 
         // this is necessary to prevent a memory leak while refreshing the tool panel
@@ -128,5 +145,10 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
     public getState(): FiltersToolPanelState {
         return this.filtersToolPanelListPanel.getExpandedFiltersAndGroups();
+    }
+
+    public override destroy(): void {
+        this.buttonPanel = this.destroyBean(this.buttonPanel);
+        super.destroy();
     }
 }

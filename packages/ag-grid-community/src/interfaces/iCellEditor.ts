@@ -4,6 +4,7 @@ import type { GetCellsParams } from './iCellsParams';
 import type { AgGridCommon } from './iCommon';
 import type { IPopupComponent } from './iPopupComponent';
 import type { IRowNode } from './iRowNode';
+import type { RowPosition } from './iRowPosition';
 
 export interface BaseCellEditor {
     /** Optional: Gets called once after initialised. If you return true, the editor will not be
@@ -108,3 +109,32 @@ export interface DefaultProvidedCellEditorParams {
 }
 
 export interface GetCellEditorInstancesParams<TData = any> extends GetCellsParams<TData> {}
+
+export interface GetEditingCellsParams {
+    includePending?: boolean;
+}
+
+export interface SetEditingCellsParams {
+    /** Update existing cells, omit or set `false` to replace currently editing cells. */
+    update?: boolean;
+}
+
+export interface EditingCellPosition extends RowPosition {
+    /** Column key */
+    colKey: string;
+
+    /**
+     * Column instance.
+     * @deprecated Use `colKey` instead.
+     */
+    column?: Column;
+
+    /** New pending value */
+    newValue?: any;
+
+    /** Existing value, used only when retrieving current editing state */
+    oldValue?: any;
+
+    /** Current editing state */
+    state?: 'editing' | 'changed';
+}

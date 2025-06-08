@@ -1,0 +1,74 @@
+---
+title: "Filter Component - Legacy"
+---
+
+{% warning %}
+This page describes the old way of declaring custom filter components when the grid option `enableFilterHandlers` is not set. It is strongly recommended to instead use the new behaviour described on the [Filter Component](./component-filter/) page.
+{% /warning %}
+
+The example below shows two custom filters. The first is on the `Athlete` column and demonstrates a filter with "fuzzy" matching and the second is on the `Year` column with preset options.
+
+{% gridExampleRunner title="Custom Filter Component" name="custom-filter-legacy" /%}
+
+## Implementing a Filter Component
+
+{% partial file="./_component-interface-javascript.mdoc" /%}
+{% partial file="./_component-interface-angular.mdoc" /%}
+{% partial file="./_component-interface-react.mdoc" /%}
+{% partial file="./_component-interface-vue.mdoc" /%}
+
+## Custom Filter Parameters
+
+{% if isFramework("javascript") %}
+The `init(params)` method takes a params object with the items listed below. If custom params are provided via the `colDef.filterParams` property, these
+will be additionally added to the params object, overriding items of the same name if a name clash exists.
+{% /if %}
+
+{% if isFramework("angular") %}
+The `agInit(params)` method takes a params object with the items listed below. If custom params are provided via the `colDef.filterParams` property, these
+will be additionally added to the params object, overriding items of the same name if a name clash exists.
+{% /if %}
+
+{% if isFramework("vue") %}
+When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and
+row values available to you via `this.params` - the interface for what is provided is documented below.
+
+If custom params are provided via the `colDef.filterParams` property, these
+will be additionally added to the params object, overriding items of the same name if a name clash exists.
+{% /if %}
+
+{% if isFramework("javascript", "angular", "vue") %}
+{% interfaceDocumentation interfaceName="IFilterParams" /%}
+{% /if %}
+
+{% if isFramework("javascript", "angular", "vue") %}
+### IDoesFilterPassParams
+
+The method `doesFilterPass(params)` takes the following as a parameter:
+{% /if %}
+
+{% if isFramework("javascript", "angular", "vue") %}
+{% interfaceDocumentation interfaceName="IDoesFilterPassParams" /%}
+{% /if %}
+
+{% if isFramework("react") %}
+### Filter Props
+
+The following props are passed to the custom filter components (`CustomFilterProps` interface). If custom props are provided via the `colDef.filterParams` property, these will be additionally added to the props object, overriding items of the same name if a name clash exists.
+{% /if %}
+
+{% if isFramework("react") %}
+{% interfaceDocumentation interfaceName="CustomFilterProps" config={ "description": "" } /%}
+{% /if %}
+
+{% if isFramework("react") %}
+### Filter Callbacks
+
+The following callbacks can be passed to the `useGridFilter` hook (`CustomFilterCallbacks` interface). The hook must be used for filters to work. The `doesFilterPass` callback is mandatory, but all others are optional.
+
+Note that `doesFilterPass` is only called with the [Client-Side Row Model](./row-models/). If being used exclusively with other row models, it can just return `true` as the filtering logic is performed on the server.
+{% /if %}
+
+{% if isFramework("react") %}
+{% interfaceDocumentation interfaceName="CustomFilterCallbacks" config={ "description": "" } /%}
+{% /if %}
