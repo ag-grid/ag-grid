@@ -251,7 +251,11 @@ export function _syncFromEditor(
         newValue = UNEDITED;
     }
 
-    beans.editModelSvc?.setEdit(position, { newValue, oldValue, state: hasEditor ? 'editing' : 'changed' });
+    if (_valuesDiffer({ newValue, oldValue })) {
+        beans.editModelSvc?.setEdit(position, { newValue, oldValue, state: hasEditor ? 'editing' : 'changed' });
+    } else {
+        beans.editModelSvc?.removeEdits(position);
+    }
 
     beans.eventSvc.dispatchEvent({
         type: 'cellEditValuesChanged',
