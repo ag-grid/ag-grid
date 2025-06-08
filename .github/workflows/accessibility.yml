@@ -43,6 +43,12 @@ jobs:
           git fetch origin --depth 1 latest
           git fetch origin --depth 1 tag latest-success
 
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
       - name: calculate matrix
         id: matrix
         run: |
