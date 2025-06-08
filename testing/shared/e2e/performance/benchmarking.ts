@@ -1,11 +1,15 @@
 import type { BrowserContext, Page } from '@playwright/test';
 import { test } from '@playwright/test';
 import * as chalk_ from 'chalk';
+import * as dotenv from 'dotenv';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
+import type { BrowserCommunications } from '../../playwright.utils';
 import { gotoUrl, waitFor } from '../../playwright.utils';
 
 export type Framework = 'typescript' | 'reactFunctionalTs';
-export type CustomVersion = `${number}.${number}.${number}`;
+export type CustomVersion = `v${number}.${number}.${number}`;
 export type Version = 'prod' | 'staging' | 'local' | CustomVersion;
 export type Entry<T> = T extends readonly (infer U)[] ? U : T extends object ? T[keyof T] : T;
 
@@ -29,33 +33,72 @@ export type TestCase = {
     framework: Framework;
     control: Variant;
     variant: Variant;
-    setup: (page: Page) => Promise<void>;
-    actions: (page: Page) => Promise<void>;
+    preSetup?: (page: Page) => Promise<void>;
+    setupPreActions?: (page: Page) => Promise<void>;
+    actions?: (page: Page) => Promise<void>;
+    expectsPostActions?: (page: Page, comms: BrowserCommunications) => Promise<void>;
     metrics?: Entry<(typeof PerformanceObserver)['supportedEntryTypes']>;
 };
 
 /**
  * Describes a variant of a test case, which can include a specific URL and version.
- * Optionally, it can include cookies to be set in the browser context.
+ *
+ * @prop url can be a plunker, or any grid example url.
+ * @prop version is used to determine the version of the grid to test against, e.g. 'prod', 'staging', 'local', or a specific version like 'v29.0.0'.
+ *               Playwright will intercept whatever version is specified in the example, and use this version instead.
+ * @prop cookies are used to set cookies for the test case, e.g. for plunker acceptance cookie
  */
 export type Variant = {
     url?: string;
     version: Version;
+    shouldInjectScript?: boolean;
     cookies?: Parameters<BrowserContext['addCookies']>[0];
 };
 
+dotenv.config({ path: path.join(__dirname, '../../../../documentation/ag-grid-docs/.env.dev') }); // grab docs PORT
+
 const knownUrls: Record<Version, string> = {
-    local: 'http://localhost:4200', // todo: update with actual local URL
+    local: `https://localhost:${process.env.PORT || '4610'}`,
     staging: 'https://grid-staging.ag-grid.com',
     prod: 'https://www.ag-grid.com',
 };
 
+export const agChartsVersion = JSON.parse(
+    fs.readFileSync(path.join(__dirname, '../../../../packages/ag-grid-enterprise/package.json')).toString()
+).optionalDependencies['ag-charts-enterprise'];
+
+/**
+ * Taken from ag-grid-enterprise package.json git history
+ */
+const gridToChartsMap = {
+    local: agChartsVersion,
+    prod: 'v11.3.0',
+    staging: agChartsVersion,
+    'v33.3.0': 'v11.3.0',
+    'v33.2.3': 'v11.2.3',
+    'v33.2.1': 'v11.2.1',
+    'v33.1.1': 'v11.1.1',
+    'v33.1.0': 'v11.1.0',
+    'v33.0.1': 'v11.0.0',
+    'v32.2.0': 'v11.0.0', // was latest, changed to the closest one
+    'v32.1.0': 'v10.1.0',
+    'v32.0.1': 'v10.0.1',
+    'v32.0.0': 'v10.0.0',
+    'v31.3.1': 'v9.3.1',
+    'v31.3.0': 'v9.3.0',
+    'v31.2.0': 'v9.2.0',
+} as const;
+
 // @ts-expect-error chalk is a CommonJS module, but we use it as an ESM module
 const { yellow, green, blue, cyan, magenta, bgBlue, bgGreen } = chalk_.default;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const getCdnUrl = (pkg: string, version: CustomVersion) =>
-    `https://cdn.jsdelivr.net/npm/${pkg}@${version}/dist/${pkg}.min.js`;
+const getCdnUrl = (pkg: string, version: Version, path: `/${string}` = `/dist/${pkg}.js`) => {
+    if (isCustomVersion(version)) {
+        return `https://cdn.jsdelivr.net/npm/${pkg}@${version.slice(1)}${path}`;
+    }
+
+    return `${knownUrls[version]}/files/${pkg}/dist/${pkg}.js`;
+};
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _getPlnkrCookies = (url: string) => [
@@ -68,15 +111,17 @@ const _getPlnkrCookies = (url: string) => [
 ];
 
 /**
- * Get the URL for the test case based on the version.
+ * Get the URL for the test case based on the version field.
+ * If custom version is specified, we use prod as base and then inject the correct version
  */
 function getUrl(testCase: TestCase, variant: Variant) {
     if (variant.url) {
         return variant.url;
     }
-    if (!variant.version.startsWith('v')) {
-        return `${knownUrls[variant.version]}/${testCase.name}/${testCase.framework}/`;
+    if (isCustomVersion(variant.version)) {
+        return `${knownUrls.prod}/${testCase.name}/${testCase.framework}/`;
     }
+    return `${knownUrls[variant.version]}/${testCase.name}/${testCase.framework}/`;
 }
 
 /**
@@ -137,7 +182,7 @@ function isSignificant(diff: number, moe1: number, moe2: number) {
  * Reports the statistics of the performance test results.
  * Returns true if the results are significant, false otherwise.
  */
-function reportStats(stats: Record<string, ReturnType<typeof computeStats>>, testCase: TestCase): boolean {
+function reportStats(stats: Record<string, ReturnType<typeof computeStats>>, testCase: TestCase) {
     const [v1, v2] = Object.keys(stats);
     const s1 = stats[v1];
     const s2 = stats[v2];
@@ -152,26 +197,15 @@ function reportStats(stats: Record<string, ReturnType<typeof computeStats>>, tes
     const avgMoE = (s1.marginOfError + s2.marginOfError) / 2;
     const avgMoEPercent = (moe1Percent + moe2Percent) / 2;
 
-    const significant = isSignificant(diff, s1.marginOfError, s2.marginOfError);
-
     const numbersString = `${diff.toFixed(2)} ± ${avgMoE.toFixed(2)}`;
     const percentString = `${percentDiff.toFixed(1)}% ± ${avgMoEPercent.toFixed(1)}%`;
 
-    if (!significant) {
-        console.log(
-            `\n${yellow('Result is statistically insignificant (')}${green(percentString)}, ${blue(`${s1.filteredCount}/${s1.originalCount}`)})${yellow('. Running more iterations...\n')}`
-        );
-        return false;
-    }
-
-    let resultMessage = '';
-    if (percentDiff - avgMoEPercent <= 2) {
-        resultMessage = `${cyan('Both')} ${magenta(testCase[v1].version)} and ${magenta(testCase[v2].version)}${cyan(` seem to be equal (${slower} is slightly slower than ${faster}): `)}${green(percentString)} (${numbersString}).\n${yellow(
-            'Even though the data is statistically significant, it is safer to re-run the test with more iterations to confirm.'
-        )}`;
-    } else {
-        resultMessage = `${magenta(slower)}${cyan(' is slower than ')}${magenta(faster)}${cyan(' by ')}${green(percentString)} (${numbersString})`;
-    }
+    const resultMessage =
+        percentDiff - avgMoEPercent <= 2
+            ? `${cyan('Both')} ${magenta(testCase[v1].version)} and ${magenta(testCase[v2].version)}${cyan(` seem to be equal (${slower} is slightly slower than ${faster}): `)}${green(percentString)} (${numbersString}).\n${yellow(
+                  'Even though the data is statistically significant, it is safer to re-run the test with more iterations to confirm.'
+              )}`
+            : `${magenta(slower)}${cyan(' is slower than ')}${magenta(faster)}${cyan(' by ')}${green(percentString)} (${numbersString})`;
 
     console.log(`${bgBlue.black.bold(' Performance Comparison Results ')}`);
     console.log(resultMessage);
@@ -185,30 +219,45 @@ function reportStats(stats: Record<string, ReturnType<typeof computeStats>>, tes
 
     console.log(detailsFormat(testCase[v1].version, s1));
     console.log(`${detailsFormat(testCase[v2].version, s2)}`);
-
-    return significant;
 }
 
-export function calculateTotalBlockingTime(page: Page, timeout = 5000): Promise<number> {
-    return page.evaluate(() => {
-        return new Promise<number>((resolve) => {
-            let totalBlockingTime = 0;
-            const po = new PerformanceObserver((list) => {
-                const perfEntries = list.getEntries();
-                for (const perfEntry of perfEntries) {
-                    totalBlockingTime += perfEntry.duration - 50;
-                }
-                resolve(totalBlockingTime);
-                po.disconnect();
-            });
-            po.observe({ type: 'longtask', buffered: true });
-
-            // Resolve promise if there haven't been long tasks
-            setTimeout(() => resolve(totalBlockingTime), timeout);
-        });
-    }, 0);
+function attachScript(page: Page, url: string) {
+    return page.evaluate((url: string) => {
+        const script = document.createElement('script');
+        script.src = url;
+        document.body.appendChild(script);
+    }, url);
 }
 
+function attachScripts(page: Page, version: Version) {
+    const chartsVersion: CustomVersion = gridToChartsMap[version] || gridToChartsMap.prod;
+
+    const urls = [getCdnUrl('ag-grid-community', version), getCdnUrl('ag-grid-enterprise', version)];
+    if (chartsVersion) {
+        urls.push(getCdnUrl('ag-charts-community', chartsVersion, '/dist/umd/ag-charts-community.js'));
+        /*[
+        // these are not available in all versions
+            getCdnUrl('@ag-grid-community/styles', version, '/'),
+            getCdnUrl('@ag-grid-community/locale', version),
+            getCdnUrl('ag-charts-core', chartsVersion),
+            getCdnUrl('ag-charts-enterprise', chartsVersion),
+            getCdnUrl('ag-charts-types', chartsVersion, '/'),
+        ];*/
+    }
+    return Promise.all(urls.map(attachScript.bind(this, page)));
+}
+
+function isCustomVersion(version: Version): version is CustomVersion {
+    return version.startsWith('v');
+}
+const metricsGetter = (page: Page, testCase: TestCase) =>
+    waitFor(
+        testCase.metrics
+            ? (metrics: TestCase['metrics']) => performance.getEntriesByType(metrics)
+            : () => performance.getEntries(),
+        page,
+        { args: [testCase.metrics] }
+    );
 /** Generic benchmark function to run performance tests */
 export default function (name: string, describe: Describe) {
     test.describe.configure({ timeout: describe.timeout || 3 * 60_000, mode: 'serial' });
@@ -220,37 +269,39 @@ export default function (name: string, describe: Describe) {
                 async ({ page, context }) => {
                     console.log(`Start time: ${(testStartTime = new Date()).toISOString()}`);
                     const result = {} as Record<'control' | 'variant', number[]>;
-                    const metricsGetter = () =>
-                        waitFor(
-                            testCase.metrics
-                                ? (metrics: TestCase['metrics']) => performance.getEntriesByType(metrics)
-                                : () => performance.getEntries(),
-                            page,
-                            { args: [testCase.metrics] }
-                        );
-                    let isSignificant = false;
+
+                    let significant = false;
                     do {
                         for (const variantName of ['control', 'variant'] as const) {
+                            result[variantName] ||= [];
                             const variant = testCase[variantName];
                             if (variant.cookies) {
                                 await context.clearCookies();
                                 await context.addCookies(variant.cookies);
                             }
-                            await gotoUrl(page, getUrl(testCase, variant));
-                            result[variantName] ||= [];
+                            const comms = await gotoUrl(page, getUrl(testCase, variant));
+                            await page.evaluate(
+                                (title) => (document.title = title),
+                                `Running ${variant.version} ${testCase.name} with ${testCase.framework}`
+                            );
+                            if (variant.shouldInjectScript) {
+                                await attachScripts(page, variant.version);
+                                // @ts-expect-error agGrid is not in the current scope
+                                await waitFor(() => typeof agGrid !== 'undefined', page);
+                            }
+                            testCase.preSetup && (await testCase.preSetup(page));
                             for (let i = 0; i < (Math.max(describe.minIterations, 3) ?? 10) + 3; i++) {
-                                await testCase.setup(page);
-                                const noiseEntries = await metricsGetter();
-                                await testCase.actions(page);
+                                testCase.setupPreActions && (await testCase.setupPreActions(page));
+                                const noiseSize = (await metricsGetter(page, testCase)).length;
+                                testCase.actions && (await testCase.actions(page));
                                 if (i > 3) {
-                                    // warmup iterations
-                                    const performanceEntries = await metricsGetter();
-                                    const duration = performanceEntries
-                                        .slice(noiseEntries.length)
-                                        .reduce((acc, pe) => acc + pe.duration, 0);
+                                    // skipped warmup iterations
+                                    const usefulEntries = (await metricsGetter(page, testCase)).slice(noiseSize);
+                                    const duration = usefulEntries.reduce((acc, pe) => acc + pe.duration, 0);
                                     result[variantName].push(duration);
                                 }
                             }
+                            testCase.expectsPostActions && (await testCase.expectsPostActions(page, comms));
                         }
                         console.log(
                             `Collected ${Object.entries(result)
@@ -260,8 +311,16 @@ export default function (name: string, describe: Describe) {
                         const stats = Object.fromEntries(
                             Object.entries(result).map(([version, durations]) => [version, computeStats(durations)])
                         );
-                        isSignificant = reportStats(stats, testCase);
-                    } while (!(isSignificant || result['control'].length > (describe.maxIterations ?? 1000))); // run until we do 1000 iterations or results are significant
+                        const [s1, s2] = Object.values(stats);
+                        significant = isSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError);
+                        if (significant) {
+                            reportStats(stats, testCase);
+                        } else {
+                            console.log(
+                                `\n${yellow('Result is statistically insignificant (')}${blue(`${s1.filteredCount}/${s1.originalCount}`)})${yellow('. Running more iterations...\n')}`
+                            );
+                        }
+                    } while (!(significant || result['control'].length > (describe.maxIterations ?? 1000))); // run until we do 1000 iterations or results are significant
                     console.log(
                         `End time: ${new Date().toISOString()}`,
                         `Took: ${(new Date().getTime() - testStartTime.getTime()) / 1000} seconds`

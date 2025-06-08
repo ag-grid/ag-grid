@@ -3,31 +3,60 @@ import type { Page } from '@playwright/test';
 type ConsoleMessage = {
     type: string;
     text: string;
-    args: any[];
+    args: Promise<any[]>;
 };
-type BrowserCommunications = {
+
+type RequestFinishedMessage = {
+    url: string;
+    method: string;
+    headers: { [p: string]: string };
+    postData: string;
+    response: Promise<{
+        status: number;
+        statusText: string;
+        headers: { [p: string]: string };
+    }>;
+};
+
+export type BrowserCommunications = {
     consoleMsgs: ConsoleMessage[];
+    requestMsgs: RequestFinishedMessage[];
     clear: () => void;
 };
 
-export async function getBrowserCommunications(page: Page): Promise<BrowserCommunications> {
+export function getBrowserCommunications(page: Page): BrowserCommunications {
     const consoleMsgs: ConsoleMessage[] = [];
+    const requestMsgs: RequestFinishedMessage[] = [];
     page.on('console', (msg) => {
         consoleMsgs.push({
             type: msg.type(),
             text: msg.text(),
-            args: msg.args().map((arg) => arg.jsonValue()),
+            args: Promise.all(msg.args().map((arg) => arg.jsonValue())),
+        });
+    });
+    page.on('requestfinished', (request) => {
+        requestMsgs.push({
+            url: request.url(),
+            method: request.method(),
+            headers: request.headers(),
+            postData: request.postData(),
+            response: request.response().then((response) => ({
+                status: response.status(),
+                statusText: response.statusText(),
+                headers: response.headers(),
+            })),
         });
     });
     return {
         consoleMsgs,
+        requestMsgs,
         clear: () => {
             consoleMsgs.length = 0;
         },
     };
 }
 
-export const waitForTimeout = async (timeout: number): Promise<void> => {
+export const waitForMs = async (timeout: number): Promise<void> => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 
@@ -76,7 +105,7 @@ export const waitFor = async <T>(
 };
 
 export const gotoUrl = async (page: Page, url: string) => {
-    const msgs = await getBrowserCommunications(page);
+    const msgs = getBrowserCommunications(page);
     await page.goto(url, { waitUntil: 'networkidle' });
     return msgs;
 };
