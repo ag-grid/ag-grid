@@ -40,14 +40,13 @@ export default defineConfig({
         trace: 'on-first-retry',
     },
     expect: {
-        timeout: 1500,
         toMatchSnapshot: {
             maxDiffPixels: 0,
-            threshold: 0.04,
+            threshold: 0.01,
         },
         toHaveScreenshot: {
             maxDiffPixels: 0,
-            threshold: 0.04,
+            threshold: 0.01,
         },
     },
 

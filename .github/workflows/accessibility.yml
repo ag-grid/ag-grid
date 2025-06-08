@@ -1,0 +1,145 @@
+name: Accessibility
+  
+on:
+  push:
+    branches:
+      - 'seanlandsman-patch-9'
+#  issue_comment:
+#    types: [created]
+  workflow_dispatch:
+#  schedule:
+#    - cron: '0 0 * * *' # Run daily at midnight UTC
+
+env:
+  NX_NO_CLOUD: true
+  NX_BRANCH: ${{ github.ref }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  SHARP_IGNORE_GLOBAL_LIBVIPS: true
+  YARN_REGISTRY: "http://52.50.158.57:4873"
+  CI: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/latest' }}
+
+jobs:
+  setup:
+    name: Setup
+    outputs:
+      nx_base: ${{ steps.setup.outputs.base }}
+      setup: ${{ steps.setup.outcome || '' }}
+      e2e_accessiblity_count: ${{ steps.matrix.outputs.e2e_accessiblity_count }}
+      e2e_accessiblity_matrix: ${{ steps.matrix.outputs.e2e_accessiblity_matrix }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
+
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
+      - name: calculate matrix
+        id: matrix
+        run: |
+          accessiblity_count=30
+          e2e_accessiblity_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 ${accessiblity_count})
+          echo "e2e_accessiblity_matrix=${e2e_accessiblity_matrix}" >> $GITHUB_OUTPUT
+          echo "e2e_accessiblity_count=${accessiblity_count}" >> $GITHUB_OUTPUT
+          echo "e2e accessiblity matrix determined to be: ${e2e_accessiblity_matrix}"
+
+  e2e_accessibility:
+    runs-on: ubuntu-latest
+    name: e2e accessibility Tests
+    needs: setup
+    if: needs.setup.outputs.e2e_accessiblity_count > 0
+    strategy:
+      matrix: ${{ fromJson(needs.setup.outputs.e2e_accessiblity_matrix )}}
+      fail-fast: false
+    env:
+      NX_PARALLEL: 1
+      NX_BASE: ${{ needs.setup.outputs.nx_base }}
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
+      - name: nx test:e2e:accessibility
+        id: tests
+        run: yarn nx run ag-grid-accessibility:test:e2e:accessibility --shard=${{ matrix.shard }}/$((${{ strategy.job-total }}))
+
+      - name: Persist test results
+        if: always() && matrix.shard != 0
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-e2e-accessiblity-shard-${{matrix.shard}}
+          path: |
+            reports/
+
+  report:
+    runs-on: ubuntu-24.04
+    permissions: write-all
+    needs: [ setup, e2e_accessibility ]
+    if: cancelled() != true
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: test-results/
+
+      - name: Merge JUnit Report XMLs
+        run: |
+          yarn global add junit-report-merger
+          reports=$(find test-results/ -name \*.xml -type f -exec basename \{\} \; | sort | uniq)
+          mkdir -p reports/
+          echo "$reports" | (while read name ; do
+            yarn exec -s jrm reports/${name} "test-results/**/${name}"
+          done)
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: needs.test.result == 'success' || needs.test.result == 'failure' ||
+          needs.e2e.result == 'success' || needs.e2e.result == 'failure' ||
+          needs.bundle_size.result == 'success' || needs.bundle_size.result == 'failure' ||
+          needs.e2e_accessibility.result == 'success' || needs.e2e_accessibility.result == 'failure'
+        id: testReport
+        continue-on-error: true
+        with:
+          name: 'Tests Results'
+          path: reports/*.xml
+          reporter: java-junit
+

@@ -1,0 +1,28 @@
+{
+  "name": "ag-grid-accessibility",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/accessibility",
+  "projectType": "application",
+  "targets": {
+    "setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx playwright install --with-deps chromium",
+          "npm run download-examples",
+          "mkdir -p e2e",
+          "npm run generate-tests"
+        ],
+        "cwd": "testing/accessibility"
+      }
+    },
+    "test:e2e:accessibility": {
+      "executor": "nx:run-script",
+      "dependsOn": ["setup"],
+      "options": {
+        "script": "playwright test"
+      }
+    }
+  },
+  "tags": ["accessibility", "testing"]
+}

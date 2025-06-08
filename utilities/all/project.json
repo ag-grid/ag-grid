@@ -237,6 +237,7 @@
     "external/ag-website-shared",
     "external/ag-shared",
     "testing/behavioural",
+    "testing/accessibility",
     "ag-grid-generate-example-files"
   ],
   "tags": []
