@@ -182,10 +182,13 @@ function isSignificant(diff: number, moe1: number, moe2: number) {
  * Reports the statistics of the performance test results.
  * Returns true if the results are significant, false otherwise.
  */
-function reportStats(stats: Record<string, ReturnType<typeof computeStats>>, testCase: TestCase) {
-    const [v1, v2] = Object.keys(stats);
-    const s1 = stats[v1];
-    const s2 = stats[v2];
+function reportStats(
+    stats: Record<'control' | 'variant', ReturnType<typeof computeStats>>,
+    testCase: TestCase,
+    significant: boolean
+) {
+    const s1 = stats.control;
+    const s2 = stats.variant;
 
     const diff = s1.average - s2.average;
     const slower = diff > 0 ? testCase.control.version : testCase.variant.version;
@@ -200,9 +203,16 @@ function reportStats(stats: Record<string, ReturnType<typeof computeStats>>, tes
     const numbersString = `${diff.toFixed(2)} ± ${avgMoE.toFixed(2)}`;
     const percentString = `${percentDiff.toFixed(1)}% ± ${avgMoEPercent.toFixed(1)}%`;
 
+    if (!significant) {
+        console.log(
+            `\n${yellow(`Result is statistically insignificant (`)}${green(percentString)}, ${blue(`${s1.filteredCount}/${s1.originalCount}`)})${yellow('. Running more iterations...\n')}`
+        );
+        return;
+    }
+
     const resultMessage =
         percentDiff - avgMoEPercent <= 2
-            ? `${cyan('Both')} ${magenta(testCase[v1].version)} and ${magenta(testCase[v2].version)}${cyan(` seem to be equal (${slower} is slightly slower than ${faster}): `)}${green(percentString)} (${numbersString}).\n${yellow(
+            ? `${cyan('Both')} ${magenta(testCase.control.version)} and ${magenta(testCase.variant.version)}${cyan(` seem to be equal (${slower} is slightly slower than ${faster}): `)}${green(percentString)} (${numbersString}).\n${yellow(
                   'Even though the data is statistically significant, it is safer to re-run the test with more iterations to confirm.'
               )}`
             : `${magenta(slower)}${cyan(' is slower than ')}${magenta(faster)}${cyan(' by ')}${green(percentString)} (${numbersString})`;
@@ -217,8 +227,8 @@ function reportStats(stats: Record<string, ReturnType<typeof computeStats>>, tes
         ${green('StdDev:')} ${stats.stdDev.toFixed(2)}
         ${green('Sample size:')} ${blue(`${stats.filteredCount}/${stats.originalCount}`)}`;
 
-    console.log(detailsFormat(testCase[v1].version, s1));
-    console.log(`${detailsFormat(testCase[v2].version, s2)}`);
+    console.log(detailsFormat(testCase.control.version, s1));
+    console.log(detailsFormat(testCase.variant.version, s2));
 }
 
 function attachScript(page: Page, url: string) {
@@ -229,7 +239,7 @@ function attachScript(page: Page, url: string) {
     }, url);
 }
 
-function attachScripts(page: Page, version: Version) {
+async function attachScripts(page: Page, version: Version) {
     const chartsVersion: CustomVersion = gridToChartsMap[version] || gridToChartsMap.prod;
 
     const urls = [getCdnUrl('ag-grid-community', version), getCdnUrl('ag-grid-enterprise', version)];
@@ -244,53 +254,59 @@ function attachScripts(page: Page, version: Version) {
             getCdnUrl('ag-charts-types', chartsVersion, '/'),
         ];*/
     }
-    return Promise.all(urls.map(attachScript.bind(this, page)));
+    await Promise.all(urls.map(attachScript.bind(this, page)));
+    // @ts-expect-error agGrid is not in the current scope
+    await waitFor(() => typeof agGrid !== 'undefined', page);
+}
+function updatePageTitle(page: Page, testCase: TestCase, variant: Variant) {
+    return page.evaluate(
+        (title) => (document.title = title),
+        `Running ${variant.version} ${testCase.name} with ${testCase.framework}`
+    );
 }
 
 function isCustomVersion(version: Version): version is CustomVersion {
     return version.startsWith('v');
 }
-const metricsGetter = (page: Page, testCase: TestCase) =>
-    waitFor(
+
+function metricsGetter(page: Page, testCase: TestCase) {
+    return waitFor(
         testCase.metrics
             ? (metrics: TestCase['metrics']) => performance.getEntriesByType(metrics)
             : () => performance.getEntries(),
         page,
         { args: [testCase.metrics] }
     );
+}
+
+async function attachCookies(context: BrowserContext, variant: Variant) {
+    await context.clearCookies();
+    await context.addCookies(variant.cookies);
+}
+
 /** Generic benchmark function to run performance tests */
 export default function (name: string, describe: Describe) {
     test.describe.configure({ timeout: describe.timeout || 3 * 60_000, mode: 'serial' });
-    let testStartTime: Date | undefined;
     return test.describe(name, () => {
+        const minIterations = (Math.max(describe.minIterations, 3) ?? 10) + 3;
+        const maxIterations = describe.maxIterations ?? 1000;
         describe.testCases.forEach((testCase, i) => {
             (testCase.skip ? test.skip : test)(
                 `${i + 1} Running ${testCase.name} with ${testCase.framework}`,
                 async ({ page, context }) => {
-                    console.log(`Start time: ${(testStartTime = new Date()).toISOString()}`);
-                    const result = {} as Record<'control' | 'variant', number[]>;
+                    console.time('Duration');
+                    const result = { control: [] as number[], variant: [] as number[] };
 
                     let significant = false;
                     do {
                         for (const variantName of ['control', 'variant'] as const) {
-                            result[variantName] ||= [];
                             const variant = testCase[variantName];
-                            if (variant.cookies) {
-                                await context.clearCookies();
-                                await context.addCookies(variant.cookies);
-                            }
+                            variant.cookies && (await attachCookies(context, variant));
                             const comms = await gotoUrl(page, getUrl(testCase, variant));
-                            await page.evaluate(
-                                (title) => (document.title = title),
-                                `Running ${variant.version} ${testCase.name} with ${testCase.framework}`
-                            );
-                            if (variant.shouldInjectScript) {
-                                await attachScripts(page, variant.version);
-                                // @ts-expect-error agGrid is not in the current scope
-                                await waitFor(() => typeof agGrid !== 'undefined', page);
-                            }
+                            void updatePageTitle(page, testCase, variant);
+                            variant.shouldInjectScript && (await attachScripts(page, variant.version));
                             testCase.preSetup && (await testCase.preSetup(page));
-                            for (let i = 0; i < (Math.max(describe.minIterations, 3) ?? 10) + 3; i++) {
+                            for (let i = 0; i < minIterations; i++) {
                                 testCase.setupPreActions && (await testCase.setupPreActions(page));
                                 const noiseSize = (await metricsGetter(page, testCase)).length;
                                 testCase.actions && (await testCase.actions(page));
@@ -303,28 +319,14 @@ export default function (name: string, describe: Describe) {
                             }
                             testCase.expectsPostActions && (await testCase.expectsPostActions(page, comms));
                         }
-                        console.log(
-                            `Collected ${Object.entries(result)
-                                .map(([v, d]) => `${v}: ${d.length}`)
-                                .join(', ')} entries`
-                        );
-                        const stats = Object.fromEntries(
-                            Object.entries(result).map(([version, durations]) => [version, computeStats(durations)])
-                        );
-                        const [s1, s2] = Object.values(stats);
+                        const s1 = computeStats(result.control);
+                        const s2 = computeStats(result.variant);
+                        console.log(`Collected ${s1.originalCount} entries`);
                         significant = isSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError);
-                        if (significant) {
-                            reportStats(stats, testCase);
-                        } else {
-                            console.log(
-                                `\n${yellow('Result is statistically insignificant (')}${blue(`${s1.filteredCount}/${s1.originalCount}`)})${yellow('. Running more iterations...\n')}`
-                            );
-                        }
-                    } while (!(significant || result['control'].length > (describe.maxIterations ?? 1000))); // run until we do 1000 iterations or results are significant
-                    console.log(
-                        `End time: ${new Date().toISOString()}`,
-                        `Took: ${(new Date().getTime() - testStartTime.getTime()) / 1000} seconds`
-                    );
+                        reportStats({ control: s1, variant: s2 }, testCase, significant);
+                    } while (!(significant || result['control'].length > maxIterations)); // run until we do 1000 iterations or results are significant
+                    console.log('Test ended at ' + new Date().toISOString());
+                    console.timeEnd('Duration');
                 }
             );
         });
