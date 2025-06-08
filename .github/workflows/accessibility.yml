@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - 'seanlandsman-patch-9'
-  issue_comment:
-    types: [created]
-  workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * *' # Run daily at midnight UTC
+#  issue_comment:
+#    types: [created]
+#  workflow_dispatch:
+#  schedule:
+#    - cron: '0 0 * * *' # Run daily at midnight UTC
 
 env:
   NX_NO_CLOUD: true
