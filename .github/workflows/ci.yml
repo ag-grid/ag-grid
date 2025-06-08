@@ -488,7 +488,7 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    permissions: write-all
+    permissions:
       contents: write
       pull-requests: write
     needs: [ build_lint, e2e_accessibility ]
