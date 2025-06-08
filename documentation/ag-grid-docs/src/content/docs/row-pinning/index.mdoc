@@ -15,31 +15,6 @@ const gridOptions = {
 }
 ```
 
-## Pinning Rows via the Context Menu
-
-{% note %}
-This approach requires the [Context Menu](./context-menu) which is an Enterprise feature.
-{% /note %}
-
-To pin a row use right-click to bring up the [Context Menu](./context-menu) and select one of the options in the "Pin Row" submenu. In the example below, try the following:
-1. Pin a row to the top.
-2. Switch the row to being pinned to the bottom.
-3. Unpin the row.
-
-{% gridExampleRunner title="Simple Row Pinning" name="simple-pinning" /%}
-
-Note that rows that have been pinned also appear greyed-out in the main viewport. All the examples on this page also apply additional styling to visually differentiate the pinned rows from the rows in the main viewport.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    theme: themeQuartz.withParts({
-        pinnedRowBorder: { 
-            width: 3 
-        }
-    })
-}
-```
-
 ## Pinning Rows on First Render
 To have a row appear as pinned when the grid initially renders data, use the `isRowPinned` callback. As an example, the snippet below will pin all rows whose `country` field is `null` in the top container.
 
@@ -52,9 +27,36 @@ const gridOptions = {
 }
 ```
 
-This is illustrated in the example below.
+This is illustrated in the example below. Rows that are pinned appear fixed at the top (or bottom) of the grid, as well as remaining in the main viewport. Pinned rows are styled bold by default to visually distinguish them.
 
 {% gridExampleRunner title="Pinning on First Render" name="pinning-on-render" /%}
+
+Note that all the examples on this page also apply additional styling to visually separate the pinned rows from the rows in the main viewport.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    theme: themeQuartz.withParts({
+        pinnedRowBorder: { 
+            width: 2
+        },
+    })
+}
+```
+
+To see what other parameters are available for the theming of pinned rows, see the [Theme Builder](/theme-builder).
+
+## Pinning Rows via the Context Menu
+
+{% note %}
+This approach requires the [Context Menu](./context-menu) which is an Enterprise feature.
+{% /note %}
+
+To pin a row use right-click to bring up the [Context Menu](./context-menu) and select one of the options in the "Pin Row" submenu. In the example below, try the following:
+1. Pin a row to the top.
+2. Switch the row to being pinned to the bottom.
+3. Unpin the row.
+
+{% gridExampleRunner title="Simple Row Pinning" name="simple-pinning" /%}
 
 ## Preventing Rows from being Pinnable
 To prevent a user from pinning a row via the context menu, use the `isRowPinnable` callback. As an example, the snippet below will prevent any rows being pinned where the `sport` field is `'Swimming'`.
@@ -85,18 +87,18 @@ Pinned rows can be selected just as normal rows can be selected. The selection s
 ## Pinning the Grand Total Row
 The [Grand Total Rows](./aggregation-total-rows/#enabling-a-grand-total-row) can be pinned in two ways. 
 
-1. Setting the value of the `grandTotalRow` grid option to either `'pinnedTop'` or `'pinnedBottom'`.
+1. Setting the value of the `grandTotalRowPinned` grid option to either `'top'` or `'bottom'`.
 2. Manually pin the grand total row via the context menu when `grandTotalRow` is either `'top'` or `'bottom'`.
 3. Return `'top'` or `'bottom'` from the `isRowPinned` callback when it's called on the grand total row node.
 
 {% gridExampleRunner title="Pinning Grand Total Row" name="pinning-grand-total" exampleHeight=650 /%}
 
-Note that when `grandTotalRow` is `'pinnedTop'` or `'pinnedBottom'` and the user _unpins_ the grand total row, it will behave as if it were set to `'top'` and `'bottom'`, respectively.
+Note that when `grandTotalRowPinned` is `'top'` or `'bottom'` the user is not able to unpin the grand total row.
 
 ## Providing Pinned Row Data
 
 {% note %}
-This approach cannot be used at the same time as using `enableRowPinning`.
+You cannot provide pinned row data at the same time as using `enableRowPinning` to manually pin rows.
 {% /note %}
 
 Pinned row data may be provided directly to the grid via Grid Options. Providing pinned rows this way means they cannot be altered by end users.
@@ -123,7 +125,15 @@ When providing pinned row data directly via `pinnedTopRowData` and `pinnedBottom
 
 ## API Reference
 
+{% note %}
+The pinned row state can be saved and restored as part of [Grid State](./grid-state/).
+{% /note %}
+
 {% apiDocumentation source="grid-options/properties.json" section="rowPinning" names=["enableRowPinning", "isRowPinnable", "isRowPinned"] /%}
+
+### Events
+
+{% apiDocumentation source="grid-events/events.json" section="rowPinning" names=["pinnedRowsChanged"] /%}
 
 ## Next Up
 

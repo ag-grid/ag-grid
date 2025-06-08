@@ -345,7 +345,8 @@
         "columnHeaderMouseLeave": {},
         "columnHeaderClicked": {},
         "columnHeaderContextMenu": {},
-        "pivotMaxColumnsExceeded": {}
+        "pivotMaxColumnsExceeded": {},
+        "resetColumns": {}
     },
     "rowGrouping": {
         "meta": {
@@ -398,6 +399,15 @@
             "more": {
                 "name": "Grid State",
                 "url": "./grid-state/"
+            }
+        }
+    },
+    "find": {
+        "meta": {
+            "displayName": "Find",
+            "page": {
+                "name": "Find",
+                "url": "./find/"
             }
         },
         "findChanged": {
@@ -474,7 +484,8 @@
                 "url": "./row-pinning/"
             }
         },
-        "pinnedRowDataChanged": {}
+        "pinnedRowDataChanged": {},
+        "pinnedRowsChanged": {}
     },
     "tooltips": {
         "meta": {

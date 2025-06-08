@@ -16,7 +16,10 @@ export interface AbstractColDef<TData = any, TValue = any> {
     headerName?: string;
     /** Function or expression. Gets the value for display in the header. */
     headerValueGetter?: string | HeaderValueGetterFunc<TData, TValue>;
-    /** Tooltip for the column header */
+    /**
+     * Tooltip for the column header
+     * @agModule `TooltipModule`
+     */
     headerTooltip?: string;
     /** An object of CSS values / or function returning an object of CSS values for a particular header. */
     headerStyle?: HeaderStyle | HeaderStyleFunc<TData, TValue>;
@@ -27,26 +30,35 @@ export interface AbstractColDef<TData = any, TValue = any> {
 
     /** Whether to only show the column when the group is open / closed. If not set the column is always displayed as part of the group. */
     columnGroupShow?: ColumnGroupShowType;
-    /** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */
+    /**
+     * CSS class to use for the tool panel cell. Can be a string, array of strings, or function.
+     * @agModule `ColumnsToolPanelModule`
+     */
     toolPanelClass?: ToolPanelClass<TData, TValue>;
     /**
      * Set to `true` if you do not want this column or group to appear in the Columns Tool Panel.
      * @default false
+     * @agModule `ColumnsToolPanelModule`
      */
     suppressColumnsToolPanel?: boolean;
 
     /**
      * Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel.
      * @default false
+     * @agModule `ColumnsToolPanelModule`
      */
     suppressFiltersToolPanel?: boolean;
 
     /**
      * Provide your own tooltip component for the column.
      * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/tooltips/) for framework specific implementation details.
+     * @agModule `TooltipModule`
      */
     tooltipComponent?: any;
-    /** The params used to configure `tooltipComponent`. */
+    /**
+     * The params used to configure `tooltipComponent`.
+     * @agModule `TooltipModule`
+     */
     tooltipComponentParams?: any;
 
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
@@ -112,6 +124,7 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
     /**
      * Customise the list of menu items available in the column group header context menu (on right-click).
      * The column menu button is not displayed for column groups.
+     * @agModule `ColumnMenuModule`
      */
     mainMenuItems?: (DefaultMenuItem | MenuItemDef<TData>)[] | GetMainMenuItems<TData>;
 }
@@ -339,7 +352,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Provide your own cell editor component for this column's cells.
      */
     cellEditor?: any;
-    /** Params to be passed to the `cellEditor` component. */
+    /**
+     * Params to be passed to the `cellEditor` component.
+     */
     cellEditorParams?: any;
     /** Callback to select which cell editor to be used for a given row within the same column. */
     cellEditorSelector?: CellEditorSelectorFunc<TData, TValue>;
@@ -386,7 +401,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns: Filtering *** //
 
-    /** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */
+    /**
+     *  A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value).
+     * @agModule `QuickFilterModule`
+     */
     getQuickFilterText?: (params: GetQuickFilterTextParams<TData, TValue>) => string;
     /**
      * Function or expression. Gets the value for filtering purposes.
@@ -395,7 +413,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Whether to display a floating filter for this column.
      * @default false
-     * @agModule `ColumnFilterModule`
      */
     floatingFilter?: boolean;
     /**
@@ -416,6 +433,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * When using Find with custom cell renderers, this allows providing a custom value to search within.
      * E.g. if the cell renderer is displaying text that is different from the cell formatted value.
      * Returning `null` means Find will not search within the cell.
+     * @agModule `FindModule`
      */
     getFindText?: GetFindTextFunc<TData, TValue>;
 
@@ -452,6 +470,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     suppressHeaderFilterButton?: boolean;
     /**
      * Customise the list of menu items available in the column menu.
+     * @agModule `ColumnMenuModule`
      */
     mainMenuItems?: (DefaultMenuItem | MenuItemDef<TData>)[] | GetMainMenuItems<TData>;
     /**
@@ -482,7 +501,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns: Integrated Charts *** //
 
-    /** Defines the chart data type that should be used for a column. */
+    /** Defines the chart data type that should be used for a column.
+     * @agModule `IntegratedChartsModule`
+     */
     chartDataType?: 'category' | 'series' | 'time' | 'excluded';
 
     // *** Columns: Pinned *** //
@@ -504,26 +525,26 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /**
      * Set to true to pivot by this column.
-     * @agModule `PivotModule` / `ServerSideRowModelModule`
+     * @agModule `PivotModule`
      */
     pivot?: boolean;
     /**
      * Same as `pivot`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
-     * @agModule `PivotModule` / `ServerSideRowModelModule`
+     * @agModule `PivotModule`
      */
     initialPivot?: boolean;
     /**
      * Set this in columns you want to pivot by.
      * If only pivoting by one column, set this to any number (e.g. `0`).
      * If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (e.g. `0` for first, `1` for second, and so on).
-     * @agModule `PivotModule` / `ServerSideRowModelModule`
+     * @agModule `PivotModule`
      */
     pivotIndex?: number | null;
     /**
      * Same as `pivotIndex`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
-     * @agModule `PivotModule` / `ServerSideRowModelModule`
+     * @agModule `PivotModule`
      */
     initialPivotIndex?: number;
     /**
@@ -538,7 +559,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot.
      * @default false
-     * @agModule `PivotModule` / `ServerSideRowModelModule`
+     * @agModule `PivotModule`
      */
     enablePivot?: boolean;
 
@@ -610,6 +631,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
      * If this callback is not set, the `rowDragText` callback in the `gridOptions` will be used and
      * if there is no callback in the `gridOptions` the current cell value will be used.
+     * @agModule `RowDragModule`
      */
     rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
 
@@ -630,67 +652,72 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` to row group by this column.
      * @default false
-     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
+     * @agModule `RowGroupingModule`
      */
     rowGroup?: boolean;
     /**
      * Same as `rowGroup`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
-     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
+     * @agModule `RowGroupingModule`
      */
     initialRowGroup?: boolean;
     /**
      * Set this in columns you want to group by.
      * If only grouping by one column, set this to any number (e.g. `0`).
      * If grouping by multiple columns, set this to where you want this column to be in the group (e.g. `0` for first, `1` for second, and so on).
-     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
+     * @agModule `RowGroupingModule`
      */
     rowGroupIndex?: number | null;
     /**
      * Same as `rowGroupIndex`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
-     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
+     * @agModule `RowGroupingModule`
      */
     initialRowGroupIndex?: number;
     /**
      * Set to `true` if you want to be able to row group by this column via the GUI.
      * This will not block the API or properties being used to achieve row grouping.
      * @default false
-     * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
+     * @agModule `RowGroupingModule`
      */
     enableRowGroup?: boolean;
     /**
      * Set to `true` if you want to be able to aggregate by this column via the GUI.
      * This will not block the API or properties being used to achieve aggregation.
      * @default false
-     * @agModule `RowGroupingModule`/ `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     enableValue?: boolean;
     /**
      * Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function.
-     * @agModule `RowGroupingModule`/ `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     aggFunc?: string | IAggFunc<TData, TValue> | null;
     /**
      * Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     initialAggFunc?: string | IAggFunc<TData, TValue>;
     /**
      * The name of the aggregation function to use for this column when it is enabled via the GUI.
      * Note that this does not immediately apply the aggregation function like `aggFunc`
      * @default 'sum'
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     defaultAggFunc?: string;
     /**
      * Aggregation functions allowed on this column e.g. `['sum', 'avg']`.
      * If missing, all installed functions are allowed.
-     * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API. */
+     * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API.
+     * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
+     * */
     allowedAggFuncs?: string[];
 
     /**
      * Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group.
      * @initial
+     * @agModule `RowGroupingModule`
      */
     showRowGroup?: string | boolean;
 

@@ -4,6 +4,10 @@ title: "Filter API"
 
 You can access and set the models for filters through the grid API, or access individual filter instances directly for more control. This page details how to do both.
 
+{% note %}
+The filter model can be saved and restored as part of [Grid State](./grid-state/).
+{% /note %}
+
 ## Get / Set All Filter Models
 
 It is possible to get the state of all filters using the grid API method `getFilterModel()`, and to set the state using
@@ -166,6 +170,7 @@ The following example demonstrates all of the Provided Filters with `readOnly: t
   * `sport` column demonstrates [Multi Filter](./filter-multi/).
 * [Floating Filters](./floating-filters/) are enabled and inherit `readOnly: true` from their parent, disabling any UI input.
 * Buttons above the grid provide API interactions to configure the filters.
+* `Print Country` button prints the country model to the developer console.
 
 {% gridExampleRunner title="Read-only Filter UI" name="filter-api-readonly"  exampleHeight=624 /%}
 

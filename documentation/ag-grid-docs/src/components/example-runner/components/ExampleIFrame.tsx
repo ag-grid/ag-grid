@@ -1,5 +1,5 @@
+import { useIntersectionObserver } from '@ag-website-shared/utils/hooks/useIntersectionObserver';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
-import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import classnames from 'classnames';
 import { type FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 

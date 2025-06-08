@@ -1,12 +1,22 @@
 import type { CellRangeType } from './IRangeService';
 import type { AdvancedFilterModel } from './advancedFilterModel';
-import type { FilterModel } from './iFilter';
+import type { ColumnFilterState, FilterModel } from './iFilter';
 import type { RowPosition } from './iRowPosition';
 import type { SortModelItem } from './iSortModelItem';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './selectionState';
 
 export interface FilterState {
+    /**
+     * Filter model for Column Filters
+     */
     filterModel?: FilterModel;
+    /**
+     * State for Column Filters
+     */
+    columnFilterState?: ColumnFilterState;
+    /**
+     * Filter model for Advanced Filter
+     */
     advancedFilterModel?: AdvancedFilterModel;
 }
 
@@ -188,6 +198,9 @@ export interface GridState {
     /**
      * When providing a partial `initialState` with some but not all column state properties, set this to `true`.
      * Not required if passing the whole state object retrieved from the grid.
+     * Not used for `api.setState()`, as that instead takes a second argument of properties to ignore.
      */
     partialColumnState?: boolean;
 }
+
+export type GridStateKey = Exclude<keyof GridState, 'version' | 'partialColumnState' | 'rangeSelection'>;

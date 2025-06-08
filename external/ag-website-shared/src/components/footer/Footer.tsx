@@ -1,4 +1,5 @@
 import type { FooterItem } from '@ag-grid-types';
+import { DevToolsToggle } from '@ag-website-shared/components/dev-tools/DevTools';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { SiteLogo } from '@components/SiteLogo';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
@@ -40,7 +41,8 @@ export const Footer = ({ showMicrosoftMessage, footerItems }: FooterProps) => {
                     <p className="text-sm">&copy; AG Grid Ltd. 2015-{new Date().getFullYear()}</p>
 
                     <p className="text-sm">
-                        AG Grid Ltd registered in the United Kingdom. Company&nbsp;No.&nbsp;07318192.
+                        <DevToolsToggle>AG Grid Ltd registered</DevToolsToggle> in the United Kingdom.
+                        Company&nbsp;No.&nbsp;07318192.
                     </p>
 
                     {showMicrosoftMessage && (

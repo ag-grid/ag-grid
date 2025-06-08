@@ -21,7 +21,7 @@ export function _isHiddenParent(node: RowNode, ancestor: RowNode, gos: GridOptio
     }
 
     for (let i = 0; i < levelDiff; i++) {
-        const isFirstChild = currentNode.parent?.childrenAfterSort?.[0] === currentNode;
+        const isFirstChild = currentNode.parent?.getFirstChild() === currentNode;
         if (!isFirstChild) {
             return false;
         }

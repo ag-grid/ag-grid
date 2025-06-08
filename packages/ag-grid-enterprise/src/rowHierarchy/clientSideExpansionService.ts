@@ -22,11 +22,18 @@ export class ClientSideExpansionService extends BaseExpansionService implements 
         this.rowModel = beans.rowModel as IClientSideRowModel;
     }
 
-    public expandRows(rowIds: string[]): void {
-        const rowIdSet = new Set(rowIds);
+    public expandRows(rowIdsToExpand: string[], rowIdsToCollapse?: string[]): void {
+        const rowIdsToExpandSet = new Set(rowIdsToExpand);
+        const rowIdsToCollapseSet = rowIdsToCollapse ? new Set(rowIdsToCollapse) : undefined;
         this.rowModel.forEachNode((node) => {
-            if (node.id && rowIdSet.has(node.id)) {
+            const id = node.id;
+            if (!id) {
+                return;
+            }
+            if (rowIdsToExpandSet.has(id)) {
                 node.expanded = true;
+            } else if (rowIdsToCollapseSet?.has(id)) {
+                node.expanded = false;
             }
         });
         this.onGroupExpandedOrCollapsed();
@@ -109,6 +116,13 @@ export class ClientSideExpansionService extends BaseExpansionService implements 
         const func = () => {
             this.rowModel.onRowGroupOpened();
             this.events.forEach((e) => this.eventSvc.dispatchEvent(e));
+
+            // when using footers we need to refresh the group row, as the aggregation
+            // values jump between group and footer, because the footer can be callback
+            // we refresh regardless as the output of the callback could be a moving target
+            const nodes = this.events.map((e) => e.node);
+            this.beans.rowRenderer.refreshCells({ rowNodes: nodes });
+
             this.events = [];
         };
 

@@ -3,10 +3,10 @@ import { ToggleAutomatedExampleButton } from '@ag-website-shared/components/auto
 import { UpdateSpeedSlider } from '@ag-website-shared/components/automated-examples/UpdateSpeedSlider';
 import { createAutomatedRowGrouping } from '@ag-website-shared/components/automated-examples/examples/row-grouping';
 import { ROW_GROUPING_ID } from '@ag-website-shared/components/automated-examples/lib/constants';
+import { useIntersectionObserver } from '@ag-website-shared/utils/hooks/useIntersectionObserver';
 import LogoMark from '@components/logo/LogoMark';
 import { useStore } from '@nanostores/react';
 import { trackHomepageExampleRowGrouping, trackOnceHomepageExampleRowGrouping } from '@utils/analytics';
-import { useIntersectionObserver } from '@utils/hooks/useIntersectionObserver';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
 import { useCallback, useEffect, useRef, useState } from 'react';

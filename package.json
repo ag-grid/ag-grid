@@ -1,13 +1,14 @@
 {
   "name": "ag-grid",
-  "version": "33.2.3",
+  "version": "33.3.0",
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
     "build-generators": "nx run-many -p ag-grid-task-autogen -t build",
     "subrepo": "tsx external/ag-shared/scripts/subrepo",
     "postinstall": "patch-package && yarn run build-generators",
-    "bootstrap": "SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY=\"http://52.50.158.57:4873\" yarn"
+    "bootstrap": "SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY=\"http://52.50.158.57:4873\" yarn",
+    "git-clean": "git clean -fdx && git reset --hard HEAD"
   },
   "private": true,
   "engines": {
@@ -79,7 +80,7 @@
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.1",
     "tsx": "4.8.2",
-    "typescript": "~5.2.2",
+    "typescript": "~5.4.5",
     "typescript-eslint": "^7.9.0",
     "vite": "~5.0.13",
     "vitest": "2.1.6"
@@ -111,5 +112,8 @@
       "**/vue-class-component"
     ]
   },
-  "packageManager": "yarn@1.22.21"
+  "packageManager": "yarn@1.22.21",
+  "resolutions": {
+    "undici": "6.21.3"
+  }
 }

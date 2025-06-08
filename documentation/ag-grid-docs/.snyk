@@ -1,0 +1,18 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+    SNYK-JS-JPEGJS-2859218:
+        - gif-frames > get-pixels-frame-info-update > jpeg-js:
+              reason: >-
+                  Used by gif-frames, and that is only run during build with gif images
+                  that are in our control
+              expires: 2026-06-05T14:36:23.501Z
+              created: 2025-06-05T14:36:23.503Z
+        - gif-frames > save-pixels-jpeg-js-upgrade > jpeg-js:
+              reason: >-
+                  Used by gif-frames, and that is only run during build with gif images
+                  that are in our control
+              expires: 2026-06-05T14:36:23.501Z
+              created: 2025-06-05T14:36:23.503Z
+patch: {}

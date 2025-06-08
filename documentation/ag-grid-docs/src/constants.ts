@@ -93,6 +93,18 @@ export const STAGING_SITE_URL = 'https://grid-staging.ag-grid.com';
 export const PRODUCTION_SITE_URLS = ['https://ag-grid.com', 'https://www.ag-grid.com'];
 export const USE_PUBLISHED_PACKAGES = isTruthy(import.meta.env?.PUBLIC_USE_PUBLISHED_PACKAGES);
 
+export const URL_CONFIG: Record<'local' | 'staging' | 'production', { hosts: string[]; baseUrl?: string }> = {
+    local: {
+        hosts: ['localhost:4610'],
+    },
+    staging: {
+        hosts: ['grid-staging.ag-grid.com'],
+    },
+    production: {
+        hosts: ['www.ag-grid.com', 'ag-grid.com'],
+    },
+};
+
 /**
  * Show debug logs
  */
@@ -107,6 +119,13 @@ export const SITE_BASE_URL_SEGMENTS = SITE_BASE_URL?.split('/').filter(Boolean).
  * URL prefix to serve files
  */
 export const FILES_BASE_PATH = '/files';
+
+/**
+ * URL path used to redirect to the user selected framework
+ *
+ * Useful when the framework is not known eg, root pages
+ */
+export const FRAMEWORK_REDIRECT_PATH = 'data-grid';
 
 /**
  * Charts robots disallow json url for merging with grid
@@ -150,3 +169,5 @@ export const GRID_URL = calculateGridUrl();
 export const EXAMPLE_RANDOM_SEED = 'AG Grid Random Seed';
 
 export const TRIAL_LICENCE_FORM_URL = import.meta.env?.PUBLIC_TRIAL_LICENCE_FORM_URL;
+
+export const EXAMPLE_STYLE_FILE_NAME = 'ag-example-styles.css';

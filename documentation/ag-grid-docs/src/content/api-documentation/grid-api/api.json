@@ -130,7 +130,23 @@
             }
         },
         "getProvidedColumnGroup": {},
-        "setColumnGroupOpened": {}
+        "setColumnGroupOpened": {},
+        "getDisplayNameForColumnGroup": {},
+        "getAllDisplayedColumnGroups": {},
+        "getCenterDisplayedColumnGroups": {},
+        "getLeftDisplayedColumnGroups": {},
+        "getRightDisplayedColumnGroups": {}
+    },
+    "colHover": {
+        "meta": {
+            "displayName": "Column Hover"
+        },
+        "isColumnHovered": {
+            "more": {
+                "name": "Column Hover",
+                "url": "./row-styles/#highlighting-rows-and-columns"
+            }
+        }
     },
     "Visibility and Display": {
         "meta": {
@@ -138,19 +154,13 @@
         },
         "setColumnsVisible": {},
         "getDisplayNameForColumn": {},
-        "getDisplayNameForColumnGroup": {},
         "getDisplayedColAfter": {},
         "getDisplayedColBefore": {},
         "getAllDisplayedVirtualColumns": {},
         "getAllDisplayedColumns": {},
         "getDisplayedCenterColumns": {},
         "getDisplayedLeftColumns": {},
-        "getDisplayedRightColumns": {},
-        "getAllDisplayedColumnGroups": {},
-        "getCenterDisplayedColumnGroups": {},
-        "getLeftDisplayedColumnGroups": {},
-        "getRightDisplayedColumnGroups": {},
-        "isColumnHovered": {}
+        "getDisplayedRightColumns": {}
     },
     "pinned": {
         "meta": {
@@ -480,6 +490,26 @@
                 "exclude": ["ICellEditor"],
                 "include": []
             }
+        },
+        "getPendingUpdates": {
+            "more": {
+                "name": "Get Pending Updates",
+                "url": "./cell-editing-start-stop/#batch-editing"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [],
+                "include": []
+            }
+        },
+        "setPendingUpdates": {
+            "more": {
+                "name": "Set Pending Updates",
+                "url": "./cell-editing-start-stop/#batch-editing"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [],
+                "include": []
+            }
         }
     },
     "export": {
@@ -661,12 +691,7 @@
             }
         },
         "getSizesForCurrentTheme": {},
-        "resetRowHeights": {
-            "more": {
-                "name": "Changing Row Height",
-                "url": "./row-height/#changing-row-height"
-            }
-        },
+
         "onRowHeightChanged": {
             "more": {
                 "name": "Changing Row Height",
@@ -1021,15 +1046,30 @@
             }
         }
     },
-    "miscellaneous": {
+    "gridState": {
         "meta": {
-            "displayName": "Miscellaneous"
-        },
-        "getState": {
-            "more": {
+            "displayName": "Grid State",
+            "page": {
                 "name": "Grid State",
                 "url": "./grid-state/"
             }
+        },
+        "getState": {
+            "more": {
+                "name": "Saving and Restoring State",
+                "url": "./grid-state/#saving-and-restoring-state"
+            }
+        },
+        "setState": {
+            "more": {
+                "name": "Setting State",
+                "url": "./grid-state/#setting-state"
+            }
+        }
+    },
+    "miscellaneous": {
+        "meta": {
+            "displayName": "Miscellaneous"
         },
         "getCellValue": {
             "description": "Gets the cell value for the given column and `rowNode` (row). Will return the cell value or the formatted value depending on the value of `params.useFormatter`."
@@ -1081,7 +1121,13 @@
                 "url": "./data-update-single-row-cell/#sort--filter--group-refresh"
             }
         },
-        "isRowDataEmpty": {}
+        "isRowDataEmpty": {},
+        "resetRowHeights": {
+            "more": {
+                "name": "Changing Row Height",
+                "url": "./row-height/#changing-row-height"
+            }
+        }
     },
     "serverSideRowModel": {
         "meta": {

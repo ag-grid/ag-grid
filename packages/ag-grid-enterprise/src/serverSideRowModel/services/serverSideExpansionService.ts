@@ -58,15 +58,27 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
         }
     }
 
-    public expandRows(rowIds: string[]): void {
-        rowIds.forEach((rowId) => {
-            const rowNode = this.serverSideRowModel.getRowNode(rowId);
-            if (rowNode) {
-                rowNode.setExpanded(true);
-            } else {
-                this.queuedRowIds.add(rowId);
+    public expandRows(rowIdsToExpand: string[], rowIdsToCollapse?: string[]): void {
+        const { serverSideRowModel, queuedRowIds } = this;
+        const processNodes = (rowIds: string[], expanded: boolean) => {
+            for (const rowId of rowIds) {
+                const rowNode = serverSideRowModel.getRowNode(rowId);
+                if (rowNode) {
+                    rowNode.setExpanded(expanded);
+                } else {
+                    if (expanded) {
+                        queuedRowIds.add(rowId);
+                    } else {
+                        queuedRowIds.delete(rowId);
+                    }
+                }
             }
-        });
+        };
+        processNodes(rowIdsToExpand, true);
+        if (!rowIdsToCollapse) {
+            return;
+        }
+        processNodes(rowIdsToCollapse, false);
     }
 
     public expandAll(value: boolean): void {
@@ -79,5 +91,10 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
 
     protected override dispatchExpandedEvent(event: RowGroupOpenedEvent): void {
         this.eventSvc.dispatchEvent(event);
+
+        // when using footers we need to refresh the group row, as the aggregation
+        // values jump between group and footer, because the footer can be callback
+        // we refresh regardless as the output of the callback could be a moving target
+        this.beans.rowRenderer.refreshCells({ rowNodes: [event.node] });
     }
 }

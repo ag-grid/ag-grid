@@ -27,7 +27,7 @@ export interface ITreeNode {
     readonly key: string;
 
     /** Updated during commit to be the same as row.sourceRowIndex */
-    readonly sourceIdx: number;
+    readonly sourceRowIndex: number;
 
     invalidate(): void;
 }
@@ -193,19 +193,16 @@ export class RowNode<TData = any>
     /** Number of children and grand children. */
     public allChildrenCount: number | null;
 
-    /**
-     * Children mapped by the pivot columns.
-     *
-     * TODO: this field is currently used only by the GroupStrategy and Pivot.
-     * TreeStrategy does not use it, and pivot cannot be enabled with tree data.
-     * Creating a new object for every row when not pivoting and not grouping
-     * consumes memory unnecessarily. Setting it to null however currently breaks
-     * transactional updates in groups so this requires a deeper investigation on GroupStrategy.
-     */
-    public childrenMapped: { [key: string]: any } | null = {};
+    /** Children mapped by the pivot columns or group key */
+    public childrenMapped: { [key: string]: any } | null = null;
 
-    /** The TreeNode associated to this row. Used only with tree data. */
-    public readonly treeNode: ITreeNode | null = null;
+    /**
+     * Used only by tree data internally.
+     * - Associated TreeNode if treeData with path
+     * - Parent RowNode if treeData with children, set by the ClientSideChildrenTreeNodeManager and processed by TreeGroupStrategy
+     * - Parent RowNode if treeData with parentId, set and processed by TreeGroupStrategy
+     */
+    public readonly treeNode: ITreeNode | RowNode<TData> | null = null;
 
     /** The flags associated to this node. Used only with tree data. */
     public readonly treeNodeFlags: number = 0;
@@ -487,6 +484,7 @@ export class RowNode<TData = any>
      * Replaces the value on the `rowNode` for the specified column. When complete,
      * the grid will refresh the rendered cell on the required row only.
      * **Note**: This method only fires `onCellEditRequest` when the Grid is in **Read Only** mode.
+     * **Note**: This method defers to EditModule if available and batches the edit when `fullRow` or `batchEdit` is enabled.
      *
      * @param colKey The column where the value should be updated
      * @param newValue The new value
@@ -494,10 +492,6 @@ export class RowNode<TData = any>
      * @returns `true` if the value was changed, otherwise `false`.
      */
     public setDataValue(colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
-        // When it is done via the editors, no 'cell changed' event gets fired, as it's assumed that
-        // the cell knows about the change given it's in charge of the editing.
-        // this method is for the client to call, so the cell listens for the change
-        // event, and also flashes the cell when the change occurs.
         const { colModel, valueSvc, gos, selectionSvc } = this.beans;
 
         // if in pivot mode, grid columns wont include primary columns
@@ -529,6 +523,14 @@ export class RowNode<TData = any>
                 source: eventSource,
             });
             return false;
+        }
+
+        if (this.beans.editSvc) {
+            const result = this.beans.editSvc.setDataValue(this, colKey, newValue, eventSource);
+
+            if (result != null) {
+                return result;
+            }
         }
 
         const valueChanged = valueSvc.setValue(this, column, newValue, eventSource);
@@ -780,5 +782,12 @@ export class RowNode<TData = any>
             this.uiLevel = uiLevel;
             this.dispatchRowEvent('uiLevelChanged');
         }
+    }
+
+    public getFirstChild(): RowNode<TData> | null {
+        if (this.childStore) {
+            return this.childStore.getFirstNode() as RowNode<TData>;
+        }
+        return this.childrenAfterSort?.[0] ?? null;
     }
 }

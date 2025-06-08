@@ -10,28 +10,34 @@ import styles from './Select.module.scss';
 type SelectProps<O> = {
     options: O[];
     value: O;
+    triggerAriaLabel?: string;
     onChange: (newValue: O) => void;
     renderItem?: (item: O) => ReactNode;
     getKey?: (item: O) => string;
     getLabel?: (item: O) => string;
     getGroupLabel?: (item: O) => string;
+    placeholder?: string;
     isPopper?: boolean;
     isLarge?: boolean;
+    constrainHeight?: boolean;
 };
 
 export function Select<O>({
     value,
     options,
+    triggerAriaLabel = 'Framework selector',
     onChange,
     renderItem,
     getKey = defaultGetKey,
     getLabel,
     getGroupLabel = defaultGetGroupLabel,
+    placeholder,
     isPopper,
     isLarge,
+    constrainHeight,
 }: SelectProps<O>) {
     const getOptionContent = useCallback((option: O) => {
-        const key = getKey(option) || '';
+        const key = getKey(option) ?? '';
         let label: string | undefined = getLabel?.(option);
         if (label == null) {
             label = defaultGetLabel(option);
@@ -51,7 +57,7 @@ export function Select<O>({
     const optionsByValue = new Map<string, O>();
     const content: Record<string, ReactElement[]> = {};
     for (const option of options) {
-        const group = getGroupLabel(option) || '';
+        const group = getGroupLabel(option) ?? '';
         const { key, optionContent } = getOptionContent(option);
         content[group] ||= [];
         content[group].push(
@@ -74,10 +80,10 @@ export function Select<O>({
         >
             <RadixSelect.Trigger
                 tabIndex={0}
-                aria-label="Framework selector"
+                aria-label={triggerAriaLabel}
                 className={classnames(styles.trigger, { [styles.large]: isLarge })}
             >
-                <RadixSelect.Value>{getOptionContent(value).optionContent}</RadixSelect.Value>
+                <RadixSelect.Value placeholder={placeholder}>{getOptionContent(value).optionContent}</RadixSelect.Value>
                 <RadixSelect.Icon>
                     <ChevronDown className={styles.chevronDown} />
                 </RadixSelect.Icon>
@@ -88,6 +94,7 @@ export function Select<O>({
                     className={classnames(styles.content, {
                         [styles.popper]: isPopper,
                         [styles.large]: isLarge,
+                        [styles.constrainHeight]: constrainHeight,
                     })}
                 >
                     <RadixSelect.ScrollUpButton className="SelectScrollButton">

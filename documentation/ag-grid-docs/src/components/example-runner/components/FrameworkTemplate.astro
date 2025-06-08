@@ -53,7 +53,8 @@ const library = 'grid';
 
 const { entryFileName, files, scriptFiles, styleFiles, isEnterprise, isIntegratedCharts, isLocale, extras } =
     generatedContents || {};
-const indexFragment = files && files['index.html'];
+const indexFragment = files['index.html'] ?? '';
+const headFragment = files?.['head.html'] ?? '';
 const appLocation = relativePath ? '' : exampleUrl;
 const boilerPlateUrl = relativePath
     ? ''
@@ -107,6 +108,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             appLocation={appLocation}
             extraStyles={extraStyles}
             extras={extras}
+            headFragment={headFragment}
             usesMathRandom={usesMathRandom}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
@@ -128,6 +130,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             extraStyles={extraStyles}
             isEnterprise={isEnterprise}
             extras={extras}
+            headFragment={headFragment}
             usesMathRandom={usesMathRandom}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
@@ -151,6 +154,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             isEnterprise={isEnterprise}
             internalFramework={internalFramework}
             extras={extras}
+            headFragment={headFragment}
             usesMathRandom={usesMathRandom}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
@@ -172,6 +176,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             boilerplatePath={boilerPlateUrl}
             extraStyles={extraStyles}
             extras={extras}
+            headFragment={headFragment}
             usesMathRandom={usesMathRandom}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
@@ -193,6 +198,7 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             boilerplatePath={boilerPlateUrl}
             extraStyles={extraStyles}
             extras={extras}
+            headFragment={headFragment}
             usesMathRandom={usesMathRandom}
         >
             {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}

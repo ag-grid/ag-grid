@@ -15,43 +15,16 @@ export default {
     },
     methods: {
         updateFilter() {
-            this.params.filterChangedCallback();
+            this.params.onModelChange(this.filterText == null || this.filterText === '' ? null : this.filterText);
         },
 
-        doesFilterPass(params) {
-            const { api, colDef, column, context } = this.params;
-            const { node } = params;
-
-            // make sure each word passes separately, ie search for firstname, lastname
-            let passed = true;
-            this.filterText
-                .toLowerCase()
-                .split(' ')
-                .forEach((filterWord) => {
-                    const value = this.params.getValue(node);
-
-                    if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
-                        passed = false;
-                    }
-                });
-
-            return passed;
-        },
-
-        isFilterActive() {
-            return this.filterText != null && this.filterText !== '';
-        },
-
-        getModel() {
-            if (!this.isFilterActive()) {
-                return null;
+        refresh(newParams): boolean {
+            const currentValue = this.filterText;
+            const newValue = newParams.model ?? '';
+            if (newValue !== currentValue) {
+                this.filterText = newValue;
             }
-
-            return { value: this.filterText };
-        },
-
-        setModel(model) {
-            this.filterText = model == null ? null : model.value;
+            return true;
         },
 
         afterGuiAttached(params) {
@@ -60,5 +33,8 @@ export default {
                 this.$refs.eFilterText.focus();
             }
         },
+    },
+    mounted: function () {
+        this.refresh(this.params);
     },
 };

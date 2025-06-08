@@ -3,6 +3,7 @@ const shouldBuildFrameworks = process.env.BUILD_FWS === '1';
 const BASE_IGNORED_PROJECTS = ['all', 'ag-grid-docs'];
 const FRAMEWORK_PROJECTS = ['ag-grid-angular', 'ag-grid-react', 'ag-grid-vue3'];
 const PACKAGE_PROJECTS = ['ag-grid-community', 'ag-grid-enterprise'];
+const EXAMPLE_GENERATOR_PROJECTS = ['ag-grid-generate-example-files'];
 
 function getIgnoredProjects() {
     const ignoredProjects = [...BASE_IGNORED_PROJECTS];
@@ -19,6 +20,8 @@ function getProjectBuildTargets(project) {
 
     if (project.startsWith('ag-grid-docs-')) {
         buildTargets.push([project, ['generate'], 'watch']);
+    } else if (EXAMPLE_GENERATOR_PROJECTS.includes(project)) {
+        buildTargets.push(['ag-grid-docs', ['generate-examples']]);
     } else {
         if (PACKAGE_PROJECTS.includes(project)) {
             buildTargets.push(['ag-grid-docs', ['generate-doc-references']]);
@@ -54,7 +57,7 @@ const externalBuildTriggers = [
 
 module.exports = {
     ignoredProjects: getIgnoredProjects(),
-    devServerReloadTargets: ['generate', 'generate-doc-references', 'build', 'build:css'],
+    devServerReloadTargets: ['generate', 'generate-doc-references', 'build', 'build:css', 'generate-examples'],
     getProjectBuildTargets,
     externalBuildTriggers,
 };

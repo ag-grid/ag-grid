@@ -6,13 +6,20 @@ import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
 import type { ComponentSelector } from './component';
 
+export interface AgInputDateFieldParams extends AgInputTextFieldParams {
+    includeTime?: boolean;
+}
 export class AgInputDateField extends AgInputTextField {
     private min?: string;
     private max?: string;
     private step?: number;
+    private readonly includeTime: boolean;
 
-    constructor(config?: AgInputTextFieldParams) {
-        super(config, 'ag-date-field', 'date');
+    constructor(config?: AgInputDateFieldParams) {
+        const inputType = config?.includeTime ? 'datetime-local' : 'date';
+
+        super(config, 'ag-date-field', inputType);
+        this.includeTime = !!config?.includeTime;
     }
 
     public override postConstruct() {
@@ -31,6 +38,9 @@ export class AgInputDateField extends AgInputTextField {
             },
         });
         this.eInput.step = 'any';
+        if (this.includeTime) {
+            this.setStep(1);
+        }
     }
 
     private onWheel(e: WheelEvent) {
@@ -41,7 +51,7 @@ export class AgInputDateField extends AgInputTextField {
     }
 
     public setMin(minDate: Date | string | undefined): this {
-        const min = minDate instanceof Date ? _serialiseDate(minDate ?? null, false) ?? undefined : minDate;
+        const min = minDate instanceof Date ? _serialiseDate(minDate ?? null, this.includeTime) ?? undefined : minDate;
         if (this.min === min) {
             return this;
         }
@@ -54,7 +64,7 @@ export class AgInputDateField extends AgInputTextField {
     }
 
     public setMax(maxDate: Date | string | undefined): this {
-        const max = maxDate instanceof Date ? _serialiseDate(maxDate ?? null, false) ?? undefined : maxDate;
+        const max = maxDate instanceof Date ? _serialiseDate(maxDate ?? null, this.includeTime) ?? undefined : maxDate;
         if (this.max === max) {
             return this;
         }
@@ -86,7 +96,7 @@ export class AgInputDateField extends AgInputTextField {
     }
 
     public setDate(date: Date | undefined, silent?: boolean): void {
-        this.setValue(_serialiseDate(date ?? null, false), silent);
+        this.setValue(_serialiseDate(date ?? null, this.includeTime), silent);
     }
 }
 

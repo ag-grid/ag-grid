@@ -85,7 +85,8 @@ export class ValueService extends BeanStub implements NamedBean {
         column: AgColumn | undefined,
         node: IRowNode,
         includeValueFormatted: boolean = false,
-        exporting: boolean = false
+        exporting: boolean = false,
+        source: 'ui' | 'api' = 'ui'
     ): {
         value: any;
         valueFormatted: string | null;
@@ -139,7 +140,7 @@ export class ValueService extends BeanStub implements NamedBean {
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
         const ignoreAggData = isOpenedGroup && !groupShowsAggData;
-        const value = this.getValue(column, node, ignoreAggData);
+        const value = this.getValue(column, node, ignoreAggData, source);
 
         const format = includeValueFormatted && !(exporting && column.colDef.useValueFormatterForExport === false);
         return {
@@ -148,7 +149,12 @@ export class ValueService extends BeanStub implements NamedBean {
         };
     }
 
-    public getValue(column: AgColumn, rowNode?: IRowNode | null, ignoreAggData = false): any {
+    public getValue(
+        column: AgColumn,
+        rowNode?: IRowNode | null,
+        ignoreAggData = false,
+        source: 'ui' | 'api' | 'edit' | string = 'ui'
+    ): any {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
         if (!this.initialised) {
@@ -165,13 +171,24 @@ export class ValueService extends BeanStub implements NamedBean {
         const colId = column.getColId();
         const data = rowNode.data;
 
+        const { editSvc, rowGroupColsSvc } = this.beans;
+
+        if (editSvc && source === 'ui') {
+            if (editSvc?.isEditing(rowNode, column)) {
+                const newValue = editSvc?.getCellDataValue(rowNode, column);
+                if (newValue !== undefined) {
+                    return newValue;
+                }
+            }
+        }
+
         let result: any;
 
         // when using multiple columns, the group column should have no value higher than its level
         const rowGroupColId = colDef.showRowGroup;
         if (typeof rowGroupColId === 'string') {
             // if multiple columns, don't show values in cells grouped at a higher level
-            const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
+            const colRowGroupIndex = rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
             if (colRowGroupIndex > rowNode.level) {
                 return null;
             }
@@ -334,7 +351,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const params: ValueSetterParams = _addGridCommonParams(this.gos, {
             node: rowNode,
             data: rowNode.data,
-            oldValue: this.getValue(column, rowNode),
+            oldValue: this.getValue(column, rowNode, undefined, eventSource),
             newValue: newValue,
             colDef: column.getColDef(),
             column: column,

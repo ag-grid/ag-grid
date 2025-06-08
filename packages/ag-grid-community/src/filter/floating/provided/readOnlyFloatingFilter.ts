@@ -4,7 +4,12 @@ import type { ElementParams } from '../../../utils/dom';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { Component, RefPlaceholder } from '../../../widgets/component';
-import type { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent } from '../floatingFilter';
+import type {
+    FloatingFilterDisplayParams,
+    IFloatingFilterComp,
+    IFloatingFilterParams,
+    IFloatingFilterParent,
+} from '../floatingFilter';
 
 const ReadOnlyFloatingFilterElement: ElementParams = {
     tag: 'div',
@@ -36,6 +41,14 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
         this.eFloatingFilterText
             .setDisabled(true)
             .setInputAriaLabel(`${displayName} ${this.getLocaleTextFunc()('ariaFilterInput', 'Filter Input')}`);
+        if (this.gos.get('enableFilterHandlers')) {
+            const reactiveParams = params as unknown as FloatingFilterDisplayParams;
+            const handler = reactiveParams.getHandler();
+            if (handler.getModelAsString) {
+                const modelAsString = handler.getModelAsString(reactiveParams.model);
+                this.eFloatingFilterText.setValue(modelAsString);
+            }
+        }
     }
 
     public onParentModelChanged(parentModel: any): void {

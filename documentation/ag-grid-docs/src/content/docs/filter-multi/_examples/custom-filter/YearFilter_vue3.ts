@@ -1,45 +1,45 @@
+let id = 1;
+
 export default {
     template: `
-      <div>
-          <div class="year-filter">
+        <div class="year-filter">
+            <div>Select Year Range</div>
             <label>
-              <input ref="eFilterAll" type="radio" value="false" v-model="isActive" v-on:change="toggleFilter(false)"/> All
+                <input type="radio" ref="rbAllYears" :name="name" v-model="year" v-on:change="updateFilter()" value="All"/> All
             </label>
             <label>
-              <input type="radio" value="true" v-model="isActive" v-on:change="toggleFilter(true)"/> After 2004
+                <input type="radio" :name="name" v-model="year" v-on:change="updateFilter()" value="2010"/> Since 2010
             </label>
-          </div>
-      </div>
+        </div>
     `,
     data: function () {
         return {
-            isActive: false,
+            year: 'All',
+            name: `year${id++}`,
         };
     },
     methods: {
-        toggleFilter(isFilterActive) {
-            this.isActive = isFilterActive;
-            this.params.filterChangedCallback();
+        updateFilter() {
+            this.params.onModelChange(this.year === '2010' || null);
         },
-        doesFilterPass(params) {
-            return params.data.year > 2004;
+
+        refresh(newParams): boolean {
+            const currentValue = this.year === '2010' || null;
+            const newValue = newParams.model;
+            if (newValue !== currentValue) {
+                this.year = newValue ? '2010' : 'All';
+            }
+            return true;
         },
-        isFilterActive() {
-            return this.isActive;
-        },
-        getModel() {
-            return this.isFilterActive() || null;
-        },
-        setModel(value) {
-            this.toggleFilter(value);
-        },
-        onFloatingFilterChanged(value) {
-            this.setModel(value);
-        },
+
         afterGuiAttached(params) {
             if (!params || !params.suppressFocus) {
-                this.$refs.eFilterAll.focus();
+                // focus the input element for keyboard navigation
+                this.$refs.rbAllYears.focus();
             }
         },
+    },
+    mounted: function () {
+        this.refresh(this.params);
     },
 };

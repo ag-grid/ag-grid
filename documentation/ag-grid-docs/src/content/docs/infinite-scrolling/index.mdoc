@@ -144,6 +144,10 @@ gridOptions.getRowId: function(params) {
 
 Once you have `getRowId()` implemented, selection will persist across sorts and filters.
 
+{% note %}
+The infinite row model does not have built-in support for [Select-All](./row-selection-multi-row/#selecting-all-rows) functionality. Neither clicking the header checkbox nor pressing {% kbd "^ Ctrl" /%}+A will have any effect.
+{% /note %}
+
 ### Example: Sorting, Filtering and Selection
 
 The following example extends the example above by adding server-side sorting, filtering and persistent selection.
@@ -223,11 +227,11 @@ Infinite scrolling has a cache working behind the scenes. The following properti
 
 ### Properties
 
-{% apiDocumentation source="grid-options/properties.json" section="infiniteRowModel" names=["cacheOverflowSize", "maxConcurrentDatasourceRequests", "maxBlocksInCache", "infiniteInitialRowCount", "cacheBlockSize"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="infiniteRowModel" names=["cacheOverflowSize", "maxConcurrentDatasourceRequests", "maxBlocksInCache", "infiniteInitialRowCount", "cacheBlockSize"]  config={"restrictModule":"InfiniteRowModelModule"} /%}
 
 ### API
 
-{% apiDocumentation source="grid-api/api.json" section="infiniteScrolling" /%}
+{% apiDocumentation source="grid-api/api.json" section="infiniteScrolling" config={"restrictModule":"InfiniteRowModelModule"} /%}
 
 {% note %}
 Adding / removing rows directly in the grid for infinite scrolling is not recommended as it will complicate your application. It will make your life easier if you update the data on the server and refresh the block cache.

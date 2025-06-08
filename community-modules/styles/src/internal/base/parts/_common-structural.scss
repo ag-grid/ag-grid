@@ -784,6 +784,11 @@
             opacity 0.2s;
     }
 
+    .ag-row-animation.ag-prevent-animation .ag-row,
+    .ag-row-animation.ag-prevent-animation .ag-row.ag-after-created {
+        transition: none !important;
+    }
+
     .ag-row-no-animation .ag-row {
         transition: none;
     }
@@ -1690,6 +1695,15 @@
                 text-align: right,
             )
         );
+    }
+
+    .ag-row-numbers-resizer {
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        height: 4px;
+        width: 100%;
+        cursor: ns-resize;
     }
 
     // /**

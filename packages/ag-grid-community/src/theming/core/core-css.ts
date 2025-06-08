@@ -72,6 +72,11 @@ export type CoreParams = {
     borderColor: ColorValue;
 
     /**
+     * Default width for borders.
+     */
+    borderWidth: LengthValue;
+
+    /**
      * Default corner radius for many UI elements such as menus, dialogs and form widgets.
      */
     borderRadius: LengthValue;
@@ -480,6 +485,36 @@ export type CoreParams = {
      * Horizontal borders between the grid and rows that are pinned to the top or bottom and the rest of the grid
      */
     pinnedRowBorder: BorderValue;
+
+    /**
+     * Font-weight for the rows that have been pinned to the top or bottom.
+     */
+    pinnedRowFontWeight: FontWeightValue;
+
+    /**
+     * Background color for the rows that have been pinned to the top or bottom.
+     */
+    pinnedRowBackgroundColor: ColorValue;
+
+    /**
+     * Text color for the rows that have been pinned to the top or bottom.
+     */
+    pinnedRowTextColor: ColorValue;
+
+    /**
+     * Text color for row in the main viewport that has been pinned to the top or bottom.
+     */
+    pinnedSourceRowTextColor: ColorValue;
+
+    /**
+     * Background color for the row in the main viewport that has been pinned to the top or bottom.
+     */
+    pinnedSourceRowBackgroundColor: ColorValue;
+
+    /**
+     * Font-weight for the row in the main viewport that has been pinned to the top or bottom.
+     */
+    pinnedSourceRowFontWeight: FontWeightValue;
 
     /**
      * Default shadow for elements that float above the grid and are intended to appear separated from it e.g. dialogs and menus
@@ -909,6 +944,7 @@ export const coreDefaults: Readonly<CoreParams> = {
         mix: 0.66,
     },
     oddRowBackgroundColor: backgroundColor,
+    borderWidth: 1,
     borderRadius: 4,
     wrapperBorderRadius: 8,
     cellHorizontalPadding: {
@@ -1069,4 +1105,18 @@ export const coreDefaults: Readonly<CoreParams> = {
     statusBarLabelFontWeight: 500,
     statusBarValueColor: foregroundColor,
     statusBarValueFontWeight: 500,
+    pinnedSourceRowTextColor: {
+        ref: 'textColor',
+    },
+    pinnedSourceRowBackgroundColor: {
+        ref: 'backgroundColor',
+    },
+    pinnedSourceRowFontWeight: 600,
+    pinnedRowFontWeight: 600,
+    pinnedRowBackgroundColor: {
+        ref: 'backgroundColor',
+    },
+    pinnedRowTextColor: {
+        ref: 'textColor',
+    },
 };

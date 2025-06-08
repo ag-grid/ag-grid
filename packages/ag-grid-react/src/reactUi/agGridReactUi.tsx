@@ -27,7 +27,7 @@ import {
     GridCoreCreator,
     VanillaFrameworkOverrides,
     _combineAttributesAndGridOptions,
-    _getGlobalGridOption,
+    _getGridOption,
     _getGridRegisteredModules,
     _isClientSideRowModel,
     _isServerSideRowModel,
@@ -41,7 +41,9 @@ import { CellRendererComponentWrapper } from '../shared/customComp/cellRendererC
 import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper';
 import { DragAndDropImageComponentWrapper } from '../shared/customComp/dragAndDropImageComponentWrapper';
 import { FilterComponentWrapper } from '../shared/customComp/filterComponentWrapper';
+import { FilterDisplayComponentWrapper } from '../shared/customComp/filterDisplayComponentWrapper';
 import { FloatingFilterComponentWrapper } from '../shared/customComp/floatingFilterComponentWrapper';
+import { FloatingFilterDisplayComponentWrapper } from '../shared/customComp/floatingFilterDisplayComponentWrapper';
 import { InnerHeaderComponentWrapper } from '../shared/customComp/innerHeaderComponentWrapper';
 import { LoadingOverlayComponentWrapper } from '../shared/customComp/loadingOverlayComponentWrapper';
 import { MenuItemComponentWrapper } from '../shared/customComp/menuItemComponentWrapper';
@@ -57,21 +59,25 @@ import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
 
-type ReactCompProps = Omit<InternalAgGridReactProps, keyof GridOptions>;
+const deprecatedProps: Pick<InternalAgGridReactProps, 'setGridApi' | 'children' | 'maxComponentCreationTimeMs'> = {
+    setGridApi: undefined,
+    maxComponentCreationTimeMs: undefined,
+    children: undefined,
+};
 
 // Used to only pass gridOptions to the GridCoreCreator from the props
+type ReactCompProps = Omit<InternalAgGridReactProps, keyof GridOptions>;
 const reactPropsNotGridOptions: ReactCompProps = {
     gridOptions: undefined,
     modules: undefined,
     containerStyle: undefined,
     className: undefined,
-    setGridApi: undefined,
     passGridApi: undefined,
     componentWrappingElement: undefined,
-    maxComponentCreationTimeMs: undefined,
-    children: undefined,
+    ...deprecatedProps,
 };
 const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
+const deprecatedReactCompProps = new Set(Object.keys(deprecatedProps));
 
 export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
@@ -135,10 +141,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         const renderStatus = new RenderStatusService();
         const gridParams: GridParams = {
             providedBeanInstances: {
-                frameworkCompWrapper: new ReactFrameworkComponentWrapper(
-                    portalManager.current,
-                    mergedGridOps.reactiveCustomComponents ?? _getGlobalGridOption('reactiveCustomComponents') ?? true
-                ),
+                frameworkCompWrapper: new ReactFrameworkComponentWrapper(portalManager.current, mergedGridOps),
                 renderStatus,
             },
             modules,
@@ -247,6 +250,9 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: strin
     const changes: { [p: string]: any } = {};
     Object.keys(nextProps).forEach((propKey) => {
         if (excludeReactCompProps.has(propKey)) {
+            if (deprecatedReactCompProps.has(propKey)) {
+                _warn(274, { prop: propKey });
+            }
             return;
         }
         const propValue = nextProps[propKey];
@@ -264,19 +270,25 @@ class ReactFrameworkComponentWrapper
 {
     constructor(
         private readonly parent: PortalManager,
-        private readonly reactiveCustomComponents?: boolean
+        private readonly gridOptions: GridOptions
     ) {
         super();
     }
 
     protected createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
-        if (this.reactiveCustomComponents) {
+        const gridOptions = this.gridOptions;
+        const reactiveCustomComponents = _getGridOption(gridOptions, 'reactiveCustomComponents');
+        if (reactiveCustomComponents) {
             const getComponentClass = (propertyName: string) => {
                 switch (propertyName) {
                     case 'filter':
-                        return FilterComponentWrapper;
+                        return _getGridOption(gridOptions, 'enableFilterHandlers')
+                            ? FilterDisplayComponentWrapper
+                            : FilterComponentWrapper;
                     case 'floatingFilterComponent':
-                        return FloatingFilterComponentWrapper;
+                        return _getGridOption(gridOptions, 'enableFilterHandlers')
+                            ? FloatingFilterDisplayComponentWrapper
+                            : FloatingFilterComponentWrapper;
                     case 'dateComponent':
                         return DateComponentWrapper;
                     case 'dragAndDropImageComponent':

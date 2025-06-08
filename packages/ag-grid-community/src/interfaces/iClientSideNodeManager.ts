@@ -15,7 +15,7 @@ export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
 }
 
 export interface IClientSideNodeManager<TData = any> {
-    readonly treeData: boolean;
+    readonly skipGrouping: boolean;
 
     activate(rootNode: RowNode<TData> | null): void;
 

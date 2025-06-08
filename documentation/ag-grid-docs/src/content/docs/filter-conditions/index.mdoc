@@ -131,6 +131,7 @@ The following example demonstrates several custom filter options:
   * a custom `* Not Equals (No Nulls) *` filter which also removes null values.
   * it also demonstrates how localisation can be achieved via the `gridOptions.getLocaleText(params)` callback function, where the default value is replaced for the filter option `'notEqualNoNulls'`.
 * Saving and restoring custom filter options via `api.getFilterModel()` and `api.setFilterModel()` can be tested using the provided buttons.
+* The `Print State` button prints the filter model to the developer console.
 
 {% gridExampleRunner title="Custom Filter Options" name="custom-filter-options" /%}
 
@@ -174,6 +175,10 @@ The following example shows the various ways of specifying filter placeholders. 
 * `Total` column shows the filter option name with the suffix `total` eg, for the `Equals` filter option, it shows `Equals total`. The [filter option names](#simple-filter-options) are listed in the table above.
 
 {% gridExampleRunner title="Filter Placeholder Text" name="filter-placeholder-text"  exampleHeight=560 /%}
+
+{% note %}
+[Date Filters](./filter-date/) use the native browser date input by default, which may not support placeholders. To use placeholders with Date Filters, you may need to use a [Custom Date Component](./filter-date/#custom-selection-component).
+{% /note %}
 
 ## Next Up
 

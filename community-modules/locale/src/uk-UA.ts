@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_UA = {
     pageSizeSelectorLabel: 'Розмір сторінки:',
     footerTotal: 'Усього',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: 'Прокрутити ${variable} до подання',
 
     // Pivoting
     pivotColumnGroupTotals: 'Загальна сума',

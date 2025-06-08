@@ -1,11 +1,11 @@
-:where(
-        input.ag-input-field-input:not([type]),
-        input.ag-input-field-input[type='text'],
-        input.ag-input-field-input[type='number'],
-        input.ag-input-field-input[type='tel'],
-        input.ag-input-field-input[type='date'],
-        input.ag-input-field-input[type='datetime-local'],
-        textarea.ag-input-field-input
+.ag-input-field-input:where(
+        input:not([type]),
+        input[type='text'],
+        input[type='number'],
+        input[type='tel'],
+        input[type='date'],
+        input[type='datetime-local'],
+        textarea
     ) {
     border-top: none;
     border-left: none;

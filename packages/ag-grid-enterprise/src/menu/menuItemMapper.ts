@@ -9,7 +9,15 @@ import type {
     NamedBean,
     RowNode,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, _exists, _getRowNode, _resetColumnState, _warn } from 'ag-grid-community';
+import {
+    BeanStub,
+    _createIconNoSpan,
+    _exists,
+    _getEnableRowPinning,
+    _getRowNode,
+    _resetColumnState,
+    _warn,
+} from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
@@ -113,7 +121,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'pinRowSubMenu': {
-                    const enableRowPinning = gos.get('enableRowPinning');
+                    const enableRowPinning = _getEnableRowPinning(gos);
                     const subMenu: string[] = [];
                     const pinned = node?.rowPinned ?? node?.pinnedSibling?.rowPinned;
 
@@ -186,7 +194,11 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return colAutosize
                         ? {
                               name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                              action: () => colAutosize.autoSizeAllColumns(source, gos.get('skipHeaderOnAutoSize')),
+                              action: () =>
+                                  colAutosize.autoSizeAllColumns({
+                                      source,
+                                      skipHeader: gos.get('skipHeaderOnAutoSize'),
+                                  }),
                           }
                         : null;
                 case 'rowGroup':

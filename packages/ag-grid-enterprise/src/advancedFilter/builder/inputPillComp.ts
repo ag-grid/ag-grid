@@ -1,4 +1,10 @@
-import type { BeanCollection, ElementParams, FieldValueEvent, WithoutGridCommon } from 'ag-grid-community';
+import type {
+    BaseCellDataType,
+    BeanCollection,
+    ElementParams,
+    FieldValueEvent,
+    WithoutGridCommon,
+} from 'ag-grid-community';
 import {
     AgInputDateField,
     AgInputNumberField,
@@ -16,6 +22,20 @@ import {
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 
 export type InputPillCompEvent = 'fieldValueChanged';
+
+type SupportedComponent = typeof AgInputTextField | typeof AgInputNumberField | typeof AgInputDateField;
+const inputComponentDescriptors: {
+    [S in BaseCellDataType]: [SupportedComponent] | [SupportedComponent, ConstructorParameters<SupportedComponent>];
+} = {
+    number: [AgInputNumberField],
+    boolean: [AgInputTextField],
+    object: [AgInputTextField],
+    text: [AgInputTextField],
+    date: [AgInputDateField],
+    dateString: [AgInputDateField],
+    dateTime: [AgInputDateField, [{ includeTime: true }]],
+    dateTimeString: [AgInputDateField, [{ includeTime: true }]],
+};
 
 const InputPillElement: ElementParams = {
     tag: 'div',
@@ -56,7 +76,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
             value: string;
             valueFormatter: (value: string) => string;
             cssClass: string;
-            type: 'text' | 'number' | 'date';
+            type: BaseCellDataType;
             ariaLabel: string;
         }
     ) {
@@ -129,22 +149,9 @@ export class InputPillComp extends Component<InputPillCompEvent> {
         this.eEditor.getFocusableElement().focus();
     }
 
-    private createEditorComp(
-        type: 'text' | 'number' | 'date'
-    ): AgInputTextField | AgInputNumberField | AgInputDateField {
-        let comp;
-        switch (type) {
-            case 'text':
-                comp = new AgInputTextField();
-                break;
-            case 'number':
-                comp = new AgInputNumberField();
-                break;
-            case 'date':
-                comp = new AgInputDateField();
-                break;
-        }
-        return this.createBean(comp);
+    private createEditorComp(type: BaseCellDataType): AgInputTextField {
+        const [Comp, args] = inputComponentDescriptors[type];
+        return this.createBean(new Comp(...(args ?? [])));
     }
 
     private hideEditor(keepFocus: boolean): void {

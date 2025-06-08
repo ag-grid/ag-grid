@@ -77,6 +77,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             columnRowGroupChanged: listener,
             modelUpdated: listener,
             cellValueChanged: this.updateForDataChange.bind(this),
+            cellEditValuesChanged: this.updateForDataChange.bind(this),
         });
     }
 

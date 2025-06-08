@@ -74,6 +74,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     }),
     ...mod<_StateGridApi>('GridState', {
         getState: 0,
+        setState: 0,
     }),
     ...mod<_RowSelectionGridApi<any>>('SharedRowSelection', {
         setNodesSelected: 0,
@@ -217,6 +218,11 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getEditingCells: 0,
         stopEditing: 0,
         startEditingCell: 0,
+        isEditing: 0,
+        setEditingCells: 0,
+        enableBatchEditing: 0,
+        disableBatchEditing: 0,
+        batchEditingEnabled: 0,
     }),
     ...mod<_UndoRedoGridApi>('UndoRedoEdit', {
         undoCellEditing: 0,
@@ -237,6 +243,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getColumnFilterModel: 0,
         setColumnFilterModel: 0,
         showColumnFilter: 0,
+        getColumnFilterHandler: 0,
     }),
     ...mod<_QuickFilterGridApi>('QuickFilter', {
         isQuickFilterPresent: 0,

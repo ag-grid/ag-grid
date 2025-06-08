@@ -5,6 +5,7 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberEditorModule,
+    NumberFilterModule,
     TextEditorModule,
     TextFilterModule,
     ValidationModule,
@@ -35,6 +36,7 @@ ModuleRegistry.registerModules([
     RowGroupingModule,
     TextFilterModule,
     TextEditorModule,
+    NumberFilterModule,
     NumberEditorModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);

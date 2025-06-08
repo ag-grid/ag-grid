@@ -70,4 +70,12 @@
 .linkWrapper {
     all: unset;
     cursor: pointer;
+
+    &:hover {
+        h2,
+        span {
+            color: var(--color-link);
+            opacity: 1;
+        }
+    }
 }

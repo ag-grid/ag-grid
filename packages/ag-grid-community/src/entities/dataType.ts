@@ -39,9 +39,21 @@ export interface DataTypeChecker<TData, TValue> {
  *
  * `'dateString'` is type `string` but represents a date.
  *
+ * `'dateTime'` is type `Date`.
+ *
+ * `'dateTimeString'` is type `string` but represents a date with time.
+ *
  * `object` is any other type.
  */
-export type BaseCellDataType = 'text' | 'number' | 'boolean' | 'date' | 'dateString' | 'object';
+export type BaseCellDataType =
+    | 'text'
+    | 'number'
+    | 'boolean'
+    | 'date'
+    | 'dateString'
+    | 'object'
+    | 'dateTime'
+    | 'dateTimeString';
 
 interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = any, TValue = any> {
     /** The underlying data type */
@@ -116,25 +128,47 @@ export interface DateStringDataTypeDefinition<TData = any> extends BaseDataTypeD
     dateFormatter?: (value: Date | undefined) => string | undefined;
 }
 
+/** Represents a `'dateTime'` data type (type `Date`). */
+export interface DateTimeDataTypeDefinition<TData = any> extends BaseDataTypeDefinition<'dateTime', TData, Date> {}
+
+/** Represents a `'dateTimeString'` data type (type `string` that represents a dateTime). */
+export interface DateTimeStringDataTypeDefinition<TData = any>
+    extends BaseDataTypeDefinition<'dateTimeString', TData, string> {
+    /** Converts a date in `string` format to a `Date`. */
+    dateParser?: (value: string | undefined) => Date | undefined;
+    /** Converts a date in `Date` format to a `string`. */
+    dateFormatter?: (value: Date | undefined) => string | undefined;
+}
+
 /** Represents an `'object'` data type (any type). */
 export interface ObjectDataTypeDefinition<TData, TValue> extends BaseDataTypeDefinition<'object', TData, TValue> {}
 
+/** Throws an error if not all keys K are present in Record Obj, as well as if Obj has extra keys (though only if you try to access properties) */
+export type CheckDataTypes<Obj extends Record<K, any>, K extends keyof any = BaseCellDataType> = keyof Obj extends K
+    ? Obj
+    : never;
+
 /** Configuration options for a cell data type. */
-export type DataTypeDefinition<TData = any> =
+export type DataTypeDefinition<TData = any, TValue = any> =
     | TextDataTypeDefinition<TData>
     | NumberDataTypeDefinition<TData>
     | BooleanDataTypeDefinition<TData>
     | DateDataTypeDefinition<TData>
     | DateStringDataTypeDefinition<TData>
-    | ObjectDataTypeDefinition<TData, any>;
+    | DateTimeDataTypeDefinition<TData>
+    | DateTimeStringDataTypeDefinition<TData>
+    | ObjectDataTypeDefinition<TData, TValue>;
 
 /** Configuration options for pre-defined data types. */
-export type CoreDataTypeDefinition<TData = any> =
-    | Omit<TextDataTypeDefinition<TData>, 'extendsDataType'>
-    | Omit<NumberDataTypeDefinition<TData>, 'extendsDataType'>
-    | Omit<BooleanDataTypeDefinition<TData>, 'extendsDataType'>
-    | Omit<DateDataTypeDefinition<TData>, 'extendsDataType'>
-    | Omit<DateStringDataTypeDefinition<TData>, 'extendsDataType'>
-    | Omit<ObjectDataTypeDefinition<TData, any>, 'extendsDataType'>;
+export type CoreDataTypeDefinition<TData = any, TValue = any> = Omit<
+    DataTypeDefinition<TData, TValue>,
+    'extendsDataType'
+>;
 
 export type DataTypeFormatValueFunc = (params: { column: Column; node: IRowNode | null; value: any }) => string;
+
+// Line below used for type checking
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type _CheckDataTypeDefinition = CheckDataTypes<{
+    [K in DataTypeDefinition['baseDataType']]: DataTypeDefinition & { baseDataType: K };
+}>;

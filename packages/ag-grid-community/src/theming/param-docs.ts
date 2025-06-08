@@ -23,6 +23,7 @@ const docs: Record<AllThemeParams, string> = {
     backgroundColor:
         'Background color of the grid. Many UI elements are semi-transparent, so their color blends with the background color.',
     borderColor: 'Default color for borders.',
+    borderWidth: 'Default width for borders.',
     borderRadius: 'Default corner radius for many UI elements such as menus, dialogs and form widgets.',
     browserColorScheme:
         'The CSS color-scheme to apply to the grid, which affects the default appearance of browser scrollbars form inputs unless these have been styled with CSS.',
@@ -306,6 +307,13 @@ const docs: Record<AllThemeParams, string> = {
     widgetVerticalSpacing: 'The spacing between widgets in containers arrange widgets vertically',
     wrapperBorder: 'Borders around the outside of the grid',
     wrapperBorderRadius: 'Corner radius of the outermost container around the grid.',
+    pinnedSourceRowTextColor: 'Text color for row in the main viewport that has been pinned to the top or bottom',
+    pinnedSourceRowBackgroundColor:
+        'Background color for the row in the main viewport that has been pinned to the top or bottom',
+    pinnedSourceRowFontWeight: 'Font-weight for the row in the main viewport that has been pinned to the top or bottom',
+    pinnedRowFontWeight: 'Font-weight for the rows that have been pinned to the top or bottom',
+    pinnedRowBackgroundColor: 'Background color for the rows that have been pinned to the top or bottom',
+    pinnedRowTextColor: 'Text color for rows that have been pinned to the top or bottom',
 };
 
 export const getParamDocs = (param: string): string | undefined => {

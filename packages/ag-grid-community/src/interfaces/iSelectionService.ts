@@ -13,8 +13,9 @@ import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } fr
 export interface ISelectionService {
     getSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | null;
     setSelectionState(
-        state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState,
-        source: SelectionEventSourceType
+        state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | undefined,
+        source: SelectionEventSourceType,
+        clearSelection?: boolean
     ): void;
     getSelectedNodes(): RowNode<any>[];
     getSelectedRows(): any[];
@@ -36,7 +37,7 @@ export interface ISelectionService {
     selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
     deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
     createCheckboxSelectionComponent(): CheckboxSelectionComponent;
-    createSelectAllFeature(column: AgColumn): SelectAllFeature;
+    createSelectAllFeature(column: AgColumn): SelectAllFeature | undefined;
     onRowCtrlSelected(rowCtrl: RowCtrl, hasFocusFunc: (gui: RowGui) => void, gui?: RowGui): void;
     announceAriaRowSelection(rowNode: RowNode): void;
     /** Called after grouping / treeData */

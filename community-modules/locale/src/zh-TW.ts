@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_TW = {
     pageSizeSelectorLabel: '頁大小：',
     footerTotal: '總數',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: '捲動${variable}到視圖',
 
     // Pivoting
     pivotColumnGroupTotals: '總計',

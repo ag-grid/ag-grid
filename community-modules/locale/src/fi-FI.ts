@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_FI = {
     pageSizeSelectorLabel: 'Sivun koko:',
     footerTotal: 'Yhteensä',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: 'Vieritä ${variable} näkyviin',
 
     // Pivoting
     pivotColumnGroupTotals: 'Yhteensä',

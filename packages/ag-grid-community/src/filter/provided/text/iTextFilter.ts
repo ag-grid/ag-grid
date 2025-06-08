@@ -51,11 +51,11 @@ export interface TextMatcher {
 export interface TextFormatter {
     (from?: string | null): string | null;
 }
+
 /**
  * Parameters provided by the grid to the `init` method of a `TextFilter`.
  * Do not use in `colDef.filterParams` - see `ITextFilterParams` instead.
  */
-
 export type TextFilterParams<TData = any> = ITextFilterParams & IFilterParams<TData>;
 /**
  * Parameters used in `colDef.filterParams` to configure a  Text Filter (`agTextColumnFilter`).

@@ -1,8 +1,7 @@
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
-import { _GET_ALL_EVENTS } from '../../eventTypes';
-import { _getCallbackForEvent } from '../../gridOptionsUtils';
 import type { ValidationModuleName } from '../../interfaces/iModule';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
+import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
 import { _mergeDeep } from '../../utils/object';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
@@ -225,6 +224,15 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             validate({ isRowPinned, pinnedTopRowData, pinnedBottomRowData }) {
                 if (isRowPinned && (pinnedTopRowData || pinnedBottomRowData)) {
                     return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinned`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                }
+                return null;
+            },
+        },
+
+        grandTotalRow: {
+            validate({ grandTotalRow }) {
+                if (grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop') {
+                    return `Using \`grandTotalRow=${grandTotalRow}\` is deprecated as of v34. Use \`grandTotalRowPinned\` instead.`;
                 }
                 return null;
             },
@@ -499,9 +507,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
     return validations;
 };
 
-export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
+export const GRID_OPTIONS_VALIDATORS: () => Required<OptionsValidator<GridOptions>> = () => ({
     objectName: 'gridOptions',
-    allProperties: [..._GET_ALL_GRID_OPTIONS(), ..._GET_ALL_EVENTS().map((event) => _getCallbackForEvent(event))],
+    allProperties: [..._GET_ALL_GRID_OPTIONS(), ...Object.values(_PUBLIC_EVENT_HANDLERS_MAP)],
     propertyExceptions: ['api'],
     docsUrl: 'grid-options/',
     deprecations: GRID_OPTION_DEPRECATIONS(),

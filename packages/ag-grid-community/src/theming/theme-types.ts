@@ -156,7 +156,7 @@ export const scaleValueToCss = literalToCSS;
  * A CSS border value e.g. "solid 1px red". Alternatively an object containing optional properties:
  *
  * - `style` -> a CSS border-style, default `"solid"`
- * - `width` -> a width in pixels, default `1`
+ * - `width` -> a width in pixels, default `{ref: "borderWidth"}` (and the default borderWidth is 1)
  * - `color` -> a ColorValue as you would pass to any color param, default `{ref: "borderColor"}`
  *
  * Or a reference:
@@ -178,15 +178,15 @@ export type BorderValue =
       }
     | { ref: string };
 
-export const borderValueToCss = (value: BorderValue, param: string) => {
+export const borderValueToCss = (value: BorderValue, param: string): string => {
     if (typeof value === 'string') return value;
-    if (value === true) return 'solid 1px var(--ag-border-color)';
-    if (value === false) return param === 'columnBorder' ? 'solid 1px transparent' : 'none';
+    if (value === true) return borderValueToCss({}, param);
+    if (value === false) return param === 'columnBorder' ? borderValueToCss({ color: 'transparent' }, param) : 'none';
     if (value && 'ref' in value) return paramToVariableExpression(value.ref);
     return (
         borderStyleValueToCss(value.style ?? 'solid') +
         ' ' +
-        lengthValueToCss(value.width ?? 1) +
+        lengthValueToCss(value.width ?? { ref: 'borderWidth' }) +
         ' ' +
         colorValueToCss(value.color ?? { ref: 'borderColor' })
     );

@@ -53,9 +53,7 @@ const gridOptions: GridOptions = {
             series: {
                 tooltip: {
                     renderer: ({ datum, xKey, yKey }) => {
-                        return {
-                            content: `${formatTime(datum[xKey])}: ${datum[yKey]}%`,
-                        };
+                        return `${formatTime(datum[xKey])}: ${datum[yKey]}%`;
                     },
                 },
             },

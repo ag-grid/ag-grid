@@ -1,0 +1,30 @@
+---
+import styles from './TouchImage.module.scss';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+interface Props {
+    id: string;
+    title: string;
+    showHeader?: boolean;
+    videoPath?: string;
+    description?: string;
+}
+
+const { title = 'Video', videoPath, description } = Astro.props as Props;
+---
+
+<div class={styles.container}>
+    <div>
+        <div class={styles.deviceContainer}>
+            <hr />
+            <div class={styles.touchContainer}>
+                <img src={urlWithBaseUrl(videoPath)} class={styles.touchImage} alt={title} />
+                <div class={styles.gap}>
+                    <div class={styles.title}>{title}</div>
+                    <div class={styles.description}>{description}</div>
+                </div>
+            </div>
+            <hr />
+        </div>
+    </div>
+</div>

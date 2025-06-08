@@ -1,4 +1,4 @@
-import {
+import type {
     CommunityModuleName,
     EnterpriseModuleName,
     ModuleName,
@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,
-    AllEnterpriseModule: 1368,
+    AllEnterpriseModule: 1380,
     CellSelectionModule: 53,
     ClipboardModule: 44.6,
     ColumnMenuModule: 147,
@@ -69,8 +69,8 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     PivotModule: 90.61,
     RangeSelectionModule: 53,
     RichSelectModule: 77,
-    RowNumbersModule: 26,
-    RowGroupingModule: 77.52,
+    RowNumbersModule: 29,
+    RowGroupingModule: 79.85,
     RowGroupingPanelModule: 71,
     ServerSideRowModelApiModule: 19,
     ServerSideRowModelModule: 147,
@@ -132,7 +132,7 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
-export const baseModule = { modules: [], expectedSize: 465 };
+export const baseModule = { modules: [], expectedSize: 470 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,

@@ -337,6 +337,14 @@ always be 0 and then making a row sticky causes the grid to scroll. */
     }
 }
 
+:where(.ag-row-animation.ag-prevent-animation) .ag-row {
+    transition: none !important;
+
+    &:where(.ag-row.ag-after-created) {
+        transition: none !important;
+    }
+}
+
 :where(.ag-row-no-animation) .ag-row {
     transition: none;
 }

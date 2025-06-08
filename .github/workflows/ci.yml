@@ -444,6 +444,9 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
     needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test ]
     if: cancelled() != true
     steps:
@@ -491,7 +494,7 @@ jobs:
 
       - name: Check last job status
         id: lastJobStatus
-        if: always() && github.ref == 'refs/heads/latest'
+        if: always()
         run: |
           WORKFLOW_STATUS="success"
           if [[ "${{ needs.build_lint.result }}" == "failure" ]] ; then
@@ -581,7 +584,7 @@ jobs:
                     "Docs": "${{ needs.docs.result }}",
                     "Bundle": "${{ needs.bundle_size.result }}",
                     "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
-                    "Angular_Pkg": "${{ needs.fw_pkg_test.result }}"
+                    "Angular_Pkg": "${{ needs.angular_fw_pkg_test.result }}"
                 }
             }
         run: |
@@ -592,3 +595,8 @@ jobs:
             --debug-channel "$SLACK_DEBUG_CHANNEL" \
             --run-context "$RUN_CONTEXT"
 
+      - name: Fail job if workflow failed
+        if: success() && steps.lastJobStatus.outputs.workflowStatus == 'failure'
+        run: |
+            echo "Workflow failed, failing the build."
+            exit 1

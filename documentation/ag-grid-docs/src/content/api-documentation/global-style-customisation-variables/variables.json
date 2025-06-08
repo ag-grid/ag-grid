@@ -339,7 +339,7 @@
         },
         "--ag-icon-font-weight": {
             "description": "The font weight to apply to icon elements, used for icon fonts that require a specific weight to work",
-            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+            "type": "CSS font weight value (e.g. `100`, `bold` or `normal`)"
         },
         "--ag-widget-container-horizontal-padding": {
             "description": "The horizontal padding of containers that contain stacked widgets, such as menus and tool panels",
@@ -505,9 +505,29 @@
             "description": "Border style for pinned row containers, e.g. `1px solid black` or `3rem dashed #ggg`.",
             "type": "a CSS border style, size and color (e.g. `1px dotted black`, `3rem solid #fff` or `none`)"
         },
-        "--ag-pinned-row-source-color": {
+        "--ag-pinned-row-text-color": {
+            "description": "Text colour of the rows that have been pinned to the top or bottom",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-pinned-row-background-color": {
+            "description": "Background colour of the rows that have been pinned to the top or bottom",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-pinned-row-font-weight": {
+            "description": "Font weight of the rows that have been pinned to the top or bottom",
+            "type": "CSS font weight value (e.g. `100`, `bold` or `normal`)"
+        },
+        "--ag-pinned-source-row-text-color": {
             "description": "Text colour of the source row that has been pinned",
             "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-pinned-source-row-background-color": {
+            "description": "Background colour of the source row that has been pinned",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-pinned-source-row-font-weight": {
+            "description": "Font weight of the source row that has been pinned",
+            "type": "CSS font weight value (e.g. `100`, `bold` or `normal`)"
         }
     }
 }

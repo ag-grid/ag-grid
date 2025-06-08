@@ -175,6 +175,16 @@ export function convertTsxToJsx(fileStr: string): string {
     return jsxFile;
 }
 
-export const getHasExampleConsoleLog = ({ contents }: { contents: string }) => {
+export const getHasExampleConsoleLog = ({ contents }: { contents?: string }) => {
     return contents?.includes('console.log');
+};
+
+export const getHasSimpleHtml = ({ contents }: { contents?: string }) => {
+    const hasFormElements =
+        contents?.includes('<button') ||
+        contents?.includes('<input') ||
+        contents?.includes('<select') ||
+        contents?.includes('<textarea');
+
+    return !hasFormElements;
 };

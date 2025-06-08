@@ -1,4 +1,4 @@
-import type { UserComponentName } from '../../context/context';
+import type { DynamicBeanName, UserComponentName } from '../../context/context';
 import type { Column } from '../../interfaces/iColumn';
 import type {
     CommunityModuleName,
@@ -61,6 +61,16 @@ function umdMissingModule(
             message + `Unable to use ${reasonOrId} as that requires the ag-grid-enterprise script to be included.\n`;
     }
     return message;
+}
+
+export function missingRowModelTypeError({
+    moduleName,
+    rowModelType,
+}: {
+    moduleName: CommunityModuleName | EnterpriseModuleName;
+    rowModelType: RowModelType;
+}) {
+    return `To use the ${moduleName}Module you must set the gridOption "rowModelType='${rowModelType}'"`;
 }
 
 const missingModule = ({
@@ -316,8 +326,8 @@ export const AG_GRID_ERRORS = {
         'popup cellEditor does not work with fullRowEdit - you cannot use them both - either turn off fullRowEdit, or stop using popup editors.' as const,
     99: () =>
         'Since v32, `api.hideOverlay()` does not hide the loading overlay when `loading=true`. Set `loading=false` instead.' as const,
-    100: ({ rowModelType }: { rowModelType: RowModelType }) =>
-        `selectAll only available when rowModelType='clientSide', ie not ${rowModelType}` as const,
+    // 100: ({ rowModelType }: { rowModelType: RowModelType }) =>
+    //     `selectAll only available when rowModelType='clientSide', ie not ${rowModelType}` as const,
     101: ({
         propertyName,
         componentName,
@@ -653,6 +663,30 @@ export const AG_GRID_ERRORS = {
     271: ({ id, parentId }: { id: string; parentId: string }) =>
         `Parent row not found for row with id='${id}' and parent id='${parentId}'. Showing row with id='${id}' as a root-level node.` as const,
     272: () => NoModulesRegisteredError(),
+    273: ({ providedId, usedId }: { providedId: string; usedId: string }) =>
+        `Provided column id '${providedId}' was already in use, ensure all column and group ids are unique. Using '${usedId}' instead.` as const,
+    274: ({ prop }: { prop: string }) => {
+        let msg = `Since v33, ${prop} has been deprecated.`;
+        switch (prop) {
+            case 'maxComponentCreationTimeMs':
+                msg += ' This property is no longer required and so will be removed in a future version.';
+                break;
+            case 'setGridApi':
+                msg += ` This method is not called by AG Grid. To access the GridApi see: https://ag-grid.com/react-data-grid/grid-interface/#grid-api `;
+                break;
+            case 'children':
+                msg += ` For multiple versions AgGridReact does not support children.`;
+                break;
+        }
+        return msg;
+    },
+    275: missingRowModelTypeError,
+    276: () => 'Row Numbers Row Resizer cannot be used when Grid Columns have `autoHeight` enabled.' as const,
+    277: ({ colId }: { colId: string }) =>
+        `'enableFilterHandlers' is set to true, but column '${colId}' does not have 'filter.doesFilterPass' or 'filter.handler' set.` as const,
+    278: ({ colId }: { colId: string }) => `Unable to create filter handler for column '${colId}'` as const,
+    279: ({ name }: { name: DynamicBeanName }) =>
+        `Unable to create dynamic bean '${name}' during module init lifecycle, dynamic beans must be initialised on first use.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

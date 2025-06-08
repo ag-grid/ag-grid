@@ -1,3 +1,5 @@
+import type { MockInstance } from 'vitest';
+
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
@@ -9,6 +11,8 @@ const gridRowsOptions: GridRowsOptions = {
 };
 
 describe('ag-grid parentId tree remove', () => {
+    let consoleWarnSpy: MockInstance | undefined;
+
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, TreeDataModule],
     });
@@ -21,6 +25,7 @@ describe('ag-grid parentId tree remove', () => {
     afterEach(() => {
         vitest.useRealTimers();
         gridsManager.reset();
+        consoleWarnSpy?.mockRestore();
     });
 
     test('tree transaction remove', async () => {
@@ -62,6 +67,50 @@ describe('ag-grid parentId tree remove', () => {
         expect(rows.length).toBe(2);
         expect(rows[0].data).toEqual(rowA);
         expect(rows[1].data).toEqual(rowB);
+    });
+
+    test('tree transaction remove parent with children raises warning', async () => {
+        const rowA = { id: 'a', orgHierarchy: ['A'] };
+        const rowB = { id: 'b', parentId: 'a' };
+        const rowC = { id: 'c-xDhjGsdDc', parentId: 'b' };
+        const rowD = { id: 'd-xDhjGsdDd', parentId: 'c-xDhjGsdDc' };
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [],
+            autoGroupColumnDef: { headerName: 'x' },
+            treeData: true,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData: [rowA, rowB, rowC, rowD],
+            getRowId: (params) => params.data.id,
+            treeDataParentIdField: 'parentId',
+        });
+
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+
+        await new GridRows(api, '', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ a GROUP id:a
+            · └─┬ b GROUP id:b
+            · · └─┬ c-xDhjGsdDc GROUP id:c-xDhjGsdDc
+            · · · └── d-xDhjGsdDd LEAF id:d-xDhjGsdDd
+        `);
+
+        api.applyTransaction({ remove: [rowC] });
+
+        const gridRows = new GridRows(api, '', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ a GROUP id:a
+            │ └── b LEAF id:b
+            └── d-xDhjGsdDd LEAF id:d-xDhjGsdDd
+        `);
+
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            'AG Grid: error #271',
+            "Parent row not found for row with id='d-xDhjGsdDd' and parent id='c-xDhjGsdDc'. Showing row with id='d-xDhjGsdDd' as a root-level node.",
+            expect.anything()
+        );
     });
 
     test('ag-grid tree sync remove re-insert filler', async () => {

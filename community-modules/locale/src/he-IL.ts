@@ -206,6 +206,7 @@ export const AG_GRID_LOCALE_IL = {
     pageSizeSelectorLabel: 'גודל עמוד:',
     footerTotal: 'סה"כ',
     statusBarLastRowUnknown: '?',
+    scrollColumnIntoView: 'גלול ${variable} לתוך התצוגה',
 
     // Pivoting
     pivotColumnGroupTotals: 'סה״כ',

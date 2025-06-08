@@ -9,6 +9,16 @@
     font-size: var(--ag-header-font-size);
     font-family: var(--ag-header-font-family);
     font-weight: var(--ag-header-font-weight);
+    border: none;
+}
+
+.ag-row-numbers-resizer {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    height: 4px;
+    width: 100%;
+    cursor: ns-resize;
 }
 
 :where(.ag-row-number-header.ag-row-number-selection-enabled) {

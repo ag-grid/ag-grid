@@ -90,7 +90,9 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         cellMouseOut: CellMouseOutEvent<TData, TContext>;
         filterChanged: FilterChangedEvent<TData, TContext>;
         filterModified: FilterModifiedEvent<TData, TContext>;
+        filterUiChanged: FilterUiChangedEvent<TData, TContext>;
         filterOpened: FilterOpenedEvent<TData, TContext>;
+        floatingFilterUiChanged: FloatingFilterUiChangedEvent<TData, TContext>;
         advancedFilterBuilderVisibleChanged: AdvancedFilterBuilderVisibleChangedEvent<TData, TContext>;
         sortChanged: SortChangedEvent<TData, TContext>;
         virtualRowRemoved: VirtualRowRemovedEvent<TData, TContext>;
@@ -122,6 +124,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowDragEnd: RowDragEndEvent<TData, TContext>;
         rowDragCancel: RowDragCancelEvent<TData, TContext>;
         findChanged: FindChangedEvent<TData, TContext>;
+        rowResizeStarted: RowResizeStartedEvent<TData, TContext>;
+        rowResizeEnded: RowResizeEndedEvent<TData, TContext>;
         // Internal events
         beforeRefreshModel: BeforeRefreshModelEvent<TData, TContext>;
         scrollbarWidthChanged: ScrollbarWidthChangedEvent<TData, TContext>;
@@ -171,6 +175,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         stickyTopOffsetChanged: StickyTopOffsetChangedEvent<TData, TContext>;
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
         rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
+        resetColumns: ResetColumnsEvent<TData, TContext>;
+        cellEditValuesChanged: CellEditValuesChangedEvent<TData, TContext>;
     }
 >;
 
@@ -378,6 +384,11 @@ export interface FilterModifiedEvent<TData = any, TContext = any>
     column: Column;
 }
 
+export interface FilterUiChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'filterUiChanged', TData, TContext> {
+    column: Column;
+}
+
 export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGlobalEvent<'filterOpened', TData, TContext> {
     /** Column / ProvidedColumnGroup that contains the filter */
     column: Column | ProvidedColumnGroup;
@@ -385,6 +396,11 @@ export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGlobal
     source: FilterRequestSource;
     /** Parent element of the filter */
     eGui: HTMLElement;
+}
+
+export interface FloatingFilterUiChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'floatingFilterUiChanged', TData, TContext> {
+    column: Column;
 }
 
 // internal event
@@ -479,6 +495,19 @@ export interface PivotMaxColumnsExceededEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'pivotMaxColumnsExceeded', TData, TContext> {
     message: string;
 }
+
+interface RowResizeEvent<TData = any, TContext = any, T extends AgEventType = any>
+    extends AgGlobalEvent<T, TData, TContext> {
+    node: IRowNode<TData>;
+    event: MouseEvent | Touch;
+    rowHeight: number;
+}
+
+export interface RowResizeStartedEvent<TData = any, TContext = any>
+    extends RowResizeEvent<TData, TContext, 'rowResizeStarted'> {}
+
+export interface RowResizeEndedEvent<TData = any, TContext = any>
+    extends RowResizeEvent<TData, TContext, 'rowResizeEnded'> {}
 
 export interface RowDragEvent<TData = any, TContext = any, T extends AgEventType = any>
     extends AgGlobalEvent<T, TData, TContext> {
@@ -714,6 +743,10 @@ export interface CellFocusedParams extends CommonCellFocusParams {
     forceBrowserFocus?: boolean;
     /** When `forceBrowserFocus` is `true`, should scroll be prevented */
     preventScrollOnBrowserFocus?: boolean;
+    /** Previous focused cell params */
+    previousCellFocus?: CellFocusedParams;
+    /** Initiating event, if any */
+    sourceEvent?: Event;
 }
 
 export interface HeaderFocusedParams {
@@ -1024,6 +1057,9 @@ export interface CellValueChangedEvent<TData = any, TValue = any>
     source: string | undefined;
 }
 
+export interface CellEditValuesChangedEvent<TData = any, TValue = any>
+    extends AgGlobalEvent<'cellEditValuesChanged', TData, TValue> {}
+
 export interface CellEditRequestEvent<TData = any, TValue = any>
     extends CellWithDataEvent<'cellEditRequest', TData, TValue> {
     oldValue: TValue | null | undefined;
@@ -1050,8 +1086,12 @@ export interface StoreRefreshedEvent<TData = any, TContext = any>
 }
 
 export interface StateUpdatedEvent<TData = any, TContext = any> extends AgGlobalEvent<'stateUpdated', TData, TContext> {
-    /** Which parts of the state triggered the update, or `gridInitializing` when the state has been created during grid initialization */
-    sources: (keyof GridState | 'gridInitializing')[];
+    /**
+     * Which parts of the state triggered the update,
+     * or `gridInitializing` when the state has been created during grid initialization,
+     * or 'api' when the state has been set via `api.setState`
+     */
+    sources: (keyof GridState | 'gridInitializing' | 'api')[];
     /** The updated state */
     state: GridState;
 }
@@ -1179,4 +1219,8 @@ export interface StickyTopOffsetChangedEvent<TData = any, TContext = any>
 export interface RowNodeDataChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowNodeDataChanged', TData, TContext> {
     node: RowNode<TData>;
+}
+
+export interface ResetColumnsEvent<TData = any, TContext = any> extends AgGlobalEvent<'resetColumns', TData, TContext> {
+    source: ColumnEventType;
 }
