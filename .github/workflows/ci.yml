@@ -303,7 +303,7 @@ jobs:
 
       - name: nx test:e2e:accessibility
         id: tests
-        run: yarn nx run test:e2e:accessibility --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+        run: yarn nx run ag-grid-accessibility:test:e2e:accessibility --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
 
       - name: Persist test results
         if: always() && matrix.shard != 0
