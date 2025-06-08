@@ -16,17 +16,16 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
     private column?: Column | null;
 
     public override shouldStop(
-        position: Required<EditPosition>,
-        key?: string | null | undefined,
+        position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        const res = super.shouldStop(position, key, event, source);
+        const res = super.shouldStop(position, event, source);
         if (res !== null) {
             return res;
         }
 
-        const { rowNode, column } = position;
+        const { rowNode, column } = position || {};
 
         if ((!this.rowNode || !this.column) && rowNode && column) {
             return null;
@@ -37,13 +36,12 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         return this.rowNode !== rowNode || this.column !== column;
     }
 
-    public override midBatchAllowed(position?: EditPosition): boolean {
+    public override midBatchInputsAllowed(position?: EditPosition): boolean {
         return this.model.hasEdits(position);
     }
 
     public start(
         position: Required<EditPosition>,
-        key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null,
         _source: 'api' | 'ui' = 'ui',
         silent?: boolean
@@ -60,7 +58,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             this.dispatchCellEvent(position, event, 'cellEditingStarted');
         }
 
-        this.setupEditors([position], position, key, true, event);
+        this.setupEditors([position], position, true, event);
     }
 
     public override dispatchRowEvent(

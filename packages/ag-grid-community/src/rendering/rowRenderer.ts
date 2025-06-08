@@ -586,7 +586,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             if (editSvc.batch) {
                 editSvc.cleanupEditors();
             } else {
-                editSvc.stopEditing({ source: 'api' });
+                editSvc.stopEditing(undefined, { source: 'api' });
             }
         }
 

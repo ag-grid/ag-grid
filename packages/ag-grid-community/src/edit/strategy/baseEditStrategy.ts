@@ -23,7 +23,7 @@ import {
 } from '../utils/editors';
 
 export abstract class BaseEditStrategy extends BeanStub {
-    public abstract midBatchAllowed(position: EditPosition): boolean;
+    public abstract midBatchInputsAllowed(position?: EditPosition): boolean;
 
     public clearEdits(position: EditPosition): void {
         this.model.clearEditValue(position);
@@ -35,7 +35,6 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     public abstract start(
         position: Required<EditPosition>,
-        key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null,
         source?: 'api' | 'ui',
         silent?: boolean
@@ -53,7 +52,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     public onCellFocusChanged(_event: CellFocusedEvent<any, any>): void {
         // check if any editors open
-        if (this.editSvc.isEditing({ withOpenEditor: true })) {
+        if (this.editSvc.isEditing(undefined, { withOpenEditor: true })) {
             const result = this.editSvc.stopEditing();
 
             // editSvc didn't handle the stopEditing, we need to do more ourselves
@@ -63,7 +62,7 @@ export abstract class BaseEditStrategy extends BeanStub {
                     this.editSvc.cleanupEditors();
                 } else {
                     // if not batch editing, then we stop editing the cell
-                    this.editSvc.stopEditing({ source: 'api' });
+                    this.editSvc.stopEditing(undefined, { source: 'api' });
                 }
             }
         }
@@ -225,10 +224,10 @@ export abstract class BaseEditStrategy extends BeanStub {
     public setupEditors(
         cells: Required<EditPosition>[] = this.model.getEditPositions(),
         position: Required<EditPosition>,
-        key?: string | null,
         cellStartedEdit?: boolean,
         event?: Event | null
     ) {
+        const key = (event instanceof KeyboardEvent && event.key) || undefined;
         const compDetails = _setupEditors(this.beans, cells, position, key, cellStartedEdit);
         const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
             ?.suppressPreventDefault;
@@ -264,7 +263,6 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     shouldStart(
         { column }: Required<EditPosition>,
-        _key?: string | null,
         event?: KeyboardEvent | MouseEvent | null,
         cellStartedEdit?: boolean | null,
         source: 'api' | 'ui' = 'ui'
@@ -302,8 +300,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     shouldStop(
-        _position: EditPosition,
-        _key?: string | null | undefined,
+        _position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
@@ -327,8 +324,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     shouldCancel(
-        _position?: Required<EditPosition>,
-        _key?: string | null | undefined,
+        _position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
@@ -349,10 +345,10 @@ export abstract class BaseEditStrategy extends BeanStub {
         return false;
     }
 
-    public setEdits(edits: EditMap): void {
-        this.editSvc.stopEditing({ cancel: true, source: 'api' });
+    public setEditMap(edits: EditMap): void {
+        this.editSvc.stopEditing(undefined, { cancel: true, source: 'api' });
 
-        this.model?.setEdits(edits);
+        this.model?.setEditMap(edits);
 
         // primary loop to preserve event semantics
         edits.forEach((_, rowNode) => {
@@ -377,7 +373,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         if (cells.length > 0) {
             const cell = cells.at(-1)!;
             this.editSvc.startEditing(cell, {
-                key: cell.newValue,
+                event: new KeyboardEvent('keydown', { key: cell.newValue }),
                 startedEdit: true,
                 source: 'api',
                 silent: true,

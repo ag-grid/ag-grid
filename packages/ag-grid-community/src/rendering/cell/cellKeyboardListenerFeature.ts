@@ -122,36 +122,35 @@ export class CellKeyboardListenerFeature extends BeanStub {
         eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellEnd' });
     }
 
-    private onEnterKeyDown(e: KeyboardEvent): void {
+    private onEnterKeyDown(event: KeyboardEvent): void {
         const { cellCtrl, beans } = this;
         const { editSvc, navigation } = beans;
         const editing = editSvc?.isEditing(cellCtrl);
         if (editing) {
-            if (this.isCtrlEnter(e)) {
+            if (this.isCtrlEnter(event)) {
                 // bulk edit, apply currently editing value to all selected cells
                 editSvc?.applyBulkEdit(cellCtrl, this.beans?.rangeSvc?.getCellRanges() || []);
                 return;
             }
 
             editSvc?.stopEditing(cellCtrl, {
-                event: e,
-                shiftKey: e.shiftKey,
+                event,
             });
         } else {
             if (beans.gos.get('enterNavigatesVertically')) {
-                const key = e.shiftKey ? KeyCode.UP : KeyCode.DOWN;
+                const key = event.shiftKey ? KeyCode.UP : KeyCode.DOWN;
                 navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
             } else {
                 const started = editSvc?.startEditing(cellCtrl, {
                     startedEdit: true,
-                    event: e,
+                    event,
                 });
                 if (started) {
                     // if we started editing, then we need to prevent default, otherwise the Enter action can get
                     // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
                     // preventing default results in a 'new line' character getting inserted in the text area
                     // when the editing was started
-                    e.preventDefault();
+                    event.preventDefault();
                 }
             }
         }
@@ -199,7 +198,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (key === KeyCode.SPACE) {
             this.onSpaceKeyDown(event);
         } else if (editSvc?.isCellEditable(cellCtrl, 'ui')) {
-            editSvc?.startEditing(cellCtrl, { key, startedEdit: true, event, source: 'api' });
+            editSvc?.startEditing(cellCtrl, { startedEdit: true, event, source: 'api' });
             // if we don't prevent default, then the event also gets applied to the text field
             // (at least when doing the default editor), but we need to allow the editor to decide
             // what it wants to do. we only do this IF editing was started - otherwise it messes

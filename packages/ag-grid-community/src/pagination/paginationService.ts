@@ -82,7 +82,7 @@ export class PaginationService extends BeanStub implements NamedBean {
             if (this.editSvc.batch) {
                 this.editSvc.cleanupEditors();
             } else {
-                this.editSvc.stopEditing({ source: 'api' });
+                this.editSvc.stopEditing(undefined, { source: 'api' });
             }
         }
 

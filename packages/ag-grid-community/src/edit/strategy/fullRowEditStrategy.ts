@@ -32,11 +32,11 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     }
 
     public override shouldStop(
-        { rowNode }: Required<EditPosition>,
-        key?: string | null | undefined,
+        position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         _source: 'api' | 'ui' = 'ui'
     ): boolean | null {
+        const { rowNode } = position || {};
         const oldRowCtrl = _getRowCtrl(this.beans, {
             rowNode: this.rowNode,
         });
@@ -45,7 +45,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return true;
         }
 
-        const res = super.shouldStop({ rowNode: this.rowNode }, key, event, _source);
+        const res = super.shouldStop({ rowNode: this.rowNode }, event, _source);
         if (res !== null) {
             return res;
         }
@@ -58,7 +58,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         return rowNode !== this.rowNode;
     }
 
-    public override midBatchAllowed({ rowNode }: EditPosition): boolean {
+    public override midBatchInputsAllowed({ rowNode }: EditPosition): boolean {
         if (!rowNode) {
             return false;
         }
@@ -72,7 +72,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
     public override start(
         position: Required<EditPosition>,
-        key?: string | null | undefined,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         _source: 'api' | 'ui' = 'ui',
         silent?: boolean
@@ -109,7 +108,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         this.rowNode = rowNode;
 
-        this.setupEditors(cells, position, key, true, event);
+        this.setupEditors(cells, position, true, event);
     }
 
     public override stop(): boolean {

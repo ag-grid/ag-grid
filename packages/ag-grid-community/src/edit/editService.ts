@@ -55,7 +55,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         this.rangeSvc = this.beans.rangeSvc!;
 
         this.addManagedPropertyListener('editType', ({ currentValue }: any) => {
-            this.stopEditing({ cancel: true, source: 'api' });
+            this.stopEditing(undefined, { cancel: true, source: 'api' });
 
             // will re-create if different
             this.createStrategy(currentValue);
@@ -75,11 +75,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     public enableBatchEditing(): void {
         this.batch = true;
-        this.stopEditing({ cancel: true, source: 'api' });
+        this.stopEditing(undefined, { cancel: true, source: 'api' });
     }
 
     public disableBatchEditing(): void {
-        this.stopEditing({ cancel: true, source: 'api' });
+        this.stopEditing(undefined, { cancel: true, source: 'api' });
         this.batch = false;
     }
 
@@ -112,47 +112,40 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     shouldStartEditing(
         position: Required<EditPosition>,
-        key?: string | null,
         event?: KeyboardEvent | MouseEvent | null,
         cellStartedEdit?: boolean | null,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        return this.strategy?.shouldStart(position, key, event, cellStartedEdit, source) ?? null;
+        return this.strategy?.shouldStart(position, event, cellStartedEdit, source) ?? null;
     }
 
     shouldStopEditing(
-        position: Required<EditPosition>,
-        key?: string | null | undefined,
+        position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        return this.strategy?.shouldStop(position, key, event, source) ?? null;
+        return this.strategy?.shouldStop(position, event, source) ?? null;
     }
 
     shouldCancelEditing(
-        position: Required<EditPosition>,
-        key?: string | null | undefined,
+        position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        return this.strategy?.shouldCancel(position, key, event, source) ?? null;
+        return this.strategy?.shouldCancel(position, event, source) ?? null;
     }
 
-    public isEditing(params?: IsEditingParams): boolean;
-    public isEditing(position: EditPosition, params?: IsEditingParams): boolean;
-    public isEditing(position: any, params?: IsEditingParams): boolean {
+    public isEditing(position?: EditPosition, params?: IsEditingParams): boolean {
         return this.model.hasEdits(position, params) ?? false;
     }
 
-    public isRowEditing(params?: IsEditingParams): boolean;
-    public isRowEditing(position: EditRowPosition, params?: IsEditingParams): boolean;
-    public isRowEditing(position: any, params?: IsEditingParams): boolean {
+    public isRowEditing(position: EditRowPosition, params?: IsEditingParams): boolean {
         return this.model.hasEdits({ rowNode: position?.rowNode }, params) ?? false;
     }
 
     /** @return whether to prevent default on event */
     public startEditing(position: Required<EditPosition>, params: StartEditParams): void {
-        const { key = null, startedEdit = true, event = null, source = 'ui', silent = false } = params;
+        const { startedEdit = true, event = null, source = 'ui', silent = false } = params;
 
         this.strategy ??= this.createStrategy();
 
@@ -168,18 +161,18 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return;
         }
 
-        const res = this.shouldStartEditing?.(position, key, event, startedEdit, source);
+        const res = this.shouldStartEditing?.(position, event, startedEdit, source);
 
         if (res === false && source !== 'api') {
             this.isEditing(position) && this.stopEditing();
             return;
         }
 
-        if (!this.batch && this.shouldStopEditing(position, undefined, undefined, source)) {
-            this.stopEditing({ source });
+        if (!this.batch && this.shouldStopEditing(position, undefined, source)) {
+            this.stopEditing(undefined, { source });
         }
 
-        this.strategy!.start(position, key, event, source, silent);
+        this.strategy!.start(position, event, source, silent);
 
         this.updateCells();
 
@@ -195,18 +188,12 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         this.strategy?.updateCells(edits, forcedState, suppressFlash, includeParents);
     }
 
-    private isStopping: boolean = false;
+    public stopEditing(position?: EditPosition, params?: StopEditParams): boolean {
+        const { event, cancel, source = 'ui', suppressNavigateAfterEdit } = params || {};
 
-    stopEditing(params?: StopEditParams): boolean;
-    stopEditing(position?: EditPosition, params?: StopEditParams): boolean;
-    stopEditing(position: any = {}, params?: StopEditParams): boolean {
-        const { key, event, cancel, source = 'ui', suppressNavigateAfterEdit, shiftKey = false } = params || {};
-
-        if (!this.isEditing() || !this.strategy || this.isStopping) {
+        if (!this.isEditing() || !this.strategy) {
             return false;
         }
-
-        this.isStopping = true;
 
         const cellCtrl = _getCellCtrl(this.beans, position);
         if (cellCtrl) {
@@ -218,8 +205,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         let res = false;
         let forcedState: boolean | undefined = undefined;
 
-        const willStop = !cancel && !!this.shouldStopEditing(position, key, event, source);
-        const willCancel = cancel && !!this.shouldCancelEditing(position, key, event, source);
+        const willStop = !cancel && !!this.shouldStopEditing(position, event, source);
+        const willCancel = cancel && !!this.shouldCancelEditing(position, event, source);
 
         if (willStop || willCancel) {
             _syncFromEditors(this.beans);
@@ -233,15 +220,15 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             res ||= willStop;
             forcedState = false;
-        } else if (event instanceof KeyboardEvent && this.batch && this.strategy?.midBatchAllowed(position)) {
-            // handle mid-batch edit interactions
+        } else if (event instanceof KeyboardEvent && this.batch && this.strategy?.midBatchInputsAllowed(position)) {
+            const key = event.key;
             const isEnter = key === KeyCode.ENTER;
             const isEscape = key === KeyCode.ESCAPE;
 
             if (isEnter || isEscape) {
                 if (isEnter) {
                     _syncFromEditors(this.beans);
-                } else {
+                } else if (position) {
                     this.strategy?.clearEdits(position);
                 }
 
@@ -257,20 +244,15 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
 
         if (!suppressNavigateAfterEdit && cellCtrl) {
-            this.navigateAfterEdit(shiftKey, cellCtrl.cellPosition);
+            this.navigateAfterEdit(event instanceof KeyboardEvent && event.shiftKey, cellCtrl.cellPosition);
         }
 
-        // update editing styles
         this.updateCells(edits, forcedState, true, true);
 
         _purgeUnchangedEdits(this.beans);
 
-        // force refresh of all row cells as custom renderers may depend on multiple cell values
         this.refreshAllRows(edits, this.includeParents);
 
-        this.isStopping = false;
-
-        // Integrated charts listen to this event to update the chart data
         this.beans.eventSvc.dispatchEvent({
             type: 'cellEditValuesChanged',
         });
@@ -346,9 +328,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
     }
 
-    public setEdits(edits: EditMap): void {
+    public setEditMap(edits: EditMap): void {
         this.strategy ??= this.createStrategy();
-        this.strategy?.setEdits(edits);
+        this.strategy?.setEditMap(edits);
         this.beans.eventSvc.dispatchEvent({
             type: 'cellEditValuesChanged',
         });
@@ -356,7 +338,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     public stopAllEditing(cancel: boolean = false, source: 'api' | 'ui' = 'ui'): void {
         if (this.isEditing()) {
-            this.stopEditing({ cancel, source });
+            this.stopEditing(undefined, { cancel, source });
         }
     }
 
@@ -559,7 +541,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 }
             });
 
-            this.setEdits(edits);
+            this.setEditMap(edits);
 
             // update editing styles
             this.updateCells(edits, undefined, true, true);
@@ -574,7 +556,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 return;
             }
 
-            this.stopEditing({ source: 'api' });
+            this.stopEditing(undefined, { source: 'api' });
         });
     }
 }

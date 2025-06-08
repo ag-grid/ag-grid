@@ -137,11 +137,11 @@ export function setEditingCells(
         editRow.set(col, { newValue, oldValue, state: state ?? 'changed' });
     });
 
-    editSvc?.setEdits(edits);
+    editSvc?.setEditMap(edits);
 }
 
 export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
-    beans.editSvc?.stopEditing({ cancel, source: 'api' });
+    beans.editSvc?.stopEditing(undefined, { cancel, source: 'api' });
 }
 
 export function isEditing(beans: BeanCollection, rowId?: string, colId?: string): boolean {
@@ -196,7 +196,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
             preventScrollOnBrowserFocus: true,
         });
     }
-    editSvc?.startEditing(cell, { key, startedEdit: true, source: 'api' });
+    editSvc?.startEditing(cell, { startedEdit: true, source: 'api', event: new KeyboardEvent('keydown', { key }) });
 }
 
 export function cancelEdits(beans: BeanCollection): void {

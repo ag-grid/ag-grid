@@ -2,13 +2,20 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
-import type { EditMap, EditRow, EditState, EditValue, HasEditsParams } from '../interfaces/iEditModelService';
+import type {
+    EditMap,
+    EditRow,
+    EditState,
+    EditValue,
+    HasEditsParams,
+    IEditModelService,
+} from '../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _getSiblingRows } from './utils/controllers';
 import { UNEDITED } from './utils/editors';
 
-export class EditModelService extends BeanStub implements NamedBean {
+export class EditModelService extends BeanStub implements NamedBean, IEditModelService {
     beanName = 'editModelSvc' as const;
 
     private edits: EditMap = new Map();
@@ -53,7 +60,7 @@ export class EditModelService extends BeanStub implements NamedBean {
         return map;
     }
 
-    public setEdits(newEdits: EditMap): void {
+    public setEditMap(newEdits: EditMap): void {
         this.edits.clear();
         newEdits.forEach((editRow, rowNode) => {
             const newRow = new Map<Column, EditValue>();
@@ -72,7 +79,7 @@ export class EditModelService extends BeanStub implements NamedBean {
         this.getEditRow(position)!.set(column, edit);
     }
 
-    public clearEdit(position: EditPosition): void {
+    public clearEditValue(position: EditPosition): void {
         const { rowNode, column } = position;
         if (rowNode) {
             if (column) {
@@ -124,10 +131,7 @@ export class EditModelService extends BeanStub implements NamedBean {
         return this.edits.has(rowNode);
     }
 
-    public hasEdits(params?: HasEditsParams): boolean;
-    public hasEdits(position?: EditPosition): boolean;
-    public hasEdits(position?: EditPosition, params?: HasEditsParams): boolean;
-    public hasEdits(position: any = {}, params: HasEditsParams = {}): boolean {
+    public hasEdits(position: EditPosition = {}, params: HasEditsParams = {}): boolean {
         const { rowNode, column } = position;
         const { checkSiblings, includeParents, withOpenEditor: withOpenEditors } = params;
         if (rowNode) {

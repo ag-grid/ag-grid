@@ -29,7 +29,7 @@ export interface IEditModelService {
     getEditMap(copy?: boolean): EditMap;
 
     setEdit(position: Required<EditPosition>, edit: EditValue): void;
-    setEdits(edits: EditMap): void;
+    setEditMap(edits: EditMap): void;
     setState(position: Required<EditPosition>, state: EditState): void;
 
     clearEditValue(position: EditPosition): void;
@@ -38,7 +38,6 @@ export interface IEditModelService {
     getState(position: EditPosition): EditState | undefined;
 
     hasRowEdits({ rowNode }: Required<EditRowPosition>): boolean;
-    hasEdits(params?: HasEditsParams): boolean;
     hasEdits(position?: EditPosition, params?: HasEditsParams): boolean;
 
     start(position: Required<EditPosition>): void;

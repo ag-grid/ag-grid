@@ -101,7 +101,7 @@ export function _addStopEditingWhenGridLosesFocus(
         }
 
         if (!clickInsideGrid) {
-            editSvc?.stopEditing({ source: 'api' });
+            editSvc?.stopEditing(undefined, { source: 'api' });
         }
     };
 

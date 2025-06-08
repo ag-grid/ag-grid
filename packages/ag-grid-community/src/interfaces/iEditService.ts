@@ -1,5 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import type { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
+import { AgColumn } from '../entities/agColumn';
 import type { AgEventType } from '../eventTypes';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
@@ -13,7 +14,6 @@ import type { UserCompDetails } from './iUserCompDetails';
 type EditEvents = KeyboardEvent | MouseEvent | null;
 
 export type StartEditParams = {
-    key?: string | null;
     startedEdit?: boolean | null;
     event?: EditEvents;
     source?: 'api' | 'ui';
@@ -21,12 +21,10 @@ export type StartEditParams = {
 };
 
 export type StopEditParams = {
-    key?: string;
     event?: EditEvents;
     cancel?: boolean;
     source?: 'api' | 'ui';
     suppressNavigateAfterEdit?: boolean;
-    shiftKey?: boolean;
 };
 
 export type IsEditingParams = {
@@ -38,20 +36,24 @@ export type EditRowPosition = {
     rowNode?: IRowNode;
 };
 
-export type EditPosition = EditRowPosition & {
+export interface EditPosition extends EditRowPosition {
     column?: Column;
-};
+}
 
+export function _isEditPosition(pos: any): pos is EditPosition {
+    return pos && typeof pos.rowNode === 'object' && (pos.column === undefined || pos.column instanceof AgColumn);
+}
+
+export function _isEditRowPosition(pos: any): pos is EditRowPosition {
+    return pos && typeof pos.rowNode === 'object';
+}
 export interface IEditService extends NamedBean {
     batch: boolean;
     enableBatchEditing(): void;
     disableBatchEditing(): void;
-    isEditing(params?: IsEditingParams | null): boolean;
     isEditing(position?: EditPosition | null, params?: IsEditingParams | null): boolean;
-    isRowEditing(params?: IsEditingParams | null): boolean;
     isRowEditing(position?: EditRowPosition | null, params?: IsEditingParams | null): boolean;
     startEditing(position: Required<EditPosition>, params: StartEditParams): void;
-    stopEditing(params?: StopEditParams): boolean;
     stopEditing(position?: EditPosition, params?: StopEditParams): boolean;
     stopAllEditing(cancel?: boolean, source?: 'api' | 'ui'): void;
     updateCells(
@@ -60,7 +62,7 @@ export interface IEditService extends NamedBean {
         suppressFlash?: boolean,
         includeParents?: boolean
     ): void;
-    setEdits(updates: EditMap): void;
+    setEditMap(updates: EditMap): void;
     isCellEditable(position: Required<EditPosition>, source?: 'api' | 'ui'): boolean;
     moveToNextCell(
         previous: CellCtrl | RowCtrl,
