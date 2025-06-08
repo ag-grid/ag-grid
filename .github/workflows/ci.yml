@@ -157,7 +157,7 @@ jobs:
           echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
           echo "bundle Test matrix determined to be: ${bundle_matrix}"
 
-          accessiblity_count=4
+          accessiblity_count=20
           e2e_accessiblity_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 ${accessiblity_count})
           echo "e2e_accessiblity_matrix=${e2e_accessiblity_matrix}" >> $GITHUB_OUTPUT
           echo "e2e_accessiblity_count=${accessiblity_count}" >> $GITHUB_OUTPUT
@@ -536,7 +536,7 @@ jobs:
         with:
           name: 'Tests Results'
           path: reports/*.xml
-          reporter: jest-junit
+          reporter: java-junit
 
 #      - name: Check last job status
 #        id: lastJobStatus
