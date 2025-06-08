@@ -303,7 +303,7 @@ jobs:
 
       - name: nx test:e2e:accessibility
         id: tests
-        run: yarn nx run ag-grid-accessibility:test:e2e:accessibility --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+        run: yarn nx run ag-grid-accessibility:test:e2e:accessibility --shard=${{ matrix.shard }}/$((${{ strategy.job-total }}))
 
       - name: Persist test results
         if: always() && matrix.shard != 0
@@ -529,7 +529,8 @@ jobs:
         uses: dorny/test-reporter@v1
         if: needs.test.result == 'success' || needs.test.result == 'failure' ||
           needs.e2e.result == 'success' || needs.e2e.result == 'failure' ||
-          needs.bundle_size.result == 'success' || needs.bundle_size.result == 'failure'
+          needs.bundle_size.result == 'success' || needs.bundle_size.result == 'failure' ||
+          needs.e2e_accessibility.result == 'success' || needs.e2e_accessibility.result == 'failure'
         id: testReport
         continue-on-error: true
         with:
