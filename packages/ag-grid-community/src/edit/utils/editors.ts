@@ -24,22 +24,24 @@ export function _setupEditors(
     }
 
     const { valueSvc, editSvc, editModelSvc } = beans;
+    const { rowNode, column } = position ?? {};
 
     let startedCompDetails: UserCompDetails<ICellEditorComp<any, any, any>> | undefined;
 
     for (const cellPosition of editingCells) {
-        const { rowNode, column } = cellPosition;
+        const { rowNode: cellRowNode, column: cellColumn } = cellPosition;
         const curCellCtrl = _getCellCtrl(beans, cellPosition);
 
         if (!curCellCtrl) {
-            if (rowNode && column) {
+            if (cellRowNode && cellColumn) {
+                const oldValue = valueSvc.getValue(cellColumn as AgColumn, cellRowNode, undefined, 'api');
+
                 const newValue =
                     key ??
                     editSvc?.getCellDataValue(cellPosition) ??
-                    valueSvc.getValueForDisplay(column as AgColumn, rowNode)?.value ??
+                    valueSvc.getValueForDisplay(cellColumn as AgColumn, cellRowNode)?.value ??
+                    oldValue ??
                     UNEDITED;
-
-                const oldValue = valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api');
 
                 editModelSvc?.setEdit(cellPosition, { newValue, oldValue, state: 'editing' });
             }
@@ -78,8 +80,12 @@ export function _setupEditor(
 
     const editorParams = _createEditorParams(beans, position, key, cellStartedEdit);
 
-    const newValue = key ?? editorParams.value;
     const oldValue = beans.valueSvc.getValue(position.column as AgColumn, position.rowNode, undefined, 'api');
+    let newValue = key ?? editorParams.value;
+
+    if (newValue === undefined) {
+        newValue = oldValue;
+    }
 
     beans.editModelSvc?.setEdit(position, { newValue: newValue ?? UNEDITED, oldValue, state: 'editing' });
 

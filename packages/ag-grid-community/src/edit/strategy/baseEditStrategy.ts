@@ -37,7 +37,8 @@ export abstract class BaseEditStrategy extends BeanStub {
         position: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null,
         source?: 'api' | 'ui',
-        silent?: boolean
+        silent?: boolean,
+        ignoreEventKey?: boolean
     ): void;
 
     postConstruct(): void {
@@ -225,9 +226,10 @@ export abstract class BaseEditStrategy extends BeanStub {
         cells: Required<EditPosition>[] = this.model.getEditPositions(),
         position: Required<EditPosition>,
         cellStartedEdit?: boolean,
-        event?: Event | null
+        event?: Event | null,
+        ignoreEventKey: boolean = false
     ) {
-        const key = (event instanceof KeyboardEvent && event.key) || undefined;
+        const key = (event instanceof KeyboardEvent && !ignoreEventKey && event.key) || undefined;
         const compDetails = _setupEditors(this.beans, cells, position, key, cellStartedEdit);
         const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
             ?.suppressPreventDefault;

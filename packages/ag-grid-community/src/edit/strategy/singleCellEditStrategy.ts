@@ -44,7 +44,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         position: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null,
         _source: 'api' | 'ui' = 'ui',
-        silent?: boolean
+        silent?: boolean,
+        ignoreEventKey?: boolean
     ): void {
         if (this.rowNode !== position.rowNode || this.column !== position.column) {
             super.cleanupEditors();
@@ -58,7 +59,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             this.dispatchCellEvent(position, event, 'cellEditingStarted');
         }
 
-        this.setupEditors([position], position, true, event);
+        this.setupEditors([position], position, true, event, ignoreEventKey);
     }
 
     public override dispatchRowEvent(
@@ -131,7 +132,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         nextCell.focusCell(false);
 
-        this.editSvc.startEditing(nextCell, { startedEdit: true, event, source });
+        this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
 
         return true;
     }

@@ -18,6 +18,7 @@ export type StartEditParams = {
     event?: EditEvents;
     source?: 'api' | 'ui';
     silent?: boolean;
+    ignoreEventKey?: boolean;
 };
 
 export type StopEditParams = {

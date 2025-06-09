@@ -74,7 +74,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         position: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         _source: 'api' | 'ui' = 'ui',
-        silent?: boolean
+        silent?: boolean,
+        ignoreEventKey?: boolean
     ): void {
         const { rowNode } = position;
         if (this.rowNode !== rowNode) {
@@ -108,7 +109,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         this.rowNode = rowNode;
 
-        this.setupEditors(cells, position, true, event);
+        this.setupEditors(cells, position, true, event, ignoreEventKey);
     }
 
     public override stop(): boolean {
@@ -164,7 +165,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         if (!rowsMatch) {
-            this.editSvc.startEditing(nextCell, { startedEdit: true, event, source });
+            this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
         }
 
         if (nextEditable) {

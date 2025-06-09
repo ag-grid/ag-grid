@@ -145,7 +145,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     /** @return whether to prevent default on event */
     public startEditing(position: Required<EditPosition>, params: StartEditParams): void {
-        const { startedEdit = true, event = null, source = 'ui', silent = false } = params;
+        const { startedEdit = true, event = null, source = 'ui', silent = false, ignoreEventKey = false } = params;
 
         this.strategy ??= this.createStrategy();
 
@@ -172,7 +172,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.stopEditing(undefined, { source });
         }
 
-        this.strategy!.start(position, event, source, silent);
+        this.strategy!.start(position, event, source, silent, ignoreEventKey);
 
         this.updateCells();
 
