@@ -236,7 +236,7 @@ function attachScript(page: Page, url: string) {
     }, url);
 }
 
-async function attachScripts(page: Page, version: Version) {
+async function attachScripts(page: Page, version: Version, describe: { __hidden?: { stack?: Error } }) {
     const chartsVersion = gridToChartsMap[version as keyof typeof gridToChartsMap] || gridToChartsMap.prod;
 
     const urls = [getCdnUrl('ag-grid-community', version), getCdnUrl('ag-grid-enterprise', version)];
@@ -252,8 +252,14 @@ async function attachScripts(page: Page, version: Version) {
         ];*/
     }
     await Promise.all(urls.map(attachScript.bind(0, page)));
-    // @ts-expect-error agGrid is not in the current scope
-    await waitFor(() => typeof agGrid !== 'undefined', page);
+    try {
+        // @ts-expect-error agGrid is not in the current scope
+        await waitFor(() => typeof agGrid !== 'undefined', page);
+    } catch (e) {
+        console.error('Perhaps you forgot to start dev server? Or provided URL/version are not available.');
+        (e as Error).stack += '\n Caused by:\n' + describe.__hidden!.stack?.stack;
+        throw e;
+    }
 }
 function updatePageTitle(page: Page, testCase: TestCase, variant: Variant) {
     return page.evaluate(
@@ -284,7 +290,8 @@ async function attachCookies(context: BrowserContext, variant: Variant) {
 }
 
 /** Generic benchmark function to run performance tests */
-export default function (name: string, describe: Describe) {
+export default function (name: string, describe: Describe & { __hidden?: { stack?: Error } }) {
+    describe.__hidden = { stack: new Error() }; // used for friendlier error logs
     test.describe.configure({ timeout: describe.timeout || 3 * 60_000, mode: 'serial' });
     return test.describe(name, () => {
         const minIterations = Math.max(describe.minIterations ?? 10, 3) + 3;
@@ -303,7 +310,7 @@ export default function (name: string, describe: Describe) {
                             await attachCookies(context, variant);
                             const comms = await gotoUrl(page, getUrl(testCase, variant));
                             void updatePageTitle(page, testCase, variant);
-                            variant.shouldInjectScript && (await attachScripts(page, variant.version));
+                            variant.shouldInjectScript && (await attachScripts(page, variant.version, describe));
                             testCase.preSetup && (await testCase.preSetup(page));
                             for (let i = 0; i < minIterations; i++) {
                                 testCase.setupPreActions && (await testCase.setupPreActions(page));

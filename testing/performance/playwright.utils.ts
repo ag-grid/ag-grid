@@ -10,7 +10,7 @@ type RequestFinishedMessage = {
     url: string;
     method: string;
     headers: { [p: string]: string };
-    postData: string;
+    postData: string | null;
     response: Promise<{
         status: number;
         statusText: string;
@@ -41,9 +41,9 @@ export function getBrowserCommunications(page: Page): BrowserCommunications {
             headers: request.headers(),
             postData: request.postData(),
             response: request.response().then((response) => ({
-                status: response.status(),
-                statusText: response.statusText(),
-                headers: response.headers(),
+                status: response!.status(),
+                statusText: response!.statusText(),
+                headers: response!.headers(),
             })),
         });
     });
@@ -89,7 +89,7 @@ export const waitFor = async <T>(
             clearInterval(interval);
             if (options.allowFailure) {
                 console.log(`waitFor timed out doing: ${getterOrTimeout.toString()}, but was allowed to resolve`);
-                return resolve(undefined);
+                return resolve(undefined as T);
             }
             return reject(new Error(`waitFor timed out doing: ${getterOrTimeout.toString()}`));
         }, timeout ?? 5000);
