@@ -87,17 +87,20 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
         return !!res;
     }, [userCompDetails]);
 
-    const reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
-    const UserCompClass = userCompDetails && userCompDetails.componentClass;
+    const reactUserComp = userCompDetails?.componentFromFramework;
+    const UserCompClass = userCompDetails?.componentClass;
 
     return (
         <div ref={setRef} style={userStyles} className="ag-header-cell" col-id={colId} role="columnheader">
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
             <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">
-                {reactUserComp && userCompStateless && <UserCompClass {...userCompDetails!.params} />}
-                {reactUserComp && !userCompStateless && (
-                    <UserCompClass {...userCompDetails!.params} ref={userCompRef} />
-                )}
+                {reactUserComp ? (
+                    userCompStateless ? (
+                        <UserCompClass {...userCompDetails!.params} />
+                    ) : (
+                        <UserCompClass {...userCompDetails!.params} ref={userCompRef} />
+                    )
+                ) : null}
             </div>
         </div>
     );

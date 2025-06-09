@@ -105,8 +105,8 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
         [cssResizableClasses]
     );
 
-    const reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
-    const UserCompClass = userCompDetails && userCompDetails.componentClass;
+    const reactUserComp = userCompDetails?.componentFromFramework;
+    const UserCompClass = userCompDetails?.componentClass;
 
     return (
         <div
@@ -118,10 +118,13 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
             aria-expanded={ariaExpanded}
         >
             <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">
-                {reactUserComp && userCompStateless && <UserCompClass {...userCompDetails!.params} />}
-                {reactUserComp && !userCompStateless && (
-                    <UserCompClass {...userCompDetails!.params} ref={userCompRef} />
-                )}
+                {reactUserComp ? (
+                    userCompStateless ? (
+                        <UserCompClass {...userCompDetails!.params} />
+                    ) : (
+                        <UserCompClass {...userCompDetails!.params} ref={userCompRef} />
+                    )
+                ) : null}
             </div>
             <div ref={eResize} aria-hidden={resizableAriaHidden} className={resizableClassName}></div>
         </div>
