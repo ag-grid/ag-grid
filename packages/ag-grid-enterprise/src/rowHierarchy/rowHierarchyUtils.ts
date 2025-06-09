@@ -10,7 +10,7 @@ import type {
 } from 'ag-grid-community';
 
 export interface IRowGroupingStrategy<TData = any> extends Bean {
-    execute(params: StageExecuteParams<TData>, approach: GroupingApproach): void;
+    execute(params: StageExecuteParams<TData>, approach: GroupingApproach): boolean | undefined | void;
 
     /** Called to reset the state when the strategy changes */
     reset?(): void;

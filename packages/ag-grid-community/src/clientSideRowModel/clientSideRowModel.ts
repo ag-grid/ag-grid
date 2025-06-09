@@ -633,8 +633,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return true; // Nothing changed, or only updates with no new rows and no removals
     }
 
-    private beforeRefreshModel(params: RefreshModelParams): void {
-        this.eventSvc.dispatchEvent({ type: 'beforeRefreshModel', params });
+    private beforeRefreshModel(params: RefreshModelParams, groupsChanged: boolean = false): void {
+        this.eventSvc.dispatchEvent({ type: 'beforeRefreshModel', params, groupsChanged });
 
         if (this.started && params.rowDataUpdated) {
             this.eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
@@ -678,13 +678,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         /* eslint-disable no-fallthrough */
         switch (params.step) {
-            case 'group':
-                this.doRowGrouping(params);
-                this.beforeRefreshModel(params); // Do this after grouping, so the parent field is correct
+            case 'group': {
+                const groupingChanged = this.doRowGrouping(params);
+                this.beforeRefreshModel(params, groupingChanged); // Do this after grouping, so the parent field is correct
                 if (params.step === 'group' && this.rowNodesCountReady) {
                     this.rowCountReady = true; // only if row data has been set
                     this.eventSvc.dispatchEventOnce({ type: 'rowCountReady' });
                 }
+            }
             case 'filter':
                 this.doFilter(changedPath);
             case 'pivot':
@@ -970,7 +971,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
-    private doRowGrouping(params: RefreshModelParams) {
+    private doRowGrouping(params: RefreshModelParams): boolean {
         const rootNode: ClientSideRowModelRootNode = this.rootNode!;
 
         const groupStageExecuted = this.groupStage?.execute({
@@ -981,14 +982,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             afterColumnsChanged: !!params.afterColumnsChanged,
         });
 
-        if (!groupStageExecuted) {
-            const sibling: ClientSideRowModelRootNode = rootNode.sibling;
-            rootNode.childrenAfterGroup = rootNode.allLeafChildren;
-            if (sibling) {
-                sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
-            }
-            rootNode.updateHasChildren();
+        if (groupStageExecuted !== undefined) {
+            return groupStageExecuted;
         }
+
+        const sibling: ClientSideRowModelRootNode = rootNode.sibling;
+        rootNode.childrenAfterGroup = rootNode.allLeafChildren;
+        if (sibling) {
+            sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
+        }
+        rootNode.updateHasChildren();
+
+        return false;
     }
 
     private doFilter(changedPath: ChangedPath) {

@@ -71,7 +71,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         return this.fillerNodesById?.get(id);
     }
 
-    public execute(params: StageExecuteParams<TData>, approach: GroupingApproach) {
+    public execute(params: StageExecuteParams<TData>, approach: GroupingApproach): boolean {
         const { changedRowNodes, changedPath, afterColumnsChanged } = params;
         this.checkGroupColsUpdated(afterColumnsChanged);
 
@@ -91,13 +91,15 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
         }
 
-        const treeChanged = this.initRowsParents(rootNode);
+        const parentsChanged = this.initRowsParents(rootNode);
 
         this.destroyFillerRows();
 
         this.initRowsChildrenSize(rootNode);
 
-        const preprocessedCount = this.preprocessRows(rootNode);
+        let preprocessedCount = this.preprocessRows(rootNode);
+        const treeChanged = parentsChanged || (preprocessedCount & FLAG_CHILDREN_CHANGED) !== 0;
+        preprocessedCount &= ~FLAG_CHILDREN_CHANGED;
 
         const traverseCount = this.traverseRoot(rootNode, activeChangedPath);
         if (preprocessedCount > 0 && preprocessedCount !== traverseCount) {
@@ -107,7 +109,9 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
         rootNode.treeNodeFlags = 0;
 
-        this.deselectHiddenNodes(treeChanged || fullReload);
+        this.deselectHiddenNodes(parentsChanged || fullReload);
+
+        return treeChanged;
     }
 
     private flagUpdatedNodes(changedRowNodes: IChangedRowNodes<TData>): boolean {
@@ -234,6 +238,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         const allLeafChildrenLen = rootAllLeafChildren.length;
         const groupColsChanged = this.groupColsChanged;
         let preprocessedCount = 0;
+        let treeChanged = false;
         for (let i = 0; i < allLeafChildrenLen; ++i) {
             let current = rootAllLeafChildren[i];
             while (true) {
@@ -250,6 +255,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 if (parentFlags & FLAG_CHILDREN_CHANGED || parentChildren[indexInParent] !== current) {
                     parentFlags |= FLAG_CHILDREN_CHANGED;
                     parentChildren[indexInParent] = current; // insert into parent.childrenAfterGroup[]
+                    treeChanged = true;
                 }
                 parent.treeNodeFlags = parentFlags;
 
@@ -265,7 +271,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 current = parent;
             }
         }
-        return preprocessedCount;
+        return preprocessedCount | (treeChanged ? FLAG_CHILDREN_CHANGED : 0);
     }
 
     private traverseRoot(rootNode: GroupingRowNode<TData>, activeChangedPath: ChangedPath | undefined): number {

@@ -290,6 +290,7 @@ export interface RowDataUpdatedEvent<TData = any, TContext = any>
 export interface BeforeRefreshModelEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'beforeRefreshModel', TData, TContext> {
     params: RefreshModelParams<TData>;
+    groupsChanged: boolean;
 }
 
 export interface RowDataUpdateStartedEvent<TData = any, TContext = any>

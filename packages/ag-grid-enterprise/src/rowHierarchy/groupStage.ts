@@ -41,14 +41,15 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         this.strategy = undefined;
     }
 
-    public execute(params: StageExecuteParams<TData>): boolean {
+    public execute(params: StageExecuteParams<TData>): boolean | undefined {
         const approach = _getGroupingApproach(this.gos);
-        const strategy = this.approach === approach ? this.strategy : this.changeApproach(params, approach);
+        const approachChanged = this.approach !== approach;
+        const strategy = approachChanged ? this.changeApproach(params, approach) : this.strategy;
         if (!strategy) {
-            return false;
+            // Stage not executed if no strategy is available
+            return undefined;
         }
-        strategy.execute(params, approach);
-        return true;
+        return strategy.execute(params, approach) || approachChanged;
     }
 
     private getStrategyBeanName(approach: GroupingApproach | null) {
