@@ -239,7 +239,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         });
     }, [props]);
 
-    const enableCellDeferRender = (props.enableCellDeferRender ?? false) && !!React.useSyncExternalStore;
+    const enableCellDeferRender = (props.enableCellDeferRender ?? true) && !!React.useSyncExternalStore;
 
     return (
         <div style={style} className={props.className} ref={setRef}>

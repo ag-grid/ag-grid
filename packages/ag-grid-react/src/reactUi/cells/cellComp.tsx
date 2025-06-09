@@ -420,7 +420,7 @@ const CellComp = ({
                 };
                 if (compDetails?.params?.deferRender) {
                     if (!enableCellDeferRender) {
-                        _errMsg(279);
+                        _errMsg(280);
                         setDetails();
                     } else {
                         agStartTransition(setDetails);

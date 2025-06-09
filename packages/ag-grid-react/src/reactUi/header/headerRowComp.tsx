@@ -10,7 +10,7 @@ import type {
 } from 'ag-grid-community';
 import { _EmptyBean } from 'ag-grid-community';
 
-import { BeansContext } from '../beansContext';
+import { BeansContext, EnableDeferRenderContext } from '../beansContext';
 import { agFlushSync, getNextValueIfDifferent } from '../utils';
 import HeaderCellComp from './headerCellComp';
 import HeaderFilterCellComp from './headerFilterCellComp';
@@ -18,6 +18,7 @@ import HeaderGroupCellComp from './headerGroupCellComp';
 
 const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
     const { context } = useContext(BeansContext);
+    const enableCellDeferRender = useContext(EnableDeferRenderContext);
 
     const { topOffset, rowHeight } = useMemo(() => ctrl.getTopAndHeight(), []);
     const ariaRowIndex = ctrl.getAriaRowIndex();
@@ -26,9 +27,22 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
     const [height, setHeight] = useState<string>(() => rowHeight + 'px');
     const [top, setTop] = useState<string>(() => topOffset + 'px');
 
-    const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);
-    const prevCellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);
+    const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[]>([]);
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>(() => ctrl.getUpdatedHeaderCtrls());
+
+    let cellCtrlsMerged = cellCtrls;
+    const cellsChanged = useRef<any>(() => {});
+    if (enableCellDeferRender) {
+        const sub = useCallback((onStoreChange: any) => {
+            cellsChanged.current = onStoreChange;
+            return () => {
+                cellsChanged.current = () => {};
+            };
+        }, []);
+        cellCtrlsMerged = React.useSyncExternalStore(sub, () => {
+            return cellCtrlsRef.current;
+        });
+    }
 
     const compBean = useRef<_EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
@@ -44,12 +58,15 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
             setHeight: (height: string) => setHeight(height),
             setTop: (top: string) => setTop(top),
             setHeaderCtrls: (ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean) => {
-                prevCellCtrlsRef.current = cellCtrlsRef.current;
-                cellCtrlsRef.current = ctrls;
-
-                const next = getNextValueIfDifferent(prevCellCtrlsRef.current, ctrls, forceOrder)!;
-                if (next !== prevCellCtrlsRef.current) {
-                    agFlushSync(afterScroll, () => setCellCtrls(next));
+                const prevCellCtrls = cellCtrlsRef.current;
+                const nextCells = getNextValueIfDifferent(prevCellCtrls, ctrls, forceOrder)!;
+                if (nextCells !== prevCellCtrls) {
+                    cellCtrlsRef.current = nextCells;
+                    if (enableCellDeferRender) {
+                        cellsChanged.current();
+                    } else {
+                        agFlushSync(afterScroll, () => setCellCtrls(nextCells));
+                    }
                 }
             },
             setWidth: (width: string) => {
@@ -70,22 +87,22 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
         [height, top]
     );
 
-    const createCellJsx = useCallback((cellCtrl: AbstractHeaderCellCtrl) => {
-        switch (ctrl.type) {
-            case 'group':
-                return <HeaderGroupCellComp ctrl={cellCtrl as HeaderGroupCellCtrl} key={cellCtrl.instanceId} />;
-
-            case 'filter':
-                return <HeaderFilterCellComp ctrl={cellCtrl as HeaderFilterCellCtrl} key={cellCtrl.instanceId} />;
-
-            default:
-                return <HeaderCellComp ctrl={cellCtrl as HeaderCellCtrl} key={cellCtrl.instanceId} />;
-        }
-    }, []);
-
     return (
         <div ref={setRef} className={className} role="row" style={style} aria-rowindex={ariaRowIndex}>
-            {cellCtrls.map(createCellJsx)}
+            {cellCtrlsMerged.map((cellCtrl) => {
+                switch (ctrl.type) {
+                    case 'group':
+                        return <HeaderGroupCellComp ctrl={cellCtrl as HeaderGroupCellCtrl} key={cellCtrl.instanceId} />;
+
+                    case 'filter':
+                        return (
+                            <HeaderFilterCellComp ctrl={cellCtrl as HeaderFilterCellCtrl} key={cellCtrl.instanceId} />
+                        );
+
+                    default:
+                        return <HeaderCellComp ctrl={cellCtrl as HeaderCellCtrl} key={cellCtrl.instanceId} />;
+                }
+            })}
         </div>
     );
 };
