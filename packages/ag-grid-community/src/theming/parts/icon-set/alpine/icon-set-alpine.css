@@ -225,3 +225,19 @@
 .ag-icon-pinned-bottom::before {
     mask-image: url('./alpine-svg-icons/pinned-bottom.svg');
 }
+
+.ag-icon-chevron-up::before {
+    mask-image: url('./alpine-svg-icons/chevron-up.svg');
+}
+
+.ag-icon-chevron-down::before {
+    mask-image: url('./alpine-svg-icons/chevron-down.svg');
+}
+
+.ag-icon-chevron-left::before {
+    mask-image: url('./alpine-svg-icons/chevron-left.svg');
+}
+
+.ag-icon-chevron-right::before {
+    mask-image: url('./alpine-svg-icons/chevron-right.svg');
+}

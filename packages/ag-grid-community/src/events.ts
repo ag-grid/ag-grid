@@ -175,7 +175,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         stickyTopOffsetChanged: StickyTopOffsetChangedEvent<TData, TContext>;
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
         rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
-        resetColumns: ResetColumnsEvent<TData, TContext>;
+        columnsReset: ColumnsResetEvent<TData, TContext>;
         cellEditValuesChanged: CellEditValuesChangedEvent<TData, TContext>;
     }
 >;
@@ -1221,6 +1221,6 @@ export interface RowNodeDataChangedEvent<TData = any, TContext = any>
     node: RowNode<TData>;
 }
 
-export interface ResetColumnsEvent<TData = any, TContext = any> extends AgGlobalEvent<'resetColumns', TData, TContext> {
+export interface ColumnsResetEvent<TData = any, TContext = any> extends AgGlobalEvent<'columnsReset', TData, TContext> {
     source: ColumnEventType;
 }

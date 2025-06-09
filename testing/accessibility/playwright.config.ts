@@ -13,7 +13,8 @@ export default defineConfig({
     retries: 0,
     // retries: process.env.CI ? 2 : 0,
     /* Limit parallel tests on CI. */
-    workers: process.env.CI ? 2 : undefined,
+    workers: 1,
+    // workers: process.env.CI ? 2 : undefined,
     reporter: [
         [
             'html',

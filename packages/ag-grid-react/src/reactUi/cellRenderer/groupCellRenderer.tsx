@@ -97,7 +97,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     );
     const checkboxClassName = useMemo(() => `ag-group-checkbox ${checkboxCssClasses.toString()}`, [checkboxCssClasses]);
 
-    const useFwRenderer = innerCompDetails && innerCompDetails.componentFromFramework;
+    const useFwRenderer = innerCompDetails?.componentFromFramework;
     const FwRenderer = useFwRenderer ? innerCompDetails!.componentClass : undefined;
     const useValue = innerCompDetails == null && value != null;
     const escapedValue = _toString(value);
@@ -113,8 +113,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
             <span className={contractedClassName} ref={eContractedRef}></span>
             <span className={checkboxClassName} ref={eCheckboxRef}></span>
             <span className="ag-group-value" ref={eValueRef}>
-                {useValue && <>{escapedValue}</>}
-                {useFwRenderer && <FwRenderer {...innerCompDetails!.params} />}
+                {useValue ? escapedValue : useFwRenderer ? <FwRenderer {...innerCompDetails!.params} /> : null}
             </span>
             <span className="ag-group-child-count">{childCount}</span>
         </span>

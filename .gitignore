@@ -64,3 +64,4 @@ reports
 
 vite.config.*.timestamp*
 
+/test-results/

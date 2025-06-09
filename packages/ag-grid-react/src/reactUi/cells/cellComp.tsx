@@ -65,6 +65,10 @@ const jsxEditor = (
         jsxEditorProxy(editDetails, CellEditorClass, setRef)
     ) : (
         <CellEditorClass {...editDetails.compDetails.params} ref={setRef} />
+    return newFormat ? (
+        jsxEditorProxy(editDetails, CellEditorClass, setRef)
+    ) : (
+        <CellEditorClass {...editDetails.compDetails.params} ref={setRef} />
     );
 };
 
@@ -82,29 +86,18 @@ const jsxEditValue = (
     const reactPopupEditor = compDetails.componentFromFramework && editDetails.popup;
     const jsPopupEditor = !compDetails.componentFromFramework && editDetails.popup;
 
-    return (
-        <>
-            {reactInlineEditor && jsxEditor(editDetails, CellEditorClass, setCellEditorRef)}
-
-            {reactPopupEditor && (
-                <PopupEditorComp
-                    editDetails={editDetails}
-                    cellCtrl={cellCtrl}
-                    eParentCell={eGui}
-                    wrappedContent={jsxEditor(editDetails, CellEditorClass, setCellEditorRef)}
-                />
-            )}
-
-            {jsPopupEditor && jsEditorComp && (
-                <PopupEditorComp
-                    editDetails={editDetails}
-                    cellCtrl={cellCtrl}
-                    eParentCell={eGui}
-                    jsChildComp={jsEditorComp}
-                />
-            )}
-        </>
-    );
+    return reactInlineEditor ? (
+        jsxEditor(editDetails, CellEditorClass, setCellEditorRef)
+    ) : reactPopupEditor ? (
+        <PopupEditorComp
+            editDetails={editDetails}
+            cellCtrl={cellCtrl}
+            eParentCell={eGui}
+            wrappedContent={jsxEditor(editDetails, CellEditorClass, setCellEditorRef)}
+        />
+    ) : jsPopupEditor && jsEditorComp ? (
+        <PopupEditorComp editDetails={editDetails} cellCtrl={cellCtrl} eParentCell={eGui} jsChildComp={jsEditorComp} />
+    ) : null;
 };
 
 const jsxShowValue = (
@@ -127,13 +120,12 @@ const jsxShowValue = (
             return value?.toString?.() ?? value;
         }
 
-        const reactCellRenderer = compDetails?.componentFromFramework;
-        if (reactCellRenderer) {
-            const CellRendererClass = compDetails?.componentClass;
+        if (compDetails.componentFromFramework) {
+            const CellRendererClass = compDetails.componentClass;
             return reactCellRendererStateless ? (
-                <CellRendererClass {...compDetails!.params} key={key} />
+                <CellRendererClass {...compDetails.params} key={key} />
             ) : (
-                <CellRendererClass {...compDetails!.params} key={key} ref={cellRendererRef} />
+                <CellRendererClass {...compDetails.params} key={key} ref={cellRendererRef} />
             );
         }
     };
