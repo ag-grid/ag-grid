@@ -1,10 +1,10 @@
-import { waitFor } from '../../playwright.utils';
-import test from './benchmarking';
+import path from 'path';
 
-import path = require('path');
+import test from '../benchmarking';
+import { waitFor } from '../playwright.utils';
 
-const noRowsCheck = () => document.body.textContent.includes('No Rows To Show');
-const athleteCheck = () => document.body.textContent.includes('Athlete');
+const noRowsCheck = () => document.body.textContent!.includes('No Rows To Show');
+const athleteCheck = () => document.body.textContent!.includes('Athlete');
 const localLotsOfCells = `file://${path.join(__dirname, './lots-of-cells.html')}`;
 
 test(`Performance Test - Compare performance of setting data`, {

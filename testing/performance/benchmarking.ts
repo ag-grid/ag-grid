@@ -1,12 +1,11 @@
 import type { BrowserContext, Page } from '@playwright/test';
 import { test } from '@playwright/test';
-import * as chalk_ from 'chalk';
-import * as dotenv from 'dotenv';
+import { bgBlue, bgGreen, blue, cyan, green, magenta, yellow } from 'chalk';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-import type { BrowserCommunications } from '../../playwright.utils';
-import { gotoUrl, waitFor } from '../../playwright.utils';
+import type { BrowserCommunications } from './playwright.utils';
+import { gotoUrl, waitFor } from './playwright.utils';
 
 export type Framework = 'typescript' | 'reactFunctionalTs';
 export type CustomVersion = `v${number}.${number}.${number}`;
@@ -55,17 +54,18 @@ export type Variant = {
     cookies?: Parameters<BrowserContext['addCookies']>[0];
 };
 
-dotenv.config({ path: path.join(__dirname, '../../../../documentation/ag-grid-docs/.env.dev') }); // grab docs PORT
+// dotenv.config({ path: path.join(__dirname, '../../../../documentation/ag-grid-docs/.env.dev') }); // grab docs PORT
 
 const knownUrls: Record<Version, string> = {
-    local: `https://localhost:${process.env.PORT || '4610'}`,
+    local: `https://localhost:${process.env['PORT'] || '4610'}`,
     staging: 'https://grid-staging.ag-grid.com',
     prod: 'https://www.ag-grid.com',
 };
 
-export const agChartsVersion = JSON.parse(
-    fs.readFileSync(path.join(__dirname, '../../../../packages/ag-grid-enterprise/package.json')).toString()
-).optionalDependencies['ag-charts-enterprise'];
+export const agChartsVersion = `v${
+    JSON.parse(fs.readFileSync(path.join(__dirname, '../../packages/ag-grid-enterprise/package.json')).toString())
+        .optionalDependencies['ag-charts-enterprise']
+}` as CustomVersion;
 
 /**
  * Taken from ag-grid-enterprise package.json git history
@@ -88,9 +88,6 @@ const gridToChartsMap = {
     'v31.3.0': 'v9.3.0',
     'v31.2.0': 'v9.2.0',
 } as const;
-
-// @ts-expect-error chalk is a CommonJS module, but we use it as an ESM module
-const { yellow, green, blue, cyan, magenta, bgBlue, bgGreen } = chalk_.default;
 
 const getCdnUrl = (pkg: string, version: Version, path: `/${string}` = `/dist/${pkg}.js`) => {
     if (isCustomVersion(version)) {
@@ -240,7 +237,7 @@ function attachScript(page: Page, url: string) {
 }
 
 async function attachScripts(page: Page, version: Version) {
-    const chartsVersion: CustomVersion = gridToChartsMap[version] || gridToChartsMap.prod;
+    const chartsVersion = gridToChartsMap[version as keyof typeof gridToChartsMap] || gridToChartsMap.prod;
 
     const urls = [getCdnUrl('ag-grid-community', version), getCdnUrl('ag-grid-enterprise', version)];
     if (chartsVersion) {
@@ -254,7 +251,7 @@ async function attachScripts(page: Page, version: Version) {
             getCdnUrl('ag-charts-types', chartsVersion, '/'),
         ];*/
     }
-    await Promise.all(urls.map(attachScript.bind(this, page)));
+    await Promise.all(urls.map(attachScript.bind(0, page)));
     // @ts-expect-error agGrid is not in the current scope
     await waitFor(() => typeof agGrid !== 'undefined', page);
 }
@@ -272,7 +269,7 @@ function isCustomVersion(version: Version): version is CustomVersion {
 function metricsGetter(page: Page, testCase: TestCase) {
     return waitFor(
         testCase.metrics
-            ? (metrics: TestCase['metrics']) => performance.getEntriesByType(metrics)
+            ? (metrics: TestCase['metrics']) => performance.getEntriesByType(metrics!)
             : () => performance.getEntries(),
         page,
         { args: [testCase.metrics] }
@@ -280,15 +277,17 @@ function metricsGetter(page: Page, testCase: TestCase) {
 }
 
 async function attachCookies(context: BrowserContext, variant: Variant) {
-    await context.clearCookies();
-    await context.addCookies(variant.cookies);
+    if (variant.cookies) {
+        await context.clearCookies();
+        await context.addCookies(variant.cookies);
+    }
 }
 
 /** Generic benchmark function to run performance tests */
 export default function (name: string, describe: Describe) {
     test.describe.configure({ timeout: describe.timeout || 3 * 60_000, mode: 'serial' });
     return test.describe(name, () => {
-        const minIterations = (Math.max(describe.minIterations, 3) ?? 10) + 3;
+        const minIterations = Math.max(describe.minIterations ?? 10, 3) + 3;
         const maxIterations = describe.maxIterations ?? 1000;
         describe.testCases.forEach((testCase, i) => {
             (testCase.skip ? test.skip : test)(
@@ -301,7 +300,7 @@ export default function (name: string, describe: Describe) {
                     do {
                         for (const variantName of ['control', 'variant'] as const) {
                             const variant = testCase[variantName];
-                            variant.cookies && (await attachCookies(context, variant));
+                            await attachCookies(context, variant);
                             const comms = await gotoUrl(page, getUrl(testCase, variant));
                             void updatePageTitle(page, testCase, variant);
                             variant.shouldInjectScript && (await attachScripts(page, variant.version));

@@ -5,6 +5,7 @@
       <project name="@ag-grid-community/locale" file="file://$PROJECT_DIR$/community-modules/locale/project.json" />
       <project name="@ag-grid-community/styles" file="file://$PROJECT_DIR$/community-modules/styles/project.json" />
       <project name="ag-behavioural-testing" file="file://$PROJECT_DIR$/testing/behavioural/project.json" />
+      <project name="ag-grid-accessibility" file="file://$PROJECT_DIR$/testing/accessibility/project.json" />
       <project name="ag-grid-angular" file="file://$PROJECT_DIR$/packages/ag-grid-angular/project.json" />
       <project name="ag-grid-community" file="file://$PROJECT_DIR$/packages/ag-grid-community/project.json" />
       <project name="ag-grid-docs" file="file://$PROJECT_DIR$/documentation/ag-grid-docs/project.json" />
