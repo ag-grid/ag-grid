@@ -13,4 +13,13 @@ export interface IDateStringCellEditorParams<TData = any, TContext = any>
      * Defaults to any value allowed.
      */
     step?: number;
+    /**
+     * Defines whether time should be included when filtering dates.
+     *
+     * - `true`: Include the time component in date comparisons.
+     * - `false`: Only compare dates without considering the time component.
+     *
+     * @default false
+     */
+    includeTime?: boolean;
 }
