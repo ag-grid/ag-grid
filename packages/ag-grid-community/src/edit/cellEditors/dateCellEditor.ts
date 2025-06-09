@@ -16,6 +16,7 @@ const DateCellElement: ElementParams = {
 class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams, AgInputDateField> {
     private eInput: AgInputDateField;
     private params: IDateCellEditorParams;
+    private includeTime: boolean | undefined;
 
     constructor(private getDataTypeService: () => DataTypeService | undefined) {}
 
@@ -29,7 +30,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     public init(eInput: AgInputDateField, params: IDateCellEditorParams): void {
         this.eInput = eInput;
         this.params = params;
-        const { min, max, step, includeTime } = params;
+        const { min, max, step, colDef } = params;
         if (min != null) {
             eInput.setMin(min);
         }
@@ -39,8 +40,10 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         if (step != null) {
             eInput.setStep(step);
         }
-        if (includeTime != null) {
-            eInput.setIncludeTime(includeTime);
+        this.includeTime =
+            params.includeTime ?? this.getDataTypeService()?.getDateIncludesTimeFlag?.(colDef.cellDataType);
+        if (this.includeTime != null) {
+            eInput.setIncludeTime(this.includeTime);
         }
     }
 
@@ -58,11 +61,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         if (!(value instanceof Date)) {
             return undefined;
         }
-        const dataTypeSvc = this.getDataTypeService();
-        return _serialiseDate(
-            value,
-            this.params.includeTime ?? dataTypeSvc?.getDateIncludesTimeFlag?.(this.params.colDef.cellDataType) ?? false
-        );
+        return _serialiseDate(value, this.includeTime ?? false);
     }
 }
 
