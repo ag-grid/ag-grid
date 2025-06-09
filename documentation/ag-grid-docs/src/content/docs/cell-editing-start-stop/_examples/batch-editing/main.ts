@@ -20,6 +20,7 @@ import {
     NumberEditorModule,
     PinnedRowModule,
     RowDragModule,
+    RowSelectionModule,
     TextEditorModule,
     UndoRedoEditModule,
     ValidationModule,
@@ -61,6 +62,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelApiModule,
     StatusBarModule,
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
+    RowSelectionModule,
     ValidationModule /* Development Only */,
 ]);
 

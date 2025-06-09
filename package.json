@@ -20,6 +20,9 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@axe-core/cli": "^4.10.2",
+    "@actions/core": "^1.11.1",
+    "@axe-core/playwright": "^4.10.2",
     "@vue/compiler-sfc": "3.5.13",
     "@types/postcss-import": "^14.0.3",
     "@types/postcss-url": "^10.0.4",
@@ -41,6 +44,7 @@
     "@nx/web": "20.3.1",
     "@nx/webpack": "20.3.1",
     "@nx/workspace": "20.3.1",
+    "@playwright/test": "^1.52.0",
     "@swc/helpers": "0.5.15",
     "@types/jest": "29.5.14",
     "@types/node": "18.16.9",
@@ -105,6 +109,7 @@
       "testing/angular-package-tests",
       "testing/react-package-tests",
       "testing/vue-package-tests",
+      "testing/accessibility",
       "external/ag-shared"
     ],
     "nohoist": [
@@ -114,5 +119,8 @@
       "**/vue-class-component"
     ]
   },
-  "packageManager": "yarn@1.22.21"
+  "packageManager": "yarn@1.22.21",
+  "resolutions": {
+    "undici": "6.21.3"
+  }
 }

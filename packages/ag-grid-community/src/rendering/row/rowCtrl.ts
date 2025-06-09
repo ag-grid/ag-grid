@@ -220,7 +220,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const focusableElement = this.fullWidthGui?.element;
         if (focusableElement) {
             // when cell is created, if it should be focus the grid should take focus from the focused cell
-            const editing = this.beans.editSvc?.isEditing(this.rowNode);
+            const editing = this.beans.editSvc?.isEditing(this);
             if (!editing && focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned) && focusSvc.shouldTakeFocus()) {
                 setTimeout(() => focusableElement.focus({ preventScroll: true }), 0);
             }
@@ -660,7 +660,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const KEEP_CELL = false;
 
         // always remove the cell if it's not rendered or if it's in the wrong pinned location
-        const { column, rowNode } = cellCtrl;
+        const { column } = cellCtrl;
         if (column.getPinned() != nextContainerPinned) {
             return REMOVE_CELL;
         }
@@ -672,7 +672,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         // we want to try and keep editing and focused cells
         const { visibleCols, editSvc } = this.beans;
-        const editing = editSvc?.isEditing(rowNode, column);
+        const editing = editSvc?.isEditing(cellCtrl);
         const focused = cellCtrl.isCellFocused();
 
         const mightWantToKeepCell = editing || focused;

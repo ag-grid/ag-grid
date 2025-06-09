@@ -1,187 +1,150 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import type { EditingCellPosition } from '../interfaces/iCellEditor';
 import type { Column } from '../interfaces/iColumn';
+import type {
+    EditMap,
+    EditRow,
+    EditState,
+    EditValue,
+    HasEditsParams,
+    IEditModelService,
+} from '../interfaces/iEditModelService';
+import type { EditPosition, EditRowPosition } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _getSiblingRows } from './utils/controllers';
 import { UNEDITED } from './utils/editors';
 
-export type CellIdPositions = {
-    rowNode: IRowNode;
-    column: Column;
-    oldValue?: any;
-    newValue?: any;
-};
-
-type EditedCellState = 'editing' | 'changed';
-
-export type EditedCell = {
-    newValue: any;
-    oldValue: any;
-    state: EditedCellState;
-};
-
-export type PendingUpdateRow = Map<Column, EditedCell>;
-export type PendingUpdates = Map<IRowNode, PendingUpdateRow>;
-
-export class EditModelService extends BeanStub implements NamedBean {
+export class EditModelService extends BeanStub implements NamedBean, IEditModelService {
     beanName = 'editModelSvc' as const;
 
-    private pendingUpdates: PendingUpdates = new Map();
+    private edits: EditMap = new Map();
 
-    public removePendingEdit(rowNode: IRowNode, column?: Column | null): void {
-        if (!this.hasPending(rowNode)) {
+    public removeEdits({ rowNode, column }: EditPosition): void {
+        if (!this.hasEdits({ rowNode }) || !rowNode) {
             return;
         }
 
-        const rowUpdateMap = this.getPendingUpdateRow(rowNode)!;
+        const editRow = this.getEditRow({ rowNode })!;
 
         if (column) {
-            rowUpdateMap.delete(column);
+            editRow.delete(column);
         } else {
-            rowUpdateMap.clear();
+            editRow.clear();
         }
 
-        if (rowUpdateMap.size === 0) {
-            this.pendingUpdates.delete(rowNode);
+        if (editRow.size === 0) {
+            this.edits.delete(rowNode);
         }
     }
 
-    public getPendingUpdateRow(rowNode: IRowNode): PendingUpdateRow | undefined {
-        return this.pendingUpdates.get(rowNode);
+    public getEditRow({ rowNode }: EditRowPosition): EditRow | undefined {
+        return rowNode && this.edits.get(rowNode);
     }
 
-    public getPendingUpdate(rowNode: IRowNode, column: Column): EditedCell | undefined {
-        return this.getPendingUpdateRow(rowNode)?.get(column);
+    public getEdit(position: EditPosition): EditValue | undefined {
+        return position.column && this.getEditRow(position)?.get(position.column);
     }
 
-    getPendingSiblingRow(rowNode: IRowNode): IRowNode | undefined {
-        return _getSiblingRows(this.beans, rowNode).find((node) => this.pendingUpdates.has(node));
+    public getEditSiblingRow({ rowNode }: Required<EditRowPosition>): IRowNode | undefined {
+        return _getSiblingRows(this.beans, rowNode).find((node) => this.edits.has(node));
     }
 
-    public getPendingUpdates(copy = true): PendingUpdates {
+    public getEditMap(copy = true): EditMap {
         if (!copy) {
-            return this.pendingUpdates;
+            return this.edits;
         }
 
-        const map = new Map<IRowNode, Map<Column, EditedCell>>();
-        this.pendingUpdates.forEach((rowUpdateMap, rowNode) => {
-            map.set(rowNode, new Map<Column, EditedCell>(rowUpdateMap));
-        });
+        const map = new Map<IRowNode, Map<Column, EditValue>>();
+        this.edits.forEach((editRow, rowNode) => map.set(rowNode, new Map<Column, EditValue>(editRow)));
         return map;
     }
 
-    public setPendingUpdates(pendingPositions: PendingUpdates): void {
-        this.pendingUpdates.clear();
-        pendingPositions.forEach((rowUpdateMap, rowNode) => {
-            const newRowUpdateMap = new Map<Column, EditedCell>();
-            rowUpdateMap.forEach((cellData, column) => {
-                newRowUpdateMap.set(column, { ...cellData });
-            });
-            this.pendingUpdates.set(rowNode, newRowUpdateMap);
+    public setEditMap(newEdits: EditMap): void {
+        this.edits.clear();
+        newEdits.forEach((editRow, rowNode) => {
+            const newRow = new Map<Column, EditValue>();
+            editRow.forEach((cellData, column) =>
+                // Ensure we copy the cell data to avoid reference issues
+                newRow.set(column, { ...cellData })
+            );
+            this.edits.set(rowNode, newRow);
         });
     }
 
-    public setPendingValue(
-        rowNode: IRowNode,
-        column: Column,
-        newValue: any,
-        oldValue: any,
-        state: EditedCellState
-    ): void {
-        if (!this.pendingUpdates.has(rowNode)) {
-            this.pendingUpdates.set(rowNode, new Map());
-        }
-        this.getPendingUpdateRow(rowNode)!.set(column, { newValue, oldValue, state });
+    public setEdit(position: Required<EditPosition>, edit: EditValue): void {
+        const { rowNode, column } = position;
+        !this.edits.has(rowNode) && this.edits.set(rowNode, new Map());
+
+        this.getEditRow(position)!.set(column, edit);
     }
 
-    public clearPendingValue(rowNode?: IRowNode, column?: Column): void {
+    public clearEditValue(position: EditPosition): void {
+        const { rowNode, column } = position;
         if (rowNode) {
             if (column) {
-                const existing = this.getPendingUpdate(rowNode, column);
-                if (existing) {
-                    existing.newValue = existing.oldValue;
-                    existing.state = 'changed';
+                const edit = this.getEdit(position);
+                if (edit) {
+                    edit.newValue = edit.oldValue;
+                    edit.state = 'changed';
                 }
             } else {
-                const rowUpdateMap = this.getPendingUpdateRow(rowNode);
-                if (rowUpdateMap) {
-                    rowUpdateMap.forEach((cellData) => {
-                        cellData.newValue = cellData.oldValue;
-                        cellData.state = 'changed';
-                    });
-                }
+                this.getEditRow(position)?.forEach((cellData) => {
+                    cellData.newValue = cellData.oldValue;
+                    cellData.state = 'changed';
+                });
             }
         }
     }
 
-    public setState(rowNode: IRowNode, column: Column, state: EditedCellState): void {
-        const rowUpdateMap = this.getPendingUpdateRow(rowNode) ?? new Map();
-
-        if (!this.pendingUpdates.has(rowNode)) {
-            this.pendingUpdates.set(rowNode, rowUpdateMap);
+    public setState(position: EditPosition, state: EditState): void {
+        if (!position.rowNode || !position.column) {
+            return;
         }
+        const editRow = this.getEditRow(position) ?? new Map();
 
-        const cellData = rowUpdateMap.get(column);
-        if (cellData) {
-            cellData.state = state;
+        const edit = editRow.get(position.column);
+        if (edit) {
+            edit.state = state;
         } else {
-            rowUpdateMap.set(column, { newValue: undefined, oldValue: undefined, state });
+            editRow.set(position.column, { newValue: undefined, oldValue: undefined, state });
         }
     }
 
-    public getState(rowNode: IRowNode, column: Column): EditedCellState | undefined {
-        return this.getPendingUpdate(rowNode, column)?.state;
+    public getState(position: EditPosition): EditState | undefined {
+        return this.getEdit(position)?.state;
     }
 
-    public getPendingCellIds(): CellIdPositions[] {
-        const ids: CellIdPositions[] = [];
-        this.pendingUpdates.forEach((rowUpdateMap, rowNode) => {
-            for (const column of rowUpdateMap.keys()) {
-                ids.push({
+    public getEditPositions(): Required<EditPosition>[] {
+        const positions: Required<EditPosition>[] = [];
+        this.edits.forEach((editRow, rowNode) => {
+            for (const column of editRow.keys()) {
+                positions.push({
                     rowNode,
                     column,
-                    ...rowUpdateMap.get(column),
+                    ...editRow.get(column),
                 });
             }
         });
 
-        return ids;
+        return positions;
     }
 
-    public getPendingCellPositions(): EditingCellPosition[] {
-        const result: EditingCellPosition[] = [];
-        const cellIds = this.getPendingCellIds();
-        cellIds.forEach(({ column, colKey, rowNode: { rowIndex, rowPinned }, state }: any) => {
-            if (state === 'editing') {
-                result.push({
-                    column,
-                    colKey,
-                    rowIndex: rowIndex!,
-                    rowPinned,
-                });
-            }
-        });
-
-        return result;
+    public hasRowEdits({ rowNode }: Required<EditRowPosition>): boolean {
+        return this.edits.has(rowNode);
     }
 
-    public hasPending(
-        rowNode?: IRowNode | null,
-        column?: Column | null,
-        checkSiblings: boolean = false,
-        includeParents: boolean = false,
-        withOpenEditors: boolean = false
-    ): boolean {
+    public hasEdits(position: EditPosition = {}, params: HasEditsParams = {}): boolean {
+        const { rowNode, column } = position;
+        const { checkSiblings, includeParents, withOpenEditor: withOpenEditors } = params;
         if (rowNode) {
-            const rowEdits = this.getPendingUpdateRow(rowNode);
+            const rowEdits = this.getEditRow(position);
             if (!rowEdits) {
                 return false;
             } else if (column) {
                 if (withOpenEditors) {
-                    const cellData = this.getPendingUpdate(rowNode, column);
-                    return cellData ? cellData.state === 'editing' : false;
+                    const edit = this.getEdit(position);
+                    return edit ? edit.state === 'editing' : false;
                 }
                 return rowEdits.has(column) ?? false;
             } else if (rowEdits.size !== 0) {
@@ -192,48 +155,50 @@ export class EditModelService extends BeanStub implements NamedBean {
             }
 
             return (
-                checkSiblings &&
-                !!_getSiblingRows(this.beans, rowNode, false, includeParents).find((sibling) =>
-                    this.hasPending(sibling, column, false, includeParents)
-                )
+                (checkSiblings &&
+                    !!_getSiblingRows(this.beans, rowNode, false, includeParents).find((sibling) =>
+                        this.hasEdits({ rowNode: sibling, column }, { includeParents })
+                    )) ??
+                false
             );
         }
         if (withOpenEditors) {
-            return this.getPendingCellIds().some(({ state }: any) => state === 'editing');
+            return this.getEditPositions().some(({ state }: any) => state === 'editing');
         }
-        return this.pendingUpdates.size > 0;
+        return this.edits.size > 0;
     }
 
-    public startEditing(rowNode: IRowNode, column?: Column): boolean {
-        const map = this.getPendingUpdateRow(rowNode) ?? new Map<Column, EditedCell>();
-        let updated = false;
+    public start(position: Required<EditPosition>): void {
+        const map = this.getEditRow(position) ?? new Map<Column, EditValue>();
+        const { rowNode, column } = position;
         if (column && !map.has(column)) {
-            const oldValue = this.beans.valueSvc.getValue(column as AgColumn, rowNode, true, 'api');
-            map.set(column, { newValue: UNEDITED, oldValue, state: 'editing' });
-            updated = true;
+            map.set(column, {
+                newValue: UNEDITED,
+                oldValue: this.beans.valueSvc.getValue(column as AgColumn, rowNode, true, 'api'),
+                state: 'editing',
+            });
         }
-        this.pendingUpdates.set(rowNode, map);
-        return updated;
+        this.edits.set(rowNode, map);
     }
 
-    public stopEditing(rowNode?: IRowNode | null, column?: Column | null): boolean {
-        if (!this.hasPending(rowNode, column)) {
-            return false;
+    public stop(position?: Required<EditPosition>): void {
+        if (!this.hasEdits(position)) {
+            return;
         }
 
-        if (rowNode) {
-            this.removePendingEdit(rowNode, column);
+        if (position) {
+            this.removeEdits(position);
         } else {
             this.clear();
         }
-        return true;
+        return;
     }
 
     public clear(): void {
-        for (const pendingRowEdits of this.pendingUpdates.values()) {
+        for (const pendingRowEdits of this.edits.values()) {
             pendingRowEdits.clear();
         }
-        this.pendingUpdates.clear();
+        this.edits.clear();
     }
 
     public override destroy(): void {

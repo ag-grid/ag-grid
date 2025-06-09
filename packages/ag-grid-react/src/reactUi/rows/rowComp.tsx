@@ -171,7 +171,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         cellCtrls?.map((cellCtrl) => (
             <CellComp
                 cellCtrl={cellCtrl}
-                editingRow={editSvc?.isEditing(rowCtrl.rowNode) ?? false}
+                editingRow={editSvc?.isRowEditing(rowCtrl) ?? false}
                 printLayout={rowCtrl.printLayout}
                 key={cellCtrl.instanceId}
             />
