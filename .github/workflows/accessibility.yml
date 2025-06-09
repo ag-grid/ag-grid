@@ -132,13 +132,9 @@ jobs:
 
       - name: Test Report
         uses: dorny/test-reporter@v1
-        if: needs.test.result == 'success' || needs.test.result == 'failure' ||
-          needs.e2e.result == 'success' || needs.e2e.result == 'failure' ||
-          needs.bundle_size.result == 'success' || needs.bundle_size.result == 'failure' ||
-          needs.e2e_accessibility.result == 'success' || needs.e2e_accessibility.result == 'failure'
+        if: needs.e2e_accessibility.result == 'success' || needs.e2e_accessibility.result == 'failure'
         id: testReport
         continue-on-error: true
-        fail-on-error: false
         with:
           name: 'Accessibility Results'
           path: reports/*.xml

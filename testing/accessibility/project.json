@@ -15,6 +15,25 @@
         ],
         "parallel": false,
         "cwd": "testing/accessibility"
+      },
+      "configurations": {
+        "production": {
+          "commands": [
+            "npx playwright install --with-deps chromium",
+            "npm run download-examples-prod",
+            "mkdir -p e2e",
+            "npm run generate-tests"
+          ]
+        },
+        "staging": {},
+        "dev": {
+          "commands": [
+            "npx playwright install --with-deps chromium",
+            "npm run download-examples-local",
+            "mkdir -p e2e",
+            "npm run generate-tests"
+          ]
+        }
       }
     },
     "test:e2e:accessibility": {
@@ -22,6 +41,11 @@
       "dependsOn": ["setup"],
       "options": {
         "script": "playwright test"
+      },
+      "configurations": {
+        "production": {},
+        "staging": {},
+        "dev": {}
       }
     }
   },

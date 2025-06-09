@@ -2565,6 +2565,9 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/documentation/react/charts.*', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
     { fromPattern: '^/documentation/vue/charts.*', to: 'https://www.ag-grid.com/charts/vue/quick-start/' },
 
+    { fromPattern: '/archive$', to: '/documentation-archive' },
+    { fromPattern: '/archive/$', to: '/documentation-archive' },
+
     { from: '/javascript-data-grid/component-types/', to: '/javascript-data-grid/components/' },
     { from: '/angular-data-grid/component-types/', to: '/angular-data-grid/components/' },
     { from: '/react-data-grid/component-types/', to: '/react-data-grid/components/' },
