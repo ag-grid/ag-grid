@@ -80,7 +80,7 @@ const gridToChartsMap = {
     'v33.1.1': 'v11.1.1',
     'v33.1.0': 'v11.1.0',
     'v33.0.1': 'v11.0.0',
-    'v32.2.0': 'v11.0.0', // was latest, changed to the closest one
+    'v32.2.0': 'v10.1.0', // was latest, changed to the closest one
     'v32.1.0': 'v10.1.0',
     'v32.0.1': 'v10.0.1',
     'v32.0.0': 'v10.0.0',
