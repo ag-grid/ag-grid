@@ -738,6 +738,10 @@ export class ColumnFilterService
         handlerParams?: FilterHandlerBaseParams;
         createFilterUi: ((update?: boolean) => AgPromise<IFilterComp>) | null;
     } {
+        const filterPanelSvc = this.beans.filterPanelSvc;
+        if (filterPanelSvc?.isSelectableFilter(filterDef)) {
+            filterDef = filterPanelSvc.getSelectableFilterDef(column, filterDef);
+        }
         const { handler, handlerParams, handlerGenerator } = this.createHandler(column, filterDef, defaultFilter) ?? {};
 
         const filterCompDetails = this.createFilterComp(
@@ -1102,7 +1106,7 @@ export class ColumnFilterService
     }
 
     public getFloatingFilterCompDetails(column: AgColumn, showParentFilter: () => void): UserCompDetails | undefined {
-        const { userCompFactory, frameworkOverrides } = this.beans;
+        const { userCompFactory, frameworkOverrides, filterPanelSvc } = this.beans;
 
         const parentFilterInstance = (callback: IFloatingFilterParentCallback<IFilter>) => {
             const filterComponent = this.getOrCreateFilterUi(column);
@@ -1118,13 +1122,16 @@ export class ColumnFilterService
 
         const colDef = column.getColDef();
 
+        const filterDef = filterPanelSvc?.isSelectableFilter(colDef)
+            ? filterPanelSvc.getSelectableFilterDef(column, colDef)
+            : colDef;
         const defaultFloatingFilterType =
-            _getDefaultFloatingFilterType(frameworkOverrides, colDef, () => this.getDefaultFloatingFilter(column)) ??
+            _getDefaultFloatingFilterType(frameworkOverrides, filterDef, () => this.getDefaultFloatingFilter(column)) ??
             'agReadOnlyFloatingFilter';
         const isReactive = this.gos.get('enableFilterHandlers');
         const filterParams = _mergeFilterParamsWithApplicationProvidedParams(
             userCompFactory,
-            colDef,
+            filterDef,
             this.createFilterCompParams(column, isReactive, 'init', true) as IFilterParams
         );
 
@@ -1271,12 +1278,19 @@ export class ColumnFilterService
             return;
         }
 
+        const beans = this.beans;
         const column = filterWrapper.column;
         const colDef = column.getColDef();
         const isFilterAllowed = column.isFilterAllowed();
         const defaultFilter = this.getDefaultFilter(column);
+        const filterPanelSvc = beans.filterPanelSvc;
+        const filterDef = filterPanelSvc?.isSelectableFilter(colDef)
+            ? filterPanelSvc.getSelectableFilterDef(column, colDef)
+            : colDef;
 
-        const handlerFunc = isFilterAllowed ? this.createHandlerFunc(colDef, this.getDefaultFilter(column)) : undefined;
+        const handlerFunc = isFilterAllowed
+            ? this.createHandlerFunc(filterDef, this.getDefaultFilter(column))
+            : undefined;
         const isHandler = !!handlerFunc;
         const wasHandler = filterWrapper.isHandler;
 
@@ -1285,14 +1299,14 @@ export class ColumnFilterService
             return;
         }
         const { compDetails, createFilterUi } = (isFilterAllowed
-            ? this.createFilterComp(column, colDef, defaultFilter, (params) => params, isHandler, 'colDef')
+            ? this.createFilterComp(column, filterDef, defaultFilter, (params) => params, isHandler, 'colDef')
             : null) ?? { compDetails: null, createFilterUi: null };
 
         const newFilterParams =
             compDetails?.params ??
             _mergeFilterParamsWithApplicationProvidedParams(
-                this.beans.userCompFactory,
-                colDef,
+                beans.userCompFactory,
+                filterDef,
                 this.createFilterCompParams(column, isHandler, 'colDef') as IFilterParams
             );
 

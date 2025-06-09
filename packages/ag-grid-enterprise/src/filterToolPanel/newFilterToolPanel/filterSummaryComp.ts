@@ -1,7 +1,5 @@
-import type { ElementParams } from 'ag-grid-community';
+import type { ElementParams, FilterPanelSummaryState } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
-
-import type { FilterPanelSummaryState } from './iFilterState';
 
 const FilterSummaryElement: ElementParams = {
     tag: 'div',

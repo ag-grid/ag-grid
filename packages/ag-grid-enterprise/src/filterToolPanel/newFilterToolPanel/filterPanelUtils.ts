@@ -5,6 +5,11 @@ const DEFAULT_LOCALE_TEXT = {
     addFilterCard: 'Add Filter',
     ariaLabelAddFilterField: 'Add Filter Field',
     ariaLabelDeleteFilterCard: 'Delete Filter',
+    agTextColumnFilterDisplayName: 'Text Filter',
+    agNumberColumnFilterDisplayName: 'Number Filter',
+    agDateColumnFilterDisplayName: 'Date Filter',
+    agSetColumnFilterDisplayName: 'Set Filter',
+    agMultiColumnFilterDisplayName: 'Multi Filter',
 } as const;
 
 export function translateForFilterPanel(bean: BeanStub<any>, key: keyof typeof DEFAULT_LOCALE_TEXT): string {

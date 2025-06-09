@@ -1,7 +1,11 @@
-import type { AgSelect, AgSelectParams, ElementParams } from 'ag-grid-community';
+import type {
+    AgSelect,
+    AgSelectParams,
+    ElementParams,
+    FilterPanelDetailState,
+    SelectableFilterDef,
+} from 'ag-grid-community';
 import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
-
-import type { FilterPanelDetailState } from './iFilterState';
 
 const FilterDetailElement: ElementParams = {
     tag: 'div',
@@ -10,28 +14,34 @@ const FilterDetailElement: ElementParams = {
 };
 
 export class FilterDetailComp extends Component<'filterTypeChanged'> {
-    private eFilterType: AgSelect = RefPlaceholder;
+    private eFilterType: AgSelect<SelectableFilterDef> = RefPlaceholder;
     private state?: FilterPanelDetailState;
 
     public postConstruct(): void {
         const eFilterTypeParams: AgSelectParams = {
-            onValueChange: (filterType) => this.dispatchLocalEvent({ type: 'filterTypeChanged', filterType }),
+            onValueChange: (filterDef) => this.dispatchLocalEvent({ type: 'filterTypeChanged', filterDef }),
         };
         this.setTemplate(FilterDetailElement, [AgSelectSelector], { eFilterType: eFilterTypeParams });
+        this.eFilterType.setDisplayed(false);
     }
 
     public refresh(newState: FilterPanelDetailState): void {
         const oldState = this.state;
         this.state = newState;
 
-        const { type: newType, options: newOptions, detail: newDetail } = newState;
-        const { type: oldType, options: oldOptions, detail: oldDetail } = oldState ?? {};
+        const { activeFilterDef: newActiveFilterDef, filterDefs: newFilterDefs, detail: newDetail } = newState;
+        const { activeFilterDef: oldActiveFilterDef, filterDefs: oldFilterDefs, detail: oldDetail } = oldState ?? {};
 
         const eFilterType = this.eFilterType;
-        if (newOptions !== oldOptions) {
-            eFilterType.clearOptions().addOptions(newOptions).setValue(newType, true);
-        } else if (newType !== oldType) {
-            eFilterType.setValue(newType, true);
+        if (newFilterDefs !== oldFilterDefs) {
+            eFilterType.clearOptions();
+            const options = newFilterDefs?.map((filterDef) => ({ value: filterDef, text: filterDef.name }));
+            if (options) {
+                eFilterType.clearOptions().addOptions(options).setValue(newActiveFilterDef, true);
+            }
+            eFilterType.setDisplayed(!!options);
+        } else if (newActiveFilterDef !== oldActiveFilterDef) {
+            eFilterType.setValue(newActiveFilterDef, true);
         }
         if (newDetail !== oldDetail) {
             if (oldDetail) {

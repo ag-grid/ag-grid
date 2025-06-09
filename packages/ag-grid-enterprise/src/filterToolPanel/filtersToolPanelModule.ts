@@ -5,6 +5,7 @@ import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { SideBarModule } from '../sideBar/sideBarModule';
 import { VERSION } from '../version';
 import { FiltersToolPanel } from './filtersToolPanel';
+import { FilterPanelService } from './newFilterToolPanel/filterPanelService';
 import { WrapperToolPanel } from './newFilterToolPanel/wrapperToolPanel';
 
 /**
@@ -28,6 +29,7 @@ export const NewFiltersToolPanelModule: _ModuleWithoutApi = {
     moduleName: 'NewFiltersToolPanel',
     version: VERSION,
     userComponents: { agNewFiltersToolPanel: WrapperToolPanel },
+    beans: [FilterPanelService],
     icons: {
         // filter tool panel tab
         filtersToolPanel: 'filter',

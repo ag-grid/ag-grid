@@ -1,9 +1,25 @@
-import type { AgColumn, BeanCollection } from 'ag-grid-community';
-import { BeanStub, FilterComp } from 'ag-grid-community';
+import type {
+    AgColumn,
+    BeanCollection,
+    FilterPanelFilterState,
+    FilterPanelSummaryState,
+    IFilterDef,
+    IFilterPanelService,
+    NamedBean,
+    SelectableFilterDef,
+    SelectableFilterParams,
+    ValueGetterFunc,
+} from 'ag-grid-community';
+import {
+    BeanStub,
+    FilterComp,
+    _addGridCommonParams,
+    _getDefaultSimpleFilter,
+    _getFilterParamsForDataType,
+} from 'ag-grid-community';
 import type { FilterHandler } from 'ag-grid-community';
 
-import type { FilterPanelFilterState, FilterPanelSummaryState } from './iFilterState';
-import type { IFilterStateService } from './iFilterStateService';
+import { translateForFilterPanel } from './filterPanelUtils';
 
 interface StateWrapper {
     state: FilterPanelFilterState;
@@ -12,12 +28,16 @@ interface StateWrapper {
     destroy?: () => void;
 }
 
-export class FilterStateService
-    extends BeanStub<'filterStateChanged' | 'filterStatesChanged'>
-    implements IFilterStateService
+export class FilterPanelService
+    extends BeanStub<'filterPanelStateChanged' | 'filterPanelStatesChanged'>
+    implements IFilterPanelService, NamedBean
 {
+    readonly beanName = 'filterPanelSvc' as const;
+
     private states: Map<string, StateWrapper> = new Map();
     private orderedStates: string[] = [];
+    private selectedFilters: Map<string, number> = new Map();
+    private valueGetters: Map<string, string | ValueGetterFunc> = new Map();
 
     public postConstruct(): void {
         const updateFilterStates = this.updateFilterStates.bind(this);
@@ -25,6 +45,23 @@ export class FilterStateService
             newColumnsLoaded: updateFilterStates,
             filterChanged: updateFilterStates,
         });
+    }
+
+    public getFilterValueGetter(colId: string): string | ValueGetterFunc | undefined {
+        return this.valueGetters.get(colId);
+    }
+
+    public isSelectableFilter(filterDef: IFilterDef): boolean {
+        const filter = filterDef.filter;
+        return filter === true || filter === 'agSelectableColumnFilter';
+    }
+
+    public getSelectableFilterDef(column: AgColumn, filterDef: IFilterDef): IFilterDef {
+        const filters = this.getSelectableFilterDefs(column, filterDef);
+
+        const selectedFilter = this.selectedFilters.get(column.getColId()) ?? 0;
+
+        return filters[selectedFilter];
     }
 
     public getFilterIds(): string[] {
@@ -82,7 +119,7 @@ export class FilterStateService
         }
         filterState[key] = value;
         this.dispatchLocalEvent({
-            type: 'filterStateChanged',
+            type: 'filterPanelStateChanged',
             id,
             state: filterState,
         });
@@ -101,21 +138,21 @@ export class FilterStateService
         const newFilterState = this.createFilterState(column, handler, expanded);
         this.states.set(id, newFilterState);
         this.dispatchLocalEvent({
-            type: 'filterStateChanged',
+            type: 'filterPanelStateChanged',
             id,
             state: newFilterState.state,
         });
     }
 
-    public updateFilterType(id: string, type: string): void {
+    public updateFilterType(id: string, filterDef: SelectableFilterDef): void {
         const oldFilterStateWrapper = this.states.get(id);
         if (!oldFilterStateWrapper) {
             return;
         }
-        type;
+        filterDef;
         // TODO
         this.dispatchLocalEvent({
-            type: 'filterStateChanged',
+            type: 'filterPanelStateChanged',
             id,
             state: oldFilterStateWrapper.state, // TODO
         });
@@ -160,18 +197,11 @@ export class FilterStateService
         const beans = this.beans;
         const name = getDisplayName(beans, column);
         if (expanded) {
-            // TODO
-            const type = 'agTextColumnFilter';
-            const options = [
-                {
-                    value: 'agTextColumnFilter',
-                    text: 'Text Filter',
-                },
-                {
-                    value: 'agSetColumnFilter',
-                    text: 'Set Filter',
-                },
-            ];
+            const colDef = column.colDef;
+            const filterDefs = this.isSelectableFilter(colDef)
+                ? this.getSelectableFilterDefs(column, colDef)
+                : undefined;
+            const activeFilterDef = filterDefs?.[this.selectedFilters.get(column.getColId()) ?? 0];
             const filterComp = this.createBean(new FilterComp(column, 'TOOLBAR'));
             return {
                 state: {
@@ -179,8 +209,8 @@ export class FilterStateService
                     name,
                     expanded,
                     detail: filterComp.getGui(),
-                    type,
-                    options,
+                    activeFilterDef,
+                    filterDefs,
                 },
                 handler,
                 destroy: () => this.destroyBean(filterComp),
@@ -209,7 +239,7 @@ export class FilterStateService
 
     private dispatchStatesUpdates(activeId?: string): void {
         this.dispatchLocalEvent({
-            type: 'filterStatesChanged',
+            type: 'filterPanelStatesChanged',
             activeId,
         });
     }
@@ -220,6 +250,75 @@ export class FilterStateService
         states.clear();
         orderedStates.length = 0;
         super.destroy();
+    }
+
+    private getDefaultFilters(column: AgColumn): SelectableFilterDef[] {
+        const beans = this.beans;
+        const { gos, dataTypeSvc } = beans;
+        const isMultiFilterEnabled = gos.isModuleRegistered('MultiFilter');
+        const colDef = column.colDef;
+        const cellDataType = dataTypeSvc?.getBaseDataType(column);
+        const simpleFilter = _getDefaultSimpleFilter(cellDataType, false) as
+            | 'agTextColumnFilter'
+            | 'agNumberColumnFilter'
+            | 'agDateColumnFilter';
+        const dataTypeDefinition = dataTypeSvc?.getDataTypeDefinition(column);
+        const formatValue = dataTypeSvc?.getFormatValue(cellDataType!);
+        const getDef = (
+            filter: 'agTextColumnFilter' | 'agNumberColumnFilter' | 'agDateColumnFilter' | 'agSetColumnFilter'
+        ) => {
+            const { filterParams, filterValueGetter } =
+                dataTypeDefinition && formatValue
+                    ? _getFilterParamsForDataType(
+                          filter,
+                          undefined,
+                          colDef,
+                          dataTypeDefinition,
+                          formatValue,
+                          beans,
+                          this.getLocaleTextFunc()
+                      )
+                    : { filterParams: undefined, filterValueGetter: undefined };
+            return {
+                name: translateForFilterPanel(this, `${filter}DisplayName`),
+                filter,
+                filterParams,
+                filterValueGetter,
+            };
+        };
+        return [
+            getDef(simpleFilter),
+            getDef('agSetColumnFilter'),
+            ...(isMultiFilterEnabled
+                ? [
+                      {
+                          name: translateForFilterPanel(this, `agMultiColumnFilterDisplayName`),
+                          filter: 'agMultiColumnFilter',
+                          ...((dataTypeDefinition && formatValue
+                              ? beans.multiFilter?.getParamsForDataType(
+                                    undefined,
+                                    colDef,
+                                    dataTypeDefinition,
+                                    formatValue
+                                )
+                              : undefined) ?? {}),
+                      },
+                  ]
+                : []),
+        ];
+    }
+
+    private getSelectableFilterDefs(column: AgColumn, filterDef: IFilterDef): SelectableFilterDef[] {
+        let filterParams = filterDef.filterParams;
+        if (typeof filterParams === 'function') {
+            filterParams = filterParams(
+                _addGridCommonParams(this.gos, {
+                    column,
+                    colDef: column.colDef,
+                })
+            );
+        }
+        return (filterParams as SelectableFilterParams)?.filters ?? this.getDefaultFilters(column);
     }
 }
 

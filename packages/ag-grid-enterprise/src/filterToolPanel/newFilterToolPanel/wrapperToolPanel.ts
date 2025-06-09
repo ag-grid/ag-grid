@@ -3,7 +3,6 @@ import { Component, _warn } from 'ag-grid-community';
 
 import type { FilterPanelRefreshParams } from './filterPanel';
 import { FilterPanel } from './filterPanel';
-import { FilterStateService } from './filterStateService';
 import { newFiltersToolPanelCSS } from './newFiltersToolPanel.css-GENERATED';
 
 export class WrapperToolPanel extends Component implements IToolPanelComp {
@@ -19,14 +18,13 @@ export class WrapperToolPanel extends Component implements IToolPanelComp {
             _warn(279);
             return;
         }
-        const filterStateService = this.createManagedBean(new FilterStateService());
-        const filterPanel = this.createManagedBean(new FilterPanel(filterStateService));
+        const filterPanel = this.createManagedBean(new FilterPanel());
         this.filterPanel = filterPanel;
         const refresh = (event?: FilterPanelRefreshParams) => filterPanel.refresh(event);
         refresh();
-        this.addManagedListeners(filterStateService, {
-            filterStatesChanged: refresh,
-            filterStateChanged: refresh,
+        this.addManagedListeners(this.beans.filterPanelSvc!, {
+            filterPanelStatesChanged: refresh,
+            filterPanelStateChanged: refresh,
         });
     }
 

@@ -1,11 +1,9 @@
-import type { ElementParams } from 'ag-grid-community';
+import type { ElementParams, FilterPanelFilterState } from 'ag-grid-community';
 import { Component, RefPlaceholder, _focusInto, _getActiveDomElement, _isNothingFocused } from 'ag-grid-community';
 
 import { AddFilterComp } from './addFilterComp';
 import { FilterCardComp } from './filterCardComp';
 import { compareAndUpdateListsInDom } from './filterPanelUtils';
-import type { FilterPanelFilterState } from './iFilterState';
-import type { IFilterStateService } from './iFilterStateService';
 
 interface SingleRefresh {
     id: string;
@@ -30,7 +28,7 @@ export class FilterPanel extends Component {
     private filters: Map<string, FilterCardComp> = new Map();
     private addFilterComp?: AddFilterComp;
 
-    constructor(private readonly filterStateService: IFilterStateService) {
+    constructor() {
         super(FilterPanelElement);
     }
 
@@ -39,8 +37,9 @@ export class FilterPanel extends Component {
             this.filters.get((params as SingleRefresh).id)?.refresh((params as SingleRefresh).state);
             return;
         }
-        const { filterStateService, eContainer, filters: existingFilters, beans } = this;
-        const filterIds = filterStateService.getFilterIds();
+        const { eContainer, filters: existingFilters, beans } = this;
+        const filterPanelService = beans.filterPanelSvc!;
+        const filterIds = filterPanelService.getFilterIds();
         const newFilters: Map<string, FilterCardComp> = new Map();
 
         const somethingIsFocused = !_isNothingFocused(beans);
@@ -51,8 +50,8 @@ export class FilterPanel extends Component {
         const eNewItems: HTMLElement[] = [];
 
         for (const id of filterIds) {
-            const newFilter = existingFilters.get(id) ?? this.createBean(new FilterCardComp(filterStateService, id));
-            newFilter.refresh(filterStateService.getFilterState(id)!);
+            const newFilter = existingFilters.get(id) ?? this.createBean(new FilterCardComp(id));
+            newFilter.refresh(filterPanelService.getFilterState(id)!);
             newFilters.set(id, newFilter);
             eNewItems.push(newFilter.getGui());
         }
@@ -72,13 +71,13 @@ export class FilterPanel extends Component {
             ePrevItems.push(addFilterComp.getGui());
         }
 
-        const addFilterOptions = this.filterStateService.getAvailableFilters();
+        const addFilterOptions = filterPanelService.getAvailableFilters();
 
         if (addFilterOptions.length) {
             if (!addFilterComp) {
                 addFilterComp = this.createBean(new AddFilterComp(addFilterOptions));
                 addFilterComp.addManagedListeners(addFilterComp, {
-                    filterSelected: ({ id }) => filterStateService.addFilter(id),
+                    filterSelected: ({ id }) => filterPanelService.addFilter(id),
                 });
             }
             addFilterComp.refresh(addFilterOptions);

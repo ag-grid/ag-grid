@@ -468,6 +468,14 @@ export {
 } from './interfaces/iToolPanel';
 export { IColumnToolPanel } from './interfaces/iColumnToolPanel';
 export { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';
+export {
+    SelectableFilterDef,
+    SelectableFilterParams,
+    FilterPanelSummaryState,
+    FilterPanelDetailState,
+    FilterPanelFilterState,
+    IFilterPanelService,
+} from './interfaces/iNewFiltersToolPanel';
 
 // overlays
 export {

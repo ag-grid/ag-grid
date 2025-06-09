@@ -58,6 +58,7 @@ import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IGroupFilterService } from '../interfaces/iGroupFilterService';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IMultiFilterService } from '../interfaces/iMultiFilterService';
+import type { IFilterPanelService } from '../interfaces/iNewFiltersToolPanel';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
@@ -339,6 +340,7 @@ export interface CoreBeanCollection {
     findSvc?: IFindService;
     groupFilter?: IGroupFilterService;
     multiFilter?: IMultiFilterService;
+    filterPanelSvc?: IFilterPanelService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -435,6 +437,7 @@ export type BeanName =
     | 'filterAggStage'
     | 'filterManager'
     | 'filterMenuFactory'
+    | 'filterPanelSvc'
     | 'filterStage'
     | 'filterValueSvc'
     | 'findSvc'

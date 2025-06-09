@@ -31,7 +31,7 @@
     align-items: center;
     padding-left: var(--ag-widget-horizontal-spacing);
     padding-right: var(--ag-widget-horizontal-spacing);
-    margin-bottom: var(--ag-widget-container-vertical-padding);
+    margin-bottom: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
 
     & > *:where(:not(:last-child)) {
         margin-right: var(--ag-spacing);
@@ -60,6 +60,10 @@
 .ag-filter-type-select {
     margin-left: var(--ag-widget-container-horizontal-padding);
     margin-right: var(--ag-widget-container-horizontal-padding);
+}
+
+.ag-filter-type-select {
+    padding-top: var(--ag-widget-vertical-spacing);
 }
 
 .ag-filter-card-add {

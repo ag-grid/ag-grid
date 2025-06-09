@@ -14,11 +14,15 @@ export class FilterValueService extends BeanStub implements NamedBean {
             return;
         }
         const colDef = column.getColDef();
-        const filterValueGetter = filterValueGetterOverride ?? colDef.filterValueGetter;
+        const { filterPanelSvc, valueSvc } = this.beans;
+        const filterValueGetter =
+            filterValueGetterOverride ??
+            filterPanelSvc?.getFilterValueGetter(column.getColId()) ??
+            colDef.filterValueGetter;
         if (filterValueGetter) {
             return this.executeFilterValueGetter(filterValueGetter, rowNode.data, column, rowNode, colDef);
         }
-        return this.beans.valueSvc.getValue(column, rowNode);
+        return valueSvc.getValue(column, rowNode);
     }
 
     private executeFilterValueGetter(
