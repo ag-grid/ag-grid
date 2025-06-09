@@ -77,6 +77,7 @@ import type {
     RangeSelectionChangedEvent,
     RedoEndedEvent,
     RedoStartedEvent,
+    ResetColumnsEvent,
     RowClickedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,

@@ -929,7 +929,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return !invalid;
     }
 
-    private forEachRowInRange(cellRange: CellRange, callback: (row: RowPosition) => void) {
+    public forEachRowInRange(cellRange: CellRange, callback: (row: RowPosition) => void) {
         const topRow = this.getRangeStartRow(cellRange);
         const bottomRow = this.getRangeEndRow(cellRange);
         let currentRow: RowPosition | null = topRow;
@@ -996,7 +996,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const editing = this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column, false, true);
+        const editing = this.beans.editSvc?.isEditing(cellCtrl, {
+            withOpenEditor: true,
+        });
 
         if (editing) {
             this.dragSvc.cancelDrag(eventTarget as HTMLElement);

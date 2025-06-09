@@ -699,6 +699,8 @@ export {
     _isDomLayout,
     _isAnimateRows,
     _getGrandTotalRow,
+    _getGrandTotalRowPinned,
+    _getEnableRowPinning,
     _getGroupTotalRowCallback,
     _isGroupMultiAutoColumn,
     _isColumnsSortingCoupledToGroup,

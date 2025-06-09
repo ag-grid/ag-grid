@@ -193,16 +193,8 @@ export class RowNode<TData = any>
     /** Number of children and grand children. */
     public allChildrenCount: number | null;
 
-    /**
-     * Children mapped by the pivot columns.
-     *
-     * TODO: this field is currently used only by the GroupStrategy and Pivot.
-     * TreeStrategy does not use it, and pivot cannot be enabled with tree data.
-     * Creating a new object for every row when not pivoting and not grouping
-     * consumes memory unnecessarily. Setting it to null however currently breaks
-     * transactional updates in groups so this requires a deeper investigation on GroupStrategy.
-     */
-    public childrenMapped: { [key: string]: any } | null = {};
+    /** Children mapped by the pivot columns or group key */
+    public childrenMapped: { [key: string]: any } | null = null;
 
     /**
      * Used only by tree data internally.
@@ -500,7 +492,7 @@ export class RowNode<TData = any>
      * @returns `true` if the value was changed, otherwise `false`.
      */
     public setDataValue(colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
-        const { colModel, valueSvc, gos, selectionSvc } = this.beans;
+        const { colModel, valueSvc, gos, selectionSvc, editSvc } = this.beans;
 
         // if in pivot mode, grid columns wont include primary columns
         const column = typeof colKey !== 'string' ? colKey : colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
@@ -533,8 +525,8 @@ export class RowNode<TData = any>
             return false;
         }
 
-        if (this.beans.editSvc) {
-            const result = this.beans.editSvc.setDataValue(this, colKey, newValue, eventSource);
+        if (editSvc) {
+            const result = editSvc.setDataValue({ rowNode: this, column }, newValue, eventSource);
 
             if (result != null) {
                 return result;

@@ -11,6 +11,7 @@ import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import {
     _addGridCommonParams,
+    _getEnableRowPinning,
     _getRowHeightAsNumber,
     _isAnimateRows,
     _isCellSelectionEnabled,
@@ -20,6 +21,7 @@ import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
+import type { IEditService } from '../interfaces/iEditService';
 import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -56,6 +58,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private focusSvc: FocusService;
     private rowContainerHeight: RowContainerHeightService;
     private ctrlsSvc: CtrlsService;
+    private editSvc?: IEditService;
 
     public wireBeans(beans: BeanCollection): void {
         this.pageBounds = beans.pageBounds;
@@ -65,6 +68,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.focusSvc = beans.focusSvc;
         this.rowContainerHeight = beans.rowContainerHeight;
         this.ctrlsSvc = beans.ctrlsSvc;
+        this.editSvc = beans.editSvc;
     }
 
     private gridBodyCtrl: GridBodyCtrl;
@@ -579,10 +583,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
     public redrawRows(rowNodes?: IRowNode[]): void {
         const { editSvc } = this.beans;
         if (editSvc?.isEditing()) {
-            if (editSvc.batchEditing) {
+            if (editSvc.batch) {
                 editSvc.cleanupEditors();
             } else {
-                editSvc.stopEditing(undefined, undefined, undefined, undefined, undefined, 'api');
+                editSvc.stopEditing(undefined, { source: 'api' });
             }
         }
 
@@ -643,7 +647,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.gridBodyCtrl.updateRowCount();
 
         if (!params.onlyBody) {
-            this.refreshFloatingRowComps(gos.get('enableRowPinning') ? recycleRows : undefined);
+            this.refreshFloatingRowComps(_getEnableRowPinning(gos) ? recycleRows : undefined);
         }
 
         this.dispatchDisplayedRowsChanged();
@@ -653,8 +657,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.restoreFocusedCell(focusedCell);
         }
 
-        if (this.beans.editSvc?.isEditing()) {
-            this.beans.editSvc.updateCells();
+        if (this.editSvc?.isEditing()) {
+            this.editSvc.updateCells();
         }
 
         this.releaseLockOnRefresh();
@@ -1463,7 +1467,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const rowNode = rowCtrl.rowNode;
 
         const rowHasFocus = this.focusSvc.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned);
-        const rowIsEditing = this.beans.editSvc?.isEditing(rowNode) ?? false;
+        const rowIsEditing = this.editSvc?.isEditing(rowCtrl);
         const rowIsDetail = rowNode.detail;
 
         const mightWantToKeepRow = rowHasFocus || rowIsEditing || rowIsDetail;

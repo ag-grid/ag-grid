@@ -2,7 +2,7 @@ import type { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getRowById } from '../../entities/positionUtils';
-import { RowNode } from '../../entities/rowNode';
+import type { RowNode } from '../../entities/rowNode';
 import { _isElementInThisGrid } from '../../gridBodyComp/mouseEventUtils';
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode, RowPinnedType } from '../../interfaces/iRowNode';
@@ -33,7 +33,7 @@ type ResolvedControllersType = {
     cellCtrl?: CellCtrl;
 };
 
-export function _resolveRowController(beans: BeanCollection, inputs: ResolveRowControllerType): RowCtrl | undefined {
+export function _getRowCtrl(beans: BeanCollection, inputs: ResolveRowControllerType = {}): RowCtrl | undefined {
     const { rowIndex, rowId, rowCtrl, rowPinned } = inputs;
 
     if (rowCtrl) {
@@ -48,20 +48,20 @@ export function _resolveRowController(beans: BeanCollection, inputs: ResolveRowC
     return rowRenderer.getRowCtrls(rowNode ? [rowNode] : [])?.[0];
 }
 
-export function _resolveCellController(beans: BeanCollection, inputs: ResolveControllerType): CellCtrl | undefined {
+export function _getCellCtrl(beans: BeanCollection, inputs: ResolveControllerType = {}): CellCtrl | undefined {
     const { cellCtrl, colId, columnId, column } = inputs;
 
     if (cellCtrl) {
         return cellCtrl;
     }
 
-    const rowCtrl = inputs.rowCtrl ?? _resolveRowController(beans, inputs);
+    const rowCtrl = inputs.rowCtrl ?? _getRowCtrl(beans, inputs);
     return rowCtrl?.getCellCtrl(beans.colModel.getCol(colId ?? columnId ?? _getColId(column))!) ?? undefined;
 }
 
-export function _resolveControllers(beans: BeanCollection, inputs: ResolveControllerType): ResolvedControllersType {
-    const rowCtrl = _resolveRowController(beans, inputs);
-    const cellCtrl = _resolveCellController(beans, inputs);
+export function _getCtrls(beans: BeanCollection, inputs: ResolveControllerType = {}): ResolvedControllersType {
+    const rowCtrl = _getRowCtrl(beans, inputs);
+    const cellCtrl = _getCellCtrl(beans, inputs);
 
     return {
         rowCtrl,
@@ -101,7 +101,7 @@ export function _addStopEditingWhenGridLosesFocus(
         }
 
         if (!clickInsideGrid) {
-            editSvc?.stopEditing(undefined, undefined, undefined, undefined, false, 'api');
+            editSvc?.stopEditing(undefined, { source: 'api' });
         }
     };
 
@@ -125,7 +125,7 @@ export function _getSiblingRows(
     includeSource = false,
     includeParents = false
 ): IRowNode[] {
-    const pinned = rowNode instanceof RowNode ? rowNode.pinnedSibling : undefined;
+    const pinned = (rowNode as RowNode).pinnedSibling;
     const sibling = rowNode.sibling;
 
     const result: IRowNode[] = [];

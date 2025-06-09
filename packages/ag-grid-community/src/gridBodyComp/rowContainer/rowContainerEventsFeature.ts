@@ -3,6 +3,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
+import type { IEditService } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrlForEventTarget } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -51,6 +52,8 @@ function _normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
 }
 
 export class RowContainerEventsFeature extends BeanStub {
+    private editSvc?: IEditService;
+
     constructor(public readonly element: HTMLElement) {
         super();
     }
@@ -59,6 +62,7 @@ export class RowContainerEventsFeature extends BeanStub {
         this.addKeyboardListeners();
         this.addMouseListeners();
         this.beans.touchSvc?.mockRowContextMenu(this);
+        this.editSvc = this.beans.editSvc;
     }
 
     private addKeyboardListeners(): void {
@@ -118,20 +122,19 @@ export class RowContainerEventsFeature extends BeanStub {
         }
         if (cellCtrl) {
             this.processCellKeyboardEvent(cellCtrl, eventName, keyboardEvent);
-        } else if (rowCtrl && rowCtrl.isFullWidth()) {
+        } else if (rowCtrl?.isFullWidth()) {
             this.processFullWidthRowKeyboardEvent(rowCtrl, eventName, keyboardEvent);
         }
     }
 
     private processCellKeyboardEvent(cellCtrl: CellCtrl, eventName: string, keyboardEvent: KeyboardEvent): void {
-        const { rowNode, column } = cellCtrl;
-        const editing = this.beans.editSvc?.isEditing(rowNode, column, undefined, true) ?? false;
+        const editing = this.editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) ?? false;
 
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(
             this.gos,
             keyboardEvent,
-            rowNode,
-            column,
+            cellCtrl.rowNode,
+            cellCtrl.column,
             editing
         );
 
@@ -163,7 +166,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const { rowNode } = rowCtrl;
         const { focusSvc, navigation } = this.beans;
         const focusedCell = focusSvc.getFocusedCell();
-        const column = (focusedCell && focusedCell.column) as AgColumn;
+        const column = focusedCell?.column as AgColumn;
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, false);
 
         if (gridProcessingAllowed) {
@@ -268,9 +271,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
         const { cellCtrl } = this.getControlsForEventTarget(event.target);
 
-        const editing = this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column, undefined, true) ?? false;
-
-        if (editing) {
+        if (this.editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
             return;
         }
 
@@ -285,9 +286,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
         const { cellCtrl } = this.getControlsForEventTarget(event.target);
 
-        const editing = this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column, undefined, true) ?? false;
-
-        if (editing) {
+        if (this.editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
             return;
         }
 
@@ -298,9 +297,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private onCtrlAndV(clipboardSvc: IClipboardService | undefined, event: KeyboardEvent): void {
         const { cellCtrl } = this.getControlsForEventTarget(event.target);
 
-        const editing = this.beans.editSvc?.isEditing(cellCtrl?.rowNode, cellCtrl?.column, undefined, true) ?? false;
-
-        if (editing) {
+        if (this.editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
             return;
         }
 

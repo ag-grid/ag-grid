@@ -45,15 +45,15 @@ export class CellMouseListenerFeature extends BeanStub {
         }
     }
 
-    private onCellClicked(mouseEvent: MouseEvent): void {
+    private onCellClicked(event: MouseEvent): void {
         // iPad doesn't have double click - so we need to mimic it to enable editing for iPad.
-        if (this.beans.touchSvc?.handleCellDoubleClick(this, mouseEvent)) {
+        if (this.beans.touchSvc?.handleCellDoubleClick(this, event)) {
             return;
         }
 
-        const { eventSvc, rangeSvc, editSvc } = this.beans;
-        const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
-        const { rowNode, column, cellPosition } = this.cellCtrl;
+        const { eventSvc, rangeSvc, editSvc, editModelSvc } = this.beans;
+        const isMultiKey = event.ctrlKey || event.metaKey;
+        const { column, cellPosition } = this.cellCtrl;
 
         if (rangeSvc && isMultiKey) {
             // the mousedown event has created the range already, so we only intersect if there is more than one
@@ -63,7 +63,7 @@ export class CellMouseListenerFeature extends BeanStub {
             }
         }
 
-        const cellClickedEvent: CellClickedEvent = this.cellCtrl.createEvent(mouseEvent, 'cellClicked');
+        const cellClickedEvent: CellClickedEvent = this.cellCtrl.createEvent(event, 'cellClicked');
         eventSvc.dispatchEvent(cellClickedEvent);
 
         const colDef = column.getColDef();
@@ -77,19 +77,18 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        if (this.beans.editModelSvc?.getState(rowNode, column) !== 'editing') {
-            editSvc?.startEditing(rowNode, column, null, undefined, mouseEvent);
+        if (editModelSvc?.getState(this.cellCtrl) !== 'editing') {
+            editSvc?.startEditing(this.cellCtrl, { event });
         }
     }
 
-    public onCellDoubleClicked(mouseEvent: MouseEvent) {
+    public onCellDoubleClicked(event: MouseEvent) {
         const { column, beans, cellCtrl } = this;
-        const { rowNode } = cellCtrl;
         const { eventSvc, frameworkOverrides, editSvc } = beans;
 
         const colDef = column.getColDef();
         // always dispatch event to eventService
-        const cellDoubleClickedEvent: CellDoubleClickedEvent = cellCtrl.createEvent(mouseEvent, 'cellDoubleClicked');
+        const cellDoubleClickedEvent: CellDoubleClickedEvent = cellCtrl.createEvent(event, 'cellDoubleClicked');
         eventSvc.dispatchEvent(cellDoubleClickedEvent);
 
         // check if colDef also wants to handle event
@@ -102,8 +101,8 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        if (beans.editModelSvc?.getState(rowNode, column) !== 'editing') {
-            editSvc?.startEditing(rowNode, column, null, undefined, mouseEvent, 'ui');
+        if (beans.editModelSvc?.getState(cellCtrl) !== 'editing') {
+            editSvc?.startEditing(cellCtrl, { event });
         }
     }
 
@@ -120,7 +119,7 @@ export class CellMouseListenerFeature extends BeanStub {
 
         const hasRanges = rangeSvc && !rangeSvc.isEmpty();
         const containsWidget = this.containsWidget(target);
-        const { cellPosition, rowNode, column } = cellCtrl;
+        const { cellPosition, column } = cellCtrl;
 
         const isRowNumberColumn = isRowNumberCol(column);
 
@@ -133,7 +132,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (!shiftKey || !hasRanges) {
-            const editing = editSvc?.isEditing(rowNode, column);
+            const editing = editSvc?.isEditing(cellCtrl);
             const isEnableCellTextSelection = gos.get('enableCellTextSelection');
             // when `enableCellTextSelection` is true, we call prevent default on `mousedown`
             // within the row dragger to block text selection while dragging, but the cell
@@ -154,14 +153,13 @@ export class CellMouseListenerFeature extends BeanStub {
             // this stops the cell from getting focused
             mouseEvent.preventDefault();
 
-            const focusedCellPosition = focusSvc.getFocusedCell();
-            if (focusedCellPosition) {
-                const { column, rowIndex, rowPinned } = focusedCellPosition;
-                const focusedRowCtrl = beans.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
+            const focusedCell = focusSvc.getFocusedCell();
+            if (focusedCell) {
+                const { column, rowIndex, rowPinned } = focusedCell;
 
                 // if the focused cell is editing, need to stop editing first
-                if (editSvc?.isEditing(focusedRowCtrl?.rowNode, column)) {
-                    editSvc?.stopEditing(focusedRowCtrl?.rowNode, column);
+                if (editSvc?.isEditing(focusedCell)) {
+                    editSvc?.stopEditing(focusedCell);
                 }
 
                 // focus could have been lost, so restore it to the starting cell in the range if needed
