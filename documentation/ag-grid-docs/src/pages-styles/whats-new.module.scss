@@ -1,9 +1,17 @@
 @use 'design-system' as *;
 
 .whatsNewOuter {
-    img {
+    img,
+    video,
+    iframe {
         max-width: 100%;
         border-radius: var(--radius-md);
+        overflow: hidden;
+    }
+
+    iframe {
+        width: 100%;
+        aspect-ratio: 16/9;
     }
 }
 
