@@ -226,11 +226,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             if (dragAndDrop!.isDropZoneWithinThisGrid(draggingEvent)) {
                 const rowsDrop = this.getRowsDrop(draggingEvent);
                 const target = rowsDrop?.target;
-                const rowHighlightSvc = this.beans.rowHighlightSvc!;
+                const rowDropHighlightSvc = this.beans.rowDropHighlightSvc!;
                 if (target) {
-                    rowHighlightSvc.set(target, rowsDrop.above ? 'above' : 'below');
+                    rowDropHighlightSvc.set(target, rowsDrop.above ? 'above' : 'below');
                 } else {
-                    rowHighlightSvc.clear();
+                    rowDropHighlightSvc.clear();
                 }
             }
         } else {
@@ -515,7 +515,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.stopDragging(draggingEvent);
 
         if (this.gos.get('rowDragManaged')) {
-            this.beans.rowHighlightSvc!.clear();
+            this.beans.rowDropHighlightSvc!.clear();
         }
     }
 
@@ -533,7 +533,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             if (rowsDrop) {
                 this.dropRows(rowsDrop);
             }
-            this.beans.rowHighlightSvc!.clear();
+            this.beans.rowDropHighlightSvc!.clear();
         }
     }
 
@@ -547,7 +547,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             (gos.get('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
             dragAndDrop!.isDropZoneWithinThisGrid(draggingEvent)
         ) {
-            this.beans.rowHighlightSvc!.clear();
+            this.beans.rowDropHighlightSvc!.clear();
         }
     }
 

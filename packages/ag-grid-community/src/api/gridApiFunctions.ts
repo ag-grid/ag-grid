@@ -157,10 +157,12 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     ...mod<_HighlightChangesGridApi<any>>('HighlightChanges', {
         flashCells: 0,
     }),
-    ...mod<_DragGridApi>('RowDrag', {
+    ...mod<_DragGridApi<any>>('RowDrag', {
         addRowDropZone: 0,
         removeRowDropZone: 0,
         getRowDropZoneParams: 0,
+        getRowDropHighlight: 0,
+        setRowDropHighlight: 0,
     }),
     ...mod<_ColumnGridApi<any>>('ColumnApi', {
         getColumnDefs: 0,

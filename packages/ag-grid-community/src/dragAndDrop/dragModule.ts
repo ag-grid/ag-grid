@@ -5,10 +5,11 @@ import { VERSION } from '../version';
 import { DragAndDropImageComponent } from './dragAndDropImageComponent';
 import { DragAndDropService } from './dragAndDropService';
 import { addRowDropZone, getRowDropZoneParams, removeRowDropZone } from './dragApi';
+import { getRowDropHighlight, setRowDropHighlight } from './dragApi';
 import { DragService } from './dragService';
 import { HorizontalResizeService } from './horizontalResizeService';
 import { RowDragService } from './rowDragService';
-import { RowHighlightService } from './rowHighlightService';
+import { RowDropHighlightService } from './rowDropHighlightService';
 
 /**
  * @internal
@@ -75,14 +76,16 @@ export const SharedDragAndDropModule: _ModuleWithoutApi = {
  * @feature Rows -> Row Dragging
  * @colDef rowDrag
  */
-export const RowDragModule: _ModuleWithApi<_DragGridApi> = {
+export const RowDragModule: _ModuleWithApi<_DragGridApi<any>> = {
     moduleName: 'RowDrag',
     version: VERSION,
-    beans: [RowHighlightService, RowDragService],
+    beans: [RowDropHighlightService, RowDragService],
     apiFunctions: {
         addRowDropZone,
         removeRowDropZone,
         getRowDropZoneParams,
+        getRowDropHighlight,
+        setRowDropHighlight,
     },
     dependsOn: [SharedDragAndDropModule],
 };
