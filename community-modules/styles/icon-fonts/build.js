@@ -72,6 +72,10 @@ const nameToCodepoint = {
     'un-pin': 0xf13b,
     'pinned-bottom': 0xf13e,
     'pinned-top': 0xf13f,
+    'chevron-up': 0xf140,
+    'chevron-down': 0xf141,
+    'chevron-left': 0xf142,
+    'chevron-right': 0xf143,
 };
 
 function generateFontFile(fontName) {
