@@ -8,6 +8,7 @@ import { addRowDropZone, getRowDropZoneParams, removeRowDropZone } from './dragA
 import { DragService } from './dragService';
 import { HorizontalResizeService } from './horizontalResizeService';
 import { RowDragService } from './rowDragService';
+import { RowHighlightService } from './rowHighlightService';
 
 /**
  * @internal
@@ -77,7 +78,7 @@ export const SharedDragAndDropModule: _ModuleWithoutApi = {
 export const RowDragModule: _ModuleWithApi<_DragGridApi> = {
     moduleName: 'RowDrag',
     version: VERSION,
-    beans: [RowDragService],
+    beans: [RowHighlightService, RowDragService],
     apiFunctions: {
         addRowDropZone,
         removeRowDropZone,

@@ -1164,6 +1164,7 @@ export {
     UndoRedoEditModule,
     CustomEditorModule,
 } from './edit/editModule';
+export type { RowHighlightPosition } from './interfaces/IRowHighlightService';
 export type { EditStrategyType } from './interfaces/editStrategyType';
 export {
     RowSelectionModule,

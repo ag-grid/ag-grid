@@ -39,6 +39,7 @@ import type { GridOptionsService } from '../gridOptionsService';
 import type { RowNodeBlockLoader } from '../infiniteRowModel/rowNodeBlockLoader';
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService } from '../interfaces/IRangeService';
+import type { IRowHighlightService } from '../interfaces/IRowHighlightService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
@@ -320,6 +321,7 @@ export interface CoreBeanCollection {
     chartSvc?: IChartService;
     aggColNameSvc?: IAggColumnNameService;
     renderStatus?: IRenderStatusService;
+    rowHighlightSvc?: IRowHighlightService;
     rowDragSvc?: RowDragService;
     stickyRowSvc?: IStickyRowService;
     filterValueSvc?: FilterValueService;
@@ -528,4 +530,5 @@ export type BeanName =
     | 'csrmChildrenTreeNodeSvc'
     | 'rowSpanSvc'
     | 'spannedRowRenderer'
-    | 'showRowGroupColValueSvc';
+    | 'showRowGroupColValueSvc'
+    | 'rowHighlightSvc';
