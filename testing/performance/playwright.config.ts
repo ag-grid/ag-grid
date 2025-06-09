@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
 import path from 'node:path';
 
-dotenv.config({ path: path.join(__dirname, '../../../../documentation/ag-grid-docs/.env.dev') }); // grab docs PORT
+dotenv.config({ path: path.join(__dirname, '../../documentation/ag-grid-docs/.env.dev') }); // grab docs PORT
 
 const baseURL = `https://localhost:${process.env['PORT'] ?? '4610'}`;
 
