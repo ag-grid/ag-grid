@@ -187,26 +187,12 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gos.get('reactiveCustomComponents');
     }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
 
-    const showCellsJsx = () =>
-        cellCtrlsMerged?.map((cellCtrl) => (
-            <CellComp
-                cellCtrl={cellCtrl}
-                editingRow={editSvc?.isRowEditing(rowCtrl) ?? false}
-                printLayout={rowCtrl.printLayout}
-                key={cellCtrl.instanceId}
-            />
-        ));
-
     const showFullWidthFrameworkJsx = () => {
         const FullWidthComp = fullWidthCompDetails!.componentClass;
-        return (
-            <>
-                {reactFullWidthCellRendererStateless ? (
-                    <FullWidthComp {...fullWidthCompDetails!.params} />
-                ) : (
-                    <FullWidthComp {...fullWidthCompDetails!.params} ref={fullWidthCompRef} />
-                )}
-            </>
+        return reactFullWidthCellRendererStateless ? (
+            <FullWidthComp {...fullWidthCompDetails!.params} />
+        ) : (
+            <FullWidthComp {...fullWidthCompDetails!.params} ref={fullWidthCompRef} />
         );
     };
 
@@ -219,8 +205,18 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             row-id={rowId}
             row-business-key={rowBusinessKey}
         >
-            {showCells && showCellsJsx()}
-            {showFullWidthFramework && showFullWidthFrameworkJsx()}
+            {showCells
+                ? cellCtrlsMerged?.map((cellCtrl) => (
+                      <CellComp
+                          cellCtrl={cellCtrl}
+                          editingRow={editSvc?.isRowEditing(rowCtrl) ?? false}
+                          printLayout={rowCtrl.printLayout}
+                          key={cellCtrl.instanceId}
+                      />
+                  ))
+                : showFullWidthFramework
+                  ? showFullWidthFrameworkJsx()
+                  : null}
         </div>
     );
 };

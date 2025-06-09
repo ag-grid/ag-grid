@@ -62,37 +62,21 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
 
     const insertRowsJsx = () => headerRowCtrls.map((ctrl) => <HeaderRowComp ctrl={ctrl} key={ctrl.instanceId} />);
 
-    return (
-        <>
-            {pinnedLeft && (
-                <div
-                    ref={setRef}
-                    className={'ag-pinned-left-header ' + className}
-                    aria-hidden={!displayed}
-                    role="rowgroup"
-                >
-                    {insertRowsJsx()}
-                </div>
-            )}
-            {pinnedRight && (
-                <div
-                    ref={setRef}
-                    className={'ag-pinned-right-header ' + className}
-                    aria-hidden={!displayed}
-                    role="rowgroup"
-                >
-                    {insertRowsJsx()}
-                </div>
-            )}
-            {centre && (
-                <div ref={setRef} className={'ag-header-viewport ' + className} role="presentation" tabIndex={-1}>
-                    <div ref={eCenterContainer} className={'ag-header-container'} role="rowgroup">
-                        {insertRowsJsx()}
-                    </div>
-                </div>
-            )}
-        </>
-    );
+    return pinnedLeft ? (
+        <div ref={setRef} className={'ag-pinned-left-header ' + className} aria-hidden={!displayed} role="rowgroup">
+            {insertRowsJsx()}
+        </div>
+    ) : pinnedRight ? (
+        <div ref={setRef} className={'ag-pinned-right-header ' + className} aria-hidden={!displayed} role="rowgroup">
+            {insertRowsJsx()}
+        </div>
+    ) : centre ? (
+        <div ref={setRef} className={'ag-header-viewport ' + className} role="presentation" tabIndex={-1}>
+            <div ref={eCenterContainer} className={'ag-header-container'} role="rowgroup">
+                {insertRowsJsx()}
+            </div>
+        </div>
+    ) : null;
 };
 
 export default memo(HeaderRowContainerComp);

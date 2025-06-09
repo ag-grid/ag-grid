@@ -19,6 +19,7 @@ import HeaderGroupCellComp from './headerGroupCellComp';
 const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
     const { context } = useContext(BeansContext);
     const enableCellDeferRender = useContext(EnableDeferRenderContext);
+    const usesSetup = useRef<boolean>(false);
 
     const { topOffset, rowHeight } = useMemo(() => ctrl.getTopAndHeight(), []);
     const ariaRowIndex = ctrl.getAriaRowIndex();
@@ -33,6 +34,10 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
     let cellCtrlsMerged = cellCtrls;
     const cellsChanged = useRef<any>(() => {});
     if (enableCellDeferRender) {
+        if (!usesSetup.current) {
+            usesSetup.current = true;
+            cellCtrlsRef.current = ctrl.getUpdatedHeaderCtrls();
+        }
         const sub = useCallback((onStoreChange: any) => {
             cellsChanged.current = onStoreChange;
             return () => {
@@ -85,6 +90,13 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
             top: top,
         }),
         [height, top]
+    );
+
+    console.warn(
+        'HeaderRowComp render',
+        ctrl.instanceId,
+        cellCtrlsMerged.length,
+        cellCtrlsMerged.map((c) => c.instanceId).join(', ')
     );
 
     return (
