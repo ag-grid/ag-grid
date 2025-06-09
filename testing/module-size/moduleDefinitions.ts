@@ -36,7 +36,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     RenderApiModule: 1.48,
     RowApiModule: 0.88,
     RowAutoHeightModule: 1.84,
-    RowDragModule: 15.49,
+    RowDragModule: 16.66,
     RowSelectionModule: 34.59,
     RowStyleModule: 1.24,
     ScrollApiModule: 0.7,
