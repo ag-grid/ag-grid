@@ -31,7 +31,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     NumberEditorModule: 41.56,
     NumberFilterModule: 120.56,
     PaginationModule: 42.74,
-    PinnedRowModule: 18.27,
+    PinnedRowModule: 18.5,
     QuickFilterModule: 17.3,
     RenderApiModule: 1.48,
     RowApiModule: 0.88,
