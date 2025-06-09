@@ -9,6 +9,13 @@ import styles from '../pages-styles/whats-new.module.scss';
 const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
 
 const releasePosts = await getCollection('whatsNewContent');
+
+const sortedPosts = releasePosts.sort((a, b) => {
+    const aVer = Number(a.data.version.split('.').join(''));
+    const bVer = Number(b.data.version.split('.').join(''));
+
+    return bVer - aVer;
+});
 ---
 
 <Layout
@@ -24,7 +31,7 @@ const releasePosts = await getCollection('whatsNewContent');
             <h1>What's new</h1>
 
             {
-                releasePosts.map(async (release) => {
+                sortedPosts.map(async (release) => {
                     const { Content } = await render(release);
 
                     return (
