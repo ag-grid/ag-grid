@@ -13,7 +13,7 @@ export interface IDateCellEditorParams<TData = any, TContext = any> extends ICel
      */
     step?: number;
     /**
-     * Defines whether time should be included when filtering dates.
+     * Defines whether time should be included when editing dates.
      *
      * - `true`: Include the time component in date comparisons.
      * - `false`: Only compare dates without considering the time component.
