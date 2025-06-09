@@ -116,12 +116,12 @@ const jsxShowValue = (
             return value?.toString?.() ?? value;
         }
 
-        if (compDetails?.componentFromFramework) {
-            const CellRendererClass = compDetails?.componentClass;
+        if (compDetails.componentFromFramework) {
+            const CellRendererClass = compDetails.componentClass;
             return reactCellRendererStateless ? (
-                <CellRendererClass {...compDetails!.params} key={key} />
+                <CellRendererClass {...compDetails.params} key={key} />
             ) : (
-                <CellRendererClass {...compDetails!.params} key={key} ref={cellRendererRef} />
+                <CellRendererClass {...compDetails.params} key={key} ref={cellRendererRef} />
             );
         }
     };

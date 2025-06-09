@@ -129,9 +129,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
         <div ref={setRef} style={userStyles} className={className} role="gridcell">
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
                 {reactUserComp ? (
-                    !reactiveCustomComponents ? (
-                        <UserCompClass {...userCompDetails!.params} ref={userCompStateless ? () => {} : userCompRef} />
-                    ) : (
+                    reactiveCustomComponents ? (
                         <CustomContext.Provider
                             value={{
                                 setMethods: (methods: CustomFloatingFilterCallbacks) =>
@@ -140,6 +138,8 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
                         >
                             <UserCompClass {...floatingFilterProps!} />
                         </CustomContext.Provider>
+                    ) : (
+                        <UserCompClass {...userCompDetails!.params} ref={userCompStateless ? () => {} : userCompRef} />
                     )
                 ) : null}
             </div>
