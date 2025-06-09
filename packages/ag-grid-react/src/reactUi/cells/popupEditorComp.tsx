@@ -84,13 +84,9 @@ const PopupEditorComp = (props: {
         };
     }, [popupEditorWrapper]);
 
-    return (
-        <>
-            {popupEditorWrapper &&
-                props.wrappedContent &&
-                createPortal(props.wrappedContent, popupEditorWrapper.getGui())}
-        </>
-    );
+    return popupEditorWrapper && props.wrappedContent
+        ? createPortal(props.wrappedContent, popupEditorWrapper.getGui())
+        : null;
 };
 
 export default memo(PopupEditorComp);

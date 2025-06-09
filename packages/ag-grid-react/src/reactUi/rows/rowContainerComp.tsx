@@ -169,19 +169,17 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
         return buildContainer();
     }
 
-    const buildSpanContainer = () =>
-        isSpanning && (
-            <div className={spanClasses} ref={setSpanContainerRef} role={'rowgroup'}>
-                {spannedRowCtrlsOrdered.map((rowCtrl) => (
-                    <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
-                ))}
-            </div>
-        );
-
+    const buildSpanContainer = () => (
+        <div className={spanClasses} ref={setSpanContainerRef} role={'rowgroup'}>
+            {spannedRowCtrlsOrdered.map((rowCtrl) => (
+                <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
+            ))}
+        </div>
+    );
     return (
         <div className={viewportClasses} ref={setViewportRef} role="presentation">
             {buildContainer()}
-            {buildSpanContainer()}
+            {isSpanning ? buildSpanContainer() : null}
         </div>
     );
 };
