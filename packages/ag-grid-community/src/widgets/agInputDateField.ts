@@ -6,20 +6,14 @@ import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
 import type { ComponentSelector } from './component';
 
-export interface AgInputDateFieldParams extends AgInputTextFieldParams {
-    includeTime?: boolean;
-}
 export class AgInputDateField extends AgInputTextField {
     private min?: string;
     private max?: string;
     private step?: number;
-    private readonly includeTime: boolean;
+    private includeTime?: boolean;
 
-    constructor(config?: AgInputDateFieldParams) {
-        const inputType = config?.includeTime ? 'datetime-local' : 'date';
-
-        super(config, 'ag-date-field', inputType);
-        this.includeTime = !!config?.includeTime;
+    constructor(config?: AgInputTextFieldParams) {
+        super(config, 'ag-date-field', 'date');
     }
 
     public override postConstruct() {
@@ -38,9 +32,6 @@ export class AgInputDateField extends AgInputTextField {
             },
         });
         this.eInput.step = 'any';
-        if (this.includeTime) {
-            this.setStep(1);
-        }
     }
 
     private onWheel(e: WheelEvent) {
@@ -84,6 +75,19 @@ export class AgInputDateField extends AgInputTextField {
         this.step = step;
 
         _addOrRemoveAttribute(this.eInput, 'step', step);
+
+        return this;
+    }
+
+    public setIncludeTime(includeTime?: boolean): this {
+        if (this.includeTime === includeTime) {
+            return this;
+        }
+
+        this.includeTime = includeTime;
+
+        super.setInputType(includeTime ? 'datetime-local' : 'date');
+        if (includeTime) this.setStep(1);
 
         return this;
     }
