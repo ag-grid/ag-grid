@@ -2,7 +2,7 @@
 import { getCollection, getEntry, render } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navigation/DocsNavFromLocalStorage';
-// import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
+import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
 import docsStyles from '@ag-website-shared/components/page-styles/docs.module.scss';
 import styles from '../pages-styles/whats-new.module.scss';
 
@@ -16,6 +16,17 @@ const sortedPosts = releasePosts.sort((a, b) => {
 
     return bVer - aVer;
 });
+
+const headings = [
+    { slug: 'top', depth: 1, text: "What's new" },
+    ...sortedPosts.map((release) => {
+        return {
+            slug: `version-${release.data.version}`,
+            depth: 2,
+            text: `Version ${release.data.version}`,
+        };
+    }),
+];
 ---
 
 <Layout
@@ -28,14 +39,12 @@ const sortedPosts = releasePosts.sort((a, b) => {
         <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={'release-history'} />
 
         <div id="doc-content" class:list={[docsStyles.docPage, styles.whatsNewOuter]}>
-            <h1>What's new</h1>
-
             {
                 sortedPosts.map(async (release) => {
                     const { Content } = await render(release);
 
                     return (
-                        <section class={styles.whatsNewPost}>
+                        <section id={`version-${release.data.version}`} class={styles.whatsNewPost}>
                             <Content />
                         </section>
                     );
@@ -43,6 +52,6 @@ const sortedPosts = releasePosts.sort((a, b) => {
             }
         </div>
 
-        <!-- <SideNavigation client:load headings={headings} delayedScrollSpy={true} /> -->
+        <SideNavigation client:load headings={headings} delayedScrollSpy={true} />
     </div>
 </Layout>
