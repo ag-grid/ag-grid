@@ -1,7 +1,9 @@
 import type { Framework } from '@ag-grid-types';
 import { Collapsible } from '@ag-website-shared/components/collapsible/Collapsible';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { getExamplePageUrl } from '@components/docs/utils/urlPaths';
+import { agLibraryVersion } from '@constants';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { Fragment, useEffect, useState } from 'react';
@@ -195,6 +197,9 @@ export function DocsNav({
     const [openGroup, setOpenGroup] = useState(pageOpenGroup);
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
+    const currentVersion = parseVersion(agLibraryVersion);
+    const currentVersionText = `v${currentVersion.major}.${currentVersion.minor}`;
+
     useEffect(() => {
         const docsButtonEl = document.querySelector('#top-bar-docs-button');
 
@@ -215,7 +220,10 @@ export function DocsNav({
                 <div className={styles.docsNavInner}>
                     {showWhatsNew && (
                         <div className={styles.whatsNewLink}>
-                            <a href={urlWithBaseUrl('/whats-new')}>What's New</a>
+                            <a href={urlWithBaseUrl('/whats-new')}>
+                                <span>What's New</span>
+                                <span>{currentVersionText}</span>
+                            </a>
                         </div>
                     )}
 
