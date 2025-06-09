@@ -86,7 +86,10 @@ export class DefaultDateComponent extends Component implements IDateComp {
         const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
         this.usingSafariDatePicker = shouldUseBrowserDatePicker && _isBrowserSafari();
         const dataTypeSvc = this.beans.dataTypeSvc;
-        const includeTime = dataTypeSvc?.getDateIncludesTimeFlag(params.filterParams?.colDef?.cellDataType) ?? false;
+        const includeTime =
+            params.filterParams.includeTime ??
+            dataTypeSvc?.getDateIncludesTimeFlag(params.filterParams?.colDef?.cellDataType) ??
+            false;
 
         if (shouldUseBrowserDatePicker) {
             if (includeTime) {

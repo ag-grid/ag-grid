@@ -30,7 +30,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     public init(eInput: AgInputDateField, params: IDateStringCellEditorParams): void {
         this.eInput = eInput;
         this.params = params;
-        const { min, max, step } = params;
+        const { min, max, step, includeTime } = params;
         if (min != null) {
             eInput.setMin(min);
         }
@@ -39,6 +39,9 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         }
         if (step != null) {
             eInput.setStep(step);
+        }
+        if (includeTime != null) {
+            eInput.setIncludeTime(includeTime);
         }
     }
 
@@ -52,7 +55,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     }
 
     public getStartValue(): string | null | undefined {
-        return this.formatDate(this.parseDate(this.params.value ?? undefined));
+        return _serialiseDate(this.parseDate(this.params.value ?? undefined) ?? null, this.params.includeTime ?? false);
     }
 
     private parseDate(value: string | undefined): Date | undefined {
@@ -66,7 +69,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         const dataTypeSvc = this.getDataTypeService();
         return dataTypeSvc
             ? dataTypeSvc.getDateFormatterFunction(this.params.column as AgColumn)(value)
-            : _serialiseDate(value ?? null, false) ?? undefined;
+            : _serialiseDate(value ?? null, this.params.includeTime ?? false) ?? undefined;
     }
 }
 

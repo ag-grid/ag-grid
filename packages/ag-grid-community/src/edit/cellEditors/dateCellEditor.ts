@@ -29,7 +29,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     public init(eInput: AgInputDateField, params: IDateCellEditorParams): void {
         this.eInput = eInput;
         this.params = params;
-        const { min, max, step } = params;
+        const { min, max, step, includeTime } = params;
         if (min != null) {
             eInput.setMin(min);
         }
@@ -38,6 +38,9 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         }
         if (step != null) {
             eInput.setStep(step);
+        }
+        if (includeTime != null) {
+            eInput.setIncludeTime(includeTime);
         }
     }
 
@@ -56,7 +59,10 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
             return undefined;
         }
         const dataTypeSvc = this.getDataTypeService();
-        return _serialiseDate(value, dataTypeSvc?.getDateIncludesTimeFlag?.(this.params.colDef.cellDataType) ?? false);
+        return _serialiseDate(
+            value,
+            this.params.includeTime ?? dataTypeSvc?.getDateIncludesTimeFlag?.(this.params.colDef.cellDataType) ?? false
+        );
     }
 }
 
