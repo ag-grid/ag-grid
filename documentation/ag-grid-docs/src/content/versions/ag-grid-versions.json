@@ -1,5 +1,9 @@
 [
     {
+        "version": "32.3.8",
+        "date": "June 10th 2025"
+    },
+    {
         "version": "32.3.0",
         "date": "October 22nd 2024",
         "landingPageHighlight": "Quality Improvements",
