@@ -3,7 +3,6 @@ import { FRAMEWORKS } from '@constants';
 // array of objects
 import { glob } from 'astro/loaders';
 import { defineCollection, z } from 'astro:content';
-import { version } from 'os';
 
 const framework = z.enum(FRAMEWORKS as any);
 

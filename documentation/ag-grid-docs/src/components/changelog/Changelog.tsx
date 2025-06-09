@@ -60,7 +60,7 @@ export const Changelog = () => {
     const [rowData, setRowData] = useState(null);
     const [gridApi, setGridApi] = useState(null);
     const [versions, setVersions] = useState<string[]>([]);
-    const [fixVersion, setFixVersion] = useFixVersion();
+    const [fixVersion, _] = useFixVersion();
     const { searchQuery, handleSearchQueryChange } = useSearchQuery();
     const autoSizeStrategy = useMemo(() => ({ type: 'fitGridWidth' }), []);
 
