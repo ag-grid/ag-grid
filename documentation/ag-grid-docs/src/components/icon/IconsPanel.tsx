@@ -13,6 +13,10 @@ const ICONS = [
     'asc',
     'cancel',
     'chart',
+    'chevron-up',
+    'chevron-down',
+    'chevron-left',
+    'chevron-right',
     'color-picker',
     'columns',
     'contracted',
@@ -61,10 +65,6 @@ const ICONS = [
     'tree-open',
     'unlinked',
     'up',
-    'chevron-up',
-    'chevron-down',
-    'chevron-left',
-    'chevron-right',
 ];
 
 const capitalizeName = (name: string) => `${name.slice(0, 1).toUpperCase()}${name.slice(1)}`;
