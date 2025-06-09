@@ -4,6 +4,7 @@ import Layout from '../layouts/Layout.astro';
 import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navigation/DocsNavFromLocalStorage';
 // import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
 import docsStyles from '@ag-website-shared/components/page-styles/docs.module.scss';
+import styles from '../pages-styles/whats-new.module.scss';
 
 const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
 
@@ -11,22 +12,26 @@ const releasePosts = await getCollection('whatsNewContent');
 ---
 
 <Layout
-    title={'AG Grid Release History'}
-    description={'Browse archived documentation for previous AG Grid versions, from version 14 and onwards. View changelogs for every minor and major release.'}
+    title={"AG Grid What's new"}
+    description={"See what's new in recent AG Grid versions. View feature highlights, browse release notes or read our release blogs. Includes major and minor releases."}
     showDocsNav={true}
     showSearchBar={true}
 >
     <div class:list={[docsStyles.contentViewport, 'layout-grid']}>
         <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={'release-history'} />
 
-        <div id="doc-content" class={docsStyles.docPage}>
+        <div id="doc-content" class:list={[docsStyles.docPage, styles.whatsNewOuter]}>
             <h1>What's new</h1>
 
             {
                 releasePosts.map(async (release) => {
                     const { Content } = await render(release);
 
-                    return <Content />;
+                    return (
+                        <section class={styles.whatsNewPost}>
+                            <Content />
+                        </section>
+                    );
                 })
             }
         </div>

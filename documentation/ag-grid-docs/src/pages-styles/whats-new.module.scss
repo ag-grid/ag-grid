@@ -1,0 +1,11 @@
+@use 'design-system' as *;
+
+.whatsNewOuter {
+    img {
+        max-width: 100%;
+    }
+}
+
+.whatsNewPost {
+    margin-bottom: $spacing-size-32;
+}
