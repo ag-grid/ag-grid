@@ -14,10 +14,10 @@ export interface IDateStringCellEditorParams<TData = any, TContext = any>
      */
     step?: number;
     /**
-     * Defines whether time should be included when filtering dates.
+     * Defines whether time should be included when editing dates.
      *
-     * - `true`: Include the time component in date comparisons.
-     * - `false`: Only compare dates without considering the time component.
+     * - `true`: Date and time will be editable.
+     * - `false`: Only date portion will be editable.
      *
      * @default false
      */

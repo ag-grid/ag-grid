@@ -15,8 +15,8 @@ export interface IDateCellEditorParams<TData = any, TContext = any> extends ICel
     /**
      * Defines whether time should be included when editing dates.
      *
-     * - `true`: Include the time component in date comparisons.
-     * - `false`: Only compare dates without considering the time component.
+     * - `true`: Date and time will be editable.
+     * - `false`: Only date portion will be editable.
      *
      * @default false
      */

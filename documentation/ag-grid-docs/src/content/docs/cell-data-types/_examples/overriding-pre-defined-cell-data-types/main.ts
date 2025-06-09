@@ -104,7 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     (d) =>
                         ({
                             ...d,
-                            date: dataTypeDefinitions.date.dateFormatter!(dataTypeDefinitions.date.dateParser!(d.date)),
+                            date: dataTypeDefinitions.date.dateFormatter!(
+                                new Date(dataTypeDefinitions.date.dateParser!(d.date)?.getTime()! + Math.random() * 1e7)
+                            ),
                         }) as IOlympicData
                 )
             );
