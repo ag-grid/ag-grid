@@ -43,6 +43,7 @@ import type {
     ColumnRowGroupChangedEvent,
     ColumnValueChangedEvent,
     ColumnVisibleEvent,
+    ColumnsResetEvent,
     ComponentStateChangedEvent,
     ContextMenuVisibleChangedEvent,
     CutEndEvent,
@@ -80,7 +81,6 @@ import type {
     RangeSelectionChangedEvent,
     RedoEndedEvent,
     RedoStartedEvent,
-    ResetColumnsEvent,
     RowClickedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
@@ -2294,7 +2294,7 @@ export interface GridOptions<TData = any> {
     /**
      * Columns have been reset to their default state as reflected by the colDefs.
      */
-    onResetColumns?(event: ResetColumnsEvent<TData>): void;
+    onColumnsReset?(event: ColumnsResetEvent<TData>): void;
 
     // *** Column Header *** //
 
