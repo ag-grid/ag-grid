@@ -92,13 +92,6 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
         [height, top]
     );
 
-    console.warn(
-        'HeaderRowComp render',
-        ctrl.instanceId,
-        cellCtrlsMerged.length,
-        cellCtrlsMerged.map((c) => c.instanceId).join(', ')
-    );
-
     return (
         <div ref={setRef} className={className} role="row" style={style} aria-rowindex={ariaRowIndex}>
             {cellCtrlsMerged.map((cellCtrl) => {
