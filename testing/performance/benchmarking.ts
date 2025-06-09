@@ -54,8 +54,6 @@ export type Variant = {
     cookies?: Parameters<BrowserContext['addCookies']>[0];
 };
 
-// dotenv.config({ path: path.join(__dirname, '../../../../documentation/ag-grid-docs/.env.dev') }); // grab docs PORT
-
 const knownUrls: Record<Version, string> = {
     local: `https://localhost:${process.env['PORT'] || '4610'}`,
     staging: 'https://grid-staging.ag-grid.com',
