@@ -24,7 +24,7 @@ import type {
     UpdateChartParams,
 } from '../interfaces/IChartService';
 import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
-import type { RowDropHighlight, RowDropHighlightPosition } from '../interfaces/IRowDropHighlightService';
+import type { RowDropHighlight } from '../interfaces/IRowDropHighlightService';
 import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type {
