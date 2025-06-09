@@ -1,7 +1,6 @@
 import { KeyCode } from '../../constants/keyCode';
 import type { DefaultProvidedCellEditorParams, ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isBrowserSafari } from '../../utils/browser';
-import type { AgInputDateFieldParams } from '../../widgets/agInputDateField';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
 import { RefPlaceholder } from '../../widgets/component';
 import { PopupComponent } from '../../widgets/popupComponent';
@@ -25,11 +24,9 @@ export class SimpleCellEditor<
     }
 
     public init(params: P): void {
-        const includeTime = this.beans.dataTypeSvc?.getDateIncludesTimeFlag(params.colDef.cellDataType);
         this.setTemplate(
             { tag: 'div', cls: 'ag-cell-edit-wrapper', children: [this.cellEditorInput.getTemplate()] },
-            this.cellEditorInput.getAgComponents(),
-            { eInput: { includeTime } satisfies AgInputDateFieldParams }
+            this.cellEditorInput.getAgComponents()
         );
         this.params = params;
         const { cellStartedEdit, eventKey, suppressPreventDefault } = params;
