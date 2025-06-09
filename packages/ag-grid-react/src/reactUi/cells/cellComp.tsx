@@ -65,10 +65,6 @@ const jsxEditor = (
         jsxEditorProxy(editDetails, CellEditorClass, setRef)
     ) : (
         <CellEditorClass {...editDetails.compDetails.params} ref={setRef} />
-    return newFormat ? (
-        jsxEditorProxy(editDetails, CellEditorClass, setRef)
-    ) : (
-        <CellEditorClass {...editDetails.compDetails.params} ref={setRef} />
     );
 };
 
