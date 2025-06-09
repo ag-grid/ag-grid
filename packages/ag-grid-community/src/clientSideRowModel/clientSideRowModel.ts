@@ -633,6 +633,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return true; // Nothing changed, or only updates with no new rows and no removals
     }
 
+    private beforeRefreshModel(params: RefreshModelParams): void {
+        this.eventSvc.dispatchEvent({ type: 'beforeRefreshModel', params });
+
+        if (this.started && params.rowDataUpdated) {
+            this.eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
+        }
+    }
+
     public refreshModel(params: RefreshModelParams): void {
         if (!this.rootNode) {
             return; // Destroyed
@@ -652,36 +660,31 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const changedPath = (params.changedPath ??= this.createChangePath(!params.newData && !!params.rowDataUpdated));
 
-        this.eventSvc.dispatchEvent({ type: 'beforeRefreshModel', params });
-
-        if (!this.started) {
-            return; // Destroyed or not yet started
-        }
-
-        if (params.rowDataUpdated) {
-            this.eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
-        }
-
         if (
+            !this.started ||
             this.isRefreshingModel ||
             this.colModel.changeEventsDispatching ||
             this.isSuppressModelUpdateAfterUpdateTransaction(params)
         ) {
+            this.beforeRefreshModel(params);
             return;
         }
 
         this.isRefreshingModel = true;
 
+        if (params.step !== 'group') {
+            this.beforeRefreshModel(params);
+        }
+
+        /* eslint-disable no-fallthrough */
         switch (params.step) {
-            case 'group': {
-                this.doRowGrouping(
-                    params.changedRowNodes,
-                    changedPath,
-                    !!params.rowNodesOrderChanged,
-                    !!params.afterColumnsChanged
-                );
-            }
-            /* eslint-disable no-fallthrough */
+            case 'group':
+                this.doRowGrouping(params);
+                this.beforeRefreshModel(params); // Do this after grouping, so the parent field is correct
+                if (params.step === 'group' && this.rowNodesCountReady) {
+                    this.rowCountReady = true; // only if row data has been set
+                    this.eventSvc.dispatchEventOnce({ type: 'rowCountReady' });
+                }
             case 'filter':
                 this.doFilter(changedPath);
             case 'pivot':
@@ -694,8 +697,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 this.doSort(params.changedRowNodes, changedPath);
             case 'map':
                 this.doRowsToDisplay();
-            /* eslint-enable no-fallthrough */
         }
+        /* eslint-enable no-fallthrough */
 
         // set all row tops to null, then set row tops on all visible rows. if we don't
         // do this, then the algorithm below only sets row tops, old row tops from old rows
@@ -967,20 +970,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
-    private doRowGrouping(
-        changedRowNodes: IChangedRowNodes | undefined,
-        changedPath: ChangedPath,
-        rowNodesOrderChanged: boolean,
-        afterColumnsChanged: boolean
-    ) {
+    private doRowGrouping(params: RefreshModelParams) {
         const rootNode: ClientSideRowModelRootNode = this.rootNode!;
 
         const groupStageExecuted = this.groupStage?.execute({
             rowNode: rootNode,
-            changedPath,
-            changedRowNodes,
-            rowNodesOrderChanged,
-            afterColumnsChanged,
+            changedRowNodes: params.changedRowNodes,
+            changedPath: params.changedPath,
+            rowNodesOrderChanged: !!params.rowNodesOrderChanged,
+            afterColumnsChanged: !!params.afterColumnsChanged,
         });
 
         if (!groupStageExecuted) {
@@ -990,12 +988,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
             }
             rootNode.updateHasChildren();
-        }
-
-        if (this.rowNodesCountReady) {
-            // only if row data has been set
-            this.rowCountReady = true;
-            this.eventSvc.dispatchEventOnce({ type: 'rowCountReady' });
         }
     }
 
