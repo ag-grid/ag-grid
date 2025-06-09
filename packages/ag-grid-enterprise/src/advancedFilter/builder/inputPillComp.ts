@@ -24,8 +24,9 @@ import type { AdvancedFilterExpressionService } from '../advancedFilterExpressio
 export type InputPillCompEvent = 'fieldValueChanged';
 
 type SupportedComponent = typeof AgInputTextField | typeof AgInputNumberField | typeof AgInputDateField;
+type SupportedInstances = InstanceType<SupportedComponent>;
 const inputComponentDescriptors: {
-    [S in BaseCellDataType]: [SupportedComponent] | [SupportedComponent, ConstructorParameters<SupportedComponent>];
+    [S in BaseCellDataType]: [SupportedComponent] | [SupportedComponent, (instance: SupportedInstances) => void];
 } = {
     number: [AgInputNumberField],
     boolean: [AgInputTextField],
@@ -33,8 +34,8 @@ const inputComponentDescriptors: {
     text: [AgInputTextField],
     date: [AgInputDateField],
     dateString: [AgInputDateField],
-    dateTime: [AgInputDateField, [{ includeTime: true }]],
-    dateTimeString: [AgInputDateField, [{ includeTime: true }]],
+    dateTime: [AgInputDateField, (i: AgInputDateField) => i.setIncludeTime(true)],
+    dateTimeString: [AgInputDateField, (i: AgInputDateField) => i.setIncludeTime(true)],
 };
 
 const InputPillElement: ElementParams = {
@@ -149,9 +150,14 @@ export class InputPillComp extends Component<InputPillCompEvent> {
         this.eEditor.getFocusableElement().focus();
     }
 
+    /**
+     * Responsible for instantiating an InputField and calling some of the setup methods
+     */
     private createEditorComp(type: BaseCellDataType): AgInputTextField {
-        const [Comp, args] = inputComponentDescriptors[type];
-        return this.createBean(new Comp(...(args ?? [])));
+        const [Comp, postConstruct] = inputComponentDescriptors[type];
+        const instance = this.createBean(new Comp());
+        if (postConstruct) postConstruct(instance);
+        return instance;
     }
 
     private hideEditor(keepFocus: boolean): void {
