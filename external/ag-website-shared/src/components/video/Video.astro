@@ -8,12 +8,14 @@ interface Props {
     autoplay?: boolean;
     showPlayPauseButtons?: boolean;
     centered?: boolean;
+    isPublic?: boolean;
 }
 
-const { pageName: propPageName, videoSrc, autoplay, showPlayPauseButtons, centered } = Astro.props as Props;
+const { pageName: propPageName, videoSrc, autoplay, showPlayPauseButtons, centered, isPublic } = Astro.props as Props;
 
 const pageName = propPageName ? propPageName : getPageNameFromPath(Astro.url.pathname);
-const src = await getPageImages({ pageName, imagePath: videoSrc });
+
+const src = isPublic ? { imageSrc: videoSrc } : await getPageImages({ pageName, imagePath: videoSrc });
 ---
 
 <Video

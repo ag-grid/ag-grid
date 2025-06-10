@@ -9,5 +9,6 @@ export const video: Schema<Config, Render> = {
         autoplay: { type: Boolean },
         showPlayPauseButtons: { type: Boolean },
         centered: { type: Boolean },
+        isPublic: { type: Boolean },
     },
 };
