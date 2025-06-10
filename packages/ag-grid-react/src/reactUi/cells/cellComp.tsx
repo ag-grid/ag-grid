@@ -11,90 +11,21 @@ import type {
     ICellRendererComp,
     UserCompDetails,
 } from 'ag-grid-community';
-import { CssClassManager, _EmptyBean, _errMsg, _removeFromParent } from 'ag-grid-community';
+import { CssClassManager, _EmptyBean, _error, _removeFromParent } from 'ag-grid-community';
 
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
-import { CustomContext } from '../../shared/customComp/customContext';
-import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext, EnableDeferRenderContext } from '../beansContext';
 import { agStartTransition, isComponentStateless } from '../utils';
-import PopupEditorComp from './popupEditorComp';
+import type { EditDetails } from './cellEditorComp';
+import { jsxEditValue } from './cellEditorComp';
 import useJsCellRenderer from './showJsRenderer';
+import { SkeletonCellComp } from './skeletonCellComp';
 
 export enum CellCompState {
     ShowValue,
     EditValue,
 }
-
-const jsxEditorProxy = (
-    editDetails: EditDetails,
-    CellEditorClass: any,
-    setRef: (cellEditor: ICellEditor | undefined) => void
-) => {
-    const { compProxy } = editDetails;
-    setRef(compProxy);
-
-    const props = compProxy!.getProps();
-
-    const isStateless = isComponentStateless(CellEditorClass);
-
-    return (
-        <CustomContext.Provider
-            value={{
-                setMethods: (methods: CustomCellEditorCallbacks) => compProxy!.setMethods(methods),
-            }}
-        >
-            {isStateless ? (
-                <CellEditorClass {...props} />
-            ) : (
-                <CellEditorClass {...props} ref={(ref: any) => compProxy!.setRef(ref)} />
-            )}
-        </CustomContext.Provider>
-    );
-};
-
-const jsxEditor = (
-    editDetails: EditDetails,
-    CellEditorClass: any,
-    setRef: (cellEditor: ICellEditor | undefined) => void
-) => {
-    const newFormat = editDetails.compProxy;
-
-    return newFormat ? (
-        jsxEditorProxy(editDetails, CellEditorClass, setRef)
-    ) : (
-        <CellEditorClass {...editDetails.compDetails.params} ref={setRef} />
-    );
-};
-
-const jsxEditValue = (
-    editDetails: EditDetails,
-    setCellEditorRef: (cellEditor: ICellEditor | undefined) => void,
-    eGui: HTMLElement,
-    cellCtrl: CellCtrl,
-    jsEditorComp: ICellEditorComp | undefined
-) => {
-    const compDetails = editDetails.compDetails;
-    const CellEditorClass = compDetails.componentClass;
-
-    const reactInlineEditor = compDetails.componentFromFramework && !editDetails.popup;
-    const reactPopupEditor = compDetails.componentFromFramework && editDetails.popup;
-    const jsPopupEditor = !compDetails.componentFromFramework && editDetails.popup;
-
-    return reactInlineEditor ? (
-        jsxEditor(editDetails, CellEditorClass, setCellEditorRef)
-    ) : reactPopupEditor ? (
-        <PopupEditorComp
-            editDetails={editDetails}
-            cellCtrl={cellCtrl}
-            eParentCell={eGui}
-            wrappedContent={jsxEditor(editDetails, CellEditorClass, setCellEditorRef)}
-        />
-    ) : jsPopupEditor && jsEditorComp ? (
-        <PopupEditorComp editDetails={editDetails} cellCtrl={cellCtrl} eParentCell={eGui} jsChildComp={jsEditorComp} />
-    ) : null;
-};
 
 const jsxShowValue = (
     showDetails: RenderDetails,
@@ -140,12 +71,6 @@ export interface RenderDetails {
     value?: any;
     force?: boolean;
 }
-export interface EditDetails {
-    compDetails: UserCompDetails;
-    popup?: boolean;
-    popupPosition?: 'over' | 'under';
-    compProxy?: CellEditorComponentProxy;
-}
 
 const CellComp = ({
     cellCtrl,
@@ -174,6 +99,7 @@ const CellComp = ({
     );
     const [editDetails, setEditDetails] = useState<EditDetails>();
     const [renderKey, setRenderKey] = useState<number>(1);
+    const [showLoading, setShowLoading] = useState<boolean>(false);
 
     const [userStyles, setUserStyles] = useState<CellStyle>();
 
@@ -395,12 +321,14 @@ const CellComp = ({
                             return prev;
                         }
                     });
+                    setShowLoading(false);
                 };
                 if (compDetails?.params?.deferRender) {
                     if (!enableCellDeferRender) {
-                        _errMsg(280);
+                        _error(280);
                         setDetails();
                     } else {
+                        setShowLoading(true);
                         agStartTransition(setDetails);
                     }
                 } else {
@@ -500,6 +428,10 @@ const CellComp = ({
     });
 
     const showContents = () => {
+        if (showLoading) {
+            return <SkeletonCellComp rowIndex={cellCtrl.rowNode.rowIndex}></SkeletonCellComp>;
+        }
+
         if (editDetails != null) {
             return jsxEditValue(editDetails, setCellEditorRef, eGui.current!, cellCtrl, jsEditorComp);
         } else if (renderDetails != null) {

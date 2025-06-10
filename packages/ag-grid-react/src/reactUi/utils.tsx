@@ -88,10 +88,10 @@ export const agFlushSync = (useFlushSync: boolean, fn: () => void) => {
  * Wrapper around startTransition to provide backwards compatibility with React 16-17 *
  */
 export const agStartTransition = (fn: () => void) => {
-    if (!isReactVersion17Minus) {
-        (React as any).startTransition(fn);
-    } else {
+    if (isReactVersion17Minus) {
         fn();
+    } else {
+        (React as any).startTransition(fn);
     }
 };
 
