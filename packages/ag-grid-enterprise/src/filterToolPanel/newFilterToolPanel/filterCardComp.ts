@@ -74,10 +74,10 @@ export class FilterCardComp extends Component {
         _setAriaLabel(eDelete, translateForFilterPanel(this, 'ariaLabelDeleteFilterCard'));
         eDeleteIcon.appendChild(_createIcon('close', beans, null));
         this.addManagedElementListeners(eExpand, {
-            click: () => filterPanelService.expandFilter(id, !this.state?.expanded),
+            click: () => filterPanelService.expand(id, !this.state?.expanded),
         });
         this.addManagedElementListeners(eDelete, {
-            click: () => filterPanelService.removeFilter(id),
+            click: () => filterPanelService.remove(id),
         });
         this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
     }
@@ -117,7 +117,7 @@ export class FilterCardComp extends Component {
             this.summaryComp = removeComp(this.summaryComp);
             const detailComp = createOrRefreshComp(this.detailComp, FilterDetailComp, (comp) =>
                 comp.addManagedListeners(comp, {
-                    filterTypeChanged: ({ filterDef }) => beans.filterPanelSvc!.updateFilterType(this.id, filterDef),
+                    filterTypeChanged: ({ filterDef }) => beans.filterPanelSvc!.updateType(this.id, filterDef),
                 })
             );
             this.detailComp = detailComp;
@@ -144,7 +144,7 @@ export class FilterCardComp extends Component {
     private onFilterOpened(event: FilterOpenedEvent): void {
         const { state, beans, id } = this;
         if (event.source === 'COLUMN_MENU' && event.column === state?.column && state?.expanded) {
-            beans.filterPanelSvc!.expandFilter(id, false);
+            beans.filterPanelSvc!.expand(id, false);
         }
     }
 

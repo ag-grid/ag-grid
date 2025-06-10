@@ -738,9 +738,9 @@ export class ColumnFilterService
         handlerParams?: FilterHandlerBaseParams;
         createFilterUi: ((update?: boolean) => AgPromise<IFilterComp>) | null;
     } {
-        const filterPanelSvc = this.beans.filterPanelSvc;
-        if (filterPanelSvc?.isSelectableFilter(filterDef)) {
-            filterDef = filterPanelSvc.getSelectableFilterDef(column, filterDef);
+        const selectableFilter = this.beans.selectableFilter;
+        if (selectableFilter?.isSelectable(filterDef)) {
+            filterDef = selectableFilter.getFilterDef(column, filterDef);
         }
         const { handler, handlerParams, handlerGenerator } = this.createHandler(column, filterDef, defaultFilter) ?? {};
 
@@ -1106,7 +1106,7 @@ export class ColumnFilterService
     }
 
     public getFloatingFilterCompDetails(column: AgColumn, showParentFilter: () => void): UserCompDetails | undefined {
-        const { userCompFactory, frameworkOverrides, filterPanelSvc } = this.beans;
+        const { userCompFactory, frameworkOverrides, selectableFilter } = this.beans;
 
         const parentFilterInstance = (callback: IFloatingFilterParentCallback<IFilter>) => {
             const filterComponent = this.getOrCreateFilterUi(column);
@@ -1122,8 +1122,8 @@ export class ColumnFilterService
 
         const colDef = column.getColDef();
 
-        const filterDef = filterPanelSvc?.isSelectableFilter(colDef)
-            ? filterPanelSvc.getSelectableFilterDef(column, colDef)
+        const filterDef = selectableFilter?.isSelectable(colDef)
+            ? selectableFilter.getFilterDef(column, colDef)
             : colDef;
         const defaultFloatingFilterType =
             _getDefaultFloatingFilterType(frameworkOverrides, filterDef, () => this.getDefaultFloatingFilter(column)) ??
@@ -1174,8 +1174,14 @@ export class ColumnFilterService
         createFilterUi: ((update?: boolean) => AgPromise<IFilterComp>) | null
     ): void {
         if (filterWrapper.isHandler) {
-            delete this.initialModel[column.getColId()];
+            const colId = column.getColId();
+            delete this.initialModel[colId];
+            this.state.delete(colId);
             const filterUi = filterWrapper.filterUi;
+            const newFilterUi = this.createFilterUiForHandler(compDetails, createFilterUi as any);
+            filterWrapper.filterUi = newFilterUi;
+            // destroy the old one after creating the new one
+            // so that anything listening to the destroyed event will receive the new comp
             if (filterUi?.created) {
                 filterUi.promise.then((filter) => {
                     this.destroyBean(filter);
@@ -1187,8 +1193,6 @@ export class ColumnFilterService
                     });
                 });
             }
-            const newFilterUi = this.createFilterUiForHandler(compDetails, createFilterUi as any);
-            filterWrapper.filterUi = newFilterUi;
         } else {
             this.destroyFilter(column, 'paramsUpdated');
         }
@@ -1272,7 +1276,7 @@ export class ColumnFilterService
         };
     }
 
-    private filterParamsChanged(colId: string): void {
+    public filterParamsChanged(colId: string, source: FilterChangedEventSourceType = 'api'): void {
         const filterWrapper = this.allColumnFilters.get(colId);
         if (!filterWrapper) {
             return;
@@ -1283,9 +1287,9 @@ export class ColumnFilterService
         const colDef = column.getColDef();
         const isFilterAllowed = column.isFilterAllowed();
         const defaultFilter = this.getDefaultFilter(column);
-        const filterPanelSvc = beans.filterPanelSvc;
-        const filterDef = filterPanelSvc?.isSelectableFilter(colDef)
-            ? filterPanelSvc.getSelectableFilterDef(column, colDef)
+        const selectableFilter = beans.selectableFilter;
+        const filterDef = selectableFilter?.isSelectable(colDef)
+            ? selectableFilter.getFilterDef(column, colDef)
             : colDef;
 
         const handlerFunc = isFilterAllowed
@@ -1311,7 +1315,9 @@ export class ColumnFilterService
             );
 
         if (wasHandler) {
-            if (filterWrapper.handlerGenerator != (handlerFunc?.handlerNameOrCallback ?? handlerFunc?.filterHandler)) {
+            const handlerGenerator = handlerFunc?.handlerNameOrCallback ?? handlerFunc?.filterHandler;
+            const existingModel = _getFilterModel(this.model, colId);
+            if (filterWrapper.handlerGenerator != handlerGenerator) {
                 // handler has changed
                 const oldHandler = filterWrapper.handler;
                 const { handler, handlerParams } = this.createHandlerFromFunc(
@@ -1321,9 +1327,19 @@ export class ColumnFilterService
                 );
                 filterWrapper.handler = handler;
                 filterWrapper.handlerParams = handlerParams;
+                filterWrapper.handlerGenerator = handlerGenerator!;
+
+                delete this.model[colId];
+                handler.init?.({ ...handlerParams, source: 'init', model: null });
                 // destroy the old handler after creating and assigning the new one in case anything
                 // is listening to events on the handler and needs to resubscribe to the new one
                 this.destroyBean(oldHandler);
+                if (existingModel != null) {
+                    this.beans.filterManager?.onFilterChanged({
+                        columns: [column],
+                        source,
+                    });
+                }
             } else {
                 const handlerParams = this.createHandlerParams(column, compDetails?.params);
                 // handler exists and is the same
@@ -1331,7 +1347,7 @@ export class ColumnFilterService
                 filterWrapper.handler.refresh?.({
                     ...handlerParams,
                     source: 'colDef',
-                    model: _getFilterModel(this.model, colId),
+                    model: existingModel,
                 });
             }
         }

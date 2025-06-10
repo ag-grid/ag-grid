@@ -39,7 +39,7 @@ export class FilterPanel extends Component {
         }
         const { eContainer, filters: existingFilters, beans } = this;
         const filterPanelService = beans.filterPanelSvc!;
-        const filterIds = filterPanelService.getFilterIds();
+        const filterIds = filterPanelService.getIds();
         const newFilters: Map<string, FilterCardComp> = new Map();
 
         const somethingIsFocused = !_isNothingFocused(beans);
@@ -51,7 +51,7 @@ export class FilterPanel extends Component {
 
         for (const id of filterIds) {
             const newFilter = existingFilters.get(id) ?? this.createBean(new FilterCardComp(id));
-            newFilter.refresh(filterPanelService.getFilterState(id)!);
+            newFilter.refresh(filterPanelService.getState(id)!);
             newFilters.set(id, newFilter);
             eNewItems.push(newFilter.getGui());
         }
@@ -71,13 +71,13 @@ export class FilterPanel extends Component {
             ePrevItems.push(addFilterComp.getGui());
         }
 
-        const addFilterOptions = filterPanelService.getAvailableFilters();
+        const addFilterOptions = filterPanelService.getAvailable();
 
         if (addFilterOptions.length) {
             if (!addFilterComp) {
                 addFilterComp = this.createBean(new AddFilterComp(addFilterOptions));
                 addFilterComp.addManagedListeners(addFilterComp, {
-                    filterSelected: ({ id }) => filterPanelService.addFilter(id),
+                    filterSelected: ({ id }) => filterPanelService.add(id),
                 });
             }
             addFilterComp.refresh(addFilterOptions);

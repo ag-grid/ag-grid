@@ -475,6 +475,7 @@ export {
     FilterPanelDetailState,
     FilterPanelFilterState,
     IFilterPanelService,
+    ISelectableFilterService,
 } from './interfaces/iNewFiltersToolPanel';
 
 // overlays

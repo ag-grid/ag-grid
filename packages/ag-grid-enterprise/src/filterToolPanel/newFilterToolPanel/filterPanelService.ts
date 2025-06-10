@@ -3,23 +3,12 @@ import type {
     BeanCollection,
     FilterPanelFilterState,
     FilterPanelSummaryState,
-    IFilterDef,
     IFilterPanelService,
     NamedBean,
     SelectableFilterDef,
-    SelectableFilterParams,
-    ValueGetterFunc,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    FilterComp,
-    _addGridCommonParams,
-    _getDefaultSimpleFilter,
-    _getFilterParamsForDataType,
-} from 'ag-grid-community';
+import { BeanStub, FilterComp } from 'ag-grid-community';
 import type { FilterHandler } from 'ag-grid-community';
-
-import { translateForFilterPanel } from './filterPanelUtils';
 
 interface StateWrapper {
     state: FilterPanelFilterState;
@@ -36,8 +25,6 @@ export class FilterPanelService
 
     private states: Map<string, StateWrapper> = new Map();
     private orderedStates: string[] = [];
-    private selectedFilters: Map<string, number> = new Map();
-    private valueGetters: Map<string, string | ValueGetterFunc> = new Map();
 
     public postConstruct(): void {
         const updateFilterStates = this.updateFilterStates.bind(this);
@@ -47,28 +34,11 @@ export class FilterPanelService
         });
     }
 
-    public getFilterValueGetter(colId: string): string | ValueGetterFunc | undefined {
-        return this.valueGetters.get(colId);
-    }
-
-    public isSelectableFilter(filterDef: IFilterDef): boolean {
-        const filter = filterDef.filter;
-        return filter === true || filter === 'agSelectableColumnFilter';
-    }
-
-    public getSelectableFilterDef(column: AgColumn, filterDef: IFilterDef): IFilterDef {
-        const filters = this.getSelectableFilterDefs(column, filterDef);
-
-        const selectedFilter = this.selectedFilters.get(column.getColId()) ?? 0;
-
-        return filters[selectedFilter];
-    }
-
-    public getFilterIds(): string[] {
+    public getIds(): string[] {
         return Array.from(this.states.keys());
     }
 
-    public getAvailableFilters(): { id: string; name: string }[] {
+    public getAvailable(): { id: string; name: string }[] {
         const beans = this.beans;
         const availableFilters: { id: string; name: string }[] = [];
         for (const column of beans.colModel.getCols()) {
@@ -83,13 +53,17 @@ export class FilterPanelService
         return availableFilters;
     }
 
-    public addFilter(id: string): void {
+    public add(id: string): void {
         this.createFilter(id);
         this.dispatchStatesUpdates(id);
     }
 
-    public removeFilter(id: string): void {
-        const { states, orderedStates, beans } = this;
+    public remove(id: string): void {
+        const {
+            states,
+            orderedStates,
+            beans: { colFilter, selectableFilter },
+        } = this;
         const state = states.get(id);
         if (!state) {
             return;
@@ -97,14 +71,19 @@ export class FilterPanelService
         state.destroy?.();
         const column = state.state.column;
         states.delete(id);
-        beans.colFilter!.destroyFilter(column);
+        selectableFilter?.clearActive(id);
+        colFilter?.destroyFilter(column);
+        this.eventSvc.dispatchEvent({
+            type: 'filterSwitched',
+            column,
+        });
         const index = orderedStates.indexOf(id);
         orderedStates.splice(index, 1);
         const newActiveId = orderedStates[index]; // undefined if no elements after
         this.dispatchStatesUpdates(newActiveId);
     }
 
-    public getFilterState<S extends FilterPanelFilterState>(id: string): S | undefined {
+    public getState<S extends FilterPanelFilterState>(id: string): S | undefined {
         return this.states.get(id)?.state as S;
     }
 
@@ -113,7 +92,7 @@ export class FilterPanelService
         key: K,
         value: S[K]
     ): void {
-        const filterState = this.getFilterState<S>(id);
+        const filterState = this.getState<S>(id);
         if (!filterState) {
             return;
         }
@@ -125,7 +104,7 @@ export class FilterPanelService
         });
     }
 
-    public expandFilter(id: string, expanded: boolean): void {
+    public expand(id: string, expanded: boolean): void {
         const existingFilterState = this.states.get(id);
         if (!existingFilterState) {
             return;
@@ -144,17 +123,38 @@ export class FilterPanelService
         });
     }
 
-    public updateFilterType(id: string, filterDef: SelectableFilterDef): void {
-        const oldFilterStateWrapper = this.states.get(id);
-        if (!oldFilterStateWrapper) {
+    public updateType(id: string, filterDef: SelectableFilterDef): void {
+        const stateWrapper = this.states.get(id);
+        if (!stateWrapper) {
             return;
         }
-        filterDef;
-        // TODO
+        const state = stateWrapper.state;
+        if (state.expanded === false) {
+            return;
+        }
+        const filterDefs = state.filterDefs;
+        if (!filterDefs) {
+            return;
+        }
+
+        const { colFilter, selectableFilter } = this.beans;
+        selectableFilter?.setActive(id, filterDefs, filterDef);
+        colFilter!.filterParamsChanged(id, 'columnFilter');
+        const column = state.column;
+        this.eventSvc.dispatchEvent({
+            type: 'filterSwitched',
+            column,
+        });
+        const handler = colFilter!.getHandler(column, true);
+        if (!handler) {
+            return;
+        }
+        stateWrapper.handler = handler;
+        state.activeFilterDef = filterDef;
         this.dispatchLocalEvent({
             type: 'filterPanelStateChanged',
             id,
-            state: oldFilterStateWrapper.state, // TODO
+            state,
         });
     }
 
@@ -198,10 +198,7 @@ export class FilterPanelService
         const name = getDisplayName(beans, column);
         if (expanded) {
             const colDef = column.colDef;
-            const filterDefs = this.isSelectableFilter(colDef)
-                ? this.getSelectableFilterDefs(column, colDef)
-                : undefined;
-            const activeFilterDef = filterDefs?.[this.selectedFilters.get(column.getColId()) ?? 0];
+            const { filterDefs, activeFilterDef } = beans.selectableFilter?.getDefs(column, colDef) ?? {};
             const filterComp = this.createBean(new FilterComp(column, 'TOOLBAR'));
             return {
                 state: {
@@ -250,75 +247,6 @@ export class FilterPanelService
         states.clear();
         orderedStates.length = 0;
         super.destroy();
-    }
-
-    private getDefaultFilters(column: AgColumn): SelectableFilterDef[] {
-        const beans = this.beans;
-        const { gos, dataTypeSvc } = beans;
-        const isMultiFilterEnabled = gos.isModuleRegistered('MultiFilter');
-        const colDef = column.colDef;
-        const cellDataType = dataTypeSvc?.getBaseDataType(column);
-        const simpleFilter = _getDefaultSimpleFilter(cellDataType, false) as
-            | 'agTextColumnFilter'
-            | 'agNumberColumnFilter'
-            | 'agDateColumnFilter';
-        const dataTypeDefinition = dataTypeSvc?.getDataTypeDefinition(column);
-        const formatValue = dataTypeSvc?.getFormatValue(cellDataType!);
-        const getDef = (
-            filter: 'agTextColumnFilter' | 'agNumberColumnFilter' | 'agDateColumnFilter' | 'agSetColumnFilter'
-        ) => {
-            const { filterParams, filterValueGetter } =
-                dataTypeDefinition && formatValue
-                    ? _getFilterParamsForDataType(
-                          filter,
-                          undefined,
-                          colDef,
-                          dataTypeDefinition,
-                          formatValue,
-                          beans,
-                          this.getLocaleTextFunc()
-                      )
-                    : { filterParams: undefined, filterValueGetter: undefined };
-            return {
-                name: translateForFilterPanel(this, `${filter}DisplayName`),
-                filter,
-                filterParams,
-                filterValueGetter,
-            };
-        };
-        return [
-            getDef(simpleFilter),
-            getDef('agSetColumnFilter'),
-            ...(isMultiFilterEnabled
-                ? [
-                      {
-                          name: translateForFilterPanel(this, `agMultiColumnFilterDisplayName`),
-                          filter: 'agMultiColumnFilter',
-                          ...((dataTypeDefinition && formatValue
-                              ? beans.multiFilter?.getParamsForDataType(
-                                    undefined,
-                                    colDef,
-                                    dataTypeDefinition,
-                                    formatValue
-                                )
-                              : undefined) ?? {}),
-                      },
-                  ]
-                : []),
-        ];
-    }
-
-    private getSelectableFilterDefs(column: AgColumn, filterDef: IFilterDef): SelectableFilterDef[] {
-        let filterParams = filterDef.filterParams;
-        if (typeof filterParams === 'function') {
-            filterParams = filterParams(
-                _addGridCommonParams(this.gos, {
-                    column,
-                    colDef: column.colDef,
-                })
-            );
-        }
-        return (filterParams as SelectableFilterParams)?.filters ?? this.getDefaultFilters(column);
     }
 }
 

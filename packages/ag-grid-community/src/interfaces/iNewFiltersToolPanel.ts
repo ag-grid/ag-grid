@@ -4,7 +4,8 @@ import type { IEventEmitter } from './iEventEmitter';
 import type { IFilterDef } from './iFilter';
 
 export interface SelectableFilterDef {
-    name: string;
+    /** Required for custom filters */
+    name?: string;
     filter: any;
     filterParams?: any;
     filterValueGetter?: string | ValueGetterFunc;
@@ -34,14 +35,23 @@ export interface FilterPanelDetailState extends FilterPanelBaseState {
 export type FilterPanelFilterState = FilterPanelSummaryState | FilterPanelDetailState;
 
 export interface IFilterPanelService extends IEventEmitter<'filterPanelStateChanged' | 'filterPanelStatesChanged'> {
+    getAvailable(): { id: string; name: string }[];
+    getIds(): string[];
+    add(id: string): void;
+    remove(id: string): void;
+    getState(id: string): FilterPanelFilterState | undefined;
+    expand(id: string, expanded: boolean): void;
+    updateType(id: string, filterDef: SelectableFilterDef): void;
+}
+
+export interface ISelectableFilterService {
     getFilterValueGetter(colId: string): string | ValueGetterFunc | undefined;
-    isSelectableFilter(filterDef: IFilterDef): boolean;
-    getSelectableFilterDef(column: AgColumn, filterDef: IFilterDef): IFilterDef;
-    getAvailableFilters(): { id: string; name: string }[];
-    getFilterIds(): string[];
-    addFilter(id: string): void;
-    removeFilter(id: string): void;
-    getFilterState(id: string): FilterPanelFilterState | undefined;
-    expandFilter(id: string, expanded: boolean): void;
-    updateFilterType(id: string, filterDef: SelectableFilterDef): void;
+    isSelectable(filterDef: IFilterDef): boolean;
+    getFilterDef(column: AgColumn, filterDef: IFilterDef): IFilterDef;
+    getDefs(
+        column: AgColumn,
+        filterDef: IFilterDef
+    ): { filterDefs: SelectableFilterDef[]; activeFilterDef: SelectableFilterDef } | undefined;
+    setActive(colId: string, filterDefs: SelectableFilterDef[], activeFilterDef: SelectableFilterDef): void;
+    clearActive(colId: string): void;
 }

@@ -175,6 +175,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         stickyTopOffsetChanged: StickyTopOffsetChangedEvent<TData, TContext>;
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
         rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
+        filterSwitched: FilterSwitchedEvent<TData, TContext>;
     }
 >;
 
@@ -1210,4 +1211,8 @@ export interface StickyTopOffsetChangedEvent<TData = any, TContext = any>
 export interface RowNodeDataChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowNodeDataChanged', TData, TContext> {
     node: RowNode<TData>;
+}
+export interface FilterSwitchedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'filterSwitched', TData, TContext> {
+    column: Column;
 }
