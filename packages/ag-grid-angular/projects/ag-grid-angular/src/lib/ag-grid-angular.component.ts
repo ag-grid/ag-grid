@@ -788,15 +788,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** By default, Advanced Filter sanitises user input and passes it to `new Function()` to provide the best performance.
      * Set to `true` to prevent this and use defined functions instead.
      * This will result in slower filtering, but it enables Advanced Filter to work when `unsafe-eval` is disabled.
-     * @default false
+     * @deprecated As of v34, advanced filter evaluation is deprecated, and this option will default to true.
+     * @default true
      * @agModule `AdvancedFilterModule`
      */
     @Input({ transform: booleanAttribute }) public suppressAdvancedFilterEval: boolean | undefined = undefined;
     /** When using AG Grid Enterprise, the Set Filter is used by default when `filter: true` is set on column definitions.
      * Set to `true` to prevent this and instead use the Text Filter, Number Filter or Date Filter based on the cell data type,
      * the same as when using AG Grid Community.
-     * @deprecated As of v33.3, advanced filter evaluation is deprecated, and this option will default to true.
-     * @default true
      * @initial
      * @agModule TextFilterModule / NumberFilterModule / DateFilterModule / MultiFilterModule / CustomFilterModule
      */
