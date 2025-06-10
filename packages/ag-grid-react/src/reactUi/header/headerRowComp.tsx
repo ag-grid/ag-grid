@@ -10,7 +10,7 @@ import type {
 } from 'ag-grid-community';
 import { _EmptyBean } from 'ag-grid-community';
 
-import { BeansContext, EnableDeferRenderContext } from '../beansContext';
+import { BeansContext } from '../beansContext';
 import { agFlushSync, getNextValueIfDifferent } from '../utils';
 import HeaderCellComp from './headerCellComp';
 import HeaderFilterCellComp from './headerFilterCellComp';
@@ -18,8 +18,6 @@ import HeaderGroupCellComp from './headerGroupCellComp';
 
 const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
     const { context } = useContext(BeansContext);
-    const enableCellDeferRender = useContext(EnableDeferRenderContext);
-    const usesSetup = useRef<boolean>(false);
 
     const { topOffset, rowHeight } = useMemo(() => ctrl.getTopAndHeight(), []);
     const ariaRowIndex = ctrl.getAriaRowIndex();
@@ -30,24 +28,6 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
 
     const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[]>([]);
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>(() => ctrl.getUpdatedHeaderCtrls());
-
-    let cellCtrlsMerged = cellCtrls;
-    const cellsChanged = useRef<any>(() => {});
-    if (enableCellDeferRender) {
-        if (!usesSetup.current) {
-            usesSetup.current = true;
-            cellCtrlsRef.current = ctrl.getUpdatedHeaderCtrls();
-        }
-        const sub = useCallback((onStoreChange: any) => {
-            cellsChanged.current = onStoreChange;
-            return () => {
-                cellsChanged.current = () => {};
-            };
-        }, []);
-        cellCtrlsMerged = React.useSyncExternalStore(sub, () => {
-            return cellCtrlsRef.current;
-        });
-    }
 
     const compBean = useRef<_EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
@@ -67,11 +47,7 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
                 const nextCells = getNextValueIfDifferent(prevCellCtrls, ctrls, forceOrder)!;
                 if (nextCells !== prevCellCtrls) {
                     cellCtrlsRef.current = nextCells;
-                    if (enableCellDeferRender) {
-                        cellsChanged.current();
-                    } else {
-                        agFlushSync(afterScroll, () => setCellCtrls(nextCells));
-                    }
+                    agFlushSync(afterScroll, () => setCellCtrls(nextCells));
                 }
             },
             setWidth: (width: string) => {
@@ -94,7 +70,7 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
 
     return (
         <div ref={setRef} className={className} role="row" style={style} aria-rowindex={ariaRowIndex}>
-            {cellCtrlsMerged.map((cellCtrl) => {
+            {cellCtrls.map((cellCtrl) => {
                 switch (ctrl.type) {
                     case 'group':
                         return <HeaderGroupCellComp ctrl={cellCtrl as HeaderGroupCellCtrl} key={cellCtrl.instanceId} />;

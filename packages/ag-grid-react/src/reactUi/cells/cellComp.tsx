@@ -17,7 +17,7 @@ import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComp
 import { CustomContext } from '../../shared/customComp/customContext';
 import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
-import { BeansContext, EnableDeferRenderContext } from '../beansContext';
+import { BeansContext } from '../beansContext';
 import { isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
@@ -157,7 +157,6 @@ const CellComp = ({
     editingRow: boolean;
 }) => {
     const beans = useContext(BeansContext);
-    const enableCellDeferRender = useContext(EnableDeferRenderContext);
 
     const { context } = beans;
     const {
