@@ -1,4 +1,4 @@
-import type { BrowserContext, Page, PlaywrightTestArgs, PlaywrightTestOptions } from '@playwright/test';
+import type { BrowserContext, Page } from '@playwright/test';
 import { test } from '@playwright/test';
 import { bgBlue, bgGreen, blue, cyan, green, magenta, yellow } from 'chalk';
 import * as fs from 'node:fs';
@@ -200,9 +200,9 @@ function reportStats(
     const percentString = `${percentDiff.toFixed(1)}% ± ${avgMoEPercent.toFixed(1)}%`;
 
     if (!significant) {
-        console.log(
+        /*console.log(
             `\n${yellow(`Result is statistically insignificant (`)}${green(percentString)}, ${blue(`${s1.filteredCount}/${s1.originalCount}`)})${yellow('. Running more iterations...\n')}`
-        );
+        );*/
         return;
     }
 
@@ -331,7 +331,7 @@ export default function (name: string, describe: Describe & { __hidden?: { stack
                         }
                         const s1 = computeStats(result.control);
                         const s2 = computeStats(result.variant);
-                        console.log(`Collected ${s1.originalCount} entries`);
+                        // console.log(`Collected ${s1.originalCount} entries`);
                         significant = isSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError);
                         reportStats({ control: s1, variant: s2 }, testCase, significant);
                     } while (!(significant || result['control'].length > maxIterations)); // run until we do 1000 iterations or results are significant
