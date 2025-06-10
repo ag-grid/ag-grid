@@ -583,7 +583,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     public redrawRows(rowNodes?: IRowNode[]): void {
         const { editSvc } = this.beans;
         if (editSvc?.isEditing()) {
-            if (editSvc.batch) {
+            if (editSvc.isBatchEditing()) {
                 editSvc.cleanupEditors();
             } else {
                 editSvc.stopEditing(undefined, { source: 'api' });

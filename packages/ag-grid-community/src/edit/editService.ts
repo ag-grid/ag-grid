@@ -43,7 +43,7 @@ type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };
 
 export class EditService extends BeanStub implements NamedBean, IEditService {
     beanName = 'editSvc' as const;
-    public batch: boolean;
+    private batch: boolean;
 
     private model: IEditModelService;
     private valueSvc: ValueService;
@@ -75,14 +75,18 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         });
     }
 
-    public enableBatchEditing(): void {
-        this.batch = true;
-        this.stopEditing(undefined, { cancel: true, source: 'api' });
+    isBatchEditing(): boolean {
+        return this.batch;
     }
 
-    public disableBatchEditing(): void {
-        this.stopEditing(undefined, { cancel: true, source: 'api' });
-        this.batch = false;
+    public setBatchEditing(enabled: boolean): void {
+        if (enabled) {
+            this.batch = true;
+            this.stopEditing(undefined, { cancel: true, source: 'api' });
+        } else {
+            this.stopEditing(undefined, { cancel: true, source: 'api' });
+            this.batch = false;
+        }
     }
 
     private createStrategy(editType?: EditStrategyType): BaseEditStrategy {

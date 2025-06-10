@@ -60,7 +60,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
             // editSvc didn't handle the stopEditing, we need to do more ourselves
             if (!result) {
-                if (this.editSvc.batch) {
+                if (this.editSvc.isBatchEditing()) {
                     // close editors, but don't stop editing in batch mode
                     this.editSvc.cleanupEditors();
                 } else {
@@ -122,7 +122,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         edits.forEach((editRow, rowNode) => {
             const rowCtrl = _getRowCtrl(beans, { rowNode });
             if (rowCtrl) {
-                this.updateRowStyle(rowCtrl, changedRows.get(rowCtrl), this.editSvc.batch);
+                this.updateRowStyle(rowCtrl, changedRows.get(rowCtrl), this.editSvc.isBatchEditing());
             }
 
             const ancestors = (includeParents && _getAncestors(beans, rowNode, { includeRelated: true })) || [];
@@ -134,7 +134,7 @@ export abstract class BaseEditStrategy extends BeanStub {
                 const cellCtrl = _getCellCtrl(beans, { rowNode, column });
 
                 const state = changedCells.get(cellCtrl!);
-                this.updateCellStyle(cellCtrl, state, this.editSvc.batch, suppressFlash);
+                this.updateCellStyle(cellCtrl, state, this.editSvc.isBatchEditing(), suppressFlash);
 
                 _updateClass(beans, nodes, 'ag-cell-batch-edit', column, state);
 
@@ -145,7 +145,7 @@ export abstract class BaseEditStrategy extends BeanStub {
                         { includeRelated: true, includeInitiator: true }
                     );
                     dependents?.forEach((cellCtrl: CellCtrl) =>
-                        this.updateCellStyle(cellCtrl, state, this.editSvc.batch, suppressFlash)
+                        this.updateCellStyle(cellCtrl, state, this.editSvc.isBatchEditing(), suppressFlash)
                     );
                 });
             });
@@ -300,7 +300,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        const batch = this.editSvc.batch;
+        const batch = this.editSvc.isBatchEditing();
 
         if (batch && source === 'api') {
             // we always defer to the API
@@ -324,7 +324,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        const batch = this.editSvc.batch;
+        const batch = this.editSvc.isBatchEditing();
         if (event instanceof KeyboardEvent && !batch) {
             return event.key === KeyCode.ESCAPE;
         }

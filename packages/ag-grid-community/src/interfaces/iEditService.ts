@@ -49,9 +49,8 @@ export function _isEditRowPosition(pos: any): pos is EditRowPosition {
     return pos && typeof pos.rowNode === 'object';
 }
 export interface IEditService extends NamedBean {
-    batch: boolean;
-    enableBatchEditing(): void;
-    disableBatchEditing(): void;
+    setBatchEditing(enabled: boolean): void;
+    isBatchEditing(): boolean;
     isEditing(position?: EditPosition | null, params?: IsEditingParams | null): boolean;
     isRowEditing(position?: EditRowPosition | null, params?: IsEditingParams | null): boolean;
     startEditing(position: Required<EditPosition>, params: StartEditParams): void;

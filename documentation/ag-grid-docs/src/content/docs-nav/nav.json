@@ -983,8 +983,9 @@
                         },
                         {
                             "type": "item",
-                            "title": "Batch",
-                            "path": "cell-editing-batch"
+                            "title": "Batch Editing",
+                            "path": "cell-editing-batch",
+                            "isEnterprise": true
                         }
                     ]
                 },
