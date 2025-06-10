@@ -102,10 +102,11 @@
     .ag-row-highlight-below::after {
         content: '';
         position: absolute;
-        pointer-events: none;
-        background-color: var(--ag-range-selection-border-color);
         width: calc(100% - 1px);
         height: 1px;
+        background-color: var(--ag-range-selection-border-color);
+        left: 1px;
+        pointer-events: none;
     }
 
     .ag-row-highlight-above::after {
