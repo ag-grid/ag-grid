@@ -1,6 +1,9 @@
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
-import type { RowDropHighlight } from '../interfaces/IRowDropHighlightService';
+import type {
+    RowDropPositionIndicator,
+    SetRowDropPositionIndicatorParams,
+} from '../interfaces/IRowDropHighlightService';
 import type { RowDropZoneEvents, RowDropZoneParams } from './rowDragFeature';
 
 export function addRowDropZone(beans: BeanCollection, params: RowDropZoneParams): void {
@@ -19,24 +22,24 @@ export function getRowDropZoneParams(beans: BeanCollection, events?: RowDropZone
     return beans.rowDragSvc?.rowDragFeature?.getRowDropZone(events);
 }
 
-export function getRowDropHighlight(beans: BeanCollection): RowDropHighlight {
+export function getRowDropPositionIndicator(beans: BeanCollection): RowDropPositionIndicator {
     const rowDropHighlightSvc = beans.rowDropHighlightSvc;
     return rowDropHighlightSvc
-        ? { row: rowDropHighlightSvc.row, position: rowDropHighlightSvc.position }
-        : { row: null, position: 'none' };
+        ? { row: rowDropHighlightSvc.row, dropIndicatorPosition: rowDropHighlightSvc.position }
+        : { row: null, dropIndicatorPosition: 'none' };
 }
 
-export function setRowDropHighlight<TData>(
+export function setRowDropPositionIndicator<TData>(
     beans: BeanCollection,
-    highlight: RowDropHighlight<TData> | null | undefined
+    params: SetRowDropPositionIndicatorParams<TData>
 ): void {
     const rowDropHighlightSvc = beans.rowDropHighlightSvc;
     if (!rowDropHighlightSvc) {
         return;
     }
 
-    const rowNode = highlight?.row;
-    let position = highlight?.position;
+    const rowNode = params?.row;
+    let position = params?.dropIndicatorPosition;
 
     if (position !== 'above' && position !== 'below') {
         position = 'none';

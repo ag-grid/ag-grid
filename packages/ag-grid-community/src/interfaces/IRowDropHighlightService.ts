@@ -1,17 +1,22 @@
 import type { RowNode } from '../entities/rowNode';
 import type { IRowNode } from './iRowNode';
 
-export type RowDropHighlightPosition = 'above' | 'below' | 'none';
+export type DropIndicatorPosition = 'above' | 'below' | 'none';
 
-export interface RowDropHighlight<TData = any> {
+export interface RowDropPositionIndicator<TData = any> {
     row: IRowNode<TData> | null;
-    position: RowDropHighlightPosition;
+    dropIndicatorPosition: DropIndicatorPosition;
+}
+
+export interface SetRowDropPositionIndicatorParams<TData = any> {
+    row: IRowNode<TData> | null | undefined;
+    dropIndicatorPosition: DropIndicatorPosition | null | false;
 }
 
 export interface IRowDropHighlightService {
     readonly row: RowNode | null;
-    readonly position: RowDropHighlightPosition;
+    readonly position: DropIndicatorPosition;
 
     clear(): void;
-    set(row: RowNode, position: Exclude<RowDropHighlightPosition, 'none'>): void;
+    set(row: RowNode, dropIndicatorPosition: Exclude<DropIndicatorPosition, 'none'>): void;
 }
