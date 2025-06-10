@@ -228,7 +228,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 const target = rowsDrop?.target;
                 const rowDropHighlightSvc = this.beans.rowDropHighlightSvc!;
                 if (target) {
-                    rowDropHighlightSvc.set(target, rowsDrop.above ? 'above' : 'below');
+                    rowDropHighlightSvc.set(target, rowsDrop.above ? 'above' : rowsDrop.newParent ? 'inside' : 'below');
                 } else {
                     rowDropHighlightSvc.clear();
                 }

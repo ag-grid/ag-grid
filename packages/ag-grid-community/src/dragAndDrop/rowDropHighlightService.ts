@@ -1,14 +1,14 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { RowNode } from '../entities/rowNode';
-import type { IRowDropHighlightService, RowDropHighlightPosition } from '../interfaces/IRowDropHighlightService';
+import type { DropIndicatorPosition, IRowDropHighlightService } from '../interfaces/IRowDropHighlightService';
 
 export class RowDropHighlightService extends BeanStub implements NamedBean, IRowDropHighlightService {
     beanName = 'rowDropHighlightSvc' as const;
 
     private uiLevel = 0;
     public row: RowNode | null = null;
-    public position: RowDropHighlightPosition = 'none';
+    public position: DropIndicatorPosition = 'none';
 
     public postConstruct(): void {
         this.addManagedEventListeners({
@@ -40,7 +40,7 @@ export class RowDropHighlightService extends BeanStub implements NamedBean, IRow
         }
     }
 
-    public set(row: RowNode, dropIndicatorPosition: Exclude<RowDropHighlightPosition, 'none'>): void {
+    public set(row: RowNode, dropIndicatorPosition: Exclude<DropIndicatorPosition, 'none'>): void {
         const nodeChanged = row !== this.row;
         const uiLevel = row.uiLevel;
         const highlightChanged = dropIndicatorPosition !== this.position;
