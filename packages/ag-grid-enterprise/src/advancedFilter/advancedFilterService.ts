@@ -195,7 +195,9 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         expressionFunction: FilterExpressionFunction;
         params: FilterExpressionFunctionParams;
     } {
-        if (this.gos.get('suppressAdvancedFilterEval')) {
+        // `suppressAdvancedFilterEval` has been deprecated.
+        // For now assume only users who have explicitly set it to false wish to filter eval.
+        if (this.gos.get('suppressAdvancedFilterEval') !== false) {
             return expressionParser.getFunctionParsed();
         } else {
             const { functionString, params } = expressionParser.getFunctionString();
