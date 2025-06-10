@@ -41,7 +41,7 @@ export function setRowDropPositionIndicator<TData>(
     const rowNode = params?.row;
     let position = params?.dropIndicatorPosition;
 
-    if (position !== 'above' && position !== 'below') {
+    if (position !== 'above' && position !== 'below' && position !== 'inside') {
         position = 'none';
     }
 

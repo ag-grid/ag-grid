@@ -6,6 +6,7 @@ import type { DropIndicatorPosition, IRowDropHighlightService } from '../interfa
 export class RowDropHighlightService extends BeanStub implements NamedBean, IRowDropHighlightService {
     beanName = 'rowDropHighlightSvc' as const;
 
+    private uiLevel = 0;
     public row: RowNode | null = null;
     public position: DropIndicatorPosition = 'none';
 
@@ -16,8 +17,11 @@ export class RowDropHighlightService extends BeanStub implements NamedBean, IRow
     }
 
     private onModelUpdated(): void {
-        if (this.row?.rowIndex === null) {
-            this.clear(); // Clear the highlight if the row was removed
+        const row = this.row;
+        if (!row || row.rowIndex === null || this.position === 'none') {
+            this.clear();
+        } else {
+            this.set(row, this.position);
         }
     }
 
@@ -29,21 +33,25 @@ export class RowDropHighlightService extends BeanStub implements NamedBean, IRow
     public clear(): void {
         const last = this.row;
         if (last) {
-            this.row = null;
+            this.uiLevel = 0;
             this.position = 'none';
+            this.row = null;
             last.dispatchRowEvent('rowHighlightChanged');
         }
     }
 
     public set(row: RowNode, dropIndicatorPosition: Exclude<DropIndicatorPosition, 'none'>): void {
         const nodeChanged = row !== this.row;
+        const uiLevel = row.uiLevel;
         const highlightChanged = dropIndicatorPosition !== this.position;
-        if (nodeChanged || highlightChanged) {
+        const uiLevelChanged = uiLevel !== this.uiLevel;
+        if (nodeChanged || highlightChanged || uiLevelChanged) {
             if (nodeChanged) {
                 this.clear();
             }
-            this.row = row;
+            this.uiLevel = uiLevel;
             this.position = dropIndicatorPosition;
+            this.row = row;
             row.dispatchRowEvent('rowHighlightChanged');
         }
     }

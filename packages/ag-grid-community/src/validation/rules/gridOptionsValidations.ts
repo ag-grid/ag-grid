@@ -352,9 +352,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         rowDragManaged: {
             supportedRowModels: ['clientSide'],
             dependencies: {
-                treeData: {
-                    required: [false, undefined],
-                },
                 pagination: {
                     required: [false, undefined],
                 },

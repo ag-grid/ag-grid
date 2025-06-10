@@ -1,7 +1,7 @@
 import type { RowNode } from '../entities/rowNode';
 import type { IRowNode } from './iRowNode';
 
-export type DropIndicatorPosition = 'above' | 'below' | 'none';
+export type DropIndicatorPosition = 'above' | 'inside' | 'below' | 'none';
 
 export interface RowDropPositionIndicator<TData = any> {
     row: IRowNode<TData> | null;
