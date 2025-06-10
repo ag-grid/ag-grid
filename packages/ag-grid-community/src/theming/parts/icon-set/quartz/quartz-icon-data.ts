@@ -82,6 +82,8 @@ const iconNameToFullSvg: Record<string, string | undefined> = {
         '<svg width="16" height="16" viewBox="0 0 16 16" class="ag-icon" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     'chevron-right':
         '<svg width="16" height="16" viewBox="0 0 16 16" class="ag-icon" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    'filter-add':
+        '<svg width="16" height="16" viewBox="0 0 16 16" class="ag-icon" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.12126 7.75L10.8517 7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6.65934 11.748L9.32778 11.748" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12.2943 1.04872V6.19184M14.9886 3.74341H9.68478" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M8.25488 3C8.04799 3.18323 7.91706 3.45099 7.91699 3.74902C7.91713 4.04868 8.04988 4.31681 8.25879 4.5H2C1.58579 4.5 1.25 4.16421 1.25 3.75C1.25 3.33579 1.58579 3 2 3H8.25488Z" fill="currentColor"/></svg>',
 };
 
 export const getQuartzIconsCss = (args: { strokeWidth?: number } = {}) => {

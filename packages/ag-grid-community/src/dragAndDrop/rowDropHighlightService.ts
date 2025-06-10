@@ -1,13 +1,13 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { RowNode } from '../entities/rowNode';
-import type { IRowDropHighlightService, RowDropHighlightPosition } from '../interfaces/IRowDropHighlightService';
+import type { DropIndicatorPosition, IRowDropHighlightService } from '../interfaces/IRowDropHighlightService';
 
 export class RowDropHighlightService extends BeanStub implements NamedBean, IRowDropHighlightService {
     beanName = 'rowDropHighlightSvc' as const;
 
     public row: RowNode | null = null;
-    public position: RowDropHighlightPosition = 'none';
+    public position: DropIndicatorPosition = 'none';
 
     public postConstruct(): void {
         this.addManagedEventListeners({
@@ -29,21 +29,21 @@ export class RowDropHighlightService extends BeanStub implements NamedBean, IRow
     public clear(): void {
         const last = this.row;
         if (last) {
+            this.row = null;
             this.position = 'none';
             last.dispatchRowEvent('rowHighlightChanged');
-            this.row = null;
         }
     }
 
-    public set(row: RowNode, position: RowDropHighlightPosition): void {
+    public set(row: RowNode, dropIndicatorPosition: Exclude<DropIndicatorPosition, 'none'>): void {
         const nodeChanged = row !== this.row;
-        const highlightChanged = position !== this.position;
+        const highlightChanged = dropIndicatorPosition !== this.position;
         if (nodeChanged || highlightChanged) {
             if (nodeChanged) {
                 this.clear();
             }
-            this.position = position;
             this.row = row;
+            this.position = dropIndicatorPosition;
             row.dispatchRowEvent('rowHighlightChanged');
         }
     }

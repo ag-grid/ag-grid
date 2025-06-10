@@ -207,6 +207,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                         state ?? { model: modelForFilter },
                         'api'
                     ).then(() => {
+                        wrapper.model = modelForFilter;
                         this.updateActiveListForHandler(index, modelForFilter);
                     })
                 );

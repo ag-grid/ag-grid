@@ -31,6 +31,7 @@ const ICONS = [
     'eye-slash',
     'eye',
     'filter',
+    'filter-add',
     'first',
     'grip',
     'group',

@@ -240,3 +240,7 @@
 .ag-icon-chevron-right::before {
     mask-image: url('./balham-svg-icons/chevron-right.svg');
 }
+
+.ag-icon-filter-add::before {
+    mask-image: url('./balham-svg-icons/filter-add.svg');
+}

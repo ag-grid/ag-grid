@@ -37,8 +37,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowData: null,
     enableRowPinning: true,
     onFirstDataRendered: () => {
-        updateGrandTotalRow();
-        updateGrandTotalRowPinned();
+        gridApi.setGridOption('grandTotalRow', getGTR());
+        gridApi.setGridOption('grandTotalRowPinned', getGTRP());
     },
     theme: themeQuartz.withParams({
         pinnedRowBorder: {
@@ -57,25 +57,16 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });
 
-function getGrandTotalRow() {
-    return document.querySelector<HTMLSelectElement>('#select-grand-total-row')?.value as GridOptions['grandTotalRow'];
+function updateGrandTotalRow() {
+    gridApi.setGridOption('grandTotalRow', getGTR());
 }
 
-function setGrandTotalRow(api: GridApi<IOlympicData>, value: GridOptions['grandTotalRow']) {
-    api.setGridOption('grandTotalRow', value);
-}
-
-function getGrandTotalRowPinned() {
-    return document.querySelector<HTMLSelectElement>('#select-grand-total-row-pinned')
-        ?.value as GridOptions['grandTotalRowPinned'];
-}
-
-function setGrandTotalRowPinned(api: GridApi<IOlympicData>, value: GridOptions['grandTotalRowPinned']) {
-    api.setGridOption('grandTotalRowPinned', value);
+function updateGrandTotalRowPinned() {
+    gridApi.setGridOption('grandTotalRowPinned', getGTRP());
 }
 
 function useIsRowPinned() {
-    setGrandTotalRowPinned(gridApi, undefined);
+    gridApi.setGridOption('grandTotalRowPinned', undefined);
     gridApi.setGridOption('isRowPinned', (node) => {
         if (node.level === -1 && node.footer) {
             return 'top';
@@ -85,15 +76,15 @@ function useIsRowPinned() {
 
 function reset() {
     gridApi.setGridOption('isRowPinned', undefined);
-    updateGrandTotalRow();
-    updateGrandTotalRowPinned();
+    gridApi.setGridOption('grandTotalRow', getGTR());
+    gridApi.setGridOption('grandTotalRowPinned', getGTRP());
 }
 
-function updateGrandTotalRow() {
-    const value = getGrandTotalRow();
-    setGrandTotalRow(gridApi, value);
+function getGTR() {
+    return document.querySelector<HTMLSelectElement>('#select-grand-total-row')?.value as GridOptions['grandTotalRow'];
 }
 
-function updateGrandTotalRowPinned() {
-    setGrandTotalRowPinned(gridApi, getGrandTotalRowPinned());
+function getGTRP() {
+    return document.querySelector<HTMLSelectElement>('#select-grand-total-row-pinned')
+        ?.value as GridOptions['grandTotalRowPinned'];
 }

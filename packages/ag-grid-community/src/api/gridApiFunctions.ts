@@ -161,8 +161,8 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         addRowDropZone: 0,
         removeRowDropZone: 0,
         getRowDropZoneParams: 0,
-        getRowDropHighlight: 0,
-        setRowDropHighlight: 0,
+        getRowDropPositionIndicator: 0,
+        setRowDropPositionIndicator: 0,
     }),
     ...mod<_ColumnGridApi<any>>('ColumnApi', {
         getColumnDefs: 0,

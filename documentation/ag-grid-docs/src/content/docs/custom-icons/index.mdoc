@@ -31,6 +31,28 @@ const myTheme = themeQuartz
 
 {% gridExampleRunner title="Swapping the Icon Font" name="icons-swapping-font" /%}
 
+## Styling Provided Icons
+
+You can change the color of the provided icons using CSS, and add other CSS styles such as borders and backgrounds. Icons have CSS class names in the format `ag-icon-{iconName}`. Use browser developer tools to find the appropriate class.
+
+Provided icons inherit the current text color, so use the CSS `color` property to change their color:
+
+```css
+/* Set the column menu icon to red */
+.ag-icon-menu-alt {
+    color: red;
+}
+
+/* Add a background to the row group icon */
+.ag-icon-tree-closed,
+.ag-icon-tree-open {
+    border-radius: 4px;
+    background-image: linear-gradient(to bottom, #66aec8, #aa74c6);
+}
+```
+
+{% gridExampleRunner title="Alternative Icon Font" name="icons-color" /%}
+
 ## Replacing Individual Icons
 
 The `iconOverrides` part can be used to change individual icons to an image, solid color with image mask, or icon font character. It can be used multiple times in the same theme to mix different types of icon.

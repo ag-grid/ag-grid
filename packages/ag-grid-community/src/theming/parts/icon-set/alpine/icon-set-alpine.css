@@ -241,3 +241,7 @@
 .ag-icon-chevron-right::before {
     mask-image: url('./alpine-svg-icons/chevron-right.svg');
 }
+
+.ag-icon-filter-add::before {
+    mask-image: url('./alpine-svg-icons/filter-add.svg');
+}

@@ -75,6 +75,15 @@ export interface IDateFilterParams extends IScalarFilterParams {
      * (as the comparator only allows for greater than, less than and equals).
      */
     isValidDate?: (value: any) => boolean;
+    /**
+     * Defines whether time should be included when filtering dates.
+     *
+     * - `true`: Include the time component in date comparisons.
+     * - `false`: Only compare dates without considering the time component.
+     *
+     * @default false
+     */
+    includeTime?: boolean;
 }
 
 export interface IDateComparatorFunc {
