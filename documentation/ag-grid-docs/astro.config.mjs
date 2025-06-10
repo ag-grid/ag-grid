@@ -193,7 +193,7 @@ export default defineConfig({
     integrations: [
         buildTime(),
         react(),
-        markdoc({ allowHTML: true }),
+        markdoc(),
         sitemap(getSitemapConfig()),
         agHtaccessGen({ include: HTACCESS === 'true' }),
         agRedirectsChecker({
