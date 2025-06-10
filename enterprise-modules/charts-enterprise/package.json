@@ -16,8 +16,8 @@
     "@ag-grid-community/core": "32.3.8",
     "@ag-grid-enterprise/core": "32.3.8",
     "@ag-grid-enterprise/charts": "32.3.8",
-    "ag-charts-community": "10.3.8-beta.20250604.1055",
-    "ag-charts-enterprise": "10.3.8-beta.20250604.1055"
+    "ag-charts-community": "10.3.8",
+    "ag-charts-enterprise": "10.3.8"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
