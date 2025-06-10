@@ -34,7 +34,7 @@ ModuleRegistry.registerModules([
 ]);
 
 const columnDefs: ColDef[] = [
-    { field: 'country', sort: 'asc', rowGroup: true, hide: true },
+    { field: 'country', rowGroup: true, hide: true },
     { field: 'athlete', minWidth: 170 },
     { field: 'age' },
     { field: 'year' },
@@ -51,17 +51,9 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     rowData: null,
     columnDefs: columnDefs,
-    defaultColDef: {
-        editable: true,
-        filter: true,
-        enableRowGroup: true,
-        enablePivot: true,
-        enableValue: true,
-    },
     autoGroupColumnDef: {
         headerName: 'Country',
     },
-    sideBar: true,
 };
 
 // setup the grid after the page has finished loading
