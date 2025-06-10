@@ -35,8 +35,8 @@ describe('ag-grid row highlight', () => {
         const element = TestGridsManager.getHTMLElement(api)!;
 
         const getRowHighlight = () => {
-            const { row, position } = api.getRowDropHighlight();
-            return { id: row?.id, position };
+            const { row, dropIndicatorPosition } = api.getRowDropPositionIndicator();
+            return { id: row?.id, position: dropIndicatorPosition };
         };
 
         const node1 = api.getRowNode('1')!;
@@ -49,37 +49,39 @@ describe('ag-grid row highlight', () => {
 
         // Null or undefined params
 
-        api.setRowDropHighlight(null);
+        api.setRowDropPositionIndicator(null);
         expect(getRowHighlight()).toEqual({ id: undefined, position: 'none' });
         expect(getElementHighlight(element)).toEqual({ id: undefined, position: 'none' });
 
-        api.setRowDropHighlight(undefined);
+        api.setRowDropPositionIndicator(undefined);
         expect(getRowHighlight()).toEqual({ id: undefined, position: 'none' });
         expect(getElementHighlight(element)).toEqual({ id: undefined, position: 'none' });
 
         // clear
 
-        for (const position of ['none', 'above', 'below'] as const) {
-            api.setRowDropHighlight({ row: null, position });
-            expect(getRowHighlight()).toEqual({ id: undefined, position: 'none' });
-            expect(getElementHighlight(element)).toEqual({ id: undefined, position: 'none' });
+        for (const row of [null, undefined]) {
+            for (const position of ['none', 'above', 'below'] as const) {
+                api.setRowDropPositionIndicator({ row, dropIndicatorPosition: position });
+                expect(getRowHighlight()).toEqual({ id: undefined, position: 'none' });
+                expect(getElementHighlight(element)).toEqual({ id: undefined, position: 'none' });
+            }
         }
 
         // set
 
-        api.setRowDropHighlight({ row: node1, position: 'above' });
+        api.setRowDropPositionIndicator({ row: node1, dropIndicatorPosition: 'above' });
         expect(getRowHighlight()).toEqual({ id: '1', position: 'above' });
         expect(getElementHighlight(element)).toEqual({ id: '1', position: 'above' });
 
-        api.setRowDropHighlight({ row: node1, position: 'below' });
+        api.setRowDropPositionIndicator({ row: node1, dropIndicatorPosition: 'below' });
         expect(getRowHighlight()).toEqual({ id: '1', position: 'below' });
         expect(getElementHighlight(element)).toEqual({ id: '1', position: 'below' });
 
-        api.setRowDropHighlight({ row: node2, position: 'below' });
+        api.setRowDropPositionIndicator({ row: node2, dropIndicatorPosition: 'below' });
         expect(getRowHighlight()).toEqual({ id: '2', position: 'below' });
         expect(getElementHighlight(element)).toEqual({ id: '2', position: 'below' });
 
-        api.setRowDropHighlight({ row: node3, position: 'above' });
+        api.setRowDropPositionIndicator({ row: node3, dropIndicatorPosition: 'above' });
         expect(getRowHighlight()).toEqual({ id: '3', position: 'above' });
         expect(getElementHighlight(element)).toEqual({ id: '3', position: 'above' });
 
@@ -94,15 +96,15 @@ describe('ag-grid row highlight', () => {
         expect(getRowHighlight()).toEqual({ id: undefined, position: 'none' });
         expect(getElementHighlight(element)).toEqual({ id: undefined, position: 'none' });
 
-        api.setRowDropHighlight({ row: node3, position: 'below' });
+        api.setRowDropPositionIndicator({ row: node3, dropIndicatorPosition: 'below' });
         expect(getRowHighlight()).toEqual({ id: undefined, position: 'none' });
         expect(getElementHighlight(element)).toEqual({ id: undefined, position: 'none' });
 
         // set and clear
 
         for (const position of ['none', 'above', 'below'] as const) {
-            api.setRowDropHighlight({ row: node1, position: 'below' });
-            api.setRowDropHighlight({ row: null, position });
+            api.setRowDropPositionIndicator({ row: node1, dropIndicatorPosition: 'below' });
+            api.setRowDropPositionIndicator({ row: null, dropIndicatorPosition: position });
             expect(getRowHighlight()).toEqual({ id: undefined, position: 'none' });
             expect(getElementHighlight(element)).toEqual({ id: undefined, position: 'none' });
         }
