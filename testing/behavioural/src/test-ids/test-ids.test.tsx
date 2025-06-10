@@ -33,7 +33,8 @@ describe('Test Ids', () => {
 
         expect(await rendered.findByText('foo')).toBeVisible();
 
-        expect(await rendered.findByTestId('ag-cell-row-foo-col-item')).toBeVisible();
-        expect(await rendered.findByTestId('ag-cell-row-foo-col-ag-Grid-SelectionColumn')).toBeVisible();
+        expect(await rendered.findByTestId('ag-cell:row-id=foo;col-id=item')).toBeVisible();
+        expect(await rendered.findByTestId('ag-cell:row-id=foo;col-id=ag-Grid-SelectionColumn')).toBeVisible();
+        expect(await rendered.findByTestId('ag-header-cell:row-index=0;col-id=item'));
     });
 });

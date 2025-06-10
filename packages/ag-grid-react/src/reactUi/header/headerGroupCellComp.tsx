@@ -1,5 +1,6 @@
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
+import { _addOrRemoveAttributes } from 'ag-grid-community';
 import type {
     HeaderGroupCellCtrl,
     HeaderStyle,
@@ -79,6 +80,8 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
             },
             setAriaExpanded: (expanded: 'true' | 'false' | undefined) => setAriaExpanded(expanded),
             getUserCompInstance: () => userCompRef.current || undefined,
+
+            setAttributes: (attrs) => eGui.current && _addOrRemoveAttributes(eGui.current, attrs),
         };
 
         ctrl.setComp(compProxy, eRef, eResize.current!, eHeaderCompWrapper.current!, compBean.current);

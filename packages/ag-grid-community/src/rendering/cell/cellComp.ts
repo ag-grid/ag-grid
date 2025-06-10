@@ -9,7 +9,13 @@ import type { PopupPositionParams } from '../../interfaces/iPopup';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
-import { _addStylesToElement, _clearElement, _createElement, _removeFromParent } from '../../utils/dom';
+import {
+    _addOrRemoveAttributes,
+    _addStylesToElement,
+    _clearElement,
+    _createElement,
+    _removeFromParent,
+} from '../../utils/dom';
 import { _missing } from '../../utils/generic';
 import { _toString } from '../../utils/string';
 import { _warn } from '../../validation/logging';
@@ -125,6 +131,8 @@ export class CellComp extends Component {
             getCellRenderer: () => this.cellRenderer || null,
             getParentOfValue: () => this.getParentOfValue(),
             refreshEditStyles: (editing, isPopup) => this.refreshEditStyles(editing, isPopup),
+
+            setAttributes: (attrs) => _addOrRemoveAttributes(cellDiv, attrs),
         };
 
         cellCtrl.setComp(compProxy, cellDiv, wrapperDiv, this.eCellWrapper, printLayout, editingCell, undefined);
