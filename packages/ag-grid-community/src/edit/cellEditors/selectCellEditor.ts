@@ -1,16 +1,16 @@
 import { KeyCode } from '../../constants/keyCode';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import type { ICellEditorComp, ICellEditorParams, ICellEditorValidationError } from '../../interfaces/iCellEditor';
+import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { ElementParams } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
 import { _warn } from '../../validation/logging';
 import type { ValueService } from '../../valueService/valueService';
+import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
 import type { ListOption } from '../../widgets/agList';
 import type { AgSelect } from '../../widgets/agSelect';
 import { AgSelectSelector } from '../../widgets/agSelect';
 import { RefPlaceholder } from '../../widgets/component';
-import { PopupComponent } from '../../widgets/popupComponent';
 import type { ISelectCellEditorParams } from './iSelectCellEditor';
 
 interface SelectCellEditorParams<TData = any, TValue = any, TContext = any>
@@ -23,21 +23,21 @@ const SelectCellElement: ElementParams = {
     children: [
         {
             tag: 'ag-select',
-            ref: 'eSelect',
+            ref: 'eEditor',
             cls: 'ag-cell-editor',
         },
     ],
 };
-export class SelectCellEditor extends PopupComponent implements ICellEditorComp {
+export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParams> implements ICellEditorComp {
     private focusAfterAttached: boolean;
     private valueSvc: ValueService;
-    private params: SelectCellEditorParams;
+    protected params: SelectCellEditorParams;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
     }
 
-    private readonly eSelect: AgSelect = RefPlaceholder;
+    protected readonly eEditor: AgSelect = RefPlaceholder;
 
     private startedByEnter: boolean = false;
 
@@ -48,7 +48,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     public init(params: SelectCellEditorParams): void {
         this.focusAfterAttached = params.cellStartedEdit;
 
-        const { eSelect, valueSvc, gos } = this;
+        const { eEditor, valueSvc, gos } = this;
         const { values, value, eventKey } = params;
 
         if (_missing(values)) {
@@ -65,64 +65,68 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
             const valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             option.text = valueFormattedExits ? valueFormatted : currentValue;
 
-            eSelect.addOption(option);
+            eEditor.addOption(option);
             hasValue = hasValue || value === currentValue;
         });
 
         if (hasValue) {
-            eSelect.setValue(params.value, true);
+            eEditor.setValue(params.value, true);
         } else if (params.values.length) {
-            eSelect.setValue(params.values[0], true);
+            eEditor.setValue(params.values[0], true);
         }
 
         const { valueListGap, valueListMaxWidth, valueListMaxHeight } = params;
 
         if (valueListGap != null) {
-            eSelect.setPickerGap(valueListGap);
+            eEditor.setPickerGap(valueListGap);
         }
 
         if (valueListMaxHeight != null) {
-            eSelect.setPickerMaxHeight(valueListMaxHeight);
+            eEditor.setPickerMaxHeight(valueListMaxHeight);
         }
 
         if (valueListMaxWidth != null) {
-            eSelect.setPickerMaxWidth(valueListMaxWidth);
+            eEditor.setPickerMaxWidth(valueListMaxWidth);
         }
 
         // we don't want to add this if full row editing, otherwise selecting will stop the
         // full row editing.
         if (gos.get('editType') !== 'fullRow') {
-            this.addManagedListeners(this.eSelect, { selectedItem: () => params.stopEditing() });
+            this.addManagedListeners(this.eEditor, { selectedItem: () => params.stopEditing() });
         }
     }
 
     public afterGuiAttached() {
         if (this.focusAfterAttached) {
-            this.eSelect.getFocusableElement().focus();
+            this.eEditor.getFocusableElement().focus();
         }
 
         if (this.startedByEnter) {
             setTimeout(() => {
                 if (this.isAlive()) {
-                    this.eSelect.showPicker();
+                    this.eEditor.showPicker();
                 }
             });
         }
     }
 
     public focusIn(): void {
-        this.eSelect.getFocusableElement().focus();
+        this.eEditor.getFocusableElement().focus();
     }
 
     public getValue(): any {
-        return this.eSelect.getValue();
+        return this.eEditor.getValue();
     }
 
     public override isPopup() {
         return false;
     }
 
-    private getErrors() {
+    protected getEditorElement(): HTMLElement | HTMLInputElement {
+        return this.eEditor.getAriaElement() as HTMLElement;
+    }
+
+    protected getErrors() {
         const { params } = this;
         const { values, validate } = params;
         const value = this.getValue();
@@ -143,23 +147,5 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         }
 
         return internalErrors;
-    }
-
-    public validateEdit(): ICellEditorValidationError | null {
-        const { params, eSelect } = this;
-        const {
-            column,
-            node: { rowIndex, rowPinned },
-        } = params;
-
-        const messages = this.getErrors();
-
-        eSelect.toggleCss('ag-invalid', !!messages);
-
-        if (!messages) {
-            return null;
-        }
-
-        return { rowIndex: rowIndex!, rowPinned, column, messages };
     }
 }

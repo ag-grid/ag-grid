@@ -392,6 +392,7 @@ export type { IRowNumbersService } from './interfaces/rowNumbers';
 export {
     ICellEditor,
     ICellEditorComp,
+    BaseCellEditorParams,
     ICellEditorParams,
     ICellEditorValidationError,
     BaseCellEditor,
@@ -399,6 +400,7 @@ export {
     GetEditingCellsParams,
     EditingCellPosition,
 } from './interfaces/iCellEditor';
+export { AgAbstractCellEditor } from './widgets/agAbstractCellEditor';
 export { ILargeTextEditorParams } from './edit/cellEditors/iLargeTextCellEditor';
 export type { LargeTextCellEditor } from './edit/cellEditors/largeTextCellEditor';
 export type { PopupEditorWrapper } from './edit/cellEditors/popupEditorWrapper';

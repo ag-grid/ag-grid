@@ -2,22 +2,21 @@ import type {
     FieldPickerValueSelectedEvent,
     ICellEditorComp,
     ICellEditorParams,
-    ICellEditorValidationError,
     KeyCreatorParams,
     RichCellEditorParams,
     RichSelectParams,
 } from 'ag-grid-community';
-import { PopupComponent, _addGridCommonParams, _missing, _warn } from 'ag-grid-community';
+import { AgAbstractCellEditor, _addGridCommonParams, _missing, _warn } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 
 export class RichSelectCellEditor<TData = any, TValue = any, TContext = any>
-    extends PopupComponent
-    implements ICellEditorComp<TData, TValue, TContext, RichCellEditorParams<TData, TValue, TContext>>
+    extends AgAbstractCellEditor<RichCellEditorParams<TData, TValue>>
+    implements ICellEditorComp
 {
-    private params: RichCellEditorParams<TData, TValue>;
+    protected params: RichCellEditorParams<TData, TValue>;
     private focusAfterAttached: boolean;
-    private richSelect: AgRichSelect<TValue>;
+    protected eEditor: AgRichSelect<TValue>;
     private isAsync: boolean = false;
 
     constructor() {
@@ -36,7 +35,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any>
         const { params: richSelectParams, valuesPromise } = this.buildRichSelectParams();
         const richSelect = this.createManagedBean(new AgRichSelect<TValue>(richSelectParams));
 
-        this.richSelect = richSelect;
+        this.eEditor = richSelect;
         richSelect.addCss('ag-cell-editor');
         this.appendChild(richSelect);
 
@@ -177,7 +176,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any>
                 return;
             }
 
-            const richSelect = this.richSelect;
+            const richSelect = this.eEditor;
             const { allowTyping, eventKey } = params;
 
             if (focusAfterAttached) {
@@ -203,17 +202,17 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any>
         }
 
         if (eventKey?.length === 1) {
-            this.richSelect.searchTextFromString(eventKey);
+            this.eEditor.searchTextFromString(eventKey);
         }
     }
 
     public focusIn(): void {
-        this.richSelect.getFocusableElement().focus();
+        this.eEditor.getFocusableElement().focus();
     }
 
     public getValue(): any {
         const { params } = this;
-        const value = this.richSelect.getValue();
+        const value = this.eEditor.getValue();
 
         return params.parseValue?.(value) ?? value;
     }
@@ -222,32 +221,22 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any>
         return false;
     }
 
-    private getErrors() {
+    protected getEditorElement() {
+        return this.eEditor.getAriaElement() as HTMLElement;
+    }
+
+    protected getErrors() {
         const { params } = this;
         const { validate } = params;
 
-        return validate?.({
+        if (!validate) {
+            return null;
+        }
+
+        return validate({
             value: this.getValue(),
             internalErrors: null,
             cellEditorParams: params as unknown as ICellEditorParams<TData, TValue, TContext>,
         });
-    }
-
-    public validateEdit(): ICellEditorValidationError | null {
-        const { params, richSelect } = this;
-        const {
-            column,
-            node: { rowIndex, rowPinned },
-        } = params;
-
-        const messages = this.getErrors();
-
-        richSelect.toggleCss('ag-invalid', !!messages);
-
-        if (!messages) {
-            return null;
-        }
-
-        return { rowIndex: rowIndex!, rowPinned, column, messages };
     }
 }

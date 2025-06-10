@@ -1,14 +1,9 @@
 import { KeyCode } from '../../constants/keyCode';
-import type {
-    DefaultProvidedCellEditorParams,
-    ICellEditorComp,
-    ICellEditorParams,
-    ICellEditorValidationError,
-} from '../../interfaces/iCellEditor';
+import type { DefaultProvidedCellEditorParams, ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isBrowserSafari } from '../../utils/browser';
+import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
 import { RefPlaceholder } from '../../widgets/component';
-import { PopupComponent } from '../../widgets/popupComponent';
 import type { CellEditorInput } from './iCellEditorInput';
 
 export class SimpleCellEditor<
@@ -16,13 +11,13 @@ export class SimpleCellEditor<
         P extends ICellEditorParams & DefaultProvidedCellEditorParams,
         I extends AgInputTextField,
     >
-    extends PopupComponent
+    extends AgAbstractCellEditor<ICellEditorParams>
     implements ICellEditorComp
 {
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
     protected params: ICellEditorParams;
-    protected readonly eInput: I = RefPlaceholder;
+    protected readonly eEditor: I = RefPlaceholder;
 
     constructor(protected cellEditorInput: CellEditorInput<TValue, P, I>) {
         super();
@@ -36,7 +31,7 @@ export class SimpleCellEditor<
         this.params = params;
         const { cellStartedEdit, eventKey, suppressPreventDefault } = params;
 
-        const eInput = this.eInput;
+        const eInput = this.eEditor;
         this.cellEditorInput.init(eInput, params);
         let startValue: string | null | undefined;
         let shouldSetStartValue = true;
@@ -82,7 +77,7 @@ export class SimpleCellEditor<
 
     public afterGuiAttached(): void {
         const translate = this.getLocaleTextFunc();
-        const eInput = this.eInput;
+        const eInput = this.eEditor;
 
         eInput.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
 
@@ -107,9 +102,9 @@ export class SimpleCellEditor<
 
     // gets called when tabbing through cells and in full row edit mode
     public focusIn(): void {
-        const eInput = this.eInput;
-        const focusEl = eInput.getFocusableElement();
-        const inputEl = eInput.getInputElement();
+        const { eEditor } = this;
+        const focusEl = eEditor.getFocusableElement();
+        const inputEl = eEditor.getInputElement();
 
         focusEl.focus();
         inputEl.select();
@@ -123,22 +118,11 @@ export class SimpleCellEditor<
         return false;
     }
 
-    public validateEdit(): ICellEditorValidationError | null {
-        const {
-            cellEditorInput,
-            eInput,
-            params: {
-                column,
-                node: { rowIndex, rowPinned },
-            },
-        } = this;
-        const messages = cellEditorInput.getErrors();
-        eInput.toggleCss('ag-invalid', !!messages);
+    protected getEditorElement(): HTMLInputElement {
+        return this.eEditor.getInputElement();
+    }
 
-        if (!messages) {
-            return null;
-        }
-
-        return { rowIndex: rowIndex!, rowPinned, column, messages };
+    protected getErrors(): string[] | null {
+        return this.cellEditorInput.getErrors();
     }
 }

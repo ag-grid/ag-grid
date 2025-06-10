@@ -69,7 +69,7 @@ export interface ICellEditor<TValue = any> extends BaseCellEditor {
     validateEdit?(): ICellEditorValidationError | null;
 }
 
-export interface ICellEditorParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
+export interface BaseCellEditorParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Current value of the cell */
     value: TValue | null | undefined;
     /** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable
@@ -99,10 +99,7 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
      *  will live inside. Useful if you want to add event listeners or classes at this level.
      *  This is the DOM element that gets browser focus when selecting cells. */
     eGridCell: HTMLElement;
-    /** Utility function to parse a value using the column's `colDef.valueParser` */
-    parseValue: (value: string) => TValue | null | undefined;
-    /** Utility function to format a value using the column's `colDef.valueFormatter` */
-    formatValue: (value: TValue | null | undefined) => string;
+
     /**
      * Optional validation callback that runs after editing is finished.
      * Return a string for error message, or `null` if the value is valid.
@@ -114,13 +111,17 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
     }) => string[] | null;
 }
 
-export interface ICellEditorComp<
-    TData = any,
-    TValue = any,
-    TContext = any,
-    TParams = ICellEditorParams<TData, TValue, TContext>,
-> extends ICellEditor<TValue>,
-        IPopupComponent<TParams> {}
+export interface ICellEditorParams<TData = any, TValue = any, TContext = any>
+    extends BaseCellEditorParams<TData, TValue, TContext> {
+    /** Utility function to parse a value using the column's `colDef.valueParser` */
+    parseValue: (value: string) => TValue | null | undefined;
+    /** Utility function to format a value using the column's `colDef.valueFormatter` */
+    formatValue: (value: TValue | null | undefined) => string;
+}
+
+export interface ICellEditorComp<TData = any, TValue = any, TContext = any>
+    extends ICellEditor<TValue>,
+        IPopupComponent<BaseCellEditorParams<TData, TValue, TContext>> {}
 
 /** This is only used internally within the grid */
 export interface DefaultProvidedCellEditorParams {
