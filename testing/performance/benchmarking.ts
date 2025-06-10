@@ -335,6 +335,13 @@ export default function (name: string, describe: Describe & { __hidden?: { stack
                         significant = isSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError);
                         reportStats({ control: s1, variant: s2 }, testCase, significant);
                     } while (!(significant || result['control'].length > maxIterations)); // run until we do 1000 iterations or results are significant
+                    if (!significant) {
+                        console.log(
+                            `${yellow('Result is statistically insignificant.')} ${green(
+                                'Consider running the test with more iterations or check your test case setup.'
+                            )}`
+                        );
+                    }
                 }
             );
         });
