@@ -20,6 +20,7 @@ export type Describe = {
     maxIterations?: number; // default is 1000
     testCases: TestCase[];
     timeout?: number; // in milliseconds, default is 3 minutes
+    warmupIterations?: number; // default is 3, used to warm up the grid before measuring performance
 };
 
 /**
@@ -192,16 +193,16 @@ function reportStats(
 
     const moe1Percent = (s1.marginOfError / s1.average) * 100;
     const moe2Percent = (s2.marginOfError / s2.average) * 100;
-    const avgMoE = (s1.marginOfError + s2.marginOfError) / 2;
-    const avgMoEPercent = (moe1Percent + moe2Percent) / 2;
+    const avgMoE = s1.marginOfError + s2.marginOfError;
+    const avgMoEPercent = moe1Percent + moe2Percent;
 
     const numbersString = `${diff.toFixed(2)} ± ${avgMoE.toFixed(2)}`;
     const percentString = `${percentDiff.toFixed(1)}% ± ${avgMoEPercent.toFixed(1)}%`;
 
     if (!significant) {
-        console.log(
+        /*console.log(
             `\n${yellow(`Result is statistically insignificant (`)}${green(percentString)}, ${blue(`${s1.filteredCount}/${s1.originalCount}`)})${yellow('. Running more iterations...\n')}`
-        );
+        );*/
         return;
     }
 
@@ -254,8 +255,9 @@ async function attachScripts(page: Page, version: Version, describe: { __hidden?
         // @ts-expect-error agGrid is not in the current scope
         await waitFor(() => typeof agGrid !== 'undefined', page);
     } catch (e) {
-        console.error('Perhaps you forgot to start dev server? Or provided URL/version are not available.');
-        (e as Error).stack += '\n Caused by:\n' + describe.__hidden!.stack?.stack;
+        const eT = e as Error;
+        eT.message = `${eT.message}. Perhaps you forgot to start dev server? Or provided URL/version are not available.`;
+        eT.stack += '\n Caused by:\n' + describe.__hidden!.stack?.stack;
         throw e;
     }
 }
@@ -290,15 +292,20 @@ async function attachCookies(context: BrowserContext, variant: Variant) {
 /** Generic benchmark function to run performance tests */
 export default function (name: string, describe: Describe & { __hidden?: { stack?: Error } }) {
     describe.__hidden = { stack: new Error() }; // used for friendlier error logs
-    test.describe.configure({ timeout: describe.timeout || 3 * 60_000, mode: 'serial' });
-    return test.describe(name, () => {
-        const minIterations = Math.max(describe.minIterations ?? 10, 3) + 3;
+    test.describe.configure({ timeout: describe.timeout || 3 * 60_000 });
+    test.beforeEach(() => console.time('Duration'));
+    test.afterEach(() => console.timeEnd('Duration'));
+    test.afterEach(() => console.log('Test ended at ' + new Date().toISOString()));
+
+    const describeBody = () => {
+        const warmupIterations = describe.warmupIterations ?? 3; // default is 3
+        const minIterations = Math.max(Math.max(describe.minIterations ?? 10, warmupIterations) + warmupIterations, 2);
         const maxIterations = describe.maxIterations ?? 1000;
+
         describe.testCases.forEach((testCase, i) => {
             (testCase.skip ? test.skip : test)(
                 `${i + 1} Running ${testCase.name} with ${testCase.framework}`,
                 async ({ page, context }) => {
-                    console.time('Duration');
                     const result = { control: [] as number[], variant: [] as number[] };
 
                     let significant = false;
@@ -314,8 +321,7 @@ export default function (name: string, describe: Describe & { __hidden?: { stack
                                 testCase.setupPreActions && (await testCase.setupPreActions(page));
                                 const noiseSize = (await metricsGetter(page, testCase)).length;
                                 testCase.actions && (await testCase.actions(page));
-                                if (i > 3) {
-                                    // skipped warmup iterations
+                                if (i > warmupIterations) {
                                     const usefulEntries = (await metricsGetter(page, testCase)).slice(noiseSize);
                                     const duration = usefulEntries.reduce((acc, pe) => acc + pe.duration, 0);
                                     result[variantName].push(duration);
@@ -325,14 +331,20 @@ export default function (name: string, describe: Describe & { __hidden?: { stack
                         }
                         const s1 = computeStats(result.control);
                         const s2 = computeStats(result.variant);
-                        console.log(`Collected ${s1.originalCount} entries`);
+                        // console.log(`Collected ${s1.originalCount} entries`);
                         significant = isSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError);
                         reportStats({ control: s1, variant: s2 }, testCase, significant);
                     } while (!(significant || result['control'].length > maxIterations)); // run until we do 1000 iterations or results are significant
-                    console.log('Test ended at ' + new Date().toISOString());
-                    console.timeEnd('Duration');
+                    if (!significant) {
+                        console.log(
+                            `${yellow('Result is statistically insignificant.')} ${green(
+                                'Consider running the test with more iterations or check your test case setup.'
+                            )}`
+                        );
+                    }
                 }
             );
         });
-    });
+    };
+    return test.describe(name, describeBody);
 }

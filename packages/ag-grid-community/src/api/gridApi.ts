@@ -24,7 +24,10 @@ import type {
     UpdateChartParams,
 } from '../interfaces/IChartService';
 import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
-import type { RowDropHighlight } from '../interfaces/IRowDropHighlightService';
+import type {
+    RowDropPositionIndicator,
+    SetRowDropPositionIndicatorParams,
+} from '../interfaces/IRowDropHighlightService';
 import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type {
@@ -824,17 +827,17 @@ export interface _DragGridApi<TData> {
     getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams | undefined;
 
     /**
+     * Gets the currently highlighted drop target row, previously set by `setRowDropHighlight`.
+     * @agModule `RowDragModule`
+     */
+    getRowDropPositionIndicator(): RowDropPositionIndicator<TData>;
+
+    /**
      * Sets the current highlighted row drop target.
      * This is useful for implementing custom unmanaged row drag and drop logic, to highlight the target row.
      * @agModule `RowDragModule`
      */
-    setRowDropHighlight(highlight: RowDropHighlight<TData> | null | undefined): void;
-
-    /**
-     * Gets the currently highlighted drop target row, previously set by `setRowDropHighlight`.
-     * @agModule `RowDragModule`
-     */
-    getRowDropHighlight(): RowDropHighlight<TData>;
+    setRowDropPositionIndicator(highlight: SetRowDropPositionIndicatorParams<TData> | null | undefined): void;
 }
 
 export interface _EditGridApi<TData> {

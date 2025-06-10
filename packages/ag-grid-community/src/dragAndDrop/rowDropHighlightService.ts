@@ -40,17 +40,17 @@ export class RowDropHighlightService extends BeanStub implements NamedBean, IRow
         }
     }
 
-    public set(row: RowNode, position: RowDropHighlightPosition): void {
+    public set(row: RowNode, dropIndicatorPosition: Exclude<RowDropHighlightPosition, 'none'>): void {
         const nodeChanged = row !== this.row;
         const uiLevel = row.uiLevel;
-        const highlightChanged = position !== this.position;
+        const highlightChanged = dropIndicatorPosition !== this.position;
         const uiLevelChanged = uiLevel !== this.uiLevel;
         if (nodeChanged || highlightChanged || uiLevelChanged) {
             if (nodeChanged) {
                 this.clear();
             }
             this.uiLevel = uiLevel;
-            this.position = position;
+            this.position = dropIndicatorPosition;
             this.row = row;
             row.dispatchRowEvent('rowHighlightChanged');
         }

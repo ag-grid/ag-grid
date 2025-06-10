@@ -1,0 +1,56 @@
+[[PackageOverrides]]
+group = "dev"
+ignore = true
+
+[[PackageOverrides]]
+name = "octokit"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/endpoint"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/app"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/core"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/oauth-app"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/plugin-paginate-graphql"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/plugin-paginate-rest"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/plugin-rest-endpoint-methods"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/plugin-retry"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/plugin-throttling"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/request-error"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/types"
+ignore = true
+
+[[IgnoredVulns]]
+id = "GHSA-67mh-4wv8-2f99"
+reason = "We do not have a HTTP endpoint"
+
