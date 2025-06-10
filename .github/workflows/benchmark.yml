@@ -110,12 +110,11 @@ jobs:
         if: failure() && github.event_name == 'issue_comment'
         with:
           script: |
-            const body = `❌ ${process.env.JOB_URL}`
             github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: ${{ steps.notify-start.outputs.result }},
-              body,
+              body: `❌ ${process.env.JOB_URL}`,
             })
 
       - name: Slack Notification
