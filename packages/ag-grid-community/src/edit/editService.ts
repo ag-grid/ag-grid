@@ -25,7 +25,7 @@ import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { ValueService } from '../valueService/valueService';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
-import { _addStopEditingWhenGridLosesFocus, _getCellCtrl, _getRowCtrl, _getSiblingRows } from './utils/controllers';
+import { _addStopEditingWhenGridLosesFocus, _getCellCtrl, _getRowCtrl } from './utils/controllers';
 import {
     UNEDITED,
     _destroyEditors,
@@ -36,6 +36,7 @@ import {
     _valuesDiffer,
     getCellEditorInstanceMap,
 } from './utils/editors';
+import { _getSiblingRows } from './utils/nodes';
 import { _refreshEditCells } from './utils/refresh';
 
 type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };

@@ -12,8 +12,9 @@ import type { EditPosition, EditRowPosition, IEditService } from '../../interfac
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { _getCellCtrl, _getRowCtrl, _getSiblingRows } from '../utils/controllers';
+import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
 import {
+    UNEDITED,
     _destroyEditor,
     _destroyEditors,
     _purgeUnchangedEdits,
@@ -21,6 +22,7 @@ import {
     _syncFromEditors,
     _valuesDiffer,
 } from '../utils/editors';
+import { _getAllLeafSiblings, _getAncestors, _getDependentCells, _getRelatedRows, _updateClass } from '../utils/nodes';
 
 export abstract class BaseEditStrategy extends BeanStub {
     public abstract midBatchInputsAllowed(position?: EditPosition): boolean;
@@ -86,74 +88,66 @@ export abstract class BaseEditStrategy extends BeanStub {
         suppressFlash: boolean = true,
         includeParents: boolean = false
     ): void {
-        const batch = this.editSvc.batch;
+        const { beans } = this;
         const forced = forcedState !== undefined;
 
-        const changedColumns: Set<string> = new Set();
+        const changedCells: Map<CellCtrl, boolean> = new Map();
+        const changedRows: Map<RowCtrl, boolean> = new Map();
 
         edits?.forEach((editRow, mainNode) => {
-            let rowEdited = false;
-
             const rowCtrl = _getRowCtrl(this.beans, {
                 rowNode: mainNode,
             });
 
+            let rowEdited = false;
+
             editRow.forEach((cellData, column) => {
-                const newState = forced ? forcedState : _valuesDiffer(cellData);
-
-                rowEdited ||= newState;
-
                 const cellCtrl = _getCellCtrl(this.beans, {
                     rowCtrl,
                     column,
                 });
 
-                this.updateCellStyle(cellCtrl, newState, batch, suppressFlash);
-                if (newState) {
-                    changedColumns.add(column.getColId());
-                }
+                const newState = forced ? forcedState : _valuesDiffer(cellData);
+
+                rowEdited ||= newState;
+
+                cellCtrl && changedCells.set(cellCtrl, newState);
             });
 
-            this.updateRowStyle(rowCtrl, rowEdited, batch);
+            if (rowCtrl) {
+                changedRows.set(rowCtrl, rowEdited);
+            }
+        });
 
-            if (!batch || !includeParents) {
-                return;
+        edits.forEach((editRow, rowNode) => {
+            const rowCtrl = _getRowCtrl(beans, { rowNode });
+            if (rowCtrl) {
+                this.updateRowStyle(rowCtrl, changedRows.get(rowCtrl), this.editSvc.batch);
             }
 
-            // check if any sibling rows have edits on other columns
-            mainNode?.parent?.allLeafChildren?.forEach((child) => {
-                const pending = this.model.getEditSiblingRow({ rowNode: child });
-                if (pending) {
-                    this.model.getEditRow({ rowNode: pending })?.forEach((cellData, column) => {
-                        const newState = forced
-                            ? forcedState
-                            : cellData.newValue !== undefined && _valuesDiffer(cellData);
-                        if (newState) {
-                            changedColumns.add(column.getColId());
-                        }
-                    });
-                }
-            });
+            const ancestors = (includeParents && _getAncestors(beans, rowNode, { includeRelated: true })) || [];
+            const leafSiblings = _getAllLeafSiblings(rowNode);
+            const relatedNodes = _getRelatedRows(rowNode);
+            const nodes = [rowNode, ...leafSiblings, ...ancestors, ...relatedNodes];
 
-            // update parent nodes
-            _getSiblingRows(this.beans, mainNode, false, includeParents).forEach((rowNode) => {
-                const rowCtrl = _getRowCtrl(this.beans, {
-                    rowNode,
+            editRow.forEach((__, column) => {
+                const cellCtrl = _getCellCtrl(beans, { rowNode, column });
+
+                const state = changedCells.get(cellCtrl!);
+                this.updateCellStyle(cellCtrl, state, this.editSvc.batch, suppressFlash);
+
+                _updateClass(beans, nodes, 'ag-cell-batch-edit', column, state);
+
+                relatedNodes.forEach((node: IRowNode) => {
+                    const dependents = _getDependentCells(
+                        beans,
+                        { rowNode: node, column },
+                        { includeRelated: true, includeInitiator: true }
+                    );
+                    dependents?.forEach((cellCtrl: CellCtrl) =>
+                        this.updateCellStyle(cellCtrl, state, this.editSvc.batch, suppressFlash)
+                    );
                 });
-
-                editRow.forEach((_, column) =>
-                    this.updateCellStyle(
-                        _getCellCtrl(this.beans, {
-                            rowCtrl,
-                            column,
-                        }),
-                        changedColumns.has(column.getColId()),
-                        batch,
-                        suppressFlash
-                    )
-                );
-
-                this.updateRowStyle(rowCtrl, rowEdited, batch);
             });
         });
     }
@@ -374,8 +368,9 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         if (cells.length > 0) {
             const cell = cells.at(-1)!;
+            const key = cell.newValue === UNEDITED ? undefined : cell.newValue;
             this.editSvc.startEditing(cell, {
-                event: new KeyboardEvent('keydown', { key: cell.newValue }),
+                event: new KeyboardEvent('keydown', { key }),
                 startedEdit: true,
                 source: 'api',
                 silent: true,

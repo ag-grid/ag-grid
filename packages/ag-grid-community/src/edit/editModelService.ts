@@ -12,8 +12,8 @@ import type {
 } from '../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _getSiblingRows } from './utils/controllers';
 import { UNEDITED } from './utils/editors';
+import { _getSiblingRows } from './utils/nodes';
 
 export class EditModelService extends BeanStub implements NamedBean, IEditModelService {
     beanName = 'editModelSvc' as const;

@@ -1,8 +1,13 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
 import type {
+    AgColumn,
+    BeanCollection,
+    CellClickedEvent,
+    CellCtrl,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
+    Column,
     EditingCellPosition,
     GridApi,
     GridOptions,
@@ -20,9 +25,11 @@ import {
     ModuleRegistry,
     NumberEditorModule,
     PinnedRowModule,
+    RowApiModule,
     RowDragModule,
     RowSelectionModule,
     TextEditorModule,
+    TextFilterModule,
     UndoRedoEditModule,
     ValidationModule,
     createGrid,
@@ -41,7 +48,16 @@ import {
     StatusBarModule,
 } from 'ag-grid-enterprise';
 
+import { CustomCellRenderer } from './custom-renderer';
 import { getData } from './data';
+import {
+    _decorate,
+    _getAllLeafSiblings,
+    _getAncestors,
+    _getCellCtrl,
+    _getDependentCells,
+    _getRelatedRows,
+} from './utils';
 
 ModuleRegistry.registerModules([
     NumberEditorModule,
@@ -65,6 +81,9 @@ ModuleRegistry.registerModules([
     CheckboxEditorModule,
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
     RowSelectionModule,
+    CheckboxEditorModule,
+    RowApiModule,
+    TextFilterModule,
     ValidationModule /* Development Only */,
 ]);
 
@@ -81,6 +100,8 @@ const uniqOrDots = (params: IAggFuncParams) => {
     return `${uniqueNames.size} / ${params.values.length}`;
 };
 
+let node: IRowNode | undefined;
+
 const gridOptions: GridOptions = {
     columnDefs: [
         {
@@ -92,6 +113,10 @@ const gridOptions: GridOptions = {
                     enablePivot: true,
                     aggFunc: uniqOrDots,
                     rowGroup: true,
+                    valueFormatter: (params) => {
+                        node = params.node as IRowNode;
+                        return params.value ?? '';
+                    },
                 },
                 {
                     field: 'lastName',
@@ -101,19 +126,14 @@ const gridOptions: GridOptions = {
                 },
                 {
                     headerName: 'Details',
-                    valueFormatter: (params) => {
-                        const names = [];
-                        params.data?.firstName && names.push(params.data.firstName);
-                        params.data?.lastName && names.push(params.data.lastName);
-                        params.data?.age && names.push(`(${params.data.age})`);
-                        return names.length > 0 ? names.join(' ') : '';
-                    },
+                    colId: 'details',
+                    cellRenderer: CustomCellRenderer,
                     editable: false,
                     minWidth: 145,
                 },
             ],
         },
-        { field: 'gender', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots },
+        { field: 'gender', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots, rowGroup: true },
         { field: 'exists', cellRenderer: 'agCheckboxCellRenderer', cellEditor: 'agCheckboxCellEditor' },
         { field: 'age', aggFunc: 'sum', cellDataType: 'number', enableValue: true },
         { field: 'mood', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots },
@@ -134,6 +154,9 @@ const gridOptions: GridOptions = {
             return true;
         },
     },
+    grandTotalRow: 'bottom',
+    groupTotalRow: 'bottom',
+
     sideBar: 'columns',
     pivotPanelShow: 'always',
     rowData: getData(),
@@ -149,10 +172,10 @@ const gridOptions: GridOptions = {
     rowDragManaged: true,
     enableRowPinning: true,
     groupDisplayType: 'multipleColumns',
-    groupDefaultExpanded: 1,
+    groupDefaultExpanded: 2,
     isRowPinned: (rowNode: IRowNode) => {
         // pinning the first two rows at the top
-        if (rowNode.data?.firstName === 'Jane') {
+        if (rowNode.data?.firstName === 'Jane' && rowNode.data?.lastName === 'Wilson') {
             return 'top';
         }
         if (rowNode.data?.firstName === 'John') {
@@ -185,7 +208,64 @@ const gridOptions: GridOptions = {
     onCellValueChanged: (event) => {
         console.log('Cell value changed');
     },
+    onBodyScroll(event) {
+        decorated && decorateCells();
+    },
+    onModelUpdated() {
+        decorated && decorateCells();
+    },
 };
+
+let decorated = false;
+function decorateCells() {
+    if (!node) {
+        return;
+    }
+    const beans = (node as any)['beans'] as BeanCollection;
+
+    const positions = gridApi!.getEditingCells({ includePending: true });
+
+    gridApi.redrawRows();
+
+    decorated = true;
+
+    positions.forEach((position) => {
+        const rowCtrl = beans.rowRenderer.getRowByPosition(position);
+        if (!rowCtrl) {
+            return null;
+        }
+
+        const cellCtrl: CellCtrl | null = rowCtrl.getCellCtrl(position.column as AgColumn);
+
+        if (!cellCtrl) {
+            return;
+        }
+
+        const { rowNode, column } = cellCtrl!;
+        const ancestors = _getAncestors(rowNode, { includeRelated: true });
+        const leafSiblings = _getAllLeafSiblings(rowNode);
+        const relatedNodes = _getRelatedRows(rowNode);
+
+        _decorate(beans, [rowNode], 'ag-cell-batch-edit', column, undefined);
+        _decorate(beans, ancestors, 'ancestor-nodes', column, rowNode);
+        _decorate(beans, leafSiblings, 'leaf-sibling-nodes', column, rowNode);
+        _decorate(beans, relatedNodes, 'related-nodes', column, rowNode);
+
+        relatedNodes.forEach((relatedRowNode: IRowNode) => {
+            _getDependentCells(beans, relatedRowNode).forEach((cellCtrl: CellCtrl) => {
+                if (cellCtrl.eGui.classList.contains('ag-cell-batch-edit')) {
+                    return;
+                }
+                cellCtrl.comp.toggleCss('dependent-nodes', true);
+            });
+        });
+    });
+}
+
+function clearDecorations() {
+    decorated = false;
+    gridApi.redrawRows();
+}
 
 function getEditingCells() {
     console.log(gridApi!.getEditingCells({ includePending: true }));
@@ -247,13 +327,13 @@ function createChart() {
 function setEditingCells(clearValues: boolean = false) {
     const pendingEdits: EditingCellPosition[] = [
         {
-            rowIndex: 1,
+            rowIndex: 2,
             rowPinned: undefined,
             colKey: 'lastName',
             newValue: 'Smith',
         },
         {
-            rowIndex: 2,
+            rowIndex: 3,
             rowPinned: undefined,
             colKey: 'age',
             state: 'editing',
@@ -271,7 +351,7 @@ function setEditingCells(clearValues: boolean = false) {
             colKey: 'mood',
         },
         {
-            rowIndex: 1,
+            rowIndex: 0,
             rowPinned: 'top',
             colKey: 'firstName',
             newValue: 'John',

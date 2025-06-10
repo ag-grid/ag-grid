@@ -23,11 +23,11 @@ export class CustomCellRenderer implements ICellRendererComp {
     }
 
     refresh(params: ICellRendererParams): boolean {
-        const age = params.data.age ? `(${params.data.age})` : '';
+        const age = params.data?.age ? `(${params.data.age})` : '';
         this.eGui.innerHTML = /* html */ `
             <div  class="athlete-info">
-                <span>${params.data.firstName} </span>
-                <span>${params.data.lastName}</span>
+                <span>${params.data?.firstName ?? ''} </span>
+                <span>${params.data?.lastName ?? ''}</span>
             </div>
             <span>${age}</span>
         `;

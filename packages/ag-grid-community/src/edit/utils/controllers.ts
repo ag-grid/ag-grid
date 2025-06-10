@@ -2,7 +2,6 @@ import type { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getRowById } from '../../entities/positionUtils';
-import type { RowNode } from '../../entities/rowNode';
 import { _isElementInThisGrid } from '../../gridBodyComp/mouseEventUtils';
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode, RowPinnedType } from '../../interfaces/iRowNode';
@@ -117,34 +116,4 @@ export function _getColId(column?: Column | string | null): string | undefined {
         return column;
     }
     return column.getColId();
-}
-
-export function _getSiblingRows(
-    beans: BeanCollection,
-    rowNode: IRowNode,
-    includeSource = false,
-    includeParents = false
-): IRowNode[] {
-    const pinned = (rowNode as RowNode).pinnedSibling;
-    const sibling = rowNode.sibling;
-
-    const result: IRowNode[] = [];
-    includeSource && result.push(rowNode);
-    pinned && result.push(pinned);
-    sibling && result.push(sibling);
-    includeParents && result.push(..._getParentRows(beans, rowNode));
-
-    return result;
-}
-
-export function _getParentRows(beans: BeanCollection, rowNode: IRowNode): IRowNode[] {
-    const result: IRowNode[] = [];
-    let parent = rowNode.parent;
-
-    while (parent) {
-        result.push(parent);
-        parent = parent.parent;
-    }
-
-    return result;
 }
