@@ -8,7 +8,7 @@ on:
       notify:
         description: 'Notify Slack channel'
         type: boolean
-        default: false
+        default: true
         required: true
   # schedule:
   #- cron: '0 0 * * *' # Run daily at midnight UTC
