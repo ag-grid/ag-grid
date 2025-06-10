@@ -104,7 +104,8 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
         const { displayedNode, value } = groupValue;
 
         const groupedCol = displayedNode.rowGroupColumn as AgColumn;
-        const isShowingGroupCell = groupedCol && column?.isRowGroupDisplayed(groupedCol.colId);
+        const isFullWidthGroup = displayedNode.group && !column;
+        const isShowingGroupCell = groupedCol && (isFullWidthGroup || column?.isRowGroupDisplayed(groupedCol.colId));
         // for grouped cells; try to use the underlying col formatter
         if (isShowingGroupCell) {
             // if exporting, check if we should use the value formatter for export
@@ -164,9 +165,9 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
             return node.parent ?? undefined;
         }
 
-        let pointer: IRowNode | null = node;
+        let pointer: RowNode | null = node as RowNode;
         while (pointer && pointer.rowGroupColumn?.getId() != showRowGroup) {
-            const isFirstChild = pointer === pointer.parent?.childrenAfterSort?.[0];
+            const isFirstChild = pointer === pointer.parent?.getFirstChild();
             if (!isShowOpenedGroupValue && !isFirstChild) {
                 // if not first child and not showOpenedGroup then groupHideOpenParents doesn't
                 // display the parent value

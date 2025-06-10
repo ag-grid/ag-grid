@@ -65,15 +65,16 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onNavigationKeyDown(event: KeyboardEvent, key: string): void {
-        if (this.cellCtrl.editing) {
+        const { cellCtrl, beans } = this;
+        if (beans.editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
             return;
         }
 
-        if (event.shiftKey && this.cellCtrl.isRangeSelectionEnabled()) {
+        if (event.shiftKey && cellCtrl.isRangeSelectionEnabled()) {
             this.onShiftRangeSelect(event);
         } else {
-            const currentCellPosition = this.cellCtrl.getFocusedCellPosition();
-            this.beans.navigation?.navigateToNextCell(event, key, currentCellPosition, true);
+            const currentCellPosition = cellCtrl.getFocusedCellPosition();
+            beans.navigation?.navigateToNextCell(event, key, currentCellPosition, true);
         }
 
         // if we don't prevent default, the grid will scroll with the navigation keys
@@ -99,15 +100,14 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     private onBackspaceOrDeleteKeyDown(key: string, event: KeyboardEvent): void {
         const { cellCtrl, beans, rowNode } = this;
-        const { gos, rangeSvc, eventSvc } = beans;
-
-        if (cellCtrl.editing) {
-            return;
-        }
+        const { gos, rangeSvc, eventSvc, editSvc } = beans;
 
         eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
 
-        if (_isDeleteKey(key, gos.get('enableCellEditingOnBackspace'))) {
+        if (
+            _isDeleteKey(key, gos.get('enableCellEditingOnBackspace')) &&
+            !editSvc?.isEditing(cellCtrl, { withOpenEditor: true })
+        ) {
             if (rangeSvc && _isCellSelectionEnabled(gos)) {
                 rangeSvc.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             } else if (cellCtrl.isCellEditable()) {
@@ -116,46 +116,68 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 rowNode.setDataValue(column, emptyValue, 'cellClear');
             }
         } else {
-            beans.editSvc?.startRowOrCellEdit(cellCtrl, key, event);
+            beans.editSvc?.startEditing(cellCtrl, { startedEdit: true, event });
         }
 
         eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellEnd' });
     }
 
-    private onEnterKeyDown(e: KeyboardEvent): void {
+    private onEnterKeyDown(event: KeyboardEvent): void {
         const { cellCtrl, beans } = this;
-        if (cellCtrl.editing || this.rowCtrl.editing) {
-            this.beans.editSvc?.stopRowOrCellEdit(cellCtrl, false, false, e.shiftKey);
+        const { editSvc, navigation } = beans;
+        const editing = editSvc?.isEditing(cellCtrl);
+        if (editing) {
+            if (this.isCtrlEnter(event)) {
+                // bulk edit, apply currently editing value to all selected cells
+                editSvc?.applyBulkEdit(cellCtrl, this.beans?.rangeSvc?.getCellRanges() || []);
+                return;
+            }
+
+            editSvc?.stopEditing(cellCtrl, {
+                event,
+            });
         } else {
             if (beans.gos.get('enterNavigatesVertically')) {
-                const key = e.shiftKey ? KeyCode.UP : KeyCode.DOWN;
-                beans.navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
+                const key = event.shiftKey ? KeyCode.UP : KeyCode.DOWN;
+                navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
             } else {
-                beans.editSvc?.startRowOrCellEdit(cellCtrl, KeyCode.ENTER, e);
-                if (cellCtrl.editing) {
+                const started = editSvc?.startEditing(cellCtrl, {
+                    startedEdit: true,
+                    event,
+                });
+                if (started) {
                     // if we started editing, then we need to prevent default, otherwise the Enter action can get
                     // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
                     // preventing default results in a 'new line' character getting inserted in the text area
                     // when the editing was started
-                    e.preventDefault();
+                    event.preventDefault();
                 }
             }
         }
     }
-
-    private onF2KeyDown(event: KeyboardEvent): void {
-        const { cellCtrl, beans } = this;
-        if (!cellCtrl.editing) {
-            beans.editSvc?.startRowOrCellEdit(cellCtrl, KeyCode.F2, event);
-        }
+    isCtrlEnter(e: KeyboardEvent) {
+        return (e.ctrlKey || e.metaKey) && e.key === KeyCode.ENTER;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    private onF2KeyDown(event: KeyboardEvent): void {
+        const {
+            cellCtrl,
+            beans: { editSvc },
+        } = this;
+
+        editSvc?.startEditing(cellCtrl, { startedEdit: true, event });
+    }
+
     private onEscapeKeyDown(event: KeyboardEvent): void {
-        const { cellCtrl, beans } = this;
-        if (cellCtrl.editing) {
-            beans.editSvc?.stopRowOrCellEdit(cellCtrl, true);
-        }
+        const {
+            cellCtrl,
+            beans: { editSvc },
+        } = this;
+
+        editSvc?.stopEditing(cellCtrl, {
+            event,
+            cancel: true,
+        });
     }
 
     public processCharacter(event: KeyboardEvent): void {
@@ -163,38 +185,38 @@ export class CellKeyboardListenerFeature extends BeanStub {
         // in which cse we should not be listening for these key pressed
         const eventTarget = event.target;
         const eventOnChildComponent = eventTarget !== this.eGui;
+        const {
+            beans: { editSvc },
+            cellCtrl,
+        } = this;
 
-        if (eventOnChildComponent || this.cellCtrl.editing) {
+        if (eventOnChildComponent) {
             return;
         }
 
         const key = event.key;
         if (key === KeyCode.SPACE) {
             this.onSpaceKeyDown(event);
-        } else {
-            if (this.beans.editSvc?.startRowOrCellEdit(this.cellCtrl, key, event)) {
-                // if we don't prevent default, then the event also gets applied to the text field
-                // (at least when doing the default editor), but we need to allow the editor to decide
-                // what it wants to do. we only do this IF editing was started - otherwise it messes
-                // up when the use is not doing editing, but using rendering with text fields in cellRenderer
-                // (as it would block the the user from typing into text fields).
-                event.preventDefault();
-            }
+        } else if (editSvc?.isCellEditable(cellCtrl, 'ui')) {
+            editSvc?.startEditing(cellCtrl, { startedEdit: true, event, source: 'api' });
+            // if we don't prevent default, then the event also gets applied to the text field
+            // (at least when doing the default editor), but we need to allow the editor to decide
+            // what it wants to do. we only do this IF editing was started - otherwise it messes
+            // up when the user is not doing editing, but using rendering with text fields in cellRenderer
+            // (as it would block the the user from typing into text fields).
+            event.preventDefault();
         }
     }
 
     private onSpaceKeyDown(event: KeyboardEvent): void {
-        const { gos } = this.beans;
+        const { gos, editSvc } = this.beans;
+        const { rowNode } = this.cellCtrl;
 
-        if (!this.cellCtrl.editing && _isRowSelection(gos)) {
-            this.beans.selectionSvc?.handleSelectionEvent(event, this.rowNode, 'spaceKey');
+        if (!editSvc?.isEditing(this.cellCtrl) && _isRowSelection(gos)) {
+            this.beans.selectionSvc?.handleSelectionEvent(event, rowNode, 'spaceKey');
         }
 
         // prevent default as space key, by default, moves browser scroll down
         event.preventDefault();
-    }
-
-    public override destroy(): void {
-        super.destroy();
     }
 }

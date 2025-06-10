@@ -18,8 +18,6 @@ import { ModuleRegistry, createGrid } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { CountryCellRenderer } from './country-renderer_typescript';
-import { PersonFilter } from './person-filter_typescript';
-import { WinningsFilter } from './winnings-filter_typescript';
 
 ModuleRegistry.registerModules([AllEnterpriseModule.with(AgChartsEnterpriseModule)]);
 
@@ -254,7 +252,6 @@ const firstColumn: ColDef = {
     width: 200,
     editable: true,
     enableRowGroup: true,
-    filter: PersonFilter,
     icons: {
         sortAscending: '<i class="fa fa-sort-alpha-up"/>',
         sortDescending: '<i class="fa fa-sort-alpha-down"/>',
@@ -380,10 +377,9 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 field: 'bankBalance',
                 width: 150,
                 editable: true,
-                filter: WinningsFilter,
                 cellRenderer: currencyRenderer,
                 cellStyle: currencyCssFunc,
-                filterParams: { cellRenderer: currencyRenderer },
+                filter: 'agNumberColumnFilter',
                 enableValue: true,
                 icons: {
                     sortAscending: '<i class="fa fa-sort-amount-up"/>',

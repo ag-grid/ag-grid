@@ -34,7 +34,7 @@ export const FrameworkTextAnimation: FunctionComponent<Props> = ({ prefix, suffi
             style={{ '--word-index': wordIndex }}
         >
             <span className={styles.animatedWordsInner}>
-                <span className={styles.javascript}>{`${prefix}Javascript${suffix}`}</span>
+                <span className={styles.javascript}>{`${prefix}JavaScript${suffix}`}</span>
                 <span className={styles.vue}>{`${prefix}Vue${suffix}`}</span>
                 <span className={styles.angular}>{`${prefix}Angular${suffix}`}</span>
                 <span className={styles.react}>{`${prefix}React${suffix}`}</span>

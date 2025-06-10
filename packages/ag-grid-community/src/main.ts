@@ -44,11 +44,14 @@ export {
 export type { SelectionColService } from './columns/selectionColService';
 export {
     SizeColumnsToFitGridColumnLimits,
+    SizeColumnsToContentColumnLimits,
     SizeColumnsToContentStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
     SizeColumnsToFitGridStrategy,
     IColumnLimit,
     ISizeColumnsToFitParams,
+    ISizeColumnsToContentParams,
+    ISizeAllColumnsToContentParams,
 } from './interfaces/autoSize';
 export { IRenderStatusService } from './interfaces/renderStatusService';
 
@@ -140,7 +143,6 @@ export { AgColumn, isColumn } from './entities/agColumn';
 export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export {
-    type ITreeNode,
     RowNode,
     ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP,
     ROW_ID_PREFIX_TOP_PINNED as _ROW_ID_PREFIX_TOP_PINNED,
@@ -177,9 +179,7 @@ export {
 export {
     IFilterDef,
     IFilterParams,
-    IFilterOptionDef,
     IDoesFilterPassParams,
-    ProvidedFilterModel,
     IFilter,
     IFilterComp,
     IFilterType,
@@ -187,6 +187,23 @@ export {
     FilterModel,
     BaseFilter,
     BaseFilterParams,
+    FilterDisplayParams,
+    FilterDisplaySource,
+    FilterHandler,
+    DoesFilterPassParams,
+    CreateFilterHandlerFunc,
+    CreateFilterHandlerFuncParams,
+    FilterHandlerParams,
+    FilterHandlerBaseParams,
+    FilterHandlerSource,
+    FilterDisplayState,
+    FilterWrapperParams,
+    FilterAction,
+    FilterDisplay,
+    SharedFilterUi,
+    FilterDisplayComp,
+    ColumnFilter,
+    ColumnFilterState,
 } from './interfaces/iFilter';
 export {
     ISetFilter,
@@ -198,10 +215,19 @@ export {
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
     ISetFilterTreeListTooltipParams,
+    SetFilterHandler,
+    SetFilterUi,
+    SetFilterUiChangedEvent,
 } from './interfaces/iSetFilter';
 export type { FilterManager } from './filter/filterManager';
 export type { FilterValueService } from './filter/filterValueService';
 export { FilterRequestSource } from './filter/iColumnFilter';
+export {
+    _refreshHandlerAndUi,
+    _updateFilterModel,
+    _refreshFilterUi,
+    _getFilterModel,
+} from './filter/columnFilterUtils';
 export {
     IMultiFilter,
     IMultiFilterModel,
@@ -210,9 +236,18 @@ export {
     MultiFilterParams,
     IMultiFilterDef,
 } from './interfaces/iMultiFilter';
+export { IMultiFilterService } from './interfaces/iMultiFilterService';
+export { FilterComp } from './filter/filterComp';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
+export { FilterButtonComp } from './filter/filterButtonComp';
+export { _getFilterParamsForDataType, _getDefaultSimpleFilter } from './filter/filterDataTypeUtils';
 
-export { IProvidedFilter, IProvidedFilterParams, ProvidedFilterParams } from './filter/provided/iProvidedFilter';
+export {
+    IProvidedFilter,
+    IProvidedFilterParams,
+    ProvidedFilterParams,
+    ProvidedFilterModel,
+} from './filter/provided/iProvidedFilter';
 export { ProvidedFilter } from './filter/provided/providedFilter';
 export {
     ISimpleFilter,
@@ -224,6 +259,8 @@ export {
     JoinOperator,
     IFilterPlaceholderFunctionParams,
     FilterPlaceholderFunction,
+    IFilterOptionDef,
+    isCombinedFilterModel,
 } from './filter/provided/iSimpleFilter';
 export { IScalarFilterParams, ScalarFilterParams } from './filter/provided/iScalarFilter';
 
@@ -251,13 +288,17 @@ export {
     IFloatingFilter,
     IFloatingFilterParams,
     IFloatingFilterComp,
-    BaseFloatingFilterChange,
     IFloatingFilterParent,
     IFloatingFilterParentCallback,
     BaseFloatingFilter,
+    FloatingFilterDisplayParams,
+    FloatingFilterDisplay,
+    FloatingFilterDisplayComp,
 } from './filter/floating/floatingFilter';
 export type { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
+
+export { IGroupFilterService } from './interfaces/iGroupFilterService';
 
 export {
     AdvancedFilterModel,
@@ -268,6 +309,8 @@ export {
     BooleanAdvancedFilterModel,
     DateAdvancedFilterModel,
     DateStringAdvancedFilterModel,
+    DateTimeAdvancedFilterModel,
+    DateTimeStringAdvancedFilterModel,
     ObjectAdvancedFilterModel,
     TextAdvancedFilterModelType,
     ScalarAdvancedFilterModelType,
@@ -352,6 +395,8 @@ export {
     ICellEditorParams,
     BaseCellEditor,
     GetCellEditorInstancesParams,
+    GetEditingCellsParams,
+    EditingCellPosition,
 } from './interfaces/iCellEditor';
 export { ILargeTextEditorParams } from './edit/cellEditors/iLargeTextCellEditor';
 export type { LargeTextCellEditor } from './edit/cellEditors/largeTextCellEditor';
@@ -609,15 +654,8 @@ export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export type { CellNavigationService } from './navigation/cellNavigationService';
 export { KeyCode } from './constants/keyCode';
-export {
-    GridParams,
-    Params,
-    GridCoreCreator,
-    createGrid,
-    provideGlobalGridOptions,
-    GlobalGridOptionsMergeStrategy,
-    _getGlobalGridOption,
-} from './grid';
+export { GridParams, Params, GridCoreCreator, createGrid } from './grid';
+export { provideGlobalGridOptions, GlobalGridOptionsMergeStrategy, _getGlobalGridOption } from './globalGridOptions';
 export {
     GridApi,
     DetailGridInfo,
@@ -644,7 +682,8 @@ export {
     _FindApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
-export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes'; // TODO: remove _GET_ALL_EVENTS, _PUBLIC_EVENTS if not required by VUE
+export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes';
+export { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 export type { FocusService } from './focusService';
 export type { GridOptionsService, PropertyValueChangedEvent } from './gridOptionsService';
 export { PropertyChangedEvent } from './gridOptionsService';
@@ -659,6 +698,8 @@ export {
     _isDomLayout,
     _isAnimateRows,
     _getGrandTotalRow,
+    _getGrandTotalRowPinned,
+    _getEnableRowPinning,
     _getGroupTotalRowCallback,
     _isGroupMultiAutoColumn,
     _isColumnsSortingCoupledToGroup,
@@ -695,6 +736,7 @@ export {
     _isUsingNewCellSelectionAPI,
     _isGroupRowsSticky,
     _getGroupingApproach,
+    _getGridOption,
 } from './gridOptionsUtils';
 export type { GroupingApproach } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
@@ -837,12 +879,16 @@ export {
     BooleanDataTypeDefinition,
     DateDataTypeDefinition,
     DateStringDataTypeDefinition,
+    DateTimeDataTypeDefinition,
+    DateTimeStringDataTypeDefinition,
     ObjectDataTypeDefinition,
     ValueFormatterLiteFunc,
     ValueFormatterLiteParams,
     ValueParserLiteFunc,
     ValueParserLiteParams,
     BaseCellDataType,
+    CoreDataTypeDefinition,
+    DataTypeFormatValueFunc,
 } from './entities/dataType';
 export type { DataTypeService } from './columns/dataTypeService';
 export {
@@ -933,12 +979,7 @@ export {
     MouseShowContextMenuParams,
     TouchShowContextMenuParam,
 } from './interfaces/iContextMenu';
-export {
-    IRowNodeStage,
-    IRowGroupingStrategy,
-    RowGroupingRowNode,
-    StageExecuteParams,
-} from './interfaces/iRowNodeStage';
+export type { IRowNodeStage, IRowGroupStage, StageExecuteParams } from './interfaces/iRowNodeStage';
 export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
@@ -1016,7 +1057,7 @@ export {
 export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './utils/array';
 export { _isIOSUserAgent } from './utils/browser';
 export { ChangedPath } from './utils/changedPath';
-export { _serialiseDate, _parseDateTimeFromString } from './utils/date';
+export { _serialiseDate, _getDateParts, _parseDateTimeFromString } from './utils/date';
 export {
     _getAbsoluteHeight,
     _getAbsoluteWidth,
@@ -1117,6 +1158,12 @@ export {
     UndoRedoEditModule,
     CustomEditorModule,
 } from './edit/editModule';
+export type {
+    DropIndicatorPosition,
+    SetRowDropPositionIndicatorParams,
+    RowDropPositionIndicator,
+} from './interfaces/IRowDropHighlightService';
+export type { EditStrategyType } from './interfaces/editStrategyType';
 export {
     RowSelectionModule,
     SharedRowSelectionModule as _SharedRowSelectionModule,

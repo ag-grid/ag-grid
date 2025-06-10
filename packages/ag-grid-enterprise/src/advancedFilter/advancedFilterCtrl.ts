@@ -156,7 +156,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
         const maxWidth = Math.round(_getAbsoluteWidth(popupParent)) - 2; // assume 1 pixel border
         const maxHeight = Math.round(_getAbsoluteHeight(popupParent) * 0.75) - 2;
 
-        const width = Math.min(Math.max(600, minWidth), maxWidth);
+        const width = Math.min(Math.max(700, minWidth), maxWidth);
         const height = Math.min(600, maxHeight);
 
         return { width, height, minWidth };

@@ -1,49 +1,38 @@
-import type { IFloatingFilterComp, IFloatingFilterParams } from 'ag-grid-community';
+import { FloatingFilterDisplayComp, FloatingFilterDisplayParams } from 'ag-grid-community';
 
-import type { NumberFilterComponent } from './numberFilterComponent_typescript';
+export interface CustomParams {
+    color: string;
+}
 
-export class NumberFloatingFilterComponent implements IFloatingFilterComp {
+export class NumberFloatingFilterComponent implements FloatingFilterDisplayComp<any, any, number> {
     eGui!: HTMLDivElement;
-    currentValue: any;
     eFilterInput!: HTMLInputElement;
+    params!: FloatingFilterDisplayParams<any, any, number> & CustomParams;
 
-    // Generic param should be NumberFilterComponent but type needs to be passed through IFloatingFilterComp first
-    init(params: IFloatingFilterParams<NumberFilterComponent>) {
+    init(params: FloatingFilterDisplayParams<any, any, number> & CustomParams) {
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = '&gt; <input style="width: 30px" type="number" min="0" />';
-        this.currentValue = null;
         this.eFilterInput = this.eGui.querySelector('input')!;
+        this.eFilterInput.style.borderColor = params.color;
+        this.refresh(params);
 
-        const onInputBoxChanged = () => {
-            if (this.eFilterInput.value === '') {
-                // Remove the filter
-                params.parentFilterInstance((instance) => {
-                    instance.myMethodForTakingValueFromFloatingFilter(null);
-                });
-                return;
-            }
-
-            this.currentValue = Number(this.eFilterInput.value);
-            params.parentFilterInstance((instance) => {
-                instance.myMethodForTakingValueFromFloatingFilter(this.currentValue);
-            });
-        };
-
-        this.eFilterInput.addEventListener('input', onInputBoxChanged);
+        this.eFilterInput.addEventListener('input', () => this.onInputChanged());
     }
 
-    onParentModelChanged(parentModel: any) {
-        // When the filter is empty we will receive a null message her
-        if (parentModel == null) {
-            this.eFilterInput.value = '';
-            this.currentValue = null;
-        } else {
-            this.eFilterInput.value = parentModel;
-            this.currentValue = parentModel;
+    refresh(params: FloatingFilterDisplayParams<any, any, number> & CustomParams) {
+        this.params = params;
+        // if the update is from the floating filter, we don't need to update the UI
+        if (params.source !== 'ui') {
+            this.eFilterInput.value = String(params.model ?? '');
         }
     }
 
     getGui() {
         return this.eGui;
+    }
+
+    private onInputChanged() {
+        const newValue = this.eFilterInput.value;
+        this.params.onModelChange(newValue === '' ? null : Number(newValue));
     }
 }

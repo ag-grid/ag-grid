@@ -25,7 +25,7 @@ describe('ag-grid tree data without hierarchical and without data path', () => {
         consoleErrorSpy?.mockRestore();
     });
 
-    test('ag-grid tree data without getDataPath and without treeDataChildrenField still works properly and raises warnings', async () => {
+    test('ag-grid tree data without getDataPath and without treeDataChildrenField and without treeDataParentIdField still works properly and raises warnings', async () => {
         const rowData = [{ x: 1 }, { x: 2, children: [{ x: 3 }] }];
 
         const gridOptions: GridOptions = {
@@ -56,8 +56,8 @@ describe('ag-grid tree data without hierarchical and without data path', () => {
         const gridRows = new GridRows(api, 'data', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── 0 LEAF id:0 ag-Grid-AutoColumn:undefined x:1
-            └── 1 LEAF id:1 ag-Grid-AutoColumn:undefined x:2
+            ├── 0 LEAF id:0 ag-Grid-AutoColumn:"0" x:1
+            └── 1 LEAF id:1 ag-Grid-AutoColumn:"1" x:2
         `);
     });
 });

@@ -465,7 +465,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
             const nodeWillBeHiddenByOpenParent =
                 node.level > 0 &&
                 gos.get('groupHideOpenParents') &&
-                node.parent?.childrenAfterSort?.[0] === node &&
+                node.parent?.getFirstChild() === node &&
                 !node.parent?.expanded;
             for (const column of allCols) {
                 if (isRowNumberCol(column) || isColumnSelectionCol(column)) {

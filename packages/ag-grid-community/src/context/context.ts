@@ -24,8 +24,6 @@ import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import type { DragService } from '../dragAndDrop/dragService';
 import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeService';
 import type { RowDragService } from '../dragAndDrop/rowDragService';
-import type { EditService } from '../edit/editService';
-import type { RowEditService } from '../edit/rowEditService';
 import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
 import type { EventService } from '../eventService';
@@ -41,6 +39,8 @@ import type { GridOptionsService } from '../gridOptionsService';
 import type { RowNodeBlockLoader } from '../infiniteRowModel/rowNodeBlockLoader';
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService } from '../interfaces/IRangeService';
+import type { IRowDropHighlightService } from '../interfaces/IRowDropHighlightService';
+import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
@@ -50,18 +50,22 @@ import type { IColsService } from '../interfaces/iColsService';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
+import type { IEditModelService } from '../interfaces/iEditModelService';
+import type { IEditService } from '../interfaces/iEditService';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
 import type { IExpansionService } from '../interfaces/iExpansionService';
 import type { IFindService } from '../interfaces/iFind';
 import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import type { IGroupFilterService } from '../interfaces/iGroupFilterService';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
+import type { IMultiFilterService } from '../interfaces/iMultiFilterService';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
+import type { IRowGroupStage, IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
@@ -128,7 +132,14 @@ export type DynamicBeanName =
     | 'tooltipFeature'
     | 'groupStrategy'
     | 'treeGroupStrategy'
-    | 'rowNumberRowResizer';
+    | EditStrategyType
+    | 'rowNumberRowResizer'
+    | 'agSetColumnFilterHandler'
+    | 'agMultiColumnFilterHandler'
+    | 'agGroupColumnFilterHandler'
+    | 'agNumberColumnFilterHandler'
+    | 'agDateColumnFilterHandler'
+    | 'agTextColumnFilterHandler';
 
 export type UserComponentName =
     | 'agDragAndDropImage'
@@ -182,13 +193,27 @@ export type UserComponentName =
     | 'agFindCellRenderer';
 
 export type ClassImp = new (...args: []) => object;
-export type ComponentMeta =
-    | ClassImp
-    | {
-          classImp: ClassImp;
-          /** Default params for provided components */
-          params?: any;
-      };
+
+interface ComponentMetaWithParams {
+    classImp: ClassImp;
+    /** Default params for provided components */
+    params?: any;
+    /** Update params for provided components before they are created */
+    processParams?: ProcessParamsFunc;
+}
+interface ComponentMetaFunc {
+    getComp: (beans: BeanCollection) => ClassImp | ComponentMetaWithParams;
+}
+
+export function isComponentMetaFunc(
+    componentMeta: ClassImp | ComponentMetaWithParams | ComponentMetaFunc
+): componentMeta is ComponentMetaFunc {
+    return typeof componentMeta === 'object' && !!(componentMeta as ComponentMetaFunc).getComp;
+}
+
+export type ComponentMeta = ClassImp | ComponentMetaWithParams | ComponentMetaFunc;
+
+export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
 
 export interface CoreBeanCollection {
     context: Context;
@@ -271,8 +296,8 @@ export interface CoreBeanCollection {
     filterMenuFactory?: IMenuFactory;
     enterpriseMenuFactory?: IMenuFactory;
     contextMenuSvc?: IContextMenuService;
-    editSvc?: EditService;
-    rowEditSvc?: RowEditService;
+    editSvc?: IEditService;
+    editModelSvc?: IEditModelService;
     alignedGridsSvc?: AlignedGridsService;
     paginationAutoPageSizeSvc?: PaginationAutoPageSizeService;
     pagination?: PaginationService;
@@ -287,7 +312,7 @@ export interface CoreBeanCollection {
     filterStage?: IRowNodeStage;
     sortStage?: IRowNodeStage;
     flattenStage?: IRowNodeStage;
-    groupStage?: IRowNodeStage;
+    groupStage?: IRowGroupStage;
     aggStage?: IRowNodeStage;
     pivotStage?: IRowNodeStage;
     filterAggStage?: IRowNodeStage;
@@ -296,11 +321,11 @@ export interface CoreBeanCollection {
     chartSvc?: IChartService;
     aggColNameSvc?: IAggColumnNameService;
     renderStatus?: IRenderStatusService;
+    rowDropHighlightSvc?: IRowDropHighlightService;
     rowDragSvc?: RowDragService;
     stickyRowSvc?: IStickyRowService;
     filterValueSvc?: FilterValueService;
     csrmNodeSvc?: IClientSideNodeManager;
-    csrmPathTreeNodeSvc?: IClientSideNodeManager;
     csrmChildrenTreeNodeSvc?: IClientSideNodeManager;
     cellFlashSvc?: CellFlashService;
     masterDetailSvc?: IMasterDetailService;
@@ -313,6 +338,8 @@ export interface CoreBeanCollection {
     rowSpanSvc?: RowSpanService;
     spannedRowRenderer?: SpannedRowRenderer;
     findSvc?: IFindService;
+    groupFilter?: IGroupFilterService;
+    multiFilter?: IMultiFilterService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -398,6 +425,7 @@ export type BeanName =
     | 'dragAndDrop'
     | 'dragSvc'
     | 'editSvc'
+    | 'editModelSvc'
     | 'excelCreator'
     | 'enterpriseMenuFactory'
     | 'environment'
@@ -431,6 +459,7 @@ export type BeanName =
     | 'gos'
     | 'gridOptionsWrapper'
     | 'gridSerializer'
+    | 'groupFilter'
     | 'groupStage'
     | 'headerNavigation'
     | 'horizontalResizeSvc'
@@ -441,6 +470,7 @@ export type BeanName =
     | 'menuItemMapper'
     | 'menuSvc'
     | 'menuUtils'
+    | 'multiFilter'
     | 'navigation'
     | 'overlays'
     | 'paginationAutoPageSizeSvc'
@@ -495,8 +525,8 @@ export type BeanName =
     | 'validationLogger'
     | 'validation'
     | 'csrmNodeSvc'
-    | 'csrmPathTreeNodeSvc'
     | 'csrmChildrenTreeNodeSvc'
     | 'rowSpanSvc'
     | 'spannedRowRenderer'
-    | 'showRowGroupColValueSvc';
+    | 'showRowGroupColValueSvc'
+    | 'rowDropHighlightSvc';

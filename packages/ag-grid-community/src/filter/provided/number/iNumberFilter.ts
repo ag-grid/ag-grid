@@ -17,11 +17,11 @@ export interface NumberFilterModel extends ISimpleFilterModel {
      */
     filterTo?: number | null;
 }
+
 /**
  * Parameters provided by the grid to the `init` method of a `NumberFilter`.
  * Do not use in `colDef.filterParams` - see `INumberFilterParams` instead.
  */
-
 export type NumberFilterParams<TData = any> = INumberFilterParams & IFilterParams<TData>;
 /**
  * Parameters used in `colDef.filterParams` to configure a Number Filter (`agNumberColumnFilter`).

@@ -1,224 +1,349 @@
-import { _getCellEditorDetails } from '../components/framework/userCompUtils';
 import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import type { RowNode } from '../entities/rowNode';
-import { _isElementInThisGrid } from '../gridBodyComp/mouseEventUtils';
-import { _addGridCommonParams } from '../gridOptionsUtils';
-import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../interfaces/iCellEditor';
-import type { CellPosition } from '../interfaces/iCellPosition';
+import { _getRowNode } from '../entities/positionUtils';
+import type { AgEventType } from '../eventTypes';
+import type { CellRange, IRangeService } from '../interfaces/IRangeService';
+import type { EditStrategyType } from '../interfaces/editStrategyType';
+import type { ICellEditorParams } from '../interfaces/iCellEditor';
+import type { EditMap, EditRow, IEditModelService } from '../interfaces/iEditModelService';
+import type {
+    EditPosition,
+    EditRowPosition,
+    IEditService,
+    IsEditingParams,
+    StartEditParams,
+    StopEditParams,
+} from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
-import type { CellCtrl, ICellComp } from '../rendering/cell/cellCtrl';
+import type { CellPosition } from '../main-umd-noStyles';
+import { CellCtrl } from '../rendering/cell/cellCtrl';
+import { _createCellEvent } from '../rendering/cell/cellEvent';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
-import { _getTabIndex } from '../utils/browser';
+import type { ValueService } from '../valueService/valueService';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
+import type { BaseEditStrategy } from './strategy/baseEditStrategy';
+import { _addStopEditingWhenGridLosesFocus, _getCellCtrl, _getRowCtrl, _getSiblingRows } from './utils/controllers';
+import {
+    UNEDITED,
+    _destroyEditors,
+    _purgeUnchangedEdits,
+    _refreshEditorOnColDefChanged,
+    _syncFromEditor,
+    _syncFromEditors,
+    _valuesDiffer,
+} from './utils/editors';
+import { _refreshEditCells } from './utils/refresh';
 
-export class EditService extends BeanStub implements NamedBean {
+type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };
+
+export class EditService extends BeanStub implements NamedBean, IEditService {
     beanName = 'editSvc' as const;
+    public batch: boolean;
+
+    private model: IEditModelService;
+    private valueSvc: ValueService;
+    private rangeSvc: IRangeService;
+    private strategy?: BaseEditStrategy;
+    private includeParents: boolean = true;
+
+    postConstruct(): void {
+        this.model = this.beans.editModelSvc!;
+        this.valueSvc = this.beans.valueSvc;
+        this.rangeSvc = this.beans.rangeSvc!;
+
+        this.addManagedPropertyListener('editType', ({ currentValue }: any) => {
+            this.stopEditing(undefined, { cancel: true, source: 'api' });
+
+            // will re-create if different
+            this.createStrategy(currentValue);
+        });
+
+        const handler = _refreshEditCells(this.beans);
+
+        this.addManagedEventListeners({
+            columnPinned: handler,
+            columnVisible: handler,
+            columnRowGroupChanged: handler,
+            rowGroupOpened: handler,
+            pinnedRowsChanged: handler,
+            displayedRowsChanged: handler,
+        });
+    }
+
+    public enableBatchEditing(): void {
+        this.batch = true;
+        this.stopEditing(undefined, { cancel: true, source: 'api' });
+    }
+
+    public disableBatchEditing(): void {
+        this.stopEditing(undefined, { cancel: true, source: 'api' });
+        this.batch = false;
+    }
+
+    private createStrategy(editType?: EditStrategyType): BaseEditStrategy {
+        const { beans, gos, strategy } = this;
+
+        const name: EditStrategyType = editType ?? gos.get('editType') ?? 'singleCell';
+
+        if (strategy) {
+            if ((strategy.beanName as EditStrategyType) === name) {
+                return strategy;
+            }
+            this.destroyStrategy();
+        }
+
+        return (this.strategy = this.createOptionalManagedBean(
+            beans.registry.createDynamicBean<BaseEditStrategy>(name, true)
+        )!);
+    }
+
+    private destroyStrategy(): void {
+        if (!this.strategy) {
+            return;
+        }
+
+        this.strategy.destroy();
+
+        this.strategy = this.destroyBean(this.strategy);
+    }
+
+    shouldStartEditing(
+        position: Required<EditPosition>,
+        event?: KeyboardEvent | MouseEvent | null,
+        cellStartedEdit?: boolean | null,
+        source: 'api' | 'ui' = 'ui'
+    ): boolean | null {
+        return this.strategy?.shouldStart(position, event, cellStartedEdit, source) ?? null;
+    }
+
+    shouldStopEditing(
+        position?: EditPosition,
+        event?: KeyboardEvent | MouseEvent | null | undefined,
+        source: 'api' | 'ui' = 'ui'
+    ): boolean | null {
+        return this.strategy?.shouldStop(position, event, source) ?? null;
+    }
+
+    shouldCancelEditing(
+        position?: EditPosition,
+        event?: KeyboardEvent | MouseEvent | null | undefined,
+        source: 'api' | 'ui' = 'ui'
+    ): boolean | null {
+        return this.strategy?.shouldCancel(position, event, source) ?? null;
+    }
+
+    public isEditing(position?: EditPosition, params?: IsEditingParams): boolean {
+        return this.model.hasEdits(position, params) ?? false;
+    }
+
+    public isRowEditing(position: EditRowPosition, params?: IsEditingParams): boolean {
+        return this.model.hasEdits({ rowNode: position?.rowNode }, params) ?? false;
+    }
 
     /** @return whether to prevent default on event */
-    public startEditing(
-        cellCtrl: CellCtrl,
-        key: string | null = null,
-        cellStartedEdit = false,
-        event: KeyboardEvent | MouseEvent | null = null
-    ): boolean {
-        if (!cellCtrl.isCellEditable() || cellCtrl.editing) {
-            return false;
+    public startEditing(position: Required<EditPosition>, params: StartEditParams): void {
+        const { startedEdit = true, event = null, source = 'ui', silent = false, ignoreEventKey = false } = params;
+
+        this.strategy ??= this.createStrategy();
+
+        if (!this.isCellEditable(position, 'api')) {
+            return;
         }
 
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
+        const cellCtrl = _getCellCtrl(this.beans, position)!;
         if (!cellCtrl.comp) {
-            cellCtrl.onCompAttachedFuncs.push(() => {
-                this.startEditing(cellCtrl, key, cellStartedEdit, event);
-            });
-            return true;
+            cellCtrl.onCompAttachedFuncs.push(() => this.startEditing(position, params));
+            return;
         }
 
-        const editorParams = this.createCellEditorParams(cellCtrl, key, cellStartedEdit);
-        const colDef = cellCtrl.column.getColDef();
-        const compDetails = _getCellEditorDetails(this.beans.userCompFactory, colDef, editorParams);
+        const res = this.shouldStartEditing?.(position, event, startedEdit, source);
 
-        // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
-        const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup;
-        const position: 'over' | 'under' | undefined =
-            compDetails?.popupPositionFromSelector != null
-                ? compDetails.popupPositionFromSelector
-                : colDef.cellEditorPopupPosition;
+        if (res === false && source !== 'api') {
+            this.isEditing(position) && this.stopEditing();
+            return;
+        }
 
-        setEditing(cellCtrl, true, compDetails);
-        cellCtrl.comp.setEditDetails(compDetails, popup, position, this.gos.get('reactiveCustomComponents'));
+        if (!this.batch && this.shouldStopEditing(position, undefined, source)) {
+            this.stopEditing(undefined, { source });
+        }
 
-        this.eventSvc.dispatchEvent(cellCtrl.createEvent(event, 'cellEditingStarted'));
+        this.strategy!.start(position, event, source, silent, ignoreEventKey);
 
-        return !(compDetails?.params as DefaultProvidedCellEditorParams)?.suppressPreventDefault;
+        this.updateCells();
+
+        return;
     }
 
-    /**
-     * Ends the Cell Editing
-     * @param cancel `True` if the edit process is being canceled.
-     * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
-     */
-    public stopEditing(cellCtrl: CellCtrl, cancel: boolean = false): boolean {
-        cellCtrl.onEditorAttachedFuncs = [];
-        if (!cellCtrl.editing) {
+    public updateCells(
+        edits?: EditMap,
+        forcedState?: boolean,
+        suppressFlash?: boolean,
+        includeParents = this.includeParents
+    ): void {
+        this.strategy?.updateCells(edits, forcedState, suppressFlash, includeParents);
+    }
+
+    public stopEditing(position?: EditPosition, params?: StopEditParams): boolean {
+        const { event, cancel, source = 'ui', suppressNavigateAfterEdit } = params || {};
+
+        if (!this.isEditing() || !this.strategy) {
             return false;
         }
 
-        const { comp: cellComp, column, rowNode } = cellCtrl;
-        const { newValue, newValueExists } = takeValueFromCellEditor(cancel, cellComp);
-        const oldValue = this.beans.valueSvc.getValueForDisplay(column, rowNode).value;
-        let valueChanged = false;
-
-        if (newValueExists) {
-            valueChanged = saveNewValue(cellCtrl, oldValue, newValue, rowNode, column);
+        const cellCtrl = _getCellCtrl(this.beans, position);
+        if (cellCtrl) {
+            cellCtrl.onEditorAttachedFuncs = [];
         }
 
-        setEditing(cellCtrl, false, undefined);
-        cellComp.setEditDetails(); // passing nothing stops editing
+        let edits = this.model.getEditMap(true);
 
-        cellCtrl.updateAndFormatValue(false);
-        cellCtrl.refreshCell({ forceRefresh: true, suppressFlash: true });
+        let res = false;
+        let forcedState: boolean | undefined = undefined;
 
-        this.eventSvc.dispatchEvent({
-            ...cellCtrl.createEvent(null, 'cellEditingStopped'),
-            oldValue,
-            newValue,
-            valueChanged,
-        });
+        const willStop = !cancel && !!this.shouldStopEditing(position, event, source);
+        const willCancel = cancel && !!this.shouldCancelEditing(position, event, source);
 
-        return valueChanged;
-    }
+        if (willStop || willCancel) {
+            _syncFromEditors(this.beans);
+            const freshEdits = this.model.getEditMap();
 
-    public handleColDefChanged(cellCtrl: CellCtrl): void {
-        const cellEditor = cellCtrl.comp?.getCellEditor();
-        if (cellEditor?.refresh) {
-            const { eventKey, cellStartedEdit } = cellCtrl.editCompDetails!.params;
-            const editorParams = this.createCellEditorParams(cellCtrl, eventKey, cellStartedEdit);
-            const colDef = cellCtrl.column.getColDef();
-            const compDetails = _getCellEditorDetails(this.beans.userCompFactory, colDef, editorParams);
-            cellEditor.refresh(compDetails!.params);
-        }
-    }
+            this.strategy?.stop();
 
-    public setFocusOutOnEditor(cellCtrl: CellCtrl): void {
-        if (!cellCtrl.editing) {
-            return;
-        }
-        const cellEditor = cellCtrl.comp.getCellEditor();
+            this.processEdits(freshEdits, cancel);
 
-        if (cellEditor && cellEditor.focusOut) {
-            cellEditor.focusOut();
-        }
-    }
+            edits = freshEdits;
 
-    public setFocusInOnEditor(cellCtrl: CellCtrl): void {
-        if (!cellCtrl.editing) {
-            return;
-        }
-        const cellComp = cellCtrl.comp;
-        const cellEditor = cellComp.getCellEditor();
+            res ||= willStop;
+            forcedState = false;
+        } else if (event instanceof KeyboardEvent && this.batch && this.strategy?.midBatchInputsAllowed(position)) {
+            const key = event.key;
+            const isEnter = key === KeyCode.ENTER;
+            const isEscape = key === KeyCode.ESCAPE;
 
-        if (cellEditor?.focusIn) {
-            // if the editor is present, then we just focus it
-            cellEditor.focusIn();
+            if (isEnter || isEscape) {
+                if (isEnter) {
+                    _syncFromEditors(this.beans);
+                } else if (position) {
+                    this.strategy?.clearEdits(position);
+                }
+
+                _destroyEditors(this.beans, this.model.getEditPositions());
+
+                event.preventDefault();
+
+                edits = this.model.getEditMap();
+            }
         } else {
-            // if the editor is not present, it means async cell editor (e.g. React)
-            // and we are trying to set focus before the cell editor is present, so we
-            // focus the cell instead
-            cellCtrl.focusCell(true);
-            cellCtrl.onEditorAttachedFuncs.push(() => cellComp.getCellEditor()?.focusIn?.());
+            _syncFromEditors(this.beans);
+            edits = this.model.getEditMap();
         }
+
+        if (!suppressNavigateAfterEdit && cellCtrl) {
+            this.navigateAfterEdit(event instanceof KeyboardEvent && event.shiftKey, cellCtrl.cellPosition);
+        }
+
+        this.updateCells(edits, forcedState, true, true);
+
+        _purgeUnchangedEdits(this.beans);
+
+        this.refreshAllRows(edits, this.includeParents);
+
+        this.beans.eventSvc.dispatchEvent({
+            type: 'cellEditValuesChanged',
+        });
+
+        return res;
     }
 
-    public createPopupEditorWrapper(params: ICellEditorParams): PopupEditorWrapper {
-        return new PopupEditorWrapper(params);
+    private refreshAllRows(edits: EditMap, includeParents: boolean = false): void {
+        edits.forEach((_, node) =>
+            _getSiblingRows(this.beans, node, true, includeParents).forEach((sibling) => this.refreshAllCells(sibling))
+        );
     }
 
-    public stopAllEditing(cancel: boolean = false): void {
-        this.beans.rowRenderer.getAllRowCtrls().forEach((rowCtrl) => this.stopRowEditing(rowCtrl, cancel));
-    }
-
-    public stopRowEditing(rowCtrl: RowCtrl, cancel: boolean = false): void {
-        // if we are already stopping row edit, there is
-        // no need to start this process again.
-        if (rowCtrl.stoppingRowEdit) {
+    private refreshAllCells(rowNode?: IRowNode | null): void {
+        if (!rowNode) {
             return;
         }
+        const rowCtrl = _getRowCtrl(this.beans, { rowNode });
 
-        const cellControls = rowCtrl.getAllCellCtrls();
-        const isRowEdit = rowCtrl.editing;
-
-        rowCtrl.stoppingRowEdit = true;
-
-        let fireRowEditEvent = false;
-        for (const ctrl of cellControls) {
-            const valueChanged = ctrl.stopEditing(cancel);
-            if (isRowEdit && !cancel && !fireRowEditEvent && valueChanged) {
-                fireRowEditEvent = true;
-            }
-        }
-
-        if (fireRowEditEvent) {
-            this.eventSvc.dispatchEvent(rowCtrl.createRowEvent('rowValueChanged'));
-        }
-
-        if (isRowEdit) {
-            this.beans.rowEditSvc?.setEditing(rowCtrl, false);
-        }
-
-        rowCtrl.stoppingRowEdit = false;
+        rowCtrl
+            ?.getAllCellCtrls()
+            .forEach((cellCtrl) => cellCtrl.refreshCell({ suppressFlash: true, forceRefresh: true }));
     }
 
-    public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
-        if (!this.gos.get('stopEditingWhenCellsLoseFocus')) {
-            return;
+    private navigateAfterEdit(shiftKey: boolean, cellPosition: CellPosition): void {
+        const navAfterEdit = this.gos.get('enterNavigatesVerticallyAfterEdit');
+
+        if (navAfterEdit) {
+            const key = shiftKey ? KeyCode.UP : KeyCode.DOWN;
+            this.beans.navigation?.navigateToNextCell(null, key, cellPosition, false);
         }
-
-        const focusOutListener = (event: FocusEvent): void => {
-            // this is the element the focus is moving to
-            const elementWithFocus = event.relatedTarget as HTMLElement;
-
-            if (_getTabIndex(elementWithFocus) === null) {
-                this.stopAllEditing();
-                return;
-            }
-
-            let clickInsideGrid =
-                // see if click came from inside the viewports
-                viewports.some((viewport) => viewport.contains(elementWithFocus)) &&
-                // and also that it's not from a detail grid
-                _isElementInThisGrid(this.gos, elementWithFocus);
-
-            if (!clickInsideGrid) {
-                const popupSvc = this.beans.popupSvc;
-
-                clickInsideGrid =
-                    !!popupSvc &&
-                    (popupSvc.getActivePopups().some((popup) => popup.contains(elementWithFocus)) ||
-                        popupSvc.isElementWithinCustomPopup(elementWithFocus));
-            }
-
-            if (!clickInsideGrid) {
-                this.stopAllEditing();
-            }
-        };
-
-        viewports.forEach((viewport) => this.addManagedElementListeners(viewport, { focusout: focusOutListener }));
     }
 
-    public setInlineEditingCss(rowCtrl: RowCtrl): void {
-        const editing = rowCtrl.editing || rowCtrl.getAllCellCtrls().some((cellCtrl) => cellCtrl.editing);
-        rowCtrl.forEachGui(undefined, (gui) => {
-            gui.rowComp.toggleCss('ag-row-inline-editing', editing);
-            gui.rowComp.toggleCss('ag-row-not-inline-editing', !editing);
+    private processEdits(edits: EditMap, cancel: boolean = false): void {
+        const rowNodes = Array.from(edits.keys());
+
+        for (const rowNode of rowNodes) {
+            const editRow = edits.get(rowNode)!;
+            for (const column of editRow.keys()) {
+                const { newValue, oldValue } = editRow.get(column)!;
+                const position: Required<EditPosition> = { rowNode, column };
+
+                const cellCtrl = _getCellCtrl(this.beans, position);
+
+                const valueChanged = _valuesDiffer({ newValue, oldValue });
+
+                if (!cancel && valueChanged) {
+                    // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
+                    // getting triggered, which results in all cells getting refreshed. we do not want this refresh
+                    // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
+                    // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
+                    if (cellCtrl) {
+                        cellCtrl.suppressRefreshCell = true;
+                    }
+                    rowNode.setDataValue(column, newValue, 'commit');
+                    if (cellCtrl) {
+                        cellCtrl.suppressRefreshCell = false;
+                    }
+                }
+
+                this.dispatchCellEvent({ rowNode, column }, undefined, 'cellEditingStopped', {
+                    ..._createCellEvent(this.beans, null, 'cellEditingStopped', position, newValue),
+                    oldValue,
+                    newValue,
+                    value: newValue,
+                    valueChanged,
+                });
+            }
+        }
+
+        for (const rowNode of rowNodes) {
+            this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
+        }
+    }
+
+    public setEditMap(edits: EditMap): void {
+        this.strategy ??= this.createStrategy();
+        this.strategy?.setEditMap(edits);
+        this.beans.eventSvc.dispatchEvent({
+            type: 'cellEditValuesChanged',
         });
     }
 
-    public isCellEditable(column: AgColumn, rowNode: IRowNode): boolean {
+    public stopAllEditing(cancel: boolean = false, source: 'api' | 'ui' = 'ui'): void {
+        if (this.isEditing()) {
+            this.stopEditing(undefined, { cancel, source });
+        }
+    }
+
+    public isCellEditable(position: Required<EditPosition>, source: 'api' | 'ui' = 'ui'): boolean {
+        const { rowNode } = position;
         if (rowNode.group) {
             // This is a group - it could be a tree group or a grouping group...
             if (this.gos.get('treeData')) {
@@ -235,139 +360,203 @@ export class EditService extends BeanStub implements NamedBean {
             }
         }
 
-        return column.isColumnFunc(rowNode, column.colDef.editable);
+        this.strategy ??= this.createStrategy();
+        return this.strategy?.isCellEditable(position, source) ?? false;
     }
 
-    // called by rowRenderer when user navigates via tab key
-    /** @return whether to prevent default on event */
-    public startRowOrCellEdit(
-        cellCtrl: CellCtrl,
-        key?: string | null,
-        event: KeyboardEvent | MouseEvent | null = null
-    ): boolean {
-        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
-        // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
-        if (!cellCtrl.comp) {
-            cellCtrl.onCompAttachedFuncs.push(() => {
-                this.startRowOrCellEdit(cellCtrl, key, event);
+    moveToNextCell(
+        prev: CellCtrl | RowCtrl,
+        backwards: boolean,
+        event?: KeyboardEvent,
+        source: 'api' | 'ui' = 'ui'
+    ): boolean | null {
+        let res: boolean | null | undefined;
+
+        if (prev instanceof CellCtrl && this.isEditing()) {
+            // if we are editing, we know it's not a Full Width Row (RowComp)
+            res = this.strategy?.moveToNextEditingCell(prev, backwards, event, source);
+        }
+
+        if (res === null) {
+            return res;
+        }
+
+        // if a cell wasn't found, it's possible that focus was moved to the header
+        res = res || !!this.beans.focusSvc.focusedHeader;
+
+        if (res === false) {
+            // not a header and not the table
+            this.stopEditing();
+        }
+
+        return res;
+    }
+
+    public getCellDataValue({ rowNode, column }: Required<EditPosition>): any {
+        if (!rowNode || !column) {
+            return undefined;
+        }
+
+        const newValue = this.model.getEdit({ rowNode, column })?.newValue;
+        return newValue === UNEDITED ? this.valueSvc.getValue(column as AgColumn, rowNode, true, 'api') : newValue;
+    }
+
+    public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
+        // TODO: find a better place for this
+        _addStopEditingWhenGridLosesFocus(this, this.beans, viewports);
+    }
+
+    public createPopupEditorWrapper(params: ICellEditorParams): PopupEditorWrapper {
+        // TODO: find a better place for this
+        return new PopupEditorWrapper(params);
+    }
+
+    setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined {
+        if ((!this.isEditing() || eventSource === 'commit') && eventSource !== 'paste') {
+            return;
+        }
+
+        this.strategy ??= this.createStrategy();
+
+        _syncFromEditor(this.beans, position, newValue, eventSource);
+
+        this.updateCells();
+
+        return true;
+    }
+
+    public handleColDefChanged(cellCtrl: CellCtrl): void {
+        _refreshEditorOnColDefChanged(this.beans, cellCtrl);
+    }
+
+    public override destroy(): void {
+        this.model.clear();
+        this.destroyStrategy();
+        super.destroy();
+    }
+
+    public prepDetailsDuringBatch(
+        position: Required<EditPosition>,
+        params: BatchPrepDetails
+    ): BatchPrepDetails | undefined {
+        if (!this.batch) {
+            return;
+        }
+        let editRow = this.model.getEditRow(position);
+
+        if (!editRow) {
+            const rowNode = this.model.getEditSiblingRow(position);
+            if (rowNode) {
+                editRow = this.model.getEditRow({ rowNode });
+            }
+        }
+
+        if (!editRow) {
+            return;
+        }
+
+        const { rowNode, column } = position;
+        const { compDetails } = params;
+
+        if (compDetails) {
+            const { params } = compDetails;
+            params.data = Object.assign({}, params.data);
+            editRow?.forEach(({ newValue }, col) => {
+                if (newValue !== undefined && newValue !== UNEDITED) {
+                    // if(newValue === UNEDITED) {
+                    //     newValue = undefined;
+                    // }
+                    params.data[col.getColId()] = newValue;
+                }
             });
-            return true;
-        }
-
-        if (this.gos.get('editType') === 'fullRow') {
-            return this.beans.rowEditSvc?.startEditing(cellCtrl.rowCtrl, key, cellCtrl) ?? false;
-        } else {
-            return this.startEditing(cellCtrl, key, true, event);
+            return { compDetails };
+        } else if (params.valueToDisplay !== undefined && editRow?.has(column)) {
+            return { valueToDisplay: this.valueSvc.getValue(column as AgColumn, rowNode) };
         }
     }
 
-    // pass in 'true' to cancel the editing.
-    public stopRowOrCellEdit(
-        cellCtrl: CellCtrl,
-        cancel: boolean = false,
-        suppressNavigateAfterEdit: boolean = false,
-        shiftKey: boolean = false
+    public cleanupEditors() {
+        this.strategy?.cleanupEditors();
+    }
+
+    public dispatchCellEvent<T extends AgEventType>(
+        position: Required<EditPosition>,
+        event?: Event | null,
+        type?: T,
+        payload?: any
     ): void {
-        if (this.gos.get('editType') === 'fullRow') {
-            this.stopRowEditing(cellCtrl.rowCtrl, cancel);
-        } else {
-            this.stopEditing(cellCtrl, cancel);
-        }
-
-        if (!suppressNavigateAfterEdit) {
-            this.navigateAfterEdit(shiftKey, cellCtrl.cellPosition);
-        }
+        this.strategy?.dispatchCellEvent(position, event, type, payload);
     }
 
-    private createCellEditorParams(
-        cellCtrl: CellCtrl,
-        key: string | null,
-        cellStartedEdit: boolean
-    ): ICellEditorParams {
-        const {
-            column,
-            rowNode,
-            cellPosition: { rowIndex },
-        } = cellCtrl;
-        const { valueSvc, gos } = this.beans;
-        return _addGridCommonParams(gos, {
-            value: valueSvc.getValueForDisplay(column, rowNode).value,
-            eventKey: key,
-            column,
-            colDef: column.getColDef(),
-            rowIndex,
-            node: rowNode,
-            data: rowNode.data,
-            cellStartedEdit: cellStartedEdit,
-            onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
-            stopEditing: this.stopRowOrCellEdit.bind(this, cellCtrl, false),
-            eGridCell: cellCtrl.eGui,
-            parseValue: (newValue: any) => valueSvc.parseValue(column, rowNode, newValue, cellCtrl.value),
-            formatValue: cellCtrl.formatValue.bind(cellCtrl),
+    public dispatchRowEvent(
+        position: Required<EditRowPosition>,
+        type: 'rowEditingStarted' | 'rowEditingStopped'
+    ): void {
+        this.strategy?.dispatchRowEvent(position, type);
+    }
+
+    public applyBulkEdit({ rowNode, column }: Required<EditPosition>, ranges: CellRange[]): void {
+        if (!ranges || ranges.length === 0) {
+            return;
+        }
+
+        const { rangeSvc, valueSvc } = this;
+
+        _syncFromEditors(this.beans);
+
+        const edits: EditMap = this.model.getEditMap(true);
+        const editValue = edits.get(rowNode)?.get(column!)?.newValue;
+
+        ranges.forEach((range: CellRange) => {
+            rangeSvc?.forEachRowInRange(range, (position) => {
+                const rowNode = _getRowNode(this.beans, position);
+                if (rowNode === undefined) {
+                    return;
+                }
+
+                const editRow: EditRow = edits.get(rowNode) ?? new Map();
+                for (const column of range.columns) {
+                    if (!column) {
+                        continue;
+                    }
+
+                    if (this.isCellEditable({ rowNode, column }, 'api')) {
+                        const oldValue = valueSvc.getValue(column as AgColumn, rowNode, true, 'api');
+                        let newValue = valueSvc.parseValue(column as AgColumn, rowNode ?? null, editValue, oldValue);
+
+                        if (Number.isNaN(newValue)) {
+                            // non-number was bulk edited into a number column
+                            newValue = null;
+                        }
+
+                        editRow.set(column, {
+                            newValue,
+                            oldValue,
+                            state: 'changed',
+                        });
+                    }
+                }
+                if (editRow.size > 0) {
+                    edits.set(rowNode, editRow);
+                }
+            });
+
+            this.setEditMap(edits);
+
+            // update editing styles
+            this.updateCells(edits, undefined, true, true);
+
+            if (this.batch) {
+                this.cleanupEditors();
+
+                _purgeUnchangedEdits(this.beans);
+
+                // force refresh of all row cells as custom renderers may depend on multiple cell values
+                this.refreshAllRows(edits, this.includeParents);
+                return;
+            }
+
+            this.stopEditing(undefined, { source: 'api' });
         });
     }
-
-    private navigateAfterEdit(shiftKey: boolean, cellPosition: CellPosition): void {
-        const enterNavigatesVerticallyAfterEdit = this.gos.get('enterNavigatesVerticallyAfterEdit');
-
-        if (enterNavigatesVerticallyAfterEdit) {
-            const key = shiftKey ? KeyCode.UP : KeyCode.DOWN;
-            this.beans.navigation?.navigateToNextCell(null, key, cellPosition, false);
-        }
-    }
-}
-
-function setEditing(cellCtrl: CellCtrl, editing: boolean, compDetails: UserCompDetails | undefined): void {
-    cellCtrl.editCompDetails = compDetails;
-    if (cellCtrl.editing === editing) {
-        return;
-    }
-
-    cellCtrl.editing = editing;
-}
-
-function takeValueFromCellEditor(cancel: boolean, cellComp: ICellComp): { newValue?: any; newValueExists: boolean } {
-    const noValueResult = { newValueExists: false };
-
-    if (cancel) {
-        return noValueResult;
-    }
-
-    const cellEditor = cellComp.getCellEditor();
-
-    if (!cellEditor) {
-        return noValueResult;
-    }
-
-    const userWantsToCancel = cellEditor.isCancelAfterEnd && cellEditor.isCancelAfterEnd();
-
-    if (userWantsToCancel) {
-        return noValueResult;
-    }
-
-    const newValue = cellEditor.getValue();
-
-    return {
-        newValue: newValue,
-        newValueExists: true,
-    };
-}
-
-/**
- * @returns `True` if the value changes, otherwise `False`.
- */
-function saveNewValue(cellCtrl: CellCtrl, oldValue: any, newValue: any, rowNode: RowNode, column: AgColumn): boolean {
-    if (newValue === oldValue) {
-        return false;
-    }
-
-    // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
-    // getting triggered, which results in all cells getting refreshed. we do not want this refresh
-    // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
-    // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
-    cellCtrl.suppressRefreshCell = true;
-    const valueChanged = rowNode.setDataValue(column, newValue, 'edit');
-    cellCtrl.suppressRefreshCell = false;
-
-    return valueChanged;
 }

@@ -24,13 +24,27 @@ import type {
     UpdateChartParams,
 } from '../interfaces/IChartService';
 import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
+import type {
+    RowDropPositionIndicator,
+    SetRowDropPositionIndicatorParams,
+} from '../interfaces/IRowDropHighlightService';
 import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
-import type { ISizeColumnsToFitParams } from '../interfaces/autoSize';
+import type {
+    ISizeAllColumnsToContentParams,
+    ISizeColumnsToContentParams,
+    ISizeColumnsToFitParams,
+} from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState, GridStateKey } from '../interfaces/gridState';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
-import type { GetCellEditorInstancesParams, ICellEditor } from '../interfaces/iCellEditor';
+import type {
+    EditingCellPosition,
+    GetCellEditorInstancesParams,
+    GetEditingCellsParams,
+    ICellEditor,
+    SetEditingCellsParams,
+} from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { FlashCellsParams, RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { ClientSideRowModelStep } from '../interfaces/iClientSideRowModel';
@@ -39,7 +53,7 @@ import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from 
 import type { IColumnToolPanel } from '../interfaces/iColumnToolPanel';
 import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
-import type { FilterModel, IFilter } from '../interfaces/iFilter';
+import type { FilterDisplay, FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { AgModuleName } from '../interfaces/iModule';
@@ -574,6 +588,14 @@ export interface _ColumnAutosizeApi {
      * @agModule `ColumnAutoSizeModule`
      */
     autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
+    /**
+     * Auto-sizes columns based on their contents. If inferring cell data types with custom column types
+     * and row data is initially empty or yet to be set,
+     * the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     * @agModule `ColumnAutoSizeModule`
+     */
+    autoSizeColumns(params: ISizeColumnsToContentParams): void;
 
     /**
      * Calls `autoSizeColumns` on all displayed columns. If inferring cell data types with custom column types
@@ -583,6 +605,14 @@ export interface _ColumnAutosizeApi {
      * @agModule `ColumnAutoSizeModule`
      */
     autoSizeAllColumns(skipHeader?: boolean): void;
+    /**
+     * Auto-sizes columns based on their contents. If inferring cell data types with custom column types
+     * and row data is initially empty or yet to be set,
+     * the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     * @agModule `ColumnAutoSizeModule`
+     */
+    autoSizeAllColumns(params: ISizeAllColumnsToContentParams): void;
 }
 
 export interface _ColumnResizeApi {
@@ -778,7 +808,7 @@ export interface _ColumnGroupGridApi {
     getAllDisplayedColumnGroups(): (Column | ColumnGroup)[] | null;
 }
 
-export interface _DragGridApi {
+export interface _DragGridApi<TData> {
     /**
      * Adds a drop zone outside of the grid where rows can be dropped.
      * @agModule `RowDragModule`
@@ -795,6 +825,19 @@ export interface _DragGridApi {
      * @agModule `RowDragModule`
      */
     getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams | undefined;
+
+    /**
+     * Gets the currently highlighted drop target row, previously set by `setRowDropHighlight`.
+     * @agModule `RowDragModule`
+     */
+    getRowDropPositionIndicator(): RowDropPositionIndicator<TData>;
+
+    /**
+     * Sets the current highlighted row drop target.
+     * This is useful for implementing custom unmanaged row drag and drop logic, to highlight the target row.
+     * @agModule `RowDragModule`
+     */
+    setRowDropPositionIndicator(highlight: SetRowDropPositionIndicatorParams<TData> | null | undefined): void;
 }
 
 export interface _EditGridApi<TData> {
@@ -808,7 +851,10 @@ export interface _EditGridApi<TData> {
      * If the grid is editing, returns back details of the editing cell(s).
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
-    getEditingCells(): CellPosition[];
+    getEditingCells(params?: GetEditingCellsParams): EditingCellPosition[];
+
+    /** Set currently pending cell updates when in batch editing mode. Specify `update=true` to update current state, otherwise pending state will be replaced. */
+    setEditingCells(cellPositions: EditingCellPosition[], params?: SetEditingCellsParams): void;
 
     /**
      * If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes).
@@ -821,6 +867,22 @@ export interface _EditGridApi<TData> {
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     startEditingCell(params: StartEditingCellParams): void;
+
+    /** Returns `true` if the grid is editing a cell */
+    isEditing(rowId?: string, colId?: string): boolean;
+
+    /**
+     * Start batch editing.
+     */
+    enableBatchEditing(): void;
+
+    /**
+     * Stop batch editing.
+     */
+    disableBatchEditing(): void;
+
+    /** Returns `true` if batch editing is enabled */
+    batchEditingEnabled(): boolean;
 }
 
 export interface _UndoRedoGridApi {
@@ -877,7 +939,18 @@ export interface _ColumnFilterGridApi {
      * `key` can be a column ID or a `Column` object.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
-    getColumnFilterInstance<TFilter extends IFilter>(key: string | Column): Promise<TFilter | null | undefined>;
+    getColumnFilterInstance<TFilter extends IFilter | FilterDisplay>(
+        key: string | Column
+    ): Promise<TFilter | null | undefined>;
+
+    /**
+     * Returns the filter handler instance for a column.
+     * Used when `enableFilterHandlers = true`, or when using a grid-provided filter.
+     * If using a `SimpleColumnFilter`, this will be an object containing the provided `doesFilterPass` callback.
+     * `key` can be a column ID or a `Column` object.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
+     */
+    getColumnFilterHandler<TFilterHandler>(key: string | Column): TFilterHandler | undefined;
 
     /**
      * Destroys a filter. Useful to force a particular filter to be created from scratch again.
@@ -1752,14 +1825,13 @@ export interface GridApi<TData = any>
         _PinnedRowGridApi,
         _RenderGridApi<TData>,
         _HighlightChangesGridApi<TData>,
-        _DragGridApi,
+        _DragGridApi<TData>,
         _ColumnAutosizeApi,
         _ColumnResizeApi,
         _ColumnMoveApi,
         _ColumnHoverApi,
         _ColumnGridApi<TData>,
         _ColumnGroupGridApi,
-        _DragGridApi,
         _EditGridApi<TData>,
         _UndoRedoGridApi,
         _FilterGridApi,

@@ -67,7 +67,9 @@ export const _PUBLIC_EVENTS = [
     'cellMouseOut',
     'filterChanged',
     'filterModified',
+    'filterUiChanged',
     'filterOpened',
+    'floatingFilterUiChanged',
     'advancedFilterBuilderVisibleChanged',
     'sortChanged',
     'virtualRowRemoved',
@@ -101,6 +103,7 @@ export const _PUBLIC_EVENTS = [
     'findChanged',
     'rowResizeStarted',
     'rowResizeEnded',
+    'columnsReset',
 ] as const;
 
 // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
@@ -155,6 +158,7 @@ export const _INTERNAL_EVENTS = [
     'overlayExclusiveChanged',
     'beforeRefreshModel',
     'rowNodeDataChanged',
+    'cellEditValuesChanged',
 ] as const;
 
 // We define as a callback to help with tree shaking (esbuild)

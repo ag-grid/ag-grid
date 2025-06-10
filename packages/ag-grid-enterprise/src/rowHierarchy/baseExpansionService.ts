@@ -35,11 +35,6 @@ export abstract class BaseExpansionService extends BeanStub {
         const event = { ..._createGlobalRowEvent(rowNode, this.gos, 'rowGroupOpened'), expanded, event: e || null };
 
         this.dispatchExpandedEvent(event, forceSync);
-
-        // when using footers we need to refresh the group row, as the aggregation
-        // values jump between group and footer, because the footer can be callback
-        // we refresh regardless as the output of the callback could be a moving target
-        this.beans.rowRenderer.refreshCells({ rowNodes: [rowNode] });
     }
 
     public isExpandable(rowNode: RowNode): boolean {

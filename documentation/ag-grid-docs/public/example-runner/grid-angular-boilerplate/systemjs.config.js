@@ -1,6 +1,6 @@
 (function (global) {
     process = { env: { NODE_ENV: 'development' } };
-    var ANGULAR_VERSION = '19.1.7';
+    var ANGULAR_VERSION = '20.0.0';
     window.ENABLE_PROD_MODE = true;
 
     System.config({
@@ -29,6 +29,7 @@
                 'npm:@angular/platform-browser-dynamic@' + ANGULAR_VERSION + '/fesm2022/platform-browser-dynamic.mjs',
 
             '@angular/core': 'npm:@angular/core@' + ANGULAR_VERSION + '/fesm2022/core.mjs',
+            '@angular/core/primitives/di': 'npm:@angular/core@' + ANGULAR_VERSION + '/fesm2022/primitives/di.mjs',
             '@angular/core/primitives/signals':
                 'npm:@angular/core@' + ANGULAR_VERSION + '/fesm2022/primitives/signals.mjs',
             '@angular/core/primitives/event-dispatch':

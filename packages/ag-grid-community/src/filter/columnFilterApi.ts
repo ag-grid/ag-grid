@@ -1,7 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
-import type { FilterModel, IFilter } from '../interfaces/iFilter';
+import type { FilterHandler, FilterModel, IFilter } from '../interfaces/iFilter';
 import { _error } from '../validation/logging';
 
 export function isColumnFilterPresent(beans: BeanCollection): boolean {
@@ -19,7 +19,7 @@ export function getColumnFilterInstance<TFilter extends IFilter>(
 export function destroyFilter(beans: BeanCollection, key: string | Column) {
     const column = beans.colModel.getColDefCol(key);
     if (column) {
-        return beans.filterManager?.destroyFilter(column, 'api');
+        return beans.colFilter?.destroyFilter(column, 'api');
     }
 }
 
@@ -31,8 +31,9 @@ export function getFilterModel(beans: BeanCollection): FilterModel {
     return beans.filterManager?.getFilterModel() ?? {};
 }
 
-export function getColumnFilterModel<TModel>(beans: BeanCollection, column: string | Column): TModel | null {
-    return beans.filterManager?.getColumnFilterModel(column as string | AgColumn) ?? null;
+export function getColumnFilterModel<TModel>(beans: BeanCollection, key: string | Column): TModel | null {
+    const column = beans.colModel.getColDefCol(key) as AgColumn | null;
+    return column ? beans.colFilter?.getModelForColumn(column) ?? null : null;
 }
 
 export function setColumnFilterModel<TModel>(
@@ -55,4 +56,14 @@ export function showColumnFilter(beans: BeanCollection, colKey: string | Column)
         containerType: 'columnFilter',
         positionBy: 'auto',
     });
+}
+
+export function getColumnFilterHandler(beans: BeanCollection, colKey: string | Column): FilterHandler | undefined {
+    const column = beans.colModel.getCol(colKey);
+    if (!column) {
+        // Column not found, can't show filter
+        _error(12, { colKey });
+        return undefined;
+    }
+    return beans.colFilter?.getHandler(column);
 }

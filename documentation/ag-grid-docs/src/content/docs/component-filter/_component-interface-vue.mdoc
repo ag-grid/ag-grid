@@ -1,33 +1,8 @@
 {% if isFramework("vue") %}
-When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
-row values available to you via `this.params`.
-
 The interface for a custom filter component is as follows:
-{% /if %}
 
-{% if isFramework("vue") %}
 ```ts
-interface IFilter {
-
-    // Return true if the filter is active. If active then 1) the grid will show the filter icon in the column
-    // header and 2) the filter will be included in the filtering of the data.
-    isFilterActive(): boolean;
-
-    // The grid will ask each active filter, in turn, whether each row in the grid passes. If any
-    // filter fails, then the row will be excluded from the final set. A params object is supplied
-    // containing attributes of node (the rowNode the grid creates that wraps the data) and data (the data
-    // object that you provided to the grid for that row). Note that this is only called for the
-    // Client-Side Row Model, and can just return `true` if being used exclusively with other row models.
-    doesFilterPass(params: IDoesFilterPassParams): boolean;
-
-    // Gets the filter state. If filter is not active, then should return null/undefined.
-    // The grid calls getModel() on all active filters when gridApi.getFilterModel() is called.
-    getModel(): any;
-
-    // Restores the filter state. Called by the grid after gridApi.setFilterModel(model) is called.
-    // The grid will pass undefined/null to clear the filter.
-    setModel(model: any): void;
-
+interface FilterDisplay {
     // Optional methods
 
     // Gets called when new rows are inserted into the grid. If the filter needs to change its
@@ -52,7 +27,7 @@ interface IFilter {
     // 
     // When this method is not provided, the default behaviour is to destroy and recreate the
     // filter instance everytime colDef.filterParams changes.
-    refresh?(newParams: IFilterParams): boolean;
+    refresh?(newParams: FilterDisplayParams): boolean;
 
     // Gets called when the column is destroyed. If your custom filter needs to do
     // any resource cleaning up, do it here. A filter is NOT destroyed when it is
@@ -60,14 +35,6 @@ interface IFilter {
     // that filter again. The filter is destroyed when the column it is associated with is
     // destroyed, either when new columns are set into the grid, or the grid itself is destroyed.
     destroy?(): void;
-
-    // If floating filters are turned on for the grid, but you have no floating filter
-    // configured for this column, then the grid will check for this method. If this
-    // method exists, then the grid will provide a read-only floating filter for you
-    // and display the results of this method. For example, if your filter is a simple
-    // filter with one string input value, you could just return the simple string
-    // value here.
-    getModelAsString?(model: any): string;
 
     // Gets called every time the popup is shown, after the GUI returned in
     // getGui is attached to the DOM. If the filter popup is closed and re-opened, this method is

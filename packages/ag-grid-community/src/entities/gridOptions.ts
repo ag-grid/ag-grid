@@ -3,6 +3,7 @@
  ************************************************************************************************/
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
+import type { AgPublicEventType } from '../eventTypes';
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushedEvent,
@@ -42,6 +43,7 @@ import type {
     ColumnRowGroupChangedEvent,
     ColumnValueChangedEvent,
     ColumnVisibleEvent,
+    ColumnsResetEvent,
     ComponentStateChangedEvent,
     ContextMenuVisibleChangedEvent,
     CutEndEvent,
@@ -56,8 +58,10 @@ import type {
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
+    FilterUiChangedEvent,
     FindChangedEvent,
     FirstDataRenderedEvent,
+    FloatingFilterUiChangedEvent,
     FullWidthCellKeyDownEvent,
     GridColumnsChangedEvent,
     GridPreDestroyedEvent,
@@ -111,6 +115,7 @@ import type {
     SizeColumnsToFitGridStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
 } from '../interfaces/autoSize';
+import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type {
     CsvExportParams,
     ProcessCellForExportParams,
@@ -163,6 +168,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
+import type { CreateFilterHandlerFunc } from '../interfaces/iFilter';
 import type { FindOptions } from '../interfaces/iFind';
 import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
@@ -362,7 +368,7 @@ export interface GridOptions<TData = any> {
     /**
      * An object map of cell data types to their definitions.
      * Cell data types can either override/update the pre-defined data types
-     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),
+     * (`'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` or `'object'`),
      * or can be custom data types.
      */
     dataTypeDefinitions?: {
@@ -504,7 +510,7 @@ export interface GridOptions<TData = any> {
      * Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
-    editType?: 'fullRow';
+    editType?: EditStrategyType;
     /**
      * Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
      * @default false
@@ -700,6 +706,18 @@ export interface GridOptions<TData = any> {
      * @agModule TextFilterModule / NumberFilterModule / DateFilterModule / MultiFilterModule / CustomFilterModule
      */
     suppressSetFilterByDefault?: boolean;
+    /**
+     * Enable filter handlers for custom filter components.
+     * Requires all custom filters need to be implemented using handlers.
+     * @initial
+     */
+    enableFilterHandlers?: boolean;
+    /**
+     * A map of filter handler key to filter handler function.
+     * Allows for filter handler keys to be used in `colDef.filter.handler`.
+     * @initial
+     */
+    filterHandlers?: { [key: string]: CreateFilterHandlerFunc };
 
     // *** Integrated Charts *** //
     /**
@@ -1284,6 +1302,8 @@ export interface GridOptions<TData = any> {
     /**
      * When provided, an extra grand total row will be inserted into the grid at the specified position.
      * This row displays the aggregate totals of all rows in the grid.
+     *
+     * Note that the `'pinnedTop'` and `'pinnedBottom'` values are deprecated in v34. Use `grandTotalRowPinned` instead.
      * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom';
@@ -1436,6 +1456,14 @@ export interface GridOptions<TData = any> {
      * @agModule `PinnedRowModule`
      */
     isRowPinned?: IsRowPinned<TData>;
+    /**
+     * Pin the grand total row to the top of bottom of the grid. Requires `grandTotalRow` to be set.
+     * When multiple rows are pinned, the grid uses `grandTotalRow` to determine whether the grand total row should be
+     * displayed first or last in the list of pinned rows.
+     * @agModule `PinnedRowModule`
+     */
+    grandTotalRowPinned?: 'top' | 'bottom';
+
     // *** Row Model *** //
     /**
      * Sets the row model type.
@@ -2263,6 +2291,10 @@ export interface GridOptions<TData = any> {
      * or use one of the more specific column events.
      */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>): void;
+    /**
+     * Columns have been reset to their default state as reflected by the colDefs.
+     */
+    onColumnsReset?(event: ColumnsResetEvent<TData>): void;
 
     // *** Column Header *** //
 
@@ -2393,6 +2425,14 @@ export interface GridOptions<TData = any> {
      * Filter was modified but not applied. Used when filters have 'Apply' buttons.
      */
     onFilterModified?(event: FilterModifiedEvent<TData>): void;
+    /**
+     * Filter UI was modified (when using `enableFilterHandlers = true`).
+     */
+    onFilterUiChanged?(event: FilterUiChangedEvent<TData>): void;
+    /**
+     * Floating filter UI modified (when using `enableFilterHandlers = true`.
+     */
+    onFloatingFilterUiChanged?(event: FloatingFilterUiChangedEvent<TData>): void;
     /**
      * Advanced Filter Builder visibility has changed (opened or closed).
      */
@@ -3018,3 +3058,5 @@ export type RowSelectionMode = RowSelectionOptions['mode'];
 export type CheckboxLocation = 'selectionColumn' | 'autoGroupColumn';
 
 export type MasterSelectionMode = NonNullable<CommonRowSelectionOptions['masterSelects']>;
+
+export type AgPublicEventHandlerType = `on${Capitalize<AgPublicEventType>}` & keyof GridOptions;

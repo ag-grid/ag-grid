@@ -1,0 +1,140 @@
+name: Benchmark
+
+on:
+  issue_comment:
+    types: [ created ]
+  workflow_dispatch:
+    inputs:
+      notify:
+        description: 'Notify Slack channel'
+        type: boolean
+        default: false
+        required: true
+  # schedule:
+  #- cron: '0 0 * * *' # Run daily at midnight UTC
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/benchmarks') || github.event_name == 'schedule'
+    env:
+      JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - name: Notify start
+        id: notify-start
+        uses: actions/github-script@v7
+        continue-on-error: true
+        if: github.event_name == 'issue_comment'
+        with:
+          result-encoding: string
+          script: |
+            const { data: comment } = await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `⏱️ ${process.env.JOB_URL}`
+            })
+            return comment.id;
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.get-branch.outputs.branch }}
+          fetch-depth: 0
+
+      - name: Notify Progress
+        uses: actions/github-script@v7
+        continue-on-error: true
+        if: github.event_name == 'issue_comment'
+        with:
+          script: |
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.notify-start.outputs.result }},
+              body: `⏱️ ${process.env.JOB_URL} (running setup...)`
+            })
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: rw
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Notify Progress
+        uses: actions/github-script@v7
+        continue-on-error: true
+        if: github.event_name == 'issue_comment'
+        with:
+          script: |
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.notify-start.outputs.result }},
+              body: `⏱️ ${process.env.JOB_URL} (running benchmarks...)`
+            })
+
+      - name: playwright test
+        id: playwright-test
+        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+        run: |
+          npx playwright test -c ./testing/performance/playwright.config.ts ./testing/performance/e2e
+
+      - name: Notify Success
+        uses: actions/github-script@v7
+        continue-on-error: true
+        if: success() && github.event_name == 'issue_comment'
+        env:
+          CONTENT: ${{ steps.playwright-test.outputs.report }}
+        with:
+          script: |
+            const body = `✅ ${process.env.JOB_URL}
+            \`\`\`
+            ${process.env.CONTENT}
+            \`\`\``;
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.notify-start.outputs.result }},
+              body,
+            })
+
+      - name: Notify Failure
+        uses: actions/github-script@v7
+        continue-on-error: true
+        if: failure() && github.event_name == 'issue_comment'
+        with:
+          script: |
+            const body = `❌ ${process.env.JOB_URL}`
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.notify-start.outputs.result }},
+              body,
+            })
+
+      - name: Slack Notification
+        if: always() && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.notify == true))
+        continue-on-error: true
+        env:
+          SLACK_CHANNEL: '#ci-gate'
+          SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
+          SLACK_USERNAME: 'ag-grid CI'
+          SLACK_WEBHOOK: ${{ secrets.GRID_CI_QUALITY }}
+          SLACK_COLOR: ${{ steps.playwright-test.outputs.status != 'failure' && 'success' || 'failure' }}
+        run: |
+          node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs > ./benchmark-slack.json
+          curl -X POST -H 'Content-type: application/json' ${{ SLACK_WEBHOOK }} --data @./benchmark-slack.json
+
+      - name: Upload Benchmark Report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30

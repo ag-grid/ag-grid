@@ -178,7 +178,7 @@
     },
     "blt": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build", "lint", "format-check"],
+      "dependsOn": ["^build", "generate-examples", "lint", "format", "test"],
       "options": {
         "commands": ["nx run-many -t test --parallel 1"]
       }
@@ -237,6 +237,7 @@
     "external/ag-website-shared",
     "external/ag-shared",
     "testing/behavioural",
+    "testing/accessibility",
     "ag-grid-generate-example-files"
   ],
   "tags": []

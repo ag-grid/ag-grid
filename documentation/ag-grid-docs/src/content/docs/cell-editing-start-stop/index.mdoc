@@ -139,6 +139,16 @@ The example below shows the editing with `stopEditingWhenCellsLoseFocus = true`.
 
 {% gridExampleRunner title="Stop Editing When Cells Loses Focus" name="stop-edit-when-grid-loses-focus"  exampleHeight=510 /%}
 
+## Batch Editing
+
+The grid has the following API methods for editing:
+
+{% apiDocumentation source="grid-api/api.json" section="editing" names=["getPendingUpdates", "setPendingUpdates"] /%}
+
+Batch editing allows you to control when the grid stops editing. This is useful when you want to edit multiple cells before committing the changes. The example below shows how to use batch editing.
+
+{% gridExampleRunner title="Batch Editing" name="batch-editing"  exampleHeight=510 /%}
+
 {% note %}
 Cell Editing can also be performed via Cell Editor Components; please see [Cell Editor Components](./cell-editors/) for more information.
 {% /note %}

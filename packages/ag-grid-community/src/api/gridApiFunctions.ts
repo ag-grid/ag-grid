@@ -157,10 +157,12 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     ...mod<_HighlightChangesGridApi<any>>('HighlightChanges', {
         flashCells: 0,
     }),
-    ...mod<_DragGridApi>('RowDrag', {
+    ...mod<_DragGridApi<any>>('RowDrag', {
         addRowDropZone: 0,
         removeRowDropZone: 0,
         getRowDropZoneParams: 0,
+        getRowDropPositionIndicator: 0,
+        setRowDropPositionIndicator: 0,
     }),
     ...mod<_ColumnGridApi<any>>('ColumnApi', {
         getColumnDefs: 0,
@@ -218,6 +220,11 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getEditingCells: 0,
         stopEditing: 0,
         startEditingCell: 0,
+        isEditing: 0,
+        setEditingCells: 0,
+        enableBatchEditing: 0,
+        disableBatchEditing: 0,
+        batchEditingEnabled: 0,
     }),
     ...mod<_UndoRedoGridApi>('UndoRedoEdit', {
         undoCellEditing: 0,
@@ -238,6 +245,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getColumnFilterModel: 0,
         setColumnFilterModel: 0,
         showColumnFilter: 0,
+        getColumnFilterHandler: 0,
     }),
     ...mod<_QuickFilterGridApi>('QuickFilter', {
         isQuickFilterPresent: 0,

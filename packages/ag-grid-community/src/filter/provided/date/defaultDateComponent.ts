@@ -86,9 +86,23 @@ export class DefaultDateComponent extends Component implements IDateComp {
         const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
         this.usingSafariDatePicker = shouldUseBrowserDatePicker && _isBrowserSafari();
 
-        inputElement.type = shouldUseBrowserDatePicker ? 'date' : 'text';
+        const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons, includeTime, colDef } =
+            params.filterParams || {};
 
-        const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons } = params.filterParams || {};
+        const dataTypeSvc = this.beans.dataTypeSvc;
+        const shouldUseDateTimeLocal =
+            includeTime ?? dataTypeSvc?.getDateIncludesTimeFlag?.(colDef.cellDataType) ?? false;
+
+        if (shouldUseBrowserDatePicker) {
+            if (shouldUseDateTimeLocal) {
+                inputElement.type = 'datetime-local';
+                inputElement.step = '1'; // enforce seconds part to show up by default
+            } else {
+                inputElement.type = 'date';
+            }
+        } else {
+            inputElement.type = 'text';
+        }
 
         if (minValidDate && minValidYear) {
             _warn(85);
@@ -149,7 +163,9 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public setDate(date: Date): void {
-        this.eDateInput.setValue(_serialiseDate(date, false));
+        const colType = this.params.filterParams.colDef.cellDataType;
+        const includeTime = this.beans.dataTypeSvc?.getDateIncludesTimeFlag(colType) ?? false;
+        this.eDateInput.setValue(_serialiseDate(date, includeTime));
     }
 
     public setInputPlaceholder(placeholder: string): void {

@@ -1,7 +1,7 @@
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, UserComponentName } from '../context/context';
+import type { BeanCollection, DynamicBeanName, UserComponentName } from '../context/context';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
@@ -14,8 +14,9 @@ import type { IconName, IconValue } from '../utils/icon';
 import { validateApiFunction } from './apiFunctionValidator';
 import type { ErrorId, GetErrorParams } from './errorMessages/errorText';
 import { getError } from './errorMessages/errorText';
-import { _error, _warn, provideValidationServiceLogger } from './logging';
+import { _errMsg, _error, _warn, provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
+import { DYNAMIC_BEAN_MODULES } from './rules/dynamicBeanValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconValidations';
 import { USER_COMP_MODULES } from './rules/userCompValidations';
@@ -69,6 +70,18 @@ export class ValidationService extends BeanStub implements NamedBean {
             });
         }
     }
+
+    public missingDynamicBean(beanName: DynamicBeanName): string | undefined {
+        const moduleName = DYNAMIC_BEAN_MODULES[beanName];
+        return moduleName
+            ? _errMsg(200, {
+                  ...this.gos.getModuleErrorParams(),
+                  moduleName,
+                  reasonOrId: beanName,
+              })
+            : undefined;
+    }
+
     public checkRowEvents(eventType: RowNodeEventType): void {
         if (DEPRECATED_ROW_NODE_EVENTS.has(eventType)) {
             _warn(10, { eventType });
@@ -218,27 +231,27 @@ export class ValidationService extends BeanStub implements NamedBean {
             .join('\n           '); // make multiple messages easier to read
     }
 
-    private checkProperties<T extends object>(
-        object: T,
+    private checkProperties<K extends string, O extends Record<K, any>>(
+        object: O,
         exceptions: string[], // deprecated properties generally
         validProperties: string[], // properties to recommend
         containerName: string,
         docsUrl?: string
-    ): void {
+    ) {
         // Vue adds these properties to all objects, so we ignore them when checking for invalid properties
         const VUE_FRAMEWORK_PROPS = ['__ob__', '__v_skip', '__metadata__'];
 
-        const invalidProperties: { [p: string]: string[] } = _fuzzyCheckStrings(
-            Object.getOwnPropertyNames(object),
+        const invalidProperties = _fuzzyCheckStrings(
+            Object.getOwnPropertyNames(object) as K[],
             [...VUE_FRAMEWORK_PROPS, ...exceptions, ...validProperties],
             validProperties
         );
 
-        const invalidPropertiesKeys = Object.keys(invalidProperties);
+        const invalidPropertiesKeys = Object.keys(invalidProperties) as K[];
 
         for (const key of invalidPropertiesKeys) {
             const value = invalidProperties[key];
-            let message = `invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}.`;
+            let message = `invalid ${containerName} property '${key as string}' did you mean any of these: ${value.slice(0, 8).join(', ')}.`;
             if (validProperties.includes('context')) {
                 message += `\nIf you are trying to annotate ${containerName} with application data, use the '${containerName}.context' property instead.`;
             }
@@ -256,13 +269,13 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 }
 
-export function _fuzzyCheckStrings(
-    inputValues: string[],
+export function _fuzzyCheckStrings<V extends string>(
+    inputValues: V[],
     validValues: string[],
     allSuggestions: string[]
-): { [p: string]: string[] } {
-    const fuzzyMatches: { [p: string]: string[] } = {};
-    const invalidInputs: string[] = inputValues.filter(
+): { [p in V]: string[] } {
+    const fuzzyMatches = {} as { [p in V]: string[] };
+    const invalidInputs = inputValues.filter(
         (inputValue) => !validValues.some((validValue) => validValue === inputValue)
     );
 

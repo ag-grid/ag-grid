@@ -444,6 +444,9 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
     needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test ]
     if: cancelled() != true
     steps:
@@ -491,7 +494,7 @@ jobs:
 
       - name: Check last job status
         id: lastJobStatus
-        if: always() && github.ref == 'refs/heads/latest'
+        if: always()
         run: |
           WORKFLOW_STATUS="success"
           if [[ "${{ needs.build_lint.result }}" == "failure" ]] ; then

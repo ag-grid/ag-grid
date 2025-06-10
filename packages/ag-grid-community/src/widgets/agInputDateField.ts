@@ -10,6 +10,7 @@ export class AgInputDateField extends AgInputTextField {
     private min?: string;
     private max?: string;
     private step?: number;
+    private includeTime?: boolean;
 
     constructor(config?: AgInputTextFieldParams) {
         super(config, 'ag-date-field', 'date');
@@ -41,7 +42,7 @@ export class AgInputDateField extends AgInputTextField {
     }
 
     public setMin(minDate: Date | string | undefined): this {
-        const min = minDate instanceof Date ? _serialiseDate(minDate ?? null, false) ?? undefined : minDate;
+        const min = minDate instanceof Date ? _serialiseDate(minDate ?? null, this.includeTime) ?? undefined : minDate;
         if (this.min === min) {
             return this;
         }
@@ -54,7 +55,7 @@ export class AgInputDateField extends AgInputTextField {
     }
 
     public setMax(maxDate: Date | string | undefined): this {
-        const max = maxDate instanceof Date ? _serialiseDate(maxDate ?? null, false) ?? undefined : maxDate;
+        const max = maxDate instanceof Date ? _serialiseDate(maxDate ?? null, this.includeTime) ?? undefined : maxDate;
         if (this.max === max) {
             return this;
         }
@@ -78,6 +79,19 @@ export class AgInputDateField extends AgInputTextField {
         return this;
     }
 
+    public setIncludeTime(includeTime?: boolean): this {
+        if (this.includeTime === includeTime) {
+            return this;
+        }
+
+        this.includeTime = includeTime;
+
+        super.setInputType(includeTime ? 'datetime-local' : 'date');
+        if (includeTime) this.setStep(1);
+
+        return this;
+    }
+
     public getDate(): Date | undefined {
         if (!this.eInput.validity.valid) {
             return undefined;
@@ -86,7 +100,7 @@ export class AgInputDateField extends AgInputTextField {
     }
 
     public setDate(date: Date | undefined, silent?: boolean): void {
-        this.setValue(_serialiseDate(date ?? null, false), silent);
+        this.setValue(_serialiseDate(date ?? null, this.includeTime), silent);
     }
 }
 

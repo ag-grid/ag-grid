@@ -188,6 +188,27 @@ class OperandParser implements Parser {
     private modelValue: number | string;
     private validationMessage: string | null = null;
 
+    private filterValidationSetters: Record<BaseCellDataType, (modelValue: string | number | null) => any> = {
+        number: () => {
+            if (this.quotes || isNaN(this.modelValue as number)) {
+                this.valid = false;
+                this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationNotANumber');
+            }
+        },
+        date: (modelValue) => {
+            if (modelValue == null) {
+                this.valid = false;
+                this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationInvalidDate');
+            }
+        },
+        dateString: (...args) => this.filterValidationSetters.date(...args),
+        dateTime: (...args) => this.filterValidationSetters.date(...args),
+        dateTimeString: (...args) => this.filterValidationSetters.date(...args),
+        boolean(): void {},
+        object(): void {},
+        text(): void {},
+    };
+
     constructor(
         private params: FilterExpressionParserParams,
         public readonly startPosition: number,
@@ -259,21 +280,7 @@ class OperandParser implements Parser {
             if (modelValue != null) {
                 this.modelValue = modelValue;
             }
-            switch (this.baseCellDataType) {
-                case 'number':
-                    if (this.quotes || isNaN(this.modelValue as number)) {
-                        this.valid = false;
-                        this.validationMessage = advFilterExpSvc.translate('advancedFilterValidationNotANumber');
-                    }
-                    break;
-                case 'date':
-                case 'dateString':
-                    if (modelValue == null) {
-                        this.valid = false;
-                        this.validationMessage = advFilterExpSvc.translate('advancedFilterValidationInvalidDate');
-                    }
-                    break;
-            }
+            this.filterValidationSetters[this.baseCellDataType](modelValue);
         }
     }
 }
@@ -288,6 +295,17 @@ export class ColFilterExpressionParser {
     private columnParser: ColumnParser | undefined;
     private operatorParser: OperatorParser | undefined;
     private operandParser: OperandParser | undefined;
+
+    private operandValueGetters: Record<BaseCellDataType, (operand: any) => any> = {
+        number: Number,
+        date: (operand) => this.params.valueSvc.parseValue(this.columnParser!.column!, null, operand, undefined),
+        dateString: (...args) => this.operandValueGetters.date(...args),
+        dateTime: (...args) => this.operandValueGetters.date(...args),
+        dateTimeString: (...args) => this.operandValueGetters.date(...args),
+        boolean: (operand) => operand,
+        object: (operand) => operand,
+        text: (operand) => operand,
+    };
 
     constructor(
         private params: FilterExpressionParserParams,
@@ -507,20 +525,10 @@ export class ColFilterExpressionParser {
     }
 
     private getOperandValue(): any {
-        let operand: any = this.operandParser!.getRawValue();
         const { baseCellDataType, column } = this.columnParser!;
-        switch (baseCellDataType) {
-            case 'number':
-                operand = Number(operand);
-                break;
-            case 'date':
-            case 'dateString':
-                operand = this.params.valueSvc.parseValue(column!, null, operand, undefined);
-                break;
-        }
-        if (baseCellDataType === 'dateString') {
-            const { dataTypeSvc } = this.params;
-            return dataTypeSvc ? dataTypeSvc.getDateParserFunction(column)(operand as string) : operand;
+        const operand = this.operandValueGetters[baseCellDataType](this.operandParser!.getRawValue());
+        if (baseCellDataType === 'dateString' || baseCellDataType === 'dateTimeString') {
+            return this.params.dataTypeSvc?.getDateParserFunction(column)(operand as string) ?? operand;
         }
         return operand;
     }

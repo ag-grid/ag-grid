@@ -4,10 +4,12 @@ import type {
     AgEvent,
     ColDef,
     ElementParams,
+    FilterDisplayParams,
     ICellRendererComp,
     ISetFilterCellRendererParams,
+    ISetFilterParams,
     ITooltipCtrl,
-    SetFilterParams,
+    SetFilterModel,
     TooltipFeature,
     ValueFormatterParams,
 } from 'ag-grid-community';
@@ -51,7 +53,7 @@ export interface SetFilterListItemExpandedChangedEvent<
 export interface SetFilterListItemParams<V> {
     focusWrapper: HTMLElement;
     value: V | null | (() => string);
-    params: SetFilterParams<any, V>;
+    params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>;
     translate: (key: keyof ISetFilterLocaleText) => string;
     valueFormatter?: (params: ValueFormatterParams) => string;
     item: SetFilterModelTreeItem | string | null;
@@ -100,7 +102,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
 
     private readonly focusWrapper: HTMLElement;
     private readonly value: V | null | (() => string);
-    private readonly params: SetFilterParams<any, V>;
+    private readonly params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>;
     private readonly translate: (key: keyof ISetFilterLocaleText) => string;
     private readonly valueFormatter?: (params: ValueFormatterParams) => string;
     private readonly isTree?: boolean;
@@ -337,11 +339,10 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         }
         if (cellRendererComponent) {
             // need to get correct params for refresh from comp details
-            const compDetails = _getCellRendererDetails<SetFilterParams<any, V>, ISetFilterCellRendererParams>(
-                beans.userCompFactory,
-                params,
-                cellRendererParams
-            );
+            const compDetails = _getCellRendererDetails<
+                ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>,
+                ISetFilterCellRendererParams
+            >(beans.userCompFactory, params, cellRendererParams);
             const success = cellRendererComponent.refresh?.(compDetails?.params ?? cellRendererParams);
             if (!success) {
                 const oldComponent = cellRendererComponent;
@@ -406,11 +407,10 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     }
 
     private renderCell(): void {
-        const compDetails = _getCellRendererDetails<SetFilterParams<any, V>, ISetFilterCellRendererParams>(
-            this.beans.userCompFactory,
-            this.params,
-            this.cellRendererParams
-        );
+        const compDetails = _getCellRendererDetails<
+            ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>,
+            ISetFilterCellRendererParams
+        >(this.beans.userCompFactory, this.params, this.cellRendererParams);
         const cellRendererPromise = compDetails?.newAgStackInstance();
 
         if (cellRendererPromise == null) {

@@ -1,4 +1,4 @@
-import type { IRowNode } from 'ag-grid-community';
+import type { BaseCellDataType, IRowNode } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry } from './autocomplete/autocompleteParams';
@@ -33,7 +33,11 @@ export interface DataTypeFilterExpressionOperators<ConvertedTValue, TValue = Con
     findOperator(displayValue: string): string | null | undefined;
 }
 
-export interface FilterExpressionOperators {
+export abstract class FilterExpressionOperators
+    implements Record<BaseCellDataType, DataTypeFilterExpressionOperators<any>>
+{
+    dateTime: DataTypeFilterExpressionOperators<Date>;
+    dateTimeString: DataTypeFilterExpressionOperators<Date, string>;
     text: DataTypeFilterExpressionOperators<string>;
     number: DataTypeFilterExpressionOperators<number>;
     boolean: DataTypeFilterExpressionOperators<boolean>;

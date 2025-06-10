@@ -7,8 +7,6 @@ import {
     TextEditorModule,
     ValidationModule,
     createGrid,
-    iconOverrides,
-    themeQuartz,
 } from 'ag-grid-community';
 import {
     ColumnMenuModule,

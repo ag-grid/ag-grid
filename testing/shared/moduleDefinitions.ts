@@ -1,4 +1,4 @@
-import {
+import type {
     CommunityModuleName,
     EnterpriseModuleName,
     ModuleName,
@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,
-    AllEnterpriseModule: 1378,
+    AllEnterpriseModule: 1380,
     CellSelectionModule: 53,
     ClipboardModule: 44.6,
     ColumnMenuModule: 147,
@@ -78,7 +78,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SideBarModule: 32,
     SparklinesModule: 20,
     StatusBarModule: 27,
-    TreeDataModule: 94.81,
+    TreeDataModule: 88.17,
     ViewportRowModelModule: 26,
 };
 

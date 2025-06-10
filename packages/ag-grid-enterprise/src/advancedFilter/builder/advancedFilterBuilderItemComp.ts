@@ -1,5 +1,4 @@
 import type {
-    BaseCellDataType,
     BeanCollection,
     DragAndDropService,
     DragSource,
@@ -423,26 +422,12 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
                     value: key,
                     valueFormatter,
                     cssClass,
-                    type: this.getInputType(baseCellDataType),
+                    type: baseCellDataType,
                     ariaLabel,
                 })
             );
             this.addManagedListeners(comp, { fieldValueChanged: ({ value }: FieldValueEvent) => onUpdated(value) });
             return comp;
-        }
-    }
-
-    private getInputType(baseCellDataType: BaseCellDataType): 'text' | 'number' | 'date' {
-        switch (baseCellDataType) {
-            case 'text':
-            case 'object':
-            case 'boolean':
-                return 'text';
-            case 'number':
-                return 'number';
-            case 'date':
-            case 'dateString':
-                return 'date';
         }
     }
 

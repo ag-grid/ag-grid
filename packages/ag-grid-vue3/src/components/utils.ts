@@ -9,10 +9,12 @@ import type {
     ColGroupDef,
     ColTypeDef,
     Column,
+    CreateFilterHandlerFunc,
     CsvExportParams,
     DataTypeDefinition,
     DefaultChartMenuItem,
     DomLayoutType,
+    EditStrategyType,
     ExcelExportParams,
     ExcelStyle,
     FillOperationParams,
@@ -127,6 +129,7 @@ import type {
     ColumnRowGroupChangedEvent,
     ColumnValueChangedEvent,
     ColumnVisibleEvent,
+    ColumnsResetEvent,
     ComponentStateChangedEvent,
     ContextMenuVisibleChangedEvent,
     CutEndEvent,
@@ -141,8 +144,10 @@ import type {
     FilterChangedEvent,
     FilterModifiedEvent,
     FilterOpenedEvent,
+    FilterUiChangedEvent,
     FindChangedEvent,
     FirstDataRenderedEvent,
+    FloatingFilterUiChangedEvent,
     FullWidthCellKeyDownEvent,
     GridColumnsChangedEvent,
     GridPreDestroyedEvent,
@@ -355,7 +360,7 @@ export interface Props<TData> {
     columnTypes?: { [key: string]: ColTypeDef<TData> } | undefined,
     /** An object map of cell data types to their definitions.
          * Cell data types can either override/update the pre-defined data types
-         * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),
+         * (`'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` or `'object'`),
          * or can be custom data types.
          */
     dataTypeDefinitions?: {
@@ -459,7 +464,7 @@ export interface Props<TData> {
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
-    editType?: 'fullRow' | undefined,
+    editType?: EditStrategyType | undefined,
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
          * @default false
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
@@ -616,6 +621,16 @@ export interface Props<TData> {
          * @agModule TextFilterModule / NumberFilterModule / DateFilterModule / MultiFilterModule / CustomFilterModule
          */
     suppressSetFilterByDefault?: boolean | undefined,
+    /** Enable filter handlers for custom filter components.
+         * Requires all custom filters need to be implemented using handlers.
+         * @initial
+         */
+    enableFilterHandlers?: boolean | undefined,
+    /** A map of filter handler key to filter handler function.
+         * Allows for filter handler keys to be used in `colDef.filter.handler`.
+         * @initial
+         */
+    filterHandlers?: { [key: string]: CreateFilterHandlerFunc } | undefined,
     /** Set to `true` to Enable Charts.
          * @default false
          * @agModule `IntegratedChartsModule`
@@ -1070,6 +1085,8 @@ export interface Props<TData> {
     groupTotalRow?: 'top' | 'bottom' | UseGroupTotalRow<TData> | undefined,
     /** When provided, an extra grand total row will be inserted into the grid at the specified position.
          * This row displays the aggregate totals of all rows in the grid.
+         *
+         * Note that the `'pinnedTop'` and `'pinnedBottom'` values are deprecated in v34. Use `grandTotalRowPinned` instead.
          * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
          */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined,
@@ -1190,6 +1207,12 @@ export interface Props<TData> {
          * @agModule `PinnedRowModule`
          */
     isRowPinned?: IsRowPinned<TData> | undefined,
+    /** Pin the grand total row to the top of bottom of the grid. Requires `grandTotalRow` to be set.
+         * When multiple rows are pinned, the grid uses `grandTotalRow` to determine whether the grand total row should be
+         * displayed first or last in the list of pinned rows.
+         * @agModule `PinnedRowModule`
+         */
+    grandTotalRowPinned?: 'top' | 'bottom' | undefined,
     /** Sets the row model type.
          * @default 'clientSide'
          * @initial
@@ -1752,6 +1775,7 @@ export interface Props<TData> {
    'onDisplayed-columns-changed'?: DisplayedColumnsChangedEvent<TData>,
    'onVirtual-columns-changed'?: VirtualColumnsChangedEvent<TData>,
    'onColumn-everything-changed'?: ColumnEverythingChangedEvent<TData>,
+   'onColumns-reset'?: ColumnsResetEvent<TData>,
    'onColumn-header-mouse-over'?: ColumnHeaderMouseOverEvent<TData>,
    'onColumn-header-mouse-leave'?: ColumnHeaderMouseLeaveEvent<TData>,
    'onColumn-header-clicked'?: ColumnHeaderClickedEvent<TData>,
@@ -1777,6 +1801,8 @@ export interface Props<TData> {
    'onFilter-opened'?: FilterOpenedEvent<TData>,
    'onFilter-changed'?: FilterChangedEvent<TData>,
    'onFilter-modified'?: FilterModifiedEvent<TData>,
+   'onFilter-ui-changed'?: FilterUiChangedEvent<TData>,
+   'onFloating-filter-ui-changed'?: FloatingFilterUiChangedEvent<TData>,
    'onAdvanced-filter-builder-visible-changed'?: AdvancedFilterBuilderVisibleChangedEvent<TData>,
    'onFind-changed'?: FindChangedEvent<TData>,
    'onChart-created'?: ChartCreatedEvent<TData>,
@@ -1924,6 +1950,8 @@ export function getProps() {
         advancedFilterBuilderParams: undefined,
         suppressAdvancedFilterEval: undefined,
         suppressSetFilterByDefault: undefined,
+        enableFilterHandlers: undefined,
+        filterHandlers: undefined,
         enableCharts: undefined,
         chartThemes: undefined,
         customChartThemes: undefined,
@@ -2037,6 +2065,7 @@ export function getProps() {
         enableRowPinning: undefined,
         isRowPinnable: undefined,
         isRowPinned: undefined,
+        grandTotalRowPinned: undefined,
         rowModelType: undefined,
         rowData: undefined,
         asyncTransactionWaitMillis: undefined,
@@ -2226,7 +2255,9 @@ export function getProps() {
         'onCell-mouse-out': undefined,
         'onFilter-changed': undefined,
         'onFilter-modified': undefined,
+        'onFilter-ui-changed': undefined,
         'onFilter-opened': undefined,
+        'onFloating-filter-ui-changed': undefined,
         'onAdvanced-filter-builder-visible-changed': undefined,
         'onSort-changed': undefined,
         'onVirtual-row-removed': undefined,
@@ -2259,7 +2290,8 @@ export function getProps() {
         'onRow-drag-cancel': undefined,
         'onFind-changed': undefined,
         'onRow-resize-started': undefined,
-        'onRow-resize-ended': undefined
+        'onRow-resize-ended': undefined,
+        'onColumns-reset': undefined
 // @END_EVENT_PROPS@
 
     };

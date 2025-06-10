@@ -24,7 +24,7 @@ export const getDependenciesSnippet = ({
     dependencies.forEach((dependency) => {
         const version = dependency.includes('ag-charts') ? agChartsVersion : agGridVersion;
         const { major, minor, patchNum } = parseVersion(version);
-        depObject[dependency] = `~${major}.${minor}.${patchNum}`;
+        depObject[dependency] = `${major}.${minor}.${patchNum}`;
     });
 
     return dependencies.length > 0 ? `dependencies: ${JSON.stringify(depObject, null, 4)}` : undefined;
