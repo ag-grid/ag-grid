@@ -46,7 +46,7 @@ export class FilterExpressionParser {
     } {
         const params = this.createFunctionParams();
         return {
-            expressionFunction: this.joinExpressionParser.getFunctionParsed(params),
+            expressionFunction: this.joinExpressionParser.getFunction(params),
             params,
         };
     }
