@@ -118,7 +118,7 @@ jobs:
             })
 
       - name: Slack Notification
-        if: always() && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.notify == true))
+        if: (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.notify == true))
         continue-on-error: true
         env:
           SLACK_CHANNEL: '#ci-gate'
@@ -128,7 +128,7 @@ jobs:
           SLACK_COLOR: ${{ steps.playwright-test.outputs.status != 'failure' && 'success' || 'failure' }}
         run: |
           node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs > ./benchmark-slack.json
-          curl -X POST -H 'Content-type: application/json' ${{ SLACK_WEBHOOK }} --data @./benchmark-slack.json
+          curl -X POST -H 'Content-type: application/json' ${{ secrets.GRID_CI_QUALITY }} --data @./benchmark-slack.json
 
       - name: Upload Benchmark Report
         uses: actions/upload-artifact@v4
