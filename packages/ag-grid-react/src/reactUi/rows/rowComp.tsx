@@ -37,7 +37,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(() => rowCtrl.rowStyles);
     const cellCtrlsRef = useRef<CellCtrl[] | null>(null);
-    const [cellCtrls, setCellCtrls] = useState<CellCtrl[] | null>(() => null);
+    const [cellCtrlsFlushSync, setCellCtrlsFlushSync] = useState<CellCtrl[] | null>(() => null);
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
 
     // these styles have initial values, so element is placed into the DOM with them,
@@ -80,7 +80,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         cssManager.current = new CssClassManager(() => eGui.current);
     }
 
-    let cellCtrlsMerged = cellCtrls;
+    let cellCtrlsMerged = cellCtrlsFlushSync;
     const cellsChanged = useRef<any>(() => {});
     if (enableCellDeferRender) {
         const sub = useCallback((onStoreChange: any) => {
@@ -135,7 +135,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                     if (enableCellDeferRender) {
                         cellsChanged.current();
                     } else {
-                        agFlushSync(useFlushSync, () => setCellCtrls(nextCells));
+                        agFlushSync(useFlushSync, () => setCellCtrlsFlushSync(nextCells));
                     }
                 }
             },
@@ -187,6 +187,16 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gos.get('reactiveCustomComponents');
     }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
 
+    const showCellsJsx = () =>
+        cellCtrlsMerged?.map((cellCtrl) => (
+            <CellComp
+                cellCtrl={cellCtrl}
+                editingRow={editSvc?.isRowEditing(rowCtrl) ?? false}
+                printLayout={rowCtrl.printLayout}
+                key={cellCtrl.instanceId}
+            />
+        ));
+
     const showFullWidthFrameworkJsx = () => {
         const FullWidthComp = fullWidthCompDetails!.componentClass;
         return reactFullWidthCellRendererStateless ? (
@@ -205,18 +215,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
             row-id={rowId}
             row-business-key={rowBusinessKey}
         >
-            {showCells
-                ? cellCtrlsMerged?.map((cellCtrl) => (
-                      <CellComp
-                          cellCtrl={cellCtrl}
-                          editingRow={editSvc?.isRowEditing(rowCtrl) ?? false}
-                          printLayout={rowCtrl.printLayout}
-                          key={cellCtrl.instanceId}
-                      />
-                  ))
-                : showFullWidthFramework
-                  ? showFullWidthFrameworkJsx()
-                  : null}
+            {showCells ? showCellsJsx() : showFullWidthFramework ? showFullWidthFrameworkJsx() : null}
         </div>
     );
 };

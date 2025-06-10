@@ -68,22 +68,22 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
         [height, top]
     );
 
+    const createCellJsx = useCallback((cellCtrl: AbstractHeaderCellCtrl) => {
+        switch (ctrl.type) {
+            case 'group':
+                return <HeaderGroupCellComp ctrl={cellCtrl as HeaderGroupCellCtrl} key={cellCtrl.instanceId} />;
+
+            case 'filter':
+                return <HeaderFilterCellComp ctrl={cellCtrl as HeaderFilterCellCtrl} key={cellCtrl.instanceId} />;
+
+            default:
+                return <HeaderCellComp ctrl={cellCtrl as HeaderCellCtrl} key={cellCtrl.instanceId} />;
+        }
+    }, []);
+
     return (
         <div ref={setRef} className={className} role="row" style={style} aria-rowindex={ariaRowIndex}>
-            {cellCtrls.map((cellCtrl) => {
-                switch (ctrl.type) {
-                    case 'group':
-                        return <HeaderGroupCellComp ctrl={cellCtrl as HeaderGroupCellCtrl} key={cellCtrl.instanceId} />;
-
-                    case 'filter':
-                        return (
-                            <HeaderFilterCellComp ctrl={cellCtrl as HeaderFilterCellCtrl} key={cellCtrl.instanceId} />
-                        );
-
-                    default:
-                        return <HeaderCellComp ctrl={cellCtrl as HeaderCellCtrl} key={cellCtrl.instanceId} />;
-                }
-            })}
+            {cellCtrls.map(createCellJsx)}
         </div>
     );
 };
