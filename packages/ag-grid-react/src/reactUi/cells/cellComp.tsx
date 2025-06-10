@@ -11,14 +11,14 @@ import type {
     ICellRendererComp,
     UserCompDetails,
 } from 'ag-grid-community';
-import { CssClassManager, _EmptyBean, _errMsg, _removeFromParent } from 'ag-grid-community';
+import { CssClassManager, _EmptyBean, _removeFromParent } from 'ag-grid-community';
 
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
 import { CustomContext } from '../../shared/customComp/customContext';
 import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext, EnableDeferRenderContext } from '../beansContext';
-import { agStartTransition, isComponentStateless } from '../utils';
+import { isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 
@@ -383,29 +383,17 @@ const CellComp = ({
             getParentOfValue: () => eCellValue.current ?? eCellWrapper.current ?? eGui.current,
 
             setRenderDetails: (compDetails, value, force) => {
-                const setDetails = () => {
-                    setRenderDetails((prev) => {
-                        if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
-                            return {
-                                value,
-                                compDetails,
-                                force,
-                            };
-                        } else {
-                            return prev;
-                        }
-                    });
-                };
-                if (compDetails?.params?.deferRender) {
-                    if (!enableCellDeferRender) {
-                        _errMsg(280);
-                        setDetails();
+                setRenderDetails((prev) => {
+                    if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
+                        return {
+                            value,
+                            compDetails,
+                            force,
+                        };
                     } else {
-                        agStartTransition(setDetails);
+                        return prev;
                     }
-                } else {
-                    setDetails();
-                }
+                });
             },
 
             setEditDetails: (compDetails, popup, popupPosition, reactiveCustomComponents) => {
