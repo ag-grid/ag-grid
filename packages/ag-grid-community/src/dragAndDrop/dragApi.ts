@@ -38,7 +38,7 @@ export function setRowDropHighlight<TData>(
     const rowNode = highlight?.row;
     let position = highlight?.position;
 
-    if (position !== 'above' && position !== 'below') {
+    if (position !== 'above' && position !== 'below' && position !== 'inside') {
         position = 'none';
     }
 

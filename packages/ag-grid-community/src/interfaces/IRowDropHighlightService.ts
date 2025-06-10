@@ -1,7 +1,7 @@
 import type { RowNode } from '../entities/rowNode';
 import type { IRowNode } from './iRowNode';
 
-export type RowDropHighlightPosition = 'above' | 'below' | 'none';
+export type RowDropHighlightPosition = 'above' | 'inside' | 'below' | 'none';
 
 export interface RowDropHighlight<TData = any> {
     row: IRowNode<TData> | null;
