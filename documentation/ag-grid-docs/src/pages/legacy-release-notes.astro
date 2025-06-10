@@ -19,13 +19,11 @@ const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) 
 
 const legacyReleases = legacyReleaseNotesData
     .map((release) => {
-        const version = versionsData.find((version) => release['release version'].includes(version.version));
+        const version = versionsData.find((version) => release.releaseVersion.includes(version.version));
 
-        const noteSections = [
-            release['feature highlights'],
-            release['breaking changes'],
-            release['deprecations'],
-        ].filter((section) => section !== '');
+        const noteSections = [release.featureHighlights, release.breakingChanges, release.deprecations].filter(
+            (section) => section !== ''
+        );
 
         return {
             version: version?.version,

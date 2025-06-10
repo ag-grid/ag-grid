@@ -290,10 +290,10 @@ const legacyReleaseNotes = defineCollection({
     loader: glob({ base: './src/content/legacy-release-notes', pattern: 'legacy-release-notes.json' }),
     schema: z.array(
         z.object({
-            'release version': z.string(),
+            releaseVersion: z.string(),
             markdown: z.string().optional(),
-            'feature highlights': z.string().optional(),
-            'breaking changes': z.string().optional(),
+            featureHighlights: z.string().optional(),
+            breakingChanges: z.string().optional(),
             deprecations: z.string().optional(),
         })
     ),
