@@ -980,6 +980,11 @@
                             "type": "item",
                             "title": "Full Row",
                             "path": "cell-editing-full-row"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Batch",
+                            "path": "cell-editing-batch"
                         }
                     ]
                 },
