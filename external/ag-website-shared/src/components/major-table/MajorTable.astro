@@ -44,7 +44,7 @@ const versions = isMigration ? allVersions.filter(filterMigrations) : allVersion
         versions.map((version) => {
             const { isMajor, versionType } = parseVersion(version.version);
 
-            const guideUrl = isMigration ? urlWithPrefix({ framework, url: version.notesPath }) : null;
+            const guideUrl = isMigration ? urlWithPrefix({ framework, url: './' + version.notesPath }) : null;
             const changelogUrl = !isMigration ? getChangelogUrl({ site: library, version: version.version }) : null;
             const docsUrl = !isMigration
                 ? getDocumentationArchiveUrl({ site: library, version: version.version })

@@ -1,4 +1,7 @@
 ---
+import { FRAMEWORK_REDIRECT_PATH } from '@constants';
+import { pathJoin } from '@utils/pathJoin';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import Layout from '../layouts/Layout.astro';
 import { getEntry, type CollectionEntry } from 'astro:content';
 import styles from '@pages-styles/homepage.module.scss';
@@ -218,6 +221,7 @@ const frameworksData = [
                                     date={versionInfo.date}
                                     highlights={versionInfo.highlights}
                                     notesPath={versionInfo.notesPath}
+                                    notesPath={urlWithBaseUrl(pathJoin(FRAMEWORK_REDIRECT_PATH, versionInfo.notesPath))}
                                 />
                             );
                         }

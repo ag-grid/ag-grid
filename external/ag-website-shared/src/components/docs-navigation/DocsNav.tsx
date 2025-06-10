@@ -46,6 +46,7 @@ function getLinkUrl({ framework, path, url }: { framework?: Framework; path?: st
 }
 
 function Item({ itemData, framework, pageName }: { itemData?: any; framework?: Framework; pageName?: string }) {
+    const isOutsideFramework = itemData.path && itemData.path.startsWith('/');
     const linkUrl = itemData.path ? getLinkUrl({ framework, path: itemData.path }) : itemData.url;
     const isExternalURL = itemData.url;
     const isCorrectFramework = !itemData.frameworks
@@ -63,7 +64,11 @@ function Item({ itemData, framework, pageName }: { itemData?: any; framework?: F
     return (
         isCorrectFramework && (
             <>
-                <a href={linkUrl} className={className} {...(isExternalURL && { target: '_blank' })}>
+                <a
+                    href={isOutsideFramework ? itemData.path : linkUrl}
+                    className={className}
+                    {...(isExternalURL && { target: '_blank' })}
+                >
                     {itemData.icon && <Icon name={itemData.icon} svgClasses={styles.itemIcon} />}
 
                     <span>

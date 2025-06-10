@@ -138,17 +138,17 @@
                         {
                             "type": "item",
                             "title": "Release History",
-                            "path": "../release-history/"
+                            "path": "/release-history/"
                         },
                         {
                             "type": "item",
                             "title": "Changelog",
-                            "path": "../changelog/"
+                            "path": "/changelog/"
                         },
                         {
                             "type": "item",
                             "title": "Pipeline",
-                            "path": "../pipeline/"
+                            "path": "/pipeline/"
                         },
                         {
                             "type": "item",

@@ -88,7 +88,7 @@
                 "text": "Performance Improvements"
             }
         ],
-        "notesPath": "./ag-grid-33-3-release-notes",
+        "notesPath": "/ag-grid-33-3-release-notes",
         "hideBlogPostLink": false
     },
     {
@@ -132,7 +132,7 @@
                 "text": "Accessibility Improvements"
             }
         ],
-        "notesPath": "./ag-grid-33-2-release-notes",
+        "notesPath": "/ag-grid-33-2-release-notes",
         "hideBlogPostLink": false
     },
     {
@@ -164,7 +164,7 @@
                 "text": "Accessibility Improvements"
             }
         ],
-        "notesPath": "./ag-grid-33-1-release-notes",
+        "notesPath": "/ag-grid-33-1-release-notes",
         "hideBlogPostLink": false
     },
     {
@@ -208,7 +208,7 @@
                 "text": "Theming Improvements"
             }
         ],
-        "notesPath": "./ag-grid-33-release-notes",
+        "notesPath": "/ag-grid-33-release-notes",
         "hideBlogPostLink": false
     },
     {
@@ -248,7 +248,7 @@
                 "text": "Quality Improvements"
             }
         ],
-        "notesPath": "./ag-grid-32-3-release-notes",
+        "notesPath": "/ag-grid-32-3-release-notes",
         "hideBlogPostLink": true
     },
     {
@@ -285,7 +285,7 @@
                 "path": "./column-moving/#suppress-move-when-dragging"
             }
         ],
-        "notesPath": "./ag-grid-32-2-1-release-notes"
+        "notesPath": "/ag-grid-32-2-1-release-notes"
     },
     {
         "version": "32.1.0",
@@ -312,7 +312,7 @@
                 "text": "Scrolling Improvements"
             }
         ],
-        "notesPath": "./ag-grid-32-1-release-notes"
+        "notesPath": "/ag-grid-32-1-release-notes"
     },
     {
         "version": "32.0.2",
@@ -346,7 +346,7 @@
                 "path": "./accessibility"
             }
         ],
-        "notesPath": "./ag-grid-32-release-notes"
+        "notesPath": "/ag-grid-32-release-notes"
     },
     {
         "version": "31.3.4",
@@ -382,7 +382,7 @@
             }
         ],
         "versionType": "Minor",
-        "notesPath": "./ag-grid-31-3-release-notes"
+        "notesPath": "/ag-grid-31-3-release-notes"
     },
     {
         "version": "31.3.0",
@@ -418,7 +418,7 @@
                 "path": "./ag-grid-design-system"
             }
         ],
-        "notesPath": "./ag-grid-31-2-release-notes"
+        "notesPath": "/ag-grid-31-2-release-notes"
     },
     {
         "version": "31.1.1",
@@ -450,7 +450,7 @@
                 "path": "./server-side-model-sorting/#client-side-sorting"
             }
         ],
-        "notesPath": "./ag-grid-31-1-release-notes"
+        "notesPath": "/ag-grid-31-1-release-notes"
     },
     {
         "version": "31.0.3",
@@ -490,7 +490,7 @@
                 "path": "./row-pagination/#top"
             }
         ],
-        "notesPath": "./ag-grid-31-release-notes"
+        "notesPath": "/ag-grid-31-release-notes"
     },
     {
         "version": "30.2.1",
@@ -595,7 +595,7 @@
                 "text": "Export Row Groups to Excel with Their Current Expanded State"
             }
         ],
-        "notesPath": "./ag-grid-30-release-notes"
+        "notesPath": "/ag-grid-30-release-notes"
     },
     {
         "version": "29.3.5",
