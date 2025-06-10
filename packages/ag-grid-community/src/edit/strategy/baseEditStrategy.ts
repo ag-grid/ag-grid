@@ -20,6 +20,7 @@ import {
     _setupEditors,
     _syncFromEditors,
 } from '../utils/editors';
+import { _getAllLeafSiblings, _getAncestors, _getDependentCells, _getRelatedRows, _updateClass } from '../utils/nodes';
 
 export abstract class BaseEditStrategy extends BeanStub {
     public abstract midBatchInputsAllowed(position?: EditPosition): boolean;
