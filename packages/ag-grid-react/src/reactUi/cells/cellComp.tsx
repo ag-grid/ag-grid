@@ -157,7 +157,6 @@ const CellComp = ({
     editingRow: boolean;
 }) => {
     const beans = useContext(BeansContext);
-
     const { context } = beans;
     const {
         column: { colIdSanitised },
