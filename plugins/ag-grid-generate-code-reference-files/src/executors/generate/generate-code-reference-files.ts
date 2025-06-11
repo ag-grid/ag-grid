@@ -54,7 +54,7 @@ function silentFindNode(text: string, srcFile: ts.SourceFile, auxSrcFiles: AuxSr
         typeRef = findInAllTrees(text, srcFile, auxSrcFiles);
     } catch {
         try {
-            typeRef = findNode(text, srcFile, 'TypeAliasDeclaration');
+            typeRef = findInAllTrees(text, srcFile, auxSrcFiles, 'TypeAliasDeclaration');
         } catch {
             // Do nothing
         }
@@ -77,7 +77,7 @@ function extractNestedTypes<T extends ts.Node>(
     if (ts.isTypeReferenceNode(node)) {
         const typeRef = silentFindNode(node.typeName.getText(), srcFile, auxSrcFiles);
         if (typeRef === undefined) {
-            console.log('failed to find', node.typeName.getText());
+            console.error('failed to find', node.typeName.getText());
             return;
         }
         visited.add(node);
@@ -110,6 +110,16 @@ function extractNestedTypes<T extends ts.Node>(
         return;
     }
 
+    if (ts.isArrayTypeNode(node)) {
+        extractNestedTypes(node.elementType, srcFile, includeQuestionMark, results, visited, auxSrcFiles);
+        return;
+    }
+
+    if (ts.isParenthesizedTypeNode(node)) {
+        extractNestedTypes(node.type, srcFile, includeQuestionMark, results, visited, auxSrcFiles);
+        return;
+    }
+
     if (ts.isExpressionWithTypeArguments(node)) {
         extractNestedTypes(node.expression, srcFile, includeQuestionMark, results, visited, auxSrcFiles);
         return;
@@ -122,8 +132,10 @@ function extractNestedTypes<T extends ts.Node>(
     }
 
     if (ts.isIdentifier(node)) {
-        const ref = findNode(node.escapedText, srcFile);
-        extractNestedTypes(ref, srcFile, includeQuestionMark, results, visited, auxSrcFiles);
+        const ref = silentFindNode(node.getFullText(), srcFile, auxSrcFiles);
+        if (ref) {
+            extractNestedTypes(ref, srcFile, includeQuestionMark, results, visited, auxSrcFiles);
+        }
         return;
     }
 
@@ -191,12 +203,12 @@ function extractTypesFromNode(
     return nodeMembers;
 }
 
-function parseFile(sourceFile) {
+function parseFile(sourceFile: string): ts.SourceFile {
     const src = fs.readFileSync(sourceFile, 'utf8');
     return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
 }
 
-export function getInterfaces(globs) {
+export function getInterfaces(globs: string[]) {
     let interfaces = {};
     const extensions = {};
     globs.forEach((file) => {
@@ -247,11 +259,11 @@ function getAncestors(extensions, child) {
     return ancestors;
 }
 
-function isBuiltinUtilityType(type) {
+function isBuiltinUtilityType(type: string): type is 'Required' | 'Omit' | 'Pick' | 'Readonly' | 'Optional' {
     return type === 'Required' || type === 'Omit' || type === 'Pick' || type === 'Readonly' || type === 'Optional';
 }
 
-function mergeAncestorProps(isDocStyle, parent, child, getProps) {
+function mergeAncestorProps(isDocStyle: boolean, parent, child, getProps) {
     const props = { ...getProps(child) };
     const mergedProps = props;
     // If the parent has a generic params lets apply the child's specific types
@@ -511,7 +523,7 @@ function extractInterfaces(srcFile, extension) {
 }
 
 /** Build the interface file in the format that can be used by <interface-documentation> */
-export function buildInterfaceProps(globs) {
+export function buildInterfaceProps(globs: string[]) {
     const interfaces = {
         _config_: {},
     };
@@ -552,28 +564,29 @@ export function buildInterfaceProps(globs) {
     return interfaces;
 }
 
-function parseImportedDefinitions(dir: string, srcFile: ts.SourceFile): AuxSrcFiles {
-    const typeDefs: string[] = [];
-
+function parseImportedDefinitions(
+    dir: string,
+    srcFile: ts.SourceFile,
+    definitions = new Map<string, ts.SourceFile>()
+): AuxSrcFiles {
     srcFile.forEachChild((child) => {
         if (ts.isImportDeclaration(child)) {
-            const modulePath = child.moduleSpecifier.getFullText();
-            if (modulePath.startsWith(" '.")) {
-                typeDefs.push(child.moduleSpecifier.getFullText().trim().replaceAll("'", ''));
+            const modulePath = child.moduleSpecifier.getFullText().trim().replaceAll("'", '');
+            // only look at local imports for now
+            if (modulePath.startsWith('.')) {
+                const absPath = require.resolve(path.resolve(dir, `${modulePath}.ts`));
+                if (definitions.has(absPath)) {
+                    return;
+                }
+                const parsed = parseFile(absPath);
+                definitions.set(absPath, parsed);
+                parseImportedDefinitions(path.dirname(absPath), parsed, definitions);
                 return;
             }
         }
     });
 
-    const result: AuxSrcFiles = [];
-
-    for (const file of typeDefs) {
-        console.log('adding ', path.resolve(dir, file));
-        result.push(parseFile(require.resolve(path.resolve(dir, `${file}.ts`))));
-        // console.log(result[result.length - 1]);
-    }
-
-    return result;
+    return Array.from(definitions.values());
 }
 
 type AuxSrcFiles = ts.SourceFile[];
@@ -581,14 +594,17 @@ type AuxSrcFiles = ts.SourceFile[];
 function findInAllTrees(
     typeName: string,
     sourceFile: ts.SourceFile,
-    auxSrcFiles: AuxSrcFiles
+    auxSrcFiles: AuxSrcFiles,
+    type = 'InterfaceDeclaration'
 ): ts.TypeNode | undefined {
-    const node = findNode(typeName, sourceFile);
-    if (node) return node;
-
-    for (const src of auxSrcFiles) {
-        const n = findNode(typeName, src);
-        if (n) return n;
+    try {
+        return findNode(typeName, sourceFile, type);
+    } catch (error) {
+        if (auxSrcFiles.length > 0) {
+            return findInAllTrees(typeName, auxSrcFiles[0], auxSrcFiles.slice(1), type);
+        } else {
+            throw error;
+        }
     }
 }
 
