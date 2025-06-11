@@ -10,7 +10,7 @@ import { SimpleCellEditor } from './simpleCellEditor';
 
 const NumberCellElement: ElementParams = {
     tag: 'ag-input-number-field',
-    ref: 'eInput',
+    ref: 'eEditor',
     cls: 'ag-cell-editor',
 };
 class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, AgInputNumberField> {

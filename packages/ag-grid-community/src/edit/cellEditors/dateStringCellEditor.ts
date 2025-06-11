@@ -11,7 +11,7 @@ import { SimpleCellEditor } from './simpleCellEditor';
 
 const DateStringCellElement: ElementParams = {
     tag: 'ag-input-date-field',
-    ref: 'eInput',
+    ref: 'eEditor',
     cls: 'ag-cell-editor',
 };
 class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCellEditorParams, AgInputDateField> {

@@ -8,7 +8,7 @@ import { SimpleCellEditor } from './simpleCellEditor';
 
 const TextCellEditorElement: ElementParams = {
     tag: 'ag-input-text-field',
-    ref: 'eInput',
+    ref: 'eEditor',
     cls: 'ag-cell-editor',
 };
 class TextCellEditorInput<TValue = any>
