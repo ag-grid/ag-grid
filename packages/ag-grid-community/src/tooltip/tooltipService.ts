@@ -53,7 +53,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             shouldDisplayTooltip,
         };
 
-        let tooltipFeature = createTooltipFeature(tooltipCtrl, this.beans);
+        let tooltipFeature = this.createTooltipFeature(tooltipCtrl);
         if (tooltipFeature) {
             tooltipFeature = ctrl.createBean(tooltipFeature);
             ctrl.setRefreshFunction('tooltip', () => tooltipFeature!.refreshTooltip());
@@ -93,7 +93,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             tooltipCtrl.getColDef = () => colGroupDef;
         }
 
-        const tooltipFeature = createTooltipFeature(tooltipCtrl, this.beans);
+        const tooltipFeature = this.createTooltipFeature(tooltipCtrl);
         return tooltipFeature ? ctrl.createBean(tooltipFeature) : tooltipFeature;
     }
 
@@ -168,7 +168,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             shouldDisplayTooltip,
         };
 
-        return createTooltipFeature(tooltipCtrl, beans);
+        return this.createTooltipFeature(tooltipCtrl, beans);
     }
 
     public refreshRowTooltip(
@@ -191,7 +191,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             ctrl.destroyBean(existingTooltipFeature, context);
         }
 
-        const tooltipFeature = createTooltipFeature(tooltipParams, beans);
+        const tooltipFeature = this.createTooltipFeature(tooltipParams, beans);
         if (!tooltipFeature) {
             return;
         }
@@ -225,7 +225,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             },
         };
 
-        const tooltipFeature = createTooltipFeature(tooltipParams, beans);
+        const tooltipFeature = this.createTooltipFeature(tooltipParams, beans);
 
         if (!tooltipFeature) {
             return;
@@ -239,8 +239,8 @@ export class TooltipService extends BeanStub implements NamedBean {
         column.tooltipEnabled =
             _exists(colDef.tooltipField) || _exists(colDef.tooltipValueGetter) || _exists(colDef.tooltipComponent);
     }
-}
 
-function createTooltipFeature(tooltipCtrl: ITooltipCtrl, beans: BeanCollection) {
-    return beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, tooltipCtrl, beans);
+    private createTooltipFeature(tooltipCtrl: ITooltipCtrl, beans?: BeanCollection): TooltipFeature | undefined {
+        return this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, tooltipCtrl, beans);
+    }
 }
