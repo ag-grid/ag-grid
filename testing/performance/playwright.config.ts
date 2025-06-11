@@ -38,9 +38,11 @@ const config = defineConfig({
     ],
 });
 
+/* Run local dev server before starting the tests */
 if (!process.env['PW_NO_SERVER']) {
-    config /* Run your local dev server before starting the tests */.webServer = {
-        command: 'npx nx dev',
+    config.webServer = {
+        command: 'npx nx dev --no-watch',
+        cwd: path.join(__dirname, '../../'),
         url: baseURL,
         reuseExistingServer: !process.env['CI'],
         ignoreHTTPSErrors: true,

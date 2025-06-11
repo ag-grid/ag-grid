@@ -123,7 +123,7 @@ jobs:
             })
 
       - name: Slack Notification
-        if: (github.event_name == 'schedule' || ((github.event_name == 'workflow_dispatch' || github.event_name == 'issue_comment') && inputs.notify == true))
+        if: github.event_name == 'schedule' || inputs.notify == true
         continue-on-error: true
         env:
           SLACK_CHANNEL: '#ci-gate'
