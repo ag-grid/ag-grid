@@ -297,6 +297,16 @@ export function _syncFromEditor(
 
     beans.eventSvc.dispatchEvent({
         type: 'cellEditValuesChanged',
+        value: newValue,
+        colDef: column.getColDef(),
+        newValue,
+        oldValue,
+        source: _eventSource,
+        column,
+        rowIndex: rowNode.rowIndex,
+        rowPinned: rowNode.rowPinned,
+        data: rowNode.data,
+        node: rowNode,
     });
 }
 

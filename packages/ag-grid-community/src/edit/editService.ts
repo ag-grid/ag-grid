@@ -1,6 +1,7 @@
 import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowNode } from '../entities/positionUtils';
 import type { AgEventType } from '../eventTypes';
@@ -23,6 +24,7 @@ import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { _createCellEvent } from '../rendering/cell/cellEvent';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { ValueService } from '../valueService/valueService';
+import { CellEditStyleFeature } from './cellEditStyleFeature';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import { _addStopEditingWhenGridLosesFocus, _getCellCtrl, _getRowCtrl } from './utils/controllers';
@@ -298,9 +300,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.refreshAllRows(edits, this.includeParents);
 
-        this.beans.eventSvc.dispatchEvent({
-            type: 'cellEditValuesChanged',
-        });
+        // this.beans.eventSvc.dispatchEvent({
+        //     type: 'cellEditValuesChanged',
+        // });
 
         return res;
     }
@@ -376,9 +378,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     public setEditMap(edits: EditMap): void {
         this.strategy ??= this.createStrategy();
         this.strategy?.setEditMap(edits);
-        this.beans.eventSvc.dispatchEvent({
-            type: 'cellEditValuesChanged',
-        });
+        // this.beans.eventSvc.dispatchEvent({
+        //     type: 'cellEditValuesChanged',
+        // });
     }
 
     public stopAllEditing(cancel: boolean = false, source: 'api' | 'ui' = 'ui'): void {
@@ -515,7 +517,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 }
             });
             return { compDetails };
-        } else if (params.valueToDisplay !== undefined && editRow?.has(column)) {
+        }
+
+        if (params.valueToDisplay !== undefined && editRow?.has(column)) {
             return { valueToDisplay: this.valueSvc.getValue(column as AgColumn, rowNode) };
         }
     }
@@ -603,5 +607,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             this.stopEditing(undefined, { source: 'api' });
         });
+    }
+
+    public createEditStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): CellEditStyleFeature {
+        return new CellEditStyleFeature(cellCtrl, beans);
     }
 }

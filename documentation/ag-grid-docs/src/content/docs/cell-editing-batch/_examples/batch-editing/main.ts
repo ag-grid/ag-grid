@@ -131,6 +131,39 @@ const gridOptions: GridOptions = {
                     editable: false,
                     minWidth: 145,
                 },
+                {
+                    headerName: 'DetailsFn',
+                    colId: 'detailsFn',
+                    cellRenderer: (params: any) => {
+                        return `
+            <div  class="athlete-info">
+                <span>${params.data?.firstName ?? ''} </span>
+                <span>${params.data?.lastName ?? ''}</span>
+            </div>
+            <span>${params.data?.age ?? ''}</span>
+        `;
+                    },
+                    editable: false,
+                    minWidth: 145,
+                },
+                {
+                    headerName: 'DetailsGt',
+                    colId: 'detailsGt',
+                    valueGetter: (params: any) => {
+                        return `${params.data?.firstName ?? ''} ${params.data?.lastName ?? ''}`;
+                    },
+                    editable: false,
+                    minWidth: 145,
+                },
+                {
+                    headerName: 'DetailsFmt',
+                    colId: 'detailsFmt',
+                    valueFormatter: (params: any) => {
+                        return `${params.data?.firstName ?? ''} ${params.data?.lastName ?? ''}`;
+                    },
+                    editable: false,
+                    minWidth: 145,
+                },
             ],
         },
         { field: 'gender', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots, rowGroup: true },
@@ -298,12 +331,12 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
 }
 
 function toggleBatch() {
-    const batch = gridApi!.batchEditingEnabled();
+    const batch = gridApi!.isBatchEditing();
 
     if (batch) {
-        gridApi!.disableBatchEditing();
+        gridApi!.setBatchEditing(false);
     } else {
-        gridApi!.enableBatchEditing();
+        gridApi!.setBatchEditing(true);
     }
 
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
@@ -329,37 +362,37 @@ function setEditingCells(clearValues: boolean = false) {
         {
             rowIndex: 2,
             rowPinned: undefined,
-            colKey: 'lastName',
+            colId: 'lastName',
             newValue: 'Smith',
         },
         {
             rowIndex: 3,
             rowPinned: undefined,
-            colKey: 'age',
+            colId: 'age',
             state: 'editing',
         },
         {
             rowIndex: 14,
             rowPinned: undefined,
             newValue: 100,
-            colKey: 'age',
+            colId: 'age',
         },
         {
             rowIndex: 14,
             rowPinned: undefined,
             newValue: 'Ecstatic',
-            colKey: 'mood',
+            colId: 'mood',
         },
         {
             rowIndex: 0,
             rowPinned: 'top',
-            colKey: 'firstName',
+            colId: 'firstName',
             newValue: 'John',
         },
         {
             rowIndex: 0,
             rowPinned: 'bottom',
-            colKey: 'firstName',
+            colId: 'firstName',
             newValue: 'Jane',
         },
     ];
@@ -370,7 +403,7 @@ function setEditingCells(clearValues: boolean = false) {
         });
     }
 
-    gridApi!.enableBatchEditing();
+    gridApi!.setBatchEditing(true);
 
     gridApi!.setEditingCells(pendingEdits);
 }

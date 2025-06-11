@@ -141,13 +141,17 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
             const rowEdits = this.getEditRow(position);
             if (!rowEdits) {
                 return false;
-            } else if (column) {
+            }
+
+            if (column) {
                 if (withOpenEditors) {
                     const edit = this.getEdit(position);
                     return edit ? edit.state === 'editing' : false;
                 }
                 return rowEdits.has(column) ?? false;
-            } else if (rowEdits.size !== 0) {
+            }
+
+            if (rowEdits.size !== 0) {
                 if (withOpenEditors) {
                     return Array.from(rowEdits.values()).some(({ state }) => state === 'editing');
                 }

@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
-import type { CellValueChangedEvent } from '../events';
+import type { CellEditValuesChangedEvent, CellValueChangedEvent } from '../events';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { ChangedPath } from '../utils/changedPath';
@@ -20,10 +20,13 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
             this.clientSideRowModel = rowModel;
         }
 
-        this.addManagedEventListeners({ cellValueChanged: this.onCellValueChanged.bind(this) });
+        this.addManagedEventListeners({
+            cellValueChanged: this.onCellValueChanged.bind(this),
+            cellEditValuesChanged: this.onCellValueChanged.bind(this),
+        });
     }
 
-    private onCellValueChanged(event: CellValueChangedEvent): void {
+    private onCellValueChanged(event: CellValueChangedEvent | CellEditValuesChangedEvent): void {
         const { gos, rowRenderer } = this.beans;
         // Clipboard service manages its own change detection, so no need to do it here.
         // The clipboard manages its own as otherwise this would happen once for every cell
@@ -58,7 +61,9 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
             });
         }
 
+        const suppressFlash = event.type === 'cellEditValuesChanged';
+
         // step 2 of change detection is to refresh the cells
-        rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
+        rowRenderer.refreshCells({ rowNodes: nodesToRefresh, suppressFlash });
     }
 }

@@ -1,10 +1,13 @@
+import { ClientSideRowModel } from '../../clientSideRowModel/clientSideRowModel';
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
+import { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusedEvent } from '../../events';
+import { _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
 import type { Column } from '../../interfaces/iColumn';
 import type { EditMap, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
@@ -12,6 +15,7 @@ import type { EditPosition, EditRowPosition, IEditService } from '../../interfac
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
+import { ChangedPath } from '../../utils/changedPath';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
 import {
     UNEDITED,
@@ -94,62 +98,99 @@ export abstract class BaseEditStrategy extends BeanStub {
         const changedCells: Map<CellCtrl, boolean> = new Map();
         const changedRows: Map<RowCtrl, boolean> = new Map();
 
-        edits?.forEach((editRow, mainNode) => {
-            const rowCtrl = _getRowCtrl(this.beans, {
-                rowNode: mainNode,
-            });
+        // edits?.forEach((editRow, mainNode) => {
+        //     const rowCtrl = _getRowCtrl(this.beans, {
+        //         rowNode: mainNode,
+        //     });
 
-            let rowEdited = false;
+        //     let rowEdited = false;
 
-            editRow.forEach((cellData, column) => {
-                const cellCtrl = _getCellCtrl(this.beans, {
-                    rowCtrl,
-                    column,
-                });
+        //     editRow.forEach((cellData, column) => {
+        //         const cellCtrl = _getCellCtrl(this.beans, {
+        //             rowCtrl,
+        //             column,
+        //         });
 
-                const newState = forced ? forcedState : _valuesDiffer(cellData);
+        //         const newState = forced ? forcedState : _valuesDiffer(cellData);
 
-                rowEdited ||= newState;
+        //         rowEdited ||= newState;
 
-                cellCtrl && changedCells.set(cellCtrl, newState);
-            });
+        //         cellCtrl && changedCells.set(cellCtrl, newState);
+        //     });
 
-            if (rowCtrl) {
-                changedRows.set(rowCtrl, rowEdited);
-            }
-        });
+        //     if (rowCtrl) {
+        //         changedRows.set(rowCtrl, rowEdited);
+        //     }
+        // });
 
-        edits.forEach((editRow, rowNode) => {
-            const rowCtrl = _getRowCtrl(beans, { rowNode });
-            if (rowCtrl) {
-                this.updateRowStyle(rowCtrl, changedRows.get(rowCtrl), this.editSvc.isBatchEditing());
-            }
+        // const result: any =
+        //     edits.size > 0
+        //         ? {
+        //               rowNode: edits.keys().next().value,
+        //               column: edits.values().next().value.keys().next().value,
+        //           }
+        //         : undefined;
 
-            const ancestors = (includeParents && _getAncestors(beans, rowNode, { includeRelated: true })) || [];
-            const leafSiblings = _getAllLeafSiblings(rowNode);
-            const relatedNodes = _getRelatedRows(rowNode);
-            const nodes = [rowNode, ...leafSiblings, ...ancestors, ...relatedNodes];
+        // const { rowNode, column } = result || {};
 
-            editRow.forEach((__, column) => {
-                const cellCtrl = _getCellCtrl(beans, { rowNode, column });
+        // if (!rowNode) {
+        //     return;
+        // }
 
-                const state = changedCells.get(cellCtrl!);
-                this.updateCellStyle(cellCtrl, state, this.editSvc.isBatchEditing(), suppressFlash);
+        // const nodesToRefresh: RowNode[] = [rowNode];
 
-                _updateClass(beans, nodes, 'ag-cell-batch-edit', column, state);
+        // const clientSideRowModel: ClientSideRowModel | undefined =
+        //     (_isClientSideRowModel(beans.gos, beans.rowModel) && (beans.rowModel as ClientSideRowModel)) || undefined;
+        // const rootNode = clientSideRowModel?.rootNode;
 
-                relatedNodes.forEach((node: IRowNode) => {
-                    const dependents = _getDependentCells(
-                        beans,
-                        { rowNode: node, column },
-                        { includeRelated: true, includeInitiator: true }
-                    );
-                    dependents?.forEach((cellCtrl: CellCtrl) =>
-                        this.updateCellStyle(cellCtrl, state, this.editSvc.isBatchEditing(), suppressFlash)
-                    );
-                });
-            });
-        });
+        // if (rootNode && !rowNode.isRowPinned()) {
+        //     const onlyChangedColumns = this.gos.get('aggregateOnlyChangedColumns');
+        //     const changedPath = new ChangedPath(onlyChangedColumns, rootNode);
+        //     changedPath.addParentNode(rowNode.parent, [column as AgColumn]);
+        //     clientSideRowModel.doAggregate(changedPath);
+
+        //     // add all nodes impacted by aggregation, as they need refreshed also.
+        //     changedPath.forEachChangedNodeDepthFirst((rowNode) => {
+        //         nodesToRefresh.push(rowNode);
+        //         if (rowNode.sibling) {
+        //             nodesToRefresh.push(rowNode.sibling);
+        //         }
+        //     });
+        // }
+
+        // this.beans.rowRenderer.refreshCells({ rowNodes: nodesToRefresh, suppressFlash });
+
+        // edits.forEach((editRow, rowNode) => {
+        //     const rowCtrl = _getRowCtrl(beans, { rowNode });
+        //     if (rowCtrl) {
+        //         this.updateRowStyle(rowCtrl, changedRows.get(rowCtrl), this.editSvc.isBatchEditing());
+        //     }
+
+        //     const ancestors = (includeParents && _getAncestors(beans, rowNode, { includeRelated: true })) || [];
+        //     const leafSiblings = _getAllLeafSiblings(rowNode);
+        //     const relatedNodes = _getRelatedRows(rowNode);
+        //     const nodes = [rowNode, ...leafSiblings, ...ancestors, ...relatedNodes];
+
+        //     editRow.forEach((__, column) => {
+        //         const cellCtrl = _getCellCtrl(beans, { rowNode, column });
+
+        //         const state = changedCells.get(cellCtrl!);
+        //         this.updateCellStyle(cellCtrl, state, this.editSvc.isBatchEditing(), suppressFlash);
+
+        //         _updateClass(beans, nodes, 'ag-cell-batch-edit', column, state);
+
+        //         relatedNodes.forEach((node: IRowNode) => {
+        //             const dependents = _getDependentCells(
+        //                 beans,
+        //                 { rowNode: node, column },
+        //                 { includeRelated: true, includeInitiator: true }
+        //             );
+        //             dependents?.forEach((cellCtrl: CellCtrl) =>
+        //                 this.updateCellStyle(cellCtrl, state, this.editSvc.isBatchEditing(), suppressFlash)
+        //             );
+        //         });
+        //     });
+        // });
     }
 
     protected updateCellStyle(
@@ -284,7 +325,9 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         if (type === 'click' && event?.detail === 1 && clickCount === 1) {
             return true;
-        } else if (type === 'dblclick' && event?.detail === 2 && clickCount === 2) {
+        }
+
+        if (type === 'dblclick' && event?.detail === 2 && clickCount === 2) {
             return true;
         }
 
@@ -305,10 +348,14 @@ export abstract class BaseEditStrategy extends BeanStub {
         if (batch && source === 'api') {
             // we always defer to the API
             return true;
-        } else if (batch && source === 'ui') {
+        }
+
+        if (batch && source === 'ui') {
             // we always defer to the UI
             return false;
-        } else if (source === 'api') {
+        }
+
+        if (source === 'api') {
             return true;
         }
 
@@ -383,9 +430,13 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         if (gos.get('suppressClickEdit') === true) {
             return 0;
-        } else if (gos.get('singleClickEdit') === true) {
+        }
+
+        if (gos.get('singleClickEdit') === true) {
             return 1;
-        } else if (colDef?.singleClickEdit) {
+        }
+
+        if (colDef?.singleClickEdit) {
             return 1;
         }
 

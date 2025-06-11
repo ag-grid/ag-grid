@@ -1,4 +1,5 @@
 import type { NamedBean } from '../context/bean';
+import type { BeanCollection } from '../context/context';
 import type { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
 import { AgColumn } from '../entities/agColumn';
 import type { AgEventType } from '../eventTypes';
@@ -6,6 +7,7 @@ import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { CellRange } from './IRangeService';
 import type { ICellEditorParams, ICellEditorValidationError } from './iCellEditor';
+import type { ICellStyleFeature } from './iCellStyleFeature';
 import type { Column } from './iColumn';
 import type { EditMap } from './iEditModelService';
 import type { IRowNode } from './iRowNode';
@@ -89,4 +91,5 @@ export interface IEditService extends NamedBean {
     dispatchRowEvent(position: Required<EditRowPosition>, type: 'rowEditingStarted' | 'rowEditingStopped'): void;
     applyBulkEdit(position: Required<EditPosition>, cellRanges: CellRange[]): void;
     validateEdit(): ICellEditorValidationError[] | null;
+    createEditStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): ICellStyleFeature;
 }
