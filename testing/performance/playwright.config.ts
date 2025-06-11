@@ -46,6 +46,7 @@ if (!process.env['PW_NO_SERVER']) {
         url: baseURL,
         reuseExistingServer: !process.env['CI'],
         ignoreHTTPSErrors: true,
+        timeout: 10 * 60 * 1000, // sometimes it takes a long time to start the server
     };
 }
 
