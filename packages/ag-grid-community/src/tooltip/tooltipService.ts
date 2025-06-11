@@ -212,7 +212,7 @@ export class TooltipService extends BeanStub implements NamedBean {
 
                 const errors = editor.getErrors();
 
-                return errors && errors.length ? errors.join('.') : undefined;
+                return errors && errors.length ? errors.join('. ') : undefined;
             },
             getLocation: () => 'cellEditor',
             shouldDisplayTooltip: () => {

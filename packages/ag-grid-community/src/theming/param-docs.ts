@@ -293,6 +293,9 @@ const docs: Record<AllThemeParams, string> = {
     tooltipBackgroundColor: 'Background color for tooltips',
     tooltipBorder: 'Border for tooltips',
     tooltipTextColor: 'Text color for tooltips',
+    tooltipErrorBackgroundColor: 'Background color for tooltips showing errors',
+    tooltipErrorBorder: 'Border for tooltips showing errors',
+    tooltipErrorTextColor: 'Text color for tooltips showing errors',
     valueChangeDeltaDownColor:
         'Color to temporarily apply to cell data when its value decreases in an agAnimateShowChangeCellRenderer cell',
     valueChangeDeltaUpColor:

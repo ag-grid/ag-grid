@@ -156,7 +156,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             if (el) {
                 if (el instanceof HTMLInputElement) {
-                    el.setCustomValidity(errorMessages ? errorMessages.join('.') : '');
+                    el.setCustomValidity(errorMessages ? errorMessages.join('. ') : '');
                 } else {
                     el.classList.toggle('invalid', errorMessages != null && errorMessages.length > 0);
                 }
