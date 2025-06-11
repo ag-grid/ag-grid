@@ -5,6 +5,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowNode } from '../entities/positionUtils';
 import type { AgEventType } from '../eventTypes';
+import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { ICellEditorParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
@@ -12,21 +13,24 @@ import type { EditMap, EditRow, IEditModelService } from '../interfaces/iEditMod
 import type {
     EditPosition,
     EditRowPosition,
+    EditSource,
     IEditService,
     IsEditingParams,
     StartEditParams,
     StopEditParams,
 } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
+import type { IRowStyleFeature } from '../interfaces/iRowStyleFeature';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { _createCellEvent } from '../rendering/cell/cellEvent';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { ValueService } from '../valueService/valueService';
-import { CellEditStyleFeature } from './cellEditStyleFeature';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
+import { CellEditStyleFeature } from './styles/cellEditStyleFeature';
+import { RowEditStyleFeature } from './styles/rowEditStyleFeature';
 import { _addStopEditingWhenGridLosesFocus, _getCellCtrl, _getRowCtrl } from './utils/controllers';
 import {
     UNEDITED,
@@ -122,7 +126,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         position: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null,
         cellStartedEdit?: boolean | null,
-        source: 'api' | 'ui' = 'ui'
+        source: EditSource = 'ui'
     ): boolean | null {
         return this.strategy?.shouldStart(position, event, cellStartedEdit, source) ?? null;
     }
@@ -130,7 +134,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     public shouldStopEditing(
         position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
-        source: 'api' | 'ui' = 'ui'
+        source: EditSource = 'ui'
     ): boolean | null {
         return this.strategy?.shouldStop(position, event, source) ?? null;
     }
@@ -138,7 +142,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     public shouldCancelEditing(
         position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
-        source: 'api' | 'ui' = 'ui'
+        source: EditSource = 'ui'
     ): boolean | null {
         return this.strategy?.shouldCancel(position, event, source) ?? null;
     }
@@ -221,22 +225,20 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.strategy!.start(position, event, source, silent, ignoreEventKey);
 
-        this.updateCells();
-
         return;
-    }
-
-    public updateCells(
-        edits?: EditMap,
-        forcedState?: boolean,
-        suppressFlash?: boolean,
-        includeParents = this.includeParents
-    ): void {
-        this.strategy?.updateCells(edits, forcedState, suppressFlash, includeParents);
     }
 
     public stopEditing(position?: EditPosition, params?: StopEditParams): boolean {
         const { event, cancel, source = 'ui', suppressNavigateAfterEdit } = params || {};
+
+        if (source === 'paste' || source === 'rangeSvc') {
+            if (this.isBatchEditing()) {
+                // if we are in batch editing, we do not stop editing on paste
+                this.bulkRefresh(position);
+                return false;
+            }
+            this.stopEditing(position, { source: 'ui' });
+        }
 
         if (!this.isEditing() || !this.strategy) {
             return false;
@@ -250,7 +252,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         let edits = this.model.getEditMap(true);
 
         let res = false;
-        let forcedState: boolean | undefined = undefined;
 
         const willStop = !cancel && !!this.shouldStopEditing(position, event, source);
         const willCancel = cancel && !!this.shouldCancelEditing(position, event, source);
@@ -266,7 +267,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             edits = freshEdits;
 
             res ||= willStop;
-            forcedState = false;
+            this.beans.rowRenderer.refreshRows({ suppressFlash: true });
         } else if (event instanceof KeyboardEvent && this.batch && this.strategy?.midBatchInputsAllowed(position)) {
             const key = event.key;
             const isEnter = key === KeyCode.ENTER;
@@ -284,6 +285,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 event.preventDefault();
 
                 edits = this.model.getEditMap();
+                this.beans.rowRenderer.refreshRows({ suppressFlash: true });
             }
         } else {
             _syncFromEditors(this.beans);
@@ -293,8 +295,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         if (!suppressNavigateAfterEdit && cellCtrl) {
             this.navigateAfterEdit(event instanceof KeyboardEvent && event.shiftKey, cellCtrl.cellPosition);
         }
-
-        this.updateCells(edits, forcedState, true, true);
 
         _purgeUnchangedEdits(this.beans);
 
@@ -378,9 +378,55 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     public setEditMap(edits: EditMap): void {
         this.strategy ??= this.createStrategy();
         this.strategy?.setEditMap(edits);
-        // this.beans.eventSvc.dispatchEvent({
-        //     type: 'cellEditValuesChanged',
-        // });
+
+        this.bulkRefresh();
+    }
+
+    public bulkRefresh(position?: EditPosition): void {
+        if (_isClientSideRowModel(this.gos, this.beans.rowModel)) {
+            if (position) {
+                const { rowNode, column } = position;
+                const edit = this.model.getEdit(position);
+                if (edit && rowNode && column) {
+                    const { newValue, oldValue } = edit || {};
+
+                    this.beans.eventSvc.dispatchEvent({
+                        type: 'cellEditValuesChanged',
+                        node: rowNode,
+                        rowIndex: rowNode.rowIndex,
+                        rowPinned: rowNode.rowPinned,
+                        column,
+                        source: 'api',
+                        data: rowNode.data,
+                        newValue,
+                        oldValue,
+                        value: newValue,
+                        colDef: column.getColDef(),
+                    });
+                }
+
+                return;
+            }
+            this.beans.editModelSvc?.getEditMap(false).forEach((editRow, rowNode) => {
+                for (const column of editRow?.keys() || []) {
+                    const { newValue, oldValue } = editRow?.get(column) || {};
+
+                    this.beans.eventSvc.dispatchEvent({
+                        type: 'cellEditValuesChanged',
+                        node: rowNode,
+                        rowIndex: rowNode.rowIndex,
+                        rowPinned: rowNode.rowPinned,
+                        column,
+                        source: 'api',
+                        data: rowNode.data,
+                        newValue,
+                        oldValue,
+                        value: newValue,
+                        colDef: column.getColDef(),
+                    });
+                }
+            });
+        }
     }
 
     public stopAllEditing(cancel: boolean = false, source: 'api' | 'ui' = 'ui'): void {
@@ -459,15 +505,46 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined {
-        if ((!this.isEditing() || eventSource === 'commit') && eventSource !== 'paste') {
+        if ((!this.isEditing() || eventSource === 'commit') && eventSource !== 'paste' && eventSource !== 'rangeSvc') {
             return;
         }
 
         this.strategy ??= this.createStrategy();
 
-        _syncFromEditor(this.beans, position, newValue, eventSource);
+        const existing = this.model.getEdit(position);
 
-        this.updateCells();
+        if (existing && existing.newValue === newValue) {
+            return false;
+        }
+
+        if (existing && existing.oldValue !== newValue) {
+            _syncFromEditor(this.beans, position, newValue, eventSource);
+            return true;
+        }
+
+        if (existing && existing.oldValue === newValue) {
+            this.beans.editModelSvc?.removeEdits(position);
+
+            const { rowNode, column } = position;
+
+            this.beans.eventSvc.dispatchEvent({
+                type: 'cellEditValuesChanged',
+                value: newValue,
+                colDef: column.getColDef(),
+                newValue,
+                oldValue: existing.oldValue,
+                source: 'ui',
+                column,
+                rowIndex: rowNode.rowIndex,
+                rowPinned: rowNode.rowPinned,
+                data: rowNode.data,
+                node: rowNode,
+            });
+
+            return true;
+        }
+
+        _syncFromEditor(this.beans, position, newValue, eventSource);
 
         return true;
     }
@@ -592,24 +669,27 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             this.setEditMap(edits);
 
-            // update editing styles
-            this.updateCells(edits, undefined, true, true);
-
             if (this.batch) {
                 this.cleanupEditors();
 
                 _purgeUnchangedEdits(this.beans);
 
                 // force refresh of all row cells as custom renderers may depend on multiple cell values
-                this.refreshAllRows(edits, this.includeParents);
+                this.bulkRefresh();
                 return;
             }
 
             this.stopEditing(undefined, { source: 'api' });
         });
+
+        this.bulkRefresh();
     }
 
-    public createEditStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): CellEditStyleFeature {
+    public createCellStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): CellEditStyleFeature {
         return new CellEditStyleFeature(cellCtrl, beans);
+    }
+
+    public createRowStyleFeature(rowCtrl: RowCtrl, beans: BeanCollection): IRowStyleFeature {
+        return new RowEditStyleFeature(rowCtrl, beans);
     }
 }

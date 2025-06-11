@@ -346,9 +346,5 @@ export class PaginationService extends BeanStub implements NamedBean {
             newPageSize,
             keepRenderedRows,
         });
-
-        if (this.editSvc?.isBatchEditing() && this.editSvc?.isEditing()) {
-            this.editSvc?.updateCells();
-        }
     }
 }

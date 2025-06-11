@@ -37,6 +37,7 @@ import {
 import {
     AggregationModule,
     CellSelectionModule,
+    ClipboardModule,
     ColumnMenuModule,
     ColumnsToolPanelModule,
     ContextMenuModule,
@@ -84,6 +85,7 @@ ModuleRegistry.registerModules([
     CheckboxEditorModule,
     RowApiModule,
     TextFilterModule,
+    ClipboardModule,
     ValidationModule /* Development Only */,
 ]);
 

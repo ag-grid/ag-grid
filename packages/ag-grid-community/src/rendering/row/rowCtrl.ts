@@ -31,6 +31,7 @@ import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColum
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
+import type { IRowStyleFeature } from '../../interfaces/iRowStyleFeature';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
@@ -137,6 +138,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     /** sanitised */
     public businessKey: string | null = null;
     private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
+    private rowEditStyleFeature?: IRowStyleFeature;
 
     constructor(
         public readonly rowNode: RowNode,
@@ -162,6 +164,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.setRowType();
         this.setAnimateFlags(animateIn);
         this.rowStyles = this.processStylesFromGridOptions();
+
+        this.rowEditStyleFeature = beans.editSvc?.createRowStyleFeature(this, beans);
 
         this.addListeners();
     }
@@ -361,6 +365,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowDragComps.push(rowDragBean);
         gui.compBean.addDestroyFunc(() => {
             this.rowDragComps = this.rowDragComps.filter((r) => r !== rowDragBean);
+            this.rowEditStyleFeature = this.destroyBean(this.rowEditStyleFeature, this.beans.context);
             this.destroyBean(rowDragBean, this.beans.context);
         });
     }
@@ -811,6 +816,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.addDestroyFunc(() => {
             this.rowDragComps = this.destroyBeans(this.rowDragComps, this.beans.context);
             this.tooltipFeature = this.destroyBean(this.tooltipFeature, this.beans.context);
+            this.rowEditStyleFeature = this.destroyBean(this.rowEditStyleFeature, this.beans.context);
         });
 
         this.addManagedPropertyListeners(
@@ -898,6 +904,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private postProcessCss(): void {
+        this.rowEditStyleFeature?.applyRowStyles();
         this.setStylesFromGridOptions(true);
         this.postProcessClassesFromGridOptions();
         this.postProcessRowClassRules();

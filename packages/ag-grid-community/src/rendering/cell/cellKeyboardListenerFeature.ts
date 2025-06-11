@@ -115,7 +115,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 const emptyValue = this.beans.valueSvc.getDeleteValue(column, rowNode);
                 rowNode.setDataValue(column, emptyValue, 'cellClear');
             }
-        } else {
+        } else if (!editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
             beans.editSvc?.startEditing(cellCtrl, { startedEdit: true, event });
         }
 

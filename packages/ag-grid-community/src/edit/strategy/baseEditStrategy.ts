@@ -1,21 +1,16 @@
-import { ClientSideRowModel } from '../../clientSideRowModel/clientSideRowModel';
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
-import { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
-import type { CellFocusedEvent } from '../../events';
-import { _isClientSideRowModel } from '../../gridOptionsUtils';
+import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
 import type { Column } from '../../interfaces/iColumn';
 import type { EditMap, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
-import type { EditPosition, EditRowPosition, IEditService } from '../../interfaces/iEditService';
+import type { EditPosition, EditRowPosition, EditSource, IEditService } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { ChangedPath } from '../../utils/changedPath';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
 import {
     UNEDITED,
@@ -24,9 +19,7 @@ import {
     _purgeUnchangedEdits,
     _setupEditors,
     _syncFromEditors,
-    _valuesDiffer,
 } from '../utils/editors';
-import { _getAllLeafSiblings, _getAncestors, _getDependentCells, _getRelatedRows, _updateClass } from '../utils/nodes';
 
 export abstract class BaseEditStrategy extends BeanStub {
     public abstract midBatchInputsAllowed(position?: EditPosition): boolean;
@@ -42,7 +35,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     public abstract start(
         position: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null,
-        source?: 'api' | 'ui',
+        source?: EditSource,
         silent?: boolean,
         ignoreEventKey?: boolean
     ): void;
@@ -57,7 +50,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         });
     }
 
-    public onCellFocusChanged(_event: CellFocusedEvent<any, any>): void {
+    public onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
         // check if any editors open
         if (this.editSvc.isEditing(undefined, { withOpenEditor: true })) {
             const result = this.editSvc.stopEditing();
@@ -73,143 +66,22 @@ export abstract class BaseEditStrategy extends BeanStub {
                 }
             }
         }
+
+        const previous = (event as any)['previousParams']! as CommonCellFocusParams;
+        if (previous) {
+            _getCellCtrl(this.beans, previous)?.refreshCell({ suppressFlash: true, forceRefresh: true });
+        }
     }
 
     public abstract moveToNextEditingCell(
         previousCell: CellCtrl,
         backwards: boolean,
         event?: KeyboardEvent,
-        source?: 'api' | 'ui'
+        source?: EditSource
     ): boolean | null;
 
     public isCellEditable({ rowNode, column }: Required<EditPosition>, _source: 'api' | 'ui' = 'ui'): boolean {
         return (column as AgColumn).isColumnFunc(rowNode, column.getColDef().editable);
-    }
-
-    public updateCells(
-        edits: EditMap = this.model.getEditMap(),
-        forcedState?: boolean,
-        suppressFlash: boolean = true,
-        includeParents: boolean = false
-    ): void {
-        const { beans } = this;
-        const forced = forcedState !== undefined;
-
-        const changedCells: Map<CellCtrl, boolean> = new Map();
-        const changedRows: Map<RowCtrl, boolean> = new Map();
-
-        // edits?.forEach((editRow, mainNode) => {
-        //     const rowCtrl = _getRowCtrl(this.beans, {
-        //         rowNode: mainNode,
-        //     });
-
-        //     let rowEdited = false;
-
-        //     editRow.forEach((cellData, column) => {
-        //         const cellCtrl = _getCellCtrl(this.beans, {
-        //             rowCtrl,
-        //             column,
-        //         });
-
-        //         const newState = forced ? forcedState : _valuesDiffer(cellData);
-
-        //         rowEdited ||= newState;
-
-        //         cellCtrl && changedCells.set(cellCtrl, newState);
-        //     });
-
-        //     if (rowCtrl) {
-        //         changedRows.set(rowCtrl, rowEdited);
-        //     }
-        // });
-
-        // const result: any =
-        //     edits.size > 0
-        //         ? {
-        //               rowNode: edits.keys().next().value,
-        //               column: edits.values().next().value.keys().next().value,
-        //           }
-        //         : undefined;
-
-        // const { rowNode, column } = result || {};
-
-        // if (!rowNode) {
-        //     return;
-        // }
-
-        // const nodesToRefresh: RowNode[] = [rowNode];
-
-        // const clientSideRowModel: ClientSideRowModel | undefined =
-        //     (_isClientSideRowModel(beans.gos, beans.rowModel) && (beans.rowModel as ClientSideRowModel)) || undefined;
-        // const rootNode = clientSideRowModel?.rootNode;
-
-        // if (rootNode && !rowNode.isRowPinned()) {
-        //     const onlyChangedColumns = this.gos.get('aggregateOnlyChangedColumns');
-        //     const changedPath = new ChangedPath(onlyChangedColumns, rootNode);
-        //     changedPath.addParentNode(rowNode.parent, [column as AgColumn]);
-        //     clientSideRowModel.doAggregate(changedPath);
-
-        //     // add all nodes impacted by aggregation, as they need refreshed also.
-        //     changedPath.forEachChangedNodeDepthFirst((rowNode) => {
-        //         nodesToRefresh.push(rowNode);
-        //         if (rowNode.sibling) {
-        //             nodesToRefresh.push(rowNode.sibling);
-        //         }
-        //     });
-        // }
-
-        // this.beans.rowRenderer.refreshCells({ rowNodes: nodesToRefresh, suppressFlash });
-
-        // edits.forEach((editRow, rowNode) => {
-        //     const rowCtrl = _getRowCtrl(beans, { rowNode });
-        //     if (rowCtrl) {
-        //         this.updateRowStyle(rowCtrl, changedRows.get(rowCtrl), this.editSvc.isBatchEditing());
-        //     }
-
-        //     const ancestors = (includeParents && _getAncestors(beans, rowNode, { includeRelated: true })) || [];
-        //     const leafSiblings = _getAllLeafSiblings(rowNode);
-        //     const relatedNodes = _getRelatedRows(rowNode);
-        //     const nodes = [rowNode, ...leafSiblings, ...ancestors, ...relatedNodes];
-
-        //     editRow.forEach((__, column) => {
-        //         const cellCtrl = _getCellCtrl(beans, { rowNode, column });
-
-        //         const state = changedCells.get(cellCtrl!);
-        //         this.updateCellStyle(cellCtrl, state, this.editSvc.isBatchEditing(), suppressFlash);
-
-        //         _updateClass(beans, nodes, 'ag-cell-batch-edit', column, state);
-
-        //         relatedNodes.forEach((node: IRowNode) => {
-        //             const dependents = _getDependentCells(
-        //                 beans,
-        //                 { rowNode: node, column },
-        //                 { includeRelated: true, includeInitiator: true }
-        //             );
-        //             dependents?.forEach((cellCtrl: CellCtrl) =>
-        //                 this.updateCellStyle(cellCtrl, state, this.editSvc.isBatchEditing(), suppressFlash)
-        //             );
-        //         });
-        //     });
-        // });
-    }
-
-    protected updateCellStyle(
-        cellCtrl?: CellCtrl | null,
-        newState?: boolean,
-        batch?: boolean,
-        suppressFlash?: boolean
-    ): void {
-        cellCtrl?.comp?.toggleCss('ag-cell-batch-edit', (newState && batch) ?? false);
-
-        // force refresh if the cell also uses a renderer for edits
-        cellCtrl?.refreshCell({
-            suppressFlash,
-            forceRefresh: true,
-        });
-    }
-
-    protected updateRowStyle(_rowCtrl?: RowCtrl | null, _newState?: boolean, _batchEdit?: boolean): void {
-        // NOP
     }
 
     public stop(): boolean {
@@ -226,8 +98,6 @@ export abstract class BaseEditStrategy extends BeanStub {
         _syncFromEditors(this.beans);
         // clean up any dangling editors
         _destroyEditors(this.beans, this.model.getEditPositions());
-
-        this.updateCells();
 
         _purgeUnchangedEdits(this.beans);
     }
@@ -302,7 +172,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         { column }: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null,
         cellStartedEdit?: boolean | null,
-        source: 'api' | 'ui' = 'ui'
+        source: EditSource = 'ui'
     ): boolean | null {
         const isTab = event instanceof KeyboardEvent && event.key === KeyCode.TAB;
 
@@ -341,7 +211,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     public shouldStop(
         _position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
-        source: 'api' | 'ui' = 'ui'
+        source: 'api' | 'ui' | string = 'ui'
     ): boolean | null {
         const batch = this.editSvc.isBatchEditing();
 
@@ -369,7 +239,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     public shouldCancel(
         _position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
-        source: 'api' | 'ui' = 'ui'
+        source: 'api' | 'ui' | string = 'ui'
     ): boolean | null {
         const batch = this.editSvc.isBatchEditing();
         if (event instanceof KeyboardEvent && !batch) {
@@ -411,8 +281,6 @@ export abstract class BaseEditStrategy extends BeanStub {
             });
         });
 
-        this.updateCells();
-
         if (cells.length > 0) {
             const cell = cells.at(-1)!;
             const key = cell.newValue === UNEDITED ? undefined : cell.newValue;
@@ -444,8 +312,6 @@ export abstract class BaseEditStrategy extends BeanStub {
     }
 
     public override destroy(): void {
-        this.updateCells(this.model.getEditMap());
-
         this.cleanupEditors();
 
         super.destroy();

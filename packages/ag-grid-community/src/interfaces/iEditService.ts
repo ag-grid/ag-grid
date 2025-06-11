@@ -11,14 +11,17 @@ import type { ICellStyleFeature } from './iCellStyleFeature';
 import type { Column } from './iColumn';
 import type { EditMap } from './iEditModelService';
 import type { IRowNode } from './iRowNode';
+import type { IRowStyleFeature } from './iRowStyleFeature';
 import type { UserCompDetails } from './iUserCompDetails';
 
 type EditEvents = KeyboardEvent | MouseEvent | null;
 
+export type EditSource = 'api' | 'ui' | 'paste' | 'rangeSvc';
+
 export type StartEditParams = {
     startedEdit?: boolean | null;
     event?: EditEvents;
-    source?: 'api' | 'ui';
+    source?: EditSource;
     silent?: boolean;
     ignoreEventKey?: boolean;
 };
@@ -26,7 +29,7 @@ export type StartEditParams = {
 export type StopEditParams = {
     event?: EditEvents;
     cancel?: boolean;
-    source?: 'api' | 'ui';
+    source?: EditSource;
     suppressNavigateAfterEdit?: boolean;
 };
 
@@ -57,20 +60,14 @@ export interface IEditService extends NamedBean {
     isRowEditing(position?: EditRowPosition | null, params?: IsEditingParams | null): boolean;
     startEditing(position: Required<EditPosition>, params: StartEditParams): void;
     stopEditing(position?: EditPosition, params?: StopEditParams): boolean;
-    stopAllEditing(cancel?: boolean, source?: 'api' | 'ui'): void;
-    updateCells(
-        updates?: EditMap,
-        forcedState?: boolean | undefined,
-        suppressFlash?: boolean,
-        includeParents?: boolean
-    ): void;
+    stopAllEditing(cancel?: boolean, source?: EditSource): void;
     setEditMap(updates: EditMap): void;
-    isCellEditable(position: Required<EditPosition>, source?: 'api' | 'ui'): boolean;
+    isCellEditable(position: Required<EditPosition>, source?: EditSource): boolean;
     moveToNextCell(
         previous: CellCtrl | RowCtrl,
         backwards: boolean,
         event?: KeyboardEvent,
-        source?: 'api' | 'ui'
+        source?: EditSource
     ): boolean | null;
     getCellDataValue(position: Required<EditPosition>): any;
     addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void;
@@ -91,5 +88,6 @@ export interface IEditService extends NamedBean {
     dispatchRowEvent(position: Required<EditRowPosition>, type: 'rowEditingStarted' | 'rowEditingStopped'): void;
     applyBulkEdit(position: Required<EditPosition>, cellRanges: CellRange[]): void;
     validateEdit(): ICellEditorValidationError[] | null;
-    createEditStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): ICellStyleFeature;
+    createCellStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): ICellStyleFeature;
+    createRowStyleFeature(rowCtrl: RowCtrl, beans: BeanCollection): IRowStyleFeature;
 }

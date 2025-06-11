@@ -158,7 +158,7 @@ export class CellCtrl extends BeanStub {
         const { beans } = this;
         this.positionFeature = new CellPositionFeature(this, beans);
         this.customStyleFeature = beans.cellStyles?.createCellCustomStyleFeature(this, beans);
-        this.editStyleFeature = beans.editSvc?.createEditStyleFeature(this, beans);
+        this.editStyleFeature = beans.editSvc?.createCellStyleFeature(this, beans);
         this.mouseListener = new CellMouseListenerFeature(this, beans, this.column);
 
         this.keyboardListener = new CellKeyboardListenerFeature(this, beans, this.rowNode, this.rowCtrl);

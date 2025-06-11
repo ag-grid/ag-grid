@@ -204,7 +204,6 @@ function _createEditorParams(
         stopEditing: (suppressNavigateAfterEdit: boolean) => {
             editSvc!.stopEditing(position, { source: batchEdit ? 'ui' : 'api', suppressNavigateAfterEdit });
             _destroyEditor(beans, position);
-            editSvc?.updateCells();
         },
         eGridCell: cellCtrl?.eGui,
         parseValue: (newValue: any) => valueSvc.parseValue(agColumn, rowNode, newValue, cellCtrl?.value),
@@ -293,6 +292,7 @@ export function _syncFromEditor(
         newValue = UNEDITED;
     }
 
+    // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
     beans.editModelSvc?.setEdit(position, { newValue, oldValue, state: hasEditor ? 'editing' : 'changed' });
 
     beans.eventSvc.dispatchEvent({
