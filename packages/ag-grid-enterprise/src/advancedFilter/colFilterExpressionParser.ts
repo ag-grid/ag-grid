@@ -11,7 +11,6 @@ import type {
 } from './filterExpressionUtils';
 import {
     checkAndUpdateExpression,
-    escapeQuotes,
     findEndPosition,
     findStartPosition,
     getSearchString,
