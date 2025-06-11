@@ -47,6 +47,7 @@ test(`Performance Test - Compare performance of setting data`, {
         },
         {
             name: 'examples/performance-test/lots-of-cells',
+            description: 'React',
             framework: 'reactFunctionalTs',
             control: { version: 'prod' },
             variant: { version: 'staging' },
