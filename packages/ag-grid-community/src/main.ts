@@ -1008,7 +1008,6 @@ export { ITooltipComp, ITooltipParams, TooltipLocation } from './tooltip/tooltip
 export {
     TooltipFeature,
     ITooltipCtrl,
-    _shouldDisplayTooltip,
     _getShouldDisplayTooltip,
     _isShowTooltipWhenTruncated,
 } from './tooltip/tooltipFeature';
@@ -1081,6 +1080,7 @@ export {
     _observeResize,
     _preserveRangesWhile,
     _requestAnimationFrame,
+    _isElementOverflowingCallback,
 } from './utils/dom';
 export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';

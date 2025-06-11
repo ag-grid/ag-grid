@@ -1,8 +1,8 @@
 import { KeyCode } from '../constants/keyCode';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
-import { _shouldDisplayTooltip } from '../tooltip/tooltipFeature';
 import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
 import { _setAriaControls } from '../utils/aria';
+import { _isElementOverflowingCallback } from '../utils/dom';
 import type { ListOption } from './agList';
 import { AgList } from './agList';
 import { AgPickerField } from './agPickerField';
@@ -43,7 +43,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
     public override postConstruct(): void {
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
-                shouldDisplayTooltip: _shouldDisplayTooltip(() => this.eDisplayField),
+                shouldDisplayTooltip: _isElementOverflowingCallback(() => this.eDisplayField),
                 getGui: () => this.getGui(),
             } as ITooltipCtrl)
         );

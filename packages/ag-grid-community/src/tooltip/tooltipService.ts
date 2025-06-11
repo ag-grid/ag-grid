@@ -7,10 +7,11 @@ import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellC
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
+import { _isElementOverflowingCallback } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
 import type { ITooltipCtrl, TooltipFeature } from './tooltipFeature';
-import { _isShowTooltipWhenTruncated, _shouldDisplayTooltip } from './tooltipFeature';
+import { _isShowTooltipWhenTruncated } from './tooltipFeature';
 
 export class TooltipService extends BeanStub implements NamedBean {
     beanName = 'tooltipSvc' as const;
@@ -30,7 +31,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         const colDef = column.getColDef();
 
         if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colDef.headerComponent) {
-            shouldDisplayTooltip = _shouldDisplayTooltip(
+            shouldDisplayTooltip = _isElementOverflowingCallback(
                 () => eGui.querySelector('.ag-header-cell-text') as HTMLElement | undefined
             );
         }
@@ -74,7 +75,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         const colGroupDef = column.getColGroupDef();
 
         if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colGroupDef?.headerGroupComponent) {
-            shouldDisplayTooltip = _shouldDisplayTooltip(
+            shouldDisplayTooltip = _isElementOverflowingCallback(
                 () => eGui.querySelector('.ag-header-group-text') as HTMLElement | undefined
             );
         }
@@ -136,13 +137,17 @@ export class TooltipService extends BeanStub implements NamedBean {
         if (!shouldDisplayTooltip) {
             const { editSvc } = beans;
             if (isTooltipWhenTruncated && !ctrl.isCellRenderer()) {
-                shouldDisplayTooltip = _shouldDisplayTooltip(() => {
-                    const eCell = ctrl.eGui;
-                    const isEditing = editSvc?.isEditing(ctrl);
-                    return !isEditing && eCell.children.length === 0
-                        ? eCell
-                        : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
-                });
+                shouldDisplayTooltip = () => {
+                    const isEditing = !!editSvc?.isEditing(ctrl);
+                    const isElementOverflowing = _isElementOverflowingCallback(() => {
+                        const eCell = ctrl.eGui;
+                        return eCell.children.length === 0
+                            ? eCell
+                            : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
+                    });
+
+                    return !isEditing && isElementOverflowing();
+                };
             } else {
                 shouldDisplayTooltip = () => !editSvc?.isEditing(ctrl);
             }
