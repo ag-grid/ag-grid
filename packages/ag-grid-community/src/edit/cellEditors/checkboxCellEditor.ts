@@ -26,12 +26,9 @@ export class CheckboxCellEditor
     }
 
     protected readonly eEditor: AgCheckbox = RefPlaceholder;
-    protected params: ICellEditorParams<any, boolean>;
 
     public initialiseEditor(params: ICellEditorParams<any, boolean>): void {
-        this.params = params;
         const isSelected = params.value ?? undefined;
-
         const eEditor = this.eEditor;
         eEditor.setValue(isSelected);
 

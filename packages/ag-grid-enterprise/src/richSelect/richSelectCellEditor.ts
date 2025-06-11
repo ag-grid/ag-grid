@@ -14,7 +14,6 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any>
     extends AgAbstractCellEditor<RichCellEditorParams<TData, TValue>>
     implements ICellEditorComp
 {
-    protected params: RichCellEditorParams<TData, TValue>;
     private focusAfterAttached: boolean;
     protected eEditor: AgRichSelect<TValue>;
     private isAsync: boolean = false;
@@ -23,9 +22,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any>
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
     }
 
-    public initialiseEditor(params: RichCellEditorParams<TData, TValue>): void {
-        this.params = params;
-
+    public initialiseEditor(_params: RichCellEditorParams<TData, TValue>): void {
         const { cellStartedEdit, values, eventKey } = this.params;
 
         if (_missing(values)) {

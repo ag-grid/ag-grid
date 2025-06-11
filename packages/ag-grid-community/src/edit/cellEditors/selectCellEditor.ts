@@ -31,14 +31,12 @@ const SelectCellElement: ElementParams = {
 export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParams> implements ICellEditorComp {
     private focusAfterAttached: boolean;
     private valueSvc: ValueService;
-    protected params: SelectCellEditorParams;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
     }
 
     protected readonly eEditor: AgSelect = RefPlaceholder;
-
     private startedByEnter: boolean = false;
 
     constructor() {

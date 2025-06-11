@@ -16,7 +16,6 @@ export class SimpleCellEditor<
 {
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
-    protected params: ICellEditorParams;
     protected readonly eEditor: I = RefPlaceholder;
 
     constructor(protected cellEditorInput: CellEditorInput<TValue, P, I>) {
@@ -28,7 +27,6 @@ export class SimpleCellEditor<
             { tag: 'div', cls: 'ag-cell-edit-wrapper', children: [this.cellEditorInput.getTemplate()] },
             this.cellEditorInput.getAgComponents()
         );
-        this.params = params;
         const { cellStartedEdit, eventKey, suppressPreventDefault } = params;
 
         const eEditor = this.eEditor;

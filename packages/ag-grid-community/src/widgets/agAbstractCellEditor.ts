@@ -4,12 +4,13 @@ import { PopupComponent } from './popupComponent';
 
 export abstract class AgAbstractCellEditor<P extends BaseCellEditorParams> extends PopupComponent {
     protected abstract readonly eEditor: AgAbstractField<any, any, any>;
-    protected abstract params: P;
+    protected params: P;
     protected abstract getErrors(): string[] | null;
     protected abstract getEditorElement(): HTMLElement | HTMLInputElement;
     protected abstract initialiseEditor(params: P): void;
 
     public init(params: P) {
+        this.params = params;
         this.initialiseEditor(params);
         const el = this.getEditorElement();
         // override the browser's error message
@@ -30,7 +31,7 @@ export abstract class AgAbstractCellEditor<P extends BaseCellEditorParams> exten
         if (el instanceof HTMLInputElement) {
             el.setCustomValidity(messages ? messages[0] : '');
         } else {
-            el.classList.toggle('invalid');
+            el.classList.toggle('invalid', messages != null && messages.length > 0);
         }
 
         if (!messages) {

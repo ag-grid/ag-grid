@@ -21,7 +21,6 @@ const LargeTextCellElement: ElementParams = {
 };
 export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorParams> implements ICellEditorComp {
     protected readonly eEditor: AgInputTextArea = RefPlaceholder;
-    protected params: ILargeTextEditorParams;
     private focusAfterAttached: boolean;
 
     constructor() {
@@ -30,7 +29,6 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
 
     public initialiseEditor(params: ILargeTextEditorParams): void {
         const { eEditor } = this;
-        this.params = params;
         const { cellStartedEdit, value, maxLength, cols, rows } = params;
         this.focusAfterAttached = cellStartedEdit;
 
