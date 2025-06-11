@@ -234,36 +234,28 @@ This works in the same way as when [Providing Custom Cell Data Types](#providing
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     dataTypeDefinitions: {
-        // override `date` to handle custom date format `HH:mm:ss dd/MM/yyyy`
+        // override `date` to handle custom date format `dd/mm/yyyy`
         date: {
-            baseDataType: 'dateTime',
-            extendsDataType: 'dateTime',
+            baseDataType: 'date',
+            extendsDataType: 'date',
             valueParser: params => {
                 if (params.newValue == null) {
                     return null;
                 }
-                // convert from `HH:mm:ss dd/MM/yyyy`
-                const [time, date] = params.newValue.split(' ');
-                const [HH, mm, ss] = time.split(':');
-                const [dd, MM, yyyy] = date.split('/');
-                return new Date(
-                    parseInt(yyyy),
-                    parseInt(MM) - 1,
-                    parseInt(dd),
-                    parseInt(HH),
-                    parseInt(mm),
-                    parseInt(ss),
-                );
+                // convert from `dd/mm/yyyy`
+                const dateParts = params.newValue.split('/');
+                return dateParts.length === 3 ? new Date(
+                    parseInt(dateParts[2]),
+                    parseInt(dateParts[1]) - 1,
+                    parseInt(dateParts[0])
+                ) : null;
             },
             valueFormatter: params => {
-                /** @type {Date} */
+                // convert to `dd/mm/yyyy`
                 const date = params.value;
-                const pad = (n) => n < 10 ? `0${n}` : n;
-                // convert to `HH:mm:ss dd/MM/yyyy`
-                return params.value == null
+                return date == null
                     ? ''
-                    : `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}` 
-                        + ` ${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${pad(date.getFullYear())}`;
+                    : `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear}`;
             },
         }
     }
