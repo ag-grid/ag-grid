@@ -381,17 +381,32 @@ const CellComp = ({
             getParentOfValue: () => eCellValue.current ?? eCellWrapper.current ?? eGui.current,
 
             setRenderDetails: (compDetails, value, force) => {
-                setRenderDetails((prev) => {
-                    if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
-                        return {
-                            value,
-                            compDetails,
-                            force,
-                        };
-                    } else {
-                        return prev;
+                const setDetails = () => {
+                    setRenderDetails((prev) => {
+                        if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
+                            return {
+                                value,
+                                compDetails,
+                                force,
+                            };
+                        } else {
+                            return prev;
+                        }
+                    });
+                };
+                if (compDetails?.params?.deferRender && React.startTransition) {
+                    const loadingCellRenderer = cellCtrl.getDeferLoadingCellRenderer();
+                    if (loadingCellRenderer) {
+                        setRenderDetails({
+                            value: undefined,
+                            compDetails: loadingCellRenderer,
+                            force: false,
+                        });
+                        React.startTransition(setDetails);
+                        return;
                     }
-                });
+                }
+                setDetails();
             },
 
             setEditDetails: (compDetails, popup, popupPosition, reactiveCustomComponents) => {
