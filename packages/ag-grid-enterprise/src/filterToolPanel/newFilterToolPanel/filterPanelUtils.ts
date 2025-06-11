@@ -10,6 +10,7 @@ const DEFAULT_LOCALE_TEXT = {
     agDateColumnFilterDisplayName: 'Date Filter',
     agSetColumnFilterDisplayName: 'Set Filter',
     agMultiColumnFilterDisplayName: 'Multi Filter',
+    addFilterPlaceholder: 'Search columns...',
 } as const;
 
 export function translateForFilterPanel(bean: BeanStub<any>, key: keyof typeof DEFAULT_LOCALE_TEXT): string {

@@ -122,4 +122,9 @@
 
 .ag-filter-add-select {
     border: 0;
+
+    /* stylelint-disable-next-line selector-max-specificity */
+    .ag-text-field-input {
+        padding-left: calc(var(--ag-spacing) * 1.5 + 12px) !important;
+    }
 }

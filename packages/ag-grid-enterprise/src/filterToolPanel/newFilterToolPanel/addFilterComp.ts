@@ -66,6 +66,7 @@ export class AddFilterComp extends Component<'filterSelected'> {
             pickerType: 'virtual-list',
             pickerAriaLabelKey,
             pickerAriaLabelValue: translateForFilterPanel(this, pickerAriaLabelKey),
+            placeholder: translateForFilterPanel(this, 'addFilterPlaceholder'),
             value: '',
             valueList: Array.from(this.options.keys()),
             searchType: 'matchAny',

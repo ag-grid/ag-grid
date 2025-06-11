@@ -232,5 +232,9 @@
 
     .ag-filter-add-select {
         border: 0;
+
+        .ag-text-field-input {
+            padding-left: calc(var(--ag-spacing) * 1.5 + 12px) !important;
+        }
     }
 }
