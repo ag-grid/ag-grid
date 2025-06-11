@@ -7,8 +7,10 @@ export abstract class AgAbstractCellEditor<P extends BaseCellEditorParams> exten
     protected abstract params: P;
     protected abstract getErrors(): string[] | null;
     protected abstract getEditorElement(): HTMLElement | HTMLInputElement;
+    protected abstract initialiseEditor(params: P): void;
 
-    public postConstruct() {
+    public init(params: P) {
+        this.initialiseEditor(params);
         const el = this.getEditorElement();
         // override the browser's error message
         el.setAttribute('title', '');

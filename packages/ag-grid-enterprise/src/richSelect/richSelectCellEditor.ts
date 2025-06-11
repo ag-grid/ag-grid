@@ -23,7 +23,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any>
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
     }
 
-    public init(params: RichCellEditorParams<TData, TValue>): void {
+    public initialiseEditor(params: RichCellEditorParams<TData, TValue>): void {
         this.params = params;
 
         const { cellStartedEdit, values, eventKey } = this.params;

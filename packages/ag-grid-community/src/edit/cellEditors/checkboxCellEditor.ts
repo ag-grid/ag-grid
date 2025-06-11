@@ -28,19 +28,19 @@ export class CheckboxCellEditor
     protected readonly eEditor: AgCheckbox = RefPlaceholder;
     protected params: ICellEditorParams<any, boolean>;
 
-    public init(params: ICellEditorParams<any, boolean>): void {
+    public initialiseEditor(params: ICellEditorParams<any, boolean>): void {
         this.params = params;
         const isSelected = params.value ?? undefined;
 
-        const eCheckbox = this.eEditor;
-        eCheckbox.setValue(isSelected);
+        const eEditor = this.eEditor;
+        eEditor.setValue(isSelected);
 
-        const inputEl = eCheckbox.getInputElement();
+        const inputEl = eEditor.getInputElement();
         inputEl.setAttribute('tabindex', '-1');
 
         this.setAriaLabel(isSelected);
 
-        this.addManagedListeners(eCheckbox, {
+        this.addManagedListeners(eEditor, {
             fieldValueChanged: (event: { selected?: boolean }) => this.setAriaLabel(event.selected),
         });
     }

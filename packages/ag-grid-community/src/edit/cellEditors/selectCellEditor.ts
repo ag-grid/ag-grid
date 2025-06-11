@@ -45,7 +45,7 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
         super(SelectCellElement, [AgSelectSelector]);
     }
 
-    public init(params: SelectCellEditorParams): void {
+    public initialiseEditor(params: SelectCellEditorParams): void {
         this.focusAfterAttached = params.cellStartedEdit;
 
         const { eEditor, valueSvc, gos } = this;

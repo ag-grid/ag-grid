@@ -23,7 +23,7 @@ export class SimpleCellEditor<
         super();
     }
 
-    public init(params: P): void {
+    public initialiseEditor(params: P): void {
         this.setTemplate(
             { tag: 'div', cls: 'ag-cell-edit-wrapper', children: [this.cellEditorInput.getTemplate()] },
             this.cellEditorInput.getAgComponents()
@@ -31,8 +31,8 @@ export class SimpleCellEditor<
         this.params = params;
         const { cellStartedEdit, eventKey, suppressPreventDefault } = params;
 
-        const eInput = this.eEditor;
-        this.cellEditorInput.init(eInput, params);
+        const eEditor = this.eEditor;
+        this.cellEditorInput.init(eEditor, params);
         let startValue: string | null | undefined;
         let shouldSetStartValue = true;
 
@@ -61,17 +61,15 @@ export class SimpleCellEditor<
         }
 
         if (shouldSetStartValue && startValue != null) {
-            eInput.setStartValue(startValue);
+            eEditor.setStartValue(startValue);
         }
 
-        this.addManagedElementListeners(eInput.getGui(), {
-            keydown: (event: KeyboardEvent) => {
-                const { key } = event;
+        this.addGuiEventListener('keydown', (event: KeyboardEvent) => {
+            const { key } = event;
 
-                if (key === KeyCode.PAGE_UP || key === KeyCode.PAGE_DOWN) {
-                    event.preventDefault();
-                }
-            },
+            if (key === KeyCode.PAGE_UP || key === KeyCode.PAGE_DOWN) {
+                event.preventDefault();
+            }
         });
     }
 

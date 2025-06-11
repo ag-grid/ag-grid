@@ -28,7 +28,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         super(LargeTextCellElement, [AgInputTextAreaSelector]);
     }
 
-    public init(params: ILargeTextEditorParams): void {
+    public initialiseEditor(params: ILargeTextEditorParams): void {
         const { eEditor } = this;
         this.params = params;
         const { cellStartedEdit, value, maxLength, cols, rows } = params;
