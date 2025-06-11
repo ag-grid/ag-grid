@@ -27,6 +27,7 @@ import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { IRowNumbersRowResizeFeature } from '../../interfaces/rowNumbers';
+import type { ILoadingCellRendererParams } from '../../main-umd-noStyles';
 import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
@@ -270,6 +271,16 @@ export class CellCtrl extends BeanStub {
     }
     public getValueToDisplay(): any {
         return this.valueFormatted ?? this.value;
+    }
+
+    public getDeferLoadingCellRenderer(): UserCompDetails | undefined {
+        const { beans, column } = this;
+        const { userCompFactory } = beans;
+        const colDef = column.getColDef();
+        const params = this.createCellRendererParams() as ILoadingCellRendererParams;
+        params.deferRender = true;
+
+        return _getLoadingCellRendererDetails(userCompFactory, colDef, params);
     }
 
     private showValue(forceNewCellRendererInstance: boolean, skipRangeHandleRefresh: boolean): void {

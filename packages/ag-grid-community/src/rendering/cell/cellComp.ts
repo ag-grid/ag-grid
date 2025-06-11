@@ -338,9 +338,7 @@ export class CellComp extends Component {
     private createCellRendererInstance(compDetails: UserCompDetails): void {
         const displayComponentVersionCopy = this.rendererVersion;
 
-        const { componentClass } = compDetails;
-
-        const createCellRendererFunc = () => {
+        const createCellRendererFunc = (details: UserCompDetails) => () => {
             const staleTask = this.rendererVersion !== displayComponentVersionCopy || !this.isAlive();
             if (staleTask) {
                 return;
@@ -348,8 +346,12 @@ export class CellComp extends Component {
 
             // this can return null in the event that the user has switched from a renderer component to nothing, for example
             // when using a cellRendererSelect to return a component or null depending on row data etc
-            const componentPromise = compDetails.newAgStackInstance();
-            const callback = this.afterCellRendererCreated.bind(this, displayComponentVersionCopy, componentClass);
+            const componentPromise = details.newAgStackInstance();
+            const callback = this.afterCellRendererCreated.bind(
+                this,
+                displayComponentVersionCopy,
+                details.componentClass
+            );
             componentPromise?.then(callback);
         };
 
@@ -358,14 +360,24 @@ export class CellComp extends Component {
         // test of users.
         const { animationFrameSvc } = this.beans;
         if (animationFrameSvc?.active && this.firstRender) {
+            const deferred = compDetails.params.deferRender;
+            if (deferred) {
+                // show loading cell and then pass the task to the animationFrameSvc
+                const loadingCompDetails = this.cellCtrl.getDeferLoadingCellRenderer();
+                if (loadingCompDetails) {
+                    createCellRendererFunc(loadingCompDetails)();
+                }
+            }
+
             animationFrameSvc.createTask(
-                createCellRendererFunc,
+                createCellRendererFunc(compDetails),
                 this.rowNode.rowIndex!,
                 'p2',
-                compDetails.componentFromFramework
+                compDetails.componentFromFramework,
+                deferred
             );
         } else {
-            createCellRendererFunc();
+            createCellRendererFunc(compDetails)();
         }
     }
 

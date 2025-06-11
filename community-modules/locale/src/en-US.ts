@@ -541,6 +541,7 @@ export const AG_GRID_LOCALE_EN = {
     ariaChartSelected: 'Selected',
     ariaSkeletonCellLoadingFailed: 'Row failed to load',
     ariaSkeletonCellLoading: 'Row data is loading',
+    ariaDeferSkeletonCellLoading: 'Cell is loading',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Row Groups',
