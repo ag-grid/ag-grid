@@ -40,24 +40,13 @@ export class FilterExpressionParser {
             : this.params.advFilterExpSvc.translate('advancedFilterValidationMessageAtEnd', [message]);
     }
 
-    public getFunctionString(): {
-        functionString: string;
-        params: FilterExpressionFunctionParams;
-    } {
-        const params = this.createFunctionParams();
-        return {
-            functionString: `return ${this.joinExpressionParser.getFunctionString(params)};`,
-            params,
-        };
-    }
-
-    public getFunctionParsed(): {
+    public getFunction(): {
         expressionFunction: FilterExpressionFunction;
         params: FilterExpressionFunctionParams;
     } {
         const params = this.createFunctionParams();
         return {
-            expressionFunction: this.joinExpressionParser.getFunctionParsed(params),
+            expressionFunction: this.joinExpressionParser.getFunction(params),
             params,
         };
     }

@@ -12,6 +12,13 @@ on:
         required: true
   # schedule:
   #- cron: '0 0 * * *' # Run daily at midnight UTC
+env:
+  NX_NO_CLOUD: true
+  NX_BRANCH: ${{ github.ref }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  SHARP_IGNORE_GLOBAL_LIBVIPS: true
+  YARN_REGISTRY: "http://52.50.158.57:4873"
+  CI: true
 
 jobs:
   benchmark:
@@ -38,11 +45,37 @@ jobs:
             })
             return comment.id;
 
+      - id: 'get-branch'
+        run: |
+            if [[ "${{ github.event_name }}" == "issue_comment" ]] ; then
+              # For PR comments, get the branch from the PR
+              echo "branch=$(gh pr view $PR_NO --repo $REPO --json headRefName --jq '.headRefName')" >> $GITHUB_OUTPUT
+              echo "base=$(gh pr view $PR_NO --repo $REPO --json baseRefName --jq '.baseRefName')" >> $GITHUB_OUTPUT
+            elif [[ "${{ github.event_name }}" == "schedule" ]] ; then
+              # For scheduled runs, get the most recent branch matching 'b' followed by semver (e.g. b1.2.3)
+              release=$(git ls-remote --heads origin 'b[0-9]*\.[0-9]*\.[0-9]*' | sort -t '/' -k 2 -V | tail -n 1 | sed 's/.*refs\/heads\///')
+              echo "branch=latest" >> $GITHUB_OUTPUT
+              echo "base=$release" >> $GITHUB_OUTPUT
+            else
+              # For manual workflow dispatch, use the current branch
+              echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+              echo "base=${{ inputs.compare-base }}" >> $GITHUB_OUTPUT
+            fi
+        env:
+            REPO: ${{ github.repository }}
+            PR_NO: ${{ github.event.issue.number }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          fetch-depth: 1
           ref: ${{ steps.get-branch.outputs.branch }}
-          fetch-depth: 0
+
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
 
       - name: Notify Progress
         uses: actions/github-script@v7
@@ -64,7 +97,9 @@ jobs:
           cache_mode: rw
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: |
+          git status;
+          npx playwright install --with-deps
 
       - name: Notify Progress
         uses: actions/github-script@v7
@@ -118,7 +153,6 @@ jobs:
             })
 
       - name: Slack Notification
-        if: (github.event_name == 'schedule' || ((github.event_name == 'workflow_dispatch' || github.event_name == 'issue_comment') && inputs.notify == true))
         continue-on-error: true
         env:
           SLACK_CHANNEL: '#ci-gate'

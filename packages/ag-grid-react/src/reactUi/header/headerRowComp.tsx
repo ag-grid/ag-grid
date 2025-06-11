@@ -26,8 +26,7 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
     const [height, setHeight] = useState<string>(() => rowHeight + 'px');
     const [top, setTop] = useState<string>(() => topOffset + 'px');
 
-    const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);
-    const prevCellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);
+    const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[]>([]);
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>(() => ctrl.getUpdatedHeaderCtrls());
 
     const compBean = useRef<_EmptyBean>();
@@ -44,12 +43,11 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
             setHeight: (height: string) => setHeight(height),
             setTop: (top: string) => setTop(top),
             setHeaderCtrls: (ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean) => {
-                prevCellCtrlsRef.current = cellCtrlsRef.current;
-                cellCtrlsRef.current = ctrls;
-
-                const next = getNextValueIfDifferent(prevCellCtrlsRef.current, ctrls, forceOrder)!;
-                if (next !== prevCellCtrlsRef.current) {
-                    agFlushSync(afterScroll, () => setCellCtrls(next));
+                const prevCellCtrls = cellCtrlsRef.current;
+                const nextCells = getNextValueIfDifferent(prevCellCtrls, ctrls, forceOrder)!;
+                if (nextCells !== prevCellCtrls) {
+                    cellCtrlsRef.current = nextCells;
+                    agFlushSync(afterScroll, () => setCellCtrls(nextCells));
                 }
             },
             setWidth: (width: string) => {
