@@ -28,8 +28,8 @@ export interface AgGridReactProps<TData = any> extends GridOptions<TData> {
     /** @deprecated v33.3 AgGridReact does not accept children so this property will be removed. */
     children?: any;
 
-    /** Enables support for `cellRendererParams.deferRender` */
-    enableCellDeferRender?: boolean;
+    /** Disables support for `cellRendererParams.deferRender` and switches the rows rendering method. */
+    suppressCellDeferRender?: boolean;
 }
 
 export interface InternalAgGridReactProps<TData = any> extends AgGridReactProps<TData> {

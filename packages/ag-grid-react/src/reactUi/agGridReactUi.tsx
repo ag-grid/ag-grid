@@ -74,7 +74,7 @@ const reactPropsNotGridOptions: ReactCompProps = {
     className: undefined,
     passGridApi: undefined,
     componentWrappingElement: undefined,
-    enableCellDeferRender: undefined,
+    suppressCellDeferRender: undefined,
     ...deprecatedProps,
 };
 const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
@@ -239,7 +239,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         });
     }, [props]);
 
-    const enableCellDeferRender = (props.enableCellDeferRender ?? true) && !!React.useSyncExternalStore;
+    const enableCellDeferRender = !(props.suppressCellDeferRender ?? false) && !!React.useSyncExternalStore;
 
     return (
         <div style={style} className={props.className} ref={setRef}>
