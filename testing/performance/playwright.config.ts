@@ -18,6 +18,11 @@ const config = defineConfig({
         headless: !!(process.env['PW_HEADLESS'] ?? process.env['CI']),
     },
 
+    reporter: [
+        ['html', { open: 'never' }], // generate HTML report, but don't open it automatically
+        ['json', { outputFile: '../../playwright-report/test-results.json' }], // JSON reporter for CI integration
+    ],
+
     /* Configure projects for major browsers */
     projects: [
         {

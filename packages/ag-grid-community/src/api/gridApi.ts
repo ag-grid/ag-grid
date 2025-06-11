@@ -24,6 +24,10 @@ import type {
     UpdateChartParams,
 } from '../interfaces/IChartService';
 import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
+import type {
+    RowDropPositionIndicator,
+    SetRowDropPositionIndicatorParams,
+} from '../interfaces/IRowDropHighlightService';
 import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type {
@@ -804,7 +808,7 @@ export interface _ColumnGroupGridApi {
     getAllDisplayedColumnGroups(): (Column | ColumnGroup)[] | null;
 }
 
-export interface _DragGridApi {
+export interface _DragGridApi<TData> {
     /**
      * Adds a drop zone outside of the grid where rows can be dropped.
      * @agModule `RowDragModule`
@@ -821,6 +825,19 @@ export interface _DragGridApi {
      * @agModule `RowDragModule`
      */
     getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams | undefined;
+
+    /**
+     * Gets the currently highlighted drop target row, previously set by `setRowDropHighlight`.
+     * @agModule `RowDragModule`
+     */
+    getRowDropPositionIndicator(): RowDropPositionIndicator<TData>;
+
+    /**
+     * Sets the current highlighted row drop target.
+     * This is useful for implementing custom unmanaged row drag and drop logic, to highlight the target row.
+     * @agModule `RowDragModule`
+     */
+    setRowDropPositionIndicator(highlight: SetRowDropPositionIndicatorParams<TData> | null | undefined): void;
 }
 
 export interface _EditGridApi<TData> {
@@ -1808,14 +1825,13 @@ export interface GridApi<TData = any>
         _PinnedRowGridApi,
         _RenderGridApi<TData>,
         _HighlightChangesGridApi<TData>,
-        _DragGridApi,
+        _DragGridApi<TData>,
         _ColumnAutosizeApi,
         _ColumnResizeApi,
         _ColumnMoveApi,
         _ColumnHoverApi,
         _ColumnGridApi<TData>,
         _ColumnGroupGridApi,
-        _DragGridApi,
         _EditGridApi<TData>,
         _UndoRedoGridApi,
         _FilterGridApi,

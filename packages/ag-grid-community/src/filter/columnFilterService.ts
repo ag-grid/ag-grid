@@ -139,9 +139,9 @@ export class ColumnFilterService
     public postConstruct(): void {
         this.addManagedEventListeners({
             gridColumnsChanged: this.onColumnsChanged.bind(this),
-            beforeRefreshModel: ({ params }) => {
+            beforeRefreshModel: ({ params, groupsChanged }) => {
                 // We listen to both row data updated and treeData changed as the SetFilter needs it
-                if (params.rowDataUpdated || params.changedProps?.has('treeData')) {
+                if (groupsChanged || params.rowDataUpdated) {
                     this.onNewRowsLoaded('rowDataUpdated');
                 }
             },

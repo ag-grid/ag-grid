@@ -2,15 +2,16 @@ import type {
     ClientSideRowModelStage,
     GridOptions,
     GroupingApproach,
-    IRowGroupingStrategy,
-    IRowNodeStage,
+    IRowGroupStage,
     NamedBean,
-    RowGroupingRowNode,
+    RowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
 import { BeanStub, _getGroupingApproach } from 'ag-grid-community';
 
-export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeStage {
+import type { GroupingRowNode, IRowGroupingStrategy } from './rowHierarchyUtils';
+
+export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupStage {
     beanName = 'groupStage' as const;
 
     public refreshProps: Set<keyof GridOptions<any>> = new Set([
@@ -23,57 +24,75 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowNodeSt
         'treeDataChildrenField',
         'treeDataParentIdField',
     ]);
+
     public step: ClientSideRowModelStage = 'group';
 
     private approach: GroupingApproach | null = null;
+    private strategyBeanName: string | null = null;
     private strategy: IRowGroupingStrategy<TData> | undefined = undefined;
+
+    /** Gets a filler row by id */
+    public getNode(id: string): RowNode<TData> | undefined {
+        return this.strategy?.getNode(id);
+    }
 
     public override destroy(): void {
         super.destroy();
         this.strategy = undefined;
-        this.approach = null;
     }
 
-    private createStrategy(): IRowGroupingStrategy<TData> | undefined {
-        const { beans, approach } = this;
-        let beanName: 'treeGroupStrategy' | 'groupStrategy' | undefined;
+    public execute(params: StageExecuteParams<TData>): boolean | undefined {
+        const approach = _getGroupingApproach(this.gos);
+        const approachChanged = this.approach !== approach;
+        const strategy = approachChanged ? this.changeApproach(params, approach) : this.strategy;
+        if (!strategy) {
+            // Stage not executed if no strategy is available
+            return undefined;
+        }
+        return strategy.execute(params, approach) || approachChanged;
+    }
+
+    private getStrategyBeanName(approach: GroupingApproach | null) {
         switch (approach) {
             case 'group':
-                beanName = 'groupStrategy';
-                break;
+                return 'groupStrategy';
+            case 'treePath':
             case 'treeNested':
             case 'treeSelfRef':
-                beanName = 'treeGroupStrategy';
-                break;
+                return 'treeGroupStrategy';
+            default:
+                return null;
         }
-        if (beanName) {
-            const bean = beans.registry.createDynamicBean<IRowGroupingStrategy<TData>>(beanName, false);
-            this.createOptionalManagedBean(bean);
-            return bean;
-        }
-        return undefined;
     }
 
-    public execute(params: StageExecuteParams<TData>): boolean {
-        let strategy = this.strategy;
-        const oldApproach = this.approach;
-        const approach = _getGroupingApproach(this.gos);
-        if (oldApproach !== approach) {
-            this.approach = approach;
+    private changeApproach(
+        { rowNode }: StageExecuteParams<TData>,
+        approach: GroupingApproach
+    ): IRowGroupingStrategy<TData> | undefined {
+        this.approach = approach;
+        const newBeanName = this.getStrategyBeanName(approach);
+        const oldStrategy = this.strategy;
+        let strategy = oldStrategy;
+        if (this.strategyBeanName !== newBeanName) {
             this.destroyBean(strategy);
-            if (strategy && this.approach !== 'treePath') {
-                resetGrouping(params.rowNode, this.approach !== 'treeNested');
+            strategy = undefined;
+            if (newBeanName) {
+                strategy = this.beans.registry.createDynamicBean(newBeanName, false);
+                this.createOptionalManagedBean(strategy);
             }
-            strategy = this.createStrategy();
             this.strategy = strategy;
+            this.strategyBeanName = newBeanName;
+        } else {
+            strategy?.reset?.();
         }
-
-        strategy?.execute(params, approach);
-        return !!strategy;
+        if (oldStrategy) {
+            resetGrouping(rowNode, approach !== 'treeNested');
+        }
+        return strategy;
     }
 }
 
-const resetGrouping = <TData>(rootNode: RowGroupingRowNode<TData>, canResetTreeNode: boolean): void => {
+const resetGrouping = <TData>(rootNode: GroupingRowNode<TData>, canResetTreeNode: boolean): void => {
     const allLeafChildren = rootNode.allLeafChildren!;
     const rootSibling = rootNode.sibling;
     rootNode.treeNodeFlags = 0;
@@ -86,7 +105,6 @@ const resetGrouping = <TData>(rootNode: RowGroupingRowNode<TData>, canResetTreeN
         rootSibling.childrenAfterFilter = rootNode.childrenAfterFilter;
         rootSibling.childrenAfterSort = rootNode.childrenAfterSort;
         rootSibling.childrenMapped = null;
-        rootSibling.groupData = null;
     }
     for (const row of allLeafChildren) {
         const sibling = row.sibling;
@@ -95,11 +113,8 @@ const resetGrouping = <TData>(rootNode: RowGroupingRowNode<TData>, canResetTreeN
             resetChildRowGrouping(sibling);
         }
         row.parent = rootNode;
-        row.level = 0;
-        row.key = null;
-        row.treeNodeFlags = 0;
         if (canResetTreeNode) {
-            row.treeNode = null;
+            row.treeParent = null;
         }
         if (row.group || row.hasChildren()) {
             row.group = false;
@@ -109,13 +124,17 @@ const resetGrouping = <TData>(rootNode: RowGroupingRowNode<TData>, canResetTreeN
     rootNode.updateHasChildren();
 };
 
-const resetChildRowGrouping = <TData>(row: RowGroupingRowNode<TData>): void => {
+const resetChildRowGrouping = <TData>(row: GroupingRowNode<TData>): void => {
+    row.key = null;
+    row.treeNodeFlags = 0;
+    row.allChildrenCount = null;
     row.allLeafChildren = null;
     row.childrenAfterGroup = null;
     row.childrenAfterAggFilter = null;
     row.childrenAfterFilter = null;
     row.childrenAfterSort = null;
     row.childrenMapped = null;
+    row.level = 0;
     if (row.groupData) {
         row.groupData = null;
     }

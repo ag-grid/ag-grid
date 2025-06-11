@@ -143,7 +143,6 @@ export { AgColumn, isColumn } from './entities/agColumn';
 export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export {
-    type ITreeNode,
     RowNode,
     ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP,
     ROW_ID_PREFIX_TOP_PINNED as _ROW_ID_PREFIX_TOP_PINNED,
@@ -980,12 +979,7 @@ export {
     MouseShowContextMenuParams,
     TouchShowContextMenuParam,
 } from './interfaces/iContextMenu';
-export {
-    IRowNodeStage,
-    IRowGroupingStrategy,
-    RowGroupingRowNode,
-    StageExecuteParams,
-} from './interfaces/iRowNodeStage';
+export type { IRowNodeStage, IRowGroupStage, StageExecuteParams } from './interfaces/iRowNodeStage';
 export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
@@ -1164,6 +1158,11 @@ export {
     UndoRedoEditModule,
     CustomEditorModule,
 } from './edit/editModule';
+export type {
+    DropIndicatorPosition,
+    SetRowDropPositionIndicatorParams,
+    RowDropPositionIndicator,
+} from './interfaces/IRowDropHighlightService';
 export type { EditStrategyType } from './interfaces/editStrategyType';
 export {
     RowSelectionModule,

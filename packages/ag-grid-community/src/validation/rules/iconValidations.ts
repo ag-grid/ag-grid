@@ -31,6 +31,7 @@ export const ICON_VALUES: Record<IconValue, 1> = {
     menu: 1,
     'menu-alt': 1,
     filter: 1,
+    'filter-add': 1,
     columns: 1,
     maximize: 1,
     minimize: 1,

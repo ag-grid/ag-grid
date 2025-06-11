@@ -109,7 +109,7 @@ The `'date'` cell data type is used for date values that are represented as `Dat
 The default Value Parser and Value Formatter use the ISO string format `'YYYY-MM-DD'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
 
 {% note %}
-Please note that the `'date'` cell data type compares full Date objects, including the time portion. As a result, if a date includes a time other than midnight (`00:00:00`), filtering or editing might behave unexpectedly. For consistent results with built-in filters, it’s best to normalize all time values to the same value. If keeping the time component is important, consider using the `'dateTime'` cell data type instead or defining a custom comparator, as explained in the [Date Filter Comparator](./filter-date/#filter-comparator).
+Please note that the `'date'` cell data type compares full Date objects, including the time portion. As a result, if a date includes a time other than midnight (`00:00:00.000`), filtering or editing might behave unexpectedly. For consistent results with built-in filters, it’s best to normalize all time values to the same value. If keeping the time component is important, consider using the `'dateTime'` cell data type instead or defining a custom comparator, as explained in the [Date Filter Comparator](./filter-date/#filter-comparator).
 {% /note %}
 
 The following properties are set:
@@ -234,27 +234,36 @@ This works in the same way as when [Providing Custom Cell Data Types](#providing
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     dataTypeDefinitions: {
-        // override `date` to handle custom date format `dd/mm/yyyy`
+        // override `date` to handle custom date format `HH:mm:ss dd/MM/yyyy`
         date: {
-            baseDataType: 'date',
-            extendsDataType: 'date',
+            baseDataType: 'dateTime',
+            extendsDataType: 'dateTime',
             valueParser: params => {
                 if (params.newValue == null) {
                     return null;
                 }
-                // convert from `dd/mm/yyyy`
-                const dateParts = params.newValue.split('/');
-                return dateParts.length === 3 ? new Date(
-                    parseInt(dateParts[2]),
-                    parseInt(dateParts[1]) - 1,
-                    parseInt(dateParts[0])
-                ) : null;
+                // convert from `HH:mm:ss dd/MM/yyyy`
+                const [time, date] = params.newValue.split(' ');
+                const [HH, mm, ss] = time.split(':');
+                const [dd, MM, yyyy] = date.split('/');
+                return new Date(
+                    parseInt(yyyy),
+                    parseInt(MM) - 1,
+                    parseInt(dd),
+                    parseInt(HH),
+                    parseInt(mm),
+                    parseInt(ss),
+                );
             },
             valueFormatter: params => {
-                // convert to `dd/mm/yyyy`
+                /** @type {Date} */
+                const date = params.value;
+                const pad = (n) => n < 10 ? `0${n}` : n;
+                // convert to `HH:mm:ss dd/MM/yyyy`
                 return params.value == null
                     ? ''
-                    : `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear}`;
+                    : `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}` 
+                        + ` ${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${pad(date.getFullYear())}`;
             },
         }
     }

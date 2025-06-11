@@ -905,13 +905,27 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onRowNodeHighlightChanged(): void {
-        const highlighted = this.rowNode.highlighted;
+        const rowDropHighlightSvc = this.beans.rowDropHighlightSvc;
+        const highlighted = rowDropHighlightSvc?.row === this.rowNode ? rowDropHighlightSvc.position : 'none';
+
+        const aboveOn = highlighted === 'above';
+        const insideOn = highlighted === 'inside';
+        const belowOn = highlighted === 'below';
+        const treeData = this.gos.get('treeData');
+        const indented = treeData && (belowOn || aboveOn);
+        const uiLevel = this.rowNode.uiLevel.toString();
 
         this.allRowGuis.forEach((gui) => {
-            const aboveOn = highlighted === 'Above';
-            const belowOn = highlighted === 'Below';
-            gui.rowComp.toggleCss('ag-row-highlight-above', aboveOn);
-            gui.rowComp.toggleCss('ag-row-highlight-below', belowOn);
+            const rowComp = gui.rowComp;
+            rowComp.toggleCss('ag-row-highlight-above', aboveOn);
+            rowComp.toggleCss('ag-row-highlight-inside', insideOn);
+            rowComp.toggleCss('ag-row-highlight-below', belowOn);
+            rowComp.toggleCss('ag-row-highlight-indent', indented);
+            if (indented) {
+                gui.element.style.setProperty('--ag-row-highlight-level', uiLevel);
+            } else {
+                gui.element.style.removeProperty('--ag-row-highlight-level');
+            }
         });
     }
 

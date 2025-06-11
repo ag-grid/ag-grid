@@ -142,6 +142,7 @@ export type IconValue =
     | 'menu'
     | 'menu-alt'
     | 'filter'
+    | 'filter-add'
     | 'columns'
     | 'maximize'
     | 'minimize'

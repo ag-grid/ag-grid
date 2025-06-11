@@ -1,5 +1,33 @@
 import { _getLocaleTextFunc } from 'ag-grid-community';
-import type { BeanCollection, Column, GridOptionsService, RowNode } from 'ag-grid-community';
+import type {
+    Bean,
+    BeanCollection,
+    Column,
+    GridOptionsService,
+    GroupingApproach,
+    RowNode,
+    StageExecuteParams,
+} from 'ag-grid-community';
+
+export interface IRowGroupingStrategy<TData = any> extends Bean {
+    execute(params: StageExecuteParams<TData>, approach: GroupingApproach): boolean | undefined | void;
+
+    /** Called to reset the state when the strategy changes */
+    reset?(): void;
+
+    /** Gets a group or a filler node, as those nodes do not exists in ClientSideNodeManager */
+    getNode(id: string): RowNode<TData> | undefined;
+}
+
+export interface GroupingRowNode<TData = any> extends RowNode<TData> {
+    parent: this | null;
+    allLeafChildren: this[] | null;
+    childrenAfterGroup: this[] | null;
+    treeParent: this | null;
+    treeNodeFlags: number;
+    sibling: this;
+    sourceRowIndex: number;
+}
 
 /**
  * Returns if the node and all of its parents are all firstChild until ancestor node is reached

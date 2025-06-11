@@ -37,7 +37,7 @@ export abstract class AgAbstractInputField<
     constructor(
         config?: TConfig,
         className?: string,
-        private readonly inputType: string | null = 'text',
+        private inputType: string | null | undefined = 'text',
         private readonly displayFieldTag: keyof HTMLElementTagNameMap = 'input'
     ) {
         super(config, config?.template ?? buildTemplate(displayFieldTag), [], className);
@@ -45,7 +45,7 @@ export abstract class AgAbstractInputField<
 
     public override postConstruct() {
         super.postConstruct();
-        this.setInputType();
+        this.setInputType(this.inputType!);
 
         const { eLabel, eWrapper, eInput, className } = this;
         eLabel.classList.add(`${className}-label`);
@@ -73,9 +73,10 @@ export abstract class AgAbstractInputField<
         });
     }
 
-    private setInputType() {
+    public setInputType(inputType?: string) {
         if (this.displayFieldTag === 'input') {
-            this.eInput.setAttribute('type', this.inputType!);
+            this.inputType = inputType;
+            _addOrRemoveAttribute(this.eInput, 'type', inputType);
         }
     }
 

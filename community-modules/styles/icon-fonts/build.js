@@ -76,6 +76,7 @@ const nameToCodepoint = {
     'chevron-down': 0xf141,
     'chevron-left': 0xf142,
     'chevron-right': 0xf143,
+    'filter-add': 0xf144,
 };
 
 function generateFontFile(fontName) {

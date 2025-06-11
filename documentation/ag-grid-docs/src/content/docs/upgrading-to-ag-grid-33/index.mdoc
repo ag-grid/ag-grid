@@ -75,8 +75,8 @@ Here is an example of a typical package.json diff for the migration:
 -    "@ag-grid-community/react": "^32.3.0",
 -    "@ag-grid-community/client-side-row-model": "^32.3.0",
 -    "@ag-grid-community/csv-export": "^32.3.0",
-+    "ag-grid-react": "~{% migrationVersionPatch() %}",
-+    "ag-grid-community": "~{% migrationVersionPatch() %}",
++    "ag-grid-react": "{% migrationVersionPatch() %}",
++    "ag-grid-community": "{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -86,8 +86,8 @@ Here is an example of a typical package.json diff for the migration:
 -    "@ag-grid-community/angular": "^32.3.0",
 -    "@ag-grid-community/client-side-row-model": "^32.3.0",
 -    "@ag-grid-community/csv-export": "^32.3.0",
-+    "ag-grid-angular": "~{% migrationVersionPatch() %}",
-+    "ag-grid-community": "~{% migrationVersionPatch() %}",
++    "ag-grid-angular": "{% migrationVersionPatch() %}",
++    "ag-grid-community": "{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -96,7 +96,7 @@ Here is an example of a typical package.json diff for the migration:
 "dependencies": {
 -    "@ag-grid-community/client-side-row-model": "^32.3.0",
 -    "@ag-grid-community/csv-export": "^32.3.0",
-+    "ag-grid-community": "~{% migrationVersionPatch() %}",
++    "ag-grid-community": "{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -106,8 +106,8 @@ Here is an example of a typical package.json diff for the migration:
 -    "@ag-grid-community/vue3": "^32.3.0",
 -    "@ag-grid-community/client-side-row-model": "^32.3.0",
 -    "@ag-grid-community/csv-export": "^32.3.0",
-+    "ag-grid-vue3": "~{% migrationVersionPatch() %}",
-+    "ag-grid-community": "~{% migrationVersionPatch() %}",
++    "ag-grid-vue3": "{% migrationVersionPatch() %}",
++    "ag-grid-community": "{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -121,8 +121,8 @@ Here is an example of a typical package.json diff for the migration:
 -    "@ag-grid-community/client-side-row-model": "^32.3.0",
 -    "@ag-grid-enterprise/master-detail": "^32.3.0",
 -    "@ag-grid-enterprise/row-grouping": "^32.3.0",
-+    "ag-grid-react": "~{% migrationVersionPatch() %}",
-+    "ag-grid-enterprise": "~{% migrationVersionPatch() %}",
++    "ag-grid-react": "{% migrationVersionPatch() %}",
++    "ag-grid-enterprise": "{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -133,8 +133,8 @@ Here is an example of a typical package.json diff for the migration:
 -    "@ag-grid-community/client-side-row-model": "^32.3.0",
 -    "@ag-grid-enterprise/master-detail": "^32.3.0",
 -    "@ag-grid-enterprise/row-grouping": "^32.3.0",
-+    "ag-grid-angular": "~{% migrationVersionPatch() %}",
-+    "ag-grid-enterprise": "~{% migrationVersionPatch() %}",
++    "ag-grid-angular": "{% migrationVersionPatch() %}",
++    "ag-grid-enterprise": "{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -144,7 +144,7 @@ Here is an example of a typical package.json diff for the migration:
 -    "@ag-grid-community/client-side-row-model": "^32.3.0",
 -    "@ag-grid-enterprise/master-detail": "^32.3.0",
 -    "@ag-grid-enterprise/row-grouping": "^32.3.0",
-+    "ag-grid-enterprise": "~{% migrationVersionPatch() %}",
++    "ag-grid-enterprise": "{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -155,8 +155,8 @@ Here is an example of a typical package.json diff for the migration:
 -    "@ag-grid-enterprise/clipboard": "^32.3.0",
 -    "@ag-grid-enterprise/master-detail": "^32.3.0",
 -    "@ag-grid-enterprise/row-grouping": "^32.3.0",
-+    "ag-grid-vue3": "~{% migrationVersionPatch() %}",
-+    "ag-grid-enterprise": "~{% migrationVersionPatch() %}",
++    "ag-grid-vue3": "{% migrationVersionPatch() %}",
++    "ag-grid-enterprise": "{% migrationVersionPatch() %}",
 }
 ```
 {% /if %}
@@ -166,7 +166,7 @@ The codemod for version {% migrationVersion() %} will automatically update all y
 {% note %}
 After updating your package.json file, we recommend using the Codmod to assist your migration as it will update all your applications import paths and module registration to ensure backwards compatibility.
 
-`npx @ag-grid-devtools/cli@latest migrate --from=$FROM_VERSION --to=33`
+`npx @ag-grid-devtools/cli@latest migrate --from=$FROM_VERSION --to=33.0`
 {% /note %}
 
 ### Changes to Existing Modules
@@ -252,7 +252,7 @@ For an application using Integrated Charts / Sparklines via the `AllEnterpriseMo
 
 ```diff
 "dependencies": {
-    "ag-grid-enterprise": "~{% migrationVersionPatch() %}",
+    "ag-grid-enterprise": "{% migrationVersionPatch() %}",
 +   "ag-charts-enterprise": "~11.0.0",
 }
 ```
@@ -309,7 +309,7 @@ Follow these steps to upgrade your project's AG Grid version to {% migrationVers
 1. Run the `migrate` command of version `33.0` of the AG Grid codemod runner, where `$FROM_VERSION` refers to your project's existing AG Grid version:
 
    ```bash
-    npx @ag-grid-devtools/cli@latest migrate --from=$FROM_VERSION --to=33
+    npx @ag-grid-devtools/cli@latest migrate --from=$FROM_VERSION --to=33.0
    ```
 
    This will update your project's source files to prepare for the new release.

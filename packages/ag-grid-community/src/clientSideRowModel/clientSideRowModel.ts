@@ -3,7 +3,6 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
-import type { RowHighlightPosition } from '../entities/rowNode';
 import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
 import {
@@ -21,7 +20,7 @@ import type {
     RefreshModelParams,
 } from '../interfaces/iClientSideRowModel';
 import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
-import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
+import type { IRowGroupStage, IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _EmptyArray, _last } from '../utils/array';
@@ -54,7 +53,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private flattenStage?: IRowNodeStage<RowNode[]>;
 
     // enterprise stages
-    private groupStage?: IRowNodeStage;
+    private groupStage?: IRowGroupStage;
     private aggStage?: IRowNodeStage;
     private pivotStage?: IRowNodeStage;
     private filterAggStage?: IRowNodeStage;
@@ -138,14 +137,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private getNewNodeManager(): IClientSideNodeManager<any> {
         const { gos, beans } = this;
-        switch (_getGroupingApproach(gos)) {
-            case 'treeNested':
-                return beans.csrmChildrenTreeNodeSvc ?? beans.csrmNodeSvc!;
-            case 'treePath':
-                return beans.csrmPathTreeNodeSvc ?? beans.csrmNodeSvc!;
-            default:
-                return beans.csrmNodeSvc!;
-        }
+        return (_getGroupingApproach(gos) === 'treeNested' && beans.csrmChildrenTreeNodeSvc) || beans.csrmNodeSvc!;
     }
 
     private addPropertyListeners() {
@@ -433,32 +425,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         recurse(this.rootNode);
     }
 
-    public clearHighlight(): void {
-        const last = this.lastHighlightedRow;
-        if (last) {
-            last.highlighted = null;
-            last.dispatchRowEvent('rowHighlightChanged');
-            this.lastHighlightedRow = null;
-        }
-    }
-
-    public highlightRow(row: RowNode, highlight: RowHighlightPosition): void {
-        const nodeChanged = row !== this.lastHighlightedRow;
-        const highlightChanged = highlight !== row.highlighted;
-        if (nodeChanged || highlightChanged) {
-            if (nodeChanged) {
-                this.clearHighlight();
-            }
-            row.highlighted = highlight;
-            row.dispatchRowEvent('rowHighlightChanged');
-            this.lastHighlightedRow = row;
-        }
-    }
-
-    public getLastHighlightedRowNode(): RowNode | null {
-        return this.lastHighlightedRow;
-    }
-
     public isLastRowIndexKnown(): boolean {
         return true;
     }
@@ -640,6 +606,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return true; // Nothing changed, or only updates with no new rows and no removals
     }
 
+    private beforeRefreshModel(params: RefreshModelParams, groupsChanged: boolean = false): void {
+        this.eventSvc.dispatchEvent({ type: 'beforeRefreshModel', params, groupsChanged });
+
+        if (this.started && params.rowDataUpdated) {
+            this.eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
+        }
+    }
+
     public refreshModel(params: RefreshModelParams): void {
         if (!this.rootNode) {
             return; // Destroyed
@@ -659,38 +633,32 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const changedPath = (params.changedPath ??= this.createChangePath(!params.newData && !!params.rowDataUpdated));
 
-        this.nodeManager.refreshModel?.(params, this.started);
-
-        this.eventSvc.dispatchEvent({ type: 'beforeRefreshModel', params });
-
-        if (!this.started) {
-            return; // Destroyed or not yet started
-        }
-
-        if (params.rowDataUpdated) {
-            this.eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
-        }
-
         if (
+            !this.started ||
             this.isRefreshingModel ||
             this.colModel.changeEventsDispatching ||
             this.isSuppressModelUpdateAfterUpdateTransaction(params)
         ) {
+            this.beforeRefreshModel(params);
             return;
         }
 
         this.isRefreshingModel = true;
 
+        if (params.step !== 'group') {
+            this.beforeRefreshModel(params);
+        }
+
+        /* eslint-disable no-fallthrough */
         switch (params.step) {
             case 'group': {
-                this.doRowGrouping(
-                    params.changedRowNodes,
-                    changedPath,
-                    !!params.rowNodesOrderChanged,
-                    !!params.afterColumnsChanged
-                );
+                const groupingChanged = this.doRowGrouping(params);
+                this.beforeRefreshModel(params, groupingChanged); // Do this after grouping, so the parent field is correct
+                if (params.step === 'group' && this.rowNodesCountReady) {
+                    this.rowCountReady = true; // only if row data has been set
+                    this.eventSvc.dispatchEventOnce({ type: 'rowCountReady' });
+                }
             }
-            /* eslint-disable no-fallthrough */
             case 'filter':
                 this.doFilter(changedPath);
             case 'pivot':
@@ -703,8 +671,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 this.doSort(params.changedRowNodes, changedPath);
             case 'map':
                 this.doRowsToDisplay();
-            /* eslint-enable no-fallthrough */
         }
+        /* eslint-enable no-fallthrough */
 
         // set all row tops to null, then set row tops on all visible rows. if we don't
         // do this, then the algorithm below only sets row tops, old row tops from old rows
@@ -976,39 +944,29 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
-    private doRowGrouping(
-        changedRowNodes: IChangedRowNodes | undefined,
-        changedPath: ChangedPath,
-        rowNodesOrderChanged: boolean,
-        afterColumnsChanged: boolean
-    ) {
+    private doRowGrouping(params: RefreshModelParams): boolean {
         const rootNode: ClientSideRowModelRootNode = this.rootNode!;
 
         const groupStageExecuted = this.groupStage?.execute({
             rowNode: rootNode,
-            changedPath,
-            changedRowNodes,
-            rowNodesOrderChanged,
-            afterColumnsChanged,
+            changedRowNodes: params.changedRowNodes,
+            changedPath: params.changedPath,
+            rowNodesOrderChanged: !!params.rowNodesOrderChanged,
+            afterColumnsChanged: !!params.afterColumnsChanged,
         });
 
-        if (
-            !groupStageExecuted &&
-            !this.nodeManager.skipGrouping // managed by the node manager
-        ) {
-            const sibling: ClientSideRowModelRootNode = rootNode.sibling;
-            rootNode.childrenAfterGroup = rootNode.allLeafChildren;
-            if (sibling) {
-                sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
-            }
-            rootNode.updateHasChildren();
+        if (groupStageExecuted !== undefined) {
+            return groupStageExecuted;
         }
 
-        if (this.rowNodesCountReady) {
-            // only if row data has been set
-            this.rowCountReady = true;
-            this.eventSvc.dispatchEventOnce({ type: 'rowCountReady' });
+        const sibling: ClientSideRowModelRootNode = rootNode.sibling;
+        rootNode.childrenAfterGroup = rootNode.allLeafChildren;
+        if (sibling) {
+            sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
         }
+        rootNode.updateHasChildren();
+
+        return false;
     }
 
     private doFilter(changedPath: ChangedPath) {
@@ -1028,24 +986,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public getRowNode(id: string): RowNode | undefined {
-        // although id is typed a string, this could be called by the user, and they could have passed a number
-        const idIsGroup = typeof id == 'string' && id.indexOf(ROW_ID_PREFIX_ROW_GROUP) == 0;
-
-        if (idIsGroup) {
-            // only one users complained about getRowNode not working for groups, after years of
-            // this working for normal rows. so have done quick implementation. if users complain
-            // about performance, then GroupStage should store / manage created groups in a map,
-            // which is a chunk of work.
-            let res: RowNode | undefined = undefined;
-            this.forEachNode((node) => {
-                if (node.id === id) {
-                    res = node;
-                }
-            });
-            return res;
+        const found = this.nodeManager.getRowNode(id);
+        if (typeof found === 'object') {
+            return found; // we check for typeof object to avoid returning things from Object.prototype
         }
-
-        return this.nodeManager.getRowNode(id);
+        // although id is typed a string, this could be called by the user, and they could have passed a number
+        const idIsGroup = typeof id == 'string' && id.indexOf(ROW_ID_PREFIX_ROW_GROUP) === 0;
+        return idIsGroup ? this.groupStage?.getNode(id) : undefined;
     }
 
     public batchUpdateRowData(
@@ -1240,7 +1187,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         super.destroy();
 
         // Forcefully deallocate memory
-        this.clearHighlight();
         this.started = false;
         this.rootNode = null;
         this.nodeManager = null!;
