@@ -1,13 +1,6 @@
-import type {
-    DateTimeStringDataTypeDefinition,
-    GridApi,
-    GridOptions,
-    ValueFormatterLiteParams,
-    ValueParserLiteParams,
-} from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
-    DateEditorModule,
     ModuleRegistry,
     TextEditorModule,
     ValidationModule,
@@ -15,11 +8,9 @@ import {
 } from 'ag-grid-community';
 import { CellSelectionModule, ColumnMenuModule, ContextMenuModule, SetFilterModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([]);
 ModuleRegistry.registerModules([
     TextEditorModule,
     ClientSideRowModelModule,
-    DateEditorModule,
     ColumnMenuModule,
     ContextMenuModule,
     CellSelectionModule,
@@ -34,46 +25,8 @@ interface IOlympicDataTypes extends IOlympicData {
     sportObject: {
         name: string;
     };
-    dateWithSpace: string;
-    dateWithComma: string;
 }
 
-const dateTimeRegex = /(\d{2}):(\d{2}):(\d{2}).{1,2}(\d{2})\/(\d{2})\/(\d{4})/;
-const pad = (n: number) => (n < 10 ? `0${n}` : n);
-const rand = (min: number, max: number) => Math.floor((max + min) * Math.random() - min);
-
-const getDateTimeStringDataTypeDefinition = (delimiter: string): DateTimeStringDataTypeDefinition => ({
-    baseDataType: 'dateTimeString',
-    extendsDataType: 'dateTimeString',
-    valueParser: (params: ValueParserLiteParams<IOlympicData, string>) => {
-        if (params.newValue != null && params.newValue.match(dateTimeRegex)) {
-            return params.newValue;
-        } else {
-            return null;
-        }
-    },
-    valueFormatter: (params: ValueFormatterLiteParams<IOlympicData, string>) => {
-        return params.value == null ? '' : params.value;
-    },
-    dataTypeMatcher: (value: any) => {
-        return typeof value === 'string' && !!value.match(dateTimeRegex);
-    },
-    dateParser: (value: string | undefined) => {
-        if (value == null) {
-            return;
-        }
-        let [_, HH, mm, ss, dd, MM, yyyy] = (value.match(dateTimeRegex) || Array(7).fill('0')).map((e) => e || '0');
-        return new Date(parseInt(yyyy), parseInt(MM) - 1, parseInt(dd), parseInt(HH), parseInt(mm), parseInt(ss));
-    },
-    dateFormatter: (value: Date | undefined) => {
-        // convert to `HH:mm:ss dd/MM/yyyy`
-        return value == null
-            ? ''
-            : `${pad(value.getHours())}:${pad(value.getMinutes())}:${pad(value.getSeconds())}` +
-                  delimiter +
-                  `${pad(value.getDate())}/${pad(value.getMonth() + 1)}/${value.getFullYear()}`;
-    },
-});
 let gridApi: GridApi<IOlympicDataTypes>;
 
 const gridOptions: GridOptions<IOlympicDataTypes> = {
@@ -81,18 +34,6 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
         { field: 'athlete' },
         { field: 'countryObject', headerName: 'Country' },
         { field: 'sportObject', headerName: 'Sport' },
-        {
-            field: 'dateWithSpace',
-            cellDataType: 'dateWithSpace',
-            filterParams: { includeTime: true },
-            cellEditorParams: { includeTime: true },
-        },
-        {
-            field: 'dateWithComma',
-            cellDataType: 'dateWithComma',
-            filterParams: { includeTime: true },
-            cellEditorParams: { includeTime: true },
-        },
     ],
     defaultColDef: {
         filter: true,
@@ -116,8 +57,6 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
             valueFormatter: (params) => (params.value == null ? '' : params.value.name),
             dataTypeMatcher: (value: any) => value && !!value.name,
         },
-        dateWithSpace: getDateTimeStringDataTypeDefinition(' '),
-        dateWithComma: getDateTimeStringDataTypeDefinition(', '),
     },
     cellSelection: { handle: { mode: 'fill' } },
 };
@@ -141,8 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         sportObject: {
                             name: rowData.sport,
                         },
-                        dateWithSpace: `${pad(rand(0, 23))}:${pad(rand(0, 59))}:${pad(rand(0, 59))} ${rowData.date}`,
-                        dateWithComma: `${pad(rand(0, 23))}:${pad(rand(0, 59))}:${pad(rand(0, 59))}, ${rowData.date}`,
                     };
                 })
             )
