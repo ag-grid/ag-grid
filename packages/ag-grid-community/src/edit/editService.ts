@@ -9,7 +9,7 @@ import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { ICellEditorParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
-import type { EditMap, EditRow, IEditModelService } from '../interfaces/iEditModelService';
+import type { EditMap, EditRow, EditValue, IEditModelService } from '../interfaces/iEditModelService';
 import type {
     EditPosition,
     EditRowPosition,
@@ -47,6 +47,18 @@ import { _refreshEditCells } from './utils/refresh';
 
 type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };
 
+// stop editing sources that we treat as UI-originated so we follow standard processing.
+const SOURCE_TRANSFORM: Record<string, EditSource> = {
+    paste: 'ui',
+    rangeSvc: 'ui',
+    fillHandle: 'ui',
+    cellClear: 'api',
+};
+
+const SOURCE_TRANSFORM_KEYS: string[] = Object.keys(SOURCE_TRANSFORM);
+
+const CANCEL_PARAMS: StopEditParams = { cancel: true, source: 'api' };
+
 export class EditService extends BeanStub implements NamedBean, IEditService {
     beanName = 'editSvc' as const;
     private batch: boolean;
@@ -63,7 +75,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         this.rangeSvc = this.beans.rangeSvc!;
 
         this.addManagedPropertyListener('editType', ({ currentValue }: any) => {
-            this.stopEditing(undefined, { cancel: true, source: 'api' });
+            this.stopEditing(undefined, CANCEL_PARAMS);
 
             // will re-create if different
             this.createStrategy(currentValue);
@@ -88,9 +100,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     public setBatchEditing(enabled: boolean): void {
         if (enabled) {
             this.batch = true;
-            this.stopEditing(undefined, { cancel: true, source: 'api' });
+            this.stopEditing(undefined, CANCEL_PARAMS);
         } else {
-            this.stopEditing(undefined, { cancel: true, source: 'api' });
+            this.stopEditing(undefined, CANCEL_PARAMS);
             this.batch = false;
         }
     }
@@ -231,13 +243,15 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     public stopEditing(position?: EditPosition, params?: StopEditParams): boolean {
         const { event, cancel, source = 'ui', suppressNavigateAfterEdit } = params || {};
 
-        if (source === 'paste' || source === 'rangeSvc') {
+        if (SOURCE_TRANSFORM_KEYS.includes(source)) {
             if (this.isBatchEditing()) {
                 // if we are in batch editing, we do not stop editing on paste
                 this.bulkRefresh(position);
                 return false;
             }
-            this.stopEditing(position, { source: 'ui' });
+
+            // do I need to use api for fillhandle source?
+            return this.stopEditing(position, { ...params, source: SOURCE_TRANSFORM[source] });
         }
 
         if (!this.isEditing() || !this.strategy) {
@@ -299,10 +313,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         _purgeUnchangedEdits(this.beans);
 
         this.refreshAllRows(edits, this.includeParents);
-
-        // this.beans.eventSvc.dispatchEvent({
-        //     type: 'cellEditValuesChanged',
-        // });
 
         return res;
     }
@@ -382,48 +392,40 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         this.bulkRefresh();
     }
 
+    private dispatchEditValuesChanged(
+        { rowNode, column }: EditPosition,
+        edit: Partial<Pick<EditValue, 'newValue' | 'oldValue'>> = {}
+    ): void {
+        if (!rowNode || !column || !edit) {
+            return;
+        }
+
+        const { newValue, oldValue } = edit;
+        this.beans.eventSvc.dispatchEvent({
+            type: 'cellEditValuesChanged',
+            node: rowNode,
+            rowIndex: rowNode.rowIndex,
+            rowPinned: rowNode.rowPinned,
+            column,
+            source: 'api',
+            data: rowNode.data,
+            newValue,
+            oldValue,
+            value: newValue,
+            colDef: column.getColDef(),
+        });
+    }
+
     public bulkRefresh(position?: EditPosition): void {
         if (_isClientSideRowModel(this.gos, this.beans.rowModel)) {
-            if (position) {
-                const { rowNode, column } = position;
+            if (position?.rowNode && position.column) {
                 const edit = this.model.getEdit(position);
-                if (edit && rowNode && column) {
-                    const { newValue, oldValue } = edit || {};
-
-                    this.beans.eventSvc.dispatchEvent({
-                        type: 'cellEditValuesChanged',
-                        node: rowNode,
-                        rowIndex: rowNode.rowIndex,
-                        rowPinned: rowNode.rowPinned,
-                        column,
-                        source: 'api',
-                        data: rowNode.data,
-                        newValue,
-                        oldValue,
-                        value: newValue,
-                        colDef: column.getColDef(),
-                    });
-                }
-
+                this.dispatchEditValuesChanged(position, edit);
                 return;
             }
             this.beans.editModelSvc?.getEditMap(false).forEach((editRow, rowNode) => {
                 for (const column of editRow?.keys() || []) {
-                    const { newValue, oldValue } = editRow?.get(column) || {};
-
-                    this.beans.eventSvc.dispatchEvent({
-                        type: 'cellEditValuesChanged',
-                        node: rowNode,
-                        rowIndex: rowNode.rowIndex,
-                        rowPinned: rowNode.rowPinned,
-                        column,
-                        source: 'api',
-                        data: rowNode.data,
-                        newValue,
-                        oldValue,
-                        value: newValue,
-                        colDef: column.getColDef(),
-                    });
+                    this.dispatchEditValuesChanged({ rowNode, column }, editRow?.get(column));
                 }
             });
         }
@@ -525,20 +527,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         if (existing && existing.oldValue === newValue) {
             this.beans.editModelSvc?.removeEdits(position);
 
-            const { rowNode, column } = position;
-
-            this.beans.eventSvc.dispatchEvent({
-                type: 'cellEditValuesChanged',
-                value: newValue,
-                colDef: column.getColDef(),
+            this.dispatchEditValuesChanged(position, {
                 newValue,
                 oldValue: existing.oldValue,
-                source: 'ui',
-                column,
-                rowIndex: rowNode.rowIndex,
-                rowPinned: rowNode.rowPinned,
-                data: rowNode.data,
-                node: rowNode,
             });
 
             return true;

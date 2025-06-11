@@ -95,9 +95,7 @@ const uniqOrDots = (params: IAggFuncParams) => {
     // distinct count of first names
     const uniqueNames = new Set<string>();
     params.values.forEach((value) => {
-        if (value) {
-            uniqueNames.add(value);
-        }
+        uniqueNames.add(value);
     });
     return `${uniqueNames.size} / ${params.values.length}`;
 };

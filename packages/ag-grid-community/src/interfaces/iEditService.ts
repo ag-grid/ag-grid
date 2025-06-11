@@ -16,7 +16,7 @@ import type { UserCompDetails } from './iUserCompDetails';
 
 type EditEvents = KeyboardEvent | MouseEvent | null;
 
-export type EditSource = 'api' | 'ui' | 'paste' | 'rangeSvc';
+export type EditSource = 'api' | 'ui' | 'paste' | 'rangeSvc' | 'fillHandle' | 'cellClear';
 
 export type StartEditParams = {
     startedEdit?: boolean | null;
