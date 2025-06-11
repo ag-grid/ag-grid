@@ -134,6 +134,8 @@ From the example the following can be noted:
 
 * Because `rowDragManaged` is not set, the row dragging is left enabled even if sorting or filtering is applied. This is because your application should decide if dragging should be allowed or suppressed using the `suppressRowDrag` property.
 
+* While dragging the row, the `setRowDropPositionIndicator` API method is called to display the projected row drop location using a horizontal line indicator.
+
 {% gridExampleRunner title="Row Drag Events" name="dragging-events" /%}
 
 ### Simple Unmanaged Example

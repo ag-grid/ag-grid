@@ -229,6 +229,15 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             },
         },
 
+        grandTotalRow: {
+            validate({ grandTotalRow }) {
+                if (grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop') {
+                    return `Using \`grandTotalRow=${grandTotalRow}\` is deprecated as of v34. Use \`grandTotalRowPinned\` instead.`;
+                }
+                return null;
+            },
+        },
+
         groupDefaultExpanded: {
             supportedRowModels: ['clientSide'],
         },
@@ -343,9 +352,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         rowDragManaged: {
             supportedRowModels: ['clientSide'],
             dependencies: {
-                treeData: {
-                    required: [false, undefined],
-                },
                 pagination: {
                     required: [false, undefined],
                 },

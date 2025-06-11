@@ -245,6 +245,7 @@ export abstract class ChartProxy<
         common.minWidth = 0;
         common.navigator = {
             enabled: false,
+            height: 18,
         };
         return {
             common,

@@ -17,6 +17,7 @@ const DateStringCellElement: ElementParams = {
 class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCellEditorParams, AgInputDateField> {
     private eInput: AgInputDateField;
     private params: IDateStringCellEditorParams;
+    private includeTime: boolean | undefined;
 
     constructor(private getDataTypeService: () => DataTypeService | undefined) {}
 
@@ -30,7 +31,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     public init(eInput: AgInputDateField, params: IDateStringCellEditorParams): void {
         this.eInput = eInput;
         this.params = params;
-        const { min, max, step } = params;
+        const { min, max, step, colDef } = params;
         if (min != null) {
             eInput.setMin(min);
         }
@@ -39,6 +40,11 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         }
         if (step != null) {
             eInput.setStep(step);
+        }
+        this.includeTime =
+            params.includeTime ?? this.getDataTypeService()?.getDateIncludesTimeFlag?.(colDef.cellDataType);
+        if (this.includeTime != null) {
+            eInput.setIncludeTime(this.includeTime);
         }
     }
 
@@ -52,7 +58,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     }
 
     public getStartValue(): string | null | undefined {
-        return this.formatDate(this.parseDate(this.params.value ?? undefined));
+        return _serialiseDate(this.parseDate(this.params.value ?? undefined) ?? null, this.includeTime ?? false);
     }
 
     private parseDate(value: string | undefined): Date | undefined {
@@ -66,7 +72,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         const dataTypeSvc = this.getDataTypeService();
         return dataTypeSvc
             ? dataTypeSvc.getDateFormatterFunction(this.params.column as AgColumn)(value)
-            : _serialiseDate(value ?? null, false) ?? undefined;
+            : _serialiseDate(value ?? null, this.includeTime ?? false) ?? undefined;
     }
 }
 

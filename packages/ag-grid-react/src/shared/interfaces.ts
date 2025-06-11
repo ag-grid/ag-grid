@@ -27,6 +27,9 @@ export interface AgGridReactProps<TData = any> extends GridOptions<TData> {
     setGridApi?: (gridApi: GridApi<TData>) => void;
     /** @deprecated v33.3 AgGridReact does not accept children so this property will be removed. */
     children?: any;
+
+    /** Disables support for `cellRendererParams.deferRender` and switches the rows rendering method. */
+    suppressDeferCellRender?: boolean;
 }
 
 export interface InternalAgGridReactProps<TData = any> extends AgGridReactProps<TData> {

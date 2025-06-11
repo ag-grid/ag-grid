@@ -360,7 +360,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 index,
                 rowIndex,
                 'excel',
-                node
+                node,
+                this.config.includePendingEdits
             );
             const styleIds: string[] = this.config.styleLinker({
                 rowType: 'BODY',

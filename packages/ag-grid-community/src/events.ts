@@ -175,6 +175,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         stickyTopOffsetChanged: StickyTopOffsetChangedEvent<TData, TContext>;
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
         rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
+        columnsReset: ColumnsResetEvent<TData, TContext>;
+        cellEditValuesChanged: CellEditValuesChangedEvent<TData, TContext>;
         filterSwitched: FilterSwitchedEvent<TData, TContext>;
     }
 >;
@@ -289,6 +291,7 @@ export interface RowDataUpdatedEvent<TData = any, TContext = any>
 export interface BeforeRefreshModelEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'beforeRefreshModel', TData, TContext> {
     params: RefreshModelParams<TData>;
+    groupsChanged: boolean;
 }
 
 export interface RowDataUpdateStartedEvent<TData = any, TContext = any>
@@ -742,6 +745,10 @@ export interface CellFocusedParams extends CommonCellFocusParams {
     forceBrowserFocus?: boolean;
     /** When `forceBrowserFocus` is `true`, should scroll be prevented */
     preventScrollOnBrowserFocus?: boolean;
+    /** Previous focused cell params */
+    previousCellFocus?: CellFocusedParams;
+    /** Initiating event, if any */
+    sourceEvent?: Event;
 }
 
 export interface HeaderFocusedParams {
@@ -1052,6 +1059,9 @@ export interface CellValueChangedEvent<TData = any, TValue = any>
     source: string | undefined;
 }
 
+export interface CellEditValuesChangedEvent<TData = any, TValue = any>
+    extends AgGlobalEvent<'cellEditValuesChanged', TData, TValue> {}
+
 export interface CellEditRequestEvent<TData = any, TValue = any>
     extends CellWithDataEvent<'cellEditRequest', TData, TValue> {
     oldValue: TValue | null | undefined;
@@ -1211,6 +1221,9 @@ export interface StickyTopOffsetChangedEvent<TData = any, TContext = any>
 export interface RowNodeDataChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowNodeDataChanged', TData, TContext> {
     node: RowNode<TData>;
+}
+export interface ColumnsResetEvent<TData = any, TContext = any> extends AgGlobalEvent<'columnsReset', TData, TContext> {
+    source: ColumnEventType;
 }
 export interface FilterSwitchedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'filterSwitched', TData, TContext> {

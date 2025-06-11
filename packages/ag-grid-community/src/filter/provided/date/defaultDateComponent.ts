@@ -85,11 +85,16 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
         const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
         this.usingSafariDatePicker = shouldUseBrowserDatePicker && _isBrowserSafari();
+
+        const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons, includeTime, colDef } =
+            params.filterParams || {};
+
         const dataTypeSvc = this.beans.dataTypeSvc;
-        const includeTime = dataTypeSvc?.getDateIncludesTimeFlag(params.filterParams?.colDef?.cellDataType) ?? false;
+        const shouldUseDateTimeLocal =
+            includeTime ?? dataTypeSvc?.getDateIncludesTimeFlag?.(colDef.cellDataType) ?? false;
 
         if (shouldUseBrowserDatePicker) {
-            if (includeTime) {
+            if (shouldUseDateTimeLocal) {
                 inputElement.type = 'datetime-local';
                 inputElement.step = '1'; // enforce seconds part to show up by default
             } else {
@@ -98,8 +103,6 @@ export class DefaultDateComponent extends Component implements IDateComp {
         } else {
             inputElement.type = 'text';
         }
-
-        const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons } = params.filterParams || {};
 
         if (minValidDate && minValidYear) {
             _warn(85);

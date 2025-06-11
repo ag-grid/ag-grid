@@ -11,7 +11,6 @@ import type {
 } from './filterExpressionUtils';
 import {
     checkAndUpdateExpression,
-    escapeQuotes,
     findEndPosition,
     findStartPosition,
     getSearchString,
@@ -391,15 +390,7 @@ export class ColFilterExpressionParser {
         return null;
     }
 
-    public getFunctionString(params: FilterExpressionFunctionParams): string {
-        return this.getFunctionCommon(params, (operandIndex, operatorIndex, colId, evaluatorParamsIndex) => {
-            const escapedColId = escapeQuotes(colId);
-            const operand = operandIndex == null ? '' : `, params.operands[${operandIndex}]`;
-            return `params.operators[${operatorIndex}].evaluator(expressionProxy.getValue('${escapedColId}', node), node, params.evaluatorParams[${evaluatorParamsIndex}]${operand})`;
-        });
-    }
-
-    public getFunctionParsed(params: FilterExpressionFunctionParams): FilterExpressionFunction {
+    public getFunction(params: FilterExpressionFunctionParams): FilterExpressionFunction {
         return this.getFunctionCommon(params, (operandIndex, operatorIndex, colId, evaluatorParamsIndex) => {
             return (expressionProxy, node, p) =>
                 p.operators[operatorIndex].evaluator(

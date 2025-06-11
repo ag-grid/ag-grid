@@ -309,6 +309,7 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      * Replaces the value on the `rowNode` for the specified column. When complete,
      * the grid will refresh the rendered cell on the required row only.
      * **Note**: This method only fires `onCellEditRequest` when the Grid is in **Read Only** mode.
+     * **Note**: This method defers to EditModule if available and batches the edit when `fullRow` or `batchEdit` is enabled.
      *
      * @param colKey The column where the value should be updated
      * @param newValue The new value

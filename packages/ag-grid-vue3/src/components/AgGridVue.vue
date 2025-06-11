@@ -40,6 +40,7 @@ import type {
     ColumnRowGroupChangedEvent,
     ColumnValueChangedEvent,
     ColumnVisibleEvent,
+    ColumnsResetEvent,
     ComponentStateChangedEvent,
     ContextMenuVisibleChangedEvent,
     CutEndEvent,

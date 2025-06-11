@@ -122,25 +122,26 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
     }, [userCompDetails]);
     const floatingFilterProps = floatingFilterCompProxy.current?.getProps();
 
-    const reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
-    const UserCompClass = userCompDetails && userCompDetails.componentClass;
+    const reactUserComp = userCompDetails?.componentFromFramework;
+    const UserCompClass = userCompDetails?.componentClass;
 
     return (
         <div ref={setRef} style={userStyles} className={className} role="gridcell">
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
-                {reactUserComp && !reactiveCustomComponents && (
-                    <UserCompClass {...userCompDetails!.params} ref={userCompStateless ? () => {} : userCompRef} />
-                )}
-                {reactUserComp && reactiveCustomComponents && (
-                    <CustomContext.Provider
-                        value={{
-                            setMethods: (methods: CustomFloatingFilterCallbacks) =>
-                                floatingFilterCompProxy.current!.setMethods(methods),
-                        }}
-                    >
-                        <UserCompClass {...floatingFilterProps!} />
-                    </CustomContext.Provider>
-                )}
+                {reactUserComp ? (
+                    reactiveCustomComponents ? (
+                        <CustomContext.Provider
+                            value={{
+                                setMethods: (methods: CustomFloatingFilterCallbacks) =>
+                                    floatingFilterCompProxy.current!.setMethods(methods),
+                            }}
+                        >
+                            <UserCompClass {...floatingFilterProps!} />
+                        </CustomContext.Provider>
+                    ) : (
+                        <UserCompClass {...userCompDetails!.params} ref={userCompStateless ? () => {} : userCompRef} />
+                    )
+                ) : null}
             </div>
             <div
                 ref={eButtonWrapper}

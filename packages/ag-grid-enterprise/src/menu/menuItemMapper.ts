@@ -9,7 +9,15 @@ import type {
     NamedBean,
     RowNode,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, _exists, _getRowNode, _resetColumnState, _warn } from 'ag-grid-community';
+import {
+    BeanStub,
+    _createIconNoSpan,
+    _exists,
+    _getEnableRowPinning,
+    _getRowNode,
+    _resetColumnState,
+    _warn,
+} from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
@@ -113,7 +121,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 case 'pinRowSubMenu': {
-                    const enableRowPinning = gos.get('enableRowPinning');
+                    const enableRowPinning = _getEnableRowPinning(gos);
                     const subMenu: string[] = [];
                     const pinned = node?.rowPinned ?? node?.pinnedSibling?.rowPinned;
 

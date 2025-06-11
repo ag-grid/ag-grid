@@ -12,4 +12,13 @@ export interface IDateCellEditorParams<TData = any, TContext = any> extends ICel
      * Defaults to any value allowed.
      */
     step?: number;
+    /**
+     * Defines whether time should be included when editing dates.
+     *
+     * - `true`: Date and time will be editable.
+     * - `false`: Only date portion will be editable.
+     *
+     * @default false
+     */
+    includeTime?: boolean;
 }

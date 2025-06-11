@@ -1,4 +1,4 @@
-import type { UserComponentName } from '../../context/context';
+import type { DynamicBeanName, UserComponentName } from '../../context/context';
 import type { Column } from '../../interfaces/iColumn';
 import type {
     CommunityModuleName,
@@ -685,11 +685,12 @@ export const AG_GRID_ERRORS = {
     277: ({ colId }: { colId: string }) =>
         `'enableFilterHandlers' is set to true, but column '${colId}' does not have 'filter.doesFilterPass' or 'filter.handler' set.` as const,
     278: ({ colId }: { colId: string }) => `Unable to create filter handler for column '${colId}'` as const,
-    279: () => 'New filter tool panel requires `enableFilterHandlers: true`.' as const,
+    279: (_: { name: DynamicBeanName }) => {}, // `Unable to create dynamic bean '${name}' during module init lifecycle, dynamic beans must be initialised on first use.` as const,
     280: ({ colId }: { colId: string }) =>
         `'name' must be provided for custom filter components for column '${colId}` as const,
     281: ({ colId }: { colId: string }) =>
         `Filter for column '${colId}' does not have 'filterParams.buttons', but the new Filters Tool Panel has buttons configured. Either configure buttons for the filter, or disable buttons on the Filters Tool Panel.` as const,
+    282: () => 'New filter tool panel requires `enableFilterHandlers: true`.' as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

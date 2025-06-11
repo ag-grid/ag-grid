@@ -142,6 +142,7 @@ export type IconValue =
     | 'menu'
     | 'menu-alt'
     | 'filter'
+    | 'filter-add'
     | 'columns'
     | 'maximize'
     | 'minimize'
@@ -173,7 +174,11 @@ export type IconValue =
     | 'column-arrow'
     | 'un-pin'
     | 'pinned-bottom'
-    | 'pinned-top';
+    | 'pinned-top'
+    | 'chevron-up'
+    | 'chevron-down'
+    | 'chevron-left'
+    | 'chevron-right';
 
 /**
  * If icon provided, use this (either a string, or a function callback).

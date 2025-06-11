@@ -25,7 +25,7 @@ export class WrapperToolPanel extends Component implements INewFiltersToolPanel,
 
     public init(params: ToolPanelNewFiltersCompParams): void {
         if (!this.gos.get('enableFilterHandlers')) {
-            _warn(279);
+            _warn(282);
             return;
         }
         this.refresh(params);

@@ -64,6 +64,7 @@ import type {
     ColumnRowGroupChangedEvent,
     ColumnValueChangedEvent,
     ColumnVisibleEvent,
+    ColumnsResetEvent,
     ComponentStateChangedEvent,
     ContextMenuVisibleChangedEvent,
     CreateFilterHandlerFunc,
@@ -77,6 +78,7 @@ import type {
     DragCancelledEvent,
     DragStartedEvent,
     DragStoppedEvent,
+    EditStrategyType,
     ExcelExportParams,
     ExcelStyle,
     ExpandOrCollapseAllEvent,
@@ -637,7 +639,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
-    @Input() public editType: 'fullRow' | undefined = undefined;
+    @Input() public editType: EditStrategyType | undefined = undefined;
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
      * @default false
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
@@ -783,10 +785,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `AdvancedFilterModule`
      */
     @Input() public advancedFilterBuilderParams: IAdvancedFilterBuilderParams | undefined = undefined;
-    /** By default, Advanced Filter sanitises user input and passes it to `new Function()` to provide the best performance.
-     * Set to `true` to prevent this and use defined functions instead.
-     * This will result in slower filtering, but it enables Advanced Filter to work when `unsafe-eval` is disabled.
-     * @default false
+    /** @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
+     * @default true
      * @agModule `AdvancedFilterModule`
      */
     @Input({ transform: booleanAttribute }) public suppressAdvancedFilterEval: boolean | undefined = undefined;
@@ -1264,6 +1264,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public groupTotalRow: 'top' | 'bottom' | UseGroupTotalRow<TData> | undefined = undefined;
     /** When provided, an extra grand total row will be inserted into the grid at the specified position.
      * This row displays the aggregate totals of all rows in the grid.
+     *
+     * Note that the `'pinnedTop'` and `'pinnedBottom'` values are deprecated in v34. Use `grandTotalRowPinned` instead.
      * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     @Input() public grandTotalRow: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined = undefined;
@@ -1384,6 +1386,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `PinnedRowModule`
      */
     @Input() public isRowPinned: IsRowPinned<TData> | undefined = undefined;
+    /** Pin the grand total row to the top of bottom of the grid. Requires `grandTotalRow` to be set.
+     * When multiple rows are pinned, the grid uses `grandTotalRow` to determine whether the grand total row should be
+     * displayed first or last in the list of pinned rows.
+     * @agModule `PinnedRowModule`
+     */
+    @Input() public grandTotalRowPinned: 'top' | 'bottom' | undefined = undefined;
     /** Sets the row model type.
      * @default 'clientSide'
      * @initial
@@ -2045,6 +2053,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent<TData>> = new EventEmitter<
         ColumnEverythingChangedEvent<TData>
+    >();
+    /** Columns have been reset to their default state as reflected by the colDefs.
+     */
+    @Output() public columnsReset: EventEmitter<ColumnsResetEvent<TData>> = new EventEmitter<
+        ColumnsResetEvent<TData>
     >();
     /** A mouse cursor is initially moved over a column header.
      */

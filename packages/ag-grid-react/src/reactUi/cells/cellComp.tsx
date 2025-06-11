@@ -61,14 +61,10 @@ const jsxEditor = (
 ) => {
     const newFormat = editDetails.compProxy;
 
-    return (
-        <>
-            {newFormat ? (
-                jsxEditorProxy(editDetails, CellEditorClass, setRef)
-            ) : (
-                <CellEditorClass {...editDetails.compDetails.params} ref={setRef} />
-            )}
-        </>
+    return newFormat ? (
+        jsxEditorProxy(editDetails, CellEditorClass, setRef)
+    ) : (
+        <CellEditorClass {...editDetails.compDetails.params} ref={setRef} />
     );
 };
 
@@ -86,29 +82,18 @@ const jsxEditValue = (
     const reactPopupEditor = compDetails.componentFromFramework && editDetails.popup;
     const jsPopupEditor = !compDetails.componentFromFramework && editDetails.popup;
 
-    return (
-        <>
-            {reactInlineEditor && jsxEditor(editDetails, CellEditorClass, setCellEditorRef)}
-
-            {reactPopupEditor && (
-                <PopupEditorComp
-                    editDetails={editDetails}
-                    cellCtrl={cellCtrl}
-                    eParentCell={eGui}
-                    wrappedContent={jsxEditor(editDetails, CellEditorClass, setCellEditorRef)}
-                />
-            )}
-
-            {jsPopupEditor && jsEditorComp && (
-                <PopupEditorComp
-                    editDetails={editDetails}
-                    cellCtrl={cellCtrl}
-                    eParentCell={eGui}
-                    jsChildComp={jsEditorComp}
-                />
-            )}
-        </>
-    );
+    return reactInlineEditor ? (
+        jsxEditor(editDetails, CellEditorClass, setCellEditorRef)
+    ) : reactPopupEditor ? (
+        <PopupEditorComp
+            editDetails={editDetails}
+            cellCtrl={cellCtrl}
+            eParentCell={eGui}
+            wrappedContent={jsxEditor(editDetails, CellEditorClass, setCellEditorRef)}
+        />
+    ) : jsPopupEditor && jsEditorComp ? (
+        <PopupEditorComp editDetails={editDetails} cellCtrl={cellCtrl} eParentCell={eGui} jsChildComp={jsEditorComp} />
+    ) : null;
 };
 
 const jsxShowValue = (
@@ -122,38 +107,31 @@ const jsxShowValue = (
 ) => {
     const { compDetails, value } = showDetails;
 
-    const noCellRenderer = !compDetails;
-    const reactCellRenderer = compDetails && compDetails.componentFromFramework;
+    const bodyJsxFunc = () => {
+        if (!compDetails) {
+            // No Cell Renderer, so just show the value.
+            // if we didn't do this, objects would cause React error. we depend on objects for things
+            // like the aggregation functions avg and count, which return objects and depend on toString()
+            // getting called.
+            return value?.toString?.() ?? value;
+        }
 
-    const CellRendererClass = compDetails && compDetails.componentClass;
-
-    // if we didn't do this, objects would cause React error. we depend on objects for things
-    // like the aggregation functions avg and count, which return objects and depend on toString()
-    // getting called.
-    const valueForNoCellRenderer = value?.toString ? value.toString() : value;
-
-    const bodyJsxFunc = () => (
-        <>
-            {noCellRenderer && <>{valueForNoCellRenderer}</>}
-            {reactCellRenderer && !reactCellRendererStateless && (
-                <CellRendererClass {...compDetails!.params} key={key} ref={cellRendererRef} />
-            )}
-            {reactCellRenderer && reactCellRendererStateless && (
-                <CellRendererClass {...compDetails!.params} key={key} />
-            )}
-        </>
-    );
-
-    return (
-        <>
-            {showCellWrapper ? (
-                <span role="presentation" id={`cell-${parentId}`} className="ag-cell-value" ref={setECellValue}>
-                    {bodyJsxFunc()}
-                </span>
+        if (compDetails.componentFromFramework) {
+            const CellRendererClass = compDetails.componentClass;
+            return reactCellRendererStateless ? (
+                <CellRendererClass {...compDetails.params} key={key} />
             ) : (
-                bodyJsxFunc()
-            )}
-        </>
+                <CellRendererClass {...compDetails.params} key={key} ref={cellRendererRef} />
+            );
+        }
+    };
+
+    return showCellWrapper ? (
+        <span role="presentation" id={`cell-${parentId}`} className="ag-cell-value" ref={setECellValue}>
+            {bodyJsxFunc()}
+        </span>
+    ) : (
+        bodyJsxFunc()
     );
 };
 
@@ -452,6 +430,17 @@ const CellComp = ({
                     });
                 }
             },
+            refreshEditStyles: (editing, isPopup) => {
+                if (!eGui.current) {
+                    return;
+                }
+
+                const { current } = cssManager;
+                current!.toggleCss('ag-cell-value', !showCellWrapper);
+                current!.toggleCss('ag-cell-inline-editing', !!editing && !isPopup);
+                current!.toggleCss('ag-cell-popup-editing', !!editing && !!isPopup);
+                current!.toggleCss('ag-cell-not-inline-editing', !editing || !!isPopup);
+            },
         };
 
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
@@ -488,28 +477,29 @@ const CellComp = ({
         if (!eGui.current) {
             return;
         }
-        cssManager.current!.toggleCss('ag-cell-value', !showCellWrapper);
-        cssManager.current!.toggleCss('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
-        cssManager.current!.toggleCss('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
-        cssManager.current!.toggleCss('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
-        cellCtrl.setInlineEditingCss();
+
+        const { current } = cssManager;
+        current!.toggleCss('ag-cell-value', !showCellWrapper);
+        current!.toggleCss('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
+        current!.toggleCss('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
+        current!.toggleCss('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
     });
 
-    const showContents = () => (
-        <>
-            {renderDetails != null &&
-                jsxShowValue(
-                    renderDetails,
-                    renderKey,
-                    instanceId,
-                    cellRendererRef,
-                    showCellWrapper,
-                    reactCellRendererStateless,
-                    setCellValueRef
-                )}
-            {editDetails != null && jsxEditValue(editDetails, setCellEditorRef, eGui.current!, cellCtrl, jsEditorComp)}
-        </>
-    );
+    const showContents = () => {
+        if (editDetails != null) {
+            return jsxEditValue(editDetails, setCellEditorRef, eGui.current!, cellCtrl, jsEditorComp);
+        } else if (renderDetails != null) {
+            return jsxShowValue(
+                renderDetails,
+                renderKey,
+                instanceId,
+                cellRendererRef,
+                showCellWrapper,
+                reactCellRendererStateless,
+                setCellValueRef
+            );
+        }
+    };
 
     const renderCell = () => (
         <div ref={setGuiRef} style={userStyles} role={cellAriaRole} col-id={colIdSanitised}>
