@@ -14,6 +14,7 @@ export abstract class AgAbstractCellEditor<P extends BaseCellEditorParams> exten
         const el = this.getEditorElement();
         // override the browser's error message
         el.setAttribute('title', '');
+        this.eEditor.onValueChange(() => this.validateEdit());
     }
 
     public validateEdit(): ICellEditorValidationError | null {
