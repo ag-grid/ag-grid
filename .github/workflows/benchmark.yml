@@ -155,7 +155,7 @@ jobs:
       - name: Slack Notification
         continue-on-error: true
         env:
-          SLACK_CHANNEL: '#ci-gate'
+          SLACK_CHANNEL: '#ci-grid-gate'
           SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
           SLACK_USERNAME: 'ag-grid CI'
           SLACK_WEBHOOK: ${{ secrets.GRID_CI_QUALITY }}
