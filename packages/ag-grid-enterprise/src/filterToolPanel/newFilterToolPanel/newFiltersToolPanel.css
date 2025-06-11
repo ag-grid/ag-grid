@@ -1,6 +1,38 @@
 .ag-filter-panel {
+    display: flex;
+    flex-direction: column;
     padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     width: 100%;
+}
+
+/** These all need different styling when used within the new filter tool panel compared to the existing use case within the legacy filter tool panel or column menu  */
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-filter-panel .ag-filter-apply-panel {
+    padding: 0;
+    flex-wrap: wrap;
+    row-gap: var(--ag-widget-vertical-spacing);
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-filter-panel .ag-filter-apply-panel-apply-button {
+    background-color: var(--ag-icon-button-active-background-color);
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-filter-panel .ag-simple-filter-body-wrapper {
+    padding: var(--ag-widget-vertical-spacing) var(--ag-widget-container-horizontal-padding) 0;
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-filter-panel .ag-mini-filter {
+    margin-top: var(--ag-widget-vertical-spacing);
+    margin-left: var(--ag-widget-container-horizontal-padding);
+    margin-right: var(--ag-widget-container-horizontal-padding);
+}
+
+.ag-filter-panel-container {
+    flex: 1;
 }
 
 .ag-filter-panel-container > *:where(:not(:last-child)) {
@@ -13,16 +45,6 @@
     border: solid var(--ag-border-width) var(--ag-border-color);
     border-radius: var(--ag-border-radius);
     background-color: var(--ag-background-color);
-
-    :where(.ag-simple-filter-body-wrapper) {
-        padding: var(--ag-widget-vertical-spacing) var(--ag-widget-container-horizontal-padding) 0;
-    }
-
-    :where(.ag-mini-filter) {
-        margin-top: var(--ag-widget-vertical-spacing);
-        margin-left: var(--ag-widget-container-horizontal-padding);
-        margin-right: var(--ag-widget-container-horizontal-padding);
-    }
 }
 
 .ag-filter-card-header {

@@ -34,6 +34,7 @@ import type {
     FilterHandler,
     FilterHandlerBaseParams,
     FilterModel,
+    FilterWrapperParams,
     IFilter,
     IFilterComp,
     IFilterDef,
@@ -98,6 +99,10 @@ export interface FilterActionEvent extends AgEvent<'filterAction'> {
     event?: KeyboardEvent;
 }
 
+export interface FilterGlobalButtonsEvent extends AgEvent<'filterGlobalButtons'> {
+    isGlobal: boolean;
+}
+
 /** Used for non-CSRM handlers */
 const DUMMY_HANDLER = {
     filterHandler: () => ({
@@ -106,7 +111,7 @@ const DUMMY_HANDLER = {
 };
 
 export class ColumnFilterService
-    extends BeanStub<'filterParamsChanged' | 'filterStateChanged' | 'filterAction'>
+    extends BeanStub<'filterParamsChanged' | 'filterStateChanged' | 'filterAction' | 'filterGlobalButtons'>
     implements NamedBean
 {
     beanName: BeanName = 'colFilter';
@@ -135,6 +140,7 @@ export class ColumnFilterService
     private handlerMap: { -readonly [K in keyof typeof FILTER_HANDLER_MAP]?: (typeof FILTER_HANDLER_MAP)[K] } = {
         ...FILTER_HANDLER_MAP,
     };
+    public isGlobalButtons: boolean = false;
 
     public postConstruct(): void {
         this.addManagedEventListeners({
@@ -764,6 +770,13 @@ export class ColumnFilterService
         }
 
         const { compDetails, createFilterUi } = filterCompDetails;
+
+        if (this.isGlobalButtons) {
+            const hasLocalButtons = !!(compDetails.params as FilterWrapperParams)?.buttons?.length;
+            if (!hasLocalButtons) {
+                _warn(281, { colId: column.getColId() });
+            }
+        }
 
         return {
             compDetails,
@@ -1709,6 +1722,33 @@ export class ColumnFilterService
             type: 'filterStateChanged',
             column,
             state,
+        });
+    }
+
+    public canApplyAll(): boolean {
+        let hasChanges = false;
+
+        const { state, model } = this;
+
+        for (const colId of state.keys()) {
+            const colState = state.get(colId)!;
+            // undefined is true
+            if (colState.valid === false) {
+                return false;
+            }
+            if ((colState.model ?? null) !== _getFilterModel(model, colId)) {
+                hasChanges = true;
+            }
+        }
+
+        return hasChanges;
+    }
+
+    public setGlobalButtons(isGlobal: boolean): void {
+        this.isGlobalButtons = true;
+        this.dispatchLocalEvent<FilterGlobalButtonsEvent>({
+            type: 'filterGlobalButtons',
+            isGlobal,
         });
     }
 

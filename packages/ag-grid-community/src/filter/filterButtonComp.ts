@@ -61,7 +61,7 @@ export class FilterButtonComp extends Component<FilterAction> {
                 tag: 'button',
                 attrs: { type: buttonType },
                 ref: `${type}FilterButton`,
-                cls: 'ag-button ag-standard-button ag-filter-apply-panel-button',
+                cls: `ag-button ag-standard-button ag-filter-apply-panel-button${isApply ? ' ag-filter-apply-panel-apply-button' : ''}`,
                 children: text,
             });
             if (isApply) {

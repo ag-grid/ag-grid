@@ -1,9 +1,11 @@
 import type {
     AgColumn,
     BeanCollection,
+    FilterAction,
     FilterPanelFilterState,
     FilterPanelSummaryState,
     IFilterPanelService,
+    IToolPanelNewFiltersCompParams,
     NamedBean,
     SelectableFilterDef,
 } from 'ag-grid-community';
@@ -25,12 +27,18 @@ export class FilterPanelService
 
     private states: Map<string, StateWrapper> = new Map();
     private orderedStates: string[] = [];
+    private params?: IToolPanelNewFiltersCompParams;
 
     public postConstruct(): void {
         const updateFilterStates = this.updateFilterStates.bind(this);
         this.addManagedEventListeners({
             newColumnsLoaded: updateFilterStates,
             filterChanged: updateFilterStates,
+        });
+        this.addManagedListeners(this.beans.colFilter!, {
+            filterStateChanged: () => {
+                this.dispatchStatesUpdates(undefined, true);
+            },
         });
     }
 
@@ -158,6 +166,25 @@ export class FilterPanelService
         });
     }
 
+    public getActions(): { actions: FilterAction[]; canApply: boolean } | undefined {
+        const actions = this.params?.buttons;
+        if (!actions?.length) {
+            return undefined;
+        }
+        const canApply = !!this.beans.colFilter?.canApplyAll();
+        return { actions, canApply };
+    }
+
+    public doAction(action: FilterAction): void {
+        this.beans.colFilter?.updateAllModels(action);
+    }
+
+    public updateParams(params: IToolPanelNewFiltersCompParams): void {
+        this.params = params;
+        this.dispatchStatesUpdates();
+        this.beans.colFilter?.setGlobalButtons(!!params.buttons?.length);
+    }
+
     private createFilter(id: string): void {
         const { colModel, colFilter } = this.beans;
         const column = colModel.getColById(id);
@@ -199,7 +226,7 @@ export class FilterPanelService
         if (expanded) {
             const colDef = column.colDef;
             const { filterDefs, activeFilterDef } = beans.selectableFilter?.getDefs(column, colDef) ?? {};
-            const filterComp = this.createBean(new FilterComp(column, 'TOOLBAR'));
+            const filterComp = this.createBean(new FilterComp(column, 'TOOLBAR', true));
             return {
                 state: {
                     column,
@@ -234,10 +261,11 @@ export class FilterPanelService
         }
     }
 
-    private dispatchStatesUpdates(activeId?: string): void {
+    private dispatchStatesUpdates(activeId?: string, action?: true): void {
         this.dispatchLocalEvent({
             type: 'filterPanelStatesChanged',
             activeId,
+            action,
         });
     }
 
@@ -246,6 +274,7 @@ export class FilterPanelService
         states.forEach((state) => state.destroy?.());
         states.clear();
         orderedStates.length = 0;
+        this.params = undefined;
         super.destroy();
     }
 }

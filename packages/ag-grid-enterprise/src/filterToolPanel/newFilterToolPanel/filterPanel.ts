@@ -1,5 +1,13 @@
-import type { ElementParams, FilterPanelFilterState } from 'ag-grid-community';
-import { Component, RefPlaceholder, _focusInto, _getActiveDomElement, _isNothingFocused } from 'ag-grid-community';
+import type { ElementParams, FilterAction, FilterPanelFilterState } from 'ag-grid-community';
+import { FilterButtonComp } from 'ag-grid-community';
+import {
+    Component,
+    RefPlaceholder,
+    _focusInto,
+    _getActiveDomElement,
+    _isNothingFocused,
+    _removeFromParent,
+} from 'ag-grid-community';
 
 import { AddFilterComp } from './addFilterComp';
 import { FilterCardComp } from './filterCardComp';
@@ -10,11 +18,23 @@ interface SingleRefresh {
     state: FilterPanelFilterState;
 }
 
+function isSingleRefresh(params?: FilterPanelRefreshParams): params is SingleRefresh {
+    return !!(params as SingleRefresh)?.id;
+}
+
 interface MultiRefreshActive {
     activeId: string;
 }
 
-export type FilterPanelRefreshParams = SingleRefresh | MultiRefreshActive;
+interface ActionRefresh {
+    action: true;
+}
+
+function isActionRefresh(params?: FilterPanelRefreshParams): params is ActionRefresh {
+    return !!(params as ActionRefresh)?.action;
+}
+
+export type FilterPanelRefreshParams = SingleRefresh | MultiRefreshActive | ActionRefresh;
 
 const FilterPanelElement: ElementParams = {
     tag: 'div',
@@ -27,19 +47,24 @@ export class FilterPanel extends Component {
 
     private filters: Map<string, FilterCardComp> = new Map();
     private addFilterComp?: AddFilterComp;
+    private buttonComp?: FilterButtonComp;
 
     constructor() {
         super(FilterPanelElement);
     }
 
     public refresh(params?: FilterPanelRefreshParams): void {
-        if ((params as SingleRefresh)?.id) {
-            this.filters.get((params as SingleRefresh).id)?.refresh((params as SingleRefresh).state);
+        if (isActionRefresh(params)) {
+            this.refreshActions();
+            return;
+        }
+        if (isSingleRefresh(params)) {
+            this.filters.get(params.id)?.refresh(params.state);
             return;
         }
         const { eContainer, filters: existingFilters, beans } = this;
-        const filterPanelService = beans.filterPanelSvc!;
-        const filterIds = filterPanelService.getIds();
+        const filterPanelSvc = beans.filterPanelSvc!;
+        const filterIds = filterPanelSvc.getIds();
         const newFilters: Map<string, FilterCardComp> = new Map();
 
         const somethingIsFocused = !_isNothingFocused(beans);
@@ -51,7 +76,7 @@ export class FilterPanel extends Component {
 
         for (const id of filterIds) {
             const newFilter = existingFilters.get(id) ?? this.createBean(new FilterCardComp(id));
-            newFilter.refresh(filterPanelService.getState(id)!);
+            newFilter.refresh(filterPanelSvc.getState(id)!);
             newFilters.set(id, newFilter);
             eNewItems.push(newFilter.getGui());
         }
@@ -71,13 +96,13 @@ export class FilterPanel extends Component {
             ePrevItems.push(addFilterComp.getGui());
         }
 
-        const addFilterOptions = filterPanelService.getAvailable();
+        const addFilterOptions = filterPanelSvc.getAvailable();
 
         if (addFilterOptions.length) {
             if (!addFilterComp) {
                 addFilterComp = this.createBean(new AddFilterComp(addFilterOptions));
                 addFilterComp.addManagedListeners(addFilterComp, {
-                    filterSelected: ({ id }) => filterPanelService.add(id),
+                    filterSelected: ({ id }) => filterPanelSvc.add(id),
                 });
             }
             addFilterComp.refresh(addFilterOptions);
@@ -91,17 +116,45 @@ export class FilterPanel extends Component {
 
         compsToDestroy.forEach((comp) => this.destroyBean(comp));
 
-        const activeId = (params as MultiRefreshActive)?.activeId;
+        const activeId = params?.activeId;
         const activeItemToFocus = activeId && newFilters.get(activeId)?.getGui();
         if (activeItemToFocus) {
             _focusInto(activeItemToFocus);
         } else if (containerHasFocus && _isNothingFocused(beans)) {
             _focusInto(eNewItems[eNewItems.length - 1] ?? eContainer);
         }
+
+        this.refreshActions();
+    }
+
+    private refreshActions(): void {
+        const filterPanelSvc = this.beans.filterPanelSvc!;
+        const { actions, canApply } = filterPanelSvc.getActions() ?? {};
+        let buttonComp = this.buttonComp;
+        if (actions?.length) {
+            if (!buttonComp) {
+                buttonComp = this.createBean(new FilterButtonComp());
+                this.getGui().appendChild(buttonComp.getGui());
+                const listeners: Partial<Record<FilterAction, () => void>> = {};
+                (['apply', 'clear', 'reset', 'cancel'] as const).forEach((action) => {
+                    listeners[action] = () => filterPanelSvc.doAction(action);
+                });
+                buttonComp.addManagedListeners(buttonComp, listeners);
+            }
+            buttonComp.updateButtons(actions);
+            buttonComp.updateValidity(canApply);
+        } else {
+            if (buttonComp) {
+                _removeFromParent(buttonComp.getGui());
+                buttonComp = this.destroyBean(buttonComp);
+            }
+        }
+        this.buttonComp = buttonComp;
     }
 
     public override destroy(): void {
         this.addFilterComp = this.destroyBean(this.addFilterComp);
+        this.buttonComp = this.destroyBean(this.buttonComp);
         const filters = this.filters;
         filters.forEach((filter) => this.destroyBean(filter));
         filters.clear();

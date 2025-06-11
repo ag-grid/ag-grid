@@ -1,7 +1,9 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { ValueGetterFunc } from '../entities/colDef';
+import type { NewFiltersToolPanelState } from './gridState';
 import type { IEventEmitter } from './iEventEmitter';
-import type { IFilterDef } from './iFilter';
+import type { FilterAction, FilterWrapperParams, IFilterDef } from './iFilter';
+import type { IToolPanel, IToolPanelNewFiltersCompParams } from './iToolPanel';
 
 export interface SelectableFilterDef {
     /** Required for custom filters */
@@ -13,6 +15,7 @@ export interface SelectableFilterDef {
 
 export interface SelectableFilterParams {
     filters?: SelectableFilterDef[];
+    defaultFilterParams?: FilterWrapperParams;
 }
 
 interface FilterPanelBaseState {
@@ -34,6 +37,10 @@ export interface FilterPanelDetailState extends FilterPanelBaseState {
 
 export type FilterPanelFilterState = FilterPanelSummaryState | FilterPanelDetailState;
 
+export interface INewFiltersToolPanel extends IToolPanel {
+    getState(): NewFiltersToolPanelState;
+}
+
 export interface IFilterPanelService extends IEventEmitter<'filterPanelStateChanged' | 'filterPanelStatesChanged'> {
     getAvailable(): { id: string; name: string }[];
     getIds(): string[];
@@ -42,6 +49,9 @@ export interface IFilterPanelService extends IEventEmitter<'filterPanelStateChan
     getState(id: string): FilterPanelFilterState | undefined;
     expand(id: string, expanded: boolean): void;
     updateType(id: string, filterDef: SelectableFilterDef): void;
+    getActions(): { actions: FilterAction[]; canApply: boolean } | undefined;
+    doAction(action: FilterAction): void;
+    updateParams(params: IToolPanelNewFiltersCompParams): void;
 }
 
 export interface ISelectableFilterService {

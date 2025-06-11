@@ -118,13 +118,15 @@ export class SelectableFilterService extends BeanStub implements ISelectableFilt
         const cellDataType = dataTypeSvc?.getBaseDataType(column);
         const dataTypeDefinition = dataTypeSvc?.getDataTypeDefinition(column);
         const formatValue = dataTypeSvc?.getFormatValue(cellDataType!);
+        const { filters, defaultFilterParams } = (filterParams as SelectableFilterParams) ?? {};
         const updateDef = (def: SelectableFilterDef) => {
             const { filter, filterParams: defFilterParams, name } = def;
+            const userParams = defaultFilterParams ? { ...defaultFilterParams, ...defFilterParams } : defFilterParams;
             let updatedParams: { filterParams?: any; filterValueGetter?: string | ValueGetterFunc } | undefined;
             if (dataTypeDefinition && formatValue) {
                 if (filter === 'agMultiColumnFilter') {
                     updatedParams = beans.multiFilter?.getParamsForDataType(
-                        defFilterParams,
+                        userParams,
                         def,
                         dataTypeDefinition,
                         formatValue
@@ -132,7 +134,7 @@ export class SelectableFilterService extends BeanStub implements ISelectableFilt
                 } else {
                     updatedParams = _getFilterParamsForDataType(
                         filter,
-                        defFilterParams,
+                        userParams,
                         def,
                         dataTypeDefinition,
                         formatValue,
@@ -148,15 +150,16 @@ export class SelectableFilterService extends BeanStub implements ISelectableFilt
                 _warn(280, { colId: column.getColId() });
                 updatedName = '';
             }
-            if (updatedParams || updatedName) {
+            if (defaultFilterParams || updatedParams || updatedName) {
                 return {
                     ...def,
+                    filterParams: userParams,
                     name: updatedName ?? name,
                     ...updatedParams,
                 };
             }
             return def;
         };
-        return ((filterParams as SelectableFilterParams)?.filters ?? this.getDefaultFilters(column)).map(updateDef);
+        return (filters ?? this.getDefaultFilters(column)).map(updateDef);
     }
 }

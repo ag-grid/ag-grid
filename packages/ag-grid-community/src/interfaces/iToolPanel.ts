@@ -61,6 +61,9 @@ export interface IToolPanelFiltersCompParams {
     suppressFilterSearch: boolean;
     /** Suppress updating the layout of columns as they are rearranged in the grid */
     suppressSyncLayoutWithGrid: boolean;
+}
+
+export interface IToolPanelNewFiltersCompParams {
     /** Allows global buttons to be provided to the filter tool panel */
     buttons?: FilterAction[];
 }

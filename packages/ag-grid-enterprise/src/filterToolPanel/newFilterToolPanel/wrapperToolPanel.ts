@@ -1,11 +1,21 @@
-import type { IToolPanelComp } from 'ag-grid-community';
+import type {
+    INewFiltersToolPanel,
+    IToolPanelComp,
+    IToolPanelNewFiltersCompParams,
+    IToolPanelParams,
+    NewFiltersToolPanelState,
+} from 'ag-grid-community';
 import { Component, _warn } from 'ag-grid-community';
 
 import type { FilterPanelRefreshParams } from './filterPanel';
 import { FilterPanel } from './filterPanel';
 import { newFiltersToolPanelCSS } from './newFiltersToolPanel.css-GENERATED';
 
-export class WrapperToolPanel extends Component implements IToolPanelComp {
+interface ToolPanelNewFiltersCompParams<TData = any, TContext = any>
+    extends IToolPanelParams<TData, TContext, NewFiltersToolPanelState>,
+        IToolPanelNewFiltersCompParams {}
+
+export class WrapperToolPanel extends Component implements INewFiltersToolPanel, IToolPanelComp {
     private filterPanel: FilterPanel;
 
     constructor() {
@@ -13,11 +23,12 @@ export class WrapperToolPanel extends Component implements IToolPanelComp {
         this.registerCSS(newFiltersToolPanelCSS);
     }
 
-    public postConstruct(): void {
+    public init(params: ToolPanelNewFiltersCompParams): void {
         if (!this.gos.get('enableFilterHandlers')) {
             _warn(279);
             return;
         }
+        this.refresh(params);
         const filterPanel = this.createManagedBean(new FilterPanel());
         this.filterPanel = filterPanel;
         const refresh = (event?: FilterPanelRefreshParams) => filterPanel.refresh(event);
@@ -32,7 +43,12 @@ export class WrapperToolPanel extends Component implements IToolPanelComp {
         return this.filterPanel?.getGui();
     }
 
-    refresh(): boolean | void {
+    public refresh(params: ToolPanelNewFiltersCompParams): boolean | void {
+        this.beans.filterPanelSvc?.updateParams(params);
         return true;
+    }
+
+    public getState(): NewFiltersToolPanelState {
+        return {};
     }
 }

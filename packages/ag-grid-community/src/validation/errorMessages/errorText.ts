@@ -688,6 +688,8 @@ export const AG_GRID_ERRORS = {
     279: () => 'New filter tool panel requires `enableFilterHandlers: true`.' as const,
     280: ({ colId }: { colId: string }) =>
         `'name' must be provided for custom filter components for column '${colId}` as const,
+    281: ({ colId }: { colId: string }) =>
+        `Filter for column '${colId}' does not have 'filterParams.buttons', but the new Filters Tool Panel has buttons configured. Either configure buttons for the filter, or disable buttons on the Filters Tool Panel.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

@@ -465,6 +465,7 @@ export {
     BaseToolPanelParams,
     IToolPanelColumnCompParams,
     IToolPanelFiltersCompParams,
+    IToolPanelNewFiltersCompParams,
 } from './interfaces/iToolPanel';
 export { IColumnToolPanel } from './interfaces/iColumnToolPanel';
 export { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';
@@ -476,6 +477,7 @@ export {
     FilterPanelFilterState,
     IFilterPanelService,
     ISelectableFilterService,
+    INewFiltersToolPanel,
 } from './interfaces/iNewFiltersToolPanel';
 
 // overlays
@@ -787,6 +789,7 @@ export {
     SideBarState,
     SortState,
     GridStateKey,
+    NewFiltersToolPanelState,
 } from './interfaces/gridState';
 export { convertColumnGroupState, convertColumnState } from './misc/state/stateUtils';
 

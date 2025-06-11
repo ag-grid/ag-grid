@@ -59,6 +59,10 @@ export interface ColumnToolPanelState {
     expandedGroupIds: string[];
 }
 
+export interface NewFiltersToolPanelState {
+    // TODO
+}
+
 export interface SideBarState {
     /** Is side bar visible */
     visible: boolean;
