@@ -7,6 +7,7 @@ import type {
 } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    DateEditorModule,
     ModuleRegistry,
     TextEditorModule,
     ValidationModule,
@@ -14,9 +15,11 @@ import {
 } from 'ag-grid-community';
 import { CellSelectionModule, ColumnMenuModule, ContextMenuModule, SetFilterModule } from 'ag-grid-enterprise';
 
+ModuleRegistry.registerModules([]);
 ModuleRegistry.registerModules([
     TextEditorModule,
     ClientSideRowModelModule,
+    DateEditorModule,
     ColumnMenuModule,
     ContextMenuModule,
     CellSelectionModule,
@@ -78,8 +81,18 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
         { field: 'athlete' },
         { field: 'countryObject', headerName: 'Country' },
         { field: 'sportObject', headerName: 'Sport' },
-        { field: 'dateWithSpace', cellDataType: 'dateWithSpace' },
-        { field: 'dateWithComma', cellDataType: 'dateWithComma' },
+        {
+            field: 'dateWithSpace',
+            cellDataType: 'dateWithSpace',
+            filterParams: { includeTime: true },
+            cellEditorParams: { includeTime: true },
+        },
+        {
+            field: 'dateWithComma',
+            cellDataType: 'dateWithComma',
+            filterParams: { includeTime: true },
+            cellEditorParams: { includeTime: true },
+        },
     ],
     defaultColDef: {
         filter: true,
