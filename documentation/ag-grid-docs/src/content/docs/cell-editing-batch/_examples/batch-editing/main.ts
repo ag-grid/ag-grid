@@ -91,13 +91,27 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi;
 
+// distinct count of first names
 const uniqOrDots = (params: IAggFuncParams) => {
-    // distinct count of first names
     const uniqueNames = new Set<string>();
+    const allValues: string[] = [];
+
     params.values.forEach((value) => {
-        uniqueNames.add(value);
+        if (value?.values) {
+            const values = value.values;
+            values.forEach((v: any) => {
+                uniqueNames.add(v);
+                allValues.push(v);
+            });
+        } else {
+            uniqueNames.add(value);
+            allValues.push(value);
+        }
     });
-    return `${uniqueNames.size} / ${params.values.length}`;
+
+    const str = `${uniqueNames.size} / ${allValues.length}`;
+
+    return { toString: () => str, values: allValues };
 };
 
 let node: IRowNode | undefined;
