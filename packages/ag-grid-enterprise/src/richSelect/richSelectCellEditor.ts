@@ -1,6 +1,5 @@
 import type {
     FieldPickerValueSelectedEvent,
-    ICellEditorComp,
     ICellEditorParams,
     KeyCreatorParams,
     RichCellEditorParams,
@@ -10,10 +9,9 @@ import { AgAbstractCellEditor, _addGridCommonParams, _missing, _warn } from 'ag-
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 
-export class RichSelectCellEditor<TData = any, TValue = any, TContext = any>
-    extends AgAbstractCellEditor<RichCellEditorParams<TData, TValue>>
-    implements ICellEditorComp
-{
+export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> extends AgAbstractCellEditor<
+    RichCellEditorParams<TData, TValue>
+> {
     private focusAfterAttached: boolean;
     protected eEditor: AgRichSelect<TValue>;
     private isAsync: boolean = false;
@@ -218,19 +216,19 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any>
         return false;
     }
 
-    protected getEditorElement() {
+    public getValidationElement() {
         return this.eEditor.getAriaElement() as HTMLElement;
     }
 
-    protected getErrors() {
+    public getErrors() {
         const { params } = this;
-        const { validate } = params;
+        const { getErrors } = params;
 
-        if (!validate) {
+        if (!getErrors) {
             return null;
         }
 
-        return validate({
+        return getErrors({
             value: this.getValue(),
             internalErrors: null,
             cellEditorParams: params as unknown as ICellEditorParams<TData, TValue, TContext>,

@@ -34,7 +34,7 @@ import {
     _syncFromEditor,
     _syncFromEditors,
     _valuesDiffer,
-    getCellEditorInstances,
+    getCellEditorInstanceMap,
 } from './utils/editors';
 import { _refreshEditCells } from './utils/refresh';
 
@@ -137,18 +137,38 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     public validateEdit(): ICellEditorValidationError[] | null {
-        const editors = getCellEditorInstances(this.beans);
+        const mappedEditors = getCellEditorInstanceMap(this.beans);
 
-        if (!editors || editors.length === 0) {
+        if (!mappedEditors || mappedEditors.length === 0) {
             return null;
         }
 
-        const errors = [];
+        const errors: ICellEditorValidationError[] = [];
 
-        for (const editor of editors) {
-            const error = editor.validateEdit?.();
-            if (error) {
-                errors.push(error);
+        for (const mappedEditor of mappedEditors) {
+            const { ctrl, editor } = mappedEditor;
+            const { rowNode, column } = ctrl;
+            const { rowIndex, rowPinned } = rowNode;
+            const errorMessages = editor.getErrors?.();
+            const el = editor.getValidationElement?.();
+
+            ctrl.refreshEditorTooltip();
+
+            if (el) {
+                if (el instanceof HTMLInputElement) {
+                    el.setCustomValidity(errorMessages ? errorMessages.join('.') : '');
+                } else {
+                    el.classList.toggle('invalid', errorMessages != null && errorMessages.length > 0);
+                }
+            }
+
+            if (errorMessages) {
+                errors.push({
+                    column,
+                    rowIndex: rowIndex!,
+                    rowPinned,
+                    messages: errorMessages,
+                });
             }
         }
 
@@ -384,7 +404,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return this.strategy?.isCellEditable(position, source) ?? false;
     }
 
-    moveToNextCell(
+    public moveToNextCell(
         prev: CellCtrl | RowCtrl,
         backwards: boolean,
         event?: KeyboardEvent,

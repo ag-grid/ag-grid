@@ -1,43 +1,32 @@
-import type { BaseCellEditorParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
+import type { BaseCellEditorParams, ICellEditorComp } from '../interfaces/iCellEditor';
 import type { AgAbstractField } from './agAbstractField';
 import { PopupComponent } from './popupComponent';
 
-export abstract class AgAbstractCellEditor<P extends BaseCellEditorParams> extends PopupComponent {
-    protected abstract readonly eEditor: AgAbstractField<any, any, any>;
+export abstract class AgAbstractCellEditor<P extends BaseCellEditorParams = any, TValue = any>
+    extends PopupComponent
+    implements ICellEditorComp
+{
+    protected abstract eEditor: AgAbstractField<any, any, any>;
     protected params: P;
-    protected abstract getErrors(): string[] | null;
-    protected abstract getEditorElement(): HTMLElement | HTMLInputElement;
+
     protected abstract initialiseEditor(params: P): void;
+
+    public abstract getValidationElement(): HTMLElement | HTMLInputElement;
+    public abstract getValue(): TValue | null | undefined;
+    public abstract getErrors(): string[] | null;
+
+    public errorMessages: string[] | null = null;
 
     public init(params: P) {
         this.params = params;
         this.initialiseEditor(params);
-        const el = this.getEditorElement();
+        const el = this.getValidationElement();
         // override the browser's error message
         el.setAttribute('title', '');
-        this.eEditor.onValueChange(() => this.validateEdit());
+        this.eEditor.onValueChange(() => params.validate());
     }
 
-    public validateEdit(): ICellEditorValidationError | null {
-        const { params } = this;
-        const {
-            column,
-            node: { rowIndex, rowPinned },
-        } = params;
-
-        const messages = this.getErrors();
-        const el = this.getEditorElement();
-
-        if (el instanceof HTMLInputElement) {
-            el.setCustomValidity(messages ? messages[0] : '');
-        } else {
-            el.classList.toggle('invalid', messages != null && messages.length > 0);
-        }
-
-        if (!messages) {
-            return null;
-        }
-
-        return { rowIndex: rowIndex!, rowPinned, column, messages };
+    public override destroy(): void {
+        this.errorMessages = null;
     }
 }

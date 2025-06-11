@@ -202,11 +202,11 @@ export abstract class BaseEditStrategy extends BeanStub {
         this.stop();
     }
 
-    setFocusOutOnEditor(cellCtrl: CellCtrl): void {
+    public setFocusOutOnEditor(cellCtrl: CellCtrl): void {
         cellCtrl.comp?.getCellEditor()?.focusOut?.();
     }
 
-    setFocusInOnEditor(cellCtrl: CellCtrl): void {
+    public setFocusInOnEditor(cellCtrl: CellCtrl): void {
         const comp = cellCtrl.comp;
         const editor = comp?.getCellEditor();
 
@@ -263,7 +263,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         }
     }
 
-    shouldStart(
+    public shouldStart(
         { column }: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null,
         cellStartedEdit?: boolean | null,
@@ -301,7 +301,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         return false;
     }
 
-    shouldStop(
+    public shouldStop(
         _position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
@@ -325,7 +325,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         return null;
     }
 
-    shouldCancel(
+    public shouldCancel(
         _position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'

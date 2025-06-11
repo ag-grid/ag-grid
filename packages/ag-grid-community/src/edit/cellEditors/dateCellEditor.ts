@@ -55,7 +55,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     public getErrors(): string[] | null {
         const value = this.getValue();
         const { params } = this;
-        const { min, max, validate } = params;
+        const { min, max, getErrors } = params;
         let internalErrors: string[] | null = [];
 
         if (value instanceof Date && !isNaN(value.getTime())) {
@@ -71,8 +71,8 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
             internalErrors = null;
         }
 
-        if (validate) {
-            return validate({ value, cellEditorParams: params, internalErrors });
+        if (getErrors) {
+            return getErrors({ value, cellEditorParams: params, internalErrors });
         }
 
         return internalErrors;

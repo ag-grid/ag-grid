@@ -5,6 +5,7 @@ import type { AgColumn } from '../entities/agColumn';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
+import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { _isElementOverflowingCallback } from '../utils/dom';
@@ -52,7 +53,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             shouldDisplayTooltip,
         };
 
-        let tooltipFeature = this.createTooltipFeature(tooltipCtrl);
+        let tooltipFeature = createTooltipFeature(tooltipCtrl, this.beans);
         if (tooltipFeature) {
             tooltipFeature = ctrl.createBean(tooltipFeature);
             ctrl.setRefreshFunction('tooltip', () => tooltipFeature!.refreshTooltip());
@@ -92,7 +93,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             tooltipCtrl.getColDef = () => colGroupDef;
         }
 
-        const tooltipFeature = this.createTooltipFeature(tooltipCtrl);
+        const tooltipFeature = createTooltipFeature(tooltipCtrl, this.beans);
         return tooltipFeature ? ctrl.createBean(tooltipFeature) : tooltipFeature;
     }
 
@@ -167,7 +168,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             shouldDisplayTooltip,
         };
 
-        return this.createTooltipFeature(tooltipCtrl, beans);
+        return createTooltipFeature(tooltipCtrl, beans);
     }
 
     public refreshRowTooltip(
@@ -190,7 +191,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             ctrl.destroyBean(existingTooltipFeature, context);
         }
 
-        const tooltipFeature = this.createTooltipFeature(tooltipParams, beans);
+        const tooltipFeature = createTooltipFeature(tooltipParams, beans);
         if (!tooltipFeature) {
             return;
         }
@@ -198,13 +199,48 @@ export class TooltipService extends BeanStub implements NamedBean {
         return ctrl.createBean(tooltipFeature, context);
     }
 
+    public setupEditorTooltip(cellCtrl: CellCtrl, editor: ICellEditor) {
+        const { beans } = this;
+        const { context } = beans;
+
+        const tooltipParams: ITooltipCtrl = {
+            getGui: () => editor.getValidationElement?.() as HTMLElement,
+            getTooltipValue: () => {
+                if (!editor.getErrors) {
+                    return;
+                }
+
+                const errors = editor.getErrors();
+
+                return errors && errors.length ? errors.join('.') : undefined;
+            },
+            getLocation: () => 'cellEditor',
+            shouldDisplayTooltip: () => {
+                if (!editor.getErrors) {
+                    return false;
+                }
+
+                const errors = editor.getErrors();
+                return !!errors && errors.length > 0;
+            },
+        };
+
+        const tooltipFeature = createTooltipFeature(tooltipParams, beans);
+
+        if (!tooltipFeature) {
+            return;
+        }
+
+        return cellCtrl.createBean(tooltipFeature, context);
+    }
+
     public initCol(column: AgColumn): void {
         const { colDef } = column;
         column.tooltipEnabled =
             _exists(colDef.tooltipField) || _exists(colDef.tooltipValueGetter) || _exists(colDef.tooltipComponent);
     }
+}
 
-    private createTooltipFeature(tooltipCtrl: ITooltipCtrl, beans?: BeanCollection): TooltipFeature | undefined {
-        return this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, tooltipCtrl, beans);
-    }
+function createTooltipFeature(tooltipCtrl: ITooltipCtrl, beans: BeanCollection) {
+    return beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, tooltipCtrl, beans);
 }

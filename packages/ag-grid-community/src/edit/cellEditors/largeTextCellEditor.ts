@@ -1,5 +1,4 @@
 import { KeyCode } from '../../constants/keyCode';
-import type { ICellEditorComp } from '../../interfaces/iCellEditor';
 import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
@@ -19,7 +18,7 @@ const LargeTextCellElement: ElementParams = {
         },
     ],
 };
-export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorParams> implements ICellEditorComp {
+export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorParams> {
     protected readonly eEditor: AgInputTextArea = RefPlaceholder;
     private focusAfterAttached: boolean;
 
@@ -81,13 +80,13 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         return params.parseValue(editorValue!);
     }
 
-    protected getEditorElement(): HTMLElement | HTMLInputElement {
+    public getValidationElement(): HTMLElement | HTMLInputElement {
         return this.eEditor.getInputElement();
     }
 
-    protected getErrors() {
+    public getErrors() {
         const { params } = this;
-        const { maxLength, validate } = params;
+        const { maxLength, getErrors } = params;
         const value = this.getValue();
         let internalErrors: string[] | null = [];
 
@@ -99,8 +98,8 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
             internalErrors = null;
         }
 
-        if (validate) {
-            return validate({
+        if (getErrors) {
+            return getErrors({
                 value,
                 internalErrors,
                 cellEditorParams: params,

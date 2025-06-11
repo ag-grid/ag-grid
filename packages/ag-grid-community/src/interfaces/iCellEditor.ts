@@ -62,11 +62,15 @@ export interface ICellEditor<TValue = any> extends BaseCellEditor {
      */
     getPopupPosition?(): 'over' | 'under' | undefined;
 
-    /**
-     * Optional: Validates the cell editor.
-     * @returns `null` if the editor is valid, or an object with `column` and `message` if invalid.
+    /** Optional: The element which will contain Edit Validation errors.
+     * This element will display a Tooltip with the validation error.
      */
-    validateEdit?(): ICellEditorValidationError | null;
+    getValidationElement?(): HTMLElement;
+
+    /**
+     * Optional: The error messages associated with the Editor
+     */
+    getErrors?(): string[] | null;
 }
 
 export interface BaseCellEditorParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -101,14 +105,20 @@ export interface BaseCellEditorParams<TData = any, TValue = any, TContext = any>
     eGridCell: HTMLElement;
 
     /**
-     * Optional validation callback that runs after editing is finished.
-     * Return a string for error message, or `null` if the value is valid.
+     * Optional validation callback that will override the `getError()` of Provided Editors.
+     * Use this to return your own custom errors.
+     * @return An array of strings containing the editor error messages, or `null` if the editor is valid.
      */
-    validate?: (params: {
+    getErrors?: (params: {
         value: TValue | null | undefined;
         internalErrors: string[] | null;
         cellEditorParams: ICellEditorParams<TData, TValue, TContext>;
     }) => string[] | null;
+
+    /**
+     * Runs the Editor Validation.
+     */
+    validate(): void;
 }
 
 export interface ICellEditorParams<TData = any, TValue = any, TContext = any>
@@ -161,5 +171,5 @@ export interface EditingCellPosition extends RowPosition {
 
 export interface ICellEditorValidationError extends RowPosition {
     column: Column;
-    messages: string[];
+    messages: string[] | null;
 }

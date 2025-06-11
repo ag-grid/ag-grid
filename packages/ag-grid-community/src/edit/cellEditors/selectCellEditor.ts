@@ -1,7 +1,7 @@
 import { KeyCode } from '../../constants/keyCode';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { ElementParams } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
 import { _warn } from '../../validation/logging';
@@ -28,7 +28,7 @@ const SelectCellElement: ElementParams = {
         },
     ],
 };
-export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParams> implements ICellEditorComp {
+export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParams> {
     private focusAfterAttached: boolean;
     private valueSvc: ValueService;
 
@@ -120,13 +120,13 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
         return false;
     }
 
-    protected getEditorElement(): HTMLElement | HTMLInputElement {
+    public getValidationElement(): HTMLElement | HTMLInputElement {
         return this.eEditor.getAriaElement() as HTMLElement;
     }
 
-    protected getErrors() {
+    public getErrors() {
         const { params } = this;
-        const { values, validate } = params;
+        const { values, getErrors } = params;
         const value = this.getValue();
         let internalErrors: string[] | null = [];
 
@@ -136,8 +136,8 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
             internalErrors = null;
         }
 
-        if (validate) {
-            return validate({
+        if (getErrors) {
+            return getErrors({
                 value,
                 internalErrors,
                 cellEditorParams: params,

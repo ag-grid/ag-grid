@@ -10,6 +10,7 @@ import { PopupComponent } from '../widgets/popupComponent';
 export type TooltipLocation =
     | 'advancedFilter'
     | 'cell'
+    | 'cellEditor'
     | 'columnToolPanelColumn'
     | 'columnToolPanelColumnGroup'
     | 'filterToolPanelColumnGroup'

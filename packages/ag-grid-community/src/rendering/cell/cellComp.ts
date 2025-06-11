@@ -437,7 +437,7 @@ export class CellComp extends Component {
         this.refreshEditStyles(true, cellEditorInPopup);
 
         cellEditor.afterGuiAttached?.();
-
+        this.cellCtrl.enableEditorTooltipFeature(cellEditor);
         this.cellCtrl.cellEditorAttached();
     }
 

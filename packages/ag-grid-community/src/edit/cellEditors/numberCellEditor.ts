@@ -52,7 +52,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
     public getErrors(): string[] | null {
         const value = this.getValue();
         const { params } = this;
-        const { min, max, validate } = params;
+        const { min, max, getErrors } = params;
         let internalErrors: string[] | null = [];
 
         if (typeof value === 'number') {
@@ -68,8 +68,8 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
             internalErrors = null;
         }
 
-        if (validate) {
-            return validate({
+        if (getErrors) {
+            return getErrors({
                 value,
                 cellEditorParams: params,
                 internalErrors,

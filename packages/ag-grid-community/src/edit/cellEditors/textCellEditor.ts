@@ -37,7 +37,7 @@ class TextCellEditorInput<TValue = any>
     public getErrors(): string[] | null {
         const value = this.getValue();
         const { params } = this;
-        const { maxLength, validate } = params;
+        const { maxLength, getErrors } = params;
         let internalErrors: string[] | null = [];
 
         if (maxLength != null && typeof value === 'string' && value.length > maxLength) {
@@ -48,8 +48,8 @@ class TextCellEditorInput<TValue = any>
             internalErrors = null;
         }
 
-        if (validate) {
-            return validate?.({ value, cellEditorParams: params, internalErrors });
+        if (getErrors) {
+            return getErrors({ value, cellEditorParams: params, internalErrors });
         }
 
         return internalErrors;

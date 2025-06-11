@@ -1,5 +1,5 @@
 import { KeyCode } from '../../constants/keyCode';
-import type { DefaultProvidedCellEditorParams, ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isBrowserSafari } from '../../utils/browser';
 import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
@@ -7,13 +7,10 @@ import { RefPlaceholder } from '../../widgets/component';
 import type { CellEditorInput } from './iCellEditorInput';
 
 export class SimpleCellEditor<
-        TValue,
-        P extends ICellEditorParams & DefaultProvidedCellEditorParams,
-        I extends AgInputTextField,
-    >
-    extends AgAbstractCellEditor<ICellEditorParams>
-    implements ICellEditorComp
-{
+    TValue,
+    P extends ICellEditorParams & DefaultProvidedCellEditorParams,
+    I extends AgInputTextField,
+> extends AgAbstractCellEditor<ICellEditorParams, TValue> {
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
     protected readonly eEditor: I = RefPlaceholder;
@@ -114,11 +111,11 @@ export class SimpleCellEditor<
         return false;
     }
 
-    protected getEditorElement(): HTMLInputElement {
+    public getValidationElement(): HTMLInputElement {
         return this.eEditor.getInputElement();
     }
 
-    protected getErrors(): string[] | null {
+    public getErrors(): string[] | null {
         return this.cellEditorInput.getErrors();
     }
 }

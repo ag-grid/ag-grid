@@ -57,7 +57,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         const { eEditor, params } = this;
         const raw = eEditor.getInputElement().value;
         const value = this.formatDate(this.parseDate(raw ?? undefined));
-        const { min, max, validate } = params;
+        const { min, max, getErrors } = params;
         let internalErrors: string[] | null = [];
 
         if (value) {
@@ -82,8 +82,8 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
             internalErrors = null;
         }
 
-        if (validate) {
-            return validate?.({
+        if (getErrors) {
+            return getErrors({
                 value: this.getValue(),
                 cellEditorParams: params,
                 internalErrors,

@@ -18,22 +18,32 @@ import { _getCellCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
 
-export function getCellEditorInstances<TData = any>(
+export function getCellEditorInstanceMap<TData = any>(
     beans: BeanCollection,
     params: GetCellEditorInstancesParams<TData> = {}
-): ICellEditor[] {
-    const res: ICellEditor[] = [];
+): { ctrl: CellCtrl; editor: ICellEditor }[] {
+    const res: { ctrl: CellCtrl; editor: ICellEditor }[] = [];
 
-    beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) => {
-        const cellEditor = cellCtrl.comp?.getCellEditor() as ICellEditor;
+    const ctrls = beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]);
+
+    for (const ctrl of ctrls) {
+        const cellEditor = ctrl.comp?.getCellEditor();
 
         if (cellEditor) {
-            res.push(_unwrapUserComp(cellEditor));
+            res.push({
+                ctrl,
+                editor: _unwrapUserComp(cellEditor),
+            });
         }
-    });
+    }
 
     return res;
 }
+
+export const getCellEditorInstances = <TData = any>(
+    beans: BeanCollection,
+    params: GetCellEditorInstancesParams<TData> = {}
+): ICellEditor[] => getCellEditorInstanceMap(beans, params).map((res) => res.editor);
 
 export function _setupEditors(
     beans: BeanCollection,
@@ -170,8 +180,8 @@ function _createEditorParams(
     cellStartedEdit?: boolean | null
 ): ICellEditorParams {
     const { valueSvc, gos, editSvc } = beans;
-    const cellCtrl = _getCellCtrl(beans, position);
-    const rowIndex = position.rowNode?.rowIndex ?? undefined;
+    const cellCtrl = _getCellCtrl(beans, position) as CellCtrl;
+    const rowIndex = position.rowNode?.rowIndex ?? (undefined as unknown as number);
     const batchEdit = editSvc?.batch;
 
     const agColumn = beans.colModel.getCol(position.column.getId())!;
@@ -199,7 +209,10 @@ function _createEditorParams(
         eGridCell: cellCtrl?.eGui,
         parseValue: (newValue: any) => valueSvc.parseValue(agColumn, rowNode, newValue, cellCtrl?.value),
         formatValue: cellCtrl?.formatValue.bind(cellCtrl),
-    } as ICellEditorParams);
+        validate: () => {
+            editSvc?.validateEdit();
+        },
+    });
 }
 
 export function _purgeUnchangedEdits(beans: BeanCollection): void {

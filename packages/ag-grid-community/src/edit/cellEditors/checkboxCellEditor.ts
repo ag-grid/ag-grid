@@ -1,4 +1,4 @@
-import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _getAriaCheckboxStateName } from '../../utils/aria';
 import type { ElementParams } from '../../utils/dom';
 import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
@@ -17,10 +17,7 @@ const CheckboxCellEditorElement: ElementParams = {
         },
     ],
 };
-export class CheckboxCellEditor
-    extends AgAbstractCellEditor<ICellEditorParams<any, boolean>>
-    implements ICellEditorComp
-{
+export class CheckboxCellEditor extends AgAbstractCellEditor<ICellEditorParams<any, boolean>, boolean> {
     constructor() {
         super(CheckboxCellEditorElement, [AgCheckboxSelector]);
     }
@@ -67,20 +64,20 @@ export class CheckboxCellEditor
         this.eEditor.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }
 
-    protected getEditorElement(): HTMLElement | HTMLInputElement {
+    public getValidationElement(): HTMLElement | HTMLInputElement {
         return this.eEditor.getInputElement();
     }
 
-    protected getErrors() {
+    public getErrors() {
         const { params } = this;
-        const { validate } = params;
+        const { getErrors } = params;
         const value = this.getValue();
 
-        if (!validate) {
+        if (!getErrors) {
             return null;
         }
 
-        return validate({
+        return getErrors({
             value,
             internalErrors: null,
             cellEditorParams: params,
