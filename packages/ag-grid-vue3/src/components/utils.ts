@@ -606,7 +606,7 @@ export interface Props<TData> {
          * @agModule `AdvancedFilterModule`
          */
     advancedFilterBuilderParams?: IAdvancedFilterBuilderParams | undefined,
-    /** @deprecated As of v34, advanced filter evaluation is deprecated, and this option will default to true.
+    /** @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
          * @default true
          * @agModule `AdvancedFilterModule`
          */
