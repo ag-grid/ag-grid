@@ -100,6 +100,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         value?: string,
         shouldDisplayTooltip?: () => boolean
     ): TooltipFeature | undefined {
+        const { gos, beans } = this;
         const { column, rowNode } = ctrl;
 
         const getTooltipValue = () => {
@@ -114,7 +115,7 @@ export class TooltipService extends BeanStub implements NamedBean {
 
             if (valueGetter) {
                 return valueGetter(
-                    _addGridCommonParams(this.gos, {
+                    _addGridCommonParams(gos, {
                         location: 'cell',
                         colDef: column.getColDef(),
                         column: column,
@@ -130,15 +131,21 @@ export class TooltipService extends BeanStub implements NamedBean {
             return null;
         };
 
-        const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(this.gos);
+        const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(gos);
 
-        if (!shouldDisplayTooltip && isTooltipWhenTruncated && !ctrl.isCellRenderer()) {
-            shouldDisplayTooltip = _shouldDisplayTooltip(() => {
-                const eCell = ctrl.eGui;
-                return eCell.children.length === 0
-                    ? eCell
-                    : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
-            });
+        if (!shouldDisplayTooltip) {
+            const { editSvc } = beans;
+            if (isTooltipWhenTruncated && !ctrl.isCellRenderer()) {
+                shouldDisplayTooltip = _shouldDisplayTooltip(() => {
+                    const eCell = ctrl.eGui;
+                    const isEditing = editSvc?.isEditing(ctrl);
+                    return !isEditing && eCell.children.length === 0
+                        ? eCell
+                        : (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined);
+                });
+            } else {
+                shouldDisplayTooltip = () => !editSvc?.isEditing(ctrl);
+            }
         }
 
         const tooltipCtrl: ITooltipCtrl = {
@@ -155,7 +162,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             shouldDisplayTooltip,
         };
 
-        return this.createTooltipFeature(tooltipCtrl, this.beans);
+        return this.createTooltipFeature(tooltipCtrl, beans);
     }
 
     public refreshRowTooltip(
