@@ -127,7 +127,3 @@ export function checkAndUpdateExpression(
         ).updatedValue;
     }
 }
-
-export function escapeQuotes(value: string): string {
-    return value.replace(/(['"])/, '\\$1');
-}
