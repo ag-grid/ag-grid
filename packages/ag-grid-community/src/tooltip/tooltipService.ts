@@ -203,8 +203,14 @@ export class TooltipService extends BeanStub implements NamedBean {
         const { beans } = this;
         const { context } = beans;
 
+        const el = editor.getValidationElement?.();
+
+        if (!el) {
+            return;
+        }
+
         const tooltipParams: ITooltipCtrl = {
-            getGui: () => editor.getValidationElement?.() as HTMLElement,
+            getGui: () => el,
             getTooltipValue: () => {
                 if (!editor.getErrors) {
                     return;
