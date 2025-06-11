@@ -12,6 +12,13 @@ on:
         required: true
   # schedule:
   #- cron: '0 0 * * *' # Run daily at midnight UTC
+env:
+  NX_NO_CLOUD: true
+  NX_BRANCH: ${{ github.ref }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  SHARP_IGNORE_GLOBAL_LIBVIPS: true
+  YARN_REGISTRY: "http://52.50.158.57:4873"
+  CI: true
 
 jobs:
   benchmark:
