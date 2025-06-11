@@ -14,7 +14,7 @@ const TextCellEditorElement: ElementParams = {
 class TextCellEditorInput<TValue = any>
     implements CellEditorInput<TValue, ITextCellEditorParams<any, TValue>, AgInputTextField>
 {
-    private eInput: AgInputTextField;
+    private eEditor: AgInputTextField;
     private params: ITextCellEditorParams<any, TValue>;
 
     public getTemplate(): ElementParams {
@@ -25,12 +25,12 @@ class TextCellEditorInput<TValue = any>
         return [AgInputTextFieldSelector];
     }
 
-    public init(eInput: AgInputTextField, params: ITextCellEditorParams<any, TValue>): void {
-        this.eInput = eInput;
+    public init(eEditor: AgInputTextField, params: ITextCellEditorParams<any, TValue>): void {
+        this.eEditor = eEditor;
         this.params = params;
         const maxLength = params.maxLength;
         if (maxLength != null) {
-            eInput.setMaxLength(maxLength);
+            eEditor.setMaxLength(maxLength);
         }
     }
 
@@ -56,8 +56,8 @@ class TextCellEditorInput<TValue = any>
     }
 
     public getValue(): TValue | null | undefined {
-        const { eInput, params } = this;
-        const value = eInput.getValue();
+        const { eEditor, params } = this;
+        const value = eEditor.getValue();
         if (!_exists(value) && !_exists(params.value)) {
             return params.value;
         }
@@ -75,7 +75,7 @@ class TextCellEditorInput<TValue = any>
         // this comes into play in two scenarios:
         //   a) when user hits F2
         //   b) when user hits a printable character
-        const eInput = this.eInput;
+        const eInput = this.eEditor;
         const value = eInput.getValue();
         const len = (_exists(value) && value.length) || 0;
 

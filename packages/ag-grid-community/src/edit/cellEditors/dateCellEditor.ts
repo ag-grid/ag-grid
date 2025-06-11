@@ -14,7 +14,7 @@ const DateCellElement: ElementParams = {
     cls: 'ag-cell-editor',
 };
 class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams, AgInputDateField> {
-    private eInput: AgInputDateField;
+    private eEditor: AgInputDateField;
     private params: IDateCellEditorParams;
     private includeTime: boolean | undefined;
 
@@ -28,27 +28,27 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         return [AgInputDateFieldSelector];
     }
 
-    public init(eInput: AgInputDateField, params: IDateCellEditorParams): void {
-        this.eInput = eInput;
+    public init(eEditor: AgInputDateField, params: IDateCellEditorParams): void {
+        this.eEditor = eEditor;
         this.params = params;
 
         const { min, max, step, colDef } = params;
 
         if (min != null) {
-            eInput.setMin(min);
+            eEditor.setMin(min);
         }
 
         if (max != null) {
-            eInput.setMax(max);
+            eEditor.setMax(max);
         }
 
         if (step != null) {
-            eInput.setStep(step);
+            eEditor.setStep(step);
         }
         this.includeTime =
             params.includeTime ?? this.getDataTypeService()?.getDateIncludesTimeFlag?.(colDef.cellDataType);
         if (this.includeTime != null) {
-            eInput.setIncludeTime(this.includeTime);
+            eEditor.setIncludeTime(this.includeTime);
         }
     }
 
@@ -79,8 +79,8 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     }
 
     public getValue(): Date | null | undefined {
-        const { eInput, params } = this;
-        const value = eInput.getDate();
+        const { eEditor, params } = this;
+        const value = eEditor.getDate();
         if (!_exists(value) && !_exists(params.value)) {
             return params.value;
         }

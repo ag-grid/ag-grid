@@ -14,7 +14,7 @@ const NumberCellElement: ElementParams = {
     cls: 'ag-cell-editor',
 };
 class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, AgInputNumberField> {
-    private eInput: AgInputNumberField;
+    private eEditor: AgInputNumberField;
     private params: INumberCellEditorParams;
 
     public getTemplate(): ElementParams {
@@ -24,28 +24,28 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         return [AgInputNumberFieldSelector];
     }
 
-    public init(eInput: AgInputNumberField, params: INumberCellEditorParams): void {
-        this.eInput = eInput;
+    public init(eEditor: AgInputNumberField, params: INumberCellEditorParams): void {
+        this.eEditor = eEditor;
         this.params = params;
         const { max, min, precision, step } = params;
         if (max != null) {
-            eInput.setMax(max);
+            eEditor.setMax(max);
         }
         if (min != null) {
-            eInput.setMin(min);
+            eEditor.setMin(min);
         }
         if (precision != null) {
-            eInput.setPrecision(precision);
+            eEditor.setPrecision(precision);
         }
         if (step != null) {
-            eInput.setStep(step);
+            eEditor.setStep(step);
         }
 
-        const inputEl = eInput.getInputElement();
+        const editorEl = eEditor.getInputElement();
         if (params.preventStepping) {
-            eInput.addManagedElementListeners(inputEl, { keydown: this.preventStepping });
+            eEditor.addManagedElementListeners(editorEl, { keydown: this.preventStepping });
         } else if (params.showStepperButtons) {
-            inputEl.classList.add('ag-number-field-input-stepper');
+            editorEl.classList.add('ag-number-field-input-stepper');
         }
     }
 
@@ -86,8 +86,8 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
     }
 
     public getValue(): number | null | undefined {
-        const { eInput, params } = this;
-        const value = eInput.getValue();
+        const { eEditor, params } = this;
+        const value = eEditor.getValue();
         if (!_exists(value) && !_exists(params.value)) {
             return params.value;
         }
@@ -113,7 +113,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
             // If not safari, input is already focused.
             // For safari we need to focus only for this use case to avoid AG-3238,
             // but still ensure the input has focus.
-            this.eInput.getInputElement().focus({ preventScroll: true });
+            this.eEditor.getInputElement().focus({ preventScroll: true });
         }
     }
 }
