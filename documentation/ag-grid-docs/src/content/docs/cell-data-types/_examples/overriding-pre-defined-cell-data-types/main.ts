@@ -40,7 +40,7 @@ interface IOlympicDataTypes extends IOlympicData {
 }
 let gridApi: GridApi<IOlympicDataTypes>;
 
-const dateTimeRegex = /(\d{2}):(\d{2}):(\d{2}).{1,2}(\d{2})\/(\d{2})\/(\d{4})/;
+const dateTimeRegex = /(\d{2})\/(\d{2})\/(\d{4}).{1,2}(\d{2}):(\d{2}):(\d{2})/;
 const pad = (n: number) => (n < 10 ? `0${n}` : n);
 const rand = (min: number, max: number) => Math.floor((max + min) * Math.random() - min);
 
@@ -118,9 +118,9 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
                 // convert to `HH:mm:ss dd/MM/yyyy`
                 return value == null
                     ? ''
-                    : `${pad(value.getHours())}:${pad(value.getMinutes())}:${pad(value.getSeconds())}` +
+                    : `${pad(value.getDate())}/${pad(value.getMonth() + 1)}/${value.getFullYear()}` +
                           ' ' +
-                          `${pad(value.getDate())}/${pad(value.getMonth() + 1)}/${value.getFullYear()}`;
+                          `${pad(value.getHours())}:${pad(value.getMinutes())}:${pad(value.getSeconds())}`;
             },
         } as DateTimeStringDataTypeDefinition,
     },
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'rowData',
                 data.map((d) => ({
                     ...d,
-                    dateTimeWithSpace: `${pad(rand(0, 23))}:${pad(rand(0, 59))}:${pad(rand(0, 59))} ${d.date}`,
+                    dateTimeWithSpace: `${d.date} ${pad(rand(0, 23))}:${pad(rand(0, 59))}:${pad(rand(0, 59))}`,
                 }))
             )
         );
