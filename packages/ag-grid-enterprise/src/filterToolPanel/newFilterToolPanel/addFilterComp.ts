@@ -39,7 +39,7 @@ export class AddFilterComp extends Component<'filterSelected'> {
             tag: 'button',
             cls: 'ag-button ag-filter-add-button',
             children: [
-                { tag: 'span', children: [() => _createIconNoSpan('filter', this.beans)!] },
+                { tag: 'span', children: [() => _createIconNoSpan('filterAdd', this.beans)!] },
                 {
                     tag: 'span',
                     cls: 'ag-filter-add-button-label',

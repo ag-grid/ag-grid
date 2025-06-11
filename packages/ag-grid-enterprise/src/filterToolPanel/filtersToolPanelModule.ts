@@ -32,12 +32,18 @@ export const NewFiltersToolPanelModule: _ModuleWithoutApi = {
     userComponents: { agNewFiltersToolPanel: WrapperToolPanel },
     beans: [FilterPanelService, SelectableFilterService],
     icons: {
+        // filter add button in new filter tool panel
+        filterAdd: 'filter-add',
         // filter tool panel tab
         filtersToolPanel: 'filter',
         // open icon for rich select
         richSelectOpen: 'small-down',
         // remove for rich select editor pills
         richSelectRemove: 'cancel',
+        // button to expand filter card in new filter tool panel
+        filterCardExpand: 'chevron-down',
+        // button to collapse filter card in new filter tool panel
+        filterCardCollapse: 'chevron-up',
     },
     dependsOn: [SideBarModule, EnterpriseCoreModule, _ColumnFilterModule],
 };

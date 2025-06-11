@@ -102,11 +102,16 @@
         .ag-filter-apply-panel {
             padding: 0;
             flex-wrap: wrap;
-            row-gap: var(--ag-widget-vertical-spacing);
+            gap: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
         }
 
         .ag-filter-apply-panel-apply-button {
-            background-color: var(ag-icon-button-active-background-color);
+            color: var(--ag-background-color);
+            background-color: var(--ag-accent-color);
+        }
+
+        .ag-filter-apply-panel-button {
+            margin: 0;
         }
 
         .ag-simple-filter-body-wrapper {
@@ -125,7 +130,7 @@
     }
 
     .ag-filter-panel-container > *:not(:last-child) {
-        margin-bottom: var(--ag-widget-vertical-spacing);
+        margin-bottom: var(--ag-widget-container-vertical-padding);
     }
 
     .ag-filter-card {
@@ -172,6 +177,16 @@
         width: 100%;
         justify-content: space-between;
         align-items: center;
+    }
+
+    .ag-filter-card-title {
+        font-weight: var(--ag-header-font-weight);
+    }
+
+    .ag-filter-card-summary,
+    .ag-filter-card-expand-icon,
+    .ag-filter-card-delete-icon {
+        color: var(--ag-subtle-text-color);
     }
 
     .ag-filter-card-expand,

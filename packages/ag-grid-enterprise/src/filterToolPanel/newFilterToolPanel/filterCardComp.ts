@@ -37,7 +37,7 @@ const FilterCardElement: ElementParams = {
                             cls: 'ag-button ag-filter-card-expand',
                             children: [
                                 { tag: 'span', ref: 'eTitle', cls: 'ag-filter-card-title' },
-                                { tag: 'span', ref: 'eExpandIcon' },
+                                { tag: 'span', ref: 'eExpandIcon', cls: 'ag-filter-card-expand-icon' },
                             ],
                         },
                     ],
@@ -46,7 +46,7 @@ const FilterCardElement: ElementParams = {
                     tag: 'button',
                     ref: 'eDelete',
                     cls: 'ag-button ag-filter-card-delete',
-                    children: [{ tag: 'span', ref: 'eDeleteIcon' }],
+                    children: [{ tag: 'span', ref: 'eDeleteIcon', cls: 'ag-filter-card-delete-icon' }],
                 },
             ],
         },
@@ -135,7 +135,7 @@ export class FilterCardComp extends Component {
         const expanded = !!state.expanded;
         const { eExpandIcon, eExpand, beans } = this;
         _clearElement(eExpandIcon);
-        eExpandIcon.appendChild(_createIcon(expanded ? 'columnSelectOpen' : 'columnSelectClosed', beans, null));
+        eExpandIcon.appendChild(_createIcon(expanded ? 'filterCardCollapse' : 'filterCardExpand', beans, null));
         const ariaLabel = expanded ? null : `${state.name} ${state.summary}`;
         _setAriaLabel(eExpand, ariaLabel);
         _setAriaExpanded(eExpand, expanded);
