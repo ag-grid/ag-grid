@@ -138,7 +138,7 @@ jobs:
           REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
         run: |
           node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs
-          echo "comment='$(cat ${{ COMMENT_FILE }})'" >> $GITHUB_OUTPUT
+          echo "comment='$(cat ${{ env.COMMENT_FILE }})'" >> $GITHUB_OUTPUT
 
       - name: Slack Notification
         continue-on-error: true
@@ -150,7 +150,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
           SLACK_COLOR: ${{ steps.playwright-test.outputs.status != 'failure' && 'success' || 'failure' }}
         run: |
-          curl -X POST -H 'Content-type: application/json' ${{ secrets.CI_GATE_WEBHOOK }} --data @${{ SLACK_FILE }}
+          curl -X POST -H 'Content-type: application/json' ${{ secrets.CI_GATE_WEBHOOK }} --data @$SLACK_FILE
 
       - name: Notify Success
         uses: actions/github-script@v7
