@@ -518,7 +518,7 @@
             },
             {
                 "label": {
-                    "name": "Synchronization",
+                    "name": "Synchronisation",
                     "link": "https://www.ag-grid.com/charts/react/sync/"
                 },
                 "community": false,
