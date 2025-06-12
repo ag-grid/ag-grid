@@ -52,7 +52,7 @@ type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };
 const SOURCE_TRANSFORM: Record<string, EditSource> = {
     paste: 'ui',
     rangeSvc: 'ui',
-    fillHandle: 'ui',
+    fillHandle: 'api',
     cellClear: 'api',
 };
 
@@ -257,7 +257,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 return false;
             }
 
-            // do I need to use api for fillhandle source?
             return this.stopEditing(position, { ...params, source: SOURCE_TRANSFORM[source] });
         }
 
