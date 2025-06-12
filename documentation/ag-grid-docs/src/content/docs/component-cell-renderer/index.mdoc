@@ -278,7 +278,9 @@ The example below demonstrates a dynamic tooltip being displayed on Cell Compone
 
 ### Defer Slow Cell Renderers
 
-If a Custom Cell Renderer is slow to render, it may make the grid appear unresponsive due to the Cell Renderer blocking the main thread. To avoid this set `cellRendererParams.deferRender = true`. Custom Cell Renderers that are deferred will be rendered after all other cells and if the grid is scrolling only after scrolling has finished. In the meantime, the loading cell renderer will be displayed.
+If a Custom Cell Renderer is slow to render, it may make the grid appear unresponsive due to the Cell Renderer blocking the main thread. To avoid this set `cellRendererParams.deferRender = true` on all slow renderers.
+
+Custom Cell Renderers that are deferred will be rendered after all other cells and only after the grid has stopped scrolling. In the meantime, the loading cell renderer will be displayed.
 
 The loading cell renderer can be customised by providing a custom `loadingCellRenderer`.
 

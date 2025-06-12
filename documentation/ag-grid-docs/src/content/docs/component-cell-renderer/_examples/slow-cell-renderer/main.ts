@@ -1,6 +1,5 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { RowNumbersModule } from 'ag-grid-enterprise';
 
 import { CustomLoadingCellRenderer } from './customLoadingCellRenderer_typescript';
 import { FastRenderer } from './fastRenderer_typescript';
@@ -8,7 +7,6 @@ import { SlowRenderer } from './slowRenderer_typescript';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
-    RowNumbersModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -16,7 +14,6 @@ ModuleRegistry.registerModules([
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    rowNumbers: true,
     rowBuffer: 5, // Reduce the row buffer to reduce number of slow cells to be rendered
     // Columns to be displayed (Should match rowData properties)
     columnDefs: [
