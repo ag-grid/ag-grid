@@ -297,7 +297,7 @@ The loading cell renderer can be customised via the `loadingCellRenderer` column
 
 {% if isFramework("react") %}
 {% note %}
-`deferRender` uses `startTransition` (when it is available, v18+) to reduce the priority of deferred components. There is a known limitation in React that transitions are batched together meaning all deferred components render at the same time. For more information, see the React documentation [StartTransition > Caveats](https://react.dev/reference/react/useTransition#starttransition-caveats).
+`deferRender` uses `startTransition` to reduce the priority of deferred components. There is a known limitation in React that transitions are currently batched together meaning all deferred components appear at the same time. For more information, see the React documentation [StartTransition > Caveats](https://react.dev/reference/react/useTransition#starttransition-caveats).
 {% /note %}
 {% /if %}
 
