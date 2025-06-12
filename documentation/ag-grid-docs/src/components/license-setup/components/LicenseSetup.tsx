@@ -264,7 +264,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                     />
 
                     <Note>
-                        To minimize bundle size, only register the modules you want to use. See the{' '}
+                        To minimise bundle size, only register the modules you want to use. See the{' '}
                         <a
                             href={urlWithPrefix({
                                 framework,
