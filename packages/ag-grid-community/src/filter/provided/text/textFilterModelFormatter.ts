@@ -1,3 +1,4 @@
+import { translateForFilter } from '../../filterLocaleText';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
 import type { ISimpleFilterModelType } from '../iSimpleFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
@@ -14,11 +15,12 @@ export class TextFilterModelFormatter extends SimpleFilterModelFormatter<ITextFi
         const { filter, filterTo, type } = condition;
 
         if (forToolPanel) {
+            const getValueFunc = (value: string) => () => translateForFilter(this, 'filterSummaryTextQuote', [value]);
             const valueForToolPanel = this.conditionForToolPanel(
                 type,
                 isRange,
-                () => `"${filter}"`,
-                () => `"${filterTo}"`,
+                getValueFunc(filter!),
+                getValueFunc(filterTo!),
                 customDisplayKey,
                 customDisplayName
             );

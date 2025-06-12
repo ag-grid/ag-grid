@@ -54,6 +54,37 @@ export const AG_GRID_LOCALE_EN = {
     // Group Column Filter
     groupFilterSelect: 'Select field:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'is (All)',
+    filterSummaryContains: 'contains',
+    filterSummaryNotContains: 'does not contain',
+    filterSummaryTextEquals: 'equals',
+    filterSummaryTextNotEqual: 'does not equal',
+    filterSummaryStartsWith: 'begins with',
+    filterSummaryEndsWith: 'ends with',
+    filterSummaryBlank: 'is blank',
+    filterSummaryNotBlank: 'is not blank',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'between',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'is (All)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'is (${variable})',
+    filterSummaryListLong: 'is (${variable}) and ${variable} more',
+    addFilterCard: 'Add Filter',
+    agTextColumnFilterDisplayName: 'Text Filter',
+    agNumberColumnFilterDisplayName: 'Number Filter',
+    agDateColumnFilterDisplayName: 'Date Filter',
+    agSetColumnFilterDisplayName: 'Set Filter',
+    agMultiColumnFilterDisplayName: 'Multi Filter',
+    addFilterPlaceholder: 'Search columns...',
+
     // Advanced Filter
     advancedFilterContains: 'contains',
     advancedFilterNotContains: 'does not contain',
@@ -584,6 +615,10 @@ export const AG_GRID_LOCALE_EN = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Column List',
     ariaFilterPanelList: 'Filter List',
+
+    // ARIA labels for new Filter Tool Panel
+    ariaLabelAddFilterField: 'Add Filter Field',
+    ariaLabelDeleteFilterCard: 'Delete Filter',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

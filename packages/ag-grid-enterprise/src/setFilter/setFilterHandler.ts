@@ -170,7 +170,7 @@ export class SetFilterHandler<TValue = string>
         const forToolPanel = source === 'filterToolPanel';
 
         if (values == null) {
-            return forToolPanel ? translateForSetFilter(this, 'filterSummaryInactive') : '';
+            return forToolPanel ? translateForSetFilter(this, 'filterSummaryListInactive') : '';
         }
 
         const availableKeys = this.valueModel.getAvailableKeys(values);
