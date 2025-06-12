@@ -24,6 +24,7 @@
 @use './parts/advanced-filter';
 @use './parts/row-numbers';
 @use './parts/row-pinning';
+@use './parts/batch-edit';
 
 @mixin general-styles() {
     .ag-measurement-container {

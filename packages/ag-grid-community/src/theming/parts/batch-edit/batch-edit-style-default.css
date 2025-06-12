@@ -1,9 +1,11 @@
-.ag-cell-batch-edit {
-    background-color: var(--ag-cell-batch-edit-background-color);
+/* stylelint-disable selector-max-specificity */
+.ag-cell .ag-cell-batch-edit {
+    display: inherit;
+    background-color: #f00;
     color: var(--ag-cell-batch-edit-text-color);
 }
 
-.ag-row-batch-edit {
+.ag-row .ag-row-batch-edit {
     background-color: var(--ag-row-batch-edit-background-color);
     color: var(--ag-row-batch-edit-text-color);
 }
