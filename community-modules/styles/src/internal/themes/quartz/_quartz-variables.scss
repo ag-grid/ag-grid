@@ -58,6 +58,7 @@
     --ag-modal-overlay-background-color: color-mix(in srgb, transparent, var(--ag-background-color) 66%);
     --ag-chart-menu-label-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 80%);
     --ag-chart-menu-pill-select-button-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 70%);
+    --ag-filter-panel-card-subtle-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 50%);
 
     // BORDERS
     --ag-borders: solid 1px;
@@ -106,6 +107,9 @@
     --ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
     --ag-popup-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.15);
     --ag-side-bar-panel-width: 250px;
+
+    --ag-filter-panel-apply-button-color: var(--ag-background-color);
+    --ag-filter-panel-apply-button-background-color: var(--ag-active-color);
 }
 
 @mixin -dark-vars {
@@ -135,6 +139,7 @@
     --ag-advanced-filter-value-pill-color: #374c86;
     --ag-find-match-color: var(--ag-background-color);
     --ag-find-active-match-color: var(--ag-background-color);
+    --ag-filter-panel-apply-button-color: var(--ag-foreground-color);
 
     --ag-popup-shadow: 0 0px 20px rgba(0, 0, 0, 0.3);
 

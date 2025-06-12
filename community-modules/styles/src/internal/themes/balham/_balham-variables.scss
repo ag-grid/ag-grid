@@ -35,6 +35,8 @@
     --ag-checkbox-checked-color: var(--ag-balham-active-color);
     --ag-checkbox-background-color: var(--ag-background-color);
     --ag-panel-background-color: var(--ag-header-background-color);
+    --ag-filter-panel-apply-button-color: var(--ag-background-color);
+    --ag-filter-panel-apply-button-background-color: var(--ag-balham-active-color);
 
     // derived and blended colours (these are static versions of the dynamic colour blends
     // applied by the Sass API and must be overridden in balham-dark)
@@ -101,6 +103,7 @@
     --ag-advanced-filter-value-pill-color: #374c86;
     --ag-find-match-color: var(--ag-background-color);
     --ag-find-active-match-color: var(--ag-background-color);
+    --ag-filter-panel-apply-button-color: var(--ag-foreground-color);
 
     // override blended colors from balham theme
     --ag-secondary-foreground-color: var(--ag-foreground-color);

@@ -1745,7 +1745,7 @@ export class ColumnFilterService
     }
 
     public setGlobalButtons(isGlobal: boolean): void {
-        this.isGlobalButtons = true;
+        this.isGlobalButtons = isGlobal;
         this.dispatchLocalEvent<FilterGlobalButtonsEvent>({
             type: 'filterGlobalButtons',
             isGlobal,

@@ -16,8 +16,8 @@
 
 /* stylelint-disable-next-line selector-max-specificity */
 .ag-filter-panel .ag-filter-apply-panel-apply-button {
-    color: var(--ag-background-color);
-    background-color: var(--ag-accent-color);
+    color: var(--ag-filter-panel-apply-button-color);
+    background-color: var(--ag-filter-panel-apply-button-background-color);
 }
 
 /* stylelint-disable-next-line selector-max-specificity */
@@ -85,7 +85,7 @@
 .ag-filter-card-summary,
 .ag-filter-card-expand-icon,
 .ag-filter-card-delete-icon {
-    color: var(--ag-subtle-text-color);
+    color: var(--ag-filter-panel-card-subtle-color);
 }
 
 .ag-filter-card-expand,
