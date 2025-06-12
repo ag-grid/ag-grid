@@ -5,7 +5,8 @@ import type { BeanCollection, ITooltipCtrl, Registry, TooltipFeature } from '../
 import type { ElementParams } from '../utils/dom';
 import { _clearElement, _createElement, _setDisabled } from '../utils/dom';
 import { _warn } from '../validation/logging';
-import { Component, type ComponentSelector } from '../widgets/component';
+import { Component } from '../widgets/component';
+import type { ComponentSelector } from '../widgets/component';
 
 export interface FilterButtonEvent extends AgEvent<FilterAction> {
     event?: Event;

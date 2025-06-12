@@ -1,5 +1,5 @@
-import type { ElementParams, FilterAction } from 'ag-grid-community';
-import { Component, FilterButton, FilterButtonComp } from 'ag-grid-community';
+import type { ElementParams, FilterAction, FilterButton } from 'ag-grid-community';
+import { Component, FilterButtonComp } from 'ag-grid-community';
 
 const ButtonsElement: ElementParams = {
     tag: 'div',
