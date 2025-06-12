@@ -360,22 +360,28 @@ export class CellComp extends Component {
         // test of users.
         const { animationFrameSvc } = this.beans;
         if (animationFrameSvc?.active && this.firstRender) {
-            const deferred = compDetails.params.deferRender;
-            if (deferred) {
+            const scheduleTask: (isDeferred: boolean) => void = (isDeferred: boolean) => {
+                animationFrameSvc.createTask(
+                    createCellRendererFunc(compDetails),
+                    this.rowNode.rowIndex!,
+                    'p2',
+                    compDetails.componentFromFramework,
+                    isDeferred
+                );
+            };
+
+            if (compDetails.params.deferRender) {
                 // show loading cell and then pass the task to the animationFrameSvc
-                const loadingCompDetails = this.cellCtrl.getDeferLoadingCellRenderer();
-                if (loadingCompDetails) {
-                    createCellRendererFunc(loadingCompDetails)();
+                const { loadingComp, onReady } = this.cellCtrl.getDeferLoadingCellRenderer();
+
+                if (loadingComp) {
+                    // Immediately render the loading component
+                    createCellRendererFunc(loadingComp)();
+                    onReady.then(() => scheduleTask(true));
+                    return;
                 }
             }
-
-            animationFrameSvc.createTask(
-                createCellRendererFunc(compDetails),
-                this.rowNode.rowIndex!,
-                'p2',
-                compDetails.componentFromFramework,
-                deferred
-            );
+            scheduleTask(false);
         } else {
             createCellRendererFunc(compDetails)();
         }

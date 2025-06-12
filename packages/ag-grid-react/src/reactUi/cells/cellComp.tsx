@@ -394,15 +394,16 @@ const CellComp = ({
                         }
                     });
                 };
-                if (compDetails?.params?.deferRender && React.startTransition) {
-                    const loadingCellRenderer = cellCtrl.getDeferLoadingCellRenderer();
-                    if (loadingCellRenderer) {
+                if (compDetails?.params?.deferRender && (React as any).startTransition) {
+                    const { loadingComp, onReady } = cellCtrl.getDeferLoadingCellRenderer();
+
+                    if (loadingComp) {
                         setRenderDetails({
                             value: undefined,
-                            compDetails: loadingCellRenderer,
+                            compDetails: loadingComp,
                             force: false,
                         });
-                        React.startTransition(setDetails);
+                        onReady.then(() => React.startTransition(setDetails));
                         return;
                     }
                 }

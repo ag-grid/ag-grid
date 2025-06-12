@@ -37,6 +37,7 @@ import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../utils/dom';
 import { _getCtrlForEventTarget } from '../../utils/event';
 import { _findFocusableElements, _isCellFocusSuppressed } from '../../utils/focus';
 import { _makeNull } from '../../utils/generic';
+import { AgPromise } from '../../utils/promise';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
@@ -273,14 +274,35 @@ export class CellCtrl extends BeanStub {
         return this.valueFormatted ?? this.value;
     }
 
-    public getDeferLoadingCellRenderer(): UserCompDetails | undefined {
+    public getDeferLoadingCellRenderer(): {
+        loadingComp: UserCompDetails | undefined;
+        onReady: AgPromise<void>;
+    } {
         const { beans, column } = this;
-        const { userCompFactory } = beans;
+        const { userCompFactory, ctrlsSvc, eventSvc } = beans;
+
         const colDef = column.getColDef();
         const params = this.createCellRendererParams() as ILoadingCellRendererParams;
         params.deferRender = true;
 
-        return _getLoadingCellRendererDetails(userCompFactory, colDef, params);
+        const loadingDetails = _getLoadingCellRendererDetails(userCompFactory, colDef, params);
+
+        if (ctrlsSvc.getGridBodyCtrl()?.scrollFeature?.isScrolling()) {
+            // If the grid is scrolling return a promise that resolves when scrolling is finished
+            // This prevents scroll being blocked by the rendering of a slow component
+            let resolver: () => void;
+            const onReady = new AgPromise<void>((resolve) => {
+                resolver = resolve;
+            });
+
+            this.addManagedListeners(eventSvc, {
+                bodyScrollEnd: () => resolver(),
+            });
+            return { loadingComp: loadingDetails, onReady };
+        }
+
+        // If not scrolling return a resolved promise immediately
+        return { loadingComp: loadingDetails, onReady: AgPromise.resolve() };
     }
 
     private showValue(forceNewCellRendererInstance: boolean, skipRangeHandleRefresh: boolean): void {
