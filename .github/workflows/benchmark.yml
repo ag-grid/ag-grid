@@ -157,7 +157,7 @@ jobs:
         continue-on-error: true
         if: github.event_name == 'issue_comment'
         env:
-          IS_SUCCESS: ${{ success() || '' }}
+          IS_SUCCESS: ${{ steps.prepare-messages.outcome == 'success' || '' }}
           COMMENT: ${{ steps.prepare-messages.outputs.comment }}
           REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
         with:
