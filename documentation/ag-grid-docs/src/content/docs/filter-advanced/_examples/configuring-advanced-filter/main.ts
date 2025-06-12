@@ -1,5 +1,4 @@
 import type {
-    AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
     GridApi,
     GridOptions,
@@ -89,29 +88,13 @@ const gridOptions: GridOptions<IOlympicData> = {
         },
     },
     advancedFilterParams: advancedFilterParams,
-    onAdvancedFilterBuilderVisibleChanged: onAdvancedFilterBuilderVisibleChanged,
     onGridReady: (params: GridReadyEvent) => {
         // Could also be provided via grid option `advancedFilterParent`.
         // Setting the parent removes the Advanced Filter input from the grid,
         // allowing the Advanced Filter to be edited only via the Builder, launched via the API.
         params.api.setGridOption('advancedFilterParent', document.getElementById('advancedFilterParent'));
     },
-    onFilterChanged: onFilterChanged,
 };
-
-function onAdvancedFilterBuilderVisibleChanged(event: AdvancedFilterBuilderVisibleChangedEvent<IOlympicData>) {
-    const eButton = document.getElementById('advancedFilterBuilderButton')!;
-    if (event.visible) {
-        eButton.setAttribute('disabled', '');
-    } else {
-        eButton.removeAttribute('disabled');
-    }
-}
-
-function onFilterChanged() {
-    const advancedFilterApplied = !!gridApi!.getAdvancedFilterModel();
-    document.getElementById('advancedFilterIcon')!.classList.toggle('filter-icon-disabled', !advancedFilterApplied);
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {

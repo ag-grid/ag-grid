@@ -184,6 +184,7 @@ export class AdvancedFilterComp extends Component {
         if (hidden) {
             this.eBuilderFilterButton.style.display = 'none';
         } else {
+            this.eBuilderFilterButton.style.display = 'block';
             this.eBuilderFilterButtonIcon.appendChild(_createIconNoSpan('advancedFilterBuilder', this.beans)!);
             this.eBuilderFilterButtonLabel.textContent = this.advFilterExpSvc.translate('advancedFilterBuilder');
             this.activateTabIndex([this.eBuilderFilterButton]);
