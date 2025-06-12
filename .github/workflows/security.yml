@@ -1,86 +1,35 @@
 name: Security
 
-env:
-  SECURITY_SEVERITY_THRESHOLD: high
-
-  # Ignore `project.json` as snyk thinks it is a dot net project
-  SECURITY_BASE_IGNORE_LIST: ".nx,project.json"
-
-  # Ignore packages that have issues when run with `synk test --all-projects`
-  # NOTE: Ignore list can't be paths
-  SECURITY_PACKAGE_IGNORE_LIST: "ag-grid-angular,ag-grid-enterprise,ag-grid-vue3,ag-grid-generate-code-reference-files,ag-grid-generate-example-files,module-size,module-size-angular"
-
-  # Paths of `SECURITY_PACKAGE_IGNORE_LIST`.
-  # Paths are required to run snyk tests individually
-  SECURITY_PACKAGE_IGNORE_LIST_PATHS: "packages/ag-grid-angular/package.json,packages/ag-grid-angular/projects/ag-grid-angular/package.json,packages/ag-grid-enterprise/package.json,packages/ag-grid-vue3/package.json,plugins/ag-grid-generate-code-reference-files/package.json,plugins/ag-grid-generate-example-files/package.json,testing/module-size/package.json,testing/module-size-angular/package.json"
-
 on:
-    issue_comment:
-        types: [created]
     workflow_dispatch:
     schedule:
-      - cron: '0 0 * * *' # Run daily at midnight UTC
+        - cron: '0 0 * * *' # Run daily at midnight UTC
 
 jobs:
-  security-all-projects:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/security') || github.event_name == 'schedule'
-    steps:
-      - uses: actions/checkout@main
-      - name: Echo ignore lists
-        run: |
-          echo "SECURITY_BASE_IGNORE_LIST: ${{ env.SECURITY_BASE_IGNORE_LIST }}"
-          echo "SECURITY_PACKAGE_IGNORE_LIST: ${{ env.SECURITY_PACKAGE_IGNORE_LIST }}"
-      - name: Run snyk to check for vulnerabilities on all projects
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --all-projects --severity-threshold=${{ env.SECURITY_SEVERITY_THRESHOLD }} --exclude=${{ env.SECURITY_BASE_IGNORE_LIST }},${{ env.SECURITY_PACKAGE_IGNORE_LIST }}
+    security-all-projects:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              id: checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+            - name: Snyk scan workspaces
+              id: snyk-scan-workspaces
+              uses: ./external/ag-shared/github/actions/snyk-scan-workspaces
+              with:
+                  snyk_token: ${{ secrets.SNYK_TOKEN }}
 
-  security-ignored-paths:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/security') || github.event_name == 'schedule'
-    steps:
-      - uses: actions/checkout@main
-      - name: Echo ignore lists
-        run: |
-          echo "SECURITY_PACKAGE_IGNORE_LIST_PATHS: ${{ env.SECURITY_PACKAGE_IGNORE_LIST_PATHS }}"
-      - name: Run snyk test individually on each ignored path
-        shell: bash
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: |
-          IFS=',' read -ra PATHS <<< "${{ env.SECURITY_PACKAGE_IGNORE_LIST_PATHS }}"
-          for path in "${PATHS[@]}"; do
-            echo "Scanning $path"
-
-            dir=$(dirname "$path")
-            echo "Working in directory: $dir"
-
-            if [ ! -f "$dir/package-lock.json" ] && [ ! -d "$dir/node_modules" ]; then
-              echo "No package-lock.json or node_modules found, which is required by snyk test — running npm install in $dir"
-              (cd "$dir" && npm install --force --ignore-scripts)
-            fi
-
-            echo "-----------------------------------------------------"
-            echo "-- snyk test: $path"
-            echo "-----------------------------------------------------"
-            npx snyk test --severity-threshold=${{ env.SECURITY_SEVERITY_THRESHOLD }} --file="$path"
-            echo "-----------------------------------------------------"
-          done
-
-  code-security:
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/security') || github.event_name == 'schedule'
-    steps:
-      - uses: actions/checkout@main
-      - name: Run Snyk SAST security code scan
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          command: code test
-          args: --severity-threshold=${{ env.SECURITY_SEVERITY_THRESHOLD }}
+    code-security:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              id: checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+            - name: Snyk code scan
+              id: snyk-code-scan
+              uses: ./external/ag-shared/github/actions/snyk-code-scan
+              with:
+                  snyk_token: ${{ secrets.SNYK_TOKEN }}

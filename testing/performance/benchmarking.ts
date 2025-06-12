@@ -1,8 +1,6 @@
 import type { BrowserContext, Page } from '@playwright/test';
 import { test } from '@playwright/test';
 import { bgBlue, bgGreen, blue, cyan, green, magenta, yellow } from 'chalk';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
 
 import type { BrowserCommunications } from './playwright.utils';
 import { gotoUrl, waitFor } from './playwright.utils';
@@ -70,18 +68,13 @@ const knownUrls: Record<Version, string> = {
     prod: 'https://www.ag-grid.com',
 };
 
-export const agChartsVersion = `v${
-    JSON.parse(fs.readFileSync(path.join(__dirname, '../../packages/ag-grid-enterprise/package.json')).toString())
-        .optionalDependencies['ag-charts-enterprise']
-}` as CustomVersion;
-
 /**
  * Taken from ag-grid-enterprise package.json git history
  */
 const gridToChartsMap = {
-    local: agChartsVersion,
+    local: 'v11.3.0',
     prod: 'v11.3.0',
-    staging: agChartsVersion,
+    staging: 'v11.3.0',
     'v33.3.0': 'v11.3.0',
     'v33.2.3': 'v11.2.3',
     'v33.2.1': 'v11.2.1',
@@ -236,29 +229,14 @@ function reportStats(
     console.log(detailsFormat(testCase.variant.version, s2));
 }
 
-function attachScript(page: Page, url: string) {
-    return page.evaluate((url: string) => {
-        const script = document.createElement('script');
-        script.src = url;
-        document.body.appendChild(script);
-    }, url);
-}
-
 function benchError(message: string, e: any, testCase: InternalTestCase) {
-    const [_, ...rest] = testCase.__hidden!.error?.stack!.split('\n')!;
+    const [_, ...rest] = testCase.__hidden!.error?.stack!.split('\n') || [];
     const [__, ...providedRest] = e.stack!.split('\n');
     e.stack = `${message}\n${providedRest.join('\n')}\n${rest
         .filter((l) => l.includes(thisFilePath) || l.includes(test.info().titlePath[0]))
-        .concat(
-            ...test
-                .info()
-                .titlePath.slice(1)
-                .reverse()
-                .map((e) => `    at ${e}`)
-        )
         .join('\n')}`;
 
-    return e;
+    throw e;
 }
 
 async function attachScripts(page: Page, version: Version, testCase: InternalTestCase) {
@@ -276,16 +254,12 @@ async function attachScripts(page: Page, version: Version, testCase: InternalTes
             getCdnUrl('ag-charts-types', chartsVersion, '/'),
         ];*/
     }
-    await Promise.all(urls.map(attachScript.bind(0, page)));
+    await Promise.all(urls.map((url) => page.addScriptTag({ url })));
     try {
         // @ts-expect-error agGrid is not in the current scope
-        await waitFor(() => typeof agGrid !== 'undefined', page, { timeout: 1 });
+        await waitFor(() => typeof agGrid !== 'undefined', page);
     } catch (e) {
-        throw benchError(
-            `Perhaps you forgot to start dev server? Or provided URL/version are not available.`,
-            e,
-            testCase
-        );
+        benchError(`Perhaps you forgot to start dev server? Or provided URL/version are not available.`, e, testCase);
     }
 }
 function updatePageTitle(page: Page, testCase: TestCase, variant: Variant) {

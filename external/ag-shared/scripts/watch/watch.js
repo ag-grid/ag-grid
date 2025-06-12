@@ -10,7 +10,7 @@
  *
  * Usage: node ./watch [charts|grid]
  */
-const { spawn } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 const fsp = require('node:fs/promises');
 const fs = require('node:fs');
 const path = require('path');
@@ -172,15 +172,36 @@ function spawnNxRun(target, config, projects) {
 }
 
 let timeout;
-function scheduleBuild() {
+function scheduleBuild(dueMs = QUIET_PERIOD_MS) {
     if (buildBuffer.length > 0) {
         if (!timeManager.hasStarted('Total build time')) {
             timeManager.start('Total build time');
         }
 
         if (timeout) clearTimeout(timeout);
-        timeout = setTimeout(() => build(), QUIET_PERIOD_MS);
+        timeout = setTimeout(() => build(), dueMs);
     }
+}
+
+let gitDir;
+function getGitDir() {
+    if (!gitDir) {
+        const result = spawnSync(`git rev-parse --git-dir`);
+        if (result.status !== 0) {
+            return '.git';
+        }
+        gitDir = result.stdout.toString().trim();
+    }
+    return gitDir;
+}
+
+function isBuildBlocked() {
+    return (
+        fs.existsSync(path.join(getGitDir(), 'index.lock')) ||
+        fs.existsSync(path.join(getGitDir(), 'rebase-merge')) ||
+        fs.existsSync(path.join(getGitDir(), 'rebase-apply')) ||
+        fs.existsSync(path.join(getGitDir(), 'MERGE_MSG'))
+    );
 }
 
 let buildBuffer = [];
@@ -212,6 +233,13 @@ function countReloadTargets() {
 let buildRunning = false;
 async function build() {
     if (buildRunning) return;
+
+    if (isBuildBlocked()) {
+        warning('Git operation in progress, build paused; will retry in 10 seconds.');
+        scheduleBuild(10_000);
+        return;
+    }
+
     buildRunning = true;
 
     const beforeReloadableCount = countReloadTargets();
