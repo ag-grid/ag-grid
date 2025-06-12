@@ -180,8 +180,8 @@ function _createEditorParams(
     cellStartedEdit?: boolean | null
 ): ICellEditorParams {
     const { valueSvc, gos, editSvc } = beans;
-    const cellCtrl = _getCellCtrl(beans, position);
-    const rowIndex = position.rowNode?.rowIndex ?? undefined;
+    const cellCtrl = _getCellCtrl(beans, position) as CellCtrl;
+    const rowIndex = position.rowNode?.rowIndex ?? (undefined as unknown as number);
     const batchEdit = editSvc?.isBatchEditing();
 
     const agColumn = beans.colModel.getCol(position.column.getId())!;
