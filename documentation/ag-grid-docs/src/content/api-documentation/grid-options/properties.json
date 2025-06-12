@@ -642,7 +642,7 @@
             }
         },
         "loadingCellRenderer": {
-            "description": "Provide your own loading cell renderer to use when data is loading via a DataSource.",
+            "description": "Provide your own loading cell renderer to use when data is loading via a DataSource or a cell renderer is deferred.",
             "more": {
                 "name": "Loading Cell Renderer",
                 "url": "./component-loading-cell-renderer/"

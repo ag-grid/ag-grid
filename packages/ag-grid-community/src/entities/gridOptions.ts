@@ -757,7 +757,7 @@ export interface GridOptions<TData = any> {
 
     // *** Loading Cell Renderers *** //
     /**
-     * Provide your own loading cell renderer to use when data is loading via a DataSource.
+     * Provide your own loading cell renderer to use when data is loading via a DataSource or when a cell renderer is deferred.
      * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
      */
     loadingCellRenderer?: any;
@@ -766,7 +766,7 @@ export interface GridOptions<TData = any> {
      */
     loadingCellRendererParams?: any;
     /**
-     * Callback to select which loading cell renderer to be used when data is loading via a DataSource.
+     * Callback to select which loading cell renderer to be used when data is loading via a DataSource or when a cell renderer is deferred.
      * @initial
      */
     loadingCellRendererSelector?: LoadingCellRendererSelectorFunc<TData>;
