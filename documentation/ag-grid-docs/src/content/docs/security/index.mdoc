@@ -12,11 +12,9 @@ The basic information on Content Security Policy can be found on the [MDN web do
 
 Some optional grid features compile string expressions into code, and if you're using these then the `script-src 'unsafe-eval'` directive is required. However, it is possible to avoid this requirement as listed below:
 
-1. Many grid properties such as [Cell Class Rules](./cell-styles/#cell-class-rules) and [Value Getters](./value-getters/) allow using expressions. However, this requires `script-src 'unsafe-eval'`. In order to avoid this requirement, replace expressions with functions as shown in the example below for the cellClassRules property of a column definition:
+ * Many grid properties such as [Cell Class Rules](./cell-styles/#cell-class-rules) and [Value Getters](./value-getters/) allow using expressions. However, this requires `script-src 'unsafe-eval'`. In order to avoid this requirement, replace expressions with functions as shown in the example below for the cellClassRules property of a column definition:
     * `{ 'is-negative': 'value < 0' }` requires `script-src 'unsafe-eval'` so that `'value < 0'` can be compiled into a function.
     * `{ 'is-negative': params => params.value < 0 }` does not because you have provided a function.
-
-2. By default, [Advanced Filter](./filter-advanced) also requires `script-src 'unsafe-eval'`, but this can be avoided by [Suppressing Advanced Filter Function Evaluation](./filter-advanced/#suppress-advanced-filter-function-evaluation).
 
 ### style-src
 

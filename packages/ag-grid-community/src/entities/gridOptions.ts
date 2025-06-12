@@ -696,10 +696,8 @@ export interface GridOptions<TData = any> {
      */
     advancedFilterParams?: IAdvancedFilterParams;
     /**
-     * By default, Advanced Filter sanitises user input and passes it to `new Function()` to provide the best performance.
-     * Set to `true` to prevent this and use defined functions instead.
-     * This will result in slower filtering, but it enables Advanced Filter to work when `unsafe-eval` is disabled.
-     * @default false
+     * @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
+     * @default true
      * @agModule `AdvancedFilterModule`
      */
     suppressAdvancedFilterEval?: boolean;

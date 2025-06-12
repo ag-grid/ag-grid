@@ -2,9 +2,10 @@ import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
 import path from 'node:path';
 
-dotenv.config({ path: path.join(__dirname, '../../documentation/ag-grid-docs/.env.dev') }); // grab docs PORT
-
-const baseURL = `https://localhost:${process.env['PORT'] ?? '4610'}`;
+const ROOT = path.join(__dirname, '../../');
+dotenv.config({ path: path.join(ROOT, 'documentation/ag-grid-docs/.env.dev') }); // grab docs PORT
+const PORT = process.env['PORT'] ?? '4610';
+const baseURL = `https://localhost:${PORT}`;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -16,9 +17,11 @@ const config = defineConfig({
         /* Base URL to use in actions like `await page.goto('/')`. */
         baseURL,
         headless: !!(process.env['PW_HEADLESS'] ?? process.env['CI']),
+        ignoreHTTPSErrors: true,
     },
 
     reporter: [
+        ['list'],
         ['html', { open: 'never' }], // generate HTML report, but don't open it automatically
         ['json', { outputFile: '../../playwright-report/test-results.json' }], // JSON reporter for CI integration
     ],
@@ -38,12 +41,17 @@ const config = defineConfig({
     ],
 });
 
+/* Run local dev server before starting the tests */
 if (!process.env['PW_NO_SERVER']) {
-    config /* Run your local dev server before starting the tests */.webServer = {
-        command: 'npx nx dev',
+    config.webServer = {
+        command: `npx nx run-many -t build --projects=ag-grid-{enterprise,angular,react,vue} && node ${path.join(ROOT, 'testing/performance/webServer.js')}`,
+        cwd: ROOT,
+        stderr: 'pipe',
+        stdout: 'pipe',
         url: baseURL,
         reuseExistingServer: !process.env['CI'],
         ignoreHTTPSErrors: true,
+        timeout: 30 * 1000, // mostly build time
     };
 }
 

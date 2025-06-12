@@ -269,17 +269,9 @@ export class JoinFilterExpressionParser {
         return null;
     }
 
-    public getFunctionString(params: FilterExpressionFunctionParams): string {
-        const hasMultipleExpressions = this.expressionParsers.length > 1;
-        const expression = this.expressionParsers
-            .map((expressionParser) => expressionParser.getFunctionString(params))
-            .join(` ${this.operatorParser.getFunction()} `);
-        return hasMultipleExpressions ? `(${expression})` : expression;
-    }
-
-    public getFunctionParsed(params: FilterExpressionFunctionParams): FilterExpressionFunction {
+    public getFunction(params: FilterExpressionFunctionParams): FilterExpressionFunction {
         const operator = this.operatorParser.getFunction();
-        const funcs = this.expressionParsers.map((expressionParser) => expressionParser.getFunctionParsed(params));
+        const funcs = this.expressionParsers.map((expressionParser) => expressionParser.getFunction(params));
         const arrayFunc = operator === '&&' ? 'every' : 'some';
         return (expressionProxy, node, p) => funcs[arrayFunc]((func) => func(expressionProxy, node, p));
     }

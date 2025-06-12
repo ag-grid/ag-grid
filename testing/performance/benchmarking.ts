@@ -1,8 +1,6 @@
 import type { BrowserContext, Page } from '@playwright/test';
 import { test } from '@playwright/test';
 import { bgBlue, bgGreen, blue, cyan, green, magenta, yellow } from 'chalk';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
 
 import type { BrowserCommunications } from './playwright.utils';
 import { gotoUrl, waitFor } from './playwright.utils';
@@ -11,6 +9,8 @@ export type Framework = 'typescript' | 'reactFunctionalTs';
 export type CustomVersion = `v${number}.${number}.${number}`;
 export type Version = 'prod' | 'staging' | 'local' | CustomVersion;
 export type Entry<T> = T extends readonly (infer U)[] ? U : T extends object ? T[keyof T] : T;
+
+const thisFilePath = __filename;
 
 /**
  * Describes a performance benchmarking test suite.
@@ -28,6 +28,7 @@ export type Describe = {
  */
 export type TestCase = {
     name: string;
+    description?: string;
     /** @deprecated don't forget to re-enable your test */
     skip?: boolean;
     framework: Framework;
@@ -35,9 +36,15 @@ export type TestCase = {
     variant: Variant;
     preSetup?: (page: Page) => Promise<void>;
     setupPreActions?: (page: Page) => Promise<void>;
-    actions?: (page: Page) => Promise<void>;
+    actions: (page: Page) => Promise<void>;
     expectsPostActions?: (page: Page, comms: BrowserCommunications) => Promise<void>;
     metrics?: Entry<(typeof PerformanceObserver)['supportedEntryTypes']>;
+};
+
+type InternalTestCase = TestCase & {
+    __hidden?: {
+        error?: Error; // used to store the error for friendlier error logs
+    };
 };
 
 /**
@@ -61,18 +68,13 @@ const knownUrls: Record<Version, string> = {
     prod: 'https://www.ag-grid.com',
 };
 
-export const agChartsVersion = `v${
-    JSON.parse(fs.readFileSync(path.join(__dirname, '../../packages/ag-grid-enterprise/package.json')).toString())
-        .optionalDependencies['ag-charts-enterprise']
-}` as CustomVersion;
-
 /**
  * Taken from ag-grid-enterprise package.json git history
  */
 const gridToChartsMap = {
-    local: agChartsVersion,
+    local: 'v11.3.0',
     prod: 'v11.3.0',
-    staging: agChartsVersion,
+    staging: 'v11.3.0',
     'v33.3.0': 'v11.3.0',
     'v33.2.3': 'v11.2.3',
     'v33.2.1': 'v11.2.1',
@@ -227,15 +229,17 @@ function reportStats(
     console.log(detailsFormat(testCase.variant.version, s2));
 }
 
-function attachScript(page: Page, url: string) {
-    return page.evaluate((url: string) => {
-        const script = document.createElement('script');
-        script.src = url;
-        document.body.appendChild(script);
-    }, url);
+function benchError(message: string, e: any, testCase: InternalTestCase) {
+    const [_, ...rest] = testCase.__hidden!.error?.stack!.split('\n') || [];
+    const [__, ...providedRest] = e.stack!.split('\n');
+    e.stack = `${message}\n${providedRest.join('\n')}\n${rest
+        .filter((l) => l.includes(thisFilePath) || l.includes(test.info().titlePath[0]))
+        .join('\n')}`;
+
+    throw e;
 }
 
-async function attachScripts(page: Page, version: Version, describe: { __hidden?: { stack?: Error } }) {
+async function attachScripts(page: Page, version: Version, testCase: InternalTestCase) {
     const chartsVersion = gridToChartsMap[version as keyof typeof gridToChartsMap] || gridToChartsMap.prod;
 
     const urls = [getCdnUrl('ag-grid-community', version), getCdnUrl('ag-grid-enterprise', version)];
@@ -250,15 +254,12 @@ async function attachScripts(page: Page, version: Version, describe: { __hidden?
             getCdnUrl('ag-charts-types', chartsVersion, '/'),
         ];*/
     }
-    await Promise.all(urls.map(attachScript.bind(0, page)));
+    await Promise.all(urls.map((url) => page.addScriptTag({ url })));
     try {
         // @ts-expect-error agGrid is not in the current scope
         await waitFor(() => typeof agGrid !== 'undefined', page);
     } catch (e) {
-        const eT = e as Error;
-        eT.message = `${eT.message}. Perhaps you forgot to start dev server? Or provided URL/version are not available.`;
-        eT.stack += '\n Caused by:\n' + describe.__hidden!.stack?.stack;
-        throw e;
+        benchError(`Perhaps you forgot to start dev server? Or provided URL/version are not available.`, e, testCase);
     }
 }
 function updatePageTitle(page: Page, testCase: TestCase, variant: Variant) {
@@ -290,8 +291,7 @@ async function attachCookies(context: BrowserContext, variant: Variant) {
 }
 
 /** Generic benchmark function to run performance tests */
-export default function (name: string, describe: Describe & { __hidden?: { stack?: Error } }) {
-    describe.__hidden = { stack: new Error() }; // used for friendlier error logs
+export default function (name: string, describe: Describe) {
     test.describe.configure({ timeout: describe.timeout || 3 * 60_000 });
     test.beforeEach(() => console.time('Duration'));
     test.afterEach(() => console.timeEnd('Duration'));
@@ -302,12 +302,12 @@ export default function (name: string, describe: Describe & { __hidden?: { stack
         const minIterations = Math.max(Math.max(describe.minIterations ?? 10, warmupIterations) + warmupIterations, 2);
         const maxIterations = describe.maxIterations ?? 1000;
 
-        describe.testCases.forEach((testCase, i) => {
+        describe.testCases.forEach((testCase: InternalTestCase) => {
+            testCase.__hidden = { error: new Error() }; // used for friendlier error logs
             (testCase.skip ? test.skip : test)(
-                `${i + 1} Running ${testCase.name} with ${testCase.framework}`,
+                `Running ${testCase.name}${testCase.description ? `/${testCase.description}` : ''} with ${testCase.framework}`,
                 async ({ page, context }) => {
                     const result = { control: [] as number[], variant: [] as number[] };
-
                     let significant = false;
                     do {
                         for (const variantName of ['control', 'variant'] as const) {
@@ -315,7 +315,7 @@ export default function (name: string, describe: Describe & { __hidden?: { stack
                             await attachCookies(context, variant);
                             const comms = await gotoUrl(page, getUrl(testCase, variant));
                             void updatePageTitle(page, testCase, variant);
-                            variant.shouldInjectScript && (await attachScripts(page, variant.version, describe));
+                            variant.shouldInjectScript && (await attachScripts(page, variant.version, testCase));
                             testCase.preSetup && (await testCase.preSetup(page));
                             for (let i = 0; i < minIterations; i++) {
                                 testCase.setupPreActions && (await testCase.setupPreActions(page));
