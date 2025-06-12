@@ -3,17 +3,28 @@ import type {
     BeanCollection,
     ColumnAdvancedFilterModel,
     ElementParams,
+    FilterAction,
+    FilterButtonEvent,
     FilterManager,
+    IAdvancedFilterBuilderParams,
     ITooltipCtrl,
     JoinAdvancedFilterModel,
     Registry,
     TooltipFeature,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, _exists, _setDisabled } from 'ag-grid-community';
+import {
+    Component,
+    FilterButtonComp,
+    RefPlaceholder,
+    _exists,
+    _removeFromParent,
+    _setDisabled,
+} from 'ag-grid-community';
 
 import type { VirtualListDragItem } from '../../features/iVirtualListDragFeature';
 import { VirtualList } from '../../widgets/virtualList';
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
+import { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';
 import type { AdvancedFilterService } from '../advancedFilterService';
 import { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
 import { AdvancedFilterBuilderItemAddComp } from './advancedFilterBuilderItemAddComp';
@@ -26,6 +37,13 @@ import type {
     AdvancedFilterBuilderRemoveEvent,
 } from './iAdvancedFilterBuilder';
 
+const ButtonLocaleMap: Record<FilterAction, keyof typeof ADVANCED_FILTER_LOCALE_TEXT> = {
+    apply: 'advancedFilterBuilderApply',
+    clear: 'advancedFilterBuilderClear',
+    cancel: 'advancedFilterBuilderCancel',
+    reset: 'advancedFilterBuilderReset',
+};
+
 const AdvancedFilterBuilderElement: ElementParams = {
     tag: 'div',
     cls: 'ag-advanced-filter-builder',
@@ -37,23 +55,6 @@ const AdvancedFilterBuilderElement: ElementParams = {
             ref: 'eList',
             cls: 'ag-advanced-filter-builder-list',
             role: 'presentation',
-        },
-        {
-            tag: 'div',
-            cls: 'ag-advanced-filter-builder-button-panel',
-            role: 'presentation',
-            children: [
-                {
-                    tag: 'button',
-                    ref: 'eApplyFilterButton',
-                    cls: 'ag-button ag-standard-button ag-advanced-filter-builder-apply-button',
-                },
-                {
-                    tag: 'button',
-                    ref: 'eCancelFilterButton',
-                    cls: 'ag-button ag-standard-button ag-advanced-filter-builder-cancel-button',
-                },
-            ],
         },
     ],
 };
@@ -71,15 +72,15 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     }
 
     private readonly eList: HTMLElement = RefPlaceholder;
-    private readonly eApplyFilterButton: HTMLElement = RefPlaceholder;
-    private readonly eCancelFilterButton: HTMLElement = RefPlaceholder;
+
+    private eButtons?: FilterButtonComp;
+    private params: IAdvancedFilterBuilderParams;
 
     private virtualList: VirtualList<AdvancedFilterBuilderItemComp | AdvancedFilterBuilderItemAddComp>;
     private filterModel: AdvancedFilterModel;
     private stringifiedModel: string;
     private items: AdvancedFilterBuilderItem[];
     private dragFeature: AdvancedFilterBuilderDragFeature;
-    private showMove: boolean;
     private validationTooltipFeature?: TooltipFeature;
     private validationMessage: string | null = null;
 
@@ -88,10 +89,11 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     }
 
     public postConstruct(): void {
-        const { showMoveButtons } = this.gos.get('advancedFilterBuilderParams') ?? {};
-        this.showMove = !!showMoveButtons;
+        const params = this.gos.get('advancedFilterBuilderParams');
+        this.params = { buttons: ['apply', 'cancel'], ...params };
         this.addManagedPropertyListener('advancedFilterBuilderParams', ({ currentValue }) => {
-            this.showMove = !!currentValue?.showMoveButtons;
+            this.params.showMoveButtons = !!currentValue?.showMoveButtons;
+            this.params.buttons = currentValue?.buttons ?? ['apply', 'cancel'];
             this.refreshList(false);
         });
 
@@ -100,7 +102,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
 
         this.dragFeature = this.createManagedBean(new AdvancedFilterBuilderDragFeature(this, this.virtualList));
 
-        this.setupButtons();
+        this.resetButtonsPanel(this.params.buttons);
     }
 
     public refresh(): void {
@@ -163,37 +165,123 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         virtualList.refresh();
     }
 
-    private setupButtons(): void {
-        this.eApplyFilterButton.textContent = this.advFilterExpSvc.translate('advancedFilterBuilderApply');
-        this.activateTabIndex([this.eApplyFilterButton]);
-        this.addManagedElementListeners(this.eApplyFilterButton, {
-            click: () => {
+    private resetButtonsPanel(actions?: FilterAction[]): void {
+        const hasButtons = actions && actions.length > 0;
+
+        let eButtonsPanel = this.eButtons;
+        if (hasButtons) {
+            const buttons = actions.map((type) => ({
+                type,
+                label: this.advFilterExpSvc.translate(ButtonLocaleMap[type]),
+            }));
+
+            if (!eButtonsPanel) {
+                eButtonsPanel = this.createBean(new FilterButtonComp());
+                this.appendChild(eButtonsPanel.getGui());
+                const getListener =
+                    (action: FilterAction) =>
+                    ({ event }: FilterButtonEvent) => {
+                        this.updateModel(action);
+                        this.afterAction(action, event);
+                    };
+                eButtonsPanel.addManagedListeners(eButtonsPanel, {
+                    apply: getListener('apply'),
+                    clear: getListener('clear'),
+                    reset: getListener('reset'),
+                    cancel: getListener('cancel'),
+                });
+
+                this.eButtons = eButtonsPanel;
+            }
+            eButtonsPanel.updateButtons(buttons);
+            const applyButton = eButtonsPanel.getApplyButton();
+            if (applyButton) {
+                const mouseListener = (isEnter: boolean) =>
+                    this.toggleCss('ag-advanced-filter-builder-validation', isEnter);
+                eButtonsPanel.addManagedListeners(applyButton, {
+                    mouseenter: () => mouseListener(true),
+                    mouseleave: () => mouseListener(false),
+                });
+            }
+        } else {
+            if (eButtonsPanel) {
+                _removeFromParent(eButtonsPanel.getGui());
+                this.eButtons = this.destroyBean(eButtonsPanel);
+            }
+        }
+    }
+
+    private updateModel(action: FilterAction): void {
+        switch (action) {
+            case 'apply':
                 this.advancedFilter.setModel(this.filterModel);
                 this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
-                this.close();
-            },
-        });
-
-        this.validationTooltipFeature = this.createOptionalManagedBean(
-            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
-                getGui: () => this.eApplyFilterButton,
-                getLocation: () => 'advancedFilter',
-                getTooltipValue: () => this.validationMessage,
-                getTooltipShowDelayOverride: () => 1000,
-            } as ITooltipCtrl)
-        );
-        this.validate();
-
-        const mouseListener = (isEnter: boolean) => this.toggleCss('ag-advanced-filter-builder-validation', isEnter);
-        this.addManagedListeners(this.eApplyFilterButton, {
-            mouseenter: () => mouseListener(true),
-            mouseleave: () => mouseListener(false),
-        });
-
-        this.eCancelFilterButton.textContent = this.advFilterExpSvc.translate('advancedFilterBuilderCancel');
-        this.activateTabIndex([this.eCancelFilterButton]);
-        this.addManagedElementListeners(this.eCancelFilterButton, { click: () => this.close() });
+                break;
+            case 'reset':
+                this.advancedFilter.setModel(null);
+                this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
+                break;
+            case 'cancel':
+                break;
+            case 'clear':
+                this.filterModel = this.formatFilterModel(null);
+                this.refreshList(false);
+                break;
+        }
     }
+
+    private afterAction(action: FilterAction, event?: Event): void {
+        switch (action) {
+            case 'apply': {
+                // Prevent form submission
+                event?.preventDefault();
+                this.close();
+                break;
+            }
+            case 'reset': {
+                this.close();
+                break;
+            }
+            case 'cancel': {
+                this.close();
+                break;
+            }
+        }
+    }
+
+    // private setupButtons(): void {
+    //     const params = this.beans.gos.get('advancedFilterBuilderParams');
+    //     const buttons: FilterAction[] = params?.buttons ?? ['apply'];
+    //     this.eApplyFilterButton.textContent = buttons.join(', ');
+    //     // this.eApplyFilterButton.textContent = this.advFilterExpSvc.translate('advancedFilterBuilderApply');
+    //     this.activateTabIndex([this.eApplyFilterButton]);
+    //     this.addManagedElementListeners(this.eApplyFilterButton, {
+    //         click: () => {
+    //             this.advancedFilter.setModel(this.filterModel);
+    //             this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
+    //             this.close();
+    //         },
+    //     });
+
+    //     this.validationTooltipFeature = this.createOptionalManagedBean(
+    //         this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+    //             getGui: () => this.eApplyFilterButton,
+    //             getLocation: () => 'advancedFilter',
+    //             getTooltipValue: () => this.validationMessage,
+    //             getTooltipShowDelayOverride: () => 1000,
+    //         } as ITooltipCtrl)
+    //     );
+    //     this.validate();
+    //     const mouseListener = (isEnter: boolean) => this.toggleCss('ag-advanced-filter-builder-validation', isEnter);
+    //     this.addManagedListeners(this.eApplyFilterButton, {
+    //         mouseenter: () => mouseListener(true),
+    //         mouseleave: () => mouseListener(false),
+    //     });
+
+    //     this.eCancelFilterButton.textContent = this.advFilterExpSvc.translate('advancedFilterBuilderCancel');
+    //     this.activateTabIndex([this.eCancelFilterButton]);
+    //     this.addManagedElementListeners(this.eCancelFilterButton, { click: () => this.close() });
+    // }
 
     private removeItemFromParent(item: AdvancedFilterBuilderItem): number {
         const sourceParentIndex = item.parent!.conditions.indexOf(item.filterModel!);
@@ -277,7 +365,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
             level: number,
             parent?: JoinAdvancedFilterModel
         ) => {
-            items.push({ filterModel, level, parent, valid: true, showMove: this.showMove });
+            items.push({ filterModel, level, parent, valid: true, showMove: this.params.showMoveButtons });
             if (filterModel.filterType === 'join') {
                 filterModel.conditions.forEach((childFilterModel) =>
                     parseFilterModel(childFilterModel, items, level + 1, filterModel)
@@ -397,7 +485,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                     level: itemIsJoin ? level + 1 : level,
                     parent,
                     valid: isJoin,
-                    showMove: this.showMove,
+                    showMove: this.params.showMoveButtons,
                 },
             ];
             this.items.splice(index, 0, ...newItems);
@@ -521,21 +609,20 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     }
 
     private validate(): void {
-        let disableApply = !this.items.every(({ valid }) => valid);
-        if (!disableApply) {
-            disableApply = JSON.stringify(this.filterModel) === this.stringifiedModel;
-            if (disableApply) {
-                this.validationMessage = this.advFilterExpSvc.translate(
-                    'advancedFilterBuilderValidationAlreadyApplied'
-                );
+        let isValid = this.items.every(({ valid }) => valid);
+        let validationMessage = null;
+        if (isValid) {
+            isValid = JSON.stringify(this.filterModel) !== this.stringifiedModel;
+            if (!isValid) {
+                validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationAlreadyApplied');
             } else {
-                this.validationMessage = null;
+                validationMessage = null;
             }
         } else {
-            this.validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationIncomplete');
+            validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationIncomplete');
         }
-        _setDisabled(this.eApplyFilterButton, disableApply);
-        this.validationTooltipFeature?.refreshTooltip();
+        console.log(isValid, validationMessage);
+        this.eButtons?.updateValidity(isValid, validationMessage);
     }
 
     private validateItems(): void {

@@ -1,14 +1,20 @@
-import type {
+import {
+    AgFilterButtonSelector,
     BeanCollection,
     ElementParams,
+    FilterAction,
+    FilterButtonComp,
+    FilterButtonEvent,
     FilterManager,
     ITooltipCtrl,
     Registry,
     TooltipFeature,
+    _removeFromParent,
 } from 'ag-grid-community';
 import { Component, RefPlaceholder, _createIconNoSpan, _makeNull, _setDisabled } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
+import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AdvancedFilterService } from './advancedFilterService';
 import type {
     AgAutocomplete,
@@ -22,6 +28,13 @@ import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/a
 import type { FilterExpressionParser } from './filterExpressionParser';
 import type { AutocompleteUpdate } from './filterExpressionUtils';
 
+const ButtonLocaleMap: Record<FilterAction, keyof typeof ADVANCED_FILTER_LOCALE_TEXT> = {
+    apply: 'advancedFilterApply',
+    clear: 'advancedFilterClear',
+    cancel: 'advancedFilterCancel',
+    reset: 'advancedFilterReset',
+};
+
 const AdvancedFilterElement: ElementParams = {
     tag: 'div',
     cls: 'ag-advanced-filter',
@@ -30,9 +43,12 @@ const AdvancedFilterElement: ElementParams = {
     children: [
         { tag: 'ag-autocomplete', ref: 'eAutocomplete' },
         {
-            tag: 'button',
-            ref: 'eApplyFilterButton',
-            cls: 'ag-button ag-standard-button ag-advanced-filter-apply-button',
+            tag: 'ag-filter-button',
+            ref: 'eButtons',
+            cls: '',
+            attrs: {
+                style: 'display: contents;',
+            },
         },
         {
             tag: 'button',
@@ -59,10 +75,11 @@ export class AdvancedFilterComp extends Component {
     }
 
     private readonly eAutocomplete: AgAutocomplete = RefPlaceholder;
-    private readonly eApplyFilterButton: HTMLElement = RefPlaceholder;
     private readonly eBuilderFilterButton: HTMLElement = RefPlaceholder;
     private readonly eBuilderFilterButtonIcon: HTMLElement = RefPlaceholder;
     private readonly eBuilderFilterButtonLabel: HTMLElement = RefPlaceholder;
+
+    private readonly eButtons: FilterButtonComp = RefPlaceholder;
 
     private expressionParser: FilterExpressionParser | null = null;
     private isApplyDisabled = true;
@@ -70,10 +87,11 @@ export class AdvancedFilterComp extends Component {
     private tooltipFeature?: TooltipFeature;
 
     constructor() {
-        super(AdvancedFilterElement, [AgAutocompleteSelector]);
+        super(AdvancedFilterElement, [AgAutocompleteSelector, AgFilterButtonSelector]);
     }
 
     public postConstruct(): void {
+        const params = this.gos.get('advancedFilterParams');
         this.tooltipFeature = this.createOptionalManagedBean(
             this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
                 getGui: () => this.getGui(),
@@ -101,7 +119,7 @@ export class AdvancedFilterComp extends Component {
                 this.onValidChanged(isValid, validationMessage),
         });
 
-        this.setupApplyButton();
+        this.setupButtons(params?.buttons ?? ['apply']);
         this.setupBuilderButton();
     }
 
@@ -116,16 +134,61 @@ export class AdvancedFilterComp extends Component {
 
     public setInputDisabled(disabled: boolean): void {
         this.eAutocomplete.setInputDisabled(disabled);
-        _setDisabled(this.eApplyFilterButton, disabled || this.isApplyDisabled);
+        this.eButtons?.updateValidity(disabled || this.isApplyDisabled);
     }
 
-    private setupApplyButton(): void {
-        this.eApplyFilterButton.textContent = this.advFilterExpSvc.translate('advancedFilterApply');
-        this.activateTabIndex([this.eApplyFilterButton]);
-        this.addManagedElementListeners(this.eApplyFilterButton, {
-            click: () => this.onValueConfirmed(this.eAutocomplete.isValid()),
+    // private setupApplyButton(): void {
+    //     this.eApplyFilterButton.textContent = this.advFilterExpSvc.translate('advancedFilterApply');
+    //     this.activateTabIndex([this.eApplyFilterButton]);
+    //     this.addManagedElementListeners(this.eApplyFilterButton, {
+    //         click: () => this.onValueConfirmed(this.eAutocomplete.isValid()),
+    //     });
+    //     _setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
+    // }
+
+    private setupButtons(actions: FilterAction[]): void {
+        const buttons = actions.map((type) => ({
+            type,
+            label: this.advFilterExpSvc.translate(ButtonLocaleMap[type]),
+        }));
+
+        // this.eButtons = this.createBean(new FilterButtonComp());
+        // this.appendChild(eButtonsPanel.getGui());
+        const getListener =
+            (action: FilterAction) =>
+            ({ event }: FilterButtonEvent) => {
+                this.updateModel(action);
+            };
+        this.eButtons?.addManagedListeners(this.eButtons, {
+            apply: getListener('apply'),
+            clear: getListener('clear'),
+            reset: getListener('reset'),
+            cancel: getListener('cancel'),
         });
-        _setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
+
+        this.eButtons.updateButtons(buttons);
+    }
+
+    private updateModel(action: FilterAction): void {
+        switch (action) {
+            case 'apply':
+                this.onValueConfirmed(this.eAutocomplete.isValid());
+                break;
+            case 'reset':
+                this.advancedFilter.setModel(null);
+                this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
+                break;
+            case 'cancel':
+                this.advancedFilter.setModel(this.advancedFilter.getModel());
+                this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
+                break;
+            case 'clear':
+                this.eAutocomplete.setValue({
+                    value: '',
+                    restoreFocus: false,
+                });
+                break;
+        }
     }
 
     private setupBuilderButton(): void {
@@ -152,7 +215,7 @@ export class AdvancedFilterComp extends Component {
         if (!isValid || this.isApplyDisabled) {
             return;
         }
-        _setDisabled(this.eApplyFilterButton, true);
+        this.eButtons?.updateValidity(false);
         this.advancedFilter.applyExpression();
         this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
     }
@@ -173,7 +236,7 @@ export class AdvancedFilterComp extends Component {
 
     private onValidChanged(isValid: boolean, validationMessage: string | null): void {
         this.isApplyDisabled = !isValid || this.advancedFilter.isCurrentExpressionApplied();
-        _setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
+        this.eButtons?.updateValidity(!this.isApplyDisabled);
         this.tooltipFeature?.setTooltipAndRefresh(validationMessage);
     }
 

@@ -1,3 +1,5 @@
+import { FilterAction } from './iFilter';
+
 /**
  * Parameters passed to the Advanced Filter Builder
  */
@@ -27,4 +29,8 @@ export interface IAdvancedFilterBuilderParams {
      * @default 200
      */
     pillSelectMaxWidth?: number;
+    /**
+     *
+     */
+    buttons?: FilterAction[];
 }

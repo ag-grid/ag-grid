@@ -1,4 +1,4 @@
-import type {
+import {
     ColDef,
     ColGroupDef,
     ElementParams,
@@ -7,6 +7,7 @@ import type {
     IToolPanelComp,
     IToolPanelFiltersCompParams,
     IToolPanelParams,
+    _FILTER_LOCALE_TEXT,
 } from 'ag-grid-community';
 import { Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
 
@@ -81,7 +82,14 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
                 this.appendChild(buttonPanel.getGui());
                 this.buttonPanel = buttonPanel;
             }
-            buttonPanel.refresh(buttons);
+
+            const translate = this.getLocaleTextFunc();
+            buttonPanel.refresh(
+                buttons.map((type) => {
+                    const localeKey = `${type}Filter` as const;
+                    return { type, label: translate(localeKey, _FILTER_LOCALE_TEXT[localeKey]) };
+                })
+            );
         } else {
             if (buttonPanel) {
                 _removeFromParent(buttonPanel.getGui());

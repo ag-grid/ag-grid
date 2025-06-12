@@ -124,6 +124,7 @@ import type {
 } from '../interfaces/exportParams';
 import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
+import { IAdvancedFilterParams } from '../interfaces/iAdvancedFilterParams';
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
 import type {
     FillOperationParams,
@@ -689,6 +690,8 @@ export interface GridOptions<TData = any> {
      * @agModule `AdvancedFilterModule`
      */
     advancedFilterBuilderParams?: IAdvancedFilterBuilderParams;
+
+    advancedFilterParams?: IAdvancedFilterParams;
     /**
      * By default, Advanced Filter sanitises user input and passes it to `new Function()` to provide the best performance.
      * Set to `true` to prevent this and use defined functions instead.

@@ -175,6 +175,10 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.applyExpressionFromParser(expressionParser);
     }
 
+    public getAppliedExpressionDisplayValue(): string | null {
+        return this.appliedExpression;
+    }
+
     private applyExpressionFromParser(expressionParser: FilterExpressionParser | null): void {
         this.isValid = !expressionParser || expressionParser.isValid();
         if (!expressionParser || !this.isValid) {

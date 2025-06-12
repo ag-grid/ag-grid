@@ -1,5 +1,5 @@
 import type { ElementParams, FilterAction } from 'ag-grid-community';
-import { Component, FilterButtonComp } from 'ag-grid-community';
+import { Component, FilterButton, FilterButtonComp } from 'ag-grid-community';
 
 const ButtonsElement: ElementParams = {
     tag: 'div',
@@ -27,7 +27,7 @@ export class AgFiltersToolPanelButtons extends Component {
         this.eButtons = eButtons;
     }
 
-    public refresh(buttons: FilterAction[]): void {
+    public refresh(buttons: FilterButton[]): void {
         this.eButtons.updateButtons(buttons);
     }
 }
