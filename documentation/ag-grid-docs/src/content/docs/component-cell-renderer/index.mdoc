@@ -276,13 +276,24 @@ The example below demonstrates a dynamic tooltip being displayed on Cell Compone
 
 {% gridExampleRunner title="Dynamic Tooltips" name="dynamic-tooltips" /%}
 
-### Defer Slow Cell Renderers
+### Defer Slow Cell Components
 
-If a Custom Cell Renderer is slow to render, it may make the grid appear unresponsive due to the Cell Renderer blocking the main thread. To avoid this set `cellRendererParams.deferRender = true` on all slow renderers.
+If a Custom Cell Component is slow to render, the grid may appear unresponsive due to the custom component blocking the main thread. To defer the rending of slow components until all other rendering has completed. Set `deferRender: true` in the `cellRendererParams` on all slow custom components.
 
-Custom Cell Renderers that are deferred will be rendered after all other cells and only after the grid has stopped scrolling. In the meantime, the loading cell renderer will be displayed.
+```js
 
-The loading cell renderer can be customised by providing a custom `loadingCellRenderer`.
+{
+    field: 'athlete',
+    cellRenderer: 'SlowCellRenderer',
+    cellRendererParams: {
+        deferRender: true
+    }
+}
+```
+
+Deferred components will be rendered after other cells and only after the grid has stopped scrolling. In the meantime, the loading cell renderer will be displayed.
+
+The loading cell renderer can be customised via the `loadingCellRenderer` column property.
 
 {% gridExampleRunner title="Slow Cell Renderer" name="slow-cell-renderer" /%}
 
