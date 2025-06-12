@@ -403,6 +403,8 @@ const CellComp = ({
                             compDetails: loadingComp,
                             force: false,
                         });
+                        // Render with startTransition to make it easier to interrupt the expensive components
+                        // for example the user starts scrolling after the cells have started to render
                         onReady.then(() => agStartTransition(setDetails));
                         // Returning here as we do not want to set the details immediately
                         return;
