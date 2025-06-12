@@ -89,7 +89,7 @@ export const agFlushSync = (useFlushSync: boolean, fn: () => void) => {
  */
 export const agStartTransition = (fn: () => void) => {
     if (!isReactVersion17Minus) {
-        (ReactDOM as any).startTransition(fn);
+        (React as any).startTransition(fn);
     } else {
         fn();
     }
