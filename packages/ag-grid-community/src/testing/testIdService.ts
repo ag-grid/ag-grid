@@ -1,6 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
+import { _getRootNode } from '../gridOptionsUtils';
 import type { ITestIdService } from '../interfaces/iTestIdService';
 
 const TEST_ID_ATTR = 'data-testid';
@@ -15,34 +16,36 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
     }
 
     public setupAllTestIds(): void {
-        const { ctrlsSvc, rowRenderer } = this.beans;
+        const root = _getRootNode(this.beans);
 
-        for (const headerRowContainerCtrl of ctrlsSvc.getHeaderRowContainerCtrls()) {
-            for (const headerRowCtrl of headerRowContainerCtrl.getAllCtrls()) {
-                const rowIndex = headerRowCtrl.rowIndex;
-                for (const headerCellCtrl of headerRowCtrl.getHeaderCellCtrls()) {
-                    const column = headerCellCtrl.column;
-                    const testId = column.isColumn
-                        ? formatTestId('ag-header-cell', { 'row-index': rowIndex, 'col-id': column.getColId() })
-                        : formatTestId('ag-header-cell', { 'row-index': rowIndex, 'col-id': column.getGroupId() });
-                    headerCellCtrl.comp.setAttributes({ [TEST_ID_ATTR]: testId });
-                }
-            }
-        }
+        root.querySelectorAll('.ag-header-group-cell').forEach((groupCell) => {
+            groupCell.setAttribute(
+                TEST_ID_ATTR,
+                formatTestId('ag-header-group-cell', {
+                    ['col-id']: groupCell.getAttribute('col-id'),
+                })
+            );
+        });
 
-        for (const rowCtrl of rowRenderer.allRowCtrls) {
-            for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
-                const column = cellCtrl.column;
-                const testId = formatTestId('ag-cell', { 'row-id': rowCtrl.rowId!, 'col-id': column.getColId() });
-                cellCtrl.comp.setAttributes({ [TEST_ID_ATTR]: testId });
-            }
-        }
+        root.querySelectorAll('.ag-header-cell').forEach((cell) => {
+            cell.setAttribute(
+                TEST_ID_ATTR,
+                formatTestId('ag-header-cell', {
+                    ['col-id']: cell.getAttribute('col-id'),
+                })
+            );
 
-        const gridCtrl = ctrlsSvc.get('gridCtrl');
+            cell
+                .querySelector('.ag-header-cell-menu-button')
+                ?.setAttribute(
+                    TEST_ID_ATTR,
+                    formatTestId('ag-header-cell-menu-button', { ['col-id']: cell.getAttribute('col-id') })
+                );
+        });
     }
 }
 
-function formatTestId(name: string, attributes: Record<string, string | number>): string {
+function formatTestId(name: string, attributes: Record<string, string | number | null>): string {
     return `${name}:${Object.entries(attributes)
         .map(([k, v]) => `${k}=${v}`)
         .join(';')}`;
