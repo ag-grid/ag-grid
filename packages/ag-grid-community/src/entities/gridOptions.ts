@@ -690,7 +690,10 @@ export interface GridOptions<TData = any> {
      * @agModule `AdvancedFilterModule`
      */
     advancedFilterBuilderParams?: IAdvancedFilterBuilderParams;
-
+    /**
+     * Customise the parameters passed to the Advanced Filter
+     * @agModule `AdvancedFilterModule`
+     */
     advancedFilterParams?: IAdvancedFilterParams;
     /**
      * By default, Advanced Filter sanitises user input and passes it to `new Function()` to provide the best performance.

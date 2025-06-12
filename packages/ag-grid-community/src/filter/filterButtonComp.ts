@@ -106,7 +106,6 @@ export class FilterButtonComp extends Component<FilterAction> {
                 this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
                     getGui: () => this.eApply,
                     getLocation: () => 'advancedFilter',
-                    // getTooltipValue: () => this.validationMessage,
                     getTooltipShowDelayOverride: () => 1000,
                 } as ITooltipCtrl)
             );

@@ -106,6 +106,8 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
 
         const { width, height, minWidth } = this.getBuilderDialogSize();
 
+        const { showFullScreenButton } = { showFullScreenButton: true, ...this.gos.get('advancedFilterBuilderParams') };
+
         this.eBuilderComp = this.createBean(new AdvancedFilterBuilderComp());
         this.eBuilderDialog = this.createBean(
             new AgDialog({
@@ -115,7 +117,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
                 height,
                 resizable: true,
                 movable: true,
-                maximizable: true,
+                maximizable: showFullScreenButton,
                 centered: true,
                 closable: true,
                 minWidth,
