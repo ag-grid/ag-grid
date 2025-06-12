@@ -4,6 +4,7 @@ import { PartImpl, createPart, defaultModeName } from './Part';
 import type { CoreParams } from './core/core-css';
 import { coreDefaults } from './core/core-css';
 import { IS_SSR, _injectCoreAndModuleCSS, _injectGlobalCSS } from './inject';
+import type { BatchEditStyleParams } from './parts/batch-edit/batch-edit-styles';
 import { batchEditStyleBase } from './parts/batch-edit/batch-edit-styles';
 import { buttonStyleQuartz } from './parts/button-style/button-styles';
 import type { ButtonStyleParams } from './parts/button-style/button-styles';
@@ -53,7 +54,7 @@ export const _asThemeImpl = <TParams>(theme: Theme<TParams>): ThemeImpl => {
 // TODO button and column drop styles were split out into a part in 33.1 and
 // must be bundled by default to avoid a breaking change for people using
 // createTheme(). In v34 the withPart calls can be removed.
-export const createTheme = (): Theme<CoreParams & ButtonStyleParams> =>
+export const createTheme = (): Theme<CoreParams & ButtonStyleParams & BatchEditStyleParams> =>
     new ThemeImpl().withPart(buttonStyleQuartz).withPart(columnDropStyleBordered).withPart(batchEditStyleBase);
 
 type GridThemeUseArgs = {

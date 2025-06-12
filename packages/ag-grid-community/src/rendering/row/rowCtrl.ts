@@ -1407,8 +1407,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         classes.push(rowNode.rowIndex! % 2 === 0 ? 'ag-row-even' : 'ag-row-odd');
 
-        classes.push('ag-row-batch-edit');
-
         if (rowNode.isRowPinned()) {
             classes.push('ag-row-pinned');
             if (beans.pinnedRowModel?.isManual()) {

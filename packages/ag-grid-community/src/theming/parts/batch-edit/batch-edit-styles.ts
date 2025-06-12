@@ -26,8 +26,8 @@ export type BatchEditStyleParams = {
 };
 
 const baseParams: BatchEditStyleParams = {
-    cellBatchEditBackgroundColor: '#F00', //'rgb(220 181 139 / 20%)',
-    cellBatchEditTextColor: 'rgb(66 47 0 / 100%)',
+    cellBatchEditBackgroundColor: 'rgba(220 181 139 / 20%)',
+    cellBatchEditTextColor: 'rgba(66 47 0 / 100%)',
 
     rowBatchEditBackgroundColor: {
         ref: 'cellBatchEditBackgroundColor',
