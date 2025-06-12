@@ -153,7 +153,7 @@ jobs:
           REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
         with:
           script: |
-            const output = `✅ ${process.env.JOB_URL}
+            const body = `✅ ${process.env.JOB_URL}
             Benchmark report: ${process.env.REPORT_URL}
             \`\`\`
             ${process.env.OUTPUT}
@@ -163,7 +163,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: ${{ steps.notify-start.outputs.result }},
-              body: output,
+              body,
             })
 
       - name: Notify Failure
