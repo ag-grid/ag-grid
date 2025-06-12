@@ -73,6 +73,7 @@ export class FilterCardComp extends Component {
         const filterPanelService = beans.filterPanelSvc!;
         _setAriaLabel(eDelete, translateForFilterPanel(this, 'ariaLabelDeleteFilterCard'));
         eDeleteIcon.appendChild(_createIcon('close', beans, null));
+        this.activateTabIndex([eExpand, eDelete]);
         this.addManagedElementListeners(eExpand, {
             click: () => filterPanelService.expand(id, !this.state?.expanded),
         });

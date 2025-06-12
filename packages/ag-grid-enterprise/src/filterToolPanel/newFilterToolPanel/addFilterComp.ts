@@ -47,6 +47,7 @@ export class AddFilterComp extends Component<'filterSelected'> {
                 },
             ],
         });
+        this.activateTabIndex([eButton]);
         const clickListener = this.showSelect.bind(this);
         eButton.addEventListener('click', clickListener);
         this.removeButton = () => {
