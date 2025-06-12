@@ -603,6 +603,10 @@ export interface Props<TData> {
          * @agModule `AdvancedFilterModule`
          */
     advancedFilterParent?: HTMLElement | null | undefined,
+    /** Customise the parameters passed to the Advanced Filter.
+         * @agModule `AdvancedFilterModule`
+         */
+    advancedFilterParams?: IAdvancedFilterParams | undefined,
     /** Customise the parameters passed to the Advanced Filter Builder.
          * @agModule `AdvancedFilterModule`
          */
