@@ -41,17 +41,11 @@ const gridOptions: GridOptions<IOlympicData> = {
             cellRenderer: FastRenderer,
         },
         {
-            field: 'country',
-        },
-        {
-            field: 'year',
-        },
-        {
             field: 'sport',
         },
     ],
     defaultColDef: {
-        width: 150,
+        flex: 1,
         autoHeaderHeight: true,
         wrapHeaderText: true,
     },
