@@ -338,7 +338,7 @@ export class CellComp extends Component {
     private createCellRendererInstance(compDetails: UserCompDetails): void {
         const displayComponentVersionCopy = this.rendererVersion;
 
-        const createCellRendererFunc = (details: UserCompDetails) => () => {
+        const createCellRendererFunc = (details: UserCompDetails) => (_?: boolean) => {
             const staleTask = this.rendererVersion !== displayComponentVersionCopy || !this.isAlive();
             if (staleTask) {
                 return;
@@ -359,8 +359,10 @@ export class CellComp extends Component {
         // if we changed this (always use task service) would make sense, however it would break tests, possibly
         // test of users.
         const { animationFrameSvc } = this.beans;
+
+        let createTask: ((isDeferred?: boolean) => void) | undefined;
         if (animationFrameSvc?.active && this.firstRender) {
-            const scheduleTask: (isDeferred: boolean) => void = (isDeferred: boolean) => {
+            createTask = (isDeferred: boolean) => {
                 animationFrameSvc.createTask(
                     createCellRendererFunc(compDetails),
                     this.rowNode.rowIndex!,
@@ -369,21 +371,20 @@ export class CellComp extends Component {
                     isDeferred
                 );
             };
-
-            if (compDetails.params.deferRender) {
-                // show loading cell and then pass the task to the animationFrameSvc
-                const { loadingComp, onReady } = this.cellCtrl.getDeferLoadingCellRenderer();
-
-                if (loadingComp) {
-                    // Immediately render the loading component
-                    createCellRendererFunc(loadingComp)();
-                    onReady.then(() => scheduleTask(true));
-                    return;
-                }
-            }
-            scheduleTask(false);
         } else {
-            createCellRendererFunc(compDetails)();
+            createTask = createCellRendererFunc(compDetails);
+        }
+        if (compDetails.params.deferRender) {
+            // show loading cell and then pass the task to the animationFrameSvc
+            const { loadingComp, onReady } = this.cellCtrl.getDeferLoadingCellRenderer();
+
+            if (loadingComp) {
+                // Immediately render the loading component and then schedule the task
+                createCellRendererFunc(loadingComp)();
+                onReady.then(() => createTask(true));
+            }
+        } else {
+            createTask(false);
         }
     }
 
