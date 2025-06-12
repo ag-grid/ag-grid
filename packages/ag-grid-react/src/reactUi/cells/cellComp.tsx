@@ -18,7 +18,7 @@ import { CustomContext } from '../../shared/customComp/customContext';
 import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
-import { isComponentStateless } from '../utils';
+import { agStartTransition, isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 
@@ -394,7 +394,7 @@ const CellComp = ({
                         }
                     });
                 };
-                if (compDetails?.params?.deferRender && (React as any).startTransition) {
+                if (compDetails?.params?.deferRender) {
                     const { loadingComp, onReady } = cellCtrl.getDeferLoadingCellRenderer();
 
                     if (loadingComp) {
@@ -403,7 +403,8 @@ const CellComp = ({
                             compDetails: loadingComp,
                             force: false,
                         });
-                        onReady.then(() => React.startTransition(setDetails));
+                        onReady.then(() => agStartTransition(setDetails));
+                        // Returning here as we do not want to set the details immediately
                         return;
                     }
                 }
