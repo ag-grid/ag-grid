@@ -52,7 +52,7 @@ jobs:
               echo "branch=$(gh pr view $PR_NO --repo $REPO --json headRefName --jq '.headRefName')" >> $GITHUB_OUTPUT
               echo "base=$(gh pr view $PR_NO --repo $REPO --json baseRefName --jq '.baseRefName')" >> $GITHUB_OUTPUT
             elif [[ "${{ github.event_name }}" == "schedule" ]] ; then
-              # For scheduled runs, get the most recent branch matching 'b' followed by semver (e.g. b1.2.3)
+              # For scheduled runs, get the most recent branch matching 'b' followed by semver (e.g. b1.2.3) todo: this doesn't apply for grid
               release=$(git ls-remote --heads origin 'b[0-9]*\.[0-9]*\.[0-9]*' | sort -t '/' -k 2 -V | tail -n 1 | sed 's/.*refs\/heads\///')
               echo "branch=latest" >> $GITHUB_OUTPUT
               echo "base=$release" >> $GITHUB_OUTPUT
@@ -119,15 +119,7 @@ jobs:
         continue-on-error: true
         if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
         run: |
-          npx playwright test -c ./testing/performance/playwright.config.ts ./testing/performance/e2e | tee playwright-output.txt
-
-      - name: Read test output
-        id: read-test-output
-        if: always()
-        run: |
-          echo 'output<<EOF' >> $GITHUB_OUTPUT
-          tail -n 20 playwright-output.txt >> $GITHUB_OUTPUT
-          echo 'EOF' >> $GITHUB_OUTPUT
+          echo "stdout=\"$(npx playwright test -c ./testing/performance/playwright.config.ts ./testing/performance/e2e)\"" >> $GITHUB_OUTPUT
 
       - name: Slack Notification
         continue-on-error: true
@@ -142,22 +134,23 @@ jobs:
           node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs > ./benchmark-slack.json
           curl -X POST -H 'Content-type: application/json' ${{ secrets.CI_GATE_WEBHOOK }} --data @./benchmark-slack.json
 
+
       - name: Upload Benchmark Report
         id: upload-report
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
-        run: |
-          output=$(npx @actions/artifact upload --name playwright-report --path playwright-report/ --retention-days 30)
-          echo "$output"
-          echo "$output" | tail -n 1 > report-url.txt
-          echo "url=$(cat report-url.txt)" >> $GITHUB_OUTPUT
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
 
       - name: Notify Success
         uses: actions/github-script@v7
         continue-on-error: true
         if: success() && github.event_name == 'issue_comment'
         env:
-          OUTPUT: ${{ steps.read-test-output.outputs.output }}
-          REPORT_URL: ${{ steps.upload-report.outputs.url }}
+          OUTPUT: ${{ steps.playwright-test.outputs.stdout }}
+          REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
         with:
           script: |
             const output = `✅ ${process.env.JOB_URL}
@@ -178,11 +171,11 @@ jobs:
         continue-on-error: true
         if: failure() && github.event_name == 'issue_comment'
         env:
-          OUTPUT: ${{ steps.read-test-output.outputs.output }}
-          REPORT_URL: ${{ steps.upload-report.outputs.url }}
+          OUTPUT: ${{ steps.playwright-test.outputs.stdout }}
+          REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
         with:
           script: |
-            const output = `❌ ${process.env.JOB_URL}
+            const body = `❌ ${process.env.JOB_URL}
             Benchmark report (if available): ${process.env.REPORT_URL}
             \`\`\`
             ${process.env.OUTPUT}
@@ -192,5 +185,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: ${{ steps.notify-start.outputs.result }},
-              body: output,
+              body,
             })
