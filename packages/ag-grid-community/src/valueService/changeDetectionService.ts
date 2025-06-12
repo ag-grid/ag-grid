@@ -31,7 +31,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
     private onCellEditValuesChanged(event: CellEditValuesChangedEvent): void {
         const suppressFlash = event.newValue === event.oldValue;
 
-        const nodesToRefresh = this.refreshCells(event, { suppressFlash });
+        const nodesToRefresh = this.refreshCells(event, { suppressFlash, includePinnedRows: true });
 
         this.beans.rowRenderer.refreshRows({ rowNodes: nodesToRefresh, suppressFlash });
     }
@@ -52,33 +52,36 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
 
     private refreshCells(
         { node, column }: { node: IRowNode; column: Column },
-        params?: { suppressFlash?: boolean }
+        params?: { suppressFlash?: boolean; includeLinkedRows?: boolean; includePinnedRows?: boolean } | null
     ): RowNode[] {
         const { gos, rowRenderer } = this.beans;
 
         const rowNode = node as RowNode;
-
-        // step 1 of change detection is to update the aggregated values
-
         const nodesToRefresh: RowNode[] = [rowNode];
 
         const clientSideRowModel = this.clientSideRowModel;
         const rootNode = clientSideRowModel?.rootNode;
 
-        if (rootNode && !rowNode.isRowPinned()) {
-            const onlyChangedColumns = gos.get('aggregateOnlyChangedColumns');
-            const changedPath = new ChangedPath(onlyChangedColumns, rootNode);
-            changedPath.addParentNode(rowNode.parent, [column as AgColumn]);
-            clientSideRowModel.doAggregate(changedPath);
-
-            // add all nodes impacted by aggregation, as they need refreshed also.
-            changedPath.forEachChangedNodeDepthFirst((rowNode) => {
-                nodesToRefresh.push(rowNode);
-                if (rowNode.sibling) {
-                    nodesToRefresh.push(rowNode.sibling);
-                }
-            });
+        if (!rootNode) {
+            return nodesToRefresh;
         }
+
+        // step 1 of change detection is to update the aggregated values
+        const onlyChangedColumns = gos.get('aggregateOnlyChangedColumns');
+        const changedPath = new ChangedPath(onlyChangedColumns, rootNode);
+        changedPath.addParentNode(rowNode.parent, [column as AgColumn]);
+        clientSideRowModel.doAggregate(changedPath);
+
+        // add all nodes impacted by aggregation, as they need refreshed also.
+        changedPath.forEachChangedNodeDepthFirst((rowNode) => {
+            nodesToRefresh.push(rowNode);
+            if (rowNode.sibling) {
+                nodesToRefresh.push(rowNode.sibling);
+            }
+            if (rowNode.pinnedSibling) {
+                nodesToRefresh.push(rowNode.pinnedSibling);
+            }
+        });
 
         // step 2 of change detection is to refresh the cells
         rowRenderer.refreshCells({ rowNodes: nodesToRefresh, suppressFlash: params?.suppressFlash });

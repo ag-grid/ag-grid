@@ -54,6 +54,25 @@ export function _isEditRowPosition(pos: any): pos is EditRowPosition {
     return pos && typeof pos.rowNode === 'object';
 }
 export interface IEditService extends NamedBean {
+    shouldStartEditing(
+        position: Required<EditPosition>,
+        event?: KeyboardEvent | MouseEvent | null,
+        cellStartedEdit?: boolean | null,
+        source?: EditSource
+    ): boolean | null;
+
+    shouldStopEditing(
+        position?: EditPosition,
+        event?: KeyboardEvent | MouseEvent | null | undefined,
+        source?: EditSource
+    ): boolean | null;
+
+    shouldCancelEditing(
+        position?: EditPosition,
+        event?: KeyboardEvent | MouseEvent | null | undefined,
+        source?: EditSource
+    ): boolean | null;
+
     setBatchEditing(enabled: boolean): void;
     isBatchEditing(): boolean;
     isEditing(position?: EditPosition | null, params?: IsEditingParams | null): boolean;

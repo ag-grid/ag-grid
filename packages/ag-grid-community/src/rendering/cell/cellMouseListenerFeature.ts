@@ -77,7 +77,7 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        if (editModelSvc?.getState(this.cellCtrl) !== 'editing') {
+        if (editSvc?.shouldStartEditing(this.cellCtrl, event) && editModelSvc?.getState(this.cellCtrl) !== 'editing') {
             editSvc?.startEditing(this.cellCtrl, { event });
         }
     }
@@ -101,7 +101,10 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        if (beans.editModelSvc?.getState(cellCtrl) !== 'editing') {
+        if (
+            editSvc?.shouldStartEditing(this.cellCtrl, event) &&
+            this.beans.editModelSvc?.getState(this.cellCtrl) !== 'editing'
+        ) {
             editSvc?.startEditing(cellCtrl, { event });
         }
     }

@@ -127,6 +127,7 @@ const gridOptions: GridOptions = {
                     enablePivot: true,
                     aggFunc: uniqOrDots,
                     rowGroup: true,
+                    rowDrag: true,
                     valueFormatter: (params) => {
                         node = params.node as IRowNode;
                         return params.value ?? '';

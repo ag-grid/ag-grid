@@ -4,7 +4,7 @@ import type { ICellStyleFeature } from '../../interfaces/iCellStyleFeature';
 import type { IEditModelService } from '../../interfaces/iEditModelService';
 import type { IEditService } from '../../interfaces/iEditService';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
-import { _valuesDiffer } from '../utils/editors';
+import { _hasEdits, _hasLeafEdits, _hasPinnedEdits } from './style-utils';
 
 export class CellEditStyleFeature extends BeanStub implements ICellStyleFeature {
     private cellComp: ICellComp;
@@ -31,8 +31,11 @@ export class CellEditStyleFeature extends BeanStub implements ICellStyleFeature 
 
     public applyCellStyles() {
         if (this.editSvc?.isBatchEditing() && this.editSvc.isEditing()) {
-            const edit = this.editModelSvc?.getEdit(this.cellCtrl);
-            this.applyStyle(edit?.state === 'changed' && _valuesDiffer(edit));
+            const state =
+                _hasEdits(this.beans, this.cellCtrl) ||
+                _hasLeafEdits(this.beans, this.cellCtrl) ||
+                _hasPinnedEdits(this.beans, this.cellCtrl);
+            this.applyStyle(state);
         } else {
             this.applyStyle(false);
         }

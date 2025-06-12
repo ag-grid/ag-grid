@@ -4,6 +4,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowNode } from '../entities/positionUtils';
+import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../interfaces/IRangeService';
@@ -199,7 +200,13 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     public isEditing(position?: EditPosition, params?: IsEditingParams): boolean {
-        return this.model.hasEdits(position, params) ?? false;
+        const nodeIsEditing = this.model.hasEdits(position, params);
+
+        const pinnedSibling = (position?.rowNode as RowNode)?.pinnedSibling;
+        const siblingIsEditing =
+            pinnedSibling && this.model.hasEdits({ rowNode: pinnedSibling, column: position?.column }, params);
+
+        return (nodeIsEditing || siblingIsEditing) ?? false;
     }
 
     public isRowEditing(position: EditRowPosition, params?: IsEditingParams): boolean {
@@ -278,6 +285,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             this.processEdits(freshEdits, cancel);
 
+            this.bulkRefresh(undefined, edits);
+
             edits = freshEdits;
 
             res ||= willStop;
@@ -297,6 +306,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 _destroyEditors(this.beans, this.model.getEditPositions());
 
                 event.preventDefault();
+
+                this.bulkRefresh(undefined, edits);
 
                 edits = this.model.getEditMap();
                 this.beans.rowRenderer.refreshRows({ suppressFlash: true });
@@ -416,16 +427,25 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         });
     }
 
-    public bulkRefresh(position?: EditPosition): void {
+    public bulkRefresh(position?: EditPosition, editMap?: EditMap): void {
         if (_isClientSideRowModel(this.gos, this.beans.rowModel)) {
             if (position?.rowNode && position.column) {
                 const edit = this.model.getEdit(position);
                 this.dispatchEditValuesChanged(position, edit);
                 return;
             }
-            this.beans.editModelSvc?.getEditMap(false).forEach((editRow, rowNode) => {
+            (editMap ?? this.beans.editModelSvc?.getEditMap(false))?.forEach((editRow, rowNode) => {
                 for (const column of editRow?.keys() || []) {
-                    this.dispatchEditValuesChanged({ rowNode, column }, editRow?.get(column));
+                    const edit = editRow?.get(column);
+                    this.dispatchEditValuesChanged({ rowNode, column }, edit);
+                    const pinnedSibling = (rowNode as RowNode).pinnedSibling;
+                    if (pinnedSibling) {
+                        this.dispatchEditValuesChanged({ rowNode: pinnedSibling, column }, edit);
+                    }
+                    const sibling = rowNode.sibling;
+                    if (sibling) {
+                        this.dispatchEditValuesChanged({ rowNode: sibling, column }, edit);
+                    }
                 }
             });
         }
@@ -492,7 +512,15 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return undefined;
         }
 
-        const newValue = this.model.getEdit({ rowNode, column })?.newValue;
+        let edit = this.model.getEdit({ rowNode, column });
+
+        const pinnedSibling = (rowNode as RowNode).pinnedSibling;
+        if (!edit && pinnedSibling) {
+            edit = this.model.getEdit({ rowNode: pinnedSibling, column });
+        }
+
+        const newValue = edit?.newValue;
+
         return newValue === UNEDITED ? this.valueSvc.getValue(column as AgColumn, rowNode, true, 'api') : newValue;
     }
 
