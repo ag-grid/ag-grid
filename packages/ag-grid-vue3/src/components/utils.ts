@@ -33,6 +33,7 @@ import type {
     GridState,
     HeaderPosition,
     IAdvancedFilterBuilderParams,
+    IAdvancedFilterParams,
     IAggFunc,
     IDatasource,
     IRowDragItem,

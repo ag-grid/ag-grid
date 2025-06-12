@@ -190,6 +190,16 @@ The Advanced Filter Model and API methods are demonstrated in the following exam
 
 {% gridExampleRunner title="Advanced Filter Model / API" name="advanced-filter-model-api" /%}
 
+## Configuring Advanced Filter
+
+The Advanced Filter can be configured using the `iAdvancedFilterParams` interface:
+
+{% interfaceDocumentation interfaceName="IAdvancedFilterParams" config={"description":"", "sortAlphabetically":true} /%}
+
+The params can be set via the grid option `advancedFilterParams`:
+
+{% apiDocumentation source="grid-options/properties.json" section="filter" names=["advancedFilterParams"] /%}
+
 ## Advanced Filter Parent
 
 By default the Advanced Filter is displayed underneath the Column Headers, where the Floating Filters would normally appear.

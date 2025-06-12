@@ -319,6 +319,7 @@ export {
 } from './interfaces/advancedFilterModel';
 export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilderParams';
+export { IAdvancedFilterParams } from './interfaces/iAdvancedFilterParams';
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
 export {

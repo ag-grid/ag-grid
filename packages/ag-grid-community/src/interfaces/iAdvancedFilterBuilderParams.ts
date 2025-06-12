@@ -37,6 +37,8 @@ export interface IAdvancedFilterBuilderParams {
      *  - `'clear'`: The Clear button will clear the filter in the builder without removing the current active filter.
      *  - `'reset'`: The Reset button will clear the filter and apply an empty filter.
      *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.
+     *
+     * @default ['apply', 'cancel']
      */
     buttons?: FilterAction[];
     /**
