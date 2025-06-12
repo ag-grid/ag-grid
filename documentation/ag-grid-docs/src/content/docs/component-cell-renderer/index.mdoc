@@ -276,6 +276,14 @@ The example below demonstrates a dynamic tooltip being displayed on Cell Compone
 
 {% gridExampleRunner title="Dynamic Tooltips" name="dynamic-tooltips" /%}
 
+### Defer Slow Cell Renderers
+
+If a Custom Cell Renderer is slow to render, it may make the grid appear unresponsive due to the Cell Renderer blocking the main thread. To avoid this set `cellRendererParams.deferRender = true`. Custom Cell Renderers that are deferred will be rendered after all other cells and if the grid is scrolling only after scrolling has finished. In the meantime, the loading cell renderer will be displayed.
+
+The loading cell renderer can be customised by providing a custom `loadingCellRenderer`.
+
+{% gridExampleRunner title="Slow Cell Renderer" name="slow-cell-renderer" /%}
+
 ### Keyboard Navigation
 
 When using custom Cell Components, the custom Cell Component is responsible for implementing support for keyboard navigation among its focusable elements. This is why by default, focusing a grid cell with a custom Cell Component will focus the entire cell instead of any of the elements inside the custom cell renderer.

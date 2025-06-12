@@ -1,0 +1,75 @@
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { RowNumbersModule } from 'ag-grid-enterprise';
+
+import { CustomLoadingCellRenderer } from './customLoadingCellRenderer_typescript';
+import { FastRenderer } from './fastRenderer_typescript';
+import { SlowRenderer } from './slowRenderer_typescript';
+
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    RowNumbersModule,
+    ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
+]);
+
+// Grid API: Access to Grid API methods
+let gridApi: GridApi<IOlympicData>;
+
+const gridOptions: GridOptions<IOlympicData> = {
+    rowNumbers: true,
+    rowBuffer: 5, // Reduce the row buffer to reduce number of slow cells to be rendered
+    // Columns to be displayed (Should match rowData properties)
+    columnDefs: [
+        {
+            field: 'athlete',
+        },
+        {
+            field: 'country',
+            headerName: 'Slow Renderer',
+            cellRenderer: SlowRenderer,
+            cellRendererParams: {
+                deferRender: true,
+            },
+        },
+        {
+            field: 'bronze',
+            headerName: 'Slow Renderer Custom Loading',
+            cellRenderer: SlowRenderer,
+            cellRendererParams: {
+                deferRender: true,
+            },
+            loadingCellRenderer: CustomLoadingCellRenderer,
+        },
+        {
+            field: 'gold',
+            headerName: 'Fast Renderer',
+            cellRenderer: FastRenderer,
+        },
+        {
+            field: 'country',
+        },
+        {
+            field: 'year',
+        },
+        {
+            field: 'sport',
+        },
+    ],
+    defaultColDef: {
+        width: 150,
+        autoHeaderHeight: true,
+        wrapHeaderText: true,
+    },
+};
+
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    gridApi = createGrid(gridDiv, gridOptions);
+
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then((data) => {
+            gridApi!.setGridOption('rowData', data);
+        });
+});
