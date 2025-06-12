@@ -4,7 +4,7 @@ import type {
     GridApi,
     GridOptions,
     GridReadyEvent,
-    IAdvancedFilterBuilderParams,
+    IAdvancedFilterParams,
 } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -59,10 +59,9 @@ const initialAdvancedFilterModel: AdvancedFilterModel = {
     ],
 };
 
-const advancedFilterBuilderParams: IAdvancedFilterBuilderParams = {
-    showMoveButtons: true,
-    hideFullScreenButton: true,
-    buttons: ['clear', 'apply', 'cancel'],
+const advancedFilterParams: IAdvancedFilterParams = {
+    buttons: ['clear', 'apply', 'reset'],
+    hideBuilderButton: true,
 };
 
 let gridApi: GridApi<IOlympicData>;
@@ -89,7 +88,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             advancedFilterModel: initialAdvancedFilterModel,
         },
     },
-    advancedFilterBuilderParams: advancedFilterBuilderParams,
+    advancedFilterParams: advancedFilterParams,
     onAdvancedFilterBuilderVisibleChanged: onAdvancedFilterBuilderVisibleChanged,
     onGridReady: (params: GridReadyEvent) => {
         // Could also be provided via grid option `advancedFilterParent`.
@@ -112,10 +111,6 @@ function onAdvancedFilterBuilderVisibleChanged(event: AdvancedFilterBuilderVisib
 function onFilterChanged() {
     const advancedFilterApplied = !!gridApi!.getAdvancedFilterModel();
     document.getElementById('advancedFilterIcon')!.classList.toggle('filter-icon-disabled', !advancedFilterApplied);
-}
-
-function showBuilder() {
-    gridApi!.showAdvancedFilterBuilder();
 }
 
 // setup the grid after the page has finished loading

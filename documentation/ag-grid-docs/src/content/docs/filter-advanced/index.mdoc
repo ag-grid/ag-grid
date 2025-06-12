@@ -192,6 +192,8 @@ The Advanced Filter Model and API methods are demonstrated in the following exam
 
 ## Configuring Advanced Filter
 
+It is possible to customise the buttons displayed in the Advanced Filter, allowing for the use of other Filter Buttons such as Reset, Cancel and Clear.
+
 The Advanced Filter can be configured using the `iAdvancedFilterParams` interface:
 
 {% interfaceDocumentation interfaceName="IAdvancedFilterParams" config={"description":"", "sortAlphabetically":true} /%}
@@ -199,6 +201,14 @@ The Advanced Filter can be configured using the `iAdvancedFilterParams` interfac
 The params can be set via the grid option `advancedFilterParams`:
 
 {% apiDocumentation source="grid-options/properties.json" section="filter" names=["advancedFilterParams"] /%}
+
+The following example demonstrates configuring the Advanced Filter:
+
+* The `Builder` button has been removed, and the Advanced Filter Builder must now be opened via the API.
+* The `buttons` have been configured to add the Clear and Reset buttons.
+
+{% gridExampleRunner title="Configuring Advanced Filter" name="configuring-advanced-filter" /%}
+
 
 ## Advanced Filter Parent
 
