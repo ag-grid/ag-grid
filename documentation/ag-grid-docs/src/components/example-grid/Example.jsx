@@ -359,93 +359,22 @@ const desktopDefaultCols = [
     },
 ];
 
-const createTooltip = (prop) => ({
-    renderer: (params) => ({
-        content: '$' + formatThousands(Math.round(params.datum[params[prop]])),
-    }),
-});
-
 const pieSeriesThemeOverrides = {
     series: {
         calloutLabel: {
             enabled: false,
         },
-        tooltip: createTooltip('angleKey'),
-    },
-};
-
-const createThemeOverrides = (tooltipProp) => ({
-    series: {
-        tooltip: createTooltip(tooltipProp),
-    },
-});
-
-const cartesianSeriesThemeOverrides = createThemeOverrides('yKey');
-const polarSeriesThemeOverrides = createThemeOverrides('radiusKey');
-
-const scatterSeriesThemeOverrides = {
-    series: {
-        tooltip: {
-            renderer: (params) => {
-                const label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
-                const xValue = params.xName + ': $' + formatThousands(params.datum[params.xKey]);
-                const yValue = params.yName + ': $' + formatThousands(params.datum[params.yKey]);
-                let size = '';
-                if (params.sizeKey) {
-                    size = '<br>' + params.sizeName + ': $' + formatThousands(params.datum[params.sizeKey]);
-                }
-                return {
-                    content: label + xValue + '<br>' + yValue + size,
-                };
-            },
-        },
-    },
-};
-
-const gradientLegendThemeOverrides = {
-    scale: {
-        label: {
-            formatter: ({ value }) => {
-                const num = Number(value);
-                return isNaN(num) ? value : '$' + formatThousands(num);
-            },
-        },
     },
 };
 
 const hierarchicalSeriesThemeOverrides = {
-    series: {
-        tooltip: {
-            renderer: (params) => {
-                // temporary workaround until fixed in standalone
-                if (!params.sizeName) {
-                    return {};
-                }
-                const findDatum = (datum) => (datum.children ? findDatum(datum.children[0]) : datum);
-                const datum = findDatum(params.datum);
-                const sizeValue = params.sizeName + ': $' + formatThousands(datum[params.sizeKey]);
-                let colorValue = '';
-                if (params.colorKey) {
-                    colorValue = params.colorName + ': $' + formatThousands(datum[params.colorKey]);
-                }
-                return {
-                    content: sizeValue + '<br>' + colorValue,
-                };
-            },
-        },
-    },
-    gradientLegend: gradientLegendThemeOverrides,
-};
-
-const rangeSeriesThemeOverrides = {
-    series: {
-        tooltip: {
-            renderer: ({ xName, xKey, yLowName, yLowKey, yHighName, yHighKey, datum }) => {
-                return {
-                    content:
-                        `${xName}: ${datum[xKey]}<br>${yLowName}: $${formatThousands(datum[yLowKey])}<br>` +
-                        `${yHighName}: $${formatThousands(datum[yHighKey])}`,
-                };
+    gradientLegend: {
+        scale: {
+            label: {
+                formatter: ({ value }) => {
+                    const num = Number(value);
+                    return isNaN(num) ? value : '$' + formatThousands(num);
+                },
             },
         },
     },
@@ -473,78 +402,8 @@ const chartThemeOverrides = {
     },
     pie: pieSeriesThemeOverrides,
     donut: pieSeriesThemeOverrides,
-    bar: cartesianSeriesThemeOverrides,
-    line: cartesianSeriesThemeOverrides,
-    area: cartesianSeriesThemeOverrides,
-    scatter: scatterSeriesThemeOverrides,
-    bubble: scatterSeriesThemeOverrides,
-    'radial-column': polarSeriesThemeOverrides,
-    'radial-bar': createThemeOverrides('angleKey'),
-    'radar-line': polarSeriesThemeOverrides,
-    'radar-area': polarSeriesThemeOverrides,
-    nightingale: polarSeriesThemeOverrides,
-    histogram: {
-        series: {
-            tooltip: {
-                renderer: (params) => ({
-                    title:
-                        (params.xName || params.xKey) +
-                        ': $' +
-                        formatThousands(params.datum.domain[0]) +
-                        ' - $' +
-                        formatThousands(params.datum.domain[1]),
-                    // With a yKey, the value is the total of the yKey value for the population of the bin.
-                    // Without a yKey, the value is a count of the population of the bin.
-                    content: params.yKey ? formatThousands(Math.round(params.datum.total)) : params.datum.frequency,
-                }),
-            },
-        },
-    },
     treemap: hierarchicalSeriesThemeOverrides,
     sunburst: hierarchicalSeriesThemeOverrides,
-    heatmap: {
-        series: {
-            tooltip: {
-                renderer: ({ xKey, yKey, colorKey, yName, datum }) => {
-                    return {
-                        title: '',
-                        content: `<b>${yName}:</b> ${datum[yKey]}<br><b>${datum[xKey]}:</b> $${formatThousands(datum[colorKey])}`,
-                    };
-                },
-            },
-        },
-        gradientLegend: gradientLegendThemeOverrides,
-    },
-    'box-plot': {
-        series: {
-            tooltip: {
-                renderer: ({
-                    xName,
-                    xKey,
-                    minName,
-                    minKey,
-                    q1Name,
-                    q1Key,
-                    medianName,
-                    medianKey,
-                    q3Name,
-                    q3Key,
-                    maxName,
-                    maxKey,
-                    datum,
-                }) => {
-                    return {
-                        content:
-                            `${xName}: ${datum[xKey]}<br>${minName}: $${formatThousands(datum[minKey])}<br>` +
-                            `${q1Name}: $${formatThousands(datum[q1Key])}<br>${medianName}: $${formatThousands(datum[medianKey])}<br>` +
-                            `${q3Name}: $${formatThousands(datum[q3Key])}<br>${maxName}: $${formatThousands(datum[maxKey])}`,
-                    };
-                },
-            },
-        },
-    },
-    'range-bar': rangeSeriesThemeOverrides,
-    'range-area': rangeSeriesThemeOverrides,
 };
 
 const ExampleInner = ({ darkMode }) => {
