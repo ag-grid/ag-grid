@@ -265,11 +265,10 @@
     cursor: default;
 }
 
-.ag-advanced-filter-builder-validation .ag-advanced-filter-builder-invalid {
+:where(.ag-advanced-filter-builder-validation) .ag-advanced-filter-builder-invalid {
     color: var(--ag-invalid-color);
 }
 
-:where(.ag-advanced-filter-builder-virtual-list-item-highlight) .ag-advanced-filter-builder-item-button:focus-visible,
-:where(.ag-advanced-filter-builder-validation) .ag-advanced-filter-builder-invalid {
+:where(.ag-advanced-filter-builder-virtual-list-item-highlight) .ag-advanced-filter-builder-item-button:focus-visible {
     opacity: 1;
 }
