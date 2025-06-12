@@ -793,6 +793,7 @@ export {
     SortState,
     GridStateKey,
     NewFiltersToolPanelState,
+    NewFiltersToolPanelFilterState,
 } from './interfaces/gridState';
 export { convertColumnGroupState, convertColumnState } from './misc/state/stateUtils';
 

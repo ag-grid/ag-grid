@@ -59,8 +59,13 @@ export interface ColumnToolPanelState {
     expandedGroupIds: string[];
 }
 
+export interface NewFiltersToolPanelFilterState {
+    colId: string;
+    expanded?: boolean;
+}
+
 export interface NewFiltersToolPanelState {
-    // TODO
+    filters?: NewFiltersToolPanelFilterState[];
 }
 
 export interface SideBarState {

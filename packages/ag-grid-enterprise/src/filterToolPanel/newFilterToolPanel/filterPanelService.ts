@@ -7,6 +7,8 @@ import type {
     IFilterPanelService,
     IToolPanelNewFiltersCompParams,
     NamedBean,
+    NewFiltersToolPanelFilterState,
+    NewFiltersToolPanelState,
     SelectableFilterDef,
 } from 'ag-grid-community';
 import { BeanStub, FilterComp } from 'ag-grid-community';
@@ -28,11 +30,16 @@ export class FilterPanelService
     private states: Map<string, StateWrapper> = new Map();
     private orderedStates: string[] = [];
     private params?: IToolPanelNewFiltersCompParams;
+    private initialStateApplied: boolean = false;
+    private initialState?: NewFiltersToolPanelState;
 
     public postConstruct(): void {
         const updateFilterStates = this.updateFilterStates.bind(this);
         this.addManagedEventListeners({
-            newColumnsLoaded: updateFilterStates,
+            newColumnsLoaded: () => {
+                this.applyInitialState();
+                updateFilterStates();
+            },
             filterChanged: updateFilterStates,
         });
         this.addManagedListeners(this.beans.colFilter!, {
@@ -179,20 +186,36 @@ export class FilterPanelService
         this.beans.colFilter?.updateAllModels(action);
     }
 
-    public updateParams(params: IToolPanelNewFiltersCompParams): void {
+    public updateParams(params: IToolPanelNewFiltersCompParams, initialState?: NewFiltersToolPanelState): void {
         this.params = params;
+        if (initialState) {
+            this.initialState = initialState;
+        }
         this.dispatchStatesUpdates();
         this.beans.colFilter?.setGlobalButtons(!!params.buttons?.length);
     }
 
-    private createFilter(id: string): void {
+    public getGridState(): NewFiltersToolPanelState {
+        const filters: NewFiltersToolPanelFilterState[] = [];
+        this.states.forEach((stateWrapper, colId) => {
+            filters.push({
+                colId,
+                expanded: stateWrapper.state.expanded,
+            });
+        });
+        return {
+            filters,
+        };
+    }
+
+    private createFilter(id: string, expanded?: boolean): void {
         const { colModel, colFilter } = this.beans;
         const column = colModel.getColById(id);
 
         if (column) {
             const handler = colFilter!.getHandler(column, true);
             if (handler) {
-                const filterState = this.createFilterState(column, handler);
+                const filterState = this.createFilterState(column, handler, expanded);
                 this.states.set(column.getColId(), filterState);
                 this.orderedStates.push(id);
             }
@@ -269,12 +292,22 @@ export class FilterPanelService
         });
     }
 
+    private applyInitialState(): void {
+        if (this.initialStateApplied) {
+            return;
+        }
+        this.initialStateApplied = true;
+        this.initialState?.filters?.forEach(({ colId, expanded }) => this.createFilter(colId, expanded));
+        this.initialState = undefined;
+    }
+
     public override destroy(): void {
         const { states, orderedStates } = this;
         states.forEach((state) => state.destroy?.());
         states.clear();
         orderedStates.length = 0;
         this.params = undefined;
+        this.initialState = undefined;
         super.destroy();
     }
 }

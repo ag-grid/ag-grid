@@ -6,15 +6,36 @@ import type { FilterAction, FilterWrapperParams, IFilterDef } from './iFilter';
 import type { IToolPanel, IToolPanelNewFiltersCompParams } from './iToolPanel';
 
 export interface SelectableFilterDef {
-    /** Required for custom filters */
+    /**
+     * Name that will be displayed in the filter card dropdown.
+     * Required for custom filters
+     */
     name?: string;
+    /**
+     * Filter to use for this column.
+     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
+     * - Set to a `ColumnFilter`
+     */
     filter: any;
+    /** Params to be passed to the filter component specified in `filter`. */
     filterParams?: any;
+    /**
+     * Function or expression. Gets the value for filtering purposes.
+     * Allows for different values to be used for different filters
+     * instead of using `colDef.filterValueGetter`.
+     */
     filterValueGetter?: string | ValueGetterFunc;
 }
 
 export interface SelectableFilterParams {
+    /**
+     * List of possible filters which will show in the filter card.
+     * If not provided, will default to grid-provided filters
+     */
     filters?: SelectableFilterDef[];
+    /**
+     * Params which will be passed to all filters
+     */
     defaultFilterParams?: FilterWrapperParams;
 }
 
@@ -51,7 +72,8 @@ export interface IFilterPanelService extends IEventEmitter<'filterPanelStateChan
     updateType(id: string, filterDef: SelectableFilterDef): void;
     getActions(): { actions: FilterAction[]; canApply: boolean } | undefined;
     doAction(action: FilterAction): void;
-    updateParams(params: IToolPanelNewFiltersCompParams): void;
+    updateParams(params: IToolPanelNewFiltersCompParams, initialState?: NewFiltersToolPanelState): void;
+    getGridState(): NewFiltersToolPanelState;
 }
 
 export interface ISelectableFilterService {

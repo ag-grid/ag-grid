@@ -28,10 +28,13 @@ export class WrapperToolPanel extends Component implements INewFiltersToolPanel,
             _warn(282);
             return;
         }
-        this.refresh(params);
+        this.updateParams(params, params.initialState);
         const filterPanel = this.createManagedBean(new FilterPanel());
         this.filterPanel = filterPanel;
-        const refresh = (event?: FilterPanelRefreshParams) => filterPanel.refresh(event);
+        const refresh = (event?: FilterPanelRefreshParams) => {
+            filterPanel.refresh(event);
+            params.onStateUpdated();
+        };
         refresh();
         this.addManagedListeners(this.beans.filterPanelSvc!, {
             filterPanelStatesChanged: refresh,
@@ -44,11 +47,15 @@ export class WrapperToolPanel extends Component implements INewFiltersToolPanel,
     }
 
     public refresh(params: ToolPanelNewFiltersCompParams): boolean | void {
-        this.beans.filterPanelSvc?.updateParams(params);
+        this.updateParams(params);
         return true;
     }
 
+    private updateParams(params: ToolPanelNewFiltersCompParams, initialState?: NewFiltersToolPanelState): void {
+        this.beans.filterPanelSvc?.updateParams(params, initialState);
+    }
+
     public getState(): NewFiltersToolPanelState {
-        return {};
+        return this.beans.filterPanelSvc?.getGridState() ?? {};
     }
 }

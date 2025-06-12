@@ -14,6 +14,9 @@ export type IFloatingFilterType = string | { new (): IFloatingFilterComp };
 export interface DoesFilterPassParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
     extends IDoesFilterPassParams<TData> {
     model: TModel;
+    /**
+     * Utility params that would be passed to the handler, including `getValue` which provides access to the cell values.
+     */
     handlerParams: FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams>;
 }
 
