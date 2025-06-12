@@ -9,9 +9,7 @@ import { AgAbstractCellEditor, _addGridCommonParams, _missing, _warn } from 'ag-
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 
-export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> extends AgAbstractCellEditor<
-    RichCellEditorParams<TData, TValue>
-> {
+export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> extends AgAbstractCellEditor<any> {
     private focusAfterAttached: boolean;
     protected eEditor: AgRichSelect<TValue>;
     private isAsync: boolean = false;

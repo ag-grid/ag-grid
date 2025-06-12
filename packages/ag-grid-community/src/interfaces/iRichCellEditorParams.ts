@@ -1,5 +1,5 @@
 import type { AgPickerFieldParams } from './agFieldParams';
-import type { BaseCellEditorParams, ICellEditorParams } from './iCellEditor';
+import type { ICellEditorParams } from './iCellEditor';
 import type { ICellEditorRendererParams } from './iCellEditorRenderer';
 
 export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRendererParams<TValue> {}
@@ -113,4 +113,4 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
 
 export interface RichCellEditorParams<TData = any, TValue = any, TContext = any>
     extends IRichCellEditorParams<TData, TValue>,
-        BaseCellEditorParams<TData, TValue, TContext> {}
+        Omit<ICellEditorParams<TData, TValue, TContext>, 'formatValue' | 'parseValue'> {}

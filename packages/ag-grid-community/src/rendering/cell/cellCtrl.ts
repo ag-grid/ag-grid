@@ -217,7 +217,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public disableEditorTooltipFeature(): void {
-        this.editorTooltipFeature = this.beans.context.destroyBean(this.tooltipFeature);
+        this.editorTooltipFeature = this.beans.context.destroyBean(this.editorTooltipFeature);
     }
 
     public setComp(

@@ -392,7 +392,6 @@ export type { IRowNumbersService } from './interfaces/rowNumbers';
 export {
     ICellEditor,
     ICellEditorComp,
-    BaseCellEditorParams,
     ICellEditorParams,
     BaseCellEditor,
     GetCellEditorInstancesParams,

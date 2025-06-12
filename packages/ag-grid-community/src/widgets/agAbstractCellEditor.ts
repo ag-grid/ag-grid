@@ -1,8 +1,8 @@
-import type { BaseCellEditorParams, ICellEditorComp } from '../interfaces/iCellEditor';
+import type { ICellEditorComp, ICellEditorParams } from '../interfaces/iCellEditor';
 import type { AgAbstractField } from './agAbstractField';
 import { PopupComponent } from './popupComponent';
 
-export abstract class AgAbstractCellEditor<P extends BaseCellEditorParams = any, TValue = any>
+export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TValue = any>
     extends PopupComponent
     implements ICellEditorComp
 {

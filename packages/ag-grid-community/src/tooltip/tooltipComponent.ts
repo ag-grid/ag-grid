@@ -61,6 +61,6 @@ export class TooltipComponent extends PopupComponent implements ITooltipComp {
 
         eGui.textContent = _toString(value) as string;
         const locationKebabCase = params.location.replace(/([a-z])([A-Z0-9])/g, '$1-$2').toLowerCase();
-        eGui.classList.add(`ag-${locationKebabCase}`);
+        eGui.classList.add(`ag-${locationKebabCase}-tooltip`);
     }
 }
