@@ -9,10 +9,15 @@ const matches = {
     // 'ag-grid-angular': 'angular',
     'ag-grid-react': 'react',
     'ag-grid-vue3': 'vue',
+    'angular-package-tests': 'angular',
+    'react-package-tests': 'react',
+    'vue-package-tests': 'vue',
 };
 
 const result = { framework: [] };
-const affectedProjects = execSync('yarn nx show projects --affected -t pack', { encoding: 'utf-8' }).split('\n');
+const affectedProjects = execSync('yarn nx show projects --affected -t pack -t test:package', {
+    encoding: 'utf-8',
+}).split('\n');
 
 for (const packageName in matches) {
     if (affectedProjects.includes(packageName)) {
