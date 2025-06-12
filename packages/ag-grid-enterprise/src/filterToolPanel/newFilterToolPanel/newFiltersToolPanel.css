@@ -1,15 +1,16 @@
 .ag-filter-panel {
     display: flex;
     flex-direction: column;
-    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     width: 100%;
+    row-gap: var(--ag-widget-container-vertical-padding);
+    padding-bottom: var(--ag-widget-container-vertical-padding);
 }
 
 /** These all need different styling when used within the new filter tool panel compared to the existing use case within the legacy filter tool panel or column menu  */
 
 /* stylelint-disable-next-line selector-max-specificity */
 .ag-filter-panel .ag-filter-apply-panel {
-    padding: 0;
+    padding: 0 var(--ag-widget-container-horizontal-padding);
     flex-wrap: wrap;
     gap: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
 }
@@ -39,6 +40,8 @@
 
 .ag-filter-panel-container {
     flex: 1;
+    overflow: auto;
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding) 0;
 }
 
 .ag-filter-panel-container > *:where(:not(:last-child)) {
@@ -114,6 +117,7 @@
     width: 100%;
     padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     align-items: center;
+    line-height: 1.5;
 }
 
 .ag-filter-add-button-label {
@@ -126,5 +130,15 @@
     /* stylelint-disable-next-line selector-max-specificity */
     .ag-text-field-input {
         padding-left: calc(var(--ag-spacing) * 1.5 + 12px) !important;
+    }
+
+    /* stylelint-disable-next-line selector-max-specificity */
+    .ag-rich-select-value {
+        padding: calc(
+                ((1.5 * var(--ag-font-size) + 2 * var(--ag-widget-container-vertical-padding)) - var(--ag-input-height)) /
+                    2
+            )
+            var(--ag-spacing);
+        border: 0;
     }
 }
