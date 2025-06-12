@@ -1,11 +1,10 @@
 import { KeyCode } from '../../constants/keyCode';
-import type { ICellEditorComp } from '../../interfaces/iCellEditor';
 import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
+import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
 import type { AgInputTextArea } from '../../widgets/agInputTextArea';
 import { AgInputTextAreaSelector } from '../../widgets/agInputTextArea';
 import { RefPlaceholder } from '../../widgets/component';
-import { PopupComponent } from '../../widgets/popupComponent';
 import type { ILargeTextEditorParams } from './iLargeTextCellEditor';
 
 const LargeTextCellElement: ElementParams = {
@@ -14,31 +13,31 @@ const LargeTextCellElement: ElementParams = {
     children: [
         {
             tag: 'ag-input-text-area',
-            ref: 'eTextArea',
+            ref: 'eEditor',
             cls: 'ag-large-text-input',
         },
     ],
 };
-export class LargeTextCellEditor extends PopupComponent implements ICellEditorComp {
-    private readonly eTextArea: AgInputTextArea = RefPlaceholder;
-    private params: ILargeTextEditorParams;
+export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorParams> {
+    protected readonly eEditor: AgInputTextArea = RefPlaceholder;
     private focusAfterAttached: boolean;
 
     constructor() {
         super(LargeTextCellElement, [AgInputTextAreaSelector]);
     }
 
-    public init(params: ILargeTextEditorParams): void {
-        this.params = params;
-        this.focusAfterAttached = params.cellStartedEdit;
+    public initialiseEditor(params: ILargeTextEditorParams): void {
+        const { eEditor } = this;
+        const { cellStartedEdit, value, maxLength, cols, rows } = params;
+        this.focusAfterAttached = cellStartedEdit;
 
-        this.eTextArea
-            .setMaxLength(params.maxLength || 200)
-            .setCols(params.cols || 60)
-            .setRows(params.rows || 10);
+        eEditor
+            .setMaxLength(maxLength || 200)
+            .setCols(cols || 60)
+            .setRows(rows || 10);
 
-        if (params.value != null) {
-            this.eTextArea.setValue(params.value.toString(), true);
+        if (value != null) {
+            eEditor.setValue(value.toString(), true);
         }
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
@@ -63,19 +62,50 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
     public afterGuiAttached(): void {
         const translate = this.getLocaleTextFunc();
 
-        this.eTextArea.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
+        this.eEditor.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
 
         if (this.focusAfterAttached) {
-            this.eTextArea.getFocusableElement().focus();
+            this.eEditor.getFocusableElement().focus();
         }
     }
 
     public getValue(): any {
-        const value = this.eTextArea.getValue();
-        const params = this.params;
-        if (!_exists(value) && !_exists(params.value)) {
-            return params.value;
+        const { eEditor, params } = this;
+        const { value } = params;
+        const editorValue = eEditor.getValue();
+
+        if (!_exists(editorValue) && !_exists(value)) {
+            return value;
         }
-        return params.parseValue(value!);
+        return params.parseValue(editorValue!);
+    }
+
+    public getValidationElement(): HTMLElement | HTMLInputElement {
+        return this.eEditor.getInputElement();
+    }
+
+    public getErrors() {
+        const { params } = this;
+        const { maxLength, getErrors } = params;
+        const value = this.getValue();
+        let internalErrors: string[] | null = [];
+
+        if (typeof value === 'string' && maxLength != null && value.length > maxLength) {
+            internalErrors.push(`Must be ${maxLength} characters or fewer.`);
+        }
+
+        if (!internalErrors.length) {
+            internalErrors = null;
+        }
+
+        if (getErrors) {
+            return getErrors({
+                value,
+                internalErrors,
+                cellEditorParams: params,
+            });
+        }
+
+        return internalErrors;
     }
 }

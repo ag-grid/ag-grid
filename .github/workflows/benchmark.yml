@@ -19,6 +19,8 @@ env:
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
   YARN_REGISTRY: "http://52.50.158.57:4873"
   CI: true
+  SLACK_FILE: ./benchmark-slack.json
+  COMMENT_FILE: ./benchmark-comment.txt
 
 jobs:
   benchmark:
@@ -118,8 +120,25 @@ jobs:
         id: playwright-test
         continue-on-error: true
         if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+        run: npx playwright test -c ./testing/performance/playwright.config.ts ./testing/performance/e2e
+
+      - name: Upload Benchmark Report
+        id: upload-report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Prepare messages
+        id: prepare-messages
+        if: ${{ !cancelled() }}
+        env:
+          REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
         run: |
-          echo "stdout=\"$(npx playwright test -c ./testing/performance/playwright.config.ts ./testing/performance/e2e)\"" >> $GITHUB_OUTPUT
+          node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs
+          echo "comment='$(cat ${{ COMMENT_FILE }})'" >> $GITHUB_OUTPUT
 
       - name: Slack Notification
         continue-on-error: true
@@ -131,56 +150,24 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
           SLACK_COLOR: ${{ steps.playwright-test.outputs.status != 'failure' && 'success' || 'failure' }}
         run: |
-          node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs > ./benchmark-slack.json
-          curl -X POST -H 'Content-type: application/json' ${{ secrets.CI_GATE_WEBHOOK }} --data @./benchmark-slack.json
-
-
-      - name: Upload Benchmark Report
-        id: upload-report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
+          curl -X POST -H 'Content-type: application/json' ${{ secrets.CI_GATE_WEBHOOK }} --data @${{ SLACK_FILE }}
 
       - name: Notify Success
         uses: actions/github-script@v7
         continue-on-error: true
-        if: success() && github.event_name == 'issue_comment'
+        if: github.event_name == 'issue_comment'
         env:
-          OUTPUT: ${{ steps.playwright-test.outputs.stdout }}
+          IS_SUCCESS: ${{ success() || '' }}
+          COMMENT: ${{ steps.prepare-messages.outputs.comment }}
           REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
         with:
           script: |
-            const body = `✅ ${process.env.JOB_URL}
+            const body = (process.env.IS_SUCCESS ? `✅ ${process.env.JOB_URL}` : `❌ ${process.env.JOB_URL}`) + `
             Benchmark report: ${process.env.REPORT_URL}
             \`\`\`
-            ${process.env.OUTPUT}
+            ${process.env.COMMENT}
             \`\`\``;
 
-            github.rest.issues.updateComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: ${{ steps.notify-start.outputs.result }},
-              body,
-            })
-
-      - name: Notify Failure
-        uses: actions/github-script@v7
-        continue-on-error: true
-        if: failure() && github.event_name == 'issue_comment'
-        env:
-          OUTPUT: ${{ steps.playwright-test.outputs.stdout }}
-          REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
-        with:
-          script: |
-            const body = `❌ ${process.env.JOB_URL}
-            Benchmark report (if available): ${process.env.REPORT_URL}
-            \`\`\`
-            ${process.env.OUTPUT}
-            \`\`\``;
-            
             github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,

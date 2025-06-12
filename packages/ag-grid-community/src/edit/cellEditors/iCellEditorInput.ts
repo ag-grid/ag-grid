@@ -9,5 +9,6 @@ export interface CellEditorInput<TValue, P extends ICellEditorParams, I extends 
     init(eInput: I, params: P): void;
     getValue(): TValue | null | undefined;
     getStartValue(): string | null | undefined;
+    getErrors(): string[] | null;
     setCaret?(): void;
 }

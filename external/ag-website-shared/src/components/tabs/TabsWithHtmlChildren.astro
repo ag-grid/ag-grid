@@ -130,7 +130,7 @@ const { tabItemIdPrefix, headerLinks, snippetTabs } = Astro.props as Props;
                 (selectedTab as HTMLElement).style.display = 'block';
             }
 
-            // Nav content labeledby
+            // Nav content labelledby
             const label = `${this.selected.label} tab`;
             this.querySelector(TABS_CONTENT_SELECTOR)?.setAttribute('aria-labelledby', label);
         }

@@ -6,7 +6,7 @@ on:
         - cron: '0 0 * * *' # Run daily at midnight UTC
 
 jobs:
-    security-all-projects:
+    code-dependency-scan:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -20,7 +20,7 @@ jobs:
               with:
                   snyk_token: ${{ secrets.SNYK_TOKEN }}
 
-    code-security:
+    sast-code-scan:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout

@@ -5,7 +5,7 @@ import type { AgEventType } from '../eventTypes';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { CellRange } from './IRangeService';
-import type { ICellEditorParams } from './iCellEditor';
+import type { ICellEditorParams, ICellEditorValidationError } from './iCellEditor';
 import type { Column } from './iColumn';
 import type { EditMap } from './iEditModelService';
 import type { IRowNode } from './iRowNode';
@@ -89,4 +89,5 @@ export interface IEditService extends NamedBean {
     ): void;
     dispatchRowEvent(position: Required<EditRowPosition>, type: 'rowEditingStarted' | 'rowEditingStopped'): void;
     applyBulkEdit(position: Required<EditPosition>, cellRanges: CellRange[]): void;
+    validateEdit(): ICellEditorValidationError[] | null;
 }

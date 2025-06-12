@@ -20,4 +20,4 @@ runs:
           env:
               SNYK_TOKEN: ${{ inputs.snyk_token }}
           with:
-              args: --yarn-workspaces --strict-out-of-sync=false --severity-threshold=${{ inputs.severity_threshold }} --exclude=${{ inputs.exclude }}
+              args: --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=${{ inputs.severity_threshold }} --exclude=${{ inputs.exclude }}

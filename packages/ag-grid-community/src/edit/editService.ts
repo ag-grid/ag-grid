@@ -6,7 +6,7 @@ import { _getRowNode } from '../entities/positionUtils';
 import type { AgEventType } from '../eventTypes';
 import type { CellRange, IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
-import type { ICellEditorParams } from '../interfaces/iCellEditor';
+import type { ICellEditorParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
 import type { EditMap, EditRow, IEditModelService } from '../interfaces/iEditModelService';
 import type {
     EditPosition,
@@ -34,6 +34,7 @@ import {
     _syncFromEditor,
     _syncFromEditors,
     _valuesDiffer,
+    getCellEditorInstanceMap,
 } from './utils/editors';
 import { _refreshEditCells } from './utils/refresh';
 
@@ -49,7 +50,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     private strategy?: BaseEditStrategy;
     private includeParents: boolean = true;
 
-    postConstruct(): void {
+    public postConstruct(): void {
         this.model = this.beans.editModelSvc!;
         this.valueSvc = this.beans.valueSvc;
         this.rangeSvc = this.beans.rangeSvc!;
@@ -110,7 +111,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         this.strategy = this.destroyBean(this.strategy);
     }
 
-    shouldStartEditing(
+    public shouldStartEditing(
         position: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null,
         cellStartedEdit?: boolean | null,
@@ -119,7 +120,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return this.strategy?.shouldStart(position, event, cellStartedEdit, source) ?? null;
     }
 
-    shouldStopEditing(
+    public shouldStopEditing(
         position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
@@ -127,12 +128,51 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return this.strategy?.shouldStop(position, event, source) ?? null;
     }
 
-    shouldCancelEditing(
+    public shouldCancelEditing(
         position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
         return this.strategy?.shouldCancel(position, event, source) ?? null;
+    }
+
+    public validateEdit(): ICellEditorValidationError[] | null {
+        const mappedEditors = getCellEditorInstanceMap(this.beans);
+
+        if (!mappedEditors || mappedEditors.length === 0) {
+            return null;
+        }
+
+        const errors: ICellEditorValidationError[] = [];
+
+        for (const mappedEditor of mappedEditors) {
+            const { ctrl, editor } = mappedEditor;
+            const { rowNode, column } = ctrl;
+            const { rowIndex, rowPinned } = rowNode;
+            const errorMessages = editor.getErrors?.();
+            const el = editor.getValidationElement?.();
+
+            ctrl.refreshEditorTooltip();
+
+            if (el) {
+                if (el instanceof HTMLInputElement) {
+                    el.setCustomValidity(errorMessages ? errorMessages.join('. ') : '');
+                } else {
+                    el.classList.toggle('invalid', errorMessages != null && errorMessages.length > 0);
+                }
+            }
+
+            if (errorMessages) {
+                errors.push({
+                    column,
+                    rowIndex: rowIndex!,
+                    rowPinned,
+                    messages: errorMessages,
+                });
+            }
+        }
+
+        return errors.length ? errors : null;
     }
 
     public isEditing(position?: EditPosition, params?: IsEditingParams): boolean {
@@ -364,7 +404,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return this.strategy?.isCellEditable(position, source) ?? false;
     }
 
-    moveToNextCell(
+    public moveToNextCell(
         prev: CellCtrl | RowCtrl,
         backwards: boolean,
         event?: KeyboardEvent,

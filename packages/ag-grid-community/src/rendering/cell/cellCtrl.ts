@@ -108,6 +108,7 @@ export class CellCtrl extends BeanStub {
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
     private tooltipFeature: TooltipFeature | undefined = undefined;
+    private editorTooltipFeature: TooltipFeature | undefined = undefined;
     private mouseListener: CellMouseListenerFeature | undefined = undefined;
     private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
 
@@ -185,6 +186,7 @@ export class CellCtrl extends BeanStub {
     private removeFeatures(): void {
         const context = this.beans.context;
         this.positionFeature = context.destroyBean(this.positionFeature);
+        this.editorTooltipFeature = context.destroyBean(this.editorTooltipFeature);
         this.customStyleFeature = context.destroyBean(this.customStyleFeature);
         this.mouseListener = context.destroyBean(this.mouseListener);
         this.keyboardListener = context.destroyBean(this.keyboardListener);
@@ -200,6 +202,22 @@ export class CellCtrl extends BeanStub {
 
     private disableTooltipFeature() {
         this.tooltipFeature = this.beans.context.destroyBean(this.tooltipFeature);
+    }
+
+    public enableEditorTooltipFeature(editor: ICellEditor): void {
+        if (this.editorTooltipFeature) {
+            this.disableEditorTooltipFeature();
+        }
+        this.editorTooltipFeature = this.beans.tooltipSvc?.setupEditorTooltip(this, editor);
+        this.refreshEditorTooltip();
+    }
+
+    public refreshEditorTooltip(): void {
+        this.editorTooltipFeature?.refreshTooltip();
+    }
+
+    public disableEditorTooltipFeature(): void {
+        this.editorTooltipFeature = this.beans.context.destroyBean(this.editorTooltipFeature);
     }
 
     public setComp(

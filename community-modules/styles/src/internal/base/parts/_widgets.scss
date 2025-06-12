@@ -265,14 +265,18 @@
         border-radius: 5px;
         background-color: var(--ag-background-color);
 
+        &.invalid {
+            border: var(--ag-borders-input-invalid) var(--ag-input-border-color-invalid);
+        }
+
         &:disabled {
             color: var(--ag-disabled-foreground-color);
             background-color: var(--ag-input-disabled-background-color);
             border-color: var(--ag-input-disabled-border-color);
         }
 
-        &.ag-picker-has-focus,
-        &:focus-within {
+        &.ag-picker-has-focus:not(.invalid),
+        &:focus-within:not(.invalid) {
             outline: none;
             box-shadow: var(--ag-input-focus-box-shadow);
             border-color: var(--ag-input-focus-border-color);
@@ -662,6 +666,12 @@
         border: var(--ag-borders) var(--ag-border-color);
         border-radius: var(--ag-card-radius);
         white-space: normal;
+    }
+
+    .ag-tooltip.ag-cell-editor-tooltip {
+        background-color: var(--ag-tooltip-error-background-color);
+        color: var(--ag-tooltip-error-text-color);
+        border: var(--ag-borders) var(--ag-tooltip-error-border-color);
     }
 
     .ag-tooltip.ag-tooltip-animate,

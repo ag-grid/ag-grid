@@ -10,11 +10,11 @@ import { SimpleCellEditor } from './simpleCellEditor';
 
 const DateCellElement: ElementParams = {
     tag: 'ag-input-date-field',
-    ref: 'eInput',
+    ref: 'eEditor',
     cls: 'ag-cell-editor',
 };
 class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams, AgInputDateField> {
-    private eInput: AgInputDateField;
+    private eEditor: AgInputDateField;
     private params: IDateCellEditorParams;
     private includeTime: boolean | undefined;
 
@@ -23,33 +23,64 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     public getTemplate(): ElementParams {
         return DateCellElement;
     }
+
     public getAgComponents() {
         return [AgInputDateFieldSelector];
     }
 
-    public init(eInput: AgInputDateField, params: IDateCellEditorParams): void {
-        this.eInput = eInput;
+    public init(eEditor: AgInputDateField, params: IDateCellEditorParams): void {
+        this.eEditor = eEditor;
         this.params = params;
+
         const { min, max, step, colDef } = params;
+
         if (min != null) {
-            eInput.setMin(min);
+            eEditor.setMin(min);
         }
+
         if (max != null) {
-            eInput.setMax(max);
+            eEditor.setMax(max);
         }
+
         if (step != null) {
-            eInput.setStep(step);
+            eEditor.setStep(step);
         }
         this.includeTime =
             params.includeTime ?? this.getDataTypeService()?.getDateIncludesTimeFlag?.(colDef.cellDataType);
         if (this.includeTime != null) {
-            eInput.setIncludeTime(this.includeTime);
+            eEditor.setIncludeTime(this.includeTime);
         }
     }
 
-    getValue(): Date | null | undefined {
-        const { eInput, params } = this;
-        const value = eInput.getDate();
+    public getErrors(): string[] | null {
+        const value = this.getValue();
+        const { params } = this;
+        const { min, max, getErrors } = params;
+        let internalErrors: string[] | null = [];
+
+        if (value instanceof Date && !isNaN(value.getTime())) {
+            if (min instanceof Date && value < min) {
+                internalErrors.push(`Date must be after ${min.toLocaleDateString()}`);
+            }
+            if (max instanceof Date && value > max) {
+                internalErrors.push(`Date must be before ${max.toLocaleDateString()}`);
+            }
+        }
+
+        if (!internalErrors.length) {
+            internalErrors = null;
+        }
+
+        if (getErrors) {
+            return getErrors({ value, cellEditorParams: params, internalErrors });
+        }
+
+        return internalErrors;
+    }
+
+    public getValue(): Date | null | undefined {
+        const { eEditor, params } = this;
+        const value = eEditor.getDate();
         if (!_exists(value) && !_exists(params.value)) {
             return params.value;
         }

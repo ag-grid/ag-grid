@@ -33,9 +33,9 @@ const myTheme = themeQuartz
 
 ## Styling Provided Icons
 
-You can change the color of the provided icons using CSS, and add other CSS styles such as borders and backgrounds. Icons have CSS class names in the format `ag-icon-{iconName}`. Use browser developer tools to find the appropriate class.
+You can change the colour of the provided icons using CSS, and add other CSS styles such as borders and backgrounds. Icons have CSS class names in the format `ag-icon-{iconName}`. Use browser developer tools to find the appropriate class.
 
-Provided icons inherit the current text color, so use the CSS `color` property to change their color:
+Provided icons inherit the current text colour, so use the CSS `color` property to change their colour:
 
 ```css
 /* Set the column menu icon to red */
@@ -55,7 +55,7 @@ Provided icons inherit the current text color, so use the CSS `color` property t
 
 ## Replacing Individual Icons
 
-The `iconOverrides` part can be used to change individual icons to an image, solid color with image mask, or icon font character. It can be used multiple times in the same theme to mix different types of icon.
+The `iconOverrides` part can be used to change individual icons to an image, solid colour with image mask, or icon font character. It can be used multiple times in the same theme to mix different types of icon.
 
 ### Overriding Icons with Images
 
@@ -64,7 +64,7 @@ The `iconOverrides` part can be used to change individual icons to an image, sol
 | Parameter | Description |
 |-|-|
 | `type` | `image` |
-| `mask` | If `true`, the icon shape is taken from the image and the color from the grid `foregroundColor` parameter. This allows one icon to serve in both light and dark modes |
+| `mask` | If `true`, the icon shape is taken from the image and the colour from the grid `foregroundColor` parameter. This allows one icon to serve in both light and dark modes |
 | `icons` | A map of [icon name](#provided-icons) to images. Values use [image parameter syntax](./theming-parameters/#image-values) to accept image urls or svg source code. |
 
 ```js
@@ -95,7 +95,7 @@ const myTheme = themeQuartz.withPart(mySvgIcons);
 | `family` | Optional, the name of the icon font family to use |
 | `cssImports` | Optional, an array CSS file URLs to import, can be used to load the CSS file that defines the icon font |
 | `weight` | Optional, e.g. `bold`. Some icon fonts such as fontawesome require a bold font weight. |
-| `color` | Optional CSS color e.g. `red`. Can use [color parameter syntax](./theming-parameters/#color-values) to reference and mix other color parameters. |
+| `color` | Optional CSS colour e.g. `red`. Can use [colour parameter syntax](./theming-parameters/#color-values) to reference and mix other colour parameters. |
 | `icons` | A map of [icon name](#icon-names) to text data. If you're using an icon font, the correct character for each icon will be documented by your font. But you can use any text or emoji. |
 
 ```js
@@ -125,8 +125,8 @@ The following example combines the various ways of overriding icons:
 * Sorting and grouping icons (coloured green) are replaced with characters from FontAwesome
 * Group and Aggregation icons (coloured red) are replaced with characters from the Material Design Icons font
 * The Columns icon (🏛️) is replaced with an emoji
-* The filter icon is replaced with a blue-colored SVG image
-* The column menu icon is replaced with an SVG image in mask mode. Although the image is blue, the icon uses the grid foreground color and will change color as appropriate for light or dark mode.
+* The filter icon is replaced with a blue-coloured SVG image
+* The column menu icon is replaced with an SVG image in mask mode. Although the image is blue, the icon uses the grid foreground colour and will change colour as appropriate for light or dark mode.
 
 {% gridExampleRunner title="Alternative Icon Font" name="icons-override" /%}
 

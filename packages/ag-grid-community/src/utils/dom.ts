@@ -347,6 +347,17 @@ export function _addStylesToElement(eElement: any, styles: RowStyle | CellStyle 
     }
 }
 
+export function _isElementOverflowingCallback(getElement: () => HTMLElement | undefined): () => boolean {
+    return () => {
+        const element = getElement();
+        if (!element) {
+            // defaults to true
+            return true;
+        }
+        return _isHorizontalScrollShowing(element);
+    };
+}
+
 export function _isHorizontalScrollShowing(element: HTMLElement): boolean {
     return element.clientWidth < element.scrollWidth;
 }
