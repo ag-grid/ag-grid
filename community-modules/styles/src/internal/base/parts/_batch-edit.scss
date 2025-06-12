@@ -1,0 +1,13 @@
+@use 'ag';
+
+@mixin output {
+    .ag-cell .ag-cell-batch-edit {
+        background-color: var(--ag-cell-batch-edit-background-color);
+        color: var(--ag-cell-batch-edit-text-color);
+    }
+
+    .ag-row .ag-row-batch-edit {
+        background-color: var(--ag-row-batch-edit-background-color);
+        color: var(--ag-row-batch-edit-text-color);
+    }
+}
