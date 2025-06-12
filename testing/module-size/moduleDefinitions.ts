@@ -6,7 +6,7 @@ import {
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
     AlignedGridsModule: 3.06,
-    AllCommunityModule: 447.66,
+    AllCommunityModule: 452.77,
     CellApiModule: 0.28,
     CellStyleModule: 2.24,
     CheckboxEditorModule: 37.47,
@@ -17,9 +17,9 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ColumnHoverModule: 1.58,
     CsvExportModule: 11.3,
     CustomEditorModule: 36.65,
-    CustomFilterModule: 67.45,
+    CustomFilterModule: 70.29,
     DateEditorModule: 41.17,
-    DateFilterModule: 122.23,
+    DateFilterModule: 126.13,
     DragAndDropModule: 1,
     EventApiModule: 2.64,
     ExternalFilterModule: 12.67,
@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,
-    AllEnterpriseModule: 1417.99,
+    AllEnterpriseModule: 1438.2,
     CellSelectionModule: 53,
     ClipboardModule: 46.04,
     ColumnMenuModule: 153.19,
@@ -66,7 +66,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     MasterDetailModule: 82,
     MenuModule: 159.93,
     MultiFilterModule: 141.31,
-    NewFiltersToolPanelModule: 157.52,
+    NewFiltersToolPanelModule: 164.51,
     PivotModule: 93.6,
     RangeSelectionModule: 53,
     RichSelectModule: 95.76,
