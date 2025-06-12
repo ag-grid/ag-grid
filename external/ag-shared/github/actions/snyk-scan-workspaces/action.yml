@@ -1,0 +1,23 @@
+name: snyk-scan-workspaces
+
+inputs:
+    snyk_token:
+        description: 'Snyk token to use.'
+        required: true
+    exclude:
+        description: 'Packages to exclude from scans'
+        # Ignore `project.json` as snyk thinks it is a dot net project
+        default: '.nx,project.json,dist'
+    severity_threshold:
+        description: 'Severity threshold of the snyk scan'
+        default: 'high'
+
+runs:
+    using: 'composite'
+    steps:
+        - name: Run snyk to check for vulnerabilities on all yarn workspaces
+          uses: snyk/actions/node@master
+          env:
+              SNYK_TOKEN: ${{ inputs.snyk_token }}
+          with:
+              args: --yarn-workspaces --strict-out-of-sync=false --severity-threshold=${{ inputs.severity_threshold }} --exclude=${{ inputs.exclude }}
