@@ -4,7 +4,6 @@ import type { IEditModelService } from '../../interfaces/iEditModelService';
 import type { IEditService } from '../../interfaces/iEditService';
 import type { IRowStyleFeature } from '../../interfaces/iRowStyleFeature';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { _valuesDiffer } from '../utils/editors';
 import { _hasEdits, _hasLeafEdits, _hasPinnedEdits } from './style-utils';
 
 export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
@@ -25,10 +24,15 @@ export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
 
     public applyRowStyles() {
         if (this.gos.get('editType') === 'fullRow') {
-            const edits = this.editModelSvc?.getEditRow(this.rowCtrl);
+            let node = this.rowCtrl.rowNode;
+            let edits = this.editModelSvc?.getEditRow({ rowNode: node });
+            if (!edits && node.pinnedSibling) {
+                node = node.pinnedSibling!;
+                edits = this.editModelSvc?.getEditRow({ rowNode: node });
+            }
             if (edits) {
                 const newState = Array.from(edits.keys()).some((key) => {
-                    const position = { rowNode: this.rowCtrl.rowNode, column: key };
+                    const position = { rowNode: node, column: key };
                     return (
                         _hasEdits(this.beans, position) ||
                         _hasLeafEdits(this.beans, position) ||

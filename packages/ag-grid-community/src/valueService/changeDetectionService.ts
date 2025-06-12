@@ -83,6 +83,11 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
             }
         });
 
+        if (rowNode.pinnedSibling) {
+            // if the row is pinned, we also need to refresh the pinned sibling
+            nodesToRefresh.push(rowNode.pinnedSibling);
+        }
+
         // step 2 of change detection is to refresh the cells
         rowRenderer.refreshCells({ rowNodes: nodesToRefresh, suppressFlash: params?.suppressFlash });
 
