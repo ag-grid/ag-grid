@@ -289,7 +289,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             edits = freshEdits;
 
             res ||= willStop;
-            this.beans.rowRenderer.refreshRows({ suppressFlash: true });
         } else if (event instanceof KeyboardEvent && this.batch && this.strategy?.midBatchInputsAllowed(position)) {
             const key = event.key;
             const isEnter = key === KeyCode.ENTER;
@@ -309,7 +308,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 this.bulkRefresh(undefined, edits);
 
                 edits = this.model.getEditMap();
-                this.beans.rowRenderer.refreshRows({ suppressFlash: true });
             }
         } else {
             _syncFromEditors(this.beans);
@@ -541,25 +539,26 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         this.strategy ??= this.createStrategy();
 
         const existing = this.model.getEdit(position);
+        if (existing) {
+            if (existing.newValue === newValue) {
+                return false;
+            }
 
-        if (existing && existing.newValue === newValue) {
-            return false;
-        }
+            if (existing.oldValue !== newValue) {
+                _syncFromEditor(this.beans, position, newValue, eventSource);
+                return true;
+            }
 
-        if (existing && existing.oldValue !== newValue) {
-            _syncFromEditor(this.beans, position, newValue, eventSource);
-            return true;
-        }
+            if (existing.oldValue === newValue) {
+                this.beans.editModelSvc?.removeEdits(position);
 
-        if (existing && existing.oldValue === newValue) {
-            this.beans.editModelSvc?.removeEdits(position);
+                this.dispatchEditValuesChanged(position, {
+                    newValue,
+                    oldValue: existing.oldValue,
+                });
 
-            this.dispatchEditValuesChanged(position, {
-                newValue,
-                oldValue: existing.oldValue,
-            });
-
-            return true;
+                return true;
+            }
         }
 
         _syncFromEditor(this.beans, position, newValue, eventSource);
