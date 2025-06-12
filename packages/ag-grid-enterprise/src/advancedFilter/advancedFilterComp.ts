@@ -1,5 +1,4 @@
-import {
-    AgFilterButtonSelector,
+import type {
     BeanCollection,
     ElementParams,
     FilterAction,
@@ -8,12 +7,12 @@ import {
     ITooltipCtrl,
     Registry,
     TooltipFeature,
-    _removeFromParent,
 } from 'ag-grid-community';
+import { AgFilterButtonSelector } from 'ag-grid-community';
 import { Component, RefPlaceholder, _createIconNoSpan, _makeNull, _setDisabled } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
-import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
+import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AdvancedFilterService } from './advancedFilterService';
 import type {
     AgAutocomplete,

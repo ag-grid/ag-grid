@@ -1,11 +1,11 @@
 import { KeyCode } from '../constants/keyCode';
 import type { AgEvent } from '../events';
 import type { FilterAction } from '../interfaces/iFilter';
-import { BeanCollection, ITooltipCtrl, Registry, TooltipFeature } from '../main-umd-noStyles';
+import type { BeanCollection, ITooltipCtrl, Registry, TooltipFeature } from '../main-umd-noStyles';
 import type { ElementParams } from '../utils/dom';
 import { _clearElement, _createElement, _setDisabled } from '../utils/dom';
 import { _warn } from '../validation/logging';
-import { Component, ComponentSelector } from '../widgets/component';
+import { Component, type ComponentSelector } from '../widgets/component';
 
 export interface FilterButtonEvent extends AgEvent<FilterAction> {
     event?: Event;

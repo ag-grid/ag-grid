@@ -9,19 +9,12 @@ import type {
     IAdvancedFilterBuilderParams,
     JoinAdvancedFilterModel,
 } from 'ag-grid-community';
-import {
-    Component,
-    FilterButtonComp,
-    RefPlaceholder,
-    _exists,
-    _removeFromParent,
-    _setDisabled,
-} from 'ag-grid-community';
+import { Component, FilterButtonComp, RefPlaceholder, _exists, _removeFromParent } from 'ag-grid-community';
 
 import type { VirtualListDragItem } from '../../features/iVirtualListDragFeature';
 import { VirtualList } from '../../widgets/virtualList';
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
-import { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';
+import type { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';
 import type { AdvancedFilterService } from '../advancedFilterService';
 import { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
 import { AdvancedFilterBuilderItemAddComp } from './advancedFilterBuilderItemAddComp';
@@ -580,7 +573,6 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         } else {
             validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationIncomplete');
         }
-        console.log(isValid, validationMessage);
         this.eButtons?.updateValidity(isValid, validationMessage);
     }
 

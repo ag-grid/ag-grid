@@ -1,4 +1,4 @@
-import {
+import type {
     ColDef,
     ColGroupDef,
     ElementParams,
@@ -7,8 +7,8 @@ import {
     IToolPanelComp,
     IToolPanelFiltersCompParams,
     IToolPanelParams,
-    _FILTER_LOCALE_TEXT,
 } from 'ag-grid-community';
+import { _FILTER_LOCALE_TEXT } from 'ag-grid-community';
 import { Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
 
 import { AgFiltersToolPanelButtons } from './agFiltersToolPanelButtons';

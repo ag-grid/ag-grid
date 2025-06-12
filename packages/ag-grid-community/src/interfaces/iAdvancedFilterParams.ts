@@ -1,4 +1,4 @@
-import { FilterAction } from './iFilter';
+import type { FilterAction } from './iFilter';
 
 /**
  * Parameters passed to the Advanced Filter
