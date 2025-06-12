@@ -116,58 +116,81 @@ jobs:
 
       - name: playwright test
         id: playwright-test
+        continue-on-error: true
         if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
         run: |
-          npx playwright test -c ./testing/performance/playwright.config.ts ./testing/performance/e2e
+          npx playwright test -c ./testing/performance/playwright.config.ts ./testing/performance/e2e | tee playwright-output.txt
+
+      - name: Read test output
+        id: read-test-output
+        if: always()
+        run: |
+          echo 'output<<EOF' >> $GITHUB_OUTPUT
+          tail -n 20 playwright-output.txt >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: Slack Notification
+        continue-on-error: true
+        if: ${{ !cancelled() }}
+        env:
+          SLACK_CHANNEL: '#ci-grid-gate'
+          SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
+          SLACK_USERNAME: 'ag-grid CI'
+          SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
+          SLACK_COLOR: ${{ steps.playwright-test.outputs.status != 'failure' && 'success' || 'failure' }}
+        run: |
+          node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs > ./benchmark-slack.json
+          curl -X POST -H 'Content-type: application/json' ${{ secrets.CI_GATE_WEBHOOK }} --data @./benchmark-slack.json
+
+      - name: Upload Benchmark Report
+        id: upload-report
+        if: ${{ !cancelled() }}
+        run: |
+          output=$(npx @actions/artifact upload --name playwright-report --path playwright-report/ --retention-days 30)
+          echo "$output"
+          echo "$output" | tail -n 1 > report-url.txt
+          echo "url=$(cat report-url.txt)" >> $GITHUB_OUTPUT
 
       - name: Notify Success
         uses: actions/github-script@v7
         continue-on-error: true
         if: success() && github.event_name == 'issue_comment'
         env:
-          CONTENT: ${{ steps.playwright-test.outputs.report }}
+          OUTPUT: ${{ steps.read-test-output.outputs.output }}
+          REPORT_URL: ${{ steps.upload-report.outputs.url }}
         with:
           script: |
-            const body = `✅ ${process.env.JOB_URL}
+            const output = `✅ ${process.env.JOB_URL}
+            Benchmark report: ${process.env.REPORT_URL}
             \`\`\`
-            ${process.env.CONTENT}
+            ${process.env.OUTPUT}
             \`\`\``;
+
             github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: ${{ steps.notify-start.outputs.result }},
-              body,
+              body: output,
             })
 
       - name: Notify Failure
         uses: actions/github-script@v7
         continue-on-error: true
         if: failure() && github.event_name == 'issue_comment'
+        env:
+          OUTPUT: ${{ steps.read-test-output.outputs.output }}
+          REPORT_URL: ${{ steps.upload-report.outputs.url }}
         with:
           script: |
+            const output = `❌ ${process.env.JOB_URL}
+            Benchmark report (if available): ${process.env.REPORT_URL}
+            \`\`\`
+            ${process.env.OUTPUT}
+            \`\`\``;
+            
             github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: ${{ steps.notify-start.outputs.result }},
-              body: `❌ ${process.env.JOB_URL}`,
+              body: output,
             })
-
-      - name: Slack Notification
-        continue-on-error: true
-        env:
-          SLACK_CHANNEL: '#ci-grid-gate'
-          SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
-          SLACK_USERNAME: 'ag-grid CI'
-          SLACK_WEBHOOK: ${{ secrets.GRID_CI_QUALITY }}
-          SLACK_COLOR: ${{ steps.playwright-test.outputs.status != 'failure' && 'success' || 'failure' }}
-        run: |
-          node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs > ./benchmark-slack.json
-          curl -X POST -H 'Content-type: application/json' ${{ secrets.GRID_CI_QUALITY }} --data @./benchmark-slack.json
-
-      - name: Upload Benchmark Report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
