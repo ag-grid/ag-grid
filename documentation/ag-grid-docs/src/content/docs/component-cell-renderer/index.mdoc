@@ -278,7 +278,7 @@ The example below demonstrates a dynamic tooltip being displayed on Cell Compone
 
 ### Defer Slow Cell Components
 
-If a Custom Cell Component is slow to render, the grid may appear unresponsive due to the custom component blocking the main thread. To defer the rending of slow components until all other rendering has completed. Set `deferRender: true` in the `cellRendererParams` on all slow custom components.
+If a Custom Cell Component is slow to render, the grid may appear unresponsive due to the custom component blocking the main thread. To defer the rending of slow components set `deferRender: true` in `cellRendererParams`.
 
 ```js
 {
