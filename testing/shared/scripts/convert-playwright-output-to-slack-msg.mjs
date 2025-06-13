@@ -16,7 +16,7 @@ if (!icon_url) throw new Error('SLACK_ICON is not set');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const logFile = path.join(__dirname, '../../../playwright-report/test-results.json');
-/**** @type {import('playwright/types/testReporter').JSONReport} **/
+/** @type {import('playwright/types/testReporter').JSONReport} */
 const report = JSON.parse(fs.readFileSync(logFile, 'utf8').toString());
 const blocks = [
     { type: 'section', text: { type: 'mrkdwn', text: `**Test results.**` } },
@@ -36,7 +36,7 @@ fs.writeFileSync(slackFileName, JSON.stringify(slackMessage, null, 2));
  */
 function generateTestsSummary(report) {
     const summaryBlocks = [];
-    /**** @type {Record<string, import('playwright/types/testReporter').JSONReportTest[]>} **/
+    /** @type {Record<string, import('playwright/types/testReporter').JSONReportTest[]>} */
     const tests = { passed: [], failed: [], skipped: [], flaky: [], all: [] };
     const testsCount = report.stats.expected + report.stats.skipped + report.stats.unexpected + report.stats.flaky;
     const walk = (node, path = []) => {
