@@ -138,6 +138,8 @@ function getUrl(testCase: TestCase, variant: Variant) {
     return `${knownUrls[variant.version]}/${testCase.name}/${testCase.framework}/`;
 }
 
+const CRITICAL_VALUE = 1.96;
+
 /**
  * Calculates:
  * - Average time
@@ -168,7 +170,7 @@ const computeStats = (times: number[]) => {
 
     const avg = base.reduce((sum, v) => sum + v, 0) / base.length;
     const stdDev = Math.sqrt(base.reduce((sum, v) => sum + Math.pow(v - avg, 2), 0) / (base.length - 1));
-    const marginOfError = (1.96 * stdDev) / Math.sqrt(base.length);
+    const marginOfError = (CRITICAL_VALUE * stdDev) / Math.sqrt(base.length);
 
     return {
         average: avg,
@@ -181,16 +183,22 @@ const computeStats = (times: number[]) => {
 };
 
 /**
+ * Calculates the standard error based on the margins of error for two sets of data.
+ * Uses the critical value for a 95% confidence level (1.96).
+ */
+function getStandardError(moe1: number, moe2: number) {
+    const se1 = moe1 / CRITICAL_VALUE;
+    const se2 = moe2 / CRITICAL_VALUE;
+    return Math.sqrt(se1 ** 2 + se2 ** 2);
+}
+
+/**
  * Determines whether a percentage difference between two values is statistically significant at the 95% confidence level,
  * using a z-test approximation based on margins of error.
  */
 function isSignificant(diff: number, moe1: number, moe2: number) {
-    const critical_value = 1.96;
-    const se1 = moe1 / critical_value;
-    const se2 = moe2 / critical_value;
-    const se_diff = Math.sqrt(se1 ** 2 + se2 ** 2);
-    const z_score = diff / se_diff;
-    return Math.abs(z_score) > critical_value;
+    const z_score = diff / getStandardError(moe1, moe2);
+    return Math.abs(z_score) > CRITICAL_VALUE;
 }
 
 /**
@@ -210,10 +218,8 @@ function reportStats(
     const faster = diff > 0 ? testCase.variant.version : testCase.control.version;
     const percentDiff = (Math.abs(diff) / Math.min(s1.average, s2.average)) * 100;
 
-    const moe1Percent = (s1.marginOfError / s1.average) * 100;
-    const moe2Percent = (s2.marginOfError / s2.average) * 100;
-    const avgMoE = s1.marginOfError + s2.marginOfError;
-    const avgMoEPercent = moe1Percent + moe2Percent;
+    const avgMoE = getStandardError(s1.marginOfError, s2.marginOfError);
+    const avgMoEPercent = (avgMoE / Math.min(s1.average, s2.average)) * 100;
 
     const numbersString = `${Math.abs(diff).toFixed(2)} ± ${avgMoE.toFixed(2)}`;
     const percentString = `${percentDiff.toFixed(1)}% ± ${avgMoEPercent.toFixed(1)}%`;
