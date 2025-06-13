@@ -1020,15 +1020,15 @@ export class ColumnFilterService
         let handlerFunc = this.createHandlerFunc(filterDef, defaultFilter);
         if (!handlerFunc) {
             const gos = this.gos;
-            if (gos.get('enableFilterHandlers')) {
-                if (_isClientSideRowModel(gos)) {
-                    _warn(277, { colId: column.getColId() });
-                } else {
-                    handlerFunc = DUMMY_HANDLER;
-                }
+            if (!gos.get('enableFilterHandlers')) {
+                return undefined;
             }
-            // if !client side and enabled, create dummy handler
-            return undefined;
+            if (_isClientSideRowModel(gos)) {
+                _warn(277, { colId: column.getColId() });
+            }
+            // create dummy handler for server side,
+            // or to prevent blowing up for CSRM custom with missing props
+            handlerFunc = DUMMY_HANDLER;
         }
         const filterParams = _mergeFilterParamsWithApplicationProvidedParams(
             this.beans.userCompFactory,
