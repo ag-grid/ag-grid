@@ -607,6 +607,10 @@ export interface Props<TData> {
          * @agModule `AdvancedFilterModule`
          */
     advancedFilterBuilderParams?: IAdvancedFilterBuilderParams | undefined,
+    /** Customise the parameters passed to the Advanced Filter
+         * @agModule `AdvancedFilterModule`
+         */
+    advancedFilterParams?: IAdvancedFilterParams | undefined,
     /** @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
          * @default true
          * @agModule `AdvancedFilterModule`
@@ -1947,6 +1951,7 @@ export function getProps() {
         includeHiddenColumnsInAdvancedFilter: undefined,
         advancedFilterParent: undefined,
         advancedFilterBuilderParams: undefined,
+        advancedFilterParams: undefined,
         suppressAdvancedFilterEval: undefined,
         suppressSetFilterByDefault: undefined,
         enableFilterHandlers: undefined,
