@@ -1,10 +1,6 @@
 import type { BeanCollection } from '../../context/context';
 import type { RowNode } from '../../entities/rowNode';
-import type { Column } from '../../interfaces/iColumn';
-import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
-import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import { _getCellCtrl } from './controllers';
 
 export function _getSiblingRows(
     beans: BeanCollection,
