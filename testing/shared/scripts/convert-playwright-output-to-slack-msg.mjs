@@ -29,11 +29,11 @@ const slackMessage = { channel, username, icon_url, blocks };
 fs.writeFileSync(commentFileName, blocks.map((b) => b.text?.text || '---').join('\n'));
 fs.writeFileSync(slackFileName, JSON.stringify(slackMessage, null, 2));
 
-/****
- ** Generate a summary of test results for Slack message blocks
- ** @param {import('playwright/types/testReporter').JSONReport} report - Playwright JSON test report
- ** @returns {Array<{type: string, text: {type: string, text: string}}>} - Array of Slack message blocks
- **/
+/**
+ * Generate a summary of test results for Slack message blocks
+ * @param {import('playwright/types/testReporter').JSONReport} report - Playwright JSON test report
+ * @returns {Array<{type: string, text: {type: string, text: string}}>} - Array of Slack message blocks
+ */
 function generateTestsSummary(report) {
     const summaryBlocks = [];
     /**** @type {Record<string, import('playwright/types/testReporter').JSONReportTest[]>} **/
