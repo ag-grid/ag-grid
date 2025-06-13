@@ -20,5 +20,5 @@ export interface IAdvancedFilterParams {
      * Whether to hide the Builder button to open the Advanced Filter Builder
      * @default false
      */
-    hideBuilderButton?: boolean;
+    suppressBuilderButton?: boolean;
 }

@@ -42,6 +42,11 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
         });
 
         this.addManagedPropertyListener('advancedFilterParent', () => this.updateComps());
+        this.addManagedPropertyListener('advancedFilterBuilderParams', (event) => {
+            if (event.currentValue?.suppressFullScreenButton !== event.previousValue?.suppressFullScreenButton) {
+                this.eBuilderDialog?.setMaximizable(event.currentValue?.suppressFullScreenButton ?? true);
+            }
+        });
 
         this.addDestroyFunc(() => {
             this.destroyAdvancedFilterComp();

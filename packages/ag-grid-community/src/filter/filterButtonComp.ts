@@ -1,7 +1,7 @@
 import { KeyCode } from '../constants/keyCode';
 import type { AgEvent } from '../events';
 import type { FilterAction } from '../interfaces/iFilter';
-import type { BeanCollection, ITooltipCtrl, Registry, TooltipFeature } from '../main-umd-noStyles';
+import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
 import type { ElementParams } from '../utils/dom';
 import { _clearElement, _createElement, _setDisabled } from '../utils/dom';
 import { _warn } from '../validation/logging';
@@ -23,8 +23,6 @@ const FilterButtonCompElement: ElementParams = {
 };
 
 export class FilterButtonComp extends Component<FilterAction> {
-    private registry: Registry;
-
     private buttons: FilterButton[];
     private listeners: (() => void)[] = [];
     private eApply?: HTMLElement;
@@ -34,10 +32,6 @@ export class FilterButtonComp extends Component<FilterAction> {
 
     constructor() {
         super(FilterButtonCompElement);
-    }
-
-    public wireBeans(beans: BeanCollection): void {
-        this.registry = beans.registry;
     }
 
     public updateButtons(buttons: FilterButton[], useForm?: boolean): void {
@@ -77,6 +71,8 @@ export class FilterButtonComp extends Component<FilterAction> {
                 cls: 'ag-button ag-standard-button ag-filter-apply-panel-button',
                 children: label,
             });
+            this.activateTabIndex([button]);
+
             if (isApply) {
                 eApplyButton = button;
             }
@@ -90,10 +86,12 @@ export class FilterButtonComp extends Component<FilterAction> {
                 }
             };
 
+            const listeners = this.listeners;
+
             button.addEventListener('click', clickListener);
-            this.listeners.push(() => button.removeEventListener('click', clickListener));
+            listeners.push(() => button.removeEventListener('click', clickListener));
             button.addEventListener('keydown', keydownListener);
-            this.listeners.push(() => button.removeEventListener('keydown', keydownListener));
+            listeners.push(() => button.removeEventListener('keydown', keydownListener));
 
             fragment.append(button);
         };
@@ -102,16 +100,18 @@ export class FilterButtonComp extends Component<FilterAction> {
 
         this.eApply = eApplyButton;
 
-        if (this.eApply && !this.validationTooltipFeature) {
+        let tooltip = this.validationTooltipFeature;
+
+        if (eApplyButton && !tooltip) {
             this.validationTooltipFeature = this.createOptionalManagedBean(
-                this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+                this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
                     getGui: () => this.eApply,
                     getLocation: () => 'advancedFilter',
                     getTooltipShowDelayOverride: () => 1000,
                 } as ITooltipCtrl)
             );
-        } else if (!this.eApply && this.validationTooltipFeature) {
-            this.validationTooltipFeature = this.destroyBean(this.validationTooltipFeature);
+        } else if (!eApplyButton && tooltip) {
+            this.validationTooltipFeature = this.destroyBean(tooltip);
         }
 
         eGui.append(fragment);

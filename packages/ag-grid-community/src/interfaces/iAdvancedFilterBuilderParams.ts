@@ -36,7 +36,7 @@ export interface IAdvancedFilterBuilderParams {
      *  - `'apply'`: The Apply button will apply the filter and close the builder.
      *  - `'clear'`: The Clear button will clear the filter in the builder without removing the current active filter.
      *  - `'reset'`: The Reset button will clear the filter and apply an empty filter.
-     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.
+     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, and close the Builder without applying any changes.
      *
      * @default ['apply', 'cancel']
      */
@@ -45,5 +45,5 @@ export interface IAdvancedFilterBuilderParams {
      * Whether to hide the Full Screen button in the Advanced Filter Builder:
      * @default false
      */
-    hideFullScreenButton?: boolean;
+    suppressFullScreenButton?: boolean;
 }

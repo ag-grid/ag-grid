@@ -4,12 +4,20 @@ import type {
     FilterAction,
     FilterButtonComp,
     FilterManager,
+    IAdvancedFilterParams,
     ITooltipCtrl,
     Registry,
     TooltipFeature,
 } from 'ag-grid-community';
-import { AgFilterButtonSelector } from 'ag-grid-community';
-import { Component, RefPlaceholder, _createIconNoSpan, _makeNull, _setDisabled } from 'ag-grid-community';
+import {
+    AgFilterButtonSelector,
+    Component,
+    RefPlaceholder,
+    _createIconNoSpan,
+    _makeNull,
+    _setDisabled,
+    _setDisplayed,
+} from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
@@ -25,6 +33,11 @@ import { AgAutocompleteSelector } from './autocomplete/agAutocomplete';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import type { FilterExpressionParser } from './filterExpressionParser';
 import type { AutocompleteUpdate } from './filterExpressionUtils';
+
+const DEFAULT_ADVANCED_FILTER_PARAMS: { buttons: FilterAction[]; suppressBuilderButton: boolean } = {
+    buttons: ['apply'],
+    suppressBuilderButton: false,
+};
 
 const ButtonLocaleMap: Record<FilterAction, keyof typeof ADVANCED_FILTER_LOCALE_TEXT> = {
     apply: 'advancedFilterApply',
@@ -43,10 +56,7 @@ const AdvancedFilterElement: ElementParams = {
         {
             tag: 'ag-filter-button',
             ref: 'eButtons',
-            cls: '',
-            attrs: {
-                style: 'display: contents;',
-            },
+            cls: 'ag-advanced-filter-buttons',
         },
         {
             tag: 'button',
@@ -88,11 +98,6 @@ export class AdvancedFilterComp extends Component {
     }
 
     public postConstruct(): void {
-        const { buttons, hideBuilderButton } = {
-            buttons: ['apply'] as FilterAction[],
-            hideBuilderButton: false,
-            ...this.gos.get('advancedFilterParams'),
-        };
         this.tooltipFeature = this.createOptionalManagedBean(
             this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
                 getGui: () => this.getGui(),
@@ -120,8 +125,31 @@ export class AdvancedFilterComp extends Component {
                 this.onValidChanged(isValid, validationMessage),
         });
 
+        const { buttons, suppressBuilderButton } = {
+            ...DEFAULT_ADVANCED_FILTER_PARAMS,
+            ...this.gos.get('advancedFilterParams'),
+        };
+
         this.setupButtons(buttons);
-        this.setupBuilderButton(hideBuilderButton);
+        this.setupBuilderButton(suppressBuilderButton);
+
+        this.beans.gos.addManagedPropertyListener('advancedFilterParams', (event) => {
+            const currentValue = { ...DEFAULT_ADVANCED_FILTER_PARAMS, ...event.currentValue };
+            const previousValue = { ...DEFAULT_ADVANCED_FILTER_PARAMS, ...event.previousValue };
+
+            if (currentValue.buttons !== previousValue.buttons) {
+                const buttons = currentValue.buttons.map((type) => ({
+                    type,
+                    label: this.advFilterExpSvc.translate(ButtonLocaleMap[type]),
+                }));
+
+                this.eButtons.updateButtons(buttons);
+            }
+
+            if (currentValue.suppressBuilderButton !== previousValue.suppressBuilderButton) {
+                _setDisplayed(this.eBuilderFilterButton, currentValue.suppressBuilderButton);
+            }
+        });
     }
 
     public refresh(): void {
@@ -147,7 +175,7 @@ export class AdvancedFilterComp extends Component {
         const getListener = (action: FilterAction) => () => {
             this.updateModel(action);
         };
-        this.eButtons?.addManagedListeners(this.eButtons, {
+        this.eButtons.addManagedListeners(this.eButtons, {
             apply: getListener('apply'),
             clear: getListener('clear'),
             reset: getListener('reset'),
@@ -179,19 +207,17 @@ export class AdvancedFilterComp extends Component {
         }
     }
 
-    private setupBuilderButton(hidden: boolean): void {
-        if (hidden) {
-            this.eBuilderFilterButton.style.display = 'none';
-        } else {
-            this.eBuilderFilterButton.style.display = 'block';
-            this.eBuilderFilterButtonIcon.appendChild(_createIconNoSpan('advancedFilterBuilder', this.beans)!);
-            this.eBuilderFilterButtonLabel.textContent = this.advFilterExpSvc.translate('advancedFilterBuilder');
-            this.activateTabIndex([this.eBuilderFilterButton]);
-            this.addManagedElementListeners(this.eBuilderFilterButton, { click: () => this.openBuilder() });
-            this.addManagedListeners(this.advancedFilter.getCtrl(), {
-                advancedFilterBuilderClosed: () => this.closeBuilder(),
-            });
-        }
+    private setupBuilderButton(suppressed: boolean): void {
+        this.eBuilderFilterButton.style.display = 'block';
+        this.eBuilderFilterButtonIcon.appendChild(_createIconNoSpan('advancedFilterBuilder', this.beans)!);
+        this.eBuilderFilterButtonLabel.textContent = this.advFilterExpSvc.translate('advancedFilterBuilder');
+        this.activateTabIndex([this.eBuilderFilterButton]);
+        this.addManagedElementListeners(this.eBuilderFilterButton, { click: () => this.openBuilder() });
+        this.addManagedListeners(this.advancedFilter.getCtrl(), {
+            advancedFilterBuilderClosed: () => this.closeBuilder(),
+        });
+
+        _setDisplayed(this.eBuilderFilterButton, !suppressed);
     }
 
     private onValueChanged(value: string | null): void {

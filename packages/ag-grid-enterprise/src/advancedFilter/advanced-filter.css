@@ -14,14 +14,14 @@
     width: 100%;
 }
 
-.ag-advanced-filter-apply-button,
+.ag-advanced-filter-buttons {
+    display: contents;
+}
+
 .ag-advanced-filter-builder-button {
     line-height: normal;
     margin-left: calc(var(--ag-spacing) * 2);
     white-space: nowrap;
-}
-
-.ag-advanced-filter-builder-button {
     display: flex;
     align-items: center;
     border: 0;
