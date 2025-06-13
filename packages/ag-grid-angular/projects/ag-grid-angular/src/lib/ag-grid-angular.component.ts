@@ -2193,7 +2193,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public filterUiChanged: EventEmitter<FilterUiChangedEvent<TData>> = new EventEmitter<
         FilterUiChangedEvent<TData>
     >();
-    /** Floating filter UI modified (when using `enableFilterHandlers = true`.
+    /** Floating filter UI modified (when using `enableFilterHandlers = true`).
      */
     @Output() public floatingFilterUiChanged: EventEmitter<FloatingFilterUiChangedEvent<TData>> = new EventEmitter<
         FloatingFilterUiChangedEvent<TData>
