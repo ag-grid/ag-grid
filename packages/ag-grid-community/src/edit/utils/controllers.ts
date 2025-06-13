@@ -54,8 +54,25 @@ export function _getCellCtrl(beans: BeanCollection, inputs: ResolveControllerTyp
         return cellCtrl;
     }
 
+    const actualColumn = beans.colModel.getCol(colId ?? columnId ?? _getColId(column))!;
+
     const rowCtrl = inputs.rowCtrl ?? _getRowCtrl(beans, inputs);
-    return rowCtrl?.getCellCtrl(beans.colModel.getCol(colId ?? columnId ?? _getColId(column))!) ?? undefined;
+    const result = rowCtrl?.getCellCtrl(actualColumn) ?? undefined;
+
+    if (result) {
+        // if we found a cellCtrl, return it
+        return result;
+    }
+
+    const rowNode = inputs.rowNode ?? rowCtrl?.rowNode;
+
+    if (rowNode) {
+        // can occur in spannedRow settings
+
+        return beans.rowRenderer.getCellCtrls([rowNode], [actualColumn])?.[0];
+    }
+
+    return undefined;
 }
 
 export function _getCtrls(beans: BeanCollection, inputs: ResolveControllerType = {}): ResolvedControllersType {
