@@ -100,7 +100,7 @@ export class FilterButtonComp extends Component<FilterAction> {
 
         this.eApply = eApplyButton;
 
-        let tooltip = this.validationTooltipFeature;
+        const tooltip = this.validationTooltipFeature;
 
         if (eApplyButton && !tooltip) {
             this.validationTooltipFeature = this.createOptionalManagedBean(
