@@ -6,7 +6,12 @@ import type { AgEventType } from '../eventTypes';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { CellRange } from './IRangeService';
-import type { ICellEditorParams, ICellEditorValidationError } from './iCellEditor';
+import type {
+    EditingCellPosition,
+    ICellEditorParams,
+    ICellEditorValidationError,
+    SetEditingCellsParams,
+} from './iCellEditor';
 import type { ICellStyleFeature } from './iCellStyleFeature';
 import type { Column } from './iColumn';
 import type { EditMap } from './iEditModelService';
@@ -109,4 +114,5 @@ export interface IEditService extends NamedBean {
     validateEdit(): ICellEditorValidationError[] | null;
     createCellStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): ICellStyleFeature;
     createRowStyleFeature(rowCtrl: RowCtrl, beans: BeanCollection): IRowStyleFeature;
+    setEditingCells(cells: EditingCellPosition[], params?: SetEditingCellsParams): void;
 }

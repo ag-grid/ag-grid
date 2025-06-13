@@ -4,6 +4,7 @@ import type {
     GridApi,
     _AdvancedFilterGridApi,
     _AggregationGridApi,
+    _BatchEditApi,
     _CellSelectionGridApi,
     _ClientSideRowModelGridApi,
     _ClipboardGridApi,
@@ -221,6 +222,8 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         stopEditing: 0,
         startEditingCell: 0,
         isEditing: 0,
+    }),
+    ...mod<_BatchEditApi>('BatchEdit', {
         setEditingCells: 0,
         setBatchEditing: 0,
         isBatchEditing: 0,

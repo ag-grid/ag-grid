@@ -3,6 +3,7 @@ import type { EnterpriseModuleName } from '../interfaces/iModule';
 export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     AdvancedFilter: 1,
     AllEnterprise: 1,
+    BatchEdit: 1,
     CellSelection: 1,
     Clipboard: 1,
     ColumnMenu: 1,

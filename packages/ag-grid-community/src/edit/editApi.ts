@@ -1,17 +1,10 @@
 import type { StartEditingCellParams } from '../api/gridApi';
 import { ensureColumnVisible, ensureIndexVisible } from '../api/scrollApi';
 import type { BeanCollection } from '../context/context';
-import type { AgColumn } from '../entities/agColumn';
 import { _getCellByPosition } from '../entities/positionUtils';
 import { _getActiveDomElement } from '../gridOptionsUtils';
-import type {
-    EditingCellPosition,
-    GetEditingCellsParams,
-    ICellEditorValidationError,
-    SetEditingCellsParams,
-} from '../interfaces/iCellEditor';
+import type { EditingCellPosition, GetEditingCellsParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
-import type { EditMap } from '../interfaces/iEditModelService';
 import { _warn } from '../validation/logging';
 import { _getCellCtrl } from './utils/controllers';
 import { UNEDITED, _valuesDiffer } from './utils/editors';
@@ -22,14 +15,6 @@ export function undoCellEditing(beans: BeanCollection): void {
 
 export function redoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.redo('api');
-}
-
-export function setBatchEditing(beans: BeanCollection, enabled: boolean): void {
-    beans.editSvc?.setBatchEditing(enabled);
-}
-
-export function isBatchEditing(beans: BeanCollection): boolean {
-    return beans.editSvc?.isBatchEditing() ?? false;
 }
 
 export function getEditingCells(beans: BeanCollection, params: GetEditingCellsParams): EditingCellPosition[] {
@@ -59,63 +44,6 @@ export function getEditingCells(beans: BeanCollection, params: GetEditingCellsPa
         });
     });
     return positions;
-}
-
-export function setEditingCells(
-    beans: BeanCollection,
-    cells: EditingCellPosition[],
-    params?: SetEditingCellsParams
-): void {
-    const { editSvc, colModel, valueSvc, editModelSvc } = beans;
-
-    if (!editSvc?.isBatchEditing()) {
-        return;
-    }
-
-    let edits: EditMap = new Map();
-
-    if (params?.update) {
-        const existingEdits = editModelSvc?.getEditMap();
-        edits = new Map(existingEdits?.entries() ?? []);
-    }
-
-    cells.forEach(({ colId, column, colKey, rowIndex, rowPinned, newValue, state }) => {
-        const col = colId ? colModel.getCol(colId) : colKey ? colModel.getCol(colKey) : column;
-
-        if (!col) {
-            return;
-        }
-
-        const cellCtrl = _getCellByPosition(beans, { rowIndex, rowPinned, column: col });
-
-        if (!cellCtrl) {
-            return;
-        }
-
-        const rowNode = cellCtrl.rowNode;
-        const oldValue = valueSvc.getValue(col as AgColumn, rowNode, true, 'api');
-
-        if (!_valuesDiffer({ newValue, oldValue }) && state !== 'editing') {
-            // If the new value is the same as the old value, we don't need to update
-            return;
-        }
-
-        let editRow = edits.get(rowNode);
-
-        if (!editRow) {
-            editRow = new Map();
-            edits.set(rowNode, editRow);
-        }
-
-        // translate undefined to unedited, don't translate null as that means cell was cleared
-        if (newValue === undefined) {
-            newValue = UNEDITED;
-        }
-
-        editRow.set(col, { newValue, oldValue, state: state ?? 'changed' });
-    });
-
-    editSvc?.setEditMap(edits);
 }
 
 export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
