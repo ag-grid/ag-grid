@@ -9,24 +9,6 @@
 /** These all need different styling when used within the new filter tool panel compared to the existing use case within the legacy filter tool panel or column menu  */
 
 /* stylelint-disable-next-line selector-max-specificity */
-.ag-filter-panel .ag-filter-apply-panel {
-    padding: 0 var(--ag-widget-container-horizontal-padding);
-    flex-wrap: wrap;
-    gap: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
-}
-
-/* stylelint-disable-next-line selector-max-specificity */
-.ag-filter-panel .ag-filter-apply-panel-apply-button {
-    color: var(--ag-filter-panel-apply-button-color);
-    background-color: var(--ag-filter-panel-apply-button-background-color);
-}
-
-/* stylelint-disable-next-line selector-max-specificity */
-.ag-filter-panel .ag-filter-apply-panel-button {
-    margin: 0;
-}
-
-/* stylelint-disable-next-line selector-max-specificity */
 .ag-filter-panel .ag-simple-filter-body-wrapper {
     padding: var(--ag-widget-vertical-spacing) var(--ag-widget-container-horizontal-padding) 0;
 }
@@ -127,6 +109,8 @@
 .ag-filter-add-select {
     border: 0;
 
+    /** These all need different styling when used within the new filter tool panel compared to the existing use case within editors  */
+
     /* stylelint-disable-next-line selector-max-specificity */
     .ag-text-field-input {
         padding-left: calc(var(--ag-spacing) * 1.5 + 12px) !important;
@@ -141,4 +125,22 @@
             var(--ag-spacing);
         border: 0;
     }
+}
+
+.ag-filter-panel-buttons {
+    display: flex;
+    justify-content: flex-end;
+    overflow: hidden;
+    padding: 0 var(--ag-widget-container-horizontal-padding);
+    flex-wrap: wrap;
+    gap: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
+}
+
+.ag-filter-panel-buttons-button {
+    line-height: 1.5;
+}
+
+.ag-filter-panel-buttons-apply-button {
+    color: var(--ag-filter-panel-apply-button-color);
+    background-color: var(--ag-filter-panel-apply-button-background-color);
 }

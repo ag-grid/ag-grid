@@ -1,14 +1,16 @@
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SharedFilterParams } from '../../../interfaces/iFilter';
 import { _dateToFormattedString, _parseDateTimeFromString } from '../../../utils/date';
-import type { FilterLocaleTextKey } from '../../filterLocaleText';
-import type { ISimpleFilterModelType } from '../iSimpleFilter';
 import type { OptionsFactory } from '../optionsFactory';
-import { getScalarFilterTypeKey } from '../scalarFilterUtils';
-import { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
+import { SCALAR_FILTER_TYPE_KEYS, SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
-export class DateFilterModelFormatter extends SimpleFilterModelFormatter<IDateFilterParams, Date> {
+export class DateFilterModelFormatter extends SimpleFilterModelFormatter<
+    IDateFilterParams,
+    typeof SCALAR_FILTER_TYPE_KEYS,
+    Date
+> {
+    protected readonly filterTypeKeys = SCALAR_FILTER_TYPE_KEYS;
     constructor(optionsFactory: OptionsFactory, filterParams: IDateFilterParams) {
         super(optionsFactory, filterParams, (value) => {
             const { dataTypeSvc, valueSvc } = this.beans;
@@ -64,9 +66,5 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter<IDateFi
 
         // cater for when the type doesn't need a value
         return `${type}`;
-    }
-
-    protected override getTypeKey(type: ISimpleFilterModelType | null | undefined): FilterLocaleTextKey | null {
-        return getScalarFilterTypeKey(type);
     }
 }

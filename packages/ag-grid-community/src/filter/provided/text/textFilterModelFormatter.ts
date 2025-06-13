@@ -1,10 +1,13 @@
 import { translateForFilter } from '../../filterLocaleText';
-import type { FilterLocaleTextKey } from '../../filterLocaleText';
-import type { ISimpleFilterModelType } from '../iSimpleFilter';
-import { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
+import { SimpleFilterModelFormatter, TEXT_FILTER_TYPE_KEYS } from '../simpleFilterModelFormatter';
 import type { ITextFilterParams, TextFilterModel } from './iTextFilter';
 
-export class TextFilterModelFormatter extends SimpleFilterModelFormatter<ITextFilterParams> {
+export class TextFilterModelFormatter extends SimpleFilterModelFormatter<
+    ITextFilterParams,
+    typeof TEXT_FILTER_TYPE_KEYS
+> {
+    protected readonly filterTypeKeys = TEXT_FILTER_TYPE_KEYS;
+
     protected conditionToString(
         condition: TextFilterModel,
         forToolPanel: boolean,
@@ -39,26 +42,5 @@ export class TextFilterModelFormatter extends SimpleFilterModelFormatter<ITextFi
         }
 
         return `${type}`;
-    }
-
-    protected override getTypeKey(type: ISimpleFilterModelType | null | undefined): FilterLocaleTextKey | null {
-        const addPrefix = <T extends string>(suffix: T) => `filterSummary${suffix}` as const;
-        switch (type) {
-            case 'contains':
-                return addPrefix('Contains');
-            case 'notContains':
-                return addPrefix('NotContains');
-            case 'equals':
-                return addPrefix('TextEquals');
-            case 'notEqual':
-                return addPrefix('TextNotEqual');
-            case 'startsWith':
-                return addPrefix('StartsWith');
-            case 'endsWith':
-                return addPrefix('EndsWith');
-            case 'inRange':
-                return addPrefix('InRange');
-        }
-        return null;
     }
 }

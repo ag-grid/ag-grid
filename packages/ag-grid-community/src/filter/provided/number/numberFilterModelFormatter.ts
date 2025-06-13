@@ -1,11 +1,14 @@
-import type { FilterLocaleTextKey } from '../../filterLocaleText';
-import type { ISimpleFilterModelType } from '../iSimpleFilter';
 import type { OptionsFactory } from '../optionsFactory';
-import { getScalarFilterTypeKey } from '../scalarFilterUtils';
-import { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
+import { SCALAR_FILTER_TYPE_KEYS, SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
 
-export class NumberFilterModelFormatter extends SimpleFilterModelFormatter<INumberFilterParams, number> {
+export class NumberFilterModelFormatter extends SimpleFilterModelFormatter<
+    INumberFilterParams,
+    typeof SCALAR_FILTER_TYPE_KEYS,
+    number
+> {
+    protected readonly filterTypeKeys = SCALAR_FILTER_TYPE_KEYS;
+
     constructor(optionsFactory: OptionsFactory, filterParams: INumberFilterParams) {
         super(optionsFactory, filterParams, filterParams.numberFormatter);
     }
@@ -45,9 +48,5 @@ export class NumberFilterModelFormatter extends SimpleFilterModelFormatter<INumb
         }
 
         return `${type}`;
-    }
-
-    protected override getTypeKey(type: ISimpleFilterModelType | null | undefined): FilterLocaleTextKey | null {
-        return getScalarFilterTypeKey(type);
     }
 }

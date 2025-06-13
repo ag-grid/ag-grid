@@ -10,10 +10,35 @@ import type {
 } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
+export const SCALAR_FILTER_TYPE_KEYS = {
+    equals: 'Equals',
+    notEqual: 'NotEqual',
+    greaterThan: 'GreaterThan',
+    greaterThanOrEqual: 'GreaterThanOrEqual',
+    lessThan: 'LessThan',
+    lessThanOrEqual: 'LessThanOrEqual',
+    inRange: 'InRange',
+} as const;
+
+export const TEXT_FILTER_TYPE_KEYS = {
+    contains: 'Contains',
+    notContains: 'NotContains',
+    equals: 'TextEquals',
+    notEqual: 'TextNotEqual',
+    startsWith: 'StartsWith',
+    endsWith: 'EndsWith',
+    inRange: 'InRange',
+} as const;
+
+type FilterTypeKeys = typeof SCALAR_FILTER_TYPE_KEYS | typeof TEXT_FILTER_TYPE_KEYS;
+
 export abstract class SimpleFilterModelFormatter<
     TFilterParams extends ISimpleFilterParams,
+    TKeys extends FilterTypeKeys = FilterTypeKeys,
     TValue = any,
 > extends BeanStub {
+    protected abstract readonly filterTypeKeys: TKeys;
+
     constructor(
         private optionsFactory: OptionsFactory,
         protected filterParams: TFilterParams,
@@ -104,7 +129,10 @@ export abstract class SimpleFilterModelFormatter<
         return null;
     }
 
-    protected abstract getTypeKey(type: ISimpleFilterModelType | null | undefined): FilterLocaleTextKey | null;
+    protected getTypeKey(type: ISimpleFilterModelType | null | undefined): FilterLocaleTextKey | null {
+        const suffix = this.filterTypeKeys[type as keyof FilterTypeKeys];
+        return suffix ? `filterSummary${suffix}` : null;
+    }
 
     protected formatValue(value?: TValue | null): string {
         const valueFormatter = this.valueFormatter;

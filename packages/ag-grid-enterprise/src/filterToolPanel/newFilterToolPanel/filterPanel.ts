@@ -133,7 +133,7 @@ export class FilterPanel extends Component {
         let buttonComp = this.buttonComp;
         if (actions?.length) {
             if (!buttonComp) {
-                buttonComp = this.createBean(new FilterButtonComp());
+                buttonComp = this.createBean(new FilterButtonComp({ className: 'ag-filter-panel-buttons' }));
                 this.getGui().appendChild(buttonComp.getGui());
                 const listeners: Partial<Record<FilterAction, () => void>> = {};
                 (['apply', 'clear', 'reset', 'cancel'] as const).forEach((action) => {
