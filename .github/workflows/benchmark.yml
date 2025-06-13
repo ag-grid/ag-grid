@@ -10,8 +10,9 @@ on:
         type: boolean
         default: true
         required: true
-  # schedule:
-  #- cron: '0 0 * * *' # Run daily at midnight UTC
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight UTC
+
 env:
   NX_NO_CLOUD: true
   NX_BRANCH: ${{ github.ref }}
@@ -47,24 +48,24 @@ jobs:
 
       - id: 'get-branch'
         run: |
-            if [[ "${{ github.event_name }}" == "issue_comment" ]] ; then
-              # For PR comments, get the branch from the PR
-              echo "branch=$(gh pr view $PR_NO --repo $REPO --json headRefName --jq '.headRefName')" >> $GITHUB_OUTPUT
-              echo "base=$(gh pr view $PR_NO --repo $REPO --json baseRefName --jq '.baseRefName')" >> $GITHUB_OUTPUT
-            elif [[ "${{ github.event_name }}" == "schedule" ]] ; then
-              # For scheduled runs, get the most recent branch matching 'b' followed by semver (e.g. b1.2.3) todo: this doesn't apply for grid
-              release=$(git ls-remote --heads origin 'b[0-9]*\.[0-9]*\.[0-9]*' | sort -t '/' -k 2 -V | tail -n 1 | sed 's/.*refs\/heads\///')
-              echo "branch=latest" >> $GITHUB_OUTPUT
-              echo "base=$release" >> $GITHUB_OUTPUT
-            else
-              # For manual workflow dispatch, use the current branch
-              echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-              echo "base=${{ inputs.compare-base }}" >> $GITHUB_OUTPUT
-            fi
+          if [[ "${{ github.event_name }}" == "issue_comment" ]] ; then
+            # For PR comments, get the branch from the PR
+            echo "branch=$(gh pr view $PR_NO --repo $REPO --json headRefName --jq '.headRefName')" >> $GITHUB_OUTPUT
+            echo "base=$(gh pr view $PR_NO --repo $REPO --json baseRefName --jq '.baseRefName')" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == "schedule" ]] ; then
+            # For scheduled runs, get the most recent branch matching 'b' followed by semver (e.g. b1.2.3) todo: this doesn't apply for grid
+            release=$(git ls-remote --heads origin 'b[0-9]*\.[0-9]*\.[0-9]*' | sort -t '/' -k 2 -V | tail -n 1 | sed 's/.*refs\/heads\///')
+            echo "branch=latest" >> $GITHUB_OUTPUT
+            echo "base=$release" >> $GITHUB_OUTPUT
+          else
+            # For manual workflow dispatch, use the current branch
+            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+            echo "base=${{ inputs.compare-base }}" >> $GITHUB_OUTPUT
+          fi
         env:
-            REPO: ${{ github.repository }}
-            PR_NO: ${{ github.event.issue.number }}
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NO: ${{ github.event.issue.number }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout
         uses: actions/checkout@v4
