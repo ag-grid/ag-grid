@@ -34,11 +34,6 @@ export interface SelectableFilterParams {
      */
     filters?: SelectableFilterDef[];
     /**
-     * If providing `filters`, the index of the filter that should be active by default.
-     * @default 0
-     */
-    defaultFilterIndex?: number;
-    /**
      * Params which will be passed to all filters
      */
     defaultFilterParams?: FilterWrapperParams;
