@@ -6,8 +6,8 @@ import { fileURLToPath } from 'node:url';
 const channel = process.env.SLACK_CHANNEL || ' ';
 const username = process.env.SLACK_USERNAME || ' ';
 const icon_url = process.env.SLACK_ICON || ' ';
-const slackFileName = process.env.SLACK_FILENAME || './benchmark-slack.json';
-const commentFileName = process.env.SLACK_COMMENT_FILENAME || './benchmark-comment.txt';
+const slackFileName = process.env.SLACK_FILE || './slack.json';
+const commentFileName = process.env.COMMENT_FILE || './comment.txt';
 
 if (!channel) throw new Error('SLACK_CHANNEL is not set');
 if (!username) throw new Error('SLACK_USERNAME is not set');
@@ -19,7 +19,7 @@ const logFile = path.join(__dirname, '../../../playwright-report/test-results.js
 /** @type {import('playwright/types/testReporter').JSONReport} */
 const report = JSON.parse(fs.readFileSync(logFile, 'utf8').toString());
 const blocks = [
-    { type: 'section', text: { type: 'mrkdwn', text: `*Benchmark results.*` } },
+    { type: 'section', text: { type: 'mrkdwn', text: `*Test results.*` } },
     { type: 'divider' },
     ...generateTestsSummary(report),
 ];
@@ -69,7 +69,7 @@ function generateTestsSummary(report) {
         text: {
             type: 'mrkdwn',
             text:
-                `*Total Benches:* ${testsCount}\n` +
+                `*Total tests:* ${testsCount}\n` +
                 `*Passed:* ${report.stats.expected}\n` +
                 `*Failed:* ${report.stats.unexpected}\n` +
                 `*Skipped:* ${report.stats.skipped}\n` +

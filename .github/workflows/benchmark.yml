@@ -42,11 +42,11 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `⏱️ ${process.env.JOB_URL}`
+              body: `🛎 Started job: ${process.env.JOB_URL}`
             })
             return comment.id;
 
-      - id: 'get-branch'
+      - id: get-branch
         run: |
           if [[ "${{ github.event_name }}" == "issue_comment" ]] ; then
             # For PR comments, get the branch from the PR
@@ -88,7 +88,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: ${{ steps.notify-start.outputs.result }},
-              body: `⏱️ ${process.env.JOB_URL} (running setup...)`
+              body: `🏗 Running setup: ${process.env.JOB_URL}`
             })
 
       - name: Setup
@@ -96,6 +96,11 @@ jobs:
         uses: ./.github/actions/setup-nx
         with:
           cache_mode: rw
+
+      - name: Build umd packages
+        run: |
+          echo "Building UMD packages..."
+          npx nx run-many -t build --projects=ag-grid-{enterprise,community,angular,react,vue3}
 
       - name: Install Playwright Browsers
         run: |
@@ -112,13 +117,8 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: ${{ steps.notify-start.outputs.result }},
-              body: `⏱️ ${process.env.JOB_URL} (running benchmarks...)`
+              body: `🏃 Running benchmarks:️ ${process.env.JOB_URL}`
             })
-
-      - name: Build umd packages
-        run: |
-          echo "Building UMD packages..."
-          npx nx run-many -t build --projects=ag-grid-{enterprise,community,angular,react,vue3}
 
       - name: playwright test
         id: playwright-test
@@ -130,7 +130,6 @@ jobs:
           else
             npx playwright test -c ./testing/performance/playwright.config.ts -gv ".*cron.*" ./testing/performance/e2e
           fi
-          
 
       - name: Upload Benchmark Report
         id: upload-report
@@ -152,7 +151,6 @@ jobs:
           node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs
           COMMENT_CONTENT=$(cat "$COMMENT_FILE")          
           echo "::set-output name=comment::${COMMENT_CONTENT}"
-          cat $SLACK_FILE
 
       - name: Slack Notification
         continue-on-error: true
@@ -166,7 +164,7 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' ${{ secrets.CI_GATE_WEBHOOK }} --data @$SLACK_FILE
 
-      - name: Notify Success
+      - name: Notify End
         uses: actions/github-script@v7
         continue-on-error: true
         if: github.event_name == 'issue_comment'
@@ -176,15 +174,15 @@ jobs:
           REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
         with:
           script: |
-            const body = (process.env.IS_SUCCESS ? `✅ ${process.env.JOB_URL}` : `❌ ${process.env.JOB_URL}`) + `
-            Benchmark report: ${process.env.REPORT_URL}
-            \`\`\`
-            ${process.env.COMMENT}
-            \`\`\``;
-
-            github.rest.issues.updateComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: ${{ steps.notify-start.outputs.result }},
-              body,
-            })
+            const body =
+                (process.env.IS_SUCCESS
+                    ? `✅ Benchmarking finished: `
+                    : `❌ We encountered problems while benchmarking, see logs: `) + process.env.JOB_URL +
+                `Benchmark report: ${process.env.REPORT_URL}\n\n` + process.env.COMMENT;
+                
+                github.rest.issues.updateComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    comment_id: ${{ steps.notify-start.outputs.result }},
+                    body,
+                });
