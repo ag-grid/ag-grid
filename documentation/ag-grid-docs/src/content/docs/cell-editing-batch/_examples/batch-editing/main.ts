@@ -1,21 +1,30 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import { CellRenderer } from 'src/content/docs/cell-editing-start-stop/_examples/single-click-editing-renderer/cell-renderer.component_angular';
 
 import type {
     AgColumn,
     BeanCollection,
+    BodyScrollEvent,
     CellClickedEvent,
     CellCtrl,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
+    CellValueChangedEvent,
     Column,
+    EditStrategyType,
     EditingCellPosition,
     GridApi,
     GridOptions,
     IAggFuncParams,
+    ICellRendererParams,
     IRowNode,
+    ModelUpdatedEvent,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
     RowPinnedType,
+    ValueFormatterParams,
+    ValueGetterParams,
+    ValueSetterParams,
 } from 'ag-grid-community';
 import {
     CheckboxEditorModule,
@@ -128,7 +137,7 @@ const gridOptions: GridOptions = {
                     aggFunc: uniqOrDots,
                     rowGroup: true,
                     rowDrag: true,
-                    valueFormatter: (params) => {
+                    valueFormatter: (params: ValueFormatterParams) => {
                         node = params.node as IRowNode;
                         return params.value ?? '';
                     },
@@ -149,14 +158,14 @@ const gridOptions: GridOptions = {
                 {
                     headerName: 'DetailsFn',
                     colId: 'detailsFn',
-                    cellRenderer: (params: any) => {
+                    cellRenderer: (params: ICellRendererParams) => {
                         return `
-            <div  class="athlete-info">
-                <span>${params.data?.firstName ?? ''} </span>
-                <span>${params.data?.lastName ?? ''}</span>
-            </div>
-            <span>${params.data?.age ?? ''}</span>
-        `;
+                            <div  class="athlete-info">
+                                <span>${params.data?.firstName ?? ''} </span>
+                                <span>${params.data?.lastName ?? ''}</span>
+                            </div>
+                            <span>${params.data?.age ?? ''}</span>
+                        `;
                     },
                     editable: false,
                     minWidth: 145,
@@ -164,7 +173,7 @@ const gridOptions: GridOptions = {
                 {
                     headerName: 'DetailsGt',
                     colId: 'detailsGt',
-                    valueGetter: (params: any) => {
+                    valueGetter: (params: ValueGetterParams) => {
                         return `${params.data?.firstName ?? ''} ${params.data?.lastName ?? ''}`;
                     },
                     editable: false,
@@ -173,7 +182,7 @@ const gridOptions: GridOptions = {
                 {
                     headerName: 'DetailsFmt',
                     colId: 'detailsFmt',
-                    valueFormatter: (params: any) => {
+                    valueFormatter: (params: ValueFormatterParams) => {
                         return `${params.data?.firstName ?? ''} ${params.data?.lastName ?? ''}`;
                     },
                     editable: false,
@@ -197,7 +206,7 @@ const gridOptions: GridOptions = {
     },
     autoGroupColumnDef: {
         headerName: 'Group',
-        valueSetter: (params): boolean => {
+        valueSetter: (_params: ValueSetterParams): boolean => {
             console.log('valueSetter called for autoGroupColumnDef');
             return true;
         },
@@ -241,25 +250,25 @@ const gridOptions: GridOptions = {
             { statusPanel: 'agAggregationComponent' },
         ],
     },
-    onRowEditingStarted: (event: RowEditingStartedEvent) => {
+    onRowEditingStarted: (_event: RowEditingStartedEvent) => {
         console.log('rowEditingStarted');
     },
-    onRowEditingStopped: (event: RowEditingStoppedEvent) => {
+    onRowEditingStopped: (_event: RowEditingStoppedEvent) => {
         console.log('rowEditingStopped');
     },
-    onCellEditingStarted: (event: CellEditingStartedEvent) => {
+    onCellEditingStarted: (_event: CellEditingStartedEvent) => {
         console.log('cellEditingStarted');
     },
-    onCellEditingStopped: (event: CellEditingStoppedEvent) => {
+    onCellEditingStopped: (_event: CellEditingStoppedEvent) => {
         console.log('cellEditingStopped');
     },
-    onCellValueChanged: (event) => {
+    onCellValueChanged: (_event: CellValueChangedEvent) => {
         console.log('Cell value changed');
     },
-    onBodyScroll(event) {
+    onBodyScroll(_event: BodyScrollEvent) {
         decorated && decorateCells();
     },
-    onModelUpdated() {
+    onModelUpdated(_event: ModelUpdatedEvent) {
         decorated && decorateCells();
     },
 };
@@ -277,7 +286,7 @@ function decorateCells() {
 
     decorated = true;
 
-    positions.forEach((position) => {
+    positions.forEach((position: EditingCellPosition) => {
         const rowCtrl = beans.rowRenderer.getRowByPosition(position);
         if (!rowCtrl) {
             return null;
@@ -320,7 +329,6 @@ function getEditingCells() {
 }
 
 let polling: any = undefined;
-
 function pollState() {
     if (polling) {
         clearInterval(polling);
@@ -368,7 +376,6 @@ function createChart() {
             rowEndIndex: 14,
             columns: ['mood', 'age'],
         },
-        // other options...
     });
 }
 
@@ -427,7 +434,7 @@ function clearEditingCells() {
     gridApi!.setEditingCells([]);
 }
 
-function setEditType(editType: any) {
+function setEditType(editType: EditStrategyType) {
     console.log('Setting edit type to:', editType);
     gridApi!.updateGridOptions({
         editType,

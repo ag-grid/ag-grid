@@ -401,14 +401,15 @@ export class CellCtrl extends BeanStub {
     }
 
     public onPopupEditorClosed(): void {
-        if (!this.editSvc?.isEditing(this)) {
+        const { editSvc } = this.beans;
+        if (!editSvc?.isEditing(this)) {
             return;
         }
 
         // note: this happens because of a click outside of the grid or if the popupEditor
         // is closed with `Escape` key. if another cell was clicked, then the editing will
         // have already stopped and returned on the conditional above.
-        this.editSvc?.stopEditing(this);
+        editSvc?.stopEditing(this, { source: editSvc?.isBatchEditing() ? 'ui' : 'api' }) ?? false;
     }
 
     /**
@@ -417,7 +418,8 @@ export class CellCtrl extends BeanStub {
      * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
      */
     public stopEditing(cancel = false): boolean {
-        return this.editSvc?.stopEditing(this, { cancel }) ?? false;
+        const { editSvc } = this.beans;
+        return editSvc?.stopEditing(this, { cancel, source: editSvc?.isBatchEditing() ? 'ui' : 'api' }) ?? false;
     }
 
     private createCellRendererParams(): ICellRendererParams {

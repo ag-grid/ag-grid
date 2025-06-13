@@ -467,20 +467,12 @@
             "more": {
                 "name": "Enable/Disable Batch Editing",
                 "url": "./cell-editing-batch"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [],
-                "include": []
             }
         },
         "isBatchEditing": {
             "more": {
                 "name": "Is Batch Editing Enabled",
                 "url": "./cell-editing-batch"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [],
-                "include": []
             }
         },
         "startEditingCell": {

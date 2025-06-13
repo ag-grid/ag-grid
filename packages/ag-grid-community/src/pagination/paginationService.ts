@@ -78,11 +78,13 @@ export class PaginationService extends BeanStub implements NamedBean {
             return;
         }
 
-        if (this.editSvc?.isEditing()) {
-            if (this.editSvc.isBatchEditing()) {
-                this.editSvc.cleanupEditors();
+        const { editSvc } = this.beans;
+
+        if (editSvc?.isEditing()) {
+            if (editSvc.isBatchEditing()) {
+                editSvc.cleanupEditors();
             } else {
-                this.editSvc.stopEditing(undefined, { source: 'api' });
+                editSvc.stopEditing(undefined, { source: 'api' });
             }
         }
 

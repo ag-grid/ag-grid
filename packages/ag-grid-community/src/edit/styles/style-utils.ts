@@ -11,28 +11,32 @@ const editHighlightFn = (edit?: EditValue) => {
 };
 
 export function _hasEdits(beans: BeanCollection, position: EditPosition): boolean | undefined {
-    const edit = beans.editModelSvc?.getEdit(position);
-    return editHighlightFn(edit);
+    return editHighlightFn(beans.editModelSvc?.getEdit(position));
 }
 
 export function _hasLeafEdits(beans: BeanCollection, position: EditPosition): boolean | undefined {
-    return position.rowNode?.allLeafChildren?.some((rowNode) => {
-        const mainNode = editHighlightFn(beans.editModelSvc?.getEdit({ rowNode, column: position.column }));
-        const pinnedSibling = (rowNode as RowNode).pinnedSibling;
-        const siblingNode = editHighlightFn(
-            beans.editModelSvc?.getEdit({ rowNode: pinnedSibling, column: position.column })
-        );
+    const { editModelSvc } = beans;
+    const { column, rowNode } = position;
+    for (const node of rowNode?.allLeafChildren ?? []) {
+        const highlight =
+            editHighlightFn(editModelSvc?.getEdit({ rowNode: node, column })) ||
+            editHighlightFn(editModelSvc?.getEdit({ rowNode: (node as RowNode).pinnedSibling, column }));
 
-        return mainNode || siblingNode;
-    });
+        if (highlight) {
+            return true;
+        }
+    }
 }
 
-export function _hasPinnedEdits(beans: BeanCollection, position: EditPosition): boolean | undefined {
-    const pinnedSibling = (position.rowNode as RowNode).pinnedSibling;
+export function _hasPinnedEdits(beans: BeanCollection, { rowNode, column }: EditPosition): boolean | undefined {
+    rowNode = (rowNode as RowNode).pinnedSibling;
+    if (!rowNode) {
+        return;
+    }
     return editHighlightFn(
         beans.editModelSvc?.getEdit({
-            rowNode: pinnedSibling,
-            column: position.column,
+            rowNode,
+            column,
         })
     );
 }

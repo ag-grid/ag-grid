@@ -1,7 +1,6 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { ICellStyleFeature } from '../../interfaces/iCellStyleFeature';
-import type { IEditModelService } from '../../interfaces/iEditModelService';
 import type { IEditService } from '../../interfaces/iEditService';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
 import { _hasEdits, _hasLeafEdits, _hasPinnedEdits } from './style-utils';
@@ -10,7 +9,6 @@ export class CellEditStyleFeature extends BeanStub implements ICellStyleFeature 
     private cellComp: ICellComp;
 
     private editSvc?: IEditService;
-    private editModelSvc?: IEditModelService;
 
     constructor(
         private readonly cellCtrl: CellCtrl,
@@ -20,7 +18,6 @@ export class CellEditStyleFeature extends BeanStub implements ICellStyleFeature 
 
         this.beans = beans;
         this.editSvc = beans.editSvc;
-        this.editModelSvc = beans.editModelSvc;
     }
 
     public setComp(comp: ICellComp): void {
@@ -30,11 +27,10 @@ export class CellEditStyleFeature extends BeanStub implements ICellStyleFeature 
     }
 
     public applyCellStyles() {
-        if (this.editSvc?.isBatchEditing() && this.editSvc.isEditing()) {
+        const { cellCtrl, editSvc, beans } = this;
+        if (editSvc?.isBatchEditing() && editSvc.isEditing()) {
             const state =
-                _hasEdits(this.beans, this.cellCtrl) ||
-                _hasLeafEdits(this.beans, this.cellCtrl) ||
-                _hasPinnedEdits(this.beans, this.cellCtrl);
+                _hasEdits(beans, cellCtrl) || _hasLeafEdits(beans, cellCtrl) || _hasPinnedEdits(beans, cellCtrl);
             this.applyStyle(state);
         } else {
             this.applyStyle(false);

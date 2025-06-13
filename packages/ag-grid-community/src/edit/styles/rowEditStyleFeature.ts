@@ -23,23 +23,22 @@ export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
     }
 
     public applyRowStyles() {
-        if (this.gos.get('editType') === 'fullRow') {
-            let node = this.rowCtrl.rowNode;
-            let edits = this.editModelSvc?.getEditRow({ rowNode: node });
+        const { gos, rowCtrl, editSvc, editModelSvc, beans } = this;
+        if (gos.get('editType') === 'fullRow') {
+            let node = rowCtrl.rowNode;
+            let edits = editModelSvc?.getEditRow({ rowNode: node });
             if (!edits && node.pinnedSibling) {
                 node = node.pinnedSibling!;
-                edits = this.editModelSvc?.getEditRow({ rowNode: node });
+                edits = editModelSvc?.getEditRow({ rowNode: node });
             }
             if (edits) {
                 const newState = Array.from(edits.keys()).some((key) => {
                     const position = { rowNode: node, column: key };
                     return (
-                        _hasEdits(this.beans, position) ||
-                        _hasLeafEdits(this.beans, position) ||
-                        _hasPinnedEdits(this.beans, position)
+                        _hasEdits(beans, position) || _hasLeafEdits(beans, position) || _hasPinnedEdits(beans, position)
                     );
                 });
-                const batchEdit = this.editSvc?.isBatchEditing() ?? false;
+                const batchEdit = editSvc?.isBatchEditing() ?? false;
                 this.applyStyle(newState, batchEdit);
 
                 return;

@@ -56,13 +56,13 @@ const SOURCE_TRANSFORM: Record<string, EditSource> = {
     cellClear: 'api',
 };
 
-const SOURCE_TRANSFORM_KEYS: string[] = Object.keys(SOURCE_TRANSFORM);
+const SOURCE_TRANSFORM_KEYS: Set<string> = new Set(Object.keys(SOURCE_TRANSFORM));
 
 const CANCEL_PARAMS: StopEditParams = { cancel: true, source: 'api' };
 
 export class EditService extends BeanStub implements NamedBean, IEditService {
     beanName = 'editSvc' as const;
-    private batch: boolean;
+    private batch: boolean = false;
 
     private model: IEditModelService;
     private valueSvc: ValueService;
@@ -71,9 +71,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     private includeParents: boolean = true;
 
     public postConstruct(): void {
-        this.model = this.beans.editModelSvc!;
-        this.valueSvc = this.beans.valueSvc;
-        this.rangeSvc = this.beans.rangeSvc!;
+        const { beans } = this;
+        this.model = beans.editModelSvc!;
+        this.valueSvc = beans.valueSvc;
+        this.rangeSvc = beans.rangeSvc!;
 
         this.addManagedPropertyListener('editType', ({ currentValue }: any) => {
             this.stopEditing(undefined, CANCEL_PARAMS);
@@ -82,7 +83,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.createStrategy(currentValue);
         });
 
-        const handler = _refreshEditCells(this.beans);
+        const handler = _refreshEditCells(beans);
 
         this.addManagedEventListeners({
             columnPinned: handler,
@@ -202,15 +203,19 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     public isEditing(position?: EditPosition, params?: IsEditingParams): boolean {
         const nodeIsEditing = this.model.hasEdits(position, params);
 
-        const pinnedSibling = (position?.rowNode as RowNode)?.pinnedSibling;
-        const siblingIsEditing =
-            pinnedSibling && this.model.hasEdits({ rowNode: pinnedSibling, column: position?.column }, params);
+        if (nodeIsEditing) {
+            return true;
+        }
 
-        return (nodeIsEditing || siblingIsEditing) ?? false;
+        const { rowNode, column } = position || {};
+        const pinnedSibling = (rowNode as RowNode)?.pinnedSibling;
+        const siblingIsEditing = pinnedSibling && this.model.hasEdits({ rowNode: pinnedSibling, column }, params);
+
+        return siblingIsEditing ?? false;
     }
 
-    public isRowEditing(position: EditRowPosition, params?: IsEditingParams): boolean {
-        return this.model.hasEdits({ rowNode: position?.rowNode }, params) ?? false;
+    public isRowEditing({ rowNode }: EditRowPosition, params?: IsEditingParams): boolean {
+        return this.model.hasEdits({ rowNode }, params) ?? false;
     }
 
     /** @return whether to prevent default on event */
@@ -249,8 +254,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     public stopEditing(position?: EditPosition, params?: StopEditParams): boolean {
         const { event, cancel, source = 'ui', suppressNavigateAfterEdit } = params || {};
+        const { beans, model } = this;
 
-        if (SOURCE_TRANSFORM_KEYS.includes(source)) {
+        if (SOURCE_TRANSFORM_KEYS.has(source)) {
             if (this.isBatchEditing()) {
                 // if we are in batch editing, we do not stop editing on paste
                 this.bulkRefresh(position);
@@ -264,12 +270,12 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return false;
         }
 
-        const cellCtrl = _getCellCtrl(this.beans, position);
+        const cellCtrl = _getCellCtrl(beans, position);
         if (cellCtrl) {
             cellCtrl.onEditorAttachedFuncs = [];
         }
 
-        let edits = this.model.getEditMap(true);
+        let edits = model.getEditMap(true);
 
         let res = false;
 
@@ -277,8 +283,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const willCancel = cancel && !!this.shouldCancelEditing(position, event, source);
 
         if (willStop || willCancel) {
-            _syncFromEditors(this.beans);
-            const freshEdits = this.model.getEditMap();
+            _syncFromEditors(beans);
+            const freshEdits = model.getEditMap();
 
             this.strategy?.stop();
 
@@ -296,29 +302,33 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             if (isEnter || isEscape) {
                 if (isEnter) {
-                    _syncFromEditors(this.beans);
+                    _syncFromEditors(beans);
                 } else if (position) {
                     this.strategy?.clearEdits(position);
                 }
 
-                _destroyEditors(this.beans, this.model.getEditPositions());
+                _destroyEditors(beans, model.getEditPositions());
 
                 event.preventDefault();
 
                 this.bulkRefresh(undefined, edits);
 
-                edits = this.model.getEditMap();
+                edits = model.getEditMap();
             }
         } else {
-            _syncFromEditors(this.beans);
-            edits = this.model.getEditMap();
+            _syncFromEditors(beans);
+            edits = model.getEditMap();
+        }
+
+        if (res && position) {
+            this.model.removeEdits(position);
         }
 
         if (!suppressNavigateAfterEdit && cellCtrl) {
             this.navigateAfterEdit(event instanceof KeyboardEvent && event.shiftKey, cellCtrl.cellPosition);
         }
 
-        _purgeUnchangedEdits(this.beans);
+        _purgeUnchangedEdits(beans);
 
         this.refreshAllRows(edits, this.includeParents);
 
@@ -353,6 +363,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     private processEdits(edits: EditMap, cancel: boolean = false): void {
         const rowNodes = Array.from(edits.keys());
+        const { beans } = this;
 
         for (const rowNode of rowNodes) {
             const editRow = edits.get(rowNode)!;
@@ -360,7 +371,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 const { newValue, oldValue } = editRow.get(column)!;
                 const position: Required<EditPosition> = { rowNode, column };
 
-                const cellCtrl = _getCellCtrl(this.beans, position);
+                const cellCtrl = _getCellCtrl(beans, position);
 
                 const valueChanged = _valuesDiffer({ newValue, oldValue });
 
@@ -379,7 +390,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 }
 
                 this.dispatchCellEvent({ rowNode, column }, undefined, 'cellEditingStopped', {
-                    ..._createCellEvent(this.beans, null, 'cellEditingStopped', position, newValue),
+                    ..._createCellEvent(beans, null, 'cellEditingStopped', position, newValue),
                     oldValue,
                     newValue,
                     value: newValue,
@@ -409,14 +420,15 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
 
         const { newValue, oldValue } = edit;
+        const { rowIndex, rowPinned, data } = rowNode;
         this.beans.eventSvc.dispatchEvent({
             type: 'cellEditValuesChanged',
             node: rowNode,
-            rowIndex: rowNode.rowIndex,
-            rowPinned: rowNode.rowPinned,
+            rowIndex,
+            rowPinned,
             column,
             source: 'api',
-            data: rowNode.data,
+            data,
             newValue,
             oldValue,
             value: newValue,
@@ -425,13 +437,15 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     public bulkRefresh(position?: EditPosition, editMap?: EditMap): void {
-        if (_isClientSideRowModel(this.gos, this.beans.rowModel)) {
+        const { beans, gos } = this;
+        const { editModelSvc, rowModel } = beans;
+        if (_isClientSideRowModel(gos, rowModel)) {
             if (position?.rowNode && position.column) {
                 const edit = this.model.getEdit(position);
                 this.dispatchEditValuesChanged(position, edit);
                 return;
             }
-            (editMap ?? this.beans.editModelSvc?.getEditMap(false))?.forEach((editRow, rowNode) => {
+            (editMap ?? editModelSvc?.getEditMap(false))?.forEach((editRow, rowNode) => {
                 for (const column of editRow?.keys() || []) {
                     const edit = editRow?.get(column);
                     this.dispatchEditValuesChanged({ rowNode, column }, edit);
@@ -536,6 +550,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return;
         }
 
+        const { beans } = this;
+
         this.strategy ??= this.createStrategy();
 
         const existing = this.model.getEdit(position);
@@ -545,12 +561,12 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             }
 
             if (existing.oldValue !== newValue) {
-                _syncFromEditor(this.beans, position, newValue, eventSource);
+                _syncFromEditor(beans, position, newValue, eventSource);
                 return true;
             }
 
             if (existing.oldValue === newValue) {
-                this.beans.editModelSvc?.removeEdits(position);
+                beans.editModelSvc?.removeEdits(position);
 
                 this.dispatchEditValuesChanged(position, {
                     newValue,
@@ -561,7 +577,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             }
         }
 
-        _syncFromEditor(this.beans, position, newValue, eventSource);
+        _syncFromEditor(beans, position, newValue, eventSource);
 
         return true;
     }
@@ -643,16 +659,16 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return;
         }
 
-        const { rangeSvc, valueSvc } = this;
+        const { beans, rangeSvc, valueSvc } = this;
 
-        _syncFromEditors(this.beans);
+        _syncFromEditors(beans);
 
         const edits: EditMap = this.model.getEditMap(true);
         const editValue = edits.get(rowNode)?.get(column!)?.newValue;
 
         ranges.forEach((range: CellRange) => {
             rangeSvc?.forEachRowInRange(range, (position) => {
-                const rowNode = _getRowNode(this.beans, position);
+                const rowNode = _getRowNode(beans, position);
                 if (rowNode === undefined) {
                     return;
                 }
@@ -689,7 +705,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             if (this.batch) {
                 this.cleanupEditors();
 
-                _purgeUnchangedEdits(this.beans);
+                _purgeUnchangedEdits(beans);
 
                 // force refresh of all row cells as custom renderers may depend on multiple cell values
                 this.bulkRefresh();

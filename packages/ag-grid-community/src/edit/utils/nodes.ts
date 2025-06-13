@@ -12,10 +12,21 @@ export function _getSiblingRows(
     const sibling = rowNode.sibling;
 
     const result: IRowNode[] = [];
-    includeSource && result.push(rowNode);
-    pinned && result.push(pinned);
-    sibling && result.push(sibling);
-    includeParents && result.push(..._getAncestors(beans, rowNode));
+    if (includeSource) {
+        result.push(rowNode);
+    }
+
+    if (pinned) {
+        result.push(pinned);
+    }
+
+    if (sibling) {
+        result.push(sibling);
+    }
+
+    if (includeParents) {
+        result.push(..._getAncestors(beans, rowNode, { includeRelated: true }));
+    }
 
     return result;
 }
@@ -23,10 +34,16 @@ export function _getSiblingRows(
 function _getRelatedRows(rowNode: IRowNode): IRowNode[] {
     const pinned = (rowNode as RowNode).pinnedSibling;
     const sibling = rowNode.sibling;
-    const result: IRowNode[] = [];
-    result.push(rowNode);
-    pinned && result.push(pinned);
-    sibling && result.push(sibling);
+    const result: IRowNode[] = [rowNode];
+
+    if (pinned) {
+        result.push(pinned);
+    }
+
+    if (sibling) {
+        result.push(sibling);
+    }
+
     return result;
 }
 
@@ -41,8 +58,7 @@ function _getAncestors(
     while (parent) {
         result.push(parent);
         if (includeRelated) {
-            const related = _getRelatedRows(parent);
-            result.push(...related);
+            result.push(..._getRelatedRows(parent));
         }
         parent = parent.parent;
     }
