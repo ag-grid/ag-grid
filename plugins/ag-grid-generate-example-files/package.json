@@ -5,7 +5,7 @@
   "dependencies": {
     "ag-shared": "0.0.1",
     "ag-grid-community": "33.3.0",
-    "glob": "8.0.3",
+    "glob": "9.0.0",
     "typescript": "~5.4.5",
     "cheerio": "^1.0.0",
     "sucrase": "^3.32.0",
