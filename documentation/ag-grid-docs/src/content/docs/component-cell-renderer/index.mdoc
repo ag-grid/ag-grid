@@ -276,6 +276,31 @@ The example below demonstrates a dynamic tooltip being displayed on Cell Compone
 
 {% gridExampleRunner title="Dynamic Tooltips" name="dynamic-tooltips" /%}
 
+### Defer Slow Cell Components
+
+If a Custom Cell Component is slow to render, the grid may appear unresponsive due to the custom component blocking the main thread. To defer the rending of slow components set `deferRender: true` in `cellRendererParams`.
+
+```js
+{
+    cellRenderer: 'SlowCellRenderer',
+    cellRendererParams: {
+        deferRender: true
+    }
+}
+```
+
+Deferred components will be rendered after other cells and only after the grid has stopped scrolling. In the meantime, the loading cell renderer will be displayed.
+
+The loading cell renderer can be customised via the `loadingCellRenderer` column property.
+
+{% gridExampleRunner title="Slow Cell Renderer" name="slow-cell-renderer" /%}
+
+{% if isFramework("react") %}
+{% note %}
+`deferRender` uses `startTransition` to reduce the priority of deferred components. There is a known limitation in React that transitions are currently batched together meaning all deferred components appear at the same time. For more information, see the React documentation [StartTransition > Caveats](https://react.dev/reference/react/useTransition#starttransition-caveats).
+{% /note %}
+{% /if %}
+
 ### Keyboard Navigation
 
 When using custom Cell Components, the custom Cell Component is responsible for implementing support for keyboard navigation among its focusable elements. This is why by default, focusing a grid cell with a custom Cell Component will focus the entire cell instead of any of the elements inside the custom cell renderer.

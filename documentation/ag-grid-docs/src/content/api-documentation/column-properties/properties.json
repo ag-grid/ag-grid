@@ -307,7 +307,7 @@
             }
         },
         "loadingCellRenderer": {
-            "description": "Provide your own cell loading Renderer component for this column's cells when using SSRM.",
+            "description": "Provide your own cell loading Renderer component for this column's cells when using SSRM or when a cell renderer is deferred.",
             "more": {
                 "name": "SSRM Cell Loading",
                 "url": "./component-loading-cell-renderer/#skeleton-loading"

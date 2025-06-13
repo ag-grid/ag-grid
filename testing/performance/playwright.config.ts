@@ -43,11 +43,10 @@ const config = defineConfig({
 
 /* Run local dev server before starting the tests */
 if (!process.env['PW_NO_SERVER']) {
+    const command = `node ${path.join(ROOT, 'testing/performance/webServer.js')}`;
     config.webServer = {
-        command: `npx nx run-many -t build --projects=ag-grid-{enterprise,angular,react,vue} && node ${path.join(ROOT, 'testing/performance/webServer.js')}`,
+        command,
         cwd: ROOT,
-        stderr: 'pipe',
-        stdout: 'pipe',
         url: baseURL,
         reuseExistingServer: !process.env['CI'],
         ignoreHTTPSErrors: true,

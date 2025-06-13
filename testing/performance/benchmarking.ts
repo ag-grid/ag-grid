@@ -254,10 +254,13 @@ async function attachScripts(page: Page, version: Version, testCase: InternalTes
             getCdnUrl('ag-charts-types', chartsVersion, '/'),
         ];*/
     }
-    await Promise.all(urls.map((url) => page.addScriptTag({ url })));
+
+    for (const url of urls) {
+        await page.addScriptTag({ url, type: 'text/javascript' });
+    }
     try {
         // @ts-expect-error agGrid is not in the current scope
-        await waitFor(() => typeof agGrid !== 'undefined', page);
+        await waitFor(() => typeof agGrid !== 'undefined', page, { timeout: 10_000 });
     } catch (e) {
         benchError(`Perhaps you forgot to start dev server? Or provided URL/version are not available.`, e, testCase);
     }
@@ -307,40 +310,57 @@ export default function (name: string, describe: Describe) {
             (testCase.skip ? test.skip : test)(
                 `Running ${testCase.name}${testCase.description ? `/${testCase.description}` : ''} with ${testCase.framework}`,
                 async ({ page, context }) => {
-                    const result = { control: [] as number[], variant: [] as number[] };
-                    let significant = false;
-                    do {
-                        for (const variantName of ['control', 'variant'] as const) {
-                            const variant = testCase[variantName];
-                            await attachCookies(context, variant);
-                            const comms = await gotoUrl(page, getUrl(testCase, variant));
-                            void updatePageTitle(page, testCase, variant);
-                            variant.shouldInjectScript && (await attachScripts(page, variant.version, testCase));
-                            testCase.preSetup && (await testCase.preSetup(page));
-                            for (let i = 0; i < minIterations; i++) {
-                                testCase.setupPreActions && (await testCase.setupPreActions(page));
-                                const noiseSize = (await metricsGetter(page, testCase)).length;
-                                testCase.actions && (await testCase.actions(page));
-                                if (i > warmupIterations) {
-                                    const usefulEntries = (await metricsGetter(page, testCase)).slice(noiseSize);
-                                    const duration = usefulEntries.reduce((acc, pe) => acc + pe.duration, 0);
-                                    result[variantName].push(duration);
+                    let lastCommunications: BrowserCommunications | undefined;
+                    try {
+                        const result = { control: [] as number[], variant: [] as number[] };
+                        let significant = false;
+                        do {
+                            for (const variantName of ['control', 'variant'] as const) {
+                                const variant = testCase[variantName];
+                                await attachCookies(context, variant);
+                                lastCommunications = await gotoUrl(page, getUrl(testCase, variant));
+                                void updatePageTitle(page, testCase, variant);
+                                variant.shouldInjectScript && (await attachScripts(page, variant.version, testCase));
+                                testCase.preSetup && (await testCase.preSetup(page));
+                                for (let i = 0; i < minIterations; i++) {
+                                    testCase.setupPreActions && (await testCase.setupPreActions(page));
+                                    const noiseSize = (await metricsGetter(page, testCase)).length;
+                                    testCase.actions && (await testCase.actions(page));
+                                    if (i > warmupIterations) {
+                                        const usefulEntries = (await metricsGetter(page, testCase)).slice(noiseSize);
+                                        const duration = usefulEntries.reduce((acc, pe) => acc + pe.duration, 0);
+                                        result[variantName].push(duration);
+                                    }
                                 }
+                                testCase.expectsPostActions &&
+                                    (await testCase.expectsPostActions(page, lastCommunications));
                             }
-                            testCase.expectsPostActions && (await testCase.expectsPostActions(page, comms));
+                            const s1 = computeStats(result.control);
+                            const s2 = computeStats(result.variant);
+                            // console.log(`Collected ${s1.originalCount} entries`);
+                            significant = isSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError);
+                            reportStats({ control: s1, variant: s2 }, testCase, significant);
+                        } while (!(significant || result['control'].length > maxIterations)); // run until we do 1000 iterations or results are significant
+                        if (!significant) {
+                            console.log(
+                                `${yellow('Result is statistically insignificant.')} ${green(
+                                    'Consider running the test with more iterations or check your test case setup.'
+                                )}`
+                            );
                         }
-                        const s1 = computeStats(result.control);
-                        const s2 = computeStats(result.variant);
-                        // console.log(`Collected ${s1.originalCount} entries`);
-                        significant = isSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError);
-                        reportStats({ control: s1, variant: s2 }, testCase, significant);
-                    } while (!(significant || result['control'].length > maxIterations)); // run until we do 1000 iterations or results are significant
-                    if (!significant) {
-                        console.log(
-                            `${yellow('Result is statistically insignificant.')} ${green(
-                                'Consider running the test with more iterations or check your test case setup.'
-                            )}`
-                        );
+                    } catch (e) {
+                        if (lastCommunications?.consoleMsgs?.length || lastCommunications?.requestMsgs?.length) {
+                            console.error('Error has been thrown during the test, here are the last comms:');
+                            lastCommunications.consoleMsgs.forEach((msg) => {
+                                console[msg.type as 'log' | 'error'](msg.text);
+                            });
+                            lastCommunications.requestMsgs.forEach((msg) => {
+                                msg.response.then((r) => {
+                                    console.log(`U: ${msg.method} ${msg.url} D: ${r.status} ${r.statusText}`);
+                                });
+                            });
+                        }
+                        throw e;
                     }
                 }
             );

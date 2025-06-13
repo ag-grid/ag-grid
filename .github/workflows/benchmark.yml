@@ -19,8 +19,6 @@ env:
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
   YARN_REGISTRY: "http://52.50.158.57:4873"
   CI: true
-  SLACK_FILE: ./benchmark-slack.json
-  COMMENT_FILE: ./benchmark-comment.txt
 
 jobs:
   benchmark:
@@ -116,6 +114,11 @@ jobs:
               body: `⏱️ ${process.env.JOB_URL} (running benchmarks...)`
             })
 
+      - name: Build umd packages
+        run: |
+          echo "Building UMD packages..."
+          npx nx run-many -t build --projects=ag-grid-{enterprise,community,angular,react,vue3}
+
       - name: playwright test
         id: playwright-test
         continue-on-error: true
@@ -136,13 +139,17 @@ jobs:
         if: ${{ !cancelled() }}
         env:
           REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
+          COMMENT_FILE: ./benchmark-comment.txt
+          SLACK_FILE: ./benchmark-slack.json
         run: |
           node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs
-          echo "comment='$(cat ${{ COMMENT_FILE }})'" >> $GITHUB_OUTPUT
+          COMMENT_CONTENT=$(cat "$COMMENT_FILE")          
+          echo "::set-output name=comment::${COMMENT_CONTENT}"
+          cat $SLACK_FILE
 
       - name: Slack Notification
         continue-on-error: true
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && inputs.notify == true }}
         env:
           SLACK_CHANNEL: '#ci-grid-gate'
           SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
@@ -150,14 +157,14 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
           SLACK_COLOR: ${{ steps.playwright-test.outputs.status != 'failure' && 'success' || 'failure' }}
         run: |
-          curl -X POST -H 'Content-type: application/json' ${{ secrets.CI_GATE_WEBHOOK }} --data @${{ SLACK_FILE }}
+          curl -X POST -H 'Content-type: application/json' ${{ secrets.CI_GATE_WEBHOOK }} --data @$SLACK_FILE
 
       - name: Notify Success
         uses: actions/github-script@v7
         continue-on-error: true
         if: github.event_name == 'issue_comment'
         env:
-          IS_SUCCESS: ${{ success() || '' }}
+          IS_SUCCESS: ${{ steps.prepare-messages.outcome == 'success' || '' }}
           COMMENT: ${{ steps.prepare-messages.outputs.comment }}
           REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
         with:

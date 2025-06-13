@@ -21,7 +21,10 @@ mkcert
                 app.use(`/${path.join('files', project, 'dist')}`, express.static(path.join(projectPath, 'dist')));
             }
         });
-        app.use('/', (req, res) => res.send('Hello from the web server!'));
+        app.use('/', (req, res) => {
+            if (req.url === '/') return res.send('Hello from the web server!');
+            return res.status(404).send('Not Found');
+        });
         const server = https.createServer(options.server.https, app);
         server.listen(PORT, () => {
             console.log(`App listening on https://${HOST}:${PORT}`);

@@ -338,9 +338,7 @@ export class CellComp extends Component {
     private createCellRendererInstance(compDetails: UserCompDetails): void {
         const displayComponentVersionCopy = this.rendererVersion;
 
-        const { componentClass } = compDetails;
-
-        const createCellRendererFunc = () => {
+        const createCellRendererFunc = (details: UserCompDetails) => (_?: boolean) => {
             const staleTask = this.rendererVersion !== displayComponentVersionCopy || !this.isAlive();
             if (staleTask) {
                 return;
@@ -348,8 +346,12 @@ export class CellComp extends Component {
 
             // this can return null in the event that the user has switched from a renderer component to nothing, for example
             // when using a cellRendererSelect to return a component or null depending on row data etc
-            const componentPromise = compDetails.newAgStackInstance();
-            const callback = this.afterCellRendererCreated.bind(this, displayComponentVersionCopy, componentClass);
+            const componentPromise = details.newAgStackInstance();
+            const callback = this.afterCellRendererCreated.bind(
+                this,
+                displayComponentVersionCopy,
+                details.componentClass
+            );
             componentPromise?.then(callback);
         };
 
@@ -357,15 +359,32 @@ export class CellComp extends Component {
         // if we changed this (always use task service) would make sense, however it would break tests, possibly
         // test of users.
         const { animationFrameSvc } = this.beans;
+
+        let createTask: ((isDeferred?: boolean) => void) | undefined;
         if (animationFrameSvc?.active && this.firstRender) {
-            animationFrameSvc.createTask(
-                createCellRendererFunc,
-                this.rowNode.rowIndex!,
-                'p2',
-                compDetails.componentFromFramework
-            );
+            createTask = (isDeferred: boolean) => {
+                animationFrameSvc.createTask(
+                    createCellRendererFunc(compDetails),
+                    this.rowNode.rowIndex!,
+                    'p2',
+                    compDetails.componentFromFramework,
+                    isDeferred
+                );
+            };
         } else {
-            createCellRendererFunc();
+            createTask = createCellRendererFunc(compDetails);
+        }
+        if (compDetails.params?.deferRender) {
+            // show loading cell and then pass the task to the animationFrameSvc
+            const { loadingComp, onReady } = this.cellCtrl.getDeferLoadingCellRenderer();
+
+            if (loadingComp) {
+                // Immediately render the loading component and then schedule the task
+                createCellRendererFunc(loadingComp)();
+                onReady.then(() => createTask(true));
+            }
+        } else {
+            createTask(false);
         }
     }
 

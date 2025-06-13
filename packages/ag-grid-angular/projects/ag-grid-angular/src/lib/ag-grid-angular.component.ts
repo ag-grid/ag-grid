@@ -839,14 +839,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public chartMenuItems: (DefaultChartMenuItem | MenuItemDef)[] | GetChartMenuItems<TData> | undefined =
         undefined;
-    /** Provide your own loading cell renderer to use when data is loading via a DataSource.
+    /** Provide your own loading cell renderer to use when data is loading via a DataSource or when a cell renderer is deferred.
      * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
      */
     @Input() public loadingCellRenderer: any = undefined;
     /** Params to be passed to the `loadingCellRenderer` component.
      */
     @Input() public loadingCellRendererParams: any = undefined;
-    /** Callback to select which loading cell renderer to be used when data is loading via a DataSource.
+    /** Callback to select which loading cell renderer to be used when data is loading via a DataSource or when a cell renderer is deferred.
      * @initial
      */
     @Input() public loadingCellRendererSelector: LoadingCellRendererSelectorFunc<TData> | undefined = undefined;
