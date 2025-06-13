@@ -1,9 +1,13 @@
 import type { BrowserContext, Page, PlaywrightTestArgs } from '@playwright/test';
 import { test } from '@playwright/test';
-import { bgBlue, bgGreen, blue, cyan, green, magenta, yellow } from 'chalk';
+import chalk from 'chalk';
 
 import type { BrowserCommunications } from './playwright.utils';
 import { gotoUrl, waitFor } from './playwright.utils';
+
+chalk.level = process.env['CI'] ? 0 : 3; // disable colors in CI, enable them otherwise
+
+const { bgBlue, bgGreen, blue, cyan, green, magenta, yellow } = chalk;
 
 export type Entry<T> = T extends readonly (infer U)[] ? U : T extends object ? T[keyof T] : T;
 export const allFrameworks = [
