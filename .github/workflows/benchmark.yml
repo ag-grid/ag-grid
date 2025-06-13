@@ -124,7 +124,13 @@ jobs:
         id: playwright-test
         continue-on-error: true
         if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
-        run: npx playwright test -c ./testing/performance/playwright.config.ts ./testing/performance/e2e
+        run: |
+          if [[ "${{ github.event_name }}" == "schedule" ]] ; then
+            npx playwright test -c ./testing/performance/playwright.config.ts ./testing/performance/e2e/cron.spec.ts
+          else
+            npx playwright test -c ./testing/performance/playwright.config.ts -gv ".*cron.*" ./testing/performance/e2e
+          fi
+          
 
       - name: Upload Benchmark Report
         id: upload-report
