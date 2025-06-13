@@ -52,6 +52,7 @@ export function getEditingCells(beans: BeanCollection, params: GetEditingCellsPa
                 state,
                 column,
                 colId: column.getColId(),
+                colKey: column.getColId(),
                 rowIndex: rowIndex!,
                 rowPinned,
             });
@@ -78,8 +79,8 @@ export function setEditingCells(
         edits = new Map(existingEdits?.entries() ?? []);
     }
 
-    cells.forEach(({ colId: colKey, column, rowIndex, rowPinned, newValue, state }) => {
-        const col = colKey ? colModel.getCol(colKey) : column;
+    cells.forEach(({ colId, column, colKey, rowIndex, rowPinned, newValue, state }) => {
+        const col = colId ? colModel.getCol(colId) : colKey ? colModel.getCol(colKey) : column;
 
         if (!col) {
             return;
