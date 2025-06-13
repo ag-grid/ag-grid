@@ -1543,15 +1543,20 @@ export class ColumnFilterService
         let filterParams: any;
         let filterValueGetter: string | ValueGetterFunc | undefined;
         const beans = this.beans;
+        const { filterParams: colDefFilterParams, filterValueGetter: colDefFilterValueGetter } = colDef;
         if (filter === 'agMultiColumnFilter') {
             ({ filterParams, filterValueGetter } =
-                beans.multiFilter?.getParamsForDataType(colDef.filterParams, colDef, dataTypeDefinition, formatValue) ??
-                {});
+                beans.multiFilter?.getParamsForDataType(
+                    colDefFilterParams,
+                    colDefFilterValueGetter,
+                    dataTypeDefinition,
+                    formatValue
+                ) ?? {});
         } else {
             ({ filterParams, filterValueGetter } = _getFilterParamsForDataType(
                 filter,
-                colDef.filterParams,
-                colDef,
+                colDefFilterParams,
+                colDefFilterValueGetter,
                 dataTypeDefinition,
                 formatValue,
                 beans,
