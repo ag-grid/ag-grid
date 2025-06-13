@@ -261,6 +261,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         let targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
         let target = clientSideRowModel.getRow(targetRowIndex) ?? null;
 
+        if (target?.footer) {
+            return null; // Cannot drop on a footer row
+        }
+
         const yDelta = target ? (y - target.rowTop! - target.rowHeight! / 2) / target.rowHeight! || 0 : 1;
         let above = yDelta < 0;
 
