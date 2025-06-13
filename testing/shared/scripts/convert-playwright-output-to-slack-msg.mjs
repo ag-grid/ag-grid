@@ -61,7 +61,7 @@ function generateTestsSummary(report) {
     walk(report);
     // Add a section for number of tests
     const num = (count, emoji, label) => (count ? `${emoji} **${label}:** ${count}\n` : '');
-    const statusEmoji = (status) => ({ expected: '✅', unexpected: '☹', skipped: '🔕', flaky: '👻' })[status] || '❓';
+    const statusEmoji = (status) => ({ expected: '✅', unexpected: '🙁', skipped: '🔕', flaky: '👻' })[status] || '❓';
     summaryBlocks.push({
         type: 'section',
         text: {
