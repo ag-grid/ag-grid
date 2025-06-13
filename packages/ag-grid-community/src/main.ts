@@ -249,6 +249,7 @@ export {
     ProvidedFilterModel,
 } from './filter/provided/iProvidedFilter';
 export { ProvidedFilter } from './filter/provided/providedFilter';
+export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
 export {
     ISimpleFilter,
     ISimpleFilterParams,
