@@ -1,7 +1,7 @@
 import { KeyCode } from '../constants/keyCode';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
-import { _setAriaControls } from '../utils/aria';
+import { _setAriaControlsAndLabel } from '../utils/aria';
 import { _isElementOverflowingCallback } from '../utils/dom';
 import type { ListOption } from './agList';
 import { AgList } from './agList';
@@ -81,7 +81,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         const listId = `ag-select-list-${listComponent.getCompId()}`;
 
         eListAriaEl.setAttribute('id', listId);
-        _setAriaControls(this.getAriaElement(), eListAriaEl);
+        _setAriaControlsAndLabel(this.getAriaElement(), eListAriaEl);
 
         listComponent.addManagedElementListeners(listComponent.getGui(), {
             mousedown: (e) => {

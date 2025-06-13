@@ -60,6 +60,7 @@ import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IGroupFilterService } from '../interfaces/iGroupFilterService';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IMultiFilterService } from '../interfaces/iMultiFilterService';
+import type { IFilterPanelService, ISelectableFilterService } from '../interfaces/iNewFiltersToolPanel';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
@@ -181,6 +182,7 @@ export type UserComponentName =
     | 'agMenuItem'
     | 'agColumnsToolPanel'
     | 'agFiltersToolPanel'
+    | 'agNewFiltersToolPanel'
     | 'agGroupRowRenderer'
     | 'agGroupCellRenderer'
     | 'agDetailCellRenderer'
@@ -340,6 +342,8 @@ export interface CoreBeanCollection {
     findSvc?: IFindService;
     groupFilter?: IGroupFilterService;
     multiFilter?: IMultiFilterService;
+    filterPanelSvc?: IFilterPanelService;
+    selectableFilter?: ISelectableFilterService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -437,6 +441,7 @@ export type BeanName =
     | 'filterAggStage'
     | 'filterManager'
     | 'filterMenuFactory'
+    | 'filterPanelSvc'
     | 'filterStage'
     | 'filterValueSvc'
     | 'findSvc'
@@ -497,6 +502,7 @@ export type BeanName =
     | 'rowRenderer'
     | 'rowStyleSvc'
     | 'scrollVisibleSvc'
+    | 'selectableFilter'
     | 'selectionController'
     | 'selectionSvc'
     | 'showRowGroupCols'

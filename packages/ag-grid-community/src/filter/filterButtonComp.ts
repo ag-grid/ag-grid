@@ -5,24 +5,33 @@ import type { ElementParams } from '../utils/dom';
 import { _clearElement, _createElement, _setDisabled } from '../utils/dom';
 import { _warn } from '../validation/logging';
 import { Component } from '../widgets/component';
-import { FILTER_LOCALE_TEXT } from './filterLocaleText';
+import { translateForFilter } from './filterLocaleText';
+
+export interface FilterButtonCompParams {
+    className?: string;
+}
 
 export interface FilterButtonEvent extends AgEvent<FilterAction> {
     event?: Event;
 }
 
-const FilterButtonCompElement: ElementParams = {
-    tag: 'div',
-    cls: 'ag-filter-apply-panel',
-};
+function getElement(className: string): ElementParams {
+    return {
+        tag: 'div',
+        cls: className,
+    };
+}
 
 export class FilterButtonComp extends Component<FilterAction> {
     private buttons: FilterAction[];
     private listeners: (() => void)[] = [];
     private eApply?: HTMLElement;
+    private readonly className: string;
 
-    constructor() {
-        super(FilterButtonCompElement);
+    constructor(config?: FilterButtonCompParams) {
+        const { className = 'ag-filter-apply-panel' } = config ?? {};
+        super(getElement(className));
+        this.className = className;
     }
 
     public updateButtons(buttons: FilterAction[], useForm?: boolean): void {
@@ -42,11 +51,11 @@ export class FilterButtonComp extends Component<FilterAction> {
         // to the DOM once. This is much faster than appending each button individually.
         const fragment = document.createDocumentFragment();
 
-        const translate = this.getLocaleTextFunc();
+        const className = this.className;
 
         const addButton = (type: FilterAction): void => {
             const localeKey = `${type}Filter` as const;
-            const text = type ? translate(localeKey, FILTER_LOCALE_TEXT[localeKey]) : undefined;
+            const text = type ? translateForFilter(this, localeKey) : undefined;
             const clickListener = (event?: Event) => {
                 this.dispatchLocalEvent<FilterButtonEvent>({
                     type,
@@ -63,7 +72,7 @@ export class FilterButtonComp extends Component<FilterAction> {
                 tag: 'button',
                 attrs: { type: buttonType },
                 ref: `${type}FilterButton`,
-                cls: 'ag-button ag-standard-button ag-filter-apply-panel-button',
+                cls: `ag-button ag-standard-button ${className}-button${isApply ? ' ' + className + '-apply-button' : ''}`,
                 children: text,
             });
             if (isApply) {

@@ -14,6 +14,9 @@ export type IFloatingFilterType = string | { new (): IFloatingFilterComp };
 export interface DoesFilterPassParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
     extends IDoesFilterPassParams<TData> {
     model: TModel;
+    /**
+     * Utility params that would be passed to the handler, including `getValue` which provides access to the cell values.
+     */
     handlerParams: FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams>;
 }
 
@@ -48,7 +51,7 @@ export interface FilterHandler<TData = any, TContext = any, TModel = any, TCusto
      * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
      * filter.
      */
-    getModelAsString?(model: TModel | null): string;
+    getModelAsString?(model: TModel | null, source?: 'floating' | 'filterToolPanel'): string;
     /** Optional: Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */
     destroy?(): void;
 }

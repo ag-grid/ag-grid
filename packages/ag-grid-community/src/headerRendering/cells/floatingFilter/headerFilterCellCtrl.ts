@@ -58,7 +58,15 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         compBean.addManagedElementListeners(this.eButtonShowMainFilter, { click: this.showParentFilter.bind(this) });
         this.setupFilterChangedListener(compBean);
-        compBean.addManagedListeners(this.column, { colDefChanged: () => this.onColDefChanged(compBean) });
+        const colDefChanged = () => this.onColDefChanged(compBean);
+        compBean.addManagedListeners(this.column, { colDefChanged });
+        compBean.addManagedEventListeners({
+            filterSwitched: ({ column }) => {
+                if (column === this.column) {
+                    colDefChanged();
+                }
+            },
+        });
         // Make sure this is the last destroy func as it clears the gui and comp
         compBean.addDestroyFunc(() => {
             (this.eButtonShowMainFilter as any) = null;

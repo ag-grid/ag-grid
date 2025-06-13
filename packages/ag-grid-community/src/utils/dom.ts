@@ -478,6 +478,7 @@ type RoleType =
     | 'button'
     | 'columnheader'
     | 'gridcell'
+    | 'heading'
     | 'menu'
     | 'option'
     | 'presentation'
@@ -518,12 +519,13 @@ export type ElementParams = {
      * A single string can be passed to the children property and this will call `element.textContent = children` on the element.
      *
      * Otherwise an array of children is passed.
-     * A child element can be an ElementParams / string / null/undefined.
+     * A child element can be an ElementParams / string / (() => Element) / null/undefined.
      *  - If an ElementParams is passed it will be created and appended to the parent element. It will be wrapped with whitespace to mimic the previous behaviour of multi line strings.
      *  - If a string is passed it will be appended as a text node.
+     *  - If a function is passed, it will be called and the result appended
      *  - If null or undefined is passed it will be ignored.
      */
-    children?: (ElementParams | string | null | undefined)[] | string;
+    children?: (ElementParams | string | (() => Element) | null | undefined)[] | string;
 };
 
 /** AG Grid attribute used to automatically assign DOM Elements to class properties */
@@ -565,6 +567,8 @@ export function _createElement<T extends HTMLElement = HTMLElement>(params: Elem
                     if (typeof child === 'string') {
                         element.appendChild(document.createTextNode(child));
                         addFirstWhitespace = false;
+                    } else if (typeof child === 'function') {
+                        element.appendChild(child());
                     } else {
                         // NOTE: To match the previous behaviour of when component templates where defined on multi line strings we need
                         // to add a whitespace node before and after each child element.

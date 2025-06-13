@@ -10,6 +10,7 @@ import { Component } from '../widgets/component';
 import type {
     FilterActionEvent,
     FilterDisplayWrapper,
+    FilterGlobalButtonsEvent,
     FilterParamsChangedEvent,
     FilterStateChangedEvent,
 } from './columnFilterService';
@@ -27,8 +28,12 @@ export class FilterWrapperComp extends Component {
     constructor(
         private readonly column: AgColumn,
         private readonly wrapper: FilterDisplayWrapper,
-        private readonly eventParent: IEventEmitter<'filterParamsChanged' | 'filterStateChanged' | 'filterAction'>,
-        private readonly updateModel: (column: AgColumn, action: FilterAction) => void
+        private readonly eventParent: IEventEmitter<
+            'filterParamsChanged' | 'filterStateChanged' | 'filterAction' | 'filterGlobalButtons'
+        >,
+        private readonly updateModel: (column: AgColumn, action: FilterAction) => void,
+        private isGlobalButtons: boolean,
+        private readonly enableGlobalButtonCheck?: boolean
     ) {
         super();
     }
@@ -54,24 +59,32 @@ export class FilterWrapperComp extends Component {
         this.params = params;
         this.resetButtonsPanel(params);
         this.addManagedListeners(this.eventParent, {
-            filterParamsChanged: (event: FilterParamsChangedEvent) => {
-                const { column, params: eventParams } = event;
+            filterParamsChanged: ({ column, params: eventParams }: FilterParamsChangedEvent) => {
                 if (column === this.column) {
                     this.resetButtonsPanel(eventParams as FilterWrapperParams, this.params);
                 }
             },
-            filterStateChanged: (event: FilterStateChangedEvent) => {
-                const { column, state } = event;
+            filterStateChanged: ({ column, state }: FilterStateChangedEvent) => {
                 if (column === this.column) {
                     this.eButtons?.updateValidity(state.valid);
                 }
             },
-            filterAction: (event: FilterActionEvent) => {
-                const { column, action, event: keyboardEvent } = event;
+            filterAction: ({ column, action, event: keyboardEvent }: FilterActionEvent) => {
                 if (column === this.column) {
                     this.afterAction(action, keyboardEvent);
                 }
             },
+            ...(this.enableGlobalButtonCheck
+                ? {
+                      filterGlobalButtons: ({ isGlobal }: FilterGlobalButtonsEvent) => {
+                          if (isGlobal !== this.isGlobalButtons) {
+                              this.isGlobalButtons = isGlobal;
+                              const currentParams = this.params;
+                              this.resetButtonsPanel(currentParams!, currentParams, true);
+                          }
+                      },
+                  }
+                : undefined),
         });
     }
 
@@ -81,14 +94,18 @@ export class FilterWrapperComp extends Component {
         }
     }
 
-    private resetButtonsPanel(newParams: FilterWrapperParams, oldParams?: FilterWrapperParams): void {
+    private resetButtonsPanel(
+        newParams: FilterWrapperParams,
+        oldParams?: FilterWrapperParams,
+        forceUpdate?: boolean
+    ): void {
         const { buttons: oldButtons, readOnly: oldReadOnly } = oldParams ?? {};
         const { buttons, readOnly, useForm } = newParams;
-        if (oldReadOnly === readOnly && _jsonEquals(oldButtons, buttons)) {
+        if (!forceUpdate && oldReadOnly === readOnly && _jsonEquals(oldButtons, buttons)) {
             return;
         }
 
-        const hasButtons = buttons && buttons.length > 0 && !newParams.readOnly;
+        const hasButtons = buttons && buttons.length > 0 && !newParams.readOnly && !this.isGlobalButtons;
 
         let eButtonsPanel = this.eButtons;
         if (hasButtons) {

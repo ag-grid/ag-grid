@@ -18,7 +18,7 @@ import { CustomContext } from '../../shared/customComp/customContext';
 import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
-import { isComponentStateless } from '../utils';
+import { agStartTransition, isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 
@@ -381,17 +381,36 @@ const CellComp = ({
             getParentOfValue: () => eCellValue.current ?? eCellWrapper.current ?? eGui.current,
 
             setRenderDetails: (compDetails, value, force) => {
-                setRenderDetails((prev) => {
-                    if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
-                        return {
-                            value,
-                            compDetails,
-                            force,
-                        };
-                    } else {
-                        return prev;
+                const setDetails = () => {
+                    setRenderDetails((prev) => {
+                        if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
+                            return {
+                                value,
+                                compDetails,
+                                force,
+                            };
+                        } else {
+                            return prev;
+                        }
+                    });
+                };
+                if (compDetails?.params?.deferRender) {
+                    const { loadingComp, onReady } = cellCtrl.getDeferLoadingCellRenderer();
+
+                    if (loadingComp) {
+                        setRenderDetails({
+                            value: undefined,
+                            compDetails: loadingComp,
+                            force: false,
+                        });
+                        // Render with startTransition to make it easier to interrupt the expensive components
+                        // for example the user starts scrolling after the cells have started to render
+                        onReady.then(() => agStartTransition(setDetails));
+                        // Returning here as we do not want to set the details immediately
+                        return;
                     }
-                });
+                }
+                setDetails();
             },
 
             setEditDetails: (compDetails, popup, popupPosition, reactiveCustomComponents) => {
