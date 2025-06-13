@@ -288,7 +288,7 @@ export const TrialLicenceForm: FunctionComponent = ({ submitUrl }: Props) => {
                 </button>
 
                 <p className={styles.privacyMessage}>
-                    By clicking "Request trial license" you agree to our{' '}
+                    By clicking "Request trial licence" you agree to our{' '}
                     <a href={urlWithBaseUrl('/privacy/')}>Privacy Policy</a>.
                 </p>
 
@@ -297,7 +297,7 @@ export const TrialLicenceForm: FunctionComponent = ({ submitUrl }: Props) => {
                         <Icon name="tick" svgClasses={styles.statusIconSuccess} />
                         <span>
                             Thank you. Please check your inbox to validate your email and receive your{' '}
-                            <b>Enterprise Bundle</b> trial license.
+                            <b>Enterprise Bundle</b> trial licence.
                         </span>
                     </p>
                 )}

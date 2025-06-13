@@ -10,6 +10,7 @@ import { PopupComponent } from '../widgets/popupComponent';
 export type TooltipLocation =
     | 'advancedFilter'
     | 'cell'
+    | 'cellEditor'
     | 'columnToolPanelColumn'
     | 'columnToolPanelColumnGroup'
     | 'filterToolPanelColumnGroup'
@@ -56,6 +57,10 @@ export class TooltipComponent extends PopupComponent implements ITooltipComp {
     // will need to type params
     public init(params: ITooltipParams): void {
         const { value } = params;
-        this.getGui().textContent = _toString(value) as string;
+        const eGui = this.getGui();
+
+        eGui.textContent = _toString(value) as string;
+        const locationKebabCase = params.location.replace(/([a-z])([A-Z0-9])/g, '$1-$2').toLowerCase();
+        eGui.classList.add(`ag-${locationKebabCase}-tooltip`);
     }
 }

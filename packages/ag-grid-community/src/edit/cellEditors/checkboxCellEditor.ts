@@ -1,10 +1,10 @@
-import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _getAriaCheckboxStateName } from '../../utils/aria';
 import type { ElementParams } from '../../utils/dom';
+import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
 import type { AgCheckbox } from '../../widgets/agCheckbox';
 import { AgCheckboxSelector } from '../../widgets/agCheckbox';
 import { RefPlaceholder } from '../../widgets/component';
-import { PopupComponent } from '../../widgets/popupComponent';
 
 const CheckboxCellEditorElement: ElementParams = {
     tag: 'div',
@@ -12,42 +12,39 @@ const CheckboxCellEditorElement: ElementParams = {
     children: [
         {
             tag: 'ag-checkbox',
-            ref: 'eCheckbox',
+            ref: 'eEditor',
             role: 'presentation',
         },
     ],
 };
-export class CheckboxCellEditor extends PopupComponent implements ICellEditorComp {
+export class CheckboxCellEditor extends AgAbstractCellEditor<ICellEditorParams<any, boolean>, boolean> {
     constructor() {
         super(CheckboxCellEditorElement, [AgCheckboxSelector]);
     }
 
-    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
-    private params: ICellEditorParams<any, boolean>;
+    protected readonly eEditor: AgCheckbox = RefPlaceholder;
 
-    public init(params: ICellEditorParams<any, boolean>): void {
-        this.params = params;
+    public initialiseEditor(params: ICellEditorParams<any, boolean>): void {
         const isSelected = params.value ?? undefined;
+        const eEditor = this.eEditor;
+        eEditor.setValue(isSelected);
 
-        const eCheckbox = this.eCheckbox;
-        eCheckbox.setValue(isSelected);
-
-        const inputEl = eCheckbox.getInputElement();
+        const inputEl = eEditor.getInputElement();
         inputEl.setAttribute('tabindex', '-1');
 
         this.setAriaLabel(isSelected);
 
-        this.addManagedListeners(eCheckbox, {
+        this.addManagedListeners(eEditor, {
             fieldValueChanged: (event: { selected?: boolean }) => this.setAriaLabel(event.selected),
         });
     }
 
     public getValue(): boolean | undefined {
-        return this.eCheckbox.getValue();
+        return this.eEditor.getValue();
     }
 
     public focusIn(): void {
-        this.eCheckbox.getFocusableElement().focus();
+        this.eEditor.getFocusableElement().focus();
     }
 
     public afterGuiAttached(): void {
@@ -64,6 +61,26 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
         const translate = this.getLocaleTextFunc();
         const stateName = _getAriaCheckboxStateName(translate, isSelected);
         const ariaLabel = translate('ariaToggleCellValue', 'Press SPACE to toggle cell value');
-        this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
+        this.eEditor.setInputAriaLabel(`${ariaLabel} (${stateName})`);
+    }
+
+    public getValidationElement(): HTMLElement | HTMLInputElement {
+        return this.eEditor.getInputElement();
+    }
+
+    public getErrors() {
+        const { params } = this;
+        const { getErrors } = params;
+        const value = this.getValue();
+
+        if (!getErrors) {
+            return null;
+        }
+
+        return getErrors({
+            value,
+            internalErrors: null,
+            cellEditorParams: params,
+        });
     }
 }

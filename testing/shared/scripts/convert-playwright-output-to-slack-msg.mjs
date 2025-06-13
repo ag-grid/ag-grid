@@ -3,9 +3,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const channel = process.env.SLACK_CHANNEL;
-const username = process.env.SLACK_USERNAME;
-const icon_url = process.env.SLACK_ICON;
+const channel = process.env.SLACK_CHANNEL || ' ';
+const username = process.env.SLACK_USERNAME || ' ';
+const icon_url = process.env.SLACK_ICON || ' ';
+const slackFileName = process.env.SLACK_FILENAME || './benchmark-slack.json';
+const commentFileName = process.env.SLACK_COMMENT_FILENAME || './benchmark-comment.txt';
 
 if (!channel) throw new Error('SLACK_CHANNEL is not set');
 if (!username) throw new Error('SLACK_USERNAME is not set');
@@ -24,7 +26,8 @@ const blocks = [
 
 const slackMessage = { channel, username, icon_url, blocks };
 
-console.log(JSON.stringify(slackMessage, null, 2));
+fs.writeFileSync(commentFileName, blocks.map((b) => b.text?.text || '---').join('\n'));
+fs.writeFileSync(slackFileName, JSON.stringify(slackMessage, null, 2));
 
 /**
  * Generate a summary of test results for Slack message blocks
@@ -76,5 +79,3 @@ function generateTestsSummary(report) {
 
     return summaryBlocks;
 }
-
-export {};

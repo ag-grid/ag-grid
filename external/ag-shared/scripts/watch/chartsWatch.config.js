@@ -31,6 +31,8 @@ function getProjectBuildTargets(project) {
             ];
         case 'ag-charts-enterprise':
             return [[project, ['build:umd', 'build'], 'watch']];
+        case 'ag-charts-generate-example-files':
+            return [['ag-charts-website', ['generate-examples']]];
     }
 
     return [[project, ['build'], undefined]];
@@ -38,6 +40,6 @@ function getProjectBuildTargets(project) {
 
 module.exports = {
     ignoredProjects: IGNORED_PROJECTS,
-    devServerReloadTargets: ['generate', 'docs-resolved-interfaces', 'build:package', 'build:umd'],
+    devServerReloadTargets: ['generate', 'docs-resolved-interfaces', 'build:package', 'build:umd', 'generate-examples'],
     getProjectBuildTargets,
 };

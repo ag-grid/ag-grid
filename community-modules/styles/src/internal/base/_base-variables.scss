@@ -20,6 +20,12 @@
 
         --ag-tooltip-background-color: transparent;
 
+        --ag-tooltip-error-background-color: var(--ag-tooltip-background-color);
+
+        --ag-tooltip-error-text-color: var(--ag-invalid-color);
+
+        --ag-tooltip-error-border-color: var(ag-invalid-color);
+
         --ag-subheader-background-color: transparent;
 
         --ag-subheader-toolbar-background-color: transparent;

@@ -53,7 +53,15 @@ export class CellEditorComponentProxy implements ICellEditor {
     }
 
     private getOptionalMethods(): string[] {
-        return ['isCancelBeforeStart', 'isCancelAfterEnd', 'focusIn', 'focusOut', 'afterGuiAttached'];
+        return [
+            'isCancelBeforeStart',
+            'isCancelAfterEnd',
+            'focusIn',
+            'focusOut',
+            'afterGuiAttached',
+            'getErrors',
+            'getValidationElement',
+        ];
     }
 
     private updateValue(value: any): void {

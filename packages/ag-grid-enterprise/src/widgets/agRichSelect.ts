@@ -29,10 +29,10 @@ import {
     _fuzzySuggestions,
     _getActiveDomElement,
     _getEditorRendererDetails,
+    _isElementOverflowingCallback,
     _isEventFromPrintableCharacter,
     _isVisible,
     _setAriaActiveDescendant,
-    _shouldDisplayTooltip,
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
 
@@ -281,7 +281,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 }
             }
 
-            this.shouldDisplayTooltip = _shouldDisplayTooltip(() => this.eDisplayField);
+            this.shouldDisplayTooltip = _isElementOverflowingCallback(() => this.eDisplayField);
             this.tooltipFeature?.setTooltipAndRefresh(valueFormatted ?? null);
         }
     }

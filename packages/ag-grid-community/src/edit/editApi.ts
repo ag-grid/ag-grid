@@ -1,15 +1,13 @@
 import type { StartEditingCellParams } from '../api/gridApi';
 import { ensureColumnVisible, ensureIndexVisible } from '../api/scrollApi';
-import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _getCellByPosition } from '../entities/positionUtils';
 import { _getActiveDomElement } from '../gridOptionsUtils';
 import type {
     EditingCellPosition,
-    GetCellEditorInstancesParams,
     GetEditingCellsParams,
-    ICellEditor,
+    ICellEditorValidationError,
     SetEditingCellsParams,
 } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
@@ -36,23 +34,6 @@ export function disableBatchEditing(beans: BeanCollection): void {
 
 export function batchEditingEnabled(beans: BeanCollection): boolean {
     return beans.editSvc?.batch ?? false;
-}
-
-export function getCellEditorInstances<TData = any>(
-    beans: BeanCollection,
-    params: GetCellEditorInstancesParams<TData> = {}
-): ICellEditor[] {
-    const res: ICellEditor[] = [];
-
-    beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) => {
-        const cellEditor = cellCtrl.comp?.getCellEditor() as ICellEditor;
-
-        if (cellEditor) {
-            res.push(_unwrapUserComp(cellEditor));
-        }
-    });
-
-    return res;
 }
 
 export function getEditingCells(beans: BeanCollection, params: GetEditingCellsParams): EditingCellPosition[] {
@@ -201,6 +182,14 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 
 export function cancelEdits(beans: BeanCollection): void {
     beans.editSvc?.stopAllEditing(true, 'api');
+}
+
+export function validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {
+    if (!beans.editSvc) {
+        return null;
+    }
+
+    return beans.editSvc.validateEdit();
 }
 
 export function getCurrentUndoSize(beans: BeanCollection): number {

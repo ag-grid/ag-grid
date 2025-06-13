@@ -29,6 +29,16 @@ export interface BaseCellEditor {
      * Optional: If doing full line edit, then gets called when focus is leaving the editor
      */
     focusOut?(): void;
+
+    /** Optional: The element which will contain Edit Validation errors.
+     * This element will display a Tooltip with the validation error.
+     */
+    getValidationElement?(): HTMLElement;
+
+    /**
+     * Optional: The error messages associated with the Editor
+     */
+    getErrors?(): string[] | null;
 }
 
 export interface ICellEditor<TValue = any> extends BaseCellEditor {
@@ -93,10 +103,27 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
      *  will live inside. Useful if you want to add event listeners or classes at this level.
      *  This is the DOM element that gets browser focus when selecting cells. */
     eGridCell: HTMLElement;
+
     /** Utility function to parse a value using the column's `colDef.valueParser` */
     parseValue: (value: string) => TValue | null | undefined;
     /** Utility function to format a value using the column's `colDef.valueFormatter` */
     formatValue: (value: TValue | null | undefined) => string;
+
+    /**
+     * Optional validation callback that will override the `getError()` of Provided Editors.
+     * Use this to return your own custom errors.
+     * @return An array of strings containing the editor error messages, or `null` if the editor is valid.
+     */
+    getErrors?: (params: {
+        value: TValue | null | undefined;
+        internalErrors: string[] | null;
+        cellEditorParams: ICellEditorParams<TData, TValue, TContext>;
+    }) => string[] | null;
+
+    /**
+     * Runs the Editor Validation.
+     */
+    validate(): void;
 }
 
 export interface ICellEditorComp<TData = any, TValue = any, TContext = any>
@@ -137,4 +164,9 @@ export interface EditingCellPosition extends RowPosition {
 
     /** Current editing state */
     state?: 'editing' | 'changed';
+}
+
+export interface ICellEditorValidationError extends RowPosition {
+    column: Column;
+    messages: string[] | null;
 }

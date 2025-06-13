@@ -762,14 +762,29 @@ export type CoreParams = {
     tooltipBackgroundColor: ColorValue;
 
     /**
+     * Background color for tooltips showing errors
+     */
+    tooltipErrorBackgroundColor: ColorValue;
+
+    /**
      * Border for tooltips
      */
     tooltipBorder: BorderValue;
 
     /**
+     * Border for tooltips showing errors
+     */
+    tooltipErrorBorder: BorderValue;
+
+    /**
      * Text color for tooltips
      */
     tooltipTextColor: ColorValue;
+
+    /**
+     * Text color for tooltips showing errors
+     */
+    tooltipErrorTextColor: ColorValue;
 
     /**
      * Color to temporarily apply to cell data when its value decreases in an agAnimateShowChangeCellRenderer cell
@@ -1067,10 +1082,19 @@ export const coreDefaults: Readonly<CoreParams> = {
     tooltipBackgroundColor: {
         ref: 'chromeBackgroundColor',
     },
+    tooltipErrorBackgroundColor: {
+        ref: 'chromeBackgroundColor',
+    },
     tooltipTextColor: {
         ref: 'textColor',
     },
+    tooltipErrorTextColor: {
+        ref: 'invalidColor',
+    },
     tooltipBorder: true,
+    tooltipErrorBorder: {
+        color: { ref: 'invalidColor' },
+    },
     columnDropCellBackgroundColor: foregroundMix(0.07),
     columnDropCellTextColor: {
         ref: 'textColor',

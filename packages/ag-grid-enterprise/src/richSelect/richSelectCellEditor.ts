@@ -1,38 +1,35 @@
 import type {
     FieldPickerValueSelectedEvent,
-    ICellEditor,
     ICellEditorParams,
     KeyCreatorParams,
     RichCellEditorParams,
     RichSelectParams,
 } from 'ag-grid-community';
-import { PopupComponent, _addGridCommonParams, _missing, _warn } from 'ag-grid-community';
+import { AgAbstractCellEditor, _addGridCommonParams, _missing, _warn } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 
-export class RichSelectCellEditor<TData = any, TValue = any> extends PopupComponent implements ICellEditor<TValue> {
-    private params: RichCellEditorParams<TData, TValue>;
+export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> extends AgAbstractCellEditor {
+    protected override params: RichCellEditorParams<TData, TValue>;
     private focusAfterAttached: boolean;
-    private richSelect: AgRichSelect<TValue>;
+    protected eEditor: AgRichSelect<TValue>;
     private isAsync: boolean = false;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
     }
 
-    public init(params: RichCellEditorParams<TData, TValue>): void {
-        this.params = params;
-
-        const { cellStartedEdit, values, eventKey } = params;
+    public initialiseEditor(_params: RichCellEditorParams<TData, TValue>): void {
+        const { cellStartedEdit, values, eventKey } = this.params;
 
         if (_missing(values)) {
             _warn(180);
         }
 
         const { params: richSelectParams, valuesPromise } = this.buildRichSelectParams();
-
         const richSelect = this.createManagedBean(new AgRichSelect<TValue>(richSelectParams));
-        this.richSelect = richSelect;
+
+        this.eEditor = richSelect;
         richSelect.addCss('ag-cell-editor');
         this.appendChild(richSelect);
 
@@ -173,7 +170,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
                 return;
             }
 
-            const richSelect = this.richSelect;
+            const richSelect = this.eEditor;
             const { allowTyping, eventKey } = params;
 
             if (focusAfterAttached) {
@@ -199,22 +196,41 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         }
 
         if (eventKey?.length === 1) {
-            this.richSelect.searchTextFromString(eventKey);
+            this.eEditor.searchTextFromString(eventKey);
         }
     }
 
     public focusIn(): void {
-        this.richSelect.getFocusableElement().focus();
+        this.eEditor.getFocusableElement().focus();
     }
 
     public getValue(): any {
         const { params } = this;
-        const value = this.richSelect.getValue();
+        const value = this.eEditor.getValue();
 
         return params.parseValue?.(value) ?? value;
     }
 
     public override isPopup(): boolean {
         return false;
+    }
+
+    public getValidationElement() {
+        return this.eEditor.getAriaElement() as HTMLElement;
+    }
+
+    public getErrors() {
+        const { params } = this;
+        const { getErrors } = params;
+
+        if (!getErrors) {
+            return null;
+        }
+
+        return getErrors({
+            value: this.getValue(),
+            internalErrors: null,
+            cellEditorParams: params as unknown as ICellEditorParams<TData, TValue, TContext>,
+        });
     }
 }

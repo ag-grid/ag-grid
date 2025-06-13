@@ -8,34 +8,56 @@ import { SimpleCellEditor } from './simpleCellEditor';
 
 const TextCellEditorElement: ElementParams = {
     tag: 'ag-input-text-field',
-    ref: 'eInput',
+    ref: 'eEditor',
     cls: 'ag-cell-editor',
 };
 class TextCellEditorInput<TValue = any>
     implements CellEditorInput<TValue, ITextCellEditorParams<any, TValue>, AgInputTextField>
 {
-    private eInput: AgInputTextField;
+    private eEditor: AgInputTextField;
     private params: ITextCellEditorParams<any, TValue>;
 
     public getTemplate(): ElementParams {
         return TextCellEditorElement;
     }
+
     public getAgComponents() {
         return [AgInputTextFieldSelector];
     }
 
-    public init(eInput: AgInputTextField, params: ITextCellEditorParams<any, TValue>): void {
-        this.eInput = eInput;
+    public init(eEditor: AgInputTextField, params: ITextCellEditorParams<any, TValue>): void {
+        this.eEditor = eEditor;
         this.params = params;
         const maxLength = params.maxLength;
         if (maxLength != null) {
-            eInput.setMaxLength(maxLength);
+            eEditor.setMaxLength(maxLength);
         }
     }
 
+    public getErrors(): string[] | null {
+        const value = this.getValue();
+        const { params } = this;
+        const { maxLength, getErrors } = params;
+        let internalErrors: string[] | null = [];
+
+        if (maxLength != null && typeof value === 'string' && value.length > maxLength) {
+            internalErrors.push(`Must be ${maxLength} characters or fewer.`);
+        }
+
+        if (!internalErrors.length) {
+            internalErrors = null;
+        }
+
+        if (getErrors) {
+            return getErrors({ value, cellEditorParams: params, internalErrors });
+        }
+
+        return internalErrors;
+    }
+
     public getValue(): TValue | null | undefined {
-        const { eInput, params } = this;
-        const value = eInput.getValue();
+        const { eEditor, params } = this;
+        const value = eEditor.getValue();
         if (!_exists(value) && !_exists(params.value)) {
             return params.value;
         }
@@ -53,7 +75,7 @@ class TextCellEditorInput<TValue = any>
         // this comes into play in two scenarios:
         //   a) when user hits F2
         //   b) when user hits a printable character
-        const eInput = this.eInput;
+        const eInput = this.eEditor;
         const value = eInput.getValue();
         const len = (_exists(value) && value.length) || 0;
 
