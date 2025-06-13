@@ -29,7 +29,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     LargeTextEditorModule: 39.02,
     LocaleModule: 0.43,
     NumberEditorModule: 42.91,
-    NumberFilterModule: 120.56,
+    NumberFilterModule: 124.59,
     PaginationModule: 42.74,
     PinnedRowModule: 18.27,
     QuickFilterModule: 17.3,
@@ -50,8 +50,8 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     CellSpanModule: 8.08,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
-    AdvancedFilterModule: 200,
-    AllEnterpriseModule: 1438.2,
+    AdvancedFilterModule: 217.72,
+    AllEnterpriseModule: 1444.27,
     CellSelectionModule: 53,
     ClipboardModule: 46.04,
     ColumnMenuModule: 153.19,
@@ -62,7 +62,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     FindModule: 14.51,
     GridChartsModule: 67,
     IntegratedChartsModule: 392,
-    GroupFilterModule: 107.83,
+    GroupFilterModule: 111.6,
     MasterDetailModule: 82,
     MenuModule: 159.93,
     MultiFilterModule: 141.31,
@@ -110,7 +110,7 @@ const commonFeatureSets: ModuleTest[] = [
             'ExternalFilterModule',
             'QuickFilterModule',
         ],
-        expectedSize: 247.09,
+        expectedSize: 252.17,
     },
 ];
 
