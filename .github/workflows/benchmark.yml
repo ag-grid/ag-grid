@@ -145,8 +145,8 @@ jobs:
         if: ${{ !cancelled() }}
         env:
           REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
-          COMMENT_FILE: ./benchmark-comment.txt
-          SLACK_FILE: ./benchmark-slack.json
+          COMMENT_FILE: ./comment.txt
+          SLACK_FILE: ./slack.json
         run: |
           node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs
           COMMENT_CONTENT=$(cat "$COMMENT_FILE")          
