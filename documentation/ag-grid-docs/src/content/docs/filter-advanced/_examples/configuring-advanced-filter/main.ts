@@ -60,7 +60,7 @@ const initialAdvancedFilterModel: AdvancedFilterModel = {
 
 const advancedFilterParams: IAdvancedFilterParams = {
     buttons: ['clear', 'apply', 'reset'],
-    hideBuilderButton: true,
+    suppressBuilderButton: true,
 };
 
 let gridApi: GridApi<IOlympicData>;

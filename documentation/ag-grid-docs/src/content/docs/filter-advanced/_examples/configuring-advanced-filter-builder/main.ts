@@ -61,7 +61,7 @@ const initialAdvancedFilterModel: AdvancedFilterModel = {
 
 const advancedFilterBuilderParams: IAdvancedFilterBuilderParams = {
     showMoveButtons: true,
-    hideFullScreenButton: true,
+    suppressFullScreenButton: true,
     buttons: ['clear', 'apply', 'cancel'],
 };
 

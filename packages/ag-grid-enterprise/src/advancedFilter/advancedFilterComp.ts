@@ -4,7 +4,6 @@ import type {
     FilterAction,
     FilterButtonComp,
     FilterManager,
-    IAdvancedFilterParams,
     ITooltipCtrl,
     Registry,
     TooltipFeature,
@@ -147,7 +146,7 @@ export class AdvancedFilterComp extends Component {
             }
 
             if (currentValue.suppressBuilderButton !== previousValue.suppressBuilderButton) {
-                _setDisplayed(this.eBuilderFilterButton, currentValue.suppressBuilderButton);
+                _setDisplayed(this.eBuilderFilterButton, !currentValue.suppressBuilderButton);
             }
         });
     }
@@ -208,7 +207,6 @@ export class AdvancedFilterComp extends Component {
     }
 
     private setupBuilderButton(suppressed: boolean): void {
-        this.eBuilderFilterButton.style.display = 'block';
         this.eBuilderFilterButtonIcon.appendChild(_createIconNoSpan('advancedFilterBuilder', this.beans)!);
         this.eBuilderFilterButtonLabel.textContent = this.advFilterExpSvc.translate('advancedFilterBuilder');
         this.activateTabIndex([this.eBuilderFilterButton]);

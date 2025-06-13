@@ -112,6 +112,7 @@ import type {
     HeaderFocusedEvent,
     HeaderPosition,
     IAdvancedFilterBuilderParams,
+    IAdvancedFilterParams,
     IAggFunc,
     IDatasource,
     IRowDragItem,
