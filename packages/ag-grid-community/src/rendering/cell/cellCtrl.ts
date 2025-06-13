@@ -27,6 +27,7 @@ import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { IRowNumbersRowResizeFeature } from '../../interfaces/rowNumbers';
+import type { ILoadingCellRendererParams } from '../../main-umd-noStyles';
 import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
@@ -36,6 +37,7 @@ import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../utils/dom';
 import { _getCtrlForEventTarget } from '../../utils/event';
 import { _findFocusableElements, _isCellFocusSuppressed } from '../../utils/focus';
 import { _makeNull } from '../../utils/generic';
+import { AgPromise } from '../../utils/promise';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
@@ -108,6 +110,7 @@ export class CellCtrl extends BeanStub {
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
     private tooltipFeature: TooltipFeature | undefined = undefined;
+    private editorTooltipFeature: TooltipFeature | undefined = undefined;
     private mouseListener: CellMouseListenerFeature | undefined = undefined;
     private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
 
@@ -185,6 +188,7 @@ export class CellCtrl extends BeanStub {
     private removeFeatures(): void {
         const context = this.beans.context;
         this.positionFeature = context.destroyBean(this.positionFeature);
+        this.editorTooltipFeature = context.destroyBean(this.editorTooltipFeature);
         this.customStyleFeature = context.destroyBean(this.customStyleFeature);
         this.mouseListener = context.destroyBean(this.mouseListener);
         this.keyboardListener = context.destroyBean(this.keyboardListener);
@@ -200,6 +204,22 @@ export class CellCtrl extends BeanStub {
 
     private disableTooltipFeature() {
         this.tooltipFeature = this.beans.context.destroyBean(this.tooltipFeature);
+    }
+
+    public enableEditorTooltipFeature(editor: ICellEditor): void {
+        if (this.editorTooltipFeature) {
+            this.disableEditorTooltipFeature();
+        }
+        this.editorTooltipFeature = this.beans.tooltipSvc?.setupEditorTooltip(this, editor);
+        this.refreshEditorTooltip();
+    }
+
+    public refreshEditorTooltip(): void {
+        this.editorTooltipFeature?.refreshTooltip();
+    }
+
+    public disableEditorTooltipFeature(): void {
+        this.editorTooltipFeature = this.beans.context.destroyBean(this.editorTooltipFeature);
     }
 
     public setComp(
@@ -270,6 +290,37 @@ export class CellCtrl extends BeanStub {
     }
     public getValueToDisplay(): any {
         return this.valueFormatted ?? this.value;
+    }
+
+    public getDeferLoadingCellRenderer(): {
+        loadingComp: UserCompDetails | undefined;
+        onReady: AgPromise<void>;
+    } {
+        const { beans, column } = this;
+        const { userCompFactory, ctrlsSvc, eventSvc } = beans;
+
+        const colDef = column.getColDef();
+        const params = this.createCellRendererParams() as ILoadingCellRendererParams;
+        params.deferRender = true;
+
+        const loadingDetails = _getLoadingCellRendererDetails(userCompFactory, colDef, params);
+
+        if (ctrlsSvc.getGridBodyCtrl()?.scrollFeature?.isScrolling()) {
+            // If the grid is scrolling return a promise that resolves when scrolling is finished
+            // This prevents scroll being blocked by the rendering of a slow component
+            let resolver: () => void;
+            const onReady = new AgPromise<void>((resolve) => {
+                resolver = resolve;
+            });
+
+            this.addManagedListeners(eventSvc, {
+                bodyScrollEnd: () => resolver(),
+            });
+            return { loadingComp: loadingDetails, onReady };
+        }
+
+        // If not scrolling return a resolved promise immediately
+        return { loadingComp: loadingDetails, onReady: AgPromise.resolve() };
     }
 
     private showValue(forceNewCellRendererInstance: boolean, skipRangeHandleRefresh: boolean): void {

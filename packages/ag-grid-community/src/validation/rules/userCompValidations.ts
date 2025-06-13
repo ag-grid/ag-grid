@@ -45,6 +45,7 @@ export const USER_COMP_MODULES: Record<UserComponentName, ValidationModuleName> 
     agMenuItem: 'MenuItem',
     agColumnsToolPanel: 'ColumnsToolPanel',
     agFiltersToolPanel: 'FiltersToolPanel',
+    agNewFiltersToolPanel: 'FiltersToolPanel',
     agAggregationComponent: 'StatusBar',
     agSelectedRowCountComponent: 'StatusBar',
     agTotalRowCountComponent: 'StatusBar',

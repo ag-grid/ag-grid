@@ -5,6 +5,7 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { GridOptionsService } from '../gridOptionsService';
+import { _isElementOverflowingCallback } from '../utils/dom';
 import type { TooltipLocation } from './tooltipComponent';
 import { TooltipStateManager } from './tooltipStateManager';
 
@@ -36,18 +37,7 @@ export function _getShouldDisplayTooltip(
     gos: GridOptionsService,
     getElement: () => HTMLElement | undefined
 ): (() => boolean) | undefined {
-    return _isShowTooltipWhenTruncated(gos) ? _shouldDisplayTooltip(getElement) : undefined;
-}
-
-export function _shouldDisplayTooltip(getElement: () => HTMLElement | undefined): () => boolean {
-    return () => {
-        const element = getElement();
-        if (!element) {
-            // show tooltip by default
-            return true;
-        }
-        return element.scrollWidth > element.clientWidth;
-    };
+    return _isShowTooltipWhenTruncated(gos) ? _isElementOverflowingCallback(getElement) : undefined;
 }
 
 export class TooltipFeature extends BeanStub {

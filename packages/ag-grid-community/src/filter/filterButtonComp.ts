@@ -8,6 +8,10 @@ import { _warn } from '../validation/logging';
 import { Component } from '../widgets/component';
 import type { ComponentSelector } from '../widgets/component';
 
+export interface FilterButtonCompParams {
+    className?: string;
+}
+
 export interface FilterButtonEvent extends AgEvent<FilterAction> {
     event?: Event;
 }
@@ -17,10 +21,12 @@ export interface FilterButton {
     label: string;
 }
 
-const FilterButtonCompElement: ElementParams = {
-    tag: 'div',
-    cls: 'ag-filter-apply-panel',
-};
+function getElement(className: string): ElementParams {
+    return {
+        tag: 'div',
+        cls: className,
+    };
+}
 
 export class FilterButtonComp extends Component<FilterAction> {
     private buttons: FilterButton[];
@@ -29,9 +35,12 @@ export class FilterButtonComp extends Component<FilterAction> {
 
     private validationTooltipFeature?: TooltipFeature;
     private validationMessage: string | null = null;
+    private readonly className: string;
 
-    constructor() {
-        super(FilterButtonCompElement);
+    constructor(config?: FilterButtonCompParams) {
+        const { className = 'ag-filter-apply-panel' } = config ?? {};
+        super(getElement(className));
+        this.className = className;
     }
 
     public updateButtons(buttons: FilterButton[], useForm?: boolean): void {
@@ -51,6 +60,8 @@ export class FilterButtonComp extends Component<FilterAction> {
         // to the DOM once. This is much faster than appending each button individually.
         const fragment = document.createDocumentFragment();
 
+        const className = this.className;
+
         const addButton = ({ type, label }: FilterButton): void => {
             const clickListener = (event?: Event) => {
                 this.dispatchLocalEvent<FilterButtonEvent>({
@@ -68,7 +79,7 @@ export class FilterButtonComp extends Component<FilterAction> {
                 tag: 'button',
                 attrs: { type: buttonType },
                 ref: `${type}FilterButton`,
-                cls: 'ag-button ag-standard-button ag-filter-apply-panel-button',
+                cls: `ag-button ag-standard-button ${className}-button${isApply ? ' ' + className + '-apply-button' : ''}`,
                 children: label,
             });
             this.activateTabIndex([button]);

@@ -5,7 +5,7 @@ import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _createElement } from '../../../utils/dom';
 import { _warn } from '../../../validation/logging';
-import type { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
+import type { FilterLocaleTextKey } from '../../filterLocaleText';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import { removeItems } from '../simpleFilterUtils';
@@ -251,7 +251,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         return result;
     }
 
-    protected override translate(key: keyof typeof FILTER_LOCALE_TEXT): string {
+    protected override translate(key: FilterLocaleTextKey): string {
         if (key === 'lessThan') {
             return super.translate('before');
         }

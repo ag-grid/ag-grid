@@ -8,6 +8,7 @@ import type {
     DataTypeFormatValueFunc,
     DateStringDataTypeDefinition,
 } from '../entities/dataType';
+import type { SelectableFilterDef } from '../interfaces/iNewFiltersToolPanel';
 import type { ISetFilterParams } from '../interfaces/iSetFilter';
 import type { LocaleTextFunc } from '../misc/locale/localeUtils';
 import { _getDateParts } from '../utils/date';
@@ -189,7 +190,7 @@ const setFilterParamsForEachDataType: FilterParamsDefMap = {
 export function _getFilterParamsForDataType(
     filter: string,
     existingFilterParams: any,
-    colDef: ColDef,
+    colDef: ColDef | SelectableFilterDef,
     dataTypeDefinition: CoreDataTypeDefinition,
     formatValue: DataTypeFormatValueFunc,
     beans: BeanCollection,

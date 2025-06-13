@@ -39,6 +39,8 @@
     --ag-find-match-background-color: #ffff00;
     --ag-find-active-match-color: var(--ag-foreground-color);
     --ag-find-active-match-background-color: #ffa500;
+    --ag-filter-panel-apply-button-color: var(--ag-background-color);
+    --ag-filter-panel-apply-button-background-color: var(--ag-material-active-color);
 
     // derived colours (no color blending)
     --ag-range-selection-border-color: var(--ag-material-primary-color);
@@ -92,6 +94,7 @@
     --ag-range-selection-border-color: var(--ag-material-accent-color);
     --ag-find-match-color: var(--ag-background-color);
     --ag-find-active-match-color: var(--ag-background-color);
+    --ag-filter-panel-apply-button-color: var(--ag-foreground-color);
 
     --ag-background-color: #121212ff;
     --ag-foreground-color: #ffffffff;

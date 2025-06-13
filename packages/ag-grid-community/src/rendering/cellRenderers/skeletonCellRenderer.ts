@@ -1,5 +1,8 @@
-import type { ElementParams, ILoadingCellRendererComp, ILoadingCellRendererParams } from 'ag-grid-community';
-import { Component, _createElement, _setAriaLabel, _setAriaLabelledBy } from 'ag-grid-community';
+import type { ILoadingCellRendererComp, ILoadingCellRendererParams } from '../../interfaces/iLoadingCellRenderer';
+import { _setAriaLabel, _setAriaLabelledBy } from '../../utils/aria';
+import type { ElementParams } from '../../utils/dom';
+import { _createElement } from '../../utils/dom';
+import { Component } from '../../widgets/component';
 
 const SkeletonCellRendererElement: ElementParams = { tag: 'div', cls: 'ag-skeleton-container' };
 
@@ -14,7 +17,11 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
         this.addDestroyFunc(() => _setAriaLabelledBy(params.eParentOfValue));
         _setAriaLabelledBy(params.eParentOfValue, id);
 
-        params.node.failedLoad ? this.setupFailed() : this.setupLoading(params);
+        if (params.deferRender) {
+            this.setupLoading(params);
+        } else {
+            params.node.failedLoad ? this.setupFailed() : this.setupLoading(params);
+        }
     }
 
     private setupFailed(): void {
@@ -46,7 +53,9 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
         this.getGui().appendChild(skeletonEffect);
 
         const localeTextFunc = this.getLocaleTextFunc();
-        const ariaLoading = localeTextFunc('ariaSkeletonCellLoading', 'Row data is loading');
+        const ariaLoading = params.deferRender
+            ? localeTextFunc('ariaDeferSkeletonCellLoading', 'Cell is loading')
+            : localeTextFunc('ariaSkeletonCellLoading', 'Row data is loading');
         _setAriaLabel(this.getGui(), ariaLoading);
     }
 

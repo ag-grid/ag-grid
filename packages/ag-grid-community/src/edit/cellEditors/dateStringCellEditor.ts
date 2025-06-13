@@ -11,11 +11,11 @@ import { SimpleCellEditor } from './simpleCellEditor';
 
 const DateStringCellElement: ElementParams = {
     tag: 'ag-input-date-field',
-    ref: 'eInput',
+    ref: 'eEditor',
     cls: 'ag-cell-editor',
 };
 class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCellEditorParams, AgInputDateField> {
-    private eInput: AgInputDateField;
+    private eEditor: AgInputDateField;
     private params: IDateStringCellEditorParams;
     private includeTime: boolean | undefined;
 
@@ -24,33 +24,78 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     public getTemplate(): ElementParams {
         return DateStringCellElement;
     }
+
     public getAgComponents() {
         return [AgInputDateFieldSelector];
     }
 
-    public init(eInput: AgInputDateField, params: IDateStringCellEditorParams): void {
-        this.eInput = eInput;
+    public init(eEditor: AgInputDateField, params: IDateStringCellEditorParams): void {
+        this.eEditor = eEditor;
         this.params = params;
+
         const { min, max, step, colDef } = params;
+
         if (min != null) {
-            eInput.setMin(min);
+            eEditor.setMin(min);
         }
+
         if (max != null) {
-            eInput.setMax(max);
+            eEditor.setMax(max);
         }
+
         if (step != null) {
-            eInput.setStep(step);
+            eEditor.setStep(step);
         }
         this.includeTime =
             params.includeTime ?? this.getDataTypeService()?.getDateIncludesTimeFlag?.(colDef.cellDataType);
         if (this.includeTime != null) {
-            eInput.setIncludeTime(this.includeTime);
+            eEditor.setIncludeTime(this.includeTime);
         }
     }
 
+    public getErrors(): string[] | null {
+        const { eEditor, params } = this;
+        const raw = eEditor.getInputElement().value;
+        const value = this.formatDate(this.parseDate(raw ?? undefined));
+        const { min, max, getErrors } = params;
+        let internalErrors: string[] | null = [];
+
+        if (value) {
+            const date = new Date(value);
+
+            if (min) {
+                const minDate = new Date(min);
+                if (date < minDate) {
+                    internalErrors.push(`Date must be after ${minDate.toLocaleDateString()}`);
+                }
+            }
+
+            if (max) {
+                const maxDate = new Date(max);
+                if (date > maxDate) {
+                    internalErrors.push(`Date must be before ${maxDate.toLocaleDateString()}`);
+                }
+            }
+        }
+
+        if (!internalErrors.length) {
+            internalErrors = null;
+        }
+
+        if (getErrors) {
+            return getErrors({
+                value: this.getValue(),
+                cellEditorParams: params,
+                internalErrors,
+            });
+        }
+
+        return internalErrors;
+    }
+
     public getValue(): string | null | undefined {
-        const { params, eInput } = this;
-        const value = this.formatDate(eInput.getDate());
+        const { params, eEditor } = this;
+        const value = this.formatDate(eEditor.getDate());
         if (!_exists(value) && !_exists(params.value)) {
             return params.value;
         }

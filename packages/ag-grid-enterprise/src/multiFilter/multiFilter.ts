@@ -367,8 +367,9 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         getHandler: () => FilterHandler
     ): (filter: IFilterComp<any> | null) => FilterWrapperComp {
         const column = this.params.column as AgColumn;
-        const eventSvc: LocalEventService<'filterParamsChanged' | 'filterStateChanged' | 'filterAction'> =
-            new LocalEventService();
+        const eventSvc: LocalEventService<
+            'filterParamsChanged' | 'filterStateChanged' | 'filterAction' | 'filterGlobalButtons'
+        > = new LocalEventService();
         displayParams.model = initialModelForFilter;
         displayParams.state = { model: initialModelForFilter };
         displayParams.onModelChange = (model, additionalEventAttributes?: any) => {
@@ -454,7 +455,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                         isHandler: true,
                     },
                     eventSvc,
-                    updateModel
+                    updateModel,
+                    false
                 )
             );
         };

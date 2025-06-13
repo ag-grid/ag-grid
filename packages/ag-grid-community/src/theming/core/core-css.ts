@@ -207,6 +207,21 @@ export type CoreParams = {
     filterToolPanelGroupIndent: LengthValue;
 
     /**
+     * Color of new Filter Tool Panel apply button
+     */
+    filterPanelApplyButtonColor: ColorValue;
+
+    /**
+     * Background color of new Filter Tool Panel apply button
+     */
+    filterPanelApplyButtonBackgroundColor: ColorValue;
+
+    /**
+     * Color of text and UI elements that should stand out less than the default in new Filter Tool Panel
+     */
+    filterPanelCardSubtleColor: ColorValue;
+
+    /**
      * Color of matches used in Find
      */
     findMatchColor: ColorValue;
@@ -762,14 +777,29 @@ export type CoreParams = {
     tooltipBackgroundColor: ColorValue;
 
     /**
+     * Background color for tooltips showing errors
+     */
+    tooltipErrorBackgroundColor: ColorValue;
+
+    /**
      * Border for tooltips
      */
     tooltipBorder: BorderValue;
 
     /**
+     * Border for tooltips showing errors
+     */
+    tooltipErrorBorder: BorderValue;
+
+    /**
      * Text color for tooltips
      */
     tooltipTextColor: ColorValue;
+
+    /**
+     * Text color for tooltips showing errors
+     */
+    tooltipErrorTextColor: ColorValue;
 
     /**
      * Color to temporarily apply to cell data when its value decreases in an agAnimateShowChangeCellRenderer cell
@@ -1067,10 +1097,19 @@ export const coreDefaults: Readonly<CoreParams> = {
     tooltipBackgroundColor: {
         ref: 'chromeBackgroundColor',
     },
+    tooltipErrorBackgroundColor: {
+        ref: 'chromeBackgroundColor',
+    },
     tooltipTextColor: {
         ref: 'textColor',
     },
+    tooltipErrorTextColor: {
+        ref: 'invalidColor',
+    },
     tooltipBorder: true,
+    tooltipErrorBorder: {
+        color: { ref: 'invalidColor' },
+    },
     columnDropCellBackgroundColor: foregroundMix(0.07),
     columnDropCellTextColor: {
         ref: 'textColor',
@@ -1093,6 +1132,9 @@ export const coreDefaults: Readonly<CoreParams> = {
     advancedFilterBuilderColumnPillColor: '#a6e194',
     advancedFilterBuilderOptionPillColor: '#f3c08b',
     advancedFilterBuilderValuePillColor: '#85c0e4',
+    filterPanelApplyButtonColor: backgroundColor,
+    filterPanelApplyButtonBackgroundColor: accentColor,
+    filterPanelCardSubtleColor: { ref: 'subtleTextColor' },
     findMatchColor: foregroundColor,
     findMatchBackgroundColor: '#ffff00',
     findActiveMatchColor: foregroundColor,

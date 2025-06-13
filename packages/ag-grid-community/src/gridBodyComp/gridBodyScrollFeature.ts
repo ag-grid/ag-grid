@@ -76,6 +76,7 @@ export class GridBodyScrollFeature extends BeanStub {
     private lastIsHorizontalScrollShowing: boolean = false;
 
     private scrollTimer: number = 0;
+    private isScrollActive = false;
 
     private isVerticalPositionInvalidated: boolean = true;
     private isHorizontalPositionInvalidated: boolean = true;
@@ -304,6 +305,10 @@ export class GridBodyScrollFeature extends BeanStub {
         this.centerRowsCtrl.onHorizontalViewportChanged(true);
     }
 
+    public isScrolling(): boolean {
+        return this.isScrollActive;
+    }
+
     private fireScrollEvent(direction: ScrollDir): void {
         const bodyScrollEvent: WithoutGridCommon<BodyScrollEvent> = {
             type: 'bodyScroll',
@@ -311,12 +316,14 @@ export class GridBodyScrollFeature extends BeanStub {
             left: this.scrollLeft,
             top: this.scrollTop,
         };
+        this.isScrollActive = true;
         this.eventSvc.dispatchEvent(bodyScrollEvent);
 
         window.clearTimeout(this.scrollTimer);
 
         this.scrollTimer = window.setTimeout(() => {
             this.scrollTimer = 0;
+            this.isScrollActive = false;
             this.eventSvc.dispatchEvent({
                 ...bodyScrollEvent,
                 type: 'bodyScrollEnd',

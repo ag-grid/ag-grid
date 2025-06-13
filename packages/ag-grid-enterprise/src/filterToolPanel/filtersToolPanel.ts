@@ -9,9 +9,8 @@ import type {
     IToolPanelParams,
 } from 'ag-grid-community';
 import { _FILTER_LOCALE_TEXT } from 'ag-grid-community';
-import { Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
+import { Component, RefPlaceholder } from 'ag-grid-community';
 
-import { AgFiltersToolPanelButtons } from './agFiltersToolPanelButtons';
 import type { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
 import { AgFiltersToolPanelHeaderSelector } from './agFiltersToolPanelHeader';
 import type { AgFiltersToolPanelList } from './agFiltersToolPanelList';
@@ -33,8 +32,6 @@ const FiltersToolPanelElement: ElementParams = {
 export class FiltersToolPanel extends Component implements IFiltersToolPanel, IToolPanelComp {
     private readonly filtersToolPanelHeaderPanel: AgFiltersToolPanelHeader = RefPlaceholder;
     private readonly filtersToolPanelListPanel: AgFiltersToolPanelList = RefPlaceholder;
-
-    private buttonPanel?: AgFiltersToolPanelButtons;
 
     private initialised = false;
     private params: ToolPanelFiltersCompParams;
@@ -69,32 +66,10 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         filtersToolPanelHeaderPanel.init(newParams);
         filtersToolPanelListPanel.init(newParams);
 
-        const { suppressExpandAll: hideExpand, suppressFilterSearch: hideSearch, buttons } = newParams;
+        const { suppressExpandAll: hideExpand, suppressFilterSearch: hideSearch } = newParams;
 
         if (hideExpand && hideSearch) {
             filtersToolPanelHeaderPanel.setDisplayed(false);
-        }
-
-        let buttonPanel = this.buttonPanel;
-        if (buttons) {
-            if (!buttonPanel) {
-                buttonPanel = this.createBean(new AgFiltersToolPanelButtons());
-                this.appendChild(buttonPanel.getGui());
-                this.buttonPanel = buttonPanel;
-            }
-
-            const translate = this.getLocaleTextFunc();
-            buttonPanel.refresh(
-                buttons.map((type) => {
-                    const localeKey = `${type}Filter` as const;
-                    return { type, label: translate(localeKey, _FILTER_LOCALE_TEXT[localeKey]) };
-                })
-            );
-        } else {
-            if (buttonPanel) {
-                _removeFromParent(buttonPanel.getGui());
-                this.buttonPanel = this.destroyBean(buttonPanel);
-            }
         }
 
         // this is necessary to prevent a memory leak while refreshing the tool panel
@@ -153,10 +128,5 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
     public getState(): FiltersToolPanelState {
         return this.filtersToolPanelListPanel.getExpandedFiltersAndGroups();
-    }
-
-    public override destroy(): void {
-        this.buttonPanel = this.destroyBean(this.buttonPanel);
-        super.destroy();
     }
 }

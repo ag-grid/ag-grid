@@ -159,6 +159,7 @@ export const _INTERNAL_EVENTS = [
     'beforeRefreshModel',
     'rowNodeDataChanged',
     'cellEditValuesChanged',
+    'filterSwitched',
 ] as const;
 
 // We define as a callback to help with tree shaking (esbuild)

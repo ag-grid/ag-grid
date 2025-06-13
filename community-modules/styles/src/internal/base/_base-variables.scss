@@ -20,6 +20,12 @@
 
         --ag-tooltip-background-color: transparent;
 
+        --ag-tooltip-error-background-color: var(--ag-tooltip-background-color);
+
+        --ag-tooltip-error-text-color: var(--ag-invalid-color);
+
+        --ag-tooltip-error-border-color: var(ag-invalid-color);
+
         --ag-subheader-background-color: transparent;
 
         --ag-subheader-toolbar-background-color: transparent;
@@ -209,5 +215,9 @@
         --ag-find-active-match-color: var(--ag-foreground-color);
         --ag-find-match-background-color: #ffff00;
         --ag-find-active-match-background-color: #ffa500;
+
+        --ag-filter-panel-apply-button-color: var(--ag-foreground-color);
+        --ag-filter-panel-apply-button-background-color: var(--ag-background-color);
+        --ag-filter-panel-card-subtle-color: var(--ag-foreground-color);
     }
 }

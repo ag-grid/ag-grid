@@ -400,6 +400,7 @@ export {
     GetEditingCellsParams,
     EditingCellPosition,
 } from './interfaces/iCellEditor';
+export { AgAbstractCellEditor } from './widgets/agAbstractCellEditor';
 export { ILargeTextEditorParams } from './edit/cellEditors/iLargeTextCellEditor';
 export type { LargeTextCellEditor } from './edit/cellEditors/largeTextCellEditor';
 export type { PopupEditorWrapper } from './edit/cellEditors/popupEditorWrapper';
@@ -468,9 +469,20 @@ export {
     BaseToolPanelParams,
     IToolPanelColumnCompParams,
     IToolPanelFiltersCompParams,
+    IToolPanelNewFiltersCompParams,
 } from './interfaces/iToolPanel';
 export { IColumnToolPanel } from './interfaces/iColumnToolPanel';
 export { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';
+export {
+    SelectableFilterDef,
+    SelectableFilterParams,
+    FilterPanelSummaryState,
+    FilterPanelDetailState,
+    FilterPanelFilterState,
+    IFilterPanelService,
+    ISelectableFilterService,
+    INewFiltersToolPanel,
+} from './interfaces/iNewFiltersToolPanel';
 
 // overlays
 export {
@@ -751,7 +763,7 @@ export { GridCtrl, IGridComp } from './gridComp/gridCtrl';
 export type { SortService } from './sort/sortService';
 export { SortModelItem } from './interfaces/iSortModelItem';
 export { LocaleService } from './misc/locale/localeService';
-export { _getLocaleTextFunc, LocaleTextFunc } from './misc/locale/localeUtils';
+export { _getLocaleTextFunc, LocaleTextFunc, _translate } from './misc/locale/localeUtils';
 export type { ValueService } from './valueService/valueService';
 export type { ValueCache } from './valueService/valueCache';
 export type { ExpressionService } from './valueService/expressionService';
@@ -783,6 +795,8 @@ export {
     SideBarState,
     SortState,
     GridStateKey,
+    NewFiltersToolPanelState,
+    NewFiltersToolPanelFilterState,
 } from './interfaces/gridState';
 export { convertColumnGroupState, convertColumnState } from './misc/state/stateUtils';
 
@@ -841,6 +855,7 @@ export {
     CellEditorSelectorFunc,
     CellEditorSelectorResult,
     CellRendererSelectorFunc,
+    ILoadingCellRendererSelectorFunc,
     CellRendererSelectorResult,
     GetQuickFilterTextParams,
     ColumnFunctionCallbackParams,
@@ -1007,7 +1022,6 @@ export { ITooltipComp, ITooltipParams, TooltipLocation } from './tooltip/tooltip
 export {
     TooltipFeature,
     ITooltipCtrl,
-    _shouldDisplayTooltip,
     _getShouldDisplayTooltip,
     _isShowTooltipWhenTruncated,
 } from './tooltip/tooltipFeature';
@@ -1038,6 +1052,7 @@ export {
     _setAriaLabelledBy,
     _setAriaChecked,
     _setAriaControls,
+    _setAriaControlsAndLabel,
     _setAriaRole,
     _setAriaColIndex,
     _setAriaColSpan,
@@ -1080,6 +1095,7 @@ export {
     _observeResize,
     _preserveRangesWhile,
     _requestAnimationFrame,
+    _isElementOverflowingCallback,
 } from './utils/dom';
 export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';

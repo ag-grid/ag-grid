@@ -1,7 +1,7 @@
-import { _defaultComparator, _last, _makeNull, _toStringOrNull, _warn } from 'ag-grid-community';
+import { _defaultComparator, _last, _makeNull, _toStringOrNull, _translate, _warn } from 'ag-grid-community';
 import type { BeanStub, ISetFilterParams } from 'ag-grid-community';
 
-import type { ISetFilterLocaleText } from './localeText';
+import type { SetFilterLocaleTextKey } from './localeText';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
 
 export function processDataPath(
@@ -26,8 +26,12 @@ export function processDataPath(
     return processedDataPath;
 }
 
-export function translateForSetFilter(bean: BeanStub<any>, key: keyof ISetFilterLocaleText): string {
-    return bean.getLocaleTextFunc()(key, DEFAULT_LOCALE_TEXT[key]);
+export function translateForSetFilter(
+    bean: BeanStub<any>,
+    key: SetFilterLocaleTextKey,
+    variableValues?: string[]
+): string {
+    return _translate(bean, DEFAULT_LOCALE_TEXT, key, variableValues);
 }
 
 export function applyExcelModeOptions<V>(params: ISetFilterParams<any, V>): void {

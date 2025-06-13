@@ -8,7 +8,7 @@ import { IntegratedChartsModule } from './charts/integratedChartsModule';
 import { ClipboardModule } from './clipboard/clipboardModule';
 import { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';
 import { ExcelExportModule } from './excelExport/excelExportModule';
-import { FiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';
+import { FiltersToolPanelModule, NewFiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';
 import { FindModule } from './find/findModule';
 import { MasterDetailModule } from './masterDetail/masterDetailModule';
 import { ColumnMenuModule, ContextMenuModule } from './menu/menuModule';
@@ -35,6 +35,7 @@ const dependsOn = [
     ColumnsToolPanelModule,
     ExcelExportModule,
     FiltersToolPanelModule,
+    NewFiltersToolPanelModule,
     MasterDetailModule,
     ColumnMenuModule,
     ContextMenuModule,

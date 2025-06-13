@@ -345,6 +345,12 @@
                             "name": "Filters Tool Panel",
                             "path": "tool-panel-filters",
                             "isEnterprise": true
+                        },
+                        {
+                            "moduleName": "NewFiltersToolPanelModule",
+                            "name": "New Filters Tool Panel",
+                            "path": "tool-panel-filters/#new-filters-tool-panel",
+                            "isEnterprise": true
                         }
                     ]
                 },

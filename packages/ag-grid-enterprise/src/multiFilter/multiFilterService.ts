@@ -4,6 +4,7 @@ import type {
     DataTypeFormatValueFunc,
     IMultiFilterParams,
     IMultiFilterService,
+    SelectableFilterDef,
     ValueGetterFunc,
 } from 'ag-grid-community';
 import { BeanStub, _getDefaultSimpleFilter, _getFilterParamsForDataType } from 'ag-grid-community';
@@ -13,7 +14,7 @@ export class MultiFilterService extends BeanStub implements IMultiFilterService 
 
     public getParamsForDataType(
         existingFilterParams: IMultiFilterParams | undefined,
-        colDef: ColDef<any, any>,
+        colDef: ColDef | SelectableFilterDef,
         dataTypeDefinition: CoreDataTypeDefinition,
         formatValue: DataTypeFormatValueFunc
     ): { filterParams?: any; filterValueGetter?: string | ValueGetterFunc<any, any> | undefined } {

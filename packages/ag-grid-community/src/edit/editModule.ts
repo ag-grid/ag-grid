@@ -16,7 +16,6 @@ import {
     batchEditingEnabled,
     disableBatchEditing,
     enableBatchEditing,
-    getCellEditorInstances,
     getCurrentRedoSize,
     getCurrentUndoSize,
     getEditingCells,
@@ -31,6 +30,7 @@ import { EditModelService } from './editModelService';
 import { EditService } from './editService';
 import { FullRowEditStrategy } from './strategy/fullRowEditStrategy';
 import { SingleCellEditStrategy } from './strategy/singleCellEditStrategy';
+import { getCellEditorInstances } from './utils/editors';
 
 /**
  * @internal
