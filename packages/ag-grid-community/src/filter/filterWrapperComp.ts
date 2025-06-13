@@ -16,7 +16,7 @@ import type {
 } from './columnFilterService';
 import type { FilterButtonEvent } from './filterButtonComp';
 import { FilterButtonComp } from './filterButtonComp';
-import { FILTER_LOCALE_TEXT } from './filterLocaleText';
+import { translateForFilter } from './filterLocaleText';
 import { isUseApplyButton } from './floating/provided/providedFilterUtils';
 
 /** Used with filter handlers. This adds filter buttons. */
@@ -110,11 +110,9 @@ export class FilterWrapperComp extends Component {
 
         let eButtonsPanel = this.eButtons;
         if (hasButtons) {
-            const translate = this.getLocaleTextFunc();
-
             const buttons = newButtons.map((type) => {
                 const localeKey = `${type}Filter` as const;
-                return { type, label: translate(localeKey, FILTER_LOCALE_TEXT[localeKey]) };
+                return { type, label: translateForFilter(this, localeKey) };
             });
 
             this.applyActive = isUseApplyButton(this.params!);

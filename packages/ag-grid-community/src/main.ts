@@ -240,7 +240,7 @@ export { IMultiFilterService } from './interfaces/iMultiFilterService';
 export { FilterComp } from './filter/filterComp';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
 export { FilterButtonComp, FilterButtonEvent, FilterButton, AgFilterButtonSelector } from './filter/filterButtonComp';
-export { FILTER_LOCALE_TEXT as _FILTER_LOCALE_TEXT } from './filter/filterLocaleText';
+export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
 export { _getFilterParamsForDataType, _getDefaultSimpleFilter } from './filter/filterDataTypeUtils';
 
 export {

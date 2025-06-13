@@ -1,5 +1,5 @@
 import type { ElementParams, FilterAction, FilterPanelFilterState } from 'ag-grid-community';
-import { FilterButtonComp } from 'ag-grid-community';
+import { FilterButtonComp, _translateForFilter } from 'ag-grid-community';
 import {
     Component,
     RefPlaceholder,
@@ -132,6 +132,10 @@ export class FilterPanel extends Component {
         const { actions, canApply } = filterPanelSvc.getActions() ?? {};
         let buttonComp = this.buttonComp;
         if (actions?.length) {
+            const buttons = actions.map((type) => ({
+                type,
+                label: _translateForFilter(this, `${type}Filter`),
+            }));
             if (!buttonComp) {
                 buttonComp = this.createBean(new FilterButtonComp({ className: 'ag-filter-panel-buttons' }));
                 this.getGui().appendChild(buttonComp.getGui());
@@ -141,8 +145,8 @@ export class FilterPanel extends Component {
                 });
                 buttonComp.addManagedListeners(buttonComp, listeners);
             }
-            buttonComp.updateButtons(actions);
-            buttonComp.updateValidity(canApply);
+            buttonComp.updateButtons(buttons);
+            buttonComp.updateValidity(canApply !== false);
         } else {
             if (buttonComp) {
                 _removeFromParent(buttonComp.getGui());

@@ -8,7 +8,7 @@ import type {
     IToolPanelFiltersCompParams,
     IToolPanelParams,
 } from 'ag-grid-community';
-import { _FILTER_LOCALE_TEXT } from 'ag-grid-community';
+import { _translateForFilter } from 'ag-grid-community';
 import { Component, RefPlaceholder } from 'ag-grid-community';
 
 import type { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
