@@ -87,7 +87,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
     public getValidationErrors() {
         const { params } = this;
         const { maxLength, getValidationErrors } = params;
-        const { maxLength, getErrors } = params;
+
         const value = this.getValue();
         let internalErrors: string[] | null = [];
 

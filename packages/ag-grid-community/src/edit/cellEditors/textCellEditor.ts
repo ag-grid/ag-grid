@@ -38,7 +38,6 @@ class TextCellEditorInput<TValue = any>
         const value = this.getValue();
         const { params } = this;
         const { maxLength, getValidationErrors } = params;
-        const { maxLength, getErrors } = params;
         let internalErrors: string[] | null = [];
 
         if (maxLength != null && typeof value === 'string' && value.length > maxLength) {

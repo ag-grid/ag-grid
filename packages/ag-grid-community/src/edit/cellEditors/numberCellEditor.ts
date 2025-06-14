@@ -53,7 +53,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         const value = this.getValue();
         const { params } = this;
         const { min, max, getValidationErrors } = params;
-        const { min, max, getErrors } = params;
+
         let internalErrors: string[] | null = [];
 
         if (typeof value === 'number') {
