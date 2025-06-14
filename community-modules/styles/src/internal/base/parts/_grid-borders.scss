@@ -151,5 +151,9 @@
 
     .ag-cell-inline-editing {
         border-color: var(--ag-input-focus-border-color) !important;
+        &:has(.invalid),
+        &:has(:invalid) {
+            border-color: var(--ag-invalid-color) !important;
+        }
     }
 }

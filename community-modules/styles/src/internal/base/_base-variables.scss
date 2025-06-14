@@ -20,11 +20,14 @@
 
         --ag-tooltip-background-color: transparent;
 
-        --ag-tooltip-error-background-color: var(--ag-tooltip-background-color);
-
+        --ag-tooltip-error-background-color: color-mix(
+            in srgb,
+            var(--ag-background-color),
+            var(--ag-invalid-color) 10%
+        );
         --ag-tooltip-error-text-color: var(--ag-invalid-color);
 
-        --ag-tooltip-error-border-color: var(ag-invalid-color);
+        --ag-tooltip-error-border-color: color-mix(in srgb, var(--ag-background-color), var(--ag-invalid-color) 25%);
 
         --ag-subheader-background-color: transparent;
 
@@ -151,6 +154,7 @@
         --ag-toggle-button-width: calc(var(--ag-toggle-button-height) * 2);
 
         --ag-input-focus-box-shadow: none;
+        --ag-input-error-focus-box-shadow: none;
         --ag-input-focus-border-color: none;
 
         --ag-minichart-selected-chart-color: var(--ag-checkbox-checked-color);
