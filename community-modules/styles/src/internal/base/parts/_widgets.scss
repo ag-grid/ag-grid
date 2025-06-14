@@ -67,7 +67,8 @@
             border-color: var(--ag-input-focus-border-color);
             &.invalid,
             &:invalid {
-                border-color: var(--ag-invalid-color) !important;
+                box-shadow: var(--ag-input-error-focus-box-shadow);
+                border-color: var(--ag-invalid-color);
             }
         }
 
