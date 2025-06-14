@@ -39,7 +39,7 @@ export interface BaseCellEditor {
     /**
      * Optional: The error messages associated with the Editor
      */
-    getErrors?(): string[] | null;
+    getValidationErrors?(): string[] | null;
 }
 
 export interface ICellEditor<TValue = any> extends BaseCellEditor {
@@ -115,7 +115,7 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
      * Use this to return your own custom errors.
      * @return An array of strings containing the editor error messages, or `null` if the editor is valid.
      */
-    getErrors?: (params: {
+    getValidationErrors?: (params: {
         value: TValue | null | undefined;
         internalErrors: string[] | null;
         cellEditorParams: ICellEditorParams<TData, TValue, TContext>;

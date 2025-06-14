@@ -212,21 +212,21 @@ export class TooltipService extends BeanStub implements NamedBean {
         const tooltipParams: ITooltipCtrl = {
             getGui: () => el,
             getTooltipValue: () => {
-                if (!editor.getErrors) {
+                if (!editor.getValidationErrors) {
                     return;
                 }
 
-                const errors = editor.getErrors();
+                const errors = editor.getValidationErrors();
 
                 return errors && errors.length ? errors.join('. ') : undefined;
             },
             getLocation: () => 'cellEditor',
             shouldDisplayTooltip: () => {
-                if (!editor.getErrors) {
+                if (!editor.getValidationErrors) {
                     return false;
                 }
 
-                const errors = editor.getErrors();
+                const errors = editor.getValidationErrors();
                 return !!errors && errors.length > 0;
             },
         };

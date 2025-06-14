@@ -84,8 +84,9 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         return this.eEditor.getInputElement();
     }
 
-    public getErrors() {
+    public getValidationErrors() {
         const { params } = this;
+        const { maxLength, getValidationErrors } = params;
         const { maxLength, getErrors } = params;
         const value = this.getValue();
         let internalErrors: string[] | null = [];
@@ -98,8 +99,8 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
             internalErrors = null;
         }
 
-        if (getErrors) {
-            return getErrors({
+        if (getValidationErrors) {
+            return getValidationErrors({
                 value,
                 internalErrors,
                 cellEditorParams: params,

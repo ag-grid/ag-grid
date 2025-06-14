@@ -68,16 +68,16 @@ export class CheckboxCellEditor extends AgAbstractCellEditor<ICellEditorParams<a
         return this.eEditor.getInputElement();
     }
 
-    public getErrors() {
+    public getValidationErrors() {
         const { params } = this;
-        const { getErrors } = params;
+        const { getValidationErrors } = params;
         const value = this.getValue();
 
-        if (!getErrors) {
+        if (!getValidationErrors) {
             return null;
         }
 
-        return getErrors({
+        return getValidationErrors({
             value,
             internalErrors: null,
             cellEditorParams: params,

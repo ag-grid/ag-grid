@@ -124,9 +124,9 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
         return this.eEditor.getAriaElement() as HTMLElement;
     }
 
-    public getErrors() {
+    public getValidationErrors() {
         const { params } = this;
-        const { values, getErrors } = params;
+        const { values, getValidationErrors } = params;
         const value = this.getValue();
         let internalErrors: string[] | null = [];
 
@@ -136,8 +136,8 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
             internalErrors = null;
         }
 
-        if (getErrors) {
-            return getErrors({
+        if (getValidationErrors) {
+            return getValidationErrors({
                 value,
                 internalErrors,
                 cellEditorParams: params,

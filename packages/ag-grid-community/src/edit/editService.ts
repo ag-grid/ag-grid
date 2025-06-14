@@ -40,8 +40,8 @@ import {
     _refreshEditorOnColDefChanged,
     _syncFromEditor,
     _syncFromEditors,
+    _validateEdit,
     _valuesDiffer,
-    getCellEditorInstanceMap,
 } from './utils/editors';
 import { _getSiblingRows } from './utils/nodes';
 import { _refreshEditCells } from './utils/refresh';
@@ -159,45 +159,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         source: EditSource = 'ui'
     ): boolean | null {
         return this.strategy?.shouldCancel(position, event, source) ?? null;
-    }
-
-    public validateEdit(): ICellEditorValidationError[] | null {
-        const mappedEditors = getCellEditorInstanceMap(this.beans);
-
-        if (!mappedEditors || mappedEditors.length === 0) {
-            return null;
-        }
-
-        const errors: ICellEditorValidationError[] = [];
-
-        for (const mappedEditor of mappedEditors) {
-            const { ctrl, editor } = mappedEditor;
-            const { rowNode, column } = ctrl;
-            const { rowIndex, rowPinned } = rowNode;
-            const errorMessages = editor.getErrors?.();
-            const el = editor.getValidationElement?.();
-
-            ctrl.refreshEditorTooltip();
-
-            if (el) {
-                if (el instanceof HTMLInputElement) {
-                    el.setCustomValidity(errorMessages ? errorMessages.join('. ') : '');
-                } else {
-                    el.classList.toggle('invalid', errorMessages != null && errorMessages.length > 0);
-                }
-            }
-
-            if (errorMessages) {
-                errors.push({
-                    column,
-                    rowIndex: rowIndex!,
-                    rowPinned,
-                    messages: errorMessages,
-                });
-            }
-        }
-
-        return errors.length ? errors : null;
     }
 
     public isEditing(position?: EditPosition, params?: IsEditingParams): boolean {
@@ -724,5 +685,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     public createRowStyleFeature(rowCtrl: RowCtrl, beans: BeanCollection): IRowStyleFeature {
         return new RowEditStyleFeature(rowCtrl, beans);
+    }
+
+    public validateEdit(): ICellEditorValidationError[] | null {
+        return _validateEdit(this.beans);
     }
 }
