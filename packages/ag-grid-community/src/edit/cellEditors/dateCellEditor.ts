@@ -1,4 +1,5 @@
 import type { DataTypeService } from '../../columns/dataTypeService';
+import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
 import { _serialiseDate } from '../../utils/date';
 import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
