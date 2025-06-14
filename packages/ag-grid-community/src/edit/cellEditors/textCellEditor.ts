@@ -1,3 +1,4 @@
+import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
@@ -17,6 +18,8 @@ class TextCellEditorInput<TValue = any>
     private eEditor: AgInputTextField;
     private params: ITextCellEditorParams<any, TValue>;
 
+    constructor(private getLocaleTextFunc: () => LocaleTextFunc) {}
+
     public getTemplate(): ElementParams {
         return TextCellEditorElement;
     }
@@ -35,13 +38,17 @@ class TextCellEditorInput<TValue = any>
     }
 
     public getErrors(): string[] | null {
-        const value = this.getValue();
         const { params } = this;
+        const value = this.getValue();
         const { maxLength, getErrors } = params;
+        const translate = this.getLocaleTextFunc();
+
         let internalErrors: string[] | null = [];
 
         if (maxLength != null && typeof value === 'string' && value.length > maxLength) {
-            internalErrors.push(`Must be ${maxLength} characters or fewer.`);
+            internalErrors.push(
+                translate('maxLengthValidation', `Must be ${maxLength} characters or fewer.`, [String(maxLength)])
+            );
         }
 
         if (!internalErrors.length) {
@@ -87,6 +94,6 @@ class TextCellEditorInput<TValue = any>
 
 export class TextCellEditor extends SimpleCellEditor<any, ITextCellEditorParams, AgInputTextField> {
     constructor() {
-        super(new TextCellEditorInput());
+        super(new TextCellEditorInput(() => this.getLocaleTextFunc()));
     }
 }

@@ -131,7 +131,8 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
         let internalErrors: string[] | null = [];
 
         if (values && !values.includes(value)) {
-            internalErrors.push(`Invalid selection.`);
+            const translate = this.getLocaleTextFunc();
+            internalErrors.push(translate('invalidSelectionValidation', 'Invalid selection.'));
         } else {
             internalErrors = null;
         }

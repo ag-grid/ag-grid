@@ -1,5 +1,6 @@
 import type { DataTypeService } from '../../columns/dataTypeService';
 import type { AgColumn } from '../../entities/agColumn';
+import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
 import { _parseDateTimeFromString, _serialiseDate } from '../../utils/date';
 import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
@@ -19,7 +20,10 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     private params: IDateStringCellEditorParams;
     private includeTime: boolean | undefined;
 
-    constructor(private getDataTypeService: () => DataTypeService | undefined) {}
+    constructor(
+        private getDataTypeService: () => DataTypeService | undefined,
+        private getLocaleTextFunc: () => LocaleTextFunc
+    ) {}
 
     public getTemplate(): ElementParams {
         return DateStringCellElement;
@@ -62,18 +66,25 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
 
         if (value) {
             const date = new Date(value);
+            const translate = this.getLocaleTextFunc();
 
             if (min) {
                 const minDate = new Date(min);
                 if (date < minDate) {
-                    internalErrors.push(`Date must be after ${minDate.toLocaleDateString()}`);
+                    const minDateString = minDate.toLocaleDateString();
+                    internalErrors.push(
+                        translate('minDateValidation', `Date must be after ${minDateString}`, [minDateString])
+                    );
                 }
             }
 
             if (max) {
                 const maxDate = new Date(max);
                 if (date > maxDate) {
-                    internalErrors.push(`Date must be before ${maxDate.toLocaleDateString()}`);
+                    const maxDateString = maxDate.toLocaleDateString();
+                    internalErrors.push(
+                        translate('maxDateValidation', `Date must be before ${maxDateString}`, [maxDateString])
+                    );
                 }
             }
         }
@@ -123,6 +134,11 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
 
 export class DateStringCellEditor extends SimpleCellEditor<string, IDateStringCellEditorParams, AgInputDateField> {
     constructor() {
-        super(new DateStringCellEditorInput(() => this.beans.dataTypeSvc));
+        super(
+            new DateStringCellEditorInput(
+                () => this.beans.dataTypeSvc,
+                () => this.getLocaleTextFunc()
+            )
+        );
     }
 }

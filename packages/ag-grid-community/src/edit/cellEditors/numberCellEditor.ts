@@ -1,4 +1,5 @@
 import { KeyCode } from '../../constants/keyCode';
+import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
 import { _isBrowserSafari } from '../../utils/browser';
 import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
@@ -16,6 +17,8 @@ const NumberCellElement: ElementParams = {
 class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, AgInputNumberField> {
     private eEditor: AgInputNumberField;
     private params: INumberCellEditorParams;
+
+    constructor(private getLocaleTextFunc: () => LocaleTextFunc) {}
 
     public getTemplate(): ElementParams {
         return NumberCellElement;
@@ -50,17 +53,23 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
     }
 
     public getErrors(): string[] | null {
-        const value = this.getValue();
         const { params } = this;
+        const value = this.getValue();
+        const translate = this.getLocaleTextFunc();
         const { min, max, getErrors } = params;
+
         let internalErrors: string[] | null = [];
 
         if (typeof value === 'number') {
             if (min != null && value < min) {
-                internalErrors.push(`Must be greater than or equal to ${min}.`);
+                internalErrors.push(
+                    translate('minValueValidation', `Must be greater than or equal to ${min}.`, [String(min)])
+                );
             }
             if (max != null && value > max) {
-                internalErrors.push(`Must be less than or equal to ${max}.`);
+                internalErrors.push(
+                    translate('maxValueValidation', `Must be less than or equal to ${max}.`, [String(max)])
+                );
             }
         }
 
@@ -120,6 +129,6 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
 
 export class NumberCellEditor extends SimpleCellEditor<number, INumberCellEditorParams, AgInputNumberField> {
     constructor() {
-        super(new NumberCellEditorInput());
+        super(new NumberCellEditorInput(() => this.getLocaleTextFunc()));
     }
 }

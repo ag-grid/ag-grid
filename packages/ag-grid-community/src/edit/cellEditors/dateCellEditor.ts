@@ -18,7 +18,10 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     private params: IDateCellEditorParams;
     private includeTime: boolean | undefined;
 
-    constructor(private getDataTypeService: () => DataTypeService | undefined) {}
+    constructor(
+        private getDataTypeService: () => DataTypeService | undefined,
+        private getLocaleTextFunc: () => LocaleTextFunc
+    ) {}
 
     public getTemplate(): ElementParams {
         return DateCellElement;
@@ -57,13 +60,20 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         const { params } = this;
         const { min, max, getErrors } = params;
         let internalErrors: string[] | null = [];
+        const translate = this.getLocaleTextFunc();
 
         if (value instanceof Date && !isNaN(value.getTime())) {
             if (min instanceof Date && value < min) {
-                internalErrors.push(`Date must be after ${min.toLocaleDateString()}`);
+                const minDateString = min.toLocaleDateString();
+                internalErrors.push(
+                    translate('minDateValidation', `Date must be after ${minDateString}`, [minDateString])
+                );
             }
             if (max instanceof Date && value > max) {
-                internalErrors.push(`Date must be before ${max.toLocaleDateString()}`);
+                const maxDateString = max.toLocaleDateString();
+                internalErrors.push(
+                    translate('maxDateValidation', `Date must be before ${maxDateString}`, [maxDateString])
+                );
             }
         }
 
@@ -98,6 +108,11 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
 
 export class DateCellEditor extends SimpleCellEditor<Date, IDateCellEditorParams, AgInputDateField> {
     constructor() {
-        super(new DateCellEditorInput(() => this.beans.dataTypeSvc));
+        super(
+            new DateCellEditorInput(
+                () => this.beans.dataTypeSvc,
+                () => this.getLocaleTextFunc()
+            )
+        );
     }
 }
