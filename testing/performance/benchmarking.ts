@@ -327,9 +327,7 @@ const testLevelCatch = (e: any, lastCommunications?: BrowserCommunications) => {
             console[msg.type as 'log' | 'error'](msg.text);
         });
         lastCommunications.requestMsgs.forEach((msg) => {
-            msg.response.then((r) => {
-                console.log(`U: ${msg.method} ${msg.url} D: ${r.status} ${r.statusText}`);
-            });
+            console.log(`U: ${msg.method} ${msg.url} D: ${msg.response.status} ${msg.response.statusText}`);
         });
     }
     throw e;
