@@ -577,8 +577,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         let edit = this.model.getEdit({ rowNode, column });
 
         const pinnedSibling = (rowNode as RowNode).pinnedSibling;
-        if (!edit && pinnedSibling) {
-            edit = this.model.getEdit({ rowNode: pinnedSibling, column });
+        if (pinnedSibling) {
+            const siblingEdit = this.model.getEdit({ rowNode: pinnedSibling, column });
+            if (siblingEdit) {
+                edit = siblingEdit;
+            }
         }
 
         const newValue = edit?.newValue;
