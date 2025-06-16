@@ -11,7 +11,7 @@ These editors support validation automatically by checking the constraints defin
 - `Number` editors validate against min and max constraints.
 - `Date` editors ensure the value is a valid date string.
 
-Validation is performed when editing ends, and the grid will handle invalid values based on the selected [Validation Mode](#validation-mode).
+Validation is performed when editing ends, and the grid will handle invalid values based on the selected [Validation Modes](#validation-modes).
 
 ## Overriding Validation
 
@@ -39,7 +39,7 @@ const gridOptions = {
 
 {% interfaceDocumentation interfaceName="ICellEditorParams" names=["getValidationErrors"] /%}
 
-If the callback returns errors, the grid will prevent the edit from completing (depending on the [Validation Mode](#validation-mode)) and show the errors in a tooltip.
+If the callback returns errors, the grid will prevent the edit from completing (depending on the [Validation Modes](#validation-modes)) and show the errors in a tooltip.
 
 
 ## Full Row Editing Validation
