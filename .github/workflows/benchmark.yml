@@ -50,7 +50,7 @@ jobs:
               issue_number: process.env.FORCE_PR_ID ? parseInt(process.env.FORCE_PR_ID, 10) : context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `🛎 Started job: ${process.env.JOB_URL}`
+              body: `🛎 Started a benchmarking job: ${process.env.JOB_URL}`
             })
             return comment.id;
 
@@ -102,10 +102,42 @@ jobs:
         with:
           cache_mode: rw
 
+      - name: Notify Progress
+        uses: actions/github-script@v7
+        continue-on-error: true
+        if: ${{ !!steps.notify-start.outputs.result }}
+        with:
+          script: |
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.notify-start.outputs.result }},
+              body: `🏗 Build umd packages: ${process.env.JOB_URL}`
+            })
+
       - name: Build umd packages
         run: |
           echo "Building UMD packages..."
           npx nx run-many -t build --projects=ag-grid-{enterprise,community,angular,react,vue3}
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: rw
+
+      - name: Notify Progress
+        uses: actions/github-script@v7
+        continue-on-error: true
+        if: ${{ !!steps.notify-start.outputs.result }}
+        with:
+          script: |
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.notify-start.outputs.result }},
+              body: `🏗 Installing Playwright Browsers: ${process.env.JOB_URL}`
+            })
 
       - name: Install Playwright Browsers
         run: |
