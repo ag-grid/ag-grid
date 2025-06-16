@@ -26,6 +26,10 @@
         white-space: nowrap;
     }
 
+    .ag-advanced-filter-buttons {
+        display: contents;
+    }
+
     .ag-advanced-filter-builder-button {
         display: flex;
         align-items: center;
