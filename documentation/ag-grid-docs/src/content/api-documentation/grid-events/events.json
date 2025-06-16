@@ -269,6 +269,18 @@
                 "url": "./filter-api/#filter-events"
             }
         },
+        "filterUiChanged": {
+            "more": {
+                "name": "Filter Events",
+                "url": "./filter-api/#filter-events"
+            }
+        },
+        "floatingFilterUiChanged": {
+            "more": {
+                "name": "Filter Events",
+                "url": "./filter-api/#filter-events"
+            }
+        },
         "advancedFilterBuilderVisibleChanged": {
             "more": {
                 "name": "Advanced Filter",

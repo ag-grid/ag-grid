@@ -463,6 +463,18 @@
                 "url": "./cell-editing/"
             }
         },
+        "setBatchEditing": {
+            "more": {
+                "name": "Enable/Disable Batch Editing",
+                "url": "./cell-editing-batch"
+            }
+        },
+        "isBatchEditing": {
+            "more": {
+                "name": "Is Batch Editing Enabled",
+                "url": "./cell-editing-batch"
+            }
+        },
         "startEditingCell": {
             "more": {
                 "name": "Editing API",
@@ -476,6 +488,12 @@
             }
         },
         "getEditingCells": {
+            "more": {
+                "name": "Editing API",
+                "url": "./cell-editing-start-stop/#editing-api"
+            }
+        },
+        "setEditingCells": {
             "more": {
                 "name": "Editing API",
                 "url": "./cell-editing-start-stop/#editing-api"

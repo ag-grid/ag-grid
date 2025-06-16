@@ -1060,7 +1060,11 @@ export interface CellValueChangedEvent<TData = any, TValue = any>
 }
 
 export interface CellEditValuesChangedEvent<TData = any, TValue = any>
-    extends AgGlobalEvent<'cellEditValuesChanged', TData, TValue> {}
+    extends CellWithDataEvent<'cellEditValuesChanged', TData, TValue> {
+    oldValue: TValue | null | undefined;
+    newValue: TValue | null | undefined;
+    source: string | undefined;
+}
 
 export interface CellEditRequestEvent<TData = any, TValue = any>
     extends CellWithDataEvent<'cellEditRequest', TData, TValue> {

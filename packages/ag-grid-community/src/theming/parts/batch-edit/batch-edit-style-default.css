@@ -1,0 +1,10 @@
+.ag-cell-batch-edit {
+    display: inherit;
+    background-color: var(--ag-cell-batch-edit-background-color);
+    color: var(--ag-cell-batch-edit-text-color);
+}
+
+.ag-row-batch-edit {
+    background-color: var(--ag-row-batch-edit-background-color);
+    color: var(--ag-row-batch-edit-text-color);
+}

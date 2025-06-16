@@ -249,6 +249,7 @@ export {
     ProvidedFilterModel,
 } from './filter/provided/iProvidedFilter';
 export { ProvidedFilter } from './filter/provided/providedFilter';
+export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
 export {
     ISimpleFilter,
     ISimpleFilterParams,
@@ -396,6 +397,7 @@ export {
     BaseCellEditor,
     GetCellEditorInstancesParams,
     GetEditingCellsParams,
+    SetEditingCellsParams,
     EditingCellPosition,
 } from './interfaces/iCellEditor';
 export { AgAbstractCellEditor } from './widgets/agAbstractCellEditor';
@@ -692,6 +694,7 @@ export {
     _AdvancedFilterGridApi,
     _PinnedRowGridApi,
     _FindApi,
+    _BatchEditApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
 export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes';
@@ -710,8 +713,6 @@ export {
     _isDomLayout,
     _isAnimateRows,
     _getGrandTotalRow,
-    _getGrandTotalRowPinned,
-    _getEnableRowPinning,
     _getGroupTotalRowCallback,
     _isGroupMultiAutoColumn,
     _isColumnsSortingCoupledToGroup,

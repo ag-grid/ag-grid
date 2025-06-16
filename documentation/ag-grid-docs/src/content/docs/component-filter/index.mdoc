@@ -192,6 +192,33 @@ There are two ways you can get fix this problem:
   This is the best solution, but you can only do this if you are writing the component yourself.
 * Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](./filter-date/#custom-selection-component)
 
+## Using Custom Filters with Grid-Provided Filter Logic
+
+It is possible to use the grid-provided filter logic with custom filter components.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'year',
+            filter: {
+                component: YearFilter, // custom filter component
+                handler: 'agNumberColumnFilterHandler', // grid-provided Number Filter handler
+            },
+        }
+    ],
+}
+```
+
+The grid-provided handlers are:
+- `'agTextColumnFilterHandler'` - [Text Filter](./filter-text/) handler.
+- `'agNumberColumnFilterHandler'` - [Number Filter](./filter-number/) handler.
+- `'agDateColumnFilterHandler'` - [Date Filter](./filter-date/) handler.
+
+The example below demonstrates using the Number Filter handler with a custom filter component:
+
+{% gridExampleRunner title="Use Grid Handlers" name="use-grid-handlers" /%}
+
 ## Accessing the Component Instance
 
 {% if isFramework("angular", "vue", "javascript") %}

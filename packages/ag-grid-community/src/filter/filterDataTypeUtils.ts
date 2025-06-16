@@ -1,6 +1,6 @@
 import type { BeanCollection, UserComponentName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDef, ValueFormatterParams, ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
+import type { ValueFormatterParams, ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
 import type {
     BaseCellDataType,
     CheckDataTypes,
@@ -8,7 +8,6 @@ import type {
     DataTypeFormatValueFunc,
     DateStringDataTypeDefinition,
 } from '../entities/dataType';
-import type { SelectableFilterDef } from '../interfaces/iNewFiltersToolPanel';
 import type { ISetFilterParams } from '../interfaces/iSetFilter';
 import type { LocaleTextFunc } from '../misc/locale/localeUtils';
 import { _getDateParts } from '../utils/date';
@@ -190,20 +189,18 @@ const setFilterParamsForEachDataType: FilterParamsDefMap = {
 export function _getFilterParamsForDataType(
     filter: string,
     existingFilterParams: any,
-    colDef: ColDef | SelectableFilterDef,
+    existingFilterValueGetter: string | ValueGetterFunc | undefined,
     dataTypeDefinition: CoreDataTypeDefinition,
     formatValue: DataTypeFormatValueFunc,
     beans: BeanCollection,
     translate: LocaleTextFunc
 ): { filterParams?: any; filterValueGetter?: string | ValueGetterFunc } {
     let filterParams: any = existingFilterParams;
-    let filterValueGetter: string | ValueGetterFunc | undefined;
+    let filterValueGetter: string | ValueGetterFunc | undefined = existingFilterValueGetter;
     const usingSetFilter = filter === 'agSetColumnFilter';
-    if (dataTypeDefinition.baseDataType === 'object' && !usingSetFilter) {
-        filterValueGetter =
-            colDef.filterValueGetter ??
-            (({ column, node }: ValueGetterParams) =>
-                formatValue({ column, node, value: beans.valueSvc.getValue(column as AgColumn, node) }));
+    if (!filterValueGetter && dataTypeDefinition.baseDataType === 'object' && !usingSetFilter) {
+        filterValueGetter = ({ column, node }: ValueGetterParams) =>
+            formatValue({ column, node, value: beans.valueSvc.getValue(column as AgColumn, node) });
     }
     const filterParamsMap = usingSetFilter ? setFilterParamsForEachDataType : filterParamsForEachDataType;
     const filterParamsGetter = filterParamsMap[dataTypeDefinition.baseDataType];

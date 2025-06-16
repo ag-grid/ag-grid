@@ -1,10 +1,8 @@
 import type {
-    ColDef,
     CoreDataTypeDefinition,
     DataTypeFormatValueFunc,
     IMultiFilterParams,
     IMultiFilterService,
-    SelectableFilterDef,
     ValueGetterFunc,
 } from 'ag-grid-community';
 import { BeanStub, _getDefaultSimpleFilter, _getFilterParamsForDataType } from 'ag-grid-community';
@@ -14,7 +12,7 @@ export class MultiFilterService extends BeanStub implements IMultiFilterService 
 
     public getParamsForDataType(
         existingFilterParams: IMultiFilterParams | undefined,
-        colDef: ColDef | SelectableFilterDef,
+        existingFilterValueGetter: string | ValueGetterFunc | undefined,
         dataTypeDefinition: CoreDataTypeDefinition,
         formatValue: DataTypeFormatValueFunc
     ): { filterParams?: any; filterValueGetter?: string | ValueGetterFunc<any, any> | undefined } {
@@ -26,14 +24,18 @@ export class MultiFilterService extends BeanStub implements IMultiFilterService 
         }
         const translate = this.getLocaleTextFunc();
         filters = filters.map((filterDef) => {
-            const { filter, filterParams: existingChildFilterParams } = filterDef;
+            const {
+                filter,
+                filterParams: existingChildFilterParams,
+                filterValueGetter: existingChildFilterValueGetter,
+            } = filterDef;
             if (typeof filter !== 'string') {
                 return filterDef;
             }
             const { filterParams, filterValueGetter } = _getFilterParamsForDataType(
                 filter,
                 existingChildFilterParams,
-                colDef,
+                existingChildFilterValueGetter ?? existingFilterValueGetter,
                 dataTypeDefinition,
                 formatValue,
                 beans,

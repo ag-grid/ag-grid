@@ -1,6 +1,6 @@
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
-import { _getGrandTotalRow, _isServerSideRowModel } from '../gridOptionsUtils';
+import { _isServerSideRowModel } from '../gridOptionsUtils';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import { _removeFromArray } from '../utils/array';
 
@@ -69,7 +69,7 @@ export class PinnedRows {
     }
 
     public sort(): void {
-        const { sortSvc, rowNodeSorter, gos } = this.beans;
+        const { sortSvc, rowNodeSorter } = this.beans;
         const sortOptions = sortSvc?.getSortOptions() ?? [];
         // first remove the grand total row so it doesn't get sorted
         const grandTotalNode = _removeGrandTotalRow(this.order);
@@ -78,7 +78,7 @@ export class PinnedRows {
         this.order = rowNodeSorter?.doFullSort(this.order, sortOptions) ?? this.order;
         // post-sort re-insert the grand total row in the correct place
         if (!grandTotalNode) return;
-        const grandTotalRow = _getGrandTotalRow(gos);
+        const grandTotalRow = this.beans.gos.get('grandTotalRow');
         if (grandTotalRow === 'bottom' || grandTotalRow === 'pinnedBottom') {
             this.order.push(grandTotalNode);
         } else {
