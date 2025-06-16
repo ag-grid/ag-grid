@@ -750,6 +750,9 @@ export {
     _isGroupRowsSticky,
     _getGroupingApproach,
     _getGridOption,
+    _getEnableRowPinning,
+    _isGrandTotalRowPinned,
+    _getIsRowPinnable,
 } from './gridOptionsUtils';
 export type { GroupingApproach } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
