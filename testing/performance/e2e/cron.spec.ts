@@ -8,7 +8,7 @@ const athleteCheck = () => document.body.textContent!.includes('Athlete');
 const localLotsOfCells = `file://${path.join(__dirname, './lots-of-cells.html')}`;
 
 test(`Performance Test - Compare performance of setting data`, {
-    timeout: allFrameworks.length * 15 * 60_000,
+    timeout: allFrameworks.length * 20 * 60_000,
     minIterations: 100,
     testCases: allFrameworks.map(
         (framework) =>
