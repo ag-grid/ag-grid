@@ -69,7 +69,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
         if (previous) {
-            _getCellCtrl(this.beans, previous)?.refreshCell({ suppressFlash: true, forceRefresh: true });
+            _getCellCtrl(this.beans, previous)?.refreshCell({ suppressFlash: true, force: true });
         }
     }
 

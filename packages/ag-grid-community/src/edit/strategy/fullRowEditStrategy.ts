@@ -128,7 +128,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
         if (previous) {
-            _getRowCtrl(this.beans, previous)?.refreshRow({ suppressFlash: true, forceRefresh: true });
+            _getRowCtrl(this.beans, previous)?.refreshRow({ suppressFlash: true, force: true });
         }
     }
 
