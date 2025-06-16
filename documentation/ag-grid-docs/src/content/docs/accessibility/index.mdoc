@@ -20,7 +20,7 @@ As meeting WCAG 2.0 level AA guidelines also meets the ADA and Section 508 stand
 
 ## High Contrast Theme
 
-For users that are visually impaired due to colour deficiencies, care should be taken when using colours to provide information.
+For users who are visually impaired due to colour deficiencies, care should be taken when using colours to provide information.
 
 Using our demo page as an example, the chrome plugin [Colorblindly](https://chrome.google.com/webstore/detail/colorblindly/floniaahmccleoclneebhhmnjgdfijgg/related?hl=en) shows how cells with colour indicators might appear to someone with total colour blindness (Monochromacy / Achromatopsia).
 
@@ -58,7 +58,7 @@ When inspecting the DOM you'll notice the following roles and properties have be
   **Note:** You can set any aria property in the panel (role="treegrid") by using the `setGridAriaProperty` method in the [Grid Api](./grid-api/).
 
   * **aria-rowcount** - announces the number of rows.
-  * **aria-colcount** - announces the number of rows.
+  * **aria-colcount** - announces the number of columns.
   * **aria-multiselectable="true"** - marks the grid as being able to select multiple rows.
 * **role="rowgroup"** - element that serve as container for the table header rows and grid rows.
 * **role="row"** - a row of column headers or grid cells.
@@ -185,7 +185,7 @@ Using advanced functionality in AG Grid makes the DOM structure incompatible wit
 * ### Full Width Rows
   Full Width Rows are rendered in a different container, therefore screen readers have trouble announcing them for the same reason as `Pinned Rows/Columns`. This also includes Row Grouping, when `groupDisplayType="groupRows"`
 
-* ### Limitations announcing the correct column name in grouped columns
+* ### Limitations in Announcing the Correct Column Name in Grouped Columns
   Even though all aria tags have been applied to the necessary elements, some screen readers have trouble navigating the tags when the structure of the grid gets more complex (eg. grouped columns). This is the reason why there are some limitations announcing the correct column names.
 
 * ### No announcements of state change of a gridcell or gridheader
