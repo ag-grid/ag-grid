@@ -120,12 +120,6 @@ jobs:
           echo "Building UMD packages..."
           npx nx run-many -t build --projects=ag-grid-{enterprise,community,angular,react,vue3}
 
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: rw
-
       - name: Notify Progress
         uses: actions/github-script@v7
         continue-on-error: true
