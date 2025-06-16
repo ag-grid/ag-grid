@@ -44,7 +44,7 @@ If the callback returns errors, the grid will prevent the edit from completing (
 
 ## Full Row Editing Validation
 
-When using [Full Row Editing](/cell-editing-full-row/), Ag Grid will validate all editors in the row individually using the same mechanisms described above.
+When using [Full Row Editing](./cell-editing-full-row/), Ag Grid will validate all editors in the row individually using the same mechanisms described above.
 
 After validating each editor, the grid will also call an optional grid-level callback: `getFullRowEditValidationErrors(params)`. This allows you to implement cross-field validation logic — for example, ensuring one field is greater than another.
 
