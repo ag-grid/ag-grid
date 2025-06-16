@@ -5,12 +5,7 @@ import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED } from '../entiti
 import type { RowNode } from '../entities/rowNode';
 import { _createRowNodeSibling } from '../entities/rowNodeUtils';
 import type { CssVariablesChanged } from '../events';
-import {
-    _getEnableRowPinning,
-    _getIsRowPinnable,
-    _getRowHeightForNode,
-    _isClientSideRowModel,
-} from '../gridOptionsUtils';
+import { _getRowHeightForNode, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
@@ -34,7 +29,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
         const runIsRowPinned = () => {
             const isRowPinned = gos.get('isRowPinned');
-            if (isRowPinned && _getEnableRowPinning(gos)) {
+            if (isRowPinned && gos.get('enableRowPinning')) {
                 beans.rowModel.forEachNode((node) => this.pinRow(node, isRowPinned(node)), true);
             }
             this.refreshRowPositions();
@@ -55,7 +50,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 this.refreshRowPositions();
             },
             rowNodeDataChanged: ({ node }) => {
-                const isRowPinnable = _getIsRowPinnable(gos);
+                const isRowPinnable = gos.get('isRowPinnable');
                 const pinnable = isRowPinnable?.(node) ?? true;
 
                 if (!pinnable) {
