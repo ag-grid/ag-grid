@@ -29,7 +29,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     LargeTextEditorModule: 41.37,
     LocaleModule: 0.43,
     NumberEditorModule: 44.96,
-    NumberFilterModule: 120.56,
+    NumberFilterModule: 124.58,
     PaginationModule: 42.74,
     PinnedRowModule: 18.5,
     QuickFilterModule: 17.3,
