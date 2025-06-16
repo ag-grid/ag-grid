@@ -200,9 +200,10 @@ export class CellMouseListenerFeature extends BeanStub {
             if (isRowNumberColumn) {
                 mouseEvent.preventDefault();
             }
+            const hasRightClickedOnRowNumber = mouseEvent.button === 2 && isRowNumberColumn;
             if (shiftKey) {
                 rangeSvc.extendLatestRangeToCell(cellPosition);
-            } else {
+            } else if (!hasRightClickedOnRowNumber) {
                 const isMultiKey = ctrlKey || metaKey;
                 rangeSvc.setRangeToCell(cellPosition, isMultiKey);
             }
