@@ -394,6 +394,7 @@ export {
     ICellEditor,
     ICellEditorComp,
     ICellEditorParams,
+    IErrorValidationParams,
     BaseCellEditor,
     GetCellEditorInstancesParams,
     GetEditingCellsParams,

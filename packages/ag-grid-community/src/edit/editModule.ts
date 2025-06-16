@@ -21,6 +21,7 @@ import {
     startEditingCell,
     stopEditing,
     undoCellEditing,
+    validateEdit,
 } from './editApi';
 import { EditModelService } from './editModelService';
 import { EditService } from './editService';
@@ -41,6 +42,7 @@ export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
         startEditingCell,
         stopEditing,
         isEditing,
+        validateEdit,
     },
     dynamicBeans: {
         singleCell: SingleCellEditStrategy,

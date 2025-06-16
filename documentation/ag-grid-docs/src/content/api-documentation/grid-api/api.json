@@ -508,6 +508,12 @@
                 "exclude": ["ICellEditor"],
                 "include": []
             }
+        },
+        "validateEdit": {
+            "more": {
+                "name": "Edit Validation",
+                "url": "./cell-editing-validation"
+            }
         }
     },
     "export": {
