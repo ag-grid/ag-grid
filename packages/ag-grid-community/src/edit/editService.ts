@@ -3,13 +3,18 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import { _getRowNode } from '../entities/positionUtils';
+import { _getCellByPosition, _getRowNode } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
-import type { ICellEditorParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
+import type {
+    EditingCellPosition,
+    ICellEditorParams,
+    ICellEditorValidationError,
+    SetEditingCellsParams,
+} from '../interfaces/iCellEditor';
 import type { EditMap, EditRow, EditValue, IEditModelService } from '../interfaces/iEditModelService';
 import type {
     EditPosition,
@@ -92,6 +97,15 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             rowGroupOpened: handler,
             pinnedRowsChanged: handler,
             displayedRowsChanged: handler,
+            rowDataUpdated: () => {
+                if (this.isEditing()) {
+                    if (this.isBatchEditing()) {
+                        _destroyEditors(beans, this.model.getEditPositions());
+                    } else {
+                        this.stopEditing(undefined, CANCEL_PARAMS);
+                    }
+                }
+            },
         });
     }
 
@@ -142,6 +156,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         cellStartedEdit?: boolean | null,
         source: EditSource = 'ui'
     ): boolean | null {
+        this.strategy ??= this.createStrategy();
         return this.strategy?.shouldStart(position, event, cellStartedEdit, source) ?? null;
     }
 
@@ -159,6 +174,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         source: EditSource = 'ui'
     ): boolean | null {
         return this.strategy?.shouldCancel(position, event, source) ?? null;
+    }
+
+    public validateEdit(): ICellEditorValidationError[] | null {
+        return _validateEdit(this.beans);
     }
 
     public isEditing(position?: EditPosition, params?: IsEditingParams): boolean {
@@ -687,7 +706,57 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return new RowEditStyleFeature(rowCtrl, beans);
     }
 
-    public validateEdit(): ICellEditorValidationError[] | null {
-        return _validateEdit(this.beans);
+    public setEditingCells(cells: EditingCellPosition[], params?: SetEditingCellsParams): void {
+        const { beans } = this;
+        const { editSvc, colModel, valueSvc, editModelSvc } = beans;
+
+        if (!editSvc?.isBatchEditing()) {
+            return;
+        }
+
+        let edits: EditMap = new Map();
+
+        if (params?.update) {
+            const existingEdits = editModelSvc?.getEditMap();
+            edits = new Map(existingEdits?.entries() ?? []);
+        }
+
+        cells.forEach(({ colId, column, colKey, rowIndex, rowPinned, newValue, state }) => {
+            const col = colId ? colModel.getCol(colId) : colKey ? colModel.getCol(colKey) : column;
+
+            if (!col) {
+                return;
+            }
+
+            const cellCtrl = _getCellByPosition(beans, { rowIndex, rowPinned, column: col });
+
+            if (!cellCtrl) {
+                return;
+            }
+
+            const rowNode = cellCtrl.rowNode;
+            const oldValue = valueSvc.getValue(col as AgColumn, rowNode, true, 'api');
+
+            if (!_valuesDiffer({ newValue, oldValue }) && state !== 'editing') {
+                // If the new value is the same as the old value, we don't need to update
+                return;
+            }
+
+            let editRow = edits.get(rowNode);
+
+            if (!editRow) {
+                editRow = new Map();
+                edits.set(rowNode, editRow);
+            }
+
+            // translate undefined to unedited, don't translate null as that means cell was cleared
+            if (newValue === undefined) {
+                newValue = UNEDITED;
+            }
+
+            editRow.set(col, { newValue, oldValue, state: state ?? 'changed' });
+        });
+
+        editSvc?.setEditMap(edits);
     }
 }

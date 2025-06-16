@@ -13,6 +13,7 @@ export interface ExampleConfig {
     licenseKey?: boolean;
     supportedFrameworks?: InternalFramework[];
     vue3VModel?: boolean;
+    hideConsoleLogger?: boolean;
     /**
      * Example uses `#myGrid`, which needs to be generated in framework examples
      */

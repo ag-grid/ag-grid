@@ -6,7 +6,7 @@ import {
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
     AlignedGridsModule: 3.06,
-    AllCommunityModule: 454.53,
+    AllCommunityModule: 459.66,
     CellApiModule: 0.28,
     CellStyleModule: 2.24,
     CheckboxEditorModule: 40.86,
@@ -52,6 +52,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,
     AllEnterpriseModule: 1444.04,
+    BatchEditModule: 56.55,
     CellSelectionModule: 53,
     ClipboardModule: 46.04,
     ColumnMenuModule: 153.19,

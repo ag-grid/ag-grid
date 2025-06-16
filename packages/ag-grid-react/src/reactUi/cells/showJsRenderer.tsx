@@ -4,7 +4,7 @@ import { useCallback, useContext, useEffect } from 'react';
 import type { ICellRendererComp } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
-import type { RenderDetails } from './cellComp';
+import type { RenderDetails } from './interfaces';
 
 const useJsCellRenderer = (
     showDetails: RenderDetails | undefined,

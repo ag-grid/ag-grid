@@ -50,6 +50,7 @@
     @include date-time.output();
     @include advanced-filter.output();
     @include row-numbers.output();
+    @include batch-edit.output();
 }
 
 @mixin native-input-styles() {

@@ -2,7 +2,6 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
-import { _getEnableRowPinning } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
@@ -16,7 +15,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
 
     public postConstruct(): void {
         const initialiseRowModel = () => {
-            const enableRowPinning = _getEnableRowPinning(this.gos);
+            const enableRowPinning = this.gos.get('enableRowPinning');
             if (this.inner) {
                 this.destroyBean(this.inner as any);
             }

@@ -144,6 +144,7 @@ export function _setupEditor(
     if (cellCtrl) {
         cellCtrl.editCompDetails = compDetails;
         cellCtrl.comp?.setEditDetails(compDetails, popup, popupLocation, beans.gos.get('reactiveCustomComponents'));
+        cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
     }
 
     return compDetails;
@@ -336,6 +337,7 @@ export function _destroyEditor(beans: BeanCollection, edit?: EditPosition): void
     comp?.refreshEditStyles(false, false);
     cellCtrl?.updateAndFormatValue(false);
     cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });
+    cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
 
     if (beans.editModelSvc?.hasEdits(edit) && edit && edit?.rowNode && edit?.column) {
         beans.editModelSvc?.setState(edit, 'changed');

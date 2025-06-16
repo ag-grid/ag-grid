@@ -4,14 +4,18 @@ import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import { _valuesDiffer } from '../utils/editors';
 
-const editHighlightFn = (edit?: EditValue) => {
+const editHighlightFn = (edit?: EditValue, includeEditing: boolean = false) => {
     if (edit !== undefined) {
-        return _valuesDiffer(edit);
+        return _valuesDiffer(edit) || (includeEditing && edit.state === 'editing');
     }
 };
 
-export function _hasEdits(beans: BeanCollection, position: EditPosition): boolean | undefined {
-    return editHighlightFn(beans.editModelSvc?.getEdit(position));
+export function _hasEdits(
+    beans: BeanCollection,
+    position: EditPosition,
+    includeEditing: boolean = false
+): boolean | undefined {
+    return editHighlightFn(beans.editModelSvc?.getEdit(position), includeEditing);
 }
 
 export function _hasLeafEdits(beans: BeanCollection, position: EditPosition): boolean | undefined {

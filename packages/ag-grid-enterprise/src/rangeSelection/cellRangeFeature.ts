@@ -247,7 +247,7 @@ export class CellRangeFeature implements ICellRangeFeature {
         const { cellPosition, column } = this.cellCtrl;
         const isFillHandleAvailable = _isFillHandleEnabled(gos) && !column.isSuppressFillHandle();
         const isRangeHandleAvailable = _isRangeHandleEnabled(gos);
-        const isCellEditing = editSvc?.isEditing(this.cellCtrl);
+        const isCellEditing = editSvc?.isEditing(this.cellCtrl, { withOpenEditor: true });
 
         let handleIsAvailable = rangesLen === 1 && !isCellEditing && (isFillHandleAvailable || isRangeHandleAvailable);
 

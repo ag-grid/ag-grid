@@ -61,7 +61,6 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'columnMenu',
     'tooltipShowMode',
     'grandTotalRow',
-    'grandTotalRowPinned',
     'themeCssLayer',
     'findSearchValue',
     'styleNonce',

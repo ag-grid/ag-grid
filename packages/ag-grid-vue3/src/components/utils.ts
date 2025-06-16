@@ -1083,8 +1083,6 @@ export interface Props<TData> {
     groupTotalRow?: 'top' | 'bottom' | UseGroupTotalRow<TData> | undefined,
     /** When provided, an extra grand total row will be inserted into the grid at the specified position.
          * This row displays the aggregate totals of all rows in the grid.
-         *
-         * Note that the `'pinnedTop'` and `'pinnedBottom'` values are deprecated in v34. Use `grandTotalRowPinned` instead.
          * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
          */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined,
@@ -1205,12 +1203,6 @@ export interface Props<TData> {
          * @agModule `PinnedRowModule`
          */
     isRowPinned?: IsRowPinned<TData> | undefined,
-    /** Pin the grand total row to the top of bottom of the grid. Requires `grandTotalRow` to be set.
-         * When multiple rows are pinned, the grid uses `grandTotalRow` to determine whether the grand total row should be
-         * displayed first or last in the list of pinned rows.
-         * @agModule `PinnedRowModule`
-         */
-    grandTotalRowPinned?: 'top' | 'bottom' | undefined,
     /** Sets the row model type.
          * @default 'clientSide'
          * @initial
@@ -2063,7 +2055,6 @@ export function getProps() {
         enableRowPinning: undefined,
         isRowPinnable: undefined,
         isRowPinned: undefined,
-        grandTotalRowPinned: undefined,
         rowModelType: undefined,
         rowData: undefined,
         asyncTransactionWaitMillis: undefined,
