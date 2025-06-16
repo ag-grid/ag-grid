@@ -34,7 +34,7 @@ jobs:
     permissions:
       pull-requests: write
       issues: write
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/benchmarks') || !!inputs.force_pr_id || github.event_name == 'schedule'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/benchmarks') || github.event_name == 'schedule'
     env:
       JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
@@ -54,10 +54,11 @@ jobs:
             })
             return comment.id;
 
-      - id: get-branch
+      - name: Assign correct Branch name
+        id: get-branch
         env:
           REPO: ${{ github.repository }}
-          PR_NO: ${{ github.event.issue.number }}
+          PR_NO: ${{ env.FORCE_PR_ID || github.event.issue.number }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [[ !!"${{ steps.notify-start.outputs.result }}" ]] ; then
@@ -194,6 +195,6 @@ jobs:
                   repo: context.repo.repo,
                   pull_number: process.env.PR_NO,
                   event: "REQUEST_CHANGES",
-                  body: process.env.COMMENT;
+                  body: process.env.COMMENT,
                 });
             }
