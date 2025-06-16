@@ -114,8 +114,6 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, ValidationM
     enableCharts: 'IntegratedCharts',
     enableRangeSelection: 'CellSelection',
     enableRowPinning: 'PinnedRow',
-    isRowPinned: 'PinnedRow',
-    isRowPinnable: 'PinnedRow',
     findSearchValue: 'Find',
     getContextMenuItems: 'ContextMenu',
     getLocaleText: 'Locale',
@@ -124,9 +122,9 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, ValidationM
     getRowStyle: 'RowStyle',
     groupTotalRow: 'SharedRowGrouping',
     grandTotalRow: 'SharedRowGrouping',
-    grandTotalRowPinned: 'PinnedRow',
     initialState: 'GridState',
     isExternalFilterPresent: 'ExternalFilter',
+    isRowPinnable: 'PinnedRow',
     localeText: 'Locale',
     masterDetail: 'SharedMasterDetail',
     pagination: 'Pagination',
@@ -214,27 +212,19 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         isRowPinnable: {
             supportedRowModels: ['clientSide'],
-            validate({ enableRowPinning, isRowPinnable, pinnedTopRowData, pinnedBottomRowData }) {
+            validate({ isRowPinnable, pinnedTopRowData, pinnedBottomRowData }) {
                 if (isRowPinnable && (pinnedTopRowData || pinnedBottomRowData)) {
                     return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinnable`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
                 }
-                if (!enableRowPinning && isRowPinnable) {
-                    return '`isRowPinnable` requires `enableRowPinning` to be set.';
-                }
-
                 return null;
             },
         },
         isRowPinned: {
             supportedRowModels: ['clientSide'],
-            validate({ enableRowPinning, isRowPinned, pinnedTopRowData, pinnedBottomRowData }) {
+            validate({ isRowPinned, pinnedTopRowData, pinnedBottomRowData }) {
                 if (isRowPinned && (pinnedTopRowData || pinnedBottomRowData)) {
                     return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinned`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
                 }
-                if (!enableRowPinning && isRowPinned) {
-                    return '`isRowPinned` requires `enableRowPinning` to be set.';
-                }
-
                 return null;
             },
         },
@@ -244,24 +234,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 if (grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop') {
                     return `Using \`grandTotalRow=${grandTotalRow}\` is deprecated as of v34. Use \`grandTotalRowPinned\` instead.`;
                 }
-                return null;
-            },
-        },
-
-        grandTotalRowPinned: {
-            validate({ grandTotalRowPinned, pinnedTopRowData, pinnedBottomRowData }, _, beans) {
-                if (!grandTotalRowPinned) {
-                    return null;
-                }
-
-                if (beans.pinnedRowModel == null) {
-                    return 'The `PinnedRowModule` must be registered when `grandTotalRowPinned` is set.';
-                }
-
-                if (pinnedTopRowData || pinnedBottomRowData) {
-                    return 'Grand total row pinning cannot be used together with pinned row data. Either remove `grandTotalRowPinned`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
-                }
-
                 return null;
             },
         },
