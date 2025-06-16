@@ -28,11 +28,35 @@ const thisFilePath = __filename;
  * Describes a performance benchmarking test suite.
  */
 export type Describe = {
-    minIterations?: number; // default is 10, also used as an inner loop iteration count
-    maxIterations?: number; // default is 1000
+    /**
+     * Minimum number of iterations to run for each test case.
+     * Test would never run less than this number, as significance is calculated after every minIterations iterations.
+     * @default 10
+     */
+    minIterations?: number;
+    /**
+     * Maximum number of iterations to run for each test case to consider results practically meaningful.
+     * If significance is achieved before this number, the test will stop early.
+     *
+     * @default minIterations * 3
+     */
+    maxIterations?: number;
+    /**
+     * Main descriptions of test cases to run.
+     */
     testCases: TestCase[];
-    timeout?: number; // in milliseconds, default is 3 minutes
-    warmupIterations?: number; // default is 3, used to warm up the grid before measuring performance
+    /**
+     * Total test timeout in milliseconds.
+     * Test would fail if it takes longer than this time to complete.
+     *
+     * @default 60_000 , or 1 minute
+     */
+    timeout?: number;
+    /**
+     * Number of warmup iterations to run before measuring performance.
+     * This is useful to ensure the grid is initialized and V8 engine is ready for performance measurements.
+     */
+    warmupIterations?: number;
 };
 
 /**
@@ -140,6 +164,15 @@ function getUrl(testCase: TestCase, variant: Variant) {
 
 const CRITICAL_VALUE = 1.96;
 
+type Stats = {
+    average: number;
+    stdDev: number;
+    marginOfError: number;
+    newBase: number[];
+    filteredCount: number;
+    originalCount: number;
+};
+
 /**
  * Calculates:
  * - Average time
@@ -148,7 +181,7 @@ const CRITICAL_VALUE = 1.96;
  * - Filtered count (after removing outliers)
  * - Original count (before filtering)
  */
-const computeStats = (times: number[]) => {
+const computeStats = (times: number[]): Stats => {
     function getPercentile(sorted: number[], p: number): number {
         const idx = (sorted.length - 1) * p;
         const lower = Math.floor(idx);
@@ -182,6 +215,21 @@ const computeStats = (times: number[]) => {
     };
 };
 
+function computeCommonStats(s1: Stats, s2: Stats, testCase: InternalTestCase) {
+    const diff = s1.average - s2.average;
+    const slower = diff > 0 ? testCase.control.version : testCase.variant.version;
+    const faster = diff > 0 ? testCase.variant.version : testCase.control.version;
+    const percentDiff = (Math.abs(diff) / Math.min(s1.average, s2.average)) * 100;
+
+    const avgMoE = getStandardError(s1.marginOfError, s2.marginOfError);
+    const avgMoEPercent = (avgMoE / Math.min(s1.average, s2.average)) * 100;
+
+    const numbersString = `${Math.abs(diff).toFixed(2)} ± ${avgMoE.toFixed(2)}`;
+    const percentString = `${percentDiff.toFixed(1)}% ± ${avgMoEPercent.toFixed(1)}%`;
+
+    return { diff, slower, faster, percentDiff, avgMoE, avgMoEPercent, numbersString, percentString };
+}
+
 /**
  * Calculates the standard error based on the margins of error for two sets of data.
  * Uses the critical value for a 95% confidence level (1.96).
@@ -205,38 +253,16 @@ function isSignificant(diff: number, moe1: number, moe2: number) {
  * Reports the statistics of the performance test results.
  * Returns true if the results are significant, false otherwise.
  */
-function reportStats(
-    stats: Record<'control' | 'variant', ReturnType<typeof computeStats>>,
-    testCase: InternalTestCase,
-    significant: boolean
-) {
-    const s1 = stats.control;
-    const s2 = stats.variant;
-
-    const diff = s1.average - s2.average;
-    const slower = diff > 0 ? testCase.control.version : testCase.variant.version;
-    const faster = diff > 0 ? testCase.variant.version : testCase.control.version;
-    const percentDiff = (Math.abs(diff) / Math.min(s1.average, s2.average)) * 100;
-
-    const avgMoE = getStandardError(s1.marginOfError, s2.marginOfError);
-    const avgMoEPercent = (avgMoE / Math.min(s1.average, s2.average)) * 100;
-
-    const numbersString = `${Math.abs(diff).toFixed(2)} ± ${avgMoE.toFixed(2)}`;
-    const percentString = `${percentDiff.toFixed(1)}% ± ${avgMoEPercent.toFixed(1)}%`;
-
-    if (!significant) {
-        if (!(s1.originalCount % testCase.__hidden.minIter)) {
-            console.log(
-                `\n${yellow(`Result is statistically insignificant (`)}${green(percentString)}, ${blue(`${s1.filteredCount}/${s1.originalCount}`)})${yellow('. Running more iterations...\n')}`
-            );
-        }
-        return;
-    }
-
+function reportStats(s1: Stats, s2: Stats, testCase: InternalTestCase) {
+    const { percentDiff, avgMoEPercent, percentString, numbersString, slower, faster } = computeCommonStats(
+        s1,
+        s2,
+        testCase
+    );
     const resultMessage =
         percentDiff - avgMoEPercent <= 2
             ? `${cyan('Both')} ${magenta(testCase.control.version)} and ${magenta(testCase.variant.version)}${cyan(` seem to be equal (${slower} is slightly slower than ${faster}): `)}${green(percentString)} (${numbersString}).\n${yellow(
-                  'Even though the data is statistically significant, it is safer to re-run the test with more iterations to confirm.'
+                  'Even though the data is statistically meaningful, it is safer to re-run the test with more iterations to confirm.'
               )}`
             : `${magenta(slower)}${cyan(' is slower than ')}${magenta(faster)}${cyan(' by ')}${green(percentString)} (${numbersString})`;
 
@@ -335,6 +361,7 @@ const testLevelCatch = (e: any, lastCommunications?: BrowserCommunications) => {
 
 const testBody = async (testCase: InternalTestCase, { page, context }: PlaywrightTestArgs, ..._: any[]) => {
     const result = { control: [] as number[], variant: [] as number[] };
+    let s1: Stats, s2: Stats;
     const { minIter, maxIter, warmupIter, setLastCommunications } = testCase.__hidden!;
     let significant = false;
     do {
@@ -357,25 +384,38 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
             }
             if (testCase.expectsPostActions) await testCase.expectsPostActions(page, lastCommunications);
         }
-        const [s1, s2] = [computeStats(result.control), computeStats(result.variant)];
+        [s1, s2] = [computeStats(result.control), computeStats(result.variant)];
         [result.control, result.variant] = [s1.newBase, s2.newBase]; // update the result with filtered data
-        if (!(s1.originalCount % testCase.__hidden!.minIter)) console.log(`Collected ${s1.originalCount} entries`);
         significant = isSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError);
-        reportStats({ control: s1, variant: s2 }, testCase, significant);
-    } while (!(significant || result['control'].length > maxIter)); // run until we do 1000 iterations or results are significant
+        if (!process.env['CI']) {
+            if (significant) {
+                reportStats(s1, s2, testCase);
+            }
+            if (!significant && result['control'].length < maxIter) {
+                console.log(
+                    `${yellow(`Result is statistically insignificant (`)}${green(
+                        computeCommonStats(s1, s2, testCase).percentString
+                    )}, ${blue(`${s1.filteredCount}/${s1.originalCount}`)})${yellow('. Running more iterations...')}`
+                );
+            }
+        }
+    } while (!significant && result['control'].length < maxIter);
     if (!significant) {
         console.log(
-            `${yellow('Result is statistically insignificant.')} ${green(
-                'Consider running the test with more iterations or check your test case setup.'
-            )}`
+            yellow(
+                `The difference is statistically insignificant. The difference may be too small, or the test needs way more iterations.`
+            )
         );
+    }
+    if (process.env['CI']) {
+        reportStats(s1, s2, testCase);
     }
 };
 
 const describeBody = (describe: Describe) => () => {
     const warmupIter = describe.warmupIterations ?? 3; // default is 3
     const minIter = Math.max(Math.max(describe.minIterations ?? 10, warmupIter) + warmupIter, 2);
-    const maxIter = describe.maxIterations ?? 1000;
+    const maxIter = describe.maxIterations ?? minIter * 3;
 
     describe.testCases.forEach((testCase: TestCase, index, allCases) => {
         let lastCommunications: BrowserCommunications | undefined;

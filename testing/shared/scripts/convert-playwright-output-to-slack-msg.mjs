@@ -22,7 +22,7 @@ const logFile = path.join(__dirname, '../../../playwright-report/test-results.js
 /** @type {import('playwright/types/testReporter').JSONReport} */
 const report = JSON.parse(fs.readFileSync(logFile, 'utf8').toString());
 const blocks = [
-    { type: 'header', text: { type: 'mrkdwn', text: `**Test results.**` } },
+    { type: 'section', text: { type: 'mrkdwn', text: `**Test results.**` } },
     { type: 'divider' },
     {
         type: 'section',
@@ -34,16 +34,17 @@ const blocks = [
     { type: 'section', text: { type: 'mrkdwn', text: process.env.IS_SUCCESS ? SUCCESS_STRING : FAILURE_STRING } },
     { type: 'divider' },
     ...generateTestsSummary(report),
-    { type: 'divider' },
-    {
-        type: 'section',
-        text: { type: 'mrkdwn', text: process.env.IS_SUCCESS ? '' : `Please address the issues before merging.` },
-    },
 ];
 
 const slackMessage = { channel, username, icon_url, blocks };
 
-fs.writeFileSync(commentFileName, blocks.map((b) => b.text?.text || '---').join('\n'));
+fs.writeFileSync(
+    commentFileName,
+    blocks
+        .map((b) => b.text?.text || '---')
+        .concat(['---', process.env.IS_SUCCESS ? '' : `Please address the issues before merging.`])
+        .join('\n')
+);
 fs.writeFileSync(slackFileName, JSON.stringify(slackMessage, null, 2));
 
 /**
@@ -119,7 +120,7 @@ function generateTestsSummary(report) {
     const testsSection = tests.all
         .map((test, i) => {
             const resultBody = test.results
-                .map((result) => `${renderError(result.error)}\n - **Output**: ${renderStdout(result.stdout)}`)
+                .map((result) => `${renderError(result.error)}\n- **Output**: ${renderStdout(result.stdout)}`)
                 .join('\n');
             return paragraph(
                 `${i + 1}. ${statusEmoji(test.status)} **${test.path.map((p) => p.title).join(' > ')}** ${paragraph(resultBody)}`
