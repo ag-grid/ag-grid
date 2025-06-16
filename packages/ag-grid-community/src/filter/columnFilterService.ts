@@ -687,7 +687,7 @@ export class ColumnFilterService
         return this.getDefaultFilterFromDataType(() => this.beans.dataTypeSvc?.getBaseDataType(column), isFloating);
     }
 
-    private getDefaultFilterFromDataType(
+    public getDefaultFilterFromDataType(
         getCellDataType: () => BaseCellDataType | undefined,
         isFloating: boolean = false
     ): string {
@@ -1521,6 +1521,14 @@ export class ColumnFilterService
         });
     }
 
+    public getStateForColumn(colId: string): FilterDisplayState {
+        return (
+            this.state.get(colId) ?? {
+                model: _getFilterModel(this.model, colId),
+            }
+        );
+    }
+
     public setModelForColumnLegacy(key: string | AgColumn, model: any): AgPromise<void> {
         const column = this.beans.colModel.getColDefCol(key);
         const filterWrapper = column ? this.getOrCreateFilterWrapper(column, true) : null;
@@ -1747,6 +1755,11 @@ export class ColumnFilterService
         }
 
         return hasChanges;
+    }
+
+    public hasUnappliedModel(colId: string): boolean {
+        const { model, state } = this;
+        return (state.get(colId)?.model ?? null) !== _getFilterModel(model, colId);
     }
 
     public setGlobalButtons(isGlobal: boolean): void {

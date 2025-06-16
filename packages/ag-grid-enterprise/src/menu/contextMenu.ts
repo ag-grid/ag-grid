@@ -23,6 +23,7 @@ import {
     _createIconNoSpan,
     _exists,
     _focusInto,
+    _getGrandTotalRow,
     _getPageBody,
     _getRootNode,
     _isIOSUserAgent,
@@ -89,10 +90,10 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         if (_exists(node)) {
             const enableRowPinning = gos.get('enableRowPinning');
             const isRowPinnable = gos.get('isRowPinnable');
-            const grandTotalRow = gos.get('grandTotalRow');
             if (enableRowPinning) {
                 const isGroupTotalRow = node.level > -1 && node.footer;
                 const isGrandTotalRow = node.level === -1 && node.footer;
+                const grandTotalRow = _getGrandTotalRow(gos);
                 const isGrandTotalRowFixed = grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
 
                 // We do not allow pinning of group total rows. As such, only show pinning related menu options for

@@ -619,7 +619,8 @@ export const AG_GRID_LOCALE_EN = {
 
     // ARIA labels for new Filter Tool Panel
     ariaLabelAddFilterField: 'Add Filter Field',
-    ariaLabelDeleteFilterCard: 'Delete Filter',
+    ariaLabelFilterCardDelete: 'Delete Filter',
+    ariaLabelFilterCardHasEdits: 'Has Edits',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

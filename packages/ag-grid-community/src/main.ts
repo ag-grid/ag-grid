@@ -750,6 +750,7 @@ export {
     _isGroupRowsSticky,
     _getGroupingApproach,
     _getGridOption,
+    _isSetFilterByDefault,
 } from './gridOptionsUtils';
 export type { GroupingApproach } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
