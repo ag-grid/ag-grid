@@ -4,14 +4,14 @@ title: "Cell Editing Validation"
 
 ## Standard Validation
 
-Ag Grid provides built-in validation for all [Provided Cell Editors](/provided-cell-editors/), such as the Text, Large Text, Number, Date, and Select editors.
+Ag Grid provides built-in validation for all [Provided Cell Editors](./provided-cell-editors/), such as the Text, Large Text, Number, Date, and Select editors.
 These editors support validation automatically by checking the constraints defined in the column configuration. For example:
 
 - `Text` and `Large Text` editors will respect the `maxLength` property.
 - `Number` editors validate against min and max constraints.
 - `Date` editors ensure the value is a valid date string.
 
-Validation is performed when editing ends, and the grid will handle invalid values based on the selected [Validation Mode](/cell-editing-validation/#validation-mode).
+Validation is performed when editing ends, and the grid will handle invalid values based on the selected [Validation Mode](./cell-editing-validation/#validation-mode).
 
 ## Overriding Validation
 
@@ -26,7 +26,7 @@ const gridOptions = {
             field: 'id',
             cellEditorParams: {
                 getValidationErrors: (params) => {
-                    if (params.value && params.value.length <3) {
+                    if (params.value && params.value.length < 3) {
                         return ['Value must be at least 3 characters long'];
                     }
                     return null;
@@ -39,7 +39,7 @@ const gridOptions = {
 
 {% interfaceDocumentation interfaceName="ICellEditorParams" names=["getValidationErrors"] /%}
 
-If the callback returns errors, the grid will prevent the edit from completing (depending on the [Validation Mode](/cell-editing-validation/#validation-mode)) and show the errors in a tooltip.
+If the callback returns errors, the grid will prevent the edit from completing (depending on the [Validation Mode](./cell-editing-validation/#validation-mode)) and show the errors in a tooltip.
 
 
 ## Full Row Editing Validation
