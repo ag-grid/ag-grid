@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, RowPinnedType } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -37,8 +37,13 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowData: null,
     enableRowPinning: true,
     onFirstDataRendered: () => {
-        gridApi.setGridOption('grandTotalRow', getGTR());
-        gridApi.setGridOption('grandTotalRowPinned', getGTRP());
+        const value = getGrandTotalRow();
+        if (value === 'isRowPinned') {
+            setGrandTotalRow(gridApi, 'bottom');
+            setIsRowPinned(gridApi, 'top');
+        } else {
+            setGrandTotalRow(gridApi, value);
+        }
     },
     theme: themeQuartz.withParams({
         pinnedRowBorder: {
@@ -57,34 +62,30 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });
 
-function updateGrandTotalRow() {
-    gridApi.setGridOption('grandTotalRow', getGTR());
+function getGrandTotalRow() {
+    return document.querySelector<HTMLSelectElement>('#select-grand-total-row')?.value as
+        | GridOptions['grandTotalRow']
+        | 'isRowPinned';
 }
 
-function updateGrandTotalRowPinned() {
-    gridApi.setGridOption('grandTotalRowPinned', getGTRP());
+function setGrandTotalRow(api: GridApi<IOlympicData>, value: GridOptions['grandTotalRow']) {
+    api.setGridOption('grandTotalRow', value);
 }
 
-function useIsRowPinned() {
-    gridApi.setGridOption('grandTotalRowPinned', undefined);
-    gridApi.setGridOption('isRowPinned', (node) => {
+function setIsRowPinned(api: GridApi<IOlympicData>, value: RowPinnedType) {
+    api.setGridOption('isRowPinned', (node) => {
         if (node.level === -1 && node.footer) {
-            return 'top';
+            return value;
         }
     });
 }
 
-function reset() {
-    gridApi.setGridOption('isRowPinned', undefined);
-    gridApi.setGridOption('grandTotalRow', getGTR());
-    gridApi.setGridOption('grandTotalRowPinned', getGTRP());
-}
-
-function getGTR() {
-    return document.querySelector<HTMLSelectElement>('#select-grand-total-row')?.value as GridOptions['grandTotalRow'];
-}
-
-function getGTRP() {
-    return document.querySelector<HTMLSelectElement>('#select-grand-total-row-pinned')
-        ?.value as GridOptions['grandTotalRowPinned'];
+function update() {
+    const value = getGrandTotalRow();
+    if (value === 'isRowPinned') {
+        setGrandTotalRow(gridApi, 'bottom');
+        setIsRowPinned(gridApi, 'top');
+    } else {
+        setGrandTotalRow(gridApi, value);
+    }
 }

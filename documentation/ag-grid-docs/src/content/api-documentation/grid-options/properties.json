@@ -1468,12 +1468,6 @@
                 "url": "./row-pinning/#pinning-rows-on-first-render"
             }
         },
-        "grandTotalRowPinned": {
-            "more": {
-                "name": "Row Pinning",
-                "url": "./row-pinning/#pinning-the-grand-total-row"
-            }
-        },
         "pinnedTopRowData": {
             "more": {
                 "name": "Row Pinning",
