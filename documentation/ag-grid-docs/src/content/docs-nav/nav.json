@@ -983,6 +983,11 @@
                         },
                         {
                             "type": "item",
+                            "title": "Validation",
+                            "path": "cell-editing-validation"
+                        },
+                        {
+                            "type": "item",
                             "title": "Batch Editing",
                             "path": "cell-editing-batch",
                             "isEnterprise": true
