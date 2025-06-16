@@ -171,18 +171,35 @@ jobs:
         env:
           IS_SUCCESS: ${{ steps.prepare-messages.outcome == 'success' || '' }}
           COMMENT: ${{ steps.prepare-messages.outputs.comment }}
+          PR_NO: ${{ github.event.issue.number }}
           REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
         with:
           script: |
-            const body =
-                (process.env.IS_SUCCESS
-                    ? `✅ Benchmarking finished: `
-                    : `❌ We encountered problems while benchmarking, see logs: `) + process.env.JOB_URL +
-                `Benchmark report: ${process.env.REPORT_URL}\n\n` + process.env.COMMENT;
-                
+            const body = `[Job link](${process.env.JOB_URL})\n`
+              + `[Benchmark report](${process.env.REPORT_URL})\n\n`
+              + process.env.COMMENT;
+        
+            if (process.env.IS_SUCCESS) {
                 github.rest.issues.updateComment({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     comment_id: ${{ steps.notify-start.outputs.result }},
-                    body,
+                    body: `✅ Benchmarking finished:\n\n` + body,
                 });
+            } else {
+                github.rest.issues.deleteComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    comment_id: ${{ steps.notify-start.outputs.result }},
+                });
+                github.rest.pulls.createReview({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: process.env.PR_NO,
+                  event: "REQUEST_CHANGES",
+                  body: `❌ Problems encountered while benchmarking.\n`
+                    + `Please check output for details.\n\n`
+                    + `${body}\n\n`
+                    + `Please address the issues before merging.`;
+                });
+            }
