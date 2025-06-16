@@ -102,24 +102,26 @@ let gridApi: GridApi;
 // distinct count of first names
 const uniqOrDots = (params: IAggFuncParams) => {
     const uniqueNames = new Set<string>();
-    const allValues: string[] = [];
+    const values: string[] = [];
 
     params.values.forEach((value) => {
         if (value?.values) {
-            const values = value.values;
-            values.forEach((v: any) => {
+            value.values.forEach((v: any) => {
                 uniqueNames.add(v);
-                allValues.push(v);
+                values.push(v);
             });
         } else {
             uniqueNames.add(value);
-            allValues.push(value);
+            values.push(value);
         }
     });
 
-    const str = `${uniqueNames.size} / ${allValues.length}`;
+    const str = `${uniqueNames.size} / ${values.length}`;
 
-    return { toString: () => str, values: allValues };
+    return {
+        toString: () => str,
+        values,
+    };
 };
 
 let node: IRowNode | undefined;
@@ -138,7 +140,7 @@ const gridOptions: GridOptions = {
                     rowDrag: true,
                     valueFormatter: (params: ValueFormatterParams) => {
                         node = params.node as IRowNode;
-                        return params.value ?? '';
+                        return params.value?.toString() ?? params.value ?? '';
                     },
                 },
                 {
@@ -202,6 +204,12 @@ const gridOptions: GridOptions = {
         editable: true,
         filter: true,
         enableCellChangeFlash: true,
+        equals: (a: any, b: any) => {
+            if (a?.values && b?.values) {
+                return a.values.length === b.values.length && a.values.every((v: any) => b.values.includes(v));
+            }
+            return a === b;
+        },
     },
     autoGroupColumnDef: {
         headerName: 'Group',

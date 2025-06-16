@@ -15,6 +15,7 @@ import type {
     ICellEditorValidationError,
     SetEditingCellsParams,
 } from '../interfaces/iCellEditor';
+import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { EditMap, EditRow, EditValue, IEditModelService } from '../interfaces/iEditModelService';
 import type {
     EditPosition,
@@ -326,7 +327,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
                 event.preventDefault();
 
-                this.bulkRefresh(undefined, edits);
+                this.bulkRefresh(position, edits, { suppressFlash: true });
 
                 edits = model.getEditMap();
             }
@@ -345,7 +346,13 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         _purgeUnchangedEdits(beans);
 
-        this.refreshAllRows(edits, this.includeParents);
+        if (res) {
+            this.bulkRefresh();
+        }
+
+        if (cancel) {
+            this.beans.rowRenderer.refreshRows({ suppressFlash: true, force: true });
+        }
 
         return res;
     }
@@ -362,9 +369,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
         const rowCtrl = _getRowCtrl(this.beans, { rowNode });
 
-        rowCtrl
-            ?.getAllCellCtrls()
-            .forEach((cellCtrl) => cellCtrl.refreshCell({ suppressFlash: true, forceRefresh: true }));
+        rowCtrl?.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.refreshCell({ suppressFlash: true, force: true }));
     }
 
     private navigateAfterEdit(shiftKey: boolean, cellPosition: CellPosition): void {
@@ -451,30 +456,61 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         });
     }
 
-    public bulkRefresh(position?: EditPosition, editMap?: EditMap): void {
+    public bulkRefresh(
+        { rowNode, column }: EditPosition = {},
+        editMap?: EditMap,
+        params: RefreshCellsParams = {}
+    ): void {
         const { beans, gos } = this;
         const { editModelSvc, rowModel } = beans;
         if (_isClientSideRowModel(gos, rowModel)) {
-            if (position?.rowNode && position.column) {
-                const edit = this.model.getEdit(position);
-                this.dispatchEditValuesChanged(position, edit);
-                return;
+            if (rowNode && column) {
+                this.refCell({ rowNode, column }, this.model.getEdit({ rowNode, column }), params);
+            } else {
+                (editMap ?? editModelSvc?.getEditMap(false))?.forEach((editRow, rowNode) => {
+                    for (const column of editRow?.keys() || []) {
+                        this.refCell({ rowNode, column }, editRow?.get(column), params);
+                    }
+                });
             }
-            (editMap ?? editModelSvc?.getEditMap(false))?.forEach((editRow, rowNode) => {
-                for (const column of editRow?.keys() || []) {
-                    const edit = editRow?.get(column);
-                    this.dispatchEditValuesChanged({ rowNode, column }, edit);
-                    const pinnedSibling = (rowNode as RowNode).pinnedSibling;
-                    if (pinnedSibling) {
-                        this.dispatchEditValuesChanged({ rowNode: pinnedSibling, column }, edit);
-                    }
-                    const sibling = rowNode.sibling;
-                    if (sibling) {
-                        this.dispatchEditValuesChanged({ rowNode: sibling, column }, edit);
-                    }
-                }
-            });
         }
+    }
+
+    private refCell(
+        { rowNode, column }: Required<EditPosition>,
+        edit?: EditValue,
+        params: RefreshCellsParams = {}
+    ): void {
+        const { beans, gos } = this;
+
+        const updatedNodes: Set<IRowNode> = new Set([rowNode]);
+        const refreshNodes: Set<IRowNode> = new Set();
+
+        const pinnedSibling = (rowNode as RowNode).pinnedSibling;
+        if (pinnedSibling) {
+            updatedNodes.add(pinnedSibling);
+        }
+
+        const sibling = rowNode.sibling;
+        if (sibling) {
+            refreshNodes.add(sibling);
+        }
+
+        let parent = rowNode.parent;
+        while (parent) {
+            if (parent.sibling?.footer && gos.get('groupTotalRow')) {
+                refreshNodes.add(parent.sibling);
+            } else if (!parent.parent && parent.sibling && gos.get('grandTotalRow')) {
+                refreshNodes.add(parent.sibling);
+            } else {
+                refreshNodes.add(parent);
+            }
+            parent = parent.parent;
+        }
+
+        updatedNodes.forEach((node) => this.dispatchEditValuesChanged({ rowNode: node, column }, edit));
+        updatedNodes.forEach((node) => _getCellCtrl(beans, { rowNode: node, column })?.refreshCell(params));
+        refreshNodes.forEach((node) => _getCellCtrl(beans, { rowNode: node, column })?.refreshCell(params));
     }
 
     public stopAllEditing(cancel: boolean = false, source: 'api' | 'ui' = 'ui'): void {

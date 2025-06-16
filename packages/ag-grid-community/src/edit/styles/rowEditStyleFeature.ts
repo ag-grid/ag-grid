@@ -54,10 +54,8 @@ export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
         const fullRow = this.gos.get('editType') === 'fullRow';
 
         this.rowCtrl?.forEachGui(undefined, ({ rowComp }) => {
-            if (fullRow) {
-                rowComp.toggleCss('ag-row-editing', editing);
-                rowComp.toggleCss('ag-row-batch-edit', editing && batchEdit);
-            }
+            rowComp.toggleCss('ag-row-editing', fullRow && editing);
+            rowComp.toggleCss('ag-row-batch-edit', fullRow && editing && batchEdit);
 
             // required for Material theme
             rowComp.toggleCss('ag-row-inline-editing', editing);

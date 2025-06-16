@@ -11,6 +11,12 @@ import { ChangedPath } from '../utils/changedPath';
 
 // Matches value in clipboard module
 const SOURCE_PASTE = 'paste';
+
+type RefreshCDParams = {
+    suppressFlash?: boolean;
+    force?: boolean;
+};
+
 export class ChangeDetectionService extends BeanStub implements NamedBean {
     beanName = 'changeDetectionSvc' as const;
 
@@ -30,10 +36,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
 
     private onCellEditValuesChanged(event: CellEditValuesChangedEvent): void {
         const suppressFlash = event.newValue === event.oldValue;
-
-        const nodesToRefresh = this.refreshCells(event, { suppressFlash, includePinnedRows: true });
-
-        this.beans.rowRenderer.refreshRows({ rowNodes: nodesToRefresh, suppressFlash });
+        this.refreshRows(event, { suppressFlash, force: true });
     }
 
     private onCellValueChanged(event: CellValueChangedEvent | CellEditValuesChangedEvent): RowNode[] | undefined {
@@ -47,23 +50,28 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.refreshCells(event);
+        this.refreshRows(event);
     }
 
-    private refreshCells(
+    private refreshRows(
         { node, column }: { node: IRowNode; column: Column },
-        params?: { suppressFlash?: boolean; includeLinkedRows?: boolean; includePinnedRows?: boolean } | null
+        { suppressFlash, force }: RefreshCDParams = {}
     ): RowNode[] {
         const { gos, rowRenderer } = this.beans;
 
         const rowNode = node as RowNode;
-        const nodesToRefresh: RowNode[] = [rowNode];
+        const rowNodes: RowNode[] = [rowNode];
+
+        if (rowNode.pinnedSibling) {
+            // if the row is pinned, we also need to refresh the pinned sibling
+            rowNodes.push(rowNode.pinnedSibling);
+        }
 
         const clientSideRowModel = this.clientSideRowModel;
         const rootNode = clientSideRowModel?.rootNode;
 
         if (!rootNode) {
-            return nodesToRefresh;
+            return rowNodes;
         }
 
         // step 1 of change detection is to update the aggregated values
@@ -73,25 +81,25 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         clientSideRowModel.doAggregate(changedPath);
 
         // add all nodes impacted by aggregation, as they need refreshed also.
-        changedPath.forEachChangedNodeDepthFirst((rowNode) => {
-            nodesToRefresh.push(rowNode);
-            if (rowNode.sibling) {
-                nodesToRefresh.push(rowNode.sibling);
+        changedPath.forEachChangedNodeDepthFirst((pathNode) => {
+            rowNodes.push(pathNode);
+            if (pathNode.sibling) {
+                rowNodes.push(pathNode.sibling);
             }
-            if (rowNode.pinnedSibling) {
-                nodesToRefresh.push(rowNode.pinnedSibling);
+            if (pathNode.pinnedSibling) {
+                rowNodes.push(pathNode.pinnedSibling);
             }
         });
 
-        if (rowNode.pinnedSibling) {
-            // if the row is pinned, we also need to refresh the pinned sibling
-            nodesToRefresh.push(rowNode.pinnedSibling);
-        }
-
         // step 2 of change detection is to refresh the cells
-        rowRenderer.refreshCells({ rowNodes: nodesToRefresh, suppressFlash: params?.suppressFlash });
+        rowRenderer.refreshCells({
+            rowNodes,
+            suppressFlash,
+            force,
+            columns: [column],
+        });
 
         // return affected nodes for further processing, if needed
-        return nodesToRefresh;
+        return rowNodes;
     }
 }
