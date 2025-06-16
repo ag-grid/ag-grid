@@ -4,7 +4,8 @@ import type { BeanStub } from 'ag-grid-community';
 const DEFAULT_LOCALE_TEXT = {
     addFilterCard: 'Add Filter',
     ariaLabelAddFilterField: 'Add Filter Field',
-    ariaLabelDeleteFilterCard: 'Delete Filter',
+    ariaLabelFilterCardDelete: 'Delete Filter',
+    ariaLabelFilterCardHasEdits: 'Has Edits',
     agTextColumnFilterDisplayName: 'Text Filter',
     agNumberColumnFilterDisplayName: 'Number Filter',
     agDateColumnFilterDisplayName: 'Date Filter',

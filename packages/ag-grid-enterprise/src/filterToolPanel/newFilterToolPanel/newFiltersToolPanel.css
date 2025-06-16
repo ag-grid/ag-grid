@@ -2,8 +2,6 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    row-gap: var(--ag-widget-container-vertical-padding);
-    padding-bottom: var(--ag-widget-container-vertical-padding);
 }
 
 /** These all need different styling when used within the new filter tool panel compared to the existing use case within the legacy filter tool panel or column menu  */
@@ -53,23 +51,36 @@
 
 .ag-filter-card-heading {
     flex: 1;
+    overflow: hidden;
 }
 
 .ag-filter-card-expand {
     display: flex;
     flex-direction: row;
     width: 100%;
-    justify-content: space-between;
     align-items: center;
 }
 
 .ag-filter-card-title {
     font-weight: var(--ag-header-font-weight);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ag-filter-card-expand-icon {
+    display: flex;
+    flex: 1;
+    justify-content: end;
+}
+
+.ag-filter-card-editing-icon {
+    margin: 0 var(--ag-spacing);
 }
 
 .ag-filter-card-summary,
 .ag-filter-card-expand-icon,
-.ag-filter-card-delete-icon {
+.ag-filter-card-delete-icon,
+.ag-filter-card-editing-icon {
     color: var(--ag-filter-panel-card-subtle-color);
 }
 
@@ -131,7 +142,7 @@
     display: flex;
     justify-content: flex-end;
     overflow: hidden;
-    padding: 0 var(--ag-widget-container-horizontal-padding);
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding) 0;
     flex-wrap: wrap;
     gap: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
 }
@@ -143,4 +154,8 @@
 .ag-filter-panel-buttons-apply-button {
     color: var(--ag-filter-panel-apply-button-color);
     background-color: var(--ag-filter-panel-apply-button-background-color);
+}
+
+.ag-filter-panel > *:where(:last-child) {
+    padding-bottom: var(--ag-widget-container-vertical-padding);
 }

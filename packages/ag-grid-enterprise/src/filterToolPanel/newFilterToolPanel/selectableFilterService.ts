@@ -12,6 +12,7 @@ import {
     _addGridCommonParams,
     _getDefaultSimpleFilter,
     _getFilterParamsForDataType,
+    _isSetFilterByDefault,
     _warn,
 } from 'ag-grid-community';
 
@@ -47,9 +48,81 @@ export class SelectableFilterService extends BeanStub implements ISelectableFilt
         if (!this.isSelectable(filterDef)) {
             return undefined;
         }
-        const filterDefs = this.getSelectableFilterDefs(column, filterDef);
+        const beans = this.beans;
+        const { gos, dataTypeSvc, colFilter } = beans;
+        let filterParams = filterDef.filterParams;
+        const colDef = column.colDef;
+        if (typeof filterParams === 'function') {
+            filterParams = filterParams(
+                _addGridCommonParams(gos, {
+                    column,
+                    colDef,
+                })
+            );
+        }
+        const cellDataType = dataTypeSvc?.getBaseDataType(column);
+        const dataTypeDefinition = dataTypeSvc?.getDataTypeDefinition(column);
+        const formatValue = dataTypeSvc?.getFormatValue(cellDataType!);
+        const { filters, defaultFilterParams, defaultFilterIndex } = (filterParams as SelectableFilterParams) ?? {};
 
-        const index = this.selectedFilters.get(column.getColId()) ?? 0;
+        const updateDef = (def: SelectableFilterDef) => {
+            const { filter, filterParams: defFilterParams, name, filterValueGetter = colDef.filterValueGetter } = def;
+            const userParams = defaultFilterParams ? { ...defaultFilterParams, ...defFilterParams } : defFilterParams;
+            let updatedParams: { filterParams?: any; filterValueGetter?: string | ValueGetterFunc } | undefined;
+            if (dataTypeDefinition && formatValue) {
+                if (filter === 'agMultiColumnFilter') {
+                    updatedParams = beans.multiFilter?.getParamsForDataType(
+                        userParams,
+                        filterValueGetter,
+                        dataTypeDefinition,
+                        formatValue
+                    );
+                } else {
+                    updatedParams = _getFilterParamsForDataType(
+                        filter,
+                        userParams,
+                        filterValueGetter,
+                        dataTypeDefinition,
+                        formatValue,
+                        beans,
+                        this.getLocaleTextFunc()
+                    );
+                }
+            }
+            let updatedName: string | undefined;
+            if (!name) {
+                let filterString = filter;
+                if (typeof filter === 'boolean') {
+                    filterString = colFilter?.getDefaultFilterFromDataType(() => cellDataType);
+                }
+                if (typeof filterString === 'string') {
+                    updatedName = translateForFilterPanel(this, `${filterString as ProvidedFilterType}DisplayName`);
+                } else {
+                    _warn(280, { colId: column.getColId() });
+                    updatedName = '';
+                }
+            }
+            if (defaultFilterParams || updatedParams || updatedName) {
+                return {
+                    ...def,
+                    filterParams: userParams,
+                    name: updatedName ?? name,
+                    ...updatedParams,
+                };
+            }
+            return def;
+        };
+
+        const filterDefs = (filters ?? this.getDefaultFilters(column)).map(updateDef);
+
+        let index =
+            this.selectedFilters.get(column.getColId()) ?? // UI selected value
+            defaultFilterIndex ?? // col def value
+            (!filters && _isSetFilterByDefault(gos) ? 1 : 0); // if using defaults, then respect set filter by default setting, else choose first
+
+        if (index >= filterDefs.length) {
+            index = 0;
+        }
 
         const activeFilterDef = filterDefs[index];
 
@@ -101,66 +174,5 @@ export class SelectableFilterService extends BeanStub implements ISelectableFilt
                   ]
                 : []),
         ];
-    }
-
-    private getSelectableFilterDefs(column: AgColumn, filterDef: IFilterDef): SelectableFilterDef[] {
-        const beans = this.beans;
-        const { gos, dataTypeSvc } = beans;
-        let filterParams = filterDef.filterParams;
-        const colDef = column.colDef;
-        if (typeof filterParams === 'function') {
-            filterParams = filterParams(
-                _addGridCommonParams(gos, {
-                    column,
-                    colDef,
-                })
-            );
-        }
-        const cellDataType = dataTypeSvc?.getBaseDataType(column);
-        const dataTypeDefinition = dataTypeSvc?.getDataTypeDefinition(column);
-        const formatValue = dataTypeSvc?.getFormatValue(cellDataType!);
-        const { filters, defaultFilterParams } = (filterParams as SelectableFilterParams) ?? {};
-        const updateDef = (def: SelectableFilterDef) => {
-            const { filter, filterParams: defFilterParams, name, filterValueGetter = colDef.filterValueGetter } = def;
-            const userParams = defaultFilterParams ? { ...defaultFilterParams, ...defFilterParams } : defFilterParams;
-            let updatedParams: { filterParams?: any; filterValueGetter?: string | ValueGetterFunc } | undefined;
-            if (dataTypeDefinition && formatValue) {
-                if (filter === 'agMultiColumnFilter') {
-                    updatedParams = beans.multiFilter?.getParamsForDataType(
-                        userParams,
-                        filterValueGetter,
-                        dataTypeDefinition,
-                        formatValue
-                    );
-                } else {
-                    updatedParams = _getFilterParamsForDataType(
-                        filter,
-                        userParams,
-                        filterValueGetter,
-                        dataTypeDefinition,
-                        formatValue,
-                        beans,
-                        this.getLocaleTextFunc()
-                    );
-                }
-            }
-            let updatedName: string | undefined;
-            if (!name && typeof filter === 'string') {
-                updatedName = translateForFilterPanel(this, `${filter as ProvidedFilterType}DisplayName`);
-            } else if (!name) {
-                _warn(280, { colId: column.getColId() });
-                updatedName = '';
-            }
-            if (defaultFilterParams || updatedParams || updatedName) {
-                return {
-                    ...def,
-                    filterParams: userParams,
-                    name: updatedName ?? name,
-                    ...updatedParams,
-                };
-            }
-            return def;
-        };
-        return (filters ?? this.getDefaultFilters(column)).map(updateDef);
     }
 }

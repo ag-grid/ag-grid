@@ -53,6 +53,7 @@ export type IconName =
     | 'filterAdd'
     | 'filterCardExpand'
     | 'filterCardCollapse'
+    | 'filterCardEditing'
     | 'filterTab'
     | 'filtersToolPanel'
     | 'columns'
