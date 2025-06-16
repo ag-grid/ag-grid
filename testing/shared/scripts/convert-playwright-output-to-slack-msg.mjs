@@ -13,15 +13,32 @@ if (!channel) throw new Error('SLACK_CHANNEL is not set');
 if (!username) throw new Error('SLACK_USERNAME is not set');
 if (!icon_url) throw new Error('SLACK_ICON is not set');
 
+const SUCCESS_STRING = '✅ Benchmarking finished';
+const FAILURE_STRING = `❌ Problems encountered while benchmarking.\nPlease check output for details.`;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const logFile = path.join(__dirname, '../../../playwright-report/test-results.json');
 /** @type {import('playwright/types/testReporter').JSONReport} */
 const report = JSON.parse(fs.readFileSync(logFile, 'utf8').toString());
 const blocks = [
-    { type: 'section', text: { type: 'mrkdwn', text: `**Test results.**` } },
+    { type: 'header', text: { type: 'mrkdwn', text: `**Test results.**` } },
+    { type: 'divider' },
+    {
+        type: 'section',
+        text: {
+            type: 'mrkdwn',
+            text: `[Job link](${process.env.JOB_URL ?? 'did you forget to supply process.env.JOB_URL?'})\n[Benchmark report](${process.env.REPORT_URL ?? 'did you forget to supply process.env.REPORT_URL?'})\n`,
+        },
+    },
+    { type: 'section', text: { type: 'mrkdwn', text: process.env.IS_SUCCESS ? SUCCESS_STRING : FAILURE_STRING } },
     { type: 'divider' },
     ...generateTestsSummary(report),
+    { type: 'divider' },
+    {
+        type: 'section',
+        text: { type: 'mrkdwn', text: process.env.IS_SUCCESS ? '' : `Please address the issues before merging.` },
+    },
 ];
 
 const slackMessage = { channel, username, icon_url, blocks };
@@ -67,7 +84,7 @@ function generateTestsSummary(report) {
         text: {
             type: 'mrkdwn',
             text:
-                num(testsCount, '⚒', 'Total') +
+                num(testsCount, '⚒️', 'Total') +
                 num(report.stats.expected, statusEmoji('expected'), 'Passed') +
                 num(report.stats.unexpected, statusEmoji('unexpected'), 'Failed') +
                 num(report.stats.skipped, statusEmoji('skipped'), 'Skipped') +
