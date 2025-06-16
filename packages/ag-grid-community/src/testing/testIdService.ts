@@ -44,6 +44,10 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             });
         });
 
+        /** Column Filters */
+
+        // ...TODO
+
         /** Rows */
 
         root.querySelectorAll('.ag-row').forEach((row) => {
@@ -216,8 +220,9 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 }
 
 function formatTestId(name: string, attributes: Record<string, string | number | null | undefined> = {}): string {
-    return `${name}:${Object.entries(attributes)
+    const params = Object.entries(attributes)
         .map(([k, v]) => (v != null ? `${k}=${v}` : null))
         .filter(Boolean)
-        .join(';')}`;
+        .join(';');
+    return [name, params].filter((s) => s.length > 0).join(':');
 }

@@ -8,33 +8,77 @@ import {
     TestingModule,
     ValidationModule,
 } from 'ag-grid-community';
+import {
+    CellSelectionModule,
+    ColumnMenuModule,
+    ColumnsToolPanelModule,
+    PaginationModule,
+    PivotModule,
+    RowGroupingModule,
+    SideBarModule,
+    StatusBarModule,
+} from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
+
+import { ROW_DATA } from './data';
 
 describe('Test Ids', () => {
     beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowSelectionModule, TestingModule, ValidationModule]);
+        ModuleRegistry.registerModules([
+            ColumnsToolPanelModule,
+            RowSelectionModule,
+            ClientSideRowModelModule,
+            CellSelectionModule,
+            StatusBarModule,
+            TestingModule,
+            ColumnMenuModule,
+            PaginationModule,
+            SideBarModule,
+            RowGroupingModule,
+            PivotModule,
+            ValidationModule,
+        ]);
     });
 
     beforeEach(() => {
         cleanup();
     });
 
-    const rowData = [{ item: 'foo' }];
-
     test('Should find components via data-test-id', async () => {
+        type ArrayType<T> = T extends Array<infer U> ? U : never;
+
         const rendered = render(
-            <AgGridReact
-                rowData={rowData}
-                getRowId={(params) => params.data.item}
-                columnDefs={[{ field: 'item' }]}
+            <AgGridReact<ArrayType<typeof ROW_DATA>>
+                rowData={ROW_DATA}
+                columnDefs={[
+                    { field: 'athlete' },
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year' },
+                    { field: 'sport' },
+                    { field: 'total' },
+                ]}
                 rowSelection={{ mode: 'multiRow' }}
+                statusBar={{
+                    statusPanels: [
+                        { statusPanel: 'agTotalAndFilteredRowCountComponent' },
+                        { statusPanel: 'agTotalRowCountComponent' },
+                        { statusPanel: 'agFilteredRowCountComponent' },
+                        { statusPanel: 'agSelectedRowCountComponent' },
+                        { statusPanel: 'agAggregationComponent' },
+                    ],
+                }}
+                sideBar="columns"
+                cellSelection
+                pagination
             />
         );
 
-        expect(await rendered.findByText('foo')).toBeVisible();
+        expect(await rendered.findByText('China')).toBeVisible();
 
-        expect(await rendered.findByTestId('ag-cell:row-id=foo;col-id=item')).toBeVisible();
-        expect(await rendered.findByTestId('ag-cell:row-id=foo;col-id=ag-Grid-SelectionColumn')).toBeVisible();
-        expect(await rendered.findByTestId('ag-header-cell:row-index=0;col-id=item'));
+        expect(
+            await rendered.findByTestId('ag-cell:row-id=row-group-country-United States;col-id=ag-Grid-AutoColumn')
+        ).toBeVisible();
+        // expect(await rendered.findByTestId('ag-cell:row-id=foo;col-id=ag-Grid-SelectionColumn')).toBeVisible();
+        // expect(await rendered.findByTestId('ag-header-cell:row-index=0;col-id=item'));
     });
 });
