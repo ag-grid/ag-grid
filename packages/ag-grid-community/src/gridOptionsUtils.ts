@@ -342,6 +342,11 @@ export function _getGrandTotalRow(gos: GridOptionsService): GridOptions['grandTo
     return gos.get('grandTotalRow');
 }
 
+export function _isGrandTotalRowPinned(gos: GridOptionsService): boolean {
+    const grandTotalRow = _getGrandTotalRow(gos);
+    return grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
+}
+
 export function _getGroupTotalRowCallback(
     gos: GridOptionsService
 ): (params: WithoutGridCommon<GetGroupIncludeFooterParams>) => 'top' | 'bottom' | undefined {
@@ -668,6 +673,14 @@ export function _getCallbackForEvent(eventName: string): string {
         return eventName;
     }
     return 'on' + eventName[0].toUpperCase() + eventName.substring(1);
+}
+
+export function _getEnableRowPinning(gos: GridOptionsService): GridOptions['enableRowPinning'] {
+    return gos.get('enableRowPinning');
+}
+
+export function _getIsRowPinnable(gos: GridOptionsService): GridOptions['isRowPinnable'] {
+    return gos.get('isRowPinnable');
 }
 
 /** Combines component props / attributes with the provided gridOptions returning a new combined gridOptions object */
