@@ -2434,7 +2434,7 @@ export interface GridOptions<TData = any> {
      */
     onFilterUiChanged?(event: FilterUiChangedEvent<TData>): void;
     /**
-     * Floating filter UI modified (when using `enableFilterHandlers = true`.
+     * Floating filter UI modified (when using `enableFilterHandlers = true`).
      */
     onFloatingFilterUiChanged?(event: FloatingFilterUiChangedEvent<TData>): void;
     /**

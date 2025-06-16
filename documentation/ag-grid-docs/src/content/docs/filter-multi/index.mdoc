@@ -139,6 +139,14 @@ The example below shows a Custom Filter in use on the **Year** column, used alon
 
 {% gridExampleRunner title="Custom Filters" name="custom-filter"  exampleHeight=635 /%}
 
+## Applying Multi Filters
+
+Similar to [Applying Provided Filters](./filter-applying/), the Multi Filter can have buttons that will control all the child filters together.
+
+To configure buttons for the Multi Filter, first enable the grid option `enableFilterHandlers`. Note that if you have custom filter components, these will need to have been written to [Support Filter Handlers](./component-filter/#implementing-a-filter-component).
+
+{% gridExampleRunner title="Applying Multi Filters" name="applying-multi-filters"  exampleHeight=635 /%}
+
 ## Multi Filter Model
 
 The model for the Multi Filter wraps the models for all the child filters inside it. It has the `IMultiFilterModel` interface:

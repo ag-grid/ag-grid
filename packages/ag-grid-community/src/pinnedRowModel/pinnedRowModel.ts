@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
-import { _getEnableRowPinning } from '../gridOptionsUtils';
+import { _getEnableRowPinning, _getGrandTotalRowPinned } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
@@ -15,17 +15,25 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
     private inner: IPinnedRowModel;
 
     public postConstruct(): void {
+        const { gos } = this;
         const initialiseRowModel = () => {
-            const enableRowPinning = _getEnableRowPinning(this.gos);
-            if (this.inner) {
+            const enableRowPinning = _getEnableRowPinning(gos);
+            const grandTotalRowPinning = _getGrandTotalRowPinned(gos);
+            const useManualPinnedRowModel = !!enableRowPinning || !!grandTotalRowPinning;
+            const shouldDestroy = useManualPinnedRowModel
+                ? this.inner instanceof StaticPinnedRowModel
+                : this.inner instanceof ManualPinnedRowModel;
+            if (this.inner && shouldDestroy) {
                 this.destroyBean(this.inner as any);
             }
-            this.inner = this.createManagedBean(
-                enableRowPinning ? new ManualPinnedRowModel() : new StaticPinnedRowModel()
-            );
+            if (shouldDestroy || !this.inner) {
+                this.inner = this.createManagedBean(
+                    useManualPinnedRowModel ? new ManualPinnedRowModel() : new StaticPinnedRowModel()
+                );
+            }
         };
 
-        this.addManagedPropertyListener('enableRowPinning', initialiseRowModel);
+        this.addManagedPropertyListeners(['enableRowPinning', 'grandTotalRowPinned'], initialiseRowModel);
 
         initialiseRowModel();
     }

@@ -558,7 +558,13 @@
                 "url": "./filter-advanced/#configuring-advanced-filter"
             }
         },
-        "alwaysPassFilter": {}
+        "alwaysPassFilter": {},
+        "enableFilterHandlers": {
+            "more": {
+                "name": "Custom Column Filters",
+                "url": "./component-filter/#implementing-a-filter-component"
+            }
+        }
     },
     "find": {
         "meta": {

@@ -78,3 +78,23 @@ button {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.ancestor-nodes {
+    background-color: rgba(220 139 139 / 20%);
+    color: rgb(66 0 0 / 100%);
+}
+
+.leaf-sibling-nodes {
+    background-color: rgba(139 220 139 / 20%);
+    color: rgb(0 66 0 / 100%);
+}
+
+.related-nodes {
+    background-color: rgba(139 139 220 / 20%);
+    color: rgb(0 0 66 / 100%);
+}
+
+.dependent-nodes {
+    background-color: rgba(220 139 220 / 20%);
+    color: rgb(66 0 66 / 100%);
+}

@@ -31,6 +31,7 @@ import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColum
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
+import type { IRowStyleFeature } from '../../interfaces/iRowStyleFeature';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
@@ -137,6 +138,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     /** sanitised */
     public businessKey: string | null = null;
     private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
+    private rowEditStyleFeature?: IRowStyleFeature;
 
     constructor(
         public readonly rowNode: RowNode,
@@ -162,6 +164,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.setRowType();
         this.setAnimateFlags(animateIn);
         this.rowStyles = this.processStylesFromGridOptions();
+
+        this.rowEditStyleFeature = beans.editSvc?.createRowStyleFeature(this, beans);
 
         this.addListeners();
     }
@@ -361,6 +365,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowDragComps.push(rowDragBean);
         gui.compBean.addDestroyFunc(() => {
             this.rowDragComps = this.rowDragComps.filter((r) => r !== rowDragBean);
+            this.rowEditStyleFeature = this.destroyBean(this.rowEditStyleFeature, this.beans.context);
             this.destroyBean(rowDragBean, this.beans.context);
         });
     }
@@ -762,20 +767,23 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private addListeners(): void {
+        const { beans, gos, rowNode } = this;
+        const { expansionSvc, eventSvc, context, rowSpanSvc } = beans;
+
         this.addManagedListeners(this.rowNode, {
             heightChanged: () => this.onRowHeightChanged(),
             rowSelected: () => this.onRowSelected(),
             rowIndexChanged: this.onRowIndexChanged.bind(this),
             topChanged: this.onTopChanged.bind(this),
-            ...(this.beans.expansionSvc?.getRowExpandedListeners(this) ?? {}),
+            ...(expansionSvc?.getRowExpandedListeners(this) ?? {}),
         });
 
-        if (this.rowNode.detail) {
+        if (rowNode.detail) {
             // if the master row node has updated data, we also want to try to refresh the detail row
-            this.addManagedListeners(this.rowNode.parent!, { dataChanged: this.onRowNodeDataChanged.bind(this) });
+            this.addManagedListeners(rowNode.parent!, { dataChanged: this.onRowNodeDataChanged.bind(this) });
         }
 
-        this.addManagedListeners(this.rowNode, {
+        this.addManagedListeners(rowNode, {
             dataChanged: this.onRowNodeDataChanged.bind(this),
             cellChanged: this.postProcessCss.bind(this),
             rowHighlightChanged: this.onRowNodeHighlightChanged.bind(this),
@@ -784,7 +792,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             rowPinned: this.onRowPinned.bind(this),
         });
 
-        this.addManagedListeners(this.beans.eventSvc, {
+        this.addManagedListeners(eventSvc, {
             paginationPixelOffsetChanged: this.onPaginationPixelOffsetChanged.bind(this),
             heightScaleChanged: this.onTopChanged.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
@@ -796,11 +804,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             columnMoved: () => this.updateColumnLists(),
         });
 
-        if (this.beans.rowSpanSvc) {
+        if (rowSpanSvc) {
             // when spans change, need to verify that cells are correctly skipped/rendered
-            this.addManagedListeners(this.beans.rowSpanSvc, {
+            this.addManagedListeners(rowSpanSvc, {
                 spannedCellsUpdated: ({ pinned }) => {
-                    if (pinned && !this.rowNode.rowPinned) {
+                    if (pinned && !rowNode.rowPinned) {
                         return;
                     }
                     this.updateColumnLists();
@@ -809,8 +817,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         this.addDestroyFunc(() => {
-            this.rowDragComps = this.destroyBeans(this.rowDragComps, this.beans.context);
-            this.tooltipFeature = this.destroyBean(this.tooltipFeature, this.beans.context);
+            this.rowDragComps = this.destroyBeans(this.rowDragComps, context);
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature, context);
+            this.rowEditStyleFeature = this.destroyBean(this.rowEditStyleFeature, context);
         });
 
         this.addManagedPropertyListeners(
@@ -819,14 +828,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         );
 
         this.addManagedPropertyListener('rowDragEntireRow', () => {
-            const useRowDragEntireRow = this.gos.get('rowDragEntireRow');
+            const useRowDragEntireRow = gos.get('rowDragEntireRow');
             if (useRowDragEntireRow) {
                 this.allRowGuis.forEach((gui) => {
                     this.addRowDraggerToRow(gui);
                 });
                 return;
             }
-            this.rowDragComps = this.destroyBeans(this.rowDragComps, this.beans.context);
+            this.rowDragComps = this.destroyBeans(this.rowDragComps, context);
         });
 
         this.addListenersForCellComps();
@@ -834,12 +843,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private addListenersForCellComps(): void {
         this.addManagedListeners(this.rowNode, {
-            rowIndexChanged: () => {
-                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onRowIndexChanged());
-            },
-            cellChanged: (event) => {
-                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellChanged(event));
-            },
+            rowIndexChanged: () => this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onRowIndexChanged()),
+            cellChanged: (event) => this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellChanged(event)),
         });
     }
 
@@ -901,6 +906,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.setStylesFromGridOptions(true);
         this.postProcessClassesFromGridOptions();
         this.postProcessRowClassRules();
+        this.rowEditStyleFeature?.applyRowStyles();
         this.postProcessRowDragging();
     }
 

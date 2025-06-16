@@ -137,6 +137,8 @@
     --ag-menu-background-color: #2c2c2cff;
     --ag-row-loading-skeleton-effect-color: #{color.change(#cacbcc, $alpha: 0.4)};
 
+    --ag-cell-batch-edit-text-color: rgba(243, 208, 179, 100%);
+
     color-scheme: dark;
 }
 

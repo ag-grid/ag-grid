@@ -244,6 +244,12 @@
                     "moduleName": "UndoRedoEditModule",
                     "name": "Undo / Redo Edits",
                     "path": "undo-redo-edits"
+                },
+                {
+                    "moduleName": "BatchEditModule",
+                    "name": "Batch Edit",
+                    "path": "cell-batch-edit",
+                    "isEnterprise": true
                 }
             ]
         },

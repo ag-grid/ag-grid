@@ -141,6 +141,7 @@ export function _setupEditor(
     if (cellCtrl) {
         cellCtrl.editCompDetails = compDetails;
         cellCtrl.comp?.setEditDetails(compDetails, popup, popupLocation, beans.gos.get('reactiveCustomComponents'));
+        cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
     }
 
     return compDetails;
@@ -182,7 +183,7 @@ function _createEditorParams(
     const { valueSvc, gos, editSvc } = beans;
     const cellCtrl = _getCellCtrl(beans, position) as CellCtrl;
     const rowIndex = position.rowNode?.rowIndex ?? (undefined as unknown as number);
-    const batchEdit = editSvc?.batch;
+    const batchEdit = editSvc?.isBatchEditing();
 
     const agColumn = beans.colModel.getCol(position.column.getId())!;
     const { rowNode, column } = position;
@@ -204,7 +205,6 @@ function _createEditorParams(
         stopEditing: (suppressNavigateAfterEdit: boolean) => {
             editSvc!.stopEditing(position, { source: batchEdit ? 'ui' : 'api', suppressNavigateAfterEdit });
             _destroyEditor(beans, position);
-            editSvc?.updateCells();
         },
         eGridCell: cellCtrl?.eGui,
         parseValue: (newValue: any) => valueSvc.parseValue(agColumn, rowNode, newValue, cellCtrl?.value),
@@ -276,7 +276,7 @@ export function _syncFromEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
     newValue?: any,
-    _eventSource?: string
+    source?: string
 ): void {
     const { rowNode, column } = position;
 
@@ -287,16 +287,34 @@ export function _syncFromEditor(
     const oldValue = beans.valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api');
     const cellCtrl = _getCellCtrl(beans, position);
     const hasEditor = !!cellCtrl?.comp?.getCellEditor();
+    const prevEditValue = beans.editModelSvc?.getEdit(position)?.newValue;
 
     // Only handle undefined, null is used to indicate a cleared cell value
     if (newValue === undefined) {
         newValue = UNEDITED;
     }
 
+    // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
     beans.editModelSvc?.setEdit(position, { newValue, oldValue, state: hasEditor ? 'editing' : 'changed' });
 
+    if (prevEditValue === newValue) {
+        // If the value hasn't changed, we don't need to dispatch an event
+        return;
+    }
+
+    const { rowIndex, rowPinned, data } = rowNode;
     beans.eventSvc.dispatchEvent({
         type: 'cellEditValuesChanged',
+        value: newValue,
+        colDef: column.getColDef(),
+        newValue,
+        oldValue,
+        source,
+        column,
+        rowIndex,
+        rowPinned,
+        data,
+        node: rowNode,
     });
 }
 
@@ -316,6 +334,7 @@ export function _destroyEditor(beans: BeanCollection, edit?: EditPosition): void
     comp?.refreshEditStyles(false, false);
     cellCtrl?.updateAndFormatValue(false);
     cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });
+    cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
 
     if (beans.editModelSvc?.hasEdits(edit) && edit && edit?.rowNode && edit?.column) {
         beans.editModelSvc?.setState(edit, 'changed');

@@ -374,5 +374,9 @@ export interface FilterModel {
  * This excludes the filter model.
  */
 export interface ColumnFilterState {
+    /**
+     * Filter state keyed by the column id.
+     * The values will be passed into each of the filter component params as `state.state`.
+     */
     [colId: string]: any;
 }

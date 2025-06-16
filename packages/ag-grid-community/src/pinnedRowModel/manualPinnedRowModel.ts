@@ -7,6 +7,7 @@ import type { RowNode } from '../entities/rowNode';
 import { _createRowNodeSibling } from '../entities/rowNodeUtils';
 import type { CssVariablesChanged } from '../events';
 import {
+    _getEnableRowPinning,
     _getGrandTotalRow,
     _getGrandTotalRowPinned,
     _getRowHeightForNode,
@@ -35,7 +36,8 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
         const runIsRowPinned = () => {
             const isRowPinned = gos.get('isRowPinned');
-            if (isRowPinned) {
+            const enableRowPinning = _getEnableRowPinning(gos);
+            if (enableRowPinning && isRowPinned) {
                 beans.rowModel.forEachNode((node) => this.pinRow(node, isRowPinned(node)), true);
             }
             this.refreshRowPositions();

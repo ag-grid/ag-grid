@@ -17,7 +17,7 @@ import type {
 import type { FilterButtonEvent } from './filterButtonComp';
 import { FilterButtonComp } from './filterButtonComp';
 import { translateForFilter } from './filterLocaleText';
-import { isUseApplyButton } from './floating/provided/providedFilterUtils';
+import { _isUseApplyButton } from './provided/providedFilterUtils';
 
 /** Used with filter handlers. This adds filter buttons. */
 export class FilterWrapperComp extends Component {
@@ -115,7 +115,7 @@ export class FilterWrapperComp extends Component {
                 return { type, label: translateForFilter(this, localeKey) };
             });
 
-            this.applyActive = isUseApplyButton(this.params!);
+            this.applyActive = _isUseApplyButton(this.params!);
             if (!eButtonsPanel) {
                 eButtonsPanel = this.createBean(new FilterButtonComp());
                 this.appendChild(eButtonsPanel.getGui());

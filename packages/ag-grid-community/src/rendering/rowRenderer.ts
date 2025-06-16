@@ -20,7 +20,7 @@ import {
 import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
-import type { RefreshCellsParams } from '../interfaces/iCellsParams';
+import type { RefreshCellsParams, RefreshRowsParams } from '../interfaces/iCellsParams';
 import type { IEditService } from '../interfaces/iEditService';
 import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
@@ -583,7 +583,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     public redrawRows(rowNodes?: IRowNode[]): void {
         const { editSvc } = this.beans;
         if (editSvc?.isEditing()) {
-            if (editSvc.batch) {
+            if (editSvc.isBatchEditing()) {
                 editSvc.cleanupEditors();
             } else {
                 editSvc.stopEditing(undefined, { source: 'api' });
@@ -655,10 +655,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // if a cell was focused before, ensure focus now.
         if (focusedCell != null) {
             this.restoreFocusedCell(focusedCell);
-        }
-
-        if (this.editSvc?.isEditing()) {
-            this.editSvc.updateCells();
         }
 
         this.releaseLockOnRefresh();
@@ -852,6 +848,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
         for (const cellCtrl of this.getCellCtrls(params.rowNodes, params.columns as AgColumn[])) {
             cellCtrl.refreshOrDestroyCell(refreshCellParams);
         }
+
+        // refresh the full width rows too
+        this.refreshFullWidth(params.rowNodes);
+    }
+
+    public refreshRows(params: RefreshRowsParams = {}): void {
+        this.getRowCtrls(params.rowNodes).forEach((rowCtrl) => {
+            rowCtrl.refreshRow(params);
+        });
 
         // refresh the full width rows too
         this.refreshFullWidth(params.rowNodes);

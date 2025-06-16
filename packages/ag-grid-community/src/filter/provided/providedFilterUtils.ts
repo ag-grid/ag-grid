@@ -1,9 +1,10 @@
-import { _warn } from '../../../validation/logging';
-import type { IProvidedFilterParams } from '../../provided/iProvidedFilter';
+import type { FilterWrapperParams } from '../../interfaces/iFilter';
+import { _warn } from '../../validation/logging';
+import type { IProvidedFilterParams } from './iProvidedFilter';
 
 export function getDebounceMs(params: IProvidedFilterParams, debounceDefault: number): number {
     const { debounceMs } = params;
-    if (isUseApplyButton(params)) {
+    if (_isUseApplyButton(params)) {
         if (debounceMs != null) {
             _warn(71);
         }
@@ -14,6 +15,6 @@ export function getDebounceMs(params: IProvidedFilterParams, debounceDefault: nu
     return debounceMs ?? debounceDefault;
 }
 
-export function isUseApplyButton(params: IProvidedFilterParams): boolean {
+export function _isUseApplyButton(params: FilterWrapperParams): boolean {
     return (params.buttons?.indexOf('apply') ?? -1) >= 0;
 }
