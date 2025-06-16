@@ -112,7 +112,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: ${{ steps.notify-start.outputs.result }},
-              body: `🏗 Build umd packages: ${process.env.JOB_URL}`
+              body: `🏗 Building umd packages: ${process.env.JOB_URL}`
             })
 
       - name: Build umd packages
