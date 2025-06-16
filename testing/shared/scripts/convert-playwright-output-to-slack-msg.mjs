@@ -13,7 +13,7 @@ if (!channel) throw new Error('SLACK_CHANNEL is not set');
 if (!username) throw new Error('SLACK_USERNAME is not set');
 if (!icon_url) throw new Error('SLACK_ICON is not set');
 
-const SUCCESS_STRING = '✅ Benchmarking finished';
+const SUCCESS_STRING = '🏁 Benchmarking finished';
 const FAILURE_STRING = `❌ Problems encountered while benchmarking.\nPlease check output for details.`;
 
 const __filename = fileURLToPath(import.meta.url);
@@ -22,13 +22,13 @@ const logFile = path.join(__dirname, '../../../playwright-report/test-results.js
 /** @type {import('playwright/types/testReporter').JSONReport} */
 const report = JSON.parse(fs.readFileSync(logFile, 'utf8').toString());
 const blocks = [
-    { type: 'section', text: { type: 'mrkdwn', text: `**Test results.**` } },
+    { type: 'section', text: { type: 'mrkdwn', text: `*Test results.*` } },
     { type: 'divider' },
     {
         type: 'section',
         text: {
             type: 'mrkdwn',
-            text: `[Job link](${process.env.JOB_URL ?? 'did you forget to supply process.env.JOB_URL?'})\n[Benchmark report](${process.env.REPORT_URL ?? 'did you forget to supply process.env.REPORT_URL?'})\n`,
+            text: `<${process.env.JOB_URL ?? 'did you forget to supply process.env.JOB_URL?'}|Job link>\n<${process.env.REPORT_URL ?? 'did you forget to supply process.env.REPORT_URL?'}|Benchmark report>\n`,
         },
     },
     { type: 'section', text: { type: 'mrkdwn', text: process.env.IS_SUCCESS ? SUCCESS_STRING : FAILURE_STRING } },
@@ -78,7 +78,7 @@ function generateTestsSummary(report) {
     };
     walk(report);
     // Add a section for number of tests
-    const num = (count, emoji, label) => (count ? `${emoji} **${label}:** ${count}\n` : '');
+    const num = (count, emoji, label) => (count ? `${emoji} *${label}:* ${count}\n` : '');
     const statusEmoji = (status) => ({ expected: '✅', unexpected: '🙁', skipped: '🔕', flaky: '👻' })[status] || '❓';
     summaryBlocks.push({
         type: 'section',
@@ -104,7 +104,7 @@ function generateTestsSummary(report) {
             const [errorTitle, _, lastAction] = error.message.split('\n');
             let text = errorTitle;
             if (lastAction) text += `: Last action: ${lastAction}`;
-            return ` - **Error**: ${code(text)}`;
+            return ` - *Error*: ${code(text)}`;
         }
         return '';
     };
@@ -120,15 +120,15 @@ function generateTestsSummary(report) {
     const testsSection = tests.all
         .map((test, i) => {
             const resultBody = test.results
-                .map((result) => `${renderError(result.error)}\n- **Output**: ${renderStdout(result.stdout)}`)
+                .map((result) => `${renderError(result.error)}\n- *Output*: ${renderStdout(result.stdout)}`)
                 .join('\n');
             return paragraph(
-                `${i + 1}. ${statusEmoji(test.status)} **${test.path.map((p) => p.title).join(' > ')}** ${paragraph(resultBody)}`
+                `${i + 1}. ${statusEmoji(test.status)} *${test.path.map((p) => p.title).join(' > ')}* ${paragraph(resultBody)}`
             );
         })
         .join('\n');
 
-    summaryBlocks.push({ type: 'section', text: { type: 'mrkdwn', text: `**🔥 Tests**${testsSection}` } });
+    summaryBlocks.push({ type: 'section', text: { type: 'mrkdwn', text: `*🔥 Tests*${testsSection}` } });
 
     return summaryBlocks;
 }

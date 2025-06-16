@@ -24,7 +24,7 @@ env:
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
   YARN_REGISTRY: "http://52.50.158.57:4873"
   CI: true
-  FORCE_PR_ID: ${{ inputs.force_pr_id }}
+  PR_ID: ${{ inputs.force_pr_id }}
   COMMENT_FILE: ./comment.txt
   SLACK_FILE: ./slack.json
 
@@ -47,7 +47,7 @@ jobs:
           result-encoding: string
           script: |
             const { data: comment } = await github.rest.issues.createComment({
-              issue_number: process.env.FORCE_PR_ID ? parseInt(process.env.FORCE_PR_ID, 10) : context.issue.number,
+              issue_number: process.env.PR_ID ? parseInt(process.env.PR_ID, 10) : context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `🛎 Started a benchmarking job: ${process.env.JOB_URL}`
@@ -58,9 +58,11 @@ jobs:
         id: get-branch
         env:
           REPO: ${{ github.repository }}
-          PR_NO: ${{ env.FORCE_PR_ID || github.event.issue.number }}
+          PR_NO: ${{ env.PR_ID || github.event.issue.number }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo PR_ID=$PR_ID
+          echo github.event.issue.number=${{ github.event.issue.number }}
           if [[ !!"${{ steps.notify-start.outputs.result }}" ]] ; then
             # For PR comments, get the branch from the PR
             echo "branch=$(gh pr view $PR_NO --repo $REPO --json headRefName --jq '.headRefName')" >> $GITHUB_OUTPUT
@@ -200,7 +202,7 @@ jobs:
         if: ${{ !!steps.notify-start.outputs.result }}
         env:
           COMMENT: ${{ steps.prepare-messages.outputs.comment }}
-          PR_NO: ${{ github.event.issue.number }}
+          PR_NO: ${{ env.PR_ID || github.event.issue.number }}
           COMMENT_ID: ${{ steps.notify-start.outputs.result }}
         with:
           script: |        
