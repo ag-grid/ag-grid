@@ -2,6 +2,7 @@ import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
+import type { RowNode } from '../../entities/rowNode';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type {
     GetCellEditorInstancesParams,
@@ -330,12 +331,31 @@ export function _destroyEditor(beans: BeanCollection, position: EditPosition): v
 
     const { comp } = cellCtrl;
 
+    if (!comp.getCellEditor()) {
+        // no editor, nothing to do
+        return;
+    }
+
     comp?.setEditDetails(); // passing nothing stops editing
+    if (beans.editModelSvc?.hasEdits(position) && position?.rowNode && position?.column) {
+        beans.editModelSvc?.setState(position, 'changed');
+    }
+
     comp?.refreshEditStyles(false, false);
     cellCtrl?.updateAndFormatValue(false);
 
-    if (beans.editModelSvc?.hasEdits(position) && position?.rowNode && position?.column) {
-        beans.editModelSvc?.setState(position, 'changed');
+    const sibling = (position.rowNode as RowNode).pinnedSibling;
+
+    // clear pinned row edit if it exists
+    if (sibling && beans.editModelSvc?.hasEdits({ rowNode: sibling, column: position.column })) {
+        beans.editModelSvc?.removeEdits({
+            rowNode: sibling,
+            column: position.column,
+        });
+        const siblingCellCtrl = _getCellCtrl(beans, { rowNode: sibling, column: position.column });
+
+        siblingCellCtrl?.refreshCell({ force: true, suppressFlash: true });
+        siblingCellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
     }
 
     const edit = beans.editModelSvc?.getEdit(position);

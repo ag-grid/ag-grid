@@ -1,6 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import type { RowNode } from '../entities/rowNode';
 import type { Column } from '../interfaces/iColumn';
 import type {
     EditMap,
@@ -140,6 +141,10 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         if (rowNode) {
             const rowEdits = this.getEditRow(position);
             if (!rowEdits) {
+                const pinnedSibling = (rowNode as RowNode).pinnedSibling;
+                if (params.checkSiblings && pinnedSibling) {
+                    return this.hasEdits({ rowNode: pinnedSibling });
+                }
                 return false;
             }
 

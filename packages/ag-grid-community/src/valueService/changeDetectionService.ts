@@ -62,11 +62,6 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         const rowNode = node as RowNode;
         const rowNodes: RowNode[] = [rowNode];
 
-        if (rowNode.pinnedSibling) {
-            // if the row is pinned, we also need to refresh the pinned sibling
-            rowNodes.push(rowNode.pinnedSibling);
-        }
-
         const clientSideRowModel = this.clientSideRowModel;
         const rootNode = clientSideRowModel?.rootNode;
 
@@ -98,6 +93,15 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
             force,
             columns: [column],
         });
+
+        if (rowNode.pinnedSibling) {
+            // if the row is pinned, we also need to refresh the pinned sibling
+            rowRenderer.refreshRows({
+                rowNodes: [rowNode.pinnedSibling],
+                suppressFlash,
+                force,
+            });
+        }
 
         // return affected nodes for further processing, if needed
         return rowNodes;
