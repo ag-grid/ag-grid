@@ -110,12 +110,14 @@ export class CellKeyboardListenerFeature extends BeanStub {
         ) {
             if (rangeSvc && _isCellSelectionEnabled(gos)) {
                 rangeSvc.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
+                this.beans.editSvc?.stopEditing(undefined, { source: 'cellClear' });
             } else if (cellCtrl.isCellEditable()) {
                 const { column } = cellCtrl;
                 const emptyValue = this.beans.valueSvc.getDeleteValue(column, rowNode);
                 rowNode.setDataValue(column, emptyValue, 'cellClear');
+                this.beans.editSvc?.stopEditing(undefined, { source: 'cellClear' });
             }
-        } else {
+        } else if (!editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
             beans.editSvc?.startEditing(cellCtrl, { startedEdit: true, event });
         }
 

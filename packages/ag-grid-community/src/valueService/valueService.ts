@@ -174,7 +174,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const { editSvc, rowGroupColsSvc } = this.beans;
 
         if (editSvc && source === 'ui') {
-            if (editSvc?.isEditing({ rowNode, column })) {
+            if (editSvc?.isEditing()) {
                 const newValue = editSvc?.getCellDataValue({ rowNode, column });
                 if (newValue !== undefined) {
                     return newValue;

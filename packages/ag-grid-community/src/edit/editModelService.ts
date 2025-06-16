@@ -12,8 +12,8 @@ import type {
 } from '../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _getSiblingRows } from './utils/controllers';
 import { UNEDITED } from './utils/editors';
+import { _getSiblingRows } from './utils/nodes';
 
 export class EditModelService extends BeanStub implements NamedBean, IEditModelService {
     beanName = 'editModelSvc' as const;
@@ -141,13 +141,17 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
             const rowEdits = this.getEditRow(position);
             if (!rowEdits) {
                 return false;
-            } else if (column) {
+            }
+
+            if (column) {
                 if (withOpenEditors) {
                     const edit = this.getEdit(position);
                     return edit ? edit.state === 'editing' : false;
                 }
                 return rowEdits.has(column) ?? false;
-            } else if (rowEdits.size !== 0) {
+            }
+
+            if (rowEdits.size !== 0) {
                 if (withOpenEditors) {
                     return Array.from(rowEdits.values()).some(({ state }) => state === 'editing');
                 }

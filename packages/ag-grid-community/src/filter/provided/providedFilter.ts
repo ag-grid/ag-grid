@@ -15,13 +15,13 @@ import { Component } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { translateForFilter } from '../filterLocaleText';
-import { getDebounceMs, isUseApplyButton } from '../floating/provided/providedFilterUtils';
 import type {
     IProvidedFilter,
     IProvidedFilterParams,
     ProvidedFilterModel,
     ProvidedFilterParams,
 } from './iProvidedFilter';
+import { _isUseApplyButton, getDebounceMs } from './providedFilterUtils';
 
 /** temporary type until `ProvidedFilterParams` is updated as breaking change */
 type ProvidedFilterDisplayParams<M extends ProvidedFilterModel> = IProvidedFilterParams &
@@ -138,7 +138,7 @@ export abstract class ProvidedFilter<
     }
 
     private commonUpdateParams(newParams: P, _oldParams?: P): void {
-        this.applyActive = isUseApplyButton(newParams);
+        this.applyActive = _isUseApplyButton(newParams);
         this.setupApplyDebounced();
     }
 

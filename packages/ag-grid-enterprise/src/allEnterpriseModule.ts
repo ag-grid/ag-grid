@@ -4,6 +4,7 @@ import type { ModuleName, _ModuleWithoutApi } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
 
 import { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
+import { BatchEditModule } from './batch-edit/batchEditModule';
 import { IntegratedChartsModule } from './charts/integratedChartsModule';
 import { ClipboardModule } from './clipboard/clipboardModule';
 import { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';
@@ -56,6 +57,7 @@ const dependsOn = [
     PivotModule,
     TreeDataModule,
     FindModule,
+    BatchEditModule,
 ];
 const moduleName: ModuleName = 'AllEnterprise';
 

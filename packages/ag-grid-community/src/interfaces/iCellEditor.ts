@@ -2,6 +2,7 @@ import type { ColDef } from '../entities/colDef';
 import type { Column } from '../interfaces/iColumn';
 import type { GetCellsParams } from './iCellsParams';
 import type { AgGridCommon } from './iCommon';
+import type { EditState } from './iEditModelService';
 import type { IPopupComponent } from './iPopupComponent';
 import type { IRowNode } from './iRowNode';
 import type { RowPosition } from './iRowPosition';
@@ -147,23 +148,29 @@ export interface SetEditingCellsParams {
 }
 
 export interface EditingCellPosition extends RowPosition {
-    /** Column key */
-    colKey: string;
+    /** Column id */
+    colId: string;
 
     /**
      * Column instance.
-     * @deprecated Use `colKey` instead.
+     * @deprecated Use `colId` instead.
      */
     column?: Column;
 
-    /** New pending value */
+    /**
+     * Column instance.
+     * @deprecated Use `colId` instead.
+     */
+    colKey?: string | Column;
+
+    /** New pending value, use `null` to delete cell content */
     newValue?: any;
 
-    /** Existing value, used only when retrieving current editing state */
+    /** Existing value, used only when retrieving current editing state, ignored when setting new editing state. */
     oldValue?: any;
 
     /** Current editing state */
-    state?: 'editing' | 'changed';
+    state?: EditState;
 }
 
 export interface ICellEditorValidationError extends RowPosition {

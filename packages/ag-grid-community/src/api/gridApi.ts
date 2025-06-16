@@ -853,9 +853,6 @@ export interface _EditGridApi<TData> {
      */
     getEditingCells(params?: GetEditingCellsParams): EditingCellPosition[];
 
-    /** Set currently pending cell updates when in batch editing mode. Specify `update=true` to update current state, otherwise pending state will be replaced. */
-    setEditingCells(cellPositions: EditingCellPosition[], params?: SetEditingCellsParams): void;
-
     /**
      * If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes).
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
@@ -868,21 +865,27 @@ export interface _EditGridApi<TData> {
      */
     startEditingCell(params: StartEditingCellParams): void;
 
-    /** Returns `true` if the grid is editing a cell */
-    isEditing(rowId?: string, colId?: string): boolean;
+    /**
+     * Returns `true` if the grid is editing a cell
+     */
+    isEditing(cellPosition: CellPosition): boolean;
+}
+
+export interface _BatchEditApi {
+    /**
+     * Set currently pending cell updates when in batch editing mode. Specify `params.update=true` to update current state, otherwise pending state will be replaced.
+     */
+    setEditingCells(cellPositions: EditingCellPosition[], params?: SetEditingCellsParams): void;
 
     /**
-     * Start batch editing.
+     * Start/Stop batch editing. Note that any pending edits will be lost when batch editing is disabled.
      */
-    enableBatchEditing(): void;
+    setBatchEditing(enable: boolean): void;
 
     /**
-     * Stop batch editing.
+     * Returns `true` if batch editing is enabled
      */
-    disableBatchEditing(): void;
-
-    /** Returns `true` if batch editing is enabled */
-    batchEditingEnabled(): boolean;
+    isBatchEditing(): boolean;
 }
 
 export interface _UndoRedoGridApi {
@@ -1857,6 +1860,7 @@ export interface GridApi<TData = any>
         _ExcelExportGridApi,
         _ClipboardGridApi,
         _GridChartsGridApi,
-        _AdvancedFilterGridApi {
+        _AdvancedFilterGridApi,
+        _BatchEditApi {
     dispatchEvent(event: AgEvent): void;
 }

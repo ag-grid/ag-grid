@@ -24,6 +24,7 @@
 @use './parts/advanced-filter';
 @use './parts/row-numbers';
 @use './parts/row-pinning';
+@use './parts/batch-edit';
 
 @mixin general-styles() {
     .ag-measurement-container {
@@ -49,6 +50,7 @@
     @include date-time.output();
     @include advanced-filter.output();
     @include row-numbers.output();
+    @include batch-edit.output();
 }
 
 @mixin native-input-styles() {

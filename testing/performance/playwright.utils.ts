@@ -11,11 +11,11 @@ type RequestFinishedMessage = {
     method: string;
     headers: { [p: string]: string };
     postData: string | null;
-    response: Promise<{
+    response: {
         status: number;
         statusText: string;
         headers: { [p: string]: string };
-    }>;
+    };
 };
 
 export type BrowserCommunications = {
@@ -34,17 +34,13 @@ export function getBrowserCommunications(page: Page): BrowserCommunications {
             args: Promise.all(msg.args().map((arg) => arg.jsonValue())),
         });
     });
-    page.on('requestfinished', (request) => {
+    page.on('response', (response) => {
         requestMsgs.push({
-            url: request.url(),
-            method: request.method(),
-            headers: request.headers(),
-            postData: request.postData(),
-            response: request.response().then((response) => ({
-                status: response!.status(),
-                statusText: response!.statusText(),
-                headers: response!.headers(),
-            })),
+            url: response.request().url(),
+            method: response.request().method(),
+            headers: response.request().headers(),
+            postData: response.request().postData(),
+            response: { status: response.status(), statusText: response.statusText(), headers: response.headers() },
         });
     });
     return {

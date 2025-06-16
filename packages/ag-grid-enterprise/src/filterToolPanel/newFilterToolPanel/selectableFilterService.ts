@@ -107,11 +107,12 @@ export class SelectableFilterService extends BeanStub implements ISelectableFilt
         const beans = this.beans;
         const { gos, dataTypeSvc } = beans;
         let filterParams = filterDef.filterParams;
+        const colDef = column.colDef;
         if (typeof filterParams === 'function') {
             filterParams = filterParams(
                 _addGridCommonParams(gos, {
                     column,
-                    colDef: column.colDef,
+                    colDef,
                 })
             );
         }
@@ -120,14 +121,14 @@ export class SelectableFilterService extends BeanStub implements ISelectableFilt
         const formatValue = dataTypeSvc?.getFormatValue(cellDataType!);
         const { filters, defaultFilterParams } = (filterParams as SelectableFilterParams) ?? {};
         const updateDef = (def: SelectableFilterDef) => {
-            const { filter, filterParams: defFilterParams, name } = def;
+            const { filter, filterParams: defFilterParams, name, filterValueGetter = colDef.filterValueGetter } = def;
             const userParams = defaultFilterParams ? { ...defaultFilterParams, ...defFilterParams } : defFilterParams;
             let updatedParams: { filterParams?: any; filterValueGetter?: string | ValueGetterFunc } | undefined;
             if (dataTypeDefinition && formatValue) {
                 if (filter === 'agMultiColumnFilter') {
                     updatedParams = beans.multiFilter?.getParamsForDataType(
                         userParams,
-                        def,
+                        filterValueGetter,
                         dataTypeDefinition,
                         formatValue
                     );
@@ -135,7 +136,7 @@ export class SelectableFilterService extends BeanStub implements ISelectableFilt
                     updatedParams = _getFilterParamsForDataType(
                         filter,
                         userParams,
-                        def,
+                        filterValueGetter,
                         dataTypeDefinition,
                         formatValue,
                         beans,

@@ -15,6 +15,7 @@ export class GridActions {
         parentSelector = '#myGrid'
     ) {
         this.parent = document.querySelector(parentSelector)!;
+        if (!this.parent) throw new Error(`${parentSelector} not found.`);
     }
 
     getRowByIndex(index: number): HTMLElement | null {
@@ -114,6 +115,15 @@ export function assertSelectedRowNodes(nodes: IRowNode[], api: GridApi): void {
     for (let i = 0; i < nodes.length; i++) {
         expect(selectedNodes[i]).toBe(nodes[i]);
     }
+}
+
+export function _isDisplayed(element: HTMLElement): boolean {
+    let el: HTMLElement | null = element;
+    while (el) {
+        if (el.classList.contains('ag-invisible')) return false;
+        el = el.parentElement;
+    }
+    return true;
 }
 
 interface CellRangeSpec {

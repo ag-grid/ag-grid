@@ -4,14 +4,8 @@
     height: 100%;
 }
 
-.example-control-group.example-selectors > .example-control:first-child {
-    margin-right: 1rem;
-}
-
 .example-header {
     margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
 }
 
 #myGrid {
