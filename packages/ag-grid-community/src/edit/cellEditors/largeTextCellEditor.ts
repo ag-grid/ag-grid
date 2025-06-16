@@ -84,12 +84,12 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         return this.eEditor.getInputElement();
     }
 
-    public getErrors() {
+    public getValidationErrors() {
         const { params } = this;
-        const { maxLength, getErrors } = params;
-
+        const { maxLength, getValidationErrors } = params;
         const translate = this.getLocaleTextFunc();
         const value = this.getValue();
+
         let internalErrors: string[] | null = [];
 
         if (typeof value === 'string' && maxLength != null && value.length > maxLength) {
@@ -100,8 +100,8 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
             internalErrors = null;
         }
 
-        if (getErrors) {
-            return getErrors({
+        if (getValidationErrors) {
+            return getValidationErrors({
                 value,
                 internalErrors,
                 cellEditorParams: params,

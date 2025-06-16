@@ -115,7 +115,7 @@ export class SimpleCellEditor<
         return this.eEditor.getInputElement();
     }
 
-    public getErrors(): string[] | null {
-        return this.cellEditorInput.getErrors();
+    public getValidationErrors(): string[] | null {
+        return this.cellEditorInput.getValidationErrors();
     }
 }

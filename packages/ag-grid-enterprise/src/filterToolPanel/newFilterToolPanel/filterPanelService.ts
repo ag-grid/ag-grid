@@ -43,7 +43,8 @@ export class FilterPanelService
             filterChanged: updateFilterStates,
         });
         this.addManagedListeners(this.beans.colFilter!, {
-            filterStateChanged: () => {
+            filterStateChanged: ({ column }: { column: AgColumn }) => {
+                this.states.get(column.getColId())?.refresh?.();
                 this.dispatchStatesUpdates(undefined, true);
             },
         });
@@ -69,7 +70,7 @@ export class FilterPanelService
     }
 
     public add(id: string): void {
-        this.createFilter(id);
+        this.createFilter(id, true);
         this.dispatchStatesUpdates(id);
     }
 
@@ -105,18 +106,21 @@ export class FilterPanelService
     private updateFilterState<S extends FilterPanelFilterState, K extends keyof S>(
         id: string,
         key: K,
-        value: S[K]
+        value: S[K],
+        suppressEvents?: boolean
     ): void {
         const filterState = this.getState<S>(id);
         if (!filterState) {
             return;
         }
         filterState[key] = value;
-        this.dispatchLocalEvent({
-            type: 'filterPanelStateChanged',
-            id,
-            state: filterState,
-        });
+        if (!suppressEvents) {
+            this.dispatchLocalEvent({
+                type: 'filterPanelStateChanged',
+                id,
+                state: filterState,
+            });
+        }
     }
 
     public expand(id: string, expanded: boolean): void {
@@ -245,40 +249,47 @@ export class FilterPanelService
 
     private createFilterState(column: AgColumn, handler: FilterHandler, expanded?: boolean): StateWrapper {
         const beans = this.beans;
+        const { colFilter, selectableFilter } = beans;
         const name = getDisplayName(beans, column);
+        const colId = column.getColId();
+        const getIsEditing = () => colFilter!.hasUnappliedModel(colId);
+        const isEditing = getIsEditing();
         if (expanded) {
             const colDef = column.colDef;
-            const { filterDefs, activeFilterDef } = beans.selectableFilter?.getDefs(column, colDef) ?? {};
+            const { filterDefs, activeFilterDef } = selectableFilter?.getDefs(column, colDef) ?? {};
             const filterComp = this.createBean(new FilterComp(column, 'TOOLBAR', true));
             return {
                 state: {
                     column,
                     name,
+                    isEditing,
                     expanded,
                     detail: filterComp.getGui(),
                     activeFilterDef,
                     filterDefs,
                 },
                 handler,
+                refresh: () => {
+                    this.updateFilterState(colId, 'isEditing', getIsEditing());
+                },
                 destroy: () => this.destroyBean(filterComp),
             };
         } else {
+            const colId = column.getColId();
             const getSummary = () =>
-                handler.getModelAsString?.(beans.colFilter!.getModelForColumn(column), 'filterToolPanel') ?? '';
+                handler.getModelAsString?.(colFilter!.getStateForColumn(colId).model, 'filterToolPanel') ?? '';
             return {
                 state: {
                     column,
                     name,
+                    isEditing,
                     expanded: false,
                     summary: getSummary(),
                 },
                 handler,
                 refresh: () => {
-                    this.updateFilterState<FilterPanelSummaryState, 'summary'>(
-                        column.getColId(),
-                        'summary',
-                        getSummary()
-                    );
+                    this.updateFilterState(colId, 'isEditing', getIsEditing(), true);
+                    this.updateFilterState<FilterPanelSummaryState, 'summary'>(colId, 'summary', getSummary());
                 },
             };
         }

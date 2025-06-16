@@ -397,6 +397,7 @@ export {
     BaseCellEditor,
     GetCellEditorInstancesParams,
     GetEditingCellsParams,
+    SetEditingCellsParams,
     EditingCellPosition,
 } from './interfaces/iCellEditor';
 export { AgAbstractCellEditor } from './widgets/agAbstractCellEditor';
@@ -693,6 +694,7 @@ export {
     _AdvancedFilterGridApi,
     _PinnedRowGridApi,
     _FindApi,
+    _BatchEditApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
 export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes';
@@ -711,8 +713,6 @@ export {
     _isDomLayout,
     _isAnimateRows,
     _getGrandTotalRow,
-    _getGrandTotalRowPinned,
-    _getEnableRowPinning,
     _getGroupTotalRowCallback,
     _isGroupMultiAutoColumn,
     _isColumnsSortingCoupledToGroup,
@@ -750,6 +750,7 @@ export {
     _isGroupRowsSticky,
     _getGroupingApproach,
     _getGridOption,
+    _isSetFilterByDefault,
 } from './gridOptionsUtils';
 export type { GroupingApproach } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
@@ -1069,6 +1070,7 @@ export {
     _setAriaSetSize,
     _setAriaHidden,
     _getAriaPosInSet,
+    _setAriaInvalid,
 } from './utils/aria';
 export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './utils/array';
 export { _isIOSUserAgent } from './utils/browser';

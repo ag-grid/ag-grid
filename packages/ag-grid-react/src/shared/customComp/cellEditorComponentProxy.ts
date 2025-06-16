@@ -59,7 +59,7 @@ export class CellEditorComponentProxy implements ICellEditor {
             'focusIn',
             'focusOut',
             'afterGuiAttached',
-            'getErrors',
+            'getValidationErrors',
             'getValidationElement',
         ];
     }

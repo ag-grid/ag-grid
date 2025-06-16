@@ -101,6 +101,8 @@ const docs: Record<AllThemeParams, string> = {
     findActiveMatchBackgroundColor: 'Background color of the active match used in Find',
     focusShadow:
         'Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.',
+    focusErrorShadow:
+        'Shadow around UI controls that have focus and contain validation errors e.g. text inputs, text-areas. The value must a valid CSS box-shadow.',
     fontFamily: 'Font family used for all text.',
     fontSize: 'Default font size for text in the grid',
     footerRowBorder: 'Horizontal borders above footer components like the pagination and status bars',

@@ -56,10 +56,10 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         }
     }
 
-    public getErrors(): string[] | null {
+    public getValidationErrors(): string[] | null {
         const value = this.getValue();
         const { params } = this;
-        const { min, max, getErrors } = params;
+        const { min, max, getValidationErrors } = params;
         let internalErrors: string[] | null = [];
         const translate = this.getLocaleTextFunc();
 
@@ -82,8 +82,8 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
             internalErrors = null;
         }
 
-        if (getErrors) {
-            return getErrors({ value, cellEditorParams: params, internalErrors });
+        if (getValidationErrors) {
+            return getValidationErrors({ value, cellEditorParams: params, internalErrors });
         }
 
         return internalErrors;

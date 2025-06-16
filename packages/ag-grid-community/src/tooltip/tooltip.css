@@ -13,6 +13,7 @@
     background-color: var(--ag-tooltip-error-background-color);
     color: var(--ag-tooltip-error-text-color);
     border: var(--ag-tooltip-error-border);
+    font-weight: bold;
 }
 
 .ag-tooltip-custom {

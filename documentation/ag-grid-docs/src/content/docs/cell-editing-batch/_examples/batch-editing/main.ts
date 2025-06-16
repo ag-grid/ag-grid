@@ -1,16 +1,13 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
-import { CellRenderer } from 'src/content/docs/cell-editing-start-stop/_examples/single-click-editing-renderer/cell-renderer.component_angular';
 
 import type {
     AgColumn,
     BeanCollection,
     BodyScrollEvent,
-    CellClickedEvent,
     CellCtrl,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     CellValueChangedEvent,
-    Column,
     EditStrategyType,
     EditingCellPosition,
     GridApi,
@@ -45,6 +42,7 @@ import {
 } from 'ag-grid-community';
 import {
     AggregationModule,
+    BatchEditModule,
     CellSelectionModule,
     ClipboardModule,
     ColumnMenuModule,
@@ -95,6 +93,7 @@ ModuleRegistry.registerModules([
     RowApiModule,
     TextFilterModule,
     ClipboardModule,
+    BatchEditModule,
     ValidationModule /* Development Only */,
 ]);
 

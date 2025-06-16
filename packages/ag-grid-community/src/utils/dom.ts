@@ -493,7 +493,6 @@ type RoleType =
 
 export type ElementParams = {
     /** The tag name to use for the element, either browser tag or one of the AG Grid components such as ag-checkbox
-     * For span and div consider using the _span() and _div() helper functions instead to save bundle size.
      */
     tag: TagName;
     /** AG Grid data-ref attribute, should match a property on the class that uses the same name and is initialised with RefPlaceholder

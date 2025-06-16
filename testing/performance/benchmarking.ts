@@ -1,14 +1,26 @@
-import type { BrowserContext, Page } from '@playwright/test';
+import type { BrowserContext, Page, PlaywrightTestArgs } from '@playwright/test';
 import { test } from '@playwright/test';
-import { bgBlue, bgGreen, blue, cyan, green, magenta, yellow } from 'chalk';
+import chalk from 'chalk';
 
 import type { BrowserCommunications } from './playwright.utils';
 import { gotoUrl, waitFor } from './playwright.utils';
 
-export type Framework = 'typescript' | 'reactFunctionalTs';
+chalk.level = process.env['CI'] ? 0 : 3; // disable colors in CI, enable them otherwise
+
+const { bgBlue, bgGreen, blue, cyan, green, magenta, yellow } = chalk;
+
+export type Entry<T> = T extends readonly (infer U)[] ? U : T extends object ? T[keyof T] : T;
+export const allFrameworks = [
+    'vanilla',
+    'typescript',
+    'reactFunctional',
+    'reactFunctionalTs',
+    'angular',
+    'vue3',
+] as const;
+export type Framework = Entry<typeof allFrameworks>;
 export type CustomVersion = `v${number}.${number}.${number}`;
 export type Version = 'prod' | 'staging' | 'local' | CustomVersion;
-export type Entry<T> = T extends readonly (infer U)[] ? U : T extends object ? T[keyof T] : T;
 
 const thisFilePath = __filename;
 
@@ -42,8 +54,12 @@ export type TestCase = {
 };
 
 type InternalTestCase = TestCase & {
-    __hidden?: {
-        error?: Error; // used to store the error for friendlier error logs
+    __hidden: {
+        error: Error; // used to store the error for friendlier error logs
+        maxIter: number;
+        minIter: number;
+        warmupIter: number;
+        setLastCommunications: (comms: BrowserCommunications) => BrowserCommunications;
     };
 };
 
@@ -122,6 +138,8 @@ function getUrl(testCase: TestCase, variant: Variant) {
     return `${knownUrls[variant.version]}/${testCase.name}/${testCase.framework}/`;
 }
 
+const CRITICAL_VALUE = 1.96;
+
 /**
  * Calculates:
  * - Average time
@@ -152,28 +170,35 @@ const computeStats = (times: number[]) => {
 
     const avg = base.reduce((sum, v) => sum + v, 0) / base.length;
     const stdDev = Math.sqrt(base.reduce((sum, v) => sum + Math.pow(v - avg, 2), 0) / (base.length - 1));
-    const marginOfError = (1.96 * stdDev) / Math.sqrt(base.length);
+    const marginOfError = (CRITICAL_VALUE * stdDev) / Math.sqrt(base.length);
 
     return {
         average: avg,
         stdDev,
         marginOfError,
+        newBase: base,
         filteredCount: base.length,
         originalCount: times.length,
     };
 };
 
 /**
+ * Calculates the standard error based on the margins of error for two sets of data.
+ * Uses the critical value for a 95% confidence level (1.96).
+ */
+function getStandardError(moe1: number, moe2: number) {
+    const se1 = moe1 / CRITICAL_VALUE;
+    const se2 = moe2 / CRITICAL_VALUE;
+    return Math.sqrt(se1 ** 2 + se2 ** 2);
+}
+
+/**
  * Determines whether a percentage difference between two values is statistically significant at the 95% confidence level,
  * using a z-test approximation based on margins of error.
  */
 function isSignificant(diff: number, moe1: number, moe2: number) {
-    const critical_value = 1.96;
-    const se1 = moe1 / critical_value;
-    const se2 = moe2 / critical_value;
-    const se_diff = Math.sqrt(se1 ** 2 + se2 ** 2);
-    const z_score = diff / se_diff;
-    return Math.abs(z_score) > critical_value;
+    const z_score = diff / getStandardError(moe1, moe2);
+    return Math.abs(z_score) > CRITICAL_VALUE;
 }
 
 /**
@@ -182,7 +207,7 @@ function isSignificant(diff: number, moe1: number, moe2: number) {
  */
 function reportStats(
     stats: Record<'control' | 'variant', ReturnType<typeof computeStats>>,
-    testCase: TestCase,
+    testCase: InternalTestCase,
     significant: boolean
 ) {
     const s1 = stats.control;
@@ -193,18 +218,18 @@ function reportStats(
     const faster = diff > 0 ? testCase.variant.version : testCase.control.version;
     const percentDiff = (Math.abs(diff) / Math.min(s1.average, s2.average)) * 100;
 
-    const moe1Percent = (s1.marginOfError / s1.average) * 100;
-    const moe2Percent = (s2.marginOfError / s2.average) * 100;
-    const avgMoE = s1.marginOfError + s2.marginOfError;
-    const avgMoEPercent = moe1Percent + moe2Percent;
+    const avgMoE = getStandardError(s1.marginOfError, s2.marginOfError);
+    const avgMoEPercent = (avgMoE / Math.min(s1.average, s2.average)) * 100;
 
-    const numbersString = `${diff.toFixed(2)} ± ${avgMoE.toFixed(2)}`;
+    const numbersString = `${Math.abs(diff).toFixed(2)} ± ${avgMoE.toFixed(2)}`;
     const percentString = `${percentDiff.toFixed(1)}% ± ${avgMoEPercent.toFixed(1)}%`;
 
     if (!significant) {
-        /*console.log(
-            `\n${yellow(`Result is statistically insignificant (`)}${green(percentString)}, ${blue(`${s1.filteredCount}/${s1.originalCount}`)})${yellow('. Running more iterations...\n')}`
-        );*/
+        if (!(s1.originalCount % testCase.__hidden.minIter)) {
+            console.log(
+                `\n${yellow(`Result is statistically insignificant (`)}${green(percentString)}, ${blue(`${s1.filteredCount}/${s1.originalCount}`)})${yellow('. Running more iterations...\n')}`
+            );
+        }
         return;
     }
 
@@ -219,18 +244,20 @@ function reportStats(
     console.log(resultMessage);
     console.log(`${bgGreen.black.bold(' Details: ')}`);
 
-    const detailsFormat = (version: string, stats: ReturnType<typeof computeStats>) => `
-        ${blue('Version:')} ${magenta(version)}
-        ${green('Average time:')} ${stats.average.toFixed(2)}ms (±${yellow(stats.marginOfError.toFixed(2))})
-        ${green('StdDev:')} ${stats.stdDev.toFixed(2)}
-        ${green('Sample size:')} ${blue(`${stats.filteredCount}/${stats.originalCount}`)}`;
+    const detailsFormat = (version: string, stats: ReturnType<typeof computeStats>) =>
+        [
+            `${blue('Version:')} ${magenta(version)}`,
+            `${green('Average time:')} ${stats.average.toFixed(2)}ms (±${yellow(stats.marginOfError.toFixed(2))})`,
+            `${green('StdDev:')} ${stats.stdDev.toFixed(2)}`,
+            `${green('Sample size:')} ${blue(`${stats.filteredCount}/${stats.originalCount}`)}`,
+        ].join('\n        ');
 
     console.log(detailsFormat(testCase.control.version, s1));
     console.log(detailsFormat(testCase.variant.version, s2));
 }
 
 function benchError(message: string, e: any, testCase: InternalTestCase) {
-    const [_, ...rest] = testCase.__hidden!.error?.stack!.split('\n') || [];
+    const [_, ...rest] = testCase.__hidden.error.stack!.split('\n') || [];
     const [__, ...providedRest] = e.stack!.split('\n');
     e.stack = `${message}\n${providedRest.join('\n')}\n${rest
         .filter((l) => l.includes(thisFilePath) || l.includes(test.info().titlePath[0]))
@@ -293,78 +320,85 @@ async function attachCookies(context: BrowserContext, variant: Variant) {
     }
 }
 
+const testLevelCatch = (e: any, lastCommunications?: BrowserCommunications) => {
+    if (lastCommunications?.consoleMsgs?.length || lastCommunications?.requestMsgs?.length) {
+        console.error('Error has been thrown during the test, here are the last comms:');
+        lastCommunications.consoleMsgs.forEach((msg) => {
+            console[msg.type as 'log' | 'error'](msg.text);
+        });
+        lastCommunications.requestMsgs.forEach((msg) => {
+            console.log(`U: ${msg.method} ${msg.url} D: ${msg.response.status} ${msg.response.statusText}`);
+        });
+    }
+    throw e;
+};
+
+const testBody = async (testCase: InternalTestCase, { page, context }: PlaywrightTestArgs, ..._: any[]) => {
+    const result = { control: [] as number[], variant: [] as number[] };
+    const { minIter, maxIter, warmupIter, setLastCommunications } = testCase.__hidden!;
+    let significant = false;
+    do {
+        for (const variantName of ['control', 'variant'] as const) {
+            const variant = testCase[variantName];
+            await attachCookies(context, variant);
+            const lastCommunications = setLastCommunications(await gotoUrl(page, getUrl(testCase, variant)));
+            void updatePageTitle(page, testCase, variant);
+            if (variant.shouldInjectScript) await attachScripts(page, variant.version, testCase);
+            if (testCase.preSetup) await testCase.preSetup(page);
+            for (let i = 0; i < minIter; i++) {
+                if (testCase.setupPreActions) await testCase.setupPreActions(page);
+                const noiseSize = (await metricsGetter(page, testCase)).length;
+                if (testCase.actions) await testCase.actions(page);
+                if (i > warmupIter) {
+                    const usefulEntries = (await metricsGetter(page, testCase)).slice(noiseSize);
+                    const duration = usefulEntries.reduce((acc, pe) => acc + pe.duration, 0);
+                    result[variantName].push(duration);
+                }
+            }
+            if (testCase.expectsPostActions) await testCase.expectsPostActions(page, lastCommunications);
+        }
+        const [s1, s2] = [computeStats(result.control), computeStats(result.variant)];
+        [result.control, result.variant] = [s1.newBase, s2.newBase]; // update the result with filtered data
+        if (!(s1.originalCount % testCase.__hidden!.minIter)) console.log(`Collected ${s1.originalCount} entries`);
+        significant = isSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError);
+        reportStats({ control: s1, variant: s2 }, testCase, significant);
+    } while (!(significant || result['control'].length > maxIter)); // run until we do 1000 iterations or results are significant
+    if (!significant) {
+        console.log(
+            `${yellow('Result is statistically insignificant.')} ${green(
+                'Consider running the test with more iterations or check your test case setup.'
+            )}`
+        );
+    }
+};
+
+const describeBody = (describe: Describe) => () => {
+    const warmupIter = describe.warmupIterations ?? 3; // default is 3
+    const minIter = Math.max(Math.max(describe.minIterations ?? 10, warmupIter) + warmupIter, 2);
+    const maxIter = describe.maxIterations ?? 1000;
+
+    describe.testCases.forEach((testCase: TestCase, index, allCases) => {
+        let lastCommunications: BrowserCommunications | undefined;
+        const setLastCommunications = (comms: BrowserCommunications) => (lastCommunications = comms);
+        const __hidden = { error: new Error(), setLastCommunications, minIter, maxIter, warmupIter };
+
+        const testTitle = `Running ${testCase.name}${testCase.description ? `/${testCase.description}` : ''} with ${testCase.framework} (${index + 1}/${allCases.length})`;
+        (testCase.skip ? test.skip : test)(testTitle, ({ page, context, request }, testInfo) =>
+            testBody({ ...testCase, __hidden }, { page, context, request }, testInfo).catch((e) =>
+                testLevelCatch(e, lastCommunications)
+            )
+        );
+    });
+};
+
 /** Generic benchmark function to run performance tests */
 export default function (name: string, describe: Describe) {
-    test.describe.configure({ timeout: describe.timeout || 3 * 60_000 });
+    test.describe.configure({ timeout: describe.timeout || 60_000 });
+    test.beforeEach(() => console.log(`${bgGreen.black.bold(test.info().title)}`));
+    test.beforeEach(() => console.log(`Test started at ${new Date().toISOString()}`));
     test.beforeEach(() => console.time('Duration'));
     test.afterEach(() => console.timeEnd('Duration'));
-    test.afterEach(() => console.log('Test ended at ' + new Date().toISOString()));
+    test.afterEach(() => console.log(`Test ended at ${new Date().toISOString()}\n\n`));
 
-    const describeBody = () => {
-        const warmupIterations = describe.warmupIterations ?? 3; // default is 3
-        const minIterations = Math.max(Math.max(describe.minIterations ?? 10, warmupIterations) + warmupIterations, 2);
-        const maxIterations = describe.maxIterations ?? 1000;
-
-        describe.testCases.forEach((testCase: InternalTestCase) => {
-            testCase.__hidden = { error: new Error() }; // used for friendlier error logs
-            (testCase.skip ? test.skip : test)(
-                `Running ${testCase.name}${testCase.description ? `/${testCase.description}` : ''} with ${testCase.framework}`,
-                async ({ page, context }) => {
-                    let lastCommunications: BrowserCommunications | undefined;
-                    try {
-                        const result = { control: [] as number[], variant: [] as number[] };
-                        let significant = false;
-                        do {
-                            for (const variantName of ['control', 'variant'] as const) {
-                                const variant = testCase[variantName];
-                                await attachCookies(context, variant);
-                                lastCommunications = await gotoUrl(page, getUrl(testCase, variant));
-                                void updatePageTitle(page, testCase, variant);
-                                variant.shouldInjectScript && (await attachScripts(page, variant.version, testCase));
-                                testCase.preSetup && (await testCase.preSetup(page));
-                                for (let i = 0; i < minIterations; i++) {
-                                    testCase.setupPreActions && (await testCase.setupPreActions(page));
-                                    const noiseSize = (await metricsGetter(page, testCase)).length;
-                                    testCase.actions && (await testCase.actions(page));
-                                    if (i > warmupIterations) {
-                                        const usefulEntries = (await metricsGetter(page, testCase)).slice(noiseSize);
-                                        const duration = usefulEntries.reduce((acc, pe) => acc + pe.duration, 0);
-                                        result[variantName].push(duration);
-                                    }
-                                }
-                                testCase.expectsPostActions &&
-                                    (await testCase.expectsPostActions(page, lastCommunications));
-                            }
-                            const s1 = computeStats(result.control);
-                            const s2 = computeStats(result.variant);
-                            // console.log(`Collected ${s1.originalCount} entries`);
-                            significant = isSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError);
-                            reportStats({ control: s1, variant: s2 }, testCase, significant);
-                        } while (!(significant || result['control'].length > maxIterations)); // run until we do 1000 iterations or results are significant
-                        if (!significant) {
-                            console.log(
-                                `${yellow('Result is statistically insignificant.')} ${green(
-                                    'Consider running the test with more iterations or check your test case setup.'
-                                )}`
-                            );
-                        }
-                    } catch (e) {
-                        if (lastCommunications?.consoleMsgs?.length || lastCommunications?.requestMsgs?.length) {
-                            console.error('Error has been thrown during the test, here are the last comms:');
-                            lastCommunications.consoleMsgs.forEach((msg) => {
-                                console[msg.type as 'log' | 'error'](msg.text);
-                            });
-                            lastCommunications.requestMsgs.forEach((msg) => {
-                                msg.response.then((r) => {
-                                    console.log(`U: ${msg.method} ${msg.url} D: ${r.status} ${r.statusText}`);
-                                });
-                            });
-                        }
-                        throw e;
-                    }
-                }
-            );
-        });
-    };
-    return test.describe(name, describeBody);
+    return test.describe(name, describeBody(describe));
 }

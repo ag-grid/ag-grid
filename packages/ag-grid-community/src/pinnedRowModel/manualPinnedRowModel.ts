@@ -1,17 +1,11 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { GridOptions } from '../entities/gridOptions';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED } from '../entities/rowNode';
 import type { RowNode } from '../entities/rowNode';
 import { _createRowNodeSibling } from '../entities/rowNodeUtils';
 import type { CssVariablesChanged } from '../events';
-import {
-    _getGrandTotalRow,
-    _getGrandTotalRowPinned,
-    _getRowHeightForNode,
-    _isClientSideRowModel,
-} from '../gridOptionsUtils';
+import { _getRowHeightForNode, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
@@ -35,7 +29,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
         const runIsRowPinned = () => {
             const isRowPinned = gos.get('isRowPinned');
-            if (isRowPinned) {
+            if (isRowPinned && gos.get('enableRowPinning')) {
                 beans.rowModel.forEachNode((node) => this.pinRow(node, isRowPinned(node)), true);
             }
             this.refreshRowPositions();
@@ -71,25 +65,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             this.dispatchRowPinnedEvents();
         });
 
-        const onGrandTotalRowChanged = (
-            grandTotalRow: GridOptions['grandTotalRow'],
-            grandTotalRowPinned: GridOptions['grandTotalRowPinned']
-        ) => {
-            const newValue =
-                grandTotalRowPinned ??
-                (grandTotalRow === 'pinnedBottom' ? 'bottom' : grandTotalRow === 'pinnedTop' ? 'top' : null);
-            if (newValue != this._grandTotalPinned) {
-                this._grandTotalPinned = newValue;
-                refreshCSRM(this.beans);
-            }
-        };
-
         this.addManagedPropertyListener('grandTotalRow', ({ currentValue }) => {
-            onGrandTotalRowChanged(currentValue, _getGrandTotalRowPinned(gos));
-        });
-
-        this.addManagedPropertyListener('grandTotalRowPinned', ({ currentValue }) => {
-            onGrandTotalRowChanged(_getGrandTotalRow(gos), currentValue);
+            this._grandTotalPinned =
+                currentValue === 'pinnedBottom' ? 'bottom' : currentValue === 'pinnedTop' ? 'top' : null;
         });
 
         this.addManagedPropertyListener('isRowPinned', runIsRowPinned);
@@ -304,8 +282,8 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 
     private pinGrandTotalRow() {
-        const { beans, _grandTotalPinned: float } = this;
-        const { rowModel, gos } = beans;
+        const { gos, beans, _grandTotalPinned: float } = this;
+        const rowModel = beans.rowModel;
         if (!_isClientSideRowModel(gos, rowModel)) return;
 
         const sibling = rowModel.rootNode?.sibling;
@@ -335,9 +313,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private onGridStylesChanges(e: CssVariablesChanged) {
         if (e.rowHeightChanged) {
             this.forContainers((container) =>
-                container.forEach((rowNode: RowNode) => {
-                    rowNode.setRowHeight(rowNode.rowHeight, true);
-                })
+                container.forEach((rowNode) => rowNode.setRowHeight(rowNode.rowHeight, true))
             );
         }
     }
@@ -441,12 +417,6 @@ function getSpannedRows(beans: BeanCollection, rowNode: RowNode, column: AgColum
     }
 }
 
-function refreshCSRM({ gos, rowModel }: BeanCollection) {
-    if (_isClientSideRowModel(gos, rowModel)) {
-        rowModel.refreshModel({ step: 'map' });
-    }
-}
-
 function getTotalHeight(container: PinnedRows): number {
     const size = container.size();
     if (size === 0) return 0;
@@ -455,4 +425,10 @@ function getTotalHeight(container: PinnedRows): number {
     if (node === undefined) return 0;
 
     return node.rowTop! + node.rowHeight!;
+}
+
+function refreshCSRM({ gos, rowModel }: BeanCollection) {
+    if (_isClientSideRowModel(gos, rowModel)) {
+        rowModel.refreshModel({ step: 'map' });
+    }
 }

@@ -219,7 +219,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public refreshEditorTooltip(): void {
-        this.editorTooltipFeature?.refreshTooltip();
+        this.editorTooltipFeature?.refreshTooltip(true);
     }
 
     public disableEditorTooltipFeature(): void {
