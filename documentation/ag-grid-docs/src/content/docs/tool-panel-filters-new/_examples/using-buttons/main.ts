@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, SelectableFilterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     DateFilterModule,
@@ -26,20 +26,37 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'athlete', minWidth: 200 },
+        { field: 'athlete' },
         { field: 'age' },
-        { field: 'country', minWidth: 200, filter: 'agSetColumnFilter' },
-        { field: 'year' },
+        { field: 'country' },
         { field: 'date', minWidth: 180 },
-        { field: 'total', filter: false },
+        { field: 'total' },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
         filter: true,
-        floatingFilter: true,
+        filterParams: {
+            defaultFilterParams: {
+                buttons: ['apply'], // set all filters to use buttons
+            },
+        } as SelectableFilterParams,
     },
-    sideBar: 'filters-new',
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'filters-new',
+                labelDefault: 'Filters',
+                labelKey: 'filters',
+                iconKey: 'filter',
+                toolPanel: 'agNewFiltersToolPanel',
+                toolPanelParams: {
+                    buttons: ['cancel', 'apply'],
+                },
+            },
+        ],
+        defaultToolPanel: 'filters-new',
+    },
     enableFilterHandlers: true,
     suppressSetFilterByDefault: true,
 };

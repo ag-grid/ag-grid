@@ -1331,6 +1331,12 @@
                                 },
                                 {
                                     "type": "item",
+                                    "title": "Filters Tool Panel (New)",
+                                    "path": "tool-panel-filters-new",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
                                     "title": "Filters Tool Panel",
                                     "path": "tool-panel-filters",
                                     "isEnterprise": true
