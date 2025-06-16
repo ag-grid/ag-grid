@@ -297,8 +297,17 @@ The loading cell renderer can be customised via the `loadingCellRenderer` column
 
 {% if isFramework("react") %}
 {% note %}
-`deferRender` uses `startTransition` to reduce the priority of deferred components. There is a known limitation in React that transitions are currently batched together meaning all deferred components appear at the same time. For more information, see the React documentation [StartTransition > Caveats](https://react.dev/reference/react/useTransition#starttransition-caveats).
+`deferRender` uses `startTransition` to reduce the priority of deferred components. There is a known limitation in React that transitions are currently batched together meaning all deferred components appear at the same time. For more information, see the React documentation [StartTransition - Caveats](https://react.dev/reference/react/useTransition#starttransition-caveats).
 {% /note %}
+
+### Lazy Loading Cell Components
+
+The grid supports lazy loading of Custom Cell Components by displaying the `loadingCellRenderer` until the custom cell has loaded. 
+
+The example below uses [React.lazy](https://react.dev/reference/react/lazy) to load the cell component for the country column with an artificial delay of 3 seconds.
+
+{% gridExampleRunner title="Lazy Cell Renderer" name="lazy-renderer" /%}
+
 {% /if %}
 
 ### Keyboard Navigation
