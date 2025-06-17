@@ -88,6 +88,11 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
         message:
             '`gridOptions` and `columnDefs` both have a `context` property that should be used for arbitrary user data. This means that column definitions and gridOptions should only contain valid properties making this property redundant.',
     },
+
+    suppressAdvancedFilterEval: {
+        version: '34',
+        message: 'Advanced filter no longer uses function evaluation, so this option has no effect.',
+    },
 });
 
 function toConstrainedNum(key: keyof GridOptions, value: any, min: number): string | null {
