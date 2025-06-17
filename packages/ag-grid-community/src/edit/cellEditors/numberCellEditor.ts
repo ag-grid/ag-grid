@@ -55,8 +55,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
     public getValidationErrors(): string[] | null {
         const { params } = this;
         const { min, max, getValidationErrors } = params;
-        const eInput = this.eEditor.getInputElement();
-        const value = eInput.valueAsNumber;
+        const value = this.getValue();
         const translate = this.getLocaleTextFunc();
 
         let internalErrors: string[] | null = [];
