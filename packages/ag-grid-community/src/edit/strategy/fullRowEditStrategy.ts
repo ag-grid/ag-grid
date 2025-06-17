@@ -5,6 +5,7 @@ import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getRowCtrl } from '../utils/controllers';
 import { _setupEditor } from '../utils/editors';
+import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class FullRowEditStrategy extends BaseEditStrategy {
@@ -102,6 +103,24 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         this.rowNode = rowNode;
 
         this.setupEditors(cells, position, true, event, ignoreEventKey);
+    }
+
+    protected override processValidationResults(results: EditValidationResult): EditValidationAction {
+        const anyFailed = results.fail.length > 0;
+
+        // if any of the cells failed, keep those editors
+        if (anyFailed && this.keepInvalidEditors) {
+            return {
+                destroy: [],
+                keep: results.all,
+            };
+        }
+
+        // if no cells failed, we destroy all editors
+        return {
+            destroy: results.all,
+            keep: [],
+        };
     }
 
     public override stop(): boolean {

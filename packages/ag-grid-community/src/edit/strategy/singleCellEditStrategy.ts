@@ -7,6 +7,7 @@ import type { EditPosition, EditRowPosition } from '../../interfaces/iEditServic
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getColId } from '../utils/controllers';
+import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class SingleCellEditStrategy extends BaseEditStrategy {
@@ -137,6 +138,24 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
 
         return true;
+    }
+
+    protected override processValidationResults(results: EditValidationResult): EditValidationAction {
+        const anyFailed = results.fail.length > 0;
+
+        // if any of the cells failed, we keep all editors
+        if (anyFailed && this.keepInvalidEditors) {
+            return {
+                destroy: [],
+                keep: results.all,
+            };
+        }
+
+        // if no cells failed, we destroy all editors
+        return {
+            destroy: results.all,
+            keep: [],
+        };
     }
 
     public override destroy(): void {

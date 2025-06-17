@@ -18,19 +18,44 @@ import {
     _destroyEditors,
     _purgeUnchangedEdits,
     _setupEditors,
+    _syncFromEditor,
     _syncFromEditors,
 } from '../utils/editors';
 
+export type EditValidationResult<T = Required<EditPosition>> = {
+    all: T[];
+    pass: T[];
+    fail: T[];
+};
+
+export type EditValidationAction<T = Required<EditPosition>> = { destroy: T[]; keep: T[] };
+
 export abstract class BaseEditStrategy extends BeanStub {
+    beanName: BeanName | undefined;
+    protected model: IEditModelService;
+    protected editSvc: IEditService;
+    protected keepInvalidEditors: boolean = false;
+
+    postConstruct(): void {
+        this.model = this.beans.editModelSvc!;
+        this.editSvc = this.beans.editSvc!;
+        this.keepInvalidEditors = this.gos.get('cellEditingInvalidCommitType') === 'block';
+
+        this.addManagedListeners(this.beans.eventSvc, {
+            cellFocused: this.onCellFocusChanged?.bind(this),
+            cellFocusCleared: this.onCellFocusChanged?.bind(this),
+        });
+
+        this.addManagedPropertyListener('cellEditingInvalidCommitType', ({ currentValue }) => {
+            this.keepInvalidEditors = currentValue === 'block';
+        });
+    }
+
     public abstract midBatchInputsAllowed(position?: EditPosition): boolean;
 
     public clearEdits(position: EditPosition): void {
         this.model.clearEditValue(position);
     }
-
-    beanName: BeanName | undefined;
-    protected model: IEditModelService;
-    protected editSvc: IEditService;
 
     public abstract start(
         position: Required<EditPosition>,
@@ -39,16 +64,6 @@ export abstract class BaseEditStrategy extends BeanStub {
         silent?: boolean,
         ignoreEventKey?: boolean
     ): void;
-
-    postConstruct(): void {
-        this.model = this.beans.editModelSvc!;
-        this.editSvc = this.beans.editSvc!;
-
-        this.addManagedListeners(this.beans.eventSvc, {
-            cellFocused: this.onCellFocusChanged?.bind(this),
-            cellFocusCleared: this.onCellFocusChanged?.bind(this),
-        });
-    }
 
     public onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
         // check if any editors open
@@ -86,13 +101,54 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     public stop(): boolean {
         const editingCells = this.model.getEditPositions();
+
+        const results: EditValidationResult = { all: [], pass: [], fail: [] };
+
         editingCells.forEach((cell) => {
-            this.model.stop(cell);
-            _destroyEditor(this.beans, cell);
+            results.all.push(cell);
+
+            // check if the cell is valid
+            const cellCtrl = _getCellCtrl(this.beans, cell);
+            if (cellCtrl) {
+                const editor = cellCtrl.comp?.getCellEditor();
+
+                if (editor?.getValidationErrors?.()?.length ?? 0 > 0) {
+                    results.fail.push(cell);
+                    return;
+                }
+            }
+
+            results.pass.push(cell);
         });
+
+        const actions = this.processValidationResults(results);
+
+        if (actions.destroy.length > 0) {
+            actions.destroy.forEach((cell) => {
+                _destroyEditor(this.beans, cell);
+                this.model.stop(cell);
+            });
+        }
+
+        if (actions.keep.length > 0) {
+            actions.keep.forEach((cell) => {
+                const edit = this.model.getEdit(cell);
+
+                // revert value on error
+                this.model.setEdit(cell, {
+                    oldValue: edit?.oldValue,
+                    newValue: edit?.oldValue ?? UNEDITED,
+                    state: this.keepInvalidEditors ? 'editing' : 'changed',
+                });
+
+                _syncFromEditor(this.beans, cell, edit?.oldValue, 'api');
+            });
+        }
 
         return true;
     }
+
+    protected abstract processValidationResults(results: EditValidationResult): EditValidationAction;
 
     public cleanupEditors() {
         _syncFromEditors(this.beans);
