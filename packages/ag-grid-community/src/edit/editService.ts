@@ -16,7 +16,7 @@ import type {
     SetEditingCellsParams,
 } from '../interfaces/iCellEditor';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
-import type { EditMap, EditRow, EditValue, IEditModelService } from '../interfaces/iEditModelService';
+import type { EditMap, EditRow, EditValue, GetEditsParams, IEditModelService } from '../interfaces/iEditModelService';
 import type {
     EditPosition,
     EditRowPosition,
@@ -589,6 +589,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return newValue === UNEDITED ? this.valueSvc.getValue(column as AgColumn, rowNode, true, 'api') : newValue;
     }
 
+    getRowDataValue(position: Required<EditRowPosition>, params?: GetEditsParams | undefined) {
+        return this.model.getEditRowDataValue(position, params);
+    }
+
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
         // TODO: find a better place for this
         _addStopEditingWhenGridLosesFocus(this, this.beans, viewports);
@@ -653,37 +657,25 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         if (!this.batch) {
             return;
         }
-        let editRow = this.model.getEditRow(position);
 
-        if (!editRow) {
-            const rowNode = this.model.getEditSiblingRow(position);
-            if (rowNode) {
-                editRow = this.model.getEditRow({ rowNode });
-            }
-        }
+        const hasEdits = this.model.hasRowEdits(position, { checkSiblings: true });
 
-        if (!editRow) {
+        if (!hasEdits) {
             return;
         }
 
         const { rowNode, column } = position;
-        const { compDetails } = params;
+        const { compDetails, valueToDisplay } = params;
 
         if (compDetails) {
             const { params } = compDetails;
-            params.data = Object.assign({}, params.data);
-            editRow?.forEach(({ newValue }, col) => {
-                if (newValue !== undefined && newValue !== UNEDITED) {
-                    // if(newValue === UNEDITED) {
-                    //     newValue = undefined;
-                    // }
-                    params.data[col.getColId()] = newValue;
-                }
-            });
+            params.data = this.model.getEditRowDataValue({ rowNode }, { checkSiblings: true });
             return { compDetails };
         }
 
-        if (params.valueToDisplay !== undefined && editRow?.has(column)) {
+        const editRow = this.model.getEditRow(position, { checkSiblings: true });
+
+        if (valueToDisplay !== undefined && editRow?.has(column)) {
             return { valueToDisplay: this.valueSvc.getValue(column as AgColumn, rowNode) };
         }
     }

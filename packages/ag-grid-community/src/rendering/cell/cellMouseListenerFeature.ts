@@ -77,8 +77,12 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
-        if (editSvc?.shouldStartEditing(this.cellCtrl, event) && editModelSvc?.getState(this.cellCtrl) !== 'editing') {
-            editSvc?.startEditing(this.cellCtrl, { event });
+        if (editModelSvc?.getState(this.cellCtrl) !== 'editing') {
+            if (editSvc?.shouldStartEditing(this.cellCtrl, event)) {
+                editSvc?.startEditing(this.cellCtrl, { event });
+            } else if (editSvc?.shouldStopEditing(this.cellCtrl, event)) {
+                editSvc?.stopEditing(this.cellCtrl);
+            }
         }
     }
 

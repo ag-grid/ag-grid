@@ -169,16 +169,18 @@ export class ValueService extends BeanStub implements NamedBean {
         const colDef = column.getColDef();
         const field = colDef.field;
         const colId = column.getColId();
-        const data = rowNode.data;
+        let data = rowNode.data;
 
         const { editSvc, rowGroupColsSvc } = this.beans;
 
-        if (editSvc && source === 'ui') {
-            if (editSvc?.isEditing()) {
-                const newValue = editSvc?.getCellDataValue({ rowNode, column });
-                if (newValue !== undefined) {
-                    return newValue;
-                }
+        if (source === 'ui' && editSvc?.isEditing({ rowNode }, { checkSiblings: true })) {
+            data = editSvc?.getRowDataValue({ rowNode }, { checkSiblings: true });
+        }
+
+        if (source === 'ui' && editSvc?.isEditing()) {
+            const newValue = editSvc.getCellDataValue({ rowNode, column });
+            if (newValue !== undefined) {
+                return newValue;
             }
         }
 
@@ -293,10 +295,17 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         if (formatter) {
+            let data = node ? node.data : null;
+
+            if (node && this.beans.editSvc?.isEditing({ rowNode: node }, { checkSiblings: true })) {
+                // if editing, then use the edited value, not the value from the data
+                data = this.beans.editSvc?.getRowDataValue({ rowNode: node }, { checkSiblings: true });
+            }
+
             const params: ValueFormatterParams = _addGridCommonParams(this.gos, {
                 value,
                 node,
-                data: node ? node.data : null,
+                data,
                 colDef,
                 column,
             });

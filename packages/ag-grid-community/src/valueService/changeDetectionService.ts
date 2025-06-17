@@ -96,7 +96,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
 
         if (rowNode.pinnedSibling) {
             // if the row is pinned, we also need to refresh the pinned sibling
-            rowRenderer.refreshRows({
+            rowRenderer.refreshCells({
                 rowNodes: [rowNode.pinnedSibling],
                 suppressFlash,
                 force,

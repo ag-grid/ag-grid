@@ -13,7 +13,7 @@ export type EditValue = {
 export type EditRow = Map<Column, EditValue>;
 export type EditMap = Map<IRowNode, EditRow>;
 
-export type HasEditsParams = {
+export type GetEditsParams = {
     checkSiblings?: boolean;
     includeParents?: boolean;
     withOpenEditor?: boolean;
@@ -24,7 +24,8 @@ export interface IEditModelService {
 
     getEdit(position: EditPosition): EditValue | undefined;
     getEditPositions(): Required<EditPosition>[];
-    getEditRow({ rowNode }: EditRowPosition): EditRow | undefined;
+    getEditRow({ rowNode }: EditRowPosition, params?: GetEditsParams): EditRow | undefined;
+    getEditRowDataValue({ rowNode }: Required<EditRowPosition>, params?: GetEditsParams): any;
     getEditSiblingRow({ rowNode }: Required<EditRowPosition>): IRowNode | undefined;
     getEditMap(copy?: boolean): EditMap;
 
@@ -37,8 +38,8 @@ export interface IEditModelService {
 
     getState(position: EditPosition): EditState | undefined;
 
-    hasRowEdits({ rowNode }: Required<EditRowPosition>): boolean;
-    hasEdits(position?: EditPosition, params?: HasEditsParams): boolean;
+    hasRowEdits({ rowNode }: Required<EditRowPosition>, params?: GetEditsParams): boolean;
+    hasEdits(position?: EditPosition, params?: GetEditsParams): boolean;
 
     start(position: Required<EditPosition>): void;
     stop(position?: Required<EditPosition>): void;
