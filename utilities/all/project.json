@@ -238,6 +238,7 @@
     "external/ag-shared",
     "testing/behavioural",
     "testing/accessibility",
+    "testing/csp",
     "ag-grid-generate-example-files"
   ],
   "tags": []
