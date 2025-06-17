@@ -31,8 +31,7 @@ const gridOptions: GridOptions = {
         {
             field: 'weight',
             headerName: 'Weight (kg)',
-            type: 'numericColumn',
-            cellEditor: 'agNumberCellEditor',
+            cellDataType: 'number',
             cellEditorParams: {
                 min: 0,
                 max: 500,
@@ -41,8 +40,7 @@ const gridOptions: GridOptions = {
         {
             field: 'height',
             headerName: 'Height (cm)',
-            type: 'numericColumn',
-            cellEditor: 'agNumberCellEditor',
+            cellDataType: 'number',
             cellEditorParams: {
                 min: 0,
                 max: 300,
