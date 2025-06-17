@@ -282,6 +282,7 @@ export class ValueService extends BeanStub implements NamedBean {
         suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true
     ): string | null {
+        const { editSvc, expressionSvc } = this.beans;
         let result: string | null = null;
         let formatter: ((value: any) => string) | string | undefined;
 
@@ -297,9 +298,9 @@ export class ValueService extends BeanStub implements NamedBean {
         if (formatter) {
             let data = node ? node.data : null;
 
-            if (node && this.beans.editSvc?.isEditing({ rowNode: node }, { checkSiblings: true })) {
+            if (node && editSvc?.isEditing({ rowNode: node }, { checkSiblings: true })) {
                 // if editing, then use the edited value, not the value from the data
-                data = this.beans.editSvc?.getRowDataValue({ rowNode: node }, { checkSiblings: true });
+                data = editSvc?.getRowDataValue({ rowNode: node }, { checkSiblings: true });
             }
 
             const params: ValueFormatterParams = _addGridCommonParams(this.gos, {
@@ -312,7 +313,7 @@ export class ValueService extends BeanStub implements NamedBean {
             if (typeof formatter === 'function') {
                 result = formatter(params);
             } else {
-                result = this.expressionSvc ? this.expressionSvc.evaluate(formatter, params) : null;
+                result = expressionSvc ? expressionSvc.evaluate(formatter, params) : null;
             }
         } else if (colDef.refData) {
             return colDef.refData[value] || '';

@@ -139,17 +139,19 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
             return;
         }
 
+        const { rowNode, column } = position;
+
         let editRow = this.getEditRow(position);
 
-        const edit = editRow?.get(position.column);
+        const edit = editRow?.get(column);
         if (edit) {
             edit.state = state;
         } else {
             if (!editRow) {
                 editRow = new Map<Column, EditValue>();
-                this.edits.set(position.rowNode, editRow);
+                this.edits.set(rowNode, editRow);
             }
-            editRow.set(position.column, { newValue: undefined, oldValue: undefined, state });
+            editRow.set(column, { newValue: undefined, oldValue: undefined, state });
         }
     }
 
@@ -179,7 +181,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
 
     public hasEdits(position: EditPosition = {}, params: GetEditsParams = {}): boolean {
         const { rowNode, column } = position;
-        const { checkSiblings, includeParents, withOpenEditor: withOpenEditors } = params;
+        const { checkSiblings, includeParents, withOpenEditor } = params;
         if (rowNode) {
             const rowEdits = this.getEditRow(position, params);
             if (!rowEdits) {
@@ -187,15 +189,14 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
             }
 
             if (column) {
-                if (withOpenEditors) {
-                    const edit = this.getEdit(position);
-                    return edit ? edit.state === 'editing' : false;
+                if (withOpenEditor) {
+                    return this.getEdit(position)?.state === 'editing';
                 }
                 return rowEdits.has(column) ?? false;
             }
 
             if (rowEdits.size !== 0) {
-                if (withOpenEditors) {
+                if (withOpenEditor) {
                     return Array.from(rowEdits.values()).some(({ state }) => state === 'editing');
                 }
                 return true;
@@ -209,7 +210,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
                 false
             );
         }
-        if (withOpenEditors) {
+        if (withOpenEditor) {
             return this.getEditPositions().some(({ state }: any) => state === 'editing');
         }
         return this.edits.size > 0;
