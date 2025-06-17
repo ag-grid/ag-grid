@@ -1,19 +1,49 @@
-import { ExpressionToken } from './expressionTypes';
+export interface Node {
+    type: string;
+}
 
-export type ASTNode =
+export type OperandNode = ValueNode | ColumnNode | ErrorNode;
+
+export interface ColumnNode {
+    type: 'Column';
+    colName: string;
+}
+
+export type ValueNode = StringValueNode | NumberValueNode | BooleanValueNode | ObjectValueNode;
+
+export type StringValueNode = {
+    type: 'StringValue';
+    value: string;
+};
+
+export type NumberValueNode = {
+    type: 'NumberValue';
+    value: number;
+};
+
+export type BooleanValueNode = {
+    type: 'BooleanValue';
+    value: boolean;
+};
+
+export type ObjectValueNode = {
+    type: 'ObjectValue';
+    value: object;
+};
+
+export type ASTNode = {
     | LogicalExpression
+    | NotExpression
     | ComparisonExpression
     | BetweenExpression
-    | NotExpression
-    | GroupExpression
-    | ValueNode
+    | InExpression
+    | ExpressionGroup
     | ErrorNode;
 
 export interface LogicalExpression {
     type: 'LogicalExpression';
     operator: 'AND' | 'OR';
-    left: ASTNode;
-    right: ASTNode;
+    operands: ASTNode[];
 }
 
 export interface NotExpression {
@@ -22,31 +52,31 @@ export interface NotExpression {
 }
 
 export interface ComparisonExpression {
-    type: 'Comparison';
-    field: string;
+    type: 'ComparisonExpression';
+    left: OperandNode;
     operator: string;
-    value: ValueNode;
+    right: OperandNode;
 }
 
 export interface BetweenExpression {
-    type: 'Between';
-    field: string;
-    min: ValueNode;
-    max: ValueNode;
+    type: 'BetweenExpression';
+    operand: OperandNode;
+    min: OperandNode;
+    max: OperandNode;
 }
 
-export interface GroupExpression {
-    type: 'Group';
-    expression: ASTNode;
+export interface InExpression {
+    type: 'InExpression';
+    operand: OperandNode;
+    options: OperandNode[];
 }
 
-export interface ValueNode {
-    type: 'Value';
-    value: string | number | boolean;
+export interface ExpressionGroup {
+    type: 'ExpressionGroup';
+    node: ASTNode;
 }
 
 export interface ErrorNode {
-    type: 'Error';
+    type: 'ErrorNode';
     message: string;
-    token?: ExpressionToken;
 }

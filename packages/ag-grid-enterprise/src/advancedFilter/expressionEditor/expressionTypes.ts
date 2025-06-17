@@ -10,25 +10,25 @@ export type TokenType =
     | 'COMPARATOR'
     | 'UNKNOWN';
 
-interface BaseMatcher {
+interface BaseTokenMatcher {
     _brand: string;
     type: TokenType;
-    key: string; // optional normalized identifier
-    priority?: number; // controls match order
+    key: string;
+    priority?: number;
 }
 
-interface LabelMatcher extends BaseMatcher {
+interface LabelTokenMatcher extends BaseTokenMatcher {
     _brand: 'label';
     label: string;
     aliases?: string[];
 }
 
-interface RegexMatcher extends BaseMatcher {
+interface RegexTokenMatcher extends BaseTokenMatcher {
     _brand: 'regex';
     regex: RegExp;
 }
 
-export type LexerMatcher = LabelMatcher | RegexMatcher;
+export type LexerTokenMatcher = LabelTokenMatcher | RegexTokenMatcher;
 
 export interface ExpressionToken {
     key: string;

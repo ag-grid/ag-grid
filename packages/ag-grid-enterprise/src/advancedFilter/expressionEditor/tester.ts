@@ -63,13 +63,11 @@ const simpleTest = () => {
         },
     ]);
 
-    console.log('here');
-
-    const output = lexer.tokenize(input);
-    console.log(output);
+    const tokens = lexer.tokenize(input);
+    console.log(JSON.stringify(tokens, null, 2));
 
     const parser = new AdvancedFilterExpressionParser();
-    const cursor = new TokenCursor(output);
+    const cursor = new TokenCursor(tokens);
     const ast = parser.parseExpression(cursor);
     console.log(JSON.stringify(ast, null, 2));
 };

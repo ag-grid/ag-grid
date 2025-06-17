@@ -1,4 +1,4 @@
-import { ExpressionToken, LexerMatcher, TokenType } from './expressionTypes';
+import { ExpressionToken, LexerTokenMatcher, TokenType } from './expressionTypes';
 
 type MatcherConfig = {
     regex: {
@@ -17,7 +17,7 @@ type MatcherConfig = {
 export class AdvancedFilterExpressionLexer {
     matchers: MatcherConfig;
 
-    setMatchers(matchers: LexerMatcher[]) {
+    setMatchers(matchers: LexerTokenMatcher[]) {
         const grouped: MatcherConfig = [];
 
         for (const matcher of matchers) {
@@ -56,7 +56,7 @@ export class AdvancedFilterExpressionLexer {
         let pos = 0;
         const tokens: ExpressionToken[] = [];
 
-        inputChunker: while (pos < input.length) {
+        chunker: while (pos < input.length) {
             const chunk = input.slice(pos);
 
             const whitespace = chunk.match(/^\s+/);
@@ -79,7 +79,7 @@ export class AdvancedFilterExpressionLexer {
                             end: pos + len,
                         });
                         pos += len;
-                        continue inputChunker;
+                        continue chunker;
                     }
                 }
 
@@ -94,7 +94,7 @@ export class AdvancedFilterExpressionLexer {
                             end: pos + len,
                         });
                         pos += len;
-                        continue inputChunker;
+                        continue chunker;
                     }
                 }
             }

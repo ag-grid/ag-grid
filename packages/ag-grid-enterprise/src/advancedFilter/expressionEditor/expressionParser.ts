@@ -1,4 +1,4 @@
-import { ASTNode, ErrorNode, ValueNode } from './expressionAST';
+import { ASTNode, ErrorNode, LogicalExpression, OperandNode, ValueNode } from './expressionAST';
 import { ExpressionToken, TokenType } from './expressionTypes';
 
 interface ParserContext {
@@ -18,7 +18,8 @@ export class TokenCursor {
     }
 
     consume() {
-        return this.tokens[this.i++];
+        const token = this.tokens[this.i++];
+        return token;
     }
 
     match(type: TokenType, key?: string) {
@@ -27,7 +28,6 @@ export class TokenCursor {
     }
 
     expect(type: TokenType, key?: string): ExpressionToken | null {
-        const token = this.peek();
         if (this.match(type, key)) return this.consume();
         return null;
     }
@@ -38,20 +38,35 @@ export class TokenCursor {
 }
 export class AdvancedFilterExpressionParser {
     parseExpression(cursor: TokenCursor): ASTNode {
-        let left = this.parseTerm(cursor);
+        return this.parseLogical(cursor);
+    }
+
+    parseLogical(cursor: TokenCursor): ASTNode {
+        let current = this.parseTerm(cursor);
+        let operator: 'AND' | 'OR' | undefined;
+        const operands: ASTNode[] = [current];
 
         while (cursor.match('OPERATOR')) {
-            const op = cursor.consume();
-            const right = this.parseTerm(cursor);
-            left = {
-                type: 'LogicalExpression',
-                operator: op.key as 'AND' | 'OR',
-                left,
-                right,
-            };
+            const op = cursor.peek().key.toUpperCase();
+            if (op !== 'AND' && op !== 'OR') break;
+            operator = op;
+
+            cursor.consume(); // skip AND/OR
+            const next = this.parseTerm(cursor);
+
+            if (!next) break;
+            operands.push(next);
         }
 
-        return left;
+        if (!operator || operands.length === 1) {
+            return current;
+        }
+
+        return {
+            type: 'LogicalExpression',
+            operator,
+            operands,
+        };
     }
 
     parseTerm(cursor: TokenCursor): ASTNode {
@@ -62,77 +77,93 @@ export class AdvancedFilterExpressionParser {
 
         if (cursor.match('LPAREN')) {
             cursor.consume();
-            const expr = this.parseExpression(cursor);
+            const node = this.parseExpression(cursor);
             cursor.expect('RPAREN'); // optional: error if not present
-            return { type: 'Group', expression: expr };
+            return { type: 'ExpressionGroup', node };
         }
 
         return this.parseComparison(cursor);
     }
 
     parseComparison(cursor: TokenCursor): ASTNode {
-        const fieldToken = cursor.expect('IDENTIFIER');
-        if (!fieldToken) return { type: 'Error', message: 'Expected column' };
+        const operand = this.parseOperand(cursor);
 
-        const operatorToken = cursor.expect('COMPARATOR');
-        if (!operatorToken) return { type: 'Error', message: 'Expected comparator' };
+        const operator = cursor.expect('COMPARATOR');
+        if (!operator) return { type: 'ErrorNode', message: 'Expected comparator' };
 
-        if (operatorToken.key === 'between') {
-            const min = this.parseValue(cursor);
+        if (operator.key === 'between') {
+            const min = this.parseOperand(cursor);
             const and = cursor.expect('OPERATOR', 'AND');
-            const max = this.parseValue(cursor);
+            const max = this.parseOperand(cursor);
 
             if (!and || !max) {
-                return { type: 'Error', message: 'Expected BETWEEN x AND y' };
+                return { type: 'ErrorNode', message: 'Expected BETWEEN x AND y' };
             }
 
             return {
-                type: 'Between',
-                field: fieldToken.value,
+                type: 'BetweenExpression',
+                operand,
                 min,
                 max,
             };
         }
 
-        const value = this.parseValue(cursor);
-        if (!value) return { type: 'Error', message: 'Expected value after operator' };
+        if (operator.key === 'in' || operator.key === 'notIn') {
+            const start = cursor.expect('LPAREN');
+            if (!start) return { type: 'ErrorNode', message: 'Expected parens' };
 
-        return {
-            type: 'Comparison',
-            field: fieldToken.value,
-            operator: operatorToken.key!,
-            value,
-        };
-    }
+            const options: OperandNode[] = [];
 
-    parseValue(cursor: TokenCursor): ValueNode {
-        const token = cursor.peek();
-        if (token && ['STRING', 'NUMBER', 'BOOLEAN'].includes(token.type)) {
-            cursor.consume();
-            return { type: 'Value', value: token.value };
+            while (!cursor.expect('RPAREN')) {
+                const value = this.parseOperand(cursor);
+                options.push(value);
+
+                const delimiter = cursor.expect('COMMA');
+                if (!delimiter) {
+                    options.push({ type: 'ErrorNode', message: 'Expected comma' });
+                }
+            }
+
+            return {
+                type: 'InExpression',
+                operand,
+                options,
+            };
         }
 
-        return { type: 'Value', value: '?' }; // or return `null` to trigger an error
-    }
-}
+        const right = this.parseOperand(cursor);
+        if (!right) return { type: 'ErrorNode', message: 'Expected value after operator' };
 
-const betweenParser: ComparatorParser = ({ cursor, field, operator, parseValue }) => {
-    const min = parseValue(cursor);
-    const and = cursor.expect('OPERATOR', 'AND');
-    const max = parseValue(cursor);
-
-    if (!min || !and || !max) {
         return {
-            type: 'Error',
-            message: 'Expected BETWEEN x AND y',
-            token: operator,
+            type: 'ComparisonExpression',
+            left: operand,
+            operator: operator.key!,
+            right,
         };
     }
 
-    return {
-        type: 'Between',
-        field: field.value,
-        min,
-        max,
-    };
-};
+    parseOperand(cursor: TokenCursor): OperandNode {
+        const token = cursor.consume();
+
+        let operand: OperandNode;
+
+        switch (token?.type) {
+            case 'IDENTIFIER':
+                operand = { type: 'Column', colName: token.value };
+                break;
+            case 'STRING':
+                operand = { type: 'StringValue', value: token.value.slice(1, -1) };
+                break;
+            case 'NUMBER':
+                operand = { type: 'NumberValue', value: Number(token.value) };
+                break;
+            case 'BOOLEAN':
+                operand = { type: 'BooleanValue', value: token.value.toLowerCase() === 'true' };
+                break;
+            default:
+                operand = { type: 'ErrorNode', message: 'Incorrect Syntax' };
+                break;
+        }
+        return operand;
+    }
+}
