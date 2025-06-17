@@ -38,7 +38,7 @@ import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import { CellEditStyleFeature } from './styles/cellEditStyleFeature';
 import { RowEditStyleFeature } from './styles/rowEditStyleFeature';
-import { _addStopEditingWhenGridLosesFocus, _getCellCtrl, _getRowCtrl } from './utils/controllers';
+import { _addStopEditingWhenGridLosesFocus, _getCellCtrl } from './utils/controllers';
 import {
     UNEDITED,
     _destroyEditors,
@@ -49,7 +49,6 @@ import {
     _valuesDiffer,
     getCellEditorInstanceMap,
 } from './utils/editors';
-import { _getSiblingRows } from './utils/nodes';
 import { _refreshEditCells } from './utils/refresh';
 
 type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };
@@ -346,30 +345,13 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         _purgeUnchangedEdits(beans);
 
-        if (res) {
-            this.bulkRefresh();
-        }
+        this.bulkRefresh();
 
         if (cancel) {
             this.beans.rowRenderer.refreshRows({ suppressFlash: true, force: true });
         }
 
         return res;
-    }
-
-    private refreshAllRows(edits: EditMap, includeParents: boolean = false): void {
-        edits.forEach((_, node) =>
-            _getSiblingRows(this.beans, node, true, includeParents).forEach((sibling) => this.refreshAllCells(sibling))
-        );
-    }
-
-    private refreshAllCells(rowNode?: IRowNode | null): void {
-        if (!rowNode) {
-            return;
-        }
-        const rowCtrl = _getRowCtrl(this.beans, { rowNode });
-
-        rowCtrl?.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.refreshCell({ suppressFlash: true, force: true }));
     }
 
     private navigateAfterEdit(shiftKey: boolean, cellPosition: CellPosition): void {

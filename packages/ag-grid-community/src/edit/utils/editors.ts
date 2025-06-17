@@ -335,13 +335,16 @@ export function _destroyEditor(beans: BeanCollection, position: EditPosition): v
         return;
     }
 
+    const { rowNode, column } = position;
+
     comp?.setEditDetails(); // passing nothing stops editing
-    if (beans.editModelSvc?.hasEdits(position) && position?.rowNode && position?.column) {
+    if (beans.editModelSvc?.hasEdits(position) && rowNode && column) {
         beans.editModelSvc?.setState(position, 'changed');
     }
 
     comp?.refreshEditStyles(false, false);
 
     cellCtrl?.refreshCell({ force: true, suppressFlash: true });
-    cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
+
+    beans.rowRenderer.refreshCells({ rowNodes: rowNode ? [rowNode] : [], suppressFlash: true, force: true });
 }

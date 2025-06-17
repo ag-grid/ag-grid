@@ -14,7 +14,6 @@ import type {
 import type { EditPosition, EditRowPosition } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { UNEDITED } from './utils/editors';
-import { _getSiblingRows } from './utils/nodes';
 
 export class EditModelService extends BeanStub implements NamedBean, IEditModelService {
     beanName = 'editModelSvc' as const;
@@ -81,10 +80,6 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
 
     public getEdit(position: EditPosition): EditValue | undefined {
         return position.column && this.getEditRow(position)?.get(position.column);
-    }
-
-    public getEditSiblingRow({ rowNode }: Required<EditRowPosition>): IRowNode | undefined {
-        return _getSiblingRows(this.beans, rowNode).find((node) => this.edits.has(node));
     }
 
     public getEditMap(copy = true): EditMap {
@@ -181,7 +176,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
 
     public hasEdits(position: EditPosition = {}, params: GetEditsParams = {}): boolean {
         const { rowNode, column } = position;
-        const { checkSiblings, includeParents, withOpenEditor } = params;
+        const { withOpenEditor } = params;
         if (rowNode) {
             const rowEdits = this.getEditRow(position, params);
             if (!rowEdits) {
@@ -202,17 +197,13 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
                 return true;
             }
 
-            return (
-                (checkSiblings &&
-                    !!_getSiblingRows(this.beans, rowNode, false, includeParents).find((sibling) =>
-                        this.hasEdits({ rowNode: sibling, column }, { includeParents })
-                    )) ??
-                false
-            );
+            return false;
         }
+
         if (withOpenEditor) {
             return this.getEditPositions().some(({ state }: any) => state === 'editing');
         }
+
         return this.edits.size > 0;
     }
 

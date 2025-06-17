@@ -26,7 +26,6 @@ export interface IEditModelService {
     getEditPositions(): Required<EditPosition>[];
     getEditRow({ rowNode }: EditRowPosition, params?: GetEditsParams): EditRow | undefined;
     getEditRowDataValue({ rowNode }: Required<EditRowPosition>, params?: GetEditsParams): any;
-    getEditSiblingRow({ rowNode }: Required<EditRowPosition>): IRowNode | undefined;
     getEditMap(copy?: boolean): EditMap;
 
     setEdit(position: Required<EditPosition>, edit: EditValue): void;
