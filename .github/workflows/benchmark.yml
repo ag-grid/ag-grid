@@ -185,8 +185,6 @@ jobs:
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
         run: |
           node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs
-          COMMENT_CONTENT=$(cat "$COMMENT_FILE")          
-          echo "::set-output name=comment::${COMMENT_CONTENT}"
           cat $SLACK_FILE
 
       - name: Upload Slack Snippet
@@ -231,7 +229,6 @@ jobs:
         continue-on-error: true
         if: ${{ !!steps.notify-start.outputs.result }}
         env:
-          COMMENT: ${{ steps.prepare-messages.outputs.comment }}
           COMMENT_ID: ${{ steps.notify-start.outputs.result }}
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
         with:
@@ -240,9 +237,9 @@ jobs:
             const repo = context.repo.repo;
             const comment_id = parseInt(process.env.COMMENT_ID, 10);
             const pull_number = parseInt(process.env.PR_ID, 10);
-            const body = `${process.env.COMMENT}`;
-
-            if (`${process.env.IS_SUCCESS}`) {
+            const body = fs.readFileSync(process.env.COMMENT_FILE, 'utf8');
+            console.log({ success: process.env.IS_SUCCESS, body });
+            if (process.env.IS_SUCCESS) {
               await github.rest.issues.updateComment({ owner, repo, comment_id, body });
             } else {
               await github.rest.issues.deleteComment({ owner, repo, comment_id });
