@@ -184,31 +184,11 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
             return;
         }
 
-        const { expressionFunction, params } = this.getFunction(expressionParser);
+        const { expressionFunction, params } = expressionParser.getFunction();
 
         this.expressionFunction = expressionFunction;
         this.expressionParams = params;
         this.appliedExpression = this.expression;
-    }
-
-    private getFunction(expressionParser: FilterExpressionParser): {
-        expressionFunction: FilterExpressionFunction;
-        params: FilterExpressionFunctionParams;
-    } {
-        if (this.gos.get('suppressAdvancedFilterEval')) {
-            return expressionParser.getFunctionParsed();
-        } else {
-            const { functionString, params } = expressionParser.getFunctionString();
-            return {
-                expressionFunction: new Function(
-                    'expressionProxy',
-                    'node',
-                    'params',
-                    functionString
-                ) as FilterExpressionFunction,
-                params,
-            };
-        }
     }
 
     public updateValidity(): boolean {

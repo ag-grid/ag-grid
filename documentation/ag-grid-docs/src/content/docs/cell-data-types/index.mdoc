@@ -8,7 +8,7 @@ This allows different grid features to work without any additional configuration
 
 ## Enable Cell Data Types
 
-There is a number of pre-defined cell data types: `'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` and `'object'`.
+There are a number of pre-defined cell data types: `'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` and `'object'`.
 
 These are enabled by default, with the data type being inferred from the row data if possible (see [Inferring Data Types](#inferring-data-types)).
 
@@ -32,8 +32,8 @@ The following example demonstrates the pre-defined cell data types (most of whic
 * The **Age** column has a `'number'` data type.
 * The **Gold** column has a `'boolean'` data type.
 * The **Date** column has a `'date'` data type (cell values are `Date` objects).
+* The **DateTime** column has a `'dateTime'` data type (cell values are `Date` objects). This is explicitly set to `cellDataType: 'dateTime'` as `Date` objects are inferred to be `'date'` data type.
 * The **Date (String)** column has a `'dateString'` data type (cell values are `string`s representing dates).
-* The **DateTime** column has a `'dateTime'` data type (cell values are `Date` objects). This is explicitly set to `cellDataType: 'dateTime'` as `Date` objects are always inferred to be `'date'` data type.
 * The **DateTime (String)** column has a `'dateTimeString'` data type (cell values are `string`s representing dates).
 * The **Country** column has an `'object'` data type. This also [Overrides the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions) so that the value parser and formatter work with the object structure.
 
@@ -109,7 +109,7 @@ The `'date'` cell data type is used for date values that are represented as `Dat
 The default Value Parser and Value Formatter use the ISO string format `'YYYY-MM-DD'`. If you wish to use a different date format, then you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
 
 {% note %}
-Please note that the `'date'` cell data type compares full Date objects, including the time portion. As a result, if a date includes a time other than midnight (`00:00:00`), filtering or editing might behave unexpectedly. For consistent results with built-in filters, it’s best to normalize all time values to the same value. If keeping the time component is important, consider using the `'dateTime'` cell data type instead or defining a custom comparator, as explained in the [Date Filter Comparator](./filter-date/#filter-comparator).
+Please note that the `'date'` cell data type compares full Date objects, including the time portion. As a result, if a date includes a time other than midnight (`00:00:00.000`), filtering or editing might behave unexpectedly. For consistent results with built-in filters, it’s best to normalize all time values to the same value. If keeping the time component is important, consider using the `'dateTime'` cell data type instead or defining a custom comparator, as explained in the [Date Filter Comparator](./filter-date/#filter-comparator).
 {% /note %}
 
 The following properties are set:
@@ -225,7 +225,7 @@ The following example demonstrates providing custom cell data types:
 
 ## Overriding the Pre-Defined Cell Data Type Definitions
 
-The default properties for the [Pre-Defined Cell Data Types](#pre-defined-cell-data-types) can be overridden if desired.
+The default properties for the [Pre-Defined Cell Data Types](#pre-defined-cell-data-types) can be overridden.
 
 For example, this is required if a different date format is desired.
 
@@ -252,9 +252,10 @@ const gridOptions = {
             },
             valueFormatter: params => {
                 // convert to `dd/mm/yyyy`
-                return params.value == null
+                const date = params.value;
+                return date == null
                     ? ''
-                    : `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear}`;
+                    : `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
             },
         }
     }
@@ -265,6 +266,7 @@ The following example demonstrates overriding pre-defined cell data types:
 
 * The **Date** column is of type `'dateString'` which has been overridden to use a different date format (`dd/mm/yyyy`).
 * The data type definition for `'dateString'` provides a `dateParser` and `dateFormatter` as it is a [Date as String Data Type Definition](#date-as-string).
+* The **DateTimeWithSpace** column overrides a built-in `'dateTimeString'` type with custom parsing/formatting logic to support `dd/MM/yyyy HH:mm:ss` format instead of the default `yyyy-MM-ddTHH:mm:ss`.
 
 {% gridExampleRunner title="Overriding Pre-Defined Cell Data Types" name="overriding-pre-defined-cell-data-types" /%}
 

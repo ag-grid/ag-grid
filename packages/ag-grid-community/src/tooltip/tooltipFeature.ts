@@ -5,6 +5,7 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { GridOptionsService } from '../gridOptionsService';
+import { _isElementOverflowingCallback } from '../utils/dom';
 import type { TooltipLocation } from './tooltipComponent';
 import { TooltipStateManager } from './tooltipStateManager';
 
@@ -36,18 +37,7 @@ export function _getShouldDisplayTooltip(
     gos: GridOptionsService,
     getElement: () => HTMLElement | undefined
 ): (() => boolean) | undefined {
-    return _isShowTooltipWhenTruncated(gos) ? _shouldDisplayTooltip(getElement) : undefined;
-}
-
-export function _shouldDisplayTooltip(getElement: () => HTMLElement | undefined): () => boolean {
-    return () => {
-        const element = getElement();
-        if (!element) {
-            // show tooltip by default
-            return true;
-        }
-        return element.scrollWidth > element.clientWidth;
-    };
+    return _isShowTooltipWhenTruncated(gos) ? _isElementOverflowingCallback(getElement) : undefined;
 }
 
 export class TooltipFeature extends BeanStub {
@@ -71,7 +61,14 @@ export class TooltipFeature extends BeanStub {
         this.refreshTooltip();
     }
 
-    private setBrowserTooltip(tooltip: string | null) {
+    /**
+     *
+     * @param tooltip The tooltip value
+     * @param allowEmptyString Set it to true to allow the title to be set to `''`. This is necessary
+     * when the browser adds a default tooltip the element and the tooltip service will be displayed
+     * next to a browser tooltip causing confusion.
+     */
+    private setBrowserTooltip(tooltip: string | null, allowEmptyString?: boolean): void {
         const name = 'title';
         const eGui = this.ctrl.getGui();
 
@@ -79,7 +76,7 @@ export class TooltipFeature extends BeanStub {
             return;
         }
 
-        if (tooltip != null && tooltip != '') {
+        if (tooltip != null && (tooltip != '' || allowEmptyString)) {
             eGui.setAttribute(name, tooltip);
         } else {
             eGui.removeAttribute(name);
@@ -107,7 +104,7 @@ export class TooltipFeature extends BeanStub {
         this.refreshTooltip();
     }
 
-    public refreshTooltip(): void {
+    public refreshTooltip(clearWithEmptyString?: boolean): void {
         this.browserTooltips = this.beans.gos.get('enableBrowserTooltips');
         this.updateTooltipText();
 
@@ -115,7 +112,7 @@ export class TooltipFeature extends BeanStub {
             this.setBrowserTooltip(this.tooltip);
             this.tooltipManager = this.destroyBean(this.tooltipManager, this.beans.context);
         } else {
-            this.setBrowserTooltip(null);
+            this.setBrowserTooltip(clearWithEmptyString ? '' : null, clearWithEmptyString);
             this.createTooltipFeatureIfNeeded();
         }
     }

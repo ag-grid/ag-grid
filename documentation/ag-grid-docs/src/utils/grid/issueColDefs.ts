@@ -29,7 +29,7 @@ export const IssueColDef = {
             component: PaddingCellRenderer,
         };
     },
-    filter: 'agSetColumnFilter',
+    filter: 'agTextColumnFilter',
 };
 export const IssueTypeColDef = {
     field: 'issueType',

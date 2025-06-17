@@ -13,18 +13,19 @@ export default defineConfig({
     retries: 0,
     // retries: process.env.CI ? 2 : 0,
     /* Limit parallel tests on CI. */
-    workers: process.env.CI ? 2 : undefined,
+    workers: 1,
+    // workers: process.env.CI ? 2 : undefined,
     reporter: [
-        // [
-        //     'html',
-        //     {
-        //         open: process.env.CI ? 'never' : 'on-failure',
-        //         outputFolder: '../../reports/ag-accessibility-e2e-html/',
-        //     },
-        // ],
+        [
+            'html',
+            {
+                open: process.env.CI ? 'never' : 'on-failure',
+                outputFolder: '../../reports/ag-accessibility-e2e-html/',
+            },
+        ],
         ['junit', { outputFile: '../../reports/ag-accessibility-e2e.xml' }],
         ['line'], //,
-        // ['json', { outputFile: '../../reports/ag-accessibility-e2e.json' }],
+        ['json', { outputFile: '../../reports/ag-accessibility-e2e.json' }],
     ],
     outputDir: '../../reports/ag-grid-accessibility-e2e-reports/',
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, ValueFormatterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     DateFilterModule,
@@ -14,7 +14,6 @@ ModuleRegistry.registerModules([
     DateFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
-
 const columnDefs: ColDef[] = [
     {
         field: 'startDate',
@@ -23,6 +22,18 @@ const columnDefs: ColDef[] = [
     {
         field: 'endDate',
         filter: 'agDateColumnFilter',
+    },
+    {
+        field: 'startDateTime',
+        filter: 'agDateColumnFilter',
+        cellDataType: 'dateTime',
+        valueFormatter: (params: ValueFormatterParams) =>
+            params.value.toISOString().replace(/[TZ]/g, ' ').trim().slice(0, -4),
+    },
+    {
+        field: 'endDateTime',
+        filter: 'agDateColumnFilter',
+        valueFormatter: (params: ValueFormatterParams) => params.value.replace(/[TZ]/g, ' ').trim().slice(0, -4),
     },
 ];
 

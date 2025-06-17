@@ -5,7 +5,6 @@ import type {
     FilterHandlerParams,
     IDoesFilterPassParams,
 } from '../../interfaces/iFilter';
-import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
 import type {
     ICombinedSimpleModel,
     ISimpleFilterModel,
@@ -27,7 +26,6 @@ export abstract class SimpleFilterHandler<
     implements FilterHandler<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>
 {
     protected abstract readonly FilterModelFormatterClass: new (
-        getLocaleTextFunc: () => LocaleTextFunc,
         optionsFactory: OptionsFactory,
         filterParams: ISimpleFilterParams
     ) => SimpleFilterModelFormatter<ISimpleFilterParams>;
@@ -58,10 +56,8 @@ export abstract class SimpleFilterHandler<
         this.optionsFactory = optionsFactory;
         optionsFactory.init(filterParams, this.defaultOptions);
 
-        this.filterModelFormatter = new this.FilterModelFormatterClass(
-            this.getLocaleTextFunc.bind(this),
-            optionsFactory,
-            filterParams
+        this.filterModelFormatter = this.createManagedBean(
+            new this.FilterModelFormatterClass(optionsFactory, filterParams)
         );
 
         this.updateParams(params);
@@ -113,8 +109,11 @@ export abstract class SimpleFilterHandler<
         return models[combineFunction]((m) => this.individualConditionPasses(params, m, cellValue));
     }
 
-    public getModelAsString(model: TModel | ICombinedSimpleModel<TModel> | null): string {
-        return this.filterModelFormatter.getModelAsString(model) ?? '';
+    public getModelAsString(
+        model: TModel | ICombinedSimpleModel<TModel> | null,
+        source?: 'floating' | 'filterToolPanel'
+    ): string {
+        return this.filterModelFormatter.getModelAsString(model, source) ?? '';
     }
 
     protected validateModel(

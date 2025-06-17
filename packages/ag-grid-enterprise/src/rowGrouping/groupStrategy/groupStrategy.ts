@@ -5,13 +5,11 @@ import type {
     ColumnModel,
     IChangedRowNodes,
     IColsService,
-    IRowGroupingStrategy,
     ISelectionService,
     IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
     KeyCreatorParams,
-    RowGroupingRowNode,
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,
@@ -26,6 +24,7 @@ import {
     _warn,
 } from 'ag-grid-community';
 
+import type { GroupingRowNode, IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
 import { setRowNodeGroup } from '../rowGroupingUtils';
 import { BatchRemover } from './batchRemover';
 import type { GroupRow } from './groupRow';
@@ -77,6 +76,20 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private oldGroupingDetails: GroupingDetails;
     private oldGroupDisplayColIds: string;
+
+    public getNode(id: string): RowNode | undefined {
+        // only one users complained about getRowNode not working for groups, after years of
+        // this working for normal rows. so have done quick implementation. if users complain
+        // about performance, then GroupStrategy should store / manage created groups in a map,
+        // which is a chunk of work.
+        let res: RowNode | undefined = undefined;
+        this.beans.rowModel.forEachNode((node) => {
+            if (node.id === id) {
+                res = node;
+            }
+        });
+        return res;
+    }
 
     public execute(params: StageExecuteParams): void {
         const details = this.createGroupingDetails(params);
@@ -322,8 +335,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             // because of the while loop below, it's possible we already moved the node,
             // so double check before trying to remove again.
             const mapKey = this.getChildrenMappedKey(rowNode.key!, rowNode.rowGroupColumn);
-            const parentRowNode = rowNode.parent;
-            const groupAlreadyRemoved = parentRowNode?.childrenMapped ? !parentRowNode.childrenMapped[mapKey] : true;
+            const parentChildrenMapped = rowNode.parent?.childrenMapped;
+            const groupAlreadyRemoved = parentChildrenMapped ? !parentChildrenMapped[mapKey] : true;
 
             if (groupAlreadyRemoved) {
                 // if not linked, then group was already removed
@@ -372,8 +385,9 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             }
         }
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
-        if (child.parent?.childrenMapped) {
-            delete child.parent.childrenMapped[mapKey];
+        const childParentChildrenMapped = child.parent?.childrenMapped;
+        if (childParentChildrenMapped) {
+            delete childParentChildrenMapped[mapKey];
         }
         // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
         // remove, if rowTop is still present, the rowComp thinks it's just moved position.
@@ -384,7 +398,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     /**
      * This is idempotent, but relies on the `key` field being the same throughout a RowNode's lifetime
      */
-    private addToParent(child: RowNode, parent: RowGroupingRowNode) {
+    private addToParent(child: RowNode, parent: GroupingRowNode) {
         const childrenMapped = (parent.childrenMapped ??= {});
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
         if (childrenMapped[mapKey] !== child) {
@@ -532,7 +546,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         details: GroupingDetails
     ): RowNode {
         const key = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
-        let nextNode = parentGroup?.childrenMapped?.[key];
+        const parentChildrenMapped = parentGroup?.childrenMapped;
+        let nextNode = parentChildrenMapped?.[key];
 
         if (!nextNode) {
             nextNode = this.createGroup(groupInfo, parentGroup, level, details);

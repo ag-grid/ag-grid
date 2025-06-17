@@ -1,4 +1,4 @@
-import React, { memo, useContext, useLayoutEffect, useState } from 'react';
+import { memo, useContext, useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { _getActiveDomElement, _getLocaleTextFunc } from 'ag-grid-community';
@@ -6,7 +6,7 @@ import type { CellCtrl, PopupEditorWrapper } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { useEffectOnce } from '../useEffectOnce';
-import type { EditDetails } from './cellComp';
+import type { EditDetails } from './interfaces';
 
 const PopupEditorComp = (props: {
     editDetails: EditDetails;
@@ -84,13 +84,9 @@ const PopupEditorComp = (props: {
         };
     }, [popupEditorWrapper]);
 
-    return (
-        <>
-            {popupEditorWrapper &&
-                props.wrappedContent &&
-                createPortal(props.wrappedContent, popupEditorWrapper.getGui())}
-        </>
-    );
+    return popupEditorWrapper && props.wrappedContent
+        ? createPortal(props.wrappedContent, popupEditorWrapper.getGui())
+        : null;
 };
 
 export default memo(PopupEditorComp);

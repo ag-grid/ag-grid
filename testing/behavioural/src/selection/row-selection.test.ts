@@ -6,7 +6,13 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
 import { GROUP_ROW_DATA } from './group-data';
-import { GridActions, assertSelectedRowElementsById, assertSelectedRowsByIndex, waitForEvent } from './utils';
+import {
+    GridActions,
+    _isDisplayed,
+    assertSelectedRowElementsById,
+    assertSelectedRowsByIndex,
+    waitForEvent,
+} from './utils';
 
 describe('Row Selection Grid Options', () => {
     const columnDefs = [{ field: 'sport' }];
@@ -329,6 +335,58 @@ describe('Row Selection Grid Options', () => {
                 actions.clickRowByIndex(3);
 
                 assertSelectedRowsByIndex([3], api);
+            });
+
+            test('Disabled checkbox shown when `isRowSelectable` returns `true` and `checkboxes` returns `false`', () => {
+                const [_, actions] = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        checkboxes: (params) => params.data.sport.endsWith('ing'),
+                        isRowSelectable: () => true,
+                    },
+                });
+
+                [
+                    { index: 0, disabled: '' },
+                    { index: 1, disabled: '' },
+                    { index: 2, disabled: '' },
+                    { index: 3, disabled: '' },
+                    { index: 4, disabled: '' },
+                    { index: 5, disabled: null },
+                    { index: 6, disabled: null },
+                ].forEach(({ index, disabled }) => {
+                    expect(actions.getCheckboxByIndex(index)?.getAttribute('disabled')).toBe(disabled);
+                });
+            });
+
+            test('Disabled checkbox shown when `isRowSelectable` returns `false` and `checkboxes` returns `true`', () => {
+                const [_, actions] = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        checkboxes: () => true,
+                        isRowSelectable: () => false,
+                    },
+                });
+
+                rowData.map((_, i) => expect(actions.getCheckboxByIndex(i)?.getAttribute('disabled')).toBe(''));
+            });
+
+            test('No checkbox shown when `isRowSelectable` returns `false` and `checkboxes` returns `false`', () => {
+                const [_, actions] = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        checkboxes: () => false,
+                        isRowSelectable: () => false,
+                    },
+                });
+
+                rowData.map((_, i) => expect(_isDisplayed(actions.getCheckboxByIndex(i)!)).toBe(false));
             });
 
             describe('Range selection behaviour', () => {

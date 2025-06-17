@@ -15,8 +15,6 @@ export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
 }
 
 export interface IClientSideNodeManager<TData = any> {
-    readonly skipGrouping: boolean;
-
     activate(rootNode: RowNode<TData> | null): void;
 
     deactivate(): void;
@@ -33,6 +31,4 @@ export interface IClientSideNodeManager<TData = any> {
         rowDataTran: RowDataTransaction<TData>,
         changedRowNodes: IChangedRowNodes<TData>
     ): ClientSideNodeManagerUpdateRowDataResult<TData>;
-
-    refreshModel?(params: RefreshModelParams<TData>, started: boolean): void;
 }

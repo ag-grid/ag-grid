@@ -34,7 +34,7 @@ import {
 } from 'ag-grid-community';
 
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
-import type { ISetFilterLocaleText } from './localeText';
+import type { SetFilterLocaleTextKey } from './localeText';
 
 export interface SetFilterListItemSelectionChangedEvent<
     I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null,
@@ -54,7 +54,7 @@ export interface SetFilterListItemParams<V> {
     focusWrapper: HTMLElement;
     value: V | null | (() => string);
     params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>;
-    translate: (key: keyof ISetFilterLocaleText) => string;
+    translate: (key: SetFilterLocaleTextKey) => string;
     valueFormatter?: (params: ValueFormatterParams) => string;
     item: SetFilterModelTreeItem | string | null;
     isSelected: boolean | undefined;
@@ -103,7 +103,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private readonly focusWrapper: HTMLElement;
     private readonly value: V | null | (() => string);
     private readonly params: ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>;
-    private readonly translate: (key: keyof ISetFilterLocaleText) => string;
+    private readonly translate: (key: SetFilterLocaleTextKey) => string;
     private readonly valueFormatter?: (params: ValueFormatterParams) => string;
     private readonly isTree?: boolean;
     private readonly depth: number;

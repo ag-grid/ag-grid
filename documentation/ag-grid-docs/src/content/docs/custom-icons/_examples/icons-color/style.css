@@ -1,0 +1,11 @@
+/* Set the column menu icon to red */
+.ag-icon-menu-alt {
+    color: red;
+}
+
+/* Add a background to the row group icon */
+.ag-icon-tree-closed,
+.ag-icon-tree-open {
+    border-radius: 4px;
+    background-image: linear-gradient(to bottom, #66aec8, #aa74c6);
+}

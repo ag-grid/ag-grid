@@ -13,7 +13,7 @@ import type { Component } from './component';
 import { RefPlaceholder } from './component';
 import type { AddPopupParams } from './popupService';
 
-export type AgPickerFieldEvent = AgAbstractFieldEvent;
+export type AgPickerFieldEvent = AgAbstractFieldEvent | 'pickerHidden';
 
 const AgPickerFieldElement: ElementParams = {
     tag: 'div',
@@ -346,7 +346,12 @@ export abstract class AgPickerField<
     }
 
     public hidePicker(): void {
-        this.hideCurrentPicker?.();
+        if (this.hideCurrentPicker) {
+            this.hideCurrentPicker();
+            this.dispatchLocalEvent({
+                type: 'pickerHidden',
+            });
+        }
     }
 
     public setInputWidth(width: number | 'flex'): this {

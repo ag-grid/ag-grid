@@ -56,8 +56,8 @@ describe('ag-grid tree data without hierarchical and without data path', () => {
         const gridRows = new GridRows(api, 'data', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── 0 LEAF id:0 ag-Grid-AutoColumn:undefined x:1
-            └── 1 LEAF id:1 ag-Grid-AutoColumn:undefined x:2
+            ├── 0 LEAF id:0 ag-Grid-AutoColumn:"0" x:1
+            └── 1 LEAF id:1 ag-Grid-AutoColumn:"1" x:2
         `);
     });
 });

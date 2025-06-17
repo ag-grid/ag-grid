@@ -980,6 +980,17 @@
                             "type": "item",
                             "title": "Full Row",
                             "path": "cell-editing-full-row"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Validation",
+                            "path": "cell-editing-validation"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Batch Editing",
+                            "path": "cell-editing-batch",
+                            "isEnterprise": true
                         }
                     ]
                 },

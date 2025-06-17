@@ -55,18 +55,32 @@ function onRowDragEnter(e: RowDragEnterEvent) {
 
 function onRowDragEnd(e: RowDragEndEvent) {
     console.log('onRowDragEnd', e);
+    e.api.setRowDropPositionIndicator(null);
 }
 
 function onRowDragMove(e: RowDragMoveEvent) {
     console.log('onRowDragMove', e);
+
+    const overNodeTop = e.overNode?.rowTop ?? 0;
+    const overNodeHeight = e.overNode?.rowHeight ?? 0;
+
+    // yRatio is 0 if the mouse is in the center of the row, less than -0.5 if above, greater than 0.5 if below
+    const yRatio = (e.y - overNodeTop - overNodeHeight / 2) / overNodeHeight;
+
+    e.api.setRowDropPositionIndicator({
+        row: e.overNode,
+        dropIndicatorPosition: yRatio < 0 ? 'above' : 'below',
+    });
 }
 
 function onRowDragLeave(e: RowDragLeaveEvent) {
     console.log('onRowDragLeave', e);
+    e.api.setRowDropPositionIndicator(null);
 }
 
 function onRowDragCancel(e: RowDragCancelEvent) {
     console.log('onRowDragCancel', e);
+    e.api.setRowDropPositionIndicator(null);
 }
 
 // setup the grid after the page has finished loading

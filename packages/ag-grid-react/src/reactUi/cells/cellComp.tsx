@@ -1,5 +1,4 @@
-import type { MutableRefObject } from 'react';
-import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import type {
     CellCtrl,
@@ -9,165 +8,17 @@ import type {
     ICellEditor,
     ICellEditorComp,
     ICellRendererComp,
-    UserCompDetails,
 } from 'ag-grid-community';
 import { CssClassManager, _EmptyBean, _removeFromParent } from 'ag-grid-community';
 
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
-import { CustomContext } from '../../shared/customComp/customContext';
-import type { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 import { BeansContext } from '../beansContext';
-import { isComponentStateless } from '../utils';
-import PopupEditorComp from './popupEditorComp';
+import { agStartTransition, isComponentStateless } from '../utils';
+import { jsxEditValue } from './cellEditorComp';
+import type { EditDetails, RenderDetails } from './interfaces';
 import useJsCellRenderer from './showJsRenderer';
-
-export enum CellCompState {
-    ShowValue,
-    EditValue,
-}
-
-const jsxEditorProxy = (
-    editDetails: EditDetails,
-    CellEditorClass: any,
-    setRef: (cellEditor: ICellEditor | undefined) => void
-) => {
-    const { compProxy } = editDetails;
-    setRef(compProxy);
-
-    const props = compProxy!.getProps();
-
-    const isStateless = isComponentStateless(CellEditorClass);
-
-    return (
-        <CustomContext.Provider
-            value={{
-                setMethods: (methods: CustomCellEditorCallbacks) => compProxy!.setMethods(methods),
-            }}
-        >
-            {isStateless ? (
-                <CellEditorClass {...props} />
-            ) : (
-                <CellEditorClass {...props} ref={(ref: any) => compProxy!.setRef(ref)} />
-            )}
-        </CustomContext.Provider>
-    );
-};
-
-const jsxEditor = (
-    editDetails: EditDetails,
-    CellEditorClass: any,
-    setRef: (cellEditor: ICellEditor | undefined) => void
-) => {
-    const newFormat = editDetails.compProxy;
-
-    return (
-        <>
-            {newFormat ? (
-                jsxEditorProxy(editDetails, CellEditorClass, setRef)
-            ) : (
-                <CellEditorClass {...editDetails.compDetails.params} ref={setRef} />
-            )}
-        </>
-    );
-};
-
-const jsxEditValue = (
-    editDetails: EditDetails,
-    setCellEditorRef: (cellEditor: ICellEditor | undefined) => void,
-    eGui: HTMLElement,
-    cellCtrl: CellCtrl,
-    jsEditorComp: ICellEditorComp | undefined
-) => {
-    const compDetails = editDetails.compDetails;
-    const CellEditorClass = compDetails.componentClass;
-
-    const reactInlineEditor = compDetails.componentFromFramework && !editDetails.popup;
-    const reactPopupEditor = compDetails.componentFromFramework && editDetails.popup;
-    const jsPopupEditor = !compDetails.componentFromFramework && editDetails.popup;
-
-    return (
-        <>
-            {reactInlineEditor && jsxEditor(editDetails, CellEditorClass, setCellEditorRef)}
-
-            {reactPopupEditor && (
-                <PopupEditorComp
-                    editDetails={editDetails}
-                    cellCtrl={cellCtrl}
-                    eParentCell={eGui}
-                    wrappedContent={jsxEditor(editDetails, CellEditorClass, setCellEditorRef)}
-                />
-            )}
-
-            {jsPopupEditor && jsEditorComp && (
-                <PopupEditorComp
-                    editDetails={editDetails}
-                    cellCtrl={cellCtrl}
-                    eParentCell={eGui}
-                    jsChildComp={jsEditorComp}
-                />
-            )}
-        </>
-    );
-};
-
-const jsxShowValue = (
-    showDetails: RenderDetails,
-    key: number,
-    parentId: string,
-    cellRendererRef: MutableRefObject<any>,
-    showCellWrapper: boolean,
-    reactCellRendererStateless: boolean,
-    setECellValue: (ref: any) => void
-) => {
-    const { compDetails, value } = showDetails;
-
-    const noCellRenderer = !compDetails;
-    const reactCellRenderer = compDetails && compDetails.componentFromFramework;
-
-    const CellRendererClass = compDetails && compDetails.componentClass;
-
-    // if we didn't do this, objects would cause React error. we depend on objects for things
-    // like the aggregation functions avg and count, which return objects and depend on toString()
-    // getting called.
-    const valueForNoCellRenderer = value?.toString ? value.toString() : value;
-
-    const bodyJsxFunc = () => (
-        <>
-            {noCellRenderer && <>{valueForNoCellRenderer}</>}
-            {reactCellRenderer && !reactCellRendererStateless && (
-                <CellRendererClass {...compDetails!.params} key={key} ref={cellRendererRef} />
-            )}
-            {reactCellRenderer && reactCellRendererStateless && (
-                <CellRendererClass {...compDetails!.params} key={key} />
-            )}
-        </>
-    );
-
-    return (
-        <>
-            {showCellWrapper ? (
-                <span role="presentation" id={`cell-${parentId}`} className="ag-cell-value" ref={setECellValue}>
-                    {bodyJsxFunc()}
-                </span>
-            ) : (
-                bodyJsxFunc()
-            )}
-        </>
-    );
-};
-
-export interface RenderDetails {
-    compDetails: UserCompDetails | undefined;
-    value?: any;
-    force?: boolean;
-}
-export interface EditDetails {
-    compDetails: UserCompDetails;
-    popup?: boolean;
-    popupPosition?: 'over' | 'under';
-    compProxy?: CellEditorComponentProxy;
-}
+import { SkeletonCellRenderer } from './skeletonCellComp';
 
 const CellComp = ({
     cellCtrl,
@@ -403,17 +254,36 @@ const CellComp = ({
             getParentOfValue: () => eCellValue.current ?? eCellWrapper.current ?? eGui.current,
 
             setRenderDetails: (compDetails, value, force) => {
-                setRenderDetails((prev) => {
-                    if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
-                        return {
-                            value,
-                            compDetails,
-                            force,
-                        };
-                    } else {
-                        return prev;
+                const setDetails = () => {
+                    setRenderDetails((prev) => {
+                        if (prev?.compDetails !== compDetails || prev?.value !== value || prev?.force !== force) {
+                            return {
+                                value,
+                                compDetails,
+                                force,
+                            };
+                        } else {
+                            return prev;
+                        }
+                    });
+                };
+                if (compDetails?.params?.deferRender) {
+                    const { loadingComp, onReady } = cellCtrl.getDeferLoadingCellRenderer();
+
+                    if (loadingComp) {
+                        setRenderDetails({
+                            value: undefined,
+                            compDetails: loadingComp,
+                            force: false,
+                        });
+                        // Render with startTransition to make it easier to interrupt the expensive components
+                        // for example the user starts scrolling after the cells have started to render
+                        onReady.then(() => agStartTransition(setDetails));
+                        // Returning here as we do not want to set the details immediately
+                        return;
                     }
-                });
+                }
+                setDetails();
             },
 
             setEditDetails: (compDetails, popup, popupPosition, reactiveCustomComponents) => {
@@ -456,10 +326,12 @@ const CellComp = ({
                 if (!eGui.current) {
                     return;
                 }
-                cssManager.current!.toggleCss('ag-cell-value', !showCellWrapper);
-                cssManager.current!.toggleCss('ag-cell-inline-editing', !!editing && !isPopup);
-                cssManager.current!.toggleCss('ag-cell-popup-editing', !!editing && !!isPopup);
-                cssManager.current!.toggleCss('ag-cell-not-inline-editing', !editing || !!isPopup);
+
+                const { current } = cssManager;
+                current!.toggleCss('ag-cell-value', !showCellWrapper);
+                current!.toggleCss('ag-cell-inline-editing', !!editing && !isPopup);
+                current!.toggleCss('ag-cell-popup-editing', !!editing && !!isPopup);
+                current!.toggleCss('ag-cell-not-inline-editing', !editing || !!isPopup);
             },
         };
 
@@ -497,24 +369,51 @@ const CellComp = ({
         if (!eGui.current) {
             return;
         }
-        cssManager.current!.toggleCss('ag-cell-value', !showCellWrapper);
-        cssManager.current!.toggleCss('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
-        cssManager.current!.toggleCss('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
-        cssManager.current!.toggleCss('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
+
+        const { current } = cssManager;
+        current!.toggleCss('ag-cell-value', !showCellWrapper);
+        current!.toggleCss('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
+        current!.toggleCss('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
+        current!.toggleCss('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
     });
 
-    const showContents = () => {
+    const valueOrCellComp = () => {
+        const { compDetails, value } = renderDetails!;
+        if (!compDetails) {
+            // No Cell Renderer, so just show the value.
+            // if we didn't do this, objects would cause React error. we depend on objects for things
+            // like the aggregation functions avg and count, which return objects and depend on toString()
+            // getting called.
+            return value?.toString?.() ?? value;
+        }
+
+        if (compDetails.componentFromFramework) {
+            const CellRendererClass = compDetails.componentClass;
+            return (
+                <Suspense fallback={<SkeletonCellRenderer cellCtrl={cellCtrl} parent={eGui} />}>
+                    {reactCellRendererStateless ? (
+                        <CellRendererClass {...compDetails.params} key={renderKey} />
+                    ) : (
+                        <CellRendererClass {...compDetails.params} key={renderKey} ref={cellRendererRef} />
+                    )}
+                </Suspense>
+            );
+        }
+        // else {
+        // If the Cell Renderer is a JS component this will have been handled in the useJsCellRenderer hook above
+        // }
+    };
+
+    const showCellOrEditor = () => {
         if (editDetails != null) {
             return jsxEditValue(editDetails, setCellEditorRef, eGui.current!, cellCtrl, jsEditorComp);
         } else if (renderDetails != null) {
-            return jsxShowValue(
-                renderDetails,
-                renderKey,
-                instanceId,
-                cellRendererRef,
-                showCellWrapper,
-                reactCellRendererStateless,
-                setCellValueRef
+            return showCellWrapper ? (
+                <span role="presentation" id={`cell-${instanceId}`} className="ag-cell-value" ref={setCellValueRef}>
+                    {valueOrCellComp()}
+                </span>
+            ) : (
+                valueOrCellComp()
             );
         }
     };
@@ -523,10 +422,10 @@ const CellComp = ({
         <div ref={setGuiRef} style={userStyles} role={cellAriaRole} col-id={colIdSanitised}>
             {showCellWrapper ? (
                 <div className="ag-cell-wrapper" role="presentation" ref={setCellWrapperRef}>
-                    {showContents()}
+                    {showCellOrEditor()}
                 </div>
             ) : (
-                showContents()
+                showCellOrEditor()
             )}
         </div>
     );

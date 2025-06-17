@@ -17,6 +17,11 @@
         width: 100%;
         line-height: normal;
     }
+
+    &:where(:has(:invalid)),
+    &:where(:has(.invalid)) {
+        border-color: var(--ag-invalid-color) !important;
+    }
 }
 
 :where(.ag-popup-editor) .ag-large-text {
@@ -37,10 +42,4 @@
 
 .ag-checkbox-edit {
     padding-left: var(--ag-cell-horizontal-padding);
-}
-
-.ag-cell-batch-edit,
-.ag-row-batch-edit {
-    background-color: rgb(220 181 139 / 20%);
-    color: rgb(66 47 0 / 100%);
 }

@@ -82,7 +82,11 @@ const calculateOrdinal = (value: number) => {
  * @param date The date to serialise
  * @param format The string to format the date to, defaults to YYYY-MM-DD
  */
-export function _dateToFormattedString(date: Date, format: string = 'YYYY-MM-DD'): string {
+export function _dateToFormattedString(date: Date, format?: string): string {
+    if (format == null) {
+        // returns YYYY-MM-DD, but is more efficient
+        return _serialiseDate(date, false)!;
+    }
     const fullYear = _padStartWidthZeros(date.getFullYear(), 4);
     const months = [
         'January',

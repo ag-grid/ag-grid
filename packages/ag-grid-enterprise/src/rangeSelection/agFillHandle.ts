@@ -345,6 +345,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
             const columns = (this.isLeft ? [...finalRange.columns].reverse() : finalRange.columns) as AgColumn[];
             iterateAcrossCells(undefined, columns);
         }
+
+        this.beans.editSvc?.stopEditing(undefined, { source: 'fillHandle' });
     }
 
     private clearCellsInRange(startRow: RowPosition, endRow: RowPosition, columns: AgColumn[]) {

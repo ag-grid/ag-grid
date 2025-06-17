@@ -1,4 +1,10 @@
-import type { GridApi, GridOptions, ValueFormatterLiteParams, ValueParserLiteParams } from 'ag-grid-community';
+import type {
+    DateTimeStringDataTypeDefinition,
+    GridApi,
+    GridOptions,
+    ValueFormatterLiteParams,
+    ValueParserLiteParams,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     DateEditorModule,
@@ -23,10 +29,33 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-let gridApi: GridApi<IOlympicData>;
+interface IOlympicDataTypes extends IOlympicData {
+    countryObject: {
+        code: string;
+    };
+    sportObject: {
+        name: string;
+    };
+    dateTimeWithSpace: string;
+}
+let gridApi: GridApi<IOlympicDataTypes>;
 
-const gridOptions: GridOptions<IOlympicData> = {
-    columnDefs: [{ field: 'athlete' }, { field: 'age' }, { field: 'date' }],
+const dateTimeRegex = /(\d{2})\/(\d{2})\/(\d{4}).{1,2}(\d{2}):(\d{2}):(\d{2})/;
+const pad = (n: number) => (n < 10 ? `0${n}` : n);
+const rand = (min: number, max: number) => Math.floor((max + min) * Math.random() - min);
+
+const gridOptions: GridOptions<IOlympicDataTypes> = {
+    columnDefs: [
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'date' },
+        {
+            field: 'dateTimeWithSpace',
+            cellDataType: 'dateTimeString',
+            filterParams: { includeTime: true },
+            cellEditorParams: { includeTime: true },
+        },
+    ],
     defaultColDef: {
         filter: true,
         floatingFilter: true,
@@ -36,9 +65,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         dateString: {
             baseDataType: 'dateString',
             extendsDataType: 'dateString',
-            valueParser: (params: ValueParserLiteParams<IOlympicData, string>) =>
+            valueParser: (params: ValueParserLiteParams<IOlympicDataTypes, string>) =>
                 params.newValue != null && params.newValue.match('\\d{2}/\\d{2}/\\d{4}') ? params.newValue : null,
-            valueFormatter: (params: ValueFormatterLiteParams<IOlympicData, string>) =>
+            valueFormatter: (params: ValueFormatterLiteParams<IOlympicDataTypes, string>) =>
                 params.value == null ? '' : params.value,
             dataTypeMatcher: (value: any) => typeof value === 'string' && !!value.match('\\d{2}/\\d{2}/\\d{4}'),
             dateParser: (value: string | undefined) => {
@@ -59,6 +88,41 @@ const gridOptions: GridOptions<IOlympicData> = {
                 return `${date.length === 1 ? '0' + date : date}/${month.length === 1 ? '0' + month : month}/${value.getFullYear()}`;
             },
         },
+        dateTimeString: {
+            baseDataType: 'dateTimeString',
+            extendsDataType: 'dateTimeString',
+            valueParser: (params: ValueParserLiteParams<IOlympicDataTypes, string>) => {
+                if (params.newValue != null && params.newValue.match(dateTimeRegex)) {
+                    return params.newValue;
+                } else {
+                    return null;
+                }
+            },
+            dateParser: (value: string | undefined) => {
+                if (value == null) {
+                    return;
+                }
+                let [_, HH, mm, ss, dd, MM, yyyy] = (value.match(dateTimeRegex) || Array(7).fill('0')).map(
+                    (e) => e || '0'
+                );
+                return new Date(
+                    parseInt(yyyy),
+                    parseInt(MM) - 1,
+                    parseInt(dd),
+                    parseInt(HH),
+                    parseInt(mm),
+                    parseInt(ss)
+                );
+            },
+            dateFormatter: (value: Date | undefined) => {
+                // convert to `HH:mm:ss dd/MM/yyyy`
+                return value == null
+                    ? ''
+                    : `${pad(value.getDate())}/${pad(value.getMonth() + 1)}/${value.getFullYear()}` +
+                          ' ' +
+                          `${pad(value.getHours())}:${pad(value.getMinutes())}:${pad(value.getSeconds())}`;
+            },
+        } as DateTimeStringDataTypeDefinition,
     },
 };
 
@@ -69,5 +133,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+        .then((data: IOlympicDataTypes[]) =>
+            gridApi!.setGridOption(
+                'rowData',
+                data.map((d) => ({
+                    ...d,
+                    dateTimeWithSpace: `${d.date} ${pad(rand(0, 23))}:${pad(rand(0, 59))}:${pad(rand(0, 59))}`,
+                }))
+            )
+        );
 });

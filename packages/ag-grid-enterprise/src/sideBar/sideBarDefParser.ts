@@ -17,9 +17,18 @@ const DEFAULT_FILTER_COMP: ToolPanelDef = {
     toolPanel: 'agFiltersToolPanel',
 };
 
+const DEFAULT_NEW_FILTER_COMP: ToolPanelDef = {
+    id: 'filters-new',
+    labelDefault: 'Filters',
+    labelKey: 'filters',
+    iconKey: 'filtersToolPanel',
+    toolPanel: 'agNewFiltersToolPanel',
+};
+
 const DEFAULT_BY_KEY: { [p: string]: ToolPanelDef } = {
     columns: DEFAULT_COLUMN_COMP,
     filters: DEFAULT_FILTER_COMP,
+    'filters-new': DEFAULT_NEW_FILTER_COMP,
 };
 
 export function parseSideBarDef(

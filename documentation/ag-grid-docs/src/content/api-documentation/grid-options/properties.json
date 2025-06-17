@@ -552,7 +552,13 @@
                 "url": "./filter-advanced/#configuring-advanced-filter-builder"
             }
         },
-        "alwaysPassFilter": {}
+        "alwaysPassFilter": {},
+        "enableFilterHandlers": {
+            "more": {
+                "name": "Custom Column Filters",
+                "url": "./component-filter/#implementing-a-filter-component"
+            }
+        }
     },
     "find": {
         "meta": {
@@ -642,7 +648,7 @@
             }
         },
         "loadingCellRenderer": {
-            "description": "Provide your own loading cell renderer to use when data is loading via a DataSource.",
+            "description": "Provide your own loading cell renderer to use when data is loading via a DataSource or a cell renderer is deferred.",
             "more": {
                 "name": "Loading Cell Renderer",
                 "url": "./component-loading-cell-renderer/"
@@ -1460,12 +1466,6 @@
             "more": {
                 "name": "Row Pinning",
                 "url": "./row-pinning/#pinning-rows-on-first-render"
-            }
-        },
-        "grandTotalRowPinned": {
-            "more": {
-                "name": "Row Pinning",
-                "url": "./row-pinning/#pinning-the-grand-total-row"
             }
         },
         "pinnedTopRowData": {

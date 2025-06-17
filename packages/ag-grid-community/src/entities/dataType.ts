@@ -60,7 +60,7 @@ interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = an
     baseDataType: TValueType;
     /**
      * The data type that this extends. Either one of the pre-defined data types
-     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)
+     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'`, `'dateTime'`, `'dateTimeString'` or  `'object'`)
      * or another custom data type.
      */
     extendsDataType: string;

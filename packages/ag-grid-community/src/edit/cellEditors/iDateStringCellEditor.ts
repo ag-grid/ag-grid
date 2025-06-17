@@ -13,4 +13,13 @@ export interface IDateStringCellEditorParams<TData = any, TContext = any>
      * Defaults to any value allowed.
      */
     step?: number;
+    /**
+     * Defines whether time should be included when editing dates.
+     *
+     * - `true`: Date and time will be editable.
+     * - `false`: Only date portion will be editable.
+     *
+     * @default false
+     */
+    includeTime?: boolean;
 }

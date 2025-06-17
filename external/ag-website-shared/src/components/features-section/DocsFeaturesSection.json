@@ -63,7 +63,7 @@
             },
             {
                 "title": "Row Grouping & Multi-Column Sorting",
-                "description": "Advanced grouping and sorting options for better data organization.",
+                "description": "Advanced grouping and sorting options for better data organisation.",
                 "link": "./grouping"
             },
             {
@@ -147,7 +147,7 @@
             },
             {
                 "title": "Advanced Interactivity",
-                "description": "Context menus, crosshairs, navigator, zoom and chart synchronization.",
+                "description": "Context menus, crosshairs, navigator, zoom and chart synchronisation.",
                 "link": "./context-menu/"
             },
             {

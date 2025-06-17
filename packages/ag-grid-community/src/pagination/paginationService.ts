@@ -1,5 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import type { IEditService } from '../interfaces/iEditService';
 import { _exists } from '../utils/generic';
 import type { ComponentSelector } from '../widgets/component';
 import { PaginationSelector } from './paginationComp';
@@ -28,6 +29,8 @@ export class PaginationService extends BeanStub implements NamedBean {
     private bottomDisplayedRowIndex = 0;
 
     private masterRowCount: number = 0;
+
+    private editSvc?: IEditService;
 
     public postConstruct() {
         const gos = this.gos;
@@ -75,11 +78,13 @@ export class PaginationService extends BeanStub implements NamedBean {
             return;
         }
 
-        if (this.beans.editSvc?.isEditing()) {
-            if (this.beans.editSvc.batchEditing) {
-                this.beans.editSvc.cleanupEditors();
+        const { editSvc } = this.beans;
+
+        if (editSvc?.isEditing()) {
+            if (editSvc.isBatchEditing()) {
+                editSvc.cleanupEditors();
             } else {
-                this.beans.editSvc.stopEditing(undefined, undefined, undefined, undefined, undefined, 'api');
+                editSvc.stopEditing(undefined, { source: 'api' });
             }
         }
 
@@ -343,9 +348,5 @@ export class PaginationService extends BeanStub implements NamedBean {
             newPageSize,
             keepRenderedRows,
         });
-        const editSvc = this.beans.editSvc;
-        if (editSvc?.batchEditing && editSvc?.isEditing()) {
-            editSvc?.updateCells();
-        }
     }
 }

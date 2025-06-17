@@ -43,6 +43,7 @@ import type {
     ColumnRowGroupChangedEvent,
     ColumnValueChangedEvent,
     ColumnVisibleEvent,
+    ColumnsResetEvent,
     ComponentStateChangedEvent,
     ContextMenuVisibleChangedEvent,
     CutEndEvent,
@@ -80,7 +81,6 @@ import type {
     RangeSelectionChangedEvent,
     RedoEndedEvent,
     RedoStartedEvent,
-    ResetColumnsEvent,
     RowClickedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
@@ -690,10 +690,8 @@ export interface GridOptions<TData = any> {
      */
     advancedFilterBuilderParams?: IAdvancedFilterBuilderParams;
     /**
-     * By default, Advanced Filter sanitises user input and passes it to `new Function()` to provide the best performance.
-     * Set to `true` to prevent this and use defined functions instead.
-     * This will result in slower filtering, but it enables Advanced Filter to work when `unsafe-eval` is disabled.
-     * @default false
+     * @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
+     * @default true
      * @agModule `AdvancedFilterModule`
      */
     suppressAdvancedFilterEval?: boolean;
@@ -759,7 +757,7 @@ export interface GridOptions<TData = any> {
 
     // *** Loading Cell Renderers *** //
     /**
-     * Provide your own loading cell renderer to use when data is loading via a DataSource.
+     * Provide your own loading cell renderer to use when data is loading via a DataSource or when a cell renderer is deferred.
      * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
      */
     loadingCellRenderer?: any;
@@ -768,7 +766,7 @@ export interface GridOptions<TData = any> {
      */
     loadingCellRendererParams?: any;
     /**
-     * Callback to select which loading cell renderer to be used when data is loading via a DataSource.
+     * Callback to select which loading cell renderer to be used when data is loading via a DataSource or when a cell renderer is deferred.
      * @initial
      */
     loadingCellRendererSelector?: LoadingCellRendererSelectorFunc<TData>;
@@ -1302,8 +1300,6 @@ export interface GridOptions<TData = any> {
     /**
      * When provided, an extra grand total row will be inserted into the grid at the specified position.
      * This row displays the aggregate totals of all rows in the grid.
-     *
-     * Note that the `'pinnedTop'` and `'pinnedBottom'` values are deprecated in v34. Use `grandTotalRowPinned` instead.
      * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom';
@@ -1456,14 +1452,6 @@ export interface GridOptions<TData = any> {
      * @agModule `PinnedRowModule`
      */
     isRowPinned?: IsRowPinned<TData>;
-    /**
-     * Pin the grand total row to the top of bottom of the grid. Requires `grandTotalRow` to be set.
-     * When multiple rows are pinned, the grid uses `grandTotalRow` to determine whether the grand total row should be
-     * displayed first or last in the list of pinned rows.
-     * @agModule `PinnedRowModule`
-     */
-    grandTotalRowPinned?: 'top' | 'bottom';
-
     // *** Row Model *** //
     /**
      * Sets the row model type.
@@ -2294,7 +2282,7 @@ export interface GridOptions<TData = any> {
     /**
      * Columns have been reset to their default state as reflected by the colDefs.
      */
-    onResetColumns?(event: ResetColumnsEvent<TData>): void;
+    onColumnsReset?(event: ColumnsResetEvent<TData>): void;
 
     // *** Column Header *** //
 
@@ -2430,7 +2418,7 @@ export interface GridOptions<TData = any> {
      */
     onFilterUiChanged?(event: FilterUiChangedEvent<TData>): void;
     /**
-     * Floating filter UI modified (when using `enableFilterHandlers = true`.
+     * Floating filter UI modified (when using `enableFilterHandlers = true`).
      */
     onFloatingFilterUiChanged?(event: FloatingFilterUiChangedEvent<TData>): void;
     /**

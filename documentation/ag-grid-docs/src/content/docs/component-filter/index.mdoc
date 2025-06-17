@@ -58,7 +58,7 @@ will be additionally added to the params object, overriding items of the same na
 
 {% if isFramework("vue") %}
 When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and
-row values available to you via `this.params` - the interface for which is provided is documented below.
+row values available to you via `this.params` - the interface for this is documented below.
 
 If custom params are provided via the `colDef.filterParams` property, these
 will be additionally added to the params object, overriding items of the same name if a name clash exists.
@@ -191,6 +191,33 @@ There are two ways you can get fix this problem:
 * Add a mouse click listener to your floating element and set it to `preventDefault()`. This way, the click event will not bubble up to the grid.
   This is the best solution, but you can only do this if you are writing the component yourself.
 * Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](./filter-date/#custom-selection-component)
+
+## Using Custom Filters with Grid-Provided Filter Logic
+
+It is possible to use the grid-provided filter logic with custom filter components.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'year',
+            filter: {
+                component: YearFilter, // custom filter component
+                handler: 'agNumberColumnFilterHandler', // grid-provided Number Filter handler
+            },
+        }
+    ],
+}
+```
+
+The grid-provided handlers are:
+- `'agTextColumnFilterHandler'` - [Text Filter](./filter-text/) handler.
+- `'agNumberColumnFilterHandler'` - [Number Filter](./filter-number/) handler.
+- `'agDateColumnFilterHandler'` - [Date Filter](./filter-date/) handler.
+
+The example below demonstrates using the Number Filter handler with a custom filter component:
+
+{% gridExampleRunner title="Use Grid Handlers" name="use-grid-handlers" /%}
 
 ## Accessing the Component Instance
 

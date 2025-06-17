@@ -44,6 +44,7 @@
     "@nx/web": "20.3.1",
     "@nx/webpack": "20.3.1",
     "@nx/workspace": "20.3.1",
+    "@playwright/test": "^1.52.0",
     "@swc/helpers": "0.5.15",
     "@types/jest": "29.5.14",
     "@types/node": "18.16.9",

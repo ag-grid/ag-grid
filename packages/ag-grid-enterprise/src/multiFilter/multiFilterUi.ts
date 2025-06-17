@@ -3,13 +3,14 @@ import type {
     FilterDisplayComp,
     FilterDisplayParams,
     FilterDisplayState,
+    FilterWrapperParams,
     IComponent,
     IMultiFilterDef,
     IMultiFilterModel,
     IMultiFilterParams,
     SharedFilterUi,
 } from 'ag-grid-community';
-import { AgPromise, _getFilterDetails, _refreshFilterUi } from 'ag-grid-community';
+import { AgPromise, _getFilterDetails, _isUseApplyButton, _refreshFilterUi } from 'ag-grid-community';
 
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
@@ -191,6 +192,10 @@ export class MultiFilterUi
             onStateChange: (newState) => this.onStateChange(onStateChange, index, newState),
             getHandler: () => this.getHandler().getHandler(index)!,
             onAction: (action, additionalEventAttributes, event) => {
+                if (_isUseApplyButton(params as FilterWrapperParams)) {
+                    // child filters cannot perform actions within a multi filter
+                    return;
+                }
                 const isChange = action === 'apply' || action === 'reset';
                 if (isChange) {
                     this.updateActiveList(index, getFilterModelForIndex(this.params.state.model, index));

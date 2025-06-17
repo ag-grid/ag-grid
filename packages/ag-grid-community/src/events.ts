@@ -175,8 +175,9 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         stickyTopOffsetChanged: StickyTopOffsetChangedEvent<TData, TContext>;
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
         rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
-        resetColumns: ResetColumnsEvent<TData, TContext>;
+        columnsReset: ColumnsResetEvent<TData, TContext>;
         cellEditValuesChanged: CellEditValuesChangedEvent<TData, TContext>;
+        filterSwitched: FilterSwitchedEvent<TData, TContext>;
     }
 >;
 
@@ -290,6 +291,7 @@ export interface RowDataUpdatedEvent<TData = any, TContext = any>
 export interface BeforeRefreshModelEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'beforeRefreshModel', TData, TContext> {
     params: RefreshModelParams<TData>;
+    groupsChanged: boolean;
 }
 
 export interface RowDataUpdateStartedEvent<TData = any, TContext = any>
@@ -1058,7 +1060,11 @@ export interface CellValueChangedEvent<TData = any, TValue = any>
 }
 
 export interface CellEditValuesChangedEvent<TData = any, TValue = any>
-    extends AgGlobalEvent<'cellEditValuesChanged', TData, TValue> {}
+    extends CellWithDataEvent<'cellEditValuesChanged', TData, TValue> {
+    oldValue: TValue | null | undefined;
+    newValue: TValue | null | undefined;
+    source: string | undefined;
+}
 
 export interface CellEditRequestEvent<TData = any, TValue = any>
     extends CellWithDataEvent<'cellEditRequest', TData, TValue> {
@@ -1220,7 +1226,10 @@ export interface RowNodeDataChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowNodeDataChanged', TData, TContext> {
     node: RowNode<TData>;
 }
-
-export interface ResetColumnsEvent<TData = any, TContext = any> extends AgGlobalEvent<'resetColumns', TData, TContext> {
+export interface ColumnsResetEvent<TData = any, TContext = any> extends AgGlobalEvent<'columnsReset', TData, TContext> {
     source: ColumnEventType;
+}
+export interface FilterSwitchedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'filterSwitched', TData, TContext> {
+    column: Column;
 }

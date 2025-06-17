@@ -1,6 +1,5 @@
 import type { AgColumn } from '../../../entities/agColumn';
 import type { FilterChangedEvent } from '../../../events';
-import type { LocaleTextFunc } from '../../../misc/locale/localeUtils';
 import { Component } from '../../../widgets/component';
 import type { IProvidedFilterParams, ProvidedFilterModel } from '../../provided/iProvidedFilter';
 import type {
@@ -37,7 +36,6 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
     protected abstract readonly filterType: 'text' | 'number' | 'date';
 
     protected abstract readonly FilterModelFormatterClass: new (
-        getLocaleTextFunc: () => LocaleTextFunc,
         optionsFactory: OptionsFactory,
         filterParams: ISimpleFilterParams
     ) => SimpleFilterModelFormatter<ISimpleFilterParams>;
@@ -99,10 +97,8 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
         this.optionsFactory = optionsFactory;
         optionsFactory.init(params.filterParams as ISimpleFilterParams, this.defaultOptions);
 
-        this.filterModelFormatter = new this.FilterModelFormatterClass(
-            this.getLocaleTextFunc.bind(this),
-            optionsFactory,
-            params.filterParams as ISimpleFilterParams
+        this.filterModelFormatter = this.createManagedBean(
+            new this.FilterModelFormatterClass(optionsFactory, params.filterParams as ISimpleFilterParams)
         );
 
         this.setSimpleParams(params, false);

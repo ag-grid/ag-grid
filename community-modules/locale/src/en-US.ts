@@ -54,6 +54,37 @@ export const AG_GRID_LOCALE_EN = {
     // Group Column Filter
     groupFilterSelect: 'Select field:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'is (All)',
+    filterSummaryContains: 'contains',
+    filterSummaryNotContains: 'does not contain',
+    filterSummaryTextEquals: 'equals',
+    filterSummaryTextNotEqual: 'does not equal',
+    filterSummaryStartsWith: 'begins with',
+    filterSummaryEndsWith: 'ends with',
+    filterSummaryBlank: 'is blank',
+    filterSummaryNotBlank: 'is not blank',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'between',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'is (All)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'is (${variable})',
+    filterSummaryListLong: 'is (${variable}) and ${variable} more',
+    addFilterCard: 'Add Filter',
+    agTextColumnFilterDisplayName: 'Text Filter',
+    agNumberColumnFilterDisplayName: 'Number Filter',
+    agDateColumnFilterDisplayName: 'Date Filter',
+    agSetColumnFilterDisplayName: 'Set Filter',
+    agMultiColumnFilterDisplayName: 'Multi Filter',
+    addFilterPlaceholder: 'Search columns...',
+
     // Advanced Filter
     advancedFilterContains: 'contains',
     advancedFilterNotContains: 'does not contain',
@@ -107,6 +138,14 @@ export const AG_GRID_LOCALE_EN = {
     advancedFilterBuilderValidationSelectColumn: 'Must select a column.',
     advancedFilterBuilderValidationSelectOption: 'Must select an option.',
     advancedFilterBuilderValidationEnterValue: 'Must enter a value.',
+
+    // Validation Errors
+    minDateValidation: 'Date must be after ${variable}',
+    maxDateValidation: 'Date must be before ${variable}',
+    maxLengthValidation: 'Must be ${variable} characters or fewer.',
+    minValueValidation: 'Must be greater than or equal to ${variable}',
+    maxValueValidation: 'Must be less than or equal to  ${variable}',
+    invalidSelectionValidation: 'Invalid selection.',
 
     // Side Bar
     columns: 'Columns',
@@ -541,6 +580,7 @@ export const AG_GRID_LOCALE_EN = {
     ariaChartSelected: 'Selected',
     ariaSkeletonCellLoadingFailed: 'Row failed to load',
     ariaSkeletonCellLoading: 'Row data is loading',
+    ariaDeferSkeletonCellLoading: 'Cell is loading',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Row Groups',
@@ -559,8 +599,11 @@ export const AG_GRID_LOCALE_EN = {
     ariaLabelColumnMenu: 'Column Menu',
     ariaLabelColumnFilter: 'Column Filter',
 
-    ariaLabelCellEditor: 'Cell Editor',
     ariaLabelSelectField: 'Select Field',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'Cell Editor',
+    ariaValidationErrorPrefix: 'Cell Editor Validation',
 
     // aria labels for async context menus
     ariaLabelLoadingContextMenu: 'Loading Context Menu',
@@ -584,6 +627,11 @@ export const AG_GRID_LOCALE_EN = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Column List',
     ariaFilterPanelList: 'Filter List',
+
+    // ARIA labels for new Filter Tool Panel
+    ariaLabelAddFilterField: 'Add Filter Field',
+    ariaLabelFilterCardDelete: 'Delete Filter',
+    ariaLabelFilterCardHasEdits: 'Has Edits',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

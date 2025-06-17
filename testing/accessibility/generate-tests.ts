@@ -6,7 +6,15 @@ type Example = {
     internalFramework: 'vanilla' | 'typescript' | 'angular' | 'reactFunctional' | 'reactFunctionalTs' | 'vue2';
 };
 
-const baseUrl = 'https://grid-staging.ag-grid.com/examples/';
+const ENV_BASE_URLS = {
+    dev: 'https://localhost:4610',
+    staging: 'https://grid-staging.ag-grid.com',
+    production: 'https://www.ag-grid.com',
+};
+
+const environment = process.env.NX_TASK_TARGET_CONFIGURATION || 'staging';
+
+const baseUrl = `${ENV_BASE_URLS[environment]}/examples/`;
 
 const examplesFile: Example[] = JSON.parse(readFileSync('./all-examples.json', 'utf8'));
 const examplesToProcess = examplesFile.filter((example) => example.internalFramework === 'vanilla');

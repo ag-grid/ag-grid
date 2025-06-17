@@ -244,6 +244,12 @@
                     "moduleName": "UndoRedoEditModule",
                     "name": "Undo / Redo Edits",
                     "path": "undo-redo-edits"
+                },
+                {
+                    "moduleName": "BatchEditModule",
+                    "name": "Batch Edit",
+                    "path": "cell-batch-edit",
+                    "isEnterprise": true
                 }
             ]
         },
@@ -344,6 +350,12 @@
                             "moduleName": "FiltersToolPanelModule",
                             "name": "Filters Tool Panel",
                             "path": "tool-panel-filters",
+                            "isEnterprise": true
+                        },
+                        {
+                            "moduleName": "NewFiltersToolPanelModule",
+                            "name": "New Filters Tool Panel",
+                            "path": "tool-panel-filters/#new-filters-tool-panel",
                             "isEnterprise": true
                         }
                     ]

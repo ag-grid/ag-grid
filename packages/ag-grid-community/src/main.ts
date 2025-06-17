@@ -143,7 +143,6 @@ export { AgColumn, isColumn } from './entities/agColumn';
 export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export {
-    type ITreeNode,
     RowNode,
     ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP,
     ROW_ID_PREFIX_TOP_PINNED as _ROW_ID_PREFIX_TOP_PINNED,
@@ -250,6 +249,7 @@ export {
     ProvidedFilterModel,
 } from './filter/provided/iProvidedFilter';
 export { ProvidedFilter } from './filter/provided/providedFilter';
+export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
 export {
     ISimpleFilter,
     ISimpleFilterParams,
@@ -394,11 +394,14 @@ export {
     ICellEditor,
     ICellEditorComp,
     ICellEditorParams,
+    IErrorValidationParams,
     BaseCellEditor,
     GetCellEditorInstancesParams,
     GetEditingCellsParams,
+    SetEditingCellsParams,
     EditingCellPosition,
 } from './interfaces/iCellEditor';
+export { AgAbstractCellEditor } from './widgets/agAbstractCellEditor';
 export { ILargeTextEditorParams } from './edit/cellEditors/iLargeTextCellEditor';
 export type { LargeTextCellEditor } from './edit/cellEditors/largeTextCellEditor';
 export type { PopupEditorWrapper } from './edit/cellEditors/popupEditorWrapper';
@@ -467,9 +470,20 @@ export {
     BaseToolPanelParams,
     IToolPanelColumnCompParams,
     IToolPanelFiltersCompParams,
+    IToolPanelNewFiltersCompParams,
 } from './interfaces/iToolPanel';
 export { IColumnToolPanel } from './interfaces/iColumnToolPanel';
 export { IFiltersToolPanel } from './interfaces/iFiltersToolPanel';
+export {
+    SelectableFilterDef,
+    SelectableFilterParams,
+    FilterPanelSummaryState,
+    FilterPanelDetailState,
+    FilterPanelFilterState,
+    IFilterPanelService,
+    ISelectableFilterService,
+    INewFiltersToolPanel,
+} from './interfaces/iNewFiltersToolPanel';
 
 // overlays
 export {
@@ -681,6 +695,7 @@ export {
     _AdvancedFilterGridApi,
     _PinnedRowGridApi,
     _FindApi,
+    _BatchEditApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
 export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes';
@@ -699,8 +714,6 @@ export {
     _isDomLayout,
     _isAnimateRows,
     _getGrandTotalRow,
-    _getGrandTotalRowPinned,
-    _getEnableRowPinning,
     _getGroupTotalRowCallback,
     _isGroupMultiAutoColumn,
     _isColumnsSortingCoupledToGroup,
@@ -738,6 +751,7 @@ export {
     _isGroupRowsSticky,
     _getGroupingApproach,
     _getGridOption,
+    _isSetFilterByDefault,
 } from './gridOptionsUtils';
 export type { GroupingApproach } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
@@ -750,7 +764,7 @@ export { GridCtrl, IGridComp } from './gridComp/gridCtrl';
 export type { SortService } from './sort/sortService';
 export { SortModelItem } from './interfaces/iSortModelItem';
 export { LocaleService } from './misc/locale/localeService';
-export { _getLocaleTextFunc, LocaleTextFunc } from './misc/locale/localeUtils';
+export { _getLocaleTextFunc, LocaleTextFunc, _translate } from './misc/locale/localeUtils';
 export type { ValueService } from './valueService/valueService';
 export type { ValueCache } from './valueService/valueCache';
 export type { ExpressionService } from './valueService/expressionService';
@@ -782,6 +796,8 @@ export {
     SideBarState,
     SortState,
     GridStateKey,
+    NewFiltersToolPanelState,
+    NewFiltersToolPanelFilterState,
 } from './interfaces/gridState';
 export { convertColumnGroupState, convertColumnState } from './misc/state/stateUtils';
 
@@ -840,6 +856,7 @@ export {
     CellEditorSelectorFunc,
     CellEditorSelectorResult,
     CellRendererSelectorFunc,
+    ILoadingCellRendererSelectorFunc,
     CellRendererSelectorResult,
     GetQuickFilterTextParams,
     ColumnFunctionCallbackParams,
@@ -980,12 +997,7 @@ export {
     MouseShowContextMenuParams,
     TouchShowContextMenuParam,
 } from './interfaces/iContextMenu';
-export {
-    IRowNodeStage,
-    IRowGroupingStrategy,
-    RowGroupingRowNode,
-    StageExecuteParams,
-} from './interfaces/iRowNodeStage';
+export type { IRowNodeStage, IRowGroupStage, StageExecuteParams } from './interfaces/iRowNodeStage';
 export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
@@ -1011,7 +1023,6 @@ export { ITooltipComp, ITooltipParams, TooltipLocation } from './tooltip/tooltip
 export {
     TooltipFeature,
     ITooltipCtrl,
-    _shouldDisplayTooltip,
     _getShouldDisplayTooltip,
     _isShowTooltipWhenTruncated,
 } from './tooltip/tooltipFeature';
@@ -1042,6 +1053,7 @@ export {
     _setAriaLabelledBy,
     _setAriaChecked,
     _setAriaControls,
+    _setAriaControlsAndLabel,
     _setAriaRole,
     _setAriaColIndex,
     _setAriaColSpan,
@@ -1059,6 +1071,7 @@ export {
     _setAriaSetSize,
     _setAriaHidden,
     _getAriaPosInSet,
+    _setAriaInvalid,
 } from './utils/aria';
 export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './utils/array';
 export { _isIOSUserAgent } from './utils/browser';
@@ -1084,6 +1097,7 @@ export {
     _observeResize,
     _preserveRangesWhile,
     _requestAnimationFrame,
+    _isElementOverflowingCallback,
 } from './utils/dom';
 export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
@@ -1164,6 +1178,11 @@ export {
     UndoRedoEditModule,
     CustomEditorModule,
 } from './edit/editModule';
+export type {
+    DropIndicatorPosition,
+    SetRowDropPositionIndicatorParams,
+    RowDropPositionIndicator,
+} from './interfaces/IRowDropHighlightService';
 export type { EditStrategyType } from './interfaces/editStrategyType';
 export {
     RowSelectionModule,

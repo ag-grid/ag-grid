@@ -347,6 +347,17 @@ export function _addStylesToElement(eElement: any, styles: RowStyle | CellStyle 
     }
 }
 
+export function _isElementOverflowingCallback(getElement: () => HTMLElement | undefined): () => boolean {
+    return () => {
+        const element = getElement();
+        if (!element) {
+            // defaults to true
+            return true;
+        }
+        return _isHorizontalScrollShowing(element);
+    };
+}
+
 export function _isHorizontalScrollShowing(element: HTMLElement): boolean {
     return element.clientWidth < element.scrollWidth;
 }
@@ -467,6 +478,7 @@ type RoleType =
     | 'button'
     | 'columnheader'
     | 'gridcell'
+    | 'heading'
     | 'menu'
     | 'option'
     | 'presentation'
@@ -481,7 +493,6 @@ type RoleType =
 
 export type ElementParams = {
     /** The tag name to use for the element, either browser tag or one of the AG Grid components such as ag-checkbox
-     * For span and div consider using the _span() and _div() helper functions instead to save bundle size.
      */
     tag: TagName;
     /** AG Grid data-ref attribute, should match a property on the class that uses the same name and is initialised with RefPlaceholder
@@ -507,12 +518,13 @@ export type ElementParams = {
      * A single string can be passed to the children property and this will call `element.textContent = children` on the element.
      *
      * Otherwise an array of children is passed.
-     * A child element can be an ElementParams / string / null/undefined.
+     * A child element can be an ElementParams / string / (() => Element) / null/undefined.
      *  - If an ElementParams is passed it will be created and appended to the parent element. It will be wrapped with whitespace to mimic the previous behaviour of multi line strings.
      *  - If a string is passed it will be appended as a text node.
+     *  - If a function is passed, it will be called and the result appended
      *  - If null or undefined is passed it will be ignored.
      */
-    children?: (ElementParams | string | null | undefined)[] | string;
+    children?: (ElementParams | string | (() => Element) | null | undefined)[] | string;
 };
 
 /** AG Grid attribute used to automatically assign DOM Elements to class properties */
@@ -554,6 +566,8 @@ export function _createElement<T extends HTMLElement = HTMLElement>(params: Elem
                     if (typeof child === 'string') {
                         element.appendChild(document.createTextNode(child));
                         addFirstWhitespace = false;
+                    } else if (typeof child === 'function') {
+                        element.appendChild(child());
                     } else {
                         // NOTE: To match the previous behaviour of when component templates where defined on multi line strings we need
                         // to add a whitespace node before and after each child element.

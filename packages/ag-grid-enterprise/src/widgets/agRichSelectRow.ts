@@ -17,8 +17,8 @@ import {
     _createElement,
     _exists,
     _getEditorRendererDetails,
+    _isElementOverflowingCallback,
     _setAriaSelected,
-    _shouldDisplayTooltip,
     _toString,
 } from 'ag-grid-community';
 
@@ -131,7 +131,7 @@ export class RichSelectRow<TValue> extends Component {
 
         eGui.appendChild(span);
         this.renderValueWithoutRenderer(parsedValue);
-        this.shouldDisplayTooltip = _shouldDisplayTooltip(() => span);
+        this.shouldDisplayTooltip = _isElementOverflowingCallback(() => span);
         this.tooltipFeature?.setTooltipAndRefresh(this.parsedValue);
     }
 

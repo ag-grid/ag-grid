@@ -164,17 +164,30 @@ export class SetFilterHandler<TValue = string>
         );
     }
 
-    public getModelAsString(model: SetFilterModel | null): string {
+    public getModelAsString(model: SetFilterModel | null, source?: 'floating' | 'filterToolPanel'): string {
         const { values } = model ?? {};
 
+        const forToolPanel = source === 'filterToolPanel';
+
         if (values == null) {
-            return '';
+            return forToolPanel ? translateForSetFilter(this, 'filterSummaryListInactive') : '';
         }
 
         const availableKeys = this.valueModel.getAvailableKeys(values);
         const numValues = availableKeys.length;
 
-        const formattedValues = availableKeys.slice(0, 10).map((key) => this.getFormattedValue(key));
+        const numToDisplay = forToolPanel ? 3 : 10;
+
+        const formattedValues = availableKeys.slice(0, numToDisplay).map((key) => this.getFormattedValue(key));
+
+        if (forToolPanel) {
+            const valueList = formattedValues.join(translateForSetFilter(this, 'filterSummaryListSeparator'));
+            if (numValues > 3) {
+                return translateForSetFilter(this, 'filterSummaryListLong', [valueList, String(numValues - 3)]);
+            } else {
+                return translateForSetFilter(this, 'filterSummaryListShort', [valueList]);
+            }
+        }
 
         return `(${numValues}) ${formattedValues.join(',')}${numValues > 10 ? ',...' : ''}`;
     }

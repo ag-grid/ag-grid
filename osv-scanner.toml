@@ -1,0 +1,174 @@
+# we ignore all octokit packages because we dont have any incoming/user driven requests to it and only
+# use to create and upload releases
+[[PackageOverrides]]
+name = "octokit"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/endpoint"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/app"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/core"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/oauth-app"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/plugin-paginate-graphql"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/plugin-paginate-rest"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/plugin-rest-endpoint-methods"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/plugin-retry"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/plugin-throttling"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/request-error"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/request"
+ignore = true
+
+[[PackageOverrides]]
+name = "@octokit/types"
+ignore = true
+
+[[IgnoredVulns]]
+id = "GHSA-67mh-4wv8-2f99"
+reason = "We do not use the esbuild development server"
+
+[[IgnoredVulns]]
+id = "GHSA-67mh-4wv8-2f99"
+reason = "We do not use the esbuild development server"
+
+[[IgnoredVulns]]
+id = "GHSA-jr5f-v2jv-69x6"
+reason = "We only use axios in examples"
+
+[[IgnoredVulns]]
+id = "GHSA-3xgq-45jj-v275"
+reason = "cross-spawn is used in development/testing - it's not used in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-4www-5p9h-95mh"
+reason = "middleware is used in development/testing - it's not used in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-9gqv-wp59-fq42"
+reason = "middleware is used in development/testing - it's not used in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-593f-38f6-jp5m"
+reason = "middleware is used in development/testing - it's not used in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-x2rg-q646-7m2v"
+reason = "middleware is used in development/testing - it's not used in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-p8p7-x288-28g6"
+reason = "Request calls are only used in our examples - not in the production code"
+
+[[IgnoredVulns]]
+id = "GHSA-9cwx-2883-4wfx"
+reason = "We don't use vite to serve files outside of development"
+
+[[IgnoredVulns]]
+id = "GHSA-vg6x-rcgg-rjx6"
+reason = "We don't use vite to serve files outside of development"
+
+[[IgnoredVulns]]
+id = "GHSA-x574-m823-4x7w"
+reason = "We don't use vite to serve files outside of development"
+
+[[IgnoredVulns]]
+id = "GHSA-4r4m-qw57-chr8"
+reason = "We don't use vite to serve files outside of development"
+
+[[IgnoredVulns]]
+id = "GHSA-xcj6-pq6g-qj4x"
+reason = "We don't use vite to serve files outside of development"
+
+[[IgnoredVulns]]
+id = "GHSA-356w-63v5-8wf4"
+reason = "We don't use vite to serve files outside of development"
+
+[[IgnoredVulns]]
+id = "GHSA-859w-5945-r5v3"
+reason = "We don't use vite to serve files outside of development"
+
+[[IgnoredVulns]]
+id = "GHSA-9crc-q9x8-hgqq"
+reason = "We don't use vitest to visit non ag-grid/charts sites, only for testing/dev purposes"
+
+[[IgnoredVulns]]
+id = "GHSA-4v9v-hfq4-rm2v"
+reason = "We only use the dev server for development/testing - it's not used in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-9jgg-88mc-972h"
+reason = "We only use the dev server for development/testing - it's not used in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-4r6h-8v6p-xvw6"
+reason = "x"
+
+[[IgnoredVulns]]
+id = "GHSA-5pgg-2g8v-p4x9" 
+reason = "x"
+
+[[IgnoredVulns]]
+id = "GHSA-72xf-g2v4-qvf3" 
+reason = "x"
+
+[[IgnoredVulns]]
+id = "GHSA-64vr-g452-qvp3" 
+reason = "x"
+
+[[IgnoredVulns]]
+id = "GHSA-4vvj-4cpr-p986" 
+reason = "x"
+
+[[IgnoredVulns]]
+id = "GHSA-952p-6rrq-rcjv" 
+reason = "x"
+
+[[IgnoredVulns]]
+id = "GHSA-x7hr-w5r2-h6wg" 
+reason = "x"
+
+[[IgnoredVulns]]
+id = "GHSA-968p-4wvh-cqc8" 
+reason = "x"
+
+[[IgnoredVulns]]
+id = "GHSA-grv7-fg5c-xmjg" 
+reason = "x"
+
+[[IgnoredVulns]]
+id = "GHSA-w7q9-p3jq-fmhm" 
+reason = "x"
+
+[[IgnoredVulns]]
+id = "GHSA-xvf7-4v9q-58w6" 
+reason = "x"
+
