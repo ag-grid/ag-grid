@@ -222,6 +222,11 @@ export type CoreParams = {
     filterPanelCardSubtleColor: ColorValue;
 
     /**
+     * Color of text and UI elements that should stand out less than the default in new Filter Tool Panel when hovered
+     */
+    filterPanelCardSubtleHoverColor: ColorValue;
+
+    /**
      * Color of matches used in Find
      */
     findMatchColor: ColorValue;
@@ -1151,7 +1156,11 @@ export const coreDefaults: Readonly<CoreParams> = {
     advancedFilterBuilderValuePillColor: '#85c0e4',
     filterPanelApplyButtonColor: backgroundColor,
     filterPanelApplyButtonBackgroundColor: accentColor,
-    filterPanelCardSubtleColor: { ref: 'subtleTextColor' },
+    filterPanelCardSubtleColor: {
+        ref: 'textColor',
+        mix: 0.7,
+    },
+    filterPanelCardSubtleHoverColor: { ref: 'textColor' },
     findMatchColor: foregroundColor,
     findMatchBackgroundColor: '#ffff00',
     findActiveMatchColor: foregroundColor,

@@ -94,6 +94,8 @@ const docs: Record<AllThemeParams, string> = {
     filterPanelApplyButtonBackgroundColor: 'Background color of new Filter Tool Panel apply button',
     filterPanelCardSubtleColor:
         'Color of text and UI elements that should stand out less than the default in new Filter Tool Panel',
+    filterPanelCardSubtleHoverColor:
+        'Color of text and UI elements that should stand out less than the default in new Filter Tool Panel when hovered',
     filterToolPanelGroupIndent: 'How much to indent child columns in the filters tool panel relative to their parent',
     findMatchColor: 'Color of matches used in Find',
     findMatchBackgroundColor: 'Background color of matches used in Find',
