@@ -79,7 +79,6 @@ import type {
     DragStartedEvent,
     DragStoppedEvent,
     EditStrategyType,
-    EditValidationCommitType,
     ExcelExportParams,
     ExcelStyle,
     ExpandOrCollapseAllEvent,
