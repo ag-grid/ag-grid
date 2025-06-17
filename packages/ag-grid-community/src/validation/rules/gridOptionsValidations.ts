@@ -125,6 +125,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, ValidationM
     initialState: 'GridState',
     isExternalFilterPresent: 'ExternalFilter',
     isRowPinnable: 'PinnedRow',
+    isRowPinned: 'PinnedRow',
     localeText: 'Locale',
     masterDetail: 'SharedMasterDetail',
     pagination: 'Pagination',
@@ -212,18 +213,24 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         isRowPinnable: {
             supportedRowModels: ['clientSide'],
-            validate({ isRowPinnable, pinnedTopRowData, pinnedBottomRowData }) {
+            validate({ enableRowPinning, isRowPinnable, pinnedTopRowData, pinnedBottomRowData }) {
                 if (isRowPinnable && (pinnedTopRowData || pinnedBottomRowData)) {
                     return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinnable`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                }
+                if (!enableRowPinning && isRowPinnable) {
+                    return '`isRowPinnable` requires `enableRowPinning` to be set.';
                 }
                 return null;
             },
         },
         isRowPinned: {
             supportedRowModels: ['clientSide'],
-            validate({ isRowPinned, pinnedTopRowData, pinnedBottomRowData }) {
+            validate({ enableRowPinning, isRowPinned, pinnedTopRowData, pinnedBottomRowData }) {
                 if (isRowPinned && (pinnedTopRowData || pinnedBottomRowData)) {
                     return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinned`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                }
+                if (!enableRowPinning && isRowPinned) {
+                    return '`isRowPinned` requires `enableRowPinning` to be set.';
                 }
                 return null;
             },

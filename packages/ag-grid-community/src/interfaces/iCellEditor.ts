@@ -39,7 +39,7 @@ export interface BaseCellEditor {
     /**
      * Optional: The error messages associated with the Editor
      */
-    getErrors?(): string[] | null;
+    getValidationErrors?(): string[] | null;
 }
 
 export interface ICellEditor<TValue = any> extends BaseCellEditor {
@@ -72,6 +72,12 @@ export interface ICellEditor<TValue = any> extends BaseCellEditor {
      * cell value visible. If this method is not present, the default is "over".
      */
     getPopupPosition?(): 'over' | 'under' | undefined;
+}
+
+export interface IErrorValidationParams<TData = any, TValue = any, TContext = any> {
+    value: TValue | null | undefined;
+    internalErrors: string[] | null;
+    cellEditorParams: ICellEditorParams<TData, TValue, TContext>;
 }
 
 export interface ICellEditorParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -115,11 +121,7 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
      * Use this to return your own custom errors.
      * @return An array of strings containing the editor error messages, or `null` if the editor is valid.
      */
-    getErrors?: (params: {
-        value: TValue | null | undefined;
-        internalErrors: string[] | null;
-        cellEditorParams: ICellEditorParams<TData, TValue, TContext>;
-    }) => string[] | null;
+    getValidationErrors?: (params: IErrorValidationParams<TData, TValue, TContext>) => string[] | null;
 
     /**
      * Runs the Editor Validation.

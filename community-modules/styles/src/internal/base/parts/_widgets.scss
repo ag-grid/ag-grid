@@ -65,6 +65,11 @@
             outline: none;
             box-shadow: var(--ag-input-focus-box-shadow);
             border-color: var(--ag-input-focus-border-color);
+            &.invalid,
+            &:invalid {
+                box-shadow: var(--ag-input-error-focus-box-shadow);
+                border-color: var(--ag-invalid-color);
+            }
         }
 
         &:invalid {
@@ -89,6 +94,10 @@
     button[class^='ag-'] {
         &:focus {
             box-shadow: var(--ag-input-focus-box-shadow);
+            &:invalid,
+            &.invalid {
+                box-shadow: var(--ag-input-error-focus-box-shadow);
+            }
         }
     }
 
@@ -672,6 +681,7 @@
         background-color: var(--ag-tooltip-error-background-color);
         color: var(--ag-tooltip-error-text-color);
         border: var(--ag-borders) var(--ag-tooltip-error-border-color);
+        font-weight: bold;
     }
 
     .ag-tooltip.ag-tooltip-animate,

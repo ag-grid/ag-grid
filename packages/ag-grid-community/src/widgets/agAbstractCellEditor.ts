@@ -13,16 +13,13 @@ export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TV
 
     public abstract getValidationElement(): HTMLElement | HTMLInputElement;
     public abstract getValue(): TValue | null | undefined;
-    public abstract getErrors(): string[] | null;
+    public abstract getValidationErrors(): string[] | null;
 
     public errorMessages: string[] | null = null;
 
     public init(params: P) {
         this.params = params;
         this.initialiseEditor(params);
-        const el = this.getValidationElement();
-        // override the browser's error message
-        el.setAttribute('title', '');
         this.eEditor.onValueChange(() => params.validate());
     }
 

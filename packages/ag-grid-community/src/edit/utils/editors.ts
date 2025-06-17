@@ -8,12 +8,15 @@ import type {
     ICellEditor,
     ICellEditorComp,
     ICellEditorParams,
+    ICellEditorValidationError,
 } from '../../interfaces/iCellEditor';
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
+import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
+import { _setAriaInvalid } from '../../utils/aria';
 import { _getCellCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
@@ -351,4 +354,54 @@ export function _refreshCell(beans: BeanCollection, edit: EditPosition): void {
     comp?.refreshEditStyles(false, false);
     cellCtrl?.updateAndFormatValue(false);
     cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });
+}
+
+export function _validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {
+    const mappedEditors = getCellEditorInstanceMap(beans);
+
+    if (!mappedEditors || mappedEditors.length === 0) {
+        return null;
+    }
+
+    const { ariaAnnounce, localeSvc } = beans;
+    const errors: ICellEditorValidationError[] = [];
+    const translate = _getLocaleTextFunc(localeSvc);
+    const ariaValidationErrorPrefix = translate('ariaValidationErrorPrefix', 'Cell Editor Validation');
+
+    for (const mappedEditor of mappedEditors) {
+        const { ctrl, editor } = mappedEditor;
+        const { rowNode, column } = ctrl;
+        const { rowIndex, rowPinned } = rowNode;
+        const errorMessages = editor.getValidationErrors?.();
+        const el = editor.getValidationElement?.();
+
+        ctrl.refreshEditorTooltip();
+
+        if (el) {
+            const isInvalid = errorMessages != null && errorMessages.length > 0;
+            const invalidMessage = isInvalid ? errorMessages.join('. ') : '';
+
+            _setAriaInvalid(el, isInvalid);
+            if (isInvalid) {
+                ariaAnnounce.announceValue(`${ariaValidationErrorPrefix} ${errorMessages}`, 'editorValidation');
+            }
+
+            if (el instanceof HTMLInputElement) {
+                el.setCustomValidity(invalidMessage);
+            } else {
+                el.classList.toggle('invalid', isInvalid);
+            }
+        }
+
+        if (errorMessages) {
+            errors.push({
+                column,
+                rowIndex: rowIndex!,
+                rowPinned,
+                messages: errorMessages,
+            });
+        }
+    }
+
+    return errors.length ? errors : null;
 }

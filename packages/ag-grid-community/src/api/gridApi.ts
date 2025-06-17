@@ -43,6 +43,7 @@ import type {
     GetCellEditorInstancesParams,
     GetEditingCellsParams,
     ICellEditor,
+    ICellEditorValidationError,
     SetEditingCellsParams,
 } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
@@ -869,6 +870,11 @@ export interface _EditGridApi<TData> {
      * Returns `true` if the grid is editing a cell
      */
     isEditing(cellPosition: CellPosition): boolean;
+
+    /**
+     * Run validation for every instantiated editor.
+     */
+    validateEdit(): ICellEditorValidationError[] | null;
 }
 
 export interface _BatchEditApi {

@@ -8,6 +8,7 @@ import {
     _setAriaControls,
     _setAriaExpanded,
     _setAriaLabel,
+    _setDisplayed,
 } from 'ag-grid-community';
 
 import { FilterDetailComp } from './filterDetailComp';
@@ -37,6 +38,7 @@ const FilterCardElement: ElementParams = {
                             cls: 'ag-button ag-filter-card-expand',
                             children: [
                                 { tag: 'span', ref: 'eTitle', cls: 'ag-filter-card-title' },
+                                { tag: 'span', ref: 'eEditing', cls: 'ag-filter-card-editing-icon' },
                                 { tag: 'span', ref: 'eExpandIcon', cls: 'ag-filter-card-expand-icon' },
                             ],
                         },
@@ -59,6 +61,7 @@ export class FilterCardComp extends Component {
     private readonly eDelete: HTMLElement = RefPlaceholder;
     private readonly eExpandIcon: HTMLElement = RefPlaceholder;
     private readonly eDeleteIcon: HTMLElement = RefPlaceholder;
+    private readonly eEditing: HTMLElement = RefPlaceholder;
 
     private state?: FilterPanelFilterState;
     private summaryComp?: FilterSummaryComp;
@@ -69,9 +72,9 @@ export class FilterCardComp extends Component {
     }
 
     public postConstruct(): void {
-        const { beans, eDelete, eExpand, eDeleteIcon, id } = this;
+        const { beans, eDelete, eExpand, eDeleteIcon, eEditing, id } = this;
         const filterPanelService = beans.filterPanelSvc!;
-        _setAriaLabel(eDelete, translateForFilterPanel(this, 'ariaLabelDeleteFilterCard'));
+        _setAriaLabel(eDelete, translateForFilterPanel(this, 'ariaLabelFilterCardDelete'));
         eDeleteIcon.appendChild(_createIcon('close', beans, null));
         this.activateTabIndex([eExpand, eDelete]);
         this.addManagedElementListeners(eExpand, {
@@ -81,18 +84,27 @@ export class FilterCardComp extends Component {
             click: () => filterPanelService.remove(id),
         });
         this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
+        eEditing.appendChild(_createIcon('filterCardEditing', beans, null));
     }
 
     public refresh(newState: FilterPanelFilterState): void {
-        const { eExpand, state: oldState, beans } = this;
+        const { eExpand, eEditing, state: oldState, beans } = this;
         this.state = newState;
-        const { name, expanded } = newState;
+        const { name, expanded, isEditing } = newState;
 
         this.eTitle.textContent = name;
+
+        _setDisplayed(eEditing, isEditing);
 
         if (!oldState || expanded !== oldState.expanded) {
             this.toggleExpand(newState);
         }
+
+        let ariaLabel = expanded ? null : `${name} ${newState.summary}`;
+        if (isEditing) {
+            ariaLabel = `${ariaLabel ?? name}. ${translateForFilterPanel(this, 'ariaLabelFilterCardHasEdits')}`;
+        }
+        _setAriaLabel(eExpand, ariaLabel);
 
         const removeComp = (comp?: Component<any>) => {
             if (!comp) {
@@ -137,8 +149,6 @@ export class FilterCardComp extends Component {
         const { eExpandIcon, eExpand, beans } = this;
         _clearElement(eExpandIcon);
         eExpandIcon.appendChild(_createIcon(expanded ? 'filterCardCollapse' : 'filterCardExpand', beans, null));
-        const ariaLabel = expanded ? null : `${state.name} ${state.summary}`;
-        _setAriaLabel(eExpand, ariaLabel);
         _setAriaExpanded(eExpand, expanded);
     }
 

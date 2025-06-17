@@ -139,6 +139,14 @@ export const AG_GRID_LOCALE_EN = {
     advancedFilterBuilderValidationSelectOption: 'Must select an option.',
     advancedFilterBuilderValidationEnterValue: 'Must enter a value.',
 
+    // Validation Errors
+    minDateValidation: 'Date must be after ${variable}',
+    maxDateValidation: 'Date must be before ${variable}',
+    maxLengthValidation: 'Must be ${variable} characters or fewer.',
+    minValueValidation: 'Must be greater than or equal to ${variable}',
+    maxValueValidation: 'Must be less than or equal to  ${variable}',
+    invalidSelectionValidation: 'Invalid selection.',
+
     // Side Bar
     columns: 'Columns',
     filters: 'Filters',
@@ -591,8 +599,11 @@ export const AG_GRID_LOCALE_EN = {
     ariaLabelColumnMenu: 'Column Menu',
     ariaLabelColumnFilter: 'Column Filter',
 
-    ariaLabelCellEditor: 'Cell Editor',
     ariaLabelSelectField: 'Select Field',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'Cell Editor',
+    ariaValidationErrorPrefix: 'Cell Editor Validation',
 
     // aria labels for async context menus
     ariaLabelLoadingContextMenu: 'Loading Context Menu',
@@ -619,7 +630,8 @@ export const AG_GRID_LOCALE_EN = {
 
     // ARIA labels for new Filter Tool Panel
     ariaLabelAddFilterField: 'Add Filter Field',
-    ariaLabelDeleteFilterCard: 'Delete Filter',
+    ariaLabelFilterCardDelete: 'Delete Filter',
+    ariaLabelFilterCardHasEdits: 'Has Edits',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

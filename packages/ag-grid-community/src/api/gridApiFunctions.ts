@@ -222,6 +222,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         stopEditing: 0,
         startEditingCell: 0,
         isEditing: 0,
+        validateEdit: 0,
     }),
     ...mod<_BatchEditApi>('BatchEdit', {
         setEditingCells: 0,

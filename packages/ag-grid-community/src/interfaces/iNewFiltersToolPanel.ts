@@ -13,6 +13,7 @@ export interface SelectableFilterDef {
     name?: string;
     /**
      * Filter to use for this column.
+     * - Set to `true` to use the default filter.
      * - Set to the name of a provided filter: `agNumberColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
      * - Set to a `ColumnFilter`
      */
@@ -34,6 +35,11 @@ export interface SelectableFilterParams {
      */
     filters?: SelectableFilterDef[];
     /**
+     * If providing `filters`, the index of the filter that should be active by default.
+     * @default 0
+     */
+    defaultFilterIndex?: number;
+    /**
      * Params which will be passed to all filters
      */
     defaultFilterParams?: FilterWrapperParams;
@@ -42,6 +48,7 @@ export interface SelectableFilterParams {
 interface FilterPanelBaseState {
     column: AgColumn;
     name: string;
+    isEditing: boolean;
 }
 
 export interface FilterPanelSummaryState extends FilterPanelBaseState {

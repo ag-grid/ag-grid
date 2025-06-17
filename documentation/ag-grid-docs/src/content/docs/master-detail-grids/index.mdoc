@@ -94,9 +94,9 @@ The following example shows flashing cells on the detail grids by using the Grid
 
 ## Detail Grid Lifecycle
 
-When a Master Row is expanded a Detail Row is created. When the Master Row is collapsed, the Detail Row is destroyed. When the Master Row is expanded a second time, a Detail Row is created again from scratch. This can be undesirable behaviour if there was context in the Detail Row, e.g. if the user sorted or filtered data in the Detail Row, the sort or filter will be reset the second time the Retail Row is displayed.
+When a Master Row is expanded a Detail Row is created. When the Master Row is collapsed, the Detail Row is destroyed. When the Master Row is expanded a second time, a Detail Row is created again from scratch. This can be undesirable behaviour if there was context in the Detail Row, e.g. if the user sorted or filtered data in the Detail Row, the sort or filter will be reset the second time the Detail Row is displayed.
 
-To prevent losing the context of Details Rows, the grid provides two properties to cache the Details Rows to be reused the next time the row is shows. The properties are as follows:
+To prevent losing the context of Details Rows, the grid provides two properties to cache the Details Rows to be reused the next time the row is shown. The properties are as follows:
 
 {% apiDocumentation source="grid-options/properties.json" section="masterDetail" names=["keepDetailRows", "keepDetailRowsCount"] /%}
 

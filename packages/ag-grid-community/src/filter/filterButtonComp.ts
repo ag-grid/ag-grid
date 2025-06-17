@@ -75,20 +75,28 @@ export class FilterButtonComp extends Component<FilterAction> {
                 cls: `ag-button ag-standard-button ${className}-button${isApply ? ' ' + className + '-apply-button' : ''}`,
                 children: text,
             });
+            this.activateTabIndex([button]);
+
             if (isApply) {
                 eApplyButton = button;
             }
 
-            button.addEventListener('click', clickListener);
-            button.addEventListener('keydown', (event) => {
+            const keydownListener = (event: KeyboardEvent) => {
                 if (event.key === KeyCode.ENTER) {
                     // this is needed to ensure a keyboard event is passed through, rather than a click event.
                     // otherwise focus won't be restored if a popup is closed
                     event.preventDefault();
                     clickListener(event);
                 }
-            });
-            this.listeners.push(() => button.removeEventListener('click', clickListener));
+            };
+
+            const listeners = this.listeners;
+
+            button.addEventListener('click', clickListener);
+            listeners.push(() => button.removeEventListener('click', clickListener));
+            button.addEventListener('keydown', keydownListener);
+            listeners.push(() => button.removeEventListener('keydown', keydownListener));
+
             fragment.append(button);
         };
 

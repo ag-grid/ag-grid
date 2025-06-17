@@ -93,27 +93,6 @@
         display: flex;
         flex-direction: column;
         width: 100%;
-        row-gap: var(--ag-widget-container-vertical-padding);
-        padding-bottom: var(--ag-widget-container-vertical-padding);
-
-        & > *:not(:last-child) {
-            margin-bottom: var(--ag-widget-vertical-spacing);
-        }
-
-        .ag-filter-apply-panel {
-            padding: 0 var(--ag-widget-container-horizontal-padding);
-            flex-wrap: wrap;
-            gap: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
-        }
-
-        .ag-filter-apply-panel-apply-button {
-            color: var(--ag-filter-panel-apply-button-color);
-            background-color: var(--ag-filter-panel-apply-button-background-color);
-        }
-
-        .ag-filter-apply-panel-button {
-            margin: 0;
-        }
 
         .ag-simple-filter-body-wrapper {
             padding: var(--ag-widget-vertical-spacing) var(--ag-widget-container-horizontal-padding) 0;
@@ -172,6 +151,7 @@
 
     .ag-filter-card-heading {
         flex: 1;
+        overflow: hidden;
     }
 
     .ag-filter-card-expand {
@@ -184,11 +164,24 @@
 
     .ag-filter-card-title {
         font-weight: var(--ag-header-font-weight);
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ag-filter-card-expand-icon {
+        display: flex;
+        flex: 1;
+        justify-content: end;
+    }
+
+    .ag-filter-card-editing-icon {
+        margin: 0 var(--ag-spacing);
     }
 
     .ag-filter-card-summary,
     .ag-filter-card-expand-icon,
-    .ag-filter-card-delete-icon {
+    .ag-filter-card-delete-icon,
+    .ag-filter-card-editing-icon {
         color: var(--ag-filter-panel-card-subtle-color);
     }
 
@@ -253,4 +246,26 @@
             border: 0;
         }
     }
+}
+
+.ag-filter-panel-buttons {
+    display: flex;
+    justify-content: flex-end;
+    overflow: hidden;
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding) 0;
+    flex-wrap: wrap;
+    gap: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
+}
+
+.ag-filter-panel-buttons-button {
+    line-height: 1.5;
+}
+
+.ag-filter-panel-buttons-apply-button {
+    color: var(--ag-filter-panel-apply-button-color);
+    background-color: var(--ag-filter-panel-apply-button-background-color);
+}
+
+.ag-filter-panel > *:where(:last-child) {
+    padding-bottom: var(--ag-widget-container-vertical-padding);
 }

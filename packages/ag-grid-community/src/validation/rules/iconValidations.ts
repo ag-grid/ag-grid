@@ -88,6 +88,7 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     filterAdd: 'NewFiltersToolPanel',
     filterCardCollapse: 'NewFiltersToolPanel',
     filterCardExpand: 'NewFiltersToolPanel',
+    filterCardEditing: 'NewFiltersToolPanel',
     filterTab: 'ColumnMenu',
     filtersToolPanel: 'FiltersToolPanel',
     columns: ['MenuCore'],
