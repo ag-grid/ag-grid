@@ -41,8 +41,8 @@ const slackMessage = { channel, username, icon_url, blocks };
 fs.writeFileSync(
     commentFileName,
     blocks
-        .map((b) => b.text?.text?.replace?.(/<(.+)\|(.+)>/g, '[$2]($1)') || '---')
-        .concat(['---', process.env.IS_SUCCESS ? '' : `Please address the issues before merging.`])
+        .map((b) => (b.text?.text || '').replace(/<(.+)\|(.+)>/g, '[$2]($1)'))
+        .concat(process.env.IS_SUCCESS ? [] : ['---', `Please address the issues before merging.`])
         .join('\n')
 );
 fs.writeFileSync(slackFileName, JSON.stringify(slackMessage, null, 2));
