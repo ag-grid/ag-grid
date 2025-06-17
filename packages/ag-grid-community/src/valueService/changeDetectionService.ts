@@ -17,6 +17,11 @@ type RefreshCDParams = {
     force?: boolean;
 };
 
+type RefreshPosition = {
+    node: IRowNode;
+    column: Column | null;
+};
+
 export class ChangeDetectionService extends BeanStub implements NamedBean {
     beanName = 'changeDetectionSvc' as const;
 
@@ -39,7 +44,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         this.refreshRows(event, { suppressFlash, force: true });
     }
 
-    private onCellValueChanged(event: CellValueChangedEvent | CellEditValuesChangedEvent): RowNode[] | undefined {
+    private onCellValueChanged(event: CellValueChangedEvent | CellEditValuesChangedEvent): void {
         // Clipboard service manages its own change detection, so no need to do it here.
         // The clipboard manages its own as otherwise this would happen once for every cell
         // that got updated as part of a paste operation, so e.g. if 100 cells in a paste operation,
@@ -53,10 +58,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         this.refreshRows(event);
     }
 
-    private refreshRows(
-        { node, column }: { node: IRowNode; column: Column },
-        { suppressFlash, force }: RefreshCDParams = {}
-    ): RowNode[] {
+    private refreshRows({ node, column }: RefreshPosition, { suppressFlash, force }: RefreshCDParams = {}): void {
         const { gos, rowRenderer } = this.beans;
 
         const rowNode = node as RowNode;
@@ -66,7 +68,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         const rootNode = clientSideRowModel?.rootNode;
 
         if (!rootNode) {
-            return rowNodes;
+            return;
         }
 
         // step 1 of change detection is to update the aggregated values
@@ -77,10 +79,14 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
 
         // add all nodes impacted by aggregation, as they need refreshed also.
         changedPath.forEachChangedNodeDepthFirst((pathNode) => {
-            rowNodes.push(pathNode);
+            if (!(gos.get('groupTotalRow') && !rowNode?.footer)) {
+                rowNodes.push(pathNode);
+            }
+
             if (pathNode.sibling) {
                 rowNodes.push(pathNode.sibling);
             }
+
             if (pathNode.pinnedSibling) {
                 rowNodes.push(pathNode.pinnedSibling);
             }
@@ -91,7 +97,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
             rowNodes,
             suppressFlash,
             force,
-            columns: [column],
+            columns: (column && [column]) || undefined,
         });
 
         if (rowNode.pinnedSibling) {
@@ -102,8 +108,5 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
                 force,
             });
         }
-
-        // return affected nodes for further processing, if needed
-        return rowNodes;
     }
 }
