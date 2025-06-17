@@ -266,6 +266,7 @@ jobs:
         id: testReport
         continue-on-error: true
         with:
+          use-actions-summary: false
           name: 'Tests Results'
           path: reports/*.xml
           reporter: jest-junit
