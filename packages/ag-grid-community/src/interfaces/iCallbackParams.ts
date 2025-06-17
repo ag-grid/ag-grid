@@ -1,4 +1,4 @@
-import type { ICellEditorValidationError } from './iCellEditor';
+import type { ICellEditorValidationError, IEditorValue } from './iCellEditor';
 import type { CellPosition } from './iCellPosition';
 import type { ChartToolbarMenuItemOptions, DefaultChartMenuItem } from './iChartOptions';
 import type { Column, ProvidedColumnGroup } from './iColumn';
@@ -70,6 +70,7 @@ export interface ProcessDataFromClipboardParams<TData = any, TContext = any> ext
 }
 
 export interface FullRowEditValidationParams {
+    currentEditingPositions: IEditorValue[];
     cellValidationErrors?: ICellEditorValidationError[];
 }
 

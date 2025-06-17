@@ -149,7 +149,7 @@ export interface SetEditingCellsParams {
     update?: boolean;
 }
 
-export interface EditingCellPosition extends RowPosition {
+export interface IEditorValue {
     /** Column id */
     colId: string;
 
@@ -170,7 +170,9 @@ export interface EditingCellPosition extends RowPosition {
 
     /** Existing value, used only when retrieving current editing state, ignored when setting new editing state. */
     oldValue?: any;
+}
 
+export interface EditingCellPosition extends IEditorValue, RowPosition {
     /** Current editing state */
     state?: EditState;
 }
