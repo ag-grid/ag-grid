@@ -283,12 +283,13 @@ export class AgSideBar extends Component implements ISideBar {
     }
 
     private validateDef(def: ToolPanelDef): boolean {
-        if (def.id == null) {
+        const { id, toolPanel } = def;
+        if (id == null) {
             _warn(212);
             return false;
         }
 
-        if (def.toolPanel === 'agFiltersToolPanel') {
+        if (toolPanel === 'agFiltersToolPanel' || toolPanel === 'agNewFiltersToolPanel') {
             if (this.beans.filterManager?.isAdvFilterEnabled()) {
                 _warn(213);
                 return false;

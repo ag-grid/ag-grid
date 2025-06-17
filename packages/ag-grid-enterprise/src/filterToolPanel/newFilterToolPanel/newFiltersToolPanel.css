@@ -178,7 +178,8 @@
     line-height: 1.5;
 }
 
-.ag-filter-panel-buttons-apply-button {
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-filter-panel .ag-filter-panel-buttons-apply-button {
     color: var(--ag-filter-panel-apply-button-color);
     background-color: var(--ag-filter-panel-apply-button-background-color);
 }
