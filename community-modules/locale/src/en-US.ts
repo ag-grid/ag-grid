@@ -78,11 +78,11 @@ export const AG_GRID_LOCALE_EN = {
     filterSummaryListShort: 'is (${variable})',
     filterSummaryListLong: 'is (${variable}) and ${variable} more',
     addFilterCard: 'Add Filter',
-    agTextColumnFilterDisplayName: 'Text Filter',
-    agNumberColumnFilterDisplayName: 'Number Filter',
-    agDateColumnFilterDisplayName: 'Date Filter',
-    agSetColumnFilterDisplayName: 'Set Filter',
-    agMultiColumnFilterDisplayName: 'Multi Filter',
+    agTextColumnFilterDisplayName: 'Simple Filter',
+    agNumberColumnFilterDisplayName: 'Simple Filter',
+    agDateColumnFilterDisplayName: 'Simple Filter',
+    agSetColumnFilterDisplayName: 'Selection Filter',
+    agMultiColumnFilterDisplayName: 'Combo Filter',
     addFilterPlaceholder: 'Search columns...',
 
     // Advanced Filter

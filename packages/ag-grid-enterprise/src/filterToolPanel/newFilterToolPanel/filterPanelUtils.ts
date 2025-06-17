@@ -6,11 +6,11 @@ const DEFAULT_LOCALE_TEXT = {
     ariaLabelAddFilterField: 'Add Filter Field',
     ariaLabelFilterCardDelete: 'Delete Filter',
     ariaLabelFilterCardHasEdits: 'Has Edits',
-    agTextColumnFilterDisplayName: 'Text Filter',
-    agNumberColumnFilterDisplayName: 'Number Filter',
-    agDateColumnFilterDisplayName: 'Date Filter',
-    agSetColumnFilterDisplayName: 'Set Filter',
-    agMultiColumnFilterDisplayName: 'Multi Filter',
+    agTextColumnFilterDisplayName: 'Simple Filter',
+    agNumberColumnFilterDisplayName: 'Simple Filter',
+    agDateColumnFilterDisplayName: 'Simple Filter',
+    agSetColumnFilterDisplayName: 'Selection Filter',
+    agMultiColumnFilterDisplayName: 'Combo Filter',
     addFilterPlaceholder: 'Search columns...',
 } as const;
 

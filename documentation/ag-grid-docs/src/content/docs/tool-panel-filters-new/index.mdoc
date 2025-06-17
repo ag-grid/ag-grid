@@ -33,7 +33,10 @@ Note that when opened from the column menu, the buttons will be visible within t
 
 For each column filter, the filter type can be changed by using the dropdown within the tool panel. To enable switching filters, set `filter: 'agSelectableColumnFilter` on the column definition. For any other `filter` value, the dropdown will not be displayed.
 
-By default, the dropdown will allow switching between the [Text Filter](./filter-text/)/[Number Filter](./filter-number/)/[Date Filter](./filter-date/) (depending on the [Cell Data Type](./cell-data-types/)), the [Set Filter](./filter-set), and the [Multi Filter](./filter-multi) (if the `MultiFilterModule` is loaded).
+By default, the dropdown will allow switching between:
+* `Simple Filter` - [Text Filter](./filter-text/), [Number Filter](./filter-number/) or [Date Filter](./filter-date/), depending on the [Cell Data Type](./cell-data-types/)
+* `Selection Filter` - [Set Filter](./filter-set)
+* `Combo Filter` - [Multi Filter](./filter-multi) (if the `MultiFilterModule` is loaded)
 
 To allow other filters to be configured in the dropdown, `filterParams` of type `SelectableFilterParams` can be set on the column definition:
 
