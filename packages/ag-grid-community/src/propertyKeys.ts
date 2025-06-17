@@ -341,6 +341,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'getRowHeight',
     'getRowClass',
     'getRowStyle',
+    'getFullRowEditValidationErrors',
     'getContextMenuItems',
     'getMainMenuItems',
     'processRowPostCreate',

@@ -99,6 +99,7 @@ import type {
     GetChartToolbarItems,
     GetContextMenuItems,
     GetDataPath,
+    GetFullRowEditValidationErrors,
     GetGroupRowAggParams,
     GetLocaleTextParams,
     GetMainMenuItems,
@@ -640,6 +641,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input() public editType: EditStrategyType | undefined = undefined;
+    /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
+    @Input() public getFullRowEditValidationErrors: GetFullRowEditValidationErrors | undefined = undefined;
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
      * @default false
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`

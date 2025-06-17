@@ -364,6 +364,12 @@
                 "url": "./cell-editing-full-row/"
             }
         },
+        "getFullRowEditValidationErrors": {
+            "more": {
+                "name": "Full Row Editing Validation",
+                "url": "./cell-editing-validation/#full-row-editing-validation"
+            }
+        },
         "singleClickEdit": {
             "more": {
                 "name": "Single Click Editing",
