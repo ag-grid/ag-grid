@@ -58,7 +58,7 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/latest' }}
 
 permissions:
-  contents: write-all
+  contents: write
 
 jobs:
   build_lint:
