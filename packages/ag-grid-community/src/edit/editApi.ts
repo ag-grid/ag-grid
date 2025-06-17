@@ -25,7 +25,7 @@ export function getEditingCells(beans: BeanCollection, params: GetEditingCellsPa
             const diff = _valuesDiffer({ newValue, oldValue });
 
             if (newValue === UNEDITED) {
-                return;
+                newValue = undefined;
             }
 
             const edit: EditingCellPosition = {
