@@ -35,7 +35,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        filter: true,
+        filter: 'agSelectableColumnFilter',
         filterParams: {
             defaultFilterParams: {
                 buttons: ['apply'], // set all filters to use buttons

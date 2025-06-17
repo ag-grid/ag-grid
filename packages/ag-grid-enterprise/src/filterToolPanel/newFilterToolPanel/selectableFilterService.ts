@@ -33,8 +33,7 @@ export class SelectableFilterService extends BeanStub implements ISelectableFilt
     }
 
     public isSelectable(filterDef: IFilterDef): boolean {
-        const filter = filterDef.filter;
-        return filter === true || filter === 'agSelectableColumnFilter';
+        return filterDef.filter === 'agSelectableColumnFilter';
     }
 
     public getFilterDef(column: AgColumn, filterDef: IFilterDef): IFilterDef {
