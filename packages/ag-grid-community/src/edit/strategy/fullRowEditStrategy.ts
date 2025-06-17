@@ -78,7 +78,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.dispatchRowEvent({ rowNode }, 'rowEditingStarted');
         }
 
-        const columns = this.beans.colModel.getCols();
+        const columns = this.beans.visibleCols.allCols;
         const cells: Required<EditPosition>[] = [];
 
         columns.forEach((column) => {
