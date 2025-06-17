@@ -191,10 +191,10 @@ jobs:
         with:
           cache_mode: ro
 
-#      - name: nx test
-#        if: matrix.shard != 0
-#        id: test
-#        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c=staging --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+      - name: nx test
+        if: matrix.shard != 0
+        id: test
+        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c=staging --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
       - name: nx test (non-sharded)
         if: matrix.shard == 0
         id: test-no-shard
