@@ -111,8 +111,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         // if any of the cells failed, keep those editors
         if (anyFailed && this.keepInvalidEditors) {
             return {
-                destroy: results.pass,
-                keep: results.fail,
+                destroy: [],
+                keep: results.all,
             };
         }
 
