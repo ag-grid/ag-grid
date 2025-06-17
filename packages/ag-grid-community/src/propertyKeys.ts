@@ -60,6 +60,7 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'serverSidePivotResultFieldSeparator',
     'columnMenu',
     'tooltipShowMode',
+    'cellEditingInvalidCommitType',
     'grandTotalRow',
     'themeCssLayer',
     'findSearchValue',

@@ -79,6 +79,7 @@ import type {
     DragStartedEvent,
     DragStoppedEvent,
     EditStrategyType,
+    EditValidationCommitType,
     ExcelExportParams,
     ExcelStyle,
     ExpandOrCollapseAllEvent,
@@ -645,6 +646,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input() public getFullRowEditValidationErrors: GetFullRowEditValidationErrors | undefined = undefined;
+    /** Set to `block` to block the commit of invalid cell edits, keeping editors open.
+     */
+    @Input() public cellEditingInvalidCommitType: EditValidationCommitType | undefined = undefined;
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
      * @default false
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`

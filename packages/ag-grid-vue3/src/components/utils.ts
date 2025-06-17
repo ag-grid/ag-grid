@@ -15,6 +15,7 @@ import type {
     DefaultChartMenuItem,
     DomLayoutType,
     EditStrategyType,
+    EditValidationCommitType,
     ExcelExportParams,
     ExcelStyle,
     FillOperationParams,
@@ -470,6 +471,9 @@ export interface Props<TData> {
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
     getFullRowEditValidationErrors?: GetFullRowEditValidationErrors | undefined,
+    /** Set to `block` to block the commit of invalid cell edits, keeping editors open.
+         */
+    cellEditingInvalidCommitType?: EditValidationCommitType | undefined,
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
          * @default false
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
@@ -1916,6 +1920,7 @@ export function getProps() {
         components: undefined,
         editType: undefined,
         getFullRowEditValidationErrors: undefined,
+        cellEditingInvalidCommitType: undefined,
         singleClickEdit: undefined,
         suppressClickEdit: undefined,
         readOnlyEdit: undefined,
