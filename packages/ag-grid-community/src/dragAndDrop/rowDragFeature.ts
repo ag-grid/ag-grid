@@ -284,7 +284,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (sameGrid && target) {
             if (source === target) {
                 targetInRows = true;
-                if (Math.abs(yDelta) < 0.5) {
+                if (Math.abs(yDelta) <= 0.5) {
                     return null; // Nothing to move
                 }
             } else {
