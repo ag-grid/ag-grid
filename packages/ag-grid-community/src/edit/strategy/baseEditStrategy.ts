@@ -45,6 +45,10 @@ export abstract class BaseEditStrategy extends BeanStub {
             cellFocused: this.onCellFocusChanged?.bind(this),
             cellFocusCleared: this.onCellFocusChanged?.bind(this),
         });
+
+        this.addManagedPropertyListener('cellEditingInvalidCommitType', ({ currentValue }) => {
+            this.keepInvalidEditors = currentValue === 'block';
+        });
     }
 
     public abstract midBatchInputsAllowed(position?: EditPosition): boolean;

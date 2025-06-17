@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { EditValidationCommitType, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -43,7 +43,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         editable: true,
     },
 
-    // cellEditingInvalidCommitType: 'revert',
+    cellEditingInvalidCommitType: 'revert', // default value
 };
 
 // setup the grid after the page has finished loading
@@ -57,7 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function onValidationModeSelect() {
-    const value: 'revert' | 'block' = document.querySelector<HTMLSelectElement>('#select-validation-mode')?.value;
+    const value: 'revert' | 'block' = document.querySelector<HTMLSelectElement>('#select-validation-mode')
+        ?.value as EditValidationCommitType;
 
     gridApi.setGridOption('cellEditingInvalidCommitType', value);
 }
