@@ -628,7 +628,7 @@ export const AG_GRID_LOCALE_EN = {
     ariaColumnPanelList: 'Column List',
     ariaFilterPanelList: 'Filter List',
 
-    // ARIA labels for new Filter Tool Panel
+    // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Add Filter Field',
     ariaLabelFilterCardDelete: 'Delete Filter',
     ariaLabelFilterCardHasEdits: 'Has Edits',

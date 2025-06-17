@@ -207,22 +207,22 @@ export type CoreParams = {
     filterToolPanelGroupIndent: LengthValue;
 
     /**
-     * Color of new Filter Tool Panel apply button
+     * Color of new Filters Tool Panel apply button
      */
     filterPanelApplyButtonColor: ColorValue;
 
     /**
-     * Background color of new Filter Tool Panel apply button
+     * Background color of new Filters Tool Panel apply button
      */
     filterPanelApplyButtonBackgroundColor: ColorValue;
 
     /**
-     * Color of text and UI elements that should stand out less than the default in new Filter Tool Panel
+     * Color of text and UI elements that should stand out less than the default in new Filters Tool Panel
      */
     filterPanelCardSubtleColor: ColorValue;
 
     /**
-     * Color of text and UI elements that should stand out less than the default in new Filter Tool Panel when hovered
+     * Color of text and UI elements that should stand out less than the default in new Filters Tool Panel when hovered
      */
     filterPanelCardSubtleHoverColor: ColorValue;
 
