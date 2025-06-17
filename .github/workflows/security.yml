@@ -9,6 +9,11 @@ jobs:
     code-dependency-scan:
         runs-on: ubuntu-latest
         steps:
+            - name: Harden the runner (Audit all outbound calls)
+              uses: step-security/harden-runner@002fdce3c6a235733a90a27c80493a3241e56863 # v2.12.1
+              with:
+                egress-policy: audit
+
             - name: Checkout
               id: checkout
               uses: actions/checkout@v4
@@ -23,6 +28,11 @@ jobs:
     sast-code-scan:
         runs-on: ubuntu-latest
         steps:
+            - name: Harden the runner (Audit all outbound calls)
+              uses: step-security/harden-runner@002fdce3c6a235733a90a27c80493a3241e56863 # v2.12.1
+              with:
+                egress-policy: audit
+
             - name: Checkout
               id: checkout
               uses: actions/checkout@v4
