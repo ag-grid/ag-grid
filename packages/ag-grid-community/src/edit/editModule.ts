@@ -1,6 +1,7 @@
 import type { _EditGridApi, _UndoRedoGridApi } from '../api/gridApi';
 import type { DefaultProvidedCellEditorParams } from '../interfaces/iCellEditor';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
+import { TooltipModule } from '../tooltip/tooltipModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';
@@ -48,7 +49,7 @@ export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
         singleCell: SingleCellEditStrategy,
         fullRow: FullRowEditStrategy,
     },
-    dependsOn: [PopupModule],
+    dependsOn: [PopupModule, TooltipModule],
     css: [cellEditingCSS],
 };
 
