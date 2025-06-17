@@ -1184,6 +1184,7 @@ export type {
     RowDropPositionIndicator,
 } from './interfaces/IRowDropHighlightService';
 export type { EditStrategyType } from './interfaces/editStrategyType';
+export type { EditValidationCommitType } from './interfaces/editValidationCommitType';
 export {
     RowSelectionModule,
     SharedRowSelectionModule as _SharedRowSelectionModule,

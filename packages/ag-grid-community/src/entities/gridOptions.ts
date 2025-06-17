@@ -116,6 +116,7 @@ import type {
     SizeColumnsToFitProvidedWidthStrategy,
 } from '../interfaces/autoSize';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
+import type { EditValidationCommitType } from '../interfaces/editValidationCommitType';
 import type {
     CsvExportParams,
     ProcessCellForExportParams,
@@ -511,6 +512,12 @@ export interface GridOptions<TData = any> {
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     editType?: EditStrategyType;
+
+    /**
+     * Set to `block` to block the commit of invalid cell edits, keeping editors open.
+     */
+    cellEditingInvalidCommitType?: EditValidationCommitType;
+
     /**
      * Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
      * @default false
