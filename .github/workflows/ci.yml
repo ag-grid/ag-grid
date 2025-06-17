@@ -59,6 +59,7 @@ concurrency:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   build_lint:
@@ -223,8 +224,9 @@ jobs:
     needs: [ build_lint, test ]
     if: cancelled() != true
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
+      actions: read
+      checks: write
     steps:
       - name: Checkout
         id: checkout
