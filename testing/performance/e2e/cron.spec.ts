@@ -1,6 +1,6 @@
 import path from 'path';
 
-import test, { TestCase, allFrameworks } from '../benchmarking';
+import test, { TestCase } from '../benchmarking';
 import { waitFor } from '../playwright.utils';
 
 const noRowsCheck = () => document.body.textContent!.includes('No Rows To Show');

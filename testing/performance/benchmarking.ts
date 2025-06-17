@@ -223,11 +223,9 @@ function computeCommonStats(s1: Stats, s2: Stats, testCase: InternalTestCase) {
 
     const avgMoE = getStandardError(s1.marginOfError, s2.marginOfError);
     const avgMoEPercent = (avgMoE / Math.min(s1.average, s2.average)) * 100;
+    const practicalConfidence = percentDiff - avgMoEPercent > 2; // 2% is a practical confidence threshold
 
-    const numbersString = `${Math.abs(diff).toFixed(2)} ± ${avgMoE.toFixed(2)}`;
-    const percentString = `${percentDiff.toFixed(1)}% ± ${avgMoEPercent.toFixed(1)}%`;
-
-    return { diff, slower, faster, percentDiff, avgMoE, avgMoEPercent, numbersString, percentString };
+    return { diff, slower, faster, percentDiff, avgMoE, avgMoEPercent, practicalConfidence };
 }
 
 /**
@@ -243,8 +241,17 @@ function getStandardError(moe1: number, moe2: number) {
 /**
  * Determines whether a percentage difference between two values is statistically significant at the 95% confidence level,
  * using a z-test approximation based on margins of error.
+ *
+ * There is some overlap with the practical confidence check.
+ * If this returns true, practical confidence is also true. If this returns false, practical confidence may still be true.
+ * So we can create a matrix of significance and practical confidence:
+ * | Significance | Practical Confidence |                                  Outcome                                     |
+ * |--------------|----------------------|------------------------------------------------------------------------------|
+ * | true         | true / false         | There is a significant difference, we don't care about practical confidence  |
+ * | false        | true                 | Insignificant difference, but high practical confidence                      |
+ * | false        | false                | Insignificant difference, and inconclusive results                           |
  */
-function isSignificant(diff: number, moe1: number, moe2: number) {
+function isDiffSignificant(diff: number, moe1: number, moe2: number) {
     const z_score = diff / getStandardError(moe1, moe2);
     return Math.abs(z_score) > CRITICAL_VALUE;
 }
@@ -254,17 +261,19 @@ function isSignificant(diff: number, moe1: number, moe2: number) {
  * Returns true if the results are significant, false otherwise.
  */
 function reportStats(s1: Stats, s2: Stats, testCase: InternalTestCase) {
-    const { percentDiff, avgMoEPercent, percentString, numbersString, slower, faster } = computeCommonStats(
+    const { percentDiff, avgMoEPercent, slower, faster, diff, avgMoE, practicalConfidence } = computeCommonStats(
         s1,
         s2,
         testCase
     );
-    const resultMessage =
-        percentDiff - avgMoEPercent <= 2
-            ? `${cyan('Both')} ${magenta(testCase.control.version)} and ${magenta(testCase.variant.version)}${cyan(` seem to be equal (${slower} is slightly slower than ${faster}): `)}${green(percentString)} (${numbersString}).\n${yellow(
-                  'Even though the data is statistically meaningful, it is safer to re-run the test with more iterations to confirm.'
-              )}`
-            : `${magenta(slower)}${cyan(' is slower than ')}${magenta(faster)}${cyan(' by ')}${green(percentString)} (${numbersString})`;
+
+    const numbersDiffString = `${Math.abs(diff).toFixed(2)} ± ${avgMoE.toFixed(2)}`;
+    const percentDiffString = renderPercentDiffString(percentDiff, avgMoEPercent);
+    const resultMessage = practicalConfidence
+        ? `${magenta(slower)}${cyan(' is slower than ')}${magenta(faster)}${cyan(' by ')}${green(percentDiffString)} (${numbersDiffString})`
+        : `${cyan('Both')} ${magenta(testCase.control.version)} and ${magenta(testCase.variant.version)}${cyan(` seem to be equal (${slower} is slightly slower than ${faster}): `)}${green(percentDiffString)} (${numbersDiffString}).\n${yellow(
+              'There is not enough practical confidence in the data, it is safer to re-run the test with more iterations to confirm.'
+          )}`;
 
     console.log(`${bgBlue.black.bold(' Performance Comparison Results ')}`);
     console.log(resultMessage);
@@ -359,11 +368,30 @@ const testLevelCatch = (e: any, lastCommunications?: BrowserCommunications) => {
     throw e;
 };
 
+/**
+ * Determines whether the test should fail based on the statistics of the two variants.
+ * If the difference between the averages is significant or practical confidence is achieved,
+ * it will return true if the faster variant is the control version.
+ */
+function shouldFailTest(s1: Stats, s2: Stats, testCase: InternalTestCase) {
+    const { practicalConfidence, faster } = computeCommonStats(s1, s2, testCase);
+    if (isDiffSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError) || practicalConfidence) {
+        return faster === testCase.control.version;
+    } else {
+        return false; // even though we don't have a significance
+    }
+}
+
+function renderPercentDiffString(percentDiff: number, avgMoEPercent: number) {
+    return `${percentDiff.toFixed(1)}% ± ${avgMoEPercent.toFixed(1)}%`;
+}
+
 const testBody = async (testCase: InternalTestCase, { page, context }: PlaywrightTestArgs, ..._: any[]) => {
     const result = { control: [] as number[], variant: [] as number[] };
     let s1: Stats, s2: Stats;
     const { minIter, maxIter, warmupIter, setLastCommunications } = testCase.__hidden!;
     let significant = false;
+    let needToContinue = true;
     do {
         for (const variantName of ['control', 'variant'] as const) {
             const variant = testCase[variantName];
@@ -386,29 +414,24 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
         }
         [s1, s2] = [computeStats(result.control), computeStats(result.variant)];
         [result.control, result.variant] = [s1.newBase, s2.newBase]; // update the result with filtered data
-        significant = isSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError);
+        significant = isDiffSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError);
+        needToContinue = !significant && result['control'].length < maxIter;
         if (!process.env['CI']) {
-            if (significant) {
-                reportStats(s1, s2, testCase);
-            }
-            if (!significant && result['control'].length < maxIter) {
+            if (significant) reportStats(s1, s2, testCase);
+            if (needToContinue) {
+                const { percentDiff, avgMoEPercent } = computeCommonStats(s1, s2, testCase);
                 console.log(
-                    `${yellow(`Result is statistically insignificant (`)}${green(
-                        computeCommonStats(s1, s2, testCase).percentString
-                    )}, ${blue(`${s1.filteredCount}/${s1.originalCount}`)})${yellow('. Running more iterations...')}`
+                    `${yellow(`Result is statistically insignificant (`)}` +
+                        green(renderPercentDiffString(percentDiff, avgMoEPercent)) +
+                        `, ${s1.filteredCount}/${s1.originalCount})` +
+                        yellow('. Running more iterations...')
                 );
             }
         }
-    } while (!significant && result['control'].length < maxIter);
-    if (!significant) {
-        console.log(
-            yellow(
-                `The difference is statistically insignificant. The difference may be too small, or the test needs way more iterations.`
-            )
-        );
-    }
-    if (process.env['CI']) {
-        reportStats(s1, s2, testCase);
+    } while (needToContinue);
+    if (process.env['CI']) reportStats(s1, s2, testCase);
+    if (shouldFailTest(s1, s2, testCase)) {
+        throw new Error('Test failed. See above for details.');
     }
 };
 

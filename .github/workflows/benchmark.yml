@@ -27,6 +27,8 @@ env:
   PR_ID: ${{ inputs.force_pr_id || github.event.issue.number }}
   COMMENT_FILE: ./comment.txt
   SLACK_FILE: ./slack.json
+  SLACK_FILE_SNIPPET: ./slack-snippet.txt
+  DEFAULT_RETENTION_DAYS: 30
 
 jobs:
   benchmark:
@@ -171,7 +173,7 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
-          retention-days: 30
+          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
       - name: Prepare messages
         id: prepare-messages
@@ -188,11 +190,34 @@ jobs:
           echo "::set-output name=comment::${COMMENT_CONTENT}"
           cat $SLACK_FILE
 
+      - name: Upload Slack Snippet
+        id: upload-snippet
+        uses: actions/upload-artifact@v4
+        if: ${{ steps.prepare-messages.outcome == 'success' }}
+        with:
+          name: slack-snippet
+          path: ${{ env.SLACK_FILE_SNIPPET }}
+          retention-days: ${{ env.DEFAULT_RETENTION_DAYS }}
+
+      - name: Attach Snippet to a Slack Message
+        uses: actions/github-script@v7
+        id: attach-snippet
+        if: ${{ steps.upload-snippet.outputs.artifact-url }}
+        env:
+          SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
+        with:
+          script: |
+            const fs = require('fs');
+            const msg = JSON.parse(fs.readFileSync(process.env.SLACK_FILE, 'utf8'));
+            msg.blocks.push({ type: 'section', text: { type: 'mrkdwn', text: `<${process.env.SNIPPET_URL}|Full stdout>` } });
+            fs.writeFileSync(process.env.SLACK_FILE, JSON.stringify(msg));
+
       - name: Slack Notification
         continue-on-error: true
-        if: ${{ !cancelled() && (inputs.notify == true || github.event_name == 'schedule') }}
+        if: ${{ !cancelled() && (inputs.notify == true || github.event_name == 'schedule') && steps.prepare-messages.outcome == 'success' }}
         env:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
+          SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
         run: |
           curl -X POST -H 'Content-type: application/json' $SLACK_WEBHOOK --data @$SLACK_FILE
 
