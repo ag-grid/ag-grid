@@ -60,14 +60,13 @@ jobs:
         id: get-branch
         env:
           REPO: ${{ github.repository }}
-          PR_NO: ${{ env.PR_ID || github.event.issue.number }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo PR_ID=$PR_ID
           echo github.event.issue.number=${{ github.event.issue.number }}
           if [[ !!"${{ steps.notify-start.outputs.result }}" ]] ; then
             # For PR comments, get the branch from the PR
-            echo "branch=$(gh pr view $PR_NO --repo $REPO --json headRefName --jq '.headRefName')" >> $GITHUB_OUTPUT
+            echo "branch=$(gh pr view $PR_ID --repo $REPO --json headRefName --jq '.headRefName')" >> $GITHUB_OUTPUT
           elif [[ "${{ github.event_name }}" == "schedule" ]] ; then
             # For scheduled workflow dispatch, use the 'latest' branch
             echo "branch=latest" >> $GITHUB_OUTPUT
@@ -227,7 +226,6 @@ jobs:
         if: ${{ !!steps.notify-start.outputs.result }}
         env:
           COMMENT: ${{ steps.prepare-messages.outputs.comment }}
-          PR_NO: ${{ env.PR_ID || github.event.issue.number }}
           COMMENT_ID: ${{ steps.notify-start.outputs.result }}
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
         with:
@@ -235,7 +233,7 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const comment_id = parseInt(process.env.COMMENT_ID, 10);
-            const pull_number = parseInt(process.env.PR_NO, 10);
+            const pull_number = parseInt(process.env.PR_ID, 10);
             const body = `${process.env.COMMENT}`;
 
             if (`${process.env.IS_SUCCESS}`) {

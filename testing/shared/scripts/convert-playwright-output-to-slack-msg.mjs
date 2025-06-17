@@ -15,7 +15,7 @@ if (!username) throw new Error('SLACK_USERNAME is not set');
 if (!icon_url) throw new Error('SLACK_ICON is not set');
 
 const SUCCESS_STRING = '🏁 Benchmarking finished';
-const FAILURE_STRING = `❌ Problems encountered while benchmarking.\nPlease check output for details.`;
+const FAILURE_STRING = `❌ Problems encountered while benchmarking.`;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,14 +29,13 @@ const defaultBlocks = [
         type: 'section',
         text: {
             type: 'mrkdwn',
-            text: `<${process.env.JOB_URL ?? 'did you forget to supply process.env.JOB_URL?'}|Job link>\n<${process.env.REPORT_URL ?? 'did you forget to supply process.env.REPORT_URL?'}|Benchmark report>\n`,
+            text: `${process.env.IS_SUCCESS ? SUCCESS_STRING : FAILURE_STRING} | <${process.env.JOB_URL ?? 'did you forget to supply process.env.JOB_URL?'}|Job link> | <${process.env.REPORT_URL ?? 'did you forget to supply process.env.REPORT_URL?'}|Benchmark report>\n`,
         },
     },
-    { type: 'section', text: { type: 'mrkdwn', text: process.env.IS_SUCCESS ? SUCCESS_STRING : FAILURE_STRING } },
     { type: 'divider' },
 ];
 
-const num = (count, emoji, label) => (count ? `${emoji} *${label}:* ${count}\n` : '');
+const num = (count, emoji, label) => (count ? `${emoji} *${label}:* ${count}` : '');
 const statusEmoji = (status) => ({ expected: '✅', unexpected: '🙁', skipped: '🔕', flaky: '👻' })[status] || '❓';
 const codeBlock = (text) => `\`\`\`${paragraph(text)}\`\`\``;
 const code = (text) => `\`${text}\``;
@@ -55,7 +54,8 @@ const getStdout = (stdout) => {
     const distilled = full
         .map((l) => l.split('\n'))
         .flat()
-        .filter((l) => l.includes('%'));
+        .filter((l) => l.includes('%'))
+        .map((l) => l.trim());
     return { full, distilled };
 };
 
@@ -64,11 +64,13 @@ const renderStdout = (stdout) => {
 };
 
 const getTotalsText = (report) =>
-    num(report.stats.expected + report.stats.skipped + report.stats.unexpected + report.stats.flaky, '⚒️', 'Total') +
-    num(report.stats.expected, statusEmoji('expected'), 'Passed') +
-    num(report.stats.unexpected, statusEmoji('unexpected'), 'Failed') +
-    num(report.stats.skipped, statusEmoji('skipped'), 'Skipped') +
-    num(report.stats.flaky, statusEmoji('flaky'), 'Flaky');
+    [
+        num(report.stats.expected + report.stats.skipped + report.stats.unexpected + report.stats.flaky, '⚒️', 'Total'),
+        num(report.stats.expected, statusEmoji('expected'), 'Passed'),
+        num(report.stats.unexpected, statusEmoji('unexpected'), 'Failed'),
+        num(report.stats.skipped, statusEmoji('skipped'), 'Skipped'),
+        num(report.stats.flaky, statusEmoji('flaky'), 'Flaky'),
+    ].join(' | ');
 
 const getSectionWithTotals = (report) => ({
     type: 'section',
@@ -80,14 +82,14 @@ const getSectionWithTotals = (report) => ({
 
 const getResultsString = (tests, distilled = false) => {
     return (
-        '*🔥 Tests*' +
+        'Tests' +
         tests
             .map(
                 ({ status, path, results }, i) =>
-                    `${i + 1}. ${statusEmoji(status)} *${path.map((p) => p.title).join(' > ')}* ${paragraph(
+                    `${i + 1}. _${statusEmoji(status)} ${path.map((p) => p.title).join(' > ')}_ ${paragraph(
                         results
                             .map(({ error, stdout }) => [error, getStdout(stdout)[distilled ? 'distilled' : 'full']])
-                            .map(([error, stdout]) => `${renderError(error)}\n- *Output*: ${renderStdout(stdout)}`)
+                            .map(([error, stdout]) => `${renderError(error)}\n- Output: ${renderStdout(stdout)}`)
                             .join('\n')
                     )}`
             )
