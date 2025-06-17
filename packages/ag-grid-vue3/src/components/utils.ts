@@ -15,7 +15,6 @@ import type {
     DefaultChartMenuItem,
     DomLayoutType,
     EditStrategyType,
-    EditValidationCommitType,
     ExcelExportParams,
     ExcelStyle,
     FillOperationParams,
