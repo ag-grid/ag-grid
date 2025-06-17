@@ -74,15 +74,10 @@ const gridOptions: GridOptions = {
         const weight = parseFloat(values['weight']);
         const height = parseFloat(values['height']);
 
-        const errors: string[] = [];
-
-        if (!isFinite(weight) || !isFinite(height) || weight <= 0 || height <= 0) {
-            errors.push('Weight and Height must be positive numbers.');
-            return errors;
-        }
-
         const heightM = height / 100;
         const bmi = weight / (heightM * heightM);
+
+        const errors: string[] = [];
 
         if (bmi < 10 || bmi > 80) {
             errors.push(`BMI value of ${bmi.toFixed(2)} is not realistic. Please verify the input.`);
