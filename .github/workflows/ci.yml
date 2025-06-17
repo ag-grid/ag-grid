@@ -269,7 +269,7 @@ jobs:
           done)
 
       - name: Test Report
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v2
         if: needs.test.result == 'success' || needs.test.result == 'failure' ||
           needs.e2e.result == 'success' || needs.e2e.result == 'failure' ||
           needs.bundle_size.result == 'success' || needs.bundle_size.result == 'failure'
