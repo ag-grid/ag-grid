@@ -57,6 +57,14 @@ The example below demonstrates configuring filters:
 
 {% gridExampleRunner title="New Filters Tool Panel Configuration" name="configuring-filters" /%}
 
+## Filters Tool Panel State
+
+When the grid initialises, the tool panel only shows active filters provided in the [Initial State](./grid-state/) filter model. The tool panel can also be configured via initial state to show inactive filters, or change the order and expansion state. This is provided to the Side Bar state as a `NewFiltersToolPanelState` object:
+
+{% interfaceDocumentation interfaceName="NewFiltersToolPanelState" config={"description": ""} /%}
+
+{% gridExampleRunner title="New Filters Tool Panel State" name="state" /%}
+
 ## Filter Instances
 
 The filters provided in the tool panel are the same instances as the filter in the column menu. This has the following implications:
