@@ -140,7 +140,7 @@ const gridOptions: GridOptions = {
                     rowDrag: true,
                     valueFormatter: (params: ValueFormatterParams) => {
                         node = params.node as IRowNode;
-                        return params.value?.toString() ?? params.value ?? '';
+                        return params.value ?? '';
                     },
                 },
                 {
@@ -220,7 +220,6 @@ const gridOptions: GridOptions = {
     },
     grandTotalRow: 'bottom',
     groupTotalRow: 'bottom',
-
     sideBar: 'columns',
     pivotPanelShow: 'always',
     rowData: getData(),
@@ -357,6 +356,13 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
         // set to 'top', 'bottom' or undefined
         rowPinned: pinned,
         key: key,
+    });
+}
+
+function toggleAggOnlyChanged() {
+    const aggOnlyChanged = gridApi!.getGridOption('aggregateOnlyChangedColumns');
+    gridApi!.updateGridOptions({
+        aggregateOnlyChangedColumns: !aggOnlyChanged,
     });
 }
 

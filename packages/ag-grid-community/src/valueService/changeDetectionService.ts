@@ -77,9 +77,11 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         changedPath.addParentNode(rowNode.parent, [column as AgColumn]);
         clientSideRowModel.doAggregate(changedPath);
 
+        const groupTotalRow = gos.get('groupTotalRow');
+
         // add all nodes impacted by aggregation, as they need refreshed also.
         changedPath.forEachChangedNodeDepthFirst((pathNode) => {
-            if (!(gos.get('groupTotalRow') && !rowNode?.footer)) {
+            if (!(groupTotalRow && !rowNode?.footer)) {
                 rowNodes.push(pathNode);
             }
 
