@@ -276,7 +276,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             // Footer row. Get the real parent, that is the sibling of the footer
             newParent = target.sibling ?? clientSideRowModel.rootNode;
             const found = getPrevOrNext(clientSideRowModel, -1, target) ?? getPrevOrNext(clientSideRowModel, 1, target);
-            yDelta = found && found.rowIndex! < target.rowIndex! ? -0.5 : 0.5;
+            yDelta = found && found.rowIndex! > target.rowIndex! ? -0.5 : 0.5;
             target = found ?? null;
         }
 
