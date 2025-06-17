@@ -1,6 +1,11 @@
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { IComponent } from './iComponent';
 
-export interface ILoadingCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, TContext> {}
+export interface ILoadingCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, TContext> {
+    /**
+     * `true` if the loading cell renderer is being displayed in place of a slow cell renderer via `cellRendererParams.deferRender`.
+     */
+    deferRender?: boolean;
+}
 export interface ILoadingCellRenderer {}
 export interface ILoadingCellRendererComp extends ILoadingCellRenderer, IComponent<ILoadingCellRendererParams> {}

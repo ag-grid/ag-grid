@@ -22,11 +22,13 @@ import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
+import type { ICellStyleFeature } from '../../interfaces/iCellStyleFeature';
 import type { IEditService } from '../../interfaces/iEditService';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { IRowNumbersRowResizeFeature } from '../../interfaces/rowNumbers';
+import type { ILoadingCellRendererParams } from '../../main-umd-noStyles';
 import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
@@ -36,6 +38,7 @@ import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../utils/dom';
 import { _getCtrlForEventTarget } from '../../utils/event';
 import { _findFocusableElements, _isCellFocusSuppressed } from '../../utils/focus';
 import { _makeNull } from '../../utils/generic';
+import { AgPromise } from '../../utils/promise';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
@@ -107,7 +110,9 @@ export class CellCtrl extends BeanStub {
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
+    private editStyleFeature: ICellStyleFeature | undefined = undefined;
     private tooltipFeature: TooltipFeature | undefined = undefined;
+    private editorTooltipFeature: TooltipFeature | undefined = undefined;
     private mouseListener: CellMouseListenerFeature | undefined = undefined;
     private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
 
@@ -155,6 +160,7 @@ export class CellCtrl extends BeanStub {
         const { beans } = this;
         this.positionFeature = new CellPositionFeature(this, beans);
         this.customStyleFeature = beans.cellStyles?.createCellCustomStyleFeature(this, beans);
+        this.editStyleFeature = beans.editSvc?.createCellStyleFeature(this, beans);
         this.mouseListener = new CellMouseListenerFeature(this, beans, this.column);
 
         this.keyboardListener = new CellKeyboardListenerFeature(this, beans, this.rowNode, this.rowCtrl);
@@ -185,7 +191,9 @@ export class CellCtrl extends BeanStub {
     private removeFeatures(): void {
         const context = this.beans.context;
         this.positionFeature = context.destroyBean(this.positionFeature);
+        this.editorTooltipFeature = context.destroyBean(this.editorTooltipFeature);
         this.customStyleFeature = context.destroyBean(this.customStyleFeature);
+        this.editStyleFeature = context.destroyBean(this.editStyleFeature);
         this.mouseListener = context.destroyBean(this.mouseListener);
         this.keyboardListener = context.destroyBean(this.keyboardListener);
         this.rangeFeature = context.destroyBean(this.rangeFeature);
@@ -200,6 +208,22 @@ export class CellCtrl extends BeanStub {
 
     private disableTooltipFeature() {
         this.tooltipFeature = this.beans.context.destroyBean(this.tooltipFeature);
+    }
+
+    public enableEditorTooltipFeature(editor: ICellEditor): void {
+        if (this.editorTooltipFeature) {
+            this.disableEditorTooltipFeature();
+        }
+        this.editorTooltipFeature = this.beans.tooltipSvc?.setupEditorTooltip(this, editor);
+        this.refreshEditorTooltip();
+    }
+
+    public refreshEditorTooltip(): void {
+        this.editorTooltipFeature?.refreshTooltip();
+    }
+
+    public disableEditorTooltipFeature(): void {
+        this.editorTooltipFeature = this.beans.context.destroyBean(this.editorTooltipFeature);
     }
 
     public setComp(
@@ -238,6 +262,7 @@ export class CellCtrl extends BeanStub {
 
         this.positionFeature?.init();
         this.customStyleFeature?.setComp(comp);
+        this.editStyleFeature?.setComp(comp);
         this.tooltipFeature?.refreshTooltip();
         this.keyboardListener?.init();
         this.rangeFeature?.setComp(comp);
@@ -272,6 +297,37 @@ export class CellCtrl extends BeanStub {
         return this.valueFormatted ?? this.value;
     }
 
+    public getDeferLoadingCellRenderer(): {
+        loadingComp: UserCompDetails | undefined;
+        onReady: AgPromise<void>;
+    } {
+        const { beans, column } = this;
+        const { userCompFactory, ctrlsSvc, eventSvc } = beans;
+
+        const colDef = column.getColDef();
+        const params = this.createCellRendererParams() as ILoadingCellRendererParams;
+        params.deferRender = true;
+
+        const loadingDetails = _getLoadingCellRendererDetails(userCompFactory, colDef, params);
+
+        if (ctrlsSvc.getGridBodyCtrl()?.scrollFeature?.isScrolling()) {
+            // If the grid is scrolling return a promise that resolves when scrolling is finished
+            // This prevents scroll being blocked by the rendering of a slow component
+            let resolver: () => void;
+            const onReady = new AgPromise<void>((resolve) => {
+                resolver = resolve;
+            });
+
+            this.addManagedListeners(eventSvc, {
+                bodyScrollEnd: () => resolver(),
+            });
+            return { loadingComp: loadingDetails, onReady };
+        }
+
+        // If not scrolling return a resolved promise immediately
+        return { loadingComp: loadingDetails, onReady: AgPromise.resolve() };
+    }
+
     private showValue(forceNewCellRendererInstance: boolean, skipRangeHandleRefresh: boolean): void {
         const { beans, column, rowNode, rangeFeature } = this;
         const { userCompFactory } = beans;
@@ -299,7 +355,7 @@ export class CellCtrl extends BeanStub {
             );
         }
 
-        if (beans?.editSvc?.batch && beans?.editSvc?.isRowEditing({ rowNode }, { checkSiblings: true })) {
+        if (beans?.editSvc?.isBatchEditing() && beans?.editSvc?.isRowEditing({ rowNode }, { checkSiblings: true })) {
             const result = beans.editSvc.prepDetailsDuringBatch(this, { compDetails, valueToDisplay });
             if (result) {
                 if (result.compDetails) {
@@ -378,14 +434,15 @@ export class CellCtrl extends BeanStub {
     }
 
     public onPopupEditorClosed(): void {
-        if (!this.editSvc?.isEditing(this)) {
+        const { editSvc } = this.beans;
+        if (!editSvc?.isEditing(this)) {
             return;
         }
 
         // note: this happens because of a click outside of the grid or if the popupEditor
         // is closed with `Escape` key. if another cell was clicked, then the editing will
         // have already stopped and returned on the conditional above.
-        this.editSvc?.stopEditing(this);
+        editSvc?.stopEditing(this, { source: editSvc?.isBatchEditing() ? 'ui' : 'api' }) ?? false;
     }
 
     /**
@@ -394,7 +451,8 @@ export class CellCtrl extends BeanStub {
      * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
      */
     public stopEditing(cancel = false): boolean {
-        return this.editSvc?.stopEditing(this, { cancel }) ?? false;
+        const { editSvc } = this.beans;
+        return editSvc?.stopEditing(this, { cancel, source: editSvc?.isBatchEditing() ? 'ui' : 'api' }) ?? false;
     }
 
     private createCellRendererParams(): ICellRendererParams {
@@ -508,6 +566,8 @@ export class CellCtrl extends BeanStub {
             if (flashCell) {
                 this.beans.cellFlashSvc?.flashCell(this);
             }
+
+            this.editStyleFeature?.applyCellStyles?.();
 
             this.customStyleFeature?.applyUserStyles();
             this.customStyleFeature?.applyClassesFromColDef();

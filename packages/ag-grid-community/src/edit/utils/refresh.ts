@@ -25,6 +25,4 @@ export const _refreshEditCells = (beans: BeanCollection) => () => {
     const rowNodes = new Set(updates.keys());
 
     purgeCells(beans, purgeRows(beans, rowNodes), columns);
-
-    beans.editSvc?.updateCells(beans.editModelSvc!.getEditMap(false), undefined, true);
 };

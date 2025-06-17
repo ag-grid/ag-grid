@@ -177,6 +177,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
         columnsReset: ColumnsResetEvent<TData, TContext>;
         cellEditValuesChanged: CellEditValuesChangedEvent<TData, TContext>;
+        filterSwitched: FilterSwitchedEvent<TData, TContext>;
     }
 >;
 
@@ -1059,7 +1060,11 @@ export interface CellValueChangedEvent<TData = any, TValue = any>
 }
 
 export interface CellEditValuesChangedEvent<TData = any, TValue = any>
-    extends AgGlobalEvent<'cellEditValuesChanged', TData, TValue> {}
+    extends CellWithDataEvent<'cellEditValuesChanged', TData, TValue> {
+    oldValue: TValue | null | undefined;
+    newValue: TValue | null | undefined;
+    source: string | undefined;
+}
 
 export interface CellEditRequestEvent<TData = any, TValue = any>
     extends CellWithDataEvent<'cellEditRequest', TData, TValue> {
@@ -1221,7 +1226,10 @@ export interface RowNodeDataChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowNodeDataChanged', TData, TContext> {
     node: RowNode<TData>;
 }
-
 export interface ColumnsResetEvent<TData = any, TContext = any> extends AgGlobalEvent<'columnsReset', TData, TContext> {
     source: ColumnEventType;
+}
+export interface FilterSwitchedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'filterSwitched', TData, TContext> {
+    column: Column;
 }

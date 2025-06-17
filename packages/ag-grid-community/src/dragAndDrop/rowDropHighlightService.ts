@@ -1,13 +1,14 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { RowNode } from '../entities/rowNode';
-import type { IRowDropHighlightService, RowDropHighlightPosition } from '../interfaces/IRowDropHighlightService';
+import type { DropIndicatorPosition, IRowDropHighlightService } from '../interfaces/IRowDropHighlightService';
 
 export class RowDropHighlightService extends BeanStub implements NamedBean, IRowDropHighlightService {
     beanName = 'rowDropHighlightSvc' as const;
 
+    private uiLevel = 0;
     public row: RowNode | null = null;
-    public position: RowDropHighlightPosition = 'none';
+    public position: DropIndicatorPosition = 'none';
 
     public postConstruct(): void {
         this.addManagedEventListeners({
@@ -16,8 +17,11 @@ export class RowDropHighlightService extends BeanStub implements NamedBean, IRow
     }
 
     private onModelUpdated(): void {
-        if (this.row?.rowIndex === null) {
-            this.clear(); // Clear the highlight if the row was removed
+        const row = this.row;
+        if (!row || row.rowIndex === null || this.position === 'none') {
+            this.clear();
+        } else {
+            this.set(row, this.position);
         }
     }
 
@@ -29,20 +33,24 @@ export class RowDropHighlightService extends BeanStub implements NamedBean, IRow
     public clear(): void {
         const last = this.row;
         if (last) {
+            this.uiLevel = 0;
             this.position = 'none';
-            last.dispatchRowEvent('rowHighlightChanged');
             this.row = null;
+            last.dispatchRowEvent('rowHighlightChanged');
         }
     }
 
-    public set(row: RowNode, position: RowDropHighlightPosition): void {
+    public set(row: RowNode, dropIndicatorPosition: Exclude<DropIndicatorPosition, 'none'>): void {
         const nodeChanged = row !== this.row;
-        const highlightChanged = position !== this.position;
-        if (nodeChanged || highlightChanged) {
+        const uiLevel = row.uiLevel;
+        const highlightChanged = dropIndicatorPosition !== this.position;
+        const uiLevelChanged = uiLevel !== this.uiLevel;
+        if (nodeChanged || highlightChanged || uiLevelChanged) {
             if (nodeChanged) {
                 this.clear();
             }
-            this.position = position;
+            this.uiLevel = uiLevel;
+            this.position = dropIndicatorPosition;
             this.row = row;
             row.dispatchRowEvent('rowHighlightChanged');
         }

@@ -13,16 +13,11 @@ import { NumberCellEditor } from './cellEditors/numberCellEditor';
 import { SelectCellEditor } from './cellEditors/selectCellEditor';
 import { TextCellEditor } from './cellEditors/textCellEditor';
 import {
-    batchEditingEnabled,
-    disableBatchEditing,
-    enableBatchEditing,
-    getCellEditorInstances,
     getCurrentRedoSize,
     getCurrentUndoSize,
     getEditingCells,
     isEditing,
     redoCellEditing,
-    setEditingCells,
     startEditingCell,
     stopEditing,
     undoCellEditing,
@@ -31,6 +26,7 @@ import { EditModelService } from './editModelService';
 import { EditService } from './editService';
 import { FullRowEditStrategy } from './strategy/fullRowEditStrategy';
 import { SingleCellEditStrategy } from './strategy/singleCellEditStrategy';
+import { getCellEditorInstances } from './utils/editors';
 
 /**
  * @internal
@@ -45,10 +41,6 @@ export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
         startEditingCell,
         stopEditing,
         isEditing,
-        setEditingCells,
-        enableBatchEditing,
-        disableBatchEditing,
-        batchEditingEnabled,
     },
     dynamicBeans: {
         singleCell: SingleCellEditStrategy,

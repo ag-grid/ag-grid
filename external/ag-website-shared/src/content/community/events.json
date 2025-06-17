@@ -1,7 +1,7 @@
 [
     {
         "title": "Frontend Nation",
-        "description": "Our first sponsorship of Frontend Nation, we're putting AG Charts front and center in front of 50,000 attendees. This event is free to join - come along to hear from senior AG Charts Engineer, Jacob, on how we implemented the M4 algorithm to make our charts run flawlessly at 60fps with large (1-million-point) data sets, join our free 90 min workshop, and meet the team at our virtual booth.",
+        "description": "Our first sponsorship of Frontend Nation, we're putting AG Charts front and centre in front of 50,000 attendees. This event is free to join - come along to hear from senior AG Charts Engineer, Jacob, on how we implemented the M4 algorithm to make our charts run flawlessly at 60fps with large (1-million-point) data sets, join our free 90 min workshop, and meet the team at our virtual booth.",
         "location": "Online",
         "logo": "/community/events/organiser-logos/frontend-nation.jpg",
         "logoLight": "/community/events/organiser-logos/frontend-nation.jpg",
@@ -212,7 +212,7 @@
     },
     {
         "title": "Enterprise NG",
-        "description": "AG Grid were gold sponsors of this fully virtual, two day event 'aimed at helping Angular enterprise leaders succeed in transforming their organization by adopting principles and practices that will put them ahead of our rapidly-changing industry'.",
+        "description": "AG Grid were gold sponsors of this fully virtual, two day event 'aimed at helping Angular enterprise leaders succeed in transforming their organisation by adopting principles and practices that will put them ahead of our rapidly-changing industry'.",
         "location": "Salt Lake City, USA",
         "logo": "/community/events/organiser-logos/ng-conf-logo.webp",
         "countryIcon": "us.png",
@@ -269,7 +269,7 @@
     },
     {
         "title": "React Amsterdam",
-        "description": "AG Grid were the platinum sponsor of React Amsterdam, the precursor to React Summit Amsterdam, which took place in Amsterdam Noord at De Kromhouthal and was organized by GitNation, who run developer conferences like JS Nation (Netherlands-based JS community) and React Day Berlin.",
+        "description": "AG Grid were the platinum sponsor of React Amsterdam, the precursor to React Summit Amsterdam, which took place in Amsterdam Noord at De Kromhouthal and was organised by GitNation, who run developer conferences like JS Nation (Netherlands-based JS community) and React Day Berlin.",
         "location": "Amsterdam, NL",
         "logo": "/community/events/organiser-logos/react-summit-logo.svg",
         "logoLight": "/community/events/organiser-logos/react-advanced-logo-light.svg",

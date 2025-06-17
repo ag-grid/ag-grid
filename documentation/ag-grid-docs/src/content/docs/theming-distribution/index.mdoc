@@ -73,9 +73,9 @@ const myCheckboxStyle = createPart({
 
 #### Naming of parameters in custom parts
 
-Parameters must use a naming convention based on their type, so for example all color parameters must end with `Color`. The full list of types and suffixes is on the [Parameters](./theming-parameters/) page. Any variable without a recognised suffix is considered to be a length.
+Parameters must use a naming convention based on their type, so for example all colour parameters must end with `Color`. The full list of types and suffixes is on the [Parameters](./theming-parameters/) page. Any variable without a recognised suffix is considered to be a length.
 
-Using the correct type suffix ensures that values will be interpreted correctly, allowing you to use the extended syntax, e.g. `{ref: "accentColor", mix: 0.5}` to create a semi-transparent color.
+Using the correct type suffix ensures that values will be interpreted correctly, allowing you to use the extended syntax, e.g. `{ref: "accentColor", mix: 0.5}` to create a semi-transparent colour.
 
 Additionally, the suffix is used by Typescript to infer the correct type for the parameter, ensuring that applications using the part and overriding the default value in their theme will get appropriate type checking.
 

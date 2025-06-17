@@ -1,8 +1,6 @@
 import type { BrowserContext, Page } from '@playwright/test';
 import { test } from '@playwright/test';
 import { bgBlue, bgGreen, blue, cyan, green, magenta, yellow } from 'chalk';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
 
 import type { BrowserCommunications } from './playwright.utils';
 import { gotoUrl, waitFor } from './playwright.utils';
@@ -12,6 +10,8 @@ export type CustomVersion = `v${number}.${number}.${number}`;
 export type Version = 'prod' | 'staging' | 'local' | CustomVersion;
 export type Entry<T> = T extends readonly (infer U)[] ? U : T extends object ? T[keyof T] : T;
 
+const thisFilePath = __filename;
+
 /**
  * Describes a performance benchmarking test suite.
  */
@@ -20,6 +20,7 @@ export type Describe = {
     maxIterations?: number; // default is 1000
     testCases: TestCase[];
     timeout?: number; // in milliseconds, default is 3 minutes
+    warmupIterations?: number; // default is 3, used to warm up the grid before measuring performance
 };
 
 /**
@@ -27,6 +28,7 @@ export type Describe = {
  */
 export type TestCase = {
     name: string;
+    description?: string;
     /** @deprecated don't forget to re-enable your test */
     skip?: boolean;
     framework: Framework;
@@ -34,9 +36,15 @@ export type TestCase = {
     variant: Variant;
     preSetup?: (page: Page) => Promise<void>;
     setupPreActions?: (page: Page) => Promise<void>;
-    actions?: (page: Page) => Promise<void>;
+    actions: (page: Page) => Promise<void>;
     expectsPostActions?: (page: Page, comms: BrowserCommunications) => Promise<void>;
     metrics?: Entry<(typeof PerformanceObserver)['supportedEntryTypes']>;
+};
+
+type InternalTestCase = TestCase & {
+    __hidden?: {
+        error?: Error; // used to store the error for friendlier error logs
+    };
 };
 
 /**
@@ -60,18 +68,13 @@ const knownUrls: Record<Version, string> = {
     prod: 'https://www.ag-grid.com',
 };
 
-export const agChartsVersion = `v${
-    JSON.parse(fs.readFileSync(path.join(__dirname, '../../packages/ag-grid-enterprise/package.json')).toString())
-        .optionalDependencies['ag-charts-enterprise']
-}` as CustomVersion;
-
 /**
  * Taken from ag-grid-enterprise package.json git history
  */
 const gridToChartsMap = {
-    local: agChartsVersion,
+    local: 'v11.3.0',
     prod: 'v11.3.0',
-    staging: agChartsVersion,
+    staging: 'v11.3.0',
     'v33.3.0': 'v11.3.0',
     'v33.2.3': 'v11.2.3',
     'v33.2.1': 'v11.2.1',
@@ -192,16 +195,16 @@ function reportStats(
 
     const moe1Percent = (s1.marginOfError / s1.average) * 100;
     const moe2Percent = (s2.marginOfError / s2.average) * 100;
-    const avgMoE = (s1.marginOfError + s2.marginOfError) / 2;
-    const avgMoEPercent = (moe1Percent + moe2Percent) / 2;
+    const avgMoE = s1.marginOfError + s2.marginOfError;
+    const avgMoEPercent = moe1Percent + moe2Percent;
 
     const numbersString = `${diff.toFixed(2)} ± ${avgMoE.toFixed(2)}`;
     const percentString = `${percentDiff.toFixed(1)}% ± ${avgMoEPercent.toFixed(1)}%`;
 
     if (!significant) {
-        console.log(
+        /*console.log(
             `\n${yellow(`Result is statistically insignificant (`)}${green(percentString)}, ${blue(`${s1.filteredCount}/${s1.originalCount}`)})${yellow('. Running more iterations...\n')}`
-        );
+        );*/
         return;
     }
 
@@ -226,15 +229,17 @@ function reportStats(
     console.log(detailsFormat(testCase.variant.version, s2));
 }
 
-function attachScript(page: Page, url: string) {
-    return page.evaluate((url: string) => {
-        const script = document.createElement('script');
-        script.src = url;
-        document.body.appendChild(script);
-    }, url);
+function benchError(message: string, e: any, testCase: InternalTestCase) {
+    const [_, ...rest] = testCase.__hidden!.error?.stack!.split('\n') || [];
+    const [__, ...providedRest] = e.stack!.split('\n');
+    e.stack = `${message}\n${providedRest.join('\n')}\n${rest
+        .filter((l) => l.includes(thisFilePath) || l.includes(test.info().titlePath[0]))
+        .join('\n')}`;
+
+    throw e;
 }
 
-async function attachScripts(page: Page, version: Version, describe: { __hidden?: { stack?: Error } }) {
+async function attachScripts(page: Page, version: Version, testCase: InternalTestCase) {
     const chartsVersion = gridToChartsMap[version as keyof typeof gridToChartsMap] || gridToChartsMap.prod;
 
     const urls = [getCdnUrl('ag-grid-community', version), getCdnUrl('ag-grid-enterprise', version)];
@@ -249,14 +254,15 @@ async function attachScripts(page: Page, version: Version, describe: { __hidden?
             getCdnUrl('ag-charts-types', chartsVersion, '/'),
         ];*/
     }
-    await Promise.all(urls.map(attachScript.bind(0, page)));
+
+    for (const url of urls) {
+        await page.addScriptTag({ url, type: 'text/javascript' });
+    }
     try {
         // @ts-expect-error agGrid is not in the current scope
-        await waitFor(() => typeof agGrid !== 'undefined', page);
+        await waitFor(() => typeof agGrid !== 'undefined', page, { timeout: 10_000 });
     } catch (e) {
-        console.error('Perhaps you forgot to start dev server? Or provided URL/version are not available.');
-        (e as Error).stack += '\n Caused by:\n' + describe.__hidden!.stack?.stack;
-        throw e;
+        benchError(`Perhaps you forgot to start dev server? Or provided URL/version are not available.`, e, testCase);
     }
 }
 function updatePageTitle(page: Page, testCase: TestCase, variant: Variant) {
@@ -288,51 +294,77 @@ async function attachCookies(context: BrowserContext, variant: Variant) {
 }
 
 /** Generic benchmark function to run performance tests */
-export default function (name: string, describe: Describe & { __hidden?: { stack?: Error } }) {
-    describe.__hidden = { stack: new Error() }; // used for friendlier error logs
-    test.describe.configure({ timeout: describe.timeout || 3 * 60_000, mode: 'serial' });
-    return test.describe(name, () => {
-        const minIterations = Math.max(describe.minIterations ?? 10, 3) + 3;
-        const maxIterations = describe.maxIterations ?? 1000;
-        describe.testCases.forEach((testCase, i) => {
-            (testCase.skip ? test.skip : test)(
-                `${i + 1} Running ${testCase.name} with ${testCase.framework}`,
-                async ({ page, context }) => {
-                    console.time('Duration');
-                    const result = { control: [] as number[], variant: [] as number[] };
+export default function (name: string, describe: Describe) {
+    test.describe.configure({ timeout: describe.timeout || 3 * 60_000 });
+    test.beforeEach(() => console.time('Duration'));
+    test.afterEach(() => console.timeEnd('Duration'));
+    test.afterEach(() => console.log('Test ended at ' + new Date().toISOString()));
 
-                    let significant = false;
-                    do {
-                        for (const variantName of ['control', 'variant'] as const) {
-                            const variant = testCase[variantName];
-                            await attachCookies(context, variant);
-                            const comms = await gotoUrl(page, getUrl(testCase, variant));
-                            void updatePageTitle(page, testCase, variant);
-                            variant.shouldInjectScript && (await attachScripts(page, variant.version, describe));
-                            testCase.preSetup && (await testCase.preSetup(page));
-                            for (let i = 0; i < minIterations; i++) {
-                                testCase.setupPreActions && (await testCase.setupPreActions(page));
-                                const noiseSize = (await metricsGetter(page, testCase)).length;
-                                testCase.actions && (await testCase.actions(page));
-                                if (i > 3) {
-                                    // skipped warmup iterations
-                                    const usefulEntries = (await metricsGetter(page, testCase)).slice(noiseSize);
-                                    const duration = usefulEntries.reduce((acc, pe) => acc + pe.duration, 0);
-                                    result[variantName].push(duration);
+    const describeBody = () => {
+        const warmupIterations = describe.warmupIterations ?? 3; // default is 3
+        const minIterations = Math.max(Math.max(describe.minIterations ?? 10, warmupIterations) + warmupIterations, 2);
+        const maxIterations = describe.maxIterations ?? 1000;
+
+        describe.testCases.forEach((testCase: InternalTestCase) => {
+            testCase.__hidden = { error: new Error() }; // used for friendlier error logs
+            (testCase.skip ? test.skip : test)(
+                `Running ${testCase.name}${testCase.description ? `/${testCase.description}` : ''} with ${testCase.framework}`,
+                async ({ page, context }) => {
+                    let lastCommunications: BrowserCommunications | undefined;
+                    try {
+                        const result = { control: [] as number[], variant: [] as number[] };
+                        let significant = false;
+                        do {
+                            for (const variantName of ['control', 'variant'] as const) {
+                                const variant = testCase[variantName];
+                                await attachCookies(context, variant);
+                                lastCommunications = await gotoUrl(page, getUrl(testCase, variant));
+                                void updatePageTitle(page, testCase, variant);
+                                variant.shouldInjectScript && (await attachScripts(page, variant.version, testCase));
+                                testCase.preSetup && (await testCase.preSetup(page));
+                                for (let i = 0; i < minIterations; i++) {
+                                    testCase.setupPreActions && (await testCase.setupPreActions(page));
+                                    const noiseSize = (await metricsGetter(page, testCase)).length;
+                                    testCase.actions && (await testCase.actions(page));
+                                    if (i > warmupIterations) {
+                                        const usefulEntries = (await metricsGetter(page, testCase)).slice(noiseSize);
+                                        const duration = usefulEntries.reduce((acc, pe) => acc + pe.duration, 0);
+                                        result[variantName].push(duration);
+                                    }
                                 }
+                                testCase.expectsPostActions &&
+                                    (await testCase.expectsPostActions(page, lastCommunications));
                             }
-                            testCase.expectsPostActions && (await testCase.expectsPostActions(page, comms));
+                            const s1 = computeStats(result.control);
+                            const s2 = computeStats(result.variant);
+                            // console.log(`Collected ${s1.originalCount} entries`);
+                            significant = isSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError);
+                            reportStats({ control: s1, variant: s2 }, testCase, significant);
+                        } while (!(significant || result['control'].length > maxIterations)); // run until we do 1000 iterations or results are significant
+                        if (!significant) {
+                            console.log(
+                                `${yellow('Result is statistically insignificant.')} ${green(
+                                    'Consider running the test with more iterations or check your test case setup.'
+                                )}`
+                            );
                         }
-                        const s1 = computeStats(result.control);
-                        const s2 = computeStats(result.variant);
-                        console.log(`Collected ${s1.originalCount} entries`);
-                        significant = isSignificant(s1.average - s2.average, s1.marginOfError, s2.marginOfError);
-                        reportStats({ control: s1, variant: s2 }, testCase, significant);
-                    } while (!(significant || result['control'].length > maxIterations)); // run until we do 1000 iterations or results are significant
-                    console.log('Test ended at ' + new Date().toISOString());
-                    console.timeEnd('Duration');
+                    } catch (e) {
+                        if (lastCommunications?.consoleMsgs?.length || lastCommunications?.requestMsgs?.length) {
+                            console.error('Error has been thrown during the test, here are the last comms:');
+                            lastCommunications.consoleMsgs.forEach((msg) => {
+                                console[msg.type as 'log' | 'error'](msg.text);
+                            });
+                            lastCommunications.requestMsgs.forEach((msg) => {
+                                msg.response.then((r) => {
+                                    console.log(`U: ${msg.method} ${msg.url} D: ${r.status} ${r.statusText}`);
+                                });
+                            });
+                        }
+                        throw e;
+                    }
                 }
             );
         });
-    });
+    };
+    return test.describe(name, describeBody);
 }

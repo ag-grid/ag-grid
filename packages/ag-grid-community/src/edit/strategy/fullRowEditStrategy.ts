@@ -3,7 +3,6 @@ import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _getRowCtrl } from '../utils/controllers';
 import { _setupEditor } from '../utils/editors';
 import { BaseEditStrategy } from './baseEditStrategy';
@@ -11,13 +10,6 @@ import { BaseEditStrategy } from './baseEditStrategy';
 export class FullRowEditStrategy extends BaseEditStrategy {
     override beanName = 'fullRow' as BeanName | undefined;
     private rowNode?: IRowNode;
-
-    protected override updateRowStyle(rowCtrl?: RowCtrl | null, newState?: boolean, batchEdit?: boolean): void {
-        rowCtrl?.forEachGui(undefined, ({ rowComp }) => {
-            rowComp.toggleCss('ag-row-editing', newState ?? false);
-            rowComp.toggleCss('ag-row-batch-edit', (newState && batchEdit) ?? false);
-        });
-    }
 
     public override isCellEditable(position: Required<EditPosition>, source: 'api' | 'ui' = 'ui'): boolean {
         const editable = super.isCellEditable(position, source);
@@ -133,6 +125,11 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         super.onCellFocusChanged(event);
+
+        const previous = (event as any)['previousParams']! as CommonCellFocusParams;
+        if (previous) {
+            _getRowCtrl(this.beans, previous)?.refreshRow({ suppressFlash: true, forceRefresh: true });
+        }
     }
 
     // returns null if no navigation should be performed

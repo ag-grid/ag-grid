@@ -1,0 +1,146 @@
+.ag-filter-panel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    row-gap: var(--ag-widget-container-vertical-padding);
+    padding-bottom: var(--ag-widget-container-vertical-padding);
+}
+
+/** These all need different styling when used within the new filter tool panel compared to the existing use case within the legacy filter tool panel or column menu  */
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-filter-panel .ag-simple-filter-body-wrapper {
+    padding: var(--ag-widget-vertical-spacing) var(--ag-widget-container-horizontal-padding) 0;
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-filter-panel .ag-mini-filter {
+    margin-top: var(--ag-widget-vertical-spacing);
+    margin-left: var(--ag-widget-container-horizontal-padding);
+    margin-right: var(--ag-widget-container-horizontal-padding);
+}
+
+.ag-filter-panel-container {
+    flex: 1;
+    overflow: auto;
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding) 0;
+}
+
+.ag-filter-panel-container > *:where(:not(:last-child)) {
+    margin-bottom: var(--ag-widget-container-vertical-padding);
+}
+
+.ag-filter-card {
+    padding-top: var(--ag-widget-container-vertical-padding);
+    padding-bottom: var(--ag-widget-container-vertical-padding);
+    border: solid var(--ag-border-width) var(--ag-border-color);
+    border-radius: var(--ag-border-radius);
+    background-color: var(--ag-background-color);
+}
+
+.ag-filter-card-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-left: var(--ag-widget-horizontal-spacing);
+    padding-right: var(--ag-widget-horizontal-spacing);
+    margin-bottom: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
+
+    & > *:where(:not(:last-child)) {
+        margin-right: var(--ag-spacing);
+    }
+}
+
+.ag-filter-card-heading {
+    flex: 1;
+}
+
+.ag-filter-card-expand {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ag-filter-card-title {
+    font-weight: var(--ag-header-font-weight);
+}
+
+.ag-filter-card-summary,
+.ag-filter-card-expand-icon,
+.ag-filter-card-delete-icon {
+    color: var(--ag-filter-panel-card-subtle-color);
+}
+
+.ag-filter-card-expand,
+.ag-filter-card-delete,
+.ag-filter-add-button {
+    border-radius: var(--ag-button-border-radius);
+}
+
+.ag-filter-card-summary,
+.ag-filter-type-select {
+    margin-left: var(--ag-widget-container-horizontal-padding);
+    margin-right: var(--ag-widget-container-horizontal-padding);
+}
+
+.ag-filter-type-select {
+    padding-top: var(--ag-widget-vertical-spacing);
+}
+
+.ag-filter-card-add {
+    padding: 0;
+}
+
+.ag-filter-add-button {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+    align-items: center;
+    line-height: 1.5;
+}
+
+.ag-filter-add-button-label {
+    margin-left: var(--ag-spacing);
+}
+
+.ag-filter-add-select {
+    border: 0;
+
+    /** These all need different styling when used within the new filter tool panel compared to the existing use case within editors  */
+
+    /* stylelint-disable-next-line selector-max-specificity */
+    .ag-text-field-input {
+        padding-left: calc(var(--ag-spacing) * 1.5 + 12px) !important;
+    }
+
+    /* stylelint-disable-next-line selector-max-specificity */
+    .ag-rich-select-value {
+        padding: calc(
+                ((1.5 * var(--ag-font-size) + 2 * var(--ag-widget-container-vertical-padding)) - var(--ag-input-height)) /
+                    2
+            )
+            var(--ag-spacing);
+        border: 0;
+    }
+}
+
+.ag-filter-panel-buttons {
+    display: flex;
+    justify-content: flex-end;
+    overflow: hidden;
+    padding: 0 var(--ag-widget-container-horizontal-padding);
+    flex-wrap: wrap;
+    gap: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
+}
+
+.ag-filter-panel-buttons-button {
+    line-height: 1.5;
+}
+
+.ag-filter-panel-buttons-apply-button {
+    color: var(--ag-filter-panel-apply-button-color);
+    background-color: var(--ag-filter-panel-apply-button-background-color);
+}

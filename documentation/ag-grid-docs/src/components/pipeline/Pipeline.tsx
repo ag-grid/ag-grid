@@ -48,6 +48,7 @@ const COLUMN_DEFS = [
 const defaultColDef = {
     autoHeight: true,
     filter: true,
+    floatingFilter: true,
     cellClass: styles.fontClass,
     headerClass: styles.fontClass,
     suppressKeyboardEvent: (params) => {

@@ -11,6 +11,7 @@ import {
     foregroundColor,
     foregroundMix,
 } from '../../theme-utils';
+import type { BatchEditStyleParams } from '../batch-edit/batch-edit-styles';
 import type { ButtonStyleParams } from '../button-style/button-styles';
 import { buttonStyleAlpine, buttonStyleBalham, buttonStyleBase } from '../button-style/button-styles';
 import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
@@ -29,7 +30,8 @@ export type ThemeDefaultParams = CoreParams &
     ButtonStyleParams &
     CheckboxStyleParams &
     TabStyleParams &
-    InputStyleParams;
+    InputStyleParams &
+    BatchEditStyleParams;
 
 const makeThemeQuartzTreeShakeable = () =>
     createTheme()

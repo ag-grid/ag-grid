@@ -21,7 +21,8 @@ export class FilterComp extends Component {
 
     constructor(
         private readonly column: AgColumn,
-        private readonly source: FilterRequestSource
+        private readonly source: FilterRequestSource,
+        private readonly enableGlobalButtonCheck?: boolean
     ) {
         super(FilterElement);
     }
@@ -72,8 +73,16 @@ export class FilterComp extends Component {
             const { isHandler, comp } = wrapper;
             let filterGui: HTMLElement;
             if (isHandler) {
+                const enableGlobalButtonCheck = !!this.enableGlobalButtonCheck;
                 const displayComp = this.createBean(
-                    new FilterWrapperComp(column, wrapper, colFilter!, colFilter!.updateModel.bind(colFilter))
+                    new FilterWrapperComp(
+                        column,
+                        wrapper,
+                        colFilter!,
+                        colFilter!.updateModel.bind(colFilter),
+                        enableGlobalButtonCheck && colFilter!.isGlobalButtons,
+                        enableGlobalButtonCheck
+                    )
                 );
                 this.comp = displayComp;
                 filterGui = displayComp.getGui();

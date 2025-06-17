@@ -38,9 +38,3 @@
 .ag-checkbox-edit {
     padding-left: var(--ag-cell-horizontal-padding);
 }
-
-.ag-cell-batch-edit,
-.ag-row-batch-edit {
-    background-color: rgb(220 181 139 / 20%);
-    color: rgb(66 47 0 / 100%);
-}

@@ -90,6 +90,10 @@ const docs: Record<AllThemeParams, string> = {
     dragAndDropImageShadow: 'Shadow for the drag cover element when dragging grid parts',
     dragHandleColor: 'Color of the drag handle on draggable rows and column markers',
     dropdownShadow: 'Default shadow for dropdown menus',
+    filterPanelApplyButtonColor: 'Color of new Filter Tool Panel apply button',
+    filterPanelApplyButtonBackgroundColor: 'Background color of new Filter Tool Panel apply button',
+    filterPanelCardSubtleColor:
+        'Color of text and UI elements that should stand out less than the default in new Filter Tool Panel',
     filterToolPanelGroupIndent: 'How much to indent child columns in the filters tool panel relative to their parent',
     findMatchColor: 'Color of matches used in Find',
     findMatchBackgroundColor: 'Background color of matches used in Find',
@@ -293,6 +297,9 @@ const docs: Record<AllThemeParams, string> = {
     tooltipBackgroundColor: 'Background color for tooltips',
     tooltipBorder: 'Border for tooltips',
     tooltipTextColor: 'Text color for tooltips',
+    tooltipErrorBackgroundColor: 'Background color for tooltips showing errors',
+    tooltipErrorBorder: 'Border for tooltips showing errors',
+    tooltipErrorTextColor: 'Text color for tooltips showing errors',
     valueChangeDeltaDownColor:
         'Color to temporarily apply to cell data when its value decreases in an agAnimateShowChangeCellRenderer cell',
     valueChangeDeltaUpColor:
@@ -314,6 +321,10 @@ const docs: Record<AllThemeParams, string> = {
     pinnedRowFontWeight: 'Font-weight for the rows that have been pinned to the top or bottom',
     pinnedRowBackgroundColor: 'Background color for the rows that have been pinned to the top or bottom',
     pinnedRowTextColor: 'Text color for rows that have been pinned to the top or bottom',
+    cellBatchEditBackgroundColor: 'Background color for cells in batch edit mode',
+    cellBatchEditTextColor: 'Text color for cells in batch edit mode',
+    rowBatchEditBackgroundColor: 'Background color for rows in batch edit mode',
+    rowBatchEditTextColor: 'Text color for rows in batch edit mode',
 };
 
 export const getParamDocs = (param: string): string | undefined => {

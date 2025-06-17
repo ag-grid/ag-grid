@@ -65,3 +65,7 @@ reports
 vite.config.*.timestamp*
 
 /test-results/
+/playwright-report/
+
+# Snyk
+.dccache

@@ -4,6 +4,7 @@ import type {
     GridApi,
     _AdvancedFilterGridApi,
     _AggregationGridApi,
+    _BatchEditApi,
     _CellSelectionGridApi,
     _ClientSideRowModelGridApi,
     _ClipboardGridApi,
@@ -161,8 +162,8 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         addRowDropZone: 0,
         removeRowDropZone: 0,
         getRowDropZoneParams: 0,
-        getRowDropHighlight: 0,
-        setRowDropHighlight: 0,
+        getRowDropPositionIndicator: 0,
+        setRowDropPositionIndicator: 0,
     }),
     ...mod<_ColumnGridApi<any>>('ColumnApi', {
         getColumnDefs: 0,
@@ -221,10 +222,11 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         stopEditing: 0,
         startEditingCell: 0,
         isEditing: 0,
+    }),
+    ...mod<_BatchEditApi>('BatchEdit', {
         setEditingCells: 0,
-        enableBatchEditing: 0,
-        disableBatchEditing: 0,
-        batchEditingEnabled: 0,
+        setBatchEditing: 0,
+        isBatchEditing: 0,
     }),
     ...mod<_UndoRedoGridApi>('UndoRedoEdit', {
         undoCellEditing: 0,

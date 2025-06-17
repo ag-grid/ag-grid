@@ -158,6 +158,7 @@ export type CommunityModuleName =
 export type EnterpriseModuleName =
     | 'AdvancedFilter'
     | 'AllEnterprise'
+    | 'BatchEdit'
     | 'CellSelection'
     | 'Clipboard'
     | 'ColumnMenu'
@@ -172,6 +173,7 @@ export type EnterpriseModuleName =
     | 'MasterDetail'
     | 'Menu'
     | 'MultiFilter'
+    | 'NewFiltersToolPanel'
     | 'Pivot'
     | 'RangeSelection'
     | 'RichSelect'
@@ -235,6 +237,7 @@ export type AgModuleName =
     // Enterprise
     | 'AdvancedFilterModule'
     | 'AllEnterpriseModule'
+    | 'BatchEditModule'
     | 'CellSelectionModule'
     | 'ClipboardModule'
     | 'ColumnMenuModule'
@@ -249,6 +252,7 @@ export type AgModuleName =
     | 'MasterDetailModule'
     | 'MenuModule'
     | 'MultiFilterModule'
+    | 'NewFiltersToolPanelModule'
     | 'PivotModule'
     | 'RangeSelectionModule'
     | 'RichSelectModule'

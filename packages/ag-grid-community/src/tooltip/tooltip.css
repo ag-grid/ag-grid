@@ -9,6 +9,12 @@
     z-index: 99999;
 }
 
+.ag-tooltip:where(.ag-cell-editor-tooltip) {
+    background-color: var(--ag-tooltip-error-background-color);
+    color: var(--ag-tooltip-error-text-color);
+    border: var(--ag-tooltip-error-border);
+}
+
 .ag-tooltip-custom {
     position: absolute;
     z-index: 99999;

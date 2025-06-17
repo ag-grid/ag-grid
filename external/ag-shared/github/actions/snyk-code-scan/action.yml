@@ -1,0 +1,20 @@
+name: snyk-code-scan
+
+inputs:
+    snyk_token:
+        description: 'Snyk token to use.'
+        required: true
+    severity_threshold:
+        description: 'Severity threshold of the snyk scan'
+        default: 'high'
+
+runs:
+    using: 'composite'
+    steps:
+        - name: Run Snyk SAST security code scan
+          uses: snyk/actions/node@master
+          env:
+              SNYK_TOKEN: ${{ inputs.snyk_token }}
+          with:
+              command: code test
+              args: --severity-threshold=${{ inputs.severity_threshold }}

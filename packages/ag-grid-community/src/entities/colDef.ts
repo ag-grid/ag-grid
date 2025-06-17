@@ -3,6 +3,7 @@ import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column, ColumnGroup, ColumnGroupShowType, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IFilterDef } from '../interfaces/iFilter';
+import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
@@ -591,14 +592,15 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /** Callback to select which cell renderer to be used for a given row within the same column. */
     cellRendererSelector?: CellRendererSelectorFunc<TData, TValue>;
     /**
-     * The renderer to be used while the row is in an unloaded state.
-     * Only used if `suppressServerSideFullWidthLoadingRow` or `groupHideOpenParents` is enabled.
+     * The renderer to be used while either
+     *  - using Server Side Row Model and the row is in an unloaded state and if `suppressServerSideFullWidthLoadingRow` or `groupHideOpenParents` is enabled.
+     *  - a cell renderer is marked for deferred loading with `cellRendererParams.deferRender:true`.
      */
     loadingCellRenderer?: any;
     /** Params to be passed to the `loadingCellRenderer` component. */
     loadingCellRendererParams?: any;
-    /** Callback to select which loading renderer to be used for a given row within the same column. */
-    loadingCellRendererSelector?: CellRendererSelectorFunc<TData, TValue>;
+    /** Callback to select which loading renderer to be used. */
+    loadingCellRendererSelector?: ILoadingCellRendererSelectorFunc<TData, TValue>;
 
     /**
      * Set to `true` to have the grid calculate the height of a row based on contents of this column.
@@ -1096,6 +1098,10 @@ export interface CellClassRules<TData = any, TValue = any> {
 
 export interface CellRendererSelectorFunc<TData = any, TValue = any> {
     (params: ICellRendererParams<TData, TValue>): CellRendererSelectorResult | undefined;
+}
+
+export interface ILoadingCellRendererSelectorFunc<TData = any, TValue = any> {
+    (params: ILoadingCellRendererParams<TData, TValue>): CellRendererSelectorResult | undefined;
 }
 
 export interface CellEditorSelectorFunc<TData = any, TValue = any> {

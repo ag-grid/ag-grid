@@ -29,7 +29,9 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         if ((!this.rowNode || !this.column) && rowNode && column) {
             return null;
-        } else if (!rowNode && !column && this.rowNode && this.column) {
+        }
+
+        if (!rowNode && !column && this.rowNode && this.column) {
             return null;
         }
 

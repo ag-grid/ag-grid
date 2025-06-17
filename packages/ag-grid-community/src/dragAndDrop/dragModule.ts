@@ -5,7 +5,7 @@ import { VERSION } from '../version';
 import { DragAndDropImageComponent } from './dragAndDropImageComponent';
 import { DragAndDropService } from './dragAndDropService';
 import { addRowDropZone, getRowDropZoneParams, removeRowDropZone } from './dragApi';
-import { getRowDropHighlight, setRowDropHighlight } from './dragApi';
+import { getRowDropPositionIndicator, setRowDropPositionIndicator } from './dragApi';
 import { DragService } from './dragService';
 import { HorizontalResizeService } from './horizontalResizeService';
 import { RowDragService } from './rowDragService';
@@ -84,8 +84,8 @@ export const RowDragModule: _ModuleWithApi<_DragGridApi<any>> = {
         addRowDropZone,
         removeRowDropZone,
         getRowDropZoneParams,
-        getRowDropHighlight,
-        setRowDropHighlight,
+        getRowDropPositionIndicator,
+        setRowDropPositionIndicator,
     },
     dependsOn: [SharedDragAndDropModule],
 };

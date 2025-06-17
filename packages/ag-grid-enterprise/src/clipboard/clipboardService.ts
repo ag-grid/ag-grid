@@ -271,6 +271,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             } else {
                 this.pasteStartingFromFocusedCell(parsedData!, cellsToFlash, updatedRowNodes, focusedCell, changedPath);
             }
+
+            this.beans.editSvc?.stopEditing(undefined, { source: SOURCE_PASTE });
         };
 
         this.doPasteOperation(pasteOperation);

@@ -7,6 +7,7 @@ interface TaskItem {
     task: () => void;
     index: number;
     createOrder: number;
+    deferred: boolean; // used for deferred tasks
 }
 
 interface TaskList {
@@ -66,13 +67,19 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
         }
     }
 
-    public createTask(task: () => void, index: number, list: 'p1' | 'p2', isFramework: boolean) {
+    public createTask(
+        task: () => void,
+        index: number,
+        list: 'p1' | 'p2',
+        isFramework: boolean,
+        isDeferred = false
+    ): void {
         this.verify();
         let taskList: 'p1' | 'p2' | 'f1' = list;
         if (isFramework && this.batchFrameworkComps) {
             taskList = 'f1';
         }
-        const taskItem: TaskItem = { task, index, createOrder: ++this.taskCount };
+        const taskItem: TaskItem = { task, index, createOrder: ++this.taskCount, deferred: isDeferred };
         this.addTaskToList(this[taskList], taskItem);
         this.schedule();
     }
@@ -89,11 +96,19 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
 
         const sortDirection = this.scrollGoingDown ? 1 : -1;
 
-        // sort first by row index (taking into account scroll direction), then by
-        // order of task creation (always ascending, so cells will render left-to-right)
-        taskList.list.sort((a, b) =>
-            a.index !== b.index ? sortDirection * (b.index - a.index) : b.createOrder - a.createOrder
-        );
+        // Sort by:
+        // 1. deferred last,
+        // 2. then by row index (taking into account scroll direction),
+        // 3. then by order of task creation (always ascending, so cells will render left-to-right)
+        taskList.list.sort((a, b) => {
+            if (a.deferred !== b.deferred) {
+                return a.deferred ? -1 : 1; // deferred tasks always last
+            }
+            if (a.index !== b.index) {
+                return sortDirection * (b.index - a.index);
+            }
+            return b.createOrder - a.createOrder;
+        });
         taskList.sorted = true;
     }
 

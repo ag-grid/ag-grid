@@ -59,6 +59,15 @@ export interface ColumnToolPanelState {
     expandedGroupIds: string[];
 }
 
+export interface NewFiltersToolPanelFilterState {
+    colId: string;
+    expanded?: boolean;
+}
+
+export interface NewFiltersToolPanelState {
+    filters?: NewFiltersToolPanelFilterState[];
+}
+
 export interface SideBarState {
     /** Is side bar visible */
     visible: boolean;
