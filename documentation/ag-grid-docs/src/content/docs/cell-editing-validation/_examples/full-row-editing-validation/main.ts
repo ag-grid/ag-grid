@@ -48,7 +48,7 @@ const gridOptions: GridOptions = {
         },
         {
             headerName: 'BMI',
-            type: 'numericColumn',
+            cellDataType: 'number',
             valueGetter: (params) => {
                 const { weight, height } = params.data ?? {};
                 if (!weight || !height) return null;
@@ -66,6 +66,7 @@ const gridOptions: GridOptions = {
     },
     editType: 'fullRow',
     rowData: getRowData(),
+    cellEditingInvalidCommitType: 'block',
     getFullRowEditValidationErrors: ({ currentEditingPositions }) => {
         const values = Object.fromEntries(currentEditingPositions.map(({ colId, newValue }) => [colId, newValue]));
 
