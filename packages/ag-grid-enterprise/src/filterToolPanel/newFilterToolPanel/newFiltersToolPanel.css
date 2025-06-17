@@ -2,6 +2,12 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+
+    :where(.ag-standard-button) {
+        transition:
+            background-color 0.25s ease-in-out,
+            color 0.25s ease-in-out;
+    }
 }
 
 /** These all need different styling when used within the new filter tool panel compared to the existing use case within the legacy filter tool panel or column menu  */
@@ -29,8 +35,6 @@
 }
 
 .ag-filter-card {
-    padding-top: var(--ag-widget-container-vertical-padding);
-    padding-bottom: var(--ag-widget-container-vertical-padding);
     border: solid var(--ag-border-width) var(--ag-border-color);
     border-radius: var(--ag-border-radius);
     background-color: var(--ag-background-color);
@@ -40,18 +44,19 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding-left: var(--ag-widget-horizontal-spacing);
-    padding-right: var(--ag-widget-horizontal-spacing);
-    margin-bottom: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
+    padding-top: var(--ag-widget-vertical-spacing);
 
     & > *:where(:not(:last-child)) {
-        margin-right: var(--ag-spacing);
+        padding-right: var(--ag-spacing);
     }
 }
 
 .ag-filter-card-heading {
     flex: 1;
     overflow: hidden;
+    padding-top: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
+    padding-bottom: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
+    padding-left: var(--ag-widget-horizontal-spacing);
 }
 
 .ag-filter-card-expand {
@@ -84,6 +89,21 @@
     color: var(--ag-filter-panel-card-subtle-color);
 }
 
+.ag-filter-card-expand-icon,
+.ag-filter-card-delete-icon {
+    transition: color 0.25s ease-in-out;
+}
+
+.ag-filter-card-expand-icon:hover,
+.ag-filter-card-delete-icon:hover {
+    color: var(--ag-filter-panel-card-subtle-hover-color);
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-filter-card-heading:hover .ag-filter-card-expand-icon {
+    color: var(--ag-filter-panel-card-subtle-hover-color);
+}
+
 .ag-filter-card-expand,
 .ag-filter-card-delete,
 .ag-filter-add-button {
@@ -96,19 +116,27 @@
     margin-right: var(--ag-widget-container-horizontal-padding);
 }
 
+.ag-filter-card-delete {
+    margin-right: var(--ag-widget-horizontal-spacing);
+}
+
+.ag-filter-card-summary {
+    margin-bottom: var(--ag-widget-container-vertical-padding);
+}
+
 .ag-filter-type-select {
     padding-top: var(--ag-widget-vertical-spacing);
 }
 
 .ag-filter-card-add {
     padding: 0;
+    border: 0;
 }
 
 .ag-filter-add-button {
     display: flex;
     flex-direction: row;
     width: 100%;
-    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     align-items: center;
     line-height: 1.5;
 }
@@ -130,8 +158,7 @@
     /* stylelint-disable-next-line selector-max-specificity */
     .ag-rich-select-value {
         padding: calc(
-                ((1.5 * var(--ag-font-size) + 2 * var(--ag-widget-container-vertical-padding)) - var(--ag-input-height)) /
-                    2
+                ((1.5 * var(--ag-font-size) + 2 * var(--ag-button-vertical-padding)) - var(--ag-input-height)) / 2
             )
             var(--ag-spacing);
         border: 0;
@@ -158,4 +185,11 @@
 
 .ag-filter-panel > *:where(:last-child) {
     padding-bottom: var(--ag-widget-container-vertical-padding);
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-filter-panel .ag-simple-filter-body-wrapper > *:last-child,
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-filter-panel .ag-set-filter-body-wrapper {
+    margin-bottom: var(--ag-widget-container-vertical-padding);
 }

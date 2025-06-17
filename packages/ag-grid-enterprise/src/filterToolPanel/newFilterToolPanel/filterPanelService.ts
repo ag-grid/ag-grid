@@ -59,7 +59,7 @@ export class FilterPanelService
         const availableFilters: { id: string; name: string }[] = [];
         for (const column of beans.colModel.getCols()) {
             const id = column.getColId();
-            if (column.getColDef().filter && !this.states.get(id)) {
+            if (column.isFilterAllowed() && !column.colDef.suppressFiltersToolPanel && !this.states.get(id)) {
                 availableFilters.push({
                     id,
                     name: getDisplayName(beans, column),
@@ -216,7 +216,7 @@ export class FilterPanelService
         const { colModel, colFilter } = this.beans;
         const column = colModel.getColById(id);
 
-        if (column) {
+        if (column && !column.colDef.suppressFiltersToolPanel) {
             const handler = colFilter!.getHandler(column, true);
             if (handler) {
                 const filterState = this.createFilterState(column, handler, expanded);

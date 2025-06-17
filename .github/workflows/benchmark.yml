@@ -28,6 +28,9 @@ env:
   COMMENT_FILE: ./comment.txt
   SLACK_FILE: ./slack.json
 
+permissions:
+  contents: read
+
 jobs:
   benchmark:
     runs-on: ubuntu-latest

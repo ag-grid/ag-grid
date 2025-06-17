@@ -57,6 +57,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/latest' }}
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   build_lint:
     name: Build & Lint
@@ -444,11 +448,12 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-      pull-requests: write
     needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test ]
     if: cancelled() != true
+    permissions:
+      contents: write
+      actions: read
+      checks: write
     steps:
       - name: Checkout
         id: checkout
@@ -481,13 +486,14 @@ jobs:
           done)
 
       - name: Test Report
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v2
         if: needs.test.result == 'success' || needs.test.result == 'failure' ||
           needs.e2e.result == 'success' || needs.e2e.result == 'failure' ||
           needs.bundle_size.result == 'success' || needs.bundle_size.result == 'failure'
         id: testReport
         continue-on-error: true
         with:
+          use-actions-summary: false
           name: 'Tests Results'
           path: reports/*.xml
           reporter: jest-junit
