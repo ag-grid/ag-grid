@@ -220,6 +220,12 @@ jobs:
         run: |
           curl -X POST -H 'Content-type: application/json' $SLACK_WEBHOOK --data @$SLACK_FILE
 
+      - name: Create Jira Ticket
+        id: create-jira-ticket
+        if: ${{ !!steps.notify-start.outputs.result && steps.playwright-test.outcome != 'success' }}
+        run: |
+          node ./testing/shared/scripts/create-jira-ticket.mjs
+
       - name: Notify End
         uses: actions/github-script@v7
         continue-on-error: true
