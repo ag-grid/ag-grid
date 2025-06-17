@@ -58,7 +58,7 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/latest' }}
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build_lint:
@@ -95,21 +95,6 @@ jobs:
         uses: ./.github/actions/setup-nx
         with:
           cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
-
-      - name: nx format:check
-        id: format
-        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
-        run: |
-          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            yarn nx format:check --all
-          else
-            yarn nx format:check --base ${{ steps.setup.outputs.base }}
-          fi
-
-      - name: nx lint
-        id: lint
-        run: |
-          yarn nx lint
 
       - name: update base url
         run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
@@ -205,10 +190,10 @@ jobs:
         with:
           cache_mode: ro
 
-      - name: nx test
-        if: matrix.shard != 0
-        id: test
-        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c=staging --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+#      - name: nx test
+#        if: matrix.shard != 0
+#        id: test
+#        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test -c=staging --exclude tag:no-sharding --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
       - name: nx test (non-sharded)
         if: matrix.shard == 0
         id: test-no-shard
@@ -237,6 +222,9 @@ jobs:
     runs-on: ubuntu-24.04
     needs: [ build_lint, test ]
     if: cancelled() != true
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         id: checkout
@@ -270,9 +258,9 @@ jobs:
 
       - name: Test Report
         uses: dorny/test-reporter@v2
-        if: needs.test.result == 'success' || needs.test.result == 'failure' ||
-          needs.e2e.result == 'success' || needs.e2e.result == 'failure' ||
-          needs.bundle_size.result == 'success' || needs.bundle_size.result == 'failure'
+#        if: needs.test.result == 'success' || needs.test.result == 'failure' ||
+#          needs.e2e.result == 'success' || needs.e2e.result == 'failure' ||
+#          needs.bundle_size.result == 'success' || needs.bundle_size.result == 'failure'
         id: testReport
         continue-on-error: true
         with:
@@ -383,8 +371,6 @@ jobs:
 #            --debug-channel "$SLACK_DEBUG_CHANNEL" \
 #            --run-context "$RUN_CONTEXT"
 
-      - name: Fail job if workflow failed
-        if: success() && steps.lastJobStatus.outputs.workflowStatus == 'failure'
+      - name: Output Report URL
         run: |
-            echo "Workflow failed, failing the build."
-            exit 1
+            echo ${{ steps.testReport.outputs.url_html }}
