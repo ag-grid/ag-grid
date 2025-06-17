@@ -228,6 +228,14 @@ export abstract class ProvidedFilter<
         params.onStateChange(state);
         params.onUiChange(this.getUiChangeEventParams());
 
+        if (!this.gos.get('enableFilterHandlers')) {
+            this.eventSvc.dispatchEvent({
+                type: 'filterModified',
+                column: params.column,
+                filterInstance: this,
+            });
+        }
+
         apply ??= this.applyActive ? undefined : 'debounce';
         if (apply === 'immediately') {
             this.doApplyModel({ afterFloatingFilter, afterDataChange: false });

@@ -2410,7 +2410,7 @@ export interface GridOptions<TData = any> {
      */
     onFilterChanged?(event: FilterChangedEvent<TData>): void;
     /**
-     * Filter was modified but not applied. Used when filters have 'Apply' buttons.
+     * Filter was modified but not applied  (when using `enableFilterHandlers = false`). Used when filters have 'Apply' buttons.
      */
     onFilterModified?(event: FilterModifiedEvent<TData>): void;
     /**
