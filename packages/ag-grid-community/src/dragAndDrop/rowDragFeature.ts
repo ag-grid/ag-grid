@@ -335,7 +335,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             this.makeGroupThrottleClear();
         }
 
-        if (target?.childrenAfterSort?.length) {
+        if (target?.expanded && target.childrenAfterSort?.length) {
             this.makeGroupThrottled = true;
             this.makeGroupThrottleTarget = target;
         }
