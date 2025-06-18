@@ -93,9 +93,9 @@ export interface AbstractColDef<TData = any, TValue = any> {
 }
 
 /** Configuration options for column groups in AG Grid.  */
-export interface ColGroupDef<TData = any, TValue = any> extends AbstractColDef<TData, TValue> {
+export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
     /** A list containing a mix of columns and column groups. */
-    children: (ColDef<TData, TValue> | ColGroupDef<TData, TValue>)[];
+    children: (ColDef<TData> | ColGroupDef<TData>)[];
     /** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the API. */
     groupId?: string;
     /**
