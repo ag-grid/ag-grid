@@ -43,6 +43,7 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'quickFilterText',
     'rowModelType',
     'editType',
+    'cellEditingInvalidCommitType',
     'domLayout',
     'clipboardDelimiter',
     'rowGroupPanelShow',
