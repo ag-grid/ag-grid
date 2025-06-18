@@ -5,6 +5,9 @@ on:
     schedule:
         - cron: '0 0 * * *' # Run daily at midnight UTC
 
+permissions:
+  contents: read
+
 jobs:
     code-dependency-scan:
         runs-on: ubuntu-latest

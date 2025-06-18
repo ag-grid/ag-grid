@@ -30,6 +30,9 @@ env:
   SLACK_FILE_SNIPPET: ./slack-snippet.txt
   DEFAULT_RETENTION_DAYS: 30
 
+permissions:
+  contents: read
+
 jobs:
   benchmark:
     runs-on: ubuntu-latest

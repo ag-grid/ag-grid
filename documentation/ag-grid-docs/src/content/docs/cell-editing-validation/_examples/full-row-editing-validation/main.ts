@@ -1,16 +1,14 @@
-import type { CellValueChangedEvent, GridApi, GridOptions, RowValueChangedEvent } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
-    CustomEditorModule,
     ModuleRegistry,
+    NumberEditorModule,
     SelectEditorModule,
     TextEditorModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
 import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule } from 'ag-grid-enterprise';
-
-import { NumericCellEditor } from './numericCellEditor_typescript';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -19,7 +17,7 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     SelectEditorModule,
     TextEditorModule,
-    CustomEditorModule,
+    NumberEditorModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -28,22 +26,38 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     columnDefs: [
         {
-            field: 'make',
-            cellEditor: 'agSelectCellEditor',
+            field: 'name',
+        },
+        {
+            field: 'weight',
+            headerName: 'Weight (kg)',
+            cellDataType: 'number',
             cellEditorParams: {
-                values: ['Porsche', 'Toyota', 'Ford', 'AAA', 'BBB', 'CCC'],
+                min: 0,
+                max: 500,
             },
         },
-        { field: 'model' },
-        { field: 'field4', headerName: 'Read Only', editable: false },
-        { field: 'price', cellEditor: NumericCellEditor },
         {
-            headerName: 'Suppress Navigable',
-            field: 'field5',
-            suppressNavigable: true,
-            minWidth: 200,
+            field: 'height',
+            headerName: 'Height (cm)',
+            cellDataType: 'number',
+            cellEditorParams: {
+                min: 0,
+                max: 300,
+            },
         },
-        { headerName: 'Read Only', field: 'field6', editable: false },
+        {
+            headerName: 'BMI',
+            cellDataType: 'number',
+            valueGetter: (params) => {
+                const { weight, height } = params.data ?? {};
+                if (!weight || !height) return null;
+                const heightM = height / 100;
+                return weight / (heightM * heightM);
+            },
+            valueFormatter: (params) => params.value?.toFixed(2),
+            editable: false,
+        },
     ],
     defaultColDef: {
         flex: 1,
@@ -52,61 +66,41 @@ const gridOptions: GridOptions = {
     },
     editType: 'fullRow',
     rowData: getRowData(),
+    cellEditingInvalidCommitType: 'block',
+    getFullRowEditValidationErrors: ({ allEditors }) => {
+        const values = Object.fromEntries(allEditors.map(({ column, newValue }) => [column?.getColId(), newValue]));
 
-    onCellValueChanged: onCellValueChanged,
-    onRowValueChanged: onRowValueChanged,
+        const weight = parseFloat(values['weight']);
+        const height = parseFloat(values['height']);
+
+        const heightM = height / 100;
+        const bmi = weight / (heightM * heightM);
+
+        const errors: string[] = [];
+
+        if (bmi < 10 || bmi > 80) {
+            errors.push(`BMI value of ${bmi.toFixed(2)} is not realistic. Please verify the input.`);
+        }
+
+        return errors.length ? errors : null;
+    },
 };
 
-function onCellValueChanged(event: CellValueChangedEvent) {
-    console.log('onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue);
-}
-
-function onRowValueChanged(event: RowValueChangedEvent) {
-    const data = event.data;
-    console.log('onRowValueChanged: (' + data.make + ', ' + data.model + ', ' + data.price + ', ' + data.field5 + ')');
-}
-
 function getRowData() {
-    const rowData = [];
-    for (let i = 0; i < 10; i++) {
-        rowData.push({
-            make: 'Toyota',
-            model: 'Celica',
-            price: 35000 + i * 1000,
-            field4: 'Sample XX',
-            field5: 'Sample 22',
-            field6: 'Sample 23',
-        });
-        rowData.push({
-            make: 'Ford',
-            model: 'Mondeo',
-            price: 32000 + i * 1000,
-            field4: 'Sample YY',
-            field5: 'Sample 24',
-            field6: 'Sample 25',
-        });
-        rowData.push({
-            make: 'Porsche',
-            model: 'Boxster',
-            price: 72000 + i * 1000,
-            field4: 'Sample ZZ',
-            field5: 'Sample 26',
-            field6: 'Sample 27',
-        });
-    }
+    const rowData = [
+        { name: 'Alice', weight: 68, height: 165 },
+        { name: 'Bob', weight: 85, height: 178 },
+        { name: 'Charlie', weight: 72, height: 172 },
+        { name: 'Diana', weight: 54, height: 160 },
+        { name: 'Ethan', weight: 90, height: 182 },
+        { name: 'Fiona', weight: 63, height: 168 },
+        { name: 'George', weight: 77, height: 175 },
+        { name: 'Hannah', weight: 59, height: 162 },
+        { name: 'Ian', weight: 95, height: 185 },
+        { name: 'Julia', weight: 70, height: 170 },
+    ];
+
     return rowData;
-}
-
-function onBtStopEditing() {
-    gridApi!.stopEditing();
-}
-
-function onBtStartEditing() {
-    gridApi!.setFocusedCell(1, 'make');
-    gridApi!.startEditingCell({
-        rowIndex: 1,
-        colKey: 'make',
-    });
 }
 
 // wait for the document to be loaded, otherwise

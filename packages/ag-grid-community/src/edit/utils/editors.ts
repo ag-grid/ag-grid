@@ -169,6 +169,10 @@ function _valueFromEditor(cancel: boolean, cellComp?: ICellComp): { newValue?: a
         return noValueResult;
     }
 
+    if (cellEditor.getValidationErrors?.()?.length) {
+        return noValueResult;
+    }
+
     const newValue = cellEditor.getValue();
 
     return {

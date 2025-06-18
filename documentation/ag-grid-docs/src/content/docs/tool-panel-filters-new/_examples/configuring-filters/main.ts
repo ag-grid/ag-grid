@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { DoesFilterPassParams, GridApi, GridOptions, SelectableFilterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     DateFilterModule,
@@ -8,7 +8,15 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { ColumnMenuModule, ContextMenuModule, NewFiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
+import {
+    ColumnMenuModule,
+    ContextMenuModule,
+    MultiFilterModule,
+    NewFiltersToolPanelModule,
+    SetFilterModule,
+} from 'ag-grid-enterprise';
+
+import { YearFilter } from './yearFilter_typescript';
 
 ModuleRegistry.registerModules([
     NumberFilterModule,
@@ -19,25 +27,54 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     SetFilterModule,
     TextFilterModule,
+    MultiFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
+
+function doesFilterPass({ model, node, handlerParams }: DoesFilterPassParams<any, any, boolean>): boolean {
+    return model ? handlerParams.getValue(node) > 2010 : true;
+}
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'athlete', minWidth: 200 },
+        { field: 'athlete', filter: 'agSetColumnFilter' },
         { field: 'age' },
-        { field: 'country', minWidth: 200, filter: 'agSetColumnFilter' },
-        { field: 'year' },
-        { field: 'date', minWidth: 180 },
+        {
+            field: 'country',
+            filterParams: {
+                filters: [
+                    {
+                        filter: 'agSetColumnFilter',
+                    },
+                    {
+                        filter: true, // default filter based on cell data type
+                    },
+                ],
+            } as SelectableFilterParams,
+        },
+        {
+            field: 'year',
+            filterParams: {
+                filters: [
+                    {
+                        filter: { component: YearFilter, doesFilterPass: doesFilterPass },
+                        name: 'Custom Filter',
+                    },
+                    {
+                        filter: 'agSetColumnFilter',
+                    },
+                ],
+            } as SelectableFilterParams,
+        },
+        { field: 'date', minWidth: 180, suppressFiltersToolPanel: true },
         { field: 'total', filter: false },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        filter: true,
-        floatingFilter: true,
+        filter: 'agSelectableColumnFilter',
     },
     sideBar: 'filters-new',
     enableFilterHandlers: true,

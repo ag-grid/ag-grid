@@ -355,7 +355,7 @@
                         {
                             "moduleName": "NewFiltersToolPanelModule",
                             "name": "New Filters Tool Panel",
-                            "path": "tool-panel-filters/#new-filters-tool-panel",
+                            "path": "tool-panel-filters-new",
                             "isEnterprise": true
                         }
                     ]
