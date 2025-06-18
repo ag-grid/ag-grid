@@ -18,6 +18,7 @@ const FilterElement: ElementParams = { tag: 'div', cls: 'ag-filter' };
 export class FilterComp extends Component {
     private wrapper: AgPromise<FilterDisplayWrapper> | null = null;
     private comp?: FilterWrapperComp;
+    private afterGuiAttachedParams?: IAfterGuiAttachedParams;
 
     constructor(
         private readonly column: AgColumn,
@@ -46,6 +47,7 @@ export class FilterComp extends Component {
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        this.afterGuiAttachedParams = params;
         this.wrapper?.then((wrapper) => {
             this.comp?.afterGuiAttached(params);
             wrapper?.comp?.afterGuiAttached?.(params);
@@ -101,6 +103,9 @@ export class FilterComp extends Component {
                     source,
                     eGui: this.getGui(),
                 });
+            } else {
+                // parent is already attached, and switching filter comps, so fire for the new comp
+                comp.afterGuiAttached?.(this.afterGuiAttachedParams);
             }
         });
     }
@@ -122,6 +127,7 @@ export class FilterComp extends Component {
     public override destroy(): void {
         this.wrapper = null;
         this.comp = this.destroyBean(this.comp);
+        this.afterGuiAttachedParams = undefined;
         super.destroy();
     }
 }

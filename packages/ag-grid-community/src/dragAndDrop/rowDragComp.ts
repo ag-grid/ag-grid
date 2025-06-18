@@ -98,6 +98,10 @@ export class RowDragComp extends Component {
             this.removeDragSource();
         }
 
+        if (this.gos.get('rowDragManaged') && this.rowNode.footer) {
+            return; // Footer nodes in row drag managed mode are not draggable
+        }
+
         const eGui = this.getGui();
 
         if (this.gos.get('enableCellTextSelection')) {
@@ -170,18 +174,19 @@ class VisibilityStrategy extends BeanStub {
         super();
     }
 
-    protected setDisplayedOrVisible(neverDisplayed: boolean): void {
+    protected setDisplayedOrVisible(neverDisplayed: boolean, alwaysHidden: boolean = false): void {
         const displayedOptions = { skipAriaHidden: true };
         if (neverDisplayed) {
             this.parent.setDisplayed(false, displayedOptions);
         } else {
-            let shown: boolean = true;
+            let shown: boolean = !alwaysHidden;
             let isShownSometimes: boolean = false;
 
             const { column, rowNode, parent } = this;
             if (column) {
-                shown = column.isRowDrag(rowNode) || parent.isCustomGui();
-                isShownSometimes = typeof column.getColDef().rowDrag === 'function';
+                const rowDrag = column.getColDef().rowDrag;
+                isShownSometimes = typeof rowDrag === 'function';
+                shown = (alwaysHidden ? !!rowDrag : column.isRowDrag(rowNode)) || parent.isCustomGui();
             }
 
             // if shown sometimes, them some rows can have drag handle while other don't,
@@ -189,10 +194,10 @@ class VisibilityStrategy extends BeanStub {
             // keeps the empty space, whereas setDisplayed looses the space)
             if (isShownSometimes) {
                 parent.setDisplayed(true, displayedOptions);
-                parent.setVisible(shown, displayedOptions);
+                parent.setVisible(shown && !alwaysHidden, displayedOptions);
             } else {
                 parent.setDisplayed(shown, displayedOptions);
-                parent.setVisible(true, displayedOptions);
+                parent.setVisible(!alwaysHidden, displayedOptions);
             }
         }
     }
@@ -262,6 +267,6 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         const hasExternalDropZones = dragAndDrop!.hasExternalDropZones();
         const neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || suppressRowDrag;
 
-        this.setDisplayedOrVisible(neverDisplayed);
+        this.setDisplayedOrVisible(neverDisplayed, this.rowNode.footer);
     }
 }

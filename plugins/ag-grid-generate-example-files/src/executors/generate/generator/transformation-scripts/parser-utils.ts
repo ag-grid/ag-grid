@@ -758,3 +758,10 @@ const darkModeJS = `
         // listen for user-triggered dark mode changes (not removing listener is fine here!)
         document.addEventListener('color-scheme-change', handleColorSchemeChange);
     `;
+
+export function wrapTearDownExample(method: string) {
+    const tearDownStart = '/** TEAR DOWN START **/';
+    const tearDownEnd = '/** TEAR DOWN END **/';
+
+    return `${tearDownStart}${method}${tearDownEnd}`;
+}

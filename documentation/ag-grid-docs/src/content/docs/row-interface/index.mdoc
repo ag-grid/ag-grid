@@ -26,25 +26,118 @@ It is recommended to **not** call any grid API functions while receiving events 
 
 ### Row Event Listener Lifecycle
 
-When adding event listeners to a row, they will stay with the row until the row is destroyed. This means if the row is taken out of memory (pagination or virtual paging) then the listener will be removed. Likewise, if you set new data into the grid, all listeners on the old data will be removed.
+When adding event listeners to a row, they will stay with the row until the row is destroyed. For example, if you set new data into the grid, all listeners on the old data will be removed.
 
-Be careful when adding listeners to `rowNodes` in cell renderers that you remove the listener when the rendered row is destroyed due to row virtualisation. You can cater for this as follows:
+#### Row Events in Cell Components
 
+To avoid memory leaks, when adding listeners to `rowNodes` in cell renderers, ensure that you remove the listener when the cell renderer is destroyed. You can cater for this as follows:
+
+
+{% if isFramework("javascript") %}
 ```js
-init(params: ICellRendererParams) {
-    // add listener
-    var selectionChangedCallback = () => {
-        // some logic on selection changed here
-        console.log('node selected = ' + params.node.isSelected());
-    };
+class MyCellRenderer {
 
-    params.node.addEventListener('rowSelected', selectionChangedCallback);
+    private selectionChangedCallback;
+    private params: ICellRendererParams;
 
-    // remove listener on destroy
-    params.api.addRenderedRowListener('virtualRowRemoved', params.rowIndex, () => {
-        params.node.removeEventListener('rowSelected', selectionChangedCallback);
-    })
+    init(params: ICellRendererParams) {
+        this.params = params;
+        // add listener
+        this.selectionChangedCallback = () => {
+            console.log('node selected = ' + params.node.isSelected());
+        };
+
+        params.node.addEventListener('rowSelected', this.selectionChangedCallback);
+    }
+
+    // OTHER METHODS...
+
+    destroy() {
+        // remove listener on destroy
+        this.params.node.removeEventListener('rowSelected', this.selectionChangedCallback);
+    }
 }
 ```
+{% /if %}
+
+{% if isFramework("react") %}
+
+```jsx
+function MyCellRenderer({ value, node, api }: ICellRendererParams) {
+    useEffect(() => {
+        // add listener
+        const selectionChangedCallback = () => {
+            console.log('node selected = ' + node.isSelected());
+        };
+
+        node.addEventListener('rowSelected', selectionChangedCallback);
+
+        // remove listener on unmount
+        return () => {
+            node.removeEventListener('rowSelected', selectionChangedCallback);
+        };
+    }, [node]);
+
+    return <span>{value}</span>;
+}
+```
+
+{% /if %}
+
+{% if isFramework("angular") %}
+
+```ts
+import { Component, OnDestroy } from '@angular/core';
+import { ICellRendererParams } from 'ag-grid-community';
+
+@Component({
+    selector: 'my-cell-renderer',
+    template: '<span>{{ value }}</span>',
+})
+export class MyCellRenderer implements OnDestroy {
+    private selectionChangedCallback: () => void;
+    params: ICellRendererParams;
+
+    agInit(params: ICellRendererParams) {
+        // add listener
+        this.selectionChangedCallback = () => {
+            console.log('node selected = ' + this.params.node.isSelected());
+        };
+        this.params.node.addEventListener('rowSelected', this.selectionChangedCallback);
+    }
+
+    // OTHER METHODS...
+
+    ngOnDestroy() {
+        // remove listener on destroy
+        this.params.node.removeEventListener('rowSelected', this.selectionChangedCallback);
+    }
+}
+```
+{% /if %}
+
+{% if isFramework("vue") %}
+```js
+
+export default {
+
+    // Other options...
+
+    mounted() {
+        // add listener
+        this.selectionChangedCallback = () => {
+            console.log('node selected = ' + this.node.isSelected());
+        };
+        this.node.addEventListener('rowSelected', this.selectionChangedCallback);
+    },
+    beforeUnmount() {
+        // remove listener on destroy
+        this.node.removeEventListener('rowSelected', this.selectionChangedCallback);
+    },
+};
+
+```
+{% /if %}
+
 
 See [Row Events](./row-events) for a complete list of row events.

@@ -1,8 +1,8 @@
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
-import type { FilterHandler, FilterModel, IFilter } from '../interfaces/iFilter';
-import { _error } from '../validation/logging';
+import type { FilterActionParams, FilterHandler, FilterModel, IFilter } from '../interfaces/iFilter';
+import { _error, _warn } from '../validation/logging';
 
 export function isColumnFilterPresent(beans: BeanCollection): boolean {
     const filterManager = beans.filterManager;
@@ -31,9 +31,18 @@ export function getFilterModel(beans: BeanCollection): FilterModel {
     return beans.filterManager?.getFilterModel() ?? {};
 }
 
-export function getColumnFilterModel<TModel>(beans: BeanCollection, key: string | Column): TModel | null {
-    const column = beans.colModel.getColDefCol(key) as AgColumn | null;
-    return column ? beans.colFilter?.getModelForColumn(column) ?? null : null;
+export function getColumnFilterModel<TModel>(
+    beans: BeanCollection,
+    key: string | Column,
+    useUnapplied?: boolean
+): TModel | null {
+    const { gos, colModel, colFilter } = beans;
+    if (useUnapplied && !gos.get('enableFilterHandlers')) {
+        _warn(288);
+        useUnapplied = false;
+    }
+    const column = colModel.getColDefCol(key) as AgColumn | null;
+    return column ? colFilter?.getModelForColumn(column, useUnapplied) ?? null : null;
 }
 
 export function setColumnFilterModel<TModel>(
@@ -65,5 +74,22 @@ export function getColumnFilterHandler(beans: BeanCollection, colKey: string | C
         _error(12, { colKey });
         return undefined;
     }
-    return beans.colFilter?.getHandler(column);
+    return beans.colFilter?.getHandler(column, true);
+}
+
+export function doFilterAction(beans: BeanCollection, params: FilterActionParams): void {
+    const { colModel, colFilter, gos } = beans;
+    if (!gos.get('enableFilterHandlers')) {
+        _warn(287);
+        return;
+    }
+    const { colId, action } = params;
+    if (colId) {
+        const column = colModel.getColById(colId);
+        if (column) {
+            colFilter?.updateModel(column, action);
+        }
+    } else {
+        colFilter?.updateAllModels(action);
+    }
 }

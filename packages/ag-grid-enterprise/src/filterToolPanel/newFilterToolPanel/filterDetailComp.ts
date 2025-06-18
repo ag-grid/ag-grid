@@ -29,7 +29,12 @@ export class FilterDetailComp extends Component<'filterTypeChanged'> {
         const oldState = this.state;
         this.state = newState;
 
-        const { activeFilterDef: newActiveFilterDef, filterDefs: newFilterDefs, detail: newDetail } = newState;
+        const {
+            activeFilterDef: newActiveFilterDef,
+            filterDefs: newFilterDefs,
+            detail: newDetail,
+            afterGuiAttached,
+        } = newState;
         const { activeFilterDef: oldActiveFilterDef, filterDefs: oldFilterDefs, detail: oldDetail } = oldState ?? {};
 
         const eFilterType = this.eFilterType;
@@ -48,6 +53,10 @@ export class FilterDetailComp extends Component<'filterTypeChanged'> {
                 _removeFromParent(oldDetail);
             }
             this.appendChild(newDetail);
+            afterGuiAttached({
+                container: 'toolPanel',
+                suppressFocus: true,
+            });
         }
     }
 }

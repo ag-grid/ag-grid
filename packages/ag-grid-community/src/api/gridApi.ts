@@ -54,7 +54,7 @@ import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from 
 import type { IColumnToolPanel } from '../interfaces/iColumnToolPanel';
 import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
-import type { FilterDisplay, FilterModel, IFilter } from '../interfaces/iFilter';
+import type { FilterActionParams, FilterDisplay, FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { AgModuleName } from '../interfaces/iModule';
@@ -986,9 +986,10 @@ export interface _ColumnFilterGridApi {
     /**
      * Gets the current filter model for the specified column.
      * Will return `null` if no active filter.
+     * @param useUnapplied If `enableFilterHandlers = true` and value is `true`, will return the unapplied filter model (or applied if no unapplied)
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
-    getColumnFilterModel<TModel>(column: string | Column): TModel | null;
+    getColumnFilterModel<TModel>(column: string | Column, useUnapplied?: boolean): TModel | null;
 
     /**
      * Sets the filter model for the specified column.
@@ -1003,6 +1004,13 @@ export interface _ColumnFilterGridApi {
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     showColumnFilter(colKey: string | Column): void;
+
+    /**
+     * Perform the provided filter action for the column specified, or all columns.
+     * Requires `enableFilterHandlers = true`.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
+     */
+    doFilterAction(params: FilterActionParams): void;
 }
 
 export interface _QuickFilterGridApi {

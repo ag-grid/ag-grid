@@ -19,6 +19,10 @@ export interface IMultiFilter extends IProvidedFilter {
     getChildFilterInstance(index: number): IFilter | undefined;
 }
 
+export interface MultiFilterHandler {
+    getHandler<TFilterHandler>(index: number): TFilterHandler | undefined;
+}
+
 export interface IMultiFilterDef extends IFilterDef {
     /**
      * Configures how the filter is shown in the Multi Filter.

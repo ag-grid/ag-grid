@@ -249,6 +249,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         setColumnFilterModel: 0,
         showColumnFilter: 0,
         getColumnFilterHandler: 0,
+        doFilterAction: 0,
     }),
     ...mod<_QuickFilterGridApi>('QuickFilter', {
         isQuickFilterPresent: 0,

@@ -161,45 +161,62 @@ function aggMax(params: IAggFuncParams): number | bigint | null {
     return result;
 }
 
+// Proto used to reduce memory impact from repeat function instantiation
+const COUNT_PROTO = Object.freeze({
+    // the grid by default uses toString to render values for an object, so this
+    // is a trick to get the default cellRenderer to display the avg value
+    toString: function () {
+        return this.value.toString();
+    },
+    // used for sorting
+    toNumber: function () {
+        return this.value;
+    },
+} as any);
+
 function aggCount(params: IAggFuncParams) {
     const { values } = params;
-    let result = 0;
+    let count = 0;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
         const value = values[i];
 
         // check if the value is from a group, in which case use the group's count
-        result += value != null && typeof value.value === 'number' ? value.value : 1;
+        count += value != null && typeof value.value === 'number' ? value.value : 1;
     }
 
     // the previous aggregation data
     const existingAggData = params.rowNode?.aggData?.[params.column.getColId()];
-    if (existingAggData && existingAggData.value === result) {
+    if (existingAggData && existingAggData.value === count) {
         // the underlying values haven't changed, return the old object to avoid triggering change detection
         return existingAggData;
     }
 
     // it's important to wrap it in the object so we can determine if this is a group level
-    return {
-        value: result,
-        toString: function () {
-            return this.value.toString();
-        },
-        // used for sorting
-        toNumber: function () {
-            return this.value;
-        },
-    };
+    const result = Object.create(COUNT_PROTO);
+    result.value = count;
+    return result;
 }
+
+// Proto used to reduce memory impact from repeat function instantiation
+const AVERAGE_PROTO = Object.freeze({
+    // the grid by default uses toString to render values for an object, so this
+    // is a trick to get the default cellRenderer to display the avg value
+    toString: function () {
+        return typeof this.value === 'number' || typeof this.value === 'bigint' ? this.value.toString() : '';
+    },
+    // used for sorting
+    toNumber: function () {
+        return this.value;
+    },
+} as any);
 
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
 function aggAvg(params: IAggFuncParams): {
     value: number | bigint | null;
     count: number;
-    toString(): string;
-    toNumber(): number;
 } {
     const { values } = params;
     let sum: any = 0; // the logic ensures that we never combine bigint arithmetic with numbers, but TS is hard to please
@@ -246,20 +263,8 @@ function aggAvg(params: IAggFuncParams): {
         return existingAggData;
     }
 
-    // the result will be an object. when this cell is rendered, only the avg is shown.
-    // however when this cell is part of another aggregation, the count is also needed
-    // to create a weighted average for the next level.
-    return {
-        count,
-        value,
-        // the grid by default uses toString to render values for an object, so this
-        // is a trick to get the default cellRenderer to display the avg value
-        toString: function () {
-            return typeof this.value === 'number' || typeof this.value === 'bigint' ? this.value.toString() : '';
-        },
-        // used for sorting
-        toNumber: function () {
-            return this.value as any;
-        },
-    };
+    const result = Object.create(AVERAGE_PROTO);
+    result.count = count;
+    result.value = value;
+    return result;
 }

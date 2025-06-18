@@ -1,0 +1,56 @@
+name: Content Security Policy (CSP)
+description: Content Security Policy Testing
+
+env:
+    NX_NO_CLOUD: true
+    CI: true
+    DEFAULT_RETENTION_DAYS: 30
+
+on:
+    workflow_dispatch:
+        inputs:
+            clean_checkout:
+                description: 'Disable all caching'
+                type: 'choice'
+                required: true
+                default: 'false'
+                options:
+                    - 'true'
+                    - 'false'
+    schedule:
+        - cron: '30 1 * * *' # Run daily at 1:30am UTC
+
+jobs:
+    csp-test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              id: checkout
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 1
+
+            - name: Setup
+              id: setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
+            - name: CSP test
+              id: cspTest
+              run: |
+                yarn nx run ag-grid-csp:test:e2e:csp
+
+            - name: Upload CSP Report
+              id: upload-report
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                name: playwright-report
+                path: reports/
+                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+            - name: Publish CSP Report
+              uses: ctrf-io/github-test-reporter@v1
+              if: always()
+              with:
+                report-path: './reports/*.json'

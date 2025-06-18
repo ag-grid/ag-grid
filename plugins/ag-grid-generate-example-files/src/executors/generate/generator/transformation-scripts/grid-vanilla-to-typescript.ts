@@ -5,6 +5,7 @@ import {
     findLocaleImport,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
+    wrapTearDownExample,
 } from './parser-utils';
 import { toTitleCase } from './string-utils';
 
@@ -53,6 +54,7 @@ export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: stri
             "if (typeof window !== 'undefined') {",
             '// Attach external event handlers to window so they can be called from index.html',
             ...externalBindings,
+            wrapTearDownExample(`(<any>window).tearDownExample = () => gridApi.destroy();`),
             '}',
         ].join('\n');
     }
@@ -78,7 +80,19 @@ export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: stri
         // Remove the original import statements
         unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
 
-        const result = `${formattedImports}${unWrapped} ${toAttach || ''} ${getIntegratedDarkModeCode(bindings.exampleName, true, 'gridApi') ?? ''}`;
+        let result = `${formattedImports}${unWrapped} ${toAttach || ''} ${getIntegratedDarkModeCode(bindings.exampleName, true, 'gridApi') ?? ''}`;
+
+        // Add test tearDown method
+        if (!result.includes('tearDownExample')) {
+            result += wrapTearDownExample(
+                [
+                    "if (typeof window !== 'undefined') {",
+                    `   (window as any).tearDownExample = () => gridApi.destroy();`,
+                    '}',
+                ].join('\n')
+            );
+        }
+
         return result;
     };
 }

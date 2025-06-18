@@ -30,16 +30,9 @@ export class RowDragService extends BeanStub implements NamedBean {
         return new RowDragComp(cellValueFn, rowNode, column, customGui, dragStartPixels, suppressVisibilityChange);
     }
 
-    private isRowDraggable(rowNode: RowNode): boolean {
-        return !rowNode.footer;
-    }
-
     public createRowDragCompForRow(rowNode: RowNode, element: HTMLElement): RowDragComp | undefined {
         if (_isCellSelectionEnabled(this.gos)) {
             return undefined;
-        }
-        if (!this.isRowDraggable(rowNode)) {
-            return undefined; // This type of row cannot be dragged
         }
         const translate = this.getLocaleTextFunc();
         return this.createRowDragComp(
@@ -66,10 +59,6 @@ export class RowDragService extends BeanStub implements NamedBean {
             if (!_isClientSideRowModel(gos) || gos.get('pagination')) {
                 return undefined;
             }
-        }
-
-        if (!this.isRowDraggable(rowNode)) {
-            return undefined; // This type of row cannot be dragged
         }
 
         // otherwise (normal case) we are creating a RowDraggingComp for the first time

@@ -1,6 +1,7 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { ValueGetterFunc } from '../entities/colDef';
 import type { NewFiltersToolPanelState } from './gridState';
+import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 import type { IEventEmitter } from './iEventEmitter';
 import type { FilterAction, FilterWrapperParams, IFilterDef } from './iFilter';
 import type { IToolPanel, IToolPanelNewFiltersCompParams } from './iToolPanel';
@@ -61,6 +62,7 @@ export interface FilterPanelDetailState extends FilterPanelBaseState {
     activeFilterDef?: SelectableFilterDef;
     filterDefs?: SelectableFilterDef[];
     detail: HTMLElement;
+    afterGuiAttached: (params?: IAfterGuiAttachedParams) => void;
 }
 
 export type FilterPanelFilterState = FilterPanelSummaryState | FilterPanelDetailState;
