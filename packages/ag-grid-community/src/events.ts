@@ -1021,7 +1021,7 @@ export interface CellEvent<T extends AgEventType, TData = any, TValue = any, TCo
 interface CellWithDataEvent<T extends AgEventType, TData = any, TValue = any, TContext = any>
     extends RowWithDataEvent<T, TData, TContext> {
     column: Column<TValue>;
-    colDef: ColDef<TData, TValue, TContext>;
+    colDef: ColDef<TData, TValue>;
     /** The value for the cell */
     value: TValue | null | undefined;
 }

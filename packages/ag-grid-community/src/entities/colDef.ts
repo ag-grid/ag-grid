@@ -12,22 +12,22 @@ import type { ITooltipParams } from '../tooltip/tooltipComponent';
 import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
 
 /** AbstractColDef can be a group or a column definition */
-export interface AbstractColDef<TData = any, TValue = any, TContext = any> {
+export interface AbstractColDef<TData = any, TValue = any> {
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */
     headerName?: string;
     /** Function or expression. Gets the value for display in the header. */
-    headerValueGetter?: string | HeaderValueGetterFunc<TData, TValue, TContext>;
+    headerValueGetter?: string | HeaderValueGetterFunc<TData, TValue>;
     /**
      * Tooltip for the column header
      * @agModule `TooltipModule`
      */
     headerTooltip?: string;
     /** An object of CSS values / or function returning an object of CSS values for a particular header. */
-    headerStyle?: HeaderStyle | HeaderStyleFunc<TData, TValue, TContext>;
+    headerStyle?: HeaderStyle | HeaderStyleFunc<TData, TValue>;
     /** CSS class to use for the header cell. Can be a string, array of strings, or function. */
-    headerClass?: HeaderClass<TData, TValue, TContext>;
+    headerClass?: HeaderClass<TData, TValue>;
     /** Suppress the grid taking action for the relevant keyboard event when a header is focused. */
-    suppressHeaderKeyboardEvent?: (params: SuppressHeaderKeyboardEventParams<TData, TValue, TContext>) => boolean;
+    suppressHeaderKeyboardEvent?: (params: SuppressHeaderKeyboardEventParams<TData, TValue>) => boolean;
 
     /** Whether to only show the column when the group is open / closed. If not set the column is always displayed as part of the group. */
     columnGroupShow?: ColumnGroupShowType;
@@ -35,7 +35,7 @@ export interface AbstractColDef<TData = any, TValue = any, TContext = any> {
      * CSS class to use for the tool panel cell. Can be a string, array of strings, or function.
      * @agModule `ColumnsToolPanelModule`
      */
-    toolPanelClass?: ToolPanelClass<TData, TValue, TContext>;
+    toolPanelClass?: ToolPanelClass<TData, TValue>;
     /**
      * Set to `true` if you do not want this column or group to appear in the Columns Tool Panel.
      * @default false
@@ -93,10 +93,9 @@ export interface AbstractColDef<TData = any, TValue = any, TContext = any> {
 }
 
 /** Configuration options for column groups in AG Grid.  */
-export interface ColGroupDef<TData = any, TValue = any, TContext = any>
-    extends AbstractColDef<TData, TValue, TContext> {
+export interface ColGroupDef<TData = any, TValue = any> extends AbstractColDef<TData, TValue> {
     /** A list containing a mix of columns and column groups. */
-    children: (ColDef<TData, TValue, TContext> | ColGroupDef<TData, TValue, TContext>)[];
+    children: (ColDef<TData, TValue> | ColGroupDef<TData, TValue>)[];
     /** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the API. */
     groupId?: string;
     /**
@@ -128,7 +127,7 @@ export interface ColGroupDef<TData = any, TValue = any, TContext = any>
      * The column menu button is not displayed for column groups.
      * @agModule `ColumnMenuModule`
      */
-    mainMenuItems?: (DefaultMenuItem | MenuItemDef<TData, TContext>)[] | GetMainMenuItems<TData, TContext>;
+    mainMenuItems?: (DefaultMenuItem | MenuItemDef<TData>)[] | GetMainMenuItems<TData>;
 }
 
 export interface IAggFunc<TData = any, TValue = any, TContext = any> {
@@ -141,7 +140,7 @@ export interface IAggFuncParams<TData = any, TValue = any, TContext = any> exten
     /** Column the aggregation function is working on */
     column: Column<TValue>;
     /** ColDef of the aggregation column */
-    colDef: ColDef<TData, TValue, TContext>;
+    colDef: ColDef<TData, TValue>;
     /** Pivot Result Column being produced using this aggregation */
     pivotResultColumn?: Column;
     /** The parent RowNode, where the aggregation result will be shown */
@@ -159,7 +158,7 @@ export interface HeaderStyle {
 }
 
 export interface HeaderClassParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    colDef: AbstractColDef<TData, TValue, TContext>;
+    colDef: AbstractColDef<TData, TValue>;
     column?: Column<TValue> | null;
     columnGroup?: ColumnGroup | null;
     floatingFilter: boolean;
@@ -169,7 +168,7 @@ export type HeaderClass<TData = any, TValue = any, TContext = any> =
     | string[]
     | ((params: HeaderClassParams<TData, TValue, TContext>) => string | string[] | undefined);
 export interface ToolPanelClassParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    colDef: AbstractColDef<TData, TValue, TContext>;
+    colDef: AbstractColDef<TData, TValue>;
     column?: Column<TValue> | null;
     columnGroup?: ProvidedColumnGroup | null;
 }
@@ -189,9 +188,7 @@ type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends
 /**
  * Returns a union of all possible paths to nested fields in `TData`.
  */
-export type ColDefField<TData = any, TValue = any, TContext = any> = TData extends any
-    ? NestedFieldPaths<TData, TValue, []>
-    : never;
+export type ColDefField<TData = any, TValue = any> = TData extends any ? NestedFieldPaths<TData, TValue, []> : never;
 
 /**
  * Returns a union of all possible paths to nested fields in `TData`.
@@ -207,9 +204,7 @@ export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = [
 }[StringOrNumKeys<TData>];
 
 /** Configuration options for columns in AG Grid. */
-export interface ColDef<TData = any, TValue = any, TContext = any>
-    extends AbstractColDef<TData, TValue, TContext>,
-        IFilterDef {
+export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData, TValue>, IFilterDef {
     // *** Columns *** //
 
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
@@ -245,9 +240,9 @@ export interface ColDef<TData = any, TValue = any, TContext = any>
      */
     cellDataType?: boolean | string;
     /** Function or expression. Gets the value from your data for display. */
-    valueGetter?: string | ValueGetterFunc<TData, TValue, TContext>;
+    valueGetter?: string | ValueGetterFunc<TData, TValue>;
     /** A function or expression to format a value, should return a string. */
-    valueFormatter?: string | ValueFormatterFunc<TData, TValue, TContext>;
+    valueFormatter?: string | ValueFormatterFunc<TData, TValue>;
     /** Provided a reference data map to be used to map column values to their respective value from the map. */
     refData?: { [key: string]: string };
     /**
@@ -255,7 +250,7 @@ export interface ColDef<TData = any, TValue = any, TContext = any>
      * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.
      * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value.
      */
-    keyCreator?: (params: KeyCreatorParams<TData, TValue, TContext>) => string;
+    keyCreator?: (params: KeyCreatorParams<TData, TValue>) => string;
     /**
      * Custom comparator for values, used by renderer to know if values have changed. Cells whose values have not changed don't get refreshed.
      * By default the grid uses `===` which should work for most use cases.
@@ -271,14 +266,14 @@ export interface ColDef<TData = any, TValue = any, TContext = any>
      * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.
      * @agModule `TooltipModule`
      */
-    tooltipValueGetter?: (params: ITooltipParams<TData, TValue, TContext>) => string | any;
+    tooltipValueGetter?: (params: ITooltipParams<TData, TValue>) => string | any;
     /**
      * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
      *
      * Set to `true` (or return `true` from function) to render a selection checkbox in the column.
      * @default false
      */
-    checkboxSelection?: boolean | CheckboxSelectionCallback<TData, TValue, TContext>;
+    checkboxSelection?: boolean | CheckboxSelectionCallback<TData, TValue>;
     /**
      * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
      *
@@ -849,7 +844,7 @@ export interface ColDef<TData = any, TValue = any, TContext = any>
 }
 
 /** Configuration options for reusable columns types in AG Grid. This includes all possible options from `ColDef` except the `type` field. */
-export type ColTypeDef<TData = any, TValue = any, TContext = any> = Omit<ColDef<TData, TValue>, 'type'>;
+export type ColTypeDef<TData = any, TValue = any> = Omit<ColDef<TData, TValue>, 'type'>;
 
 export interface ColumnFunctionCallbackParams<TData = any, TValue = any, TContext = any>
     extends AgGridCommon<TData, TContext> {
@@ -903,7 +898,7 @@ export interface SuppressNavigableCallback<TData = any, TValue = any, TContext =
 export interface HeaderCheckboxSelectionCallbackParams<TData = any, TValue = any, TContext = any>
     extends AgGridCommon<TData, TContext> {
     column: Column<TValue>;
-    colDef: ColDef<TData, TValue, TContext>;
+    colDef: ColDef<TData, TValue>;
 }
 export interface HeaderCheckboxSelectionCallback<TData = any, TValue = any, TContext = any> {
     (params: HeaderCheckboxSelectionCallbackParams<TData, TValue, TContext>): boolean;
@@ -923,7 +918,7 @@ export interface GetQuickFilterTextParams<TData = any, TValue = any, TContext = 
     /** Column for this callback. */
     column: Column<TValue>;
     /** ColDef provided for this column. */
-    colDef: ColDef<TData, TValue, TContext>;
+    colDef: ColDef<TData, TValue>;
 }
 
 export interface GetFindTextParams<TData = any, TValue = any, TContext = any>
@@ -931,7 +926,7 @@ export interface GetFindTextParams<TData = any, TValue = any, TContext = any>
     /** Column for this callback. `null` for `groupRows`. */
     column: Column<TValue> | null;
     /** ColDef provided for this column. `null` for `groupRows`. */
-    colDef: ColDef<TData, TValue, TContext> | null;
+    colDef: ColDef<TData, TValue> | null;
     /** Get formatted value for the cell (or `null` if no `valueFormatter`) */
     getValueFormatted: () => string | null;
 }
@@ -966,7 +961,7 @@ export interface BaseColDefParams<TData = any, TValue = any, TContext = any> ext
     /** Column for this callback */
     column: Column<TValue>;
     /** ColDef provided for this column */
-    colDef: ColDef<TData, TValue, TContext>;
+    colDef: ColDef<TData, TValue>;
 }
 
 export interface BaseColDefOptionalDataParams<TData = any, TValue = any, TContext = any>
@@ -978,7 +973,7 @@ export interface BaseColDefOptionalDataParams<TData = any, TValue = any, TContex
     /** Column for this callback */
     column: Column<TValue>;
     /** ColDef provided for this column */
-    colDef: ColDef<TData, TValue, TContext>;
+    colDef: ColDef<TData, TValue>;
 }
 
 export interface SpanRowsParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -1017,7 +1012,7 @@ export type HeaderLocation =
     | null;
 export interface HeaderValueGetterParams<TData = any, TValue = any, TContext = any>
     extends AgGridCommon<TData, TContext> {
-    colDef: AbstractColDef<TData, TValue, TContext>;
+    colDef: AbstractColDef<TData, TValue>;
     /** Column for this callback if applicable*/
     column?: Column<TValue> | null;
     /** ColumnGroup for this callback if applicable */
