@@ -161,6 +161,7 @@ function aggMax(params: IAggFuncParams): number | bigint | null {
     return result;
 }
 
+// Proto used to reduce memory impact from repeat function instantiation
 const COUNT_PROTO = Object.freeze({
     // the grid by default uses toString to render values for an object, so this
     // is a trick to get the default cellRenderer to display the avg value
@@ -198,6 +199,7 @@ function aggCount(params: IAggFuncParams) {
     return result;
 }
 
+// Proto used to reduce memory impact from repeat function instantiation
 const AVERAGE_PROTO = Object.freeze({
     // the grid by default uses toString to render values for an object, so this
     // is a trick to get the default cellRenderer to display the avg value
@@ -262,7 +264,7 @@ function aggAvg(params: IAggFuncParams): {
     }
 
     const result = Object.create(AVERAGE_PROTO);
-    result.value = value;
     result.count = count;
+    result.value = value;
     return result;
 }
