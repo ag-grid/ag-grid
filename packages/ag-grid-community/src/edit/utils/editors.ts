@@ -329,35 +329,31 @@ export function _destroyEditors(beans: BeanCollection, edits: Required<EditPosit
     edits.forEach((cellPosition) => _destroyEditor(beans, cellPosition));
 }
 
-export function _destroyEditor(beans: BeanCollection, edit?: EditPosition): void {
-    const cellCtrl = _getCellCtrl(beans, edit);
+export function _destroyEditor(beans: BeanCollection, position: EditPosition): void {
+    const cellCtrl = _getCellCtrl(beans, position);
     if (!cellCtrl) {
         return;
     }
 
     const { comp } = cellCtrl;
+
+    if (comp && !comp.getCellEditor()) {
+        // no editor, nothing to do
+        return;
+    }
+
+    const { rowNode, column } = position;
 
     comp?.setEditDetails(); // passing nothing stops editing
-    comp?.refreshEditStyles(false, false);
-    cellCtrl?.updateAndFormatValue(false);
-    cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });
-    cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
-
-    if (beans.editModelSvc?.hasEdits(edit) && edit && edit?.rowNode && edit?.column) {
-        beans.editModelSvc?.setState(edit, 'changed');
-    }
-}
-
-export function _refreshCell(beans: BeanCollection, edit: EditPosition): void {
-    const cellCtrl = _getCellCtrl(beans, edit);
-    if (!cellCtrl) {
-        return;
+    if (beans.editModelSvc?.hasEdits(position) && rowNode && column) {
+        beans.editModelSvc?.setState(position, 'changed');
     }
 
-    const { comp } = cellCtrl;
     comp?.refreshEditStyles(false, false);
-    cellCtrl?.updateAndFormatValue(false);
-    cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });
+
+    cellCtrl?.refreshCell({ force: true, suppressFlash: true });
+
+    beans.rowRenderer.refreshCells({ rowNodes: rowNode ? [rowNode] : [], suppressFlash: true, force: true });
 }
 
 export function _validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {

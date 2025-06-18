@@ -1,19 +1,19 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import type { RowNode } from '../entities/rowNode';
 import type { Column } from '../interfaces/iColumn';
 import type {
     EditMap,
     EditRow,
     EditState,
     EditValue,
-    HasEditsParams,
+    GetEditsParams,
     IEditModelService,
 } from '../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { UNEDITED } from './utils/editors';
-import { _getSiblingRows } from './utils/nodes';
 
 export class EditModelService extends BeanStub implements NamedBean, IEditModelService {
     beanName = 'editModelSvc' as const;
@@ -38,16 +38,54 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         }
     }
 
-    public getEditRow({ rowNode }: EditRowPosition): EditRow | undefined {
-        return rowNode && this.edits.get(rowNode);
+    public getEditRow({ rowNode }: EditRowPosition, params: GetEditsParams = {}): EditRow | undefined {
+        const edits = rowNode && this.edits.get(rowNode);
+
+        if (edits) {
+            return edits;
+        }
+
+        if (params.checkSiblings) {
+            const pinnedSibling = (rowNode as RowNode).pinnedSibling;
+            if (pinnedSibling) {
+                return this.getEditRow({ rowNode: pinnedSibling });
+            }
+        }
+
+        return undefined;
+    }
+
+    public getEditRowDataValue({ rowNode }: Required<EditRowPosition>, { checkSiblings }: GetEditsParams = {}): any {
+        const editRow = this.getEditRow({ rowNode });
+        const pinnedSibling = (rowNode as RowNode).pinnedSibling;
+        const siblingRow = checkSiblings && pinnedSibling && this.getEditRow({ rowNode: pinnedSibling });
+
+        if (!editRow && !siblingRow) {
+            return rowNode.data;
+        }
+
+        const data: any = Object.assign({}, rowNode.data);
+
+        const applyEdits = (edits: EditRow, data: any) =>
+            edits.forEach(({ newValue }, column) => {
+                if (newValue !== UNEDITED) {
+                    data[column.getColId()] = newValue;
+                }
+            });
+
+        if (editRow) {
+            applyEdits(editRow, data);
+        }
+
+        if (siblingRow) {
+            applyEdits(siblingRow, data);
+        }
+
+        return data;
     }
 
     public getEdit(position: EditPosition): EditValue | undefined {
         return position.column && this.getEditRow(position)?.get(position.column);
-    }
-
-    public getEditSiblingRow({ rowNode }: Required<EditRowPosition>): IRowNode | undefined {
-        return _getSiblingRows(this.beans, rowNode).find((node) => this.edits.has(node));
     }
 
     public getEditMap(copy = true): EditMap {
@@ -101,13 +139,20 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         if (!position.rowNode || !position.column) {
             return;
         }
-        const editRow = this.getEditRow(position) ?? new Map();
 
-        const edit = editRow.get(position.column);
+        const { rowNode, column } = position;
+
+        let editRow = this.getEditRow(position);
+
+        const edit = editRow?.get(column);
         if (edit) {
             edit.state = state;
         } else {
-            editRow.set(position.column, { newValue: undefined, oldValue: undefined, state });
+            if (!editRow) {
+                editRow = new Map<Column, EditValue>();
+                this.edits.set(rowNode, editRow);
+            }
+            editRow.set(column, { newValue: undefined, oldValue: undefined, state });
         }
     }
 
@@ -130,45 +175,41 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         return positions;
     }
 
-    public hasRowEdits({ rowNode }: Required<EditRowPosition>): boolean {
-        return this.edits.has(rowNode);
+    public hasRowEdits({ rowNode }: Required<EditRowPosition>, params?: GetEditsParams): boolean {
+        const rowEdits = this.getEditRow({ rowNode }, params);
+        return !!rowEdits;
     }
 
-    public hasEdits(position: EditPosition = {}, params: HasEditsParams = {}): boolean {
+    public hasEdits(position: EditPosition = {}, params: GetEditsParams = {}): boolean {
         const { rowNode, column } = position;
-        const { checkSiblings, includeParents, withOpenEditor: withOpenEditors } = params;
+        const { withOpenEditor } = params;
         if (rowNode) {
-            const rowEdits = this.getEditRow(position);
+            const rowEdits = this.getEditRow(position, params);
             if (!rowEdits) {
                 return false;
             }
 
             if (column) {
-                if (withOpenEditors) {
-                    const edit = this.getEdit(position);
-                    return edit ? edit.state === 'editing' : false;
+                if (withOpenEditor) {
+                    return this.getEdit(position)?.state === 'editing';
                 }
                 return rowEdits.has(column) ?? false;
             }
 
             if (rowEdits.size !== 0) {
-                if (withOpenEditors) {
+                if (withOpenEditor) {
                     return Array.from(rowEdits.values()).some(({ state }) => state === 'editing');
                 }
                 return true;
             }
 
-            return (
-                (checkSiblings &&
-                    !!_getSiblingRows(this.beans, rowNode, false, includeParents).find((sibling) =>
-                        this.hasEdits({ rowNode: sibling, column }, { includeParents })
-                    )) ??
-                false
-            );
+            return false;
         }
-        if (withOpenEditors) {
+
+        if (withOpenEditor) {
             return this.getEditPositions().some(({ state }: any) => state === 'editing');
         }
+
         return this.edits.size > 0;
     }
 

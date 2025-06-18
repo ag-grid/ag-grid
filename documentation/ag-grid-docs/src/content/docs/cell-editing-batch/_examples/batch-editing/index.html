@@ -13,8 +13,8 @@
         </div>
         <div class="example-button-row">
             <span>Export API: </span>
-            <button onclick="onBtExport('excel')">Export to Excel</button>
-            <button onclick="onBtExport('csv')">Export to CSV (including pending edits)</button>
+            <button onclick="onBtExport('excel')">Excel</button>
+            <button onclick="onBtExport('csv')">CSV (inc pending)</button>
         </div>
         <div class="example-button-row">
             <span>UndoRedo API: </span>
@@ -22,32 +22,31 @@
             <button onclick="onBtRedo()">Redo</button>
         </div>
         <div class="example-button-row">
-            <span>Editing Utility: </span>
-            <button id="getPending" onclick="getEditingCells()">Get Editing Cells</button>
-            <button id="enablePoll" onclick="pollState()">Poll State</button>
-            <button id="disablePoll" onclick="pollState()">Stop Polling</button>
-        </div>
-        <div class="example-button-row">
             <span>Extras: </span>
             <button id="createChart" onclick="createChart()">Create Chart</button>
+            <button id="refresh" onclick="refreshRows()">Refresh Rows</button>
         </div>
         <div class="example-button-row">
             <span>Batch Editing:</span>
             <label><input type="checkbox" id="batchEdit" onclick="toggleBatch()" />Enabled</label>
         </div>
-        <div id="batchEditingApi" class="example-button-row">
-            <span>Batch Editing API:</span>
-            <button id="setPending" onclick="setEditingCells()">Set Editing Cells</button>
-            <button id="setPending" onclick="setEditingCells(true)">Set Editing Cells (empty values)</button>
-            <button id="clearPending" onclick="clearEditingCells()">Clear Editing Cells</button>
-        </div>
-        <div class="example-button-row">
-            <span>Extras: </span>
-            <button id="decorateCells" onclick="decorateCells()">Decorate Cells</button>
-            <button id="clearDecorations" onclick="clearDecorations()">Clear Decorations</button>
-        </div>
     </div>
-    <div class="grid-wrapper">
-        <div id="myGrid"></div>
+    <div id="edits" style="grid-column: 2">
+        <div>
+            <div id="poll-buttons">
+                <button id="getPending" onclick="getEditingCells()">Get Editing Cells</button>
+                <button id="enablePoll" onclick="pollState()">Poll State</button>
+                <button id="disablePoll" onclick="pollState()">Stop Polling</button>
+            </div>
+            <div id="batchEditingApi">
+                <button id="clearPending" onclick="clearEditingCells()">Clear Pending</button>
+                <button id="setPending" onclick="setEditingCells(true)">Set Empty Pending</button>
+                <button id="setPending" onclick="setEditingCells()">Set Pending</button>
+            </div>
+        </div>
+        <table id="edits-table"></table>
+    </div>
+    <div class="grid-wrapper" style="grid-column: span 2">
+        <div id="myGrid" class="ag-theme-balham"></div>
     </div>
 </div>

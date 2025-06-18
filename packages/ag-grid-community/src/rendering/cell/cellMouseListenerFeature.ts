@@ -51,9 +51,10 @@ export class CellMouseListenerFeature extends BeanStub {
             return;
         }
 
-        const { eventSvc, rangeSvc, editSvc, editModelSvc } = this.beans;
+        const { eventSvc, rangeSvc, editSvc, editModelSvc, frameworkOverrides } = this.beans;
         const isMultiKey = event.ctrlKey || event.metaKey;
-        const { column, cellPosition } = this.cellCtrl;
+        const { cellCtrl } = this;
+        const { column, cellPosition } = cellCtrl;
 
         if (rangeSvc && isMultiKey) {
             // the mousedown event has created the range already, so we only intersect if there is more than one
@@ -63,7 +64,7 @@ export class CellMouseListenerFeature extends BeanStub {
             }
         }
 
-        const cellClickedEvent: CellClickedEvent = this.cellCtrl.createEvent(event, 'cellClicked');
+        const cellClickedEvent: CellClickedEvent = cellCtrl.createEvent(event, 'cellClicked');
         eventSvc.dispatchEvent(cellClickedEvent);
 
         const colDef = column.getColDef();
@@ -71,14 +72,18 @@ export class CellMouseListenerFeature extends BeanStub {
         if (colDef.onCellClicked) {
             // to make callback async, do in a timeout
             window.setTimeout(() => {
-                this.beans.frameworkOverrides.wrapOutgoing(() => {
+                frameworkOverrides.wrapOutgoing(() => {
                     colDef.onCellClicked!(cellClickedEvent);
                 });
             }, 0);
         }
 
-        if (editSvc?.shouldStartEditing(this.cellCtrl, event) && editModelSvc?.getState(this.cellCtrl) !== 'editing') {
-            editSvc?.startEditing(this.cellCtrl, { event });
+        if (editModelSvc?.getState(cellCtrl) !== 'editing') {
+            if (editSvc?.shouldStartEditing(cellCtrl, event)) {
+                editSvc?.startEditing(cellCtrl, { event });
+            } else if (editSvc?.shouldStopEditing(cellCtrl, event)) {
+                editSvc?.stopEditing(cellCtrl);
+            }
         }
     }
 

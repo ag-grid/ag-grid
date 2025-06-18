@@ -80,7 +80,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.dispatchRowEvent({ rowNode }, 'rowEditingStarted');
         }
 
-        const columns = this.beans.colModel.getCols();
+        const columns = this.beans.visibleCols.allCols;
         const cells: Required<EditPosition>[] = [];
 
         columns.forEach((column) => {
@@ -177,7 +177,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
         if (previous) {
-            _getRowCtrl(this.beans, previous)?.refreshRow({ suppressFlash: true, forceRefresh: true });
+            _getRowCtrl(this.beans, previous)?.refreshRow({ suppressFlash: true, force: true });
         }
     }
 
@@ -224,6 +224,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         } else {
             nextCell.focusCell(true, event);
         }
+
+        prevCell.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
 
         return true;
     }

@@ -14,7 +14,7 @@ import type {
 } from './iCellEditor';
 import type { ICellStyleFeature } from './iCellStyleFeature';
 import type { Column } from './iColumn';
-import type { EditMap } from './iEditModelService';
+import type { EditMap, GetEditsParams } from './iEditModelService';
 import type { IRowNode } from './iRowNode';
 import type { IRowStyleFeature } from './iRowStyleFeature';
 import type { UserCompDetails } from './iUserCompDetails';
@@ -94,6 +94,7 @@ export interface IEditService extends NamedBean {
         source?: EditSource
     ): boolean | null;
     getCellDataValue(position: Required<EditPosition>): any;
+    getRowDataValue({ rowNode }: Required<EditRowPosition>, params?: GetEditsParams): any;
     addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void;
     createPopupEditorWrapper(params: ICellEditorParams): PopupEditorWrapper;
     setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined;

@@ -169,13 +169,19 @@ export class ValueService extends BeanStub implements NamedBean {
         const colDef = column.getColDef();
         const field = colDef.field;
         const colId = column.getColId();
-        const data = rowNode.data;
+        let data = rowNode.data;
 
         const { editSvc, rowGroupColsSvc } = this.beans;
 
-        if (editSvc && source === 'ui') {
+        if (source === 'ui') {
+            // if the row is editing, make sure we sync data fields with any pending values
+            if (editSvc?.isEditing({ rowNode }, { checkSiblings: true })) {
+                data = editSvc?.getRowDataValue({ rowNode }, { checkSiblings: true });
+            }
+
+            // if the row is editing, we want to return the new value, if available
             if (editSvc?.isEditing()) {
-                const newValue = editSvc?.getCellDataValue({ rowNode, column });
+                const newValue = editSvc.getCellDataValue({ rowNode, column });
                 if (newValue !== undefined) {
                     return newValue;
                 }
@@ -280,6 +286,7 @@ export class ValueService extends BeanStub implements NamedBean {
         suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true
     ): string | null {
+        const { editSvc, expressionSvc } = this.beans;
         let result: string | null = null;
         let formatter: ((value: any) => string) | string | undefined;
 
@@ -293,17 +300,29 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         if (formatter) {
+            let data = node ? node.data : null;
+
+            if (node) {
+                const position = { rowNode: node };
+                const options = { checkSiblings: true };
+
+                if (editSvc?.isEditing(position, options)) {
+                    // if editing, then use the edited value, not the value from the data
+                    data = editSvc?.getRowDataValue(position, options);
+                }
+            }
+
             const params: ValueFormatterParams = _addGridCommonParams(this.gos, {
                 value,
                 node,
-                data: node ? node.data : null,
+                data,
                 colDef,
                 column,
             });
             if (typeof formatter === 'function') {
                 result = formatter(params);
             } else {
-                result = this.expressionSvc ? this.expressionSvc.evaluate(formatter, params) : null;
+                result = expressionSvc ? expressionSvc.evaluate(formatter, params) : null;
             }
         } else if (colDef.refData) {
             return colDef.refData[value] || '';

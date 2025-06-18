@@ -6,10 +6,8 @@ import type { ColDef } from '../../entities/colDef';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
-import type { Column } from '../../interfaces/iColumn';
 import type { EditMap, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition, EditSource, IEditService } from '../../interfaces/iEditService';
-import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
 import {
@@ -87,7 +85,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
         if (previous) {
-            _getCellCtrl(this.beans, previous)?.refreshCell({ suppressFlash: true, forceRefresh: true });
+            _getCellCtrl(this.beans, previous)?.refreshCell({ suppressFlash: true, force: true });
         }
     }
 
@@ -328,11 +326,10 @@ export abstract class BaseEditStrategy extends BeanStub {
         });
 
         // now update cell values and fire cell events
-        const cells: (EditValue & { rowNode: IRowNode; column: Column })[] = [];
+        const cells: (EditValue & Required<EditPosition>)[] = [];
         edits.forEach((editRow, rowNode) => {
             editRow.forEach((cellData, column) => {
                 const position = { rowNode, column };
-                this.model.setEdit(position, cellData);
                 this.dispatchCellEvent(position, undefined, 'cellEditingStarted');
                 if (cellData.state === 'editing') {
                     cells.push({ ...cellData, rowNode, column });
