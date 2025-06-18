@@ -116,4 +116,5 @@ export interface IEditService extends NamedBean {
     createCellStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): ICellStyleFeature;
     createRowStyleFeature(rowCtrl: RowCtrl, beans: BeanCollection): IRowStyleFeature;
     setEditingCells(cells: EditingCellPosition[], params?: SetEditingCellsParams): void;
+    hasValidationErrors({ rowNode, column }: EditPosition): boolean;
 }
