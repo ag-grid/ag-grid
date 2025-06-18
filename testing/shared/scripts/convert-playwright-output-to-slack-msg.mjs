@@ -70,7 +70,9 @@ const getTotalsText = (report) =>
         num(report.stats.unexpected, statusEmoji('unexpected'), 'Failed'),
         num(report.stats.skipped, statusEmoji('skipped'), 'Skipped'),
         num(report.stats.flaky, statusEmoji('flaky'), 'Flaky'),
-    ].join(' | ');
+    ]
+        .filter((t) => t.trim())
+        .join(' | ');
 
 const getSectionWithTotals = (report) => ({
     type: 'section',

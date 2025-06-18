@@ -223,7 +223,7 @@ jobs:
 
       - name: Create Jira Ticket
         id: create-jira-ticket
-        if: ${{ !!steps.notify-start.outputs.result && steps.playwright-test.outcome != 'success' }}
+        if: ${{ steps.prepare-messages.outcome == 'success' && steps.playwright-test.outcome != 'success' && github.event_name == 'schedule' }}
         run: |
           node ./testing/shared/scripts/create-jira-ticket.mjs
 
