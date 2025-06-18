@@ -50,6 +50,8 @@ class MyCellRenderer {
         params.node.addEventListener('rowSelected', this.selectionChangedCallback);
     }
 
+    // OTHER METHODS...
+
     destroy() {
         // remove listener on destroy
         this.params.node.removeEventListener('rowSelected', this.selectionChangedCallback);
@@ -94,13 +96,18 @@ import { ICellRendererParams } from 'ag-grid-community';
 })
 export class MyCellRenderer implements OnDestroy {
     private selectionChangedCallback: () => void;
-    constructor(private params: ICellRendererParams) {
+    params: ICellRendererParams;
+
+    agInit(params: ICellRendererParams) {
         // add listener
         this.selectionChangedCallback = () => {
             console.log('node selected = ' + this.params.node.isSelected());
         };
         this.params.node.addEventListener('rowSelected', this.selectionChangedCallback);
     }
+
+    // OTHER METHODS...
+
     ngOnDestroy() {
         // remove listener on destroy
         this.params.node.removeEventListener('rowSelected', this.selectionChangedCallback);
@@ -114,6 +121,8 @@ export class MyCellRenderer implements OnDestroy {
 
 export default {
 
+    // Other options...
+
     mounted() {
         // add listener
         this.selectionChangedCallback = () => {
@@ -126,7 +135,7 @@ export default {
         this.node.removeEventListener('rowSelected', this.selectionChangedCallback);
     },
 };
-</script>
+
 ```
 {% /if %}
 
