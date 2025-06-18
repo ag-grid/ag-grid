@@ -141,19 +141,16 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             })),
         });
 
-        const hasErrors = !!fullRowEditErrors?.length;
-
-        const rowCtrl = _getRowCtrl(this.beans, {
-            rowNode: this.rowNode,
-        });
+        const rowCtrl = _getRowCtrl(this.beans, { rowNode: this.rowNode });
 
         if (rowCtrl) {
-            rowCtrl.forEachGui(undefined, ({ rowComp }) => {
-                rowComp.toggleCss('invalid', hasErrors);
+            this.eventSvc.dispatchEvent({
+                ...rowCtrl.createRowEvent('rowEditingValidated'),
+                errorMessages: fullRowEditErrors,
             });
         }
 
-        return hasErrors;
+        return !!fullRowEditErrors?.length;
     }
 
     public override stop(): boolean {

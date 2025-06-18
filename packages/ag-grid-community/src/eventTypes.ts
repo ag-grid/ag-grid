@@ -85,6 +85,7 @@ export const _PUBLIC_EVENTS = [
     'dragCancelled',
     'rowEditingStarted',
     'rowEditingStopped',
+    'rowEditingValidated',
     'cellEditingStarted',
     'cellEditingStopped',
     'bodyScroll',

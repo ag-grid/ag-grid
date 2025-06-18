@@ -223,7 +223,9 @@ export abstract class BaseEditStrategy extends BeanStub {
         const rowCtrl = _getRowCtrl(this.beans, position)!;
 
         if (rowCtrl) {
-            this.eventSvc.dispatchEvent(rowCtrl.createRowEvent(type));
+            this.eventSvc.dispatchEvent({
+                ...rowCtrl.createRowEvent(type),
+            });
         }
     }
 
