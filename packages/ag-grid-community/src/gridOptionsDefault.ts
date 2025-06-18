@@ -99,6 +99,7 @@ export const GRID_OPTION_DEFAULTS = {
     suppressMaxRenderedRowRestriction: false,
     suppressRowVirtualisation: false,
     rowDragManaged: false,
+    rowDragInsertDelay: 500,
     suppressRowDrag: false,
     suppressMoveWhenRowDragging: false,
     rowDragEntireRow: false,

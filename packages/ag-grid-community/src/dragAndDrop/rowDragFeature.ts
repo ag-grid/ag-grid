@@ -231,13 +231,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.lastDraggingEvent = draggingEvent;
 
         if (this.gos.get('rowDragManaged')) {
-            this.doManagedDrag(draggingEvent);
+            this.doManagedDrag(draggingEvent, true);
         }
 
         this.autoScrollService.check(draggingEvent.event);
     }
 
-    private doManagedDrag(draggingEvent: DraggingEvent): void {
+    private doManagedDrag(draggingEvent: DraggingEvent, throttleMakeGroup: boolean): void {
         const { dragAndDrop, gos } = this.beans;
         const isFromThisGrid = this.isFromThisGrid(draggingEvent);
         const managedDrag = gos.get('rowDragManaged');
@@ -248,7 +248,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         if (gos.get('suppressMoveWhenRowDragging') || !isFromThisGrid) {
             if (dragAndDrop!.isDropZoneWithinThisGrid(draggingEvent)) {
-                const rowsDrop = this.managedRowsDrop(draggingEvent, true);
+                const rowsDrop = this.managedRowsDrop(draggingEvent, throttleMakeGroup);
                 const target = rowsDrop?.target;
                 const rowDropHighlightSvc = this.beans.rowDropHighlightSvc!;
                 if (target) {
@@ -258,7 +258,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 }
             }
         } else {
-            const rowsDrop = this.managedRowsDrop(draggingEvent, true);
+            const rowsDrop = this.managedRowsDrop(draggingEvent, throttleMakeGroup);
             if (rowsDrop) {
                 this.dropRows(rowsDrop);
             }
@@ -336,8 +336,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         if (target?.childrenAfterSort?.length) {
-            this.makeGroupThrottleTarget = target;
             this.makeGroupThrottled = true;
+            this.makeGroupThrottleTarget = target;
         }
 
         if (newParent === null && canSetParent) {
@@ -348,7 +348,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                     newParent = target;
                 }
                 if (throttleMakeGroup && (newParent === null || !target.expanded)) {
-                    this.makeGroupThrottleStart(target);
+                    this.makeGroupThrottleTarget = target;
+                    this.makeGroupThrottleStart();
                 }
             } else {
                 newParent = target.parent ?? rootNode;
@@ -381,23 +382,23 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return { sameGrid, position, target, newParent, rows };
     }
 
-    private makeGroupThrottleStart(target: RowNode) {
+    private makeGroupThrottleStart() {
         if (this.makeGroupThrottleTimer === null) {
-            this.makeGroupThrottled = false;
-            this.makeGroupThrottleTarget = target;
-            this.makeGroupThrottleTimer = window.setTimeout(this.makeGroupThrottleCallback, 1000);
+            this.makeGroupThrottleTimer = window.setTimeout(
+                this.makeGroupThrottleCallback,
+                this.gos.get('rowDragInsertDelay')
+            );
         }
     }
 
     private makeGroupThrottleCallback = () => {
+        this.makeGroupThrottleTimer = null;
         const event = this.lastDraggingEvent;
         if (event) {
             this.makeGroupThrottled = true;
-            this.doManagedDrag(event);
+            this.doManagedDrag(event, false);
             this.makeGroupExpanded(this.makeGroupThrottleTarget);
         }
-        this.makeGroupThrottleTimer = null;
-        this.makeGroupThrottleTarget = null;
     };
 
     private makeGroupExpanded(target: RowNode | null): void {
