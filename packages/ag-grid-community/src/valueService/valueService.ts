@@ -202,12 +202,12 @@ export class ValueService extends BeanStub implements NamedBean {
         const aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
 
         // SSRM agg data comes from the data attribute, so ignore that instead
-        const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!column.getColDef().aggFunc;
+        const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!colDef.aggFunc;
         const ssrmFooterGroupCol =
             this.isSsrm &&
             rowNode.footer &&
             rowNode.field &&
-            (column.getColDef().showRowGroup === true || column.getColDef().showRowGroup === rowNode.field);
+            (colDef.showRowGroup === true || colDef.showRowGroup === rowNode.field);
 
         if (this.isTreeData && aggDataExists) {
             result = rowNode.aggData[colId];
@@ -219,7 +219,7 @@ export class ValueService extends BeanStub implements NamedBean {
             result = rowNode.groupData![colId];
         } else if (aggDataExists) {
             result = rowNode.aggData[colId];
-        } else if (colDef.valueGetter) {
+        } else if (colDef.valueGetter && !ignoreSsrmAggData) {
             if (!allowUserValuesForCell) {
                 return result;
             }
