@@ -19,9 +19,28 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-let gridApi: GridApi<IOlympicData>;
+interface IModifiedOlympicData extends IOlympicData {
+    dateObj: Date | null;
+}
 
-const gridOptions: GridOptions<IOlympicData> = {
+let gridApi: GridApi<IModifiedOlympicData>;
+
+const stringToDate = (date: string): Date | null => {
+    const [day, month, year] = (date || '').split('/');
+    if (day == null || month == null || year == null) {
+        return null;
+    }
+    return new Date(`${year}-${month}-${day}`);
+};
+
+const dateToIso = (date: string | null): string => {
+    const [day, month, year] = (date || '').split('/');
+    if (day == null || month == null || year == null) {
+        return '';
+    }
+    return `${year}-${month}-${day}`;
+};
+const gridOptions: GridOptions<IModifiedOlympicData> = {
     columnDefs: [
         {
             field: 'athlete',
@@ -41,22 +60,11 @@ const gridOptions: GridOptions<IOlympicData> = {
             },
         },
         {
-            field: 'date',
+            field: 'dateObj',
             headerName: 'Date (< 2009)',
             cellEditor: 'agDateCellEditor',
-            valueGetter: ({ data }) => {
-                const [day, month, year] = (data?.date || '').split('/');
-                if (day == null || month == null || year == null) {
-                    return null;
-                }
-                return new Date(`${year}-${month}-${day}`);
-            },
             valueFormatter: ({ data }) => {
-                const [day, month, year] = (data?.date || '').split('/');
-                if (day == null || month == null || year == null) {
-                    return '';
-                }
-                return `${year}-${month}-${day}`;
+                return data?.dateObj?.toISOString().slice(0, 10) || '';
             },
             cellEditorParams: {
                 max: new Date('2008-12-31'),
@@ -66,13 +74,6 @@ const gridOptions: GridOptions<IOlympicData> = {
             field: 'date',
             headerName: 'Date as String (> 2008)',
             cellEditor: 'agDateStringCellEditor',
-            valueGetter: ({ data }) => {
-                const [day, month, year] = (data?.date || '').split('/');
-                if (day == null || month == null || year == null) {
-                    return null;
-                }
-                return new Date(`${year}-${month}-${day}`);
-            },
             cellEditorParams: {
                 min: '2008-12-31',
             },
@@ -80,6 +81,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     ],
     defaultColDef: {
         editable: true,
+        cellDataType: false,
     },
 };
 
@@ -90,5 +92,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+        .then((data: IOlympicData[]) =>
+            gridApi!.setGridOption(
+                'rowData',
+                data.map((rec: IOlympicData) => ({
+                    ...rec,
+                    date: dateToIso(rec.date),
+                    dateObj: stringToDate(rec.date),
+                }))
+            )
+        );
 });
