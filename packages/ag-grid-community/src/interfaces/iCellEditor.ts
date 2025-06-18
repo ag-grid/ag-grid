@@ -150,7 +150,7 @@ export interface SetEditingCellsParams {
     update?: boolean;
 }
 
-export interface ICellEditingValue extends EditPosition, EditValue {}
+export interface ICellEditingValue extends Required<EditPosition>, EditValue {}
 
 export interface EditingCellPosition extends RowPosition {
     /** Column id */

@@ -22,13 +22,16 @@ import {
     _syncFromEditors,
 } from '../utils/editors';
 
-export type EditValidationResult<T = Required<EditPosition>> = {
+export type EditValidationResult<T extends Required<EditPosition> = Required<EditPosition>> = {
     all: T[];
     pass: T[];
     fail: T[];
 };
 
-export type EditValidationAction<T = Required<EditPosition>> = { destroy: T[]; keep: T[] };
+export type EditValidationAction<T extends Required<EditPosition> = Required<EditPosition>> = {
+    destroy: T[];
+    keep: T[];
+};
 
 export abstract class BaseEditStrategy extends BeanStub {
     beanName: BeanName | undefined;

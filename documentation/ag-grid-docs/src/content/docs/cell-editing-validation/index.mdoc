@@ -4,7 +4,7 @@ title: "Cell Editing Validation"
 
 ## Standard Validation
 
-Ag Grid provides built-in validation for all [Provided Cell Editors](./provided-cell-editors/), such as the Text, Large Text, Number, Date, and Select editors.
+The Grid provides built-in validation for all [Provided Cell Editors](./provided-cell-editors/), such as the Text, Large Text, Number, Date, and Select editors.
 These editors support validation automatically by checking the constraints defined in the column configuration. For example:
 
 - `Text` and `Large Text` editors will respect the `maxLength` property.
@@ -52,7 +52,7 @@ This is demonstrated in the following example, note that:
 
 ## Validation Modes
 
-Ag Grid supports two modes for handling invalid edits, configured via the grid option `cellEditingInvalidCommitType`:
+The Grid supports two modes for handling invalid edits, configured via the grid option `cellEditingInvalidCommitType`:
 
 | Mode | Description |
 | ----- | ---------- |
@@ -71,7 +71,7 @@ const gridOptions = {
 
 ## Full Row Editing Validation
 
-When using [Full Row Editing](./cell-editing-full-row/), Ag Grid will validate all editors in the row individually using the same mechanisms described above.
+When using [Full Row Editing](./cell-editing-full-row/), the Grid will validate all editors in the row individually using the same mechanisms described above.
 
 After validating each editor, the grid will also call an optional grid-level callback: `getFullRowEditValidationErrors(params)`. This allows you to implement cross-field validation logic — for example, ensuring one field is greater than another.
 
@@ -90,6 +90,11 @@ const gridOptions = {
 ```
 
 The row edit will only complete successfully if both the individual editors and the full-row validation return no errors.
+This is demonstrated in the following example, note that:
+
+- `Weight` has to be a positive value below `500`.
+- `Height` has to be a positive value below `300`.
+- The **Full Row Edit Validation** will enforce that the relation between height and weight (BMI) has to be between `10` and `80`.
 
 {% gridExampleRunner title="Full Row Editing Validation" name="full-row-editing-validation" /%}
 
