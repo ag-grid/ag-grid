@@ -160,43 +160,43 @@ const gridOptions: GridOptions = {
                     editable: false,
                     minWidth: 145,
                 },
-                // {
-                //     headerName: 'DetailsFn',
-                //     colId: 'detailsFn',
-                //     cellRenderer: (params: ICellRendererParams) => {
-                //         return `
-                //             <div  class="athlete-info">
-                //                 <span>${params.data?.firstName ?? ''} </span>
-                //                 <span>${params.data?.lastName ?? ''}</span>
-                //             </div>
-                //             <span>${params.data?.age ?? ''}</span>
-                //         `;
-                //     },
-                //     editable: false,
-                //     minWidth: 145,
-                // },
-                // {
-                //     headerName: 'DetailsGt',
-                //     colId: 'detailsGt',
-                //     valueGetter: (params: ValueGetterParams) => {
-                //         return `${params.data?.firstName ?? ''} ${params.data?.lastName ?? ''}`;
-                //     },
-                //     editable: false,
-                //     minWidth: 145,
-                // },
-                // {
-                //     headerName: 'DetailsFmt',
-                //     colId: 'detailsFmt',
-                //     valueFormatter: (params: ValueFormatterParams) => {
-                //         return `${params.data?.firstName ?? ''} ${params.data?.lastName ?? ''}`;
-                //     },
-                //     editable: false,
-                //     minWidth: 145,
-                // },
+                {
+                    headerName: 'DetailsFn',
+                    colId: 'detailsFn',
+                    cellRenderer: (params: ICellRendererParams) => {
+                        return `
+                            <div  class="athlete-info">
+                                <span>${params.data?.firstName ?? ''} </span>
+                                <span>${params.data?.lastName ?? ''}</span>
+                            </div>
+                            <span>${params.data?.age ?? ''}</span>
+                        `;
+                    },
+                    editable: false,
+                    minWidth: 145,
+                },
+                {
+                    headerName: 'DetailsGt',
+                    colId: 'detailsGt',
+                    valueGetter: (params: ValueGetterParams) => {
+                        return `${params.data?.firstName ?? ''} ${params.data?.lastName ?? ''}`;
+                    },
+                    editable: false,
+                    minWidth: 145,
+                },
+                {
+                    headerName: 'DetailsFmt',
+                    colId: 'detailsFmt',
+                    valueFormatter: (params: ValueFormatterParams) => {
+                        return `${params.data?.firstName ?? ''} ${params.data?.lastName ?? ''}`;
+                    },
+                    editable: false,
+                    minWidth: 145,
+                },
             ],
         },
         { field: 'gender', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots, rowGroup: true },
-        // { field: 'exists', cellRenderer: 'agCheckboxCellRenderer', cellEditor: 'agCheckboxCellEditor' },
+        { field: 'exists', cellRenderer: 'agCheckboxCellRenderer', cellEditor: 'agCheckboxCellEditor' },
         { field: 'age', aggFunc: 'sum', cellDataType: 'number', enableValue: true },
         { field: 'mood', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots },
         { field: 'country', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots },
@@ -276,6 +276,7 @@ const gridOptions: GridOptions = {
     },
     onCellValueChanged: (_event: CellValueChangedEvent) => {
         console.log('Cell value changed');
+        getEditingCells();
     },
     onBodyScroll(_event: BodyScrollEvent) {
         decorated && decorateCells();
