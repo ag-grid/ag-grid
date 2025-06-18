@@ -81,7 +81,7 @@
     height: var(--ag-row-height);
     border-bottom: var(--ag-row-border);
 
-    &.invalid {
+    &.ag-row-editing-invalid {
         background-color: var(--ag-full-row-edit-invalid-background-color);
     }
 }

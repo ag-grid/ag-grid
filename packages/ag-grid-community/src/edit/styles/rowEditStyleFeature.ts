@@ -60,6 +60,10 @@ export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
             // required for Material theme
             rowComp.toggleCss('ag-row-inline-editing', editing);
             rowComp.toggleCss('ag-row-not-inline-editing', !editing);
+
+            if (!fullRow || !editing) {
+                rowComp.toggleCss('ag-row-editing-invalid', false);
+            }
         });
     }
 }

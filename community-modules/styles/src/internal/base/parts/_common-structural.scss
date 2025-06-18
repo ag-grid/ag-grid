@@ -913,7 +913,7 @@
         }
     }
 
-    .ag-row.invalid .ag-cell-inline-editing {
+    .ag-row.ag-row-editing-invalid .ag-cell-inline-editing {
         opacity: 0.8;
     }
 

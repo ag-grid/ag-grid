@@ -864,7 +864,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         for (const { rowComp } of this.allRowGuis) {
             const isThisRow = rowNode.rowIndex === rowIndex && rowNode.rowPinned === rowPinned;
             const isInvalid = isThisRow && !!errorMessages?.length;
-            rowComp.toggleCss('invalid', isInvalid);
+            rowComp.toggleCss('ag-row-editing-invalid', isInvalid);
         }
     }
 
