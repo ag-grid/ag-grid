@@ -106,15 +106,14 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     }
 
     protected override processValidationResults(results: EditValidationResult): EditValidationAction {
-        const { gos } = this;
-        const getFullRowEditValidationErrors = gos.get('getFullRowEditValidationErrors');
+        // TODO - process getFullRowEditValidationErrors
+        // const { gos } = this;
+        // const getFullRowEditValidationErrors = gos.get('getFullRowEditValidationErrors');
 
-        const res = getFullRowEditValidationErrors?.({
-            allEditors: results.all as any,
-            editorsWithErrors: results.fail as any,
-        });
-
-        console.log(res);
+        // const res = getFullRowEditValidationErrors?.({
+        //     allEditors: results.all as any,
+        //     editorsWithErrors: results.fail as any,
+        // });
 
         const anyFailed = results.fail.length > 0;
 
