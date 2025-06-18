@@ -116,7 +116,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 setVerticalPosition: (position) => gridBodyCon.scrollFeature.setVerticalScrollPosition(position),
                 onScrollCallback: () => {
                     const lastDraggingEvent = this.lastDraggingEvent;
-                    if (lastDraggingEvent !== null) {
+                    if (lastDraggingEvent) {
                         this.onDragging(lastDraggingEvent);
                     }
                 },
