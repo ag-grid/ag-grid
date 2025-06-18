@@ -1,6 +1,6 @@
 import type { BeanName } from '../../context/context';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
-import type { ICellEditingValue } from '../../interfaces/iCellEditor';
+import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
@@ -107,14 +107,23 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     }
 
     protected override processValidationResults(
-        results: EditValidationResult<ICellEditingValue>
+        results: EditValidationResult<Required<EditPosition> & EditValue>
     ): EditValidationAction {
         const { gos } = this;
         const getFullRowEditValidationErrors = gos.get('getFullRowEditValidationErrors');
 
         getFullRowEditValidationErrors?.({
-            allEditors: results.all,
-            editorsWithErrors: results.fail,
+            editorsState: results.all.map(
+                ({ column, rowNode: { rowIndex, rowPinned }, newValue, oldValue, state }) => ({
+                    colId: column.getColId(),
+                    column,
+                    rowIndex: rowIndex!,
+                    rowPinned,
+                    newValue,
+                    oldValue,
+                    state,
+                })
+            ),
         });
 
         const anyFailed = results.fail.length > 0;
