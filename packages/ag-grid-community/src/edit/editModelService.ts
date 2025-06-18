@@ -67,7 +67,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         const data: any = Object.assign({}, rowNode.data);
 
         const applyEdits = (edits: EditRow, data: any) =>
-            Array.from(edits.entries()).forEach(([column, { newValue }]) => {
+            edits.forEach(({ newValue }, column) => {
                 if (newValue !== UNEDITED) {
                     data[column.getColId()] = newValue;
                 }
