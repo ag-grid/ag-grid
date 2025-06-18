@@ -385,7 +385,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (this.makeGroupThrottleTimer === null) {
             this.makeGroupThrottled = false;
             this.makeGroupThrottleTarget = target;
-            this.makeGroupThrottleTimer = window.setTimeout(this.makeGroupThrottleCallback, 2000);
+            this.makeGroupThrottleTimer = window.setTimeout(this.makeGroupThrottleCallback, 1000);
         }
     }
 
