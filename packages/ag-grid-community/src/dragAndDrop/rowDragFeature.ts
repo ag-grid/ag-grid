@@ -127,11 +127,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     public override destroy(): void {
         super.destroy();
 
-        this.makeGroupThrottleClear();
-        this.autoScrollService?.ensureCleared();
-        this.autoScrollService = null!;
         this.eContainer = null!;
         this.lastDraggingEvent = null!;
+        this.makeGroupThrottleClear();
+        const autoScrollService = this.autoScrollService;
+        if (autoScrollService) {
+            this.autoScrollService = null!;
+            autoScrollService?.ensureCleared();
+        }
     }
 
     public getContainer(): HTMLElement {
