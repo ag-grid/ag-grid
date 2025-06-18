@@ -2,6 +2,7 @@ import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
+import type { RowNode } from '../../entities/rowNode';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type {
     GetCellEditorInstancesParams,
@@ -10,6 +11,7 @@ import type {
     ICellEditorParams,
     ICellEditorValidationError,
 } from '../../interfaces/iCellEditor';
+import type { Column } from '../../interfaces/iColumn';
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
@@ -356,22 +358,23 @@ export function _destroyEditor(beans: BeanCollection, position: EditPosition): v
     beans.rowRenderer.refreshCells({ rowNodes: rowNode ? [rowNode] : [], suppressFlash: true, force: true });
 }
 
-export function _validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {
+export type MappedValidationErrors = Map<RowNode, Map<Column, string[]>>;
+
+export function _validateEditAsMap(beans: BeanCollection): MappedValidationErrors {
     const mappedEditors = getCellEditorInstanceMap(beans);
+    const errors: MappedValidationErrors = new Map();
 
     if (!mappedEditors || mappedEditors.length === 0) {
-        return null;
+        return errors;
     }
 
     const { ariaAnnounce, localeSvc } = beans;
-    const errors: ICellEditorValidationError[] = [];
     const translate = _getLocaleTextFunc(localeSvc);
     const ariaValidationErrorPrefix = translate('ariaValidationErrorPrefix', 'Cell Editor Validation');
 
     for (const mappedEditor of mappedEditors) {
         const { ctrl, editor } = mappedEditor;
         const { rowNode, column } = ctrl;
-        const { rowIndex, rowPinned } = rowNode;
         const errorMessages = editor.getValidationErrors?.();
         const el = editor.getValidationElement?.();
 
@@ -394,14 +397,38 @@ export function _validateEdit(beans: BeanCollection): ICellEditorValidationError
         }
 
         if (errorMessages) {
-            errors.push({
-                column,
-                rowIndex: rowIndex!,
-                rowPinned,
-                messages: errorMessages,
-            });
+            if (!errors.has(rowNode)) {
+                errors.set(rowNode, new Map());
+            }
+            const rowErrors = errors.get(rowNode)!;
+            if (!rowErrors.has(column)) {
+                rowErrors.set(column, []);
+            }
+            rowErrors.get(column)!.push(...errorMessages);
         }
     }
 
-    return errors.length ? errors : null;
+    return errors;
+}
+
+export function _validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {
+    const map = _validateEditAsMap(beans);
+
+    // flatten map of maps rownode -> column -> messages into an array of validation errors
+    if (!map) {
+        return null;
+    }
+    const validations: ICellEditorValidationError[] = [];
+    map.forEach((rowErrors, rowNode) => {
+        rowErrors.forEach((messages, column) => {
+            validations.push({
+                column,
+                rowIndex: rowNode.rowIndex!,
+                rowPinned: rowNode.rowPinned,
+                messages,
+            });
+        });
+    });
+
+    return validations;
 }
