@@ -1,5 +1,4 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
-import { get } from 'http';
 
 import type {
     AgColumn,
