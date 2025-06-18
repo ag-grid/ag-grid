@@ -3,6 +3,7 @@
 const url = 'https://ag-grid.atlassian.net/rest/api/2/issue/';
 const auth = process.env.JIRA_API_AUTH;
 const commentText = process.env.COMMENT_FILE;
+const fs = require('fs');
 
 if (!auth) {
     console.error('JIRA_API_AUTH environment variable must be set.');
@@ -17,7 +18,7 @@ const body = JSON.stringify(
         fields: {
             project: { key: 'RTI' },
             summary: 'Performance Regression',
-            description: `A regression in performance has been detected in the latest build. ${codeBlock(commentText)}`,
+            description: `A regression in performance has been detected in the latest build. ${codeBlock(fs.readFileSync(commentText, 'utf8'))}`,
             issuetype: { name: 'Task' },
         },
     },

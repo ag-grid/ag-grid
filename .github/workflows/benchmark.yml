@@ -52,7 +52,7 @@ jobs:
         id: notify-start
         uses: actions/github-script@v7
         continue-on-error: true
-        if: github.event_name == 'issue_comment' || !!inputs.force_pr_id
+        if: ${{ env.PR_ID }}
         with:
           result-encoding: string
           script: |
@@ -97,7 +97,7 @@ jobs:
       - name: Notify Progress
         uses: actions/github-script@v7
         continue-on-error: true
-        if: ${{ !!steps.notify-start.outputs.result }}
+        if: ${{ steps.notify-start.outputs.result }}
         with:
           script: |
             github.rest.issues.updateComment({
@@ -116,7 +116,7 @@ jobs:
       - name: Notify Progress
         uses: actions/github-script@v7
         continue-on-error: true
-        if: ${{ !!steps.notify-start.outputs.result }}
+        if: ${{ steps.notify-start.outputs.result }}
         with:
           script: |
             github.rest.issues.updateComment({
@@ -127,6 +127,8 @@ jobs:
             })
 
       - name: Build umd packages
+        id: build-umd
+        if: ${{ steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped' }}
         run: |
           echo "Building UMD packages..."
           npx nx run-many -t build --projects=ag-grid-{enterprise,community,angular,react,vue3}
@@ -134,7 +136,7 @@ jobs:
       - name: Notify Progress
         uses: actions/github-script@v7
         continue-on-error: true
-        if: ${{ !!steps.notify-start.outputs.result }}
+        if: ${{ steps.notify-start.outputs.result }}
         with:
           script: |
             github.rest.issues.updateComment({
@@ -145,6 +147,8 @@ jobs:
             })
 
       - name: Install Playwright Browsers
+        id: install-browsers
+        if: ${{ steps.build-umd.outcome == 'success' }}
         run: |
           git status;
           npx playwright install --with-deps
@@ -152,7 +156,7 @@ jobs:
       - name: Notify Progress
         uses: actions/github-script@v7
         continue-on-error: true
-        if: ${{ !!steps.notify-start.outputs.result }}
+        if: ${{ steps.notify-start.outputs.result }}
         with:
           script: |
             github.rest.issues.updateComment({
@@ -165,7 +169,7 @@ jobs:
       - name: playwright test
         id: playwright-test
         continue-on-error: true
-        if: ${{ steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped' }}
+        if: ${{ steps.install-browsers.outcome == 'success' }}
         run: |
           if [[ "${{ github.event_name }}" == "schedule" ]] ; then
             npx playwright test -c ./testing/performance/playwright.config.ts ./testing/performance/e2e/cron.spec.ts
@@ -184,7 +188,7 @@ jobs:
 
       - name: Prepare messages
         id: prepare-messages
-        if: ${{ !cancelled() }}
+        if: ${{ steps.upload-report.outputs.artifact-url }}
         env:
           REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
           SLACK_CHANNEL: '#ci-grid-gate'
@@ -193,18 +197,17 @@ jobs:
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
         run: |
           node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs
-          cat $SLACK_FILE
 
-      - name: Upload Slack Snippet
+      - name: Upload Snippet
         id: upload-snippet
         uses: actions/upload-artifact@v4
-        if: ${{ steps.prepare-messages.outcome == 'success' && (inputs.notify == true || github.event_name == 'schedule') }}
+        if: ${{ steps.prepare-messages.outcome == 'success' }}
         with:
           name: slack-snippet
           path: ${{ env.SLACK_FILE_SNIPPET }}
           retention-days: ${{ env.DEFAULT_RETENTION_DAYS }}
 
-      - name: Attach Snippet to a Slack Message
+      - name: Attach snippet
         uses: actions/github-script@v7
         id: attach-snippet
         if: ${{ steps.upload-snippet.outputs.artifact-url }}
@@ -213,9 +216,12 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const msg = JSON.parse(fs.readFileSync(process.env.SLACK_FILE, 'utf8'));
-            msg.blocks.push({ type: 'section', text: { type: 'mrkdwn', text: `<${process.env.SNIPPET_URL}|Full stdout>` } });
-            fs.writeFileSync(process.env.SLACK_FILE, JSON.stringify(msg));
+            const slackMsg = JSON.parse(fs.readFileSync(process.env.SLACK_FILE, 'utf8'));
+            let ghMsg = fs.readFileSync(process.env.COMMENT_FILE, 'utf8');
+            slackMsg.blocks.push({ type: 'section', text: { type: 'mrkdwn', text: `<${process.env.SNIPPET_URL}|Full stdout>` } });
+            ghMsg += `\n\n[Full stdout](${process.env.SNIPPET_URL})`;
+            fs.writeFileSync(process.env.SLACK_FILE, JSON.stringify(slackMsg));
+            fs.writeFileSync(process.env.COMMENT_FILE, ghMsg);
 
       - name: Slack Notification
         continue-on-error: true
@@ -228,14 +234,14 @@ jobs:
 
       - name: Create Jira Ticket
         id: create-jira-ticket
-        if: ${{ steps.prepare-messages.outcome == 'success' && steps.playwright-test.outcome != 'success' && (github.event_name == 'schedule' || inputs.force_jira_ticket) }}
+        if: ${{ steps.attach-snippet.outcome == 'success' && steps.playwright-test.outcome != 'success' && (github.event_name == 'schedule' || inputs.force_jira_ticket) }}
         run: |
           node ./testing/shared/scripts/create-jira-ticket.mjs
 
       - name: Notify End
         uses: actions/github-script@v7
         continue-on-error: true
-        if: ${{ !!steps.notify-start.outputs.result }}
+        if: ${{ steps.notify-start.outputs.result && steps.attach-snippet.outcome == 'success' }}
         env:
           COMMENT_ID: ${{ steps.notify-start.outputs.result }}
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
@@ -243,10 +249,10 @@ jobs:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const comment_id = parseInt(process.env.COMMENT_ID, 10);
-            const pull_number = parseInt(process.env.PR_ID, 10);
-            const body = require('fs').readFileSync(process.env.COMMENT_FILE, 'utf8') + `\n[Full stdout](${process.env.SNIPPET_URL})`;
-            console.log({ success: process.env.IS_SUCCESS, body });
+            const comment_id = process.env.COMMENT_ID;
+            const pull_number = process.env.PR_ID;
+            const body = require('fs').readFileSync(process.env.COMMENT_FILE, 'utf8');
+
             if (process.env.IS_SUCCESS) {
               await github.rest.issues.updateComment({ owner, repo, comment_id, body });
             } else {
