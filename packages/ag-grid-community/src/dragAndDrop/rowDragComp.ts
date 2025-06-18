@@ -98,6 +98,10 @@ export class RowDragComp extends Component {
             this.removeDragSource();
         }
 
+        if (this.gos.get('rowDragManaged') && this.rowNode.footer) {
+            return; // Footer nodes in row drag managed mode are not draggable
+        }
+
         const eGui = this.getGui();
 
         if (this.gos.get('enableCellTextSelection')) {
