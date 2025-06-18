@@ -352,9 +352,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
         }
 
+        let inside = false;
         if (newParent !== null) {
-            if (newParent === target) {
-                above = false; // When moving inside the target, we want to insert below it
+            if (newParent === target && newParent !== rootNode) {
+                inside = true; // Dragging as child
             }
             if (rowsHaveSameParent(rows, newParent)) {
                 newParent = null; // No need to set parent if all rows have the same parent
@@ -366,7 +367,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return null;
         }
 
-        const position = above ? 'above' : newParent && !newParent.childrenAfterSort?.length ? 'inside' : 'below';
+        const position = inside ? 'inside' : above ? 'above' : 'below';
 
         return { sameGrid, position, target, newParent, rows };
     }
