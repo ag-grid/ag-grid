@@ -15,6 +15,7 @@ const SOURCE_PASTE = 'paste';
 type RefreshCDParams = {
     suppressFlash?: boolean;
     force?: boolean;
+    onlyChangedColumns?: boolean;
 };
 
 type RefreshPosition = {
@@ -41,24 +42,31 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
 
     private onCellEditValuesChanged(event: CellEditValuesChangedEvent): void {
         const suppressFlash = event.newValue === event.oldValue;
-        this.refreshRows(event, { suppressFlash, force: true });
+        this.refreshRows(event, { suppressFlash, force: true, onlyChangedColumns: true });
     }
 
     private onCellValueChanged(event: CellValueChangedEvent | CellEditValuesChangedEvent): void {
+        const { gos } = this.beans;
+
         // Clipboard service manages its own change detection, so no need to do it here.
         // The clipboard manages its own as otherwise this would happen once for every cell
         // that got updated as part of a paste operation, so e.g. if 100 cells in a paste operation,
         // this doChangeDetection would get called 100 times (once for each cell), instead clipboard
         // service executes the logic we have here once (in essence batching up all cell changes
         // into one change detection).
-        if (event.source === SOURCE_PASTE || this.gos.get('suppressChangeDetection')) {
+        if (event.source === SOURCE_PASTE || gos.get('suppressChangeDetection')) {
             return;
         }
 
-        this.refreshRows(event);
+        const onlyChangedColumns = gos.get('aggregateOnlyChangedColumns');
+
+        this.refreshRows(event, { onlyChangedColumns });
     }
 
-    private refreshRows({ node, column }: RefreshPosition, { suppressFlash, force }: RefreshCDParams = {}): void {
+    private refreshRows(
+        { node, column }: RefreshPosition,
+        { suppressFlash, force, onlyChangedColumns }: RefreshCDParams = {}
+    ): void {
         const { gos, rowRenderer } = this.beans;
 
         const rowNode = node as RowNode;
@@ -72,8 +80,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         }
 
         // step 1 of change detection is to update the aggregated values
-        const onlyChangedColumns = gos.get('aggregateOnlyChangedColumns');
-        const changedPath = new ChangedPath(onlyChangedColumns, rootNode);
+        const changedPath = new ChangedPath(!!onlyChangedColumns, rootNode);
         changedPath.addParentNode(rowNode.parent, [column as AgColumn]);
         clientSideRowModel.doAggregate(changedPath);
 
