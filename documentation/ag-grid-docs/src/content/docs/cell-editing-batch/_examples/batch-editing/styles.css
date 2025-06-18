@@ -11,10 +11,10 @@ button {
 }
 
 .example-button-row {
-    margin-bottom: 5px;
     display: flex;
     gap: 5px;
     align-items: baseline;
+    margin: 0;
 }
 
 .grid-wrapper {
@@ -127,6 +127,7 @@ button {
     border-collapse: collapse;
     font-size: x-small;
     color: var(--default-fg-primary);
+    overflow: auto;
 }
 
 #edits-table th,

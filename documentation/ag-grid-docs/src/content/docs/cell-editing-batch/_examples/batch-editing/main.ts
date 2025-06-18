@@ -1,4 +1,5 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import { get } from 'http';
 
 import type {
     AgColumn,
@@ -54,6 +55,7 @@ import {
     IntegratedChartsModule,
     PivotModule,
     RowGroupingPanelModule,
+    RowNumbersModule,
     StatusBarModule,
 } from 'ag-grid-enterprise';
 
@@ -96,6 +98,7 @@ ModuleRegistry.registerModules([
     ClipboardModule,
     BatchEditModule,
     RenderApiModule,
+    RowNumbersModule,
     ValidationModule /* Development Only */,
 ]);
 
@@ -235,7 +238,7 @@ const gridOptions: GridOptions = {
         },
     },
     enableCharts: true,
-
+    rowNumbers: true,
     rowDragManaged: true,
     enableRowPinning: true,
     groupDisplayType: 'multipleColumns',
@@ -361,7 +364,6 @@ function getEditingCells() {
             <tr>
                 <th>Idx</th>
                 <th>Row</th>
-                <th>RowId</th>
                 <th>ColId</th>
                 <th>Pinned</th>
                 <th>Old</th>
@@ -421,10 +423,15 @@ function toggleBatch() {
 
     gridApi!.setBatchEditing(!batch);
 
+    if (!batch) {
+        clearEditingCells();
+    }
+
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
     document.getElementById('disablePoll')!.style.display = polling ? 'unset' : 'none';
 
     document.getElementById('batchEditingApi')!.style.display = batch ? 'none' : 'flex';
+    document.getElementById('edits-table')!.style.display = batch ? 'none' : 'block';
 }
 
 function createChart() {
@@ -453,13 +460,13 @@ function setEditingCells(clearValues: boolean = false) {
             state: 'editing',
         },
         {
-            rowIndex: 14,
+            rowIndex: 8,
             rowPinned: undefined,
             newValue: 100,
             colId: 'age',
         },
         {
-            rowIndex: 14,
+            rowIndex: 8,
             rowPinned: undefined,
             newValue: 'Ecstatic',
             colId: 'mood',
