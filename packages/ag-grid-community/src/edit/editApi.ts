@@ -22,7 +22,7 @@ export function getEditingCells(beans: BeanCollection, params: GetEditingCellsPa
     const edits = beans.editModelSvc?.getEditMap();
     const positions: EditingCellPosition[] = [];
     edits?.forEach((editRow, rowNode) => {
-        const { rowIndex, rowPinned, id: rowId } = rowNode as RowNode;
+        const { rowIndex, rowPinned } = rowNode as RowNode;
         editRow.forEach(({ newValue, oldValue, state }, column) => {
             const diff = _valuesDiffer({ newValue, oldValue });
 
@@ -39,7 +39,6 @@ export function getEditingCells(beans: BeanCollection, params: GetEditingCellsPa
                 colKey: column.getColId(),
                 rowIndex: rowIndex!,
                 rowPinned,
-                rowId,
             };
 
             const changed = state === 'changed' && diff;

@@ -88,16 +88,17 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
 
         // add all nodes impacted by aggregation, as they need refreshed also.
         changedPath.forEachChangedNodeDepthFirst((pathNode) => {
+            const { sibling, pinnedSibling } = pathNode;
             if (!(groupTotalRow && !rowNode?.footer)) {
                 rowNodes.push(pathNode);
             }
 
-            if (pathNode.sibling) {
-                rowNodes.push(pathNode.sibling);
+            if (sibling) {
+                rowNodes.push(sibling);
             }
 
-            if (pathNode.pinnedSibling) {
-                rowNodes.push(pathNode.pinnedSibling);
+            if (pinnedSibling) {
+                rowNodes.push(pinnedSibling);
             }
         });
 

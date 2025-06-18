@@ -378,7 +378,6 @@ function getEditingCells() {
                 <tr>
                     <td>${index}</td>
                     <td>${cell.rowIndex}</td>
-                    <td>${cell.rowId}</td>
                     <td>${trim(cell.colId)}</td>
                     <td>${cell.rowPinned ?? ''}</td>
                     <td>${trim(cell.oldValue)}</td>

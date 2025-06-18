@@ -39,14 +39,20 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public getEditRow({ rowNode }: EditRowPosition, params: GetEditsParams = {}): EditRow | undefined {
-        let edits = rowNode && this.edits.get(rowNode);
-        if (!edits && params.checkSiblings) {
+        const edits = rowNode && this.edits.get(rowNode);
+
+        if (edits) {
+            return edits;
+        }
+
+        if (params.checkSiblings) {
             const pinnedSibling = (rowNode as RowNode).pinnedSibling;
-            if (params.checkSiblings && pinnedSibling) {
-                edits = this.getEditRow({ rowNode: pinnedSibling });
+            if (pinnedSibling) {
+                return this.getEditRow({ rowNode: pinnedSibling });
             }
         }
-        return edits;
+
+        return undefined;
     }
 
     public getEditRowDataValue({ rowNode }: Required<EditRowPosition>, { checkSiblings }: GetEditsParams = {}): any {

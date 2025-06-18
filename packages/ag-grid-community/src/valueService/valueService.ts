@@ -173,14 +173,18 @@ export class ValueService extends BeanStub implements NamedBean {
 
         const { editSvc, rowGroupColsSvc } = this.beans;
 
-        if (source === 'ui' && editSvc?.isEditing({ rowNode }, { checkSiblings: true })) {
-            data = editSvc?.getRowDataValue({ rowNode }, { checkSiblings: true });
-        }
+        if (source === 'ui') {
+            // if the row is editing, make sure we sync data fields with any pending values
+            if (editSvc?.isEditing({ rowNode }, { checkSiblings: true })) {
+                data = editSvc?.getRowDataValue({ rowNode }, { checkSiblings: true });
+            }
 
-        if (source === 'ui' && editSvc?.isEditing()) {
-            const newValue = editSvc.getCellDataValue({ rowNode, column });
-            if (newValue !== undefined) {
-                return newValue;
+            // if the row is editing, we want to return the new value, if available
+            if (editSvc?.isEditing()) {
+                const newValue = editSvc.getCellDataValue({ rowNode, column });
+                if (newValue !== undefined) {
+                    return newValue;
+                }
             }
         }
 
@@ -298,9 +302,14 @@ export class ValueService extends BeanStub implements NamedBean {
         if (formatter) {
             let data = node ? node.data : null;
 
-            if (node && editSvc?.isEditing({ rowNode: node }, { checkSiblings: true })) {
-                // if editing, then use the edited value, not the value from the data
-                data = editSvc?.getRowDataValue({ rowNode: node }, { checkSiblings: true });
+            if (node) {
+                const position = { rowNode: node };
+                const options = { checkSiblings: true };
+
+                if (editSvc?.isEditing(position, options)) {
+                    // if editing, then use the edited value, not the value from the data
+                    data = editSvc?.getRowDataValue(position, options);
+                }
             }
 
             const params: ValueFormatterParams = _addGridCommonParams(this.gos, {

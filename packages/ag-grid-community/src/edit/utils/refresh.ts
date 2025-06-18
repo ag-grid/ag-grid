@@ -13,7 +13,7 @@ const purgeRows = (
     pinnedRowModel?.forEachPinnedRow('bottom', (node) => rowNodes.has(node) && found.add(node));
 
     rowNodes.forEach((rowNode) => {
-        if (!found.has(rowNode) && editModelSvc?.hasEdits({ rowNode })) {
+        if (!found.has(rowNode)) {
             editModelSvc!.removeEdits({ rowNode });
         }
     });

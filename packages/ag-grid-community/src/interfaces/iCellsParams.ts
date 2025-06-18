@@ -13,8 +13,6 @@ interface RefreshParams<TData = any> extends GetCellsParams<TData> {
     force?: boolean;
     /** Skip cell flashing, if cell flashing is enabled. */
     suppressFlash?: boolean;
-    /** New data hint */
-    newData?: boolean;
 }
 
 export interface RefreshCellsParams<TData = any> extends RefreshParams<TData> {}

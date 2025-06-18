@@ -163,9 +163,6 @@ export interface EditingCellPosition extends RowPosition {
      */
     colKey?: string | Column;
 
-    /** Row Id, if available */
-    rowId?: string;
-
     /** New pending value, use `null` to delete cell content */
     newValue?: any;
 

@@ -446,20 +446,17 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         });
     }
 
-    public bulkRefresh(
-        { rowNode, column }: EditPosition = {},
-        editMap?: EditMap,
-        params: RefreshCellsParams = {}
-    ): void {
+    public bulkRefresh(position: EditPosition = {}, editMap?: EditMap, params: RefreshCellsParams = {}): void {
         const { beans, gos } = this;
         const { editModelSvc, rowModel } = beans;
+
         if (_isClientSideRowModel(gos, rowModel)) {
-            if (rowNode && column) {
-                this.refCell({ rowNode, column }, this.model.getEdit({ rowNode, column }), params);
-            } else {
-                (editMap ?? editModelSvc?.getEditMap(false))?.forEach((editRow, rowNode) => {
-                    for (const column of editRow?.keys() || []) {
-                        this.refCell({ rowNode, column }, editRow?.get(column), params);
+            if (position.rowNode && position.column) {
+                this.refCell(position as Required<EditPosition>, this.model.getEdit(position), params);
+            } else if (editMap) {
+                editModelSvc?.getEditMap(false)?.forEach((editRow, rowNode) => {
+                    for (const column of editRow.keys()) {
+                        this.refCell({ rowNode, column }, editRow.get(column), params);
                     }
                 });
             }
