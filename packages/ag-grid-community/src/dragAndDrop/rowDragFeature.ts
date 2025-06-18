@@ -368,7 +368,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         const position = inside ? 'inside' : above ? 'above' : 'below';
-
         return { sameGrid, position, target, newParent, rows };
     }
 
