@@ -380,3 +380,10 @@ export interface ColumnFilterState {
      */
     [colId: string]: any;
 }
+
+export interface FilterActionParams {
+    /** Column ID to perform action on. If `undefined`, will run for all columns. */
+    colId?: string;
+    /** Action to perform */
+    action: FilterAction;
+}

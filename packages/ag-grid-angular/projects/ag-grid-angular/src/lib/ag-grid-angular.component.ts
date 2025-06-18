@@ -1180,6 +1180,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowDragModule`
      */
     @Input({ transform: booleanAttribute }) public rowDragManaged: boolean | undefined = undefined;
+    /** Used if rowDragManaged is enabled and treeData is enabled,
+     * - If the row is already a group, but is not expanded, it will be expanded after rowDragInsertDelay milliseconds of dragging over it.
+     * - If the row is a leaf (no children), it will be converted to a group and the row inserted into it after rowDragInsertDelay milliseconds of dragging over it.
+     * @default 500
+     * @agModule `RowDragModule`
+     */
+    @Input() public rowDragInsertDelay: number | undefined = undefined;
     /** Set to `true` to suppress row dragging.
      * @default false
      */

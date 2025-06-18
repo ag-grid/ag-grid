@@ -110,6 +110,7 @@
       "testing/react-package-tests",
       "testing/vue-package-tests",
       "testing/accessibility",
+      "testing/csp",
       "external/ag-shared"
     ],
     "nohoist": [

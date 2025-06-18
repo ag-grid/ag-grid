@@ -127,7 +127,7 @@
     }
 
     .ag-filter-card {
-        border: solid var(--ag-border-width) var(--ag-border-color);
+        border: 1px solid var(--ag-border-color);
         border-radius: var(--ag-border-radius);
         background-color: var(--ag-background-color);
 
@@ -181,7 +181,6 @@
     }
 
     .ag-filter-card-title {
-        font-weight: var(--ag-header-font-weight);
         overflow: hidden;
         text-overflow: ellipsis;
     }
@@ -193,7 +192,7 @@
     }
 
     .ag-filter-card-editing-icon {
-        margin: 0 var(--ag-spacing);
+        margin: 0 var(--ag-grid-size);
     }
 
     .ag-filter-card-summary,
@@ -266,7 +265,7 @@
     .ag-filter-add-button-label {
         @include ag.unthemed-rtl(
             (
-                margin-left: var(--ag-spacing),
+                margin-left: var(--ag-grid-size),
             )
         );
     }
@@ -277,14 +276,14 @@
         .ag-text-field-input {
             @include ag.unthemed-rtl(
                 (
-                    padding-left: calc(var(--ag-spacing) * 1.5 + 12px) !important,
+                    padding-left: calc(var(--ag-grid-size) * 1.5 + 12px) !important,
                 )
             );
         }
 
         .ag-rich-select-value {
             padding: calc(((1.5 * var(--ag-font-size) + 4 * var(--ag-grid-size)) - var(--ag-input-height)) / 2)
-                var(--ag-spacing);
+                var(--ag-grid-size);
             border: 0;
         }
     }
@@ -303,7 +302,7 @@
     line-height: 1.5;
 }
 
-.ag-filter-panel-buttons-apply-button {
+.ag-filter-panel .ag-standard-button.ag-filter-panel-buttons-apply-button {
     color: var(--ag-filter-panel-apply-button-color);
     background-color: var(--ag-filter-panel-apply-button-background-color);
 }

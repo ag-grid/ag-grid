@@ -7,8 +7,8 @@ const channel = process.env.SLACK_CHANNEL || ' ';
 const username = process.env.SLACK_USERNAME || ' ';
 const icon_url = process.env.SLACK_ICON || ' ';
 const slackFileName = process.env.SLACK_FILE || './slack.json';
-const snippetSlackFileName = process.env.SLACK_FILE_SNIPPET || './slack-snippet.txt';
-const commentFileName = process.env.COMMENT_FILE || './comment.txt';
+const snippetSlackFileName = process.env.SLACK_FILE_SNIPPET || './slack-snippet.md';
+const commentFileName = process.env.COMMENT_FILE || './comment.md';
 
 if (!channel) throw new Error('SLACK_CHANNEL is not set');
 if (!username) throw new Error('SLACK_USERNAME is not set');
@@ -22,25 +22,16 @@ const __dirname = path.dirname(__filename);
 const logFile = path.join(__dirname, '../../../playwright-report/test-results.json');
 /** @type {import('playwright/types/testReporter').JSONReport} */
 const report = JSON.parse(fs.readFileSync(logFile, 'utf8').toString());
-const defaultBlocks = [
-    { type: 'section', text: { type: 'mrkdwn', text: `*Test results.*` } },
-    { type: 'divider' },
-    {
-        type: 'section',
-        text: {
-            type: 'mrkdwn',
-            text: `${process.env.IS_SUCCESS ? SUCCESS_STRING : FAILURE_STRING} | <${process.env.JOB_URL ?? 'did you forget to supply process.env.JOB_URL?'}|Job link> | <${process.env.REPORT_URL ?? 'did you forget to supply process.env.REPORT_URL?'}|Benchmark report>\n`,
-        },
-    },
-    { type: 'divider' },
-];
 
+const DIVIDER = { type: 'divider' };
 const num = (count, emoji, label) => (count ? `${emoji} *${label}:* ${count}` : '');
 const statusEmoji = (status) => ({ expected: '✅', unexpected: '🙁', skipped: '🔕', flaky: '👻' })[status] || '❓';
 const codeBlock = (text) => `\`\`\`${paragraph(text)}\`\`\``;
 const code = (text) => `\`${text}\``;
 const TAB = '  ';
 const paragraph = (text) => `\n${TAB}${text.trim().replace(/\n+/g, `\n${TAB}`)}\n`;
+const section = (text) => ({ type: 'section', text: { type: 'mrkdwn', text } });
+
 const renderError = (error) => {
     if (!error) return '';
     const [errorTitle, _, lastAction] = error.message.split('\n');
@@ -74,34 +65,22 @@ const getTotalsText = (report) =>
         .filter((t) => t.trim())
         .join(' | ');
 
-const getSectionWithTotals = (report) => ({
-    type: 'section',
-    text: {
-        type: 'mrkdwn',
-        text: getTotalsText(report),
-    },
-});
-
 const getResultsString = (tests, distilled = false) => {
     return (
-        'Tests' +
+        '*Tests*' +
         tests
             .map(
-                ({ status, path, results }, i) =>
-                    `${i + 1}. _${statusEmoji(status)} ${path.map((p) => p.title).join(' > ')}_ ${paragraph(
+                ({ status, path, results }, index) =>
+                    `${index + 1}. ${statusEmoji(status)} ${path.map((p) => p.title).join(' > ')} ${paragraph(
                         results
                             .map(({ error, stdout }) => [error, getStdout(stdout)[distilled ? 'distilled' : 'full']])
-                            .map(([error, stdout]) => `${renderError(error)}\n- Output: ${renderStdout(stdout)}`)
+                            .map(([error, stdout]) => `${renderError(error)}\n- Output:\n${renderStdout(stdout)}`)
                             .join('\n')
                     )}`
             )
             .map(paragraph)
             .join('\n')
     );
-};
-
-const getSectionWithResults = (text) => {
-    return { type: 'section', text: { type: 'mrkdwn', text } };
 };
 
 function calculateTests(report) {
@@ -119,19 +98,29 @@ function calculateTests(report) {
     walk(report);
     return tests;
 }
-
+const slackLink = (text, url) => `<${url}|${text}>`;
+const mdLink = (text, url) => `[${text}](${url})`;
 const getSlackMessage = (blocks) => ({ channel, username, icon_url, blocks });
-
 const calculatedTests = calculateTests(report);
 const resultsString = getResultsString(calculatedTests);
 const resultsStringDistilled = getResultsString(calculatedTests, true);
-const slackMessage = getSlackMessage(
-    defaultBlocks.concat([getSectionWithTotals(report), getSectionWithResults(resultsStringDistilled)])
-);
+const linksText = (createLink) =>
+    [
+        process.env.IS_SUCCESS ? SUCCESS_STRING : FAILURE_STRING,
+        createLink('Job link', process.env.JOB_URL ?? 'https://example.com'),
+        createLink('Benchmark report', process.env.REPORT_URL ?? 'https://example.com'),
+    ].join(' | ');
 
-const textMessage = defaultBlocks
-    .concat([getSectionWithTotals(report), getSectionWithResults(resultsString)])
-    .map((b) => (b.text?.text || '').replace(/<(.+)\|(.+)>/g, '[$2]($1)'))
+const slackMessage = getSlackMessage([
+    section(`Test results.`),
+    DIVIDER,
+    section(linksText(slackLink)),
+    DIVIDER,
+    section(getTotalsText(report)),
+    section(resultsStringDistilled),
+]);
+
+const textMessage = [`Test results.`, '---', linksText(mdLink), '', getTotalsText(report), '', resultsStringDistilled]
     .concat(process.env.IS_SUCCESS ? [] : ['---', `Please address the issues before merging.`])
     .join('\n');
 fs.writeFileSync(commentFileName, textMessage);

@@ -14,6 +14,11 @@ on:
         description: 'PR ID to update (used for debugging this workflow)'
         type: number
         required: false
+      force_jira_ticket:
+        description: 'Force create a Jira ticket even if the run is not scheduled'
+        type: boolean
+        default: false
+        required: true
   schedule:
     - cron: '0 0 * * *' # Run daily at midnight UTC
 
@@ -25,9 +30,9 @@ env:
   YARN_REGISTRY: "http://52.50.158.57:4873"
   CI: true
   PR_ID: ${{ inputs.force_pr_id || github.event.issue.number }}
-  COMMENT_FILE: ./comment.txt
+  COMMENT_FILE: ./comment.md
   SLACK_FILE: ./slack.json
-  SLACK_FILE_SNIPPET: ./slack-snippet.txt
+  SLACK_FILE_SNIPPET: ./slack-snippet.md
   DEFAULT_RETENTION_DAYS: 30
 
 permissions:
@@ -193,7 +198,7 @@ jobs:
       - name: Upload Slack Snippet
         id: upload-snippet
         uses: actions/upload-artifact@v4
-        if: ${{ steps.prepare-messages.outcome == 'success' }}
+        if: ${{ steps.prepare-messages.outcome == 'success' && (inputs.notify == true || github.event_name == 'schedule') }}
         with:
           name: slack-snippet
           path: ${{ env.SLACK_FILE_SNIPPET }}
@@ -214,7 +219,7 @@ jobs:
 
       - name: Slack Notification
         continue-on-error: true
-        if: ${{ !cancelled() && (inputs.notify == true || github.event_name == 'schedule') && steps.prepare-messages.outcome == 'success' }}
+        if: ${{ steps.upload-snippet.outputs.artifact-url }}
         env:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
           SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
@@ -223,7 +228,7 @@ jobs:
 
       - name: Create Jira Ticket
         id: create-jira-ticket
-        if: ${{ steps.prepare-messages.outcome == 'success' && steps.playwright-test.outcome != 'success' && github.event_name == 'schedule' }}
+        if: ${{ steps.prepare-messages.outcome == 'success' && steps.playwright-test.outcome != 'success' && (github.event_name == 'schedule' || inputs.force_jira_ticket) }}
         run: |
           node ./testing/shared/scripts/create-jira-ticket.mjs
 
@@ -240,7 +245,7 @@ jobs:
             const repo = context.repo.repo;
             const comment_id = parseInt(process.env.COMMENT_ID, 10);
             const pull_number = parseInt(process.env.PR_ID, 10);
-            const body = fs.readFileSync(process.env.COMMENT_FILE, 'utf8');
+            const body = require('fs').readFileSync(process.env.COMMENT_FILE, 'utf8') + `\n[Full stdout](${process.env.SNIPPET_URL})`;
             console.log({ success: process.env.IS_SUCCESS, body });
             if (process.env.IS_SUCCESS) {
               await github.rest.issues.updateComment({ owner, repo, comment_id, body });

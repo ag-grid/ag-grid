@@ -204,6 +204,7 @@ export {
     FilterDisplayComp,
     ColumnFilter,
     ColumnFilterState,
+    FilterActionParams,
 } from './interfaces/iFilter';
 export {
     ISetFilter,
@@ -235,6 +236,7 @@ export {
     IMultiFilterParams,
     MultiFilterParams,
     IMultiFilterDef,
+    MultiFilterHandler,
 } from './interfaces/iMultiFilter';
 export { IMultiFilterService } from './interfaces/iMultiFilterService';
 export { FilterComp } from './filter/filterComp';

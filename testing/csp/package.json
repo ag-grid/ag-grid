@@ -1,0 +1,15 @@
+{
+  "name": "ag-grid-csp",
+  "version": "33.3.0",
+  "description": "CSP testing for AG Grid",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Tak Tran <contact@tutaktran.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "playwright": "^1.46.0",
+    "playwright-ctrf-json-reporter": "0.0.20",
+    "@playwright/test": "^1.46.0",
+    "@types/node": "^24.0.3"
+  }
+}
