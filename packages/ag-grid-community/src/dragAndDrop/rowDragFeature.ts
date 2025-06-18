@@ -78,7 +78,7 @@ export interface RowDropZoneParams extends RowDropZoneEvents {
 
 interface RowsDrop<TData = any> {
     sameGrid: boolean;
-    above: boolean;
+    position: 'above' | 'inside' | 'below';
     target: RowNode<TData> | null;
     newParent: RowNode<TData> | null;
     rows: IRowNode<TData>[];
@@ -249,7 +249,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 const target = rowsDrop?.target;
                 const rowDropHighlightSvc = this.beans.rowDropHighlightSvc!;
                 if (target) {
-                    rowDropHighlightSvc.set(target, rowsDrop.above ? 'above' : rowsDrop.newParent ? 'inside' : 'below');
+                    rowDropHighlightSvc.set(target, rowsDrop.position);
                 } else {
                     rowDropHighlightSvc.clear();
                 }
@@ -366,7 +366,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return null;
         }
 
-        return { sameGrid, above, target, newParent, rows };
+        const position = above ? 'above' : newParent && !newParent.childrenAfterSort?.length ? 'inside' : 'below';
+
+        return { sameGrid, position, target, newParent, rows };
     }
 
     private makeGroupThrottleStart(target: RowNode) {
@@ -655,7 +657,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return rowsDrop.sameGrid ? this.moveRows(rowsDrop) : this.addRows(rowsDrop);
     }
 
-    private addRows({ above, target, rows }: RowsDrop): boolean {
+    private addRows({ position, target, rows }: RowsDrop): boolean {
         const getRowIdFunc = _getRowIdCallback(this.gos);
         const clientSideRowModel = this.clientSideRowModel;
 
@@ -670,7 +672,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return false; // Nothing to add
         }
 
-        const addIndex = target ? getLeafSourceRowIndex(target) + (above ? 0 : 1) : undefined;
+        const addIndex = target ? getLeafSourceRowIndex(target) + (position === 'above' ? 0 : 1) : undefined;
         clientSideRowModel.updateRowData({ add, addIndex });
 
         return true;
@@ -686,7 +688,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         });
     }
 
-    private moveRows({ above, target, rows, newParent }: RowsDrop): boolean {
+    private moveRows({ position, target, rows, newParent }: RowsDrop): boolean {
         let changed = false;
 
         const clientSideRowModel = this.clientSideRowModel;
@@ -719,7 +721,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const cellPosition = focusSvc.getFocusedCell();
         const cellCtrl = cellPosition && _getCellByPosition(this.beans, cellPosition);
 
-        if (leafs.size && this.reorderLeafChildren(leafs, ...this.getMoveRowsBounds(leafs, target, above))) {
+        if (
+            leafs.size &&
+            this.reorderLeafChildren(leafs, ...this.getMoveRowsBounds(leafs, target, position === 'above'))
+        ) {
             changed = true;
         }
 
