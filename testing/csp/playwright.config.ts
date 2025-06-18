@@ -27,8 +27,13 @@ export default defineConfig({
                 outputFolder: '../../reports/ag-grid-csp-e2e-html/',
             },
         ],
-        ['junit', { outputFile: '../../reports/ag-grid-csp-e2e.xml' }],
-        ['json', { outputFile: '../../reports/ag-grid-csp-e2e.json' }],
+        [
+            'playwright-ctrf-json-reporter',
+            {
+                outputDir: '../../reports/',
+                outputFile: 'ag-grid-csp-e2e.json',
+            },
+        ],
     ],
     outputDir: '../../reports/ag-grid-csp-e2e-reports/',
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

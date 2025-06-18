@@ -21134,6 +21134,11 @@ playwright-core@1.52.0:
   resolved "http://52.50.158.57:4873/playwright-core/-/playwright-core-1.52.0.tgz#238f1f0c3edd4ebba0434ce3f4401900319a3dca"
   integrity sha512-l2osTgLXSMeuLZOML9qYODUQoPPnUsKsb5/P6LJ2e6uPKXUdPK5WYhN4z03G+YNbWmGDY4YENauNu4ZKczreHg==
 
+playwright-ctrf-json-reporter@0.0.20:
+  version "0.0.20"
+  resolved "http://52.50.158.57:4873/playwright-ctrf-json-reporter/-/playwright-ctrf-json-reporter-0.0.20.tgz#86e6c15a446105a07cb04313cec9908bb53c3e82"
+  integrity sha512-pv8ZZ1PBgztgQ1iShB8NqcFigTWGeZZ8zowld3wLlaeRF3bo4O9QrB5qlb2W7HcgppVWbM8SDvUszRLiLi923A==
+
 playwright@1.52.0, playwright@^1.46.0:
   version "1.52.0"
   resolved "http://52.50.158.57:4873/playwright/-/playwright-1.52.0.tgz#26cb9a63346651e1c54c8805acfd85683173d4bd"
