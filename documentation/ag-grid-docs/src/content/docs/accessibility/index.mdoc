@@ -20,7 +20,7 @@ As meeting WCAG 2.0 level AA guidelines also meets the ADA and Section 508 stand
 
 ## High Contrast Theme
 
-For users that are visually impaired due to colour deficiencies, care should be taken when using colours to provide information.
+For users who are visually impaired due to colour deficiencies, care should be taken when using colours to provide information.
 
 Using our demo page as an example, the chrome plugin [Colorblindly](https://chrome.google.com/webstore/detail/colorblindly/floniaahmccleoclneebhhmnjgdfijgg/related?hl=en) shows how cells with colour indicators might appear to someone with total colour blindness (Monochromacy / Achromatopsia).
 
@@ -58,7 +58,7 @@ When inspecting the DOM you'll notice the following roles and properties have be
   **Note:** You can set any aria property in the panel (role="treegrid") by using the `setGridAriaProperty` method in the [Grid Api](./grid-api/).
 
   * **aria-rowcount** - announces the number of rows.
-  * **aria-colcount** - announces the number of rows.
+  * **aria-colcount** - announces the number of columns.
   * **aria-multiselectable="true"** - marks the grid as being able to select multiple rows.
 * **role="rowgroup"** - element that serve as container for the table header rows and grid rows.
 * **role="row"** - a row of column headers or grid cells.
@@ -182,14 +182,14 @@ Using advanced functionality in AG Grid makes the DOM structure incompatible wit
 * ### Navigation to pinned rows/columns
   Screen readers assume that the visual and DOM element order are identical. Specifically, when you pin a row/column, it  causes elements to be rendered in different containers. This is why you cannot use screen readers to navigate into a  pinned row/column cells, as in fact, this means they're rendered in a different element from the rest of the columns/rows which are scrollable.
 
-* ### Full Width Rows
+* ### Full width rows
   Full Width Rows are rendered in a different container, therefore screen readers have trouble announcing them for the same reason as `Pinned Rows/Columns`. This also includes Row Grouping, when `groupDisplayType="groupRows"`
 
-* ### Limitations announcing the correct column name in grouped columns
+* ### Limitations in announcing the correct column name in grouped columns
   Even though all aria tags have been applied to the necessary elements, some screen readers have trouble navigating the tags when the structure of the grid gets more complex (eg. grouped columns). This is the reason why there are some limitations announcing the correct column names.
 
 * ### No announcements of state change of a gridcell or gridheader
   Some screen readers will not recognise changes that happen to an element that is currently focused (including children of this element). So in order to detect changes (eg. sorted state, updated labels, etc...) you will need to move focus to another element and back.
 
-* ### Server-Side Row Model
+* ### Server-side row model
   Announcing the row count in the grid when using server-side row model (SSRM) is not supported. This is because the row count cannot be known in all the scenarios where SSRM is in use.

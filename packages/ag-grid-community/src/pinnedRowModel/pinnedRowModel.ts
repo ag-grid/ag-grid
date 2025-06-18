@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
-import { _getEnableRowPinning, _getGrandTotalRowPinned } from '../gridOptionsUtils';
+import { _getGrandTotalRow } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
@@ -17,9 +17,10 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
     public postConstruct(): void {
         const { gos } = this;
         const initialiseRowModel = () => {
-            const enableRowPinning = _getEnableRowPinning(gos);
-            const grandTotalRowPinning = _getGrandTotalRowPinned(gos);
-            const useManualPinnedRowModel = !!enableRowPinning || !!grandTotalRowPinning;
+            const enableRowPinning = gos.get('enableRowPinning');
+            const grandTotalRow = _getGrandTotalRow(gos);
+            const isGrandTotalRowPinned = grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
+            const useManualPinnedRowModel = !!enableRowPinning || isGrandTotalRowPinned;
             const shouldDestroy = useManualPinnedRowModel
                 ? this.inner instanceof StaticPinnedRowModel
                 : this.inner instanceof ManualPinnedRowModel;
@@ -33,7 +34,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
             }
         };
 
-        this.addManagedPropertyListeners(['enableRowPinning', 'grandTotalRowPinned'], initialiseRowModel);
+        this.addManagedPropertyListeners(['enableRowPinning', 'grandTotalRow'], initialiseRowModel);
 
         initialiseRowModel();
     }

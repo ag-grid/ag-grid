@@ -204,6 +204,7 @@ export {
     FilterDisplayComp,
     ColumnFilter,
     ColumnFilterState,
+    FilterActionParams,
 } from './interfaces/iFilter';
 export {
     ISetFilter,
@@ -235,6 +236,7 @@ export {
     IMultiFilterParams,
     MultiFilterParams,
     IMultiFilterDef,
+    MultiFilterHandler,
 } from './interfaces/iMultiFilter';
 export { IMultiFilterService } from './interfaces/iMultiFilterService';
 export { FilterComp } from './filter/filterComp';
@@ -394,6 +396,7 @@ export {
     ICellEditor,
     ICellEditorComp,
     ICellEditorParams,
+    IErrorValidationParams,
     BaseCellEditor,
     GetCellEditorInstancesParams,
     GetEditingCellsParams,
@@ -713,8 +716,6 @@ export {
     _isDomLayout,
     _isAnimateRows,
     _getGrandTotalRow,
-    _getGrandTotalRowPinned,
-    _getEnableRowPinning,
     _getGroupTotalRowCallback,
     _isGroupMultiAutoColumn,
     _isColumnsSortingCoupledToGroup,
@@ -752,6 +753,7 @@ export {
     _isGroupRowsSticky,
     _getGroupingApproach,
     _getGridOption,
+    _isSetFilterByDefault,
 } from './gridOptionsUtils';
 export type { GroupingApproach } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
@@ -919,6 +921,7 @@ export {
     RowSelectionMode,
     IsApplyServerSideTransaction,
     GetContextMenuItems,
+    GetFullRowEditValidationErrors,
     GetDataPath,
     IsRowMaster,
     IsRowSelectable,
@@ -969,6 +972,7 @@ export {
     NavigateToNextCellParams,
     TabToNextCellParams,
     GetContextMenuItemsParams,
+    FullRowEditValidationParams,
     GetMainMenuItemsParams,
     GetChartMenuItemsParams,
     PostProcessPopupParams,
@@ -1071,6 +1075,7 @@ export {
     _setAriaSetSize,
     _setAriaHidden,
     _getAriaPosInSet,
+    _setAriaInvalid,
 } from './utils/aria';
 export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './utils/array';
 export { _isIOSUserAgent } from './utils/browser';
@@ -1183,6 +1188,7 @@ export type {
     RowDropPositionIndicator,
 } from './interfaces/IRowDropHighlightService';
 export type { EditStrategyType } from './interfaces/editStrategyType';
+export type { EditValidationCommitType } from './interfaces/editValidationCommitType';
 export {
     RowSelectionModule,
     SharedRowSelectionModule as _SharedRowSelectionModule,

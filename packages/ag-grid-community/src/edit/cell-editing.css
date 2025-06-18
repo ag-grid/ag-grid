@@ -17,6 +17,11 @@
         width: 100%;
         line-height: normal;
     }
+
+    &:where(:has(:invalid)),
+    &:where(:has(.invalid)) {
+        border-color: var(--ag-invalid-color) !important;
+    }
 }
 
 :where(.ag-popup-editor) .ag-large-text {

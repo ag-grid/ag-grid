@@ -13,7 +13,7 @@ The Side Bar is configured using the grid property `sideBar`. The property takes
 | ---------------------------- | -------------------------------------------------------------------------------------------------- |
 | `undefined` / `null`         | No Side Bar provided.                                                                              |
 | `boolean`                    | Set to `true` to display the Side Bar with default configuration.                       |
-| `string` / `string[]`        | Set to `'columns'` or `'filters'` to display the Side Bar with just one of [Columns](./tool-panel-columns/) or [Filters](./tool-panel-filters/) Tool Panels or an array of one or both of these values. |
+| `string` / `string[]`        | Set to `'columns'`, `'filters'` or `'filters-new'` to display the Side Bar with just one of [Columns](./tool-panel-columns/), [Filters](./tool-panel-filters/) or [New Filters](./tool-panel-filters-new) Tool Panels or an array of one or both of these values. |
 | `SideBarDef`{% br /%}(long form) | An object of type `SideBarDef` (explained below) to allow detailed configuration of the Side Bar. Use this to configure the provided Tool Panels (e.g. pass parameters to the columns or filters panel) or to include custom Tool Panels. |
 
 ### Boolean Configuration
@@ -26,7 +26,7 @@ The default configuration doesn't allow customisation of the Tool Panels.
 
 ### String Configuration
 
-To display just one of the provided Tool Panels, set either `sideBar='columns'` or `sideBar='filters'`. This will display the desired item with default configuration. Alternatively pass one or both as a `string[]`, i.e `sideBar=['columns','filters']`.
+To display just one of the provided Tool Panels, set either `sideBar='columns'`, `sideBar='filters'` or `sideBar='filters-new'`. This will display the desired item with default configuration. Alternatively pass one or both as a `string[]`, i.e `sideBar=['columns','filters', 'filters-new']`.
 
 The example below demonstrates using the string configuration. Note the following:
 

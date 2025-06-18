@@ -1,29 +1,23 @@
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { BaseColDefOptionalDataParams, ValueFormatterParams, ValueParserParams } from './colDef';
+import type { ValueFormatterParams, ValueParserParams } from './colDef';
 
-export type ValueParserLiteParams<TData, TValue> = Omit<ValueParserParams<TData, TValue>, 'data' | 'node' | 'oldValue'>;
+export type ValueParserLiteParams<TData, TValue, TContext = any> = Omit<
+    ValueParserParams<TData, TValue, TContext>,
+    'data' | 'node' | 'oldValue'
+>;
 
-export interface ValueParserLiteFunc<TData, TValue> {
-    (params: ValueParserLiteParams<TData, TValue>): TValue | null | undefined;
+export interface ValueParserLiteFunc<TData, TValue, TContext = any> {
+    (params: ValueParserLiteParams<TData, TValue, TContext>): TValue | null | undefined;
 }
 
-export type ValueFormatterLiteParams<TData, TValue> = Omit<ValueFormatterParams<TData, TValue>, 'data' | 'node'>;
-
-export interface ValueFormatterLiteFunc<TData, TValue> {
-    (params: ValueFormatterLiteParams<TData, TValue>): string;
-}
-
-export type DataTypeCheckerParams<TData, TValue> = Omit<
-    BaseColDefOptionalDataParams<TData, TValue>,
+export type ValueFormatterLiteParams<TData, TValue, TContext = any> = Omit<
+    ValueFormatterParams<TData, TValue, TContext>,
     'data' | 'node'
-> & {
-    /** Value to be checked (e.g. from the cell). */
-    value: TValue | null | undefined;
-};
+>;
 
-export interface DataTypeChecker<TData, TValue> {
-    (params: DataTypeCheckerParams<TData, TValue>): boolean;
+export interface ValueFormatterLiteFunc<TData, TValue, TContext = any> {
+    (params: ValueFormatterLiteParams<TData, TValue, TContext>): string;
 }
 
 /**
@@ -55,7 +49,7 @@ export type BaseCellDataType =
     | 'dateTime'
     | 'dateTimeString';
 
-interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = any, TValue = any> {
+interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = any, TValue = any, TContext = any> {
     /** The underlying data type */
     baseDataType: TValueType;
     /**
@@ -72,7 +66,7 @@ interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = an
      * the `params` do not have row node or data properties.
      * If not provided, the value parser of the data type that this extends will be used.
      */
-    valueParser?: ValueParserLiteFunc<TData, TValue>;
+    valueParser?: ValueParserLiteFunc<TData, TValue, TContext>;
     /**
      * Formats a value for display.
      * This will be used as the `colDef.valueFormatter` (unless overridden),
@@ -81,7 +75,7 @@ interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = an
      * the `params` do not have row node or data properties.
      * If not provided, the value formatter of the data type that this extends will be used.
      */
-    valueFormatter?: ValueFormatterLiteFunc<TData, TValue>;
+    valueFormatter?: ValueFormatterLiteFunc<TData, TValue, TContext>;
     /**
      * Returns `true` if the `value` is of this data type.
      * Used when inferring cell data types as well as to ensure values of the
@@ -109,19 +103,24 @@ interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = an
 }
 
 /** Represents a `'text'` data type (type `string`). */
-export interface TextDataTypeDefinition<TData = any> extends BaseDataTypeDefinition<'text', TData, string> {}
+export interface TextDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'text', TData, string, TContext> {}
 
 /** Represents a `'number'` data type (type `number`). */
-export interface NumberDataTypeDefinition<TData = any> extends BaseDataTypeDefinition<'number', TData, number> {}
+export interface NumberDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'number', TData, number, TContext> {}
 
 /** Represents a `'boolean'` data type (type `boolean`). */
-export interface BooleanDataTypeDefinition<TData = any> extends BaseDataTypeDefinition<'boolean', TData, boolean> {}
+export interface BooleanDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'boolean', TData, boolean, TContext> {}
 
 /** Represents a `'date'` data type (type `Date`). */
-export interface DateDataTypeDefinition<TData = any> extends BaseDataTypeDefinition<'date', TData, Date> {}
+export interface DateDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'date', TData, Date, TContext> {}
 
 /** Represents a `'dateString'` data type (type `string` that represents a date). */
-export interface DateStringDataTypeDefinition<TData = any> extends BaseDataTypeDefinition<'dateString', TData, string> {
+export interface DateStringDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'dateString', TData, string, TContext> {
     /** Converts a date in `string` format to a `Date`. */
     dateParser?: (value: string | undefined) => Date | undefined;
     /** Converts a date in `Date` format to a `string`. */
@@ -129,11 +128,12 @@ export interface DateStringDataTypeDefinition<TData = any> extends BaseDataTypeD
 }
 
 /** Represents a `'dateTime'` data type (type `Date`). */
-export interface DateTimeDataTypeDefinition<TData = any> extends BaseDataTypeDefinition<'dateTime', TData, Date> {}
+export interface DateTimeDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'dateTime', TData, Date, TContext> {}
 
 /** Represents a `'dateTimeString'` data type (type `string` that represents a dateTime). */
-export interface DateTimeStringDataTypeDefinition<TData = any>
-    extends BaseDataTypeDefinition<'dateTimeString', TData, string> {
+export interface DateTimeStringDataTypeDefinition<TData = any, TContext = any>
+    extends BaseDataTypeDefinition<'dateTimeString', TData, string, TContext> {
     /** Converts a date in `string` format to a `Date`. */
     dateParser?: (value: string | undefined) => Date | undefined;
     /** Converts a date in `Date` format to a `string`. */
@@ -141,7 +141,8 @@ export interface DateTimeStringDataTypeDefinition<TData = any>
 }
 
 /** Represents an `'object'` data type (any type). */
-export interface ObjectDataTypeDefinition<TData, TValue> extends BaseDataTypeDefinition<'object', TData, TValue> {}
+export interface ObjectDataTypeDefinition<TData, TValue, TContext>
+    extends BaseDataTypeDefinition<'object', TData, TValue, TContext> {}
 
 /** Throws an error if not all keys K are present in Record Obj, as well as if Obj has extra keys (though only if you try to access properties) */
 export type CheckDataTypes<Obj extends Record<K, any>, K extends keyof any = BaseCellDataType> = keyof Obj extends K
@@ -149,19 +150,19 @@ export type CheckDataTypes<Obj extends Record<K, any>, K extends keyof any = Bas
     : never;
 
 /** Configuration options for a cell data type. */
-export type DataTypeDefinition<TData = any, TValue = any> =
-    | TextDataTypeDefinition<TData>
-    | NumberDataTypeDefinition<TData>
-    | BooleanDataTypeDefinition<TData>
-    | DateDataTypeDefinition<TData>
-    | DateStringDataTypeDefinition<TData>
-    | DateTimeDataTypeDefinition<TData>
-    | DateTimeStringDataTypeDefinition<TData>
-    | ObjectDataTypeDefinition<TData, TValue>;
+export type DataTypeDefinition<TData = any, TValue = any, TContext = any> =
+    | TextDataTypeDefinition<TData, TContext>
+    | NumberDataTypeDefinition<TData, TContext>
+    | BooleanDataTypeDefinition<TData, TContext>
+    | DateDataTypeDefinition<TData, TContext>
+    | DateStringDataTypeDefinition<TData, TContext>
+    | DateTimeDataTypeDefinition<TData, TContext>
+    | DateTimeStringDataTypeDefinition<TData, TContext>
+    | ObjectDataTypeDefinition<TData, TValue, TContext>;
 
 /** Configuration options for pre-defined data types. */
-export type CoreDataTypeDefinition<TData = any, TValue = any> = Omit<
-    DataTypeDefinition<TData, TValue>,
+export type CoreDataTypeDefinition<TData = any, TValue = any, TContext = any> = Omit<
+    DataTypeDefinition<TData, TValue, TContext>,
     'extendsDataType'
 >;
 

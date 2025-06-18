@@ -21,7 +21,7 @@ import {
 import type { ClientSideValuesExtractor } from './clientSideValueExtractor';
 import { createTreeDataOrGroupingComparator } from './setFilterUtils';
 
-type SetValueModelEvent = 'availableValuesChanged' | 'loadingStart' | 'loadingEnd';
+type SetValueModelEvent = 'availableValuesChanged' | 'loadingStart' | 'loadingEnd' | 'destroyed';
 
 enum SetFilterModelValuesType {
     PROVIDED_LIST,

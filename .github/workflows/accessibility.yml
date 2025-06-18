@@ -22,6 +22,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/latest' }}
 
+permissions:
+  contents: read
+
 jobs:
   setup:
     name: Setup

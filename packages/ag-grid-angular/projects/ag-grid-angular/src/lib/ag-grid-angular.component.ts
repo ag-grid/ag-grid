@@ -79,6 +79,7 @@ import type {
     DragStartedEvent,
     DragStoppedEvent,
     EditStrategyType,
+    EditValidationCommitType,
     ExcelExportParams,
     ExcelStyle,
     ExpandOrCollapseAllEvent,
@@ -99,6 +100,7 @@ import type {
     GetChartToolbarItems,
     GetContextMenuItems,
     GetDataPath,
+    GetFullRowEditValidationErrors,
     GetGroupRowAggParams,
     GetLocaleTextParams,
     GetMainMenuItems,
@@ -640,6 +642,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input() public editType: EditStrategyType | undefined = undefined;
+    /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
+    @Input() public getFullRowEditValidationErrors: GetFullRowEditValidationErrors | undefined = undefined;
+    /** Set to `block` to block the commit of invalid cell edits, keeping editors open.
+     */
+    @Input() public cellEditingInvalidCommitType: EditValidationCommitType | undefined = undefined;
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
      * @default false
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
@@ -807,7 +816,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Allows for filter handler keys to be used in `colDef.filter.handler`.
      * @initial
      */
-    @Input() public filterHandlers: { [key: string]: CreateFilterHandlerFunc } | undefined = undefined;
+    @Input() public filterHandlers: { [key: string]: CreateFilterHandlerFunc<TData> } | undefined = undefined;
     /** Set to `true` to Enable Charts.
      * @default false
      * @agModule `IntegratedChartsModule`
@@ -837,8 +846,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Get chart menu items. Only applies when using AG Charts Enterprise.
      * @agModule `IntegratedChartsModule`
      */
-    @Input() public chartMenuItems: (DefaultChartMenuItem | MenuItemDef)[] | GetChartMenuItems<TData> | undefined =
-        undefined;
+    @Input() public chartMenuItems:
+        | (DefaultChartMenuItem | MenuItemDef<TData>)[]
+        | GetChartMenuItems<TData>
+        | undefined = undefined;
     /** Provide your own loading cell renderer to use when data is loading via a DataSource or when a cell renderer is deferred.
      * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
      */
@@ -1169,6 +1180,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowDragModule`
      */
     @Input({ transform: booleanAttribute }) public rowDragManaged: boolean | undefined = undefined;
+    /** Used if rowDragManaged is enabled and treeData is enabled,
+     * - If the row is already a group, but is not expanded, it will be expanded after rowDragInsertDelay milliseconds of dragging over it.
+     * - If the row is a leaf (no children), it will be converted to a group and the row inserted into it after rowDragInsertDelay milliseconds of dragging over it.
+     * @default 500
+     * @agModule `RowDragModule`
+     */
+    @Input() public rowDragInsertDelay: number | undefined = undefined;
     /** Set to `true` to suppress row dragging.
      * @default false
      */
@@ -1264,8 +1282,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public groupTotalRow: 'top' | 'bottom' | UseGroupTotalRow<TData> | undefined = undefined;
     /** When provided, an extra grand total row will be inserted into the grid at the specified position.
      * This row displays the aggregate totals of all rows in the grid.
-     *
-     * Note that the `'pinnedTop'` and `'pinnedBottom'` values are deprecated in v34. Use `grandTotalRowPinned` instead.
      * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     @Input() public grandTotalRow: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined = undefined;
@@ -1386,12 +1402,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `PinnedRowModule`
      */
     @Input() public isRowPinned: IsRowPinned<TData> | undefined = undefined;
-    /** Pin the grand total row to the top of bottom of the grid. Requires `grandTotalRow` to be set.
-     * When multiple rows are pinned, the grid uses `grandTotalRow` to determine whether the grand total row should be
-     * displayed first or last in the list of pinned rows.
-     * @agModule `PinnedRowModule`
-     */
-    @Input() public grandTotalRowPinned: 'top' | 'bottom' | undefined = undefined;
     /** Sets the row model type.
      * @default 'clientSide'
      * @initial
@@ -1805,7 +1815,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `IntegratedChartsModule`
      */
-    @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
+    @Input() public getChartToolbarItems: GetChartToolbarItems<TData> | undefined = undefined;
     /** Callback to enable displaying the chart in an alternative chart container.
      * @initial
      * @agModule `IntegratedChartsModule`
@@ -1890,18 +1900,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ServerSideRowModelModule`
      */
     @Input() public getServerSideGroupLevelParams:
-        | ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams)
+        | ((params: GetServerSideGroupLevelParamsParams<TData>) => ServerSideGroupLevelParams)
         | undefined = undefined;
     /** Allows groups to be open by default.
      * @agModule `ServerSideRowModelModule`
      */
     @Input() public isServerSideGroupOpenByDefault:
-        | ((params: IsServerSideGroupOpenByDefaultParams) => boolean)
+        | ((params: IsServerSideGroupOpenByDefaultParams<TData>) => boolean)
         | undefined = undefined;
     /** Allows cancelling transactions.
      * @agModule `ServerSideRowModelModule`
      */
-    @Input() public isApplyServerSideTransaction: IsApplyServerSideTransaction | undefined = undefined;
+    @Input() public isApplyServerSideTransaction: IsApplyServerSideTransaction<TData> | undefined = undefined;
     /** SSRM Tree Data: Allows specifying which rows are expandable.
      * @agModule `ServerSideRowModelModule`
      */
@@ -2183,7 +2193,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public filterChanged: EventEmitter<FilterChangedEvent<TData>> = new EventEmitter<
         FilterChangedEvent<TData>
     >();
-    /** Filter was modified but not applied. Used when filters have 'Apply' buttons.
+    /** Filter was modified but not applied  (when using `enableFilterHandlers = false`). Used when filters have 'Apply' buttons.
      */
     @Output() public filterModified: EventEmitter<FilterModifiedEvent<TData>> = new EventEmitter<
         FilterModifiedEvent<TData>
@@ -2316,7 +2326,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     >();
     /** The row resize has ended (Row Numbers Feature)
      */
-    @Output() public rowResizeEnded: EventEmitter<RowResizeEndedEvent> = new EventEmitter<RowResizeEndedEvent>();
+    @Output() public rowResizeEnded: EventEmitter<RowResizeEndedEvent<TData>> = new EventEmitter<
+        RowResizeEndedEvent<TData>
+    >();
     /** A row group column was added, removed or reordered.
      */
     @Output() public columnRowGroupChanged: EventEmitter<ColumnRowGroupChangedEvent<TData>> = new EventEmitter<

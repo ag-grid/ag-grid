@@ -3,7 +3,7 @@ title: "Excel Export - Rows"
 enterprise: true
 ---
 
-Excel Export allows you  to select which rows get exported to Excel.
+Excel Export allows you to select which rows get exported to Excel.
 
 By default, all the rows in the grid are included in the Excel export. However, you can set which rows are exported and configure how they are rendered within the Excel file.
 

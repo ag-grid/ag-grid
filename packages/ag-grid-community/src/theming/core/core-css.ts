@@ -207,19 +207,24 @@ export type CoreParams = {
     filterToolPanelGroupIndent: LengthValue;
 
     /**
-     * Color of new Filter Tool Panel apply button
+     * Color of new Filters Tool Panel apply button
      */
     filterPanelApplyButtonColor: ColorValue;
 
     /**
-     * Background color of new Filter Tool Panel apply button
+     * Background color of new Filters Tool Panel apply button
      */
     filterPanelApplyButtonBackgroundColor: ColorValue;
 
     /**
-     * Color of text and UI elements that should stand out less than the default in new Filter Tool Panel
+     * Color of text and UI elements that should stand out less than the default in new Filters Tool Panel
      */
     filterPanelCardSubtleColor: ColorValue;
+
+    /**
+     * Color of text and UI elements that should stand out less than the default in new Filters Tool Panel when hovered
+     */
+    filterPanelCardSubtleHoverColor: ColorValue;
 
     /**
      * Color of matches used in Find
@@ -245,6 +250,11 @@ export type CoreParams = {
      * Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.
      */
     focusShadow: ShadowValue;
+
+    /**
+     * 'Shadow around UI controls that have focus and contain validation errors e.g. text inputs, text-areas. The value must a valid CSS box-shadow.',
+     */
+    focusErrorShadow: ShadowValue;
 
     /**
      * Default font family for all text. Can be overridden by more specific parameters like `headerFontFamily`
@@ -1013,6 +1023,12 @@ export const coreDefaults: Readonly<CoreParams> = {
         spread: 3,
         color: accentMix(0.5),
     },
+    focusErrorShadow: {
+        spread: 3,
+        color: {
+            ref: 'invalidColor',
+        },
+    },
     headerColumnResizeHandleHeight: '30%',
     headerColumnResizeHandleWidth: 2,
     headerColumnResizeHandleColor: {
@@ -1098,7 +1114,9 @@ export const coreDefaults: Readonly<CoreParams> = {
         ref: 'chromeBackgroundColor',
     },
     tooltipErrorBackgroundColor: {
-        ref: 'chromeBackgroundColor',
+        ref: 'invalidColor',
+        onto: 'backgroundColor',
+        mix: 0.1,
     },
     tooltipTextColor: {
         ref: 'textColor',
@@ -1108,7 +1126,11 @@ export const coreDefaults: Readonly<CoreParams> = {
     },
     tooltipBorder: true,
     tooltipErrorBorder: {
-        color: { ref: 'invalidColor' },
+        color: {
+            ref: 'invalidColor',
+            onto: 'backgroundColor',
+            mix: 0.25,
+        },
     },
     columnDropCellBackgroundColor: foregroundMix(0.07),
     columnDropCellTextColor: {
@@ -1134,7 +1156,11 @@ export const coreDefaults: Readonly<CoreParams> = {
     advancedFilterBuilderValuePillColor: '#85c0e4',
     filterPanelApplyButtonColor: backgroundColor,
     filterPanelApplyButtonBackgroundColor: accentColor,
-    filterPanelCardSubtleColor: { ref: 'subtleTextColor' },
+    filterPanelCardSubtleColor: {
+        ref: 'textColor',
+        mix: 0.7,
+    },
+    filterPanelCardSubtleHoverColor: { ref: 'textColor' },
     findMatchColor: foregroundColor,
     findMatchBackgroundColor: '#ffff00',
     findActiveMatchColor: foregroundColor,

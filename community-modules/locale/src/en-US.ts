@@ -78,11 +78,11 @@ export const AG_GRID_LOCALE_EN = {
     filterSummaryListShort: 'is (${variable})',
     filterSummaryListLong: 'is (${variable}) and ${variable} more',
     addFilterCard: 'Add Filter',
-    agTextColumnFilterDisplayName: 'Text Filter',
-    agNumberColumnFilterDisplayName: 'Number Filter',
-    agDateColumnFilterDisplayName: 'Date Filter',
-    agSetColumnFilterDisplayName: 'Set Filter',
-    agMultiColumnFilterDisplayName: 'Multi Filter',
+    agTextColumnFilterDisplayName: 'Simple Filter',
+    agNumberColumnFilterDisplayName: 'Simple Filter',
+    agDateColumnFilterDisplayName: 'Simple Filter',
+    agSetColumnFilterDisplayName: 'Selection Filter',
+    agMultiColumnFilterDisplayName: 'Combo Filter',
     addFilterPlaceholder: 'Search columns...',
 
     // Advanced Filter
@@ -138,6 +138,14 @@ export const AG_GRID_LOCALE_EN = {
     advancedFilterBuilderValidationSelectColumn: 'Must select a column.',
     advancedFilterBuilderValidationSelectOption: 'Must select an option.',
     advancedFilterBuilderValidationEnterValue: 'Must enter a value.',
+
+    // Validation Errors
+    minDateValidation: 'Date must be after ${variable}',
+    maxDateValidation: 'Date must be before ${variable}',
+    maxLengthValidation: 'Must be ${variable} characters or fewer.',
+    minValueValidation: 'Must be greater than or equal to ${variable}',
+    maxValueValidation: 'Must be less than or equal to  ${variable}',
+    invalidSelectionValidation: 'Invalid selection.',
 
     // Side Bar
     columns: 'Columns',
@@ -591,8 +599,11 @@ export const AG_GRID_LOCALE_EN = {
     ariaLabelColumnMenu: 'Column Menu',
     ariaLabelColumnFilter: 'Column Filter',
 
-    ariaLabelCellEditor: 'Cell Editor',
     ariaLabelSelectField: 'Select Field',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'Cell Editor',
+    ariaValidationErrorPrefix: 'Cell Editor Validation',
 
     // aria labels for async context menus
     ariaLabelLoadingContextMenu: 'Loading Context Menu',
@@ -617,9 +628,10 @@ export const AG_GRID_LOCALE_EN = {
     ariaColumnPanelList: 'Column List',
     ariaFilterPanelList: 'Filter List',
 
-    // ARIA labels for new Filter Tool Panel
+    // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Add Filter Field',
-    ariaLabelDeleteFilterCard: 'Delete Filter',
+    ariaLabelFilterCardDelete: 'Delete Filter',
+    ariaLabelFilterCardHasEdits: 'Has Edits',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

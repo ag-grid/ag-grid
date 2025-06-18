@@ -4,12 +4,13 @@ import type { BeanStub } from 'ag-grid-community';
 const DEFAULT_LOCALE_TEXT = {
     addFilterCard: 'Add Filter',
     ariaLabelAddFilterField: 'Add Filter Field',
-    ariaLabelDeleteFilterCard: 'Delete Filter',
-    agTextColumnFilterDisplayName: 'Text Filter',
-    agNumberColumnFilterDisplayName: 'Number Filter',
-    agDateColumnFilterDisplayName: 'Date Filter',
-    agSetColumnFilterDisplayName: 'Set Filter',
-    agMultiColumnFilterDisplayName: 'Multi Filter',
+    ariaLabelFilterCardDelete: 'Delete Filter',
+    ariaLabelFilterCardHasEdits: 'Has Edits',
+    agTextColumnFilterDisplayName: 'Simple Filter',
+    agNumberColumnFilterDisplayName: 'Simple Filter',
+    agDateColumnFilterDisplayName: 'Simple Filter',
+    agSetColumnFilterDisplayName: 'Selection Filter',
+    agMultiColumnFilterDisplayName: 'Combo Filter',
     addFilterPlaceholder: 'Search columns...',
 } as const;
 

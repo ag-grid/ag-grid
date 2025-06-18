@@ -1,5 +1,6 @@
 import type { _EditGridApi, _UndoRedoGridApi } from '../api/gridApi';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
+import { TooltipModule } from '../tooltip/tooltipModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';
@@ -20,6 +21,7 @@ import {
     startEditingCell,
     stopEditing,
     undoCellEditing,
+    validateEdit,
 } from './editApi';
 import { EditModelService } from './editModelService';
 import { EditService } from './editService';
@@ -40,12 +42,13 @@ export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
         startEditingCell,
         stopEditing,
         isEditing,
+        validateEdit,
     },
     dynamicBeans: {
         singleCell: SingleCellEditStrategy,
         fullRow: FullRowEditStrategy,
     },
-    dependsOn: [PopupModule],
+    dependsOn: [PopupModule, TooltipModule],
     css: [cellEditingCSS],
 };
 

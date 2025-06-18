@@ -292,13 +292,12 @@ export class RowNode<TData = any>
     }
 
     private setDataCommon(data: TData, update: boolean): void {
-        const { valueCache, selectionSvc, eventSvc } = this.beans;
+        const { valueCache, eventSvc } = this.beans;
         const oldData = this.data;
 
         this.data = data;
         valueCache?.onDataChanged();
         this.updateDataOnDetailNode();
-        selectionSvc?.updateRowSelectable(this);
         this.resetQuickFilterAggregateText();
 
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
@@ -473,7 +472,7 @@ export class RowNode<TData = any>
      * @returns `true` if the value was changed, otherwise `false`.
      */
     public setDataValue(colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
-        const { colModel, valueSvc, gos, selectionSvc, editSvc } = this.beans;
+        const { colModel, valueSvc, gos, editSvc } = this.beans;
 
         // if in pivot mode, grid columns wont include primary columns
         const column = typeof colKey !== 'string' ? colKey : colModel.getCol(colKey) ?? colModel.getColDefCol(colKey);
@@ -517,7 +516,6 @@ export class RowNode<TData = any>
         const valueChanged = valueSvc.setValue(this, column, newValue, eventSource);
 
         this.dispatchCellChangedEvent(column, newValue, oldValue);
-        const selectable = selectionSvc?.updateRowSelectable(this);
 
         const pinnedSibling = this.pinnedSibling;
         if (pinnedSibling) {
@@ -525,9 +523,6 @@ export class RowNode<TData = any>
             if (valueChanged) {
                 pinnedSibling.dispatchCellChangedEvent(column, newValue, oldValue);
             }
-            // The pinned sibling mirrors the state of the source row, otherwise
-            // we could potentially have siblings with different values of "selectable"
-            pinnedSibling.selectable = selectable ?? true;
         }
 
         return valueChanged;

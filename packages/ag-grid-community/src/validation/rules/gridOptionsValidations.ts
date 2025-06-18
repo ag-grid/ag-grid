@@ -88,6 +88,11 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
         message:
             '`gridOptions` and `columnDefs` both have a `context` property that should be used for arbitrary user data. This means that column definitions and gridOptions should only contain valid properties making this property redundant.',
     },
+
+    suppressAdvancedFilterEval: {
+        version: '34',
+        message: 'Advanced filter no longer uses function evaluation, so this option has no effect.',
+    },
 });
 
 function toConstrainedNum(key: keyof GridOptions, value: any, min: number): string | null {
@@ -109,14 +114,14 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, ValidationM
     datasource: 'InfiniteRowModel',
     doesExternalFilterPass: 'ExternalFilter',
     editType: 'EditCore',
+    cellEditingInvalidCommitType: 'EditCore',
     enableAdvancedFilter: 'AdvancedFilter',
     enableCellSpan: 'CellSpan',
     enableCharts: 'IntegratedCharts',
     enableRangeSelection: 'CellSelection',
     enableRowPinning: 'PinnedRow',
-    isRowPinned: 'PinnedRow',
-    isRowPinnable: 'PinnedRow',
     findSearchValue: 'Find',
+    getFullRowEditValidationErrors: 'EditCore',
     getContextMenuItems: 'ContextMenu',
     getLocaleText: 'Locale',
     getMainMenuItems: 'ColumnMenu',
@@ -124,9 +129,10 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, ValidationM
     getRowStyle: 'RowStyle',
     groupTotalRow: 'SharedRowGrouping',
     grandTotalRow: 'SharedRowGrouping',
-    grandTotalRowPinned: 'PinnedRow',
     initialState: 'GridState',
     isExternalFilterPresent: 'ExternalFilter',
+    isRowPinnable: 'PinnedRow',
+    isRowPinned: 'PinnedRow',
     localeText: 'Locale',
     masterDetail: 'SharedMasterDetail',
     pagination: 'Pagination',
@@ -221,7 +227,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 if (!enableRowPinning && isRowPinnable) {
                     return '`isRowPinnable` requires `enableRowPinning` to be set.';
                 }
-
                 return null;
             },
         },
@@ -234,34 +239,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 if (!enableRowPinning && isRowPinned) {
                     return '`isRowPinned` requires `enableRowPinning` to be set.';
                 }
-
-                return null;
-            },
-        },
-
-        grandTotalRow: {
-            validate({ grandTotalRow }) {
-                if (grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop') {
-                    return `Using \`grandTotalRow=${grandTotalRow}\` is deprecated as of v34. Use \`grandTotalRowPinned\` instead.`;
-                }
-                return null;
-            },
-        },
-
-        grandTotalRowPinned: {
-            validate({ grandTotalRowPinned, pinnedTopRowData, pinnedBottomRowData }, _, beans) {
-                if (!grandTotalRowPinned) {
-                    return null;
-                }
-
-                if (beans.pinnedRowModel == null) {
-                    return 'The `PinnedRowModule` must be registered when `grandTotalRowPinned` is set.';
-                }
-
-                if (pinnedTopRowData || pinnedBottomRowData) {
-                    return 'Grand total row pinning cannot be used together with pinned row data. Either remove `grandTotalRowPinned`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
-                }
-
                 return null;
             },
         },

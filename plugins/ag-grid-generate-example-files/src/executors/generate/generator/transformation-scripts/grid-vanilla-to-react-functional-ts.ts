@@ -14,6 +14,7 @@ import {
     isInstanceMethod,
     preferParamsApi,
     removeCreateGridImport,
+    wrapTearDownExample,
 } from './parser-utils';
 import {
     EventAndCallbackNames,
@@ -379,7 +380,7 @@ ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   
 
 const root = createRoot(document.getElementById('root')!);
 root.render(<StrictMode><GridExample /></StrictMode>);
-(window as any).tearDownExample = () => root.unmount();
+${wrapTearDownExample('(window as any).tearDownExample = () => root.unmount();')}
 `;
 
         if ((generatedOutput.match(/gridRef\.current/g) || []).length === 0) {

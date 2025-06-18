@@ -9,5 +9,10 @@
     ) {
     &:focus {
         box-shadow: var(--ag-focus-shadow);
+
+        &:where(:invalid),
+        &:where(.invalid) {
+            box-shadow: var(--ag-focus-error-shadow);
+        }
     }
 }

@@ -65,6 +65,7 @@ export interface NewFiltersToolPanelFilterState {
 }
 
 export interface NewFiltersToolPanelState {
+    /** Ordered list of filters and their expansion state */
     filters?: NewFiltersToolPanelFilterState[];
 }
 

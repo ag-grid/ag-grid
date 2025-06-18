@@ -77,32 +77,47 @@ function currencyCssFunc(params) {
 
 export class CountryCellRendererJs {
     eGui;
+    currValue;
 
     init(params) {
-        this.eGui = document.createElement('span');
-        this.eGui.style.cursor = 'default';
-        this.eGui.style.overflow = 'hidden';
-        this.eGui.style.textOverflow = 'ellipsis';
-
-        if (params.value === undefined) {
-            return null;
-        } else if (params.value == null || params.value === '' || params.value === '(Select All)') {
-            this.eGui.innerHTML = params.value;
-        } else {
-            // Get flags from here: http://www.freeflagicons.com/
-            var flag = `<img border="0" width="15" height="10" alt="${
-                params.value
-            } flag"  src="https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[params.value]}.png">`;
-            this.eGui.innerHTML = flag + ' ' + params.value;
-        }
+        this.updateFlag(params.value);
     }
 
     getGui() {
         return this.eGui;
     }
 
-    refresh() {
-        return false;
+    updateFlag(value) {
+        this.currValue = value;
+        this.eGui = document.createElement('span');
+        this.eGui.style.cursor = 'default';
+        this.eGui.style.overflow = 'hidden';
+        this.eGui.style.textOverflow = 'ellipsis';
+
+        if (value === undefined) {
+            return null;
+        } else if (value == null || value === '' || value === '(Select All)') {
+            this.eGui.innerHTML = value;
+        } else {
+            const img = document.createElement('img');
+            img.border = '0';
+            img.width = 15;
+            img.height = 10;
+            img.alt = `${value} flag`;
+            img.src = `https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[value]}.png`;
+
+            this.eGui.appendChild(img);
+            this.eGui.appendChild(document.createTextNode(' ' + value));
+        }
+    }
+
+    refresh(params) {
+        const value = params.value;
+        if (this.currValue !== value) {
+            this.updateFlag(value);
+        }
+        // We have handled the refresh to return true
+        return true;
     }
 }
 

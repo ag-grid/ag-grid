@@ -3,6 +3,7 @@ import type {
     FilterDisplayComp,
     FilterDisplayParams,
     FilterDisplayState,
+    FilterHandler,
     FilterWrapperParams,
     IComponent,
     IMultiFilterDef,
@@ -160,7 +161,7 @@ export class MultiFilterUi
             const handler = this.getHandler();
             this.filters.forEach((filter, otherIndex) => {
                 if (index !== otherIndex) {
-                    handler.getHandler(otherIndex)?.onAnyFilterChanged?.();
+                    handler.getHandler<FilterHandler>(otherIndex)?.onAnyFilterChanged?.();
                     filter?.onAnyFilterChanged?.();
                 }
             });

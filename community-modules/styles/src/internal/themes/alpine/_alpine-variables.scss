@@ -46,6 +46,7 @@
     --ag-input-border-color: var(--ag-border-color);
     --ag-input-border-color-invalid: var(--ag-invalid-color);
     --ag-input-focus-box-shadow: 0 0 2px 0.1rem var(--ag-input-focus-border-color);
+    --ag-input-error-focus-box-shadow: 0 0 2px 0.1rem var(--ag-invalid-color);
     --ag-panel-background-color: var(--ag-header-background-color);
     --ag-menu-background-color: var(--ag-header-background-color);
     --ag-filter-panel-apply-button-color: var(--ag-background-color);
@@ -116,6 +117,7 @@
     --ag-subheader-background-color: #000;
     --ag-input-disabled-background-color: #282c2f;
     --ag-input-focus-box-shadow: 0 0 2px 0.5px rgba(255, 255, 255, 0.5), 0 0 4px 3px var(--ag-input-focus-border-color);
+    --ag-input-error-focus-box-shadow: 0 0 2px 0.5px rgba(255, 255, 255, 0.5), 0 0 4px 3px var(--ag-invalid-color);
     --ag-card-shadow: 0 1px 20px 1px black;
 
     --ag-disabled-foreground-color: #{color.change(#fff, $alpha: 0.5)};

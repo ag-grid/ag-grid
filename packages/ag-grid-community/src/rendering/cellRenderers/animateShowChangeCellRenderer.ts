@@ -16,7 +16,7 @@ const AnimateShowChangeCellRendererElement: ElementParams = {
 };
 
 export class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
-    private lastValue: number;
+    private lastValue: any;
 
     private eValue: HTMLElement = RefPlaceholder;
     private eDelta: HTMLElement = RefPlaceholder;
@@ -93,8 +93,16 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
             return false;
         }
 
-        if (typeof value === 'number' && typeof lastValue === 'number') {
-            const delta = value - lastValue;
+        const numericValue = typeof value === 'object' && 'toNumber' in value ? value.toNumber() : value;
+        const numericLastValue =
+            typeof lastValue === 'object' && 'toNumber' in lastValue ? lastValue.toNumber() : lastValue;
+
+        if (numericValue === numericLastValue) {
+            return false;
+        }
+
+        if (typeof numericValue === 'number' && typeof numericLastValue === 'number') {
+            const delta = numericValue - numericLastValue;
             this.showDelta(params, delta);
         }
 
