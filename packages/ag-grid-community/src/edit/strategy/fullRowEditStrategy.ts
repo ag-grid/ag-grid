@@ -176,6 +176,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             nextCell.focusCell(true, event);
         }
 
+        prevCell.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
+
         return true;
     }
 
