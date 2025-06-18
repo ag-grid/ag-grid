@@ -269,11 +269,10 @@ export abstract class BaseEditStrategy extends BeanStub {
         });
 
         // now update cell values and fire cell events
-        const cells: (EditValue & { rowNode: IRowNode; column: Column })[] = [];
+        const cells: (EditValue & Required<EditPosition>)[] = [];
         edits.forEach((editRow, rowNode) => {
             editRow.forEach((cellData, column) => {
                 const position = { rowNode, column };
-                this.model.setEdit(position, cellData);
                 this.dispatchCellEvent(position, undefined, 'cellEditingStarted');
                 if (cellData.state === 'editing') {
                     cells.push({ ...cellData, rowNode, column });

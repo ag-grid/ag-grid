@@ -330,7 +330,7 @@ export function _destroyEditor(beans: BeanCollection, position: EditPosition): v
 
     const { comp } = cellCtrl;
 
-    if (!comp.getCellEditor()) {
+    if (comp && !comp.getCellEditor()) {
         // no editor, nothing to do
         return;
     }

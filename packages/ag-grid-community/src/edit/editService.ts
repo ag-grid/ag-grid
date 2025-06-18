@@ -3,7 +3,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import { _getCellByPosition, _getRowNode } from '../entities/positionUtils';
+import { _getRowNode } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
@@ -246,7 +246,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
         const cellCtrl = _getCellCtrl(this.beans, position)!;
-        if (!cellCtrl.comp) {
+        if (cellCtrl && !cellCtrl.comp) {
             cellCtrl.onCompAttachedFuncs.push(() => this.startEditing(position, params));
             return;
         }
@@ -419,6 +419,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         this.strategy?.setEditMap(edits);
 
         this.bulkRefresh();
+
+        // force refresh of all row cells as custom renderers may depend on multiple cell values
+        this.beans.rowRenderer.refreshCells({ force: true, suppressFlash: true });
     }
 
     private dispatchEditValuesChanged(
@@ -765,17 +768,17 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     public setEditingCells(cells: EditingCellPosition[], params?: SetEditingCellsParams): void {
-        const { beans } = this;
-        const { editSvc, colModel, valueSvc, editModelSvc } = beans;
+        const { beans, model } = this;
+        const { colModel, valueSvc } = beans;
 
-        if (!editSvc?.isBatchEditing()) {
+        if (!this?.isBatchEditing()) {
             return;
         }
 
         let edits: EditMap = new Map();
 
         if (params?.update) {
-            const existingEdits = editModelSvc?.getEditMap();
+            const existingEdits = model.getEditMap();
             edits = new Map(existingEdits?.entries() ?? []);
         }
 
@@ -786,13 +789,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 return;
             }
 
-            const cellCtrl = _getCellByPosition(beans, { rowIndex, rowPinned, column: col });
+            const rowNode = _getRowNode(beans, { rowIndex, rowPinned });
 
-            if (!cellCtrl) {
+            if (!rowNode) {
                 return;
             }
-
-            const rowNode = cellCtrl.rowNode;
             const oldValue = valueSvc.getValue(col as AgColumn, rowNode, true, 'api');
 
             if (!_valuesDiffer({ newValue, oldValue }) && state !== 'editing') {
@@ -815,6 +816,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             editRow.set(col, { newValue, oldValue, state: state ?? 'changed' });
         });
 
-        editSvc?.setEditMap(edits);
+        this.setEditMap(edits);
     }
 }
