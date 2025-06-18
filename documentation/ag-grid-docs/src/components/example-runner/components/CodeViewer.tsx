@@ -43,16 +43,11 @@ export function stripOutExampleGeneratorCode(files: FileContents) {
                     .replace(consoleLogRegex, '')
                     .trim() + '\n';
 
-            // hide React tear down example code
-            if (mainFile === 'index.tsx') {
-                files[mainFile] = files[mainFile]?.replace(
-                    '(window as any).tearDownExample = () => root.unmount();',
-                    ''
-                );
-            }
-            if (mainFile === 'index.jsx') {
-                files[mainFile] = files[mainFile]?.replace('window.tearDownExample = () => root.unmount();', '');
-            }
+            // Hide the example tear down code use in Documentation tests
+            files[mainFile] =
+                files[mainFile]
+                    ?.replace(/\/\*\* TEAR DOWN START \*\*\/([\s\S]*?)\/\*\* TEAR DOWN END \*\*\//g, '')
+                    .trim() + '\n';
         }
     });
 }

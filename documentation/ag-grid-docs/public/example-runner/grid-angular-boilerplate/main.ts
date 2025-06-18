@@ -9,6 +9,13 @@ if ((window as any).ENABLE_PROD_MODE) {
     enableProdMode();
 }
 
-bootstrapApplication(AppComponent, {
+const app = bootstrapApplication(AppComponent, {
     providers: [provideHttpClient()],
 });
+/** TEAR DOWN START **/
+app.then((appRef) => {
+    (window as any).tearDownExample = () => appRef.destroy();
+}).catch((err) => {
+    console.error('Error during bootstrap:', err);
+});
+/** TEAR DOWN END **/
