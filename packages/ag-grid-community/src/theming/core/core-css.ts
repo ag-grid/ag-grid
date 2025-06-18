@@ -207,19 +207,24 @@ export type CoreParams = {
     filterToolPanelGroupIndent: LengthValue;
 
     /**
-     * Color of new Filter Tool Panel apply button
+     * Color of new Filters Tool Panel apply button
      */
     filterPanelApplyButtonColor: ColorValue;
 
     /**
-     * Background color of new Filter Tool Panel apply button
+     * Background color of new Filters Tool Panel apply button
      */
     filterPanelApplyButtonBackgroundColor: ColorValue;
 
     /**
-     * Color of text and UI elements that should stand out less than the default in new Filter Tool Panel
+     * Color of text and UI elements that should stand out less than the default in new Filters Tool Panel
      */
     filterPanelCardSubtleColor: ColorValue;
+
+    /**
+     * Color of text and UI elements that should stand out less than the default in new Filters Tool Panel when hovered
+     */
+    filterPanelCardSubtleHoverColor: ColorValue;
 
     /**
      * Color of matches used in Find
@@ -1151,7 +1156,11 @@ export const coreDefaults: Readonly<CoreParams> = {
     advancedFilterBuilderValuePillColor: '#85c0e4',
     filterPanelApplyButtonColor: backgroundColor,
     filterPanelApplyButtonBackgroundColor: accentColor,
-    filterPanelCardSubtleColor: { ref: 'subtleTextColor' },
+    filterPanelCardSubtleColor: {
+        ref: 'textColor',
+        mix: 0.7,
+    },
+    filterPanelCardSubtleHoverColor: { ref: 'textColor' },
     findMatchColor: foregroundColor,
     findMatchBackgroundColor: '#ffff00',
     findActiveMatchColor: foregroundColor,

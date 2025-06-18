@@ -37,7 +37,7 @@ export class AddFilterComp extends Component<'filterSelected'> {
         this.destroySelect();
         const eButton = _createElement({
             tag: 'button',
-            cls: 'ag-button ag-filter-add-button',
+            cls: 'ag-button ag-standard-button ag-filter-add-button',
             children: [
                 { tag: 'span', children: [() => _createIconNoSpan('filterAdd', this.beans)!] },
                 {

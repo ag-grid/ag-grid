@@ -97,6 +97,21 @@ jobs:
         with:
           cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
+#      - name: nx format:check
+#        id: format
+#        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+#        run: |
+#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+#            yarn nx format:check --all
+#          else
+#            yarn nx format:check --base ${{ steps.setup.outputs.base }}
+#          fi
+#
+#      - name: nx lint
+#        id: lint
+#        run: |
+#          yarn nx lint
+
       - name: update base url
         run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
 
@@ -161,7 +176,6 @@ jobs:
                 dist/
                 packages/*/dist/
                 external/*/dist/
-
   test:
     runs-on: ubuntu-24.04
     name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
@@ -218,13 +232,226 @@ jobs:
             reports/
             packages/**/__diff_output__/*
 
+#  e2e:
+#    runs-on: ubuntu-latest
+#    name: e2e Tests
+#    needs: build_lint
+#    if: needs.build_lint.outputs.e2e_test_count > 0
+#    strategy:
+#      matrix: ${{ fromJson(needs.build_lint.outputs.e2e_test_matrix )}}
+#      fail-fast: false
+#    env:
+#      NX_PARALLEL: 1
+#      NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Restore Init Build Outputs
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: e2e-init-outputs
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: nx test:e2e
+#        id: tests
+#        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c staging --exclude 'tag:module-size' --exclude all
+#
+#      - name: Persist test results
+#        if: always() && matrix.shard != 0
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: test-results-e2e-shard-${{matrix.shard}}
+#          path: |
+#            reports/
+
+#  bundle_size:
+#    runs-on: ubuntu-latest
+#    name: Bundle Size Tests
+#    needs: build_lint
+#    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_bundle_size_tests }}
+#    strategy:
+#      matrix: ${{ fromJson(needs.build_lint.outputs.bundle_test_matrix )}}
+#      fail-fast: false
+#    env:
+#      NX_PARALLEL: 1
+#      NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Restore Init Build Outputs
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: e2e-init-outputs
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: module-size tests (non-sharded)
+#        if: matrix.shard == 0
+#        id: test-no-shard
+#        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t test:e2e -c staging --exclude '!tag:module-size' --exclude 'tag:sharding' --exclude all
+#      - name: module-size tests
+#        if: matrix.shard != 0
+#        id: test
+#        run: yarn nx ${{ github.event.inputs.nx_command || 'affected' }}  -t test:e2e -c staging --exclude '!tag:module-size' --exclude 'tag:non-sharding' --exclude all --shard=${{ matrix.shard }}/$((${{ strategy.job-total }} - 1))
+#
+#      - name: Persist test results
+#        if: always() && matrix.shard != 0
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: test-results-bundle-shard-${{matrix.shard}}
+#          path: |
+#            reports/
+#
+#  docs:
+#    runs-on: ubuntu-latest
+#    name: Docs Build & Link Checker
+#    needs: build_lint
+#    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_docs }}
+#    strategy:
+#      fail-fast: false
+#    env:
+#      NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
+#    outputs:
+#      docs_deployed: ${{ steps.deploy_to_staging.outcome }}
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Restore Init Build Outputs
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: e2e-init-outputs
+#
+#      - name: Setup
+#        id: setup
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: validate grid modules
+#        run: node scripts/deployments/validateGridModulesList.js
+#      - name: docs build and link checker
+#        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
+#
+#      - name: Deploy to Staging
+#        id: deploy_to_staging
+#        if: ${{ github.ref == 'refs/heads/latest' }}
+#        env:
+#          SSH_PRIVATE_KEY: |
+#            ${{ secrets.STAGING_SSH_KEY }}
+#          SSH_HOST: ${{ secrets.STAGING_HOST }}
+#          SSH_USER: ubuntu
+#          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+#          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
+#        run: |
+#          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+#          chmod 400 $SSH_KEY_LOCATION
+#          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+#
+#      - name: Persist test results
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: test-results-docs
+#          path: |
+#            reports/
+#
+#  fw_pkg_test:
+#    runs-on: ubuntu-24.04
+#    name: Framework Package Tests (${{ matrix.framework }})
+#    needs: build_lint
+#    strategy:
+#      fail-fast: false
+#      matrix: ${{ fromJson(needs.build_lint.outputs.test_pkg_matrix )}}
+#    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
+#    env:
+#      NX_BASE: ${{ needs.init.outputs.nx_base }}
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        if: matrix.framework != 'none'
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1
+#
+#      - name: Restore Init Build Outputs
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: e2e-init-outputs
+#
+#      - name: Setup
+#        id: setup
+#        if: matrix.framework != 'none'
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: nx package:test
+#        id: package-test
+#        if: matrix.framework != 'none'
+#        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
+#
+#  angular_fw_pkg_test:
+#    runs-on: ubuntu-24.04
+#    name: Angular Package Tests
+#    needs: build_lint
+#    strategy:
+#      fail-fast: false
+#      matrix: ${{ fromJson(needs.build_lint.outputs.test_angular_pkg_matrix )}}
+#    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
+#    env:
+#      NX_BASE: ${{ needs.init.outputs.nx_base }}
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        if: matrix.framework != 'none'
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1
+#
+#      - name: Restore Init Build Outputs
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: e2e-init-outputs
+#
+#      - name: Setup
+#        id: setup
+#        if: matrix.framework != 'none'
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: nx package:test
+#        id: package-test
+#        if: matrix.framework != 'none'
+#        run: yarn nx run-many -t test:package:shard-${{ matrix.shard }} -p angular-package-tests -c staging
 
   report:
     runs-on: ubuntu-24.04
     needs: [ build_lint, test ]
     if: cancelled() != true
     permissions:
-      contents: read
+      contents: write
       actions: read
       checks: write
     steps:
@@ -259,10 +486,10 @@ jobs:
           done)
 
       - name: Test Report
-        uses: dorny/test-reporter@v2
-#        if: needs.test.result == 'success' || needs.test.result == 'failure' ||
-#          needs.e2e.result == 'success' || needs.e2e.result == 'failure' ||
-#          needs.bundle_size.result == 'success' || needs.bundle_size.result == 'failure'
+        uses: dorny/test-reporter@v1
+        if: needs.test.result == 'success' || needs.test.result == 'failure' ||
+          needs.e2e.result == 'success' || needs.e2e.result == 'failure' ||
+          needs.bundle_size.result == 'success' || needs.bundle_size.result == 'failure'
         id: testReport
         continue-on-error: true
         with:
@@ -308,7 +535,7 @@ jobs:
 #          fi
 #        env:
 #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+#
 #      - name: Commit History
 #        id: commits
 #        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
@@ -317,7 +544,7 @@ jobs:
 #          echo "GIT_LOG<<EOF" >> $GITHUB_ENV
 #          echo "$GIT_LOG" >> $GITHUB_ENV
 #          echo "EOF" >> $GITHUB_ENV
-
+#
 #      - name: Tag Latest Successful Commit
 #        if: success() && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.workflowStatus != 'failure'
 #        uses: EndBug/latest-tag@latest
@@ -373,7 +600,9 @@ jobs:
 #            --website-status-channel "$WEBSITE_STATUS_CHANNEL" \
 #            --debug-channel "$SLACK_DEBUG_CHANNEL" \
 #            --run-context "$RUN_CONTEXT"
-
-      - name: Output Report URL
-        run: |
-            echo ${{ steps.testReport.outputs.url_html }}
+#
+#      - name: Fail job if workflow failed
+#        if: success() && steps.lastJobStatus.outputs.workflowStatus == 'failure'
+#        run: |
+#            echo "Workflow failed, failing the build."
+#            exit 1
