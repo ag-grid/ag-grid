@@ -586,7 +586,12 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined {
-        if ((!this.isEditing() || eventSource === 'commit') && eventSource !== 'paste' && eventSource !== 'rangeSvc') {
+        if (
+            (!this.isEditing() || eventSource === 'commit') &&
+            eventSource !== 'paste' &&
+            eventSource !== 'rangeSvc' &&
+            eventSource !== 'renderer'
+        ) {
             return;
         }
 
