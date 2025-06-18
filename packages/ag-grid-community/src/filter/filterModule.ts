@@ -10,6 +10,7 @@ import { PopupModule } from '../widgets/popupModule';
 import { columnFiltersCSS } from './column-filters.css-GENERATED';
 import {
     destroyFilter,
+    doFilterAction,
     getColumnFilterHandler,
     getColumnFilterInstance,
     getColumnFilterModel,
@@ -96,6 +97,7 @@ export const ColumnFilterModule: _ModuleWithApi<_ColumnFilterGridApi> = {
         setColumnFilterModel,
         showColumnFilter,
         getColumnFilterHandler,
+        doFilterAction,
     },
     dependsOn: [FilterCoreModule, PopupModule, FilterValueModule, SharedMenuModule],
 };

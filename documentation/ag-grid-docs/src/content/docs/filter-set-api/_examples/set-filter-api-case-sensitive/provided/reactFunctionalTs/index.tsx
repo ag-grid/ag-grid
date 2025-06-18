@@ -1,7 +1,7 @@
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, FirstDataRenderedEvent, ISetFilter } from 'ag-grid-community';
+import type { ColDef, FirstDataRenderedEvent, SetFilterHandler } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 import type { CustomCellRendererProps } from 'ag-grid-react';
@@ -97,25 +97,20 @@ const GridExample = () => {
     }, []);
 
     const setFilterValues = useCallback((type: string) => {
-        gridRef.current!.api.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then((instance) => {
-            instance!.setFilterValues(MANGLED_COLOURS);
-            instance!.applyModel();
-            gridRef.current!.api.onFilterChanged();
-        });
+        const handler = gridRef.current!.api.getColumnFilterHandler<SetFilterHandler>(FILTER_TYPES[type]);
+        handler!.setFilterValues(MANGLED_COLOURS);
     }, []);
 
     const getValues = useCallback((type: string) => {
-        gridRef.current!.api.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then((instance) => {
-            console.log(JSON.stringify(instance!.getFilterValues(), null, 2));
-        });
+        const handler = gridRef.current!.api.getColumnFilterHandler<SetFilterHandler>(FILTER_TYPES[type]);
+        console.log(JSON.stringify(handler!.getFilterValues(), null, 2));
     }, []);
 
     const reset = useCallback((type: string) => {
-        gridRef.current!.api.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then((instance) => {
-            instance!.resetFilterValues();
-            instance!.setModel(null).then(() => {
-                gridRef.current!.api.onFilterChanged();
-            });
+        const handler = gridRef.current!.api.getColumnFilterHandler<SetFilterHandler>(FILTER_TYPES[type]);
+        handler!.resetFilterValues();
+        gridRef.current!.api.setColumnFilterModel(FILTER_TYPES[type], null).then(() => {
+            gridRef.current!.api.onFilterChanged();
         });
     }, []);
 

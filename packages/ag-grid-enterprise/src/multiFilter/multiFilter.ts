@@ -124,12 +124,15 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 return true;
             }
             const { handler, filter, model } = wrapper;
-            if (handler && model != null) {
-                return handler.doesFilterPass({
-                    ...params,
-                    model,
-                    handlerParams: wrapper.handlerParams!,
-                });
+            if (handler) {
+                return (
+                    model == null ||
+                    handler.doesFilterPass({
+                        ...params,
+                        model,
+                        handlerParams: wrapper.handlerParams!,
+                    })
+                );
             }
             return !filter.isFilterActive() || filter.doesFilterPass(params);
         });

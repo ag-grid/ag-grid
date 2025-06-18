@@ -405,6 +405,12 @@
             }
         },
         "destroyFilter": {},
+        "doFilterAction": {
+            "more": {
+                "name": "Applying the UI Model",
+                "url": "./filter-applying/#applying-the-ui-model"
+            }
+        },
         "getAdvancedFilterModel": {
             "more": {
                 "name": "Advanced Filter",

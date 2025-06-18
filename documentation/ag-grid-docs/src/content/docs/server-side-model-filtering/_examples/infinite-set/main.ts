@@ -2,10 +2,10 @@ import type {
     ColDef,
     GridApi,
     GridOptions,
-    IMultiFilter,
     IServerSideDatasource,
-    ISetFilter,
     KeyCreatorParams,
+    MultiFilterHandler,
+    SetFilterHandler,
     SetFilterValuesFuncParams,
     ValueFormatterParams,
 } from 'ag-grid-community';
@@ -103,6 +103,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     // only keep 10 blocks of rows
     maxBlocksInCache: 10,
 
+    enableFilterHandlers: true,
+
     onFilterChanged: onFilterChanged,
 };
 
@@ -121,12 +123,11 @@ function onFilterChanged() {
         textFilterStored = textFilter;
 
         console.log('Refreshing sports filter');
-        gridApi.getColumnFilterInstance<IMultiFilter>('sport').then((filter) => {
-            filter!.getChildFilterInstance(1).refreshFilterValues();
-        });
-        gridApi.getColumnFilterInstance<ISetFilter>('country').then((filter) => {
-            filter!.refreshFilterValues();
-        });
+        gridApi
+            .getColumnFilterHandler<MultiFilterHandler>('sport')!
+            .getHandler<SetFilterHandler>(1)!
+            .refreshFilterValues();
+        gridApi.getColumnFilterHandler<SetFilterHandler>('country')!.refreshFilterValues();
     }
 }
 

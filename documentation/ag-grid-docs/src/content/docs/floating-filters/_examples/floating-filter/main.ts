@@ -4,7 +4,7 @@ import type {
     GridOptions,
     IDateFilterParams,
     INumberFilterParams,
-    ISetFilter,
+    SetFilterHandler,
 } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -119,14 +119,15 @@ function destroyCountryFilter() {
 }
 
 function endingStan() {
-    gridApi!.getColumnFilterInstance<ISetFilter>('country').then((countryFilterComponent) => {
-        const countriesEndingWithStan = countryFilterComponent!.getFilterKeys().filter(function (value: any) {
+    const countriesEndingWithStan = gridApi!
+        .getColumnFilterHandler<SetFilterHandler>('country')!
+        .getFilterKeys()
+        .filter(function (value: any) {
             return value.indexOf('stan') === value.length - 4;
         });
 
-        gridApi!.setColumnFilterModel('country', { values: countriesEndingWithStan }).then(() => {
-            gridApi!.onFilterChanged();
-        });
+    gridApi!.setColumnFilterModel('country', { values: countriesEndingWithStan }).then(() => {
+        gridApi!.onFilterChanged();
     });
 }
 

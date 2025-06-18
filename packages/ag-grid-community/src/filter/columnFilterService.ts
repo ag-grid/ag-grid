@@ -1502,7 +1502,16 @@ export class ColumnFilterService
         this.columnModelUpdates = [];
     }
 
-    public getModelForColumn(column: AgColumn): any {
+    public getModelForColumn(column: AgColumn, useUnapplied?: boolean): any {
+        if (useUnapplied) {
+            const { state, model } = this;
+            const colId = column.getColId();
+            const colState = state.get(colId);
+            if (colState) {
+                return colState.model ?? null;
+            }
+            return _getFilterModel(model, colId);
+        }
         const filterWrapper = this.cachedFilter(column);
         return filterWrapper ? this.getModelFromFilterWrapper(filterWrapper) : null;
     }
