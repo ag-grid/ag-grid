@@ -6,10 +6,8 @@ import type { ColDef } from '../../entities/colDef';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
-import type { Column } from '../../interfaces/iColumn';
 import type { EditMap, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition, EditSource, IEditService } from '../../interfaces/iEditService';
-import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
 import {
