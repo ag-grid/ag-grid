@@ -109,24 +109,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     protected override processValidationResults(
         results: EditValidationResult<Required<EditPosition> & EditValue>
     ): EditValidationAction {
-        const { gos } = this;
-        const getFullRowEditValidationErrors = gos.get('getFullRowEditValidationErrors');
-
-        getFullRowEditValidationErrors?.({
-            editorsState: results.all.map(
-                ({ column, rowNode: { rowIndex, rowPinned }, newValue, oldValue, state }) => ({
-                    colId: column.getColId(),
-                    column,
-                    rowIndex: rowIndex!,
-                    rowPinned,
-                    newValue,
-                    oldValue,
-                    state,
-                })
-            ),
-        });
-
-        const anyFailed = results.fail.length > 0;
+        const anyFailed = results.fail.length > 0 || this.handleCustomFullRowValidation(results.all);
 
         // if any of the cells failed, keep those editors
         if (anyFailed && this.keepInvalidEditors) {
@@ -141,6 +124,36 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             destroy: results.all,
             keep: [],
         };
+    }
+
+    private handleCustomFullRowValidation(editors: (Required<EditPosition> & EditValue)[]): boolean {
+        const getFullRowEditValidationErrors = this.gos.get('getFullRowEditValidationErrors');
+
+        const fullRowEditErrors = getFullRowEditValidationErrors?.({
+            editorsState: editors.map(({ column, rowNode: { rowIndex, rowPinned }, newValue, oldValue, state }) => ({
+                colId: column.getColId(),
+                column,
+                rowIndex: rowIndex!,
+                rowPinned,
+                newValue,
+                oldValue,
+                state,
+            })),
+        });
+
+        const hasErrors = !!fullRowEditErrors?.length;
+
+        const rowCtrl = _getRowCtrl(this.beans, {
+            rowNode: this.rowNode,
+        });
+
+        if (rowCtrl) {
+            rowCtrl.forEachGui(undefined, ({ rowComp }) => {
+                rowComp.toggleCss('invalid', hasErrors);
+            });
+        }
+
+        return hasErrors;
     }
 
     public override stop(): boolean {
