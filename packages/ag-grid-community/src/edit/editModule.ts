@@ -1,5 +1,4 @@
 import type { _EditGridApi, _UndoRedoGridApi } from '../api/gridApi';
-import type { DefaultProvidedCellEditorParams } from '../interfaces/iCellEditor';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
@@ -85,9 +84,6 @@ export const NumberEditorModule: _ModuleWithoutApi = {
     userComponents: {
         agNumberCellEditor: {
             classImp: NumberCellEditor,
-            params: {
-                suppressPreventDefault: true,
-            } as DefaultProvidedCellEditorParams,
         },
     },
     dependsOn: [EditCoreModule],
