@@ -729,7 +729,7 @@ export interface GridOptions<TData = any> {
      * Allows for filter handler keys to be used in `colDef.filter.handler`.
      * @initial
      */
-    filterHandlers?: { [key: string]: CreateFilterHandlerFunc };
+    filterHandlers?: { [key: string]: CreateFilterHandlerFunc<TData> };
 
     // *** Integrated Charts *** //
     /**
@@ -767,7 +767,7 @@ export interface GridOptions<TData = any> {
      * Get chart menu items. Only applies when using AG Charts Enterprise.
      * @agModule `IntegratedChartsModule`
      */
-    chartMenuItems?: (DefaultChartMenuItem | MenuItemDef)[] | GetChartMenuItems<TData>;
+    chartMenuItems?: (DefaultChartMenuItem | MenuItemDef<TData>)[] | GetChartMenuItems<TData>;
 
     // *** Loading Cell Renderers *** //
     /**
@@ -2010,7 +2010,7 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `IntegratedChartsModule`
      */
-    getChartToolbarItems?: GetChartToolbarItems;
+    getChartToolbarItems?: GetChartToolbarItems<TData>;
     /**
      * Callback to enable displaying the chart in an alternative chart container.
      * @initial
@@ -2112,17 +2112,17 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `ServerSideRowModelModule`
      */
-    getServerSideGroupLevelParams?: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams;
+    getServerSideGroupLevelParams?: (params: GetServerSideGroupLevelParamsParams<TData>) => ServerSideGroupLevelParams;
     /**
      * Allows groups to be open by default.
      * @agModule `ServerSideRowModelModule`
      */
-    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
+    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams<TData>) => boolean;
     /**
      * Allows cancelling transactions.
      * @agModule `ServerSideRowModelModule`
      */
-    isApplyServerSideTransaction?: IsApplyServerSideTransaction;
+    isApplyServerSideTransaction?: IsApplyServerSideTransaction<TData>;
     /**
      * SSRM Tree Data: Allows specifying which rows are expandable.
      * @agModule `ServerSideRowModelModule`
@@ -2564,7 +2564,7 @@ export interface GridOptions<TData = any> {
     /**
      * The row resize has ended (Row Numbers Feature)
      */
-    onRowResizeEnded?(event: RowResizeEndedEvent): void;
+    onRowResizeEnded?(event: RowResizeEndedEvent<TData>): void;
 
     // *** Row Grouping *** //
     /**
@@ -2696,20 +2696,20 @@ export interface IsServerSideGroup {
     (dataItem: any): boolean;
 }
 
-export interface IsRowFilterable<TData = any> {
-    (params: GetGroupAggFilteringParams<TData>): boolean;
+export interface IsRowFilterable<TData = any, TContext = any> {
+    (params: GetGroupAggFilteringParams<TData, TContext>): boolean;
 }
 
-export interface UseGroupFooter<TData = any> {
-    (params: GetGroupIncludeFooterParams<TData>): boolean;
+export interface UseGroupFooter<TData = any, TContext = any> {
+    (params: GetGroupIncludeFooterParams<TData, TContext>): boolean;
 }
 
-export interface UseGroupTotalRow<TData = any> {
-    (params: GetGroupIncludeTotalRowParams<TData>): 'top' | 'bottom' | undefined;
+export interface UseGroupTotalRow<TData = any, TContext = any> {
+    (params: GetGroupIncludeTotalRowParams<TData, TContext>): 'top' | 'bottom' | undefined;
 }
 
-export interface IsApplyServerSideTransaction {
-    (params: IsApplyServerSideTransactionParams): boolean;
+export interface IsApplyServerSideTransaction<TData = any, TContext = any> {
+    (params: IsApplyServerSideTransactionParams<TData, TContext>): boolean;
 }
 export interface GetServerSideGroupKey {
     (dataItem: any): string;
@@ -2731,8 +2731,8 @@ export interface IsRowPinned<TData = any> {
     (node: IRowNode<TData>): RowPinnedType;
 }
 
-export interface RowClassRules<TData = any> {
-    [cssClassName: string]: ((params: RowClassParams<TData>) => boolean) | string;
+export interface RowClassRules<TData = any, TContext = any> {
+    [cssClassName: string]: ((params: RowClassParams<TData, TContext>) => boolean) | string;
 }
 
 export interface RowStyle {
@@ -2769,8 +2769,8 @@ export interface GetFullRowEditValidationErrors {
     (validationResult: FullRowEditValidationParams): string[] | null;
 }
 
-export interface GetChartToolbarItems {
-    (params: GetChartToolbarItemsParams): ChartToolbarMenuItemOptions[];
+export interface GetChartToolbarItems<TData = any, TContext = any> {
+    (params: GetChartToolbarItemsParams<TData, TContext>): ChartToolbarMenuItemOptions[];
 }
 
 export interface GetMainMenuItems<TData = any, TContext = any> {
@@ -2785,8 +2785,8 @@ export interface GetRowNodeIdFunc<TData = any> {
     (data: TData): string;
 }
 
-export interface GetRowIdFunc<TData = any> {
-    (params: GetRowIdParams<TData>): string;
+export interface GetRowIdFunc<TData = any, TContext = any> {
+    (params: GetRowIdParams<TData, TContext>): string;
 }
 
 export interface ChartRef {
@@ -2813,7 +2813,7 @@ export interface ChartRef {
     focusChart: () => void;
 }
 
-export interface ChartRefParams<TData = any> extends AgGridCommon<TData, any>, ChartRef {}
+export interface ChartRefParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, ChartRef {}
 
 export interface ServerSideGroupLevelParams {
     /**
@@ -2834,8 +2834,8 @@ export interface ServerSideGroupLevelParams {
  * @deprecated use ServerSideGroupLevelParams instead */
 export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
 
-export interface LoadingCellRendererSelectorFunc<TData = any> {
-    (params: ILoadingCellRendererParams<TData>): LoadingCellRendererSelectorResult | undefined;
+export interface LoadingCellRendererSelectorFunc<TData = any, TValue = any, TContext = any> {
+    (params: ILoadingCellRendererParams<TData, TValue, TContext>): LoadingCellRendererSelectorResult | undefined;
 }
 export interface LoadingCellRendererSelectorResult {
     /**
@@ -2893,11 +2893,11 @@ export interface FillHandleOptions<TData = any> {
     setFillValue?: <TContext = any>(params: FillOperationParams<TData, TContext>) => any;
 }
 
-export type RowSelectionOptions<TData = any, TValue = any> =
-    | SingleRowSelectionOptions<TData, TValue>
-    | MultiRowSelectionOptions<TData>;
+export type RowSelectionOptions<TData = any, TValue = any, TContext = any> =
+    | SingleRowSelectionOptions<TData, TValue, TContext>
+    | MultiRowSelectionOptions<TData, TValue, TContext>;
 
-interface CommonRowSelectionOptions<TData = any, TValue = any> {
+interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
     /**
      * Modifies the selection behaviour when clicking a row.
      *
@@ -2913,7 +2913,7 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      * Set to `true` or return `true` from the callback to render a selection checkbox.
      * @default true
      */
-    checkboxes?: boolean | CheckboxSelectionCallback<TData, TValue>;
+    checkboxes?: boolean | CheckboxSelectionCallback<TData, TValue, TContext>;
     /**
      * Configure where checkboxes are displayed.
      *
@@ -2956,14 +2956,16 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
 /**
  * Determines selection behaviour when only a single row can be selected at a time
  */
-export interface SingleRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData, TValue> {
+export interface SingleRowSelectionOptions<TData = any, TValue = any, TContext = any>
+    extends CommonRowSelectionOptions<TData, TValue, TContext> {
     mode: 'singleRow';
 }
 
 /**
  * Determines selection behaviour when multiple rows can be selected at once.
  */
-export interface MultiRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData, TValue> {
+export interface MultiRowSelectionOptions<TData = any, TValue = any, TContext = any>
+    extends CommonRowSelectionOptions<TData, TValue, TContext> {
     mode: 'multiRow';
     /**
      * Determine group selection behaviour

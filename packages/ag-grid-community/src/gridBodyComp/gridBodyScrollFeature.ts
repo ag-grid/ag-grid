@@ -606,8 +606,13 @@ export class GridBodyScrollFeature extends BeanStub {
                     // if row is before, scroll up with row at top
                     newScrollPosition = pxTop - stickyTopHeight;
                 } else if (rowBelowViewport) {
-                    // if row is after, scroll down with row at bottom
-                    newScrollPosition = pxBottom + stickyBottomHeight;
+                    // if row is taller than viewport, scroll down to the top of the row
+                    if (pxBottom - pxTop > viewportHeight) {
+                        newScrollPosition = pxTop - stickyTopHeight;
+                    } else {
+                        // if row is after, scroll down with row at bottom
+                        newScrollPosition = pxBottom + stickyBottomHeight;
+                    }
                 }
 
                 if (newScrollPosition !== null) {

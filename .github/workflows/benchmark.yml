@@ -27,6 +27,8 @@ env:
   PR_ID: ${{ inputs.force_pr_id || github.event.issue.number }}
   COMMENT_FILE: ./comment.txt
   SLACK_FILE: ./slack.json
+  SLACK_FILE_SNIPPET: ./slack-snippet.txt
+  DEFAULT_RETENTION_DAYS: 30
 
 permissions:
   contents: read
@@ -61,14 +63,13 @@ jobs:
         id: get-branch
         env:
           REPO: ${{ github.repository }}
-          PR_NO: ${{ env.PR_ID || github.event.issue.number }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo PR_ID=$PR_ID
           echo github.event.issue.number=${{ github.event.issue.number }}
           if [[ !!"${{ steps.notify-start.outputs.result }}" ]] ; then
             # For PR comments, get the branch from the PR
-            echo "branch=$(gh pr view $PR_NO --repo $REPO --json headRefName --jq '.headRefName')" >> $GITHUB_OUTPUT
+            echo "branch=$(gh pr view $PR_ID --repo $REPO --json headRefName --jq '.headRefName')" >> $GITHUB_OUTPUT
           elif [[ "${{ github.event_name }}" == "schedule" ]] ; then
             # For scheduled workflow dispatch, use the 'latest' branch
             echo "branch=latest" >> $GITHUB_OUTPUT
@@ -174,7 +175,7 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
-          retention-days: 30
+          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
       - name: Prepare messages
         id: prepare-messages
@@ -187,46 +188,63 @@ jobs:
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
         run: |
           node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs
-          COMMENT_CONTENT=$(cat "$COMMENT_FILE")          
-          echo "::set-output name=comment::${COMMENT_CONTENT}"
           cat $SLACK_FILE
+
+      - name: Upload Slack Snippet
+        id: upload-snippet
+        uses: actions/upload-artifact@v4
+        if: ${{ steps.prepare-messages.outcome == 'success' }}
+        with:
+          name: slack-snippet
+          path: ${{ env.SLACK_FILE_SNIPPET }}
+          retention-days: ${{ env.DEFAULT_RETENTION_DAYS }}
+
+      - name: Attach Snippet to a Slack Message
+        uses: actions/github-script@v7
+        id: attach-snippet
+        if: ${{ steps.upload-snippet.outputs.artifact-url }}
+        env:
+          SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
+        with:
+          script: |
+            const fs = require('fs');
+            const msg = JSON.parse(fs.readFileSync(process.env.SLACK_FILE, 'utf8'));
+            msg.blocks.push({ type: 'section', text: { type: 'mrkdwn', text: `<${process.env.SNIPPET_URL}|Full stdout>` } });
+            fs.writeFileSync(process.env.SLACK_FILE, JSON.stringify(msg));
 
       - name: Slack Notification
         continue-on-error: true
-        if: ${{ !cancelled() && (inputs.notify == true || github.event_name == 'schedule') }}
+        if: ${{ !cancelled() && (inputs.notify == true || github.event_name == 'schedule') && steps.prepare-messages.outcome == 'success' }}
         env:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
+          SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
         run: |
           curl -X POST -H 'Content-type: application/json' $SLACK_WEBHOOK --data @$SLACK_FILE
 
+      - name: Create Jira Ticket
+        id: create-jira-ticket
+        if: ${{ steps.prepare-messages.outcome == 'success' && steps.playwright-test.outcome != 'success' && github.event_name == 'schedule' }}
+        run: |
+          node ./testing/shared/scripts/create-jira-ticket.mjs
+
       - name: Notify End
-        uses: actions/github-script@v6.4.1 # using v6 to avoid regression in v7
+        uses: actions/github-script@v7
         continue-on-error: true
         if: ${{ !!steps.notify-start.outputs.result }}
         env:
-          COMMENT: ${{ steps.prepare-messages.outputs.comment }}
-          PR_NO: ${{ env.PR_ID || github.event.issue.number }}
           COMMENT_ID: ${{ steps.notify-start.outputs.result }}
+          IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
         with:
-          script: |        
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const comment_id = parseInt(process.env.COMMENT_ID, 10);
+            const pull_number = parseInt(process.env.PR_ID, 10);
+            const body = fs.readFileSync(process.env.COMMENT_FILE, 'utf8');
+            console.log({ success: process.env.IS_SUCCESS, body });
             if (process.env.IS_SUCCESS) {
-                github.rest.issues.updateComment({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    comment_id: process.env.COMMENT_ID,
-                    body: process.env.COMMENT,
-                });
+              await github.rest.issues.updateComment({ owner, repo, comment_id, body });
             } else {
-                github.rest.issues.deleteComment({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    comment_id: process.env.COMMENT_ID,
-                });
-                github.rest.pulls.createReview({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  pull_number: process.env.PR_NO,
-                  event: "REQUEST_CHANGES",
-                  body: process.env.COMMENT,
-                });
+              await github.rest.issues.deleteComment({ owner, repo, comment_id });
+              await github.rest.pulls.createReview({ owner, repo, pull_number, event: "REQUEST_CHANGES", body });
             }

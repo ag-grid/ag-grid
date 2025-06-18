@@ -148,7 +148,8 @@ export interface IsGroupOpenByDefaultParams<TData = any, TContext = any> extends
     key: string;
 }
 
-export interface GetServerSideGroupLevelParamsParams extends AgGridCommon<any, any> {
+export interface GetServerSideGroupLevelParamsParams<TData = any, TContext = any>
+    extends AgGridCommon<TData, TContext> {
     /** The level of the store. Top level is 0. */
     level: number;
     /** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */
@@ -161,12 +162,13 @@ export interface GetServerSideGroupLevelParamsParams extends AgGridCommon<any, a
     pivotMode: boolean;
 }
 
-export interface IsServerSideGroupOpenByDefaultParams extends AgGridCommon<any, any> {
+export interface IsServerSideGroupOpenByDefaultParams<TData = any, TContext = any>
+    extends AgGridCommon<TData, TContext> {
     data: any;
     rowNode: IRowNode;
 }
 
-export interface IsApplyServerSideTransactionParams extends AgGridCommon<any, any> {
+export interface IsApplyServerSideTransactionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The transaction getting applied. */
     transaction: ServerSideTransaction;
     /** The parent RowNode, if transaction is applied to a group. */

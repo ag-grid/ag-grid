@@ -23,17 +23,7 @@
                 return Array(n).fill(arr).flat();
             }
 
-            function outputText(time) {
-                let text = `Time taken: ${time ? Math.round(time) + 'ms' : ''}`;
-                document.querySelector('#output').innerText = text;
-            }
-
             function onClearData() {
-                const start = performance.now();
-                outputText();
-                requestIdleCallback(() => {
-                    outputText(Math.round(performance.now() - start));
-                });
                 gridApi.updateGridOptions({
                     columnDefs: [],
                     rowData: [],
@@ -41,11 +31,6 @@
             }
 
             function onSetData() {
-                const start = performance.now();
-                outputText();
-                requestIdleCallback(() => {
-                    outputText(performance.now() - start);
-                });
                 gridApi.updateGridOptions({
                     columnDefs: repeat(cols, 10),
                     rowData: repeat(data, 100),
@@ -53,11 +38,6 @@
             }
 
             function onScroll() {
-                const start = performance.now();
-                outputText();
-                requestIdleCallback(() => {
-                    outputText(performance.now() - start);
-                });
                 const eBodyViewport = document.querySelector('.ag-body-viewport');
                 const currScroll = eBodyViewport.scrollTop;
                 eBodyViewport.scroll(0, currScroll + 5000);

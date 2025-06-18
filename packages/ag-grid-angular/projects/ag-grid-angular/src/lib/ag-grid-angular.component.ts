@@ -816,7 +816,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Allows for filter handler keys to be used in `colDef.filter.handler`.
      * @initial
      */
-    @Input() public filterHandlers: { [key: string]: CreateFilterHandlerFunc } | undefined = undefined;
+    @Input() public filterHandlers: { [key: string]: CreateFilterHandlerFunc<TData> } | undefined = undefined;
     /** Set to `true` to Enable Charts.
      * @default false
      * @agModule `IntegratedChartsModule`
@@ -846,8 +846,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Get chart menu items. Only applies when using AG Charts Enterprise.
      * @agModule `IntegratedChartsModule`
      */
-    @Input() public chartMenuItems: (DefaultChartMenuItem | MenuItemDef)[] | GetChartMenuItems<TData> | undefined =
-        undefined;
+    @Input() public chartMenuItems:
+        | (DefaultChartMenuItem | MenuItemDef<TData>)[]
+        | GetChartMenuItems<TData>
+        | undefined = undefined;
     /** Provide your own loading cell renderer to use when data is loading via a DataSource or when a cell renderer is deferred.
      * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
      */
@@ -1806,7 +1808,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `IntegratedChartsModule`
      */
-    @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
+    @Input() public getChartToolbarItems: GetChartToolbarItems<TData> | undefined = undefined;
     /** Callback to enable displaying the chart in an alternative chart container.
      * @initial
      * @agModule `IntegratedChartsModule`
@@ -1891,18 +1893,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ServerSideRowModelModule`
      */
     @Input() public getServerSideGroupLevelParams:
-        | ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams)
+        | ((params: GetServerSideGroupLevelParamsParams<TData>) => ServerSideGroupLevelParams)
         | undefined = undefined;
     /** Allows groups to be open by default.
      * @agModule `ServerSideRowModelModule`
      */
     @Input() public isServerSideGroupOpenByDefault:
-        | ((params: IsServerSideGroupOpenByDefaultParams) => boolean)
+        | ((params: IsServerSideGroupOpenByDefaultParams<TData>) => boolean)
         | undefined = undefined;
     /** Allows cancelling transactions.
      * @agModule `ServerSideRowModelModule`
      */
-    @Input() public isApplyServerSideTransaction: IsApplyServerSideTransaction | undefined = undefined;
+    @Input() public isApplyServerSideTransaction: IsApplyServerSideTransaction<TData> | undefined = undefined;
     /** SSRM Tree Data: Allows specifying which rows are expandable.
      * @agModule `ServerSideRowModelModule`
      */
@@ -2317,7 +2319,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     >();
     /** The row resize has ended (Row Numbers Feature)
      */
-    @Output() public rowResizeEnded: EventEmitter<RowResizeEndedEvent> = new EventEmitter<RowResizeEndedEvent>();
+    @Output() public rowResizeEnded: EventEmitter<RowResizeEndedEvent<TData>> = new EventEmitter<
+        RowResizeEndedEvent<TData>
+    >();
     /** A row group column was added, removed or reordered.
      */
     @Output() public columnRowGroupChanged: EventEmitter<ColumnRowGroupChangedEvent<TData>> = new EventEmitter<

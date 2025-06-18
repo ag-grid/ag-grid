@@ -637,7 +637,7 @@ export interface Props<TData> {
          * Allows for filter handler keys to be used in `colDef.filter.handler`.
          * @initial
          */
-    filterHandlers?: { [key: string]: CreateFilterHandlerFunc } | undefined,
+    filterHandlers?: { [key: string]: CreateFilterHandlerFunc<TData> } | undefined,
     /** Set to `true` to Enable Charts.
          * @default false
          * @agModule `IntegratedChartsModule`
@@ -667,7 +667,7 @@ export interface Props<TData> {
     /** Get chart menu items. Only applies when using AG Charts Enterprise.
          * @agModule `IntegratedChartsModule`
          */
-    chartMenuItems?: (DefaultChartMenuItem | MenuItemDef)[] | GetChartMenuItems<TData> | undefined,
+    chartMenuItems?: (DefaultChartMenuItem | MenuItemDef<TData>)[] | GetChartMenuItems<TData> | undefined,
     /** Provide your own loading cell renderer to use when data is loading via a DataSource or when a cell renderer is deferred.
          * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
          */
@@ -1614,7 +1614,7 @@ export interface Props<TData> {
          * @initial
          * @agModule `IntegratedChartsModule`
          */
-    getChartToolbarItems?: GetChartToolbarItems | undefined,
+    getChartToolbarItems?: GetChartToolbarItems<TData> | undefined,
     /** Callback to enable displaying the chart in an alternative chart container.
          * @initial
          * @agModule `IntegratedChartsModule`
@@ -1687,15 +1687,15 @@ export interface Props<TData> {
          * @initial
          * @agModule `ServerSideRowModelModule`
          */
-    getServerSideGroupLevelParams?: ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams) | undefined,
+    getServerSideGroupLevelParams?: ((params: GetServerSideGroupLevelParamsParams<TData>) => ServerSideGroupLevelParams) | undefined,
     /** Allows groups to be open by default.
          * @agModule `ServerSideRowModelModule`
          */
-    isServerSideGroupOpenByDefault?: ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined,
+    isServerSideGroupOpenByDefault?: ((params: IsServerSideGroupOpenByDefaultParams<TData>) => boolean) | undefined,
     /** Allows cancelling transactions.
          * @agModule `ServerSideRowModelModule`
          */
-    isApplyServerSideTransaction?: IsApplyServerSideTransaction | undefined,
+    isApplyServerSideTransaction?: IsApplyServerSideTransaction<TData> | undefined,
     /** SSRM Tree Data: Allows specifying which rows are expandable.
          * @agModule `ServerSideRowModelModule`
          */
@@ -1829,7 +1829,7 @@ export interface Props<TData> {
    'onRow-drag-end'?: RowDragEndEvent<TData>,
    'onRow-drag-cancel'?: RowDragCancelEvent<TData>,
    'onRow-resize-started'?: RowResizeStartedEvent<TData>,
-   'onRow-resize-ended'?: RowResizeEndedEvent,
+   'onRow-resize-ended'?: RowResizeEndedEvent<TData>,
    'onColumn-row-group-changed'?: ColumnRowGroupChangedEvent<TData>,
    'onRow-group-opened'?: RowGroupOpenedEvent<TData>,
    'onExpand-or-collapse-all'?: ExpandOrCollapseAllEvent<TData>,
