@@ -93,6 +93,16 @@ describe('Edit API', () => {
             registry: {
                 createDynamicBean: jest.fn(),
             },
+            rowModel: {
+                getRow: jest.fn((index: number) => {
+                    if (index === 0) {
+                        return rowNode1;
+                    } else if (index === 1) {
+                        return rowNode2;
+                    }
+                    return undefined;
+                }),
+            },
         } as unknown as BeanCollection;
 
         editSvc = new EditService();
