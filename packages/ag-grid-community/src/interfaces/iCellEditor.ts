@@ -2,8 +2,7 @@ import type { ColDef } from '../entities/colDef';
 import type { Column } from '../interfaces/iColumn';
 import type { GetCellsParams } from './iCellsParams';
 import type { AgGridCommon } from './iCommon';
-import type { EditState, EditValue } from './iEditModelService';
-import type { EditPosition } from './iEditService';
+import type { EditState } from './iEditModelService';
 import type { IPopupComponent } from './iPopupComponent';
 import type { IRowNode } from './iRowNode';
 import type { RowPosition } from './iRowPosition';
@@ -149,8 +148,6 @@ export interface SetEditingCellsParams {
     /** Update existing cells, omit or set `false` to replace currently editing cells. */
     update?: boolean;
 }
-
-export interface ICellEditingValue extends EditPosition, EditValue {}
 
 export interface EditingCellPosition extends RowPosition {
     /** Column id */

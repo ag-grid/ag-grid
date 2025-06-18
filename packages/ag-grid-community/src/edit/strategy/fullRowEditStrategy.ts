@@ -1,5 +1,6 @@
 import type { BeanName } from '../../context/context';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
+import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
@@ -105,17 +106,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         this.setupEditors(cells, position, true, event, ignoreEventKey);
     }
 
-    protected override processValidationResults(results: EditValidationResult): EditValidationAction {
-        // TODO - process getFullRowEditValidationErrors
-        // const { gos } = this;
-        // const getFullRowEditValidationErrors = gos.get('getFullRowEditValidationErrors');
-
-        // const res = getFullRowEditValidationErrors?.({
-        //     allEditors: results.all as any,
-        //     editorsWithErrors: results.fail as any,
-        // });
-
-        const anyFailed = results.fail.length > 0;
+    protected override processValidationResults(
+        results: EditValidationResult<Required<EditPosition> & EditValue>
+    ): EditValidationAction {
+        const anyFailed = results.fail.length > 0 || this.handleCustomFullRowValidation(results.all);
 
         // if any of the cells failed, keep those editors
         if (anyFailed && this.keepInvalidEditors) {
@@ -130,6 +124,33 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             destroy: results.all,
             keep: [],
         };
+    }
+
+    private handleCustomFullRowValidation(editors: (Required<EditPosition> & EditValue)[]): boolean {
+        const getFullRowEditValidationErrors = this.gos.get('getFullRowEditValidationErrors');
+
+        const fullRowEditErrors = getFullRowEditValidationErrors?.({
+            editorsState: editors.map(({ column, rowNode: { rowIndex, rowPinned }, newValue, oldValue, state }) => ({
+                colId: column.getColId(),
+                column,
+                rowIndex: rowIndex!,
+                rowPinned,
+                newValue,
+                oldValue,
+                state,
+            })),
+        });
+
+        const rowCtrl = _getRowCtrl(this.beans, { rowNode: this.rowNode });
+
+        if (rowCtrl) {
+            this.eventSvc.dispatchEvent({
+                ...rowCtrl.createRowEvent('rowEditingValidated'),
+                errorMessages: fullRowEditErrors,
+            });
+        }
+
+        return !!fullRowEditErrors?.length;
     }
 
     public override stop(): boolean {

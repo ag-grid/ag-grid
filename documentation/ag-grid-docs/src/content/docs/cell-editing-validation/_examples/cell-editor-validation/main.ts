@@ -45,11 +45,17 @@ const gridOptions: GridOptions<IOlympicData> = {
             headerName: 'Date (< 2009)',
             cellEditor: 'agDateCellEditor',
             valueGetter: ({ data }) => {
-                const [day, month, year] = data?.date.split('/') || '';
+                const [day, month, year] = (data?.date || '').split('/');
+                if (day == null || month == null || year == null) {
+                    return null;
+                }
                 return new Date(`${year}-${month}-${day}`);
             },
             valueFormatter: ({ data }) => {
-                const [day, month, year] = data?.date.split('/') || '';
+                const [day, month, year] = (data?.date || '').split('/');
+                if (day == null || month == null || year == null) {
+                    return '';
+                }
                 return `${year}-${month}-${day}`;
             },
             cellEditorParams: {
@@ -61,8 +67,11 @@ const gridOptions: GridOptions<IOlympicData> = {
             headerName: 'Date as String (> 2008)',
             cellEditor: 'agDateStringCellEditor',
             valueGetter: ({ data }) => {
-                const [day, month, year] = data?.date.split('/') || '';
-                return `${year}-${month}-${day}`;
+                const [day, month, year] = (data?.date || '').split('/');
+                if (day == null || month == null || year == null) {
+                    return null;
+                }
+                return new Date(`${year}-${month}-${day}`);
             },
             cellEditorParams: {
                 min: '2008-12-31',

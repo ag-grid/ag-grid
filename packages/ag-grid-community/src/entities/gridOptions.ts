@@ -2774,7 +2774,7 @@ export interface GetContextMenuItems<TData = any, TContext = any> {
 }
 
 export interface GetFullRowEditValidationErrors {
-    (validationResult: FullRowEditValidationParams): string[] | null;
+    (params: FullRowEditValidationParams): string[] | null;
 }
 
 export interface GetChartToolbarItems<TData = any, TContext = any> {
