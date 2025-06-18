@@ -1,7 +1,7 @@
 .example-wrapper {
     display: grid;
     grid-template-columns: 1fr auto;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: minmax(auto, 210px) 1fr;
     height: 100%;
     width: 100%;
 }
@@ -125,7 +125,7 @@ button {
 #edits-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: smaller;
+    font-size: x-small;
     color: var(--default-fg-primary);
 }
 

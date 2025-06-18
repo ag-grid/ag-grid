@@ -33,6 +33,7 @@ import {
     ModuleRegistry,
     NumberEditorModule,
     PinnedRowModule,
+    RenderApiModule,
     RowApiModule,
     RowDragModule,
     RowSelectionModule,
@@ -96,6 +97,7 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     ClipboardModule,
     BatchEditModule,
+    RenderApiModule,
     ValidationModule /* Development Only */,
 ]);
 
@@ -225,7 +227,7 @@ const gridOptions: GridOptions = {
     sideBar: {
         toolPanels: ['columns'],
     },
-    // pivotPanelShow: 'always',
+    pivotPanelShow: 'always',
     rowData: getData(),
     undoRedoCellEditing: true,
     undoRedoCellEditingLimit: 5,
@@ -285,6 +287,9 @@ const gridOptions: GridOptions = {
         getEditingCells();
     },
     onCellFocused: (event) => {
+        getEditingCells();
+    },
+    onCellKeyDown: (event) => {
         getEditingCells();
     },
 };
@@ -349,9 +354,10 @@ function trim(str?: any) {
 }
 
 function getEditingCells() {
-    const cells = gridApi!.getEditingCells({ includePending: true });
-    console.log(cells);
-    document.getElementById('edits-table')!.innerHTML = `
+    setTimeout(() => {
+        const cells = gridApi!.getEditingCells({ includePending: true });
+        console.log(cells);
+        document.getElementById('edits-table')!.innerHTML = `
         <thead>
             <tr>
                 <th>Idx</th>
@@ -383,6 +389,7 @@ function getEditingCells() {
                 .join('')}
         </tbody>
     `;
+    });
 }
 
 let polling: any = undefined;
