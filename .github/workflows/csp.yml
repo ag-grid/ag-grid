@@ -7,10 +7,6 @@ env:
     DEFAULT_RETENTION_DAYS: 30
 
 on:
-    push:
-        branches: ['AG-15152-csp-testing']
-    pull_request:
-        branches: ['AG-15152-csp-testing']
     workflow_dispatch:
         inputs:
             clean_checkout:
