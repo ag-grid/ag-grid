@@ -22,7 +22,7 @@ on:
                     - 'true'
                     - 'false'
     schedule:
-        - cron: '0 0 * * *' # Run daily at midnight UTC
+        - cron: '30 1 * * *' # Run daily at 1:30am UTC
 
 jobs:
     csp-test:
