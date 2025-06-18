@@ -359,6 +359,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (newParent !== null) {
             if (newParent === target && newParent !== rootNode) {
                 inside = true; // Dragging as child
+
+                const firstRow = newParent.expanded ? getPrevOrNext(clientSideRowModel, 1, target) : null;
+                if (firstRow?.parent === newParent) {
+                    target = firstRow; // Instead of showing "inside" style, we can show "above" by using first child as target
+                    inside = false;
+                    above = true;
+                }
             }
             if (rowsHaveSameParent(rows, newParent)) {
                 newParent = null; // No need to set parent if all rows have the same parent
