@@ -67,8 +67,8 @@ const gridOptions: GridOptions = {
     editType: 'fullRow',
     rowData: getRowData(),
     cellEditingInvalidCommitType: 'block',
-    getFullRowEditValidationErrors: ({ currentEditingPositions }) => {
-        const values = Object.fromEntries(currentEditingPositions.map(({ colId, newValue }) => [colId, newValue]));
+    getFullRowEditValidationErrors: ({ allEditors }) => {
+        const values = Object.fromEntries(allEditors.map(({ column, newValue }) => [column?.getColId(), newValue]));
 
         const weight = parseFloat(values['weight']);
         const height = parseFloat(values['height']);

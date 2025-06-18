@@ -1,4 +1,4 @@
-import type { ICellEditorValidationError, IEditorValue } from './iCellEditor';
+import type { ICellEditingValue } from './iCellEditor';
 import type { CellPosition } from './iCellPosition';
 import type { ChartToolbarMenuItemOptions, DefaultChartMenuItem } from './iChartOptions';
 import type { Column, ProvidedColumnGroup } from './iColumn';
@@ -70,8 +70,8 @@ export interface ProcessDataFromClipboardParams<TData = any, TContext = any> ext
 }
 
 export interface FullRowEditValidationParams {
-    currentEditingPositions: IEditorValue[];
-    cellValidationErrors?: ICellEditorValidationError[];
+    allEditors: ICellEditingValue[];
+    editorsWithErrors: ICellEditingValue[];
 }
 
 export interface GetChartToolbarItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

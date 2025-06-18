@@ -3,6 +3,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { GetCellsParams } from './iCellsParams';
 import type { AgGridCommon } from './iCommon';
 import type { EditState } from './iEditModelService';
+import type { EditPosition } from './iEditService';
 import type { IPopupComponent } from './iPopupComponent';
 import type { IRowNode } from './iRowNode';
 import type { RowPosition } from './iRowPosition';
@@ -149,7 +150,13 @@ export interface SetEditingCellsParams {
     update?: boolean;
 }
 
-export interface IEditorValue {
+export interface ICellEditingValue extends EditPosition {
+    newValue?: any;
+    oldValue?: any;
+    state?: EditState;
+}
+
+export interface EditingCellPosition extends RowPosition {
     /** Column id */
     colId: string;
 
@@ -170,9 +177,7 @@ export interface IEditorValue {
 
     /** Existing value, used only when retrieving current editing state, ignored when setting new editing state. */
     oldValue?: any;
-}
 
-export interface EditingCellPosition extends IEditorValue, RowPosition {
     /** Current editing state */
     state?: EditState;
 }

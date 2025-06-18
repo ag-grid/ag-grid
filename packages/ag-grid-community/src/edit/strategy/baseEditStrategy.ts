@@ -36,7 +36,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     protected editSvc: IEditService;
     protected keepInvalidEditors: boolean = false;
 
-    postConstruct(): void {
+    public postConstruct(): void {
         this.model = this.beans.editModelSvc!;
         this.editSvc = this.beans.editSvc!;
         this.keepInvalidEditors = this.gos.get('cellEditingInvalidCommitType') === 'block';
