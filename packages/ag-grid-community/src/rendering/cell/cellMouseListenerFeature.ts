@@ -79,6 +79,11 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (editModelSvc?.getState(cellCtrl) !== 'editing') {
+            if (editSvc?.hasValidationErrors()) {
+                editSvc?.focusOnFirstError();
+                return;
+            }
+
             if (editSvc?.shouldStartEditing(cellCtrl, event)) {
                 editSvc?.startEditing(cellCtrl, { event });
             } else if (editSvc?.shouldStopEditing(cellCtrl, event)) {
@@ -110,6 +115,11 @@ export class CellMouseListenerFeature extends BeanStub {
             editSvc?.shouldStartEditing(this.cellCtrl, event) &&
             this.beans.editModelSvc?.getState(this.cellCtrl) !== 'editing'
         ) {
+            if (editSvc?.hasValidationErrors()) {
+                editSvc?.focusOnFirstError();
+                return;
+            }
+
             editSvc?.startEditing(cellCtrl, { event });
         }
     }

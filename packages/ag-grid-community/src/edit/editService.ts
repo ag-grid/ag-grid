@@ -497,8 +497,35 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return this.strategy?.isCellEditable(position, source) ?? false;
     }
 
-    public hasValidationErrors({ rowNode, column }: EditPosition): boolean {
+    public focusOnFirstError(): void {
+        const errors = _validateEditAsMap(this.beans);
+        if (!errors || errors.size === 0) {
+            return;
+        }
+
+        const rowNode = errors.keys().next()?.value;
+        if (!rowNode) {
+            return;
+        }
+
+        const column = errors.get(rowNode)?.keys().next()?.value;
+        if (!column) {
+            return;
+        }
+
+        const cellCtrl = _getCellCtrl(this.beans, { rowNode, column });
+        if (cellCtrl) {
+            cellCtrl.focusCell();
+            cellCtrl?.comp?.getCellEditor()?.focusIn?.();
+        }
+    }
+
+    public hasValidationErrors({ rowNode, column }: EditPosition = {}): boolean {
         const validationErrors = _validateEditAsMap(this.beans);
+        if (!rowNode) {
+            return validationErrors?.size > 0;
+        }
+
         const errorRow = validationErrors?.get(rowNode as RowNode);
         if (!column) {
             return !!errorRow;
