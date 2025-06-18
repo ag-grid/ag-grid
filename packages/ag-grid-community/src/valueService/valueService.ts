@@ -391,6 +391,20 @@ export class ValueService extends BeanStub implements NamedBean {
 
         const savedValue = this.getValue(column, rowNode);
 
+        this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
+        if ((rowNode as RowNode).pinnedSibling) {
+            this.dispatchCellValueChangedEvent((rowNode as RowNode).pinnedSibling!, params, savedValue, eventSource);
+        }
+
+        return true;
+    }
+
+    private dispatchCellValueChangedEvent(
+        rowNode: IRowNode,
+        params: ValueSetterParams,
+        value: any,
+        source?: string
+    ): void {
         this.eventSvc.dispatchEvent({
             type: 'cellValueChanged',
             event: null,
@@ -401,12 +415,10 @@ export class ValueService extends BeanStub implements NamedBean {
             data: rowNode.data,
             node: rowNode,
             oldValue: params.oldValue,
-            newValue: savedValue,
-            value: savedValue,
-            source: eventSource,
+            newValue: value,
+            value,
+            source,
         });
-
-        return true;
     }
 
     private callColumnCellValueChangedHandler(event: CellValueChangedEvent) {
