@@ -90,6 +90,7 @@ const CellComp = ({
                         cellCtrl.focusCell(true);
                     } else {
                         cellCtrl.cellEditorAttached();
+                        cellCtrl.enableEditorTooltipFeature(cellEditor);
                     }
                 });
             }
