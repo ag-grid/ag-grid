@@ -2,8 +2,6 @@
     position: relative;
     display: flex;
     align-items: center;
-    padding-left: var(--ag-cell-horizontal-padding);
-    padding-right: var(--ag-cell-horizontal-padding);
     background-color: var(--ag-header-background-color);
     border-bottom: var(--ag-header-row-border);
 }
@@ -12,6 +10,12 @@
     display: flex;
     align-items: center;
     width: 100%;
+}
+
+.ag-advanced-filter-header-cell {
+    height: 100%;
+    padding-left: var(--ag-cell-horizontal-padding);
+    padding-right: var(--ag-cell-horizontal-padding);
 }
 
 .ag-advanced-filter-apply-button,

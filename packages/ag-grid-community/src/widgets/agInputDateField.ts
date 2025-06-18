@@ -42,7 +42,8 @@ export class AgInputDateField extends AgInputTextField {
     }
 
     public setMin(minDate: Date | string | undefined): this {
-        const min = minDate instanceof Date ? _serialiseDate(minDate ?? null, this.includeTime) ?? undefined : minDate;
+        const min =
+            minDate instanceof Date ? _serialiseDate(minDate ?? null, !!this.includeTime) ?? undefined : minDate;
         if (this.min === min) {
             return this;
         }
@@ -55,7 +56,8 @@ export class AgInputDateField extends AgInputTextField {
     }
 
     public setMax(maxDate: Date | string | undefined): this {
-        const max = maxDate instanceof Date ? _serialiseDate(maxDate ?? null, this.includeTime) ?? undefined : maxDate;
+        const max =
+            maxDate instanceof Date ? _serialiseDate(maxDate ?? null, !!this.includeTime) ?? undefined : maxDate;
         if (this.max === max) {
             return this;
         }

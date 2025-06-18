@@ -57,7 +57,9 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     }
 
     public getValidationErrors(): string[] | null {
-        const value = this.getValue();
+        const eInput = this.eEditor.getInputElement();
+        const value = eInput.valueAsDate;
+
         const { params } = this;
         const { min, max, getValidationErrors } = params;
         let internalErrors: string[] | null = [];

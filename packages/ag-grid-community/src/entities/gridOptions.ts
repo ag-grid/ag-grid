@@ -116,6 +116,7 @@ import type {
     SizeColumnsToFitProvidedWidthStrategy,
 } from '../interfaces/autoSize';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
+import type { EditValidationCommitType } from '../interfaces/editValidationCommitType';
 import type {
     CsvExportParams,
     ProcessCellForExportParams,
@@ -128,6 +129,7 @@ import type { AlignedGrid } from '../interfaces/iAlignedGrid';
 import type {
     FillOperationParams,
     FocusGridInnerElementParams,
+    FullRowEditValidationParams,
     GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
     GetContextMenuItemsParams,
@@ -511,6 +513,18 @@ export interface GridOptions<TData = any, TContext = any> {
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     editType?: EditStrategyType;
+
+    /**
+     * Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
+    getFullRowEditValidationErrors?: GetFullRowEditValidationErrors;
+
+    /**
+     * Set to `block` to block the commit of invalid cell edits, keeping editors open.
+     */
+    cellEditingInvalidCommitType?: EditValidationCommitType;
+
     /**
      * Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
      * @default false
@@ -2412,7 +2426,7 @@ export interface GridOptions<TData = any, TContext = any> {
      */
     onFilterChanged?(event: FilterChangedEvent<TData, TContext>): void;
     /**
-     * Filter was modified but not applied. Used when filters have 'Apply' buttons.
+     * Filter was modified but not applied  (when using `enableFilterHandlers = false`). Used when filters have 'Apply' buttons.
      */
     onFilterModified?(event: FilterModifiedEvent<TData, TContext>): void;
     /**
@@ -2752,6 +2766,11 @@ export interface GetContextMenuItems<TData = any, TContext = any> {
         | MenuCallbackReturn<DefaultMenuItem, TData, TContext>
         | Promise<MenuCallbackReturn<DefaultMenuItem, TData, TContext>>;
 }
+
+export interface GetFullRowEditValidationErrors {
+    (validationResult: FullRowEditValidationParams): string[] | null;
+}
+
 export interface GetChartToolbarItems<TData = any, TContext = any> {
     (params: GetChartToolbarItemsParams<TData, TContext>): ChartToolbarMenuItemOptions[];
 }

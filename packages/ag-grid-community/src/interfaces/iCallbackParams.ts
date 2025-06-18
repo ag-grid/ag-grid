@@ -1,3 +1,4 @@
+import type { ICellEditingValue } from './iCellEditor';
 import type { CellPosition } from './iCellPosition';
 import type { ChartToolbarMenuItemOptions, DefaultChartMenuItem } from './iChartOptions';
 import type { Column, ProvidedColumnGroup } from './iColumn';
@@ -66,6 +67,11 @@ export interface SendToClipboardParams<TData = any, TContext = any> extends AgGr
 export interface ProcessDataFromClipboardParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** 2D array of all cells from the clipboard */
     data: string[][];
+}
+
+export interface FullRowEditValidationParams {
+    allEditors: ICellEditingValue[];
+    editorsWithErrors: ICellEditingValue[];
 }
 
 export interface GetChartToolbarItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

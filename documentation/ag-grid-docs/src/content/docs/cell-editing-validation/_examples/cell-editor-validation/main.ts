@@ -2,6 +2,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
+    DateEditorModule,
     ModuleRegistry,
     NumberEditorModule,
     TextEditorModule,
@@ -12,6 +13,7 @@ import {
 ModuleRegistry.registerModules([
     NumberEditorModule,
     TextEditorModule,
+    DateEditorModule,
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
@@ -36,6 +38,34 @@ const gridOptions: GridOptions<IOlympicData> = {
             cellEditorParams: {
                 min: 0,
                 max: 100,
+            },
+        },
+        {
+            field: 'date',
+            headerName: 'Date (< 2009)',
+            cellEditor: 'agDateCellEditor',
+            valueGetter: ({ data }) => {
+                const [day, month, year] = data?.date.split('/') || '';
+                return new Date(`${year}-${month}-${day}`);
+            },
+            valueFormatter: ({ data }) => {
+                const [day, month, year] = data?.date.split('/') || '';
+                return `${year}-${month}-${day}`;
+            },
+            cellEditorParams: {
+                max: new Date('2008-12-31'),
+            },
+        },
+        {
+            field: 'date',
+            headerName: 'Date as String (> 2008)',
+            cellEditor: 'agDateStringCellEditor',
+            valueGetter: ({ data }) => {
+                const [day, month, year] = data?.date.split('/') || '';
+                return `${year}-${month}-${day}`;
+            },
+            cellEditorParams: {
+                min: '2008-12-31',
             },
         },
     ],

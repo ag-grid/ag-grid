@@ -1657,19 +1657,23 @@ export class ColumnFilterService
     }
 
     public filterUiChanged(column: Column, additionalEventAttributes?: any): void {
-        this.eventSvc.dispatchEvent({
-            type: 'filterUiChanged',
-            column,
-            ...additionalEventAttributes,
-        });
+        if (this.gos.get('enableFilterHandlers')) {
+            this.eventSvc.dispatchEvent({
+                type: 'filterUiChanged',
+                column,
+                ...additionalEventAttributes,
+            });
+        }
     }
 
     private floatingFilterUiChanged(column: Column, additionalEventAttributes?: any): void {
-        this.eventSvc.dispatchEvent({
-            type: 'floatingFilterUiChanged',
-            column,
-            ...additionalEventAttributes,
-        });
+        if (this.gos.get('enableFilterHandlers')) {
+            this.eventSvc.dispatchEvent({
+                type: 'floatingFilterUiChanged',
+                column,
+                ...additionalEventAttributes,
+            });
+        }
     }
 
     public updateModel(column: AgColumn, action: FilterAction, additionalEventAttributes?: any): void {
