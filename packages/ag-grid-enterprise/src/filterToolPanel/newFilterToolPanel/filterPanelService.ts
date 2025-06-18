@@ -267,6 +267,7 @@ export class FilterPanelService
                     detail: filterComp.getGui(),
                     activeFilterDef,
                     filterDefs,
+                    afterGuiAttached: filterComp.afterGuiAttached.bind(filterComp),
                 },
                 handler,
                 refresh: () => {
