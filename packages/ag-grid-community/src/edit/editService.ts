@@ -389,6 +389,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     if (cellCtrl) {
                         cellCtrl.suppressRefreshCell = false;
                     }
+
+                    cellCtrl?.refreshCell({ force: true, suppressFlash: true });
                 }
 
                 this.dispatchCellEvent({ rowNode, column }, undefined, 'cellEditingStopped', {
@@ -404,6 +406,12 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         for (const rowNode of rowNodes) {
             this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
         }
+
+        beans.rowRenderer.refreshCells({
+            rowNodes,
+            suppressFlash: true,
+            force: true,
+        });
     }
 
     public setEditMap(edits: EditMap): void {
