@@ -1,7 +1,9 @@
 .example-wrapper {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr;
     height: 100%;
+    width: 100%;
 }
 
 button {
@@ -97,4 +99,45 @@ button {
 .dependent-nodes {
     background-color: rgba(220 139 220 / 20%);
     color: rgb(66 0 66 / 100%);
+}
+
+#edits {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    padding-bottom: 8px;
+}
+
+#poll-buttons {
+    display: flex;
+    flex-direction: row-reverse;
+    padding-bottom: 2px;
+    gap: 4px;
+}
+
+#batchEditingApi {
+    display: flex;
+    flex-direction: row-reverse;
+    padding-bottom: 2px;
+    gap: 4px;
+    display: none;
+}
+
+#edits-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: smaller;
+    color: var(--default-fg-primary);
+}
+
+#edits-table th,
+#edits-table td {
+    border: 1px solid #ddd;
+    padding: 1px 5px;
+}
+
+#edits-table th {
+    background-color: var(--color-bg-secondary);
+}
+#edits-table tr:nth-child(even) {
+    background-color: var(--color-bg-secondary);
 }

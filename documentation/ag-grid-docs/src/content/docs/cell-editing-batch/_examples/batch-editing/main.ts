@@ -1,4 +1,6 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import { get } from 'http';
+import { doc } from 'prettier';
 
 import type {
     AgColumn,
@@ -156,43 +158,43 @@ const gridOptions: GridOptions = {
                     editable: false,
                     minWidth: 145,
                 },
-                {
-                    headerName: 'DetailsFn',
-                    colId: 'detailsFn',
-                    cellRenderer: (params: ICellRendererParams) => {
-                        return `
-                            <div  class="athlete-info">
-                                <span>${params.data?.firstName ?? ''} </span>
-                                <span>${params.data?.lastName ?? ''}</span>
-                            </div>
-                            <span>${params.data?.age ?? ''}</span>
-                        `;
-                    },
-                    editable: false,
-                    minWidth: 145,
-                },
-                {
-                    headerName: 'DetailsGt',
-                    colId: 'detailsGt',
-                    valueGetter: (params: ValueGetterParams) => {
-                        return `${params.data?.firstName ?? ''} ${params.data?.lastName ?? ''}`;
-                    },
-                    editable: false,
-                    minWidth: 145,
-                },
-                {
-                    headerName: 'DetailsFmt',
-                    colId: 'detailsFmt',
-                    valueFormatter: (params: ValueFormatterParams) => {
-                        return `${params.data?.firstName ?? ''} ${params.data?.lastName ?? ''}`;
-                    },
-                    editable: false,
-                    minWidth: 145,
-                },
+                // {
+                //     headerName: 'DetailsFn',
+                //     colId: 'detailsFn',
+                //     cellRenderer: (params: ICellRendererParams) => {
+                //         return `
+                //             <div  class="athlete-info">
+                //                 <span>${params.data?.firstName ?? ''} </span>
+                //                 <span>${params.data?.lastName ?? ''}</span>
+                //             </div>
+                //             <span>${params.data?.age ?? ''}</span>
+                //         `;
+                //     },
+                //     editable: false,
+                //     minWidth: 145,
+                // },
+                // {
+                //     headerName: 'DetailsGt',
+                //     colId: 'detailsGt',
+                //     valueGetter: (params: ValueGetterParams) => {
+                //         return `${params.data?.firstName ?? ''} ${params.data?.lastName ?? ''}`;
+                //     },
+                //     editable: false,
+                //     minWidth: 145,
+                // },
+                // {
+                //     headerName: 'DetailsFmt',
+                //     colId: 'detailsFmt',
+                //     valueFormatter: (params: ValueFormatterParams) => {
+                //         return `${params.data?.firstName ?? ''} ${params.data?.lastName ?? ''}`;
+                //     },
+                //     editable: false,
+                //     minWidth: 145,
+                // },
             ],
         },
         { field: 'gender', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots, rowGroup: true },
-        { field: 'exists', cellRenderer: 'agCheckboxCellRenderer', cellEditor: 'agCheckboxCellEditor' },
+        // { field: 'exists', cellRenderer: 'agCheckboxCellRenderer', cellEditor: 'agCheckboxCellEditor' },
         { field: 'age', aggFunc: 'sum', cellDataType: 'number', enableValue: true },
         { field: 'mood', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots },
         { field: 'country', enableRowGroup: true, enablePivot: true, aggFunc: uniqOrDots },
@@ -220,8 +222,10 @@ const gridOptions: GridOptions = {
     },
     grandTotalRow: 'bottom',
     groupTotalRow: 'bottom',
-    sideBar: 'columns',
-    pivotPanelShow: 'always',
+    sideBar: {
+        toolPanels: ['columns'],
+    },
+    // pivotPanelShow: 'always',
     rowData: getData(),
     undoRedoCellEditing: true,
     undoRedoCellEditingLimit: 5,
@@ -277,6 +281,12 @@ const gridOptions: GridOptions = {
     onModelUpdated(_event: ModelUpdatedEvent) {
         decorated && decorateCells();
     },
+    onCellClicked: () => {
+        getEditingCells();
+    },
+    onCellFocused: (event) => {
+        getEditingCells();
+    },
 };
 
 let decorated = false;
@@ -330,8 +340,49 @@ function clearDecorations() {
     gridApi.redrawRows();
 }
 
+function trim(str?: any) {
+    if (!str || typeof str !== 'string') {
+        return str;
+    }
+    const len = Math.min(15, str.length);
+    return str.substring?.(0, len) + (str.length > len ? '...' : '') ?? str;
+}
+
 function getEditingCells() {
-    console.log(gridApi!.getEditingCells({ includePending: true }));
+    const cells = gridApi!.getEditingCells({ includePending: true });
+    console.log(cells);
+    document.getElementById('edits-table')!.innerHTML = `
+        <thead>
+            <tr>
+                <th>Idx</th>
+                <th>Row</th>
+                <th>RowId</th>
+                <th>ColId</th>
+                <th>Pinned</th>
+                <th>Old</th>
+                <th>New</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${cells
+                .map(
+                    (cell, index) => `
+                <tr>
+                    <td>${index}</td>
+                    <td>${cell.rowIndex}</td>
+                    <td>${cell.rowId}</td>
+                    <td>${trim(cell.colId)}</td>
+                    <td>${cell.rowPinned ?? ''}</td>
+                    <td>${trim(cell.oldValue)}</td>
+                    <td>${trim(cell.newValue)}</td>
+                    <td style="text-decoration: italic">${cell.state}</td>
+                </tr>
+            `
+                )
+                .join('')}
+        </tbody>
+    `;
 }
 
 let polling: any = undefined;
@@ -357,36 +408,26 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
         rowPinned: pinned,
         key: key,
     });
-}
-
-function toggleAggOnlyChanged() {
-    const aggOnlyChanged = gridApi!.getGridOption('aggregateOnlyChangedColumns');
-    gridApi!.updateGridOptions({
-        aggregateOnlyChangedColumns: !aggOnlyChanged,
-    });
+    getEditingCells();
 }
 
 function toggleBatch() {
     const batch = gridApi!.isBatchEditing();
 
-    if (batch) {
-        gridApi!.setBatchEditing(false);
-    } else {
-        gridApi!.setBatchEditing(true);
-    }
+    gridApi!.setBatchEditing(!batch);
 
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
     document.getElementById('disablePoll')!.style.display = polling ? 'unset' : 'none';
 
-    document.getElementById('batchEditingApi')!.style.display = batch ? 'none' : 'unset';
+    document.getElementById('batchEditingApi')!.style.display = batch ? 'none' : 'flex';
 }
 
 function createChart() {
     gridApi!.createRangeChart({
         chartType: 'groupedColumn',
         cellRange: {
-            rowStartIndex: 12,
-            rowEndIndex: 14,
+            rowStartIndex: 14,
+            rowEndIndex: 18,
             columns: ['mood', 'age'],
         },
     });
@@ -441,10 +482,13 @@ function setEditingCells(clearValues: boolean = false) {
     gridApi!.setBatchEditing(true);
 
     gridApi!.setEditingCells(pendingEdits);
+
+    getEditingCells();
 }
 
 function clearEditingCells() {
     gridApi!.setEditingCells([]);
+    getEditingCells();
 }
 
 function setEditType(editType: EditStrategyType) {
@@ -452,14 +496,17 @@ function setEditType(editType: EditStrategyType) {
     gridApi!.updateGridOptions({
         editType,
     });
+    getEditingCells();
 }
 
 function cancelEdit() {
     gridApi!.stopEditing(true);
+    getEditingCells();
 }
 
 function stopEdit() {
     gridApi!.stopEditing();
+    getEditingCells();
 }
 
 function onBtExport(type: 'csv' | 'excel') {
@@ -490,10 +537,12 @@ function onBtRedo() {
 
 function refreshRows() {
     gridApi!.refreshCells({ force: true });
+    getEditingCells();
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
+    getEditingCells();
 });
