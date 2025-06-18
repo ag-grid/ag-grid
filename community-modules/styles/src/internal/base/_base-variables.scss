@@ -116,6 +116,12 @@
 
         --ag-input-border-color-invalid: var(--ag-invalid-color);
 
+        --ag-full-row-invalid-background-color: color-mix(
+            in srgb,
+            var(--ag-background-color),
+            var(--ag-invalid-color) 25%
+        );
+
         --ag-borders-side-button: var(--ag-borders);
 
         --ag-border-radius: 0px;

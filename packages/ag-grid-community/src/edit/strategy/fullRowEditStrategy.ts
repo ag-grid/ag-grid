@@ -127,7 +127,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     }
 
     private handleCustomFullRowValidation(editors: (Required<EditPosition> & EditValue)[]): boolean {
-        const getFullRowEditValidationErrors = this.gos.get('getFullRowEditValidationErrors');
+        const { gos, beans, rowNode, eventSvc } = this;
+        const getFullRowEditValidationErrors = gos.get('getFullRowEditValidationErrors');
 
         const fullRowEditErrors = getFullRowEditValidationErrors?.({
             editorsState: editors.map(({ column, rowNode: { rowIndex, rowPinned }, newValue, oldValue, state }) => ({
@@ -141,10 +142,12 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             })),
         });
 
-        const rowCtrl = _getRowCtrl(this.beans, { rowNode: this.rowNode });
+        const rowCtrl = _getRowCtrl(beans, { rowNode });
 
-        if (rowCtrl) {
-            this.eventSvc.dispatchEvent({
+        // if `cellEditingInvalidCommitType` is not `block` there is no need
+        // to fire the event, as the row will not display tooltips or be styled
+        if (gos.get('cellEditingInvalidCommitType') === 'block' && rowCtrl) {
+            eventSvc.dispatchEvent({
                 ...rowCtrl.createRowEvent('rowEditingValidated'),
                 errorMessages: fullRowEditErrors,
             });

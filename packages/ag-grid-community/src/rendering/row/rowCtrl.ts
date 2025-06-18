@@ -858,10 +858,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onRowEditValidated(params: RowEditingValidated): void {
-        const { errorMessages } = params;
+        const { rowNode } = this;
+        const { errorMessages, rowIndex, rowPinned } = params;
 
         for (const { rowComp } of this.allRowGuis) {
-            rowComp.toggleCss('invalid', !!errorMessages?.length);
+            const isThisRow = rowNode.rowIndex === rowIndex && rowNode.rowPinned === rowPinned;
+            const isInvalid = isThisRow && !!errorMessages?.length;
+            rowComp.toggleCss('invalid', isInvalid);
         }
     }
 

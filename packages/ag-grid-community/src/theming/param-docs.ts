@@ -325,6 +325,7 @@ const docs: Record<AllThemeParams, string> = {
     pinnedRowFontWeight: 'Font-weight for the rows that have been pinned to the top or bottom',
     pinnedRowBackgroundColor: 'Background color for the rows that have been pinned to the top or bottom',
     pinnedRowTextColor: 'Text color for rows that have been pinned to the top or bottom',
+    fullRowEditInvalidBackgroundColor: 'Background color for a row with invalid editor status',
     cellBatchEditBackgroundColor: 'Background color for cells in batch edit mode',
     cellBatchEditTextColor: 'Text color for cells in batch edit mode',
     rowBatchEditBackgroundColor: 'Background color for rows in batch edit mode',

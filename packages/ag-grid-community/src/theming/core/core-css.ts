@@ -177,6 +177,11 @@ export type CoreParams = {
     cellEditingShadow: ShadowValue;
 
     /**
+     * Background color for a row with invalid editor status
+     */
+    fullRowEditInvalidBackgroundColor: ColorValue;
+
+    /**
      * Background color of the drag and drop image component element when dragging columns
      */
     dragAndDropImageBackgroundColor: ColorValue;
@@ -1089,6 +1094,11 @@ export const coreDefaults: Readonly<CoreParams> = {
         color: accentColor,
     },
     cellEditingShadow: { ref: 'cardShadow' },
+    fullRowEditInvalidBackgroundColor: {
+        ref: 'invalidColor',
+        onto: 'backgroundColor',
+        mix: 0.25,
+    },
     dialogBorder: {
         color: foregroundMix(0.2),
     },
