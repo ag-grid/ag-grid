@@ -29,7 +29,7 @@ export function getCellEditorInstanceMap<TData = any>(
 
     const ctrls = beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]);
 
-    for (const ctrl of ctrls) {
+    ctrls.forEach((ctrl) => {
         const cellEditor = ctrl.comp?.getCellEditor();
 
         if (cellEditor) {
@@ -38,7 +38,7 @@ export function getCellEditorInstanceMap<TData = any>(
                 editor: _unwrapUserComp(cellEditor),
             });
         }
-    }
+    });
 
     return res;
 }

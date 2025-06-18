@@ -33,7 +33,8 @@ import { _requestAnimationFrame } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import { _errMsg } from '../validation/logging';
 import type { CellCtrl } from './cell/cellCtrl';
-import type { RowCtrlInstanceId } from './row/rowCtrl';
+import type { RowCtrlInstanceId, SharedProxyArray, SharedProxyArrayWithFirstElementAndLength } from './row/rowCtrl';
+import { sharedProxyArrayMethods } from './row/rowCtrl';
 import { RowCtrl } from './row/rowCtrl';
 import type { RowContainerHeightService } from './rowContainerHeightService';
 
@@ -792,21 +793,17 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return null;
     }
 
-    public getAllCellCtrls(): CellCtrl[] {
-        const res: CellCtrl[] = [];
+    public getAllCellCtrls(): SharedProxyArray<CellCtrl> {
         const rowCtrls = this.getAllRowCtrls();
-        const rowCtrlsLength = rowCtrls.length;
 
-        for (let i = 0; i < rowCtrlsLength; i++) {
-            const cellCtrls = rowCtrls[i].getAllCellCtrls();
-            const cellCtrlsLength = cellCtrls.length;
-
-            for (let j = 0; j < cellCtrlsLength; j++) {
-                res.push(cellCtrls[j]);
-            }
-        }
-
-        return res;
+        return {
+            ...sharedProxyArrayMethods,
+            forEach(callbackfn: (value: CellCtrl) => void) {
+                for (let i = 0; i < rowCtrls.length; i++) {
+                    rowCtrls[i].getAllCellCtrls().forEach(callbackfn);
+                }
+            },
+        };
     }
 
     public getAllRowCtrls(): RowCtrl[] {
@@ -844,9 +841,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
             newData: false,
             suppressFlash: params.suppressFlash,
         };
-        for (const cellCtrl of this.getCellCtrls(params.rowNodes, params.columns as AgColumn[])) {
-            cellCtrl.refreshOrDestroyCell(refreshCellParams);
-        }
+        this.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) =>
+            cellCtrl.refreshOrDestroyCell(refreshCellParams)
+        );
 
         // refresh the full width rows too
         this.refreshFullWidth(params.rowNodes);
@@ -902,7 +899,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
-    public getCellCtrls(rowNodes?: IRowNode[] | null, columns?: (string | AgColumn)[]): CellCtrl[] {
+    public getCellCtrls(
+        rowNodes?: IRowNode[] | null,
+        columns?: (string | AgColumn)[]
+    ): SharedProxyArrayWithFirstElementAndLength<CellCtrl> {
         let colIdsMap: any;
         if (_exists(columns)) {
             colIdsMap = {};
@@ -913,21 +913,32 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 }
             });
         }
+        const self = this;
+        return {
+            ...sharedProxyArrayMethods,
+            get [0]() {
+                return self.getRowCtrls(rowNodes)[0]?.getAllCellCtrls?.()?.[0];
+            },
+            get length() {
+                return self.getRowCtrls(rowNodes).reduce((acc, rowCtrl) => acc + rowCtrl.getAllCellCtrls().length, 0);
+            },
+            forEach(callbackfn: (value: CellCtrl) => void) {
+                const rowCtrls = self.getRowCtrls(rowNodes);
+                for (let i = 0; i < rowCtrls.length; i++) {
+                    const rowCtrl = rowCtrls[i];
+                    rowCtrl.getAllCellCtrls().forEach((cellCtrl) => {
+                        const colId: string = cellCtrl.column.getId();
+                        const excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
 
-        const res: CellCtrl[] = [];
-        this.getRowCtrls(rowNodes).forEach((rowCtrl) => {
-            rowCtrl.getAllCellCtrls().forEach((cellCtrl) => {
-                const colId: string = cellCtrl.column.getId();
-                const excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
+                        if (excludeColFromRefresh) {
+                            return;
+                        }
 
-                if (excludeColFromRefresh) {
-                    return;
+                        callbackfn(cellCtrl);
+                    });
                 }
-
-                res.push(cellCtrl);
-            });
-        });
-        return res;
+            },
+        };
     }
 
     public override destroy(): void {

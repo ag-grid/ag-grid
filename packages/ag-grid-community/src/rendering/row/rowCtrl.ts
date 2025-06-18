@@ -1344,12 +1344,33 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    public getAllCellCtrls(): CellCtrl[] {
-        if (this.leftCellCtrls.list.length === 0 && this.rightCellCtrls.list.length === 0) {
-            return this.centerCellCtrls.list;
-        }
-        const res = [...this.centerCellCtrls.list, ...this.leftCellCtrls.list, ...this.rightCellCtrls.list];
-        return res;
+    public getAllCellCtrls(): SharedProxyArrayWithFirstElementAndLength<CellCtrl> {
+        const self = this;
+
+        // return a proxy object that allows us to iterate over all cellCtrls
+        // this optimization is here to avoid having to create a new array every time we want to iterate
+        return {
+            ...sharedProxyArrayMethods,
+            get [0]() {
+                return self.centerCellCtrls.list[0] ?? self.leftCellCtrls.list[0] ?? self.rightCellCtrls.list[0];
+            },
+            get length() {
+                return (
+                    self.centerCellCtrls.list.length + self.leftCellCtrls.list.length + self.rightCellCtrls.list.length
+                );
+            },
+            forEach(callbackfn: (value: CellCtrl) => void) {
+                for (let i = 0; i < self.centerCellCtrls.list.length; i++) {
+                    callbackfn(self.centerCellCtrls.list[i]);
+                }
+                for (let i = 0; i < self.leftCellCtrls.list.length; i++) {
+                    callbackfn(self.leftCellCtrls.list[i]);
+                }
+                for (let i = 0; i < self.rightCellCtrls.list.length; i++) {
+                    callbackfn(self.rightCellCtrls.list[i]);
+                }
+            },
+        };
     }
 
     private postProcessClassesFromGridOptions(): void {
@@ -1822,3 +1843,38 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         });
     }
 }
+
+export type SharedProxyArray<T> = {
+    forEach(_callbackfn: (value: T) => void): void;
+    find(predicate: (value: T) => boolean): T | undefined;
+    some(predicate: (value: T) => boolean): boolean;
+};
+export type SharedProxyArrayWithFirstElementAndLength<T> = SharedProxyArray<T> & {
+    '0': T;
+    length: number;
+};
+
+/**
+ * This is an optimization effort to cut on array copying
+ * we checked this callback based approach is the fastest (compared to generators, iterators, and straight up array copy + forEach)
+ * see AG-12347
+ */
+export const sharedProxyArrayMethods = {
+    forEach<T extends CellCtrl>(_callbackfn: (value: T) => void) {},
+    find<T extends CellCtrl>(predicate: (value: T) => boolean): T | undefined {
+        let element: T | undefined;
+        let found = false;
+        this.forEach((value) => {
+            if (found || predicate(value as T)) {
+                element = value as T;
+                found = true;
+            }
+        });
+        return element;
+    },
+    // careful, this is not the same as Array.prototype.some, as it doesn't support
+    // undefined values in the array, since that would require copying code from find()
+    some<T extends CellCtrl>(predicate: (value: T) => boolean): boolean {
+        return this.find(predicate) !== undefined;
+    },
+};
