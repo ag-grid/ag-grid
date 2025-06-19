@@ -31,6 +31,10 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         const { cellStartedEdit, value, maxLength, cols, rows } = params;
         this.focusAfterAttached = cellStartedEdit;
 
+        // disable initial tooltips added to the input field
+        // let the validation handle tooltips.
+        eEditor.getInputElement().setAttribute('title', '');
+
         eEditor
             .setMaxLength(maxLength || 200)
             .setCols(cols || 60)
