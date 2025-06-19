@@ -54,7 +54,9 @@ export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: stri
             "if (typeof window !== 'undefined') {",
             '// Attach external event handlers to window so they can be called from index.html',
             ...externalBindings,
-            wrapTearDownExample(`(<any>window).tearDownExample = () => gridApi.destroy();`),
+            wrapTearDownExample(
+                `(<any>window).tearDownExample = () => (gridApi ?? topApi ?? bottomApi ?? leftApi ?? rightApi)?.destroy();`
+            ),
             '}',
         ].join('\n');
     }
