@@ -137,6 +137,14 @@ The example below demonstrates Server-side Filtering using the Set Filter. Note 
 
 {% gridExampleRunner title="Set Filter Server Side Filtering" name="infinite-set" /%}
 
+## Batching Filter Requests
+
+The [New Filters Tool Panel](./tool-panel-filters-new/) allows for filter changes to be batched together before a new `getRows` request is sent to the datasource.
+
+This is possible by configuring the Filters Tool Panel to [Use Buttons](./tool-panel-filters-new/#using-buttons). Each filter can then be edited in the tool panel, and one request will be sent when the global apply button is clicked.
+
+{% gridExampleRunner title="Set Filter Server Side Filtering" name="global-apply" /%}
+
 ## Advanced Filter
 
 In addition to Column Filters, the [Advanced Filter](./filter-advanced/) can also be used with the Server-Side Row Model. In this case, the `filterModel` in the request will be an [Advanced Filter Model](./filter-advanced/#filter-model--api) of type `AdvancedFilterModel | null`.
