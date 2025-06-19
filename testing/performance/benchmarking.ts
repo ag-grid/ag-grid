@@ -314,15 +314,9 @@ async function attachScripts(page: Page, version: Version, testCase: InternalTes
 
     const urls = [getCdnUrl('ag-grid-community', version), getCdnUrl('ag-grid-enterprise', version)];
     if (chartsVersion) {
-        urls.push(getCdnUrl('ag-charts-community', chartsVersion, '/dist/umd/ag-charts-community.js'));
-        /*[
-        // these are not available in all versions
-            getCdnUrl('@ag-grid-community/styles', version, '/'),
-            getCdnUrl('@ag-grid-community/locale', version),
-            getCdnUrl('ag-charts-core', chartsVersion),
-            getCdnUrl('ag-charts-enterprise', chartsVersion),
-            getCdnUrl('ag-charts-types', chartsVersion, '/'),
-        ];*/
+        urls.push(
+            `https://cdn.jsdelivr.net/npm/ag-charts-community@${chartsVersion.slice(1)}/dist/umd/ag-charts-community.js`
+        );
     }
 
     for (const url of urls) {
@@ -469,7 +463,7 @@ const describeBody = (describe: Describe) => () => {
 };
 
 /** Generic benchmark function to run performance tests */
-export default function (name: string, describe: Describe) {
+export default function run(name: string, describe: Describe) {
     test.describe.configure({ timeout: describe.timeout || 60_000 });
     test.beforeEach(() => console.log(`${bgGreen.black.bold(test.info().title)}`));
     test.beforeEach(() => console.log(`Test started at ${new Date().toISOString()}`));
