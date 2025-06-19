@@ -289,6 +289,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         let yDelta = target ? (y - target.rowTop! - target.rowHeight! / 2) / target.rowHeight! || 0 : 1;
 
+        if (yDelta > 0.5 && targetRowIndex >= clientSideRowModel.getRowCount() - 1) {
+            target = null; // We want target null if we are past the last row
+        }
+
         const sameGrid = this.isFromThisGrid(draggingEvent);
         const groupingApproach = _getGroupingApproach(gos);
         const canSetParent =
@@ -351,9 +355,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                     this.makeGroupThrottleTarget = target;
                     this.makeGroupThrottleStart();
                 }
-            } else {
-                newParent = target.parent ?? rootNode;
             }
+            newParent ??= target?.parent ?? rootNode;
         }
 
         let inside = false;
@@ -704,6 +707,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         const clientSideRowModel = this.clientSideRowModel;
         const leafs = new Set<WritableRowNode>();
+        let lastFiller: WritableRowNode | null = null;
         for (const row of rows as WritableRowNode[]) {
             if (row.footer || (row.rowTop === null && row !== clientSideRowModel.getRowNode(row.id!))) {
                 continue; // This row cannot be dragged, not in allLeafChildren and not a filler
@@ -719,12 +723,25 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
             const leafRow = getLeafRow(row);
             if (leafRow) {
+                lastFiller = leafRow !== row ? row : null;
                 leafs.add(leafRow);
             }
         }
 
         if (!changed && leafs.size === 0) {
             return false; // Nothing to move
+        }
+
+        if (!target && lastFiller) {
+            // Special case, if the last moved row is a filler, we want to ensure
+            // the relative ordering is correct, as the order of a filler
+            // is determined by the first leaf. So we need to add all the remaining leaves to the dragged rows.
+            const fillerLeafChildren = lastFiller.allLeafChildren;
+            if (fillerLeafChildren) {
+                for (const fillerLeaf of fillerLeafChildren) {
+                    leafs.add(fillerLeaf);
+                }
+            }
         }
 
         // Get the focussed cell so we can ensure it remains focussed after the move
@@ -847,19 +864,18 @@ const getRowsPrevOrNext = (
 const getPrevOrNext = (
     clientSideRowModel: IClientSideRowModel,
     increment: -1 | 1,
-    initialRow: IRowNode
+    initialRow: IRowNode | null | undefined
 ): RowNode | undefined => {
-    const rowCount = clientSideRowModel.getRowCount();
-    let rowIndex = initialRow.rowIndex! + increment;
-    while (rowIndex >= 0 && rowIndex < rowCount) {
-        let row: RowNode | undefined = clientSideRowModel.getRow(rowIndex)!;
-        if (row?.footer) {
-            row = row.sibling; // Skip footer rows
+    if (initialRow) {
+        const rowCount = clientSideRowModel.getRowCount();
+        let rowIndex = initialRow.rowIndex! + increment;
+        while (rowIndex >= 0 && rowIndex < rowCount) {
+            const row: RowNode | undefined = clientSideRowModel.getRow(rowIndex)!;
+            if (!row || !row.footer) {
+                return row;
+            }
+            rowIndex += increment;
         }
-        if (row?.sourceRowIndex >= 0) {
-            return row; // Valid leaf node
-        }
-        rowIndex += increment;
     }
     return undefined; // Out of bounds
 };
