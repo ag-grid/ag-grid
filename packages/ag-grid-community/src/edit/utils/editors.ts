@@ -109,7 +109,9 @@ export function _setupEditor(
     const editorParams = _createEditorParams(beans, position, key, cellStartedEdit);
 
     const oldValue = beans.valueSvc.getValue(position.column as AgColumn, position.rowNode, undefined, 'api');
-    let newValue = key ?? editorParams.value;
+
+    // if key is a single character, then we treat it as user input
+    let newValue = key?.length === 1 ? key : editorParams.value;
 
     if (newValue === undefined) {
         newValue = oldValue;
