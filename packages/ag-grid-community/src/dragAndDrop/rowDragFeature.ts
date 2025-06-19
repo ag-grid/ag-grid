@@ -289,10 +289,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         let yDelta = target ? (y - target.rowTop! - target.rowHeight! / 2) / target.rowHeight! || 0 : 1;
 
-        if (yDelta > 0.5 && targetRowIndex >= clientSideRowModel.getRowCount() - 1) {
-            target = null; // We want target null if we are past the last row
-        }
-
         const sameGrid = this.isFromThisGrid(draggingEvent);
         const groupingApproach = _getGroupingApproach(gos);
         const canSetParent =
@@ -371,6 +367,16 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                     above = true;
                 }
             }
+
+            if (target && !inside) {
+                // Set target to the first group that is not the root node or the new parent
+                let current: RowNode | null = target;
+                while (current && current !== rootNode && current !== newParent) {
+                    target = current;
+                    current = current.parent;
+                }
+            }
+
             if (rowsHaveSameParent(rows, newParent)) {
                 newParent = null; // No need to set parent if all rows have the same parent
             }
@@ -707,7 +713,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         const clientSideRowModel = this.clientSideRowModel;
         const leafs = new Set<WritableRowNode>();
-        let lastFiller: WritableRowNode | null = null;
         for (const row of rows as WritableRowNode[]) {
             if (row.footer || (row.rowTop === null && row !== clientSideRowModel.getRowNode(row.id!))) {
                 continue; // This row cannot be dragged, not in allLeafChildren and not a filler
@@ -723,25 +728,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
             const leafRow = getLeafRow(row);
             if (leafRow) {
-                lastFiller = leafRow !== row ? row : null;
                 leafs.add(leafRow);
             }
         }
 
         if (!changed && leafs.size === 0) {
             return false; // Nothing to move
-        }
-
-        if (!target && lastFiller) {
-            // Special case, if the last moved row is a filler, we want to ensure
-            // the relative ordering is correct, as the order of a filler
-            // is determined by the first leaf. So we need to add all the remaining leaves to the dragged rows.
-            const fillerLeafChildren = lastFiller.allLeafChildren;
-            if (fillerLeafChildren) {
-                for (const fillerLeaf of fillerLeafChildren) {
-                    leafs.add(fillerLeaf);
-                }
-            }
         }
 
         // Get the focussed cell so we can ensure it remains focussed after the move
