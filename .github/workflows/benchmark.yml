@@ -33,6 +33,7 @@ env:
   COMMENT_FILE: ./comment.md
   SLACK_FILE: ./slack.json
   SLACK_FILE_SNIPPET: ./slack-snippet.md
+  JIRA_FILE: ./jira.md
   DEFAULT_RETENTION_DAYS: 30
 
 permissions:
@@ -215,13 +216,7 @@ jobs:
           SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
         with:
           script: |
-            const fs = require('fs');
-            const slackMsg = JSON.parse(fs.readFileSync(process.env.SLACK_FILE, 'utf8'));
-            let ghMsg = fs.readFileSync(process.env.COMMENT_FILE, 'utf8');
-            slackMsg.blocks.push({ type: 'section', text: { type: 'mrkdwn', text: `<${process.env.SNIPPET_URL}|Full stdout>` } });
-            ghMsg += `\n\n[Full stdout](${process.env.SNIPPET_URL})`;
-            fs.writeFileSync(process.env.SLACK_FILE, JSON.stringify(slackMsg));
-            fs.writeFileSync(process.env.COMMENT_FILE, ghMsg);
+            node ./testing/shared/scripts/attach-snippet.mjs
 
       - name: Slack Notification
         continue-on-error: true

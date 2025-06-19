@@ -3,7 +3,7 @@ import fs from 'fs';
 
 const url = 'https://ag-grid.atlassian.net/rest/api/2/issue/';
 const auth = process.env.JIRA_API_AUTH;
-const commentText = fs.readFileSync(process.env.COMMENT_FILE || './comment.md', 'utf8');
+const commentText = fs.readFileSync(process.env.JIRA_FILE || './jira.md', 'utf8');
 
 if (!auth) {
     console.error('JIRA_API_AUTH environment variable must be set.');
