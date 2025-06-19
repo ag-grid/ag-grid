@@ -369,7 +369,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 }
             }
 
-            console.log('target', target?.id, inside);
             if (target && !inside) {
                 // Set target to the first group that is not the root node or the new parent
                 let current: RowNode | null = target;
