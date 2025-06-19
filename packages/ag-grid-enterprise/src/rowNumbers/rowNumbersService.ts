@@ -128,7 +128,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             return false;
         }
 
-        if (!mouseEvent.shiftKey && _interpretAsRightClick(this.beans, mouseEvent)) {
+        if (!mouseEvent.shiftKey && !_interpretAsRightClick(this.beans, mouseEvent)) {
             setTimeout(() => {
                 this.focusFirstRenderedCellAtRowPosition(cellPosition);
             });
