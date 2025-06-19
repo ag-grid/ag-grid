@@ -1,3 +1,5 @@
+import type { BeanCollection } from '../context/context';
+
 /**
  * `True` if the event is close to the original event by X pixels either vertically or horizontally.
  * we only start dragging after X pixels so this allows us to know if we should start dragging yet.
@@ -16,4 +18,8 @@ export function _areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, p
     const diffY = Math.abs(e1.clientY - e2.clientY);
 
     return Math.max(diffX, diffY) <= pixelCount;
+}
+
+export function _interpretAsRightClick({ gos }: BeanCollection, event: MouseEvent): boolean {
+    return event.button === 2 || (event.ctrlKey && gos.get('allowContextMenuWithControlKey'));
 }

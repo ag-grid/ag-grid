@@ -6,6 +6,7 @@ import type { CellClickedEvent, CellDoubleClickedEvent } from '../../events';
 import { _isBrowserSafari } from '../../utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
+import { _interpretAsRightClick } from '../../utils/mouse';
 import type { CellCtrl } from './cellCtrl';
 
 export class CellMouseListenerFeature extends BeanStub {
@@ -200,7 +201,7 @@ export class CellMouseListenerFeature extends BeanStub {
             if (isRowNumberColumn) {
                 mouseEvent.preventDefault();
             }
-            const hasRightClickedOnRowNumber = mouseEvent.button === 2 && isRowNumberColumn;
+            const hasRightClickedOnRowNumber = _interpretAsRightClick(this.beans, mouseEvent) && isRowNumberColumn;
             if (shiftKey) {
                 rangeSvc.extendLatestRangeToCell(cellPosition);
             } else if (!hasRightClickedOnRowNumber) {
@@ -217,8 +218,7 @@ export class CellMouseListenerFeature extends BeanStub {
 
         if (rangeSvc) {
             const cellInRange = rangeSvc.isCellInAnyRange(this.cellCtrl.cellPosition);
-            const isRightClick =
-                mouseEvent.button === 2 || (mouseEvent.ctrlKey && this.beans.gos.get('allowContextMenuWithControlKey'));
+            const isRightClick = _interpretAsRightClick(this.beans, mouseEvent);
 
             if (cellInRange && isRightClick) {
                 return true;
