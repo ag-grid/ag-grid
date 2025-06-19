@@ -387,8 +387,10 @@ export class GridBodyCtrl extends BeanStub {
     private onStickyWheel(e: WheelEvent): void {
         const { deltaY } = e;
 
-        e.preventDefault();
-        this.scrollVertically(deltaY);
+        const scrolled = this.scrollVertically(deltaY);
+        if (scrolled > 0) {
+            e.preventDefault();
+        }
     }
 
     private onHorizontalWheel(e: WheelEvent): void {
