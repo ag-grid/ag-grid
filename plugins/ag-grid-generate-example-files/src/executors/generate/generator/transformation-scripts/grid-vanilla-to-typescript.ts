@@ -42,6 +42,19 @@ function getImports(bindings: ParsedBindings, currFile: string): string[] {
     return imports;
 }
 
+function getTearDownCode(exampleCode: string): string {
+    const apisPresent = ['gridApi', 'topApi', 'bottomApi', 'leftApi', 'rightApi'].filter((api) =>
+        exampleCode.includes(api)
+    );
+    if (apisPresent.length === 0) {
+        return '';
+    }
+
+    return wrapTearDownExample(
+        `(<any>window).tearDownExample = () => [${apisPresent.join()}].forEach(api => api?.destroy());`
+    );
+}
+
 export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: string, tsFile: string): () => string {
     const { externalEventHandlers } = bindings;
 
@@ -54,9 +67,7 @@ export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: stri
             "if (typeof window !== 'undefined') {",
             '// Attach external event handlers to window so they can be called from index.html',
             ...externalBindings,
-            wrapTearDownExample(
-                `(<any>window).tearDownExample = () => (gridApi ?? topApi ?? bottomApi ?? leftApi ?? rightApi)?.destroy();`
-            ),
+            getTearDownCode(tsFile),
             '}',
         ].join('\n');
     }
@@ -86,13 +97,7 @@ export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: stri
 
         // Add test tearDown method
         if (!result.includes('tearDownExample')) {
-            result += wrapTearDownExample(
-                [
-                    "if (typeof window !== 'undefined') {",
-                    `   (window as any).tearDownExample = () => gridApi.destroy();`,
-                    '}',
-                ].join('\n')
-            );
+            result += wrapTearDownExample(`if (typeof window !== 'undefined') {${getTearDownCode(result)} }`);
         }
 
         return result;
