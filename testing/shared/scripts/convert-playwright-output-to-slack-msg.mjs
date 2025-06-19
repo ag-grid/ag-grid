@@ -65,13 +65,16 @@ const getTotalsText = (report) =>
         .filter((t) => t.trim())
         .join(' | ');
 
-const getResultsString = (tests, distilled = false) => {
+const getGitDiffLink = (annotation) =>
+    `https://github.com/ag-grid/ag-grid/compare/${annotation.description.control.gitHash.slice(0, 7)}...${annotation.description.variant.gitHash.slice(0, 7)}`;
+
+const getResultsString = (tests, distilled, createLink) => {
     return (
         '*Tests*' +
         tests
             .map(
-                ({ status, path, results }, index) =>
-                    `${index + 1}. ${statusEmoji(status)} ${path.map((p) => p.title).join(' > ')} ${paragraph(
+                ({ status, path, results, annotations }, index) =>
+                    `${index + 1}. ${statusEmoji(status)} ${path.map((p) => p.title).join(' > ')} | ${createLink('Git Diff', getGitDiffLink(annotations[0]))} ${paragraph(
                         results
                             .map(({ error, stdout }) => [error, getStdout(stdout)[distilled ? 'distilled' : 'full']])
                             .map(([error, stdout]) => `${renderError(error)}\n- Output:\n${renderStdout(stdout)}`)
@@ -102,8 +105,7 @@ const slackLink = (text, url) => `<${url}|${text}>`;
 const mdLink = (text, url) => `[${text}](${url})`;
 const getSlackMessage = (blocks) => ({ channel, username, icon_url, blocks });
 const calculatedTests = calculateTests(report);
-const resultsString = getResultsString(calculatedTests);
-const resultsStringDistilled = getResultsString(calculatedTests, true);
+
 const linksText = (createLink) =>
     [
         process.env.IS_SUCCESS ? SUCCESS_STRING : FAILURE_STRING,
@@ -113,15 +115,17 @@ const linksText = (createLink) =>
 
 const slackMessage = getSlackMessage(
     [section(linksText(slackLink)), DIVIDER, section(getTotalsText(report))].concat(
-        process.env.IS_SUCCESS ? [] : [section(resultsStringDistilled)]
+        process.env.IS_SUCCESS ? [] : [section(getResultsString(calculatedTests, true, slackLink))]
     )
 );
 
 const textMessage = [linksText(mdLink), getTotalsText(report)]
     .concat(
-        process.env.IS_SUCCESS ? [] : ['', resultsStringDistilled, '---', `Please address the issues before merging.`]
+        process.env.IS_SUCCESS
+            ? []
+            : ['', getResultsString(calculatedTests, true, mdLink), '---', `Please address the issues before merging.`]
     )
     .join('\n');
 fs.writeFileSync(commentFileName, textMessage);
 fs.writeFileSync(slackFileName, JSON.stringify(slackMessage, null, 2));
-fs.writeFileSync(snippetSlackFileName, resultsString);
+fs.writeFileSync(snippetSlackFileName, getResultsString(calculatedTests, false, mdLink));

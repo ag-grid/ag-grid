@@ -115,6 +115,15 @@ const knownUrlsProxy = new Proxy<Record<Version, string>>(
     }
 );
 
+async function getGitBranch(version: Version): Promise<string> {
+    if (version === 'local') {
+        const { stdout } = await promisify(child_process.exec)('git rev-parse --abbrev-ref HEAD');
+        return stdout.trim();
+    }
+
+    return 'latest'; // For remote versions, we assume the branch is 'latest'
+}
+
 async function getGitHash(version: Version): Promise<string> {
     if (version === 'local') {
         const { stdout } = await promisify(child_process.exec)('git rev-parse HEAD');
@@ -393,10 +402,12 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
             control: {
                 version: testCase.control.version,
                 gitHash: await getGitHash(testCase.control.version),
+                branch: await getGitBranch(testCase.control.version),
             },
             variant: {
                 version: testCase.variant.version,
                 gitHash: await getGitHash(testCase.variant.version),
+                branch: await getGitBranch(testCase.variant.version),
             },
         } as any, // expects string, but object works as well
     });
