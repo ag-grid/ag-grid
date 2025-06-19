@@ -9,11 +9,13 @@ export function isColumnFilterPresent(beans: BeanCollection): boolean {
     return !!filterManager?.isColumnFilterPresent() || !!filterManager?.isAggregateFilterPresent();
 }
 
-export function getColumnFilterInstance<TFilter extends IFilter>(
+export function getColumnFilterInstance<TFilter = IFilter>(
     beans: BeanCollection,
     key: string | Column
 ): Promise<TFilter | null | undefined> {
-    return beans.filterManager?.getColumnFilterInstance(key as string | AgColumn) ?? Promise.resolve(undefined);
+    return (
+        (beans.filterManager?.getColumnFilterInstance(key as string | AgColumn) as any) ?? Promise.resolve(undefined)
+    );
 }
 
 export function destroyFilter(beans: BeanCollection, key: string | Column) {

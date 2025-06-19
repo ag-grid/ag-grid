@@ -54,7 +54,7 @@ import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from 
 import type { IColumnToolPanel } from '../interfaces/iColumnToolPanel';
 import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
-import type { FilterActionParams, FilterDisplay, FilterModel, IFilter } from '../interfaces/iFilter';
+import type { FilterActionParams, FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { AgModuleName } from '../interfaces/iModule';
@@ -948,9 +948,7 @@ export interface _ColumnFilterGridApi {
      * `key` can be a column ID or a `Column` object.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
-    getColumnFilterInstance<TFilter extends IFilter | FilterDisplay>(
-        key: string | Column
-    ): Promise<TFilter | null | undefined>;
+    getColumnFilterInstance<TFilter = IFilter>(key: string | Column): Promise<TFilter | null | undefined>;
 
     /**
      * Returns the filter handler instance for a column.
