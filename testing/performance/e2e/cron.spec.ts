@@ -11,7 +11,7 @@ const frameworks = ['typescript', 'reactFunctionalTs', 'angular', 'vue3'];
 
 test(`Performance Test - Compare performance of setting data`, {
     timeout: frameworks.length * 20 * 60_000, // takes about 10 mins per framework, but allow for some overhead
-    minIterations: 200,
+    minIterations: 300,
     testCases: frameworks.map(
         (framework) =>
             ({
@@ -30,7 +30,7 @@ test(`Performance Test - Compare performance of setting data`, {
                     await page.getByText('Set Data').click({ force: true });
                     await waitFor(athleteCheck, page);
                 },
-                metrics: 'long-animation-frame',
+                metrics: 'set-data',
             }) as TestCase
     ),
 });

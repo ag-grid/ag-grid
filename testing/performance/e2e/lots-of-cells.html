@@ -30,44 +30,12 @@
                 });
             }
 
-            function onSetData() {
-                gridApi.updateGridOptions({
-                    columnDefs: repeat(cols, 10),
-                    rowData: repeat(data, 100),
-                });
-            }
-
-            function onScroll() {
-                const eBodyViewport = document.querySelector('.ag-body-viewport');
-                const currScroll = eBodyViewport.scrollTop;
-                eBodyViewport.scroll(0, currScroll + 5000);
-            }
-
-            function run() {
-                const gridOptions = {
-                    columnDefs: [],
-                    suppressColumnVirtualisation: true,
-                    rowBuffer: 300,
-                    defaultColDef: {
-                        initialWidth: 100,
-                    },
-                    rowData: [],
-                };
-                const myGridElement = document.querySelector('#myGrid');
-                gridApi = agGrid.createGrid(myGridElement, gridOptions);
-            }
-
             const cols = [
                 { field: 'athlete' },
                 { field: 'gold' },
                 { field: 'silver' },
                 { field: 'bronze' },
                 { field: 'total' },
-                { field: 'age' },
-                { field: 'country' },
-                { field: 'sport' },
-                { field: 'year' },
-                { field: 'date' },
             ];
 
             const data = [
@@ -131,55 +99,41 @@
                     bronze: 3,
                     total: 6,
                 },
-                {
-                    athlete: 'Alicia Coutts',
-                    age: 24,
-                    country: 'Australia',
-                    sport: 'Swimming',
-                    year: 2012,
-                    date: '12/08/2012',
-                    gold: 1,
-                    silver: 3,
-                    bronze: 1,
-                    total: 5,
-                },
-                {
-                    athlete: 'Missy Franklin',
-                    age: 17,
-                    country: 'United States',
-                    sport: 'Swimming',
-                    year: 2012,
-                    date: '12/08/2012',
-                    gold: 4,
-                    silver: 0,
-                    bronze: 1,
-                    total: 5,
-                },
-                {
-                    athlete: 'Ryan Lochte',
-                    age: 27,
-                    country: 'United States',
-                    sport: 'Swimming',
-                    year: 2012,
-                    date: '12/08/2012',
-                    gold: 2,
-                    silver: 2,
-                    bronze: 1,
-                    total: 5,
-                },
-                {
-                    athlete: 'Allison Schmitt',
-                    age: 22,
-                    country: 'United States',
-                    sport: 'Swimming',
-                    year: 2012,
-                    date: '12/08/2012',
-                    gold: 3,
-                    silver: 1,
-                    bronze: 1,
-                    total: 5,
-                },
             ];
+
+            const preAllocatedData = {
+                init: {
+                    columnDefs: repeat(cols, 4), // 20
+                    rowData: repeat(data, 200), // 1_000
+                },
+              /*  lots: {
+                    rowData: repeat(data, 100000), // 500_000
+                    columnDefs: repeat(cols, 4), // 20
+                },*/
+            };
+
+            function onSetData() {
+                performance.mark('set-data-started');
+                gridApi.updateGridOptions(preAllocatedData.init);
+            }
+
+            function onScroll() {
+                const eBodyViewport = document.querySelector('.ag-body-viewport');
+                const currScroll = eBodyViewport.scrollTop;
+                eBodyViewport.scroll(0, currScroll + 5000);
+            }
+
+            function run() {
+                const gridOptions = {
+                    columnDefs: [],
+                    rowData: [],
+                };
+                const myGridElement = document.querySelector('#myGrid');
+                gridApi = agGrid.createGrid(myGridElement, gridOptions);
+                gridApi.addEventListener('displayedRowsChanged', () =>
+                    performance.measure('set-data', 'set-data-started')
+                );
+            }
         </script>
     </body>
 </html>
