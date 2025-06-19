@@ -1,10 +1,11 @@
 <meta
     http-equiv="Content-Security-Policy"
     content="
-    default-src 'self' https://localhost https://*.ag-grid.com;
-    script-src 'self' https://cdn.jsdelivr.net https://localhost https://*.ag-grid.com;
+    default-src 'self';
+    script-src 'self' localhost https://cdn.jsdelivr.net/npm/seedrandom@3.0.5/seedrandom.min.js https://*.ag-grid.com;
+    connect-src 'self' https://*.ag-grid.com;
     style-src 'self' 'unsafe-inline';
-    img-src 'self' data:;
     font-src 'self' data: https://fonts.gstatic.com;
+    img-src 'self' data:;
   "
 />
