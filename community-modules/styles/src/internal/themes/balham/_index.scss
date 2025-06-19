@@ -10,8 +10,7 @@
     .ag-status-bar,
     .ag-header-row,
     .ag-row-number-cell,
-    .ag-multi-filter-group-title-bar,
-    .ag-filter-card-title {
+    .ag-multi-filter-group-title-bar {
         font-weight: 600;
         color: var(--ag-header-foreground-color);
     }
@@ -172,5 +171,14 @@
         .ag-icon {
             color: var(--ag-disabled-foreground-color);
         }
+    }
+
+    .ag-filter-panel .ag-standard-button.ag-filter-panel-buttons-apply-button:disabled {
+        color: unset;
+        background-color: unset;
+    }
+
+    .ag-filter-card-title {
+        font-weight: 600;
     }
 }

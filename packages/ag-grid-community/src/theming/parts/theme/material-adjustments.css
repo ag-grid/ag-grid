@@ -56,3 +56,7 @@
 .ag-header-highlight-after::after {
     background-color: var(--ag-primary-color);
 }
+
+.ag-filter-add-button {
+    border-bottom: 2px solid var(--ag-primary-color);
+}

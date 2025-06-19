@@ -196,35 +196,37 @@
     }
 
     .ag-filter-card-summary,
-    .ag-filter-card-expand-icon,
-    .ag-filter-card-delete-icon,
-    .ag-filter-card-editing-icon {
+    .ag-filter-card-expand-icon .ag-icon,
+    .ag-filter-card-delete-icon .ag-icon,
+    .ag-filter-card-editing-icon .ag-icon {
         color: var(--ag-filter-panel-card-subtle-color);
     }
 
-    .ag-filter-card-expand-icon,
-    .ag-filter-card-delete-icon {
+    .ag-filter-card-expand-icon .ag-icon,
+    .ag-filter-card-delete-icon .ag-icon {
         transition: color 0.25s ease-in-out;
     }
 
-    .ag-filter-card-expand-icon:hover,
-    .ag-filter-card-delete-icon:hover {
+    .ag-filter-card-expand-icon:hover .ag-icon,
+    .ag-filter-card-delete-icon:hover .ag-icon {
         color: var(--ag-filter-panel-card-subtle-hover-color);
     }
 
-    .ag-filter-card-heading:hover .ag-filter-card-expand-icon {
+    .ag-filter-card-heading:hover .ag-filter-card-expand-icon .ag-icon {
         color: var(--ag-filter-panel-card-subtle-hover-color);
     }
 
     .ag-filter-card-expand,
-    .ag-filter-card-delete,
-    .ag-filter-add-button {
+    .ag-filter-card-delete {
         border-radius: var(--ag-button-border-radius);
-        background: none;
         background: none;
         border: none;
         cursor: pointer;
         padding: 0;
+    }
+
+    .ag-filter-panel .ag-standard-button {
+        cursor: pointer;
     }
 
     .ag-filter-card-summary,
