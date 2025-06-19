@@ -23,7 +23,7 @@ export function FakeServer(allData) {
             };
         },
         getCountries: function (sportFilter) {
-            const textFilter = sportFilter.filterModels[0]
+            const textFilter = sportFilter?.filterModels[0]
                 ? ' WHERE ' + textFilterMapper('sport', sportFilter.filterModels[0])
                 : '';
             const sql = 'SELECT DISTINCT countryCode, countryName FROM ? ' + textFilter + ' ORDER BY countryName ASC';
