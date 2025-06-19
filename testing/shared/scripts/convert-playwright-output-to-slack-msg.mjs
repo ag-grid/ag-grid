@@ -7,7 +7,7 @@ const channel = process.env.SLACK_CHANNEL || ' ';
 const username = process.env.SLACK_USERNAME || ' ';
 const icon_url = process.env.SLACK_ICON || ' ';
 const slackFileName = process.env.SLACK_FILE || './slack.json';
-const snippetSlackFileName = process.env.SLACK_FILE_SNIPPET || './snippet.md';
+const snippetSlackFileName = process.env.SLACK_FILE_SNIPPET || './slack-snippet.md';
 const commentFileName = process.env.COMMENT_FILE || './comment.md';
 
 if (!channel) throw new Error('SLACK_CHANNEL is not set');
