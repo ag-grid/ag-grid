@@ -100,7 +100,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
             return {
                 ...series,
                 domain: markerDomain,
-                highlightStyle: { item: { fill: 'yellow' } },
+                highlight: { highlightedItem: { fill: 'yellow' } },
                 listeners: {
                     ...series.listeners,
                     seriesNodeClick: this.crossFilterCallback,

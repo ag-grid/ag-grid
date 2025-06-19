@@ -40,8 +40,8 @@ const gridOptions: GridOptions = {
                             }
                         },
                     },
-                    highlightStyle: {
-                        item: {
+                    highlight: {
+                        highlightedItem: {
                             fill: 'rgb(143,185,77)',
                             strokeWidth: 0,
                         },

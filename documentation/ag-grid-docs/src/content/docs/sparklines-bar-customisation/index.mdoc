@@ -25,8 +25,8 @@ sparklineOptions: {
     direction: 'horizontal',
     fill: '#5470c6',
     stroke: '#91cc75',
-    highlightStyle: {
-        item: {
+    highlight: {
+        highlightedItem: {
             fill: '#fac858'
         }
     },
@@ -72,14 +72,14 @@ Custom fill
 {% /imageCaption %}
 {% /flex %}
 
-It is possible to set the fill for the highlighted state of the bar by adding `fill` in `highlightStyle` options as follows:
+It is possible to set the fill for the highlighted state of the bar by adding `fill` in `highlight` options as follows:
 
 ```js
 sparklineOptions: {
     type: 'bar',
     direction: 'horizontal',
-    highlightStyle: {
-        item: {
+    highlight: {
+        highlightedItem: {
             fill: 'orange', // sets the highlighted bar fill
         }
     }
@@ -115,8 +115,8 @@ sparklineOptions: {
     direction: 'horizontal',
     stroke: '#ec7c7d', // sets the bar stroke
     strokeWidth: 2, // sets the bar stroke width
-    highlightStyle: {
-        item: {
+    highlight: {
+        highlightedItem: {
             stroke: '#b5ec7c', // sets the highlighted bar stroke
             strokeWidth: 2, // sets the highlighted bar stroke width
         }
