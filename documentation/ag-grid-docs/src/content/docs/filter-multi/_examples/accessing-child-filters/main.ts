@@ -62,13 +62,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
 };
 
-function getTextModel() {
-    gridApi!.getColumnFilterInstance<IMultiFilter>('athlete').then((multiFilterInstance) => {
-        const textFilter = multiFilterInstance!.getChildFilterInstance(0)!;
-        console.log('Current Text Filter model: ', textFilter.getModel());
-    });
-}
-
 function getSetMiniFilter() {
     gridApi!.getColumnFilterInstance<IMultiFilter>('athlete').then((multiFilterInstance) => {
         const setFilter = multiFilterInstance!.getChildFilterInstance(1) as ISetFilter;
