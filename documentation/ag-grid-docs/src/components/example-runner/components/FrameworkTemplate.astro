@@ -33,6 +33,11 @@ interface Props {
      * Extra styles to add to HTML
      */
     extraStyles?: string;
+
+    /**
+     * Nonce value used for Content Security Policies
+     */
+    nonce?: string;
 }
 
 const {
@@ -45,6 +50,7 @@ const {
     addInitMessageScript,
     ignoreSystemJs,
     extraStyles,
+    nonce
 } = Astro.props as Props;
 
 const isDev = getIsDev();
@@ -110,8 +116,9 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             extras={extras}
             headFragment={headFragment}
             usesMathRandom={usesMathRandom}
+            nonce={nonce}
         >
-            {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
+            {addInitMessageScript && <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />}
         </JavascriptTemplate>
     )
 }
@@ -132,8 +139,9 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             extras={extras}
             headFragment={headFragment}
             usesMathRandom={usesMathRandom}
+            nonce={nonce}
         >
-            {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
+            {addInitMessageScript && <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />}
         </TypescriptTemplate>
     )
 }
@@ -156,8 +164,9 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             extras={extras}
             headFragment={headFragment}
             usesMathRandom={usesMathRandom}
+            nonce={nonce}
         >
-            {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
+            {addInitMessageScript && <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />}
         </ReactTemplate>
     )
 }
@@ -178,8 +187,9 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             extras={extras}
             headFragment={headFragment}
             usesMathRandom={usesMathRandom}
+            nonce={nonce}
         >
-            {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
+            {addInitMessageScript && <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />}
         </AngularTemplate>
     )
 }
@@ -200,8 +210,9 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             extras={extras}
             headFragment={headFragment}
             usesMathRandom={usesMathRandom}
+            nonce={nonce}
         >
-            {addInitMessageScript && <PostInitMessageScript pageName={pageName} exampleName={exampleName} />}
+            {addInitMessageScript && <PostInitMessageScript nonce={nonce} pageName={pageName} exampleName={exampleName} />}
         </VueTemplate>
     )
 }

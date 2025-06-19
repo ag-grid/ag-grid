@@ -18,6 +18,7 @@ export interface GeneratedContents {
     isIntegratedCharts?: boolean;
     hasExampleConsoleLog?: boolean;
     hasSimpleHtml?: boolean;
+    scriptNonce?: string;
     boilerPlateFiles: FileContents;
     packageJson: Record<string, string>;
     extras?: string[];

@@ -28,6 +28,7 @@ interface Props {
     headFragment?: string;
     extras?: string[];
     usesMathRandom?: boolean;
+    nonce?: string;
 }
 
 const {
@@ -46,6 +47,7 @@ const {
     headFragment,
     extras,
     usesMathRandom,
+    nonce
 } = Astro.props as Props;
 
 const startFile = pathJoin(appLocation, entryFileName);
@@ -61,7 +63,7 @@ const startFile = pathJoin(appLocation, entryFileName);
     </head>
     <body>
         <div id="root"></div>
-        {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} />}
+        {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} nonce={nonce} />}
         {
             !ignoreSystemJs && (
                 <SystemJs
@@ -72,6 +74,7 @@ const startFile = pathJoin(appLocation, entryFileName);
                     internalFramework={internalFramework}
                     isEnterprise={isEnterprise}
                     usesMathRandom={usesMathRandom}
+                    nonce={nonce}
                 />
             )
         }

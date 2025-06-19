@@ -20,6 +20,7 @@ interface Props {
     isEnterprise: boolean;
     isDev: boolean;
     usesMathRandom?: boolean;
+    nonce?: string;
 }
 
 type Paths = Record<string, string>;
@@ -126,6 +127,7 @@ export const SystemJs = ({
     isEnterprise,
     isDev,
     usesMathRandom,
+    nonce,
 }: Props) => {
     const systemJsPath = pathJoin(boilerplatePath, `systemjs.config${isDev ? '.dev' : ''}.js`);
 
@@ -156,6 +158,7 @@ export const SystemJs = ({
     return (
         <>
             <script
+                nonce={nonce}
                 dangerouslySetInnerHTML={{
                     __html: `
             var appLocation = '${appLocation}';
@@ -166,10 +169,10 @@ export const SystemJs = ({
         `,
                 }}
             />
-            {usesMathRandom && <SeedRandom />}
+            {usesMathRandom && <SeedRandom nonce={nonce} />}
 
-            <script src={systemJsVersion} />
-            <script src={systemJsPath} />
+            <script nonce={nonce} src={systemJsVersion} />
+            <script nonce={nonce} src={systemJsPath} />
         </>
     );
 };

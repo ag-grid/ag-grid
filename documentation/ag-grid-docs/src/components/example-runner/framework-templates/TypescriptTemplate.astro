@@ -23,6 +23,7 @@ interface Props {
     extras?: string[];
     headFragment?: string;
     usesMathRandom?: boolean;
+    nonce?: string;
 }
 
 const {
@@ -39,6 +40,7 @@ const {
     extras,
     headFragment,
     usesMathRandom,
+    nonce
 } = Astro.props as Props;
 
 const startFile = pathJoin(appLocation, entryFileName);
@@ -64,6 +66,7 @@ const startFile = pathJoin(appLocation, entryFileName);
 
         <script
             is:inline
+            nonce={nonce}
             define:vars={{
                 appLocation,
             }}
@@ -79,6 +82,7 @@ const startFile = pathJoin(appLocation, entryFileName);
             internalFramework={'typescript'}
             isEnterprise={isEnterprise}
             usesMathRandom={usesMathRandom}
+            nonce={nonce}
         />
         <Styles
             baseUrl={appLocation}

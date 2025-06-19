@@ -10,11 +10,12 @@ Math.seedrandom('${EXAMPLE_RANDOM_SEED}');
 /**
  * Inject the seedrandom library and initialise the random number generator with a seed.
  */
-export const SeedRandom = () => {
+export const SeedRandom = ({ nonce }: { nonce?: string }) => {
     return (
         <>
-            <script src={SEEDRANDOM_CDN_URL} />
+            <script nonce={nonce} src={SEEDRANDOM_CDN_URL} />
             <script
+                nonce={nonce}
                 dangerouslySetInnerHTML={{
                     __html: `${INIT_RANDOM_SEED}`,
                 }}

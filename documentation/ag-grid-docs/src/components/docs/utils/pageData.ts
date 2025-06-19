@@ -21,6 +21,7 @@ type DocExamplePage = DocExamplePages[number]['params'] & {
     isLocale?: boolean;
     hasExampleConsoleLog?: boolean;
     hasSimpleHtml?: boolean;
+    scriptNonce?: string;
     sourceFileList?: string[];
 };
 type DocFrameworkExamples = Record<InternalFramework, DocExamplePage>;
@@ -121,7 +122,7 @@ function allPropertiesAreTruthy(entries: [string, DocExamplePage][], property: k
 function flattenDocsExampleContents(data: Record<string, DocFrameworkExamples>) {
     return Object.values(data).map((frameworkExamples) => {
         const frameworkEntries = Object.entries(frameworkExamples);
-        const [_, { pageName, exampleName, sourceFileList }] = frameworkEntries[0];
+        const [_, { pageName, exampleName, sourceFileList, scriptNonce }] = frameworkEntries[0];
         const isEnterprise = allPropertiesAreTruthy(frameworkEntries, 'isEnterprise');
         const isIntegratedCharts = allPropertiesAreTruthy(frameworkEntries, 'isIntegratedCharts');
         const isLocale = allPropertiesAreTruthy(frameworkEntries, 'isLocale');
@@ -138,6 +139,7 @@ function flattenDocsExampleContents(data: Record<string, DocFrameworkExamples>) 
             isLocale,
             hasExampleConsoleLog,
             hasSimpleHtml,
+            scriptNonce,
             frameworkExamples,
         };
     });
@@ -170,6 +172,7 @@ export async function getDocsExampleContents({ pages }: { pages: DocsPage[] }) {
             hasExampleConsoleLog: contents?.hasExampleConsoleLog,
             hasSimpleHtml: contents?.hasSimpleHtml,
             sourceFileList: contents?.sourceFileList,
+            scriptNonce: contents?.scriptNonce,
             ...example.params,
         };
     });

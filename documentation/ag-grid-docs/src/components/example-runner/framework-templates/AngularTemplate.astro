@@ -24,6 +24,7 @@ interface Props {
     headFragment?: string;
     extras?: string[];
     usesMathRandom?: boolean;
+    nonce?: string;
 }
 
 const {
@@ -40,6 +41,7 @@ const {
     headFragment,
     extras,
     usesMathRandom,
+    nonce
 } = Astro.props as Props;
 
 const startFile = pathJoin(appLocation, entryFileName);
@@ -63,13 +65,13 @@ const startFile = pathJoin(appLocation, entryFileName);
     <body>
         <my-app></my-app>
 
-        <script is:inline>
+        <script is:inline nonce={nonce}>
             document.write('<base href="' + document.location + '" />');
         </script>
-        <script is:inline src="https://cdn.jsdelivr.net/npm/core-js-bundle@3.6.5/minified.js"></script>
-        <script is:inline src="https://cdn.jsdelivr.net/npm/zone.js@0.14.3/bundles/zone.umd.min.js"></script>
+        <script is:inline nonce={nonce} src="https://cdn.jsdelivr.net/npm/core-js-bundle@3.6.5/minified.js"></script>
+        <script is:inline nonce={nonce} src="https://cdn.jsdelivr.net/npm/zone.js@0.14.3/bundles/zone.umd.min.js"></script>
 
-        {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} />}
+        {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} nonce={nonce} />}
         <SystemJs
             isDev={isDev}
             boilerplatePath={boilerplatePath}
@@ -78,6 +80,7 @@ const startFile = pathJoin(appLocation, entryFileName);
             internalFramework={'angular'}
             isEnterprise={isEnterprise}
             usesMathRandom={usesMathRandom}
+            nonce={nonce}
         />
         <Styles
             baseUrl={appLocation}

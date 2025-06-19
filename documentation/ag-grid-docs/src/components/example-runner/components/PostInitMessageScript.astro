@@ -7,14 +7,16 @@ import {
 interface Props {
     pageName: string;
     exampleName: string;
+    nonce?: string;
 }
 
-const { pageName, exampleName } = Astro.props as Props;
+const { pageName, exampleName, nonce } = Astro.props as Props;
 const initSelector = LIBRARY_INIT_SELECTOR;
 ---
 
 <Fragment set:html={POST_INIT_MESSAGE_START} />
 <script
+    nonce={nonce}
     define:vars={{
         pageName,
         exampleName,
