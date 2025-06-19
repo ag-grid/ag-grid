@@ -5,7 +5,6 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
-import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
 import type { EditMap, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition, EditSource, IEditService } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
@@ -61,8 +60,18 @@ export abstract class BaseEditStrategy extends BeanStub {
     ): void;
 
     public onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
+        let cellCtrl: CellCtrl | undefined;
+        const previous = (event as any)['previousParams']! as CommonCellFocusParams;
+        if (previous) {
+            cellCtrl = _getCellCtrl(this.beans, previous);
+        }
+
         // check if any editors open
         if (this.editSvc.isEditing(undefined, { withOpenEditor: true })) {
+            if (cellCtrl && this.editSvc.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
+                return;
+            }
+
             const result = this.editSvc.stopEditing();
 
             // editSvc didn't handle the stopEditing, we need to do more ourselves
@@ -77,10 +86,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             }
         }
 
-        const previous = (event as any)['previousParams']! as CommonCellFocusParams;
-        if (previous) {
-            _getCellCtrl(this.beans, previous)?.refreshCell({ suppressFlash: true, force: true });
-        }
+        cellCtrl?.refreshCell({ suppressFlash: true, force: true });
     }
 
     public abstract moveToNextEditingCell(
@@ -102,15 +108,12 @@ export abstract class BaseEditStrategy extends BeanStub {
         editingCells.forEach((cell) => {
             results.all.push(cell);
 
+            const edit = this.model.getEdit(cell);
             // check if the cell is valid
-            const cellCtrl = _getCellCtrl(this.beans, cell);
-            if (cellCtrl) {
-                const editor = cellCtrl.comp?.getCellEditor();
 
-                if (editor?.getValidationErrors?.()?.length ?? 0 > 0) {
-                    results.fail.push(cell);
-                    return;
-                }
+            if (edit?.errorMessages?.length ?? 0 > 0) {
+                results.fail.push(cell);
+                return;
             }
 
             results.pass.push(cell);
@@ -194,13 +197,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         ignoreEventKey: boolean = false
     ) {
         const key = (event instanceof KeyboardEvent && !ignoreEventKey && event.key) || undefined;
-        const compDetails = _setupEditors(this.beans, cells, position, key, cellStartedEdit);
-        const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
-            ?.suppressPreventDefault;
-
-        if (!suppressPreventDefault) {
-            event?.preventDefault();
-        }
+        _setupEditors(this.beans, cells, position, key, event, cellStartedEdit);
     }
 
     public dispatchCellEvent<T extends AgEventType>(

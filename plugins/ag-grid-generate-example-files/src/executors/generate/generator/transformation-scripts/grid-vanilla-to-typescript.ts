@@ -50,9 +50,7 @@ function getTearDownCode(exampleCode: string): string {
         return '';
     }
 
-    return wrapTearDownExample(
-        `(<any>window).tearDownExample = () => [${apisPresent.join()}].forEach(api => api?.destroy());`
-    );
+    return `(<any>window).tearDownExample = () => [${apisPresent.join()}].forEach(api => api?.destroy());`;
 }
 
 export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: string, tsFile: string): () => string {
@@ -67,7 +65,7 @@ export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: stri
             "if (typeof window !== 'undefined') {",
             '// Attach external event handlers to window so they can be called from index.html',
             ...externalBindings,
-            getTearDownCode(tsFile),
+            wrapTearDownExample(getTearDownCode(tsFile)),
             '}',
         ].join('\n');
     }

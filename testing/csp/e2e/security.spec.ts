@@ -23,4 +23,13 @@ test.describe('security', () => {
             framework: 'vanilla',
         });
     });
+
+    test('advanced-filter-csp example should load successfully', async ({ page }) => {
+        await goToExampleUrl({
+            page,
+            pageName: 'security-test',
+            example: 'advanced-filter-csp',
+            framework: 'vanilla',
+        });
+    });
 });

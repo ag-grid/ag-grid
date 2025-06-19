@@ -6,6 +6,7 @@ import type {
     FilterHandler,
     FilterHandlerBaseParams,
     IDoesFilterPassParams,
+    IFilter,
     IFilterComp,
     IFilterParams,
     IMultiFilter,
@@ -240,8 +241,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         return result;
     }
 
-    public getChildFilterInstance(index: number): IFilterComp | undefined {
-        return this.wrappers[index]?.filter;
+    public getChildFilterInstance<TFilter = IFilter>(index: number): TFilter | undefined {
+        return this.wrappers[index]?.filter as TFilter;
     }
 
     public override destroy(): void {

@@ -3,7 +3,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowNode } from '../../entities/rowNode';
 import { _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
-import type { EditSource } from '../../interfaces/iEditService';
+import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
 import { _isMacOsUserAgent } from '../../utils/browser';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { SpannedCellCtrl } from '../spanning/spannedCellCtrl';
@@ -136,6 +136,10 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 return;
             }
 
+            if (editSvc?.checkNavWithValidation(cellCtrl, event)) {
+                return;
+            }
+
             editSvc?.stopEditing(cellCtrl, {
                 event,
             });
@@ -144,6 +148,10 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 const key = event.shiftKey ? KeyCode.UP : KeyCode.DOWN;
                 navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
             } else {
+                if (editSvc?.hasValidationErrors(cellCtrl)) {
+                    editSvc.revertSingleCellEdit(cellCtrl, true);
+                }
+
                 const started = editSvc?.startEditing(cellCtrl, {
                     startedEdit: true,
                     event,
@@ -177,17 +185,14 @@ export class CellKeyboardListenerFeature extends BeanStub {
             beans: { editSvc },
         } = this;
 
-        let source: EditSource = 'ui';
-
         if (editSvc?.hasValidationErrors(cellCtrl)) {
-            source = 'api';
+            editSvc.revertSingleCellEdit(cellCtrl, true);
+        } else {
+            editSvc?.stopEditing(cellCtrl, {
+                event,
+                cancel: true,
+            });
         }
-
-        editSvc?.stopEditing(cellCtrl, {
-            event,
-            cancel: true,
-            source,
-        });
     }
 
     public processCharacter(event: KeyboardEvent): void {
@@ -214,7 +219,14 @@ export class CellKeyboardListenerFeature extends BeanStub {
             // what it wants to do. we only do this IF editing was started - otherwise it messes
             // up when the user is not doing editing, but using rendering with text fields in cellRenderer
             // (as it would block the the user from typing into text fields).
-            event.preventDefault();
+
+            const compDetails = cellCtrl.editCompDetails;
+            const shouldPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
+                ?.suppressPreventDefault;
+
+            if (shouldPreventDefault) {
+                event.preventDefault();
+            }
         }
     }
 

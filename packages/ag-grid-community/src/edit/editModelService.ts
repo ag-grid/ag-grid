@@ -246,6 +246,24 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         this.edits.clear();
     }
 
+    public setErrors(position: Required<EditPosition>, errorMessages: string[]) {
+        const edit = this.getEdit(position);
+        if (edit) {
+            edit.errorMessages = errorMessages;
+        }
+    }
+
+    public clearErrors(position: Required<EditPosition>): void {
+        const edit = this.getEdit(position);
+        if (edit) {
+            edit.errorMessages = undefined;
+        }
+    }
+
+    public getErrors(position: Required<EditPosition>): string[] | undefined {
+        return this.getEdit(position)?.errorMessages;
+    }
+
     public override destroy(): void {
         super.destroy();
         this.clear();

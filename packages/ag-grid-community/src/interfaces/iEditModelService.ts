@@ -4,14 +4,18 @@ import type { IRowNode } from './iRowNode';
 
 export type EditState = 'editing' | 'changed';
 
+export type EditValidation = {
+    errorMessages?: string[];
+};
+
 export type EditValue = {
     newValue: any;
     oldValue: any;
     state: EditState;
-};
+} & EditValidation;
 
-export type EditRow = Map<Column, EditValue>;
-export type EditMap = Map<IRowNode, EditRow>;
+export type EditRow<C = Column, V = EditValue> = Map<C, V>;
+export type EditMap<R = IRowNode, C = Column, V = EditValue> = Map<R, EditRow<C, V>>;
 
 export type GetEditsParams = {
     checkSiblings?: boolean;
@@ -42,4 +46,8 @@ export interface IEditModelService {
 
     start(position: Required<EditPosition>): void;
     stop(position?: Required<EditPosition>): void;
+
+    setErrors(position: Required<EditPosition>, errors: string[]): void;
+    clearErrors(position: Required<EditPosition>): void;
+    getErrors(position: EditPosition): string[] | undefined;
 }

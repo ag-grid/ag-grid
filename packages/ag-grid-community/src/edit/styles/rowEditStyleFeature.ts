@@ -27,6 +27,8 @@ export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
 
         let rowNode = rowCtrl.rowNode;
         let edits = editModelSvc?.getEditRow({ rowNode });
+        const hasErrors = this.editSvc?.hasValidationErrors({ rowNode }) ?? false;
+
         if (!edits && rowNode.pinnedSibling) {
             rowNode = rowNode.pinnedSibling!;
             edits = editModelSvc?.getEditRow({ rowNode });
@@ -41,15 +43,15 @@ export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
                 );
             });
 
-            this.applyStyle(editing);
+            this.applyStyle(hasErrors, editing);
 
             return;
         }
 
-        this.applyStyle();
+        this.applyStyle(hasErrors);
     }
 
-    private applyStyle(editing: boolean = false) {
+    private applyStyle(hasErrors: boolean = false, editing: boolean = false) {
         const batchEdit = this.editSvc?.isBatchEditing() ?? false;
         const fullRow = this.gos.get('editType') === 'fullRow';
 
@@ -61,9 +63,7 @@ export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
             rowComp.toggleCss('ag-row-inline-editing', editing);
             rowComp.toggleCss('ag-row-not-inline-editing', !editing);
 
-            if (!fullRow || !editing) {
-                rowComp.toggleCss('ag-row-editing-invalid', false);
-            }
+            rowComp.toggleCss('ag-row-editing-invalid', fullRow && editing && hasErrors);
         });
     }
 }

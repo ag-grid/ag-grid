@@ -220,7 +220,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         if (nextEditable) {
             if (!nextCell.comp?.getCellEditor()) {
                 // editor missing because it was outside the viewport during creating phase, attempt to create it now
-                _setupEditor(this.beans, nextCell, undefined, true);
+                _setupEditor(this.beans, nextCell, undefined, event, true);
             }
             this.setFocusInOnEditor(nextCell);
             nextCell.focusCell(false, event);

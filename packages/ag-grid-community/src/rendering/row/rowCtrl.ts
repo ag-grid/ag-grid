@@ -11,7 +11,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
-import type { CellFocusedEvent, RowEditingValidated, RowEvent, VirtualRowRemovedEvent } from '../../events';
+import type { CellFocusedEvent, RowEvent, VirtualRowRemovedEvent } from '../../events';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import {
     _addGridCommonParams,
@@ -803,7 +803,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             paginationChanged: this.onPaginationChanged.bind(this),
             modelUpdated: this.refreshFirstAndLastRowStyles.bind(this),
             columnMoved: () => this.updateColumnLists(),
-            rowEditingValidated: this.onRowEditValidated.bind(this),
         });
 
         if (rowSpanSvc) {
@@ -854,17 +853,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private onRowPinned(): void {
         for (const gui of this.allRowGuis) {
             gui.rowComp.toggleCss('ag-row-pinned-source', !!this.rowNode.pinnedSibling);
-        }
-    }
-
-    private onRowEditValidated(params: RowEditingValidated): void {
-        const { rowNode } = this;
-        const { errorMessages, rowIndex, rowPinned } = params;
-
-        for (const { rowComp } of this.allRowGuis) {
-            const isThisRow = rowNode.rowIndex === rowIndex && rowNode.rowPinned === rowPinned;
-            const isInvalid = isThisRow && !!errorMessages?.length;
-            rowComp.toggleCss('ag-row-editing-invalid', isInvalid);
         }
     }
 

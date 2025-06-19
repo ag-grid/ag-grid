@@ -3,6 +3,7 @@ import type { BeanCollection } from '../context/context';
 import type { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
 import { AgColumn } from '../entities/agColumn';
 import type { AgEventType } from '../eventTypes';
+import type { CellFocusedEvent } from '../events';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { CellRange } from './IRangeService';
@@ -121,5 +122,6 @@ export interface IEditService extends NamedBean {
     hasValidationErrors(position?: EditPosition): boolean;
     focusOnFirstError(): void;
     cellEditingInvalidCommitBlocks(): boolean;
-    checkNavWithValidation(cellCtrl: CellCtrl, event: EditInputEvents): EditNavOnValidationResult;
+    checkNavWithValidation(cellCtrl: CellCtrl, event: Event | CellFocusedEvent): EditNavOnValidationResult;
+    revertSingleCellEdit(cellCtrl: CellCtrl, focus?: boolean): void;
 }
