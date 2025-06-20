@@ -246,7 +246,7 @@ export const AG_GRID_LOCALE_CZ = {
     pageSizeSelectorLabel: 'Velikost stránky:',
     footerTotal: 'Celkem',
     statusBarLastRowUnknown: '?',
-    scrollColumnIntoView: "Přejít na '${variable}'",
+    scrollColumnIntoView: 'Přejít na ${variable}',
 
     // Pivoting
     pivotColumnGroupTotals: 'Celkem',

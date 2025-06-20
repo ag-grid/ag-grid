@@ -156,7 +156,7 @@ export const AG_GRID_LOCALE_TW = {
     minValueValidation: '必須大於或等於 ${variable}',
     maxValueValidation: '必須小於或等於 ${variable}',
     invalidSelectionValidation: '無效的選擇。',
-    tooltipValidationErrorSeparator: "。'",
+    tooltipValidationErrorSeparator: '。',
 
     // Side Bar
     columns: '欄位',
