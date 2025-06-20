@@ -171,11 +171,15 @@ export class ValueService extends BeanStub implements NamedBean {
         const colId = column.getColId();
         let data = rowNode.data;
 
-        const { editSvc, rowGroupColsSvc } = this.beans;
+        const { editSvc, rowGroupColsSvc, editModelSvc } = this.beans;
 
-        if (source === 'ui') {
+        if (source === 'ui' && editSvc && editModelSvc) {
             // if the row is editing, make sure we sync data fields with any pending values
-            if (editSvc?.isEditing({ rowNode }, { checkSiblings: true })) {
+            const hasInvalidValues =
+                editModelSvc.getCellValidationModel().hasCellValidation({ rowNode, column }) ||
+                editModelSvc.getRowValidationModel().hasRowValidation({ rowNode });
+
+            if (editSvc?.isEditing({ rowNode }, { checkSiblings: true }) && !hasInvalidValues) {
                 data = editSvc?.getRowDataValue({ rowNode }, { checkSiblings: true });
             }
 
