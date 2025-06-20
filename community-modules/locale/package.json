@@ -49,7 +49,7 @@
     "jest-runner": "^29.5.0",
     "jest-serial-runner": "^1.2.1",
     "ts-jest": "^29.1.0",
-    "typescript": "~5.4.5"
+    "typescript": "~5.2.2"
   },
   "publishConfig": {
     "access": "public"
