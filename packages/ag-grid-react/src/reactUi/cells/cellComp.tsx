@@ -269,7 +269,7 @@ const CellComp = ({
                         }
                     });
                 };
-                if (compDetails?.params?.deferRender) {
+                if (compDetails?.params?.deferRender && !cellCtrl.rowNode.group) {
                     const { loadingComp, onReady } = cellCtrl.getDeferLoadingCellRenderer();
 
                     if (loadingComp) {
