@@ -1288,12 +1288,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             rowNode: { rowPinned, rowIndex },
         } = this;
 
-        if (
-            gos.get('editType') !== 'fullRow' ||
-            gos.get('cellEditingInvalidCommitType') !== 'block' ||
-            params.rowIndex !== rowIndex ||
-            params.rowPinned !== rowPinned
-        ) {
+        if (gos.get('editType') !== 'fullRow' || params.rowIndex !== rowIndex || params.rowPinned !== rowPinned) {
             return;
         }
         this.tooltipFeature = beans.tooltipSvc?.setRowTooltip(this, gui.element);
