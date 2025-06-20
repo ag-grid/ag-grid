@@ -154,6 +154,12 @@ const gridOptions: GridOptions = {
                     aggFunc: uniqOrDots,
                 },
                 {
+                    field: 'lastName',
+                    enableRowGroup: true,
+                    enablePivot: true,
+                    aggFunc: uniqOrDots,
+                },
+                {
                     headerName: 'Details',
                     colId: 'details',
                     cellRenderer: CustomCellRenderer,

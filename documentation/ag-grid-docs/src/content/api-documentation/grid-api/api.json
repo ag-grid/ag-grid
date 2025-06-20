@@ -461,6 +461,33 @@
         },
         "setFocusedHeader": {}
     },
+    "batch-editing": {
+        "meta": {
+            "displayName": "Batch Editing",
+            "page": {
+                "name": "Batch Editing",
+                "url": "./cell-editing-batch/"
+            }
+        },
+        "setBatchEditing": {
+            "more": {
+                "name": "Enable/Disable Batch Editing",
+                "url": "./cell-editing-batch"
+            }
+        },
+        "isBatchEditing": {
+            "more": {
+                "name": "Is Batch Editing Enabled",
+                "url": "./cell-editing-batch"
+            }
+        },
+        "setEditingCells": {
+            "more": {
+                "name": "Editing API",
+                "url": "./cell-editing-start-stop/#editing-api"
+            }
+        }
+    },
     "editing": {
         "meta": {
             "displayName": "Editing",
