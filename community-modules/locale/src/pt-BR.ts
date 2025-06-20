@@ -82,7 +82,7 @@ export const AG_GRID_LOCALE_BR = {
     filterSummaryLessThanOrEqual: '<=',
     filterSummaryInRange: 'entre',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
-    filterSummaryTextQuote: ' \'"${variable}"\'',
+    filterSummaryTextQuote: ' "${variable}"',
     filterSummaryListInactive: 'é (Todos)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'é (${variable})',

@@ -82,7 +82,7 @@ export const AG_GRID_LOCALE_CN = {
     filterSummaryLessThanOrEqual: '<=',
     filterSummaryInRange: '介于',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
-    filterSummaryTextQuote: ' \'"${variable}"\'',
+    filterSummaryTextQuote: ' "${variable}"',
     filterSummaryListInactive: '是（全部）',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: '是(${variable})',

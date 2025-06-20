@@ -82,7 +82,7 @@ export const AG_GRID_LOCALE_NL = {
     filterSummaryLessThanOrEqual: '<=',
     filterSummaryInRange: 'tussen',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
-    filterSummaryTextQuote: '"\'${variable}"\'',
+    filterSummaryTextQuote: '"${variable}"',
     filterSummaryListInactive: 'is (Alles)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'is (${variable})',

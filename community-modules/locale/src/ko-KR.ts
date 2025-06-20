@@ -65,7 +65,7 @@ export const AG_GRID_LOCALE_KR = {
     groupFilterSelect: '필드를 선택하세요:',
 
     // New Filter Tool Panel
-    filterSummaryInactive: 'is (All)',
+    filterSummaryInactive: '입니다 (모두)',
     filterSummaryContains: '포함됨',
     filterSummaryNotContains: '포함되지 않음',
     filterSummaryTextEquals: '같음',
@@ -83,10 +83,10 @@ export const AG_GRID_LOCALE_KR = {
     filterSummaryInRange: '사이',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
     filterSummaryTextQuote: '"${variable}"',
-    filterSummaryListInactive: 'is (All)',
+    filterSummaryListInactive: '입니다 (모두)',
     filterSummaryListSeparator: ', ',
-    filterSummaryListShort: 'is (${variable})',
-    filterSummaryListLong: 'is (${variable}) and ${variable} more',
+    filterSummaryListShort: '입니다 (${variable})',
+    filterSummaryListLong: '입니다 (${variable}) 및 ${variable}개 더',
     addFilterCard: '필터 추가',
     agTextColumnFilterDisplayName: '간단 필터',
     agNumberColumnFilterDisplayName: '간단 필터',

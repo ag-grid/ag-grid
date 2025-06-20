@@ -82,7 +82,7 @@ export const AG_GRID_LOCALE_VN = {
     filterSummaryLessThanOrEqual: "'<=",
     filterSummaryInRange: 'giữa',
     filterSummaryInRangeValues: "'(${variable}, ${variable})",
-    filterSummaryTextQuote: '\'"${variable}"',
+    filterSummaryTextQuote: '"${variable}"',
     filterSummaryListInactive: 'là (Tất cả)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'là (${variable})',

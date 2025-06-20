@@ -82,7 +82,7 @@ export const AG_GRID_LOCALE_HR = {
     filterSummaryLessThanOrEqual: '<=',
     filterSummaryInRange: 'između',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
-    filterSummaryTextQuote: '\'"${variable}"',
+    filterSummaryTextQuote: '"${variable}"',
     filterSummaryListInactive: 'je (sve)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'je (${variable})',
