@@ -4,9 +4,16 @@ title: "Theming Test"
 
 This is an internal page that contains examples that can be used to validate themes with theming API and legacy themes.
 
+{% if isFramework("angular", "react", "vue") %}
 {% warning %}
-Launch examples in Plunker in vanilla JS.
+Examples only work in vanilla JS.
 {% /warning %}
+{% /if %}
+
+{% if isFramework("javascript") %}
+{% note %}
+Launch examples in Plunker.
+{% /note %}
 
 ## Theming API
 
@@ -15,3 +22,4 @@ Launch examples in Plunker in vanilla JS.
 ## Legacy Themes
 
 {% gridExampleRunner title="Legacy Themes" name="legacy-themes" /%}
+{% /if %}
