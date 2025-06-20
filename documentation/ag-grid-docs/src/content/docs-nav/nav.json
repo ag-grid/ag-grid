@@ -1258,7 +1258,7 @@
                         },
                         {
                             "type": "item",
-                            "title": "Row Dragging",
+                            "title": "Tree Row Dragging",
                             "path": "tree-data-row-dragging",
                             "isEnterprise": true
                         }

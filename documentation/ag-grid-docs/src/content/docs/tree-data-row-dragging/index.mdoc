@@ -43,9 +43,9 @@ This next examples shows how to use the `getDataPath` callback to define the hie
 
 {% note %}
 This example uses filler nodes (where some intermediate path segments do not exist as explicit nodes in the data).
-Empty filler nodes cannot exist in ag-Grid; if all their children are moved out, the filler node will be deleted and disappear from the grid.
-It is instead recommended to provide a full grid without filler nodes.
-See the [Providing Data Paths](./tree-data-paths) for details about filler nodes
+Empty filler nodes cannot exist in the grid; if all their children are moved out, the filler node will be deleted and disappear.
+It is instead recommended to provide a full grid without filler nodes to avoid this.
+See the [Providing Data Paths](./tree-data-paths) for details about filler nodes ans `getDataPath`.
 {% /note %}
 
 {% gridExampleRunner title="Managed Row Drag with Tree Data (getDataPath)" name="tree-managed-row-drag-data-path" exampleHeight=500 /%}
