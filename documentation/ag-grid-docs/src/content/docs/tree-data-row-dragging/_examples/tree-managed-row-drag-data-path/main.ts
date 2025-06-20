@@ -23,7 +23,6 @@ const gridOptions: GridOptions<Task> = {
 
     autoGroupColumnDef: {
         headerName: 'Task',
-        field: 'title',
         rowDrag: true,
         flex: 2,
         minWidth: 200,
@@ -31,7 +30,7 @@ const gridOptions: GridOptions<Task> = {
     rowData: getData(),
     getRowId: (params) => params.data.id,
     treeData: true,
-    treeDataParentIdField: 'parentId',
+    getDataPath: (data) => data.path,
     groupDefaultExpanded: -1,
     rowDragManaged: true,
     rowDragInsertDelay: 500,

@@ -683,6 +683,18 @@
                 ],
                 "include": []
             }
+        },
+        "setRowDropPositionIndicator": {
+            "more": {
+                "name": "Row Drag and Drop Usage",
+                "url": "./row-dragging"
+            }
+        },
+        "getRowDropPositionIndicator": {
+            "more": {
+                "name": "Row Drag and Drop Usage",
+                "url": "./row-dragging"
+            }
         }
     },
     "rendering": {

@@ -828,7 +828,7 @@ export interface _DragGridApi<TData> {
     getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams | undefined;
 
     /**
-     * Gets the currently highlighted drop target row, previously set by `setRowDropHighlight`.
+     * Gets the currently highlighted drop target row, set by `setRowDropPositionIndicator` or managed drag ad drop.
      * @agModule `RowDragModule`
      */
     getRowDropPositionIndicator(): RowDropPositionIndicator<TData>;
