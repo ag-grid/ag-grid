@@ -18,7 +18,7 @@ import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
 import { _setAriaInvalid } from '../../utils/aria';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
-import { _getCellCtrl } from './controllers';
+import { _getCellCtrl, _getRowCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
 
@@ -445,6 +445,7 @@ export function _populateModelValidationErrors(
 
 export const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationModel => {
     const rowValidationModel = new EditRowValidationModel();
+
     const getFullRowEditValidationErrors = beans.gos.get('getFullRowEditValidationErrors');
 
     // populate row-level errors
@@ -473,7 +474,16 @@ export const _generateRowValidationErrors = (beans: BeanCollection): EditRowVali
                 { errorMessages }
             );
         }
+
+        const rowCtrl = _getRowCtrl(beans, rowNode);
+        if (beans.gos.get('cellEditingInvalidCommitType') === 'block' && rowCtrl) {
+            beans.eventSvc.dispatchEvent({
+                ...rowCtrl.createRowEvent('rowEditingValidated'),
+                errorMessages,
+            });
+        }
     });
+
     return rowValidationModel;
 };
 

@@ -92,6 +92,24 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         });
 
         const handler = _refreshEditCells(beans);
+        const stopInvalidEdits = () => {
+            const hasCellValidation = this.model.getCellValidationModel().getCellValidationMap().size > 0;
+            const hasRowValidation = this.model.getRowValidationModel().getRowValidationMap().size > 0;
+
+            if (hasCellValidation || hasRowValidation) {
+                this.stopEditing(undefined, CANCEL_PARAMS);
+            } else {
+                if (this.isEditing()) {
+                    if (this.isBatchEditing()) {
+                        _destroyEditors(beans, this.model.getEditPositions());
+                    } else {
+                        this.stopEditing(undefined, CANCEL_PARAMS);
+                    }
+                }
+            }
+
+            return false;
+        };
 
         this.addManagedEventListeners({
             columnPinned: handler,
@@ -100,15 +118,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             rowGroupOpened: handler,
             pinnedRowsChanged: handler,
             displayedRowsChanged: handler,
-            rowDataUpdated: () => {
-                if (this.isEditing()) {
-                    if (this.isBatchEditing()) {
-                        _destroyEditors(beans, this.model.getEditPositions());
-                    } else {
-                        this.stopEditing(undefined, CANCEL_PARAMS);
-                    }
-                }
-            },
+            rowDataUpdated: stopInvalidEdits,
+            sortChanged: stopInvalidEdits,
+            filterChanged: stopInvalidEdits,
         });
     }
 

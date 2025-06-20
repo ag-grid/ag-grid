@@ -15,6 +15,7 @@ export type TooltipLocation =
     | 'columnToolPanelColumnGroup'
     | 'filterToolPanelColumnGroup'
     | 'fullWidthRow'
+    | 'fullRowEdit'
     | 'header'
     | 'headerGroup'
     | 'menu'
