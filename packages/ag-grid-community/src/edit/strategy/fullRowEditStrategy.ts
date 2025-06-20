@@ -5,7 +5,7 @@ import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getRowCtrl } from '../utils/controllers';
-import { UNEDITED, _setupEditor } from '../utils/editors';
+import { _setupEditor } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
@@ -109,7 +109,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     protected override processValidationResults(
         results: EditValidationResult<Required<EditPosition> & EditValue>
     ): EditValidationAction {
-        const anyFailed = results.fail.length > 0 || this.handleCustomFullRowValidation(results.all);
+        const anyFailed = results.fail.length > 0;
 
         // if any of the cells failed, keep those editors
         if (anyFailed && this.editSvc.cellEditingInvalidCommitBlocks()) {
@@ -124,36 +124,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             destroy: results.all,
             keep: [],
         };
-    }
-
-    private handleCustomFullRowValidation(editors: (Required<EditPosition> & EditValue)[]): boolean {
-        const { gos, beans, rowNode, eventSvc } = this;
-        const getFullRowEditValidationErrors = gos.get('getFullRowEditValidationErrors');
-
-        const fullRowEditErrors = getFullRowEditValidationErrors?.({
-            editorsState: editors.map(({ column, rowNode: { rowIndex, rowPinned }, newValue, oldValue, state }) => ({
-                colId: column.getColId(),
-                column,
-                rowIndex: rowIndex!,
-                rowPinned,
-                newValue: newValue === UNEDITED ? undefined : newValue,
-                oldValue,
-                state,
-            })),
-        });
-
-        const rowCtrl = _getRowCtrl(beans, { rowNode });
-
-        // if `cellEditingInvalidCommitType` is not `block` there is no need
-        // to fire the event, as the row will not display tooltips or be styled
-        if (gos.get('cellEditingInvalidCommitType') === 'block' && rowCtrl) {
-            eventSvc.dispatchEvent({
-                ...rowCtrl.createRowEvent('rowEditingValidated'),
-                errorMessages: fullRowEditErrors,
-            });
-        }
-
-        return !!fullRowEditErrors?.length;
     }
 
     public override stop(cancel?: boolean): boolean {

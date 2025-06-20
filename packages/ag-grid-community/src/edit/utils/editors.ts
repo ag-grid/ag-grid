@@ -16,6 +16,7 @@ import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
+import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _setAriaInvalid } from '../../utils/aria';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
 import { _getCellCtrl } from './controllers';
@@ -394,12 +395,14 @@ export function _populateModelValidationErrors(beans: BeanCollection): EditValid
     const ariaValidationErrorPrefix = translate('ariaValidationErrorPrefix', 'Cell Editor Validation');
 
     const getFullRowEditValidationErrors = beans.gos.get('getFullRowEditValidationErrors');
+    let rowCtrl: RowCtrl;
 
     for (const mappedEditor of mappedEditors) {
         const { ctrl, editor } = mappedEditor;
         const { rowNode, column } = ctrl;
         const errorMessages = editor.getValidationErrors?.() ?? [];
         const el = editor.getValidationElement?.();
+        rowCtrl ||= ctrl?.rowCtrl;
 
         ctrl.refreshEditorTooltip();
 
@@ -459,6 +462,13 @@ export function _populateModelValidationErrors(beans: BeanCollection): EditValid
                 },
                 { errorMessages }
             );
+        }
+
+        if (beans.gos.get('cellEditingInvalidCommitType') === 'block' && rowCtrl) {
+            beans.eventSvc.dispatchEvent({
+                ...rowCtrl.createRowEvent('rowEditingValidated'),
+                errorMessages,
+            });
         }
     });
 
