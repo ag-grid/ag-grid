@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_GR = {
     // Group Column Filter
     groupFilterSelect: 'Επιλέξτε πεδίο:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'είναι (Όλα)',
+    filterSummaryContains: 'περιέχει',
+    filterSummaryNotContains: 'δεν περιέχει',
+    filterSummaryTextEquals: 'ισούται με',
+    filterSummaryTextNotEqual: 'δεν ισούται με',
+    filterSummaryStartsWith: 'αρχίζει με',
+    filterSummaryEndsWith: 'τελειώνει με',
+    filterSummaryBlank: 'είναι κενό',
+    filterSummaryNotBlank: 'δεν είναι κενό',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'μεταξύ',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'είναι (Όλα)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'είναι (${variable})',
+    filterSummaryListLong: 'είναι (${variable}) και ${variable} περισσότερα',
+    addFilterCard: 'Προσθήκη Φίλτρου',
+    agTextColumnFilterDisplayName: 'Απλό Φίλτρο',
+    agNumberColumnFilterDisplayName: 'Απλό Φίλτρο',
+    agDateColumnFilterDisplayName: 'Απλό Φίλτρο',
+    agSetColumnFilterDisplayName: 'Φίλτρο Επιλογής',
+    agMultiColumnFilterDisplayName: 'Σύνθετο Φίλτρο',
+    addFilterPlaceholder: 'Αναζήτηση στηλών...',
+
     // Advanced Filter
     advancedFilterContains: 'περιέχει',
     advancedFilterNotContains: 'δεν περιέχει',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_GR = {
     advancedFilterBuilderValidationSelectColumn: 'Πρέπει να επιλέξετε μια στήλη.',
     advancedFilterBuilderValidationSelectOption: 'Πρέπει να επιλέξετε μια επιλογή.',
     advancedFilterBuilderValidationEnterValue: 'Πρέπει να εισάγετε μια τιμή.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Η ημερομηνία πρέπει να είναι μετά από ${variable}',
+    maxDateValidation: 'Η ημερομηνία πρέπει να είναι πριν από ${variable}',
+    maxLengthValidation: 'Πρέπει να είναι ${variable} χαρακτήρες ή λιγότερο.',
+    minValueValidation: 'Πρέπει να είναι μεγαλύτερο ή ίσο με ${variable}',
+    maxValueValidation: 'Πρέπει να είναι μικρότερο ή ίσο με ${variable}',
+    invalidSelectionValidation: 'Μη έγκυρη επιλογή.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Στήλες',
@@ -540,6 +580,7 @@ export const AG_GRID_LOCALE_GR = {
     ariaChartSelected: 'Επιλεγμένο',
     ariaSkeletonCellLoadingFailed: 'Αποτυχία φόρτωσης γραμμής',
     ariaSkeletonCellLoading: 'Τα δεδομένα γραμμής φορτώνονται',
+    ariaDeferSkeletonCellLoading: 'Το κύτταρο φορτώνεται',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Ομάδες Σειρών',
@@ -556,8 +597,11 @@ export const AG_GRID_LOCALE_GR = {
     ariaLabelDialog: 'Διαλογή',
     ariaLabelColumnMenu: 'Μενού Στήλης',
     ariaLabelColumnFilter: 'Φίλτρο Στήλης',
-    ariaLabelCellEditor: 'Επεξεργαστής Κελιού',
     ariaLabelSelectField: 'Επιλογή Πεδίου',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'Επεξεργαστής Κελιού',
+    ariaValidationErrorPrefix: 'Επιβεβαίωση Επεξεργαστή Κελιού',
     ariaLabelLoadingContextMenu: 'Φόρτωση Μενού Περιβάλλοντος',
 
     // aria labels for rich select
@@ -578,6 +622,11 @@ export const AG_GRID_LOCALE_GR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Λίστα Στηλών',
     ariaFilterPanelList: 'Λίστα Φίλτρων',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Προσθήκη πεδίου φίλτρου',
+    ariaLabelFilterCardDelete: 'Διαγραφή φίλτρου',
+    ariaLabelFilterCardHasEdits: 'Έχει επεξεργασίες',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

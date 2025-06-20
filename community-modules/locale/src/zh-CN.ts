@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_CN = {
     // Group Column Filter
     groupFilterSelect: '选择字段:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: '是（全部）',
+    filterSummaryContains: '包含',
+    filterSummaryNotContains: '不包含',
+    filterSummaryTextEquals: '等于',
+    filterSummaryTextNotEqual: '不等于',
+    filterSummaryStartsWith: '开始于',
+    filterSummaryEndsWith: '结束于',
+    filterSummaryBlank: '为空',
+    filterSummaryNotBlank: '不为空',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: '介于',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: ' "${variable}"',
+    filterSummaryListInactive: '是（全部）',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: '是(${variable})',
+    filterSummaryListLong: '是(${variable})和${variable}更多',
+    addFilterCard: '添加过滤器',
+    agTextColumnFilterDisplayName: '简单过滤器',
+    agNumberColumnFilterDisplayName: '简单过滤器',
+    agDateColumnFilterDisplayName: '简单过滤器',
+    agSetColumnFilterDisplayName: '选择过滤器',
+    agMultiColumnFilterDisplayName: '组合过滤器',
+    addFilterPlaceholder: '搜索列...',
+
     // Advanced Filter
     advancedFilterContains: '包含',
     advancedFilterNotContains: '不包含',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_CN = {
     advancedFilterBuilderValidationSelectColumn: '必须选择一个列。',
     advancedFilterBuilderValidationSelectOption: '必须选择一个选项。',
     advancedFilterBuilderValidationEnterValue: '必须输入一个值。',
+
+    // Editor Validation Errors
+    minDateValidation: '日期必须在 ${variable} 之后',
+    maxDateValidation: '日期必须在 ${variable} 之前',
+    maxLengthValidation: '必须少于或等于 ${variable} 个字符',
+    minValueValidation: '必须大于或等于 ${variable}',
+    maxValueValidation: '必须小于或等于 ${variable}',
+    invalidSelectionValidation: '无效的选择',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: '列',
@@ -539,6 +579,7 @@ export const AG_GRID_LOCALE_CN = {
     ariaChartSelected: '已选择',
     ariaSkeletonCellLoadingFailed: '行加载失败',
     ariaSkeletonCellLoading: '行数据加载中',
+    ariaDeferSkeletonCellLoading: '单元格正在加载',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: '行分组',
@@ -555,8 +596,11 @@ export const AG_GRID_LOCALE_CN = {
     ariaLabelDialog: '对话框',
     ariaLabelColumnMenu: '列菜单',
     ariaLabelColumnFilter: '列过滤器',
-    ariaLabelCellEditor: '单元格编辑器',
     ariaLabelSelectField: '选择字段',
+
+    // Cell Editor
+    ariaLabelCellEditor: '单元格编辑器',
+    ariaValidationErrorPrefix: '单元格编辑器验证',
     ariaLabelLoadingContextMenu: '正在加载上下文菜单',
 
     // aria labels for rich select
@@ -577,6 +621,11 @@ export const AG_GRID_LOCALE_CN = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: '列列表',
     ariaFilterPanelList: '过滤列表',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: '添加过滤字段',
+    ariaLabelFilterCardDelete: '删除过滤器',
+    ariaLabelFilterCardHasEdits: '有编辑',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

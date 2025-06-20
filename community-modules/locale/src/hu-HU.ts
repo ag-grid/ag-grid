@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_HU = {
     // Group Column Filter
     groupFilterSelect: 'Válassza ki a mezőt:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'mindent tartalmaz',
+    filterSummaryContains: 'tartalmazza',
+    filterSummaryNotContains: 'nem tartalmazza',
+    filterSummaryTextEquals: 'egyenlő',
+    filterSummaryTextNotEqual: 'nem egyenlő',
+    filterSummaryStartsWith: 'kezdődik',
+    filterSummaryEndsWith: 'végződik',
+    filterSummaryBlank: 'üres',
+    filterSummaryNotBlank: 'nem üres',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'között',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'mindent tartalmaz',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: '(${variable})',
+    filterSummaryListLong: '(${variable}) és ${variable} további',
+    addFilterCard: 'Szűrő hozzáadása',
+    agTextColumnFilterDisplayName: 'Egyszerű szűrő',
+    agNumberColumnFilterDisplayName: 'Egyszerű szűrő',
+    agDateColumnFilterDisplayName: 'Egyszerű szűrő',
+    agSetColumnFilterDisplayName: 'Kiválasztási szűrő',
+    agMultiColumnFilterDisplayName: 'Kombinált szűrő',
+    addFilterPlaceholder: 'Oszlopok keresése...',
+
     // Advanced Filter
     advancedFilterContains: 'tartalmazza',
     advancedFilterNotContains: 'nem tartalmazza',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_HU = {
     advancedFilterBuilderValidationSelectColumn: 'Oszlopot kell választani.',
     advancedFilterBuilderValidationSelectOption: 'Opciót kell választani.',
     advancedFilterBuilderValidationEnterValue: 'Értéket kell megadni.',
+
+    // Editor Validation Errors
+    minDateValidation: 'A dátumnak későbbinek kell lennie, mint ${variable}',
+    maxDateValidation: 'A dátumnak korábbinak kell lennie, mint ${variable}',
+    maxLengthValidation: 'Legfeljebb ${variable} karakter hosszú lehet.',
+    minValueValidation: 'Az értéknek nagyobbnak vagy egyenlőnek kell lennie ${variable}-val/vel',
+    maxValueValidation: 'Az értéknek kisebbnek vagy egyenlőnek kell lennie ${variable}-val/vel',
+    invalidSelectionValidation: 'Érvénytelen kiválasztás.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Oszlopok',
@@ -540,6 +580,7 @@ export const AG_GRID_LOCALE_HU = {
     ariaChartSelected: 'Kiválasztva',
     ariaSkeletonCellLoadingFailed: 'A sor betöltése sikertelen volt',
     ariaSkeletonCellLoading: 'A sor adatai betöltődnek',
+    ariaDeferSkeletonCellLoading: 'A cella betöltődik',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Sor csoportok',
@@ -556,8 +597,11 @@ export const AG_GRID_LOCALE_HU = {
     ariaLabelDialog: 'Párbeszédpanel',
     ariaLabelColumnMenu: 'Oszlop menü',
     ariaLabelColumnFilter: 'Oszlop szűrő',
-    ariaLabelCellEditor: 'Cella szerkesztő',
     ariaLabelSelectField: 'Mező kiválasztása',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'Cella szerkesztő',
+    ariaValidationErrorPrefix: 'Cella szerkesztő érvényesítés',
     ariaLabelLoadingContextMenu: 'Kontextusmenü betöltése',
 
     // aria labels for rich select
@@ -578,6 +622,11 @@ export const AG_GRID_LOCALE_HU = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Oszloplista',
     ariaFilterPanelList: 'Szűrőlista',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Szűrőmező hozzáadása',
+    ariaLabelFilterCardDelete: 'Szűrő törlése',
+    ariaLabelFilterCardHasEdits: 'Módosításokat tartalmaz',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

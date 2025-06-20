@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_SK = {
     // Group Column Filter
     groupFilterSelect: 'Vyberte pole:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'je (Všetko)',
+    filterSummaryContains: 'obsahuje',
+    filterSummaryNotContains: 'neobsahuje',
+    filterSummaryTextEquals: 'rovná sa',
+    filterSummaryTextNotEqual: 'nerovná sa',
+    filterSummaryStartsWith: 'začína s',
+    filterSummaryEndsWith: 'končí s',
+    filterSummaryBlank: 'je prázdne',
+    filterSummaryNotBlank: 'nie je prázdne',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'medzi',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'je (Všetko)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'je (${variable})',
+    filterSummaryListLong: 'je (${variable}) a ${variable} viac',
+    addFilterCard: 'Pridať filter',
+    agTextColumnFilterDisplayName: 'Jednoduchý filter',
+    agNumberColumnFilterDisplayName: 'Jednoduchý filter',
+    agDateColumnFilterDisplayName: 'Jednoduchý filter',
+    agSetColumnFilterDisplayName: 'Filter výberu',
+    agMultiColumnFilterDisplayName: 'Kombinovaný filter',
+    addFilterPlaceholder: 'Vyhľadať stĺpce...',
+
     // Advanced Filter
     advancedFilterContains: 'obsahuje',
     advancedFilterNotContains: 'neobsahuje',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_SK = {
     advancedFilterBuilderValidationSelectColumn: 'Musí byť vybraný stĺpec.',
     advancedFilterBuilderValidationSelectOption: 'Musí byť vybraná možnosť.',
     advancedFilterBuilderValidationEnterValue: 'Musí byť zadaná hodnota.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Dátum musí byť po ${variable}',
+    maxDateValidation: 'Dátum musí byť pred ${variable}',
+    maxLengthValidation: 'Musí mať ${variable} znakov alebo menej.',
+    minValueValidation: 'Musí byť väčšie alebo rovné ${variable}',
+    maxValueValidation: 'Musí byť menšie alebo rovné ${variable}',
+    invalidSelectionValidation: 'Neplatný výber.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Stĺpce',
@@ -539,6 +579,7 @@ export const AG_GRID_LOCALE_SK = {
     ariaChartSelected: 'Vybrané',
     ariaSkeletonCellLoadingFailed: 'Nahrávanie riadku zlyhalo',
     ariaSkeletonCellLoading: 'Údaje riadku sa nahrávajú',
+    ariaDeferSkeletonCellLoading: 'Načítava sa bunka',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Skupiny riadkov',
@@ -555,8 +596,11 @@ export const AG_GRID_LOCALE_SK = {
     ariaLabelDialog: 'Dialóg',
     ariaLabelColumnMenu: 'Ponuka stĺpcov',
     ariaLabelColumnFilter: 'Filter stĺpcov',
-    ariaLabelCellEditor: 'Editor bunky',
     ariaLabelSelectField: 'Vyberte pole',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'Editor bunky',
+    ariaValidationErrorPrefix: 'Validácia editora bunky',
     ariaLabelLoadingContextMenu: 'Načítava sa kontextová ponuka',
 
     // aria labels for rich select
@@ -577,6 +621,11 @@ export const AG_GRID_LOCALE_SK = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Zoznam stĺpcov',
     ariaFilterPanelList: 'Zoznam filtrov',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Pridať pole filtra',
+    ariaLabelFilterCardDelete: 'Odstrániť filter',
+    ariaLabelFilterCardHasEdits: 'Má úpravy',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

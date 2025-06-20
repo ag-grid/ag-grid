@@ -355,8 +355,9 @@ export function _destroyEditor(beans: BeanCollection, position: Required<EditPos
         return;
     }
 
-    const errorMessages = comp.getCellEditor()?.getValidationErrors?.();
+    const errorMessages = comp?.getCellEditor()?.getValidationErrors?.();
     const cellValidationModel = beans.editModelSvc?.getCellValidationModel();
+
     if (errorMessages?.length) {
         cellValidationModel?.setCellValidation(position, { errorMessages });
     } else {
@@ -476,7 +477,7 @@ export const _generateRowValidationErrors = (beans: BeanCollection): EditRowVali
         }
 
         const rowCtrl = _getRowCtrl(beans, rowNode);
-        if (beans.gos.get('cellEditingInvalidCommitType') === 'block' && rowCtrl) {
+        if (rowCtrl) {
             beans.eventSvc.dispatchEvent({
                 ...rowCtrl.createRowEvent('rowEditingValidated'),
                 errorMessages,

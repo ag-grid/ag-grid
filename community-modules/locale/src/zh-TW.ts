@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_TW = {
     // Group Column Filter
     groupFilterSelect: '選擇字段：',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: '是 (全部)',
+    filterSummaryContains: '包含',
+    filterSummaryNotContains: '不包含',
+    filterSummaryTextEquals: '等於',
+    filterSummaryTextNotEqual: '不等於',
+    filterSummaryStartsWith: '開始於',
+    filterSummaryEndsWith: '結束於',
+    filterSummaryBlank: '為空',
+    filterSummaryNotBlank: '不為空',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: '介於',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: '是 (全部)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: '是 (${variable})',
+    filterSummaryListLong: '是 (${variable}) 和其他 ${variable} 項',
+    addFilterCard: '添加篩選條件',
+    agTextColumnFilterDisplayName: '簡單篩選',
+    agNumberColumnFilterDisplayName: '簡單篩選',
+    agDateColumnFilterDisplayName: '簡單篩選',
+    agSetColumnFilterDisplayName: '選擇篩選',
+    agMultiColumnFilterDisplayName: '組合篩選',
+    addFilterPlaceholder: '搜尋列...',
+
     // Advanced Filter
     advancedFilterContains: '包含',
     advancedFilterNotContains: '不包含',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_TW = {
     advancedFilterBuilderValidationSelectColumn: '必須選擇一個欄位。',
     advancedFilterBuilderValidationSelectOption: '必須選擇一個選項。',
     advancedFilterBuilderValidationEnterValue: '必須輸入一個值。',
+
+    // Editor Validation Errors
+    minDateValidation: '日期必須在 ${variable} 之後',
+    maxDateValidation: '日期必須在 ${variable} 之前',
+    maxLengthValidation: '必須少於或等於 ${variable} 個字元。',
+    minValueValidation: '必須大於或等於 ${variable}',
+    maxValueValidation: '必須小於或等於 ${variable}',
+    invalidSelectionValidation: '無效的選擇。',
+    tooltipValidationErrorSeparator: '。',
 
     // Side Bar
     columns: '欄位',
@@ -539,6 +579,7 @@ export const AG_GRID_LOCALE_TW = {
     ariaChartSelected: '已選擇',
     ariaSkeletonCellLoadingFailed: '行加載失敗',
     ariaSkeletonCellLoading: '行數據加載中',
+    ariaDeferSkeletonCellLoading: '儲存格正在載入',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: '行群組',
@@ -555,8 +596,11 @@ export const AG_GRID_LOCALE_TW = {
     ariaLabelDialog: '對話框',
     ariaLabelColumnMenu: '欄位選單',
     ariaLabelColumnFilter: '欄位篩選器',
-    ariaLabelCellEditor: '儲存格編輯器',
     ariaLabelSelectField: '選擇欄位',
+
+    // Cell Editor
+    ariaLabelCellEditor: '單元格編輯器',
+    ariaValidationErrorPrefix: '單元格編輯器驗證',
     ariaLabelLoadingContextMenu: '正在載入內容選單',
 
     // aria labels for rich select
@@ -577,6 +621,11 @@ export const AG_GRID_LOCALE_TW = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: '欄位列表',
     ariaFilterPanelList: '篩選列表',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: '新增篩選欄位',
+    ariaLabelFilterCardDelete: '刪除篩選器',
+    ariaLabelFilterCardHasEdits: '有編輯',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

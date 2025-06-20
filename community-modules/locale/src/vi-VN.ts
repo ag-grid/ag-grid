@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_VN = {
     // Group Column Filter
     groupFilterSelect: 'Chọn trường:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'là (Tất cả)',
+    filterSummaryContains: 'chứa',
+    filterSummaryNotContains: 'không chứa',
+    filterSummaryTextEquals: 'bằng',
+    filterSummaryTextNotEqual: 'không bằng',
+    filterSummaryStartsWith: 'bắt đầu với',
+    filterSummaryEndsWith: 'kết thúc với',
+    filterSummaryBlank: 'trống',
+    filterSummaryNotBlank: 'không trống',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'giữa',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'là (Tất cả)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'là (${variable})',
+    filterSummaryListLong: 'là (${variable}) và ${variable} nữa',
+    addFilterCard: 'Thêm Bộ Lọc',
+    agTextColumnFilterDisplayName: 'Bộ Lọc Đơn Giản',
+    agNumberColumnFilterDisplayName: 'Bộ Lọc Đơn Giản',
+    agDateColumnFilterDisplayName: 'Bộ Lọc Đơn Giản',
+    agSetColumnFilterDisplayName: 'Bộ Lọc Lựa Chọn',
+    agMultiColumnFilterDisplayName: 'Bộ Lọc Kết Hợp',
+    addFilterPlaceholder: 'Tìm kiếm cột...',
+
     // Advanced Filter
     advancedFilterContains: 'chứa',
     advancedFilterNotContains: 'không chứa',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_VN = {
     advancedFilterBuilderValidationSelectColumn: 'Phải chọn một cột.',
     advancedFilterBuilderValidationSelectOption: 'Phải chọn một tùy chọn.',
     advancedFilterBuilderValidationEnterValue: 'Phải nhập một giá trị.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Ngày phải sau ${variable}',
+    maxDateValidation: 'Ngày phải trước ${variable}',
+    maxLengthValidation: 'Phải có ${variable} ký tự hoặc ít hơn.',
+    minValueValidation: 'Phải lớn hơn hoặc bằng ${variable}',
+    maxValueValidation: 'Phải nhỏ hơn hoặc bằng ${variable}',
+    invalidSelectionValidation: 'Lựa chọn không hợp lệ.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Cột',
@@ -539,6 +579,7 @@ export const AG_GRID_LOCALE_VN = {
     ariaChartSelected: 'Đã chọn',
     ariaSkeletonCellLoadingFailed: 'Hàng không tải được',
     ariaSkeletonCellLoading: 'Dữ liệu hàng đang tải',
+    ariaDeferSkeletonCellLoading: 'Ô đang tải',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Nhóm Hàng',
@@ -555,8 +596,11 @@ export const AG_GRID_LOCALE_VN = {
     ariaLabelDialog: 'Hộp thoại',
     ariaLabelColumnMenu: 'Menu Cột',
     ariaLabelColumnFilter: 'Bộ Lọc Cột',
-    ariaLabelCellEditor: 'Chỉnh Sửa Ô',
     ariaLabelSelectField: 'Chọn Trường',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'Trình chỉnh sửa ô',
+    ariaValidationErrorPrefix: 'Xác nhận lỗi trình chỉnh sửa ô',
     ariaLabelLoadingContextMenu: 'Đang tải Menu Ngữ cảnh',
 
     // aria labels for rich select
@@ -577,6 +621,11 @@ export const AG_GRID_LOCALE_VN = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Danh sách Cột',
     ariaFilterPanelList: 'Danh sách Bộ lọc',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Thêm Trường Bộ Lọc',
+    ariaLabelFilterCardDelete: 'Xóa Bộ Lọc',
+    ariaLabelFilterCardHasEdits: 'Có Chỉnh Sửa',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
