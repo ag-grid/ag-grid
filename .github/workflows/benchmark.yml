@@ -218,7 +218,7 @@ jobs:
 
       - name: Slack Notification
         continue-on-error: true
-        if: ${{ steps.upload-snippet.outputs.artifact-url }}
+        if: ${{ steps.upload-snippet.outputs.artifact-url && (github.event_name == 'schedule' || inputs.notify) }}
         env:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
           SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
