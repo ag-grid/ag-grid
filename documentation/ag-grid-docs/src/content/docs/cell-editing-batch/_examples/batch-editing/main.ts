@@ -46,7 +46,6 @@ const gridOptions: GridOptions = {
         { field: 'firstName' },
         { field: 'lastName' },
         { field: 'gender' },
-        { field: 'exists' },
         { field: 'age' },
         { field: 'mood' },
         { field: 'country' },
