@@ -73,7 +73,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     ): void {
         const { rowNode } = position;
         if (this.rowNode !== rowNode) {
-            super.cleanupEditors();
+            super.cleanupEditors(position);
         }
 
         if (!this.model.hasEdits({ rowNode }) && !silent) {
@@ -166,7 +166,26 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         const prevPos = prevCell.cellPosition;
 
         // find the next cell to start editing
-        const nextCell = this.beans.navigation?.findNextCellToFocusOn(prevPos, backwards, true) as CellCtrl | false;
+        let nextCell: CellCtrl | false | undefined;
+
+        // fineNextCell in fullRow mode causes CellComps to initialise editors, this is
+        // undesirable so we suspend the model while we find the next cell.
+        this.model.suspend(true);
+        try {
+            nextCell = this.beans.navigation?.findNextCellToFocusOn(prevPos, {
+                backwards,
+                startEditing: true,
+                // Default behaviour for fullRow is skip to the next cell,
+                // editable or not. FullRow editing might have some editable
+                // and some not editable cells in the row.
+                // More complex logic needed to skip to the
+                // next FullRow editable cell,
+                skipToNextEditableCell: false,
+            }) as CellCtrl | false;
+        } finally {
+            this.model.suspend(false);
+        }
+
         if (nextCell === false) {
             return null;
         }
@@ -194,6 +213,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         if (!rowsMatch) {
+            super.cleanupEditors(nextCell, true);
             this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
         }
 

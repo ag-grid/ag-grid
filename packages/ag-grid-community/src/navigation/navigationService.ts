@@ -34,6 +34,12 @@ interface NavigateParams {
     isAsync?: boolean;
 }
 
+export type FindNextCellToFocusOnParams = {
+    backwards: boolean;
+    startEditing: boolean;
+    skipToNextEditableCell?: boolean;
+};
+
 export class NavigationService extends BeanStub implements NamedBean {
     beanName = 'navigation' as const;
 
@@ -497,7 +503,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             cellPos = previousCell.getFocusedCellPosition();
         }
         // find the next cell to start editing
-        const nextCell = this.findNextCellToFocusOn(cellPos, backwards, false);
+        const nextCell = this.findNextCellToFocusOn(cellPos, { backwards, startEditing: false });
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
@@ -519,8 +525,7 @@ export class NavigationService extends BeanStub implements NamedBean {
      */
     public findNextCellToFocusOn(
         previousPosition: CellPosition,
-        backwards: boolean,
-        startEditing: boolean
+        { backwards, startEditing, skipToNextEditableCell }: FindNextCellToFocusOnParams
     ): CellCtrl | CellPosition | null | false {
         let nextPosition: CellPosition | null | undefined = previousPosition;
         const beans = this.beans;
@@ -586,7 +591,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             // (except for the last one) which causes grid to stall for a while.
             // note - for full row edit, we do focus non-editable cells, as the row stays in edit mode.
             const fullRowEdit = gos.get('editType') === 'fullRow';
-            if (startEditing && !fullRowEdit) {
+            if (startEditing && (!fullRowEdit || skipToNextEditableCell)) {
                 const cellIsEditable = this.isCellEditable(nextPosition);
                 if (!cellIsEditable) {
                     continue;

@@ -27,6 +27,7 @@ export type GetEditsParams = {
 };
 
 export interface IEditModelService {
+    suspend(suspend: boolean): void;
     removeEdits({ rowNode, column }: EditPosition): void;
 
     getEdit(position: EditPosition): EditValue | undefined;

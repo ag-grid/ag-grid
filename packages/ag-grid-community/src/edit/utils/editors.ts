@@ -93,7 +93,10 @@ export function _setupEditors(
 }
 
 export function _valuesDiffer({ newValue, oldValue }: Pick<EditValue, 'newValue' | 'oldValue'>): boolean {
-    return newValue !== UNEDITED && `${newValue ?? ''}` !== `${oldValue ?? ''}`;
+    if (newValue === UNEDITED) {
+        newValue = oldValue;
+    }
+    return `${newValue ?? ''}` !== `${oldValue ?? ''}`;
 }
 
 export function _setupEditor(
@@ -220,14 +223,18 @@ function _createEditorParams(
     });
 }
 
-export function _purgeUnchangedEdits(beans: BeanCollection): void {
+export function _purgeUnchangedEdits(beans: BeanCollection, includeEditing?: boolean): void {
     const { editModelSvc, editSvc } = beans;
     const removedRows: IRowNode[] = [];
     const removedCells: Required<EditPosition>[] = [];
     editModelSvc?.getEditMap().forEach((editRow, rowNode) => {
         const removedRowCells: Required<EditPosition>[] = [];
         editRow.forEach((edit, column) => {
-            if (edit.newValue !== UNEDITED && !_valuesDiffer(edit) && edit.state !== 'editing') {
+            if (!includeEditing && (edit.state === 'editing' || edit.newValue === UNEDITED)) {
+                return;
+            }
+
+            if (!_valuesDiffer(edit) && (edit.state !== 'editing' || includeEditing)) {
                 // remove edits where the pending is equal to the old value
                 editModelSvc?.removeEdits({ rowNode, column });
                 removedRowCells.push({ rowNode, column });

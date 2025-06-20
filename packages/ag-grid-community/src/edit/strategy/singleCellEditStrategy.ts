@@ -129,7 +129,11 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         previousCell.stopEditing();
 
         // find the next cell to start editing
-        const nextCell = this.beans.navigation?.findNextCellToFocusOn(previousPos, backwards, true) as CellCtrl | false;
+        const nextCell = this.beans.navigation?.findNextCellToFocusOn(previousPos, {
+            backwards,
+            startEditing: true,
+            skipToNextEditableCell: true,
+        }) as CellCtrl | false;
         if (nextCell === false) {
             return null;
         }

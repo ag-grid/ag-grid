@@ -27,6 +27,13 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     private cellValidations: IEditCellValidationModel = new EditCellValidationModel();
     private rowValidations: IEditRowValidationModel = new EditRowValidationModel();
 
+    // during some operations, we want to always return false from `hasEdits`
+    private suspendEdits = false;
+
+    public suspend(suspend: boolean): void {
+        this.suspendEdits = suspend;
+    }
+
     public removeEdits({ rowNode, column }: EditPosition): void {
         if (!this.hasEdits({ rowNode }) || !rowNode) {
             return;
@@ -46,6 +53,10 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public getEditRow({ rowNode }: EditRowPosition, params: GetEditsParams = {}): EditRow | undefined {
+        if (this.suspendEdits) {
+            return undefined;
+        }
+
         const edits = rowNode && this.edits.get(rowNode);
 
         if (edits) {
@@ -92,10 +103,17 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public getEdit(position: EditPosition): EditValue | undefined {
+        if (this.suspendEdits) {
+            return undefined;
+        }
         return position.column && this.getEditRow(position)?.get(position.column);
     }
 
     public getEditMap(copy = true): EditMap {
+        if (this.suspendEdits) {
+            return new Map();
+        }
+
         if (!copy) {
             return this.edits;
         }
@@ -164,10 +182,18 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public getState(position: EditPosition): EditState | undefined {
+        if (this.suspendEdits) {
+            return undefined;
+        }
+
         return this.getEdit(position)?.state;
     }
 
     public getEditPositions(): Required<EditPosition>[] {
+        if (this.suspendEdits) {
+            return [];
+        }
+
         const positions: Required<EditPosition>[] = [];
         this.edits.forEach((editRow, rowNode) => {
             for (const column of editRow.keys()) {
@@ -183,11 +209,19 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public hasRowEdits({ rowNode }: Required<EditRowPosition>, params?: GetEditsParams): boolean {
+        if (this.suspendEdits) {
+            return false;
+        }
+
         const rowEdits = this.getEditRow({ rowNode }, params);
         return !!rowEdits;
     }
 
     public hasEdits(position: EditPosition = {}, params: GetEditsParams = {}): boolean {
+        if (this.suspendEdits) {
+            return false;
+        }
+
         const { rowNode, column } = position;
         const { withOpenEditor } = params;
         if (rowNode) {

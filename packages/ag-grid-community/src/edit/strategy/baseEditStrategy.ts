@@ -150,12 +150,31 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     protected abstract processValidationResults(results: EditValidationResult): EditValidationAction;
 
-    public cleanupEditors() {
+    public cleanupEditors({ rowNode }: EditRowPosition = {}, includeEditing?: boolean): void {
         _syncFromEditors(this.beans);
-        // clean up any dangling editors
-        _destroyEditors(this.beans, this.model.getEditPositions());
 
-        _purgeUnchangedEdits(this.beans);
+        const positions = this.model.getEditPositions();
+
+        const discard: Required<EditPosition>[] = [];
+
+        if (rowNode) {
+            positions.forEach((pos) => {
+                // if the rowNode is provided, we only keep positions that match it
+                if (!(!rowNode || pos.rowNode === rowNode)) {
+                    discard.push(pos);
+                }
+            });
+        } else {
+            positions.forEach((pos) => {
+                // if no rowNode is provided, we keep all positions
+                discard.push(pos);
+            });
+        }
+
+        // clean up any dangling editors
+        _destroyEditors(this.beans, discard);
+
+        _purgeUnchangedEdits(this.beans, includeEditing);
     }
 
     public stopAllEditing(): void {
