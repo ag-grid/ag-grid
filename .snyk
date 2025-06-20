@@ -1,0 +1,10 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+    SNYK-JS-KOA-8720152:
+        - '@nx/react@20.3.1 > @nx/module-federation@20.3.1 > @module-federation/enhanced@0.7.6 > @module-federation/dts-plugin@0.7.6 > koa@2.15.3':
+              reason: Used for typescript types and ReDOS could only apply on developer machines
+              expires: 2025-07-20T15:49:18.097Z
+              created: 2025-06-20T15:49:18.099Z
+patch: {}
