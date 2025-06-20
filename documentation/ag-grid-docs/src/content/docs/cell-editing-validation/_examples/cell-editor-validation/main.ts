@@ -30,7 +30,7 @@ const stringToDate = (date: string): Date | null => {
     if (day == null || month == null || year == null) {
         return null;
     }
-    return new Date(`${year}-${month}-${day}`);
+    return new Date(Number(year), Number(month) - 1, Number(day));
 };
 
 const dateToIso = (date: string | null): string => {
