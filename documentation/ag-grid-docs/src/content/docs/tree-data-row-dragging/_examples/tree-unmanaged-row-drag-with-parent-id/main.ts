@@ -10,7 +10,8 @@ import {
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
-import { type FileDropIndicator, type IFile, getFileDropIndicator, moveFiles } from './fileUtils';
+import type { FileDropIndicator, IFile } from './fileUtils';
+import { getFileDropIndicator, moveFiles } from './fileUtils';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,

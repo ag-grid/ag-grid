@@ -15,7 +15,8 @@ import { TreeDataModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
-import { type FileDropIndicator, type IFile, getFileDropIndicator, moveFiles } from './fileUtils';
+import type { FileDropIndicator, IFile } from './fileUtils';
+import { getFileDropIndicator, moveFiles } from './fileUtils';
 import './style.css';
 
 ModuleRegistry.registerModules([
