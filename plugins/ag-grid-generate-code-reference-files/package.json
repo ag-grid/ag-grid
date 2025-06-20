@@ -5,7 +5,7 @@
   "dependencies": {
     "ag-shared": "0.0.1",
     "glob": "8.0.3",
-    "typescript": "~5.4.5",
+    "typescript": "~5.2.2",
     "@nx/devkit": "17.2.6",
     "@swc/helpers": "0.5.3"
   },

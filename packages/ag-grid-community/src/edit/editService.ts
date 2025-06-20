@@ -527,8 +527,12 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return this.gos.get('cellEditingInvalidCommitType') === 'block';
     }
 
-    public checkNavWithValidation(cellCtrl: CellCtrl, event?: Event | CellFocusedEvent): EditNavOnValidationResult {
-        if (this.hasValidationErrors(cellCtrl)) {
+    public checkNavWithValidation(
+        cellCtrl: CellCtrl,
+        event?: Event | CellFocusedEvent,
+        includeRows?: boolean
+    ): EditNavOnValidationResult {
+        if (this.hasValidationErrors(cellCtrl, includeRows)) {
             if (this.cellEditingInvalidCommitBlocks()) {
                 (event as Event)?.preventDefault?.();
                 !cellCtrl?.hasBrowserFocus() && cellCtrl?.focusCell();
@@ -564,8 +568,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         cellCtrl?.comp?.getCellEditor()?.focusIn?.();
     }
 
-    public hasValidationErrors(position: Required<EditPosition>): boolean {
-        _populateModelValidationErrors(this.beans);
+    public hasValidationErrors(position: Required<EditPosition>, includeRows?: boolean): boolean {
+        _populateModelValidationErrors(this.beans, includeRows);
         const cellCtrl = _getCellCtrl(this.beans, position);
         if (cellCtrl) {
             cellCtrl.refreshCell({ suppressFlash: true, force: true });

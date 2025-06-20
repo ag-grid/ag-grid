@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_BG = {
     // Group Column Filter
     groupFilterSelect: 'Изберете поле:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'е (Всички)',
+    filterSummaryContains: 'съдържа',
+    filterSummaryNotContains: 'не съдържа',
+    filterSummaryTextEquals: 'равно на',
+    filterSummaryTextNotEqual: 'не е равно на',
+    filterSummaryStartsWith: 'започва с',
+    filterSummaryEndsWith: 'завършва с',
+    filterSummaryBlank: 'е празно',
+    filterSummaryNotBlank: 'не е празно',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'между',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'е (Всички)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'е (${variable})',
+    filterSummaryListLong: 'е (${variable}) и още ${variable}',
+    addFilterCard: 'Добави филтър',
+    agTextColumnFilterDisplayName: 'Прост филтър',
+    agNumberColumnFilterDisplayName: 'Прост филтър',
+    agDateColumnFilterDisplayName: 'Прост филтър',
+    agSetColumnFilterDisplayName: 'Филтър за избор',
+    agMultiColumnFilterDisplayName: 'Комбиниран филтър',
+    addFilterPlaceholder: 'Търсене по колони...',
+
     // Advanced Filter
     advancedFilterContains: 'съдържа',
     advancedFilterNotContains: 'не съдържа',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_BG = {
     advancedFilterBuilderValidationSelectColumn: 'Трябва да изберете колона.',
     advancedFilterBuilderValidationSelectOption: 'Трябва да изберете опция.',
     advancedFilterBuilderValidationEnterValue: 'Трябва да въведете стойност.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Датата трябва да е след ${variable}',
+    maxDateValidation: 'Датата трябва да е преди ${variable}',
+    maxLengthValidation: 'Трябва да бъде ${variable} символа или по-малко.',
+    minValueValidation: 'Трябва да бъде по-голямо или равно на ${variable}',
+    maxValueValidation: 'Трябва да бъде по-малко или равно на ${variable}',
+    invalidSelectionValidation: 'Невалиден избор.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Колони',
@@ -540,6 +580,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaChartSelected: 'Избрано',
     ariaSkeletonCellLoadingFailed: 'Редът не можа да се зареди',
     ariaSkeletonCellLoading: 'Данните на реда се зареждат',
+    ariaDeferSkeletonCellLoading: 'Зарежда се клетка',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Редови групи',
@@ -556,8 +597,11 @@ export const AG_GRID_LOCALE_BG = {
     ariaLabelDialog: 'Диалог',
     ariaLabelColumnMenu: 'Меню на колона',
     ariaLabelColumnFilter: 'Филтър на колона',
-    ariaLabelCellEditor: 'Редактор на клетка',
     ariaLabelSelectField: 'Избор на поле',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'Редактор на клетки',
+    ariaValidationErrorPrefix: 'Валидиране на редактор на клетки',
     ariaLabelLoadingContextMenu: 'Зареждане на контекстно меню',
 
     // aria labels for rich select
@@ -579,6 +623,11 @@ export const AG_GRID_LOCALE_BG = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Списък с колони',
     ariaFilterPanelList: 'Списък с филтри',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Добавяне на поле за филтър',
+    ariaLabelFilterCardDelete: 'Изтриване на филтър',
+    ariaLabelFilterCardHasEdits: 'Има редакции',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

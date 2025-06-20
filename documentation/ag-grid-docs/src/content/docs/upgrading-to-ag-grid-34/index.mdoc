@@ -4,7 +4,41 @@ description: "See what's new in AG Grid, view a full list of changes and migrate
 migrationVersion: "34.0.0"
 ---
 
-TODO
+New Filters Tool Panel, Cell Editor Validation, Batch Editing, Date Picker Time Support, Tree Data Row Dragging.
+
+## What's New
+
+AG Grid {% migrationVersion() %} adds important new features – New Filters Tool Panel, Cell Editor Validation, Batch Editing, Date Picker Time Support, Tree Data Row Dragging, as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-34-0/).
+
+These improvements involve no breaking changes as listed below.
+
+<!-- 
+Documentation to the highest patch release of the major/minor
+NOTE: This will not show if the current library version is the same as the migration version
+-->
+{% documentationArchiveSection version=migrationVersionPatch() /%}
+
+## Breaking Changes
+
+There are no breaking changes in AG Grid version {% migrationVersion() %}.
+
+## Behaviour Changes
+
+There are no behaviour changes in AG Grid version {% migrationVersion() %}.
+
+## Removal of Deprecated APIs
+
+There are no deprecated API removals in AG Grid version {% migrationVersion() %}.
+
+## Deprecations
+
+### Filters
+
+- `suppressAdvancedFilterEval` is deprecated without replacement. No longer using eval at all in advanced filters so this is now default behavior. This improves security by not requiring `script-src 'unsafe-eval'` for advanced filters.
+
+- `ISetFilter` interface is deprecated. When retrieving via `api.getColumnFilterInstance(column)`, use `SetFilterUi`. To access the methods that were previously available on `ISetFilter` (but not on `SetFilterUi`), instead retrieve the filter handler via `api.getColumnFilterHandler(column)` and use the `SetFilterHandler` interface.
+
+- `getModel()` and `setModel()` on all grid-provided filter instances are deprecated. Use `api.getColumnFilterModel(column)` and `api.setColumnFilterModel(column)` instead.
 
 {% expandingSection headerText="Migrating to Filter Handlers" %}
 Filter Handlers simplify custom filter components by splitting the filter logic out from the UI component. They also enable new features such as the [New Filters Tool Panel](./tool-panel-filters-new/).
@@ -65,3 +99,4 @@ To enable custom filter components to work with [Filter Buttons](./filter-applyi
 {% /if %}
 {% /expandingSection %}
 
+{% changelogSection version=$migrationVersion /%}

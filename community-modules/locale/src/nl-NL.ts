@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_NL = {
     // Group Column Filter
     groupFilterSelect: 'Selecteer veld:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'is (Alles)',
+    filterSummaryContains: 'bevat',
+    filterSummaryNotContains: 'bevat niet',
+    filterSummaryTextEquals: 'is gelijk aan',
+    filterSummaryTextNotEqual: 'is niet gelijk aan',
+    filterSummaryStartsWith: 'begint met',
+    filterSummaryEndsWith: 'eindigt met',
+    filterSummaryBlank: 'is leeg',
+    filterSummaryNotBlank: 'is niet leeg',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'tussen',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'is (Alles)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'is (${variable})',
+    filterSummaryListLong: 'is (${variable}) en ${variable} meer',
+    addFilterCard: 'Filter toevoegen',
+    agTextColumnFilterDisplayName: 'Eenvoudig Filter',
+    agNumberColumnFilterDisplayName: 'Eenvoudig Filter',
+    agDateColumnFilterDisplayName: 'Eenvoudig Filter',
+    agSetColumnFilterDisplayName: 'Selectie Filter',
+    agMultiColumnFilterDisplayName: 'Combinatie Filter',
+    addFilterPlaceholder: 'Zoek kolommen...',
+
     // Advanced Filter
     advancedFilterContains: 'bevat',
     advancedFilterNotContains: 'bevat-niet',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_NL = {
     advancedFilterBuilderValidationSelectColumn: 'Moet een kolom selecteren.',
     advancedFilterBuilderValidationSelectOption: 'Moet een optie selecteren.',
     advancedFilterBuilderValidationEnterValue: 'Moet een waarde invoeren.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Datum moet na ${variable} zijn',
+    maxDateValidation: 'Datum moet voor ${variable} zijn',
+    maxLengthValidation: 'Moet ${variable} tekens of minder zijn.',
+    minValueValidation: 'Moet groter dan of gelijk aan ${variable} zijn',
+    maxValueValidation: 'Moet kleiner dan of gelijk aan ${variable} zijn',
+    invalidSelectionValidation: 'Ongeldige selectie.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Kolommen',
@@ -540,6 +580,7 @@ export const AG_GRID_LOCALE_NL = {
     ariaChartSelected: 'Geselecteerd',
     ariaSkeletonCellLoadingFailed: 'Rij laden is mislukt',
     ariaSkeletonCellLoading: 'Rijgegevens worden geladen',
+    ariaDeferSkeletonCellLoading: 'Cel wordt geladen',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Rijgroepen',
@@ -556,8 +597,11 @@ export const AG_GRID_LOCALE_NL = {
     ariaLabelDialog: 'Dialoog',
     ariaLabelColumnMenu: 'Kolommenu',
     ariaLabelColumnFilter: 'Kolomfilter',
-    ariaLabelCellEditor: 'Celbewerker',
     ariaLabelSelectField: 'Selectievak',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'Celleditor',
+    ariaValidationErrorPrefix: 'Celleditorvalidatie',
     ariaLabelLoadingContextMenu: 'Contextmenu laden',
 
     // aria labels for rich select
@@ -578,6 +622,11 @@ export const AG_GRID_LOCALE_NL = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Kolom Lijst',
     ariaFilterPanelList: 'Filterlijst',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Filterveld toevoegen',
+    ariaLabelFilterCardDelete: 'Filter verwijderen',
+    ariaLabelFilterCardHasEdits: 'Heeft wijzigingen',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

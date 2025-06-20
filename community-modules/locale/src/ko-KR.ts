@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_KR = {
     // Group Column Filter
     groupFilterSelect: '필드를 선택하세요:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: '입니다 (모두)',
+    filterSummaryContains: '포함됨',
+    filterSummaryNotContains: '포함되지 않음',
+    filterSummaryTextEquals: '같음',
+    filterSummaryTextNotEqual: '같지 않음',
+    filterSummaryStartsWith: '시작됨',
+    filterSummaryEndsWith: '끝남',
+    filterSummaryBlank: '비어 있음',
+    filterSummaryNotBlank: '비어 있지 않음',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: '사이',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: '입니다 (모두)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: '입니다 (${variable})',
+    filterSummaryListLong: '입니다 (${variable}) 및 ${variable}개 더',
+    addFilterCard: '필터 추가',
+    agTextColumnFilterDisplayName: '간단 필터',
+    agNumberColumnFilterDisplayName: '간단 필터',
+    agDateColumnFilterDisplayName: '간단 필터',
+    agSetColumnFilterDisplayName: '선택 필터',
+    agMultiColumnFilterDisplayName: '복합 필터',
+    addFilterPlaceholder: '열 검색...',
+
     // Advanced Filter
     advancedFilterContains: '포함',
     advancedFilterNotContains: '포함하지 않음',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_KR = {
     advancedFilterBuilderValidationSelectColumn: '열을 선택해야 합니다.',
     advancedFilterBuilderValidationSelectOption: '옵션을 선택해야 합니다.',
     advancedFilterBuilderValidationEnterValue: '값을 입력해야 합니다.',
+
+    // Editor Validation Errors
+    minDateValidation: '날짜는 ${variable} 이후여야 합니다.',
+    maxDateValidation: '날짜는 ${variable} 이전이어야 합니다.',
+    maxLengthValidation: '${variable}자 이내여야 합니다.',
+    minValueValidation: '${variable}보다 크거나 같아야 합니다.',
+    maxValueValidation: '${variable}보다 작거나 같아야 합니다.',
+    invalidSelectionValidation: '잘못된 선택입니다.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: '열',
@@ -226,9 +266,9 @@ export const AG_GRID_LOCALE_KR = {
     pieChart: '파이',
     pie: '파이',
     donut: '도넛',
-    lineChart: '‘꺾은선형’',
-    stackedLine: '‘누적’',
-    normalizedLine: '‘100% 누적’',
+    lineChart: '꺾은선형',
+    stackedLine: '누적',
+    normalizedLine: '100% 누적',
     xyChart: 'X Y (산점도)',
     scatter: '산점도',
     bubble: '버블',
@@ -539,6 +579,7 @@ export const AG_GRID_LOCALE_KR = {
     ariaChartSelected: '선택됨',
     ariaSkeletonCellLoadingFailed: '행 로드 실패',
     ariaSkeletonCellLoading: '행 데이터 로드 중',
+    ariaDeferSkeletonCellLoading: '셀 로드 중',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: '행 그룹',
@@ -555,8 +596,11 @@ export const AG_GRID_LOCALE_KR = {
     ariaLabelDialog: '대화상자',
     ariaLabelColumnMenu: '컬럼 메뉴',
     ariaLabelColumnFilter: '컬럼 필터',
-    ariaLabelCellEditor: '셀 편집기',
     ariaLabelSelectField: '필드 선택',
+
+    // Cell Editor
+    ariaLabelCellEditor: '셀 편집기',
+    ariaValidationErrorPrefix: '셀 편집기 유효성 검사',
     ariaLabelLoadingContextMenu: '로드 중인 컨텍스트 메뉴',
 
     // aria labels for rich select
@@ -577,6 +621,11 @@ export const AG_GRID_LOCALE_KR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: '열 목록',
     ariaFilterPanelList: '필터 목록',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: '필터 필드 추가',
+    ariaLabelFilterCardDelete: '필터 삭제',
+    ariaLabelFilterCardHasEdits: '편집 사항 있음',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

@@ -374,14 +374,14 @@ export class CellComp extends Component {
         } else {
             createTask = createCellRendererFunc(compDetails);
         }
-        if (compDetails.params?.deferRender) {
+        if (compDetails.params?.deferRender && !this.cellCtrl.rowNode.group) {
             // show loading cell and then pass the task to the animationFrameSvc
             const { loadingComp, onReady } = this.cellCtrl.getDeferLoadingCellRenderer();
 
             if (loadingComp) {
                 // Immediately render the loading component and then schedule the task
                 createCellRendererFunc(loadingComp)();
-                onReady.then(() => createTask(true));
+                onReady.then(() => createTask!(true));
             }
         } else {
             createTask(false);

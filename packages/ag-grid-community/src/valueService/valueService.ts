@@ -171,10 +171,10 @@ export class ValueService extends BeanStub implements NamedBean {
         const colId = column.getColId();
         let data = rowNode.data;
 
-        const { editSvc, rowGroupColsSvc } = this.beans;
+        const { editSvc, rowGroupColsSvc, editModelSvc } = this.beans;
 
-        if (source === 'ui') {
-            // if the row is editing, make sure we sync data fields with any pending values
+        if (source === 'ui' && editSvc && editModelSvc) {
+            // if the row is editing, make sure we sync data fields with any pending values, for display purposes
             if (editSvc?.isEditing({ rowNode }, { checkSiblings: true })) {
                 data = editSvc?.getRowDataValue({ rowNode }, { checkSiblings: true });
             }

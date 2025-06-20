@@ -121,6 +121,10 @@ export interface IEditService extends NamedBean {
     setEditingCells(cells: EditingCellPosition[], params?: SetEditingCellsParams): void;
     hasValidationErrors(position?: EditPosition): boolean;
     cellEditingInvalidCommitBlocks(): boolean;
-    checkNavWithValidation(cellCtrl: CellCtrl, event?: Event | CellFocusedEvent): EditNavOnValidationResult;
+    checkNavWithValidation(
+        cellCtrl: CellCtrl,
+        event?: Event | CellFocusedEvent,
+        includeRows?: boolean
+    ): EditNavOnValidationResult;
     revertSingleCellEdit(cellCtrl: CellCtrl, focus?: boolean): void;
 }

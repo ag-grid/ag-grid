@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_SE = {
     // Group Column Filter
     groupFilterSelect: 'Välj fält:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'är (Alla)',
+    filterSummaryContains: 'innehåller',
+    filterSummaryNotContains: 'innehåller inte',
+    filterSummaryTextEquals: 'är lika med',
+    filterSummaryTextNotEqual: 'är inte lika med',
+    filterSummaryStartsWith: 'börjar med',
+    filterSummaryEndsWith: 'slutar med',
+    filterSummaryBlank: 'är tom',
+    filterSummaryNotBlank: 'är inte tom',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'mellan',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'är (Alla)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'är (${variable})',
+    filterSummaryListLong: 'är (${variable}) och ${variable} mer',
+    addFilterCard: 'Lägg till filter',
+    agTextColumnFilterDisplayName: 'Enkel filter',
+    agNumberColumnFilterDisplayName: 'Enkel filter',
+    agDateColumnFilterDisplayName: 'Enkel filter',
+    agSetColumnFilterDisplayName: 'Valfilter',
+    agMultiColumnFilterDisplayName: 'Kombinationsfilter',
+    addFilterPlaceholder: 'Sök kolumner...',
+
     // Advanced Filter
     advancedFilterContains: 'innehåller',
     advancedFilterNotContains: 'innehåller-inte',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_SE = {
     advancedFilterBuilderValidationSelectColumn: 'Måste välja en kolumn.',
     advancedFilterBuilderValidationSelectOption: 'Måste välja ett alternativ.',
     advancedFilterBuilderValidationEnterValue: 'Måste ange ett värde.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Datum måste vara efter ${variable}',
+    maxDateValidation: 'Datum måste vara före ${variable}',
+    maxLengthValidation: 'Måste vara ${variable} tecken eller färre.',
+    minValueValidation: 'Måste vara större än eller lika med ${variable}',
+    maxValueValidation: 'Måste vara mindre än eller lika med ${variable}',
+    invalidSelectionValidation: 'Ogiltigt val.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Kolumner',
@@ -539,6 +579,7 @@ export const AG_GRID_LOCALE_SE = {
     ariaChartSelected: 'Vald',
     ariaSkeletonCellLoadingFailed: 'Raden kunde inte laddas',
     ariaSkeletonCellLoading: 'Raddata laddas',
+    ariaDeferSkeletonCellLoading: 'Cellen laddas',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Radgrupper',
@@ -555,8 +596,11 @@ export const AG_GRID_LOCALE_SE = {
     ariaLabelDialog: 'Dialogruta',
     ariaLabelColumnMenu: 'Kolumnmeny',
     ariaLabelColumnFilter: 'Kolumnfilter',
-    ariaLabelCellEditor: 'Celleditor',
     ariaLabelSelectField: 'Välj fält',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'Celleditor',
+    ariaValidationErrorPrefix: 'Celleditorvalidering',
     ariaLabelLoadingContextMenu: 'Laddar kontextmeny',
 
     // aria labels for rich select
@@ -577,6 +621,11 @@ export const AG_GRID_LOCALE_SE = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Kolumnlista',
     ariaFilterPanelList: 'Filterlista',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Lägg till filterfält',
+    ariaLabelFilterCardDelete: 'Radera filter',
+    ariaLabelFilterCardHasEdits: 'Har ändringar',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

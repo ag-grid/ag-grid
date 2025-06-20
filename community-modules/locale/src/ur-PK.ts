@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_PK = {
     // Group Column Filter
     groupFilterSelect: 'فیلڈ منتخب کریں:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'ہے (سب)',
+    filterSummaryContains: 'شامل ہے',
+    filterSummaryNotContains: 'شامل نہیں ہے',
+    filterSummaryTextEquals: 'کے برابر ہے',
+    filterSummaryTextNotEqual: 'کے برابر نہیں ہے',
+    filterSummaryStartsWith: 'شروع ہوتا ہے',
+    filterSummaryEndsWith: 'ختم ہوتا ہے',
+    filterSummaryBlank: 'خالی ہے',
+    filterSummaryNotBlank: 'خالی نہیں ہے',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'کے درمیان',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'ہے (سب)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'ہے (${variable})',
+    filterSummaryListLong: 'ہے (${variable}) اور ${variable} مزید',
+    addFilterCard: 'فلٹر شامل کریں',
+    agTextColumnFilterDisplayName: 'سادہ فلٹر',
+    agNumberColumnFilterDisplayName: 'سادہ فلٹر',
+    agDateColumnFilterDisplayName: 'سادہ فلٹر',
+    agSetColumnFilterDisplayName: 'انتخابی فلٹر',
+    agMultiColumnFilterDisplayName: 'کمبو فلٹر',
+    addFilterPlaceholder: 'کالم تلاش کریں...',
+
     // Advanced Filter
     advancedFilterContains: 'شامل ہے',
     advancedFilterNotContains: 'شامل نہیں ہے',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_PK = {
     advancedFilterBuilderValidationSelectColumn: 'ایک کالم منتخب کرنا ضروری ہے.',
     advancedFilterBuilderValidationSelectOption: 'ایک آپشن منتخب کرنا ضروری ہے.',
     advancedFilterBuilderValidationEnterValue: 'ایک قدر درج کرنا ضروری ہے.',
+
+    // Editor Validation Errors
+    minDateValidation: 'تاریخ ${variable} کے بعد کی ہونی چاہیے',
+    maxDateValidation: 'تاریخ ${variable} سے پہلے کی ہونی چاہیے',
+    maxLengthValidation: '${variable} حروف یا کم ہونا چاہیے۔',
+    minValueValidation: '${variable} کے برابر یا اس سے زیادہ ہونا چاہیے',
+    maxValueValidation: '${variable} کے برابر یا اس سے کم ہونا چاہیے',
+    invalidSelectionValidation: 'غلط انتخاب',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'کالمز',
@@ -539,6 +579,7 @@ export const AG_GRID_LOCALE_PK = {
     ariaChartSelected: 'منتخب شدہ',
     ariaSkeletonCellLoadingFailed: 'صف لوڈ کرنے میں ناکام',
     ariaSkeletonCellLoading: 'صف کا ڈیٹا لوڈ ہو رہا ہے',
+    ariaDeferSkeletonCellLoading: 'سیل لوڈ ہو رہا ہے',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'قطار گروپس',
@@ -555,8 +596,11 @@ export const AG_GRID_LOCALE_PK = {
     ariaLabelDialog: 'ڈائیلاگ',
     ariaLabelColumnMenu: 'کالم مینو',
     ariaLabelColumnFilter: 'کالم فلٹر',
-    ariaLabelCellEditor: 'سیل ایڈیٹر',
     ariaLabelSelectField: 'فیلڈ منتخب کریں',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'سیل ایڈیٹر',
+    ariaValidationErrorPrefix: 'سیل ایڈیٹر کی توثیق',
     ariaLabelLoadingContextMenu: 'کنٹیکسٹ مینو لوڈ ہو رہا ہے',
 
     // aria labels for rich select
@@ -577,6 +621,11 @@ export const AG_GRID_LOCALE_PK = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'کالم کی فہرست',
     ariaFilterPanelList: 'فلٹر کی فہرست',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'فلٹر فیلڈ شامل کریں',
+    ariaLabelFilterCardDelete: 'فلٹر حذف کریں',
+    ariaLabelFilterCardHasEdits: 'ترمیم شدہ',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

@@ -1,5 +1,9 @@
 [
     {
+        "release version": "34.0.0",
+        "markdown": "/releases/34_0_0.md"
+    },
+    {
         "release version": "33.3.0",
         "markdown": "/releases/33_3_0.md"
     },

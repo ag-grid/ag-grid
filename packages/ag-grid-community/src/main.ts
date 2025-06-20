@@ -859,6 +859,7 @@ export {
     CellEditorSelectorResult,
     CellRendererSelectorFunc,
     ILoadingCellRendererSelectorFunc,
+    CellRendererDeferParams,
     CellRendererSelectorResult,
     GetQuickFilterTextParams,
     ColumnFunctionCallbackParams,
