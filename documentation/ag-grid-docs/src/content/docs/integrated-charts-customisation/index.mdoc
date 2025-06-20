@@ -152,6 +152,22 @@ this example demonstrates the use of the `domain` property passed through to the
 
 For more information on the `formatter` property for axes labels, see AG Charts Axis Labels [Label Text Formatting](https://www.ag-grid.com/charts/javascript/axes-labels/#label-text-formatting).
 
+### Global Label Formatter
+
+A single, top‑level `formatter` can be used to control the text for every label‑bearing element, e.g. axes, series labels, legend items, callouts, etc. The formatter will run for each element, unless that element defines its own `formatter`.
+
+The callback receives the same `params` object provided to element‑level formatters, providing access to properties such as `value`, `type`, and `elementId`. See the [AG Charts API Reference](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-common-formatter) for more information.
+
+The example below shows a global formatter that prefixes all number values with a `£` symbol.
+
+{% gridExampleRunner title="Global Label Formatter" name="global-label-formatter"  exampleHeight=850 /%}
+
+The order of formatting is as follows:
+
+1. Element‑specific `label.formatter` (axis, series, legend, callout, etc.)
+2. Global `formatter`
+3. Default AG Charts formatting rules
+
 ## Next Up
 
 Continue to the next section to learn about [Chart Events](./integrated-charts-events/).
