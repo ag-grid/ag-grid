@@ -335,6 +335,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const rowNodes = Array.from(edits.keys());
         const { beans } = this;
 
+        const hasValidationErrors =
+            this.model.getCellValidationModel().getCellValidationMap().size > 0 ||
+            this.model.getRowValidationModel().getRowValidationMap().size > 0;
+
         for (const rowNode of rowNodes) {
             const editRow = edits.get(rowNode)!;
             for (const column of editRow.keys()) {
@@ -345,7 +349,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
                 const valueChanged = _valuesDiffer({ newValue, oldValue });
 
-                if (!cancel && valueChanged) {
+                if (!cancel && valueChanged && !hasValidationErrors) {
                     // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
                     // getting triggered, which results in all cells getting refreshed. we do not want this refresh
                     // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
@@ -571,10 +575,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         let res: boolean | null | undefined;
 
         if (prev instanceof CellCtrl && this.isEditing()) {
-            if (this.checkNavWithValidation(prev, event) === 'block-stop') {
-                return true;
-            }
-
             // if we are editing, we know it's not a Full Width Row (RowComp)
             res = this.strategy?.moveToNextEditingCell(prev, backwards, event, source);
         }

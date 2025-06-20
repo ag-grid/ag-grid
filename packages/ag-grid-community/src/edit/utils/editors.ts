@@ -445,6 +445,8 @@ export function _populateModelValidationErrors(beans: BeanCollection): EditValid
                 rowIndex: rowIndex!,
                 rowPinned,
                 ...editValue,
+                // don't expose this implementation detail
+                newValue: editValue.newValue === UNEDITED ? undefined : editValue.newValue,
             });
         });
 

@@ -5,7 +5,7 @@ import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getRowCtrl } from '../utils/controllers';
-import { _setupEditor } from '../utils/editors';
+import { UNEDITED, _setupEditor } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
@@ -136,7 +136,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 column,
                 rowIndex: rowIndex!,
                 rowPinned,
-                newValue,
+                newValue: newValue === UNEDITED ? undefined : newValue,
                 oldValue,
                 state,
             })),
@@ -208,6 +208,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         const nextEditable = nextCell.isCellEditable();
 
         const rowsMatch = nextPos && prevPos.rowIndex === nextPos.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
+
+        if (!rowsMatch && this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop') {
+            return true;
+        }
 
         if (prevEditable) {
             this.setFocusOutOnEditor(prevCell);

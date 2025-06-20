@@ -80,7 +80,10 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (editModelSvc?.getState(cellCtrl) !== 'editing') {
-            if ((editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0) > 0) {
+            const editing = editSvc?.isEditing();
+            const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
+            const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
+            if (editing && (cellValidations > 0 || rowValidations > 0)) {
                 return;
             }
 
@@ -115,7 +118,10 @@ export class CellMouseListenerFeature extends BeanStub {
             editSvc?.shouldStartEditing(this.cellCtrl, event) &&
             this.beans.editModelSvc?.getState(this.cellCtrl) !== 'editing'
         ) {
-            if (editSvc?.isEditing() && (editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0) > 0) {
+            const editing = editSvc?.isEditing();
+            const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
+            const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
+            if (editing && (cellValidations > 0 || rowValidations > 0)) {
                 return;
             }
 

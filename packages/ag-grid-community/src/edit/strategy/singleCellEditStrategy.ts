@@ -3,7 +3,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import { _getRowNode } from '../../entities/positionUtils';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
-import type { EditPosition, EditRowPosition } from '../../interfaces/iEditService';
+import type { EditInputEvents, EditPosition, EditRowPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getColId } from '../utils/controllers';
@@ -109,9 +109,13 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
     public override moveToNextEditingCell(
         previousCell: CellCtrl,
         backwards: boolean,
-        event?: KeyboardEvent,
+        event?: KeyboardEvent | CellFocusedEvent,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
+        if (this.editSvc.checkNavWithValidation(previousCell, event) === 'block-stop') {
+            return true;
+        }
+
         const previousPos = previousCell.cellPosition;
 
         // before we stop editing, we need to focus the cell element
@@ -135,7 +139,12 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         nextCell.focusCell(false);
 
-        this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
+        this.editSvc.startEditing(nextCell, {
+            startedEdit: true,
+            event: event as EditInputEvents,
+            source,
+            ignoreEventKey: true,
+        });
 
         return true;
     }
