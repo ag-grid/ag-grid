@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import fs from 'fs';
 
 const snippetUrl = process.env.SNIPPET_URL || 'https://example.com/snippet.md';
