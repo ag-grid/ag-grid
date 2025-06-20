@@ -160,11 +160,11 @@ function binDrop(data: any) {
         remove: [data],
     };
 
-    [leftApi, rightApi].forEach((gridApi) => {
-        const rowsInGrid = !!gridApi!.getRowNode(data.id);
+    [leftApi, rightApi].forEach((api) => {
+        const rowsInGrid = !!api!.getRowNode(data.id);
 
         if (rowsInGrid) {
-            gridApi!.applyTransaction(transaction);
+            api!.applyTransaction(transaction);
         }
     });
 }
