@@ -532,7 +532,7 @@ export const AG_GRID_LOCALE_UA = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Рівень ${variable}. Натисніть ENTER для редагування.',
     ariaAdvancedFilterBuilderItemValidation:
-    '${variable}. Рівень ${variable}. ${variable} Натисніть ENTER для редагування.',
+        '${variable}. Рівень ${variable}. ${variable} Натисніть ENTER для редагування.',
     ariaAdvancedFilterBuilderList: 'Список розширеного фільтру',
     ariaAdvancedFilterBuilderFilterItem: 'Умова фільтру',
     ariaAdvancedFilterBuilderGroupItem: 'Група фільтрів',

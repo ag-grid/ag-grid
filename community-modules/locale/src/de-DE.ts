@@ -74,8 +74,8 @@ export const AG_GRID_LOCALE_DE = {
     filterSummaryEndsWith: 'endet mit',
     filterSummaryBlank: 'ist leer',
     filterSummaryNotBlank: 'ist nicht leer',
-    filterSummaryEquals: '\'=',
-    filterSummaryNotEqual: '\'!=',
+    filterSummaryEquals: "'=",
+    filterSummaryNotEqual: "'!=",
     filterSummaryGreaterThan: '>',
     filterSummaryGreaterThanOrEqual: '>=',
     filterSummaryLessThan: '<',
@@ -532,7 +532,7 @@ export const AG_GRID_LOCALE_DE = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Ebene ${variable}. Drücken Sie ENTER, um zu bearbeiten.',
     ariaAdvancedFilterBuilderItemValidation:
-    '${variable}. Ebene ${variable}. ${variable} Drücken Sie ENTER, um zu bearbeiten.',
+        '${variable}. Ebene ${variable}. ${variable} Drücken Sie ENTER, um zu bearbeiten.',
     ariaAdvancedFilterBuilderList: 'Erweiterte Filter-Builder-Liste',
     ariaAdvancedFilterBuilderFilterItem: 'Filterbedingung',
     ariaAdvancedFilterBuilderGroupItem: 'Filtergruppe',

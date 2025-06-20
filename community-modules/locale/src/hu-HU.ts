@@ -532,7 +532,7 @@ export const AG_GRID_LOCALE_HU = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Szint ${variable}. Nyomja meg az ENTER billentyűt a szerkesztéshez.',
     ariaAdvancedFilterBuilderItemValidation:
-    '${variable}. Szint ${variable}. ${variable} Nyomja meg az ENTER billentyűt a szerkesztéshez.',
+        '${variable}. Szint ${variable}. ${variable} Nyomja meg az ENTER billentyűt a szerkesztéshez.',
     ariaAdvancedFilterBuilderList: 'Speciális szűrő készítő lista',
     ariaAdvancedFilterBuilderFilterItem: 'Szűrési feltétel',
     ariaAdvancedFilterBuilderGroupItem: 'Szűrési csoport',

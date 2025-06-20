@@ -532,7 +532,7 @@ export const AG_GRID_LOCALE_DK = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Niveau ${variable}. Tryk på ENTER for at redigere.',
     ariaAdvancedFilterBuilderItemValidation:
-    '${variable}. Niveau ${variable}. ${variable} Tryk på ENTER for at redigere.',
+        '${variable}. Niveau ${variable}. ${variable} Tryk på ENTER for at redigere.',
     ariaAdvancedFilterBuilderList: 'Avanceret Filter Builder Liste',
     ariaAdvancedFilterBuilderFilterItem: 'Filterbetingelse',
     ariaAdvancedFilterBuilderGroupItem: 'Filtergruppe',
