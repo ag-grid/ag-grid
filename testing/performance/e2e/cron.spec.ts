@@ -10,8 +10,10 @@ const localLotsOfCells = `file://${path.join(__dirname, './lots-of-cells.html')}
 const frameworks = ['typescript', 'reactFunctionalTs', 'angular', 'vue3'];
 
 test(`Performance Test - Compare performance of setting data`, {
-    timeout: frameworks.length * 20 * 60_000, // takes about 10 mins per framework, but allow for some overhead
-    minIterations: 200,
+    timeout: frameworks.length * 10 * 60_000,
+    minIterations: 50,
+    maxIterations: 150,
+    warmupIterations: 5,
     testCases: frameworks.map(
         (framework) =>
             ({
@@ -30,7 +32,7 @@ test(`Performance Test - Compare performance of setting data`, {
                     await page.getByText('Set Data').click({ force: true });
                     await waitFor(athleteCheck, page);
                 },
-                metrics: 'long-animation-frame',
+                metrics: 'set-data',
             }) as TestCase
     ),
 });

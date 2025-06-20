@@ -1,6 +1,12 @@
 import type { FilterWrapperParams, GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
 import { ModuleRegistry, NumberFilterModule, TextFilterModule, ValidationModule, createGrid } from 'ag-grid-community';
-import { ColumnMenuModule, ContextMenuModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import {
+    ColumnMenuModule,
+    ContextMenuModule,
+    NewFiltersToolPanelModule,
+    ServerSideRowModelModule,
+    SideBarModule,
+} from 'ag-grid-enterprise';
 
 import { FakeServer } from './fakeServer';
 
@@ -10,6 +16,8 @@ ModuleRegistry.registerModules([
     ServerSideRowModelModule,
     TextFilterModule,
     NumberFilterModule,
+    SideBarModule,
+    NewFiltersToolPanelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 

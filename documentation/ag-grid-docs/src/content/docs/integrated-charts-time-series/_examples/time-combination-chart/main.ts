@@ -72,18 +72,12 @@ const gridOptions: GridOptions = {
             series: {
                 strokeWidth: 2,
                 fillOpacity: 0.8,
-                tooltip: {
-                    renderer: chartTooltipRenderer,
-                },
             },
         },
         line: {
             series: {
                 strokeWidth: 5,
                 strokeOpacity: 0.8,
-                tooltip: {
-                    renderer: chartTooltipRenderer,
-                },
             },
         },
     },
@@ -116,10 +110,6 @@ function numberParser(params: ValueParserParams) {
         return null;
     }
     return parseFloat(value);
-}
-
-function chartTooltipRenderer({ datum, xKey, yKey }: AgCartesianSeriesTooltipRendererParams) {
-    return `${formatDate(datum[xKey])}: ${datum[yKey]}`;
 }
 
 function formatDate(date: Date | number) {

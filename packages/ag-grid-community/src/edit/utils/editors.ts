@@ -18,7 +18,7 @@ import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
 import { _setAriaInvalid } from '../../utils/aria';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
-import { _getCellCtrl } from './controllers';
+import { _getCellCtrl, _getRowCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
 
@@ -380,10 +380,12 @@ export function _destroyEditor(beans: BeanCollection, position: Required<EditPos
 
 export type MappedValidationErrors = EditMap | undefined;
 
-export function _populateModelValidationErrors(beans: BeanCollection): EditValidationMap | undefined {
+export function _populateModelValidationErrors(
+    beans: BeanCollection,
+    includeRows: boolean = true
+): EditValidationMap | undefined {
     const mappedEditors = getCellEditorInstanceMap(beans);
     const cellValidationModel = new EditCellValidationModel();
-    const rowValidationModel = new EditRowValidationModel();
 
     if (!mappedEditors || mappedEditors.length === 0) {
         return new Map();
@@ -392,8 +394,6 @@ export function _populateModelValidationErrors(beans: BeanCollection): EditValid
     const { ariaAnnounce, localeSvc } = beans;
     const translate = _getLocaleTextFunc(localeSvc);
     const ariaValidationErrorPrefix = translate('ariaValidationErrorPrefix', 'Cell Editor Validation');
-
-    const getFullRowEditValidationErrors = beans.gos.get('getFullRowEditValidationErrors');
 
     for (const mappedEditor of mappedEditors) {
         const { ctrl, editor } = mappedEditor;
@@ -434,6 +434,20 @@ export function _populateModelValidationErrors(beans: BeanCollection): EditValid
 
     _syncFromEditors(beans);
 
+    beans.editModelSvc?.setCellValidationModel(cellValidationModel);
+
+    if (includeRows) {
+        const rowValidations = _generateRowValidationErrors(beans);
+        beans.editModelSvc?.setRowValidationModel(rowValidations);
+    }
+    return;
+}
+
+export const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationModel => {
+    const rowValidationModel = new EditRowValidationModel();
+
+    const getFullRowEditValidationErrors = beans.gos.get('getFullRowEditValidationErrors');
+
     // populate row-level errors
     beans.editModelSvc?.getEditMap().forEach((cellValidation, rowNode) => {
         const editorsState: EditingCellPosition[] = [];
@@ -460,13 +474,18 @@ export function _populateModelValidationErrors(beans: BeanCollection): EditValid
                 { errorMessages }
             );
         }
+
+        const rowCtrl = _getRowCtrl(beans, rowNode);
+        if (beans.gos.get('cellEditingInvalidCommitType') === 'block' && rowCtrl) {
+            beans.eventSvc.dispatchEvent({
+                ...rowCtrl.createRowEvent('rowEditingValidated'),
+                errorMessages,
+            });
+        }
     });
 
-    beans.editModelSvc?.setCellValidationModel(cellValidationModel);
-    beans.editModelSvc?.setRowValidationModel(rowValidationModel);
-
-    return;
-}
+    return rowValidationModel;
+};
 
 export function _validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {
     _populateModelValidationErrors(beans);

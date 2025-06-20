@@ -381,7 +381,7 @@ export class CellComp extends Component {
             if (loadingComp) {
                 // Immediately render the loading component and then schedule the task
                 createCellRendererFunc(loadingComp)();
-                onReady.then(() => createTask(true));
+                onReady.then(() => createTask!(true));
             }
         } else {
             createTask(false);

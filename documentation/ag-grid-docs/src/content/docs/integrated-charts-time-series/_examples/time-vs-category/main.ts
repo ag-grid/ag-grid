@@ -77,13 +77,6 @@ const gridOptions: GridOptions = {
                     },
                 },
             },
-            series: {
-                tooltip: {
-                    renderer: ({ datum, xKey, yKey }) => {
-                        return `${formatDate(datum[xKey])}: ${Math.round(datum[yKey])}°C`;
-                    },
-                },
-            },
         },
     },
     chartToolPanelsDef: {

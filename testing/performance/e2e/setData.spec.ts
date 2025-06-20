@@ -9,7 +9,9 @@ const localLotsOfCells = `file://${path.join(__dirname, './lots-of-cells.html')}
 
 test(`Performance Test - Compare performance of setting data`, {
     timeout: 40 * 60_000,
-    minIterations: 100,
+    minIterations: 50,
+    maxIterations: 150,
+    warmupIterations: 5,
     testCases: [
         {
             name: 'Set data (lots): staging vs local',
@@ -27,7 +29,7 @@ test(`Performance Test - Compare performance of setting data`, {
                 await page.getByText('Set Data').click({ force: true });
                 await waitFor(athleteCheck, page);
             },
-            metrics: 'long-animation-frame',
+            metrics: 'set-data',
         },
     ],
 });
