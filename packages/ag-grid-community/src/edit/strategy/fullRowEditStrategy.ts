@@ -191,6 +191,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         event?: KeyboardEvent,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
+        let preventNavigation = this.editSvc.checkNavWithValidation(prevCell, event, false) === 'block-stop';
+
         const prevPos = prevCell.cellPosition;
 
         // find the next cell to start editing
@@ -199,6 +201,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return null;
         }
         if (nextCell == null) {
+            if (preventNavigation) {
+                return true;
+            }
+
             return false;
         }
 
@@ -209,8 +215,11 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         const rowsMatch = nextPos && prevPos.rowIndex === nextPos.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
 
-        if (!rowsMatch && this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop') {
-            return true;
+        if (!rowsMatch) {
+            preventNavigation = this.editSvc.checkNavWithValidation(prevCell, event, true) === 'block-stop';
+            if (preventNavigation) {
+                return true;
+            }
         }
 
         if (prevEditable) {
