@@ -599,8 +599,8 @@ export const AG_GRID_LOCALE_CN = {
     ariaLabelSelectField: '选择字段',
 
     // Cell Editor
-    ariaLabelCellEditor: '“单元格编辑器”',
-    ariaValidationErrorPrefix: '“单元格编辑器验证”',
+    ariaLabelCellEditor: '单元格编辑器',
+    ariaValidationErrorPrefix: '单元格编辑器验证',
     ariaLabelLoadingContextMenu: '正在加载上下文菜单',
 
     // aria labels for rich select
