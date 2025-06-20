@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_UA = {
     // Group Column Filter
     groupFilterSelect: 'Виберіть поле:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'є (всі)',
+    filterSummaryContains: 'містить',
+    filterSummaryNotContains: 'не містить',
+    filterSummaryTextEquals: 'дорівнює',
+    filterSummaryTextNotEqual: 'не дорівнює',
+    filterSummaryStartsWith: 'починається з',
+    filterSummaryEndsWith: 'закінчується на',
+    filterSummaryBlank: 'порожнє',
+    filterSummaryNotBlank: 'не порожнє',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'між',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'є (всі)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'є (${variable})',
+    filterSummaryListLong: 'є (${variable}) та ${variable} ще',
+    addFilterCard: 'Додати фільтр',
+    agTextColumnFilterDisplayName: 'Простий фільтр',
+    agNumberColumnFilterDisplayName: 'Простий фільтр',
+    agDateColumnFilterDisplayName: 'Простий фільтр',
+    agSetColumnFilterDisplayName: 'Фільтр за вибором',
+    agMultiColumnFilterDisplayName: 'Комбінований фільтр',
+    addFilterPlaceholder: 'Пошук у стовпцях...',
+
     // Advanced Filter
     advancedFilterContains: 'містить',
     advancedFilterNotContains: 'не містить',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_UA = {
     advancedFilterBuilderValidationSelectColumn: 'Потрібно обрати колонку.',
     advancedFilterBuilderValidationSelectOption: 'Потрібно обрати варіант.',
     advancedFilterBuilderValidationEnterValue: 'Потрібно ввести значення.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Дата має бути після ${variable}',
+    maxDateValidation: 'Дата має бути до ${variable}',
+    maxLengthValidation: 'Має бути ${variable} символів або менше.',
+    minValueValidation: 'Має бути більше або дорівнювати ${variable}',
+    maxValueValidation: 'Має бути менше або дорівнювати ${variable}',
+    invalidSelectionValidation: 'Недійсний вибір.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Стовпці',
@@ -492,7 +532,7 @@ export const AG_GRID_LOCALE_UA = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Рівень ${variable}. Натисніть ENTER для редагування.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Рівень ${variable}. ${variable} Натисніть ENTER для редагування.',
+    '${variable}. Рівень ${variable}. ${variable} Натисніть ENTER для редагування.',
     ariaAdvancedFilterBuilderList: 'Список розширеного фільтру',
     ariaAdvancedFilterBuilderFilterItem: 'Умова фільтру',
     ariaAdvancedFilterBuilderGroupItem: 'Група фільтрів',
@@ -540,6 +580,7 @@ export const AG_GRID_LOCALE_UA = {
     ariaChartSelected: 'Вибрано',
     ariaSkeletonCellLoadingFailed: 'Помилка завантаження рядка',
     ariaSkeletonCellLoading: 'Дані рядка завантажуються',
+    ariaDeferSkeletonCellLoading: 'Завантаження комірки',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Групи рядків',
@@ -556,8 +597,11 @@ export const AG_GRID_LOCALE_UA = {
     ariaLabelDialog: 'Діалог',
     ariaLabelColumnMenu: 'Меню стовпця',
     ariaLabelColumnFilter: 'Фільтр стовпця',
-    ariaLabelCellEditor: 'Редактор клітинок',
     ariaLabelSelectField: 'Виберіть поле',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'Редактор комірок',
+    ariaValidationErrorPrefix: 'Перевірка редактора комірок',
     ariaLabelLoadingContextMenu: 'Завантаження контекстного меню',
 
     // aria labels for rich select
@@ -578,6 +622,11 @@ export const AG_GRID_LOCALE_UA = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Список колонок',
     ariaFilterPanelList: 'Список фільтрів',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Додати поле фільтра',
+    ariaLabelFilterCardDelete: 'Видалити фільтр',
+    ariaLabelFilterCardHasEdits: 'Є зміни',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ' ',

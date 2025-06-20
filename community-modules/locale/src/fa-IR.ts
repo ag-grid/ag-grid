@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_IR = {
     // Group Column Filter
     groupFilterSelect: 'انتخاب فیلد:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'است (همه)',
+    filterSummaryContains: 'شامل',
+    filterSummaryNotContains: 'شامل نمی‌شود',
+    filterSummaryTextEquals: 'برابر است با',
+    filterSummaryTextNotEqual: 'برابر نیست با',
+    filterSummaryStartsWith: 'شروع می‌شود با',
+    filterSummaryEndsWith: 'پایان می‌یابد با',
+    filterSummaryBlank: 'خالی است',
+    filterSummaryNotBlank: 'خالی نیست',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>‌',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'بین',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '${entry.localeKeys[key]}',
+    filterSummaryListInactive: 'است (همه)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'است (${variable})',
+    filterSummaryListLong: 'است (${variable}) و ${variable} بیشتر',
+    addFilterCard: 'افزودن فیلتر',
+    agTextColumnFilterDisplayName: 'فیلتر ساده',
+    agNumberColumnFilterDisplayName: 'فیلتر ساده',
+    agDateColumnFilterDisplayName: 'فیلتر ساده',
+    agSetColumnFilterDisplayName: 'فیلتر انتخاب',
+    agMultiColumnFilterDisplayName: 'فیلتر ترکیبی',
+    addFilterPlaceholder: 'جستجوی ستون‌ها...',
+
     // Advanced Filter
     advancedFilterContains: 'شامل می‌شود',
     advancedFilterNotContains: 'شامل نمی‌شود',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_IR = {
     advancedFilterBuilderValidationSelectColumn: 'باید یک ستون انتخاب شود.',
     advancedFilterBuilderValidationSelectOption: 'باید یک گزینه انتخاب شود.',
     advancedFilterBuilderValidationEnterValue: 'باید یک مقدار وارد شود.',
+
+    // Editor Validation Errors
+    minDateValidation: '${entry.localeKeys[key]}',
+    maxDateValidation: '${entry.localeKeys[key]}',
+    maxLengthValidation: '${entry.localeKeys[key]}',
+    minValueValidation: '${entry.localeKeys[key]}',
+    maxValueValidation: '${entry.localeKeys[key]}',
+    invalidSelectionValidation: '${entry.localeKeys[key]}',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'ستون‌ها',
@@ -492,7 +532,7 @@ export const AG_GRID_LOCALE_IR = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. سطح ${variable}. کلید ENTER را فشار دهید تا ویرایش شود.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. سطح ${variable}. ${variable} کلید ENTER را فشار دهید تا ویرایش شود.',
+    '${variable}. سطح ${variable}. ${variable} کلید ENTER را فشار دهید تا ویرایش شود.',
     ariaAdvancedFilterBuilderList: 'لیست سازنده فیلتر پیشرفته',
     ariaAdvancedFilterBuilderFilterItem: 'شرط فیلتر',
     ariaAdvancedFilterBuilderGroupItem: 'گروه فیلتر',
@@ -540,6 +580,7 @@ export const AG_GRID_LOCALE_IR = {
     ariaChartSelected: 'انتخاب شده',
     ariaSkeletonCellLoadingFailed: 'بارگیری ردیف ناموفق بود',
     ariaSkeletonCellLoading: 'داده‌های ردیف در حال بارگیری است',
+    ariaDeferSkeletonCellLoading: 'در حال بارگذاری سلول',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'گروه‌های ردیفی',
@@ -556,8 +597,11 @@ export const AG_GRID_LOCALE_IR = {
     ariaLabelDialog: 'گفتگو',
     ariaLabelColumnMenu: 'منوی ستون',
     ariaLabelColumnFilter: 'فیلتر ستون',
-    ariaLabelCellEditor: 'ویرایشگر سلول',
     ariaLabelSelectField: 'انتخاب فیلد',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'ویرایشگر سلول',
+    ariaValidationErrorPrefix: 'اعتبارسنجی ویرایشگر سلول',
     ariaLabelLoadingContextMenu: 'در حال بارگذاری فهرست زمینه',
 
     // aria labels for rich select
@@ -578,6 +622,11 @@ export const AG_GRID_LOCALE_IR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'فهرست ستون‌ها',
     ariaFilterPanelList: 'فهرست فیلترها',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'افزودن فیلد فیلتر',
+    ariaLabelFilterCardDelete: 'حذف فیلتر',
+    ariaLabelFilterCardHasEdits: 'دارای ویرایش‌ها',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '،',

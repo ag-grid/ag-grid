@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_DE = {
     // Group Column Filter
     groupFilterSelect: 'Feld auswählen:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'ist (Alle)',
+    filterSummaryContains: 'enthält',
+    filterSummaryNotContains: 'enthält nicht',
+    filterSummaryTextEquals: 'gleich',
+    filterSummaryTextNotEqual: 'ungleich',
+    filterSummaryStartsWith: 'beginnt mit',
+    filterSummaryEndsWith: 'endet mit',
+    filterSummaryBlank: 'ist leer',
+    filterSummaryNotBlank: 'ist nicht leer',
+    filterSummaryEquals: '\'=',
+    filterSummaryNotEqual: '\'!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'zwischen',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'ist (Alle)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'ist (${variable})',
+    filterSummaryListLong: 'ist (${variable}) und ${variable} mehr',
+    addFilterCard: 'Filter hinzufügen',
+    agTextColumnFilterDisplayName: 'Einfacher Filter',
+    agNumberColumnFilterDisplayName: 'Einfacher Filter',
+    agDateColumnFilterDisplayName: 'Einfacher Filter',
+    agSetColumnFilterDisplayName: 'Auswahlfilter',
+    agMultiColumnFilterDisplayName: 'Kombinationsfilter',
+    addFilterPlaceholder: 'Spalten durchsuchen...',
+
     // Advanced Filter
     advancedFilterContains: 'enthält',
     advancedFilterNotContains: 'enthält-nicht',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_DE = {
     advancedFilterBuilderValidationSelectColumn: 'Eine Spalte muss ausgewählt werden.',
     advancedFilterBuilderValidationSelectOption: 'Eine Option muss ausgewählt werden.',
     advancedFilterBuilderValidationEnterValue: 'Ein Wert muss eingegeben werden.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Datum muss nach ${variable} liegen',
+    maxDateValidation: 'Datum muss vor ${variable} liegen',
+    maxLengthValidation: 'Muss ${variable} Zeichen oder weniger sein.',
+    minValueValidation: 'Muss größer oder gleich ${variable} sein',
+    maxValueValidation: 'Muss kleiner oder gleich ${variable} sein',
+    invalidSelectionValidation: 'Ungültige Auswahl.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Spalten',
@@ -492,7 +532,7 @@ export const AG_GRID_LOCALE_DE = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Ebene ${variable}. Drücken Sie ENTER, um zu bearbeiten.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Ebene ${variable}. ${variable} Drücken Sie ENTER, um zu bearbeiten.',
+    '${variable}. Ebene ${variable}. ${variable} Drücken Sie ENTER, um zu bearbeiten.',
     ariaAdvancedFilterBuilderList: 'Erweiterte Filter-Builder-Liste',
     ariaAdvancedFilterBuilderFilterItem: 'Filterbedingung',
     ariaAdvancedFilterBuilderGroupItem: 'Filtergruppe',
@@ -540,6 +580,7 @@ export const AG_GRID_LOCALE_DE = {
     ariaChartSelected: 'Ausgewählt',
     ariaSkeletonCellLoadingFailed: 'Das Laden der Zeile ist fehlgeschlagen',
     ariaSkeletonCellLoading: 'Zeilendaten werden geladen',
+    ariaDeferSkeletonCellLoading: 'Zelle wird geladen',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Zeilengruppen',
@@ -556,8 +597,11 @@ export const AG_GRID_LOCALE_DE = {
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Spaltenmenü',
     ariaLabelColumnFilter: 'Spaltenfilter',
-    ariaLabelCellEditor: 'Zelleneditor',
     ariaLabelSelectField: 'Feld auswählen',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'Zelleneditor',
+    ariaValidationErrorPrefix: 'Zelleneditor-Validierung',
     ariaLabelLoadingContextMenu: 'Lade Kontextmenü',
 
     // aria labels for rich select
@@ -578,6 +622,11 @@ export const AG_GRID_LOCALE_DE = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Spaltenliste',
     ariaFilterPanelList: 'Filterliste',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Filterfeld hinzufügen',
+    ariaLabelFilterCardDelete: 'Filter löschen',
+    ariaLabelFilterCardHasEdits: 'Hat Änderungen',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

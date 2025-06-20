@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_TR = {
     // Group Column Filter
     groupFilterSelect: 'Alan seçiniz:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'dır (Hepsi)',
+    filterSummaryContains: 'içerir',
+    filterSummaryNotContains: 'içermez',
+    filterSummaryTextEquals: 'eşittir',
+    filterSummaryTextNotEqual: 'eşit değildir',
+    filterSummaryStartsWith: 'ile başlar',
+    filterSummaryEndsWith: 'ile biter',
+    filterSummaryBlank: 'boş',
+    filterSummaryNotBlank: 'boş değil',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'arasında',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'dır (Hepsi)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'dır (${variable})',
+    filterSummaryListLong: 'dır (${variable}) ve ${variable} daha fazla',
+    addFilterCard: 'Filtre Ekle',
+    agTextColumnFilterDisplayName: 'Basit Filtre',
+    agNumberColumnFilterDisplayName: 'Basit Filtre',
+    agDateColumnFilterDisplayName: 'Basit Filtre',
+    agSetColumnFilterDisplayName: 'Seçim Filtresi',
+    agMultiColumnFilterDisplayName: 'Kombin Filtre',
+    addFilterPlaceholder: 'Sütunlarda ara...',
+
     // Advanced Filter
     advancedFilterContains: 'içerir',
     advancedFilterNotContains: 'içermez',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_TR = {
     advancedFilterBuilderValidationSelectColumn: 'Bir sütun seçmelisiniz.',
     advancedFilterBuilderValidationSelectOption: 'Bir seçenek seçmelisiniz.',
     advancedFilterBuilderValidationEnterValue: 'Bir değer girmelisiniz.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Tarih ${variable}\'den sonra olmalıdır',
+    maxDateValidation: 'Tarih ${variable}\'den önce olmalıdır',
+    maxLengthValidation: '${variable} karakter veya daha az olmalıdır.',
+    minValueValidation: '${variable}\'den büyük veya eşit olmalıdır',
+    maxValueValidation: '${variable}\'den küçük veya eşit olmalıdır',
+    invalidSelectionValidation: 'Geçersiz seçim.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Sütunlar',
@@ -492,7 +532,7 @@ export const AG_GRID_LOCALE_TR = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Seviye ${variable}. Düzenlemek için ENTER tuşuna basın',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Seviye ${variable}. ${variable} Düzenlemek için ENTER tuşuna basın.',
+    '${variable}. Seviye ${variable}. ${variable} Düzenlemek için ENTER tuşuna basın.',
     ariaAdvancedFilterBuilderList: 'Gelişmiş Filtre Oluşturucu Listesi',
     ariaAdvancedFilterBuilderFilterItem: 'Filtre Koşulu',
     ariaAdvancedFilterBuilderGroupItem: 'Filtre Grubu',
@@ -540,6 +580,7 @@ export const AG_GRID_LOCALE_TR = {
     ariaChartSelected: 'Seçildi',
     ariaSkeletonCellLoadingFailed: 'Satır yüklenemedi',
     ariaSkeletonCellLoading: 'Satır verisi yükleniyor',
+    ariaDeferSkeletonCellLoading: 'Hücre yükleniyor',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Satır Grupları',
@@ -556,8 +597,11 @@ export const AG_GRID_LOCALE_TR = {
     ariaLabelDialog: 'Diyalog',
     ariaLabelColumnMenu: 'Sütun Menüsü',
     ariaLabelColumnFilter: 'Sütun Filtresi',
-    ariaLabelCellEditor: 'Hücre Düzenleyici',
     ariaLabelSelectField: 'Alan Seç',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'Hücre Düzenleyici',
+    ariaValidationErrorPrefix: 'Hücre Düzenleyici Doğrulama',
     ariaLabelLoadingContextMenu: 'Bağlam Menüsü Yükleniyor',
 
     // aria labels for rich select
@@ -578,6 +622,11 @@ export const AG_GRID_LOCALE_TR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Kolon Listesi',
     ariaFilterPanelList: 'Filtre Listesi',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Filtre Alanı Ekle',
+    ariaLabelFilterCardDelete: 'Filtreyi Sil',
+    ariaLabelFilterCardHasEdits: 'Değişiklikler Var',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

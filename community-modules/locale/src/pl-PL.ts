@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_PL = {
     // Group Column Filter
     groupFilterSelect: 'Wybierz pole:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'jest (wszystkie)',
+    filterSummaryContains: 'zawiera',
+    filterSummaryNotContains: 'nie zawiera',
+    filterSummaryTextEquals: 'równa się',
+    filterSummaryTextNotEqual: 'nie równa się',
+    filterSummaryStartsWith: 'zaczyna się od',
+    filterSummaryEndsWith: 'kończy się na',
+    filterSummaryBlank: 'jest puste',
+    filterSummaryNotBlank: 'nie jest puste',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'pomiędzy',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '\'${variable}\'',
+    filterSummaryListInactive: 'jest (wszystkie)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'jest (${variable})',
+    filterSummaryListLong: 'jest (${variable}) i ${variable} więcej',
+    addFilterCard: 'Dodaj filtr',
+    agTextColumnFilterDisplayName: 'Prosty filtr',
+    agNumberColumnFilterDisplayName: 'Prosty filtr',
+    agDateColumnFilterDisplayName: 'Prosty filtr',
+    agSetColumnFilterDisplayName: 'Filtr wyboru',
+    agMultiColumnFilterDisplayName: 'Filtr łączony',
+    addFilterPlaceholder: 'Szukaj kolumn...',
+
     // Advanced Filter
     advancedFilterContains: 'zawiera',
     advancedFilterNotContains: 'nie zawiera',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_PL = {
     advancedFilterBuilderValidationSelectColumn: 'Musisz wybrać kolumnę.',
     advancedFilterBuilderValidationSelectOption: 'Musisz wybrać opcję.',
     advancedFilterBuilderValidationEnterValue: 'Musisz wpisać wartość.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Data musi być po ${variable}',
+    maxDateValidation: 'Data musi być przed ${variable}',
+    maxLengthValidation: 'Musi mieć ${variable} znaków lub mniej.',
+    minValueValidation: 'Musi być większe lub równe ${variable}',
+    maxValueValidation: 'Musi być mniejsze lub równe ${variable}',
+    invalidSelectionValidation: 'Nieprawidłowy wybór.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Kolumny',
@@ -492,7 +532,7 @@ export const AG_GRID_LOCALE_PL = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Poziom ${variable}. Naciśnij ENTER, aby edytować',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Poziom ${variable}. ${variable} Naciśnij ENTER, aby edytować.',
+    '${variable}. Poziom ${variable}. ${variable} Naciśnij ENTER, aby edytować.',
     ariaAdvancedFilterBuilderList: 'Zaawansowana Lista Kreatora Filtrów',
     ariaAdvancedFilterBuilderFilterItem: 'Warunek Filtra',
     ariaAdvancedFilterBuilderGroupItem: 'Grupa Filtrów',
@@ -540,6 +580,7 @@ export const AG_GRID_LOCALE_PL = {
     ariaChartSelected: 'Wybrane',
     ariaSkeletonCellLoadingFailed: 'Wiersz nie udało się załadować',
     ariaSkeletonCellLoading: 'Dane wiersza ładują się',
+    ariaDeferSkeletonCellLoading: 'Ładowanie komórki',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Grupy wierszy',
@@ -556,8 +597,11 @@ export const AG_GRID_LOCALE_PL = {
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Menu kolumny',
     ariaLabelColumnFilter: 'Filtr kolumny',
-    ariaLabelCellEditor: 'Edytor komórek',
     ariaLabelSelectField: 'Wybierz pole',
+
+    // Cell Editor
+    ariaLabelCellEditor: 'Edytor komórki',
+    ariaValidationErrorPrefix: 'Walidacja edytora komórki',
     ariaLabelLoadingContextMenu: 'Ładowanie menu kontekstowego',
 
     // aria labels for rich select
@@ -578,6 +622,11 @@ export const AG_GRID_LOCALE_PL = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Lista kolumn',
     ariaFilterPanelList: 'Lista filtrów',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Dodaj pole filtru',
+    ariaLabelFilterCardDelete: 'Usuń filtr',
+    ariaLabelFilterCardHasEdits: 'Ma edycje',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

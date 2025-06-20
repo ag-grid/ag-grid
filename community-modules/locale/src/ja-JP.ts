@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_JP = {
     // Group Column Filter
     groupFilterSelect: 'フィールドを選択:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'は (すべて)',
+    filterSummaryContains: '含む',
+    filterSummaryNotContains: '含まない',
+    filterSummaryTextEquals: '等しい',
+    filterSummaryTextNotEqual: '等しくない',
+    filterSummaryStartsWith: 'で始まる',
+    filterSummaryEndsWith: 'で終わる',
+    filterSummaryBlank: '空欄である',
+    filterSummaryNotBlank: '空欄でない',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'の間',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '${entry.localeKeys[key]}',
+    filterSummaryListInactive: 'は (すべて)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: '${entry.localeKeys[key]}',
+    filterSummaryListLong: 'は (${variable}) および ${variable} 以上',
+    addFilterCard: 'フィルターを追加',
+    agTextColumnFilterDisplayName: '${entry.localeKeys[key]}',
+    agNumberColumnFilterDisplayName: 'シンプルフィルター',
+    agDateColumnFilterDisplayName: 'シンプルフィルター',
+    agSetColumnFilterDisplayName: '選択フィルター',
+    agMultiColumnFilterDisplayName: 'コンボフィルター',
+    addFilterPlaceholder: '列を検索...',
+
     // Advanced Filter
     advancedFilterContains: '含む',
     advancedFilterNotContains: '含まない',
@@ -117,6 +148,15 @@ export const AG_GRID_LOCALE_JP = {
     advancedFilterBuilderValidationSelectColumn: '列を選択する必要があります。',
     advancedFilterBuilderValidationSelectOption: 'オプションを選択する必要があります。',
     advancedFilterBuilderValidationEnterValue: '値を入力する必要があります。',
+
+    // Editor Validation Errors
+    minDateValidation: '日付は${variable}以降でなければなりません',
+    maxDateValidation: '日付は${variable}以前でなければなりません',
+    maxLengthValidation: '${variable}文字以内でなければなりません。',
+    minValueValidation: '${variable}以上でなければなりません',
+    maxValueValidation: '${variable}以下でなければなりません',
+    invalidSelectionValidation: '無効な選択です。',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: '列',
@@ -492,7 +532,7 @@ export const AG_GRID_LOCALE_JP = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}。 レベル ${variable}。 編集するにはENTERを押してください。',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}。 レベル ${variable}。 ${variable} 編集するにはENTERを押してください。',
+    '${variable}。 レベル ${variable}。 ${variable} 編集するにはENTERを押してください。',
     ariaAdvancedFilterBuilderList: '高度なフィルタービルダリスト',
     ariaAdvancedFilterBuilderFilterItem: 'フィルター条件',
     ariaAdvancedFilterBuilderGroupItem: 'フィルターグループ',
@@ -540,6 +580,7 @@ export const AG_GRID_LOCALE_JP = {
     ariaChartSelected: '選択済み',
     ariaSkeletonCellLoadingFailed: '行の読み込みに失敗しました',
     ariaSkeletonCellLoading: '行データを読み込み中',
+    ariaDeferSkeletonCellLoading: 'セルを読み込み中',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: '行グループ',
@@ -556,8 +597,11 @@ export const AG_GRID_LOCALE_JP = {
     ariaLabelDialog: 'ダイアログ',
     ariaLabelColumnMenu: '列メニュー',
     ariaLabelColumnFilter: '列フィルター',
-    ariaLabelCellEditor: 'セルエディター',
     ariaLabelSelectField: 'フィールドを選択',
+
+    // Cell Editor
+    ariaLabelCellEditor: '${entry.localeKeys[key]}',
+    ariaValidationErrorPrefix: '${entry.localeKeys[key]}',
     ariaLabelLoadingContextMenu: 'コンテキストメニューを読み込んでいます',
 
     // aria labels for rich select
@@ -578,6 +622,11 @@ export const AG_GRID_LOCALE_JP = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: '列リスト',
     ariaFilterPanelList: 'フィルターリスト',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: '${entry.localeKeys[key]}',
+    ariaLabelFilterCardDelete: '${entry.localeKeys[key]}',
+    ariaLabelFilterCardHasEdits: '${entry.localeKeys[key]}',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '、',
