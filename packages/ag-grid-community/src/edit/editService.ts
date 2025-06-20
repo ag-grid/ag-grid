@@ -290,8 +290,14 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             edits = freshEdits;
 
             res ||= willStop;
-        } else if (event instanceof KeyboardEvent && this.batch && this.strategy?.midBatchInputsAllowed(position)) {
+        } else if (
+            event instanceof KeyboardEvent &&
+            this.batch &&
+            this.strategy?.midBatchInputsAllowed(position) &&
+            this.isEditing(position, { withOpenEditor: true })
+        ) {
             const key = event.key;
+
             const isEnter = key === KeyCode.ENTER;
             const isEscape = key === KeyCode.ESCAPE;
 
