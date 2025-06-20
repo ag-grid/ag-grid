@@ -113,9 +113,9 @@ function addRecordToGrid(side: string, data: any) {
         return;
     }
 
-    let gridApi = side === 'left' ? leftApi : rightApi,
+    let api = side === 'left' ? leftApi : rightApi,
         // do nothing if row is already in the grid, otherwise we would have duplicates
-        rowAlreadyInGrid = !!gridApi!.getRowNode(data.id),
+        rowAlreadyInGrid = !!api!.getRowNode(data.id),
         transaction;
 
     if (rowAlreadyInGrid) {
@@ -127,7 +127,7 @@ function addRecordToGrid(side: string, data: any) {
         add: [data],
     };
 
-    gridApi!.applyTransaction(transaction);
+    api!.applyTransaction(transaction);
 }
 
 function onFactoryButtonClick(e: any) {

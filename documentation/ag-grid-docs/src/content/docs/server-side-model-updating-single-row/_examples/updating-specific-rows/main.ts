@@ -33,7 +33,9 @@ const gridOptions: GridOptions = {
 function updateRows(athlete?: string, date?: string) {
     versionCounter += 1;
     gridApi!.forEachNode((rowNode) => {
-        if (athlete != null && rowNode.data.athlete !== athlete) {
+        if (athlete != null && rowNode.data?.athlete !== athlete) {
+            // if the athlete doesn't match, skip this row
+            // Or row data is empty as it could be the loading row
             return;
         }
 
