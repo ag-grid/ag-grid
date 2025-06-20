@@ -6,7 +6,7 @@ import {
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
     AlignedGridsModule: 3.06,
-    AllCommunityModule: 465.78,
+    AllCommunityModule: 470.87,
     CellApiModule: 0.28,
     CellStyleModule: 2.24,
     CheckboxEditorModule: 59.33,
@@ -16,7 +16,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ColumnAutoSizeModule: 6.34,
     ColumnHoverModule: 1.58,
     CsvExportModule: 11.3,
-    CustomEditorModule: 58.12,
+    CustomEditorModule: 59.87,
     CustomFilterModule: 70.29,
     DateEditorModule: 64.36,
     DateFilterModule: 126.13,
@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,
-    AllEnterpriseModule: 1454.22,
+    AllEnterpriseModule: 1459.37,
     BatchEditModule: 75.19,
     CellSelectionModule: 53,
     ClipboardModule: 46.04,
