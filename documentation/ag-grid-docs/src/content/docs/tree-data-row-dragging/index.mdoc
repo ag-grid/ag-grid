@@ -4,21 +4,35 @@ enterprise: true
 ---
 Configure the grid to display structured data by providing data paths.
 
-### Row Dragging & Tree Data
+## Enabling Row Dragging
 
-Row Dragging can be combined with Tree Data to let users reorder rows within a hierarchical structure.
-You can choose between two approaches:
+Row Dragging can be combined with Tree Data to let users reorder rows within a hierarchical structure. You can choose between two approaches:
 
-- [Managed Row Dragging](#managed-row-dragging): The grid handles row dragging automatically.
+- [Managed Row Dragging](#enabling-managed-row-dragging): The grid handles row dragging automatically.
 - [Unmanaged Row Dragging](#unmanaged-row-dragging): Customized application specific logic for row dragging.
 
-See the [Row Dragging](./row-dragging/) for more information about row dragging options and APIs and advanced usage.
+To enable row dragging, set `rowDrag: true` on the group column (usually via `autoGroupColumnDef`).
 
-## Managed Row Dragging
+```{% frameworkTransform=true %}
+const gridOptions = {
+    treeData: true,
+    autoGroupColumnDef: {
+        field: 'name',
+        rowDrag: true // Enable row dragging on the group column
+    },
+    // ...other options
+};
+```
+
+See the [Row Dragging](./row-dragging/) documentation for more information about row dragging options, APIs, and advanced usage.
+
+## Enabling Managed Row Dragging
 
 This is the simplest way to enable row dragging with Tree Data.
 The grid will automatically handle the dragging of rows and updating the data structure.
 It supports reordering, moving parents and children, and converting a leaf node into a group.
+
+To enable managed row dragging, set the following options:
 
 - `treeData: true` — Enables tree data mode, allowing hierarchical data structures.
 - `getRowId` — Provides a unique ID for each row, required for row movement.
@@ -27,7 +41,24 @@ It supports reordering, moving parents and children, and converting a leaf node 
 - `rowDragInsertDelay` — Delay before expanding a collapsed group or converting a leaf to a group (see [Row Drag Insert Delay](#row-drag-insert-delay)).
 - `autoGroupColumnDef.rowDrag: true` — Enables the drag handle in the group column.
 - `groupDefaultExpanded: -1` — Expands all groups by default.
-- `suppressMoveWhenRowDragging: true` — Prevents the grid from moving rows while dragging, showing an highlight over the row instead.
+- `suppressMoveWhenRowDragging: true` — Prevents the grid from moving rows while dragging, showing a highlight over the row instead.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    treeData: true,
+    getRowId: params => params.data.id,
+    treeDataParentIdField: 'parentId',
+    rowDragManaged: true,
+    rowDragInsertDelay: 500, // optional
+    groupDefaultExpanded: -1,
+    suppressMoveWhenRowDragging: true,
+    autoGroupColumnDef: {
+        field: 'name',
+        rowDrag: true
+    },
+    // ...other options
+};
+```
 
 {% note %}
 It is recommended to enable `suppressMoveWhenRowDragging` when using managed row dragging with Tree Data.
