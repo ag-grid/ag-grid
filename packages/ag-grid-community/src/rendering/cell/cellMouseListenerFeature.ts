@@ -1,7 +1,6 @@
 import { isRowNumberCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import { _populateModelValidationErrors } from '../../edit/utils/editors';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellClickedEvent, CellDoubleClickedEvent } from '../../events';
 import { _isBrowserSafari } from '../../utils/browser';
@@ -86,10 +85,6 @@ export class CellMouseListenerFeature extends BeanStub {
             const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
             if (editing && (cellValidations > 0 || rowValidations > 0)) {
                 return;
-            }
-
-            if (!editSvc?.isEditing()) {
-                _populateModelValidationErrors(this.beans, true);
             }
 
             if (editSvc?.shouldStartEditing(cellCtrl, event)) {
