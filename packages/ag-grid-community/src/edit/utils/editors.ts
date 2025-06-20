@@ -476,7 +476,7 @@ export const _generateRowValidationErrors = (beans: BeanCollection): EditRowVali
         }
 
         const rowCtrl = _getRowCtrl(beans, rowNode);
-        if (beans.gos.get('cellEditingInvalidCommitType') === 'block' && rowCtrl) {
+        if (rowCtrl) {
             beans.eventSvc.dispatchEvent({
                 ...rowCtrl.createRowEvent('rowEditingValidated'),
                 errorMessages,
