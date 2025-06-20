@@ -65,7 +65,7 @@ export const AG_GRID_LOCALE_TR = {
     groupFilterSelect: 'Alan seçiniz:',
 
     // New Filter Tool Panel
-    filterSummaryInactive: 'dır (Hepsi)',
+    filterSummaryInactive: '(Tümü)',
     filterSummaryContains: 'içerir',
     filterSummaryNotContains: 'içermez',
     filterSummaryTextEquals: 'eşittir',
@@ -83,17 +83,17 @@ export const AG_GRID_LOCALE_TR = {
     filterSummaryInRange: 'arasında',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
     filterSummaryTextQuote: '"${variable}"',
-    filterSummaryListInactive: 'dır (Hepsi)',
+    filterSummaryListInactive: '(Tümü)',
     filterSummaryListSeparator: ', ',
-    filterSummaryListShort: 'dır (${variable})',
-    filterSummaryListLong: 'dır (${variable}) ve ${variable} daha fazla',
+    filterSummaryListShort: '(${variable})',
+    filterSummaryListLong: '(${variable}) ve ${variable} daha',
     addFilterCard: 'Filtre Ekle',
     agTextColumnFilterDisplayName: 'Basit Filtre',
     agNumberColumnFilterDisplayName: 'Basit Filtre',
     agDateColumnFilterDisplayName: 'Basit Filtre',
     agSetColumnFilterDisplayName: 'Seçim Filtresi',
-    agMultiColumnFilterDisplayName: 'Kombin Filtre',
-    addFilterPlaceholder: 'Sütunlarda ara...',
+    agMultiColumnFilterDisplayName: 'Karma Filtre',
+    addFilterPlaceholder: 'Kolonlarda ara...',
 
     // Advanced Filter
     advancedFilterContains: 'içerir',
@@ -150,11 +150,11 @@ export const AG_GRID_LOCALE_TR = {
     advancedFilterBuilderValidationEnterValue: 'Bir değer girmelisiniz.',
 
     // Editor Validation Errors
-    minDateValidation: "Tarih ${variable}'den sonra olmalıdır",
-    maxDateValidation: "Tarih ${variable}'den önce olmalıdır",
-    maxLengthValidation: '${variable} karakter veya daha az olmalıdır.',
-    minValueValidation: "${variable}'den büyük veya eşit olmalıdır",
-    maxValueValidation: "${variable}'den küçük veya eşit olmalıdır",
+    minDateValidation: 'Tarih ${variable} tarihinden sonra olmalıdır',
+    maxDateValidation: 'Tarih ${variable} tarihinden önce olmalıdır',
+    maxLengthValidation: 'En fazla ${variable} karakter olmalıdır.',
+    minValueValidation: 'En az ${variable} veya daha büyük olmalıdır',
+    maxValueValidation: 'En fazla ${variable} veya daha küçük olmalıdır ',
     invalidSelectionValidation: 'Geçersiz seçim.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -601,7 +601,7 @@ export const AG_GRID_LOCALE_TR = {
 
     // Cell Editor
     ariaLabelCellEditor: 'Hücre Düzenleyici',
-    ariaValidationErrorPrefix: 'Hücre Düzenleyici Doğrulama',
+    ariaValidationErrorPrefix: 'Hücre Düzenleyici Doğrulaması',
     ariaLabelLoadingContextMenu: 'Bağlam Menüsü Yükleniyor',
 
     // aria labels for rich select
@@ -626,7 +626,7 @@ export const AG_GRID_LOCALE_TR = {
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Filtre Alanı Ekle',
     ariaLabelFilterCardDelete: 'Filtreyi Sil',
-    ariaLabelFilterCardHasEdits: 'Değişiklikler Var',
+    ariaLabelFilterCardHasEdits: 'Düzenlemeler Var',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

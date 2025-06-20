@@ -65,15 +65,15 @@ export const AG_GRID_LOCALE_UA = {
     groupFilterSelect: 'Виберіть поле:',
 
     // New Filter Tool Panel
-    filterSummaryInactive: 'є (всі)',
+    filterSummaryInactive: 'дорівнює (Усі)',
     filterSummaryContains: 'містить',
     filterSummaryNotContains: 'не містить',
     filterSummaryTextEquals: 'дорівнює',
     filterSummaryTextNotEqual: 'не дорівнює',
     filterSummaryStartsWith: 'починається з',
     filterSummaryEndsWith: 'закінчується на',
-    filterSummaryBlank: 'порожнє',
-    filterSummaryNotBlank: 'не порожнє',
+    filterSummaryBlank: 'порожньо',
+    filterSummaryNotBlank: 'не порожньо',
     filterSummaryEquals: '=',
     filterSummaryNotEqual: '!=',
     filterSummaryGreaterThan: '>',
@@ -83,15 +83,15 @@ export const AG_GRID_LOCALE_UA = {
     filterSummaryInRange: 'між',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
     filterSummaryTextQuote: '"${variable}"',
-    filterSummaryListInactive: 'є (всі)',
+    filterSummaryListInactive: 'дорівнює (Усі)',
     filterSummaryListSeparator: ', ',
-    filterSummaryListShort: 'є (${variable})',
-    filterSummaryListLong: 'є (${variable}) та ${variable} ще',
+    filterSummaryListShort: 'дорівнює (${variable})',
+    filterSummaryListLong: 'дорівнює (${variable}) та ${variable} більше',
     addFilterCard: 'Додати фільтр',
     agTextColumnFilterDisplayName: 'Простий фільтр',
     agNumberColumnFilterDisplayName: 'Простий фільтр',
     agDateColumnFilterDisplayName: 'Простий фільтр',
-    agSetColumnFilterDisplayName: 'Фільтр за вибором',
+    agSetColumnFilterDisplayName: 'Фільтр вибору',
     agMultiColumnFilterDisplayName: 'Комбінований фільтр',
     addFilterPlaceholder: 'Пошук у стовпцях...',
 
@@ -150,12 +150,12 @@ export const AG_GRID_LOCALE_UA = {
     advancedFilterBuilderValidationEnterValue: 'Потрібно ввести значення.',
 
     // Editor Validation Errors
-    minDateValidation: 'Дата має бути після ${variable}',
-    maxDateValidation: 'Дата має бути до ${variable}',
-    maxLengthValidation: 'Має бути ${variable} символів або менше.',
-    minValueValidation: 'Має бути більше або дорівнювати ${variable}',
-    maxValueValidation: 'Має бути менше або дорівнювати ${variable}',
-    invalidSelectionValidation: 'Недійсний вибір.',
+    minDateValidation: 'Дата повинна бути після ${variable}',
+    maxDateValidation: 'Дата повинна бути до ${variable}',
+    maxLengthValidation: 'Повинно бути ${variable} символів або менше.',
+    minValueValidation: 'Повинно бути більше або дорівнювати ${variable}',
+    maxValueValidation: 'Повинно бути менше або дорівнювати ${variable}',
+    invalidSelectionValidation: 'Неправильний вибір.',
     tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
@@ -580,7 +580,7 @@ export const AG_GRID_LOCALE_UA = {
     ariaChartSelected: 'Вибрано',
     ariaSkeletonCellLoadingFailed: 'Помилка завантаження рядка',
     ariaSkeletonCellLoading: 'Дані рядка завантажуються',
-    ariaDeferSkeletonCellLoading: 'Завантаження комірки',
+    ariaDeferSkeletonCellLoading: 'Завантажується комірка',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Групи рядків',
@@ -600,8 +600,8 @@ export const AG_GRID_LOCALE_UA = {
     ariaLabelSelectField: 'Виберіть поле',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Редактор комірок',
-    ariaValidationErrorPrefix: 'Перевірка редактора комірок',
+    ariaLabelCellEditor: 'Редактор комірки',
+    ariaValidationErrorPrefix: 'Валідація редактора комірки',
     ariaLabelLoadingContextMenu: 'Завантаження контекстного меню',
 
     // aria labels for rich select

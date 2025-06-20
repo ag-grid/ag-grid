@@ -65,34 +65,34 @@ export const AG_GRID_LOCALE_EG = {
     groupFilterSelect: 'اختر الحقل:',
 
     // New Filter Tool Panel
-    filterSummaryInactive: 'is (All)',
+    filterSummaryInactive: 'هو (الكل)',
     filterSummaryContains: 'يحتوي على',
     filterSummaryNotContains: 'لا يحتوي على',
     filterSummaryTextEquals: 'يساوي',
     filterSummaryTextNotEqual: 'لا يساوي',
-    filterSummaryStartsWith: 'يبدأ ب',
-    filterSummaryEndsWith: 'ينتهي ب',
-    filterSummaryBlank: 'فارغ',
-    filterSummaryNotBlank: 'ليس فارغ',
+    filterSummaryStartsWith: 'يبدأ بـ',
+    filterSummaryEndsWith: 'ينتهي بـ',
+    filterSummaryBlank: 'هو فارغ',
+    filterSummaryNotBlank: 'ليس فارغًا',
     filterSummaryEquals: '=',
     filterSummaryNotEqual: '!=',
     filterSummaryGreaterThan: '>',
     filterSummaryGreaterThanOrEqual: '>=',
-    filterSummaryLessThan: '<',
-    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryLessThan: '‘<’',
+    filterSummaryLessThanOrEqual: "‘<='",
     filterSummaryInRange: 'بين',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
     filterSummaryTextQuote: '"${variable}"',
-    filterSummaryListInactive: 'is (All)',
+    filterSummaryListInactive: 'هو (الكل)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'هو (${variable})',
-    filterSummaryListLong: 'هو (${variable}) و ${variable} أكثر',
+    filterSummaryListLong: 'هو (${variable}) و${variable} أخرى',
     addFilterCard: 'إضافة فلتر',
     agTextColumnFilterDisplayName: 'فلتر بسيط',
     agNumberColumnFilterDisplayName: 'فلتر بسيط',
     agDateColumnFilterDisplayName: 'فلتر بسيط',
-    agSetColumnFilterDisplayName: 'فلتر تحديد',
-    agMultiColumnFilterDisplayName: 'فلتر متعدد',
+    agSetColumnFilterDisplayName: 'فلتر اختيار',
+    agMultiColumnFilterDisplayName: 'فلتر مركب',
     addFilterPlaceholder: 'ابحث في الأعمدة...',
 
     // Advanced Filter
@@ -152,7 +152,7 @@ export const AG_GRID_LOCALE_EG = {
     // Editor Validation Errors
     minDateValidation: 'التاريخ يجب أن يكون بعد ${variable}',
     maxDateValidation: 'التاريخ يجب أن يكون قبل ${variable}',
-    maxLengthValidation: 'يجب أن يكون ${variable} حروف أو أقل.',
+    maxLengthValidation: 'يجب أن يكون ${variable} حرف أو أقل.',
     minValueValidation: 'يجب أن يكون أكبر من أو يساوي ${variable}',
     maxValueValidation: 'يجب أن يكون أقل من أو يساوي ${variable}',
     invalidSelectionValidation: 'اختيار غير صالح.',
@@ -579,7 +579,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaChartSelected: 'محدد',
     ariaSkeletonCellLoadingFailed: 'فشل تحميل الصف',
     ariaSkeletonCellLoading: 'جاري تحميل بيانات الصف',
-    ariaDeferSkeletonCellLoading: 'الخلیة جارٍ تحميلها',
+    ariaDeferSkeletonCellLoading: 'الخلية قيد التحميل',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'مجموعات الصفوف',
@@ -599,8 +599,8 @@ export const AG_GRID_LOCALE_EG = {
     ariaLabelSelectField: 'اختيار الحقل',
 
     // Cell Editor
-    ariaLabelCellEditor: '${entry.localeKeys[key]}',
-    ariaValidationErrorPrefix: '${entry.localeKeys[key]}',
+    ariaLabelCellEditor: 'محرر الخلية',
+    ariaValidationErrorPrefix: 'تحقق من صحة محرر الخلية',
     ariaLabelLoadingContextMenu: 'تحميل قائمة السياق',
 
     // aria labels for rich select
@@ -623,9 +623,9 @@ export const AG_GRID_LOCALE_EG = {
     ariaFilterPanelList: 'قائمة المرشحات',
 
     // ARIA labels for new Filters Tool Panel
-    ariaLabelAddFilterField: 'أضف حقل فلتر',
-    ariaLabelFilterCardDelete: 'احذف الفلتر',
-    ariaLabelFilterCardHasEdits: 'لديه تعديلات',
+    ariaLabelAddFilterField: 'إضافة حقل الفلتر',
+    ariaLabelFilterCardDelete: 'حذف الفلتر',
+    ariaLabelFilterCardHasEdits: 'يوجد تعديلات',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '،',

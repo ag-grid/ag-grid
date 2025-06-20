@@ -70,29 +70,29 @@ export const AG_GRID_LOCALE_HR = {
     filterSummaryNotContains: 'ne sadrži',
     filterSummaryTextEquals: 'jednako je',
     filterSummaryTextNotEqual: 'nije jednako',
-    filterSummaryStartsWith: 'počinje s',
+    filterSummaryStartsWith: 'započinje s',
     filterSummaryEndsWith: 'završava s',
     filterSummaryBlank: 'je prazno',
     filterSummaryNotBlank: 'nije prazno',
-    filterSummaryEquals: "1 je jednako // '=",
-    filterSummaryNotEqual: "1 nije jednako // '!=",
-    filterSummaryGreaterThan: "1 veće od // '>",
-    filterSummaryGreaterThanOrEqual: "1 veće ili jednako // '>=",
-    filterSummaryLessThan: "1 manje od // '<",
-    filterSummaryLessThanOrEqual: "1 manje ili jednako // '<=",
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
     filterSummaryInRange: 'između',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
-    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryTextQuote: '\'"${variable}"',
     filterSummaryListInactive: 'je (sve)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'je (${variable})',
     filterSummaryListLong: 'je (${variable}) i ${variable} više',
-    addFilterCard: 'Dodaj filtar',
-    agTextColumnFilterDisplayName: 'Jednostavni filtar',
-    agNumberColumnFilterDisplayName: 'Jednostavni filtar',
-    agDateColumnFilterDisplayName: 'Jednostavni filtar',
-    agSetColumnFilterDisplayName: 'Filtar za odabir',
-    agMultiColumnFilterDisplayName: 'Kombinirani filtar',
+    addFilterCard: 'Dodaj filtriranje',
+    agTextColumnFilterDisplayName: 'Jednostavan filter',
+    agNumberColumnFilterDisplayName: 'Jednostavan filter',
+    agDateColumnFilterDisplayName: 'Jednostavan filter',
+    agSetColumnFilterDisplayName: 'Filter za odabir',
+    agMultiColumnFilterDisplayName: 'Kombinirani filter',
     addFilterPlaceholder: 'Pretraži stupce...',
 
     // Advanced Filter
@@ -155,7 +155,7 @@ export const AG_GRID_LOCALE_HR = {
     maxLengthValidation: 'Mora imati ${variable} znakova ili manje.',
     minValueValidation: 'Mora biti veće ili jednako ${variable}',
     maxValueValidation: 'Mora biti manje ili jednako ${variable}',
-    invalidSelectionValidation: 'Neispravan odabir.',
+    invalidSelectionValidation: 'Nevažeći odabir.',
     tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
@@ -601,7 +601,7 @@ export const AG_GRID_LOCALE_HR = {
 
     // Cell Editor
     ariaLabelCellEditor: 'Uređivač ćelija',
-    ariaValidationErrorPrefix: 'Provjera valjanosti uređivača ćelija',
+    ariaValidationErrorPrefix: 'Validacija Uređivača ćelija',
     ariaLabelLoadingContextMenu: 'Učitavanje kontekstnog izbornika',
 
     // aria labels for rich select
@@ -624,8 +624,8 @@ export const AG_GRID_LOCALE_HR = {
     ariaFilterPanelList: 'Popis filtara',
 
     // ARIA labels for new Filters Tool Panel
-    ariaLabelAddFilterField: 'Dodaj polje filtra',
-    ariaLabelFilterCardDelete: 'Obriši filtar',
+    ariaLabelAddFilterField: 'Dodaj polje filtera',
+    ariaLabelFilterCardDelete: 'Izbriši filter',
     ariaLabelFilterCardHasEdits: 'Ima izmjene',
 
     // Number Format (Status Bar, Pagination Panel)

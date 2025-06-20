@@ -65,13 +65,13 @@ export const AG_GRID_LOCALE_FR = {
     groupFilterSelect: 'Sélectionner le champ :',
 
     // New Filter Tool Panel
-    filterSummaryInactive: 'est (Tout)',
+    filterSummaryInactive: 'est (Tous)',
     filterSummaryContains: 'contient',
     filterSummaryNotContains: 'ne contient pas',
     filterSummaryTextEquals: 'égale',
     filterSummaryTextNotEqual: "n'égale pas",
     filterSummaryStartsWith: 'commence par',
-    filterSummaryEndsWith: 'se termine par',
+    filterSummaryEndsWith: 'termine par',
     filterSummaryBlank: 'est vide',
     filterSummaryNotBlank: "n'est pas vide",
     filterSummaryEquals: '=',
@@ -83,7 +83,7 @@ export const AG_GRID_LOCALE_FR = {
     filterSummaryInRange: 'entre',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
     filterSummaryTextQuote: '"${variable}"',
-    filterSummaryListInactive: 'est (Tout)',
+    filterSummaryListInactive: 'est (Tous)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'est (${variable})',
     filterSummaryListLong: 'est (${variable}) et ${variable} de plus',
@@ -93,7 +93,7 @@ export const AG_GRID_LOCALE_FR = {
     agDateColumnFilterDisplayName: 'Filtre simple',
     agSetColumnFilterDisplayName: 'Filtre de sélection',
     agMultiColumnFilterDisplayName: 'Filtre combiné',
-    addFilterPlaceholder: 'Rechercher des colonnes...',
+    addFilterPlaceholder: 'Rechercher dans les colonnes...',
 
     // Advanced Filter
     advancedFilterContains: 'contient',
@@ -601,8 +601,8 @@ export const AG_GRID_LOCALE_FR = {
     ariaLabelSelectField: 'Champ de sélection',
 
     // Cell Editor
-    ariaLabelCellEditor: '${entry.localeKeys[key]}',
-    ariaValidationErrorPrefix: '${entry.localeKeys[key]}',
+    ariaLabelCellEditor: 'Éditeur de cellule',
+    ariaValidationErrorPrefix: "Validation de l'éditeur de cellule",
     ariaLabelLoadingContextMenu: 'Chargement du menu contextuel',
 
     // aria labels for rich select

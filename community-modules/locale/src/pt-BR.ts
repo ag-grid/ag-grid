@@ -82,18 +82,18 @@ export const AG_GRID_LOCALE_BR = {
     filterSummaryLessThanOrEqual: '<=',
     filterSummaryInRange: 'entre',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
-    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryTextQuote: ' \'"${variable}"\'',
     filterSummaryListInactive: 'é (Todos)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'é (${variable})',
-    filterSummaryListLong: 'é (${variable}) e ${variable} mais',
+    filterSummaryListLong: 'é (${variable}) e mais ${variable}',
     addFilterCard: 'Adicionar Filtro',
     agTextColumnFilterDisplayName: 'Filtro Simples',
     agNumberColumnFilterDisplayName: 'Filtro Simples',
     agDateColumnFilterDisplayName: 'Filtro Simples',
     agSetColumnFilterDisplayName: 'Filtro de Seleção',
     agMultiColumnFilterDisplayName: 'Filtro Combinado',
-    addFilterPlaceholder: 'Pesquisar colunas...',
+    addFilterPlaceholder: 'Procurar colunas...',
 
     // Advanced Filter
     advancedFilterContains: 'contém',
@@ -150,8 +150,8 @@ export const AG_GRID_LOCALE_BR = {
     advancedFilterBuilderValidationEnterValue: 'Deve digitar um valor.',
 
     // Editor Validation Errors
-    minDateValidation: 'Data deve ser após ${variable}',
-    maxDateValidation: 'Data deve ser antes de ${variable}',
+    minDateValidation: 'A data deve ser após ${variable}',
+    maxDateValidation: 'A data deve ser antes de ${variable}',
     maxLengthValidation: 'Deve ter ${variable} caracteres ou menos.',
     minValueValidation: 'Deve ser maior ou igual a ${variable}',
     maxValueValidation: 'Deve ser menor ou igual a ${variable}',
@@ -579,7 +579,7 @@ export const AG_GRID_LOCALE_BR = {
     ariaChartSelected: 'Selecionado',
     ariaSkeletonCellLoadingFailed: 'Falha no carregamento da linha',
     ariaSkeletonCellLoading: 'Carregando dados da linha',
-    ariaDeferSkeletonCellLoading: 'Célula está carregando',
+    ariaDeferSkeletonCellLoading: 'A célula está carregando',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Agrupamento de Linhas',
@@ -626,7 +626,7 @@ export const AG_GRID_LOCALE_BR = {
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Adicionar Campo de Filtro',
     ariaLabelFilterCardDelete: 'Excluir Filtro',
-    ariaLabelFilterCardHasEdits: 'Possui Edições',
+    ariaLabelFilterCardHasEdits: 'Tem Edições',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

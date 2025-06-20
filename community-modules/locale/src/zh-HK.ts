@@ -65,35 +65,35 @@ export const AG_GRID_LOCALE_HK = {
     groupFilterSelect: '選擇字段：',
 
     // New Filter Tool Panel
-    filterSummaryInactive: '是（全部）',
-    filterSummaryContains: '包含',
-    filterSummaryNotContains: '不包含',
-    filterSummaryTextEquals: '等於',
-    filterSummaryTextNotEqual: '不等於',
-    filterSummaryStartsWith: '開始於',
-    filterSummaryEndsWith: '結束於',
-    filterSummaryBlank: '為空',
-    filterSummaryNotBlank: '不為空',
-    filterSummaryEquals: '=',
-    filterSummaryNotEqual: '!=',
-    filterSummaryGreaterThan: '>',
-    filterSummaryGreaterThanOrEqual: '>=',
-    filterSummaryLessThan: '<',
-    filterSummaryLessThanOrEqual: '<=',
-    filterSummaryInRange: '介於',
-    filterSummaryInRangeValues: '(${variable}, ${variable})',
-    filterSummaryTextQuote: '${entry.localeKeys[key]}',
-    filterSummaryListInactive: '是（全部）',
-    filterSummaryListSeparator: ', ',
-    filterSummaryListShort: '是 (${variable})',
-    filterSummaryListLong: '是 (${variable}) 和其他 ${variable}',
-    addFilterCard: '添加篩選',
-    agTextColumnFilterDisplayName: '簡單篩選',
-    agNumberColumnFilterDisplayName: '簡單篩選',
-    agDateColumnFilterDisplayName: '簡單篩選',
-    agSetColumnFilterDisplayName: '選擇篩選',
-    agMultiColumnFilterDisplayName: '組合篩選',
-    addFilterPlaceholder: '搜尋列...',
+    filterSummaryInactive: '「是 (全部)」',
+    filterSummaryContains: '「包含」',
+    filterSummaryNotContains: '「不包含」',
+    filterSummaryTextEquals: '「等於」',
+    filterSummaryTextNotEqual: '「不等於」',
+    filterSummaryStartsWith: '「開始於」',
+    filterSummaryEndsWith: '「結束於」',
+    filterSummaryBlank: '「是空白」',
+    filterSummaryNotBlank: '「不是空白」',
+    filterSummaryEquals: '「＝」',
+    filterSummaryNotEqual: '「≠」',
+    filterSummaryGreaterThan: '「＞」',
+    filterSummaryGreaterThanOrEqual: '「≥」',
+    filterSummaryLessThan: '「＜」',
+    filterSummaryLessThanOrEqual: '「≤」',
+    filterSummaryInRange: '「介於」',
+    filterSummaryInRangeValues: '「(${variable}, ${variable})」',
+    filterSummaryTextQuote: '「"${variable}"」',
+    filterSummaryListInactive: '「是 (全部)」',
+    filterSummaryListSeparator: '「, 」',
+    filterSummaryListShort: '「是 (${variable})」',
+    filterSummaryListLong: '「是 (${variable}) 和另外 ${variable}」',
+    addFilterCard: '「新增篩選」',
+    agTextColumnFilterDisplayName: '「簡單篩選」',
+    agNumberColumnFilterDisplayName: '「簡單篩選」',
+    agDateColumnFilterDisplayName: '「簡單篩選」',
+    agSetColumnFilterDisplayName: '「選擇篩選」',
+    agMultiColumnFilterDisplayName: '「組合篩選」',
+    addFilterPlaceholder: '「搜尋欄位...」',
 
     // Advanced Filter
     advancedFilterContains: '包含',
@@ -152,11 +152,11 @@ export const AG_GRID_LOCALE_HK = {
     // Editor Validation Errors
     minDateValidation: '日期必須在 ${variable} 之後',
     maxDateValidation: '日期必須在 ${variable} 之前',
-    maxLengthValidation: '必須少於或等於 ${variable} 個字符',
+    maxLengthValidation: '必須少於或等於 ${variable} 個字符。',
     minValueValidation: '必須大於或等於 ${variable}',
     maxValueValidation: '必須小於或等於 ${variable}',
-    invalidSelectionValidation: '無效的選擇',
-    tooltipValidationErrorSeparator: '. ',
+    invalidSelectionValidation: '選擇無效。',
+    tooltipValidationErrorSeparator: "。 '",
 
     // Side Bar
     columns: '欄',
@@ -579,7 +579,7 @@ export const AG_GRID_LOCALE_HK = {
     ariaChartSelected: '已選擇',
     ariaSkeletonCellLoadingFailed: '行加載失敗',
     ariaSkeletonCellLoading: '行數據加載中',
-    ariaDeferSkeletonCellLoading: '單元格正在加載',
+    ariaDeferSkeletonCellLoading: '儲存格正在載入',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: '行群組',
@@ -599,8 +599,8 @@ export const AG_GRID_LOCALE_HK = {
     ariaLabelSelectField: '選擇欄位',
 
     // Cell Editor
-    ariaLabelCellEditor: '單元格編輯器',
-    ariaValidationErrorPrefix: '單元格編輯器驗證',
+    ariaLabelCellEditor: '單元編輯器',
+    ariaValidationErrorPrefix: '單元編輯器驗證',
     ariaLabelLoadingContextMenu: '加載上下文選單',
 
     // aria labels for rich select
@@ -623,9 +623,9 @@ export const AG_GRID_LOCALE_HK = {
     ariaFilterPanelList: '篩選清單',
 
     // ARIA labels for new Filters Tool Panel
-    ariaLabelAddFilterField: '添加篩選欄位',
+    ariaLabelAddFilterField: '新增篩選字段',
     ariaLabelFilterCardDelete: '刪除篩選',
-    ariaLabelFilterCardHasEdits: '有修改',
+    ariaLabelFilterCardHasEdits: '已有編輯',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

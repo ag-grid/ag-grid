@@ -65,11 +65,11 @@ export const AG_GRID_LOCALE_DK = {
     groupFilterSelect: 'Vælg felt:',
 
     // New Filter Tool Panel
-    filterSummaryInactive: 'er (Alle)',
+    filterSummaryInactive: 'er (alle)',
     filterSummaryContains: 'indeholder',
     filterSummaryNotContains: 'indeholder ikke',
-    filterSummaryTextEquals: 'lig',
-    filterSummaryTextNotEqual: 'lig ikke',
+    filterSummaryTextEquals: 'er lig med',
+    filterSummaryTextNotEqual: 'er ikke lig med',
     filterSummaryStartsWith: 'begynder med',
     filterSummaryEndsWith: 'slutter med',
     filterSummaryBlank: 'er tom',
@@ -83,7 +83,7 @@ export const AG_GRID_LOCALE_DK = {
     filterSummaryInRange: 'mellem',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
     filterSummaryTextQuote: '"${variable}"',
-    filterSummaryListInactive: 'er (Alle)',
+    filterSummaryListInactive: 'er (alle)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'er (${variable})',
     filterSummaryListLong: 'er (${variable}) og ${variable} mere',
@@ -152,7 +152,7 @@ export const AG_GRID_LOCALE_DK = {
     // Editor Validation Errors
     minDateValidation: 'Dato skal være efter ${variable}',
     maxDateValidation: 'Dato skal være før ${variable}',
-    maxLengthValidation: 'Skal være ${variable} tegn eller færre.',
+    maxLengthValidation: 'Må ikke have flere end ${variable} tegn.',
     minValueValidation: 'Skal være større end eller lig med ${variable}',
     maxValueValidation: 'Skal være mindre end eller lig med ${variable}',
     invalidSelectionValidation: 'Ugyldigt valg.',
@@ -626,7 +626,7 @@ export const AG_GRID_LOCALE_DK = {
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Tilføj filterfelt',
     ariaLabelFilterCardDelete: 'Slet filter',
-    ariaLabelFilterCardHasEdits: 'Har ændringer',
+    ariaLabelFilterCardHasEdits: 'Har redigeringer',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

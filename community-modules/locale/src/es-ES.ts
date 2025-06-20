@@ -87,12 +87,12 @@ export const AG_GRID_LOCALE_ES = {
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'es (${variable})',
     filterSummaryListLong: 'es (${variable}) y ${variable} más',
-    addFilterCard: 'Añadir filtro',
-    agTextColumnFilterDisplayName: 'Filtro simple',
-    agNumberColumnFilterDisplayName: 'Filtro simple',
-    agDateColumnFilterDisplayName: 'Filtro simple',
-    agSetColumnFilterDisplayName: 'Filtro de selección',
-    agMultiColumnFilterDisplayName: 'Filtro combinado',
+    addFilterCard: 'Agregar Filtro',
+    agTextColumnFilterDisplayName: 'Filtro Simple',
+    agNumberColumnFilterDisplayName: 'Filtro Simple',
+    agDateColumnFilterDisplayName: 'Filtro Simple',
+    agSetColumnFilterDisplayName: 'Filtro de Selección',
+    agMultiColumnFilterDisplayName: 'Filtro Combinado',
     addFilterPlaceholder: 'Buscar columnas...',
 
     // Advanced Filter
@@ -151,8 +151,8 @@ export const AG_GRID_LOCALE_ES = {
     advancedFilterBuilderValidationEnterValue: 'Debe introducir un valor.',
 
     // Editor Validation Errors
-    minDateValidation: 'La fecha debe ser después de ${variable}',
-    maxDateValidation: 'La fecha debe ser antes de ${variable}',
+    minDateValidation: 'La fecha debe ser posterior a ${variable}',
+    maxDateValidation: 'La fecha debe ser anterior a ${variable}',
     maxLengthValidation: 'Debe tener ${variable} caracteres o menos.',
     minValueValidation: 'Debe ser mayor o igual a ${variable}',
     maxValueValidation: 'Debe ser menor o igual a ${variable}',
@@ -600,8 +600,8 @@ export const AG_GRID_LOCALE_ES = {
     ariaLabelSelectField: 'Seleccionar Campo',
 
     // Cell Editor
-    ariaLabelCellEditor: '${entry.localeKeys[key]}',
-    ariaValidationErrorPrefix: '${entry.localeKeys[key]}',
+    ariaLabelCellEditor: 'Editor de Celda',
+    ariaValidationErrorPrefix: 'Validación del Editor de Celda',
     ariaLabelLoadingContextMenu: 'Cargando menú contextual',
 
     // aria labels for rich select

@@ -68,10 +68,10 @@ export const AG_GRID_LOCALE_IT = {
     filterSummaryInactive: 'è (Tutti)',
     filterSummaryContains: 'contiene',
     filterSummaryNotContains: 'non contiene',
-    filterSummaryTextEquals: 'uguale a',
-    filterSummaryTextNotEqual: 'diverso da',
+    filterSummaryTextEquals: 'è uguale a',
+    filterSummaryTextNotEqual: 'non è uguale a',
     filterSummaryStartsWith: 'inizia con',
-    filterSummaryEndsWith: 'termina con',
+    filterSummaryEndsWith: 'finisce con',
     filterSummaryBlank: 'è vuoto',
     filterSummaryNotBlank: 'non è vuoto',
     filterSummaryEquals: '=',
@@ -80,18 +80,18 @@ export const AG_GRID_LOCALE_IT = {
     filterSummaryGreaterThanOrEqual: '>=',
     filterSummaryLessThan: '<',
     filterSummaryLessThanOrEqual: '<=',
-    filterSummaryInRange: 'compreso tra',
+    filterSummaryInRange: 'tra',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
-    filterSummaryTextQuote: '${entry.localeKeys[key]}',
+    filterSummaryTextQuote: '"${variable}"',
     filterSummaryListInactive: 'è (Tutti)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'è (${variable})',
-    filterSummaryListLong: 'è (${variable}) e ${variable} altri',
+    filterSummaryListLong: 'è (${variable}) e ${variable} in più',
     addFilterCard: 'Aggiungi Filtro',
     agTextColumnFilterDisplayName: 'Filtro Semplice',
     agNumberColumnFilterDisplayName: 'Filtro Semplice',
     agDateColumnFilterDisplayName: 'Filtro Semplice',
-    agSetColumnFilterDisplayName: 'Filtro Selezione',
+    agSetColumnFilterDisplayName: 'Filtro di Selezione',
     agMultiColumnFilterDisplayName: 'Filtro Combinato',
     addFilterPlaceholder: 'Cerca colonne...',
 
@@ -153,7 +153,7 @@ export const AG_GRID_LOCALE_IT = {
     // Editor Validation Errors
     minDateValidation: 'La data deve essere successiva a ${variable}',
     maxDateValidation: 'La data deve essere precedente a ${variable}',
-    maxLengthValidation: 'Deve avere ${variable} caratteri o meno.',
+    maxLengthValidation: 'Deve essere di ${variable} caratteri o meno.',
     minValueValidation: 'Deve essere maggiore o uguale a ${variable}',
     maxValueValidation: 'Deve essere minore o uguale a ${variable}',
     invalidSelectionValidation: 'Selezione non valida.',
@@ -601,8 +601,8 @@ export const AG_GRID_LOCALE_IT = {
     ariaLabelSelectField: 'Seleziona Campo',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Editor di Cella',
-    ariaValidationErrorPrefix: 'Validazione Editor di Cella',
+    ariaLabelCellEditor: 'Editor di cella',
+    ariaValidationErrorPrefix: 'Validazione di Editor di cella',
     ariaLabelLoadingContextMenu: 'Caricamento del menu contestuale',
 
     // aria labels for rich select
@@ -625,9 +625,9 @@ export const AG_GRID_LOCALE_IT = {
     ariaFilterPanelList: 'Elenco dei filtri',
 
     // ARIA labels for new Filters Tool Panel
-    ariaLabelAddFilterField: 'Aggiungi Campo Filtro',
-    ariaLabelFilterCardDelete: 'Elimina Filtro',
-    ariaLabelFilterCardHasEdits: 'Ha Modifiche',
+    ariaLabelAddFilterField: 'Aggiungi campo filtro',
+    ariaLabelFilterCardDelete: 'Elimina filtro',
+    ariaLabelFilterCardHasEdits: 'Ha modifiche',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

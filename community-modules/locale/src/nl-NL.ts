@@ -82,7 +82,7 @@ export const AG_GRID_LOCALE_NL = {
     filterSummaryLessThanOrEqual: '<=',
     filterSummaryInRange: 'tussen',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
-    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryTextQuote: '"\'${variable}"\'',
     filterSummaryListInactive: 'is (Alles)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'is (${variable})',
@@ -93,7 +93,7 @@ export const AG_GRID_LOCALE_NL = {
     agDateColumnFilterDisplayName: 'Eenvoudig Filter',
     agSetColumnFilterDisplayName: 'Selectie Filter',
     agMultiColumnFilterDisplayName: 'Combinatie Filter',
-    addFilterPlaceholder: 'Kolommen zoeken...',
+    addFilterPlaceholder: 'Zoek kolommen...',
 
     // Advanced Filter
     advancedFilterContains: 'bevat',
@@ -600,8 +600,8 @@ export const AG_GRID_LOCALE_NL = {
     ariaLabelSelectField: 'Selectievak',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Cel Editor',
-    ariaValidationErrorPrefix: 'Cel Editor Validatie',
+    ariaLabelCellEditor: 'Celleditor',
+    ariaValidationErrorPrefix: 'Celleditorvalidatie',
     ariaLabelLoadingContextMenu: 'Contextmenu laden',
 
     // aria labels for rich select
@@ -626,7 +626,7 @@ export const AG_GRID_LOCALE_NL = {
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Filterveld toevoegen',
     ariaLabelFilterCardDelete: 'Filter verwijderen',
-    ariaLabelFilterCardHasEdits: 'Heeft bewerkingen',
+    ariaLabelFilterCardHasEdits: 'Heeft wijzigingen',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

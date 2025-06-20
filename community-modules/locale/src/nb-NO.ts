@@ -72,8 +72,8 @@ export const AG_GRID_LOCALE_NO = {
     filterSummaryTextNotEqual: 'er ikke lik',
     filterSummaryStartsWith: 'begynner med',
     filterSummaryEndsWith: 'slutter med',
-    filterSummaryBlank: 'er blank',
-    filterSummaryNotBlank: 'er ikke blank',
+    filterSummaryBlank: 'er tom',
+    filterSummaryNotBlank: 'er ikke tom',
     filterSummaryEquals: '=',
     filterSummaryNotEqual: '!=',
     filterSummaryGreaterThan: '>',
@@ -86,14 +86,14 @@ export const AG_GRID_LOCALE_NO = {
     filterSummaryListInactive: 'er (Alle)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'er (${variable})',
-    filterSummaryListLong: 'er (${variable}) og ${variable} mer',
+    filterSummaryListLong: 'er (${variable}) og ${variable} flere',
     addFilterCard: 'Legg til filter',
-    agTextColumnFilterDisplayName: 'Enkelt filter',
-    agNumberColumnFilterDisplayName: 'Enkelt filter',
-    agDateColumnFilterDisplayName: 'Enkelt filter',
-    agSetColumnFilterDisplayName: 'Utvalgsfilter',
+    agTextColumnFilterDisplayName: 'Enkel filter',
+    agNumberColumnFilterDisplayName: 'Enkel filter',
+    agDateColumnFilterDisplayName: 'Enkel filter',
+    agSetColumnFilterDisplayName: 'Utvalgfilter',
     agMultiColumnFilterDisplayName: 'Kombinasjonsfilter',
-    addFilterPlaceholder: 'Søk i kolonner...',
+    addFilterPlaceholder: 'Søk kolonner...',
 
     // Advanced Filter
     advancedFilterContains: 'inneholder',
@@ -579,7 +579,7 @@ export const AG_GRID_LOCALE_NO = {
     ariaChartSelected: 'Valgt',
     ariaSkeletonCellLoadingFailed: 'Raden kunne ikke lastes',
     ariaSkeletonCellLoading: 'Raddata lastes',
-    ariaDeferSkeletonCellLoading: 'Celle laster',
+    ariaDeferSkeletonCellLoading: 'Cell laster',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Radgrupper',
@@ -599,8 +599,8 @@ export const AG_GRID_LOCALE_NO = {
     ariaLabelSelectField: 'Velg Felt',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Celleeditor',
-    ariaValidationErrorPrefix: 'Celleeditorvalidering',
+    ariaLabelCellEditor: 'Celle redigerer',
+    ariaValidationErrorPrefix: 'Celle redigerer validering',
     ariaLabelLoadingContextMenu: 'Laster inn kontekstmeny',
 
     // aria labels for rich select

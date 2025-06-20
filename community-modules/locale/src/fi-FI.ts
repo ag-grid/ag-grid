@@ -65,7 +65,7 @@ export const AG_GRID_LOCALE_FI = {
     groupFilterSelect: 'Valitse kenttä:',
 
     // New Filter Tool Panel
-    filterSummaryInactive: 'on (Kaikki)',
+    filterSummaryInactive: 'on (kaikki)',
     filterSummaryContains: 'sisältää',
     filterSummaryNotContains: 'ei sisällä',
     filterSummaryTextEquals: 'on yhtä suuri kuin',
@@ -83,16 +83,16 @@ export const AG_GRID_LOCALE_FI = {
     filterSummaryInRange: 'välillä',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
     filterSummaryTextQuote: '"${variable}"',
-    filterSummaryListInactive: 'on (Kaikki)',
+    filterSummaryListInactive: 'on (kaikki)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'on (${variable})',
-    filterSummaryListLong: 'on (${variable}) ja ${variable} lisää',
+    filterSummaryListLong: 'on (${variable}) ja ${variable} enemmän',
     addFilterCard: 'Lisää suodatin',
     agTextColumnFilterDisplayName: 'Yksinkertainen suodatin',
     agNumberColumnFilterDisplayName: 'Yksinkertainen suodatin',
     agDateColumnFilterDisplayName: 'Yksinkertainen suodatin',
     agSetColumnFilterDisplayName: 'Valintasuodatin',
-    agMultiColumnFilterDisplayName: 'Yhdistelmäsuodatin',
+    agMultiColumnFilterDisplayName: 'Yhdistelmä suodatin',
     addFilterPlaceholder: 'Etsi sarakkeita...',
 
     // Advanced Filter
@@ -153,8 +153,8 @@ export const AG_GRID_LOCALE_FI = {
     minDateValidation: 'Päivämäärän on oltava jälkeen ${variable}',
     maxDateValidation: 'Päivämäärän on oltava ennen ${variable}',
     maxLengthValidation: 'Saa olla enintään ${variable} merkkiä.',
-    minValueValidation: 'Arvon on oltava suurempi tai yhtä suuri kuin ${variable}',
-    maxValueValidation: 'Arvon on oltava pienempi tai yhtä suuri kuin ${variable}',
+    minValueValidation: 'Täytyy olla suurempi tai yhtä suuri kuin ${variable}',
+    maxValueValidation: 'Täytyy olla pienempi tai yhtä suuri kuin ${variable}',
     invalidSelectionValidation: 'Virheellinen valinta.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -579,7 +579,7 @@ export const AG_GRID_LOCALE_FI = {
     ariaChartSelected: 'Valittu',
     ariaSkeletonCellLoadingFailed: 'Rivin lataus epäonnistui',
     ariaSkeletonCellLoading: 'Rivin tietoja ladataan',
-    ariaDeferSkeletonCellLoading: 'Solu lataa',
+    ariaDeferSkeletonCellLoading: 'Solu latautuu',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Riviryhmät',
@@ -599,8 +599,8 @@ export const AG_GRID_LOCALE_FI = {
     ariaLabelSelectField: 'Valitse kenttä',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Solueditori',
-    ariaValidationErrorPrefix: 'Solueditorin validointivirhe',
+    ariaLabelCellEditor: 'Solumuokkain',
+    ariaValidationErrorPrefix: 'Solumuokkaimen vahvistus',
     ariaLabelLoadingContextMenu: 'Ladataan kontekstivalikkoa',
 
     // aria labels for rich select
@@ -623,7 +623,7 @@ export const AG_GRID_LOCALE_FI = {
     ariaFilterPanelList: 'Suodatinluettelo',
 
     // ARIA labels for new Filters Tool Panel
-    ariaLabelAddFilterField: 'Lisää suodatuskenttä',
+    ariaLabelAddFilterField: 'Lisää suodatin kenttä',
     ariaLabelFilterCardDelete: 'Poista suodatin',
     ariaLabelFilterCardHasEdits: 'On muutoksia',
 

@@ -65,7 +65,7 @@ export const AG_GRID_LOCALE_SE = {
     groupFilterSelect: 'Välj fält:',
 
     // New Filter Tool Panel
-    filterSummaryInactive: 'är (alla)',
+    filterSummaryInactive: 'är (Alla)',
     filterSummaryContains: 'innehåller',
     filterSummaryNotContains: 'innehåller inte',
     filterSummaryTextEquals: 'är lika med',
@@ -83,14 +83,14 @@ export const AG_GRID_LOCALE_SE = {
     filterSummaryInRange: 'mellan',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
     filterSummaryTextQuote: '"${variable}"',
-    filterSummaryListInactive: 'är (alla)',
+    filterSummaryListInactive: 'är (Alla)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'är (${variable})',
-    filterSummaryListLong: 'är (${variable}) och ${variable} fler',
+    filterSummaryListLong: 'är (${variable}) och ${variable} mer',
     addFilterCard: 'Lägg till filter',
-    agTextColumnFilterDisplayName: 'Enkelt filter',
-    agNumberColumnFilterDisplayName: 'Enkelt filter',
-    agDateColumnFilterDisplayName: 'Enkelt filter',
+    agTextColumnFilterDisplayName: 'Enkel filter',
+    agNumberColumnFilterDisplayName: 'Enkel filter',
+    agDateColumnFilterDisplayName: 'Enkel filter',
     agSetColumnFilterDisplayName: 'Valfilter',
     agMultiColumnFilterDisplayName: 'Kombinationsfilter',
     addFilterPlaceholder: 'Sök kolumner...',
@@ -579,7 +579,7 @@ export const AG_GRID_LOCALE_SE = {
     ariaChartSelected: 'Vald',
     ariaSkeletonCellLoadingFailed: 'Raden kunde inte laddas',
     ariaSkeletonCellLoading: 'Raddata laddas',
-    ariaDeferSkeletonCellLoading: 'Cellen laddar',
+    ariaDeferSkeletonCellLoading: 'Cellen laddas',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Radgrupper',
@@ -599,8 +599,8 @@ export const AG_GRID_LOCALE_SE = {
     ariaLabelSelectField: 'Välj fält',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Cellredigerare',
-    ariaValidationErrorPrefix: 'Cellredigerare validering',
+    ariaLabelCellEditor: 'Celleditor',
+    ariaValidationErrorPrefix: 'Celleditorvalidering',
     ariaLabelLoadingContextMenu: 'Laddar kontextmeny',
 
     // aria labels for rich select
@@ -624,8 +624,8 @@ export const AG_GRID_LOCALE_SE = {
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Lägg till filterfält',
-    ariaLabelFilterCardDelete: 'Ta bort filter',
-    ariaLabelFilterCardHasEdits: 'Har redigeringar',
+    ariaLabelFilterCardDelete: 'Radera filter',
+    ariaLabelFilterCardHasEdits: 'Har ändringar',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

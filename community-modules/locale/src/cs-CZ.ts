@@ -65,13 +65,13 @@ export const AG_GRID_LOCALE_CZ = {
     groupFilterSelect: 'Vyberte pole:',
 
     // New Filter Tool Panel
-    filterSummaryInactive: 'je (Vše)',
+    filterSummaryInactive: 'je (vše)',
     filterSummaryContains: 'obsahuje',
     filterSummaryNotContains: 'neobsahuje',
     filterSummaryTextEquals: 'rovná se',
     filterSummaryTextNotEqual: 'nerovná se',
-    filterSummaryStartsWith: 'začíná na',
-    filterSummaryEndsWith: 'končí na',
+    filterSummaryStartsWith: 'začíná s',
+    filterSummaryEndsWith: 'končí s',
     filterSummaryBlank: 'je prázdné',
     filterSummaryNotBlank: 'není prázdné',
     filterSummaryEquals: '=',
@@ -83,7 +83,7 @@ export const AG_GRID_LOCALE_CZ = {
     filterSummaryInRange: 'mezi',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
     filterSummaryTextQuote: '"${variable}"',
-    filterSummaryListInactive: 'je (Vše)',
+    filterSummaryListInactive: 'je (vše)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'je (${variable})',
     filterSummaryListLong: 'je (${variable}) a ${variable} dalších',
@@ -91,7 +91,7 @@ export const AG_GRID_LOCALE_CZ = {
     agTextColumnFilterDisplayName: 'Jednoduchý filtr',
     agNumberColumnFilterDisplayName: 'Jednoduchý filtr',
     agDateColumnFilterDisplayName: 'Jednoduchý filtr',
-    agSetColumnFilterDisplayName: 'Filtr s výběrem',
+    agSetColumnFilterDisplayName: 'Filtr výběru',
     agMultiColumnFilterDisplayName: 'Kombinovaný filtr',
     addFilterPlaceholder: 'Hledat ve sloupcích...',
 
@@ -152,7 +152,7 @@ export const AG_GRID_LOCALE_CZ = {
     // Editor Validation Errors
     minDateValidation: 'Datum musí být po ${variable}',
     maxDateValidation: 'Datum musí být před ${variable}',
-    maxLengthValidation: 'Musí být ${variable} znaků nebo méně.',
+    maxLengthValidation: 'Musí mít ${variable} znaků nebo méně.',
     minValueValidation: 'Musí být větší nebo rovno ${variable}',
     maxValueValidation: 'Musí být menší nebo rovno ${variable}',
     invalidSelectionValidation: 'Neplatný výběr.',
@@ -579,7 +579,7 @@ export const AG_GRID_LOCALE_CZ = {
     ariaChartSelected: 'Vybráno',
     ariaSkeletonCellLoadingFailed: 'Řádek se nepodařilo načíst',
     ariaSkeletonCellLoading: 'Data řádku se načítají',
-    ariaDeferSkeletonCellLoading: 'Buňka se načítá',
+    ariaDeferSkeletonCellLoading: 'Načítá se buňka',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Skupiny řádků',
@@ -623,7 +623,7 @@ export const AG_GRID_LOCALE_CZ = {
     ariaFilterPanelList: 'Seznam filtrů',
 
     // ARIA labels for new Filters Tool Panel
-    ariaLabelAddFilterField: 'Přidat pole filtru',
+    ariaLabelAddFilterField: 'Přidat filtr',
     ariaLabelFilterCardDelete: 'Smazat filtr',
     ariaLabelFilterCardHasEdits: 'Má úpravy',
 

@@ -70,10 +70,10 @@ export const AG_GRID_LOCALE_IL = {
     filterSummaryNotContains: 'לא מכיל',
     filterSummaryTextEquals: 'שווה',
     filterSummaryTextNotEqual: 'לא שווה',
-    filterSummaryStartsWith: 'מתחיל ב-',
-    filterSummaryEndsWith: 'מסתיים ב-',
-    filterSummaryBlank: 'הוא ריק',
-    filterSummaryNotBlank: 'אינו ריק',
+    filterSummaryStartsWith: 'מתחיל ב',
+    filterSummaryEndsWith: 'מסתיים ב',
+    filterSummaryBlank: 'ריק',
+    filterSummaryNotBlank: 'לא ריק',
     filterSummaryEquals: '=',
     filterSummaryNotEqual: '!=',
     filterSummaryGreaterThan: '>',
@@ -86,7 +86,7 @@ export const AG_GRID_LOCALE_IL = {
     filterSummaryListInactive: 'הוא (הכל)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'הוא (${variable})',
-    filterSummaryListLong: 'הוא (${variable}) ועוד ${variable}',
+    filterSummaryListLong: 'הוא (${variable}) ו-${variable} נוספים',
     addFilterCard: 'הוסף מסנן',
     agTextColumnFilterDisplayName: 'מסנן פשוט',
     agNumberColumnFilterDisplayName: 'מסנן פשוט',
@@ -599,8 +599,8 @@ export const AG_GRID_LOCALE_IL = {
     ariaLabelSelectField: 'שדה בחירה',
 
     // Cell Editor
-    ariaLabelCellEditor: '${entry.localeKeys[key]}',
-    ariaValidationErrorPrefix: '${entry.localeKeys[key]}',
+    ariaLabelCellEditor: 'עורך תא',
+    ariaValidationErrorPrefix: 'אימות עורך תא',
     ariaLabelLoadingContextMenu: 'טוען תפריט קיצור דרך',
 
     // aria labels for rich select
@@ -623,9 +623,9 @@ export const AG_GRID_LOCALE_IL = {
     ariaFilterPanelList: 'רשימת מסננים',
 
     // ARIA labels for new Filters Tool Panel
-    ariaLabelAddFilterField: '${entry.localeKeys[key]}',
-    ariaLabelFilterCardDelete: '${entry.localeKeys[key]}',
-    ariaLabelFilterCardHasEdits: '${entry.localeKeys[key]}',
+    ariaLabelAddFilterField: 'הוסף שדה סינון',
+    ariaLabelFilterCardDelete: 'מחק סינון',
+    ariaLabelFilterCardHasEdits: 'יש עריכות',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

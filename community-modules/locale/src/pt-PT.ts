@@ -68,8 +68,8 @@ export const AG_GRID_LOCALE_PT = {
     filterSummaryInactive: 'é (Todos)',
     filterSummaryContains: 'contém',
     filterSummaryNotContains: 'não contém',
-    filterSummaryTextEquals: 'igual a',
-    filterSummaryTextNotEqual: 'diferente de',
+    filterSummaryTextEquals: 'é igual a',
+    filterSummaryTextNotEqual: 'não é igual a',
     filterSummaryStartsWith: 'começa com',
     filterSummaryEndsWith: 'termina com',
     filterSummaryBlank: 'está em branco',
@@ -82,11 +82,11 @@ export const AG_GRID_LOCALE_PT = {
     filterSummaryLessThanOrEqual: '<=',
     filterSummaryInRange: 'entre',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
-    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryTextQuote: ' \'"${variable}"\'',
     filterSummaryListInactive: 'é (Todos)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'é (${variable})',
-    filterSummaryListLong: 'é (${variable}) e mais ${variable}',
+    filterSummaryListLong: 'é (${variable}) e ${variable} mais',
     addFilterCard: 'Adicionar Filtro',
     agTextColumnFilterDisplayName: 'Filtro Simples',
     agNumberColumnFilterDisplayName: 'Filtro Simples',
@@ -579,7 +579,7 @@ export const AG_GRID_LOCALE_PT = {
     ariaChartSelected: 'Selecionado',
     ariaSkeletonCellLoadingFailed: 'Falha ao carregar a linha',
     ariaSkeletonCellLoading: 'Os dados da linha estão carregando',
-    ariaDeferSkeletonCellLoading: 'Celula está carregando',
+    ariaDeferSkeletonCellLoading: 'Célula está carregando',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Grupos de Linhas',
@@ -625,7 +625,7 @@ export const AG_GRID_LOCALE_PT = {
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Adicionar Campo de Filtro',
     ariaLabelFilterCardDelete: 'Excluir Filtro',
-    ariaLabelFilterCardHasEdits: 'Tem Edições',
+    ariaLabelFilterCardHasEdits: 'Possui Edições',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

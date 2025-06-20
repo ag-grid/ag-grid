@@ -65,7 +65,7 @@ export const AG_GRID_LOCALE_SK = {
     groupFilterSelect: 'Vyberte pole:',
 
     // New Filter Tool Panel
-    filterSummaryInactive: 'je (všetky)',
+    filterSummaryInactive: 'je (Všetko)',
     filterSummaryContains: 'obsahuje',
     filterSummaryNotContains: 'neobsahuje',
     filterSummaryTextEquals: 'rovná sa',
@@ -83,7 +83,7 @@ export const AG_GRID_LOCALE_SK = {
     filterSummaryInRange: 'medzi',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
     filterSummaryTextQuote: '"${variable}"',
-    filterSummaryListInactive: 'je (všetky)',
+    filterSummaryListInactive: 'je (Všetko)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'je (${variable})',
     filterSummaryListLong: 'je (${variable}) a ${variable} viac',
@@ -91,7 +91,7 @@ export const AG_GRID_LOCALE_SK = {
     agTextColumnFilterDisplayName: 'Jednoduchý filter',
     agNumberColumnFilterDisplayName: 'Jednoduchý filter',
     agDateColumnFilterDisplayName: 'Jednoduchý filter',
-    agSetColumnFilterDisplayName: 'Výberový filter',
+    agSetColumnFilterDisplayName: 'Filter výberu',
     agMultiColumnFilterDisplayName: 'Kombinovaný filter',
     addFilterPlaceholder: 'Vyhľadať stĺpce...',
 
@@ -579,7 +579,7 @@ export const AG_GRID_LOCALE_SK = {
     ariaChartSelected: 'Vybrané',
     ariaSkeletonCellLoadingFailed: 'Nahrávanie riadku zlyhalo',
     ariaSkeletonCellLoading: 'Údaje riadku sa nahrávajú',
-    ariaDeferSkeletonCellLoading: 'Bunka sa načítava',
+    ariaDeferSkeletonCellLoading: 'Načítava sa bunka',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Skupiny riadkov',
@@ -600,7 +600,7 @@ export const AG_GRID_LOCALE_SK = {
 
     // Cell Editor
     ariaLabelCellEditor: 'Editor bunky',
-    ariaValidationErrorPrefix: 'Overenie editora bunky',
+    ariaValidationErrorPrefix: 'Validácia editora bunky',
     ariaLabelLoadingContextMenu: 'Načítava sa kontextová ponuka',
 
     // aria labels for rich select

@@ -65,11 +65,11 @@ export const AG_GRID_LOCALE_PL = {
     groupFilterSelect: 'Wybierz pole:',
 
     // New Filter Tool Panel
-    filterSummaryInactive: 'jest (wszystkie)',
+    filterSummaryInactive: 'jest (Wszystkie)',
     filterSummaryContains: 'zawiera',
     filterSummaryNotContains: 'nie zawiera',
-    filterSummaryTextEquals: 'równa się',
-    filterSummaryTextNotEqual: 'nie równa się',
+    filterSummaryTextEquals: 'jest równe',
+    filterSummaryTextNotEqual: 'nie jest równe',
     filterSummaryStartsWith: 'zaczyna się od',
     filterSummaryEndsWith: 'kończy się na',
     filterSummaryBlank: 'jest puste',
@@ -82,8 +82,8 @@ export const AG_GRID_LOCALE_PL = {
     filterSummaryLessThanOrEqual: '<=',
     filterSummaryInRange: 'pomiędzy',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
-    filterSummaryTextQuote: "'${variable}'",
-    filterSummaryListInactive: 'jest (wszystkie)',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'jest (Wszystkie)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'jest (${variable})',
     filterSummaryListLong: 'jest (${variable}) i ${variable} więcej',
@@ -92,8 +92,8 @@ export const AG_GRID_LOCALE_PL = {
     agNumberColumnFilterDisplayName: 'Prosty filtr',
     agDateColumnFilterDisplayName: 'Prosty filtr',
     agSetColumnFilterDisplayName: 'Filtr wyboru',
-    agMultiColumnFilterDisplayName: 'Filtr łączony',
-    addFilterPlaceholder: 'Szukaj kolumn...',
+    agMultiColumnFilterDisplayName: 'Filtr złożony',
+    addFilterPlaceholder: 'Szukaj w kolumnach...',
 
     // Advanced Filter
     advancedFilterContains: 'zawiera',
@@ -153,8 +153,8 @@ export const AG_GRID_LOCALE_PL = {
     minDateValidation: 'Data musi być po ${variable}',
     maxDateValidation: 'Data musi być przed ${variable}',
     maxLengthValidation: 'Musi mieć ${variable} znaków lub mniej.',
-    minValueValidation: 'Musi być większe lub równe ${variable}',
-    maxValueValidation: 'Musi być mniejsze lub równe ${variable}',
+    minValueValidation: 'Musi być większa lub równa ${variable}',
+    maxValueValidation: 'Musi być mniejsza lub równa ${variable}',
     invalidSelectionValidation: 'Nieprawidłowy wybór.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -580,7 +580,7 @@ export const AG_GRID_LOCALE_PL = {
     ariaChartSelected: 'Wybrane',
     ariaSkeletonCellLoadingFailed: 'Wiersz nie udało się załadować',
     ariaSkeletonCellLoading: 'Dane wiersza ładują się',
-    ariaDeferSkeletonCellLoading: 'Ładowanie komórki',
+    ariaDeferSkeletonCellLoading: 'Komórka się ładuje',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Grupy wierszy',
@@ -600,8 +600,8 @@ export const AG_GRID_LOCALE_PL = {
     ariaLabelSelectField: 'Wybierz pole',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Edytor komórki',
-    ariaValidationErrorPrefix: 'Walidacja edytora komórki',
+    ariaLabelCellEditor: 'Edytor komórek',
+    ariaValidationErrorPrefix: 'Walidacja edytora komórek',
     ariaLabelLoadingContextMenu: 'Ładowanie menu kontekstowego',
 
     // aria labels for rich select

@@ -80,8 +80,8 @@ export const AG_GRID_LOCALE_GR = {
     filterSummaryGreaterThanOrEqual: '>=',
     filterSummaryLessThan: '<',
     filterSummaryLessThanOrEqual: '<=',
-    filterSummaryInRange: 'ανάμεσα',
-    filterSummaryInRangeValues: '${entry.localeKeys[key]}',
+    filterSummaryInRange: 'μεταξύ',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
     filterSummaryTextQuote: '"${variable}"',
     filterSummaryListInactive: 'είναι (Όλα)',
     filterSummaryListSeparator: ', ',
@@ -92,7 +92,7 @@ export const AG_GRID_LOCALE_GR = {
     agNumberColumnFilterDisplayName: 'Απλό Φίλτρο',
     agDateColumnFilterDisplayName: 'Απλό Φίλτρο',
     agSetColumnFilterDisplayName: 'Φίλτρο Επιλογής',
-    agMultiColumnFilterDisplayName: 'Συνδυαστικό Φίλτρο',
+    agMultiColumnFilterDisplayName: 'Σύνθετο Φίλτρο',
     addFilterPlaceholder: 'Αναζήτηση στηλών...',
 
     // Advanced Filter
@@ -150,8 +150,8 @@ export const AG_GRID_LOCALE_GR = {
     advancedFilterBuilderValidationEnterValue: 'Πρέπει να εισάγετε μια τιμή.',
 
     // Editor Validation Errors
-    minDateValidation: 'Η ημερομηνία πρέπει να είναι μετά την ${variable}',
-    maxDateValidation: 'Η ημερομηνία πρέπει να είναι πριν την ${variable}',
+    minDateValidation: 'Η ημερομηνία πρέπει να είναι μετά από ${variable}',
+    maxDateValidation: 'Η ημερομηνία πρέπει να είναι πριν από ${variable}',
     maxLengthValidation: 'Πρέπει να είναι ${variable} χαρακτήρες ή λιγότερο.',
     minValueValidation: 'Πρέπει να είναι μεγαλύτερο ή ίσο με ${variable}',
     maxValueValidation: 'Πρέπει να είναι μικρότερο ή ίσο με ${variable}',
@@ -580,7 +580,7 @@ export const AG_GRID_LOCALE_GR = {
     ariaChartSelected: 'Επιλεγμένο',
     ariaSkeletonCellLoadingFailed: 'Αποτυχία φόρτωσης γραμμής',
     ariaSkeletonCellLoading: 'Τα δεδομένα γραμμής φορτώνονται',
-    ariaDeferSkeletonCellLoading: 'Το κελί φορτώνεται',
+    ariaDeferSkeletonCellLoading: 'Το κύτταρο φορτώνεται',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Ομάδες Σειρών',
@@ -600,8 +600,8 @@ export const AG_GRID_LOCALE_GR = {
     ariaLabelSelectField: 'Επιλογή Πεδίου',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Επεξεργαστής Κελιών',
-    ariaValidationErrorPrefix: 'Επικύρωση Επεξεργαστή Κελιών',
+    ariaLabelCellEditor: 'Επεξεργαστής Κελιού',
+    ariaValidationErrorPrefix: 'Επιβεβαίωση Επεξεργαστή Κελιού',
     ariaLabelLoadingContextMenu: 'Φόρτωση Μενού Περιβάλλοντος',
 
     // aria labels for rich select
@@ -624,9 +624,9 @@ export const AG_GRID_LOCALE_GR = {
     ariaFilterPanelList: 'Λίστα Φίλτρων',
 
     // ARIA labels for new Filters Tool Panel
-    ariaLabelAddFilterField: 'Προσθήκη Πεδίου Φίλτρου',
-    ariaLabelFilterCardDelete: 'Διαγραφή Φίλτρου',
-    ariaLabelFilterCardHasEdits: 'Έχει Επεξεργασίες',
+    ariaLabelAddFilterField: 'Προσθήκη πεδίου φίλτρου',
+    ariaLabelFilterCardDelete: 'Διαγραφή φίλτρου',
+    ariaLabelFilterCardHasEdits: 'Έχει επεξεργασίες',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

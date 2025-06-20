@@ -65,7 +65,7 @@ export const AG_GRID_LOCALE_HU = {
     groupFilterSelect: 'Válassza ki a mezőt:',
 
     // New Filter Tool Panel
-    filterSummaryInactive: 'van (Mind)',
+    filterSummaryInactive: 'mindent tartalmaz',
     filterSummaryContains: 'tartalmazza',
     filterSummaryNotContains: 'nem tartalmazza',
     filterSummaryTextEquals: 'egyenlő',
@@ -83,15 +83,15 @@ export const AG_GRID_LOCALE_HU = {
     filterSummaryInRange: 'között',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
     filterSummaryTextQuote: '"${variable}"',
-    filterSummaryListInactive: 'van (Mind)',
+    filterSummaryListInactive: 'mindent tartalmaz',
     filterSummaryListSeparator: ', ',
-    filterSummaryListShort: 'van (${variable})',
-    filterSummaryListLong: 'van (${variable}) és ${variable} több',
+    filterSummaryListShort: '(${variable})',
+    filterSummaryListLong: '(${variable}) és ${variable} további',
     addFilterCard: 'Szűrő hozzáadása',
     agTextColumnFilterDisplayName: 'Egyszerű szűrő',
     agNumberColumnFilterDisplayName: 'Egyszerű szűrő',
     agDateColumnFilterDisplayName: 'Egyszerű szűrő',
-    agSetColumnFilterDisplayName: 'Kiválasztás szűrő',
+    agSetColumnFilterDisplayName: 'Kiválasztási szűrő',
     agMultiColumnFilterDisplayName: 'Kombinált szűrő',
     addFilterPlaceholder: 'Oszlopok keresése...',
 
@@ -153,8 +153,8 @@ export const AG_GRID_LOCALE_HU = {
     minDateValidation: 'A dátumnak későbbinek kell lennie, mint ${variable}',
     maxDateValidation: 'A dátumnak korábbinak kell lennie, mint ${variable}',
     maxLengthValidation: 'Legfeljebb ${variable} karakter hosszú lehet.',
-    minValueValidation: 'Nagyobbnak vagy egyenlőnek kell lennie, mint ${variable}',
-    maxValueValidation: 'Kisebbnek vagy egyenlőnek kell lennie, mint ${variable}',
+    minValueValidation: 'Az értéknek nagyobbnak vagy egyenlőnek kell lennie ${variable}-val/vel',
+    maxValueValidation: 'Az értéknek kisebbnek vagy egyenlőnek kell lennie ${variable}-val/vel',
     invalidSelectionValidation: 'Érvénytelen kiválasztás.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -580,7 +580,7 @@ export const AG_GRID_LOCALE_HU = {
     ariaChartSelected: 'Kiválasztva',
     ariaSkeletonCellLoadingFailed: 'A sor betöltése sikertelen volt',
     ariaSkeletonCellLoading: 'A sor adatai betöltődnek',
-    ariaDeferSkeletonCellLoading: 'A cella betöltése folyamatban van',
+    ariaDeferSkeletonCellLoading: 'A cella betöltődik',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Sor csoportok',
@@ -626,7 +626,7 @@ export const AG_GRID_LOCALE_HU = {
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Szűrőmező hozzáadása',
     ariaLabelFilterCardDelete: 'Szűrő törlése',
-    ariaLabelFilterCardHasEdits: 'Van szerkesztés',
+    ariaLabelFilterCardHasEdits: 'Módosításokat tartalmaz',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '.',

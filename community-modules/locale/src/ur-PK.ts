@@ -65,13 +65,13 @@ export const AG_GRID_LOCALE_PK = {
     groupFilterSelect: 'فیلڈ منتخب کریں:',
 
     // New Filter Tool Panel
-    filterSummaryInactive: 'ہے (تمام)',
-    filterSummaryContains: 'پر مشتمل ہے',
-    filterSummaryNotContains: 'مشتمل نہیں ہے',
-    filterSummaryTextEquals: 'برابر ہے',
-    filterSummaryTextNotEqual: 'برابر نہیں ہے',
-    filterSummaryStartsWith: 'سے شروع ہوتا ہے',
-    filterSummaryEndsWith: 'پر ختم ہوتا ہے',
+    filterSummaryInactive: 'ہے (سب)',
+    filterSummaryContains: 'شامل ہے',
+    filterSummaryNotContains: 'شامل نہیں ہے',
+    filterSummaryTextEquals: 'کے برابر ہے',
+    filterSummaryTextNotEqual: 'کے برابر نہیں ہے',
+    filterSummaryStartsWith: 'شروع ہوتا ہے',
+    filterSummaryEndsWith: 'ختم ہوتا ہے',
     filterSummaryBlank: 'خالی ہے',
     filterSummaryNotBlank: 'خالی نہیں ہے',
     filterSummaryEquals: '=',
@@ -82,8 +82,8 @@ export const AG_GRID_LOCALE_PK = {
     filterSummaryLessThanOrEqual: '<=',
     filterSummaryInRange: 'کے درمیان',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
-    filterSummaryTextQuote: '\'"${variable}"',
-    filterSummaryListInactive: 'ہے (تمام)',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'ہے (سب)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'ہے (${variable})',
     filterSummaryListLong: 'ہے (${variable}) اور ${variable} مزید',
@@ -91,9 +91,9 @@ export const AG_GRID_LOCALE_PK = {
     agTextColumnFilterDisplayName: 'سادہ فلٹر',
     agNumberColumnFilterDisplayName: 'سادہ فلٹر',
     agDateColumnFilterDisplayName: 'سادہ فلٹر',
-    agSetColumnFilterDisplayName: 'انتخاب فلٹر',
+    agSetColumnFilterDisplayName: 'انتخابی فلٹر',
     agMultiColumnFilterDisplayName: 'کمبو فلٹر',
-    addFilterPlaceholder: 'کالمز تلاش کریں...',
+    addFilterPlaceholder: 'کالم تلاش کریں...',
 
     // Advanced Filter
     advancedFilterContains: 'شامل ہے',
@@ -150,12 +150,12 @@ export const AG_GRID_LOCALE_PK = {
     advancedFilterBuilderValidationEnterValue: 'ایک قدر درج کرنا ضروری ہے.',
 
     // Editor Validation Errors
-    minDateValidation: 'تاریخ کو ${variable} کے بعد ہونا چاہیے',
-    maxDateValidation: 'تاریخ کو ${variable} سے پہلے ہونا چاہیے',
-    maxLengthValidation: 'زیادہ سے زیادہ ${variable} حروف تک ہونے چاہیے۔',
-    minValueValidation: '${variable} سے زیادہ یا برابر ہونا چاہیے',
-    maxValueValidation: '${variable} سے کم یا برابر ہونا چاہیے',
-    invalidSelectionValidation: 'غلط انتخاب۔',
+    minDateValidation: 'تاریخ ${variable} کے بعد کی ہونی چاہیے',
+    maxDateValidation: 'تاریخ ${variable} سے پہلے کی ہونی چاہیے',
+    maxLengthValidation: '${variable} حروف یا کم ہونا چاہیے۔',
+    minValueValidation: '${variable} کے برابر یا اس سے زیادہ ہونا چاہیے',
+    maxValueValidation: '${variable} کے برابر یا اس سے کم ہونا چاہیے',
+    invalidSelectionValidation: 'غلط انتخاب',
     tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
@@ -600,7 +600,7 @@ export const AG_GRID_LOCALE_PK = {
 
     // Cell Editor
     ariaLabelCellEditor: 'سیل ایڈیٹر',
-    ariaValidationErrorPrefix: 'سیل ایڈیٹر کی تنقید',
+    ariaValidationErrorPrefix: 'سیل ایڈیٹر کی توثیق',
     ariaLabelLoadingContextMenu: 'کنٹیکسٹ مینو لوڈ ہو رہا ہے',
 
     // aria labels for rich select
@@ -625,7 +625,7 @@ export const AG_GRID_LOCALE_PK = {
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'فلٹر فیلڈ شامل کریں',
     ariaLabelFilterCardDelete: 'فلٹر حذف کریں',
-    ariaLabelFilterCardHasEdits: 'تدوین موجود ہیں',
+    ariaLabelFilterCardHasEdits: 'ترمیم شدہ',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

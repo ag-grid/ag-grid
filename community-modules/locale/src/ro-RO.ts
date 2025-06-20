@@ -65,7 +65,7 @@ export const AG_GRID_LOCALE_RO = {
     groupFilterSelect: 'Selectează câmp:',
 
     // New Filter Tool Panel
-    filterSummaryInactive: 'este (Tot)',
+    filterSummaryInactive: 'este (Toate)',
     filterSummaryContains: 'conține',
     filterSummaryNotContains: 'nu conține',
     filterSummaryTextEquals: 'este egal cu',
@@ -74,7 +74,7 @@ export const AG_GRID_LOCALE_RO = {
     filterSummaryEndsWith: 'se termină cu',
     filterSummaryBlank: 'este gol',
     filterSummaryNotBlank: 'nu este gol',
-    filterSummaryEquals: '',
+    filterSummaryEquals: '=',
     filterSummaryNotEqual: '!=',
     filterSummaryGreaterThan: '>',
     filterSummaryGreaterThanOrEqual: '>=',
@@ -82,17 +82,17 @@ export const AG_GRID_LOCALE_RO = {
     filterSummaryLessThanOrEqual: '<=',
     filterSummaryInRange: 'între',
     filterSummaryInRangeValues: '(${variable}, ${variable})',
-    filterSummaryTextQuote: '"${variable}"',
-    filterSummaryListInactive: 'este (Tot)',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'este (Toate)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: 'este (${variable})',
-    filterSummaryListLong: 'este (${variable}) și ${variable} altele',
-    addFilterCard: 'Adaugă Filtru',
-    agTextColumnFilterDisplayName: 'Filtru Simplu',
-    agNumberColumnFilterDisplayName: 'Filtru Simplu',
-    agDateColumnFilterDisplayName: 'Filtru Simplu',
-    agSetColumnFilterDisplayName: 'Filtru de Selecție',
-    agMultiColumnFilterDisplayName: 'Filtru Combinat',
+    filterSummaryListLong: 'este (${variable}) și ${variable} mai mult',
+    addFilterCard: 'Adaugă filtru',
+    agTextColumnFilterDisplayName: 'Filtru simplu',
+    agNumberColumnFilterDisplayName: 'Filtru simplu',
+    agDateColumnFilterDisplayName: 'Filtru simplu',
+    agSetColumnFilterDisplayName: 'Filtru de selecție',
+    agMultiColumnFilterDisplayName: 'Filtru combinat',
     addFilterPlaceholder: 'Caută coloane...',
 
     // Advanced Filter
@@ -152,7 +152,7 @@ export const AG_GRID_LOCALE_RO = {
     // Editor Validation Errors
     minDateValidation: 'Data trebuie să fie după ${variable}',
     maxDateValidation: 'Data trebuie să fie înainte de ${variable}',
-    maxLengthValidation: 'Trebuie să fie ${variable} caractere sau mai puțin.',
+    maxLengthValidation: 'Trebuie să fie cel mult ${variable} caractere.',
     minValueValidation: 'Trebuie să fie mai mare sau egal cu ${variable}',
     maxValueValidation: 'Trebuie să fie mai mic sau egal cu ${variable}',
     invalidSelectionValidation: 'Selecție invalidă.',
@@ -600,8 +600,8 @@ export const AG_GRID_LOCALE_RO = {
     ariaLabelSelectField: 'Selectează Câmp',
 
     // Cell Editor
-    ariaLabelCellEditor: '${entry.localeKeys[key]}',
-    ariaValidationErrorPrefix: '${entry.localeKeys[key]}',
+    ariaLabelCellEditor: 'Editor de celule',
+    ariaValidationErrorPrefix: 'Validare editor de celule',
     ariaLabelLoadingContextMenu: 'Încărcare Meniu Contextual',
 
     // aria labels for rich select
@@ -624,7 +624,7 @@ export const AG_GRID_LOCALE_RO = {
     ariaFilterPanelList: 'Listă de filtre',
 
     // ARIA labels for new Filters Tool Panel
-    ariaLabelAddFilterField: 'Adaugă Câmp Filtru',
+    ariaLabelAddFilterField: 'Adaugă Câmp de Filtrare',
     ariaLabelFilterCardDelete: 'Șterge Filtrul',
     ariaLabelFilterCardHasEdits: 'Are Modificări',
 
