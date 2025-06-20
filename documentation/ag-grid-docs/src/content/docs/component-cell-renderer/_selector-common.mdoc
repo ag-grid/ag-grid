@@ -1,14 +1,4 @@
 {% if isFramework("javascript", "angular", "react") %}
-```js
-cellRendererSelector: params => {
-    return {
-        component: GenderCellRenderer,
-        params: {values: ['Male', 'Female']}
-    };
-}
-```
-
-However a selector only makes sense when a selection is made. The following demonstrates selecting between Mood and Gender Cell Renderers:
 
 ```js
 cellRendererSelector: params => {
@@ -31,4 +21,13 @@ cellRendererSelector: params => {
     return undefined;
 }
 ```
+
+Another use case for the Selector function is to only render a custom cell component in leaf nodes when [Row Grouping](./grouping). This is done by checking `params.node.group` and returning `undefined` for the group nodes.
+
+```js
+cellRendererSelector: params => {
+    return params.node.group ? undefined : { component: CellRenderer };
+},
+```
+
 {% /if %}

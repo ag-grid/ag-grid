@@ -183,12 +183,14 @@ The `params` passed to `cellRendererSelector` are the same as those passed to th
 
 The result is an object with `component` and `params` to use instead of `cellRenderer` and `cellRendererParams`.
 
-This following shows the Selector always returning back a Mood Cell Renderer:
+This following shows the selector choosing between Mood and Gender Cell Renderers based on the row data.
+
 
 {% partial file="./_selector-common.mdoc" /%}
 {% partial file="./_selector-vue.mdoc" /%}
 
-Here is a full example.
+
+The example below demonstrates the use of `cellRendererSelector` to dynamically select a Cell Component based on the row data.
 
 * The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
 * `colDef.cellRendererSelector` is a function that selects the renderer based on the row data.
@@ -278,7 +280,7 @@ The example below demonstrates a dynamic tooltip being displayed on Cell Compone
 
 ### Defer Slow Cell Components
 
-If a Custom Cell Component is slow to render, the grid may appear unresponsive due to the custom component blocking the main thread. To defer the rending of slow components set `deferRender: true` in `cellRendererParams`.
+If a Custom Cell Component is slow to render, the grid may appear unresponsive due to the custom component blocking the main thread. This can be avoided by deferring the rending of slow components as follows:
 
 ```js
 {
@@ -289,9 +291,14 @@ If a Custom Cell Component is slow to render, the grid may appear unresponsive d
 }
 ```
 
-Deferred components will be rendered after other cells and only after the grid has stopped scrolling. In the meantime, the loading cell renderer will be displayed.
+Deferred components will be rendered after other cells and only after the grid has stopped scrolling. In the meantime, the loading cell renderer will be displayed. If [Row Grouping](./grouping) is active only custom cells in leaf nodes will be deferred. 
 
-The loading cell renderer can be customised via the `loadingCellRenderer` column property.
+The example below demonstrates the use of `deferRender` to defer the rendering of an artificially slow cell component. The following can be noted when scrolling:
+
+* The column 'Slow Renderer' is deferred and shows the default skeleton cell loader.
+* The column 'Slow Renderer Custom' is deferred but uses a custom loading cell defined via `colDef.loadingCellRenderer`.
+* The column 'Fast Renderer' is a custom component but not deferred so renders immediately along with the other plain cells. 
+
 
 {% gridExampleRunner title="Slow Cell Renderer" name="slow-cell-renderer" /%}
 
