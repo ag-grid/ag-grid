@@ -338,8 +338,12 @@ export function _syncFromEditor(
     });
 }
 
-export function _destroyEditors(beans: BeanCollection, edits: Required<EditPosition>[]): void {
-    edits.forEach((cellPosition) => _destroyEditor(beans, cellPosition));
+export function _destroyEditors(beans: BeanCollection, edits?: Required<EditPosition>[]): void {
+    if (!edits) {
+        edits = beans.editModelSvc?.getEditPositions();
+    }
+
+    edits!.forEach((cellPosition) => _destroyEditor(beans, cellPosition));
 }
 
 export function _destroyEditor(beans: BeanCollection, position: Required<EditPosition>): void {
