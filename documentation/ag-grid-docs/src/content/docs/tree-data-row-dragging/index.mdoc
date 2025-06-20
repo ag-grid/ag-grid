@@ -1,0 +1,82 @@
+---
+title: "Tree Data - Row Dragging"
+enterprise: true
+---
+Configure the grid to display structured data by providing data paths.
+
+### Row Dragging & Tree Data
+
+Row Dragging can be combined with Tree Data to let users reorder rows within a hierarchical structure.
+You can choose between two approaches:
+
+- [Managed Row Dragging](#managed-row-dragging): The grid handles row dragging automatically.
+- [Unmanaged Row Dragging](#unmanaged-row-dragging): Customized application specific logic for row dragging.
+
+See the [Row Dragging](./row-dragging/) for more information about row dragging options and APIs and advanced usage.
+
+## Managed Row Dragging
+
+This is the simplest way to enable row dragging with Tree Data.
+The grid will automatically handle the dragging of rows and updating the data structure.
+It supports reordering, moving parents and children, and converting a leaf node into a group.
+
+- `treeData: true` — Enables tree data mode, allowing hierarchical data structures.
+- `getRowId` — Provides a unique ID for each row, required for row movement.
+- `treeDataParentIdField: 'parentId'` — Specifies the field that defines parent-child relationships.
+- `rowDragManaged: true` — Enables managed row dragging, so the grid handles row movement automatically.
+- `rowDragInsertDelay` — Delay before expanding a collapsed group or converting a leaf to a group (see [Row Drag Insert Delay](#row-drag-insert-delay)).
+- `autoGroupColumnDef.rowDrag: true` — Enables the drag handle in the group column.
+- `groupDefaultExpanded: -1` — Expands all groups by default.
+
+{% gridExampleRunner title="Managed Row Drag with Tree Data" name="tree-managed-row-drag"  exampleHeight=545 /%}
+
+### Row Drag Insert Delay
+
+When using Tree Data with Managed Row Dragging, the `rowDragInsertDelay` property sets a delay (in milliseconds) before a dragged row is inserted into a new parent node.
+This delay helps prevent accidental moves when hovering over potential drop targets. If the target is a collapsed parent or a leaf node, the grid will expand the parent or convert the leaf into a parent after this delay, allowing the dragged row to be inserted as a child.
+
+You can configure this delay using the `rowDragInsertDelay` grid option.
+
+For example:
+
+```ts
+rowDragInsertDelay: 500 // 500ms delay before expanding or converting
+```
+
+## Unmanaged Row Dragging 
+
+To have full control, is possible to provide a customized implementation of row dragging using unmanaged row dragging.
+The application in this case is fully responsible to maintain the rowData state and handling the dragging events and updating the rowData based on the drag events fired by the grid.
+
+### Example Tree Data Unmanaged Row Dragging (with getDataPath)
+
+The example below shows [Tree Data](./tree-data/) and row dragging with getDataPath where the following can be noted:
+
+* The [auto-group column](./grouping/) has row drag `true` for all rows.
+
+* The application moves the rows in the row data while the row drag is happening in the `onRowDragMove` event handler.
+
+* While row dragging the row move operation can be reverted by pressing {% kbd "⎋ Escape" /%} key.
+
+* You can reorder a row only inside its current parent by holding the {% kbd "⇧ Shift" /%} key press and dragging it
+
+* The expanded/contracted state of a folder and all of its child folders is preserved when the folder is moved to a new parent.
+
+{% gridExampleRunner title="Unmanaged Row Drag with Tree Data" name="tree-unmanaged-row-drag"  exampleHeight=545 /%}
+
+### Example UHighlighted Tree Data Unmanaged Row Dragging (with getDataPath)
+
+The example above works, however it is not intuitive as the user is given no visual hint what folder will be the destination folder. The example below continues with the example above by providing hints to the user while the drag is in progress. From the example the following can be observed:
+
+* The example registers for `onRowDragMove` events and works out what folder the mouse is over as the drag is happening.
+
+* While the row is dragging, the application highlights the folder that is currently selected as the destination folder (called `potentialParent` in the example code).
+
+* The application does NOT rearrange the rows as the drag is happening. As with the previous example, it waits for the `onRowDragEnd` event before updating the data.
+
+* The example uses [Cell Class Rules](./cell-styles/#cell-class-rules) to highlight the destination folder. The example adds a CSS class `hover-over` to all the cells of the destination folder.
+
+* The example uses [Refresh Cells](./view-refresh/#refresh-cells) to get the grid to execute the Cell Class Rules again over the destination folder when the destination folder changes.
+
+{% gridExampleRunner title="Highlighting Unmanaged Row Drag with Tree Data" name="tree-unmanaged-row-drag-highlight" /%}
+
