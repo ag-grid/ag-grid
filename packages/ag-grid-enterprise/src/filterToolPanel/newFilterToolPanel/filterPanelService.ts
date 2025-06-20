@@ -311,6 +311,10 @@ export class FilterPanelService
     }
 
     private onFilterDestroyed({ column }: FilterDestroyedEvent) {
+        if (!this.beans.colFilter?.isAlive()) {
+            // if grid is being destroyed, don't recreate filters
+            return;
+        }
         const states = this.states;
         const id = column.getColId();
         const existingState = states.get(id);
