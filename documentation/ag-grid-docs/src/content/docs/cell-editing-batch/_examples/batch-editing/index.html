@@ -1,15 +1,17 @@
 <div class="example-wrapper">
     <div class="example-buttons">
         <div class="example-button-row">
-            <button id="startBatch" onclick="startBatch()">Start Batch</button>
-            <button id="stopBatch" onclick="stopBatch()">Stop Batch</button>
+            <button onclick="startBatchEdit()">Start Batch Edit</button>
+            <button onclick="commitBatchEdit()">Commit Batch Edit</button>
+            <button onclick="cancelBatchEdit()">Cancel Batch Edit</button>
         </div>
         <div class="example-button-row">
-            <button id="stopEdit" onclick="stopEdit()">Commit Batch</button>
-            <button id="cancelEdit" onclick="cancelEdit()">Cancel Batch</button>
+            <button onclick="startEdit()">Start Edit</button>
+            <button onclick="stopEdit()">Stop Edit</button>
+            <button onclick="cancelEdit()">Cancel Edit</button>
         </div>
         <div class="example-button-row">
-            <button id="getPending" onclick="getEditingCells()">Get Editing Cells</button>
+            <button onclick="getEditingCells()">Get Editing Cells</button>
         </div>
     </div>
     <div class="grid-wrapper">

@@ -37,9 +37,9 @@ The following example demonstrates a simple batch editing scenario: starting a b
 
 {% gridExampleRunner title="Batch Editing API" name="batch-editing-api" exampleHeight=560 /%}
 
-The grid API methods `startEditingCell()` and `stopEditing()` can be used to control the editing state of individual cells. When you start editing a cell after enabling Batch Editing, the grid enters a batch editing mode where it can track changes. `isBatchEditing()` can be used to check if the grid is currently in batch editing mode.
+The grid API methods `startEditingCell()` and `stopEditing()` can be used to control the editing state of individual cells. When you start editing a cell after enabling Batch Editing, the grid enters a batch editing mode where it can track changes. `isBatchEditing()` can be used to check if the grid is currently in batch editing mode. In this mode, `startEditingCell()` and `stopEditing()` affect only the cell editors, not the overall batch.
 
-{% apiDocumentation source="grid-api/api.json" section="batch-editing" names=["isBatchEditing", "setBatchEditing", "setEditingCells"] /%}
+{% apiDocumentation source="grid-api/api.json" section="batch-editing" names=["isBatchEditing", "startBatchEdit", "commitBatchEdit", "cancelBatchEdit", "setEditingCells"] /%}
 
 {% apiDocumentation source="grid-api/api.json" section="editing" names=["getEditingCells", "startEditingCell", "stopEditing"] /%}
 

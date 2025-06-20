@@ -54,8 +54,8 @@ export function getEditingCells(beans: BeanCollection, params: GetEditingCellsPa
     return positions;
 }
 
-export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
-    beans.editSvc?.stopEditing(undefined, { cancel, source: 'api' });
+export function stopEditing({ editSvc }: BeanCollection, cancel: boolean = false): void {
+    editSvc?.stopEditing(undefined, { cancel, source: editSvc?.isBatchEditing() ? 'ui' : 'api' });
 }
 
 export function isEditing(beans: BeanCollection, cellPosition: CellPosition): boolean {
@@ -113,16 +113,12 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
     editSvc?.startEditing(cell, { startedEdit: true, source: 'api', event: new KeyboardEvent('keydown', { key }) });
 }
 
-export function cancelEdits(beans: BeanCollection): void {
-    beans.editSvc?.stopAllEditing(true, 'api');
+export function cancelEdits({ editSvc }: BeanCollection): void {
+    editSvc?.stopEditing(undefined, { cancel: true, source: editSvc?.isBatchEditing() ? 'ui' : 'api' });
 }
 
 export function validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {
-    if (!beans.editSvc) {
-        return null;
-    }
-
-    return beans.editSvc.validateEdit();
+    return beans.editSvc?.validateEdit() || null;
 }
 
 export function getCurrentUndoSize(beans: BeanCollection): number {

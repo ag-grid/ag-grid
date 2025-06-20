@@ -424,9 +424,9 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
 }
 
 function toggleBatch() {
-    const batch = gridApi!.isBatchEditing();
+    const batch = !gridApi!.isBatchEditing();
 
-    gridApi!.setBatchEditing(!batch);
+    batch ? gridApi!.startBatchEdit() : gridApi!.cancelBatchEdit();
 
     if (!batch) {
         clearEditingCells();
@@ -496,7 +496,7 @@ function setEditingCells(clearValues: boolean = false) {
         });
     }
 
-    gridApi!.setBatchEditing(true);
+    gridApi!.startBatchEdit();
 
     gridApi!.setEditingCells(pendingEdits);
 

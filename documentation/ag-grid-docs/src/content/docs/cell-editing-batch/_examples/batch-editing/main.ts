@@ -78,12 +78,23 @@ function getEditingCells() {
     console.log('Editing cells:', cells);
 }
 
-function startBatch() {
-    gridApi!.setBatchEditing(true);
+function startBatchEdit() {
+    gridApi!.startBatchEdit();
 }
 
-function stopBatch() {
-    gridApi!.setBatchEditing(false);
+function commitBatchEdit() {
+    gridApi!.commitBatchEdit();
+}
+
+function cancelBatchEdit() {
+    gridApi!.cancelBatchEdit();
+}
+
+function startEdit() {
+    gridApi!.startEditingCell({
+        rowIndex: 0,
+        colKey: 'firstName',
+    });
 }
 
 function cancelEdit() {

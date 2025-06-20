@@ -884,9 +884,19 @@ export interface _BatchEditApi {
     setEditingCells(cellPositions: EditingCellPosition[], params?: SetEditingCellsParams): void;
 
     /**
-     * Start/Stop batch editing. Note that any pending edits will be lost when batch editing is disabled.
+     * Start batch editing.
      */
-    setBatchEditing(enable: boolean): void;
+    startBatchEdit(): void;
+
+    /**
+     * Stop batch editing and commit any pending changes.
+     */
+    commitBatchEdit(): void;
+
+    /**
+     * Stop batch editing and discard any pending changes.
+     */
+    cancelBatchEdit(): void;
 
     /**
      * Returns `true` if batch editing is enabled

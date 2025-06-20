@@ -469,9 +469,21 @@
                 "url": "./cell-editing-batch/"
             }
         },
-        "setBatchEditing": {
+        "startBatchEdit": {
             "more": {
-                "name": "Enable/Disable Batch Editing",
+                "name": "Start Batch Editing",
+                "url": "./cell-editing-batch"
+            }
+        },
+        "commitBatchEdit": {
+            "more": {
+                "name": "Commit Batch Editing, keeping pending edits",
+                "url": "./cell-editing-batch"
+            }
+        },
+        "cancelBatchEdit": {
+            "more": {
+                "name": "Stop Batch Editing, discarding pending edits",
                 "url": "./cell-editing-batch"
             }
         },
@@ -496,18 +508,6 @@
                 "url": "./cell-editing/"
             }
         },
-        "setBatchEditing": {
-            "more": {
-                "name": "Enable/Disable Batch Editing",
-                "url": "./cell-editing-batch"
-            }
-        },
-        "isBatchEditing": {
-            "more": {
-                "name": "Is Batch Editing Enabled",
-                "url": "./cell-editing-batch"
-            }
-        },
         "startEditingCell": {
             "more": {
                 "name": "Editing API",
@@ -521,12 +521,6 @@
             }
         },
         "getEditingCells": {
-            "more": {
-                "name": "Editing API",
-                "url": "./cell-editing-start-stop/#editing-api"
-            }
-        },
-        "setEditingCells": {
             "more": {
                 "name": "Editing API",
                 "url": "./cell-editing-start-stop/#editing-api"
