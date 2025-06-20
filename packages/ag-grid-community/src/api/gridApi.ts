@@ -984,7 +984,7 @@ export interface _ColumnFilterGridApi {
     /**
      * Gets the current filter model for the specified column.
      * Will return `null` if no active filter.
-     * @param useUnapplied If `enableFilterHandlers = true` and value is `true`, will return the unapplied filter model (or applied if no unapplied)
+     * @param useUnapplied If `enableFilterHandlers = true` and value is `true`, will return the unapplied filter model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     getColumnFilterModel<TModel>(column: string | Column, useUnapplied?: boolean): TModel | null;

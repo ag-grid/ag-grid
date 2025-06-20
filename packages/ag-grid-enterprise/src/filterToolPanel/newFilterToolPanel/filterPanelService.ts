@@ -2,6 +2,7 @@ import type {
     AgColumn,
     BeanCollection,
     FilterAction,
+    FilterDestroyedEvent,
     FilterPanelFilterState,
     FilterPanelSummaryState,
     IFilterPanelService,
@@ -34,6 +35,10 @@ export class FilterPanelService
     private initialState?: NewFiltersToolPanelState;
 
     public postConstruct(): void {
+        if (!this.gos.get('enableFilterHandlers')) {
+            return;
+        }
+
         const updateFilterStates = this.updateFilterStates.bind(this);
         this.addManagedEventListeners({
             newColumnsLoaded: () => {
@@ -41,6 +46,7 @@ export class FilterPanelService
                 updateFilterStates();
             },
             filterChanged: updateFilterStates,
+            filterDestroyed: this.onFilterDestroyed.bind(this),
         });
         this.addManagedListeners(this.beans.colFilter!, {
             filterStateChanged: ({ column }: { column: AgColumn }) => {
@@ -213,17 +219,25 @@ export class FilterPanelService
     }
 
     private createFilter(id: string, expanded?: boolean): void {
+        const stateWrapper = this.createFilterStateWrapper(id, expanded);
+        if (stateWrapper) {
+            this.states.set(id, stateWrapper);
+            this.orderedStates.push(id);
+        }
+    }
+
+    private createFilterStateWrapper(id: string, expanded?: boolean): StateWrapper | undefined {
         const { colModel, colFilter } = this.beans;
         const column = colModel.getColById(id);
 
         if (column && !column.colDef.suppressFiltersToolPanel) {
             const handler = colFilter!.getHandler(column, true);
             if (handler) {
-                const filterState = this.createFilterState(column, handler, expanded);
-                this.states.set(column.getColId(), filterState);
-                this.orderedStates.push(id);
+                return this.createFilterState(column, handler, expanded);
             }
         }
+
+        return undefined;
     }
 
     private updateFilterStates(): void {
@@ -293,6 +307,21 @@ export class FilterPanelService
                     this.updateFilterState<FilterPanelSummaryState, 'summary'>(colId, 'summary', getSummary());
                 },
             };
+        }
+    }
+
+    private onFilterDestroyed({ column }: FilterDestroyedEvent) {
+        const states = this.states;
+        const id = column.getColId();
+        const existingState = states.get(id);
+        if (existingState) {
+            const stateWrapper = this.createFilterStateWrapper(id, existingState.state.expanded);
+            if (stateWrapper) {
+                existingState.destroy?.();
+                states.set(id, stateWrapper);
+            } else {
+                this.remove(id);
+            }
         }
     }
 
