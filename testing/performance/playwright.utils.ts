@@ -74,6 +74,7 @@ export const waitFor = async <T>(
     const { timeout } = options;
     if (page) {
         const handle = await page.waitForFunction(getterOrTimeout, options.args ?? [], { timeout: timeout ?? 5000 });
+        setTimeout(() => handle.dispose(), timeout ?? 5000 + 1000);
         if (options.smart) {
             return handle as T; // todo this type assertion is a workaround, ideally we should handle the type more gracefully
         } else {

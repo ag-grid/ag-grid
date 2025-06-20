@@ -138,7 +138,7 @@ async function getGitHash(version: Version): Promise<string> {
 /**
  * Taken from ag-grid-enterprise package.json git history
  */
-const gridToChartsMap = {
+const gridToChartsMap: Record<Version, Version> = {
     local: 'v11.3.0',
     prod: 'v11.3.0',
     staging: 'v11.3.0',
@@ -188,7 +188,6 @@ type Stats = {
     average: number;
     stdDev: number;
     marginOfError: number;
-    newBase: number[];
     filteredCount: number;
     originalCount: number;
 };
@@ -296,7 +295,6 @@ const computeStats = (times: number[]): Stats => {
         average: avg,
         stdDev,
         marginOfError: totalMarginOfError,
-        newBase: base,
         filteredCount: base.length,
         originalCount: times.length,
     };
@@ -386,7 +384,7 @@ function benchError(message: string, e: any, testCase: InternalTestCase) {
 }
 
 async function attachScripts(page: Page, version: Version, testCase: InternalTestCase) {
-    const chartsVersion = gridToChartsMap[version as keyof typeof gridToChartsMap] || gridToChartsMap.prod;
+    const chartsVersion = gridToChartsMap[version] || gridToChartsMap.prod;
 
     const urls = [getCdnUrl('ag-grid-community', version), getCdnUrl('ag-grid-enterprise', version)];
     if (chartsVersion) {
@@ -493,6 +491,7 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
             if (testCase.preSetup) await testCase.preSetup(page);
             for (let i = 0; i < minIter; i++) {
                 if (testCase.setupPreActions) await testCase.setupPreActions(page);
+                if (i % 50 === 0) await page.requestGC();
                 const noiseSize = (await metricsGetter(page, testCase)).length;
                 if (testCase.actions) await testCase.actions(page);
                 if (i > warmupIter) {
@@ -505,7 +504,6 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
             if (testCase.expectsPostActions) await testCase.expectsPostActions(page, lastCommunications);
         }
         [s1, s2] = [computeStats(measurements.control), computeStats(measurements.variant)];
-        [measurements.control, measurements.variant] = [s1.newBase, s2.newBase]; // update the result with filtered data
         const { percentDiff, avgMoEPercent, isSignificant } = computeCommonStats(s1, s2, testCase);
         significant = isSignificant;
         needToContinue = !significant && totalIterations < maxIter;
