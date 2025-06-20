@@ -2,20 +2,30 @@ import type { BeanCollection } from '../../context/context';
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode } from '../../interfaces/iRowNode';
 
-const purgeRows = (beans: BeanCollection, rowNodes: Set<IRowNode>): Set<IRowNode> => {
-    const foundNodes = new Set<IRowNode>();
+const purgeRows = (
+    { rowModel, pinnedRowModel, editModelSvc }: BeanCollection,
+    rowNodes: Set<IRowNode>
+): Set<IRowNode> => {
+    const found = new Set<IRowNode>();
 
-    beans.rowModel.forEachNode((node) => rowNodes.has(node) && foundNodes.add(node));
-    rowNodes.forEach((node) => !foundNodes.has(node) && beans.editModelSvc!.removeEdits({ rowNode: node }));
+    rowModel.forEachNode((node) => rowNodes.has(node) && found.add(node));
+    pinnedRowModel?.forEachPinnedRow('top', (node) => rowNodes.has(node) && found.add(node));
+    pinnedRowModel?.forEachPinnedRow('bottom', (node) => rowNodes.has(node) && found.add(node));
 
-    return foundNodes;
+    rowNodes.forEach((rowNode) => {
+        if (!found.has(rowNode)) {
+            editModelSvc!.removeEdits({ rowNode });
+        }
+    });
+
+    return found;
 };
 
-const purgeCells = (beans: BeanCollection, rowNodes: Set<IRowNode>, columns: Set<Column>): void => {
+const purgeCells = ({ editModelSvc }: BeanCollection, rowNodes: Set<IRowNode>, columns: Set<Column>): void => {
     rowNodes.forEach((rowNode) =>
-        beans
-            .editModelSvc!.getEditRow({ rowNode })
-            ?.forEach((_, column) => !columns.has(column) && beans.editModelSvc!.removeEdits({ rowNode, column }))
+        editModelSvc
+            ?.getEditRow({ rowNode })
+            ?.forEach((_, column) => !columns.has(column) && editModelSvc!.removeEdits({ rowNode, column }))
     );
 };
 

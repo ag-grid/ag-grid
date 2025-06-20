@@ -25,8 +25,8 @@ sparklineOptions: {
     direction: 'vertical',
     fill: '#91cc75',
     stroke: '#91cc75',
-    highlightStyle: {
-        item: {
+    highlight: {
+        highlightedItem: {
             fill: 'orange'
         }
     },
@@ -63,14 +63,14 @@ Custom fill
 {% /imageCaption %}
 {% /flex %}
 
-It is possible to set the fill for the highlighted state of the column by adding `fill` in `highlightStyle` options as follows:
+It is possible to set the fill for the highlighted state of the column by adding `fill` in `highlight` options as follows:
 
 ```js
 sparklineOptions: {
     type: 'bar',
     direction: 'vertical',
-    highlightStyle: {
-        item: {
+    highlight: {
+        highlightedItem: {
             fill: 'orange', // sets the highlighted column fill
         }
     }
@@ -106,8 +106,8 @@ sparklineOptions: {
     direction: 'vertical',
     stroke: '#ec7c7d', // sets the column stroke
     strokeWidth: 2, // sets the column stroke width
-    highlightStyle: {
-        item: {
+    highlight: {
+        highlightedItem: {
             stroke: '#b5ec7c', // sets the highlighted column stroke
             strokeWidth: 2, // sets the highlighted column stroke width
         }

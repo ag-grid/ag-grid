@@ -226,6 +226,8 @@ const makeStyleMaterialTreeShakeable = () => {
         valueChangeValueHighlightBackgroundColor: '#00acc1',
         panelTitleBarIconColor: foregroundColor,
         advancedFilterBuilderButtonBarBorder: false,
+        filterPanelApplyButtonColor: { ref: 'buttonTextColor' },
+        filterPanelApplyButtonBackgroundColor: { ref: 'buttonBackgroundColor' },
     };
 
     const lightParams = {

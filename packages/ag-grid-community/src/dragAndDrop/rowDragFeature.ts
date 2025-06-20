@@ -286,6 +286,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const y = _getNormalisedMousePosition(beans, draggingEvent).y;
         let targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
         let target = clientSideRowModel.getRow(targetRowIndex) ?? null;
+        const moved = source !== target;
 
         let yDelta = target ? (y - target.rowTop! - target.rowHeight! / 2) / target.rowHeight! || 0 : 1;
 
@@ -309,12 +310,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         let above = yDelta < 0;
         let targetInRows = false;
         if (sameGrid && target) {
-            if (source === target) {
-                targetInRows = true;
+            if (!moved) {
                 if (Math.abs(yDelta) <= 0.5) {
                     this.makeGroupThrottleClear();
                     return null; // Nothing to move
                 }
+                targetInRows = true;
             } else {
                 targetInRows = rows.indexOf(target) >= 0;
                 if (targetInRows) {
@@ -351,9 +352,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                     this.makeGroupThrottleTarget = target;
                     this.makeGroupThrottleStart();
                 }
-            } else {
-                newParent = target.parent ?? rootNode;
             }
+            newParent ??= target?.parent ?? rootNode;
         }
 
         let inside = false;
@@ -368,6 +368,16 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                     above = true;
                 }
             }
+
+            if (target && !inside) {
+                // Set target to the first group that is not the root node or the new parent
+                let current: RowNode | null = target;
+                while (current && current !== rootNode && current !== newParent) {
+                    target = current;
+                    current = current.parent;
+                }
+            }
+
             if (rowsHaveSameParent(rows, newParent)) {
                 newParent = null; // No need to set parent if all rows have the same parent
             }
@@ -847,19 +857,18 @@ const getRowsPrevOrNext = (
 const getPrevOrNext = (
     clientSideRowModel: IClientSideRowModel,
     increment: -1 | 1,
-    initialRow: IRowNode
+    initialRow: IRowNode | null | undefined
 ): RowNode | undefined => {
-    const rowCount = clientSideRowModel.getRowCount();
-    let rowIndex = initialRow.rowIndex! + increment;
-    while (rowIndex >= 0 && rowIndex < rowCount) {
-        let row: RowNode | undefined = clientSideRowModel.getRow(rowIndex)!;
-        if (row?.footer) {
-            row = row.sibling; // Skip footer rows
+    if (initialRow) {
+        const rowCount = clientSideRowModel.getRowCount();
+        let rowIndex = initialRow.rowIndex! + increment;
+        while (rowIndex >= 0 && rowIndex < rowCount) {
+            const row: RowNode | undefined = clientSideRowModel.getRow(rowIndex)!;
+            if (!row || !row.footer) {
+                return row;
+            }
+            rowIndex += increment;
         }
-        if (row?.sourceRowIndex >= 0) {
-            return row; // Valid leaf node
-        }
-        rowIndex += increment;
     }
     return undefined; // Out of bounds
 };

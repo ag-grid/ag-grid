@@ -913,6 +913,10 @@
         }
     }
 
+    .ag-row.ag-row-editing-invalid .ag-cell-inline-editing {
+        opacity: 0.8;
+    }
+
     .ag-cell .ag-icon {
         display: inline-block;
         vertical-align: middle;

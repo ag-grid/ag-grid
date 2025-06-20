@@ -65,7 +65,7 @@ export class CellComp extends Component {
         public readonly cellCtrl: CellCtrl,
         printLayout: boolean,
         eRow: HTMLElement,
-        editingRow: boolean
+        editingCell: boolean
     ) {
         super();
         this.beans = beans;
@@ -127,7 +127,7 @@ export class CellComp extends Component {
             refreshEditStyles: (editing, isPopup) => this.refreshEditStyles(editing, isPopup),
         };
 
-        cellCtrl.setComp(compProxy, cellDiv, wrapperDiv, this.eCellWrapper, printLayout, editingRow, undefined);
+        cellCtrl.setComp(compProxy, cellDiv, wrapperDiv, this.eCellWrapper, printLayout, editingCell, undefined);
     }
 
     private getParentOfValue(): HTMLElement {

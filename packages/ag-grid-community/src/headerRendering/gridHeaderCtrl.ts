@@ -164,7 +164,7 @@ export class GridHeaderCtrl extends BeanStub {
                 if (!_exists(direction)) {
                     direction = 'DOWN';
                 }
-                if (headerNavigation!.navigateVertically(direction, null, e)) {
+                if (headerNavigation!.navigateVertically(direction, e)) {
                     // preventDefault so that the arrow keys don't cause an extra scroll
                     e.preventDefault();
                 }

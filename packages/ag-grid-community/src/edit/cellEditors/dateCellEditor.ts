@@ -66,17 +66,24 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         const translate = this.getLocaleTextFunc();
 
         if (value instanceof Date && !isNaN(value.getTime())) {
-            if (min instanceof Date && value < min) {
-                const minDateString = min.toLocaleDateString();
-                internalErrors.push(
-                    translate('minDateValidation', `Date must be after ${minDateString}`, [minDateString])
-                );
+            if (min) {
+                const minValue = min instanceof Date ? min : new Date(min);
+                if (value < minValue) {
+                    const minDateString = minValue.toLocaleDateString();
+                    internalErrors.push(
+                        translate('minDateValidation', `Date must be after ${minDateString}`, [minDateString])
+                    );
+                }
             }
-            if (max instanceof Date && value > max) {
-                const maxDateString = max.toLocaleDateString();
-                internalErrors.push(
-                    translate('maxDateValidation', `Date must be before ${maxDateString}`, [maxDateString])
-                );
+
+            if (max) {
+                const maxValue = max instanceof Date ? max : new Date(max);
+                if (value > maxValue) {
+                    const maxDateString = maxValue.toLocaleDateString();
+                    internalErrors.push(
+                        translate('maxDateValidation', `Date must be before ${maxDateString}`, [maxDateString])
+                    );
+                }
             }
         }
 

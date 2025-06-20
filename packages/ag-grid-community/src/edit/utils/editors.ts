@@ -4,19 +4,21 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type {
+    DefaultProvidedCellEditorParams,
+    EditingCellPosition,
     GetCellEditorInstancesParams,
     ICellEditor,
-    ICellEditorComp,
     ICellEditorParams,
     ICellEditorValidationError,
 } from '../../interfaces/iCellEditor';
-import type { EditValue } from '../../interfaces/iEditModelService';
+import type { EditMap, EditValidationMap, EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
-import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
+import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _setAriaInvalid } from '../../utils/aria';
+import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
 import { _getCellCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
@@ -53,16 +55,15 @@ export function _setupEditors(
     editingCells: Required<EditPosition>[],
     position?: Required<EditPosition>,
     key?: string | null,
+    event?: Event | null,
     cellStartedEdit?: boolean | null
-): UserCompDetails<ICellEditorComp<any, any, any>> | undefined {
+): void {
     if (editingCells.length === 0 && position?.rowNode && position?.column) {
-        return _setupEditor(beans, position, key, cellStartedEdit);
+        _setupEditor(beans, position, key, event, cellStartedEdit);
     }
 
     const { valueSvc, editSvc, editModelSvc } = beans;
     const { rowNode, column } = position ?? {};
-
-    let startedCompDetails: UserCompDetails<ICellEditorComp<any, any, any>> | undefined;
 
     for (const cellPosition of editingCells) {
         const { rowNode: cellRowNode, column: cellColumn } = cellPosition;
@@ -86,19 +87,10 @@ export function _setupEditors(
 
         const shouldStartEditing = cellStartedEdit && rowNode === curCellCtrl.rowNode && curCellCtrl.column === column;
 
-        const compDetails = _setupEditor(
-            beans,
-            { rowNode: rowNode!, column: curCellCtrl.column! }!,
-            key,
-            shouldStartEditing
-        );
-
-        if (shouldStartEditing) {
-            startedCompDetails = compDetails;
-        }
+        _setupEditor(beans, { rowNode: rowNode!, column: curCellCtrl.column! }!, key, event, shouldStartEditing);
     }
 
-    return startedCompDetails;
+    return;
 }
 
 export function _valuesDiffer({ newValue, oldValue }: Pick<EditValue, 'newValue' | 'oldValue'>): boolean {
@@ -109,15 +101,18 @@ export function _setupEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
     key?: string | null,
+    event?: Event | null,
     cellStartedEdit?: boolean | null
-): UserCompDetails<ICellEditorComp<any, any, any>> | undefined {
+): void {
     const cellCtrl = _getCellCtrl(beans, position)!;
     const editorComp = cellCtrl?.comp?.getCellEditor();
 
     const editorParams = _createEditorParams(beans, position, key, cellStartedEdit);
 
     const oldValue = beans.valueSvc.getValue(position.column as AgColumn, position.rowNode, undefined, 'api');
-    let newValue = key ?? editorParams.value;
+
+    // if key is a single character, then we treat it as user input
+    let newValue = key?.length === 1 ? key : editorParams.value;
 
     if (newValue === undefined) {
         newValue = oldValue;
@@ -128,7 +123,7 @@ export function _setupEditor(
     if (editorComp) {
         // don't reinitialise, just refresh if possible
         editorComp.refresh?.(editorParams);
-        return cellCtrl.editCompDetails;
+        return;
     }
 
     const colDef = position.column.getColDef();
@@ -141,13 +136,15 @@ export function _setupEditor(
             ? compDetails.popupPositionFromSelector
             : colDef.cellEditorPopupPosition;
 
+    checkAndPreventDefault(compDetails!.params, event);
+
     if (cellCtrl) {
         cellCtrl.editCompDetails = compDetails;
         cellCtrl.comp?.setEditDetails(compDetails, popup, popupLocation, beans.gos.get('reactiveCustomComponents'));
         cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
     }
 
-    return compDetails;
+    return;
 }
 
 function _valueFromEditor(cancel: boolean, cellComp?: ICellComp): { newValue?: any; newValueExists: boolean } {
@@ -169,7 +166,9 @@ function _valueFromEditor(cancel: boolean, cellComp?: ICellComp): { newValue?: a
         return noValueResult;
     }
 
-    if (cellEditor.getValidationErrors?.()?.length) {
+    const validationErrors = cellEditor.getValidationErrors?.();
+
+    if (validationErrors?.length ?? 0 > 0) {
         return noValueResult;
     }
 
@@ -258,7 +257,22 @@ export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: C
     const editorParams = _createEditorParams(beans, cellCtrl, eventKey, cellStartedEdit);
     const colDef = column.getColDef();
     const compDetails = _getCellEditorDetails(beans.userCompFactory, colDef, editorParams);
-    editor.refresh(compDetails!.params);
+
+    editor.refresh(checkAndPreventDefault(compDetails!.params, eventKey));
+}
+
+function checkAndPreventDefault(
+    params: ICellEditorParams & DefaultProvidedCellEditorParams,
+    event?: Event | null
+): ICellEditorParams {
+    if (event instanceof KeyboardEvent && params.column.getColDef().cellEditor === 'agNumberCellEditor') {
+        // -, +, . need suppressPreventDefault to prevent the editor from ignoring the keypress
+        params.suppressPreventDefault = ['-', '+', '.'].includes(event?.key ?? '') || params.suppressPreventDefault;
+    } else {
+        event?.preventDefault?.();
+    }
+
+    return params;
 }
 
 export function _syncFromEditors(beans: BeanCollection): void {
@@ -329,55 +343,66 @@ export function _destroyEditors(beans: BeanCollection, edits: Required<EditPosit
     edits.forEach((cellPosition) => _destroyEditor(beans, cellPosition));
 }
 
-export function _destroyEditor(beans: BeanCollection, edit?: EditPosition): void {
-    const cellCtrl = _getCellCtrl(beans, edit);
+export function _destroyEditor(beans: BeanCollection, position: Required<EditPosition>): void {
+    const cellCtrl = _getCellCtrl(beans, position);
     if (!cellCtrl) {
         return;
     }
 
     const { comp } = cellCtrl;
+
+    if (comp && !comp.getCellEditor()) {
+        // no editor, nothing to do
+        return;
+    }
+
+    const errorMessages = comp.getCellEditor()?.getValidationErrors?.();
+    const cellValidationModel = beans.editModelSvc?.getCellValidationModel();
+    if (errorMessages?.length) {
+        cellValidationModel?.setCellValidation(position, { errorMessages });
+    } else {
+        cellValidationModel?.clearCellValidation(position);
+    }
+
+    const { rowNode, column } = position;
 
     comp?.setEditDetails(); // passing nothing stops editing
-    comp?.refreshEditStyles(false, false);
-    cellCtrl?.updateAndFormatValue(false);
-    cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });
-    cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
-
-    if (beans.editModelSvc?.hasEdits(edit) && edit && edit?.rowNode && edit?.column) {
-        beans.editModelSvc?.setState(edit, 'changed');
-    }
-}
-
-export function _refreshCell(beans: BeanCollection, edit: EditPosition): void {
-    const cellCtrl = _getCellCtrl(beans, edit);
-    if (!cellCtrl) {
-        return;
+    if (beans.editModelSvc?.hasEdits(position) && rowNode && column) {
+        beans.editModelSvc?.setState(position, 'changed');
     }
 
-    const { comp } = cellCtrl;
     comp?.refreshEditStyles(false, false);
-    cellCtrl?.updateAndFormatValue(false);
-    cellCtrl?.refreshCell({ forceRefresh: true, suppressFlash: true });
+
+    cellCtrl?.refreshCell({ force: true, suppressFlash: true });
+
+    beans.rowRenderer.refreshCells({ rowNodes: rowNode ? [rowNode] : [], suppressFlash: true, force: true });
+    cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
 }
 
-export function _validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {
+export type MappedValidationErrors = EditMap | undefined;
+
+export function _populateModelValidationErrors(beans: BeanCollection): EditValidationMap | undefined {
     const mappedEditors = getCellEditorInstanceMap(beans);
+    const cellValidationModel = new EditCellValidationModel();
+    const rowValidationModel = new EditRowValidationModel();
 
     if (!mappedEditors || mappedEditors.length === 0) {
-        return null;
+        return new Map();
     }
 
     const { ariaAnnounce, localeSvc } = beans;
-    const errors: ICellEditorValidationError[] = [];
     const translate = _getLocaleTextFunc(localeSvc);
     const ariaValidationErrorPrefix = translate('ariaValidationErrorPrefix', 'Cell Editor Validation');
+
+    const getFullRowEditValidationErrors = beans.gos.get('getFullRowEditValidationErrors');
+    let rowCtrl: RowCtrl;
 
     for (const mappedEditor of mappedEditors) {
         const { ctrl, editor } = mappedEditor;
         const { rowNode, column } = ctrl;
-        const { rowIndex, rowPinned } = rowNode;
-        const errorMessages = editor.getValidationErrors?.();
+        const errorMessages = editor.getValidationErrors?.() ?? [];
         const el = editor.getValidationElement?.();
+        rowCtrl ||= ctrl?.rowCtrl;
 
         ctrl.refreshEditorTooltip();
 
@@ -397,15 +422,82 @@ export function _validateEdit(beans: BeanCollection): ICellEditorValidationError
             }
         }
 
-        if (errorMessages) {
-            errors.push({
-                column,
-                rowIndex: rowIndex!,
-                rowPinned,
-                messages: errorMessages,
-            });
+        if (errorMessages?.length > 0) {
+            cellValidationModel.setCellValidation(
+                {
+                    rowNode,
+                    column,
+                },
+                {
+                    errorMessages,
+                }
+            );
         }
     }
 
-    return errors.length ? errors : null;
+    _syncFromEditors(beans);
+
+    // populate row-level errors
+    beans.editModelSvc?.getEditMap().forEach((cellValidation, rowNode) => {
+        const editorsState: EditingCellPosition[] = [];
+        const { rowIndex, rowPinned } = rowNode;
+        cellValidation.forEach((editValue, column) => {
+            editorsState.push({
+                column,
+                colId: column.getColId(),
+                rowIndex: rowIndex!,
+                rowPinned,
+                ...editValue,
+                // don't expose this implementation detail
+                newValue: editValue.newValue === UNEDITED ? undefined : editValue.newValue,
+            });
+        });
+
+        const errorMessages = getFullRowEditValidationErrors?.({ editorsState }) ?? [];
+
+        if (errorMessages.length > 0) {
+            rowValidationModel.setRowValidation(
+                {
+                    rowNode,
+                },
+                { errorMessages }
+            );
+        }
+
+        if (beans.gos.get('cellEditingInvalidCommitType') === 'block' && rowCtrl) {
+            beans.eventSvc.dispatchEvent({
+                ...rowCtrl.createRowEvent('rowEditingValidated'),
+                errorMessages,
+            });
+        }
+    });
+
+    beans.editModelSvc?.setCellValidationModel(cellValidationModel);
+    beans.editModelSvc?.setRowValidationModel(rowValidationModel);
+
+    return;
+}
+
+export function _validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {
+    _populateModelValidationErrors(beans);
+
+    const map = beans.editModelSvc?.getCellValidationModel().getCellValidationMap();
+
+    if (!map) {
+        return null;
+    }
+
+    const validations: ICellEditorValidationError[] = [];
+    map.forEach((rowValidations, rowNode) => {
+        rowValidations.forEach(({ errorMessages }, column) => {
+            validations.push({
+                column,
+                rowIndex: rowNode.rowIndex!,
+                rowPinned: rowNode.rowPinned,
+                messages: errorMessages ?? null,
+            });
+        });
+    });
+
+    return validations;
 }

@@ -20,14 +20,21 @@ export class SimpleCellEditor<
     }
 
     public initialiseEditor(params: P): void {
+        const { cellEditorInput } = this;
+
         this.setTemplate(
-            { tag: 'div', cls: 'ag-cell-edit-wrapper', children: [this.cellEditorInput.getTemplate()] },
-            this.cellEditorInput.getAgComponents()
+            { tag: 'div', cls: 'ag-cell-edit-wrapper', children: [cellEditorInput.getTemplate()] },
+            cellEditorInput.getAgComponents()
         );
+
+        const { eEditor } = this;
         const { cellStartedEdit, eventKey, suppressPreventDefault } = params;
 
-        const eEditor = this.eEditor;
-        this.cellEditorInput.init(eEditor, params);
+        // disable initial tooltips added to the input field
+        // let the validation handle tooltips.
+        eEditor.getInputElement().setAttribute('title', '');
+
+        cellEditorInput.init(eEditor, params);
         let startValue: string | null | undefined;
         let shouldSetStartValue = true;
 
@@ -44,7 +51,7 @@ export class SimpleCellEditor<
                     startValue = eventKey;
                 }
             } else {
-                startValue = this.cellEditorInput.getStartValue();
+                startValue = cellEditorInput.getStartValue();
 
                 if (eventKey !== KeyCode.F2) {
                     this.highlightAllOnFocus = true;
@@ -52,7 +59,7 @@ export class SimpleCellEditor<
             }
         } else {
             this.focusAfterAttached = false;
-            startValue = this.cellEditorInput.getStartValue();
+            startValue = cellEditorInput.getStartValue();
         }
 
         if (shouldSetStartValue && startValue != null) {

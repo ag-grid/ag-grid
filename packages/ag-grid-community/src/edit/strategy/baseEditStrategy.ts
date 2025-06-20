@@ -5,11 +5,8 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
-import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
-import type { Column } from '../../interfaces/iColumn';
 import type { EditMap, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition, EditSource, IEditService } from '../../interfaces/iEditService';
-import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
 import {
@@ -18,7 +15,6 @@ import {
     _destroyEditors,
     _purgeUnchangedEdits,
     _setupEditors,
-    _syncFromEditor,
     _syncFromEditors,
 } from '../utils/editors';
 
@@ -37,20 +33,14 @@ export abstract class BaseEditStrategy extends BeanStub {
     beanName: BeanName | undefined;
     protected model: IEditModelService;
     protected editSvc: IEditService;
-    protected keepInvalidEditors: boolean = false;
 
     public postConstruct(): void {
         this.model = this.beans.editModelSvc!;
         this.editSvc = this.beans.editSvc!;
-        this.keepInvalidEditors = this.gos.get('cellEditingInvalidCommitType') === 'block';
 
         this.addManagedListeners(this.beans.eventSvc, {
             cellFocused: this.onCellFocusChanged?.bind(this),
             cellFocusCleared: this.onCellFocusChanged?.bind(this),
-        });
-
-        this.addManagedPropertyListener('cellEditingInvalidCommitType', ({ currentValue }) => {
-            this.keepInvalidEditors = currentValue === 'block';
         });
     }
 
@@ -69,8 +59,18 @@ export abstract class BaseEditStrategy extends BeanStub {
     ): void;
 
     public onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
+        let cellCtrl: CellCtrl | undefined;
+        const previous = (event as any)['previousParams']! as CommonCellFocusParams;
+        if (previous) {
+            cellCtrl = _getCellCtrl(this.beans, previous);
+        }
+
         // check if any editors open
         if (this.editSvc.isEditing(undefined, { withOpenEditor: true })) {
+            if (cellCtrl && this.editSvc.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
+                return;
+            }
+
             const result = this.editSvc.stopEditing();
 
             // editSvc didn't handle the stopEditing, we need to do more ourselves
@@ -85,10 +85,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             }
         }
 
-        const previous = (event as any)['previousParams']! as CommonCellFocusParams;
-        if (previous) {
-            _getCellCtrl(this.beans, previous)?.refreshCell({ suppressFlash: true, forceRefresh: true });
-        }
+        cellCtrl?.refreshCell({ suppressFlash: true, force: true });
     }
 
     public abstract moveToNextEditingCell(
@@ -102,7 +99,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         return (column as AgColumn).isColumnFunc(rowNode, column.getColDef().editable);
     }
 
-    public stop(): boolean {
+    public stop(cancel?: boolean): boolean {
         const editingCells = this.model.getEditPositions();
 
         const results: EditValidationResult = { all: [], pass: [], fail: [] };
@@ -110,19 +107,24 @@ export abstract class BaseEditStrategy extends BeanStub {
         editingCells.forEach((cell) => {
             results.all.push(cell);
 
+            const validation = this.model.getCellValidationModel().getCellValidation(cell);
             // check if the cell is valid
-            const cellCtrl = _getCellCtrl(this.beans, cell);
-            if (cellCtrl) {
-                const editor = cellCtrl.comp?.getCellEditor();
 
-                if (editor?.getValidationErrors?.()?.length ?? 0 > 0) {
-                    results.fail.push(cell);
-                    return;
-                }
+            if (validation?.errorMessages?.length ?? 0 > 0) {
+                results.fail.push(cell);
+                return;
             }
 
             results.pass.push(cell);
         });
+
+        if (cancel) {
+            editingCells.forEach((cell) => {
+                _destroyEditor(this.beans, cell);
+                this.model.stop(cell);
+            });
+            return true;
+        }
 
         const actions = this.processValidationResults(results);
 
@@ -135,16 +137,11 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         if (actions.keep.length > 0) {
             actions.keep.forEach((cell) => {
-                const edit = this.model.getEdit(cell);
+                const cellCtrl = _getCellCtrl(this.beans, cell);
 
-                // revert value on error
-                this.model.setEdit(cell, {
-                    oldValue: edit?.oldValue,
-                    newValue: edit?.oldValue ?? UNEDITED,
-                    state: this.keepInvalidEditors ? 'editing' : 'changed',
-                });
-
-                _syncFromEditor(this.beans, cell, edit?.oldValue, 'api');
+                if (!this.editSvc?.cellEditingInvalidCommitBlocks()) {
+                    cellCtrl && this.editSvc.revertSingleCellEdit(cellCtrl);
+                }
             });
         }
 
@@ -194,13 +191,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         ignoreEventKey: boolean = false
     ) {
         const key = (event instanceof KeyboardEvent && !ignoreEventKey && event.key) || undefined;
-        const compDetails = _setupEditors(this.beans, cells, position, key, cellStartedEdit);
-        const suppressPreventDefault = !(compDetails?.params as DefaultProvidedCellEditorParams)
-            ?.suppressPreventDefault;
-
-        if (!suppressPreventDefault) {
-            event?.preventDefault();
-        }
+        _setupEditors(this.beans, cells, position, key, event, cellStartedEdit);
     }
 
     public dispatchCellEvent<T extends AgEventType>(
@@ -302,7 +293,10 @@ export abstract class BaseEditStrategy extends BeanStub {
     ): boolean | null {
         const batch = this.editSvc.isBatchEditing();
         if (event instanceof KeyboardEvent && !batch) {
-            return event.key === KeyCode.ESCAPE;
+            const result = event.key === KeyCode.ESCAPE;
+            if (result) {
+                return true;
+            }
         }
 
         if (batch && source === 'api') {
@@ -328,11 +322,10 @@ export abstract class BaseEditStrategy extends BeanStub {
         });
 
         // now update cell values and fire cell events
-        const cells: (EditValue & { rowNode: IRowNode; column: Column })[] = [];
+        const cells: (EditValue & Required<EditPosition>)[] = [];
         edits.forEach((editRow, rowNode) => {
             editRow.forEach((cellData, column) => {
                 const position = { rowNode, column };
-                this.model.setEdit(position, cellData);
                 this.dispatchCellEvent(position, undefined, 'cellEditingStarted');
                 if (cellData.state === 'editing') {
                     cells.push({ ...cellData, rowNode, column });

@@ -23,6 +23,7 @@ import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { ICellStyleFeature } from '../../interfaces/iCellStyleFeature';
+import type { RefreshCellsParams } from '../../interfaces/iCellsParams';
 import type { IEditService } from '../../interfaces/iEditService';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
@@ -269,7 +270,7 @@ export class CellCtrl extends BeanStub {
         this.rowResizeFeature?.refreshRowResizer();
 
         if (startEditing && this.isCellEditable()) {
-            this.editSvc?.startEditing(this, { startedEdit: true });
+            this.editSvc?.startEditing(this, { startedEdit: true, source: 'api' });
         } else {
             // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
             this.showValue(false, true);
@@ -508,7 +509,7 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    public refreshOrDestroyCell(params?: { suppressFlash?: boolean; newData?: boolean; forceRefresh?: boolean }): void {
+    public refreshOrDestroyCell(params?: RefreshCellsParams): void {
         if (this.refreshShouldDestroy()) {
             this.rowCtrl?.recreateCell(this);
         } else {
@@ -516,21 +517,19 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    // + stop editing {forceRefresh: true, suppressFlash: true}
+    // + stop editing {force: true, suppressFlash: true}
     // + event cellChanged {}
     // + cellRenderer.params.refresh() {} -> method passes 'as is' to the cellRenderer, so params could be anything
     // + rowCtrl: event dataChanged {suppressFlash: !update, newData: !update}
     // + rowCtrl: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
-    public refreshCell(params?: { suppressFlash?: boolean; newData?: boolean; forceRefresh?: boolean }) {
+    public refreshCell({ force, suppressFlash, newData }: RefreshCellsParams & { newData?: boolean } = {}): void {
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
         if (this.suppressRefreshCell) {
             return;
         }
 
         const colDef = this.column.getColDef();
-        const newData = params != null && !!params.newData;
-        const suppressFlash = params != null && !!params.suppressFlash;
         // we always refresh if cell has no value - this can happen when user provides Cell Renderer and the
         // cell renderer doesn't rely on a value, instead it could be looking directly at the data, or maybe
         // printing the current time (which would be silly)???. Generally speaking
@@ -538,7 +537,7 @@ export class CellCtrl extends BeanStub {
         // best always refresh and take the performance hit rather than never refresh and users complaining in support
         // that cells are not updating.
         const noValueProvided = colDef.field == null && colDef.valueGetter == null && colDef.showRowGroup == null;
-        const forceRefresh = (params && params.forceRefresh) || noValueProvided || newData;
+        const forceRefresh = force || noValueProvided || newData;
 
         const isCellCompReady = !!this.comp;
         // Only worth comparing values if the cellComp is ready
@@ -555,7 +554,7 @@ export class CellCtrl extends BeanStub {
             // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
             // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
             // then we are not showing a movement in the stock price, rather we are showing different stock.
-            this.showValue(newData, false);
+            this.showValue(!!newData, false);
 
             // we don't want to flash the cells when processing a filter change, as otherwise the UI would
             // be to busy. see comment in FilterManager with regards processingFilterChange
@@ -881,7 +880,7 @@ export class CellCtrl extends BeanStub {
         if (this.editSvc?.isEditing(this)) {
             this.editSvc?.handleColDefChanged(this);
         } else {
-            this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
+            this.refreshOrDestroyCell({ force: true, suppressFlash: true });
         }
     }
 

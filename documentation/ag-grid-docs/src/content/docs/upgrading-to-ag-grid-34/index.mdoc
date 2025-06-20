@@ -1,0 +1,67 @@
+---
+title: "Upgrading to AG Grid 34"
+description: "See what's new in AG Grid, view a full list of changes and migrate your $framework Data Grid to version v34."
+migrationVersion: "34.0.0"
+---
+
+TODO
+
+{% expandingSection headerText="Migrating to Filter Handlers" %}
+Filter Handlers simplify custom filter components by splitting the filter logic out from the UI component. They also enable new features such as the [New Filters Tool Panel](./tool-panel-filters-new/).
+
+See [Custom Filter Components](./component-filter/) for the full guide on using filter handlers.
+
+{% if isFramework("react") %}
+To migrate a custom filter component, simply move the `doesFilterPass` callback from inside the filter component to the column definition.
+{% /if %}
+
+{% if isFramework("javascript", "angular", "vue") %}
+To migrate a custom filter component, firstly move the logic from the `doesFilterPass` method inside the filter component to a callback in the column definition.
+{% /if %}
+
+Old:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            filter: CustomFilter,
+            // other props
+        }
+    ]
+}
+```
+
+New:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            filter: {
+                component: CustomFilter,
+                doesFilterPass: (params) => {
+                    // filter logic
+                }
+            },
+            // other props
+        }
+    ]
+}
+```
+
+Properties access from the component props can now be accessed from the parameters passed to [doesFilterPass](./component-filter/#doesfilterpass-callback).
+
+See [Filter Logic](./component-filter/#filter-logic) for more information, including handling more advanced cases.
+
+{% if isFramework("react") %}
+To enable custom filter components to work with [Filter Buttons](./filter-applying/) (including apply), switch from using the `model` and `onModelChange(model)` props to `state.model` and `onStateChange({ model })`. See [Using Buttons](./component-filter/#using-buttons) for more information.
+{% /if %}
+
+{% if isFramework("javascript", "angular", "vue") %}
+The `doesFilterPass`, `getModel`, `setModel` and `isFilterActive` methods can all be removed from the component. The filter is now treated as active when the model is not `null`. The filter model is provided to the component via the `model` parameter (which is updated after any change via the `refresh` method), and changes to the model are passed back to the grid via `onModelChange(model)`.
+
+See [Custom Filter Parameters](./component-filter/#custom-filter-parameters) for more information.
+
+To enable custom filter components to work with [Filter Buttons](./filter-applying/) (including apply), use the `state.model` and `onStateChange({ model })` parameters instead of `model` and `onModelChange(model)`. See [Using Buttons](./component-filter/#using-buttons) for more information.
+{% /if %}
+{% /expandingSection %}
+

@@ -2,6 +2,7 @@ import type { StartEditingCellParams } from '../api/gridApi';
 import { ensureColumnVisible, ensureIndexVisible } from '../api/scrollApi';
 import type { BeanCollection } from '../context/context';
 import { _getCellByPosition } from '../entities/positionUtils';
+import type { RowNode } from '../entities/rowNode';
 import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { EditingCellPosition, GetEditingCellsParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
@@ -20,12 +21,13 @@ export function redoCellEditing(beans: BeanCollection): void {
 export function getEditingCells(beans: BeanCollection, params: GetEditingCellsParams): EditingCellPosition[] {
     const edits = beans.editModelSvc?.getEditMap();
     const positions: EditingCellPosition[] = [];
-    edits?.forEach((editRow, { rowIndex, rowPinned }) => {
+    edits?.forEach((editRow, rowNode) => {
+        const { rowIndex, rowPinned } = rowNode as RowNode;
         editRow.forEach(({ newValue, oldValue, state }, column) => {
             const diff = _valuesDiffer({ newValue, oldValue });
 
             if (newValue === UNEDITED) {
-                return;
+                newValue = undefined;
             }
 
             const edit: EditingCellPosition = {

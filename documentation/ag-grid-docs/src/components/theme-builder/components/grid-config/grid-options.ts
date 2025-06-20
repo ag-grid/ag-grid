@@ -172,17 +172,23 @@ const buildSimpleColumnDefs = (): ColDef[] => [
     },
     {
         field: 'winnings2023',
-        headerName: '2023 winnings',
+        headerName: '2023 winnings (> 0)',
         type: 'rightAligned',
         valueFormatter: cashFormatter,
         filter: 'agNumberColumnFilter',
+        cellEditorParams: {
+            min: 0,
+        },
     },
     {
         field: 'winnings2022',
-        headerName: '2022 winnings',
+        headerName: '2022 winnings (> 0)',
         type: 'rightAligned',
         valueFormatter: cashFormatter,
         filter: 'agNumberColumnFilter',
+        cellEditorParams: {
+            min: 0,
+        },
     },
 ];
 

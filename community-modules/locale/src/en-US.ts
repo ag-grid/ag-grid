@@ -139,13 +139,14 @@ export const AG_GRID_LOCALE_EN = {
     advancedFilterBuilderValidationSelectOption: 'Must select an option.',
     advancedFilterBuilderValidationEnterValue: 'Must enter a value.',
 
-    // Validation Errors
+    // Editor Validation Errors
     minDateValidation: 'Date must be after ${variable}',
     maxDateValidation: 'Date must be before ${variable}',
     maxLengthValidation: 'Must be ${variable} characters or fewer.',
     minValueValidation: 'Must be greater than or equal to ${variable}',
     maxValueValidation: 'Must be less than or equal to  ${variable}',
     invalidSelectionValidation: 'Invalid selection.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Columns',

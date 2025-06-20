@@ -27,6 +27,8 @@ export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
 
         let rowNode = rowCtrl.rowNode;
         let edits = editModelSvc?.getEditRow({ rowNode });
+        const hasErrors = this.editModelSvc?.getRowValidationModel().hasRowValidation({ rowNode });
+
         if (!edits && rowNode.pinnedSibling) {
             rowNode = rowNode.pinnedSibling!;
             edits = editModelSvc?.getEditRow({ rowNode });
@@ -41,27 +43,27 @@ export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
                 );
             });
 
-            this.applyStyle(editing);
+            this.applyStyle(hasErrors, editing);
 
             return;
         }
 
-        this.applyStyle();
+        this.applyStyle(hasErrors);
     }
 
-    private applyStyle(editing: boolean = false) {
+    private applyStyle(hasErrors: boolean = false, editing: boolean = false) {
         const batchEdit = this.editSvc?.isBatchEditing() ?? false;
         const fullRow = this.gos.get('editType') === 'fullRow';
 
         this.rowCtrl?.forEachGui(undefined, ({ rowComp }) => {
-            if (fullRow) {
-                rowComp.toggleCss('ag-row-editing', editing);
-                rowComp.toggleCss('ag-row-batch-edit', editing && batchEdit);
-            }
+            rowComp.toggleCss('ag-row-editing', fullRow && editing);
+            rowComp.toggleCss('ag-row-batch-edit', fullRow && editing && batchEdit);
 
             // required for Material theme
             rowComp.toggleCss('ag-row-inline-editing', editing);
             rowComp.toggleCss('ag-row-not-inline-editing', !editing);
+
+            rowComp.toggleCss('ag-row-editing-invalid', fullRow && editing && hasErrors);
         });
     }
 }

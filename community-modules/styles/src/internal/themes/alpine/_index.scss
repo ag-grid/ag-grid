@@ -278,6 +278,10 @@
         padding-bottom: calc(var(--ag-grid-size) * 0.5);
     }
 
+    .ag-filter-add-button .ag-icon {
+        color: var(--ag-alpine-active-color);
+    }
+
     .ag-layout-auto-height,
     .ag-layout-print {
         .ag-center-cols-viewport,

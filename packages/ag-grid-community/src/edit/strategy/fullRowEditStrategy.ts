@@ -80,7 +80,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.dispatchRowEvent({ rowNode }, 'rowEditingStarted');
         }
 
-        const columns = this.beans.colModel.getCols();
+        const columns = this.beans.visibleCols.allCols;
         const cells: Required<EditPosition>[] = [];
 
         columns.forEach((column) => {
@@ -109,10 +109,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     protected override processValidationResults(
         results: EditValidationResult<Required<EditPosition> & EditValue>
     ): EditValidationAction {
-        const anyFailed = results.fail.length > 0 || this.handleCustomFullRowValidation(results.all);
+        const anyFailed = results.fail.length > 0;
 
         // if any of the cells failed, keep those editors
-        if (anyFailed && this.keepInvalidEditors) {
+        if (anyFailed && this.editSvc.cellEditingInvalidCommitBlocks()) {
             return {
                 destroy: [],
                 keep: results.all,
@@ -126,39 +126,12 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         };
     }
 
-    private handleCustomFullRowValidation(editors: (Required<EditPosition> & EditValue)[]): boolean {
-        const getFullRowEditValidationErrors = this.gos.get('getFullRowEditValidationErrors');
-
-        const fullRowEditErrors = getFullRowEditValidationErrors?.({
-            editorsState: editors.map(({ column, rowNode: { rowIndex, rowPinned }, newValue, oldValue, state }) => ({
-                colId: column.getColId(),
-                column,
-                rowIndex: rowIndex!,
-                rowPinned,
-                newValue,
-                oldValue,
-                state,
-            })),
-        });
-
-        const rowCtrl = _getRowCtrl(this.beans, { rowNode: this.rowNode });
-
-        if (rowCtrl) {
-            this.eventSvc.dispatchEvent({
-                ...rowCtrl.createRowEvent('rowEditingValidated'),
-                errorMessages: fullRowEditErrors,
-            });
-        }
-
-        return !!fullRowEditErrors?.length;
-    }
-
-    public override stop(): boolean {
+    public override stop(cancel?: boolean): boolean {
         if (this.rowNode && !this.model.hasRowEdits({ rowNode: this.rowNode })) {
             return false;
         }
 
-        super.stop();
+        super.stop(cancel);
 
         this.rowNode = undefined;
 
@@ -177,7 +150,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
         if (previous) {
-            _getRowCtrl(this.beans, previous)?.refreshRow({ suppressFlash: true, forceRefresh: true });
+            _getRowCtrl(this.beans, previous)?.refreshRow({ suppressFlash: true, force: true });
         }
     }
 
@@ -206,6 +179,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         const rowsMatch = nextPos && prevPos.rowIndex === nextPos.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
 
+        if (!rowsMatch && this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop') {
+            return true;
+        }
+
         if (prevEditable) {
             this.setFocusOutOnEditor(prevCell);
         }
@@ -217,13 +194,15 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         if (nextEditable) {
             if (!nextCell.comp?.getCellEditor()) {
                 // editor missing because it was outside the viewport during creating phase, attempt to create it now
-                _setupEditor(this.beans, nextCell, undefined, true);
+                _setupEditor(this.beans, nextCell, undefined, event, true);
             }
             this.setFocusInOnEditor(nextCell);
             nextCell.focusCell(false, event);
         } else {
             nextCell.focusCell(true, event);
         }
+
+        prevCell.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
 
         return true;
     }

@@ -43,3 +43,7 @@
 .ag-checkbox-edit {
     padding-left: var(--ag-cell-horizontal-padding);
 }
+
+:where(.ag-row.ag-row-editing-invalid .ag-cell-inline-editing) {
+    opacity: 0.8;
+}

@@ -21,6 +21,12 @@ export function _hasEdits(
 export function _hasLeafEdits(beans: BeanCollection, position: EditPosition): boolean | undefined {
     const { editModelSvc } = beans;
     const { column, rowNode } = position;
+
+    // if we have group total rows, we should decorate them, rather than agg nodes
+    if (beans.gos.get('groupTotalRow') && !rowNode?.footer) {
+        return false;
+    }
+
     for (const node of rowNode?.allLeafChildren ?? []) {
         const highlight =
             editHighlightFn(editModelSvc?.getEdit({ rowNode: node, column })) ||

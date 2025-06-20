@@ -93,6 +93,16 @@ describe('Edit API', () => {
             registry: {
                 createDynamicBean: jest.fn(),
             },
+            rowModel: {
+                getRow: jest.fn((index: number) => {
+                    if (index === 0) {
+                        return rowNode1;
+                    } else if (index === 1) {
+                        return rowNode2;
+                    }
+                    return undefined;
+                }),
+            },
         } as unknown as BeanCollection;
 
         editSvc = new EditService();
@@ -249,14 +259,26 @@ describe('Edit API', () => {
             const result = getEditingCells(beans, { includePending: true });
             expect(result).toEqual([
                 {
-                    newValue: 'new2',
-                    oldValue: 'old2',
-                    state: 'changed',
-                    column: column2,
-                    colId: 'col2',
-                    colKey: 'col2',
+                    colId: 'col1',
+                    colKey: 'col1',
+                    column: column1,
+                    newValue: undefined,
+                    oldValue: 'old1',
+                    rowId: undefined,
                     rowIndex: 0,
                     rowPinned: undefined,
+                    state: 'editing',
+                },
+                {
+                    colId: 'col2',
+                    colKey: 'col2',
+                    column: column2,
+                    newValue: 'new2',
+                    oldValue: 'old2',
+                    rowId: undefined,
+                    rowIndex: 0,
+                    rowPinned: undefined,
+                    state: 'changed',
                 },
             ]);
         });

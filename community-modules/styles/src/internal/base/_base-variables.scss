@@ -116,6 +116,12 @@
 
         --ag-input-border-color-invalid: var(--ag-invalid-color);
 
+        --ag-full-row-invalid-background-color: color-mix(
+            in srgb,
+            var(--ag-background-color),
+            var(--ag-invalid-color) 25%
+        );
+
         --ag-borders-side-button: var(--ag-borders);
 
         --ag-border-radius: 0px;
@@ -220,8 +226,8 @@
         --ag-find-match-background-color: #ffff00;
         --ag-find-active-match-background-color: #ffa500;
 
-        --ag-cell-batch-edit-background-color: rgb(220 181 139 / 20%);
-        --ag-cell-batch-edit-text-color: rgb(66 47 0 / 100%);
+        --ag-cell-batch-edit-background-color: rgb(220 181 139 / 16%);
+        --ag-cell-batch-edit-text-color: #422f00;
         --ag-row-batch-edit-background-color: var(--ag-cell-batch-edit-background-color);
         --ag-row-batch-edit-text-color: var(--ag-cell-batch-edit-text-color);
 

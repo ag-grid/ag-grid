@@ -31,6 +31,7 @@ import {
     ModuleRegistry,
     NumberEditorModule,
     PinnedRowModule,
+    RenderApiModule,
     RowApiModule,
     RowDragModule,
     RowSelectionModule,
@@ -53,6 +54,7 @@ import {
     IntegratedChartsModule,
     PivotModule,
     RowGroupingPanelModule,
+    RowNumbersModule,
     StatusBarModule,
 } from 'ag-grid-enterprise';
 
@@ -94,6 +96,8 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     ClipboardModule,
     BatchEditModule,
+    RenderApiModule,
+    RowNumbersModule,
     ValidationModule /* Development Only */,
 ]);
 
@@ -102,24 +106,26 @@ let gridApi: GridApi;
 // distinct count of first names
 const uniqOrDots = (params: IAggFuncParams) => {
     const uniqueNames = new Set<string>();
-    const allValues: string[] = [];
+    const values: string[] = [];
 
     params.values.forEach((value) => {
         if (value?.values) {
-            const values = value.values;
-            values.forEach((v: any) => {
+            value.values.forEach((v: any) => {
                 uniqueNames.add(v);
-                allValues.push(v);
+                values.push(v);
             });
         } else {
             uniqueNames.add(value);
-            allValues.push(value);
+            values.push(value);
         }
     });
 
-    const str = `${uniqueNames.size} / ${allValues.length}`;
+    const str = `${uniqueNames.size} / ${values.length}`;
 
-    return { toString: () => str, values: allValues };
+    return {
+        toString: () => str,
+        values,
+    };
 };
 
 let node: IRowNode | undefined;
@@ -202,6 +208,12 @@ const gridOptions: GridOptions = {
         editable: true,
         filter: true,
         enableCellChangeFlash: true,
+        equals: (a: any, b: any) => {
+            if (a?.values && b?.values) {
+                return a.values.length === b.values.length && a.values.every((v: any) => b.values.includes(v));
+            }
+            return a === b;
+        },
     },
     autoGroupColumnDef: {
         headerName: 'Group',
@@ -212,8 +224,9 @@ const gridOptions: GridOptions = {
     },
     grandTotalRow: 'bottom',
     groupTotalRow: 'bottom',
-
-    sideBar: 'columns',
+    sideBar: {
+        toolPanels: ['columns'],
+    },
     pivotPanelShow: 'always',
     rowData: getData(),
     undoRedoCellEditing: true,
@@ -224,7 +237,7 @@ const gridOptions: GridOptions = {
         },
     },
     enableCharts: true,
-
+    rowNumbers: true,
     rowDragManaged: true,
     enableRowPinning: true,
     groupDisplayType: 'multipleColumns',
@@ -263,12 +276,22 @@ const gridOptions: GridOptions = {
     },
     onCellValueChanged: (_event: CellValueChangedEvent) => {
         console.log('Cell value changed');
+        getEditingCells();
     },
     onBodyScroll(_event: BodyScrollEvent) {
         decorated && decorateCells();
     },
     onModelUpdated(_event: ModelUpdatedEvent) {
         decorated && decorateCells();
+    },
+    onCellClicked: () => {
+        getEditingCells();
+    },
+    onCellFocused: (event) => {
+        getEditingCells();
+    },
+    onCellKeyDown: (event) => {
+        getEditingCells();
     },
 };
 
@@ -323,8 +346,49 @@ function clearDecorations() {
     gridApi.redrawRows();
 }
 
+function trim(str?: any) {
+    if (!str || typeof str !== 'string') {
+        return str;
+    }
+    const len = Math.min(15, str.length);
+    return str.substring?.(0, len) + (str.length > len ? '...' : '') ?? str;
+}
+
 function getEditingCells() {
-    console.log(gridApi!.getEditingCells({ includePending: true }));
+    setTimeout(() => {
+        const cells = gridApi!.getEditingCells({ includePending: true });
+        console.log(cells);
+        document.getElementById('edits-table')!.innerHTML = `
+        <thead>
+            <tr>
+                <th>Idx</th>
+                <th>Row</th>
+                <th>ColId</th>
+                <th>Pinned</th>
+                <th>Old</th>
+                <th>New</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${cells
+                .map(
+                    (cell, index) => `
+                <tr>
+                    <td>${index}</td>
+                    <td>${cell.rowIndex}</td>
+                    <td>${trim(cell.colId)}</td>
+                    <td>${cell.rowPinned ?? ''}</td>
+                    <td>${trim(cell.oldValue)}</td>
+                    <td>${trim(cell.newValue)}</td>
+                    <td style="text-decoration: italic">${cell.state}</td>
+                </tr>
+            `
+                )
+                .join('')}
+        </tbody>
+    `;
+    });
 }
 
 let polling: any = undefined;
@@ -350,29 +414,31 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
         rowPinned: pinned,
         key: key,
     });
+    getEditingCells();
 }
 
 function toggleBatch() {
     const batch = gridApi!.isBatchEditing();
 
-    if (batch) {
-        gridApi!.setBatchEditing(false);
-    } else {
-        gridApi!.setBatchEditing(true);
+    gridApi!.setBatchEditing(!batch);
+
+    if (!batch) {
+        clearEditingCells();
     }
 
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
     document.getElementById('disablePoll')!.style.display = polling ? 'unset' : 'none';
 
-    document.getElementById('batchEditingApi')!.style.display = batch ? 'none' : 'unset';
+    document.getElementById('batchEditingApi')!.style.display = batch ? 'none' : 'flex';
+    document.getElementById('edits-table')!.style.display = batch ? 'none' : 'block';
 }
 
 function createChart() {
     gridApi!.createRangeChart({
         chartType: 'groupedColumn',
         cellRange: {
-            rowStartIndex: 12,
-            rowEndIndex: 14,
+            rowStartIndex: 14,
+            rowEndIndex: 18,
             columns: ['mood', 'age'],
         },
     });
@@ -393,13 +459,13 @@ function setEditingCells(clearValues: boolean = false) {
             state: 'editing',
         },
         {
-            rowIndex: 14,
+            rowIndex: 8,
             rowPinned: undefined,
             newValue: 100,
             colId: 'age',
         },
         {
-            rowIndex: 14,
+            rowIndex: 8,
             rowPinned: undefined,
             newValue: 'Ecstatic',
             colId: 'mood',
@@ -427,10 +493,13 @@ function setEditingCells(clearValues: boolean = false) {
     gridApi!.setBatchEditing(true);
 
     gridApi!.setEditingCells(pendingEdits);
+
+    getEditingCells();
 }
 
 function clearEditingCells() {
     gridApi!.setEditingCells([]);
+    getEditingCells();
 }
 
 function setEditType(editType: EditStrategyType) {
@@ -438,14 +507,17 @@ function setEditType(editType: EditStrategyType) {
     gridApi!.updateGridOptions({
         editType,
     });
+    getEditingCells();
 }
 
 function cancelEdit() {
     gridApi!.stopEditing(true);
+    getEditingCells();
 }
 
 function stopEdit() {
     gridApi!.stopEditing();
+    getEditingCells();
 }
 
 function onBtExport(type: 'csv' | 'excel') {
@@ -474,8 +546,14 @@ function onBtRedo() {
     gridApi!.redoCellEditing();
 }
 
+function refreshRows() {
+    gridApi!.refreshCells({ force: true });
+    getEditingCells();
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
+    getEditingCells();
 });

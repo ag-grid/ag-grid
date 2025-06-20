@@ -3,6 +3,7 @@ import type { BeanCollection } from '../context/context';
 import type { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
 import { AgColumn } from '../entities/agColumn';
 import type { AgEventType } from '../eventTypes';
+import type { CellFocusedEvent } from '../events';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { CellRange } from './IRangeService';
@@ -14,25 +15,27 @@ import type {
 } from './iCellEditor';
 import type { ICellStyleFeature } from './iCellStyleFeature';
 import type { Column } from './iColumn';
-import type { EditMap } from './iEditModelService';
+import type { EditMap, GetEditsParams } from './iEditModelService';
 import type { IRowNode } from './iRowNode';
 import type { IRowStyleFeature } from './iRowStyleFeature';
 import type { UserCompDetails } from './iUserCompDetails';
 
-type EditEvents = KeyboardEvent | MouseEvent | null;
+export type EditInputEvents = KeyboardEvent | MouseEvent | null | undefined;
+
+export type EditNavOnValidationResult = 'block-stop' | 'revert-continue' | 'continue';
 
 export type EditSource = 'api' | 'ui' | 'paste' | 'rangeSvc' | 'fillHandle' | 'cellClear';
 
 export type StartEditParams = {
     startedEdit?: boolean | null;
-    event?: EditEvents;
+    event?: EditInputEvents;
     source?: EditSource;
     silent?: boolean;
     ignoreEventKey?: boolean;
 };
 
 export type StopEditParams = {
-    event?: EditEvents;
+    event?: EditInputEvents;
     cancel?: boolean;
     source?: EditSource;
     suppressNavigateAfterEdit?: boolean;
@@ -94,6 +97,7 @@ export interface IEditService extends NamedBean {
         source?: EditSource
     ): boolean | null;
     getCellDataValue(position: Required<EditPosition>): any;
+    getRowDataValue({ rowNode }: Required<EditRowPosition>, params?: GetEditsParams): any;
     addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void;
     createPopupEditorWrapper(params: ICellEditorParams): PopupEditorWrapper;
     setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined;
@@ -115,4 +119,8 @@ export interface IEditService extends NamedBean {
     createCellStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): ICellStyleFeature;
     createRowStyleFeature(rowCtrl: RowCtrl, beans: BeanCollection): IRowStyleFeature;
     setEditingCells(cells: EditingCellPosition[], params?: SetEditingCellsParams): void;
+    hasValidationErrors(position?: EditPosition): boolean;
+    cellEditingInvalidCommitBlocks(): boolean;
+    checkNavWithValidation(cellCtrl: CellCtrl, event?: Event | CellFocusedEvent): EditNavOnValidationResult;
+    revertSingleCellEdit(cellCtrl: CellCtrl, focus?: boolean): void;
 }

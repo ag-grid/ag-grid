@@ -1,6 +1,8 @@
 import type { BrowserContext, Page, PlaywrightTestArgs } from '@playwright/test';
 import { test } from '@playwright/test';
 import chalk from 'chalk';
+import * as child_process from 'node:child_process';
+import { promisify } from 'node:util';
 
 import type { BrowserCommunications } from './playwright.utils';
 import { gotoUrl, waitFor } from './playwright.utils';
@@ -102,11 +104,36 @@ export type Variant = {
     cookies?: Parameters<BrowserContext['addCookies']>[0];
 };
 
-const knownUrls: Record<Version, string> = {
-    local: `https://localhost:${process.env['PORT'] || '4610'}`,
-    staging: 'https://grid-staging.ag-grid.com',
-    prod: 'https://www.ag-grid.com',
-};
+const knownUrlsProxy = new Proxy<Record<Version, string>>(
+    {
+        local: `https://localhost:${process.env['PORT'] || '4610'}`,
+        staging: 'https://grid-staging.ag-grid.com',
+        prod: 'https://www.ag-grid.com',
+    },
+    {
+        get: (target, prop: Version) => target[prop] ?? `https://www.ag-grid.com/archive/${prop.slice(1)}`,
+    }
+);
+
+async function getGitBranch(version: Version): Promise<string> {
+    if (version === 'local') {
+        const { stdout } = await promisify(child_process.exec)('git rev-parse --abbrev-ref HEAD');
+        return stdout.trim();
+    }
+
+    return 'latest'; // For remote versions, we assume the branch is 'latest'
+}
+
+async function getGitHash(version: Version): Promise<string> {
+    if (version === 'local') {
+        const { stdout } = await promisify(child_process.exec)('git rev-parse HEAD');
+        return stdout.trim();
+    }
+
+    return fetch(`${knownUrlsProxy[version]}/debug/meta.json`)
+        .then((r) => r.json())
+        .then((meta: { git: { hash: string } }) => meta.git.hash);
+}
 
 /**
  * Taken from ag-grid-enterprise package.json git history
@@ -131,11 +158,7 @@ const gridToChartsMap = {
 } as const;
 
 const getCdnUrl = (pkg: string, version: Version, path: `/${string}` = `/dist/${pkg}.js`) => {
-    if (isCustomVersion(version)) {
-        return `https://cdn.jsdelivr.net/npm/${pkg}@${version.slice(1)}${path}`;
-    }
-
-    return `${knownUrls[version]}/files/${pkg}/dist/${pkg}.js`;
+    return `${knownUrlsProxy[version]}/files/${pkg}${path}`;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -156,10 +179,7 @@ function getUrl(testCase: TestCase, variant: Variant) {
     if (variant.url) {
         return variant.url;
     }
-    if (isCustomVersion(variant.version)) {
-        return `${knownUrls.prod}/${testCase.name}/${testCase.framework}/`;
-    }
-    return `${knownUrls[variant.version]}/${testCase.name}/${testCase.framework}/`;
+    return `${knownUrlsProxy[variant.version]}/${testCase.name}/${testCase.framework}/`;
 }
 
 const CRITICAL_VALUE = 1.96;
@@ -303,15 +323,9 @@ async function attachScripts(page: Page, version: Version, testCase: InternalTes
 
     const urls = [getCdnUrl('ag-grid-community', version), getCdnUrl('ag-grid-enterprise', version)];
     if (chartsVersion) {
-        urls.push(getCdnUrl('ag-charts-community', chartsVersion, '/dist/umd/ag-charts-community.js'));
-        /*[
-        // these are not available in all versions
-            getCdnUrl('@ag-grid-community/styles', version, '/'),
-            getCdnUrl('@ag-grid-community/locale', version),
-            getCdnUrl('ag-charts-core', chartsVersion),
-            getCdnUrl('ag-charts-enterprise', chartsVersion),
-            getCdnUrl('ag-charts-types', chartsVersion, '/'),
-        ];*/
+        urls.push(
+            `https://cdn.jsdelivr.net/npm/ag-charts-community@${chartsVersion.slice(1)}/dist/umd/ag-charts-community.js`
+        );
     }
 
     for (const url of urls) {
@@ -324,15 +338,12 @@ async function attachScripts(page: Page, version: Version, testCase: InternalTes
         benchError(`Perhaps you forgot to start dev server? Or provided URL/version are not available.`, e, testCase);
     }
 }
+
 function updatePageTitle(page: Page, testCase: TestCase, variant: Variant) {
     return page.evaluate(
         (title) => (document.title = title),
         `Running ${variant.version} ${testCase.name} with ${testCase.framework}`
     );
-}
-
-function isCustomVersion(version: Version): version is CustomVersion {
-    return version.startsWith('v');
 }
 
 function metricsGetter(page: Page, testCase: TestCase) {
@@ -385,6 +396,21 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
     const { minIter, maxIter, warmupIter, setLastCommunications } = testCase.__hidden!;
     let significant = false;
     let needToContinue = true;
+    test.info().annotations.push({
+        type: 'info',
+        description: {
+            control: {
+                version: testCase.control.version,
+                gitHash: await getGitHash(testCase.control.version),
+                branch: await getGitBranch(testCase.control.version),
+            },
+            variant: {
+                version: testCase.variant.version,
+                gitHash: await getGitHash(testCase.variant.version),
+                branch: await getGitBranch(testCase.variant.version),
+            },
+        } as any, // expects string, but object works as well
+    });
     do {
         for (const variantName of ['control', 'variant'] as const) {
             const variant = testCase[variantName];
@@ -448,7 +474,7 @@ const describeBody = (describe: Describe) => () => {
 };
 
 /** Generic benchmark function to run performance tests */
-export default function (name: string, describe: Describe) {
+export default function run(name: string, describe: Describe) {
     test.describe.configure({ timeout: describe.timeout || 60_000 });
     test.beforeEach(() => console.log(`${bgGreen.black.bold(test.info().title)}`));
     test.beforeEach(() => console.log(`Test started at ${new Date().toISOString()}`));

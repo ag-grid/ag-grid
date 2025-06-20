@@ -44,6 +44,7 @@ import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
+import type { IChangeDetectionService } from '../interfaces/iChangeDetectionService';
 import type { IClientSideNodeManager } from '../interfaces/iClientSideNodeManager';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColsService } from '../interfaces/iColsService';
@@ -344,6 +345,7 @@ export interface CoreBeanCollection {
     multiFilter?: IMultiFilterService;
     filterPanelSvc?: IFilterPanelService;
     selectableFilter?: ISelectableFilterService;
+    changeDetectionSvc?: IChangeDetectionService;
 }
 
 export type BeanCollection = CoreBeanCollection & {

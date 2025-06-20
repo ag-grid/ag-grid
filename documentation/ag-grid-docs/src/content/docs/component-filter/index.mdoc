@@ -154,6 +154,10 @@ The filter handler is useful for when the filter model needs parsing to allow fo
 
 {% interfaceDocumentation interfaceName="FilterHandler" config={ "description": "" } /%}
 
+It is also possible to define filter handlers in the `filterHandlers` grid option, and then refer to them by the string key in the column definition.
+
+{% apiDocumentation source="grid-options/properties.json" section="filter" names=["filterHandlers"] /%}
+
 ## Using Buttons
 
 It is possible to use the [Filter Buttons](./filter-applying/) for grid-provided filters with custom filter components.
@@ -171,7 +175,7 @@ The buttons are configured by passing additional parameters to the filter (inter
 
 When the buttons are pressed, the custom filter `state` parameter will be updated via the `refresh(params)` method, with `state.model` being the model that should be displayed in the filter.
 
-With the `Apply` button present, the filter component no longer needs to call `onModelChange` as the grid will apply the model when the button is clicked (although it can still be called if the component wants to apply a model in some other way). Instead, the filter component will call `onStateChange` with the model that is currently displayed in the filter component. This is the model that the grid will apply when the button is clicked. If the filter is being used without buttons, it can also call `onAction('apply')` to apply the model set via the state.
+With the `Apply` button present, the filter component no longer needs to call `onModelChange(model)` as the grid will apply the model when the button is clicked (although it can still be called if the component wants to apply a model in some other way). Instead, the filter component will call `onStateChange({ model })` with the model that is currently displayed in the filter component. This is the model that the grid will apply when the button is clicked. If the filter is being used without buttons, it can also call `onAction('apply')` to apply the model set via the state.
 
 ## Associating Floating Filter
 

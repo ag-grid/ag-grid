@@ -570,6 +570,12 @@
                 "name": "Custom Column Filters",
                 "url": "./component-filter/#implementing-a-filter-component"
             }
+        },
+        "filterHandlers": {
+            "more": {
+                "name": "Custom Column Filters",
+                "url": "./component-filter/#implementing-a-filter-component"
+            }
         }
     },
     "find": {

@@ -121,31 +121,36 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
     }
 
     private onCheckboxChanged(isSelected?: boolean): void {
-        const { eventSvc, params } = this;
+        const { params } = this;
         const { column, node, value } = params;
-        const sharedEventParams = {
-            column: column!,
-            colDef: column!.getColDef(),
-            data: node.data,
-            node,
-            rowIndex: node.rowIndex,
-            rowPinned: node.rowPinned,
-            value,
-        };
-        eventSvc.dispatchEvent({
-            type: 'cellEditingStarted',
-            ...sharedEventParams,
-        });
 
-        const valueChanged = node.setDataValue(column!, isSelected, 'edit');
+        // prep edit state
+        this.beans?.editSvc?.setEditingCells(
+            [
+                {
+                    column: column!,
+                    colId: column!.getColId(),
+                    rowIndex: node.rowIndex!,
+                    rowPinned: node.rowPinned!,
+                    state: 'changed',
+                    oldValue: value,
+                    newValue: value,
+                },
+            ],
+            { update: true }
+        );
 
-        eventSvc.dispatchEvent({
-            type: 'cellEditingStopped',
-            ...sharedEventParams,
-            oldValue: value,
-            newValue: isSelected,
-            valueChanged,
-        });
+        // set new value
+        const valueChanged = node.setDataValue(column!, isSelected, 'renderer');
+
+        // stop editing
+        this.beans.editSvc?.stopEditing(
+            {
+                rowNode: node,
+                column,
+            },
+            { source: this.beans.editSvc?.isBatchEditing() ? 'ui' : 'api' }
+        );
 
         if (!valueChanged) {
             // need to reset to original

@@ -85,6 +85,9 @@
         height: var(--ag-row-height);
         background-color: var(--ag-background-color);
         border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+        &.ag-row-editing-invalid {
+            background-color: var(--ag-full-row-invalid-background-color);
+        }
     }
 
     .ag-spanned-cell-wrapper {

@@ -171,7 +171,38 @@ export class TooltipService extends BeanStub implements NamedBean {
         return this.createTooltipFeature(tooltipCtrl, beans);
     }
 
-    public refreshRowTooltip(
+    public setRowTooltip(rowCtrl: RowCtrl, el: HTMLElement) {
+        const { beans } = this;
+        const { context } = beans;
+
+        const tooltipParams: ITooltipCtrl = {
+            getGui: () => el,
+            getTooltipValue: () => {
+                const errorMap = beans.editModelSvc?.getRowValidationModel()?.getRowValidationMap();
+                const errors = errorMap?.get(rowCtrl.rowNode)?.errorMessages;
+                const translate = this.getLocaleTextFunc();
+                return errors && errors.length
+                    ? errors.join(translate('tooltipValidationErrorSeparator', '. '))
+                    : undefined;
+            },
+            getLocation: () => 'fullRowEdit',
+            shouldDisplayTooltip: () => {
+                const errorMap = beans.editModelSvc?.getRowValidationModel()?.getRowValidationMap();
+                const errors = errorMap?.get(rowCtrl.rowNode)?.errorMessages;
+                return !!errors && errors.length > 0;
+            },
+        };
+
+        const tooltipFeature = this.createTooltipFeature(tooltipParams, beans);
+
+        if (!tooltipFeature) {
+            return;
+        }
+
+        return rowCtrl.createBean(tooltipFeature, context);
+    }
+
+    public setupFullWidthRowTooltip(
         existingTooltipFeature: TooltipFeature | undefined,
         ctrl: RowCtrl,
         value: string,
@@ -217,12 +248,19 @@ export class TooltipService extends BeanStub implements NamedBean {
                 }
 
                 const errors = editor.getValidationErrors();
-
-                return errors && errors.length ? errors.join('. ') : undefined;
+                const translate = this.getLocaleTextFunc();
+                return errors && errors.length
+                    ? errors.join(translate('tooltipValidationErrorSeparator', '. '))
+                    : undefined;
             },
             getLocation: () => 'cellEditor',
             shouldDisplayTooltip: () => {
                 if (!editor.getValidationErrors) {
+                    return false;
+                }
+
+                const rowValidationMap = beans.editModelSvc?.getRowValidationModel()?.getRowValidationMap();
+                if (rowValidationMap && rowValidationMap.size > 0) {
                     return false;
                 }
 

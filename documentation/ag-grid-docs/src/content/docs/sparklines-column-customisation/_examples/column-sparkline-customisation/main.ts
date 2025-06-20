@@ -30,8 +30,8 @@ const gridOptions: GridOptions = {
                     direction: 'vertical',
                     fill: '#91cc75',
                     stroke: '#91cc75',
-                    highlightStyle: {
-                        item: {
+                    highlight: {
+                        highlightedItem: {
                             fill: 'orange',
                         },
                     },

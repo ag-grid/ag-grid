@@ -6,6 +6,7 @@ import type { CellClickedEvent, CellDoubleClickedEvent } from '../../events';
 import { _isBrowserSafari } from '../../utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
+import { _interpretAsRightClick } from '../../utils/mouse';
 import type { CellCtrl } from './cellCtrl';
 
 export class CellMouseListenerFeature extends BeanStub {
@@ -51,9 +52,10 @@ export class CellMouseListenerFeature extends BeanStub {
             return;
         }
 
-        const { eventSvc, rangeSvc, editSvc, editModelSvc } = this.beans;
+        const { eventSvc, rangeSvc, editSvc, editModelSvc, frameworkOverrides } = this.beans;
         const isMultiKey = event.ctrlKey || event.metaKey;
-        const { column, cellPosition } = this.cellCtrl;
+        const { cellCtrl } = this;
+        const { column, cellPosition } = cellCtrl;
 
         if (rangeSvc && isMultiKey) {
             // the mousedown event has created the range already, so we only intersect if there is more than one
@@ -63,7 +65,7 @@ export class CellMouseListenerFeature extends BeanStub {
             }
         }
 
-        const cellClickedEvent: CellClickedEvent = this.cellCtrl.createEvent(event, 'cellClicked');
+        const cellClickedEvent: CellClickedEvent = cellCtrl.createEvent(event, 'cellClicked');
         eventSvc.dispatchEvent(cellClickedEvent);
 
         const colDef = column.getColDef();
@@ -71,20 +73,31 @@ export class CellMouseListenerFeature extends BeanStub {
         if (colDef.onCellClicked) {
             // to make callback async, do in a timeout
             window.setTimeout(() => {
-                this.beans.frameworkOverrides.wrapOutgoing(() => {
+                frameworkOverrides.wrapOutgoing(() => {
                     colDef.onCellClicked!(cellClickedEvent);
                 });
             }, 0);
         }
 
-        if (editSvc?.shouldStartEditing(this.cellCtrl, event) && editModelSvc?.getState(this.cellCtrl) !== 'editing') {
-            editSvc?.startEditing(this.cellCtrl, { event });
+        if (editModelSvc?.getState(cellCtrl) !== 'editing') {
+            const editing = editSvc?.isEditing();
+            const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
+            const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
+            if (editing && (cellValidations > 0 || rowValidations > 0)) {
+                return;
+            }
+
+            if (editSvc?.shouldStartEditing(cellCtrl, event)) {
+                editSvc?.startEditing(cellCtrl, { event });
+            } else if (editSvc?.shouldStopEditing(cellCtrl, event)) {
+                editSvc?.stopEditing(cellCtrl);
+            }
         }
     }
 
     public onCellDoubleClicked(event: MouseEvent) {
         const { column, beans, cellCtrl } = this;
-        const { eventSvc, frameworkOverrides, editSvc } = beans;
+        const { eventSvc, frameworkOverrides, editSvc, editModelSvc } = beans;
 
         const colDef = column.getColDef();
         // always dispatch event to eventService
@@ -105,6 +118,13 @@ export class CellMouseListenerFeature extends BeanStub {
             editSvc?.shouldStartEditing(this.cellCtrl, event) &&
             this.beans.editModelSvc?.getState(this.cellCtrl) !== 'editing'
         ) {
+            const editing = editSvc?.isEditing();
+            const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
+            const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
+            if (editing && (cellValidations > 0 || rowValidations > 0)) {
+                return;
+            }
+
             editSvc?.startEditing(cellCtrl, { event });
         }
     }
@@ -187,9 +207,10 @@ export class CellMouseListenerFeature extends BeanStub {
             if (isRowNumberColumn) {
                 mouseEvent.preventDefault();
             }
+            const hasRightClickedOnRowNumber = _interpretAsRightClick(this.beans, mouseEvent) && isRowNumberColumn;
             if (shiftKey) {
                 rangeSvc.extendLatestRangeToCell(cellPosition);
-            } else {
+            } else if (!hasRightClickedOnRowNumber) {
                 const isMultiKey = ctrlKey || metaKey;
                 rangeSvc.setRangeToCell(cellPosition, isMultiKey);
             }
@@ -203,8 +224,7 @@ export class CellMouseListenerFeature extends BeanStub {
 
         if (rangeSvc) {
             const cellInRange = rangeSvc.isCellInAnyRange(this.cellCtrl.cellPosition);
-            const isRightClick =
-                mouseEvent.button === 2 || (mouseEvent.ctrlKey && this.beans.gos.get('allowContextMenuWithControlKey'));
+            const isRightClick = _interpretAsRightClick(this.beans, mouseEvent);
 
             if (cellInRange && isRightClick) {
                 return true;

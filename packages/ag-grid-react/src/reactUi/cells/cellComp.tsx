@@ -23,11 +23,11 @@ import { SkeletonCellRenderer } from './skeletonCellComp';
 const CellComp = ({
     cellCtrl,
     printLayout,
-    editingRow,
+    editingCell,
 }: {
     cellCtrl: CellCtrl;
     printLayout: boolean;
-    editingRow: boolean;
+    editingCell: boolean;
 }) => {
     const beans = useContext(BeansContext);
     const { context } = beans;
@@ -90,6 +90,7 @@ const CellComp = ({
                         cellCtrl.focusCell(true);
                     } else {
                         cellCtrl.cellEditorAttached();
+                        cellCtrl.enableEditorTooltipFeature(cellEditor);
                     }
                 });
             }
@@ -343,7 +344,7 @@ const CellComp = ({
             eWrapper.current ?? undefined,
             cellWrapperOrUndefined,
             printLayout,
-            editingRow,
+            editingCell,
             compBean.current
         );
     }, []);

@@ -11,7 +11,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
-import type { CellFocusedEvent, RowEditingValidated, RowEvent, VirtualRowRemovedEvent } from '../../events';
+import type { CellFocusedEvent, RowEditingStartedEvent, RowEvent, VirtualRowRemovedEvent } from '../../events';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import {
     _addGridCommonParams,
@@ -27,6 +27,7 @@ import {
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallbackParams';
 import type { CellPosition } from '../../interfaces/iCellPosition';
+import type { RefreshRowsParams } from '../../interfaces/iCellsParams';
 import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
@@ -295,6 +296,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (this.isFullWidth()) {
             this.setupFullWidth(gui);
+        } else {
+            this.addRowTooltipListeners(gui);
         }
 
         if (gos.get('rowDragEntireRow')) {
@@ -802,7 +805,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             paginationChanged: this.onPaginationChanged.bind(this),
             modelUpdated: this.refreshFirstAndLastRowStyles.bind(this),
             columnMoved: () => this.updateColumnLists(),
-            rowEditingValidated: this.onRowEditValidated.bind(this),
         });
 
         if (rowSpanSvc) {
@@ -819,7 +821,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.addDestroyFunc(() => {
             this.rowDragComps = this.destroyBeans(this.rowDragComps, context);
-            this.tooltipFeature = this.destroyBean(this.tooltipFeature, context);
+            this.destroyRowTooltip();
             this.rowEditStyleFeature = this.destroyBean(this.rowEditStyleFeature, context);
         });
 
@@ -856,14 +858,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    private onRowEditValidated(params: RowEditingValidated): void {
-        const { errorMessages } = params;
-
-        for (const { rowComp } of this.allRowGuis) {
-            rowComp.toggleCss('invalid', !!errorMessages?.length);
-        }
-    }
-
     private onRowNodeDataChanged(event: DataChangedEvent): void {
         this.refreshRow({
             suppressFlash: !event.update,
@@ -871,7 +865,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         });
     }
 
-    public refreshRow(params: { suppressFlash?: boolean; newData?: boolean; forceRefresh?: boolean }): void {
+    public refreshRow(params: RefreshRowsParams & { newData?: boolean }): void {
         // if the row is rendered incorrectly, as the requirements for whether this is a FW row have changed, we force re-render this row.
         const fullWidthChanged = this.isFullWidth() !== !!this.isNodeFullWidthCell();
         if (fullWidthChanged) {
@@ -1258,7 +1252,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, suppressVisibilityChange),
             setTooltip: (value, shouldDisplayTooltip) => {
                 gos.assertModuleRegistered('Tooltip', 3);
-                this.refreshRowTooltip(value, shouldDisplayTooltip);
+                this.setupFullWidthRowTooltip(value, shouldDisplayTooltip);
             },
         } as WithoutGridCommon<ICellRendererParams>);
 
@@ -1279,12 +1273,47 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    private refreshRowTooltip(value: string, shouldDisplayTooltip?: () => boolean) {
+    private addRowTooltipListeners(gui: RowGui) {
+        gui.compBean.addManagedListeners(this.beans.eventSvc, {
+            rowEditingStarted: (params) => this.createRowTooltip(params, gui),
+            rowEditingStopped: this.destroyRowTooltip.bind(this),
+            rowEditingValidated: this.refreshTooltip.bind(this),
+        });
+    }
+
+    private createRowTooltip(params: RowEditingStartedEvent, gui: RowGui): void {
+        const {
+            beans,
+            gos,
+            rowNode: { rowPinned, rowIndex },
+        } = this;
+
+        if (
+            gos.get('editType') !== 'fullRow' ||
+            gos.get('cellEditingInvalidCommitType') !== 'block' ||
+            params.rowIndex !== rowIndex ||
+            params.rowPinned !== rowPinned
+        ) {
+            return;
+        }
+        this.tooltipFeature = beans.tooltipSvc?.setRowTooltip(this, gui.element);
+    }
+
+    private refreshTooltip(): void {
+        this.tooltipFeature?.refreshTooltip();
+    }
+
+    private destroyRowTooltip(): void {
+        const { tooltipFeature, beans } = this;
+        this.tooltipFeature = this.destroyBean(tooltipFeature, beans.context);
+    }
+
+    private setupFullWidthRowTooltip(value: string, shouldDisplayTooltip?: () => boolean) {
         if (!this.fullWidthGui) {
             return;
         }
 
-        this.tooltipFeature = this.beans.tooltipSvc?.refreshRowTooltip(
+        this.tooltipFeature = this.beans.tooltipSvc?.setupFullWidthRowTooltip(
             this.tooltipFeature,
             this,
             value,
