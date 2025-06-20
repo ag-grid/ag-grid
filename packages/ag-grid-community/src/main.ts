@@ -130,7 +130,13 @@ export {
     DragAndDropIcon,
 } from './dragAndDrop/dragAndDropService';
 export { DragItem } from './interfaces/iDragItem';
-export { RowDropZoneParams, RowDropZoneEvents } from './dragAndDrop/rowDragFeature';
+export {
+    CanDropOnRowCallback,
+    RowDropTargetPosition,
+    RowDropTarget,
+    RowDropZoneParams,
+    RowDropZoneEvents,
+} from './dragAndDrop/rowDragFeature';
 export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { DragService } from './dragAndDrop/dragService';
 export { DragListenerParams } from './dragAndDrop/dragService';

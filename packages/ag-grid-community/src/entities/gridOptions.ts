@@ -3,6 +3,7 @@
  ************************************************************************************************/
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
+import type { CanDropOnRowCallback } from '../dragAndDrop/rowDragFeature';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
@@ -2563,6 +2564,13 @@ export interface GridOptions<TData = any> {
      * The drag has been cancelled over the grid.
      */
     onRowDragCancel?(event: RowDragCancelEvent<TData>): void;
+
+    /**
+     * Called by managed drag and drop when rows are dropped on another row.
+     * The user can cancel the drop by returning `false` or customize the operation by returning a `RowDragDropResult`.
+     * @agModule `RowDragModule`
+     */
+    canDropOnRow?: CanDropOnRowCallback<TData>;
 
     /**
      * The row resize has started (Row Numbers Feature)
