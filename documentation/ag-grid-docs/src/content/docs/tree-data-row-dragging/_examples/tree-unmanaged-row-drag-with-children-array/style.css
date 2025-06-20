@@ -1,0 +1,12 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 1rem;
+    background: #fafbfc;
+}
+h2 {
+    margin-top: 0;
+}
+#myGrid {
+    margin-top: 1rem;
+}
