@@ -500,7 +500,7 @@
             },
             {
                 "label": {
-                    "name": "Crosshairs",
+                    "name": "Crosshairs & Band Highlight",
                     "link": "https://www.ag-grid.com/charts/react/axes-crosshairs/"
                 },
                 "community": false,
