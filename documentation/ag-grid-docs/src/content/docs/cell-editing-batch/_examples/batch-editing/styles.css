@@ -1,7 +1,6 @@
 .example-wrapper {
     display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-rows: minmax(auto, 210px) 1fr;
+    grid-template-rows: auto 1fr;
     height: 100%;
     width: 100%;
 }
@@ -11,10 +10,13 @@ button {
 }
 
 .example-button-row {
-    display: flex;
+    display: inline;
     gap: 5px;
-    align-items: baseline;
-    margin: 0;
+    padding-right: 8px;
+}
+
+.example-buttons {
+    padding-bottom: 8px;
 }
 
 .grid-wrapper {
@@ -24,121 +26,4 @@ button {
 #myGrid {
     height: 100%;
     width: 100%;
-}
-
-#disableBatch,
-#disablePoll,
-#batchEditingApi {
-    display: none;
-}
-
-.ag-ltr .ag-cell.custom-athlete-cell.ag-cell-focus:not(.ag-cell-range-selected):focus-within {
-    border: 1px solid #ff7b7b;
-}
-.ag-cell.custom-athlete-cell {
-    padding-left: 0;
-    padding-right: 0;
-}
-.ag-cell.custom-athlete-cell > div {
-    height: 100%;
-}
-
-.my-custom-cell-renderer {
-    display: flex;
-    font-size: 0.7rem;
-    background-color: #4180d6;
-    color: white;
-    padding: 0.25rem;
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-    height: 100%;
-}
-
-.my-custom-cell-renderer > * {
-    line-height: normal;
-}
-
-.my-custom-cell-renderer i {
-    visibility: hidden;
-    cursor: move;
-    color: orange;
-}
-
-.my-custom-cell-renderer:hover i {
-    visibility: visible;
-}
-
-.my-custom-cell-renderer .athlete-info {
-    display: flex;
-    flex-direction: column;
-    width: 85px;
-    max-width: 85px;
-}
-
-.my-custom-cell-renderer .athlete-info > span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.ancestor-nodes {
-    background-color: rgba(220 139 139 / 20%);
-    color: rgb(66 0 0 / 100%);
-}
-
-.leaf-sibling-nodes {
-    background-color: rgba(139 220 139 / 20%);
-    color: rgb(0 66 0 / 100%);
-}
-
-.related-nodes {
-    background-color: rgba(139 139 220 / 20%);
-    color: rgb(0 0 66 / 100%);
-}
-
-.dependent-nodes {
-    background-color: rgba(220 139 220 / 20%);
-    color: rgb(66 0 66 / 100%);
-}
-
-#edits {
-    display: grid;
-    grid-template-rows: auto auto 1fr;
-    padding-bottom: 8px;
-}
-
-#poll-buttons {
-    display: flex;
-    flex-direction: row-reverse;
-    padding-bottom: 2px;
-    gap: 4px;
-}
-
-#batchEditingApi {
-    display: flex;
-    flex-direction: row-reverse;
-    padding-bottom: 2px;
-    gap: 4px;
-    display: none;
-}
-
-#edits-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: x-small;
-    color: var(--default-fg-primary);
-    overflow: auto;
-}
-
-#edits-table th,
-#edits-table td {
-    border: 1px solid #ddd;
-    padding: 1px 5px;
-}
-
-#edits-table th {
-    background-color: var(--color-bg-secondary);
-}
-#edits-table tr:nth-child(even) {
-    background-color: var(--color-bg-secondary);
 }
