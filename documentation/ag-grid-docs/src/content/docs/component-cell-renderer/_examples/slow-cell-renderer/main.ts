@@ -28,7 +28,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         },
         {
             field: 'bronze',
-            headerName: 'Slow Renderer Custom Loading',
+            headerName: 'Slow Renderer Custom',
             cellRenderer: SlowRenderer,
             cellRendererParams: {
                 deferRender: true,

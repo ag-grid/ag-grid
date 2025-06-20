@@ -1118,6 +1118,11 @@ export interface ILoadingCellRendererSelectorFunc<TData = any, TValue = any, TCo
     (params: ILoadingCellRendererParams<TData, TValue, TContext>): CellRendererSelectorResult | undefined;
 }
 
+export interface CellRendererDeferParams {
+    /** Defer the rendering of the cell component  */
+    deferRender?: boolean;
+}
+
 export interface CellEditorSelectorFunc<TData = any, TValue = any, TContext = any> {
     (params: ICellEditorParams<TData, TValue, TContext>): CellEditorSelectorResult | undefined;
 }
