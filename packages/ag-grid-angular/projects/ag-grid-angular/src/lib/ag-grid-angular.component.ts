@@ -22,6 +22,7 @@ import type {
     AsyncTransactionsFlushedEvent,
     BodyScrollEndEvent,
     BodyScrollEvent,
+    CanDropOnRowCallback,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -1967,6 +1968,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Tells the grid if this row should be rendered as full width.
      */
     @Input() public isFullWidthRow: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined = undefined;
+    /** Called by managed drag and drop when rows are dropped on another row.
+     * The user can cancel the drop by returning `false` or customize the operation by returning a `RowDragDropResult`.
+     * @agModule `RowDragModule`
+     */
+    @Input() public canDropOnRow: CanDropOnRowCallback<TData> | undefined = undefined;
 
     /** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel.
      */

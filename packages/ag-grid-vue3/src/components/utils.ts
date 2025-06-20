@@ -1,6 +1,7 @@
 // @START_IMPORTS@
 import type {
     AlignedGrid,
+    CanDropOnRowCallback,
     CellPosition,
     CellSelectionOptions,
     ChartRefParams,
@@ -1756,6 +1757,11 @@ export interface Props<TData> {
     /** Tells the grid if this row should be rendered as full width.
          */
     isFullWidthRow?: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined,
+    /** Called by managed drag and drop when rows are dropped on another row.
+         * The user can cancel the drop by returning `false` or customize the operation by returning a `RowDragDropResult`.
+         * @agModule `RowDragModule`
+         */
+    canDropOnRow?: CanDropOnRowCallback<TData> | undefined,
 
     // @END_PROPS@
 
@@ -2193,6 +2199,7 @@ export function getProps() {
         getRowClass: undefined,
         getRowHeight: undefined,
         isFullWidthRow: undefined,
+        canDropOnRow: undefined,
 
 // @END_DEFAULTS@
 
