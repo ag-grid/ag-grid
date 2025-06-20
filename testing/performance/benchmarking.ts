@@ -157,7 +157,7 @@ const gridToChartsMap: Record<Version, Version> = {
     'v31.2.0': 'v9.2.0',
 } as const;
 
-const getCdnUrl = (pkg: string, version: Version, path: `/${string}` = `/dist/${pkg}.min.js`) => {
+const getCdnUrl = (pkg: string, version: Version, path: `/${string}` = `/dist/${pkg}.js`) => {
     return `${knownUrlsProxy[version]}/files/${pkg}${path}`;
 };
 
@@ -389,7 +389,7 @@ async function attachScripts(page: Page, version: Version, testCase: InternalTes
     const urls = [getCdnUrl('ag-grid-community', version), getCdnUrl('ag-grid-enterprise', version)];
     if (chartsVersion) {
         urls.push(
-            `https://cdn.jsdelivr.net/npm/ag-charts-community@${chartsVersion.slice(1)}/dist/umd/ag-charts-community.min.js`
+            `https://cdn.jsdelivr.net/npm/ag-charts-community@${chartsVersion.slice(1)}/dist/umd/ag-charts-community.js`
         );
     }
 
