@@ -75,10 +75,21 @@ function onRowDragMove(event: any) {
 
 const gridOptions: GridOptions<IFile> = {
     columnDefs: [
-        { field: 'dateModified' },
+        {
+            field: 'type',
+            headerName: 'Type',
+            width: 90,
+        },
+        {
+            field: 'dateModified',
+            headerName: 'Modified',
+            width: 130,
+        },
         {
             field: 'size',
             valueFormatter: (params: ValueFormatterParams) => (params.value ? params.value + ' MB' : ''),
+            width: 140,
+            aggFunc: 'sum',
         },
     ],
     autoGroupColumnDef: {

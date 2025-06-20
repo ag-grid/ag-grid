@@ -9,23 +9,6 @@ export interface IFile {
     size?: number;
 }
 
-/**
- * Returns the new parentId for a move operation.
- */
-function getNewParentId(source: IFile, target: IFile | null | undefined, reorderOnly: boolean): string | undefined {
-    if (reorderOnly) {
-        return source.parentId;
-    }
-    if (!target) {
-        return undefined;
-    }
-    if (target.type === 'folder') {
-        return target.id;
-    } else {
-        return target.parentId;
-    }
-}
-
 export interface FileDropIndicator {
     parentId: string | undefined;
     index: number;
@@ -49,14 +32,9 @@ export function getFileDropIndicator(
     let dropIndicatorPosition: DropIndicatorPosition = 'none';
 
     if (!target) {
-        // Insert at root: if there is a last node with no parent, set file to that and position to below
-        const rootNodes = files.filter((f) => !f.parentId);
-        if (rootNodes.length > 0) {
-            file = rootNodes[rootNodes.length - 1];
-            index = rootNodes.length;
-            dropIndicatorPosition = 'below';
-        }
-        parentId = undefined;
+        // Append in the root
+        index = files.length;
+        dropIndicatorPosition = 'none';
     } else if (target.type === 'folder') {
         parentId = target.id;
         const children = files.filter((f) => f.parentId === target.id);
@@ -75,8 +53,10 @@ export function getFileDropIndicator(
         index = siblings.findIndex((f) => f.id === target.id);
         if (index === -1) {
             index = siblings.length;
+        } else {
+            index = index + 1; // always insert after target
         }
-        dropIndicatorPosition = filtered.length && index === siblings.length ? 'below' : 'above';
+        dropIndicatorPosition = 'below';
     }
 
     return { parentId, index, file, dropIndicatorPosition };
@@ -97,22 +77,30 @@ export function moveFiles(
     if (source === target) {
         return files;
     }
-    const ctx = getFileDropIndicator(files, source, target, reorderOnly);
-    if (!ctx) {
-        return files;
-    }
     if (target && isDescendant(source, target, files)) {
         return files;
     }
+    const ctx = getFileDropIndicator(files, source, target, reorderOnly);
+    if (!ctx) {
+        // Insert at root (parentId undefined), at the end
+        const filtered = files.filter((f) => f.id !== source.id);
+        const newFile: IFile = { ...source, parentId: undefined };
+        const result: IFile[] = [];
+        for (const file of filtered) {
+            result.push(file);
+        }
+        // Always insert at the end of root
+        result.push(newFile);
+        return result;
+    }
     const filtered = files.filter((f) => f.id !== source.id);
-    let newIndex = ctx.index;
     const newFile: IFile = { ...source, parentId: ctx.parentId };
     const result: IFile[] = [];
     let siblingIdx = 0;
     let inserted = false;
     for (const file of filtered) {
         if (file.parentId === ctx.parentId) {
-            if (siblingIdx === newIndex && !inserted) {
+            if (siblingIdx === ctx.index && !inserted) {
                 result.push(newFile);
                 inserted = true;
             }
@@ -131,20 +119,28 @@ export function moveFiles(
  * Used to prevent invalid moves.
  */
 function isDescendant(source: IFile, target: IFile, files: IFile[]): boolean {
-    if (source.id === target.id) {
-        return true;
-    }
-    // Build a map for O(1) lookups
-    const idMap = new Map<string, IFile>();
-    for (const file of files) {
-        idMap.set(file.id, file);
-    }
+    if (source.id === target.id) return true;
     let parent = target.parentId;
     while (parent) {
-        if (parent === source.id) {
-            return true;
-        }
-        parent = idMap.get(parent)?.parentId;
+        if (parent === source.id) return true;
+        parent = files.find((f) => f.id === parent)?.parentId;
     }
     return false;
+}
+
+/**
+ * Returns the new parentId for a move operation.
+ */
+function getNewParentId(source: IFile, target: IFile | null | undefined, reorderOnly: boolean): string | undefined {
+    if (reorderOnly) {
+        return source.parentId;
+    }
+    if (!target) {
+        return undefined;
+    }
+    if (target.type === 'folder') {
+        return target.id;
+    } else {
+        return target.parentId;
+    }
 }

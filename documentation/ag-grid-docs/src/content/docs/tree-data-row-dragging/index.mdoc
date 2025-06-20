@@ -72,20 +72,15 @@ The example above works, however it is not intuitive as the user is given no vis
 
 * The example uses [Refresh Cells](./view-refresh/#refresh-cells) to get the grid to execute the Cell Class Rules again over the destination folder when the destination folder changes.
 
-{% gridExampleRunner title="Highlighting Unmanaged Row Drag with Tree Data" name="tree-unmanaged-row-drag-highlight" /%}
+{% gridExampleRunner title="Highlighting Unmanaged Row Drag with Tree Data" name="tree-unmanaged-row-drag-highlight"  /%}
 
 ### Example Tree Data with parentId Unmanaged Row Dragging
 
-{% gridExampleRunner title="Unmanaged Row Drag with Tree Data" name="tree-unmanaged-row-drag"  exampleHeight=545 /%}
+{% gridExampleRunner title="Unmanaged Row Drag with Tree Data" name="tree-unmanaged-row-drag"  exampleHeight=545  /%}
 
 The following example shows how to implement unmanaged row dragging using the `parentId` approach, which is simpler and more direct than using `getDataPath`. The grid uses the `treeDataParentIdField` property, and utility functions are provided to move rows and update the tree structure. This approach is recommended for most use cases where your data is already structured with parent IDs.
 
 This example also demonstrates how to provide custom drop indicators using the [`setRowDropPositionIndicator`](https://www.ag-grid.com/javascript-data-grid/grid-api/#reference-setRowDropPositionIndicator) API.
 
-{% gridExampleRunner title="Unmanaged Row Drag with parentId" name="tree-unmanaged-row-drag-with-parent-id" exampleHeight=500 /%}
+{% gridExampleRunner title="Unmanaged Row Drag with parentId" name="tree-unmanaged-row-drag-with-parent-id" exampleHeight=500  /%}
 
-### Example Tree Data with children array Unmanaged Row Dragging
-
-The following example shows how to implement unmanaged row dragging using a nested `children` array structure. This is useful when your data is already organized as a tree, with each folder containing its children directly. The example demonstrates how to move nodes within the tree and update the structure accordingly.
-
-{% gridExampleRunner title="Unmanaged Row Drag with children array" name="tree-unmanaged-row-drag-with-children-array" exampleHeight=500 /%}
