@@ -1,11 +1,11 @@
 [
     {
         "version": "34.0.0",
-        "date": "June 20th, 2025",
-        "landingPageHighlight": "New Filter Tool Panel, Cell Editor Validation, Batch Editing, Date Picker Time Support, Tree Data Row Dragging",
+        "date": "June 25th, 2025",
+        "landingPageHighlight": "New Filters Tool Panel, Cell Editor Validation, Batch Editing, Date Picker Time Support, Tree Data Row Dragging",
         "highlights": [
             {
-                "text": "New Filter Tool Panel",
+                "text": "New Filters Tool Panel",
                 "path": "./tool-panel-filters-new/"
             },
             {

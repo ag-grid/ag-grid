@@ -4,11 +4,11 @@ description: "See what's new in AG Grid, view a full list of changes and migrate
 migrationVersion: "34.0.0"
 ---
 
-New Filter Tool Panel, Cell Editor Validation, Batch Editing, Date Picker Time Support, Tree Data Row Dragging.
+New Filters Tool Panel, Cell Editor Validation, Batch Editing, Date Picker Time Support, Tree Data Row Dragging.
 
 ## What's New
 
-AG Grid {% migrationVersion() %} adds important new features – New Filter Tool Panel, Cell Editor Validation, Batch Editing, Date Picker Time Support, Tree Data Row Dragging, as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-34-0/).
+AG Grid {% migrationVersion() %} adds important new features – New Filters Tool Panel, Cell Editor Validation, Batch Editing, Date Picker Time Support, Tree Data Row Dragging, as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-34-0/).
 
 These improvements involve no breaking changes as listed below.
 
@@ -32,13 +32,11 @@ There are no deprecated API removals in AG Grid version {% migrationVersion() %}
 
 ## Deprecations
 
-### Grid Options
+### Filters
 
 - `suppressAdvancedFilterEval` is deprecated without replacement. No longer using eval at all in advanced filters so this is now default behavior. This improves security by not requiring `script-src 'unsafe-eval'` for advanced filters.
 
 - `ISetFilter` interface is deprecated. When retrieving via `api.getColumnFilterInstance(column)`, use `SetFilterUi`. To access the methods that were previously available on `ISetFilter` (but not on `SetFilterUi`), instead retrieve the filter handler via `api.getColumnFilterHandler(column)` and use the `SetFilterHandler` interface.
-
-### Filters
 
 - `getModel()` and `setModel()` on all grid-provided filter instances are deprecated. Use `api.getColumnFilterModel(column)` and `api.setColumnFilterModel(column)` instead.
 
