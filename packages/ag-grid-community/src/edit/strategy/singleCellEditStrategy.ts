@@ -72,8 +72,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         // NOP - single cell edit strategy does not dispatch row events
     }
 
-    public override stop(): boolean {
-        super.stop();
+    public override stop(cancel?: boolean): boolean {
+        super.stop(cancel);
 
         this.rowNode = undefined;
         this.column = undefined;

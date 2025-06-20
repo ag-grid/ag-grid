@@ -80,7 +80,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (editModelSvc?.getState(cellCtrl) !== 'editing') {
-            if (editSvc?.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
+            if ((editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0) > 0) {
                 return;
             }
 
@@ -94,7 +94,7 @@ export class CellMouseListenerFeature extends BeanStub {
 
     public onCellDoubleClicked(event: MouseEvent) {
         const { column, beans, cellCtrl } = this;
-        const { eventSvc, frameworkOverrides, editSvc } = beans;
+        const { eventSvc, frameworkOverrides, editSvc, editModelSvc } = beans;
 
         const colDef = column.getColDef();
         // always dispatch event to eventService
@@ -115,7 +115,7 @@ export class CellMouseListenerFeature extends BeanStub {
             editSvc?.shouldStartEditing(this.cellCtrl, event) &&
             this.beans.editModelSvc?.getState(this.cellCtrl) !== 'editing'
         ) {
-            if (editSvc?.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
+            if (editSvc?.isEditing() && (editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0) > 0) {
                 return;
             }
 

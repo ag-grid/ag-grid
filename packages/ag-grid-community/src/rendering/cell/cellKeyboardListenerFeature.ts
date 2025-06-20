@@ -188,7 +188,6 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (editSvc?.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
             // for escape we always revert, even if blocking
             editSvc.revertSingleCellEdit(cellCtrl);
-            return;
         }
 
         editSvc?.stopEditing(cellCtrl, {

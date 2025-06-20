@@ -375,6 +375,7 @@ export function _destroyEditor(beans: BeanCollection, position: Required<EditPos
     cellCtrl?.refreshCell({ force: true, suppressFlash: true });
 
     beans.rowRenderer.refreshCells({ rowNodes: rowNode ? [rowNode] : [], suppressFlash: true, force: true });
+    cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
 }
 
 export type MappedValidationErrors = EditMap | undefined;
