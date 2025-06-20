@@ -355,8 +355,9 @@ export function _destroyEditor(beans: BeanCollection, position: Required<EditPos
         return;
     }
 
-    const errorMessages = comp.getCellEditor()?.getValidationErrors?.();
+    const errorMessages = comp?.getCellEditor()?.getValidationErrors?.();
     const cellValidationModel = beans.editModelSvc?.getCellValidationModel();
+
     if (errorMessages?.length) {
         cellValidationModel?.setCellValidation(position, { errorMessages });
     } else {
