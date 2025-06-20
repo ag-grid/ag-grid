@@ -1,5 +1,34 @@
 [
     {
+        "version": "34.0.0",
+        "date": "June 25th, 2025",
+        "landingPageHighlight": "New Filters Tool Panel, Cell Editor Validation, Batch Editing, Date Picker Time Support, Tree Data Row Dragging",
+        "highlights": [
+            {
+                "text": "New Filters Tool Panel",
+                "path": "./tool-panel-filters-new/"
+            },
+            {
+                "text": "Cell Editor Validation",
+                "path": "./cell-editing-validation/"
+            },
+            {
+                "text": "Batch Editing",
+                "path": "./cell-editing-batch/"
+            },
+            {
+                "text": "Date Picker Time Support",
+                "path": "./cell-data-types/#datetime"
+            },
+            {
+                "text": "Tree Data Row Dragging",
+                "path": "./row-dragging/#row-dragging--tree-data"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-34",
+        "hideBlogPostLink": false
+    },
+    {
         "version": "33.3.0",
         "date": "May 13th, 2025",
         "landingPageHighlight": "Row Pinning, Row Height Resizing, Grand Total Row Pinning, Scroll Column Into View, Feature Highlights",
