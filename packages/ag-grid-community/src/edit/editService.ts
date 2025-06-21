@@ -65,6 +65,9 @@ const SOURCE_TRANSFORM_KEYS: Set<string> = new Set(Object.keys(SOURCE_TRANSFORM)
 
 const CANCEL_PARAMS: StopEditParams = { cancel: true, source: 'api' };
 
+// Escape reverts the current edit cell in batch editing mode
+const escapeRevertsCurrentEdit = false;
+
 export class EditService extends BeanStub implements NamedBean, IEditService {
     beanName = 'editSvc' as const;
     private batch: boolean = false;
@@ -301,7 +304,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             if (isEnter || isEscape) {
                 if (isEnter) {
                     _syncFromEditors(beans);
-                } else if (position) {
+                } else if (position && escapeRevertsCurrentEdit) {
                     this.strategy?.clearEdits(position);
                 }
 
