@@ -887,19 +887,19 @@ export interface _BatchEditApi {
     setEditingCells(cellPositions: EditingCellPosition[], params?: SetEditingCellsParams): void;
 
     /**
-     * Batch Editing.
+     * Start Batch Editing.
      * @agModule `BatchEditModule`
      */
     startBatchEdit(): void;
 
     /**
-     * Stop batch editing and commit any pending changes.
+     * Commit Batch Editing.
      * @agModule `BatchEditModule`
      */
     commitBatchEdit(): void;
 
     /**
-     * Stop batch editing and discard any pending changes.
+     * Cancel Batch Editing.
      * @agModule `BatchEditModule`
      */
     cancelBatchEdit(): void;
