@@ -40,7 +40,8 @@
     --ag-input-focus-border-color: var(--ag-active-color);
     --ag-range-selection-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 20%);
     --ag-input-focus-box-shadow: 0 0 0 3px color-mix(in srgb, transparent, var(--ag-input-focus-border-color) 47%);
-    --ag-input-error-focus-box-shadow: 0 0 0 3px var(--ag-invalid-color);
+    --ag-input-error-focus-box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--ag-background-color), var(--ag-invalid-color) 50%);
     --ag-range-selection-background-color-2: color-mix(in srgb, transparent, var(--ag-active-color) 36%);
     --ag-range-selection-background-color-3: color-mix(in srgb, transparent, var(--ag-active-color) 49%);
     --ag-range-selection-background-color-4: color-mix(in srgb, transparent, var(--ag-active-color) 59%);
