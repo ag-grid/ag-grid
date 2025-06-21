@@ -471,32 +471,32 @@
         },
         "startBatchEdit": {
             "more": {
-                "name": "Start Batch Editing",
+                "name": "Batch Editing",
                 "url": "./cell-editing-batch"
             }
         },
         "commitBatchEdit": {
             "more": {
-                "name": "Commit Batch Editing, keeping pending edits",
+                "name": "Batch Editing",
                 "url": "./cell-editing-batch"
             }
         },
         "cancelBatchEdit": {
             "more": {
-                "name": "Stop Batch Editing, discarding pending edits",
+                "name": "Batch Editing",
                 "url": "./cell-editing-batch"
             }
         },
         "isBatchEditing": {
             "more": {
-                "name": "Is Batch Editing Enabled",
+                "name": "Batch Editing",
                 "url": "./cell-editing-batch"
             }
         },
         "setEditingCells": {
             "more": {
-                "name": "Editing API",
-                "url": "./cell-editing-start-stop/#editing-api"
+                "name": "Batch Editing",
+                "url": "./cell-editing-batch"
             }
         }
     },

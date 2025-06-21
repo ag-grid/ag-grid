@@ -3,7 +3,7 @@ title: 'Batch Editing'
 enterprise: true
 ---
 
-Batch editing allows you to edit multiple cells in the grid before committing the changes. This is useful for scenarios where you want to make several edits at once without immediately updating the data source.
+Batch editing allows you to edit multiple cells or rows in the grid before committing or reverting these edits. This is useful for scenarios where you want to make several edits at once without immediately updating the data source.
 
 {% note %}
 Batch editing is an advanced feature only available via the API to allow you to tailor it to your specific needs.
@@ -98,17 +98,7 @@ Small description to explain consequences of using batch mid session (visible va
 
 {% gridExampleRunner title="Batch Editing Sort / Excel" name="batch-editing-sort-excel" exampleHeight=560 /%}
 
-### Important Differences To Non-Batch Editing
-
--   In batch editing, the grid does not immediately update the data source when a cell is edited. Instead, it tracks changes until you explicitly commit them.
--   The grid allows you to edit multiple cells in a row without committing changes until you decide to do so.
--   You can queue up edits across rows
-
-#### Clipboard Interaction
-
-The grid supports clipboard operations during batch editing. You can copy and paste data into the grid, and it will respect the batch editing state.
-
-#### Exporting Data
+### Exporting Data
 
 When exporting data from the grid, you can choose to include any pending changes made during batch editing. The exported data will reflect the changes made in the batch editing session. This is off by default.
 
@@ -116,7 +106,3 @@ When exporting data from the grid, you can choose to include any pending changes
 gridApi.exportDataAsExcel({ includePendingEdits: true });
 gridApi.exportDataAsCsv({ includePendingEdits: true });
 ```
-
-#### Row Models
-
-Batch editing is currently constrained to the [Client-Side Row Model](./row-models/). Server-side, Infinite and Viewport row models are unsupported. Row-spanning is also currently unsupported.
