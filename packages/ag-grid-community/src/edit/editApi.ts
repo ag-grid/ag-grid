@@ -55,7 +55,7 @@ export function getEditingCells(beans: BeanCollection, params: GetEditingCellsPa
 }
 
 export function stopEditing({ editSvc }: BeanCollection, cancel: boolean = false): void {
-    editSvc?.stopEditing(undefined, { cancel, source: editSvc?.isBatchEditing() ? 'ui' : 'api' });
+    editSvc?.stopEditing(undefined, { cancel, source: 'api' });
 }
 
 export function isEditing(beans: BeanCollection, cellPosition: CellPosition): boolean {

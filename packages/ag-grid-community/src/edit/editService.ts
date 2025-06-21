@@ -327,9 +327,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.bulkRefresh();
 
-        if (cancel) {
-            this.beans.rowRenderer.refreshRows({ suppressFlash: true, force: true });
-        }
+        this.beans.rowRenderer.refreshRows({ suppressFlash: true, force: true });
 
         return res;
     }
@@ -645,6 +643,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const { beans } = this;
 
         this.strategy ??= this.createStrategy();
+        const source = this.isBatchEditing() ? 'ui' : 'api';
 
         const existing = this.model.getEdit(position);
         if (existing) {
@@ -654,6 +653,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             if (existing.oldValue !== newValue) {
                 _syncFromEditor(beans, position, newValue, eventSource);
+                this.stopEditing(position, { source });
                 return true;
             }
 
@@ -670,6 +670,12 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
 
         _syncFromEditor(beans, position, newValue, eventSource);
+        this.stopEditing(position, { source });
+
+        this.beans.changeDetectionSvc?.refreshRows(
+            { node: position.rowNode, column: position.column },
+            { suppressFlash: true, force: true }
+        );
 
         return true;
     }
