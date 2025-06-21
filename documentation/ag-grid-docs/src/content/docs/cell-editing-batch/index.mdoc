@@ -3,7 +3,7 @@ title: 'Batch Editing'
 enterprise: true
 ---
 
-Batch editing allows you to edit multiple cells in the grid before committing the changes. This is useful for scenarios where you want to make several edits at once without immediately updating the data source.
+Batch editing allows you to edit multiple cells or rows in the grid before committing or reverting these edits. This is useful for scenarios where you want to make several edits at once without immediately updating the data source.
 
 {% note %}
 Batch editing is an advanced feature only available via the API to allow you to tailor it to your specific needs.
@@ -11,12 +11,12 @@ Batch editing is an advanced feature only available via the API to allow you to 
 
 ## Enabling Batch Editing
 
-Batch Editing is enabled by calling the grid API method `setBatchEditing(true)`.
+Batch Editing is enabled by calling the grid API method `startBatchEdit()`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     onGridReady: (params) => {
-        params.api.setBatchEditing(true);
+        params.api.startBatchEdit();
     }
 }
 ```
@@ -39,7 +39,7 @@ The following example demonstrates a simple batch editing scenario: starting a b
 
 The grid API methods `startEditingCell()` and `stopEditing()` can be used to control the editing state of individual cells. When you start editing a cell after enabling Batch Editing, the grid enters a batch editing mode where it can track changes. `isBatchEditing()` can be used to check if the grid is currently in batch editing mode. In this mode, `startEditingCell()` and `stopEditing()` affect only the cell editors, not the overall batch.
 
-{% apiDocumentation source="grid-api/api.json" section="batch-editing" names=["isBatchEditing", "startBatchEdit", "commitBatchEdit", "cancelBatchEdit", "setEditingCells"] /%}
+{% apiDocumentation source="grid-api/api.json" section="batch-editing" names=["isBatchEditing", "startBatchEdit", "commitBatchEdit", "cancelBatchEdit"] /%}
 
 {% apiDocumentation source="grid-api/api.json" section="editing" names=["getEditingCells", "startEditingCell", "stopEditing"] /%}
 
@@ -97,17 +97,3 @@ Small description how to change the styling
 Small description to explain consequences of using batch mid session (visible values are considered not original values).
 
 {% gridExampleRunner title="Batch Editing Sort / Excel" name="batch-editing-sort-excel" exampleHeight=560 /%}
-
-### Important Differences To Non-Batch Editing
-
--   In batch editing, the grid does not immediately update the data source when a cell is edited. Instead, it tracks changes until you explicitly commit them.
--   The grid allows you to edit multiple cells in a row without committing changes until you decide to do so.
--   You can queue up edits across rows
-
-#### Clipboard Interaction
-
-The grid supports clipboard operations during batch editing. You can copy and paste data into the grid, and it will respect the batch editing state.
-
-#### Row Models
-
-Batch editing is currently constrained to the [Client-Side Row Model](./row-models/). Server-side, Infinite and Viewport row models are unsupported. Row-spanning is also currently unsupported.

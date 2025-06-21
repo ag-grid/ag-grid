@@ -428,14 +428,9 @@ function toggleBatch() {
 
     batch ? gridApi!.startBatchEdit() : gridApi!.cancelBatchEdit();
 
-    if (!batch) {
-        clearEditingCells();
-    }
-
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
     document.getElementById('disablePoll')!.style.display = polling ? 'unset' : 'none';
 
-    document.getElementById('batchEditingApi')!.style.display = batch ? 'none' : 'flex';
     document.getElementById('edits-table')!.style.display = batch ? 'none' : 'block';
 }
 
@@ -448,64 +443,6 @@ function createChart() {
             columns: ['mood', 'age'],
         },
     });
-}
-
-function setEditingCells(clearValues: boolean = false) {
-    const pendingEdits: EditingCellPosition[] = [
-        {
-            rowIndex: 2,
-            rowPinned: undefined,
-            colId: 'lastName',
-            newValue: 'Smith',
-        },
-        {
-            rowIndex: 3,
-            rowPinned: undefined,
-            colId: 'age',
-            state: 'editing',
-        },
-        {
-            rowIndex: 8,
-            rowPinned: undefined,
-            newValue: 100,
-            colId: 'age',
-        },
-        {
-            rowIndex: 8,
-            rowPinned: undefined,
-            newValue: 'Ecstatic',
-            colId: 'mood',
-        },
-        {
-            rowIndex: 0,
-            rowPinned: 'top',
-            colId: 'firstName',
-            newValue: 'John',
-        },
-        {
-            rowIndex: 0,
-            rowPinned: 'bottom',
-            colId: 'firstName',
-            newValue: 'Jane',
-        },
-    ];
-
-    if (clearValues) {
-        pendingEdits.forEach((edit) => {
-            edit.newValue = null;
-        });
-    }
-
-    gridApi!.startBatchEdit();
-
-    gridApi!.setEditingCells(pendingEdits);
-
-    getEditingCells();
-}
-
-function clearEditingCells() {
-    gridApi!.setEditingCells([]);
-    getEditingCells();
 }
 
 function setEditType(editType: EditStrategyType) {
