@@ -867,11 +867,13 @@ export interface _EditGridApi<TData> {
 
     /**
      * Returns `true` if the grid is editing a cell
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     isEditing(cellPosition: CellPosition): boolean;
 
     /**
      * Run validation for every instantiated editor.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     validateEdit(): ICellEditorValidationError[] | null;
 }
@@ -883,17 +885,20 @@ export interface _BatchEditApi {
     startBatchEdit(): void;
 
     /**
-     * Stop batch editing and commit any pending changes.
+     * Commit Batch Editing.
+     * @agModule `BatchEditModule`
      */
     commitBatchEdit(): void;
 
     /**
-     * Stop batch editing and discard any pending changes.
+     * Cancel Batch Editing.
+     * @agModule `BatchEditModule`
      */
     cancelBatchEdit(): void;
 
     /**
-     * Returns `true` if batch editing is enabled
+     * Returns whether batch editing is currently active.
+     * @agModule `BatchEditModule`
      */
     isBatchEditing(): boolean;
 }
