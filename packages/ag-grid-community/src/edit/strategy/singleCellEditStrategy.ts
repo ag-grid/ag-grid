@@ -47,7 +47,6 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         position: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null,
         _source: 'api' | 'ui' = 'ui',
-        silent?: boolean,
         ignoreEventKey?: boolean
     ): void {
         if (this.rowNode !== position.rowNode || this.column !== position.column) {
@@ -58,9 +57,6 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         this.column = position.column;
 
         this.model.start(position);
-        if (!silent) {
-            this.dispatchCellEvent(position, event, 'cellEditingStarted');
-        }
 
         this.setupEditors([position], position, true, event, ignoreEventKey);
     }

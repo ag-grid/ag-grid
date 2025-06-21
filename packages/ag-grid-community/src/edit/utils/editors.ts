@@ -144,6 +144,8 @@ export function _setupEditor(
         cellCtrl.editCompDetails = compDetails;
         cellCtrl.comp?.setEditDetails(compDetails, popup, popupLocation, beans.gos.get('reactiveCustomComponents'));
         cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
+
+        beans.editSvc?.dispatchCellEvent(position, null, 'cellEditingStarted');
     }
 
     return;
@@ -224,11 +226,8 @@ function _createEditorParams(
 }
 
 export function _purgeUnchangedEdits(beans: BeanCollection, includeEditing?: boolean): void {
-    const { editModelSvc, editSvc } = beans;
-    const removedRows: IRowNode[] = [];
-    const removedCells: Required<EditPosition>[] = [];
+    const { editModelSvc } = beans;
     editModelSvc?.getEditMap().forEach((editRow, rowNode) => {
-        const removedRowCells: Required<EditPosition>[] = [];
         editRow.forEach((edit, column) => {
             if (!includeEditing && (edit.state === 'editing' || edit.newValue === UNEDITED)) {
                 return;
@@ -237,19 +236,9 @@ export function _purgeUnchangedEdits(beans: BeanCollection, includeEditing?: boo
             if (!_valuesDiffer(edit) && (edit.state !== 'editing' || includeEditing)) {
                 // remove edits where the pending is equal to the old value
                 editModelSvc?.removeEdits({ rowNode, column });
-                removedRowCells.push({ rowNode, column });
             }
         });
-
-        if (removedRowCells.length === editRow.size) {
-            // if all cells in the row were removed, remove the row
-            removedRows.push(rowNode);
-        }
-        removedCells.push(...removedRowCells);
     });
-
-    removedCells.forEach((cell) => editSvc?.dispatchCellEvent(cell, undefined, 'cellEditingStopped'));
-    removedRows.forEach((rowNode) => editSvc?.dispatchRowEvent({ rowNode }, 'rowEditingStopped'));
 }
 
 export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: CellCtrl): void {
@@ -388,6 +377,8 @@ export function _destroyEditor(beans: BeanCollection, position: Required<EditPos
 
     beans.rowRenderer.refreshCells({ rowNodes: rowNode ? [rowNode] : [], suppressFlash: true, force: true });
     cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
+
+    beans.editSvc?.dispatchCellEvent(position, null, 'cellEditingStopped');
 }
 
 export type MappedValidationErrors = EditMap | undefined;

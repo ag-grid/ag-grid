@@ -68,7 +68,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         position: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         _source: 'api' | 'ui' = 'ui',
-        silent?: boolean,
         ignoreEventKey?: boolean
     ): void {
         const { rowNode } = position;
@@ -76,7 +75,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             super.cleanupEditors(position);
         }
 
-        if (!this.model.hasEdits({ rowNode }) && !silent) {
+        if (!this.model.hasEdits({ rowNode })) {
             this.dispatchRowEvent({ rowNode }, 'rowEditingStarted');
         }
 
@@ -95,9 +94,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
             if (!this.model.hasEdits(position)) {
                 this.model.start(position);
-                if (!silent) {
-                    this.dispatchCellEvent(position, event, 'cellEditingStarted');
-                }
             }
         });
 
@@ -132,6 +128,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         super.stop(cancel);
+
+        if (this.rowNode) {
+            this.dispatchRowEvent({ rowNode: this.rowNode! }, 'rowEditingStopped');
+        }
 
         this.rowNode = undefined;
 

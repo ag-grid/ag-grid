@@ -54,7 +54,6 @@ export abstract class BaseEditStrategy extends BeanStub {
         position: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null,
         source?: EditSource,
-        silent?: boolean,
         ignoreEventKey?: boolean
     ): void;
 
@@ -335,17 +334,10 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         this.model?.setEditMap(edits);
 
-        // primary loop to preserve event semantics
-        edits.forEach((_, rowNode) => {
-            this.dispatchRowEvent({ rowNode }, 'rowEditingStarted');
-        });
-
         // now update cell values and fire cell events
         const cells: (EditValue & Required<EditPosition>)[] = [];
         edits.forEach((editRow, rowNode) => {
             editRow.forEach((cellData, column) => {
-                const position = { rowNode, column };
-                this.dispatchCellEvent(position, undefined, 'cellEditingStarted');
                 if (cellData.state === 'editing') {
                     cells.push({ ...cellData, rowNode, column });
                 }
@@ -359,7 +351,6 @@ export abstract class BaseEditStrategy extends BeanStub {
                 event: new KeyboardEvent('keydown', { key }),
                 startedEdit: true,
                 source: 'api',
-                silent: true,
             });
         }
     }

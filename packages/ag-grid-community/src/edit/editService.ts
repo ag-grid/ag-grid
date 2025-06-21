@@ -33,7 +33,6 @@ import type { IRowStyleFeature } from '../interfaces/iRowStyleFeature';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
-import { _createCellEvent } from '../rendering/cell/cellEvent';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { ValueService } from '../valueService/valueService';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
@@ -216,7 +215,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     /** @return whether to prevent default on event */
     public startEditing(position: Required<EditPosition>, params: StartEditParams): void {
-        const { startedEdit = true, event = null, source = 'ui', silent = false, ignoreEventKey = false } = params;
+        const { startedEdit = true, event = null, source = 'ui', ignoreEventKey = false } = params;
 
         this.strategy ??= this.createStrategy();
 
@@ -243,7 +242,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.stopEditing(undefined, { source });
         }
 
-        this.strategy!.start(position, event, source, silent, ignoreEventKey);
+        this.strategy!.start(position, event, source, ignoreEventKey);
 
         return;
     }
@@ -384,14 +383,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     cellCtrl?.refreshCell({ force: true, suppressFlash: true });
                 }
 
-                this.dispatchCellEvent({ rowNode, column }, undefined, 'cellEditingStopped', {
-                    ..._createCellEvent(beans, null, 'cellEditingStopped', position, newValue),
-                    oldValue,
-                    newValue,
-                    value: newValue,
-                    valueChanged,
-                });
-
                 if (cancel) {
                     // refresh aggs
                     this.beans.changeDetectionSvc?.refreshRows(
@@ -400,10 +391,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     );
                 }
             }
-        }
-
-        for (const rowNode of rowNodes) {
-            this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
         }
 
         beans.rowRenderer.refreshCells({
