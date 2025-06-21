@@ -1,12 +1,4 @@
-import type { BeanCollection, EditingCellPosition, SetEditingCellsParams } from 'ag-grid-community';
-
-export function setEditingCells(
-    beans: BeanCollection,
-    cells: EditingCellPosition[],
-    params?: SetEditingCellsParams
-): void {
-    beans.editSvc?.setEditingCells(cells, params);
-}
+import type { BeanCollection } from 'ag-grid-community';
 
 export function startBatchEdit(beans: BeanCollection): void {
     beans.editSvc?.setBatchEditing(true);

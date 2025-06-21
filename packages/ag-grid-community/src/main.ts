@@ -400,7 +400,6 @@ export {
     BaseCellEditor,
     GetCellEditorInstancesParams,
     GetEditingCellsParams,
-    SetEditingCellsParams,
     EditingCellPosition,
 } from './interfaces/iCellEditor';
 export { AgAbstractCellEditor } from './widgets/agAbstractCellEditor';

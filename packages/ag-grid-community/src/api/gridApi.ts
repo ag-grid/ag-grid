@@ -44,7 +44,6 @@ import type {
     GetEditingCellsParams,
     ICellEditor,
     ICellEditorValidationError,
-    SetEditingCellsParams,
 } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { FlashCellsParams, RefreshCellsParams } from '../interfaces/iCellsParams';
@@ -878,11 +877,6 @@ export interface _EditGridApi<TData> {
 }
 
 export interface _BatchEditApi {
-    /**
-     * Set currently pending cell updates when in batch editing mode. Specify `params.update=true` to update current state, otherwise pending state will be replaced.
-     */
-    setEditingCells(cellPositions: EditingCellPosition[], params?: SetEditingCellsParams): void;
-
     /**
      * Start batch editing.
      */

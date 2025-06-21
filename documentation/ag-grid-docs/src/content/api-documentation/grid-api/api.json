@@ -492,12 +492,6 @@
                 "name": "Is Batch Editing Enabled",
                 "url": "./cell-editing-batch"
             }
-        },
-        "setEditingCells": {
-            "more": {
-                "name": "Editing API",
-                "url": "./cell-editing-start-stop/#editing-api"
-            }
         }
     },
     "editing": {

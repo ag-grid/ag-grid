@@ -143,11 +143,6 @@ export interface GetEditingCellsParams {
     includePending?: boolean;
 }
 
-export interface SetEditingCellsParams {
-    /** Update existing cells, omit or set `false` to replace currently editing cells. */
-    update?: boolean;
-}
-
 export interface EditingCellPosition extends RowPosition {
     /** Column id */
     colId: string;

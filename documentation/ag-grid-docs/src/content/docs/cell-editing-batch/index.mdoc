@@ -11,12 +11,12 @@ Batch editing is an advanced feature only available via the API to allow you to 
 
 ## Enabling Batch Editing
 
-Batch Editing is enabled by calling the grid API method `setBatchEditing(true)`.
+Batch Editing is enabled by calling the grid API method `startBatchEdit()`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     onGridReady: (params) => {
-        params.api.setBatchEditing(true);
+        params.api.startBatchEdit();
     }
 }
 ```
@@ -39,7 +39,7 @@ The following example demonstrates a simple batch editing scenario: starting a b
 
 The grid API methods `startEditingCell()` and `stopEditing()` can be used to control the editing state of individual cells. When you start editing a cell after enabling Batch Editing, the grid enters a batch editing mode where it can track changes. `isBatchEditing()` can be used to check if the grid is currently in batch editing mode. In this mode, `startEditingCell()` and `stopEditing()` affect only the cell editors, not the overall batch.
 
-{% apiDocumentation source="grid-api/api.json" section="batch-editing" names=["isBatchEditing", "startBatchEdit", "commitBatchEdit", "cancelBatchEdit", "setEditingCells"] /%}
+{% apiDocumentation source="grid-api/api.json" section="batch-editing" names=["isBatchEditing", "startBatchEdit", "commitBatchEdit", "cancelBatchEdit"] /%}
 
 {% apiDocumentation source="grid-api/api.json" section="editing" names=["getEditingCells", "startEditingCell", "stopEditing"] /%}
 
