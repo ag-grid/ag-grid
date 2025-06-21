@@ -521,7 +521,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     /**
      * called by the cell, when tab is pressed while editing.
-     * @return: RenderedCell when navigation successful, false if navigation should not be performed, otherwise null
+     * @returns RenderedCell when navigation successful, false if navigation should not be performed, otherwise null
      */
     public findNextCellToFocusOn(
         previousPosition: CellPosition,

@@ -27,8 +27,7 @@ button {
 }
 
 #disableBatch,
-#disablePoll,
-#batchEditingApi {
+#disablePoll {
     display: none;
 }
 
@@ -112,14 +111,6 @@ button {
     flex-direction: row-reverse;
     padding-bottom: 2px;
     gap: 4px;
-}
-
-#batchEditingApi {
-    display: flex;
-    flex-direction: row-reverse;
-    padding-bottom: 2px;
-    gap: 4px;
-    display: none;
 }
 
 #edits-table {

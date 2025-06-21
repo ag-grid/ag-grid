@@ -7,12 +7,7 @@ import type { CellFocusedEvent } from '../events';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { CellRange } from './IRangeService';
-import type {
-    EditingCellPosition,
-    ICellEditorParams,
-    ICellEditorValidationError,
-    SetEditingCellsParams,
-} from './iCellEditor';
+import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError } from './iCellEditor';
 import type { ICellStyleFeature } from './iCellStyleFeature';
 import type { Column } from './iColumn';
 import type { EditMap, GetEditsParams } from './iEditModelService';
@@ -52,6 +47,10 @@ export type EditRowPosition = {
 
 export interface EditPosition extends EditRowPosition {
     column?: Column;
+}
+export interface _SetEditingCellsParams {
+    /** Update existing cells, omit or set `false` to replace currently editing cells. */
+    update?: boolean;
 }
 
 export function _isEditPosition(pos: any): pos is EditPosition {
@@ -118,7 +117,7 @@ export interface IEditService extends NamedBean {
     validateEdit(): ICellEditorValidationError[] | null;
     createCellStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): ICellStyleFeature;
     createRowStyleFeature(rowCtrl: RowCtrl, beans: BeanCollection): IRowStyleFeature;
-    setEditingCells(cells: EditingCellPosition[], params?: SetEditingCellsParams): void;
+    setEditingCells(cells: EditingCellPosition[], params?: _SetEditingCellsParams): void;
     hasValidationErrors(position?: EditPosition): boolean;
     cellEditingInvalidCommitBlocks(): boolean;
     checkNavWithValidation(

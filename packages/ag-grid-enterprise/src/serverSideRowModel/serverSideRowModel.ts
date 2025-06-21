@@ -605,7 +605,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         rootStore.forEachNodeDeepAfterFilterAndSort(callback, undefined, includeFooterNodes);
     }
 
-    /** @return false if store hasn't started */
+    /** @returns false if store hasn't started */
     public executeOnStore(route: string[], callback: (cache: LazyStore) => void): boolean {
         if (!this.started) {
             return false;

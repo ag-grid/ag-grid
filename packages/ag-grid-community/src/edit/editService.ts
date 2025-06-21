@@ -10,12 +10,7 @@ import type { CellFocusedEvent } from '../events';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
-import type {
-    EditingCellPosition,
-    ICellEditorParams,
-    ICellEditorValidationError,
-    SetEditingCellsParams,
-} from '../interfaces/iCellEditor';
+import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { EditMap, EditRow, EditValue, GetEditsParams, IEditModelService } from '../interfaces/iEditModelService';
 import type {
@@ -27,6 +22,7 @@ import type {
     IsEditingParams,
     StartEditParams,
     StopEditParams,
+    _SetEditingCellsParams,
 } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { IRowStyleFeature } from '../interfaces/iRowStyleFeature';
@@ -121,6 +117,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             rowDataUpdated: stopInvalidEdits,
             sortChanged: stopInvalidEdits,
             filterChanged: stopInvalidEdits,
+            cellFocused: this.onCellFocused.bind(this),
         });
     }
 
@@ -213,7 +210,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return this.model.hasEdits({ rowNode }, params) ?? false;
     }
 
-    /** @return whether to prevent default on event */
+    /** @returns whether to prevent default on event */
     public startEditing(position: Required<EditPosition>, params: StartEditParams): void {
         const { startedEdit = true, event = null, source = 'ui', silent = false, ignoreEventKey = false } = params;
 
@@ -824,7 +821,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return new RowEditStyleFeature(rowCtrl, beans);
     }
 
-    public setEditingCells(cells: EditingCellPosition[], params?: SetEditingCellsParams): void {
+    public setEditingCells(cells: EditingCellPosition[], params?: _SetEditingCellsParams): void {
         const { beans, model } = this;
         const { colModel, valueSvc } = beans;
 
@@ -874,5 +871,19 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         });
 
         this.setEditMap(edits);
+    }
+
+    onCellFocused(event: CellFocusedEvent): void {
+        const { column, rowIndex, rowPinned } = event;
+        const cellCtrl = _getCellCtrl(this.beans, { rowIndex, rowPinned, column });
+
+        if (!cellCtrl || !this.isEditing(cellCtrl, { checkSiblings: true })) {
+            return;
+        }
+
+        const translate = this.getLocaleTextFunc();
+        const label = translate('ariaPendingChange', 'Pending Change');
+
+        this.beans.ariaAnnounce?.announceValue(label, 'pendingChange');
     }
 }
