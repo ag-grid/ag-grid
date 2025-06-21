@@ -201,12 +201,12 @@ export class TooltipService extends BeanStub implements NamedBean {
 
     public setRowEditorTooltip(rowCtrl: RowCtrl, el: HTMLElement) {
         const { beans } = this;
-        const { context } = beans;
+        const { context, editModelSvc } = beans;
 
         const tooltipParams: ITooltipCtrl = {
             getGui: () => el,
             getTooltipValue: () => {
-                const errorMap = beans.editModelSvc?.getRowValidationModel()?.getRowValidationMap();
+                const errorMap = editModelSvc?.getRowValidationModel()?.getRowValidationMap();
                 const errors = errorMap?.get(rowCtrl.rowNode)?.errorMessages;
                 const translate = this.getLocaleTextFunc();
                 return errors && errors.length
@@ -215,8 +215,15 @@ export class TooltipService extends BeanStub implements NamedBean {
             },
             getLocation: () => 'fullRowEditor',
             shouldDisplayTooltip: () => {
-                const errorMap = beans.editModelSvc?.getRowValidationModel()?.getRowValidationMap();
+                const cellValidationMap = editModelSvc?.getCellValidationModel()?.getCellValidationMap();
+
+                if (cellValidationMap && cellValidationMap.size > 0) {
+                    return false;
+                }
+
+                const errorMap = editModelSvc?.getRowValidationModel()?.getRowValidationMap();
                 const errors = errorMap?.get(rowCtrl.rowNode)?.errorMessages;
+
                 return !!errors && errors.length > 0;
             },
         };
@@ -232,7 +239,7 @@ export class TooltipService extends BeanStub implements NamedBean {
 
     public setupCellEditorTooltip(cellCtrl: CellCtrl, editor: ICellEditor) {
         const { beans } = this;
-        const { context } = beans;
+        const { context, editModelSvc } = beans;
 
         const el = editor.getValidationElement?.();
 
@@ -243,7 +250,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         const tooltipParams: ITooltipCtrl = {
             getGui: () => el,
             getTooltipValue: () => {
-                const cellValidationModel = beans.editModelSvc?.getCellValidationModel();
+                const cellValidationModel = editModelSvc?.getCellValidationModel();
                 const errors = cellValidationModel?.getCellValidation(cellCtrl)?.errorMessages;
                 const translate = this.getLocaleTextFunc();
                 return errors && errors.length
@@ -252,12 +259,6 @@ export class TooltipService extends BeanStub implements NamedBean {
             },
             getLocation: () => 'cellEditor',
             shouldDisplayTooltip: () => {
-                const { editModelSvc } = beans;
-                const rowValidationMap = editModelSvc?.getRowValidationModel()?.getRowValidationMap();
-                if (rowValidationMap && rowValidationMap.size > 0) {
-                    return false;
-                }
-
                 const cellValidationMap = editModelSvc?.getCellValidationModel()?.getCellValidationMap();
                 return !!cellValidationMap && cellValidationMap.size > 0;
             },
