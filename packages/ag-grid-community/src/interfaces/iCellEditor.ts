@@ -118,7 +118,7 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
 
     /**
      * Optional validation callback that will override the `getValidationErrors()` of Provided Editors. Use this to return your own custom errors.
-     * @return An array of strings containing the editor error messages, or `null` if the editor is valid.
+     * @returns An array of strings containing the editor error messages, or `null` if the editor is valid.
      */
     getValidationErrors?: (params: IErrorValidationParams<TData, TValue, TContext>) => string[] | null;
 

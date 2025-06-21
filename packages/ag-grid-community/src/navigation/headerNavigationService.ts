@@ -113,7 +113,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
 
     /*
      * This method navigates grid header vertically
-     * @return {boolean} true to preventDefault on the event that caused this navigation.
+     * @returns {boolean} true to preventDefault on the event that caused this navigation.
      */
     public navigateVertically(direction: HeaderNavigationDirection, event: KeyboardEvent): boolean {
         const focusSvc = this.beans.focusSvc;
@@ -166,7 +166,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
 
     /*
      * This method navigates grid header horizontally
-     * @return {boolean} true to preventDefault on the event that caused this navigation.
+     * @returns {boolean} true to preventDefault on the event that caused this navigation.
      */
     public navigateHorizontally(
         direction: HeaderNavigationDirection,

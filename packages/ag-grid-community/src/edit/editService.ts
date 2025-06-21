@@ -213,7 +213,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return this.model.hasEdits({ rowNode }, params) ?? false;
     }
 
-    /** @return whether to prevent default on event */
+    /** @returns whether to prevent default on event */
     public startEditing(position: Required<EditPosition>, params: StartEditParams): void {
         const { startedEdit = true, event = null, source = 'ui', silent = false, ignoreEventKey = false } = params;
 

@@ -838,7 +838,7 @@ export class PopupService extends BeanStub implements NamedBean {
         }
     }
 
-    /** @return true if moved */
+    /** @returns true if moved */
     public bringPopupToFront(ePopup: HTMLElement): void {
         const parent = this.getPopupParent();
         const popupList: HTMLElement[] = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup'));
