@@ -460,9 +460,7 @@ export function _populateModelValidationErrors(
 
 export const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationModel => {
     const rowValidationModel = new EditRowValidationModel();
-
     const getFullRowEditValidationErrors = beans.gos.get('getFullRowEditValidationErrors');
-
     // populate row-level errors
     const editMap = beans.editModelSvc?.getEditMap();
 
@@ -470,10 +468,22 @@ export const _generateRowValidationErrors = (beans: BeanCollection): EditRowVali
         return rowValidationModel;
     }
 
-    for (const [rowNode, cellValidation] of editMap.entries()) {
+    for (const rowNode of editMap.keys()) {
+        const rowEditMap = editMap.get(rowNode);
+
+        if (!rowEditMap) {
+            continue;
+        }
+
         const editorsState: EditingCellPosition[] = [];
         const { rowIndex, rowPinned } = rowNode;
-        cellValidation.forEach((editValue, column) => {
+
+        for (const column of rowEditMap.keys()) {
+            const editValue = rowEditMap.get(column);
+            if (!editValue) {
+                continue;
+            }
+
             editorsState.push({
                 column,
                 colId: column.getColId(),
@@ -483,7 +493,7 @@ export const _generateRowValidationErrors = (beans: BeanCollection): EditRowVali
                 // don't expose this implementation detail
                 newValue: editValue.newValue === UNEDITED ? undefined : editValue.newValue,
             });
-        });
+        }
 
         const errorMessages = getFullRowEditValidationErrors?.({ editorsState }) ?? [];
 
