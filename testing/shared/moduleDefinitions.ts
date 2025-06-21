@@ -28,7 +28,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     InfiniteRowModelModule: 18,
     LargeTextEditorModule: 58.75,
     LocaleModule: 0.43,
-    NumberEditorModule: 65.81,
+    NumberEditorModule: 62.42,
     NumberFilterModule: 124.22,
     PaginationModule: 42.74,
     PinnedRowModule: 18.27,
