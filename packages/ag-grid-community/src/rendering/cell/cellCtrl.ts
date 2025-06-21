@@ -3,6 +3,7 @@ import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../c
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
+import { _populateModelValidationErrors } from '../../edit/utils/editors';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
@@ -113,7 +114,7 @@ export class CellCtrl extends BeanStub {
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
     private editStyleFeature: ICellStyleFeature | undefined = undefined;
     private tooltipFeature: TooltipFeature | undefined = undefined;
-    private editorTooltipFeature: TooltipFeature | undefined = undefined;
+    public editorTooltipFeature: TooltipFeature | undefined = undefined;
     private mouseListener: CellMouseListenerFeature | undefined = undefined;
     private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
 
@@ -216,11 +217,8 @@ export class CellCtrl extends BeanStub {
             this.disableEditorTooltipFeature();
         }
         this.editorTooltipFeature = this.beans.tooltipSvc?.setupEditorTooltip(this, editor);
-        this.refreshEditorTooltip();
-    }
 
-    public refreshEditorTooltip(): void {
-        this.editorTooltipFeature?.refreshTooltip(true);
+        _populateModelValidationErrors(this.beans);
     }
 
     public disableEditorTooltipFeature(): void {

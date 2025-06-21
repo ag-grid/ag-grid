@@ -243,11 +243,8 @@ export class TooltipService extends BeanStub implements NamedBean {
         const tooltipParams: ITooltipCtrl = {
             getGui: () => el,
             getTooltipValue: () => {
-                if (!editor.getValidationErrors) {
-                    return;
-                }
-
-                const errors = editor.getValidationErrors();
+                const cellValidationModel = beans.editModelSvc?.getCellValidationModel();
+                const errors = cellValidationModel?.getCellValidation(cellCtrl)?.errorMessages;
                 const translate = this.getLocaleTextFunc();
                 return errors && errors.length
                     ? errors.join(translate('tooltipValidationErrorSeparator', '. '))
@@ -255,17 +252,14 @@ export class TooltipService extends BeanStub implements NamedBean {
             },
             getLocation: () => 'cellEditor',
             shouldDisplayTooltip: () => {
-                if (!editor.getValidationErrors) {
-                    return false;
-                }
-
-                const rowValidationMap = beans.editModelSvc?.getRowValidationModel()?.getRowValidationMap();
+                const { editModelSvc } = beans;
+                const rowValidationMap = editModelSvc?.getRowValidationModel()?.getRowValidationMap();
                 if (rowValidationMap && rowValidationMap.size > 0) {
                     return false;
                 }
 
-                const errors = editor.getValidationErrors();
-                return !!errors && errors.length > 0;
+                const cellValidationMap = editModelSvc?.getCellValidationModel()?.getCellValidationMap();
+                return !!cellValidationMap && cellValidationMap.size > 0;
             },
         };
 

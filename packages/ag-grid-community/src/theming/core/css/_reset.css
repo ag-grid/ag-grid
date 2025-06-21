@@ -18,6 +18,10 @@
                will crop a regular shadow  */
         outline: none;
         box-shadow: inset var(--ag-focus-shadow);
+
+        &.invalid {
+            box-shadow: inset var(--ag-focus-error-shadow);
+        }
     }
 
     &:where(button) {

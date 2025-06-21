@@ -1032,6 +1032,8 @@ export const coreDefaults: Readonly<CoreParams> = {
         spread: 3,
         color: {
             ref: 'invalidColor',
+            onto: 'backgroundColor',
+            mix: 0.5,
         },
     },
     headerColumnResizeHandleHeight: '30%',

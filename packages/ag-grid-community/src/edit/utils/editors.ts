@@ -413,8 +413,6 @@ export function _populateModelValidationErrors(
         const errorMessages = editor.getValidationErrors?.() ?? [];
         const el = editor.getValidationElement?.();
 
-        ctrl.refreshEditorTooltip();
-
         if (el) {
             const isInvalid = errorMessages != null && errorMessages.length > 0;
             const invalidMessage = isInvalid ? errorMessages.join('. ') : '';
@@ -446,7 +444,13 @@ export function _populateModelValidationErrors(
 
     _syncFromEditors(beans);
 
+    // the cellValidationModel should probably be reused to avoid
+    // the second loop over mappedEditor below
     beans.editModelSvc?.setCellValidationModel(cellValidationModel);
+
+    for (const { ctrl } of mappedEditors) {
+        ctrl.editorTooltipFeature?.refreshTooltip(true);
+    }
 
     if (includeRows) {
         const rowValidations = _generateRowValidationErrors(beans);

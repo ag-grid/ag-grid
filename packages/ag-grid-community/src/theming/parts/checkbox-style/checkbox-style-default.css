@@ -38,6 +38,10 @@
 
     &:where(:focus-within, :active) {
         box-shadow: var(--ag-focus-shadow);
+
+        &:where(:has(:invalid)) {
+            box-shadow: var(--ag-focus-error-shadow);
+        }
     }
 
     &:where(.ag-disabled) {
