@@ -13,7 +13,6 @@ import type {
 } from '../../interfaces/iCellEditor';
 import type { EditMap, EditValidationMap, EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
-import type { IRowNode } from '../../interfaces/iRowNode';
 import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
 import { _setAriaInvalid } from '../../utils/aria';
