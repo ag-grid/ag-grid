@@ -121,6 +121,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             rowDataUpdated: stopInvalidEdits,
             sortChanged: stopInvalidEdits,
             filterChanged: stopInvalidEdits,
+            cellFocused: this.onCellFocused.bind(this),
         });
     }
 
@@ -874,5 +875,19 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         });
 
         this.setEditMap(edits);
+    }
+
+    onCellFocused(event: CellFocusedEvent): void {
+        const { column, rowIndex, rowPinned } = event;
+        const cellCtrl = _getCellCtrl(this.beans, { rowIndex, rowPinned, column });
+
+        if (!cellCtrl || !this.isEditing(cellCtrl, { checkSiblings: true })) {
+            return;
+        }
+
+        const translate = this.getLocaleTextFunc();
+        const label = translate('ariaPendingChange', 'Pending Change');
+
+        this.beans.ariaAnnounce?.announceValue(label, 'pendingChange');
     }
 }
