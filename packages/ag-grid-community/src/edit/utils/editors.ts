@@ -389,7 +389,7 @@ export type MappedValidationErrors = EditMap | undefined;
 
 export function _populateModelValidationErrors(
     beans: BeanCollection,
-    includeRows: boolean = true
+    includeRows: boolean = false
 ): EditValidationMap | undefined {
     const mappedEditors = getCellEditorInstanceMap(beans);
     const cellValidationModel = new EditCellValidationModel();
