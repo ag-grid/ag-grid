@@ -378,7 +378,11 @@ export function _destroyEditor(beans: BeanCollection, position: Required<EditPos
     beans.rowRenderer.refreshCells({ rowNodes: rowNode ? [rowNode] : [], suppressFlash: true, force: true });
     cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
 
-    beans.editSvc?.dispatchCellEvent(position, null, 'cellEditingStopped');
+    const edit = beans.editModelSvc?.getEdit(position);
+
+    beans.editSvc?.dispatchCellEvent(position, null, 'cellEditingStopped', {
+        valueChanged: edit && _valuesDiffer(edit),
+    });
 }
 
 export type MappedValidationErrors = EditMap | undefined;
