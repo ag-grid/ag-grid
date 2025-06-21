@@ -821,7 +821,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.addDestroyFunc(() => {
             this.rowDragComps = this.destroyBeans(this.rowDragComps, context);
-            this.destroyRowTooltip();
+            this.destroyEditorTooltip();
             this.rowEditStyleFeature = this.destroyBean(this.rowEditStyleFeature, context);
         });
 
@@ -1275,13 +1275,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private addRowTooltipListeners(gui: RowGui) {
         gui.compBean.addManagedListeners(this.beans.eventSvc, {
-            rowEditingStarted: (params) => this.createRowTooltip(params, gui),
-            rowEditingStopped: this.destroyRowTooltip.bind(this),
-            rowEditingValidated: this.refreshTooltip.bind(this),
+            rowEditingStarted: (params) => this.createEditorTooltip(params, gui),
+            rowEditingStopped: this.destroyEditorTooltip.bind(this),
         });
     }
 
-    private createRowTooltip(params: RowEditingStartedEvent, gui: RowGui): void {
+    private createEditorTooltip(params: RowEditingStartedEvent, gui: RowGui): void {
         const {
             beans,
             gos,
@@ -1294,11 +1293,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.tooltipFeature = beans.tooltipSvc?.setRowTooltip(this, gui.element);
     }
 
-    private refreshTooltip(): void {
+    public refreshTooltip(): void {
         this.tooltipFeature?.refreshTooltip();
     }
 
-    private destroyRowTooltip(): void {
+    private destroyEditorTooltip(): void {
         const { tooltipFeature, beans } = this;
         this.tooltipFeature = this.destroyBean(tooltipFeature, beans.context);
     }

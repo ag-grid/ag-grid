@@ -108,7 +108,6 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         dragCancelled: DragCancelledEvent<TData, TContext>;
         rowEditingStarted: RowEditingStartedEvent<TData, TContext>;
         rowEditingStopped: RowEditingStoppedEvent<TData, TContext>;
-        rowEditingValidated: RowEditingValidated<TData, TContext>;
         cellEditingStarted: CellEditingStartedEvent<TData, TContext>;
         cellEditingStopped: CellEditingStoppedEvent<TData, TContext>;
         bodyScroll: BodyScrollEvent<TData, TContext>;
@@ -1002,11 +1001,6 @@ export interface RowEditingStartedEvent<TData = any, TContext = any>
 
 export interface RowEditingStoppedEvent<TData = any, TContext = any>
     extends RowEvent<'rowEditingStopped', TData, TContext> {}
-
-export interface RowEditingValidated<TData = any, TContext = any>
-    extends RowEvent<'rowEditingValidated', TData, TContext> {
-    errorMessages?: string[] | null;
-}
 
 export interface FullWidthCellKeyDownEvent<TData = any, TContext = any>
     extends RowEvent<'cellKeyDown', TData, TContext> {}
