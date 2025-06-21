@@ -539,7 +539,6 @@ function onBtExport(type: 'csv' | 'excel') {
                 }
                 return params.value; // Return the original value for other types
             },
-            includePendingEdits: true,
         });
     }
 }

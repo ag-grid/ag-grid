@@ -108,15 +108,6 @@ Small description to explain consequences of using batch mid session (visible va
 
 The grid supports clipboard operations during batch editing. You can copy and paste data into the grid, and it will respect the batch editing state.
 
-#### Exporting Data
-
-When exporting data from the grid, you can choose to include any pending changes made during batch editing. The exported data will reflect the changes made in the batch editing session. This is off by default.
-
-```js
-gridApi.exportDataAsExcel({ includePendingEdits: true });
-gridApi.exportDataAsCsv({ includePendingEdits: true });
-```
-
 #### Row Models
 
 Batch editing is currently constrained to the [Client-Side Row Model](./row-models/). Server-side, Infinite and Viewport row models are unsupported. Row-spanning is also currently unsupported.
