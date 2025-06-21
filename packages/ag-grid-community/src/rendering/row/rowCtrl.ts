@@ -1290,7 +1290,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (gos.get('editType') !== 'fullRow' || params.rowIndex !== rowIndex || params.rowPinned !== rowPinned) {
             return;
         }
-        this.tooltipFeature = beans.tooltipSvc?.setRowTooltip(this, gui.element);
+        this.tooltipFeature = beans.tooltipSvc?.setRowEditorTooltip(this, gui.element);
     }
 
     public refreshTooltip(): void {

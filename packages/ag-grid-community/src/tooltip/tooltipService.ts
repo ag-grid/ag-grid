@@ -171,7 +171,35 @@ export class TooltipService extends BeanStub implements NamedBean {
         return this.createTooltipFeature(tooltipCtrl, beans);
     }
 
-    public setRowTooltip(rowCtrl: RowCtrl, el: HTMLElement) {
+    public setupFullWidthRowTooltip(
+        existingTooltipFeature: TooltipFeature | undefined,
+        ctrl: RowCtrl,
+        value: string,
+        shouldDisplayTooltip?: () => boolean
+    ): TooltipFeature | undefined {
+        const tooltipParams: ITooltipCtrl = {
+            getGui: () => ctrl.getFullWidthElement()!,
+            getTooltipValue: () => value,
+            getLocation: () => 'fullWidthRow',
+            shouldDisplayTooltip,
+        };
+
+        const beans = this.beans;
+        const context = beans.context;
+
+        if (existingTooltipFeature) {
+            ctrl.destroyBean(existingTooltipFeature, context);
+        }
+
+        const tooltipFeature = this.createTooltipFeature(tooltipParams, beans);
+        if (!tooltipFeature) {
+            return;
+        }
+
+        return ctrl.createBean(tooltipFeature, context);
+    }
+
+    public setRowEditorTooltip(rowCtrl: RowCtrl, el: HTMLElement) {
         const { beans } = this;
         const { context } = beans;
 
@@ -202,35 +230,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         return rowCtrl.createBean(tooltipFeature, context);
     }
 
-    public setupFullWidthRowTooltip(
-        existingTooltipFeature: TooltipFeature | undefined,
-        ctrl: RowCtrl,
-        value: string,
-        shouldDisplayTooltip?: () => boolean
-    ): TooltipFeature | undefined {
-        const tooltipParams: ITooltipCtrl = {
-            getGui: () => ctrl.getFullWidthElement()!,
-            getTooltipValue: () => value,
-            getLocation: () => 'fullWidthRow',
-            shouldDisplayTooltip,
-        };
-
-        const beans = this.beans;
-        const context = beans.context;
-
-        if (existingTooltipFeature) {
-            ctrl.destroyBean(existingTooltipFeature, context);
-        }
-
-        const tooltipFeature = this.createTooltipFeature(tooltipParams, beans);
-        if (!tooltipFeature) {
-            return;
-        }
-
-        return ctrl.createBean(tooltipFeature, context);
-    }
-
-    public setupEditorTooltip(cellCtrl: CellCtrl, editor: ICellEditor) {
+    public setupCellEditorTooltip(cellCtrl: CellCtrl, editor: ICellEditor) {
         const { beans } = this;
         const { context } = beans;
 
