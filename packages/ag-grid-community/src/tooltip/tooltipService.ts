@@ -185,7 +185,7 @@ export class TooltipService extends BeanStub implements NamedBean {
                     ? errors.join(translate('tooltipValidationErrorSeparator', '. '))
                     : undefined;
             },
-            getLocation: () => 'fullRowEdit',
+            getLocation: () => 'fullRowEditor',
             shouldDisplayTooltip: () => {
                 const errorMap = beans.editModelSvc?.getRowValidationModel()?.getRowValidationMap();
                 const errors = errorMap?.get(rowCtrl.rowNode)?.errorMessages;

@@ -7,13 +7,14 @@
     border-radius: var(--ag-border-radius);
     white-space: normal;
     z-index: 99999;
-}
 
-.ag-tooltip:where(.ag-cell-editor-tooltip) {
-    background-color: var(--ag-tooltip-error-background-color);
-    color: var(--ag-tooltip-error-text-color);
-    border: var(--ag-tooltip-error-border);
-    font-weight: bold;
+    &:where(.ag-cell-editor-tooltip),
+    &:where(.ag-full-row-editor-tooltip) {
+        background-color: var(--ag-tooltip-error-background-color);
+        color: var(--ag-tooltip-error-text-color);
+        border: var(--ag-tooltip-error-border);
+        font-weight: 500;
+    }
 }
 
 .ag-tooltip-custom {
