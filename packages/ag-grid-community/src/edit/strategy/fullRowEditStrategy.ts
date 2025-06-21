@@ -146,6 +146,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return;
         }
 
+        if (this.model.getRowValidationModel().getRowValidationMap().size > 0) {
+            return;
+        }
+
         super.onCellFocusChanged(event);
 
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
@@ -201,9 +205,17 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         const rowsMatch = nextPos && prevPos.rowIndex === nextPos.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
 
         if (!rowsMatch) {
-            const rowPreventNavigation = this.editSvc.checkNavWithValidation(prevCell, event, true) === 'block-stop';
-            if (rowPreventNavigation) {
-                return true;
+            if (this.model.getRowValidationModel().getRowValidationMap().size > 0) {
+                // if there was a previous row validation error, we need to check if that's still the case
+                if (this.editSvc.checkNavWithValidation(prevCell, event, true) === 'block-stop') {
+                    return true;
+                }
+            } else {
+                const rowPreventNavigation =
+                    this.editSvc.checkNavWithValidation(prevCell, event, true) === 'block-stop';
+                if (rowPreventNavigation) {
+                    return true;
+                }
             }
         }
 
