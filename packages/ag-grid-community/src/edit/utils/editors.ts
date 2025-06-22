@@ -456,6 +456,8 @@ export function _populateModelValidationErrors(
         for (const rowCtrl of rowCtrlSet.values()) {
             rowCtrl.refreshTooltip();
         }
+    } else {
+        beans.editModelSvc?.getRowValidationModel().clearRowValidationMap();
     }
 
     return;
