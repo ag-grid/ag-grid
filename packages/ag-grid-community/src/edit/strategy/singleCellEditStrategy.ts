@@ -117,9 +117,24 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         // find the next cell to start editing
         let nextCell: CellCtrl | false | undefined;
 
-        // fineNextCell in fullRow mode causes CellComps to initialise editors, this is
-        // undesirable so we suspend the model while we find the next cell.
-        this.model.suspend(true);
+        const shouldSuspend = this.beans.gos.get('editType') === 'fullRow';
+
+        if (shouldSuspend) {
+            // fineNextCell in fullRow mode causes CellComps to initialise editors, this is
+            // undesirable so we suspend the model while we find the next cell.
+            this.model.suspend(true);
+        } else {
+            // before we stop editing, we need to focus the cell element
+            // so the grid doesn't detect that focus has left the grid
+            prevCell.eGui.focus();
+
+            // need to do this before getting next cell to edit, in case the next cell
+            // has editable function (eg colDef.editable=func() ) and it depends on the
+            // result of this cell, so need to save updates from the first edit, in case
+            // the value is referenced in the function.
+            prevCell.stopEditing();
+        }
+
         try {
             nextCell = this.beans.navigation?.findNextCellToFocusOn(prevPos, {
                 backwards,
@@ -132,7 +147,9 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
                 // skipToNextEditableCell: false,
             }) as CellCtrl | false;
         } finally {
-            this.model.suspend(false);
+            if (shouldSuspend) {
+                this.model.suspend(false);
+            }
         }
 
         if (nextCell === false) {
