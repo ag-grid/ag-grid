@@ -108,7 +108,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         event?: KeyboardEvent | CellFocusedEvent,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        if (this.editSvc.checkNavWithValidation(previousCell, event) === 'block-stop') {
+        if (this.editSvc.checkNavWithValidation(undefined, event) === 'block-stop') {
             return true;
         }
 
