@@ -16,6 +16,7 @@ import type { IFilterComp } from './interfaces/iFilter';
 import type { FindMatch } from './interfaces/iFind';
 import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
 import type { IServerSideGroupSelectionState, IServerSideSelectionState } from './interfaces/iServerSideSelection';
+import type { CellValueChange } from './interfaces/iUndoRedo';
 import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 import type { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
 
@@ -178,6 +179,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         columnsReset: ColumnsResetEvent<TData, TContext>;
         cellEditValuesChanged: CellEditValuesChangedEvent<TData, TContext>;
         filterSwitched: FilterSwitchedEvent<TData, TContext>;
+        batchEditingStarted: BatchEditingStartedEvent<TData, TContext>;
+        batchEditingStopped: BatchEditingStoppedEvent<TData, TContext>;
     }
 >;
 
@@ -947,6 +950,20 @@ export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any>
      */
     columnGroup?: ProvidedColumnGroup | null;
 }
+
+/**--------------*/
+/** BATCH EVENTS */
+/**--------------*/
+export interface BatchEditingEvent<T extends AgEventType, TData = any, TContext = any>
+    extends AgGlobalEvent<T, TData, TContext> {
+    changes?: CellValueChange[];
+}
+
+export interface BatchEditingStartedEvent<TData = any, TContext = any>
+    extends BatchEditingEvent<'batchEditingStarted', TData, TContext> {}
+
+export interface BatchEditingStoppedEvent<TData = any, TContext = any>
+    extends BatchEditingEvent<'batchEditingStopped', TData, TContext> {}
 
 /**------------*/
 /** ROW EVENTS */

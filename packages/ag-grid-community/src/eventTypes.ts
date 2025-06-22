@@ -160,6 +160,8 @@ export const _INTERNAL_EVENTS = [
     'rowNodeDataChanged',
     'cellEditValuesChanged',
     'filterSwitched',
+    'batchEditingStarted',
+    'batchEditingStopped',
 ] as const;
 
 // We define as a callback to help with tree shaking (esbuild)

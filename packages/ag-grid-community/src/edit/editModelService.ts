@@ -5,6 +5,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { Column } from '../interfaces/iColumn';
 import type {
     EditMap,
+    EditPositionValue,
     EditRow,
     EditRowValidationMap,
     EditState,
@@ -189,18 +190,18 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         return this.getEdit(position)?.state;
     }
 
-    public getEditPositions(): Required<EditPosition>[] {
+    public getEditPositions(editMap?: EditMap): EditPositionValue[] {
         if (this.suspendEdits) {
             return [];
         }
 
-        const positions: Required<EditPosition>[] = [];
-        this.edits.forEach((editRow, rowNode) => {
+        const positions: EditPositionValue[] = [];
+        (editMap ?? this.edits).forEach((editRow, rowNode) => {
             for (const column of editRow.keys()) {
                 positions.push({
                     rowNode,
                     column,
-                    ...editRow.get(column),
+                    ...editRow.get(column)!,
                 });
             }
         });

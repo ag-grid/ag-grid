@@ -6,8 +6,8 @@ import type { AgColumn } from '../entities/agColumn';
 import { _getRowNode } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
-import type { CellFocusedEvent } from '../events';
-import { _isClientSideRowModel } from '../gridOptionsUtils';
+import type { BatchEditingEvent, CellFocusedEvent } from '../events';
+import { _addGridCommonParams, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
@@ -238,6 +238,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.stopEditing(undefined, { source });
         }
 
+        if (res && this.isBatchEditing()) {
+            this.dispatchBatchEvent('batchEditingStarted', new Map());
+        }
+
         this.strategy!.start(position, event, source, ignoreEventKey);
 
         return;
@@ -328,6 +332,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         this.bulkRefresh();
 
         this.beans.rowRenderer.refreshRows({ suppressFlash: true, force: true });
+
+        if (res && willStop && this.isBatchEditing()) {
+            this.dispatchBatchEvent('batchEditingStopped', edits);
+        }
 
         return res;
     }
@@ -738,6 +746,28 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         type: 'rowEditingStarted' | 'rowEditingStopped'
     ): void {
         this.strategy?.dispatchRowEvent(position, type);
+    }
+
+    public dispatchBatchEvent(type: 'batchEditingStarted' | 'batchEditingStopped', edits: EditMap): void {
+        this.eventSvc.dispatchEvent(this.createBatchEditEvent(type, edits));
+    }
+
+    public createBatchEditEvent<T extends AgEventType>(type: T, edits: EditMap): BatchEditingEvent<T> {
+        return _addGridCommonParams(this.gos, {
+            type,
+            ...(type === 'batchEditingStopped'
+                ? {
+                      changes: this.model.getEditPositions(edits).map((edit) => {
+                          return {
+                              ...edit,
+                              rowIndex: edit.rowNode.rowIndex!,
+                              rowPinned: edit.rowNode.rowPinned,
+                              columnId: edit.column.getColId(),
+                          };
+                      }),
+                  }
+                : {}),
+        });
     }
 
     public applyBulkEdit({ rowNode, column }: Required<EditPosition>, ranges: CellRange[]): void {

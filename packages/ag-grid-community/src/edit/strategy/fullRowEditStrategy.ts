@@ -1,7 +1,7 @@
 import type { BeanName } from '../../context/context';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { EditValue } from '../../interfaces/iEditModelService';
-import type { EditPosition } from '../../interfaces/iEditService';
+import type { EditPosition, EditRowPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getRowCtrl } from '../utils/controllers';
@@ -155,6 +155,13 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
         if (previous) {
             _getRowCtrl(this.beans, previous)?.refreshRow({ suppressFlash: true, force: true });
+        }
+    }
+
+    public override cleanupEditors({ rowNode }: EditRowPosition = {}, includeEditing?: boolean): void {
+        super.cleanupEditors({ rowNode }, includeEditing);
+        if (rowNode) {
+            this.dispatchRowEvent({ rowNode: this.rowNode! }, 'rowEditingStopped');
         }
     }
 
