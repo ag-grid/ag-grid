@@ -14,6 +14,8 @@ export type EditValue = {
     state: EditState;
 };
 
+export type EditPositionValue = Required<EditPosition> & EditValue;
+
 export type EditRow<C = Column, V = EditValue> = Map<C, V>;
 export type EditMap = Map<IRowNode, Map<Column, EditValue>>;
 
@@ -31,7 +33,7 @@ export interface IEditModelService {
     removeEdits({ rowNode, column }: EditPosition): void;
 
     getEdit(position: EditPosition): EditValue | undefined;
-    getEditPositions(): Required<EditPosition>[];
+    getEditPositions(editMap?: EditMap): EditPositionValue[];
     getEditRow({ rowNode }: EditRowPosition, params?: GetEditsParams): EditRow | undefined;
     getEditRowDataValue({ rowNode }: Required<EditRowPosition>, params?: GetEditsParams): any;
     getEditMap(copy?: boolean): EditMap;

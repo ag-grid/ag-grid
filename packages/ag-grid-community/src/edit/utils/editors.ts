@@ -343,8 +343,13 @@ export function _destroyEditors(beans: BeanCollection, edits?: Required<EditPosi
 }
 
 export function _destroyEditor(beans: BeanCollection, position: Required<EditPosition>): void {
+    const { rowNode, column } = position;
     const cellCtrl = _getCellCtrl(beans, position);
     if (!cellCtrl) {
+        if (beans.editModelSvc?.hasEdits(position) && rowNode && column) {
+            beans.editModelSvc?.setState(position, 'changed');
+        }
+
         return;
     }
 
@@ -363,8 +368,6 @@ export function _destroyEditor(beans: BeanCollection, position: Required<EditPos
     } else {
         cellValidationModel?.clearCellValidation(position);
     }
-
-    const { rowNode, column } = position;
 
     comp?.setEditDetails(); // passing nothing stops editing
     if (beans.editModelSvc?.hasEdits(position) && rowNode && column) {

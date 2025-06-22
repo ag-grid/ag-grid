@@ -1,4 +1,4 @@
-import type { RowPinnedType } from '../interfaces/iRowNode';
+import type { RowPinnedType } from './iRowNode';
 
 export interface CellValueChange {
     rowPinned: RowPinnedType;
