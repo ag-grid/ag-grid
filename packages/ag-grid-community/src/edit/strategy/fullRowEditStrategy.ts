@@ -221,11 +221,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         const rowsMatch = nextPos && prevPos.rowIndex === nextPos.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
 
         if (!rowsMatch) {
-            if (preventNavigation) {
-                // don't even try running row validation if cell validation prevents navigation
-                return true;
-            }
-
             // run validation to gather row-level validation errors
             _populateModelValidationErrors(this.beans, true);
 
@@ -241,13 +236,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                     return true;
                 }
             }
-        } else {
-            if (this.model.getRowValidationModel().getRowValidationMap().size > 0) {
-                // if there was a previous row validation error, see if that's on the current row
-                if (this.editSvc.checkNavWithValidation(prevCell, event, true) !== 'block-stop') {
-                    // it's not on the current row, so we bail out
-                    return true;
-                }
+
+            if (preventNavigation && this.model.getRowValidationModel().getRowValidation(prevCell)) {
+                return true;
             }
         }
 
@@ -255,12 +246,12 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.setFocusOutOnEditor(prevCell);
         }
 
-        if (!rowsMatch) {
+        if (!rowsMatch && !preventNavigation) {
             super.cleanupEditors(nextCell, true);
             this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
         }
 
-        if (nextEditable) {
+        if (nextEditable && !preventNavigation) {
             if (!nextCell.comp?.getCellEditor()) {
                 // editor missing because it was outside the viewport during creating phase, attempt to create it now
                 _setupEditor(this.beans, nextCell, undefined, event, true);

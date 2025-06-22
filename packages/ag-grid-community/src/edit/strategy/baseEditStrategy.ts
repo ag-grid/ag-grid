@@ -13,6 +13,7 @@ import {
     UNEDITED,
     _destroyEditor,
     _destroyEditors,
+    _populateModelValidationErrors,
     _purgeUnchangedEdits,
     _setupEditors,
     _syncFromEditors,
@@ -63,6 +64,8 @@ export abstract class BaseEditStrategy extends BeanStub {
         if (previous) {
             cellCtrl = _getCellCtrl(this.beans, previous);
         }
+
+        _populateModelValidationErrors(this.beans, true);
 
         // check if any editors open
         if (this.editSvc.isEditing(undefined, { withOpenEditor: true })) {
