@@ -139,7 +139,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     /** sanitised */
     public businessKey: string | null = null;
     private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
-    private rowEditStyleFeature?: IRowStyleFeature;
+    public rowEditStyleFeature?: IRowStyleFeature;
 
     constructor(
         public readonly rowNode: RowNode,

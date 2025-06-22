@@ -18,7 +18,7 @@ import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _setAriaInvalid } from '../../utils/aria';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
-import { _getCellCtrl, _getRowCtrl } from './controllers';
+import { _getCellCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
 
@@ -452,22 +452,13 @@ export function _populateModelValidationErrors(
     if (includeRows) {
         const rowValidations = _generateRowValidationErrors(beans);
         beans.editModelSvc?.setRowValidationModel(rowValidations);
-
-        for (const rowCtrl of rowCtrlSet.values()) {
-            rowCtrl.refreshTooltip();
-        }
     } else {
-        const rowValidationMap = beans.editModelSvc?.getRowValidationModel().getRowValidationMap();
+        beans.editModelSvc?.setRowValidationModel(new EditRowValidationModel());
+    }
 
-        rowValidationMap?.forEach((_, rowNode) => {
-            const rowCtrl = _getRowCtrl(beans, { rowNode });
-            rowCtrl?.refreshRow({
-                suppressFlash: true,
-                force: true,
-            });
-        });
-
-        rowValidationMap?.clear();
+    for (const rowCtrl of rowCtrlSet.values()) {
+        rowCtrl.rowEditStyleFeature?.applyRowStyles();
+        rowCtrl.refreshTooltip();
     }
 
     return;
