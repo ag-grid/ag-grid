@@ -226,6 +226,14 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                     return true;
                 }
             }
+        } else {
+            if (this.model.getRowValidationModel().getRowValidationMap().size > 0) {
+                // if there was a previous row validation error, see if that's on the current row
+                if (this.editSvc.checkNavWithValidation(prevCell, event, true) !== 'block-stop') {
+                    // it's not on the current row, so we bail out
+                    return true;
+                }
+            }
         }
 
         if (prevEditable) {
