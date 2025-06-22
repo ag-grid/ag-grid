@@ -1,6 +1,7 @@
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
+import { _generateRowValidationErrors, _populateModelValidationErrors } from '../../edit/utils/editors';
 import type { RowNode } from '../../entities/rowNode';
 import { _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
@@ -135,6 +136,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 editSvc?.applyBulkEdit(cellCtrl, this.beans?.rangeSvc?.getCellRanges() || []);
                 return;
             }
+
+            // re-run ALL validations, Enter key is used to commit the edit, so we want to ensure it's valid
+            _populateModelValidationErrors(this.beans, true);
 
             if (editSvc?.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
                 return;
