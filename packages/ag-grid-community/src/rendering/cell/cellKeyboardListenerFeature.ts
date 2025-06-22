@@ -218,6 +218,10 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (key === KeyCode.SPACE) {
             this.onSpaceKeyDown(event);
         } else if (editSvc?.isCellEditable(cellCtrl, 'ui')) {
+            if (editSvc?.hasValidationErrors() && !editSvc?.hasValidationErrors(cellCtrl)) {
+                return;
+            }
+
             editSvc?.startEditing(cellCtrl, { startedEdit: true, event, source: 'api' });
             // if we don't prevent default, then the event also gets applied to the text field
             // (at least when doing the default editor), but we need to allow the editor to decide
