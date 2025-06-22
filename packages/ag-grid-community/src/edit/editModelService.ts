@@ -312,11 +312,15 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
 export class EditCellValidationModel implements IEditCellValidationModel {
     private cellValidations: EditValidationMap = new Map();
 
-    public getCellValidation({ rowNode, column }: EditPosition): EditValidation | undefined {
+    public getCellValidation(position?: EditPosition): EditValidation | undefined {
+        const { rowNode, column } = position || {};
         return this.cellValidations?.get(rowNode!)?.get(column!);
     }
 
-    public hasCellValidation(position: Required<EditPosition>): boolean {
+    public hasCellValidation(position?: EditPosition): boolean {
+        if (!position || !position.rowNode || !position.column) {
+            return this.cellValidations.size > 0;
+        }
         return !!this.getCellValidation(position);
     }
 
@@ -348,12 +352,16 @@ export class EditCellValidationModel implements IEditCellValidationModel {
 export class EditRowValidationModel implements IEditRowValidationModel {
     private rowValidations: EditRowValidationMap = new Map();
 
-    public getRowValidation({ rowNode }: Required<EditRowPosition>): EditValidation | undefined {
-        return this.rowValidations.get(rowNode);
+    public getRowValidation(position?: EditRowPosition): EditValidation | undefined {
+        const { rowNode } = position || {};
+        return this.rowValidations.get(rowNode!);
     }
 
-    public hasRowValidation({ rowNode }: Required<EditRowPosition>): boolean {
-        return !!this.getRowValidation({ rowNode });
+    public hasRowValidation(position?: EditRowPosition): boolean {
+        if (!position || !position.rowNode) {
+            return this.rowValidations.size > 0;
+        }
+        return !!this.getRowValidation(position);
     }
 
     public setRowValidation({ rowNode }: Required<EditRowPosition>, rowValidation: EditValidation): void {

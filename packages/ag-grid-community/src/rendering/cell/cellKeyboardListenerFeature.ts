@@ -148,6 +148,10 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 const key = event.shiftKey ? KeyCode.UP : KeyCode.DOWN;
                 navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
             } else {
+                if (editSvc?.hasValidationErrors()) {
+                    return;
+                }
+
                 if (editSvc?.hasValidationErrors(cellCtrl)) {
                     editSvc.revertSingleCellEdit(cellCtrl, true);
                 }
