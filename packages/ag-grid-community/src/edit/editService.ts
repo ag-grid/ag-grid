@@ -300,6 +300,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             if (isEnter || isEscape) {
                 if (isEnter) {
                     _syncFromEditors(beans);
+                } else if (isEscape) {
+                    // only if ESC is pressed while in the editor for this cell
+                    this.revertSingleCellEdit(cellCtrl!, false);
                 }
 
                 _destroyEditors(beans, model.getEditPositions());
