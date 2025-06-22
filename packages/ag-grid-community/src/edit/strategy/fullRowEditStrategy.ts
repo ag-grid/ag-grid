@@ -5,7 +5,7 @@ import type { EditPosition, EditRowPosition } from '../../interfaces/iEditServic
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getRowCtrl } from '../utils/controllers';
-import { _setupEditor } from '../utils/editors';
+import { _populateModelValidationErrors, _setupEditor } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
@@ -128,6 +128,12 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return false;
         }
 
+        // rerun validation, new values might have triggered row validations
+        _populateModelValidationErrors(this.beans, true);
+        if (this.editSvc?.checkNavWithValidation({ rowNode }) === 'block-stop') {
+            return false;
+        }
+
         super.stop(cancel);
 
         if (rowNode) {
@@ -174,7 +180,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         event?: KeyboardEvent,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
-        const cellPreventNavigation = this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop';
+        // check for all cell-level validation errors
+        const preventNavigation = this.editSvc.checkNavWithValidation(undefined, event) === 'block-stop';
 
         const prevPos = prevCell.cellPosition;
 
@@ -203,7 +210,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return null;
         }
         if (nextCell == null) {
-            return cellPreventNavigation;
+            return preventNavigation;
         }
 
         const nextPos = nextCell.cellPosition;
@@ -214,6 +221,14 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         const rowsMatch = nextPos && prevPos.rowIndex === nextPos.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
 
         if (!rowsMatch) {
+            if (preventNavigation) {
+                // don't even try running row validation if cell validation prevents navigation
+                return true;
+            }
+
+            // run validation to gather row-level validation errors
+            _populateModelValidationErrors(this.beans, true);
+
             if (this.model.getRowValidationModel().getRowValidationMap().size > 0) {
                 // if there was a previous row validation error, we need to check if that's still the case
                 if (this.editSvc.checkNavWithValidation(prevCell, event, true) === 'block-stop') {

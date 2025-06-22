@@ -397,10 +397,6 @@ export function _populateModelValidationErrors(
     const mappedEditors = getCellEditorInstanceMap(beans);
     const cellValidationModel = new EditCellValidationModel();
 
-    if (!mappedEditors || mappedEditors.length === 0) {
-        return new Map();
-    }
-
     const { ariaAnnounce, localeSvc } = beans;
     const translate = _getLocaleTextFunc(localeSvc);
     const ariaValidationErrorPrefix = translate('ariaValidationErrorPrefix', 'Cell Editor Validation');

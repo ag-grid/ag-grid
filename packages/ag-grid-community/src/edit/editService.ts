@@ -530,11 +530,12 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     public checkNavWithValidation(
-        cellCtrl: CellCtrl,
+        position?: EditPosition,
         event?: Event | CellFocusedEvent,
         includeRows?: boolean
     ): EditNavOnValidationResult {
-        if (this.hasValidationErrors(cellCtrl, includeRows)) {
+        if (this.hasValidationErrors(position, includeRows)) {
+            const cellCtrl = _getCellCtrl(this.beans, position);
             if (this.cellEditingInvalidCommitBlocks()) {
                 (event as Event)?.preventDefault?.();
                 !cellCtrl?.hasBrowserFocus() && cellCtrl?.focusCell();
@@ -542,7 +543,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 return 'block-stop';
             }
 
-            this.revertSingleCellEdit(cellCtrl);
+            cellCtrl && this.revertSingleCellEdit(cellCtrl);
 
             return 'revert-continue';
         }
@@ -551,6 +552,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     public revertSingleCellEdit(cellCtrl: CellCtrl, focus = false): void {
+        if (!cellCtrl?.comp?.getCellEditor()) {
+            // don't cancel/revert if there is no editor
+            return;
+        }
+
         this.model.clearEditValue(cellCtrl);
 
         _destroyEditors(this.beans, [cellCtrl]);
@@ -570,7 +576,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         cellCtrl?.comp?.getCellEditor()?.focusIn?.();
     }
 
-    public hasValidationErrors(position: Required<EditPosition>, includeRows?: boolean): boolean {
+    public hasValidationErrors(position?: EditPosition, includeRows?: boolean): boolean {
         _populateModelValidationErrors(this.beans, includeRows);
         const cellCtrl = _getCellCtrl(this.beans, position);
         if (cellCtrl) {
@@ -578,10 +584,20 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             cellCtrl.rowCtrl.refreshRow({ suppressFlash: true, force: true });
         }
 
-        return (
-            this.model.getCellValidationModel().hasCellValidation(position) ||
-            this.model.getRowValidationModel().hasRowValidation(position)
-        );
+        let invalid = false;
+        if (position?.rowNode) {
+            invalid ||= this.model.getRowValidationModel().hasRowValidation({ rowNode: position.rowNode });
+            if (position.column) {
+                invalid ||= this.model
+                    .getCellValidationModel()
+                    .hasCellValidation({ rowNode: position.rowNode, column: position.column });
+            }
+        } else {
+            invalid ||= this.model.getCellValidationModel().getCellValidationMap().size > 0;
+            invalid ||= this.model.getRowValidationModel().getRowValidationMap().size > 0;
+        }
+
+        return invalid;
     }
 
     public moveToNextCell(

@@ -120,7 +120,7 @@ export interface IEditService extends NamedBean {
     hasValidationErrors(position?: EditPosition): boolean;
     cellEditingInvalidCommitBlocks(): boolean;
     checkNavWithValidation(
-        cellCtrl: CellCtrl,
+        position?: EditPosition,
         event?: Event | CellFocusedEvent,
         includeRows?: boolean
     ): EditNavOnValidationResult;

@@ -60,7 +60,7 @@ export interface IEditModelService {
 }
 export interface IEditCellValidationModel {
     getCellValidation(position: EditPosition): EditValidation | undefined;
-    hasCellValidation(position: Required<EditPosition>): boolean;
+    hasCellValidation(position: EditPosition): boolean;
     setCellValidation(position: Required<EditPosition>, validation: EditValidation): void;
     clearCellValidation(position: Required<EditPosition>): void;
     setCellValidationMap(validationMap: EditValidationMap): void;
