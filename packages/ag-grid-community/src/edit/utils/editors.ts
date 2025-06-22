@@ -11,7 +11,7 @@ import type {
     ICellEditorParams,
     ICellEditorValidationError,
 } from '../../interfaces/iCellEditor';
-import type { EditMap, EditValidationMap, EditValue } from '../../interfaces/iEditModelService';
+import type { EditMap, EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
@@ -390,10 +390,7 @@ export function _destroyEditor(beans: BeanCollection, position: Required<EditPos
 
 export type MappedValidationErrors = EditMap | undefined;
 
-export function _populateModelValidationErrors(
-    beans: BeanCollection,
-    includeRows: boolean = false
-): EditValidationMap | undefined {
+export function _populateModelValidationErrors(beans: BeanCollection, includeRows: boolean = false): void {
     const mappedEditors = getCellEditorInstanceMap(beans);
     const cellValidationModel = new EditCellValidationModel();
 
@@ -460,8 +457,6 @@ export function _populateModelValidationErrors(
         rowCtrl.rowEditStyleFeature?.applyRowStyles();
         rowCtrl.refreshTooltip();
     }
-
-    return;
 }
 
 export const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationModel => {
