@@ -325,6 +325,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         _purgeUnchangedEdits(beans);
 
+        if (!this.model.hasEdits()) {
+            this.model.getCellValidationModel().clearCellValidationMap();
+            this.model.getRowValidationModel().clearRowValidationMap();
+        }
+
         this.bulkRefresh();
 
         this.beans.rowRenderer.refreshRows({ suppressFlash: true, force: true });
