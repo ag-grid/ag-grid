@@ -3,7 +3,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import { _getRowNode } from '../../entities/positionUtils';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
-import type { EditInputEvents, EditPosition, EditRowPosition } from '../../interfaces/iEditService';
+import type { EditPosition, EditRowPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getColId } from '../utils/controllers';
@@ -101,64 +101,6 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         super.onCellFocusChanged(event);
     }
-
-    // // returns null if no navigation should be performed
-    // public override moveToNextEditingCell(
-    //     previousCell: CellCtrl,
-    //     backwards: boolean,
-    //     event?: KeyboardEvent | CellFocusedEvent,
-    //     source: 'api' | 'ui' = 'ui'
-    // ): boolean | null {
-    //     const preventNavigation = this.editSvc.checkNavWithValidation(undefined, event) === 'block-stop';
-
-    //     const previousPos = previousCell.cellPosition;
-
-    //     // find the next cell to start editing
-    //     const nextCell = this.beans.navigation?.findNextCellToFocusOn(previousPos, {
-    //         backwards,
-    //         startEditing: true,
-    //         skipToNextEditableCell: true,
-    //     }) as CellCtrl | false;
-
-    //     if (nextCell === false) {
-    //         return null;
-    //     }
-    //     if (nextCell == null) {
-    //         return false;
-    //     }
-
-    //     if (this.editSvc.checkNavWithValidation(previousCell, event) === 'block-stop') {
-    //         // if we are preventing navigation, we don't want to start editing the next cell
-    //         return true;
-    //     }
-
-    //     const nextEditable = nextCell.isCellEditable();
-
-    //     // before we stop editing, we need to focus the cell element
-    //     // so the grid doesn't detect that focus has left the grid
-    //     previousCell.eGui.focus();
-
-    //     // need to do this before getting next cell to edit, in case the next cell
-    //     // has editable function (eg colDef.editable=func() ) and it depends on the
-    //     // result of this cell, so need to save updates from the first edit, in case
-    //     // the value is referenced in the function.
-    //     previousCell.stopEditing();
-
-    //     const keyEvent = event instanceof KeyboardEvent ? event : undefined;
-
-    //     if (nextEditable && !preventNavigation) {
-    //         if (!nextCell.comp?.getCellEditor()) {
-    //             // editor missing because it was outside the viewport during creating phase, attempt to create it now
-    //             _setupEditor(this.beans, nextCell, undefined, keyEvent, true);
-    //         }
-    //         this.setFocusInOnEditor(nextCell);
-    //         nextCell.focusCell(false, keyEvent);
-    //     } else {
-    //         nextCell.focusCell(true, keyEvent);
-    //     }
-
-    //     return true;
-    // }
 
     // returns null if no navigation should be performed
     public override moveToNextEditingCell(

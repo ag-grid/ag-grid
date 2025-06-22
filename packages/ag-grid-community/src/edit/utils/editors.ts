@@ -18,7 +18,7 @@ import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _setAriaInvalid } from '../../utils/aria';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
-import { _getCellCtrl } from './controllers';
+import { _getCellCtrl, _getRowCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
 
@@ -457,7 +457,17 @@ export function _populateModelValidationErrors(
             rowCtrl.refreshTooltip();
         }
     } else {
-        beans.editModelSvc?.getRowValidationModel().clearRowValidationMap();
+        const rowValidationMap = beans.editModelSvc?.getRowValidationModel().getRowValidationMap();
+
+        rowValidationMap?.forEach((_, rowNode) => {
+            const rowCtrl = _getRowCtrl(beans, { rowNode });
+            rowCtrl?.refreshRow({
+                suppressFlash: true,
+                force: true,
+            });
+        });
+
+        rowValidationMap?.clear();
     }
 
     return;
