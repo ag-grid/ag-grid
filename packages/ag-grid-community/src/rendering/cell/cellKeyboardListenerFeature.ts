@@ -1,7 +1,7 @@
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import { _generateRowValidationErrors, _populateModelValidationErrors } from '../../edit/utils/editors';
+import { _populateModelValidationErrors } from '../../edit/utils/editors';
 import type { RowNode } from '../../entities/rowNode';
 import { _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
