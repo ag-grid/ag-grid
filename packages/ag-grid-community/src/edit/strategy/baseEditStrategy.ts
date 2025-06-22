@@ -227,7 +227,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     public dispatchRowEvent(
         position: Required<EditRowPosition>,
-        type: 'rowEditingStarted' | 'rowEditingStopped'
+        type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged'
     ): void {
         const rowCtrl = _getRowCtrl(this.beans, position)!;
 

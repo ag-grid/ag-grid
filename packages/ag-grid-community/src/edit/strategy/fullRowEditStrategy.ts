@@ -123,14 +123,16 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     }
 
     public override stop(cancel?: boolean): boolean {
-        if (this.rowNode && !this.model.hasRowEdits({ rowNode: this.rowNode })) {
+        const { rowNode } = this;
+        if (rowNode && !this.model.hasRowEdits({ rowNode })) {
             return false;
         }
 
         super.stop(cancel);
 
-        if (this.rowNode) {
-            this.dispatchRowEvent({ rowNode: this.rowNode! }, 'rowEditingStopped');
+        if (rowNode) {
+            this.dispatchRowEvent({ rowNode }, 'rowValueChanged');
+            this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
         }
 
         this.rowNode = undefined;
