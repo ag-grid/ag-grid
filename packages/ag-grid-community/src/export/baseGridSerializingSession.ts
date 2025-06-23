@@ -73,7 +73,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         if (
             this.processRowGroupCallback &&
             (this.gos.get('treeData') || node.group) &&
-            (!node.rowGroupColumn || column.isRowGroupDisplayed(node.rowGroupColumn.getColId()))
+            column.isRowGroupDisplayed(node.rowGroupColumn?.getColId() ?? '')
         ) {
             return { value: this.processRowGroupCallback(_addGridCommonParams(this.gos, { column, node })) ?? '' };
         }
