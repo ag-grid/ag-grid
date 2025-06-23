@@ -307,7 +307,6 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             const comp = dragAndDropImageComp?.comp;
             if (comp) {
                 const iconName = dropTarget.getIconName ? dropTarget.getIconName() : null;
-                console.log('iconName', iconName);
                 if (this.lastDropIconName !== iconName) {
                     this.lastDropIconName = iconName;
                     comp.setIcon(iconName, false);
