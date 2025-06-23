@@ -551,22 +551,23 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return 'continue';
     }
 
-    public revertSingleCellEdit(cellCtrl: CellCtrl, focus = false): void {
+    public revertSingleCellEdit(cellPosition: Required<EditPosition>, focus = false): void {
+        const cellCtrl = _getCellCtrl(this.beans, cellPosition);
         if (!cellCtrl?.comp?.getCellEditor()) {
             // don't cancel/revert if there is no editor
             return;
         }
 
-        this.model.clearEditValue(cellCtrl);
+        this.model.clearEditValue(cellPosition);
 
-        _destroyEditors(this.beans, [cellCtrl]);
+        _destroyEditors(this.beans, [cellPosition]);
 
-        _setupEditor(this.beans, cellCtrl);
+        _setupEditor(this.beans, cellPosition);
 
         _populateModelValidationErrors(this.beans);
 
-        cellCtrl.refreshCell({ suppressFlash: true, force: true });
-        cellCtrl.rowCtrl.refreshRow({ suppressFlash: true, force: true });
+        cellCtrl?.refreshCell({ suppressFlash: true, force: true });
+        cellCtrl?.rowCtrl.refreshRow({ suppressFlash: true, force: true });
 
         if (!focus) {
             return;
