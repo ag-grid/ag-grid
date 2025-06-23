@@ -13,7 +13,6 @@ import {
     UNEDITED,
     _destroyEditor,
     _destroyEditors,
-    _populateModelValidationErrors,
     _purgeUnchangedEdits,
     _setupEditors,
     _syncFromEditors,
@@ -65,11 +64,16 @@ export abstract class BaseEditStrategy extends BeanStub {
             cellCtrl = _getCellCtrl(this.beans, previous);
         }
 
-        _populateModelValidationErrors(this.beans, true);
-
         // check if any editors open
         if (this.editSvc.isEditing(undefined, { withOpenEditor: true })) {
-            if (cellCtrl && this.editSvc.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
+            const isFullRow = this.beans.gos.get('editType') === 'fullRow';
+            const currentRowEditing = this.editSvc.isRowEditing(cellCtrl, { withOpenEditor: true });
+            const shouldRerunRowValidation = currentRowEditing && !isFullRow;
+
+            if (
+                cellCtrl &&
+                this.editSvc.checkNavWithValidation(cellCtrl, event, shouldRerunRowValidation) === 'block-stop'
+            ) {
                 return;
             }
 
