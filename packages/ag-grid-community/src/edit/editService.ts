@@ -873,10 +873,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const { beans } = this;
         const { colModel, valueSvc } = beans;
 
-        if (!this?.isBatchEditing()) {
-            return;
-        }
-
         const edits: EditMap = new Map();
 
         cells.forEach(({ colId, column, colKey, rowIndex, rowPinned, newValue, state }) => {
