@@ -581,6 +581,9 @@ export const AG_GRID_LOCALE_SE = {
     ariaSkeletonCellLoading: 'Raddata laddas',
     ariaDeferSkeletonCellLoading: 'Cellen laddas',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Väntande ändring',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Radgrupper',
     ariaValuesDropZonePanelLabel: 'Värden',

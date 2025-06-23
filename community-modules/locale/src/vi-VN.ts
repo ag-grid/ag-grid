@@ -581,6 +581,9 @@ export const AG_GRID_LOCALE_VN = {
     ariaSkeletonCellLoading: 'Dữ liệu hàng đang tải',
     ariaDeferSkeletonCellLoading: 'Ô đang tải',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Thay đổi đang chờ xử lý',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Nhóm Hàng',
     ariaValuesDropZonePanelLabel: 'Giá Trị',

@@ -582,6 +582,9 @@ export const AG_GRID_LOCALE_HR = {
     ariaSkeletonCellLoading: 'Podaci retka se učitavaju',
     ariaDeferSkeletonCellLoading: 'Ćelija se učitava',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Promjena na čekanju',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Grupe redaka',
     ariaValuesDropZonePanelLabel: 'Vrijednosti',

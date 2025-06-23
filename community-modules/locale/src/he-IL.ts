@@ -581,6 +581,9 @@ export const AG_GRID_LOCALE_IL = {
     ariaSkeletonCellLoading: 'נתוני השורה נטענים',
     ariaDeferSkeletonCellLoading: 'התא נטען',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'שינוי בהמתנה',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'קבוצות שורות',
     ariaValuesDropZonePanelLabel: 'ערכים',

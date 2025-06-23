@@ -581,6 +581,9 @@ export const AG_GRID_LOCALE_CN = {
     ariaSkeletonCellLoading: '行数据加载中',
     ariaDeferSkeletonCellLoading: '单元格正在加载',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: '待处理的变更',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: '行分组',
     ariaValuesDropZonePanelLabel: '值',

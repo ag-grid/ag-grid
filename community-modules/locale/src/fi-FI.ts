@@ -581,6 +581,9 @@ export const AG_GRID_LOCALE_FI = {
     ariaSkeletonCellLoading: 'Rivin tietoja ladataan',
     ariaDeferSkeletonCellLoading: 'Solu latautuu',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Odotusmuutos',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Riviryhmät',
     ariaValuesDropZonePanelLabel: 'Arvot',

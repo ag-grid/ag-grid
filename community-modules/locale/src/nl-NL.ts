@@ -582,6 +582,9 @@ export const AG_GRID_LOCALE_NL = {
     ariaSkeletonCellLoading: 'Rijgegevens worden geladen',
     ariaDeferSkeletonCellLoading: 'Cel wordt geladen',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Wijziging in behandeling',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Rijgroepen',
     ariaValuesDropZonePanelLabel: 'Waarden',

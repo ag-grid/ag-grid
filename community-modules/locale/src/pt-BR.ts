@@ -581,6 +581,9 @@ export const AG_GRID_LOCALE_BR = {
     ariaSkeletonCellLoading: 'Carregando dados da linha',
     ariaDeferSkeletonCellLoading: 'A célula está carregando',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Mudança pendente',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Agrupamento de Linhas',
     ariaValuesDropZonePanelLabel: 'Valores',

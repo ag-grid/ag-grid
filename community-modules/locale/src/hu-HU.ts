@@ -582,6 +582,9 @@ export const AG_GRID_LOCALE_HU = {
     ariaSkeletonCellLoading: 'A sor adatai betöltődnek',
     ariaDeferSkeletonCellLoading: 'A cella betöltődik',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Függőben lévő változtatás',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Sor csoportok',
     ariaValuesDropZonePanelLabel: 'Értékek',

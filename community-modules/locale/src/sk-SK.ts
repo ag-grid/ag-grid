@@ -581,6 +581,9 @@ export const AG_GRID_LOCALE_SK = {
     ariaSkeletonCellLoading: 'Údaje riadku sa nahrávajú',
     ariaDeferSkeletonCellLoading: 'Načítava sa bunka',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Čakajúca zmena',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Skupiny riadkov',
     ariaValuesDropZonePanelLabel: 'Hodnoty',
