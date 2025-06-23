@@ -458,6 +458,7 @@ export function _populateModelValidationErrors(beans: BeanCollection): void {
         for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
             cellCtrl.tooltipFeature?.refreshTooltip(true);
             cellCtrl.editorTooltipFeature?.refreshTooltip(true);
+            cellCtrl.editStyleFeature?.applyCellStyles?.();
         }
     }
 }

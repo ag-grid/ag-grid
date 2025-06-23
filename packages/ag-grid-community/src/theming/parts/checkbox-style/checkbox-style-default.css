@@ -38,10 +38,6 @@
 
     &:where(:focus-within, :active) {
         box-shadow: var(--ag-focus-shadow);
-
-        &:where(:has(:invalid)) {
-            box-shadow: var(--ag-focus-error-shadow);
-        }
     }
 
     &:where(.ag-disabled) {
@@ -66,6 +62,11 @@
             mask-image: var(--ag-checkbox-indeterminate-shape-image);
         }
     }
+}
+
+/* stylelint-disable-next-line */
+.ag-cell-editing-error .ag-checkbox-input-wrapper:focus-within {
+    box-shadow: var(--ag-focus-error-shadow);
 }
 
 .ag-radio-button-input-wrapper {
