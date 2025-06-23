@@ -25,7 +25,7 @@
     &:active {
         outline: none;
         box-shadow: var(--ag-input-focus-box-shadow);
-        &:has(:invalid) {
+        .ag-cell-editing-error & {
             box-shadow: var(--ag-input-error-focus-box-shadow);
         }
     }
