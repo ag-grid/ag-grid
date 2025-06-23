@@ -300,7 +300,7 @@ export abstract class ProvidedFilter<
             positionableFeature.removeSizeFromEl();
             positionableFeature.setResizable(false);
         }
-        positionableFeature.constrainSizeToAvailableHeight(true);
+        positionableFeature.constrainSizeToAvailableHeight(isResizable);
     }
 
     public afterGuiDetached(): void {
