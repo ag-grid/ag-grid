@@ -612,6 +612,11 @@ export type CoreParams = {
     rowHeight: LengthValue;
 
     /**
+     * Height of the pagination panel at the bottom of the grid. Defaults to the higher of rowHeight or 22px.
+     */
+    paginationPanelHeight: LengthValue;
+
+    /**
      * Background color when hovering over rows in the grid and in dropdown menus. Set to `transparent` to disable the hover effect. Note: if you want a hover effect on one but not the other, use CSS selectors instead of this property.
      */
     rowHoverColor: ColorValue;
@@ -1015,6 +1020,10 @@ export const coreDefaults: Readonly<CoreParams> = {
         calc: 'max(iconSize, dataFontSize) + spacing * 4 * headerVerticalPaddingScale',
     },
     headerVerticalPaddingScale: 1,
+    paginationPanelHeight: {
+        ref: 'rowHeight',
+        calc: 'max(rowHeight, 22px)',
+    },
     popupShadow: '0 0 16px #00000026',
     cardShadow: '0 1px 4px 1px #00000018',
     dropdownShadow: { ref: 'cardShadow' },
