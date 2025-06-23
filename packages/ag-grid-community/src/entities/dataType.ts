@@ -55,6 +55,19 @@ export type BaseCellDataType =
     | 'dateTime'
     | 'dateTimeString';
 
+type BaseCellDataTypeMap = {
+    text: string;
+    number: number;
+    boolean: boolean;
+    date: Date;
+    dateString: string;
+    dateTime: Date;
+    dateTimeString: string;
+    object: object;
+};
+
+export type InferCellDataType<TType extends BaseCellDataType> = BaseCellDataTypeMap[TType] | null | undefined;
+
 interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = any, TValue = any> {
     /** The underlying data type */
     baseDataType: TValueType;

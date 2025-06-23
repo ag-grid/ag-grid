@@ -1,68 +1,104 @@
-import { TokenCursor } from '../expressionParser';
-import { TokenType } from '../expressionTypes';
+import {
+    ComparatorNode,
+    ExpressionNode,
+    InferNode,
+    OperandErrorNode,
+    OperandNode,
+    OperatorErrorNode,
+    Valid,
+    isValidDatatype,
+} from '../ast';
+import { TokenCursor } from '../cursor';
+import { Parser } from '../parser';
+import { LexerTokenMatcher } from '../token';
 
-type ExpressionDataType = number | string | Date | boolean;
-
-type OperandTypes = {
-    string: string;
-    number: number;
-    date: Date;
-    boolean: boolean;
-};
-
-type ASTNode = {
-    type: string;
+type ExpressionDef<TType extends ExpressionNode['type'], TNode extends InferNode<TType>, TRow = any> = {
+    tokens: LexerTokenMatcher[];
     key: string;
-    datatype: keyof OperandTypes;
-};
-
-type Column = {
-    datatype: keyof OperandTypes;
-    colId: string;
-};
-
-type OperandValue<TDataType extends ExpressionDataType> = Column | TDataType;
-
-export type ParserHelpers = {
-    parseOperand: (cursor: TokenCursor) => ASTNode;
-};
-
-type ExpressionDef<TNode extends ASTNode> = {
-    tokenType: TokenType;
-    key: string;
-    parse: (cursor: TokenCursor, helpers: ParserHelpers) => TNode;
-    suggest: (position: number, helpers: ParserHelpers) => string[];
+    parse: (cursor: TokenCursor, parser: Parser) => TNode | OperatorErrorNode;
+    buildFilter: (node: Extract<TNode, { valid: true }>, context: any) => (row: TRow) => boolean;
+    suggest: (position: number, parser: Parser) => string[];
     render: () => string;
 };
 
-type ValidOperandTypes = Pick<OperandTypes, 'string' | 'number' | 'date' | 'boolean'>;
-export type EqualsNode = ASTNode &
-    {
-        [K in keyof ValidOperandTypes]: {
-            datatype: K;
-            values: [OperandValue<ValidOperandTypes[K]>, OperandValue<ValidOperandTypes[K]>];
-        };
-    }[keyof ValidOperandTypes];
+const validDataTypes = ['string', 'number', 'date'] as const;
+export type EqualsNode<TDatatype extends (typeof validDataTypes)[number] = (typeof validDataTypes)[number]> =
+    ComparatorNode<[Valid<OperandNode<TDatatype>>, Valid<OperandNode<TDatatype>>]>;
 
-export const EqualsOperator: ExpressionDef<EqualsNode> = {
-    tokenType: 'OPERATOR',
-    key: 'EqualsOperator',
-    parse(cursor, helpers) {
-        const left = helpers.parseOperand(cursor);
-        cursor.expect('OPERATOR', 'EqualsOperator');
-        const right = helpers.parseOperand(cursor);
+export function createEqualsOperator<TRow = any>(): ExpressionDef<'Comparator', EqualsNode, TRow> {
+    return {
+        key: 'EqualsComparator',
+        tokens: [
+            {
+                type: 'string',
+                token: 'COMPARATOR',
+                key: 'EqualsToken',
+                label: 'equals',
+                aliases: ['='],
+            },
+        ],
+        parse(cursor, parser) {
+            const left = parser.parseOperand(cursor);
+            let op = cursor.expect('OPERATOR', 'EqualsOperator');
+            const right = parser.parseOperand(cursor);
 
-        const node: ASTNode = {
-            type: this.tokenType,
-            key: this.key,
-            datatype: 'boolean',
-        };
+            if (!op) {
+                return parser.createNode({
+                    type: 'OperatorErrorNode',
+                    key: 'SyntaxError',
+                    datatype: 'unknown',
+                    children: [left, right],
+                    errors: [{ message: 'Invalid syntax' }],
+                }) as OperatorErrorNode;
+            }
 
-        if (!['string', 'number', 'date', 'boolean'].includes(left.datatype)) {
-            // Set errors
-        }
-        if (left.datatype !== right.datatype) {
-            // Set errors
-        }
-    },
-};
+            const node = {
+                type: 'Comparator',
+                key: 'EqualsComparator',
+                datatype: 'boolean',
+            } as const;
+
+            if (
+                isValidDatatype(left.datatype, validDataTypes) &&
+                isValidDatatype(right.datatype, validDataTypes) &&
+                left.valid &&
+                right.valid &&
+                left.datatype === right.datatype
+            ) {
+                return parser.createNode<'Comparator'>({
+                    ...node,
+                    parameters: [left, right],
+                    children: [left, right],
+                }) as EqualsNode;
+            }
+
+            if (left.valid && !isValidDatatype(left.datatype, ['string', 'date', 'number'])) {
+                parser.addError(left, `Data type must be either string, number or date.`);
+            }
+
+            if (left.valid && right.valid && right.datatype !== left.datatype) {
+                parser.addError(right, `${left.datatype} cannot be equated to ${right.datatype}`);
+            }
+
+            return parser.createNode({
+                ...node,
+                valid: false,
+                children: [left, right],
+            }) as EqualsNode;
+        },
+        buildFilter({ parameters }, context) {
+            const [left, right] = parameters;
+
+            const getLeft = left.type === 'Identifier' ? context.getAccessor(left) : () => left.value;
+            const getRight = right.type === 'Identifier' ? context.getAccessor(right) : () => right.value;
+
+            return (row: TRow) => getLeft(row) === getRight(row);
+        },
+        suggest() {
+            return [];
+        },
+        render() {
+            return '';
+        },
+    };
+}

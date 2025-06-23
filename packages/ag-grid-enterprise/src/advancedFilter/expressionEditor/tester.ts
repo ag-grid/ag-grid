@@ -1,5 +1,5 @@
-import { AdvancedFilterExpressionLexer } from './expressionLexer';
-import { AdvancedFilterExpressionParser, TokenCursor } from './expressionParser';
+import { AdvancedFilterExpressionLexer } from './lexer';
+import { AdvancedFilterExpressionParser, TokenCursor } from './parser';
 
 const simpleTest = () => {
     const input = '[Athlete] = "Phelps" AND ([Test] not in (1,2,3))';
@@ -7,57 +7,57 @@ const simpleTest = () => {
     const lexer = new AdvancedFilterExpressionLexer();
     lexer.setMatchers([
         {
-            _brand: 'regex',
-            type: 'IDENTIFIER',
+            type: 'regex',
+            token: 'IDENTIFIER',
             key: 'column',
             regex: /^\[([^\]\n]*)\]?/,
         },
         {
-            _brand: 'label',
-            type: 'COMPARATOR',
+            type: 'string',
+            token: 'COMPARATOR',
             key: 'equals',
             label: 'equals',
             aliases: ['='],
         },
         {
-            _brand: 'regex',
-            type: 'STRING',
+            type: 'regex',
+            token: 'STRING',
             key: 'string',
             regex: /^"([^"\n]*)"?/,
         },
         {
-            _brand: 'label',
-            type: 'LPAREN',
+            type: 'string',
+            token: 'GROUP_START',
             key: 'openParens',
             label: '(',
         },
         {
-            _brand: 'label',
-            type: 'RPAREN',
+            type: 'string',
+            token: 'GROUP_END',
             key: 'closeParens',
             label: ')',
         },
         {
-            _brand: 'label',
-            type: 'COMMA',
+            type: 'string',
+            token: 'ARRAY_SEPARATOR',
             key: 'comma',
             label: ',',
         },
         {
-            _brand: 'label',
-            type: 'COMPARATOR',
+            type: 'string',
+            token: 'COMPARATOR',
             key: 'notIn',
             label: 'not in',
         },
         {
-            _brand: 'regex',
-            type: 'NUMBER',
+            type: 'regex',
+            token: 'NUMBER',
             key: 'number',
             regex: /^-?\d+(?:\.\d+)?/,
         },
         {
-            _brand: 'label',
-            type: 'OPERATOR',
+            type: 'string',
+            token: 'OPERATOR',
             key: 'and',
             label: 'AND',
         },
