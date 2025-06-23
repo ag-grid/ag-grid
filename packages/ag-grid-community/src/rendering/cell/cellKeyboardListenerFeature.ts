@@ -131,6 +131,21 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const { editSvc, navigation } = beans;
         const cellEditing = editSvc?.isEditing(cellCtrl);
         const rowEditing = editSvc?.isRowEditing(cellCtrl);
+
+        const startEditingAction = (cellCtrl: CellCtrl) => {
+            const started = editSvc?.startEditing(cellCtrl, {
+                startedEdit: true,
+                event,
+            });
+            if (started) {
+                // if we started editing, then we need to prevent default, otherwise the Enter action can get
+                // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
+                // preventing default results in a 'new line' character getting inserted in the text area
+                // when the editing was started
+                event.preventDefault();
+            }
+        };
+
         if (cellEditing || rowEditing) {
             if (this.isCtrlEnter(event)) {
                 // bulk edit, apply currently editing value to all selected cells
@@ -145,9 +160,13 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 return;
             }
 
-            editSvc?.stopEditing(cellCtrl, {
-                event,
-            });
+            if (editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
+                editSvc?.stopEditing(cellCtrl, {
+                    event,
+                });
+            } else {
+                startEditingAction(cellCtrl);
+            }
         } else {
             if (beans.gos.get('enterNavigatesVertically')) {
                 const key = event.shiftKey ? KeyCode.UP : KeyCode.DOWN;
@@ -161,17 +180,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                     editSvc.revertSingleCellEdit(cellCtrl, true);
                 }
 
-                const started = editSvc?.startEditing(cellCtrl, {
-                    startedEdit: true,
-                    event,
-                });
-                if (started) {
-                    // if we started editing, then we need to prevent default, otherwise the Enter action can get
-                    // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
-                    // preventing default results in a 'new line' character getting inserted in the text area
-                    // when the editing was started
-                    event.preventDefault();
-                }
+                startEditingAction(cellCtrl);
             }
         }
     }
