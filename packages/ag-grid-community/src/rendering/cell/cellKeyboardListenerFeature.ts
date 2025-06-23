@@ -248,7 +248,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const { gos, editSvc } = this.beans;
         const { rowNode } = this.cellCtrl;
 
-        if (!editSvc?.isEditing(this.cellCtrl) && _isRowSelection(gos)) {
+        if (!editSvc?.isEditing(this.cellCtrl, { withOpenEditor: true }) && _isRowSelection(gos)) {
             this.beans.selectionSvc?.handleSelectionEvent(event, rowNode, 'spaceKey');
         }
 
