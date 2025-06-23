@@ -69,8 +69,12 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         this.eEditor.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
 
         if (this.focusAfterAttached) {
-            this.eEditor.getFocusableElement().focus();
+            this.focusIn();
         }
+    }
+
+    public focusIn(): void {
+        this.eEditor.getFocusableElement().focus();
     }
 
     public getValue(): any {
