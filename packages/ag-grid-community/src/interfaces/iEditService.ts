@@ -124,5 +124,5 @@ export interface IEditService extends NamedBean {
         event?: Event | CellFocusedEvent,
         includeRows?: boolean
     ): EditNavOnValidationResult;
-    revertSingleCellEdit(cellCtrl: CellCtrl, focus?: boolean): void;
+    revertSingleCellEdit(cellPosition: Required<EditPosition>, focus?: boolean): void;
 }

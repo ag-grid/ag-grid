@@ -8,7 +8,7 @@ import type { EditingCellPosition, GetEditingCellsParams, ICellEditorValidationE
 import type { CellPosition } from '../interfaces/iCellPosition';
 import { _warn } from '../validation/logging';
 import { _getCellCtrl } from './utils/controllers';
-import { UNEDITED, _valuesDiffer } from './utils/editors';
+import { UNEDITED, _destroyEditors, _syncFromEditors, _valuesDiffer } from './utils/editors';
 
 export function undoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.undo('api');
@@ -54,8 +54,22 @@ export function getEditingCells(beans: BeanCollection, params: GetEditingCellsPa
     return positions;
 }
 
-export function stopEditing({ editSvc }: BeanCollection, cancel: boolean = false): void {
-    editSvc?.stopEditing(undefined, { cancel, source: 'api' });
+export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
+    const { editSvc } = beans;
+    if (editSvc?.isBatchEditing()) {
+        if (cancel) {
+            beans.editModelSvc?.getEditPositions().forEach((cellPosition) => {
+                if (cellPosition.state === 'editing') {
+                    editSvc.revertSingleCellEdit(cellPosition);
+                }
+            });
+        } else {
+            _syncFromEditors(beans);
+        }
+        _destroyEditors(beans);
+    } else {
+        editSvc?.stopEditing(undefined, { cancel, source: 'api' });
+    }
 }
 
 export function isEditing(beans: BeanCollection, cellPosition: CellPosition): boolean {

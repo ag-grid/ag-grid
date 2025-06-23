@@ -198,12 +198,13 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         }
 
         if (nextEditable && !preventNavigation) {
+            // need to focus the cell before setting the editor, otherwise the focus handler won't cause previous editor cleanups
+            nextCell.focusCell(false, event);
             if (!nextCell.comp?.getCellEditor()) {
                 // editor missing because it was outside the viewport during creating phase, attempt to create it now
                 _setupEditor(this.beans, nextCell, undefined, event, true);
             }
             this.setFocusInOnEditor(nextCell);
-            nextCell.focusCell(false, event);
         } else {
             if (preventNavigation && this.model.getCellValidationModel().getCellValidation(prevCell)) {
                 return true;
