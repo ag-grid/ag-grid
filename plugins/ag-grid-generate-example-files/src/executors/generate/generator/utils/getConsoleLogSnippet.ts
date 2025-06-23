@@ -161,8 +161,8 @@ function patchConsoleLog() {
         return args.map(getConsoleValue);
     }
 
-    // we ignore console.error to avoid printing license messages
-    Object.getOwnPropertyNames(console).filter(name => name !== 'error').map(name => [name, console[name]]).forEach(([name, originalMethod]) => {
+    // we ignore console.error to avoid printing license messages, as well as infinite try catch loop below
+    ['log', 'info', 'warn', 'table', 'debug'].map(name => [name, console[name]]).forEach(([name, originalMethod]) => {
         console[name] = (...args) => {
             try {
                 window.parent.postMessage({
@@ -177,6 +177,7 @@ function patchConsoleLog() {
             }
             originalMethod(...args);
         };
+        console[name]._original = originalMethod;
     });
 }
 patchConsoleLog();

@@ -174,7 +174,7 @@ export function convertTsxToJsx(fileStr: string): string {
     jsxFile = jsxFile.replaceAll('// empty line', '');
     return jsxFile;
 }
-const consoleMethods = Object.getOwnPropertyNames(console);
+const consoleMethods = ['log', 'warn', 'table', 'info', 'debug'] as const;
 const consoleRegexp = new RegExp(`console.(${consoleMethods.join('|')})`, 'g');
 
 export const getHasExampleConsoleLog = ({ contents }: { contents?: string }) => {
