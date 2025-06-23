@@ -27,3 +27,13 @@ button {
     height: 100%;
     width: 100%;
 }
+
+.ag-cell-batch-edit {
+    background-color: rgba(59, 255, 49, 0.16);
+    color: #c48965;
+}
+
+.ag-row-batch-edit {
+    background-color: rgba(245, 255, 49, 0.152);
+    color: #828600;
+}

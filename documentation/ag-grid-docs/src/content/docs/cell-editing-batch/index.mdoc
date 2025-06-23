@@ -21,9 +21,7 @@ const gridOptions = {
 }
 ```
 
-The following example demonstrates basic batch editing functionality.
-
-{% gridExampleRunner title="Batch Editing" name="batch-editing" exampleHeight=360 /%}
+Once enabled, `api.commitBatchEdit()` or `api.cancelBatchEdit()` can be called to complete the batch edit operation.
 
 {% note %}
 Batch Edit is only compatible with the [Client-Side Row Model](./row-models/).
@@ -31,7 +29,7 @@ Batch Edit is only compatible with the [Client-Side Row Model](./row-models/).
 
 ## Using API methods to batch edit data
 
-Using the following API calls, you can build your own experience around the batch editing functionality.
+Using the following API calls, you can build your own experience around AG Grid's batch editing functionality.
 
 The following example demonstrates a simple batch editing scenario: starting a batch, queuing edits and then either committing them or discarding them.
 
@@ -41,57 +39,48 @@ The grid API methods `startEditingCell()` and `stopEditing()` can be used to con
 
 {% apiDocumentation source="grid-api/api.json" section="batch-editing" names=["isBatchEditing", "startBatchEdit", "commitBatchEdit", "cancelBatchEdit"] /%}
 
-An example similar to above for showcasing Batch Editing API, with buttons for:
+### Full Row Editing
 
--   Set Editing Cells
--   Set Editing Cells (empty values)
--   Clear Editing cells
-
-### Full Row Editing: Small explanation
-
-When you edit a full row, the grid allows you to edit multiple cells in that row before committing the changes.
+[Full Row](./cell-editing-full-row/) is supported in Batch Editing, adding each cell's pending value to the batch.
 
 {% gridExampleRunner title="Batch Editing FullRow" name="batch-editing-fullrow" exampleHeight=560 /%}
 
 ## Batch Editing Lifecycle
 
-As more cells are edited, each new edit will emit start events as required, but the stop events will only be emitted when the batch is completed.
+As in default editing, cell and row editing events get fired as normal when edit starts and ends, following the lifecycle of the editors.
 
-{% apiDocumentation source="grid-events/events.json" section="editing" names=["rowEditingStarted", "cellEditingStarted", "cellEditingStopped", "rowEditingStopped"] /%}
+Value change events in Batch Editing are fired **after** the batch edit is committed.
 
 ## Customisation
 
-### Custom Renderers
+### Custom Renderers & Editors
 
 The `ICellRendererComp` interface provides a means for your cell renderer to update when edits are batched, to reflect the pending nature of the values. The `refresh` method that the grid calls when the cell needs to be re-rendered. The parameters include the latest pending value.
 
 {% interfaceDocumentation interfaceName="ICellRendererComp" names=["refresh"] /%}
 
-### Custom editors
-
 As with custom renderers, the `ICellEditor` interface includes the `refresh` method, which the grid calls when the cell needs to be re-rendered. The parameters include the latest pending value.
 
 {% interfaceDocumentation interfaceName="ICellEditor" names=["refresh"] /%}
 
+{% gridExampleRunner title="Batch Editing Customization" name="batch-editing-custom" exampleHeight=560 /%}
+
 ### Styling
 
-Small description how to change the styling
+Pending edit styles can be overridden using css, via the `.ag-cell-edit-color` and `.ag-row-batch-edit` classes.
 
 ```scss
 .ag-cell-batch-edit {
     background-color: var(--ag-cell-batch-edit-background-color);
     color: var(--ag-cell-batch-edit-text-color);
 }
+
 .ag-row-batch-edit {
     background-color: var(--ag-row-batch-edit-background-color);
     color: var(--ag-row-batch-edit-text-color);
 }
 ```
 
-{% gridExampleRunner title="Batch Editing Customisation" name="batch-editing-custom" exampleHeight=560 /%}
+The following example demonstrates custom batch editing styling:
 
-## Notes
-
-Small description to explain consequences of using batch mid session (visible values are considered not original values).
-
-{% gridExampleRunner title="Batch Editing Sort / Excel" name="batch-editing-sort-excel" exampleHeight=560 /%}
+{% gridExampleRunner title="Batch Editing Styles" name="batch-editing-styles" exampleHeight=560 /%}

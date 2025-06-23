@@ -72,6 +72,28 @@ const gridOptions: GridOptions = {
         console.log('Cell value changed');
     },
     editType: 'fullRow',
+    onFirstDataRendered: (params) => {
+        gridApi = params.api;
+        gridApi.startBatchEdit();
+
+        gridApi.startEditingCell({
+            rowIndex: 0,
+            colKey: 'firstName',
+            key: 'Justine',
+        });
+
+        gridApi.startEditingCell({
+            rowIndex: 1,
+            colKey: 'age',
+            key: '101',
+        });
+
+        // Close editors
+        // gridApi!.stopEditing();
+
+        // Commit the batch edit
+        // gridApi!.commitBatchEdit();
+    },
 };
 
 function getEditingCells() {
