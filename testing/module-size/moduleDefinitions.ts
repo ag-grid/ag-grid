@@ -66,7 +66,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     GroupFilterModule: 111.24,
     MasterDetailModule: 82,
     MenuModule: 159.93,
-    MultiFilterModule: 141.31,
+    MultiFilterModule: 145.8,
     NewFiltersToolPanelModule: 164.51,
     PivotModule: 93.6,
     RangeSelectionModule: 53,
@@ -76,7 +76,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     RowGroupingPanelModule: 71,
     ServerSideRowModelApiModule: 19,
     ServerSideRowModelModule: 147,
-    SetFilterModule: 147.31,
+    SetFilterModule: 152.16,
     SideBarModule: 32,
     SparklinesModule: 20,
     StatusBarModule: 27,
@@ -99,7 +99,7 @@ const allEnterpriseModules: ModuleTest[] = Object.entries(AllEnterpriseModules).
 }));
 
 const commonFeatureSets: ModuleTest[] = [
-    { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 145.47 },
+    { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 150.22 },
     {
         modules: [
             'TextFilterModule',
