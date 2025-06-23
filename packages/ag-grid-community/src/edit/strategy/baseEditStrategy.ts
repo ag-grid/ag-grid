@@ -6,7 +6,13 @@ import type { ColDef } from '../../entities/colDef';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { EditMap, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
-import type { EditPosition, EditRowPosition, EditSource, IEditService } from '../../interfaces/iEditService';
+import type {
+    EditPosition,
+    EditRowPosition,
+    EditSource,
+    IEditService,
+    _SetEditingCellsParams,
+} from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
 import {
@@ -79,7 +85,8 @@ export abstract class BaseEditStrategy extends BeanStub {
                 return;
             }
 
-            const result = this.editSvc.stopEditing();
+            // if we don't have a previous cell, we don't need to force stopEditing
+            const result = previous ? this.editSvc.stopEditing() : true;
 
             // editSvc didn't handle the stopEditing, we need to do more ourselves
             if (!result) {
@@ -338,12 +345,12 @@ export abstract class BaseEditStrategy extends BeanStub {
         return false;
     }
 
-    public setEditMap(edits: EditMap): void {
-        this.editSvc.stopEditing(undefined, { cancel: true, source: 'api' });
+    public setEditMap(edits: EditMap, params?: _SetEditingCellsParams): void {
+        if (!params?.update) {
+            this.editSvc.stopEditing(undefined, { cancel: true, source: 'api' });
+        }
 
-        this.model?.setEditMap(edits);
-
-        // now update cell values and fire cell events
+        // Identify incoming editing cells
         const cells: (EditValue & Required<EditPosition>)[] = [];
         edits.forEach((editRow, rowNode) => {
             editRow.forEach((cellData, column) => {
@@ -353,6 +360,12 @@ export abstract class BaseEditStrategy extends BeanStub {
             });
         });
 
+        if (params?.update) {
+            edits = new Map([...this.model.getEditMap(), ...edits]);
+        }
+
+        this.model?.setEditMap(edits);
+
         if (cells.length > 0) {
             const cell = cells.at(-1)!;
             const key = cell.newValue === UNEDITED ? undefined : cell.newValue;
@@ -361,6 +374,10 @@ export abstract class BaseEditStrategy extends BeanStub {
                 startedEdit: true,
                 source: 'api',
             });
+            const cellCtrl = _getCellCtrl(this.beans, cell);
+            if (cellCtrl) {
+                this.setFocusInOnEditor(cellCtrl);
+            }
         }
     }
 
