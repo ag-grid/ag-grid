@@ -136,15 +136,21 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         ctrlsSvc.whenReady(this, (p) => {
             const gridBodyCon = p.gridBodyCtrl;
+            const oldVerticalPosition = 0;
+            const getVerticalPosition = () => gridBodyCon.scrollFeature.getVScrollPosition().top;
+
             this.autoScrollService = new AutoScrollService({
                 scrollContainer: gridBodyCon.eBodyViewport,
                 scrollAxis: 'y',
-                getVerticalPosition: () => gridBodyCon.scrollFeature.getVScrollPosition().top,
+                getVerticalPosition,
                 setVerticalPosition: (position) => gridBodyCon.scrollFeature.setVerticalScrollPosition(position),
                 onScrollCallback: () => {
-                    const lastDraggingEvent = this.lastDraggingEvent;
-                    if (lastDraggingEvent) {
-                        this.onDragging(lastDraggingEvent);
+                    const newVerticalScrollPosition = getVerticalPosition();
+                    if (oldVerticalPosition !== newVerticalScrollPosition) {
+                        const lastDraggingEvent = this.lastDraggingEvent;
+                        if (lastDraggingEvent) {
+                            this.onDragging(lastDraggingEvent);
+                        }
                     }
                 },
             });
