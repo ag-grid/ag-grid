@@ -71,9 +71,11 @@ export function _setupEditors(
         if (!curCellCtrl) {
             if (cellRowNode && cellColumn) {
                 const oldValue = valueSvc.getValue(cellColumn as AgColumn, cellRowNode, undefined, 'api');
+                const isNewValueCell = position?.rowNode === cellRowNode && position?.column === cellColumn;
+                const cellStartValue = (isNewValueCell && key) || undefined;
 
                 const newValue =
-                    key ??
+                    cellStartValue ??
                     editSvc?.getCellDataValue(cellPosition) ??
                     valueSvc.getValueForDisplay(cellColumn as AgColumn, cellRowNode)?.value ??
                     oldValue ??
