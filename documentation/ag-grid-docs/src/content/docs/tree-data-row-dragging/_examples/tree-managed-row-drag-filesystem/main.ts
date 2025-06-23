@@ -54,7 +54,7 @@ const gridOptions: GridOptions<IFile> = {
         let { newParent, rows } = params;
 
         if (isReadonlyFolder(newParent) || isInsideReadonlyFolder(newParent)) {
-            return null; // Prevent dropping into a readonly folder
+            return { rows: null }; // Prevent dropping into a readonly folder
         }
 
         if (newParent) {
@@ -64,10 +64,6 @@ const gridOptions: GridOptions<IFile> = {
 
         // Filter out anything that is inside a readonly folder, it cannot be moved
         rows = rows.filter((row) => !isInsideReadonlyFolder(row));
-
-        if (!rows.length) {
-            return null; // Nothing to drop
-        }
 
         if (newParent && newParent.data && newParent.data.type !== 'folder') {
             // Block changing parents on anything that is not of type 'folder'

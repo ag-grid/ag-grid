@@ -133,8 +133,8 @@ export { DragItem } from './interfaces/iDragItem';
 export type {
     IsRowValidDropPositionCallback,
     IsRowValidDropPositionResult,
+    IsRowValidDropPositionParams,
     RowDropTargetPosition,
-    RowDropTarget,
     RowDropZoneParams,
     RowDropZoneEvents,
 } from './dragAndDrop/rowDragFeature';
