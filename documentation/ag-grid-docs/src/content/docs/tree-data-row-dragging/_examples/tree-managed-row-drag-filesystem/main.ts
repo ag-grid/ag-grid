@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { GridApi, GridOptions, IRowNode, ValueFormatterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -51,15 +51,48 @@ const gridOptions: GridOptions<IFile> = {
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     canDropOnRow: (params) => {
-        if (!params.newParent) {
-            return true; // Not changing parent, allow drop
+        let { newParent, position, rows } = params;
+
+        if (isReadonlyFolder(newParent) || isInsideReadonlyFolder(newParent)) {
+            return null; // Prevent dropping into a readonly folder
         }
-        if (params.newParent?.data?.type === 'folder') {
-            return true; // Allow dropping on folders
+
+        if (newParent) {
+            // Prevent moving a readonly folder into another folder
+            rows = rows.filter((row) => !isReadonlyFolder(row));
         }
-        return false; // Prevent dropping on anything else
+
+        // Filter out anything that is inside a readonly folder, it cannot be moved
+        rows = rows.filter((row) => !isInsideReadonlyFolder(row));
+
+        if (!rows.length) {
+            return null; // Nothing to drop
+        }
+
+        if (newParent && newParent.data && newParent.data?.type !== 'folder') {
+            // Block changing parents on anything that is not of type 'folder'
+            return { newParent: null, position: position === 'inside' ? 'below' : position, rows };
+        }
+
+        return { rows };
     },
 };
+
+/** Returns true if the row is a readonly folder, false if it is a file or a normal folder */
+function isReadonlyFolder(row: IRowNode<IFile> | null) {
+    return !!row && row.data?.type === 'readonly-folder';
+}
+
+/** Returns true if the row is a file or folder inside a readonly folder */
+function isInsideReadonlyFolder(row: IRowNode<IFile> | null): boolean {
+    if (!row || !row.parent) {
+        return false; // Root level
+    }
+    if (isReadonlyFolder(row.parent)) {
+        return true;
+    }
+    return isInsideReadonlyFolder(row.parent);
+}
 
 const eGridDiv = document.getElementById('myGrid');
 let gridApi: GridApi<IFile>;

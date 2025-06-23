@@ -95,14 +95,18 @@ Returning an object allows instead to filter the rows to drop, or, change the pa
 
 {% apiDocumentation source="grid-options/properties.json" section="rowDragging" names=["canDropOnRow"] /%}
 
+In the example below, note that:
+* A file cannot be converted to a folder, dropping a file or a folder into a file is blocked.
+* The `READONLY` folder cannot be changed, not drag and drop allowed in or from it, but it can be reordered.
+
 {% gridExampleRunner title="Managed Row Drag with Tree Data and canDropOnRow" name="tree-managed-row-drag-filesystem"  /%}
 
 ## Unmanaged Row Dragging 
 
-To have full control, is possible to provide a customized implementation of row dragging using unmanaged row dragging.
-The application in this case is fully responsible to maintain the rowData state and handling the dragging events and updating the rowData based on the drag events fired by the grid.
+In order to have full control over row dragging, it is possible to provide a customized implementation of row dragging using unmanaged row dragging.
+In this case, the application is responsible for maintaining the rowData state, handling the dragging events and updating the rowData based on the drag events fired by the grid.
 
-### Example Tree Data Unmanaged Row Dragging
+### Tree Data with getDataPath
 
 The example below shows [Tree Data](./tree-data/) and row dragging with getDataPath where the following can be noted:
 
@@ -112,27 +116,24 @@ The example below shows [Tree Data](./tree-data/) and row dragging with getDataP
 * You can reorder a row only inside its current parent by holding the {% kbd "⇧ Shift" /%} key press and dragging it
 * The expanded/contracted state of a folder and all of its child folders is preserved when the folder is moved to a new parent.
 
-### Example Highlighted Tree Data Unmanaged Row Dragging
+{% gridExampleRunner title="Unmanaged Row Drag with Tree Data" name="tree-unmanaged-row-drag"  exampleHeight=545  /%}
+
+### Tree Data Highlighting the Drop Parent Row
 
 The example above works, however it is not intuitive as the user is given no visual hint what folder will be the destination folder. The example below continues with the example above by providing hints to the user while the drag is in progress. From the example the following can be observed:
 
 * The example registers for `onRowDragMove` events and works out what folder the mouse is over as the drag is happening.
-
 * While the row is dragging, the application highlights the folder that is currently selected as the destination folder (called `potentialParent` in the example code).
-
 * The application does NOT rearrange the rows as the drag is happening. As with the previous example, it waits for the `onRowDragEnd` event before updating the data.
-
 * The example uses [Cell Class Rules](./cell-styles/#cell-class-rules) to highlight the destination folder. The example adds a CSS class `hover-over` to all the cells of the destination folder.
-
 * The example uses [Refresh Cells](./view-refresh/#refresh-cells) to get the grid to execute the Cell Class Rules again over the destination folder when the destination folder changes.
 
 {% gridExampleRunner title="Highlighting Unmanaged Row Drag with Tree Data" name="tree-unmanaged-row-drag-highlight"  /%}
 
-### Example Tree Data with parentId Unmanaged Row Dragging
+### Tree Data with parentId
 
-{% gridExampleRunner title="Unmanaged Row Drag with Tree Data" name="tree-unmanaged-row-drag"  exampleHeight=545  /%}
-
-The following example shows how to implement unmanaged row dragging using the `parentId` approach, which is simpler and more direct than using `getDataPath`. The grid uses the `treeDataParentIdField` property, and utility functions are provided to move rows and update the tree structure. This approach is recommended for most use cases where your data is already structured with parent IDs.
+The following example shows how to implement unmanaged row dragging using the `parentId` approach, which is simpler and more direct than using `getDataPath`.
+The grid uses the `treeDataParentIdField` property, and utility functions are provided to move rows and update the tree structure. This approach is recommended for most use cases where your data is already structured with parent IDs.
 
 This example also demonstrates how to provide custom drop indicators using the [`setRowDropPositionIndicator`](https://www.ag-grid.com/javascript-data-grid/grid-api/#reference-setRowDropPositionIndicator) API.
 
