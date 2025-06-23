@@ -299,7 +299,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         let flags = row.treeNodeFlags;
 
         row.treeNodeFlags = flags & FLAG_EXPANDED_INITIALIZED;
-        row.level = level++;
+        row.level = level;
 
         // Update group state and children markers
         if (row.group !== !!len) {
@@ -327,6 +327,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
         collapsed ||= row.expanded === false;
 
+        ++level; // Increment level as it is passed down to children
         flags &= FLAG_CHILDREN_CHANGED;
         let leafsLen = 0;
         for (let i = 0; i < len; ++i) {
