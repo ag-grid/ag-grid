@@ -64,11 +64,13 @@ export abstract class BaseEditStrategy extends BeanStub {
             cellCtrl = _getCellCtrl(this.beans, previous);
         }
 
+        const nextCell = _getCellCtrl(this.beans, event);
+
         // check if any editors open
         if (this.editSvc.isEditing(undefined, { withOpenEditor: true })) {
             const isFullRow = this.beans.gos.get('editType') === 'fullRow';
-            const currentRowEditing = this.editSvc.isRowEditing(cellCtrl, { withOpenEditor: true });
-            const shouldRerunRowValidation = currentRowEditing && !isFullRow;
+            const nextRowEditing = this.editSvc.isRowEditing(nextCell, { withOpenEditor: true });
+            const shouldRerunRowValidation = !nextRowEditing && isFullRow;
 
             if (
                 cellCtrl &&
