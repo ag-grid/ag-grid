@@ -203,7 +203,9 @@ export abstract class BaseEditStrategy extends BeanStub {
             // if the editor is not present, it means async cell editor (e.g. React)
             // and we are trying to set focus before the cell editor is present, so we
             // focus the cell instead
-            cellCtrl.focusCell(true);
+
+            const isFullRow = this.beans.gos.get('editType') === 'fullRow';
+            cellCtrl.focusCell(isFullRow);
             cellCtrl.onEditorAttachedFuncs.push(() => comp?.getCellEditor()?.focusIn?.());
         }
     }
