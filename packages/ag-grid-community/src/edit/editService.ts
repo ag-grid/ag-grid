@@ -277,8 +277,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const willStop = !cancel && !!this.shouldStopEditing(position, event, source);
         const willCancel = cancel && !!this.shouldCancelEditing(position, event, source);
 
-        const hadOpenEditor = this.isEditing(position, { withOpenEditor: true });
-
         if (willStop || willCancel) {
             _syncFromEditors(beans);
             const freshEdits = model.getEditMap();
@@ -308,7 +306,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     _syncFromEditors(beans);
                 } else if (isEscape) {
                     // only if ESC is pressed while in the editor for this cell
-                    // this.revertSingleCellEdit(cellCtrl!, false);
+                    this.revertSingleCellEdit(cellCtrl!, false);
                 }
 
                 _destroyEditors(beans, model.getEditPositions());
@@ -342,15 +340,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         this.bulkRefresh();
 
         this.beans.rowRenderer.refreshRows({ suppressFlash: true, force: true });
-
-        if (
-            hadOpenEditor &&
-            !this.isEditing(undefined, { withOpenEditor: true }) &&
-            this.gos.get('editType') === 'fullRow' &&
-            position?.rowNode
-        ) {
-            this.dispatchRowEvent({ rowNode: position.rowNode }, 'rowEditingStopped');
-        }
 
         if (res && willStop && this.isBatchEditing()) {
             this.dispatchBatchEvent('batchEditingStopped', edits);
@@ -818,7 +807,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         const edits: EditMap = this.model.getEditMap(true);
         const editValue = edits.get(rowNode)?.get(column!)?.newValue;
-        let valueSource: CellCtrl | undefined = undefined;
 
         ranges.forEach((range: CellRange) => {
             rangeSvc?.forEachRowInRange(range, (position) => {
@@ -828,7 +816,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 }
 
                 const editRow: EditRow = edits.get(rowNode) ?? new Map();
-                valueSource = _getCellCtrl(beans, { ...range.startRow, column: range.startColumn });
                 for (const column of range.columns) {
                     if (!column) {
                         continue;
