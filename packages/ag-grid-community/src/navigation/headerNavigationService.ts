@@ -174,6 +174,9 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         event: KeyboardEvent
     ): boolean {
         const { focusSvc, gos } = this.beans;
+        if (!focusSvc.focusedHeader) {
+            return false;
+        }
         const focusedHeader = { ...focusSvc.focusedHeader! };
         let nextHeader: HeaderPosition;
         let normalisedDirection: 'Before' | 'After';
