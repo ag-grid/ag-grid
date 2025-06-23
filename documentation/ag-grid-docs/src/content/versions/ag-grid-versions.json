@@ -22,7 +22,7 @@
             },
             {
                 "text": "Tree Data Row Dragging",
-                "path": "./row-dragging/#row-dragging--tree-data"
+                "path": "./tree-data-row-dragging"
             }
         ],
         "notesPath": "./upgrading-to-ag-grid-34",

@@ -581,6 +581,9 @@ export const AG_GRID_LOCALE_CZ = {
     ariaSkeletonCellLoading: 'Data řádku se načítají',
     ariaDeferSkeletonCellLoading: 'Načítá se buňka',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Čekající změna',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Skupiny řádků',
     ariaValuesDropZonePanelLabel: 'Hodnoty',

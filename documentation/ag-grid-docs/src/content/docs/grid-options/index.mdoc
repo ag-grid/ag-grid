@@ -9,6 +9,10 @@ The grid will respond to property updates unless they are marked as `Initial`. S
 
 {% apiDocumentation source="grid-options/properties.json" config={ "showInitialDescription": true } /%}
 
-{% if isFramework("angular", "vue", "react") %}
+{% if isFramework("angular", "vue") %}
 {% apiDocumentation source="grid-options/grid-option.json" config={ "showInitialDescription": true } /%}
+{% /if %}
+
+{% if isFramework("react") %}
+{% apiDocumentation source="grid-options/react-grid-options.json" config={ "showInitialDescription": true } /%}
 {% /if %}

@@ -408,9 +408,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         });
     }
 
-    public setEditMap(edits: EditMap): void {
+    public setEditMap(edits: EditMap, params?: _SetEditingCellsParams): void {
         this.strategy ??= this.createStrategy();
-        this.strategy?.setEditMap(edits);
+        this.strategy?.setEditMap(edits, params);
 
         this.bulkRefresh();
 
@@ -869,19 +869,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     public setEditingCells(cells: EditingCellPosition[], params?: _SetEditingCellsParams): void {
-        const { beans, model } = this;
+        const { beans } = this;
         const { colModel, valueSvc } = beans;
 
-        if (!this?.isBatchEditing()) {
-            return;
-        }
-
-        let edits: EditMap = new Map();
-
-        if (params?.update) {
-            const existingEdits = model.getEditMap();
-            edits = new Map(existingEdits?.entries() ?? []);
-        }
+        const edits: EditMap = new Map();
 
         cells.forEach(({ colId, column, colKey, rowIndex, rowPinned, newValue, state }) => {
             const col = colId ? colModel.getCol(colId) : colKey ? colModel.getCol(colKey) : column;
@@ -917,7 +908,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             editRow.set(col, { newValue, oldValue, state: state ?? 'changed' });
         });
 
-        this.setEditMap(edits);
+        this.setEditMap(edits, params);
     }
 
     onCellFocused(event: CellFocusedEvent): void {

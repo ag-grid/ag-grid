@@ -582,6 +582,9 @@ export const AG_GRID_LOCALE_DK = {
     ariaSkeletonCellLoading: 'Række data indlæses',
     ariaDeferSkeletonCellLoading: 'Celle indlæses',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Afventende ændring',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Rækkegrupper',
     ariaValuesDropZonePanelLabel: 'Værdier',

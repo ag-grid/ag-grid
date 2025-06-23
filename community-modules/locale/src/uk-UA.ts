@@ -582,6 +582,9 @@ export const AG_GRID_LOCALE_UA = {
     ariaSkeletonCellLoading: 'Дані рядка завантажуються',
     ariaDeferSkeletonCellLoading: 'Завантажується комірка',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Зміна в очікуванні',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Групи рядків',
     ariaValuesDropZonePanelLabel: 'Значення',

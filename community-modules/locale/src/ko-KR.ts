@@ -581,6 +581,9 @@ export const AG_GRID_LOCALE_KR = {
     ariaSkeletonCellLoading: '행 데이터 로드 중',
     ariaDeferSkeletonCellLoading: '셀 로드 중',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: '보류 중인 변경',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: '행 그룹',
     ariaValuesDropZonePanelLabel: '값',

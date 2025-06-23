@@ -86,7 +86,7 @@ export interface IEditService extends NamedBean {
     startEditing(position: Required<EditPosition>, params: StartEditParams): void;
     stopEditing(position?: EditPosition, params?: StopEditParams): boolean;
     stopAllEditing(cancel?: boolean, source?: EditSource): void;
-    setEditMap(updates: EditMap): void;
+    setEditMap(updates: EditMap, params?: _SetEditingCellsParams): void;
     isCellEditable(position: Required<EditPosition>, source?: EditSource): boolean;
     moveToNextCell(
         previous: CellCtrl | RowCtrl,

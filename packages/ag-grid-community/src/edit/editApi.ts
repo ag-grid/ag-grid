@@ -3,7 +3,6 @@ import { ensureColumnVisible, ensureIndexVisible } from '../api/scrollApi';
 import type { BeanCollection } from '../context/context';
 import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
-import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { EditingCellPosition, GetEditingCellsParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import { _warn } from '../validation/logging';
@@ -79,7 +78,9 @@ export function isEditing(beans: BeanCollection, cellPosition: CellPosition): bo
 
 export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {
     const { key, colKey, rowIndex, rowPinned } = params;
-    const column = beans.colModel.getCol(colKey);
+    const { editSvc, colModel } = beans;
+
+    const column = colModel.getCol(colKey);
     if (!column) {
         _warn(12, { colKey });
         return;
@@ -98,33 +99,21 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 
     ensureColumnVisible(beans, colKey);
 
-    const cell = _getCellByPosition(beans, cellPosition);
-    if (!cell) {
+    if (!_getCellByPosition(beans, cellPosition)) {
         return;
     }
 
-    const { eGui } = cell;
-    const { focusSvc, gos, editSvc } = beans;
-
-    if (beans.editSvc?.isEditing(cell)) {
-        // if already editing, just focus the cell
-        return;
-    }
-
-    const isFocusWithinCell = () => {
-        const activeElement = _getActiveDomElement(beans);
-        return activeElement !== eGui && !!eGui?.contains(activeElement);
-    };
-
-    const forceBrowserFocus = gos.get('stopEditingWhenCellsLoseFocus') && isFocusWithinCell();
-    if (forceBrowserFocus || !focusSvc.isCellFocused(cellPosition)) {
-        focusSvc.setFocusedCell({
-            ...cellPosition,
-            forceBrowserFocus,
-            preventScrollOnBrowserFocus: true,
-        });
-    }
-    editSvc?.startEditing(cell, { startedEdit: true, source: 'api', event: new KeyboardEvent('keydown', { key }) });
+    editSvc?.setEditingCells(
+        [
+            {
+                ...cellPosition,
+                colId: column.getColId(),
+                newValue: key,
+                state: 'editing',
+            },
+        ],
+        { update: true }
+    );
 }
 
 export function cancelEdits({ editSvc }: BeanCollection): void {

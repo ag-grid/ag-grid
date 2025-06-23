@@ -582,6 +582,9 @@ export const AG_GRID_LOCALE_GR = {
     ariaSkeletonCellLoading: 'Τα δεδομένα γραμμής φορτώνονται',
     ariaDeferSkeletonCellLoading: 'Το κύτταρο φορτώνεται',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Εκκρεμής αλλαγή',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Ομάδες Σειρών',
     ariaValuesDropZonePanelLabel: 'Τιμές',

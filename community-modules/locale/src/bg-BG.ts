@@ -582,6 +582,9 @@ export const AG_GRID_LOCALE_BG = {
     ariaSkeletonCellLoading: 'Данните на реда се зареждат',
     ariaDeferSkeletonCellLoading: 'Зарежда се клетка',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Чакаща промяна',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Редови групи',
     ariaValuesDropZonePanelLabel: 'Стойности',

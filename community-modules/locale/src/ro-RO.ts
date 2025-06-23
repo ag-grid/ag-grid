@@ -582,6 +582,9 @@ export const AG_GRID_LOCALE_RO = {
     ariaSkeletonCellLoading: 'Datele rândului se încarcă',
     ariaDeferSkeletonCellLoading: 'Celula se încarcă',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Modificare în așteptare',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Grupuri de rânduri',
     ariaValuesDropZonePanelLabel: 'Valori',

@@ -174,16 +174,15 @@ export class FilterPanelService
             type: 'filterSwitched',
             column,
         });
-        const handler = colFilter!.getHandler(column, true);
-        if (!handler) {
+        const newStateWrapper = this.states.get(id);
+        if (!newStateWrapper) {
             return;
         }
-        stateWrapper.handler = handler;
-        state.activeFilterDef = filterDef;
+        const newState = newStateWrapper.state;
         this.dispatchLocalEvent({
             type: 'filterPanelStateChanged',
             id,
-            state,
+            state: newState,
         });
     }
 
@@ -315,7 +314,7 @@ export class FilterPanelService
         }
     }
 
-    private onFilterDestroyed({ column }: FilterDestroyedEvent) {
+    private onFilterDestroyed({ column, source }: FilterDestroyedEvent) {
         if (!this.beans.colFilter?.isAlive()) {
             // if grid is being destroyed, don't recreate filters
             return;
@@ -330,6 +329,11 @@ export class FilterPanelService
                 states.set(id, stateWrapper);
             } else {
                 this.remove(id);
+            }
+            if (source === 'api') {
+                // other sources trigger refresh through their main events (e.g. newColumnsLoaded).
+                // need manual update for `api.destroyFilter()`
+                this.dispatchStatesUpdates();
             }
         }
     }

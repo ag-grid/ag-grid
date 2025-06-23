@@ -582,6 +582,9 @@ export const AG_GRID_LOCALE_TR = {
     ariaSkeletonCellLoading: 'Satır verisi yükleniyor',
     ariaDeferSkeletonCellLoading: 'Hücre yükleniyor',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Bekleyen değişiklik',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Satır Grupları',
     ariaValuesDropZonePanelLabel: 'Değerler',

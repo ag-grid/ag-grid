@@ -581,6 +581,9 @@ export const AG_GRID_LOCALE_HK = {
     ariaSkeletonCellLoading: '行數據加載中',
     ariaDeferSkeletonCellLoading: '儲存格正在載入',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: '待處理的變更',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: '行群組',
     ariaValuesDropZonePanelLabel: '值',

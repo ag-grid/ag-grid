@@ -473,6 +473,7 @@ export class SetFilter<V = string>
                 hasIndeterminateExpandState: false,
                 selectedListener: (e: SetFilterListItemSelectionChangedEvent) => {
                     this.addCurrentSelectionToFilter = e.isSelected;
+                    this.refreshAfterSelection();
                 },
             };
         }
@@ -526,6 +527,7 @@ export class SetFilter<V = string>
                 value: () => this.getAddSelectionToFilterLabel(),
                 selectedListener: (e: SetFilterListItemSelectionChangedEvent<string | null>) => {
                     this.addCurrentSelectionToFilter = e.isSelected;
+                    this.refreshAfterSelection();
                 },
             };
         }
@@ -704,7 +706,13 @@ export class SetFilter<V = string>
 
     private updateUiAfterMiniFilterChange(updateSelections: boolean, apply?: 'immediately' | 'debounce'): void {
         if (updateSelections) {
-            this.selectAllMatchingMiniFilter(true);
+            const { excelMode, readOnly, model } = this.params;
+            if (excelMode && !readOnly && this.miniFilterText == null) {
+                // reset to applied model
+                this.setModelAndRefresh(model?.values ?? null);
+            } else {
+                this.selectAllMatchingMiniFilter(true);
+            }
         }
         this.checkAndRefreshVirtualList();
         this.onUiChanged(updateSelections ? apply : 'prevent');

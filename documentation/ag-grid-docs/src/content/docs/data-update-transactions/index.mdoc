@@ -73,7 +73,7 @@ const myTransaction = {
 
 * ### Using Object References (Slower)
 
-  If you do not provide [Row IDs](./row-ids/) for the rows, the grid will compare rows using object references. In other words when you provide a transaction with update or remove items, the grid will find those rows using the `===` operator on the data that you previously provided.
+  If you do not provide [Row IDs](./row-ids/) for the rows, the grid will compare rows using object references. In other words when you provide a transaction with update or remove items, the grid does an array lookup to find those rows using the `===` operator on the data that you previously provided.
 
   When using object references, note the following:
 

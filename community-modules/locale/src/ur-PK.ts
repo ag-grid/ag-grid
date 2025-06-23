@@ -581,6 +581,9 @@ export const AG_GRID_LOCALE_PK = {
     ariaSkeletonCellLoading: 'صف کا ڈیٹا لوڈ ہو رہا ہے',
     ariaDeferSkeletonCellLoading: 'سیل لوڈ ہو رہا ہے',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'زیر التواء تبدیلی',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'قطار گروپس',
     ariaValuesDropZonePanelLabel: 'قدریں',

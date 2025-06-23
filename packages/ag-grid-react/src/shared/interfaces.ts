@@ -28,8 +28,13 @@ export interface AgGridReactProps<TData = any> extends GridOptions<TData> {
     /** @deprecated v33.3 AgGridReact does not accept children so this property will be removed. */
     children?: any;
 
-    /** Disables support for `cellRendererParams.deferRender` and switches the rows rendering method. */
-    suppressDeferCellRender?: boolean;
+    /**
+     * Advanced: Fine grained control over the row rendering mechanism.
+     * - `default` - recommended rendering approach.
+     * - `legacy` - provided for backwards compatibility with previous versions of AG Grid (<= v33). Is susceptible to "Maximum Update Depth Exceeded" errors. May be removed in a future version.
+     * @default 'default'
+     */
+    renderingMode?: 'default' | 'legacy';
 }
 
 export interface InternalAgGridReactProps<TData = any> extends AgGridReactProps<TData> {

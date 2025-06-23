@@ -582,6 +582,9 @@ export const AG_GRID_LOCALE_IR = {
     ariaSkeletonCellLoading: 'داده‌های ردیف در حال بارگیری است',
     ariaDeferSkeletonCellLoading: 'در حال بارگذاری سلول',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'تغییر در انتظار',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'گروه‌های ردیفی',
     ariaValuesDropZonePanelLabel: 'مقادیر',

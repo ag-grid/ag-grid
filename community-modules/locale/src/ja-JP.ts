@@ -582,6 +582,9 @@ export const AG_GRID_LOCALE_JP = {
     ariaSkeletonCellLoading: '行データを読み込み中',
     ariaDeferSkeletonCellLoading: 'セルを読み込み中',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: '保留中の変更',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: '行グループ',
     ariaValuesDropZonePanelLabel: '値',

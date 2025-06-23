@@ -581,6 +581,9 @@ export const AG_GRID_LOCALE_NO = {
     ariaSkeletonCellLoading: 'Raddata lastes',
     ariaDeferSkeletonCellLoading: 'Cell laster',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Ventende endring',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Radgrupper',
     ariaValuesDropZonePanelLabel: 'Verdier',
