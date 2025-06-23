@@ -10,7 +10,7 @@
             "tags": [{ "name": "initial" }]
         }
     },
-    "rendering": {
+    "reactRendering": {
         "meta": {
             "displayName": "React Rendering"
         },
