@@ -11,15 +11,15 @@ import type {
 } from 'ag-grid-community';
 import { CssClassManager, _EmptyBean } from 'ag-grid-community';
 
-import { BeansContext, EnableDeferRenderContext } from '../beansContext';
+import { BeansContext, RenderModeContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
-import { agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../utils';
+import { agFlushSync, agUseSyncExternalStore, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
 const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
     const { context, gos, editSvc } = useContext(BeansContext);
 
-    const enableCellDeferRender = useContext(EnableDeferRenderContext);
+    const enableUses = useContext(RenderModeContext) === 'default';
 
     const compBean = useRef<_EmptyBean>();
 
@@ -80,19 +80,24 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         cssManager.current = new CssClassManager(() => eGui.current);
     }
 
-    let cellCtrlsMerged = cellCtrlsFlushSync;
+    // Setup both approaches to avoid conditionally rendering Hooks even though we don't use both at the same time.
     const cellsChanged = useRef<any>(() => {});
-    if (enableCellDeferRender) {
-        const sub = useCallback((onStoreChange: any) => {
-            cellsChanged.current = onStoreChange;
-            return () => {
-                cellsChanged.current = () => {};
-            };
-        }, []);
-        cellCtrlsMerged = React.useSyncExternalStore(sub, () => {
+    const sub = useCallback((onStoreChange: any) => {
+        cellsChanged.current = onStoreChange;
+        return () => {
+            cellsChanged.current = () => {};
+        };
+    }, []);
+    const cellCtrlsUses = agUseSyncExternalStore(
+        sub,
+        () => {
             return cellCtrlsRef.current;
-        });
-    }
+        },
+        []
+    );
+
+    // Will only use useSyncExternalStore if it is supported by the React version and the rendering mode has not been set to 'legacy
+    const cellCtrlsMerged = enableUses ? cellCtrlsUses : cellCtrlsFlushSync;
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
@@ -132,7 +137,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                 const nextCells = getNextValueIfDifferent(prevCellCtrls, next, domOrderRef.current);
                 if (nextCells !== prevCellCtrls) {
                     cellCtrlsRef.current = nextCells;
-                    if (enableCellDeferRender) {
+                    if (enableUses) {
                         cellsChanged.current();
                     } else {
                         agFlushSync(useFlushSync, () => setCellCtrlsFlushSync(nextCells));

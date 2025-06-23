@@ -96,6 +96,22 @@ export const agStartTransition = (fn: () => void) => {
 };
 
 /**
+ * Wrapper around useSyncExternalStore to provide backwards compatibility with React 16-17
+ */
+export function agUseSyncExternalStore<T>(
+    subscribe: (onStoreChange: () => void) => () => void,
+    getSnapshot: () => T,
+    defaultSnapshot: T
+): T {
+    if ((React as any).useSyncExternalStore) {
+        return React.useSyncExternalStore(subscribe, getSnapshot);
+    } else {
+        // Do nothing as this value cannot be used
+        return defaultSnapshot;
+    }
+}
+
+/**
  * The aim of this function is to maintain references to prev or next values where possible.
  * If there are not real changes then return the prev value to avoid unnecessary renders.
  * @param maintainOrder If we want to maintain the order of the elements in the dom in line with the next array
