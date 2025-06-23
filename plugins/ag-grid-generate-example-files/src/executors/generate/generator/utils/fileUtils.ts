@@ -175,7 +175,7 @@ export function convertTsxToJsx(fileStr: string): string {
     return jsxFile;
 }
 const consoleMethods = Object.getOwnPropertyNames(console);
-const consoleRegexp = new RegExp(`console\.(${consoleMethods.join('|')})`, 'g');
+const consoleRegexp = new RegExp(`console.(${consoleMethods.join('|')})`, 'g');
 
 export const getHasExampleConsoleLog = ({ contents }: { contents?: string }) => {
     const res = consoleRegexp.test(contents || '');
