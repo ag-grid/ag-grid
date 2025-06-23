@@ -129,7 +129,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         // rerun validation, new values might have triggered row validations
-        _populateModelValidationErrors(this.beans, true);
+        _populateModelValidationErrors(this.beans);
         if (this.editSvc?.checkNavWithValidation({ rowNode }) === 'block-stop') {
             return false;
         }
@@ -222,16 +222,15 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         if (!rowsMatch) {
             // run validation to gather row-level validation errors
-            _populateModelValidationErrors(this.beans, true);
+            _populateModelValidationErrors(this.beans);
 
             if (this.model.getRowValidationModel().getRowValidationMap().size > 0) {
                 // if there was a previous row validation error, we need to check if that's still the case
-                if (this.editSvc.checkNavWithValidation(prevCell, event, true) === 'block-stop') {
+                if (this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop') {
                     return true;
                 }
             } else {
-                const rowPreventNavigation =
-                    this.editSvc.checkNavWithValidation(prevCell, event, true) === 'block-stop';
+                const rowPreventNavigation = this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop';
                 if (rowPreventNavigation) {
                     return true;
                 }

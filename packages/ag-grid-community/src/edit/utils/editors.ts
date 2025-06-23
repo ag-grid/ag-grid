@@ -390,11 +390,12 @@ export function _destroyEditor(beans: BeanCollection, position: Required<EditPos
 
 export type MappedValidationErrors = EditMap | undefined;
 
-export function _populateModelValidationErrors(beans: BeanCollection, includeRows: boolean = false): void {
+export function _populateModelValidationErrors(beans: BeanCollection): void {
     const mappedEditors = getCellEditorInstanceMap(beans);
     const cellValidationModel = new EditCellValidationModel();
 
-    const { ariaAnnounce, localeSvc } = beans;
+    const { ariaAnnounce, localeSvc, editModelSvc, gos } = beans;
+    const includeRows = gos.get('editType') === 'fullRow';
     const translate = _getLocaleTextFunc(localeSvc);
     const ariaValidationErrorPrefix = translate('ariaValidationErrorPrefix', 'Cell Editor Validation');
 
@@ -437,25 +438,25 @@ export function _populateModelValidationErrors(beans: BeanCollection, includeRow
 
     // the cellValidationModel should probably be reused to avoid
     // the second loop over mappedEditor below
-    beans.editModelSvc?.setCellValidationModel(cellValidationModel);
+    editModelSvc?.setCellValidationModel(cellValidationModel);
 
     const rowCtrlSet = new Set<RowCtrl>();
 
     for (const { ctrl } of mappedEditors) {
-        ctrl.editorTooltipFeature?.refreshTooltip(true);
         rowCtrlSet.add(ctrl.rowCtrl);
     }
 
     if (includeRows) {
         const rowValidations = _generateRowValidationErrors(beans);
-        beans.editModelSvc?.setRowValidationModel(rowValidations);
-    } else {
-        beans.editModelSvc?.setRowValidationModel(new EditRowValidationModel());
+        editModelSvc?.setRowValidationModel(rowValidations);
     }
 
     for (const rowCtrl of rowCtrlSet.values()) {
         rowCtrl.rowEditStyleFeature?.applyRowStyles();
-        rowCtrl.refreshTooltip();
+        for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
+            cellCtrl.tooltipFeature?.refreshTooltip(true);
+            cellCtrl.editorTooltipFeature?.refreshTooltip(true);
+        }
     }
 }
 

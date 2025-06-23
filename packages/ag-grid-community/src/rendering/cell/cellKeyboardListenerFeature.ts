@@ -128,7 +128,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     private onEnterKeyDown(event: KeyboardEvent): void {
         const { cellCtrl, beans } = this;
-        const { editSvc, navigation, gos } = beans;
+        const { editSvc, navigation } = beans;
         const cellEditing = editSvc?.isEditing(cellCtrl);
         const rowEditing = editSvc?.isRowEditing(cellCtrl);
         if (cellEditing || rowEditing) {
@@ -139,9 +139,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
             }
 
             // re-run ALL validations, Enter key is used to commit the edit, so we want to ensure it's valid
-            _populateModelValidationErrors(beans, true);
+            _populateModelValidationErrors(beans);
 
-            if (editSvc?.checkNavWithValidation(cellCtrl, event, gos.get('editType') === 'fullRow') === 'block-stop') {
+            if (editSvc?.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
                 return;
             }
 

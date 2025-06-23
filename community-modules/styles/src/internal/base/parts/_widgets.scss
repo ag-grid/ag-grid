@@ -676,8 +676,7 @@
         border-radius: var(--ag-card-radius);
         white-space: normal;
 
-        &.ag-cell-editor-tooltip,
-        &.ag-full-row-editor-tooltip {
+        &.ag-cell-editor-tooltip {
             background-color: var(--ag-tooltip-error-background-color);
             color: var(--ag-tooltip-error-text-color);
             border: var(--ag-borders) var(--ag-tooltip-error-border-color);

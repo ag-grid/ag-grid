@@ -6,6 +6,7 @@ import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { ICellEditor } from '../interfaces/iCellEditor';
+import type { LocaleTextFunc } from '../misc/locale/localeUtils';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { _isElementOverflowingCallback } from '../utils/dom';
@@ -13,6 +14,21 @@ import { _exists } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
 import type { ITooltipCtrl, TooltipFeature } from './tooltipFeature';
 import { _isShowTooltipWhenTruncated } from './tooltipFeature';
+
+const getEditErrorsForPosition = (
+    beans: BeanCollection,
+    cellCtrl: CellCtrl,
+    translate: LocaleTextFunc
+): string | undefined => {
+    const { editModelSvc } = beans;
+
+    const cellValidationErrors = editModelSvc?.getCellValidationModel()?.getCellValidation(cellCtrl)?.errorMessages;
+    const rowValidationErrors = editModelSvc?.getRowValidationModel().getRowValidation(cellCtrl)?.errorMessages;
+
+    const errors = cellValidationErrors || rowValidationErrors;
+
+    return errors && errors.length ? errors.join(translate('tooltipValidationErrorSeparator', '. ')) : undefined;
+};
 
 export class TooltipService extends BeanStub implements NamedBean {
     beanName = 'tooltipSvc' as const;
@@ -102,10 +118,23 @@ export class TooltipService extends BeanStub implements NamedBean {
         value?: string,
         shouldDisplayTooltip?: () => boolean
     ): TooltipFeature | undefined {
-        const { gos, beans } = this;
+        const { beans } = this;
+        const { gos, editSvc } = beans;
         const { column, rowNode } = ctrl;
 
+        let location: 'cell' | 'cellEditor' = 'cell';
+
         const getTooltipValue = () => {
+            const isEditing = !!editSvc?.isEditing(ctrl);
+            const errorMessages = !isEditing && getEditErrorsForPosition(beans, ctrl, this.getLocaleTextFunc());
+
+            if (errorMessages) {
+                location = 'cellEditor';
+                return errorMessages;
+            }
+
+            location = 'cell';
+
             const colDef = column.getColDef();
             const data = rowNode.data;
 
@@ -136,10 +165,21 @@ export class TooltipService extends BeanStub implements NamedBean {
         const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(gos);
 
         if (!shouldDisplayTooltip) {
-            const { editSvc } = beans;
             if (isTooltipWhenTruncated && !ctrl.isCellRenderer()) {
                 shouldDisplayTooltip = () => {
                     const isEditing = !!editSvc?.isEditing(ctrl);
+                    const errorMessages = !isEditing && getEditErrorsForPosition(beans, ctrl, this.getLocaleTextFunc());
+
+                    if (errorMessages) {
+                        return true;
+                    }
+
+                    const isTooltipEnabled = column.isTooltipEnabled();
+
+                    if (!isTooltipEnabled) {
+                        return false;
+                    }
+
                     const isElementOverflowing = _isElementOverflowingCallback(() => {
                         const eCell = ctrl.eGui;
                         return eCell.children.length === 0
@@ -160,7 +200,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             getRowIndex: () => ctrl.cellPosition.rowIndex,
             getRowNode: () => rowNode,
             getGui: () => ctrl.eGui,
-            getLocation: () => 'cell',
+            getLocation: () => location,
             getTooltipValue: value != null ? () => value : getTooltipValue,
 
             // this makes no sense, why is the cell formatted value passed to the tooltip???
@@ -199,37 +239,6 @@ export class TooltipService extends BeanStub implements NamedBean {
         return ctrl.createBean(tooltipFeature, context);
     }
 
-    public setRowEditorTooltip(rowCtrl: RowCtrl, el: HTMLElement) {
-        const { beans } = this;
-        const { context } = beans;
-
-        const tooltipParams: ITooltipCtrl = {
-            getGui: () => el,
-            getTooltipValue: () => {
-                const errorMap = beans.editModelSvc?.getRowValidationModel()?.getRowValidationMap();
-                const errors = errorMap?.get(rowCtrl.rowNode)?.errorMessages;
-                const translate = this.getLocaleTextFunc();
-                return errors && errors.length
-                    ? errors.join(translate('tooltipValidationErrorSeparator', '. '))
-                    : undefined;
-            },
-            getLocation: () => 'fullRowEditor',
-            shouldDisplayTooltip: () => {
-                const errorMap = beans.editModelSvc?.getRowValidationModel()?.getRowValidationMap();
-                const errors = errorMap?.get(rowCtrl.rowNode)?.errorMessages;
-                return !!errors && errors.length > 0;
-            },
-        };
-
-        const tooltipFeature = this.createTooltipFeature(tooltipParams, beans);
-
-        if (!tooltipFeature) {
-            return;
-        }
-
-        return rowCtrl.createBean(tooltipFeature, context);
-    }
-
     public setupCellEditorTooltip(cellCtrl: CellCtrl, editor: ICellEditor) {
         const { beans } = this;
         const { context } = beans;
@@ -242,24 +251,17 @@ export class TooltipService extends BeanStub implements NamedBean {
 
         const tooltipParams: ITooltipCtrl = {
             getGui: () => el,
-            getTooltipValue: () => {
-                const cellValidationModel = beans.editModelSvc?.getCellValidationModel();
-                const errors = cellValidationModel?.getCellValidation(cellCtrl)?.errorMessages;
-                const translate = this.getLocaleTextFunc();
-                return errors && errors.length
-                    ? errors.join(translate('tooltipValidationErrorSeparator', '. '))
-                    : undefined;
-            },
+            getTooltipValue: () => getEditErrorsForPosition(beans, cellCtrl, this.getLocaleTextFunc()),
             getLocation: () => 'cellEditor',
             shouldDisplayTooltip: () => {
                 const { editModelSvc } = beans;
                 const rowValidationMap = editModelSvc?.getRowValidationModel()?.getRowValidationMap();
-                if (rowValidationMap && rowValidationMap.size > 0) {
-                    return false;
-                }
-
                 const cellValidationMap = editModelSvc?.getCellValidationModel()?.getCellValidationMap();
-                return !!cellValidationMap && cellValidationMap.size > 0;
+
+                const hasRowValidationErrors = !!rowValidationMap && rowValidationMap.size > 0;
+                const hasCellValidationErrors = !!cellValidationMap && cellValidationMap.size > 0;
+
+                return hasRowValidationErrors || hasCellValidationErrors;
             },
         };
 

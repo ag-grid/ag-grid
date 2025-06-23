@@ -182,6 +182,7 @@ const CellComp = ({
         return () => {
             cellEditorPromise.then((cellEditor) => {
                 const compGui = cellEditor.getGui();
+                cellCtrl.disableEditorTooltipFeature();
                 context.destroyBean(cellEditor);
                 setCellEditorRef(undefined);
                 setJsEditorComp(undefined);

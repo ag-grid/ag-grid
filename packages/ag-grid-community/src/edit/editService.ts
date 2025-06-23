@@ -531,10 +531,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     public checkNavWithValidation(
         position?: EditPosition,
-        event?: Event | CellFocusedEvent,
-        includeRows?: boolean
+        event?: Event | CellFocusedEvent
     ): EditNavOnValidationResult {
-        if (this.hasValidationErrors(position, includeRows)) {
+        if (this.hasValidationErrors(position)) {
             const cellCtrl = _getCellCtrl(this.beans, position);
             if (this.cellEditingInvalidCommitBlocks()) {
                 (event as Event)?.preventDefault?.();
@@ -577,8 +576,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         cellCtrl?.comp?.getCellEditor()?.focusIn?.();
     }
 
-    public hasValidationErrors(position?: EditPosition, includeRows?: boolean): boolean {
-        _populateModelValidationErrors(this.beans, includeRows);
+    public hasValidationErrors(position?: EditPosition): boolean {
+        _populateModelValidationErrors(this.beans);
         const cellCtrl = _getCellCtrl(this.beans, position);
         if (cellCtrl) {
             cellCtrl.refreshCell({ suppressFlash: true, force: true });

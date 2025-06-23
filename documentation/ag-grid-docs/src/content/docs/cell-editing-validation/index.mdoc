@@ -91,13 +91,6 @@ const gridOptions = {
 
 A row edit will only complete successfully if **both** the individual cell editors **and** the full-row validation return no errors.
 
-{% note %}
-When working with Full Row Edit, it's important to understand the following:
-
-- Row-level validation runs **only when attempting to complete the row edit**.
-- Any row-level validation errors are **cleared when tabbing** between editors or when a cell value changes.
-- It is recommended to use Full Row Edit Validation **only when** [Validation Mode](#validation-modes) is set to `'block'`, otherwise row edits may be silently discarded if validation fails.
-{% /note %}
 This is demonstrated in the following example. Note the following validation rules:
 
 - `Weight` has to be a positive value below `500`.

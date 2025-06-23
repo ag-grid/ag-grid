@@ -309,6 +309,7 @@ export class CellComp extends Component {
         this.cellEditorPopupWrapper = context.destroyBean(this.cellEditorPopupWrapper);
 
         _removeFromParent(this.cellEditorGui);
+        this.cellCtrl.disableEditorTooltipFeature();
         this.cellEditorGui = null;
 
         this.editorVersion++;

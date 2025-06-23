@@ -113,8 +113,6 @@ export class CellCtrl extends BeanStub {
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
     private editStyleFeature: ICellStyleFeature | undefined = undefined;
-    private tooltipFeature: TooltipFeature | undefined = undefined;
-    public editorTooltipFeature: TooltipFeature | undefined = undefined;
     private mouseListener: CellMouseListenerFeature | undefined = undefined;
     private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
 
@@ -138,6 +136,9 @@ export class CellCtrl extends BeanStub {
     private hasBeenFocused = false;
 
     private editSvc?: IEditService;
+
+    public tooltipFeature: TooltipFeature | undefined = undefined;
+    public editorTooltipFeature: TooltipFeature | undefined = undefined;
 
     constructor(
         public readonly column: AgColumn,
@@ -167,9 +168,7 @@ export class CellCtrl extends BeanStub {
 
         this.keyboardListener = new CellKeyboardListenerFeature(this, beans, this.rowNode, this.rowCtrl);
 
-        if (this.column.isTooltipEnabled()) {
-            this.enableTooltipFeature();
-        }
+        this.enableTooltipFeature();
 
         const { rangeSvc } = beans;
         const cellSelectionEnabled = rangeSvc && _isCellSelectionEnabled(beans.gos);
