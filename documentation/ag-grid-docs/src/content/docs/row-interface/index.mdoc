@@ -20,7 +20,7 @@ Most users will not need to use Row Events but they are made available for advan
 
 ### Row Event Guidance
 
-All events fired by the `rowNode` are synchronous (events are normally asynchronous). The grid is also listening for these events internally. This means that when you receive an event, the grid  may still have some work to do (e.g. if `rowTop` changed, the grid UI may still have to update to reflect this change).
+All events fired by the `rowNode` are synchronous (events are normally asynchronous). The grid is also listening for these events internally. This means that when you receive an event, the grid may still have some work to do (e.g. if `rowTop` changed, the grid UI may still have to update to reflect this change).
 
 It is recommended to **not** call any grid API functions while receiving events from the `rowNode`. Instead, it is best to put your logic into a timeout and call the grid in another VM tick.
 
