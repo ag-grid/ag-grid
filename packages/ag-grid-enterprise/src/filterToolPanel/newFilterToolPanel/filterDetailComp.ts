@@ -34,6 +34,7 @@ export class FilterDetailComp extends Component<'filterTypeChanged'> {
             filterDefs: newFilterDefs,
             detail: newDetail,
             afterGuiAttached,
+            afterGuiDetached,
         } = newState;
         const { activeFilterDef: oldActiveFilterDef, filterDefs: oldFilterDefs, detail: oldDetail } = oldState ?? {};
 
@@ -51,10 +52,11 @@ export class FilterDetailComp extends Component<'filterTypeChanged'> {
         if (newDetail !== oldDetail) {
             if (oldDetail) {
                 _removeFromParent(oldDetail);
+                afterGuiDetached();
             }
             this.appendChild(newDetail);
             afterGuiAttached({
-                container: 'toolPanel',
+                container: 'newFiltersToolPanel',
                 suppressFocus: true,
             });
         }

@@ -28,6 +28,11 @@ export class WrapperToolPanel extends Component implements INewFiltersToolPanel,
             _warn(282);
             return;
         }
+        const filterPanelSvc = this.beans.filterPanelSvc!;
+        filterPanelSvc.isActive = true;
+        this.addDestroyFunc(() => {
+            filterPanelSvc.isActive = false;
+        });
         this.updateParams(params, params.initialState);
         const filterPanel = this.createManagedBean(new FilterPanel());
         this.filterPanel = filterPanel;
@@ -36,7 +41,7 @@ export class WrapperToolPanel extends Component implements INewFiltersToolPanel,
             params.onStateUpdated();
         };
         refresh();
-        this.addManagedListeners(this.beans.filterPanelSvc!, {
+        this.addManagedListeners(filterPanelSvc, {
             filterPanelStatesChanged: refresh,
             filterPanelStateChanged: refresh,
         });

@@ -33,6 +33,7 @@ export class FilterPanelService
     private params?: IToolPanelNewFiltersCompParams;
     private initialStateApplied: boolean = false;
     private initialState?: NewFiltersToolPanelState;
+    public isActive = false;
 
     public postConstruct(): void {
         if (!this.gos.get('enableFilterHandlers')) {
@@ -40,6 +41,7 @@ export class FilterPanelService
         }
 
         const updateFilterStates = this.updateFilterStates.bind(this);
+        const updateApplyButton = () => this.dispatchStatesUpdates(undefined, true);
         this.addManagedEventListeners({
             newColumnsLoaded: () => {
                 this.applyInitialState();
@@ -47,11 +49,13 @@ export class FilterPanelService
             },
             filterChanged: updateFilterStates,
             filterDestroyed: this.onFilterDestroyed.bind(this),
+            filterOpened: updateApplyButton,
+            filterClosed: updateApplyButton,
         });
         this.addManagedListeners(this.beans.colFilter!, {
             filterStateChanged: ({ column }: { column: AgColumn }) => {
                 this.states.get(column.getColId())?.refresh?.();
-                this.dispatchStatesUpdates(undefined, true);
+                updateApplyButton();
             },
         });
     }
@@ -282,6 +286,7 @@ export class FilterPanelService
                     activeFilterDef,
                     filterDefs,
                     afterGuiAttached: filterComp.afterGuiAttached.bind(filterComp),
+                    afterGuiDetached: filterComp.afterGuiDetached.bind(filterComp),
                 },
                 handler,
                 refresh: () => {

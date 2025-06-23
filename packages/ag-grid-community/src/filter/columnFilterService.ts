@@ -19,6 +19,7 @@ import {
     _isClientSideRowModel,
     _isSetFilterByDefault,
 } from '../gridOptionsUtils';
+import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { isColumnFilterComp } from '../interfaces/iFilter';
@@ -54,6 +55,7 @@ import {
     getAndRefreshFilterUi,
     getFilterUiFromWrapper,
 } from './columnFilterUtils';
+import type { FilterComp } from './filterComp';
 import { _getDefaultSimpleFilter, _getFilterParamsForDataType } from './filterDataTypeUtils';
 import type {
     FloatingFilterDisplayParams,
@@ -141,6 +143,7 @@ export class ColumnFilterService
         ...FILTER_HANDLER_MAP,
     };
     public isGlobalButtons: boolean = false;
+    public activeFilterComps: Set<FilterComp> = new Set();
 
     public postConstruct(): void {
         this.addManagedEventListeners({
@@ -1751,10 +1754,18 @@ export class ColumnFilterService
         });
     }
 
+    // for tool panel only
     public canApplyAll(): boolean {
-        let hasChanges = false;
+        const { state, model, activeFilterComps } = this;
 
-        const { state, model } = this;
+        for (const comp of activeFilterComps) {
+            if (comp.source === 'COLUMN_MENU') {
+                // if open in column menu, can't apply as unapplied state will be cleared when the filter closes
+                return false;
+            }
+        }
+
+        let hasChanges = false;
 
         for (const colId of state.keys()) {
             const colState = state.get(colId)!;
@@ -1783,11 +1794,28 @@ export class ColumnFilterService
         });
     }
 
+    public shouldKeepStateOnDetach(column: Column, lastContainerType?: ContainerType): boolean {
+        if (lastContainerType === 'newFiltersToolPanel') {
+            // don't reset for new filters tool panel
+            return true;
+        }
+
+        const filterPanelSvc = this.beans.filterPanelSvc;
+
+        if (filterPanelSvc?.isActive) {
+            // if in tool panel, then keep
+            return !!filterPanelSvc.getState(column.getColId());
+        }
+
+        return false;
+    }
+
     public override destroy() {
         super.destroy();
         this.allColumnFilters.forEach((filterWrapper) => this.disposeFilterWrapper(filterWrapper, 'gridDestroyed'));
         // don't need to destroy the listeners as they are managed listeners
         this.allColumnListeners.clear();
         this.state.clear();
+        this.activeFilterComps.clear();
     }
 }

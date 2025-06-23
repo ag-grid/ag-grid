@@ -162,6 +162,7 @@ export const _INTERNAL_EVENTS = [
     'filterSwitched',
     'batchEditingStarted',
     'batchEditingStopped',
+    'filterClosed',
 ] as const;
 
 // We define as a callback to help with tree shaking (esbuild)

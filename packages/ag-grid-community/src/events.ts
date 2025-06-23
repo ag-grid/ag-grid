@@ -160,6 +160,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         gridStylesChanged: GridStylesChangedEvent<TData, TContext>;
         storeUpdated: StoreUpdatedEvent<TData, TContext>;
         filterDestroyed: FilterDestroyedEvent<TData, TContext>;
+        filterClosed: FilterClosedEvent<TData, TContext>;
         rowDataUpdateStarted: RowDataUpdateStartedEvent<TData, TContext>;
         rowCountReady: RowCountReadyEvent<TData, TContext>;
         advancedFilterEnabledChanged: AdvancedFilterEnabledChangedEvent<TData, TContext>;
@@ -1256,5 +1257,9 @@ export interface ColumnsResetEvent<TData = any, TContext = any> extends AgGlobal
 }
 export interface FilterSwitchedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'filterSwitched', TData, TContext> {
+    column: Column;
+}
+
+export interface FilterClosedEvent<TData = any, TContext = any> extends AgGlobalEvent<'filterClosed', TData, TContext> {
     column: Column;
 }

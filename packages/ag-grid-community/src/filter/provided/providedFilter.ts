@@ -52,6 +52,7 @@ export abstract class ProvidedFilter<
     private applyDebounced: () => void;
     private debouncePending = false;
     protected state: FilterDisplayState<M>;
+    protected lastContainerType?: ContainerType;
 
     private positionableFeature: PositionableFeature | undefined;
 
@@ -275,6 +276,7 @@ export abstract class ProvidedFilter<
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        this.lastContainerType = params?.container;
         this.refreshFilterResizer(params?.container);
     }
 

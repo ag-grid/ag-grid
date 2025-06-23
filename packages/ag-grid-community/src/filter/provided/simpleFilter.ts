@@ -531,9 +531,15 @@ export abstract class SimpleFilter<
     public override afterGuiDetached(): void {
         super.afterGuiDetached();
 
+        const params = this.params;
+
+        if (this.beans.colFilter?.shouldKeepStateOnDetach(params.column)) {
+            return;
+        }
+
         // Reset temporary UI state that was applied to the DOM but not committed to the model
-        this.params.onStateChange({
-            model: this.params.model,
+        params.onStateChange({
+            model: params.model,
         });
 
         // remove incomplete positions

@@ -624,7 +624,12 @@ export class SetFilter<V = string>
     public override afterGuiDetached(): void {
         super.afterGuiDetached();
 
-        const { excelMode, model, onStateChange } = this.params;
+        const { column, excelMode, model, onStateChange } = this.params;
+
+        if (this.beans.colFilter?.shouldKeepStateOnDetach(column)) {
+            return;
+        }
+
         // discard any unapplied UI state (reset to model)
         if (excelMode) {
             this.resetMiniFilter();
