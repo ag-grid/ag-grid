@@ -129,8 +129,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
     private onEnterKeyDown(event: KeyboardEvent): void {
         const { cellCtrl, beans } = this;
         const { editSvc, navigation, gos } = beans;
-        const editing = editSvc?.isEditing(cellCtrl);
-        if (editing) {
+        const cellEditing = editSvc?.isEditing(cellCtrl);
+        const rowEditing = editSvc?.isRowEditing(cellCtrl);
+        if (cellEditing || rowEditing) {
             if (this.isCtrlEnter(event)) {
                 // bulk edit, apply currently editing value to all selected cells
                 editSvc?.applyBulkEdit(cellCtrl, beans?.rangeSvc?.getCellRanges() || []);
