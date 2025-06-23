@@ -53,7 +53,7 @@ const gridOptions: GridOptions = {
         flex: 1,
         minWidth: 120,
     },
-    groupDefaultExpanded: -1,
+    groupDefaultExpanded: 1,
     rowData: getData(),
     onCellDoubleClicked: (params: CellDoubleClickedEvent<IOlympicData, any>) => {
         if (params.colDef.showRowGroup) {
