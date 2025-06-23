@@ -1,4 +1,3 @@
-import type { IsGroupOpenByDefaultParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
