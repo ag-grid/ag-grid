@@ -89,13 +89,13 @@ This delay helps prevent accidental moves when hovering over potential drop targ
 
 ### Preventing dropping on certain rows
 
-The `canDropOnRow` callback allows you to control whether a row drop is allowed during managed row dragging, and optionally override the rows or parent or position for the drop.
+The `isRowValidDropPosition` callback allows you to control whether a row drop is allowed during managed row dragging, and optionally override the rows or parent or position for the drop.
 This is useful for restricting where rows can be dropped or customizing drop behaviour in tree data.
 Returning an object allows instead to filter the rows to drop, or, change the parent or the position of the drop.
 
-{% apiDocumentation source="grid-options/properties.json" section="rowDragging" names=["canDropOnRow"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="rowDragging" names=["isRowValidDropPosition"] /%}
 
-{% gridExampleRunner title="Managed Row Drag with Tree Data and canDropOnRow" name="tree-managed-row-drag-filesystem"  /%}
+{% gridExampleRunner title="Managed Row Drag with Tree Data and isRowValidDropPosition" name="tree-managed-row-drag-filesystem"  /%}
 
 ## Unmanaged Row Dragging 
 

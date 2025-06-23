@@ -1257,7 +1257,7 @@
             },
             "description": "Delay in milliseconds. When dragging over, it expands collapsed groups or converts leafs to groups after this delay. Default: `500`."
         },
-        "canDropOnRow": {}
+        "isRowValidDropPosition": {}
     },
     "fullWidth": {
         "meta": {

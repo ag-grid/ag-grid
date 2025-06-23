@@ -50,7 +50,7 @@ const gridOptions: GridOptions<IFile> = {
     groupDefaultExpanded: -1,
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
-    canDropOnRow: (params) => {
+    isRowValidDropPosition: (params) => {
         if (!params.newParent) {
             return true; // Not changing parent, allow drop
         }

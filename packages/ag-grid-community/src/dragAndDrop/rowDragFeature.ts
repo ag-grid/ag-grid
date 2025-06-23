@@ -28,7 +28,7 @@ import { DragSourceType } from './dragAndDropService';
 
 export type RowDropTargetPosition = 'above' | 'inside' | 'below';
 
-export interface CanDropOnRowCustomResult<TData = any> {
+export interface IsRowValidDropPositionResult<TData = any> {
     /** The rows that are being dropped, can be used to filter the rows. If empty, the operation is aborted. */
     rows?: IRowNode<TData>[] | null;
     /** The position of the rows relative to the target row */
@@ -39,9 +39,9 @@ export interface CanDropOnRowCustomResult<TData = any> {
     target?: IRowNode<TData> | null;
 }
 
-export type CanDropOnRowCallback<TData = any, TContext = any> = (
+export type IsRowValidDropPositionCallback<TData = any, TContext = any> = (
     params: RowDropTarget<TData, TContext>
-) => boolean | null | CanDropOnRowCustomResult<TData>;
+) => IsRowValidDropPositionResult<TData> | null | boolean;
 
 export interface RowDropTarget<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** True if this rows comes from the same grid, false if is coming from another grid */
@@ -425,26 +425,30 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             rows,
         };
 
-        const canDropOnRowCallback = gos.get('canDropOnRow');
+        const isRowValidDropPosition = gos.get('isRowValidDropPosition');
 
-        if (canDropOnRowCallback) {
-            const canDropResult = canDropOnRowCallback(result);
+        if (isRowValidDropPosition) {
+            const canDropResult = isRowValidDropPosition(result);
             if (!canDropResult) {
                 this.makeGroupThrottleClear();
                 return null; // Nothing to move
-            } else if (typeof canDropResult === 'object') {
+            }
+
+            if (typeof canDropResult === 'object') {
                 // Custom result, override the default values
                 if (canDropResult.rows !== undefined) {
                     result.rows = canDropResult.rows ?? [];
-                }
-                if (canDropResult.position) {
-                    result.position = canDropResult.position;
                 }
                 if (canDropResult.newParent !== undefined) {
                     result.newParent = canDropResult.newParent;
                 }
                 if (canDropResult.target !== undefined) {
                     result.target = canDropResult.target;
+                }
+                if (canDropResult.position) {
+                    result.position = canDropResult.position;
+                } else if (!result.newParent) {
+                    result.position = above ? 'above' : 'below'; // Remove 'inside' if no new parent
                 }
             }
         }
