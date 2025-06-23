@@ -1,7 +1,7 @@
 export interface IFile {
     id: string;
     name: string;
-    type: 'folder' | 'file';
+    type: 'folder' | 'file' | 'readonly-folder';
     dateModified?: string; // ISO date string
     size?: number; // Size in MB
     children?: IFile[];
@@ -16,66 +16,57 @@ export function getData(): IFile[] {
             children: [
                 {
                     id: '2',
-                    name: 'txt',
-                    type: 'folder',
-                    children: [
-                        {
-                            id: '3',
-                            name: 'notes.txt',
-                            type: 'file',
-                            dateModified: '2017-05-21',
-                            size: 14.7,
-                        },
-                    ],
+                    name: 'notes.txt',
+                    type: 'file',
+                    dateModified: '2017-05-21',
+                    size: 14.7,
+                },
+                {
+                    id: '3',
+                    name: 'accounts.xls',
+                    type: 'file',
+                    dateModified: '2016-08-12',
+                    size: 4.3,
                 },
                 {
                     id: '4',
-                    name: 'pdf',
-                    type: 'folder',
-                    children: [
-                        {
-                            id: '5',
-                            name: 'book.pdf',
-                            type: 'file',
-                            dateModified: '2017-05-20',
-                            size: 2.1,
-                        },
-                        {
-                            id: '6',
-                            name: 'cv.pdf',
-                            type: 'file',
-                            dateModified: '2016-05-20',
-                            size: 2.4,
-                        },
-                    ],
+                    name: 'xyz.txt',
+                    type: 'file',
+                    dateModified: '2016-01-17',
+                    size: 1.1,
                 },
                 {
-                    id: '7',
-                    name: 'xls',
+                    id: '5',
+                    name: 'var',
+                    type: 'folder',
+                },
+            ],
+        },
+        {
+            id: '100',
+            name: 'READONLY',
+            type: 'readonly-folder',
+            children: [
+                {
+                    id: '101',
+                    name: 'subfolder',
                     type: 'folder',
                     children: [
                         {
-                            id: '8',
-                            name: 'accounts.xls',
+                            id: '102',
+                            name: 'temp.txt',
                             type: 'file',
                             dateModified: '2016-08-12',
-                            size: 4.3,
+                            size: 101,
                         },
                     ],
                 },
                 {
-                    id: '9',
-                    name: 'stuff',
-                    type: 'folder',
-                    children: [
-                        {
-                            id: '10',
-                            name: 'xyz.txt',
-                            type: 'file',
-                            dateModified: '2016-01-17',
-                            size: 1.1,
-                        },
-                    ],
+                    id: '103',
+                    name: 'notes.txt',
+                    type: 'file',
+                    dateModified: '2016-08-12',
+                    size: 400,
                 },
             ],
         },
@@ -97,20 +88,6 @@ export function getData(): IFile[] {
                             size: 14.3,
                         },
                     ],
-                },
-            ],
-        },
-        {
-            id: '14',
-            name: 'Misc',
-            type: 'folder',
-            children: [
-                {
-                    id: '15',
-                    name: 'temp.txt',
-                    type: 'file',
-                    dateModified: '2016-08-12',
-                    size: 101,
                 },
             ],
         },
