@@ -1,19 +1,19 @@
 ---
-title: "Theming: Colors & Dark Mode"
+title: "Theming: Colours & Dark Mode"
 ---
 
-Control the overall color scheme and color of individual elements
+Control the overall colour scheme and colour of individual elements
 
 ## Overview
 
 * Change individual [colour parameters](#color-parameters)
-* Switch between [light and dark color schemes](#color-schemes) using parts
+* Switch between [light and dark colour schemes](#colour-schemes) using parts
 * Integrate with a website that has a dark mode toggle using [theme modes](#theme-modes)
 * Make unrestricted [customisations using CSS](./theming-css/#custom-css-rules)
 
-## Color Parameters
+## Colour Parameters
 
-The grid has a few key color parameters that most applications will set custom values for, and many more specific color parameters that can be used for fine tuning. Appropriate default values for many parameters are automatically generated based on the key parameters:
+The grid has a few key colour parameters that most applications will set custom values for, and many more specific colour parameters that can be used for fine tuning. Appropriate default values for many parameters are automatically generated based on the key parameters:
 
 * `backgroundColor` - typically your application page background (must be opaque)
 * `foregroundColor` - typically your application text colour
@@ -44,18 +44,18 @@ const myTheme = themeQuartz.withParams({
 
 {% gridExampleRunner title="Colour Customisation" name="color-customisation" exampleHeight=400 suppressDarkMode=true /%}
 
-## Extended Syntax for Color Values
+## Extended Syntax for Colour Values
 
-All theme parameters with the suffix `Color` are color values, and can accept the following values:
+All theme parameters with the suffix `Color` are colour values, and can accept the following values:
 
 | Syntax | Description |
 |-|-|
-| `string` | A [CSS color value](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value), such as `'red'`, `'rgb(255, 0, 0)'`, or variable expression `'var(--myColorVar)'`. |
+| `string` | A [CSS colour value](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value), such as `'red'`, `'rgb(255, 0, 0)'`, or variable expression `'var(--myColorVar)'`. |
 | `{ ref: 'accentColor' }` | Use the same value as the `accentColor` parameter |
 | `{ ref: 'accentColor', mix: 0.25 }` | A mix of 25%, `accentColor` 75% transparent |
 | `{ ref: 'accentColor', mix: 0.25, onto: 'backgroundColor' }` | A mix of 25%, `accentColor` 75% `backgroundColor` |
 
-## Color Schemes
+## Colour Schemes
 
 The grid defines a number of dark and light colour schemes that you can apply.
 

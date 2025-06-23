@@ -34,7 +34,7 @@ There are no deprecated API removals in AG Grid version {% migrationVersion() %}
 
 ### Filters
 
-- `suppressAdvancedFilterEval` is deprecated without replacement. No longer using eval at all in advanced filters so this is now default behavior. This improves security by not requiring `script-src 'unsafe-eval'` for advanced filters.
+- `suppressAdvancedFilterEval` is deprecated without replacement. No longer using eval at all in advanced filters so this is now default behaviour. This improves security by not requiring `script-src 'unsafe-eval'` for advanced filters.
 
 - `ISetFilter` interface is deprecated. When retrieving via `api.getColumnFilterInstance(column)`, use `SetFilterUi`. To access the methods that were previously available on `ISetFilter` (but not on `SetFilterUi`), instead retrieve the filter handler via `api.getColumnFilterHandler(column)` and use the `SetFilterHandler` interface.
 

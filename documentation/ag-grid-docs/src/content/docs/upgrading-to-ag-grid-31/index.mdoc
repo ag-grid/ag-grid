@@ -101,7 +101,7 @@ module.exports = {
 ### ColumnDefs
 
 * Grid columns are now sortable and resizable by default. Also, the grid animates rows by default. In order to avoid this, please set `defaultColDef.resizable = false`, `defaultColDef.sortable = false` and `gridOptions.animateRows = false`.
-* When not providing column definitions or setting `columnDefs = undefined`, a loading overlay will be displayed until column definitions are set. To go back to the earlier behavior of showing a grid without any columns, please set `columnDefs = []`.
+* When not providing column definitions or setting `columnDefs = undefined`, a loading overlay will be displayed until column definitions are set. To go back to the earlier behaviour of showing a grid without any columns, please set `columnDefs = []`.
 * Setting `columnDefs` to `null`/`undefined` via a call to `api.setColumnDefs` or via a state variable no longer clears the columns shown in the grid. Instead, set `columnDefs` to `[]` to clear the columns shown in the grid.
 * `useValueFormatterForExport` is now true by default. This means that cell values are formatted using the column's valueFormatter when exporting data from the grid. This applies to CSV and Excel export, as well as clipboard operations and the fill handle. 
 
@@ -135,7 +135,7 @@ Setting `rowData` to `null`/`undefined` via a call to `api.setRowData` or via a 
 ### Row Grouping
 
 * Group values will no longer be typeless, and will be inferred from the first row when they were created.
-* When using row grouping with `groupDisplayType=singleColumn` (which is the default behavior) and displaying checkboxes in the auto-group column, checkboxes in leaf rows are only displayed if `autoGroupColumnDef` provides a field or a valueGetter to show values in leaf row cells. If you'd like to show checkboxes in the group columns for leaf rows, provide a field or valueGetter in the `autoGroupColumnDef`.
+* When using row grouping with `groupDisplayType=singleColumn` (which is the default behaviour) and displaying checkboxes in the auto-group column, checkboxes in leaf rows are only displayed if `autoGroupColumnDef` provides a field or a valueGetter to show values in leaf row cells. If you'd like to show checkboxes in the group columns for leaf rows, provide a field or valueGetter in the `autoGroupColumnDef`.
 
 ### Pagination
 
