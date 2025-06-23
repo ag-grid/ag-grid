@@ -57,13 +57,13 @@ The following example demonstrates single range cell selection:
 
 {% gridExampleRunner title="Cell Range Selection Suppress Multi" name="range-selection-suppress-multi" /%}
 
-## Ranges with Pinning and Floating
+## Ranges with Pinned Columns and Rows
 
-It is possible to select a cell range that spans pinned and non-pinned sections of the grid. If you do this, the selected range will not have any gaps with regards to the column order. For example, if you start the drag on the left pinned area and drag to the right pinned area, then all of the columns in the center area will also be part of the range.
+It is possible to select a cell range that spans pinned and non-pinned sections of the grid. If you do this, the selected range will not have any gaps with regards to the column or row order. 
 
-Likewise with floating, no row gaps will occur if a range spans into pinned rows. A range will be continuous between the floating top rows, the center, and the floating bottom rows.
+For example, if you start the drag on the left pinned area and drag to the right pinned area, then all of the columns in the center area will also be part of the range. Likewise with pinned rows, no row gaps will occur if a cell range spans into pinned rows. A range will be continuous between the rows pinned to the top, the center, and the rows pinned to the bottom.
 
-The above two (pinning and floating) can be thought of as follows: if you have a grid with pinning and / or floating, then 'flatten out' the grid in your head so that all rows and columns are visible, then the cell selection will work as you would expect in the flattened out version where only full rectangles can be selectable.
+This can be thought of as follows: if you have a grid with pinned rows and / or columns, then 'flatten out' the grid in your head so that all rows and columns are visible, then the cell selection will work as you would expect in the flattened out version where only full rectangles can be selectable.
 
 {% gridExampleRunner title="Cell Range Selection and Pinned Areas" name="range-selection-pinned-areas" /%}
 
