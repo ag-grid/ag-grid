@@ -163,6 +163,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     private dragAndDropImageParent: HTMLElement | ShadowRoot;
 
     private dropTargets: DropTarget[] = [];
+    private lastDropIconName: string | null = null;
     private lastDropTarget: DropTarget | null | undefined;
 
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
@@ -252,6 +253,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.eventLastTime = null;
         this.dragging = false;
         this.lastDropTarget = undefined;
+        this.lastDropIconName = null;
         this.dragItem = null;
         this.dragSource = null;
         this.removeDragAndDropImageComponent();
@@ -284,11 +286,15 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             if (dropTarget && dragAndDropImageComp) {
                 const { comp, promise } = dragAndDropImageComp;
                 if (comp) {
-                    comp.setIcon(dropTarget.getIconName ? dropTarget.getIconName() : null, false);
+                    const iconName = dropTarget.getIconName ? dropTarget.getIconName() : null;
+                    this.lastDropIconName = iconName;
+                    comp.setIcon(iconName, false);
                 } else {
                     promise.then((resolvedComponent) => {
                         if (resolvedComponent) {
-                            resolvedComponent.setIcon(dropTarget.getIconName ? dropTarget.getIconName() : null, false);
+                            const iconName = dropTarget.getIconName ? dropTarget.getIconName() : null;
+                            this.lastDropIconName = iconName;
+                            resolvedComponent.setIcon(iconName, false);
                         }
                     });
                 }
@@ -298,6 +304,15 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         } else if (dropTarget && dropTarget.onDragging) {
             const draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             dropTarget.onDragging(draggingEvent);
+            const comp = dragAndDropImageComp?.comp;
+            if (comp) {
+                const iconName = dropTarget.getIconName ? dropTarget.getIconName() : null;
+                console.log('iconName', iconName);
+                if (this.lastDropIconName !== iconName) {
+                    this.lastDropIconName = iconName;
+                    comp.setIcon(iconName, false);
+                }
+            }
         }
     }
 

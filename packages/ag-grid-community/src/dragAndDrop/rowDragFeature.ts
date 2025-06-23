@@ -118,6 +118,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private eContainer: HTMLElement | null = null;
     private lastDraggingEvent: DraggingEvent | null = null;
     private autoScrollService: AutoScrollService | null = null;
+    private dropAllowed = true;
 
     private makeGroupThrottleTimer: number | null = null;
     private makeGroupThrottleTarget: RowNode | null = null;
@@ -180,9 +181,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public getIconName(): DragAndDropIcon {
-        const managedDrag = this.gos.get('rowDragManaged');
+        const gos = this.gos;
+        const managedDrag = gos.get('rowDragManaged');
 
-        if (managedDrag && this.shouldPreventRowMove()) {
+        if (
+            managedDrag &&
+            ((!this.dropAllowed && gos.get('suppressMoveWhenRowDragging')) || this.shouldPreventRowMove())
+        ) {
             return 'notAllowed';
         }
 
@@ -272,14 +277,15 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private doManagedDrag(draggingEvent: DraggingEvent, throttleMakeGroup: boolean): void {
-        const { dragAndDrop, gos } = this.beans;
-        const isFromThisGrid = this.isFromThisGrid(draggingEvent);
-        const managedDrag = gos.get('rowDragManaged');
-
-        if (managedDrag && this.shouldPreventRowMove()) {
+        if (this.shouldPreventRowMove()) {
             return;
         }
 
+        const { dragAndDrop, gos } = this.beans;
+
+        this.dropAllowed = true;
+
+        const isFromThisGrid = this.isFromThisGrid(draggingEvent);
         if (gos.get('suppressMoveWhenRowDragging') || !isFromThisGrid) {
             if (dragAndDrop!.isDropZoneWithinThisGrid(draggingEvent)) {
                 const rowsDrop = this.managedRowsDrop(draggingEvent, throttleMakeGroup);
@@ -288,13 +294,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 if (target && rowsDrop.rows.length) {
                     rowDropHighlightSvc.set(target as RowNode, rowsDrop.position);
                 } else {
+                    this.dropAllowed = false;
                     rowDropHighlightSvc.clear();
                 }
             }
         } else {
             const rowsDrop = this.managedRowsDrop(draggingEvent, throttleMakeGroup);
-            if (rowsDrop) {
-                this.dropRows(rowsDrop);
+            if (!rowsDrop || !this.dropRows(rowsDrop)) {
+                this.dropAllowed = false;
             }
         }
     }
@@ -435,7 +442,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             source,
             target,
             newParent,
-            rows,
+            rows: filterManageDragRows(rows, newParent),
         };
 
         let customPosition = false;
@@ -485,7 +492,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private makeGroupThrottleCallback = () => {
         this.makeGroupThrottleTimer = null;
         const event = this.lastDraggingEvent;
-        if (event) {
+        if (event && this.gos.get('rowDragManaged')) {
             this.makeGroupThrottled = true;
             this.doManagedDrag(event, false);
             this.makeGroupExpanded(this.makeGroupThrottleTarget);
@@ -796,14 +803,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const clientSideRowModel = this.clientSideRowModel;
         const leafs = new Set<WritableRowNode>();
         for (const row of rows as WritableRowNode[]) {
-            if (row.footer || (row.rowTop === null && row !== clientSideRowModel.getRowNode(row.id!))) {
+            if (row.rowTop === null && row !== clientSideRowModel.getRowNode(row.id!)) {
                 continue; // This row cannot be dragged, not in allLeafChildren and not a filler
             }
 
             if (newParent && row.parent !== newParent) {
-                if (wouldFormCycle(row, newParent)) {
-                    continue; // Invalid move.
-                }
                 row.treeParent = newParent as RowNode | null;
                 changed = true;
             }
@@ -954,17 +958,6 @@ const getPrevOrNext = (
     return undefined; // Out of bounds
 };
 
-const wouldFormCycle = <TData>(row: IRowNode<TData>, newParent: IRowNode<TData> | null): boolean => {
-    let parent = newParent;
-    while (parent) {
-        if (parent === row) {
-            return true;
-        }
-        parent = parent.parent;
-    }
-    return false;
-};
-
 const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: IRowNode): boolean => {
     for (let i = 0, len = rows.length; i < len; ++i) {
         if (rows[i].parent !== newParent) {
@@ -991,3 +984,23 @@ const getLeafRow = (row: IRowNode | null | undefined): RowNode | undefined => {
         row = childrenAfterGroup[0];
     }
 };
+
+const wouldFormCycle = <TData>(row: IRowNode<TData>, newParent: IRowNode<TData> | null): boolean => {
+    for (let parent = newParent; parent; parent = parent.parent) {
+        if (parent === row) return true;
+    }
+    return false;
+};
+
+function filterManageDragRows(rows: IRowNode<any>[], newParent: IRowNode<any> | null): IRowNode<any>[] {
+    let filtered: IRowNode<any>[] | undefined;
+    for (let i = 0, len = rows.length; i < len; ++i) {
+        const row = rows[i];
+        if (row.footer || wouldFormCycle(row, newParent)) {
+            filtered ??= rows.slice(0, i);
+        } else {
+            filtered?.push(row);
+        }
+    }
+    return filtered ?? rows;
+}
