@@ -98,7 +98,7 @@ export function _valuesDiffer({ newValue, oldValue }: Pick<EditValue, 'newValue'
     if (newValue === UNEDITED) {
         newValue = oldValue;
     }
-    return `${newValue ?? ''}` !== `${oldValue ?? ''}`;
+    return newValue !== oldValue;
 }
 
 export function _setupEditor(
