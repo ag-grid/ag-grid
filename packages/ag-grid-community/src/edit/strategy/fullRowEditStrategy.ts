@@ -5,7 +5,7 @@ import type { EditPosition, EditRowPosition } from '../../interfaces/iEditServic
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getRowCtrl } from '../utils/controllers';
-import { _populateModelValidationErrors, _setupEditor } from '../utils/editors';
+import { _populateModelValidationErrors, _setupEditor, _valuesDiffer } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
@@ -128,6 +128,15 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return false;
         }
 
+        const rowEdits = this.model.getEditRow(rowNode!)!;
+        let hadRowEdits = false;
+        for (const [, edit] of rowEdits) {
+            if (_valuesDiffer(edit)) {
+                hadRowEdits = true;
+                break;
+            }
+        }
+
         // rerun validation, new values might have triggered row validations
         _populateModelValidationErrors(this.beans);
         if (this.editSvc?.checkNavWithValidation({ rowNode }) === 'block-stop') {
@@ -137,7 +146,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         super.stop(cancel);
 
         if (rowNode) {
-            this.dispatchRowEvent({ rowNode }, 'rowValueChanged');
+            if (hadRowEdits) {
+                this.dispatchRowEvent({ rowNode }, 'rowValueChanged');
+            }
             this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
         }
 
