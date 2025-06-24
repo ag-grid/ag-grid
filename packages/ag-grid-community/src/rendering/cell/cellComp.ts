@@ -372,7 +372,7 @@ export class CellComp extends Component {
                 );
             };
         } else {
-            createTask = (details: UserCompDetails) => createCellRendererFunc(details);
+            createTask = (details: UserCompDetails) => createCellRendererFunc(details)();
         }
         if (compDetails.params?.deferRender && !this.cellCtrl.rowNode.group) {
             // show loading cell and then pass the task to the animationFrameSvc
