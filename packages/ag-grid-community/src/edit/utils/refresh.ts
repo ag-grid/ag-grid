@@ -24,7 +24,7 @@ const purgeRows = (
 const purgeCells = ({ editModelSvc }: BeanCollection, rowNodes: Set<IRowNode>, columns: Set<Column>): void => {
     rowNodes.forEach((rowNode) =>
         editModelSvc
-            ?.getEditRow({ rowNode })
+            ?.getEditRow(rowNode)
             ?.forEach((_, column) => !columns.has(column) && editModelSvc!.removeEdits({ rowNode, column }))
     );
 };

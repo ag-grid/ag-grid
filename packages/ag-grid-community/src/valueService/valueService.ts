@@ -14,12 +14,15 @@ import type {
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
+import type { IEditService, IsEditingParams } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _exists, _missing } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
 import { _warn } from '../validation/logging';
 import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
+
+const EDITING_CHECK_SIBLINGS: IsEditingParams = { checkSiblings: true };
 
 export class ValueService extends BeanStub implements NamedBean {
     beanName = 'valueSvc' as const;
@@ -28,12 +31,16 @@ export class ValueService extends BeanStub implements NamedBean {
     private colModel: ColumnModel;
     private valueCache?: ValueCache;
     private dataTypeSvc?: DataTypeService;
+    private editSvc?: IEditService;
+    hasEdit: boolean = false;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionSvc = beans.expressionSvc;
         this.colModel = beans.colModel;
         this.valueCache = beans.valueCache;
         this.dataTypeSvc = beans.dataTypeSvc;
+        this.editSvc = beans.editSvc;
+        this.hasEdit = !!beans.editSvc;
     }
 
     private cellExpressions: boolean;
@@ -171,16 +178,16 @@ export class ValueService extends BeanStub implements NamedBean {
         const colId = column.getColId();
         let data = rowNode.data;
 
-        const { editSvc, rowGroupColsSvc, editModelSvc } = this.beans;
-
-        if (source === 'ui' && editSvc && editModelSvc) {
+        if (this.hasEdit && source === 'ui') {
+            const editSvc = this.editSvc!;
             // if the row is editing, make sure we sync data fields with any pending values, for display purposes
-            if (editSvc?.isEditing({ rowNode }, { checkSiblings: true })) {
-                data = editSvc?.getRowDataValue({ rowNode }, { checkSiblings: true });
+
+            if (editSvc.isRowEditing(rowNode, EDITING_CHECK_SIBLINGS)) {
+                data = editSvc.getRowDataValue(rowNode, EDITING_CHECK_SIBLINGS);
             }
 
             // if the row is editing, we want to return the new value, if available
-            if (editSvc?.isEditing()) {
+            if (editSvc.isEditing()) {
                 const newValue = editSvc.getCellDataValue({ rowNode, column });
                 if (newValue !== undefined) {
                     return newValue;
@@ -194,7 +201,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const rowGroupColId = colDef.showRowGroup;
         if (typeof rowGroupColId === 'string') {
             // if multiple columns, don't show values in cells grouped at a higher level
-            const colRowGroupIndex = rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
+            const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
             if (colRowGroupIndex > rowNode.level) {
                 return null;
             }
@@ -286,7 +293,7 @@ export class ValueService extends BeanStub implements NamedBean {
         suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true
     ): string | null {
-        const { editSvc, expressionSvc } = this.beans;
+        const { expressionSvc } = this.beans;
         let result: string | null = null;
         let formatter: ((value: any) => string) | string | undefined;
 
@@ -304,11 +311,13 @@ export class ValueService extends BeanStub implements NamedBean {
 
             if (node) {
                 const position = { rowNode: node };
-                const options = { checkSiblings: true };
 
-                if (editSvc?.isEditing(position, options)) {
-                    // if editing, then use the edited value, not the value from the data
-                    data = editSvc?.getRowDataValue(position, options);
+                if (this.hasEdit) {
+                    const editSvc = this.editSvc!;
+                    if (editSvc.isEditing(position, EDITING_CHECK_SIBLINGS)) {
+                        // if editing, then use the edited value, not the value from the data
+                        data = editSvc.getRowDataValue(node, EDITING_CHECK_SIBLINGS);
+                    }
                 }
             }
 

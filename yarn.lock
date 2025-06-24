@@ -5537,11 +5537,6 @@
     "@octokit/types" "^13.6.2"
     universal-user-agent "^7.0.0"
 
-"@octokit/auth-token@^4.0.0":
-  version "4.0.0"
-  resolved "http://52.50.158.57:4873/@octokit/auth-token/-/auth-token-4.0.0.tgz#40d203ea827b9f17f42a29c6afb93b7745ef80c7"
-  integrity sha512-tY/msAuJo6ARbK6SPIxZrPBms3xPbfwBrulZe0Wtr/DIY9lje2HeV1uoebShn6mx7SjCHif6EjMvoREj+gZ+SA==
-
 "@octokit/auth-token@^5.0.0":
   version "5.1.1"
   resolved "http://52.50.158.57:4873/@octokit/auth-token/-/auth-token-5.1.1.tgz#3bbfe905111332a17f72d80bd0b51a3e2fa2cf07"
@@ -5554,19 +5549,6 @@
   dependencies:
     "@octokit/request-error" "^6.1.6"
     "@octokit/types" "^13.6.2"
-
-"@octokit/core@^5.0.2":
-  version "5.2.0"
-  resolved "http://52.50.158.57:4873/@octokit/core/-/core-5.2.0.tgz#ddbeaefc6b44a39834e1bb2e58a49a117672a7ea"
-  integrity sha512-1LFfa/qnMQvEOAdzlQymH0ulepxbxnCYAKJZfMci/5XJyIHWgEYnDmgnKakbTh7CH2tFQ5O60oYDvns4i9RAIg==
-  dependencies:
-    "@octokit/auth-token" "^4.0.0"
-    "@octokit/graphql" "^7.1.0"
-    "@octokit/request" "^8.3.1"
-    "@octokit/request-error" "^5.1.0"
-    "@octokit/types" "^13.0.0"
-    before-after-hook "^2.2.0"
-    universal-user-agent "^6.0.0"
 
 "@octokit/core@^6.1.3":
   version "6.1.3"
@@ -5588,23 +5570,6 @@
   dependencies:
     "@octokit/types" "^13.6.2"
     universal-user-agent "^7.0.2"
-
-"@octokit/endpoint@^9.0.1":
-  version "9.0.5"
-  resolved "http://52.50.158.57:4873/@octokit/endpoint/-/endpoint-9.0.5.tgz#e6c0ee684e307614c02fc6ac12274c50da465c44"
-  integrity sha512-ekqR4/+PCLkEBF6qgj8WqJfvDq65RH85OAgrtnVp1mSxaXF03u2xW/hUdweGS5654IlC0wkNYC18Z50tSYTAFw==
-  dependencies:
-    "@octokit/types" "^13.1.0"
-    universal-user-agent "^6.0.0"
-
-"@octokit/graphql@^7.1.0":
-  version "7.1.0"
-  resolved "http://52.50.158.57:4873/@octokit/graphql/-/graphql-7.1.0.tgz#9bc1c5de92f026648131f04101cab949eeffe4e0"
-  integrity sha512-r+oZUH7aMFui1ypZnAvZmn0KSqAUgE1/tUXIWaqUCa1758ts/Jio84GZuzsvUkme98kv0WFY8//n0J1Z+vsIsQ==
-  dependencies:
-    "@octokit/request" "^8.3.0"
-    "@octokit/types" "^13.0.0"
-    universal-user-agent "^6.0.0"
 
 "@octokit/graphql@^8.1.2":
   version "8.1.2"
@@ -5659,31 +5624,12 @@
   resolved "http://52.50.158.57:4873/@octokit/plugin-paginate-graphql/-/plugin-paginate-graphql-5.2.4.tgz#b6afda7b3f24cb93d2ab822ec8eac664a5d325d0"
   integrity sha512-pLZES1jWaOynXKHOqdnwZ5ULeVR6tVVCMm+AUbp0htdcyXDU95WbkYdU4R2ej1wKj5Tu94Mee2Ne0PjPO9cCyA==
 
-"@octokit/plugin-paginate-rest@11.3.1":
-  version "11.3.1"
-  resolved "http://52.50.158.57:4873/@octokit/plugin-paginate-rest/-/plugin-paginate-rest-11.3.1.tgz#fe92d04b49f134165d6fbb716e765c2f313ad364"
-  integrity sha512-ryqobs26cLtM1kQxqeZui4v8FeznirUsksiA+RYemMPJ7Micju0WSkv50dBksTuZks9O5cg4wp+t8fZ/cLY56g==
-  dependencies:
-    "@octokit/types" "^13.5.0"
-
 "@octokit/plugin-paginate-rest@^11.3.6", "@octokit/plugin-paginate-rest@^11.4.0":
   version "11.4.0"
   resolved "http://52.50.158.57:4873/@octokit/plugin-paginate-rest/-/plugin-paginate-rest-11.4.0.tgz#a9c3347113d793e48a014f0aa549eada00de7c9a"
   integrity sha512-ttpGck5AYWkwMkMazNCZMqxKqIq1fJBNxBfsFwwfyYKTf914jKkLF0POMS3YkPBwp5g1c2Y4L79gDz01GhSr1g==
   dependencies:
     "@octokit/types" "^13.7.0"
-
-"@octokit/plugin-request-log@^4.0.0":
-  version "4.0.1"
-  resolved "http://52.50.158.57:4873/@octokit/plugin-request-log/-/plugin-request-log-4.0.1.tgz#98a3ca96e0b107380664708111864cb96551f958"
-  integrity sha512-GihNqNpGHorUrO7Qa9JbAl0dbLnqJVrV8OXe2Zm5/Y4wFkZQDfTreBzVmiRfJVfE4mClXdihHnbpyyO9FSX4HA==
-
-"@octokit/plugin-rest-endpoint-methods@13.2.2":
-  version "13.2.2"
-  resolved "http://52.50.158.57:4873/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-13.2.2.tgz#af8e5dd2cddfea576f92ffaf9cb84659f302a638"
-  integrity sha512-EI7kXWidkt3Xlok5uN43suK99VWqc8OaIMktY9d9+RNKl69juoTyxmLoWPIZgJYzi41qj/9zU7G/ljnNOJ5AFA==
-  dependencies:
-    "@octokit/types" "^13.5.0"
 
 "@octokit/plugin-rest-endpoint-methods@^13.3.0":
   version "13.3.0"
@@ -5709,31 +5655,12 @@
     "@octokit/types" "^13.7.0"
     bottleneck "^2.15.3"
 
-"@octokit/request-error@^5.1.0":
-  version "5.1.0"
-  resolved "http://52.50.158.57:4873/@octokit/request-error/-/request-error-5.1.0.tgz#ee4138538d08c81a60be3f320cd71063064a3b30"
-  integrity sha512-GETXfE05J0+7H2STzekpKObFe765O5dlAKUTLNGeH+x47z7JjXHfsHKo5z21D/o/IOZTUEI6nyWyR+bZVP/n5Q==
-  dependencies:
-    "@octokit/types" "^13.1.0"
-    deprecation "^2.0.0"
-    once "^1.4.0"
-
 "@octokit/request-error@^6.0.1", "@octokit/request-error@^6.1.6":
   version "6.1.6"
   resolved "http://52.50.158.57:4873/@octokit/request-error/-/request-error-6.1.6.tgz#5f42c7894e7c3ab47c63aa3241f78cee8a826644"
   integrity sha512-pqnVKYo/at0NuOjinrgcQYpEbv4snvP3bKMRqHaD9kIsk9u1LCpb2smHZi8/qJfgeNqLo5hNW4Z7FezNdEo0xg==
   dependencies:
     "@octokit/types" "^13.6.2"
-
-"@octokit/request@^8.3.0", "@octokit/request@^8.3.1":
-  version "8.4.0"
-  resolved "http://52.50.158.57:4873/@octokit/request/-/request-8.4.0.tgz#7f4b7b1daa3d1f48c0977ad8fffa2c18adef8974"
-  integrity sha512-9Bb014e+m2TgBeEJGEbdplMVWwPmL1FPtggHQRkV+WVsMggPtEkLKPlcVYm/o8xKLkpJ7B+6N8WfQMtDLX2Dpw==
-  dependencies:
-    "@octokit/endpoint" "^9.0.1"
-    "@octokit/request-error" "^5.1.0"
-    "@octokit/types" "^13.1.0"
-    universal-user-agent "^6.0.0"
 
 "@octokit/request@^9.1.4":
   version "9.1.4"
@@ -5746,17 +5673,7 @@
     fast-content-type-parse "^2.0.0"
     universal-user-agent "^7.0.2"
 
-"@octokit/rest@^20.1.1":
-  version "20.1.1"
-  resolved "http://52.50.158.57:4873/@octokit/rest/-/rest-20.1.1.tgz#ec775864f53fb42037a954b9a40d4f5275b3dc95"
-  integrity sha512-MB4AYDsM5jhIHro/dq4ix1iWTLGToIGk6cWF5L6vanFaMble5jTX/UBQyiv05HsWnwUtY8JrfHy2LWfKwihqMw==
-  dependencies:
-    "@octokit/core" "^5.0.2"
-    "@octokit/plugin-paginate-rest" "11.3.1"
-    "@octokit/plugin-request-log" "^4.0.0"
-    "@octokit/plugin-rest-endpoint-methods" "13.2.2"
-
-"@octokit/types@^13.0.0", "@octokit/types@^13.1.0", "@octokit/types@^13.5.0", "@octokit/types@^13.6.2", "@octokit/types@^13.7.0":
+"@octokit/types@^13.6.2", "@octokit/types@^13.7.0":
   version "13.7.0"
   resolved "http://52.50.158.57:4873/@octokit/types/-/types-13.7.0.tgz#22d0e26a8c9f53599bfb907213d8ccde547f36aa"
   integrity sha512-BXfRP+3P3IN6fd4uF3SniaHKOO4UXWBfkdR3vA8mIvaoO/wLjGN5qivUtW0QRitBHHMcfC41SLhNVYIZZE+wkA==
@@ -9083,61 +9000,61 @@ adm-zip@^0.5.10:
   resolved "http://52.50.158.57:4873/adm-zip/-/adm-zip-0.5.16.tgz#0b5e4c779f07dedea5805cdccb1147071d94a909"
   integrity sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==
 
-ag-charts-angular@12.0.0-beta.20250624.1045:
-  version "12.0.0-beta.20250624.1045"
-  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-12.0.0-beta.20250624.1045.tgz#b58a2cdfc300d5ebd44a085d088ff3bf5a570d27"
-  integrity sha512-yw4+iD1ExAEYH83+UPy680wsYJihxZXEkAnsmPKcOp+9t5AMtkHxp7+mq3pGPlEBB1mnrwyAVUoytJ+yGOkEbQ==
+ag-charts-angular@12.0.0-beta.20250624.1327:
+  version "12.0.0-beta.20250624.1327"
+  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-12.0.0-beta.20250624.1327.tgz#08598e0e9444703eec8c490dc021ee24e00c90fc"
+  integrity sha512-xzAgA3s5Tfl63OBSGkkclh/18EsttSj2W0SSpcgtOXi5GTYwWy7Zamzpc1qqG+lukNKpYDnogLSnS1teAwc2Kg==
   dependencies:
-    ag-charts-community "12.0.0-beta.20250624.1045"
+    ag-charts-community "12.0.0-beta.20250624.1327"
     tslib "^2.3.0"
 
-ag-charts-community@12.0.0-beta.20250624.1045:
-  version "12.0.0-beta.20250624.1045"
-  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-12.0.0-beta.20250624.1045.tgz#42786c3c125a1b911f6f4dc172a4dbf802fbff43"
-  integrity sha512-iK7A6UXigDC4PjljfuUNrY1z/1i5rOjx0RtItcIuhh2+2VW92EcOM5OrAUvZU9mfHE6pTxSEOXPoSZid8e8F0Q==
+ag-charts-community@12.0.0-beta.20250624.1327:
+  version "12.0.0-beta.20250624.1327"
+  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-12.0.0-beta.20250624.1327.tgz#4eff164cd85e89a2e60d533013f17523eaed7ab9"
+  integrity sha512-Rbv1SvwKkCAE5sLGd5q+rY1ZVt42H1GPKntsHMdIn/O79KjHxrecNJ53BMsbx0QpjnhiFgzZUPO6VOy9ZDG7/A==
   dependencies:
-    ag-charts-core "12.0.0-beta.20250624.1045"
-    ag-charts-locale "12.0.0-beta.20250624.1045"
-    ag-charts-types "12.0.0-beta.20250624.1045"
+    ag-charts-core "12.0.0-beta.20250624.1327"
+    ag-charts-locale "12.0.0-beta.20250624.1327"
+    ag-charts-types "12.0.0-beta.20250624.1327"
 
-ag-charts-core@12.0.0-beta.20250624.1045:
-  version "12.0.0-beta.20250624.1045"
-  resolved "http://52.50.158.57:4873/ag-charts-core/-/ag-charts-core-12.0.0-beta.20250624.1045.tgz#03eda32618c4dfcbf92666bb24bd72945ddea481"
-  integrity sha512-+GHHm0m0MwBuahP0+33Y1wIriRVkT6SmwcNWWS9Y4lx4ptdchDmX//z4aYx5nhUrvEXb8hU3tjcfUv/KWOqs6Q==
+ag-charts-core@12.0.0-beta.20250624.1327:
+  version "12.0.0-beta.20250624.1327"
+  resolved "http://52.50.158.57:4873/ag-charts-core/-/ag-charts-core-12.0.0-beta.20250624.1327.tgz#321f6a9b245c508a70132d544839300bc1120c2d"
+  integrity sha512-Lzg31aGEk3lyWOM5G+g7iDpyVE9NHZer+vEr3zH4FHokW1tfDTWLvdGO2lrvZ6SUIXGqwZsThPdHLuKjEm4BEg==
   dependencies:
-    ag-charts-types "12.0.0-beta.20250624.1045"
+    ag-charts-types "12.0.0-beta.20250624.1327"
 
-ag-charts-enterprise@12.0.0-beta.20250624.1045:
-  version "12.0.0-beta.20250624.1045"
-  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-12.0.0-beta.20250624.1045.tgz#053efa55dd6b494666bb7597605c395cfa4bf3e2"
-  integrity sha512-NmZOUab2CWP1r/+B0NrqReiCp5ebrbfOjoCD79OwotIfvox/z1xzio+M8eQpy+kh3XMH0SUgevFsg20UTtdRRg==
+ag-charts-enterprise@12.0.0-beta.20250624.1327:
+  version "12.0.0-beta.20250624.1327"
+  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-12.0.0-beta.20250624.1327.tgz#5dfb05a13a497d0134e00e977faf576d4bad418c"
+  integrity sha512-e1iFfn+RXOMIoY9D+Vw8chOwnuQDtFlNP/N1G1BUTIK8YluAZr/VcBL9bfMxFyn5jNkzWVPakud2jW/oPA+GRg==
   dependencies:
-    ag-charts-community "12.0.0-beta.20250624.1045"
-    ag-charts-core "12.0.0-beta.20250624.1045"
+    ag-charts-community "12.0.0-beta.20250624.1327"
+    ag-charts-core "12.0.0-beta.20250624.1327"
 
-ag-charts-locale@12.0.0-beta.20250624.1045:
-  version "12.0.0-beta.20250624.1045"
-  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-12.0.0-beta.20250624.1045.tgz#3fedf925ba169031bfaa05e2da4efd5a6e571d30"
-  integrity sha512-MgdJBEQvBcXMSzUiKcB7rdnooOZoUllN5Dvty9wTbbTm24yaF1A6Cu7fIBhH1AhwQF5BlPcsxK8Q2pq+xnaSkA==
+ag-charts-locale@12.0.0-beta.20250624.1327:
+  version "12.0.0-beta.20250624.1327"
+  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-12.0.0-beta.20250624.1327.tgz#75adb4ce32d587a837edc92735f12f2a1af1a499"
+  integrity sha512-4wsNsvMpIoA82k8TnpZlVdByE18EZjYYI6UuwD2jx9Fzt8cF7Bb+kl22dxKjMJF+slhP63gI75ZtjEW1FdfvYw==
 
-ag-charts-react@12.0.0-beta.20250624.1045:
-  version "12.0.0-beta.20250624.1045"
-  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-12.0.0-beta.20250624.1045.tgz#861a825df7c5fd23fe239d7380e946de868ce5ef"
-  integrity sha512-rdmNTNF9ab+J50N6nj+a2EXTC43TlHc3cTV3N9hPVnwKmPpw6sW4fFU6uEye5GrAWDLevLwQ7lscFhahTLsf1g==
+ag-charts-react@12.0.0-beta.20250624.1327:
+  version "12.0.0-beta.20250624.1327"
+  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-12.0.0-beta.20250624.1327.tgz#9a1007a63c446568bb4953933ef3284e3af8bc2a"
+  integrity sha512-OSZ1p/d679vP2O79J58zH/s6TTt16XgUGUnokEcFi6vF3fT1odZ2RnUsAHj8adpTPU08JzUPwQXKH/zU4j1cZA==
   dependencies:
-    ag-charts-community "12.0.0-beta.20250624.1045"
+    ag-charts-community "12.0.0-beta.20250624.1327"
 
-ag-charts-types@12.0.0-beta.20250624.1045:
-  version "12.0.0-beta.20250624.1045"
-  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-12.0.0-beta.20250624.1045.tgz#12a7452b77a0ad9a433d94e5ea3c9c2ff570432f"
-  integrity sha512-i4DfLY058FQ5CcKOdpzy3okMDdRpmJKBArXAzwZ52dAVzTk2Tz6yzEL19duB4kCMbzb/cPN7NSVcfp+viOHPDQ==
+ag-charts-types@12.0.0-beta.20250624.1327:
+  version "12.0.0-beta.20250624.1327"
+  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-12.0.0-beta.20250624.1327.tgz#e384de6342f503b2a0c3448d389d31e16a10a4de"
+  integrity sha512-KyXOasTQNErVsvGpyZjWJ7RgAdb2Swfi3ixMk32yAsVa1yM1oZLm8cdlLVHRF2TmtrrJfjQBb4E1IJyzeAjN4g==
 
-ag-charts-vue3@12.0.0-beta.20250624.1045:
-  version "12.0.0-beta.20250624.1045"
-  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-12.0.0-beta.20250624.1045.tgz#c64b9fff75ca7fed12de4824bde801c90d4b76f0"
-  integrity sha512-1JSTWecns397ZLuCWIlUPI5SRfOWVQRNJftjertKihHgUC1kx59MrDAadLIsLQkm3UfxyeINIQC1hXaW907TZw==
+ag-charts-vue3@12.0.0-beta.20250624.1327:
+  version "12.0.0-beta.20250624.1327"
+  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-12.0.0-beta.20250624.1327.tgz#295ca9734d14d33be6e6176dc93624263ca44c6e"
+  integrity sha512-SjuAdPinj/E1SRUfhLmj5mnGCGx+a/6feLkS+iRKQiAjMJ7RprId+OKt6bbDp2rSEBG7CNx16lzFoa0u4Eunbw==
   dependencies:
-    ag-charts-community "12.0.0-beta.20250624.1045"
+    ag-charts-community "12.0.0-beta.20250624.1327"
 
 agent-base@6, agent-base@^6.0.2:
   version "6.0.2"
@@ -9780,6 +9697,15 @@ axios@^1.6.0, axios@^1.7.4:
     form-data "^4.0.0"
     proxy-from-env "^1.1.0"
 
+axios@^1.8.3:
+  version "1.10.0"
+  resolved "http://52.50.158.57:4873/axios/-/axios-1.10.0.tgz#af320aee8632eaf2a400b6a1979fa75856f38d54"
+  integrity sha512-/1xYAC4MP/HEG+3duIhFr4ZQXR4sQXOIe+o6sdqzeykGLx6Upp/1p8MHqhINOvGeP7xyNHe7tsiJByc4SSVUxw==
+  dependencies:
+    follow-redirects "^1.15.6"
+    form-data "^4.0.0"
+    proxy-from-env "^1.1.0"
+
 axobject-query@^4.1.0:
   version "4.1.0"
   resolved "http://52.50.158.57:4873/axobject-query/-/axobject-query-4.1.0.tgz#28768c76d0e3cff21bc62a9e2d0b6ac30042a1ee"
@@ -10069,11 +9995,6 @@ beasties@0.1.0:
     picocolors "^1.1.1"
     postcss "^8.4.47"
     postcss-media-query-parser "^0.2.3"
-
-before-after-hook@^2.2.0:
-  version "2.2.3"
-  resolved "http://52.50.158.57:4873/before-after-hook/-/before-after-hook-2.2.3.tgz#c51e809c81a4e354084422b9b26bad88249c517c"
-  integrity sha512-NzUnlZexiaH/46WDhANlyR2bXRopNg4F/zuSA3OpZnllCUgRaOF2znDioDWrmbNVsuZk6l9pMquQB38cfBZwkQ==
 
 before-after-hook@^3.0.2:
   version "3.0.2"
@@ -12241,11 +12162,6 @@ dependency-graph@^1.0.0:
   version "1.0.0"
   resolved "http://52.50.158.57:4873/dependency-graph/-/dependency-graph-1.0.0.tgz#bb5e85aec1310bc13b22dbd76e3196c4ee4c10d2"
   integrity sha512-cW3gggJ28HZ/LExwxP2B++aiKxhJXMSIt9K48FOXQkm+vuG5gyatXnLsONRJdzO/7VfjDIiaOOa/bs4l464Lwg==
-
-deprecation@^2.0.0:
-  version "2.3.1"
-  resolved "http://52.50.158.57:4873/deprecation/-/deprecation-2.3.1.tgz#6368cbdb40abf3373b525ac87e4a260c3a700919"
-  integrity sha512-xmHIy4F3scKVwMsQ4WnVaS8bHOx0DmVwRywosKhaILI0ywMDWPtBSku2HNxRvF7jtwDRsoEwYQSfbxj8b7RlJQ==
 
 dequal@^2.0.0, dequal@^2.0.3:
   version "2.0.3"
@@ -26146,11 +26062,6 @@ universal-github-app-jwt@^2.2.0:
   resolved "http://52.50.158.57:4873/universal-github-app-jwt/-/universal-github-app-jwt-2.2.0.tgz#dc6c8929e76f1996a766ba2a08fb420f73365d77"
   integrity sha512-G5o6f95b5BggDGuUfKDApKaCgNYy2x7OdHY0zSMF081O0EJobw+1130VONhrA7ezGSV2FNOGyM+KQpQZAr9bIQ==
 
-universal-user-agent@^6.0.0:
-  version "6.0.1"
-  resolved "http://52.50.158.57:4873/universal-user-agent/-/universal-user-agent-6.0.1.tgz#15f20f55da3c930c57bddbf1734c6654d5fd35aa"
-  integrity sha512-yCzhz6FN2wU1NiiQRogkTQszlQSlpWaw8SvVegAc+bDxbzHgh1vX8uIe8OYyMH6DwH+sdTJsgMl36+mSMdRJIQ==
-
 universal-user-agent@^7.0.0, universal-user-agent@^7.0.2:
   version "7.0.2"
   resolved "http://52.50.158.57:4873/universal-user-agent/-/universal-user-agent-7.0.2.tgz#52e7d0e9b3dc4df06cc33cb2b9fd79041a54827e"
@@ -26516,15 +26427,14 @@ vite-plugin-inspect@0.8.9:
     picocolors "^1.1.1"
     sirv "^3.0.0"
 
-vite-plugin-mkcert@^1.17.2:
-  version "1.17.6"
-  resolved "http://52.50.158.57:4873/vite-plugin-mkcert/-/vite-plugin-mkcert-1.17.6.tgz#c514d3d72ba201997e29cc537538bf8ff126c5c2"
-  integrity sha512-4JR1RN0HEg/w17eRQJ/Ve2pSa6KCVQcQO6yKtIaKQCFDyd63zGfXHWpygBkvvRSpqa0GcqNKf0fjUJ0HiJQXVQ==
+vite-plugin-mkcert@^1.17.8:
+  version "1.17.8"
+  resolved "http://52.50.158.57:4873/vite-plugin-mkcert/-/vite-plugin-mkcert-1.17.8.tgz#7ddbd62a7b7941a57dfdf73cb19d6c39c3967e96"
+  integrity sha512-S+4tNEyGqdZQ3RLAG54ETeO2qyURHWrVjUWKYikLAbmhh/iJ+36gDEja4OWwFyXNuvyXcZwNt5TZZR9itPeG5Q==
   dependencies:
-    "@octokit/rest" "^20.1.1"
-    axios "^1.7.4"
-    debug "^4.3.6"
-    picocolors "^1.0.1"
+    axios "^1.8.3"
+    debug "^4.4.0"
+    picocolors "^1.1.1"
 
 vite-plugin-svgr@^4.2.0:
   version "4.3.0"

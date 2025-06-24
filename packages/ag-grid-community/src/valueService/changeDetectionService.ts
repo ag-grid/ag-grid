@@ -98,7 +98,6 @@ export class ChangeDetectionService extends BeanStub implements IChangeDetection
             rowNodes,
             suppressFlash,
             force,
-            columns: (column && [column]) || undefined,
         });
 
         if (rowNode.pinnedSibling) {
