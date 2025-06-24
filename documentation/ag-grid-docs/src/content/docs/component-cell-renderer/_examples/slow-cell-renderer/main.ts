@@ -1,5 +1,6 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, ICellRendererParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { CustomLoadingCellRenderer } from './customLoadingCellRenderer_typescript';
 import { FastRenderer } from './fastRenderer_typescript';
@@ -7,6 +8,7 @@ import { SlowRenderer } from './slowRenderer_typescript';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    RowGroupingModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -14,14 +16,20 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     rowBuffer: 5, // Reduce the row buffer to reduce number of slow cells to be rendered
+    groupDefaultExpanded: 1,
     columnDefs: [
         {
             field: 'athlete',
+            rowGroup: true,
+            hide: true,
         },
         {
             field: 'country',
             headerName: 'Slow Renderer',
-            cellRenderer: SlowRenderer,
+            cellRendererSelector: (params: ICellRendererParams) => {
+                // Optimisation to only use the slow renderer for leaf nodes and not for groups
+                return params.node.group ? undefined : { component: SlowRenderer };
+            },
             cellRendererParams: {
                 deferRender: true,
             },
@@ -29,7 +37,10 @@ const gridOptions: GridOptions<IOlympicData> = {
         {
             field: 'bronze',
             headerName: 'Slow Renderer Custom',
-            cellRenderer: SlowRenderer,
+            cellRendererSelector: (params: ICellRendererParams) => {
+                // Optimisation to only use the slow renderer for leaf nodes and not for groups
+                return params.node.group ? undefined : { component: SlowRenderer };
+            },
             cellRendererParams: {
                 deferRender: true,
             },

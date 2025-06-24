@@ -82,7 +82,7 @@ export interface IEditService extends NamedBean {
     setBatchEditing(enabled: boolean): void;
     isBatchEditing(): boolean;
     isEditing(position?: EditPosition | null, params?: IsEditingParams | null): boolean;
-    isRowEditing(position?: EditRowPosition | null, params?: IsEditingParams | null): boolean;
+    isRowEditing(rowNode?: IRowNode | null, params?: IsEditingParams | null): boolean;
     startEditing(position: Required<EditPosition>, params: StartEditParams): void;
     stopEditing(position?: EditPosition, params?: StopEditParams): boolean;
     stopAllEditing(cancel?: boolean, source?: EditSource): void;
@@ -95,7 +95,7 @@ export interface IEditService extends NamedBean {
         source?: EditSource
     ): boolean | null;
     getCellDataValue(position: Required<EditPosition>): any;
-    getRowDataValue({ rowNode }: Required<EditRowPosition>, params?: GetEditsParams): any;
+    getRowDataValue(rowNode: IRowNode, params?: GetEditsParams): any;
     addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void;
     createPopupEditorWrapper(params: ICellEditorParams): PopupEditorWrapper;
     setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined;
