@@ -245,11 +245,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.setFocusOutOnEditor(prevCell);
         }
 
-        if (!rowsMatch && !preventNavigation) {
-            super.cleanupEditors(nextCell, true);
-            this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
-        }
-
         if (nextEditable && !preventNavigation) {
             if (!nextCell.comp?.getCellEditor()) {
                 // editor missing because it was outside the viewport during creating phase, attempt to create it now
@@ -259,6 +254,11 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             nextCell.focusCell(false, event);
         } else {
             nextCell.focusCell(true, event);
+        }
+
+        if (!rowsMatch && !preventNavigation) {
+            super.cleanupEditors(nextCell, true);
+            this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
         }
 
         prevCell.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
