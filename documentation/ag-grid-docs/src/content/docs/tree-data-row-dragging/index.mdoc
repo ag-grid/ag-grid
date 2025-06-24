@@ -2,7 +2,8 @@
 title: "Tree Data - Row Dragging"
 enterprise: true
 ---
-Configure the grid to display structured data by providing data paths.
+
+Row dragging is used to rearrange the tree structure by dragging rows with the mouse.
 
 ## Enabling Row Dragging
 
@@ -31,6 +32,7 @@ See the [Row Dragging](./row-dragging/) documentation for more information about
 This is the simplest way to enable row dragging with Tree Data.
 The grid will automatically handle the dragging of rows and updating the data structure.
 It supports reordering, moving parents and children, and converting a leaf node into a group.
+Moving a parent as a child of itself is not allowed, to avoid cycles, and the grid will prevent this automatically.
 
 To enable managed row dragging, set the following options:
 
@@ -85,6 +87,19 @@ See the [Providing Data Paths](./tree-data-paths) for details about filler nodes
 
 {% gridExampleRunner title="Managed Row Drag with Tree Data (getDataPath)" name="tree-managed-row-drag-data-path" exampleHeight=500 /%}
 
+### Multi-Row Dragging
+
+Managed row dragging supports multi-row dragging, allowing users to select multiple rows and drag them together, also from different levels.
+
+It is possible to drag multiple rows at the same time also in a tree, when `rowDragMultiRow` is set to `true` in the `gridOptions` and it is combined with `rowSelection.mode='multiRow'`.
+
+For this example note the following:
+
+* When you select multiple items and drag one of them, all items in the selection will be dragged.
+* When you drag an item that is not selected while other items are selected, only the unselected item will be dragged.
+
+{% gridExampleRunner title="Row Drag with Multi-Row Drag" name="tree-managed-multi-row-drag" /%}
+
 ### Row Drag Insert Delay
 
 When using Tree Data with Managed Row Dragging, the `rowDragInsertDelay` grid option sets a delay (in milliseconds) before a dragged row is inserted into a new parent node.
@@ -107,7 +122,7 @@ In the example below, note that:
 
 ## Unmanaged Row Dragging 
 
-In order to have full control over row dragging, it is possible to provide a customized implementation of row dragging using unmanaged row dragging.
+In order to have full control over row dragging, it is possible to provide a customized implementation of row dragging using [unmanaged row dragging](./row-dragging/#unmanaged-dragging)
 In this case, the application is responsible for maintaining the rowData state, handling the dragging events and updating the rowData based on the drag events fired by the grid.
 
 ### Tree Data with getDataPath
