@@ -336,8 +336,10 @@ export class CellComp extends Component {
         return result === true || result === undefined;
     }
 
-    private getCompConstructor(displayComponentVersionCopy: number) {
-        return (details: UserCompDetails) => (_?: boolean) => {
+    private createCellRendererInstance(compDetails: UserCompDetails): void {
+        const displayComponentVersionCopy = this.rendererVersion;
+
+        const createCellRendererFunc = (details: UserCompDetails) => (_?: boolean) => {
             const staleTask = this.rendererVersion !== displayComponentVersionCopy || !this.isAlive();
             if (staleTask) {
                 return;
@@ -353,12 +355,6 @@ export class CellComp extends Component {
             );
             componentPromise?.then(callback);
         };
-    }
-
-    private createCellRendererInstance(compDetails: UserCompDetails): void {
-        const displayComponentVersionCopy = this.rendererVersion;
-
-        const createCellRendererFunc = this.getCompConstructor(displayComponentVersionCopy);
         // we only use task service when rendering for first time, which means it is not used when doing edits.
         // if we changed this (always use task service) would make sense, however it would break tests, possibly
         // test of users.
