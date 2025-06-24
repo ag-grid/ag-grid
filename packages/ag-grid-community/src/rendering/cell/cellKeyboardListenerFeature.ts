@@ -2,6 +2,7 @@ import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import { _populateModelValidationErrors } from '../../edit/utils/editors';
+import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import { _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
@@ -91,8 +92,14 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
         const endCell = rangeSvc.extendLatestRangeInDirection(event);
 
-        if (endCell) {
-            navigation?.ensureCellVisible(endCell);
+        if (!endCell) {
+            return;
+        }
+
+        if (event.key === KeyCode.LEFT || event.key === KeyCode.RIGHT) {
+            navigation?.ensureColumnVisible(endCell.column as AgColumn);
+        } else {
+            navigation?.ensureRowVisible(endCell.rowIndex);
         }
     }
 

@@ -866,6 +866,20 @@ export class NavigationService extends BeanStub implements NamedBean {
             scrollFeature.ensureColumnVisible(gridCell.column);
         }
     }
+
+    public ensureColumnVisible(column: AgColumn): void {
+        const scrollFeature = this.gridBodyCon.scrollFeature;
+
+        // this scrolls the column into view
+        if (!column.isPinned()) {
+            scrollFeature.ensureColumnVisible(column);
+        }
+    }
+
+    public ensureRowVisible(rowIndex: number): void {
+        const scrollFeature = this.gridBodyCon.scrollFeature;
+        scrollFeature.ensureIndexVisible(rowIndex);
+    }
 }
 
 function getVScroll(beans: BeanCollection): VerticalScrollPosition {
