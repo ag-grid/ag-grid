@@ -35,6 +35,8 @@ export class SetFilterHandler<TValue = string>
     extends BeanStub<SetFilterHandlerEventType>
     implements FilterHandler<any, any, SetFilterModel, ISetFilterParams<any, TValue>>, ISetFilterHandler<TValue>
 {
+    /** Used to get the filter type for filter models. */
+    public readonly filterType = 'set' as const;
     public params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
     /**
      * Here we keep track of the keys that are currently being used for filtering.
@@ -314,9 +316,11 @@ export class SetFilterHandler<TValue = string>
                 params.onModelChange(null, additionalEventAttributes);
                 return;
             }
-            if (updated) {
+            const allSelected = numNewValues === existingFormattedKeys.size;
+
+            if (updated || !model.filterType || allSelected) {
                 // if all values selected, remove model
-                const newModel = numNewValues === existingFormattedKeys.size ? null : { ...model, values: newValues };
+                const newModel = allSelected ? null : { filterType: this.filterType, values: newValues };
                 params.onModelChange(newModel, additionalEventAttributes);
                 return;
             }

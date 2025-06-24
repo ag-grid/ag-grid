@@ -28,6 +28,9 @@ export class MultiFilterHandler
     extends BeanStub
     implements FilterHandler<any, any, IMultiFilterModel, IMultiFilterParams>, IMultiFilterHandler
 {
+    /** Used to get the filter type for filter models. */
+    public readonly filterType = 'multi' as const;
+
     private params: FilterHandlerParams<any, any, IMultiFilterModel, IMultiFilterParams>;
     private handlerWrappers: (HandlerWrapper | undefined)[] = [];
     /** ui active. could still have null model */
