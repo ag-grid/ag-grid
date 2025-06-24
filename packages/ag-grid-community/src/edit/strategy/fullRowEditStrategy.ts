@@ -130,7 +130,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         // rerun validation, new values might have triggered row validations
         _populateModelValidationErrors(this.beans);
-        if (this.editSvc?.checkNavWithValidation({ rowNode }) === 'block-stop') {
+        if (!cancel && this.editSvc?.checkNavWithValidation({ rowNode }) === 'block-stop') {
             return false;
         }
 
