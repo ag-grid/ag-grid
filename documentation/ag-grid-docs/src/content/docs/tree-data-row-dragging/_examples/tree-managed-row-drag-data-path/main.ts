@@ -33,7 +33,6 @@ const gridOptions: GridOptions<Task> = {
     getDataPath: (data) => data.path,
     groupDefaultExpanded: -1,
     rowDragManaged: true,
-    rowDragInsertDelay: 500,
     suppressMoveWhenRowDragging: true,
 };
 

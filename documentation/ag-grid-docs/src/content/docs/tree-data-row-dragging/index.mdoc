@@ -37,7 +37,6 @@ Moving a parent to be a child of itself is not allowed, as this would create a c
 To enable managed row dragging, set the following options:
 
 - `rowDragManaged: true` — Enables managed row dragging, so the grid handles row movement automatically.
-- `rowDragInsertDelay` — Delay before expanding a collapsed group or converting a leaf to a group (see [Row Drag Insert Delay](#row-drag-insert-delay)).
 - `autoGroupColumnDef.rowDrag: true` — Enables the drag handle in the group column.
 - `suppressMoveWhenRowDragging: true` — Prevents the grid from moving rows while dragging, showing a highlight over the row instead.
 
@@ -55,7 +54,6 @@ Other relevant options used in the example above include:
 - `treeData: true` — Enables tree data mode, allowing hierarchical data structures.
 - `treeDataParentIdField: 'parentId'` — Specifies the field that defines parent-child relationships.
 - `groupDefaultExpanded: -1` — Expands all groups by default.
-- `rowDragInsertDelay` — Optional delay before inserting a dragged row into a new parent node. Default is 500 milliseconds.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -63,7 +61,6 @@ const gridOptions = {
     getRowId: params => params.data.id,
     treeDataParentIdField: 'parentId',
     rowDragManaged: true,
-    rowDragInsertDelay: 500, // optional
     groupDefaultExpanded: -1,
     suppressMoveWhenRowDragging: true,
     autoGroupColumnDef: {
@@ -122,7 +119,7 @@ In the example below, note that:
 
 ## Unmanaged Row Dragging 
 
-In order to have full control over row dragging, it is possible to provide a customized implementation of row dragging using [Unmanaged Row Dragging](./row-dragging/#unmanaged-dragging)
+In order to have full control over row dragging, it is possible to provide a customized implementation of row dragging using [Unmanaged Row Dragging](./row-dragging/#unmanaged-dragging).
 In this case, the application is responsible for maintaining the rowData state, handling the dragging events and updating the rowData based on the drag events fired by the grid.
 
 ### Tree Data with getDataPath
