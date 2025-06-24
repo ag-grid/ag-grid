@@ -18,7 +18,8 @@ html, body {
     background-color: transparent;
 }
 
-/* Apply "color-scheme: dark;" to all elements outside the grid */ 
+/* Apply "color-scheme: dark;" to all elements outside the grid */
+html[data-color-scheme='dark'] body,
 html[data-color-scheme='dark'] body > *:where(:not([class^=ag])) {
     color-scheme: dark;
 
@@ -26,6 +27,11 @@ html[data-color-scheme='dark'] body > *:where(:not([class^=ag])) {
     .ag-theme-quartz {
         color-scheme: light;
     }
+}
+
+/* restore light color scheme for legacy quartz light theme which does not set its own color scheme */
+html[data-color-scheme='dark'] body:has(.ag-theme-quartz) {
+    color-scheme: light;
 }
 
 html[data-color-scheme='dark'] button:not(.ag-root-wrapper button, #myChart button, button[class*='ag-']) , .ag-fill-direction  {
