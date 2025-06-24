@@ -1,5 +1,11 @@
 import React from 'react';
 
-export default () => {
-    return <button onClick={() => console.log('Software Launched')}>Launch!</button>;
+import type { ICellRendererParams } from 'ag-grid-community';
+
+export default ({ data }: ICellRendererParams) => {
+    return (
+        <button onClick={() => console.log('Software Launched')}>
+            {data?.company ? `Launch ${data.company}!` : 'Launch!'}
+        </button>
+    );
 };
