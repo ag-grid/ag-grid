@@ -22,8 +22,12 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
+function arrayEquals<T>(a: T[], b: T[]) {
+    return a === b || (a.length === b.length && a.every((v, i) => v === b[i]));
+}
+
 // Rebuild the data array, updating the path for each node if changed
-const extractChildren = (api: GridApi<Task>) => {
+function extractRowData(api: GridApi<Task>) {
     const extractedData: Task[] = [];
     api.forEachLeafNode((node) => {
         const data = node.data;
@@ -39,13 +43,13 @@ const extractChildren = (api: GridApi<Task>) => {
         }
     });
     return extractedData;
-};
+}
 
-const exportDataCallback = (api: GridApi<Task>) => {
-    const exportedData = extractChildren(api);
+function showExtractedRowData(api: GridApi<Task>) {
+    const exportedData = extractRowData(api);
     const json = JSON.stringify(exportedData, null, 2);
-    document.getElementById('exported-data-content')!.textContent = json;
-};
+    document.getElementById('extracted-data-content')!.textContent = json;
+}
 
 const gridOptions: GridOptions<Task> = {
     columnDefs: [{ field: 'assignee' }],
@@ -65,17 +69,10 @@ const gridOptions: GridOptions<Task> = {
     rowDragInsertDelay: 500,
     suppressMoveWhenRowDragging: true,
     onRowDragEnd: (event) => {
-        exportDataCallback(event.api);
+        showExtractedRowData(event.api);
     },
 };
 
 const eGridDiv = document.getElementById('myGrid');
 let gridApi: GridApi<Task>;
 gridApi = createGrid(eGridDiv!, gridOptions) as GridApi<Task>;
-
-// Initial export
-exportDataCallback(gridApi);
-
-function arrayEquals<T>(a: T[], b: T[]) {
-    return a === b || (a.length === b.length && a.every((v, i) => v === b[i]));
-}

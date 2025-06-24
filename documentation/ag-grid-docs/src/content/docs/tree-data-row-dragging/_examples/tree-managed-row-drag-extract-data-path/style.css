@@ -10,12 +10,12 @@
     flex: 1;
 }
 
-#exported-data-content {
+#extracted-data-content {
     margin: 0;
     padding: 5px;
 }
 
-#exported-data-content-container {
+#extracted-data-content-container {
     min-width: 350px;
     overflow: auto;
     border: 1px solid #aaa;

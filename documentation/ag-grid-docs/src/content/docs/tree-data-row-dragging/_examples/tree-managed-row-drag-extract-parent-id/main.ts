@@ -20,7 +20,7 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-function extractData(api: GridApi<Task>) {
+function extractRowData(api: GridApi<Task>) {
     const extractedData: Task[] = [];
     api.forEachLeafNode((node) => {
         let data = node.data!;
@@ -34,10 +34,10 @@ function extractData(api: GridApi<Task>) {
     return extractedData;
 }
 
-function exportDataCallback(api: GridApi<Task>) {
-    const exportedData = extractData(api);
+function showExtractedRowData(api: GridApi<Task>) {
+    const exportedData = extractRowData(api);
     const json = JSON.stringify(exportedData, null, 2);
-    document.getElementById('exported-data-content')!.textContent = json;
+    document.getElementById('extracted-data-content')!.textContent = json;
 }
 
 const gridOptions: GridOptions<Task> = {
@@ -59,7 +59,7 @@ const gridOptions: GridOptions<Task> = {
     rowDragInsertDelay: 500,
     suppressMoveWhenRowDragging: true,
     onRowDragEnd: (event) => {
-        exportDataCallback(event.api);
+        showExtractedRowData(event.api);
     },
 };
 

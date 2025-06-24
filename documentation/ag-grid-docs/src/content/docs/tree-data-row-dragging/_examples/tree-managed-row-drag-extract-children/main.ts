@@ -33,17 +33,15 @@ function buildTree(node: IRowNode<Task>): Task {
     const data = node.data!;
     const oldChildren = data.children ?? [];
     const children = node.childrenAfterGroup?.map(buildTree) ?? [];
-
-    if (arrayEquals(oldChildren, children)) {
-        return data; // unchanged
+    if (!arrayEquals(oldChildren, children)) {
+        // We create a new object only if the children have changed
+        return { ...data, children: children.length > 0 ? children : undefined };
     }
-
-    // We return a new object only if the children have changed
-    return { ...data, children: children.length > 0 ? children : undefined };
+    return data; // unchanged
 }
 
 /** Extract children for each node in the tree */
-function extractChildren(api: GridApi<Task>) {
+function extractRowData(api: GridApi<Task>) {
     const extractedData: Task[] = [];
     api.forEachNode((node) => {
         if (node.level === 0 && node.data) {
@@ -53,10 +51,10 @@ function extractChildren(api: GridApi<Task>) {
     return extractedData;
 }
 
-function exportDataCallback(api: GridApi<Task>) {
-    const exportedData = extractChildren(api);
+function showExtractedRowData(api: GridApi<Task>) {
+    const exportedData = extractRowData(api);
     const json = JSON.stringify(exportedData, null, 2);
-    document.getElementById('exported-data-content')!.textContent = json;
+    document.getElementById('extracted-data-content')!.textContent = json;
 }
 
 const gridOptions: GridOptions<Task> = {
@@ -78,13 +76,10 @@ const gridOptions: GridOptions<Task> = {
     rowDragInsertDelay: 500,
     suppressMoveWhenRowDragging: true,
     onRowDragEnd: (event) => {
-        exportDataCallback(event.api);
+        showExtractedRowData(event.api);
     },
 };
 
 const eGridDiv = document.getElementById('myGrid');
 let gridApi: GridApi<Task>;
 gridApi = createGrid(eGridDiv!, gridOptions) as GridApi<Task>;
-
-// Initial export
-exportDataCallback(gridApi);
