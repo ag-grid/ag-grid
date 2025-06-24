@@ -65,9 +65,10 @@ const gridOptions: GridOptions<IRow> = {
             colId: 'actions',
             headerName: 'Actions',
             cellRenderer: CustomButtonComponent,
-            cellRendererParams: {
+            cellRendererParams: (params: any) => ({
                 onClick: onClick,
-            },
+                params,
+            }),
         },
     ],
     defaultColDef: {
