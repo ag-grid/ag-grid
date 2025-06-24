@@ -379,7 +379,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     if (cellCtrl) {
                         cellCtrl.suppressRefreshCell = true;
                     }
-
                     rowNode.setDataValue(column, editValue.newValue, 'commit');
                     if (cellCtrl) {
                         cellCtrl.suppressRefreshCell = false;
