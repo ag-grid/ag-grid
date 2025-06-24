@@ -263,8 +263,9 @@ function checkAndPreventDefault(
     event?: Event | null
 ): ICellEditorParams {
     if (event instanceof KeyboardEvent && params.column.getColDef().cellEditor === 'agNumberCellEditor') {
-        // -, +, . need suppressPreventDefault to prevent the editor from ignoring the keypress
-        params.suppressPreventDefault = ['-', '+', '.'].includes(event?.key ?? '') || params.suppressPreventDefault;
+        // `-`, `+`, `.`, `e` need suppressPreventDefault to prevent the editor from ignoring the keypress
+        params.suppressPreventDefault =
+            ['-', '+', '.', 'e'].includes(event?.key ?? '') || params.suppressPreventDefault;
     } else {
         event?.preventDefault?.();
     }
