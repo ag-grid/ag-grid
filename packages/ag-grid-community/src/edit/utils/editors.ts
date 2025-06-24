@@ -88,7 +88,13 @@ export function _setupEditors(
 
         const shouldStartEditing = cellStartedEdit && rowNode === curCellCtrl.rowNode && curCellCtrl.column === column;
 
-        _setupEditor(beans, { rowNode: rowNode!, column: curCellCtrl.column! }!, key, event, shouldStartEditing);
+        _setupEditor(
+            beans,
+            { rowNode: rowNode!, column: curCellCtrl.column! }!,
+            shouldStartEditing ? key : null,
+            shouldStartEditing ? event : null,
+            shouldStartEditing
+        );
     }
 
     return;
