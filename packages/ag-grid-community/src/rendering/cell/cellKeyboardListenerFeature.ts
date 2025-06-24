@@ -230,6 +230,11 @@ export class CellKeyboardListenerFeature extends BeanStub {
             return;
         }
 
+        if (editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
+            // if we have an open editor, then we don't want to process the character on the cell
+            return;
+        }
+
         const key = event.key;
         if (key === KeyCode.SPACE) {
             this.onSpaceKeyDown(event);
