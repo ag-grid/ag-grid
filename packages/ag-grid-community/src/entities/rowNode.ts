@@ -182,7 +182,7 @@ export class RowNode<TData = any>
 
     /**
      * Parent RowNode for tree data.
-     * When set, the hierarchical node parent is updated during Client-Side Row Model (CSRM) grouping.
+     * When set, the parent node in the hierarchy is updated during Client-Side Row Model (CSRM) grouping.
      * Used by the ClientSideChildrenTreeNodeManager, TreeGroupStrategy, RowDragFeature
      */
     public readonly treeParent: RowNode<TData> | null = null;
