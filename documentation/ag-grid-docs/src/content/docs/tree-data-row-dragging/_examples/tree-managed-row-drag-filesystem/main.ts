@@ -8,7 +8,8 @@ import {
 } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { type IFile, getData } from './data';
+import { getData } from './data';
+import type { IFile } from './data';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,

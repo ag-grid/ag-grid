@@ -16,7 +16,8 @@ import { AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
 import FileCellRenderer from './fileCellRenderer';
-import { type IFile, moveFiles } from './fileUtils';
+import { moveFiles } from './fileUtils';
+import type { IFile } from './fileUtils';
 import './style.css';
 
 ModuleRegistry.registerModules([

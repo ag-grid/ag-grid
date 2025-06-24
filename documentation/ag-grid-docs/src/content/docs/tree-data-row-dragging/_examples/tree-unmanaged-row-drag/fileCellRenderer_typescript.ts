@@ -1,6 +1,7 @@
 import type { ICellRendererParams } from 'ag-grid-community';
 
-import { type IFile, getFileCssIcon } from './fileUtils';
+import { getFileCssIcon } from './fileUtils';
+import type { IFile } from './fileUtils';
 
 export class FileCellRenderer {
     private eGui!: any;
