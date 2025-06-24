@@ -440,7 +440,7 @@ export class CellCtrl extends BeanStub {
         // note: this happens because of a click outside of the grid or if the popupEditor
         // is closed with `Escape` key. if another cell was clicked, then the editing will
         // have already stopped and returned on the conditional above.
-        editSvc?.stopEditing(this, { source: editSvc?.isBatchEditing() ? 'ui' : 'api' }) ?? false;
+        editSvc?.stopEditing(this, { source: editSvc?.isBatchEditing() ? 'ui' : 'api' });
     }
 
     /**
