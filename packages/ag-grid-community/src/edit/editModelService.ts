@@ -53,7 +53,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         }
     }
 
-    public getEditRow(rowNode: Required<IRowNode>, params: GetEditsParams = {}): EditRow | undefined {
+    public getEditRow(rowNode: IRowNode, params: GetEditsParams = {}): EditRow | undefined {
         if (this.suspendEdits) {
             return undefined;
         }
@@ -78,7 +78,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         return undefined;
     }
 
-    public getEditRowDataValue(rowNode: Required<IRowNode>, { checkSiblings }: GetEditsParams = {}): any {
+    public getEditRowDataValue(rowNode: IRowNode, { checkSiblings }: GetEditsParams = {}): any {
         if (this.edits.size === 0) {
             return rowNode.data;
         }
@@ -221,7 +221,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         return positions;
     }
 
-    public hasRowEdits(rowNode: Required<IRowNode>, params?: GetEditsParams): boolean {
+    public hasRowEdits(rowNode: IRowNode, params?: GetEditsParams): boolean {
         if (this.suspendEdits) {
             return false;
         }

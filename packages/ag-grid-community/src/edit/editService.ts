@@ -644,7 +644,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             : newValue;
     }
 
-    getRowDataValue(rowNode: Required<IRowNode>, params?: GetEditsParams | undefined) {
+    getRowDataValue(rowNode: IRowNode, params?: GetEditsParams | undefined) {
         return this.model.getEditRowDataValue(rowNode, params);
     }
 
