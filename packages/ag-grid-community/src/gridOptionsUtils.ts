@@ -752,6 +752,7 @@ export function _getGridOption<K extends keyof GridOptions>(
 ): GridOptionOrDefault<K> {
     return (
         providedGridOptions[gridOption] ??
+        (providedGridOptions as any)[`gridOptions`]?.[gridOption] ??
         _getGlobalGridOption(gridOption) ??
         (GRID_OPTION_DEFAULTS[gridOption as keyof typeof GRID_OPTION_DEFAULTS] as any)
     );

@@ -130,7 +130,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const { cellCtrl, beans } = this;
         const { editSvc, navigation } = beans;
         const cellEditing = editSvc?.isEditing(cellCtrl);
-        const rowEditing = editSvc?.isRowEditing(cellCtrl);
+        const rowEditing = editSvc?.isRowEditing(cellCtrl.rowNode);
 
         const startEditingAction = (cellCtrl: CellCtrl) => {
             const started = editSvc?.startEditing(cellCtrl, {

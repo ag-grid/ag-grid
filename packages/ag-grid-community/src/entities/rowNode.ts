@@ -55,7 +55,7 @@ export class RowNode<TData = any>
 
     /**
      * If doing in-memory (client-side) grouping, this is the index of the group column this cell is for.
-     * This will always be the same as the level, unless we are collapsing groups, i.e. `groupHideParentOfSingleChild=true`.
+     * This is always the same as the level, unless we are collapsing groups, i.e. `groupHideParentOfSingleChild=true`.
      */
     public rowGroupIndex: number | null;
 
@@ -84,7 +84,7 @@ export class RowNode<TData = any>
     public lastChild: boolean;
     public childIndex: number;
 
-    /** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */
+    /** The current row index. If the row is filtered out or in a collapsed group, this value is set to `null`. */
     public rowIndex: number | null = null;
 
     /**
@@ -95,12 +95,12 @@ export class RowNode<TData = any>
 
     /**
      * If using manual row pinning, a reference to the sibling node.
-     * If this node is in the pinned section, `pinnedSibling` will be the source row.
-     * If this node is in the main viewport, `pinnedSibling` will be the pinned row.
+     * If this node is in the pinned section, `pinnedSibling` is the source row.
+     * If this node is in the main viewport, `pinnedSibling` is the pinned row.
      */
     public pinnedSibling?: RowNode<TData>;
 
-    /** When true, this row will appear in the top */
+    /** When true, this row sticks to the top */
     public sticky: boolean;
 
     /** If row is pinned, then pinnedRowTop is used rather than rowTop */
@@ -133,7 +133,7 @@ export class RowNode<TData = any>
     /**
      * The index of the row in the source rowData array including any updates via transactions.
      * It does not change when sorting, filtering, grouping, pivoting or any other UI related operations.
-     * If this is a filler node (a visual row created by AG Grid in tree data or grouping) the value will be `-1`.
+     * If this is a filler node (a visual row created by AG Grid in tree data or grouping) the value is set to `-1`.
      *
      * Generally readonly. It is modified only by:
      * - ClientSideNodeManager, cast to ClientSideNodeManagerRowNode
@@ -182,7 +182,7 @@ export class RowNode<TData = any>
 
     /**
      * Parent RowNode for tree data.
-     * When set, during CSRM grouping the parent of the node in the hierarchy will be updated reflecting this.
+     * When set, the parent node in the hierarchy is updated during Client-Side Row Model (CSRM) grouping.
      * Used by the ClientSideChildrenTreeNodeManager, TreeGroupStrategy, RowDragFeature
      */
     public readonly treeParent: RowNode<TData> | null = null;
@@ -209,7 +209,7 @@ export class RowNode<TData = any>
     public rowHeightEstimated: boolean;
 
     /**
-     * This will be `true` if it has a rowIndex assigned, otherwise `false`.
+     * This is `true` if the row has a rowIndex assigned, otherwise `false`.
      */
     public displayed: boolean = false;
 
@@ -272,7 +272,7 @@ export class RowNode<TData = any>
     }
 
     /**
-     * Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.
+     * Replaces the data on the `rowNode`. When this method is called, the grid refreshes the entire rendered row if it is displayed.
      */
     public setData(data: TData): void {
         this.setDataCommon(data, false);
@@ -282,10 +282,10 @@ export class RowNode<TData = any>
     // is intended to be used with Redux type stores, where the whole data can be changed. we are
     // guaranteed that the data is the same entity (so grid doesn't need to worry about the id of the
     // underlying data changing, hence doesn't need to worry about selection). the grid, upon receiving
-    // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
+    // dataChanged event, refreshes the cells rather than rip them all out (so user can show transitions).
 
     /**
-     * Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.
+     * Updates the data on the `rowNode`. When this method is called, the grid refreshes the entire rendered row if it is displayed.
      */
     public updateData(data: TData): void {
         this.setDataCommon(data, true);
@@ -462,7 +462,7 @@ export class RowNode<TData = any>
 
     /**
      * Replaces the value on the `rowNode` for the specified column. When complete,
-     * the grid will refresh the rendered cell on the required row only.
+     * the grid refreshes the rendered cell on the required row only.
      * **Note**: This method only fires `onCellEditRequest` when the Grid is in **Read Only** mode.
      * **Note**: This method defers to EditModule if available and batches the edit when `fullRow` or `batchEdit` is enabled.
      *
@@ -529,7 +529,7 @@ export class RowNode<TData = any>
     }
 
     public updateHasChildren(): void {
-        // in CSRM, the group property will be set before the childrenAfterGroup property, check both to prevent flickering
+        // in CSRM, the group property is set before the childrenAfterGroup property, check both to prevent flickering
         let newValue: boolean | null =
             (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
 
@@ -566,8 +566,8 @@ export class RowNode<TData = any>
      * The first time `quickFilter` runs, the grid creates a one-off string representation of the row.
      * This string is then used for the quick filter instead of hitting each column separately.
      * When you edit, using grid editing, this string gets cleared down.
-     * However if you edit without using grid editing, you will need to clear this string down for the row to be updated with the new values.
-     * Otherwise new values will not work with the `quickFilter`. */
+     * However, if you edit without using grid editing, you need to clear this string down for the row to be updated with the new values.
+     * Otherwise, new values would not work with the `quickFilter`. */
     public resetQuickFilterAggregateText(): void {
         this.quickFilterAggregateText = null;
     }
@@ -613,8 +613,8 @@ export class RowNode<TData = any>
     /**
      * Select (or deselect) the node.
      * @param newValue -`true` for selection, `false` for deselection.
-     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.
-     * @param source - Source property that will appear in the `selectionChanged` event.
+     * @param clearSelection - If selecting, then passing `true` selects the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.
+     * @param source - Source property that appears in the `selectionChanged` event.
      */
     public setSelected(
         newValue: boolean,

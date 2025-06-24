@@ -124,7 +124,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
     public override stop(cancel?: boolean): boolean {
         const { rowNode } = this;
-        if (rowNode && !this.model.hasRowEdits({ rowNode })) {
+        if (rowNode && !this.model.hasRowEdits(rowNode)) {
             return false;
         }
 
