@@ -69,6 +69,7 @@ const gridOptions: GridOptions<IRow> = {
                 onClick: onClick,
                 params,
             }),
+            sortable: false,
         },
     ],
     defaultColDef: {
