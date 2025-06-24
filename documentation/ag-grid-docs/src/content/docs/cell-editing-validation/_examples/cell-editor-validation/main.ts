@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, ValueFormatterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -63,8 +63,13 @@ const gridOptions: GridOptions<IModifiedOlympicData> = {
             field: 'dateObj',
             headerName: 'Date (< 2009)',
             cellEditor: 'agDateCellEditor',
-            valueFormatter: ({ data }) => {
-                return data?.dateObj?.toISOString().slice(0, 10) || '';
+            valueFormatter: (params: ValueFormatterParams<any, Date>) => {
+                if (!params.value) {
+                    return '';
+                }
+                const month = params.value.getMonth() + 1;
+                const day = params.value.getDate();
+                return `${params.value.getFullYear()}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
             },
             cellEditorParams: {
                 max: new Date('2008-12-31'),
