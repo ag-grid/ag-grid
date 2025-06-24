@@ -296,6 +296,9 @@ export function _syncFromEditor(
     newValue?: any,
     source?: string
 ): void {
+    if (!beans.editModelSvc) {
+        return;
+    }
     const { rowNode, column } = position;
 
     if (!(rowNode && column)) {
@@ -313,7 +316,12 @@ export function _syncFromEditor(
     }
 
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
-    beans.editModelSvc?.setEdit(position, { newValue, oldValue, state: hasEditor ? 'editing' : 'changed' });
+    beans.editModelSvc.setEdit(position, { newValue, oldValue, state: hasEditor ? 'editing' : 'changed' });
+
+    // re-read the value once it's been through all the formatting and parsing
+    const { value } = beans.valueSvc.getValueForDisplay(column as AgColumn, rowNode, true);
+
+    beans.editModelSvc.getEdit(position)!.newValue = value;
 
     if (prevEditValue === newValue) {
         // If the value hasn't changed, we don't need to dispatch an event
