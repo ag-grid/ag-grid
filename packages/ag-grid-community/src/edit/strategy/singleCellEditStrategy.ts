@@ -1,7 +1,7 @@
 import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getRowNode } from '../../entities/positionUtils';
-import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
+import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { EditPosition, EditRowPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
@@ -30,10 +30,6 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         const { rowNode, column } = position || {};
 
         if ((!this.rowNode || !this.column) && rowNode && column) {
-            return null;
-        }
-
-        if (!rowNode && !column && this.rowNode && this.column) {
             return null;
         }
 
@@ -78,7 +74,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         return true;
     }
 
-    public override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
+    public override onCellFocusChanged(event: CellFocusedEvent | CellFocusClearedEvent): void {
         const { colModel, editSvc } = this.beans;
         const { rowIndex, column, rowPinned } = event;
         const rowNode = _getRowNode(this.beans, { rowIndex: rowIndex!, rowPinned });
@@ -94,7 +90,10 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             }
         }
 
-        if (editSvc?.isEditing({ rowNode, column: curCol as AgColumn }, { withOpenEditor: true })) {
+        if (
+            editSvc?.isEditing({ rowNode, column: curCol as AgColumn }, { withOpenEditor: true }) &&
+            event.type === 'cellFocused'
+        ) {
             // editor is already active, so we don't need to do anything
             return;
         }

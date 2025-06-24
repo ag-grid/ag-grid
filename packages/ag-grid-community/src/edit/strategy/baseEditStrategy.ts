@@ -3,8 +3,9 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
+import { _getRowNode } from '../../entities/positionUtils';
 import type { AgEventType } from '../../eventTypes';
-import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
+import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { EditMap, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
 import type {
     EditPosition,
@@ -44,7 +45,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         this.model = this.beans.editModelSvc!;
         this.editSvc = this.beans.editSvc!;
 
-        this.addManagedListeners(this.beans.eventSvc, {
+        this.addManagedEventListeners({
             cellFocused: this.onCellFocusChanged?.bind(this),
             cellFocusCleared: this.onCellFocusChanged?.bind(this),
         });
@@ -63,30 +64,52 @@ export abstract class BaseEditStrategy extends BeanStub {
         ignoreEventKey?: boolean
     ): void;
 
-    public onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
+    public onCellFocusChanged(event: CellFocusedEvent | CellFocusClearedEvent): void {
         let cellCtrl: CellCtrl | undefined;
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
+        const { editSvc, beans } = this;
+
         if (previous) {
-            cellCtrl = _getCellCtrl(this.beans, previous);
+            cellCtrl = _getCellCtrl(beans, previous);
         }
 
+        const { gos, editModelSvc } = beans;
+        const isFocusCleared = event.type === 'cellFocusCleared';
+
         // check if any editors open
-        if (this.editSvc.isEditing(undefined, { withOpenEditor: true })) {
-            if (cellCtrl && this.editSvc.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
+        if (editSvc.isEditing(undefined, { withOpenEditor: true })) {
+            if (cellCtrl && !isFocusCleared && editSvc.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
                 return;
             }
 
+            // if focus is clearing, we should stop editing
+            // or cancel the editing if `block` and `hasErrors`
+            const { column, rowIndex, rowPinned } = event;
+            const cellPositionFromEvent = {
+                column: column as AgColumn,
+                rowNode: _getRowNode(beans, { rowIndex: rowIndex!, rowPinned })!,
+            };
+            const isBlock = gos.get('cellEditingInvalidCommitType') === 'block';
+            const hasError =
+                isBlock && !!editModelSvc?.getCellValidationModel().hasCellValidation(cellPositionFromEvent);
+
             // if we don't have a previous cell, we don't need to force stopEditing
-            const result = previous ? this.editSvc.stopEditing() : true;
+            const result =
+                previous || isFocusCleared
+                    ? editSvc.stopEditing(undefined, {
+                          cancel: hasError,
+                          source: isFocusCleared ? 'api' : undefined,
+                      })
+                    : true;
 
             // editSvc didn't handle the stopEditing, we need to do more ourselves
             if (!result) {
-                if (this.editSvc.isBatchEditing()) {
+                if (editSvc.isBatchEditing()) {
                     // close editors, but don't stop editing in batch mode
-                    this.editSvc.cleanupEditors();
+                    editSvc.cleanupEditors();
                 } else {
                     // if not batch editing, then we stop editing the cell
-                    this.editSvc.stopEditing(undefined, { source: 'api' });
+                    editSvc.stopEditing(undefined, { source: 'api' });
                 }
             }
         }
