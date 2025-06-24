@@ -293,7 +293,7 @@ export class ValueService extends BeanStub implements NamedBean {
         suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true
     ): string | null {
-        const { editSvc, expressionSvc } = this.beans;
+        const { expressionSvc } = this.beans;
         let result: string | null = null;
         let formatter: ((value: any) => string) | string | undefined;
 
@@ -312,9 +312,12 @@ export class ValueService extends BeanStub implements NamedBean {
             if (node) {
                 const position = { rowNode: node };
 
-                if (this.editSvc && editSvc!.isEditing(position, EDITING_CHECK_SIBLINGS)) {
-                    // if editing, then use the edited value, not the value from the data
-                    data = editSvc!.getRowDataValue(node, EDITING_CHECK_SIBLINGS);
+                if (this.hasEdit) {
+                    const editSvc = this.editSvc!;
+                    if (editSvc.isEditing(position, EDITING_CHECK_SIBLINGS)) {
+                        // if editing, then use the edited value, not the value from the data
+                        data = editSvc.getRowDataValue(node, EDITING_CHECK_SIBLINGS);
+                    }
                 }
             }
 
