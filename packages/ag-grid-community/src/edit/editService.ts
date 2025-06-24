@@ -921,7 +921,13 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const { column, rowIndex, rowPinned } = event;
         const cellCtrl = _getCellCtrl(this.beans, { rowIndex, rowPinned, column });
 
-        if (!cellCtrl || !this.isEditing(cellCtrl, { checkSiblings: true })) {
+        if (!cellCtrl) {
+            return;
+        }
+
+        const edit = this.model.getEdit(cellCtrl);
+
+        if (!edit || !_valuesDiffer(edit)) {
             return;
         }
 
