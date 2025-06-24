@@ -116,7 +116,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             const validation = this.model.getCellValidationModel().getCellValidation(cell);
             // check if the cell is valid
 
-            if (validation?.errorMessages?.length ?? 0 > 0) {
+            if ((validation?.errorMessages?.length ?? 0) > 0) {
                 results.fail.push(cell);
                 return;
             }

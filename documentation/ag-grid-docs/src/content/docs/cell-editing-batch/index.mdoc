@@ -27,7 +27,7 @@ Once enabled, `api.commitBatchEdit()` or `api.cancelBatchEdit()` can be called t
 Batch Edit is only compatible with the [Client-Side Row Model](./row-models/).
 {% /note %}
 
-## Using API Methods to Batch Edit Data
+## Batch Editing API
 
 Using the following API calls, you can build your own experience around AG Grid's batch editing functionality.
 
@@ -39,7 +39,7 @@ The grid API methods `startEditingCell()` and `stopEditing()` can be used to con
 
 {% apiDocumentation source="grid-api/api.json" section="batch-editing" names=["isBatchEditing", "startBatchEdit", "commitBatchEdit", "cancelBatchEdit"] /%}
 
-### Full Row Editing
+## Full Row Batch Editing
 
 [Full Row](./cell-editing-full-row/) is supported in Batch Editing, adding each cell's pending value to the batch.
 
@@ -49,7 +49,7 @@ The grid API methods `startEditingCell()` and `stopEditing()` can be used to con
 
 As in default editing, cell and row editing events get fired as normal when edit starts and ends, following the lifecycle of the editors.
 
-Value change events in Batch Editing are fired **after** the batch edit is committed.
+When in Batch Editing, the `cellValueChanged`, `rowValueChanged` events are fired **after** the batch edit is committed.
 
 ## Customisation
 
