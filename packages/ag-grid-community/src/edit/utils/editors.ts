@@ -316,8 +316,8 @@ export function _syncFromEditor(
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
     beans.editModelSvc?.setEdit(position, { newValue, oldValue, state: hasEditor ? 'editing' : 'changed' });
 
-    if (prevEditValue === newValue) {
-        // If the value hasn't changed, we don't need to dispatch an event
+    if (prevEditValue === newValue || hasEditor) {
+        // If the value hasn't changed or the editor is currently open, we don't need to dispatch an event
         return;
     }
 
