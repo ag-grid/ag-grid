@@ -117,14 +117,21 @@ In the example below, note that:
 
 {% gridExampleRunner title="Managed Row Drag with Tree Data and isRowValidDropPosition" name="tree-managed-row-drag-filesystem"  /%}
 
-### Extracting Managed Row Dragging Data
+### Persisting Row Order
 
-To extract the new rowData reordered and updated by managed row dragging, you can use the `forEachLeafNode` API method.
+These three examples below show how to persist the row order from the grid on to the server after a row drag operation has been completed.
 
 Example with Parent IDs:
 
-{% gridExampleRunner title="Extracting Managed Row Dragging Data with Parent IDs" name="tree-managed-row-drag-extract-parent-id" exampleHeight=500 /%}
+{% gridExampleRunner title="Extracting Managed Row Dragging Data with Parent IDs" name="tree-managed-row-drag-extract-parent-id" exampleHeight=400 /%}
 
+Example with Children arrays:
+
+{% gridExampleRunner title="Extracting Managed Row Dragging Data with Children" name="tree-managed-row-drag-extract-children" exampleHeight=400 /%}
+
+Example with Data Paths:
+
+{% gridExampleRunner title="Extracting Managed Row Dragging Data with Data Paths" name="tree-managed-row-drag-extract-data-path" exampleHeight=400 /%}
 
 ## Unmanaged Row Dragging 
 
