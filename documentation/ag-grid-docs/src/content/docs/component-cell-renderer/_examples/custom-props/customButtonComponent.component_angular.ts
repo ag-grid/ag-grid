@@ -10,14 +10,19 @@ interface CustomButtonParams extends ICellRendererParams {
 @Component({
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `<button (click)="onClick()">Launch!</button>`,
+    template: `<button (click)="onClick()">
+        {{ data?.company ? 'Launch ' + data.company + '!' : 'Launch!' }}
+    </button>`,
 })
 export class CustomButtonComponent implements ICellRendererAngularComp {
     onClick!: () => void;
+    data: any;
     agInit(params: CustomButtonParams): void {
         this.onClick = params.onClick;
+        this.data = params.data;
     }
     refresh(params: CustomButtonParams) {
+        this.data = params.data;
         return true;
     }
 }

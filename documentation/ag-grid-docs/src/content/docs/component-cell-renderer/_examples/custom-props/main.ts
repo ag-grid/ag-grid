@@ -1,5 +1,6 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
+    ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     ModuleRegistry,
     RowApiModule,
@@ -13,6 +14,7 @@ import { MissionResultRenderer } from './missionResultRenderer_typescript';
 ModuleRegistry.registerModules([
     RowApiModule,
     ClientSideRowModelModule,
+    ClientSideRowModelApiModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
