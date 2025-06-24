@@ -11,13 +11,13 @@ Once you have access to the required Row Node, you can update its data with the 
 
 ## View Refresh
 
-After calling `rowNode.setData`, `rowNode.updateData` or `rowNode.setDataValue` the grid's view will automatically refresh to reflect the change. There is no need to manually request a refresh.
+After calling `rowNode.setData`, `rowNode.updateData` or `rowNode.setDataValue`, the grid's view automatically refreshes to reflect the change. There is no need to manually request a refresh.
 
-The main difference between `setData` and `updateData` is that `setData` will always refresh every cell, whereas `updateData` will only refresh cells whose values have changed. Additionally, `setData` will not cause changed cells to flash when `ColDef.enableCellChangeFlash = true`.
+The main difference between `setData` and `updateData` is that `setData` always refreshes every cell, whereas `updateData` only refreshes cells whose values have changed. Additionally, `setData` does not cause changed cells to flash when `ColDef.enableCellChangeFlash = true`.
 
 ## Sort / Filter / Group Refresh
 
-After calling `rowNode.setData`, `rowNode.updateData` or `rowNode.setDataValue` the grid will not update to reflect a change in sorting, filtering or grouping.
+After calling `rowNode.setData`, `rowNode.updateData` or `rowNode.setDataValue` the grid does not update to reflect a change in sorting, filtering or grouping.
 
 To have the grid update its sort, filter or grouping call the Grid API `refreshClientSideRowModel()`.
 

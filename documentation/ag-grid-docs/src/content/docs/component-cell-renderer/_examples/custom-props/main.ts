@@ -1,5 +1,6 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
+    ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     ModuleRegistry,
     RowApiModule,
@@ -13,6 +14,7 @@ import { MissionResultRenderer } from './missionResultRenderer_typescript';
 ModuleRegistry.registerModules([
     RowApiModule,
     ClientSideRowModelModule,
+    ClientSideRowModelApiModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -36,9 +38,11 @@ function successIconSrc(params: boolean) {
 }
 
 function refreshData() {
-    gridApi!.forEachNode((rowNode) => {
+    gridApi.forEachNode((rowNode) => {
         rowNode.setDataValue('successful', Math.random() > 0.5);
     });
+
+    gridApi.refreshClientSideRowModel('sort');
 }
 
 const onClick = () => console.log('Mission Launched');
@@ -55,7 +59,7 @@ const gridOptions: GridOptions<IRow> = {
         },
         {
             field: 'successful',
-            headerName: 'Success',
+            headerName: 'Success (Custom Props)',
             cellRenderer: MissionResultRenderer,
             cellRendererParams: {
                 src: successIconSrc,
@@ -65,9 +69,11 @@ const gridOptions: GridOptions<IRow> = {
             colId: 'actions',
             headerName: 'Actions',
             cellRenderer: CustomButtonComponent,
-            cellRendererParams: {
+            cellRendererParams: (params: any) => ({
                 onClick: onClick,
-            },
+                params,
+            }),
+            sortable: false,
         },
     ],
     defaultColDef: {

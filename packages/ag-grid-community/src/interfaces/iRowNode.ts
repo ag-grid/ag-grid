@@ -114,7 +114,7 @@ interface BaseRowNode<TData = any> {
     data: TData | undefined;
 
     /**
-     * This will be `true` if it has a rowIndex assigned, otherwise `false`.
+     * This is `true` if it has a rowIndex assigned, otherwise `false`.
      */
     displayed: boolean;
     /** Either `'top'` or `'bottom'` if row pinned, otherwise `undefined` or `null`. */
@@ -155,11 +155,11 @@ interface BaseRowNode<TData = any> {
     /**
      * The index of the row in the source rowData array including any updates via transactions.
      * It does not change when sorting, filtering, grouping, pivoting or any other UI related operations.
-     * If this is a filler node (a visual row created by AG Grid in tree data or grouping) the value will be `-1`.
+     * If this is a filler node (a visual row created by AG Grid in tree data or grouping) the value is set to `-1`.
      */
     readonly sourceRowIndex: number;
 
-    /** The current row index. If the row is filtered out or in a collapsed group, this value will be `null`. */
+    /** The current row index. If the row is filtered out or in a collapsed group, this value is set to `null`. */
     rowIndex: number | null;
 
     /** If using quick filter, stores a string representation of the row for searching against. */
@@ -186,7 +186,7 @@ interface GroupRowNode<TData = any> {
     rowGroupColumn: Column | null;
     /**
      * If doing in-memory (client-side) grouping, this is the index of the group column this cell is for.
-     * This will always be the same as the level, unless we are collapsing groups, i.e. `groupHideParentOfSingleChild=true`.
+     * This is always the same as the level, unless we are collapsing groups, i.e. `groupHideParentOfSingleChild=true`.
      */
     rowGroupIndex: number | null;
     /** `true` if group is expanded, otherwise `false`. */
@@ -221,8 +221,8 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     /**
      * Select (or deselect) the node.
      * @param newValue -`true` for selection, `false` for deselection.
-     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`
-     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`
+     * @param clearSelection - If selecting, then passing `true` selects the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`
+     * @param source - Source property that appears in the `selectionChanged` event. Default: `'api'`
      */
     setSelected(newValue: boolean, clearSelection?: boolean, source?: SelectionEventSourceType): void;
 
@@ -248,7 +248,7 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     /**
      * Set the expanded state of this rowNode.
      * @param expanded - `true` to expand, `false` to collapse.
-     * @param sourceEvent - Optional event that will be passed to the `rowGroupOpened` event.
+     * @param sourceEvent - Optional event that gets passed to the `rowGroupOpened` event.
      * @param forceSync - By default rows are expanded asynchronously for best performance. Set to `true` if you need to interact with the expanded row immediately after this function.
      */
     setExpanded(expanded: boolean, sourceEvent?: MouseEvent | KeyboardEvent, forceSync?: boolean): void;
@@ -278,8 +278,8 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      * The first time `quickFilter` runs, the grid creates a one-off string representation of the row.
      * This string is then used for the quick filter instead of hitting each column separately.
      * When you edit, using grid editing, this string gets cleared down.
-     * However if you edit without using grid editing, you will need to clear this string down for the row to be updated with the new values.
-     * Otherwise new values will not work with the `quickFilter`.
+     * However, if you edit without using grid editing, you need to clear this string down for the row to be updated with the new values.
+     * Otherwise, new values would not work with the `quickFilter`.
      */
     resetQuickFilterAggregateText(): void;
 
@@ -296,18 +296,18 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     setRowHeight(rowHeight: number | undefined | null, estimated?: boolean): void;
 
     /**
-     * Replaces the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.
+     * Replaces the data on the `rowNode`. When this method is called, the grid refreshes the entire rendered row if it is displayed.
      */
     setData(data: TData): void;
 
     /**
-     * Updates the data on the `rowNode`. When this method is called, the grid will refresh the entire rendered row if it is displayed.
+     * Updates the data on the `rowNode`. When this method is called, the grid refreshes the entire rendered row if it is displayed.
      */
     updateData(data: TData): void;
 
     /**
      * Replaces the value on the `rowNode` for the specified column. When complete,
-     * the grid will refresh the rendered cell on the required row only.
+     * the grid refreshes the rendered cell on the required row only.
      * **Note**: This method only fires `onCellEditRequest` when the Grid is in **Read Only** mode.
      * **Note**: This method defers to EditModule if available and batches the edit when `fullRow` or `batchEdit` is enabled.
      *
