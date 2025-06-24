@@ -58,7 +58,6 @@ import {
     StatusBarModule,
 } from 'ag-grid-enterprise';
 
-import { CustomCellRenderer } from './custom-renderer';
 import { getData } from './data';
 import {
     _decorate,
@@ -162,7 +161,6 @@ const gridOptions: GridOptions = {
                 {
                     headerName: 'Details',
                     colId: 'details',
-                    cellRenderer: CustomCellRenderer,
                     editable: false,
                     minWidth: 145,
                 },
