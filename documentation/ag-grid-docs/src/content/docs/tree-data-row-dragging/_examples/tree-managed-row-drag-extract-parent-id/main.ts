@@ -35,8 +35,8 @@ function extractRowData(api: GridApi<Task>) {
 }
 
 function showExtractedRowData(api: GridApi<Task>) {
-    const exportedData = extractRowData(api);
-    const json = JSON.stringify(exportedData, null, 2);
+    const extractedRowData = extractRowData(api);
+    const json = JSON.stringify(extractedRowData, null, 2);
     document.getElementById('extracted-data-content')!.textContent = json;
 }
 
