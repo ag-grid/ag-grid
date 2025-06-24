@@ -117,6 +117,12 @@ const gridOptions = {
 }
 ```
 
+{% note %}
+String based expressions are parsed and evaluated as JavaScript. Use of this form of expression may require configuration of your [Content Security Policy](./security/#content-security-policy-csp).
+
+Functions are recommended for most use cases, unless there is a specific need for string-based expressions.
+{% /note %}
+
 ## Cell Styling Properties
 
 All cellClass cellStyle and cellClassRules functions take a `CellClassParams`.
