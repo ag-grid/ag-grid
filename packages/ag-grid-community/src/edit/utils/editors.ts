@@ -395,10 +395,6 @@ export function _destroyEditor(beans: BeanCollection, position: Required<EditPos
     comp?.refreshEditStyles(false, false);
 
     cellCtrl?.refreshCell({ force: true, suppressFlash: true });
-
-    beans.rowRenderer.refreshCells({ rowNodes: rowNode ? [rowNode] : [], suppressFlash: true, force: true });
-    cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
-
     const edit = beans.editModelSvc?.getEdit(position);
 
     beans.editSvc?.dispatchCellEvent(position, null, 'cellEditingStopped', {

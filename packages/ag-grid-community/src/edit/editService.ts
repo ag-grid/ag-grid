@@ -335,10 +335,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.bulkRefresh();
 
-        this.beans.rowRenderer.refreshRows({ suppressFlash: true, force: true });
-
-        if (res && willStop && this.isBatchEditing()) {
-            this.dispatchBatchEvent('batchEditingStopped', edits);
+        if (this.isBatchEditing()) {
+            this.beans.rowRenderer.refreshRows({ suppressFlash: true, force: true });
+            if (res && willStop) {
+                this.dispatchBatchEvent('batchEditingStopped', edits);
+            }
         }
 
         return res;
