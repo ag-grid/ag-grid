@@ -59,8 +59,8 @@ class FileCellRenderer {
     }
 }
 
-const valueFormatter = function (params: ValueFormatterParams) {
-    return params.value ? params.value + ' MB' : '';
+const valueFormatter = function (params: ValueFormatterParams<IFile, number>) {
+    return params.value ? params.value.toFixed(1) + ' MB' : '';
 };
 
 const cellClassRules = {
@@ -79,6 +79,7 @@ const gridOptions: GridOptions<IFile> = {
         },
         {
             field: 'size',
+            aggFunc: 'sum',
             valueFormatter: valueFormatter,
             cellClassRules: cellClassRules,
         },

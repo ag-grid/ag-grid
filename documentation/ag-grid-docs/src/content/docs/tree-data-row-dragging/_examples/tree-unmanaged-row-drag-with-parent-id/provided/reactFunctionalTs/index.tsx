@@ -10,7 +10,13 @@ import {
     RowDragModule,
     ValidationModule,
 } from 'ag-grid-community';
-import type { GridOptions, RowDragEndEvent, RowDragEvent, RowDragMoveEvent } from 'ag-grid-community';
+import type {
+    GridOptions,
+    RowDragEndEvent,
+    RowDragEvent,
+    RowDragMoveEvent,
+    ValueFormatterParams,
+} from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -41,9 +47,10 @@ const STATIC_GRID_OPTIONS: GridOptions<IFile> = {
         },
         {
             field: 'size',
-            valueFormatter: (params) => (params.value ? params.value + ' MB' : ''),
-            width: 140,
             aggFunc: 'sum',
+            width: 140,
+            valueFormatter: (params: ValueFormatterParams<IFile, number>) =>
+                params.value ? params.value.toFixed(1) + ' MB' : '',
         },
     ],
     autoGroupColumnDef: {

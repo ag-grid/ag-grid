@@ -85,7 +85,9 @@ const gridOptions: GridOptions<IFile> = {
         { field: 'dateModified' },
         {
             field: 'size',
-            valueFormatter: (params: ValueFormatterParams) => (params.value ? params.value + ' MB' : ''),
+            aggFunc: 'sum',
+            valueFormatter: (params: ValueFormatterParams<IFile, number>) =>
+                params.value ? params.value.toFixed(1) + ' MB' : '',
         },
     ],
     autoGroupColumnDef: {
