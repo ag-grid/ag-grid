@@ -176,17 +176,19 @@ export class ValueService extends BeanStub implements NamedBean {
         const colDef = column.getColDef();
         const field = colDef.field;
         const colId = column.getColId();
-        const data = rowNode.data;
+        let data = rowNode.data;
 
         if (this.hasEdit && source === 'ui') {
+            const editSvc = this.editSvc!;
             // if the row is editing, make sure we sync data fields with any pending values, for display purposes
-            if (this.editSvc!.isRowEditing(rowNode, EDITING_CHECK_SIBLINGS)) {
-                this.editSvc!.getRowDataValue(rowNode, EDITING_CHECK_SIBLINGS);
+
+            if (editSvc.isRowEditing(rowNode, EDITING_CHECK_SIBLINGS)) {
+                data = editSvc.getRowDataValue(rowNode, EDITING_CHECK_SIBLINGS);
             }
 
             // if the row is editing, we want to return the new value, if available
-            if (this.editSvc!.isEditing()) {
-                const newValue = this.editSvc!.getCellDataValue({ rowNode, column });
+            if (editSvc.isEditing()) {
+                const newValue = editSvc.getCellDataValue({ rowNode, column });
                 if (newValue !== undefined) {
                     return newValue;
                 }
