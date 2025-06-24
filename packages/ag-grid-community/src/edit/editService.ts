@@ -66,6 +66,8 @@ const CANCEL_PARAMS: StopEditParams = { cancel: true, source: 'api' };
 
 const COMMIT_PARAMS: StopEditParams = { cancel: false, source: 'api' };
 
+const CHECK_SIBLING = { checkSiblings: true };
+
 const FORCE_REFRESH = { force: true, suppressFlash: true };
 
 export class EditService extends BeanStub implements NamedBean, IEditService {
