@@ -663,7 +663,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             (!this.isEditing() || eventSource === 'commit') &&
             eventSource !== 'paste' &&
             eventSource !== 'rangeSvc' &&
-            eventSource !== 'renderer'
+            eventSource !== 'renderer' &&
+            eventSource !== 'cellClear'
         ) {
             return;
         }
