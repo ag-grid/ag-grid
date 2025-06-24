@@ -194,7 +194,7 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
     useEffect(() => {
         const updateLogs = (event: MessageEvent) => {
             const log = event.data;
-            if (log?.type.startsWith('console-') && log.exampleName === exampleName && !containsIgnoredMessage(log)) {
+            if (log?.type?.startsWith('console-') && log.exampleName === exampleName && !containsIgnoredMessage(log)) {
                 setLogs((prevLogs) => {
                     if (isRepeatedLog({ prevLogs, log })) {
                         const lastLog = prevLogs[prevLogs.length - 1];
