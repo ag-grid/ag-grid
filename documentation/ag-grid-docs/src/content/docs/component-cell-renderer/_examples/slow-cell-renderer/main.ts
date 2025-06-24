@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, ICellRendererParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -26,8 +26,8 @@ const gridOptions: GridOptions<IOlympicData> = {
         {
             field: 'country',
             headerName: 'Slow Renderer',
-            cellRendererSelector: (params) => {
-                // Optimisation to only use the slow renderer for leaf nodes ang not for groups
+            cellRendererSelector: (params: ICellRendererParams) => {
+                // Optimisation to only use the slow renderer for leaf nodes and not for groups
                 return params.node.group ? undefined : { component: SlowRenderer };
             },
             cellRendererParams: {
@@ -37,8 +37,8 @@ const gridOptions: GridOptions<IOlympicData> = {
         {
             field: 'bronze',
             headerName: 'Slow Renderer Custom',
-            cellRendererSelector: (params) => {
-                // Optimisation to only use the slow renderer for leaf nodes ang not for groups
+            cellRendererSelector: (params: ICellRendererParams) => {
+                // Optimisation to only use the slow renderer for leaf nodes and not for groups
                 return params.node.group ? undefined : { component: SlowRenderer };
             },
             cellRendererParams: {
