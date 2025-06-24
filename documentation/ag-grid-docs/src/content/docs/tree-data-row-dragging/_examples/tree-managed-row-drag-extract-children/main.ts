@@ -73,7 +73,6 @@ const gridOptions: GridOptions<Task> = {
     treeDataChildrenField: 'children',
     groupDefaultExpanded: -1,
     rowDragManaged: true,
-    rowDragInsertDelay: 500,
     suppressMoveWhenRowDragging: true,
     onRowDragEnd: (event) => {
         showExtractedRowData(event.api);
