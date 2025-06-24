@@ -302,6 +302,9 @@ export class SetFilterHandler<TValue = string>
                 const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
                 if (existingUnformattedKey !== undefined) {
                     newValues.push(existingUnformattedKey);
+                    if (existingUnformattedKey !== unformattedKey) {
+                        updated = true;
+                    }
                 } else {
                     updated = true;
                 }

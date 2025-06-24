@@ -34,7 +34,6 @@ const gridOptions: GridOptions<Task> = {
     treeDataParentIdField: 'parentId',
     groupDefaultExpanded: -1,
     rowDragManaged: true,
-    rowDragInsertDelay: 500,
     suppressMoveWhenRowDragging: true,
 };
 

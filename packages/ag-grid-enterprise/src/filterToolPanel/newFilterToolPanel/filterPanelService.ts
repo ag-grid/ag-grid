@@ -269,7 +269,7 @@ export class FilterPanelService
         const { colFilter, selectableFilter } = beans;
         const name = getDisplayName(beans, column);
         const colId = column.getColId();
-        const getIsEditing = () => colFilter!.hasUnappliedModel(colId);
+        const getIsEditing = () => !!this.params?.buttons && colFilter!.hasUnappliedModel(colId);
         const isEditing = getIsEditing();
         if (expanded) {
             const colDef = column.colDef;
