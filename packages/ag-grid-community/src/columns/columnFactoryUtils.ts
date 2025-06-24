@@ -53,13 +53,12 @@ export function _createColumnTreeWithIds(
         const colId = def.colId!;
 
         let column = colIdMap.get(colId);
+        const colDefMerged = _addColumnDefaultAndTypes(beans, def, column?.getColId() ?? colId);
         if (!column) {
             // no existing column, need to create one
-            const colDefMerged = _addColumnDefaultAndTypes(beans, def, colId);
             column = new AgColumn(colDefMerged, def, colId, primaryColumns);
             beans.context.createBean(column);
         } else {
-            const colDefMerged = _addColumnDefaultAndTypes(beans, def, column.getColId());
             column.setColDef(colDefMerged, def, source);
             _updateColumnState(beans, column, colDefMerged, source);
         }

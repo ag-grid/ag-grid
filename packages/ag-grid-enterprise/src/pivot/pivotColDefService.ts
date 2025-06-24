@@ -100,14 +100,9 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         // additional group columns that contain an aggregated total across all child columns
         this.addPivotTotalsToGroups(pivotColumnGroupDefs, pivotColumnDefs);
 
-        // we clone, so the colDefs in pivotColumnsGroupDefs and pivotColumnDefs are not shared. this is so that
-        // any changes the user makes (via processSecondaryColumnDefinitions) don't impact the internal aggregations,
-        // as these use the col defs also
-        const pivotColumnDefsClone: ColDef[] = pivotColumnDefs.map((colDef) => ({ ...colDef }));
-
         return {
             pivotColumnGroupDefs: pivotColumnGroupDefs,
-            pivotColumnDefs: pivotColumnDefsClone,
+            pivotColumnDefs: pivotColumnDefs,
         };
     }
 
@@ -196,10 +191,9 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
         return measureColumns.map((measureCol) => {
             const columnName = this.colNames.getDisplayNameForColumn(measureCol, 'header');
-            return {
-                ...this.createColDef(measureCol, columnName, pivotKeys),
-                columnGroupShow: 'open',
-            };
+            const colDef = this.createColDef(measureCol, columnName, pivotKeys);
+            colDef.columnGroupShow = 'open';
+            return colDef;
         });
     }
 
@@ -384,6 +378,35 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
     }
 
+    /**
+     * Recreate a pivot colDef to update from a changed valueColumn colDef
+     */
+    public recreateColDef(colDef: ColDef): ColDef {
+        if (!colDef.pivotValueColumn) {
+            // if this is not a pivot value column, then we don't need to recreate it
+            return colDef;
+        }
+
+        const newColDef = this.createColDef(
+            colDef.pivotValueColumn as AgColumn,
+            colDef.headerName,
+            colDef.pivotKeys,
+            !!colDef.pivotTotalColumnIds
+        );
+
+        // don't overwrite these
+        newColDef.columnGroupShow = colDef.columnGroupShow;
+        newColDef.colId = colDef.colId;
+        newColDef.valueGetter = colDef.valueGetter;
+        newColDef.aggFunc = colDef.aggFunc;
+        newColDef.valueGetter = colDef.valueGetter;
+
+        const process = this.gos.get('processPivotResultColDef');
+        process?.(colDef);
+
+        return newColDef;
+    }
+
     private createColDef(
         valueColumn: AgColumn | null,
         headerName: any,
@@ -396,6 +419,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         if (valueColumn) {
             const colDefToCopy = valueColumn.getColDef();
             Object.assign(colDef, colDefToCopy);
+
             // even if original column was hidden, we always show the pivot value column, otherwise it would be
             // very confusing for people thinking the pivot is broken
             colDef.hide = false;
