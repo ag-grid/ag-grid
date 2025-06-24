@@ -524,7 +524,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `block` to block the commit of invalid cell edits, keeping editors open.
      */
-    cellEditingInvalidCommitType?: EditValidationCommitType;
+    invalidEditValueMode?: EditValidationCommitType;
 
     /**
      * Set to `true` to enable Single Click Editing for cells, to start editing with a single click.

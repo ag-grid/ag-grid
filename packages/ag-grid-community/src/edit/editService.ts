@@ -522,7 +522,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     public cellEditingInvalidCommitBlocks(): boolean {
-        return this.gos.get('cellEditingInvalidCommitType') === 'block';
+        return this.gos.get('invalidEditValueMode') === 'block';
     }
 
     public checkNavWithValidation(

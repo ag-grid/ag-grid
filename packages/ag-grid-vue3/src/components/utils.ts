@@ -474,7 +474,7 @@ export interface Props<TData> {
     getFullRowEditValidationErrors?: GetFullRowEditValidationErrors | undefined,
     /** Set to `block` to block the commit of invalid cell edits, keeping editors open.
          */
-    cellEditingInvalidCommitType?: EditValidationCommitType | undefined,
+    invalidEditValueMode?: EditValidationCommitType | undefined,
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
          * @default false
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
@@ -1933,7 +1933,7 @@ export function getProps() {
         components: undefined,
         editType: undefined,
         getFullRowEditValidationErrors: undefined,
-        cellEditingInvalidCommitType: undefined,
+        invalidEditValueMode: undefined,
         singleClickEdit: undefined,
         suppressClickEdit: undefined,
         readOnlyEdit: undefined,

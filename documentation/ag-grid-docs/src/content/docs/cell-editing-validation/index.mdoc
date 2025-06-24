@@ -1,5 +1,5 @@
 ---
-title: "Cell Editing Validation"
+title: 'Cell Editing Validation'
 ---
 
 ## Standard Validation
@@ -7,14 +7,13 @@ title: "Cell Editing Validation"
 The Grid provides built-in validation for all [Provided Cell Editors](./provided-cell-editors/), such as the Text, Large Text, Number and Date editors.
 These editors support validation automatically by checking the constraints defined in the column configuration. For example:
 
-- `Text` and `Large Text` editors will respect the `maxLength` property.
-- `Number` editors validate against min and max constraints.
-- `Date` editors ensure the value is a valid date string.
+-   `Text` and `Large Text` editors will respect the `maxLength` property.
+-   `Number` editors validate against min and max constraints.
+-   `Date` editors ensure the value is a valid date string.
 
 Validation is performed when editing ends, and the Grid will handle invalid values based on the selected [Validation Modes](#validation-modes).
 
 {% gridExampleRunner title="Cell Editor Validation" name="cell-editor-validation" /%}
-
 
 ## Overriding Validation
 
@@ -45,25 +44,26 @@ const gridOptions = {
 If the callback returns errors, the Grid will show the errors in a tooltip when hovering the editor and discard the edit value before completing (depending on the [Validation Modes](#validation-modes)).
 
 This is demonstrated in the following example, note that:
-- `Athlete` has to be longer than `3` characters.
-- `Age` has to be different than `18`.
+
+-   `Athlete` has to be longer than `3` characters.
+-   `Age` has to be different than `18`.
 
 {% gridExampleRunner title="Cell Editor Validation Override" name="cell-editor-validation-override" /%}
 
 ## Validation Modes
 
-The Grid supports two modes for handling invalid edits, configured via the grid option `cellEditingInvalidCommitType`:
+The Grid supports two modes for handling invalid edits, configured via the grid option `invalidEditValueMode`:
 
-| Mode | Description |
-| ----- | ---------- |
-| `'revert'` (default) | Cancels the edit and reverts the cell to its original value if the value is invalid. |
-| `'block'` | Prevents the editor from closing until a valid value is provided. Other editors cannot be started until the current edit is completed or cancelled. |
+| Mode                 | Description                                                                                                                                         |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `'revert'` (default) | Cancels the edit and reverts the cell to its original value if the value is invalid.                                                                |
+| `'block'`            | Prevents the editor from closing until a valid value is provided. Other editors cannot be started until the current edit is completed or cancelled. |
 
 Use the `'block'` mode when you want to strictly enforce valid input before allowing the user to proceed.
 
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
-    cellEditingInvalidCommitType: 'block',
+    invalidEditValueMode: 'block',
 }
 ```
 
@@ -95,9 +95,9 @@ A row edit will only complete successfully if **both** the individual cell edito
 
 This is demonstrated in the following example. Note the following validation rules:
 
-- `Weight` has to be a positive value below `500`.
-- `Height` has to be a positive value below `300`.
-- **Full Row Edit Validation** ensures that the Body Mass Index (BMI), calculated using height and weight, is between `10` and `80`.
+-   `Weight` has to be a positive value below `500`.
+-   `Height` has to be a positive value below `300`.
+-   **Full Row Edit Validation** ensures that the Body Mass Index (BMI), calculated using height and weight, is between `10` and `80`.
 
 {% gridExampleRunner title="Full Row Editing Validation" name="full-row-editing-validation" /%}
 

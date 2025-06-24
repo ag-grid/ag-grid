@@ -89,7 +89,7 @@ export abstract class BaseEditStrategy extends BeanStub {
                 column: column as AgColumn,
                 rowNode: _getRowNode(beans, { rowIndex: rowIndex!, rowPinned })!,
             };
-            const isBlock = gos.get('cellEditingInvalidCommitType') === 'block';
+            const isBlock = gos.get('invalidEditValueMode') === 'block';
             const hasError =
                 isBlock && !!editModelSvc?.getCellValidationModel().hasCellValidation(cellPositionFromEvent);
 
