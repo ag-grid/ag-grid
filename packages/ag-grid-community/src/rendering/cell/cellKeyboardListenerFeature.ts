@@ -130,7 +130,8 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const { cellCtrl, beans } = this;
         const { editSvc, navigation } = beans;
         const cellEditing = editSvc?.isEditing(cellCtrl);
-        const rowEditing = editSvc?.isRowEditing(cellCtrl.rowNode);
+        const rowNode = cellCtrl.rowNode;
+        const rowEditing = editSvc?.isRowEditing(rowNode);
 
         const startEditingAction = (cellCtrl: CellCtrl) => {
             const started = editSvc?.startEditing(cellCtrl, {
@@ -164,9 +165,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 editSvc?.stopEditing(cellCtrl, {
                     event,
                 });
-            } else if (rowEditing) {
+            } else if (rowEditing && !cellCtrl.isCellEditable()) {
                 // must be on a read only cell
-                editSvc?.stopEditing(cellCtrl, { event });
+                editSvc?.stopEditing({ rowNode }, { event });
             } else {
                 startEditingAction(cellCtrl);
             }
