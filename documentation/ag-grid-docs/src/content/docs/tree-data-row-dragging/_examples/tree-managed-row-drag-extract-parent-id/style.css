@@ -1,0 +1,37 @@
+/* Simple responsive side-by-side layout */
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+#myGrid {
+    flex: 2;
+    min-width: 0;
+}
+
+.exported-data {
+    flex: 1;
+    position: relative;
+    min-width: 180px;
+    padding: 1em;
+    overflow: auto;
+}
+
+.exported-data::after {
+    content: 'Exported Data';
+    display: block;
+    position: fixed;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 0.5em;
+}
+
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+    }
+    .exported-data {
+        border-left: none;
+        border-top: 1px solid #ddd;
+    }
+}

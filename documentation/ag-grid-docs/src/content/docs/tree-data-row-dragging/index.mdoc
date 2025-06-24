@@ -120,6 +120,15 @@ In the example below, note that:
 
 {% gridExampleRunner title="Managed Row Drag with Tree Data and isRowValidDropPosition" name="tree-managed-row-drag-filesystem"  /%}
 
+### Extracting Managed Row Dragging Data
+
+To extract the new rowData reordered and updated by managed row dragging, you can use the `forEachLeafNode` API method.
+
+Example with Parent IDs:
+
+{% gridExampleRunner title="Extracting Managed Row Dragging Data with Parent IDs" name="tree-managed-row-drag-extract-parent-id" exampleHeight=500 /%}
+
+
 ## Unmanaged Row Dragging 
 
 In order to have full control over row dragging, it is possible to provide a customized implementation of row dragging using [Unmanaged Row Dragging](./row-dragging/#unmanaged-dragging)
