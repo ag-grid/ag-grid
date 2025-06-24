@@ -496,6 +496,16 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        renderingMode: {
+            validate: (options) => {
+                const renderingMode = options.renderingMode;
+                const validModes: GridOptions['renderingMode'][] = ['default', 'legacy'];
+                if (renderingMode && !validModes.includes(renderingMode)) {
+                    return `renderingMode must be one of [${validModes.join()}], currently it's ${renderingMode}`;
+                }
+                return null;
+            },
+        },
     };
     const validations: Validations<GridOptions> = {};
     _BOOLEAN_GRID_OPTIONS.forEach((key) => {
