@@ -279,7 +279,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             (event.key === KeyCode.TAB ||
                 event.key === KeyCode.ENTER ||
                 event.key === KeyCode.F2 ||
-                (event.key === 'Backspace' && cellStartedEdit))
+                (event.key === KeyCode.BACKSPACE && cellStartedEdit))
         ) {
             return true;
         }
