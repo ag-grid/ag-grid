@@ -360,6 +360,16 @@ function trim(str?: any) {
     return str.substring?.(0, len) + (str.length > len ? '...' : '') ?? str;
 }
 
+function commitBatchEdit() {
+    gridApi!.commitBatchEdit();
+    getEditingCells();
+}
+
+function cancelBatchEdit() {
+    gridApi!.cancelBatchEdit();
+    getEditingCells();
+}
+
 function getEditingCells() {
     setTimeout(() => {
         const cells = gridApi!.getEditingCells({ includePending: true });
