@@ -16,7 +16,6 @@ import type { EditMap, EditRow, EditValue, GetEditsParams, IEditModelService } f
 import type {
     EditNavOnValidationResult,
     EditPosition,
-    EditRowPosition,
     EditSource,
     IEditService,
     IsEditingParams,
@@ -273,9 +272,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const willStop = !cancel && !!this.shouldStopEditing(position, event, source);
         const willCancel = cancel && !!this.shouldCancelEditing(position, event, source);
 
+        const originalData = position?.rowNode ? Object.assign({}, position.rowNode.data) : undefined;
+
         if (willStop || willCancel) {
             _syncFromEditors(beans);
-            const freshEdits = model.getEditMap();
+            const freshEdits = model.getEditMap(true);
 
             this.processEdits(freshEdits, cancel);
 
@@ -311,11 +312,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
                 this.bulkRefresh(position, edits, { suppressFlash: true });
 
-                edits = model.getEditMap();
+                edits = model.getEditMap(true);
             }
         } else {
             _syncFromEditors(beans);
-            edits = model.getEditMap();
+            edits = model.getEditMap(true);
         }
 
         if (res && position) {
@@ -336,6 +337,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         this.bulkRefresh();
 
         this.beans.rowRenderer.refreshRows({ suppressFlash: true, force: true });
+
+        this.strategy?.dispatchRowEvents(edits, originalData, cancel);
 
         if (res && willStop && this.isBatchEditing()) {
             this.dispatchBatchEvent('batchEditingStopped', edits);
@@ -541,8 +544,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.model.clearEditValue(cellPosition);
 
-        _destroyEditors(this.beans, [cellPosition]);
-
         _setupEditor(this.beans, cellPosition);
 
         _populateModelValidationErrors(this.beans);
@@ -743,13 +744,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         payload?: any
     ): void {
         this.strategy?.dispatchCellEvent(position, event, type, payload);
-    }
-
-    public dispatchRowEvent(
-        position: Required<EditRowPosition>,
-        type: 'rowEditingStarted' | 'rowEditingStopped'
-    ): void {
-        this.strategy?.dispatchRowEvent(position, type);
     }
 
     public dispatchBatchEvent(type: 'batchEditingStarted' | 'batchEditingStopped', edits: EditMap): void {

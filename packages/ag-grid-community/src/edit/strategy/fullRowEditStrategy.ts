@@ -1,11 +1,12 @@
 import type { BeanName } from '../../context/context';
+import type { RowNode } from '../../entities/rowNode';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
-import type { EditValue } from '../../interfaces/iEditModelService';
-import type { EditPosition, EditRowPosition } from '../../interfaces/iEditService';
+import type { EditMap, EditValue } from '../../interfaces/iEditModelService';
+import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getRowCtrl } from '../utils/controllers';
-import { _populateModelValidationErrors, _setupEditor, _valuesDiffer } from '../utils/editors';
+import { _populateModelValidationErrors } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
@@ -75,8 +76,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             super.cleanupEditors(position);
         }
 
-        if (!this.model.hasEdits({ rowNode })) {
-            this.dispatchRowEvent({ rowNode }, 'rowEditingStarted');
+        this.rowNode = rowNode;
+
+        if (!this.model.hasRowEdits(rowNode)) {
+            this.dispatchRowEvent(rowNode as RowNode, 'rowEditingStarted');
         }
 
         const columns = this.beans.visibleCols.allCols;
@@ -96,8 +99,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 this.model.start(position);
             }
         });
-
-        this.rowNode = rowNode;
 
         this.setupEditors(cells, position, true, event, ignoreEventKey);
     }
@@ -124,17 +125,14 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
     public override stop(cancel?: boolean): boolean {
         const { rowNode } = this;
-        if (rowNode && !this.model.hasRowEdits(rowNode)) {
+
+        if (!rowNode) {
+            // shouldn't call stop without a start
             return false;
         }
 
-        const rowEdits = this.model.getEditRow(rowNode!)!;
-        let hadRowEdits = false;
-        for (const [, edit] of rowEdits) {
-            if (_valuesDiffer(edit)) {
-                hadRowEdits = true;
-                break;
-            }
+        if (!this.model.hasRowEdits(rowNode)) {
+            return false;
         }
 
         // rerun validation, new values might have triggered row validations
@@ -145,16 +143,17 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         super.stop(cancel);
 
-        if (rowNode) {
-            if (hadRowEdits) {
-                this.dispatchRowEvent({ rowNode }, 'rowValueChanged');
-            }
-            this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
+        return true;
+    }
+
+    public override dispatchRowEvents(edits: EditMap, originalData?: any, cancel?: boolean): void {
+        const rowNode = this.rowNode as RowNode;
+
+        if (!cancel && this.editRowHasChanged(originalData, edits.get(rowNode), cancel)) {
+            this.dispatchRowEvent(rowNode, 'rowValueChanged');
         }
 
-        this.rowNode = undefined;
-
-        return true;
+        (originalData || !this.editSvc.isBatchEditing()) && this.dispatchRowEvent(rowNode, 'rowEditingStopped');
     }
 
     public override onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
@@ -177,12 +176,12 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
     }
 
-    public override cleanupEditors({ rowNode }: EditRowPosition = {}, includeEditing?: boolean): void {
-        super.cleanupEditors({ rowNode }, includeEditing);
-        if (rowNode) {
-            this.dispatchRowEvent({ rowNode: this.rowNode! }, 'rowEditingStopped');
-        }
-    }
+    // public override cleanupEditors({ rowNode }: EditRowPosition = {}, includeEditing?: boolean): void {
+    //     super.cleanupEditors({ rowNode }, includeEditing);
+    //     // if (rowNode) {
+    //     //     this.dispatchRowEvent({ rowNode: this.rowNode! }, 'rowEditingStopped');
+    //     // }
+    // }
 
     // returns null if no navigation should be performed
     public override moveToNextEditingCell(
@@ -257,10 +256,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         if (nextEditable && !preventNavigation) {
-            if (!nextCell.comp?.getCellEditor()) {
-                // editor missing because it was outside the viewport during creating phase, attempt to create it now
-                _setupEditor(this.beans, nextCell, undefined, event, true);
-            }
             this.setFocusInOnEditor(nextCell);
             nextCell.focusCell(false, event);
         } else {

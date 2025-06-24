@@ -111,7 +111,6 @@ export interface IEditService extends NamedBean {
         type?: T,
         payload?: any
     ): void;
-    dispatchRowEvent(position: Required<EditRowPosition>, type: 'rowEditingStarted' | 'rowEditingStopped'): void;
     applyBulkEdit(position: Required<EditPosition>, cellRanges: CellRange[]): void;
     validateEdit(): ICellEditorValidationError[] | null;
     createCellStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): ICellStyleFeature;

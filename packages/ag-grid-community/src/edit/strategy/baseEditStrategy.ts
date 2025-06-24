@@ -4,9 +4,10 @@ import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
 import { _getRowNode } from '../../entities/positionUtils';
+import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
-import type { EditMap, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
+import type { EditMap, EditRow, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
 import type {
     EditPosition,
     EditRowPosition,
@@ -23,6 +24,7 @@ import {
     _purgeUnchangedEdits,
     _setupEditors,
     _syncFromEditors,
+    _valuesDiffer,
 } from '../utils/editors';
 
 export type EditValidationResult<T extends Required<EditPosition> = Required<EditPosition>> = {
@@ -107,6 +109,7 @@ export abstract class BaseEditStrategy extends BeanStub {
                 if (editSvc.isBatchEditing()) {
                     // close editors, but don't stop editing in batch mode
                     editSvc.cleanupEditors();
+                    this.dispatchRowEvents(this.model.getEditMap());
                 } else {
                     // if not batch editing, then we stop editing the cell
                     editSvc.stopEditing(undefined, { source: 'api' });
@@ -257,16 +260,42 @@ export abstract class BaseEditStrategy extends BeanStub {
         }
     }
 
-    public dispatchRowEvent(
-        position: Required<EditRowPosition>,
-        type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged'
-    ): void {
-        const rowCtrl = _getRowCtrl(this.beans, position)!;
+    public dispatchRowEvent<T extends AgEventType>(rowNode: RowNode, type: T): void {
+        const rowCtrl = _getRowCtrl(this.beans, { rowNode });
 
         if (rowCtrl) {
-            this.eventSvc.dispatchEvent(rowCtrl.createRowEvent(type));
+            this.eventSvc.dispatchEvent(rowCtrl.createRowEvent(type) as any);
         }
     }
+
+    protected editRowHasChanged(originalData?: any, editRow?: EditRow, cancel?: boolean): boolean {
+        if (!editRow) {
+            return false;
+        }
+
+        const includeEditing = !cancel;
+
+        for (const column of editRow.keys()) {
+            const cellData = editRow.get(column)!;
+            const editing = cellData.state === 'editing';
+            const changed = !editing;
+
+            let valuesDiffer: boolean;
+            if (originalData) {
+                valuesDiffer = originalData[column?.getColId()] !== cellData.newValue;
+            } else {
+                valuesDiffer = _valuesDiffer(cellData);
+            }
+
+            if (((editing && includeEditing) || changed) && valuesDiffer) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public dispatchRowEvents(_edits: EditMap, _originalData?: any, _cancel?: boolean): void {}
 
     public shouldStart(
         { column }: Required<EditPosition>,

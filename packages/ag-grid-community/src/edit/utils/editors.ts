@@ -130,7 +130,7 @@ export function _setupEditor(
 
     beans.editModelSvc?.setEdit(position, { newValue: newValue ?? UNEDITED, oldValue, state: 'editing' });
 
-    if (editorComp) {
+    if (editorComp?.refresh) {
         // don't reinitialise, just refresh if possible
         editorComp.refresh?.(editorParams);
         return;
@@ -149,10 +149,17 @@ export function _setupEditor(
     checkAndPreventDefault(compDetails!.params, event);
 
     if (cellCtrl) {
+        if (editorComp) {
+            // couldn't refresh the editor, so we need to destroy it, to rebuild it with new params
+            cellCtrl.comp?.setEditDetails();
+        }
         cellCtrl.editCompDetails = compDetails;
         cellCtrl.comp?.setEditDetails(compDetails, popup, popupLocation, beans.gos.get('reactiveCustomComponents'));
         cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
+    }
 
+    if (!editorComp) {
+        // if we didn't originally have an editor, we this is a new edit, so we need to dispatch the event
         beans.editSvc?.dispatchCellEvent(position, null, 'cellEditingStarted');
     }
 

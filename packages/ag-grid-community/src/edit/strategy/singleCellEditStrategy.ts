@@ -3,7 +3,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import { _getRowNode } from '../../entities/positionUtils';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
-import type { EditPosition, EditRowPosition } from '../../interfaces/iEditService';
+import type { EditPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getColId } from '../utils/controllers';
@@ -58,10 +58,11 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         this.setupEditors([position], position, true, event, ignoreEventKey);
     }
 
-    public override dispatchRowEvent(
-        _position: EditRowPosition,
-        _type: 'rowEditingStarted' | 'rowEditingStopped'
-    ): void {
+    public override dispatchRowEvent(): void {
+        // NOP - single cell edit strategy does not dispatch row events
+    }
+
+    public override dispatchRowEvents(): void {
         // NOP - single cell edit strategy does not dispatch row events
     }
 

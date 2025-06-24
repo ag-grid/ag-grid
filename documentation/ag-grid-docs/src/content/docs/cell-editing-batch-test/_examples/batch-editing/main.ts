@@ -270,15 +270,19 @@ const gridOptions: GridOptions = {
     },
     onRowEditingStarted: (_event: RowEditingStartedEvent) => {
         console.log('rowEditingStarted');
+        getEditingCells();
     },
     onRowEditingStopped: (_event: RowEditingStoppedEvent) => {
         console.log('rowEditingStopped');
+        getEditingCells();
     },
     onCellEditingStarted: (_event: CellEditingStartedEvent) => {
         console.log('cellEditingStarted');
+        getEditingCells();
     },
     onCellEditingStopped: (_event: CellEditingStoppedEvent) => {
         console.log('cellEditingStopped');
+        getEditingCells();
     },
     onCellValueChanged: (_event: CellValueChangedEvent) => {
         console.log('Cell value changed');
@@ -436,12 +440,13 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
 function toggleBatch() {
     const batch = gridApi!.isBatchEditing();
 
-    gridApi!.startBatchEdit();
+    batch && gridApi!.startBatchEdit();
+    !batch && gridApi!.cancelBatchEdit();
 
     document.getElementById('enablePoll')!.style.display = polling ? 'none' : 'unset';
     document.getElementById('disablePoll')!.style.display = polling ? 'unset' : 'none';
 
-    document.getElementById('edits-table')!.style.display = batch ? 'none' : 'block';
+    (document.getElementById('batchEdit')! as HTMLInputElement).checked = !batch;
 }
 
 function createChart() {
@@ -466,11 +471,13 @@ function setEditType(editType: EditStrategyType) {
 function cancelEdit() {
     gridApi!.stopEditing(true);
     getEditingCells();
+    toggleBatch();
 }
 
 function stopEdit() {
     gridApi!.stopEditing();
     getEditingCells();
+    toggleBatch();
 }
 
 function onBtExport(type: 'csv' | 'excel') {
