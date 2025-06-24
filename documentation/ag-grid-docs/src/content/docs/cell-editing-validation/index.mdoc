@@ -77,6 +77,8 @@ In addition, the Grid can also perform cross-field validation by using the optio
 
 This callback should return an array of error strings if the row is in an invalid state. If no errors are found, it should return `null`.
 
+{% apiDocumentation source="grid-options/properties.json" section="editing" names=["getFullRowEditValidationErrors"] /%}
+
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     getFullRowEditValidationErrors: (params) => {
