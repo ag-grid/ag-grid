@@ -32,7 +32,7 @@ There are two approaches to enable Row Dragging:
 This is the simplest way to enable row dragging with Tree Data.
 The grid will automatically handle the dragging of rows and updating the data structure.
 It supports reordering, moving parents and children, and converting a leaf node into a group.
-Moving a parent as a child of itself is not allowed, to avoid cycles, and the grid will prevent this automatically.
+Moving a parent to be a child of itself is not allowed, as this would create a cycle. The grid will prevent this automatically.
 
 To enable managed row dragging, set the following options:
 
