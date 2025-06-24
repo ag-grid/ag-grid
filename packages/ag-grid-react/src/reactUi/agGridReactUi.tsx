@@ -238,7 +238,9 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         });
     }, [props]);
 
-    const renderMode = !(React as any).useSyncExternalStore ? 'legacy' : props.renderingMode ?? 'default';
+    const renderMode = !(React as any).useSyncExternalStore
+        ? 'legacy'
+        : _getGridOption(props, 'renderingMode') ?? 'default';
 
     return (
         <div style={style} className={props.className} ref={setRef}>
