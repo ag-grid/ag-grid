@@ -209,7 +209,7 @@ export class RowNode<TData = any>
     public rowHeightEstimated: boolean;
 
     /**
-     * This is `true` if row has a rowIndex assigned, otherwise `false`.
+     * This is `true` if the row has a rowIndex assigned, otherwise `false`.
      */
     public displayed: boolean = false;
 
