@@ -136,6 +136,7 @@ export class CellCtrl extends BeanStub {
     private hasBeenFocused = false;
 
     private editSvc?: IEditService;
+    private hasEdit: boolean = false;
 
     public tooltipFeature: TooltipFeature | undefined = undefined;
     public editorTooltipFeature: TooltipFeature | undefined = undefined;
@@ -150,6 +151,7 @@ export class CellCtrl extends BeanStub {
         this.beans = beans;
         this.gos = beans.gos;
         this.editSvc = beans.editSvc;
+        this.hasEdit = !!beans.editSvc;
 
         const { colId } = column;
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
@@ -353,8 +355,12 @@ export class CellCtrl extends BeanStub {
             );
         }
 
-        if (beans?.editSvc?.isBatchEditing() && beans?.editSvc?.isRowEditing({ rowNode }, { checkSiblings: true })) {
-            const result = beans.editSvc.prepDetailsDuringBatch(this, { compDetails, valueToDisplay });
+        if (
+            this.hasEdit &&
+            this.editSvc!.isBatchEditing() &&
+            this.editSvc!.isRowEditing(rowNode, { checkSiblings: true })
+        ) {
+            const result = this.editSvc!.prepDetailsDuringBatch(this, { compDetails, valueToDisplay });
             if (result) {
                 if (result.compDetails) {
                     compDetails = result.compDetails;

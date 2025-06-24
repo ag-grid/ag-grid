@@ -64,6 +64,10 @@ const SOURCE_TRANSFORM_KEYS: Set<string> = new Set(Object.keys(SOURCE_TRANSFORM)
 
 const CANCEL_PARAMS: StopEditParams = { cancel: true, source: 'api' };
 
+const CHECK_SIBLING = { checkSiblings: true };
+
+const FORCE_REFRESH = { force: true, suppressFlash: true };
+
 export class EditService extends BeanStub implements NamedBean, IEditService {
     beanName = 'editSvc' as const;
     private batch: boolean = false;
@@ -192,21 +196,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     public isEditing(position?: EditPosition, params?: IsEditingParams): boolean {
-        const nodeIsEditing = this.model.hasEdits(position, params);
-
-        if (nodeIsEditing) {
-            return true;
-        }
-
-        const { rowNode, column } = position || {};
-        const pinnedSibling = (rowNode as RowNode)?.pinnedSibling;
-        const siblingIsEditing = pinnedSibling && this.model.hasEdits({ rowNode: pinnedSibling, column }, params);
-
-        return siblingIsEditing ?? false;
+        return this.model.hasEdits(position, params ?? CHECK_SIBLING);
     }
 
-    public isRowEditing({ rowNode }: EditRowPosition, params?: IsEditingParams): boolean {
-        return this.model.hasEdits({ rowNode }, params) ?? false;
+    public isRowEditing(rowNode?: IRowNode, params?: IsEditingParams): boolean {
+        return (rowNode && this.model.hasRowEdits(rowNode, params)) ?? false;
     }
 
     /** @returns whether to prevent default on event */
@@ -368,12 +362,12 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         for (const rowNode of rowNodes) {
             const editRow = edits.get(rowNode)!;
             for (const column of editRow.keys()) {
-                const { newValue, oldValue } = editRow.get(column)!;
+                const editValue = editRow.get(column)!;
                 const position: Required<EditPosition> = { rowNode, column };
 
                 const cellCtrl = _getCellCtrl(beans, position);
 
-                const valueChanged = _valuesDiffer({ newValue, oldValue });
+                const valueChanged = _valuesDiffer(editValue);
 
                 if (!cancel && valueChanged && !hasValidationErrors) {
                     // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
@@ -383,12 +377,12 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     if (cellCtrl) {
                         cellCtrl.suppressRefreshCell = true;
                     }
-                    rowNode.setDataValue(column, newValue, 'commit');
+                    rowNode.setDataValue(column, editValue.newValue, 'commit');
                     if (cellCtrl) {
                         cellCtrl.suppressRefreshCell = false;
                     }
 
-                    cellCtrl?.refreshCell({ force: true, suppressFlash: true });
+                    cellCtrl?.refreshCell(FORCE_REFRESH);
                 }
 
                 if (cancel) {
@@ -415,7 +409,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         this.bulkRefresh();
 
         // force refresh of all row cells as custom renderers may depend on multiple cell values
-        this.beans.rowRenderer.refreshCells({ force: true, suppressFlash: true });
+        this.beans.rowRenderer.refreshCells(FORCE_REFRESH);
     }
 
     private dispatchEditValuesChanged(
@@ -565,8 +559,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         _populateModelValidationErrors(this.beans);
 
-        cellCtrl?.refreshCell({ suppressFlash: true, force: true });
-        cellCtrl?.rowCtrl.refreshRow({ suppressFlash: true, force: true });
+        cellCtrl?.refreshCell(FORCE_REFRESH);
+        cellCtrl?.rowCtrl.refreshRow(FORCE_REFRESH);
 
         if (!focus) {
             return;
@@ -580,8 +574,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         _populateModelValidationErrors(this.beans);
         const cellCtrl = _getCellCtrl(this.beans, position);
         if (cellCtrl) {
-            cellCtrl.refreshCell({ suppressFlash: true, force: true });
-            cellCtrl.rowCtrl.refreshRow({ suppressFlash: true, force: true });
+            cellCtrl.refreshCell(FORCE_REFRESH);
+            cellCtrl.rowCtrl.refreshRow(FORCE_REFRESH);
         }
 
         let invalid = false;
@@ -650,8 +644,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             : newValue;
     }
 
-    getRowDataValue(position: Required<EditRowPosition>, params?: GetEditsParams | undefined) {
-        return this.model.getEditRowDataValue(position, params);
+    getRowDataValue(rowNode: Required<IRowNode>, params?: GetEditsParams | undefined) {
+        return this.model.getEditRowDataValue(rowNode, params);
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
@@ -706,10 +700,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         _syncFromEditor(beans, position, newValue, eventSource);
         this.stopEditing(position, { source });
 
-        this.beans.changeDetectionSvc?.refreshRows(
-            { node: position.rowNode, column: position.column },
-            { suppressFlash: true, force: true }
-        );
+        this.beans.changeDetectionSvc?.refreshRows({ node: position.rowNode, column: position.column }, FORCE_REFRESH);
 
         return true;
     }
@@ -732,7 +723,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return;
         }
 
-        const hasEdits = this.model.hasRowEdits(position, { checkSiblings: true });
+        const hasEdits = this.model.hasRowEdits(position.rowNode, CHECK_SIBLING);
 
         if (!hasEdits) {
             return;
@@ -743,11 +734,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         if (compDetails) {
             const { params } = compDetails;
-            params.data = this.model.getEditRowDataValue({ rowNode }, { checkSiblings: true });
+            params.data = this.model.getEditRowDataValue(rowNode, CHECK_SIBLING);
             return { compDetails };
         }
 
-        const editRow = this.model.getEditRow(position, { checkSiblings: true });
+        const editRow = this.model.getEditRow(position.rowNode, CHECK_SIBLING);
 
         if (valueToDisplay !== undefined && editRow?.has(column)) {
             return { valueToDisplay: this.valueSvc.getValue(column as AgColumn, rowNode) };
@@ -918,10 +909,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     onCellFocused(event: CellFocusedEvent): void {
-        const { column, rowIndex, rowPinned } = event;
-        const cellCtrl = _getCellCtrl(this.beans, { rowIndex, rowPinned, column });
+        const cellCtrl = _getCellCtrl(this.beans, event);
 
-        if (!cellCtrl) {
+        if (!cellCtrl || !this.isEditing(cellCtrl, CHECK_SIBLING)) {
             return;
         }
 
