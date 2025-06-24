@@ -164,6 +164,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 editSvc?.stopEditing(cellCtrl, {
                     event,
                 });
+            } else if (rowEditing) {
+                // must be on a read only cell
+                editSvc?.stopEditing(undefined, { event });
             } else {
                 startEditingAction(cellCtrl);
             }
