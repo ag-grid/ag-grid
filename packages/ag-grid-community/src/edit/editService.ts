@@ -379,7 +379,21 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     if (cellCtrl) {
                         cellCtrl.suppressRefreshCell = true;
                     }
-                    rowNode.setDataValue(column, editValue.newValue, 'commit');
+
+                    const { value, valueFormatted } = this.beans.valueSvc.getValueForDisplay(
+                        column as AgColumn,
+                        rowNode,
+                        true
+                    );
+
+                    let newValue = value;
+
+                    if (column.getColDef().refData && valueFormatted === '') {
+                        // refdata lookup failed, so we set the value to formatted value
+                        newValue = valueFormatted;
+                    }
+
+                    rowNode.setDataValue(column, newValue, 'commit');
                     if (cellCtrl) {
                         cellCtrl.suppressRefreshCell = false;
                     }
