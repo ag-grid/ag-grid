@@ -12,6 +12,7 @@ import styles from '@layouts/Layout.module.scss';
 import { getApiPaths } from '@utils/apiMenuPath';
 import { SITE_BASE_URL } from '@constants';
 import GoogleTagManager from '@components/GoogleTagManager.astro';
+import ZoomInfo from '@components/ZoomInfo.astro';
 
 interface Props {
     title: string;
@@ -108,6 +109,7 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
                 <Fragment>
                     <GoogleTagManager googleTagManagerId={metadata.googleTagManagerId} />
                     <Plausible domain="ag-grid.com" />
+                    <ZoomInfo />
 
                     <script async type="text/javascript" src="https://secure.inventiveinspired7.com/js/792251.js" />
                     <noscript>
