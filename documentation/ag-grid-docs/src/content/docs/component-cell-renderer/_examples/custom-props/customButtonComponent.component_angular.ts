@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import type { ICellRendererParams } from 'ag-grid-community';
@@ -11,18 +11,18 @@ interface CustomButtonParams extends ICellRendererParams {
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `<button (click)="onClick()">
-        {{ data?.company ? 'Launch ' + data.company + '!' : 'Launch!' }}
+        {{ 'Launch ' + company() + '!' }}
     </button>`,
 })
 export class CustomButtonComponent implements ICellRendererAngularComp {
     onClick!: () => void;
-    data: any;
+    company = signal('');
     agInit(params: CustomButtonParams): void {
         this.onClick = params.onClick;
-        this.data = params.data;
+        this.refresh(params);
     }
     refresh(params: CustomButtonParams) {
-        this.data = params.data;
+        this.company.set(params.data?.company ?? '');
         return true;
     }
 }
