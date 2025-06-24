@@ -54,8 +54,9 @@ const gridOptions: GridOptions<IRow> = {
             cellRenderer: MissionResultRenderer,
         },
         {
+            colId: 'successful-custom',
             field: 'successful',
-            headerName: 'Success',
+            headerName: 'Success (Custom Props)',
             cellRenderer: MissionResultRenderer,
             cellRendererParams: {
                 src: successIconSrc,
