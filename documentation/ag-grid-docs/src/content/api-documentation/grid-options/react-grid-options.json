@@ -1,5 +1,7 @@
 {
-    "_config_": {},
+    "_config_": {
+        "codeSrc": "grid-options.AUTO.json"
+    },
     "gridOptions": {
         "meta": {
             "displayName": "Grid Options"
@@ -14,11 +16,6 @@
         "meta": {
             "displayName": "React Rendering"
         },
-        "renderingMode": {
-            "description": "Fine grained control over the row rendering mechanism. <br/> `default` - recommended rendering approach. <br/> `legacy` - provided for backwards compatibility with AG Grid <= v33. Is susceptible to 'Maximum Update Depth Exceeded' errors and likely to be deprecated in a future version.",
-            "default": "'default'",
-            "type": "'default' | 'legacy'",
-            "tags": [{ "name": "initial" }]
-        }
+        "renderingMode": {}
     }
 }

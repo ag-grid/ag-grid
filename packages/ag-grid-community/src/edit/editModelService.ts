@@ -40,7 +40,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
             return;
         }
 
-        const editRow = this.getEditRow({ rowNode })!;
+        const editRow = this.getEditRow(rowNode)!;
 
         if (column) {
             editRow.delete(column);
@@ -53,8 +53,12 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         }
     }
 
-    public getEditRow({ rowNode }: EditRowPosition, params: GetEditsParams = {}): EditRow | undefined {
+    public getEditRow(rowNode: IRowNode, params: GetEditsParams = {}): EditRow | undefined {
         if (this.suspendEdits) {
+            return undefined;
+        }
+
+        if (this.edits.size === 0) {
             return undefined;
         }
 
@@ -67,17 +71,21 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         if (params.checkSiblings) {
             const pinnedSibling = (rowNode as RowNode).pinnedSibling;
             if (pinnedSibling) {
-                return this.getEditRow({ rowNode: pinnedSibling });
+                return this.getEditRow(pinnedSibling);
             }
         }
 
         return undefined;
     }
 
-    public getEditRowDataValue({ rowNode }: Required<EditRowPosition>, { checkSiblings }: GetEditsParams = {}): any {
-        const editRow = this.getEditRow({ rowNode });
+    public getEditRowDataValue(rowNode: IRowNode, { checkSiblings }: GetEditsParams = {}): any {
+        if (this.edits.size === 0) {
+            return rowNode.data;
+        }
+
+        const editRow = this.getEditRow(rowNode);
         const pinnedSibling = (rowNode as RowNode).pinnedSibling;
-        const siblingRow = checkSiblings && pinnedSibling && this.getEditRow({ rowNode: pinnedSibling });
+        const siblingRow = checkSiblings && pinnedSibling && this.getEditRow(pinnedSibling);
 
         if (!editRow && !siblingRow) {
             return rowNode.data;
@@ -107,11 +115,16 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         if (this.suspendEdits) {
             return undefined;
         }
-        return position.column && this.getEditRow(position)?.get(position.column);
+
+        if (this.edits.size === 0) {
+            return undefined;
+        }
+
+        return position.rowNode && position.column && this.getEditRow(position.rowNode)?.get(position.column);
     }
 
     public getEditMap(copy = true): EditMap {
-        if (this.suspendEdits) {
+        if (this.suspendEdits || this.edits.size === 0) {
             return new Map();
         }
 
@@ -137,10 +150,9 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public setEdit(position: Required<EditPosition>, edit: EditValue): void {
-        const { rowNode, column } = position;
-        !this.edits.has(rowNode) && this.edits.set(rowNode, new Map());
+        (this.edits.size === 0 || !this.edits.has(position.rowNode)) && this.edits.set(position.rowNode, new Map());
 
-        this.getEditRow(position)!.set(column, edit);
+        this.getEditRow(position.rowNode)!.set(position.column, edit);
     }
 
     public clearEditValue(position: EditPosition): void {
@@ -153,7 +165,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
                     edit.state = 'changed';
                 }
             } else {
-                this.getEditRow(position)?.forEach((cellData) => {
+                this.getEditRow(rowNode)?.forEach((cellData) => {
                     cellData.newValue = cellData.oldValue;
                     cellData.state = 'changed';
                 });
@@ -168,7 +180,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
 
         const { rowNode, column } = position;
 
-        let editRow = this.getEditRow(position);
+        let editRow = this.getEditRow(rowNode);
 
         const edit = editRow?.get(column);
         if (edit) {
@@ -191,7 +203,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public getEditPositions(editMap?: EditMap): EditPositionValue[] {
-        if (this.suspendEdits) {
+        if (this.suspendEdits || this.edits.size === 0) {
             return [];
         }
 
@@ -209,12 +221,16 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         return positions;
     }
 
-    public hasRowEdits({ rowNode }: Required<EditRowPosition>, params?: GetEditsParams): boolean {
+    public hasRowEdits(rowNode: IRowNode, params?: GetEditsParams): boolean {
         if (this.suspendEdits) {
             return false;
         }
 
-        const rowEdits = this.getEditRow({ rowNode }, params);
+        if (this.edits.size === 0) {
+            return false;
+        }
+
+        const rowEdits = this.getEditRow(rowNode, params);
         return !!rowEdits;
     }
 
@@ -223,10 +239,14 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
             return false;
         }
 
+        if (this.edits.size === 0) {
+            return false;
+        }
+
         const { rowNode, column } = position;
         const { withOpenEditor } = params;
         if (rowNode) {
-            const rowEdits = this.getEditRow(position, params);
+            const rowEdits = this.getEditRow(rowNode, params);
             if (!rowEdits) {
                 return false;
             }
@@ -256,7 +276,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public start(position: Required<EditPosition>): void {
-        const map = this.getEditRow(position) ?? new Map<Column, EditValue>();
+        const map = this.getEditRow(position.rowNode) ?? new Map<Column, EditValue>();
         const { rowNode, column } = position;
         if (column && !map.has(column)) {
             map.set(column, {

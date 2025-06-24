@@ -88,9 +88,10 @@ const gridOptions: GridOptions<IFile> = {
         },
         {
             field: 'size',
-            valueFormatter: (params: ValueFormatterParams) => (params.value ? params.value + ' MB' : ''),
-            width: 140,
             aggFunc: 'sum',
+            width: 140,
+            valueFormatter: (params: ValueFormatterParams<IFile, number>) =>
+                params.value ? params.value.toFixed(1) + ' MB' : '',
         },
     ],
     autoGroupColumnDef: {

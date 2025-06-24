@@ -174,7 +174,7 @@ function _valueFromEditor(cancel: boolean, cellComp?: ICellComp): { newValue?: a
 
     const validationErrors = cellEditor.getValidationErrors?.();
 
-    if (validationErrors?.length ?? 0 > 0) {
+    if ((validationErrors?.length ?? 0) > 0) {
         return noValueResult;
     }
 

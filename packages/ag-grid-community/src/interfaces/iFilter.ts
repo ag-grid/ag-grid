@@ -241,8 +241,10 @@ export interface FilterWrapperParams {
      */
     buttons?: FilterAction[];
     /**
-     * If the Apply button is present, the filter popup will be closed immediately when the Apply
-     * or Reset button is clicked if this is set to `true`.
+     * When this is set to `true`, the following will happen after clicking a filter button:
+     * - Apply closes popup.
+     * - Reset closes popup if Apply button is present.
+     * - Cancel closes popup.
      *
      * @default false
      */

@@ -1,7 +1,7 @@
 import { createApp, defineComponent, ref } from 'vue';
 
 import { ClientSideRowModelModule, ModuleRegistry, RowDragModule, ValidationModule } from 'ag-grid-community';
-import type { GridOptions, RowDragEndEvent, RowDragMoveEvent } from 'ag-grid-community';
+import type { GridOptions, RowDragEndEvent, RowDragMoveEvent, ValueFormatterParams } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
@@ -71,7 +71,9 @@ const VueExample = defineComponent({
                 { field: 'dateModified' },
                 {
                     field: 'size',
-                    valueFormatter: (params) => (params.value ? params.value + ' MB' : ''),
+                    aggFunc: 'sum',
+                    valueFormatter: (params: ValueFormatterParams<IFile, number>) =>
+                        params.value ? params.value.toFixed(1) + ' MB' : '',
                 },
             ],
             autoGroupColumnDef: {

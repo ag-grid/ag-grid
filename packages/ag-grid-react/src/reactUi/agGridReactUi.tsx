@@ -74,7 +74,6 @@ const reactPropsNotGridOptions: ReactCompProps = {
     className: undefined,
     passGridApi: undefined,
     componentWrappingElement: undefined,
-    renderingMode: undefined,
     ...deprecatedProps,
 };
 const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
@@ -239,7 +238,9 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         });
     }, [props]);
 
-    const renderMode = !React.useSyncExternalStore ? 'legacy' : props.renderingMode ?? 'default';
+    const renderMode = !(React as any).useSyncExternalStore
+        ? 'legacy'
+        : _getGridOption(props, 'renderingMode') ?? 'default';
 
     return (
         <div style={style} className={props.className} ref={setRef}>

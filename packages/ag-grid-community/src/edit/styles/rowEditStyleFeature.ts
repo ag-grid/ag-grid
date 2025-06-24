@@ -26,12 +26,12 @@ export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
         const { rowCtrl, editModelSvc, beans } = this;
 
         let rowNode = rowCtrl.rowNode;
-        let edits = editModelSvc?.getEditRow({ rowNode });
+        let edits = editModelSvc?.getEditRow(rowNode);
         const hasErrors = this.editModelSvc?.getRowValidationModel().hasRowValidation({ rowNode });
 
         if (!edits && rowNode.pinnedSibling) {
             rowNode = rowNode.pinnedSibling!;
-            edits = editModelSvc?.getEditRow({ rowNode });
+            edits = editModelSvc?.getEditRow(rowNode);
         }
         if (edits) {
             const editing = Array.from(edits.keys()).some((column) => {

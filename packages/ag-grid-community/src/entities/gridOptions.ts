@@ -1895,6 +1895,17 @@ export interface GridOptions<TData = any> {
     reactiveCustomComponents?: boolean;
 
     /**
+     *
+     * ** React only**.
+     *
+     * Enables fine grained control over the row rendering mechanism.
+     * - `default` - recommended rendering approach.
+     * - `legacy` - provided for backwards compatibility with previous versions of AG Grid (<= v33). Is susceptible to "Maximum Update Depth Exceeded" errors and so may be removed in a future version.
+     * @default 'default'
+     */
+    renderingMode?: 'default' | 'legacy';
+
+    /**
      * Theme to apply to the grid, or the string "legacy" to opt back into the
      * v32 style of theming where themes were imported as CSS files and applied
      * by setting a class name on the parent element.

@@ -3,6 +3,7 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     RowDragModule,
+    RowSelectionModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
@@ -15,6 +16,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     TreeDataModule,
     RowDragModule,
+    RowSelectionModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -31,9 +33,13 @@ const gridOptions: GridOptions<Task> = {
     rowData: getData(),
     getRowId: (params) => params.data.id,
     treeData: true,
-    treeDataParentIdField: 'parentId',
+    treeDataChildrenField: 'children',
     groupDefaultExpanded: -1,
     rowDragManaged: true,
+    rowDragMultiRow: true,
+    rowSelection: {
+        mode: 'multiRow',
+    },
     suppressMoveWhenRowDragging: true,
 };
 

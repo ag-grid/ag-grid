@@ -881,6 +881,7 @@ export interface _EditGridApi<TData> {
 export interface _BatchEditApi {
     /**
      * Start batch editing.
+     * @agModule `BatchEditModule`
      */
     startBatchEdit(): void;
 

@@ -2,14 +2,10 @@
 title: "Tree Data - Row Dragging"
 enterprise: true
 ---
-Configure the grid to display structured data by providing data paths.
+
+Rows can be rearranged interactively when using Tree Data by dragging with the mouse.
 
 ## Enabling Row Dragging
-
-Row Dragging can be combined with Tree Data to let users reorder rows within a hierarchical structure. You can choose between two approaches:
-
-- [Managed Row Dragging](#enabling-managed-row-dragging): The grid handles row dragging automatically.
-- [Unmanaged Row Dragging](#unmanaged-row-dragging): Customized application-specific logic for row dragging.
 
 To enable row dragging, set `rowDrag: true` on the group column (usually via `autoGroupColumnDef`).
 
@@ -26,16 +22,21 @@ const gridOptions = {
 
 See the [Row Dragging](./row-dragging/) documentation for more information about row dragging options, APIs, and advanced usage.
 
+There are two approaches to enable Row Dragging:
+
+- [Managed Row Dragging](#enabling-managed-row-dragging): The grid handles row dragging automatically.
+- [Unmanaged Row Dragging](#unmanaged-row-dragging): Customized application-specific logic for row dragging.
+
 ## Enabling Managed Row Dragging
 
 This is the simplest way to enable row dragging with Tree Data.
 The grid will automatically handle the dragging of rows and updating the data structure.
 It supports reordering, moving parents and children, and converting a leaf node into a group.
+Moving a parent to be a child of itself is not allowed, as this would create a cycle. The grid will prevent this automatically.
 
 To enable managed row dragging, set the following options:
 
 - `rowDragManaged: true` — Enables managed row dragging, so the grid handles row movement automatically.
-- `rowDragInsertDelay` — Delay before expanding a collapsed group or converting a leaf to a group (see [Row Drag Insert Delay](#row-drag-insert-delay)).
 - `autoGroupColumnDef.rowDrag: true` — Enables the drag handle in the group column.
 - `suppressMoveWhenRowDragging: true` — Prevents the grid from moving rows while dragging, showing a highlight over the row instead.
 
@@ -53,7 +54,6 @@ Other relevant options used in the example above include:
 - `treeData: true` — Enables tree data mode, allowing hierarchical data structures.
 - `treeDataParentIdField: 'parentId'` — Specifies the field that defines parent-child relationships.
 - `groupDefaultExpanded: -1` — Expands all groups by default.
-- `rowDragInsertDelay` — Optional delay before inserting a dragged row into a new parent node. Default is 500 milliseconds.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -61,7 +61,6 @@ const gridOptions = {
     getRowId: params => params.data.id,
     treeDataParentIdField: 'parentId',
     rowDragManaged: true,
-    rowDragInsertDelay: 500, // optional
     groupDefaultExpanded: -1,
     suppressMoveWhenRowDragging: true,
     autoGroupColumnDef: {
@@ -85,6 +84,19 @@ See the [Providing Data Paths](./tree-data-paths) for details about filler nodes
 
 {% gridExampleRunner title="Managed Row Drag with Tree Data (getDataPath)" name="tree-managed-row-drag-data-path" exampleHeight=500 /%}
 
+### Multi-Row Dragging
+
+Managed row dragging supports multi-row dragging, allowing users to select multiple rows and drag them together, including rows in different levels.
+
+To enable this, set the grid options `rowDragMultiRow = true` together with `rowSelection.mode = 'multiRow'`.  
+
+For this example note the following:
+
+* When you select multiple items and drag one of them, all items in the selection will be dragged.
+* When you drag an item that is not selected while other items are selected, only the unselected item will be dragged.
+
+{% gridExampleRunner title="Row Drag with Multi-Row Drag" name="tree-managed-multi-row-drag" /%}
+
 ### Row Drag Insert Delay
 
 When using Tree Data with Managed Row Dragging, the `rowDragInsertDelay` grid option sets a delay (in milliseconds) before a dragged row is inserted into a new parent node.
@@ -107,16 +119,16 @@ In the example below, note that:
 
 ## Unmanaged Row Dragging 
 
-In order to have full control over row dragging, it is possible to provide a customized implementation of row dragging using unmanaged row dragging.
+In order to have full control over row dragging, it is possible to provide a customized implementation of row dragging using [Unmanaged Row Dragging](./row-dragging/#unmanaged-dragging).
 In this case, the application is responsible for maintaining the rowData state, handling the dragging events and updating the rowData based on the drag events fired by the grid.
 
 ### Tree Data with getDataPath
 
 The example below shows [Tree Data](./tree-data/) and row dragging with getDataPath where the following can be noted:
 
-* The [auto-group column](./grouping/) has row drag `true` for all rows.
+* The [Auto-Group Column](./grouping/) has row drag `true` for all rows.
 * The application moves the rows in the row data while the row drag is happening in the `onRowDragMove` event handler.
-* While row dragging the row move operation can be reverted by pressing {% kbd "⎋ Escape" /%} key.
+* While row dragging, the row move operation can be reverted by pressing {% kbd "⎋ Escape" /%} key.
 * Is possible to reorder a row only inside its current parent by holding the {% kbd "⇧ Shift" /%} key and dragging it.  
 * The expanded/contracted state of a folder and all of its child folders is preserved when the folder is moved to a new parent.
 

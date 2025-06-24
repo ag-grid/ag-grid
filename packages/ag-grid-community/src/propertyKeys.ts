@@ -65,6 +65,7 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'themeCssLayer',
     'findSearchValue',
     'styleNonce',
+    'renderingMode',
 ];
 
 // only used internally

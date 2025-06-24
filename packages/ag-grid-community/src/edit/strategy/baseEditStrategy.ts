@@ -116,7 +116,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             const validation = this.model.getCellValidationModel().getCellValidation(cell);
             // check if the cell is valid
 
-            if (validation?.errorMessages?.length ?? 0 > 0) {
+            if ((validation?.errorMessages?.length ?? 0) > 0) {
                 results.fail.push(cell);
                 return;
             }
@@ -362,11 +362,8 @@ export abstract class BaseEditStrategy extends BeanStub {
         if (cells.length > 0) {
             const cell = cells.at(-1)!;
             const key = cell.newValue === UNEDITED ? undefined : cell.newValue;
-            this.editSvc.startEditing(cell, {
-                event: new KeyboardEvent('keydown', { key }),
-                startedEdit: true,
-                source: 'api',
-            });
+            this.start(cell, new KeyboardEvent('keydown', { key }), 'api');
+
             const cellCtrl = _getCellCtrl(this.beans, cell);
             if (cellCtrl) {
                 this.setFocusInOnEditor(cellCtrl);
