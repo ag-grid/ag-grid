@@ -386,22 +386,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
                     cellCtrl?.refreshCell(FORCE_REFRESH);
                 }
-
-                if (cancel) {
-                    // refresh aggs
-                    this.beans.changeDetectionSvc?.refreshRows(
-                        { node: rowNode, column },
-                        { suppressFlash: true, force: true }
-                    );
-                }
             }
         }
-
-        beans.rowRenderer.refreshCells({
-            rowNodes,
-            suppressFlash: true,
-            force: true,
-        });
     }
 
     public setEditMap(edits: EditMap, params?: _SetEditingCellsParams): void {
@@ -660,7 +646,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return new PopupEditorWrapper(params);
     }
 
-    setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined {
+    public setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined {
         if (
             (!this.isEditing() || eventSource === 'commit') &&
             eventSource !== 'paste' &&
@@ -702,8 +688,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         _syncFromEditor(beans, position, newValue, eventSource);
         this.stopEditing(position, { source });
-
-        this.beans.changeDetectionSvc?.refreshRows({ node: position.rowNode, column: position.column }, FORCE_REFRESH);
 
         return true;
     }
