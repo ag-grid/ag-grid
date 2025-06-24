@@ -36,9 +36,11 @@ function successIconSrc(params: boolean) {
 }
 
 function refreshData() {
-    gridApi!.forEachNode((rowNode) => {
+    gridApi.forEachNode((rowNode) => {
         rowNode.setDataValue('successful', Math.random() > 0.5);
     });
+
+    gridApi.refreshClientSideRowModel('sort');
 }
 
 const onClick = () => console.log('Mission Launched');
@@ -54,7 +56,6 @@ const gridOptions: GridOptions<IRow> = {
             cellRenderer: MissionResultRenderer,
         },
         {
-            colId: 'successful-custom',
             field: 'successful',
             headerName: 'Success (Custom Props)',
             cellRenderer: MissionResultRenderer,
