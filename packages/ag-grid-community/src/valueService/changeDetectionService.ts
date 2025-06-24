@@ -26,14 +26,8 @@ export class ChangeDetectionService extends BeanStub implements IChangeDetection
         }
 
         this.addManagedEventListeners({
-            cellEditValuesChanged: this.onCellEditValuesChanged.bind(this),
             cellValueChanged: this.onCellValueChanged.bind(this),
         });
-    }
-
-    private onCellEditValuesChanged(event: CellEditValuesChangedEvent): void {
-        const suppressFlash = event.newValue === event.oldValue;
-        this.refreshRows(event, { suppressFlash, force: true, onlyChangedColumns: true });
     }
 
     private onCellValueChanged(event: CellValueChangedEvent | CellEditValuesChangedEvent): void {
