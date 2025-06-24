@@ -1257,6 +1257,17 @@ export class ColumnFilterService
             delete this.model[colId];
             this.state.delete(colId);
         }
+        const removeFilter = () => {
+            this.setColFilterActive(column, false, 'filterDestroyed');
+
+            this.allColumnFilters.delete(colId);
+
+            this.eventSvc.dispatchEvent({
+                type: 'filterDestroyed',
+                source,
+                column,
+            });
+        };
         if (filterUi) {
             if (filterUi.created) {
                 return filterUi.promise.then((filter) => {
@@ -1264,18 +1275,12 @@ export class ColumnFilterService
 
                     this.destroyBean(filter);
 
-                    this.setColFilterActive(column, false, 'filterDestroyed');
-
-                    this.allColumnFilters.delete(colId);
-
-                    this.eventSvc.dispatchEvent({
-                        type: 'filterDestroyed',
-                        source,
-                        column,
-                    });
+                    removeFilter();
 
                     return isActive;
                 });
+            } else {
+                removeFilter();
             }
         }
         return AgPromise.resolve(isActive);
