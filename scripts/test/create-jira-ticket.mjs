@@ -24,6 +24,7 @@ function createIssue() {
                 summary: 'Performance Regression',
                 description: `A regression in performance has been detected in the latest build.\n${commentText}`,
                 issuetype: { name: 'Task' },
+                customfield_10675: 123,
             },
         }),
     }).then((response) => {

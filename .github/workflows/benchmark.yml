@@ -33,7 +33,7 @@ env:
   COMMENT_FILE: ./comment.md
   SLACK_FILE: ./slack.json
   SLACK_FILE_SNIPPET: ./slack-snippet.md
-  JIRA_FILE: ./jira.md
+  JIRA_FILE: ./jira.json
   DEFAULT_RETENTION_DAYS: 30
 
 permissions:
@@ -197,7 +197,7 @@ jobs:
           SLACK_USERNAME: 'ag-grid CI'
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
         run: |
-          node ./testing/shared/scripts/convert-playwright-output-to-slack-msg.mjs
+          node ./scripts/test/convert-playwright-output-to-slack-msg.mjs
 
       - name: Upload Snippet
         id: upload-snippet
@@ -214,7 +214,7 @@ jobs:
         env:
           SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
         run: |
-          node ./testing/shared/scripts/attach-snippet.mjs
+          node ./scripts/test/attach-snippet.mjs
 
       - name: Slack Notification
         continue-on-error: true
@@ -228,8 +228,10 @@ jobs:
       - name: Create Jira Ticket
         id: create-jira-ticket
         if: ${{ steps.attach-snippet.outcome == 'success' && steps.playwright-test.outcome != 'success' && (github.event_name == 'schedule' || inputs.force_jira_ticket) }}
+        env:
+          JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
         run: |
-          node ./testing/shared/scripts/create-jira-ticket.mjs
+          node ./scripts/test/create-jira-ticket.mjs
 
       - name: Notify End
         uses: actions/github-script@v7
