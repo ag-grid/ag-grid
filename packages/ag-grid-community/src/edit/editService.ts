@@ -554,7 +554,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         _populateModelValidationErrors(this.beans);
 
         cellCtrl?.refreshCell(FORCE_REFRESH);
-        cellCtrl?.rowCtrl.refreshRow(FORCE_REFRESH);
+        // refresh the styles directly rather than through refreshRow as that causes the group cell renderer to
+        // be recreated and would discard future mouse click events
+        cellCtrl.rowCtrl.rowEditStyleFeature?.applyRowStyles();
 
         if (!focus) {
             return;
@@ -569,7 +571,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const cellCtrl = _getCellCtrl(this.beans, position);
         if (cellCtrl) {
             cellCtrl.refreshCell(FORCE_REFRESH);
-            cellCtrl.rowCtrl.refreshRow(FORCE_REFRESH);
+            // refresh the styles directly rather than through refreshRow as that causes the group cell renderer to
+            // be recreated and would discard future mouse click events
+            cellCtrl.rowCtrl.rowEditStyleFeature?.applyRowStyles();
         }
 
         let invalid = false;
