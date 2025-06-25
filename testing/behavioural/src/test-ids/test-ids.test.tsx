@@ -1,5 +1,6 @@
 import { cleanup, render } from '@testing-library/react';
 import React from 'react';
+import type { MockInstance } from 'vitest';
 
 import {
     ClientSideRowModelModule,
@@ -23,6 +24,9 @@ import { AgGridReact } from 'ag-grid-react';
 import { ROW_DATA } from './data';
 
 describe('Test Ids', () => {
+    let consoleErrorSpy: MockInstance;
+    let consoleWarnSpy: MockInstance;
+
     beforeAll(() => {
         ModuleRegistry.registerModules([
             ColumnsToolPanelModule,
@@ -42,6 +46,14 @@ describe('Test Ids', () => {
 
     beforeEach(() => {
         cleanup();
+
+        consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        consoleErrorSpy.mockRestore();
+        consoleWarnSpy.mockRestore();
     });
 
     test('Should find components via data-test-id', async () => {

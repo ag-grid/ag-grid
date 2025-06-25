@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import { _getRootNode } from '../gridOptionsUtils';
 import type { ITestIdService } from '../interfaces/iTestIdService';
+import * as ids from './testIdUtils';
 
 const TEST_ID_ATTR = 'data-testid';
 
@@ -18,30 +19,26 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
     public setupAllTestIds(): void {
         const root = _getRootNode(this.beans);
 
-        function setTestId(
-            element: Element | null | undefined,
-            name: string,
-            attrs?: Record<string, string | number | null | undefined>
-        ) {
-            element?.setAttribute(TEST_ID_ATTR, formatTestId(name, attrs));
+        function setTestId(element: Element | null | undefined, testId: string) {
+            element?.setAttribute(TEST_ID_ATTR, testId);
         }
 
         /** Headers */
 
         root.querySelectorAll('.ag-header-group-cell').forEach((groupCell) => {
-            setTestId(groupCell, 'ag-header-group-cell', {
-                ['col-id']: groupCell.getAttribute('col-id'),
-            });
+            setTestId(groupCell, ids.getTestIdForHeaderGroupCell(groupCell.getAttribute('col-id')));
         });
 
         root.querySelectorAll('.ag-header-cell').forEach((cell) => {
-            setTestId(cell, 'ag-header-cell', {
-                ['col-id']: cell.getAttribute('col-id'),
-            });
+            const colId = cell.getAttribute('col-id');
+            setTestId(cell, ids.getTestIdForHeaderCell(colId));
 
-            setTestId(cell.querySelector('.ag-header-cell-menu-button'), 'ag-header-cell-menu-button', {
-                ['col-id']: cell.getAttribute('col-id'),
-            });
+            setTestId(cell.querySelector('.ag-header-cell-menu-button'), ids.getTestIdForHeaderCellMenuButton(colId));
+
+            setTestId(
+                cell.querySelector('.ag-selection-checkbox input[type=checkbox]'),
+                ids.getTestIdForHeaderCheckbox(colId)
+            );
         });
 
         /** Column Filters */
@@ -51,109 +48,104 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         /** Rows */
 
         root.querySelectorAll('.ag-row').forEach((row) => {
-            setTestId(row, 'ag-row', { ['row-id']: row.getAttribute('row-id') });
+            const rowId = row.getAttribute('row-id');
+            setTestId(row, ids.getTestIdForRowNode(rowId));
 
             /** Cells */
 
             row.querySelectorAll('.ag-cell').forEach((cell) => {
-                setTestId(cell, 'ag-cell', {
-                    ['row-id']: row.getAttribute('row-id'),
-                    ['col-id']: cell.getAttribute('col-id'),
-                });
+                const colId = cell.getAttribute('col-id');
+                setTestId(cell, ids.getTestIdForCell(rowId, colId));
 
-                setTestId(cell.querySelector('.ag-selection-checkbox input[type=checkbox]'), 'ag-selection-checkbox', {
-                    ['row-id']: row.getAttribute('row-id'),
-                    ['col-id']: cell.getAttribute('col-id'),
-                });
+                setTestId(
+                    cell.querySelector('.ag-selection-checkbox input[type=checkbox]'),
+                    ids.getTestIdForCheckbox(rowId, colId)
+                );
 
-                setTestId(cell.querySelector('.ag-drag-handle'), 'ag-drag-handle', {
-                    ['row-id']: row.getAttribute('row-id'),
-                    ['col-id']: cell.getAttribute('col-id'),
-                });
+                setTestId(cell.querySelector('.ag-drag-handle'), ids.getTestIdForDragHandle(rowId, colId));
 
-                setTestId(cell.querySelector('.ag-group-contracted'), 'ag-group-contracted', {
-                    ['row-id']: row.getAttribute('row-id'),
-                    ['col-id']: cell.getAttribute('col-id'),
-                });
+                setTestId(cell.querySelector('.ag-group-contracted'), ids.getTestIdForGroupContracted(rowId, colId));
 
-                setTestId(cell.querySelector('.ag-group-expanded'), 'ag-group-expanded', {
-                    ['row-id']: row.getAttribute('row-id'),
-                    ['col-id']: cell.getAttribute('col-id'),
-                });
+                setTestId(cell.querySelector('.ag-group-expanded'), ids.getTestIdForGroupExpanded(rowId, colId));
             });
         });
 
         /** Menu */
 
         root.querySelectorAll('.ag-menu-list').forEach((menu) => {
-            setTestId(menu, 'ag-menu-list');
+            setTestId(menu, ids.getTestIdForMenu());
 
             menu.querySelectorAll('.ag-menu-option').forEach((option) => {
-                setTestId(option, 'ag-menu-option', {
-                    ['option-text']: option.querySelector('.ag-menu-option-text')?.textContent,
-                });
+                setTestId(
+                    option,
+                    ids.getTestIdForMenuOption(option.querySelector('.ag-menu-option-text')?.textContent)
+                );
             });
         });
 
         /** SideBar */
 
         root.querySelectorAll('.ag-side-bar').forEach((sideBar) => {
-            setTestId(sideBar, 'ag-side-bar');
+            setTestId(sideBar, ids.getTestIdForSideBar());
 
             /** SideBar buttons */
 
             sideBar.querySelectorAll('.ag-side-button button').forEach((button) => {
-                setTestId(button, 'ag-side-button', {
-                    ['label']: button.querySelector('.ag-side-button-label')?.textContent,
-                });
+                setTestId(
+                    button,
+                    ids.getTestIdForSideBarButton(button.querySelector('.ag-side-button-label')?.textContent)
+                );
             });
 
             /** Column Tool Panel */
 
             sideBar.querySelectorAll('.ag-column-panel').forEach((panel) => {
-                setTestId(panel, 'ag-column-panel');
+                setTestId(panel, ids.getTestIdForColumnToolPanel());
 
-                setTestId(panel.querySelector('.ag-pivot-mode-select input[type=checkbox]'), 'ag-pivot-mode-select');
+                setTestId(
+                    panel.querySelector('.ag-pivot-mode-select input[type=checkbox]'),
+                    ids.getTestIdForPivotModeSelect()
+                );
 
                 setTestId(
                     panel.querySelector('.ag-column-select-header-checkbox input[type=checkbox]'),
-                    'ag-column-panel-select-header-checkbox'
+                    ids.getTestIdForColumnPanelSelectHeaderCheckbox()
                 );
 
                 setTestId(
                     panel.querySelector('.ag-column-select-header-filter-wrapper input[type=text]'),
-                    'ag-column-panel-select-header-filter'
+                    ids.getTestIdForColumnPanelSelectHeaderFilter()
                 );
 
                 panel.querySelectorAll('.ag-column-select-list').forEach((list) => {
                     list.querySelectorAll('.ag-column-select-virtual-list-item').forEach((item) => {
+                        const label = item.getAttribute('aria-label');
+
                         setTestId(
                             item.querySelector('.ag-column-group-closed-icon'),
-                            'ag-column-select-list-item-group-closed-icon',
-                            {
-                                label: item.getAttribute('aria-label'),
-                            }
+                            ids.getTestIdForColumnSelectListItemGroupClosedIcon(label)
                         );
 
                         setTestId(
                             item.querySelector('.ag-column-select-checkbox input[type=checkbox]'),
-                            'ag-column-select-list-item-checkbox',
-                            {
-                                label: item.getAttribute('aria-label'),
-                            }
+                            ids.getTestIdForColumnSelectListItemCheckbox(label)
                         );
 
-                        setTestId(item.querySelector('.ag-drag-handle'), 'ag-column-select-list-item-drag-handle', {
-                            label: item.getAttribute('aria-label'),
-                        });
+                        setTestId(
+                            item.querySelector('.ag-drag-handle'),
+                            ids.getTestIdForColumnSelectListItemDragHandle(label)
+                        );
                     });
                 });
 
                 panel.querySelectorAll('.ag-column-drop').forEach((columnDrop) => {
                     columnDrop.querySelectorAll('.ag-column-drop-cell').forEach((columnDropCell) => {
-                        setTestId(columnDropCell.querySelector('.ag-drag-handle'), 'ag-column-drop-cell-drag-handle', {
-                            label: columnDropCell.querySelector('.ag-column-drop-cell-text')?.textContent,
-                        });
+                        setTestId(
+                            columnDropCell.querySelector('.ag-drag-handle'),
+                            ids.getTestIdForColumnDropCellDragHandle(
+                                columnDropCell.querySelector('.ag-column-drop-cell-text')?.textContent
+                            )
+                        );
                     });
                 });
             });
@@ -217,12 +209,4 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             });
         });
     }
-}
-
-function formatTestId(name: string, attributes: Record<string, string | number | null | undefined> = {}): string {
-    const params = Object.entries(attributes)
-        .map(([k, v]) => (v != null ? `${k}=${v}` : null))
-        .filter(Boolean)
-        .join(';');
-    return [name, params].filter((s) => s.length > 0).join(':');
 }
