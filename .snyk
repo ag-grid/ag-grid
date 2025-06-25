@@ -23,4 +23,11 @@ ignore:
                   the dev server to the network
               expires: 2025-07-25T14:14:23.301Z
               created: 2025-06-25T14:14:23.307Z
+    SNYK-JS-CROSSSPAWN-8303230:
+        - '@swc/cli@0.3.14 > @mole-inc/bin-wrapper@8.0.1 > bin-check@4.1.0 > execa@0.7.0 > cross-spawn@5.1.0':
+              reason: >-
+                  SWC cli is only used during development so ReDoS would only affect
+                  developer machines
+                  expires: 2025-07-25T15:10:07.408Z
+              created: 2025-06-25T15:10:07.411Z
 patch: {}
