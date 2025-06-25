@@ -39,7 +39,7 @@ const gridOptions: GridOptions = {
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze', minWidth: 100 },
-        { headerName: 'Total', valueGetter: 'data.gold + data.silver + data.bronze', aggFunc: 'sum' },
+        { field: 'total', aggFunc: 'sum' },
     ],
     defaultColDef: {
         flex: 1,
