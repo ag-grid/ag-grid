@@ -74,7 +74,10 @@ const CellComp = ({
         setCellValueVersion((v) => v + 1);
     }, []);
 
-    const showTools = renderDetails != null && (includeSelection || includeDndSource || includeRowDrag);
+    const showTools =
+        renderDetails != null &&
+        (includeSelection || includeDndSource || includeRowDrag) &&
+        (editDetails == null || !!editDetails.popup);
     const showCellWrapper = forceWrapper || showTools;
 
     const setCellEditorRef = useCallback(
