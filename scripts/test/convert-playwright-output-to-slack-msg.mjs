@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -54,6 +55,7 @@ const getStdout = (stdout) => {
 };
 
 const renderStdout = (stdout, codeBlock) => {
+    if (!stdout || !stdout.length) return 'No distilled output available. See full output in the report.';
     return codeBlock(stdout.join('\n').trim());
 };
 
@@ -144,12 +146,33 @@ const textMessage = [linksText(mdLink), getTotalsText(report)]
 fs.writeFileSync(commentFileName, textMessage);
 fs.writeFileSync(slackFileName, JSON.stringify(slackMessage, null, 2));
 fs.writeFileSync(snippetSlackFileName, getResultsString(calculatedTests.all, false, mdLink));
+/**
+ * Generates a unique fingerprint for the failed tests based on their titles and git hashes.
+ * This fingerprint is used to deduplicate JIRA issues for the same regression.
+ *
+ * Big assumption here is that the all failed tests have the same control version, e.g. 'production', and we use the first git hash base.
+ * Another assumption is that only 1 test file is tested, so we use its filename as a fingerprint base.
+ * @type {string}
+ */
+const uniqueFingerprint = generateHash(
+    [
+        calculatedTests.failed[0].path[0]?.title || 'unknown',
+        calculatedTests.failed[0]?.annotations[0]?.description?.control?.gitHash.slice(0, 7) || 'unknown',
+    ].join()
+);
+
 fs.writeFileSync(
     jiraFileName,
-    JSON.stringify({
-        metadata: {
-            gitBase: calculatedTests.failed[0]?.annotations[0]?.description?.control?.gitHash.slice(0, 7) || 'unknown',
+    JSON.stringify(
+        {
+            fingerprint: uniqueFingerprint,
+            text: getResultsString(calculatedTests.failed, true, jiraLink, jiraCodeBlock),
         },
-        text: getResultsString(calculatedTests.failed, true, jiraLink, jiraCodeBlock),
-    })
+        null,
+        2
+    )
 );
+
+function generateHash(input) {
+    return crypto.createHash('sha1').update(input).digest('hex');
+}
