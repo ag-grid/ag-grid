@@ -408,9 +408,10 @@ const CellComp = ({
     };
 
     const showCellOrEditor = () => {
-        if (editDetails != null) {
-            return jsxEditValue(editDetails, setCellEditorRef, eGui.current!, cellCtrl, jsEditorComp);
-        } else if (renderDetails != null) {
+        const showCellValue = () => {
+            if (renderDetails == null) {
+                return null;
+            }
             return showCellWrapper ? (
                 <span role="presentation" id={`cell-${instanceId}`} className="ag-cell-value" ref={setCellValueRef}>
                     {valueOrCellComp()}
@@ -418,7 +419,25 @@ const CellComp = ({
             ) : (
                 valueOrCellComp()
             );
+        };
+
+        const showEditValue = (details: EditDetails) =>
+            jsxEditValue(details, setCellEditorRef, eGui.current!, cellCtrl, jsEditorComp);
+
+        if (editDetails != null) {
+            if (editDetails.popup) {
+                return (
+                    <>
+                        {showCellValue()}
+                        {showEditValue(editDetails)}
+                    </>
+                );
+            }
+
+            return showEditValue(editDetails);
         }
+
+        return showCellValue();
     };
 
     const renderCell = () => (
