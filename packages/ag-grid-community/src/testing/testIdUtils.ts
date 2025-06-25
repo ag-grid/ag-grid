@@ -1,7 +1,4 @@
-export function formatTestId(
-    name: string,
-    attributes: Record<string, string | number | null | undefined> = {}
-): string {
+function formatTestId(name: string, attributes: Record<string, string | number | null | undefined> = {}): string {
     const params = Object.entries(attributes)
         .map(([k, v]) => (v != null ? `${k}=${v}` : null))
         .filter(Boolean)
@@ -20,8 +17,25 @@ export function getTestIdForHeaderCell(colId: string | null): string {
 export function getTestIdForHeaderCheckbox(colId: string | null): string {
     return formatTestId('ag-header-selection-checkbox', { ['col-id']: colId });
 }
+export function getTestIdForHeaderFilterButton(colId: string | null): string {
+    return formatTestId('ag-header-cell-filter-button', { colId });
+}
 export function getTestIdForHeaderCellMenuButton(colId: string | null): string {
     return formatTestId('ag-header-cell-menu-button', { ['col-id']: colId });
+}
+
+/** Column Filters */
+export function getTestIdForColumnFilterMenu(colId: string): string {
+    return formatTestId('ag-column-filter-menu', { colId });
+}
+export function getTestIdForColumnFilterPickerDisplay(value?: string | null): string {
+    return formatTestId('ag-column-filter-picker-display', { value });
+}
+export function getTestIdForColumnNumberFilterInput(value?: string | null): string {
+    return formatTestId('ag-column-number-filter-text-input', { value });
+}
+export function getTestIdForColumnTextFilterInput(value?: string | null): string {
+    return formatTestId('ag-column-number-filter-number-input', { value });
 }
 
 /** Rows */
@@ -91,4 +105,28 @@ export function getTestIdForColumnSelectListItemDragHandle(label?: string | null
 }
 export function getTestIdForColumnDropCellDragHandle(label?: string | null): string {
     return formatTestId('ag-column-drop-cell-drag-handle', { label });
+}
+
+/** Pagination */
+
+export function getTestIdForPaginationPanelSizePickerDisplay(value?: string | null): string {
+    return formatTestId('ag-pagination-page-size-picker-field-display', { value });
+}
+export function getTestIdForPaginationPanelFirstRowOnPage(value?: string | null): string {
+    return formatTestId('ag-paging-row-summary-panel-first-row-on-page', { value });
+}
+export function getTestIdForPaginationPanelLastRowOnPage(value?: string | null): string {
+    return formatTestId('ag-paging-row-summary-panel-last-row-on-page', { value });
+}
+export function getTestIdForPaginationPanelRecordCount(value?: string | null): string {
+    return formatTestId('ag-paging-row-summary-panel-record-count', { value });
+}
+export function getTestIdForPaginationSummaryPanelButton(label?: string | null): string {
+    return formatTestId('ag-paging-page-summary-panel-btn', { label });
+}
+export function getTestIdForPaginationSummaryPanelCurrentPage(value?: string | null): string {
+    return formatTestId('ag-paging-page-summary-panel-current-page', { value });
+}
+export function getTestIdForPaginationSummaryPanelTotalPage(value?: string | null): string {
+    return formatTestId('ag-paging-page-summary-panel-total-page', { value });
 }

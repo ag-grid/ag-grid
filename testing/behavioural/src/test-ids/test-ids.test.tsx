@@ -1,6 +1,7 @@
 import { cleanup, render } from '@testing-library/react';
 import React from 'react';
 import type { MockInstance } from 'vitest';
+import { vitest } from 'vitest';
 
 import {
     ClientSideRowModelModule,
@@ -8,6 +9,10 @@ import {
     RowSelectionModule,
     TestingModule,
     ValidationModule,
+    getTestIdForCell,
+    getTestIdForHeaderCell,
+    getTestIdForHeaderCellMenuButton,
+    getTestIdForHeaderCheckbox,
 } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -79,18 +84,21 @@ describe('Test Ids', () => {
                         { statusPanel: 'agAggregationComponent' },
                     ],
                 }}
+                groupDefaultExpanded={-1}
                 sideBar="columns"
                 cellSelection
                 pagination
             />
         );
 
-        expect(await rendered.findByText('China')).toBeVisible();
+        expect(await rendered.findByText('United States')).toBeVisible();
 
+        expect(await rendered.findByTestId(getTestIdForHeaderCell('year'))).toBeVisible();
+        expect(await rendered.findByTestId(getTestIdForHeaderCheckbox('ag-Grid-SelectionColumn'))).toBeVisible();
+        expect(await rendered.findByTestId(getTestIdForHeaderCellMenuButton('sport'))).toBeVisible();
         expect(
-            await rendered.findByTestId('ag-cell:row-id=row-group-country-United States;col-id=ag-Grid-AutoColumn')
+            await rendered.findByTestId(getTestIdForCell('row-group-country-United States', 'ag-Grid-AutoColumn'))
         ).toBeVisible();
-        // expect(await rendered.findByTestId('ag-cell:row-id=foo;col-id=ag-Grid-SelectionColumn')).toBeVisible();
-        // expect(await rendered.findByTestId('ag-header-cell:row-index=0;col-id=item'));
+        expect(await rendered.findByTestId(getTestIdForCell('0', 'athlete'))).toBeVisible();
     });
 });

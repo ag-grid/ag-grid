@@ -33,15 +33,25 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             const colId = cell.getAttribute('col-id');
             setTestId(cell, ids.getTestIdForHeaderCell(colId));
 
+            setTestId(cell.querySelector('.ag-header-cell-filter-button'), ids.getTestIdForHeaderFilterButton(colId));
+
             setTestId(cell.querySelector('.ag-header-cell-menu-button'), ids.getTestIdForHeaderCellMenuButton(colId));
 
-            setTestId(
-                cell.querySelector('.ag-selection-checkbox input[type=checkbox]'),
-                ids.getTestIdForHeaderCheckbox(colId)
-            );
+            setTestId(cell.querySelector('.ag-checkbox input[type=checkbox]'), ids.getTestIdForHeaderCheckbox(colId));
         });
 
         /** Column Filters */
+
+        root.querySelectorAll('.ag-filter-menu').forEach((menu) => {
+            const fieldDisplay = menu.querySelector('.ag-filter-select .ag-picker-field-display');
+            setTestId(fieldDisplay, ids.getTestIdForColumnFilterPickerDisplay(fieldDisplay?.textContent));
+
+            const numberInput = menu.querySelector('.ag-filter-body input[type=number]');
+            setTestId(numberInput, ids.getTestIdForColumnNumberFilterInput(numberInput?.textContent));
+
+            const textInput = menu.querySelector('.ag-filter-body input[type=text]');
+            setTestId(textInput, ids.getTestIdForColumnTextFilterInput(textInput?.textContent));
+        });
 
         // ...TODO
 
@@ -156,54 +166,51 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         });
 
         /** Pagination */
+
         root.querySelectorAll('.ag-paging-panel').forEach((pagingPanel) => {
             setTestId(
                 pagingPanel.querySelector('.ag-paging-page-size .ag-picker-field-display'),
-                'ag-pagination-page-size-picker-field-display',
-                {
-                    value: pagingPanel.querySelector('.ag-paging-page-size .ag-picker-field-display')?.textContent,
-                }
+                ids.getTestIdForPaginationPanelSizePickerDisplay(
+                    pagingPanel.querySelector('.ag-paging-page-size .ag-picker-field-display')?.textContent
+                )
             );
 
             pagingPanel.querySelectorAll('.ag-paging-row-summary-panel-number').forEach((panelNumber) => {
                 const dataRef = panelNumber.getAttribute('data-ref');
                 switch (dataRef) {
                     case 'lbFirstRowOnPage':
-                        setTestId(panelNumber, 'ag-paging-row-summary-panel-first-row-on-page', {
-                            value: panelNumber.textContent,
-                        });
+                        setTestId(panelNumber, ids.getTestIdForPaginationPanelFirstRowOnPage(panelNumber.textContent));
                         break;
                     case 'lbLastRowOnPage':
-                        setTestId(panelNumber, 'ag-paging-row-summary-panel-last-row-on-page', {
-                            value: panelNumber.textContent,
-                        });
+                        setTestId(panelNumber, ids.getTestIdForPaginationPanelLastRowOnPage(panelNumber.textContent));
                         break;
                     case 'lbRecordCount':
-                        setTestId(panelNumber, 'ag-paging-row-summary-panel-record-count', {
-                            value: panelNumber.textContent,
-                        });
+                        setTestId(panelNumber, ids.getTestIdForPaginationPanelRecordCount(panelNumber.textContent));
                         break;
                 }
             });
 
             pagingPanel.querySelectorAll('.ag-paging-page-summary-panel .ag-button').forEach((pagingButton) => {
-                setTestId(pagingButton, 'ag-paging-page-summary-panel-button', {
-                    label: pagingButton.getAttribute('aria-label')?.toLowerCase(),
-                });
+                setTestId(
+                    pagingButton,
+                    ids.getTestIdForPaginationSummaryPanelButton(pagingButton.getAttribute('aria-label')?.toLowerCase())
+                );
             });
 
             pagingPanel.querySelectorAll('.ag-paging-page-summary-panel .ag-paging-number').forEach((pagingNumber) => {
                 const dataRef = pagingNumber.getAttribute('data-ref');
                 switch (dataRef) {
                     case 'lbCurrent':
-                        setTestId(pagingNumber, 'ag-paging-page-summary-panel-current-page', {
-                            value: pagingNumber.textContent,
-                        });
+                        setTestId(
+                            pagingNumber,
+                            ids.getTestIdForPaginationSummaryPanelCurrentPage(pagingNumber.textContent)
+                        );
                         break;
                     case 'lbTotal':
-                        setTestId(pagingNumber, 'ag-paging-page-summary-panel-total-page', {
-                            value: pagingNumber.textContent,
-                        });
+                        setTestId(
+                            pagingNumber,
+                            ids.getTestIdForPaginationSummaryPanelTotalPage(pagingNumber.textContent)
+                        );
                         break;
                 }
             });

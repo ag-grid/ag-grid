@@ -1300,3 +1300,7 @@ export type {
     ColorSchemeValue,
     WithParamTypes,
 } from './theming/theme-types';
+
+// Testing
+
+export * from './testing/testIdUtils';
