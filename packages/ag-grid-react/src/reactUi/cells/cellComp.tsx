@@ -294,12 +294,14 @@ const CellComp = ({
             setEditDetails: (compDetails, popup, popupPosition, reactiveCustomComponents) => {
                 if (compDetails) {
                     let compProxy = undefined;
-                    if (reactiveCustomComponents) {
-                        compProxy = new CellEditorComponentProxy(compDetails.params!, () =>
-                            setRenderKey((prev) => prev + 1)
-                        );
-                    } else if (compDetails.componentFromFramework) {
-                        warnReactiveCustomComponents();
+                    if (compDetails.componentFromFramework) {
+                        if (reactiveCustomComponents) {
+                            compProxy = new CellEditorComponentProxy(compDetails.params!, () =>
+                                setRenderKey((prev) => prev + 1)
+                            );
+                        } else {
+                            warnReactiveCustomComponents();
+                        }
                     }
                     // start editing
                     setEditDetails({
