@@ -335,6 +335,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.bulkRefresh();
 
+        if (willCancel) {
+            // if we cancelled the edit, we need to refresh the rows to remove the pending value and editing styles
+            this.beans.rowRenderer.refreshRows({ rowNodes: Array.from(edits.keys()) });
+        }
+
         if (this.isBatchEditing()) {
             this.beans.rowRenderer.refreshRows({ suppressFlash: true, force: true });
             if (res && willStop) {
