@@ -21763,7 +21763,7 @@ postcss@8.4.49:
     picocolors "^1.1.1"
     source-map-js "^1.2.1"
 
-postcss@^8.0.0, postcss@^8.2.14, postcss@^8.4.14, postcss@^8.4.21, postcss@^8.4.23, postcss@^8.4.24, postcss@^8.4.31, postcss@^8.4.32, postcss@^8.4.33, postcss@^8.4.35, postcss@^8.4.38, postcss@^8.4.43, postcss@^8.4.47, postcss@^8.4.48, postcss@^8.4.49:
+postcss@^8.0.0, postcss@^8.2.14, postcss@^8.4.14, postcss@^8.4.21, postcss@^8.4.23, postcss@^8.4.24, postcss@^8.4.31, postcss@^8.4.33, postcss@^8.4.35, postcss@^8.4.38, postcss@^8.4.43, postcss@^8.4.47, postcss@^8.4.48, postcss@^8.4.49:
   version "8.5.1"
   resolved "http://52.50.158.57:4873/postcss/-/postcss-8.5.1.tgz#e2272a1f8a807fafa413218245630b5db10a3214"
   integrity sha512-6oz2beyjc5VMn/KV1pPw8fliQkhBXrVn1Z3TVyqZxU8kZpzEKhBdmCFqI6ZbmGtamQvQGuU1sgPTk8ZrXDD7jQ==
@@ -26480,7 +26480,7 @@ vite@5.1.8:
   optionalDependencies:
     fsevents "~2.3.3"
 
-vite@5.4.11, vite@^5.0.0, vite@^5.3.1, vite@^5.4.1:
+vite@5.4.11, vite@^5.0.0:
   version "5.4.11"
   resolved "http://52.50.158.57:4873/vite/-/vite-5.4.11.tgz#3b415cd4aed781a356c1de5a9ebafb837715f6e5"
   integrity sha512-c7jFQRklXua0mTzneGW9QVyxFjUgwcihC4bXEtujIo2ouWCe1Ajt/amn2PCxYnhYfd5k09JX3SB7OYWFKYqj8Q==
@@ -26516,14 +26516,14 @@ vite@^6.3.4, vite@^6.3.5:
   optionalDependencies:
     fsevents "~2.3.3"
 
-vite@~5.0.13:
-  version "5.0.13"
-  resolved "http://52.50.158.57:4873/vite/-/vite-5.0.13.tgz#605865b0e482506163e3f04f91665238f3be8cf1"
-  integrity sha512-/9ovhv2M2dGTuA+dY93B9trfyWMDRQw2jdVBhHNP6wr0oF34wG2i/N55801iZIpgUpnHDm4F/FabGQLyc+eOgg==
+vite@~5.4.19:
+  version "5.4.19"
+  resolved "http://52.50.158.57:4873/vite/-/vite-5.4.19.tgz#20efd060410044b3ed555049418a5e7d1998f959"
+  integrity sha512-qO3aKv3HoQC8QKiNSTuUM1l9o/XX3+c+VTgLHbJWHZGeTPVAg2XwazI9UWzoxjIJCGCV2zU60uqMzjeLZuULqA==
   dependencies:
-    esbuild "^0.19.3"
-    postcss "^8.4.32"
-    rollup "^4.2.0"
+    esbuild "^0.21.3"
+    postcss "^8.4.43"
+    rollup "^4.20.0"
   optionalDependencies:
     fsevents "~2.3.3"
 
