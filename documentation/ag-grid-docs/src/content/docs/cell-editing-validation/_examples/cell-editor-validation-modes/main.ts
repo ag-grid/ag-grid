@@ -43,7 +43,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         editable: true,
     },
 
-    cellEditingInvalidCommitType: 'revert', // default value
+    invalidEditValueMode: 'revert', // default value
 };
 
 // setup the grid after the page has finished loading
@@ -60,5 +60,5 @@ function onValidationModeSelect() {
     const value: 'revert' | 'block' = document.querySelector<HTMLSelectElement>('#select-validation-mode')
         ?.value as EditValidationCommitType;
 
-    gridApi.setGridOption('cellEditingInvalidCommitType', value);
+    gridApi.setGridOption('invalidEditValueMode', value);
 }

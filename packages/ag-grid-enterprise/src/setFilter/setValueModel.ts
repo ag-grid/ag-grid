@@ -85,7 +85,15 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     }
 
     public refresh(params: SetValueModelParams<TValue>): void {
-        const { values, suppressSorting } = params.handlerParams.filterParams;
+        const handlerParams = params.handlerParams;
+
+        if (handlerParams.source !== 'colDef') {
+            // if params haven't changed, we don't need to do anything.
+            // also don't want to override provided values set via api.
+            return;
+        }
+
+        const { values, suppressSorting } = handlerParams.filterParams;
 
         const currentProvidedValues = this.providedValues;
         const currentSuppressSorting = this.params.handlerParams.filterParams.suppressSorting;

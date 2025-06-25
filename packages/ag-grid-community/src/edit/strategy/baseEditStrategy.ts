@@ -3,10 +3,17 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
+import { _getRowNode } from '../../entities/positionUtils';
 import type { AgEventType } from '../../eventTypes';
-import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
+import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { EditMap, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
-import type { EditPosition, EditRowPosition, EditSource, IEditService } from '../../interfaces/iEditService';
+import type {
+    EditPosition,
+    EditRowPosition,
+    EditSource,
+    IEditService,
+    _SetEditingCellsParams,
+} from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
 import {
@@ -38,7 +45,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         this.model = this.beans.editModelSvc!;
         this.editSvc = this.beans.editSvc!;
 
-        this.addManagedListeners(this.beans.eventSvc, {
+        this.addManagedEventListeners({
             cellFocused: this.onCellFocusChanged?.bind(this),
             cellFocusCleared: this.onCellFocusChanged?.bind(this),
         });
@@ -54,33 +61,55 @@ export abstract class BaseEditStrategy extends BeanStub {
         position: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null,
         source?: EditSource,
-        silent?: boolean,
         ignoreEventKey?: boolean
     ): void;
 
-    public onCellFocusChanged(event: CellFocusedEvent<any, any>): void {
+    public onCellFocusChanged(event: CellFocusedEvent | CellFocusClearedEvent): void {
         let cellCtrl: CellCtrl | undefined;
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
+        const { editSvc, beans } = this;
+
         if (previous) {
-            cellCtrl = _getCellCtrl(this.beans, previous);
+            cellCtrl = _getCellCtrl(beans, previous);
         }
 
+        const { gos, editModelSvc } = beans;
+        const isFocusCleared = event.type === 'cellFocusCleared';
+
         // check if any editors open
-        if (this.editSvc.isEditing(undefined, { withOpenEditor: true })) {
-            if (cellCtrl && this.editSvc.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
+        if (editSvc.isEditing(undefined, { withOpenEditor: true })) {
+            if (cellCtrl && !isFocusCleared && editSvc.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
                 return;
             }
 
-            const result = this.editSvc.stopEditing();
+            // if focus is clearing, we should stop editing
+            // or cancel the editing if `block` and `hasErrors`
+            const { column, rowIndex, rowPinned } = event;
+            const cellPositionFromEvent = {
+                column: column as AgColumn,
+                rowNode: _getRowNode(beans, { rowIndex: rowIndex!, rowPinned })!,
+            };
+            const isBlock = gos.get('invalidEditValueMode') === 'block';
+            const hasError =
+                isBlock && !!editModelSvc?.getCellValidationModel().hasCellValidation(cellPositionFromEvent);
+
+            // if we don't have a previous cell, we don't need to force stopEditing
+            const result =
+                previous || isFocusCleared
+                    ? editSvc.stopEditing(undefined, {
+                          cancel: hasError,
+                          source: isFocusCleared ? 'api' : undefined,
+                      })
+                    : true;
 
             // editSvc didn't handle the stopEditing, we need to do more ourselves
             if (!result) {
-                if (this.editSvc.isBatchEditing()) {
+                if (editSvc.isBatchEditing()) {
                     // close editors, but don't stop editing in batch mode
-                    this.editSvc.cleanupEditors();
+                    editSvc.cleanupEditors();
                 } else {
                     // if not batch editing, then we stop editing the cell
-                    this.editSvc.stopEditing(undefined, { source: 'api' });
+                    editSvc.stopEditing(undefined, { source: 'api' });
                 }
             }
         }
@@ -110,7 +139,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             const validation = this.model.getCellValidationModel().getCellValidation(cell);
             // check if the cell is valid
 
-            if (validation?.errorMessages?.length ?? 0 > 0) {
+            if ((validation?.errorMessages?.length ?? 0) > 0) {
                 results.fail.push(cell);
                 return;
             }
@@ -150,12 +179,31 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     protected abstract processValidationResults(results: EditValidationResult): EditValidationAction;
 
-    public cleanupEditors() {
+    public cleanupEditors({ rowNode }: EditRowPosition = {}, includeEditing?: boolean): void {
         _syncFromEditors(this.beans);
-        // clean up any dangling editors
-        _destroyEditors(this.beans, this.model.getEditPositions());
 
-        _purgeUnchangedEdits(this.beans);
+        const positions = this.model.getEditPositions();
+
+        const discard: Required<EditPosition>[] = [];
+
+        if (rowNode) {
+            positions.forEach((pos) => {
+                // if the rowNode is provided, we only keep positions that match it
+                if (!(!rowNode || pos.rowNode === rowNode)) {
+                    discard.push(pos);
+                }
+            });
+        } else {
+            positions.forEach((pos) => {
+                // if no rowNode is provided, we keep all positions
+                discard.push(pos);
+            });
+        }
+
+        // clean up any dangling editors
+        _destroyEditors(this.beans, discard);
+
+        _purgeUnchangedEdits(this.beans, includeEditing);
     }
 
     public stopAllEditing(): void {
@@ -178,7 +226,9 @@ export abstract class BaseEditStrategy extends BeanStub {
             // if the editor is not present, it means async cell editor (e.g. React)
             // and we are trying to set focus before the cell editor is present, so we
             // focus the cell instead
-            cellCtrl.focusCell(true);
+
+            const isFullRow = this.beans.gos.get('editType') === 'fullRow';
+            cellCtrl.focusCell(isFullRow);
             cellCtrl.onEditorAttachedFuncs.push(() => comp?.getCellEditor()?.focusIn?.());
         }
     }
@@ -209,7 +259,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     public dispatchRowEvent(
         position: Required<EditRowPosition>,
-        type: 'rowEditingStarted' | 'rowEditingStopped'
+        type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged'
     ): void {
         const rowCtrl = _getRowCtrl(this.beans, position)!;
 
@@ -224,17 +274,17 @@ export abstract class BaseEditStrategy extends BeanStub {
         cellStartedEdit?: boolean | null,
         source: EditSource = 'ui'
     ): boolean | null {
-        const isTab = event instanceof KeyboardEvent && event.key === KeyCode.TAB;
-
-        if (isTab) {
+        if (
+            event instanceof KeyboardEvent &&
+            (event.key === KeyCode.TAB ||
+                event.key === KeyCode.ENTER ||
+                event.key === KeyCode.F2 ||
+                (event.key === KeyCode.BACKSPACE && cellStartedEdit))
+        ) {
             return true;
         }
 
-        if (event instanceof KeyboardEvent && (event.key === KeyCode.ENTER || event.key === KeyCode.F2)) {
-            return true;
-        }
-
-        const extendingRange = event?.shiftKey && !isTab && this.beans.rangeSvc?.getCellRanges().length != 0;
+        const extendingRange = event?.shiftKey && this.beans.rangeSvc?.getCellRanges().length != 0;
         if (extendingRange) {
             return false;
         }
@@ -311,37 +361,36 @@ export abstract class BaseEditStrategy extends BeanStub {
         return false;
     }
 
-    public setEditMap(edits: EditMap): void {
-        this.editSvc.stopEditing(undefined, { cancel: true, source: 'api' });
+    public setEditMap(edits: EditMap, params?: _SetEditingCellsParams): void {
+        if (!params?.update) {
+            this.editSvc.stopEditing(undefined, { cancel: true, source: 'api' });
+        }
 
-        this.model?.setEditMap(edits);
-
-        // primary loop to preserve event semantics
-        edits.forEach((_, rowNode) => {
-            this.dispatchRowEvent({ rowNode }, 'rowEditingStarted');
-        });
-
-        // now update cell values and fire cell events
+        // Identify incoming editing cells
         const cells: (EditValue & Required<EditPosition>)[] = [];
         edits.forEach((editRow, rowNode) => {
             editRow.forEach((cellData, column) => {
-                const position = { rowNode, column };
-                this.dispatchCellEvent(position, undefined, 'cellEditingStarted');
                 if (cellData.state === 'editing') {
                     cells.push({ ...cellData, rowNode, column });
                 }
             });
         });
 
+        if (params?.update) {
+            edits = new Map([...this.model.getEditMap(), ...edits]);
+        }
+
+        this.model?.setEditMap(edits);
+
         if (cells.length > 0) {
             const cell = cells.at(-1)!;
             const key = cell.newValue === UNEDITED ? undefined : cell.newValue;
-            this.editSvc.startEditing(cell, {
-                event: new KeyboardEvent('keydown', { key }),
-                startedEdit: true,
-                source: 'api',
-                silent: true,
-            });
+            this.start(cell, new KeyboardEvent('keydown', { key }), 'api');
+
+            const cellCtrl = _getCellCtrl(this.beans, cell);
+            if (cellCtrl) {
+                this.setFocusInOnEditor(cellCtrl);
+            }
         }
     }
 

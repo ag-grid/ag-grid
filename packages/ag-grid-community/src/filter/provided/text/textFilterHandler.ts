@@ -38,6 +38,7 @@ const defaultLowercaseFormatter: TextFormatter = (from: string) =>
     from == null ? null : from.toString().toLowerCase();
 
 export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, string, ITextFilterParams> {
+    public readonly filterType = 'text' as const;
     protected readonly FilterModelFormatterClass = TextFilterModelFormatter;
     private matcher: TextMatcher;
     private formatter: TextFormatter;

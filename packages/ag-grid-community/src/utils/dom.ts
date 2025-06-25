@@ -320,7 +320,7 @@ export function _insertWithDomOrder(
 /**
  * Converts a camelCase string into hyphenated string
  * @param {string} camelCase
- * @return {string}
+ * @returns {string}
  */
 function _camelCaseToHyphenated(camelCase: string): string {
     return camelCase.replace(/[A-Z]/g, (s) => `-${s.toLocaleLowerCase()}`);

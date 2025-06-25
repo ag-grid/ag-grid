@@ -34,7 +34,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     sideBar: 'columns',
     pivotMaxGeneratedColumns: 1000,
     onPivotMaxColumnsExceeded: () => {
-        console.error(
+        console.warn(
             'The limit of 1000 generated columns has been exceeded. Either remove pivot or aggregations from some columns or increase the limit.'
         );
     },

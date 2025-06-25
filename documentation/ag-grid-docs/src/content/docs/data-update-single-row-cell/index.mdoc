@@ -5,19 +5,19 @@ title: "Client-Side Data - Single Row / Cell Updates"
 You can target updates to a single row or cell. Updating a single row means asking the grid to replace the data item for one specific row. Updating a cell means keeping the data item but asking the grid to replace one attribute of that data item.
 
 Both single row and single cell updates are done by first getting a reference to the row's Row Node and then using the relevant Row Node API method. See [Accessing Data](./accessing-data/) on how to access Row Nodes.
-Once you have access to the required Row Node, you update its data with the following Row Node API methods:
+Once you have access to the required Row Node, you can update its data with the following Row Node API methods:
 
 {% apiDocumentation source="row-object/properties.json" section="data" names=["setData", "updateData", "setDataValue"] /%}
 
 ## View Refresh
 
-After calling `rowNode.setData`, `rowNode.updateData` or `rowNode.setDataValue` the grid's view will automatically refresh to reflect the change. There is no need to manually request a refresh.
+After calling `rowNode.setData`, `rowNode.updateData` or `rowNode.setDataValue`, the grid's view automatically refreshes to reflect the change. There is no need to manually request a refresh.
 
-The main difference between `setData` and `updateData` is that `setData` will always refresh every cell, whereas `updateData` will only refresh cells whose values have changed. Additionally, `setData` will not cause changed cells to flash when `ColDef.enableCellChangeFlash = true`.
+The main difference between `setData` and `updateData` is that `setData` always refreshes every cell, whereas `updateData` only refreshes cells whose values have changed. Additionally, `setData` does not cause changed cells to flash when `ColDef.enableCellChangeFlash = true`.
 
 ## Sort / Filter / Group Refresh
 
-After calling `rowNode.setData`, `rowNode.updateData` or `rowNode.setDataValue` the grid will not update to reflect a change in sorting, filtering or grouping.
+After calling `rowNode.setData`, `rowNode.updateData` or `rowNode.setDataValue` the grid does not update to reflect a change in sorting, filtering or grouping.
 
 To have the grid update its sort, filter or grouping call the Grid API `refreshClientSideRowModel()`.
 

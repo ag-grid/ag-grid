@@ -66,7 +66,7 @@ const gridOptions: GridOptions = {
     },
     editType: 'fullRow',
     rowData: getRowData(),
-    cellEditingInvalidCommitType: 'block',
+    invalidEditValueMode: 'block',
     getFullRowEditValidationErrors: ({ editorsState }) => {
         const values = Object.fromEntries(editorsState.map(({ colId, newValue }) => [colId, newValue]));
 

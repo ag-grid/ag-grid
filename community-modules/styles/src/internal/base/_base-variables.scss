@@ -186,6 +186,8 @@
 
         --ag-header-height: var(--ag-row-height);
 
+        --ag-pagination-panel-height: var(--ag-header-height);
+
         --ag-list-item-height: calc(var(--ag-grid-size) * 5);
 
         --ag-column-select-indent-size: calc(var(--ag-grid-size) + var(--ag-icon-size));

@@ -138,7 +138,7 @@ async function getGitHash(version: Version): Promise<string> {
 /**
  * Taken from ag-grid-enterprise package.json git history
  */
-const gridToChartsMap = {
+const gridToChartsMap: Record<Version, Version> = {
     local: 'v11.3.0',
     prod: 'v11.3.0',
     staging: 'v11.3.0',
@@ -188,10 +188,71 @@ type Stats = {
     average: number;
     stdDev: number;
     marginOfError: number;
-    newBase: number[];
     filteredCount: number;
     originalCount: number;
 };
+
+/**
+ * Helper function to calculate drift rate and its margin of error
+ */
+function calculateDriftWithMargin(data: number[]): { driftRate: number; driftMarginOfError: number } {
+    if (data.length < 2) return { driftRate: 0, driftMarginOfError: 0 };
+
+    let sumX = 0,
+        sumY = 0,
+        sumXY = 0,
+        sumX2 = 0;
+    for (let i = 0; i < data.length; i++) {
+        const x = i;
+        const y = data[i];
+        sumX += x;
+        sumY += y;
+        sumXY += x * y;
+        sumX2 += x * x;
+    }
+
+    // Compute slope
+    const numerator = data.length * sumXY - sumX * sumY;
+    const denominator = data.length * sumX2 - sumX * sumX;
+
+    if (denominator === 0) return { driftRate: 0, driftMarginOfError: 0 };
+
+    const slope = numerator / denominator;
+
+    // Compute intercept
+    const intercept = (sumY - slope * sumX) / data.length;
+
+    // Compute residuals
+    let SSE = 0;
+    for (let i = 0; i < data.length; i++) {
+        const predicted = slope * i + intercept;
+        const residual = data[i] - predicted;
+        SSE += Math.pow(residual, 2);
+    }
+
+    // Degrees of freedom
+    const df = data.length - 2;
+
+    if (df <= 0) return { driftRate: slope, driftMarginOfError: 0 };
+
+    // Standard error of the regression (MSE)
+    const MSE = SSE / df;
+
+    // Compute Sxx (sum of squared deviations from mean x)
+    const xBar = sumX / data.length;
+    let Sxx = 0;
+    for (let i = 0; i < data.length; i++) {
+        Sxx += Math.pow(i - xBar, 2);
+    }
+
+    // Standard error of the slope
+    const SE_slope = Math.sqrt(MSE / Sxx);
+
+    // Compute margin of error using critical value
+    const driftMarginOfError = SE_slope * CRITICAL_VALUE;
+
+    return { driftRate: slope, driftMarginOfError };
+}
 
 /**
  * Calculates:
@@ -212,24 +273,28 @@ const computeStats = (times: number[]): Stats => {
         return sorted[lower] * (1 - weight) + sorted[upper] * weight;
     }
 
-    const sorted = times.sort((a, b) => a - b);
+    const sorted = [...times].sort((a, b) => a - b);
     const q1 = getPercentile(sorted, 0.25);
     const q3 = getPercentile(sorted, 0.75);
     const iqr = q3 - q1;
     const lower = q1 - 1.5 * iqr;
     const upper = q3 + 1.5 * iqr;
+    const { driftRate, driftMarginOfError } = calculateDriftWithMargin([...times]);
     const filtered = sorted.filter((t) => t >= lower && t <= upper);
     const base = filtered.length >= 5 ? filtered : sorted;
 
     const avg = base.reduce((sum, v) => sum + v, 0) / base.length;
     const stdDev = Math.sqrt(base.reduce((sum, v) => sum + Math.pow(v - avg, 2), 0) / (base.length - 1));
     const marginOfError = (CRITICAL_VALUE * stdDev) / Math.sqrt(base.length);
-
+    const isDriftSignificant = Math.abs(driftRate) > driftMarginOfError;
+    if (isDriftSignificant && !process.env['CI']) {
+        console.log(`${yellow('Drift detected:')} ${renderNumbersDiffString(driftRate, driftMarginOfError)};`);
+    }
+    const totalMarginOfError = Math.sqrt(Math.pow(driftMarginOfError, 2) + Math.pow(marginOfError, 2));
     return {
         average: avg,
         stdDev,
-        marginOfError,
-        newBase: base,
+        marginOfError: totalMarginOfError,
         filteredCount: base.length,
         originalCount: times.length,
     };
@@ -283,7 +348,7 @@ function isDiffSignificant(diff: number, moe1: number, moe2: number) {
 function reportStats(s1: Stats, s2: Stats, testCase: InternalTestCase) {
     const { percentDiff, avgMoEPercent, slower, faster, diff, avgMoE, practicalConfidence, isSignificant } =
         computeCommonStats(s1, s2, testCase);
-    const numbersDiffString = `${Math.abs(diff).toFixed(2)} ± ${avgMoE.toFixed(2)}`;
+    const numbersDiffString = renderNumbersDiffString(diff, avgMoE);
     const percentDiffString = renderPercentDiffString(percentDiff, avgMoEPercent);
     const resultMessage =
         isSignificant || practicalConfidence
@@ -319,7 +384,7 @@ function benchError(message: string, e: any, testCase: InternalTestCase) {
 }
 
 async function attachScripts(page: Page, version: Version, testCase: InternalTestCase) {
-    const chartsVersion = gridToChartsMap[version as keyof typeof gridToChartsMap] || gridToChartsMap.prod;
+    const chartsVersion = gridToChartsMap[version] || gridToChartsMap.prod;
 
     const urls = [getCdnUrl('ag-grid-community', version), getCdnUrl('ag-grid-enterprise', version)];
     if (chartsVersion) {
@@ -349,8 +414,8 @@ function updatePageTitle(page: Page, testCase: TestCase, variant: Variant) {
 function metricsGetter(page: Page, testCase: TestCase) {
     return waitFor(
         testCase.metrics
-            ? (metrics: TestCase['metrics']) => performance.getEntriesByType(metrics!)
-            : () => performance.getEntries(),
+            ? (metrics: TestCase['metrics']) => performance.getEntriesByName(metrics!)
+            : () => performance.getEntriesByName('long-animation-frame'),
         page,
         { args: [testCase.metrics] }
     );
@@ -390,12 +455,17 @@ function renderPercentDiffString(percentDiff: number, avgMoEPercent: number) {
     return `${percentDiff.toFixed(1)}% ± ${avgMoEPercent.toFixed(1)}%`;
 }
 
+function renderNumbersDiffString(diff: number, avgMoE: number, unit = 'ms') {
+    return `${Math.abs(diff).toFixed(2)}${unit} ± ${avgMoE.toFixed(2)}${unit}`;
+}
+
 const testBody = async (testCase: InternalTestCase, { page, context }: PlaywrightTestArgs, ..._: any[]) => {
-    const result = { control: [] as number[], variant: [] as number[] };
+    const measurements = { control: [] as number[], variant: [] as number[] };
     let s1: Stats, s2: Stats;
     const { minIter, maxIter, warmupIter, setLastCommunications } = testCase.__hidden!;
     let significant = false;
     let needToContinue = true;
+    let totalIterations = 0;
     test.info().annotations.push({
         type: 'info',
         description: {
@@ -421,21 +491,22 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
             if (testCase.preSetup) await testCase.preSetup(page);
             for (let i = 0; i < minIter; i++) {
                 if (testCase.setupPreActions) await testCase.setupPreActions(page);
+                if (i % 50 === 0) await page.requestGC();
                 const noiseSize = (await metricsGetter(page, testCase)).length;
                 if (testCase.actions) await testCase.actions(page);
                 if (i > warmupIter) {
                     const usefulEntries = (await metricsGetter(page, testCase)).slice(noiseSize);
-                    const duration = usefulEntries.reduce((acc, pe) => acc + pe.duration, 0);
-                    result[variantName].push(duration);
+                    const duration = usefulEntries.pop()!.duration || 0;
+                    measurements[variantName].push(duration);
+                    totalIterations++;
                 }
             }
             if (testCase.expectsPostActions) await testCase.expectsPostActions(page, lastCommunications);
         }
-        [s1, s2] = [computeStats(result.control), computeStats(result.variant)];
-        [result.control, result.variant] = [s1.newBase, s2.newBase]; // update the result with filtered data
+        [s1, s2] = [computeStats(measurements.control), computeStats(measurements.variant)];
         const { percentDiff, avgMoEPercent, isSignificant } = computeCommonStats(s1, s2, testCase);
         significant = isSignificant;
-        needToContinue = !significant && result['control'].length < maxIter;
+        needToContinue = !significant && totalIterations < maxIter;
         if (!process.env['CI']) {
             if (significant) reportStats(s1, s2, testCase);
             if (needToContinue) {

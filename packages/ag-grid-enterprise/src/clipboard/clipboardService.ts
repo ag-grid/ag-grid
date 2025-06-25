@@ -1044,7 +1044,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             processRowGroupCallback: processRowGroupCallback,
             processHeaderCallback: gos.getCallback('processHeaderForClipboard'),
             processGroupHeaderCallback: gos.getCallback('processGroupHeaderForClipboard'),
-            includePendingEdits: true,
         };
 
         return csvCreator!.getDataAsCsv(exportParams, true);

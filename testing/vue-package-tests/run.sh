@@ -11,7 +11,6 @@ function install_fw {
     npx create-vue --default --ts vue-${version}-test
 
     cd vue-${version}-test
-    npm i vite-plugin-vue-devtools@7.7.2 # Workaround for https://github.com/vuejs/devtools/issues/861
     npm i
 }
 

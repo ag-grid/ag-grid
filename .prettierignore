@@ -35,3 +35,5 @@ external/ag-website-shared/src/components/documentation-archive/DocumentationArc
 /.nx/workspace-data
 
 testing/angular-package-tests/project.base.json
+
+documentation/ag-grid-docs/src/components/ZoomInfo.astro

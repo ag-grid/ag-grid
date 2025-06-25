@@ -461,24 +461,45 @@
         },
         "setFocusedHeader": {}
     },
+    "batch-editing": {
+        "meta": {
+            "displayName": "Batch Editing",
+            "page": {
+                "name": "Batch Editing",
+                "url": "./cell-editing-batch/"
+            }
+        },
+        "startBatchEdit": {
+            "more": {
+                "name": "Batch Editing",
+                "url": "./cell-editing-batch"
+            }
+        },
+        "commitBatchEdit": {
+            "more": {
+                "name": "Batch Editing",
+                "url": "./cell-editing-batch"
+            }
+        },
+        "cancelBatchEdit": {
+            "more": {
+                "name": "Batch Editing",
+                "url": "./cell-editing-batch"
+            }
+        },
+        "isBatchEditing": {
+            "more": {
+                "name": "Batch Editing",
+                "url": "./cell-editing-batch"
+            }
+        }
+    },
     "editing": {
         "meta": {
             "displayName": "Editing",
             "page": {
                 "name": "Cell Editing",
                 "url": "./cell-editing/"
-            }
-        },
-        "setBatchEditing": {
-            "more": {
-                "name": "Enable/Disable Batch Editing",
-                "url": "./cell-editing-batch"
-            }
-        },
-        "isBatchEditing": {
-            "more": {
-                "name": "Is Batch Editing Enabled",
-                "url": "./cell-editing-batch"
             }
         },
         "startEditingCell": {
@@ -494,12 +515,6 @@
             }
         },
         "getEditingCells": {
-            "more": {
-                "name": "Editing API",
-                "url": "./cell-editing-start-stop/#editing-api"
-            }
-        },
-        "setEditingCells": {
             "more": {
                 "name": "Editing API",
                 "url": "./cell-editing-start-stop/#editing-api"
@@ -682,6 +697,18 @@
                     "RowDragCancelEvent"
                 ],
                 "include": []
+            }
+        },
+        "setRowDropPositionIndicator": {
+            "more": {
+                "name": "Row Drag and Drop Usage",
+                "url": "./row-dragging"
+            }
+        },
+        "getRowDropPositionIndicator": {
+            "more": {
+                "name": "Row Drag and Drop Usage",
+                "url": "./row-dragging"
             }
         }
     },

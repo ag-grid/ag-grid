@@ -33,6 +33,7 @@ export class FilterPanelService
     private params?: IToolPanelNewFiltersCompParams;
     private initialStateApplied: boolean = false;
     private initialState?: NewFiltersToolPanelState;
+    public isActive = false;
 
     public postConstruct(): void {
         if (!this.gos.get('enableFilterHandlers')) {
@@ -40,6 +41,7 @@ export class FilterPanelService
         }
 
         const updateFilterStates = this.updateFilterStates.bind(this);
+        const updateApplyButton = () => this.dispatchStatesUpdates(undefined, true);
         this.addManagedEventListeners({
             newColumnsLoaded: () => {
                 this.applyInitialState();
@@ -47,11 +49,13 @@ export class FilterPanelService
             },
             filterChanged: updateFilterStates,
             filterDestroyed: this.onFilterDestroyed.bind(this),
+            filterOpened: updateApplyButton,
+            filterClosed: updateApplyButton,
         });
         this.addManagedListeners(this.beans.colFilter!, {
             filterStateChanged: ({ column }: { column: AgColumn }) => {
                 this.states.get(column.getColId())?.refresh?.();
-                this.dispatchStatesUpdates(undefined, true);
+                updateApplyButton();
             },
         });
     }
@@ -170,16 +174,15 @@ export class FilterPanelService
             type: 'filterSwitched',
             column,
         });
-        const handler = colFilter!.getHandler(column, true);
-        if (!handler) {
+        const newStateWrapper = this.states.get(id);
+        if (!newStateWrapper) {
             return;
         }
-        stateWrapper.handler = handler;
-        state.activeFilterDef = filterDef;
+        const newState = newStateWrapper.state;
         this.dispatchLocalEvent({
             type: 'filterPanelStateChanged',
             id,
-            state,
+            state: newState,
         });
     }
 
@@ -266,7 +269,7 @@ export class FilterPanelService
         const { colFilter, selectableFilter } = beans;
         const name = getDisplayName(beans, column);
         const colId = column.getColId();
-        const getIsEditing = () => colFilter!.hasUnappliedModel(colId);
+        const getIsEditing = () => !!this.params?.buttons && colFilter!.hasUnappliedModel(colId);
         const isEditing = getIsEditing();
         if (expanded) {
             const colDef = column.colDef;
@@ -282,6 +285,7 @@ export class FilterPanelService
                     activeFilterDef,
                     filterDefs,
                     afterGuiAttached: filterComp.afterGuiAttached.bind(filterComp),
+                    afterGuiDetached: filterComp.afterGuiDetached.bind(filterComp),
                 },
                 handler,
                 refresh: () => {
@@ -310,7 +314,11 @@ export class FilterPanelService
         }
     }
 
-    private onFilterDestroyed({ column }: FilterDestroyedEvent) {
+    private onFilterDestroyed({ column, source }: FilterDestroyedEvent) {
+        if (!this.beans.colFilter?.isAlive()) {
+            // if grid is being destroyed, don't recreate filters
+            return;
+        }
         const states = this.states;
         const id = column.getColId();
         const existingState = states.get(id);
@@ -321,6 +329,11 @@ export class FilterPanelService
                 states.set(id, stateWrapper);
             } else {
                 this.remove(id);
+            }
+            if (source === 'api') {
+                // other sources trigger refresh through their main events (e.g. newColumnsLoaded).
+                // need manual update for `api.destroyFilter()`
+                this.dispatchStatesUpdates();
             }
         }
     }

@@ -174,9 +174,13 @@ export function convertTsxToJsx(fileStr: string): string {
     jsxFile = jsxFile.replaceAll('// empty line', '');
     return jsxFile;
 }
+const consoleMethods = ['log', 'warn', 'table', 'info', 'debug'] as const;
+const consoleRegexp = new RegExp(`console.(${consoleMethods.join('|')})`, 'g');
 
 export const getHasExampleConsoleLog = ({ contents }: { contents?: string }) => {
-    return contents?.includes('console.log');
+    const res = consoleRegexp.test(contents || '');
+    consoleRegexp.lastIndex = 0; // reset lastIndex to ensure it can be reused
+    return res;
 };
 
 export const getHasSimpleHtml = ({ contents }: { contents?: string }) => {

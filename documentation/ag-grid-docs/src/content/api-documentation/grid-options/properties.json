@@ -370,7 +370,7 @@
                 "url": "./cell-editing-validation/#full-row-editing-validation"
             }
         },
-        "cellEditingInvalidCommitType": {
+        "invalidEditValueMode": {
             "more": {
                 "name": "Cell Editing Validation Modes",
                 "url": "./cell-editing-validation/#validation-modes"
@@ -1249,7 +1249,15 @@
                 "name": "Custom Drag and Drop Image",
                 "url": "./row-dragging/#custom-params"
             }
-        }
+        },
+        "rowDragInsertDelay": {
+            "more": {
+                "name": "Row Drag Insert Delay",
+                "url": "./tree-data-row-dragging/#row-drag-insert-delay"
+            },
+            "description": "Delay in milliseconds. When dragging over, it expands collapsed groups or converts leafs to groups after this delay. Default: `500`."
+        },
+        "isRowValidDropPosition": {}
     },
     "fullWidth": {
         "meta": {

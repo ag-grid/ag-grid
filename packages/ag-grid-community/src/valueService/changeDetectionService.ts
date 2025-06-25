@@ -1,20 +1,15 @@
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
-import type { CellEditValuesChangedEvent, CellValueChangedEvent } from '../events';
+import type { CellValueChangedEvent } from '../events';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
-import type {
-    ChangeDetectionParams,
-    ChangeDetectionPosition,
-    IChangeDetectionService,
-} from '../interfaces/iChangeDetectionService';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { ChangedPath } from '../utils/changedPath';
 
 // Matches value in clipboard module
 const SOURCE_PASTE = 'paste';
-
-export class ChangeDetectionService extends BeanStub implements IChangeDetectionService {
+export class ChangeDetectionService extends BeanStub implements NamedBean {
     beanName = 'changeDetectionSvc' as const;
 
     private clientSideRowModel: IClientSideRowModel | null = null;
@@ -25,20 +20,11 @@ export class ChangeDetectionService extends BeanStub implements IChangeDetection
             this.clientSideRowModel = rowModel;
         }
 
-        this.addManagedEventListeners({
-            cellEditValuesChanged: this.onCellEditValuesChanged.bind(this),
-            cellValueChanged: this.onCellValueChanged.bind(this),
-        });
+        this.addManagedEventListeners({ cellValueChanged: this.onCellValueChanged.bind(this) });
     }
 
-    private onCellEditValuesChanged(event: CellEditValuesChangedEvent): void {
-        const suppressFlash = event.newValue === event.oldValue;
-        this.refreshRows(event, { suppressFlash, force: true, onlyChangedColumns: true });
-    }
-
-    private onCellValueChanged(event: CellValueChangedEvent | CellEditValuesChangedEvent): void {
-        const { gos } = this.beans;
-
+    private onCellValueChanged(event: CellValueChangedEvent): void {
+        const { gos, rowRenderer } = this.beans;
         // Clipboard service manages its own change detection, so no need to do it here.
         // The clipboard manages its own as otherwise this would happen once for every cell
         // that got updated as part of a paste operation, so e.g. if 100 cells in a paste operation,
@@ -49,65 +35,30 @@ export class ChangeDetectionService extends BeanStub implements IChangeDetection
             return;
         }
 
-        const onlyChangedColumns = gos.get('aggregateOnlyChangedColumns');
+        const rowNode = event.node as RowNode;
 
-        this.refreshRows(event, { onlyChangedColumns });
-    }
-
-    public refreshRows(
-        { node, column }: ChangeDetectionPosition,
-        { suppressFlash, force, onlyChangedColumns }: ChangeDetectionParams = {}
-    ): void {
-        const { gos, rowRenderer } = this.beans;
-
-        const rowNode = node as RowNode;
-        const rowNodes: RowNode[] = [rowNode];
+        const nodesToRefresh: RowNode[] = [rowNode];
 
         const clientSideRowModel = this.clientSideRowModel;
         const rootNode = clientSideRowModel?.rootNode;
 
-        if (!rootNode) {
-            return;
-        }
-
         // step 1 of change detection is to update the aggregated values
-        const changedPath = new ChangedPath(!!onlyChangedColumns, rootNode);
-        changedPath.addParentNode(rowNode.parent, [column as AgColumn]);
-        clientSideRowModel.doAggregate(changedPath);
+        if (rootNode && !rowNode.isRowPinned()) {
+            const onlyChangedColumns = gos.get('aggregateOnlyChangedColumns');
+            const changedPath = new ChangedPath(onlyChangedColumns, rootNode);
+            changedPath.addParentNode(rowNode.parent, [event.column as AgColumn]);
+            clientSideRowModel.doAggregate(changedPath);
 
-        const groupTotalRow = gos.get('groupTotalRow');
-
-        // add all nodes impacted by aggregation, as they need refreshed also.
-        changedPath.forEachChangedNodeDepthFirst((pathNode) => {
-            const { sibling, pinnedSibling } = pathNode;
-            if (!(groupTotalRow && !rowNode?.footer)) {
-                rowNodes.push(pathNode);
-            }
-
-            if (sibling) {
-                rowNodes.push(sibling);
-            }
-
-            if (pinnedSibling) {
-                rowNodes.push(pinnedSibling);
-            }
-        });
-
-        // step 2 of change detection is to refresh the cells
-        rowRenderer.refreshCells({
-            rowNodes,
-            suppressFlash,
-            force,
-            columns: (column && [column]) || undefined,
-        });
-
-        if (rowNode.pinnedSibling) {
-            // if the row is pinned, we also need to refresh the pinned sibling
-            rowRenderer.refreshCells({
-                rowNodes: [rowNode.pinnedSibling],
-                suppressFlash,
-                force,
+            // add all nodes impacted by aggregation, as they need refreshed also.
+            changedPath.forEachChangedNodeDepthFirst((rowNode) => {
+                nodesToRefresh.push(rowNode);
+                if (rowNode.sibling) {
+                    nodesToRefresh.push(rowNode.sibling);
+                }
             });
         }
+
+        // step 2 of change detection is to refresh the cells
+        rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
     }
 }

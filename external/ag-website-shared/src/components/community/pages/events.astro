@@ -12,6 +12,6 @@ import events from '@ag-website-shared/content/community/events.json';
     pageTitle="Global Event Participation"
 >
     <section>
-        <Events client:load images={eventImages} events={events} />
+        <Events client:only images={eventImages} events={events} />
     </section>
 </CommunityLayout>

@@ -699,6 +699,8 @@ export const AG_GRID_ERRORS = {
     286: () => 'As of v34, use (`api.setColumnFilterModel()`) instead.' as const,
     287: () => '`api.doFilterAction()` requires `enableFilterHandlers = true' as const,
     288: () => '`api.getColumnFilterModel(key, true)` requires `enableFilterHandlers = true' as const,
+    289: ({ rowModelType }: { rowModelType: string }) =>
+        `Row Model '${rowModelType}' is not supported with Batch Editing` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

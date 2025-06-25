@@ -180,6 +180,8 @@ const docs: Record<AllThemeParams, string> = {
     menuTextColor: 'Text color for menus e.g. column menu and right-click context menu',
     modalOverlayBackgroundColor: 'Background color of the overlay shown over the grid e.g. a data loading indicator.',
     oddRowBackgroundColor: 'Background color applied to every other row',
+    paginationPanelHeight:
+        'Height of the pagination panel at the bottom of the grid. Defaults to the higher of rowHeight or 22px.',
     panelBackgroundColor:
         'Background color for panels and dialogs such as the integrated charts and the advanced filter builder.',
     panelTitleBarBackgroundColor:

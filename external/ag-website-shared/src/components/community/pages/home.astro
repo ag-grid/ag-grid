@@ -36,7 +36,7 @@ const { currentSite } = Astro.props;
                 <Icon name="arrowRight" />
             </a>
         </div>
-        <UpcomingEvents client:load enableFilters={false} images={eventImages} events={events} />
+        <UpcomingEvents client:only enableFilters={false} images={eventImages} events={events} />
     </section>
     <!-- Showcase -->
     <section>

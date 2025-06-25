@@ -39,7 +39,7 @@ function updateRows(athlete?: string, date?: string) {
             return;
         }
 
-        if (date != null && rowNode.data.date !== date) {
+        if (date != null && rowNode.data?.date !== date) {
             return;
         }
 

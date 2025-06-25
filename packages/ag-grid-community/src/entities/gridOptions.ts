@@ -3,6 +3,7 @@
  ************************************************************************************************/
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
+import type { IsRowValidDropPositionCallback } from '../dragAndDrop/rowDragFeature';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
@@ -523,7 +524,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `block` to block the commit of invalid cell edits, keeping editors open.
      */
-    cellEditingInvalidCommitType?: EditValidationCommitType;
+    invalidEditValueMode?: EditValidationCommitType;
 
     /**
      * Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
@@ -1894,6 +1895,17 @@ export interface GridOptions<TData = any> {
     reactiveCustomComponents?: boolean;
 
     /**
+     *
+     * ** React only**.
+     *
+     * Enables fine grained control over the row rendering mechanism.
+     * - `default` - recommended rendering approach.
+     * - `legacy` - provided for backwards compatibility with previous versions of AG Grid (<= v33). Is susceptible to "Maximum Update Depth Exceeded" errors and so may be removed in a future version.
+     * @default 'default'
+     */
+    renderingMode?: 'default' | 'legacy';
+
+    /**
      * Theme to apply to the grid, or the string "legacy" to opt back into the
      * v32 style of theming where themes were imported as CSS files and applied
      * by setting a class name on the parent element.
@@ -2563,6 +2575,13 @@ export interface GridOptions<TData = any> {
      * The drag has been cancelled over the grid.
      */
     onRowDragCancel?(event: RowDragCancelEvent<TData>): void;
+
+    /**
+     * Called by managed drag and drop when rows are dropped on another row.
+     * The user can cancel the drop by returning `false` or customize the operation by returning a `IsRowValidDropPositionResult`.
+     * @agModule `RowDragModule`
+     */
+    isRowValidDropPosition?: IsRowValidDropPositionCallback<TData>;
 
     /**
      * The row resize has started (Row Numbers Feature)

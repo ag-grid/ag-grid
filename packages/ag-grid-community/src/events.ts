@@ -16,6 +16,7 @@ import type { IFilterComp } from './interfaces/iFilter';
 import type { FindMatch } from './interfaces/iFind';
 import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
 import type { IServerSideGroupSelectionState, IServerSideSelectionState } from './interfaces/iServerSideSelection';
+import type { CellValueChange } from './interfaces/iUndoRedo';
 import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 import type { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
 
@@ -108,7 +109,6 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         dragCancelled: DragCancelledEvent<TData, TContext>;
         rowEditingStarted: RowEditingStartedEvent<TData, TContext>;
         rowEditingStopped: RowEditingStoppedEvent<TData, TContext>;
-        rowEditingValidated: RowEditingValidated<TData, TContext>;
         cellEditingStarted: CellEditingStartedEvent<TData, TContext>;
         cellEditingStopped: CellEditingStoppedEvent<TData, TContext>;
         bodyScroll: BodyScrollEvent<TData, TContext>;
@@ -160,6 +160,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         gridStylesChanged: GridStylesChangedEvent<TData, TContext>;
         storeUpdated: StoreUpdatedEvent<TData, TContext>;
         filterDestroyed: FilterDestroyedEvent<TData, TContext>;
+        filterClosed: FilterClosedEvent<TData, TContext>;
         rowDataUpdateStarted: RowDataUpdateStartedEvent<TData, TContext>;
         rowCountReady: RowCountReadyEvent<TData, TContext>;
         advancedFilterEnabledChanged: AdvancedFilterEnabledChangedEvent<TData, TContext>;
@@ -179,6 +180,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         columnsReset: ColumnsResetEvent<TData, TContext>;
         cellEditValuesChanged: CellEditValuesChangedEvent<TData, TContext>;
         filterSwitched: FilterSwitchedEvent<TData, TContext>;
+        batchEditingStarted: BatchEditingStartedEvent<TData, TContext>;
+        batchEditingStopped: BatchEditingStoppedEvent<TData, TContext>;
     }
 >;
 
@@ -949,6 +952,20 @@ export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any>
     columnGroup?: ProvidedColumnGroup | null;
 }
 
+/**--------------*/
+/** BATCH EVENTS */
+/**--------------*/
+export interface BatchEditingEvent<T extends AgEventType, TData = any, TContext = any>
+    extends AgGlobalEvent<T, TData, TContext> {
+    changes?: CellValueChange[];
+}
+
+export interface BatchEditingStartedEvent<TData = any, TContext = any>
+    extends BatchEditingEvent<'batchEditingStarted', TData, TContext> {}
+
+export interface BatchEditingStoppedEvent<TData = any, TContext = any>
+    extends BatchEditingEvent<'batchEditingStopped', TData, TContext> {}
+
 /**------------*/
 /** ROW EVENTS */
 /**------------*/
@@ -1002,11 +1019,6 @@ export interface RowEditingStartedEvent<TData = any, TContext = any>
 
 export interface RowEditingStoppedEvent<TData = any, TContext = any>
     extends RowEvent<'rowEditingStopped', TData, TContext> {}
-
-export interface RowEditingValidated<TData = any, TContext = any>
-    extends RowEvent<'rowEditingValidated', TData, TContext> {
-    errorMessages?: string[] | null;
-}
 
 export interface FullWidthCellKeyDownEvent<TData = any, TContext = any>
     extends RowEvent<'cellKeyDown', TData, TContext> {}
@@ -1245,5 +1257,9 @@ export interface ColumnsResetEvent<TData = any, TContext = any> extends AgGlobal
 }
 export interface FilterSwitchedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'filterSwitched', TData, TContext> {
+    column: Column;
+}
+
+export interface FilterClosedEvent<TData = any, TContext = any> extends AgGlobalEvent<'filterClosed', TData, TContext> {
     column: Column;
 }

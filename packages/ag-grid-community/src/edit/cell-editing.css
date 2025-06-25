@@ -18,8 +18,7 @@
         line-height: normal;
     }
 
-    &:where(:has(:invalid)),
-    &:where(:has(.invalid)) {
+    &.ag-cell-editing-error {
         border-color: var(--ag-invalid-color) !important;
     }
 }

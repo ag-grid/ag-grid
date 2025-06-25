@@ -3,11 +3,9 @@ title: "Excel Export - Formulas"
 enterprise: true
 ---
 
-Excel Export allows to include Excel Formulas in the exported file. You can use formulas to translate any column Value Getters logic, so the column values are correctly computed locally in Excel.
+Excel Export allows you to include Excel Formulas in the exported file. You can use formulas to translate any column Value Getters logic, so the column values are correctly computed locally in Excel.
 
 ## Exporting formulas
-
-There are two ways to export formulas.
 
 There are two ways to include formulas as part of the exported Excel file.
 
@@ -50,7 +48,7 @@ const gridOptions = {
 Note the following:
 
 * The `Full Name` column uses a `valueGetter` to combine `First Name` and `Last Name`.
-* The `processCellCallback` create a formula that has a similar function of the `valueGetter`.
+* The `processCellCallback` creates a formula that has a similar function of the `valueGetter`.
 * The exported Excel Sheet will have the `Full Name` column computed using a formula that uses the `First Name` and `Last Name` columns as inputs.
 
 {% gridExampleRunner title="Excel Export - Formula DataType" name="excel-export-formula-data-type" /%}

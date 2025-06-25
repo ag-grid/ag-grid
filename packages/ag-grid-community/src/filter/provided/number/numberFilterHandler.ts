@@ -6,6 +6,7 @@ import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
 import { mapValuesFromNumberFilterModel } from './numberFilterUtils';
 
 export class NumberFilterHandler extends ScalarFilterHandler<NumberFilterModel, number, INumberFilterParams> {
+    public readonly filterType = 'number' as const;
     protected readonly FilterModelFormatterClass = NumberFilterModelFormatter;
 
     constructor() {

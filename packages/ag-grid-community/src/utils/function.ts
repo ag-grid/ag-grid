@@ -82,7 +82,7 @@ export function _batchCall(func: () => void, mode: 'setTimeout' | 'raf' = 'setTi
  * Creates a debounced function a function, and attach it to a bean for lifecycle
  * @param {Function} func The function to be debounced
  * @param {number} delay The time in ms to debounce
- * @return {Function} The debounced function
+ * @returns {Function} The debounced function
  */
 export function _debounce(
     bean: { isAlive(): boolean },
@@ -111,7 +111,7 @@ export function _debounce(
 /**
  * @param {Function} func The function to be throttled
  * @param {number} wait The time in ms to throttle
- * @return {Function} The throttled function
+ * @returns {Function} The throttled function
  */
 export function _throttle(func: (...args: any[]) => void, wait: number): (...args: any[]) => void {
     let previousCall = 0;

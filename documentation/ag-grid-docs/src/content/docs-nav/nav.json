@@ -1255,6 +1255,12 @@
                             "title": "Filtering",
                             "path": "tree-data-filtering",
                             "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Tree Row Dragging",
+                            "path": "tree-data-row-dragging",
+                            "isEnterprise": true
                         }
                     ]
                 },

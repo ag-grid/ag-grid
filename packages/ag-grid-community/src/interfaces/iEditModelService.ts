@@ -14,6 +14,8 @@ export type EditValue = {
     state: EditState;
 };
 
+export type EditPositionValue = Required<EditPosition> & EditValue;
+
 export type EditRow<C = Column, V = EditValue> = Map<C, V>;
 export type EditMap = Map<IRowNode, Map<Column, EditValue>>;
 
@@ -27,12 +29,13 @@ export type GetEditsParams = {
 };
 
 export interface IEditModelService {
+    suspend(suspend: boolean): void;
     removeEdits({ rowNode, column }: EditPosition): void;
 
     getEdit(position: EditPosition): EditValue | undefined;
-    getEditPositions(): Required<EditPosition>[];
-    getEditRow({ rowNode }: EditRowPosition, params?: GetEditsParams): EditRow | undefined;
-    getEditRowDataValue({ rowNode }: Required<EditRowPosition>, params?: GetEditsParams): any;
+    getEditPositions(editMap?: EditMap): EditPositionValue[];
+    getEditRow(rowNode: IRowNode, params?: GetEditsParams): EditRow | undefined;
+    getEditRowDataValue(rowNode: IRowNode, params?: GetEditsParams): any;
     getEditMap(copy?: boolean): EditMap;
 
     setEdit(position: Required<EditPosition>, edit: EditValue): void;
@@ -44,7 +47,7 @@ export interface IEditModelService {
 
     getState(position: EditPosition): EditState | undefined;
 
-    hasRowEdits({ rowNode }: Required<EditRowPosition>, params?: GetEditsParams): boolean;
+    hasRowEdits(rowNode: IRowNode, params?: GetEditsParams): boolean;
     hasEdits(position?: EditPosition, params?: GetEditsParams): boolean;
 
     start(position: Required<EditPosition>): void;
@@ -57,7 +60,7 @@ export interface IEditModelService {
 }
 export interface IEditCellValidationModel {
     getCellValidation(position: EditPosition): EditValidation | undefined;
-    hasCellValidation(position: Required<EditPosition>): boolean;
+    hasCellValidation(position: EditPosition): boolean;
     setCellValidation(position: Required<EditPosition>, validation: EditValidation): void;
     clearCellValidation(position: Required<EditPosition>): void;
     setCellValidationMap(validationMap: EditValidationMap): void;

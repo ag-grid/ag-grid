@@ -132,7 +132,7 @@ jobs:
         if: ${{ steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped' }}
         run: |
           echo "Building UMD packages..."
-          npx nx run-many -t build --projects=ag-grid-{enterprise,community,angular,react,vue3}
+          npx nx run-many -t build --projects=ag-grid-{enterprise,community}
 
       - name: Notify Progress
         uses: actions/github-script@v7
@@ -209,18 +209,16 @@ jobs:
           retention-days: ${{ env.DEFAULT_RETENTION_DAYS }}
 
       - name: Attach snippet
-        uses: actions/github-script@v7
         id: attach-snippet
         if: ${{ steps.upload-snippet.outputs.artifact-url }}
         env:
           SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
-        with:
-          script: |
-            node ./testing/shared/scripts/attach-snippet.mjs
+        run: |
+          node ./testing/shared/scripts/attach-snippet.mjs
 
       - name: Slack Notification
         continue-on-error: true
-        if: ${{ steps.upload-snippet.outputs.artifact-url }}
+        if: ${{ steps.upload-snippet.outputs.artifact-url && (github.event_name == 'schedule' || inputs.notify) }}
         env:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
           SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}

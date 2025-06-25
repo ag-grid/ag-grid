@@ -13,7 +13,7 @@ The Side Bar is configured using the grid property `sideBar`. The property takes
 | ---------------------------- | -------------------------------------------------------------------------------------------------- |
 | `undefined` / `null`         | No Side Bar provided.                                                                              |
 | `boolean`                    | Set to `true` to display the Side Bar with default configuration.                       |
-| `string` / `string[]`        | Set to `'columns'`, `'filters'` or `'filters-new'` to display the Side Bar with just one of [Columns](./tool-panel-columns/), [Filters](./tool-panel-filters/) or [New Filters](./tool-panel-filters-new) Tool Panels or an array of one or both of these values. |
+| `string` / `string[]`        | Set to `'columns'`, `'filters'` or `'filters-new'` to display the Side Bar with just one of [Columns](./tool-panel-columns/), [Filters](./tool-panel-filters/) or [New Filters](./tool-panel-filters-new) Tool Panels or an array of some or all of these values. |
 | `SideBarDef`{% br /%}(long form) | An object of type `SideBarDef` (explained below) to allow detailed configuration of the Side Bar. Use this to configure the provided Tool Panels (e.g. pass parameters to the columns or filters panel) or to include custom Tool Panels. |
 
 ### Boolean Configuration
@@ -26,7 +26,7 @@ The default configuration doesn't allow customisation of the Tool Panels.
 
 ### String Configuration
 
-To display just one of the provided Tool Panels, set either `sideBar='columns'`, `sideBar='filters'` or `sideBar='filters-new'`. This will display the desired item with default configuration. Alternatively pass one or both as a `string[]`, i.e `sideBar=['columns','filters', 'filters-new']`.
+To display just one of the provided Tool Panels, set either `sideBar='columns'`, `sideBar='filters'` or `sideBar='filters-new'`. This will display the desired item with default configuration. Alternatively pass some or all of these values as a `string[]`, i.e `sideBar=['columns','filters', 'filters-new']`.
 
 The example below demonstrates using the string configuration. Note the following:
 
@@ -147,7 +147,7 @@ const gridOptions = {
 }
 ```
 
-You can also use shortcuts inside the `toolPanel.items` array for specifying the Columns and Filters items.
+You can also use shortcuts inside the `sideBar.toolPanels` array for specifying the Columns and Filters items.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -237,4 +237,4 @@ The example below demonstrates different usages of the Tool Panel API methods. T
 
 ## Next Up
 
-Now that we covered the Side Bar, continue to the next section to learn about the [Columns Tool Panel](./tool-panel-columns/).
+Continue to the next section to learn about the [Columns Tool Panel](./tool-panel-columns/).

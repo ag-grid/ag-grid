@@ -5,6 +5,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { Column } from '../interfaces/iColumn';
 import type {
     EditMap,
+    EditPositionValue,
     EditRow,
     EditRowValidationMap,
     EditState,
@@ -27,12 +28,19 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     private cellValidations: IEditCellValidationModel = new EditCellValidationModel();
     private rowValidations: IEditRowValidationModel = new EditRowValidationModel();
 
+    // during some operations, we want to always return false from `hasEdits`
+    private suspendEdits = false;
+
+    public suspend(suspend: boolean): void {
+        this.suspendEdits = suspend;
+    }
+
     public removeEdits({ rowNode, column }: EditPosition): void {
         if (!this.hasEdits({ rowNode }) || !rowNode) {
             return;
         }
 
-        const editRow = this.getEditRow({ rowNode })!;
+        const editRow = this.getEditRow(rowNode)!;
 
         if (column) {
             editRow.delete(column);
@@ -45,7 +53,15 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         }
     }
 
-    public getEditRow({ rowNode }: EditRowPosition, params: GetEditsParams = {}): EditRow | undefined {
+    public getEditRow(rowNode: IRowNode, params: GetEditsParams = {}): EditRow | undefined {
+        if (this.suspendEdits) {
+            return undefined;
+        }
+
+        if (this.edits.size === 0) {
+            return undefined;
+        }
+
         const edits = rowNode && this.edits.get(rowNode);
 
         if (edits) {
@@ -55,17 +71,21 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         if (params.checkSiblings) {
             const pinnedSibling = (rowNode as RowNode).pinnedSibling;
             if (pinnedSibling) {
-                return this.getEditRow({ rowNode: pinnedSibling });
+                return this.getEditRow(pinnedSibling);
             }
         }
 
         return undefined;
     }
 
-    public getEditRowDataValue({ rowNode }: Required<EditRowPosition>, { checkSiblings }: GetEditsParams = {}): any {
-        const editRow = this.getEditRow({ rowNode });
+    public getEditRowDataValue(rowNode: IRowNode, { checkSiblings }: GetEditsParams = {}): any {
+        if (this.edits.size === 0) {
+            return rowNode.data;
+        }
+
+        const editRow = this.getEditRow(rowNode);
         const pinnedSibling = (rowNode as RowNode).pinnedSibling;
-        const siblingRow = checkSiblings && pinnedSibling && this.getEditRow({ rowNode: pinnedSibling });
+        const siblingRow = checkSiblings && pinnedSibling && this.getEditRow(pinnedSibling);
 
         if (!editRow && !siblingRow) {
             return rowNode.data;
@@ -92,10 +112,22 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public getEdit(position: EditPosition): EditValue | undefined {
-        return position.column && this.getEditRow(position)?.get(position.column);
+        if (this.suspendEdits) {
+            return undefined;
+        }
+
+        if (this.edits.size === 0) {
+            return undefined;
+        }
+
+        return position.rowNode && position.column && this.getEditRow(position.rowNode)?.get(position.column);
     }
 
     public getEditMap(copy = true): EditMap {
+        if (this.suspendEdits || this.edits.size === 0) {
+            return new Map();
+        }
+
         if (!copy) {
             return this.edits;
         }
@@ -118,10 +150,9 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public setEdit(position: Required<EditPosition>, edit: EditValue): void {
-        const { rowNode, column } = position;
-        !this.edits.has(rowNode) && this.edits.set(rowNode, new Map());
+        (this.edits.size === 0 || !this.edits.has(position.rowNode)) && this.edits.set(position.rowNode, new Map());
 
-        this.getEditRow(position)!.set(column, edit);
+        this.getEditRow(position.rowNode)!.set(position.column, edit);
     }
 
     public clearEditValue(position: EditPosition): void {
@@ -134,7 +165,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
                     edit.state = 'changed';
                 }
             } else {
-                this.getEditRow(position)?.forEach((cellData) => {
+                this.getEditRow(rowNode)?.forEach((cellData) => {
                     cellData.newValue = cellData.oldValue;
                     cellData.state = 'changed';
                 });
@@ -149,7 +180,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
 
         const { rowNode, column } = position;
 
-        let editRow = this.getEditRow(position);
+        let editRow = this.getEditRow(rowNode);
 
         const edit = editRow?.get(column);
         if (edit) {
@@ -164,17 +195,25 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public getState(position: EditPosition): EditState | undefined {
+        if (this.suspendEdits) {
+            return undefined;
+        }
+
         return this.getEdit(position)?.state;
     }
 
-    public getEditPositions(): Required<EditPosition>[] {
-        const positions: Required<EditPosition>[] = [];
-        this.edits.forEach((editRow, rowNode) => {
+    public getEditPositions(editMap?: EditMap): EditPositionValue[] {
+        if (this.suspendEdits || this.edits.size === 0) {
+            return [];
+        }
+
+        const positions: EditPositionValue[] = [];
+        (editMap ?? this.edits).forEach((editRow, rowNode) => {
             for (const column of editRow.keys()) {
                 positions.push({
                     rowNode,
                     column,
-                    ...editRow.get(column),
+                    ...editRow.get(column)!,
                 });
             }
         });
@@ -182,16 +221,32 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         return positions;
     }
 
-    public hasRowEdits({ rowNode }: Required<EditRowPosition>, params?: GetEditsParams): boolean {
-        const rowEdits = this.getEditRow({ rowNode }, params);
+    public hasRowEdits(rowNode: IRowNode, params?: GetEditsParams): boolean {
+        if (this.suspendEdits) {
+            return false;
+        }
+
+        if (this.edits.size === 0) {
+            return false;
+        }
+
+        const rowEdits = this.getEditRow(rowNode, params);
         return !!rowEdits;
     }
 
     public hasEdits(position: EditPosition = {}, params: GetEditsParams = {}): boolean {
+        if (this.suspendEdits) {
+            return false;
+        }
+
+        if (this.edits.size === 0) {
+            return false;
+        }
+
         const { rowNode, column } = position;
         const { withOpenEditor } = params;
         if (rowNode) {
-            const rowEdits = this.getEditRow(position, params);
+            const rowEdits = this.getEditRow(rowNode, params);
             if (!rowEdits) {
                 return false;
             }
@@ -221,7 +276,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public start(position: Required<EditPosition>): void {
-        const map = this.getEditRow(position) ?? new Map<Column, EditValue>();
+        const map = this.getEditRow(position.rowNode) ?? new Map<Column, EditValue>();
         const { rowNode, column } = position;
         if (column && !map.has(column)) {
             map.set(column, {
@@ -278,11 +333,15 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
 export class EditCellValidationModel implements IEditCellValidationModel {
     private cellValidations: EditValidationMap = new Map();
 
-    public getCellValidation({ rowNode, column }: EditPosition): EditValidation | undefined {
+    public getCellValidation(position?: EditPosition): EditValidation | undefined {
+        const { rowNode, column } = position || {};
         return this.cellValidations?.get(rowNode!)?.get(column!);
     }
 
-    public hasCellValidation(position: Required<EditPosition>): boolean {
+    public hasCellValidation(position?: EditPosition): boolean {
+        if (!position || !position.rowNode || !position.column) {
+            return this.cellValidations.size > 0;
+        }
         return !!this.getCellValidation(position);
     }
 
@@ -314,12 +373,16 @@ export class EditCellValidationModel implements IEditCellValidationModel {
 export class EditRowValidationModel implements IEditRowValidationModel {
     private rowValidations: EditRowValidationMap = new Map();
 
-    public getRowValidation({ rowNode }: Required<EditRowPosition>): EditValidation | undefined {
-        return this.rowValidations.get(rowNode);
+    public getRowValidation(position?: EditRowPosition): EditValidation | undefined {
+        const { rowNode } = position || {};
+        return this.rowValidations.get(rowNode!);
     }
 
-    public hasRowValidation({ rowNode }: Required<EditRowPosition>): boolean {
-        return !!this.getRowValidation({ rowNode });
+    public hasRowValidation(position?: EditRowPosition): boolean {
+        if (!position || !position.rowNode) {
+            return this.rowValidations.size > 0;
+        }
+        return !!this.getRowValidation(position);
     }
 
     public setRowValidation({ rowNode }: Required<EditRowPosition>, rowValidation: EditValidation): void {

@@ -3,6 +3,7 @@ import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../c
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
+import { _populateModelValidationErrors } from '../../edit/utils/editors';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
@@ -111,9 +112,7 @@ export class CellCtrl extends BeanStub {
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
-    private editStyleFeature: ICellStyleFeature | undefined = undefined;
-    private tooltipFeature: TooltipFeature | undefined = undefined;
-    private editorTooltipFeature: TooltipFeature | undefined = undefined;
+    public editStyleFeature: ICellStyleFeature | undefined = undefined;
     private mouseListener: CellMouseListenerFeature | undefined = undefined;
     private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
 
@@ -137,6 +136,10 @@ export class CellCtrl extends BeanStub {
     private hasBeenFocused = false;
 
     private editSvc?: IEditService;
+    private hasEdit: boolean = false;
+
+    public tooltipFeature: TooltipFeature | undefined = undefined;
+    public editorTooltipFeature: TooltipFeature | undefined = undefined;
 
     constructor(
         public readonly column: AgColumn,
@@ -148,6 +151,7 @@ export class CellCtrl extends BeanStub {
         this.beans = beans;
         this.gos = beans.gos;
         this.editSvc = beans.editSvc;
+        this.hasEdit = !!beans.editSvc;
 
         const { colId } = column;
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
@@ -166,9 +170,7 @@ export class CellCtrl extends BeanStub {
 
         this.keyboardListener = new CellKeyboardListenerFeature(this, beans, this.rowNode, this.rowCtrl);
 
-        if (this.column.isTooltipEnabled()) {
-            this.enableTooltipFeature();
-        }
+        this.enableTooltipFeature();
 
         const { rangeSvc } = beans;
         const cellSelectionEnabled = rangeSvc && _isCellSelectionEnabled(beans.gos);
@@ -215,12 +217,9 @@ export class CellCtrl extends BeanStub {
         if (this.editorTooltipFeature) {
             this.disableEditorTooltipFeature();
         }
-        this.editorTooltipFeature = this.beans.tooltipSvc?.setupEditorTooltip(this, editor);
-        this.refreshEditorTooltip();
-    }
+        this.editorTooltipFeature = this.beans.tooltipSvc?.setupCellEditorTooltip(this, editor);
 
-    public refreshEditorTooltip(): void {
-        this.editorTooltipFeature?.refreshTooltip(true);
+        _populateModelValidationErrors(this.beans);
     }
 
     public disableEditorTooltipFeature(): void {
@@ -356,8 +355,12 @@ export class CellCtrl extends BeanStub {
             );
         }
 
-        if (beans?.editSvc?.isBatchEditing() && beans?.editSvc?.isRowEditing({ rowNode }, { checkSiblings: true })) {
-            const result = beans.editSvc.prepDetailsDuringBatch(this, { compDetails, valueToDisplay });
+        if (
+            this.hasEdit &&
+            this.editSvc!.isBatchEditing() &&
+            this.editSvc!.isRowEditing(rowNode, { checkSiblings: true })
+        ) {
+            const result = this.editSvc!.prepDetailsDuringBatch(this, { compDetails, valueToDisplay });
             if (result) {
                 if (result.compDetails) {
                     compDetails = result.compDetails;
@@ -443,7 +446,7 @@ export class CellCtrl extends BeanStub {
         // note: this happens because of a click outside of the grid or if the popupEditor
         // is closed with `Escape` key. if another cell was clicked, then the editing will
         // have already stopped and returned on the conditional above.
-        editSvc?.stopEditing(this, { source: editSvc?.isBatchEditing() ? 'ui' : 'api' }) ?? false;
+        editSvc?.stopEditing(this, { source: editSvc?.isBatchEditing() ? 'ui' : 'api' });
     }
 
     /**

@@ -1,4 +1,5 @@
-import fs from 'fs';
+#!/usr/bin/env node
+import fs from 'node:fs';
 
 const snippetUrl = process.env.SNIPPET_URL || 'https://example.com/snippet.md';
 

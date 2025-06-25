@@ -381,6 +381,10 @@
             "description": "Height of items in lists (example of lists are dropdown select inputs and column menu set filters)",
             "type": "CSS length (e.g. `0`, `4px` or `50%`)"
         },
+        "--ag-pagination-panel-height": {
+            "description": "Height of the pagination panel at the bottom of the grid. Defaults to the header height.",
+            "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+        },
         "--ag-header-column-separator-display": {
             "description": "Whether to display the header column separator - a vertical line that displays between every header cell",
             "type": "CSS display value - `block` to show or `none` to hide"

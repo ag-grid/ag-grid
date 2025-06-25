@@ -60,11 +60,12 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'serverSidePivotResultFieldSeparator',
     'columnMenu',
     'tooltipShowMode',
-    'cellEditingInvalidCommitType',
+    'invalidEditValueMode',
     'grandTotalRow',
     'themeCssLayer',
     'findSearchValue',
     'styleNonce',
+    'renderingMode',
 ];
 
 // only used internally
@@ -385,6 +386,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'alwaysPassFilter',
     'isRowPinnable',
     'isRowPinned',
+    'isRowValidDropPosition',
 ];
 
 // angular generation of component

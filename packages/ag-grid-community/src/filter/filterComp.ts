@@ -22,13 +22,15 @@ export class FilterComp extends Component {
 
     constructor(
         private readonly column: AgColumn,
-        private readonly source: FilterRequestSource,
+        public readonly source: FilterRequestSource,
         private readonly enableGlobalButtonCheck?: boolean
     ) {
         super(FilterElement);
     }
 
     public postConstruct(): void {
+        this.beans.colFilter?.activeFilterComps.add(this);
+
         this.createFilter(true);
 
         this.addManagedEventListeners({ filterDestroyed: this.onFilterDestroyed.bind(this) });
@@ -125,6 +127,11 @@ export class FilterComp extends Component {
     }
 
     public override destroy(): void {
+        this.beans.colFilter?.activeFilterComps.delete(this);
+        this.eventSvc.dispatchEvent({
+            type: 'filterClosed',
+            column: this.column,
+        });
         this.wrapper = null;
         this.comp = this.destroyBean(this.comp);
         this.afterGuiAttachedParams = undefined;

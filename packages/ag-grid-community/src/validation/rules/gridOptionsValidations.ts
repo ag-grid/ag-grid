@@ -114,7 +114,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, ValidationM
     datasource: 'InfiniteRowModel',
     doesExternalFilterPass: 'ExternalFilter',
     editType: 'EditCore',
-    cellEditingInvalidCommitType: 'EditCore',
+    invalidEditValueMode: 'EditCore',
     enableAdvancedFilter: 'AdvancedFilter',
     enableCellSpan: 'CellSpan',
     enableCharts: 'IntegratedCharts',
@@ -492,6 +492,16 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 }
                 if (autoGroupColumnDef?.valueGetter && showOpenedGroup) {
                     return 'autoGroupColumnDef.valueGetter and showOpenedGroup are not supported when used together.';
+                }
+                return null;
+            },
+        },
+        renderingMode: {
+            validate: (options) => {
+                const renderingMode = options.renderingMode;
+                const validModes: GridOptions['renderingMode'][] = ['default', 'legacy'];
+                if (renderingMode && !validModes.includes(renderingMode)) {
+                    return `renderingMode must be one of [${validModes.join()}], currently it's ${renderingMode}`;
                 }
                 return null;
             },

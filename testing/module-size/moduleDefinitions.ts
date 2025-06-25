@@ -9,16 +9,16 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     AllCommunityModule: 470.87,
     CellApiModule: 0.28,
     CellStyleModule: 2.24,
-    CheckboxEditorModule: 61.55,
+    CheckboxEditorModule: 60.34,
     ClientSideRowModelApiModule: 1.88,
     ClientSideRowModelModule: 29.1,
     ColumnApiModule: 3.6,
     ColumnAutoSizeModule: 6.34,
     ColumnHoverModule: 1.58,
     CsvExportModule: 11.3,
-    CustomEditorModule: 59.87,
+    CustomEditorModule: 59.13,
     CustomFilterModule: 70.29,
-    DateEditorModule: 66.63,
+    DateEditorModule: 65.42,
     DateFilterModule: 126.13,
     DragAndDropModule: 1,
     EventApiModule: 2.64,
@@ -26,9 +26,9 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     GridStateModule: 14.7,
     HighlightChangesModule: 5.09,
     InfiniteRowModelModule: 18,
-    LargeTextEditorModule: 62.16,
+    LargeTextEditorModule: 60.96,
     LocaleModule: 0.43,
-    NumberEditorModule: 65.81,
+    NumberEditorModule: 64.6,
     NumberFilterModule: 124.22,
     PaginationModule: 42.74,
     PinnedRowModule: 18.27,
@@ -40,11 +40,11 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     RowSelectionModule: 34.59,
     RowStyleModule: 1.24,
     ScrollApiModule: 0.7,
-    SelectEditorModule: 75.08,
-    TextEditorModule: 63.57,
+    SelectEditorModule: 73.88,
+    TextEditorModule: 62.36,
     TextFilterModule: 120.09,
     TooltipModule: 23.68,
-    UndoRedoEditModule: 65.83,
+    UndoRedoEditModule: 64.89,
     ValidationModule: 69.88,
     ValueCacheModule: 0.65,
     CellSpanModule: 8.08,
@@ -52,7 +52,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,
     AllEnterpriseModule: 1459.37,
-    BatchEditModule: 77.46,
+    BatchEditModule: 76.53,
     CellSelectionModule: 53,
     ClipboardModule: 46.04,
     ColumnMenuModule: 153.19,
@@ -66,17 +66,17 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     GroupFilterModule: 111.24,
     MasterDetailModule: 82,
     MenuModule: 159.93,
-    MultiFilterModule: 141.31,
+    MultiFilterModule: 145.8,
     NewFiltersToolPanelModule: 164.51,
     PivotModule: 93.6,
     RangeSelectionModule: 53,
-    RichSelectModule: 116.69,
+    RichSelectModule: 116.59,
     RowNumbersModule: 29,
     RowGroupingModule: 79.85,
     RowGroupingPanelModule: 71,
     ServerSideRowModelApiModule: 19,
     ServerSideRowModelModule: 147,
-    SetFilterModule: 147.31,
+    SetFilterModule: 152.16,
     SideBarModule: 32,
     SparklinesModule: 20,
     StatusBarModule: 27,
@@ -99,7 +99,7 @@ const allEnterpriseModules: ModuleTest[] = Object.entries(AllEnterpriseModules).
 }));
 
 const commonFeatureSets: ModuleTest[] = [
-    { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 145.47 },
+    { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 150.22 },
     {
         modules: [
             'TextFilterModule',
@@ -134,7 +134,7 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
-export const baseModule = { modules: [], expectedSize: 483 };
+export const baseModule = { modules: [], expectedSize: 490.37 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,

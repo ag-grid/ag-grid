@@ -11,7 +11,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
-import type { CellFocusedEvent, RowEditingStartedEvent, RowEvent, VirtualRowRemovedEvent } from '../../events';
+import type { CellFocusedEvent, RowEvent, VirtualRowRemovedEvent } from '../../events';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import {
     _addGridCommonParams,
@@ -139,7 +139,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     /** sanitised */
     public businessKey: string | null = null;
     private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
-    private rowEditStyleFeature?: IRowStyleFeature;
+    public rowEditStyleFeature?: IRowStyleFeature;
 
     constructor(
         public readonly rowNode: RowNode,
@@ -296,8 +296,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (this.isFullWidth()) {
             this.setupFullWidth(gui);
-        } else {
-            this.addRowTooltipListeners(gui);
         }
 
         if (gos.get('rowDragEntireRow')) {
@@ -821,7 +819,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.addDestroyFunc(() => {
             this.rowDragComps = this.destroyBeans(this.rowDragComps, context);
-            this.destroyRowTooltip();
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature, context);
             this.rowEditStyleFeature = this.destroyBean(this.rowEditStyleFeature, context);
         });
 
@@ -1271,41 +1269,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             default:
                 return _getFullWidthCellRendererDetails(compFactory, params)!;
         }
-    }
-
-    private addRowTooltipListeners(gui: RowGui) {
-        gui.compBean.addManagedListeners(this.beans.eventSvc, {
-            rowEditingStarted: (params) => this.createRowTooltip(params, gui),
-            rowEditingStopped: this.destroyRowTooltip.bind(this),
-            rowEditingValidated: this.refreshTooltip.bind(this),
-        });
-    }
-
-    private createRowTooltip(params: RowEditingStartedEvent, gui: RowGui): void {
-        const {
-            beans,
-            gos,
-            rowNode: { rowPinned, rowIndex },
-        } = this;
-
-        if (
-            gos.get('editType') !== 'fullRow' ||
-            gos.get('cellEditingInvalidCommitType') !== 'block' ||
-            params.rowIndex !== rowIndex ||
-            params.rowPinned !== rowPinned
-        ) {
-            return;
-        }
-        this.tooltipFeature = beans.tooltipSvc?.setRowTooltip(this, gui.element);
-    }
-
-    private refreshTooltip(): void {
-        this.tooltipFeature?.refreshTooltip();
-    }
-
-    private destroyRowTooltip(): void {
-        const { tooltipFeature, beans } = this;
-        this.tooltipFeature = this.destroyBean(tooltipFeature, beans.context);
     }
 
     private setupFullWidthRowTooltip(value: string, shouldDisplayTooltip?: () => boolean) {

@@ -18,7 +18,7 @@ html, body {
     background-color: transparent;
 }
 
-/* Apply "color-scheme: dark;" to all elements outside the grid */ 
+/* Apply "color-scheme: dark;" to all elements outside the grid */
 html[data-color-scheme='dark'] body > *:where(:not([class^=ag])) {
     color-scheme: dark;
 

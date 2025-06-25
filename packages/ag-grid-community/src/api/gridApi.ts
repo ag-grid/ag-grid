@@ -41,10 +41,8 @@ import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type {
     EditingCellPosition,
     GetCellEditorInstancesParams,
-    GetEditingCellsParams,
     ICellEditor,
     ICellEditorValidationError,
-    SetEditingCellsParams,
 } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { FlashCellsParams, RefreshCellsParams } from '../interfaces/iCellsParams';
@@ -828,7 +826,7 @@ export interface _DragGridApi<TData> {
     getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams | undefined;
 
     /**
-     * Gets the currently highlighted drop target row, previously set by `setRowDropHighlight`.
+     * Gets the currently highlighted drop target row, set by `setRowDropPositionIndicator` or managed drag ad drop.
      * @agModule `RowDragModule`
      */
     getRowDropPositionIndicator(): RowDropPositionIndicator<TData>;
@@ -852,7 +850,7 @@ export interface _EditGridApi<TData> {
      * If the grid is editing, returns back details of the editing cell(s).
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
-    getEditingCells(params?: GetEditingCellsParams): EditingCellPosition[];
+    getEditingCells(): EditingCellPosition[];
 
     /**
      * If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes).
@@ -868,28 +866,39 @@ export interface _EditGridApi<TData> {
 
     /**
      * Returns `true` if the grid is editing a cell
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     isEditing(cellPosition: CellPosition): boolean;
 
     /**
      * Run validation for every instantiated editor.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     validateEdit(): ICellEditorValidationError[] | null;
 }
 
 export interface _BatchEditApi {
     /**
-     * Set currently pending cell updates when in batch editing mode. Specify `params.update=true` to update current state, otherwise pending state will be replaced.
+     * Start batch editing.
+     * @agModule `BatchEditModule`
      */
-    setEditingCells(cellPositions: EditingCellPosition[], params?: SetEditingCellsParams): void;
+    startBatchEdit(): void;
 
     /**
-     * Start/Stop batch editing. Note that any pending edits will be lost when batch editing is disabled.
+     * Commit Batch Editing.
+     * @agModule `BatchEditModule`
      */
-    setBatchEditing(enable: boolean): void;
+    commitBatchEdit(): void;
 
     /**
-     * Returns `true` if batch editing is enabled
+     * Cancel Batch Editing.
+     * @agModule `BatchEditModule`
+     */
+    cancelBatchEdit(): void;
+
+    /**
+     * Returns whether batch editing is currently active.
+     * @agModule `BatchEditModule`
      */
     isBatchEditing(): boolean;
 }

@@ -93,9 +93,9 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
             return false;
         }
 
-        const numericValue = typeof value === 'object' && 'toNumber' in value ? value.toNumber() : value;
+        const numericValue = value && typeof value === 'object' && 'toNumber' in value ? value.toNumber() : value;
         const numericLastValue =
-            typeof lastValue === 'object' && 'toNumber' in lastValue ? lastValue.toNumber() : lastValue;
+            lastValue && typeof lastValue === 'object' && 'toNumber' in lastValue ? lastValue.toNumber() : lastValue;
 
         if (numericValue === numericLastValue) {
             return false;

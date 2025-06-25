@@ -63,6 +63,7 @@ export interface FilterPanelDetailState extends FilterPanelBaseState {
     filterDefs?: SelectableFilterDef[];
     detail: HTMLElement;
     afterGuiAttached: (params?: IAfterGuiAttachedParams) => void;
+    afterGuiDetached: () => void;
 }
 
 export type FilterPanelFilterState = FilterPanelSummaryState | FilterPanelDetailState;
@@ -72,6 +73,7 @@ export interface INewFiltersToolPanel extends IToolPanel {
 }
 
 export interface IFilterPanelService extends IEventEmitter<'filterPanelStateChanged' | 'filterPanelStatesChanged'> {
+    isActive: boolean;
     getAvailable(): { id: string; name: string }[];
     getIds(): string[];
     add(id: string): void;

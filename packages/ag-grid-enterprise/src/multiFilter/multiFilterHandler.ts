@@ -28,6 +28,9 @@ export class MultiFilterHandler
     extends BeanStub
     implements FilterHandler<any, any, IMultiFilterModel, IMultiFilterParams>, IMultiFilterHandler
 {
+    /** Used to get the filter type for filter models. */
+    public readonly filterType = 'multi' as const;
+
     private params: FilterHandlerParams<any, any, IMultiFilterModel, IMultiFilterParams>;
     private handlerWrappers: (HandlerWrapper | undefined)[] = [];
     /** ui active. could still have null model */
@@ -147,13 +150,18 @@ export class MultiFilterHandler
         return activeFilterIndices.length > 0 ? activeFilterIndices[activeFilterIndices.length - 1] : null;
     }
 
-    public getModelAsString(model: IMultiFilterModel | null): string {
+    public getModelAsString(model: IMultiFilterModel | null, source?: 'floating' | 'filterToolPanel'): string {
+        const isForToolPanel = source === 'filterToolPanel';
+        const defaultOption = () =>
+            isForToolPanel ? this.getLocaleTextFunc()('filterSummaryInactive', 'is (All)') : '';
         if (!model?.filterModels?.length) {
-            return '';
+            return defaultOption();
         }
         const lastActiveIndex = this.getLastActiveFilterIndex() ?? 0;
         const activeWrapper = this.handlerWrappers[lastActiveIndex];
-        return activeWrapper?.handler.getModelAsString?.(model.filterModels[lastActiveIndex]) ?? '';
+        return (
+            activeWrapper?.handler.getModelAsString?.(model.filterModels[lastActiveIndex], source) ?? defaultOption()
+        );
     }
 
     public getHandler<TFilterHandler>(index: number): TFilterHandler | undefined {
