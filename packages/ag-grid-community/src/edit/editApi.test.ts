@@ -160,7 +160,7 @@ describe('Edit API', () => {
                 ])
             );
 
-            const result = getEditingCells(beans, { includePending: true });
+            const result = getEditingCells(beans);
             expect(result).toEqual([
                 {
                     newValue: 'new1',
@@ -172,29 +172,6 @@ describe('Edit API', () => {
                     rowIndex: 0,
                     rowPinned: undefined,
                 },
-                {
-                    newValue: 'new2',
-                    oldValue: 'old2',
-                    state: 'changed',
-                    column: column2,
-                    colId: 'col2',
-                    colKey: 'col2',
-                    rowIndex: 0,
-                    rowPinned: undefined,
-                },
-            ]);
-        });
-        test('returns only changed cells when includePending is false', () => {
-            editMap!.set(
-                rowNode1,
-                new Map([
-                    [column1, { newValue: 'new1', oldValue: 'old1', state: 'editing' }],
-                    [column2, { newValue: 'new2', oldValue: 'old2', state: 'changed' }],
-                ])
-            );
-
-            const result = getEditingCells(beans, { includePending: false });
-            expect(result).toEqual([
                 {
                     newValue: 'new2',
                     oldValue: 'old2',
@@ -223,7 +200,7 @@ describe('Edit API', () => {
                 ])
             );
 
-            const result = getEditingCells(beans, { includePending: true });
+            const result = getEditingCells(beans);
             expect(result).toEqual([
                 {
                     newValue: 'new1',
@@ -267,12 +244,6 @@ describe('Edit API', () => {
                 },
             ]);
         });
-        test('returns empty array when no edits match criteria', () => {
-            editMap!.set(rowNode1, new Map([[column1, { newValue: 'new1', oldValue: 'old1', state: 'editing' }]]));
-
-            const result = getEditingCells(beans, { includePending: false });
-            expect(result).toEqual([]);
-        });
         test('handles edits with UNEDITED state', () => {
             editMap!.set(
                 rowNode1,
@@ -282,7 +253,7 @@ describe('Edit API', () => {
                 ])
             );
 
-            const result = getEditingCells(beans, { includePending: true });
+            const result = getEditingCells(beans);
             expect(result).toEqual([
                 {
                     colId: 'col1',

@@ -406,7 +406,6 @@ export {
     IErrorValidationParams,
     BaseCellEditor,
     GetCellEditorInstancesParams,
-    GetEditingCellsParams,
     EditingCellPosition,
 } from './interfaces/iCellEditor';
 export { AgAbstractCellEditor } from './widgets/agAbstractCellEditor';

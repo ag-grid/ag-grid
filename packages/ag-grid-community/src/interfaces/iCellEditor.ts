@@ -139,10 +139,6 @@ export interface DefaultProvidedCellEditorParams {
 
 export interface GetCellEditorInstancesParams<TData = any> extends GetCellsParams<TData> {}
 
-export interface GetEditingCellsParams {
-    includePending?: boolean;
-}
-
 export interface EditingCellPosition extends RowPosition {
     /** Column id */
     colId: string;

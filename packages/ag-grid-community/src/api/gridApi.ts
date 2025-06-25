@@ -41,7 +41,6 @@ import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type {
     EditingCellPosition,
     GetCellEditorInstancesParams,
-    GetEditingCellsParams,
     ICellEditor,
     ICellEditorValidationError,
 } from '../interfaces/iCellEditor';
@@ -851,7 +850,7 @@ export interface _EditGridApi<TData> {
      * If the grid is editing, returns back details of the editing cell(s).
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
-    getEditingCells(params?: GetEditingCellsParams): EditingCellPosition[];
+    getEditingCells(): EditingCellPosition[];
 
     /**
      * If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes).

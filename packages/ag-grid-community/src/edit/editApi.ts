@@ -3,7 +3,7 @@ import { ensureColumnVisible, ensureIndexVisible } from '../api/scrollApi';
 import type { BeanCollection } from '../context/context';
 import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
-import type { EditingCellPosition, GetEditingCellsParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
+import type { EditingCellPosition, ICellEditorValidationError } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import { _warn } from '../validation/logging';
 import { _getCellCtrl } from './utils/controllers';
@@ -17,7 +17,7 @@ export function redoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.redo('api');
 }
 
-export function getEditingCells(beans: BeanCollection, params: GetEditingCellsParams): EditingCellPosition[] {
+export function getEditingCells(beans: BeanCollection): EditingCellPosition[] {
     const edits = beans.editModelSvc?.getEditMap();
     const positions: EditingCellPosition[] = [];
     edits?.forEach((editRow, rowNode) => {
@@ -43,7 +43,7 @@ export function getEditingCells(beans: BeanCollection, params: GetEditingCellsPa
             const changed = state === 'changed' && diff;
             const editing = state === 'editing';
 
-            if (editing && params?.includePending) {
+            if (editing) {
                 positions.push(edit);
             } else if (changed) {
                 positions.push(edit);

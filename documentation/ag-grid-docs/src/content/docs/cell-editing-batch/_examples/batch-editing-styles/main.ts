@@ -97,7 +97,7 @@ const gridOptions: GridOptions = {
 };
 
 function getEditingCells() {
-    const cells = gridApi!.getEditingCells({ includePending: true });
+    const cells = gridApi!.getEditingCells();
     console.log('Editing cells:', cells);
 }
 

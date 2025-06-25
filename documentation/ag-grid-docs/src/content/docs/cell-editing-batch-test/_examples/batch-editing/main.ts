@@ -308,7 +308,7 @@ function decorateCells() {
     }
     const beans = (node as any)['beans'] as BeanCollection;
 
-    const positions = gridApi!.getEditingCells({ includePending: true });
+    const positions = gridApi!.getEditingCells();
 
     gridApi.redrawRows();
 
@@ -372,7 +372,7 @@ function cancelBatchEdit() {
 
 function getEditingCells() {
     setTimeout(() => {
-        const cells = gridApi!.getEditingCells({ includePending: true });
+        const cells = gridApi!.getEditingCells();
         console.log(cells);
         document.getElementById('edits-table')!.innerHTML = `
         <thead>
