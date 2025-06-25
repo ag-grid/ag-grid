@@ -31,7 +31,7 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'athlete', minWidth: 120 },
-        { field: 'age', aggFunc: 'avg', valueFormatter: 'x.toFixed(0)' },
+        { field: 'age', aggFunc: 'avg' },
         { field: 'country' },
         { field: 'date' },
         { field: 'sport', minWidth: 120 },
