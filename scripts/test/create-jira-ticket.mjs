@@ -17,7 +17,7 @@ if (!fs.existsSync(jiraFilePath)) {
     console.error(`JIRA file not found: ${process.env.JIRA_FILE || './jira.json'}`);
     process.exit(1);
 }
-const REOPEN_TRANSITION_ID = '21';
+const COLUMN_TODO_ID = '21';
 
 const jiraFileContent = fs.readFileSync(jiraFilePath, 'utf8');
 
@@ -32,10 +32,10 @@ if (!jiraFileContentParsed?.text || !jiraFileContentParsed?.fingerprint) {
 }
 
 const jiraLink = (text, url) => `[${text}|${url}]`;
-const automatedMessage = `This issue/comment was ${jiraLink(
+const automatedMessage = `[This issue/comment was ${jiraLink(
     'automatically created',
     'https://github.com/ag-grid/ag-grid/blob/latest/.github/workflows/benchmark.yml#L232'
-)} by the AG Grid performance regression test`;
+)} by the AG Grid performance regression test]`;
 createIssue()
     .then((r) => console.log('Issue created successfully:', r))
     .catch((error) => console.error('Error creating issue:', error));
@@ -55,10 +55,10 @@ async function createIssue() {
             );
 
             // Step 2: Reopen the issue if it's not already open
-            const status = existingIssue.fields.status.name;
-            if (status !== 'TODO') {
+            const status = existingIssue.fields.status.name.toUpperCase();
+            if (status === 'DONE') {
                 console.log(`Reopening issue ${existingIssue.key} from status "${status}" to "TODO"`);
-                await transitionIssue(existingIssue.key, REOPEN_TRANSITION_ID);
+                await transitionIssue(existingIssue.key, COLUMN_TODO_ID);
             }
 
             // Skip creating a new issue
@@ -148,7 +148,6 @@ async function addComment(issueKey, body) {
 // Transition an issue to a new status
 async function transitionIssue(issueKey, transitionId) {
     const url = `${jiraBaseUrl}/issue/${issueKey}/transitions`;
-
     try {
         const response = await fetch(url, {
             method: 'POST',
