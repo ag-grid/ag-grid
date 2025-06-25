@@ -15,7 +15,7 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
+import { BatchEditModule, CellSelectionModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     NumberEditorModule,
@@ -23,6 +23,7 @@ ModuleRegistry.registerModules([
     TextEditorModule,
     ClientSideRowModelModule,
     BatchEditModule,
+    RowGroupingModule,
     ValidationModule /* Development Only */,
 ]);
 
