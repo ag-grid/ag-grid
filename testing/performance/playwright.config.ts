@@ -47,7 +47,7 @@ if (!process.env['PW_NO_SERVER']) {
     config.webServer = {
         command,
         cwd: ROOT,
-        url: baseURL,
+        url: `${baseURL}/healthcheck`,
         reuseExistingServer: !process.env['CI'],
         ignoreHTTPSErrors: true,
         timeout: 30 * 1000, // mostly build time

@@ -18,13 +18,14 @@ if (!fs.existsSync(jiraFilePath)) {
     console.error(`JIRA file not found: ${process.env.JIRA_FILE || './jira.json'}`);
     process.exit(1);
 }
-const COLUMN_BACKLOG_ID = '11';
-const COLUMN_QA_ID = '131';
-const COLUMN_QA_NAME = 'QA';
-const PROJECT_ID = 'AG';
+const COLUMN_BACKLOG_ID = '21';
+const COLUMN_BACKLOG_NAME = 'TODO';
+const COLUMN_QA_ID = '5';
+const COLUMN_QA_NAME = 'READY TO VERIFY';
+const PROJECT_ID = 'RTI';
 const GRID_PERFORMANCE_ITEMS_TICKET_ID = '38254'; // AG-8145
 const CUSTOM_FIELD_FINGERPRINT = 'customfield_10708'; // Fingerprint[Short text]
-const CUSTOM_FIELD_TRACK = 'customfield_10501'; // Track[Multi-select list]
+const _CUSTOM_FIELD_TRACK = 'customfield_10501'; // Track[Multi-select list]
 
 const jiraFileContent = fs.readFileSync(jiraFilePath, 'utf8');
 
@@ -46,11 +47,12 @@ const automatedMessage = `[This issue/comment was ${jiraLink(
 
 if (IS_SUCCESS) {
     console.log('IS_SUCCESS is true, transitioning issue to QA...');
-    findExistingIssue(jiraFileContentParsed.fingerprint).then((existingIssue) =>
-        transitionIssue(existingIssue.key, COLUMN_QA_ID)
-    );
+    await findExistingIssue(jiraFileContentParsed.fingerprint).then(async (existingIssue) => {
+        if (!existingIssue) return;
+        return transitionIssue(existingIssue.key, COLUMN_QA_ID);
+    });
 } else {
-    findExistingIssue(jiraFileContentParsed.fingerprint).then((existingIssue) => {
+    await findExistingIssue(jiraFileContentParsed.fingerprint).then((existingIssue) => {
         if (!existingIssue) {
             // If no existing issue is found, create a new one
             console.log('No existing issue found. Creating a new issue...');
@@ -60,18 +62,20 @@ if (IS_SUCCESS) {
         }
         // If an existing issue is found, add a comment and reopen it
         console.log(`Duplicate issue found: ${existingIssue.key}. Adding comment...`);
-        // Step 1: Add a comment to the issue
-        const promises = [
-            addComment(
-                existingIssue.key,
-                `New failure detected:\n\n${jiraFileContentParsed.text}\n\n${automatedMessage}`
-            ),
-        ];
 
         // Step 2: Reopen the issue if it's not already open
         const status = existingIssue.fields.status.name.toUpperCase();
-        if (status === COLUMN_QA_NAME) {
-            console.log(`Reopening issue ${existingIssue.key} from status "${status}" to "TODO"`);
+        const shouldAddComment = status === COLUMN_QA_NAME;
+        const promises = [
+            // Step 1: Add a comment to the issue
+            addComment(
+                existingIssue.key,
+                `New failure detected${shouldAddComment ? ', reopening this issue' : ''}:\n\n${jiraFileContentParsed.text}\n\n${automatedMessage}`
+            ),
+        ];
+
+        if (shouldAddComment) {
+            console.log(`Reopening issue ${existingIssue.key} from status "${status}" to "${COLUMN_BACKLOG_NAME}"`);
             promises.push(transitionIssue(existingIssue.key, COLUMN_BACKLOG_ID));
         }
         return Promise.all(promises).catch((error) => {
@@ -89,8 +93,8 @@ async function createIssue() {
             description: `A regression in performance has been detected in the latest build.\n${jiraFileContentParsed.text}\n\n${automatedMessage}`,
             issuetype: { name: 'Bug' },
             [CUSTOM_FIELD_FINGERPRINT]: jiraFileContentParsed.fingerprint,
-            [CUSTOM_FIELD_TRACK]: [{ value: 'Bug' }],
-            components: [{ name: 'Grid' }],
+            // [CUSTOM_FIELD_TRACK]: [{ value: 'Bug' }],
+            // components: [{ name: 'Grid' }],
             labels: ['in_kanban'],
             parent: {
                 id: GRID_PERFORMANCE_ITEMS_TICKET_ID,
@@ -140,9 +144,9 @@ async function transitionIssue(issueKey, transitionId) {
         throw error;
     }
 }
-/*
+
 // Debugging function to get available transitions for an issue
-async function getTransitions(issueKey) {
+async function _getTransitions(issueKey) {
     const url = `${jiraBaseUrl}/issue/${issueKey}/transitions`;
     try {
         const data = await commonFetch(url, { method: 'GET' });
@@ -151,7 +155,7 @@ async function getTransitions(issueKey) {
         console.error('Error fetching transitions:', error.message);
         throw error;
     }
-}*/
+}
 
 async function commonFetch(url, options) {
     const response = await fetch(url, {

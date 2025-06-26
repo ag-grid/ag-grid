@@ -30,11 +30,11 @@ mkcert
         const staticTestFiles = path.join(__root, 'testing', 'performance', 'e2e');
         console.log('Adding route', staticTestFiles);
         app.use('/', (req, res, next) => {
-            if (req.url === '/') {
+            if (req.url === '/healthcheck') {
                 res.send('OK', 200);
-            } else {
-                return express.static(staticTestFiles)(req, res, next);
+                return next();
             }
+            return express.static(staticTestFiles)(req, res, next);
         });
         const server = https.createServer(options.server.https, app);
         server.listen(PORT, () => {
