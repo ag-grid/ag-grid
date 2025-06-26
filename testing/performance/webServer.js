@@ -13,18 +13,18 @@ mkcert
     .config({ https: true, host: HOST })
     .then((options) => {
         const app = express();
-        const projectsDir = './packages';
+        const projectsDir = 'packages';
         fs.readdirSync(projectsDir).forEach((project) => {
             const projectPath = path.join(projectsDir, project);
             if (fs.statSync(projectPath).isDirectory()) {
                 console.log('Adding route', path.join('files', project, 'dist'));
                 app.use(`/${path.join('files', project, 'dist')}`, express.static(path.join(projectPath, 'dist')));
+                app.use(`/${path.join('files', project, 'styles')}`, express.static(path.join(projectPath, 'styles')));
             }
         });
-        app.use('/', (req, res) => {
-            if (req.url === '/') return res.send('Hello from the web server!');
-            return res.status(404).send('Not Found');
-        });
+        const staticTestFiles = path.join('testing', 'performance', 'e2e');
+        console.log('Adding route', staticTestFiles);
+        app.use('/', express.static(staticTestFiles));
         const server = https.createServer(options.server.https, app);
         server.listen(PORT, () => {
             console.log(`App listening on https://${HOST}:${PORT}`);

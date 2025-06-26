@@ -1,26 +1,28 @@
 #!/usr/bin/env node
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-const channel = process.env.SLACK_CHANNEL || ' ';
-const username = process.env.SLACK_USERNAME || ' ';
-const icon_url = process.env.SLACK_ICON || ' ';
-const slackFileName = process.env.SLACK_FILE || './slack.json';
-const snippetSlackFileName = process.env.SLACK_FILE_SNIPPET || './slack-snippet.md';
-const commentFileName = process.env.COMMENT_FILE || './comment.md';
-const jiraFileName = process.env.JIRA_FILE || './jira.md';
-
-if (!channel) throw new Error('SLACK_CHANNEL is not set');
-if (!username) throw new Error('SLACK_USERNAME is not set');
-if (!icon_url) throw new Error('SLACK_ICON is not set');
 
 const SUCCESS_STRING = '🏁 Benchmarking finished';
 const FAILURE_STRING = `❌ Problems encountered while benchmarking.`;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const logFile = path.join(__dirname, '../../../playwright-report/test-results.json');
+const __root = path.join(__dirname, '..', '..');
+const logFile = path.join(__root, 'playwright-report', 'test-results.json');
+const channel = process.env.SLACK_CHANNEL || ' ';
+const username = process.env.SLACK_USERNAME || ' ';
+const icon_url = process.env.SLACK_ICON || ' ';
+const slackFileName = process.env.SLACK_FILE || path.join(__root, 'slack.json');
+const snippetSlackFileName = process.env.SLACK_FILE_SNIPPET || path.join(__root, 'slack-snippet.md');
+const commentFileName = process.env.COMMENT_FILE || path.join(__root, 'comment.md');
+const jiraFileName = process.env.JIRA_FILE || path.join(__root, 'jira.json');
+
+if (!channel) throw new Error('SLACK_CHANNEL is not set');
+if (!username) throw new Error('SLACK_USERNAME is not set');
+if (!icon_url) throw new Error('SLACK_ICON is not set');
+
 /** @type {import('playwright/types/testReporter').JSONReport} */
 const report = JSON.parse(fs.readFileSync(logFile, 'utf8').toString());
 
@@ -53,6 +55,7 @@ const getStdout = (stdout) => {
 };
 
 const renderStdout = (stdout, codeBlock) => {
+    if (!stdout || !stdout.length) return 'No distilled output available. See full output in the report.';
     return codeBlock(stdout.join('\n').trim());
 };
 
@@ -126,11 +129,7 @@ const linksText = (createLink) =>
         createLink('Benchmark report', process.env.REPORT_URL ?? 'https://example.com'),
     ].join(' | ');
 
-const slackMessage = getSlackMessage(
-    [section(linksText(slackLink)), DIVIDER, section(getTotalsText(report))].concat(
-        process.env.IS_SUCCESS ? [] : [section(getResultsString(calculatedTests.failed, true, slackLink))]
-    )
-);
+const slackMessage = getSlackMessage([section(linksText(slackLink)), DIVIDER, section(getTotalsText(report))]);
 
 const textMessage = [linksText(mdLink), getTotalsText(report)]
     .concat(
@@ -147,4 +146,33 @@ const textMessage = [linksText(mdLink), getTotalsText(report)]
 fs.writeFileSync(commentFileName, textMessage);
 fs.writeFileSync(slackFileName, JSON.stringify(slackMessage, null, 2));
 fs.writeFileSync(snippetSlackFileName, getResultsString(calculatedTests.all, false, mdLink));
-fs.writeFileSync(jiraFileName, getResultsString(calculatedTests.failed, true, jiraLink, jiraCodeBlock));
+/**
+ * Generates a unique fingerprint for the failed tests based on their titles and git hashes.
+ * This fingerprint is used to deduplicate JIRA issues for the same regression.
+ *
+ * Big assumption here is that the all failed tests have the same control version, e.g. 'production', and we use the first git hash base.
+ * Another assumption is that only 1 test file is tested, so we use its filename as a fingerprint base.
+ * @type {string}
+ */
+const uniqueFingerprint = generateHash(
+    [
+        calculatedTests.failed[0].path[0]?.title || 'unknown',
+        calculatedTests.failed[0]?.annotations[0]?.description?.control?.gitHash.slice(0, 7) || 'unknown',
+    ].join()
+);
+
+fs.writeFileSync(
+    jiraFileName,
+    JSON.stringify(
+        {
+            fingerprint: uniqueFingerprint,
+            text: getResultsString(calculatedTests.failed, true, jiraLink, jiraCodeBlock),
+        },
+        null,
+        2
+    )
+);
+
+function generateHash(input) {
+    return crypto.createHash('sha1').update(input).digest('hex');
+}

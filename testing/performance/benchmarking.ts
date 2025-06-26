@@ -488,12 +488,12 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
             const lastCommunications = setLastCommunications(await gotoUrl(page, getUrl(testCase, variant)));
             void updatePageTitle(page, testCase, variant);
             if (variant.shouldInjectScript) await attachScripts(page, variant.version, testCase);
-            if (testCase.preSetup) await testCase.preSetup(page);
-            for (let i = 0; i < minIter; i++) {
-                if (testCase.setupPreActions) await testCase.setupPreActions(page);
+            await testCase.preSetup?.(page);
+            for (let i = 0; i < Math.min(minIter, 50); i++) {
+                await testCase.setupPreActions?.(page);
                 if (i % 50 === 0) await page.requestGC();
                 const noiseSize = (await metricsGetter(page, testCase)).length;
-                if (testCase.actions) await testCase.actions(page);
+                await testCase.actions(page);
                 if (i > warmupIter) {
                     const usefulEntries = (await metricsGetter(page, testCase)).slice(noiseSize);
                     const duration = usefulEntries.pop()!.duration || 0;
@@ -501,12 +501,12 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
                     totalIterations++;
                 }
             }
-            if (testCase.expectsPostActions) await testCase.expectsPostActions(page, lastCommunications);
+            await testCase.expectsPostActions?.(page, lastCommunications);
         }
         [s1, s2] = [computeStats(measurements.control), computeStats(measurements.variant)];
         const { percentDiff, avgMoEPercent, isSignificant } = computeCommonStats(s1, s2, testCase);
         significant = isSignificant;
-        needToContinue = !significant && totalIterations < maxIter;
+        needToContinue = (!significant && totalIterations < maxIter) || totalIterations < minIter;
         if (!process.env['CI']) {
             if (significant) reportStats(s1, s2, testCase);
             if (needToContinue) {
