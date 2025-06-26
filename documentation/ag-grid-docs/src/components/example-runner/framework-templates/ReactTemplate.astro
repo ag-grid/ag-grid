@@ -37,7 +37,6 @@ const {
     internalFramework,
     modifiedTimeMs,
     appLocation,
-    entryFileName,
     scriptFiles = [],
     styleFiles = [],
     boilerplatePath,
@@ -47,8 +46,6 @@ const {
     extras,
     usesMathRandom,
 } = Astro.props as Props;
-
-const startFile = pathJoin(appLocation, entryFileName);
 ---
 
 <html lang="en">
@@ -68,7 +65,6 @@ const startFile = pathJoin(appLocation, entryFileName);
                     isDev={isDev}
                     boilerplatePath={boilerplatePath}
                     appLocation={appLocation}
-                    startFile={startFile}
                     internalFramework={internalFramework}
                     isEnterprise={isEnterprise}
                     usesMathRandom={usesMathRandom}

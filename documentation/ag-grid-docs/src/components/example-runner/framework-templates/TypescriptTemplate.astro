@@ -31,7 +31,6 @@ const {
     isEnterprise,
     modifiedTimeMs,
     appLocation,
-    entryFileName,
     styleFiles,
     indexFragment,
     boilerplatePath,
@@ -40,8 +39,6 @@ const {
     headFragment,
     usesMathRandom,
 } = Astro.props as Props;
-
-const startFile = pathJoin(appLocation, entryFileName);
 ---
 
 <html lang="en">
@@ -75,7 +72,6 @@ const startFile = pathJoin(appLocation, entryFileName);
             isDev={isDev}
             boilerplatePath={boilerplatePath}
             appLocation={appLocation}
-            startFile={startFile}
             internalFramework={'typescript'}
             isEnterprise={isEnterprise}
             usesMathRandom={usesMathRandom}
