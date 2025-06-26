@@ -51,9 +51,12 @@ const automatedMessage = `[This issue/comment was ${jiraLink(
 )} by the AG Grid performance regression test]`;
 
 if (IS_SUCCESS) {
-    console.log('IS_SUCCESS is true, transitioning issue to QA...');
     await findExistingIssue(jiraFileContentParsed.fingerprint).then(async (existingIssue) => {
-        if (!existingIssue) return;
+        if (!existingIssue) {
+            console.log('No existing issue found. Nothing to do...');
+            return;
+        }
+        console.log(`IS_SUCCESS is true, transitioning issue ${existingIssue.key} to QA...`);
         return transitionIssue(existingIssue.key, COLUMN_QA_ID);
     });
 } else {
