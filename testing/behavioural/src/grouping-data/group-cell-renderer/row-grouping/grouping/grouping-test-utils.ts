@@ -1,223 +1,82 @@
 import type { GridOptions } from 'ag-grid-community';
 
-import { autoColDefSetter, cellRendererParamsSetter, rowSelectionSetter, sportColDefSetter } from '../../util';
 import type { TestPermutation } from '../../util';
+import {
+    groupCellSnapshotter,
+    getGridOptions_checkboxes as sharedGetGridOptions_checkboxes,
+    getGridOptions_correctRenderer as sharedGetGridOptions_correctRenderer,
+    getGridOptions_correctValue_colDefInnerRendererGroupCol as sharedGetGridOptions_correctValue_colDefInnerRendererGroupCol,
+    getGridOptions_correctValue_defaultRenderer as sharedGetGridOptions_correctValue_defaultRenderer,
+    getGridOptions_correctValue_innerRenderer as sharedGetGridOptions_correctValue_innerRenderer,
+    getGridOptions_masterDetail as sharedGetGridOptions_masterDetail,
+    getGridOptions_pivot as sharedGetGridOptions_pivot,
+    getGridOptions_suppressCount as sharedGetGridOptions_suppressCount,
+    getTestConcerns_checkboxes as sharedGetTestConcerns_checkboxes,
+    getTestConcerns_correctRenderer as sharedGetTestConcerns_correctRenderer,
+    getTestConcerns_correctValue as sharedGetTestConcerns_correctValue,
+    getTestConcerns_masterDetail as sharedGetTestConcerns_masterDetail,
+    getTestConcerns_pivot as sharedGetTestConcerns_pivot,
+    getTestConcerns_suppressCount as sharedGetTestConcerns_suppressCount,
+} from '../shared-test-utils';
 
-function getExpandedConcern(gridOptions: GridOptions): TestPermutation {
-    const rowModelType = gridOptions.rowModelType;
-    if (rowModelType === 'clientSide' || !rowModelType) {
-        return {
-            condition: (go) => go.groupHideOpenParents === true,
-            property: 'groupDefaultExpanded',
-            values: [-1, 0, 1],
-        };
-    }
-    if (rowModelType === 'serverSide') {
-        return {
-            condition: (go) => go.groupHideOpenParents === true,
-            property: 'isServerSideGroupOpenByDefault',
-            values: [() => true, () => false],
-        };
-    }
-    throw new Error(`unsupported rowModelType: ${rowModelType}`);
-}
+// Re-export the shared group cell snapshotter
+export { groupCellSnapshotter };
 
-export const groupCellSnapshotter = (container: HTMLDivElement) => {
-    const snap: string[] = [];
-    // auto group cell or full width row group cell
-    container.querySelectorAll('.ag-cell-group,.ag-full-width-row>.ag-row-group').forEach((el) => {
-        // strip comp generated comp ids as they're too volatile
-        snap.push(el.innerHTML.replaceAll(/id="ag-[0-9]+-[a-zA-Z]+"/g, ''));
-    });
-    return snap;
-};
-
+// Export functions with original names for backward compatibility
 export function getTestConcerns_masterDetail(gridOptions: GridOptions): TestPermutation[] {
-    return [
-        { property: 'groupDisplayType', values: ['singleColumn', 'multipleColumns'] },
-        {
-            property: 'groupHideOpenParents',
-            values: [true, false],
-            condition: (go) => go.groupDisplayType === 'multipleColumns',
-        },
-        getExpandedConcern(gridOptions),
-        { property: 'showOpenedGroup', values: [true, false] },
-    ];
+    return sharedGetTestConcerns_masterDetail(gridOptions);
 }
 
 export function getGridOptions_masterDetail(gridOptions: GridOptions): GridOptions {
-    return { ...gridOptions, masterDetail: true };
+    return sharedGetGridOptions_masterDetail(gridOptions);
 }
 
 export function getTestConcerns_pivot(gridOptions: GridOptions): TestPermutation[] {
-    return [
-        { property: 'groupDisplayType', values: ['singleColumn', 'multipleColumns'] },
-        {
-            property: 'groupHideOpenParents',
-            values: [true, false],
-            condition: (go) => go.groupDisplayType === 'multipleColumns',
-        },
-        getExpandedConcern(gridOptions),
-        { property: 'showOpenedGroup', values: [true, false] },
-    ];
+    return sharedGetTestConcerns_pivot(gridOptions);
 }
 
 export function getGridOptions_pivot(gridOptions: GridOptions): GridOptions {
-    return { ...gridOptions, pivotMode: true };
+    return sharedGetGridOptions_pivot(gridOptions);
 }
 
 export function getTestConcerns_correctRenderer(gridOptions: GridOptions): TestPermutation[] {
-    return [
-        { property: 'groupDisplayType', values: ['singleColumn', 'multipleColumns', 'groupRows'] },
-        {
-            property: 'groupHideOpenParents',
-            values: [true, false],
-            condition: (go) => go.groupDisplayType === 'multipleColumns',
-        },
-        getExpandedConcern(gridOptions),
-        { property: 'showOpenedGroup', values: [true, false] },
-        {
-            property: 'autoGroupColumnDef.cellRendererParams.innerRenderer' as any,
-            values: [
-                undefined,
-                (p: { valueFormatted: any; value: any }) =>
-                    `autoColDef.cellRendererParams.innerRenderer(${p.valueFormatted ?? p.value})`,
-            ],
-            setter: cellRendererParamsSetter('innerRenderer'),
-        },
-        {
-            property: 'colDef[1].cellRenderer',
-            values: [
-                undefined,
-                (p: { valueFormatted: any; value: any }) => `columnDef[1].cellRenderer(${p.valueFormatted ?? p.value})`,
-            ],
-            setter: sportColDefSetter('cellRenderer'),
-        },
-    ];
+    // Grouping supports groupRows, so include it (default behavior)
+    return sharedGetTestConcerns_correctRenderer(gridOptions, true);
 }
 
 export function getGridOptions_correctRenderer(gridOptions: GridOptions): GridOptions {
-    return { ...gridOptions };
+    return sharedGetGridOptions_correctRenderer(gridOptions);
 }
 
 export function getTestConcerns_correctValue(gridOptions: GridOptions): TestPermutation[] {
-    return [
-        { property: 'groupDisplayType', values: ['singleColumn', 'multipleColumns', 'groupRows'] },
-        {
-            property: 'groupHideOpenParents',
-            values: [true, false],
-            condition: (go) => go.groupDisplayType === 'multipleColumns',
-        },
-        getExpandedConcern(gridOptions),
-        { property: 'showOpenedGroup', values: [true, false] },
-        {
-            property: 'colDef[1].valueFormatter',
-            values: [undefined, (p) => `columnDef[1].valueFormatter(${p.value})`],
-            setter: sportColDefSetter('valueFormatter'),
-        },
-        {
-            property: 'autoGroupColumnDef.valueGetter',
-            values: [undefined, (p) => `autoColDef.valueGetter(${p.data?.athlete ?? 'MISSING'})`],
-            setter: autoColDefSetter('valueGetter'),
-            condition: (go) => go.showOpenedGroup === false, // not supported together
-        },
-        {
-            property: 'autoGroupColumnDef.valueFormatter',
-            values: [undefined, (p) => `autoColDef.valueFormatter(${p.value})`],
-            setter: autoColDefSetter('valueFormatter'),
-        },
-        {
-            property: 'autoGroupColumnDef.cellRendererParams.totalValueGetter' as any,
-            values: [
-                undefined,
-                (p: { valueFormatted: any; value: any }) =>
-                    `autoColDef.cellRendererParams.totalValueGetter(${p.valueFormatted ?? p.value})`,
-            ],
-            setter: cellRendererParamsSetter('totalValueGetter'),
-        },
-    ];
+    // Grouping supports groupRows, so include it (default behavior)
+    return sharedGetTestConcerns_correctValue(gridOptions, true);
 }
 
 export function getGridOptions_correctValue_defaultRenderer(gridOptions: GridOptions): GridOptions {
-    return { ...gridOptions };
+    return sharedGetGridOptions_correctValue_defaultRenderer(gridOptions);
 }
 
 export function getGridOptions_correctValue_innerRenderer(gridOptions: GridOptions): GridOptions {
-    return {
-        ...gridOptions,
-        autoGroupColumnDef: {
-            ...gridOptions.autoGroupColumnDef,
-            cellRendererParams: {
-                innerRenderer: (p: { valueFormatted: any; value: any }) =>
-                    `autoColDef.cellRendererParams.innerRenderer(${p.valueFormatted ?? p.value})`,
-            },
-        },
-    };
+    return sharedGetGridOptions_correctValue_innerRenderer(gridOptions);
 }
 
 export function getGridOptions_correctValue_colDefInnerRendererGroupCol(gridOptions: GridOptions) {
-    const [column0, column1, ...rest] = gridOptions.columnDefs!;
-    const column1WithRenderer = {
-        ...column1,
-        cellRenderer: (p: { valueFormatted: any; value: any }) =>
-            `columnDef[1].cellRenderer(${p.valueFormatted ?? p.value})`,
-    };
-    return {
-        ...gridOptions,
-        columnDefs: [column0, column1WithRenderer, ...rest],
-    };
+    return sharedGetGridOptions_correctValue_colDefInnerRendererGroupCol(gridOptions);
 }
 
 export function getTestConcerns_suppressCount(gridOptions: GridOptions): TestPermutation[] {
-    return [
-        { property: 'groupDisplayType', values: ['singleColumn', 'multipleColumns'] },
-        {
-            property: 'groupHideOpenParents',
-            values: [true, false],
-            condition: (go) => go.groupDisplayType === 'multipleColumns',
-        },
-        getExpandedConcern(gridOptions),
-        { property: 'showOpenedGroup', values: [true, false] },
-    ];
+    return sharedGetTestConcerns_suppressCount(gridOptions);
 }
 
 export function getGridOptions_suppressCount(gridOptions: GridOptions): GridOptions {
-    return {
-        ...gridOptions,
-        autoGroupColumnDef: {
-            ...gridOptions.autoGroupColumnDef,
-            cellRendererParams: {
-                suppressCount: true,
-            },
-        },
-    };
+    return sharedGetGridOptions_suppressCount(gridOptions);
 }
 
 export function getTestConcerns_checkboxes(gridOptions: GridOptions): TestPermutation[] {
-    return [
-        { property: 'groupDisplayType', values: ['singleColumn', 'multipleColumns'] },
-        {
-            property: 'groupHideOpenParents',
-            values: [true, false],
-            condition: (go) => go.groupDisplayType === 'multipleColumns',
-        },
-        getExpandedConcern(gridOptions),
-        { property: 'showOpenedGroup', values: [true, false] },
-        {
-            property: 'rowSelection.checkboxes',
-            values: [true, false],
-            condition: (go) =>
-                typeof go.rowSelection === 'object' && go.rowSelection.checkboxLocation === 'autoGroupColumn',
-            setter: rowSelectionSetter('checkboxes'),
-        }, // check if location is correct, we can disable via boolean
-        {
-            property: 'rowSelection.checkboxLocation',
-            values: ['selectionColumn', 'autoGroupColumn'],
-            setter: rowSelectionSetter('checkboxLocation'),
-        },
-    ];
+    return sharedGetTestConcerns_checkboxes(gridOptions);
 }
 
 export function getGridOptions_checkboxes(gridOptions: GridOptions): GridOptions {
-    return { ...gridOptions };
+    return sharedGetGridOptions_checkboxes(gridOptions);
 }
