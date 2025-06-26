@@ -102,6 +102,7 @@ const VueExample = defineComponent({
         return {
             leftRowData: null,
             rightRowData: [],
+            rawData: [],
             leftApi: null,
             rightApi: null,
 
