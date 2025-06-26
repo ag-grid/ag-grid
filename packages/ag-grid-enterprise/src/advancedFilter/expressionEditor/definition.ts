@@ -1,76 +1,56 @@
-import { InferCellDataType } from 'packages/ag-grid-community/src/entities/dataType';
-
-import { BaseCellDataType, IRowNode } from 'ag-grid-community';
-
-import { ErrorNode, ExpressionNode, InferNode, NodeParameters, OperandNode, OperatorNode, Valid } from './ast';
 import { TokenCursor } from './cursor';
-import { LexerTokenMatcher, MatchedToken } from './token';
+import { ExpressionDataTypeMap, ModelNode, ParsedExpression } from './model';
+import { ParserContext, ParserDefinition } from './parser';
 
-// Roughly taken from the MDN documentation on javascript precedence
-// prettier-ignore
-export const ParserPrecedence = {
-    GROUPING: 18,       // (x)
-    ACCESS: 17,         // x.y
-    CALL: 17,           // x(y)
-    POSTFIX: 15,        // x++, x-- (Not currently used)
-    PREFIX: 14,         // !x
-    EXPONENT: 13,       // x ** y
-    MULTIPLICATIVE: 12, // x * y, x / y, x % y
-    ADDITIVE: 11,       // x + y, x - y,
-    RELATIONAL: 9,      // x < y, x <= y, x > y, x >= y, x in y
-    EQUALITY: 8,        // x === y, x !== y
-    LOGICAL_AND: 4,     // x && y
-    LOGICAL_OR: 3,      // x || y, x ?? y
-    MISC: 2,            // x ? y : z
-} as const
+export abstract class ExpressionDefinition<TNode extends ModelNode> implements ParserDefinition<TNode> {
+    abstract readonly type: 'operator' | 'value';
+    abstract readonly precedence: number;
+    abstract readonly fixity?: 'prefix' | 'infix' | 'postfix';
+    abstract readonly associativity?: 'left' | 'right';
 
-export interface ParserContext {
-    parseExpression(cursor: TokenCursor, precedence?: number): ExpressionNode;
-    createNode<TType extends ExpressionNode['type']>(params: NodeParameters<TType>): InferNode<TType>;
-    addError(node: ExpressionNode, message: string): void;
-    getColumn(name: string):
-        | {
-              id: string;
-              datatype: BaseCellDataType;
-          }
-        | undefined;
+    constructor() {}
+
+    get canStartExpression(): boolean {
+        return this.fixity === 'prefix' || this.fixity === null;
+    }
+
+    get requiresLeftOperand(): boolean {
+        return this.fixity === 'infix' || this.fixity === 'postfix';
+    }
+
+    get requiresRightOperand(): boolean {
+        return this.fixity === 'prefix' || this.fixity === 'infix';
+    }
+
+    shouldApply(minPrecedence: number): boolean {
+        if (this.fixity !== 'infix') return false;
+        return this.associativity === 'left' ? this.precedence >= minPrecedence : this.precedence > minPrecedence;
+    }
+
+    abstract parseFromCursor(
+        cursor: TokenCursor,
+        context: ParserContext,
+        left: ParsedExpression<ModelNode<keyof ExpressionDataTypeMap>>
+    ): ParsedExpression<TNode>;
 }
 
-export interface FilterContext {
-    getValueAccessor: <TDataType extends BaseCellDataType>(
-        operand: OperandNode<TDataType>
-    ) => (row: IRowNode) => InferCellDataType<TDataType>;
+export abstract class ValueExpressionDefinition<TNode extends ModelNode> extends ExpressionDefinition<TNode> {
+    type = 'value' as const;
+    precedence = 0;
+    override get canStartExpression() {
+        return true;
+    }
 }
 
-type BaseDefinition<TType extends string, TNode extends ExpressionNode> = {
-    type: TType;
-    key: string;
-    tokens: LexerTokenMatcher[];
-    buildFilter: (node: Valid<TNode>, parser: FilterContext) => (row: IRowNode) => boolean;
-    suggest: (node: TNode, position: number, parser: ParserContext) => string[];
-    render: (node: TNode) => string;
-};
+export abstract class OperatorExpressionDefinition<TNode extends ModelNode> extends ExpressionDefinition<TNode> {
+    type = 'operator' as const;
+}
 
-export type OperandDefinition<TNode extends OperandNode = OperandNode> = BaseDefinition<'operand', TNode> & {
-    parse: (cursor: TokenCursor, context: ParserContext) => TNode | ErrorNode<TNode>;
-};
+export abstract class InfixExpressionDefinition<TNode extends ModelNode> extends OperatorExpressionDefinition<TNode> {
+    fixity = 'infix' as const;
+    associativity: 'left' | 'right';
+}
 
-export type OperatorDefinition<TNode extends OperatorNode = OperatorNode> = BaseDefinition<'operator', TNode> & {
-    precedence: number;
-} & (
-        | {
-              fixity: 'infix';
-              associativity?: 'left' | 'right';
-              parse: (left: ExpressionNode, cursor: TokenCursor, parser: ParserContext) => TNode | ErrorNode<TNode>;
-          }
-        | {
-              fixity: 'postfix';
-              parse: (left: ExpressionNode, cursor: TokenCursor, parser: ParserContext) => TNode | ErrorNode<TNode>;
-          }
-        | {
-              fixity: 'prefix';
-              parse: (cursor: TokenCursor, parser: ParserContext) => TNode | ErrorNode<TNode>;
-          }
-    );
-
-export type ExpressionDefinition = OperandDefinition | OperatorDefinition;
+export abstract class PostfixExpressionDefinition<TNode extends ModelNode> extends OperatorExpressionDefinition<TNode> {
+    fixity = 'postfix' as const;
+}

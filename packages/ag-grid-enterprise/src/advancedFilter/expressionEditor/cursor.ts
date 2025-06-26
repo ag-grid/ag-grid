@@ -1,9 +1,9 @@
-import { MatchedToken, Token, TokenMatch, TokenType } from './token';
+import { MatchedToken, RawToken, TokenMatch, TokenType } from './tokenizer';
 
 export class TokenCursor {
     private i = 0;
 
-    constructor(private tokens: Token[]) {}
+    constructor(private tokens: RawToken[]) {}
 
     peek(n = 0) {
         return this.tokens[this.i + n];

@@ -1,4 +1,58 @@
-import { LexerTokenMatcher, Token, TokenType } from './token';
+import { TokenRange } from './typeHelpers';
+
+export type TokenType =
+    | 'GROUP_START'
+    | 'GROUP_END'
+    | 'ARRAY_START'
+    | 'ARRAY_END'
+    | 'ARRAY_SEPARATOR'
+    | 'IDENTIFIER'
+    | 'STRING'
+    | 'NUMBER'
+    | 'BOOLEAN'
+    | 'OPERATOR'
+    | 'COMPARATOR'
+    | 'FUNCTION'
+    | 'STRUCTURAL'
+    | 'UNKNOWN';
+
+export type TokenMatch = {
+    type: TokenType;
+    key: string;
+};
+
+interface BaseTokenMatcher {
+    type: string;
+    token: TokenType;
+    key: string;
+    priority?: number;
+}
+
+interface StringTokenMatcher extends BaseTokenMatcher {
+    type: 'string';
+    label: string;
+    aliases?: string[];
+}
+
+interface RegexTokenMatcher extends BaseTokenMatcher {
+    type: 'regex';
+    regex: RegExp;
+}
+
+export type TokenMatcher = StringTokenMatcher | RegexTokenMatcher;
+
+export interface RawToken {
+    value: string;
+    range: TokenRange;
+    matches: TokenMatch[];
+}
+
+export interface MatchedToken {
+    type: TokenType;
+    key: string;
+    value: string;
+    range: TokenRange;
+}
 
 type MatcherConfig = {
     regex: {
@@ -14,10 +68,10 @@ type MatcherConfig = {
     priority: number;
 }[];
 
-export class AdvancedFilterExpressionLexer {
+export class ExpressionTokenizer {
     matchers: MatcherConfig;
 
-    setMatchers(matchers: LexerTokenMatcher[]) {
+    setMatchers(matchers: TokenMatcher[]) {
         const grouped: MatcherConfig = [];
 
         for (const matcher of matchers) {
@@ -52,9 +106,9 @@ export class AdvancedFilterExpressionLexer {
         this.matchers = grouped.sort((a, b) => b.priority - a.priority);
     }
 
-    public tokenize(input: string): Token[] {
+    public tokenize(input: string): RawToken[] {
         let pos = 0;
-        const tokens: Token[] = [];
+        const tokens: RawToken[] = [];
 
         chunker: while (pos < input.length) {
             const chunk = input.slice(pos);
@@ -89,7 +143,7 @@ export class AdvancedFilterExpressionLexer {
                     }
                 }
 
-                let token: Token | undefined;
+                let token: RawToken | undefined;
                 for (const stringMatcher of matcher.label) {
                     let len = stringMatcher.expression.length;
 
