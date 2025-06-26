@@ -1,5 +1,5 @@
+import { fileNameToMimeType } from '@utils/mimeType';
 import { type ExtraFileRoute, getExtraFiles } from '@utils/pages';
-import mime from 'mime';
 import fsOriginal from 'node:fs';
 import fs from 'node:fs/promises';
 
@@ -18,8 +18,11 @@ export async function GET({ props }: ExtraFileRoute) {
         ? await fs.readFile(fullFilePath)
         : `throw new Error("File does not exist: '${fullFilePath}'. You may need to generate it, or try reloading again.");`;
 
-    const res = new Response(body);
-    res.headers.set('Content-Type', mime.getType(fullFilePath) ?? 'plain');
+    const response = new Response(body, {
+        headers: {
+            'Content-Type': fileNameToMimeType(fullFilePath),
+        },
+    });
 
-    return res;
+    return response;
 }
