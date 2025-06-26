@@ -125,8 +125,14 @@
             '*.css': { loader: 'css' },
         },
     });
-})(this);
 
-window.addEventListener('error', (e) => {
-    console.error('ERROR', e.message, e.filename);
-});
+    window.addEventListener('error', (e) => {
+        console.error('ERROR', e.message, e.filename);
+    });
+
+    System.import('index.jsx').catch(function (err) {
+        document.body.innerHTML =
+            '<div class="example-error" style="background:#fdb022;padding:1rem;">' + 'Example Error: ' + err + '</div>';
+        console.error(err);
+    });
+})(this);
