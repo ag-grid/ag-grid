@@ -1,5 +1,3 @@
-import path from 'path';
-
 import test, { TestCase } from '../benchmarking';
 import { waitFor } from '../playwright.utils';
 

@@ -1,5 +1,3 @@
-import path from 'path';
-
 import test from '../benchmarking';
 import { waitFor } from '../playwright.utils';
 

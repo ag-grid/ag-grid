@@ -489,7 +489,7 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
             void updatePageTitle(page, testCase, variant);
             if (variant.shouldInjectScript) await attachScripts(page, variant.version, testCase);
             await testCase.preSetup?.(page);
-            for (let i = 0; i < Math.min(minIter, 50); i++) {
+            for (let i = 0; i < Math.max(minIter, 50); i++) {
                 await testCase.setupPreActions?.(page);
                 if (i % 50 === 0) await page.requestGC();
                 const noiseSize = (await metricsGetter(page, testCase)).length;
