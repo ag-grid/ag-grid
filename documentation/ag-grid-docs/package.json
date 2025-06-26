@@ -64,6 +64,7 @@
     "history": "^5.3.0",
     "jotai": "^2.8.0",
     "lucide-react": "^0.343.0",
+    "mime": "^4.0.7",
     "nanostores": "^0.9.5",
     "node-html-parser": "^6.1.5",
     "prismjs": "^1.29.0",
