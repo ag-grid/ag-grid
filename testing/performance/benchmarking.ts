@@ -132,16 +132,21 @@ async function getGitHash(version: Version): Promise<string> {
 
     return fetch(`${knownUrlsProxy[version]}/debug/meta.json`)
         .then((r) => r.json())
-        .then((meta: { git: { hash: string } }) => meta.git.hash);
+        .then((meta: { git: { hash: string } }) => meta.git.hash)
+        .catch((e) => {
+            console.error(`Failed to fetch git hash for version ${version}:`, e);
+            return '';
+        });
 }
-
+const LATEST_CHARTS_VERSION = 'v12.0.0';
 /**
  * Taken from ag-grid-enterprise package.json git history
  */
 const gridToChartsMap: Record<Version, Version> = {
-    local: 'v11.3.0',
-    prod: 'v11.3.0',
-    staging: 'v11.3.0',
+    local: 'v12.0.0',
+    prod: 'v12.0.0',
+    staging: 'v12.0.0',
+    'v34.0.0': 'v12.0.0',
     'v33.3.0': 'v11.3.0',
     'v33.2.3': 'v11.2.3',
     'v33.2.1': 'v11.2.1',

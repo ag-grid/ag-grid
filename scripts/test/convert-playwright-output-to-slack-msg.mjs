@@ -78,20 +78,20 @@ const getResultsString = (tests, distilled, createLink, createCodeBlock = codeBl
     return (
         '*Tests*' +
         tests
-            .map(
-                ({ status, path, results, annotations }, index) =>
-                    `${index + 1}. ${statusEmoji(status)} ${path.map((p) => p.title).join(' > ')} | ${createLink('Git Diff', getGitDiffLink(annotations[0]))} ${paragraph(
-                        results
-                            .map(({ error, stdout }) => [error, getStdout(stdout)[distilled ? 'distilled' : 'full']])
-                            .map(
-                                ([error, stdout]) =>
-                                    `${renderError(error)}\n- Output:\n${renderStdout(stdout, createCodeBlock)}`
-                            )
-                            .join('\n')
-                    )}`
-            )
+            .map(({ status, path, results, annotations }, index) => {
+                const annotation = annotations[0] ? createLink('Git Diff', getGitDiffLink(annotations[0])) : '';
+                const testPath = `${statusEmoji(status)} ${path.map((p) => p.title).join(' > ')}`;
+                const resultsStr = results
+                    .map(({ error, stdout }) => {
+                        return `${renderError(error)}\n- Output:\n${renderStdout(getStdout(stdout)[distilled ? 'distilled' : 'full'], createCodeBlock)}`;
+                    })
+                    .join('\n');
+                return `${index + 1}. ${[testPath, annotation].filter((_) => _.trim()).join(' | ')} ${paragraph(
+                    resultsStr
+                )}`;
+            })
             .map(paragraph)
-            .join('\n')
+            .join('')
     );
 };
 
@@ -122,6 +122,10 @@ const jiraLink = (text, url) => `[${text}|${url}]`;
 const getSlackMessage = (blocks) => ({ channel, username, icon_url, blocks });
 const calculatedTests = calculateTests(report);
 
+if (!calculatedTests.failed.length) {
+    console.warn('No failed tests found. Skipping fingerprint generation');
+}
+
 const linksText = (createLink) =>
     [
         process.env.IS_SUCCESS ? SUCCESS_STRING : FAILURE_STRING,
@@ -137,7 +141,11 @@ const textMessage = [linksText(mdLink), getTotalsText(report)]
             ? []
             : [
                   '',
-                  getResultsString(calculatedTests.failed, true, mdLink),
+                  getResultsString(
+                      calculatedTests.failed.length ? calculatedTests.failed : calculatedTests.all,
+                      true,
+                      mdLink
+                  ),
                   '---',
                   `Please address the issues before merging.`,
               ]
@@ -152,14 +160,19 @@ fs.writeFileSync(snippetSlackFileName, getResultsString(calculatedTests.all, fal
  *
  * Big assumption here is that the all failed tests have the same control version, e.g. 'production', and we use the first git hash base.
  * Another assumption is that only 1 test file is tested, so we use its filename as a fingerprint base.
+ *
+ * CAUTION: DO NOT MODIFY THIS FINGERPRINT GENERATION LOGIC UNLESS YOU KNOW WHAT YOU ARE DOING!
+ *
  * @type {string}
  */
-const uniqueFingerprint = generateHash(
-    [
-        calculatedTests.failed[0].path[0]?.title || 'unknown',
-        calculatedTests.failed[0]?.annotations[0]?.description?.control?.gitHash.slice(0, 7) || 'unknown',
-    ].join()
-);
+const uniqueFingerprint = calculatedTests.failed[0]
+    ? generateHash(
+          [
+              calculatedTests.failed[0].path[0].title || 'unknown',
+              calculatedTests.failed[0].annotations[0].description.control.gitHash.slice(0, 7) || 'unknown',
+          ].join()
+      )
+    : '';
 
 fs.writeFileSync(
     jiraFileName,

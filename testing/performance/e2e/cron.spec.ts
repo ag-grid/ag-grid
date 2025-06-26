@@ -1,5 +1,5 @@
 import test, { TestCase } from '../benchmarking';
-import { waitFor } from '../playwright.utils';
+import { waitFor, waitForMs } from '../playwright.utils';
 
 const noRowsCheck = () => document.body.textContent!.includes('No Rows To Show');
 const athleteCheck = () => document.body.textContent!.includes('Athlete');
