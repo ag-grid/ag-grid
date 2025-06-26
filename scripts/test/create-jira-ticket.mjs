@@ -57,7 +57,7 @@ if (IS_SUCCESS) {
             return;
         }
         console.log(`IS_SUCCESS is true, transitioning issue ${existingIssue.key} to QA...`);
-        return transitionIssue(existingIssue.key, COLUMN_QA_ID);
+        return transitionIssue(existingIssue, COLUMN_QA_ID);
     });
 } else {
     await findExistingIssue(jiraFileContentParsed.fingerprint).then((existingIssue) => {
@@ -84,13 +84,24 @@ if (IS_SUCCESS) {
 
         if (shouldAddComment) {
             console.log(`Reopening issue ${existingIssue.key} from status "${status}" to "${COLUMN_BACKLOG_NAME}"`);
-            promises.push(transitionIssue(existingIssue.key, COLUMN_BACKLOG_ID));
+            promises.push(transitionIssue(existingIssue, COLUMN_BACKLOG_ID));
         }
         return Promise.all(promises).catch((error) => {
             console.error('Error processing existing issue:', error);
             throw error;
         });
     });
+}
+
+async function updateIssue(issueKey, body) {
+    const url = `${jiraBaseUrl}/issue/${issueKey}`;
+    try {
+        await commonFetch(url, { method: 'PUT', body: JSON.stringify(body) });
+        console.log(`Issue ${issueKey} updated successfully`);
+    } catch (error) {
+        console.error('Error updating issue:', error.message);
+        throw error;
+    }
 }
 
 async function createIssue() {
@@ -145,11 +156,12 @@ async function addComment(issueKey, body) {
 }
 
 // Transition an issue to a new status
-async function transitionIssue(issueKey, transitionId) {
-    const url = `${jiraBaseUrl}/issue/${issueKey}/transitions`;
+async function transitionIssue(issue, transitionId) {
+    const url = `${jiraBaseUrl}/issue/${issue.key}/transitions`;
     try {
         await commonFetch(url, { method: 'POST', body: JSON.stringify({ transition: { id: transitionId } }) });
-        console.log(`Issue ${issueKey} transitioned successfully`);
+        await updateIssue(issue.key, { fields: { assignee: { accountId: issue.fields.assignee.accountId } } });
+        console.log(`Issue ${issue.key} transitioned successfully`);
     } catch (error) {
         console.error('Error transitioning issue:', error.message);
         throw error;
