@@ -160,21 +160,16 @@ export const SystemJs = ({
                     __html: `
             var appLocation = '${appLocation}';
             var boilerplatePath = '${boilerplatePath}';
+            var startFile = '${startFile}';
             var systemJsMap = ${format(systemJsMap)};
             ${Object.keys(systemJsPaths).length > 0 ? `var systemJsPaths = ${format(systemJsPaths)};` : ''}
         `,
                 }}
             />
-            <script src={systemJsVersion} />
-            <script src={systemJsPath} />
-
             {usesMathRandom && <SeedRandom />}
 
-            <script
-                dangerouslySetInnerHTML={{
-                    __html: `System.import('${startFile}').catch(function(err) { document.body.innerHTML = '<div class="example-error" style="background:#fdb022;padding:1rem;">' + 'Example Error: ' + err + '</div>'; console.error(err); });`,
-                }}
-            />
+            <script src={systemJsVersion} />
+            <script src={systemJsPath} />
         </>
     );
 };
