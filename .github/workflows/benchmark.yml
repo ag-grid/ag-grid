@@ -227,9 +227,10 @@ jobs:
 
       - name: Create Jira Ticket
         id: create-jira-ticket
-        if: ${{ steps.attach-snippet.outcome == 'success' && steps.playwright-test.outcome != 'success' && (github.event_name == 'schedule' || inputs.force_jira_ticket) }}
+        if: ${{ steps.attach-snippet.outcome == 'success' && (github.event_name == 'schedule' || inputs.force_jira_ticket) }}
         env:
           JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
+          IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
         run: |
           node ./scripts/test/create-jira-ticket.mjs
 

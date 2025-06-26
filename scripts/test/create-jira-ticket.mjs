@@ -9,6 +9,7 @@ if (!auth) {
     console.error('JIRA_API_AUTH environment variable must be set.');
     process.exit(1);
 }
+const IS_SUCCESS = process.env.IS_SUCCESS;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const __root = path.join(__dirname, '..', '..');
@@ -17,12 +18,13 @@ if (!fs.existsSync(jiraFilePath)) {
     console.error(`JIRA file not found: ${process.env.JIRA_FILE || './jira.json'}`);
     process.exit(1);
 }
-const COLUMN_TODO_ID = '21';
+const COLUMN_BACKLOG_ID = '11';
+const COLUMN_QA_ID = '131';
+const COLUMN_QA_NAME = 'QA';
 const PROJECT_ID = 'AG';
 const GRID_PERFORMANCE_ITEMS_TICKET_ID = '38254'; // AG-8145
 const CUSTOM_FIELD_FINGERPRINT = 'customfield_10708'; // Fingerprint[Short text]
-const CUSTOM_FIELD_TRACK = 'customfield_10501'; // multicheckboxes
-const TRACK_BUG_KEY = '10401';
+const CUSTOM_FIELD_TRACK = 'customfield_10501'; // Track[Multi-select list]
 
 const jiraFileContent = fs.readFileSync(jiraFilePath, 'utf8');
 
@@ -41,39 +43,45 @@ const automatedMessage = `[This issue/comment was ${jiraLink(
     'automatically created',
     'https://github.com/ag-grid/ag-grid/blob/latest/.github/workflows/benchmark.yml#L232'
 )} by the AG Grid performance regression test]`;
-createIssue()
-    .then((r) => console.log('Issue created successfully:', r))
-    .catch((error) => console.error('Error creating issue:', error));
 
-async function createIssue() {
-    const existingIssue = await findExistingIssue(jiraFileContentParsed.fingerprint);
-
-    if (existingIssue) {
+if (IS_SUCCESS) {
+    console.log('IS_SUCCESS is true, transitioning issue to QA...');
+    findExistingIssue(jiraFileContentParsed.fingerprint).then((existingIssue) =>
+        transitionIssue(existingIssue.key, COLUMN_QA_ID)
+    );
+} else {
+    findExistingIssue(jiraFileContentParsed.fingerprint).then((existingIssue) => {
+        if (!existingIssue) {
+            // If no existing issue is found, create a new one
+            console.log('No existing issue found. Creating a new issue...');
+            return createIssue()
+                .then((r) => console.log('Issue created successfully:', r))
+                .catch((error) => console.error('Error creating issue:', error));
+        }
         // If an existing issue is found, add a comment and reopen it
         console.log(`Duplicate issue found: ${existingIssue.key}. Adding comment...`);
-
-        try {
-            // Step 1: Add a comment to the issue
-            await addComment(
+        // Step 1: Add a comment to the issue
+        const promises = [
+            addComment(
                 existingIssue.key,
                 `New failure detected:\n\n${jiraFileContentParsed.text}\n\n${automatedMessage}`
-            );
+            ),
+        ];
 
-            // Step 2: Reopen the issue if it's not already open
-            const status = existingIssue.fields.status.name.toUpperCase();
-            if (status === 'DONE') {
-                console.log(`Reopening issue ${existingIssue.key} from status "${status}" to "TODO"`);
-                await transitionIssue(existingIssue.key, COLUMN_TODO_ID);
-            }
-
-            // Skip creating a new issue
-            process.exit(0);
-        } catch (err) {
-            console.error('Error updating existing JIRA issue:', err.message);
-            process.exit(1);
+        // Step 2: Reopen the issue if it's not already open
+        const status = existingIssue.fields.status.name.toUpperCase();
+        if (status === COLUMN_QA_NAME) {
+            console.log(`Reopening issue ${existingIssue.key} from status "${status}" to "TODO"`);
+            promises.push(transitionIssue(existingIssue.key, COLUMN_BACKLOG_ID));
         }
-    }
+        return Promise.all(promises).catch((error) => {
+            console.error('Error processing existing issue:', error);
+            throw error;
+        });
+    });
+}
 
+async function createIssue() {
     const body = {
         fields: {
             project: { key: PROJECT_ID },
@@ -90,15 +98,7 @@ async function createIssue() {
         },
     };
     console.log('Creating JIRA issue...', body);
-    return fetch(`${jiraBaseUrl}/issue/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Basic ${auth}` },
-        body: JSON.stringify(body),
-    }).then(async (response) => {
-        if (!response.ok)
-            throw new Error(`HTTP error status ${response.status} ${response.statusText} ${await response.text()}`);
-        return response.json();
-    });
+    return commonFetch(`${jiraBaseUrl}/issue/`, { method: 'POST', body: JSON.stringify(body) });
 }
 
 async function findExistingIssue(hash) {
@@ -108,21 +108,7 @@ async function findExistingIssue(hash) {
     const url = `${jiraBaseUrl}/search?jql=${encodeURIComponent(jqlQuery)}&maxResults=1`;
 
     try {
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Basic ${auth}`,
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(
-                `JIRA search error: ${response.status} - ${response.statusText} - ${await response.text()}`
-            );
-        }
-
-        const data = await response.json();
+        const data = await commonFetch(url, { method: 'GET' });
         return data.issues.length > 0 ? data.issues[0] : null;
     } catch (error) {
         console.error('Error searching JIRA for duplicates:', error.message);
@@ -135,21 +121,7 @@ async function addComment(issueKey, body) {
     const url = `${jiraBaseUrl}/issue/${issueKey}/comment`;
 
     try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Basic ${auth}`,
-            },
-            body: JSON.stringify({ body }),
-        });
-
-        if (!response.ok) {
-            throw new Error(
-                `Failed to add comment to issue ${issueKey}: ${response.status} - ${await response.text()}`
-            );
-        }
-
+        await commonFetch(url, { method: 'POST', body: JSON.stringify({ body }) });
         console.log(`Added comment to issue ${issueKey}`);
     } catch (error) {
         console.error('Error adding comment:', error.message);
@@ -161,24 +133,40 @@ async function addComment(issueKey, body) {
 async function transitionIssue(issueKey, transitionId) {
     const url = `${jiraBaseUrl}/issue/${issueKey}/transitions`;
     try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Basic ${auth}`,
-            },
-            body: JSON.stringify({
-                transition: { id: transitionId },
-            }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to transition issue ${issueKey}: ${response.status} - ${await response.text()}`);
-        }
-
+        await commonFetch(url, { method: 'POST', body: JSON.stringify({ transition: { id: transitionId } }) });
         console.log(`Issue ${issueKey} transitioned successfully`);
     } catch (error) {
         console.error('Error transitioning issue:', error.message);
         throw error;
     }
+}
+/*
+// Debugging function to get available transitions for an issue
+async function getTransitions(issueKey) {
+    const url = `${jiraBaseUrl}/issue/${issueKey}/transitions`;
+    try {
+        const data = await commonFetch(url, { method: 'GET' });
+        return data.transitions;
+    } catch (error) {
+        console.error('Error fetching transitions:', error.message);
+        throw error;
+    }
+}*/
+
+async function commonFetch(url, options) {
+    const response = await fetch(url, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${auth}`,
+        },
+        ...options,
+    });
+    if (!response.ok) {
+        throw new Error(`HTTP error ${response.status} ${response.statusText} ${await response.text()}`);
+    }
+    return response.json().catch((e) => {
+        if (e.message === 'Unexpected end of JSON input') {
+            return {};
+        }
+    });
 }
