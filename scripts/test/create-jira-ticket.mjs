@@ -23,8 +23,13 @@ const COLUMN_BACKLOG_NAME = 'TODO';
 const COLUMN_QA_ID = '5';
 const COLUMN_QA_NAME = 'READY TO VERIFY';
 const PROJECT_ID = 'RTI';
-const GRID_PERFORMANCE_ITEMS_TICKET_ID = '38254'; // AG-8145
+const _GRID_PERFORMANCE_ITEMS_TICKET_ID = '38254'; // AG-8145
 const CUSTOM_FIELD_FINGERPRINT = 'customfield_10708'; // Fingerprint[Short text]
+
+const PERFORMANCE_CHAMP_USER_IDS = [
+    /** Victor */ '712020:d433cc4b-4581-4385-8e04-7d11157ef90d',
+    /** Stephen */ '60e4746bcf1849006a2c3141',
+];
 const _CUSTOM_FIELD_TRACK = 'customfield_10501'; // Track[Multi-select list]
 
 const jiraFileContent = fs.readFileSync(jiraFilePath, 'utf8');
@@ -92,13 +97,16 @@ async function createIssue() {
             summary: '[NR] CI/CD detected a slowdown in grid performance',
             description: `A regression in performance has been detected in the latest build.\n${jiraFileContentParsed.text}\n\n${automatedMessage}`,
             issuetype: { name: 'Bug' },
+            assignee: {
+                accountId: PERFORMANCE_CHAMP_USER_IDS[Math.floor(Math.random() * PERFORMANCE_CHAMP_USER_IDS.length)],
+            },
             [CUSTOM_FIELD_FINGERPRINT]: jiraFileContentParsed.fingerprint,
             // [CUSTOM_FIELD_TRACK]: [{ value: 'Bug' }],
             // components: [{ name: 'Grid' }],
             labels: ['in_kanban'],
-            parent: {
-                id: GRID_PERFORMANCE_ITEMS_TICKET_ID,
-            },
+            // parent: {
+            //     id: GRID_PERFORMANCE_ITEMS_TICKET_ID,
+            // },
         },
     };
     console.log('Creating JIRA issue...', body);

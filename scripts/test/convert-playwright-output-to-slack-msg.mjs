@@ -122,10 +122,6 @@ const jiraLink = (text, url) => `[${text}|${url}]`;
 const getSlackMessage = (blocks) => ({ channel, username, icon_url, blocks });
 const calculatedTests = calculateTests(report);
 
-if (!calculatedTests.failed.length) {
-    console.warn('No failed tests found. Skipping fingerprint generation');
-}
-
 const linksText = (createLink) =>
     [
         process.env.IS_SUCCESS ? SUCCESS_STRING : FAILURE_STRING,
@@ -165,14 +161,12 @@ fs.writeFileSync(snippetSlackFileName, getResultsString(calculatedTests.all, fal
  *
  * @type {string}
  */
-const uniqueFingerprint = calculatedTests.failed[0]
-    ? generateHash(
-          [
-              calculatedTests.failed[0].path[0].title || 'unknown',
-              calculatedTests.failed[0].annotations[0].description.control.gitHash.slice(0, 7) || 'unknown',
-          ].join()
-      )
-    : '';
+const uniqueFingerprint = generateHash(
+    [
+        calculatedTests.all[0].path[0].title || 'unknown',
+        calculatedTests.all[0].annotations[0].description.control.gitHash.slice(0, 7) || 'unknown',
+    ].join()
+);
 
 fs.writeFileSync(
     jiraFileName,
