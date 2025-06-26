@@ -15,6 +15,7 @@ import { SeedRandom } from './SeedRandom';
 interface Props {
     boilerplatePath: string;
     appLocation: string;
+    startFile: string;
     internalFramework: InternalFramework;
     isEnterprise: boolean;
     isDev: boolean;
@@ -120,6 +121,7 @@ function getRelevantConfig(configuration: Configuration, framework: InternalFram
 export const SystemJs = ({
     boilerplatePath,
     appLocation,
+    startFile,
     internalFramework,
     isEnterprise,
     isDev,
@@ -163,10 +165,16 @@ export const SystemJs = ({
         `,
                 }}
             />
-            {usesMathRandom && <SeedRandom />}
-
             <script src={systemJsVersion} />
             <script src={systemJsPath} />
+
+            {usesMathRandom && <SeedRandom />}
+
+            <script
+                dangerouslySetInnerHTML={{
+                    __html: `System.import('${startFile}').catch(function(err) { document.body.innerHTML = '<div class="example-error" style="background:#fdb022;padding:1rem;">' + 'Example Error: ' + err + '</div>'; console.error(err); });`,
+                }}
+            />
         </>
     );
 };

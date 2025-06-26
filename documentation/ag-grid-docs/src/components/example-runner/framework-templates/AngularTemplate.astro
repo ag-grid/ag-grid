@@ -32,6 +32,7 @@ const {
     isEnterprise,
     modifiedTimeMs,
     appLocation,
+    entryFileName,
     styleFiles,
     scriptFiles,
     boilerplatePath,
@@ -40,6 +41,8 @@ const {
     extras,
     usesMathRandom,
 } = Astro.props as Props;
+
+const startFile = pathJoin(appLocation, entryFileName);
 ---
 
 <html lang="en">
@@ -71,6 +74,7 @@ const {
             isDev={isDev}
             boilerplatePath={boilerplatePath}
             appLocation={appLocation}
+            startFile={startFile}
             internalFramework={'angular'}
             isEnterprise={isEnterprise}
             usesMathRandom={usesMathRandom}

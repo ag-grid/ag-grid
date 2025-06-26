@@ -34,6 +34,7 @@ const {
     modifiedTimeMs,
     boilerplatePath,
     appLocation,
+    entryFileName,
     scriptFiles = [],
     styleFiles = [],
     extraStyles,
@@ -41,6 +42,8 @@ const {
     headFragment,
     usesMathRandom,
 } = Astro.props as Props;
+
+const startFile = pathJoin(appLocation, entryFileName);
 ---
 
 <html lang="en">
@@ -59,6 +62,7 @@ const {
             isDev={isDev}
             boilerplatePath={boilerplatePath}
             appLocation={appLocation}
+            startFile={startFile}
             internalFramework={'vue3'}
             isEnterprise={isEnterprise}
             usesMathRandom={usesMathRandom}
