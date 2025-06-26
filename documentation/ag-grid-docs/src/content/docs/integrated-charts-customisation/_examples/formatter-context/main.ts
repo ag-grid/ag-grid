@@ -6,10 +6,18 @@ import type {
     ChartType,
     FirstDataRenderedEvent,
     GridApi,
+    GridChartContext,
     GridOptions,
     GridReadyEvent,
+    IRowNode,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    ModuleRegistry,
+    ValidationModule,
+    createGrid,
+} from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, IntegratedChartsModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
@@ -20,6 +28,7 @@ ModuleRegistry.registerModules([
     ColumnMenuModule,
     ContextMenuModule,
     RowGroupingModule,
+    ColumnApiModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -33,16 +42,26 @@ const gridOptions: GridOptions = {
             chartDataType: 'category',
             headerName: 'Financial Period',
             width: 150,
+            valueFormatter: (params) => {
+                const parts = params.value?.split(' ');
+                return parts ? `${parts[1]} - ${parts[0]}` : '';
+            },
         },
         {
             field: 'recurring',
             chartDataType: 'series',
             headerName: 'Recurring Revenue',
+            valueFormatter: (params) => {
+                return `£${params.value}`;
+            },
         },
         {
             field: 'individual',
             chartDataType: 'series',
             headerName: 'Individual Sales',
+            valueFormatter: (params) => {
+                return `$${params.value}`;
+            },
         },
     ],
     defaultColDef: {
@@ -62,13 +81,49 @@ const gridOptions: GridOptions = {
     chartThemeOverrides: {
         common: {
             formatter: (params: FormatterParams) => {
-                if (params.type === 'number') {
-                    return `£${params.value}`;
+                const { type, key, datum, value, context, boundSeries } = params;
+                if (type === 'number') {
+                    return formatValue(key, datum?.node, context as GridChartContext, value);
                 }
+                if (type === 'category') {
+                    return formatValue(
+                        boundSeries?.[0]?.key,
+                        datum?.node,
+                        context as GridChartContext,
+                        value?.toString()
+                    );
+                }
+                // fallback to default
+                return undefined;
             },
         },
     },
 };
+
+function formatValue(
+    colId: string | undefined,
+    node: IRowNode | undefined,
+    chartContext: GridChartContext,
+    value: any
+) {
+    const column = colId ? chartContext.api.getColumn(colId) : null;
+    if (column) {
+        const colDef = column.getColDef();
+        const valueFormatter = colDef.valueFormatter;
+        if (typeof valueFormatter === 'function') {
+            const formattedValue = valueFormatter({
+                ...chartContext,
+                column,
+                colDef,
+                node: node ?? null,
+                data: node?.data,
+                value,
+            });
+            return formattedValue;
+        }
+    }
+    return undefined;
+}
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
     chartRef = params.api.createRangeChart({

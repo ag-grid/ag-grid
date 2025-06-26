@@ -9,7 +9,7 @@ import type {
     AgCrosshairOptions,
 } from 'ag-charts-types';
 
-import type { ChartType, SeriesChartType, SeriesGroupType } from 'ag-grid-community';
+import type { ChartType, GridChartContext, SeriesChartType, SeriesGroupType } from 'ag-grid-community';
 
 import type { AgChartsExports } from '../../agChartsExports';
 import type { CrossFilteringContext } from '../../chartService';
@@ -40,6 +40,7 @@ export interface ChartProxyParams {
     seriesChartTypes: SeriesChartType[];
     suppressFieldDotNotation?: boolean;
     translate: (toTranslate: string, defaultText?: string) => string;
+    context: GridChartContext;
 }
 
 export type ExtraPaddingDirection = 'top' | 'right' | 'bottom' | 'left';
@@ -247,6 +248,7 @@ export abstract class ChartProxy<
             enabled: false,
             height: 18,
         };
+        common.context = this.chartProxyParams.context;
         return {
             common,
             ...seriesChartOptions,

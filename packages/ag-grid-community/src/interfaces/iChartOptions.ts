@@ -1,3 +1,5 @@
+import type { AgGridCommon } from './iCommon';
+
 export interface ChartGroupsDef {
     // community chart groups
     columnGroup?: ('column' | 'stackedColumn' | 'normalizedColumn')[];
@@ -140,3 +142,5 @@ export type DefaultChartMenuItem =
     | 'chartUnlink'
     | 'chartLink'
     | 'chartDownload';
+
+export interface GridChartContext<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
