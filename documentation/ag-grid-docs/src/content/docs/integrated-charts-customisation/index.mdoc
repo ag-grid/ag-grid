@@ -195,7 +195,7 @@ The grid will pass the grid API and context into the `context` property of the f
 
 {% interfaceDocumentation interfaceName="GridChartContext" /%}
 
-For formatters that are directly linked to row data, the row node will be passed in the `datum.node` property.
+For formatters that are directly linked to row data, the row node will be passed in the `datum.node` property (note that `datum` may be undefined).
 
 For formatters related to columns, the `key` property will usually contain the column ID. In some instances this will be in the `key` property of the corresponding series in the `boundSeries` property.
 
