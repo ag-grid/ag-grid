@@ -1,39 +1,7 @@
 import type { GridOptions } from 'ag-grid-community';
 
+import { autoColDefSetter, cellRendererParamsSetter, rowSelectionSetter, sportColDefSetter } from '../util';
 import type { TestPermutation } from '../util';
-
-export const autoColDefSetter = (field: string) => (go: any, value: any) => {
-    go.autoGroupColumnDef = {
-        ...go.autoGroupColumnDef,
-        [field]: value,
-    };
-};
-
-export const sportColDefSetter = (field: string) => (go: any, value: any) => {
-    go.columnDefs = [...go.columnDefs];
-    go.columnDefs[1] = {
-        ...go.columnDefs[1],
-        [field]: value,
-    };
-};
-
-export const cellRendererParamsSetter = (field: string) => (go: any, value: any) => {
-    go.autoGroupColumnDef = {
-        ...go.autoGroupColumnDef,
-        cellRendererParams: {
-            ...go.autoGroupColumnDef?.cellRendererParams,
-            [field]: value,
-        },
-    };
-};
-
-export const rowSelectionSetter = (field: string) => (go: any, value: any) => {
-    go.rowSelection = {
-        mode: 'singleRow',
-        ...go.rowSelection,
-        [field]: value,
-    };
-};
 
 export const treeDataSnapshotter = (container: HTMLDivElement) => {
     const snap: string[] = [];
@@ -157,7 +125,5 @@ export function getTestConcerns_checkboxes(): TestPermutation[] {
 }
 
 export function getGridOptions_checkboxes(gridOptions: GridOptions): GridOptions {
-    return {
-        ...gridOptions,
-    };
+    return { ...gridOptions };
 }

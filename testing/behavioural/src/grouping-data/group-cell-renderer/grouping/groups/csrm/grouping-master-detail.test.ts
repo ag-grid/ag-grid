@@ -7,7 +7,7 @@ import {
     getGridOptions_masterDetail,
     getTestConcerns_masterDetail,
     groupCellSnapshotter,
-} from '../grouping-test-utils';
+} from '../../grouping-test-utils';
 
 describe('ag-grid groupCellRenderer', () => {
     const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });

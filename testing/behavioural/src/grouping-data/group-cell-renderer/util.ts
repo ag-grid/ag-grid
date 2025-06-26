@@ -38,6 +38,18 @@ export const getTestGenerator =
         return generateTestsRecursively(gridManager, getSnapshot, tests, prevGridOptions, 0);
     };
 
+function innerTextPolyfill() {
+    // for snapshots, the grid uses innerText which is not supported by JSDOM; so we need to polyfill it
+    // with innerText instead
+    if (!('innerText' in Element.prototype)) {
+        Object.defineProperty(Element.prototype, 'innerText', {
+            set(value) {
+                this.textContent = value;
+            },
+        });
+    }
+}
+
 const generateTestsRecursively = (
     gridManager: TestGridsManager,
     getSnapshot: (container: HTMLDivElement, api: GridApi) => any,
@@ -49,6 +61,13 @@ const generateTestsRecursively = (
     if (!nextTest) {
         return false;
     }
+
+    let div: HTMLDivElement;
+    beforeAll(() => {
+        innerTextPolyfill();
+        div = document.createElement('div');
+        document.body.appendChild(div);
+    });
 
     const gridOptions = { ...prevGridOptions };
     const { condition, property, values } = nextTest;
@@ -67,17 +86,6 @@ const generateTestsRecursively = (
                 gridOptions[property] = value;
             }
 
-            // for snapshots, the grid uses innerText which is not supported by jsom; so we need to polyfill it
-            // with innerText instead
-            if (!('innerText' in Element.prototype)) {
-                Object.defineProperty(Element.prototype, 'innerText', {
-                    set(value) {
-                        this.textContent = value;
-                    },
-                });
-            }
-
-            const div = document.createElement('div');
             // use fake timers when creating the grid; as the grid uses a lot of setTimeout
             // and we want to wait for all of them to finish
             vi.useFakeTimers();
@@ -99,17 +107,6 @@ const generateTestsRecursively = (
         // if no more tests after this, we need to make a test instead of describe.
         if (!generateTestsRecursively(gridManager, getSnapshot, tests, gridOptions, idx + 1)) {
             test('snapshot', () => {
-                // for snapshots, the grid uses innerText which is not supported by jsom; so we need to polyfill it
-                // with innerText instead
-                if (!('innerText' in Element.prototype)) {
-                    Object.defineProperty(Element.prototype, 'innerText', {
-                        set(value) {
-                            this.textContent = value;
-                        },
-                    });
-                }
-
-                const div = document.createElement('div');
                 // use fake timers when creating the grid; as the grid uses a lot of setTimeout
                 // and we want to wait for all of them to finish
                 vi.useFakeTimers();
