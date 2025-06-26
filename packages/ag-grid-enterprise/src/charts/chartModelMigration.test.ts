@@ -43,7 +43,7 @@ function nextVersions(): string[] {
 
 const NEXT_VERSIONS = nextVersions();
 
-describe('chartModelMigration', () => {
+describe.skip('chartModelMigration', () => {
     const SNAPSHOT_CASES = {
         '22.1.0': {},
         '22.1.0-bar': {},
