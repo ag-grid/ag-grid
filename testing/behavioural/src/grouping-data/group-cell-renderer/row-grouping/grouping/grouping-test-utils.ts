@@ -1,37 +1,7 @@
-import type { GridOptions, RowSelectionOptions } from 'ag-grid-community';
+import type { GridOptions } from 'ag-grid-community';
 
+import { autoColDefSetter, cellRendererParamsSetter, rowSelectionSetter, sportColDefSetter } from '../../util';
 import type { TestPermutation } from '../../util';
-
-const autoColDefSetter = (field: string) => (go: GridOptions, value: any) => {
-    go.autoGroupColumnDef = {
-        ...go.autoGroupColumnDef,
-        [field]: value,
-    };
-};
-const sportColDefSetter = (field: string) => (go: GridOptions, value: any) => {
-    go.columnDefs = go.columnDefs ? [...go.columnDefs] : [];
-    go.columnDefs[1] = {
-        ...go.columnDefs[1],
-        [field]: value,
-    };
-};
-const cellRendererParamsSetter = (field: string) => (go: GridOptions, value: any) => {
-    go.autoGroupColumnDef = {
-        ...go.autoGroupColumnDef,
-        cellRendererParams: {
-            ...go.autoGroupColumnDef?.cellRendererParams,
-            [field]: value,
-        },
-    };
-};
-
-const rowSelectionSetter = (field: string) => (go: GridOptions, value: any) => {
-    go.rowSelection = {
-        mode: 'singleRow',
-        ...(go.rowSelection as Partial<RowSelectionOptions>),
-        [field]: value,
-    };
-};
 
 function getExpandedConcern(gridOptions: GridOptions): TestPermutation {
     const rowModelType = gridOptions.rowModelType;

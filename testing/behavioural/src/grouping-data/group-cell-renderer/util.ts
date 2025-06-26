@@ -123,3 +123,36 @@ const generateTestsRecursively = (
     });
     return true;
 };
+
+export const autoColDefSetter = (field: string) => (go: GridOptions, value: any) => {
+    go.autoGroupColumnDef = {
+        ...go.autoGroupColumnDef,
+        [field]: value,
+    };
+};
+
+export const sportColDefSetter = (field: string) => (go: GridOptions, value: any) => {
+    go.columnDefs = go.columnDefs ? [...go.columnDefs] : [];
+    go.columnDefs[1] = {
+        ...go.columnDefs[1],
+        [field]: value,
+    };
+};
+
+export const cellRendererParamsSetter = (field: string) => (go: GridOptions, value: any) => {
+    go.autoGroupColumnDef = {
+        ...go.autoGroupColumnDef,
+        cellRendererParams: {
+            ...go.autoGroupColumnDef?.cellRendererParams,
+            [field]: value,
+        },
+    };
+};
+
+export const rowSelectionSetter = (field: string) => (go: GridOptions, value: any) => {
+    go.rowSelection = {
+        mode: 'singleRow',
+        ...(go.rowSelection as Partial<RowSelectionOptions>),
+        [field]: value,
+    };
+};

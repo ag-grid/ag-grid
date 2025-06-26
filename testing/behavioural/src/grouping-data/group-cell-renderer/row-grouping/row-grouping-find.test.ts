@@ -3,39 +3,14 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../../../test-utils';
 import type { TestPermutation } from '../util';
-import { getTestGenerator } from '../util';
+import {
+    autoColDefSetter,
+    cellRendererParamsSetter,
+    getTestGenerator,
+    rowSelectionSetter,
+    sportColDefSetter,
+} from '../util';
 import { rowModelGridOptions } from './grid-config';
-
-const autoColDefSetter = (field) => (go, value) => {
-    go.autoGroupColumnDef = {
-        ...go.autoGroupColumnDef,
-        [field]: value,
-    };
-};
-const sportColDefSetter = (field) => (go, value) => {
-    go.columnDefs = [...go.columnDefs];
-    go.columnDefs[1] = {
-        ...go.columnDefs[1],
-        [field]: value,
-    };
-};
-const cellRendererParamsSetter = (field) => (go, value) => {
-    go.autoGroupColumnDef = {
-        ...go.autoGroupColumnDef,
-        cellRendererParams: {
-            ...go.autoGroupColumnDef?.cellRendererParams,
-            [field]: value,
-        },
-    };
-};
-
-const rowSelectionSetter = (field) => (go, value) => {
-    go.rowSelection = {
-        mode: 'singleRow',
-        ...go.rowSelection,
-        [field]: value,
-    };
-};
 
 describe('ag-grid find API', () => {
     const gridsManager = new TestGridsManager({

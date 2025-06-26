@@ -1,20 +1,7 @@
 import type { ColDef } from 'ag-grid-community';
 
+import { autoColDefSetter, sportColDefSetter } from '../../util';
 import type { TestPermutation } from '../../util';
-
-const autoColDefSetter = (field) => (go, value) => {
-    go.autoGroupColumnDef = {
-        ...go.autoGroupColumnDef,
-        [field]: value,
-    };
-};
-const sportColDefSetter = (field) => (go, value) => {
-    go.columnDefs = [...go.columnDefs];
-    go.columnDefs[1] = {
-        ...go.columnDefs[1],
-        [field]: value,
-    };
-};
 
 export function getExportedTestConcerns(): TestPermutation[] {
     return [
