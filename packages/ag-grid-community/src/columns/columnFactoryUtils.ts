@@ -363,8 +363,15 @@ export function _addColumnDefaultAndTypes(
         assignColumnTypes(beans, columnType, res);
     }
 
+    const cellDataType = res.cellDataType;
+
     // merge properties from column definitions
     _mergeDeep(res, colDef, false, true);
+
+    if (cellDataType !== undefined) {
+        // `cellDataType: true` in provided def will overwrite inferred result type otherwise
+        res.cellDataType = cellDataType;
+    }
 
     const autoGroupColDef = gos.get('autoGroupColumnDef');
     const isSortingCoupled = _isColumnsSortingCoupledToGroup(gos);
