@@ -18,6 +18,11 @@ if (!fs.existsSync(jiraFilePath)) {
     process.exit(1);
 }
 const COLUMN_TODO_ID = '21';
+const PROJECT_ID = 'AG';
+const GRID_PERFORMANCE_ITEMS_TICKET_ID = '38254'; // AG-8145
+const CUSTOM_FIELD_FINGERPRINT = 'customfield_10708'; // Fingerprint[Short text]
+const CUSTOM_FIELD_TRACK = 'customfield_10501'; // multicheckboxes
+const TRACK_BUG_KEY = '10401';
 
 const jiraFileContent = fs.readFileSync(jiraFilePath, 'utf8');
 
@@ -71,11 +76,17 @@ async function createIssue() {
 
     const body = {
         fields: {
-            project: { key: 'RTI' },
+            project: { key: PROJECT_ID },
             summary: '[NR] CI/CD detected a slowdown in grid performance',
             description: `A regression in performance has been detected in the latest build.\n${jiraFileContentParsed.text}\n\n${automatedMessage}`,
             issuetype: { name: 'Bug' },
-            customfield_10675: jiraFileContentParsed.fingerprint,
+            [CUSTOM_FIELD_FINGERPRINT]: jiraFileContentParsed.fingerprint,
+            [CUSTOM_FIELD_TRACK]: [{ value: 'Bug' }],
+            components: [{ name: 'Grid' }],
+            labels: ['in_kanban'],
+            parent: {
+                id: GRID_PERFORMANCE_ITEMS_TICKET_ID,
+            },
         },
     };
     console.log('Creating JIRA issue...', body);
@@ -91,7 +102,8 @@ async function createIssue() {
 }
 
 async function findExistingIssue(hash) {
-    const jqlQuery = `"Fingerprint[Short text]" ~ '${hash}' AND type = Bug AND project = RTI`;
+    // Search for existing issues with the given fingerprint
+    const jqlQuery = `"Fingerprint[Short text]" ~ '${hash}' AND type = Bug AND project = ${PROJECT_ID} AND fixVersion is EMPTY`;
 
     const url = `${jiraBaseUrl}/search?jql=${encodeURIComponent(jqlQuery)}&maxResults=1`;
 
