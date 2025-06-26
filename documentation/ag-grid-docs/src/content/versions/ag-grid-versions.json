@@ -61,7 +61,7 @@
                 "path": "./tree-data-row-dragging"
             }
         ],
-        "notesPath": "./upgrading-to-ag-grid-34",
+        "notesPath": "/ag-grid-33-3-release-notes",
         "hideBlogPostLink": false
     },
     {
