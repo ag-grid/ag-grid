@@ -31,6 +31,7 @@ mkcert
         console.log('Adding route', staticTestFiles);
         app.use('/', (req, res, next) => {
             if (req.url === '/healthcheck') {
+                // used by Playwright to check if the server is running
                 res.send('OK', 200);
                 return next();
             }
