@@ -15,7 +15,7 @@
     "**/node_modules": true,
     "**/typings": true
   },
-  "typescript.preferences.autoImportFileExcludePatterns": ["**/main"],
+  "typescript.preferences.autoImportFileExcludePatterns": ["**/main", "**/main-umd*"],
   "typescript.tsdk": "node_modules/typescript/lib",
   "eslint.experimental.useFlatConfig": true,
   "[typescript]": {
