@@ -25797,7 +25797,7 @@ undici-types@~7.8.0:
 
 undici@6.11.1, undici@6.21.3, undici@^5.25.4, undici@^7.10.0:
   version "6.21.3"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-6.21.3.tgz#185752ad92c3d0efe7a7d1f6854a50f83b552d7a"
+  resolved "http://52.50.158.57:4873/undici/-/undici-6.21.3.tgz#185752ad92c3d0efe7a7d1f6854a50f83b552d7a"
   integrity sha512-gBLkYIlEnSp8pFbT64yFgGE6UIB9tAkhukC23PmMDCe5Nd+cRqKxSjw5y54MK2AZMgZfJWMaNE4nYUHgi1XEOw==
 
 unicode-canonical-property-names-ecmascript@^2.0.0:
