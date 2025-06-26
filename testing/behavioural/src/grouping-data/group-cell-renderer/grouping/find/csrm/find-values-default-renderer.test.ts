@@ -7,7 +7,7 @@ import {
     findSnapshotter,
     getGridOptions_correctValue_defaultRenderer,
     getTestConcerns_correctValue,
-} from '../../shared-test-utils';
+} from '../../grouping-test-utils';
 
 describe('ag-grid find API', () => {
     const gridsManager = new TestGridsManager({ modules: [AllEnterpriseModule] });

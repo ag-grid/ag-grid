@@ -2,29 +2,30 @@ import type { GridOptions } from 'ag-grid-community';
 
 import type { TestPermutation } from '../../util';
 import {
-    groupCellSnapshotter,
+    findSnapshotter,
+    getExpandedConcern,
     getGridOptions_checkboxes as sharedGetGridOptions_checkboxes,
-    getGridOptions_correctRenderer as sharedGetGridOptions_correctRenderer,
-    getGridOptions_correctValue_colDefInnerRendererGroupCol as sharedGetGridOptions_correctValue_colDefInnerRendererGroupCol,
+    getGridOptions_colDefInnerRendererGroupCol as sharedGetGridOptions_correctValue_colDefInnerRendererGroupCol,
     getGridOptions_correctValue_defaultRenderer as sharedGetGridOptions_correctValue_defaultRenderer,
     getGridOptions_correctValue_innerRenderer as sharedGetGridOptions_correctValue_innerRenderer,
     getGridOptions_masterDetail as sharedGetGridOptions_masterDetail,
     getGridOptions_pivot as sharedGetGridOptions_pivot,
     getGridOptions_suppressCount as sharedGetGridOptions_suppressCount,
-    getTestConcerns_checkboxes as sharedGetTestConcerns_checkboxes,
-    getTestConcerns_correctRenderer as sharedGetTestConcerns_correctRenderer,
-    getTestConcerns_correctValue as sharedGetTestConcerns_correctValue,
-    getTestConcerns_masterDetail as sharedGetTestConcerns_masterDetail,
-    getTestConcerns_pivot as sharedGetTestConcerns_pivot,
-    getTestConcerns_suppressCount as sharedGetTestConcerns_suppressCount,
-} from '../grouping-test-utils';
+    getTestConcerns_grouping_checkboxes,
+    getTestConcerns_grouping_correctRenderer,
+    getTestConcerns_grouping_correctValue,
+    getTestConcerns_grouping_masterDetail,
+    getTestConcerns_grouping_pivot,
+    getTestConcerns_grouping_suppressCount,
+    groupCellSnapshotter,
+} from '../../shared-test-utils';
 
-// Re-export the shared group cell snapshotter
-export { groupCellSnapshotter };
+// Re-export commonly used functions
+export { findSnapshotter, getExpandedConcern, groupCellSnapshotter };
 
 // Export functions with original names for backward compatibility
 export function getTestConcerns_masterDetail(gridOptions: GridOptions): TestPermutation[] {
-    return sharedGetTestConcerns_masterDetail(gridOptions);
+    return getTestConcerns_grouping_masterDetail(gridOptions);
 }
 
 export function getGridOptions_masterDetail(gridOptions: GridOptions): GridOptions {
@@ -32,7 +33,7 @@ export function getGridOptions_masterDetail(gridOptions: GridOptions): GridOptio
 }
 
 export function getTestConcerns_pivot(gridOptions: GridOptions): TestPermutation[] {
-    return sharedGetTestConcerns_pivot(gridOptions);
+    return getTestConcerns_grouping_pivot(gridOptions);
 }
 
 export function getGridOptions_pivot(gridOptions: GridOptions): GridOptions {
@@ -41,16 +42,16 @@ export function getGridOptions_pivot(gridOptions: GridOptions): GridOptions {
 
 export function getTestConcerns_correctRenderer(gridOptions: GridOptions): TestPermutation[] {
     // Grouping supports groupRows, so include it (default behavior)
-    return sharedGetTestConcerns_correctRenderer(gridOptions, true);
+    return getTestConcerns_grouping_correctRenderer(gridOptions, true);
 }
 
 export function getGridOptions_correctRenderer(gridOptions: GridOptions): GridOptions {
-    return sharedGetGridOptions_correctRenderer(gridOptions);
+    return { ...gridOptions };
 }
 
 export function getTestConcerns_correctValue(gridOptions: GridOptions): TestPermutation[] {
     // Grouping supports groupRows, so include it (default behavior)
-    return sharedGetTestConcerns_correctValue(gridOptions, true);
+    return getTestConcerns_grouping_correctValue(gridOptions, true);
 }
 
 export function getGridOptions_correctValue_defaultRenderer(gridOptions: GridOptions): GridOptions {
@@ -66,7 +67,7 @@ export function getGridOptions_correctValue_colDefInnerRendererGroupCol(gridOpti
 }
 
 export function getTestConcerns_suppressCount(gridOptions: GridOptions): TestPermutation[] {
-    return sharedGetTestConcerns_suppressCount(gridOptions);
+    return getTestConcerns_grouping_suppressCount(gridOptions);
 }
 
 export function getGridOptions_suppressCount(gridOptions: GridOptions): GridOptions {
@@ -74,7 +75,7 @@ export function getGridOptions_suppressCount(gridOptions: GridOptions): GridOpti
 }
 
 export function getTestConcerns_checkboxes(gridOptions: GridOptions): TestPermutation[] {
-    return sharedGetTestConcerns_checkboxes(gridOptions);
+    return getTestConcerns_grouping_checkboxes(gridOptions);
 }
 
 export function getGridOptions_checkboxes(gridOptions: GridOptions): GridOptions {
