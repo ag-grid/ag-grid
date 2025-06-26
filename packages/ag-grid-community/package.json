@@ -123,9 +123,6 @@
   },
   "devDependencies": {
     "source-map-loader": "^5.0.0",
-    "gulp": "^4.0.0",
-    "gulp-replace": "^1.0.0",
-    "gulp-rename": "^2.0.0",
     "ts-loader": "^9.5.1",
     "style-loader": "^3.3.4",
     "css-loader": "^6.10.0",
