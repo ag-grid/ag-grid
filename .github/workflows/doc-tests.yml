@@ -24,7 +24,6 @@ on:
     schedule:
         - cron: '30 2 * * *' # Run daily at 1:30am UTC
 
-
 jobs:
     docs-test:
         runs-on: ubuntu-latest
@@ -41,25 +40,122 @@ jobs:
               with:
                 cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
-            - name: Demo Pages
-              id: demoPages
-              run: |
-                yarn nx run ag-grid-docs-testing:test:e2e:demos
+    # Run all framework tasks in parallel
+    test-demos:
+        needs: docs-test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 1
 
-            - name: Upload Test Report
-              id: upload-report
-              uses: actions/upload-artifact@v4
-              if: ${{ !cancelled() }}
+            - name: Setup
+              uses: ./.github/actions/setup-nx
               with:
-                name: playwright-report
-                path: reports/
-                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
-            - name: Publish Test Report
-              uses: ctrf-io/github-test-reporter@v1
-              if: always()
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
+            - name: Demo Pages
+              run: yarn nx run ag-grid-docs-testing:test:e2e:demos
+
+    test-react-functional:
+        needs: docs-test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
               with:
-                report-path: './reports/*.json'
-                summary-report: true
-                failed-report: true
-                flaky-report: true
-                skipped-report: true
+                fetch-depth: 1
+
+            - name: Setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
+            - name: React Functional
+              run: yarn nx run ag-grid-docs-testing:test:e2e:reactFunctional
+
+    test-react-functional-ts:
+        needs: docs-test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 1
+
+            - name: Setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
+            - name: React Functional TS
+              run: yarn nx run ag-grid-docs-testing:test:e2e:reactFunctionalTs
+
+    test-angular:
+        needs: docs-test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 1
+
+            - name: Setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
+            - name: Angular
+              run: yarn nx run ag-grid-docs-testing:test:e2e:angular
+
+    test-typescript:
+        needs: docs-test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 1
+
+            - name: Setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
+            - name: Typescript
+              run: yarn nx run ag-grid-docs-testing:test:e2e:typescript
+
+    test-vanilla:
+        needs: docs-test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 1
+
+            - name: Setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
+            - name: Vanilla
+              run: yarn nx run ag-grid-docs-testing:test:e2e:vanilla
+
+    test-vue3:
+        needs: docs-test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 1
+
+            - name: Setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
+            - name: Vue3
+              run: yarn nx run ag-grid-docs-testing:test:e2e:vue3
