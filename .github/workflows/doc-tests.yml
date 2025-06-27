@@ -44,7 +44,7 @@ jobs:
             - name: Demo Pages
               id: demoPages
               run: |
-                yarn nx run test:e2e:ag-grid-docs:demos
+                yarn nx run ag-grid-docs-testing:test:e2e:demos
 
             - name: Upload Test Report
               id: upload-report

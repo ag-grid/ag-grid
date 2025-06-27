@@ -13,7 +13,7 @@
       }
     },
 
-    "test:e2e:ag-grid-docs:demos": {
+    "test:e2e:demos": {
       "executor": "nx:run-commands",
       "dependsOn": ["setup"],
       "options": {
