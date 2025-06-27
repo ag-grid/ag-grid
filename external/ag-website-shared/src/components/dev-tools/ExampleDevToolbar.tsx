@@ -9,6 +9,7 @@ import { useStoreSsr } from '@utils/hooks/useStoreSsr';
 import { pathJoin } from '@utils/pathJoin';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classNames from 'classnames';
+import purify from 'dompurify';
 import { type FunctionComponent, useCallback, useMemo } from 'react';
 
 import styles from './ExampleDevToolbar.module.scss';
@@ -73,7 +74,7 @@ export const ExampleDevToolbar: FunctionComponent<Props> = ({ framework, example
                             {isEnv ? (
                                 <>{env}</>
                             ) : (
-                                <a href={url} target={target}>
+                                <a href={purify.sanitize(url)} target={target}>
                                     {env}{' '}
                                 </a>
                             )}
