@@ -59,3 +59,7 @@ jobs:
               if: always()
               with:
                 report-path: './reports/*.json'
+                summary-report: true
+                failed-report: true
+                flaky-report: true
+                insights-report: true
