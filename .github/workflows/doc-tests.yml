@@ -40,24 +40,20 @@ jobs:
               with:
                 cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
-            - name: Upload workspace
-              if: always()
-              uses: actions/upload-artifact@v4
-              with:
-                name: ag-grid-workspace
-                path: |
-                  . 
-
     # Run all framework tasks in parallel
     test-demos:
         needs: docs-test
         runs-on: ubuntu-latest
         steps:
-            - name: Download workspace
-              uses: actions/download-artifact@v4
+            - name: Checkout
+              uses: actions/checkout@v4
               with:
-                name: ag-grid-workspace
-                path: .
+                fetch-depth: 1
+
+            - name: Setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
             - name: Demo Pages
               run: yarn nx run ag-grid-docs-testing:test:e2e:demos
@@ -66,11 +62,15 @@ jobs:
         needs: docs-test
         runs-on: ubuntu-latest
         steps:
-            - name: Download workspace
-              uses: actions/download-artifact@v4
+            - name: Checkout
+              uses: actions/checkout@v4
               with:
-                name: ag-grid-workspace
-                path: .
+                fetch-depth: 1
+
+            - name: Setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
             - name: React Functional
               run: yarn nx run ag-grid-docs-testing:test:e2e:reactFunctional
@@ -79,24 +79,49 @@ jobs:
         needs: docs-test
         runs-on: ubuntu-latest
         steps:
-            - name: Download workspace
-              uses: actions/download-artifact@v4
+            - name: Checkout
+              uses: actions/checkout@v4
               with:
-                name: ag-grid-workspace
-                path: .
+                fetch-depth: 1
+
+            - name: Setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
             - name: React Functional TS
               run: yarn nx run ag-grid-docs-testing:test:e2e:reactFunctionalTs
+
+    test-angular:
+        needs: docs-test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 1
+
+            - name: Setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
+            - name: Angular
+              run: yarn nx run ag-grid-docs-testing:test:e2e:angular
 
     test-typescript:
         needs: docs-test
         runs-on: ubuntu-latest
         steps:
-            - name: Download workspace
-              uses: actions/download-artifact@v4
+            - name: Checkout
+              uses: actions/checkout@v4
               with:
-                name: ag-grid-workspace
-                path: .
+                fetch-depth: 1
+
+            - name: Setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
             - name: Typescript
               run: yarn nx run ag-grid-docs-testing:test:e2e:typescript
@@ -105,11 +130,15 @@ jobs:
         needs: docs-test
         runs-on: ubuntu-latest
         steps:
-            - name: Download workspace
-              uses: actions/download-artifact@v4
+            - name: Checkout
+              uses: actions/checkout@v4
               with:
-                name: ag-grid-workspace
-                path: .
+                fetch-depth: 1
+
+            - name: Setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
             - name: Vanilla
               run: yarn nx run ag-grid-docs-testing:test:e2e:vanilla
@@ -118,11 +147,15 @@ jobs:
         needs: docs-test
         runs-on: ubuntu-latest
         steps:
-            - name: Download workspace
-              uses: actions/download-artifact@v4
+            - name: Checkout
+              uses: actions/checkout@v4
               with:
-                name: ag-grid-workspace
-                path: .
+                fetch-depth: 1
+
+            - name: Setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
             - name: Vue3
               run: yarn nx run ag-grid-docs-testing:test:e2e:vue3
