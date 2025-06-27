@@ -2,13 +2,7 @@ import type { BenchOptions } from 'vitest';
 import { bench, suite } from 'vitest';
 
 import type { ColDef, GridOptions, Module, Params } from 'ag-grid-community';
-import {
-    AllCommunityModule,
-    ClientSideRowModelModule,
-    NumberFilterModule,
-    TextEditorModule,
-    ValidationModule,
-} from 'ag-grid-community';
+import { AllCommunityModule, ClientSideRowModelModule, NumberFilterModule, TextEditorModule } from 'ag-grid-community';
 import { AllEnterpriseModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../../test-utils';
