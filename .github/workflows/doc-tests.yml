@@ -25,24 +25,8 @@ on:
         - cron: '30 2 * * *' # Run daily at 1:30am UTC
 
 jobs:
-    docs-test:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              id: checkout
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 1
-
-            - name: Setup
-              id: setup
-              uses: ./.github/actions/setup-nx
-              with:
-                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
-
     # Run all framework tasks in parallel
     test-demos:
-        needs: docs-test
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -59,7 +43,6 @@ jobs:
               run: yarn nx run ag-grid-docs-testing:test:e2e:demos
 
     test-react-functional:
-        needs: docs-test
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -76,7 +59,6 @@ jobs:
               run: yarn nx run ag-grid-docs-testing:test:e2e:reactFunctional
 
     test-react-functional-ts:
-        needs: docs-test
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -93,7 +75,6 @@ jobs:
               run: yarn nx run ag-grid-docs-testing:test:e2e:reactFunctionalTs
 
     test-angular:
-        needs: docs-test
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -110,7 +91,6 @@ jobs:
               run: yarn nx run ag-grid-docs-testing:test:e2e:angular
 
     test-typescript:
-        needs: docs-test
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -127,7 +107,6 @@ jobs:
               run: yarn nx run ag-grid-docs-testing:test:e2e:typescript
 
     test-vanilla:
-        needs: docs-test
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -144,7 +123,6 @@ jobs:
               run: yarn nx run ag-grid-docs-testing:test:e2e:vanilla
 
     test-vue3:
-        needs: docs-test
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
