@@ -3,12 +3,12 @@ version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
     SNYK-JS-WEBPACKDEVSERVER-10300775:
-        - ag-grid-angular > @angular-devkit/build-angular > webpack-dev-server:
+        - ag-grid-angular > @angular-devkit/build-angular@19.0.7 > webpack-dev-server@5.1.0:
               reason: Only used for calculating module size and is dev only
               expires: 2026-06-05T14:36:23.501Z
               created: 2025-06-06T14:47:25.226Z
     SNYK-JS-VITE-9653016:
-        - angular-devkit/build-angular > @angular/build > vite:
+        - '@angular-devkit/build-angular@19.0.7 > @angular/build@19.0.7 > vite@5.4.11':
               reason: Only used for calculating module size and is dev only
               expires: 2026-06-05T14:36:23.501Z
               created: 2025-06-06T14:47:25.226Z

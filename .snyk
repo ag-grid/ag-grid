@@ -10,14 +10,14 @@ ignore:
               expires: 2025-07-20T15:49:18.097Z
               created: 2025-06-20T15:49:18.099Z
     SNYK-JS-VITEST-8688125:
-        - vitest:
+        - vitest@2.1.6:
               reason: >-
                   Vitest is only used for development and we do not expose
                   'browser.api.host'
               expires: 2025-07-25T14:14:23.301Z
               created: 2025-06-25T14:14:23.307Z
     SNYK-JS-VITE-9653016:
-        - vitest:
+        - vitest@2.1.6:
               reason: >-
                   Vitest is only used for development and we do not expose
                   the dev server to the network
