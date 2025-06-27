@@ -45,16 +45,6 @@ jobs:
         needs: docs-test
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 1
-
-            - name: Setup
-              uses: ./.github/actions/setup-nx
-              with:
-                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
-
             - name: Demo Pages
               run: yarn nx run ag-grid-docs-testing:test:e2e:demos
 
@@ -62,16 +52,6 @@ jobs:
         needs: docs-test
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 1
-
-            - name: Setup
-              uses: ./.github/actions/setup-nx
-              with:
-                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
-
             - name: React Functional
               run: yarn nx run ag-grid-docs-testing:test:e2e:reactFunctional
 
