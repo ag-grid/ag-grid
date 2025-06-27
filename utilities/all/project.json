@@ -223,6 +223,12 @@
     },
     "unlink": {
       "command": "./scripts/removeLocalDeps.sh"
+    },
+    "snykIgnore": {
+      "command": "node ./scripts/getSnykIgnore.js",
+      "options": {
+        "cwd": "{workspaceRoot}"
+      }
     }
   },
   "implicitDependencies": [
