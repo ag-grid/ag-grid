@@ -28,14 +28,14 @@ export default defineConfig({
             'html',
             {
                 open: process.env.CI ? 'never' : 'on-failure',
-                outputFolder: '../../reports/ag-grid-csp-e2e-html/',
+                outputFolder: '../../reports/ag-grid-docs-e2e-html/',
             },
         ],
         [
             'playwright-ctrf-json-reporter',
             {
                 outputDir: '../../reports/',
-                outputFile: 'ag-grid-csp-e2e.json',
+                outputFile: 'ag-grid-docs-e2e.json',
             },
         ],
     ],
