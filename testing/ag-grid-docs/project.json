@@ -1,0 +1,27 @@
+{
+  "name": "ag-grid-docs-testing",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/ag-grid-docs",
+  "projectType": "application",
+  "targets": {
+    "setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["npx playwright install --with-deps"],
+        "parallel": true,
+        "cwd": "testing/ag-grid-docs"
+      }
+    },
+
+    "test:e2e:ag-grid-docs:demos": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["setup"],
+      "options": {
+        "commands": ["npx playwright test ag-grid-demos.spec.ts"],
+        "parallel": true,
+        "cwd": "testing/ag-grid-docs"
+      }
+    }
+  },
+  "tags": []
+}

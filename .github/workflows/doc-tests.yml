@@ -1,0 +1,61 @@
+name: Doc Tests 
+description: Testing of AG Grid Examples
+
+env:
+    NX_NO_CLOUD: true
+    CI: true
+    DEFAULT_RETENTION_DAYS: 30
+
+on:
+    push:
+        branches: ['AG-15304-doc-tests']
+    pull_request:
+        branches: ['AG-15304-doc-tests']
+    workflow_dispatch:
+        inputs:
+            clean_checkout:
+                description: 'Disable all caching'
+                type: 'choice'
+                required: true
+                default: 'false'
+                options:
+                    - 'true'
+                    - 'false'
+    schedule:
+        - cron: '30 2 * * *' # Run daily at 1:30am UTC
+
+
+jobs:
+    csp-test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              id: checkout
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 1
+
+            - name: Setup
+              id: setup
+              uses: ./.github/actions/setup-nx
+              with:
+                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+
+            - name: Demo Pages
+              id: demoPages
+              run: |
+                yarn nx run test:e2e:ag-grid-docs:demos
+
+            - name: Upload Test Report
+              id: upload-report
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                name: playwright-report
+                path: reports/
+                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+            - name: Publish Test Report
+              uses: ctrf-io/github-test-reporter@v1
+              if: always()
+              with:
+                report-path: './reports/*.json'

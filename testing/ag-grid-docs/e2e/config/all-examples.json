@@ -1,0 +1,8 @@
+[
+    { "pageName": "accessing-data", "exampleName": "using-for-each", "internalFramework": "vanilla" },
+    { "pageName": "accessing-data", "exampleName": "using-for-each", "internalFramework": "typescript" },
+    { "pageName": "accessing-data", "exampleName": "using-for-each", "internalFramework": "reactFunctional" },
+    { "pageName": "accessing-data", "exampleName": "using-for-each", "internalFramework": "reactFunctionalTs" },
+    { "pageName": "accessing-data", "exampleName": "using-for-each", "internalFramework": "angular" },
+    { "pageName": "accessing-data", "exampleName": "using-for-each", "internalFramework": "vue3" }
+]
