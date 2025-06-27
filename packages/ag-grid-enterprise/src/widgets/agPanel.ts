@@ -13,7 +13,7 @@ import {
 
 import { agPanelCSS } from './agPanel.css-GENERATED';
 
-interface PostProcessPopupParams {
+interface PanelPostProcessPopupParams {
     type: string;
     eventSource?: HTMLElement | null;
     mouseEvent?: MouseEvent | Touch | null;
@@ -28,7 +28,7 @@ export interface PanelOptions extends PositionableOptions {
     resizable?: boolean | ResizableStructure;
     title?: string | null;
     cssIdentifier?: string | null;
-    postProcessPopupParams?: PostProcessPopupParams;
+    postProcessPopupParams?: PanelPostProcessPopupParams;
 }
 function getTemplate(config: PanelOptions): ElementParams {
     const cssIdentifier = config.cssIdentifier || 'default';
