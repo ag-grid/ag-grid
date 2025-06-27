@@ -541,8 +541,8 @@ export class GridChartComp extends Component {
         this.chartProxy.crossFilteringReset();
     }
 
-    public setMaximize(maximize: boolean): void {
-        this.chartDialog?.setMaximize(maximize);
+    public setMaximized(maximized: boolean): void {
+        this.chartDialog?.setMaximized(maximized);
     }
 
     private setActiveChartCellRange(focusEvent: FocusEvent): void {

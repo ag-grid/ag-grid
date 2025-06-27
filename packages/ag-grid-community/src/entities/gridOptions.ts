@@ -2839,9 +2839,9 @@ export interface ChartRef {
      */
     focusChart: () => void;
     /**
-     * If opening the chart in a dialog, sets the maximize status of the dialog, else does nothing.
+     * If opening the chart in a dialog, sets the maximized status of the dialog, else does nothing.
      */
-    setMaximize: (maximize: boolean) => void;
+    setMaximized: (maximized: boolean) => void;
 }
 
 export interface ChartRefParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, ChartRef {}

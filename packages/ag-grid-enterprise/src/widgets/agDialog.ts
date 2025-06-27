@@ -143,8 +143,8 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
         this.config.closedCallback?.(event);
     }
 
-    public setMaximize(maximize: boolean): void {
-        if (this.isMaximizable && maximize !== this.isMaximized) {
+    public setMaximized(maximized: boolean): void {
+        if (this.isMaximizable && maximized !== this.isMaximized) {
             this.toggleMaximize();
         }
     }
