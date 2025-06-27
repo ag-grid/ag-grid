@@ -10,6 +10,10 @@ on:
         type: boolean
         default: false
         required: true
+      force_scheduled:
+        description: 'Run the workflow as if it was scheduled'
+        type: boolean
+        default: false
       force_pr_id:
         description: 'PR ID to update (used for debugging this workflow)'
         type: number
@@ -171,8 +175,10 @@ jobs:
         id: playwright-test
         continue-on-error: true
         if: ${{ steps.install-browsers.outcome == 'success' }}
+        env:
+          IS_SCHEDULED: ${{ github.event_name == 'schedule' || inputs.force_scheduled }}
         run: |
-          if [[ "${{ github.event_name }}" == "schedule" ]] ; then
+          if [[ "$IS_SCHEDULED" == "true" ]] ; then
             npx playwright test -c ./testing/performance/playwright.config.ts -g ".*cron.spec.ts" ./testing/performance/e2e
           else
             npx playwright test -c ./testing/performance/playwright.config.ts -gv ".*cron.spec.ts" ./testing/performance/e2e
