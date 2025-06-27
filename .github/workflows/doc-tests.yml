@@ -41,11 +41,12 @@ jobs:
                 cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
             - name: Upload workspace
+              if: always()
               uses: actions/upload-artifact@v4
               with:
                 name: ag-grid-workspace
                 path: |
-                  . # or a more specific path if you want
+                  . 
 
     # Run all framework tasks in parallel
     test-demos:
