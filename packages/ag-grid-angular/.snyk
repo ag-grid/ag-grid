@@ -1,0 +1,17 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+    SNYK-JS-WEBPACKDEVSERVER-10300775:
+        - '@angular-devkit/build-angular > webpack-dev-server':
+              reason: Only used for calculating module size and is dev only
+              expires: 2026-06-05T14:36:23.501Z
+              created: 2025-06-06T14:47:25.226Z
+    SNYK-JS-VITE-9653016:
+        - '@angular-devkit/build-angular > vite':
+              reason: >-
+                  Vitest is only used for development and we do not expose
+                  the dev server to the network
+              expires: 2025-07-25T14:14:23.301Z
+              created: 2025-06-25T14:14:23.307Z
+patch: {}
