@@ -173,9 +173,9 @@ jobs:
         if: ${{ steps.install-browsers.outcome == 'success' }}
         run: |
           if [[ "${{ github.event_name }}" == "schedule" ]] ; then
-            npx playwright test -c ./testing/performance/playwright.config.ts -g "*cron.spec.ts" ./testing/performance/e2e
+            npx playwright test -c ./testing/performance/playwright.config.ts -g ".*cron.spec.ts" ./testing/performance/e2e
           else
-            npx playwright test -c ./testing/performance/playwright.config.ts -gv "*cron.spec.ts" ./testing/performance/e2e
+            npx playwright test -c ./testing/performance/playwright.config.ts -gv ".*cron.spec.ts" ./testing/performance/e2e
           fi
 
       - name: Upload Benchmark Report

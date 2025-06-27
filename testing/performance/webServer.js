@@ -1,16 +1,13 @@
 // cwd is always the root of the project
-import express from 'express';
-import fs from 'node:fs';
-import https from 'node:https';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import * as mkcert from 'vite-plugin-mkcert';
+const express = require('express');
+const fs = require('node:fs');
+const https = require('node:https');
+const path = require('node:path');
+const mkcert = require('vite-plugin-mkcert');
 
 const PORT = process.env['PORT'] ?? '4610';
 const HOST = process.env['HOST'] ?? 'localhost';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const __root = path.join(__dirname, '..', '..');
 console.log('Using root', __root);
 mkcert
