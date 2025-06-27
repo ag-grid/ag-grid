@@ -139,16 +139,16 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
         this.config = Object.assign({}, { popup: false }, config);
     }
 
-    public center() {
+    public center(postProcessCallback?: () => void) {
         const { clientHeight, clientWidth } = this.offsetParent;
 
         const x = clientWidth / 2 - this.getWidth()! / 2;
         const y = clientHeight / 2 - this.getHeight()! / 2;
 
-        this.offsetElement(x, y);
+        this.offsetElement(x, y, postProcessCallback);
     }
 
-    public initialisePosition(): void {
+    public initialisePosition(postProcessCallback?: () => void): void {
         if (this.positioned) {
             return;
         }
@@ -195,9 +195,9 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
         }
 
         if (centered) {
-            this.center();
+            this.center(postProcessCallback);
         } else if (x || y) {
-            this.offsetElement(x!, y!);
+            this.offsetElement(x!, y!, postProcessCallback);
         } else if (isElementVisible && forcePopupParentAsOffsetParent) {
             let boundaryEl: HTMLElement | null = this.boundaryEl;
             let initialisedDuringPositioning = true;
@@ -212,7 +212,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
                 const left = parseFloat(boundaryEl.style.left);
 
                 if (initialisedDuringPositioning) {
-                    this.offsetElement(isNaN(left) ? 0 : left, isNaN(top) ? 0 : top);
+                    this.offsetElement(isNaN(left) ? 0 : left, isNaN(top) ? 0 : top, postProcessCallback);
                 } else {
                     this.setPosition(left, top);
                 }
@@ -445,7 +445,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
         }
     }
 
-    public offsetElement(x = 0, y = 0) {
+    public offsetElement(x = 0, y = 0, postProcessCallback?: () => void) {
         const { forcePopupParentAsOffsetParent } = this.config;
         const ePopup = forcePopupParentAsOffsetParent ? this.boundaryEl : this.element;
 
@@ -458,6 +458,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
             keepWithinBounds: true,
             skipObserver: this.movable || this.isResizable(),
             updatePosition: () => ({ x, y }),
+            postProcessCallback,
         });
 
         this.setPosition(parseFloat(ePopup.style.left), parseFloat(ePopup.style.top));

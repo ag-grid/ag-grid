@@ -1,11 +1,4 @@
-import type {
-    AgColumn,
-    BeanCollection,
-    FocusableContainer,
-    IRowNode,
-    PopupService,
-    ResizableStructure,
-} from 'ag-grid-community';
+import type { BeanCollection, FocusableContainer, PopupService, ResizableStructure } from 'ag-grid-community';
 import {
     Component,
     TabGuardFeature,
@@ -18,14 +11,6 @@ import {
 import type { PanelOptions } from './agPanel';
 import { AgPanel } from './agPanel';
 
-export interface DialogPostProcessPopupParams {
-    type: string;
-    eventSource?: HTMLElement | null;
-    mouseEvent?: MouseEvent | Touch | null;
-    column?: AgColumn | null;
-    rowNode?: IRowNode | null;
-}
-
 export interface DialogOptions extends PanelOptions {
     eWrapper?: HTMLElement;
     modal?: boolean;
@@ -34,7 +19,6 @@ export interface DialogOptions extends PanelOptions {
     maximizable?: boolean;
     afterGuiAttached?: () => void;
     closedCallback?: (event?: MouseEvent | TouchEvent | KeyboardEvent) => void;
-    postProcessPopupParams?: DialogPostProcessPopupParams;
 }
 
 export class AgDialog extends AgPanel<DialogOptions> implements FocusableContainer {
@@ -66,16 +50,11 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
 
     public override postConstruct() {
         const eGui = this.getGui();
-        const { movable, resizable, maximizable, modal, postProcessPopupParams } = this.config;
+        const { movable, resizable, maximizable, modal } = this.config;
 
         this.addCss('ag-dialog');
 
         super.postConstruct();
-
-        if (postProcessPopupParams) {
-            const { type, eventSource, column, mouseEvent, rowNode } = postProcessPopupParams;
-            this.popupSvc?.callPostProcessPopup(type, eGui, eventSource, mouseEvent, column, rowNode);
-        }
 
         this.tabGuardFeature = this.createManagedBean(new TabGuardFeature(this));
         this.tabGuardFeature.initialiseTabGuard({
