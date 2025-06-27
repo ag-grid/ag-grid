@@ -7,26 +7,26 @@ ignore:
               reason: >-
                   Used by gif-frames, and that is only run during build with gif images
                   that are in our control
-              expires: 2026-06-05T14:36:23.501Z
+              expires: 2025-09-21T12:00:00.000Z
               created: 2025-06-05T14:36:23.503Z
         - gif-frames@1.0.1 > save-pixels-jpeg-js-upgrade@2.3.4-jpeg-js-upgrade.0 > jpeg-js@0.3.7:
               reason: >-
                   Used by gif-frames, and that is only run during build with gif images
                   that are in our control
-              expires: 2026-06-05T14:36:23.501Z
+              expires: 2025-09-21T12:00:00.000Z
               created: 2025-06-05T14:36:23.503Z
     SNYK-JS-VITEST-8688125:
         - vitest@2.1.6:
               reason: >-
                   Vitest is only used for development and we do not expose
                   'browser.api.host'
-              expires: 2025-07-25T14:14:23.301Z
+              expires: 2025-09-21T12:00:00.000Z
               created: 2025-06-25T14:14:23.307Z
     SNYK-JS-VITE-9653016:
         - vitest@2.1.6:
               reason: >-
                   Vitest is only used for development and we do not expose
                   the dev server to the network
-              expires: 2025-07-25T14:14:23.301Z
+              expires: 2025-09-21T12:00:00.000Z
               created: 2025-06-25T14:14:23.307Z
 patch: {}
