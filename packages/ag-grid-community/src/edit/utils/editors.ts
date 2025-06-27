@@ -399,6 +399,8 @@ export function _destroyEditor(beans: BeanCollection, position: Required<EditPos
 
     beans.editSvc?.dispatchCellEvent(position, null, 'cellEditingStopped', {
         valueChanged: edit && _valuesDiffer(edit),
+        newValue: edit?.newValue,
+        oldValue: edit?.oldValue,
     });
 }
 
