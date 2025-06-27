@@ -143,6 +143,12 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
         this.config.closedCallback?.(event);
     }
 
+    public setMaximize(maximize: boolean): void {
+        if (this.isMaximizable && maximize !== this.isMaximized) {
+            this.toggleMaximize();
+        }
+    }
+
     private toggleMaximize() {
         const position = this.positionableFeature.getPosition();
         if (this.isMaximized) {
@@ -212,6 +218,8 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
         if (!eTitleBar || maximizable === this.isMaximizable) {
             return;
         }
+
+        this.isMaximizable = maximizable;
 
         const maximizeButtonComp = this.buildMaximizeAndMinimizeElements();
         this.refreshMaximizeIcon();
