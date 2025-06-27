@@ -62,4 +62,4 @@ jobs:
                 summary-report: true
                 failed-report: true
                 flaky-report: true
-                insights-report: true
+                skipped-report: true
