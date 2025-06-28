@@ -12,6 +12,7 @@ import { BaseEditStrategy } from './baseEditStrategy';
 export class FullRowEditStrategy extends BaseEditStrategy {
     override beanName = 'fullRow' as BeanName | undefined;
     private rowNode?: IRowNode;
+    private startedRows: IRowNode[] = [];
 
     public override isCellEditable(position: Required<EditPosition>, source: 'api' | 'ui' = 'ui'): boolean {
         const editable = super.isCellEditable(position, source);
@@ -75,9 +76,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             super.cleanupEditors(position);
         }
 
-        if (!this.model.hasEdits({ rowNode })) {
-            this.dispatchRowEvent({ rowNode }, 'rowEditingStarted');
-        }
+        this.dispatchRowEvent({ rowNode }, 'rowEditingStarted');
+        this.startedRows.push(rowNode);
 
         const columns = this.beans.visibleCols.allCols;
         const cells: Required<EditPosition>[] = [];
@@ -128,13 +128,21 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return false;
         }
 
-        const rowEdits = this.model.getEditRow(rowNode!)!;
-        let hadRowEdits = false;
-        for (const [, edit] of rowEdits) {
-            if (_valuesDiffer(edit)) {
-                hadRowEdits = true;
-                break;
-            }
+        const changedRows: IRowNode[] = [];
+        if (!cancel) {
+            this.model.getEditMap().forEach((rowEdits, rowNode) => {
+                if (rowEdits.size === 0) {
+                    return;
+                }
+
+                for (const edit of rowEdits.values()) {
+                    if (_valuesDiffer(edit)) {
+                        changedRows.push(rowNode);
+                        // early return, we only need to know if there are any edits
+                        break;
+                    }
+                }
+            });
         }
 
         // rerun validation, new values might have triggered row validations
@@ -145,12 +153,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         super.stop(cancel);
 
-        if (rowNode) {
-            if (hadRowEdits) {
-                this.dispatchRowEvent({ rowNode }, 'rowValueChanged');
-            }
-            this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
-        }
+        changedRows.forEach((rowNode) => this.dispatchRowEvent({ rowNode }, 'rowValueChanged'));
+
+        this.startedRows.forEach((rowNode) => this.dispatchRowEvent({ rowNode }, 'rowEditingStopped'));
+        this.startedRows.length = 0;
 
         this.rowNode = undefined;
 
