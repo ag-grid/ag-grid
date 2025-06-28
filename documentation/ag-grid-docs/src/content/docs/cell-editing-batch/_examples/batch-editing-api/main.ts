@@ -83,7 +83,7 @@ function cancelBatchEdit() {
 function startEdit() {
     gridApi!.startEditingCell({
         rowIndex: 0,
-        colKey: 'firstName',
+        colKey: 'athlete',
     });
 }
 

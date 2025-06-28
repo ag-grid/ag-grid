@@ -1,5 +1,8 @@
 [
     {
+        "version": "34.0.1"
+    },
+    {
         "version": "34.0.0",
         "date": "June 25th, 2025",
         "landingPageHighlight": "New Filters Tool Panel, Cell Editor Validation, Batch Editing, Date Picker Time Support, Tree Data Row Dragging",

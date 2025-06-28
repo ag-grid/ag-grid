@@ -479,16 +479,12 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     public postProcess(colDef: ColDef): void {
         const cellDataType = colDef.cellDataType;
-        if (!cellDataType) {
+        if (!cellDataType || typeof cellDataType !== 'string') {
             return;
         }
         const { dataTypeDefinitions, beans, formatValueFuncs } = this;
-        const dataTypeDefinition = dataTypeDefinitions[cellDataType as string];
-        beans.colFilter?.setColDefPropsForDataType(
-            colDef,
-            dataTypeDefinition,
-            formatValueFuncs[cellDataType as string]
-        );
+        const dataTypeDefinition = dataTypeDefinitions[cellDataType];
+        beans.colFilter?.setColDefPropsForDataType(colDef, dataTypeDefinition, formatValueFuncs[cellDataType]);
     }
 
     // noinspection JSUnusedGlobalSymbols
