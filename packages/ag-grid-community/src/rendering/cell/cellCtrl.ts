@@ -699,6 +699,12 @@ export class CellCtrl extends BeanStub {
     }
 
     public focusCell(forceBrowserFocus = false, sourceEvent?: Event): void {
+        const allowedTarget = this.editSvc?.allowedFocusTargetOnValidation(this);
+        // if allowedTarget is set, then edit mode is active (with potential validation failures) and we should check if we can service the focus request
+        if (allowedTarget && allowedTarget !== this) {
+            return;
+        }
+
         this.beans.focusSvc.setFocusedCell({
             ...this.getFocusedCellPosition(),
             forceBrowserFocus,
