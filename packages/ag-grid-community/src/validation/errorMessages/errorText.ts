@@ -489,21 +489,8 @@ export const AG_GRID_ERRORS = {
     184: ({ parentGroupData, childNodeData }: { parentGroupData: any; childNodeData: any }) =>
         [`duplicate group keys for row data, keys should be unique`, [parentGroupData, childNodeData]] as const,
     185: ({ data }: { data: any }) => [`getDataPath() should not return an empty path`, [data]] as const,
-    186: ({
-        rowId,
-        rowData,
-        duplicateRowsData,
-    }: {
-        rowId: string | undefined;
-        rowData: any;
-        duplicateRowsData: any[];
-    }) =>
-        [
-            `duplicate group keys for row data, keys should be unique`,
-            rowId,
-            rowData,
-            ...(duplicateRowsData ?? []),
-        ] as const,
+    // 186: ({ rowId, rowData, duplicateRowsData }: { rowId: string | undefined; rowData: any; duplicateRowsData: any[] }) =>
+    //     [ `duplicate group keys for row data, keys should be unique`, rowId, rowData, ...(duplicateRowsData ?? []) ] as const,
     187: ({ rowId, firstData, secondData }: { rowId: string; firstData: any; secondData: any }) =>
         [
             `Duplicate node id ${rowId}. Row IDs are provided via the getRowId() callback. Please modify the getRowId() callback code to provide unique row id values.`,

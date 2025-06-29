@@ -13,18 +13,22 @@ ModuleRegistry.registerModules([
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-    columnDefs: [{ field: 'id' }],
+    columnDefs: [{ field: 'employeeId' }],
     defaultColDef: {
         flex: 1,
     },
     autoGroupColumnDef: {
-        cellRendererParams: { suppressCount: true },
+        headerName: 'Organisation Chart',
+        field: 'name',
+
+        cellRendererParams: {
+            suppressCount: true,
+        },
     },
     rowData: getData(),
     treeData: true,
-    groupDefaultExpanded: -1, // expand all groups by default
+    groupDefaultExpanded: 1,
     getDataPath: (data) => data.path,
-    getRowId: (params) => params.data.id,
 };
 
 // wait for the document to be loaded, otherwise
