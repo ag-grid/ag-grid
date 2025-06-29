@@ -1,6 +1,5 @@
 import type {
     ChangedPath,
-    GetDataPath,
     GroupingApproach,
     IChangedRowNodes,
     IsGroupOpenByDefaultParams,
@@ -94,12 +93,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                     this.loadSelfRef(params, fullReload);
                 }
             } else {
-                const getDataPath = this.gos.get('getDataPath');
-                if (!getDataPath) {
-                    this.loadFlattened(rootNode);
-                } else {
-                    this.loadDataPath(params, fullReload, getDataPath);
-                }
+                this.loadDataPath(params, fullReload);
             }
         }
 
@@ -561,11 +555,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     /** Load the tree structure for data paths, aka getDataPath callback */
-    private loadDataPath(
-        { rowNode: rootNode }: StageExecuteParams<TData>,
-        fullReload: boolean,
-        getDataPath: GetDataPath<TData>
-    ): void {
+    private loadDataPath({ rowNode: rootNode }: StageExecuteParams<TData>, fullReload: boolean): void {
         const nodesByPath = new Map<string, GroupingRowNode<TData>>();
         const paths = new Map<GroupingRowNode, string>();
 
@@ -573,18 +563,20 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             this.loadExistingDataPath(rootNode, nodesByPath, paths);
         }
 
+        const getDataPath = this.gos.get('getDataPath');
+
         const allLeafChildren: GroupingRowNode<TData>[] = rootNode.allLeafChildren!;
         for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
             const node = allLeafChildren[i];
             if (!fullReload && node.treeParent !== null && (node.treeNodeFlags & FLAG_CHANGED) === 0) {
                 continue;
             }
-            const path = getDataPath(node.data!) ?? _EmptyArray;
+            const path = getDataPath?.(node.data!) ?? _EmptyArray;
             const pathLen = path.length;
             let key = '';
             if (pathLen > 0) {
                 key = path[pathLen - 1];
-            } else {
+            } else if (getDataPath) {
                 _warn(185, { data: node.data });
             }
             if (node.key !== key) {
@@ -592,7 +584,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 node.groupData = null;
             }
             const pathKey = path.join(PATH_KEY_SEPARATOR);
-            paths.set(node, pathKey); // Cache the path key for faster access
+            paths.set(node, pathKey);
             const existing = nodesByPath.get(pathKey);
             if (existing === undefined || node.sourceRowIndex < existing.sourceRowIndex) {
                 nodesByPath.set(pathKey, node);
