@@ -99,10 +99,6 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 
     ensureColumnVisible(beans, colKey);
 
-    if (!_getCellByPosition(beans, cellPosition)) {
-        return;
-    }
-
     editSvc?.setEditingCells(
         [
             {
