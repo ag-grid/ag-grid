@@ -1,7 +1,7 @@
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-types';
 
-import type { AgToggleButtonParams, BeanCollection, ListOption } from 'ag-grid-community';
-import { AgSelect, AgToggleButton, Component, RefPlaceholder, _error, _removeFromParent } from 'ag-grid-community';
+import type { BeanCollection, ListOption } from 'ag-grid-community';
+import { AgSelect, Component, RefPlaceholder, _error, _removeFromParent } from 'ag-grid-community';
 
 import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
@@ -22,6 +22,7 @@ import { SeriesItemsPanel } from './seriesItemsPanel';
 import { getShapeSelectOptions } from './seriesUtils';
 import { ShadowPanel } from './shadowPanel';
 import { TileSpacingPanel } from './tileSpacingPanel';
+import { TooltipPanel } from './tooltipPanel';
 import { WhiskersPanel } from './whiskersPanel';
 
 const tooltips = 'tooltips';
@@ -63,7 +64,7 @@ export class SeriesPanel extends Component {
         [labels]: () => this.initLabels(),
         sectorLabels: () => this.initSectorLabels(),
         [shadow]: () => new ShadowPanel(this.chartMenuUtils),
-        [tooltips]: () => this.initTooltips(),
+        [tooltips]: () => new TooltipPanel(this.options.chartMenuParamsFactory),
         bins: () => this.initBins(),
         whiskers: () => new WhiskersPanel(this.chartMenuUtils),
         caps: () => new CapsPanel(this.chartMenuUtils),
@@ -197,17 +198,6 @@ export class SeriesPanel extends Component {
         this.seriesGroup.addItem(seriesSelect);
 
         this.activePanels.push(seriesSelect);
-    }
-
-    private initTooltips(): AgToggleButton {
-        return new AgToggleButton(
-            this.chartMenuUtils.addValueParams<AgToggleButtonParams>('tooltip.enabled', {
-                label: this.translate('tooltips'),
-                labelAlignment: 'left',
-                labelWidth: 'flex',
-                inputWidth: 'flex',
-            })
-        );
     }
 
     private initLineColor(): AgColorPicker {

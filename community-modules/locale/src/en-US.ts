@@ -535,6 +535,10 @@ export const AG_GRID_LOCALE_EN = {
     dropOff: 'Drop-Off',
     stageLabels: 'Stage Labels',
     reverse: 'Reverse',
+    tooltipMode: 'Tooltip Mode',
+    tooltipModeSingle: 'Single',
+    tooltipModeShared: 'Multiple',
+    tooltipModeCompact: 'Compact',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Level ${variable}. Press ENTER to edit',

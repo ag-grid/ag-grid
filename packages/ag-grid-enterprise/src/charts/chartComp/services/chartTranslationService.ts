@@ -236,6 +236,10 @@ export const DEFAULT_CHART_TRANSLATIONS = {
     dropOff: 'Drop-Off',
     stageLabels: 'Stage Labels',
     reverse: 'Reverse',
+    tooltipMode: 'Tooltip Mode',
+    tooltipModeSingle: 'Single',
+    tooltipModeShared: 'Multiple',
+    tooltipModeCompact: 'Compact',
 
     // menu items
     groupedColumn: 'Grouped',
