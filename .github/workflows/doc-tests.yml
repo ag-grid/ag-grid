@@ -7,20 +7,20 @@ env:
     DEFAULT_RETENTION_DAYS: 30
 
 on:
-    push:
-        branches: ['AG-15304-doc-tests']
-    pull_request:
-        branches: ['AG-15304-doc-tests']
     workflow_dispatch:
         inputs:
-            clean_checkout:
-                description: 'Disable all caching'
+            frameworks:
+                description: 'Frameworks to test'
                 type: 'choice'
                 required: true
-                default: 'false'
+                default: 'vanilla,typescript,reactFunctional,reactFunctionalTs,angular,vue3'
                 options:
-                    - 'true'
-                    - 'false'
+                    - vanilla
+                    - typescript
+                    - reactFunctional
+                    - reactFunctionalTs
+                    - angular
+                    - vue3
     schedule:
         - cron: '30 2 * * *' # Run daily at 2:30am UTC
 
@@ -72,7 +72,40 @@ jobs:
             path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
             key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
 
+    test-vanilla:
+        if: contains(github.event.inputs.frameworks, 'vanilla')
+        name: Test Vanilla Examples
+        needs: download-examples
+        runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1]
+            shardTotal: [1]
+        steps:
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: vanilla
+
+    test-typescript:
+        if: contains(github.event.inputs.frameworks, 'typescript')
+        name: Test Typescript Examples
+        needs: download-examples
+        runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1]
+            shardTotal: [1]
+        steps:
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: typescript
+
     test-react-functional:
+        if: contains(github.event.inputs.frameworks, 'reactFunctional')
         name: Test React Examples
         needs: download-examples
         runs-on: ubuntu-latest
@@ -88,6 +121,7 @@ jobs:
               framework: reactFunctional
 
     test-react-functional-ts:
+        if: contains(github.event.inputs.frameworks, 'reactFunctionalTs')
         name: Test React TS Examples
         needs: download-examples
         runs-on: ubuntu-latest
@@ -102,7 +136,24 @@ jobs:
             with:
               framework: reactFunctionalTs
 
+    test-vue3:
+        if: contains(github.event.inputs.frameworks, 'vue3')
+        name: Test Vue Examples
+        needs: download-examples
+        runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1, 2]
+            shardTotal: [2]
+        steps:
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: vue3              
+
     test-angular:
+        if: contains(github.event.inputs.frameworks, 'angular')
         name: Test Angular Examples
         needs: download-examples
         runs-on: ubuntu-latest
@@ -116,51 +167,6 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: angular
-
-    test-typescript:
-        name: Test Typescript Examples
-        needs: download-examples
-        runs-on: ubuntu-latest
-        strategy:
-          fail-fast: false
-          matrix:
-            shardIndex: [1]
-            shardTotal: [1]
-        steps:
-          - uses: actions/checkout@v4
-          - uses: ./.github/actions/test-framework-examples
-            with:
-              framework: typescript
-
-    test-vanilla:
-        name: Test Vanilla Examples
-        needs: download-examples
-        runs-on: ubuntu-latest
-        strategy:
-          fail-fast: false
-          matrix:
-            shardIndex: [1]
-            shardTotal: [1]
-        steps:
-          - uses: actions/checkout@v4
-          - uses: ./.github/actions/test-framework-examples
-            with:
-              framework: vanilla
-
-    test-vue3:
-        name: Test Vue Examples
-        needs: download-examples
-        runs-on: ubuntu-latest
-        strategy:
-          fail-fast: false
-          matrix:
-            shardIndex: [1, 2]
-            shardTotal: [2]
-        steps:
-          - uses: actions/checkout@v4
-          - uses: ./.github/actions/test-framework-examples
-            with:
-              framework: vue3
 
     publish-reports:
       if: always()
