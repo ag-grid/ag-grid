@@ -4,7 +4,7 @@
   "description": "Testing for AG Grid Example Documentation",
   "main": "index.js",
   "scripts": {},
-  "author": "Tak Tran <contact@tutaktran.com>",
+  "author": "AG Grid <info@ag-grid.com>",
   "license": "MIT",
   "devDependencies": {
     "playwright": "^1.46.0",

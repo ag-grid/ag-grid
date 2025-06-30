@@ -1,12 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// import path from 'node:path';
-
-// const PUBLIC_SITE_URL = process.env.PUBLIC_SITE_URL!;
-// const baseURL = process.env.PUBLIC_BASE_URL ? path.join(PUBLIC_SITE_URL, process.env.PUBLIC_BASE_URL) : PUBLIC_SITE_URL;
-
-// console.log(`Using base URL: ${baseURL}`);
-
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
