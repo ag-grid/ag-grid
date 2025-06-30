@@ -71,70 +71,37 @@ jobs:
             key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
 
     test-react-functional:
+        name: Test React Examples
         needs: download-examples
         runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1]
+            shardTotal: [1]
         steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 1
-
-            - name: Restore all-examples-cached.json
-              uses: actions/cache@v4
-              with:
-                path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
-                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
-
-            - name: Install Playwright Browsers
-              working-directory: testing/ag-grid-docs
-              run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
-
-            - name: React Functional
-              working-directory: testing/ag-grid-docs
-              run: FRAMEWORK=reactFunctional npx playwright test framework-examples.spec.ts
-
-            - name: Upload Test Report
-              id: upload-report
-              uses: actions/upload-artifact@v4
-              if: ${{ !cancelled() }}
-              with:
-                name: playwright-report-react-functional
-                path: reports/
-                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: reactFunctional
 
     test-react-functional-ts:
+        name: Test React TS Examples
         needs: download-examples
         runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1]
+            shardTotal: [1]
         steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 1
-
-            - name: Restore all-examples-cached.json
-              uses: actions/cache@v4
-              with:
-                path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
-                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}                
-
-            - name: Install Playwright Browsers
-              working-directory: testing/ag-grid-docs
-              run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
-
-            - name: React Functional TS
-              working-directory: testing/ag-grid-docs
-              run: FRAMEWORK=reactFunctionalTs npx playwright test framework-examples.spec.ts
-
-            - name: Upload Test Report
-              id: upload-report
-              uses: actions/upload-artifact@v4
-              if: ${{ !cancelled() }}
-              with:
-                name: playwright-report-react-functional-ts
-                path: reports/
-                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: reactFunctionalTs
 
     test-angular:
+        name: Test Angular Examples
         needs: download-examples
         runs-on: ubuntu-latest
         strategy:
@@ -149,100 +116,50 @@ jobs:
               framework: angular
 
     test-typescript:
+        name: Test Typescript Examples
         needs: download-examples
         runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1]
+            shardTotal: [1]
         steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 1
-
-            - name: Restore all-examples-cached.json
-              uses: actions/cache@v4
-              with:
-                path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
-                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
-
-            - name: Install Playwright Browsers
-              working-directory: testing/ag-grid-docs
-              run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
-
-            - name: Typescript
-              working-directory: testing/ag-grid-docs
-              run: FRAMEWORK=typescript npx playwright test framework-examples.spec.ts
-
-            - name: Upload Test Report
-              id: upload-report
-              uses: actions/upload-artifact@v4
-              if: ${{ !cancelled() }}
-              with:
-                name: playwright-report-typescript
-                path: reports/
-                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: typescript
 
     test-vanilla:
+        name: Test Vanilla Examples
         needs: download-examples
         runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1]
+            shardTotal: [1]
         steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 1
-
-            - name: Restore all-examples-cached.json
-              uses: actions/cache@v4
-              with:
-                path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
-                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
-
-            - name: Install Playwright Browsers
-              working-directory: testing/ag-grid-docs
-              run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
-
-            - name: Vanilla
-              working-directory: testing/ag-grid-docs
-              run: FRAMEWORK=vanilla npx playwright test framework-examples.spec.ts
-
-            - name: Upload Test Report
-              id: upload-report
-              uses: actions/upload-artifact@v4
-              if: ${{ !cancelled() }}
-              with:
-                name: playwright-report-vanilla
-                path: reports/
-                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: vanilla
 
     test-vue3:
+        name: Test Vue Examples
         needs: download-examples
         runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1, 2]
+            shardTotal: [2]
         steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 1
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: vue3
 
-            - name: Restore all-examples-cached.json
-              uses: actions/cache@v4
-              with:
-                path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
-                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
-
-            - name: Install Playwright Browsers
-              working-directory: testing/ag-grid-docs
-              run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
-
-            - name: Vue3
-              working-directory: testing/ag-grid-docs
-              run: FRAMEWORK=vue3 npx playwright test framework-examples.spec.ts
-
-            - name: Upload Test Report
-              id: upload-report
-              uses: actions/upload-artifact@v4
-              if: ${{ !cancelled() }}
-              with:
-                name: playwright-report-vue3
-                path: reports/
-                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
     publish-reports:
       if: always()
       needs:
