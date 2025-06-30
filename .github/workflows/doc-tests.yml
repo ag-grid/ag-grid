@@ -103,6 +103,11 @@ jobs:
 
     test-angular:
         runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1, 2, 3, 4]
+            shardTotal: [4]
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -115,16 +120,16 @@ jobs:
                 cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
             - name: Angular
-              run: yarn nx run ag-grid-docs-testing:test:e2e:angular
+              run: yarn nx run ag-grid-docs-testing:test:e2e:angular --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
-            - name: Upload Test Report
-              id: upload-report
-              uses: actions/upload-artifact@v4
+
+            - name: Upload blob report to GitHub Actions Artifacts
               if: ${{ !cancelled() }}
+              uses: actions/upload-artifact@v4
               with:
-                name: playwright-report-angular
-                path: reports/
-                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+                name: blob-report-${{ matrix.shardIndex }}
+                path: blob-report
+                retention-days: 1
 
     test-typescript:
         runs-on: ubuntu-latest
