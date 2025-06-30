@@ -1,11 +1,13 @@
 import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-import examples from './config/all-examples.json';
 import { clickAllButtons, getRowCountOrError, waitForGridReady } from './utils';
 
 export type InternalFramework = 'vanilla' | 'typescript' | 'reactFunctional' | 'reactFunctionalTs' | 'angular' | 'vue3';
 
+let examples: any;
 interface ExampleTestCase {
     pageName: string;
     exampleName: string;
@@ -25,7 +27,13 @@ const matchesExclusion = (testCase: ExampleTestCase) => {
     });
 };
 
-export function getFrameworkExamples(framework: InternalFramework) {
+export async function getFrameworkExamples(framework: InternalFramework) {
+    if (!examples) {
+        const filePath = join(__dirname, 'config', 'all-examples.json');
+        examples = JSON.parse(readFileSync(filePath, 'utf-8'));
+        console.log(examples.length, 'examples found');
+    }
+
     return (examples as ExampleTestCase[])
         .filter(
             (e) =>
@@ -37,12 +45,12 @@ export function getFrameworkExamples(framework: InternalFramework) {
         .splice(0, 10); // Limit to 10 examples per framework for testing purposes
 }
 
-export function getSelectionOfFrameworkExamples(
+export async function getSelectionOfFrameworkExamples(
     framework: InternalFramework,
     nthExample: number,
     randomOffset: number
 ) {
-    const allExamples = getFrameworkExamples(framework);
+    const allExamples = await getFrameworkExamples(framework);
     const filtered = allExamples.filter((_, i) => (i + randomOffset) % nthExample === 0);
     return filtered;
 }

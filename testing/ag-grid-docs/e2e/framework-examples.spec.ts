@@ -22,7 +22,9 @@ if (framework !== undefined && !allFrameworks.includes(framework)) {
 
 const runTestsForFramework = (framework: InternalFramework) => {
     test.describe(framework, async () => {
-        for (const e of getFrameworkExamples(framework)) {
+        const allExamples = await getFrameworkExamples(framework);
+
+        for (const e of allExamples) {
             const { examplePath, url } = getExampleConfig(e);
 
             let errors: string[];
