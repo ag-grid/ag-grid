@@ -4,7 +4,7 @@ import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import { _getRowCtrl } from '../utils/controllers';
+import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
 import { _populateModelValidationErrors, _setupEditor, _valuesDiffer } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
@@ -130,10 +130,12 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         const rowEdits = this.model.getEditRow(rowNode!)!;
         let hadRowEdits = false;
-        for (const [, edit] of rowEdits) {
-            if (_valuesDiffer(edit)) {
-                hadRowEdits = true;
-                break;
+        if (rowEdits) {
+            for (const [, edit] of rowEdits) {
+                if (_valuesDiffer(edit)) {
+                    hadRowEdits = true;
+                    break;
+                }
             }
         }
 
@@ -165,16 +167,17 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return;
         }
 
-        if (this.model.getRowValidationModel().getRowValidationMap().size > 0) {
+        const prevCell = _getCellCtrl(this.beans, prev);
+
+        if (
+            prevCell &&
+            (this.model.getCellValidationModel().getCellValidation(prevCell) ||
+                this.model.getRowValidationModel().getRowValidation(prevCell))
+        ) {
             return;
         }
 
         super.onCellFocusChanged(event);
-
-        const previous = (event as any)['previousParams']! as CommonCellFocusParams;
-        if (previous) {
-            _getRowCtrl(this.beans, previous)?.refreshRow({ suppressFlash: true, force: true });
-        }
     }
 
     public override cleanupEditors({ rowNode }: EditRowPosition = {}, includeEditing?: boolean): void {
@@ -241,7 +244,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                     return true;
                 }
             } else {
-                const rowPreventNavigation = this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop';
+                // `undefined` for the check means any edits anywhere in the table will prevent navigation
+                const rowPreventNavigation = this.editSvc.checkNavWithValidation(undefined, event) === 'block-stop';
                 if (rowPreventNavigation) {
                     return true;
                 }

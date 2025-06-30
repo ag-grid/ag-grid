@@ -1,10 +1,9 @@
 import type {
-    AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
     GridApi,
     GridOptions,
     GridReadyEvent,
-    IAdvancedFilterBuilderParams,
+    IAdvancedFilterParams,
 } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -59,10 +58,9 @@ const initialAdvancedFilterModel: AdvancedFilterModel = {
     ],
 };
 
-const advancedFilterBuilderParams: IAdvancedFilterBuilderParams = {
-    showMoveButtons: true,
-    suppressFullScreenButton: true,
-    buttons: ['clear', 'apply', 'cancel'],
+const advancedFilterParams: IAdvancedFilterParams = {
+    buttons: ['clear', 'apply', 'reset'],
+    suppressBuilderButton: true,
 };
 
 let gridApi: GridApi<IOlympicData>;
@@ -89,34 +87,14 @@ const gridOptions: GridOptions<IOlympicData> = {
             advancedFilterModel: initialAdvancedFilterModel,
         },
     },
-    advancedFilterBuilderParams: advancedFilterBuilderParams,
-    onAdvancedFilterBuilderVisibleChanged: onAdvancedFilterBuilderVisibleChanged,
+    advancedFilterParams: advancedFilterParams,
     onGridReady: (params: GridReadyEvent) => {
         // Could also be provided via grid option `advancedFilterParent`.
         // Setting the parent removes the Advanced Filter input from the grid,
         // allowing the Advanced Filter to be edited only via the Builder, launched via the API.
         params.api.setGridOption('advancedFilterParent', document.getElementById('advancedFilterParent'));
     },
-    onFilterChanged: onFilterChanged,
 };
-
-function onAdvancedFilterBuilderVisibleChanged(event: AdvancedFilterBuilderVisibleChangedEvent<IOlympicData>) {
-    const eButton = document.getElementById('advancedFilterBuilderButton')!;
-    if (event.visible) {
-        eButton.setAttribute('disabled', '');
-    } else {
-        eButton.removeAttribute('disabled');
-    }
-}
-
-function onFilterChanged() {
-    const advancedFilterApplied = !!gridApi!.getAdvancedFilterModel();
-    document.getElementById('advancedFilterIcon')!.classList.toggle('filter-icon-disabled', !advancedFilterApplied);
-}
-
-function showBuilder() {
-    gridApi!.showAdvancedFilterBuilder();
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {

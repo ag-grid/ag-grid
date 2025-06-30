@@ -15,15 +15,8 @@
         width: 100%;
     }
 
-    .ag-advanced-filter-apply-button,
-    .ag-advanced-filter-builder-button {
-        line-height: normal;
-        @include ag.unthemed-rtl(
-            (
-                margin-left: calc(var(--ag-grid-size) * 2),
-            )
-        );
-        white-space: nowrap;
+    .ag-advanced-filter-buttons {
+        display: contents;
     }
 
     .ag-advanced-filter-builder-button {
@@ -34,6 +27,13 @@
         color: var(--ag-foreground-color);
         font-size: var(--ag-font-size);
         font-weight: 600;
+        line-height: normal;
+        @include ag.unthemed-rtl(
+            (
+                margin-left: calc(var(--ag-grid-size) * 2),
+            )
+        );
+        white-space: nowrap;
 
         &:hover:not(:disabled) {
             background-color: var(--ag-row-hover-color);

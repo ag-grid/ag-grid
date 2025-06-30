@@ -564,6 +564,12 @@
                 "url": "./filter-advanced/#configuring-advanced-filter-builder"
             }
         },
+        "advancedFilterParams": {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "./filter-advanced/#configuring-advanced-filter"
+            }
+        },
         "alwaysPassFilter": {},
         "enableFilterHandlers": {
             "more": {

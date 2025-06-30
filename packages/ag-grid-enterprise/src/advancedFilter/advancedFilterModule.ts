@@ -1,5 +1,11 @@
 import type { _AdvancedFilterGridApi, _ModuleWithApi } from 'ag-grid-community';
-import { _FilterCoreModule, _FilterValueModule, _PopupModule, _SharedDragAndDropModule } from 'ag-grid-community';
+import {
+    TooltipModule,
+    _FilterCoreModule,
+    _FilterValueModule,
+    _PopupModule,
+    _SharedDragAndDropModule,
+} from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
@@ -47,6 +53,13 @@ export const AdvancedFilterModule: _ModuleWithApi<_AdvancedFilterGridApi> = {
         showAdvancedFilterBuilder,
         hideAdvancedFilterBuilder,
     },
-    dependsOn: [EnterpriseCoreModule, _FilterCoreModule, _SharedDragAndDropModule, _PopupModule, _FilterValueModule],
+    dependsOn: [
+        EnterpriseCoreModule,
+        _FilterCoreModule,
+        _SharedDragAndDropModule,
+        _PopupModule,
+        _FilterValueModule,
+        TooltipModule,
+    ],
     css: [advancedFilterCSS],
 };
