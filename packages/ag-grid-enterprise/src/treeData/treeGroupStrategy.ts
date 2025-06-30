@@ -116,9 +116,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
         rootNode.treeNodeFlags = 0;
 
-        if (!fullReload && !hasUpdates && (traverseResult & FLAG_CHILDREN_CHANGED) !== 0) {
-            // We want to maintain the order of leaf nodes in the root node by sorting them hierarchically,
-            // in such a way that parent nodes are always before their children.
+        if (!fullReload && !hasUpdates && !params.rowDataUpdated && (traverseResult & FLAG_CHILDREN_CHANGED) !== 0) {
             this.orderRootLeafsHierarchically(rootNode);
         }
 
@@ -400,7 +398,8 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
     /**
      * Order the root leaf children in such a way the parents always comes before the children.
-     * This is needed after row dragging to ensure consistency and correctness over multiple drag and drop operations over time.
+     * This is needed after row dragging, as it may causes fragmentation in the order, so we sort correctly
+     * to ensure consistency and correctness over multiple drag and drop operations over time.
      */
     private orderRootLeafsHierarchically(rootNode: GroupingRowNode<TData>): void {
         const allLeafChildren = rootNode.allLeafChildren!;

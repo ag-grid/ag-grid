@@ -950,10 +950,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const groupStageExecuted = this.groupStage?.execute({
             rowNode: rootNode,
-            changedRowNodes: params.changedRowNodes,
+            rowDataUpdated: !!params.rowDataUpdated,
             changedPath: params.changedPath,
             rowNodesOrderChanged: !!params.rowNodesOrderChanged,
             afterColumnsChanged: !!params.afterColumnsChanged,
+            changedRowNodes: params.changedRowNodes,
         });
 
         if (groupStageExecuted !== undefined) {

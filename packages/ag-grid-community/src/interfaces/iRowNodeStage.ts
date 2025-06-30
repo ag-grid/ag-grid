@@ -14,6 +14,7 @@ export interface StageExecuteParams<TData = any> {
     rowNodesOrderChanged?: boolean;
     changedPath?: ChangedPath;
     afterColumnsChanged?: boolean;
+    rowDataUpdated?: boolean;
 }
 
 export interface IRowNodeStage<TResult = any, TData = any> {
