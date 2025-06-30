@@ -62,7 +62,7 @@ jobs:
         - name: Download all-examples-cached.json
           run: |
             mkdir -p ./e2e/config
-            curl https://grid-staging.ag-grid.com/debug/all-examples-cached.json > ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
+            curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
 
         - name: Cache all-examples-cached.json
           uses: actions/cache@v4
