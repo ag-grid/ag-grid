@@ -1,5 +1,5 @@
 name: 'Run Framework Example Tests'
-description: 'An Run Framework Example Tests'
+description: 'Run Framework Example Tests'
 inputs:
   framework:
     description: 'Framework to use'
