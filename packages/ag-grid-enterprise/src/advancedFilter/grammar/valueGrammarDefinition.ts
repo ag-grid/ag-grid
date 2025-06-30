@@ -1,7 +1,17 @@
 import { SyntaxGrammarDefinition, SyntaxParselet } from '../../syntaxParser/syntaxGrammar';
-import { AdvancedFilterNode, BooleanValueNode, NumberValueNode, TextValueNode } from './advancedFilterGrammar';
+import {
+    AdvancedFilterContext,
+    AdvancedFilterNode,
+    BooleanValueNode,
+    NumberValueNode,
+    TextValueNode,
+} from './advancedFilterGrammar';
 
-export const createStringValueParser = (): SyntaxGrammarDefinition<AdvancedFilterNode, TextValueNode> => {
+export const createStringValueParser = (): SyntaxGrammarDefinition<
+    AdvancedFilterNode,
+    TextValueNode,
+    AdvancedFilterContext
+> => {
     const parselet: SyntaxParselet<AdvancedFilterNode, TextValueNode> = {
         isLeading: true,
         expectsLeft: true,
@@ -32,7 +42,7 @@ export const createStringValueParser = (): SyntaxGrammarDefinition<AdvancedFilte
     };
 
     return {
-        key: 'TextValueNode',
+        key: 'StringValue',
         patterns: [
             {
                 type: 'regex',
@@ -45,7 +55,11 @@ export const createStringValueParser = (): SyntaxGrammarDefinition<AdvancedFilte
     };
 };
 
-export const createNumberValueParser = (): SyntaxGrammarDefinition<AdvancedFilterNode, NumberValueNode> => {
+export const createNumberValueParser = (): SyntaxGrammarDefinition<
+    AdvancedFilterNode,
+    NumberValueNode,
+    AdvancedFilterContext
+> => {
     const parselet: SyntaxParselet<AdvancedFilterNode, NumberValueNode> = {
         isLeading: true,
         expectsLeft: false,
@@ -83,7 +97,7 @@ export const createNumberValueParser = (): SyntaxGrammarDefinition<AdvancedFilte
     };
 
     return {
-        key: 'NumberValueNode',
+        key: 'NumberValue',
         patterns: [
             {
                 type: 'regex',
@@ -96,7 +110,11 @@ export const createNumberValueParser = (): SyntaxGrammarDefinition<AdvancedFilte
     };
 };
 
-export const createBooleanValueParser = (): SyntaxGrammarDefinition<AdvancedFilterNode, BooleanValueNode> => {
+export const createBooleanValueParser = (): SyntaxGrammarDefinition<
+    AdvancedFilterNode,
+    BooleanValueNode,
+    AdvancedFilterContext
+> => {
     const parselet: SyntaxParselet<AdvancedFilterNode, BooleanValueNode> = {
         isLeading: true,
         expectsLeft: false,
@@ -112,7 +130,7 @@ export const createBooleanValueParser = (): SyntaxGrammarDefinition<AdvancedFilt
                 });
             }
 
-            const value = token.key === 'TruthyValue';
+            const value = token.value.toLowerCase() === 'true';
 
             return {
                 isValid: true,
@@ -132,14 +150,14 @@ export const createBooleanValueParser = (): SyntaxGrammarDefinition<AdvancedFilt
             {
                 type: 'string',
                 category: 'BOOLEAN',
-                key: 'TruthyValue',
+                key: 'BooleanValueNode',
                 label: 'true',
                 aliases: ['T'],
             },
             {
                 type: 'string',
                 category: 'BOOLEAN',
-                key: 'FalsyValue',
+                key: 'BooleanValueNode',
                 label: 'false',
                 aliases: ['F'],
             },

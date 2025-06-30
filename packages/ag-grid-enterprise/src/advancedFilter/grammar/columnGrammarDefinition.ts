@@ -1,12 +1,12 @@
-import { BaseCellDataType } from 'ag-grid-community';
-
 import { SyntaxGrammarDefinition, SyntaxParselet } from '../../syntaxParser/syntaxGrammar';
-import { AdvancedFilterNode, ColumnNode } from './advancedFilterGrammar';
+import { AdvancedFilterContext, AdvancedFilterNode, ColumnNode } from './advancedFilterGrammar';
 
-export const createColumnParser = (
-    getColumnIdByName: (name: string) => { colId: string; dataType: BaseCellDataType } | undefined
-): SyntaxGrammarDefinition<AdvancedFilterNode, ColumnNode> => {
-    const parselet: SyntaxParselet<AdvancedFilterNode, ColumnNode> = {
+export const createColumnParser = (): SyntaxGrammarDefinition<
+    AdvancedFilterNode,
+    ColumnNode,
+    AdvancedFilterContext
+> => {
+    const parselet: SyntaxParselet<AdvancedFilterNode, ColumnNode, AdvancedFilterContext> = {
         isLeading: true,
         expectsLeft: true,
         shouldParseAt: () => true,
@@ -23,7 +23,7 @@ export const createColumnParser = (
 
             const colName = token.value.trim().slice(1, -1);
 
-            const colDef = getColumnIdByName(colName);
+            const colDef = context.context.getColIdFromName(colName);
 
             if (!colDef) {
                 return context.parseRecovery({

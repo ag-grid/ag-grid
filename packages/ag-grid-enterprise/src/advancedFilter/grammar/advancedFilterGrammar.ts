@@ -4,7 +4,38 @@ import { AdvancedFilterModel } from 'ag-grid-community';
 
 import { SyntaxGrammar } from '../../syntaxParser/syntaxGrammar';
 import { SyntaxParserOutput, ValidSyntaxParserOutput } from '../../syntaxParser/syntaxParser';
-import { createEqualsParser } from './binaryGrammarDefinition';
+import {
+    createBeginsWithParser,
+    createContainsParser,
+    createEndsWithParser,
+    createEqualsParser,
+    createGreaterThanOrEqualsParser,
+    createGreaterThanParser,
+    createLessThanOrEqualsParser,
+    createLessThanParser,
+    createNotContainsParser,
+} from './binaryGrammarDefinition';
+import { createColumnParser } from './columnGrammarDefinition';
+import { createGroupParser } from './groupGrammarDefinition';
+import { createAndParser, createOrParser } from './logicalGrammarDefinition';
+import { createBooleanValueParser, createNumberValueParser, createStringValueParser } from './valueGrammarDefinition';
+
+// prettier-ignore
+export const ParserPrecedence = {
+    GROUPING: 18,       // (x)
+    ACCESS: 17,         // x.y
+    CALL: 17,           // x(y)
+    POSTFIX: 15,        // x++, x-- (Not currently used)
+    PREFIX: 14,         // !x
+    EXPONENT: 13,       // x ** y
+    MULTIPLICATIVE: 12, // x * y, x / y, x % y
+    ADDITIVE: 11,       // x + y, x - y,
+    RELATIONAL: 9,      // x < y, x <= y, x > y, x >= y, x in y
+    EQUALITY: 8,        // x === y, x !== y
+    LOGICAL_AND: 4,     // x && y
+    LOGICAL_OR: 3,      // x || y, x ?? y
+    MISC: 2,            // x ? y : z
+} as const
 
 export type TextValueNode = {
     type: 'value';
@@ -34,9 +65,34 @@ export type ColumnNode = {
 
 export type AdvancedFilterNode = AdvancedFilterModel | ValueNode | ColumnNode;
 
-export class AdvancedFilterGrammar extends SyntaxGrammar<AdvancedFilterNode, AdvancedFilterModel> {
+export type AdvancedFilterContext = {
+    getColIdFromName: (name: string) => { colId: string; dataType: BaseCellDataType } | undefined;
+};
+
+export class AdvancedFilterGrammar extends SyntaxGrammar<
+    AdvancedFilterNode,
+    AdvancedFilterModel,
+    AdvancedFilterContext
+> {
     constructor() {
-        super([createEqualsParser()]);
+        super([
+            createGroupParser(),
+            createEqualsParser(),
+            createLessThanParser(),
+            createLessThanOrEqualsParser(),
+            createGreaterThanParser(),
+            createGreaterThanOrEqualsParser(),
+            createBeginsWithParser(),
+            createEndsWithParser(),
+            createContainsParser(),
+            createNotContainsParser(),
+            createAndParser(),
+            createOrParser(),
+            createNumberValueParser(),
+            createStringValueParser(),
+            createBooleanValueParser(),
+            createColumnParser(),
+        ]);
     }
 
     override validateOutput(

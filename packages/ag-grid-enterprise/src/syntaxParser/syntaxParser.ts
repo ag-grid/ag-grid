@@ -7,17 +7,18 @@ export type SyntaxParseError = {
     range: TextRange;
 };
 
-export interface SyntaxParserContext<TModelNode> {
-    peekToken(n: number): RawSyntaxToken;
+export interface SyntaxParserContext<TModelNode, TContext> {
+    peekToken(n?: number): RawSyntaxToken;
     consumeToken(): RawSyntaxToken;
     matchToken(category: SyntaxCategory, key?: string): SyntaxToken | null;
     expectToken(category: SyntaxCategory, key?: string): SyntaxToken | null;
     endOfTokens(): boolean;
-    parseNext(minPrecedence: number): SyntaxParserOutput<TModelNode>;
+    parseNext(minPrecedence?: number): SyntaxParserOutput<TModelNode>;
     parseRecovery(params?: ParserRecoveryParams): InvalidSyntaxParserOutput;
     getEncompassingRange(tokens: SyntaxToken[]): TextRange;
     containsCaret(token: SyntaxToken): boolean;
     endsWithCaret(token: SyntaxToken): boolean;
+    context: TContext;
 }
 
 export type SyntaxParserSuggestion = {
@@ -53,14 +54,17 @@ type ParserRecoveryParams = {
     };
 };
 
-export class SyntaxParser<TModelNode, TOutputNode extends TModelNode> implements SyntaxParserContext<TModelNode> {
+export class SyntaxParser<TModelNode, TOutputNode extends TModelNode, TContext>
+    implements SyntaxParserContext<TModelNode, TContext>
+{
     private tokens: RawSyntaxToken[];
     private cursorIndex: number = 0;
     private caretIndex: number | null;
 
     constructor(
-        private grammar: SyntaxGrammar<TModelNode, TOutputNode>,
-        private tokenizer: SyntaxTokenizer
+        private grammar: SyntaxGrammar<TModelNode, TOutputNode, TContext>,
+        private tokenizer: SyntaxTokenizer,
+        public context: TContext
     ) {}
 
     /**
@@ -95,6 +99,7 @@ export class SyntaxParser<TModelNode, TOutputNode extends TModelNode> implements
     }
 
     public matchToken(category: SyntaxCategory, key?: string): SyntaxToken | null {
+        if (this.endOfTokens()) return null;
         const { matches, ...token } = this.peekToken();
 
         const match = matches.find((t) => t.category === category && (!key || t.key === key));
@@ -132,22 +137,26 @@ export class SyntaxParser<TModelNode, TOutputNode extends TModelNode> implements
 
     public parseNext(minPrecedence = 0): SyntaxParserOutput<TModelNode> {
         let token = this.peekToken();
-        const definition = this.grammar.getParser(token.matches);
+        const definition = this.grammar.getParselet(token.matches);
 
         if (!definition || !definition.isLeading) {
             return this.parseRecovery();
         }
 
         let output = definition.parse(this);
+        console.log('Logginh output');
+        console.log(output);
 
         while (true) {
             const next = this.peekToken();
+
+            if (this.endOfTokens()) break;
 
             if (this.grammar.isClosingToken(next.matches)) {
                 break;
             }
 
-            const op = this.grammar.getParser(next.matches);
+            const op = this.grammar.getParselet(next.matches);
 
             if (!op || !op.expectsLeft) {
                 return this.parseRecovery();
@@ -168,6 +177,7 @@ export class SyntaxParser<TModelNode, TOutputNode extends TModelNode> implements
     }
 
     public parseRecovery(params?: ParserRecoveryParams): InvalidSyntaxParserOutput {
+        console.log(params);
         const errors: SyntaxParseError[] = params?.errors ?? [];
         const tokens: SyntaxToken[] = params?.tokens ?? [];
         const stopOn = params?.stopOn;
@@ -182,8 +192,10 @@ export class SyntaxParser<TModelNode, TOutputNode extends TModelNode> implements
 
         const next = this.peekToken();
 
+        console.log(next);
+
         if (this.grammar.isOpeningToken(next.matches)) {
-            const op = this.grammar.getParser(next.matches);
+            const op = this.grammar.getParselet(next.matches);
             if (op) {
                 const group = op?.parse(this);
                 tokens.push(...group.tokens);
@@ -198,23 +210,25 @@ export class SyntaxParser<TModelNode, TOutputNode extends TModelNode> implements
             return { isValid: false, errors, tokens };
         }
 
-        const { matches, ...token } = this.consumeToken();
-        const match: PatternMatch =
-            matches.length > 0
-                ? matches[0]
-                : {
-                      category: 'UNKNOWN',
-                      key: 'UnknownToken',
-                  };
+        if (!this.endOfTokens()) {
+            const { matches, ...token } = this.consumeToken();
+            const match: PatternMatch =
+                matches.length > 0
+                    ? matches[0]
+                    : {
+                          category: 'UNKNOWN',
+                          key: 'UnknownToken',
+                      };
 
-        tokens.push({
-            ...token,
-            ...match,
-        });
-        errors.push({
-            message: `Unrecognized token: "${token.value}"`,
-            range: token.range,
-        });
+            tokens.push({
+                ...token,
+                ...match,
+            });
+            errors.push({
+                message: `Unrecognized token: "${token.value}"`,
+                range: token.range,
+            });
+        }
 
         return { isValid: false, errors, tokens };
     }

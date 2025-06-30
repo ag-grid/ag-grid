@@ -1,6 +1,48 @@
-import { BaseCellDataType } from 'ag-grid-community';
+import { AdvancedFilterModel } from 'ag-grid-community';
 
-import { MatchedToken, Range, Token } from './token';
+import { SyntaxParser } from '../../syntaxParser/syntaxParser';
+import { SyntaxTokenizer } from '../../syntaxParser/syntaxTokenizer';
+import { AdvancedFilterContext, AdvancedFilterGrammar, AdvancedFilterNode } from './advancedFilterGrammar';
+
+class AdvancedFilterParser extends SyntaxParser<AdvancedFilterNode, AdvancedFilterModel, AdvancedFilterContext> {
+    constructor() {
+        const grammar = new AdvancedFilterGrammar();
+        super(grammar, new SyntaxTokenizer(grammar.patterns), AdvancedFilterParser);
+    }
+
+    static getColIdFromName(name: string) {
+        switch (name) {
+            case 'boolean':
+                return { colId: 'boolean', dataType: 'boolean' as const };
+            case 'number':
+                return { colId: 'number', dataType: 'number' as const };
+            case 'date':
+                return { colId: 'date', dataType: 'date' as const };
+            case 'dateString':
+                return { colId: 'dateString', dataType: 'dateString' as const };
+            case 'text':
+            default:
+                return { colId: 'text', dataType: 'text' as const };
+        }
+    }
+}
+
+const simpleTest = () => {
+    const input =
+        '[boolean] == false AND [number] >= 100 OR [number] < 10 AND [text] contains "S" OR [dateString] equals "2009-1-1"';
+
+    const parser = new AdvancedFilterParser();
+    const output = parser.parse(input, 0);
+    if (output.isValid) {
+        console.log('Valid');
+        console.log(JSON.stringify(output.model, null, 2));
+    } else {
+        console.log('Invalid');
+        console.log(JSON.stringify(output.errors, null, 2));
+    }
+};
+
+simpleTest();
 
 // TODO: Parser refactor and expression system overhaul
 
@@ -57,103 +99,3 @@ import { MatchedToken, Range, Token } from './token';
 // - annotateParens() for marking group depth and inserting synthetic closers
 // - extractDeepestError(node) for editor display
 // - TokenCursor factory with caret-aware logic
-
-export type ExpressionDatatype = BaseCellDataType | 'unknown';
-
-export function isValidDatatype<TDatatypes extends readonly ExpressionDatatype[]>(
-    datatype: ExpressionDatatype,
-    allowed: TDatatypes
-): datatype is TDatatypes[number] {
-    return allowed.includes(datatype);
-}
-
-export interface ExpressionError {
-    message: string;
-    token?: MatchedToken;
-}
-
-type ErrorState = {
-    valid: false;
-    errors: ExpressionError[];
-};
-
-type NodeBase<TType extends string, TDatatype extends ExpressionDatatype, TExtras extends object = {}> = {
-    type: TType;
-    key: string;
-    datatype: TDatatype;
-    range: Range;
-    tokens?: MatchedToken[];
-} & (({ valid: true; errors?: undefined } & TExtras) | ErrorState);
-
-// Use an interface here to avoid circular referencing
-interface HasChildren {
-    children: ExpressionNode[];
-}
-
-type NodeParent<TType extends string, TDatatype extends ExpressionDatatype, TExtras extends object = {}> = HasChildren &
-    NodeBase<TType, TDatatype, TExtras>;
-
-export type IdentifierNode<TDataType extends BaseCellDataType = BaseCellDataType, TRef = never> = NodeBase<
-    'Identifier',
-    TDataType,
-    {
-        reference: TRef;
-    }
->;
-
-export type ValueNode<TDatatype extends BaseCellDataType = BaseCellDataType, TValue = unknown> = NodeBase<
-    'Value',
-    TDatatype,
-    {
-        value: TValue;
-    }
->;
-
-export type OperandErrorNode = NodeBase<'OperandError', 'unknown'> & ErrorState;
-
-export type OperandNode<T extends BaseCellDataType = BaseCellDataType> =
-    | ValueNode<T>
-    | IdentifierNode<T>
-    | OperandErrorNode;
-
-export type LogicalNode = NodeParent<
-    'Logical',
-    'boolean',
-    {
-        operands: OperandNode<'boolean'>[];
-    }
->;
-
-export type ComparatorNode<
-    TParams extends Valid<DataTypedNode<BaseCellDataType>>[] = Valid<OperandNode<BaseCellDataType>>[],
-> = NodeParent<
-    'Comparator',
-    'boolean',
-    {
-        parameters: TParams;
-    }
->;
-
-export type GroupNode<TDatatype extends BaseCellDataType = BaseCellDataType> = NodeParent<'Group', TDatatype>;
-
-export type OperatorErrorNode = NodeParent<'OperatorError', 'unknown'> & ErrorState;
-
-export type OperatorNode = LogicalNode | ComparatorNode | GroupNode | OperatorErrorNode;
-
-export type ExpressionNode = OperandNode | OperatorNode;
-
-export type ExpressionType = ExpressionNode['type'];
-
-export type InferNode<TType extends ExpressionType> = Extract<ExpressionNode, { type: TType }>;
-
-export type InferDatatype<TType extends ExpressionType> = Extract<ExpressionNode, { type: TType }>['datatype'];
-
-export type NodeParameters<TType extends ExpressionType> =
-    InferNode<TType> extends { children: ExpressionNode[] }
-        ? MakeOptional<InferNode<TType>, 'valid' | 'errors' | 'children' | 'range'>
-        : MakeOptional<InferNode<TType>, 'valid' | 'errors' | 'range'>;
-
-export type DataTypedNode<TDataType extends ExpressionDatatype> = Extract<ExpressionNode, { datatype: TDataType }>;
-
-export type Valid<TNode extends ExpressionNode> = Extract<TNode, { valid: true }>;
-export type ErrorNode<TNode extends ExpressionNode> = TNode extends ParentNode ? OperandErrorNode : OperatorErrorNode;

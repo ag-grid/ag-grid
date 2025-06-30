@@ -12,7 +12,7 @@ import {
 } from 'ag-grid-community';
 
 import { SyntaxGrammarDefinition, SyntaxParselet } from '../../syntaxParser/syntaxGrammar';
-import { AdvancedFilterNode } from './advancedFilterGrammar';
+import { AdvancedFilterContext, AdvancedFilterNode } from './advancedFilterGrammar';
 
 const isNonNullish = <T>(a: T | null | undefined): a is T => {
     return a !== null && a !== undefined;
@@ -42,7 +42,7 @@ const eq = <T>(a: T | null | undefined, b: T | null | undefined): boolean => {
 
 const SCALAR_TYPES: BaseCellDataType[] = ['number', 'object', 'date', 'dateTime', 'dateString', 'dateTimeString'];
 const TEXT_TYPES: BaseCellDataType[] = ['text', 'object'];
-const ALL_TYPES: BaseCellDataType[] = [...SCALAR_TYPES, ...TEXT_TYPES];
+const ALL_TYPES: BaseCellDataType[] = [...SCALAR_TYPES, ...TEXT_TYPES, 'boolean'];
 
 export const createEqualsParser = () =>
     createBinaryComparatorParser({
@@ -51,7 +51,7 @@ export const createEqualsParser = () =>
         type: 'equals',
         validDataTypes: ALL_TYPES,
         token: {
-            key: 'EqualsToken',
+            key: 'EqualsComparator',
             label: 'equals',
             aliases: ['=', '=='],
         },
@@ -68,7 +68,7 @@ export const createNotEqualsParser = () =>
         type: 'notEqual',
         validDataTypes: ALL_TYPES,
         token: {
-            key: 'NotEqualsToken',
+            key: 'NotEqualsComparator',
             label: 'does not equal',
             aliases: ['!=', '!=='],
         },
@@ -85,7 +85,7 @@ export const createGreaterThanParser = () =>
         type: 'greaterThan',
         validDataTypes: SCALAR_TYPES,
         token: {
-            key: 'GreaterThanToken',
+            key: 'GreaterThanComparator',
             label: 'greater than',
             aliases: ['>', 'gt'],
         },
@@ -102,7 +102,7 @@ export const createGreaterThanOrEqualsParser = () =>
         type: 'greaterThanOrEqual',
         validDataTypes: SCALAR_TYPES,
         token: {
-            key: 'GreaterThanOrEqualsToken',
+            key: 'GreaterThanOrEqualsComparator',
             label: 'greater than or equal to',
             aliases: ['>=', 'gte'],
         },
@@ -119,7 +119,7 @@ export const createLessThanParser = () =>
         type: 'lessThan',
         validDataTypes: SCALAR_TYPES,
         token: {
-            key: 'LessThanToken',
+            key: 'LessThanComparator',
             label: 'less than',
             aliases: ['<', 'lt'],
         },
@@ -136,7 +136,7 @@ export const createLessThanOrEqualsParser = () =>
         type: 'lessThanOrEqual',
         validDataTypes: SCALAR_TYPES,
         token: {
-            key: 'LessThanOrEqualsToken',
+            key: 'LessThanOrEqualsComparator',
             label: 'less than or equal to',
             aliases: ['<=', 'lte'],
         },
@@ -149,7 +149,7 @@ export const createContainsParser = () =>
         type: 'contains',
         validDataTypes: TEXT_TYPES,
         token: {
-            key: 'ContainsToken',
+            key: 'ContainsParser',
             label: 'contains',
             aliases: ['includes'],
         },
@@ -162,7 +162,7 @@ export const createNotContainsParser = () =>
         type: 'notContains',
         validDataTypes: TEXT_TYPES,
         token: {
-            key: 'NotContainsToken',
+            key: 'NotContainsParser',
             label: 'does not contain',
             aliases: ['does not include'],
         },
@@ -175,7 +175,7 @@ export const createBeginsWithParser = () =>
         type: 'startsWith',
         validDataTypes: TEXT_TYPES,
         token: {
-            key: 'BeginsWithToken',
+            key: 'BeginsWithParser',
             label: 'begins with',
             aliases: ['starts with'],
         },
@@ -188,7 +188,7 @@ export const createEndsWithParser = () =>
         type: 'endsWith',
         validDataTypes: TEXT_TYPES,
         token: {
-            key: 'EndsWithToken',
+            key: 'EndsWithParser',
             label: 'ends with',
             aliases: [],
         },
@@ -212,11 +212,11 @@ const createBinaryComparatorParser = ({
     precedence,
     type,
     validDataTypes,
-}: BinaryParserParams): SyntaxGrammarDefinition<AdvancedFilterNode, AdvancedFilterNode> => {
+}: BinaryParserParams): SyntaxGrammarDefinition<AdvancedFilterNode, AdvancedFilterNode, AdvancedFilterContext> => {
     const parselet: SyntaxParselet<AdvancedFilterNode, AdvancedFilterNode> = {
         isLeading: false,
         expectsLeft: true,
-        shouldParseAt: (p) => p >= precedence,
+        shouldParseAt: (p) => p <= precedence,
         parse: (context, column) => {
             if (!column) {
                 return context.parseRecovery();
@@ -230,6 +230,7 @@ const createBinaryComparatorParser = ({
             }
 
             let op = context.expectToken('COMPARATOR', token.key);
+            console.log(op);
 
             if (!op) {
                 const { matches, ...token } = context.consumeToken();
@@ -312,14 +313,14 @@ const createBinaryComparatorParser = ({
                         filter: value.model.value,
                     } as NumberAdvancedFilterModel;
                     break;
-                case 'number':
+                case 'boolean':
                     model = {
                         filterType: 'boolean',
                         colId: column.model.colId,
                         type: value.model.value ? 'true' : 'false',
                     };
                     break;
-                case 'number':
+                case 'object':
                     model = {
                         filterType: 'object',
                         colId: column.model.colId,
@@ -327,7 +328,7 @@ const createBinaryComparatorParser = ({
                         filter: value.model.value,
                     } as ObjectAdvancedFilterModel;
                     break;
-                case 'number':
+                case 'text':
                     model = {
                         filterType: 'text',
                         colId: column.model.colId,
