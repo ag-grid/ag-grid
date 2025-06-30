@@ -48,13 +48,20 @@ export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, stri
     }
 
     protected override updateParams(
-        params: FilterHandlerParams<any, any, TextFilterModel | ICombinedSimpleModel<TextFilterModel>> &
+        params: FilterHandlerParams<
+            any,
+            any,
+            TextFilterModel | ICombinedSimpleModel<TextFilterModel>,
             ITextFilterParams
+        >
     ): void {
         super.updateParams(params);
 
-        this.matcher = params.textMatcher ?? defaultMatcher;
-        this.formatter = params.textFormatter ?? (params.caseSensitive ? defaultFormatter : defaultLowercaseFormatter);
+        const filterParams = params.filterParams;
+
+        this.matcher = filterParams.textMatcher ?? defaultMatcher;
+        this.formatter =
+            filterParams.textFormatter ?? (filterParams.caseSensitive ? defaultFormatter : defaultLowercaseFormatter);
     }
 
     protected override evaluateNullValue(filterType: ISimpleFilterModelType | null) {
