@@ -111,7 +111,11 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         return data;
     }
 
-    public getEdit(position: EditPosition): EditValue | undefined {
+    public getEdit(position: EditPosition): Readonly<EditValue> | undefined {
+        return this._getEdit(position);
+    }
+
+    private _getEdit(position: EditPosition): EditValue | undefined {
         if (this.suspendEdits) {
             return undefined;
         }
@@ -149,17 +153,26 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         });
     }
 
-    public setEdit(position: Required<EditPosition>, edit: EditValue): void {
+    public setEdit(position: Required<EditPosition>, edit: Partial<EditValue>): void {
         (this.edits.size === 0 || !this.edits.has(position.rowNode)) && this.edits.set(position.rowNode, new Map());
 
-        this.getEditRow(position.rowNode)!.set(position.column, edit);
+        const currentEdit: EditValue = Object.assign({}, this.getEdit(position));
+        Object.keys(edit).forEach((key) => {
+            const value = (edit as any)[key];
+            // don't copy unset keys
+            if (value !== undefined) {
+                (currentEdit as any)[key] = value;
+            }
+        });
+
+        this.getEditRow(position.rowNode)!.set(position.column, currentEdit);
     }
 
     public clearEditValue(position: EditPosition): void {
         const { rowNode, column } = position;
         if (rowNode) {
             if (column) {
-                const edit = this.getEdit(position);
+                const edit = this._getEdit(position);
                 if (edit) {
                     edit.newValue = edit.oldValue;
                     edit.state = 'changed';
