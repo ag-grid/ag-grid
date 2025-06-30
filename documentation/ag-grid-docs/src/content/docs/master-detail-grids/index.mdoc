@@ -94,9 +94,9 @@ The following example shows flashing cells on the detail grids by using the Grid
 
 ## Detail Grid Lifecycle
 
-When a Master Row is expanded a Detail Row is created. When the Master Row is collapsed, the Detail Row is destroyed. When the Master Row is expanded a second time, a Detail Row is created again from scratch. This can be undesirable behaviour if there was context in the Detail Row, e.g. if the user sorted or filtered data in the Detail Row, the sort or filter will be reset the second time the Retail Row is displayed.
+When a Master Row is expanded a Detail Row is created. When the Master Row is collapsed, the Detail Row is destroyed. When the Master Row is expanded a second time, a Detail Row is created again from scratch. This can be undesirable behaviour if there was context in the Detail Row, e.g. if the user sorted or filtered data in the Detail Row, the sort or filter will be reset the second time the Detail Row is displayed.
 
-To prevent losing the context of Details Rows, the grid provides two properties to cache the Details Rows to be reused the next time the row is shows. The properties are as follows:
+To prevent losing the context of Details Rows, the grid provides two properties to cache the Details Rows to be reused the next time the row is shown. The properties are as follows:
 
 {% apiDocumentation source="grid-options/properties.json" section="masterDetail" names=["keepDetailRows", "keepDetailRowsCount"] /%}
 
@@ -144,3 +144,7 @@ In the example below, selecting a master row will select all rows in the associa
 Note that selecting a master row will select _all_ rows in the detail grid, regardless of the value of `rowSelection.selectAll` in the `detailGridOptions`.
 
 Note also that calling the API methods `getSelectedNodes` and `getSelectedRows` on the master grid will not return any information about the selection states of any detail grids.
+
+## Next Up
+
+Continue to the next section to learn about [Master / Detail - Detail Height](./master-detail-height/).

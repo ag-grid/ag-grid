@@ -24,7 +24,7 @@ export interface Module {
     /**
      * Validation run when registering the module
      *
-     * @return Whether the module is valid or not. If not, a message explaining why it is not valid
+     * @returns Whether the module is valid or not. If not, a message explaining why it is not valid
      */
     validate?: () => ModuleValidationResult;
     /** singleton beans which are created once on grid init */

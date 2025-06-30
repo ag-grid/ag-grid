@@ -56,19 +56,19 @@ export interface FilterHandler<TData = any, TContext = any, TModel = any, TCusto
     destroy?(): void;
 }
 
-export interface CreateFilterHandlerFuncParams<TData = any, TContext = any, TValue = any>
+export interface CreateFilterHandlerFuncParams<TData = any, TValue = any, TContext = any>
     extends AgGridCommon<TData, TContext> {
     colDef: ColDef<TData, TValue>;
     column: Column<TValue>;
 }
 
-export interface CreateFilterHandlerFunc<TData = any, TContext = any, TValue = any, TModel = any, TCustomParams = any> {
+export interface CreateFilterHandlerFunc<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> {
     (
-        params: CreateFilterHandlerFuncParams<TData, TContext, TValue>
+        params: CreateFilterHandlerFuncParams<TData, TValue, TContext>
     ): FilterHandler<TData, TContext, TModel, TCustomParams>;
 }
 
-export interface ColumnFilter<TData = any, TContext = any, TValue = any, TModel = any, TCustomParams = any> {
+export interface ColumnFilter<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> {
     /**
      * Filter component to use for this column.
      * - Set to the name of a provided filter: `agNumberColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
@@ -89,7 +89,7 @@ export interface ColumnFilter<TData = any, TContext = any, TValue = any, TModel 
      *
      * Not required if providing `doesFilterPass` (but will take precedence), or if not using Client-Side Row Model.
      */
-    handler?: string | CreateFilterHandlerFunc<TData, TContext, TValue, TModel, TCustomParams>;
+    handler?: string | CreateFilterHandlerFunc<TData, TValue, TContext, TModel, TCustomParams>;
 }
 
 export function isColumnFilterComp(filter: any): filter is ColumnFilter {
@@ -241,8 +241,10 @@ export interface FilterWrapperParams {
      */
     buttons?: FilterAction[];
     /**
-     * If the Apply button is present, the filter popup will be closed immediately when the Apply
-     * or Reset button is clicked if this is set to `true`.
+     * When this is set to `true`, the following will happen after clicking a filter button:
+     * - Apply closes popup.
+     * - Reset closes popup if Apply button is present.
+     * - Cancel closes popup.
      *
      * @default false
      */
@@ -379,4 +381,11 @@ export interface ColumnFilterState {
      * The values will be passed into each of the filter component params as `state.state`.
      */
     [colId: string]: any;
+}
+
+export interface FilterActionParams {
+    /** Column ID to perform action on. If `undefined`, will run for all columns. */
+    colId?: string;
+    /** Action to perform */
+    action: FilterAction;
 }

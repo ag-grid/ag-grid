@@ -65,7 +65,7 @@ export class CellComp extends Component {
         public readonly cellCtrl: CellCtrl,
         printLayout: boolean,
         eRow: HTMLElement,
-        editingRow: boolean
+        editingCell: boolean
     ) {
         super();
         this.beans = beans;
@@ -127,7 +127,7 @@ export class CellComp extends Component {
             refreshEditStyles: (editing, isPopup) => this.refreshEditStyles(editing, isPopup),
         };
 
-        cellCtrl.setComp(compProxy, cellDiv, wrapperDiv, this.eCellWrapper, printLayout, editingRow, undefined);
+        cellCtrl.setComp(compProxy, cellDiv, wrapperDiv, this.eCellWrapper, printLayout, editingCell, undefined);
     }
 
     private getParentOfValue(): HTMLElement {
@@ -309,6 +309,7 @@ export class CellComp extends Component {
         this.cellEditorPopupWrapper = context.destroyBean(this.cellEditorPopupWrapper);
 
         _removeFromParent(this.cellEditorGui);
+        this.cellCtrl.disableEditorTooltipFeature();
         this.cellEditorGui = null;
 
         this.editorVersion++;
@@ -354,37 +355,37 @@ export class CellComp extends Component {
             );
             componentPromise?.then(callback);
         };
-
         // we only use task service when rendering for first time, which means it is not used when doing edits.
         // if we changed this (always use task service) would make sense, however it would break tests, possibly
         // test of users.
         const { animationFrameSvc } = this.beans;
 
-        let createTask: ((isDeferred?: boolean) => void) | undefined;
+        let createTask: ((details: UserCompDetails, isDeferred?: boolean) => void) | undefined;
         if (animationFrameSvc?.active && this.firstRender) {
-            createTask = (isDeferred: boolean) => {
+            createTask = (details, isDeferred = false) => {
                 animationFrameSvc.createTask(
-                    createCellRendererFunc(compDetails),
+                    createCellRendererFunc(details),
                     this.rowNode.rowIndex!,
                     'p2',
-                    compDetails.componentFromFramework,
+                    details.componentFromFramework,
                     isDeferred
                 );
             };
         } else {
-            createTask = createCellRendererFunc(compDetails);
+            createTask = (details: UserCompDetails) => createCellRendererFunc(details)();
         }
-        if (compDetails.params?.deferRender) {
+        if (compDetails.params?.deferRender && !this.cellCtrl.rowNode.group) {
             // show loading cell and then pass the task to the animationFrameSvc
             const { loadingComp, onReady } = this.cellCtrl.getDeferLoadingCellRenderer();
 
             if (loadingComp) {
-                // Immediately render the loading component and then schedule the task
-                createCellRendererFunc(loadingComp)();
-                onReady.then(() => createTask(true));
+                // Render the loading component and setup the task to create the actual cell renderer
+                // Still use the animationFrameSvc (if active) to ensure the loading component is rendered after group rows
+                createTask(loadingComp);
+                onReady.then(() => createTask!(compDetails, true));
             }
         } else {
-            createTask(false);
+            createTask(compDetails);
         }
     }
 

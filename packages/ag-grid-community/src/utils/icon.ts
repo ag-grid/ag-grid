@@ -53,6 +53,7 @@ export type IconName =
     | 'filterAdd'
     | 'filterCardExpand'
     | 'filterCardCollapse'
+    | 'filterCardEditing'
     | 'filterTab'
     | 'filtersToolPanel'
     | 'columns'
@@ -181,7 +182,8 @@ export type IconValue =
     | 'chevron-up'
     | 'chevron-down'
     | 'chevron-left'
-    | 'chevron-right';
+    | 'chevron-right'
+    | 'edit';
 
 /**
  * If icon provided, use this (either a string, or a function callback).

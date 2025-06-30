@@ -3,6 +3,7 @@ import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../c
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
+import { _populateModelValidationErrors } from '../../edit/utils/editors';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
@@ -23,6 +24,7 @@ import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { ICellStyleFeature } from '../../interfaces/iCellStyleFeature';
+import type { RefreshCellsParams } from '../../interfaces/iCellsParams';
 import type { IEditService } from '../../interfaces/iEditService';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
@@ -110,9 +112,7 @@ export class CellCtrl extends BeanStub {
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
-    private editStyleFeature: ICellStyleFeature | undefined = undefined;
-    private tooltipFeature: TooltipFeature | undefined = undefined;
-    private editorTooltipFeature: TooltipFeature | undefined = undefined;
+    public editStyleFeature: ICellStyleFeature | undefined = undefined;
     private mouseListener: CellMouseListenerFeature | undefined = undefined;
     private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
 
@@ -136,6 +136,10 @@ export class CellCtrl extends BeanStub {
     private hasBeenFocused = false;
 
     private editSvc?: IEditService;
+    private hasEdit: boolean = false;
+
+    public tooltipFeature: TooltipFeature | undefined = undefined;
+    public editorTooltipFeature: TooltipFeature | undefined = undefined;
 
     constructor(
         public readonly column: AgColumn,
@@ -147,6 +151,7 @@ export class CellCtrl extends BeanStub {
         this.beans = beans;
         this.gos = beans.gos;
         this.editSvc = beans.editSvc;
+        this.hasEdit = !!beans.editSvc;
 
         const { colId } = column;
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
@@ -165,9 +170,7 @@ export class CellCtrl extends BeanStub {
 
         this.keyboardListener = new CellKeyboardListenerFeature(this, beans, this.rowNode, this.rowCtrl);
 
-        if (this.column.isTooltipEnabled()) {
-            this.enableTooltipFeature();
-        }
+        this.enableTooltipFeature();
 
         const { rangeSvc } = beans;
         const cellSelectionEnabled = rangeSvc && _isCellSelectionEnabled(beans.gos);
@@ -214,12 +217,9 @@ export class CellCtrl extends BeanStub {
         if (this.editorTooltipFeature) {
             this.disableEditorTooltipFeature();
         }
-        this.editorTooltipFeature = this.beans.tooltipSvc?.setupEditorTooltip(this, editor);
-        this.refreshEditorTooltip();
-    }
+        this.editorTooltipFeature = this.beans.tooltipSvc?.setupCellEditorTooltip(this, editor);
 
-    public refreshEditorTooltip(): void {
-        this.editorTooltipFeature?.refreshTooltip();
+        _populateModelValidationErrors(this.beans);
     }
 
     public disableEditorTooltipFeature(): void {
@@ -269,7 +269,7 @@ export class CellCtrl extends BeanStub {
         this.rowResizeFeature?.refreshRowResizer();
 
         if (startEditing && this.isCellEditable()) {
-            this.editSvc?.startEditing(this, { startedEdit: true });
+            this.editSvc?.startEditing(this, { startedEdit: true, source: 'api' });
         } else {
             // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
             this.showValue(false, true);
@@ -355,8 +355,12 @@ export class CellCtrl extends BeanStub {
             );
         }
 
-        if (beans?.editSvc?.isBatchEditing() && beans?.editSvc?.isRowEditing({ rowNode }, { checkSiblings: true })) {
-            const result = beans.editSvc.prepDetailsDuringBatch(this, { compDetails, valueToDisplay });
+        if (
+            this.hasEdit &&
+            this.editSvc!.isBatchEditing() &&
+            this.editSvc!.isRowEditing(rowNode, { checkSiblings: true })
+        ) {
+            const result = this.editSvc!.prepDetailsDuringBatch(this, { compDetails, valueToDisplay });
             if (result) {
                 if (result.compDetails) {
                     compDetails = result.compDetails;
@@ -442,7 +446,7 @@ export class CellCtrl extends BeanStub {
         // note: this happens because of a click outside of the grid or if the popupEditor
         // is closed with `Escape` key. if another cell was clicked, then the editing will
         // have already stopped and returned on the conditional above.
-        editSvc?.stopEditing(this, { source: editSvc?.isBatchEditing() ? 'ui' : 'api' }) ?? false;
+        editSvc?.stopEditing(this, { source: editSvc?.isBatchEditing() ? 'ui' : 'api' });
     }
 
     /**
@@ -508,7 +512,7 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    public refreshOrDestroyCell(params?: { suppressFlash?: boolean; newData?: boolean; forceRefresh?: boolean }): void {
+    public refreshOrDestroyCell(params?: RefreshCellsParams): void {
         if (this.refreshShouldDestroy()) {
             this.rowCtrl?.recreateCell(this);
         } else {
@@ -516,21 +520,19 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    // + stop editing {forceRefresh: true, suppressFlash: true}
+    // + stop editing {force: true, suppressFlash: true}
     // + event cellChanged {}
     // + cellRenderer.params.refresh() {} -> method passes 'as is' to the cellRenderer, so params could be anything
     // + rowCtrl: event dataChanged {suppressFlash: !update, newData: !update}
     // + rowCtrl: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
-    public refreshCell(params?: { suppressFlash?: boolean; newData?: boolean; forceRefresh?: boolean }) {
+    public refreshCell({ force, suppressFlash, newData }: RefreshCellsParams & { newData?: boolean } = {}): void {
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
         if (this.suppressRefreshCell) {
             return;
         }
 
         const colDef = this.column.getColDef();
-        const newData = params != null && !!params.newData;
-        const suppressFlash = params != null && !!params.suppressFlash;
         // we always refresh if cell has no value - this can happen when user provides Cell Renderer and the
         // cell renderer doesn't rely on a value, instead it could be looking directly at the data, or maybe
         // printing the current time (which would be silly)???. Generally speaking
@@ -538,7 +540,7 @@ export class CellCtrl extends BeanStub {
         // best always refresh and take the performance hit rather than never refresh and users complaining in support
         // that cells are not updating.
         const noValueProvided = colDef.field == null && colDef.valueGetter == null && colDef.showRowGroup == null;
-        const forceRefresh = (params && params.forceRefresh) || noValueProvided || newData;
+        const forceRefresh = force || noValueProvided || newData;
 
         const isCellCompReady = !!this.comp;
         // Only worth comparing values if the cellComp is ready
@@ -555,7 +557,7 @@ export class CellCtrl extends BeanStub {
             // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
             // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
             // then we are not showing a movement in the stock price, rather we are showing different stock.
-            this.showValue(newData, false);
+            this.showValue(!!newData, false);
 
             // we don't want to flash the cells when processing a filter change, as otherwise the UI would
             // be to busy. see comment in FilterManager with regards processingFilterChange
@@ -881,7 +883,7 @@ export class CellCtrl extends BeanStub {
         if (this.editSvc?.isEditing(this)) {
             this.editSvc?.handleColDefChanged(this);
         } else {
-            this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
+            this.refreshOrDestroyCell({ force: true, suppressFlash: true });
         }
     }
 

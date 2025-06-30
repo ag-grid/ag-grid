@@ -10,11 +10,11 @@ export interface TabGuardParams {
     focusInnerElement?: (fromBottom: boolean) => boolean;
     shouldStopEventPropagation?: () => boolean;
     /**
-     * @return `true` to prevent the default onFocusIn behavior
+     * @returns `true` to prevent the default onFocusIn behavior
      */
     onFocusIn?: (e: FocusEvent) => void;
     /**
-     * @return `true` to prevent the default onFocusOut behavior
+     * @returns `true` to prevent the default onFocusOut behavior
      */
     onFocusOut?: (e: FocusEvent) => void;
     onTabKeyDown?: (e: KeyboardEvent) => void;

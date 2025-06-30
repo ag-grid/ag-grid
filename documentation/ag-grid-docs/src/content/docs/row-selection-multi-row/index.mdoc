@@ -55,13 +55,13 @@ For rows where both `isRowSelectable` and `rowSelection.checkboxes` return `fals
 
 It is possible to specify which rows can be selected via the `rowSelection.isRowSelectable` callback function.
 
-For instance if we only wanted to allow selection for rows where the 'year' property is less than 2004, we could implement the following:
+For instance if we only wanted to allow selection for rows where the 'year' property is less than 2007, we could implement the following:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     rowSelection: {
         mode: 'multiRow',
-        isRowSelectable: (rowNode) => rowNode.data ? rowNode.data.year < 2004 : false,
+        isRowSelectable: (rowNode) => rowNode.data ? rowNode.data.year < 2007 : false,
     }
 }
 ```
@@ -107,7 +107,11 @@ The checkbox column may be customised in a similar way to any other column, by s
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["selectionColumnDef"] /%}
 
 The `SelectionColumnDef` allows for a great deal of customisation, including custom renderers, sorting, tooltips and more.
-The example below demonstrates allowing sorting using the default sort order (selected first) via the header, changing the default width of the column, allowing resizing, and pinning it to the left.
+The example below demonstrates the following configuration:
+- allowing sorting using the default sort order (selected first) via the header
+- changing the default width of the column
+- allowing resizing
+- pinning it to the left
 
 ```{% frameworkTransform=true %}
 const gridOptions = {

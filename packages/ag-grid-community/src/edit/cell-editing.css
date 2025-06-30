@@ -17,6 +17,10 @@
         width: 100%;
         line-height: normal;
     }
+
+    &.ag-cell-editing-error {
+        border-color: var(--ag-invalid-color) !important;
+    }
 }
 
 :where(.ag-popup-editor) .ag-large-text {
@@ -37,4 +41,8 @@
 
 .ag-checkbox-edit {
     padding-left: var(--ag-cell-horizontal-padding);
+}
+
+:where(.ag-row.ag-row-editing-invalid .ag-cell-inline-editing) {
+    opacity: 0.8;
 }

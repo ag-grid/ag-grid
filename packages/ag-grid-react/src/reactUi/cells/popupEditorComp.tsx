@@ -6,7 +6,7 @@ import type { CellCtrl, PopupEditorWrapper } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { useEffectOnce } from '../useEffectOnce';
-import type { EditDetails } from './cellComp';
+import type { EditDetails } from './interfaces';
 
 const PopupEditorComp = (props: {
     editDetails: EditDetails;

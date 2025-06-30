@@ -15,6 +15,7 @@ import {
     preferParamsApi,
     removeCreateGridImport,
     replaceGridReadyRowData,
+    wrapTearDownExample,
 } from './parser-utils';
 import { getComponentName, getImport, toConst, toInput, toMemberWithType, toOutput } from './vue-utils';
 
@@ -264,8 +265,9 @@ const VueExample = defineComponent({
     }
 })
 
-createApp(VueExample)
-    .mount("#app")
+const app = createApp(VueExample);
+app.mount("#app");
+${wrapTearDownExample('(window as any).tearDownExample = () => app.unmount();')}
 `,
             bindings.tData
         );

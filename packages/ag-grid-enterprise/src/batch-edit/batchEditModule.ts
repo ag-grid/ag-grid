@@ -3,7 +3,7 @@ import type { _BatchEditApi, _ModuleWithApi } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
-import { isBatchEditing, setBatchEditing, setEditingCells } from './batchEditApi';
+import { cancelBatchEdit, commitBatchEdit, isBatchEditing, startBatchEdit } from './batchEditApi';
 
 /**
  * @internal
@@ -13,9 +13,10 @@ export const BatchEditModule: _ModuleWithApi<_BatchEditApi> = {
     version: VERSION,
     beans: [],
     apiFunctions: {
-        setEditingCells,
-        setBatchEditing,
         isBatchEditing,
+        startBatchEdit,
+        cancelBatchEdit,
+        commitBatchEdit,
     },
     dependsOn: [_EditCoreModule, EnterpriseCoreModule],
     css: [],

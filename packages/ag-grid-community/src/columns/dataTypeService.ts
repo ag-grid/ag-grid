@@ -479,16 +479,12 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     public postProcess(colDef: ColDef): void {
         const cellDataType = colDef.cellDataType;
-        if (!cellDataType) {
+        if (!cellDataType || typeof cellDataType !== 'string') {
             return;
         }
         const { dataTypeDefinitions, beans, formatValueFuncs } = this;
-        const dataTypeDefinition = dataTypeDefinitions[cellDataType as string];
-        beans.colFilter?.setColDefPropsForDataType(
-            colDef,
-            dataTypeDefinition,
-            formatValueFuncs[cellDataType as string]
-        );
+        const dataTypeDefinition = dataTypeDefinitions[cellDataType];
+        beans.colFilter?.setColDefPropsForDataType(colDef, dataTypeDefinition, formatValueFuncs[cellDataType]);
     }
 
     // noinspection JSUnusedGlobalSymbols
@@ -761,13 +757,6 @@ function createGroupSafeValueFormatter(
                 }
 
                 // by default don't use value formatter for agg func as type may have changed
-                return undefined as any;
-            }
-
-            // `groupRows` use the key as the value
-            if (gos.get('groupDisplayType') === 'groupRows' && !gos.get('treeData')) {
-                // we don't want to double format the value
-                // as this is already formatted by using the valueFormatter as the keyCreator
                 return undefined as any;
             }
         } else if (gos.get('groupHideOpenParents') && params.column.isRowGroupActive()) {

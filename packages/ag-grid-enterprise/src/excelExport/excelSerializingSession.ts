@@ -360,8 +360,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 index,
                 rowIndex,
                 'excel',
-                node,
-                this.config.includePendingEdits
+                node
             );
             const styleIds: string[] = this.config.styleLinker({
                 rowType: 'BODY',
@@ -435,7 +434,16 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         if (valueForCell === undefined) {
             return 'empty';
         }
-        return this.isNumerical(valueForCell) ? 'n' : 's';
+
+        let dataType: ExcelOOXMLDataType = 's';
+        try {
+            if (this.isNumerical(valueForCell)) {
+                dataType = 'n';
+            }
+        } catch (e) {
+            // no need to handle - error thrown to avoid type conversion
+        }
+        return dataType;
     }
 
     private getTypeFromStyle(style: ExcelStyle | null, value: string | null): ExcelOOXMLDataType | null {

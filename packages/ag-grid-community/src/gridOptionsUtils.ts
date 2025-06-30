@@ -342,10 +342,6 @@ export function _getGrandTotalRow(gos: GridOptionsService): GridOptions['grandTo
     return gos.get('grandTotalRow');
 }
 
-export function _getGrandTotalRowPinned(gos: GridOptionsService): GridOptions['grandTotalRowPinned'] {
-    return gos.get('grandTotalRowPinned');
-}
-
 export function _getGroupTotalRowCallback(
     gos: GridOptionsService
 ): (params: WithoutGridCommon<GetGroupIncludeFooterParams>) => 'top' | 'bottom' | undefined {
@@ -667,10 +663,6 @@ export function _areAdditionalColumnMenuItemsEnabled(gos: GridOptionsService): b
     return gos.get('columnMenu') === 'new';
 }
 
-export function _getEnableRowPinning(gos: GridOptionsService): GridOptions['enableRowPinning'] {
-    return gos.get('enableRowPinning');
-}
-
 export function _getCallbackForEvent(eventName: string): string {
     if (!eventName || eventName.length < 2) {
         return eventName;
@@ -760,6 +752,7 @@ export function _getGridOption<K extends keyof GridOptions>(
 ): GridOptionOrDefault<K> {
     return (
         providedGridOptions[gridOption] ??
+        (providedGridOptions as any)[`gridOptions`]?.[gridOption] ??
         _getGlobalGridOption(gridOption) ??
         (GRID_OPTION_DEFAULTS[gridOption as keyof typeof GRID_OPTION_DEFAULTS] as any)
     );

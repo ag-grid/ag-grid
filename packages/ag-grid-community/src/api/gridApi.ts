@@ -41,9 +41,8 @@ import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type {
     EditingCellPosition,
     GetCellEditorInstancesParams,
-    GetEditingCellsParams,
     ICellEditor,
-    SetEditingCellsParams,
+    ICellEditorValidationError,
 } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { FlashCellsParams, RefreshCellsParams } from '../interfaces/iCellsParams';
@@ -53,7 +52,7 @@ import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from 
 import type { IColumnToolPanel } from '../interfaces/iColumnToolPanel';
 import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
-import type { FilterDisplay, FilterModel, IFilter } from '../interfaces/iFilter';
+import type { FilterActionParams, FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { AgModuleName } from '../interfaces/iModule';
@@ -827,7 +826,7 @@ export interface _DragGridApi<TData> {
     getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams | undefined;
 
     /**
-     * Gets the currently highlighted drop target row, previously set by `setRowDropHighlight`.
+     * Gets the currently highlighted drop target row, set by `setRowDropPositionIndicator` or managed drag ad drop.
      * @agModule `RowDragModule`
      */
     getRowDropPositionIndicator(): RowDropPositionIndicator<TData>;
@@ -851,7 +850,7 @@ export interface _EditGridApi<TData> {
      * If the grid is editing, returns back details of the editing cell(s).
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
-    getEditingCells(params?: GetEditingCellsParams): EditingCellPosition[];
+    getEditingCells(): EditingCellPosition[];
 
     /**
      * If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes).
@@ -867,23 +866,39 @@ export interface _EditGridApi<TData> {
 
     /**
      * Returns `true` if the grid is editing a cell
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     isEditing(cellPosition: CellPosition): boolean;
+
+    /**
+     * Run validation for every instantiated editor.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
+    validateEdit(): ICellEditorValidationError[] | null;
 }
 
 export interface _BatchEditApi {
     /**
-     * Set currently pending cell updates when in batch editing mode. Specify `params.update=true` to update current state, otherwise pending state will be replaced.
+     * Start batch editing.
+     * @agModule `BatchEditModule`
      */
-    setEditingCells(cellPositions: EditingCellPosition[], params?: SetEditingCellsParams): void;
+    startBatchEdit(): void;
 
     /**
-     * Start/Stop batch editing. Note that any pending edits will be lost when batch editing is disabled.
+     * Commit Batch Editing.
+     * @agModule `BatchEditModule`
      */
-    setBatchEditing(enable: boolean): void;
+    commitBatchEdit(): void;
 
     /**
-     * Returns `true` if batch editing is enabled
+     * Cancel Batch Editing.
+     * @agModule `BatchEditModule`
+     */
+    cancelBatchEdit(): void;
+
+    /**
+     * Returns whether batch editing is currently active.
+     * @agModule `BatchEditModule`
      */
     isBatchEditing(): boolean;
 }
@@ -942,9 +957,7 @@ export interface _ColumnFilterGridApi {
      * `key` can be a column ID or a `Column` object.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
-    getColumnFilterInstance<TFilter extends IFilter | FilterDisplay>(
-        key: string | Column
-    ): Promise<TFilter | null | undefined>;
+    getColumnFilterInstance<TFilter = IFilter>(key: string | Column): Promise<TFilter | null | undefined>;
 
     /**
      * Returns the filter handler instance for a column.
@@ -980,9 +993,10 @@ export interface _ColumnFilterGridApi {
     /**
      * Gets the current filter model for the specified column.
      * Will return `null` if no active filter.
+     * @param useUnapplied If `enableFilterHandlers = true` and value is `true`, will return the unapplied filter model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
-    getColumnFilterModel<TModel>(column: string | Column): TModel | null;
+    getColumnFilterModel<TModel>(column: string | Column, useUnapplied?: boolean): TModel | null;
 
     /**
      * Sets the filter model for the specified column.
@@ -997,6 +1011,13 @@ export interface _ColumnFilterGridApi {
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     showColumnFilter(colKey: string | Column): void;
+
+    /**
+     * Perform the provided filter action for the column specified, or all columns.
+     * Requires `enableFilterHandlers = true`.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
+     */
+    doFilterAction(params: FilterActionParams): void;
 }
 
 export interface _QuickFilterGridApi {

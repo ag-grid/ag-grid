@@ -45,6 +45,11 @@ export abstract class BaseSelectionService extends BeanStub {
         });
 
         this.isRowSelectable = _getIsRowSelectable(gos);
+
+        this.addManagedEventListeners({
+            cellValueChanged: (e) => this.updateRowSelectable(e.node as RowNode),
+            rowNodeDataChanged: (e) => this.updateRowSelectable(e.node),
+        });
     }
 
     public override destroy(): void {
@@ -112,7 +117,13 @@ export abstract class BaseSelectionService extends BeanStub {
     }
 
     public updateRowSelectable(rowNode: RowNode, suppressSelectionUpdate?: boolean): boolean {
-        const selectable = this.isRowSelectable?.(rowNode) ?? true;
+        const selectable =
+            rowNode.rowPinned && rowNode.pinnedSibling
+                ? // If row node is pinned sibling, copy selectable status over from sibling row node
+                  rowNode.pinnedSibling.selectable
+                : // otherwise calculate selectable state directly
+                  this.isRowSelectable?.(rowNode) ?? true;
+
         this.setRowSelectable(rowNode, selectable, suppressSelectionUpdate);
         return selectable;
     }

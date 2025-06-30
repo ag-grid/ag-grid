@@ -68,18 +68,15 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         currentColumnIndex: number,
         accumulatedRowIndex: number,
         type: string,
-        node: RowNode,
-        includePendingEdits: boolean = false
+        node: RowNode
     ): { value: any; valueFormatted?: string | null } {
         if (
             this.processRowGroupCallback &&
             (this.gos.get('treeData') || node.group) &&
-            (!node.rowGroupColumn || column.isRowGroupDisplayed(node.rowGroupColumn.getColId()))
+            column.isRowGroupDisplayed(node.rowGroupColumn?.getColId() ?? '')
         ) {
             return { value: this.processRowGroupCallback(_addGridCommonParams(this.gos, { column, node })) ?? '' };
         }
-
-        const rawSource = includePendingEdits ? 'ui' : 'api';
 
         if (this.processCellCallback) {
             return {
@@ -89,15 +86,14 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                             accumulatedRowIndex,
                             column,
                             node,
-                            value: this.valueSvc.getValueForDisplay(column, node, undefined, undefined, rawSource)
-                                .value,
+                            value: this.valueSvc.getValueForDisplay(column, node, undefined, undefined).value,
                             type,
                             parseValue: (valueToParse: string) =>
                                 this.valueSvc.parseValue(
                                     column,
                                     node,
                                     valueToParse,
-                                    this.valueSvc.getValue(column, node, undefined, rawSource)
+                                    this.valueSvc.getValue(column, node, undefined)
                                 ),
                             formatValue: (valueToFormat: any) =>
                                 this.valueSvc.formatValue(column, node, valueToFormat) ?? valueToFormat,
@@ -134,7 +130,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             };
         }
 
-        const { value, valueFormatted } = valueService.getValueForDisplay(column, node, true, true, rawSource);
+        const { value, valueFormatted } = valueService.getValueForDisplay(column, node, true, true);
         return {
             value: value ?? '',
             valueFormatted,

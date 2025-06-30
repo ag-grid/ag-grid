@@ -3,36 +3,33 @@ import type { BeanCollection } from '../context/context';
 import type { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
 import { AgColumn } from '../entities/agColumn';
 import type { AgEventType } from '../eventTypes';
+import type { CellFocusedEvent } from '../events';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { CellRange } from './IRangeService';
-import type {
-    EditingCellPosition,
-    ICellEditorParams,
-    ICellEditorValidationError,
-    SetEditingCellsParams,
-} from './iCellEditor';
+import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError } from './iCellEditor';
 import type { ICellStyleFeature } from './iCellStyleFeature';
 import type { Column } from './iColumn';
-import type { EditMap } from './iEditModelService';
+import type { EditMap, GetEditsParams } from './iEditModelService';
 import type { IRowNode } from './iRowNode';
 import type { IRowStyleFeature } from './iRowStyleFeature';
 import type { UserCompDetails } from './iUserCompDetails';
 
-type EditEvents = KeyboardEvent | MouseEvent | null;
+export type EditInputEvents = KeyboardEvent | MouseEvent | null | undefined;
+
+export type EditNavOnValidationResult = 'block-stop' | 'revert-continue' | 'continue';
 
 export type EditSource = 'api' | 'ui' | 'paste' | 'rangeSvc' | 'fillHandle' | 'cellClear';
 
 export type StartEditParams = {
     startedEdit?: boolean | null;
-    event?: EditEvents;
+    event?: EditInputEvents;
     source?: EditSource;
-    silent?: boolean;
     ignoreEventKey?: boolean;
 };
 
 export type StopEditParams = {
-    event?: EditEvents;
+    event?: EditInputEvents;
     cancel?: boolean;
     source?: EditSource;
     suppressNavigateAfterEdit?: boolean;
@@ -49,6 +46,10 @@ export type EditRowPosition = {
 
 export interface EditPosition extends EditRowPosition {
     column?: Column;
+}
+export interface _SetEditingCellsParams {
+    /** Update existing cells, omit or set `false` to replace currently editing cells. */
+    update?: boolean;
 }
 
 export function _isEditPosition(pos: any): pos is EditPosition {
@@ -81,11 +82,11 @@ export interface IEditService extends NamedBean {
     setBatchEditing(enabled: boolean): void;
     isBatchEditing(): boolean;
     isEditing(position?: EditPosition | null, params?: IsEditingParams | null): boolean;
-    isRowEditing(position?: EditRowPosition | null, params?: IsEditingParams | null): boolean;
+    isRowEditing(rowNode?: IRowNode | null, params?: IsEditingParams | null): boolean;
     startEditing(position: Required<EditPosition>, params: StartEditParams): void;
     stopEditing(position?: EditPosition, params?: StopEditParams): boolean;
     stopAllEditing(cancel?: boolean, source?: EditSource): void;
-    setEditMap(updates: EditMap): void;
+    setEditMap(updates: EditMap, params?: _SetEditingCellsParams): void;
     isCellEditable(position: Required<EditPosition>, source?: EditSource): boolean;
     moveToNextCell(
         previous: CellCtrl | RowCtrl,
@@ -94,6 +95,7 @@ export interface IEditService extends NamedBean {
         source?: EditSource
     ): boolean | null;
     getCellDataValue(position: Required<EditPosition>): any;
+    getRowDataValue(rowNode: IRowNode, params?: GetEditsParams): any;
     addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void;
     createPopupEditorWrapper(params: ICellEditorParams): PopupEditorWrapper;
     setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined;
@@ -114,5 +116,9 @@ export interface IEditService extends NamedBean {
     validateEdit(): ICellEditorValidationError[] | null;
     createCellStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): ICellStyleFeature;
     createRowStyleFeature(rowCtrl: RowCtrl, beans: BeanCollection): IRowStyleFeature;
-    setEditingCells(cells: EditingCellPosition[], params?: SetEditingCellsParams): void;
+    setEditingCells(cells: EditingCellPosition[], params?: _SetEditingCellsParams): void;
+    hasValidationErrors(position?: EditPosition): boolean;
+    cellEditingInvalidCommitBlocks(): boolean;
+    checkNavWithValidation(position?: EditPosition, event?: Event | CellFocusedEvent): EditNavOnValidationResult;
+    revertSingleCellEdit(cellPosition: Required<EditPosition>, focus?: boolean): void;
 }

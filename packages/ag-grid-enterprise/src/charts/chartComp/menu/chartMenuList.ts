@@ -117,6 +117,7 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
             return chartMenuItems(
                 _addGridCommonParams(this.gos, {
                     defaultItems,
+                    chartId: chartController.getChartId(),
                 })
             );
         }

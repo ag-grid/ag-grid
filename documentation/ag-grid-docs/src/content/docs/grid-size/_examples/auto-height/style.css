@@ -1,3 +1,8 @@
+/* Manually set dark mode to get a dark scroll bar on the body */
+html[data-color-scheme='dark'] body {
+    color-scheme: dark;
+}
+
 .test-header {
     display: flex;
     justify-content: space-between;

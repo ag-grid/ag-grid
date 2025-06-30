@@ -188,6 +188,23 @@
         height: calc(var(--ag-grid-size) * 7);
     }
 
+    .ag-filter-card-title {
+        font-size: calc(var(--ag-font-size) - 1px);
+        font-weight: 600;
+    }
+
+    .ag-filter-panel .ag-standard-button {
+        padding: var(--ag-grid-size);
+    }
+
+    .ag-filter-add-button {
+        border-bottom: 2px solid var(--ag-material-primary-color);
+    }
+
+    .ag-filter-add-button .ag-icon {
+        color: var(--ag-material-active-color);
+    }
+
     .ag-filter-apply-panel-button,
     .ag-advanced-filter-apply-button,
     .ag-advanced-filter-builder-button {

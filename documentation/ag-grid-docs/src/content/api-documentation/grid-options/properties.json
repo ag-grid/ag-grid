@@ -364,6 +364,18 @@
                 "url": "./cell-editing-full-row/"
             }
         },
+        "getFullRowEditValidationErrors": {
+            "more": {
+                "name": "Full Row Editing Validation",
+                "url": "./cell-editing-validation/#full-row-editing-validation"
+            }
+        },
+        "invalidEditValueMode": {
+            "more": {
+                "name": "Cell Editing Validation Modes",
+                "url": "./cell-editing-validation/#validation-modes"
+            }
+        },
         "singleClickEdit": {
             "more": {
                 "name": "Single Click Editing",
@@ -560,6 +572,12 @@
         },
         "alwaysPassFilter": {},
         "enableFilterHandlers": {
+            "more": {
+                "name": "Custom Column Filters",
+                "url": "./component-filter/#implementing-a-filter-component"
+            }
+        },
+        "filterHandlers": {
             "more": {
                 "name": "Custom Column Filters",
                 "url": "./component-filter/#implementing-a-filter-component"
@@ -1237,7 +1255,15 @@
                 "name": "Custom Drag and Drop Image",
                 "url": "./row-dragging/#custom-params"
             }
-        }
+        },
+        "rowDragInsertDelay": {
+            "more": {
+                "name": "Row Drag Insert Delay",
+                "url": "./tree-data-row-dragging/#row-drag-insert-delay"
+            },
+            "description": "Delay in milliseconds. When dragging over, it expands collapsed groups or converts leafs to groups after this delay. Default: `500`."
+        },
+        "isRowValidDropPosition": {}
     },
     "fullWidth": {
         "meta": {
@@ -1472,12 +1498,6 @@
             "more": {
                 "name": "Row Pinning",
                 "url": "./row-pinning/#pinning-rows-on-first-render"
-            }
-        },
-        "grandTotalRowPinned": {
-            "more": {
-                "name": "Row Pinning",
-                "url": "./row-pinning/#pinning-the-grand-total-row"
             }
         },
         "pinnedTopRowData": {

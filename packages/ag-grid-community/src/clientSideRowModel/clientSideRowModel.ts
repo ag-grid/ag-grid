@@ -456,7 +456,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return 1;
         }
 
-        const filteredChildren = rootNode.childrenAfterAggFilter;
+        // we use the childrenAfterSort as postSortRows is occasionally used to reduce row count.
+        const filteredChildren = rootNode.childrenAfterSort;
         const totalFooterInc = rootNode.sibling ? 1 : 0;
         return (filteredChildren ? filteredChildren.length : 0) + totalFooterInc;
     }

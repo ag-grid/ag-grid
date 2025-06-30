@@ -80,6 +80,10 @@
     width: 100%;
     height: var(--ag-row-height);
     border-bottom: var(--ag-row-border);
+
+    &.ag-row-editing-invalid {
+        background-color: var(--ag-full-row-edit-invalid-background-color);
+    }
 }
 
 /* Hide the border of the last last row when there is no gap between the row and
@@ -234,7 +238,7 @@
     display: block;
     width: auto;
     height: auto;
-    inset: 0 1px;
+    inset: 0;
     background-color: var(--ag-selected-row-background-color);
     border: 1px solid var(--ag-range-selection-border-color);
 }

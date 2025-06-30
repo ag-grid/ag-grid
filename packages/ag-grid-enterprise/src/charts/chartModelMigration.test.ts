@@ -43,6 +43,8 @@ function nextVersions(): string[] {
 
 const NEXT_VERSIONS = nextVersions();
 
+const CURRENT_VERSION = VERSION.includes('-beta') ? VERSION.replace(/-beta.*/, '') : VERSION;
+
 describe('chartModelMigration', () => {
     const SNAPSHOT_CASES = {
         '22.1.0': {},
@@ -77,11 +79,13 @@ describe('chartModelMigration', () => {
             expect(upgradedChartModel).toMatchSnapshot();
         });
 
-        it.each(SNAPSHOT_NAMES)(`should upgrade %s to ${VERSION}`, (name) => {
+        it.each(SNAPSHOT_NAMES)(`should upgrade %s to ${CURRENT_VERSION}`, (name) => {
             const chartModel = loadChartModel(name);
 
             const upgradedChartModel = upgradeChartModel(chartModel);
-            const isCurrentOrNextVersion = [VERSION, ...NEXT_VERSIONS].includes(upgradedChartModel.version ?? '');
+            const isCurrentOrNextVersion = [CURRENT_VERSION, ...NEXT_VERSIONS].includes(
+                upgradedChartModel.version ?? ''
+            );
             expect(isCurrentOrNextVersion).toEqual(true);
         });
     });

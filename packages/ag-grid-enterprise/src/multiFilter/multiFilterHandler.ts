@@ -5,6 +5,7 @@ import type {
     FilterHandlerBaseParams,
     FilterHandlerParams,
     IMultiFilterDef,
+    MultiFilterHandler as IMultiFilterHandler,
     IMultiFilterModel,
     IMultiFilterParams,
 } from 'ag-grid-community';
@@ -25,8 +26,11 @@ interface HandlerWrapper {
 
 export class MultiFilterHandler
     extends BeanStub
-    implements FilterHandler<any, any, IMultiFilterModel, IMultiFilterParams>
+    implements FilterHandler<any, any, IMultiFilterModel, IMultiFilterParams>, IMultiFilterHandler
 {
+    /** Used to get the filter type for filter models. */
+    public readonly filterType = 'multi' as const;
+
     private params: FilterHandlerParams<any, any, IMultiFilterModel, IMultiFilterParams>;
     private handlerWrappers: (HandlerWrapper | undefined)[] = [];
     /** ui active. could still have null model */
@@ -57,13 +61,27 @@ export class MultiFilterHandler
 
     public refresh(params: FilterHandlerParams<any, any, IMultiFilterModel> & IMultiFilterParams): void {
         this.params = params;
-        const { model, source } = params;
+        const { model, source, filterParams } = params;
+        const filters = filterParams?.filters;
 
         this.handlerWrappers.forEach((wrapper, index) => {
-            const updatedParams = this.updateHandlerParams(params, index);
             if (wrapper) {
+                const handlerParams = this.updateHandlerParams(params, index);
+                const originalFilterParams = handlerParams.filterParams;
+                const providedFilterParams = filters?.[index].filterParams;
+                const filterParamsForFilter = providedFilterParams
+                    ? { ...originalFilterParams, ...providedFilterParams }
+                    : originalFilterParams;
+                const updatedParams = {
+                    ...this.updateHandlerParams(params, index),
+                    filterParams: filterParamsForFilter,
+                };
                 wrapper.handlerParams = updatedParams;
-                wrapper.handler.refresh?.({ ...updatedParams, model: getFilterModelForIndex(model, index), source });
+                wrapper.handler.refresh?.({
+                    ...updatedParams,
+                    model: getFilterModelForIndex(model, index),
+                    source,
+                });
             }
         });
         if (params.source !== 'floating' && params.source !== 'ui') {
@@ -132,17 +150,22 @@ export class MultiFilterHandler
         return activeFilterIndices.length > 0 ? activeFilterIndices[activeFilterIndices.length - 1] : null;
     }
 
-    public getModelAsString(model: IMultiFilterModel | null): string {
+    public getModelAsString(model: IMultiFilterModel | null, source?: 'floating' | 'filterToolPanel'): string {
+        const isForToolPanel = source === 'filterToolPanel';
+        const defaultOption = () =>
+            isForToolPanel ? this.getLocaleTextFunc()('filterSummaryInactive', 'is (All)') : '';
         if (!model?.filterModels?.length) {
-            return '';
+            return defaultOption();
         }
         const lastActiveIndex = this.getLastActiveFilterIndex() ?? 0;
         const activeWrapper = this.handlerWrappers[lastActiveIndex];
-        return activeWrapper?.handler.getModelAsString?.(model.filterModels[lastActiveIndex]) ?? '';
+        return (
+            activeWrapper?.handler.getModelAsString?.(model.filterModels[lastActiveIndex], source) ?? defaultOption()
+        );
     }
 
-    public getHandler(index: number): FilterHandler | undefined {
-        return this.handlerWrappers[index]?.handler;
+    public getHandler<TFilterHandler>(index: number): TFilterHandler | undefined {
+        return this.handlerWrappers[index]?.handler as TFilterHandler;
     }
 
     public onAnyFilterChanged(): void {

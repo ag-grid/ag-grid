@@ -54,7 +54,7 @@ import { warnReactiveCustomComponents } from '../shared/customComp/util';
 import type { AgGridReactProps, InternalAgGridReactProps } from '../shared/interfaces';
 import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
-import { BeansContext, EnableDeferRenderContext } from './beansContext';
+import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
@@ -74,7 +74,6 @@ const reactPropsNotGridOptions: ReactCompProps = {
     className: undefined,
     passGridApi: undefined,
     componentWrappingElement: undefined,
-    suppressDeferCellRender: undefined,
     ...deprecatedProps,
 };
 const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
@@ -239,14 +238,17 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         });
     }, [props]);
 
-    const enableCellDeferRender = !props.suppressDeferCellRender && !!React.useSyncExternalStore;
+    const renderMode =
+        !(React as any).useSyncExternalStore || _getGridOption(props, 'renderingMode') === 'legacy'
+            ? 'legacy'
+            : 'default';
 
     return (
         <div style={style} className={props.className} ref={setRef}>
-            <EnableDeferRenderContext.Provider value={enableCellDeferRender}>
+            <RenderModeContext.Provider value={renderMode}>
                 {context && !context.isDestroyed() ? <GridComp context={context} /> : null}
                 {portalManager.current?.getPortals() ?? null}
-            </EnableDeferRenderContext.Provider>
+            </RenderModeContext.Provider>
         </div>
     );
 };

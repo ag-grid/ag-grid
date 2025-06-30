@@ -1,6 +1,7 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { ValueGetterFunc } from '../entities/colDef';
 import type { NewFiltersToolPanelState } from './gridState';
+import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 import type { IEventEmitter } from './iEventEmitter';
 import type { FilterAction, FilterWrapperParams, IFilterDef } from './iFilter';
 import type { IToolPanel, IToolPanelNewFiltersCompParams } from './iToolPanel';
@@ -13,6 +14,7 @@ export interface SelectableFilterDef {
     name?: string;
     /**
      * Filter to use for this column.
+     * - Set to `true` to use the default filter.
      * - Set to the name of a provided filter: `agNumberColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
      * - Set to a `ColumnFilter`
      */
@@ -34,6 +36,11 @@ export interface SelectableFilterParams {
      */
     filters?: SelectableFilterDef[];
     /**
+     * If providing `filters`, the index of the filter that should be active by default.
+     * @default 0
+     */
+    defaultFilterIndex?: number;
+    /**
      * Params which will be passed to all filters
      */
     defaultFilterParams?: FilterWrapperParams;
@@ -42,6 +49,7 @@ export interface SelectableFilterParams {
 interface FilterPanelBaseState {
     column: AgColumn;
     name: string;
+    isEditing: boolean;
 }
 
 export interface FilterPanelSummaryState extends FilterPanelBaseState {
@@ -54,6 +62,8 @@ export interface FilterPanelDetailState extends FilterPanelBaseState {
     activeFilterDef?: SelectableFilterDef;
     filterDefs?: SelectableFilterDef[];
     detail: HTMLElement;
+    afterGuiAttached: (params?: IAfterGuiAttachedParams) => void;
+    afterGuiDetached: () => void;
 }
 
 export type FilterPanelFilterState = FilterPanelSummaryState | FilterPanelDetailState;
@@ -63,6 +73,7 @@ export interface INewFiltersToolPanel extends IToolPanel {
 }
 
 export interface IFilterPanelService extends IEventEmitter<'filterPanelStateChanged' | 'filterPanelStatesChanged'> {
+    isActive: boolean;
     getAvailable(): { id: string; name: string }[];
     getIds(): string[];
     add(id: string): void;

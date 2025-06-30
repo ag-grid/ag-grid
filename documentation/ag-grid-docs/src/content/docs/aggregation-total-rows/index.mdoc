@@ -5,15 +5,16 @@ enterprise: true
 This section shows how to include group and grand total rows in the grid.
 
 ## Enabling a Grand Total Row
-A grand total row can be included in the grid by setting the `grandTotalRow` grid option to either `"top"` or `"bottom"`.
-The provided value determines whether the grand total row will be included as the first or last row in the grid.
+A grand total row can be included in the grid by setting the `grandTotalRow` grid option to one of: `"top"`, `"bottom"`, `"pinnedTop"` or `"pinnedBottom"`.
+
+Setting a value of `"top"` or `"bottom"` renders the grand total row as the first or last row in the grid, respectively. 
+Setting a value of `"pinnedTop"` or `"pinnedBottom"` renders the grand total row pinned to the top or bottom of the grid, respectively.
 
 {% gridExampleRunner title="Enabling Grand Total Row" name="enabling-grand-total" /%}
 
 The following configuration shows how grand total rows can be included at the bottom of the grid:
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    // adds subtotals to the bottom of each row group
     grandTotalRow: 'bottom',
 }
 ```

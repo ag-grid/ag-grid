@@ -39,8 +39,8 @@
     --ag-find-match-background-color: #ffff00;
     --ag-find-active-match-color: var(--ag-foreground-color);
     --ag-find-active-match-background-color: #ffa500;
-    --ag-filter-panel-apply-button-color: var(--ag-background-color);
-    --ag-filter-panel-apply-button-background-color: var(--ag-material-active-color);
+    --ag-filter-panel-apply-button-color: var(--ag-material-primary-color);
+    --ag-filter-panel-apply-button-background-color: transparent;
 
     // derived colours (no color blending)
     --ag-range-selection-border-color: var(--ag-material-primary-color);
@@ -80,6 +80,8 @@
     --ag-input-focus-border-color: var(--ag-material-primary-color);
 
     --ag-input-focus-box-shadow: 0 0 0 5px rgba(32, 33, 36, 0.122);
+    --ag-input-error-focus-box-shadow: 0 0 0 5px
+        color-mix(in srgb, var(--ag-background-color), var(--ag-invalid-color) 0.5%);
 
     --ag-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
         0 1px 5px 0 rgba(0, 0, 0, 0.12);
@@ -94,7 +96,6 @@
     --ag-range-selection-border-color: var(--ag-material-accent-color);
     --ag-find-match-color: var(--ag-background-color);
     --ag-find-active-match-color: var(--ag-background-color);
-    --ag-filter-panel-apply-button-color: var(--ag-foreground-color);
 
     --ag-background-color: #121212ff;
     --ag-foreground-color: #ffffffff;
@@ -137,7 +138,7 @@
     --ag-menu-background-color: #2c2c2cff;
     --ag-row-loading-skeleton-effect-color: #{color.change(#cacbcc, $alpha: 0.4)};
 
-    --ag-cell-batch-edit-text-color: rgba(243, 208, 179, 100%);
+    --ag-cell-batch-edit-text-color: #f3d0b3;
 
     color-scheme: dark;
 }

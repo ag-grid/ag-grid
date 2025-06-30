@@ -130,7 +130,14 @@ export {
     DragAndDropIcon,
 } from './dragAndDrop/dragAndDropService';
 export { DragItem } from './interfaces/iDragItem';
-export { RowDropZoneParams, RowDropZoneEvents } from './dragAndDrop/rowDragFeature';
+export type {
+    IsRowValidDropPositionCallback,
+    IsRowValidDropPositionResult,
+    IsRowValidDropPositionParams,
+    RowDropTargetPosition,
+    RowDropZoneParams,
+    RowDropZoneEvents,
+} from './dragAndDrop/rowDragFeature';
 export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { DragService } from './dragAndDrop/dragService';
 export { DragListenerParams } from './dragAndDrop/dragService';
@@ -204,6 +211,7 @@ export {
     FilterDisplayComp,
     ColumnFilter,
     ColumnFilterState,
+    FilterActionParams,
 } from './interfaces/iFilter';
 export {
     ISetFilter,
@@ -235,6 +243,7 @@ export {
     IMultiFilterParams,
     MultiFilterParams,
     IMultiFilterDef,
+    MultiFilterHandler,
 } from './interfaces/iMultiFilter';
 export { IMultiFilterService } from './interfaces/iMultiFilterService';
 export { FilterComp } from './filter/filterComp';
@@ -396,10 +405,9 @@ export {
     ICellEditor,
     ICellEditorComp,
     ICellEditorParams,
+    IErrorValidationParams,
     BaseCellEditor,
     GetCellEditorInstancesParams,
-    GetEditingCellsParams,
-    SetEditingCellsParams,
     EditingCellPosition,
 } from './interfaces/iCellEditor';
 export { AgAbstractCellEditor } from './widgets/agAbstractCellEditor';
@@ -715,8 +723,6 @@ export {
     _isDomLayout,
     _isAnimateRows,
     _getGrandTotalRow,
-    _getGrandTotalRowPinned,
-    _getEnableRowPinning,
     _getGroupTotalRowCallback,
     _isGroupMultiAutoColumn,
     _isColumnsSortingCoupledToGroup,
@@ -754,6 +760,7 @@ export {
     _isGroupRowsSticky,
     _getGroupingApproach,
     _getGridOption,
+    _isSetFilterByDefault,
 } from './gridOptionsUtils';
 export type { GroupingApproach } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
@@ -859,6 +866,7 @@ export {
     CellEditorSelectorResult,
     CellRendererSelectorFunc,
     ILoadingCellRendererSelectorFunc,
+    CellRendererDeferParams,
     CellRendererSelectorResult,
     GetQuickFilterTextParams,
     ColumnFunctionCallbackParams,
@@ -921,6 +929,7 @@ export {
     RowSelectionMode,
     IsApplyServerSideTransaction,
     GetContextMenuItems,
+    GetFullRowEditValidationErrors,
     GetDataPath,
     IsRowMaster,
     IsRowSelectable,
@@ -971,6 +980,7 @@ export {
     NavigateToNextCellParams,
     TabToNextCellParams,
     GetContextMenuItemsParams,
+    FullRowEditValidationParams,
     GetMainMenuItemsParams,
     GetChartMenuItemsParams,
     PostProcessPopupParams,
@@ -1073,6 +1083,7 @@ export {
     _setAriaSetSize,
     _setAriaHidden,
     _getAriaPosInSet,
+    _setAriaInvalid,
 } from './utils/aria';
 export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './utils/array';
 export { _isIOSUserAgent } from './utils/browser';
@@ -1104,6 +1115,7 @@ export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
 export { _warnOnce, _debounce, _doOnce, _waitUntil, _batchCall } from './utils/function';
 export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
+export { _interpretAsRightClick } from './utils/mouse';
 export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export { _exists, _missing, _jsonEquals, _toStringOrNull, _makeNull, _defaultComparator } from './utils/generic';
@@ -1185,6 +1197,7 @@ export type {
     RowDropPositionIndicator,
 } from './interfaces/IRowDropHighlightService';
 export type { EditStrategyType } from './interfaces/editStrategyType';
+export type { EditValidationCommitType } from './interfaces/editValidationCommitType';
 export {
     RowSelectionModule,
     SharedRowSelectionModule as _SharedRowSelectionModule,

@@ -60,11 +60,12 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'serverSidePivotResultFieldSeparator',
     'columnMenu',
     'tooltipShowMode',
+    'invalidEditValueMode',
     'grandTotalRow',
-    'grandTotalRowPinned',
     'themeCssLayer',
     'findSearchValue',
     'styleNonce',
+    'renderingMode',
 ];
 
 // only used internally
@@ -157,6 +158,7 @@ export const _NUMBER_GRID_OPTIONS: KeysWithType<number>[] = [
     'cellFadeDuration',
     'tabIndex',
     'pivotMaxGeneratedColumns',
+    'rowDragInsertDelay',
 ];
 
 // If property does not fit above, i.e union that should not be coerced.
@@ -343,6 +345,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'getRowHeight',
     'getRowClass',
     'getRowStyle',
+    'getFullRowEditValidationErrors',
     'getContextMenuItems',
     'getMainMenuItems',
     'processRowPostCreate',
@@ -384,6 +387,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'alwaysPassFilter',
     'isRowPinnable',
     'isRowPinned',
+    'isRowValidDropPosition',
 ];
 
 // angular generation of component

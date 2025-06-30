@@ -659,9 +659,16 @@ body {
     margin-top: $spacing-size-8;
     margin-bottom: $spacing-size-8;
 
-    @media screen and (max-width: $breakpoint-landing-page-small) {
+    @media screen and (max-width: 700px) {
         flex-direction: column;
         gap: $spacing-size-3;
+    }
+
+    // Hide 3rd item in 2 col layout
+    @media screen and (min-width: 700px) and (max-width: 1020px) {
+        > *:last-child {
+            display: none;
+        }
     }
 }
 

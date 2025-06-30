@@ -19,6 +19,7 @@ import {
     _isClientSideRowModel,
     _isSetFilterByDefault,
 } from '../gridOptionsUtils';
+import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { isColumnFilterComp } from '../interfaces/iFilter';
@@ -54,6 +55,7 @@ import {
     getAndRefreshFilterUi,
     getFilterUiFromWrapper,
 } from './columnFilterUtils';
+import type { FilterComp } from './filterComp';
 import { _getDefaultSimpleFilter, _getFilterParamsForDataType } from './filterDataTypeUtils';
 import type {
     FloatingFilterDisplayParams,
@@ -141,6 +143,7 @@ export class ColumnFilterService
         ...FILTER_HANDLER_MAP,
     };
     public isGlobalButtons: boolean = false;
+    public activeFilterComps: Set<FilterComp> = new Set();
 
     public postConstruct(): void {
         this.addManagedEventListeners({
@@ -687,7 +690,7 @@ export class ColumnFilterService
         return this.getDefaultFilterFromDataType(() => this.beans.dataTypeSvc?.getBaseDataType(column), isFloating);
     }
 
-    private getDefaultFilterFromDataType(
+    public getDefaultFilterFromDataType(
         getCellDataType: () => BaseCellDataType | undefined,
         isFloating: boolean = false
     ): string {
@@ -1254,6 +1257,17 @@ export class ColumnFilterService
             delete this.model[colId];
             this.state.delete(colId);
         }
+        const removeFilter = () => {
+            this.setColFilterActive(column, false, 'filterDestroyed');
+
+            this.allColumnFilters.delete(colId);
+
+            this.eventSvc.dispatchEvent({
+                type: 'filterDestroyed',
+                source,
+                column,
+            });
+        };
         if (filterUi) {
             if (filterUi.created) {
                 return filterUi.promise.then((filter) => {
@@ -1261,18 +1275,12 @@ export class ColumnFilterService
 
                     this.destroyBean(filter);
 
-                    this.setColFilterActive(column, false, 'filterDestroyed');
-
-                    this.allColumnFilters.delete(colId);
-
-                    this.eventSvc.dispatchEvent({
-                        type: 'filterDestroyed',
-                        source,
-                        column,
-                    });
+                    removeFilter();
 
                     return isActive;
                 });
+            } else {
+                removeFilter();
             }
         }
         return AgPromise.resolve(isActive);
@@ -1502,7 +1510,16 @@ export class ColumnFilterService
         this.columnModelUpdates = [];
     }
 
-    public getModelForColumn(column: AgColumn): any {
+    public getModelForColumn(column: AgColumn, useUnapplied?: boolean): any {
+        if (useUnapplied) {
+            const { state, model } = this;
+            const colId = column.getColId();
+            const colState = state.get(colId);
+            if (colState) {
+                return colState.model ?? null;
+            }
+            return _getFilterModel(model, colId);
+        }
         const filterWrapper = this.cachedFilter(column);
         return filterWrapper ? this.getModelFromFilterWrapper(filterWrapper) : null;
     }
@@ -1519,6 +1536,14 @@ export class ColumnFilterService
         return new Promise((resolve) => {
             this.setModelForColumnLegacy(key, model).then((result) => resolve(result!));
         });
+    }
+
+    public getStateForColumn(colId: string): FilterDisplayState {
+        return (
+            this.state.get(colId) ?? {
+                model: _getFilterModel(this.model, colId),
+            }
+        );
     }
 
     public setModelForColumnLegacy(key: string | AgColumn, model: any): AgPromise<void> {
@@ -1649,19 +1674,23 @@ export class ColumnFilterService
     }
 
     public filterUiChanged(column: Column, additionalEventAttributes?: any): void {
-        this.eventSvc.dispatchEvent({
-            type: 'filterUiChanged',
-            column,
-            ...additionalEventAttributes,
-        });
+        if (this.gos.get('enableFilterHandlers')) {
+            this.eventSvc.dispatchEvent({
+                type: 'filterUiChanged',
+                column,
+                ...additionalEventAttributes,
+            });
+        }
     }
 
     private floatingFilterUiChanged(column: Column, additionalEventAttributes?: any): void {
-        this.eventSvc.dispatchEvent({
-            type: 'floatingFilterUiChanged',
-            column,
-            ...additionalEventAttributes,
-        });
+        if (this.gos.get('enableFilterHandlers')) {
+            this.eventSvc.dispatchEvent({
+                type: 'floatingFilterUiChanged',
+                column,
+                ...additionalEventAttributes,
+            });
+        }
     }
 
     public updateModel(column: AgColumn, action: FilterAction, additionalEventAttributes?: any): void {
@@ -1730,10 +1759,18 @@ export class ColumnFilterService
         });
     }
 
+    // for tool panel only
     public canApplyAll(): boolean {
-        let hasChanges = false;
+        const { state, model, activeFilterComps } = this;
 
-        const { state, model } = this;
+        for (const comp of activeFilterComps) {
+            if (comp.source === 'COLUMN_MENU') {
+                // if open in column menu, can't apply as unapplied state will be cleared when the filter closes
+                return false;
+            }
+        }
+
+        let hasChanges = false;
 
         for (const colId of state.keys()) {
             const colState = state.get(colId)!;
@@ -1749,6 +1786,11 @@ export class ColumnFilterService
         return hasChanges;
     }
 
+    public hasUnappliedModel(colId: string): boolean {
+        const { model, state } = this;
+        return (state.get(colId)?.model ?? null) !== _getFilterModel(model, colId);
+    }
+
     public setGlobalButtons(isGlobal: boolean): void {
         this.isGlobalButtons = isGlobal;
         this.dispatchLocalEvent<FilterGlobalButtonsEvent>({
@@ -1757,11 +1799,28 @@ export class ColumnFilterService
         });
     }
 
+    public shouldKeepStateOnDetach(column: Column, lastContainerType?: ContainerType): boolean {
+        if (lastContainerType === 'newFiltersToolPanel') {
+            // don't reset for new filters tool panel
+            return true;
+        }
+
+        const filterPanelSvc = this.beans.filterPanelSvc;
+
+        if (filterPanelSvc?.isActive) {
+            // if in tool panel, then keep
+            return !!filterPanelSvc.getState(column.getColId());
+        }
+
+        return false;
+    }
+
     public override destroy() {
         super.destroy();
         this.allColumnFilters.forEach((filterWrapper) => this.disposeFilterWrapper(filterWrapper, 'gridDestroyed'));
         // don't need to destroy the listeners as they are managed listeners
         this.allColumnListeners.clear();
         this.state.clear();
+        this.activeFilterComps.clear();
     }
 }

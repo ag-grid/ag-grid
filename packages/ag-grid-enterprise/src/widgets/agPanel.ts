@@ -1,4 +1,4 @@
-import type { ElementParams, PositionableOptions, ResizableStructure } from 'ag-grid-community';
+import type { AgColumn, ElementParams, IRowNode, PositionableOptions, ResizableStructure } from 'ag-grid-community';
 import {
     Component,
     PositionableFeature,
@@ -13,6 +13,14 @@ import {
 
 import { agPanelCSS } from './agPanel.css-GENERATED';
 
+interface PanelPostProcessPopupParams {
+    type: string;
+    eventSource?: HTMLElement | null;
+    mouseEvent?: MouseEvent | Touch | null;
+    column?: AgColumn | null;
+    rowNode?: IRowNode | null;
+}
+
 export interface PanelOptions extends PositionableOptions {
     component?: Component<any>;
     hideTitleBar?: boolean | null;
@@ -20,6 +28,7 @@ export interface PanelOptions extends PositionableOptions {
     resizable?: boolean | ResizableStructure;
     title?: string | null;
     cssIdentifier?: string | null;
+    postProcessPopupParams?: PanelPostProcessPopupParams;
 }
 function getTemplate(config: PanelOptions): ElementParams {
     const cssIdentifier = config.cssIdentifier || 'default';
@@ -85,21 +94,24 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             popup,
             x,
             y,
+            postProcessPopupParams,
         } = this.config;
+        const beans = this.beans;
 
-        this.positionableFeature = new PositionableFeature(this.getGui(), {
-            minWidth,
-            width,
-            minHeight,
-            height,
-            centered,
-            x,
-            y,
-            popup,
-            calculateTopBuffer: () => this.positionableFeature.getHeight()! - this.getBodyHeight(),
-        });
-
-        this.createManagedBean(this.positionableFeature);
+        const positionableFeature = this.createManagedBean(
+            new PositionableFeature(this.getGui(), {
+                minWidth,
+                width,
+                minHeight,
+                height,
+                centered,
+                x,
+                y,
+                popup,
+                calculateTopBuffer: () => this.positionableFeature.getHeight()! - this.getBodyHeight(),
+            })
+        );
+        this.positionableFeature = positionableFeature;
 
         const eGui = this.getGui();
 
@@ -120,7 +132,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             mousedown: (e: MouseEvent) => {
                 if (
                     eGui.contains(e.relatedTarget as HTMLElement) ||
-                    eGui.contains(_getActiveDomElement(this.beans)) ||
+                    eGui.contains(_getActiveDomElement(beans)) ||
                     this.eTitleBarButtons.contains(e.target as HTMLElement)
                 ) {
                     e.preventDefault();
@@ -137,7 +149,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             },
         });
 
-        if (popup && this.positionableFeature.isPositioned()) {
+        if (popup && positionableFeature.isPositioned()) {
             return;
         }
 
@@ -145,7 +157,13 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             this.renderComponent();
         }
 
-        this.positionableFeature.initialisePosition();
+        let postProcessCallback: (() => void) | undefined;
+        if (postProcessPopupParams) {
+            const { type, eventSource, column, mouseEvent, rowNode } = postProcessPopupParams;
+            postProcessCallback = () =>
+                beans.popupSvc?.callPostProcessPopup(type, eGui, eventSource, mouseEvent, column, rowNode);
+        }
+        positionableFeature.initialisePosition(postProcessCallback);
         this.eContentWrapper.style.height = '0';
     }
 

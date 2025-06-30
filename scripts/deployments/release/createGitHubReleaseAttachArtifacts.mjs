@@ -22,8 +22,8 @@ const INSTALLATION_ID = args.installationId;
 // github releases can't be a number so all of our releases are prefixed with a "v"
 const releaseVersion = args.releaseVersion;
 const ghReleaseVersion = `v${releaseVersion}`;
+const ghReleaseTag = `release-${releaseVersion}`;
 
-const releaseBranch = args.releaseBranch;
 const artifactsPath = args.artifactsPath;
 
 const artifactFolders = ['community-modules', 'packages'];
@@ -75,8 +75,7 @@ async function createGitHubRelease() {
         owner: 'ag-grid',
         repo: 'ag-grid',
         make_latest: args.latest ? 'true' : 'false',
-        tag_name: ghReleaseVersion,
-        target_commitish: releaseBranch,
+        tag_name: ghReleaseTag,
         name: ghReleaseVersion,
         body: `https://www.ag-grid.com/changelog/?fixVersion=${releaseVersion}`,
         draft: false,

@@ -1,10 +1,12 @@
 import type { BeanName } from '../../context/context';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
-import type { EditPosition } from '../../interfaces/iEditService';
+import type { EditValue } from '../../interfaces/iEditModelService';
+import type { EditPosition, EditRowPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getRowCtrl } from '../utils/controllers';
-import { _setupEditor } from '../utils/editors';
+import { _populateModelValidationErrors, _setupEditor, _valuesDiffer } from '../utils/editors';
+import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
 export class FullRowEditStrategy extends BaseEditStrategy {
@@ -66,19 +68,18 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         position: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         _source: 'api' | 'ui' = 'ui',
-        silent?: boolean,
         ignoreEventKey?: boolean
     ): void {
         const { rowNode } = position;
         if (this.rowNode !== rowNode) {
-            super.cleanupEditors();
+            super.cleanupEditors(position);
         }
 
-        if (!this.model.hasEdits({ rowNode }) && !silent) {
+        if (!this.model.hasEdits({ rowNode })) {
             this.dispatchRowEvent({ rowNode }, 'rowEditingStarted');
         }
 
-        const columns = this.beans.colModel.getCols();
+        const columns = this.beans.visibleCols.allCols;
         const cells: Required<EditPosition>[] = [];
 
         columns.forEach((column) => {
@@ -93,9 +94,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
             if (!this.model.hasEdits(position)) {
                 this.model.start(position);
-                if (!silent) {
-                    this.dispatchCellEvent(position, event, 'cellEditingStarted');
-                }
             }
         });
 
@@ -104,12 +102,55 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         this.setupEditors(cells, position, true, event, ignoreEventKey);
     }
 
-    public override stop(): boolean {
-        if (this.rowNode && !this.model.hasRowEdits({ rowNode: this.rowNode })) {
+    protected override processValidationResults(
+        results: EditValidationResult<Required<EditPosition> & EditValue>
+    ): EditValidationAction {
+        const anyFailed = results.fail.length > 0;
+
+        // if any of the cells failed, keep those editors
+        if (anyFailed && this.editSvc.cellEditingInvalidCommitBlocks()) {
+            return {
+                destroy: [],
+                keep: results.all,
+            };
+        }
+
+        // if no cells failed, we destroy all editors
+        return {
+            destroy: results.all,
+            keep: [],
+        };
+    }
+
+    public override stop(cancel?: boolean): boolean {
+        const { rowNode } = this;
+        if (rowNode && !this.model.hasRowEdits(rowNode)) {
             return false;
         }
 
-        super.stop();
+        const rowEdits = this.model.getEditRow(rowNode!)!;
+        let hadRowEdits = false;
+        for (const [, edit] of rowEdits) {
+            if (_valuesDiffer(edit)) {
+                hadRowEdits = true;
+                break;
+            }
+        }
+
+        // rerun validation, new values might have triggered row validations
+        _populateModelValidationErrors(this.beans);
+        if (!cancel && this.editSvc?.checkNavWithValidation({ rowNode }) === 'block-stop') {
+            return false;
+        }
+
+        super.stop(cancel);
+
+        if (rowNode) {
+            if (hadRowEdits) {
+                this.dispatchRowEvent({ rowNode }, 'rowValueChanged');
+            }
+            this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
+        }
 
         this.rowNode = undefined;
 
@@ -124,11 +165,22 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return;
         }
 
+        if (this.model.getRowValidationModel().getRowValidationMap().size > 0) {
+            return;
+        }
+
         super.onCellFocusChanged(event);
 
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
         if (previous) {
-            _getRowCtrl(this.beans, previous)?.refreshRow({ suppressFlash: true, forceRefresh: true });
+            _getRowCtrl(this.beans, previous)?.refreshRow({ suppressFlash: true, force: true });
+        }
+    }
+
+    public override cleanupEditors({ rowNode }: EditRowPosition = {}, includeEditing?: boolean): void {
+        super.cleanupEditors({ rowNode }, includeEditing);
+        if (rowNode) {
+            this.dispatchRowEvent({ rowNode: this.rowNode! }, 'rowEditingStopped');
         }
     }
 
@@ -139,15 +191,37 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         event?: KeyboardEvent,
         source: 'api' | 'ui' = 'ui'
     ): boolean | null {
+        // check for all cell-level validation errors
+        const preventNavigation = this.editSvc.checkNavWithValidation(undefined, event) === 'block-stop';
+
         const prevPos = prevCell.cellPosition;
 
         // find the next cell to start editing
-        const nextCell = this.beans.navigation?.findNextCellToFocusOn(prevPos, backwards, true) as CellCtrl | false;
+        let nextCell: CellCtrl | false | undefined;
+
+        // fineNextCell in fullRow mode causes CellComps to initialise editors, this is
+        // undesirable so we suspend the model while we find the next cell.
+        this.model.suspend(true);
+        try {
+            nextCell = this.beans.navigation?.findNextCellToFocusOn(prevPos, {
+                backwards,
+                startEditing: true,
+                // Default behaviour for fullRow is skip to the next cell,
+                // editable or not. FullRow editing might have some editable
+                // and some not editable cells in the row.
+                // More complex logic needed to skip to the
+                // next FullRow editable cell,
+                skipToNextEditableCell: false,
+            }) as CellCtrl | false;
+        } finally {
+            this.model.suspend(false);
+        }
+
         if (nextCell === false) {
             return null;
         }
         if (nextCell == null) {
-            return false;
+            return preventNavigation;
         }
 
         const nextPos = nextCell.cellPosition;
@@ -157,24 +231,48 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         const rowsMatch = nextPos && prevPos.rowIndex === nextPos.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
 
+        if (!rowsMatch) {
+            // run validation to gather row-level validation errors
+            _populateModelValidationErrors(this.beans);
+
+            if (this.model.getRowValidationModel().getRowValidationMap().size > 0) {
+                // if there was a previous row validation error, we need to check if that's still the case
+                if (this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop') {
+                    return true;
+                }
+            } else {
+                const rowPreventNavigation = this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop';
+                if (rowPreventNavigation) {
+                    return true;
+                }
+            }
+
+            if (preventNavigation && this.model.getRowValidationModel().getRowValidation(prevCell)) {
+                return true;
+            }
+        }
+
         if (prevEditable) {
             this.setFocusOutOnEditor(prevCell);
         }
 
-        if (!rowsMatch) {
-            this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
-        }
-
-        if (nextEditable) {
+        if (nextEditable && !preventNavigation) {
             if (!nextCell.comp?.getCellEditor()) {
                 // editor missing because it was outside the viewport during creating phase, attempt to create it now
-                _setupEditor(this.beans, nextCell, undefined, true);
+                _setupEditor(this.beans, nextCell, undefined, event, true);
             }
             this.setFocusInOnEditor(nextCell);
             nextCell.focusCell(false, event);
         } else {
             nextCell.focusCell(true, event);
         }
+
+        if (!rowsMatch && !preventNavigation) {
+            super.cleanupEditors(nextCell, true);
+            this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
+        }
+
+        prevCell.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
 
         return true;
     }

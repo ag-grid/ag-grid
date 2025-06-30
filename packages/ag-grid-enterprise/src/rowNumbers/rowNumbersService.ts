@@ -11,6 +11,7 @@ import {
     _debounce,
     _destroyColumnTree,
     _getRowNode,
+    _interpretAsRightClick,
     _selectAllCells,
     _setAriaLabel,
     _updateColsMap,
@@ -127,7 +128,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             return false;
         }
 
-        if (!mouseEvent.shiftKey) {
+        if (!mouseEvent.shiftKey && !_interpretAsRightClick(this.beans, mouseEvent)) {
             setTimeout(() => {
                 this.focusFirstRenderedCellAtRowPosition(cellPosition);
             });

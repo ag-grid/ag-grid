@@ -8,6 +8,7 @@
       <project name="ag-grid-accessibility" file="file://$PROJECT_DIR$/testing/accessibility/project.json" />
       <project name="ag-grid-angular" file="file://$PROJECT_DIR$/packages/ag-grid-angular/project.json" />
       <project name="ag-grid-community" file="file://$PROJECT_DIR$/packages/ag-grid-community/project.json" />
+      <project name="ag-grid-csp" file="file://$PROJECT_DIR$/testing/csp/project.json" />
       <project name="ag-grid-docs" file="file://$PROJECT_DIR$/documentation/ag-grid-docs/project.json" />
       <project name="ag-grid-enterprise" file="file://$PROJECT_DIR$/packages/ag-grid-enterprise/project.json" />
       <project name="ag-grid-generate-code-reference-files" file="file://$PROJECT_DIR$/plugins/ag-grid-generate-code-reference-files/project.json" />

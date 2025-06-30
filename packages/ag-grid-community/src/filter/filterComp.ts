@@ -18,16 +18,19 @@ const FilterElement: ElementParams = { tag: 'div', cls: 'ag-filter' };
 export class FilterComp extends Component {
     private wrapper: AgPromise<FilterDisplayWrapper> | null = null;
     private comp?: FilterWrapperComp;
+    private afterGuiAttachedParams?: IAfterGuiAttachedParams;
 
     constructor(
         private readonly column: AgColumn,
-        private readonly source: FilterRequestSource,
+        public readonly source: FilterRequestSource,
         private readonly enableGlobalButtonCheck?: boolean
     ) {
         super(FilterElement);
     }
 
     public postConstruct(): void {
+        this.beans.colFilter?.activeFilterComps.add(this);
+
         this.createFilter(true);
 
         this.addManagedEventListeners({ filterDestroyed: this.onFilterDestroyed.bind(this) });
@@ -46,6 +49,7 @@ export class FilterComp extends Component {
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        this.afterGuiAttachedParams = params;
         this.wrapper?.then((wrapper) => {
             this.comp?.afterGuiAttached(params);
             wrapper?.comp?.afterGuiAttached?.(params);
@@ -101,6 +105,9 @@ export class FilterComp extends Component {
                     source,
                     eGui: this.getGui(),
                 });
+            } else {
+                // parent is already attached, and switching filter comps, so fire for the new comp
+                comp.afterGuiAttached?.(this.afterGuiAttachedParams);
             }
         });
     }
@@ -120,8 +127,14 @@ export class FilterComp extends Component {
     }
 
     public override destroy(): void {
+        this.beans.colFilter?.activeFilterComps.delete(this);
+        this.eventSvc.dispatchEvent({
+            type: 'filterClosed',
+            column: this.column,
+        });
         this.wrapper = null;
         this.comp = this.destroyBean(this.comp);
+        this.afterGuiAttachedParams = undefined;
         super.destroy();
     }
 }

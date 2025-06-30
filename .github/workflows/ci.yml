@@ -57,6 +57,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/latest' }}
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   build_lint:
     name: Build & Lint
@@ -167,11 +171,11 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-            name: e2e-init-outputs
-            path: |
-                dist/
-                packages/*/dist/
-                external/*/dist/
+          name: e2e-init-outputs
+          path: |
+            dist/
+            packages/*/dist/
+            external/*/dist/
   test:
     runs-on: ubuntu-24.04
     name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
@@ -444,11 +448,12 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-      pull-requests: write
     needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test ]
     if: cancelled() != true
+    permissions:
+      contents: write
+      actions: read
+      checks: write
     steps:
       - name: Checkout
         id: checkout

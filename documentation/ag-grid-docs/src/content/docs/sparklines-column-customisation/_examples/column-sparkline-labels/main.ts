@@ -45,8 +45,8 @@ const gridOptions: GridOptions = {
                         stroke: '#cccccc',
                         strokeWidth: 2,
                     },
-                    highlightStyle: {
-                        item: {
+                    highlight: {
+                        highlightedItem: {
                             stroke: '#fac858',
                         },
                     },

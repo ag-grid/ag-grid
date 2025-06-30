@@ -117,6 +117,18 @@ export function assertSelectedRowNodes(nodes: IRowNode[], api: GridApi): void {
     }
 }
 
+export function assertSelectableByIndex(indices: number[], api: GridApi): void {
+    const selectable: number[] = [];
+
+    api.forEachNode((node) => {
+        if (node.selectable) {
+            selectable.push(node.rowIndex!);
+        }
+    });
+
+    expect(selectable).toEqual(indices);
+}
+
 export function _isDisplayed(element: HTMLElement): boolean {
     let el: HTMLElement | null = element;
     while (el) {

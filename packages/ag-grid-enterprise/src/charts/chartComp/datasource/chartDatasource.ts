@@ -155,7 +155,7 @@ export class ChartDatasource extends BeanStub {
                 continue;
             }
 
-            const data: any = {};
+            const data: any = { node: rowNode };
             // first get data for dimensions columns
             dimensionCols.forEach((col) => {
                 const colId = col.colId;

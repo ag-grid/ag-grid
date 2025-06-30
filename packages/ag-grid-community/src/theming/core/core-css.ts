@@ -177,6 +177,11 @@ export type CoreParams = {
     cellEditingShadow: ShadowValue;
 
     /**
+     * Background color for a row with invalid editor status
+     */
+    fullRowEditInvalidBackgroundColor: ColorValue;
+
+    /**
      * Background color of the drag and drop image component element when dragging columns
      */
     dragAndDropImageBackgroundColor: ColorValue;
@@ -207,19 +212,24 @@ export type CoreParams = {
     filterToolPanelGroupIndent: LengthValue;
 
     /**
-     * Color of new Filter Tool Panel apply button
+     * Color of new Filters Tool Panel apply button
      */
     filterPanelApplyButtonColor: ColorValue;
 
     /**
-     * Background color of new Filter Tool Panel apply button
+     * Background color of new Filters Tool Panel apply button
      */
     filterPanelApplyButtonBackgroundColor: ColorValue;
 
     /**
-     * Color of text and UI elements that should stand out less than the default in new Filter Tool Panel
+     * Color of text and UI elements that should stand out less than the default in new Filters Tool Panel
      */
     filterPanelCardSubtleColor: ColorValue;
+
+    /**
+     * Color of text and UI elements that should stand out less than the default in new Filters Tool Panel when hovered
+     */
+    filterPanelCardSubtleHoverColor: ColorValue;
 
     /**
      * Color of matches used in Find
@@ -245,6 +255,11 @@ export type CoreParams = {
      * Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.
      */
     focusShadow: ShadowValue;
+
+    /**
+     * 'Shadow around UI controls that have focus and contain validation errors e.g. text inputs, text-areas. The value must a valid CSS box-shadow.',
+     */
+    focusErrorShadow: ShadowValue;
 
     /**
      * Default font family for all text. Can be overridden by more specific parameters like `headerFontFamily`
@@ -595,6 +610,11 @@ export type CoreParams = {
      * Height of grid rows. NOTE: by default this value is calculated to leave enough room for text, icons and padding. Most applications should leave it as is and use rowVerticalPaddingScale to change padding.
      */
     rowHeight: LengthValue;
+
+    /**
+     * Height of the pagination panel at the bottom of the grid. Defaults to the higher of rowHeight or 22px.
+     */
+    paginationPanelHeight: LengthValue;
 
     /**
      * Background color when hovering over rows in the grid and in dropdown menus. Set to `transparent` to disable the hover effect. Note: if you want a hover effect on one but not the other, use CSS selectors instead of this property.
@@ -1000,6 +1020,10 @@ export const coreDefaults: Readonly<CoreParams> = {
         calc: 'max(iconSize, dataFontSize) + spacing * 4 * headerVerticalPaddingScale',
     },
     headerVerticalPaddingScale: 1,
+    paginationPanelHeight: {
+        ref: 'rowHeight',
+        calc: 'max(rowHeight, 22px)',
+    },
     popupShadow: '0 0 16px #00000026',
     cardShadow: '0 1px 4px 1px #00000018',
     dropdownShadow: { ref: 'cardShadow' },
@@ -1012,6 +1036,14 @@ export const coreDefaults: Readonly<CoreParams> = {
     focusShadow: {
         spread: 3,
         color: accentMix(0.5),
+    },
+    focusErrorShadow: {
+        spread: 3,
+        color: {
+            ref: 'invalidColor',
+            onto: 'backgroundColor',
+            mix: 0.5,
+        },
     },
     headerColumnResizeHandleHeight: '30%',
     headerColumnResizeHandleWidth: 2,
@@ -1073,6 +1105,11 @@ export const coreDefaults: Readonly<CoreParams> = {
         color: accentColor,
     },
     cellEditingShadow: { ref: 'cardShadow' },
+    fullRowEditInvalidBackgroundColor: {
+        ref: 'invalidColor',
+        onto: 'backgroundColor',
+        mix: 0.25,
+    },
     dialogBorder: {
         color: foregroundMix(0.2),
     },
@@ -1098,7 +1135,9 @@ export const coreDefaults: Readonly<CoreParams> = {
         ref: 'chromeBackgroundColor',
     },
     tooltipErrorBackgroundColor: {
-        ref: 'chromeBackgroundColor',
+        ref: 'invalidColor',
+        onto: 'backgroundColor',
+        mix: 0.1,
     },
     tooltipTextColor: {
         ref: 'textColor',
@@ -1108,7 +1147,11 @@ export const coreDefaults: Readonly<CoreParams> = {
     },
     tooltipBorder: true,
     tooltipErrorBorder: {
-        color: { ref: 'invalidColor' },
+        color: {
+            ref: 'invalidColor',
+            onto: 'backgroundColor',
+            mix: 0.25,
+        },
     },
     columnDropCellBackgroundColor: foregroundMix(0.07),
     columnDropCellTextColor: {
@@ -1134,7 +1177,11 @@ export const coreDefaults: Readonly<CoreParams> = {
     advancedFilterBuilderValuePillColor: '#85c0e4',
     filterPanelApplyButtonColor: backgroundColor,
     filterPanelApplyButtonBackgroundColor: accentColor,
-    filterPanelCardSubtleColor: { ref: 'subtleTextColor' },
+    filterPanelCardSubtleColor: {
+        ref: 'textColor',
+        mix: 0.7,
+    },
+    filterPanelCardSubtleHoverColor: { ref: 'textColor' },
     findMatchColor: foregroundColor,
     findMatchBackgroundColor: '#ffff00',
     findActiveMatchColor: foregroundColor,

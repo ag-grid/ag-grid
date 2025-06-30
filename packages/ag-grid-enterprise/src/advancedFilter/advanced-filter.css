@@ -2,8 +2,6 @@
     position: relative;
     display: flex;
     align-items: center;
-    padding-left: var(--ag-cell-horizontal-padding);
-    padding-right: var(--ag-cell-horizontal-padding);
     background-color: var(--ag-header-background-color);
     border-bottom: var(--ag-header-row-border);
 }
@@ -18,6 +16,13 @@
     display: contents;
 }
 
+.ag-advanced-filter-header-cell {
+    height: 100%;
+    padding-left: var(--ag-cell-horizontal-padding);
+    padding-right: var(--ag-cell-horizontal-padding);
+}
+
+.ag-advanced-filter-apply-button,
 .ag-advanced-filter-builder-button {
     line-height: normal;
     margin-left: calc(var(--ag-spacing) * 2);

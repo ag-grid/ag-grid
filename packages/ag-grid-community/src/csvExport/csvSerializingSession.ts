@@ -106,14 +106,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        const rowCellValue = this.extractRowCellValue(
-            column,
-            index,
-            index,
-            'csv',
-            node,
-            this.config.includePendingEdits
-        );
+        const rowCellValue = this.extractRowCellValue(column, index, index, 'csv', node);
         this.result += this.putInQuotes(rowCellValue.valueFormatted ?? rowCellValue.value);
     }
 

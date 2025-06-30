@@ -8,6 +8,7 @@ import type { IRowNode, RowPinnedType } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _getTabIndex } from '../../utils/browser';
+import { _destroyEditors } from './editors';
 
 type ResolveRowControllerType = {
     rowIndex?: number | null;
@@ -85,11 +86,22 @@ export function _getCtrls(beans: BeanCollection, inputs: ResolveControllerType =
     };
 }
 
+function _stopEditing(beans: BeanCollection): void {
+    const { editSvc } = beans;
+    if (editSvc?.isBatchEditing()) {
+        _destroyEditors(beans);
+    } else {
+        editSvc?.stopEditing(undefined, { source: 'api' });
+    }
+}
+
 export function _addStopEditingWhenGridLosesFocus(
     bean: BeanStub,
-    { editSvc, gos, popupSvc }: BeanCollection,
+    beans: BeanCollection,
     viewports: HTMLElement[]
 ): void {
+    const { gos, popupSvc } = beans;
+
     if (!gos.get('stopEditingWhenCellsLoseFocus')) {
         return;
     }
@@ -99,7 +111,7 @@ export function _addStopEditingWhenGridLosesFocus(
         const elementWithFocus = event.relatedTarget as HTMLElement;
 
         if (_getTabIndex(elementWithFocus) === null) {
-            editSvc?.stopEditing();
+            _stopEditing(beans);
             return;
         }
 
@@ -117,7 +129,7 @@ export function _addStopEditingWhenGridLosesFocus(
         }
 
         if (!clickInsideGrid) {
-            editSvc?.stopEditing(undefined, { source: 'api' });
+            _stopEditing(beans);
         }
     };
 

@@ -21,6 +21,7 @@ import type {
 import {
     Component,
     RefPlaceholder,
+    _addGridCommonParams,
     _clearElement,
     _errMsg,
     _focusGridInnerElement,
@@ -222,6 +223,7 @@ export class GridChartComp extends Component {
             seriesChartTypes: this.chartController.getSeriesChartTypes(),
             suppressFieldDotNotation: this.gos.get('suppressFieldDotNotation'),
             translate: (toTranslate: ChartTranslationKey) => this.chartTranslation.translate(toTranslate),
+            context: _addGridCommonParams(this.gos, {}),
         };
 
         // ensure 'restoring' options are not reused when switching chart types

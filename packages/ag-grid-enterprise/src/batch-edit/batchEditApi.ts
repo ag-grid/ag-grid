@@ -1,15 +1,33 @@
-import type { BeanCollection, EditingCellPosition, SetEditingCellsParams } from 'ag-grid-community';
+import type { BeanCollection } from 'ag-grid-community';
+import { _isClientSideRowModel, _warn } from 'ag-grid-community';
 
-export function setEditingCells(
-    beans: BeanCollection,
-    cells: EditingCellPosition[],
-    params?: SetEditingCellsParams
-): void {
-    beans.editSvc?.setEditingCells(cells, params);
+export function startBatchEdit({ editSvc, gos, rowModel }: BeanCollection): void {
+    if (!editSvc?.isBatchEditing()) {
+        if (!_isClientSideRowModel(gos, rowModel)) {
+            _warn(289, { rowModelType: gos.get('rowModelType') });
+            return;
+        }
+
+        editSvc?.setBatchEditing(true);
+    }
 }
 
-export function setBatchEditing(beans: BeanCollection, enabled: boolean): void {
-    beans.editSvc?.setBatchEditing(enabled);
+export function cancelBatchEdit({ editSvc }: BeanCollection): void {
+    if (!editSvc?.isBatchEditing()) {
+        return;
+    }
+
+    editSvc?.stopEditing(undefined, { cancel: true, source: 'api' });
+    editSvc?.setBatchEditing(false);
+}
+
+export function commitBatchEdit({ editSvc }: BeanCollection): void {
+    if (!editSvc?.isBatchEditing()) {
+        return;
+    }
+
+    editSvc?.stopEditing(undefined, { source: 'api' });
+    editSvc?.setBatchEditing(false);
 }
 
 export function isBatchEditing(beans: BeanCollection): boolean {

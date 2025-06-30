@@ -6,14 +6,19 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 const myTheme = themeQuartz.withParams({
     inputBorder: { color: 'orange', style: 'dotted', width: 3 },
-    inputBackgroundColor: 'rgb(255, 209, 123)', // light orange
-    inputPlaceholderTextColor: 'rgb(155, 101, 1)', // darker orange
-    inputIconColor: 'purple', // light orange
+    inputBackgroundColor: 'rgb(255, 209, 123)',
+    inputPlaceholderTextColor: 'rgb(155, 101, 1)',
+    inputIconColor: 'purple',
+    inputTextColor: 'black',
+    // Cell Editors
+    inputInvalidBackgroundColor: 'purple',
+    inputInvalidBorder: 'darkred',
+    inputInvalidTextColor: 'white',
 });
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 170 },
-    { field: 'age' },
+    { field: 'age', headerName: 'Age (< 20)', cellEditorParams: { max: 20 } },
     { field: 'country' },
     { field: 'year' },
     { field: 'date' },

@@ -219,15 +219,15 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         return this.eEditor.getAriaElement() as HTMLElement;
     }
 
-    public getErrors() {
+    public getValidationErrors() {
         const { params } = this;
-        const { getErrors } = params;
+        const { getValidationErrors } = params;
 
-        if (!getErrors) {
+        if (!getValidationErrors) {
             return null;
         }
 
-        return getErrors({
+        return getValidationErrors({
             value: this.getValue(),
             internalErrors: null,
             cellEditorParams: params as unknown as ICellEditorParams<TData, TValue, TContext>,

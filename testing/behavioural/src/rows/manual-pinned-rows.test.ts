@@ -36,7 +36,7 @@ describe('Manual pinned rows', () => {
         gridsManager.reset();
     });
 
-    test('Setting `grandTotalRow` does not reset pinned row state', async () => {
+    test('Setting `grandTotalRow` to non-pinned value does not reset pinned row state', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             rowData,
@@ -48,31 +48,53 @@ describe('Manual pinned rows', () => {
             grandTotalRow: 'bottom',
         });
 
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(5);
 
         assertPinnedRows(api, 'top', ['t-top-0-rugby']);
 
-        api.setGridOption('grandTotalRowPinned', 'top');
+        api.setGridOption('grandTotalRow', 'top');
 
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(5);
 
-        assertPinnedRows(api, 'top', ['t-top-0-rugby', 't-top-rowGroupFooter_ROOT_NODE_ID']);
+        assertPinnedRows(api, 'top', ['t-top-0-rugby']);
+    });
+
+    test('Setting `grandTotalRow` to pinned value does not reset pinned row state', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData,
+            enableRowPinning: true,
+            isRowPinned: (node) => (node.data?.sport === 'rugby' ? 'top' : null),
+            getRowId(params) {
+                return `${params.level}-${params.data?.sport}`;
+            },
+            grandTotalRow: 'bottom',
+        });
+
+        await asyncSetTimeout(5);
+
+        assertPinnedRows(api, 'top', ['t-top-0-rugby']);
+
+        api.setGridOption('grandTotalRow', 'pinnedTop');
+
+        await asyncSetTimeout(5);
+
+        assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID', 't-top-0-rugby']);
     });
 
     test('grand total row can be pinned without `enableRowPinning`', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             rowData,
-            grandTotalRow: 'bottom',
-            grandTotalRowPinned: 'bottom',
+            grandTotalRow: 'pinnedBottom',
         });
 
-        await asyncSetTimeout(10);
+        await asyncSetTimeout(5);
 
         assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
     });
 
-    test('can control position of pinned grand total row with `grandTotalRow`', async () => {
+    test('can move position of pinned grand total row with `grandTotalRow`', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             rowData,
@@ -81,15 +103,15 @@ describe('Manual pinned rows', () => {
             getRowId(params) {
                 return `${params.level}-${params.data?.sport}`;
             },
-            grandTotalRow: 'bottom',
-            grandTotalRowPinned: 'top',
+            grandTotalRow: 'pinnedBottom',
         });
-        await asyncSetTimeout(1);
+        await asyncSetTimeout(5);
 
-        assertPinnedRows(api, 'top', ['t-top-0-rugby', 't-top-rowGroupFooter_ROOT_NODE_ID']);
+        assertPinnedRows(api, 'top', ['t-top-0-rugby']);
+        assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
 
-        api.setGridOption('grandTotalRow', 'top');
-        await asyncSetTimeout(1);
+        api.setGridOption('grandTotalRow', 'pinnedTop');
+        await asyncSetTimeout(5);
 
         assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID', 't-top-0-rugby']);
     });

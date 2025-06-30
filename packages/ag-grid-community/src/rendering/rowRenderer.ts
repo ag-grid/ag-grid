@@ -11,7 +11,6 @@ import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import {
     _addGridCommonParams,
-    _getEnableRowPinning,
     _getRowHeightAsNumber,
     _isAnimateRows,
     _isCellSelectionEnabled,
@@ -647,7 +646,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.gridBodyCtrl.updateRowCount();
 
         if (!params.onlyBody) {
-            this.refreshFloatingRowComps(_getEnableRowPinning(gos) ? recycleRows : undefined);
+            this.refreshFloatingRowComps(gos.get('enableRowPinning') ? recycleRows : undefined);
         }
 
         this.dispatchDisplayedRowsChanged();
@@ -839,24 +838,22 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
     }
 
-    public refreshCells(params: RefreshCellsParams = {}): void {
+    public refreshCells({ rowNodes, columns, force, suppressFlash }: RefreshCellsParams = {}): void {
         const refreshCellParams = {
-            forceRefresh: params.force,
+            force,
             newData: false,
-            suppressFlash: params.suppressFlash,
+            suppressFlash,
         };
-        for (const cellCtrl of this.getCellCtrls(params.rowNodes, params.columns as AgColumn[])) {
+        for (const cellCtrl of this.getCellCtrls(rowNodes, columns as AgColumn[])) {
             cellCtrl.refreshOrDestroyCell(refreshCellParams);
         }
 
         // refresh the full width rows too
-        this.refreshFullWidth(params.rowNodes);
+        this.refreshFullWidth(rowNodes);
     }
 
     public refreshRows(params: RefreshRowsParams = {}): void {
-        this.getRowCtrls(params.rowNodes).forEach((rowCtrl) => {
-            rowCtrl.refreshRow(params);
-        });
+        this.getRowCtrls(params.rowNodes).forEach((rowCtrl) => rowCtrl.refreshRow(params));
 
         // refresh the full width rows too
         this.refreshFullWidth(params.rowNodes);

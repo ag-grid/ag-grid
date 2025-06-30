@@ -16,8 +16,8 @@ function checkFileExists {
     fi
 }
 
-CURRENT_HOST=$1
-VERSION=$2
+VERSION=$1
+CURRENT_HOST=$2
 
 export SSH_LOCATION=$SSH_FILE
 

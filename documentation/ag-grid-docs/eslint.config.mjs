@@ -54,6 +54,7 @@ export default [
                 System: 'readonly',
                 systemJsPaths: 'readonly',
                 boilerplatePath: 'readonly',
+                startFile: 'readonly',
                 appLocation: 'readonly',
                 systemJsMap: 'readonly',
             },

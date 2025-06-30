@@ -38,8 +38,10 @@
     --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 12%);
     --ag-column-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
     --ag-input-focus-border-color: var(--ag-active-color);
-    --ag-input-focus-box-shadow: 0 0 0 3px color-mix(in srgb, transparent, var(--ag-input-focus-border-color) 47%);
     --ag-range-selection-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 20%);
+    --ag-input-focus-box-shadow: 0 0 0 3px color-mix(in srgb, transparent, var(--ag-input-focus-border-color) 47%);
+    --ag-input-error-focus-box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--ag-background-color), var(--ag-invalid-color) 50%);
     --ag-range-selection-background-color-2: color-mix(in srgb, transparent, var(--ag-active-color) 36%);
     --ag-range-selection-background-color-3: color-mix(in srgb, transparent, var(--ag-active-color) 49%);
     --ag-range-selection-background-color-4: color-mix(in srgb, transparent, var(--ag-active-color) 59%);
@@ -58,7 +60,7 @@
     --ag-modal-overlay-background-color: color-mix(in srgb, transparent, var(--ag-background-color) 66%);
     --ag-chart-menu-label-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 80%);
     --ag-chart-menu-pill-select-button-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 70%);
-    --ag-filter-panel-card-subtle-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 50%);
+    --ag-filter-panel-card-subtle-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 70%);
 
     // BORDERS
     --ag-borders: solid 1px;
@@ -145,7 +147,7 @@
 
     --ag-row-loading-skeleton-effect-color: #{color.change(#cacbcc, $alpha: 0.4)};
 
-    --ag-cell-batch-edit-text-color: rgba(243, 208, 179, 100%);
+    --ag-cell-batch-edit-text-color: #f3d0b3;
 
     color-scheme: dark;
 }

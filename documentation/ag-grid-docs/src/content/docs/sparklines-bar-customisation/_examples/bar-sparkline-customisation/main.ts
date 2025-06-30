@@ -33,8 +33,8 @@ const gridOptions: GridOptions = {
                     fill: '#5470c6',
                     stroke: '#91cc75',
                     strokeWidth: 1,
-                    highlightStyle: {
-                        item: {
+                    highlight: {
+                        highlightedItem: {
                             fill: '#fac858',
                         },
                     },

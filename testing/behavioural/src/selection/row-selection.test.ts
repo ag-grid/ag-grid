@@ -1,14 +1,15 @@
 import type { MockInstance } from 'vitest';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, isColumnSelectionCol } from 'ag-grid-community';
+import type { GridApi, GridOptions, Params } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule, isColumnSelectionCol } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 import { GROUP_ROW_DATA } from './group-data';
 import {
     GridActions,
     _isDisplayed,
+    assertSelectableByIndex,
     assertSelectedRowElementsById,
     assertSelectedRowsByIndex,
     waitForEvent,
@@ -46,14 +47,14 @@ describe('Row Selection Grid Options', () => {
     let consoleErrorSpy: MockInstance;
     let consoleWarnSpy: MockInstance;
 
-    function createGrid(gridOptions: GridOptions): [GridApi, GridActions] {
-        const api = gridMgr.createGrid('myGrid', gridOptions);
+    function createGrid(gridOptions: GridOptions, params?: Params): [GridApi, GridActions] {
+        const api = gridMgr.createGrid('myGrid', gridOptions, params);
         const actions = new GridActions(api, '#myGrid');
         return [api, actions];
     }
 
-    async function createGridAndWait(gridOptions: GridOptions): Promise<[GridApi, GridActions]> {
-        const [api, actions] = createGrid(gridOptions);
+    async function createGridAndWait(gridOptions: GridOptions, params?: Params): Promise<[GridApi, GridActions]> {
+        const [api, actions] = createGrid(gridOptions, params);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -78,7 +79,7 @@ describe('Row Selection Grid Options', () => {
         consoleWarnSpy.mockRestore();
     });
 
-    describe('User Interactions', () => {
+    describe('Basic Interactions', () => {
         describe('Single Row Selection', () => {
             test('Select single row', () => {
                 const [api, actions] = createGrid({
@@ -1861,6 +1862,87 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([], api);
                 });
             });
+        });
+    });
+
+    describe('Cell Renderer', () => {
+        class CustomCellRenderer {
+            eGui: HTMLElement;
+            eButton: HTMLElement;
+            eventListener: () => void;
+
+            init(params: any) {
+                this.eGui = document.createElement('div');
+                const eButton = document.createElement('button');
+                eButton.className = `btn-${params.data.sport}`;
+                eButton.textContent = `Update ${params.data.sport} selectable`;
+                this.eventListener = () => {
+                    params.setValue('foo');
+                };
+                eButton.addEventListener('click', this.eventListener);
+                this.eGui.appendChild(eButton);
+            }
+
+            getGui() {
+                return this.eGui;
+            }
+
+            refresh() {
+                return true;
+            }
+
+            destroy() {
+                this.eButton?.removeEventListener('click', this.eventListener);
+            }
+        }
+
+        test('selectable refreshed when changing cell value', async () => {
+            const [api] = await createGridAndWait({
+                columnDefs: [
+                    { field: 'sport', cellRenderer: CustomCellRenderer },
+                    { field: 'unrelated', editable: true },
+                ],
+                rowData: structuredClone(rowData),
+                rowSelection: { mode: 'multiRow', isRowSelectable: (node) => node.data?.sport !== 'foo' },
+            });
+
+            assertSelectableByIndex([0, 1, 2, 3, 4, 5, 6], api);
+
+            document.querySelector<HTMLButtonElement>('.btn-rugby')?.click();
+
+            assertSelectableByIndex([0, 2, 3, 4, 5, 6], api);
+        });
+
+        test('pinned rows mirror selectable status of their siblings reactively', async () => {
+            const [api] = await createGridAndWait(
+                {
+                    columnDefs: [
+                        { field: 'sport', cellRenderer: CustomCellRenderer },
+                        { field: 'unrelated', editable: true },
+                    ],
+                    rowData: structuredClone(rowData),
+                    rowSelection: {
+                        mode: 'multiRow',
+                        isRowSelectable: (node) => (node.rowPinned ? true : node.data?.sport !== 'foo'),
+                    },
+                    enableRowPinning: true,
+                },
+                { modules: [PinnedRowModule] }
+            );
+
+            assertSelectableByIndex([0, 1, 2, 3, 4, 5, 6], api);
+
+            const btn = document.querySelector<HTMLButtonElement>('.btn-rugby');
+
+            api.setGridOption('isRowPinned', (node) => (node.data?.sport === 'rugby' ? 'top' : null));
+
+            btn?.click();
+
+            await asyncSetTimeout(5);
+
+            assertSelectableByIndex([0, 2, 3, 4, 5, 6], api);
+
+            api.forEachPinnedRow('top', (node) => expect(node.selectable).toBe(false));
         });
     });
 });

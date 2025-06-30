@@ -15,6 +15,7 @@ import type {
     DefaultChartMenuItem,
     DomLayoutType,
     EditStrategyType,
+    EditValidationCommitType,
     ExcelExportParams,
     ExcelStyle,
     FillOperationParams,
@@ -24,6 +25,7 @@ import type {
     GetChartToolbarItems,
     GetContextMenuItems,
     GetDataPath,
+    GetFullRowEditValidationErrors,
     GetGroupRowAggParams,
     GetLocaleTextParams,
     GetMainMenuItems,
@@ -50,6 +52,7 @@ import type {
     IsRowPinnable,
     IsRowPinned,
     IsRowSelectable,
+    IsRowValidDropPositionCallback,
     IsServerSideGroup,
     IsServerSideGroupOpenByDefaultParams,
     LoadingCellRendererSelectorFunc,
@@ -466,6 +469,13 @@ export interface Props<TData> {
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
     editType?: EditStrategyType | undefined,
+    /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
+         * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+         */
+    getFullRowEditValidationErrors?: GetFullRowEditValidationErrors | undefined,
+    /** Set to `block` to block the commit of invalid cell edits, keeping editors open.
+         */
+    invalidEditValueMode?: EditValidationCommitType | undefined,
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
          * @default false
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
@@ -633,7 +643,7 @@ export interface Props<TData> {
          * Allows for filter handler keys to be used in `colDef.filter.handler`.
          * @initial
          */
-    filterHandlers?: { [key: string]: CreateFilterHandlerFunc } | undefined,
+    filterHandlers?: { [key: string]: CreateFilterHandlerFunc<TData> } | undefined,
     /** Set to `true` to Enable Charts.
          * @default false
          * @agModule `IntegratedChartsModule`
@@ -663,7 +673,7 @@ export interface Props<TData> {
     /** Get chart menu items. Only applies when using AG Charts Enterprise.
          * @agModule `IntegratedChartsModule`
          */
-    chartMenuItems?: (DefaultChartMenuItem | MenuItemDef)[] | GetChartMenuItems<TData> | undefined,
+    chartMenuItems?: (DefaultChartMenuItem | MenuItemDef<TData>)[] | GetChartMenuItems<TData> | undefined,
     /** Provide your own loading cell renderer to use when data is loading via a DataSource or when a cell renderer is deferred.
          * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
          */
@@ -993,6 +1003,13 @@ export interface Props<TData> {
          * @agModule `RowDragModule`
          */
     rowDragManaged?: boolean | undefined,
+    /** Used if rowDragManaged is enabled and treeData is enabled,
+         * - If the row is already a group, but is not expanded, it will be expanded after rowDragInsertDelay milliseconds of dragging over it.
+         * - If the row is a leaf (no children), it will be converted to a group and the row inserted into it after rowDragInsertDelay milliseconds of dragging over it.
+         * @default 500
+         * @agModule `RowDragModule`
+         */
+    rowDragInsertDelay?: number | undefined,
     /** Set to `true` to suppress row dragging.
          * @default false
          */
@@ -1088,8 +1105,6 @@ export interface Props<TData> {
     groupTotalRow?: 'top' | 'bottom' | UseGroupTotalRow<TData> | undefined,
     /** When provided, an extra grand total row will be inserted into the grid at the specified position.
          * This row displays the aggregate totals of all rows in the grid.
-         *
-         * Note that the `'pinnedTop'` and `'pinnedBottom'` values are deprecated in v34. Use `grandTotalRowPinned` instead.
          * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
          */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom' | undefined,
@@ -1210,12 +1225,6 @@ export interface Props<TData> {
          * @agModule `PinnedRowModule`
          */
     isRowPinned?: IsRowPinned<TData> | undefined,
-    /** Pin the grand total row to the top of bottom of the grid. Requires `grandTotalRow` to be set.
-         * When multiple rows are pinned, the grid uses `grandTotalRow` to determine whether the grand total row should be
-         * displayed first or last in the list of pinned rows.
-         * @agModule `PinnedRowModule`
-         */
-    grandTotalRowPinned?: 'top' | 'bottom' | undefined,
     /** Sets the row model type.
          * @default 'clientSide'
          * @initial
@@ -1618,7 +1627,7 @@ export interface Props<TData> {
          * @initial
          * @agModule `IntegratedChartsModule`
          */
-    getChartToolbarItems?: GetChartToolbarItems | undefined,
+    getChartToolbarItems?: GetChartToolbarItems<TData> | undefined,
     /** Callback to enable displaying the chart in an alternative chart container.
          * @initial
          * @agModule `IntegratedChartsModule`
@@ -1691,15 +1700,15 @@ export interface Props<TData> {
          * @initial
          * @agModule `ServerSideRowModelModule`
          */
-    getServerSideGroupLevelParams?: ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams) | undefined,
+    getServerSideGroupLevelParams?: ((params: GetServerSideGroupLevelParamsParams<TData>) => ServerSideGroupLevelParams) | undefined,
     /** Allows groups to be open by default.
          * @agModule `ServerSideRowModelModule`
          */
-    isServerSideGroupOpenByDefault?: ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined,
+    isServerSideGroupOpenByDefault?: ((params: IsServerSideGroupOpenByDefaultParams<TData>) => boolean) | undefined,
     /** Allows cancelling transactions.
          * @agModule `ServerSideRowModelModule`
          */
-    isApplyServerSideTransaction?: IsApplyServerSideTransaction | undefined,
+    isApplyServerSideTransaction?: IsApplyServerSideTransaction<TData> | undefined,
     /** SSRM Tree Data: Allows specifying which rows are expandable.
          * @agModule `ServerSideRowModelModule`
          */
@@ -1753,6 +1762,11 @@ export interface Props<TData> {
     /** Tells the grid if this row should be rendered as full width.
          */
     isFullWidthRow?: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined,
+    /** Called by managed drag and drop when rows are dropped on another row.
+         * The user can cancel the drop by returning `false` or customize the operation by returning a `IsRowValidDropPositionResult`.
+         * @agModule `RowDragModule`
+         */
+    isRowValidDropPosition?: IsRowValidDropPositionCallback<TData> | undefined,
 
     // @END_PROPS@
 
@@ -1833,7 +1847,7 @@ export interface Props<TData> {
    'onRow-drag-end'?: RowDragEndEvent<TData>,
    'onRow-drag-cancel'?: RowDragCancelEvent<TData>,
    'onRow-resize-started'?: RowResizeStartedEvent<TData>,
-   'onRow-resize-ended'?: RowResizeEndedEvent,
+   'onRow-resize-ended'?: RowResizeEndedEvent<TData>,
    'onColumn-row-group-changed'?: ColumnRowGroupChangedEvent<TData>,
    'onRow-group-opened'?: RowGroupOpenedEvent<TData>,
    'onExpand-or-collapse-all'?: ExpandOrCollapseAllEvent<TData>,
@@ -1923,6 +1937,8 @@ export function getProps() {
         autoSizeStrategy: undefined,
         components: undefined,
         editType: undefined,
+        getFullRowEditValidationErrors: undefined,
+        invalidEditValueMode: undefined,
         singleClickEdit: undefined,
         suppressClickEdit: undefined,
         readOnlyEdit: undefined,
@@ -2028,6 +2044,7 @@ export function getProps() {
         suppressMaxRenderedRowRestriction: undefined,
         suppressRowVirtualisation: undefined,
         rowDragManaged: undefined,
+        rowDragInsertDelay: undefined,
         suppressRowDrag: undefined,
         suppressMoveWhenRowDragging: undefined,
         rowDragEntireRow: undefined,
@@ -2069,7 +2086,6 @@ export function getProps() {
         enableRowPinning: undefined,
         isRowPinnable: undefined,
         isRowPinned: undefined,
-        grandTotalRowPinned: undefined,
         rowModelType: undefined,
         rowData: undefined,
         asyncTransactionWaitMillis: undefined,
@@ -2189,6 +2205,7 @@ export function getProps() {
         getRowClass: undefined,
         getRowHeight: undefined,
         isFullWidthRow: undefined,
+        isRowValidDropPosition: undefined,
 
 // @END_DEFAULTS@
 

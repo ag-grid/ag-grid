@@ -222,10 +222,12 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         stopEditing: 0,
         startEditingCell: 0,
         isEditing: 0,
+        validateEdit: 0,
     }),
     ...mod<_BatchEditApi>('BatchEdit', {
-        setEditingCells: 0,
-        setBatchEditing: 0,
+        startBatchEdit: 0,
+        cancelBatchEdit: 0,
+        commitBatchEdit: 0,
         isBatchEditing: 0,
     }),
     ...mod<_UndoRedoGridApi>('UndoRedoEdit', {
@@ -248,6 +250,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         setColumnFilterModel: 0,
         showColumnFilter: 0,
         getColumnFilterHandler: 0,
+        doFilterAction: 0,
     }),
     ...mod<_QuickFilterGridApi>('QuickFilter', {
         isQuickFilterPresent: 0,

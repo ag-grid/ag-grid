@@ -193,7 +193,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     private createListComponent(): void {
         this.listComponent = this.createBean(
-            new AgRichSelectList<TValue>(this.config, this.eWrapper, () => this.searchString)
+            new AgRichSelectList<TValue>(this.config, this.getFocusableElement(), () => this.searchString)
         );
         this.listComponent.setParentComponent(this);
 

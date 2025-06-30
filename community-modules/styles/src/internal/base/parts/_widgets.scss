@@ -65,6 +65,11 @@
             outline: none;
             box-shadow: var(--ag-input-focus-box-shadow);
             border-color: var(--ag-input-focus-border-color);
+            &.invalid,
+            &:invalid {
+                box-shadow: var(--ag-input-error-focus-box-shadow);
+                border-color: var(--ag-invalid-color);
+            }
         }
 
         &:invalid {
@@ -89,6 +94,10 @@
     button[class^='ag-'] {
         &:focus {
             box-shadow: var(--ag-input-focus-box-shadow);
+            &:invalid,
+            &.invalid {
+                box-shadow: var(--ag-input-error-focus-box-shadow);
+            }
         }
     }
 
@@ -666,12 +675,13 @@
         border: var(--ag-borders) var(--ag-border-color);
         border-radius: var(--ag-card-radius);
         white-space: normal;
-    }
 
-    .ag-tooltip.ag-cell-editor-tooltip {
-        background-color: var(--ag-tooltip-error-background-color);
-        color: var(--ag-tooltip-error-text-color);
-        border: var(--ag-borders) var(--ag-tooltip-error-border-color);
+        &.ag-cell-editor-tooltip {
+            background-color: var(--ag-tooltip-error-background-color);
+            color: var(--ag-tooltip-error-text-color);
+            border: var(--ag-borders) var(--ag-tooltip-error-border-color);
+            font-weight: 500;
+        }
     }
 
     .ag-tooltip.ag-tooltip-animate,

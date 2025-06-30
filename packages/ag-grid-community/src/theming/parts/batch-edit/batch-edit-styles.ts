@@ -26,8 +26,8 @@ export type BatchEditStyleParams = {
 };
 
 const baseParams: BatchEditStyleParams = {
-    cellBatchEditBackgroundColor: 'rgba(220 181 139 / 20%)',
-    cellBatchEditTextColor: 'rgba(66 47 0 / 100%)',
+    cellBatchEditBackgroundColor: 'rgba(220 181 139 / 16%)',
+    cellBatchEditTextColor: '#422f00',
 
     rowBatchEditBackgroundColor: {
         ref: 'cellBatchEditBackgroundColor',
@@ -39,7 +39,7 @@ const baseParams: BatchEditStyleParams = {
 
 export const baseDarkBatchEditParams: BatchEditStyleParams = {
     ...baseParams,
-    cellBatchEditTextColor: 'rgba(243 208 179 / 100%)',
+    cellBatchEditTextColor: '#f3d0b3',
 };
 
 const makeBatchEditStyleBaseTreeShakeable = () =>

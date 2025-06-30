@@ -8,7 +8,7 @@ This allows different grid features to work without any additional configuration
 
 ## Enable Cell Data Types
 
-There is a number of pre-defined cell data types: `'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` and `'object'`.
+There are a number of pre-defined cell data types: `'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` and `'object'`.
 
 These are enabled by default, with the data type being inferred from the row data if possible (see [Inferring Data Types](#inferring-data-types)).
 
@@ -255,7 +255,7 @@ const gridOptions = {
                 const date = params.value;
                 return date == null
                     ? ''
-                    : `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear}`;
+                    : `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
             },
         }
     }
