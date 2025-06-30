@@ -22,7 +22,7 @@ on:
                     - 'true'
                     - 'false'
     schedule:
-        - cron: '30 2 * * *' # Run daily at 1:30am UTC
+        - cron: '30 2 * * *' # Run daily at 2:30am UTC
 
 jobs:
     # Run all framework tasks in parallel
@@ -42,6 +42,24 @@ jobs:
             - name: Demo Pages
               run: yarn nx run ag-grid-docs-testing:test:e2e:demos
 
+            - name: Upload Test Report
+              id: upload-report
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                name: playwright-report-demos
+                path: reports/
+                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+            - name: Publish Test Report
+              uses: ctrf-io/github-test-reporter@v1
+              if: always()
+              with:
+                report-path: './reports/*.json'
+                summary-report: true
+                failed-report: true
+                flaky-report: true
+                skipped-report: true
+
     test-react-functional:
         runs-on: ubuntu-latest
         steps:
@@ -57,6 +75,24 @@ jobs:
 
             - name: React Functional
               run: yarn nx run ag-grid-docs-testing:test:e2e:reactFunctional
+
+            - name: Upload Test Report
+              id: upload-report
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                name: playwright-report-react-functional
+                path: reports/
+                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+            - name: Publish Test Report
+              uses: ctrf-io/github-test-reporter@v1
+              if: always()
+              with:
+                report-path: './reports/*.json'
+                summary-report: true
+                failed-report: true
+                flaky-report: true
+                skipped-report: true
 
     test-react-functional-ts:
         runs-on: ubuntu-latest
@@ -74,6 +110,24 @@ jobs:
             - name: React Functional TS
               run: yarn nx run ag-grid-docs-testing:test:e2e:reactFunctionalTs
 
+            - name: Upload Test Report
+              id: upload-report
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                name: playwright-report-react-functional-ts
+                path: reports/
+                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+            - name: Publish Test Report
+              uses: ctrf-io/github-test-reporter@v1
+              if: always()
+              with:
+                report-path: './reports/*.json'
+                summary-report: true
+                failed-report: true
+                flaky-report: true
+                skipped-report: true
+
     test-angular:
         runs-on: ubuntu-latest
         steps:
@@ -89,6 +143,24 @@ jobs:
 
             - name: Angular
               run: yarn nx run ag-grid-docs-testing:test:e2e:angular
+
+            - name: Upload Test Report
+              id: upload-report
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                name: playwright-report-angular
+                path: reports/
+                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+            - name: Publish Test Report
+              uses: ctrf-io/github-test-reporter@v1
+              if: always()
+              with:
+                report-path: './reports/*.json'
+                summary-report: true
+                failed-report: true
+                flaky-report: true
+                skipped-report: true
 
     test-typescript:
         runs-on: ubuntu-latest
@@ -106,6 +178,24 @@ jobs:
             - name: Typescript
               run: yarn nx run ag-grid-docs-testing:test:e2e:typescript
 
+            - name: Upload Test Report
+              id: upload-report
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                name: playwright-report-typescript
+                path: reports/
+                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+            - name: Publish Test Report
+              uses: ctrf-io/github-test-reporter@v1
+              if: always()
+              with:
+                report-path: './reports/*.json'
+                summary-report: true
+                failed-report: true
+                flaky-report: true
+                skipped-report: true
+
     test-vanilla:
         runs-on: ubuntu-latest
         steps:
@@ -122,6 +212,24 @@ jobs:
             - name: Vanilla
               run: yarn nx run ag-grid-docs-testing:test:e2e:vanilla
 
+            - name: Upload Test Report
+              id: upload-report
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                name: playwright-report-vanilla
+                path: reports/
+                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+            - name: Publish Test Report
+              uses: ctrf-io/github-test-reporter@v1
+              if: always()
+              with:
+                report-path: './reports/*.json'
+                summary-report: true
+                failed-report: true
+                flaky-report: true
+                skipped-report: true
+
     test-vue3:
         runs-on: ubuntu-latest
         steps:
@@ -137,3 +245,21 @@ jobs:
 
             - name: Vue3
               run: yarn nx run ag-grid-docs-testing:test:e2e:vue3
+
+            - name: Upload Test Report
+              id: upload-report
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                name: playwright-report-vue3
+                path: reports/
+                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+            - name: Publish Test Report
+              uses: ctrf-io/github-test-reporter@v1
+              if: always()
+              with:
+                report-path: './reports/*.json'
+                summary-report: true
+                failed-report: true
+                flaky-report: true
+                skipped-report: true
