@@ -20,7 +20,6 @@ export class TooltipPanel extends Component {
     }
 
     public postConstruct() {
-        // Determine the path within the series options object to get/set the individual shadow options
         const { chartMenuUtils, beans } = this;
         const propertyKey = 'tooltip';
         const chartTranslation = beans.chartTranslation as ChartTranslationService;
