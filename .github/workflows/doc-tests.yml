@@ -34,13 +34,12 @@ jobs:
               with:
                 fetch-depth: 1
 
-            - name: Setup
-              uses: ./.github/actions/setup-nx
-              with:
-                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+            - name: Install Playwright Browsers
+            
+              run: npx playwright install --with-deps chromium firefox webkit
 
             - name: Demo Pages
-              run: yarn nx run ag-grid-docs-testing:test:e2e:demos
+              run: npx playwright test ag-grid-demos.spec.ts
 
             - name: Upload Test Report
               id: upload-report
@@ -85,13 +84,13 @@ jobs:
                 path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
                 key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
 
-            - name: Setup
-              uses: ./.github/actions/setup-nx
-              with:
-                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+            - name: Install Playwright Browsers
+              working-directory: testing/ag-grid-docs
+              run: npx playwright install --with-deps chromium firefox webkit
 
             - name: React Functional
-              run: yarn nx run ag-grid-docs-testing:test:e2e:reactFunctional
+              working-directory: testing/ag-grid-docs
+              run: FRAMEWORK=reactFunctional npx playwright test framework-examples.spec.ts
 
             - name: Upload Test Report
               id: upload-report
@@ -117,13 +116,13 @@ jobs:
                 path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
                 key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}                
 
-            - name: Setup
-              uses: ./.github/actions/setup-nx
-              with:
-                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+            - name: Install Playwright Browsers
+              working-directory: testing/ag-grid-docs
+              run: npx playwright install --with-deps chromium firefox webkit
 
             - name: React Functional TS
-              run: yarn nx run ag-grid-docs-testing:test:e2e:reactFunctionalTs
+              working-directory: testing/ag-grid-docs
+              run: FRAMEWORK=reactFunctionalTs npx playwright test framework-examples.spec.ts
 
             - name: Upload Test Report
               id: upload-report
@@ -154,13 +153,13 @@ jobs:
                 path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
                 key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
 
-            - name: Setup
-              uses: ./.github/actions/setup-nx
-              with:
-                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+            - name: Install Playwright Browsers
+              working-directory: testing/ag-grid-docs
+              run: npx playwright install --with-deps chromium firefox webkit
 
             - name: Angular
-              run: yarn nx run ag-grid-docs-testing:test:e2e:angular --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+              working-directory: testing/ag-grid-docs
+              run: FRAMEWORK=angular npx playwright test framework-examples.spec.ts
 
             - name: Upload Test Report
               id: upload-report
@@ -186,13 +185,13 @@ jobs:
                 path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
                 key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
 
-            - name: Setup
-              uses: ./.github/actions/setup-nx
-              with:
-                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+            - name: Install Playwright Browsers
+              working-directory: testing/ag-grid-docs
+              run: npx playwright install --with-deps chromium firefox webkit
 
             - name: Typescript
-              run: yarn nx run ag-grid-docs-testing:test:e2e:typescript
+              working-directory: testing/ag-grid-docs
+              run: FRAMEWORK=typescript npx playwright test framework-examples.spec.ts
 
             - name: Upload Test Report
               id: upload-report
@@ -218,13 +217,13 @@ jobs:
                 path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
                 key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
 
-            - name: Setup
-              uses: ./.github/actions/setup-nx
-              with:
-                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+            - name: Install Playwright Browsers
+              working-directory: testing/ag-grid-docs
+              run: npx playwright install --with-deps chromium firefox webkit
 
             - name: Vanilla
-              run: yarn nx run ag-grid-docs-testing:test:e2e:vanilla
+              working-directory: testing/ag-grid-docs
+              run: FRAMEWORK=vanilla npx playwright test framework-examples.spec.ts
 
             - name: Upload Test Report
               id: upload-report
@@ -250,13 +249,13 @@ jobs:
                 path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
                 key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
 
-            - name: Setup
-              uses: ./.github/actions/setup-nx
-              with:
-                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+            - name: Install Playwright Browsers
+              working-directory: testing/ag-grid-docs
+              run: npx playwright install --with-deps chromium firefox webkit
 
             - name: Vue3
-              run: yarn nx run ag-grid-docs-testing:test:e2e:vue3
+              working-directory: testing/ag-grid-docs
+              run: FRAMEWORK=vue3 npx playwright test framework-examples.spec.ts
 
             - name: Upload Test Report
               id: upload-report
