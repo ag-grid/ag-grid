@@ -28,7 +28,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     InfiniteRowModelModule: 18,
     LargeTextEditorModule: 60.96,
     LocaleModule: 0.43,
-    NumberEditorModule: 44.96,
+    NumberEditorModule: 64.44,
     NumberFilterModule: 124.58,
     PaginationModule: 42.74,
     PinnedRowModule: 18.27,
@@ -51,8 +51,8 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 217.72,
-    AllEnterpriseModule: 1444.27,
-    BatchEditModule: 56.55,
+    AllEnterpriseModule: 1464.86,
+    BatchEditModule: 76.37,
     CellSelectionModule: 53,
     ClipboardModule: 46.04,
     ColumnMenuModule: 153.19,
