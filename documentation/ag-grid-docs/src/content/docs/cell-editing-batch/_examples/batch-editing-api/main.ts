@@ -69,14 +69,17 @@ function getEditingCells() {
 }
 
 function startBatchEdit() {
+    console.log('Starting batch edit');
     gridApi!.startBatchEdit();
 }
 
 function commitBatchEdit() {
+    console.log('Committing batch edit');
     gridApi!.commitBatchEdit();
 }
 
 function cancelBatchEdit() {
+    console.log('Cancelling batch edit');
     gridApi!.cancelBatchEdit();
 }
 
