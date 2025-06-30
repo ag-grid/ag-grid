@@ -160,7 +160,7 @@ jobs:
 
             - name: Angular
               working-directory: testing/ag-grid-docs
-              run: FRAMEWORK=angular npx playwright test framework-examples.spec.ts
+              run: FRAMEWORK=angular npx playwright test framework-examples.spec.ts --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
             - name: Upload Test Report
               id: upload-report
