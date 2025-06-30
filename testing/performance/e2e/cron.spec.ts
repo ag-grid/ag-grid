@@ -9,7 +9,7 @@ const frameworks = ['typescript', 'reactFunctionalTs', 'angular', 'vue3'];
 
 test(`Performance Test - Compare performance of setting data`, {
     timeout: frameworks.length * 10 * 60_000,
-    minIterations: 100,
+    minIterations: 200,
     maxIterations: 300,
     warmupIterations: 5,
     testCases: frameworks.map(
