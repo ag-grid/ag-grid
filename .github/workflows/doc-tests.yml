@@ -50,15 +50,6 @@ jobs:
                 name: playwright-report-demos
                 path: reports/
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
-            - name: Publish Test Report
-              uses: ctrf-io/github-test-reporter@v1
-              if: always()
-              with:
-                report-path: './reports/*.json'
-                summary-report: true
-                failed-report: true
-                flaky-report: true
-                skipped-report: true
 
     test-react-functional:
         runs-on: ubuntu-latest
@@ -84,15 +75,6 @@ jobs:
                 name: playwright-report-react-functional
                 path: reports/
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
-            - name: Publish Test Report
-              uses: ctrf-io/github-test-reporter@v1
-              if: always()
-              with:
-                report-path: './reports/*.json'
-                summary-report: true
-                failed-report: true
-                flaky-report: true
-                skipped-report: true
 
     test-react-functional-ts:
         runs-on: ubuntu-latest
@@ -118,15 +100,6 @@ jobs:
                 name: playwright-report-react-functional-ts
                 path: reports/
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
-            - name: Publish Test Report
-              uses: ctrf-io/github-test-reporter@v1
-              if: always()
-              with:
-                report-path: './reports/*.json'
-                summary-report: true
-                failed-report: true
-                flaky-report: true
-                skipped-report: true
 
     test-angular:
         runs-on: ubuntu-latest
@@ -152,15 +125,6 @@ jobs:
                 name: playwright-report-angular
                 path: reports/
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
-            - name: Publish Test Report
-              uses: ctrf-io/github-test-reporter@v1
-              if: always()
-              with:
-                report-path: './reports/*.json'
-                summary-report: true
-                failed-report: true
-                flaky-report: true
-                skipped-report: true
 
     test-typescript:
         runs-on: ubuntu-latest
@@ -186,15 +150,6 @@ jobs:
                 name: playwright-report-typescript
                 path: reports/
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
-            - name: Publish Test Report
-              uses: ctrf-io/github-test-reporter@v1
-              if: always()
-              with:
-                report-path: './reports/*.json'
-                summary-report: true
-                failed-report: true
-                flaky-report: true
-                skipped-report: true
 
     test-vanilla:
         runs-on: ubuntu-latest
@@ -220,15 +175,6 @@ jobs:
                 name: playwright-report-vanilla
                 path: reports/
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
-            - name: Publish Test Report
-              uses: ctrf-io/github-test-reporter@v1
-              if: always()
-              with:
-                report-path: './reports/*.json'
-                summary-report: true
-                failed-report: true
-                flaky-report: true
-                skipped-report: true
 
     test-vue3:
         runs-on: ubuntu-latest
@@ -254,15 +200,6 @@ jobs:
                 name: playwright-report-vue3
                 path: reports/
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
-            - name: Publish Test Report
-              uses: ctrf-io/github-test-reporter@v1
-              if: always()
-              with:
-                report-path: './reports/*.json'
-                summary-report: true
-                failed-report: true
-                flaky-report: true
-                skipped-report: true
     publish-reports:
       needs:
         - test-demos
