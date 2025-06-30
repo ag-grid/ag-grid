@@ -24,9 +24,9 @@ runs:
       run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
       shell: bash
 
-    - name: ${{ inputs.example-input }}
+    - name: ${{ inputs.framework }}
       working-directory: testing/ag-grid-docs
-      run: FRAMEWORK=${{ inputs.example-input }} npx playwright test framework-examples.spec.ts --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      run: FRAMEWORK=${{ inputs.framework }} npx playwright test framework-examples.spec.ts --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       shell: bash
 
     - name: Upload Test Report
@@ -34,6 +34,6 @@ runs:
       uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
-        name: playwright-report-${{ inputs.example-input }}-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}
+        name: playwright-report-${{ inputs.framework }}-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}
         path: reports/
         retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
