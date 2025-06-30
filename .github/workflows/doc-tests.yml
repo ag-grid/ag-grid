@@ -201,6 +201,7 @@ jobs:
                 path: reports/
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
     publish-reports:
+      if: always()
       needs:
         - test-demos
         - test-react-functional
