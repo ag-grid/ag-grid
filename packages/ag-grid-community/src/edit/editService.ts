@@ -371,6 +371,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.model.getCellValidationModel().getCellValidationMap().size > 0 ||
             this.model.getRowValidationModel().getRowValidationMap().size > 0;
 
+        const editsToDelete = [];
+
         for (const rowNode of rowNodes) {
             const editRow = edits.get(rowNode)!;
             for (const column of editRow.keys()) {
@@ -378,13 +380,22 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 const valueChanged = _valuesDiffer(editValue);
 
                 if (!cancel && valueChanged && !hasValidationErrors) {
-                    this.setNodeDataValue(rowNode, column, editValue.newValue);
+                    const success = this.setNodeDataValue(rowNode, column, editValue.newValue);
+
+                    if (!success) {
+                        // grid is likely readOnly, we want to update the edit state before refreshing
+                        editsToDelete.push({ rowNode, column });
+                    }
                 }
             }
         }
+
+        editsToDelete.forEach((position) => {
+            this.model.clearEditValue(position);
+        });
     }
 
-    private setNodeDataValue(rowNode: IRowNode, column: Column, newValue: any, refreshCell?: boolean): void {
+    private setNodeDataValue(rowNode: IRowNode, column: Column, newValue: any, refreshCell?: boolean): boolean {
         const { beans } = this;
         const cellCtrl = _getCellCtrl(beans, { rowNode, column });
 
@@ -395,7 +406,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         if (cellCtrl) {
             cellCtrl.suppressRefreshCell = true;
         }
-        rowNode.setDataValue(column, newValue, 'commit');
+        const success = rowNode.setDataValue(column, newValue, 'commit');
         if (cellCtrl) {
             cellCtrl.suppressRefreshCell = false;
         }
@@ -403,6 +414,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         if (refreshCell) {
             cellCtrl?.refreshCell(FORCE_REFRESH);
         }
+
+        return success;
     }
 
     public setEditMap(edits: EditMap, params?: _SetEditingCellsParams): void {
