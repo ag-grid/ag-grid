@@ -51,7 +51,7 @@ export function getBestColumnMoveIndexFromXPosition(
     let { allMovingColumns } = params;
     if (isFromHeader) {
         // If the columns we're dragging are the only visible columns of their group, move the hidden ones too
-        const newCols: AgColumn[] = [];
+        const newCols: AgColumn[] = [...allMovingColumns];
         allMovingColumns.forEach((col) => {
             let movingGroup: AgColumnGroup | null = null;
 
@@ -73,8 +73,6 @@ export function getBestColumnMoveIndexFromXPosition(
                         newCols.push(newCol);
                     }
                 });
-            } else if (!newCols.includes(col)) {
-                newCols.push(col);
             }
         });
         allMovingColumns = newCols;
@@ -176,7 +174,7 @@ export function getBestColumnMoveIndexFromXPosition(
         return;
     }
 
-    return { columns: allMovingColumns, toIndex };
+    return { columns: allMovingColumnsOrdered, toIndex };
 }
 
 export function attemptMoveColumns(
