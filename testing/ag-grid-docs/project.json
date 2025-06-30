@@ -26,7 +26,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["setup"],
       "options": {
-        "commands": ["npx playwright test ag-grid-demos.spec.ts --reporter=json=reports/demos-report.json"],
+        "commands": ["npx playwright test ag-grid-demos.spec.ts"],
         "parallel": true,
         "cwd": "testing/ag-grid-docs"
       }
@@ -36,9 +36,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["setup", "download"],
       "options": {
-        "commands": [
-          "FRAMEWORK=reactFunctional npx playwright test framework-examples.spec.ts --reporter=json=reports/react-functional-report.json"
-        ],
+        "commands": ["FRAMEWORK=reactFunctional npx playwright test framework-examples.spec.ts"],
         "parallel": true,
         "cwd": "testing/ag-grid-docs"
       }
@@ -47,9 +45,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["setup", "download"],
       "options": {
-        "commands": [
-          "FRAMEWORK=reactFunctionalTs npx playwright test framework-examples.spec.ts --reporter=json=reports/react-functional-ts-report.json"
-        ],
+        "commands": ["FRAMEWORK=reactFunctionalTs npx playwright test framework-examples.spec.ts"],
         "parallel": true,
         "cwd": "testing/ag-grid-docs"
       }
@@ -59,9 +55,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["setup", "download"],
       "options": {
-        "commands": [
-          "FRAMEWORK=angular npx playwright test framework-examples.spec.ts --reporter=json=reports/angular-report.json"
-        ],
+        "commands": ["FRAMEWORK=angular npx playwright test framework-examples.spec.ts"],
         "parallel": true,
         "cwd": "testing/ag-grid-docs"
       }
@@ -71,9 +65,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["setup", "download"],
       "options": {
-        "commands": [
-          "FRAMEWORK=typescript npx playwright test framework-examples.spec.ts --reporter=json=reports/typescript-report.json"
-        ],
+        "commands": ["FRAMEWORK=typescript npx playwright test framework-examples.spec.ts"],
         "parallel": true,
         "cwd": "testing/ag-grid-docs"
       }
@@ -83,9 +75,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["setup", "download"],
       "options": {
-        "commands": [
-          "FRAMEWORK=vanilla npx playwright test framework-examples.spec.ts --reporter=json=reports/vanilla-report.json"
-        ],
+        "commands": ["FRAMEWORK=vanilla npx playwright test framework-examples.spec.ts"],
         "parallel": true,
         "cwd": "testing/ag-grid-docs"
       }
@@ -94,9 +84,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["setup", "download"],
       "options": {
-        "commands": [
-          "FRAMEWORK=vue3 npx playwright test framework-examples.spec.ts --reporter=json=reports/vue3-report.json"
-        ],
+        "commands": ["FRAMEWORK=vue3 npx playwright test framework-examples.spec.ts"],
         "parallel": true,
         "cwd": "testing/ag-grid-docs"
       }
