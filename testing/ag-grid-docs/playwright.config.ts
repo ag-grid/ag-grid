@@ -37,7 +37,7 @@ export default defineConfig({
             'playwright-ctrf-json-reporter',
             {
                 outputDir: '../../reports',
-                outputFile: `ag-grid-docs-e2e-${process.env.FRAMEWORK || 'default'}${process.env.SHARD_INDEX ? '-' + process.env.SHARD_INDEX + '-' + process.env.SHARD_TOTAL : ''}.json`,
+                outputFile: `ag-grid-docs-e2e-${process.env.FRAMEWORK || 'default'}.json`,
             },
         ],
     ],
