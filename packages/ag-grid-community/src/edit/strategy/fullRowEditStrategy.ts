@@ -286,5 +286,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     public override destroy(): void {
         super.destroy();
         this.rowNode = undefined;
+        this.startedRows.length = 0;
     }
 }
