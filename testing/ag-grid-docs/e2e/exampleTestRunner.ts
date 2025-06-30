@@ -31,18 +31,16 @@ export async function getFrameworkExamples(framework: InternalFramework) {
     if (!examples) {
         const filePath = join(__dirname, 'config', 'all-examples-cached.json');
         examples = JSON.parse(readFileSync(filePath, 'utf-8'));
-        console.log(examples.length, 'examples found');
     }
 
-    return (examples as ExampleTestCase[])
-        .filter(
-            (e) =>
-                e.internalFramework === framework &&
-                !matchesExclusion(e) &&
-                // ag-grid.com still uses the old importType
-                ((e as any).importType === undefined || (e as any).importType === 'modules')
-        )
-        .splice(0, 10); // Limit to 10 examples per framework for testing purposes
+    return (examples as ExampleTestCase[]).filter(
+        (e) =>
+            e.internalFramework === framework &&
+            !matchesExclusion(e) &&
+            // ag-grid.com still uses the old importType
+            ((e as any).importType === undefined || (e as any).importType === 'modules')
+    );
+    // .splice(0, 10); // Limit to 10 examples per framework for testing purposes
 }
 
 export async function getSelectionOfFrameworkExamples(

@@ -27,6 +27,7 @@ on:
 jobs:
     # Run all framework tasks in parallel
     test-demos:
+        name: Test Doc Demos
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -52,6 +53,7 @@ jobs:
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
     download-examples:
+      name: Download all-examples.json
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
