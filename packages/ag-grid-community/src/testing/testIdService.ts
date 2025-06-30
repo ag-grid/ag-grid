@@ -16,6 +16,8 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             firstDataRendered: setup,
             displayedRowsChanged: setup,
             displayedColumnsChanged: setup,
+            columnMenuVisibleChanged: setup,
+            contextMenuVisibleChanged: setup,
         });
     }
 
