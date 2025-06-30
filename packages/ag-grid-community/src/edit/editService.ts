@@ -367,6 +367,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.model.getCellValidationModel().getCellValidationMap().size > 0 ||
             this.model.getRowValidationModel().getRowValidationMap().size > 0;
 
+        const editsToDelete = [];
+
         for (const rowNode of rowNodes) {
             const editRow = edits.get(rowNode)!;
             for (const column of editRow.keys()) {
@@ -385,15 +387,24 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     if (cellCtrl) {
                         cellCtrl.suppressRefreshCell = true;
                     }
-                    rowNode.setDataValue(column, editValue.newValue, 'commit');
+                    const success = rowNode.setDataValue(column, editValue.newValue, 'commit');
                     if (cellCtrl) {
                         cellCtrl.suppressRefreshCell = false;
+                    }
+
+                    if (!success) {
+                        // grid is likely readOnly, we want to update the edit state before refreshing
+                        editsToDelete.push(position);
                     }
 
                     cellCtrl?.refreshCell(FORCE_REFRESH);
                 }
             }
         }
+
+        editsToDelete.forEach((position) => {
+            this.model.clearEditValue(position);
+        });
     }
 
     public setEditMap(edits: EditMap, params?: _SetEditingCellsParams): void {
