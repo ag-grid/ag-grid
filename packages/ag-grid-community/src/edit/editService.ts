@@ -384,7 +384,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
     }
 
-    private setNodeDataValue(rowNode: IRowNode, column: Column, newValue: any): void {
+    private setNodeDataValue(rowNode: IRowNode, column: Column, newValue: any, refreshCell?: boolean): void {
         const { beans } = this;
         const cellCtrl = _getCellCtrl(beans, { rowNode, column });
 
@@ -400,7 +400,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             cellCtrl.suppressRefreshCell = false;
         }
 
-        cellCtrl?.refreshCell(FORCE_REFRESH);
+        if (refreshCell) {
+            cellCtrl?.refreshCell(FORCE_REFRESH);
+        }
     }
 
     public setEditMap(edits: EditMap, params?: _SetEditingCellsParams): void {
@@ -685,7 +687,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         if (!eventSource || KEEP_EDITOR_SOURCES.has(eventSource)) {
             // editApi or undoRedoApi apply change without involving the editor
             _syncFromEditor(beans, position, newValue, eventSource);
-            this.setNodeDataValue(position.rowNode, position.column, newValue);
+            this.setNodeDataValue(position.rowNode, position.column, newValue, false);
             return;
         }
 
