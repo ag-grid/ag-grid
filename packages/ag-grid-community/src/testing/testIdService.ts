@@ -11,8 +11,11 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
     beanName: BeanName = 'testIdSvc';
 
     public postConstruct(): void {
+        const setup = () => this.setupAllTestIds();
         this.addManagedEventListeners({
-            firstDataRendered: () => this.setupAllTestIds(),
+            firstDataRendered: setup,
+            displayedRowsChanged: setup,
+            displayedColumnsChanged: setup,
         });
     }
 

@@ -1,10 +1,10 @@
-{% if isFramework("javascript") %}
-## Testing with DOM Testing Library
+{% if isFramework("react") %}
+## Testing with React Testing Library
 
-The following snippet illustrates testing a simple configuration of AG Grid with the [DOM Testing Library](https://testing-library.com/docs/dom-testing-library/intro/).
+The following snippet illustrates testing a simple configuration of AG Grid with the [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/).
 
 ```js
-import { getByText, getByTestId } from '@testing-library/dom';
+import { getByText, getByTestId } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { createGrid, GridOptions, TestingModule, ModuleRegistry, getTestIdForCell } from 'ag-grid-community';
