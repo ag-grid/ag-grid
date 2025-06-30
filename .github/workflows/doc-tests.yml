@@ -35,10 +35,11 @@ jobs:
                 fetch-depth: 1
 
             - name: Install Playwright Browsers
-            
-              run: npx playwright install --with-deps chromium firefox webkit
+              working-directory: testing/ag-grid-docs
+              run: npm install && npx playwright install --with-deps chromium firefox webkit
 
             - name: Demo Pages
+              working-directory: testing/ag-grid-docs
               run: npx playwright test ag-grid-demos.spec.ts
 
             - name: Upload Test Report
@@ -86,7 +87,7 @@ jobs:
 
             - name: Install Playwright Browsers
               working-directory: testing/ag-grid-docs
-              run: npx playwright install --with-deps chromium firefox webkit
+              run: npm install && npx playwright install --with-deps chromium firefox webkit
 
             - name: React Functional
               working-directory: testing/ag-grid-docs
@@ -118,7 +119,7 @@ jobs:
 
             - name: Install Playwright Browsers
               working-directory: testing/ag-grid-docs
-              run: npx playwright install --with-deps chromium firefox webkit
+              run: npm install && npx playwright install --with-deps chromium firefox webkit
 
             - name: React Functional TS
               working-directory: testing/ag-grid-docs
@@ -155,7 +156,7 @@ jobs:
 
             - name: Install Playwright Browsers
               working-directory: testing/ag-grid-docs
-              run: npx playwright install --with-deps chromium firefox webkit
+              run: npm install && npx playwright install --with-deps chromium firefox webkit
 
             - name: Angular
               working-directory: testing/ag-grid-docs
@@ -187,7 +188,7 @@ jobs:
 
             - name: Install Playwright Browsers
               working-directory: testing/ag-grid-docs
-              run: npx playwright install --with-deps chromium firefox webkit
+              run: npm install && npx playwright install --with-deps chromium firefox webkit
 
             - name: Typescript
               working-directory: testing/ag-grid-docs
@@ -219,7 +220,7 @@ jobs:
 
             - name: Install Playwright Browsers
               working-directory: testing/ag-grid-docs
-              run: npx playwright install --with-deps chromium firefox webkit
+              run: npm install && npx playwright install --with-deps chromium firefox webkit
 
             - name: Vanilla
               working-directory: testing/ag-grid-docs
@@ -251,7 +252,7 @@ jobs:
 
             - name: Install Playwright Browsers
               working-directory: testing/ag-grid-docs
-              run: npx playwright install --with-deps chromium firefox webkit
+              run: npm install && npx playwright install --with-deps chromium firefox webkit
 
             - name: Vue3
               working-directory: testing/ag-grid-docs
