@@ -59,16 +59,16 @@ jobs:
           with:
             fetch-depth: 1
 
-        - name: Download all-examples.json
+        - name: Download all-examples-cached.json
           run: |
             mkdir -p ./e2e/config
-            curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./e2e/config/all-examples.json
+            curl https://grid-staging.ag-grid.com/debug/all-examples-cached.json > ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
 
-        - name: Cache all-examples.json
+        - name: Cache all-examples-cached.json
           uses: actions/cache@v4
           with:
-            path: ./e2e/config/all-examples.json
-            key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}
+            path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
+            key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
 
     test-react-functional:
         needs: download-examples
@@ -79,11 +79,11 @@ jobs:
               with:
                 fetch-depth: 1
 
-            - name: Restore all-examples.json
+            - name: Restore all-examples-cached.json
               uses: actions/cache@v4
               with:
-                path: ./e2e/config/all-examples.json
-                key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}
+                path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
+                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
 
             - name: Setup
               uses: ./.github/actions/setup-nx
@@ -111,11 +111,11 @@ jobs:
               with:
                 fetch-depth: 1
 
-            - name: Restore all-examples.json
+            - name: Restore all-examples-cached.json
               uses: actions/cache@v4
               with:
-                path: ./e2e/config/all-examples.json
-                key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}                
+                path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
+                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}                
 
             - name: Setup
               uses: ./.github/actions/setup-nx
@@ -148,11 +148,11 @@ jobs:
               with:
                 fetch-depth: 1
 
-            - name: Restore all-examples.json
+            - name: Restore all-examples-cached.json
               uses: actions/cache@v4
               with:
-                path: ./e2e/config/all-examples.json
-                key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}
+                path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
+                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
 
             - name: Setup
               uses: ./.github/actions/setup-nx
@@ -180,11 +180,11 @@ jobs:
               with:
                 fetch-depth: 1
 
-            - name: Restore all-examples.json
+            - name: Restore all-examples-cached.json
               uses: actions/cache@v4
               with:
-                path: ./e2e/config/all-examples.json
-                key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}
+                path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
+                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
 
             - name: Setup
               uses: ./.github/actions/setup-nx
@@ -212,11 +212,11 @@ jobs:
               with:
                 fetch-depth: 1
 
-            - name: Restore all-examples.json
+            - name: Restore all-examples-cached.json
               uses: actions/cache@v4
               with:
-                path: ./e2e/config/all-examples.json
-                key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}
+                path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
+                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
 
             - name: Setup
               uses: ./.github/actions/setup-nx
@@ -244,11 +244,11 @@ jobs:
               with:
                 fetch-depth: 1
 
-            - name: Restore all-examples.json
+            - name: Restore all-examples-cached.json
               uses: actions/cache@v4
               with:
-                path: ./e2e/config/all-examples.json
-                key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}
+                path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
+                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
 
             - name: Setup
               uses: ./.github/actions/setup-nx

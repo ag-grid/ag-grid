@@ -29,7 +29,7 @@ const matchesExclusion = (testCase: ExampleTestCase) => {
 
 export async function getFrameworkExamples(framework: InternalFramework) {
     if (!examples) {
-        const filePath = join(__dirname, 'config', 'all-examples.json');
+        const filePath = join(__dirname, 'config', 'all-examples-cached.json');
         examples = JSON.parse(readFileSync(filePath, 'utf-8'));
         console.log(examples.length, 'examples found');
     }
