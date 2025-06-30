@@ -71,6 +71,7 @@ jobs:
             key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}
 
     test-react-functional:
+        needs: download-examples
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -102,6 +103,7 @@ jobs:
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
     test-react-functional-ts:
+        needs: download-examples
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -133,6 +135,7 @@ jobs:
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
     test-angular:
+        needs: download-examples
         runs-on: ubuntu-latest
         strategy:
           fail-fast: false
@@ -169,6 +172,7 @@ jobs:
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
     test-typescript:
+        needs: download-examples
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -200,6 +204,7 @@ jobs:
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
     test-vanilla:
+        needs: download-examples
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -231,6 +236,7 @@ jobs:
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
     test-vue3:
+        needs: download-examples
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
