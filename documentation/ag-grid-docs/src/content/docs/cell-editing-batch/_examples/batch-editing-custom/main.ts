@@ -8,7 +8,7 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { RichSelectModule } from 'ag-grid-enterprise';
+import { BatchEditModule, RichSelectModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 import { GenderRenderer } from './genderRenderer_typescript';
@@ -19,6 +19,7 @@ import { SimpleTextEditor } from './simpleTextEditor_typescript';
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     RichSelectModule,
+    BatchEditModule,
     NumberEditorModule,
     TextEditorModule,
     CustomEditorModule,
@@ -74,14 +75,17 @@ function getEditingCells() {
 }
 
 function startBatchEdit() {
+    console.log('Starting batch edit');
     gridApi!.startBatchEdit();
 }
 
 function commitBatchEdit() {
+    console.log('Committing batch edit');
     gridApi!.commitBatchEdit();
 }
 
 function cancelBatchEdit() {
+    console.log('Cancelling batch edit');
     gridApi!.cancelBatchEdit();
 }
 

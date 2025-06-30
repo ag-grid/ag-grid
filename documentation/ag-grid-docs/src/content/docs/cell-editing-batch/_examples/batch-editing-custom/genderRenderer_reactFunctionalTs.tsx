@@ -1,4 +1,3 @@
-import { RectangleHorizontal } from 'lucide-react';
 import React from 'react';
 
 import type { CustomCellRendererProps } from 'ag-grid-react';
