@@ -51,6 +51,25 @@ jobs:
                 path: reports/
                 retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
+    download-examples:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+
+        - name: Download all-examples.json
+          run: |
+            mkdir -p ./e2e/config
+            curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./e2e/config/all-examples.json
+
+        - name: Cache all-examples.json
+          uses: actions/cache@v4
+          with:
+            path: ./e2e/config/all-examples.json
+            key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}
+
     test-react-functional:
         runs-on: ubuntu-latest
         steps:
@@ -58,6 +77,12 @@ jobs:
               uses: actions/checkout@v4
               with:
                 fetch-depth: 1
+
+            - name: Restore all-examples.json
+              uses: actions/cache@v4
+              with:
+                path: ./e2e/config/all-examples.json
+                key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}
 
             - name: Setup
               uses: ./.github/actions/setup-nx
@@ -83,6 +108,12 @@ jobs:
               uses: actions/checkout@v4
               with:
                 fetch-depth: 1
+
+            - name: Restore all-examples.json
+              uses: actions/cache@v4
+              with:
+                path: ./e2e/config/all-examples.json
+                key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}                
 
             - name: Setup
               uses: ./.github/actions/setup-nx
@@ -114,6 +145,12 @@ jobs:
               with:
                 fetch-depth: 1
 
+            - name: Restore all-examples.json
+              uses: actions/cache@v4
+              with:
+                path: ./e2e/config/all-examples.json
+                key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}
+
             - name: Setup
               uses: ./.github/actions/setup-nx
               with:
@@ -138,6 +175,12 @@ jobs:
               uses: actions/checkout@v4
               with:
                 fetch-depth: 1
+
+            - name: Restore all-examples.json
+              uses: actions/cache@v4
+              with:
+                path: ./e2e/config/all-examples.json
+                key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}
 
             - name: Setup
               uses: ./.github/actions/setup-nx
@@ -164,6 +207,12 @@ jobs:
               with:
                 fetch-depth: 1
 
+            - name: Restore all-examples.json
+              uses: actions/cache@v4
+              with:
+                path: ./e2e/config/all-examples.json
+                key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}
+
             - name: Setup
               uses: ./.github/actions/setup-nx
               with:
@@ -188,6 +237,12 @@ jobs:
               uses: actions/checkout@v4
               with:
                 fetch-depth: 1
+
+            - name: Restore all-examples.json
+              uses: actions/cache@v4
+              with:
+                path: ./e2e/config/all-examples.json
+                key: all-examples-${{ hashFiles('./e2e/config/all-examples.json') }}
 
             - name: Setup
               uses: ./.github/actions/setup-nx

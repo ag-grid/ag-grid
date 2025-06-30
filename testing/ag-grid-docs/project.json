@@ -34,7 +34,7 @@
 
     "test:e2e:reactFunctional": {
       "executor": "nx:run-commands",
-      "dependsOn": ["setup", "download"],
+      "dependsOn": ["setup"],
       "options": {
         "commands": ["FRAMEWORK=reactFunctional npx playwright test framework-examples.spec.ts"],
         "parallel": true,
@@ -43,7 +43,7 @@
     },
     "test:e2e:reactFunctionalTs": {
       "executor": "nx:run-commands",
-      "dependsOn": ["setup", "download"],
+      "dependsOn": ["setup"],
       "options": {
         "commands": ["FRAMEWORK=reactFunctionalTs npx playwright test framework-examples.spec.ts"],
         "parallel": true,
@@ -53,7 +53,7 @@
 
     "test:e2e:angular": {
       "executor": "nx:run-commands",
-      "dependsOn": ["setup", "download"],
+      "dependsOn": ["setup"],
       "options": {
         "commands": ["FRAMEWORK=angular npx playwright test framework-examples.spec.ts"],
         "parallel": true,
@@ -63,7 +63,7 @@
 
     "test:e2e:typescript": {
       "executor": "nx:run-commands",
-      "dependsOn": ["setup", "download"],
+      "dependsOn": ["setup"],
       "options": {
         "commands": ["FRAMEWORK=typescript npx playwright test framework-examples.spec.ts"],
         "parallel": true,
@@ -73,7 +73,7 @@
 
     "test:e2e:vanilla": {
       "executor": "nx:run-commands",
-      "dependsOn": ["setup", "download"],
+      "dependsOn": ["setup"],
       "options": {
         "commands": ["FRAMEWORK=vanilla npx playwright test framework-examples.spec.ts"],
         "parallel": true,
@@ -82,7 +82,7 @@
     },
     "test:e2e:vue3": {
       "executor": "nx:run-commands",
-      "dependsOn": ["setup", "download"],
+      "dependsOn": ["setup"],
       "options": {
         "commands": ["FRAMEWORK=vue3 npx playwright test framework-examples.spec.ts"],
         "parallel": true,
