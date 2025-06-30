@@ -3035,6 +3035,7 @@ export type SelectionColumnDef = Pick<
     | 'headerClass'
     | 'headerComponent'
     | 'headerComponentParams'
+    | 'headerName'
     | 'mainMenuItems'
     | 'suppressHeaderContextMenu'
     | 'suppressHeaderMenuButton'
