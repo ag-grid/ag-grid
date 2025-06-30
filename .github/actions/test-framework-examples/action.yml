@@ -22,10 +22,12 @@ runs:
     - name: Install Playwright Browsers
       working-directory: testing/ag-grid-docs
       run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
+      shell: bash
 
     - name: ${{ inputs.example-input }}
       working-directory: testing/ag-grid-docs
       run: FRAMEWORK=${{ inputs.example-input }} npx playwright test framework-examples.spec.ts --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      shell: bash
 
     - name: Upload Test Report
       id: upload-report
