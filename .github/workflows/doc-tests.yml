@@ -143,33 +143,10 @@ jobs:
             shardIndex: [1, 2, 3, 4]
             shardTotal: [4]
         steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 1
-
-            - name: Restore all-examples-cached.json
-              uses: actions/cache@v4
-              with:
-                path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
-                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
-
-            - name: Install Playwright Browsers
-              working-directory: testing/ag-grid-docs
-              run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
-
-            - name: Angular
-              working-directory: testing/ag-grid-docs
-              run: FRAMEWORK=angular npx playwright test framework-examples.spec.ts --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-
-            - name: Upload Test Report
-              id: upload-report
-              uses: actions/upload-artifact@v4
-              if: ${{ !cancelled() }}
-              with:
-                name: playwright-report-angular-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}
-                path: reports/
-                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: angular
 
     test-typescript:
         needs: download-examples
