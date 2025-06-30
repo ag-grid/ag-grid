@@ -235,7 +235,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
     }
 
     private setCaret(position: number, setFocus?: boolean): void {
-        if (setFocus && _isNothingFocused(this.beans)) {
+        if (setFocus || _isNothingFocused(this.beans)) {
             // clicking on the list loses focus, so restore
             this.eAutocompleteInput.getFocusableElement().focus();
         }

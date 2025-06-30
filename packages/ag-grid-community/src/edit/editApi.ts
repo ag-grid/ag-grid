@@ -1,7 +1,6 @@
 import type { StartEditingCellParams } from '../api/gridApi';
 import { ensureColumnVisible, ensureIndexVisible } from '../api/scrollApi';
 import type { BeanCollection } from '../context/context';
-import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { EditingCellPosition, ICellEditorValidationError } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
@@ -98,10 +97,6 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
     }
 
     ensureColumnVisible(beans, colKey);
-
-    if (!_getCellByPosition(beans, cellPosition)) {
-        return;
-    }
 
     editSvc?.setEditingCells(
         [

@@ -332,6 +332,11 @@ const docs: Record<AllThemeParams, string> = {
     cellBatchEditTextColor: 'Text color for cells in batch edit mode',
     rowBatchEditBackgroundColor: 'Background color for rows in batch edit mode',
     rowBatchEditTextColor: 'Text color for rows in batch edit mode',
+    colorPickerThumbSize: 'Size of thumb (the draggable item) in color picker popup',
+    colorPickerTrackSize: 'Size of track in color picker popup',
+    colorPickerThumbBorderWidth: 'Border width of thumb (the draggable item) in color picker popup',
+    colorPickerTrackBorderRadius: 'Border radius of track in color picker popup',
+    colorPickerColorBorderRadius: 'Border radius of selected/recent colors in color picker',
 };
 
 export const getParamDocs = (param: string): string | undefined => {

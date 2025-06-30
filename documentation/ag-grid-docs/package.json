@@ -57,6 +57,7 @@
     "cheerio": "^1.0.0",
     "classnames": "^2.5.1",
     "codesandbox-import-utils": "2.2.3",
+    "dompurify": "^3.2.6",
     "downshift": "^9.0.6",
     "fast-xml-parser": "^4.4.1",
     "gif-frames": "^1.0.1",

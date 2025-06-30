@@ -114,6 +114,7 @@ import type {
     HeaderFocusedEvent,
     HeaderPosition,
     IAdvancedFilterBuilderParams,
+    IAdvancedFilterParams,
     IAggFunc,
     IDatasource,
     IRowDragItem,
@@ -795,6 +796,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `AdvancedFilterModule`
      */
     @Input() public advancedFilterBuilderParams: IAdvancedFilterBuilderParams | undefined = undefined;
+    /** Customise the parameters passed to the Advanced Filter
+     * @agModule `AdvancedFilterModule`
+     */
+    @Input() public advancedFilterParams: IAdvancedFilterParams | undefined = undefined;
     /** @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
      * @default true
      * @agModule `AdvancedFilterModule`

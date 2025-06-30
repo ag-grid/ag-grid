@@ -11,7 +11,9 @@ import { _addGridCommonParams, _isClientSideRowModel } from '../gridOptionsUtils
 import type { CellRange, IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
+import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
+import type { Column } from '../interfaces/iColumn';
 import type { EditMap, EditRow, EditValue, GetEditsParams, IEditModelService } from '../interfaces/iEditModelService';
 import type {
     EditNavOnValidationResult,
@@ -27,9 +29,9 @@ import type {
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { IRowStyleFeature } from '../interfaces/iRowStyleFeature';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
-import type { CellPosition } from '../main-umd-noStyles';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
+import { _batchCall } from '../utils/function';
 import type { ValueService } from '../valueService/valueService';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
@@ -51,6 +53,9 @@ import {
 import { _refreshEditCells } from './utils/refresh';
 
 type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };
+
+// these are event sources for setDataValue that will not cause the editors to close
+const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo']);
 
 // stop editing sources that we treat as UI-originated so we follow standard processing.
 const SOURCE_TRANSFORM: Record<string, EditSource> = {
@@ -361,7 +366,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     private processEdits(edits: EditMap, cancel: boolean = false): void {
         const rowNodes = Array.from(edits.keys());
-        const { beans } = this;
 
         const hasValidationErrors =
             this.model.getCellValidationModel().getCellValidationMap().size > 0 ||
@@ -371,29 +375,32 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             const editRow = edits.get(rowNode)!;
             for (const column of editRow.keys()) {
                 const editValue = editRow.get(column)!;
-                const position: Required<EditPosition> = { rowNode, column };
-
-                const cellCtrl = _getCellCtrl(beans, position);
-
                 const valueChanged = _valuesDiffer(editValue);
 
                 if (!cancel && valueChanged && !hasValidationErrors) {
-                    // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
-                    // getting triggered, which results in all cells getting refreshed. we do not want this refresh
-                    // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
-                    // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
-                    if (cellCtrl) {
-                        cellCtrl.suppressRefreshCell = true;
-                    }
-                    rowNode.setDataValue(column, editValue.newValue, 'commit');
-                    if (cellCtrl) {
-                        cellCtrl.suppressRefreshCell = false;
-                    }
-
-                    cellCtrl?.refreshCell(FORCE_REFRESH);
+                    this.setNodeDataValue(rowNode, column, editValue.newValue);
                 }
             }
         }
+    }
+
+    private setNodeDataValue(rowNode: IRowNode, column: Column, newValue: any): void {
+        const { beans } = this;
+        const cellCtrl = _getCellCtrl(beans, { rowNode, column });
+
+        // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
+        // getting triggered, which results in all cells getting refreshed. we do not want this refresh
+        // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
+        // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
+        if (cellCtrl) {
+            cellCtrl.suppressRefreshCell = true;
+        }
+        rowNode.setDataValue(column, newValue, 'commit');
+        if (cellCtrl) {
+            cellCtrl.suppressRefreshCell = false;
+        }
+
+        cellCtrl?.refreshCell(FORCE_REFRESH);
     }
 
     public setEditMap(edits: EditMap, params?: _SetEditingCellsParams): void {
@@ -519,14 +526,17 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     public checkNavWithValidation(
         position?: EditPosition,
-        event?: Event | CellFocusedEvent
+        event?: Event | CellFocusedEvent,
+        focus: boolean = true
     ): EditNavOnValidationResult {
         if (this.hasValidationErrors(position)) {
             const cellCtrl = _getCellCtrl(this.beans, position);
             if (this.cellEditingInvalidCommitBlocks()) {
                 (event as Event)?.preventDefault?.();
-                !cellCtrl?.hasBrowserFocus() && cellCtrl?.focusCell();
-                cellCtrl?.comp?.getCellEditor()?.focusIn?.();
+                if (focus) {
+                    !cellCtrl?.hasBrowserFocus() && cellCtrl?.focusCell();
+                    cellCtrl?.comp?.getCellEditor()?.focusIn?.();
+                }
                 return 'block-stop';
             }
 
@@ -671,6 +681,13 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.strategy ??= this.createStrategy();
         const source = this.isBatchEditing() ? 'ui' : 'api';
+
+        if (!eventSource || KEEP_EDITOR_SOURCES.has(eventSource)) {
+            // editApi or undoRedoApi apply change without involving the editor
+            _syncFromEditor(beans, position, newValue, eventSource);
+            this.setNodeDataValue(position.rowNode, position.column, newValue);
+            return;
+        }
 
         const existing = this.model.getEdit(position);
         if (existing) {
@@ -922,5 +939,26 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const label = translate('ariaPendingChange', 'Pending Change');
 
         this.beans.ariaAnnounce?.announceValue(label, 'pendingChange');
+    }
+
+    allowedFocusTargetOnValidation(cellPosition: EditPosition): CellCtrl | undefined {
+        const incomingCellCtrl = _getCellCtrl(this.beans, cellPosition);
+
+        if (this.checkNavWithValidation(undefined, undefined, false) === 'block-stop') {
+            // if we are blocking the navigation, we don't allow focus change out of the editor
+            const map = this.model.getCellValidationModel().getCellValidationMap();
+            const rowNode = map.keys().next()?.value;
+            const column = map.get(rowNode)?.keys().next()?.value;
+            const cellCtrl = _getCellCtrl(this.beans, { rowNode, column });
+
+            if (cellCtrl && cellCtrl !== incomingCellCtrl) {
+                // if we are blocking the navigation, we set the focus back to the editor
+                _batchCall(() => this.strategy?.setFocusInOnEditor(cellCtrl));
+            }
+
+            return cellCtrl;
+        }
+
+        return incomingCellCtrl;
     }
 }

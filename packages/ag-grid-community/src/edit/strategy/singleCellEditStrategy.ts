@@ -7,7 +7,7 @@ import type { EditPosition, EditRowPosition } from '../../interfaces/iEditServic
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getColId } from '../utils/controllers';
-import { _populateModelValidationErrors, _setupEditor } from '../utils/editors';
+import { _populateModelValidationErrors, _setupEditor, _syncFromEditor } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
@@ -123,6 +123,11 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             // undesirable so we suspend the model while we find the next cell.
             this.model.suspend(true);
         } else {
+            if (preventNavigation) {
+                _syncFromEditor(this.beans, prevCell);
+                return true;
+            }
+
             // before we stop editing, we need to focus the cell element
             // so the grid doesn't detect that focus has left the grid
             prevCell.eGui.focus();

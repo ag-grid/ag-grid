@@ -126,6 +126,31 @@ export type InputStyleParams = {
      * Background color for dropdown menus attached to buttons (e.g. select fields)
      */
     pickerListBackgroundColor: ColorValue;
+
+    /**
+     * Size of thumb (the draggable item) in color picker popup.
+     */
+    colorPickerThumbSize: LengthValue;
+
+    /**
+     * Size of track in color picker popup.
+     */
+    colorPickerTrackSize: LengthValue;
+
+    /**
+     * Border width of thumb (the draggable item) in color picker popup.
+     */
+    colorPickerThumbBorderWidth: LengthValue;
+
+    /**
+     * Border radius of track in color picker popup.
+     */
+    colorPickerTrackBorderRadius: LengthValue;
+
+    /**
+     * Border radius of selected/recent colors in color picker.
+     */
+    colorPickerColorBorderRadius: LengthValue;
 };
 
 const baseParams: InputStyleParams = {
@@ -180,6 +205,11 @@ const baseParams: InputStyleParams = {
     pickerButtonFocusBackgroundColor: { ref: 'backgroundColor' },
     pickerListBorder: false,
     pickerListBackgroundColor: { ref: 'backgroundColor' },
+    colorPickerThumbSize: 18,
+    colorPickerTrackSize: 12,
+    colorPickerThumbBorderWidth: 3,
+    colorPickerTrackBorderRadius: 12,
+    colorPickerColorBorderRadius: 4,
 };
 
 const makeInputStyleBaseTreeShakeable = () =>
