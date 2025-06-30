@@ -41,6 +41,7 @@ export interface GridRowsOptions<TData = any> {
 
 export class GridRows<TData = any> {
     public readonly treeData: boolean;
+    public readonly pivotMode: boolean;
     public readonly rowNodes: RowNode<TData>[];
     public readonly displayedRows: RowNode<TData>[];
     public readonly rootRowNodes: RowNode<TData>[];
@@ -64,6 +65,7 @@ export class GridRows<TData = any> {
         const errors = options.errors || new GridRowsErrors<TData>();
         this.errors = errors;
         this.treeData = options.treeData ?? !!api.getGridOption('treeData');
+        this.pivotMode = !!api.getGridOption('pivotMode');
         const rowNodes: RowNode<TData>[] = [];
         const displayedRows: RowNode<TData>[] = [];
         const rootNodesSet = new Set<RowNode<TData>>();

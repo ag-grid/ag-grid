@@ -139,12 +139,6 @@ export class GridRowsDomValidator {
             }
 
             if (cellElement.textContent !== cellValue) {
-                if (row.group && gridRows.api.getGridOption('groupTotalRow')) {
-                    // TODO: HACK: we are disabling checking the cell value due to AG-12716
-                    // if group footers are visible, api.getCellValue return the aggregate value, but HTML cells shows the row data value
-                    continue;
-                }
-
                 rowErrors.add(
                     `HTML cell value mismatch for column id:"${columnId}" index:${columnIndex}, expected ${JSON.stringify(cellValue)}, got ${JSON.stringify(cellElement.textContent)}`
                 );

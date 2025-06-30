@@ -40,6 +40,12 @@ export class SimplePRNG {
         return result;
     }
 
+    /** Pick a random element from an array */
+    pick<T>(array: readonly T[]): T | undefined {
+        const len = array.length;
+        return len ? array[this.nextInt(0, len - 1)] : undefined;
+    }
+
     /** Shuffle an array in place */
     shuffle<T>(array: T[], start: number = 0, end: number = array.length - 1): T[] {
         const len = array.length;

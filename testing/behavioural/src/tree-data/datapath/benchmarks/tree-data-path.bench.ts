@@ -37,7 +37,7 @@ suite('treeData with getDataPath', () => {
     };
 
     bench(
-        'build from scratch ' + rowData.length + ' rows',
+        'tree from scratch ' + rowData.length + ' rows',
         () => {
             api.setGridOption('rowData', []);
             api.setGridOption('rowData', rowData);
@@ -46,7 +46,7 @@ suite('treeData with getDataPath', () => {
     );
 
     bench(
-        'update rowData ' + rowData1.length + ' rows',
+        'update tree rowData ' + rowData1.length + ' rows',
         () => {
             api.setGridOption('rowData', rowData);
             api.setGridOption('rowData', rowData1);

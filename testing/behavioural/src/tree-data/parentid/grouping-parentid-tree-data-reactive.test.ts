@@ -58,12 +58,12 @@ describe('ag-grid grouping parentId treeData is reactive', () => {
             let gridRows = new GridRows(api, 'data 1 ' + repeat, gridRowsOptions);
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"X-ROOT_NODE_ID"
-                ├─┬ filler id:row-group-g-0 ag-Grid-AutoColumn:0
+                ├─┬ LEAF_GROUP id:row-group-g-0 ag-Grid-AutoColumn:0
                 │ ├── LEAF id:A ag-Grid-AutoColumn:"X-A" g:0 v:0
                 │ ├── LEAF id:D ag-Grid-AutoColumn:"X-D" g:0 v:1
                 │ ├── LEAF id:E ag-Grid-AutoColumn:"X-E" g:0 v:2
                 │ └── LEAF id:F ag-Grid-AutoColumn:"X-F" g:0 v:3
-                └─┬ filler id:row-group-g-1 ag-Grid-AutoColumn:1
+                └─┬ LEAF_GROUP id:row-group-g-1 ag-Grid-AutoColumn:1
                 · ├── LEAF id:B ag-Grid-AutoColumn:"X-B" g:1 v:1
                 · ├── LEAF id:C ag-Grid-AutoColumn:"X-C" g:1 v:1
                 · └── LEAF id:G ag-Grid-AutoColumn:"X-G" g:1 v:4

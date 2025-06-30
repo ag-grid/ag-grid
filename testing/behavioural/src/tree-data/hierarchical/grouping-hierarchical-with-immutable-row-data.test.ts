@@ -67,15 +67,15 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
             │ · └── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
@@ -106,13 +106,13 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
             │ · └── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · └─┬ filler id:row-group-country-Italy-year-2000
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · · ├── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2000
         `);
@@ -144,15 +144,15 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
             │ · └── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
@@ -185,17 +185,17 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
             │ · ├── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
             │ · ├── LEAF id:6 name:"xxx" country:"Ireland" year:2001
             │ · └── LEAF id:5 name:"Grace Hopper" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
@@ -227,16 +227,16 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
             │ · ├── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
             │ · └── LEAF id:5 name:"Grace Hopper" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
@@ -270,16 +270,16 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ ├── LEAF id:2 name:"Alan M. Turing" country:"Ireland" year:2000
             │ │ └── LEAF id:7 name:"New" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-1940
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-1940
             │ · └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:1940
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2001
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · │ └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
-            · └─┬ filler id:row-group-country-Italy-year-1940
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-1940
             · · └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:1940
         `);
 
@@ -307,17 +307,17 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
             │ │ └── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-1940
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-1940
             │ · └── LEAF id:2 name:"Alan M. Turing" country:"Ireland" year:1940
             ├─┬ filler id:row-group-country-Italy
-            │ └─┬ filler id:row-group-country-Italy-year-1940
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-1940
             │ · ├── LEAF id:5 name:"Grace Brewster Murray Hopper" country:"Italy" year:1940
             │ · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:1940
             └─┬ filler id:row-group-country-Germany
-            · └─┬ filler id:row-group-country-Germany-year-1900
+            · └─┬ LEAF_GROUP id:row-group-country-Germany-year-1900
             · · ├── LEAF id:7 name:"unknown X" country:"Germany" year:1900
             · · └── LEAF id:8 name:"unknown Y" country:"Germany" year:1900
         `);
@@ -376,16 +376,16 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler collapsed id:row-group-country-Ireland
-            │ ├─┬ filler hidden id:row-group-country-Ireland-year-2000
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland
+            │ ├─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF hidden id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF hidden id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler hidden id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2001
             │ · └── LEAF hidden id:2 name:"Alan Turing" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
@@ -413,16 +413,16 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
         gridRows = new GridRows(api, 'first', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler collapsed id:row-group-country-Ireland
-            │ ├─┬ filler hidden id:row-group-country-Ireland-year-2000
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland
+            │ ├─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF hidden id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF hidden id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler hidden id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2001
             │ · └── LEAF hidden id:2 name:"Alan Turing" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky the second" country:"Italy" year:2001
         `);
 
@@ -450,14 +450,14 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
         gridRows = new GridRows(api, 'first', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler collapsed id:row-group-country-Ireland
-            │ └─┬ filler hidden id:row-group-country-Ireland-year-2000
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland
+            │ └─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2000
             │ · ├── LEAF hidden id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ · └── LEAF hidden id:1 name:"Ada Lovelace" country:"Ireland" year:2000
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · ├── LEAF id:4 name:"Marvin Minsky the second" country:"Italy" year:2001
             · · └── LEAF id:2 name:"Alan Turing" country:"Italy" year:2001
         `);

@@ -29,7 +29,13 @@ nx test ag-behavioural-testing -- -w
 To execute benchmarks
 
 ```sh
-nx benchmark ag-behavioural-testing
+nx run ag-behavioural-testing:benchmark
+```
+
+To execute benchmarks on a single file
+
+```sh
+nx run ag-behavioural-testing:benchmark -- src/tree-data/datapath/benchmarks/tree-data-path.bench.ts
 ```
 
 ## References:

@@ -18,36 +18,59 @@ export class GridRowsDiagramNode {
 export class GridRowsDiagramTree {
     public readonly diagramRoots = new Map<GridRows, GridRowsDiagramNode>();
     public readonly diagramNodes = new Map<RowNode, GridRowsDiagramNode>();
-    #processedHiddenRows = new Set<RowNode>();
+
+    // Cache grid options for performance
+    private readonly groupHideParentOfSingleChild: boolean | 'leafGroupsOnly';
+    private readonly groupHideOpenParents: boolean;
+    private readonly hasMasterDetail: boolean;
+    private readonly hasHiddenParentOptions: boolean;
 
     public constructor(public readonly gridRows: GridRows) {
+        this.groupHideParentOfSingleChild = gridRows.api.getGridOption('groupHideParentOfSingleChild') ?? false;
+        this.groupHideOpenParents = gridRows.api.getGridOption('groupHideOpenParents') ?? false;
+        this.hasMasterDetail = gridRows.api.getGridOption('masterDetail') ?? false;
+        this.hasHiddenParentOptions = this.groupHideOpenParents || !!this.groupHideParentOfSingleChild;
+
         const diagramRoot = this.getDiagramRoot(gridRows)!;
-        this.#updateDiagramTree(diagramRoot, '', new Set());
+        this.updateDiagramTree(diagramRoot, '', new Set());
     }
 
-    private processHiddenRows(gridRows: GridRows, row: RowNode) {
-        if (this.#processedHiddenRows.has(row)) {
+    private getRowChildren(row: RowNode): RowNode[] | null {
+        return row.childrenAfterSort ?? row.childrenAfterAggFilter ?? row.childrenAfterFilter ?? row.childrenAfterGroup;
+    }
+
+    private processHiddenRows(
+        gridRows: GridRows,
+        row: RowNode,
+        processedHiddenRows: Set<RowNode>,
+        displayedRowsSet?: Set<RowNode>
+    ) {
+        if (processedHiddenRows.has(row)) {
             return;
         }
-        this.#processedHiddenRows.add(row);
-        const node = this.getDiagramNode(gridRows, row);
-        if (!node) {
+        processedHiddenRows.add(row);
+
+        const children = this.getRowChildren(row);
+        if (!children?.length) {
             return;
         }
-        const children =
-            row.childrenAfterSort ?? row.childrenAfterAggFilter ?? row.childrenAfterFilter ?? row.childrenAfterGroup;
-        if (!children) {
-            return;
-        }
-        node.hiddenChildren ??= new Set();
+
+        let node: GridRowsDiagramNode | null = null;
         for (const child of children) {
-            if (typeof child !== 'object' || child === null || this.diagramNodes.has(child)) {
-                continue;
-            }
-            const diagramChild = this.getDiagramNode(gridRows, child);
-            if (diagramChild) {
-                node.hiddenChildren.add(diagramChild);
-                this.processHiddenRows(gridRows, child);
+            const isHidden = displayedRowsSet ? !displayedRowsSet.has(child) : !this.diagramNodes.has(child);
+
+            if (isHidden && !this.diagramNodes.has(child)) {
+                if (!node) {
+                    node = this.getDiagramNode(gridRows, row);
+                    if (!node) return;
+                    node.hiddenChildren ??= new Set();
+                }
+
+                const diagramChild = this.getDiagramNode(gridRows, child);
+                if (diagramChild) {
+                    node.hiddenChildren!.add(diagramChild);
+                    this.processHiddenRows(gridRows, child, processedHiddenRows, displayedRowsSet);
+                }
             }
         }
     }
@@ -59,18 +82,25 @@ export class GridRowsDiagramTree {
         if (row.footer) {
             return 'footer';
         }
-        if (!row.data) {
-            return 'filler';
-        }
         if (row.detail) {
             return 'detail';
         }
         if (row.master) {
             return 'master';
         }
+
+        // Check for leaf groups first (works in both pivot and non-pivot modes)
+        if (row.leafGroup) {
+            return 'LEAF_GROUP';
+        }
+
+        if (!row.data) {
+            return 'filler';
+        }
         if (row.childrenAfterGroup?.length) {
             return 'GROUP';
         }
+
         return 'LEAF';
     }
 
@@ -78,62 +108,106 @@ export class GridRowsDiagramTree {
         let diagramRoot = this.diagramRoots.get(gridRows);
         if (!diagramRoot) {
             const rootRowNode = gridRows.rootRowNode;
-            diagramRoot = new GridRowsDiagramNode(gridRows, gridRows.rootRowNode);
+            diagramRoot = new GridRowsDiagramNode(gridRows, rootRowNode);
             this.diagramRoots.set(gridRows, diagramRoot);
             if (rootRowNode) {
                 this.diagramNodes.set(rootRowNode, diagramRoot);
             }
-            const displayedRows = gridRows.displayedRows;
-            for (const row of displayedRows) {
-                this.getDiagramNode(gridRows, row);
-            }
 
-            if (gridRows.options.printHiddenRows ?? true) {
-                for (const row of displayedRows) {
-                    this.processHiddenRows(gridRows, row);
+            this.buildHierarchy(gridRows, diagramRoot, gridRows.displayedRows);
+
+            if ((gridRows.options.printHiddenRows ?? true) && !this.hasHiddenParentOptions) {
+                const displayedRowsSet = new Set(gridRows.displayedRows);
+                const processedHiddenRows = new Set<RowNode>();
+                for (const row of gridRows.displayedRows) {
+                    this.processHiddenRows(gridRows, row, processedHiddenRows, displayedRowsSet);
                 }
             }
         }
         return diagramRoot;
     }
 
-    public getDiagramNode = (gridRows: GridRows, row: RowNode | null): GridRowsDiagramNode | null => {
-        if (typeof row !== 'object') {
-            return null;
+    private buildHierarchy(gridRows: GridRows, diagramRoot: GridRowsDiagramNode, displayedRows: RowNode[]) {
+        const parentStack: GridRowsDiagramNode[] = [diagramRoot];
+        let survivingGroupNode: GridRowsDiagramNode | null = null;
+
+        for (const row of displayedRows) {
+            let diagramNode = this.diagramNodes.get(row);
+            if (!diagramNode) {
+                diagramNode = new GridRowsDiagramNode(gridRows, row);
+                this.diagramNodes.set(row, diagramNode);
+            }
+
+            let parentNode: GridRowsDiagramNode;
+
+            if (this.hasMasterDetail && row.detail && row.parent) {
+                parentNode = this.getDiagramNode(gridRows, row.parent) || diagramRoot;
+            } else if (this.groupHideParentOfSingleChild === true) {
+                if (row.group && !survivingGroupNode) {
+                    survivingGroupNode = diagramNode;
+                    parentNode = diagramRoot;
+                } else {
+                    parentNode = row.group ? diagramRoot : survivingGroupNode || diagramRoot;
+                }
+            } else {
+                const uiLevel = row.uiLevel ?? 0;
+
+                parentStack.length = Math.min(parentStack.length, uiLevel + 1);
+                while (parentStack.length <= uiLevel) {
+                    parentStack.push(diagramNode);
+                }
+
+                parentNode = parentStack[uiLevel];
+                parentStack[uiLevel + 1] = diagramNode;
+            }
+
+            if (!diagramNode.parent) {
+                diagramNode.parent = parentNode;
+                parentNode.children.set(row, diagramNode);
+            }
+
+            const detailGridRows = gridRows.getDetailGridRows(row);
+            if (detailGridRows) {
+                this.attachDetailGrid(diagramNode, detailGridRows);
+            }
         }
-        let diagramNode = row ? this.diagramNodes.get(row) : this.getDiagramRoot(gridRows);
+    }
+
+    private attachDetailGrid(parentNode: GridRowsDiagramNode, detailGridRows: GridRows) {
+        const detailRoot = this.getDiagramRoot(detailGridRows);
+        detailRoot.parent = parentNode;
+        parentNode.children.set(null, detailRoot);
+
+        for (const displayedRow of detailGridRows.displayedRows) {
+            const detailChild = this.getDiagramNode(detailGridRows, displayedRow);
+            if (detailChild) {
+                detailChild.parent = detailRoot;
+                detailRoot.children.set(displayedRow, detailChild);
+            }
+        }
+    }
+
+    public getDiagramNode = (gridRows: GridRows, row: RowNode | null): GridRowsDiagramNode | null => {
+        if (!row) {
+            return this.getDiagramRoot(gridRows);
+        }
+
+        let diagramNode = this.diagramNodes.get(row);
         if (!diagramNode) {
             diagramNode = new GridRowsDiagramNode(gridRows, row);
-            if (row) {
-                this.diagramNodes.set(row, diagramNode);
-                let parent: RowNode | null | undefined;
-                if (row.footer && typeof row.id === 'string' && row.id?.startsWith('rowGroupFooter_')) {
-                    parent = gridRows.getById(row.id!.slice('rowGroupFooter_'.length));
-                }
-                if (!parent) {
-                    parent = row.parent ?? null;
-                }
-                const parentNode = this.getDiagramNode(gridRows, parent);
-                if (parentNode && !diagramNode.parent) {
+            this.diagramNodes.set(row, diagramNode);
+
+            if (!diagramNode.parent && row.parent) {
+                const parentNode = this.getDiagramNode(gridRows, row.parent);
+                if (parentNode) {
                     diagramNode.parent = parentNode;
                     parentNode.children.set(row, diagramNode);
                 }
-                const detailGridRows = gridRows.getDetailGridRows(row);
-                if (detailGridRows) {
-                    const detailRoot = this.getDiagramRoot(detailGridRows);
-                    if (detailRoot) {
-                        detailRoot.parent = diagramNode;
-                        diagramNode.children.set(null, detailRoot);
-                    }
+            }
 
-                    for (const displayedRow of detailGridRows.displayedRows) {
-                        const detailChild = this.getDiagramNode(detailGridRows, displayedRow);
-                        if (detailChild) {
-                            detailChild.parent = detailRoot;
-                            detailRoot.children.set(displayedRow, detailChild);
-                        }
-                    }
-                }
+            const detailGridRows = gridRows.getDetailGridRows(row);
+            if (detailGridRows) {
+                this.attachDetailGrid(diagramNode, detailGridRows);
             }
         }
         return diagramNode;
@@ -142,8 +216,7 @@ export class GridRowsDiagramTree {
     public diagramToString(printErrors: boolean, inputColumns: Column[] | null): string {
         const processedRows = new Set<RowNode>();
         const rootRowNode = this.gridRows.rootRowNode;
-        let result =
-            (rootRowNode ? this.#rowDiagram(this.gridRows, rootRowNode, inputColumns) : '[no root row]') + '\n';
+        let result = (rootRowNode ? this.rowDiagram(this.gridRows, rootRowNode, inputColumns) : '[no root row]') + '\n';
 
         const processRow = (gridRows: GridRows, row: RowNode, columns: Column[] | null) => {
             if (processedRows.has(row)) {
@@ -151,15 +224,11 @@ export class GridRowsDiagramTree {
                 return;
             }
             processedRows.add(row);
-            if (typeof row !== 'object' || !row) {
-                result += '[' + row + ']\n';
-                return;
-            }
 
             const diagramNode = this.getDiagramNode(gridRows, row);
             const prefix = diagramNode?.prefix ?? '';
 
-            result += prefix + this.#rowDiagram(gridRows, row, columns);
+            result += prefix + this.rowDiagram(gridRows, row, columns);
             result += '\n';
 
             if (printErrors) {
@@ -188,6 +257,8 @@ export class GridRowsDiagramTree {
             }
         };
 
+        this.getDiagramRoot(this.gridRows);
+
         for (const displayedRow of this.gridRows.displayedRows) {
             processRow(this.gridRows, displayedRow, inputColumns);
         }
@@ -204,76 +275,78 @@ export class GridRowsDiagramTree {
         return result;
     }
 
-    #rowDiagram(gridRows: GridRows, row: RowNode, columns: Column[] | null): string {
+    private rowDiagram(gridRows: GridRows, row: RowNode, columns: Column[] | null): string {
         let result = '';
-        let typeAdded = false;
+
         if (
             gridRows.treeData &&
             row.key &&
             !row.footer &&
             (row.data || (typeof row.id === 'string' && row.id.startsWith('row-group-')))
         ) {
-            result += optionalEscapeString(row.key) + ' ';
-            result += this.getNodeType(gridRows, row) + ' ';
-            typeAdded = true;
-        }
-
-        if (!typeAdded) {
-            result += this.getNodeType(gridRows, row) + ' ';
+            result += optionalEscapeString(row.key) + ' ' + this.getNodeType(gridRows, row);
+        } else {
+            result += this.getNodeType(gridRows, row);
         }
 
         const selectionState = row.isSelected();
         if (selectionState) {
-            result += 'selected ';
+            result += ' selected';
         } else if (selectionState === undefined) {
-            result += 'indeterminate ';
+            result += ' indeterminate';
         }
+
         if (row.level >= 0 && !row.expanded && (row.group || row.master)) {
-            result += 'collapsed ';
+            result += ' collapsed';
         }
+
         if (!gridRows.isRowDisplayed(row) && row !== gridRows.rootRowNode) {
-            result += 'hidden ';
+            result += ' hidden';
         }
 
         if (gridRows.options.printIds !== false) {
-            result += 'id:' + rowIdToString(row) + ' ';
+            result += ' id:' + rowIdToString(row);
         }
 
         if (gridRows.options.printRowIndices) {
-            result += 'rowIndex:' + row.rowIndex + ' ';
+            result += ' rowIndex:' + row.rowIndex;
         }
 
         if (columns) {
             for (const column of columns) {
                 const value = gridRows.api.getCellValue({ rowNode: row, colKey: column });
                 if (value !== undefined || row.data) {
-                    result += column.getColId() + ':' + JSON.stringify(value) + ' ';
+                    result += ' ' + column.getColId() + ':' + JSON.stringify(value);
                 }
             }
         }
 
-        return result;
+        return result + ' ';
     }
 
-    #updateDiagramTree(node: GridRowsDiagramNode, branch: string, updated: Set<GridRowsDiagramNode>) {
+    private updateDiagramTree(node: GridRowsDiagramNode, branch: string, updated: Set<GridRowsDiagramNode>) {
         if (updated.has(node)) {
             return;
         }
         updated.add(node);
-        const branchPrefix = branch.length ? (node.children.size > 0 ? '┬ ' : '─ ') : '';
-        node.prefix = branch + branchPrefix;
-        if (branch.length > 0) {
-            branch = branch.slice(0, -2) + (branch.endsWith('└─') || branch.endsWith('└') ? '· ' : '│ ');
-        }
-        let index = 0;
-        const indexOfLastChild = node.children.size - 1;
-        for (const child of node.children.values()) {
-            let childBranch = branch + (index === indexOfLastChild ? '└' : '├');
-            if (!child.row?.footer) {
-                childBranch += '─';
+
+        node.prefix = branch + (branch && node.children.size > 0 ? '┬ ' : branch ? '─ ' : '');
+
+        if (node.children.size > 0) {
+            const nextBranch = branch
+                ? branch.slice(0, -2) + (branch.endsWith('└─') || branch.endsWith('└') ? '· ' : '│ ')
+                : '';
+
+            let index = 0;
+            for (const child of node.children.values()) {
+                const isLast = index === node.children.size - 1;
+                this.updateDiagramTree(
+                    child,
+                    nextBranch + (isLast ? '└' : '├') + (child.row?.footer ? '' : '─'),
+                    updated
+                );
+                index++;
             }
-            this.#updateDiagramTree(child, childBranch, updated);
-            ++index;
         }
     }
 }
