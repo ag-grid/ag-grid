@@ -120,7 +120,7 @@ jobs:
                 cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
 
             - name: Angular
-              run: yarn nx run ag-grid-docs-testing:test:e2e:angular --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+              run: SHARD_INDEX=${{ matrix.shardIndex }} SHARD_TOTAL=${{ matrix.shardTotal }}  yarn nx run ag-grid-docs-testing:test:e2e:angular --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
 
             - name: Upload blob report to GitHub Actions Artifacts
