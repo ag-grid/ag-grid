@@ -263,3 +263,27 @@ jobs:
                 failed-report: true
                 flaky-report: true
                 skipped-report: true
+    publish-reports:
+      needs:
+        - test-demos
+        - test-react-functional
+        - test-react-functional-ts
+        - test-angular
+        - test-typescript
+        - test-vanilla
+        - test-vue3
+      runs-on: ubuntu-latest
+      steps:
+        - name: Download all test reports
+          uses: actions/download-artifact@v4
+          with:
+            path: combined-reports
+
+        - name: Publish Combined Test Report
+          uses: ctrf-io/github-test-reporter@v1
+          with:
+            report-path: 'combined-reports/**/*.json'
+            summary-report: true
+            failed-report: true
+            flaky-report: true
+            skipped-report: true
