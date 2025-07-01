@@ -2,15 +2,28 @@ import { SyntaxParserContext, SyntaxParserOutput, ValidSyntaxParserOutput } from
 import { PatternMatch, SyntaxPattern } from './syntaxTokenizer';
 import { CLOSING_CATEGORIES, OPENING_CATEGORIES } from './syntaxTypes';
 
-export interface SyntaxParselet<TModelNode, TOutputNode extends TModelNode, TContext = {}> {
-    isLeading: boolean;
-    expectsLeft: boolean;
-    shouldParseAt(precedence: number): boolean;
+type ParseletTypes =
+    | {
+          type: 'operand';
+      }
+    | {
+          type: 'operator';
+          fixity: 'prefix' | 'postfix';
+          precedence: number;
+      }
+    | {
+          type: 'operator';
+          fixity: 'infix';
+          associativity: 'left' | 'right';
+          precedence: number;
+      };
+
+export type SyntaxParselet<TModelNode, TOutputNode extends TModelNode, TContext = {}> = ParseletTypes & {
     parse(
         context: SyntaxParserContext<TModelNode, TContext>,
         left?: ValidSyntaxParserOutput<TModelNode>
     ): SyntaxParserOutput<TOutputNode>;
-}
+};
 
 export interface SyntaxGrammarDefinition<TModelNode, TOutputNode extends TModelNode, TContext> {
     key: string;

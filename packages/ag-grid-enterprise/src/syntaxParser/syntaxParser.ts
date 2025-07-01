@@ -139,13 +139,11 @@ export class SyntaxParser<TModelNode, TOutputNode extends TModelNode, TContext>
         let token = this.peekToken();
         const definition = this.grammar.getParselet(token.matches);
 
-        if (!definition || !definition.isLeading) {
+        if (!definition || (definition.type !== 'operand' && definition.fixity !== 'prefix')) {
             return this.parseRecovery();
         }
 
         let output = definition.parse(this);
-        console.log('Logginh output');
-        console.log(output);
 
         while (true) {
             const next = this.peekToken();
@@ -158,11 +156,18 @@ export class SyntaxParser<TModelNode, TOutputNode extends TModelNode, TContext>
 
             const op = this.grammar.getParselet(next.matches);
 
-            if (!op || !op.expectsLeft) {
+            if (!op || op.type === 'operand' || op.fixity === 'prefix') {
                 return this.parseRecovery();
             }
 
-            if (!op.shouldParseAt(minPrecedence)) {
+            const shouldParse =
+                op.fixity === 'infix'
+                    ? op.associativity === 'right'
+                        ? op.precedence > minPrecedence
+                        : op.precedence >= minPrecedence
+                    : op.precedence >= minPrecedence;
+
+            if (!shouldParse) {
                 break;
             }
 
@@ -177,7 +182,6 @@ export class SyntaxParser<TModelNode, TOutputNode extends TModelNode, TContext>
     }
 
     public parseRecovery(params?: ParserRecoveryParams): InvalidSyntaxParserOutput {
-        console.log(params);
         const errors: SyntaxParseError[] = params?.errors ?? [];
         const tokens: SyntaxToken[] = params?.tokens ?? [];
         const stopOn = params?.stopOn;
@@ -191,8 +195,6 @@ export class SyntaxParser<TModelNode, TOutputNode extends TModelNode, TContext>
         }
 
         const next = this.peekToken();
-
-        console.log(next);
 
         if (this.grammar.isOpeningToken(next.matches)) {
             const op = this.grammar.getParselet(next.matches);

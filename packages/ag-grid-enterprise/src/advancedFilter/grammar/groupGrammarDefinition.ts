@@ -9,9 +9,7 @@ export const createGroupParser = (): SyntaxGrammarDefinition<
     AdvancedFilterContext
 > => {
     const parselet: SyntaxParselet<AdvancedFilterNode, AdvancedFilterModel, AdvancedFilterContext> = {
-        isLeading: true,
-        expectsLeft: true,
-        shouldParseAt: () => true,
+        type: 'operand',
         parse: (context) => {
             const tokens = [];
             const errors = [];

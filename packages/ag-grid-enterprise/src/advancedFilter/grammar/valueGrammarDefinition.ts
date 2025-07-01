@@ -13,9 +13,7 @@ export const createStringValueParser = (): SyntaxGrammarDefinition<
     AdvancedFilterContext
 > => {
     const parselet: SyntaxParselet<AdvancedFilterNode, TextValueNode> = {
-        isLeading: true,
-        expectsLeft: true,
-        shouldParseAt: () => true,
+        type: 'operand',
         parse: (context) => {
             const token = context.expectToken('STRING', 'StringValue');
 
@@ -61,9 +59,7 @@ export const createNumberValueParser = (): SyntaxGrammarDefinition<
     AdvancedFilterContext
 > => {
     const parselet: SyntaxParselet<AdvancedFilterNode, NumberValueNode> = {
-        isLeading: true,
-        expectsLeft: false,
-        shouldParseAt: () => true,
+        type: 'operand',
         parse: (context) => {
             const token = context.expectToken('NUMBER', 'NumberValue');
 
@@ -116,9 +112,7 @@ export const createBooleanValueParser = (): SyntaxGrammarDefinition<
     AdvancedFilterContext
 > => {
     const parselet: SyntaxParselet<AdvancedFilterNode, BooleanValueNode> = {
-        isLeading: true,
-        expectsLeft: false,
-        shouldParseAt: () => true,
+        type: 'operand',
         parse: (context) => {
             const token = context.expectToken('BOOLEAN');
 

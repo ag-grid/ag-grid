@@ -25,12 +25,15 @@ class AdvancedFilterParser extends SyntaxParser<AdvancedFilterNode, AdvancedFilt
                 return { colId: 'text', dataType: 'text' as const };
         }
     }
+
+    static translate() {
+        return '';
+    }
 }
 
 const simpleTest = () => {
     const input =
-        '[boolean] == false AND [number] >= 100 OR [number] < 10 AND [text] contains "S" OR [dateString] equals "2009-1-1"';
-
+        '[boolean] == false AND [number] gte 100 AND [number] < 10 AND [text] contains "S" OR [dateString] equals "2009-1-1"';
     const parser = new AdvancedFilterParser();
     const output = parser.parse(input, 0);
     if (output.isValid) {

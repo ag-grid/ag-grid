@@ -12,7 +12,7 @@ import {
 } from 'ag-grid-community';
 
 import { SyntaxGrammarDefinition, SyntaxParselet } from '../../syntaxParser/syntaxGrammar';
-import { AdvancedFilterContext, AdvancedFilterNode } from './advancedFilterGrammar';
+import { AdvancedFilterContext, AdvancedFilterNode, ParserPrecedence } from './advancedFilterGrammar';
 
 const isNonNullish = <T>(a: T | null | undefined): a is T => {
     return a !== null && a !== undefined;
@@ -47,7 +47,7 @@ const ALL_TYPES: BaseCellDataType[] = [...SCALAR_TYPES, ...TEXT_TYPES, 'boolean'
 export const createEqualsParser = () =>
     createBinaryComparatorParser({
         key: 'EqualsComparator',
-        precedence: 3,
+        precedence: ParserPrecedence.EQUALITY,
         type: 'equals',
         validDataTypes: ALL_TYPES,
         token: {
@@ -64,7 +64,7 @@ export const createEqualsParser = () =>
 export const createNotEqualsParser = () =>
     createBinaryComparatorParser({
         key: 'NotEqualsComparator',
-        precedence: 3,
+        precedence: ParserPrecedence.EQUALITY,
         type: 'notEqual',
         validDataTypes: ALL_TYPES,
         token: {
@@ -81,7 +81,7 @@ export const createNotEqualsParser = () =>
 export const createGreaterThanParser = () =>
     createBinaryComparatorParser({
         key: 'GreaterThanComparator',
-        precedence: 3,
+        precedence: ParserPrecedence.RELATIONAL,
         type: 'greaterThan',
         validDataTypes: SCALAR_TYPES,
         token: {
@@ -98,7 +98,7 @@ export const createGreaterThanParser = () =>
 export const createGreaterThanOrEqualsParser = () =>
     createBinaryComparatorParser({
         key: 'GreaterThanOrEqualsComparator',
-        precedence: 3,
+        precedence: ParserPrecedence.RELATIONAL,
         type: 'greaterThanOrEqual',
         validDataTypes: SCALAR_TYPES,
         token: {
@@ -115,7 +115,7 @@ export const createGreaterThanOrEqualsParser = () =>
 export const createLessThanParser = () =>
     createBinaryComparatorParser({
         key: 'LessThanComparator',
-        precedence: 3,
+        precedence: ParserPrecedence.RELATIONAL,
         type: 'lessThan',
         validDataTypes: SCALAR_TYPES,
         token: {
@@ -132,7 +132,7 @@ export const createLessThanParser = () =>
 export const createLessThanOrEqualsParser = () =>
     createBinaryComparatorParser({
         key: 'LessThanOrEqualsComparator',
-        precedence: 3,
+        precedence: ParserPrecedence.RELATIONAL,
         type: 'lessThanOrEqual',
         validDataTypes: SCALAR_TYPES,
         token: {
@@ -145,7 +145,7 @@ export const createLessThanOrEqualsParser = () =>
 export const createContainsParser = () =>
     createBinaryComparatorParser({
         key: 'ContainsParser',
-        precedence: 3,
+        precedence: ParserPrecedence.RELATIONAL,
         type: 'contains',
         validDataTypes: TEXT_TYPES,
         token: {
@@ -158,7 +158,7 @@ export const createContainsParser = () =>
 export const createNotContainsParser = () =>
     createBinaryComparatorParser({
         key: 'NotContainsParser',
-        precedence: 3,
+        precedence: ParserPrecedence.RELATIONAL,
         type: 'notContains',
         validDataTypes: TEXT_TYPES,
         token: {
@@ -171,7 +171,7 @@ export const createNotContainsParser = () =>
 export const createBeginsWithParser = () =>
     createBinaryComparatorParser({
         key: 'BeginsWithParser',
-        precedence: 3,
+        precedence: ParserPrecedence.RELATIONAL,
         type: 'startsWith',
         validDataTypes: TEXT_TYPES,
         token: {
@@ -184,7 +184,7 @@ export const createBeginsWithParser = () =>
 export const createEndsWithParser = () =>
     createBinaryComparatorParser({
         key: 'EndsWithParser',
-        precedence: 3,
+        precedence: ParserPrecedence.RELATIONAL,
         type: 'endsWith',
         validDataTypes: TEXT_TYPES,
         token: {
@@ -214,9 +214,10 @@ const createBinaryComparatorParser = ({
     validDataTypes,
 }: BinaryParserParams): SyntaxGrammarDefinition<AdvancedFilterNode, AdvancedFilterNode, AdvancedFilterContext> => {
     const parselet: SyntaxParselet<AdvancedFilterNode, AdvancedFilterNode> = {
-        isLeading: false,
-        expectsLeft: true,
-        shouldParseAt: (p) => p <= precedence,
+        type: 'operator',
+        fixity: 'infix',
+        associativity: 'left',
+        precedence,
         parse: (context, column) => {
             if (!column) {
                 return context.parseRecovery();

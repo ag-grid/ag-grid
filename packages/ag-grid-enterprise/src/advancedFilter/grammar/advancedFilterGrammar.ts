@@ -2,8 +2,9 @@ import { BaseCellDataType } from 'packages/ag-grid-community/dist/types/src/main
 
 import { AdvancedFilterModel } from 'ag-grid-community';
 
-import { SyntaxGrammar } from '../../syntaxParser/syntaxGrammar';
+import { SyntaxGrammar, SyntaxGrammarDefinition, SyntaxParselet } from '../../syntaxParser/syntaxGrammar';
 import { SyntaxParserOutput, ValidSyntaxParserOutput } from '../../syntaxParser/syntaxParser';
+import { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';
 import {
     createBeginsWithParser,
     createContainsParser,
@@ -15,7 +16,7 @@ import {
     createLessThanParser,
     createNotContainsParser,
 } from './binaryGrammarDefinition';
-import { createColumnParser } from './columnGrammarDefinition';
+import { createColumnGrammar } from './columnGrammarDefinition';
 import { createGroupParser } from './groupGrammarDefinition';
 import { createAndParser, createOrParser } from './logicalGrammarDefinition';
 import { createBooleanValueParser, createNumberValueParser, createStringValueParser } from './valueGrammarDefinition';
@@ -67,7 +68,14 @@ export type AdvancedFilterNode = AdvancedFilterModel | ValueNode | ColumnNode;
 
 export type AdvancedFilterContext = {
     getColIdFromName: (name: string) => { colId: string; dataType: BaseCellDataType } | undefined;
+    translate: (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) => string;
 };
+
+export type AdvancedFilterGrammarDefinition<TOutputNode extends AdvancedFilterNode> = SyntaxGrammarDefinition<
+    AdvancedFilterNode,
+    TOutputNode,
+    AdvancedFilterContext
+>;
 
 export class AdvancedFilterGrammar extends SyntaxGrammar<
     AdvancedFilterNode,
@@ -91,7 +99,7 @@ export class AdvancedFilterGrammar extends SyntaxGrammar<
             createNumberValueParser(),
             createStringValueParser(),
             createBooleanValueParser(),
-            createColumnParser(),
+            createColumnGrammar(),
         ]);
     }
 

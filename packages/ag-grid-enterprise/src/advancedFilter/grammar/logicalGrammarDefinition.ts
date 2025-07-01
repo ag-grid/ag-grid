@@ -1,7 +1,7 @@
 import { JoinAdvancedFilterModel } from 'ag-grid-community';
 
 import { SyntaxGrammarDefinition, SyntaxParselet } from '../../syntaxParser/syntaxGrammar';
-import { AdvancedFilterContext, AdvancedFilterNode } from './advancedFilterGrammar';
+import { AdvancedFilterContext, AdvancedFilterNode, ParserPrecedence } from './advancedFilterGrammar';
 
 export const createAndParser = (): SyntaxGrammarDefinition<
     AdvancedFilterNode,
@@ -9,9 +9,10 @@ export const createAndParser = (): SyntaxGrammarDefinition<
     AdvancedFilterContext
 > => {
     const parselet: SyntaxParselet<AdvancedFilterNode, JoinAdvancedFilterModel> = {
-        isLeading: false,
-        expectsLeft: true,
-        shouldParseAt: (p) => p < 2,
+        type: 'operator',
+        fixity: 'infix',
+        associativity: 'left',
+        precedence: ParserPrecedence.LOGICAL_AND,
         parse: (context, left) => {
             const tokens = [];
             const errors = [];
@@ -45,7 +46,7 @@ export const createAndParser = (): SyntaxGrammarDefinition<
             tokens.push(op);
 
             while (!context.endOfTokens()) {
-                const operand = context.parseNext(2);
+                const operand = context.parseNext(ParserPrecedence.LOGICAL_AND + 1);
 
                 if (!operand.isValid) {
                     errors.push(...operand.errors);
@@ -104,9 +105,10 @@ export const createOrParser = (): SyntaxGrammarDefinition<
     AdvancedFilterContext
 > => {
     const parselet: SyntaxParselet<AdvancedFilterNode, JoinAdvancedFilterModel> = {
-        isLeading: false,
-        expectsLeft: true,
-        shouldParseAt: (p) => p < 3,
+        type: 'operator',
+        fixity: 'infix',
+        associativity: 'left',
+        precedence: ParserPrecedence.LOGICAL_OR,
         parse: (context, left) => {
             const tokens = [];
             const errors = [];
@@ -140,7 +142,7 @@ export const createOrParser = (): SyntaxGrammarDefinition<
             tokens.push(op);
 
             while (!context.endOfTokens()) {
-                const operand = context.parseNext(3);
+                const operand = context.parseNext(ParserPrecedence.LOGICAL_OR + 1);
 
                 if (!operand.isValid) {
                     errors.push(...operand.errors);
