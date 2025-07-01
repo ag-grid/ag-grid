@@ -29,7 +29,11 @@ const matchesExclusion = (testCase: ExampleTestCase) => {
 
 export async function getFrameworkExamples(framework: InternalFramework) {
     if (!examples) {
-        const filePath = join(__dirname, 'config', 'all-examples-cached.json');
+        // if on ci use a different path to the cached examples
+        const isCI = process.env.CI === 'true';
+        const filePath = isCI
+            ? join(__dirname, '.cache', 'all-examples-cached.json')
+            : join(__dirname, 'config', 'all-examples.json');
         examples = JSON.parse(readFileSync(filePath, 'utf-8'));
     }
 
