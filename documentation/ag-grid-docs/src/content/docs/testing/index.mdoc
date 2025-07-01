@@ -11,17 +11,53 @@ Here we give some hints on testing AG Grid as part of your application.
 We recommend using e2e tests to validate AG Grid as part of your application.
 {% /idea %}
 
-It is recommended to use e2e tests to validate AG Grid as part of your application. There are a number of tools available to help with this, such as [Playwright](https://playwright.dev/), [Cypress](https://www.cypress.io/) or [Selenium](https://www.selenium.dev/).
+There are a number of tools available to help with this, such as [Playwright](https://playwright.dev/), [Cypress](https://www.cypress.io/) or [Selenium](https://www.selenium.dev/).
 
-e2e tests are recommended so that AG Grid is run inside a real browser. Fake browser environments (such as jsdom) can be used for simple unit testing cases, but their limitations can lead to confusing test results.
+e2e tests are recommended so that AG Grid is run inside a real browser. Mocked browser environments (such as `jsdom`) can be used for simple unit testing cases, but their [limitations](#jsdom-limitations) can lead to confusing test results.
 
-A few examples of how to use Playwright with AG Grid can be found in this [GitHub Repo](https://github.com/ag-grid/ag-grid-testing/tree/latest/e2e). 
+## End to End (e2e) Testing Examples
 
-## jsdom Limitations
+Some examples for how to write end-to-end tests are provided in the [AG Grid repo](https://github.com/ag-grid/ag-grid/tree/latest/testing/public-recipes). 
+
+While these examples depend on [Playwright](https://playwright.dev), we do not necessarily recommend one e2e framework over another.
+
+The e2e examples all target the following example:
+
+{% gridExampleRunner title="Hello World" name="hello-world"  exampleHeight=560 /%}
+
+## Test IDs
+
+Many testing libraries allow targeting the `data-testid` attribute to locate elements on the page to use for assertions or actions. 
+AG Grid provides support for attaching this attribute to many of the interactive elements in the grid. This is achieved by registering the `TestingModule`. This module should only be used in a test or development environment, not in production.
+
+```js
+import { TestingModule, ModuleRegistry } from 'ag-grid-community'
+
+ModuleRegistry.registerModules([TestingModule]);
+```
+
+In addition, utility functions are provided to avoid users having to manually construct the IDs:
+```js
+import { getTestIdForCheckbox } from 'ag-grid-community';
+
+// ...in your test case:
+const rowId = 'toyota-celica';
+const colId = 'ag-Grid-SelectionColumn';
+expect(findByTestId(getTestIdForCheckbox(rowId, colId))).toBeVisible();
+```
+
+Where you implement this polyfill may vary depending on your testing setup.
+
+{% partial file="./_register-javascript.mdoc" /%}
+{% partial file="./_register-angular.mdoc" /%}
+{% partial file="./_register-react.mdoc" /%}
+{% partial file="./_register-vue.mdoc" /%}
+
+## `jsdom` Limitations
 
 Test tools such as [vitest](https://vitest.dev/), [Dom Testing Library](https://testing-library.com/docs/dom-testing-library/intro) and [Jest](https://jestjs.io/) often rely on [jsdom](https://github.com/jsdom/jsdom) to mock the browser.
 
-jsdom is a pure JavaScript implementation of many web standards with the goal to emulate enough of a subset of a web browser to be useful for testing. However, there are some [limitations](https://github.com/jsdom/jsdom?tab=readme-ov-file#unimplemented-parts-of-the-web-platform) to be aware of when using jsdom.
+`jsdom` is a pure JavaScript implementation of many web standards with the goal to emulate enough of a subset of a web browser to be useful for testing. However, there are some [limitations](https://github.com/jsdom/jsdom?tab=readme-ov-file#unimplemented-parts-of-the-web-platform) to be aware of when using jsdom.
 
 {% warning  %}
 If you are using jsdom for testing, you may encounter issues that suggest the grid is not rendering correctly. However, this is likely caused by jsdom not supporting all the features of a real browser.
@@ -41,41 +77,3 @@ Object.defineProperty(Element.prototype, 'innerText', {
     },
 });
 ```
-
-Where you implement this polyfill may vary depending on your testing setup.
-
-## Test IDs
-
-Many testing libraries allow targeting the `data-testid` attribute to locate elements on the page to use for assertions or actions. 
-AG Grid now provides support for attaching this attribute to many of the interactive elements in the grid. This is achieved by registering the `Testing` module. This module should only be used in a test or development environment, not in production.
-
-```js
-import { TestingModule, ModuleRegistry } from 'ag-grid-community'
-
-ModuleRegistry.registerModules([TestingModule]);
-```
-
-In addition, utility functions are provided to avoid users having to manually construct the IDs:
-```js
-import { getTestIdForCheckbox } from 'ag-grid-community';
-
-// ...in your test case:
-const rowId = 'toyota-celica';
-const colId = 'ag-Grid-SelectionColumn';
-expect(findByTestId(getTestIdForCheckbox(rowId, colId))).toBeVisible();
-```
-
-{% partial file="./_register-javascript.mdoc" /%}
-{% partial file="./_register-angular.mdoc" /%}
-{% partial file="./_register-react.mdoc" /%}
-{% partial file="./_register-vue.mdoc" /%}
-
-## End to End (e2e) Testing Examples
-
-Some examples for how to write end-to-end tests are provided in the [AG Grid repo](https://github.com/ag-grid/ag-grid/tree/latest/testing/public-recipes). 
-
-While these examples depend on [Playwright](https://playwright.dev), we do not necessarily recommend one e2e framework over another.
-
-The e2e examples all target the following example:
-
-{% gridExampleRunner title="Hello World" name="hello-world"  exampleHeight=560 /%}

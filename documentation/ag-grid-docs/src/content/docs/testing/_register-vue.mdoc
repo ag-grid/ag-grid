@@ -1,8 +1,9 @@
 {% if isFramework("vue") %}
+## Testing your Vue Application
 
-We will walk through how you can use testing AG Grid as part of your Vue application, using default build tools provided when using the [Vue CLI](https://cli.vuejs.org/) utility.
+We will walk through how you can test AG Grid as part of your Vue application, using default build tools provided when using the [Vue CLI](https://cli.vuejs.org/) utility.
 
-## Waiting for the Grid to be Initialised
+### Waiting for the Grid to be Initialised
 
 Due to the asynchronous nature of AG Grid we cannot simply mount the Grid and assume it'll be ready
 for testing in the next step - we need to wait for the Grid to be ready before testing it.
@@ -15,7 +16,12 @@ We can create a utility function that will wait for the Grid API to be set for a
 
 ```js
 const ensureGridApiHasBeenSet = vm => new Promise(function (resolve, reject) {
+    let timeout = 3000;
     (function waitForGridReady() {
+        if (timeout === 0) {
+            reject(new Error('Timeout while waiting for AG Grid to initialise'))
+        }
+
         // we need to wait for the gridReady event before we can start interacting with the grid
         // in this case we're looking at the api property in our App component,
         // but it could be anything (ie a boolean flag)
@@ -25,6 +31,7 @@ const ensureGridApiHasBeenSet = vm => new Promise(function (resolve, reject) {
         }
 
         // not set - wait a bit longer
+        timeout =- 10;
         setTimeout(waitForGridReady, 10);
     })();
 });
@@ -36,10 +43,10 @@ before continuing with out test:
 beforeEach((done) => {
     wrapper = mount(GridExample, {});
 
-        // don't start our tests until the grid is ready
-        // it doesn't take long for the grid to initialise, but it is some finite amount of time
-        // after the component is ready
-        ensureGridApiHasBeenSet(wrapper.vm).then(() => done());
+    // don't start our tests until the grid is ready
+    // it doesn't take long for the grid to initialise, but it is some finite amount of time
+    // after the component is ready
+    ensureGridApiHasBeenSet(wrapper.vm).then(() => done());
 });
 ```
 

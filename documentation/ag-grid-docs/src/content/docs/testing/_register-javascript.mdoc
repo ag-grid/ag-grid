@@ -1,13 +1,19 @@
 {% if isFramework("javascript") %}
 ## Testing with DOM Testing Library
 
-The following snippet illustrates testing a simple configuration of AG Grid with the [DOM Testing Library](https://testing-library.com/docs/dom-testing-library/intro/).
+To illustrate an alternative approach, the following snippet demonstrates testing a simple configuration of AG Grid with the [DOM Testing Library](https://testing-library.com/docs/dom-testing-library/intro/).
 
 ```js
 import { getByText, getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 
-import { createGrid, GridOptions, TestingModule, ModuleRegistry, getTestIdForCell } from 'ag-grid-community';
+import { 
+    createGrid, 
+    GridOptions, 
+    TestingModule, 
+    ModuleRegistry, 
+    getTestIdForCell 
+} from 'ag-grid-community';
 
 ModuleRegistry.registerModules([TestingModule]);
 
@@ -18,14 +24,17 @@ function createAgGrid() {
         columnDefs: [
             { headerName: 'Make', field: 'make' },
             { headerName: 'Model', field: 'model' },
-            { field: 'price', valueFormatter: (params) => '$' + params.value.toLocaleString() },
+            { 
+                field: 'price', 
+                valueFormatter: (params) => '$' + params.value.toLocaleString() 
+            },
         ],
         rowData: [
             { make: 'Toyota', model: 'Celica', price: 35000 },
             { make: 'Ford', model: 'Mondeo', price: 32000 },
             { make: 'Porsche', model: 'Boxster', price: 72000 },
         ],
-        getRowId: (params) => `${params.data.make.toLowerCase()}-${params.data.model.toLowerCase()}`,
+        getRowId: ({ data }) => `${data.make.toLowerCase()}-${data.model.toLowerCase()}`,
     };
 
     const api = createGrid(div, gridOptions);
