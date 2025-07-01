@@ -30,7 +30,7 @@ test.describe('Prime Example assets', () => {
     test(`should fetch `, async ({ page, browserName }) => {
         test.skip(browserName !== 'chromium', 'This test only runs on chromium');
 
-        await page.routeFromHAR('./cache/example-assets.har', {
+        await page.routeFromHAR('./e2e/.cache/example-assets.har', {
             url: 'https://www.ag-grid.com/example-assets/*.json',
             update: true,
         });
