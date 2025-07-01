@@ -18,9 +18,9 @@ runs:
         fetch-depth: 1
 
     - name: Restore all-examples-cached.json
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       with:
-        path: ./testing/ag-grid-docs/e2e/.cache
+        path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
         key: ${{ inputs.cacheKey }}
 
     - name: Install Playwright Browsers
