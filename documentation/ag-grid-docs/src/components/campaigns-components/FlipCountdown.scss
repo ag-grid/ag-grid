@@ -1,7 +1,15 @@
+@use 'design-system' as *;
+
 .tick {
     font-size: 3em;
 }
 
 .tick-group {
     display: flex;
+}
+
+.font-mono {
+    font-family: var(--text-monospace-font-family);
+    text-transform: uppercase;
+    padding-top: $spacing-size-3;
 }

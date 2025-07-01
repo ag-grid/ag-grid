@@ -32,19 +32,27 @@ const FlipCountdown: React.FC<{ days?: number }> = ({ days = 60 }) => {
         <div style={{ display: 'flex', gap: '1em', alignItems: 'center' }}>
             <div>
                 <Flip value={timeLeft.days} />
-                <div style={{ textAlign: 'center', fontSize: '0.7em' }}>Days</div>
+                <div class="font-mono" style={{ textAlign: 'center', fontSize: '0.7em' }}>
+                    Days
+                </div>
             </div>
             <div>
                 <Flip value={timeLeft.hours} />
-                <div style={{ textAlign: 'center', fontSize: '0.7em' }}>Hours</div>
+                <div class="font-mono" style={{ textAlign: 'center', fontSize: '0.7em' }}>
+                    Hours
+                </div>
             </div>
             <div>
                 <Flip value={timeLeft.minutes} />
-                <div style={{ textAlign: 'center', fontSize: '0.7em' }}>Minutes</div>
+                <div class="font-mono" style={{ textAlign: 'center', fontSize: '0.7em' }}>
+                    Minutes
+                </div>
             </div>
             <div>
                 <Flip value={timeLeft.seconds} />
-                <div style={{ textAlign: 'center', fontSize: '0.7em' }}>Seconds</div>
+                <div class="font-mono" style={{ textAlign: 'center', fontSize: '0.7em' }}>
+                    Seconds
+                </div>
             </div>
         </div>
     );
