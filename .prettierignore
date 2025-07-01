@@ -17,6 +17,7 @@ documentation/update-algolia-indices/output
 
 # Don't reorganize the order of the imports
 testing/module-size/src/App_Src.tsx
+testing/ag-grid-docs/cache/*
 
 # generated file
 packages/ag-grid-vue3/vite.config.d.ts
