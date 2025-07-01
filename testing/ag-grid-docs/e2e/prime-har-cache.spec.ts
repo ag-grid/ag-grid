@@ -30,10 +30,10 @@ test.describe('Prime Example assets', () => {
     test(`should fetch `, async ({ page, browserName }) => {
         test.skip(browserName !== 'chromium', 'This test only runs on chromium');
 
-        await page.routeFromHAR('./e2e/.cache/example-assets.har', {
-            url: 'https://www.ag-grid.com/example-assets/*.json',
-            update: true,
-        });
+        // await page.routeFromHAR('./e2e/.cache/example-assets.har', {
+        //     url: 'https://www.ag-grid.com/example-assets/*.json',
+        //     update: true,
+        // });
         for (const file of assetFiles) {
             const url = `${EXAMPLE_ASSETS_BASE_URL}${file}`;
             const response = await page.goto(url);

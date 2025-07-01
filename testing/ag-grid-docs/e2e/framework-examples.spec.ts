@@ -31,11 +31,11 @@ const runTestsForFramework = (framework: InternalFramework) => {
             test.beforeEach(async ({ page }) => {
                 errors = setupConsoleExpectations(page);
 
-                await page.routeFromHAR('./e2e/.cache/example-assets.har', {
-                    url: 'https://www.ag-grid.com/example-assets/*.json',
-                    update: false,
-                    notFound: 'abort',
-                });
+                // await page.routeFromHAR('./e2e/.cache/example-assets.har', {
+                //     url: 'https://www.ag-grid.com/example-assets/*.json',
+                //     update: false,
+                //     notFound: 'abort',
+                // });
             });
 
             test(`${examplePath}`, async ({ page }) => {
