@@ -82,16 +82,14 @@ jobs:
         - name: Download all-examples-cached.json
           run: |
             mkdir -p ./e2e/config
-            curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
+            curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
             npx playwright test prime-har-cache.spec.ts
 
         - name: Cache all-examples-cached.json / example-assets.har
           uses: actions/cache@v4
           with:
-            path: |
-              ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
-              ./testing/ag-grid-docs/e2e/.cache/*
-            key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json','./testing/ag-grid-docs/e2e/.cache/*') }}
+            path: ./testing/ag-grid-docs/e2e/.cache/*
+            key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/*') }}
 
     test-vanilla:
         if: ${{ github.event.inputs.skip_vanilla != 'true' }}
