@@ -242,11 +242,17 @@ jobs:
           COMMENT_FILE: ${{ env.COMMENT_FILE }}
         run: |
           node ./scripts/test/attach-snippet.mjs
+          echo 'JIRA_DESCRIPTION_FILE:'
+          cat $JIRA_DESCRIPTION_FILE
+          echo ':JIRA_DESCRIPTION_FILE'
           {
             echo 'JIRA_DESCRIPTION<<EOF'
             cat $JIRA_DESCRIPTION_FILE
             echo 'EOF'
           } >> $GITHUB_ENV
+          echo 'SLACK_FILE:'
+          cat $SLACK_FILE
+          echo ':SLACK_FILE'
           {
             echo 'SLACK_MESSAGE_BLOCKS<<EOF'
             cat $SLACK_FILE
