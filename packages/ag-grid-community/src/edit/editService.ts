@@ -698,21 +698,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const source = this.isBatchEditing() ? 'ui' : 'api';
 
         if (!eventSource || KEEP_EDITOR_SOURCES.has(eventSource)) {
-            const cellCtrl = _getCellCtrl(beans, position);
-            if (cellCtrl) {
-                // prevent the cell from refreshing while we update the underlying row data
-                cellCtrl.suppressRefreshCell = true;
-            }
-
             // editApi or undoRedoApi apply change without involving the editor
             _syncFromEditor(beans, position, newValue, eventSource);
-            this.setNodeDataValue(position.rowNode, position.column, newValue, false);
 
-            if (cellCtrl) {
-                cellCtrl.suppressRefreshCell = false;
-            }
-
-            return;
+            // a truthy return here indicates the operation succeeded, and if invoked from rowNode.setDataValue, will not result in a cell value change event
+            return this.setNodeDataValue(position.rowNode, position.column, newValue, false);
         }
 
         const existing = this.model.getEdit(position);
