@@ -13,32 +13,32 @@ on:
                 description: 'Skip Vanilla tests'
                 type: boolean
                 required: true
-                default: true
+                default: false
             skip_typescript:
                 description: 'Skip Typescript tests'
                 type: boolean
                 required: true
-                default: true
+                default: false
             skip_reactFunctional:
                 description: 'Skip React Functional tests'
                 type: boolean
                 required: true
-                default: true
+                default: false
             skip_reactFunctionalTs:
                 description: 'Skip React Functional TS tests'
                 type: boolean
                 required: true
-                default: true
+                default: false
             skip_angular:
                 description: 'Skip Angular tests'
                 type: boolean
                 required: true
-                default: true
+                default: false
             skip_vue3:
                 description: 'Skip Vue3 tests'
                 type: boolean
                 required: true
-                default: true
+                default: false
     schedule:
         - cron: '30 2 * * *' # Run daily at 2:30am UTC
 

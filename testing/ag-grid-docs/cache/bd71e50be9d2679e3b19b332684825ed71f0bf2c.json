@@ -1,0 +1,157 @@
+[{
+    "employeeId": 101,
+    "employeeName": "Erica Rogers",
+    "jobTitle": "CEO",
+    "employmentType": "Permanent",
+    "children": [
+      {
+        "employeeId": 102,
+        "employeeName": "Malcolm Barrett",
+        "jobTitle": "Exec. Vice President",
+        "employmentType": "Permanent",
+        "children": [
+          {
+            "employeeId": 103,
+            "employeeName": "Esther Baker",
+            "jobTitle": "Director of Operations",
+            "employmentType": "Permanent",
+            "children": [
+              {
+                "employeeId": 104,
+                "employeeName": "Brittany Hanson",
+                "jobTitle": "Fleet Coordinator",
+                "employmentType": "Permanent",
+                "children": [
+                  {
+                    "employeeId": 105,
+                    "employeeName": "Leah Flowers",
+                    "jobTitle": "Parts Technician",
+                    "employmentType": "Contract"
+                  },
+                  {
+                    "employeeId": 106,
+                    "employeeName": "Tammy Sutton",
+                    "jobTitle": "Service Technician",
+                    "employmentType": "Contract"
+                  }
+                ]
+              },
+              {
+                "employeeId": 107,
+                "employeeName": "Derek Paul",
+                "jobTitle": "Inventory Control",
+                "employmentType": "Permanent"
+              }
+            ]
+          },
+          {
+            "employeeId": 108,
+            "employeeName": "Francis Strickland",
+            "jobTitle": "VP Sales",
+            "employmentType": "Permanent",
+            "children": [
+              {
+                "employeeId": 109,
+                "employeeName": "Morris Hanson",
+                "jobTitle": "Sales Manager",
+                "employmentType": "Permanent"
+              },
+              {
+                "employeeId": 110,
+                "employeeName": "Todd Tyler",
+                "jobTitle": "Sales Executive",
+                "employmentType": "Contract"
+              },
+              {
+                "employeeId": 111,
+                "employeeName": "Bennie Wise",
+                "jobTitle": "Sales Executive",
+                "employmentType": "Contract"
+              },
+              {
+                "employeeId": 112,
+                "employeeName": "Joel Cooper",
+                "jobTitle": "Sales Executive",
+                "employmentType": "Permanent"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "employeeId": 113,
+        "employeeName": "Luke McBride",
+        "jobTitle": "Exec. Vice President",
+        "employmentType": "Permanent",
+        "children": [
+          {
+            "employeeId": 114,
+            "employeeName": "Sarah Baker",
+            "jobTitle": "Director of Operations",
+            "employmentType": "Permanent",
+            "children": [
+              {
+                "employeeId": 115,
+                "employeeName": "Mason Hanson",
+                "jobTitle": "Fleet Coordinator",
+                "employmentType": "Permanent",
+                "children": [
+                  {
+                    "employeeId": 116,
+                    "employeeName": "Hannah Flowers",
+                    "jobTitle": "Parts Technician",
+                    "employmentType": "Contract"
+                  },
+                  {
+                    "employeeId": 117,
+                    "employeeName": "Rob Sutton",
+                    "jobTitle": "Service Technician",
+                    "employmentType": "Contract"
+                  }
+                ]
+              },
+              {
+                "employeeId": 118,
+                "employeeName": "Paul Smith",
+                "jobTitle": "Inventory Control",
+                "employmentType": "Permanent"
+              }
+            ]
+          },
+          {
+            "employeeId": 119,
+            "employeeName": "Adam Newman",
+            "jobTitle": "VP Sales",
+            "employmentType": "Permanent",
+            "children": [
+              {
+                "employeeId": 120,
+                "employeeName": "John Smith",
+                "jobTitle": "Sales Manager",
+                "employmentType": "Permanent"
+              },
+              {
+                "employeeId": 121,
+                "employeeName": "Alice Grant",
+                "jobTitle": "Sales Executive",
+                "employmentType": "Contract"
+              },
+              {
+                "employeeId": 122,
+                "employeeName": "Ben Hill",
+                "jobTitle": "Sales Executive",
+                "employmentType": "Contract"
+              },
+              {
+                "employeeId": 123,
+                "employeeName": "Joe Cooper",
+                "jobTitle": "Sales Executive",
+                "employmentType": "Permanent"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

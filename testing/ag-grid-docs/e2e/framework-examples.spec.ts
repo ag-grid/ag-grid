@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 
-import { getExampleConfig, getFrameworkExamples, runExampleSpec, setupConsoleExpectations } from './exampleTestRunner';
 import type { InternalFramework } from './exampleTestRunner';
+import { getExampleConfig, getFrameworkExamples, runExampleSpec, setupConsoleExpectations } from './exampleTestRunner';
 
 const allFrameworks: InternalFramework[] = [
     'vanilla',
@@ -30,6 +30,12 @@ const runTestsForFramework = (framework: InternalFramework) => {
             let errors: string[];
             test.beforeEach(async ({ page }) => {
                 errors = setupConsoleExpectations(page);
+
+                await page.routeFromHAR('./cache/example-assets.har', {
+                    url: 'https://www.ag-grid.com/example-assets/*.json',
+                    update: false,
+                    notFound: 'abort',
+                });
             });
 
             test(`${examplePath}`, async ({ page }) => {
