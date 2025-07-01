@@ -81,7 +81,7 @@ jobs:
 
         - name: Download all-examples-cached.json
           run: |
-            mkdir -p ./e2e/config
+            mkdir -p ./e2e/.cache
             curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
             npx playwright test prime-har-cache.spec.ts
 
