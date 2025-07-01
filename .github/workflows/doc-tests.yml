@@ -87,8 +87,8 @@ jobs:
         - name: Cache all-examples-cached.json / example-assets.har
           uses: actions/cache@v4
           with:
-            path: ./testing/ag-grid-docs/e2e/.cache/*
-            key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/*') }}
+            path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
+            key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
 
     test-vanilla:
         if: ${{ github.event.inputs.skip_vanilla != 'true' }}
@@ -105,7 +105,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: vanilla
-              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/*') }}
+              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
 
     test-typescript:
         if: ${{ github.event.inputs.skip_typescript != 'true' }}
@@ -122,7 +122,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: typescript
-              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/*') }}
+              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
 
     test-react-functional:
         if: ${{ github.event.inputs.skip_reactFunctional != 'true' }}
@@ -139,7 +139,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: reactFunctional
-              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/*') }}
+              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
 
     test-react-functional-ts:
         if: ${{ github.event.inputs.skip_reactFunctionalTs != 'true' }}
@@ -156,7 +156,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: reactFunctionalTs
-              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/*') }}
+              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
 
     test-vue3:
         if: ${{ github.event.inputs.skip_vue3 != 'true' }}
@@ -173,7 +173,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: vue3
-              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/*') }}  
+              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}  
 
     test-angular:
         if: ${{ github.event.inputs.skip_angular != 'true' }}
@@ -190,7 +190,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: angular
-              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/*') }}
+              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
 
     publish-reports:
       if: always()
