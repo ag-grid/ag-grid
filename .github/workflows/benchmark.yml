@@ -247,15 +247,19 @@ jobs:
             cat $JIRA_DESCRIPTION_FILE
             echo 'EOF'
           } >> $GITHUB_ENV
+          {
+            echo 'SLACK_MESSAGE_BLOCKS<<EOF'
+            cat $SLACK_FILE
+            echo 'EOF'
+          } >> $GITHUB_ENV
 
       - name: Slack Notification
         continue-on-error: true
         if: ${{ steps.upload-snippet.outputs.artifact-url && (github.event_name == 'schedule' || inputs.notify) }}
-        env:
+        uses: ./.github/actions/slack-integration
+        with:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
-          SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
-        run: |
-          curl -X POST -H 'Content-type: application/json' $SLACK_WEBHOOK --data @$SLACK_FILE
+          SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
 
       - name: Create Jira Ticket
         uses: ./.github/actions/jira-integration
