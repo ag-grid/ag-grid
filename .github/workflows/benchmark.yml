@@ -205,11 +205,9 @@ jobs:
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
         run: |
           node ./scripts/test/convert-playwright-output-to-slack-msg.mjs
-          JIRA_DESCRIPTION=$(cat "$JIRA_DESCRIPTION_FILE")
-          JIRA_FINGERPRINT=$(cat "$JIRA_FINGERPRINT_FILE")
           
-          echo "JIRA_DESCRIPTION=$JIRA_DESCRIPTION" >> $GITHUB_ENV
-          echo "JIRA_FINGERPRINT=$JIRA_FINGERPRINT" >> $GITHUB_ENV
+          echo "JIRA_DESCRIPTION=`cat $JIRA_DESCRIPTION_FILE`" >> $GITHUB_ENV
+          echo "JIRA_FINGERPRINT=`cat $JIRA_FINGERPRINT_FILE`" >> $GITHUB_ENV
 
       - name: Upload Snippet
         id: upload-snippet
