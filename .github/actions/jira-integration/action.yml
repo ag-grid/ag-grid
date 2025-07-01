@@ -1,0 +1,35 @@
+name: jira-integration
+author: sdwvit
+description: Creates a Jira ticket based on the test results.
+inputs:
+  JIRA_FINGERPRINT:
+    description: 'Jira fingerprint for creating unique tickets'
+    required: true
+  JIRA_API_AUTH:
+    description: 'Jira API authentication header'
+    required: true
+  WORKFLOW:
+    description: 'Workflow name to be used in the Jira ticket'
+    required: false
+  JIRA_DESCRIPTION:
+    description: 'Description of the Jira ticket'
+    required: false
+  JIRA_SUMMARY:
+    description: 'Title/Summary of the Jira ticket'
+    required: false
+  IS_SUCCESS:
+    description: "Whether the tests were successful"
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Create Jira Ticket
+      env:
+        JIRA_FINGERPRINT: ${{ inputs.JIRA_FINGERPRINT }}
+        JIRA_API_AUTH: ${{ inputs.JIRA_API_AUTH }}
+        WORKFLOW: ${{ inputs.WORKFLOW }}
+        JIRA_DESCRIPTION: ${{ inputs.JIRA_DESCRIPTION }}
+        JIRA_SUMMARY: ${{ inputs.JIRA_SUMMARY }}
+        IS_SUCCESS: ${{ inputs.IS_SUCCESS }}
+      shell: bash
+      run: node ./scripts/test/create-jira-ticket.mjs

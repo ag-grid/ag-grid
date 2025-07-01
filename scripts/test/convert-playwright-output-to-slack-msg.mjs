@@ -17,7 +17,9 @@ const icon_url = process.env.SLACK_ICON || ' ';
 const slackFileName = process.env.SLACK_FILE || path.join(__root, 'slack.json');
 const snippetSlackFileName = process.env.SLACK_FILE_SNIPPET || path.join(__root, 'slack-snippet.md');
 const commentFileName = process.env.COMMENT_FILE || path.join(__root, 'comment.md');
-const jiraFileName = process.env.JIRA_FILE || path.join(__root, 'jira.json');
+
+const jiraTextFile = process.env.JIRA_DESCRIPTION_FILE || path.join(__root, 'jira_description.txt');
+const jiraFingerprintFile = process.env.JIRA_FINGERPRINT_FILE || path.join(__root, 'jira_fingerprint.txt');
 
 if (!channel) throw new Error('SLACK_CHANNEL is not set');
 if (!username) throw new Error('SLACK_USERNAME is not set');
@@ -168,17 +170,8 @@ const uniqueFingerprint = generateHash(
     ].join()
 );
 
-fs.writeFileSync(
-    jiraFileName,
-    JSON.stringify(
-        {
-            fingerprint: uniqueFingerprint,
-            text: getResultsString(calculatedTests.failed, true, jiraLink, jiraCodeBlock),
-        },
-        null,
-        2
-    )
-);
+fs.writeFileSync(jiraTextFile, getResultsString(calculatedTests.failed, true, jiraLink, jiraCodeBlock));
+fs.writeFileSync(jiraFingerprintFile, uniqueFingerprint);
 
 function generateHash(input) {
     return crypto.createHash('sha1').update(input).digest('hex');

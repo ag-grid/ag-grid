@@ -37,7 +37,8 @@ env:
   COMMENT_FILE: ./comment.md
   SLACK_FILE: ./slack.json
   SLACK_FILE_SNIPPET: ./slack-snippet.md
-  JIRA_FILE: ./jira.json
+  JIRA_DESCRIPTION_FILE: ./jira-text.json
+  JIRA_FINGERPRINT_FILE: ./jira-fingerprint.json
   DEFAULT_RETENTION_DAYS: 30
 
 permissions:
@@ -204,6 +205,11 @@ jobs:
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
         run: |
           node ./scripts/test/convert-playwright-output-to-slack-msg.mjs
+          JIRA_DESCRIPTION=$(cat "$JIRA_DESCRIPTION_FILE")
+          JIRA_FINGERPRINT=$(cat "$JIRA_FINGERPRINT_FILE")
+          
+          echo "JIRA_DESCRIPTION=$JIRA_DESCRIPTION" >> $GITHUB_ENV
+          echo "JIRA_FINGERPRINT=$JIRA_FINGERPRINT" >> $GITHUB_ENV
 
       - name: Upload Snippet
         id: upload-snippet
@@ -232,13 +238,16 @@ jobs:
           curl -X POST -H 'Content-type: application/json' $SLACK_WEBHOOK --data @$SLACK_FILE
 
       - name: Create Jira Ticket
+        uses: ./.github/actions/jira-integration
         continue-on-error: true
         if: ${{ steps.attach-snippet.outcome == 'success' && (github.event_name == 'schedule' || inputs.force_jira_ticket) }}
-        env:
+        with:
+          JIRA_FINGERPRINT: ${{ env.JIRA_FINGERPRINT }}
           JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
+          WORKFLOW: ${{ github.workflow }}
+          JIRA_DESCRIPTION: ${{ env.JIRA_DESCRIPTION }}
+          JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' has detected a slowdown in grid performance"
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
-        run: |
-          node ./scripts/test/create-jira-ticket.mjs
 
       - name: Notify End
         uses: actions/github-script@v7
