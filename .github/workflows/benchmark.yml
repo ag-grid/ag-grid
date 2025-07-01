@@ -223,8 +223,12 @@ jobs:
         if: ${{ steps.upload-snippet.outputs.artifact-url }}
         env:
           SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
+          JIRA_DESCRIPTION_FILE: ${{ env.JIRA_DESCRIPTION_FILE }}
+          SLACK_FILE: ${{ env.SLACK_FILE }}
+          COMMENT_FILE: ${{ env.COMMENT_FILE }}
         run: |
           node ./scripts/test/attach-snippet.mjs
+          echo "JIRA_DESCRIPTION=`cat $JIRA_DESCRIPTION_FILE`" >> $GITHUB_ENV
 
       - name: Slack Notification
         continue-on-error: true
