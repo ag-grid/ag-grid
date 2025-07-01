@@ -216,7 +216,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public getEditPositions(editMap?: EditMap): EditPositionValue[] {
-        if (this.suspendEdits || this.edits.size === 0) {
+        if (this.suspendEdits || (editMap ?? this.edits).size === 0) {
             return [];
         }
 

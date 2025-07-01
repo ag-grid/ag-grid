@@ -439,7 +439,7 @@ export class CellCtrl extends BeanStub {
 
     public onPopupEditorClosed(): void {
         const { editSvc } = this.beans;
-        if (!editSvc?.isEditing(this)) {
+        if (!editSvc?.isEditing(this, { withOpenEditor: true })) {
             return;
         }
 
