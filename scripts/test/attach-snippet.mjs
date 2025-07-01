@@ -13,7 +13,7 @@ if (!snippetUrl) {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const __root = path.join(__dirname, '..', '..');
-const jiraFilePath = process.env.JIRA_DESCRIPTION_FILE || path.join(__root, 'jira_description.txt');
+const jiraFilePath = process.env.JIRA_DESCRIPTION_FILE || path.join(__root, 'jira-description.txt');
 const slackFileName = process.env.SLACK_FILE || path.join(__root, 'slack.json');
 const commentFileName = process.env.COMMENT_FILE || path.join(__root, 'comment.md');
 

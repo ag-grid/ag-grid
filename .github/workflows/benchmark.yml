@@ -37,7 +37,7 @@ env:
   COMMENT_FILE: ./comment.md
   SLACK_FILE: ./slack.json
   SLACK_FILE_SNIPPET: ./slack-snippet.md
-  JIRA_DESCRIPTION_FILE: ./jira-text.json
+  JIRA_DESCRIPTION_FILE: ./jira-description.txt
   JIRA_FINGERPRINT_FILE: ./jira-fingerprint.json
   DEFAULT_RETENTION_DAYS: 30
 
@@ -203,11 +203,17 @@ jobs:
           SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
           SLACK_USERNAME: 'ag-grid CI'
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
+          SLACK_FILE: ${{ env.SLACK_FILE }}
+          SLACK_FILE_SNIPPET: ${{ env.SLACK_FILE_SNIPPET }}
+          COMMENT_FILE: ${{ env.COMMENT_FILE }}
+          JIRA_DESCRIPTION_FILE: ${{ env.JIRA_DESCRIPTION_FILE }}
+          JIRA_FINGERPRINT_FILE: ${{ env.JIRA_FINGERPRINT_FILE }}
+          JOB_URL: ${{ env.JOB_URL }}
         run: |
           node ./scripts/test/convert-playwright-output-to-slack-msg.mjs
           
-          echo "JIRA_DESCRIPTION=`cat $JIRA_DESCRIPTION_FILE`" >> $GITHUB_ENV
-          echo "JIRA_FINGERPRINT=`cat $JIRA_FINGERPRINT_FILE`" >> $GITHUB_ENV
+          printf "JIRA_DESCRIPTION=%s\n" "$JIRA_DESCRIPTION_FILE" >> $GITHUB_ENV
+          printf "JIRA_FINGERPRINT=%s\n" "$JIRA_FINGERPRINT_FILE" >> $GITHUB_ENV
 
       - name: Upload Snippet
         id: upload-snippet
@@ -228,7 +234,7 @@ jobs:
           COMMENT_FILE: ${{ env.COMMENT_FILE }}
         run: |
           node ./scripts/test/attach-snippet.mjs
-          echo "JIRA_DESCRIPTION=`cat $JIRA_DESCRIPTION_FILE`" >> $GITHUB_ENV
+          printf "JIRA_DESCRIPTION=%s\n" "$JIRA_DESCRIPTION_FILE" >> $GITHUB_ENV
 
       - name: Slack Notification
         continue-on-error: true
