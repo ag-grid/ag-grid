@@ -9,33 +9,33 @@ env:
 on:
     workflow_dispatch:
         inputs:
-            run_vanilla:
-                description: 'Run Vanilla tests'
+            skip_vanilla:
+                description: 'Skip Vanilla tests'
                 type: boolean
                 required: true
                 default: true
-            run_typescript:
-                description: 'Run Typescript tests'
+            skip_typescript:
+                description: 'Skip Typescript tests'
                 type: boolean
                 required: true
                 default: true
-            run_reactFunctional:
-                description: 'Run React Functional tests'
+            skip_reactFunctional:
+                description: 'Skip React Functional tests'
                 type: boolean
                 required: true
                 default: true
-            run_reactFunctionalTs:
-                description: 'Run React Functional TS tests'
+            skip_reactFunctionalTs:
+                description: 'Skip React Functional TS tests'
                 type: boolean
                 required: true
                 default: true
-            run_angular:
-                description: 'Run Angular tests'
+            skip_angular:
+                description: 'Skip Angular tests'
                 type: boolean
                 required: true
                 default: true
-            run_vue3:
-                description: 'Run Vue3 tests'
+            skip_vue3:
+                description: 'Skip Vue3 tests'
                 type: boolean
                 required: true
                 default: true
@@ -91,7 +91,7 @@ jobs:
             key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
 
     test-vanilla:
-        if: ${{ github.event.inputs.run_vanilla == 'true' }}
+        if: ${{ github.event.inputs.skip_vanilla != 'true' }}
         name: Test Vanilla Examples
         needs: download-examples
         runs-on: ubuntu-latest
@@ -107,7 +107,7 @@ jobs:
               framework: vanilla
 
     test-typescript:
-        if: ${{ github.event.inputs.run_typescript == 'true' }}
+        if: ${{ github.event.inputs.skip_typescript != 'true' }}
         name: Test Typescript Examples
         needs: download-examples
         runs-on: ubuntu-latest
@@ -123,7 +123,7 @@ jobs:
               framework: typescript
 
     test-react-functional:
-        if: ${{ github.event.inputs.run_reactFunctional == 'true' }}
+        if: ${{ github.event.inputs.skip_reactFunctional != 'true' }}
         name: Test React Examples
         needs: download-examples
         runs-on: ubuntu-latest
@@ -139,7 +139,7 @@ jobs:
               framework: reactFunctional
 
     test-react-functional-ts:
-        if: ${{ github.event.inputs.run_reactFunctionalTs == 'true' }}
+        if: ${{ github.event.inputs.skip_reactFunctionalTs != 'true' }}
         name: Test React TS Examples
         needs: download-examples
         runs-on: ubuntu-latest
@@ -155,7 +155,7 @@ jobs:
               framework: reactFunctionalTs
 
     test-vue3:
-        if: ${{ github.event.inputs.run_vue3 == 'true' }}
+        if: ${{ github.event.inputs.skip_vue3 != 'true' }}
         name: Test Vue Examples
         needs: download-examples
         runs-on: ubuntu-latest
@@ -171,7 +171,7 @@ jobs:
               framework: vue3              
 
     test-angular:
-        if: ${{ github.event.inputs.run_angular == 'true' }}
+        if: ${{ github.event.inputs.skip_angular != 'true' }}
         name: Test Angular Examples
         needs: download-examples
         runs-on: ubuntu-latest
