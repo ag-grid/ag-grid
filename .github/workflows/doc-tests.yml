@@ -83,7 +83,6 @@ jobs:
           run: |
             mkdir -p ./testing/ag-grid-docs/e2e/.cache
             curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
-            npx playwright test prime-har-cache.spec.ts
 
         - name: Cache all-examples-cached.json / example-assets.har
           uses: actions/cache@v4

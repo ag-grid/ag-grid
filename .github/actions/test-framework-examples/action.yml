@@ -24,6 +24,11 @@ runs:
       run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
       shell: bash
 
+    - name: Prime HAR Cache
+      working-directory: testing/ag-grid-docs
+      run: npx playwright test prime-har-cache.spec.ts
+      shell: bash
+
     - name: ${{ inputs.framework }}
       working-directory: testing/ag-grid-docs
       run: FRAMEWORK=${{ inputs.framework }} npx playwright test framework-examples.spec.ts --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
