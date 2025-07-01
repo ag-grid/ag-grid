@@ -526,3 +526,334 @@
         font-size: var(--text-fs-lg);
     }
 }
+
+// Return to Service Landing Page Styles
+.rtsHeroSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-size-16 $spacing-size-4;
+    border-radius: var(--radius-lg);
+    margin: $spacing-size-10 auto $spacing-size-12 auto;
+    max-width: 1200px;
+    gap: $spacing-size-8;
+
+    @media screen and (min-width: 900px) {
+        flex-direction: row;
+        padding: $spacing-size-20 $spacing-size-12;
+    }
+}
+.rtsHeroContent {
+    flex: 2;
+
+    max-width: 400px;
+    h2 {
+        font-size: var(--text-fs-2xl);
+        margin-bottom: $spacing-size-4;
+        text-align: left;
+    }
+    p {
+        text-align: left;
+    }
+}
+.rtsFlipClockBox {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-size-4;
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+
+    padding: $spacing-size-8 $spacing-size-4;
+    min-width: 220px;
+
+    a {
+        width: 100%;
+        text-align: center;
+    }
+}
+.rtsFlipClock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: $spacing-size-2;
+}
+.rtsFlipClockTime {
+    display: flex;
+    gap: $spacing-size-2;
+    div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: var(--color-brand-200);
+        color: var(--color-brand-700);
+        border-radius: var(--radius-md);
+        padding: $spacing-size-2 $spacing-size-3;
+        font-size: 1.5rem;
+        min-width: 48px;
+        font-weight: var(--text-bold);
+    }
+}
+.rtsFlipClockLabel {
+    font-size: var(--text-fs-xs);
+    color: var(--color-brand-700);
+    margin-top: 2px;
+    font-weight: var(--text-regular);
+}
+.rtsFlipClockEnds {
+    font-size: var(--text-fs-base);
+    color: var(--color-brand-500);
+    margin-top: $spacing-size-2;
+    letter-spacing: 1px;
+    font-family: var(--text-monospace-font-family);
+    padding-bottom: $spacing-size-3;
+}
+
+.rtsBenefitsSection {
+    border-radius: var(--radius-md);
+    padding: $spacing-size-12 $spacing-size-4;
+    margin: $spacing-size-10 auto;
+    max-width: 1100px;
+    text-align: center;
+    > h2,
+    > p {
+        text-align: left;
+    }
+    p {
+        margin-bottom: $spacing-size-8;
+    }
+
+    h2 {
+        font-size: var(--text-fs-2xl);
+    }
+}
+.rtsBenefitsTableWrapper {
+    overflow-x: auto;
+    margin-bottom: $spacing-size-6;
+}
+.rtsBenefitsTable {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xs);
+    th,
+    td {
+        padding: $spacing-size-3 $spacing-size-4;
+        text-align: center;
+        border-bottom: 1px solid var(--color-border-secondary);
+    }
+    th {
+        background: var(--color-brand-100);
+        color: var(--color-brand-700);
+        font-weight: var(--text-bold);
+    }
+    td:first-child {
+        text-align: left;
+        color: var(--color-brand-700);
+        font-size: var(--text-fs-base);
+    }
+    tr:last-child td {
+        border-bottom: none;
+    }
+}
+
+.rtsReleasesSection {
+    margin: $spacing-size-12 auto;
+    max-width: 1100px;
+    text-align: center;
+    > h2,
+    > p {
+        text-align: left;
+    }
+    p {
+        color: var(--color-brand-700);
+        margin-bottom: $spacing-size-4;
+    }
+}
+.rtsReleaseCards {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-6;
+    margin-top: $spacing-size-6;
+    @media screen and (min-width: 900px) {
+        flex-direction: row;
+        justify-content: center;
+    }
+}
+.rtsReleaseCard {
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xs);
+    padding: $spacing-size-6 $spacing-size-4;
+    flex: 1;
+    min-width: 220px;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    h3 {
+        color: var(--color-brand-500);
+        font-size: var(--text-fs-lg);
+        margin: $spacing-size-4 0 $spacing-size-2 0;
+    }
+    p {
+        color: var(--color-brand-700);
+        font-size: var(--text-fs-base);
+    }
+}
+.rtsReleaseImage {
+    width: 100%;
+    height: 120px;
+    background: var(--color-brand-100);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-brand-300);
+    font-size: var(--text-fs-lg);
+    margin-bottom: $spacing-size-4;
+}
+
+.rtsChartsCtaSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-brand-200);
+    border-radius: var(--radius-lg);
+    margin: $spacing-size-12 auto;
+    padding: $spacing-size-10 $spacing-size-4;
+    max-width: 1100px;
+    gap: $spacing-size-8;
+    @media screen and (min-width: 900px) {
+        flex-direction: row;
+        align-items: stretch;
+        padding: $spacing-size-16 $spacing-size-12;
+    }
+}
+.rtsChartsCtaContent {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    h2 {
+        font-size: var(--text-fs-2xl);
+        margin-bottom: $spacing-size-4;
+        text-align: left;
+    }
+    p {
+        text-align: left;
+    }
+    a {
+        margin-top: $spacing-size-2;
+    }
+}
+.rtsChartsCtaImage {
+    flex: 1;
+    min-width: 180px;
+    min-height: 120px;
+    background: var(--color-brand-100);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-brand-300);
+    font-size: var(--text-fs-lg);
+    margin-top: $spacing-size-4;
+    @media screen and (min-width: 900px) {
+        margin-top: 0;
+        margin-left: $spacing-size-8;
+    }
+}
+
+.rtsTrustedSection {
+    margin: $spacing-size-12 auto;
+    max-width: 1100px;
+    text-align: center;
+    h2 {
+        font-size: var(--text-fs-2xl);
+        margin-bottom: $spacing-size-6;
+        text-align: left;
+    }
+    p {
+        text-align: left;
+    }
+}
+.rtsTrustedQuotes {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-6;
+    @media screen and (min-width: 900px) {
+        flex-direction: row;
+        justify-content: center;
+    }
+}
+.rtsTrustedQuote {
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xs);
+    padding: $spacing-size-6 $spacing-size-4;
+    flex: 1;
+    min-width: 220px;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    p {
+        color: var(--color-brand-700);
+        font-size: var(--text-fs-base);
+        font-style: italic;
+        margin-bottom: $spacing-size-2;
+    }
+    span {
+        color: var(--color-brand-300);
+        font-size: var(--text-fs-xs);
+    }
+}
+
+.rtsRenewSection {
+    margin: $spacing-size-12 auto;
+    max-width: 900px;
+    text-align: center;
+    h2 {
+        font-size: var(--text-fs-2xl);
+        margin-bottom: $spacing-size-4;
+        text-align: left;
+    }
+    p {
+        text-align: left;
+    }
+}
+.rtsRenewContent {
+    color: var(--color-brand-700);
+    font-size: var(--text-fs-lg);
+}
+
+.rtsFooter {
+    background: var(--color-brand-100);
+    padding: $spacing-size-8 0;
+    margin-top: $spacing-size-16;
+}
+.rtsFooterContent {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-size-2;
+    color: var(--color-brand-700);
+    font-size: var(--text-fs-sm);
+    a {
+        color: var(--color-brand-500);
+        text-decoration: underline;
+        margin: 0 $spacing-size-1;
+    }
+    @media screen and (min-width: 600px) {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}

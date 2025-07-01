@@ -5817,6 +5817,11 @@
   resolved "http://52.50.158.57:4873/@polka/url/-/url-1.0.0-next.28.tgz#d45e01c4a56f143ee69c54dd6b12eade9e270a73"
   integrity sha512-8LduaNlMZGwdZ6qWrKlfa+2M4gahzFkprZiAt2TF8uS0qQgBizKXpXURqvTJ4WtmupWxaLqjRb2UCTe72mu+Aw==
 
+"@pqina/flip@^1.8.4":
+  version "1.8.4"
+  resolved "http://52.50.158.57:4873/@pqina/flip/-/flip-1.8.4.tgz#f0c542ec37f047f3663dd7b35199569edd128492"
+  integrity sha512-vOOGo23t0egDHOhnNeDwHdSQVT1p8l+MetwpZPd+5xEYjvZR6FNUaWYqLki3XFfMijro9YpYuljInCaLhO62dQ==
+
 "@radix-ui/number@1.1.0":
   version "1.1.0"
   resolved "http://52.50.158.57:4873/@radix-ui/number/-/number-1.1.0.tgz#1e95610461a09cdf8bb05c152e76ca1278d5da46"
