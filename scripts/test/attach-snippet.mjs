@@ -22,8 +22,8 @@ let ghMsg = fs.readFileSync(commentFileName, 'utf8');
 let jiraMsg = fs.readFileSync(jiraFilePath, 'utf8');
 
 slackMsg.blocks.push({ type: 'section', text: { type: 'mrkdwn', text: `<${snippetUrl}|Full stdout>` } });
-ghMsg += `\n\n[Full stdout](${snippetUrl})`;
-jiraMsg += `\n\n[Full stdout|${snippetUrl}]`;
+ghMsg += `\n[Full stdout](${snippetUrl})\n`;
+jiraMsg += `\n[Full stdout|${snippetUrl}]\n`;
 
 fs.writeFileSync(slackFileName, JSON.stringify(slackMsg));
 fs.writeFileSync(commentFileName, ghMsg);

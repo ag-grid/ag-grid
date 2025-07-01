@@ -149,9 +149,9 @@ const textMessage = [linksText(mdLink), getTotalsText(report)]
               ]
     )
     .join('\n');
-fs.writeFileSync(commentFileName, textMessage);
-fs.writeFileSync(slackFileName, JSON.stringify(slackMessage, null, 2));
-fs.writeFileSync(snippetSlackFileName, getResultsString(calculatedTests.all, false, mdLink));
+fs.writeFileSync(commentFileName, textMessage + '\n');
+fs.writeFileSync(slackFileName, JSON.stringify(slackMessage, null, 2) + '\n');
+fs.writeFileSync(snippetSlackFileName, getResultsString(calculatedTests.all, false, mdLink) + '\n');
 /**
  * Generates a unique fingerprint for the failed tests based on their titles and git hashes.
  * This fingerprint is used to deduplicate JIRA issues for the same regression.
@@ -170,8 +170,8 @@ const uniqueFingerprint = generateHash(
     ].join()
 );
 
-fs.writeFileSync(jiraDescriptionFile, getResultsString(calculatedTests.failed, true, jiraLink, jiraCodeBlock));
-fs.writeFileSync(jiraFingerprintFile, uniqueFingerprint);
+fs.writeFileSync(jiraDescriptionFile, getResultsString(calculatedTests.failed, true, jiraLink, jiraCodeBlock) + '\n');
+fs.writeFileSync(jiraFingerprintFile, uniqueFingerprint + '\n');
 
 function generateHash(input) {
     return crypto.createHash('sha1').update(input).digest('hex');
