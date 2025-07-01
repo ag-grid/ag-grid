@@ -370,8 +370,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.model.getCellValidationModel().getCellValidationMap().size > 0 ||
             this.model.getRowValidationModel().getRowValidationMap().size > 0;
 
-        const editsToDelete = [];
-
         for (const rowNode of rowNodes) {
             const editRow = edits.get(rowNode)!;
             for (const column of editRow.keys()) {
@@ -383,10 +381,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 }
             }
         }
-
-        editsToDelete.forEach((position) => {
-            this.model.clearEditValue(position);
-        });
     }
 
     private setNodeDataValue(rowNode: IRowNode, column: Column, newValue: any, refreshCell?: boolean): boolean {
