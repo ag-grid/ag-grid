@@ -301,9 +301,9 @@ export function _syncFromEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
     newValue?: any,
-    source?: string
+    _source?: string
 ): void {
-    const { editModelSvc, valueSvc, eventSvc } = beans;
+    const { editModelSvc, valueSvc } = beans;
     if (!editModelSvc) {
         return;
     }
@@ -338,19 +338,12 @@ export function _syncFromEditor(
         return;
     }
 
-    const { rowIndex, rowPinned, data } = rowNode;
-    eventSvc.dispatchEvent({
-        type: 'cellEditValuesChanged',
-        value: newValue,
-        colDef: column.getColDef(),
-        newValue,
-        oldValue,
-        source,
-        column,
-        rowIndex,
-        rowPinned,
-        data,
-        node: rowNode,
+    const edit = editModelSvc.getEdit(position);
+
+    beans.editSvc?.dispatchCellEvent(position, null, 'cellValueChanged', {
+        valueChanged: edit && _valuesDiffer(edit),
+        newValue: edit?.newValue,
+        oldValue: edit?.oldValue,
     });
 }
 
@@ -391,11 +384,11 @@ export function _destroyEditor(beans: BeanCollection, position: Required<EditPos
 
     const wasEditing = beans.editModelSvc?.getEdit(position)?.state === 'editing';
 
-    comp?.setEditDetails(); // passing nothing stops editing
     if (beans.editModelSvc?.hasEdits(position) && rowNode && column) {
         beans.editModelSvc?.setState(position, 'changed');
     }
 
+    comp?.setEditDetails(); // passing nothing stops editing
     comp?.refreshEditStyles(false, false);
 
     cellCtrl?.refreshCell({ force: true, suppressFlash: true });
