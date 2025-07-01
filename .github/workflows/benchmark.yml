@@ -212,8 +212,16 @@ jobs:
         run: |
           node ./scripts/test/convert-playwright-output-to-slack-msg.mjs
           
-          printf "JIRA_DESCRIPTION=%s\n" "$JIRA_DESCRIPTION_FILE" >> $GITHUB_ENV
-          printf "JIRA_FINGERPRINT=%s\n" "$JIRA_FINGERPRINT_FILE" >> $GITHUB_ENV
+          {
+            echo 'JIRA_FINGERPRINT<<EOF'
+            cat $JIRA_FINGERPRINT_FILE
+            echo 'EOF'
+          } >> $GITHUB_ENV
+          {
+            echo 'JIRA_DESCRIPTION<<EOF'
+            cat $JIRA_DESCRIPTION_FILE
+            echo 'EOF'
+          } >> $GITHUB_ENV
 
       - name: Upload Snippet
         id: upload-snippet
@@ -234,7 +242,11 @@ jobs:
           COMMENT_FILE: ${{ env.COMMENT_FILE }}
         run: |
           node ./scripts/test/attach-snippet.mjs
-          printf "JIRA_DESCRIPTION=%s\n" "$JIRA_DESCRIPTION_FILE" >> $GITHUB_ENV
+          {
+            echo 'JIRA_DESCRIPTION<<EOF'
+            cat $JIRA_DESCRIPTION_FILE
+            echo 'EOF'
+          } >> $GITHUB_ENV
 
       - name: Slack Notification
         continue-on-error: true
