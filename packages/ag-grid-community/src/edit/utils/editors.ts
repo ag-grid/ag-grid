@@ -301,9 +301,9 @@ export function _syncFromEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
     newValue?: any,
-    source?: string
+    _source?: string
 ): void {
-    const { editModelSvc, valueSvc, eventSvc } = beans;
+    const { editModelSvc, valueSvc } = beans;
     if (!editModelSvc) {
         return;
     }
