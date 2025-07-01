@@ -105,6 +105,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: vanilla
+              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/*') }}
 
     test-typescript:
         if: ${{ github.event.inputs.skip_typescript != 'true' }}
@@ -121,6 +122,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: typescript
+              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/*') }}
 
     test-react-functional:
         if: ${{ github.event.inputs.skip_reactFunctional != 'true' }}
@@ -137,6 +139,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: reactFunctional
+              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/*') }}
 
     test-react-functional-ts:
         if: ${{ github.event.inputs.skip_reactFunctionalTs != 'true' }}
@@ -153,6 +156,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: reactFunctionalTs
+              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/*') }}
 
     test-vue3:
         if: ${{ github.event.inputs.skip_vue3 != 'true' }}
@@ -168,7 +172,8 @@ jobs:
           - uses: actions/checkout@v4
           - uses: ./.github/actions/test-framework-examples
             with:
-              framework: vue3              
+              framework: vue3
+              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/*') }}  
 
     test-angular:
         if: ${{ github.event.inputs.skip_angular != 'true' }}
@@ -185,6 +190,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: angular
+              cacheKey: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/*') }}
 
     publish-reports:
       if: always()
