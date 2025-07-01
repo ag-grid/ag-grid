@@ -383,7 +383,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
     }
 
-    private setNodeDataValue(rowNode: IRowNode, column: Column, newValue: any, refreshCell?: boolean): void {
+    private setNodeDataValue(rowNode: IRowNode, column: Column, newValue: any, refreshCell?: boolean): boolean {
         const { beans } = this;
         const cellCtrl = _getCellCtrl(beans, { rowNode, column });
 
@@ -394,7 +394,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         if (cellCtrl) {
             cellCtrl.suppressRefreshCell = true;
         }
-        rowNode.setDataValue(column, newValue, 'commit');
+        const success = rowNode.setDataValue(column, newValue, 'commit');
         if (cellCtrl) {
             cellCtrl.suppressRefreshCell = false;
         }
@@ -402,6 +402,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         if (refreshCell) {
             cellCtrl?.refreshCell(FORCE_REFRESH);
         }
+
+        return success;
     }
 
     public setEditMap(edits: EditMap, params?: _SetEditingCellsParams): void {
