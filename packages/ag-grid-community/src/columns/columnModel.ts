@@ -69,7 +69,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.pivotMode = this.gos.get('pivotMode');
 
         this.addManagedPropertyListeners(
-            ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'],
+            ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents', 'rowNumbers'],
             (event) => this.refreshAll(_convertColumnEventSourceType(event.source))
         );
         this.addManagedPropertyListeners(

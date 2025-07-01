@@ -77,14 +77,15 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         cols: _ColumnCollections,
         updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void
     ): void {
-        if (!this.gos.get('rowNumbers')) {
-            return;
-        }
-
         const destroyCollection = () => {
             _destroyColumnTree(this.beans, this.columns?.tree);
             this.columns = null;
         };
+
+        if (!this.gos.get('rowNumbers')) {
+            destroyCollection();
+            return;
+        }
 
         const newTreeDepth = cols.treeDepth;
         const oldTreeDepth = this.columns?.treeDepth ?? -1;
