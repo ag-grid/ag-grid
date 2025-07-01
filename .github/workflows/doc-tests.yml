@@ -7,6 +7,8 @@ env:
     DEFAULT_RETENTION_DAYS: 30
 
 on:
+    push:
+        branches: ['AG-15342-cache-test-assets']
     workflow_dispatch:
         inputs:
             skip_vanilla:
