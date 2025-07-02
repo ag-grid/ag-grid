@@ -1,7 +1,7 @@
 {
-  "name": "ag-grid-public-testing-recipes",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "testing/public-recipes",
+  "name": "ag-grid-public-e2e-testing-recipes",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/public-recipes/e2e",
   "projectType": "application",
   "targets": {
     "setup": {
@@ -12,13 +12,13 @@
         "cwd": "testing/public-recipes"
       }
     },
-    "test:e2e:public-recipes": {
+    "test": {
       "executor": "nx:run-commands",
       "dependsOn": ["setup"],
       "options": {
         "commands": ["npx playwright test"],
         "parallel": false,
-        "cwd": "testing/public-recipes",
+        "cwd": "testing/public-recipes/e2e",
         "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
       },
       "configurations": {

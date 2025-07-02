@@ -10,7 +10,7 @@ console.log(`Using base URL: ${baseURL}`);
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-    testDir: './e2e',
+    testDir: './src',
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
     workers: 1,
@@ -19,7 +19,7 @@ export default defineConfig({
         baseURL,
     },
     reporter: [['line']],
-    outputDir: '../../reports/ag-grid-public-testing-recipes/',
+    outputDir: '../../reports/ag-grid-public-e2e-testing-recipes/',
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     expect: {
         timeout: 3000,
