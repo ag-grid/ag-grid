@@ -631,7 +631,7 @@
 }
 .rtsFlipClockEnds {
     font-size: var(--text-fs-base);
-    color: var(--color-brand-500);
+    color: var(--color-fg-primary);
     margin-top: $spacing-size-2;
     letter-spacing: 1px;
     font-family: var(--text-monospace-font-family);
@@ -679,9 +679,7 @@
         text-align: center;
         border-bottom: none;
     }
-    td {
-        font-weight: 500;
-    }
+
     th {
         opacity: 0.5;
         font-weight: 500;
@@ -692,6 +690,16 @@
         font-size: 14px;
         opacity: 0.8;
     }
+
+    td {
+        font-weight: 500;
+
+        #{$selector-darkmode} & {
+            color: var(--color-white);
+            opacity: 1;
+        }
+    }
+
     tr:last-child td {
         border-bottom: none;
     }
@@ -704,6 +712,13 @@
             background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
         }
     }
+
+    tr:nth-child(odd) {
+        td {
+            color: var(--color-fg-primary);
+        }
+    }
+
     tr {
         border: none;
     }
@@ -828,6 +843,8 @@
     margin: $spacing-size-12 auto;
     max-width: 1100px;
     text-align: center;
+    padding-top: $spacing-size-24;
+    padding-bottom: $spacing-size-24;
 
     h2 {
         font-size: var(--text-fs-2xl);
@@ -873,20 +890,46 @@
 .rtsRenewSection {
     margin: $spacing-size-12 auto;
     max-width: 900px;
-    text-align: center;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: $spacing-size-12;
+    padding: $spacing-size-8 0;
 
     h2 {
         font-size: var(--text-fs-2xl);
-        margin-bottom: $spacing-size-4;
+        margin-bottom: $spacing-size-6;
         text-align: left;
     }
-    p {
-        text-align: left;
+    .rtsRenewLeft {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        min-width: 260px;
+    }
+    .rtsRenewRight {
+        flex: 2;
+        display: flex;
+        align-items: center;
+        min-width: 0;
+    }
+    @media screen and (max-width: 700px) {
+        flex-direction: column;
+        gap: $spacing-size-6;
+        .rtsRenewLeft,
+        .rtsRenewRight {
+            width: 100%;
+            min-width: 0;
+        }
+        .rtsRenewRight {
+            justify-content: flex-start;
+        }
     }
 }
 .rtsRenewContent {
-    color: var(--color-brand-700);
-    font-size: var(--text-fs-lg);
+    font-size: var(--text-fs-base);
 }
 
 .rtsFooter {

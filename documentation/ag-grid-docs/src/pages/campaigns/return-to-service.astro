@@ -203,13 +203,18 @@ import ImageCarousel from '@components/campaigns-components/ImageCarousel';
         </section>
 
         <section class={styles.rtsRenewSection} id="renew">
-            <h2>Ready to renew?</h2>
-            <div class={styles.rtsRenewContent}>
-                <p>
-                    For transparency and to be fair to those customers whose support and maintenance fees enable us to
-                    continue to develop the best grid in the world, we are introducing a change to our pricing policy by
-                    introducing a return to support policy for lapsed customers.
-                </p>
+            <div class={styles.rtsRenewLeft}>
+                <h2>Ready to renew?</h2>
+                <a href="#" class={`button-primary ${styles.button}`}>Renew now <Icon name="chevronRight" /></a>
+            </div>
+            <div class={styles.rtsRenewRight}>
+                <div class={styles.rtsRenewContent}>
+                    <p>
+                        For transparency and to be fair to those customers whose support and maintenance fees enable us
+                        to continue to develop the best grid in the world, we are introducing a change to our pricing
+                        policy by introducing a return to support policy for lapsed customers.
+                    </p>
+                </div>
             </div>
         </section>
     </div>
