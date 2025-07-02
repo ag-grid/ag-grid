@@ -636,6 +636,8 @@
     letter-spacing: 1px;
     font-family: var(--text-monospace-font-family);
     padding-bottom: $spacing-size-3;
+    font-weight: 600;
+    opacity: 0.7;
 
     #{$selector-darkmode} & {
         color: var(--color-button-tertiary-fg);
@@ -958,4 +960,15 @@
 .renewedSupportTitle {
     color: var(--color-brand-500);
     opacity: 1 !important;
+
+    #{$selector-darkmode} & {
+        color: var(--color-button-tertiary-fg);
+    }
+}
+
+.button {
+    svg {
+        height: 18px;
+        width: 18px;
+    }
 }

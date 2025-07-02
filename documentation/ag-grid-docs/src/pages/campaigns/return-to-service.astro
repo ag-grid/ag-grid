@@ -35,7 +35,7 @@ import ImageCarousel from '@components/campaigns-components/ImageCarousel';
 
                     <FlipCountdown client:only days={60} />
                 </div>
-                <a href="#renew" class="button">Renew now <Icon name="chevronRight" /></a>
+                <a href="#renew" class={`button ${styles.button}`}>Renew now <Icon name="chevronRight" /></a>
             </div>
         </div>
 
@@ -46,7 +46,7 @@ import ImageCarousel from '@components/campaigns-components/ImageCarousel';
                     Pick up where you left off and enjoy the full benefits of AG Grid at today's prices. In future,
                     renewing once you are out of contract will incur back pay and reinstatement charges.
                 </p>
-                <a href="mailto:info@ag-grid.com" class="button-tertiary"
+                <a href="mailto:info@ag-grid.com" class={`button-tertiary ${styles.button}`}
                     >Contact us at info@ag-grid.com <Icon name="chevronRight" /></a
                 >
             </div>
@@ -142,7 +142,9 @@ import ImageCarousel from '@components/campaigns-components/ImageCarousel';
             <div class={styles.sectionTitle}>
                 <h2>Latest releases</h2>
                 <p>Here's what you've missed since you've been gone</p>
-                <a href="#" class="button-tertiary">View recent releases <Icon name="chevronRight" /></a>
+                <a href="#" class={`button-tertiary ${styles.button}`}
+                    >View recent releases <Icon name="chevronRight" /></a
+                >
             </div>
             <div class={styles.rtsReleaseCards}>
                 <div class={styles.rtsReleaseCard}>
@@ -191,7 +193,9 @@ import ImageCarousel from '@components/campaigns-components/ImageCarousel';
         <section class={styles.rtsChartsCtaSection}>
             <div class={styles.rtsChartsCtaContent}>
                 <h2>It's time to try AG Charts</h2>
-                <a href="#" class="button-primary">Get started with charts <Icon name="chevronRight" /></a>
+                <a href="#" class={`button-primary ${styles.button}`}
+                    >Get started with charts <Icon name="chevronRight" /></a
+                >
             </div>
             <div class={styles.carouselWrapper}>
                 <ImageCarousel client:load />

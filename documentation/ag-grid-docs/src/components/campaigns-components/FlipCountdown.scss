@@ -11,9 +11,11 @@
 .font-mono {
     font-family: var(--text-monospace-font-family);
     text-transform: uppercase;
-    padding-top: $spacing-size-3;
+    padding-top: $spacing-size-5;
     color: var(--color-button-tertiary-fg);
     font-size: 15px;
+    font-weight: 600;
+    opacity: 0.5;
 }
 
 .tick-flip-panel-back-highlight {
