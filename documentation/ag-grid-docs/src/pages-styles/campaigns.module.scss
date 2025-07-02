@@ -563,7 +563,7 @@
     flex-direction: column;
     align-items: center;
     gap: $spacing-size-4;
-    background: var(--color-white);
+    background: var(--color-bg-primary);
     border-radius: var(--radius-md);
 
     padding: $spacing-size-8 $spacing-size-4;
@@ -638,11 +638,17 @@
     border-collapse: collapse;
     background: var(--color-bg-primary);
     box-shadow: var(--shadow-xs);
+    margin-top: $spacing-size-16;
+    margin-bottom: $spacing-size-16;
+
     th,
     td {
         padding: $spacing-size-3 $spacing-size-4;
         text-align: center;
         border-bottom: none;
+    }
+    td {
+        font-weight: 500;
     }
     th {
         opacity: 0.5;
@@ -651,8 +657,8 @@
     }
     td:first-child {
         text-align: left;
-
-        font-size: var(--text-fs-base);
+        font-size: 14px;
+        opacity: 0.8;
     }
     tr:last-child td {
         border-bottom: none;
@@ -692,7 +698,6 @@
 .rtsReleaseCard {
     background: var(--color-bg-primary);
     border-radius: var(--radius-md);
-    box-shadow: var(--shadow-xs);
 
     flex: 1;
     min-width: 220px;
@@ -890,4 +895,8 @@
 
 .dash {
     opacity: 0.4;
+}
+
+.rtsFlipClock {
+    font-family: 'Oswald', sans-serif;
 }
