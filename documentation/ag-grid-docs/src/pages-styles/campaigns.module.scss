@@ -528,6 +528,24 @@
 }
 
 // Return to Service Landing Page Styles
+.rtsHeroGradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 550px;
+    background: radial-gradient(
+        circle at 80% 50%,
+        rgba(30, 81, 200, 0.049) 0%,
+        rgba(30, 81, 200, 0.018) 60%,
+        transparent 100%
+    );
+    border-bottom: 1px solid var(--color-border-secondary);
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
 .rtsHeroSection {
     display: flex;
     flex-direction: column;
@@ -535,9 +553,17 @@
     justify-content: space-between;
     padding: $spacing-size-16 $spacing-size-4;
     border-radius: var(--radius-lg);
-    margin: $spacing-size-10 auto $spacing-size-12 auto;
+
     max-width: 1200px;
     gap: $spacing-size-8;
+    position: relative;
+    overflow: visible;
+
+    // Ensure content is above the gradient
+    > * {
+        position: relative;
+        z-index: 1;
+    }
 
     @media screen and (min-width: 900px) {
         flex-direction: row;
@@ -563,14 +589,15 @@
     flex-direction: column;
     align-items: center;
     gap: $spacing-size-4;
-    background: var(--color-bg-primary);
-    border-radius: var(--radius-md);
 
+    border-radius: var(--radius-md);
     padding: $spacing-size-8 $spacing-size-4;
     max-width: 500px;
+    position: static;
+    overflow: visible;
 
     a {
-        width: 100%;
+        width: 300px;
         text-align: center;
     }
 }
@@ -609,12 +636,16 @@
     letter-spacing: 1px;
     font-family: var(--text-monospace-font-family);
     padding-bottom: $spacing-size-3;
+
+    #{$selector-darkmode} & {
+        color: var(--color-button-tertiary-fg);
+    }
 }
 
 .rtsBenefitsSection {
     border-radius: var(--radius-md);
-    padding: $spacing-size-12 $spacing-size-4;
-    margin: $spacing-size-10 auto;
+    padding: $spacing-size-16 $spacing-size-12;
+    margin-top: $spacing-size-16;
     max-width: 1100px;
     text-align: center;
     > h2,
@@ -639,7 +670,6 @@
     background: var(--color-bg-primary);
     box-shadow: var(--shadow-xs);
     margin-top: $spacing-size-16;
-    margin-bottom: $spacing-size-16;
 
     th,
     td {
@@ -666,6 +696,11 @@
 
     tr:nth-child(2n) {
         background-color: var(--color-brand-50);
+        border-radius: var(--radius-md);
+
+        #{$selector-darkmode} & {
+            background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
+        }
     }
     tr {
         border: none;
@@ -732,12 +767,13 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: var(--color-brand-200);
+    background: var(--color-brand-500);
     border-radius: var(--radius-lg);
     margin: $spacing-size-12 auto;
     padding: $spacing-size-10 $spacing-size-4;
     max-width: 1100px;
     gap: $spacing-size-8;
+
     @media screen and (min-width: 900px) {
         flex-direction: row;
         align-items: stretch;
@@ -754,12 +790,18 @@
         font-size: var(--text-fs-2xl);
         margin-bottom: $spacing-size-4;
         text-align: left;
+        color: var(--color-white);
     }
     p {
         text-align: left;
+        color: var(--color-white);
     }
     a {
         margin-top: $spacing-size-2;
+        color: var(--color-white);
+    }
+    svg {
+        fill: white;
     }
 }
 .rtsChartsCtaImage {
@@ -784,6 +826,7 @@
     margin: $spacing-size-12 auto;
     max-width: 1100px;
     text-align: center;
+
     h2 {
         font-size: var(--text-fs-2xl);
         margin-bottom: $spacing-size-6;
@@ -797,6 +840,7 @@
     display: flex;
     flex-direction: column;
     gap: $spacing-size-6;
+
     @media screen and (min-width: 900px) {
         flex-direction: row;
         justify-content: center;
@@ -806,22 +850,21 @@
     background: var(--color-bg-primary);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-xs);
-    padding: $spacing-size-6 $spacing-size-4;
     flex: 1;
     min-width: 220px;
     max-width: 340px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    text-align: left;
+
     p {
-        color: var(--color-brand-700);
-        font-size: var(--text-fs-base);
-        font-style: italic;
+        font-size: var(--text-fs-lg);
+        font-weight: 500;
         margin-bottom: $spacing-size-2;
     }
+
     span {
-        color: var(--color-brand-300);
-        font-size: var(--text-fs-xs);
+        font-size: var(--text-fs-base);
     }
 }
 
@@ -829,6 +872,7 @@
     margin: $spacing-size-12 auto;
     max-width: 900px;
     text-align: center;
+
     h2 {
         font-size: var(--text-fs-2xl);
         margin-bottom: $spacing-size-4;
@@ -871,10 +915,10 @@
 .sectionTitle {
     max-width: 500px;
     text-align: left;
-}
 
-.tick-credits {
-    display: none;
+    h2 {
+        font-size: var(--text-fs-2xl);
+    }
 }
 
 .tick svg {
@@ -899,4 +943,19 @@
 
 .rtsFlipClock {
     font-family: 'Oswald', sans-serif;
+}
+
+.rtsChartsCtaSection {
+    height: 300px;
+    overflow: hidden;
+
+    .carouselWrapper {
+        width: 400px;
+        height: 400px;
+    }
+}
+
+.renewedSupportTitle {
+    color: var(--color-brand-500);
+    opacity: 1 !important;
 }

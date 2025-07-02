@@ -12,4 +12,28 @@
     font-family: var(--text-monospace-font-family);
     text-transform: uppercase;
     padding-top: $spacing-size-3;
+    color: var(--color-button-tertiary-fg);
+    font-size: 15px;
+}
+
+.tick-flip-panel-back-highlight {
+    #{$selector-darkmode} & {
+        background-color: linear-gradient(180deg, hsla(0, 0%, 100%, 0.15), hsla(0, 0%, 100%, 0.3));
+    }
+}
+
+.tick-flip-panel {
+    #{$selector-darkmode} & {
+        background-color: var(--color-button-primary-bg);
+    }
+}
+
+.tick-flip-panel-text-wrapper {
+    #{$selector-darkmode} & {
+        color: var(--color-bg-primary);
+    }
+}
+
+.tick-credits {
+    display: none;
 }
