@@ -1,38 +1,33 @@
+// Flip.tsx
 import Tick from '@pqina/flip';
 import '@pqina/flip/dist/flip.min.css';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
-import './FlipCountdown.scss';
-
-export default class Flip extends React.Component {
-    constructor(props) {
-        super(props);
-        this._tickRef = React.createRef();
-    }
-
-    componentDidMount() {
-        this._tickInstance = Tick.DOM.create(this._tickRef.current, {
-            value: this.props.value,
-        });
-    }
-
-    componentDidUpdate() {
-        if (!this._tickInstance) return;
-        this._tickInstance.value = this.props.value;
-    }
-
-    componentWillUnmount() {
-        if (!this._tickInstance) return;
-        Tick.DOM.destroy(this._tickRef.current);
-    }
-
-    render() {
-        return (
-            <div ref={this._tickRef} className="tick">
-                <div className="tick-group" data-repeat="true" aria-hidden="true">
-                    <span data-view="flip">Tick</span>
-                </div>
-            </div>
-        );
-    }
+interface FlipProps {
+    value: string | number;
 }
+
+const Flip: React.FC<FlipProps> = ({ value }) => {
+    const root = useRef<HTMLDivElement>(null);
+    const tick = useRef<any>(null);
+
+    // mount
+    useEffect(() => {
+        tick.current = Tick.DOM.create(root.current!, { value });
+        return () => tick.current?.destroy();
+    }, []);
+
+    // update
+    useEffect(() => {
+        if (tick.current) tick.current.value = value;
+    }, [value]);
+
+    return (
+        <div ref={root} className="tick">
+            {/* one flipper for the whole value */}
+            <span data-view="flip" />
+        </div>
+    );
+};
+
+export default Flip;
