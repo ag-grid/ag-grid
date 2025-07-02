@@ -12,149 +12,186 @@ import FlipCountdown from '@components/campaigns-components/FlipCountdown';
     showSearchBar={true}
     hidePageFromSearchEngines={true}
 >
-    <div class={styles.rtsHeroSection}>
-        <div class={styles.rtsHeroContent}>
-            <h2>Welcome back to better support & new features</h2>
-            <p>
-                Take advantage of our limited-time renewal offer and unlock the full power of AG Grid support before our
-                return to support policy takes effect. Renew today and stay ahead.
-            </p>
-        </div>
-        <div class={styles.rtsFlipClockBox}>
-            <div class={styles.rtsFlipClock}>
-                <div class={styles.rtsFlipClockEnds}>OFFER ENDS MON 10TH SEP</div>
-
-                <FlipCountdown client:only days={60} />
+    <div class={`layout-max-width-small`}>
+        <div class={styles.rtsHeroSection}>
+            <div class={styles.rtsHeroContent}>
+                <h2>Welcome back to better support & new features</h2>
+                <p>
+                    Take advantage of our limited-time renewal offer and unlock the full power of AG Grid support before
+                    our return to support policy takes effect. Renew today and stay ahead.
+                </p>
             </div>
-            <a href="#renew" class="button">Renew now</a>
+            <div class={styles.rtsFlipClockBox}>
+                <div class={styles.rtsFlipClock}>
+                    <div class={styles.rtsFlipClockEnds}>OFFER ENDS MON 10TH SEP</div>
+
+                    <FlipCountdown client:only days={60} />
+                </div>
+                <a href="#renew" class="button">Renew now</a>
+            </div>
         </div>
+
+        <section class={styles.rtsBenefitsSection}>
+            <div class={styles.sectionTitle}>
+                <h2>Why renewing makes sense, at a glance</h2>
+                <p>
+                    Pick up where you left off and enjoy the full benefits of AG Grid at today's prices. In future,
+                    renewing once you are out of contract will incur back pay and reinstatement charges.
+                </p>
+            </div>
+
+            <div class={styles.rtsBenefitsTableWrapper}>
+                <table class={styles.rtsBenefitsTable}>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Renewed Support & Maintenance</th>
+                            <th>Lapsed Support & Maintenance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Access to latest versions and updates</td>
+                            <td>
+                                <span class={styles.tick}>
+                                    <Icon name="tick" />
+                                </span></td
+                            >
+                            <td><Icon name="cross" /></td>
+                        </tr>
+                        <tr>
+                            <td>Security patches and critical fixes</td>
+                            <td>
+                                <span class={styles.tick}>
+                                    <Icon name="tick" />
+                                </span></td
+                            >
+                            <td><Icon name="cross" /></td>
+                        </tr>
+                        <tr>
+                            <td>Technical support from AG Grid team</td>
+                            <td>
+                                <span class={styles.tick}>
+                                    <Icon name="tick" />
+                                </span></td
+                            >
+                            <td><Icon name="cross" /></td>
+                        </tr>
+                        <tr>
+                            <td>Compatibility with latest browsers</td>
+                            <td>
+                                <span class={styles.tick}>
+                                    <Icon name="tick" />
+                                </span></td
+                            >
+                            <td><Icon name="cross" /></td>
+                        </tr>
+                        <tr>
+                            <td>New features and improvements</td>
+                            <td>
+                                <span class={styles.tick}>
+                                    <Icon name="tick" />
+                                </span></td
+                            >
+                            <td><Icon name="cross" /></td>
+                        </tr>
+                        <tr>
+                            <td>Priority issue resolution</td>
+                            <td>
+                                <span class={styles.tick}>
+                                    <Icon name="tick" />
+                                </span></td
+                            >
+                            <td><Icon name="cross" /></td>
+                        </tr>
+                        <tr>
+                            <td>Peace of mind for your team</td>
+                            <td>
+                                <span class={styles.tick}>
+                                    <Icon name="tick" />
+                                </span></td
+                            >
+                            <td><Icon name="cross" /></td>
+                        </tr>
+                        <tr>
+                            <td>Compatibility with latest framework versions</td>
+                            <td>
+                                <span class={styles.tick}>
+                                    <Icon name="tick" />
+                                </span></td
+                            >
+                            <td><Icon name="cross" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <a href="mailto:info@ag-grid.com" class="button-secondary">Contact us at info@ag-grid.com</a>
+        </section>
+
+        <section class={styles.rtsReleasesSection}>
+            <h2>Latest releases</h2>
+            <p>Here's what you've missed since you've been gone</p>
+            <a href="#" class="button-secondary">View recent releases</a>
+            <div class={styles.rtsReleaseCards}>
+                <div class={styles.rtsReleaseCard}>
+                    <div class={styles.rtsReleaseImage}>[Image Placeholder]</div>
+                    <h3>New In 33.2: Find</h3>
+                    <p>Instantly search and locate data using the powerful new in-grid Find feature</p>
+                </div>
+                <div class={styles.rtsReleaseCard}>
+                    <div class={styles.rtsReleaseImage}>[Image Placeholder]</div>
+                    <h3>New In 33.3: Row Pinning</h3>
+                    <p>
+                        Bring a familiar, spreadsheet-style experience to your users with row numbers, resizable row
+                        heights, and customizable header columns.
+                    </p>
+                </div>
+                <div class={styles.rtsReleaseCard}>
+                    <div class={styles.rtsReleaseImage}>[Image Placeholder]</div>
+                    <h3>New In 34: Filter Tool Panel</h3>
+                    <p>
+                        Take control of data filtering with the redesigned Filters Tool Panel, faster, clearer, and more
+                        intuitive than ever.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class={styles.rtsChartsCtaSection}>
+            <div class={styles.rtsChartsCtaContent}>
+                <h2>It's time to try AG Charts</h2>
+                <a href="#" class="button-primary">Get started with charts</a>
+            </div>
+            <div class={styles.rtsChartsCtaImage}>[Charts Image Placeholder]</div>
+        </section>
+
+        <section class={styles.rtsTrustedSection}>
+            <h2>Trusted by developers worldwide</h2>
+            <div class={styles.rtsTrustedQuotes}>
+                <div class={styles.rtsTrustedQuote}>
+                    <p>"The flexibility provided by AG Grid and your support is unmatched."</p>
+                    <span>– Dirparce Halmstad</span>
+                </div>
+                <div class={styles.rtsTrustedQuote}>
+                    <p>"Amazing software! Used it for years and it has been great."</p>
+                    <span>– PWC</span>
+                </div>
+                <div class={styles.rtsTrustedQuote}>
+                    <p>"Keep up the great work, it's still the best grid in the world"</p>
+                    <span>– Developer Community</span>
+                </div>
+            </div>
+        </section>
+
+        <section class={styles.rtsRenewSection} id="renew">
+            <h2>Ready to renew?</h2>
+            <div class={styles.rtsRenewContent}>
+                <p>
+                    For transparency and to be fair to those customers whose support and maintenance fees enable us to
+                    continue to develop the best grid in the world, we are introducing a change to our pricing policy by
+                    introducing a return to support policy for lapsed customers.
+                </p>
+            </div>
+        </section>
     </div>
-
-    <section class={styles.rtsBenefitsSection}>
-        <h2>Why renewing makes sense, at a glance</h2>
-        <p>
-            Pick up where you left off and enjoy the full benefits of AG Grid at today's prices. In future, renewing
-            once you are out of contract will incur back pay and reinstatement charges.
-        </p>
-        <div class={styles.rtsBenefitsTableWrapper}>
-            <table class={styles.rtsBenefitsTable}>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Renewed Support & Maintenance</th>
-                        <th>Lapsed Support & Maintenance</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Access to latest versions and updates</td>
-                        <td><Icon name="check" /></td>
-                        <td><Icon name="cross" /></td>
-                    </tr>
-                    <tr>
-                        <td>Security patches and critical fixes</td>
-                        <td><Icon name="check" /></td>
-                        <td><Icon name="cross" /></td>
-                    </tr>
-                    <tr>
-                        <td>Technical support from AG Grid team</td>
-                        <td><Icon name="check" /></td>
-                        <td><Icon name="cross" /></td>
-                    </tr>
-                    <tr>
-                        <td>Compatibility with latest browsers</td>
-                        <td><Icon name="check" /></td>
-                        <td><Icon name="cross" /></td>
-                    </tr>
-                    <tr>
-                        <td>New features and improvements</td>
-                        <td><Icon name="check" /></td>
-                        <td><Icon name="cross" /></td>
-                    </tr>
-                    <tr>
-                        <td>Priority issue resolution</td>
-                        <td><Icon name="check" /></td>
-                        <td><Icon name="cross" /></td>
-                    </tr>
-                    <tr>
-                        <td>Peace of mind for your team</td>
-                        <td><Icon name="check" /></td>
-                        <td><Icon name="cross" /></td>
-                    </tr>
-                    <tr>
-                        <td>Compatibility with latest framework versions</td>
-                        <td><Icon name="check" /></td>
-                        <td><Icon name="cross" /></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <a href="mailto:info@ag-grid.com" class="button-secondary">Contact us at info@ag-grid.com</a>
-    </section>
-
-    <section class={styles.rtsReleasesSection}>
-        <h2>Latest releases</h2>
-        <p>Here's what you've missed since you've been gone</p>
-        <a href="#" class="button-secondary">View recent releases</a>
-        <div class={styles.rtsReleaseCards}>
-            <div class={styles.rtsReleaseCard}>
-                <div class={styles.rtsReleaseImage}>[Image Placeholder]</div>
-                <h3>New In 33.2: Find</h3>
-                <p>Instantly search and locate data using the powerful new in-grid Find feature</p>
-            </div>
-            <div class={styles.rtsReleaseCard}>
-                <div class={styles.rtsReleaseImage}>[Image Placeholder]</div>
-                <h3>New In 33.3: Row Pinning</h3>
-                <p>
-                    Bring a familiar, spreadsheet-style experience to your users with row numbers, resizable row
-                    heights, and customizable header columns.
-                </p>
-            </div>
-            <div class={styles.rtsReleaseCard}>
-                <div class={styles.rtsReleaseImage}>[Image Placeholder]</div>
-                <h3>New In 34: Filter Tool Panel</h3>
-                <p>
-                    Take control of data filtering with the redesigned Filters Tool Panel, faster, clearer, and more
-                    intuitive than ever.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <section class={styles.rtsChartsCtaSection}>
-        <div class={styles.rtsChartsCtaContent}>
-            <h2>It's time to try AG Charts</h2>
-            <a href="#" class="button-primary">Get started with charts</a>
-        </div>
-        <div class={styles.rtsChartsCtaImage}>[Charts Image Placeholder]</div>
-    </section>
-
-    <section class={styles.rtsTrustedSection}>
-        <h2>Trusted by developers worldwide</h2>
-        <div class={styles.rtsTrustedQuotes}>
-            <div class={styles.rtsTrustedQuote}>
-                <p>"The flexibility provided by AG Grid and your support is unmatched."</p>
-                <span>– Dirparce Halmstad</span>
-            </div>
-            <div class={styles.rtsTrustedQuote}>
-                <p>"Amazing software! Used it for years and it has been great."</p>
-                <span>– PWC</span>
-            </div>
-            <div class={styles.rtsTrustedQuote}>
-                <p>"Keep up the great work, it's still the best grid in the world"</p>
-                <span>– Developer Community</span>
-            </div>
-        </div>
-    </section>
-
-    <section class={styles.rtsRenewSection} id="renew">
-        <h2>Ready to renew?</h2>
-        <div class={styles.rtsRenewContent}>
-            <p>
-                For transparency and to be fair to those customers whose support and maintenance fees enable us to
-                continue to develop the best grid in the world, we are introducing a change to our pricing policy by
-                introducing a return to support policy for lapsed customers.
-            </p>
-        </div>
-    </section>
 </Layout>
