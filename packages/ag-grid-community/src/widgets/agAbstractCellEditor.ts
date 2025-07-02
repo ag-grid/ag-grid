@@ -11,7 +11,7 @@ export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TV
 
     protected abstract initialiseEditor(params: P): void;
 
-    public abstract getValidationElement(): HTMLElement | HTMLInputElement;
+    public abstract getValidationElement(tooltip: boolean): HTMLElement | HTMLInputElement;
     public abstract getValue(): TValue | null | undefined;
     public abstract getValidationErrors(): string[] | null;
 

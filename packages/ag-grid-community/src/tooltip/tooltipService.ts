@@ -243,7 +243,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         const { beans } = this;
         const { context } = beans;
 
-        const el = editor.getValidationElement?.();
+        const el = editor.getValidationElement?.(true) || (!editor.isPopup?.() && cellCtrl.eGui);
 
         if (!el) {
             return;

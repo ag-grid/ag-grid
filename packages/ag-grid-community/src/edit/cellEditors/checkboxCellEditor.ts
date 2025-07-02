@@ -64,8 +64,8 @@ export class CheckboxCellEditor extends AgAbstractCellEditor<ICellEditorParams<a
         this.eEditor.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }
 
-    public getValidationElement(): HTMLElement | HTMLInputElement {
-        return this.eEditor.getInputElement();
+    public getValidationElement(tooltip: boolean): HTMLElement | HTMLInputElement {
+        return tooltip ? this.params.eGridCell : this.eEditor.getInputElement();
     }
 
     public getValidationErrors() {

@@ -418,7 +418,7 @@ export function _populateModelValidationErrors(beans: BeanCollection): void {
         const { ctrl, editor } = mappedEditor;
         const { rowNode, column } = ctrl;
         const errorMessages = editor.getValidationErrors?.() ?? [];
-        const el = editor.getValidationElement?.();
+        const el = editor.getValidationElement?.(false) || (!editor.isPopup?.() && ctrl.eGui);
 
         if (el) {
             const isInvalid = errorMessages != null && errorMessages.length > 0;
