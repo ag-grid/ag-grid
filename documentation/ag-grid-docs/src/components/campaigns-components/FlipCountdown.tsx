@@ -39,13 +39,13 @@ const FlipCountdown: React.FC<{ days?: number }> = ({ days = 60 }) => {
             <div>
                 <Flip value={pad(left.minutes)} />
                 <div className="font-mono" style={{ textAlign: 'center' }}>
-                    Minutes
+                    Mins
                 </div>
             </div>
             <div>
                 <Flip value={pad(left.seconds)} />
                 <div className="font-mono" style={{ textAlign: 'center' }}>
-                    Seconds
+                    Secs
                 </div>
             </div>
         </div>
