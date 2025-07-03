@@ -196,6 +196,18 @@ export class CellKeyboardListenerFeature extends BeanStub {
             beans: { editSvc },
         } = this;
 
+        const editing = editSvc?.isEditing();
+
+        if (editing) {
+            // re-run ALL validations, F2 is used to initiate a new edit. If we have one already in progress,
+            // we want to ensure it's valid before initiating a new edit cycle
+            _populateModelValidationErrors(this.beans);
+
+            if (editSvc?.checkNavWithValidation(undefined, event) === 'block-stop') {
+                return;
+            }
+        }
+
         editSvc?.startEditing(cellCtrl, { startedEdit: true, event });
     }
 

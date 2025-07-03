@@ -941,4 +941,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.beans.ariaAnnounce?.announceValue(label, 'pendingChange');
     }
+
+    allowedFocusTargetOnValidation(cellPosition: EditPosition): CellCtrl | undefined {
+        return _getCellCtrl(this.beans, cellPosition);
+    }
 }

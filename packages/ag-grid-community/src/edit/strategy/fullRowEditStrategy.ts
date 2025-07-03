@@ -221,7 +221,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return null;
         }
         if (nextCell == null) {
-            return preventNavigation;
+            return false;
         }
 
         const nextPos = nextCell.cellPosition;
@@ -235,20 +235,12 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             // run validation to gather row-level validation errors
             _populateModelValidationErrors(this.beans);
 
-            if (this.model.getRowValidationModel().getRowValidationMap().size > 0) {
-                // if there was a previous row validation error, we need to check if that's still the case
-                if (this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop') {
-                    return true;
-                }
-            } else {
-                const rowPreventNavigation = this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop';
+            if ((this.model.getRowValidationModel().getRowValidationMap().size ?? 0) === 0) {
+                // `undefined` for the check means any edits anywhere in the table will prevent navigation
+                const rowPreventNavigation = this.editSvc.checkNavWithValidation(undefined, event) === 'block-stop';
                 if (rowPreventNavigation) {
                     return true;
                 }
-            }
-
-            if (preventNavigation && this.model.getRowValidationModel().getRowValidation(prevCell)) {
-                return true;
             }
         }
 
