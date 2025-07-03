@@ -544,6 +544,10 @@
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
+
+    @media screen and (max-width: 700px) {
+        height: 700px;
+    }
 }
 
 .rtsHeroSection {
@@ -650,6 +654,13 @@
     margin-top: $spacing-size-16;
     max-width: 1100px;
     text-align: center;
+    padding-top: $spacing-size-24;
+    padding-bottom: $spacing-size-24;
+
+    @media screen and (max-width: 700px) {
+        padding: $spacing-size-8 $spacing-size-2;
+    }
+
     > h2,
     > p {
         text-align: left;
@@ -750,7 +761,6 @@
 .rtsReleaseCard {
     background: var(--color-bg-primary);
     border-radius: var(--radius-md);
-
     flex: 1;
     min-width: 220px;
     max-width: 340px;
@@ -764,6 +774,10 @@
     }
     p {
         font-size: var(--text-fs-base);
+    }
+
+    @media screen and (max-width: 700px) {
+        max-width: none;
     }
 }
 .rtsReleaseImage {
@@ -795,6 +809,21 @@
         flex-direction: row;
         align-items: stretch;
         padding: $spacing-size-16 $spacing-size-12;
+    }
+
+    height: 300px;
+    overflow: hidden;
+
+    .carouselWrapper {
+        width: 400px;
+        height: 400px;
+    }
+
+    @media screen and (max-width: 700px) {
+        height: 450px;
+        .carouselWrapper {
+            width: 370px;
+        }
     }
 }
 .rtsChartsCtaContent {
@@ -866,17 +895,15 @@
     }
 }
 .rtsTrustedQuote {
-    margin-top: $spacing-size-3;
     background: var(--color-bg-primary);
     border-radius: var(--radius-md);
+
     flex: 1;
     min-width: 220px;
     max-width: 340px;
     display: flex;
     flex-direction: column;
     text-align: left;
-    color: var(--color-fg-primary);
-    font-weight: 600;
 
     p {
         font-size: var(--text-fs-lg);
@@ -896,6 +923,10 @@
         font-size: var(--text-fs-base);
         font-weight: 400;
         opacity: 0.7;
+    }
+
+    @media screen and (max-width: 700px) {
+        max-width: none;
     }
 }
 
@@ -1007,16 +1038,6 @@
 
 .rtsFlipClock {
     font-family: 'Oswald', sans-serif;
-}
-
-.rtsChartsCtaSection {
-    height: 300px;
-    overflow: hidden;
-
-    .carouselWrapper {
-        width: 400px;
-        height: 400px;
-    }
 }
 
 .renewedSupportTitle {
