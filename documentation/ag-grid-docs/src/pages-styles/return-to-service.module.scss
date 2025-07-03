@@ -229,6 +229,7 @@
         flex-direction: row;
     }
 }
+
 .rtsReleaseCard {
     background: var(--color-bg-primary);
     border-radius: var(--radius-md);
@@ -245,7 +246,15 @@
     p {
         font-size: var(--text-fs-base);
     }
+
+    a {
+        display: flex;
+        flex-direction: column;
+        color: inherit;
+        font-weight: inherit;
+    }
 }
+
 .rtsReleaseImage {
     width: 100%;
 

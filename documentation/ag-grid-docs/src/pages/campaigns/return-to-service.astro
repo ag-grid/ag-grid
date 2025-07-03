@@ -144,32 +144,38 @@ import ImageCarousel from '@components/campaigns-components/ImageCarousel';
             <div class={styles.sectionTitle}>
                 <h2>Latest releases</h2>
                 <p>Here's what you've missed since you've been gone</p>
-                <a href="#" class={`button-tertiary ${styles.button}`}
+                <a href={urlWithBaseUrl(`/whats-new/`)} target="_blank" class={`button-tertiary ${styles.button}`}
                     >View recent releases <Icon name="chevronRight" /></a
                 >
             </div>
             <div class={styles.rtsReleaseCards}>
                 <div class={styles.rtsReleaseCard}>
-                    <img src={urlWithBaseUrl(`images/campaigns/33.2.png`)} class={styles.rtsReleaseImage} />
-                    <h3>New In 33.2: Find</h3>
-                    <p>Instantly search and locate data using the powerful new in-grid Find feature</p>
+                    <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-33-2/" target="_blank">
+                        <img src={urlWithBaseUrl(`images/campaigns/33.2.png`)} class={styles.rtsReleaseImage} />
+                        <h3>33.2: Find</h3>
+                        <p>Instantly search and locate data using the powerful new in-grid Find feature</p>
+                    </a>
                 </div>
 
                 <div class={styles.rtsReleaseCard}>
-                    <img src={urlWithBaseUrl(`images/campaigns/33.3.png`)} class={styles.rtsReleaseImage} />
-                    <h3>New In 33.3: Row Pinning</h3>
-                    <p>
-                        Bring a familiar, spreadsheet-style experience to your users with row numbers, resizable row
-                        heights, and customizable header columns.
-                    </p>
+                    <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-33-3/" target="_blank">
+                        <img src={urlWithBaseUrl(`images/campaigns/33.3.png`)} class={styles.rtsReleaseImage} />
+                        <h3>33.3: Row Pinning</h3>
+                        <p>
+                            Bring a familiar, spreadsheet-style experience to your users with row numbers, resizable row
+                            heights, and customizable header columns.
+                        </p>
+                    </a>
                 </div>
                 <div class={styles.rtsReleaseCard}>
-                    <img src={urlWithBaseUrl(`images/campaigns/34.png`)} class={styles.rtsReleaseImage} />
-                    <h3>New In 34: Filter Tool Panel</h3>
-                    <p>
-                        Take control of data filtering with the redesigned Filters Tool Panel, faster, clearer, and more
-                        intuitive than ever.
-                    </p>
+                    <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-34/" target=" _blank">
+                        <img src={urlWithBaseUrl(`images/campaigns/34.png`)} class={styles.rtsReleaseImage} />
+                        <h3>34: Filter Tool Panel</h3>
+                        <p>
+                            Take control of data filtering with the redesigned Filters Tool Panel, faster, clearer, and
+                            more intuitive than ever.
+                        </p>
+                    </a>
                 </div>
             </div>
         </section>
