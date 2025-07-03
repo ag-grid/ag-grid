@@ -440,10 +440,9 @@
         --section-background-color: var(--color-util-gray-100);
     }
 }
-
-/* mobile breakpoint responsive */
-@media screen and (max-width: $breakpoint-pricing-medium) {
-    .licensesOuter {
+.licensesOuter {
+    /* mobile breakpoint responsive */
+    @media screen and (max-width: $breakpoint-pricing-medium) {
         display: flex;
         flex-direction: column;
         gap: $spacing-size-8;
@@ -793,6 +792,8 @@
 }
 
 .rtsChartsCtaSection {
+    height: 300px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -810,9 +811,6 @@
         padding: $spacing-size-16 $spacing-size-12;
     }
 
-    height: 300px;
-    overflow: hidden;
-
     .carouselWrapper {
         width: 400px;
         height: 400px;
@@ -825,6 +823,7 @@
         }
     }
 }
+
 .rtsChartsCtaContent {
     flex: 2;
     display: flex;
