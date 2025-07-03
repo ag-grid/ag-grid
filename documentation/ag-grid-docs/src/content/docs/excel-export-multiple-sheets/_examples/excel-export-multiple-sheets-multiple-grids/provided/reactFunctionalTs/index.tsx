@@ -126,7 +126,7 @@ const GridExample = () => {
     const loadGrids = useCallback(() => {
         setLeftRowData([...rawData.slice(0, rawData.length / 2)]);
         setRightRowData([...rawData.slice(rawData.length / 2)]);
-        leftApi!.deselectAll();
+        leftApi?.deselectAll();
     }, [leftApi, rawData]);
 
     useEffect(() => {
@@ -143,8 +143,8 @@ const GridExample = () => {
         const spreadsheets: any[] = [];
 
         spreadsheets.push(
-            leftApi!.getSheetDataForExcel({ sheetName: 'Athletes' }),
-            rightApi!.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
+            leftApi?.getSheetDataForExcel({ sheetName: 'Athletes' }),
+            rightApi?.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
         );
 
         exportMultipleSheetsAsExcel({
@@ -159,7 +159,7 @@ const GridExample = () => {
         (params: RowDragEndEvent) => {
             const nodes = params.nodes;
 
-            leftApi!.applyTransaction({
+            leftApi?.applyTransaction({
                 remove: nodes.map(function (node) {
                     return node.data;
                 }),
