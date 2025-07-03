@@ -195,7 +195,7 @@ jobs:
         # - test-react-functional-ts
         # - test-angular
         # - test-typescript
-        # - test-vanilla
+        - test-vanilla
         # - test-vue3
       runs-on: ubuntu-latest
       steps:
