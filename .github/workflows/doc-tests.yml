@@ -206,7 +206,7 @@ jobs:
 
         - name: Publish Combined Test Report
           id: ctrf
-          uses: sdwvit/github-test-reporter@v1.0.15report5
+          uses: sdwvit/github-test-reporter@v1.0.15report6
           with:
             report-path: 'combined-reports/**/*.json'
             summary-report: true
