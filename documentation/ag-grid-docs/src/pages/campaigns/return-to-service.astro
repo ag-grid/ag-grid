@@ -5,6 +5,9 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import FlipCountdown from '@components/campaigns-components/FlipCountdown';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import ImageCarousel from '@components/campaigns-components/ImageCarousel';
+
+const utm =
+    '?utm_source=ag-grid.com&utm_medium=marketing-campaign-landing-page&utm_campaign=return-to-service-campaign';
 ---
 
 <!-- Oswald font -->
@@ -144,13 +147,13 @@ import ImageCarousel from '@components/campaigns-components/ImageCarousel';
             <div class={styles.sectionTitle}>
                 <h2>Latest releases</h2>
                 <p>Here's what you've missed since you've been gone</p>
-                <a href={urlWithBaseUrl(`/whats-new/`)} target="_blank" class={`button-tertiary ${styles.button}`}
+                <a href={urlWithBaseUrl(`/whats-new/${utm}`)} target="_blank" class={`button-tertiary ${styles.button}`}
                     >View recent releases <Icon name="chevronRight" /></a
                 >
             </div>
             <div class={styles.rtsReleaseCards}>
                 <div class={styles.rtsReleaseCard}>
-                    <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-33-2/" target="_blank">
+                    <a href=`https://blog.ag-grid.com/whats-new-in-ag-grid-33-2/${utm}` target="_blank">
                         <img src={urlWithBaseUrl(`images/campaigns/33.2.png`)} class={styles.rtsReleaseImage} />
                         <h3>33.2: Find</h3>
                         <p>Instantly search and locate data using the powerful new in-grid Find feature</p>
@@ -158,7 +161,7 @@ import ImageCarousel from '@components/campaigns-components/ImageCarousel';
                 </div>
 
                 <div class={styles.rtsReleaseCard}>
-                    <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-33-3/" target="_blank">
+                    <a href=`https://blog.ag-grid.com/whats-new-in-ag-grid-33-3/${utm}` target="_blank">
                         <img src={urlWithBaseUrl(`images/campaigns/33.3.png`)} class={styles.rtsReleaseImage} />
                         <h3>33.3: Row Pinning</h3>
                         <p>
@@ -168,7 +171,7 @@ import ImageCarousel from '@components/campaigns-components/ImageCarousel';
                     </a>
                 </div>
                 <div class={styles.rtsReleaseCard}>
-                    <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-34/" target=" _blank">
+                    <a href=`https://blog.ag-grid.com/whats-new-in-ag-grid-34/${utm}` target=" _blank">
                         <img src={urlWithBaseUrl(`images/campaigns/34.png`)} class={styles.rtsReleaseImage} />
                         <h3>34: Filter Tool Panel</h3>
                         <p>
@@ -201,7 +204,7 @@ import ImageCarousel from '@components/campaigns-components/ImageCarousel';
         <section class={styles.rtsChartsCtaSection}>
             <div class={styles.rtsChartsCtaContent}>
                 <h2>It's time to try AG Charts</h2>
-                <a href="https://ag-grid.com/charts" class={`button-primary ${styles.button}`}
+                <a href=`https://www.ag-grid.com/charts${utm}` target="_blank" class={`button-primary ${styles.button}`}
                     >Get started with charts <Icon name="chevronRight" /></a
                 >
             </div>
