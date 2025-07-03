@@ -1,0 +1,40 @@
+{
+  "name": "ag-grid-mcp",
+  "version": "34.0.0",
+  "description": "MCP server for AG-Grid to help developers integrate AG-Grid into their applications",
+  "main": "dist/index.js",
+  "bin": {
+    "ag-grid-mcp": "dist/index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest"
+  },
+  "keywords": [
+    "ag-grid",
+    "mcp",
+    "model-context-protocol",
+    "datagrid",
+    "assistant",
+    "llm"
+  ],
+  "author": "AG Grid",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "node-fetch": "^3.3.2",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "~5.2.2",
+    "vitest": "^2.1.6"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
