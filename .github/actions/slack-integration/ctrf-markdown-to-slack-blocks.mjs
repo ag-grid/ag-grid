@@ -36,7 +36,7 @@ try {
     console.error(`Failed to read previous commit SHA from ${previousCommitShaFile}:`, error);
 }
 
-const headerTemplate = `${isSuccess ? '✅' : '❌'} AgGrid / ${slackLink(`${jobName} #${jobID}`, jobUrl)} (on ${branchName}) ${bold(isSuccess ? 'is successful' : 'failed')}`;
+const headerTemplate = `${isSuccess ? '✅' : '❌'} AgGrid / ${slackLink(`${jobName} #${jobID}`, jobUrl)} run (on ${branchName}) ${bold(isSuccess ? 'is successful' : 'failed')}`;
 
 const statsString = ['failed', 'passed', 'skipped']
     .filter((n) => parsedReport[n])
