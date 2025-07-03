@@ -374,13 +374,15 @@
     text-align: left;
 
     p {
+        --padding: #{$spacing-size-4};
+
         position: relative;
         padding-left: 2.2em;
         font-size: var(--text-fs-lg);
         font-weight: 500;
         margin-bottom: $spacing-size-2;
         background-color: var(--color-brand-50);
-        padding: $spacing-size-4;
+        padding: var(--padding);
         height: 120px;
         border-radius: var(--radius-md);
 
@@ -389,15 +391,14 @@
         }
 
         &::before {
+            content: '"';
             position: absolute;
-            left: $spacing-size-4;
-            top: $spacing-size-2;
-            font-size: 2.5em;
-            color: var(--color-brand-300);
-            line-height: 1;
-            font-family: serif;
-            font-style: normal;
-            opacity: 0.4;
+            top: var(--padding);
+            left: calc(var(--padding) - 0.7ch);
+        }
+
+        &::after {
+            content: '"';
         }
     }
 
