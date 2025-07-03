@@ -309,7 +309,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     this.revertSingleCellEdit(cellCtrl!, false);
                 }
 
-                _destroyEditors(beans, model.getEditPositions());
+                if (this.isBatchEditing()) {
+                    this.strategy?.cleanupEditors();
+                } else {
+                    _destroyEditors(beans, model.getEditPositions());
+                }
 
                 event.preventDefault();
 
@@ -571,9 +575,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.model.clearEditValue(cellPosition);
 
-        _destroyEditors(this.beans, [cellPosition]);
+        _destroyEditors(this.beans, [cellPosition], { silent: true });
 
-        _setupEditor(this.beans, cellPosition);
+        _setupEditor(this.beans, cellPosition, { silent: true });
 
         _populateModelValidationErrors(this.beans);
 

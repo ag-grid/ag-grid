@@ -155,8 +155,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         changedRows.forEach((rowNode) => this.dispatchRowEvent({ rowNode }, 'rowValueChanged'));
 
-        this.startedRows.forEach((rowNode) => this.dispatchRowEvent({ rowNode }, 'rowEditingStopped'));
-        this.startedRows.length = 0;
+        this.cleanupEditors({ rowNode }, true);
 
         this.rowNode = undefined;
 
@@ -184,11 +183,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         super.onCellFocusChanged(event);
     }
 
-    public override cleanupEditors({ rowNode }: EditRowPosition = {}, includeEditing?: boolean): void {
-        super.cleanupEditors({ rowNode }, includeEditing);
-        if (rowNode) {
-            this.dispatchRowEvent({ rowNode: this.rowNode! }, 'rowEditingStopped');
-        }
+    public override cleanupEditors(position: EditRowPosition = {}, includeEditing?: boolean): void {
+        super.cleanupEditors(position, includeEditing);
+        this.startedRows.forEach((rowNode) => this.dispatchRowEvent({ rowNode }, 'rowEditingStopped'));
+        this.startedRows.length = 0;
     }
 
     // returns null if no navigation should be performed
@@ -258,7 +256,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         if (nextEditable && !preventNavigation) {
             if (!nextCell.comp?.getCellEditor()) {
                 // editor missing because it was outside the viewport during creating phase, attempt to create it now
-                _setupEditor(this.beans, nextCell, undefined, event, true);
+                _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true });
             }
             this.setFocusInOnEditor(nextCell);
             nextCell.focusCell(false, event);
@@ -267,7 +265,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         if (!rowsMatch && !preventNavigation) {
-            super.cleanupEditors(nextCell, true);
+            this.cleanupEditors(nextCell, true);
             this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
         }
 

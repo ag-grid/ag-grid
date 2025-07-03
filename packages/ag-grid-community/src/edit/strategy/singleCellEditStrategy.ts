@@ -60,7 +60,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
     public override dispatchRowEvent(
         _position: EditRowPosition,
-        _type: 'rowEditingStarted' | 'rowEditingStopped'
+        _type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged'
     ): void {
         // NOP - single cell edit strategy does not dispatch row events
     }
@@ -193,7 +193,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             nextCell.focusCell(false, event);
             if (!nextCell.comp?.getCellEditor()) {
                 // editor missing because it was outside the viewport during creating phase, attempt to create it now
-                _setupEditor(this.beans, nextCell, undefined, event, true);
+                _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true });
             }
             this.setFocusInOnEditor(nextCell);
         } else {
