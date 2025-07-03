@@ -60,7 +60,7 @@ function bold(text) {
 }
 
 function section(text) {
-    return { type: 'section', text: { type: 'mrkdwn', text, emoji: true } };
+    return { type: 'section', text: { type: 'mrkdwn', text } };
 }
 
 function getSlackMessage(blocks) {
