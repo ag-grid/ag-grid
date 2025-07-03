@@ -1,4 +1,4 @@
-name: Doc Tests 
+name: Doc Tests
 description: Testing of AG Grid Examples
 
 env:
@@ -40,6 +40,11 @@ on:
                 type: boolean
                 required: true
                 default: true
+            notify:
+              description: 'Notify Slack channel'
+              type: boolean
+              default: true
+              required: true
     schedule:
         - cron: '30 2 * * *' # Run daily at 2:30am UTC
 
@@ -170,7 +175,7 @@ jobs:
           - uses: actions/checkout@v4
           - uses: ./.github/actions/test-framework-examples
             with:
-              framework: vue3              
+              framework: vue3
 
     test-angular:
         if: ${{ github.event.inputs.skip_angular != 'true' }}
@@ -220,6 +225,7 @@ jobs:
             fetch-depth: 1
 
         - name: Get previous run commit SHA
+          if: ${{ inputs.notify }}
           id: prev-commit-sha
           uses: actions/cache/restore@v4
           with:
@@ -227,6 +233,7 @@ jobs:
             key: doc-tests-prev-commit
 
         - name: Convert ctrf output to Slack message blocks and write git sha
+          if: ${{ inputs.notify }}
           env:
             CTRF_REPORT: ${{ steps.ctrf.outputs.report }}
             JOB_URL: ${{ env.JOB_URL }}
@@ -252,14 +259,15 @@ jobs:
             echo ${{ github.sha }} > ${{ env.COMMIT_SHA_FILE }}
 
         - name: Slack Notification
+          if: ${{ inputs.notify }}
           continue-on-error: true
-          if: ${{ false }}
           uses: ./.github/actions/slack-integration
           with:
             SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
             SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
 
         - name: Save this run commit SHA
+          if: ${{ inputs.notify }}
           uses: actions/cache/save@v4
           with:
             path: ${{ env.COMMIT_SHA_FILE }}
