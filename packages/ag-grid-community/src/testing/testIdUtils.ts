@@ -20,22 +20,61 @@ export function getTestIdForHeaderCheckbox(colId: string | null): string {
 export function getTestIdForHeaderFilterButton(colId: string | null): string {
     return formatTestId('ag-header-cell-filter-button', { colId });
 }
+export function getTestIdForFloatingFilterButton(colId: string | null): string {
+    return formatTestId('ag-floating-filter-button', { colId });
+}
 export function getTestIdForHeaderCellMenuButton(colId: string | null): string {
     return formatTestId('ag-header-cell-menu-button', { ['col-id']: colId });
 }
 
 /** Column Filters */
-export function getTestIdForColumnFilterMenu(colId: string): string {
-    return formatTestId('ag-column-filter-menu', { colId });
+
+export function getTestIdForColumnFilterPickerDisplay(): string {
+    return formatTestId('ag-column-filter-picker-display');
 }
-export function getTestIdForColumnFilterPickerDisplay(value?: string | null): string {
-    return formatTestId('ag-column-filter-picker-display', { value });
+export function getTestIdForColumnNumberFilterInput(): string {
+    return formatTestId('ag-column-number-filter-number-input');
 }
-export function getTestIdForColumnNumberFilterInput(value?: string | null): string {
-    return formatTestId('ag-column-number-filter-text-input', { value });
+export function getTestIdForColumnTextFilterInput(): string {
+    return formatTestId('ag-column-number-filter-text-input');
 }
-export function getTestIdForColumnTextFilterInput(value?: string | null): string {
-    return formatTestId('ag-column-number-filter-number-input', { value });
+export function getTestIdForColumnDateFilterInput(): string {
+    return formatTestId('ag-column-number-filter-date-input');
+}
+export function getTestIdForSetFilterMiniFilterInput(): string {
+    return formatTestId('ag-column-set-filter-mini-filter-input');
+}
+export function getTestIdForSetFilterItem(label?: string | null): string {
+    return formatTestId('ag-column-set-filter-item', { label });
+}
+export function getTestIdForSetFilterApplyPanelButton(label?: string | null): string {
+    return formatTestId('ag-column-set-filter-apply-panel-button', { label });
+}
+export function getTestIdForFilterConditionRadioButton(label?: string | null): string {
+    return formatTestId('ag-column-filter-condition-radio-button', { label });
+}
+
+/** Advanced Filter */
+export function getTestIdForAdvancedFilterInput(): string {
+    return formatTestId('ag-advanced-filter-input');
+}
+export function getTestIdForAdvancedFilterButton(label?: string | null): string {
+    return formatTestId('ag-advanced-filter-button', { label });
+}
+export function getTestIdForAdvancedFilterBuilderButton(): string {
+    return formatTestId('ag-advanced-filter-builder-button');
+}
+export function getTestIdForAdvancedFilterPanelMaximiseButton(): string {
+    return formatTestId('ag-advanced-filter-builder-panel-maximise');
+}
+export function getTestIdForAdvancedFilterPanelCloseButton(): string {
+    return formatTestId('ag-advanced-filter-builder-panel-close');
+}
+export function getTestIdForAdvancedFilterPill(label?: string | null): string {
+    return formatTestId('ag-advanced-filter-builder-pill', { label });
+}
+export function getTestIdForAdvancedFilterBuilderAddItemButton(): string {
+    return formatTestId('ag-advanced-filter-builder-add-item-button');
 }
 
 /** Rows */
@@ -105,6 +144,36 @@ export function getTestIdForColumnSelectListItemDragHandle(label?: string | null
 }
 export function getTestIdForColumnDropCellDragHandle(label?: string | null): string {
     return formatTestId('ag-column-drop-cell-drag-handle', { label });
+}
+
+/** Filter Tool Panel */
+
+export function getTestIdForFilterToolPanel(): string {
+    return formatTestId('ag-filter-panel');
+}
+export function getTestIdForFilterToolPanelAddFilterButton(): string {
+    return formatTestId('ag-filter-panel-add-filter-button');
+}
+export function getTestIdForFilterToolPanelFilterTypeSelector(colLabel?: string | null): string {
+    return formatTestId('ag-filter-panel-filter-type-selector', { colLabel });
+}
+
+/** Status Bar */
+
+export function getTestIdForStatusBarTotalAndFilteredRowCount(): string {
+    return formatTestId('ag-status-bar-total-and-filtered-row-count');
+}
+export function getTestIdForStatusBarTotalRowCount(): string {
+    return formatTestId('ag-status-bar-total-row-count');
+}
+export function getTestIdForStatusBarFilteredRowCount(): string {
+    return formatTestId('ag-status-bar-filtered-row-count');
+}
+export function getTestIdForStatusBarSelectedRowCount(): string {
+    return formatTestId('ag-status-bar-selected-row-count');
+}
+export function getTestIdForStatusBarAggregations(): string {
+    return formatTestId('ag-status-bar-aggregations');
 }
 
 /** Pagination */

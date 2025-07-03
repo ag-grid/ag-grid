@@ -7,6 +7,10 @@ import * as ids from './testIdUtils';
 
 const TEST_ID_ATTR = 'data-testid';
 
+function setTestId(element: Element | null | undefined, testId: string) {
+    element?.setAttribute(TEST_ID_ATTR, testId);
+}
+
 export class TestIdService extends BeanStub implements NamedBean, ITestIdService {
     beanName: BeanName = 'testIdSvc';
 
@@ -16,17 +20,19 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             firstDataRendered: setup,
             displayedRowsChanged: setup,
             displayedColumnsChanged: setup,
+            displayedColumnsWidthChanged: setup,
             columnMenuVisibleChanged: setup,
             contextMenuVisibleChanged: setup,
+            advancedFilterBuilderVisibleChanged: setup,
+            fieldPickerValueSelected: setup,
+            modelUpdated: setup,
+            sideBarUpdated: setup,
+            pinnedHeightChanged: setup,
         });
     }
 
     public setupAllTestIds(): void {
         const root = _getRootNode(this.beans);
-
-        function setTestId(element: Element | null | undefined, testId: string) {
-            element?.setAttribute(TEST_ID_ATTR, testId);
-        }
 
         /** Headers */
 
@@ -43,22 +49,25 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             setTestId(cell.querySelector('.ag-header-cell-menu-button'), ids.getTestIdForHeaderCellMenuButton(colId));
 
             setTestId(cell.querySelector('.ag-checkbox input[type=checkbox]'), ids.getTestIdForHeaderCheckbox(colId));
+
+            setTestId(
+                cell.querySelector('.ag-floating-filter-button button'),
+                ids.getTestIdForFloatingFilterButton(colId)
+            );
+
+            const numberInput = cell.querySelector('.ag-floating-filter-body input[type=number]');
+            setTestId(numberInput, ids.getTestIdForColumnNumberFilterInput());
+
+            const textInput = cell.querySelector('.ag-floating-filter-body input[type=text]');
+            setTestId(textInput, ids.getTestIdForColumnTextFilterInput());
+
+            const dateInput = cell.querySelector('.ag-floating-filter-body input[type=date]');
+            setTestId(dateInput, ids.getTestIdForColumnDateFilterInput());
         });
 
         /** Column Filters */
 
-        root.querySelectorAll('.ag-filter-menu').forEach((menu) => {
-            const fieldDisplay = menu.querySelector('.ag-filter-select .ag-picker-field-display');
-            setTestId(fieldDisplay, ids.getTestIdForColumnFilterPickerDisplay(fieldDisplay?.textContent));
-
-            const numberInput = menu.querySelector('.ag-filter-body input[type=number]');
-            setTestId(numberInput, ids.getTestIdForColumnNumberFilterInput(numberInput?.textContent));
-
-            const textInput = menu.querySelector('.ag-filter-body input[type=text]');
-            setTestId(textInput, ids.getTestIdForColumnTextFilterInput(textInput?.textContent));
-        });
-
-        // ...TODO
+        this.setupFilters(root);
 
         /** Rows */
 
@@ -167,8 +176,47 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
             /** Filter Tool Panel */
 
-            // TODO...
+            sideBar.querySelectorAll('.ag-filter-panel').forEach((panel) => {
+                setTestId(panel, ids.getTestIdForFilterToolPanel());
+
+                setTestId(
+                    panel.querySelector('button.ag-filter-add-button'),
+                    ids.getTestIdForFilterToolPanelAddFilterButton()
+                );
+
+                panel.querySelectorAll('.ag-filter-card').forEach((filterCard) => {
+                    const colLabel = filterCard.querySelector('.ag-filter-card-title')?.textContent;
+
+                    const typeSelector = filterCard.querySelector('.ag-filter-type-select');
+                    setTestId(typeSelector, ids.getTestIdForFilterToolPanelFilterTypeSelector(colLabel));
+
+                    filterCard.querySelectorAll('.ag-filter').forEach((filter) => this.setupFilters(filter));
+                });
+            });
         });
+
+        /** Status Bar */
+
+        setTestId(
+            root.querySelector('.ag-status-bar .ag-status-panel-total-and-filtered-row-count'),
+            ids.getTestIdForStatusBarTotalAndFilteredRowCount()
+        );
+        setTestId(
+            root.querySelector('.ag-status-bar .ag-status-panel-total-row-count'),
+            ids.getTestIdForStatusBarTotalRowCount()
+        );
+        setTestId(
+            root.querySelector('.ag-status-bar .ag-status-panel-filtered-row-count'),
+            ids.getTestIdForStatusBarFilteredRowCount()
+        );
+        setTestId(
+            root.querySelector('.ag-status-bar .ag-status-panel-selected-row-count'),
+            ids.getTestIdForStatusBarSelectedRowCount()
+        );
+        setTestId(
+            root.querySelector('.ag-status-bar .ag-status-panel-filtered-row-count'),
+            ids.getTestIdForStatusBarAggregations()
+        );
 
         /** Pagination */
 
@@ -220,5 +268,81 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                 }
             });
         });
+    }
+
+    private setupFilters(root: Document | ShadowRoot | Element): void {
+        root.querySelectorAll('.ag-filter-menu').forEach((menu) => {
+            menu.querySelectorAll('.ag-filter-select .ag-picker-field-display').forEach((fieldDisplay) => {
+                setTestId(fieldDisplay, ids.getTestIdForColumnFilterPickerDisplay());
+            });
+
+            const numberInput = menu.querySelector('.ag-filter-body input[type=number]');
+            setTestId(numberInput, ids.getTestIdForColumnNumberFilterInput());
+
+            const textInput = menu.querySelector('.ag-filter-body input[type=text]');
+            setTestId(textInput, ids.getTestIdForColumnTextFilterInput());
+
+            const dateInput = menu.querySelector('.ag-filter-body input[type=date]');
+            setTestId(dateInput, ids.getTestIdForColumnDateFilterInput());
+
+            const setMiniFilterInput = menu.querySelector('.ag-mini-flter input[type=text]');
+            setTestId(setMiniFilterInput, ids.getTestIdForSetFilterMiniFilterInput());
+
+            menu.querySelectorAll('.ag-set-filter-list .ag-set-filter-item').forEach((item) => {
+                const label = item.querySelector('.ag-checkbox-label')?.textContent;
+                const checkbox = item.querySelector('input[type=checkbox]');
+                setTestId(checkbox, ids.getTestIdForSetFilterItem(label));
+            });
+
+            menu.querySelectorAll('.ag-filter-apply-panel button').forEach((button) => {
+                setTestId(button, ids.getTestIdForSetFilterApplyPanelButton(button.textContent));
+            });
+
+            menu.querySelectorAll('.ag-filter-condition .ag-radio-button').forEach((radioButton) => {
+                const label = radioButton.querySelector('.ag-radio-button-label')?.textContent;
+                setTestId(
+                    radioButton.querySelector('input[type=radio]'),
+                    ids.getTestIdForFilterConditionRadioButton(label)
+                );
+            });
+        });
+
+        /** Advanced Filter */
+
+        setTestId(root.querySelector('.ag-advanced-filter input[type=text]'), ids.getTestIdForAdvancedFilterInput());
+
+        root.querySelectorAll('.ag-advanced-filter-buttons button').forEach((button) => {
+            setTestId(button, ids.getTestIdForAdvancedFilterButton(button.textContent));
+        });
+
+        setTestId(
+            root.querySelector('button.ag-advanced-filter-builder-button'),
+            ids.getTestIdForAdvancedFilterBuilderButton()
+        );
+
+        root.querySelectorAll('.ag-panel[aria-label="Advanced Filter"] .ag-panel-title-bar-button').forEach(
+            (button, i) => {
+                setTestId(
+                    button,
+                    i === 0
+                        ? ids.getTestIdForAdvancedFilterPanelMaximiseButton()
+                        : ids.getTestIdForAdvancedFilterPanelCloseButton()
+                );
+            }
+        );
+
+        root.querySelectorAll('.ag-panel[aria-lable="Advanced Filter"] .ag-advanced-filter-builder-pill').forEach(
+            (pill) => {
+                setTestId(
+                    pill,
+                    ids.getTestIdForAdvancedFilterPill(pill.querySelector('.ag-picker-field-display')?.textContent)
+                );
+            }
+        );
+
+        setTestId(
+            root.querySelector('.ag-panel[aria-label="Advanced Filter"] .ag-advanced-filter-builder-item-button'),
+            ids.getTestIdForAdvancedFilterBuilderAddItemButton()
+        );
     }
 }
