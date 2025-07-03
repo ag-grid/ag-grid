@@ -1,12 +1,83 @@
-const ctrfSummary = process.env.CTRF_OUTPUT;
-const ctrfReport = process.env.CTRF_REPORT;
-if (!ctrfSummary) {
-    console.log('CTRF_OUTPUT environment variable must be set.');
-}
-if (!ctrfReport) {
+import fs from 'node:fs';
+
+const rawReport = process.env.CTRF_REPORT || '';
+const jobUrl = process.env.JOB_URL || '';
+const jobID = process.env.JOB_ID || '';
+const jobName = process.env.JOB_NAME || '';
+const repoName = process.env.REPO_NAME || '';
+const branchName = process.env.BRANCH_NAME || '';
+const channel = process.env.SLACK_CHANNEL || '';
+const username = process.env.SLACK_USERNAME || '';
+const icon_url = process.env.SLACK_ICON || '';
+const currentCommitSha = process.env.COMMIT_SHA || '';
+const previousCommitShaFile = process.env.COMMIT_SHA_FILE || './commit-sha.txt';
+const slackFile = process.env.SLACK_FILE || './slack.json';
+
+if (!rawReport) {
     console.log('CTRF_REPORT environment variable must be set.');
+    process.exit(1);
 }
 
 console.log('Converting CTRF report to Slack blocks...');
-console.log(`CTRF summary:\n${ctrfSummary}`);
-console.log(`CTRF report:\n${ctrfReport}`);
+let parsedReport;
+try {
+    parsedReport = JSON.parse(rawReport);
+} catch (error) {
+    console.error('Failed to parse CTRF report:', rawReport, error);
+    process.exit(1);
+}
+const isSuccess = parsedReport.extra?.result === 'passed' || parsedReport.failed === 0;
+let previousCommitSha = '';
+try {
+    previousCommitSha = fs.readFileSync(previousCommitShaFile, 'utf8').trim();
+} catch (error) {
+    console.error(`Failed to read previous commit SHA from ${previousCommitShaFile}:`, error);
+}
+
+const headerTemplate = `${isSuccess ? ':white_tick:' : ':x:'} AgGrid / ${slackLink(`${jobName} #${jobID}`, jobUrl)} (on ${branchName}) ${bold(isSuccess ? 'is successful' : 'failed')}`;
+
+const statsString = ['failed', 'passed', 'skipped']
+    .filter((n) => parsedReport[n])
+    .map(renderStat)
+    .join(', ');
+const statsTemplate = `Status: Tests ${statsString}`;
+const blocks = [section(headerTemplate), context(statsTemplate), getGitDiffLink()];
+const slackMsg = getSlackMessage(blocks);
+fs.writeFileSync(slackFile, JSON.stringify(slackMsg), 'utf8');
+
+function slackLink(text, url) {
+    return `<${url}|${text}>`;
+}
+
+function context(text) {
+    return { type: 'context', elements: [{ type: 'plain_text', text: text, emoji: true }] };
+}
+
+function bold(text) {
+    return `*${text}*`;
+}
+
+function section(text) {
+    return { type: 'section', text: { type: 'mrkdwn', text } };
+}
+
+function getSlackMessage(blocks) {
+    return { channel, username, icon_url, blocks };
+}
+
+function renderStat(statKey) {
+    return `${statKey}: ${parsedReport[statKey]}${statKey === 'failed' ? ` (${parsedReport.extra?.failRateChange} new)` : ''}`;
+}
+
+function getGitDiffLink() {
+    if (previousCommitSha === currentCommitSha) {
+        return context('No new changes');
+    }
+
+    return section(
+        slackLink(
+            'Git diff',
+            `https://github.com/${repoName}/compare/${previousCommitSha.slice(0, 7)}...${currentCommitSha.slice(0, 7)}`
+        )
+    );
+}
