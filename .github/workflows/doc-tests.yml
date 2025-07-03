@@ -259,7 +259,7 @@ jobs:
             echo ${{ github.sha }} > ${{ env.COMMIT_SHA_FILE }}
 
         - name: Slack Notification
-          if: ${{ 1 }}
+          if: ${{ inputs.notify }}
           continue-on-error: true
           uses: ./.github/actions/slack-integration
           with:
