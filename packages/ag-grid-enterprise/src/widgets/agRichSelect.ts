@@ -213,9 +213,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             multiSelect,
             suppressDeselectAll,
             suppressMultiSelectPillRenderer,
+            valueFormatter,
         } = config;
 
-        const valueFormatted = config.valueFormatter?.(value) ?? String(value);
+        const valueFormatted = formatValueFn(value, valueFormatter);
 
         if (allowTyping) {
             this.eInput.setValue(initialInputValue ?? valueFormatted);
@@ -458,14 +459,14 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     private getSearchStringsFromValues(values: TValue[]): string[] | undefined {
-        const { config } = this;
-        const { valueFormatter = (value) => String(value) } = config;
-
+        const {
+            config: { valueFormatter },
+        } = this;
         if (typeof values[0] === 'object' && this.searchStringCreator) {
             return this.searchStringCreator(values);
         }
 
-        return values.map((v) => valueFormatter(v) as string);
+        return values.map((value) => formatValueFn(value, valueFormatter));
     }
 
     private filterListModel(filteredValues: TValue[]): void {
@@ -859,6 +860,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         super.destroy();
     }
 }
+
+// helper function that users a provided value formatter or
+// converts the value to a string, or to '' if the original
+// value is `null` or `undefined`
+const formatValueFn = <TValue>(value: TValue, valueFormatter?: ((value: TValue | TValue[]) => string) | undefined) =>
+    valueFormatter?.(value) ?? String(value ?? '');
 
 /**
  * cell renderers are used in a few places. they bind to dom slightly differently to other cell renders as they
