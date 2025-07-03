@@ -31,7 +31,6 @@ import type { IRowStyleFeature } from '../interfaces/iRowStyleFeature';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
-import { _batchCall } from '../utils/function';
 import type { ValueService } from '../valueService/valueService';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
@@ -958,23 +957,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     allowedFocusTargetOnValidation(cellPosition: EditPosition): CellCtrl | undefined {
-        const incomingCellCtrl = _getCellCtrl(this.beans, cellPosition);
-
-        if (this.checkNavWithValidation(undefined, undefined, false) === 'block-stop') {
-            // if we are blocking the navigation, we don't allow focus change out of the editor
-            const map = this.model.getCellValidationModel().getCellValidationMap();
-            const rowNode = map.keys().next()?.value;
-            const column = map.get(rowNode)?.keys().next()?.value;
-            const cellCtrl = _getCellCtrl(this.beans, { rowNode, column });
-
-            if (cellCtrl && cellCtrl !== incomingCellCtrl) {
-                // if we are blocking the navigation, we set the focus back to the editor
-                _batchCall(() => this.strategy?.setFocusInOnEditor(cellCtrl));
-            }
-
-            return cellCtrl;
-        }
-
-        return incomingCellCtrl;
+        return _getCellCtrl(this.beans, cellPosition);
     }
 }

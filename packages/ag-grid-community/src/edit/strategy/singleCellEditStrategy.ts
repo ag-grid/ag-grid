@@ -7,7 +7,7 @@ import type { EditPosition, EditRowPosition } from '../../interfaces/iEditServic
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getColId } from '../utils/controllers';
-import { _populateModelValidationErrors, _setupEditor, _syncFromEditor } from '../utils/editors';
+import { _populateModelValidationErrors, _setupEditor } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
@@ -122,12 +122,9 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             // fineNextCell in fullRow mode causes CellComps to initialise editors, this is
             // undesirable so we suspend the model while we find the next cell.
             this.model.suspend(true);
-        } else {
-            if (preventNavigation) {
-                _syncFromEditor(this.beans, prevCell);
-                return true;
-            }
+        }
 
+        if (!preventNavigation) {
             // before we stop editing, we need to focus the cell element
             // so the grid doesn't detect that focus has left the grid
             prevCell.eGui.focus();
@@ -160,7 +157,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return null;
         }
         if (nextCell == null) {
-            return preventNavigation;
+            return false;
         }
 
         const nextPos = nextCell.cellPosition;
@@ -174,24 +171,15 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             // run validation to gather row-level validation errors
             _populateModelValidationErrors(this.beans);
 
-            if (this.model.getRowValidationModel().getRowValidationMap().size > 0) {
-                // if there was a previous row validation error, we need to check if that's still the case
-                if (this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop') {
-                    return true;
-                }
-            } else {
+            if ((this.model.getRowValidationModel().getRowValidationMap().size ?? 0) === 0) {
                 const rowPreventNavigation = this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop';
                 if (rowPreventNavigation) {
                     return true;
                 }
             }
-
-            if (preventNavigation && this.model.getRowValidationModel().getRowValidation(prevCell)) {
-                return true;
-            }
         }
 
-        if (prevEditable) {
+        if (prevEditable && !preventNavigation) {
             this.setFocusOutOnEditor(prevCell);
         }
 
@@ -209,10 +197,6 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             }
             this.setFocusInOnEditor(nextCell);
         } else {
-            if (preventNavigation && this.model.getCellValidationModel().getCellValidation(prevCell)) {
-                return true;
-            }
-
             nextCell.focusCell(true, event);
         }
 
