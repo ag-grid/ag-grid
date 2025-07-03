@@ -395,7 +395,17 @@ export class GridBodyScrollFeature extends BeanStub {
     // adding and removing the grid from the DOM both resets the scroll position and
     // triggers a resize event, so notify listeners if the scroll position has changed
     public checkScrollLeft(): void {
-        if (this.scrollLeft !== this.centerRowsCtrl.getCenterViewportScrollLeft()) {
+        const scrollLeft = this.scrollLeft;
+        let hasHorizontalScrollersOutOfSync = false;
+        for (const source of HORIZONTAL_SOURCES) {
+            const viewport = this.getViewportForSource(source);
+            if (viewport.scrollLeft !== scrollLeft) {
+                hasHorizontalScrollersOutOfSync = true;
+                break;
+            }
+        }
+
+        if (hasHorizontalScrollersOutOfSync) {
             this.onHScroll(VIEWPORT);
         }
     }
