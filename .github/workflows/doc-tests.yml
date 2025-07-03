@@ -197,12 +197,12 @@ jobs:
       if: always()
       needs:
         - test-demos
-        # - test-react-functional
-        # - test-react-functional-ts
-        # - test-angular
-        # - test-typescript
-        # - test-vanilla
-        # - test-vue3
+        - test-react-functional
+        - test-react-functional-ts
+        - test-angular
+        - test-typescript
+        - test-vanilla
+        - test-vue3
       runs-on: ubuntu-latest
       steps:
         - name: Download all test reports
