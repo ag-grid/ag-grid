@@ -1,10 +1,9 @@
 import fs from 'node:fs';
 
 const rawReport = process.env.CTRF_REPORT || '';
-const jobUrl = process.env.JOB_URL || '';
 const jobID = process.env.JOB_ID || '';
 const jobName = process.env.JOB_NAME || '';
-const repoName = process.env.REPO_NAME || '';
+const repoUrl = process.env.REPO_URL || '';
 const branchName = process.env.BRANCH_NAME || '';
 const channel = process.env.SLACK_CHANNEL || '';
 const username = process.env.SLACK_USERNAME || '';
@@ -12,6 +11,8 @@ const icon_url = process.env.SLACK_ICON || '';
 const currentCommitSha = process.env.COMMIT_SHA || '';
 const previousCommitShaFile = process.env.COMMIT_SHA_FILE || './commit-sha.txt';
 const slackFile = process.env.SLACK_FILE || './slack.json';
+
+const jobUrl = `${repoUrl}/actions/runs/${jobID}`
 
 if (!rawReport) {
     console.log('CTRF_REPORT environment variable must be set.');
@@ -27,6 +28,7 @@ try {
     process.exit(1);
 }
 const isSuccess = parsedReport.extra?.result === 'passed' || parsedReport.failed === 0;
+
 let previousCommitSha = '';
 try {
     previousCommitSha = fs.readFileSync(previousCommitShaFile, 'utf8').trim();
@@ -34,7 +36,7 @@ try {
     console.error(`Failed to read previous commit SHA from ${previousCommitShaFile}:`, error);
 }
 
-const headerTemplate = `${isSuccess ? ':white_tick:' : ':x:'} AgGrid / ${slackLink(`${jobName} #${jobID}`, jobUrl)} (on ${branchName}) ${bold(isSuccess ? 'is successful' : 'failed')}`;
+const headerTemplate = `${isSuccess ? '✅' : '❌'} AgGrid / ${slackLink(`${jobName} #${jobID}`, jobUrl)} (on ${branchName}) ${bold(isSuccess ? 'is successful' : 'failed')}`;
 
 const statsString = ['failed', 'passed', 'skipped']
     .filter((n) => parsedReport[n])
@@ -58,7 +60,7 @@ function bold(text) {
 }
 
 function section(text) {
-    return { type: 'section', text: { type: 'mrkdwn', text } };
+    return { type: 'section', text: { type: 'mrkdwn', text, emoji: true } };
 }
 
 function getSlackMessage(blocks) {
@@ -70,7 +72,7 @@ function renderStat(statKey) {
 }
 
 function getGitDiffLink() {
-    if (!repoName || !currentCommitSha || !previousCommitSha) {
+    if (!repoUrl || !currentCommitSha || !previousCommitSha) {
         return context('No git diff available');
     }
 
@@ -81,7 +83,7 @@ function getGitDiffLink() {
     return section(
         slackLink(
             'Git diff',
-            `https://github.com/${repoName}/compare/${previousCommitSha.slice(0, 7)}...${currentCommitSha.slice(0, 7)}`
+            `${repoUrl}/compare/${previousCommitSha.slice(0, 7)}...${currentCommitSha.slice(0, 7)}`
         )
     );
 }
