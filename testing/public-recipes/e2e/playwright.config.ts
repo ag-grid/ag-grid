@@ -45,5 +45,6 @@ export default defineConfig({
         url: `${baseURL}/javascript-data-grid/testing/#end-to-end-e2e-testing-examples`,
         ignoreHTTPSErrors: true,
         reuseExistingServer: true,
+        timeout: 90 * 1000,
     },
 });
