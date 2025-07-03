@@ -30,6 +30,10 @@
     text-align: center;
 }
 
+.tick-flip {
+    width: 100%;
+}
+
 .tick-flip-panel-back-highlight {
     #{$selector-darkmode} & {
         background-color: linear-gradient(180deg, hsla(0, 0%, 100%, 0.15), hsla(0, 0%, 100%, 0.3));

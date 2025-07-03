@@ -4,6 +4,7 @@ import Flip from './Flip';
 import './FlipCountdown.scss';
 
 const pad = (n: number) => String(n).padStart(2, '0');
+
 const getTimeLeft = (target: Date) => {
     const diff = Math.max(0, Math.floor((target.getTime() - Date.now()) / 1000));
     const days = Math.floor(diff / 86_400);
@@ -14,10 +15,13 @@ const getTimeLeft = (target: Date) => {
 };
 
 const FlipCountdown: React.FC<{ days?: number }> = ({ days = 60 }) => {
-    const [left, setLeft] = useState(() => getTimeLeft(new Date(Date.now() + days * 86_400_000)));
+    //  00:00 on 1st September 2025 in GMT
+    const endDate = new Date(Date.UTC(2025, 8, 1, 0, 0, 0));
+
+    const [left, setLeft] = useState(() => getTimeLeft(endDate));
 
     useEffect(() => {
-        const target = new Date(Date.now() + days * 86_400_000);
+        const target = new Date(endDate);
         const handle = setInterval(() => setLeft(getTimeLeft(target)), 1000);
         return () => clearInterval(handle);
     }, [days]);

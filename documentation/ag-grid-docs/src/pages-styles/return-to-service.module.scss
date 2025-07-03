@@ -106,6 +106,7 @@
     margin-top: 2px;
     font-weight: var(--text-regular);
 }
+
 .rtsFlipClockEnds {
     font-size: var(--text-fs-base);
     color: var(--color-fg-primary);
@@ -118,6 +119,11 @@
 
     #{$selector-darkmode} & {
         color: var(--color-button-tertiary-fg);
+    }
+
+    sup {
+        font-size: 8px;
+        font-weight: 900;
     }
 }
 
