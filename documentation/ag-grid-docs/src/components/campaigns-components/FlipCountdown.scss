@@ -2,6 +2,11 @@
 
 .tick {
     font-size: 3em;
+    width: 86px;
+    min-width: 86px;
+    max-width: 86px;
+    display: inline-flex;
+    justify-content: center;
 }
 
 .tick-group {
