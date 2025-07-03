@@ -7,7 +7,7 @@ import type {
     ValidationModuleName,
 } from '../../interfaces/iModule';
 import type { RowModelType } from '../../interfaces/iRowModel';
-import type { RowNodeEventType } from '../../interfaces/iRowNode';
+import type { RowNodeEventType, RowPinnedType } from '../../interfaces/iRowNode';
 import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
 import { ENTERPRISE_MODULE_NAMES } from '../enterpriseModuleNames';
 import { baseDocLink, getErrorLink } from '../logging';
@@ -701,6 +701,8 @@ export const AG_GRID_ERRORS = {
     288: () => '`api.getColumnFilterModel(key, true)` requires `enableFilterHandlers = true' as const,
     289: ({ rowModelType }: { rowModelType: string }) =>
         `Row Model '${rowModelType}' is not supported with Batch Editing` as const,
+    290: ({ rowIndex, rowPinned }: { rowIndex: number; rowPinned: RowPinnedType }) =>
+        `Row with index '${rowIndex}' and pinned state '${rowPinned}' not found` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
