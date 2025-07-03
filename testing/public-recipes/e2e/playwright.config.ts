@@ -42,9 +42,8 @@ export default defineConfig({
     webServer: {
         cwd: path.resolve(__dirname, '..', '..', '..'),
         command: 'nx dev',
-        url: `${baseURL}/javascript-data-grid/testing/#end-to-end-e2e-testing-examples`,
+        url: baseURL,
         ignoreHTTPSErrors: true,
         reuseExistingServer: true,
-        timeout: 90 * 1000,
     },
 });
