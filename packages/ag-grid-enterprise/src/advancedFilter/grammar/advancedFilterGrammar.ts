@@ -1,6 +1,6 @@
 import { BaseCellDataType } from 'packages/ag-grid-community/dist/types/src/main-umd-noStyles';
 
-import { AdvancedFilterModel } from 'ag-grid-community';
+import { AdvancedFilterModel, IRowNode } from 'ag-grid-community';
 
 import { SyntaxGrammar, SyntaxGrammarDefinition, SyntaxParselet } from '../../syntaxParser/syntaxGrammar';
 import { SyntaxParserOutput, ValidSyntaxParserOutput } from '../../syntaxParser/syntaxParser';
@@ -75,7 +75,12 @@ export type AdvancedFilterGrammarDefinition<TOutputNode extends AdvancedFilterNo
     AdvancedFilterNode,
     TOutputNode,
     AdvancedFilterContext
->;
+> & {
+    filter: (
+        node: TOutputNode
+    ) => (row: IRowNode, context: { getCellValue: (row: IRowNode, colId: string) => any }) => boolean;
+    serialize: (node: TOutputNode, context: { getColumnNameFromId: (id: string) => string }) => string;
+};
 
 export class AdvancedFilterGrammar extends SyntaxGrammar<
     AdvancedFilterNode,

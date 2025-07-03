@@ -1,68 +1,70 @@
-import { SyntaxCategory, TextRange } from './syntaxTypes';
+import { KindOf, SyntaxCategory, SyntaxConfig, TextRange } from './syntaxTypes';
 
 const FALLBACK_REGEXP: RegExp = /([a-zA-Z_]+)|([0-9]+)|([^\w\s]+)/g;
 
-interface BasePattern {
-    type: string;
-    category: SyntaxCategory;
-    key: string;
-    priority?: number;
-}
-
-interface SyntaxStringPattern extends BasePattern {
+interface SyntaxStringPattern {
     type: 'string';
     label: string;
     aliases?: string[];
 }
 
-interface SyntaxRegexPattern extends BasePattern {
+interface SyntaxRegexPattern {
     type: 'regex';
     regex: RegExp;
 }
 
-export type SyntaxPattern = SyntaxStringPattern | SyntaxRegexPattern;
-
-export type PatternMatch = {
+export type SyntaxPattern<TKind extends string> = (SyntaxStringPattern | SyntaxRegexPattern) & {
     category: SyntaxCategory;
     key: string;
+    priority?: number;
+    handler: TKind;
 };
 
-export interface RawSyntaxToken {
+export type PatternMatch<TKind extends string> = {
+    category: SyntaxCategory;
+    key: string;
+    handler: TKind;
+};
+
+export interface RawSyntaxToken<TKind extends string> {
     value: string;
     range: TextRange;
-    matches: PatternMatch[];
+    matches: [PatternMatch<TKind>, ...PatternMatch<TKind>[]];
 }
 
-export interface SyntaxToken {
+export interface SyntaxToken<THandler extends string = string> {
     category: SyntaxCategory;
     key: string;
     value: string;
     range: TextRange;
+    handler: THandler;
 }
 
-type PatternConfig = {
+type PatternConfig<TSyntaxConfig extends SyntaxConfig> = {
     regex: {
         category: SyntaxCategory;
         key: string;
+        handler: KindOf<TSyntaxConfig>;
         expression: RegExp;
     }[];
     strings: {
         category: SyntaxCategory;
         key: string;
+        handler: KindOf<TSyntaxConfig>;
         expression: string;
     }[];
     priority: number;
 }[];
 
-export class SyntaxTokenizer {
-    patterns: PatternConfig;
+export class SyntaxTokenizer<TSyntaxConfig extends SyntaxConfig> {
+    patterns: PatternConfig<TSyntaxConfig>;
 
-    constructor(patterns: SyntaxPattern[]) {
+    constructor(patterns: SyntaxPattern<KindOf<TSyntaxConfig>>[]) {
         this.setPatterns(patterns);
     }
 
-    private setPatterns(patterns: SyntaxPattern[]) {
-        const config: PatternConfig = [];
+    private setPatterns(patterns: SyntaxPattern<KindOf<TSyntaxConfig>>[]) {
+        const config: PatternConfig<TSyntaxConfig> = [];
 
         for (const pattern of patterns) {
             const priority = pattern.priority ?? 100;
@@ -80,6 +82,7 @@ export class SyntaxTokenizer {
                         key: pattern.key,
                         expression: l.toLowerCase(),
                         category: pattern.category,
+                        handler: pattern.handler,
                     }))
                 );
 
@@ -89,6 +92,7 @@ export class SyntaxTokenizer {
                     key: pattern.key,
                     expression: pattern.regex,
                     category: pattern.category,
+                    handler: pattern.handler,
                 });
             }
         }
@@ -96,9 +100,9 @@ export class SyntaxTokenizer {
         this.patterns = config.sort((a, b) => b.priority - a.priority);
     }
 
-    public tokenize(input: string, caretIndex?: number): RawSyntaxToken[] {
+    public tokenize(input: string, caretIndex?: number): RawSyntaxToken<KindOf<TSyntaxConfig>>[] {
         let pos = 0;
-        const tokens: RawSyntaxToken[] = [];
+        const tokens: RawSyntaxToken<KindOf<TSyntaxConfig>>[] = [];
 
         while (pos < input.length) {
             const chunk = input.slice(pos);
@@ -111,36 +115,23 @@ export class SyntaxTokenizer {
             }
 
             const token = this.matchChunk(chunk);
-            if (token) {
-                let len = token.value.length;
-                tokens.push({
-                    ...token,
-                    range: {
-                        start: pos,
-                        end: pos + len,
-                    },
-                });
-                pos += len;
-                continue;
-            }
 
-            const matches = chunk.match(FALLBACK_REGEXP);
-            if (matches) {
-                let value = matches[0];
-            }
-
+            let len = token.value.length;
             tokens.push({
-                value: input[pos],
-                range: { start: pos, end: pos + 1 },
-                matches: [],
+                ...token,
+                range: {
+                    start: pos,
+                    end: pos + len,
+                },
             });
-            pos += 1;
+            pos += len;
+            continue;
         }
 
         return tokens;
     }
 
-    private matchChunk(chunk: string): Omit<RawSyntaxToken, 'range'> {
+    private matchChunk(chunk: string): Omit<RawSyntaxToken<KindOf<TSyntaxConfig>>, 'range'> {
         for (const pattern of this.patterns) {
             for (const regexPattern of pattern.regex) {
                 const match = chunk.match(regexPattern.expression);
@@ -150,6 +141,7 @@ export class SyntaxTokenizer {
                             {
                                 category: regexPattern.category,
                                 key: regexPattern.key,
+                                handler: regexPattern.handler,
                             },
                         ],
                         value: match[0],
@@ -157,7 +149,7 @@ export class SyntaxTokenizer {
                 }
             }
 
-            let token: Omit<RawSyntaxToken, 'range'> | undefined;
+            let token: Omit<RawSyntaxToken<KindOf<TSyntaxConfig>>, 'range'> | undefined;
             for (const stringPattern of pattern.strings) {
                 let len = stringPattern.expression.length;
 
@@ -166,17 +158,20 @@ export class SyntaxTokenizer {
                 }
 
                 if (chunk.toLowerCase().startsWith(stringPattern.expression)) {
+                    let match = {
+                        category: stringPattern.category,
+                        key: stringPattern.key,
+                        handler: stringPattern.handler,
+                    };
+
                     if (!token) {
                         token = {
                             value: chunk.slice(0, len),
-                            matches: [],
+                            matches: [match],
                         };
+                    } else {
+                        token.matches.push(match);
                     }
-
-                    token.matches.push({
-                        category: stringPattern.category,
-                        key: stringPattern.key,
-                    });
                 }
             }
             if (token) {
@@ -197,6 +192,7 @@ export class SyntaxTokenizer {
                 {
                     category: 'UNKNOWN',
                     key: 'UnknownToken',
+                    handler: 'unknown',
                 },
             ],
         };

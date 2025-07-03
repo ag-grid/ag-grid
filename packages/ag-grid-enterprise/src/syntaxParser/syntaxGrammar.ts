@@ -1,6 +1,10 @@
 import { SyntaxParserContext, SyntaxParserOutput, ValidSyntaxParserOutput } from './syntaxParser';
-import { PatternMatch, SyntaxPattern } from './syntaxTokenizer';
-import { CLOSING_CATEGORIES, OPENING_CATEGORIES } from './syntaxTypes';
+import { PatternMatch, SyntaxPattern, SyntaxToken } from './syntaxTokenizer';
+import { CLOSING_CATEGORIES, KindOf, NodeOf, OPENING_CATEGORIES, SyntaxConfig } from './syntaxTypes';
+
+function typedValues<T extends Record<string, any>>(obj: T): Array<T[keyof T]> {
+    return Object.values(obj) as Array<T[keyof T]>;
+}
 
 type ParseletTypes =
     | {
@@ -18,49 +22,49 @@ type ParseletTypes =
           precedence: number;
       };
 
-export type SyntaxParselet<TModelNode, TOutputNode extends TModelNode, TContext = {}> = ParseletTypes & {
+export type SyntaxParselet<TKind extends string, TModel, TOutputModel extends TModel, TContext> = ParseletTypes & {
     parse(
-        context: SyntaxParserContext<TModelNode, TContext>,
-        left?: ValidSyntaxParserOutput<TModelNode>
-    ): SyntaxParserOutput<TOutputNode>;
+        context: TContext,
+        token: SyntaxToken<TKind>,
+        left?: ValidSyntaxParserOutput<TModel>
+    ): SyntaxParserOutput<TOutputModel>;
 };
 
-export interface SyntaxGrammarDefinition<TModelNode, TOutputNode extends TModelNode, TContext> {
-    key: string;
-    patterns: SyntaxPattern[];
-    parselet: SyntaxParselet<TModelNode, TOutputNode, TContext>;
+export interface SyntaxGrammarDefinition<
+    TParselet extends SyntaxParselet<infer TKind, infer TModel, infer TOutputModel, infer TContext>,
+> {
+    parselet: TParselet;
+    patterns: SyntaxPattern<KindOf<TSyntaxConfig>>[];
 }
 
-export abstract class SyntaxGrammar<TModelNode, TOutputNode extends TModelNode, TContext> {
-    private _patterns: SyntaxPattern[] = [];
-    private _parselets: Map<string, SyntaxParselet<TModelNode, TModelNode, TContext>> = new Map();
+export abstract class SyntaxGrammar<TSyntaxConfig extends SyntaxConfig, TContext> {
+    private _patterns: SyntaxPattern<KindOf<TSyntaxConfig>>[];
 
-    constructor(defs: SyntaxGrammarDefinition<TModelNode, TModelNode, TContext>[]) {
-        defs.forEach((def) => {
-            this._patterns.push(...def.patterns);
-            this._parselets.set(def.key, def.parselet);
-        });
+    constructor(
+        private defs: {
+            [TKind in KindOf<TSyntaxConfig>]: SyntaxGrammarDefinition<TSyntaxConfig, TKind, TContext>;
+        }
+    ) {
+        this._patterns = typedValues(defs).flatMap((def) => def.patterns);
     }
 
     get patterns() {
         return this._patterns;
     }
 
-    getParselet(matches: PatternMatch[]): SyntaxParselet<TModelNode, TModelNode, TContext> | null {
-        for (let key of matches.map((m) => m.key)) {
-            const parser = this._parselets.get(key);
-            if (parser) return parser as SyntaxParselet<TModelNode, TModelNode, TContext>;
-        }
-        return null;
+    parselet<TKind extends KindOf<TSyntaxConfig>>(kind: TKind): SyntaxParselet<TSyntaxConfig, TKind, TContext> {
+        return this.defs[kind].parselet;
     }
 
-    isClosingToken(matches: PatternMatch[]): boolean {
+    isClosingToken(matches: PatternMatch<KindOf<TSyntaxConfig>>[]): boolean {
         return matches.some((m) => CLOSING_CATEGORIES.has(m.category));
     }
 
-    isOpeningToken(matches: PatternMatch[]): boolean {
+    isOpeningToken(matches: PatternMatch<KindOf<TSyntaxConfig>>[]): boolean {
         return matches.some((m) => OPENING_CATEGORIES.has(m.category));
     }
 
-    abstract validateOutput(output: ValidSyntaxParserOutput<TModelNode>): SyntaxParserOutput<TOutputNode>;
+    abstract validateOutput(
+        output: ValidSyntaxParserOutput<TSyntaxConfig['model']>
+    ): SyntaxParserOutput<TSyntaxConfig['model']>;
 }

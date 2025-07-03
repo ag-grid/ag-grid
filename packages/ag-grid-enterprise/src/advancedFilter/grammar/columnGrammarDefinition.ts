@@ -8,17 +8,7 @@ function escapeRegex(char: string) {
 
 const columnParselet: ColumnGrammar['parselet'] = {
     type: 'operand',
-    parse: (context) => {
-        const token = context.expectToken('IDENTIFIER', 'ColumnNode');
-
-        if (!token) {
-            let invalid = context.consumeToken();
-            return context.parseRecovery({
-                errors: [{ message: 'Expected a column definition', range: invalid.range }],
-                tokens: [],
-            });
-        }
-
+    parse: (context, token) => {
         const colName = token.value.trim().slice(1, -1);
 
         const colDef = context.context.getColIdFromName(colName);
@@ -64,5 +54,11 @@ export const createColumnGrammar = (
             },
         ],
         parselet: columnParselet,
+        filter: (node) => {
+            return (row, { getCellValue }) => getCellValue(row, node.colId);
+        },
+        serialize: (node) => {
+            return `${delimiters[0]}${node.colId}${delimiters[1]}`;
+        },
     };
 };

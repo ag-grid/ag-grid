@@ -22,9 +22,28 @@ export const CLOSING_CATEGORIES: Set<SyntaxCategory> = new Set([
     'FUNCTION_END',
 ]);
 
-export const OPENING_CATEGORIES: Set<SyntaxCategory> = new Set(['GROUP_START', 'ARRAY_START', 'FUNCTION_START']);
+export const OPENING_CATEGORIES: Set<SyntaxCategory> = new Set([
+    'GROUP_START',
+    'ARRAY_START',
+    'ARRAY_SEPARATOR',
+    'FUNCTION_START',
+]);
 
 export interface TextRange {
     start: number;
     end: number;
 }
+
+export interface SyntaxConfig<
+    TKind extends string = 'unknown' | 'test',
+    TModel extends { kind: TKind } = { kind: TKind },
+> {
+    model: TModel;
+    kinds: TKind[];
+}
+
+export type KindOf<TSyntaxConfig extends SyntaxConfig> = TSyntaxConfig['kinds'][number];
+export type NodeOf<TSyntaxConfig extends SyntaxConfig, TKind extends KindOf<TSyntaxConfig>> = Extract<
+    TSyntaxConfig['model'],
+    { kind: TKind }
+>;

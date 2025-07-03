@@ -1,75 +1,71 @@
-import { AdvancedFilterModel } from 'ag-grid-community';
+import { SyntaxGrammarDefinition } from '../../syntaxParser/syntaxGrammar';
+import { AdvancedFilterContext, AdvancedFilterNode } from './advancedFilterGrammar';
 
-import { SyntaxGrammarDefinition, SyntaxParselet } from '../../syntaxParser/syntaxGrammar';
-import { AdvancedFilterContext, AdvancedFilterNode, ColumnNode } from './advancedFilterGrammar';
+type GroupGrammar = SyntaxGrammarDefinition<AdvancedFilterNode, AdvancedFilterNode, AdvancedFilterContext>;
 
-export const createGroupParser = (): SyntaxGrammarDefinition<
-    AdvancedFilterNode,
-    AdvancedFilterModel,
-    AdvancedFilterContext
-> => {
-    const parselet: SyntaxParselet<AdvancedFilterNode, AdvancedFilterModel, AdvancedFilterContext> = {
-        type: 'operand',
-        parse: (context) => {
-            const tokens = [];
-            const errors = [];
-            let model;
+const parselet: GroupGrammar['parselet'] = {
+    type: 'operand',
+    parse: (context) => {
+        const tokens = [];
+        const errors = [];
+        let model;
 
-            const opening = context.expectToken('GROUP_START', 'GroupNode');
+        const opening = context.expectToken('GROUP_START', 'GroupNode');
 
-            if (!opening) {
+        if (!opening) {
+            let invalid = context.consumeToken();
+            return context.parseRecovery({
+                errors: [{ message: 'Expected an opening bracket', range: invalid.range }],
+                tokens: [],
+            });
+        }
+
+        tokens.push(opening);
+
+        const group = context.parseNext();
+
+        if (!group.isValid) {
+            errors.push(...group.errors);
+        } else if (group.model.type === 'value' || group.model.type === 'column') {
+            errors.push({ message: 'Expected an expression', range: context.getEncompassingRange(group.tokens) });
+        } else {
+            model = group.model;
+        }
+        tokens.push(...group.tokens);
+
+        const closing = context.expectToken('GROUP_END', 'GroupNode');
+
+        if (!closing) {
+            if (context.endOfTokens()) {
+                errors.push({ message: 'Group not closed', range: context.peekToken().range });
+            } else {
                 let invalid = context.consumeToken();
                 return context.parseRecovery({
-                    errors: [{ message: 'Expected an opening bracket', range: invalid.range }],
+                    errors: [{ message: 'Expected a closing bracket', range: invalid.range }],
                     tokens: [],
                 });
             }
+        } else {
+            tokens.push(closing);
+        }
 
-            tokens.push(opening);
-
-            const group = context.parseNext();
-
-            if (!group.isValid) {
-                errors.push(...group.errors);
-            } else if (group.model.type === 'value' || group.model.type === 'column') {
-                errors.push({ message: 'Expected an expression', range: context.getEncompassingRange(group.tokens) });
-            } else {
-                model = group.model;
-            }
-            tokens.push(...group.tokens);
-
-            const closing = context.expectToken('GROUP_END', 'GroupNode');
-
-            if (!closing) {
-                if (context.endOfTokens()) {
-                    errors.push({ message: 'Group not closed', range: context.peekToken().range });
-                } else {
-                    let invalid = context.consumeToken();
-                    return context.parseRecovery({
-                        errors: [{ message: 'Expected a closing bracket', range: invalid.range }],
-                        tokens: [],
-                    });
-                }
-            } else {
-                tokens.push(closing);
-            }
-
-            if (errors.length > 0 || !model) {
-                return {
-                    isValid: false,
-                    errors,
-                    tokens,
-                };
-            }
-
+        if (errors.length > 0 || !model) {
             return {
-                isValid: true,
+                isValid: false,
+                errors,
                 tokens,
-                model,
             };
-        },
-    };
+        }
 
+        return {
+            isValid: true,
+            tokens,
+            model,
+        };
+    },
+};
+
+export const createGroupParser = (): GroupGrammar => {
     return {
         key: 'GroupNode',
         patterns: [

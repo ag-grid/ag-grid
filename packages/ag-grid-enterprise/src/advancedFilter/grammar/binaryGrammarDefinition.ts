@@ -231,7 +231,6 @@ const createBinaryComparatorParser = ({
             }
 
             let op = context.expectToken('COMPARATOR', token.key);
-            console.log(op);
 
             if (!op) {
                 const { matches, ...token } = context.consumeToken();
