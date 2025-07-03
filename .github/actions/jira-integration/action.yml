@@ -32,4 +32,4 @@ runs:
         JIRA_SUMMARY: ${{ inputs.JIRA_SUMMARY }}
         IS_SUCCESS: ${{ inputs.IS_SUCCESS }}
       shell: bash
-      run: node ./scripts/test/create-jira-ticket.mjs
+      run: node ./.github/actions/jira-integration/create-jira-ticket.mjs

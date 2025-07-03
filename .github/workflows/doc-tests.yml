@@ -190,12 +190,12 @@ jobs:
       if: always()
       needs:
         - test-demos
-        - test-react-functional
-        - test-react-functional-ts
-        - test-angular
-        - test-typescript
-        - test-vanilla
-        - test-vue3
+        # - test-react-functional
+        # - test-react-functional-ts
+        # - test-angular
+        # - test-typescript
+        # - test-vanilla
+        # - test-vue3
       runs-on: ubuntu-latest
       steps:
         - name: Download all test reports
@@ -204,6 +204,7 @@ jobs:
             path: combined-reports
 
         - name: Publish Combined Test Report
+          id: ctrf
           uses: ctrf-io/github-test-reporter@v1
           with:
             report-path: 'combined-reports/**/*.json'
@@ -211,3 +212,17 @@ jobs:
             failed-report: true
             flaky-report: true
             skipped-report: true
+
+        - name: Convert ctrf output to Slack message blocks
+          env:
+            CTRF_OUTPUT: ${{ steps.ctrf.outputs.summary }}
+          run: |
+            node ./.github/actions/slack-integration/ctrf-markdown-to-slack-blocks.mjs
+
+        - name: Slack Notification
+          continue-on-error: true
+          if: ${{ false }}
+          uses: ./.github/actions/slack-integration
+          with:
+            SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
+            SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
