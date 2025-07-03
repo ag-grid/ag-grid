@@ -206,7 +206,7 @@ jobs:
 
         - name: Publish Combined Test Report
           id: ctrf
-          uses: ctrf-io/github-test-reporter@v1
+          uses: sdwvit/github-test-reporter@v1.0.15report
           with:
             report-path: 'combined-reports/**/*.json'
             summary-report: true
@@ -221,6 +221,7 @@ jobs:
         - name: Convert ctrf output to Slack message blocks
           env:
             CTRF_OUTPUT: ${{ steps.ctrf.outputs.summary }}
+            CTRF_REPORT: ${{ steps.ctrf.outputs.report }}
           run: |
             node ./.github/actions/slack-integration/ctrf-markdown-to-slack-blocks.mjs
 
