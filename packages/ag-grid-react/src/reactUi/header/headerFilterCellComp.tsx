@@ -1,7 +1,6 @@
 import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useEffect } from 'react';
 
-import { _addOrRemoveAttributes } from 'ag-grid-community';
 import type {
     HeaderFilterCellCtrl,
     HeaderStyle,
@@ -81,8 +80,6 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
             setCompDetails: (compDetails) => setUserCompDetails(compDetails),
             getFloatingFilterComp: () => (userCompPromise.current ? userCompPromise.current : null),
             setMenuIcon: (eIcon) => eButtonShowMainFilter.current?.appendChild(eIcon),
-
-            setAttributes: (attrs) => eGui.current && _addOrRemoveAttributes(eGui.current, attrs),
         };
 
         ctrl.setComp(compProxy, eRef, eButtonShowMainFilter.current!, eFloatingFilterBody.current!, compBean.current);

@@ -1,6 +1,6 @@
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { ElementParams } from '../../utils/dom';
-import { _addOrRemoveAttributes, _ensureDomOrder } from '../../utils/dom';
+import { _ensureDomOrder } from '../../utils/dom';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import { HeaderRowComp } from '../row/headerRowComp';
 import type { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';
@@ -50,8 +50,6 @@ export class HeaderRowContainerComp extends Component {
                 eGui.style.maxWidth = width;
                 eGui.style.minWidth = width;
             },
-
-            setAttributes: (attrs) => _addOrRemoveAttributes(this.getGui(), attrs),
         };
 
         const ctrl = this.createManagedBean(new HeaderRowContainerCtrl(this.pinned));

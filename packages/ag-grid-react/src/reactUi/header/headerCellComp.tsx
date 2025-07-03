@@ -8,7 +8,7 @@ import type {
     IHeaderCellComp,
     UserCompDetails,
 } from 'ag-grid-community';
-import { CssClassManager, _EmptyBean, _addOrRemoveAttributes, _removeAriaSort, _setAriaSort } from 'ag-grid-community';
+import { CssClassManager, _EmptyBean, _removeAriaSort, _setAriaSort } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
@@ -64,8 +64,6 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
             getUserCompInstance: () => userCompRef.current || undefined,
             refreshSelectAllGui,
             removeSelectAllGui: () => ctrl.getSelectAllGui()?.remove(),
-
-            setAttributes: (attrs) => eGui.current && _addOrRemoveAttributes(eGui.current, attrs),
         };
 
         ctrl.setComp(compProxy, eRef, eResize.current!, eHeaderCompWrapper.current!, compBean.current);

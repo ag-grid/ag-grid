@@ -407,13 +407,6 @@ export function _addOrRemoveAttribute(element: HTMLElement, name: string, value:
     }
 }
 
-export function _addOrRemoveAttributes(
-    element: HTMLElement,
-    attrs: Record<string, string | number | null | undefined>
-): void {
-    Object.keys(attrs).forEach((k) => _addOrRemoveAttribute(element, k, attrs[k]));
-}
-
 export function _observeResize(
     beans: BeanCollection,
     element: HTMLElement,

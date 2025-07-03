@@ -8,14 +8,13 @@ import type { FocusService } from '../../focusService';
 import { CenterWidthFeature } from '../../gridBodyComp/centerWidthFeature';
 import type { ScrollPartner } from '../../gridBodyComp/gridBodyScrollFeature';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
-import type { ICompProxy } from '../../interfaces/iCompProxy';
 import type { HeaderPosition } from '../../interfaces/iHeaderPosition';
 import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { getHeaderRowCount } from '../headerUtils';
 import type { HeaderRowType } from '../row/headerRowComp';
 import { HeaderRowCtrl } from '../row/headerRowCtrl';
 
-export interface IHeaderRowContainerComp extends ICompProxy {
+export interface IHeaderRowContainerComp {
     setCenterWidth(width: string): void;
     setViewportScrollLeft(left: number): void;
     setPinnedContainerWidth(width: string): void;

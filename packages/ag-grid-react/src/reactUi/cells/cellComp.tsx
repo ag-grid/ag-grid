@@ -9,7 +9,7 @@ import type {
     ICellEditorComp,
     ICellRendererComp,
 } from 'ag-grid-community';
-import { CssClassManager, _EmptyBean, _addOrRemoveAttributes, _removeFromParent } from 'ag-grid-community';
+import { CssClassManager, _EmptyBean, _removeFromParent } from 'ag-grid-community';
 
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
 import { warnReactiveCustomComponents } from '../../shared/customComp/util';
@@ -340,8 +340,6 @@ const CellComp = ({
                 current!.toggleCss('ag-cell-popup-editing', !!editing && !!isPopup);
                 current!.toggleCss('ag-cell-not-inline-editing', !editing || !!isPopup);
             },
-
-            setAttributes: (attrs) => eGui.current && _addOrRemoveAttributes(eGui.current, attrs),
         };
 
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;

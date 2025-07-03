@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useContext, useRef, useState } from 'react';
 
 import type { ColumnPinnedType, HeaderRowCtrl, IHeaderRowContainerComp } from 'ag-grid-community';
-import { HeaderRowContainerCtrl, _addOrRemoveAttributes } from 'ag-grid-community';
+import { HeaderRowContainerCtrl } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import HeaderRowComp from './headerRowComp';
@@ -53,8 +53,6 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
                     eGui.current.style.maxWidth = width;
                 }
             },
-
-            setAttributes: (attrs) => eGui.current && _addOrRemoveAttributes(eGui.current, attrs),
         };
 
         headerRowCtrlRef.current!.setComp(compProxy, eGui.current);
