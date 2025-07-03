@@ -385,30 +385,18 @@
 
     p {
         --padding: #{$spacing-size-4};
-
+        display: flex;
+        align-items: center;
         position: relative;
         padding-left: 2.2em;
         font-size: var(--text-fs-lg);
-        font-weight: 500;
         margin-bottom: $spacing-size-2;
         background-color: var(--color-brand-50);
         padding: var(--padding);
         height: 120px;
         border-radius: var(--radius-md);
-
         #{$selector-darkmode} & {
             background: var(--color-bg-secondary);
-        }
-
-        &::before {
-            content: '"';
-            position: absolute;
-            top: var(--padding);
-            left: calc(var(--padding) - 0.7ch);
-        }
-
-        &::after {
-            content: '"';
         }
     }
 
