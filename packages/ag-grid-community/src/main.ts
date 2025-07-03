@@ -137,7 +137,7 @@ export type {
     RowDropTargetPosition,
     RowDropZoneParams,
     RowDropZoneEvents,
-} from './dragAndDrop/rowDragFeature';
+} from './dragAndDrop/rowDragFeatureTypes';
 export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { DragService } from './dragAndDrop/dragService';
 export { DragListenerParams } from './dragAndDrop/dragService';
