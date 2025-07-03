@@ -43,7 +43,7 @@ const statsString = ['failed', 'passed', 'skipped']
 const statsTemplate = `Status: Tests ${statsString}`;
 const blocks = [section(headerTemplate), context(statsTemplate), getGitDiffLink()];
 const slackMsg = getSlackMessage(blocks);
-fs.writeFileSync(slackFile, JSON.stringify(slackMsg), 'utf8');
+fs.writeFileSync(slackFile, `${JSON.stringify(slackMsg)}\n`, 'utf8');
 
 function slackLink(text, url) {
     return `<${url}|${text}>`;
@@ -70,6 +70,10 @@ function renderStat(statKey) {
 }
 
 function getGitDiffLink() {
+    if (!repoName || !currentCommitSha || !previousCommitSha) {
+        return context('No git diff available');
+    }
+
     if (previousCommitSha === currentCommitSha) {
         return context('No new changes');
     }
