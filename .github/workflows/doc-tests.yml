@@ -79,7 +79,6 @@ jobs:
     download-examples:
       name: Download all-examples.json
       runs-on: ubuntu-latest
-      if: ${{ github.event.inputs.skip_vanilla != 'true' || github.event.inputs.skip_typescript != 'true' || github.event.inputs.skip_reactFunctional != 'true' || github.event.inputs.skip_reactFunctionalTs != 'true' || github.event.inputs.skip_angular != 'true' || github.event.inputs.skip_vue3 != 'true'}}
       steps:
         - name: Checkout
           uses: actions/checkout@v4
