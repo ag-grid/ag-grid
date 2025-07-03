@@ -1,8 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 import path from 'node:path';
 
-const PUBLIC_SITE_URL = process.env.PUBLIC_SITE_URL!;
-const baseURL = process.env.PUBLIC_BASE_URL ? path.join(PUBLIC_SITE_URL, process.env.PUBLIC_BASE_URL) : PUBLIC_SITE_URL;
+// const PUBLIC_SITE_URL = process.env.PUBLIC_SITE_URL!;
+const baseURL = 'https://localhost:4610';
 
 console.log(`Using base URL: ${baseURL}`);
 
@@ -38,4 +38,12 @@ export default defineConfig({
             },
         },
     ],
+
+    webServer: {
+        cwd: path.resolve(__dirname, '..', '..', '..'),
+        command: 'nx dev',
+        url: `${baseURL}/javascript-data-grid/testing/#end-to-end-e2e-testing-examples`,
+        ignoreHTTPSErrors: true,
+        reuseExistingServer: true,
+    },
 });

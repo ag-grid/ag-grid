@@ -14,12 +14,12 @@
     },
     "test": {
       "executor": "nx:run-commands",
-      "dependsOn": ["setup"],
+      "dependsOn": ["setup", "ag-grid-community:build", "ag-grid-enterprise:build"],
       "options": {
         "commands": ["npx playwright test"],
         "parallel": false,
         "cwd": "testing/public-recipes/e2e",
-        "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
+        "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.dev"
       },
       "configurations": {
         "production": {
