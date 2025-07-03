@@ -13,6 +13,12 @@
     display: flex;
 }
 
+.countdownContainer {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+}
+
 .font-mono {
     font-family: var(--text-monospace-font-family);
     text-transform: uppercase;
