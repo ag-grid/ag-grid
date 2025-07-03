@@ -123,16 +123,12 @@
 
 .rtsBenefitsSection {
     border-radius: var(--radius-md);
-    padding: $spacing-size-16 $spacing-size-12;
+    padding: $spacing-size-24 $spacing-size-12;
     margin-top: $spacing-size-16;
-    max-width: 1100px;
     text-align: center;
-    padding-top: $spacing-size-24;
-    padding-bottom: $spacing-size-24;
-    padding-right: 0;
 
     @media screen and (max-width: 700px) {
-        padding: $spacing-size-8 $spacing-size-2;
+        padding: $spacing-size-8 0;
     }
 
     > h2,
@@ -237,7 +233,6 @@
     border-radius: var(--radius-md);
     flex: 1;
     min-width: 220px;
-    max-width: 340px;
     display: flex;
     flex-direction: column;
     text-align: left;
@@ -248,10 +243,6 @@
     }
     p {
         font-size: var(--text-fs-base);
-    }
-
-    @media screen and (max-width: 700px) {
-        max-width: none;
     }
 }
 .rtsReleaseImage {
@@ -378,7 +369,6 @@
 
     flex: 1;
     min-width: 220px;
-    max-width: 340px;
     display: flex;
     flex-direction: column;
     text-align: left;

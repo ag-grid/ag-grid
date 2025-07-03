@@ -23,7 +23,7 @@ const FlipCountdown: React.FC<{ days?: number }> = ({ days = 60 }) => {
     }, [days]);
 
     return (
-        <div class="countdownContainer">
+        <div className="countdownContainer">
             <div>
                 <Flip value={left.days} />
                 <div className="font-mono">Days</div>
