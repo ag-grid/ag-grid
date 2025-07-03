@@ -713,7 +713,7 @@
         }
     }
 
-    tr:nth-child(odd) {
+    tr {
         td {
             color: var(--color-fg-primary);
         }
@@ -868,7 +868,6 @@
 .rtsTrustedQuote {
     background: var(--color-bg-primary);
     border-radius: var(--radius-md);
-    box-shadow: var(--shadow-xs);
     flex: 1;
     min-width: 220px;
     max-width: 340px;
@@ -1013,5 +1012,13 @@
     svg {
         height: 18px;
         width: 18px;
+    }
+}
+
+.rtsChartsCtaContent {
+    .button {
+        border: 1px solid var(--color-white);
+        padding: 8px 12px;
+        border-radius: var(--radius-md);
     }
 }
