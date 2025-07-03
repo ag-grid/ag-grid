@@ -459,7 +459,6 @@
 // =======================================
 .quotesOuter {
     display: flex;
-
     max-width: 1400px;
     border: 1px solid var(--color-border-secondary);
     border-radius: 8px;
@@ -480,7 +479,6 @@
     width: 33.33%;
     font-size: var(--text-fs-base);
     line-height: var(--text-lh-2xl);
-
     padding: $spacing-size-10;
 
     @media screen and (max-width: $breakpoint-pricing-medium) {
@@ -540,6 +538,7 @@
         rgba(30, 81, 200, 0.018) 60%,
         transparent 100%
     );
+
     border-bottom: 1px solid var(--color-border-secondary);
     z-index: 0;
     pointer-events: none;
@@ -880,6 +879,7 @@
         margin-bottom: $spacing-size-6;
         text-align: left;
     }
+
     p {
         text-align: left;
     }
@@ -945,6 +945,7 @@
         margin-bottom: $spacing-size-6;
         text-align: left;
     }
+
     .rtsRenewLeft {
         flex: 1;
         display: flex;
@@ -952,12 +953,14 @@
         align-items: flex-start;
         min-width: 260px;
     }
+
     .rtsRenewRight {
         flex: 2;
         display: flex;
         align-items: center;
         min-width: 0;
     }
+
     @media screen and (max-width: 700px) {
         flex-direction: column;
         gap: $spacing-size-6;
@@ -966,6 +969,7 @@
             width: 100%;
             min-width: 0;
         }
+
         .rtsRenewRight {
             justify-content: flex-start;
         }

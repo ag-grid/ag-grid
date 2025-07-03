@@ -1,4 +1,3 @@
-// Flip.tsx
 import Tick from '@pqina/flip';
 import '@pqina/flip/dist/flip.min.css';
 import React, { useEffect, useRef } from 'react';
