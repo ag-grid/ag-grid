@@ -8,6 +8,10 @@ import ImageCarousel from '@components/campaigns-components/ImageCarousel';
 
 const utm =
     '?utm_source=ag-grid.com&utm_medium=marketing-campaign-landing-page&utm_campaign=return-to-service-campaign';
+
+const mailtoAddress = 'info@ag-grid.com';
+const mailtoSubject = 'test subject';
+const mailtoBody = 'test body';
 ---
 
 <!-- Oswald font -->
@@ -38,8 +42,9 @@ const utm =
 
                     <FlipCountdown client:only days={60} />
                 </div>
-                <a href="mailto:info@ag-grid.com" class={`button ${styles.button}`}
-                    >Renew now <Icon name="chevronRight" /></a
+                <a
+                    href=`mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubject)}&body=${encodeURIComponent(mailtoBody)}`
+                    class={`button ${styles.button}`}>Renew now <Icon name="chevronRight" /></a
                 >
             </div>
         </div>
@@ -51,7 +56,9 @@ const utm =
                     Pick up where you left off and enjoy the full benefits of AG Grid at today's prices. In future,
                     renewing once you are out of contract will incur back pay and reinstatement charges.
                 </p>
-                <a href="mailto:info@ag-grid.com" class={`button-tertiary ${styles.button}`}
+                <a
+                    href=`mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubject)}&body=${encodeURIComponent(mailtoBody)}`
+                    class={`button-tertiary ${styles.button}`}
                     >Contact us at info@ag-grid.com <Icon name="chevronRight" /></a
                 >
             </div>
@@ -216,8 +223,9 @@ const utm =
         <section class={styles.rtsRenewSection} id="renew">
             <div class={styles.rtsRenewLeft}>
                 <h2>Ready to renew?</h2>
-                <a href="mailto:info@ag-grid.com" class={`button ${styles.button}`}
-                    >Renew now <Icon name="chevronRight" /></a
+                <a
+                    href=`mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubject)}&body=${encodeURIComponent(mailtoBody)}`
+                    class={`button ${styles.button}`}>Renew now <Icon name="chevronRight" /></a
                 >
             </div>
             <div class={styles.rtsRenewRight}>
