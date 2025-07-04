@@ -67,7 +67,7 @@ jobs:
               if: always()
               working-directory: testing/ag-grid-docs
               env:
-                  BASE_URL: https://grid-staging.ag-grid.com/
+                BASE_URL: https://grid-staging.ag-grid.com/
               run: npx playwright test ag-grid-demos.spec.ts
             
             - name: Smoke Test Examples (ag-grid.com)
@@ -76,8 +76,7 @@ jobs:
               env:
                 BASE_URL: https://ag-grid.com
                 AG_GRID_PERCENTAGE_TO_RUN: 0.01
-              run: npx playwright test ag-grid-demos.spec.ts
-
+              run: npx playwright test smoke-test-examples.spec.ts
 
             - name: Upload Test Report
               id: upload-report
