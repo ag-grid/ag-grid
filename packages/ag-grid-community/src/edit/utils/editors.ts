@@ -180,12 +180,6 @@ function _valueFromEditor(cancel: boolean, cellComp?: ICellComp): { newValue?: a
         return noValueResult;
     }
 
-    const userWantsToCancel = cellEditor.isCancelAfterEnd?.();
-
-    if (userWantsToCancel) {
-        return noValueResult;
-    }
-
     const validationErrors = cellEditor.getValidationErrors?.();
 
     if ((validationErrors?.length ?? 0) > 0) {
@@ -359,13 +353,13 @@ export function _syncFromEditor(
 export function _destroyEditors(
     beans: BeanCollection,
     edits?: Required<EditPosition>[],
-    params?: { silent?: boolean }
+    params?: { silent?: boolean } | null
 ): void {
     if (!edits) {
         edits = beans.editModelSvc?.getEditPositions();
     }
 
-    edits!.forEach((cellPosition) => _destroyEditor(beans, cellPosition, params));
+    edits!.forEach((cellPosition) => _destroyEditor(beans, cellPosition, params ?? undefined));
 }
 
 export function _destroyEditor(

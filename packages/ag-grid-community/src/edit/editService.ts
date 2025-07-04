@@ -383,7 +383,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 const editValue = editRow.get(column)!;
                 const valueChanged = _valuesDiffer(editValue);
 
-                if (!cancel && valueChanged && !hasValidationErrors) {
+                const cellCtrl = _getCellCtrl(this.beans, { rowNode, column });
+
+                const isCancelAfterEnd = cellCtrl?.comp?.getCellEditor()?.isCancelAfterEnd?.();
+
+                if (!cancel && !isCancelAfterEnd && valueChanged && !hasValidationErrors) {
                     const success = this.setNodeDataValue(rowNode, column, editValue.newValue);
 
                     if (!success) {
