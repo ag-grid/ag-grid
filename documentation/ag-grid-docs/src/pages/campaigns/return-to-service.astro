@@ -3,15 +3,17 @@ import Layout from '../../layouts/Layout.astro';
 import styles from '../../pages-styles/return-to-service.module.scss';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import FlipCountdown from '@components/campaigns-components/FlipCountdown';
+import RenewNowButton from '@components/campaigns-components/RenewNowButton';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import ImageCarousel from '@components/campaigns-components/ImageCarousel';
+import { trackClickRenewMailto } from '@utils/analytics';
 
 const utm =
     '?utm_source=ag-grid.com&utm_medium=marketing-campaign-landing-page&utm_campaign=return-to-service-campaign';
-
 const mailtoAddress = 'info@ag-grid.com';
 const mailtoSubject = 'test subject';
 const mailtoBody = 'test body';
+const mailto = `mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubject)}&body=${encodeURIComponent(mailtoBody)}`;
 ---
 
 <!-- Oswald font -->
@@ -42,10 +44,13 @@ const mailtoBody = 'test body';
 
                     <FlipCountdown client:only days={60} />
                 </div>
-                <a
-                    href=`mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubject)}&body=${encodeURIComponent(mailtoBody)}`
-                    class={`button ${styles.button}`}>Renew now <Icon name="chevronRight" /></a
-                >
+                <RenewNowButton
+                    href={mailto}
+                    className={`button ${styles.button}`}
+                    plausibleEventType="renew-header-cta"
+                    text="Renew Now"
+                    client:load
+                />
             </div>
         </div>
 
@@ -56,11 +61,14 @@ const mailtoBody = 'test body';
                     Pick up where you left off and enjoy the full benefits of AG Grid at today's prices. In future,
                     renewing once you are out of contract will incur back pay and reinstatement charges.
                 </p>
-                <a
-                    href=`mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubject)}&body=${encodeURIComponent(mailtoBody)}`
-                    class={`button-tertiary ${styles.button}`}
-                    >Contact us at info@ag-grid.com <Icon name="chevronRight" /></a
-                >
+
+                <RenewNowButton
+                    href={mailto}
+                    className={`button-tertiary ${styles.button}`}
+                    plausibleEventType="renew-body-cta"
+                    text="Contact us at info@ag-grid.com"
+                    client:load
+                />
             </div>
 
             <div class={styles.rtsBenefitsTableWrapper}>
@@ -223,10 +231,14 @@ const mailtoBody = 'test body';
         <section class={styles.rtsRenewSection} id="renew">
             <div class={styles.rtsRenewLeft}>
                 <h2>Ready to renew?</h2>
-                <a
-                    href=`mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubject)}&body=${encodeURIComponent(mailtoBody)}`
-                    class={`button ${styles.button}`}>Renew now <Icon name="chevronRight" /></a
-                >
+
+                <RenewNowButton
+                    href={mailto}
+                    className={`button ${styles.button}`}
+                    plausibleEventType="renew-footer-cta"
+                    text="Renew now"
+                    client:load
+                />
             </div>
             <div class={styles.rtsRenewRight}>
                 <div class={styles.rtsRenewContent}>
