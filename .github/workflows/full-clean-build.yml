@@ -1,4 +1,174 @@
-name: full-clean-build.yml
+name: Full Clean Build
+
 on:
+  schedule:
+    - cron: '0 0 * * *' # Daily at midnight UTC
+  workflow_dispatch:
+    inputs:
+      notify:
+        description: 'Notify Slack channel'
+        type: boolean
+        default: true
+        required: true
 
 jobs:
+  full-clean-build:
+    name: Full Clean Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      # Map environment variables from TeamCity
+      CHARTS_ROOT_DIR: ${{ env.GRID_ROOT_DIR }}/charts
+      GRID_ROOT_DIR: ${{ env.WWW_ROOT_DIR }}/html
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          submodules: 'recursive' # Adjust based on original checkout settings
+
+      - name: Init env files
+        run: |
+          echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.archive
+          echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.production
+        
+      - name: Version Modules
+        run: |
+          node scripts/deployments/versionModules.js "$(node ./scripts/calculate-next-version.js)" $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])") local
+        
+      - name: Bootstrap
+        run: |
+          npm run bootstrap
+        
+      - name: Sanity Check Grid & Charts Versions
+        run: |
+          node scripts/deployments/sanityCheckPackages.js $(node -e "console.log(require('./package.json').version)") $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])")
+        
+      - name: Update Base Url
+        run: |
+          node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
+        
+      - name: Validate Grid Modules
+        run: |
+          node scripts/deployments/validateGridModulesList.js
+        
+      - name: Sync Readmes
+        run: |
+          nx sync-readmes
+        
+      - name: Build
+        run: |
+          NODE_ENV=production yarn nx pack:verify --prod
+        
+      - name: Test
+        run: |
+          # yarn nx test:modules:full
+          yarn nx test:modules
+        
+      - name: Validate Dist Folders
+        run: |
+          ./scripts/deployments/validateDistFolders.sh
+        
+      - name: Publish Packages
+        run: |
+          ./scripts/publishGridPackages.sh %full_build_folder%
+        
+      - name: Sanity Check Base Url
+        run: |
+          node scripts/deployments/sanityCheckBaseUrl.js staging
+        
+      - name: Build Docs For Staging
+        run: |
+          CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
+        
+      - name: Deploy docs
+        run: |
+          ./scripts/deployments/createAndDeployDocsToTC.sh
+        
+      - name: Test Build Artefacts - Initialise
+        run: |
+          killall http-server || true
+          cd ~/.builds/ag-artefact-tests
+          git reset --hard && \
+            git checkout main && \
+            git pull && \
+            npm run update-seed && \
+            git clean -fdx  && \
+            npm i && \
+            ./update.sh ~/.builds/fullClean  && \
+            npm run clean && npm run build && npm run start-server
+        
+      - name: Test Build Artefacts - Tests
+        run: |
+          cd ~/.builds/ag-artefact-tests
+          npm run start-server
+          npm test
+        
+      - name: Test Build Artefacts - Stop Server
+        run: |
+          #cd ~/.builds/ag-artefact-tests
+          #npm run stop-server 2> /dev/null || true
+          killall http-server || true
+
+      - name: Test Build LTS Artefacts - Initialise
+        run: |
+          killall http-server || true
+          cd ~/.builds/ag-artefact-tests
+          git reset --hard && \
+            git pull && \
+            git clean -fdx  && \
+            git checkout b32.3.7 && \
+            npm i && \
+            ./update.sh ~/TeamCity/.builds/archive/b32.3.7 && \
+            npm run clean && npm run build && npm run start-server
+        
+      - name: Test Build LTS Artefacts - Tests
+        run: |
+          cd ~/.builds/ag-artefact-tests
+          npm run start-server
+          npm test
+        
+      - name: Test Build LTS Artefacts - Stop Server
+        run: |
+          killall http-server || true        
+
+      - name: SonarQube Analysis Community
+        uses: SonarSource/sonarqube-scan-action@v5.2.0
+        env:
+          SONAR_HOST_URL: https://sonarcloud.io
+          SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
+        with:
+          projectBaseDir: ./packages/
+          args: >
+            -Dsonar.javascript.node.maxspace=8192
+            -Dsonar.organization=ag-grid
+            -Dsonar.sources=./ag-grid-community,./ag-grid-angular/projects/ag-grid-angular,./ag-grid-react,./ag-grid-vue3
+            -Dsonar.typescript.tsconfigPaths=./ag-grid-community/tsconfig.lib.json,./ag-grid-angular/projects/ag-grid-angular/tsconfig.lib.prod.json,./ag-grid-react/tsconfig.json,./ag-grid-vue3/tsconfig.json
+            -Dsonar.projectKey=ag-grid_community_latest
+            -Dsonar.exclusions=**/__tests__/*,**/test.ts,**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+            -Dsonar.scanner.force-deprecated-java-version=true
+            -Dsonar.coverage.exclusions=**/*
+        
+      - name: SonarQube Analysis Enterprise
+        uses: SonarSource/sonarqube-scan-action@v5.2.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          projectBaseDir: ./packages/
+          args: >
+            -Dsonar.javascript.node.maxspace=8192
+            -Dsonar.organization=ag-grid
+            -Dsonar.sources=./ag-grid-enterprise
+            -Dsonar.typescript.tsconfigPaths=./ag-grid-enterprise/tsconfig.lib.json
+            -Dsonar.projectKey=ag-grid-enterprise-latest
+            -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+            -Dsonar.scanner.force-deprecated-java-version=true
+            -Dsonar.coverage.exclusions=**/*
+        
+      - name: Update Algolia Dev
+        run: |
+          echo ALGOLIA_ADMIN_KEY=${{ secrets.ALGOLIA_ADMIN_KEY }} > documentation/update-algolia-indices/.env
+          echo PUBLIC_ALGOLIA_APP_ID=O1K1ESGB5K >> documentation/update-algolia-indices/.env
+          yarn nx run ag-grid-docs:update-algolia -c staging
