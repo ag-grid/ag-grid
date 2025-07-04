@@ -5,7 +5,7 @@ const DOCS_RESOURCES_URL = 'https://localhost:4610/mcp/resources.json';
 const FRAMEWORK = 'react';
 
 const getMarkdownUrl = ({ framework, pageName }: { framework: string; pageName: string }) => {
-    return `https://localhost:4610/${framework}-data-grid/${pageName}.md`;
+    return `https://localhost:4610/${framework}-data-grid/${pageName}`;
 };
 
 async function fetchJson(url: string): Promise<any> {

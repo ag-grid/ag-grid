@@ -34,9 +34,11 @@ export async function GET() {
     const resp = await Promise.all(
         docsNavPages.map(async ({ path, title }) => {
             const page = (await getEntry('docs', path)) as CollectionEntry<'docs'>;
+            const pagePath = `${path}.md`;
             return {
-                uri: `ag-grid://docs/${path}`,
-                name: title,
+                uri: `ag-grid://docs/${pagePath}`,
+                name: pagePath,
+                title,
                 description: page.data.description || getFirstParagraphText(page.body!, currentFramework),
                 mimeType: 'text/markdown',
             };
