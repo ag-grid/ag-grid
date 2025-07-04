@@ -63,14 +63,14 @@ jobs:
 
         - name: Download all-examples-cached.json
           run: |
-            mkdir -p ./e2e/config
-            curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
+            mkdir -p ./e2e/.cache
+            curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
 
         - name: Cache all-examples-cached.json
           uses: actions/cache@v4
           with:
-            path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
-            key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
+            path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
+            key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
     
     test-demos-smoke:
         name: Smoke Test Demos / Examples
@@ -85,8 +85,8 @@ jobs:
             - name: Restore all-examples-cached.json
               uses: actions/cache@v4
               with:
-                path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
-                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
+                path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
+                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
 
             - name: Install Playwright Browsers
               working-directory: testing/ag-grid-docs
