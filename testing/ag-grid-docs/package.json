@@ -6,9 +6,11 @@
   "scripts": {},
   "author": "AG Grid <info@ag-grid.com>",
   "license": "MIT",
+  "dependencies": {
+    "playwright-ctrf-json-reporter": "0.0.20"
+  },
   "devDependencies": {
     "playwright": "^1.52.0",
-    "playwright-ctrf-json-reporter": "0.0.20",
     "@playwright/test": "^1.52.0",
     "@types/node": "^24.0.3"
   }
