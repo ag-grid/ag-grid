@@ -51,7 +51,7 @@ on:
 jobs:
     # Run all framework tasks in parallel
     test-demos:
-        name: Test Doc Demos
+        name: Smoke Test Demos / Examples
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -70,12 +70,14 @@ jobs:
               run: npx playwright test ag-grid-demos.spec.ts
 
             - name: Demo Pages (grid-staging.ag-grid.com)
+              if: always()
               working-directory: testing/ag-grid-docs
               env:
                   BASE_URL: https://grid-staging.ag-grid.com/
               run: npx playwright test ag-grid-demos.spec.ts
             
             - name: Smoke Test Examples (ag-grid.com)
+              if: always()
               working-directory: testing/ag-grid-docs
               env:
                 BASE_URL: https://ag-grid.com
