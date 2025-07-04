@@ -7,7 +7,7 @@
     "setup": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["npx playwright install --with-deps chromium firefox webkit"],
+        "commands": ["npx playwright install chromium firefox webkit  --with-deps --only-shell"],
         "parallel": true,
         "cwd": "testing/ag-grid-docs"
       }
