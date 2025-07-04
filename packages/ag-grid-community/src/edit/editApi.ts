@@ -1,7 +1,7 @@
 import type { StartEditingCellParams } from '../api/gridApi';
 import { ensureColumnVisible, ensureIndexVisible } from '../api/scrollApi';
 import type { BeanCollection } from '../context/context';
-import { _getCellByPosition } from '../entities/positionUtils';
+import { _getCellByPosition, _getRowNode } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { EditingCellPosition, ICellEditorValidationError } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
@@ -91,6 +91,16 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
         rowPinned: rowPinned || null,
         column,
     };
+
+    const rowNode = _getRowNode(beans, cellPosition);
+    if (!rowNode) {
+        _warn(290, { rowIndex, rowPinned });
+        return;
+    }
+
+    if (!column.isCellEditable(rowNode)) {
+        return;
+    }
 
     const notPinned = rowPinned == null;
     if (notPinned) {
