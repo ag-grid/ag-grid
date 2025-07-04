@@ -20,8 +20,12 @@ import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AlignedGrid,
     AsyncTransactionsFlushedEvent,
+    BatchEditingStartedEvent,
+    BatchEditingStoppedEvent,
     BodyScrollEndEvent,
     BodyScrollEvent,
+    BulkEditingStartedEvent,
+    BulkEditingStoppedEvent,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -2151,6 +2155,26 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public rowEditingStopped: EventEmitter<RowEditingStoppedEvent<TData>> = new EventEmitter<
         RowEditingStoppedEvent<TData>
+    >();
+    /** Bulk editing has started.
+     */
+    @Output() public bulkEditingStarted: EventEmitter<BulkEditingStartedEvent<TData>> = new EventEmitter<
+        BulkEditingStartedEvent<TData>
+    >();
+    /** Bulk editing has stopped.
+     */
+    @Output() public bulkEditingStopped: EventEmitter<BulkEditingStoppedEvent<TData>> = new EventEmitter<
+        BulkEditingStoppedEvent<TData>
+    >();
+    /** Batch editing has started (when batch editing is enabled).
+     */
+    @Output() public batchEditingStarted: EventEmitter<BatchEditingStartedEvent<TData>> = new EventEmitter<
+        BatchEditingStartedEvent<TData>
+    >();
+    /** Batch editing has stopped (when batch editing is enabled).
+     */
+    @Output() public batchEditingStopped: EventEmitter<BatchEditingStoppedEvent<TData>> = new EventEmitter<
+        BatchEditingStoppedEvent<TData>
     >();
     /** Undo operation has started.
      */

@@ -182,6 +182,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         filterSwitched: FilterSwitchedEvent<TData, TContext>;
         batchEditingStarted: BatchEditingStartedEvent<TData, TContext>;
         batchEditingStopped: BatchEditingStoppedEvent<TData, TContext>;
+        bulkEditingStarted: BulkEditingStartedEvent<TData, TContext>;
+        bulkEditingStopped: BulkEditingStoppedEvent<TData, TContext>;
     }
 >;
 
@@ -955,7 +957,7 @@ export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any>
 /**--------------*/
 /** BATCH EVENTS */
 /**--------------*/
-export interface BatchEditingEvent<T extends AgEventType, TData = any, TContext = any>
+interface BatchEditingEvent<T extends AgEventType, TData = any, TContext = any>
     extends AgGlobalEvent<T, TData, TContext> {
     changes?: CellValueChange[];
 }
@@ -965,6 +967,20 @@ export interface BatchEditingStartedEvent<TData = any, TContext = any>
 
 export interface BatchEditingStoppedEvent<TData = any, TContext = any>
     extends BatchEditingEvent<'batchEditingStopped', TData, TContext> {}
+
+/**---------------------*/
+/** BULK EDITING EVENTS */
+/**---------------------*/
+interface BulkEditingEvent<T extends AgEventType, TData = any, TContext = any>
+    extends AgGlobalEvent<T, TData, TContext> {
+    changes?: CellValueChange[];
+}
+
+export interface BulkEditingStartedEvent<TData = any, TContext = any>
+    extends BulkEditingEvent<'bulkEditingStarted', TData, TContext> {}
+
+export interface BulkEditingStoppedEvent<TData = any, TContext = any>
+    extends BulkEditingEvent<'bulkEditingStopped', TData, TContext> {}
 
 /**------------*/
 /** ROW EVENTS */
