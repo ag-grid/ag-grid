@@ -63,12 +63,6 @@ jobs:
               working-directory: testing/ag-grid-docs
               run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
 
-            - name: Demo Pages (ag-grid.com)
-              working-directory: testing/ag-grid-docs
-              env:
-                BASE_URL: https://ag-grid.com
-              run: npx playwright test ag-grid-demos.spec.ts
-
             - name: Demo Pages (grid-staging.ag-grid.com)
               if: always()
               working-directory: testing/ag-grid-docs
