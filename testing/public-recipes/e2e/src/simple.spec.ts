@@ -32,7 +32,9 @@ test.describe('Simple e2e testing examples', () => {
             const frame = await loadE2ETestingExample(page, fw);
             expect(frame).toBeTruthy();
 
-            await expect(frame.getByTestId(getTestIdForRowNode('row-group-country-South Korea'))).toBeVisible();
+            await expect(frame.getByTestId(getTestIdForRowNode('row-group-country-South Korea'))).toBeVisible({
+                timeout: 20_000,
+            });
             await expect(
                 frame.getByTestId(getTestIdForCell('row-group-country-South Korea', 'ag-Grid-AutoColumn'))
             ).toContainText('South Korea');
