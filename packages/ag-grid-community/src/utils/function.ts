@@ -84,16 +84,15 @@ export function _batchCall(func: () => void, mode: 'setTimeout' | 'raf' = 'setTi
  * @param {number} delay The time in ms to debounce
  * @returns {Function} The debounced function
  */
-export function _debounce(
+export function _debounce<TArgs extends any[], TContext>(
     bean: { isAlive(): boolean },
-    func: (...args: any[]) => void,
+    func: (this: TContext, ...args: TArgs) => void,
     delay: number
-): (...args: any[]) => void {
+): (this: TContext, ...args: TArgs) => void {
     let timeout: any;
 
     // Calling debounce returns a new anonymous function
-    return function (...args: any[]) {
-        //@ts-expect-error no implicit this
+    return function (this: TContext, ...args: TArgs) {
         const context = this as any;
         window.clearTimeout(timeout);
 

@@ -81,6 +81,7 @@ export class AgColumn<TValue = any>
     public sort: SortDirection | undefined;
     public sortIndex: number | null | undefined;
     public moving = false;
+    public resizing = false;
     public menuVisible = false;
     public highlighted: ColumnHighlightPosition | null;
 

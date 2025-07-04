@@ -221,8 +221,8 @@ export type AgGlobalEventListener<TData = any, TContext = any, T extends AgEvent
 export interface ModelUpdatedEvent<TData = any, TContext = any> extends AgGlobalEvent<'modelUpdated', TData, TContext> {
     /** If true, the grid will try and animate the rows to the new positions */
     animate: boolean | undefined;
-    /** If true, the grid has new data loaded, eg user called setRowData(), otherwise
-     * it's the same data but sorted or filtered, in which case this is true, and rows
+    /** If the grid has new data loaded, eg user called setRowData(), this will be false,
+     * otherwise it's the same data but sorted or filtered, in which case this is true, and rows
      * can animate around (eg rowNode id 24 is the same row node as last time). */
     keepRenderedRows: boolean | undefined;
     /** If true, then this update was a result of setRowData() getting called. This
