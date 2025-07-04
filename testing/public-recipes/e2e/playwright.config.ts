@@ -35,6 +35,9 @@ export default defineConfig({
                     width: 800,
                     height: 600,
                 },
+                launchOptions: {
+                    args: ['--ignore-certificate-errors'],
+                },
             },
         },
     ],
