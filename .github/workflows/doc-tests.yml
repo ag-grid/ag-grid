@@ -224,7 +224,7 @@ jobs:
             fetch-depth: 1
 
         - name: Get previous run commit SHA
-          if: ${{ inputs.notify }}
+          if: ${{ github.event_name == 'schedule' || inputs.notify }}
           id: prev-commit-sha
           uses: actions/cache/restore@v4
           with:
@@ -232,7 +232,7 @@ jobs:
             key: doc-tests-prev-commit
 
         - name: Convert ctrf output to Slack message blocks and write git sha
-          if: ${{ inputs.notify }}
+          if: ${{ github.event_name == 'schedule' || inputs.notify }}
           env:
             CTRF_REPORT: ${{ steps.ctrf.outputs.report }}
             JOB_NAME: 'Documentation Tests'
@@ -257,7 +257,7 @@ jobs:
             echo ${{ github.sha }} > ${{ env.COMMIT_SHA_FILE }}
 
         - name: Slack Notification
-          if: ${{ inputs.notify }}
+          if: ${{ github.event_name == 'schedule' || inputs.notify }}
           continue-on-error: true
           uses: ./.github/actions/slack-integration
           with:
@@ -265,7 +265,7 @@ jobs:
             SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
 
         - name: Save this run commit SHA
-          if: ${{ inputs.notify }}
+          if: ${{ github.event_name == 'schedule' || inputs.notify }}
           uses: actions/cache/save@v4
           with:
             path: ${{ env.COMMIT_SHA_FILE }}
