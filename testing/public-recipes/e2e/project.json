@@ -12,7 +12,7 @@
         "cwd": "testing/public-recipes"
       }
     },
-    "e2e": {
+    "test:e2e": {
       "executor": "nx:run-commands",
       "dependsOn": ["setup", "ag-grid-community:build", "ag-grid-enterprise:build"],
       "options": {
