@@ -50,42 +50,7 @@ on:
 
 jobs:
     # Run all framework tasks in parallel
-    test-demos:
-        name: Smoke Test Demos / Examples
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 1
-
-            - name: Install Playwright Browsers
-              working-directory: testing/ag-grid-docs
-              run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
-
-            - name: Demo Pages (grid-staging.ag-grid.com)
-              if: always()
-              working-directory: testing/ag-grid-docs
-              env:
-                BASE_URL: https://grid-staging.ag-grid.com/
-              run: npx playwright test ag-grid-demos.spec.ts
-            
-            - name: Smoke Test Examples (ag-grid.com)
-              if: always()
-              working-directory: testing/ag-grid-docs
-              env:
-                BASE_URL: https://ag-grid.com
-                AG_GRID_PERCENTAGE_TO_RUN: 0.01
-              run: npx playwright test smoke-test-examples.spec.ts
-
-            - name: Upload Test Report
-              id: upload-report
-              uses: actions/upload-artifact@v4
-              if: ${{ !cancelled() }}
-              with:
-                name: playwright-report-demos
-                path: reports/
-                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+    
 
     download-examples:
       name: Download all-examples.json
@@ -106,6 +71,49 @@ jobs:
           with:
             path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
             key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
+    
+    test-demos-smoke:
+        name: Smoke Test Demos / Examples
+        needs: download-examples
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 1
+
+            - name: Restore all-examples-cached.json
+              uses: actions/cache@v4
+              with:
+                path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
+                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
+
+            - name: Install Playwright Browsers
+              working-directory: testing/ag-grid-docs
+              run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
+
+            - name: Demo Pages
+              working-directory: testing/ag-grid-docs
+              env:
+                BASE_URL: https://grid-staging.ag-grid.com/
+              run: npx playwright test ag-grid-demos.spec.ts
+            
+            - name: Smoke Test Examples (ag-grid.com)
+              if: always()
+              working-directory: testing/ag-grid-docs
+              env:
+                BASE_URL: https://ag-grid.com
+                AG_GRID_PERCENTAGE_TO_RUN: 0.01
+              run: npx playwright test smoke-test-examples.spec.ts
+
+            - name: Upload Test Report
+              id: upload-report
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                name: playwright-report-demos
+                path: reports/
+                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}            
 
     test-vanilla:
         if: ${{ github.event.inputs.skip_vanilla != 'true' }}
