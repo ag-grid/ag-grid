@@ -11,6 +11,10 @@ on:
         default: true
         required: true
 
+env:
+  COMMIT_SHA_FILE: ./commit-sha.txt
+  SLACK_FILE: ./slack.json
+
 jobs:
   full-clean-build:
     name: Full Clean Build
@@ -26,7 +30,46 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
-          submodules: 'recursive' # Adjust based on original checkout settings
+
+      - name: Get previous run commit SHA
+        if: ${{ github.event_name == 'schedule' || inputs.notify }}
+        id: prev-commit-sha
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.COMMIT_SHA_FILE }}
+          key: full-build-prev-commit
+
+      - name: Check for Changes
+        run: |
+          # Read previous commit from file (if exists)
+          if [ -f ${{ env.COMMIT_SHA_FILE }} ]; then
+            PREV_COMMIT=$(cat ${{ env.COMMIT_SHA_FILE }})
+          else
+            PREV_COMMIT=""
+          fi
+          
+          CURRENT_COMMIT=$(git rev-parse HEAD)
+          
+          echo "Current Commit: $CURRENT_COMMIT"
+          echo "Previous Commit: $PREV_COMMIT"
+          
+          if [ "$CURRENT_COMMIT" == "$PREV_COMMIT" ]; then
+            echo "::set-output name=has_changes::false"
+            echo "No changes detected. Skipping build."
+          else
+            echo "::set-output name=has_changes::true"
+            echo "::set-output name=current_commit::$CURRENT_COMMIT"
+            # Write current commit to file for caching
+            echo "$CURRENT_COMMIT" > {{ env.COMMIT_SHA_FILE }}
+            echo "Changes detected. Proceeding with build."
+          fi
+        id: change-check
+
+      - name: Skip Build if No Changes
+        if: ${{ steps.change-check.outputs.has_changes == 'false' }}
+        run: |
+          echo "No changes detected. Skipping the build."
+          exit 0
 
       - name: Init env files
         run: |
@@ -172,3 +215,16 @@ jobs:
           echo ALGOLIA_ADMIN_KEY=${{ secrets.ALGOLIA_ADMIN_KEY }} > documentation/update-algolia-indices/.env
           echo PUBLIC_ALGOLIA_APP_ID=O1K1ESGB5K >> documentation/update-algolia-indices/.env
           yarn nx run ag-grid-docs:update-algolia -c staging
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: module-size-results
+          path: testing/module-size/module-size-results.json
+          retention-days: 30
+
+      - name: Save Current Commit Hash
+        uses: actions/cache@v4
+        with:
+          key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
+          path: ${{ env.COMMIT_SHA_FILE }}
