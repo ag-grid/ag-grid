@@ -63,9 +63,25 @@ jobs:
               working-directory: testing/ag-grid-docs
               run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
 
-            - name: Demo Pages
+            - name: Demo Pages (ag-grid.com)
               working-directory: testing/ag-grid-docs
+              env:
+                BASE_URL: https://ag-grid.com
               run: npx playwright test ag-grid-demos.spec.ts
+
+            - name: Demo Pages (grid-staging.ag-grid.com)
+              working-directory: testing/ag-grid-docs
+              env:
+                  BASE_URL: https://grid-staging.ag-grid.com/
+              run: npx playwright test ag-grid-demos.spec.ts
+            
+            - name: Smoke Test Examples (ag-grid.com)
+              working-directory: testing/ag-grid-docs
+              env:
+                BASE_URL: https://ag-grid.com
+                AG_GRID_PERCENTAGE_TO_RUN: 0.01
+              run: npx playwright test ag-grid-demos.spec.ts
+
 
             - name: Upload Test Report
               id: upload-report
