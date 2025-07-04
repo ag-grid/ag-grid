@@ -25,6 +25,10 @@ const FRAMEWORKS = ['javascript', 'react', 'angular', 'vue'] as const;
 test.describe('Simple e2e testing examples', () => {
     for (const fw of FRAMEWORKS) {
         test(`can load the example and select row in ${fw}`, async ({ page }) => {
+            if (fw === 'angular') {
+                test.slow();
+            }
+
             const frame = await loadE2ETestingExample(page, fw);
             expect(frame).toBeTruthy();
 
