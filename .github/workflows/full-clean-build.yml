@@ -1,0 +1,4 @@
+name: full-clean-build.yml
+on:
+
+jobs:
