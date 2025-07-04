@@ -214,7 +214,7 @@ jobs:
     publish-reports:
       if: always()
       needs:
-        - test-demos
+        - test-demos-smoke
         - test-react-functional
         - test-react-functional-ts
         - test-angular
