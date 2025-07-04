@@ -39,38 +39,6 @@ jobs:
           path: ${{ env.COMMIT_SHA_FILE }}
           key: full-build-prev-commit
 
-      - name: Check for Changes
-        run: |
-          # Read previous commit from file (if exists)
-          if [ -f ${{ env.COMMIT_SHA_FILE }} ]; then
-            PREV_COMMIT=$(cat ${{ env.COMMIT_SHA_FILE }})
-          else
-            PREV_COMMIT=""
-          fi
-          
-          CURRENT_COMMIT=$(git rev-parse HEAD)
-          
-          echo "Current Commit: $CURRENT_COMMIT"
-          echo "Previous Commit: $PREV_COMMIT"
-          
-          if [ "$CURRENT_COMMIT" == "$PREV_COMMIT" ]; then
-            echo "::set-output name=has_changes::false"
-            echo "No changes detected. Skipping build."
-          else
-            echo "::set-output name=has_changes::true"
-            echo "::set-output name=current_commit::$CURRENT_COMMIT"
-            # Write current commit to file for caching
-            echo "$CURRENT_COMMIT" > {{ env.COMMIT_SHA_FILE }}
-            echo "Changes detected. Proceeding with build."
-          fi
-        id: change-check
-
-      - name: Skip Build if No Changes
-        if: ${{ steps.change-check.outputs.has_changes == 'false' }}
-        run: |
-          echo "No changes detected. Skipping the build."
-          exit 0
-
       - name: Init env files
         run: |
           echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.archive
