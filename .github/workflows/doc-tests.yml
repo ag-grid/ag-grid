@@ -92,7 +92,7 @@ jobs:
 
             - name: Install Playwright Browsers
               working-directory: testing/ag-grid-docs
-              run: npm ci 
+              run: npm i 
               # && npx playwright install chromium firefox webkit --with-deps --only-shell
 
             - name: Demo Pages
