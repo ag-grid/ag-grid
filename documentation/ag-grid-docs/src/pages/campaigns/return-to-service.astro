@@ -8,8 +8,13 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import ImageCarousel from '@components/campaigns-components/ImageCarousel';
 import { trackClickRenewMailto } from '@utils/analytics';
 
-const utm =
-    '?utm_source=ag-grid.com&utm_medium=marketing-campaign-landing-page&utm_campaign=return-to-service-campaign';
+// Tracking / Analytics
+const utmSource = 'ag-grid.com';
+const utmMedium = 'marketing-campaign-landing-page';
+const utmCampaign = 'return-to-service-campaign';
+const utm = `?utm_source=${utmSource}&utm_medium=${utmMedium}&utm_campaign=${utmCampaign}`;
+
+// Mailto Content
 const mailtoAddress = 'info@ag-grid.com';
 const mailtoSubject = 'test subject';
 const mailtoBody = 'test body';
