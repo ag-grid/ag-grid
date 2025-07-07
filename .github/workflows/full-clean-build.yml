@@ -43,63 +43,73 @@ jobs:
         run: |
           echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.archive
           echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.production
-        
+
       - name: Version Modules
         run: |
           node scripts/deployments/versionModules.js "$(node ./scripts/calculate-next-version.js)" $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])") local
-        
+
       - name: Bootstrap
         run: |
           npm run bootstrap
-        
+
       - name: Sanity Check Grid & Charts Versions
         run: |
           node scripts/deployments/sanityCheckPackages.js $(node -e "console.log(require('./package.json').version)") $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])")
-        
+
       - name: Update Base Url
         run: |
           node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
-        
+
       - name: Validate Grid Modules
         run: |
           node scripts/deployments/validateGridModulesList.js
-        
+
       - name: Sync Readmes
         run: |
           nx sync-readmes
-        
+
       - name: Build
         run: |
           NODE_ENV=production yarn nx pack:verify --prod
-        
+
       - name: Test
         run: |
           # yarn nx test:modules:full
           yarn nx test:modules
-        
+
       - name: Validate Dist Folders
         run: |
           ./scripts/deployments/validateDistFolders.sh
-        
+
       - name: Publish Packages
         run: |
           ./scripts/publishGridPackages.sh %full_build_folder%
-        
+
       - name: Sanity Check Base Url
         run: |
           node scripts/deployments/sanityCheckBaseUrl.js staging
-        
+
       - name: Build Docs For Staging
         run: |
           CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
-        
-      - name: Deploy docs
+
+      - name: Deploy to Staging
+        id: deploy_to_staging
+        if: ${{ github.ref == 'refs/heads/latest' }}
+        env:
+          SSH_PRIVATE_KEY: |
+            ${{ secrets.STAGING_SSH_KEY }}
+          SSH_HOST: ${{ secrets.STAGING_HOST }}
+          SSH_USER: ubuntu
+          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
         run: |
-          ./scripts/deployments/createAndDeployDocsToTC.sh
-        
+          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+          chmod 400 $SSH_KEY_LOCATION
+          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+
       - name: Test Build Artefacts - Initialise
         run: |
-          killall http-server || true
           cd ~/.builds/ag-artefact-tests
           git reset --hard && \
             git checkout main && \
@@ -109,22 +119,16 @@ jobs:
             npm i && \
             ./update.sh ~/.builds/fullClean  && \
             npm run clean && npm run build && npm run start-server
-        
+
       - name: Test Build Artefacts - Tests
         run: |
           cd ~/.builds/ag-artefact-tests
           npm run start-server
           npm test
-        
-      - name: Test Build Artefacts - Stop Server
-        run: |
-          #cd ~/.builds/ag-artefact-tests
-          #npm run stop-server 2> /dev/null || true
           killall http-server || true
 
       - name: Test Build LTS Artefacts - Initialise
         run: |
-          killall http-server || true
           cd ~/.builds/ag-artefact-tests
           git reset --hard && \
             git pull && \
@@ -133,16 +137,13 @@ jobs:
             npm i && \
             ./update.sh ~/TeamCity/.builds/archive/b32.3.7 && \
             npm run clean && npm run build && npm run start-server
-        
+
       - name: Test Build LTS Artefacts - Tests
         run: |
           cd ~/.builds/ag-artefact-tests
           npm run start-server
           npm test
-        
-      - name: Test Build LTS Artefacts - Stop Server
-        run: |
-          killall http-server || true        
+          killall http-server || true
 
       - name: SonarQube Analysis Community
         uses: SonarSource/sonarqube-scan-action@v5.2.0
@@ -160,7 +161,7 @@ jobs:
             -Dsonar.exclusions=**/__tests__/*,**/test.ts,**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
             -Dsonar.scanner.force-deprecated-java-version=true
             -Dsonar.coverage.exclusions=**/*
-        
+
       - name: SonarQube Analysis Enterprise
         uses: SonarSource/sonarqube-scan-action@v5.2.0
         env:
@@ -177,7 +178,7 @@ jobs:
             -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
             -Dsonar.scanner.force-deprecated-java-version=true
             -Dsonar.coverage.exclusions=**/*
-        
+
       - name: Update Algolia Dev
         run: |
           echo ALGOLIA_ADMIN_KEY=${{ secrets.ALGOLIA_ADMIN_KEY }} > documentation/update-algolia-indices/.env
