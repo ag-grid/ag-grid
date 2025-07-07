@@ -22,7 +22,7 @@ if (!rawReport) {
 console.log('Converting CTRF report to Slack blocks...');
 let parsedReport;
 try {
-    parsedReport = JSON.parse(rawReport);
+    parsedReport = JSON.parse(rawReport).results.summary;
 } catch (error) {
     console.error('Failed to parse CTRF report:', rawReport, error);
     process.exit(1);
