@@ -2,7 +2,7 @@ name: Full Clean Build
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Daily at midnight UTC
+    - cron: '0 0 * * *' # Daily at midnight UTC against the latest branch
   workflow_dispatch:
     inputs:
       notify:
