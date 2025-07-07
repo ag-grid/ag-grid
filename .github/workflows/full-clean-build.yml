@@ -86,8 +86,9 @@ jobs:
           ./scripts/deployments/validateDistFolders.sh
 
       - name: Publish Packages
+        if: ${{ github.ref == 'refs/heads/latest' && steps.build.outputs.success == 'true' }}
         run: |
-          ./scripts/publishGridPackages.sh ${{ env.FULL_BUILD_FOLDER }}
+          ./scripts/publishGridPackages.sh .
 
       - name: Sanity Check Base Url
         run: |
