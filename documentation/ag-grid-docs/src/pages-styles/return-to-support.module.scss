@@ -5,13 +5,12 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 550px;
-    background: radial-gradient(
-        circle at 80% 50%,
-        rgba(30, 81, 200, 0.049) 0%,
-        rgba(30, 81, 200, 0.018) 60%,
-        transparent 100%
-    );
+    height: 500px;
+    background: var(--color-brand-500);
+
+    #{$selector-darkmode} & {
+        background: var(--color-bg-primary);
+    }
 
     border-bottom: 1px solid var(--color-border-secondary);
     z-index: 0;
@@ -30,11 +29,15 @@
     justify-content: space-between;
     padding: $spacing-size-16 $spacing-size-4;
     border-radius: var(--radius-lg);
-
     max-width: 1200px;
     gap: $spacing-size-8;
     position: relative;
     overflow: visible;
+
+    p {
+        color: var(--color-white);
+        opacity: 0.8;
+    }
 
     // Ensure content is above the gradient
     > * {
@@ -55,6 +58,7 @@
         font-size: var(--text-fs-2xl);
         margin-bottom: $spacing-size-4;
         text-align: left;
+        color: var(--color-white);
     }
     p {
         text-align: left;
@@ -76,6 +80,19 @@
     a {
         width: 300px;
         text-align: center;
+        background-color: var(--color-white);
+        color: var(--color-brand-500);
+
+        svg {
+            fill: var(--color-brand-500);
+        }
+        #{$selector-darkmode} & {
+            background-color: var(--color-button-tertiary-fg);
+        }
+
+        &:hover {
+            background-color: var(--color-white);
+        }
     }
 }
 .rtsFlipClock {
@@ -109,7 +126,7 @@
 
 .rtsFlipClockEnds {
     font-size: var(--text-fs-base);
-    color: var(--color-fg-primary);
+    color: var(--color-white);
     margin-top: $spacing-size-2;
     letter-spacing: 1px;
     font-family: var(--text-monospace-font-family);
@@ -124,8 +141,8 @@
 
 .rtsBenefitsSection {
     border-radius: var(--radius-md);
-    padding: $spacing-size-24 $spacing-size-12;
-    margin-top: $spacing-size-16;
+    padding: $spacing-size-16 $spacing-size-12;
+    margin-top: $spacing-size-8;
     text-align: center;
 
     @media screen and (max-width: 700px) {
@@ -210,7 +227,7 @@
 .rtsReleasesSection {
     margin: $spacing-size-12 auto;
     max-width: 1100px;
-    text-align: center;
+    text-align: left;
     > h2,
     > p {
         text-align: left;
@@ -503,10 +520,29 @@
     padding: 4px;
     border-radius: 24px;
     fill: var(--color-bg-primary);
-    background: var(--color-util-brand-500);
-
+    background: rgb(33, 159, 33);
     #{$selector-darkmode} & {
         background: var(--color-button-tertiary-fg);
+    }
+
+    transition: all 0.3s;
+    opacity: 1;
+}
+
+.tick span {
+    transition: all 0.3s;
+    opacity: 1;
+}
+
+.cross svg {
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    border-radius: 24px;
+    fill: rgb(212, 19, 19);
+
+    #{$selector-darkmode} & {
+        fill: rgb(242, 71, 71);
     }
 
     transition: all 0.3s;
@@ -527,8 +563,8 @@
 }
 
 .renewedSupportTitle {
-    color: var(--color-brand-500);
-    opacity: 1 !important;
+    color: var(--color-fg-tertiary);
+    opacity: 0.7 !important;
 
     #{$selector-darkmode} & {
         color: var(--color-button-tertiary-fg);

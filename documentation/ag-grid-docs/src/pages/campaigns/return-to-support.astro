@@ -86,76 +86,44 @@ const mailto = `mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubje
                     </thead>
                     <tbody>
                         <tr>
+                            <td>New features and improvements</td>
+                            <td> <span class={styles.tick}><Icon name="tick" /></span></td>
+                            <td><span class={styles.cross}><Icon name="cross" /></span></td>
+                        </tr>
+                        <tr>
                             <td>Access to latest versions and updates</td>
-                            <td>
-                                <span class={styles.tick}>
-                                    <Icon name="tick" />
-                                </span></td
-                            >
-                            <td><span class={styles.dash}>—</span></td>
+                            <td> <span class={styles.tick}><Icon name="tick" /></span></td>
+                            <td><span class={styles.cross}><Icon name="cross" /></span></td>
                         </tr>
                         <tr>
                             <td>Security patches and critical fixes</td>
-                            <td>
-                                <span class={styles.tick}>
-                                    <Icon name="tick" />
-                                </span></td
-                            >
-                            <td><span class={styles.dash}>—</span></td>
+                            <td> <span class={styles.tick}><Icon name="tick" /></span></td>
+                            <td><span class={styles.cross}><Icon name="cross" /></span></td>
                         </tr>
                         <tr>
                             <td>Technical support from AG Grid team</td>
-                            <td>
-                                <span class={styles.tick}>
-                                    <Icon name="tick" />
-                                </span></td
-                            >
-                            <td><span class={styles.dash}>—</span></td>
+                            <td> <span class={styles.tick}><Icon name="tick" /></span></td>
+                            <td><span class={styles.cross}><Icon name="cross" /></span></td>
                         </tr>
                         <tr>
                             <td>Compatibility with latest browsers</td>
-                            <td>
-                                <span class={styles.tick}>
-                                    <Icon name="tick" />
-                                </span></td
-                            >
-                            <td><span class={styles.dash}>—</span></td>
-                        </tr>
-                        <tr>
-                            <td>New features and improvements</td>
-                            <td>
-                                <span class={styles.tick}>
-                                    <Icon name="tick" />
-                                </span></td
-                            >
-                            <td><span class={styles.dash}>—</span></td>
-                        </tr>
-                        <tr>
-                            <td>Priority issue resolution</td>
-                            <td>
-                                <span class={styles.tick}>
-                                    <Icon name="tick" />
-                                </span></td
-                            >
-                            <td><span class={styles.dash}>—</span></td>
-                        </tr>
-                        <tr>
-                            <td>Peace of mind for your team</td>
-                            <td>
-                                <span class={styles.tick}>
-                                    <Icon name="tick" />
-                                </span></td
-                            >
-                            <td><span class={styles.dash}>—</span></td>
+                            <td> <span class={styles.tick}><Icon name="tick" /></span></td>
+                            <td><span class={styles.cross}><Icon name="cross" /></span></td>
                         </tr>
                         <tr>
                             <td>Compatibility with latest framework versions</td>
-                            <td>
-                                <span class={styles.tick}>
-                                    <Icon name="tick" />
-                                </span></td
-                            >
-                            <td><span class={styles.dash}>—</span></td>
+                            <td> <span class={styles.tick}><Icon name="tick" /></span></td>
+                            <td><span class={styles.cross}><Icon name="cross" /></span></td>
+                        </tr>
+                        <tr>
+                            <td>Priority issue resolution</td>
+                            <td> <span class={styles.tick}><Icon name="tick" /></span></td>
+                            <td><span class={styles.cross}><Icon name="cross" /></span></td>
+                        </tr>
+                        <tr>
+                            <td>Peace of mind for your team</td>
+                            <td> <span class={styles.tick}><Icon name="tick" /></span></td>
+                            <td><span class={styles.cross}><Icon name="cross" /></span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -164,21 +132,20 @@ const mailto = `mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubje
 
         <section class={styles.rtsReleasesSection}>
             <div class={styles.sectionTitle}>
-                <h2>Latest releases</h2>
+                <h2>Highlights from our latest releases</h2>
                 <p>Here's what you've missed since you've been gone</p>
-                <a href={urlWithBaseUrl(`/whats-new/${utm}`)} target="_blank" class={`button-tertiary ${styles.button}`}
-                    >View recent releases <Icon name="chevronRight" /></a
-                >
             </div>
             <div class={styles.rtsReleaseCards}>
                 <div class={styles.rtsReleaseCard}>
-                    <a href=`https://blog.ag-grid.com/whats-new-in-ag-grid-33-2/${utm}` target="_blank">
-                        <img src={urlWithBaseUrl(`images/campaigns/33.2.png`)} class={styles.rtsReleaseImage} />
-                        <h3>33.2: Find</h3>
-                        <p>Instantly search and locate data using the powerful new in-grid Find feature</p>
+                    <a href=`https://blog.ag-grid.com/whats-new-in-ag-grid-34/${utm}` target=" _blank">
+                        <img src={urlWithBaseUrl(`images/campaigns/34.png`)} class={styles.rtsReleaseImage} />
+                        <h3>34: Filter Tool Panel</h3>
+                        <p>
+                            Take control of data filtering with the redesigned Filters Tool Panel, faster, clearer, and
+                            more intuitive than ever.
+                        </p>
                     </a>
                 </div>
-
                 <div class={styles.rtsReleaseCard}>
                     <a href=`https://blog.ag-grid.com/whats-new-in-ag-grid-33-3/${utm}` target="_blank">
                         <img src={urlWithBaseUrl(`images/campaigns/33.3.png`)} class={styles.rtsReleaseImage} />
@@ -190,16 +157,16 @@ const mailto = `mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubje
                     </a>
                 </div>
                 <div class={styles.rtsReleaseCard}>
-                    <a href=`https://blog.ag-grid.com/whats-new-in-ag-grid-34/${utm}` target=" _blank">
-                        <img src={urlWithBaseUrl(`images/campaigns/34.png`)} class={styles.rtsReleaseImage} />
-                        <h3>34: Filter Tool Panel</h3>
-                        <p>
-                            Take control of data filtering with the redesigned Filters Tool Panel, faster, clearer, and
-                            more intuitive than ever.
-                        </p>
+                    <a href=`https://blog.ag-grid.com/whats-new-in-ag-grid-33-2/${utm}` target="_blank">
+                        <img src={urlWithBaseUrl(`images/campaigns/33.2.png`)} class={styles.rtsReleaseImage} />
+                        <h3>33.2: Find</h3>
+                        <p>Instantly search and locate data using the powerful new in-grid Find feature</p>
                     </a>
                 </div>
             </div>
+            <a href={urlWithBaseUrl(`/whats-new/${utm}`)} target="_blank" class={`button-tertiary ${styles.button}`}
+                >View recent releases <Icon name="chevronRight" /></a
+            >
         </section>
 
         <section class={styles.rtsTrustedSection}>
@@ -236,11 +203,11 @@ const mailto = `mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubje
                 <div class={styles.rtsRenewContent}>
                     <p>
                         To ensure fairness for customers who maintain continuous support and to help us deliver
-                        consistent, high-quality service and enhancements, we’re updating our Support & Maintenance
+                        consistent, high-quality service and enhancements, we're updating our Support & Maintenance
                         renewal policy.
                     </p>
                     <p>
-                        From 31 August, if you renew your agreement after a break in coverage, you’ll be required to pay
+                        From 31 August, if you renew your agreement after a break in coverage, you'll be required to pay
                         the <b>full back-pay for the inactive period</b>, plus a <b>reinstatement fee</b>. This fee will
                         be <b>15% of your go-forward support fee</b> if the break was <b>under a year</b>, or
                         <b>25% of the back-pay</b> if the break was <b>over a year</b>.
