@@ -83,11 +83,11 @@ jobs:
 
       - name: Validate Dist Folders
         run: |
-          ./scripts/deployments/validateDistFolders.sh # <-------------------------------------------
+          ./scripts/deployments/validateDistFolders.sh
 
       - name: Publish Packages
         run: |
-          ./scripts/publishGridPackages.sh ${{ env.FULL_BUILD_FOLDER }} # <-------------------------------------------
+          ./scripts/publishGridPackages.sh ${{ env.FULL_BUILD_FOLDER }}
 
       - name: Sanity Check Base Url
         run: |
@@ -110,7 +110,7 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
           chmod 400 $SSH_KEY_LOCATION
-          ./scripts/deployments/createAndDeployDocsToTCGH.sh # <-------------------------------------------
+          ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
 # Skipped for now, as it requires extra setup
 #      - name: Test Build Artefacts
