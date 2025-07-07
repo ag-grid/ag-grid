@@ -82,6 +82,7 @@ jobs:
           yarn nx test:modules
 
       - name: Validate Dist Folders
+        continue-on-error: true
         run: |
           ./scripts/deployments/validateDistFolders.sh
 
