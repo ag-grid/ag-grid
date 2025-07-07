@@ -233,7 +233,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     public getSelectedRows(): any[] {
         const selectedRows: any[] = [];
-        this.selectedNodes.forEach((rowNode) => selectedRows.push(rowNode.data));
+        this.selectedNodes.forEach((rowNode) => rowNode.data && selectedRows.push(rowNode.data));
         return selectedRows;
     }
 

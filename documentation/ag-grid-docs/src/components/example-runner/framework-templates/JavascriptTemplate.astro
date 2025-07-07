@@ -18,6 +18,7 @@ interface Props {
     extraStyles?: string;
     extras?: string[];
     usesMathRandom?: boolean;
+    nonce?: string;
 }
 
 const {
@@ -35,6 +36,7 @@ const {
     extraStyles,
     extras,
     usesMathRandom,
+    nonce
 } = Astro.props as Props;
 
 import { MetaData } from './lib/MetaData';
@@ -81,17 +83,18 @@ const gridScriptLocalePath = getCacheBustingUrl(getGridLocaleScriptPath(siteUrl)
 
         <script
             is:inline
+            nonce={nonce}
             define:vars={{
                 appLocation,
             }}
         >
             window.__basePath = appLocation;
         </script>
-        {usesMathRandom && <SeedRandom />}
-        {isIntegratedCharts && <script src={chartsScriptEnterprisePath} />}
-        <script src={isEnterprise ? gridScriptEnterprisePath : gridScriptPath}></script>
-        {isLocale && <script src={gridScriptLocalePath} />}
-        <Scripts baseUrl={appLocation} files={scriptFiles!} />
+        {usesMathRandom && <SeedRandom nonce={nonce} />}
+        {isIntegratedCharts && <script nonce={nonce} src={chartsScriptEnterprisePath} />}
+        <script nonce={nonce} src={isEnterprise ? gridScriptEnterprisePath : gridScriptPath}></script>
+        {isLocale && <script nonce={nonce} src={gridScriptLocalePath} />}
+        <Scripts baseUrl={appLocation} files={scriptFiles!} nonce={nonce} />
         <Styles
             baseUrl={appLocation}
             files={styleFiles

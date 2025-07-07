@@ -1,5 +1,3 @@
-import path from 'path';
-
 import test, { TestCase } from '../benchmarking';
 import { waitFor } from '../playwright.utils';
 
@@ -11,13 +9,13 @@ const frameworks = ['typescript', 'reactFunctionalTs', 'angular', 'vue3'];
 
 test(`Performance Test - Compare performance of setting data`, {
     timeout: frameworks.length * 10 * 60_000,
-    minIterations: 100,
+    minIterations: 200,
     maxIterations: 300,
     warmupIterations: 5,
     testCases: frameworks.map(
         (framework) =>
             ({
-                name: 'Set data (lots): staging vs prod',
+                name: 'Scheduled: Set data (lots): staging vs prod',
                 framework,
                 control: { version: 'prod', url: localLotsOfCells, shouldInjectScript: true },
                 variant: { version: 'staging', url: localLotsOfCells, shouldInjectScript: true },

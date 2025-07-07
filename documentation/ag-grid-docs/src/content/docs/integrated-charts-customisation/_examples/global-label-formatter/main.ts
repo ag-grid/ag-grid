@@ -37,12 +37,12 @@ const gridOptions: GridOptions = {
         {
             field: 'recurring',
             chartDataType: 'series',
-            headerName: 'Recurring revenue',
+            headerName: 'Recurring Revenue',
         },
         {
             field: 'individual',
             chartDataType: 'series',
-            headerName: 'Individual sales',
+            headerName: 'Individual Sales',
         },
     ],
     defaultColDef: {

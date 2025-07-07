@@ -78,10 +78,6 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         // check if any editors open
         if (editSvc.isEditing(undefined, { withOpenEditor: true })) {
-            if (cellCtrl && !isFocusCleared && editSvc.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
-                return;
-            }
-
             // if focus is clearing, we should stop editing
             // or cancel the editing if `block` and `hasErrors`
             const { column, rowIndex, rowPinned } = event;

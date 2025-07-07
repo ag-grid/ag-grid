@@ -116,7 +116,11 @@ alongside a custom theme, and are unaffected by the settings in the custom theme
 
 {% gridExampleRunner title="Custom Chart Theme" name="custom-chart-theme"  exampleHeight=660 /%}
 
-## Label Formatting
+## Formatting
+
+Chart values can be formatted in several different ways.
+
+### Label Formatting
 
 {% note %}
 The `valueFormatter` is not automatically applied to the chart axes. If you wish to use the grid's value formatters, you must apply them manually.
@@ -167,6 +171,8 @@ const gridOptions = {
                     return `£${params.value}`;
                     // prefix with `£` sign
                 }
+                const gridApi = params.context.api;
+                // do something with the grid API
             }
         }
     }
@@ -182,6 +188,23 @@ The order of formatting is as follows:
 1. Element‑specific `label.formatter` (axis, series, legend, callout, etc.)
 2. Global `formatter`
 3. Default AG Charts formatting rules
+
+### Accessing Grid Context in Formatters
+
+The grid will pass the grid API and context into the `context` property of the formatter parameters.
+
+{% interfaceDocumentation interfaceName="GridChartContext" /%}
+
+For formatters that are directly linked to row data, the row node will be passed in the `datum.node` property (note that `datum` may be undefined).
+
+For formatters related to columns, the `key` property will usually contain the column ID. In some instances this will be in the `key` property of the corresponding series in the `boundSeries` property.
+
+In the example below, the global formatter is used to access the `valueFormatter` in each of the columns:
+- The x axis uses the **Financial Period** column value formatter.
+- The y axis does not use a formatter as it belongs to multiple columns.
+- The tooltip (when mousing over the series) uses the value formatters from each of the three columns.
+
+{% gridExampleRunner title="Formatter Context" name="formatter-context"  exampleHeight=850 /%}
 
 ## Next Up
 

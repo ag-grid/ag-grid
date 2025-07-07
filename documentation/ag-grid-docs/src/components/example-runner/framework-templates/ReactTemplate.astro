@@ -28,6 +28,7 @@ interface Props {
     headFragment?: string;
     extras?: string[];
     usesMathRandom?: boolean;
+    nonce?: string;
 }
 
 const {
@@ -37,6 +38,7 @@ const {
     internalFramework,
     modifiedTimeMs,
     appLocation,
+    entryFileName,
     scriptFiles = [],
     styleFiles = [],
     boilerplatePath,
@@ -45,7 +47,10 @@ const {
     headFragment,
     extras,
     usesMathRandom,
+    nonce
 } = Astro.props as Props;
+
+const startFile = pathJoin(appLocation, entryFileName);
 ---
 
 <html lang="en">
@@ -58,16 +63,18 @@ const {
     </head>
     <body>
         <div id="root"></div>
-        {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} />}
+        {scriptFiles && <Scripts baseUrl={appLocation} files={scriptFiles} nonce={nonce} />}
         {
             !ignoreSystemJs && (
                 <SystemJs
                     isDev={isDev}
                     boilerplatePath={boilerplatePath}
                     appLocation={appLocation}
+                    startFile={startFile}
                     internalFramework={internalFramework}
                     isEnterprise={isEnterprise}
                     usesMathRandom={usesMathRandom}
+                    nonce={nonce}
                 />
             )
         }

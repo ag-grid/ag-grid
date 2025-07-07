@@ -1,0 +1,201 @@
+name: Full Clean Build
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Daily at midnight UTC against the latest branch
+  workflow_dispatch:
+    inputs:
+      notify:
+        description: 'Notify Slack channel'
+        type: boolean
+        default: true
+        required: true
+
+env:
+  COMMIT_SHA_FILE: ./commit-sha.txt
+  SLACK_FILE: ./slack.json
+  BUILD_DIRECTORY: ./.builds
+  WWW_ROOT_DIR: /var/www
+  PUBLIC_ALGOLIA_APP_ID: O1K1ESGB5K
+  LTS_VERSION: b32.3.7
+
+jobs:
+  full-clean-build:
+    name: Full Clean Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      GRID_ROOT_DIR: ${{ env.WWW_ROOT_DIR }}/html
+      FULL_BUILD_FOLDER: ${{ env.BUILD_DIRECTORY }}/fullClean
+      ARTEFACT_TESTS_FOLDER: ${{ env.BUILD_DIRECTORY }}/ag-artefact-tests
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Get previous run commit SHA
+        if: ${{ github.event_name == 'schedule' || inputs.notify }}
+        id: prev-commit-sha
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.COMMIT_SHA_FILE }}
+          key: full-build-prev-commit
+
+      - name: Init env files
+        run: |
+          echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.archive
+          echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.production
+
+      - name: Version Modules
+        run: |
+          node ./scripts/deployments/versionModules.js "$(node ./scripts/calculate-next-version.js)" $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])") local
+
+      - name: Bootstrap
+        run: |
+          npm run bootstrap
+
+      - name: Sanity Check Grid & Charts Versions
+        run: |
+          node ./scripts/deployments/sanityCheckPackages.js $(node -e "console.log(require('./package.json').version)") $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])")
+
+      - name: Update Base Url
+        run: |
+          node ./scripts/deployments/prep_and_archive/updateBaseUrl.js staging
+
+      - name: Validate Grid Modules
+        run: |
+          node ./scripts/deployments/validateGridModulesList.js
+
+      - name: Sync Readmes
+        run: |
+          nx sync-readmes
+
+      - name: Build
+        id: build
+        run: |
+          NODE_ENV=production yarn nx pack:verify --prod
+
+      - name: Test
+        run: |
+          # yarn nx test:modules:full
+          yarn nx test:modules
+
+      - name: Validate Dist Folders
+        continue-on-error: true
+        run: |
+          ./scripts/deployments/validateDistFolders.sh
+
+      - name: Publish Packages
+        run: |
+          ./scripts/publishGridPackages.sh ${{ env.FULL_BUILD_FOLDER }}
+
+      - name: Sanity Check Base Url
+        run: |
+          node ./scripts/deployments/sanityCheckBaseUrl.js staging
+
+      - name: Build Docs For Staging
+        id: build_docs_staging
+        run: |
+          CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
+
+      - name: Deploy to Staging
+        id: deploy_to_staging
+        if: ${{ github.ref == 'refs/heads/latest' && steps.build_docs_staging.outputs.success == 'true' && steps.build.outputs.success == 'true' }}
+        env:
+          SSH_PRIVATE_KEY: |
+            ${{ secrets.STAGING_SSH_KEY }}
+          SSH_HOST: ${{ secrets.STAGING_HOST }}
+          SSH_USER: ubuntu
+          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+          WWW_ROOT_DIR: ${{ env.WWW_ROOT_DIR }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+          chmod 400 $SSH_KEY_LOCATION
+          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+
+# Skipped for now, as it requires extra setup
+#      - name: Test Build Artefacts
+#        run: |
+#          cd ${{ env.ARTEFACT_TESTS_FOLDER }}
+#          git reset --hard
+#          git checkout main
+#          git pull
+#          npm run update-seed
+#          git clean -fdx
+#          npm i
+#          ./update.sh ${{ env.FULL_BUILD_FOLDER }}
+#          npm run clean
+#          npm run build
+#          npm run start-server
+#          npm test
+#          killall http-server || true
+#
+#      - name: Test Build LTS Artefacts
+#        run: |
+#          cd ${{ env.ARTEFACT_TESTS_FOLDER }}
+#          git reset --hard
+#          git pull
+#          git clean -fdx
+#          git checkout ${{ env.LTS_VERSION }}
+#          npm i
+#          ./update.sh ${{ env.BUILD_DIRECTORY }}/archive/${{ env.LTS_VERSION }}
+#          npm run clean
+#          npm run build
+#          npm run start-server
+#          npm test
+#          killall http-server || true
+
+      - name: SonarQube Analysis Community
+        uses: SonarSource/sonarqube-scan-action@v5.2.0
+        env:
+          SONAR_HOST_URL: https://sonarcloud.io
+          SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
+        with:
+          projectBaseDir: ./packages/
+          args: >
+            -Dsonar.javascript.node.maxspace=8192
+            -Dsonar.organization=ag-grid
+            -Dsonar.sources=./ag-grid-community,./ag-grid-angular/projects/ag-grid-angular,./ag-grid-react,./ag-grid-vue3
+            -Dsonar.typescript.tsconfigPaths=./ag-grid-community/tsconfig.lib.json,./ag-grid-angular/projects/ag-grid-angular/tsconfig.lib.prod.json,./ag-grid-react/tsconfig.json,./ag-grid-vue3/tsconfig.json
+            -Dsonar.projectKey=ag-grid_community_latest
+            -Dsonar.exclusions=**/__tests__/*,**/test.ts,**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+            -Dsonar.scanner.force-deprecated-java-version=true
+            -Dsonar.coverage.exclusions=**/*
+
+      - name: SonarQube Analysis Enterprise
+        uses: SonarSource/sonarqube-scan-action@v5.2.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          projectBaseDir: ./packages/
+          args: >
+            -Dsonar.javascript.node.maxspace=8192
+            -Dsonar.organization=ag-grid
+            -Dsonar.sources=./ag-grid-enterprise
+            -Dsonar.typescript.tsconfigPaths=./ag-grid-enterprise/tsconfig.lib.json
+            -Dsonar.projectKey=ag-grid-enterprise-latest
+            -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+            -Dsonar.scanner.force-deprecated-java-version=true
+            -Dsonar.coverage.exclusions=**/*
+
+      - name: Update Algolia Dev
+        run: |
+          echo ALGOLIA_ADMIN_KEY=${{ secrets.ALGOLIA_ADMIN_KEY }} > documentation/update-algolia-indices/.env
+          echo PUBLIC_ALGOLIA_APP_ID=${{ env.PUBLIC_ALGOLIA_APP_ID }} >> documentation/update-algolia-indices/.env
+          yarn nx run ag-grid-docs:update-algolia -c staging
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: module-size-results
+          path: testing/module-size/module-size-results.json
+          retention-days: 30
+
+      - name: Save Current Commit Hash
+        uses: actions/cache@v4
+        with:
+          key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
+          path: ${{ env.COMMIT_SHA_FILE }}

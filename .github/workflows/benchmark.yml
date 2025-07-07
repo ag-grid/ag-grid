@@ -10,6 +10,10 @@ on:
         type: boolean
         default: false
         required: true
+      force_scheduled:
+        description: 'Run the workflow as if it was scheduled'
+        type: boolean
+        default: false
       force_pr_id:
         description: 'PR ID to update (used for debugging this workflow)'
         type: number
@@ -33,7 +37,8 @@ env:
   COMMENT_FILE: ./comment.md
   SLACK_FILE: ./slack.json
   SLACK_FILE_SNIPPET: ./slack-snippet.md
-  JIRA_FILE: ./jira.json
+  JIRA_DESCRIPTION_FILE: ./jira-description.txt
+  JIRA_FINGERPRINT_FILE: ./jira-fingerprint.json
   DEFAULT_RETENTION_DAYS: 30
 
 permissions:
@@ -171,11 +176,13 @@ jobs:
         id: playwright-test
         continue-on-error: true
         if: ${{ steps.install-browsers.outcome == 'success' }}
+        env:
+          IS_SCHEDULED: ${{ github.event_name == 'schedule' || inputs.force_scheduled }}
         run: |
-          if [[ "${{ github.event_name }}" == "schedule" ]] ; then
-            npx playwright test -c ./testing/performance/playwright.config.ts ./testing/performance/e2e/cron.spec.ts
+          if [[ "$IS_SCHEDULED" == "true" ]] ; then
+            npx playwright test -c ./testing/performance/playwright.config.ts -g ".*cron.spec.ts" ./testing/performance/e2e
           else
-            npx playwright test -c ./testing/performance/playwright.config.ts -gv ".*cron.*" ./testing/performance/e2e
+            npx playwright test -c ./testing/performance/playwright.config.ts -gv ".*cron.spec.ts" ./testing/performance/e2e
           fi
 
       - name: Upload Benchmark Report
@@ -196,8 +203,25 @@ jobs:
           SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
           SLACK_USERNAME: 'ag-grid CI'
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
+          SLACK_FILE: ${{ env.SLACK_FILE }}
+          SLACK_FILE_SNIPPET: ${{ env.SLACK_FILE_SNIPPET }}
+          COMMENT_FILE: ${{ env.COMMENT_FILE }}
+          JIRA_DESCRIPTION_FILE: ${{ env.JIRA_DESCRIPTION_FILE }}
+          JIRA_FINGERPRINT_FILE: ${{ env.JIRA_FINGERPRINT_FILE }}
+          JOB_URL: ${{ env.JOB_URL }}
         run: |
           node ./scripts/test/convert-playwright-output-to-slack-msg.mjs
+          
+          {
+            echo 'JIRA_FINGERPRINT<<EOF'
+            cat $JIRA_FINGERPRINT_FILE
+            echo 'EOF'
+          } >> $GITHUB_ENV
+          {
+            echo 'JIRA_DESCRIPTION<<EOF'
+            cat $JIRA_DESCRIPTION_FILE
+            echo 'EOF'
+          } >> $GITHUB_ENV
 
       - name: Upload Snippet
         id: upload-snippet
@@ -213,25 +237,47 @@ jobs:
         if: ${{ steps.upload-snippet.outputs.artifact-url }}
         env:
           SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
+          JIRA_DESCRIPTION_FILE: ${{ env.JIRA_DESCRIPTION_FILE }}
+          SLACK_FILE: ${{ env.SLACK_FILE }}
+          COMMENT_FILE: ${{ env.COMMENT_FILE }}
         run: |
           node ./scripts/test/attach-snippet.mjs
+          echo 'JIRA_DESCRIPTION_FILE:'
+          cat $JIRA_DESCRIPTION_FILE
+          echo ':JIRA_DESCRIPTION_FILE'
+          {
+            echo 'JIRA_DESCRIPTION<<EOF'
+            cat $JIRA_DESCRIPTION_FILE
+            echo 'EOF'
+          } >> $GITHUB_ENV
+          echo 'SLACK_FILE:'
+          cat $SLACK_FILE
+          echo ':SLACK_FILE'
+          {
+            echo 'SLACK_MESSAGE_BLOCKS<<EOF'
+            cat $SLACK_FILE
+            echo 'EOF'
+          } >> $GITHUB_ENV
 
       - name: Slack Notification
         continue-on-error: true
         if: ${{ steps.upload-snippet.outputs.artifact-url && (github.event_name == 'schedule' || inputs.notify) }}
-        env:
+        uses: ./.github/actions/slack-integration
+        with:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
-          SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
-        run: |
-          curl -X POST -H 'Content-type: application/json' $SLACK_WEBHOOK --data @$SLACK_FILE
+          SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
 
       - name: Create Jira Ticket
-        id: create-jira-ticket
-        if: ${{ steps.attach-snippet.outcome == 'success' && steps.playwright-test.outcome != 'success' && (github.event_name == 'schedule' || inputs.force_jira_ticket) }}
-        env:
+        uses: ./.github/actions/jira-integration
+        continue-on-error: true
+        if: ${{ steps.attach-snippet.outcome == 'success' && (github.event_name == 'schedule' || inputs.force_jira_ticket) }}
+        with:
+          JIRA_FINGERPRINT: ${{ env.JIRA_FINGERPRINT }}
           JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
-        run: |
-          node ./scripts/test/create-jira-ticket.mjs
+          WORKFLOW: ${{ github.workflow }}
+          JIRA_DESCRIPTION: ${{ env.JIRA_DESCRIPTION }}
+          JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' has detected a slowdown in grid performance"
+          IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
 
       - name: Notify End
         uses: actions/github-script@v7

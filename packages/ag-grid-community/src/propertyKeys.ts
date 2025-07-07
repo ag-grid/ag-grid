@@ -102,6 +102,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'dataTypeDefinitions',
     'advancedFilterParent',
     'advancedFilterBuilderParams',
+    'advancedFilterParams',
     'initialState',
     'autoSizeStrategy',
     'selectionColumnDef',

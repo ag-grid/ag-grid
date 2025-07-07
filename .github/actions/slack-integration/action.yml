@@ -1,0 +1,20 @@
+name: slack-integration
+author: sdwvit
+description: Creates a Slack message based on the test results.
+inputs:
+  SLACK_WEBHOOK:
+    description: 'Slack webhook URL for sending messages'
+    required: true
+  SLACK_MESSAGE_BLOCKS:
+    description: 'Slack message blocks in JSON format'
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Create Slack Message
+      env:
+        SLACK_WEBHOOK: ${{ inputs.SLACK_WEBHOOK }}
+        SLACK_MESSAGE_BLOCKS: ${{ inputs.SLACK_MESSAGE_BLOCKS }}
+      shell: bash
+      run: |
+        curl -X POST -H 'Content-type: application/json' $SLACK_WEBHOOK --data "$SLACK_MESSAGE_BLOCKS"

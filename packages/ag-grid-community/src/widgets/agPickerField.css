@@ -22,17 +22,21 @@
     background-color: var(--ag-picker-button-background-color);
     min-height: max(var(--ag-list-item-height), calc(var(--ag-spacing) * 4));
 
+    &:where(.ag-picker-has-focus),
+    &:where(:focus-within) {
+        box-shadow: var(--ag-focus-shadow);
+        border: var(--ag-picker-button-focus-border);
+        background-color: var(--ag-picker-button-focus-background-color);
+
+        &:where(.invalid) {
+            box-shadow: var(--ag-focus-error-shadow);
+        }
+    }
+
     &:where(.invalid) {
         background-color: var(--ag-input-invalid-background-color);
         border: var(--ag-input-invalid-border);
         color: var(--ag-input-invalid-text-color);
-    }
-
-    &:where(.ag-picker-has-focus:not(.invalid)),
-    &:where(:focus-within:not(.invalid)) {
-        box-shadow: var(--ag-focus-shadow);
-        border: var(--ag-picker-button-focus-border);
-        background-color: var(--ag-picker-button-focus-background-color);
     }
 
     &:disabled {

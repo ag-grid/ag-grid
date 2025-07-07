@@ -61,6 +61,8 @@ const initialAdvancedFilterModel: AdvancedFilterModel = {
 
 const advancedFilterBuilderParams: IAdvancedFilterBuilderParams = {
     showMoveButtons: true,
+    suppressFullScreenButton: true,
+    buttons: ['clear', 'apply', 'cancel'],
 };
 
 let gridApi: GridApi<IOlympicData>;

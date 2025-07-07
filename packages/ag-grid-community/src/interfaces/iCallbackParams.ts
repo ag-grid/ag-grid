@@ -33,6 +33,8 @@ export interface GetMainMenuItemsParams<TData = any, TContext = any> extends AgG
 export interface GetChartMenuItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** List of the items that would be displayed by default */
     defaultItems: DefaultChartMenuItem[];
+    /** Chart ID that the menu is displayed for */
+    chartId: string;
 }
 
 export interface ProcessUnpinnedColumnsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

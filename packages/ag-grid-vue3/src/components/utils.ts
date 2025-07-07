@@ -35,6 +35,7 @@ import type {
     GridState,
     HeaderPosition,
     IAdvancedFilterBuilderParams,
+    IAdvancedFilterParams,
     IAggFunc,
     IDatasource,
     IRowDragItem,
@@ -96,8 +97,12 @@ import type {
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushedEvent,
+    BatchEditingStartedEvent,
+    BatchEditingStoppedEvent,
     BodyScrollEndEvent,
     BodyScrollEvent,
+    BulkEditingStartedEvent,
+    BulkEditingStoppedEvent,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -616,6 +621,10 @@ export interface Props<TData> {
          * @agModule `AdvancedFilterModule`
          */
     advancedFilterBuilderParams?: IAdvancedFilterBuilderParams | undefined,
+    /** Customise the parameters passed to the Advanced Filter
+         * @agModule `AdvancedFilterModule`
+         */
+    advancedFilterParams?: IAdvancedFilterParams | undefined,
     /** @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
          * @default true
          * @agModule `AdvancedFilterModule`
@@ -1800,6 +1809,10 @@ export interface Props<TData> {
    'onCell-editing-stopped'?: CellEditingStoppedEvent<TData>,
    'onRow-editing-started'?: RowEditingStartedEvent<TData>,
    'onRow-editing-stopped'?: RowEditingStoppedEvent<TData>,
+   'onBulk-editing-started'?: BulkEditingStartedEvent<TData>,
+   'onBulk-editing-stopped'?: BulkEditingStoppedEvent<TData>,
+   'onBatch-editing-started'?: BatchEditingStartedEvent<TData>,
+   'onBatch-editing-stopped'?: BatchEditingStoppedEvent<TData>,
    'onUndo-started'?: UndoStartedEvent<TData>,
    'onUndo-ended'?: UndoEndedEvent<TData>,
    'onRedo-started'?: RedoStartedEvent<TData>,
@@ -1962,6 +1975,7 @@ export function getProps() {
         includeHiddenColumnsInAdvancedFilter: undefined,
         advancedFilterParent: undefined,
         advancedFilterBuilderParams: undefined,
+        advancedFilterParams: undefined,
         suppressAdvancedFilterEval: undefined,
         suppressSetFilterByDefault: undefined,
         enableFilterHandlers: undefined,
@@ -2306,7 +2320,11 @@ export function getProps() {
         'onFind-changed': undefined,
         'onRow-resize-started': undefined,
         'onRow-resize-ended': undefined,
-        'onColumns-reset': undefined
+        'onColumns-reset': undefined,
+        'onBulk-editing-started': undefined,
+        'onBulk-editing-stopped': undefined,
+        'onBatch-editing-started': undefined,
+        'onBatch-editing-stopped': undefined
 // @END_EVENT_PROPS@
 
     };

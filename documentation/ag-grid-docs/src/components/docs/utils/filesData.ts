@@ -51,16 +51,33 @@ export const getFolderPath = ({ pageName, exampleName }: { pageName: string; exa
     return new URL(exampleFolderPath, import.meta.url);
 };
 
-export const getSupportedFrameworks = async ({ pageName, exampleName }: { pageName: string; exampleName: string }) => {
+const getExampleDirFile = async ({
+    pageName,
+    exampleName,
+    fileName,
+}: {
+    pageName: string;
+    exampleName: string;
+    fileName: string;
+}): Promise<undefined | string> => {
     const exampleDir = await readdir(getFolderPath({ pageName, exampleName }));
-    const hasExampleConfig = exampleDir.includes('exampleConfig.json');
+    const hasFile = exampleDir.includes(fileName);
 
+    if (!hasFile) {
+        return undefined;
+    }
+
+    return await readFile(path.join(getExamplesPath({ pageName }), exampleName, fileName), 'utf-8');
+};
+
+export const getSupportedFrameworks = async ({ pageName, exampleName }: { pageName: string; exampleName: string }) => {
+    const exampleConfig = await getExampleDirFile({
+        pageName,
+        exampleName,
+        fileName: 'exampleConfig.json',
+    });
     let supportedFrameworks: Set<InternalFramework> | undefined = undefined;
-    if (hasExampleConfig) {
-        const exampleConfig = await readFile(
-            path.join(getExamplesPath({ pageName }), exampleName, 'exampleConfig.json'),
-            'utf-8'
-        );
+    if (exampleConfig) {
         const exampleConfigJson = JSON.parse(exampleConfig);
         supportedFrameworks = exampleConfigJson.supportedFrameworks
             ? new Set(exampleConfigJson.supportedFrameworks)

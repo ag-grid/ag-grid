@@ -1,0 +1,272 @@
+name: Doc Tests
+description: Testing of AG Grid Examples
+
+env:
+    NX_NO_CLOUD: true
+    CI: true
+    DEFAULT_RETENTION_DAYS: 30
+    COMMIT_SHA_FILE: ./commit-sha.txt
+    SLACK_FILE: ./slack.json
+on:
+    workflow_dispatch:
+        inputs:
+            skip_vanilla:
+                description: 'Skip Vanilla tests'
+                type: boolean
+                required: true
+                default: true
+            skip_typescript:
+                description: 'Skip Typescript tests'
+                type: boolean
+                required: true
+                default: true
+            skip_reactFunctional:
+                description: 'Skip React Functional tests'
+                type: boolean
+                required: true
+                default: true
+            skip_reactFunctionalTs:
+                description: 'Skip React Functional TS tests'
+                type: boolean
+                required: true
+                default: true
+            skip_angular:
+                description: 'Skip Angular tests'
+                type: boolean
+                required: true
+                default: true
+            skip_vue3:
+                description: 'Skip Vue3 tests'
+                type: boolean
+                required: true
+                default: true
+            notify:
+              description: 'Notify Slack channel'
+              type: boolean
+              default: true
+              required: true
+    schedule:
+        - cron: '30 2 * * *' # Run daily at 2:30am UTC
+
+jobs:
+    # Run all framework tasks in parallel
+    test-demos:
+        name: Test Doc Demos
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 1
+
+            - name: Install Playwright Browsers
+              working-directory: testing/ag-grid-docs
+              run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
+
+            - name: Demo Pages
+              working-directory: testing/ag-grid-docs
+              run: npx playwright test ag-grid-demos.spec.ts
+
+            - name: Upload Test Report
+              id: upload-report
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                name: playwright-report-demos
+                path: reports/
+                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+
+    download-examples:
+      name: Download all-examples.json
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+
+        - name: Download all-examples-cached.json
+          run: |
+            mkdir -p ./e2e/config
+            curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
+
+        - name: Cache all-examples-cached.json
+          uses: actions/cache@v4
+          with:
+            path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
+            key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
+
+    test-vanilla:
+        if: ${{ github.event.inputs.skip_vanilla != 'true' }}
+        name: Test Vanilla Examples
+        needs: download-examples
+        runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1]
+            shardTotal: [1]
+        steps:
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: vanilla
+
+    test-typescript:
+        if: ${{ github.event.inputs.skip_typescript != 'true' }}
+        name: Test Typescript Examples
+        needs: download-examples
+        runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1]
+            shardTotal: [1]
+        steps:
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: typescript
+
+    test-react-functional:
+        if: ${{ github.event.inputs.skip_reactFunctional != 'true' }}
+        name: Test React Examples
+        needs: download-examples
+        runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1]
+            shardTotal: [1]
+        steps:
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: reactFunctional
+
+    test-react-functional-ts:
+        if: ${{ github.event.inputs.skip_reactFunctionalTs != 'true' }}
+        name: Test React TS Examples
+        needs: download-examples
+        runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1]
+            shardTotal: [1]
+        steps:
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: reactFunctionalTs
+
+    test-vue3:
+        if: ${{ github.event.inputs.skip_vue3 != 'true' }}
+        name: Test Vue Examples
+        needs: download-examples
+        runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1, 2]
+            shardTotal: [2]
+        steps:
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: vue3
+
+    test-angular:
+        if: ${{ github.event.inputs.skip_angular != 'true' }}
+        name: Test Angular Examples
+        needs: download-examples
+        runs-on: ubuntu-latest
+        strategy:
+          fail-fast: false
+          matrix:
+            shardIndex: [1, 2, 3, 4]
+            shardTotal: [4]
+        steps:
+          - uses: actions/checkout@v4
+          - uses: ./.github/actions/test-framework-examples
+            with:
+              framework: angular
+
+    publish-reports:
+      if: always()
+      needs:
+        - test-demos
+        - test-react-functional
+        - test-react-functional-ts
+        - test-angular
+        - test-typescript
+        - test-vanilla
+        - test-vue3
+      runs-on: ubuntu-latest
+      steps:
+        - name: Download all test reports
+          uses: actions/download-artifact@v4
+          with:
+            path: combined-reports
+
+        - name: Publish Combined Test Report
+          id: ctrf
+          uses: ctrf-io/github-test-reporter@v1.0.17
+          with:
+            report-path: 'combined-reports/**/*.json'
+            summary-report: true
+            failed-report: true
+            flaky-report: true
+            skipped-report: true
+
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+
+        - name: Get previous run commit SHA
+          if: ${{ github.event_name == 'schedule' || inputs.notify }}
+          id: prev-commit-sha
+          uses: actions/cache/restore@v4
+          with:
+            path: ${{ env.COMMIT_SHA_FILE }}
+            key: doc-tests-prev-commit
+
+        - name: Convert ctrf output to Slack message blocks and write git sha
+          if: ${{ github.event_name == 'schedule' || inputs.notify }}
+          env:
+            CTRF_REPORT: ${{ steps.ctrf.outputs.report }}
+            JOB_NAME: 'Documentation Tests'
+            JOB_ID: ${{ github.run_id }}
+            BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+            COMMIT_SHA: ${{ github.sha }}
+            COMMIT_SHA_FILE: ${{ env.COMMIT_SHA_FILE }}
+            REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+            SLACK_CHANNEL: '#ci-grid-gate'
+            SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
+            SLACK_USERNAME: 'ag-grid CI'
+          run: |
+            node ./.github/actions/slack-integration/ctrf-markdown-to-slack-blocks.mjs
+            echo 'SLACK_FILE:'
+            cat $SLACK_FILE
+            echo ':SLACK_FILE'
+            {
+              echo 'SLACK_MESSAGE_BLOCKS<<EOF'
+              cat $SLACK_FILE
+              echo 'EOF'
+            } >> $GITHUB_ENV
+            echo ${{ github.sha }} > ${{ env.COMMIT_SHA_FILE }}
+
+        - name: Slack Notification
+          if: ${{ github.event_name == 'schedule' || inputs.notify }}
+          continue-on-error: true
+          uses: ./.github/actions/slack-integration
+          with:
+            SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
+            SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
+
+        - name: Save this run commit SHA
+          if: ${{ github.event_name == 'schedule' || inputs.notify }}
+          uses: actions/cache/save@v4
+          with:
+            path: ${{ env.COMMIT_SHA_FILE }}
+            key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}

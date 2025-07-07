@@ -26,6 +26,7 @@ import {
     getMainFileName,
     getProvidedExampleFiles,
     getProvidedExampleFolder,
+    getScriptNonce,
     getTransformTsFileExt,
 } from './generator/utils/fileUtils';
 import { frameworkFilesGenerator } from './generator/utils/frameworkFilesGenerator';
@@ -174,6 +175,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
         const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
         const entryFileName = getEntryFileName(internalFramework)!;
         const mainFileName = getMainFileName(internalFramework)!;
+        const scriptNonce = getScriptNonce(htmlFiles)!;
         const provideFrameworkFiles = getProvidedFrameworkFiles(internalFramework, frameworkProvidedExamples);
 
         const packageJson = getPackageJson({
@@ -276,6 +278,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             isIntegratedCharts,
             hasExampleConsoleLog,
             hasSimpleHtml,
+            scriptNonce,
             entryFileName,
             mainFileName,
             sourceFileList,

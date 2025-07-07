@@ -111,7 +111,10 @@ export interface IEditService extends NamedBean {
         type?: T,
         payload?: any
     ): void;
-    dispatchRowEvent(position: Required<EditRowPosition>, type: 'rowEditingStarted' | 'rowEditingStopped'): void;
+    dispatchRowEvent(
+        position: Required<EditRowPosition>,
+        type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged'
+    ): void;
     applyBulkEdit(position: Required<EditPosition>, cellRanges: CellRange[]): void;
     validateEdit(): ICellEditorValidationError[] | null;
     createCellStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): ICellStyleFeature;
@@ -121,4 +124,5 @@ export interface IEditService extends NamedBean {
     cellEditingInvalidCommitBlocks(): boolean;
     checkNavWithValidation(position?: EditPosition, event?: Event | CellFocusedEvent): EditNavOnValidationResult;
     revertSingleCellEdit(cellPosition: Required<EditPosition>, focus?: boolean): void;
+    allowedFocusTargetOnValidation(cellPosition: EditPosition): CellCtrl | undefined;
 }

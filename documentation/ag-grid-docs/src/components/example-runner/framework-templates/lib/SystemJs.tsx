@@ -15,10 +15,12 @@ import { SeedRandom } from './SeedRandom';
 interface Props {
     boilerplatePath: string;
     appLocation: string;
+    startFile: string;
     internalFramework: InternalFramework;
     isEnterprise: boolean;
     isDev: boolean;
     usesMathRandom?: boolean;
+    nonce?: string;
 }
 
 type Paths = Record<string, string>;
@@ -120,10 +122,12 @@ function getRelevantConfig(configuration: Configuration, framework: InternalFram
 export const SystemJs = ({
     boilerplatePath,
     appLocation,
+    startFile,
     internalFramework,
     isEnterprise,
     isDev,
     usesMathRandom,
+    nonce,
 }: Props) => {
     const systemJsPath = pathJoin(boilerplatePath, `systemjs.config${isDev ? '.dev' : ''}.js`);
 
@@ -154,19 +158,21 @@ export const SystemJs = ({
     return (
         <>
             <script
+                nonce={nonce}
                 dangerouslySetInnerHTML={{
                     __html: `
             var appLocation = '${appLocation}';
             var boilerplatePath = '${boilerplatePath}';
+            var startFile = '${startFile}';
             var systemJsMap = ${format(systemJsMap)};
             ${Object.keys(systemJsPaths).length > 0 ? `var systemJsPaths = ${format(systemJsPaths)};` : ''}
         `,
                 }}
             />
-            {usesMathRandom && <SeedRandom />}
+            {usesMathRandom && <SeedRandom nonce={nonce} />}
 
-            <script src={systemJsVersion} />
-            <script src={systemJsPath} />
+            <script nonce={nonce} src={systemJsVersion} />
+            <script nonce={nonce} src={systemJsPath} />
         </>
     );
 };

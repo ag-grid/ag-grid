@@ -248,7 +248,8 @@ export {
 export { IMultiFilterService } from './interfaces/iMultiFilterService';
 export { FilterComp } from './filter/filterComp';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
-export { FilterButtonComp } from './filter/filterButtonComp';
+export { FilterButtonComp, FilterButtonEvent, FilterButton, AgFilterButtonSelector } from './filter/filterButtonComp';
+export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
 export { _getFilterParamsForDataType, _getDefaultSimpleFilter } from './filter/filterDataTypeUtils';
 
 export {
@@ -328,6 +329,7 @@ export {
 } from './interfaces/advancedFilterModel';
 export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilderParams';
+export { IAdvancedFilterParams } from './interfaces/iAdvancedFilterParams';
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
 export {

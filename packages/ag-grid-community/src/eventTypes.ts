@@ -104,6 +104,10 @@ export const _PUBLIC_EVENTS = [
     'rowResizeStarted',
     'rowResizeEnded',
     'columnsReset',
+    'bulkEditingStarted',
+    'bulkEditingStopped',
+    'batchEditingStarted',
+    'batchEditingStopped',
 ] as const;
 
 // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
@@ -160,8 +164,6 @@ export const _INTERNAL_EVENTS = [
     'rowNodeDataChanged',
     'cellEditValuesChanged',
     'filterSwitched',
-    'batchEditingStarted',
-    'batchEditingStopped',
     'filterClosed',
 ] as const;
 

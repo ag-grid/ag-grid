@@ -23,6 +23,7 @@ interface Props {
     extras?: string[];
     headFragment?: string;
     usesMathRandom?: boolean;
+    nonce?: string;
 }
 
 const {
@@ -31,6 +32,7 @@ const {
     isEnterprise,
     modifiedTimeMs,
     appLocation,
+    entryFileName,
     styleFiles,
     indexFragment,
     boilerplatePath,
@@ -38,7 +40,10 @@ const {
     extras,
     headFragment,
     usesMathRandom,
+    nonce
 } = Astro.props as Props;
+
+const startFile = pathJoin(appLocation, entryFileName);
 ---
 
 <html lang="en">
@@ -61,6 +66,7 @@ const {
 
         <script
             is:inline
+            nonce={nonce}
             define:vars={{
                 appLocation,
             }}
@@ -72,9 +78,11 @@ const {
             isDev={isDev}
             boilerplatePath={boilerplatePath}
             appLocation={appLocation}
+            startFile={startFile}
             internalFramework={'typescript'}
             isEnterprise={isEnterprise}
             usesMathRandom={usesMathRandom}
+            nonce={nonce}
         />
         <Styles
             baseUrl={appLocation}

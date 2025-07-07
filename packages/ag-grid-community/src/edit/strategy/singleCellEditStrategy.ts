@@ -60,7 +60,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
     public override dispatchRowEvent(
         _position: EditRowPosition,
-        _type: 'rowEditingStarted' | 'rowEditingStopped'
+        _type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged'
     ): void {
         // NOP - single cell edit strategy does not dispatch row events
     }
@@ -122,7 +122,9 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             // fineNextCell in fullRow mode causes CellComps to initialise editors, this is
             // undesirable so we suspend the model while we find the next cell.
             this.model.suspend(true);
-        } else {
+        }
+
+        if (!preventNavigation) {
             // before we stop editing, we need to focus the cell element
             // so the grid doesn't detect that focus has left the grid
             prevCell.eGui.focus();
@@ -155,7 +157,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             return null;
         }
         if (nextCell == null) {
-            return preventNavigation;
+            return false;
         }
 
         const nextPos = nextCell.cellPosition;
@@ -169,24 +171,15 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             // run validation to gather row-level validation errors
             _populateModelValidationErrors(this.beans);
 
-            if (this.model.getRowValidationModel().getRowValidationMap().size > 0) {
-                // if there was a previous row validation error, we need to check if that's still the case
-                if (this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop') {
-                    return true;
-                }
-            } else {
+            if ((this.model.getRowValidationModel().getRowValidationMap().size ?? 0) === 0) {
                 const rowPreventNavigation = this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop';
                 if (rowPreventNavigation) {
                     return true;
                 }
             }
-
-            if (preventNavigation && this.model.getRowValidationModel().getRowValidation(prevCell)) {
-                return true;
-            }
         }
 
-        if (prevEditable) {
+        if (prevEditable && !preventNavigation) {
             this.setFocusOutOnEditor(prevCell);
         }
 
@@ -200,14 +193,10 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             nextCell.focusCell(false, event);
             if (!nextCell.comp?.getCellEditor()) {
                 // editor missing because it was outside the viewport during creating phase, attempt to create it now
-                _setupEditor(this.beans, nextCell, undefined, event, true);
+                _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true });
             }
             this.setFocusInOnEditor(nextCell);
         } else {
-            if (preventNavigation && this.model.getCellValidationModel().getCellValidation(prevCell)) {
-                return true;
-            }
-
             nextCell.focusCell(true, event);
         }
 

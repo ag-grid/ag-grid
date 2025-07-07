@@ -132,16 +132,21 @@ async function getGitHash(version: Version): Promise<string> {
 
     return fetch(`${knownUrlsProxy[version]}/debug/meta.json`)
         .then((r) => r.json())
-        .then((meta: { git: { hash: string } }) => meta.git.hash);
+        .then((meta: { git: { hash: string } }) => meta.git.hash)
+        .catch((e) => {
+            console.error(`Failed to fetch git hash for version ${version}:`, e);
+            return '';
+        });
 }
-
+const LATEST_CHARTS_VERSION = 'v12.0.0';
 /**
  * Taken from ag-grid-enterprise package.json git history
  */
 const gridToChartsMap: Record<Version, Version> = {
-    local: 'v11.3.0',
-    prod: 'v11.3.0',
-    staging: 'v11.3.0',
+    local: LATEST_CHARTS_VERSION,
+    prod: LATEST_CHARTS_VERSION,
+    staging: LATEST_CHARTS_VERSION,
+    'v34.0.0': LATEST_CHARTS_VERSION,
     'v33.3.0': 'v11.3.0',
     'v33.2.3': 'v11.2.3',
     'v33.2.1': 'v11.2.1',
@@ -300,6 +305,7 @@ const computeStats = (times: number[]): Stats => {
     };
 };
 
+const HARD_THRESHOLD = 5; // 5% is the hard threshold for practical confidence
 function computeCommonStats(s1: Stats, s2: Stats, testCase: InternalTestCase) {
     const diff = s1.average - s2.average;
     const slower = diff > 0 ? testCase.control.version : testCase.variant.version;
@@ -308,7 +314,7 @@ function computeCommonStats(s1: Stats, s2: Stats, testCase: InternalTestCase) {
 
     const avgMoE = getStandardError(s1.marginOfError, s2.marginOfError);
     const avgMoEPercent = (avgMoE / Math.min(s1.average, s2.average)) * 100;
-    const practicalConfidence = percentDiff - avgMoEPercent > 2; // 2% is a practical confidence threshold
+    const practicalConfidence = Math.abs(percentDiff - avgMoEPercent) >= HARD_THRESHOLD;
     const isSignificant = isDiffSignificant(diff, s1.marginOfError, s2.marginOfError);
     return { diff, slower, faster, percentDiff, avgMoE, avgMoEPercent, practicalConfidence, isSignificant };
 }
@@ -429,6 +435,8 @@ async function attachCookies(context: BrowserContext, variant: Variant) {
 }
 
 const testLevelCatch = (e: any, lastCommunications?: BrowserCommunications) => {
+    if (e instanceof ExpectedError) throw e; // re-throw expected errors without modification
+
     if (lastCommunications?.consoleMsgs?.length || lastCommunications?.requestMsgs?.length) {
         console.error('Error has been thrown during the test, here are the last comms:');
         lastCommunications.consoleMsgs.forEach((msg) => {
@@ -448,7 +456,7 @@ const testLevelCatch = (e: any, lastCommunications?: BrowserCommunications) => {
  */
 function shouldFailTest(s1: Stats, s2: Stats, testCase: InternalTestCase) {
     const { practicalConfidence, faster, isSignificant } = computeCommonStats(s1, s2, testCase);
-    return (isSignificant || practicalConfidence) && faster === testCase.control.version;
+    return isSignificant && practicalConfidence && faster === testCase.control.version;
 }
 
 function renderPercentDiffString(percentDiff: number, avgMoEPercent: number) {
@@ -489,7 +497,7 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
             void updatePageTitle(page, testCase, variant);
             if (variant.shouldInjectScript) await attachScripts(page, variant.version, testCase);
             await testCase.preSetup?.(page);
-            for (let i = 0; i < Math.min(minIter, 50); i++) {
+            for (let i = 0; i < Math.max(minIter, 50); i++) {
                 await testCase.setupPreActions?.(page);
                 if (i % 50 === 0) await page.requestGC();
                 const noiseSize = (await metricsGetter(page, testCase)).length;
@@ -506,7 +514,7 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
         [s1, s2] = [computeStats(measurements.control), computeStats(measurements.variant)];
         const { percentDiff, avgMoEPercent, isSignificant } = computeCommonStats(s1, s2, testCase);
         significant = isSignificant;
-        needToContinue = (!significant && totalIterations < maxIter) || totalIterations < minIter;
+        needToContinue = (!significant && totalIterations < maxIter) || s1.filteredCount + s2.filteredCount < minIter;
         if (!process.env['CI']) {
             if (significant) reportStats(s1, s2, testCase);
             if (needToContinue) {
@@ -519,11 +527,18 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
             }
         }
     } while (needToContinue);
-    if (process.env['CI']) reportStats(s1, s2, testCase);
+    reportStats(s1, s2, testCase);
     if (shouldFailTest(s1, s2, testCase)) {
-        throw new Error('Test failed. See below for details.');
+        throw new ExpectedError('Test failed. See below for details.');
     }
 };
+
+class ExpectedError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'ExpectedError';
+    }
+}
 
 const describeBody = (describe: Describe) => () => {
     const warmupIter = describe.warmupIterations ?? 3; // default is 3
@@ -535,7 +550,7 @@ const describeBody = (describe: Describe) => () => {
         const setLastCommunications = (comms: BrowserCommunications) => (lastCommunications = comms);
         const __hidden = { error: new Error(), setLastCommunications, minIter, maxIter, warmupIter };
 
-        const testTitle = `Running ${testCase.name}${testCase.description ? `/${testCase.description}` : ''} with ${testCase.framework} (${index + 1}/${allCases.length})`;
+        const testTitle = `${testCase.name}${testCase.description ? `/${testCase.description}` : ''} with ${testCase.framework} (${index + 1}/${allCases.length})`;
         (testCase.skip ? test.skip : test)(testTitle, ({ page, context, request }, testInfo) =>
             testBody({ ...testCase, __hidden }, { page, context, request }, testInfo).catch((e) =>
                 testLevelCatch(e, lastCommunications)
@@ -547,7 +562,7 @@ const describeBody = (describe: Describe) => () => {
 /** Generic benchmark function to run performance tests */
 export default function run(name: string, describe: Describe) {
     test.describe.configure({ timeout: describe.timeout || 60_000 });
-    test.beforeEach(() => console.log(`${bgGreen.black.bold(test.info().title)}`));
+    test.beforeEach(() => console.log(`${'-'.repeat(10)}\nRunning ${bgGreen.black.bold(test.info().title)}`));
     test.beforeEach(() => console.log(`Test started at ${new Date().toISOString()}`));
     test.beforeEach(() => console.time('Duration'));
     test.afterEach(() => console.timeEnd('Duration'));

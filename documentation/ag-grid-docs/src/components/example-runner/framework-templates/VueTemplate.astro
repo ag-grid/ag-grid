@@ -25,6 +25,7 @@ interface Props {
     extras?: string[];
     headFragment?: string;
     usesMathRandom?: boolean;
+    nonce?: string;
 }
 
 const {
@@ -34,13 +35,17 @@ const {
     modifiedTimeMs,
     boilerplatePath,
     appLocation,
+    entryFileName,
     scriptFiles = [],
     styleFiles = [],
     extraStyles,
     extras,
     headFragment,
     usesMathRandom,
+    nonce
 } = Astro.props as Props;
+
+const startFile = pathJoin(appLocation, entryFileName);
 ---
 
 <html lang="en">
@@ -54,14 +59,16 @@ const {
     <body>
         <div id="app"><my-component></my-component></div>
 
-        <Scripts baseUrl={appLocation} files={scriptFiles} />
+        <Scripts baseUrl={appLocation} files={scriptFiles} nonce={nonce}/>
         <SystemJs
             isDev={isDev}
             boilerplatePath={boilerplatePath}
             appLocation={appLocation}
+            startFile={startFile}
             internalFramework={'vue3'}
             isEnterprise={isEnterprise}
             usesMathRandom={usesMathRandom}
+            nonce={nonce}
         />
         <slot />
     </body>

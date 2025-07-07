@@ -440,10 +440,9 @@
         --section-background-color: var(--color-util-gray-100);
     }
 }
-
-/* mobile breakpoint responsive */
-@media screen and (max-width: $breakpoint-pricing-medium) {
-    .licensesOuter {
+.licensesOuter {
+    /* mobile breakpoint responsive */
+    @media screen and (max-width: $breakpoint-pricing-medium) {
         display: flex;
         flex-direction: column;
         gap: $spacing-size-8;
@@ -459,7 +458,6 @@
 // =======================================
 .quotesOuter {
     display: flex;
-
     max-width: 1400px;
     border: 1px solid var(--color-border-secondary);
     border-radius: 8px;
@@ -480,7 +478,6 @@
     width: 33.33%;
     font-size: var(--text-fs-base);
     line-height: var(--text-lh-2xl);
-
     padding: $spacing-size-10;
 
     @media screen and (max-width: $breakpoint-pricing-medium) {
