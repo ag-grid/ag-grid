@@ -69,7 +69,7 @@ jobs:
 
       - name: Sync Readmes
         run: |
-          nx sync-readmes
+          yarn nx sync-readmes
 
       - name: Build
         id: build
@@ -78,7 +78,6 @@ jobs:
 
       - name: Test
         run: |
-          # yarn nx test:modules:full
           yarn nx test:modules
 
       - name: Validate Dist Folders
