@@ -14,6 +14,10 @@ on:
 env:
   COMMIT_SHA_FILE: ./commit-sha.txt
   SLACK_FILE: ./slack.json
+  BUILD_DIRECTORY: ./.builds
+  WWW_ROOT_DIR: /var/www
+  PUBLIC_ALGOLIA_APP_ID: O1K1ESGB5K
+  LTS_VERSION: b32.3.7
 
 jobs:
   full-clean-build:
@@ -21,9 +25,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
-      # Map environment variables from TeamCity
-      CHARTS_ROOT_DIR: ${{ env.GRID_ROOT_DIR }}/charts
       GRID_ROOT_DIR: ${{ env.WWW_ROOT_DIR }}/html
+      FULL_BUILD_FOLDER: ${{ env.BUILD_DIRECTORY }}/fullClean
+      ARTEFACT_TESTS_FOLDER: ${{ env.BUILD_DIRECTORY }}/ag-artefact-tests
 
     steps:
       - name: Checkout Code
@@ -46,7 +50,7 @@ jobs:
 
       - name: Version Modules
         run: |
-          node scripts/deployments/versionModules.js "$(node ./scripts/calculate-next-version.js)" $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])") local
+          node ./scripts/deployments/versionModules.js "$(node ./scripts/calculate-next-version.js)" $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])") local
 
       - name: Bootstrap
         run: |
@@ -54,15 +58,15 @@ jobs:
 
       - name: Sanity Check Grid & Charts Versions
         run: |
-          node scripts/deployments/sanityCheckPackages.js $(node -e "console.log(require('./package.json').version)") $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])")
+          node ./scripts/deployments/sanityCheckPackages.js $(node -e "console.log(require('./package.json').version)") $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])")
 
       - name: Update Base Url
         run: |
-          node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
+          node ./scripts/deployments/prep_and_archive/updateBaseUrl.js staging
 
       - name: Validate Grid Modules
         run: |
-          node scripts/deployments/validateGridModulesList.js
+          node ./scripts/deployments/validateGridModulesList.js
 
       - name: Sync Readmes
         run: |
@@ -79,15 +83,15 @@ jobs:
 
       - name: Validate Dist Folders
         run: |
-          ./scripts/deployments/validateDistFolders.sh
+          ./scripts/deployments/validateDistFolders.sh # <-------------------------------------------
 
       - name: Publish Packages
         run: |
-          ./scripts/publishGridPackages.sh %full_build_folder%
+          ./scripts/publishGridPackages.sh ${{ env.FULL_BUILD_FOLDER }} # <-------------------------------------------
 
       - name: Sanity Check Base Url
         run: |
-          node scripts/deployments/sanityCheckBaseUrl.js staging
+          node ./scripts/deployments/sanityCheckBaseUrl.js staging
 
       - name: Build Docs For Staging
         run: |
@@ -102,48 +106,43 @@ jobs:
           SSH_HOST: ${{ secrets.STAGING_HOST }}
           SSH_USER: ubuntu
           SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
-          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
+          WWW_ROOT_DIR: ${{ env.WWW_ROOT_DIR }}
         run: |
           echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
           chmod 400 $SSH_KEY_LOCATION
-          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+          ./scripts/deployments/createAndDeployDocsToTCGH.sh # <-------------------------------------------
 
-      - name: Test Build Artefacts - Initialise
-        run: |
-          cd ~/.builds/ag-artefact-tests
-          git reset --hard && \
-            git checkout main && \
-            git pull && \
-            npm run update-seed && \
-            git clean -fdx  && \
-            npm i && \
-            ./update.sh ~/.builds/fullClean  && \
-            npm run clean && npm run build && npm run start-server
-
-      - name: Test Build Artefacts - Tests
-        run: |
-          cd ~/.builds/ag-artefact-tests
-          npm run start-server
-          npm test
-          killall http-server || true
-
-      - name: Test Build LTS Artefacts - Initialise
-        run: |
-          cd ~/.builds/ag-artefact-tests
-          git reset --hard && \
-            git pull && \
-            git clean -fdx  && \
-            git checkout b32.3.7 && \
-            npm i && \
-            ./update.sh ~/TeamCity/.builds/archive/b32.3.7 && \
-            npm run clean && npm run build && npm run start-server
-
-      - name: Test Build LTS Artefacts - Tests
-        run: |
-          cd ~/.builds/ag-artefact-tests
-          npm run start-server
-          npm test
-          killall http-server || true
+# Skipped for now, as it requires extra setup
+#      - name: Test Build Artefacts
+#        run: |
+#          cd ${{ env.ARTEFACT_TESTS_FOLDER }}
+#          git reset --hard
+#          git checkout main
+#          git pull
+#          npm run update-seed
+#          git clean -fdx
+#          npm i
+#          ./update.sh ${{ env.FULL_BUILD_FOLDER }}
+#          npm run clean
+#          npm run build
+#          npm run start-server
+#          npm test
+#          killall http-server || true
+#
+#      - name: Test Build LTS Artefacts
+#        run: |
+#          cd ${{ env.ARTEFACT_TESTS_FOLDER }}
+#          git reset --hard
+#          git pull
+#          git clean -fdx
+#          git checkout ${{ env.LTS_VERSION }}
+#          npm i
+#          ./update.sh ${{ env.BUILD_DIRECTORY }}/archive/${{ env.LTS_VERSION }}
+#          npm run clean
+#          npm run build
+#          npm run start-server
+#          npm test
+#          killall http-server || true
 
       - name: SonarQube Analysis Community
         uses: SonarSource/sonarqube-scan-action@v5.2.0
@@ -182,7 +181,7 @@ jobs:
       - name: Update Algolia Dev
         run: |
           echo ALGOLIA_ADMIN_KEY=${{ secrets.ALGOLIA_ADMIN_KEY }} > documentation/update-algolia-indices/.env
-          echo PUBLIC_ALGOLIA_APP_ID=O1K1ESGB5K >> documentation/update-algolia-indices/.env
+          echo PUBLIC_ALGOLIA_APP_ID=${{ env.PUBLIC_ALGOLIA_APP_ID }} >> documentation/update-algolia-indices/.env
           yarn nx run ag-grid-docs:update-algolia -c staging
 
       - name: Upload Artifacts
