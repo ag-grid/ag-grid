@@ -19,12 +19,12 @@ export class PopupEditorWrapper extends PopupComponent {
     private addKeyDownListener(): void {
         const eGui = this.getGui();
         const params = this.params;
-        const listener = (event: KeyboardEvent) => {
+        const keydown = (event: KeyboardEvent) => {
             if (!_isUserSuppressingKeyboardEvent(this.gos, event, params.node, params.column as AgColumn, true)) {
                 params.onKeyDown(event);
             }
         };
 
-        this.addManagedElementListeners(eGui, { keydown: listener });
+        this.addManagedElementListeners(eGui, { keydown });
     }
 }

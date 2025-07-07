@@ -43,10 +43,8 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
         super(SelectCellElement, [AgSelectSelector]);
     }
 
-    public initialiseEditor(params: SelectCellEditorParams): void {
-        this.focusAfterAttached = params.cellStartedEdit;
-
-        const { eEditor, valueSvc, gos } = this;
+    public updateParams(params: SelectCellEditorParams): void {
+        const { eEditor, valueSvc } = this;
         const { values, value, eventKey } = params;
 
         if (_missing(values)) {
@@ -55,6 +53,10 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
         }
 
         this.startedByEnter = eventKey != null ? eventKey === KeyCode.ENTER : false;
+
+        if (eEditor.hasOptions()) {
+            eEditor.clearOptions();
+        }
 
         let hasValue = false;
         values.forEach((currentValue: any) => {
@@ -86,12 +88,21 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
         if (valueListMaxWidth != null) {
             eEditor.setPickerMaxWidth(valueListMaxWidth);
         }
+    }
+
+    public initialiseEditor(params: SelectCellEditorParams): void {
+        this.focusAfterAttached = params.cellStartedEdit;
+        this.updateParams(params);
 
         // we don't want to add this if full row editing, otherwise selecting will stop the
         // full row editing.
-        if (gos.get('editType') !== 'fullRow') {
+        if (this.gos.get('editType') !== 'fullRow') {
             this.addManagedListeners(this.eEditor, { selectedItem: () => params.stopEditing() });
         }
+    }
+
+    public override refreshEditor(params: SelectCellEditorParams): void {
+        this.updateParams(params);
     }
 
     public afterGuiAttached() {

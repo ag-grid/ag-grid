@@ -547,8 +547,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.model.clearEditValue(cellPosition);
 
-        _destroyEditors(this.beans, [cellPosition]);
-
         _setupEditor(this.beans, cellPosition);
 
         _populateModelValidationErrors(this.beans);
@@ -670,7 +668,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const { beans } = this;
 
         this.strategy ??= this.createStrategy();
-        const source = this.isBatchEditing() ? 'ui' : 'api';
+        // const source = this.isBatchEditing() ? 'ui' : 'api';
 
         const existing = this.model.getEdit(position);
         if (existing) {
@@ -680,7 +678,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             if (existing.oldValue !== newValue) {
                 _syncFromEditor(beans, position, newValue, eventSource);
-                this.stopEditing(position, { source });
+                position.rowNode.setDataValue(position.column, newValue, 'api');
                 return true;
             }
 
@@ -697,7 +695,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
 
         _syncFromEditor(beans, position, newValue, eventSource);
-        this.stopEditing(position, { source });
+        position.rowNode.setDataValue(position.column, newValue, 'api');
 
         return true;
     }

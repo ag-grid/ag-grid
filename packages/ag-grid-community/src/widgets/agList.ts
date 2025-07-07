@@ -137,6 +137,10 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
         this.refreshAriaRole();
     }
 
+    public hasOptions(): boolean {
+        return this.options.length > 0;
+    }
+
     private refreshAriaRole(): void {
         const eGui = this.getGui();
 

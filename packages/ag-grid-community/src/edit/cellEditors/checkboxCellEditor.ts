@@ -39,6 +39,10 @@ export class CheckboxCellEditor extends AgAbstractCellEditor<ICellEditorParams<a
         });
     }
 
+    public override refreshEditor(params: ICellEditorParams<any, boolean, any>): void {
+        this.eEditor.setValue(params.value ?? undefined, true);
+    }
+
     public getValue(): boolean | undefined {
         return this.eEditor.getValue();
     }

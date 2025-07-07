@@ -307,6 +307,10 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     private getRowForMouseEvent(e: MouseEvent): number {
+        if (!this.model) {
+            return -1;
+        }
+
         const eGui = this.getGui();
         const rect = eGui.getBoundingClientRect();
         const scrollTop = this.getScrollTop();

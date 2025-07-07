@@ -27,10 +27,10 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         return [AgInputNumberFieldSelector];
     }
 
-    public init(eEditor: AgInputNumberField, params: INumberCellEditorParams): void {
-        this.eEditor = eEditor;
+    public updateParams(params: INumberCellEditorParams): void {
         this.params = params;
         const { max, min, precision, step } = params;
+        const { eEditor } = this;
         if (max != null) {
             eEditor.setMax(max);
         }
@@ -43,7 +43,11 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         if (step != null) {
             eEditor.setStep(step);
         }
+    }
 
+    public init(eEditor: AgInputNumberField, params: INumberCellEditorParams): void {
+        this.eEditor = eEditor;
+        this.updateParams(params);
         const editorEl = eEditor.getInputElement();
         if (params.preventStepping) {
             eEditor.addManagedElementListeners(editorEl, { keydown: this.preventStepping });

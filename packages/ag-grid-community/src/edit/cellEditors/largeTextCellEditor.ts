@@ -26,14 +26,9 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         super(LargeTextCellElement, [AgInputTextAreaSelector]);
     }
 
-    public initialiseEditor(params: ILargeTextEditorParams): void {
+    updateParams(params: ILargeTextEditorParams): void {
         const { eEditor } = this;
-        const { cellStartedEdit, value, maxLength, cols, rows } = params;
-        this.focusAfterAttached = cellStartedEdit;
-
-        // disable initial tooltips added to the input field
-        // let the validation handle tooltips.
-        eEditor.getInputElement().setAttribute('title', '');
+        const { value, maxLength, cols, rows } = params;
 
         eEditor
             .setMaxLength(maxLength || 200)
@@ -43,9 +38,24 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
         if (value != null) {
             eEditor.setValue(value.toString(), true);
         }
+    }
+
+    public initialiseEditor(params: ILargeTextEditorParams): void {
+        const { eEditor } = this;
+        this.focusAfterAttached = params.cellStartedEdit;
+
+        // disable initial tooltips added to the input field
+        // let the validation handle tooltips.
+        eEditor.getInputElement().setAttribute('title', '');
+
+        this.updateParams(params);
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
         this.activateTabIndex();
+    }
+
+    public refreshEditor(params: ILargeTextEditorParams): void {
+        this.updateParams(params);
     }
 
     private onKeyDown(event: KeyboardEvent): void {

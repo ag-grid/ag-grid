@@ -173,6 +173,10 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         return this;
     }
 
+    public hasOptions(): boolean {
+        return this.listComponent?.hasOptions() ?? false;
+    }
+
     public override setValue(value?: TValue, silent?: boolean, fromPicker?: boolean): this {
         const {
             listComponent,

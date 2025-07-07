@@ -9,6 +9,11 @@ import { AgAbstractCellEditor, _addGridCommonParams, _missing, _warn } from 'ag-
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 
+type RichSelectBuiltParams<TValue> = {
+    params: RichSelectParams<TValue>;
+    valuesPromise?: Promise<TValue[]>;
+};
+
 export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> extends AgAbstractCellEditor {
     protected override params: RichCellEditorParams<TData, TValue>;
     private focusAfterAttached: boolean;
@@ -19,37 +24,48 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
     }
 
-    public initialiseEditor(_params: RichCellEditorParams<TData, TValue>): void {
-        const { cellStartedEdit, values, eventKey } = this.params;
+    public updateParams({ params, valuesPromise }: RichSelectBuiltParams<TValue>): void {
+        const handler = (valueList: TValue[]) => {
+            this.eEditor.setValueList({ valueList, refresh: true });
+            const searchStringCallback = this.getSearchStringCallback(valueList);
+            if (searchStringCallback) {
+                this.eEditor.setSearchStringCreator(searchStringCallback);
+            }
+        };
 
-        if (_missing(values)) {
-            _warn(180);
+        if (valuesPromise) {
+            this.isAsync = true;
+            valuesPromise.then(handler);
+            return;
         }
 
-        const { params: richSelectParams, valuesPromise } = this.buildRichSelectParams();
-        const richSelect = this.createManagedBean(new AgRichSelect<TValue>(richSelectParams));
+        const { valueList } = params;
+        if (valueList) {
+            handler(valueList);
+        }
+    }
+
+    public initialiseEditor(params: RichCellEditorParams<TData, TValue>): void {
+        this.params = params;
+        const builtParams = this.buildRichSelectParams(params);
+
+        const richSelect = this.createManagedBean(new AgRichSelect<TValue>(builtParams.params));
 
         this.eEditor = richSelect;
         richSelect.addCss('ag-cell-editor');
         this.appendChild(richSelect);
 
-        if (valuesPromise) {
-            this.isAsync = true;
-            valuesPromise.then((values: TValue[]) => {
-                richSelect.setValueList({ valueList: values, refresh: true });
-                const searchStringCallback = this.getSearchStringCallback(values);
-                if (searchStringCallback) {
-                    richSelect.setSearchStringCreator(searchStringCallback);
-                }
-
-                this.processEventKey(eventKey);
-            });
-        }
+        this.updateParams(builtParams);
 
         this.addManagedListeners(richSelect, {
             fieldPickerValueSelected: this.onEditorPickerValueSelected.bind(this),
         });
-        this.focusAfterAttached = cellStartedEdit;
+        this.focusAfterAttached = params.cellStartedEdit;
+    }
+
+    public override refreshEditor(params: RichCellEditorParams<TData, TValue, TContext>): void {
+        this.params = params;
+        this.updateParams(this.buildRichSelectParams(params));
     }
 
     private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
@@ -58,8 +74,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         setTimeout(() => this.params.stopEditing(!e.fromEnterKey));
     }
 
-    private buildRichSelectParams(): { params: RichSelectParams<TValue>; valuesPromise?: Promise<TValue[]> } {
-        const params = this.params;
+    private buildRichSelectParams(params: RichCellEditorParams<TData, TValue>): RichSelectBuiltParams<TValue> {
         const {
             cellRenderer,
             cellHeight,
@@ -80,6 +95,10 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             suppressDeselectAll,
             suppressMultiSelectPillRenderer,
         } = params;
+
+        if (_missing(values)) {
+            _warn(180);
+        }
 
         const ret: RichSelectParams = {
             value: value,

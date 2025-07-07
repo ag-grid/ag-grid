@@ -10,6 +10,7 @@ export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TV
     protected params: P;
 
     protected abstract initialiseEditor(params: P): void;
+    protected abstract refreshEditor(params: P): void;
 
     public abstract getValidationElement(): HTMLElement | HTMLInputElement;
     public abstract getValue(): TValue | null | undefined;
@@ -21,6 +22,19 @@ export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TV
         this.params = params;
         this.initialiseEditor(params);
         this.eEditor.onValueChange(() => params.validate());
+    }
+
+    public refresh(params: P): boolean {
+        this.params = params;
+        try {
+            this.refreshEditor(params);
+            const value: any = params.value;
+            this.eEditor.setValue(value as any, true);
+            return true;
+        } catch (e) {
+            // if the value is invalid, return false to indicate the refresh didn't succeed
+            return false;
+        }
     }
 
     public override destroy(): void {

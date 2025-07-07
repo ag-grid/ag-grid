@@ -32,8 +32,8 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         return [AgInputDateFieldSelector];
     }
 
-    public init(eEditor: AgInputDateField, params: IDateCellEditorParams): void {
-        this.eEditor = eEditor;
+    public updateParams(params: IDateCellEditorParams): void {
+        const { eEditor } = this;
         this.params = params;
 
         const { min, max, step, colDef } = params;
@@ -54,6 +54,11 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         if (this.includeTime != null) {
             eEditor.setIncludeTime(this.includeTime);
         }
+    }
+
+    public init(eEditor: AgInputDateField, params: IDateCellEditorParams): void {
+        this.eEditor = eEditor;
+        this.updateParams(params);
     }
 
     public getValidationErrors(): string[] | null {

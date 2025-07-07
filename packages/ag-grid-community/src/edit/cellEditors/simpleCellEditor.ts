@@ -75,6 +75,10 @@ export class SimpleCellEditor<
         });
     }
 
+    public override refreshEditor(params: P): void {
+        this.cellEditorInput.updateParams?.(params);
+    }
+
     public afterGuiAttached(): void {
         const translate = this.getLocaleTextFunc();
         const eInput = this.eEditor;

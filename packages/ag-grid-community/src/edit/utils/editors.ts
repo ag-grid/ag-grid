@@ -107,16 +107,13 @@ export function _valuesDiffer({ newValue, oldValue }: Pick<EditValue, 'newValue'
     return newValue !== oldValue;
 }
 
-export function _setupEditor(
+export function _refreshEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
     key?: string | null,
     event?: Event | null,
     cellStartedEdit?: boolean | null
-): void {
-    const cellCtrl = _getCellCtrl(beans, position)!;
-    const editorComp = cellCtrl?.comp?.getCellEditor();
-
+): ICellEditorParams | undefined {
     const editorParams = _createEditorParams(beans, position, key, cellStartedEdit);
 
     const oldValue = beans.valueSvc.getValue(position.column as AgColumn, position.rowNode, undefined, 'api');
@@ -130,11 +127,40 @@ export function _setupEditor(
 
     beans.editModelSvc?.setEdit(position, { newValue: newValue ?? UNEDITED, oldValue, state: 'editing' });
 
-    if (editorComp) {
+    const cellCtrl = _getCellCtrl(beans, position)!;
+    const editorComp = cellCtrl?.comp?.getCellEditor();
+    if (editorComp?.refresh) {
         // don't reinitialise, just refresh if possible
         editorComp.refresh?.(editorParams);
+        return undefined;
+    }
+    return editorParams;
+}
+
+export function _setupEditor(
+    beans: BeanCollection,
+    position: Required<EditPosition>,
+    key?: string | null,
+    event?: Event | null,
+    cellStartedEdit?: boolean | null
+): void {
+    const editorParams = _refreshEditor(beans, position, key, event, cellStartedEdit);
+
+    if (!editorParams) {
+        // refresh succeeded, so we don't need to set up the editor again
         return;
     }
+
+    const oldValue = beans.valueSvc.getValue(position.column as AgColumn, position.rowNode, undefined, 'api');
+
+    // if key is a single character, then we treat it as user input
+    let newValue = key?.length === 1 ? key : editorParams.value;
+
+    if (newValue === undefined) {
+        newValue = oldValue;
+    }
+
+    beans.editModelSvc?.setEdit(position, { newValue: newValue ?? UNEDITED, oldValue, state: 'editing' });
 
     const colDef = position.column.getColDef();
     const compDetails = _getCellEditorDetails(beans.userCompFactory, colDef, editorParams);
@@ -148,11 +174,24 @@ export function _setupEditor(
 
     checkAndPreventDefault(compDetails!.params, event);
 
+    const cellCtrl = _getCellCtrl(beans, position)!;
+    const editorComp = cellCtrl?.comp?.getCellEditor();
+
     if (cellCtrl) {
+        if (editorComp) {
+            // couldn't refresh the editor, so we need to destroy it, to rebuild it with new params
+            cellCtrl.comp?.setEditDetails();
+        }
         cellCtrl.editCompDetails = compDetails;
         cellCtrl.comp?.setEditDetails(compDetails, popup, popupLocation, beans.gos.get('reactiveCustomComponents'));
+        // if (!cellCtrl.comp?.getCellEditor()) {
+        //     cellCtrl.onEditorAttachedFuncs.push(() => cellCtrl.comp?.getCellEditor()?.refresh?.(editorParams));
+        // }
         cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
+    }
 
+    if (!editorComp) {
+        // if we didn't originally have an editor, this is a new edit, so we need to dispatch the event
         beans.editSvc?.dispatchCellEvent(position, null, 'cellEditingStarted');
     }
 
@@ -399,6 +438,8 @@ export function _destroyEditor(beans: BeanCollection, position: Required<EditPos
 
     beans.editSvc?.dispatchCellEvent(position, null, 'cellEditingStopped', {
         valueChanged: edit && _valuesDiffer(edit),
+        newValue: edit?.newValue,
+        oldValue: edit?.oldValue,
     });
 }
 

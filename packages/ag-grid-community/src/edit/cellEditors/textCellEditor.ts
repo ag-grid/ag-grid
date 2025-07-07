@@ -28,13 +28,17 @@ class TextCellEditorInput<TValue = any>
         return [AgInputTextFieldSelector];
     }
 
-    public init(eEditor: AgInputTextField, params: ITextCellEditorParams<any, TValue>): void {
-        this.eEditor = eEditor;
+    public updateParams(params: ITextCellEditorParams<any, TValue>): void {
         this.params = params;
         const maxLength = params.maxLength;
         if (maxLength != null) {
-            eEditor.setMaxLength(maxLength);
+            this.eEditor.setMaxLength(maxLength);
         }
+    }
+
+    public init(eEditor: AgInputTextField, params: ITextCellEditorParams<any, TValue>): void {
+        this.eEditor = eEditor;
+        this.updateParams(params);
     }
 
     public getValidationErrors(): string[] | null {

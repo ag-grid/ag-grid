@@ -7,6 +7,7 @@ export interface CellEditorInput<TValue, P extends ICellEditorParams, I extends 
     getTemplate(): ElementParams;
     getAgComponents(): ComponentSelector[];
     init(eInput: I, params: P): void;
+    updateParams?(params: P): void;
     getValue(): TValue | null | undefined;
     getStartValue(): string | null | undefined;
     getValidationErrors(): string[] | null;
