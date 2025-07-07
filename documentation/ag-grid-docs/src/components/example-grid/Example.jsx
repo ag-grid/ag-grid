@@ -11,6 +11,7 @@ import 'ag-grid-community/styles/ag-theme-balham.css';
 import 'ag-grid-community/styles/ag-theme-material.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import {
+    AdvancedFilterModule,
     CellSelectionModule,
     ClipboardModule,
     ColumnMenuModule,
@@ -177,6 +178,7 @@ const mobileDefaultCols = [
         filter: 'agSetColumnFilter',
         cellEditor: 'agRichSelectCellEditor',
         cellClass: 'v-align',
+        enableAdvancedFilter: true,
         cellEditorParams: {
             values: LANGUAGES,
         },
@@ -184,8 +186,10 @@ const mobileDefaultCols = [
     {
         field: 'country',
         width: 150,
+        filter: 'agSetColumnFilter',
         cellRenderer: 'countryCellRenderer',
         cellClass: 'v-align',
+        enableAdvancedFilter: true,
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             cellRenderer: 'countryCellRenderer',
@@ -195,28 +199,31 @@ const mobileDefaultCols = [
     {
         field: 'game.name',
         width: 180,
+        filter: 'agSetColumnFilter',
         cellEditor: 'agRichSelectCellEditor',
+        enableAdvancedFilter: true,
         cellEditorParams: {
             values: [...games].sort(),
         },
-        filter: 'agSetColumnFilter',
         cellClass: () => 'alphabet',
     },
     {
         field: 'bankBalance',
         width: 180,
+        filter: 'agNumberColumnFilter',
         cellClassRules: {
             'currency-cell': 'typeof x == "number"',
         },
         enableValue: true,
+        enableAdvancedFilter: true,
         cellDataType: 'currency',
-        filter: 'agNumberColumnFilter',
     },
     {
         field: 'totalWinnings',
-        filter: 'agNumberColumnFilter',
         width: 170,
+        filter: 'agNumberColumnFilter',
         enableValue: true,
+        enableAdvancedFilter: true,
         cellClassRules: {
             'currency-cell': 'typeof x == "number"',
         },
@@ -233,51 +240,37 @@ const desktopDefaultCols = [
                 rowDrag: true,
                 field: 'name',
                 width: 200,
+                filter: 'agTextColumnFilter',
                 enableRowGroup: true,
+                enableAdvancedFilter: true,
                 cellClass: 'v-align',
             },
             {
                 field: 'language',
                 width: 150,
+                filter: 'agSetColumnFilter',
                 cellEditor: 'agRichSelectCellEditor',
                 cellClass: 'v-align',
                 enableRowGroup: true,
                 enablePivot: true,
+                enableAdvancedFilter: true,
                 cellEditorParams: {
                     values: LANGUAGES,
-                },
-                filter: 'agMultiColumnFilter',
-                filterParams: {
-                    filters: [
-                        {
-                            filter: 'agTextColumnFilter',
-                            display: 'subMenu',
-                        },
-                        {
-                            filter: 'agSetColumnFilter',
-                            filterParams: {
-                                buttons: ['reset'],
-                            },
-                        },
-                    ],
                 },
             },
             {
                 field: 'country',
                 width: 150,
+                filter: 'agSetColumnFilter',
                 cellRenderer: 'countryCellRenderer',
                 cellClass: ['country-cell', 'v-align'],
                 enableRowGroup: true,
                 enablePivot: true,
+                enableAdvancedFilter: true,
                 cellEditor: 'agRichSelectCellEditor',
                 cellEditorParams: {
                     cellRenderer: 'countryCellRenderer',
                     values: COUNTRY_NAMES,
-                },
-                filter: 'agSetColumnFilter',
-                filterParams: {
-                    cellRenderer: 'countryCellRenderer',
-                    buttons: ['reset'],
                 },
             },
         ],
@@ -288,7 +281,7 @@ const desktopDefaultCols = [
             {
                 field: 'game.name',
                 width: 180,
-                filter: 'agMultiColumnFilter',
+                filter: 'agSetColumnFilter',
                 cellEditor: 'agRichSelectCellEditor',
                 cellEditorParams: {
                     values: [...games].sort(),
@@ -299,38 +292,21 @@ const desktopDefaultCols = [
                 },
                 tooltipField: 'game.name',
                 cellClass: () => 'alphabet',
-                filterParams: {
-                    filters: [
-                        {
-                            filter: 'agTextColumnFilter',
-                            display: 'subMenu',
-                        },
-                        {
-                            filter: 'agSetColumnFilter',
-                            filterParams: {
-                                buttons: ['reset'],
-                            },
-                        },
-                    ],
-                },
                 enableRowGroup: true,
                 enablePivot: true,
+                enableAdvancedFilter: true,
             },
             {
                 headerName: 'Bought',
                 field: 'game.bought',
-                filter: 'agSetColumnFilter',
                 width: 150,
+                filter: 'agSetColumnFilter',
                 enableRowGroup: true,
                 enablePivot: true,
+                enableAdvancedFilter: true,
                 cellClass: 'boolean-type',
                 cellRenderer: 'booleanCellRenderer',
                 cellStyle: { textAlign: 'center' },
-                filterParams: {
-                    cellRenderer: 'booleanCellRenderer',
-                    cellRendererParams: { isFilterRenderer: true },
-                    buttons: ['reset'],
-                },
             },
         ],
     },
@@ -341,31 +317,34 @@ const desktopDefaultCols = [
             {
                 field: 'bankBalance',
                 width: 180,
+                filter: 'agNumberColumnFilter',
                 cellClassRules: {
                     'currency-cell': 'typeof x == "number"',
                 },
                 enableValue: true,
+                enableAdvancedFilter: true,
                 cellDataType: 'currency',
-                filter: 'agNumberColumnFilter',
             },
         ],
     },
     {
         field: 'rating',
         width: 120,
+        filter: 'agNumberColumnFilter',
         cellRenderer: 'ratingRenderer',
         cellClass: 'v-align',
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
+        enableAdvancedFilter: true,
         chartDataType: 'category',
-        filterParams: { cellRenderer: 'ratingRenderer', cellRendererParams: { isFilterRenderer: true } },
     },
     {
         field: 'totalWinnings',
-        filter: 'agNumberColumnFilter',
         width: 200,
+        filter: 'agNumberColumnFilter',
         enableValue: true,
+        enableAdvancedFilter: true,
         cellClassRules: {
             'currency-cell': 'typeof x == "number"',
         },
@@ -448,6 +427,7 @@ const ExampleInner = ({ darkMode }) => {
             AllCommunityModule,
             ClientSideRowModelModule,
             CsvExportModule,
+            AdvancedFilterModule,
             ClipboardModule,
             ColumnsToolPanelModule,
             ExcelExportModule,
@@ -515,8 +495,6 @@ const ExampleInner = ({ darkMode }) => {
             defaultColDef: {
                 minWidth: 50,
                 editable: true,
-                filter: true,
-                floatingFilter: !isSmall,
                 enableCellChangeFlash: true,
             },
             rowDragManaged: true,
@@ -529,6 +507,7 @@ const ExampleInner = ({ darkMode }) => {
             undoRedoCellEditing: true,
             undoRedoCellEditingLimit: 50,
             quickFilterText: null,
+            enableAdvancedFilter: true,
             autoGroupColumnDef: groupColumn,
             rowNumbers: true,
             cellSelection: {
@@ -541,7 +520,7 @@ const ExampleInner = ({ darkMode }) => {
                 mode: 'multiRow',
             },
             sideBar: {
-                toolPanels: ['columns', 'filters'],
+                toolPanels: ['columns'],
                 position: 'right',
                 defaultToolPanel: 'columns',
                 hiddenByDefault: isSmall,
@@ -822,18 +801,15 @@ const ExampleInner = ({ darkMode }) => {
             monthGroup.children.push({
                 field: month.toLocaleLowerCase(),
                 width: 150,
+                filter: 'agNumberColumnFilter',
                 enableValue: true,
+                enableAdvancedFilter: true,
                 cellClassRules: {
                     'good-score': 'typeof x === "number" && x > 50000',
                     'bad-score': 'typeof x === "number" && x < 10000',
                     'currency-cell': 'typeof x === "number" && x >= 10000 && x <= 50000',
                 },
                 cellDataType: 'currency',
-                filter: 'agNumberColumnFilter',
-                filterParams: {
-                    buttons: ['reset'],
-                    inRangeInclusive: true,
-                },
             });
         });
 

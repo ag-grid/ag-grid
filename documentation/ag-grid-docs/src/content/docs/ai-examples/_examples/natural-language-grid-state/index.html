@@ -1,0 +1,44 @@
+<div class="example-wrapper">
+    <div>
+        <div class="input-group">
+            <input 
+                type="text" 
+                id="naturalLanguageInput" 
+                placeholder="Enter your request in natural language (e.g., 'hide age column', 'sort by gold medals')"
+                autocomplete="off"
+                style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-right: 10px;"
+            />
+            <button id="processRequest" onclick="processNaturalLanguageRequest()" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Process Request
+            </button>
+        </div>
+        
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 15px; border-radius: 4px; margin: 15px 0;">
+            <strong>Setup Required:</strong> This example requires an OpenAI API key to be configured. Set the <code>OPENAI_API_KEY</code> environment variable or update the API key in the source code.
+        </div>
+        
+        <div class="examples" style="background: #e7f3ff; padding: 15px; border-radius: 4px; margin: 15px 0; border-left: 4px solid #007bff;">
+            <strong>Try these example commands:</strong>
+            <ul style="margin: 10px 0 0 20px;">
+                <li><code>hide the age column</code> - Hide the age column</li>
+                <li><code>sort by gold medals descending</code> - Sort by gold medals</li>
+                <li><code>group rows by country</code> - Group by country (only groupable columns)</li>
+                <li><code>pin athlete column to the left</code> - Pin the athlete column</li>
+                <li><code>aggregate gold medals using sum</code> - Apply aggregation (only numeric columns)</li>
+                <li><code>create pivot table with sport as columns</code> - Enable pivot mode</li>
+                <li><code>resize age column to 120 pixels</code> - Set column width</li>
+            </ul>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="getCurrentState()">Get Current State</button>
+            <button onclick="resetGrid()">Reset Grid</button>
+        </div>
+        
+        <div id="processingStatus" style="margin-top: 15px;"></div>
+        <div id="aiResponse" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 4px; display: none;"></div>
+        <div id="currentState" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 4px; display: none; max-height: 300px; overflow-y: auto;"></div>
+    </div>
+
+    <div id="myGrid"></div>
+</div>

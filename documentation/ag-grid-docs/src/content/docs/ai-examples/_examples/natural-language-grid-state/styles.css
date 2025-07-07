@@ -1,0 +1,72 @@
+/* Minimal styles for the natural language grid state example */
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.input-group {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.examples {
+    background: #e7f3ff;
+    padding: 15px;
+    border-radius: 4px;
+    margin: 15px 0;
+    border-left: 4px solid #007bff;
+}
+
+.examples ul {
+    margin: 10px 0 0 20px;
+}
+
+.examples li {
+    margin: 5px 0;
+}
+
+#processingStatus {
+    margin-top: 15px;
+}
+
+#aiResponse,
+#currentState {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+}
+
+#currentState {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#aiResponse pre,
+#currentState pre {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 12px;
+    border: 1px solid #e9ecef;
+}
+
+#aiResponse h4,
+#currentState h4 {
+    margin: 0 0 10px 0;
+    color: #495057;
+}
+
+@media (max-width: 768px) {
+    .input-group {
+        flex-direction: column;
+    }
+
+    .input-group input {
+        margin-bottom: 10px;
+        margin-right: 0 !important;
+    }
+}

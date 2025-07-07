@@ -1,0 +1,636 @@
+{
+    "name": "grid_state",
+    "strict": true,
+    "schema": {
+        "type": "object",
+        "description": "Response for modifying AG-Grid state using natural language commands",
+        "$defs": {
+            "allColumnId": {
+                "type": "string",
+                "enum": ["athlete", "age", "country", "year", "sport", "gold", "silver", "bronze", "total"],
+                "description": "Valid column ID from the grid"
+            },
+            "sortableColumnId": {
+                "type": "string",
+                "enum": ["athlete", "age", "country", "year", "sport", "gold", "silver", "bronze", "total"],
+                "description": "Column ID that supports sorting"
+            },
+            "filterableColumnId": {
+                "type": "string",
+                "enum": ["athlete", "age", "country", "year", "sport", "gold", "silver", "bronze", "total"],
+                "description": "Column ID that supports filtering"
+            },
+            "groupableColumnId": {
+                "type": "string",
+                "enum": [],
+                "description": "Column ID that supports row grouping"
+            },
+            "pivotableColumnId": {
+                "type": "string",
+                "enum": [],
+                "description": "Column ID that supports pivoting"
+            },
+            "aggregatableColumnId": {
+                "type": "string",
+                "enum": ["age", "gold", "silver", "bronze", "total"],
+                "description": "Column ID that supports aggregation"
+            },
+            "resizableColumnId": {
+                "type": "string",
+                "enum": ["athlete", "age", "country", "year", "sport", "gold", "silver", "bronze", "total"],
+                "description": "Column ID that supports resizing"
+            },
+            "pinnableColumnId": {
+                "type": "string",
+                "enum": ["athlete", "age", "country", "year", "sport", "gold", "silver", "bronze", "total"],
+                "description": "Column ID that can be pinned"
+            },
+            "sortDirection": {
+                "type": "string",
+                "enum": ["asc", "desc"],
+                "description": "Sort direction: ascending or descending"
+            },
+            "aggregationFunction": {
+                "type": "string",
+                "enum": ["sum", "avg", "min", "max", "count", "first", "last"],
+                "description": "Aggregation function to apply to numeric columns"
+            },
+            "sideBarPosition": {
+                "type": "string",
+                "enum": ["left", "right"],
+                "description": "Position of the sidebar"
+            },
+            "toolPanelId": {
+                "type": "string",
+                "enum": ["columns", "filters"],
+                "description": "Tool panel identifier"
+            },
+            "gridStateProperty": {
+                "type": "string",
+                "enum": [
+                    "aggregation",
+                    "columnGroup",
+                    "columnOrder",
+                    "columnPinning",
+                    "columnSizing",
+                    "columnVisibility",
+                    "filter",
+                    "focusedCell",
+                    "pagination",
+                    "rowPinning",
+                    "pivot",
+                    "cellSelection",
+                    "rowGroup",
+                    "rowGroupExpansion",
+                    "rowSelection",
+                    "scroll",
+                    "sideBar",
+                    "sort"
+                ],
+                "description": "Grid state property that can be ignored when setting state"
+            },
+            "filterModel": {
+                "type": "object",
+                "description": "Column filter configurations where each key is a column ID",
+                "patternProperties": { "^.*$": { "$ref": "#/$defs/columnFilter" } },
+                "additionalProperties": false
+            },
+            "columnFilter": {
+                "anyOf": [
+                    { "$ref": "#/$defs/textFilter" },
+                    { "$ref": "#/$defs/numberFilter" },
+                    { "$ref": "#/$defs/dateFilter" },
+                    { "$ref": "#/$defs/setFilter" },
+                    { "$ref": "#/$defs/multiFilter" }
+                ]
+            },
+            "textFilter": {
+                "type": "object",
+                "properties": {
+                    "filterType": { "type": "string", "enum": ["text"] },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "equals",
+                            "notEqual",
+                            "contains",
+                            "notContains",
+                            "startsWith",
+                            "endsWith",
+                            "blank",
+                            "notBlank"
+                        ]
+                    },
+                    "filter": { "type": "string" }
+                },
+                "required": ["filterType", "type"],
+                "additionalProperties": false
+            },
+            "numberFilter": {
+                "type": "object",
+                "properties": {
+                    "filterType": { "type": "string", "enum": ["number"] },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "equals",
+                            "notEqual",
+                            "lessThan",
+                            "lessThanOrEqual",
+                            "greaterThan",
+                            "greaterThanOrEqual",
+                            "inRange",
+                            "blank",
+                            "notBlank"
+                        ]
+                    },
+                    "filter": { "type": "number" },
+                    "filterTo": { "type": "number" }
+                },
+                "required": ["filterType", "type"],
+                "additionalProperties": false
+            },
+            "dateFilter": {
+                "type": "object",
+                "properties": {
+                    "filterType": { "type": "string", "enum": ["date"] },
+                    "type": {
+                        "type": "string",
+                        "enum": ["equals", "notEqual", "lessThan", "greaterThan", "inRange", "blank", "notBlank"]
+                    },
+                    "dateFrom": { "type": "string" },
+                    "dateTo": { "type": "string" }
+                },
+                "required": ["filterType", "type"],
+                "additionalProperties": false
+            },
+            "setFilter": {
+                "type": "object",
+                "properties": {
+                    "filterType": { "type": "string", "enum": ["set"] },
+                    "values": { "type": "array", "items": { "type": "string" } }
+                },
+                "required": ["filterType", "values"],
+                "additionalProperties": false
+            },
+            "multiFilter": {
+                "type": "object",
+                "properties": {
+                    "filterType": { "type": "string", "enum": ["multi"] },
+                    "operator": { "type": "string", "enum": ["AND", "OR"] },
+                    "conditions": { "type": "array", "items": { "$ref": "#/$defs/columnFilter" } }
+                },
+                "required": ["filterType", "operator", "conditions"],
+                "additionalProperties": false
+            },
+            "advancedFilterModel": {
+                "anyOf": [{ "$ref": "#/$defs/advancedFilterCondition" }, { "$ref": "#/$defs/advancedFilterJoin" }]
+            },
+            "advancedFilterCondition": {
+                "type": "object",
+                "properties": {
+                    "filterType": { "type": "string" },
+                    "colId": { "$ref": "#/$defs/filterableColumnId" },
+                    "type": { "type": "string" },
+                    "filter": { "type": ["string", "number"] },
+                    "filterTo": { "type": ["string", "number"] }
+                },
+                "required": ["filterType", "colId", "type"],
+                "additionalProperties": false
+            },
+            "advancedFilterJoin": {
+                "type": "object",
+                "properties": {
+                    "filterType": { "type": "string", "enum": ["join"] },
+                    "type": { "type": "string", "enum": ["AND", "OR"] },
+                    "conditions": { "type": "array", "items": { "$ref": "#/$defs/advancedFilterModel" } }
+                },
+                "required": ["filterType", "type", "conditions"],
+                "additionalProperties": false
+            },
+            "rowPosition": {
+                "type": "object",
+                "properties": {
+                    "rowIndex": { "type": "number", "minimum": 0 },
+                    "rowPinned": { "type": ["string", "null"], "enum": ["top", "bottom", null] }
+                },
+                "required": ["rowIndex"],
+                "additionalProperties": false
+            },
+            "toolPanelConfig": {
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string" },
+                    "labelDefault": { "type": "string" },
+                    "labelKey": { "type": "string" },
+                    "iconKey": { "type": "string" },
+                    "toolPanel": { "type": "string" }
+                },
+                "required": ["id"],
+                "additionalProperties": false
+            },
+            "serverSideRowSelection": {
+                "type": "object",
+                "properties": {
+                    "selectAll": { "type": "boolean" },
+                    "toggledNodes": { "type": "array", "items": { "type": "string" } }
+                },
+                "required": ["selectAll", "toggledNodes"],
+                "additionalProperties": false
+            }
+        },
+        "properties": {
+            "gridState": {
+                "type": "object",
+                "description": "The grid state changes to apply. Only include properties that need to be modified.",
+                "properties": {
+                    "version": { "type": "string", "description": "Grid state version" },
+                    "columnOrder": {
+                        "type": "object",
+                        "description": "Change the order of columns in the grid",
+                        "properties": {
+                            "orderedColIds": {
+                                "type": "array",
+                                "description": "Array of column IDs in the desired order",
+                                "items": { "$ref": "#/$defs/allColumnId" }
+                            }
+                        },
+                        "required": ["orderedColIds"],
+                        "additionalProperties": false
+                    },
+                    "columnPinning": {
+                        "type": "object",
+                        "description": "Pin or unpin columns to the left or right side of the grid",
+                        "properties": {
+                            "leftColIds": {
+                                "type": "array",
+                                "description": "Column IDs to pin to the left side",
+                                "items": { "$ref": "#/$defs/pinnableColumnId" }
+                            },
+                            "rightColIds": {
+                                "type": "array",
+                                "description": "Column IDs to pin to the right side",
+                                "items": { "$ref": "#/$defs/pinnableColumnId" }
+                            }
+                        },
+                        "required": ["leftColIds", "rightColIds"],
+                        "additionalProperties": false
+                    },
+                    "columnSizing": {
+                        "type": "object",
+                        "description": "Resize columns by setting width or flex values",
+                        "properties": {
+                            "columnSizingModel": {
+                                "type": "array",
+                                "description": "Array of column sizing configurations",
+                                "items": {
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "colId": {
+                                                    "$ref": "#/$defs/resizableColumnId",
+                                                    "description": "Column ID to resize"
+                                                },
+                                                "width": {
+                                                    "type": "number",
+                                                    "description": "Fixed width in pixels",
+                                                    "minimum": 20
+                                                }
+                                            },
+                                            "required": ["colId", "width"],
+                                            "additionalProperties": false
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "colId": {
+                                                    "$ref": "#/$defs/resizableColumnId",
+                                                    "description": "Column ID to resize"
+                                                },
+                                                "flex": {
+                                                    "type": "number",
+                                                    "description": "Flexible sizing ratio",
+                                                    "minimum": 0
+                                                }
+                                            },
+                                            "required": ["colId", "flex"],
+                                            "additionalProperties": false
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        "required": ["columnSizingModel"],
+                        "additionalProperties": false
+                    },
+                    "columnVisibility": {
+                        "type": "object",
+                        "description": "Show or hide columns in the grid",
+                        "properties": {
+                            "hiddenColIds": {
+                                "type": "array",
+                                "description": "Array of column IDs to hide",
+                                "items": { "$ref": "#/$defs/allColumnId" }
+                            }
+                        },
+                        "required": ["hiddenColIds"],
+                        "additionalProperties": false
+                    },
+                    "filter": {
+                        "type": "object",
+                        "description": "Apply filters to the grid data",
+                        "properties": {
+                            "filterModel": {
+                                "$ref": "#/$defs/filterModel",
+                                "description": "Column filter configurations"
+                            },
+                            "columnFilterState": {
+                                "type": "object",
+                                "description": "Column filter state information (rarely used)",
+                                "properties": {},
+                                "additionalProperties": false
+                            },
+                            "advancedFilterModel": {
+                                "$ref": "#/$defs/advancedFilterModel",
+                                "description": "Advanced filter configuration"
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "sort": {
+                        "type": "object",
+                        "description": "Sort the grid data by one or more columns",
+                        "properties": {
+                            "sortModel": {
+                                "type": "array",
+                                "description": "Array of sort configurations",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "colId": {
+                                            "$ref": "#/$defs/sortableColumnId",
+                                            "description": "Column ID to sort by"
+                                        },
+                                        "sort": {
+                                            "$ref": "#/$defs/sortDirection",
+                                            "description": "Sort direction"
+                                        }
+                                    },
+                                    "required": ["colId", "sort"],
+                                    "additionalProperties": false
+                                }
+                            }
+                        },
+                        "required": ["sortModel"],
+                        "additionalProperties": false
+                    },
+                    "rowGroup": {
+                        "type": "object",
+                        "description": "Group rows by one or more columns",
+                        "properties": {
+                            "groupColIds": {
+                                "type": "array",
+                                "description": "Array of column IDs to group by",
+                                "items": { "$ref": "#/$defs/groupableColumnId" }
+                            }
+                        },
+                        "required": ["groupColIds"],
+                        "additionalProperties": false
+                    },
+                    "pivot": {
+                        "type": "object",
+                        "description": "Enable pivot mode and set pivot columns",
+                        "properties": {
+                            "pivotMode": { "type": "boolean", "description": "Whether pivot mode is enabled" },
+                            "pivotColIds": {
+                                "type": "array",
+                                "description": "Array of column IDs to use as pivot columns",
+                                "items": { "$ref": "#/$defs/pivotableColumnId" }
+                            }
+                        },
+                        "required": ["pivotMode", "pivotColIds"],
+                        "additionalProperties": false
+                    },
+                    "aggregation": {
+                        "type": "object",
+                        "description": "Apply aggregation functions to columns",
+                        "properties": {
+                            "aggregationModel": {
+                                "type": "array",
+                                "description": "Array of aggregation configurations",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "colId": {
+                                            "$ref": "#/$defs/aggregatableColumnId",
+                                            "description": "Column ID to aggregate"
+                                        },
+                                        "aggFunc": {
+                                            "$ref": "#/$defs/aggregationFunction",
+                                            "description": "Aggregation function to apply"
+                                        }
+                                    },
+                                    "required": ["colId", "aggFunc"],
+                                    "additionalProperties": false
+                                }
+                            }
+                        },
+                        "required": ["aggregationModel"],
+                        "additionalProperties": false
+                    },
+                    "rowSelection": {
+                        "anyOf": [
+                            {
+                                "type": "array",
+                                "description": "Array of row IDs to select",
+                                "items": { "type": "string" }
+                            },
+                            {
+                                "$ref": "#/$defs/serverSideRowSelection",
+                                "description": "Server-side row selection state"
+                            }
+                        ]
+                    },
+                    "pagination": {
+                        "type": "object",
+                        "description": "Control pagination settings",
+                        "properties": {
+                            "page": {
+                                "type": "number",
+                                "description": "Current page number (0-based)",
+                                "minimum": 0
+                            },
+                            "pageSize": {
+                                "type": "number",
+                                "description": "Number of rows per page",
+                                "minimum": 1
+                            }
+                        },
+                        "required": ["page", "pageSize"],
+                        "additionalProperties": false
+                    },
+                    "sideBar": {
+                        "type": "object",
+                        "description": "Control sidebar visibility and tool panels",
+                        "properties": {
+                            "visible": { "type": "boolean", "description": "Whether the sidebar is visible" },
+                            "position": {
+                                "$ref": "#/$defs/sideBarPosition",
+                                "description": "Position of the sidebar"
+                            },
+                            "openToolPanel": {
+                                "type": ["string", "null"],
+                                "description": "ID of the currently open tool panel, or null if closed"
+                            },
+                            "toolPanels": {
+                                "type": "object",
+                                "description": "Tool panel configurations",
+                                "patternProperties": { "^.*$": { "$ref": "#/$defs/toolPanelConfig" } },
+                                "additionalProperties": false
+                            }
+                        },
+                        "required": ["visible", "position", "openToolPanel", "toolPanels"],
+                        "additionalProperties": false
+                    },
+                    "rowGroupExpansion": {
+                        "type": "object",
+                        "description": "Control which row groups are expanded",
+                        "properties": {
+                            "expandedRowGroupIds": {
+                                "type": "array",
+                                "description": "Array of row group IDs that should be expanded",
+                                "items": { "type": "string" }
+                            }
+                        },
+                        "required": ["expandedRowGroupIds"],
+                        "additionalProperties": false
+                    },
+                    "rowPinning": {
+                        "type": "object",
+                        "description": "Pin specific rows to top or bottom of the grid",
+                        "properties": {
+                            "top": {
+                                "type": "array",
+                                "description": "Array of row IDs to pin to the top",
+                                "items": { "type": "string" }
+                            },
+                            "bottom": {
+                                "type": "array",
+                                "description": "Array of row IDs to pin to the bottom",
+                                "items": { "type": "string" }
+                            }
+                        },
+                        "required": ["top", "bottom"],
+                        "additionalProperties": false
+                    },
+                    "cellSelection": {
+                        "type": "object",
+                        "description": "Select specific cell ranges",
+                        "properties": {
+                            "cellRanges": {
+                                "type": "array",
+                                "description": "Array of cell range selections",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "description": "Unique identifier for the cell range"
+                                        },
+                                        "type": { "type": "string", "description": "Type of cell range" },
+                                        "startRow": {
+                                            "$ref": "#/$defs/rowPosition",
+                                            "description": "Starting row position"
+                                        },
+                                        "endRow": {
+                                            "$ref": "#/$defs/rowPosition",
+                                            "description": "Ending row position"
+                                        },
+                                        "colIds": {
+                                            "type": "array",
+                                            "description": "Array of column IDs in the range",
+                                            "items": { "$ref": "#/$defs/allColumnId" }
+                                        },
+                                        "startColId": {
+                                            "$ref": "#/$defs/allColumnId",
+                                            "description": "Starting column ID"
+                                        }
+                                    },
+                                    "required": ["id", "type", "startRow", "endRow", "colIds", "startColId"],
+                                    "additionalProperties": false
+                                }
+                            }
+                        },
+                        "required": ["cellRanges"],
+                        "additionalProperties": false
+                    },
+                    "focusedCell": {
+                        "type": "object",
+                        "description": "Set the currently focused cell",
+                        "properties": {
+                            "rowIndex": {
+                                "type": "number",
+                                "description": "Row index of the focused cell",
+                                "minimum": 0
+                            },
+                            "rowPinned": {
+                                "type": ["string", "null"],
+                                "description": "Pinned position of the row (top, bottom, or null)"
+                            },
+                            "colId": {
+                                "$ref": "#/$defs/allColumnId",
+                                "description": "Column ID of the focused cell"
+                            }
+                        },
+                        "required": ["rowIndex", "rowPinned", "colId"],
+                        "additionalProperties": false
+                    },
+                    "scroll": {
+                        "type": "object",
+                        "description": "Set the scroll position of the grid",
+                        "properties": {
+                            "top": {
+                                "type": "number",
+                                "description": "Vertical scroll position in pixels",
+                                "minimum": 0
+                            },
+                            "left": {
+                                "type": "number",
+                                "description": "Horizontal scroll position in pixels",
+                                "minimum": 0
+                            }
+                        },
+                        "required": ["top", "left"],
+                        "additionalProperties": false
+                    },
+                    "columnGroup": {
+                        "type": "object",
+                        "description": "Control which column groups are open",
+                        "properties": {
+                            "openColumnGroupIds": {
+                                "type": "array",
+                                "description": "Array of column group IDs that should be open",
+                                "items": { "type": "string" }
+                            }
+                        },
+                        "required": ["openColumnGroupIds"],
+                        "additionalProperties": false
+                    }
+                },
+                "additionalProperties": false
+            },
+            "propertiesToIgnore": {
+                "type": "array",
+                "description": "Grid state properties to ignore when applying the state (optional)",
+                "items": { "$ref": "#/$defs/gridStateProperty" }
+            },
+            "explanation": {
+                "type": "string",
+                "description": "Human-readable explanation of what changes were made to the grid state"
+            }
+        },
+        "required": ["gridState", "explanation"],
+        "additionalProperties": false
+    }
+}
