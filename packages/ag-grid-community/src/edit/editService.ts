@@ -957,11 +957,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.beans.ariaAnnounce?.announceValue(label, 'pendingChange');
     }
-<<<<<<< HEAD
-=======
 
     allowedFocusTargetOnValidation(cellPosition: EditPosition): CellCtrl | undefined {
         return _getCellCtrl(this.beans, cellPosition);
     }
->>>>>>> d3ecbf3c59 (AG-15272 - allow tab & click focus changing when validation errors are present (#11215))
 }
