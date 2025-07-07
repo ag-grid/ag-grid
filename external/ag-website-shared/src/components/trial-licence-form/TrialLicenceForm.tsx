@@ -1,6 +1,7 @@
 import type { FunctionComponent } from 'react';
 import { useEffect, useState } from 'react';
 
+import { TrialLicenceFormAllFields } from './TrialLicenceFormAllFields';
 import { TrialLicenceFormEmailOnly } from './TrialLicenceFormEmailOnly';
 import { TrialLicenceFormOriginal } from './TrialLicenceFormOriginal';
 
@@ -26,7 +27,9 @@ export const TrialLicenceForm: FunctionComponent = ({ type = 'emailOnly' }: Prop
 
     if (trialLicenseType === 'emailOnly') {
         return <TrialLicenceFormEmailOnly />;
-    } else if (trialLicenseType === 'original') {
+    } else if (trialLicenseType === 'allFields') {
+        return <TrialLicenceFormAllFields />;
+    } else {
         return <TrialLicenceFormOriginal />;
     }
 };
