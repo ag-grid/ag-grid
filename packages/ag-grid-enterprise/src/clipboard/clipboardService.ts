@@ -31,6 +31,7 @@ import {
     _last,
     _removeFromArray,
     _warn,
+    isSpecialCol,
 } from 'ag-grid-community';
 
 interface RowCallback {
@@ -324,7 +325,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.fireRowChanged(updatedRowNodes);
 
         // if using the clipboard hack with a temp element, then the focus has been lost,
-        // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
+        // so need to put it back. otherwise paste operation looses focus on cell and keyboard
         // navigation stops.
         this.refocusLastFocusedCell();
         eventSvc.dispatchEvent({
@@ -410,7 +411,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private getDisplayedColumnsStartingAt(column: AgColumn): AgColumn[] {
         let currentColumn: AgColumn | null = column;
         const columns: AgColumn[] = [];
-        const visibleCols = this.beans.visibleCols;
+        const { visibleCols } = this.beans;
+
+        // first, skip row numbers column and selection column
+        while (currentColumn && isSpecialCol(currentColumn)) {
+            currentColumn = visibleCols.getColAfter(currentColumn);
+        }
 
         while (currentColumn != null) {
             columns.push(currentColumn);

@@ -83,6 +83,10 @@ export function isRowNumberCol(col: ColKey): boolean {
     return id?.startsWith(ROW_NUMBERS_COLUMN_ID) ?? false;
 }
 
+export function isSpecialCol(col: ColKey): boolean {
+    return isColumnSelectionCol(col) || isRowNumberCol(col);
+}
+
 export function convertColumnTypes(type: string | string[]): string[] {
     let typeKeys: string[] = [];
 

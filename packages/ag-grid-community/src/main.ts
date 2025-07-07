@@ -34,6 +34,7 @@ export {
     isRowNumberCol,
     isColumnSelectionCol,
     isColumnGroupAutoCol,
+    isSpecialCol,
     _destroyColumnTree,
     _getColumnsFromTree,
     _areColIdsEqual,
