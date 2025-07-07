@@ -98,7 +98,7 @@ async function getResourceContent(uri: string): Promise<string> {
         case 'troubleshooting':
             return await getTroubleshootingContent(resource);
         case 'migration':
-            return await getMigrationContent(resource);
+            return await getDocumentationContent(resource);
         case 'performance':
             return await getPerformanceContent(resource);
         default:
@@ -338,83 +338,6 @@ Enterprise features not working
 
         default:
             throw new Error(`Unknown troubleshooting resource: ${resource}`);
-    }
-}
-
-async function getMigrationContent(resource: string): Promise<string> {
-    switch (resource) {
-        case 'latest':
-            return `# Migration Guide - Latest Version
-
-## Overview
-This guide helps you migrate between AG-Grid versions safely.
-
-## Before You Start
-1. Read the changelog for your target version
-2. Test in a development environment
-3. Update one major version at a time
-4. Back up your current implementation
-
-## Common Migration Steps
-
-### Update Dependencies
-\`\`\`bash
-npm update ag-grid-community ag-grid-react
-# or for enterprise
-npm update ag-grid-enterprise ag-grid-react
-\`\`\`
-
-### Breaking Changes
-Check the changelog for breaking changes in:
-- Grid Options
-- Column Definitions
-- API methods
-- Event signatures
-- CSS class names
-
-### Property Renames
-Some properties may have been renamed:
-- Check deprecation warnings in console
-- Update property names according to changelog
-- Test functionality after changes
-
-### API Changes
-- Method signatures may have changed
-- Some methods may have been deprecated
-- New methods may be available
-
-### CSS Updates
-- Theme CSS file names may have changed
-- New CSS variables may be available
-- Some CSS classes may be deprecated
-
-## Version-Specific Guides
-
-### v33.x to v34.x
-- No major breaking changes
-- Some minor API improvements
-- Enhanced TypeScript support
-
-### v32.x to v33.x
-- Updated column sizing behavior
-- Improved filter API
-- New theme enhancements
-
-## Testing After Migration
-1. Test core functionality
-2. Verify all features work as expected
-3. Check console for deprecation warnings
-4. Test with different data sizes
-5. Validate custom components still work
-
-## Getting Help
-- Check the official migration guide
-- Visit the AG Grid community forum
-- Contact support for enterprise customers
-- Review GitHub issues for known problems`;
-
-        default:
-            throw new Error(`Unknown migration resource: ${resource}`);
     }
 }
 

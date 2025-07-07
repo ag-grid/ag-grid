@@ -1,5 +1,5 @@
 import { getFirstParagraphText } from '@utils/markdoc/getFirstParagraphText';
-import { type CollectionEntry, getEntry } from 'astro:content';
+import { type CollectionEntry, getCollection, getEntry } from 'astro:content';
 
 // TODO: Make this dynamic
 const currentFramework = 'react';
@@ -29,9 +29,9 @@ async function getDocsNavPages() {
     });
 }
 
-export async function GET() {
+async function getDocsResources() {
     const docsNavPages = await getDocsNavPages();
-    const resp = await Promise.all(
+    return Promise.all(
         docsNavPages.map(async ({ path, title }) => {
             const page = (await getEntry('docs', path)) as CollectionEntry<'docs'>;
             const pagePath = `${path}.md`;
@@ -44,6 +44,29 @@ export async function GET() {
             };
         })
     );
+}
+
+async function getMigrationResources() {
+    const pages = await getCollection('docs');
+    const upgradePages = pages.filter(({ id }) => {
+        return id.startsWith('upgrading-to-ag-grid-');
+    });
+
+    return upgradePages.map(({ id, data }) => {
+        return {
+            uri: `ag-grid://migration/${id}.md`,
+            name: id,
+            title: data.title,
+            description: data.description,
+            mimeType: 'text/markdown',
+        };
+    });
+}
+
+export async function GET() {
+    const docsResources = await getDocsResources();
+    const migrationResources = await getMigrationResources();
+    const resp = [...docsResources, ...migrationResources];
 
     return new Response(JSON.stringify(resp), {
         status: 200,
