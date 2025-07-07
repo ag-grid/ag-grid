@@ -12,6 +12,12 @@ export interface DragItem<TValue = any> {
     /** When dragging multiple rows, this contains all rows being dragged */
     rowNodes?: IRowNode[];
 
+    /**
+     * With managed dragging, this contains all rows being dragged that can be dropped into the target.
+     * See the grid option `isRowValidDropPosition` and `rowDragManaged` for more details.
+     */
+    validRowNodes?: IRowNode[];
+
     /** When dragging columns, this contains the columns being dragged */
     columns?: Column[];
 

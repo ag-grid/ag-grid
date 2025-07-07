@@ -3,7 +3,7 @@
  ************************************************************************************************/
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
-import type { IsRowValidDropPositionCallback } from '../dragAndDrop/rowDragFeature';
+import type { IsRowValidDropPositionCallback } from '../dragAndDrop/rowDragFeature/rowDragFeatureTypes';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,

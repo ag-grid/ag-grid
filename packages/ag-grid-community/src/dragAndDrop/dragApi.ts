@@ -4,7 +4,7 @@ import type {
     RowDropPositionIndicator,
     SetRowDropPositionIndicatorParams,
 } from '../interfaces/IRowDropHighlightService';
-import type { RowDropZoneEvents, RowDropZoneParams } from './rowDragFeature';
+import type { RowDropZoneEvents, RowDropZoneParams } from './rowDragFeature/rowDragFeatureTypes';
 
 export function addRowDropZone(beans: BeanCollection, params: RowDropZoneParams): void {
     beans.rowDragSvc?.rowDragFeature?.addRowDropZone(params);

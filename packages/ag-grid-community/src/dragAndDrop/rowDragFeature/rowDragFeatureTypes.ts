@@ -1,14 +1,14 @@
-import type { RowNode } from '../entities/rowNode';
+import type { RowNode } from '../../entities/rowNode';
 import type {
     RowDragCancelEvent,
     RowDragEndEvent,
     RowDragEnterEvent,
     RowDragLeaveEvent,
     RowDragMoveEvent,
-} from '../events';
-import type { AgGridCommon } from '../interfaces/iCommon';
-import type { IRowNode } from '../interfaces/iRowNode';
-import type { DraggingEvent } from './dragAndDropService';
+} from '../../events';
+import type { AgGridCommon } from '../../interfaces/iCommon';
+import type { IRowNode } from '../../interfaces/iRowNode';
+import type { DraggingEvent } from '../dragAndDropService';
 
 export type RowDropTargetPosition = 'above' | 'inside' | 'below';
 

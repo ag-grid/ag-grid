@@ -1,7 +1,8 @@
-import type { RowNode } from '../entities/rowNode';
-import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import type { IRowNode } from '../interfaces/iRowNode';
-import type { DraggingEvent } from './dragAndDropService';
+import type { RowNode } from '../../entities/rowNode';
+import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
+import type { IRowNode } from '../../interfaces/iRowNode';
+import type { DragItem } from '../../interfaces/iDragItem';
+import type { DraggingEvent } from '../dragAndDropService';
 import type { IsRowValidDropPositionCallback, IsRowValidDropPositionParams } from './rowDragFeatureTypes';
 
 export interface WritableRowNode extends RowNode {
@@ -37,6 +38,15 @@ export interface InternalRowDropZoneParams extends InternalRowDropZoneEvents {
 
 export type RowDragEventType = 'rowDragEnter' | 'rowDragLeave' | 'rowDragMove' | 'rowDragEnd' | 'rowDragCancel';
 
+export const compareRowIndex = (a: IRowNode, b: IRowNode): number => {
+    const aRowIndex = a.rowIndex;
+    const bRowIndex = b.rowIndex;
+    if (aRowIndex == null || bRowIndex == null) {
+        return a.sourceRowIndex - b.sourceRowIndex;
+    }
+    return aRowIndex - bRowIndex;
+};
+
 /** When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows. */
 export const getPrevOrNextRow = (
     clientSideRowModel: IClientSideRowModel,
@@ -55,17 +65,6 @@ export const getPrevOrNextRow = (
         }
     }
     return undefined; // Out of bounds
-};
-
-export const rowParentWouldFormCycle = <TData>(row: IRowNode<TData>, newParent: IRowNode<TData> | null): boolean => {
-    let parent = newParent;
-    while (parent) {
-        if (parent === row) {
-            return true;
-        }
-        parent = parent.parent;
-    }
-    return false;
 };
 
 export const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: IRowNode): boolean => {
@@ -135,6 +134,105 @@ export const targetRowShouldBeParent = (
 
     return false;
 };
+
+const rowParentWouldFormCycle = <TData>(row: IRowNode<TData>, newParent: IRowNode<TData> | null): boolean => {
+    let parent = newParent;
+    while (parent) {
+        if (parent === row) {
+            return true;
+        }
+        parent = parent.parent;
+    }
+    return false;
+};
+
+const filterRowsToMove = (
+    clientSideRowModel: IClientSideRowModel,
+    rows: IRowNode[],
+    newParent: IRowNode | null
+): IRowNode[] => {
+    let result: IRowNode[] | null = null;
+    let writeIdx = 0;
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        let invalid = false;
+
+        if (row.footer || (row.rowTop === null && row !== clientSideRowModel.getRowNode(row.id!))) {
+            invalid = true; // Row is a footer or not in the model, so we cannot move it
+        } else if (newParent !== null && row.parent !== newParent && rowParentWouldFormCycle(row, newParent)) {
+            invalid = true; // Row would form a cycle if moved to the new parent
+        }
+
+        if (invalid && result === null) {
+            result = rows.slice(0, i); // We need a new array to filter out invalid rows
+            writeIdx = i;
+        } else if (!invalid && result !== null) {
+            result[writeIdx++] = row;
+        }
+    }
+
+    if (result) {
+        result.length = writeIdx;
+        return result;
+    }
+    return rows;
+};
+
+/**
+ * Processes the isRowValidDropPosition callback and updates the result accordingly.
+ * Returns an object with updated result, newParent, and customPosition.
+ */
+export function invokeIsRowValidDropPosition(
+    clientSideRowModel: IClientSideRowModel,
+    params: IsRowValidDropPositionParams,
+    above: boolean,
+    isRowValidDropPosition: IsRowValidDropPositionCallback | null | undefined
+): IsRowValidDropPositionParams {
+    let customPosition = false;
+    const draggingEvent = params.draggingEvent;
+    if (isRowValidDropPosition) {
+        if (draggingEvent) {
+            draggingEvent.dragItem.validRowNodes = params.rows;
+        }
+        const canDropResult = isRowValidDropPosition(params);
+        if (!canDropResult) {
+            params.rows = []; // Cannot drop, so no rows
+        } else if (typeof canDropResult === 'object') {
+            // Custom result, override the default values
+
+            if (canDropResult.newParent !== undefined) {
+                params.newParent = canDropResult.newParent;
+            }
+
+            if (canDropResult.rows !== undefined) {
+                params.rows = canDropResult.rows ? Array.from(canDropResult.rows) : [];
+            }
+
+            if (canDropResult.target !== undefined) {
+                params.target = canDropResult.target;
+            }
+
+            if (canDropResult.position) {
+                customPosition = true;
+                params.position = canDropResult.position;
+            }
+        }
+    }
+
+    let rows = params.rows;
+    const newParent = params.newParent;
+    if (!customPosition && (!newParent || !rows.length)) {
+        params.position = above ? 'above' : 'below'; // Remove 'inside' if no new parent
+    }
+
+    rows = filterRowsToMove(clientSideRowModel, rows, newParent);
+    params.rows = rows;
+    if (draggingEvent) {
+        draggingEvent.dragItem.validRowNodes = rows;
+    }
+
+    return params;
+}
 
 /** Reorders the children of the root node, so that the rows to move are in the correct order.
  * @param leafs The valid set of rows to move, as returned by getValidRowsToMove
@@ -212,71 +310,12 @@ export const reorderLeafChildren = (
     return orderChanged;
 };
 
-const removeCycles = (rows: IRowNode[], newParent: IRowNode): void => {
-    let count = 0;
-    const len = rows.length;
-    for (let i = 0; i < len; ++i) {
-        if (!rowParentWouldFormCycle(rows[i], newParent)) {
-            rows[count++] = rows[i];
-        }
+/** Gets the current drag item count from a row drag component */
+export const getRowDragItemCount = (dragItem: DragItem, suppressMoveWhenRowDragging: boolean): number => {
+    if (dragItem.validRowNodes && suppressMoveWhenRowDragging) {
+        return dragItem.validRowNodes.length;
+    } else if (dragItem.rowNodes) {
+        return dragItem.rowNodes.length;
     }
-    if (count !== rows.length) {
-        rows.length = count;
-    }
+    return 1; // Default to 1 if no valid row nodes or row nodes are present
 };
-
-/**
- * Processes the isRowValidDropPosition callback and updates the result accordingly.
- * Returns an object with updated result, newParent, and customPosition.
- */
-export function invokeIsRowValidDropPosition(
-    params: IsRowValidDropPositionParams,
-    above: boolean,
-    isRowValidDropPosition: IsRowValidDropPositionCallback | null | undefined
-): IsRowValidDropPositionParams {
-    let customPosition = false;
-    if (isRowValidDropPosition) {
-        const canDropResult = isRowValidDropPosition(params);
-        if (!canDropResult) {
-            params.rows = []; // Cannot drop, so no rows
-        } else if (typeof canDropResult === 'object') {
-            // Custom result, override the default values
-
-            if (canDropResult.newParent !== undefined) {
-                params.newParent = canDropResult.newParent;
-            }
-
-            if (canDropResult.rows !== undefined) {
-                const resultRows = canDropResult.rows ? Array.from(canDropResult.rows) : [];
-                params.rows = resultRows;
-            }
-
-            if (canDropResult.target !== undefined) {
-                params.target = canDropResult.target;
-            }
-
-            if (canDropResult.position) {
-                customPosition = true;
-                params.position = canDropResult.position;
-            }
-        }
-    }
-
-    const rows = params.rows;
-    const newParent = params.newParent;
-    if (!customPosition && (!newParent || !rows.length)) {
-        params.position = above ? 'above' : 'below'; // Remove 'inside' if no new parent
-    }
-
-    if (newParent) {
-        removeCycles(rows, newParent);
-    }
-
-    // Overwrite the rowNodes in the dragging event
-    const draggingEvent = params.draggingEvent;
-    if (draggingEvent) {
-        draggingEvent.dragItem.rowNodes = rows;
-    }
-
-    return params;
-}

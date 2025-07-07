@@ -1,29 +1,29 @@
-import { AutoScrollService } from '../autoScrollService';
-import { BeanStub } from '../context/beanStub';
-import { _getCellByPosition } from '../entities/positionUtils';
-import type { RowNode } from '../entities/rowNode';
-import type { RowDragEvent } from '../events';
-import { _getNormalisedMousePosition } from '../gridBodyComp/mouseEventUtils';
+import { AutoScrollService } from '../../autoScrollService';
+import { BeanStub } from '../../context/beanStub';
+import { _getCellByPosition } from '../../entities/positionUtils';
+import type { RowNode } from '../../entities/rowNode';
+import type { RowDragEvent } from '../../events';
+import { _getNormalisedMousePosition } from '../../gridBodyComp/mouseEventUtils';
 import {
     _addGridCommonParams,
     _getGroupingApproach,
     _getRowIdCallback,
     _isClientSideRowModel,
-} from '../gridOptionsUtils';
-import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import { ChangedPath } from '../utils/changedPath';
-import { _warn } from '../validation/logging';
-import type { DragAndDropIcon, DraggingEvent, DropTarget } from './dragAndDropService';
-import { DragSourceType } from './dragAndDropService';
+} from '../../gridOptionsUtils';
+import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
+import { ChangedPath } from '../../utils/changedPath';
+import { _warn } from '../../validation/logging';
+import type { DragAndDropIcon, DraggingEvent, DropTarget } from '../dragAndDropService';
+import { DragSourceType } from '../dragAndDropService';
 import type { IsRowValidDropPositionParams, RowDropZoneEvents, RowDropZoneParams } from './rowDragFeatureTypes';
 import type { InternalRowDropZoneParams, RowDragEventType, WritableRowNode } from './rowDragFeatureUtils';
 import {
+    compareRowIndex,
     getLeafRow,
     getLeafSourceRowIndex,
     getPrevOrNextRow,
     invokeIsRowValidDropPosition,
     reorderLeafChildren,
-    rowParentWouldFormCycle,
     rowsHaveSameParent,
     targetRowShouldBeParent,
 } from './rowDragFeatureUtils';
@@ -95,19 +95,19 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public getIconName(): DragAndDropIcon {
-        const managedDrag = this.gos.get('rowDragManaged');
-
-        if (managedDrag && this.shouldPreventRowMove()) {
+        if (this.gos.get('rowDragManaged') && this.shouldPreventRowMove()) {
             return 'notAllowed';
         }
-
         return 'move';
     }
 
     public shouldPreventRowMove(): boolean {
+        const validRowNodes = this.lastDraggingEvent?.dragItem.validRowNodes;
+        if (validRowNodes && !validRowNodes.length) {
+            return true; // No valid rows to move
+        }
         const { rowGroupColsSvc, filterManager, sortSvc } = this.beans;
-        const rowGroupCols = rowGroupColsSvc?.columns ?? [];
-        if (rowGroupCols.length) {
+        if (rowGroupColsSvc?.columns?.length) {
             return true;
         }
         const isFilterPresent = filterManager?.isAnyFilterPresent();
@@ -127,16 +127,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         const currentNode = draggingEvent.dragItem.rowNode! as RowNode;
-        const isRowDragMultiRow = this.gos.get('rowDragMultiRow');
-        if (isRowDragMultiRow) {
-            const selectedNodes = [...(this.beans.selectionSvc?.getSelectedNodes() ?? [])].sort((a, b) => {
-                if (a.rowIndex == null || b.rowIndex == null) {
-                    return 0;
-                }
-                return a.rowIndex - b.rowIndex;
-            });
-            if (selectedNodes.indexOf(currentNode) !== -1) {
-                return selectedNodes;
+        if (this.gos.get('rowDragMultiRow')) {
+            const selectedNodes = this.beans.selectionSvc?.getSelectedNodes();
+            if (selectedNodes && selectedNodes.indexOf(currentNode) >= 0) {
+                return selectedNodes.slice().sort(compareRowIndex);
             }
         }
 
@@ -145,15 +139,16 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // builds a lits of all rows being dragged before firing events
-        draggingEvent.dragItem.rowNodes = this.getRowNodes(draggingEvent);
+        const rowNodes = this.getRowNodes(draggingEvent);
+        draggingEvent.dragItem.rowNodes = rowNodes;
 
         // when entering, we fire the enter event, then in onEnterOrDragging,
         // we also fire the move event. so we get both events when entering.
         this.dispatchGridEvent('rowDragEnter', draggingEvent);
 
-        this.getRowNodes(draggingEvent).forEach((rowNode) => {
+        for (const rowNode of rowNodes) {
             this.setRowNodeDragging(rowNode, true);
-        });
+        }
 
         this.onEnterOrDragging(draggingEvent);
     }
@@ -321,7 +316,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
 
             if (rowsHaveSameParent(rows, newParent)) {
-                newParent = null; // No need to set parent if all rows have the same parent
+                newParent = null; // No need to set parent if all rows have already the same parent
             }
         }
 
@@ -331,6 +326,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         return invokeIsRowValidDropPosition(
+            clientSideRowModel,
             {
                 api: beans.gridApi,
                 context: beans.gridOptions.context,
@@ -627,17 +623,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private moveRows({ rootNode, position, target, rows, newParent }: IsRowValidDropPositionParams): boolean {
         let changed = false;
 
-        const clientSideRowModel = this.clientSideRowModel;
         const leafs = new Set<WritableRowNode>();
         for (const row of rows as WritableRowNode[]) {
-            if (row.footer || (row.rowTop === null && row !== clientSideRowModel.getRowNode(row.id!))) {
-                continue; // This row cannot be dragged, not in allLeafChildren and not a filler
-            }
-
             if (newParent && row.parent !== newParent) {
-                if (rowParentWouldFormCycle(row, newParent)) {
-                    continue; // Invalid move.
-                }
                 row.treeParent = newParent as RowNode | null;
                 changed = true;
             }

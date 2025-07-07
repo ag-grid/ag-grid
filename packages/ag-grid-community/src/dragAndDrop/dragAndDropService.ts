@@ -15,7 +15,7 @@ import type { AgPromise } from '../utils/promise';
 import { _warn } from '../validation/logging';
 import type { IDragAndDropImageComponent } from './dragAndDropImageComponent';
 import type { DragListenerParams, DragService } from './dragService';
-import type { RowDropZoneParams } from './rowDragFeatureTypes';
+import type { RowDropZoneParams } from './rowDragFeature/rowDragFeatureTypes';
 
 export enum DragSourceType {
     ToolPanel,
