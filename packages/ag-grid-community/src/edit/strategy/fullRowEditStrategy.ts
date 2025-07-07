@@ -236,19 +236,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         const rowsMatch = nextPos && prevPos.rowIndex === nextPos.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
 
-        if (!rowsMatch) {
-            // run validation to gather row-level validation errors
-            _populateModelValidationErrors(this.beans);
-
-            if ((this.model.getRowValidationModel().getRowValidationMap().size ?? 0) === 0) {
-                // `undefined` for the check means any edits anywhere in the table will prevent navigation
-                const rowPreventNavigation = this.editSvc.checkNavWithValidation(undefined, event) === 'block-stop';
-                if (rowPreventNavigation) {
-                    return true;
-                }
-            }
-        }
-
         if (prevEditable) {
             this.setFocusOutOnEditor(prevCell);
         }
