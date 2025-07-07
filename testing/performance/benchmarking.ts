@@ -314,7 +314,7 @@ function computeCommonStats(s1: Stats, s2: Stats, testCase: InternalTestCase) {
 
     const avgMoE = getStandardError(s1.marginOfError, s2.marginOfError);
     const avgMoEPercent = (avgMoE / Math.min(s1.average, s2.average)) * 100;
-    const practicalConfidence = Math.abs(percentDiff - avgMoEPercent) >= HARD_THRESHOLD; // 2% is a practical confidence threshold
+    const practicalConfidence = Math.abs(percentDiff - avgMoEPercent) >= HARD_THRESHOLD;
     const isSignificant = isDiffSignificant(diff, s1.marginOfError, s2.marginOfError);
     return { diff, slower, faster, percentDiff, avgMoE, avgMoEPercent, practicalConfidence, isSignificant };
 }
