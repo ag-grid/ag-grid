@@ -369,26 +369,38 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     private processEdits(edits: EditMap, cancel: boolean = false): void {
         const rowNodes = Array.from(edits.keys());
+        const { beans } = this;
 
         const hasValidationErrors =
             this.model.getCellValidationModel().getCellValidationMap().size > 0 ||
             this.model.getRowValidationModel().getRowValidationMap().size > 0;
 
+        const editsToDelete: EditPosition[] = [];
+
         for (const rowNode of rowNodes) {
             const editRow = edits.get(rowNode)!;
             for (const column of editRow.keys()) {
                 const editValue = editRow.get(column)!;
+                const position: Required<EditPosition> = { rowNode, column };
+                const cellCtrl = _getCellCtrl(beans, position);
                 const valueChanged = _valuesDiffer(editValue);
-
-                const cellCtrl = _getCellCtrl(this.beans, { rowNode, column });
 
                 const isCancelAfterEnd = cellCtrl?.comp?.getCellEditor()?.isCancelAfterEnd?.();
 
                 if (!cancel && !isCancelAfterEnd && valueChanged && !hasValidationErrors) {
-                    this.setNodeDataValue(rowNode, column, editValue.newValue);
+                    const success = this.setNodeDataValue(rowNode, column, editValue.newValue);
+                    if (!success) {
+                        editsToDelete.push(position);
+                    }
                 }
+
+                cellCtrl?.refreshCell(FORCE_REFRESH);
             }
         }
+
+        editsToDelete.forEach((position) => {
+            this.model.clearEditValue(position);
+        });
     }
 
     private setNodeDataValue(rowNode: IRowNode, column: Column, newValue: any, refreshCell?: boolean): boolean {
