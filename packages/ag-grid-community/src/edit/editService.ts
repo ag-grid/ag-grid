@@ -309,11 +309,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     this.revertSingleCellEdit(cellCtrl!, false);
                 }
 
-                if (this.isBatchEditing()) {
-                    this.strategy?.cleanupEditors();
-                } else {
-                    _destroyEditors(beans, model.getEditPositions());
-                }
+                _destroyEditors(beans, model.getEditPositions());
 
                 event.preventDefault();
 
@@ -369,22 +365,38 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     private processEdits(edits: EditMap, cancel: boolean = false): void {
         const rowNodes = Array.from(edits.keys());
+        const { beans } = this;
 
         const hasValidationErrors =
             this.model.getCellValidationModel().getCellValidationMap().size > 0 ||
             this.model.getRowValidationModel().getRowValidationMap().size > 0;
 
+        const editsToDelete: EditPosition[] = [];
+
         for (const rowNode of rowNodes) {
             const editRow = edits.get(rowNode)!;
             for (const column of editRow.keys()) {
                 const editValue = editRow.get(column)!;
+                const position: Required<EditPosition> = { rowNode, column };
+
+                const cellCtrl = _getCellCtrl(beans, position);
+
                 const valueChanged = _valuesDiffer(editValue);
 
                 if (!cancel && valueChanged && !hasValidationErrors) {
-                    this.setNodeDataValue(rowNode, column, editValue.newValue);
+                    const success = this.setNodeDataValue(rowNode, column, editValue.newValue);
+                    if (!success) {
+                        editsToDelete.push(position);
+                    }
                 }
+
+                cellCtrl?.refreshCell(FORCE_REFRESH);
             }
         }
+
+        editsToDelete.forEach((position) => {
+            this.model.clearEditValue(position);
+        });
     }
 
     private setNodeDataValue(rowNode: IRowNode, column: Column, newValue: any, refreshCell?: boolean): boolean {
@@ -561,9 +573,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.model.clearEditValue(cellPosition);
 
-        _destroyEditors(this.beans, [cellPosition], { silent: true });
+        _destroyEditors(this.beans, [cellPosition]);
 
-        _setupEditor(this.beans, cellPosition, { silent: true });
+        _setupEditor(this.beans, cellPosition);
 
         _populateModelValidationErrors(this.beans);
 
@@ -945,8 +957,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.beans.ariaAnnounce?.announceValue(label, 'pendingChange');
     }
+<<<<<<< HEAD
+=======
 
     allowedFocusTargetOnValidation(cellPosition: EditPosition): CellCtrl | undefined {
         return _getCellCtrl(this.beans, cellPosition);
     }
+>>>>>>> d3ecbf3c59 (AG-15272 - allow tab & click focus changing when validation errors are present (#11215))
 }
