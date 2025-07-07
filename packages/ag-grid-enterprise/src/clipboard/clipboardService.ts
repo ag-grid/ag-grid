@@ -63,7 +63,7 @@ enum CellClearType {
 
 // This will parse a delimited string into an array of arrays.
 export function stringToArray(strData: string, delimiter = ','): string[][] {
-    const data: any[][] = [];
+    const data: string[][] = [];
     const isNewline = (char: string) => char === '\r' || char === '\n';
 
     let insideQuotedField = false;
@@ -258,7 +258,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const { rangeSvc } = this.beans;
 
         const pasteOperation = (
-            cellsToFlash: any,
+            cellsToFlash: Record<string, boolean>,
             updatedRowNodes: RowNode[],
             focusedCell: CellPosition,
             changedPath: ChangedPath | undefined
@@ -281,7 +281,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     // common code to paste operations, e.g. paste to cell, paste to range, and copy range down
     private doPasteOperation(
         pasteOperationFunc: (
-            cellsToFlash: any,
+            cellsToFlash: Record<string, boolean>,
             updatedRowNodes: RowNode[],
             focusedCell: CellPosition | null,
             changedPath: ChangedPath | null | undefined
@@ -300,7 +300,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const rootNode = clientSideRowModel?.rootNode;
         const changedPath = rootNode && new ChangedPath(gos.get('aggregateOnlyChangedColumns'), rootNode);
 
-        const cellsToFlash = {} as any;
+        const cellsToFlash: Record<string, boolean> = {};
         const updatedRowNodes: RowNode[] = [];
         const focusedCell = focusSvc.getFocusedCell();
 
@@ -336,7 +336,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private pasteIntoActiveRange(
         rangeSvc: IRangeService,
         clipboardData: string[][],
-        cellsToFlash: any,
+        cellsToFlash: Record<string, boolean>,
         updatedRowNodes: RowNode[],
         changedPath: ChangedPath | undefined
     ) {
@@ -422,7 +422,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
     private pasteStartingFromFocusedCell(
         parsedData: string[][],
-        cellsToFlash: any,
+        cellsToFlash: Record<string, boolean>,
         updatedRowNodes: RowNode[],
         focusedCell: CellPosition,
         changedPath: ChangedPath | undefined
@@ -458,7 +458,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private pasteSingleValueIntoRange(
         parsedData: string[][],
         updatedRowNodes: RowNode[],
-        cellsToFlash: any,
+        cellsToFlash: Record<string, boolean>,
         changedPath: ChangedPath | undefined
     ) {
         const value = parsedData[0][0];
@@ -486,7 +486,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const firstRowValues: any[] = [];
 
         const pasteOperation = (
-            cellsToFlash: any,
+            cellsToFlash: Record<string, boolean>,
             updatedRowNodes: RowNode[],
             focusedCell: CellPosition,
             changedPath: ChangedPath | undefined
@@ -583,7 +583,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         currentRow: RowPosition | null,
         updatedRowNodes: RowNode[],
         columnsToPasteInto: AgColumn[],
-        cellsToFlash: any,
+        cellsToFlash: Record<string, boolean>,
         type: string,
         changedPath: ChangedPath | undefined
     ): void {
@@ -643,7 +643,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         rowNode: RowNode | null,
         column: AgColumn,
         value: string,
-        cellsToFlash: any,
+        cellsToFlash: Record<string, boolean>,
         type: string,
         changedPath: ChangedPath | undefined
     ) {
