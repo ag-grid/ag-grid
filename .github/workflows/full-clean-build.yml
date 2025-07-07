@@ -73,6 +73,7 @@ jobs:
           nx sync-readmes
 
       - name: Build
+        id: build
         run: |
           NODE_ENV=production yarn nx pack:verify --prod
 
@@ -95,12 +96,13 @@ jobs:
           node ./scripts/deployments/sanityCheckBaseUrl.js staging
 
       - name: Build Docs For Staging
+        id: build_docs_staging
         run: |
           CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
 
       - name: Deploy to Staging
         id: deploy_to_staging
-        if: ${{ github.ref == 'refs/heads/latest' }}
+        if: ${{ github.ref == 'refs/heads/latest' && steps.build_docs_staging.outputs.success == 'true' && steps.build.outputs.success == 'true' }}
         env:
           SSH_PRIVATE_KEY: |
             ${{ secrets.STAGING_SSH_KEY }}
