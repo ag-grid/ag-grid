@@ -1,5 +1,4 @@
 import { defineConfig, devices } from '@playwright/test';
-import path from 'node:path';
 
 // const PUBLIC_SITE_URL = process.env.PUBLIC_SITE_URL!;
 const baseURL = 'https://localhost:4610';
@@ -41,13 +40,4 @@ export default defineConfig({
             },
         },
     ],
-
-    webServer: {
-        cwd: path.resolve(__dirname, '..', '..', '..'),
-        command: 'nx dev',
-        url: baseURL,
-        ignoreHTTPSErrors: true,
-        reuseExistingServer: true,
-        timeout: 10 * 60 * 1000,
-    },
 });

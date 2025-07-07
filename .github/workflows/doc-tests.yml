@@ -46,11 +46,16 @@ on:
                 type: boolean
                 required: true
                 default: true
+            skip_recipes:
+                description: 'Skip Public Recipes tests'
+                type: boolean
+                required: true
+                default: true
             notify:
-              description: 'Notify Slack channel'
-              type: boolean
-              default: true
-              required: true
+                description: 'Notify Slack channel'
+                type: boolean
+                default: true
+                required: true
     schedule:
         - cron: '30 2 * * *' # Run daily at 2:30am UTC
 
@@ -217,6 +222,20 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: angular
+
+    test-recipes:
+      if: ${{ github.event.inputs.skip_recipes != 'true' }}
+      name: Test Public Testing Recipes
+      runs-on: ubuntu-latest
+      strategy:
+        fail-fast: false
+        matrix:
+          shardIndex: [1]
+          shardTotal: [1]
+      steps:
+        - uses: actions/checkout@v4
+        - name: Run Public Testing Recipes
+          run: yarn nx run ag-grid-public-e2e-testing-recipes:test:recipes -c staging
 
     publish-reports:
       if: always()

@@ -12,20 +12,21 @@
         "cwd": "testing/public-recipes"
       }
     },
-    "test:e2e": {
+    "test:recipes": {
       "executor": "nx:run-commands",
       "dependsOn": ["setup", "ag-grid-community:build", "ag-grid-enterprise:build"],
       "options": {
         "commands": ["npx playwright test"],
         "parallel": false,
-        "cwd": "testing/public-recipes/e2e",
-        "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.dev"
+        "cwd": "testing/public-recipes/e2e"
       },
       "configurations": {
         "production": {
           "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.production"
         },
-        "staging": {},
+        "staging": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
+        },
         "dev": {
           "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.dev"
         }
