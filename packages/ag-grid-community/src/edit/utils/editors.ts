@@ -180,12 +180,6 @@ function _valueFromEditor(cancel: boolean, cellComp?: ICellComp): { newValue?: a
         return noValueResult;
     }
 
-    const userWantsToCancel = cellEditor.isCancelAfterEnd?.();
-
-    if (userWantsToCancel) {
-        return noValueResult;
-    }
-
     const validationErrors = cellEditor.getValidationErrors?.();
 
     if ((validationErrors?.length ?? 0) > 0) {
