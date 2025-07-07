@@ -701,7 +701,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const { beans } = this;
 
         this.strategy ??= this.createStrategy();
-        const source = this.isBatchEditing() ? 'ui' : 'api';
 
         if (!eventSource || KEEP_EDITOR_SOURCES.has(eventSource)) {
             // editApi or undoRedoApi apply change without involving the editor

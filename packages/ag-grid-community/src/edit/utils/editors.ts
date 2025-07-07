@@ -119,10 +119,7 @@ export function _refreshEditor(
         silent?: boolean;
     }
 ): ICellEditorParams | undefined {
-    const { key, event, cellStartedEdit, silent } = params ?? {};
-    const cellCtrl = _getCellCtrl(beans, position)!;
-    const editorComp = cellCtrl?.comp?.getCellEditor();
-
+    const { key, cellStartedEdit } = params ?? {};
     const editorParams = _createEditorParams(beans, position, key, cellStartedEdit);
 
     const previousEdit = beans.editModelSvc?.getEdit(position);
