@@ -109,7 +109,6 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
                 <Fragment>
                     <GoogleTagManager googleTagManagerId={metadata.googleTagManagerId} />
                     <Plausible domain="ag-grid.com" />
-                    <ZoomInfo />
 
                     <script async type="text/javascript" src="https://secure.inventiveinspired7.com/js/792251.js" />
                     <noscript>
@@ -118,6 +117,8 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
                 </Fragment>
             )
         }
+
+        {!isDev && <ZoomInfo />}
 
         {isStaging && <Plausible domain="grid-staging.ag-grid.com" />}
 
