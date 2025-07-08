@@ -160,7 +160,7 @@ export function _setupEditor(
         cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
 
         if (!silent) {
-            beans.editSvc?.dispatchCellEvent(position, null, 'cellEditingStarted');
+            beans.editSvc?.dispatchCellEvent(position, event, 'cellEditingStarted');
         }
     }
 
@@ -281,7 +281,7 @@ function checkAndPreventDefault(
     return params;
 }
 
-export function _syncFromEditors(beans: BeanCollection): void {
+export function _syncFromEditors(beans: BeanCollection, params?: { event?: Event | null }): void {
     beans.editModelSvc?.getEditPositions().forEach((cellId) => {
         const cellCtrl = _getCellCtrl(beans, cellId);
 
@@ -295,7 +295,7 @@ export function _syncFromEditors(beans: BeanCollection): void {
             return;
         }
 
-        _syncFromEditor(beans, cellId, newValue);
+        _syncFromEditor(beans, cellId, newValue, undefined, params);
     });
 }
 
@@ -303,7 +303,8 @@ export function _syncFromEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
     newValue?: any,
-    _source?: string
+    _source?: string,
+    params?: { event?: Event | null }
 ): void {
     const { editModelSvc, valueSvc } = beans;
     if (!editModelSvc) {
@@ -343,7 +344,7 @@ export function _syncFromEditor(
 
     const edit = editModelSvc.getEdit(position);
 
-    beans.editSvc?.dispatchCellEvent(position, null, 'cellValueChanged', {
+    beans.editSvc?.dispatchCellEvent(position, params?.event, 'cellValueChanged', {
         valueChanged: edit && _valuesDiffer(edit),
         newValue: edit?.newValue,
         oldValue: edit?.oldValue,
@@ -353,7 +354,7 @@ export function _syncFromEditor(
 export function _destroyEditors(
     beans: BeanCollection,
     edits?: Required<EditPosition>[],
-    params?: { silent?: boolean }
+    params?: { event?: Event; silent?: boolean }
 ): void {
     if (!edits) {
         edits = beans.editModelSvc?.getEditPositions();
@@ -365,7 +366,7 @@ export function _destroyEditors(
 export function _destroyEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
-    params?: { silent?: boolean }
+    params?: { event?: Event; silent?: boolean }
 ): void {
     const { editSvc, editModelSvc } = beans;
     const { rowNode, column } = position;
@@ -407,7 +408,7 @@ export function _destroyEditor(
     const edit = editModelSvc?.getEdit(position);
 
     if (wasEditing && edit?.state === 'changed' && !params?.silent) {
-        editSvc?.dispatchCellEvent(position, null, 'cellEditingStopped', {
+        editSvc?.dispatchCellEvent(position, params?.event, 'cellEditingStopped', {
             valueChanged: edit && _valuesDiffer(edit),
             newValue: edit?.newValue,
             oldValue: edit?.oldValue,
