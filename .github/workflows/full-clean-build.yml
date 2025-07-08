@@ -186,13 +186,6 @@ jobs:
           echo PUBLIC_ALGOLIA_APP_ID=${{ env.PUBLIC_ALGOLIA_APP_ID }} >> documentation/update-algolia-indices/.env
           yarn nx run ag-grid-docs:update-algolia -c staging
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: module-size-results
-          path: testing/module-size/module-size-results.json
-          retention-days: 30
-
       - name: Save Current Commit Hash
         uses: actions/cache@v4
         with:
