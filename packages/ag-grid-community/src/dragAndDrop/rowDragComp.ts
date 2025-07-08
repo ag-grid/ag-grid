@@ -123,14 +123,18 @@ export class RowDragComp extends Component {
             dragItemName: (dragItem?: DragItem | null) => {
                 dragItem ??= this.getDragItem();
 
+                const dragItemCount = dragItem.rowNodes?.length ?? 1;
                 const rowsDrop = dragItem.rowsDrop;
                 let rowCount = 0;
-                let withSource = true;
+                let showSourceValue = false;
                 if (rowsDrop === undefined || !this.gos.get('suppressMoveWhenRowDragging')) {
-                    rowCount = dragItem.rowNodes?.length ?? 1;
+                    rowCount = dragItemCount;
+                    showSourceValue = rowCount === 1;
                 } else if (rowsDrop !== null) {
                     rowCount = rowsDrop.rows.length;
-                    withSource = rowsDrop.withSource;
+                    showSourceValue = rowsDrop.withSource || dragItemCount === 1;
+                } else {
+                    showSourceValue = dragItemCount === 1;
                 }
 
                 const rowDragText = this.getRowDragText(this.column);
@@ -138,9 +142,7 @@ export class RowDragComp extends Component {
                     return rowDragText(dragItem as IRowDragItem, rowCount);
                 }
 
-                return rowCount === 1 && withSource
-                    ? this.cellValueFn()
-                    : `${rowCount} ${translate('rowDragRows', 'rows')}`;
+                return showSourceValue ? this.cellValueFn() : `${rowCount} ${translate('rowDragRows', 'rows')}`;
             },
             getDragItem: () => this.getDragItem(),
             dragStartPixels,
