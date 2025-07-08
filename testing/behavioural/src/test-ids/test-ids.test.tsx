@@ -9,10 +9,7 @@ import {
     RowSelectionModule,
     TestingModule,
     ValidationModule,
-    getTestIdForCell,
-    getTestIdForHeaderCell,
-    getTestIdForHeaderCellMenuButton,
-    getTestIdForHeaderCheckbox,
+    agTestIdFor,
 } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -93,12 +90,12 @@ describe('Test Ids', () => {
 
         expect(await rendered.findByText('United States')).toBeVisible();
 
-        expect(await rendered.findByTestId(getTestIdForHeaderCell('year'))).toBeVisible();
-        expect(await rendered.findByTestId(getTestIdForHeaderCheckbox('ag-Grid-SelectionColumn'))).toBeVisible();
-        expect(await rendered.findByTestId(getTestIdForHeaderCellMenuButton('sport'))).toBeVisible();
+        expect(await rendered.findByTestId(agTestIdFor.headerCell('year'))).toBeVisible();
+        expect(await rendered.findByTestId(agTestIdFor.headerCheckbox('ag-Grid-SelectionColumn'))).toBeVisible();
+        expect(await rendered.findByTestId(agTestIdFor.headerCellMenuButton('sport'))).toBeVisible();
         expect(
-            await rendered.findByTestId(getTestIdForCell('row-group-country-United States', 'ag-Grid-AutoColumn'))
+            await rendered.findByTestId(agTestIdFor.cell('row-group-country-United States', 'ag-Grid-AutoColumn'))
         ).toBeVisible();
-        expect(await rendered.findByTestId(getTestIdForCell('0', 'athlete'))).toBeVisible();
+        expect(await rendered.findByTestId(agTestIdFor.cell('0', 'athlete'))).toBeVisible();
     });
 });
