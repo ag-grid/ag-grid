@@ -47,10 +47,14 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     private isSuppressCellSelectionIntegration: boolean;
 
     private rowNumberOverrides: RowNumbersOptions;
+    private lastColumnResized: number = 0;
 
     public postConstruct(): void {
         const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this), 10);
         this.addManagedEventListeners({
+            columnResized: () => {
+                this.lastColumnResized = new Date().getTime();
+            },
             modelUpdated: (params) => {
                 refreshCells_debounced(false, !params.keepRenderedRows);
             },
@@ -170,7 +174,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         _setAriaLabel(eGridHeader, 'Row Number');
 
         this.addManagedElementListeners(eGridHeader, {
-            mouseup: this.onHeaderMouseUp.bind(this),
+            click: this.onHeaderClick.bind(this),
             keydown: this.onHeaderKeyDown.bind(this),
             focus: this.onHeaderFocus.bind(this),
         });
@@ -249,7 +253,10 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         _selectAllCells(this.beans);
     }
 
-    private onHeaderMouseUp(_e: MouseEvent): void {
+    private onHeaderClick(_e: MouseEvent): void {
+        if (new Date().getTime() - this.lastColumnResized < 100) {
+            return;
+        }
         if (!this.isIntegratedWithSelection || this.getColumn()?.resizing) {
             return;
         }
