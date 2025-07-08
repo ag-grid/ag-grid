@@ -418,3 +418,26 @@
         font-size: 15px;
     }
 }
+
+.historySection,
+.principlesSection,
+.leadershipSection,
+.resourcesSection,
+.memoriumSection {
+    @media (max-width: 900px) {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+.historySection,
+.memoriumSection,
+.timeline,
+.principlesSection .principlesList,
+.leadershipSection .leadershipList,
+.resourcesSection .resourcesList {
+    @media (max-width: 900px) {
+        margin-left: 0;
+        min-width: 0;
+    }
+}
