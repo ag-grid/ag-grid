@@ -9,6 +9,12 @@
         width: auto;
     }
 }
+
+.eyebrow {
+    font-size: var(--text-fs-base);
+    font-weight: var(--text-semibold);
+    color: var(--color-util-brand-600);
+}
 .introSection {
     display: flex;
     align-items: center;
