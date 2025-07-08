@@ -42,6 +42,10 @@ export const LifeAtAgGridCarousel = () => {
     return (
         <div className={styles.lifeSectionWrapper}>
             <h2 className={styles.lifeHeading}>Life at AG Grid</h2>
+            <p>
+                We are headquartered in London, with a team of 60 professionals obsessed about building our products,
+                bringing them to market and ensuring our customers are successful with them.
+            </p>
             <div className={styles.carouselOuter}>
                 <div className={styles.blurLeft} />
                 <div className={styles.carouselTrack} ref={trackRef}>

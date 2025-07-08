@@ -1,3 +1,5 @@
+@use 'design-system' as *;
+
 .lifeSectionWrapper {
     width: 100vw;
     max-width: 100vw;
@@ -9,6 +11,15 @@
     align-items: center;
     justify-content: center;
     position: relative;
+
+    padding-top: $spacing-size-16;
+    padding-bottom: $spacing-size-16;
+
+    p {
+        width: 600px;
+        margin: 0 auto;
+        text-align: center;
+    }
 }
 
 .lifeHeading {
