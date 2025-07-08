@@ -1,3 +1,6 @@
+// Prevents the risk of prototype pollution
+export const SKIP_JS_BUILTINS = new Set<string>(['__proto__', 'constructor', 'prototype']);
+
 export function get(source: any, expression: string, defaultValue: any): any {
     if (source == null) {
         return defaultValue;
@@ -29,6 +32,10 @@ export function set(target: any, expression: string, value: any) {
     let objectToUpdate = target;
     // Create empty objects
     keys.forEach((key, i) => {
+        if (SKIP_JS_BUILTINS.has(key)) {
+            return;
+        }
+
         if (!objectToUpdate[key]) {
             objectToUpdate[key] = {};
         }
