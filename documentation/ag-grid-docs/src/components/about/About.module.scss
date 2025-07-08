@@ -1,74 +1,68 @@
 @use 'design-system' as *;
 
 .aboutPage {
-    height: 100%;
-    margin-top: $spacing-size-12;
-    margin-bottom: calc($spacing-size-12 * 4);
-
     h2 {
-        margin-top: $spacing-size-8;
+        font-size: 40px;
+        font-weight: var(--text-bold);
+        letter-spacing: -1px;
+
+        width: auto;
     }
 }
-
-.team {
+.introSection {
     display: flex;
-    flex-wrap: wrap;
-    gap: $spacing-size-4;
-    margin-bottom: calc($spacing-size-12 * 2);
-    line-height: var(--text-lh-tight);
-
-    @media screen and (min-width: $breakpoint-about-small) {
-        gap: $spacing-size-8;
-    }
-
-    > div {
-        width: calc((100% - $spacing-size-4 * 1) / 2);
-
-        @media screen and (min-width: $breakpoint-about-small) {
-            width: calc((100% - $spacing-size-8 * 2) / 3);
-        }
-
-        @media screen and (min-width: $breakpoint-about-four-column) {
-            width: calc((100% - $spacing-size-8 * 3) / 4);
-        }
-
-        @media screen and (min-width: $breakpoint-about-five-column) {
-            width: calc((100% - $spacing-size-8 * 4) / 5);
-        }
-
-        @media screen and (min-width: $breakpoint-about-six-column) {
-            width: calc((100% - $spacing-size-8 * 5) / 6);
-        }
-    }
-
-    img {
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        border-radius: var(--radius-md);
-        object-fit: cover;
-    }
-
-    h3 {
-        margin-top: $spacing-size-2;
-        margin-bottom: $spacing-size-1;
-        line-height: var(--text-lh-tight);
-    }
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    padding-top: $spacing-size-20;
+    padding-bottom: $spacing-size-20;
 
     p {
-        line-height: var(--text-lh-tight);
+        max-width: 600px;
+        padding-top: $spacing-size-3;
+        line-height: 1.6;
     }
 }
 
-.footer {
+.aboutHeaderImage {
+    max-width: 800px;
     display: flex;
-    gap: $spacing-size-8;
-    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    user-select: none;
+}
 
-    @media screen and (min-width: $breakpoint-about-small) {
+.customerLogos {
+    padding-top: $spacing-size-20;
+    padding-bottom: $spacing-size-20;
+}
+
+.memoriumSection {
+    padding-top: $spacing-size-20;
+    padding-bottom: $spacing-size-20;
+
+    .content {
+        display: flex;
         flex-direction: row;
+        gap: $spacing-size-12;
 
-        > div {
-            width: 33.3333%;
+        p {
+            max-width: 600px;
+            padding-top: $spacing-size-3;
+            line-height: 1.6;
+        }
+
+        div {
+            max-width: 500px;
+        }
+
+        img {
+            max-width: 200px;
         }
     }
+}
+
+.historySection {
+    padding-top: $spacing-size-20;
+    padding-bottom: $spacing-size-20;
 }
