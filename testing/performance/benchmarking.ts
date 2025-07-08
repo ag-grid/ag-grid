@@ -305,6 +305,7 @@ const computeStats = (times: number[]): Stats => {
     };
 };
 
+const HARD_THRESHOLD = 5; // 5% is the hard threshold for practical confidence
 function computeCommonStats(s1: Stats, s2: Stats, testCase: InternalTestCase) {
     const diff = s1.average - s2.average;
     const slower = diff > 0 ? testCase.control.version : testCase.variant.version;
@@ -313,7 +314,7 @@ function computeCommonStats(s1: Stats, s2: Stats, testCase: InternalTestCase) {
 
     const avgMoE = getStandardError(s1.marginOfError, s2.marginOfError);
     const avgMoEPercent = (avgMoE / Math.min(s1.average, s2.average)) * 100;
-    const practicalConfidence = percentDiff - avgMoEPercent > 2; // 2% is a practical confidence threshold
+    const practicalConfidence = Math.abs(percentDiff - avgMoEPercent) >= HARD_THRESHOLD;
     const isSignificant = isDiffSignificant(diff, s1.marginOfError, s2.marginOfError);
     return { diff, slower, faster, percentDiff, avgMoE, avgMoEPercent, practicalConfidence, isSignificant };
 }
@@ -455,7 +456,7 @@ const testLevelCatch = (e: any, lastCommunications?: BrowserCommunications) => {
  */
 function shouldFailTest(s1: Stats, s2: Stats, testCase: InternalTestCase) {
     const { practicalConfidence, faster, isSignificant } = computeCommonStats(s1, s2, testCase);
-    return (isSignificant || practicalConfidence) && faster === testCase.control.version;
+    return isSignificant && practicalConfidence && faster === testCase.control.version;
 }
 
 function renderPercentDiffString(percentDiff: number, avgMoEPercent: number) {

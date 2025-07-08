@@ -8,8 +8,12 @@ import type { AgPublicEventType } from '../eventTypes';
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushedEvent,
+    BatchEditingStartedEvent,
+    BatchEditingStoppedEvent,
     BodyScrollEndEvent,
     BodyScrollEvent,
+    BulkEditingStartedEvent,
+    BulkEditingStoppedEvent,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -2393,6 +2397,22 @@ export interface GridOptions<TData = any> {
      * Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. Only fires when doing Full Row Editing.
      */
     onRowEditingStopped?(event: RowEditingStoppedEvent<TData>): void;
+    /**
+     * Bulk editing has started.
+     */
+    onBulkEditingStarted?(event: BulkEditingStartedEvent<TData>): void;
+    /**
+     * Bulk editing has stopped.
+     */
+    onBulkEditingStopped?(event: BulkEditingStoppedEvent<TData>): void;
+    /**
+     * Batch editing has started (when batch editing is enabled).
+     */
+    onBatchEditingStarted?(event: BatchEditingStartedEvent<TData>): void;
+    /**
+     * Batch editing has stopped (when batch editing is enabled).
+     */
+    onBatchEditingStopped?(event: BatchEditingStoppedEvent<TData>): void;
     /**
      * Undo operation has started.
      */

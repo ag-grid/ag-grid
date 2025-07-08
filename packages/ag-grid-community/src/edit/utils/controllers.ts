@@ -43,7 +43,13 @@ export function _getRowCtrl(beans: BeanCollection, inputs: ResolveRowControllerT
     const { rowModel, rowRenderer } = beans;
 
     let { rowNode } = inputs;
-    rowNode ??= rowId ? _getRowById(beans, rowId, rowPinned) : rowModel.getRow(rowIndex!);
+    if (!rowNode) {
+        if (rowId) {
+            rowNode = _getRowById(beans, rowId, rowPinned);
+        } else if (rowIndex != null) {
+            rowNode = rowModel.getRow(rowIndex);
+        }
+    }
 
     return rowRenderer.getRowCtrls(rowNode ? [rowNode] : [])?.[0];
 }

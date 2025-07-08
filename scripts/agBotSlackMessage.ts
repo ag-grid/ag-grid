@@ -146,14 +146,6 @@ const SLACK_GITHUB_MAPPING: GH_MAPPING[] = [
         directNotification: true,
     },
     {
-        id: 'U048BCNDQJV',
-        name: 'peter.reynolds',
-        email: ['40919976+peterjrreynolds@users.noreply.github.com', 'peterjrreynolds@gmail.com'],
-        real_name: 'Peter Reynolds',
-        github: 'peterjrreynolds',
-        directNotification: true,
-    },
-    {
         id: 'U04D4E6JY73',
         name: 'david.glickman',
         email: ['121935568+AG-DavidG@users.noreply.github.com'],
