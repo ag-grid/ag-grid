@@ -38,12 +38,14 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
 
         this.addManagedEventListeners({
             gridStylesChanged: this.onGridStylesChanges.bind(this),
-            modelUpdated: () => {
+            modelUpdated: ({ keepRenderedRows }) => {
                 this.tryToEmptyQueues();
                 this.pinGrandTotalRow();
                 this.forContainers((container) => container.hide(shouldHide));
                 this.refreshRowPositions();
-                this.dispatchRowPinnedEvents();
+                if (!keepRenderedRows) {
+                    this.dispatchRowPinnedEvents();
+                }
             },
             columnRowGroupChanged: () => {
                 this.forContainers(removeGroupRows);
