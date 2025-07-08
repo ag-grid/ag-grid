@@ -141,6 +141,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     private dragSvc: DragService;
     private environment: Environment;
     private userCompFactory: UserComponentFactory;
+    private currentIconName: DragAndDropIcon | null = null;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
@@ -254,7 +255,20 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.lastDropTarget = undefined;
         this.dragItem = null;
         this.dragSource = null;
+        this.currentIconName = null;
         this.removeDragAndDropImageComponent();
+    }
+
+    private updateIconName(): void {
+        const comp = this.dragAndDropImageComp?.comp;
+        const dropTarget = this.lastDropTarget;
+        if (comp) {
+            const iconName = dropTarget?.getIconName?.() ?? null;
+            if (this.currentIconName !== iconName) {
+                this.currentIconName = iconName;
+                comp.setIcon(iconName, false);
+            }
+        }
     }
 
     private onDragging(mouseEvent: MouseEvent, fromNudge: boolean = false): void {
@@ -268,7 +282,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         const validDropTargets = this.dropTargets.filter((target) => this.isMouseOnDropTarget(mouseEvent, target));
         const dropTarget: DropTarget | null = this.findCurrentDropTarget(mouseEvent, validDropTargets);
 
-        const { lastDropTarget, dragSource, dragAndDropImageComp, dragItem } = this;
+        const { lastDropTarget, dragSource, dragItem } = this;
 
         if (dropTarget !== lastDropTarget) {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
@@ -281,24 +295,13 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             }
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
 
-            if (dropTarget && dragAndDropImageComp) {
-                const { comp, promise } = dragAndDropImageComp;
-                if (comp) {
-                    comp.setIcon(dropTarget.getIconName ? dropTarget.getIconName() : null, false);
-                } else {
-                    promise.then((resolvedComponent) => {
-                        if (resolvedComponent) {
-                            resolvedComponent.setIcon(dropTarget.getIconName ? dropTarget.getIconName() : null, false);
-                        }
-                    });
-                }
-            }
-
             this.lastDropTarget = dropTarget;
         } else if (dropTarget && dropTarget.onDragging) {
             const draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             dropTarget.onDragging(draggingEvent);
         }
+
+        this.updateIconName();
     }
 
     private getAllContainersFromDropTarget(dropTarget: DropTarget): HTMLElement[][] {
@@ -559,6 +562,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
             this.processDragAndDropImageComponent(comp);
             this.dragAndDropImageComp!.comp = comp;
+            this.updateIconName();
         });
     }
 
@@ -575,7 +579,6 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
         _stampTopLevelGridCompWithGridInstance(this.gos, eGui);
         environment.applyThemeClasses(eGui);
-        dragAndDropImageComponent.setIcon(null, false);
 
         let { dragItemName } = dragSource;
 

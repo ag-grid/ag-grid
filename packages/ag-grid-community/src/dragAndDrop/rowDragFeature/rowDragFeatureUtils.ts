@@ -1,7 +1,6 @@
 import type { RowNode } from '../../entities/rowNode';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { IRowNode } from '../../interfaces/iRowNode';
-import type { DragItem } from '../../interfaces/iDragItem';
 import type { DraggingEvent } from '../dragAndDropService';
 import type { IsRowValidDropPositionCallback, IsRowValidDropPositionParams } from './rowDragFeatureTypes';
 
@@ -42,7 +41,7 @@ export const compareRowIndex = (a: IRowNode, b: IRowNode): number => {
     const aRowIndex = a.rowIndex;
     const bRowIndex = b.rowIndex;
     if (aRowIndex == null || bRowIndex == null) {
-        return a.sourceRowIndex - b.sourceRowIndex;
+        return 0;
     }
     return aRowIndex - bRowIndex;
 };
@@ -227,10 +226,6 @@ export function invokeIsRowValidDropPosition(
 
     rows = filterRowsToMove(clientSideRowModel, rows, newParent);
     params.rows = rows;
-    if (draggingEvent) {
-        draggingEvent.dragItem.validRowNodes = rows;
-    }
-
     return params;
 }
 
@@ -308,14 +303,4 @@ export const reorderLeafChildren = (
     }
 
     return orderChanged;
-};
-
-/** Gets the current drag item count from a row drag component */
-export const getRowDragItemCount = (dragItem: DragItem, suppressMoveWhenRowDragging: boolean): number => {
-    if (dragItem.validRowNodes && suppressMoveWhenRowDragging) {
-        return dragItem.validRowNodes.length;
-    } else if (dragItem.rowNodes) {
-        return dragItem.rowNodes.length;
-    }
-    return 1; // Default to 1 if no valid row nodes or row nodes are present
 };
