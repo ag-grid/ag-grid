@@ -220,3 +220,67 @@
         line-height: 1.5;
     }
 }
+
+.leadershipSection {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-12;
+    align-items: flex-start;
+    padding-top: $spacing-size-20;
+    padding-bottom: $spacing-size-20;
+
+    .leadershipContent {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .leadershipList {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+        min-width: 320px;
+        margin-left: $spacing-size-12;
+    }
+
+    .leaderItem {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 24px;
+    }
+
+    .leaderPhoto {
+        width: 64px;
+        height: 64px;
+        border-radius: 12px;
+        background: var(--color-util-brand-50);
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .leaderText {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .leaderName {
+        font-weight: bold;
+        color: var(--ag-text-color, #222);
+        font-size: 17px;
+        margin-bottom: 2px;
+    }
+    .leaderTitle {
+        color: var(--color-text-secondary);
+        font-size: 15px;
+        margin-bottom: 6px;
+    }
+    .leaderDesc {
+        color: var(--color-text-secondary);
+        font-size: 15px;
+        line-height: 1.5;
+    }
+}

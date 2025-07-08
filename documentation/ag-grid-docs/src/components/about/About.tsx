@@ -156,6 +156,105 @@ export const About = () => {
                     </div>
                 </section>
 
+                <section className={styles.leadershipSection}>
+                    <div className={styles.leadershipContent}>
+                        <h2>Leadership</h2>
+                        <p>Decades of experience, that you can count on</p>
+                    </div>
+                    <div className={styles.leadershipList}>
+                        <div className={styles.leaderItem}>
+                            <img
+                                src={urlWithBaseUrl('images/about/1.png')}
+                                className={styles.leaderPhoto}
+                                alt="John Matterson"
+                            />
+                            <div className={styles.leaderText}>
+                                <div className={styles.leaderName}>John Matterson</div>
+                                <div className={styles.leaderTitle}>CEO</div>
+                                <div className={styles.leaderDesc}>
+                                    John brings a wealth of experience in technology leadership. He is passionate about
+                                    building high-performing teams and delivering innovative solutions.
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.leaderItem}>
+                            <img
+                                src={urlWithBaseUrl('images/about/2.png')}
+                                className={styles.leaderPhoto}
+                                alt="Rob Clarke"
+                            />
+                            <div className={styles.leaderText}>
+                                <div className={styles.leaderName}>Rob Clarke</div>
+                                <div className={styles.leaderTitle}>CTO</div>
+                                <div className={styles.leaderDesc}>
+                                    Rob oversees all technical aspects of the company. He is dedicated to driving
+                                    innovation and ensuring technical excellence across the organization.
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.leaderItem}>
+                            <img
+                                src={urlWithBaseUrl('images/about/3.png')}
+                                className={styles.leaderPhoto}
+                                alt="Rob Grubb"
+                            />
+                            <div className={styles.leaderText}>
+                                <div className={styles.leaderName}>Rob Grubb</div>
+                                <div className={styles.leaderTitle}>CFO</div>
+                                <div className={styles.leaderDesc}>
+                                    Rob manages the financial actions of the company. He brings strategic insight and a
+                                    strong focus on sustainable growth.
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.leaderItem}>
+                            <img
+                                src={urlWithBaseUrl('images/about/4.png')}
+                                className={styles.leaderPhoto}
+                                alt="Jon Williams"
+                            />
+                            <div className={styles.leaderText}>
+                                <div className={styles.leaderName}>Jon Williams</div>
+                                <div className={styles.leaderTitle}>VP Sales</div>
+                                <div className={styles.leaderDesc}>
+                                    Jon leads the sales team with a customer-first approach. He is committed to building
+                                    lasting relationships and driving business success.
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.leaderItem}>
+                            <img
+                                src={urlWithBaseUrl('images/about/5.png')}
+                                className={styles.leaderPhoto}
+                                alt="Kiril Matev"
+                            />
+                            <div className={styles.leaderText}>
+                                <div className={styles.leaderName}>Kiril Matev</div>
+                                <div className={styles.leaderTitle}>VP TPA</div>
+                                <div className={styles.leaderDesc}>
+                                    Kiril is responsible for third-party alliances. He excels at forging partnerships
+                                    and expanding the company's reach.
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.leaderItem}>
+                            <img
+                                src={urlWithBaseUrl('images/about/6.png')}
+                                className={styles.leaderPhoto}
+                                alt="Jason Osmond"
+                            />
+                            <div className={styles.leaderText}>
+                                <div className={styles.leaderName}>Jason Osmond</div>
+                                <div className={styles.leaderTitle}>Chair of the Board</div>
+                                <div className={styles.leaderDesc}>
+                                    Jason provides strategic guidance and oversight. His leadership ensures the company
+                                    remains focused on its mission and values.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <section>
                     <h2>Contact Us</h2>
 
