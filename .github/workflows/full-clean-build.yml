@@ -213,7 +213,9 @@ jobs:
           LAST_FAILED_STEP: ${{ steps.last-failed-step.outputs.failed_step || 'Unknown' }}
         run: |
           pwd
-          ls -la
+          ls ./.github
+          ls ./.github/actions
+          ls ./.github/actions/slack-integration
           node ./.github/actions/slack-integration/simple-to-slack-blocks.mjs
           echo 'SLACK_FILE:'
           cat $SLACK_FILE
