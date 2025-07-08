@@ -65,14 +65,6 @@ const mailto = `mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubje
                     Pick up where you left off and enjoy the full benefits of AG Grid at today's prices. In future,
                     renewing once you are out of contract will incur back pay and reinstatement charges.
                 </p>
-
-                <RenewNowButton
-                    href={mailto}
-                    className={`button-tertiary ${styles.button}`}
-                    plausibleEventType="renew-body-cta"
-                    text="Contact us at info@ag-grid.com"
-                    client:load
-                />
             </div>
 
             <div class={styles.rtsBenefitsTableWrapper}>
@@ -128,6 +120,13 @@ const mailto = `mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubje
                     </tbody>
                 </table>
             </div>
+            <RenewNowButton
+                href={mailto}
+                className={`button-tertiary ${styles.button}`}
+                plausibleEventType="renew-body-cta"
+                text="Contact us at info@ag-grid.com"
+                client:load
+            />
         </section>
 
         <section class={styles.rtsReleasesSection}>

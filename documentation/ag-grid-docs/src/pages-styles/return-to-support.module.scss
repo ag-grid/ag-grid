@@ -92,6 +92,7 @@
 
         &:hover {
             background-color: var(--color-white);
+            color: var(--color-brand-500);
         }
     }
 }
@@ -143,7 +144,7 @@
     border-radius: var(--radius-md);
     padding: $spacing-size-16 $spacing-size-12;
     margin-top: $spacing-size-8;
-    text-align: center;
+    text-align: left;
 
     @media screen and (max-width: 700px) {
         padding: $spacing-size-8 0;
