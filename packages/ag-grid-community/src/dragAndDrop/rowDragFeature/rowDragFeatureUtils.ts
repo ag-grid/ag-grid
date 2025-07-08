@@ -2,7 +2,7 @@ import type { RowNode } from '../../entities/rowNode';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { DraggingEvent } from '../dragAndDropService';
-import type { ValidRowsDropPosition } from './rowDragFeatureTypes';
+import type { IsRowValidDropPositionResult, ValidRowsDropPosition } from './rowDragFeatureTypes';
 
 export interface WritableRowNode extends RowNode {
     treeParent: RowNode | null;
@@ -244,4 +244,25 @@ export const reorderLeafChildren = (
     }
 
     return orderChanged;
+};
+
+export const processRowsDropResult = (
+    rowsDrop: ValidRowsDropPosition,
+    result: IsRowValidDropPositionResult
+): boolean => {
+    // Custom result, override the default values
+    if (result.newParent !== undefined) {
+        rowsDrop.newParent = result.newParent;
+    }
+    if (result.rows !== undefined) {
+        rowsDrop.rows = result.rows || [];
+    }
+    if (result.target !== undefined) {
+        rowsDrop.target = result.target;
+    }
+    if (result.position) {
+        (rowsDrop as ValidRowsDropPosition).position = result.position;
+        return true; // Custom position
+    }
+    return false;
 };

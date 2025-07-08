@@ -11,6 +11,7 @@ import {
     _isClientSideRowModel,
 } from '../../gridOptionsUtils';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
+import type { IRowNode } from '../../interfaces/iRowNode';
 import { ChangedPath } from '../../utils/changedPath';
 import { _warn } from '../../validation/logging';
 import type { DragAndDropIcon, DraggingEvent, DropTarget } from '../dragAndDropService';
@@ -28,6 +29,7 @@ import {
     getLeafRow,
     getLeafSourceRowIndex,
     getPrevOrNextRow,
+    processRowsDropResult,
     reorderLeafChildren,
     rowsHaveSameParent,
     targetRowShouldBeParent,
@@ -40,7 +42,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private autoScrollService: AutoScrollService | null = null;
 
     private makeGroupThrottleTimer: number | null = null;
-    private makeGroupThrottleTarget: RowNode | null = null;
+    private makeGroupThrottleTarget: IRowNode | null = null;
     private makeGroupThrottled = false;
 
     constructor(eContainer: HTMLElement) {
@@ -100,13 +102,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public getIconName(): DragAndDropIcon {
-        if (this.gos.get('rowDragManaged') && this.shouldPreventRowMove()) {
+        const gos = this.gos;
+        const rowDragManaged = gos.get('rowDragManaged');
+        if (rowDragManaged && this.shouldPreventRowMove()) {
             return 'notAllowed';
         }
         const lastDraggingEvent = this.lastDraggingEvent;
-        if (lastDraggingEvent && this.gos.get('suppressMoveWhenRowDragging')) {
-            const rowsDrop = lastDraggingEvent.dragItem.rowsDrop;
-            if (rowsDrop === null || rowsDrop?.rows.length === 0) {
+        if (lastDraggingEvent && (!rowDragManaged || gos.get('suppressMoveWhenRowDragging'))) {
+            if (lastDraggingEvent.dragItem.rowsDrop?.rows.length === 0) {
                 return 'notAllowed';
             }
         }
@@ -181,14 +184,17 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         this.lastDraggingEvent = draggingEvent;
 
-        if (this.gos.get('rowDragManaged')) {
-            this.doManagedDrag(draggingEvent, true);
-        }
+        this.doManagedDrag(draggingEvent, true);
 
         this.autoScrollService.check(draggingEvent.event);
     }
 
     private doManagedDrag(draggingEvent: DraggingEvent, throttleMakeGroup: boolean): void {
+        if (!this.gos.get('rowDragManaged')) {
+            this.managedRowsDrop(draggingEvent, throttleMakeGroup);
+            return;
+        }
+
         if (!this.shouldPreventRowMove()) {
             const { dragAndDrop, gos } = this.beans;
             const isFromThisGrid = this.isFromThisGrid(draggingEvent);
@@ -197,7 +203,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 if (dragAndDrop!.isDropZoneWithinThisGrid(draggingEvent)) {
                     const rowsDrop = this.managedRowsDrop(draggingEvent, throttleMakeGroup);
                     draggingEvent.dragItem.rowsDrop = rowsDrop;
-                    const target = rowsDrop?.target;
+                    const target = rowsDrop.target;
                     const rowDropHighlightSvc = this.beans.rowDropHighlightSvc!;
                     if (target && rowsDrop.rows.length && rowsDrop.position !== 'none') {
                         rowDropHighlightSvc.set(target as RowNode, rowsDrop.position);
@@ -207,36 +213,68 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 }
             } else {
                 const rowsDrop = this.managedRowsDrop(draggingEvent, throttleMakeGroup);
-                draggingEvent.dragItem.rowsDrop = rowsDrop;
-                if (rowsDrop) {
-                    this.dropRows(rowsDrop);
-                }
+                this.dropRows(rowsDrop);
             }
         }
-
-        draggingEvent.dragItem.rowsDrop ??= null;
     }
 
-    private managedRowsDrop(draggingEvent: DraggingEvent, throttleMakeGroup: boolean): ValidRowsDropPosition | null {
-        const { beans, gos, clientSideRowModel } = this;
-        const rootNode = clientSideRowModel.rootNode;
+    private preventRowsDrop(rowsDrop: ValidRowsDropPosition): void {
+        if (rowsDrop.rows.length > 0 && this.gos.get('rowDragManaged')) {
+            rowsDrop.rows = [];
+        }
+        rowsDrop.position = 'none';
+        this.makeGroupThrottleUpdate(rowsDrop.target);
+    }
+
+    private makeRowsDrop(draggingEvent: DraggingEvent, y: number): ValidRowsDropPosition {
+        const { beans, clientSideRowModel } = this;
+
         const dragItem = draggingEvent.dragItem;
         const rowNode = dragItem.rowNode;
+        const rootNode = clientSideRowModel.rootNode;
         let rows = dragItem.rowNodes;
         rows = rows?.length ? rows : rowNode ? [rowNode] : [];
-        const source = rows.length && (rowNode ?? rows[0]);
+        const source = rowNode ?? (rows.length > 0 ? rows[0] : null);
+        const sameGrid = this.isFromThisGrid(draggingEvent);
+        const targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
+        const target = clientSideRowModel.getRow(targetRowIndex) ?? null;
 
-        if (!source || !rootNode) {
-            this.makeGroupThrottleClear();
-            return null; // Nothing to move
-        }
+        const rowsDrop: ValidRowsDropPosition = {
+            api: beans.gridApi,
+            context: beans.gridOptions.context,
+            rootNode: rootNode!,
+            draggingEvent,
+            sameGrid,
+            position: 'below',
+            source,
+            target,
+            newParent: null,
+            rows,
+            withSource: true,
+        };
+
+        draggingEvent.dragItem.rowsDrop = rowsDrop;
+
+        return rowsDrop;
+    }
+
+    private managedRowsDrop(draggingEvent: DraggingEvent, throttleMakeGroup: boolean): ValidRowsDropPosition {
+        const { beans, gos, clientSideRowModel } = this;
 
         const y = _getNormalisedMousePosition(beans, draggingEvent).y;
-        let targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
-        let target = clientSideRowModel.getRow(targetRowIndex) ?? null;
+
+        const rowsDrop = this.makeRowsDrop(draggingEvent, y);
+        const rowDragManaged = this.gos.get('rowDragManaged');
+        const { sameGrid, rootNode, source, rows } = rowsDrop;
+        if (!rootNode) {
+            return rowsDrop; // Destroyed
+        }
+
+        let target = rowsDrop.target as RowNode | null;
+        let newParent = rowsDrop.newParent;
+
         const moved = source !== target;
 
-        const sameGrid = this.isFromThisGrid(draggingEvent);
         const groupingApproach = _getGroupingApproach(gos);
         const canSetParent =
             // We don't yet support drag and drop with grouping
@@ -244,7 +282,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             // We don't yet support moving tree rows from a different grid in a structured way
             sameGrid;
 
-        let newParent: RowNode | null = null;
         let yDelta: number;
 
         if (canSetParent && target?.footer) {
@@ -261,13 +298,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         let above = yDelta < 0;
         let targetInRows = false;
         if (sameGrid && target) {
+            let targetRowIndex = target.rowIndex!;
             if (!moved) {
                 if (Math.abs(yDelta) <= 0.5) {
-                    this.makeGroupThrottleClear();
-                    return null; // Nothing to move
+                    this.preventRowsDrop(rowsDrop); // Nothing to move
+                    if (rowDragManaged) return rowsDrop;
                 }
                 targetInRows = true;
-            } else {
+            } else if (source) {
                 targetInRows = rows.indexOf(target) >= 0;
                 if (targetInRows) {
                     const newTarget =
@@ -280,7 +318,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                     }
                 }
             }
-            if (targetInRows || (!canSetParent && Math.abs(targetRowIndex - source.rowIndex!) === 1)) {
+            if (source && (targetInRows || (!canSetParent && Math.abs(targetRowIndex - source.rowIndex!) === 1))) {
                 above = targetRowIndex < source.rowIndex!; // Select the row above or below without the mid point if the diff is 1
             }
         }
@@ -330,63 +368,37 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         if (!newParent && targetInRows && (canSetParent || source === target)) {
             // No delta dragging of multiple rows with TreeData or no change, nothing to move
-            return null;
+            this.preventRowsDrop(rowsDrop);
+            if (rowDragManaged) return rowsDrop;
         }
 
-        return this.filterRowsDrop(
-            {
-                api: beans.gridApi,
-                context: beans.gridOptions.context,
-                rootNode: clientSideRowModel.rootNode!,
-                draggingEvent,
-                sameGrid,
-                position: inside ? 'inside' : above ? 'above' : 'below',
-                source,
-                target,
-                newParent,
-                rows,
-                withSource: true,
-            },
-            above
-        );
-    }
+        rowsDrop.target = target;
+        rowsDrop.newParent = newParent;
+        rowsDrop.position = inside ? 'inside' : above ? 'above' : 'below';
 
-    private filterRowsDrop(
-        rowsDrop: ValidRowsDropPosition & IsRowValidDropPositionParams,
-        above: boolean
-    ): ValidRowsDropPosition {
         let customPosition = false;
         const isRowValidDropPosition = this.gos.get('isRowValidDropPosition');
         if (isRowValidDropPosition) {
-            const canDropResult = isRowValidDropPosition(rowsDrop);
-            if (!canDropResult) {
-                rowsDrop.rows = []; // Cannot drop, so no rows
-            } else if (typeof canDropResult === 'object') {
-                // Custom result, override the default values
-                if (canDropResult.newParent !== undefined) {
-                    rowsDrop.newParent = canDropResult.newParent;
-                }
-                if (canDropResult.rows !== undefined) {
-                    rowsDrop.rows = canDropResult.rows || [];
-                }
-                if (canDropResult.target !== undefined) {
-                    rowsDrop.target = canDropResult.target;
-                }
-                if (canDropResult.position) {
-                    customPosition = true;
-                    (rowsDrop as ValidRowsDropPosition).position = canDropResult.position;
-                }
+            const callbackResult = isRowValidDropPosition(rowsDrop as IsRowValidDropPositionParams);
+            if (!callbackResult) {
+                this.preventRowsDrop(rowsDrop); // Cannot drop, so no rows
+                if (rowDragManaged) return rowsDrop;
+            } else if (typeof callbackResult === 'object') {
+                customPosition = processRowsDropResult(rowsDrop, callbackResult);
             }
         }
 
-        filterRowsToMove(this.clientSideRowModel, rowsDrop);
-        if (!customPosition && (!rowsDrop.newParent || !rowsDrop.rows.length)) {
-            rowsDrop.position = above ? 'above' : 'below'; // Remove 'inside' if no new parent
+        if (rowDragManaged) {
+            filterRowsToMove(this.clientSideRowModel, rowsDrop);
+            if (!customPosition && (!rowsDrop.newParent || !rowsDrop.rows.length)) {
+                rowsDrop.position = above ? 'above' : 'below'; // Remove 'inside' if no new parent
+            }
         }
+
         return rowsDrop;
     }
 
-    private makeGroupThrottleUpdate(target: RowNode | null) {
+    private makeGroupThrottleUpdate(target: IRowNode | null) {
         const makeGroupThrottleTarget = this.makeGroupThrottleTarget;
         if (makeGroupThrottleTarget !== null && makeGroupThrottleTarget !== target) {
             this.makeGroupThrottleClear();
@@ -592,16 +604,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.stopDragging(draggingEvent);
         const { dragAndDrop, gos } = this.beans;
 
-        if (
-            gos.get('rowDragManaged') &&
+        if (!gos.get('rowDragManaged')) {
+            this.managedRowsDrop(draggingEvent, false);
+        } else if (
             (gos.get('suppressMoveWhenRowDragging') || !this.isFromThisGrid(draggingEvent)) &&
             dragAndDrop!.isDropZoneWithinThisGrid(draggingEvent)
         ) {
             const rowsDrop = this.managedRowsDrop(draggingEvent, false);
-            draggingEvent.dragItem.rowsDrop = rowsDrop;
-            if (rowsDrop) {
-                this.dropRows(rowsDrop);
-            }
+            this.dropRows(rowsDrop);
             this.beans.rowDropHighlightSvc!.clear();
         }
 

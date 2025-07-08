@@ -280,9 +280,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             const dragSource = this.dragSource;
             if (dragItem && dragSource) {
                 const rowsDrop = dragItem.rowsDrop;
-                const rowCount =
-                    rowsDrop === null ? 0 : rowsDrop ? rowsDrop.rows.length : dragItem.rowNodes?.length ?? 1;
-
+                const rowCount = rowsDrop?.rows.length ?? dragItem.rowNodes?.length ?? 1;
                 const withSource = rowsDrop?.withSource ?? true;
                 if (this.currentRowCount !== rowCount || this.currentWithSource !== withSource) {
                     this.currentRowCount = rowCount;

@@ -127,14 +127,13 @@ export class RowDragComp extends Component {
                 const rowsDrop = dragItem.rowsDrop;
                 let rowCount = 0;
                 let showSourceValue = false;
-                if (rowsDrop === undefined || !this.gos.get('suppressMoveWhenRowDragging')) {
+                const gos = this.gos;
+                if (!rowsDrop || (gos.get('rowDragManaged') && !gos.get('suppressMoveWhenRowDragging'))) {
                     rowCount = dragItemCount;
                     showSourceValue = rowCount === 1;
-                } else if (rowsDrop !== null) {
-                    rowCount = rowsDrop.rows.length;
-                    showSourceValue = rowsDrop.withSource || dragItemCount === 1;
                 } else {
-                    showSourceValue = dragItemCount === 1;
+                    rowCount = rowsDrop.rows.length;
+                    showSourceValue = (rowsDrop.withSource || rowCount === 0) && dragItemCount === 1;
                 }
 
                 const rowDragText = this.getRowDragText(this.column);

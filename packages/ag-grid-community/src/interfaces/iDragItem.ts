@@ -14,10 +14,10 @@ export interface DragItem<TValue = any> {
     rowNodes?: IRowNode[];
 
     /**
-     * With managed dragging, this contains all rows being dragged that can be dropped into the target.
+     * This contains information about the resulting drop position and the filtered rows being dragged.
      * See the grid option `isRowValidDropPosition` and `rowDragManaged` for more details.
      */
-    rowsDrop?: ValidRowsDropPosition | null;
+    rowsDrop?: ValidRowsDropPosition;
 
     /** When dragging columns, this contains the columns being dragged */
     columns?: Column[];
