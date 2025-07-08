@@ -100,9 +100,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
         const lastDraggingEvent = this.lastDraggingEvent;
         if (lastDraggingEvent && this.gos.get('suppressMoveWhenRowDragging')) {
-            const dragItem = lastDraggingEvent.dragItem;
-            const rows = dragItem.validRowNodes ?? dragItem.rowNodes;
-            if (rows && !rows.length) {
+            if (lastDraggingEvent.dragItem.validRowNodes?.length === 0) {
                 return 'notAllowed';
             }
         }
