@@ -370,6 +370,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     private processEdits(edits: EditMap, cancel: boolean = false): void {
         const rowNodes = Array.from(edits.keys());
+        const { beans } = this;
 
         const hasValidationErrors =
             this.model.getCellValidationModel().getCellValidationMap().size > 0 ||
