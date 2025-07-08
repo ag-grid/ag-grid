@@ -1302,4 +1302,4 @@ export type {
 
 // Testing
 
-export * as agTestIdFor from './testing/testIdUtils';
+export { agTestIdFor } from './testing/testIdUtils';

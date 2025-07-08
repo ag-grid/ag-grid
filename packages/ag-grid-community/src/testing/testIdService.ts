@@ -3,7 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import { _getRootNode } from '../gridOptionsUtils';
 import type { ITestIdService } from '../interfaces/iTestIdService';
-import * as getTestIdFor from './testIdUtils';
+import { agTestIdFor } from './testIdUtils';
 
 let TEST_ID_ATTR = 'data-testid';
 
@@ -41,32 +41,29 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         /** Headers */
 
         root.querySelectorAll('.ag-header-group-cell').forEach((groupCell) => {
-            setTestId(groupCell, getTestIdFor.headerGroupCell(groupCell.getAttribute('col-id')));
+            setTestId(groupCell, agTestIdFor.headerGroupCell(groupCell.getAttribute('col-id')));
         });
 
         root.querySelectorAll('.ag-header-cell').forEach((cell) => {
             const colId = cell.getAttribute('col-id');
-            setTestId(cell, getTestIdFor.headerCell(colId));
+            setTestId(cell, agTestIdFor.headerCell(colId));
 
-            setTestId(cell.querySelector('.ag-header-cell-filter-button'), getTestIdFor.headerFilterButton(colId));
+            setTestId(cell.querySelector('.ag-header-cell-filter-button'), agTestIdFor.headerFilterButton(colId));
 
-            setTestId(cell.querySelector('.ag-header-cell-menu-button'), getTestIdFor.headerCellMenuButton(colId));
+            setTestId(cell.querySelector('.ag-header-cell-menu-button'), agTestIdFor.headerCellMenuButton(colId));
 
-            setTestId(cell.querySelector('.ag-checkbox input[type=checkbox]'), getTestIdFor.headerCheckbox(colId));
+            setTestId(cell.querySelector('.ag-checkbox input[type=checkbox]'), agTestIdFor.headerCheckbox(colId));
 
-            setTestId(
-                cell.querySelector('.ag-floating-filter-button button'),
-                getTestIdFor.floatingFilterButton(colId)
-            );
+            setTestId(cell.querySelector('.ag-floating-filter-button button'), agTestIdFor.floatingFilterButton(colId));
 
             const numberInput = cell.querySelector('.ag-floating-filter-body input[type=number]');
-            setTestId(numberInput, getTestIdFor.columnNumberFilterInput());
+            setTestId(numberInput, agTestIdFor.columnNumberFilterInput());
 
             const textInput = cell.querySelector('.ag-floating-filter-body input[type=text]');
-            setTestId(textInput, getTestIdFor.columnTextFilterInput());
+            setTestId(textInput, agTestIdFor.columnTextFilterInput());
 
             const dateInput = cell.querySelector('.ag-floating-filter-body input[type=date]');
-            setTestId(dateInput, getTestIdFor.columnDateFilterInput());
+            setTestId(dateInput, agTestIdFor.columnDateFilterInput());
         });
 
         /** Column Filters */
@@ -77,69 +74,69 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         root.querySelectorAll('.ag-row').forEach((row) => {
             const rowId = row.getAttribute('row-id');
-            setTestId(row, getTestIdFor.rowNode(rowId));
+            setTestId(row, agTestIdFor.rowNode(rowId));
 
             /** Cells */
 
             row.querySelectorAll('.ag-cell').forEach((cell) => {
                 const colId = cell.getAttribute('col-id');
-                setTestId(cell, getTestIdFor.cell(rowId, colId));
+                setTestId(cell, agTestIdFor.cell(rowId, colId));
 
                 setTestId(
                     cell.querySelector('.ag-selection-checkbox input[type=checkbox]'),
-                    getTestIdFor.checkbox(rowId, colId)
+                    agTestIdFor.checkbox(rowId, colId)
                 );
 
-                setTestId(cell.querySelector('.ag-drag-handle'), getTestIdFor.dragHandle(rowId, colId));
+                setTestId(cell.querySelector('.ag-drag-handle'), agTestIdFor.dragHandle(rowId, colId));
 
-                setTestId(cell.querySelector('.ag-group-contracted'), getTestIdFor.groupContracted(rowId, colId));
+                setTestId(cell.querySelector('.ag-group-contracted'), agTestIdFor.groupContracted(rowId, colId));
 
-                setTestId(cell.querySelector('.ag-group-expanded'), getTestIdFor.groupExpanded(rowId, colId));
+                setTestId(cell.querySelector('.ag-group-expanded'), agTestIdFor.groupExpanded(rowId, colId));
             });
         });
 
         /** Menu */
 
         root.querySelectorAll('.ag-menu-list').forEach((menu) => {
-            setTestId(menu, getTestIdFor.menu());
+            setTestId(menu, agTestIdFor.menu());
 
             menu.querySelectorAll('.ag-menu-option').forEach((option) => {
-                setTestId(option, getTestIdFor.menuOption(option.querySelector('.ag-menu-option-text')?.textContent));
+                setTestId(option, agTestIdFor.menuOption(option.querySelector('.ag-menu-option-text')?.textContent));
             });
         });
 
         /** SideBar */
 
         root.querySelectorAll('.ag-side-bar').forEach((sideBar) => {
-            setTestId(sideBar, getTestIdFor.sideBar());
+            setTestId(sideBar, agTestIdFor.sideBar());
 
             /** SideBar buttons */
 
             sideBar.querySelectorAll('.ag-side-button button').forEach((button) => {
                 setTestId(
                     button,
-                    getTestIdFor.sideBarButton(button.querySelector('.ag-side-button-label')?.textContent)
+                    agTestIdFor.sideBarButton(button.querySelector('.ag-side-button-label')?.textContent)
                 );
             });
 
             /** Column Tool Panel */
 
             sideBar.querySelectorAll('.ag-column-panel').forEach((panel) => {
-                setTestId(panel, getTestIdFor.columnToolPanel());
+                setTestId(panel, agTestIdFor.columnToolPanel());
 
                 setTestId(
                     panel.querySelector('.ag-pivot-mode-select input[type=checkbox]'),
-                    getTestIdFor.pivotModeSelect()
+                    agTestIdFor.pivotModeSelect()
                 );
 
                 setTestId(
                     panel.querySelector('.ag-column-select-header-checkbox input[type=checkbox]'),
-                    getTestIdFor.columnPanelSelectHeaderCheckbox()
+                    agTestIdFor.columnPanelSelectHeaderCheckbox()
                 );
 
                 setTestId(
                     panel.querySelector('.ag-column-select-header-filter-wrapper input[type=text]'),
-                    getTestIdFor.columnPanelSelectHeaderFilter()
+                    agTestIdFor.columnPanelSelectHeaderFilter()
                 );
 
                 panel.querySelectorAll('.ag-column-select-list').forEach((list) => {
@@ -148,17 +145,17 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
                         setTestId(
                             item.querySelector('.ag-column-group-closed-icon'),
-                            getTestIdFor.columnSelectListItemGroupClosedIcon(label)
+                            agTestIdFor.columnSelectListItemGroupClosedIcon(label)
                         );
 
                         setTestId(
                             item.querySelector('.ag-column-select-checkbox input[type=checkbox]'),
-                            getTestIdFor.columnSelectListItemCheckbox(label)
+                            agTestIdFor.columnSelectListItemCheckbox(label)
                         );
 
                         setTestId(
                             item.querySelector('.ag-drag-handle'),
-                            getTestIdFor.columnSelectListItemDragHandle(label)
+                            agTestIdFor.columnSelectListItemDragHandle(label)
                         );
                     });
                 });
@@ -167,7 +164,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                     columnDrop.querySelectorAll('.ag-column-drop-cell').forEach((columnDropCell) => {
                         setTestId(
                             columnDropCell.querySelector('.ag-drag-handle'),
-                            getTestIdFor.columnDropCellDragHandle(
+                            agTestIdFor.columnDropCellDragHandle(
                                 columnDropCell.querySelector('.ag-column-drop-cell-text')?.textContent
                             )
                         );
@@ -178,18 +175,18 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             /** Filter Tool Panel */
 
             sideBar.querySelectorAll('.ag-filter-panel').forEach((panel) => {
-                setTestId(panel, getTestIdFor.filterToolPanel());
+                setTestId(panel, agTestIdFor.filterToolPanel());
 
                 setTestId(
                     panel.querySelector('button.ag-filter-add-button'),
-                    getTestIdFor.filterToolPanelAddFilterButton()
+                    agTestIdFor.filterToolPanelAddFilterButton()
                 );
 
                 panel.querySelectorAll('.ag-filter-card').forEach((filterCard) => {
                     const colLabel = filterCard.querySelector('.ag-filter-card-title')?.textContent;
 
                     const typeSelector = filterCard.querySelector('.ag-filter-type-select');
-                    setTestId(typeSelector, getTestIdFor.filterToolPanelFilterTypeSelector(colLabel));
+                    setTestId(typeSelector, agTestIdFor.filterToolPanelFilterTypeSelector(colLabel));
 
                     filterCard.querySelectorAll('.ag-filter').forEach((filter) => this.setupFilters(filter));
                 });
@@ -200,23 +197,23 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         setTestId(
             root.querySelector('.ag-status-bar .ag-status-panel-total-and-filtered-row-count'),
-            getTestIdFor.statusBarTotalAndFilteredRowCount()
+            agTestIdFor.statusBarTotalAndFilteredRowCount()
         );
         setTestId(
             root.querySelector('.ag-status-bar .ag-status-panel-total-row-count'),
-            getTestIdFor.statusBarTotalRowCount()
+            agTestIdFor.statusBarTotalRowCount()
         );
         setTestId(
             root.querySelector('.ag-status-bar .ag-status-panel-filtered-row-count'),
-            getTestIdFor.statusBarFilteredRowCount()
+            agTestIdFor.statusBarFilteredRowCount()
         );
         setTestId(
             root.querySelector('.ag-status-bar .ag-status-panel-selected-row-count'),
-            getTestIdFor.statusBarSelectedRowCount()
+            agTestIdFor.statusBarSelectedRowCount()
         );
         setTestId(
             root.querySelector('.ag-status-bar .ag-status-panel-filtered-row-count'),
-            getTestIdFor.statusBarAggregations()
+            agTestIdFor.statusBarAggregations()
         );
 
         /** Pagination */
@@ -224,7 +221,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         root.querySelectorAll('.ag-paging-panel').forEach((pagingPanel) => {
             setTestId(
                 pagingPanel.querySelector('.ag-paging-page-size .ag-picker-field-display'),
-                getTestIdFor.paginationPanelSizePickerDisplay(
+                agTestIdFor.paginationPanelSizePickerDisplay(
                     pagingPanel.querySelector('.ag-paging-page-size .ag-picker-field-display')?.textContent
                 )
             );
@@ -233,13 +230,13 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                 const dataRef = panelNumber.getAttribute('data-ref');
                 switch (dataRef) {
                     case 'lbFirstRowOnPage':
-                        setTestId(panelNumber, getTestIdFor.paginationPanelFirstRowOnPage(panelNumber.textContent));
+                        setTestId(panelNumber, agTestIdFor.paginationPanelFirstRowOnPage(panelNumber.textContent));
                         break;
                     case 'lbLastRowOnPage':
-                        setTestId(panelNumber, getTestIdFor.paginationPanelLastRowOnPage(panelNumber.textContent));
+                        setTestId(panelNumber, agTestIdFor.paginationPanelLastRowOnPage(panelNumber.textContent));
                         break;
                     case 'lbRecordCount':
-                        setTestId(panelNumber, getTestIdFor.paginationPanelRecordCount(panelNumber.textContent));
+                        setTestId(panelNumber, agTestIdFor.paginationPanelRecordCount(panelNumber.textContent));
                         break;
                 }
             });
@@ -247,7 +244,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             pagingPanel.querySelectorAll('.ag-paging-page-summary-panel .ag-button').forEach((pagingButton) => {
                 setTestId(
                     pagingButton,
-                    getTestIdFor.paginationSummaryPanelButton(pagingButton.getAttribute('aria-label')?.toLowerCase())
+                    agTestIdFor.paginationSummaryPanelButton(pagingButton.getAttribute('aria-label')?.toLowerCase())
                 );
             });
 
@@ -257,11 +254,11 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                     case 'lbCurrent':
                         setTestId(
                             pagingNumber,
-                            getTestIdFor.paginationSummaryPanelCurrentPage(pagingNumber.textContent)
+                            agTestIdFor.paginationSummaryPanelCurrentPage(pagingNumber.textContent)
                         );
                         break;
                     case 'lbTotal':
-                        setTestId(pagingNumber, getTestIdFor.paginationSummaryPanelTotalPage(pagingNumber.textContent));
+                        setTestId(pagingNumber, agTestIdFor.paginationSummaryPanelTotalPage(pagingNumber.textContent));
                         break;
                 }
             });
@@ -271,51 +268,51 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
     private setupFilters(root: Document | ShadowRoot | Element): void {
         root.querySelectorAll('.ag-filter-menu').forEach((menu) => {
             menu.querySelectorAll('.ag-filter-select .ag-picker-field-display').forEach((fieldDisplay) => {
-                setTestId(fieldDisplay, getTestIdFor.columnFilterPickerDisplay());
+                setTestId(fieldDisplay, agTestIdFor.columnFilterPickerDisplay());
             });
 
             const numberInput = menu.querySelector('.ag-filter-body input[type=number]');
-            setTestId(numberInput, getTestIdFor.columnNumberFilterInput());
+            setTestId(numberInput, agTestIdFor.columnNumberFilterInput());
 
             const textInput = menu.querySelector('.ag-filter-body input[type=text]');
-            setTestId(textInput, getTestIdFor.columnTextFilterInput());
+            setTestId(textInput, agTestIdFor.columnTextFilterInput());
 
             const dateInput = menu.querySelector('.ag-filter-body input[type=date]');
-            setTestId(dateInput, getTestIdFor.columnDateFilterInput());
+            setTestId(dateInput, agTestIdFor.columnDateFilterInput());
 
             const setMiniFilterInput = menu.querySelector('.ag-mini-flter input[type=text]');
-            setTestId(setMiniFilterInput, getTestIdFor.setFilterMiniFilterInput());
+            setTestId(setMiniFilterInput, agTestIdFor.setFilterMiniFilterInput());
 
             menu.querySelectorAll('.ag-set-filter-list .ag-set-filter-item').forEach((item) => {
                 const label = item.querySelector('.ag-checkbox-label')?.textContent;
                 const checkbox = item.querySelector('input[type=checkbox]');
-                setTestId(checkbox, getTestIdFor.setFilterItem(label));
+                setTestId(checkbox, agTestIdFor.setFilterItem(label));
             });
 
             menu.querySelectorAll('.ag-filter-apply-panel button').forEach((button) => {
-                setTestId(button, getTestIdFor.setFilterApplyPanelButton(button.textContent));
+                setTestId(button, agTestIdFor.setFilterApplyPanelButton(button.textContent));
             });
 
             menu.querySelectorAll('.ag-filter-condition .ag-radio-button').forEach((radioButton) => {
                 const label = radioButton.querySelector('.ag-radio-button-label')?.textContent;
                 setTestId(
                     radioButton.querySelector('input[type=radio]'),
-                    getTestIdFor.filterConditionRadioButton(label)
+                    agTestIdFor.filterConditionRadioButton(label)
                 );
             });
         });
 
         /** Advanced Filter */
 
-        setTestId(root.querySelector('.ag-advanced-filter input[type=text]'), getTestIdFor.advancedFilterInput());
+        setTestId(root.querySelector('.ag-advanced-filter input[type=text]'), agTestIdFor.advancedFilterInput());
 
         root.querySelectorAll('.ag-advanced-filter-buttons button').forEach((button) => {
-            setTestId(button, getTestIdFor.advancedFilterButton(button.textContent));
+            setTestId(button, agTestIdFor.advancedFilterButton(button.textContent));
         });
 
         setTestId(
             root.querySelector('button.ag-advanced-filter-builder-button'),
-            getTestIdFor.advancedFilterBuilderButton()
+            agTestIdFor.advancedFilterBuilderButton()
         );
 
         root.querySelectorAll('.ag-panel[aria-label="Advanced Filter"] .ag-panel-title-bar-button').forEach(
@@ -323,8 +320,8 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                 setTestId(
                     button,
                     i === 0
-                        ? getTestIdFor.advancedFilterPanelMaximiseButton()
-                        : getTestIdFor.advancedFilterPanelCloseButton()
+                        ? agTestIdFor.advancedFilterPanelMaximiseButton()
+                        : agTestIdFor.advancedFilterPanelCloseButton()
                 );
             }
         );
@@ -333,14 +330,14 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             (pill) => {
                 setTestId(
                     pill,
-                    getTestIdFor.advancedFilterPill(pill.querySelector('.ag-picker-field-display')?.textContent)
+                    agTestIdFor.advancedFilterPill(pill.querySelector('.ag-picker-field-display')?.textContent)
                 );
             }
         );
 
         setTestId(
             root.querySelector('.ag-panel[aria-label="Advanced Filter"] .ag-advanced-filter-builder-item-button'),
-            getTestIdFor.advancedFilterBuilderAddItemButton()
+            agTestIdFor.advancedFilterBuilderAddItemButton()
         );
     }
 }
