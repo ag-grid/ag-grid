@@ -254,10 +254,11 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     private onHeaderClick(_e: MouseEvent): void {
-        if (new Date().getTime() - this.lastColumnResized < 100) {
-            return;
-        }
-        if (!this.isIntegratedWithSelection || this.getColumn()?.resizing) {
+        if (
+            new Date().getTime() - this.lastColumnResized < 100 ||
+            !this.isIntegratedWithSelection ||
+            this.getColumn()?.resizing
+        ) {
             return;
         }
         _selectAllCells(this.beans);
