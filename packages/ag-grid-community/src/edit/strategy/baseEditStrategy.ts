@@ -86,15 +86,22 @@ export abstract class BaseEditStrategy extends BeanStub {
                 rowNode: _getRowNode(beans, { rowIndex: rowIndex!, rowPinned })!,
             };
             const isBlock = gos.get('invalidEditValueMode') === 'block';
-            const hasError =
-                isBlock && !!editModelSvc?.getCellValidationModel().hasCellValidation(cellPositionFromEvent);
+
+            if (isBlock) {
+                // if we are blocking on invalid edits, focus changes don't stop current editing
+                return;
+            }
+
+            const shouldRevert = !isBlock;
+            const hasError = !!editModelSvc?.getCellValidationModel().hasCellValidation(cellPositionFromEvent);
+            const shouldCancel = shouldRevert && hasError;
 
             // if we don't have a previous cell, we don't need to force stopEditing
             const result =
                 previous || isFocusCleared
                     ? editSvc.stopEditing(undefined, {
-                          cancel: hasError,
-                          source: isFocusCleared ? 'api' : undefined,
+                          cancel: shouldCancel,
+                          source: isFocusCleared && shouldRevert ? 'api' : undefined,
                       })
                     : true;
 
