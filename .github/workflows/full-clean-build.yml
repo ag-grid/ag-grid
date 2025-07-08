@@ -223,7 +223,7 @@ jobs:
           } >> $GITHUB_ENV
 
       - name: Slack Notification
-        if: ${{ (github.event_name == 'schedule' || inputs.notify) && steps.create-slack-blocks.outputs.success == 'true' }}
+        if: ${{ (github.event_name == 'schedule' || inputs.notify) && steps.create-slack-blocks.outcome == 'success' }}
         continue-on-error: true
         uses: ./.github/actions/slack-integration
         with:
