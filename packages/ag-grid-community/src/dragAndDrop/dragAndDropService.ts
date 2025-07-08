@@ -44,7 +44,7 @@ export interface DragSource {
     /**
      * This name appears in the drag and drop image component when dragging.
      */
-    dragItemName: string | (() => string) | null;
+    dragItemName: string | ((dragItem?: DragItem | null) => string) | null;
     /**
      * Icon to show when not over a drop zone
      */
@@ -142,6 +142,9 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     private environment: Environment;
     private userCompFactory: UserComponentFactory;
     private currentIconName: DragAndDropIcon | null = null;
+    private currentLabel: string | null = null;
+    private currentRowCount: number | null = null;
+    private currentWithSource: boolean | null = null;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
@@ -256,10 +259,13 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.dragItem = null;
         this.dragSource = null;
         this.currentIconName = null;
+        this.currentLabel = null;
+        this.currentRowCount = null;
+        this.currentWithSource = null;
         this.removeDragAndDropImageComponent();
     }
 
-    private updateIconName(): void {
+    private updateIconAndLabel(): void {
         const comp = this.dragAndDropImageComp?.comp;
         const dropTarget = this.lastDropTarget;
         if (comp) {
@@ -267,6 +273,32 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             if (this.currentIconName !== iconName) {
                 this.currentIconName = iconName;
                 comp.setIcon(iconName, false);
+            }
+
+            let label = this.currentLabel;
+            const dragItem = this.dragItem;
+            const dragSource = this.dragSource;
+            if (dragItem && dragSource) {
+                const rowsDrop = dragItem.rowsDrop;
+                const rowCount =
+                    rowsDrop === null ? 0 : rowsDrop ? rowsDrop.rows.length : dragItem.rowNodes?.length ?? 1;
+
+                const withSource = rowsDrop?.withSource ?? true;
+                if (this.currentRowCount !== rowCount || this.currentWithSource !== withSource) {
+                    this.currentRowCount = rowCount;
+                    this.currentWithSource = withSource;
+                    let dragItemName = dragSource.dragItemName;
+                    if (typeof dragItemName === 'function') {
+                        dragItemName = dragItemName(this.dragItem);
+                    }
+                    label = dragItemName;
+                }
+            }
+
+            label ||= '';
+            if (this.currentLabel !== label) {
+                this.currentLabel = label;
+                comp.setLabel(label);
             }
         }
     }
@@ -301,7 +333,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             dropTarget.onDragging(draggingEvent);
         }
 
-        this.updateIconName();
+        this.updateIconAndLabel();
     }
 
     private getAllContainersFromDropTarget(dropTarget: DropTarget): HTMLElement[][] {
@@ -562,7 +594,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
             this.processDragAndDropImageComponent(comp);
             this.dragAndDropImageComp!.comp = comp;
-            this.updateIconName();
+            this.updateIconAndLabel();
         });
     }
 
@@ -579,14 +611,6 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
         _stampTopLevelGridCompWithGridInstance(this.gos, eGui);
         environment.applyThemeClasses(eGui);
-
-        let { dragItemName } = dragSource;
-
-        if (typeof dragItemName === 'function') {
-            dragItemName = dragItemName();
-        }
-
-        dragAndDropImageComponent.setLabel(dragItemName || '');
 
         eGui.style.top = '20px';
         eGui.style.left = '20px';

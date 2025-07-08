@@ -6,6 +6,7 @@ import type {
     RowDragLeaveEvent,
     RowDragMoveEvent,
 } from '../../events';
+import type { DropIndicatorPosition } from '../../interfaces/IRowDropHighlightService';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { DraggingEvent } from '../dragAndDropService';
@@ -16,7 +17,7 @@ export interface IsRowValidDropPositionResult<TData = any> {
     /** The rows that are being dropped, can be used to filter the rows. If empty, the operation is aborted. */
     rows?: IRowNode<TData>[] | null;
     /** The position of the rows relative to the target row */
-    position?: RowDropTargetPosition;
+    position?: DropIndicatorPosition;
     /** The new parent row the rows will have after dropped */
     newParent?: RowNode<TData> | null;
     /** The target row node where the row is being dropped. */
@@ -27,14 +28,13 @@ export type IsRowValidDropPositionCallback<TData = any, TContext = any> = (
     params: IsRowValidDropPositionParams<TData, TContext>
 ) => IsRowValidDropPositionResult<TData> | null | boolean;
 
-export interface IsRowValidDropPositionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+export interface ValidRowsDropPosition<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The root node that contains all row nodes */
     rootNode: IRowNode<TData>;
     /** The dragging event that originated this drop operation */
     draggingEvent: DraggingEvent<TData, TContext> | null;
     /** True if this rows comes from the same grid, false if is coming from another grid */
     sameGrid: boolean;
-    /** The position of the rows relative to the target row */
-    position: RowDropTargetPosition;
     /** The source row node that was dragged, if any */
     source: IRowNode<TData> | null;
     /** The target row node where the row is being dropped. */
@@ -43,6 +43,16 @@ export interface IsRowValidDropPositionParams<TData = any, TContext = any> exten
     newParent: IRowNode<TData> | null;
     /** The rows that are being dropped */
     rows: IRowNode<TData>[];
+    /** This indicates whether `source` can be dropped or not */
+    withSource: boolean;
+    /** The position of the rows relative to the target row */
+    position: DropIndicatorPosition;
+}
+
+export interface IsRowValidDropPositionParams<TData = any, TContext = any>
+    extends Exclude<ValidRowsDropPosition<TData, TContext>, 'withSource' | 'position'> {
+    /** The position of the rows relative to the target row */
+    position: RowDropTargetPosition;
 }
 
 export interface RowDropZoneEvents {

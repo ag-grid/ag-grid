@@ -15,14 +15,19 @@ import { ChangedPath } from '../../utils/changedPath';
 import { _warn } from '../../validation/logging';
 import type { DragAndDropIcon, DraggingEvent, DropTarget } from '../dragAndDropService';
 import { DragSourceType } from '../dragAndDropService';
-import type { IsRowValidDropPositionParams, RowDropZoneEvents, RowDropZoneParams } from './rowDragFeatureTypes';
+import type {
+    IsRowValidDropPositionParams,
+    RowDropZoneEvents,
+    RowDropZoneParams,
+    ValidRowsDropPosition,
+} from './rowDragFeatureTypes';
 import type { InternalRowDropZoneParams, RowDragEventType, WritableRowNode } from './rowDragFeatureUtils';
 import {
     compareRowIndex,
+    filterRowsToMove,
     getLeafRow,
     getLeafSourceRowIndex,
     getPrevOrNextRow,
-    invokeIsRowValidDropPosition,
     reorderLeafChildren,
     rowsHaveSameParent,
     targetRowShouldBeParent,
@@ -100,7 +105,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
         const lastDraggingEvent = this.lastDraggingEvent;
         if (lastDraggingEvent && this.gos.get('suppressMoveWhenRowDragging')) {
-            if (lastDraggingEvent.dragItem.validRowNodes?.length === 0) {
+            const rowsDrop = lastDraggingEvent.dragItem.rowsDrop;
+            if (rowsDrop === null || rowsDrop?.rows.length === 0) {
                 return 'notAllowed';
             }
         }
@@ -190,10 +196,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             if (gos.get('suppressMoveWhenRowDragging') || !isFromThisGrid) {
                 if (dragAndDrop!.isDropZoneWithinThisGrid(draggingEvent)) {
                     const rowsDrop = this.managedRowsDrop(draggingEvent, throttleMakeGroup);
-                    draggingEvent.dragItem.validRowNodes = rowsDrop ? rowsDrop.rows : [];
+                    draggingEvent.dragItem.rowsDrop = rowsDrop;
                     const target = rowsDrop?.target;
                     const rowDropHighlightSvc = this.beans.rowDropHighlightSvc!;
-                    if (target && rowsDrop.rows.length) {
+                    if (target && rowsDrop.rows.length && rowsDrop.position !== 'none') {
                         rowDropHighlightSvc.set(target as RowNode, rowsDrop.position);
                     } else {
                         rowDropHighlightSvc.clear();
@@ -201,25 +207,24 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 }
             } else {
                 const rowsDrop = this.managedRowsDrop(draggingEvent, throttleMakeGroup);
-                draggingEvent.dragItem.validRowNodes = rowsDrop ? rowsDrop.rows : [];
+                draggingEvent.dragItem.rowsDrop = rowsDrop;
                 if (rowsDrop) {
                     this.dropRows(rowsDrop);
                 }
             }
         }
 
-        draggingEvent.dragItem.validRowNodes ??= [];
+        draggingEvent.dragItem.rowsDrop ??= null;
     }
 
-    private managedRowsDrop(
-        draggingEvent: DraggingEvent,
-        throttleMakeGroup: boolean
-    ): IsRowValidDropPositionParams | null {
+    private managedRowsDrop(draggingEvent: DraggingEvent, throttleMakeGroup: boolean): ValidRowsDropPosition | null {
         const { beans, gos, clientSideRowModel } = this;
         const rootNode = clientSideRowModel.rootNode;
-        const { rowNode, rowNodes: rows } = draggingEvent.dragItem;
-        const rowsLen = rows?.length;
-        const source = rowsLen && (rowNode ?? rows[0]);
+        const dragItem = draggingEvent.dragItem;
+        const rowNode = dragItem.rowNode;
+        let rows = dragItem.rowNodes;
+        rows = rows?.length ? rows : rowNode ? [rowNode] : [];
+        const source = rows.length && (rowNode ?? rows[0]);
 
         if (!source || !rootNode) {
             this.makeGroupThrottleClear();
@@ -328,23 +333,57 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return null;
         }
 
-        return invokeIsRowValidDropPosition(
-            clientSideRowModel,
+        return this.filterRowsDrop(
             {
                 api: beans.gridApi,
                 context: beans.gridOptions.context,
+                rootNode: clientSideRowModel.rootNode!,
                 draggingEvent,
-                rootNode,
                 sameGrid,
                 position: inside ? 'inside' : above ? 'above' : 'below',
                 source,
                 target,
                 newParent,
                 rows,
+                withSource: true,
             },
-            above,
-            gos.get('isRowValidDropPosition')
+            above
         );
+    }
+
+    private filterRowsDrop(
+        rowsDrop: ValidRowsDropPosition & IsRowValidDropPositionParams,
+        above: boolean
+    ): ValidRowsDropPosition {
+        let customPosition = false;
+        const isRowValidDropPosition = this.gos.get('isRowValidDropPosition');
+        if (isRowValidDropPosition) {
+            const canDropResult = isRowValidDropPosition(rowsDrop);
+            if (!canDropResult) {
+                rowsDrop.rows = []; // Cannot drop, so no rows
+            } else if (typeof canDropResult === 'object') {
+                // Custom result, override the default values
+                if (canDropResult.newParent !== undefined) {
+                    rowsDrop.newParent = canDropResult.newParent;
+                }
+                if (canDropResult.rows !== undefined) {
+                    rowsDrop.rows = canDropResult.rows || [];
+                }
+                if (canDropResult.target !== undefined) {
+                    rowsDrop.target = canDropResult.target;
+                }
+                if (canDropResult.position) {
+                    customPosition = true;
+                    (rowsDrop as ValidRowsDropPosition).position = canDropResult.position;
+                }
+            }
+        }
+
+        filterRowsToMove(this.clientSideRowModel, rowsDrop);
+        if (!customPosition && (!rowsDrop.newParent || !rowsDrop.rows.length)) {
+            rowsDrop.position = above ? 'above' : 'below'; // Remove 'inside' if no new parent
+        }
+        return rowsDrop;
     }
 
     private makeGroupThrottleUpdate(target: RowNode | null) {
@@ -559,7 +598,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             dragAndDrop!.isDropZoneWithinThisGrid(draggingEvent)
         ) {
             const rowsDrop = this.managedRowsDrop(draggingEvent, false);
-            draggingEvent.dragItem.validRowNodes = rowsDrop ? rowsDrop.rows : [];
+            draggingEvent.dragItem.rowsDrop = rowsDrop;
             if (rowsDrop) {
                 this.dropRows(rowsDrop);
             }
@@ -599,11 +638,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     /** Drag and drop. Returns false if at least a row was moved, otherwise true */
-    private dropRows(rowsDrop: IsRowValidDropPositionParams): boolean {
+    private dropRows(rowsDrop: ValidRowsDropPosition): boolean {
         return rowsDrop.sameGrid ? this.moveRows(rowsDrop) : this.addRows(rowsDrop);
     }
 
-    private addRows({ position, target, rows }: IsRowValidDropPositionParams): boolean {
+    private addRows({ position, target, rows }: ValidRowsDropPosition): boolean {
         const getRowIdFunc = _getRowIdCallback(this.gos);
         const clientSideRowModel = this.clientSideRowModel;
 
@@ -624,7 +663,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return true;
     }
 
-    private moveRows({ rootNode, position, target, rows, newParent }: IsRowValidDropPositionParams): boolean {
+    private moveRows({ rootNode, position, target, rows, newParent }: ValidRowsDropPosition): boolean {
         let changed = false;
 
         const leafs = new Set<WritableRowNode>();

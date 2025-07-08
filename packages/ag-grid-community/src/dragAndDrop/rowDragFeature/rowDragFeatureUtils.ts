@@ -2,7 +2,7 @@ import type { RowNode } from '../../entities/rowNode';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { DraggingEvent } from '../dragAndDropService';
-import type { IsRowValidDropPositionCallback, IsRowValidDropPositionParams } from './rowDragFeatureTypes';
+import type { ValidRowsDropPosition } from './rowDragFeatureTypes';
 
 export interface WritableRowNode extends RowNode {
     treeParent: RowNode | null;
@@ -145,89 +145,30 @@ const rowParentWouldFormCycle = <TData>(row: IRowNode<TData>, newParent: IRowNod
     return false;
 };
 
-const filterRowsToMove = (
-    clientSideRowModel: IClientSideRowModel,
-    rows: IRowNode[],
-    newParent: IRowNode | null
-): IRowNode[] => {
-    let result: IRowNode[] | null = null;
+export const filterRowsToMove = (clientSideRowModel: IClientSideRowModel, rowsDrop: ValidRowsDropPosition): void => {
+    const { newParent, rows, sameGrid, source } = rowsDrop;
+    const rowsLen = rows.length;
+    const filteredRows = new Array<IRowNode>(rowsLen);
     let writeIdx = 0;
-    for (let i = 0; i < rows.length; i++) {
+    let withSource = false;
+    for (let i = 0; i < rowsLen; ++i) {
         const row = rows[i];
-        let invalid = false;
-
-        if (row.footer || (row.rowTop === null && row !== clientSideRowModel.getRowNode(row.id!))) {
-            invalid = true; // Row is a footer or not in the model, so we cannot move it
-        } else if (newParent !== null && row.parent !== newParent && rowParentWouldFormCycle(row, newParent)) {
-            invalid = true; // Row would form a cycle if moved to the new parent
+        if (row.footer || (sameGrid && row.rowTop === null && row !== clientSideRowModel.getRowNode(row.id!))) {
+            continue; // Row is a footer or not in the model, so we cannot move it
         }
-
-        if (invalid && result === null) {
-            result = rows.slice(0, i); // We need a new array to filter out invalid rows
-            writeIdx = i;
-        } else if (!invalid && result !== null) {
-            result[writeIdx++] = row;
+        if (newParent !== null && row.parent !== newParent && rowParentWouldFormCycle(row, newParent)) {
+            continue; // Row would form a cycle if moved to the new parent
         }
+        withSource ||= row === source;
+        filteredRows[writeIdx++] = row;
     }
 
-    if (result) {
-        result.length = writeIdx;
-        return result;
+    if (rowsLen !== writeIdx) {
+        filteredRows.length = writeIdx;
     }
-    return rows;
+    rowsDrop.rows = filteredRows;
+    rowsDrop.withSource = withSource;
 };
-
-/**
- * Processes the isRowValidDropPosition callback and updates the result accordingly.
- * Returns an object with updated result, newParent, and customPosition.
- */
-export function invokeIsRowValidDropPosition(
-    clientSideRowModel: IClientSideRowModel,
-    params: IsRowValidDropPositionParams,
-    above: boolean,
-    isRowValidDropPosition: IsRowValidDropPositionCallback | null | undefined
-): IsRowValidDropPositionParams {
-    let customPosition = false;
-    const draggingEvent = params.draggingEvent;
-    if (isRowValidDropPosition) {
-        if (draggingEvent) {
-            draggingEvent.dragItem.validRowNodes = params.rows;
-        }
-        const canDropResult = isRowValidDropPosition(params);
-        if (!canDropResult) {
-            params.rows = []; // Cannot drop, so no rows
-        } else if (typeof canDropResult === 'object') {
-            // Custom result, override the default values
-
-            if (canDropResult.newParent !== undefined) {
-                params.newParent = canDropResult.newParent;
-            }
-
-            if (canDropResult.rows !== undefined) {
-                params.rows = canDropResult.rows ? Array.from(canDropResult.rows) : [];
-            }
-
-            if (canDropResult.target !== undefined) {
-                params.target = canDropResult.target;
-            }
-
-            if (canDropResult.position) {
-                customPosition = true;
-                params.position = canDropResult.position;
-            }
-        }
-    }
-
-    let rows = params.rows;
-    const newParent = params.newParent;
-    if (!customPosition && (!newParent || !rows.length)) {
-        params.position = above ? 'above' : 'below'; // Remove 'inside' if no new parent
-    }
-
-    rows = filterRowsToMove(clientSideRowModel, rows, newParent);
-    params.rows = rows;
-    return params;
-}
 
 /** Reorders the children of the root node, so that the rows to move are in the correct order.
  * @param leafs The valid set of rows to move, as returned by getValidRowsToMove

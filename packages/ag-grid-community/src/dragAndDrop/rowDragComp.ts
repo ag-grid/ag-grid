@@ -2,6 +2,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
+import type { DragItem } from '../interfaces/iDragItem';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
 import type { ElementParams } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
@@ -119,18 +120,27 @@ export class RowDragComp extends Component {
         this.dragSource = {
             type: DragSourceType.RowDrag,
             eElement: eGui,
-            dragItemName: () => {
-                const dragItem = this.getDragItem();
-                const dragItemCount = dragItem.rowNodes?.length || 1;
+            dragItemName: (dragItem?: DragItem | null) => {
+                dragItem ??= this.getDragItem();
+
+                const rowsDrop = dragItem.rowsDrop;
+                let rowCount = 0;
+                let withSource = true;
+                if (rowsDrop === undefined || !this.gos.get('suppressMoveWhenRowDragging')) {
+                    rowCount = dragItem.rowNodes?.length ?? 1;
+                } else if (rowsDrop !== null) {
+                    rowCount = rowsDrop.rows.length;
+                    withSource = rowsDrop.withSource;
+                }
 
                 const rowDragText = this.getRowDragText(this.column);
                 if (rowDragText) {
-                    return rowDragText(dragItem, dragItemCount);
+                    return rowDragText(dragItem as IRowDragItem, rowCount);
                 }
 
-                return dragItemCount === 1
+                return rowCount === 1 && withSource
                     ? this.cellValueFn()
-                    : `${dragItemCount} ${translate('rowDragRows', 'rows')}`;
+                    : `${rowCount} ${translate('rowDragRows', 'rows')}`;
             },
             getDragItem: () => this.getDragItem(),
             dragStartPixels,

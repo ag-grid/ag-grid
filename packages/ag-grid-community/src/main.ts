@@ -131,6 +131,7 @@ export {
 } from './dragAndDrop/dragAndDropService';
 export { DragItem } from './interfaces/iDragItem';
 export type {
+    ValidRowsDropPosition,
     IsRowValidDropPositionCallback,
     IsRowValidDropPositionResult,
     IsRowValidDropPositionParams,
