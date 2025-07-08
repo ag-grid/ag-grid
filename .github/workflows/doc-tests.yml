@@ -308,7 +308,6 @@ jobs:
             SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
 
         - name: Save this run commit SHA
-          if: ${{ github.event_name == 'schedule' || inputs.notify }}
           uses: actions/cache/save@v4
           with:
             path: ${{ env.COMMIT_SHA_FILE }}

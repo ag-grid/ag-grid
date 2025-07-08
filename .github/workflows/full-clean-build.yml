@@ -35,7 +35,6 @@ jobs:
           fetch-depth: 1
 
       - name: Get previous run commit SHA
-        if: ${{ github.event_name == 'schedule' || inputs.notify }}
         id: prev-commit-sha
         uses: actions/cache/restore@v4
         with:
@@ -197,6 +196,7 @@ jobs:
           REPO_NAME: ${{ github.repository }}
 
       - name: Create Slack Blocks
+        id: create-slack-blocks
         if: ${{ github.event_name == 'schedule' || inputs.notify }}
         continue-on-error: true
         env:
@@ -223,7 +223,7 @@ jobs:
           } >> $GITHUB_ENV
 
       - name: Slack Notification
-        if: ${{ github.event_name == 'schedule' || inputs.notify }}
+        if: ${{ (github.event_name == 'schedule' || inputs.notify) && steps.create-slack-blocks.outputs.success == 'true' }}
         continue-on-error: true
         uses: ./.github/actions/slack-integration
         with:
@@ -231,7 +231,7 @@ jobs:
           SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
 
       - name: Save Current Commit Hash
-        uses: actions/cache@v4
+        uses: actions/cache/save@v4
         with:
           key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
           path: ${{ env.COMMIT_SHA_FILE }}
