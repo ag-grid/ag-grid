@@ -11,7 +11,7 @@
   "type": "module",
   "dependencies": {},
   "devDependencies": {
-    "playwright": "^^1.52.0",
-    "@playwright/test": "^^1.52.0"
+    "playwright": "^1.46.0",
+    "@playwright/test": "^1.46.0"
   }
 }

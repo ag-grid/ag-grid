@@ -7,7 +7,7 @@
     "setup": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["npx playwright install chromium --with-deps"],
+        "commands": ["npx playwright install --with-deps chromium"],
         "parallel": false,
         "cwd": "testing/csp"
       }
