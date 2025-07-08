@@ -52,6 +52,7 @@
     "@tweenjs/tween.js": "^18.6.4",
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
+    "@pqina/flip": "^1.8.4",
     "algoliasearch": "^4.18.0",
     "astro": "5.8.2",
     "cheerio": "^1.0.0",
