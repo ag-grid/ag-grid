@@ -568,6 +568,7 @@ jobs:
           WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
+          SLACK_GITHUB_MAPPING: ${{ secrets.SLACK_GITHUB_MAPPING }}
           RUN_CONTEXT: >
             {
               "workflow": "${{ github.workflow }}",

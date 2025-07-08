@@ -63,198 +63,13 @@ type RunContext = {
 
 type AgProject = 'AgGrid' | 'AgCharts' | 'Blog';
 
-const SLACK_GITHUB_MAPPING: GH_MAPPING[] = [
-    {
-        id: 'U51ANDH2P',
-        name: 'sean',
-        email: ['sean@thelandsmans.com'],
-        real_name: 'Sean Landsman',
-        github: 'seanlandsman',
-    },
-    {
-        id: 'U52QGCPHV',
-        name: 'niall',
-        email: ['niall.crosby@ag-grid.com'],
-        real_name: 'Niall Crosby',
-        github: 'ceolter',
-    },
-    {
-        id: 'U5M13C4H0',
-        name: 'robert.clarke',
-        email: ['rmc.software.consultancy@gmail.com'],
-        real_name: 'Robert Clarke',
-        github: 'rmc-software',
-    },
-    {
-        id: 'UB6TDQ8NN',
-        name: 'guilherme.lopes',
-        email: ['guilherme@gwm-solutions.com'],
-        real_name: 'Guilherme Lopes',
-        github: 'gportela85',
-    },
-    {
-        id: 'UP1LLU532',
-        name: 'viqas.hussain',
-        real_name: 'Viqas Hussain',
-        email: ['viqashussain@hotmail.co.uk'],
-        github: 'viqashussain',
-    },
-    {
-        id: 'U026R2EUPSA',
-        name: 'mana.jalali',
-        email: ['mana.jalali.15@ucl.ac.uk'],
-        real_name: 'Mana Jalali',
-        github: 'manapeirov',
-        directNotification: true,
-    },
-    {
-        id: 'U027TLR9R4G',
-        name: 'stephen.cooper',
-        email: ['scooperdev@gmail.com'],
-        real_name: 'Stephen Cooper',
-        github: 'StephenCooper',
-        directNotification: true,
-    },
-    {
-        id: 'U02GZ8PH678',
-        name: 'alan.treadway',
-        email: ['alan.treadway@ag-grid.com', 'alantreadway@users.noreply.github.com'],
-        real_name: 'Alan Treadway',
-        github: 'alantreadway',
-        directNotification: true,
-    },
-    {
-        id: 'U034PGFVAAW',
-        name: 'andrew.glazier',
-        email: ['andrew.glazier@ag-grid.com'],
-        real_name: 'Andrew Glazier',
-        github: 'AndrewGlazier',
-    },
-    {
-        id: 'U03CRKJN7LK',
-        name: 'bernard.sumption',
-        email: ['bernie@berniecode.com'],
-        real_name: 'Bernie Sumption',
-        github: 'BernieSumption',
-    },
-    {
-        id: 'U040RJNEV63',
-        name: 'tak.tran',
-        email: ['contact@tutaktran.com'],
-        real_name: 'Tak Tran',
-        github: 'taktran',
-        directNotification: true,
-    },
-    {
-        id: 'U04D4E6JY73',
-        name: 'david.glickman',
-        email: ['121935568+AG-DavidG@users.noreply.github.com'],
-        real_name: 'David Glickman',
-        github: 'AG-DavidG',
-        directNotification: true,
-    },
-    {
-        id: 'U04DWL7114H',
-        name: 'mark.durrant',
-        email: ['mark.j.durrant@gmail.com'],
-        real_name: 'Mark Durrant',
-        github: 'markdurrant',
-        directNotification: true,
-    },
-    {
-        id: 'U04PCGQSV62',
-        name: 'laurence.roberts',
-        email: ['laurence.roberts@ag-grid.com'],
-        real_name: 'Laurence Roberts',
-        github: 'lsjroberts',
-    },
-    {
-        id: 'U054HRAAL21',
-        name: 'zoheil.khaleqi',
-        email: ['132376454+AG-Zoheil@users.noreply.github.com'],
-        real_name: 'Zoheil Khaleqi',
-        github: 'AG-Zoheil',
-    },
-    {
-        id: 'U05QWSB8ZN0',
-        name: 'olivier.legat',
-        email: ['olegat@users.noreply.github.com', 'olivier.legat@ag-grid.com'],
-        real_name: 'Oli Legat',
-        github: 'olegat',
-    },
-    {
-        id: 'U05PDUVNKB2',
-        name: 'ido.moshe',
-        email: ['ido.moshe@ag-grid.com'],
-        real_name: 'Ido Moshe',
-        github: 'iMoses',
-        directNotification: true,
-    },
-    {
-        id: 'U05QQV4KHE3',
-        name: 'adam.wang',
-        email: ['adam.wang@ag-grid.com'],
-        real_name: 'Adam Wang',
-        github: 'adam-wang-uk',
-    },
-    {
-        id: 'U05QWR6UE2Y',
-        name: 'james.swinton-bland',
-        email: ['40694714+JamesSwinton@users.noreply.github.com', 'james_swinton@hotmail.co.uk'],
-        real_name: 'James Swinton-Bland',
-        github: 'JamesSwinton',
-    },
-    {
-        id: 'U061A165HRR',
-        name: 'kyler.phillips',
-        email: ['kylerphillips@MacBook-Pro.local', 'kylerphillips@hotmail.co.uk'],
-        real_name: 'Kyler Phillips',
-        github: 'kylerphillips',
-    },
-    {
-        id: 'U063CF7TRGT',
-        name: 'jacob.parker',
-        email: ['jacobparker1992@gmail.com'],
-        real_name: 'jacob.parker',
-        github: 'jacobp100',
-    },
-    {
-        id: 'U0738CFPT6Z',
-        name: 'elias.malik',
-        email: ['elias.malik@ag-grid.com', 'elias0789@gmail.com'],
-        real_name: 'Elias Malik',
-        github: 'eliasmalik',
-        directNotification: true,
-    },
-    {
-        id: 'U078E51LUM9',
-        name: 'salvatore.previti',
-        email: ['salvatore.previti@ag-grid.com'],
-        real_name: 'Salvatore Previti',
-        github: 'SalvatorePreviti',
-    },
-    {
-        id: 'U07KLFGNKS8',
-        name: 'steph.meslin-weber',
-        email: ['steph@tangency.co.uk '],
-        real_name: 'Steph Meslin-Weber',
-        github: 'Stephanemw',
-        directNotification: true,
-    },
-    // {
-    //     "id": "U0833KVHLJG",
-    //     "name": "shadid.haque",
-    //     "real_name": "shadid.haque",
-    //     "github": "Shadid12"
-    // }
-];
-
 const JIRA_BASE_URL = 'https://ag-grid.atlassian.net/jira/software/c/projects/AG';
 
 const SLACK_POST_MESSAGE_URL = 'https://slack.com/api/chat.postMessage';
 const SLACK_POST_EPHEMERAL_URL = 'https://slack.com/api/chat.postEphemeral';
 const THREAD_TEAMCITY_RESPONSE = true;
 const MANY_CHANGES_LIMIT = 10;
+const SLACK_GITHUB_MAPPING = process.env.SLACK_GITHUB_MAPPING;
 
 interface GitChange {
     id?: string;
@@ -272,6 +87,20 @@ interface User {
 }
 
 type UserDisplayType = 'slack' | 'name' | 'debug';
+
+let slackGithubMapping;
+function getSlackGithubMapping(): GH_MAPPING[] {
+    if (slackGithubMapping === undefined) {
+        slackGithubMapping = [];
+        try {
+            slackGithubMapping = JSON.parse(SLACK_GITHUB_MAPPING!);
+        } catch (error) {
+            console.error('Error parsing SLACK_GITHUB_MAPPING:', error);
+        }
+    }
+
+    return slackGithubMapping;
+}
 
 function sendSlackMessage({ isEphemeral, data }: { isEphemeral?: boolean; data: object }) {
     const url = isEphemeral ? SLACK_POST_EPHEMERAL_URL : SLACK_POST_MESSAGE_URL;
@@ -327,7 +156,7 @@ function getBranchLink(runContext: RunContext) {
 }
 
 function getUser(username: string): User | undefined {
-    return SLACK_GITHUB_MAPPING.find(({ github }: { github: string }) => github === username);
+    return getSlackGithubMapping().find(({ github }: { github: string }) => github === username);
 }
 
 function getUserDisplay(username: string, userDisplayType: UserDisplayType) {
@@ -363,7 +192,7 @@ function updateWithGithubPRUrl({ str, baseGithubUrl }: { str: string; baseGithub
 }
 
 function findUserByEmail(testEmail: string): GH_MAPPING | undefined {
-    return SLACK_GITHUB_MAPPING.find(({ email }) => email.some((email) => email === testEmail));
+    return getSlackGithubMapping().find(({ email }) => email.some((email) => email === testEmail));
 }
 
 function getGitChanges(currentSha: string, lastSuccessfulSha: string): GitChange[] {
@@ -572,7 +401,7 @@ async function notifyIndividualStagingDeploy(
         userDisplayType
     );
 
-    const usersToCheck = SLACK_GITHUB_MAPPING.filter((mapping) => !!mapping.directNotification);
+    const usersToCheck = getSlackGithubMapping().filter((mapping) => !!mapping.directNotification);
     const slackUsers = uniqueUsers.map((userName) => getUserSlackId(userName));
 
     const usersWithChanges = usersToCheck
