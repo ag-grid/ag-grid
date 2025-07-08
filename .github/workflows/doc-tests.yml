@@ -7,6 +7,7 @@ env:
     DEFAULT_RETENTION_DAYS: 30
     COMMIT_SHA_FILE: ./commit-sha.txt
     SLACK_FILE: ./slack.json
+    CTRF_FILE: ./ctrf-report.json
 on:
     workflow_dispatch:
         inputs:
@@ -218,6 +219,7 @@ jobs:
             failed-report: true
             flaky-report: true
             skipped-report: true
+            write-ctrf-to-file: ${{ env.CTRF_FILE }}
 
         - uses: actions/checkout@v4
           with:
@@ -234,7 +236,7 @@ jobs:
         - name: Convert ctrf output to Slack message blocks and write git sha
           if: ${{ github.event_name == 'schedule' || inputs.notify }}
           env:
-            CTRF_REPORT: ${{ steps.ctrf.outputs.report }}
+            CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
             JOB_NAME: 'Documentation Tests'
             JOB_ID: ${{ github.run_id }}
             BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
