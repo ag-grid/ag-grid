@@ -53,7 +53,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this), 10);
         this.addManagedEventListeners({
             columnResized: () => {
-                this.lastColumnResized = new Date().getTime();
+                this.lastColumnResized = Date.now();
             },
             modelUpdated: (params) => {
                 refreshCells_debounced(false, !params.keepRenderedRows);
@@ -255,7 +255,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
     private onHeaderClick(_e: MouseEvent): void {
         if (
-            new Date().getTime() - this.lastColumnResized < 100 ||
+            Date.now() - this.lastColumnResized < 100 ||
             !this.isIntegratedWithSelection ||
             this.getColumn()?.resizing
         ) {
