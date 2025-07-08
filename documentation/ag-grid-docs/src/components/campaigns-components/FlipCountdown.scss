@@ -1,0 +1,57 @@
+@use 'design-system' as *;
+
+.tick {
+    font-size: 3em;
+    width: 86px;
+    min-width: 86px;
+    max-width: 86px;
+    display: inline-flex;
+    justify-content: center;
+}
+
+.tick-group {
+    display: flex;
+}
+
+.countdownContainer {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+}
+
+.font-mono {
+    font-family: var(--text-monospace-font-family);
+    text-transform: uppercase;
+    padding-top: $spacing-size-5;
+    color: var(--color-white);
+    font-size: 15px;
+    font-weight: 600;
+    opacity: 0.5;
+    text-align: center;
+}
+
+.tick-flip {
+    width: 100%;
+}
+
+.tick-flip-panel-back-highlight {
+    #{$selector-darkmode} & {
+        background-color: linear-gradient(180deg, hsla(0, 0%, 100%, 0.15), hsla(0, 0%, 100%, 0.3));
+    }
+}
+
+.tick-flip-panel {
+    #{$selector-darkmode} & {
+        background-color: var(--color-button-primary-bg);
+    }
+}
+
+.tick-flip-panel-text-wrapper {
+    #{$selector-darkmode} & {
+        color: var(--color-bg-primary);
+    }
+}
+
+.tick-credits {
+    display: none;
+}
