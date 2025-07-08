@@ -41,6 +41,11 @@ on:
                 type: boolean
                 required: true
                 default: true
+            skip_demo_smoke:
+                description: 'Skip Demo / Smoke tests'
+                type: boolean
+                required: true
+                default: true
             notify:
               description: 'Notify Slack channel'
               type: boolean
@@ -74,6 +79,7 @@ jobs:
             key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
     
     test-demos-smoke:
+        if: ${{ github.event.inputs.skip_demo_smoke != 'true' }}
         name: Smoke Test Demos / Examples
         needs: download-examples
         runs-on: ubuntu-latest
