@@ -97,7 +97,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         });
 
         const handler = _refreshEditCells(beans);
-        const stopInvalidEdits = () => {
+        const stopInvalidEdits = (event: any) => {
             const hasCellValidation = this.model.getCellValidationModel().getCellValidationMap().size > 0;
             const hasRowValidation = this.model.getRowValidationModel().getRowValidationMap().size > 0;
 
@@ -106,7 +106,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             } else {
                 if (this.isEditing()) {
                     if (this.isBatchEditing()) {
-                        _destroyEditors(beans, this.model.getEditPositions());
+                        _destroyEditors(beans, this.model.getEditPositions(), { event });
                     } else {
                         this.stopEditing(undefined, COMMIT_PARAMS);
                     }
@@ -278,7 +278,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const willCancel = cancel && !!this.shouldCancelEditing(position, event, source);
 
         if (willStop || willCancel) {
-            _syncFromEditors(beans);
+            _syncFromEditors(beans, { event });
             const freshEdits = model.getEditMap();
 
             this.processEdits(freshEdits, cancel);
@@ -303,7 +303,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             if (isEnter || isEscape) {
                 if (isEnter) {
-                    _syncFromEditors(beans);
+                    _syncFromEditors(beans, { event });
                 } else if (isEscape) {
                     // only if ESC is pressed while in the editor for this cell
                     this.revertSingleCellEdit(cellCtrl!, false);
@@ -312,7 +312,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 if (this.isBatchEditing()) {
                     this.strategy?.cleanupEditors();
                 } else {
-                    _destroyEditors(beans, model.getEditPositions());
+                    _destroyEditors(beans, model.getEditPositions(), { event });
                 }
 
                 event.preventDefault();
@@ -322,7 +322,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 edits = model.getEditMap();
             }
         } else {
-            _syncFromEditors(beans);
+            _syncFromEditors(beans, { event });
             edits = model.getEditMap();
         }
 
