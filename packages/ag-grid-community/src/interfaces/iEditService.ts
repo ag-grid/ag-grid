@@ -125,4 +125,5 @@ export interface IEditService extends NamedBean {
     checkNavWithValidation(position?: EditPosition, event?: Event | CellFocusedEvent): EditNavOnValidationResult;
     revertSingleCellEdit(cellPosition: Required<EditPosition>, focus?: boolean): void;
     allowedFocusTargetOnValidation(cellPosition: EditPosition): CellCtrl | undefined;
+    createDefaultStopEditingFn(position: Required<EditPosition>): ICellEditorParams['stopEditing'];
 }

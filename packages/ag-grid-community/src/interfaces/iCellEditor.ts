@@ -136,6 +136,11 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
      * Runs the Editor Validation.
      */
     validate(): void;
+
+    /**
+     * Source of the params, indicating lifecycle state.
+     */
+    source?: 'init' | 'refresh' | 'coldef';
 }
 
 export interface ICellEditorComp<TData = any, TValue = any, TContext = any>

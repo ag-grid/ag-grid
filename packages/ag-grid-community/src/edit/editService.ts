@@ -40,6 +40,7 @@ import { RowEditStyleFeature } from './styles/rowEditStyleFeature';
 import { _addStopEditingWhenGridLosesFocus, _getCellCtrl } from './utils/controllers';
 import {
     UNEDITED,
+    _destroyEditor,
     _destroyEditors,
     _populateModelValidationErrors,
     _purgeUnchangedEdits,
@@ -977,5 +978,15 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     allowedFocusTargetOnValidation(cellPosition: EditPosition): CellCtrl | undefined {
         return _getCellCtrl(this.beans, cellPosition);
+    }
+
+    createDefaultStopEditingFn(position: Required<EditPosition>): ICellEditorParams['stopEditing'] {
+        const { beans } = this;
+
+        return (suppressNavigateAfterEdit: boolean) => {
+            const source = this.isBatchEditing() ? 'ui' : 'api';
+            this.stopEditing(position, { source, suppressNavigateAfterEdit });
+            _destroyEditor(beans, position);
+        };
     }
 }

@@ -69,9 +69,19 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     }
 
     private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
+        // If stopEditing is missing (user provided refresh params), we provide the default implementation
+        let stopEditing = this.params.stopEditing;
+        if (!stopEditing) {
+            const position = {
+                rowNode: this.params.node,
+                column: this.params.column,
+            };
+            stopEditing = this.beans.editSvc!.createDefaultStopEditingFn(position);
+        }
+
         // there is an issue with focus handling when we call `stopEditing` while the
         // picker list is still collapsing, so we make this call async to guarantee that.
-        setTimeout(() => this.params.stopEditing(!e.fromEnterKey));
+        setTimeout(() => stopEditing(!e.fromEnterKey));
     }
 
     private buildRichSelectParams(params: RichCellEditorParams<TData, TValue>): RichSelectBuiltParams<TValue> {

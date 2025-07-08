@@ -119,8 +119,12 @@ export function _refreshEditor(
         silent?: boolean;
     }
 ): ICellEditorParams | undefined {
+    const cellCtrl = _getCellCtrl(beans, position)!;
+    const editorComp = cellCtrl?.comp?.getCellEditor();
+    const refreshFn = editorComp?.refresh;
+
     const { key, cellStartedEdit } = params ?? {};
-    const editorParams = _createEditorParams(beans, position, key, cellStartedEdit);
+    const editorParams = _createEditorParams(beans, position, key, cellStartedEdit, refreshFn ? 'refresh' : 'init');
 
     const previousEdit = beans.editModelSvc?.getEdit(position);
 
@@ -133,13 +137,13 @@ export function _refreshEditor(
 
     beans.editModelSvc?.setEdit(position, { newValue: newValue ?? UNEDITED, state: 'editing' });
 
-    const cellCtrl = _getCellCtrl(beans, position)!;
-    const editorComp = cellCtrl?.comp?.getCellEditor();
-    if (editorComp?.refresh) {
-        // don't reinitialise, just refresh if possible
-        editorComp.refresh?.(editorParams);
+    if (refreshFn) {
+        // don't reinitialise, just refresh
+        refreshFn(editorParams);
         return undefined;
     }
+
+    // refresh not supported, so we'll need to create a new editor
     return editorParams;
 }
 
@@ -155,7 +159,6 @@ export function _setupEditor(
 ): void {
     const { key, event, cellStartedEdit, silent } = params ?? {};
     const cellCtrl = _getCellCtrl(beans, position)!;
-    const editorComp = cellCtrl?.comp?.getCellEditor();
 
     const editorParams = _refreshEditor(beans, position, { key, event, cellStartedEdit });
 
@@ -164,23 +167,24 @@ export function _setupEditor(
         return;
     }
 
-    const previousEdit = beans.editModelSvc?.getEdit(position);
-
-    // if key is a single character, then we treat it as user input
-    let newValue = key?.length === 1 ? key : editorParams.value;
-
-    if (newValue === undefined) {
-        newValue = previousEdit?.oldValue;
+    if (cellCtrl?.comp?.getCellEditor()) {
+        // if we already have an editor, and it couldn't be refreshed we need to destroy it first, so we can change the current value shown in the editor
+        _destroyEditor(beans, position, { silent });
     }
 
-    beans.editModelSvc?.setEdit(position, { newValue: newValue ?? UNEDITED, state: 'editing' });
+    _createEditor(beans, position, editorParams, event, cellCtrl, silent);
 
-    if (editorComp) {
-        // don't reinitialise, just refresh if possible
-        editorComp.refresh?.(editorParams);
-        return;
-    }
+    return;
+}
 
+function _createEditor(
+    beans: BeanCollection,
+    position: Required<EditPosition>,
+    editorParams: ICellEditorParams<any, any, any>,
+    event: Event | null | undefined,
+    cellCtrl: CellCtrl,
+    silent: boolean | undefined
+) {
     const colDef = position.column.getColDef();
     const compDetails = _getCellEditorDetails(beans.userCompFactory, colDef, editorParams);
 
@@ -202,8 +206,6 @@ export function _setupEditor(
             beans.editSvc?.dispatchCellEvent(position, null, 'cellEditingStarted');
         }
     }
-
-    return;
 }
 
 function _valueFromEditor(cancel: boolean, cellComp?: ICellComp): { newValue?: any; newValueExists: boolean } {
@@ -237,17 +239,19 @@ function _createEditorParams(
     beans: BeanCollection,
     position: Required<EditPosition>,
     key?: string | null,
-    cellStartedEdit?: boolean | null
+    cellStartedEdit?: boolean | null,
+    source?: ICellEditorParams['source']
 ): ICellEditorParams {
-    const { valueSvc, gos, editSvc } = beans;
+    const { valueSvc, gos } = beans;
+    const editSvc = beans.editSvc!;
+
     const cellCtrl = _getCellCtrl(beans, position) as CellCtrl;
     const rowIndex = position.rowNode?.rowIndex ?? (undefined as unknown as number);
-    const batchEdit = editSvc?.isBatchEditing();
 
     const agColumn = beans.colModel.getCol(position.column.getId())!;
     const { rowNode, column } = position;
 
-    const initialNewValue = editSvc?.getCellDataValue(position) ?? _valueFromEditor(false, cellCtrl?.comp)?.newValue;
+    const initialNewValue = editSvc.getCellDataValue(position) ?? _valueFromEditor(false, cellCtrl?.comp)?.newValue;
     const value =
         initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
 
@@ -261,16 +265,12 @@ function _createEditorParams(
         data: rowNode.data,
         cellStartedEdit: cellStartedEdit ?? false,
         onKeyDown: cellCtrl?.onKeyDown.bind(cellCtrl),
-        stopEditing: (suppressNavigateAfterEdit: boolean) => {
-            editSvc!.stopEditing(position, { source: batchEdit ? 'ui' : 'api', suppressNavigateAfterEdit });
-            _destroyEditor(beans, position);
-        },
+        stopEditing: editSvc.createDefaultStopEditingFn(position),
         eGridCell: cellCtrl?.eGui,
         parseValue: (newValue: any) => valueSvc.parseValue(agColumn, rowNode, newValue, cellCtrl?.value),
         formatValue: cellCtrl?.formatValue.bind(cellCtrl),
-        validate: () => {
-            editSvc?.validateEdit();
-        },
+        validate: () => editSvc.validateEdit(),
+        source,
     });
 }
 
@@ -298,7 +298,7 @@ export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: C
 
     const { eventKey, cellStartedEdit } = cellCtrl.editCompDetails!.params;
     const { column } = cellCtrl;
-    const editorParams = _createEditorParams(beans, cellCtrl, eventKey, cellStartedEdit);
+    const editorParams = _createEditorParams(beans, cellCtrl, eventKey, cellStartedEdit, 'coldef');
     const colDef = column.getColDef();
     const compDetails = _getCellEditorDetails(beans.userCompFactory, colDef, editorParams);
 
