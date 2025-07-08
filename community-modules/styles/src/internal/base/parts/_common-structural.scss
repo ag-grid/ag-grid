@@ -1710,6 +1710,11 @@
         cursor: ns-resize;
     }
 
+    .ag-floating-bottom .ag-row-numbers-resizer {
+        bottom: unset;
+        top: -2px;
+    }
+
     // /**
     //  ****************************
     //  * Widgets

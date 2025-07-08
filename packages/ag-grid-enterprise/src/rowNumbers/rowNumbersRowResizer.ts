@@ -61,7 +61,11 @@ export class AgRowNumbersRowResizer extends Component {
     }
 
     private onDragging(mouseEvent: MouseEvent | Touch): void {
-        const { clientY } = mouseEvent;
+        let { clientY } = mouseEvent;
+
+        if (this.cellCtrl.rowNode.rowPinned === 'bottom') {
+            clientY *= -1;
+        }
 
         if (this.initialYPosition === -1 || !this.dragging) {
             this.initialYPosition = clientY;
