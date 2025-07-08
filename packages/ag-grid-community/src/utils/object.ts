@@ -19,6 +19,9 @@ function _iterateObject<T>(
     }
 
     for (const key of Object.keys(object)) {
+        if (SKIP_JS_BUILTINS.has(key)) {
+            continue;
+        }
         callback(key, object[key]);
     }
 }
@@ -29,10 +32,6 @@ export function _mergeDeep(dest: any, source: any, copyUndefined = true, makeCop
     }
 
     _iterateObject(source, (key: string, sourceValue: any) => {
-        if (SKIP_JS_BUILTINS.has(key)) {
-            return;
-        }
-
         let destValue: any = dest[key];
 
         if (destValue === sourceValue) {
