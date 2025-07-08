@@ -76,8 +76,6 @@ jobs:
         name: Smoke Test Demos / Examples
         needs: download-examples
         runs-on: ubuntu-latest
-        container:
-          image: mcr.microsoft.com/playwright:v1.52.0-jammy
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -92,8 +90,7 @@ jobs:
 
             - name: Install Playwright Browsers
               working-directory: testing/ag-grid-docs
-              run: npm i 
-              # && npx playwright install chromium firefox webkit --with-deps --only-shell
+              run: npm i && npx playwright install chromium firefox webkit --with-deps --only-shell
 
             - name: Demo Pages
               working-directory: testing/ag-grid-docs
