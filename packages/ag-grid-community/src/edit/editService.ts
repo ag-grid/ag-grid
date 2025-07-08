@@ -375,26 +375,26 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.model.getCellValidationModel().getCellValidationMap().size > 0 ||
             this.model.getRowValidationModel().getRowValidationMap().size > 0;
 
-        const editsToDelete = [];
+        const editsToDelete: EditPosition[] = [];
 
         for (const rowNode of rowNodes) {
             const editRow = edits.get(rowNode)!;
             for (const column of editRow.keys()) {
                 const editValue = editRow.get(column)!;
+                const position: Required<EditPosition> = { rowNode, column };
+                const cellCtrl = _getCellCtrl(beans, position);
                 const valueChanged = _valuesDiffer(editValue);
-
-                const cellCtrl = _getCellCtrl(this.beans, { rowNode, column });
 
                 const isCancelAfterEnd = cellCtrl?.comp?.getCellEditor()?.isCancelAfterEnd?.();
 
                 if (!cancel && !isCancelAfterEnd && valueChanged && !hasValidationErrors) {
                     const success = this.setNodeDataValue(rowNode, column, editValue.newValue);
-
                     if (!success) {
-                        // grid is likely readOnly, we want to update the edit state before refreshing
-                        editsToDelete.push({ rowNode, column });
+                        editsToDelete.push(position);
                     }
                 }
+
+                cellCtrl?.refreshCell(FORCE_REFRESH);
             }
         }
 
