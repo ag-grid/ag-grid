@@ -1,5 +1,7 @@
 import type { AgChartThemeOverrides } from 'ag-charts-types';
 
+import { ValidRowsDropPosition } from 'ag-grid-community';
+
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
@@ -523,6 +525,8 @@ export interface RowDragEvent<TData = any, TContext = any, T extends AgEventType
     nodes: IRowNode<TData>[];
     /** The underlying mouse move event associated with the drag. */
     event: MouseEvent;
+    /** Contains information about the drop position for this event */
+    rowsDrop: ValidRowsDropPosition | null;
     /** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */
     eventPath?: EventTarget[];
     /** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */

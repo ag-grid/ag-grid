@@ -2,12 +2,11 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
-import type { DragItem } from '../interfaces/iDragItem';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
 import type { ElementParams } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
-import type { DragSource } from './dragAndDropService';
+import type { DragSource, DraggingEvent } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
 
 const RowDragElement: ElementParams = {
@@ -120,11 +119,11 @@ export class RowDragComp extends Component {
         this.dragSource = {
             type: DragSourceType.RowDrag,
             eElement: eGui,
-            dragItemName: (dragItem?: DragItem | null) => {
-                dragItem ??= this.getDragItem();
+            dragItemName: (draggingEvent?: DraggingEvent | null) => {
+                const rowsDrop = draggingEvent?.rowsDrop;
+                const dragItem = draggingEvent?.dragItem ?? this.getDragItem();
 
                 const dragItemCount = dragItem.rowNodes?.length ?? 1;
-                const rowsDrop = dragItem.rowsDrop;
                 let rowCount = 0;
                 let showSourceValue = false;
                 const gos = this.gos;

@@ -1,4 +1,3 @@
-import type { ValidRowsDropPosition } from '../dragAndDrop/rowDragFeature/rowDragFeatureTypes';
 import type { IAggFunc } from '../entities/colDef';
 import type { Column, ColumnPinnedType } from './iColumn';
 import type { IRowNode } from './iRowNode';
@@ -12,12 +11,6 @@ export interface DragItem<TValue = any> {
 
     /** When dragging multiple rows, this contains all rows being dragged */
     rowNodes?: IRowNode[];
-
-    /**
-     * This contains information about the resulting drop position and the filtered rows being dragged.
-     * See the grid option `isRowValidDropPosition` and `rowDragManaged` for more details.
-     */
-    rowsDrop?: ValidRowsDropPosition;
 
     /** When dragging columns, this contains the columns being dragged */
     columns?: Column[];

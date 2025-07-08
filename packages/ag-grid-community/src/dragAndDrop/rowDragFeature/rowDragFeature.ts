@@ -109,7 +109,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
         const lastDraggingEvent = this.lastDraggingEvent;
         if (lastDraggingEvent && (!rowDragManaged || gos.get('suppressMoveWhenRowDragging'))) {
-            if (lastDraggingEvent.dragItem.rowsDrop?.rows.length === 0) {
+            if (lastDraggingEvent.rowsDrop?.rows.length === 0) {
                 return 'notAllowed';
             }
         }
@@ -202,7 +202,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             if (gos.get('suppressMoveWhenRowDragging') || !isFromThisGrid) {
                 if (dragAndDrop!.isDropZoneWithinThisGrid(draggingEvent)) {
                     const rowsDrop = this.managedRowsDrop(draggingEvent, throttleMakeGroup);
-                    draggingEvent.dragItem.rowsDrop = rowsDrop;
+                    draggingEvent.rowsDrop = rowsDrop;
                     const target = rowsDrop.target;
                     const rowDropHighlightSvc = this.beans.rowDropHighlightSvc!;
                     if (target && rowsDrop.rows.length && rowsDrop.position !== 'none') {
@@ -253,7 +253,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             withSource: true,
         };
 
-        draggingEvent.dragItem.rowsDrop = rowsDrop;
+        draggingEvent.rowsDrop = rowsDrop;
 
         return rowsDrop;
     }
@@ -581,6 +581,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             overNode: overNode,
             y,
             vDirection: draggingEvent.vDirection,
+            rowsDrop: draggingEvent.rowsDrop ?? null,
         });
     }
 
