@@ -24,6 +24,10 @@ export const About = () => {
 
                 <section className={styles.customerLogos}>
                     <CustomerLogos />
+
+                    <p className={styles.footnote}>
+                        <span>Our work impacts thousands of companies</span> and millions of developers
+                    </p>
                 </section>
 
                 <section className={styles.memoriumSection}>

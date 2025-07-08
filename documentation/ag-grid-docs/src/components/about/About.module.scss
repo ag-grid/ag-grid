@@ -75,6 +75,15 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 200px;
+        align-self: flex-start;
+        z-index: 2;
+        @media (max-width: 900px) {
+            position: static;
+            top: auto;
+        }
     }
 
     .timeline {
@@ -140,7 +149,7 @@
     }
 
     .timelineTitle {
-        font-weight: bold;
+        font-weight: 600;
         color: var(--ag-text-color, #222);
         font-size: 17px;
         margin-bottom: 2px;
@@ -168,6 +177,15 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 200px;
+        align-self: flex-start;
+        z-index: 2;
+        @media (max-width: 900px) {
+            position: static;
+            top: auto;
+        }
     }
 
     .principlesList {
@@ -209,7 +227,7 @@
     }
 
     .principleTitle {
-        font-weight: bold;
+        font-weight: 600;
         color: var(--ag-text-color, #222);
         font-size: 17px;
         margin-bottom: 2px;
@@ -218,6 +236,17 @@
         color: var(--color-text-secondary);
         font-size: 15px;
         line-height: 1.5;
+    }
+}
+.footnote {
+    max-width: 500px;
+    text-align: center;
+
+    margin: 0 auto;
+    padding-top: $spacing-size-20;
+
+    span {
+        font-weight: 600;
     }
 }
 
@@ -234,6 +263,15 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 200px;
+        align-self: flex-start;
+        z-index: 2;
+        @media (max-width: 900px) {
+            position: static;
+            top: auto;
+        }
     }
 
     .leadershipList {
@@ -268,7 +306,7 @@
     }
 
     .leaderName {
-        font-weight: bold;
+        font-weight: 600;
         color: var(--ag-text-color, #222);
         font-size: 17px;
         margin-bottom: 2px;
@@ -340,7 +378,7 @@
     }
 
     .resourceTitle {
-        font-weight: bold;
+        font-weight: 600;
         color: var(--ag-text-color, #222);
         font-size: 17px;
         margin-bottom: 2px;
@@ -364,7 +402,7 @@
         font-size: 16px;
         line-height: 1.6;
         strong {
-            font-weight: bold;
+            font-weight: 600;
         }
     }
     .contactEmail {
