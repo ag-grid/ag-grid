@@ -284,3 +284,99 @@
         line-height: 1.5;
     }
 }
+
+.resourcesSection {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-12;
+    align-items: flex-start;
+    padding-top: $spacing-size-20;
+    padding-bottom: $spacing-size-20;
+
+    .resourcesContent {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+
+    .resourcesList {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        min-width: 320px;
+        margin-left: $spacing-size-12;
+    }
+
+    .resourceItem {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .resourceIcon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: var(--color-util-brand-50);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 2px;
+        svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--color-brand-500);
+        }
+    }
+
+    .resourceText {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .resourceTitle {
+        font-weight: bold;
+        color: var(--ag-text-color, #222);
+        font-size: 17px;
+        margin-bottom: 2px;
+    }
+    .resourceDesc {
+        color: var(--color-text-secondary);
+        font-size: 15px;
+        line-height: 1.5;
+    }
+}
+
+.contactSection {
+    padding-top: $spacing-size-20;
+    padding-bottom: $spacing-size-20;
+    .contactContent {
+        max-width: 600px;
+        margin-bottom: 32px;
+    }
+    .contactOffice {
+        margin-bottom: 24px;
+        font-size: 16px;
+        line-height: 1.6;
+        strong {
+            font-weight: bold;
+        }
+    }
+    .contactEmail {
+        font-size: 16px;
+        margin-top: 16px;
+        a {
+            font-weight: bold;
+            color: var(--color-brand-500);
+        }
+    }
+    .contactEmailDesc {
+        color: var(--color-text-secondary);
+        font-size: 15px;
+    }
+}

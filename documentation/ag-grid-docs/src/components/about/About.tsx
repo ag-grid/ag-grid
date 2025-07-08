@@ -3,6 +3,7 @@ import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 import styles from './About.module.scss';
+import LifeAtAgGridCarousel from './LifeAtAgGridCarousel';
 
 export const About = () => {
     return (
@@ -254,31 +255,61 @@ export const About = () => {
                         </div>
                     </div>
                 </section>
+            </div>
 
-                <section>
-                    <h2>Contact Us</h2>
+            <LifeAtAgGridCarousel />
 
-                    <article className={styles.footer}>
-                        <div>
-                            <h3>Our Address</h3>
-                            <address>
-                                <strong>AG Grid Ltd.</strong>
-                                <br />
-                                Bank Chambers
-                                <br />
-                                6 Borough High Street
-                                <br />
-                                London
-                                <br />
-                                SE1 9QQ
-                                <br />
-                                United Kingdom
-                            </address>
-                            <p>
-                                Email Enquiries: <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>
-                            </p>
+            <div className="layout-max-width-small">
+                <section className={styles.resourcesSection}>
+                    <div className={styles.resourcesContent}>
+                        <h2>Resources</h2>
+                        <p>How to find us, common resources</p>
+                    </div>
+                    <div className={styles.resourcesList}>
+                        <div className={styles.resourceItem}>
+                            <div className={styles.resourceIcon}>
+                                <Icon name="lightBulb" />
+                            </div>
+                            <div className={styles.resourceText}>
+                                <div className={styles.resourceTitle}>Blog</div>
+                                <div className={styles.resourceDesc}>Some content goes here</div>
+                            </div>
                         </div>
-                    </article>
+                        <div className={styles.resourceItem}>
+                            <div className={styles.resourceIcon}>
+                                <Icon name="lightBulb" />
+                            </div>
+                            <div className={styles.resourceText}>
+                                <div className={styles.resourceTitle}>Press Kit</div>
+                                <div className={styles.resourceDesc}>Some content goes here</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className={styles.contactSection}>
+                    <div className={styles.contactContent}>
+                        <h2>Get in touch</h2>
+                        <p>We are here to help with licenses, developer support and any other queries.</p>
+                    </div>
+                    <div className={styles.contactOffice}>
+                        <strong>Our office</strong>
+                        <br />
+                        Bank Chambers
+                        <br />
+                        6 Borough High Street
+                        <br />
+                        London
+                        <br />
+                        SE1 9QQ
+                    </div>
+                    <div className={styles.contactEmail}>
+                        Contact us over email
+                        <br />
+                        <span className={styles.contactEmailDesc}>
+                            We can be also reached at <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>
+                        </span>
+                    </div>
                 </section>
             </div>
         </div>
