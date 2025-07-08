@@ -1,3 +1,4 @@
+import { Direction } from '../constants/direction';
 import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -31,11 +32,6 @@ interface AgPopup {
     instanceId: number;
     alignedToElement?: HTMLElement;
     stopAnchoringPromise?: AgPromise<() => void>;
-}
-
-enum DIRECTION {
-    vertical,
-    horizontal,
 }
 
 let instanceIdSeq = 0;
@@ -80,7 +76,7 @@ interface Position {
     lastDiff: number;
     initial: number;
     last: number;
-    direction: DIRECTION;
+    direction: Direction;
 }
 
 export class PopupService extends BeanStub implements NamedBean {
@@ -124,7 +120,7 @@ export class PopupService extends BeanStub implements NamedBean {
         let minWidthSet = false;
 
         const updatePosition = () => {
-            const y = this.keepXYWithinBounds(ePopup, sourceRect.top - parentRect.top, DIRECTION.vertical);
+            const y = this.keepXYWithinBounds(ePopup, sourceRect.top - parentRect.top, Direction.Vertical);
 
             const minWidth = ePopup.clientWidth > 0 ? ePopup.clientWidth : 200;
             if (!minWidthSet) {
@@ -383,8 +379,8 @@ export class PopupService extends BeanStub implements NamedBean {
 
             // if popup is overflowing to the bottom, move it up
             if (keepWithinBounds) {
-                x = this.keepXYWithinBounds(ePopup, x, DIRECTION.horizontal);
-                y = this.keepXYWithinBounds(ePopup, y, DIRECTION.vertical);
+                x = this.keepXYWithinBounds(ePopup, x, Direction.Horizontal);
+                y = this.keepXYWithinBounds(ePopup, y, Direction.Vertical);
             }
 
             ePopup.style.left = `${x}px`;
@@ -433,8 +429,8 @@ export class PopupService extends BeanStub implements NamedBean {
         return _getElementRectWithOffset(popupParent);
     }
 
-    private keepXYWithinBounds(ePopup: HTMLElement, position: number, direction: DIRECTION): number {
-        const isVertical = direction === DIRECTION.vertical;
+    private keepXYWithinBounds(ePopup: HTMLElement, position: number, direction: Direction): number {
+        const isVertical = direction === Direction.Vertical;
         const sizeProperty = isVertical ? 'clientHeight' : 'clientWidth';
         const anchorProperty = isVertical ? 'top' : 'left';
         const offsetProperty = isVertical ? 'height' : 'width';
@@ -707,7 +703,7 @@ export class PopupService extends BeanStub implements NamedBean {
         const sourceRect = element.getBoundingClientRect();
 
         const extractFromPixelValue = (pxSize: string) => parseInt(pxSize.substring(0, pxSize.length - 1), 10);
-        const createPosition = (prop: 'top' | 'left', direction: DIRECTION) => {
+        const createPosition = (prop: 'top' | 'left', direction: Direction) => {
             const initialDiff = parentRect[prop] - sourceRect[prop];
             const initial = extractFromPixelValue(ePopup.style[prop]);
             return {
@@ -718,8 +714,8 @@ export class PopupService extends BeanStub implements NamedBean {
                 direction,
             };
         };
-        const topPosition = createPosition('top', DIRECTION.vertical);
-        const leftPosition = createPosition('left', DIRECTION.horizontal);
+        const topPosition = createPosition('top', Direction.Vertical);
+        const leftPosition = createPosition('left', Direction.Horizontal);
 
         const fwOverrides = this.beans.frameworkOverrides;
         return new AgPromise<() => void>((resolve) => {

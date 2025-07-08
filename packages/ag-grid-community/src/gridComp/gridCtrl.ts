@@ -1,3 +1,4 @@
+import { Direction } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
 import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
 import { _getActiveDomElement } from '../gridOptionsUtils';
@@ -90,8 +91,15 @@ export class GridCtrl extends BeanStub {
         return this.eGui;
     }
 
-    public setResizeCursor(on: boolean): void {
-        this.view.setCursor(on ? 'ew-resize' : null);
+    public setResizeCursor(direction: Direction | false): void {
+        const { view } = this;
+
+        if (direction === false) {
+            view.setCursor(null);
+        } else {
+            const cursor = direction === Direction.Horizontal ? 'ew-resize' : 'ns-resize';
+            view.setCursor(cursor);
+        }
     }
 
     public disableUserSelect(on: boolean): void {
