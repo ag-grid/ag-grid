@@ -1,7 +1,6 @@
 import type { AgChartThemeOverrides } from 'ag-charts-types';
 
-import { ValidRowsDropPosition } from 'ag-grid-community';
-
+import type { ValidRowsDropPosition } from './dragAndDrop/rowDragFeature/rowDragFeatureTypes';
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
