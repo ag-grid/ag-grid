@@ -200,7 +200,7 @@ jobs:
         if: ${{ github.event_name == 'schedule' || inputs.notify }}
         continue-on-error: true
         env:
-          IS_SUCCESS: ${{ success() }}
+          IS_SUCCESS: ${{ !steps.last-failed-step.outputs.failed_step }}
           JOB_NAME: 'Full Clean Build'
           JOB_ID: ${{ github.run_id }}
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
