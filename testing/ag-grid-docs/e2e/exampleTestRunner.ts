@@ -29,28 +29,16 @@ const matchesExclusion = (testCase: ExampleTestCase) => {
 
 export async function getFrameworkExamples(framework: InternalFramework) {
     if (!examples) {
-        const filePath = join(__dirname, 'config', 'all-examples-cached.json');
+        // if on ci use a different path to the cached examples
+        const isCI = process.env.CI === 'true';
+        const filePath = isCI
+            ? join(__dirname, '.cache', 'all-examples-cached.json')
+            : join(__dirname, 'config', 'all-examples.json');
         examples = JSON.parse(readFileSync(filePath, 'utf-8'));
     }
 
-    return (examples as ExampleTestCase[]).filter(
-        (e) =>
-            e.internalFramework === framework &&
-            !matchesExclusion(e) &&
-            // ag-grid.com still uses the old importType
-            ((e as any).importType === undefined || (e as any).importType === 'modules')
-    );
-    // .splice(0, 10); // Limit to 10 examples per framework for testing purposes
-}
-
-export async function getSelectionOfFrameworkExamples(
-    framework: InternalFramework,
-    nthExample: number,
-    randomOffset: number
-) {
-    const allExamples = await getFrameworkExamples(framework);
-    const filtered = allExamples.filter((_, i) => (i + randomOffset) % nthExample === 0);
-    return filtered;
+    return (examples as ExampleTestCase[]).filter((e) => e.internalFramework === framework && !matchesExclusion(e));
+    //.splice(0, 10); // Limit to 10 examples per framework for testing purposes
 }
 
 export function getExampleConfig(e) {
@@ -84,6 +72,7 @@ const excludeErrors = [
     'XML Parsing Error: not well-formed',
     'XML Parsing Error: syntax error',
     'Layout was forced before the page was fully loaded. If stylesheets are not yet loaded this may cause a flash of unstyled content.',
+    'Request to access cookie or storage on “<URL>” was blocked because it came from a tracker and Enhanced Tracking Protection is enabled.',
 ];
 
 export function setupConsoleExpectations(page) {

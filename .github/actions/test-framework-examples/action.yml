@@ -16,17 +16,19 @@ runs:
     - name: Restore all-examples-cached.json
       uses: actions/cache@v4
       with:
-        path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
-        key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
+        path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
+        key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
 
     - name: Install Playwright Browsers
       working-directory: testing/ag-grid-docs
-      run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
+      run: npm install && npx playwright install chromium firefox webkit --with-deps --only-shell
       shell: bash
 
     - name: ${{ inputs.framework }}
       working-directory: testing/ag-grid-docs
-      run: FRAMEWORK=${{ inputs.framework }} npx playwright test framework-examples.spec.ts --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      env:
+        FRAMEWORK: ${{ inputs.framework }}
+      run: npx playwright test framework-examples.spec.ts --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       shell: bash
 
     - name: Upload Test Report

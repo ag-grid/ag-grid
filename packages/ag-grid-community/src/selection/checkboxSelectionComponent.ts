@@ -42,10 +42,6 @@ export class CheckboxSelectionComponent extends Component {
         this.eCheckbox.setPassive(true);
     }
 
-    public getCheckboxId(): string {
-        return this.eCheckbox.getInputElement().id;
-    }
-
     private onDataChanged(): void {
         // when rows are loaded for the second time, this can impact the selection, as a row
         // could be loaded as already selected (if user scrolls down, and then up again).

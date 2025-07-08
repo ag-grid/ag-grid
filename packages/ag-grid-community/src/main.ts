@@ -34,6 +34,7 @@ export {
     isRowNumberCol,
     isColumnSelectionCol,
     isColumnGroupAutoCol,
+    isSpecialCol,
     _destroyColumnTree,
     _getColumnsFromTree,
     _areColIdsEqual,
@@ -1232,6 +1233,7 @@ export { TooltipModule } from './tooltip/tooltipModule';
 export { LocaleModule } from './misc/locale/localeModule';
 export { RowAutoHeightModule } from './rendering/row/rowAutoHeightModule';
 export { SharedExportModule as _SharedExportModule } from './export/exportModule';
+export { TestingModule } from './testing/testingModule';
 export { AllCommunityModule } from './allCommunityModule';
 
 //  events
@@ -1298,3 +1300,7 @@ export type {
     ColorSchemeValue,
     WithParamTypes,
 } from './theming/theme-types';
+
+// Testing
+
+export { agTestIdFor } from './testing/testIdUtils';

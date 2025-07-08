@@ -7,6 +7,7 @@ env:
     DEFAULT_RETENTION_DAYS: 30
     COMMIT_SHA_FILE: ./commit-sha.txt
     SLACK_FILE: ./slack.json
+    CTRF_FILE: ./ctrf-report.json
 on:
     workflow_dispatch:
         inputs:
@@ -40,41 +41,27 @@ on:
                 type: boolean
                 required: true
                 default: true
+            skip_demo_smoke:
+                description: 'Skip Demo / Smoke tests'
+                type: boolean
+                required: true
+                default: true
+            skip_recipes:
+                description: 'Skip Public Recipes tests'
+                type: boolean
+                required: true
+                default: true
             notify:
-              description: 'Notify Slack channel'
-              type: boolean
-              default: true
-              required: true
+                description: 'Notify Slack channel'
+                type: boolean
+                default: true
+                required: true
     schedule:
         - cron: '30 2 * * *' # Run daily at 2:30am UTC
 
 jobs:
     # Run all framework tasks in parallel
-    test-demos:
-        name: Test Doc Demos
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-              with:
-                fetch-depth: 1
-
-            - name: Install Playwright Browsers
-              working-directory: testing/ag-grid-docs
-              run: npm install && npx playwright install --with-deps chromium firefox webkit --only-shell
-
-            - name: Demo Pages
-              working-directory: testing/ag-grid-docs
-              run: npx playwright test ag-grid-demos.spec.ts
-
-            - name: Upload Test Report
-              id: upload-report
-              uses: actions/upload-artifact@v4
-              if: ${{ !cancelled() }}
-              with:
-                name: playwright-report-demos
-                path: reports/
-                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+    
 
     download-examples:
       name: Download all-examples.json
@@ -87,14 +74,58 @@ jobs:
 
         - name: Download all-examples-cached.json
           run: |
-            mkdir -p ./e2e/config
-            curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
+            mkdir -p ./testing/ag-grid-docs/e2e/.cache
+            curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
 
         - name: Cache all-examples-cached.json
           uses: actions/cache@v4
           with:
-            path: ./testing/ag-grid-docs/e2e/config/all-examples-cached.json
-            key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/config/all-examples-cached.json') }}
+            path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
+            key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
+    
+    test-demos-smoke:
+        if: ${{ github.event.inputs.skip_demo_smoke != 'true' }}
+        name: Smoke Test Demos / Examples
+        needs: download-examples
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 1
+
+            - name: Restore all-examples-cached.json
+              uses: actions/cache@v4
+              with:
+                path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
+                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
+
+            - name: Install Playwright Browsers
+              working-directory: testing/ag-grid-docs
+              run: npm i && npx playwright install chromium firefox webkit --with-deps --only-shell
+
+            - name: Demo Pages
+              working-directory: testing/ag-grid-docs
+              env:
+                BASE_URL: https://grid-staging.ag-grid.com/
+              run: npx playwright test ag-grid-demos.spec.ts
+            
+            - name: Smoke Test Examples (ag-grid.com)
+              if: always()
+              working-directory: testing/ag-grid-docs
+              env:
+                BASE_URL: https://ag-grid.com
+                AG_GRID_PERCENTAGE_TO_RUN: 0.01
+              run: npx playwright test smoke-test-examples.spec.ts
+
+            - name: Upload Test Report
+              id: upload-report
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                name: playwright-report-demos
+                path: reports/
+                retention-days: ${{env.DEFAULT_RETENTION_DAYS}}            
 
     test-vanilla:
         if: ${{ github.event.inputs.skip_vanilla != 'true' }}
@@ -192,10 +223,21 @@ jobs:
             with:
               framework: angular
 
+    test-recipes:
+      if: ${{ github.event.inputs.skip_recipes != 'true' }}
+      name: Test Public Testing Recipes
+      runs-on: ubuntu-latest
+      strategy:
+        fail-fast: false
+      steps:
+        - uses: actions/checkout@v4
+        - name: Run Public Testing Recipes
+          run: yarn nx run ag-grid-public-e2e-testing-recipes:test:recipes -c staging
+
     publish-reports:
       if: always()
       needs:
-        - test-demos
+        - test-demos-smoke
         - test-react-functional
         - test-react-functional-ts
         - test-angular
@@ -218,6 +260,7 @@ jobs:
             failed-report: true
             flaky-report: true
             skipped-report: true
+            write-ctrf-to-file: ${{ env.CTRF_FILE }}
 
         - uses: actions/checkout@v4
           with:
@@ -234,7 +277,7 @@ jobs:
         - name: Convert ctrf output to Slack message blocks and write git sha
           if: ${{ github.event_name == 'schedule' || inputs.notify }}
           env:
-            CTRF_REPORT: ${{ steps.ctrf.outputs.report }}
+            CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
             JOB_NAME: 'Documentation Tests'
             JOB_ID: ${{ github.run_id }}
             BRANCH_NAME: ${{ github.head_ref || github.ref_name }}

@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-const rawReport = process.env.CTRF_REPORT || '';
+const rawReportFile = process.env.CTRF_REPORT_FILE || '';
 const jobID = process.env.JOB_ID || '';
 const jobName = process.env.JOB_NAME || '';
 const repoUrl = process.env.REPO_URL || '';
@@ -14,8 +14,15 @@ const slackFile = process.env.SLACK_FILE || './slack.json';
 
 const jobUrl = `${repoUrl}/actions/runs/${jobID}`
 
-if (!rawReport) {
-    console.log('CTRF_REPORT environment variable must be set.');
+let rawReport;
+
+try {
+    rawReport = fs.readFileSync(rawReportFile, 'utf8').trim();
+    if (!rawReport) {
+        throw new Error(`Report file ${rawReportFile} is empty.`);
+    }
+} catch (error) {
+    console.error(`Failed to read CTRF report from ${rawReportFile}:`, error);
     process.exit(1);
 }
 

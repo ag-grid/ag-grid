@@ -353,13 +353,13 @@ export function _syncFromEditor(
 export function _destroyEditors(
     beans: BeanCollection,
     edits?: Required<EditPosition>[],
-    params?: { silent?: boolean } | null
+    params?: { silent?: boolean }
 ): void {
     if (!edits) {
         edits = beans.editModelSvc?.getEditPositions();
     }
 
-    edits!.forEach((cellPosition) => _destroyEditor(beans, cellPosition, params ?? undefined));
+    edits!.forEach((cellPosition) => _destroyEditor(beans, cellPosition, params));
 }
 
 export function _destroyEditor(

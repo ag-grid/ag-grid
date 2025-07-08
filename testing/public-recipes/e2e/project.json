@@ -1,0 +1,37 @@
+{
+  "name": "ag-grid-public-e2e-testing-recipes",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/public-recipes/e2e",
+  "projectType": "application",
+  "targets": {
+    "setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["npx playwright install --with-deps chromium"],
+        "parallel": false,
+        "cwd": "testing/public-recipes"
+      }
+    },
+    "test:recipes": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["setup", "ag-grid-community:build", "ag-grid-enterprise:build"],
+      "options": {
+        "commands": ["npx playwright test"],
+        "parallel": false,
+        "cwd": "testing/public-recipes/e2e"
+      },
+      "configurations": {
+        "production": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.production"
+        },
+        "staging": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
+        },
+        "dev": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.dev"
+        }
+      }
+    }
+  },
+  "tags": ["public", "testing"]
+}
