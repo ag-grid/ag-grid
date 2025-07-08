@@ -163,17 +163,25 @@ The following example demonstrates providing custom column layouts in the column
 
 The `gridApi` has the following methods that can be used to interact with the column menu:
 
-{% apiDocumentation source="grid-api/api.json" section="accessories" names=["showColumnChooser", "showColumnFilter", "showColumnMenu", "hidePopupMenu", "hideColumnChooser"] /%}
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["showColumnChooser", "showColumnMenu", "hideColumnChooser", "hidePopupMenu"] /%}
+
+Column filters are not considered part of the menu, so have their own API methods to show/hide.
+
+However, when using the [Legacy Tabbed Column Menu](#legacy-tabbed-column-menu), the filter popup is part of the column menu, and can be opened/closed via the column menu API methods.
+
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["showColumnFilter", "hideColumnFilter"] /%}
 
 {% br /%}
 
-The following column menu event is emitted by the grid:
+The following column menu event is emitted by the grid. Note that this also includes the column filter popup.
 
 {% apiDocumentation source="grid-events/events.json" section="accessories" names=["columnMenuVisibleChanged"] /%}
 
 {% br /%}
 
-The following example demonstrates the column menu API and events (by clicking the buttons outside the grid):
+The following example demonstrates the column menu API and events (by clicking the buttons outside the grid).
+
+Note that the column menu and column filter popup close automatically when clicking outside the grid, so there are no buttons to close them in the example.
 
 {% gridExampleRunner title="Column Menu API" name="column-menu-api" /%}
 

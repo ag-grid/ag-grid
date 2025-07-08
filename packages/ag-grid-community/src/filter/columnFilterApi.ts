@@ -69,6 +69,10 @@ export function showColumnFilter(beans: BeanCollection, colKey: string | Column)
     });
 }
 
+export function hideColumnFilter(beans: BeanCollection): void {
+    beans.menuSvc?.hideFilterMenu();
+}
+
 export function getColumnFilterHandler(beans: BeanCollection, colKey: string | Column): FilterHandler | undefined {
     const column = beans.colModel.getCol(colKey);
     if (!column) {
