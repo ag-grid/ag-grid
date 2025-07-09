@@ -31,6 +31,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
 import type { AgEventType } from '../eventTypes';
 import type { AgEventTypeParams, AgGlobalEventListener, AllEventsWithoutGridCommon } from '../events';
+import type { GridSerializer } from '../export/gridSerializer';
 import type { ColumnFilterService } from '../filter/columnFilterService';
 import type { FilterManager } from '../filter/filterManager';
 import type { FilterValueService } from '../filter/filterValueService';
@@ -77,6 +78,7 @@ import type { IShowRowGroupColsValueService } from '../interfaces/iShowRowGroupC
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStickyRowService } from '../interfaces/iStickyRows';
 import type { ITestIdService } from '../interfaces/iTestIdService';
+import type { IWatermark } from '../interfaces/iWatermark';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { IRowNumbersService } from '../interfaces/rowNumbers';
@@ -349,11 +351,37 @@ export interface CoreBeanCollection
     filterPanelSvc?: IFilterPanelService;
     selectableFilter?: ISelectableFilterService;
     testIdSvc?: ITestIdService;
+    gridSerializer?: GridSerializer;
+    licenseManager?: IWatermark;
 }
+
+/** Things used in enterprise that we haven't created interfaces for */
+type UntypedBeans =
+    | 'advFilterExpSvc'
+    | 'advSettingsMenuFactory'
+    | 'agChartsExports'
+    | 'chartCrossFilterSvc'
+    | 'chartMenuItemMapper'
+    | 'chartMenuListFactory'
+    | 'chartMenuSvc'
+    | 'chartTranslation'
+    | 'colChooserFactory'
+    | 'colMenuFactory'
+    | 'colToolPanelFactory'
+    | 'enterpriseChartProxyFactory'
+    | 'lazyBlockLoadingSvc'
+    | 'menuItemMapper'
+    | 'menuUtils'
+    | 'ssrmBlockUtils'
+    | 'ssrmListenerUtils'
+    | 'ssrmNodeManager'
+    | 'ssrmStoreFactory'
+    | 'ssrmStoreUtils'
+    | 'statusBarSvc';
 
 export type BeanCollection = CoreBeanCollection & {
     // `unknown | undefined` to make sure the type is handled correctly when used
-    [key in Exclude<BeanName, keyof CoreBeanCollection>]?: unknown;
+    [key in UntypedBeans]?: unknown;
 };
 
 export class Context extends AgContext<BeanName, BeanCollection> {

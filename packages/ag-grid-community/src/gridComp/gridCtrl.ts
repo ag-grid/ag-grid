@@ -3,7 +3,6 @@ import { BeanStub } from '../context/beanStub';
 import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
 import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
-import type { IWatermark } from '../interfaces/iWatermark';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _last } from '../utils/array';
@@ -71,7 +70,7 @@ export class GridCtrl extends BeanStub {
             gridHeaderDropZonesSelector: beans.registry.getSelector('AG-GRID-HEADER-DROP-ZONES'),
             sideBarSelector: beans.sideBar?.getSelector(),
             statusBarSelector: beans.registry?.getSelector('AG-STATUS-BAR'),
-            watermarkSelector: (beans.licenseManager as IWatermark)?.getWatermarkSelector(),
+            watermarkSelector: beans.licenseManager?.getWatermarkSelector(),
         };
     }
 
