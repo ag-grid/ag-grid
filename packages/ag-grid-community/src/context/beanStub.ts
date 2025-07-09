@@ -142,18 +142,24 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
                 return null;
             };
         } else {
+            const objIsEventService = isEventService(object);
             if (object instanceof HTMLElement) {
                 _addSafePassiveEventListener(this.beans.frameworkOverrides, object, event, listener);
-            } else if (isEventService(object)) {
+            } else if (objIsEventService) {
                 object.addListener(event as AgEventType, listener);
             } else {
                 object.addEventListener(event, listener);
             }
 
-            destroyFunc = () => {
-                (object as any).removeEventListener(event, listener);
-                return null;
-            };
+            destroyFunc = objIsEventService
+                ? () => {
+                      object.removeListener(event as AgEventType, listener);
+                      return null;
+                  }
+                : () => {
+                      (object as any).removeEventListener(event, listener);
+                      return null;
+                  };
         }
 
         this.destroyFunctions.push(destroyFunc);
@@ -309,5 +315,5 @@ function isAgEventEmitter<TEvent extends string>(
 }
 
 function isEventService(object: any): object is IEventService {
-    return !!(object as IEventService).dispatchEventOnce;
+    return (object as IEventService).eventServiceType === 'global';
 }

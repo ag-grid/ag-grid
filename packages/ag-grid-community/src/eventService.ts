@@ -8,6 +8,7 @@ import { LocalEventService } from './localEventService';
 
 export class EventService extends BeanStub<AgEventType> implements NamedBean, IEventService {
     beanName = 'eventSvc' as const;
+    public eventServiceType = 'global' as const;
 
     private readonly globalSvc: LocalEventService<AgEventType> = new LocalEventService();
 

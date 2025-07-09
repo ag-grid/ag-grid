@@ -2,6 +2,8 @@ import type { AgEventType } from '../eventTypes';
 import type { AgEventListener, AgGlobalEventListener, AllEventsWithoutGridCommon } from '../events';
 
 export interface IEventService {
+    readonly eventServiceType: 'global';
+
     addListener<TEventType extends AgEventType>(
         eventType: TEventType,
         listener: AgEventListener<any, any, TEventType>,
