@@ -1,4 +1,4 @@
-name: Doc Tests
+name: Documentation Tests
 # Testing of AG Grid Examples
 
 env:
@@ -291,7 +291,6 @@ jobs:
           with:
             CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
             SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
-            WORKFLOW_NAME: 'Documentation Tests'
             PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
             CURRENT_COMMIT_SHA: ${{ github.sha }}
 
