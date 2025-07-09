@@ -1,5 +1,5 @@
+import type { AgEvent } from '../agStack/interfaces/agEvent';
 import { KeyCode } from '../constants/keyCode';
-import type { AgEvent } from '../events';
 import type { FilterAction } from '../interfaces/iFilter';
 import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
 import type { ElementParams } from '../utils/dom';

@@ -1,7 +1,7 @@
+import type { IEventEmitter } from '../agStack/interfaces/iEventEmitter';
 import { KeyCode } from '../constants/keyCode';
 import type { AgColumn } from '../entities/agColumn';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { FilterAction, FilterWrapperParams } from '../interfaces/iFilter';
 import type { PopupEventParams } from '../interfaces/iPopup';
 import { _removeFromParent } from '../utils/dom';

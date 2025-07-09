@@ -1,5 +1,5 @@
+import { RefPlaceholder } from '../agStack/agComponent';
 import { KeyCode } from '../constants/keyCode';
-import { RefPlaceholder } from '../context/newContext/agComponent';
 import { _isNothingFocused } from '../gridOptionsUtils';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaExpanded, _setAriaRole } from '../utils/aria';

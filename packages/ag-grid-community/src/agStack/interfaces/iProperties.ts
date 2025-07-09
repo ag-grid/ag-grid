@@ -1,4 +1,4 @@
-import type { AgEvent } from '../../events';
+import type { AgEvent } from './agEvent';
 
 export interface BaseProperties {
     tabIndex?: number;

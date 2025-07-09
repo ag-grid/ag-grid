@@ -1,13 +1,13 @@
+import { RefPlaceholder } from '../../../agStack/agComponent';
+import { _setDisplayed } from '../../../agStack/utils/domUtils';
 import { _getInnerHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { BeanCollection } from '../../../context/context';
-import { RefPlaceholder } from '../../../context/newContext/agComponent';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnGroup } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
 import type { ElementParams } from '../../../utils/dom';
-import { _setDisplayed } from '../../../utils/dom';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../../utils/event';
 import { _exists } from '../../../utils/generic';
 import type { IconName } from '../../../utils/icon';

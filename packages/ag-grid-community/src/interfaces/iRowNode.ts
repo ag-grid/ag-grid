@@ -1,6 +1,6 @@
-import type { AgEvent, SelectionEventSourceType } from '../events';
+import type { AgEvent } from '../agStack/interfaces/agEvent';
+import type { BuildEventTypeMap, SelectionEventSourceType } from '../events';
 import type { Column } from '../interfaces/iColumn';
-import type { BuildEventTypeMap } from './iEventEmitter';
 
 export type RowNodeEventType =
     | 'rowSelected'

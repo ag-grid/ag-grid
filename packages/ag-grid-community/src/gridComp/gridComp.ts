@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../context/newContext/agComponent';
+import { RefPlaceholder } from '../agStack/agComponent';
 import type { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import { GridBodySelector } from '../gridBodyComp/gridBodyComp';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';

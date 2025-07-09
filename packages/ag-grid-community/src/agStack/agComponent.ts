@@ -1,19 +1,19 @@
-import type { AgEvent } from '../../events';
-import type { IEventListener } from '../../interfaces/iEventEmitter';
-import { CssClassManager } from '../../rendering/cssClassManager';
-import type { ElementParams } from '../../utils/dom';
+import { AgBeanStub } from './agBeanStub';
+import type { AgBeanStubEvent } from './agBeanStub';
+import { CssClassManager } from './cssClassManager';
+import type { AgEvent } from './interfaces/agEvent';
+import type { AgBaseBean, AgContext, AgCoreBeanCollection } from './interfaces/iContext';
+import type { IEventListener } from './interfaces/iEventEmitter';
+import type { BaseProperties, BasePropertyDefaults, IPropertiesService } from './interfaces/iProperties';
+import type { AgElementParams } from './utils/domUtils';
 import {
     DataRefAttribute,
-    _createElement,
+    _createAgElement,
     _isNodeOrElement,
     _loadTemplate,
     _setDisplayed,
     _setVisible,
-} from '../../utils/dom';
-import { AgBeanStub } from './agBeanStub';
-import type { AgBeanStubEvent } from './agBeanStub';
-import type { AgBaseBean, AgContext, AgCoreBeanCollection } from './iContext';
-import type { BaseProperties, BasePropertyDefaults, IPropertiesService } from './iProperties';
+} from './utils/domUtils';
 
 let compIdSequence = 0;
 
@@ -142,7 +142,7 @@ export abstract class AgComponent<
     private cssManager: CssClassManager;
 
     constructor(
-        templateOrParams?: string | ElementParams<TComponentSelectorType>,
+        templateOrParams?: string | AgElementParams<TComponentSelectorType>,
         componentSelectors?: AgComponentSelectorParams<TComponent, TComponentSelectorType>[]
     ) {
         super();
@@ -308,7 +308,7 @@ export abstract class AgComponent<
     }
 
     public setTemplate(
-        templateOrParams: ElementParams<TComponentSelectorType> | string | null | undefined,
+        templateOrParams: AgElementParams<TComponentSelectorType> | string | null | undefined,
         componentSelectors?: AgComponentSelectorParams<TComponent, TComponentSelectorType>[],
         paramsMap?: { [key: string]: any }
     ): void {
@@ -316,7 +316,7 @@ export abstract class AgComponent<
         if (typeof templateOrParams === 'string' || templateOrParams == null) {
             eGui = _loadTemplate(templateOrParams);
         } else {
-            eGui = _createElement(templateOrParams);
+            eGui = _createAgElement(templateOrParams);
         }
 
         this.setTemplateFromElement(eGui, componentSelectors, paramsMap);

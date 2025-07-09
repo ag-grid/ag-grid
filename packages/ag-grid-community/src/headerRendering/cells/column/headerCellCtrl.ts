@@ -1,3 +1,4 @@
+import { _setDisplayed } from '../../../agStack/utils/domUtils';
 import type { ResizeFeature } from '../../../columnResize/resizeFeature';
 import { setupCompBean } from '../../../components/emptyBean';
 import { _getHeaderCompDetails } from '../../../components/framework/userCompUtils';
@@ -14,7 +15,6 @@ import type { SelectAllFeature } from '../../../selection/selectAllFeature';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import type { ColumnSortState } from '../../../utils/aria';
 import { _getAriaSortState } from '../../../utils/aria';
-import { _setDisplayed } from '../../../utils/dom';
 import { _isKeyboardMode } from '../../../utils/focus';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils';

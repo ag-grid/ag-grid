@@ -1,5 +1,5 @@
-import type { AgEvent } from '../../events';
-import type { IEventEmitter } from '../../interfaces/iEventEmitter';
+import type { AgEvent } from './agEvent';
+import type { IEventEmitter } from './iEventEmitter';
 
 type GlobalEventListener<TEventType extends string, TEventParams extends Record<TEventType, any>> = (
     eventType: TEventType,

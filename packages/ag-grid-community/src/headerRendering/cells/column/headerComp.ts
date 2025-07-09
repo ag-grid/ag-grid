@@ -1,12 +1,13 @@
+import { RefPlaceholder } from '../../../agStack/agComponent';
+import { _setDisplayed } from '../../../agStack/utils/domUtils';
 import { _getInnerHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { RefPlaceholder } from '../../../context/newContext/agComponent';
 import type { AgColumn } from '../../../entities/agColumn';
 import { _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { IHeaderComp, IHeaderParams, IInnerHeaderComponent } from '../../../interfaces/iHeader';
 import type { SortIndicatorComp } from '../../../sort/sortIndicatorComp';
 import type { ElementParams } from '../../../utils/dom';
-import { _removeFromParent, _setDisplayed } from '../../../utils/dom';
+import { _removeFromParent } from '../../../utils/dom';
 import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _mergeDeep } from '../../../utils/object';

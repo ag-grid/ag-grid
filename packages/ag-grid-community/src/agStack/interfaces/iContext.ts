@@ -1,9 +1,9 @@
-import type { AgEvent } from '../../events';
-import type { IAgEventEmitter, IEventEmitter, IEventListener } from '../../interfaces/iEventEmitter';
-import type { AgFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
-import type { ILocaleService } from '../../misc/locale/localeService';
-import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
+import type { AgEvent } from './agEvent';
+import type { AgFrameworkOverrides } from './agFrameworkOverrides';
 import type { AgEventService } from './iEvent';
+import type { IAgEventEmitter, IEventEmitter, IEventListener } from './iEventEmitter';
+import type { LocaleTextFunc } from './iLocaleService';
+import type { ILocaleService } from './iLocaleService';
 import type { AgPropertyChangedListener, AgPropertyValueChangedListener, BaseProperties } from './iProperties';
 
 export interface AgCoreBeanCollection<

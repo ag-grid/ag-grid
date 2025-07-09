@@ -1,11 +1,8 @@
-import type { AgEvent } from '../../events';
-import type { IAgEventEmitter, IEventEmitter, IEventListener } from '../../interfaces/iEventEmitter';
-import { LocalEventService } from '../../localEventService';
-import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
-import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
-import { _addSafePassiveEventListener } from '../../utils/event';
-import type { AgBaseBean, AgBean, AgContext, AgCoreBeanCollection } from './iContext';
-import type { AgEventService } from './iEvent';
+import type { AgEvent } from './interfaces/agEvent';
+import type { AgBaseBean, AgBean, AgContext, AgCoreBeanCollection } from './interfaces/iContext';
+import type { AgEventService } from './interfaces/iEvent';
+import type { IAgEventEmitter, IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
+import type { LocaleTextFunc } from './interfaces/iLocaleService';
 import type {
     AgPropertyChangedEvent,
     AgPropertyChangedListener,
@@ -14,7 +11,10 @@ import type {
     BaseProperties,
     BasePropertyDefaults,
     IPropertiesService,
-} from './iProperties';
+} from './interfaces/iProperties';
+import { LocalEventService } from './localEventService';
+import { _addSafePassiveEventListener } from './utils/eventUtils';
+import { _getLocaleTextFunc } from './utils/localeUtils';
 
 export type AgBeanStubEvent = 'destroyed';
 export type AgEventOrDestroyed<TEventType extends string> = TEventType | AgBeanStubEvent;

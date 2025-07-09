@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../context/newContext/agComponent';
+import { RefPlaceholder } from '../agStack/agComponent';
 import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
 import type { ElementParams } from '../utils/dom';
 import { _isVisible, _requestAnimationFrame } from '../utils/dom';

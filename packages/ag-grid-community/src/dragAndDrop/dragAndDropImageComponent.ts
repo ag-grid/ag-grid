@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../context/newContext/agComponent';
+import { RefPlaceholder } from '../agStack/agComponent';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IComponent } from '../interfaces/iComponent';
 import type { ElementParams } from '../utils/dom';

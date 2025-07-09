@@ -1,5 +1,5 @@
+import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
 import { KeyCode } from '../../constants/keyCode';
-import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
 import { _isBrowserSafari } from '../../utils/browser';
 import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';

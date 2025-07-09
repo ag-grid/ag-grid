@@ -1,4 +1,4 @@
-import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
+import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
 import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import type { AgInputTextField } from '../../widgets/agInputTextField';

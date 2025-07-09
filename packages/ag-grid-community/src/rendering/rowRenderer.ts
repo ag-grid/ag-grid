@@ -1,3 +1,4 @@
+import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
 import type { ColumnModel } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -21,7 +22,6 @@ import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams, RefreshRowsParams } from '../interfaces/iCellsParams';
 import type { IEditService } from '../interfaces/iEditService';
-import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';

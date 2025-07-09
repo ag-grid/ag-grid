@@ -1,6 +1,6 @@
+import { RefPlaceholder } from '../../agStack/agComponent';
 import { GROUP_AUTO_COLUMN_ID } from '../../columns/columnUtils';
 import { KeyCode } from '../../constants/keyCode';
-import { RefPlaceholder } from '../../context/newContext/agComponent';
 import { _getActiveDomElement } from '../../gridOptionsUtils';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
 import type { ElementParams } from '../../utils/dom';

@@ -1,10 +1,8 @@
 import type { GridOptionsService } from '../gridOptionsService';
 import { _getDomData } from '../gridOptionsUtils';
-import type { AgFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 
 const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
-const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel', 'scroll'];
-const NON_PASSIVE_EVENTS = ['wheel'];
+
 const supports: { [key: string]: boolean } = {};
 
 /**
@@ -110,37 +108,3 @@ export function _getEventPath(event: Event | { target: EventTarget }): EventTarg
     // If this is an AG Grid event build the path ourselves
     return _createEventPath(eventNoType);
 }
-
-export function _addSafePassiveEventListener(
-    frameworkOverrides: AgFrameworkOverrides,
-    eElement: HTMLElement,
-    event: string,
-    listener: (event?: any) => void
-) {
-    const passive = getPassiveStateForEvent(event);
-
-    let options: { passive: boolean } | undefined;
-
-    if (passive != null) {
-        options = { passive };
-    }
-
-    // this check is here for certain scenarios where I believe the user must be destroying
-    // the grid somehow but continuing for it to be used
-    if (frameworkOverrides && frameworkOverrides.addEventListener) {
-        frameworkOverrides.addEventListener(eElement, event, listener, options);
-    }
-}
-
-export const getPassiveStateForEvent = (event: string): boolean | undefined => {
-    const isPassive = PASSIVE_EVENTS.includes(event);
-    const isNonPassive = NON_PASSIVE_EVENTS.includes(event);
-
-    if (isPassive) {
-        return true;
-    }
-
-    if (isNonPassive) {
-        return false;
-    }
-};

@@ -1,6 +1,4 @@
-import type { ILocaleService } from './localeService';
-
-export type LocaleTextFunc = (key: string, defaultValue: string, variableValues?: string[]) => string;
+import type { ILocaleService, LocaleTextFunc } from '../interfaces/iLocaleService';
 
 function defaultLocaleTextFunc(_key: string, defaultValue: string): string {
     return defaultValue;

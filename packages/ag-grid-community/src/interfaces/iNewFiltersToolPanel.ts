@@ -1,8 +1,8 @@
+import type { IEventEmitter } from '../agStack/interfaces/iEventEmitter';
 import type { AgColumn } from '../entities/agColumn';
 import type { ValueGetterFunc } from '../entities/colDef';
 import type { NewFiltersToolPanelState } from './gridState';
 import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
-import type { IEventEmitter } from './iEventEmitter';
 import type { FilterAction, FilterWrapperParams, IFilterDef } from './iFilter';
 import type { IToolPanel, IToolPanelNewFiltersCompParams } from './iToolPanel';
 

@@ -1,5 +1,5 @@
+import { RefPlaceholder } from '../../agStack/agComponent';
 import { KeyCode } from '../../constants/keyCode';
-import { RefPlaceholder } from '../../context/newContext/agComponent';
 import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';

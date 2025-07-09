@@ -1,12 +1,9 @@
+import type { ILocaleService } from '../../agStack/interfaces/iLocaleService';
+import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { GetLocaleTextParams } from '../../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
-import type { LocaleTextFunc } from './localeUtils';
-
-export interface ILocaleService {
-    getLocaleTextFunc(): LocaleTextFunc;
-}
 
 export class LocaleService extends BeanStub implements NamedBean, ILocaleService {
     beanName = 'localeSvc' as const;

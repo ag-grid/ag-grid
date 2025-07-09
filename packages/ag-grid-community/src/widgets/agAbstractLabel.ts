@@ -1,7 +1,8 @@
+import { _setDisplayed } from '../agStack/utils/domUtils';
 import type { AgLabelParams, LabelAlignment } from '../interfaces/agFieldParams';
 import { _setAriaRole } from '../utils/aria';
 import type { ElementParams } from '../utils/dom';
-import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../utils/dom';
+import { _clearElement, _setDisabled, _setElementWidth } from '../utils/dom';
 import { agAbstractLabelCSS } from './agAbstractLabel.css-GENERATED';
 import type { ComponentEvent, ComponentSelector } from './component';
 import { Component } from './component';

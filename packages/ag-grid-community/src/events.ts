@@ -1,5 +1,6 @@
 import type { AgChartThemeOverrides } from 'ag-charts-types';
 
+import type { AgEvent } from './agStack/interfaces/agEvent';
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
@@ -11,7 +12,6 @@ import type { ChartType } from './interfaces/iChartOptions';
 import type { RefreshModelParams } from './interfaces/iClientSideRowModel';
 import type { Column, ColumnEventName, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
-import type { BuildEventTypeMap } from './interfaces/iEventEmitter';
 import type { IFilterComp } from './interfaces/iFilter';
 import type { FindMatch } from './interfaces/iFind';
 import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
@@ -21,6 +21,8 @@ import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 import type { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
 
 export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<AgEventType> = new Set(['gridPreDestroyed', 'fillStart', 'pasteStart']);
+
+export type BuildEventTypeMap<TEventTypes extends string, T extends { [K in TEventTypes]: AgEvent<K> }> = T;
 
 export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
     AgPublicEventType | AgInternalEventType,
@@ -196,11 +198,6 @@ export type AllEventsWithoutGridCommon<TData = any, TContext = any> = {
 export type AllEvents<TData = any, TContext = any> = {
     [K in keyof AgEventTypeParams<TData, TContext>]: AgEventTypeParams<TData, TContext>[K];
 }[keyof AgEventTypeParams];
-
-export interface AgEvent<TEventType extends string = string> {
-    /** Event identifier */
-    type: TEventType;
-}
 
 export interface AgGridEvent<TData = any, TContext = any, TEventType extends string = string>
     extends AgGridCommon<TData, TContext>,

@@ -1,3 +1,4 @@
+import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
 import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -18,7 +19,6 @@ import type { GridOptionsService } from '../gridOptionsService';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { ColumnEventName } from '../interfaces/iColumn';
-import type { IEventListener } from '../interfaces/iEventEmitter';
 import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _toStringOrNull } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';

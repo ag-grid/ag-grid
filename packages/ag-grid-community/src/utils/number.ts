@@ -1,4 +1,4 @@
-import type { LocaleTextFunc } from '../misc/locale/localeUtils';
+import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
 
 /**
  * the native method number.toLocaleString(undefined, {minimumFractionDigits: 0})

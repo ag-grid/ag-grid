@@ -1,9 +1,10 @@
+import { _setDisplayed } from '../agStack/utils/domUtils';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
-import { _getInnerWidth, _setDisplayed } from '../utils/dom';
+import { _getInnerWidth } from '../utils/dom';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private lastResizeAmount: number;

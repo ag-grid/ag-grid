@@ -1,3 +1,4 @@
+import type { AgEvent } from '../agStack/interfaces/agEvent';
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import {
     _getFilterCompKeys,
@@ -12,7 +13,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueGetterFunc } from '../entities/colDef';
 import type { BaseCellDataType, CoreDataTypeDefinition, DataTypeFormatValueFunc } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
-import type { AgEvent, ColumnEventType, FilterChangedEventSourceType } from '../events';
+import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
 import {
     _addGridCommonParams,
     _getGroupAggFiltering,

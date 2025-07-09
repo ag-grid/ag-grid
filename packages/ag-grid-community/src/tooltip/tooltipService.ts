@@ -1,3 +1,4 @@
+import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -6,7 +7,6 @@ import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { ICellEditor } from '../interfaces/iCellEditor';
-import type { LocaleTextFunc } from '../misc/locale/localeUtils';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { _isElementOverflowingCallback } from '../utils/dom';

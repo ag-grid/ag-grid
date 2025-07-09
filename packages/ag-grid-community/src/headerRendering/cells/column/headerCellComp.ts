@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../../context/newContext/agComponent';
+import { RefPlaceholder } from '../../../agStack/agComponent';
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { IHeaderComp } from '../../../interfaces/iHeader';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';

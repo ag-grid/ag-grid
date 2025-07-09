@@ -1,6 +1,7 @@
+import type { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
+import { getPassiveStateForEvent } from './agStack/utils/eventUtils';
 import { BASE_URL } from './baseUrl';
-import type { FrameworkOverridesIncomingSource, IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
-import { getPassiveStateForEvent } from './utils/event';
+import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import { AgPromise } from './utils/promise';
 import { setValidationDocLink } from './validation/logging';
 

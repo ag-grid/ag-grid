@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../context/newContext/agComponent';
+import { RefPlaceholder } from '../agStack/agComponent';
 import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaLabel } from '../utils/aria';
 import type { ElementParams } from '../utils/dom';

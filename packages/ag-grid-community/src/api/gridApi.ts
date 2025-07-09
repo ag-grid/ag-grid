@@ -1,10 +1,10 @@
+import type { AgEvent } from '../agStack/interfaces/agEvent';
 import type { ApplyColumnStateParams, ColumnState } from '../columns/columnStateUtils';
 import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragFeature';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
 import type { ChartRef, GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
-    AgEvent,
     AgEventListener,
     AgGlobalEventListener,
     ColumnEventType,

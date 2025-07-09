@@ -1,5 +1,5 @@
+import { RefPlaceholder } from '../../../agStack/agComponent';
 import { BeanStub } from '../../../context/beanStub';
-import { RefPlaceholder } from '../../../context/newContext/agComponent';
 import type { AgInputTextFieldParams } from '../../../widgets/agInputTextField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import type { FloatingFilterInputService } from './iFloatingFilterInputService';

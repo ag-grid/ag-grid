@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../../context/newContext/agComponent';
+import { RefPlaceholder } from '../../../agStack/agComponent';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { IFilter } from '../../../interfaces/iFilter';
 import type { ElementParams } from '../../../utils/dom';

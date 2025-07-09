@@ -1,5 +1,5 @@
+import { RefPlaceholder } from '../../agStack/agComponent';
 import type { BeanCollection } from '../../context/context';
-import { RefPlaceholder } from '../../context/newContext/agComponent';
 import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import type { ElementParams } from '../../utils/dom';

@@ -1,6 +1,6 @@
+import { RefPlaceholder } from '../agStack/agComponent';
 import { KeyCode } from '../constants/keyCode';
 import type { BeanCollection } from '../context/context';
-import { RefPlaceholder } from '../context/newContext/agComponent';
 import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';

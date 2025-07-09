@@ -1,5 +1,5 @@
+import { RefPlaceholder } from '../../agStack/agComponent';
 import { KeyCode } from '../../constants/keyCode';
-import { RefPlaceholder } from '../../context/newContext/agComponent';
 import type { GridOptions } from '../../entities/gridOptions';
 import { _addGridCommonParams, _getActiveDomElement, _isNothingFocused } from '../../gridOptionsUtils';
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';

@@ -1,7 +1,7 @@
+import type { AgComponentEvent, AgComponentSelectorParams } from '../agStack/agComponent';
+import { AgComponent } from '../agStack/agComponent';
 import type { Bean } from '../context/bean';
 import type { BeanCollection, BeanName, Context } from '../context/context';
-import type { AgComponentEvent, AgComponentSelectorParams } from '../context/newContext/agComponent';
-import { AgComponent } from '../context/newContext/agComponent';
 import type { GridOptions } from '../entities/gridOptions';
 import type { AgEventType } from '../eventTypes';
 import type { AgEventListener, AgEventTypeParams, AllEventsWithoutGridCommon } from '../events';

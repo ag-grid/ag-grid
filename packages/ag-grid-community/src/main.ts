@@ -77,7 +77,18 @@ export { BeanStub } from './context/beanStub';
 export { Bean, NamedBean } from './context/bean';
 export type { Context } from './context/context';
 export { BeanName, SingletonBean, BeanCollection } from './context/context';
-export { VisibleChangedEvent, RefPlaceholder } from './context/newContext/agComponent';
+
+// AG Stack
+export { VisibleChangedEvent, RefPlaceholder } from './agStack/agComponent';
+export { AgEvent } from './agStack/interfaces/agEvent';
+export { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
+export { _setAriaHidden } from './agStack/ariaUtils';
+export { _setDisplayed, _loadTemplate, _setVisible, _isNodeOrElement } from './agStack/utils/domUtils';
+export { _getLocaleTextFunc, _translate } from './agStack/utils/localeUtils';
+export { LocaleTextFunc } from './agStack/interfaces/iLocaleService';
+export { CssClassManager } from './agStack/cssClassManager';
+export { LocalEventService } from './agStack/localEventService';
+export { IEventEmitter, IEventListener } from './agStack/interfaces/iEventEmitter';
 
 // excel
 export {
@@ -529,7 +540,6 @@ export {
     ILoadingCellRendererComp,
     ILoadingCellRendererParams,
 } from './interfaces/iLoadingCellRenderer';
-export { CssClassManager } from './rendering/cssClassManager';
 export type { CheckboxCellRenderer } from './rendering/cellRenderers/checkboxCellRenderer';
 export { ICheckboxCellRendererParams } from './rendering/cellRenderers/checkboxCellRenderer';
 
@@ -766,7 +776,6 @@ export {
     _isSetFilterByDefault,
 } from './gridOptionsUtils';
 export type { GroupingApproach } from './gridOptionsUtils';
-export { LocalEventService } from './localEventService';
 export type { EventService } from './eventService';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
 export { SortedRowNode } from './sort/rowNodeSorter';
@@ -776,7 +785,6 @@ export { GridCtrl, IGridComp } from './gridComp/gridCtrl';
 export type { SortService } from './sort/sortService';
 export { SortModelItem } from './interfaces/iSortModelItem';
 export { LocaleService } from './misc/locale/localeService';
-export { _getLocaleTextFunc, LocaleTextFunc, _translate } from './misc/locale/localeUtils';
 export type { ValueService } from './valueService/valueService';
 export type { ValueCache } from './valueService/valueCache';
 export type { ExpressionService } from './valueService/expressionService';
@@ -1017,7 +1025,6 @@ export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
 export { IComponent } from './interfaces/iComponent';
-export { IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
 export { HeaderComp as _HeaderComp } from './headerRendering/cells/column/headerComp';
 export { IHeaderParams, IHeaderComp, IHeader, IInnerHeaderComponent } from './interfaces/iHeader';
 export {
@@ -1031,7 +1038,7 @@ export {
     BaseComponentWrapper,
     FrameworkComponentWrapper,
 } from './components/framework/frameworkComponentWrapper';
-export { IFrameworkOverrides, FrameworkOverridesIncomingSource } from './interfaces/iFrameworkOverrides';
+export { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 export { IFrameworkEventListenerService } from './interfaces/iFrameworkEventListenerService';
 export type { Environment } from './environment';
 export { ITooltipComp, ITooltipParams, TooltipLocation } from './tooltip/tooltipComponent';
@@ -1084,7 +1091,6 @@ export {
     _setAriaSelected,
     _setAriaPosInSet,
     _setAriaSetSize,
-    _setAriaHidden,
     _getAriaPosInSet,
     _setAriaInvalid,
 } from './utils/aria';
@@ -1095,24 +1101,20 @@ export { _serialiseDate, _getDateParts, _parseDateTimeFromString } from './utils
 export {
     _getAbsoluteHeight,
     _getAbsoluteWidth,
-    _setDisplayed,
     _clearElement,
     _removeFromParent,
     _radioCssClass,
-    _loadTemplate,
-    _createElement,
     ElementParams,
     _isVisible,
     _setFixedWidth,
     _setDisabled,
-    _setVisible,
     _getInnerHeight,
     _getInnerWidth,
-    _isNodeOrElement,
     _observeResize,
     _preserveRangesWhile,
     _requestAnimationFrame,
     _isElementOverflowingCallback,
+    _createElement,
 } from './utils/dom';
 export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
