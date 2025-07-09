@@ -80,6 +80,11 @@ jobs:
       build_type: ${{ steps.setup.outputs.type }}
     runs-on: ubuntu-latest
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@002fdce3c6a235733a90a27c80493a3241e56863 # v2.12.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
@@ -188,6 +193,11 @@ jobs:
       NX_PARALLEL: 1
       NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@002fdce3c6a235733a90a27c80493a3241e56863 # v2.12.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
@@ -244,6 +254,11 @@ jobs:
       NX_PARALLEL: 1
       NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@002fdce3c6a235733a90a27c80493a3241e56863 # v2.12.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
@@ -285,6 +300,11 @@ jobs:
       NX_PARALLEL: 1
       NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@002fdce3c6a235733a90a27c80493a3241e56863 # v2.12.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
@@ -331,6 +351,11 @@ jobs:
     outputs:
       docs_deployed: ${{ steps.deploy_to_staging.outcome }}
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@002fdce3c6a235733a90a27c80493a3241e56863 # v2.12.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
@@ -387,6 +412,11 @@ jobs:
     env:
       NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@002fdce3c6a235733a90a27c80493a3241e56863 # v2.12.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
         id: checkout
         if: matrix.framework != 'none'
@@ -422,6 +452,11 @@ jobs:
     env:
       NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@002fdce3c6a235733a90a27c80493a3241e56863 # v2.12.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
         id: checkout
         if: matrix.framework != 'none'
@@ -455,6 +490,11 @@ jobs:
       actions: read
       checks: write
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@002fdce3c6a235733a90a27c80493a3241e56863 # v2.12.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
