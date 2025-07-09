@@ -365,44 +365,47 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 dataRowIndex = 0;
             }
 
-            const currentRowData = clipboardData[index - indexOffset];
+            const currentRowData: (string | null)[] = clipboardData[index - indexOffset];
+
+            const selectionColIdx = columns.findIndex(isSpecialCol);
+            currentRowData.splice(selectionColIdx, 0, null);
 
             // otherwise we are not the first row, so copy
             updatedRowNodes.push(rowNode);
 
             const processCellFromClipboardFunc = this.gos.getCallback('processCellFromClipboard');
 
-            columns
-                .filter((c) => !isSpecialCol(c))
-                .forEach((column, idx) => {
-                    if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
-                        return;
-                    }
+            for (let idx = 0; idx < columns.length; idx++) {
+                const column = columns[idx];
 
-                    // repeat data for columns we don't have data for - happens when to range is bigger than copied data range
-                    if (idx >= currentRowData.length) {
-                        idx = idx % currentRowData.length;
-                    }
+                if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
+                    continue;
+                }
 
-                    const newValue = this.processCell(
-                        rowNode,
-                        column,
-                        currentRowData[idx],
-                        EXPORT_TYPE_DRAG_COPY,
-                        processCellFromClipboardFunc,
-                        true
-                    );
+                // repeat data for columns we don't have data for - happens when to range is bigger than copied data range
+                if (idx >= currentRowData.length) {
+                    idx = idx % currentRowData.length;
+                }
 
-                    rowNode.setDataValue(column, newValue, SOURCE_PASTE);
+                if (currentRowData[idx] === null) continue;
 
-                    if (changedPath) {
-                        changedPath.addParentNode(rowNode.parent, [column]);
-                    }
+                const newValue = this.processCell(
+                    rowNode,
+                    column,
+                    currentRowData[idx],
+                    EXPORT_TYPE_DRAG_COPY,
+                    processCellFromClipboardFunc,
+                    true
+                );
 
-                    const { rowIndex, rowPinned } = currentRow;
-                    const cellId = _createCellId({ rowIndex, column, rowPinned });
-                    cellsToFlash[cellId] = true;
-                });
+                rowNode.setDataValue(column, newValue, SOURCE_PASTE);
+
+                changedPath?.addParentNode(rowNode.parent, [column]);
+
+                const { rowIndex, rowPinned } = currentRow;
+                const cellId = _createCellId({ rowIndex, column, rowPinned });
+                cellsToFlash[cellId] = true;
+            }
 
             dataRowIndex++;
         };
