@@ -66,5 +66,4 @@ runs:
         IS_SUCCESS: ${{ !steps.last-failed-step.outputs.failed_step }}
       shell: bash
       run: |
-        echo "Is success value: '$IS_SUCCESS'"
         node ./scripts/ci/create-jira-ticket.mjs

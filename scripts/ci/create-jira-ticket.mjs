@@ -37,7 +37,7 @@ if (isSuccess) {
     await findExistingIssue(fingerprint).then(async (existingIssue) => {
         if (!existingIssue) {
             console.log('No existing issue found. Nothing to do...');
-            return;
+            process.exit(0);
         }
         console.log(`IS_SUCCESS is true, transitioning issue ${existingIssue.key} to QA...`);
         await transitionIssue(existingIssue, COLUMN_QA_ID);
