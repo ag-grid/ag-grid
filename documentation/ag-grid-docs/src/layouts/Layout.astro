@@ -10,9 +10,9 @@ import Plausible from '@components/Plausible.astro';
 import { Footer } from '@ag-website-shared/components/footer/Footer';
 import styles from '@layouts/Layout.module.scss';
 import { getApiPaths } from '@utils/apiMenuPath';
-import { SITE_BASE_URL } from '@constants';
+import { SITE_BASE_URL, PUBLIC_GTM_ID, PUBLIC_GTM_AUTH, PUBLIC_GTM_PREVIEW } from '@constants';
 import GoogleTagManager from '@components/GoogleTagManager.astro';
-import ZoomInfo from '@components/ZoomInfo.astro';
+import GoogleTagManagerBody from '@components/GoogleTagManagerBody.astro';
 
 interface Props {
     title: string;
@@ -105,9 +105,17 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
         <meta name="twitter:image" content={socialImage} />
 
         {
+            !isDev && (
+                <GoogleTagManager
+                    googleTagManagerId={PUBLIC_GTM_ID}
+                    googleTagManagerAuth={PUBLIC_GTM_AUTH}
+                    googleTagManagerPreview={PUBLIC_GTM_PREVIEW}
+                />
+            )
+        }
+        {
             isProduction && (
                 <Fragment>
-                    <GoogleTagManager googleTagManagerId={metadata.googleTagManagerId} />
                     <Plausible domain="ag-grid.com" />
 
                     <script async type="text/javascript" src="https://secure.inventiveinspired7.com/js/792251.js" />
@@ -117,8 +125,6 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
                 </Fragment>
             )
         }
-
-        {!isDev && <ZoomInfo />}
 
         {isStaging && <Plausible domain="grid-staging.ag-grid.com" />}
 
@@ -190,5 +196,15 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
             )
         }
         <DevTools client:only />
+
+        {
+            !isDev && (
+                <GoogleTagManagerBody
+                    googleTagManagerId={PUBLIC_GTM_ID}
+                    googleTagManagerAuth={PUBLIC_GTM_AUTH}
+                    googleTagManagerPreview={PUBLIC_GTM_PREVIEW}
+                />
+            )
+        }
     </body>
 </html>
