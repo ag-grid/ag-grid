@@ -1,5 +1,7 @@
 import type { Framework } from '@ag-grid-types';
+import { getExamplePageUrl } from '@components/docs/utils/urlPaths';
 import { type RenderableTreeNode } from '@markdoc/markdoc';
+import { getInternalFramework } from '@utils/framework';
 import fs from 'fs';
 import path from 'path';
 
@@ -16,14 +18,13 @@ export interface MarkdocToMarkdownOptions {
  */
 export function markdocToMarkdown(content: string, options: MarkdocToMarkdownOptions = {}): string {
     const { framework = 'react', baseUrl = 'https://ag-grid.com' } = options;
-
     try {
         const { ast } = transformMarkdoc({ framework, markdocContent: content });
-        console.log(JSON.stringify(ast, null, 2));
-        return astToMarkdown(ast, {
+        const result = astToMarkdown(ast, {
             framework,
             baseUrl,
         });
+        return result;
     } catch (error) {
         console.error('Error converting markdoc to markdown:', error);
         return content; // Return original content if conversion fails
@@ -129,10 +130,11 @@ function astNodeToMarkdown(node: any, options: MarkdocToMarkdownOptions, depth =
             const codeInlineReactProperties = node.attributes?.inlineReactProperties;
 
             // If it's inline code (no language and short content), render as inline
-            if (!language && codeContent.length < 50 && !codeContent.includes('\n')) {
+            if (!language && !codeContent.includes('\n')) {
                 return `\`${codeContent}\``;
             }
 
+            console.log(JSON.stringify(node, null, 2));
             // Apply framework transformation if enabled
             if (codeFrameworkTransform && codeContent.trim()) {
                 try {
@@ -142,7 +144,7 @@ function astNodeToMarkdown(node: any, options: MarkdocToMarkdownOptions, depth =
                         inlineReactProperties: codeInlineReactProperties,
                     };
                     const transformedContent = transformSnippet(codeContent, options.framework, transformOptions);
-                    return `\`\`\`${language}\n${transformedContent}\n\`\`\`\n\n`;
+                    return `\`\`\`${language}\n ${transformedContent}\n\`\`\`\n\n`;
                 } catch (error) {
                     console.error('Error transforming code snippet:', error);
                     // Fall back to original content if transformation fails
@@ -152,12 +154,13 @@ function astNodeToMarkdown(node: any, options: MarkdocToMarkdownOptions, depth =
             return `\`\`\`${language}\n${codeContent}\n\`\`\`\n\n`;
 
         case 'fence':
-            console.log(JSON.stringify(node, null, 2));
-            const fenceContent = node.children;
+            const fenceContent = node.attributes.content;
+            const fenceLanguage = node.attributes.language ?? '';
             const frameworkTransform = node.attributes?.frameworkTransform;
             const suppressFrameworkContext = node.attributes?.suppressFrameworkContext;
             const spaceBetweenProperties = node.attributes?.spaceBetweenProperties;
             const inlineReactProperties = node.attributes?.inlineReactProperties;
+            console.log(JSON.stringify(node, null, 2));
 
             // Apply framework transformation if enabled
             if (frameworkTransform && fenceContent.trim()) {
@@ -168,14 +171,14 @@ function astNodeToMarkdown(node: any, options: MarkdocToMarkdownOptions, depth =
                         inlineReactProperties,
                     };
                     const transformedContent = transformSnippet(fenceContent, options.framework, transformOptions);
-                    return `\`\`\`\n${transformedContent}\n\`\`\`\n\n`;
+                    return `\`\`\`\n ${transformedContent}\n\`\`\`\n\n`;
                 } catch (error) {
                     console.error('Error transforming snippet:', error);
                     // Fall back to original content if transformation fails
                 }
             }
 
-            return `\`\`\\n${fenceContent}\n\`\`\`\n\n`;
+            return `\`\`\`${fenceLanguage}\n${fenceContent}\n\`\`\`\n\n`;
 
         case 'link':
             const linkHref = node.attributes?.href || '';
@@ -222,12 +225,18 @@ function astNodeToMarkdown(node: any, options: MarkdocToMarkdownOptions, depth =
         case 'table':
             const tableContent =
                 node.children?.map((child: any) => astNodeToMarkdown(child, options, depth)).join('') || '';
+
             return `${tableContent}\n\n`;
+        case 'thead':
+            const theadContent =
+                node.children?.map((child: any) => astNodeToMarkdown(child, options, depth)).join('') || '';
+            const colCount = node.children[0]?.children?.length ?? 0;
+            return `${theadContent}|${'-|'.repeat(colCount)}\n`;
 
         case 'tr':
             const rowContent =
                 node.children?.map((child: any) => astNodeToMarkdown(child, options, depth)).join('') || '';
-            return `| ${rowContent} |\n`;
+            return `| ${rowContent} \n`;
 
         case 'td':
         case 'th':
@@ -346,8 +355,20 @@ function handleMarkdocAstTag(node: any, options: MarkdocToMarkdownOptions, depth
         case 'gridExampleRunner':
             const exampleTitle = attributes.title || 'Example';
             const exampleName = attributes.name || 'example';
-            const exampleUrl = `${baseUrl}/${framework}-data-grid/examples/${exampleName}`;
-            return `**${exampleTitle}**\n\n[View Example](${exampleUrl})\n\n`;
+
+            const jsInternalFramework = getInternalFramework({
+                framework: framework ?? 'javascript',
+                useTypescript: false,
+            });
+            const tsInternalFramework = getInternalFramework({
+                framework: framework ?? 'javascript',
+                useTypescript: true,
+            });
+
+            if (jsInternalFramework !== tsInternalFramework) {
+                return `${exampleTitle}: [Javascript Example](./examples/${exampleName}/${jsInternalFramework}/contents.json) [Typescript Example](./examples/${exampleName}/${tsInternalFramework}/contents.json)\n\n`;
+            }
+            return `View [${exampleTitle} Example](./examples/${exampleName}/${jsInternalFramework}/content.json)\n\n`;
 
         case 'apiDocumentation':
             return inlineApiDocumentation(attributes, options);
@@ -508,8 +529,22 @@ function handleMarkdocTag(node: any, options: MarkdocToMarkdownOptions, depth: n
         case 'gridExampleRunner':
             const exampleTitle = attributes.title || 'Example';
             const exampleName = attributes.name || 'example';
-            const exampleUrl = `${baseUrl}/${framework}-data-grid/examples/${exampleName}`;
-            return `**${exampleTitle}**\n\n[View Example](${exampleUrl})\n\n`;
+
+            const exampleUrl = getExamplePageUrl({ framework, path: exampleName });
+
+            const jsInternalFramework = getInternalFramework({
+                framework: framework ?? 'javascript',
+                useTypescript: false,
+            });
+            const tsInternalFramework = getInternalFramework({
+                framework: framework ?? 'javascript',
+                useTypescript: true,
+            });
+
+            if (jsInternalFramework !== tsInternalFramework) {
+                return `${exampleTitle}: [Javascript Example](${exampleUrl}/${jsInternalFramework}/contents.json) [Typescript Example](${exampleUrl}/${tsInternalFramework}/contents.json)\n\n`;
+            }
+            return `View [${exampleTitle} Example](${exampleUrl}/${jsInternalFramework}/content.json)\n\n`;
 
         case 'apiDocumentation':
             const apiUrl = `${baseUrl}/${framework}-data-grid/api-reference`;
@@ -657,8 +692,11 @@ function handleMarkdocNode(node: any, options: MarkdocToMarkdownOptions, depth: 
             const tableContent = renderChildren(children, options, depth);
             return `${tableContent}\n\n`;
 
+        case 'thead':
+            const colCount = children.length;
+            return `${renderChildren(children, options, depth)}|${'-|'.repeat(colCount)}`;
         case 'tr':
-            return `| ${renderChildren(children, options, depth)} |\n`;
+            return `| ${renderChildren(children, options, depth)} \n`;
 
         case 'td':
         case 'th':
