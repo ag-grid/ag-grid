@@ -23,7 +23,7 @@ export type EventOrDestroyed<TEventType extends string> = TEventType | BeanStubE
 
 type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
 
-type AgEventHandlers = { [K in AgEventType]?: (event: AgEventTypeParams[K]) => void };
+type AgOldEventHandlers = { [K in AgEventType]?: (event: AgEventTypeParams[K]) => void };
 
 export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     implements BaseBean<BeanCollection>, Bean, IEventEmitter<EventOrDestroyed<TEventType>>
@@ -110,7 +110,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     ) {
         return this._setupListeners<keyof HTMLElementEventMap>(object, handlers);
     }
-    public addManagedEventListeners(handlers: AgEventHandlers) {
+    public addManagedEventListeners(handlers: AgOldEventHandlers) {
         return this._setupListeners<AgEventType>(this.eventSvc, handlers);
     }
     public addManagedListeners<TEvent extends string>(

@@ -13,7 +13,7 @@ import {
 import { AgBeanStub } from './agBeanStub';
 import type { AgBeanStubEvent } from './agBeanStub';
 import type { AgBaseBean, AgContext, AgCoreBeanCollection } from './iContext';
-import type { AgPropertyKey, IPropertiesService } from './iProperties';
+import type { BaseProperties, BasePropertyDefaults, IPropertiesService } from './iProperties';
 
 let compIdSequence = 0;
 
@@ -31,69 +31,27 @@ export interface VisibleChangedEvent extends AgEvent<'displayChanged'> {
     visible: boolean;
 }
 
-export type AgComponentSelector<
+export type AgComponentSelectorParams<
     TComponent extends AgComponent<
-        TComponent,
-        TBeanName,
-        TBeanCollection,
-        TBean,
-        TContext,
-        TLocalEventListener,
-        TLocalEventType | AgComponentEvent,
-        TGlobalEventType,
-        TGlobalEventParams,
-        TProcessedEvents,
-        TProperties,
-        TPropertyDefaults,
-        TBooleanProperties,
-        TPropertiesEventSource,
-        TPropertiesEventType,
-        TPropertiesService,
-        TComponentSelectorType,
-        TComponentSelector
-    > &
-        TBean,
-    TBeanName extends string,
-    TBeanCollection extends AgCoreBeanCollection<
-        TPropertiesService,
-        TGlobalEventType,
-        TGlobalEventParams,
-        TProcessedEvents
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        TComponentSelectorType
     >,
-    TBean extends AgBaseBean<TBeanCollection>,
-    TContext extends AgContext<TBeanName, TBeanCollection>,
-    TLocalEventListener extends IEventListener<TLocalEventType>,
-    TLocalEventType extends string, // TODO move to end and add default
-    TGlobalEventType extends string,
-    TGlobalEventParams extends Record<TGlobalEventType, any>,
-    TProcessedEvents extends AgEvent,
-    TProperties,
-    TPropertyDefaults extends AgPropertyKey<TProperties>,
-    TBooleanProperties,
-    TPropertiesEventSource,
-    TPropertiesEventType extends string,
-    TPropertiesService extends IPropertiesService<TProperties, TPropertyDefaults>,
     TComponentSelectorType extends string,
-    TComponentSelector extends AgComponentSelector<
-        TComponent,
-        TBeanName,
-        TBeanCollection,
-        TBean,
-        TContext,
-        TLocalEventListener,
-        TLocalEventType,
-        TGlobalEventType,
-        TGlobalEventParams,
-        TProcessedEvents,
-        TProperties,
-        TPropertyDefaults,
-        TBooleanProperties,
-        TPropertiesEventSource,
-        TPropertiesEventType,
-        TPropertiesService,
-        TComponentSelectorType,
-        TComponentSelector
-    >,
 > = {
     component: { new (params?: any): TComponent };
     selector: TComponentSelectorType;
@@ -117,8 +75,7 @@ export abstract class AgComponent<
         TPropertiesEventSource,
         TPropertiesEventType,
         TPropertiesService,
-        TComponentSelectorType,
-        TComponentSelector
+        TComponentSelectorType
     > &
         TBean,
     TBeanName extends string,
@@ -135,33 +92,13 @@ export abstract class AgComponent<
     TGlobalEventType extends string,
     TGlobalEventParams extends Record<TGlobalEventType, any>,
     TProcessedEvents extends AgEvent,
-    TProperties,
-    TPropertyDefaults extends AgPropertyKey<TProperties>,
+    TProperties extends BaseProperties,
+    TPropertyDefaults extends BasePropertyDefaults,
     TBooleanProperties,
     TPropertiesEventSource,
     TPropertiesEventType extends string,
     TPropertiesService extends IPropertiesService<TProperties, TPropertyDefaults>,
     TComponentSelectorType extends string,
-    TComponentSelector extends AgComponentSelector<
-        TComponent,
-        TBeanName,
-        TBeanCollection,
-        TBean,
-        TContext,
-        TLocalEventListener,
-        TLocalEventType,
-        TGlobalEventType,
-        TGlobalEventParams,
-        TProcessedEvents,
-        TProperties,
-        TPropertyDefaults,
-        TBooleanProperties,
-        TPropertiesEventSource,
-        TPropertiesEventType,
-        TPropertiesService,
-        TComponentSelectorType,
-        TComponentSelector
-    >,
 > extends AgBeanStub<
     TBeanName,
     TBeanCollection,
@@ -180,7 +117,10 @@ export abstract class AgComponent<
     TPropertiesService
 > {
     private eGui: HTMLElement;
-    private componentSelectors: Map<TComponentSelectorType, TComponentSelector>;
+    private componentSelectors: Map<
+        TComponentSelectorType,
+        AgComponentSelectorParams<TComponent, TComponentSelectorType>
+    >;
     private suppressDataRefValidation: boolean = false;
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
@@ -202,7 +142,7 @@ export abstract class AgComponent<
 
     constructor(
         templateOrParams?: string | ElementParams<TComponentSelectorType>,
-        componentSelectors?: TComponentSelector[]
+        componentSelectors?: AgComponentSelectorParams<TComponent, TComponentSelectorType>[]
     ) {
         super();
 
@@ -353,9 +293,7 @@ export abstract class AgComponent<
     }
 
     protected activateTabIndex(elements?: Element[]): void {
-        const tabIndex = this.gos.get('tabIndex');
-
-        tabIndex?.toString();
+        const tabIndex = this.gos.get('tabIndex')!;
 
         if (!elements) {
             elements = [];
@@ -370,7 +308,7 @@ export abstract class AgComponent<
 
     public setTemplate(
         templateOrParams: ElementParams<TComponentSelectorType> | string | null | undefined,
-        componentSelectors?: TComponentSelector[],
+        componentSelectors?: AgComponentSelectorParams<TComponent, TComponentSelectorType>[],
         paramsMap?: { [key: string]: any }
     ): void {
         let eGui: HTMLElement;
@@ -385,7 +323,7 @@ export abstract class AgComponent<
 
     public setTemplateFromElement(
         element: HTMLElement,
-        components?: TComponentSelector[],
+        components?: AgComponentSelectorParams<TComponent, TComponentSelectorType>[],
         paramsMap?: { [key: string]: any },
         suppressDataRefValidation = false
     ): void {

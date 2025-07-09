@@ -3,18 +3,20 @@ import type { AgEventType } from '../../eventTypes';
 import type { AgEventListener, AgEventTypeParams, AllEventsWithoutGridCommon } from '../../events';
 import type { GRID_OPTION_DEFAULTS } from '../../gridOptionsDefault';
 import type { BooleanProps, GridOptionsService, PropertyChangedSource } from '../../gridOptionsService';
+import type { AgComponentSelector } from '../../widgets/component';
 import type { Bean } from '../bean';
 import type { BeanCollection, BeanName, Context } from '../context';
-import type { AgBeanStubEvent } from './agBeanStub';
-import { AgBeanStub } from './agBeanStub';
+import type { AgComponentEvent } from './agComponent';
+import { AgComponent } from './agComponent';
 
-export abstract class GridBeanStub<TEventType extends string = AgBeanStubEvent> extends AgBeanStub<
+export abstract class GridComponent<TLocalEvent extends string = AgComponentEvent> extends AgComponent<
+    GridComponent<any>,
     BeanName,
     BeanCollection,
     Bean,
     Context,
     AgEventListener<any, any, any>,
-    TEventType,
+    TLocalEvent,
     AgEventType,
     AgEventTypeParams,
     AllEventsWithoutGridCommon,
@@ -23,7 +25,8 @@ export abstract class GridBeanStub<TEventType extends string = AgBeanStubEvent> 
     BooleanProps,
     PropertyChangedSource,
     'gridPropertyChanged',
-    GridOptionsService
+    GridOptionsService,
+    AgComponentSelector
 > {
     protected override propertiesChangedEventType = 'gridPropertyChanged' as const;
 }

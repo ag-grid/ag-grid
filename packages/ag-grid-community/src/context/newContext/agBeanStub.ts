@@ -9,9 +9,10 @@ import type { IEventService } from './iEvent';
 import type {
     AgPropertyChangedEvent,
     AgPropertyChangedListener,
-    AgPropertyKey,
     AgPropertyValueChangedEvent,
     AgPropertyValueChangedListener,
+    BaseProperties,
+    BasePropertyDefaults,
     IPropertiesService,
 } from './iProperties';
 
@@ -30,13 +31,13 @@ export abstract class AgBeanStub<
         >,
         TBean extends AgBaseBean<TBeanCollection>,
         TContext extends AgContext<TBeanName, TBeanCollection>,
-        TLocalEventListener extends IEventListener<TLocalEventType>,
+        TLocalEventListener extends IEventListener<AgEventOrDestroyed<TLocalEventType>>,
         TLocalEventType extends string, // TODO move to end and add default
         TGlobalEventType extends string,
         TGlobalEventParams extends Record<TGlobalEventType, any>,
         TProcessedEvents extends AgEvent,
-        TProperties,
-        TPropertyDefaults extends AgPropertyKey<TProperties>,
+        TProperties extends BaseProperties,
+        TPropertyDefaults extends BasePropertyDefaults,
         TBooleanProperties,
         TPropertiesEventSource,
         TPropertiesEventType extends string,

@@ -4,7 +4,7 @@ import type { AgFrameworkOverrides } from '../../interfaces/iFrameworkOverrides'
 import type { ILocaleService } from '../../misc/locale/localeService';
 import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { IEventService } from './iEvent';
-import type { AgPropertyChangedListener, AgPropertyValueChangedListener } from './iProperties';
+import type { AgPropertyChangedListener, AgPropertyValueChangedListener, BaseProperties } from './iProperties';
 
 export interface AgCoreBeanCollection<
     TPropertiesService,
@@ -64,7 +64,7 @@ export interface AgBean<
     TLocalEventType extends string,
     TGlobalEventType extends string,
     TGlobalEventParams extends Record<TGlobalEventType, any>,
-    TProperties,
+    TProperties extends BaseProperties,
     TBooleanProperties,
     TPropertiesEventSource,
     TPropertiesEventType extends string,
