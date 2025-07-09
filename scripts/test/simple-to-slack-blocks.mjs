@@ -13,7 +13,7 @@ const previousCommitShaFile = process.env.COMMIT_SHA_FILE || './commit-sha.txt';
 const slackFile = process.env.SLACK_FILE || './slack.json';
 const lastFailedStep = process.env.LAST_FAILED_STEP || '';
 
-const jobUrl = `${repoUrl}/actions/runs/${jobID}`
+const jobUrl = `${repoUrl}/actions/runs/${jobID}`;
 
 let previousCommitSha = '';
 try {
@@ -21,7 +21,7 @@ try {
 } catch (error) {
     console.error(`Failed to read previous commit SHA from ${previousCommitShaFile}:`, error);
 }
-const headerTemplate = `${isSuccess ? '✅' : '❌'} AgGrid / ${slackLink(`${jobName} #${jobID}`, jobUrl)} run (on ${branchName}) ${isSuccess ? bold('is successful') : `${bold('failed')} at step ${inlineCode(lastFailedStep)}` }`;
+const headerTemplate = `${isSuccess ? '✅' : '❌'} AgGrid / ${slackLink(`${jobName} #${jobID}`, jobUrl)} run (on ${branchName}) ${isSuccess ? bold('is successful') : `${bold('failed')} at step ${inlineCode(lastFailedStep)}`}`;
 
 const blocks = [section(headerTemplate), getGitDiffLink()];
 const slackMsg = getSlackMessage(blocks);
@@ -61,9 +61,6 @@ function getGitDiffLink() {
     }
 
     return section(
-        slackLink(
-            'Git diff',
-            `${repoUrl}/compare/${previousCommitSha.slice(0, 7)}...${currentCommitSha.slice(0, 7)}`
-        )
+        slackLink('Git diff', `${repoUrl}/compare/${previousCommitSha.slice(0, 7)}...${currentCommitSha.slice(0, 7)}`)
     );
 }
