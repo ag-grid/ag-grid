@@ -36,6 +36,7 @@ env:
   PR_ID: ${{ inputs.force_pr_id || github.event.issue.number }}
   COMMENT_FILE: ./comment.md
   PW_REPORT_PATH: ./reports/playwright.json
+  CTRF_FILE: ./reports/performance.json
 
 permissions:
   contents: read
