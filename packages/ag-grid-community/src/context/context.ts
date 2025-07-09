@@ -26,7 +26,6 @@ import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeSer
 import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
-import type { EventService } from '../eventService';
 import type { AgGlobalEventListener } from '../events';
 import type { ColumnFilterService } from '../filter/columnFilterService';
 import type { FilterManager } from '../filter/filterManager';
@@ -115,6 +114,7 @@ import type { ValueService } from '../valueService/valueService';
 import type { PopupService } from '../widgets/popupService';
 import type { GenericContextParams, GenericSingletonBean } from './genericContext';
 import { GenericContext } from './genericContext';
+import type { IEventService } from './overrides';
 
 export interface ContextParams extends GenericContextParams<BeanName, BeanCollection> {
     gridId: string;
@@ -225,7 +225,7 @@ export interface CoreBeanCollection {
     environment: Environment;
     rowRenderer: RowRenderer;
     valueSvc: ValueService;
-    eventSvc: EventService;
+    eventSvc: IEventService;
     colModel: ColumnModel;
     colViewport: ColumnViewportService;
     colNames: ColumnNameService;

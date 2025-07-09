@@ -6,8 +6,8 @@ import {
     _mergeFilterParamsWithApplicationProvidedParams,
 } from '../components/framework/userCompUtils';
 import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
-import { GridBeanStub } from '../context/newContext/gridBeanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueGetterFunc } from '../entities/colDef';
 import type { BaseCellDataType, CoreDataTypeDefinition, DataTypeFormatValueFunc } from '../entities/dataType';
@@ -113,7 +113,7 @@ const DUMMY_HANDLER = {
 };
 
 export class ColumnFilterService
-    extends GridBeanStub<'filterParamsChanged' | 'filterStateChanged' | 'filterAction' | 'filterGlobalButtons'>
+    extends BeanStub<'filterParamsChanged' | 'filterStateChanged' | 'filterAction' | 'filterGlobalButtons'>
     implements NamedBean
 {
     beanName: BeanName = 'colFilter';
@@ -965,7 +965,7 @@ export class ColumnFilterService
         const providedFilterHandler = gos.get('enableFilterHandlers') ? getFilterHandlerFromDef(filterDef) : undefined;
 
         const resolveProvidedFilterHandler = (handlerName: FilterHandlerName) => () =>
-            this.createBean(registry.createDynamicBean<FilterHandler & GridBeanStub>(handlerName!, true)!);
+            this.createBean(registry.createDynamicBean<FilterHandler & BeanStub>(handlerName!, true)!);
 
         let filterHandler: CreateFilterHandlerFunc | undefined;
         let handlerName: FilterHandlerName | undefined;

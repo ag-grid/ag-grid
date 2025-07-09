@@ -6,7 +6,7 @@ type GlobalEventListener<TEventType extends string, TEventParams extends Record<
     event: TEventParams[TEventType]
 ) => void;
 
-export interface IEventService<
+export interface AgEventService<
     TEventType extends string,
     TEventParams extends Record<TEventType, any>,
     TProcessedEvents extends AgEvent,

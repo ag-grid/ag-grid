@@ -1,8 +1,8 @@
 import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { BeanCollection } from '../context/context';
+import type { IEventService } from '../context/overrides';
 import type { AgColumn } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
-import type { EventService } from '../eventService';
 import type { ColumnEvent, ColumnEventType, ColumnsResetEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
@@ -621,7 +621,7 @@ function normaliseColumnMovedEventForColumnState(
     colStateAfter: ColumnState[],
     source: ColumnEventType,
     colModel: ColumnModel,
-    eventSvc: EventService
+    eventSvc: IEventService
 ) {
     // we are only interested in columns that were both present and visible before and after
 

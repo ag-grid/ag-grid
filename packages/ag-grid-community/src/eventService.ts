@@ -1,12 +1,16 @@
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
+import type { IEventService } from './context/overrides';
 import type { AgEventType } from './eventTypes';
 import type { AgEventListener, AgGlobalEventListener, AllEventsWithoutGridCommon } from './events';
 import { _addGridCommonParams } from './gridOptionsUtils';
 import type { IEventEmitter } from './interfaces/iEventEmitter';
 import { LocalEventService } from './localEventService';
 
-export class EventService extends BeanStub<AgEventType> implements NamedBean, IEventEmitter<AgEventType> {
+export class EventService
+    extends BeanStub<AgEventType>
+    implements NamedBean, IEventEmitter<AgEventType>, IEventService
+{
     beanName = 'eventSvc' as const;
 
     private readonly globalSvc: LocalEventService<AgEventType> = new LocalEventService();

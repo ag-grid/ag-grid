@@ -1,4 +1,4 @@
-import type { BeanStub, ElementParams, IMenuActionParams, MenuItemDef, WithoutGridCommon } from 'ag-grid-community';
+import type { ElementParams, IMenuActionParams, MenuItemDef, WithoutGridCommon } from 'ag-grid-community';
 import {
     AgPromise,
     KeyCode,
@@ -216,7 +216,7 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
     }
 
     private closeIfIsChild(e?: KeyboardEvent): boolean {
-        const parentItem = this.getParentComponent() as BeanStub;
+        const parentItem = this.getParentComponent() as any;
 
         if (parentItem && parentItem instanceof AgMenuItemComponent) {
             if (e) {

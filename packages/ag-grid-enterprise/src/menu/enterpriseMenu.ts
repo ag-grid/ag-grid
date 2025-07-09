@@ -8,6 +8,7 @@ import type {
     ContainerType,
     DefaultMenuItem,
     IAfterGuiAttachedParams,
+    IEventEmitter,
     IMenuFactory,
     MenuItemDef,
     NamedBean,
@@ -298,7 +299,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         restoreFocusParams: MenuRestoreFocusParams,
         restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement
-    ): (EnterpriseColumnMenu & BeanStub<TabbedColumnMenuEvent | ComponentEvent>) | undefined {
+    ): (EnterpriseColumnMenu & IEventEmitter<TabbedColumnMenuEvent | ComponentEvent>) | undefined {
         if (_isLegacyMenuEnabled(this.gos)) {
             return this.createBean(
                 new TabbedColumnMenu(column, restoreFocusParams, this.lastSelectedTab, restrictToTabs, eventSource)

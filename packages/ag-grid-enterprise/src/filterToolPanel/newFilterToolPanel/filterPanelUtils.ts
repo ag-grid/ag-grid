@@ -1,5 +1,5 @@
 import { _removeFromParent, _translate } from 'ag-grid-community';
-import type { BeanStub } from 'ag-grid-community';
+import type { LocaleTextFunc } from 'ag-grid-community';
 
 const DEFAULT_LOCALE_TEXT = {
     addFilterCard: 'Add Filter',
@@ -14,7 +14,10 @@ const DEFAULT_LOCALE_TEXT = {
     addFilterPlaceholder: 'Search columns...',
 } as const;
 
-export function translateForFilterPanel(bean: BeanStub<any>, key: keyof typeof DEFAULT_LOCALE_TEXT): string {
+export function translateForFilterPanel(
+    bean: { getLocaleTextFunc(): LocaleTextFunc },
+    key: keyof typeof DEFAULT_LOCALE_TEXT
+): string {
     return _translate(bean, DEFAULT_LOCALE_TEXT, key);
 }
 

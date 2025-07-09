@@ -3,7 +3,7 @@ import type { IAgEventEmitter, IEventEmitter, IEventListener } from '../../inter
 import type { AgFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { ILocaleService } from '../../misc/locale/localeService';
 import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
-import type { IEventService } from './iEvent';
+import type { AgEventService } from './iEvent';
 import type { AgPropertyChangedListener, AgPropertyValueChangedListener, BaseProperties } from './iProperties';
 
 export interface AgCoreBeanCollection<
@@ -13,7 +13,7 @@ export interface AgCoreBeanCollection<
     TProcessedEvents extends AgEvent,
 > {
     context: any;
-    eventSvc: IEventService<TEventType, TEventParams, TProcessedEvents>;
+    eventSvc: AgEventService<TEventType, TEventParams, TProcessedEvents>;
     frameworkOverrides: AgFrameworkOverrides;
     gos: TPropertiesService;
     localeSvc?: ILocaleService;

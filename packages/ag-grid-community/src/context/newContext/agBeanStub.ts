@@ -5,7 +5,7 @@ import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
 import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import { _addSafePassiveEventListener } from '../../utils/event';
 import type { AgBaseBean, AgBean, AgContext, AgCoreBeanCollection } from './iContext';
-import type { IEventService } from './iEvent';
+import type { AgEventService } from './iEvent';
 import type {
     AgPropertyChangedEvent,
     AgPropertyChangedListener,
@@ -73,7 +73,7 @@ export abstract class AgBeanStub<
     public __v_skip = true;
 
     protected beans: TBeanCollection;
-    protected eventSvc: IEventService<TGlobalEventType, TGlobalEventParams, TProcessedEvents>;
+    protected eventSvc: AgEventService<TGlobalEventType, TGlobalEventParams, TProcessedEvents>;
     protected gos: TPropertiesService;
 
     public preWireBeans(beans: TBeanCollection): void {

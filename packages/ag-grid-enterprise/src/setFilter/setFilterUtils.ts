@@ -1,5 +1,5 @@
 import { _defaultComparator, _last, _makeNull, _toStringOrNull, _translate, _warn } from 'ag-grid-community';
-import type { BeanStub, ISetFilterParams } from 'ag-grid-community';
+import type { ISetFilterParams, LocaleTextFunc } from 'ag-grid-community';
 
 import type { SetFilterLocaleTextKey } from './localeText';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
@@ -27,7 +27,7 @@ export function processDataPath(
 }
 
 export function translateForSetFilter(
-    bean: BeanStub<any>,
+    bean: { getLocaleTextFunc(): LocaleTextFunc },
     key: SetFilterLocaleTextKey,
     variableValues?: string[]
 ): string {
