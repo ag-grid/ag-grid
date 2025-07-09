@@ -171,3 +171,12 @@ export const EXAMPLE_RANDOM_SEED = 'AG Grid Random Seed';
 export const TRIAL_LICENCE_FORM_URL = import.meta.env?.PUBLIC_TRIAL_LICENCE_FORM_URL;
 
 export const EXAMPLE_STYLE_FILE_NAME = 'ag-example-styles.css';
+
+export const ZI_FORM_ID = 'aad0527d-5af6-4263-8dcd-60f3ac998d5d';
+export type TrialLicenceFormType = 'emailOnly' | 'allFields' | 'original';
+export const DEFAULT_TRIAL_LICENSE_FORM: TrialLicenceFormType = 'allFields';
+
+// Google Tag Manager
+export const PUBLIC_GTM_ID = import.meta.env?.PUBLIC_GTM_ID;
+export const PUBLIC_GTM_AUTH = import.meta.env?.PUBLIC_GTM_AUTH;
+export const PUBLIC_GTM_PREVIEW = import.meta.env?.PUBLIC_GTM_PREVIEW;

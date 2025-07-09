@@ -1,14 +1,18 @@
 ---
 interface Props {
     googleTagManagerId: string;
+    googleTagManagerAuth: string;
+    googleTagManagerPreview: string;
 }
 
-const { googleTagManagerId } = Astro.props as Props;
+const { googleTagManagerId, googleTagManagerAuth, googleTagManagerPreview } = Astro.props as Props;
 ---
 
 <script
     define:vars={{
         googleTagManagerId,
+        googleTagManagerAuth,
+        googleTagManagerPreview,
     }}
 >
     (function (w, d, s, l, i) {
@@ -18,7 +22,11 @@ const { googleTagManagerId } = Astro.props as Props;
             j = d.createElement(s),
             dl = l != 'dataLayer' ? '&l=' + l : '';
         j.async = true;
-        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        j.src =
+            'https://www.googletagmanager.com/gtm.js?id=' +
+            i +
+            dl +
+            `&gtm_auth=${googleTagManagerAuth}&gtm_preview=${googleTagManagerPreview}&gtm_cookies_win=x`;
         f.parentNode.insertBefore(j, f);
     })(window, document, 'script', 'dataLayer', googleTagManagerId);
 </script>
