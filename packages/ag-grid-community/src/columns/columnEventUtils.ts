@@ -1,7 +1,7 @@
 import type { AgColumn } from '../entities/agColumn';
-import type { EventService } from '../eventService';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IEventService } from '../interfaces/iEventService';
 
 function getCommonValue<T>(cols: AgColumn[], valueGetter: (col: AgColumn) => T): T | undefined {
     if (!cols || cols.length == 0) {
@@ -21,7 +21,7 @@ function getCommonValue<T>(cols: AgColumn[], valueGetter: (col: AgColumn) => T):
 }
 
 export function dispatchColumnPinnedEvent(
-    eventSvc: EventService,
+    eventSvc: IEventService,
     changedColumns: AgColumn[],
     source: ColumnEventType
 ): void {
@@ -46,7 +46,7 @@ export function dispatchColumnPinnedEvent(
 }
 
 export function dispatchColumnVisibleEvent(
-    eventSvc: EventService,
+    eventSvc: IEventService,
     changedColumns: AgColumn[],
     source: ColumnEventType
 ): void {
@@ -71,7 +71,7 @@ export function dispatchColumnVisibleEvent(
 
 export function dispatchColumnChangedEvent<
     T extends 'columnValueChanged' | 'columnPivotChanged' | 'columnRowGroupChanged',
->(eventSvc: EventService, type: T, columns: AgColumn[], source: ColumnEventType): void {
+>(eventSvc: IEventService, type: T, columns: AgColumn[], source: ColumnEventType): void {
     eventSvc.dispatchEvent({
         type,
         columns,
@@ -81,7 +81,7 @@ export function dispatchColumnChangedEvent<
 }
 
 export function dispatchColumnResizedEvent(
-    eventSvc: EventService,
+    eventSvc: IEventService,
     columns: AgColumn[] | null,
     finished: boolean,
     source: ColumnEventType,

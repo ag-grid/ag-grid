@@ -26,7 +26,6 @@ import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeSer
 import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
-import type { EventService } from '../eventService';
 import type { AgGlobalEventListener } from '../events';
 import type { ColumnFilterService } from '../filter/columnFilterService';
 import type { FilterManager } from '../filter/filterManager';
@@ -52,6 +51,7 @@ import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import type { IEditModelService } from '../interfaces/iEditModelService';
 import type { IEditService } from '../interfaces/iEditService';
+import type { IEventService } from '../interfaces/iEventService';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
 import type { IExpansionService } from '../interfaces/iExpansionService';
 import type { IFindService } from '../interfaces/iFind';
@@ -225,7 +225,7 @@ export interface CoreBeanCollection {
     environment: Environment;
     rowRenderer: RowRenderer;
     valueSvc: ValueService;
-    eventSvc: EventService;
+    eventSvc: IEventService;
     colModel: ColumnModel;
     colViewport: ColumnViewportService;
     colNames: ColumnNameService;

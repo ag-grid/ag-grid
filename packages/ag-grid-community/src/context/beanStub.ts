@@ -1,7 +1,6 @@
 import type { GridOptions } from '../entities/gridOptions';
-import type { EventService } from '../eventService';
 import type { AgEventType } from '../eventTypes';
-import type { AgEvent, AgEventListener, AgEventTypeParams } from '../events';
+import type { AgEvent, AgEventTypeParams } from '../events';
 import type {
     GridOptionsService,
     PropertyChangedEvent,
@@ -9,7 +8,8 @@ import type {
     PropertyValueChangedEvent,
     PropertyValueChangedListener,
 } from '../gridOptionsService';
-import type { IAgEventEmitter, IEventEmitter } from '../interfaces/iEventEmitter';
+import type { IAgEventEmitter, IEventEmitter, IEventListener } from '../interfaces/iEventEmitter';
+import type { IEventService } from '../interfaces/iEventService';
 import { LocalEventService } from '../localEventService';
 import type { LocaleTextFunc } from '../misc/locale/localeUtils';
 import { _getLocaleTextFunc } from '../misc/locale/localeUtils';
@@ -39,7 +39,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     public __v_skip = true;
 
     protected beans: BeanCollection;
-    protected eventSvc: EventService;
+    protected eventSvc: IEventService;
     protected gos: GridOptionsService;
 
     public preWireBeans(beans: BeanCollection): void {
@@ -77,14 +77,8 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
         this.dispatchLocalEvent({ type: 'destroyed' } as { type: BeanStubEvent } as any);
     }
 
-    // The typing of AgEventListener<any, any, any> is not ideal, but it's the best we can do at the moment to enable
-    // eventSvc to have the best typing at the expense of BeanStub local events
     /** Add a local event listener against this BeanStub */
-    public addEventListener<T extends TEventType>(
-        eventType: T,
-        listener: AgEventListener<any, any, any>,
-        async?: boolean
-    ): void {
+    public addEventListener<T extends TEventType>(eventType: T, listener: IEventListener<T>, async?: boolean): void {
         if (!this.localEventService) {
             this.localEventService = new LocalEventService();
         }
@@ -92,11 +86,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     }
 
     /** Remove a local event listener from this BeanStub */
-    public removeEventListener<T extends TEventType>(
-        eventType: T,
-        listener: AgEventListener<any, any, any>,
-        async?: boolean
-    ): void {
+    public removeEventListener<T extends TEventType>(eventType: T, listener: IEventListener<T>, async?: boolean): void {
         this.localEventService?.removeEventListener(eventType, listener, async);
     }
 
@@ -114,14 +104,14 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
         return this._setupListeners<AgEventType>(this.eventSvc, handlers);
     }
     public addManagedListeners<TEvent extends string>(
-        object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent>,
+        object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | IEventService,
         handlers: EventHandlers<TEvent>
     ) {
         return this._setupListeners<TEvent>(object, handlers);
     }
 
     private _setupListeners<TEvent extends string>(
-        object: HTMLElement | IEventEmitter<TEvent> | IAgEventEmitter<TEvent>,
+        object: HTMLElement | IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | IEventService,
         handlers: EventHandlers<TEvent>
     ) {
         const destroyFuncs: (() => null)[] = [];
@@ -135,7 +125,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     }
 
     private _setupListener<const T extends string>(
-        object: Window | HTMLElement | IEventEmitter<T> | IAgEventEmitter<T>,
+        object: Window | HTMLElement | IEventEmitter<T> | IAgEventEmitter<T> | IEventService,
         event: T,
         listener: (event?: any) => void
     ): () => null {
@@ -154,6 +144,8 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
         } else {
             if (object instanceof HTMLElement) {
                 _addSafePassiveEventListener(this.beans.frameworkOverrides, object, event, listener);
+            } else if (isEventService(object)) {
+                object.addListener(event as AgEventType, listener);
             } else {
                 object.addEventListener(event, listener);
             }
@@ -311,7 +303,11 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
 
 // type guard for IAgEventEmitter
 function isAgEventEmitter<TEvent extends string>(
-    object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent>
+    object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | IEventService
 ): object is IAgEventEmitter<TEvent> {
     return (object as IAgEventEmitter<TEvent>).__addEventListener !== undefined;
+}
+
+function isEventService(object: any): object is IEventService {
+    return !!(object as IEventService).dispatchEventOnce;
 }

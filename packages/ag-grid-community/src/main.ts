@@ -766,7 +766,7 @@ export {
 } from './gridOptionsUtils';
 export type { GroupingApproach } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
-export type { EventService } from './eventService';
+export { IEventService } from './interfaces/iEventService';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
 export { SortedRowNode } from './sort/rowNodeSorter';
 export { SortOption } from './interfaces/iSortOption';
