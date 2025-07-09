@@ -44,6 +44,7 @@ runs:
         IS_SUCCESS: ${{ !steps.last-failed-step.outputs.failed_step }}
         LAST_FAILED_STEP: ${{ steps.last-failed-step.outputs.failed_step }}
       run: |
+        node ./scripts/ci/gen-jira-files.mjs        
         {
           echo 'JIRA_FINGERPRINT<<EOF'
           cat $JIRA_FINGERPRINT_FILE
