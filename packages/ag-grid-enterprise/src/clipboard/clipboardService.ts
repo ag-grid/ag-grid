@@ -31,6 +31,7 @@ import {
     _last,
     _removeFromArray,
     _warn,
+    isColumnSelectionCol,
     isSpecialCol,
 } from 'ag-grid-community';
 
@@ -353,6 +354,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             columns: AgColumn[],
             index: number
         ) => {
+            // remove the selection column (paste into selection is not supported)
+            const selectionColIdx = columns.findIndex(isColumnSelectionCol);
+            if (selectionColIdx !== -1) {
+                columns.splice(selectionColIdx, 1);
+            }
+
             const atEndOfClipboardData = index - indexOffset >= clipboardData.length;
 
             if (atEndOfClipboardData) {
@@ -365,12 +372,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 dataRowIndex = 0;
             }
 
-            const currentRowData: (string | null)[] = clipboardData[index - indexOffset];
-
-            const specialColIdx = columns.findIndex(isSpecialCol);
-            if (specialColIdx > -1) {
-                currentRowData.splice(specialColIdx, 0, null);
-            }
+            const currentRowData = clipboardData[index - indexOffset];
 
             // otherwise we are not the first row, so copy
             updatedRowNodes.push(rowNode);
@@ -379,29 +381,26 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
             for (let idx = 0; idx < columns.length; idx++) {
                 const column = columns[idx];
-
                 if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
                     continue;
                 }
 
                 // repeat data for columns we don't have data for - happens when to range is bigger than copied data range
+                let calculatedIdx = idx;
                 if (idx >= currentRowData.length) {
-                    idx = idx % currentRowData.length;
+                    calculatedIdx = idx % currentRowData.length;
                 }
-
-                if (currentRowData[idx] === null) continue;
 
                 const newValue = this.processCell(
                     rowNode,
                     column,
-                    currentRowData[idx],
+                    currentRowData[calculatedIdx],
                     EXPORT_TYPE_DRAG_COPY,
                     processCellFromClipboardFunc,
                     true
                 );
 
                 rowNode.setDataValue(column, newValue, SOURCE_PASTE);
-
                 changedPath?.addParentNode(rowNode.parent, [column]);
 
                 const { rowIndex, rowPinned } = currentRow;
