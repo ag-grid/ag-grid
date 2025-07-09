@@ -20,7 +20,7 @@ import type {
     IsRowValidDropPositionParams,
     RowDropZoneEvents,
     RowDropZoneParams,
-    ValidRowsDropPosition,
+    RowsDropPosition,
 } from './rowDragFeatureTypes';
 import type { InternalRowDropZoneParams, RowDragEventType, WritableRowNode } from './rowDragFeatureUtils';
 import {
@@ -218,7 +218,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
     }
 
-    private preventRowsDrop(rowsDrop: ValidRowsDropPosition): void {
+    private preventRowsDrop(rowsDrop: RowsDropPosition): void {
         if (rowsDrop.rows.length > 0 && this.gos.get('rowDragManaged')) {
             rowsDrop.rows = [];
         }
@@ -226,7 +226,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.makeGroupThrottleUpdate(rowsDrop.target);
     }
 
-    private makeRowsDrop(draggingEvent: DraggingEvent, y: number): ValidRowsDropPosition {
+    private makeRowsDrop(draggingEvent: DraggingEvent, y: number): RowsDropPosition {
         const { beans, clientSideRowModel } = this;
 
         const dragItem = draggingEvent.dragItem;
@@ -239,7 +239,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
         const target = clientSideRowModel.getRow(targetRowIndex) ?? null;
 
-        const rowsDrop: ValidRowsDropPosition = {
+        const rowsDrop: RowsDropPosition & IsRowValidDropPositionParams = {
             api: beans.gridApi,
             context: beans.gridOptions.context,
             rootNode: rootNode!,
@@ -258,7 +258,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return rowsDrop;
     }
 
-    private managedRowsDrop(draggingEvent: DraggingEvent, throttleMakeGroup: boolean): ValidRowsDropPosition {
+    private managedRowsDrop(draggingEvent: DraggingEvent, throttleMakeGroup: boolean): RowsDropPosition {
         const { beans, gos, clientSideRowModel } = this;
 
         const y = _getNormalisedMousePosition(beans, draggingEvent).y;
@@ -581,7 +581,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             overNode: overNode,
             y,
             vDirection: draggingEvent.vDirection,
-            rowsDrop: draggingEvent.rowsDrop ?? null,
+            rowsDrop: draggingEvent.rowsDrop,
         });
     }
 
@@ -649,11 +649,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     /** Drag and drop. Returns false if at least a row was moved, otherwise true */
-    private dropRows(rowsDrop: ValidRowsDropPosition): boolean {
+    private dropRows(rowsDrop: RowsDropPosition): boolean {
         return rowsDrop.sameGrid ? this.moveRows(rowsDrop) : this.addRows(rowsDrop);
     }
 
-    private addRows({ position, target, rows }: ValidRowsDropPosition): boolean {
+    private addRows({ position, target, rows }: RowsDropPosition): boolean {
         const getRowIdFunc = _getRowIdCallback(this.gos);
         const clientSideRowModel = this.clientSideRowModel;
 
@@ -674,7 +674,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return true;
     }
 
-    private moveRows({ rootNode, position, target, rows, newParent }: ValidRowsDropPosition): boolean {
+    private moveRows({ rootNode, position, target, rows, newParent }: RowsDropPosition): boolean {
         let changed = false;
 
         const leafs = new Set<WritableRowNode>();

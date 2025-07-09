@@ -28,11 +28,9 @@ export type IsRowValidDropPositionCallback<TData = any, TContext = any> = (
     params: IsRowValidDropPositionParams<TData, TContext>
 ) => IsRowValidDropPositionResult<TData> | null | boolean;
 
-export interface ValidRowsDropPosition<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** The root node that contains all row nodes */
+export interface RowsDropPosition<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The root node that contains all row nodes as children */
     rootNode: IRowNode<TData>;
-    /** The dragging event that originated this drop operation */
-    draggingEvent: DraggingEvent<TData, TContext> | null;
     /** True if this rows comes from the same grid, false if is coming from another grid */
     sameGrid: boolean;
     /** The source row node that was dragged, if any */
@@ -43,14 +41,16 @@ export interface ValidRowsDropPosition<TData = any, TContext = any> extends AgGr
     newParent: IRowNode<TData> | null;
     /** The rows that are being dropped */
     rows: IRowNode<TData>[];
-    /** This indicates whether `source` can be dropped or not */
+    /** This indicates whether `source` can be dropped as well, so if is part of the rows array */
     withSource: boolean;
     /** The position of the rows relative to the target row */
     position: DropIndicatorPosition;
 }
 
 export interface IsRowValidDropPositionParams<TData = any, TContext = any>
-    extends Exclude<ValidRowsDropPosition<TData, TContext>, 'withSource' | 'position'> {
+    extends Exclude<RowsDropPosition<TData, TContext>, 'withSource' | 'position'> {
+    /** The dragging event that originated this drop operation */
+    draggingEvent: DraggingEvent<TData, TContext> | null;
     /** The position of the rows relative to the target row */
     position: RowDropTargetPosition;
 }

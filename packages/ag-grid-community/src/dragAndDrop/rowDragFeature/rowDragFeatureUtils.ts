@@ -2,7 +2,7 @@ import type { RowNode } from '../../entities/rowNode';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { DraggingEvent } from '../dragAndDropService';
-import type { IsRowValidDropPositionResult, ValidRowsDropPosition } from './rowDragFeatureTypes';
+import type { IsRowValidDropPositionResult, RowsDropPosition } from './rowDragFeatureTypes';
 
 export interface WritableRowNode extends RowNode {
     treeParent: RowNode | null;
@@ -145,7 +145,7 @@ const rowParentWouldFormCycle = <TData>(row: IRowNode<TData>, newParent: IRowNod
     return false;
 };
 
-export const filterRowsToMove = (clientSideRowModel: IClientSideRowModel, rowsDrop: ValidRowsDropPosition): void => {
+export const filterRowsToMove = (clientSideRowModel: IClientSideRowModel, rowsDrop: RowsDropPosition): void => {
     const { newParent, rows, sameGrid, source } = rowsDrop;
     const rowsLen = rows.length;
     const filteredRows = new Array<IRowNode>(rowsLen);
@@ -246,10 +246,7 @@ export const reorderLeafChildren = (
     return orderChanged;
 };
 
-export const processRowsDropResult = (
-    rowsDrop: ValidRowsDropPosition,
-    result: IsRowValidDropPositionResult
-): boolean => {
+export const processRowsDropResult = (rowsDrop: RowsDropPosition, result: IsRowValidDropPositionResult): boolean => {
     // Custom result, override the default values
     if (result.newParent !== undefined) {
         rowsDrop.newParent = result.newParent;
@@ -261,7 +258,7 @@ export const processRowsDropResult = (
         rowsDrop.target = result.target;
     }
     if (result.position) {
-        (rowsDrop as ValidRowsDropPosition).position = result.position;
+        (rowsDrop as RowsDropPosition).position = result.position;
         return true; // Custom position
     }
     return false;

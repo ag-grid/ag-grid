@@ -15,7 +15,7 @@ import type { AgPromise } from '../utils/promise';
 import { _warn } from '../validation/logging';
 import type { IDragAndDropImageComponent } from './dragAndDropImageComponent';
 import type { DragListenerParams, DragService } from './dragService';
-import type { RowDropZoneParams, ValidRowsDropPosition } from './rowDragFeature/rowDragFeatureTypes';
+import type { RowDropZoneParams, RowsDropPosition } from './rowDragFeature/rowDragFeatureTypes';
 
 export enum DragSourceType {
     ToolPanel,
@@ -119,9 +119,9 @@ export interface DraggingEvent<TData = any, TContext = any> extends AgGridCommon
     hDirection: HorizontalDirection | null;
     dragSource: DragSource;
     dragItem: DragItem;
+    rowsDrop: RowsDropPosition | null;
     fromNudge: boolean;
     dropZoneTarget: HTMLElement;
-    rowsDrop: ValidRowsDropPosition | null;
 }
 
 export type DragAndDropIcon =
@@ -541,9 +541,9 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             hDirection,
             dragSource: dragSource!,
             fromNudge,
-            dragItem: dragItem as DragItem,
+            dragItem: dragItem as DragItem, // This is updated by rowDragFeature
             dropZoneTarget,
-            rowsDrop: null,
+            rowsDrop: null, // This is set by rowDragFeature
         });
     }
 
