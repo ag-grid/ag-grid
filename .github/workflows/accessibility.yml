@@ -56,7 +56,7 @@ jobs:
         id: matrix
         run: |
           accessiblity_count=30
-          e2e_accessiblity_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 ${accessiblity_count})
+          e2e_accessiblity_matrix=$(node ./scripts/ci/calculate-shards.js eval --ratio 1 ${accessiblity_count})
           echo "e2e_accessiblity_matrix=${e2e_accessiblity_matrix}" >> $GITHUB_OUTPUT
           echo "e2e_accessiblity_count=${accessiblity_count}" >> $GITHUB_OUTPUT
           echo "e2e accessiblity matrix determined to be: ${e2e_accessiblity_matrix}"

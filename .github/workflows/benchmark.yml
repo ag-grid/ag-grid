@@ -208,7 +208,7 @@ jobs:
           JIRA_FINGERPRINT_FILE: ${{ env.JIRA_FINGERPRINT_FILE }}
           JOB_URL: ${{ env.JOB_URL }}
         run: |
-          node ./scripts/test/convert-playwright-output-to-slack-msg.mjs
+          node ./scripts/ci/convert-playwright-output-to-slack-msg.mjs
           
           {
             echo 'JIRA_FINGERPRINT<<EOF'

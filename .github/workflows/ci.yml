@@ -134,7 +134,7 @@ jobs:
             count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
           fi
           
-          matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
+          matrix=$(node ./scripts/ci/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
           echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
           echo "test_count=${count}" >> $GITHUB_OUTPUT
           echo "Test matrix determined to be: ${matrix}"
@@ -154,7 +154,7 @@ jobs:
           # 3 is optimal atm for bundle tests
           bundle_count=3
           
-          bundle_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
+          bundle_matrix=$(node ./scripts/ci/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
           echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
           echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
           echo "bundle Test matrix determined to be: ${bundle_matrix}"
