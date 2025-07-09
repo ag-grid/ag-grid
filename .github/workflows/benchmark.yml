@@ -35,9 +35,7 @@ env:
   CI: true
   PR_ID: ${{ inputs.force_pr_id || github.event.issue.number }}
   COMMENT_FILE: ./comment.md
-  SLACK_FILE: ./slack.json
   PW_REPORT_PATH: ./reports/playwright
-  PREV_COMMIT_SHA_FILE: ./commit-sha.txt
 
 permissions:
   contents: read
@@ -215,45 +213,15 @@ jobs:
         with:
           JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
           JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' has detected a slowdown in grid performance"
-
-      - name: Get previous run commit SHA
-        id: prev-commit-sha
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ env.PREV_COMMIT_SHA_FILE }}
-          key: full-build-prev-commit
-
-      - name: Load files into environment
-        run: |
-          {
-            if [ -f ${{ env.PREV_COMMIT_SHA_FILE }} ]; then
-              echo 'PREV_COMMIT_SHA<<EOF'
-              cat ${{ env.PREV_COMMIT_SHA_FILE }}
-              echo 'EOF'
-            else
-              echo 'PREV_COMMIT_SHA_FILE not found'
-            fi
-          } >> $GITHUB_ENV
+          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
 
       - name: Slack Notification
         if: ${{ github.event_name == 'schedule' || inputs.notify }}
         continue-on-error: true
         uses: ./.github/actions/slack-integration
         with:
+          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
-          PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
-          CURRENT_COMMIT_SHA: ${{ github.sha }}
-
-      - name: Set commit SHA
-        id: set-commit-sha
-        run: |
-          echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
-
-      - name: Save Current Commit Hash
-        uses: actions/cache/save@v4
-        with:
-          key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
-          path: ${{ env.PREV_COMMIT_SHA_FILE }}
 
       - name: Final Notify Progress
         uses: actions/github-script@v7
@@ -263,8 +231,14 @@ jobs:
           COMMENT_ID: ${{ steps.notify-start.outputs.result }}
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
           COMMENT_FILE: ${{ env.COMMENT_FILE }}
+          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          JOB_ID: ${{ github.run_id }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          BRANCH_NAME: ${{ steps.get-branch.outputs.branch }}
         with:
           script: |
+            require('./scripts/ci/gen-gh-comment.mjs');
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const comment_id = process.env.COMMENT_ID;
