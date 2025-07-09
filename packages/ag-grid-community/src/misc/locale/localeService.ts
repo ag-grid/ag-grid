@@ -4,7 +4,11 @@ import type { GetLocaleTextParams } from '../../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { LocaleTextFunc } from './localeUtils';
 
-export class LocaleService extends BeanStub implements NamedBean {
+export interface ILocaleService {
+    getLocaleTextFunc(): LocaleTextFunc;
+}
+
+export class LocaleService extends BeanStub implements NamedBean, ILocaleService {
     beanName = 'localeSvc' as const;
 
     public override getLocaleTextFunc(): LocaleTextFunc {

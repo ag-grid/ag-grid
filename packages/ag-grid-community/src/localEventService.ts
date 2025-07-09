@@ -1,6 +1,6 @@
 import type { AgEvent } from './events';
 import type { IEventEmitter, IEventListener, IGlobalEventListener } from './interfaces/iEventEmitter';
-import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
+import type { AgFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 
 export class LocalEventService<TEventType extends string> implements IEventEmitter<TEventType> {
     private allSyncListeners = new Map<TEventType, Set<IEventListener<TEventType>>>();
@@ -9,7 +9,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
     private globalSyncListeners = new Set<IGlobalEventListener<TEventType>>();
     private globalAsyncListeners = new Set<IGlobalEventListener<TEventType>>();
 
-    private frameworkOverrides?: IFrameworkOverrides;
+    private frameworkOverrides?: AgFrameworkOverrides;
 
     private asyncFunctionsQueue: (() => void)[] = [];
     private scheduled = false;
@@ -17,7 +17,7 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
     // using an object performs better than a Set for the number of different events we have
     private firedEvents: { [key in TEventType]?: boolean } = {};
 
-    public setFrameworkOverrides(frameworkOverrides: IFrameworkOverrides): void {
+    public setFrameworkOverrides(frameworkOverrides: AgFrameworkOverrides): void {
         this.frameworkOverrides = frameworkOverrides;
     }
 

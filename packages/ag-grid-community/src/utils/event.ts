@@ -1,6 +1,6 @@
 import type { GridOptionsService } from '../gridOptionsService';
 import { _getDomData } from '../gridOptionsUtils';
-import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import type { AgFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 
 const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel', 'scroll'];
@@ -112,7 +112,7 @@ export function _getEventPath(event: Event | { target: EventTarget }): EventTarg
 }
 
 export function _addSafePassiveEventListener(
-    frameworkOverrides: IFrameworkOverrides,
+    frameworkOverrides: AgFrameworkOverrides,
     eElement: HTMLElement,
     event: string,
     listener: (event?: any) => void

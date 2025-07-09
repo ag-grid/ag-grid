@@ -35,7 +35,7 @@ type GetKeys<T, U> = {
  */
 type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 
-type BooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
+export type BooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
 type NoArgFuncs = KeysOfType<() => any>;
 type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
 type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any, any>) => any>, NoArgFuncs | AnyArgFuncs>;

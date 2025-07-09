@@ -472,7 +472,7 @@ export function _requestAnimationFrame(beans: BeanCollection, callback: any) {
 }
 
 export type Attributes = { [key: string]: string };
-type TagName = keyof HTMLElementTagNameMap | Lowercase<AgComponentSelector>;
+type TagName<SelectorType extends string> = keyof HTMLElementTagNameMap | Lowercase<SelectorType>;
 /** Type to help avoid typos, add new roles as required. */
 type RoleType =
     | 'button'
@@ -491,10 +491,10 @@ type RoleType =
     | 'tabpanel'
     | 'treeitem';
 
-export type ElementParams = {
+export type ElementParams<SelectorType extends string = AgComponentSelector> = {
     /** The tag name to use for the element, either browser tag or one of the AG Grid components such as ag-checkbox
      */
-    tag: TagName;
+    tag: TagName<SelectorType>;
     /** AG Grid data-ref attribute, should match a property on the class that uses the same name and is initialised with RefPlaceholder
      * @example
      * ref: 'eLabel'
@@ -536,7 +536,10 @@ function getWhitespaceNode() {
     whitespaceNode ??= document.createTextNode(' ');
     return whitespaceNode.cloneNode();
 }
-export function _createElement<T extends HTMLElement = HTMLElement>(params: ElementParams): T {
+export function _createElement<
+    T extends HTMLElement = HTMLElement,
+    TComponentSelector extends string = AgComponentSelector,
+>(params: ElementParams<TComponentSelector>): T {
     const { attrs, children, cls, ref, role, tag } = params;
     const element = document.createElement(tag);
 

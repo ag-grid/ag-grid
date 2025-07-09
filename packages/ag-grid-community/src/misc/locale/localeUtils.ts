@@ -1,4 +1,4 @@
-import type { LocaleService } from './localeService';
+import type { ILocaleService } from './localeService';
 
 export type LocaleTextFunc = (key: string, defaultValue: string, variableValues?: string[]) => string;
 
@@ -6,7 +6,7 @@ function defaultLocaleTextFunc(_key: string, defaultValue: string): string {
     return defaultValue;
 }
 
-export function _getLocaleTextFunc(localeSvc?: LocaleService): LocaleTextFunc {
+export function _getLocaleTextFunc(localeSvc?: ILocaleService): LocaleTextFunc {
     return localeSvc?.getLocaleTextFunc() ?? defaultLocaleTextFunc;
 }
 

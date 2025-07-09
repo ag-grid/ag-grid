@@ -4,9 +4,7 @@ import type { IFrameworkEventListenerService } from './iFrameworkEventListenerSe
 
 export type FrameworkOverridesIncomingSource = 'resize-observer' | 'ensureVisible' | 'popupPositioning';
 
-export interface IFrameworkOverrides {
-    setInterval(action: any, interval?: any): AgPromise<number>;
-
+export interface AgFrameworkOverrides {
     addEventListener(
         element: HTMLElement,
         type: string,
@@ -24,6 +22,10 @@ export interface IFrameworkOverrides {
      * again so that the user's code triggers change detection as normal. See wrapOutgoing() below.
      */
     wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T;
+}
+
+export interface IFrameworkOverrides extends AgFrameworkOverrides {
+    setInterval(action: any, interval?: any): AgPromise<number>;
 
     /**
      * This method is to cater for Angular's change detection.
