@@ -372,35 +372,37 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
             const processCellFromClipboardFunc = this.gos.getCallback('processCellFromClipboard');
 
-            columns.forEach((column, idx) => {
-                if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
-                    return;
-                }
+            columns
+                .filter((c) => !isSpecialCol(c))
+                .forEach((column, idx) => {
+                    if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
+                        return;
+                    }
 
-                // repeat data for columns we don't have data for - happens when to range is bigger than copied data range
-                if (idx >= currentRowData.length) {
-                    idx = idx % currentRowData.length;
-                }
+                    // repeat data for columns we don't have data for - happens when to range is bigger than copied data range
+                    if (idx >= currentRowData.length) {
+                        idx = idx % currentRowData.length;
+                    }
 
-                const newValue = this.processCell(
-                    rowNode,
-                    column,
-                    currentRowData[idx],
-                    EXPORT_TYPE_DRAG_COPY,
-                    processCellFromClipboardFunc,
-                    true
-                );
+                    const newValue = this.processCell(
+                        rowNode,
+                        column,
+                        currentRowData[idx],
+                        EXPORT_TYPE_DRAG_COPY,
+                        processCellFromClipboardFunc,
+                        true
+                    );
 
-                rowNode.setDataValue(column, newValue, SOURCE_PASTE);
+                    rowNode.setDataValue(column, newValue, SOURCE_PASTE);
 
-                if (changedPath) {
-                    changedPath.addParentNode(rowNode.parent, [column]);
-                }
+                    if (changedPath) {
+                        changedPath.addParentNode(rowNode.parent, [column]);
+                    }
 
-                const { rowIndex, rowPinned } = currentRow;
-                const cellId = _createCellId({ rowIndex, column, rowPinned });
-                cellsToFlash[cellId] = true;
-            });
+                    const { rowIndex, rowPinned } = currentRow;
+                    const cellId = _createCellId({ rowIndex, column, rowPinned });
+                    cellsToFlash[cellId] = true;
+                });
 
             dataRowIndex++;
         };
