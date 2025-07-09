@@ -66,7 +66,7 @@ export function parseCtrfReport(ctrfReportFile) {
         }
         return JSON.parse(rawReport);
     } catch (error) {
-        console.warn(`Failed to read CTRF report from ${ctrfReportFile}. Continuing without it.`, error);
+        console.warn(`Failed to read CTRF report from ${ctrfReportFile}. Continuing without it.`);
     }
 }
 function renderStat(statKey, parsedReport) {
