@@ -70,6 +70,7 @@ jobs:
         id: get-branch
         env:
           REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo PR_ID=$PR_ID
           echo github.event.issue.number=${{ github.event.issue.number }}
