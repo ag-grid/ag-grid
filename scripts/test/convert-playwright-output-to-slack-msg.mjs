@@ -15,7 +15,6 @@ const channel = process.env.SLACK_CHANNEL || ' ';
 const username = process.env.SLACK_USERNAME || ' ';
 const icon_url = process.env.SLACK_ICON || ' ';
 const slackFileName = process.env.SLACK_FILE || path.join(__root, 'slack.json');
-const snippetSlackFileName = process.env.SLACK_FILE_SNIPPET || path.join(__root, 'slack-snippet.md');
 const commentFileName = process.env.COMMENT_FILE || path.join(__root, 'comment.md');
 
 const jiraDescriptionFile = process.env.JIRA_DESCRIPTION_FILE || path.join(__root, 'jira-description.txt');
@@ -151,7 +150,6 @@ const textMessage = [linksText(mdLink), getTotalsText(report)]
     .join('\n');
 fs.writeFileSync(commentFileName, textMessage + '\n');
 fs.writeFileSync(slackFileName, JSON.stringify(slackMessage, null, 2) + '\n');
-fs.writeFileSync(snippetSlackFileName, getResultsString(calculatedTests.all, false, mdLink) + '\n');
 /**
  * Generates a unique fingerprint for the failed tests based on their titles and git hashes.
  * This fingerprint is used to deduplicate JIRA issues for the same regression.

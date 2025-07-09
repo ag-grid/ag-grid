@@ -36,7 +36,6 @@ env:
   PR_ID: ${{ inputs.force_pr_id || github.event.issue.number }}
   COMMENT_FILE: ./comment.md
   SLACK_FILE: ./slack.json
-  SLACK_FILE_SNIPPET: ./slack-snippet.md
   JIRA_DESCRIPTION_FILE: ./jira-description.txt
   JIRA_FINGERPRINT_FILE: ./jira-fingerprint.json
   DEFAULT_RETENTION_DAYS: 30
@@ -204,7 +203,6 @@ jobs:
           SLACK_USERNAME: 'ag-grid CI'
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
           SLACK_FILE: ${{ env.SLACK_FILE }}
-          SLACK_FILE_SNIPPET: ${{ env.SLACK_FILE_SNIPPET }}
           COMMENT_FILE: ${{ env.COMMENT_FILE }}
           JIRA_DESCRIPTION_FILE: ${{ env.JIRA_DESCRIPTION_FILE }}
           JIRA_FINGERPRINT_FILE: ${{ env.JIRA_FINGERPRINT_FILE }}
@@ -222,37 +220,6 @@ jobs:
             cat $JIRA_DESCRIPTION_FILE
             echo 'EOF'
           } >> $GITHUB_ENV
-
-      - name: Upload Snippet
-        id: upload-snippet
-        uses: actions/upload-artifact@v4
-        if: ${{ steps.prepare-messages.outcome == 'success' }}
-        with:
-          name: slack-snippet
-          path: ${{ env.SLACK_FILE_SNIPPET }}
-          retention-days: ${{ env.DEFAULT_RETENTION_DAYS }}
-
-      - name: Attach snippet
-        id: attach-snippet
-        if: ${{ steps.upload-snippet.outputs.artifact-url }}
-        env:
-          SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
-          JIRA_DESCRIPTION_FILE: ${{ env.JIRA_DESCRIPTION_FILE }}
-          SLACK_FILE: ${{ env.SLACK_FILE }}
-          COMMENT_FILE: ${{ env.COMMENT_FILE }}
-        run: |
-          node ./scripts/test/attach-snippet.mjs
-          echo 'JIRA_DESCRIPTION_FILE:'
-          cat $JIRA_DESCRIPTION_FILE
-          echo ':JIRA_DESCRIPTION_FILE'
-          {
-            echo 'JIRA_DESCRIPTION<<EOF'
-            cat $JIRA_DESCRIPTION_FILE
-            echo 'EOF'
-          } >> $GITHUB_ENV
-          echo 'SLACK_FILE:'
-          cat $SLACK_FILE
-          echo ':SLACK_FILE'
           {
             echo 'SLACK_MESSAGE_BLOCKS<<EOF'
             cat $SLACK_FILE

@@ -289,9 +289,6 @@ jobs:
             SLACK_USERNAME: 'ag-grid CI'
           run: |
             node ./scripts/test/ctrf-report-to-slack-blocks.mjs
-            echo 'SLACK_FILE:'
-            cat $SLACK_FILE
-            echo ':SLACK_FILE'
             {
               echo 'SLACK_MESSAGE_BLOCKS<<EOF'
               cat $SLACK_FILE
