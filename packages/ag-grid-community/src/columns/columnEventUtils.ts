@@ -1,4 +1,4 @@
-import type { IEventService } from '../context/overrides';
+import type { IEventService } from '../context/iEventService';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
