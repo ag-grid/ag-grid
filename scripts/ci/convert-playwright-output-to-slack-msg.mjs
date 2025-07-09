@@ -127,7 +127,6 @@ const linksText = (createLink) =>
     [
         process.env.IS_SUCCESS ? SUCCESS_STRING : FAILURE_STRING,
         createLink('Job link', process.env.JOB_URL ?? 'https://example.com'),
-        createLink('Benchmark report', process.env.REPORT_URL ?? 'https://example.com'),
     ].join(' | ');
 
 const slackMessage = getSlackMessage([section(linksText(slackLink)), DIVIDER, section(getTotalsText(report))]);

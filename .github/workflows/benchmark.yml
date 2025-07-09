@@ -184,20 +184,9 @@ jobs:
             npx playwright test -c ./testing/performance/playwright.config.ts -gv ".*cron.spec.ts" ./testing/performance/e2e
           fi
 
-      - name: Upload Benchmark Report
-        id: upload-report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
-
       - name: Prepare messages
         id: prepare-messages
-        if: ${{ steps.upload-report.outputs.artifact-url }}
         env:
-          REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
           SLACK_CHANNEL: '#ci-grid-gate'
           SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
           SLACK_USERNAME: 'ag-grid CI'

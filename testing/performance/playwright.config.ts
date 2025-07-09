@@ -22,8 +22,13 @@ const config = defineConfig({
 
     reporter: [
         ['list'],
-        ['html', { open: 'never' }], // generate HTML report, but don't open it automatically
-        ['json', { outputFile: '../../playwright-report/test-results.json' }], // JSON reporter for CI integration
+        [
+            'playwright-ctrf-json-reporter',
+            {
+                outputDir: '../../reports',
+                outputFile: 'ag-grid-bench.json',
+            },
+        ],
     ],
 
     /* Configure projects for major browsers */
