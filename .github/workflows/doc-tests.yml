@@ -1,12 +1,11 @@
 name: Doc Tests
-description: Testing of AG Grid Examples
+# Testing of AG Grid Examples
 
 env:
     NX_NO_CLOUD: true
     CI: true
     DEFAULT_RETENTION_DAYS: 30
-    COMMIT_SHA_FILE: ./commit-sha.txt
-    SLACK_FILE: ./slack.json
+    PREV_COMMIT_SHA_FILE: ./commit-sha.txt
     CTRF_FILE: ./ctrf-report.json
 on:
     workflow_dispatch:
@@ -271,41 +270,36 @@ jobs:
           id: prev-commit-sha
           uses: actions/cache/restore@v4
           with:
-            path: ${{ env.COMMIT_SHA_FILE }}
+            path: ${{ env.PREV_COMMIT_SHA_FILE }}
             key: doc-tests-prev-commit
 
-        - name: Convert ctrf output to Slack message blocks and write git sha
-          if: ${{ github.event_name == 'schedule' || inputs.notify }}
-          env:
-            CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
-            JOB_NAME: 'Documentation Tests'
-            JOB_ID: ${{ github.run_id }}
-            BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-            COMMIT_SHA: ${{ github.sha }}
-            COMMIT_SHA_FILE: ${{ env.COMMIT_SHA_FILE }}
-            REPO_URL: ${{ github.server_url }}/${{ github.repository }}
-            SLACK_CHANNEL: '#ci-grid-gate'
-            SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
-            SLACK_USERNAME: 'ag-grid CI'
+        - name: Load files into environment
           run: |
-            node ./scripts/ci/ctrf-report-to-slack-blocks.mjs
             {
-              echo 'SLACK_MESSAGE_BLOCKS<<EOF'
-              cat $SLACK_FILE
+              echo 'PREV_COMMIT_SHA<<EOF'
+              cat $PREV_COMMIT_SHA_FILE
               echo 'EOF'
             } >> $GITHUB_ENV
-            echo ${{ github.sha }} > ${{ env.COMMIT_SHA_FILE }}
 
         - name: Slack Notification
           if: ${{ github.event_name == 'schedule' || inputs.notify }}
           continue-on-error: true
           uses: ./.github/actions/slack-integration
           with:
+            CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
             SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
-            SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
+            WORKFLOW_NAME: 'Documentation Tests'
+            PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
+            CURRENT_COMMIT_SHA: ${{ github.sha }}
+
+        - name: Set commit SHA
+          if: ${{ steps.prev-commit-sha.outputs.cache-hit != 'true' }}
+          id: set-commit-sha
+          run: |
+            echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
 
         - name: Save this run commit SHA
           uses: actions/cache/save@v4
           with:
-            path: ${{ env.COMMIT_SHA_FILE }}
+            path: ${{ env.PREV_COMMIT_SHA_FILE }}
             key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
