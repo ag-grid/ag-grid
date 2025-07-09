@@ -44,15 +44,6 @@ runs:
         IS_SUCCESS: ${{ !steps.last-failed-step.outputs.failed_step }}
         LAST_FAILED_STEP: ${{ steps.last-failed-step.outputs.failed_step }}
       run: |
-        node ./scripts/ci/gen-jira-files.mjs
-        echo "Generated JIRA files:"
-        echo "---------------------"
-        echo "Description file: "
-        cat $JIRA_DESCRIPTION_FILE
-        echo "---------------------"
-        echo "Fingerprint file: "
-        cat $JIRA_FINGERPRINT_FILE
-        echo "---------------------"
         {
           echo 'JIRA_FINGERPRINT<<EOF'
           cat $JIRA_FINGERPRINT_FILE
@@ -73,4 +64,6 @@ runs:
         JIRA_SUMMARY: ${{ inputs.JIRA_SUMMARY }}
         IS_SUCCESS: ${{ !steps.last-failed-step.outputs.failed_step }}
       shell: bash
-      run: node ./scripts/ci/create-jira-ticket.mjs
+      run: |
+        echo "Is success value: '$IS_SUCCESS'"
+        node ./scripts/ci/create-jira-ticket.mjs

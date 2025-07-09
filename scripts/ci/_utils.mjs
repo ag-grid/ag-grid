@@ -42,8 +42,8 @@ export function getGitDiffLinks(repoUrl, currentCommitSha, previousCommitSha, co
         }
         links.add(getDiffUrl(previousCommitSha, currentCommitSha, repoUrl));
     }
-
-    return section([...links].map((url) => getGitDiffLink(url, section, link)).join('\n'));
+    const linksArr = [...links].map((url) => getGitDiffLink(url, (t) => t, link));
+    return section(linksArr.join('\n'));
 }
 
 export function getDiffUrl(controlHash, variantHash, repoUrl) {
