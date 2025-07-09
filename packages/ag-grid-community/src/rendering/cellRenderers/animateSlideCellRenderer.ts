@@ -1,7 +1,8 @@
+import { RefPlaceholder } from '../../context/newContext/agComponent';
 import type { ElementParams } from '../../utils/dom';
 import { _clearElement, _createElement } from '../../utils/dom';
 import { _exists, _missing } from '../../utils/generic';
-import { Component, RefPlaceholder } from '../../widgets/component';
+import { Component } from '../../widgets/component';
 import { animateSlideCellRendererCSS } from './animateSlideCellRenderer.css-GENERATED';
 import type { ICellRenderer } from './iCellRenderer';
 

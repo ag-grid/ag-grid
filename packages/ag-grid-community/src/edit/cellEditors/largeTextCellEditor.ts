@@ -1,10 +1,10 @@
 import { KeyCode } from '../../constants/keyCode';
+import { RefPlaceholder } from '../../context/newContext/agComponent';
 import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
 import type { AgInputTextArea } from '../../widgets/agInputTextArea';
 import { AgInputTextAreaSelector } from '../../widgets/agInputTextArea';
-import { RefPlaceholder } from '../../widgets/component';
 import type { ILargeTextEditorParams } from './iLargeTextCellEditor';
 
 const LargeTextCellElement: ElementParams = {

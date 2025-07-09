@@ -1,3 +1,4 @@
+import { RefPlaceholder } from '../../../context/newContext/agComponent';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _isBrowserSafari } from '../../../utils/browser';
@@ -6,7 +7,7 @@ import type { ElementParams } from '../../../utils/dom';
 import { _warn } from '../../../validation/logging';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
-import { Component, RefPlaceholder } from '../../../widgets/component';
+import { Component } from '../../../widgets/component';
 
 const DefaultDateElement: ElementParams = {
     tag: 'div',

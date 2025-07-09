@@ -1,3 +1,4 @@
+import { RefPlaceholder } from '../context/newContext/agComponent';
 import type { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import { GridBodySelector } from '../gridBodyComp/gridBodyComp';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
@@ -8,7 +9,6 @@ import type { ElementParams } from '../utils/dom';
 import { _isVisible } from '../utils/dom';
 import { _logIfDebug } from '../utils/function';
 import type { ComponentSelector } from '../widgets/component';
-import { RefPlaceholder } from '../widgets/component';
 import type { Component } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 import type { IGridComp, OptionalGridComponents } from './gridCtrl';

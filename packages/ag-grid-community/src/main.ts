@@ -58,7 +58,7 @@ export { IRenderStatusService } from './interfaces/renderStatusService';
 
 // components
 export { EmptyBean as _EmptyBean } from './components/emptyBean';
-export { ComponentSelector, AgComponentSelector, RefPlaceholder, ComponentEvent } from './widgets/component';
+export { ComponentSelector, AgComponentSelector, ComponentEvent } from './widgets/component';
 
 export type { Registry } from './components/framework/registry';
 export { UserCompDetails, ComponentType } from './interfaces/iUserCompDetails';
@@ -77,6 +77,7 @@ export { BeanStub } from './context/beanStub';
 export { Bean, NamedBean } from './context/bean';
 export type { Context } from './context/context';
 export { BeanName, SingletonBean, BeanCollection } from './context/context';
+export { VisibleChangedEvent, RefPlaceholder } from './context/newContext/agComponent';
 
 // excel
 export {
@@ -597,7 +598,7 @@ export { AgInputNumberField, AgInputNumberFieldSelector, AgInputNumberFieldParam
 export { AgInputDateField } from './widgets/agInputDateField';
 export { AgSelect, AgSelectParams, AgSelectSelector } from './widgets/agSelect';
 export { ListOption } from './widgets/agList';
-export { Component, VisibleChangedEvent } from './widgets/component';
+export { Component } from './widgets/component';
 export {
     ManagedFocusFeature,
     ManagedFocusCallbacks,

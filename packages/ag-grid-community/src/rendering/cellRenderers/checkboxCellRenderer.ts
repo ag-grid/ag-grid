@@ -1,12 +1,13 @@
 import { GROUP_AUTO_COLUMN_ID } from '../../columns/columnUtils';
 import { KeyCode } from '../../constants/keyCode';
+import { RefPlaceholder } from '../../context/newContext/agComponent';
 import { _getActiveDomElement } from '../../gridOptionsUtils';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
 import type { ElementParams } from '../../utils/dom';
 import { _stopPropagationForAgGrid } from '../../utils/event';
 import type { AgCheckbox } from '../../widgets/agCheckbox';
 import { AgCheckboxSelector } from '../../widgets/agCheckbox';
-import { Component, RefPlaceholder } from '../../widgets/component';
+import { Component } from '../../widgets/component';
 import { checkboxCellRendererCSS } from './checkboxCellRenderer.css-GENERATED';
 import type { ICellRenderer, ICellRendererParams } from './iCellRenderer';
 

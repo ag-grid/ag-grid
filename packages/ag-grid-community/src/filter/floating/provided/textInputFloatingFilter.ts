@@ -1,8 +1,8 @@
 import { KeyCode } from '../../../constants/keyCode';
+import { RefPlaceholder } from '../../../context/newContext/agComponent';
 import type { ElementParams } from '../../../utils/dom';
 import { _clearElement } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
-import { RefPlaceholder } from '../../../widgets/component';
 import type { NumberFilterModel } from '../../provided/number/iNumberFilter';
 import { _isUseApplyButton, getDebounceMs } from '../../provided/providedFilterUtils';
 import type {

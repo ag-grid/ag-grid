@@ -1,6 +1,6 @@
 import type { AgEvent } from '../../events';
 import type { IEventListener } from '../../interfaces/iEventEmitter';
-import { CssClassManager } from '../../main';
+import { CssClassManager } from '../../rendering/cssClassManager';
 import type { ElementParams } from '../../utils/dom';
 import {
     DataRefAttribute,
@@ -24,6 +24,7 @@ let compIdSequence = 0;
  * The value is `null` so that it can be identified in the component and distinguished from just missing with undefined.
  * The `null` value also allows for existing falsy checks to work as expected when code can be run before the template is setup.
  */
+
 export const RefPlaceholder: any = null;
 
 export type AgComponentEvent = 'displayChanged' | AgBeanStubEvent;

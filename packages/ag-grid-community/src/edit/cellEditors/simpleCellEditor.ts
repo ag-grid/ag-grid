@@ -1,9 +1,9 @@
 import { KeyCode } from '../../constants/keyCode';
+import { RefPlaceholder } from '../../context/newContext/agComponent';
 import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isBrowserSafari } from '../../utils/browser';
 import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
-import { RefPlaceholder } from '../../widgets/component';
 import type { CellEditorInput } from './iCellEditorInput';
 
 export class SimpleCellEditor<

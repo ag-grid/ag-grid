@@ -1,6 +1,7 @@
 import { _getInnerHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { BeanCollection } from '../../../context/context';
+import { RefPlaceholder } from '../../../context/newContext/agComponent';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnGroup } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
@@ -13,7 +14,7 @@ import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _toString } from '../../../utils/string';
 import { _warn } from '../../../validation/logging';
-import { Component, RefPlaceholder } from '../../../widgets/component';
+import { Component } from '../../../widgets/component';
 
 export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column group the header is for. */

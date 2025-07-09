@@ -1,5 +1,6 @@
 import { KeyCode } from '../../constants/keyCode';
 import type { BeanCollection } from '../../context/context';
+import { RefPlaceholder } from '../../context/newContext/agComponent';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { ElementParams } from '../../utils/dom';
@@ -10,7 +11,6 @@ import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
 import type { ListOption } from '../../widgets/agList';
 import type { AgSelect } from '../../widgets/agSelect';
 import { AgSelectSelector } from '../../widgets/agSelect';
-import { RefPlaceholder } from '../../widgets/component';
 import type { ISelectCellEditorParams } from './iSelectCellEditor';
 
 interface SelectCellEditorParams<TData = any, TValue = any, TContext = any>

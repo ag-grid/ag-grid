@@ -1,3 +1,4 @@
+import { RefPlaceholder } from '../context/newContext/agComponent';
 import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
@@ -8,7 +9,7 @@ import type { ElementParams } from '../utils/dom';
 import { _stopPropagationForAgGrid } from '../utils/event';
 import type { AgCheckbox } from '../widgets/agCheckbox';
 import { AgCheckboxSelector } from '../widgets/agCheckbox';
-import { Component, RefPlaceholder } from '../widgets/component';
+import { Component } from '../widgets/component';
 
 const CheckboxSelectionComponentElement: ElementParams = {
     tag: 'div',

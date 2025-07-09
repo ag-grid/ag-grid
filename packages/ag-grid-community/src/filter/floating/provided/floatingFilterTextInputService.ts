@@ -1,7 +1,7 @@
 import { BeanStub } from '../../../context/beanStub';
+import { RefPlaceholder } from '../../../context/newContext/agComponent';
 import type { AgInputTextFieldParams } from '../../../widgets/agInputTextField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { RefPlaceholder } from '../../../widgets/component';
 import type { FloatingFilterInputService } from './iFloatingFilterInputService';
 
 export class FloatingFilterTextInputService extends BeanStub implements FloatingFilterInputService {

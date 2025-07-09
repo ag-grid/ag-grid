@@ -1,3 +1,4 @@
+import { RefPlaceholder } from '../context/newContext/agComponent';
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
 import { GridHeaderSelector } from '../headerRendering/gridHeaderComp';
 import { LayoutCssClasses } from '../styling/layoutFeature';
@@ -5,7 +6,7 @@ import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRole, _setAriaRowCou
 import type { ElementParams } from '../utils/dom';
 import { _observeResize } from '../utils/dom';
 import type { ComponentSelector } from '../widgets/component';
-import { Component, RefPlaceholder } from '../widgets/component';
+import { Component } from '../widgets/component';
 import { FakeHScrollSelector } from './fakeHScrollComp';
 import { FakeVScrollSelector } from './fakeVScrollComp';
 import type { IGridBodyComp, RowAnimationCssClasses } from './gridBodyCtrl';

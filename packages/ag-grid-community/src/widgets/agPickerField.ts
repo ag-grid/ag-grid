@@ -1,4 +1,5 @@
 import { KeyCode } from '../constants/keyCode';
+import { RefPlaceholder } from '../context/newContext/agComponent';
 import { _isNothingFocused } from '../gridOptionsUtils';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
@@ -10,7 +11,6 @@ import type { AgAbstractFieldEvent } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
 import { agPickerFieldCSS } from './agPickerField.css-GENERATED';
 import type { Component } from './component';
-import { RefPlaceholder } from './component';
 import type { AddPopupParams } from './popupService';
 
 export type AgPickerFieldEvent = AgAbstractFieldEvent | 'pickerHidden';

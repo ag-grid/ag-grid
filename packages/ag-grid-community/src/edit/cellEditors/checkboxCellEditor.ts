@@ -1,10 +1,10 @@
+import { RefPlaceholder } from '../../context/newContext/agComponent';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _getAriaCheckboxStateName } from '../../utils/aria';
 import type { ElementParams } from '../../utils/dom';
 import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
 import type { AgCheckbox } from '../../widgets/agCheckbox';
 import { AgCheckboxSelector } from '../../widgets/agCheckbox';
-import { RefPlaceholder } from '../../widgets/component';
 
 const CheckboxCellEditorElement: ElementParams = {
     tag: 'div',

@@ -1,3 +1,4 @@
+import { RefPlaceholder } from '../../../context/newContext/agComponent';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
@@ -6,7 +7,6 @@ import { _setDisplayed } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
-import { RefPlaceholder } from '../../../widgets/component';
 import type { FloatingFilterDisplayParams, IFloatingFilterParams } from '../../floating/floatingFilter';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import type { ISimpleFilterModel } from '../iSimpleFilter';

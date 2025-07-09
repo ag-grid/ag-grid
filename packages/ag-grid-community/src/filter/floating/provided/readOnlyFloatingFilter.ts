@@ -1,9 +1,10 @@
+import { RefPlaceholder } from '../../../context/newContext/agComponent';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { IFilter } from '../../../interfaces/iFilter';
 import type { ElementParams } from '../../../utils/dom';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
-import { Component, RefPlaceholder } from '../../../widgets/component';
+import { Component } from '../../../widgets/component';
 import type {
     FloatingFilterDisplayParams,
     IFloatingFilterComp,
