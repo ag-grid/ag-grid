@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-const rawReportFile = process.env.CTRF_REPORT_FILE || '';
+const rawReportFile = process.env.CTRF_REPORT_FILE || './ctrf-report.json';
 const jobID = process.env.JOB_ID || '';
 const jobName = process.env.JOB_NAME || '';
 const repoUrl = process.env.REPO_URL || '';
@@ -11,21 +11,6 @@ const icon_url = process.env.SLACK_ICON || '';
 const currentCommitSha = process.env.COMMIT_SHA || '';
 const previousCommitShaFile = process.env.COMMIT_SHA_FILE || './commit-sha.txt';
 const slackFile = process.env.SLACK_FILE || './slack.json';
-
-console.log('Using environment variables:', {
-    cwd: process.cwd(),
-    rawReportFile,
-    jobID,
-    jobName,
-    repoUrl,
-    branchName,
-    channel,
-    username,
-    icon_url,
-    currentCommitSha,
-    previousCommitShaFile,
-    slackFile,
-});
 
 const jobUrl = `${repoUrl}/actions/runs/${jobID}`;
 

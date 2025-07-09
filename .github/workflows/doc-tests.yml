@@ -246,6 +246,10 @@ jobs:
         - test-vue3
       runs-on: ubuntu-latest
       steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+
         - name: Download all test reports
           uses: actions/download-artifact@v4
           with:
@@ -261,10 +265,6 @@ jobs:
             flaky-report: true
             skipped-report: true
             write-ctrf-to-file: ${{ env.CTRF_FILE }}
-
-        - uses: actions/checkout@v4
-          with:
-            fetch-depth: 1
 
         - name: Get previous run commit SHA
           if: ${{ github.event_name == 'schedule' || inputs.notify }}
