@@ -48,7 +48,6 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ValidationModule: 69.88,
     ValueCacheModule: 0.65,
     CellSpanModule: 8.08,
-    TestingModule: 11.54,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 217.72,
@@ -72,7 +71,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     PivotModule: 93.6,
     RangeSelectionModule: 53,
     RichSelectModule: 116.59,
-    RowNumbersModule: 30,
+    RowNumbersModule: 29,
     RowGroupingModule: 79.85,
     RowGroupingPanelModule: 71,
     ServerSideRowModelApiModule: 19,
@@ -135,7 +134,7 @@ const commonFeatureSets: ModuleTest[] = [
 //     },
 // ];
 
-export const baseModule = { modules: [], expectedSize: 502 };
+export const baseModule = { modules: [], expectedSize: 490.37 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,

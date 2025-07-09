@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "angular-19": {
+        "angular": {
             "projectType": "application",
             "schematics": {},
             "root": "",
@@ -13,9 +13,9 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:application",
                     "options": {
-                        "sourceMap": true,
+                        "sourceMap": false,
                         "namedChunks": true,
-                        "outputPath": "dist/angular-19",
+                        "outputPath": "dist/angular",
                         "index": "src/index.html",
                         "browser": "src/main.ts",
                         "polyfills": ["zone.js"],
@@ -26,23 +26,7 @@
                     },
                     "configurations": {
                         "production": {
-                            "budgets": [
-                                {
-                                    "type": "initial",
-                                    "maximumWarning": "250kB",
-                                    "maximumError": "500kB"
-                                },
-                                {
-                                    "type": "anyScript",
-                                    "maximumError": "850kB"
-                                },
-                                {
-                                    "type": "anyComponentStyle",
-                                    "maximumWarning": "4kB",
-                                    "maximumError": "8kB"
-                                }
-                            ],
-                            "outputHashing": "all"
+                            "outputHashing": "none"
                         },
                         "development": {
                             "optimization": false,
@@ -56,10 +40,10 @@
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "configurations": {
                         "production": {
-                            "buildTarget": "angular-19:build:production"
+                            "buildTarget": "angular:build:production"
                         },
                         "development": {
-                            "buildTarget": "angular-19:build:development"
+                            "buildTarget": "angular:build:development"
                         }
                     },
                     "defaultConfiguration": "development"

@@ -1,0 +1,81 @@
+[
+  {
+    "modules": [],
+    "selfSize": 615.57,
+    "fileSize": 615.57,
+    "gzipSize": 173.14,
+    "expectedSize": 490.37
+  },
+  {
+    "modules": [
+      "DateFilterModule"
+    ],
+    "selfSize": 126.6,
+    "fileSize": 742.17,
+    "gzipSize": 208.31,
+    "expectedSize": 126.13
+  },
+  {
+    "modules": [
+      "DragAndDropModule"
+    ],
+    "selfSize": 0.89,
+    "fileSize": 616.46,
+    "gzipSize": 173.47,
+    "expectedSize": 1
+  },
+  {
+    "modules": [
+      "EventApiModule"
+    ],
+    "selfSize": 2.17,
+    "fileSize": 617.74,
+    "gzipSize": 173.67,
+    "expectedSize": 2.64
+  },
+  {
+    "modules": [
+      "ExternalFilterModule"
+    ],
+    "selfSize": 12.67,
+    "fileSize": 628.24,
+    "gzipSize": 175.96,
+    "expectedSize": 12.67
+  },
+  {
+    "modules": [
+      "GridStateModule"
+    ],
+    "selfSize": 14.39,
+    "fileSize": 629.96,
+    "gzipSize": 177.17,
+    "expectedSize": 14.7
+  },
+  {
+    "modules": [
+      "HighlightChangesModule"
+    ],
+    "selfSize": 5.28,
+    "fileSize": 620.85,
+    "gzipSize": 174.7,
+    "expectedSize": 5.09
+  },
+  {
+    "modules": [
+      "InfiniteRowModelModule"
+    ],
+    "selfSize": 17.57,
+    "fileSize": 633.14,
+    "gzipSize": 177.92,
+    "expectedSize": 18
+  },
+  {
+    "modules": [
+      "LargeTextEditorModule"
+    ],
+    "selfSize": 58.44,
+    "fileSize": 674.01,
+    "gzipSize": 189.58,
+    "expectedSize": 60.96
+  }
+]

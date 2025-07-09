@@ -5,12 +5,15 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "test:e2e": "ng build",
+    "build-app": "ng build",
     "watch": "ng build --watch --configuration development",
-    "analyze": "ng build && source-map-explorer dist/angular-19/**/*.js"
+    "analyze": "ng build && source-map-explorer dist/angular/**/*.js",
+    "module-combinations": "ts-node moduleCombinations.ts",
+    "module-stats": "ts-node moduleCombinations.ts && npm run module-validate",
+    "module-validate": "ts-node moduleValidator.ts",
+    "test:e2e": "run-s \"module-combinations -- {1}\" module-validate --"
   },
   "private": true,
-  "type": "module",
   "dependencies": {
     "@angular/animations": "^19.0.0",
     "@angular/common": "^19.0.0",
@@ -25,6 +28,7 @@
     "ag-grid-enterprise": "34.0.1",
     "ag-charts-community": "12.0.1",
     "ag-charts-enterprise": "12.0.1",
+    "ag-shared": "0.0.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
@@ -33,7 +37,10 @@
     "@angular-devkit/build-angular": "^19.2.15",
     "@angular/cli": "^19.0.0",
     "@angular/compiler-cli": "^19.0.0",
+    "glob": "^11.0.0",
+    "globals": "^15.9.0",
     "source-map-explorer": "2.5.3",
-    "typescript": "~5.6.2"
+    "typescript": "~5.6.2",
+    "npm-run-all": "4.1.5"
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { baseModule, moduleCombinations } from './moduleDefinitions';
 
 const fs = require('fs');
@@ -36,7 +37,7 @@ moduleCombinationsToProcess.unshift(baseModule);
 // --- Add timing ---
 const startTime = Date.now();
 
-function runCombination(index) {
+function runCombination(index: number) {
     if (index >= moduleCombinationsToProcess.length) {
         // Save results to a JSON file
         fs.writeFileSync('module-size-results.json', JSON.stringify(results, null, 2));
@@ -46,13 +47,13 @@ function runCombination(index) {
 
         // Run the command with no modules to clear the app.tsx file
         const clearCommand = `ts-node ${updateModulesScript} ${[].join(' ')}`;
-        exec(clearCommand, (err, stdout, stderr) => {
+        exec(clearCommand, (err: any, stdout: any, stderr: any) => {
             if (err) {
                 console.error(`Error clearing App.tsx}:`, err);
                 return;
             }
-            // console.log(stdout);
-            // console.error(stderr);
+            console.log(stdout);
+            console.error(stderr);
         });
 
         return;
@@ -61,7 +62,7 @@ function runCombination(index) {
     const { modules, expectedSize } = moduleCombinationsToProcess[index];
     const command = `ts-node ${updateModulesScript} ${modules.join(' ')}`;
 
-    exec(command, (err, stdout, stderr) => {
+    exec(command, (err: any, stdout: any, stderr: any) => {
         if (err) {
             console.error(`Error running combination ${modules.join(', ')}:`, err);
             return;
