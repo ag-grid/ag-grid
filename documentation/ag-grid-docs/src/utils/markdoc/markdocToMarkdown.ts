@@ -134,7 +134,6 @@ function astNodeToMarkdown(node: any, options: MarkdocToMarkdownOptions, depth =
                 return `\`${codeContent}\``;
             }
 
-            console.log(JSON.stringify(node, null, 2));
             // Apply framework transformation if enabled
             if (codeFrameworkTransform && codeContent.trim()) {
                 try {
@@ -160,7 +159,6 @@ function astNodeToMarkdown(node: any, options: MarkdocToMarkdownOptions, depth =
             const suppressFrameworkContext = node.attributes?.suppressFrameworkContext;
             const spaceBetweenProperties = node.attributes?.spaceBetweenProperties;
             const inlineReactProperties = node.attributes?.inlineReactProperties;
-            console.log(JSON.stringify(node, null, 2));
 
             // Apply framework transformation if enabled
             if (frameworkTransform && fenceContent.trim()) {
