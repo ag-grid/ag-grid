@@ -266,7 +266,6 @@ jobs:
             write-ctrf-to-file: ${{ env.CTRF_FILE }}
 
         - name: Get previous run commit SHA
-          if: ${{ github.event_name == 'schedule' || inputs.notify }}
           id: prev-commit-sha
           uses: actions/cache/restore@v4
           with:
@@ -276,9 +275,13 @@ jobs:
         - name: Load files into environment
           run: |
             {
-              echo 'PREV_COMMIT_SHA<<EOF'
-              cat $PREV_COMMIT_SHA_FILE
-              echo 'EOF'
+              if [ -f ${{ env.PREV_COMMIT_SHA_FILE }} ]; then
+                echo 'PREV_COMMIT_SHA<<EOF'
+                cat ${{ env.PREV_COMMIT_SHA_FILE }}
+                echo 'EOF'
+              else
+                echo 'PREV_COMMIT_SHA_FILE not found'
+              fi
             } >> $GITHUB_ENV
 
         - name: Slack Notification
@@ -293,7 +296,6 @@ jobs:
             CURRENT_COMMIT_SHA: ${{ github.sha }}
 
         - name: Set commit SHA
-          if: ${{ steps.prev-commit-sha.outputs.cache-hit != 'true' }}
           id: set-commit-sha
           run: |
             echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
