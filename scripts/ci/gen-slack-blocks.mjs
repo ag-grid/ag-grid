@@ -5,8 +5,6 @@ import { getGitDiffLinks, getHeader, getStats, parseCtrfReport } from './_utils.
 const ctrfReportFile = process.env.CTRF_REPORT_FILE || '../../reports/performance.json';
 const workflowName = process.env.WORKFLOW_NAME || '';
 const jobId = process.env.JOB_ID || '';
-const isSuccess = process.env.IS_SUCCESS === 'true';
-const jobID = process.env.JOB_ID || '';
 const repoUrl = process.env.REPO_URL || 'https://github.com/ag-grid/ag-grid';
 const branchName = process.env.BRANCH_NAME || '';
 const channel = process.env.SLACK_CHANNEL || '';
@@ -15,6 +13,7 @@ const icon_url = process.env.SLACK_ICON || '';
 const currentCommitSha = process.env.CURRENT_COMMIT_SHA || '';
 const previousCommitSha = process.env.PREV_COMMIT_SHA || '';
 const slackFile = process.env.SLACK_FILE || './slack.json';
+const isSuccess = process.env.IS_SUCCESS === 'true';
 const lastFailedStep = process.env.LAST_FAILED_STEP || '';
 
 const jobUrl = `${repoUrl}/actions/runs/${jobId}`;
@@ -25,7 +24,7 @@ const header = getHeader(
     isSuccess,
     slackLink,
     workflowName,
-    jobID,
+    jobId,
     jobUrl,
     branchName,
     bold,
