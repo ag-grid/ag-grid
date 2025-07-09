@@ -44,6 +44,7 @@ runs:
       shell: bash
       run: |
         node ./scripts/ci/gen-slack-blocks.mjs
+        cat $SLACK_FILE
         {
           echo 'SLACK_MESSAGE_BLOCKS<<EOF'
           cat $SLACK_FILE
