@@ -5,6 +5,8 @@ import path from 'node:path';
 const ROOT = path.join(__dirname, '../../');
 dotenv.config({ path: path.join(ROOT, 'documentation/ag-grid-docs/.env.dev') }); // grab docs PORT
 const PORT = process.env['PORT'] ?? '4610';
+const reportPath = path.resolve(ROOT, process.env['PW_REPORT_PATH'] ?? './reports/performance.json');
+
 const baseURL = `https://localhost:${PORT}`;
 
 /**
@@ -25,8 +27,8 @@ const config = defineConfig({
         [
             'playwright-ctrf-json-reporter',
             {
-                outputDir: '../../reports',
-                outputFile: 'ag-grid-bench.json',
+                outputDir: path.parse(reportPath).dir,
+                outputFile: path.parse(reportPath).base,
             },
         ],
     ],
