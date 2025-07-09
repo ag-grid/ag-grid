@@ -12,7 +12,7 @@ on:
         required: true
 
 env:
-  COMMIT_SHA_FILE: ./commit-sha.txt
+  PREV_COMMIT_SHA_FILE: ./commit-sha.txt
   SLACK_FILE: ./slack.json
   BUILD_DIRECTORY: ./.builds
   WWW_ROOT_DIR: /var/www
@@ -34,16 +34,8 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Get previous run commit SHA
-        id: prev-commit-sha
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ env.COMMIT_SHA_FILE }}
-          key: full-build-prev-commit
-
       - name: Init env files
         run: |
-          echo ${{ github.sha }} > ${{ env.COMMIT_SHA_FILE }}
           echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.archive
           echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.production
 
@@ -186,52 +178,42 @@ jobs:
           echo PUBLIC_ALGOLIA_APP_ID=${{ env.PUBLIC_ALGOLIA_APP_ID }} >> documentation/update-algolia-indices/.env
           yarn nx run ag-grid-docs:update-algolia -c staging
 
-      - name: Get last failed step
-        id: last-failed-step
-        if: ${{ failure() }}
-        continue-on-error: true
-        uses: ./.github/actions/get-last-failed-step
+      - name: Get previous run commit SHA
+        id: prev-commit-sha
+        uses: actions/cache/restore@v4
         with:
-          JOB_ID: ${{ github.run_id }}
-          REPO_NAME: ${{ github.repository }}
+          path: ${{ env.PREV_COMMIT_SHA_FILE }}
+          key: full-build-prev-commit
 
-      - name: Create Slack Blocks
-        id: create-slack-blocks
-        if: ${{ github.event_name == 'schedule' || inputs.notify }}
-        continue-on-error: true
-        env:
-          IS_SUCCESS: ${{ !steps.last-failed-step.outputs.failed_step }}
-          JOB_NAME: 'Full Clean Build'
-          JOB_ID: ${{ github.run_id }}
-          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-          COMMIT_SHA: ${{ github.sha }}
-          COMMIT_SHA_FILE: ${{ env.COMMIT_SHA_FILE }}
-          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
-          SLACK_CHANNEL: '#ci-grid-gate'
-          SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
-          SLACK_USERNAME: 'ag-grid CI'
-          LAST_FAILED_STEP: ${{ steps.last-failed-step.outputs.failed_step || 'Unknown' }}
+      - name: Load files into environment
         run: |
-          node ./scripts/ci/simple-to-slack-blocks.mjs
-          echo 'SLACK_FILE:'
-          cat $SLACK_FILE
-          echo ':SLACK_FILE'
           {
-            echo 'SLACK_MESSAGE_BLOCKS<<EOF'
-            cat $SLACK_FILE
-            echo 'EOF'
+            if [ -f ${{ env.PREV_COMMIT_SHA_FILE }} ]; then
+              echo 'PREV_COMMIT_SHA<<EOF'
+              cat ${{ env.PREV_COMMIT_SHA_FILE }}
+              echo 'EOF'
+            else
+              echo 'PREV_COMMIT_SHA_FILE not found'
+            fi
           } >> $GITHUB_ENV
 
       - name: Slack Notification
-        if: ${{ (github.event_name == 'schedule' || inputs.notify) && steps.create-slack-blocks.outcome == 'success' }}
+        if: ${{ github.event_name == 'schedule' || inputs.notify }}
         continue-on-error: true
         uses: ./.github/actions/slack-integration
         with:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
-          SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
+          WORKFLOW_NAME: 'Full Clean Build'
+          PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
+          CURRENT_COMMIT_SHA: ${{ github.sha }}
+
+      - name: Set commit SHA
+        id: set-commit-sha
+        run: |
+          echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
 
       - name: Save Current Commit Hash
         uses: actions/cache/save@v4
         with:
           key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
-          path: ${{ env.COMMIT_SHA_FILE }}
+          path: ${{ env.PREV_COMMIT_SHA_FILE }}
