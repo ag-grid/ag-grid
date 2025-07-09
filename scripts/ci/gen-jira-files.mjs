@@ -73,10 +73,8 @@ function jiraLink(text, url) {
  * Generates a unique fingerprint for the failed tests based on their titles and git hashes.
  * This fingerprint is used to deduplicate JIRA issues for the same regression.
  *
- * Big assumption here is that the all failed tests have the same control version, e.g. 'production', and we use the first git hash base.
- * Another assumption is that only 1 test file is tested, so we use its filename as a fingerprint base.
- *
  * CAUTION: DO NOT MODIFY THIS FINGERPRINT GENERATION LOGIC UNLESS YOU KNOW WHAT YOU ARE DOING!
+ * If you change the logic, you must also delete/manually change fingerprint field on all JIRA issues created by this script.
  *
  * @type {string}
  */
