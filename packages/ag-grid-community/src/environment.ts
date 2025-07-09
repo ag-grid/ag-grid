@@ -1,3 +1,4 @@
+import type { IEnvironment } from './agStack/interfaces/iEnvironment';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
@@ -63,7 +64,7 @@ const PINNED_BORDER_WIDTH: Variable = {
 
 let paramsId = 0;
 
-export class Environment extends BeanStub implements NamedBean {
+export class Environment extends BeanStub implements NamedBean, IEnvironment {
     beanName = 'environment' as const;
 
     private eGridDiv: HTMLElement;

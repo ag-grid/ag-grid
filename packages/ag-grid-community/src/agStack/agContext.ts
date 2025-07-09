@@ -1,14 +1,14 @@
-import type { GenericBean } from './genericBean';
+import type { AgSingletonBean } from './interfaces/iBean';
 
 type BeanComparator<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> = (
-    bean1: GenericBean<TBeanName, TBeanCollection>,
-    bean2: GenericBean<TBeanName, TBeanCollection>
+    bean1: AgSingletonBean<TBeanName, TBeanCollection>,
+    bean2: AgSingletonBean<TBeanName, TBeanCollection>
 ) => number;
 
-export interface GenericContextParams<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
-    providedBeanInstances: Partial<{ [key in TBeanName]: GenericBean<TBeanName, TBeanCollection> }>;
-    beanClasses: GenericSingletonBean<TBeanName, TBeanCollection>[];
-    derivedBeans?: ((context: GenericContext<TBeanName, TBeanCollection>) => {
+export interface AgContextParams<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
+    providedBeanInstances: Partial<{ [key in TBeanName]: AgSingletonBean<TBeanName, TBeanCollection> }>;
+    beanClasses: AgSingletonBeanClass<TBeanName, TBeanCollection>[];
+    derivedBeans?: ((context: AgContext<TBeanName, TBeanCollection>) => {
         beanName: TBeanName;
         bean: TBeanCollection[TBeanName];
     })[];
@@ -16,30 +16,18 @@ export interface GenericContextParams<TBeanName extends string, TBeanCollection 
     beanDestroyComparator?: BeanComparator<TBeanName, TBeanCollection>;
 }
 
-export interface GenericSingletonBean<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
-    new (): GenericBean<TBeanName, TBeanCollection>;
+export interface AgSingletonBeanClass<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
+    new (): AgSingletonBean<TBeanName, TBeanCollection>;
 }
 
-export interface ComponentBean {
-    preConstruct(): void;
-}
-
-/**
- * The BaseBean can be used to avoid having to call super.wireBeans() in every subclass of a shared base bean, .i.e BeanStub, Component
- * It is used to pre-wire beans before the wireBeans() method is called which is equivalent to calling super.wireBeans() in a sub class
- */
-export interface BaseBean<TBeanCollection> {
-    preWireBeans?(beans: TBeanCollection): void;
-}
-
-export class GenericContext<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
+export class AgContext<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
     protected beans: TBeanCollection = {} as TBeanCollection;
-    private createdBeans: GenericBean<TBeanName, TBeanCollection>[] = [];
+    private createdBeans: AgSingletonBean<TBeanName, TBeanCollection>[] = [];
     private beanDestroyComparator?: BeanComparator<TBeanName, TBeanCollection>;
 
     private destroyed = false;
 
-    constructor(params: GenericContextParams<TBeanName, TBeanCollection>) {
+    constructor(params: AgContextParams<TBeanName, TBeanCollection>) {
         if (!params || !params.beanClasses) {
             return;
         }
@@ -49,7 +37,7 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
         this.init(params);
     }
 
-    protected init(params: GenericContextParams<TBeanName, TBeanCollection>): void {
+    protected init(params: AgContextParams<TBeanName, TBeanCollection>): void {
         for (const beanName of Object.keys(params.providedBeanInstances) as TBeanName[]) {
             this.beans[beanName] = params.providedBeanInstances[beanName] as any;
         }
@@ -79,30 +67,31 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
         this.initBeans(this.createdBeans);
     }
 
-    private getBeanInstances(): GenericBean<TBeanName, TBeanCollection>[] {
+    private getBeanInstances(): AgSingletonBean<TBeanName, TBeanCollection>[] {
         return Object.values(this.beans);
     }
 
-    public createBean<T extends GenericBean<TBeanName, TBeanCollection>>(
+    public createBean<T extends AgSingletonBean<TBeanName, TBeanCollection>>(
         bean: T,
-        afterPreCreateCallback?: (bean: GenericBean<TBeanName, TBeanCollection>) => void
+        afterPreCreateCallback?: (bean: AgSingletonBean<TBeanName, TBeanCollection>) => void
     ): T {
         this.initBeans([bean], afterPreCreateCallback);
         return bean;
     }
 
     private initBeans(
-        beanInstances: GenericBean<TBeanName, TBeanCollection>[],
-        afterPreCreateCallback?: (bean: GenericBean<TBeanName, TBeanCollection>) => void
+        beanInstances: AgSingletonBean<TBeanName, TBeanCollection>[],
+        afterPreCreateCallback?: (bean: AgSingletonBean<TBeanName, TBeanCollection>) => void
     ): void {
+        const beans = this.beans;
         beanInstances.forEach((instance) => {
-            // used by BaseBeans to avoid the need for calling super.wireBeans() in every subclasses
-            (instance as BaseBean<TBeanCollection>).preWireBeans?.(this.beans);
-            instance.wireBeans?.(this.beans);
+            // used to avoid the need for calling super.wireBeans() in every subclasses
+            instance.preWireBeans?.(beans);
+            instance.wireBeans?.(beans);
         });
 
         // used by the component class
-        beanInstances.forEach((instance) => (instance as ComponentBean).preConstruct?.());
+        beanInstances.forEach((instance) => instance.preConstruct?.());
         if (afterPreCreateCallback) {
             beanInstances.forEach(afterPreCreateCallback);
         }
@@ -140,7 +129,7 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
      * Destroys a bean and returns undefined to support destruction and clean up in a single line.
      * this.dateComp = this.context.destroyBean(this.dateComp);
      */
-    public destroyBean(bean: GenericBean<TBeanName, TBeanCollection> | null | undefined): undefined {
+    public destroyBean(bean: AgSingletonBean<TBeanName, TBeanCollection> | null | undefined): undefined {
         bean?.destroy?.();
     }
 
@@ -148,7 +137,7 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
      * Destroys an array of beans and returns an empty array to support destruction and clean up in a single line.
      * this.dateComps = this.context.destroyBeans(this.dateComps);
      */
-    public destroyBeans(beans: (GenericBean<TBeanName, TBeanCollection> | null | undefined)[]): [] {
+    public destroyBeans(beans: (AgSingletonBean<TBeanName, TBeanCollection> | null | undefined)[]): [] {
         if (beans) {
             for (let i = 0; i < beans.length; i++) {
                 this.destroyBean(beans[i]);

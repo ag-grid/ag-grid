@@ -1,3 +1,5 @@
+import type { AgContextParams, AgSingletonBeanClass } from '../agStack/agContext';
+import { AgContext } from '../agStack/agContext';
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
@@ -112,16 +114,14 @@ import type { ExpressionService } from '../valueService/expressionService';
 import type { ValueCache } from '../valueService/valueCache';
 import type { ValueService } from '../valueService/valueService';
 import type { PopupService } from '../widgets/popupService';
-import type { GenericContextParams, GenericSingletonBean } from './genericContext';
-import { GenericContext } from './genericContext';
 import type { IEventService } from './overrides';
 
-export interface ContextParams extends GenericContextParams<BeanName, BeanCollection> {
+export interface ContextParams extends AgContextParams<BeanName, BeanCollection> {
     gridId: string;
     destroyCallback?: () => void;
 }
 
-export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollection> {}
+export interface SingletonBean extends AgSingletonBeanClass<BeanName, BeanCollection> {}
 
 export type DynamicBeanName =
     | 'detailCellRendererCtrl'
@@ -353,7 +353,7 @@ export type BeanCollection = CoreBeanCollection & {
     [key in Exclude<BeanName, keyof CoreBeanCollection>]?: unknown;
 };
 
-export class Context extends GenericContext<BeanName, BeanCollection> {
+export class Context extends AgContext<BeanName, BeanCollection> {
     private gridId: string;
     private destroyCallback?: () => void;
 

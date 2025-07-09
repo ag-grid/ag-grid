@@ -82,7 +82,7 @@ export { BeanName, SingletonBean, BeanCollection } from './context/context';
 export { VisibleChangedEvent, RefPlaceholder } from './agStack/agComponent';
 export { AgEvent } from './agStack/interfaces/agEvent';
 export { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
-export { _setAriaHidden } from './agStack/ariaUtils';
+export { _setAriaHidden } from './agStack/utils/ariaUtils';
 export { _setDisplayed, _loadTemplate, _setVisible, _isNodeOrElement } from './agStack/utils/domUtils';
 export { _getLocaleTextFunc, _translate } from './agStack/utils/localeUtils';
 export { LocaleTextFunc } from './agStack/interfaces/iLocaleService';

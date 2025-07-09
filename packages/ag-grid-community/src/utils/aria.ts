@@ -1,5 +1,5 @@
-import { _removeAriaAttribute, _setAriaAttribute, _toggleAriaAttribute } from '../agStack/ariaUtils';
 import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
+import { _removeAriaAttribute, _setAriaAttribute, _toggleAriaAttribute } from '../agStack/utils/ariaUtils';
 import type { SortDirection } from '../entities/colDef';
 
 export type ColumnSortState = 'ascending' | 'descending' | 'other' | 'none';

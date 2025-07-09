@@ -1,4 +1,4 @@
-import { _setAriaHidden } from '../ariaUtils';
+import { _setAriaHidden } from './ariaUtils';
 
 export function _setDisplayed(element: Element, displayed: boolean, options: { skipAriaHidden?: boolean } = {}) {
     const { skipAriaHidden } = options;
