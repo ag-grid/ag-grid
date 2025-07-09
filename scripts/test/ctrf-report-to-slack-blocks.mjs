@@ -12,7 +12,22 @@ const currentCommitSha = process.env.COMMIT_SHA || '';
 const previousCommitShaFile = process.env.COMMIT_SHA_FILE || './commit-sha.txt';
 const slackFile = process.env.SLACK_FILE || './slack.json';
 
-const jobUrl = `${repoUrl}/actions/runs/${jobID}`
+console.log('Using environment variables:', {
+    cwd: process.cwd(),
+    rawReportFile,
+    jobID,
+    jobName,
+    repoUrl,
+    branchName,
+    channel,
+    username,
+    icon_url,
+    currentCommitSha,
+    previousCommitShaFile,
+    slackFile,
+});
+
+const jobUrl = `${repoUrl}/actions/runs/${jobID}`;
 
 let rawReport;
 
@@ -88,9 +103,6 @@ function getGitDiffLink() {
     }
 
     return section(
-        slackLink(
-            'Git diff',
-            `${repoUrl}/compare/${previousCommitSha.slice(0, 7)}...${currentCommitSha.slice(0, 7)}`
-        )
+        slackLink('Git diff', `${repoUrl}/compare/${previousCommitSha.slice(0, 7)}...${currentCommitSha.slice(0, 7)}`)
     );
 }

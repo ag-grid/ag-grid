@@ -212,7 +212,7 @@ jobs:
           SLACK_USERNAME: 'ag-grid CI'
           LAST_FAILED_STEP: ${{ steps.last-failed-step.outputs.failed_step || 'Unknown' }}
         run: |
-          node ./.github/actions/slack-integration/simple-to-slack-blocks.mjs
+          node ./scripts/test/simple-to-slack-blocks.mjs
           echo 'SLACK_FILE:'
           cat $SLACK_FILE
           echo ':SLACK_FILE'
