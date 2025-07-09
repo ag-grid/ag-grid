@@ -368,7 +368,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             const currentRowData: (string | null)[] = clipboardData[index - indexOffset];
 
             const selectionColIdx = columns.findIndex(isSpecialCol);
-            currentRowData.splice(selectionColIdx, 0, null);
+            if (selectionColIdx > -1) {
+                currentRowData.splice(selectionColIdx, 0, null);
+            }
 
             // otherwise we are not the first row, so copy
             updatedRowNodes.push(rowNode);
