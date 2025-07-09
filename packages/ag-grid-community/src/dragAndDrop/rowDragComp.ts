@@ -3,6 +3,8 @@ import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
+import type { IRowNode } from '../interfaces/iRowNode';
+import type { LocaleTextFunc } from '../misc/locale/localeUtils';
 import type { ElementParams } from '../utils/dom';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
@@ -92,6 +94,52 @@ export class RowDragComp extends Component {
         return this.gos.get('rowDragText');
     }
 
+    private getCellValueForRow(rowNode: IRowNode): string {
+        if (rowNode === this.rowNode) {
+            return this.cellValueFn();
+        }
+        const valueSvc = this.beans.valueSvc;
+        const value = valueSvc.getValueForDisplay(this.column, rowNode, false, false, 'ui').value;
+        return value != null ? String(value) : '';
+    }
+
+    private getDragItemName(translate: LocaleTextFunc, draggingEvent?: DraggingEvent | null): string {
+        const rowsDrop = draggingEvent?.rowsDrop;
+        const dragItem = draggingEvent?.dragItem ?? this.getDragItem();
+        const dragItemCount = dragItem.rowNodes?.length ?? 1;
+
+        let rowCount = dragItemCount;
+
+        const useRowsDrop =
+            !!rowsDrop?.sameGrid && (!this.gos.get('rowDragManaged') || this.gos.get('suppressMoveWhenRowDragging'));
+
+        if (useRowsDrop) {
+            rowCount = rowsDrop.rows.length;
+        }
+
+        // Check for custom row drag text first
+        const rowDragText = this.getRowDragText(this.column);
+        if (rowDragText) {
+            return rowDragText(dragItem as IRowDragItem, rowCount);
+        }
+
+        // Show source cell value for single row
+        if (dragItemCount === 1 && (!useRowsDrop || rowCount === 0 || rowsDrop?.withSource)) {
+            return this.cellValueFn();
+        }
+
+        // Sow the first cell in the rowsDrop.rows when the source is not included
+        if (useRowsDrop && rowCount === 1 && !rowsDrop.withSource) {
+            const targetValue = this.getCellValueForRow(rowsDrop.rows[0]);
+            if (targetValue) {
+                return targetValue;
+            }
+        }
+
+        // Default: show row count
+        return `${rowCount} ${translate('rowDragRows', 'rows')}`;
+    }
+
     private addDragSource(dragStartPixels: number = 4): void {
         // if this is changing the drag element, delete the previous dragSource
         if (this.dragSource) {
@@ -119,29 +167,7 @@ export class RowDragComp extends Component {
         this.dragSource = {
             type: DragSourceType.RowDrag,
             eElement: eGui,
-            dragItemName: (draggingEvent?: DraggingEvent | null) => {
-                const rowsDrop = draggingEvent?.rowsDrop;
-                const dragItem = draggingEvent?.dragItem ?? this.getDragItem();
-
-                const dragItemCount = dragItem.rowNodes?.length ?? 1;
-                let rowCount = 0;
-                let showSourceValue = false;
-                const gos = this.gos;
-                if (!rowsDrop || (gos.get('rowDragManaged') && !gos.get('suppressMoveWhenRowDragging'))) {
-                    rowCount = dragItemCount;
-                    showSourceValue = rowCount === 1;
-                } else {
-                    rowCount = rowsDrop.rows.length;
-                    showSourceValue = (rowsDrop.withSource || rowCount === 0) && dragItemCount === 1;
-                }
-
-                const rowDragText = this.getRowDragText(this.column);
-                if (rowDragText) {
-                    return rowDragText(dragItem as IRowDragItem, rowCount);
-                }
-
-                return showSourceValue ? this.cellValueFn() : `${rowCount} ${translate('rowDragRows', 'rows')}`;
-            },
+            dragItemName: () => this.getDragItemName(translate),
             getDragItem: () => this.getDragItem(),
             dragStartPixels,
             dragSourceDomDataKey: this.gos.getDomDataKey(),

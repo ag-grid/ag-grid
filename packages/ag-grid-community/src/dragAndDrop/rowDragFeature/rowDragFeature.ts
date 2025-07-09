@@ -218,12 +218,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
     }
 
-    private preventRowsDrop(rowsDrop: RowsDropPosition): void {
-        if (rowsDrop.rows.length > 0 && this.gos.get('rowDragManaged')) {
+    private preventRowsDrop(rowsDrop: RowsDropPosition, clearRows: boolean): void {
+        this.makeGroupThrottleUpdate(rowsDrop.target);
+        if (clearRows && rowsDrop.rows.length > 0) {
             rowsDrop.rows = [];
         }
         rowsDrop.position = 'none';
-        this.makeGroupThrottleUpdate(rowsDrop.target);
     }
 
     private makeRowsDrop(draggingEvent: DraggingEvent, y: number): RowsDropPosition {
@@ -301,8 +301,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             let targetRowIndex = target.rowIndex!;
             if (!moved) {
                 if (Math.abs(yDelta) <= 0.5) {
-                    this.preventRowsDrop(rowsDrop); // Nothing to move
-                    if (rowDragManaged) return rowsDrop;
+                    this.preventRowsDrop(rowsDrop, rowDragManaged); // Nothing to move
+                    if (rowDragManaged) {
+                        return rowsDrop;
+                    }
                 }
                 targetInRows = true;
             } else if (source) {
@@ -368,8 +370,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         if (!newParent && targetInRows && (canSetParent || source === target)) {
             // No delta dragging of multiple rows with TreeData or no change, nothing to move
-            this.preventRowsDrop(rowsDrop);
-            if (rowDragManaged) return rowsDrop;
+            this.preventRowsDrop(rowsDrop, rowDragManaged);
+            if (rowDragManaged) {
+                return rowsDrop;
+            }
         }
 
         rowsDrop.target = target;
@@ -381,8 +385,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (isRowValidDropPosition) {
             const callbackResult = isRowValidDropPosition(rowsDrop as IsRowValidDropPositionParams);
             if (!callbackResult) {
-                this.preventRowsDrop(rowsDrop); // Cannot drop, so no rows
-                if (rowDragManaged) return rowsDrop;
+                this.preventRowsDrop(rowsDrop, true); // Cannot drop, so no rows
+                if (rowDragManaged) {
+                    return rowsDrop;
+                }
             } else if (typeof callbackResult === 'object') {
                 customPosition = processRowsDropResult(rowsDrop, callbackResult);
             }
