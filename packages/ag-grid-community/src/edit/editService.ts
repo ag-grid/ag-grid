@@ -284,7 +284,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             this.processEdits(freshEdits, cancel);
 
-            this.strategy?.stop(cancel);
+            this.strategy?.stop(cancel, event);
 
             this.bulkRefresh(undefined, edits);
 

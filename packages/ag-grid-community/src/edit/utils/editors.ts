@@ -366,7 +366,7 @@ export function _destroyEditors(
 export function _destroyEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
-    params?: { event?: Event; silent?: boolean }
+    params?: { event?: Event | null; silent?: boolean }
 ): void {
     const { editSvc, editModelSvc } = beans;
     const { rowNode, column } = position;

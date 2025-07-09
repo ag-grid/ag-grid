@@ -8,6 +8,7 @@ import type { AgEventType } from '../../eventTypes';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { EditMap, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
 import type {
+    EditInputEvents,
     EditPosition,
     EditRowPosition,
     EditSource,
@@ -68,6 +69,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         let cellCtrl: CellCtrl | undefined;
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
         const { editSvc, beans } = this;
+        const sourceEvent = event.type === 'cellFocused' ? event.sourceEvent : null;
 
         if (previous) {
             cellCtrl = _getCellCtrl(beans, previous);
@@ -102,6 +104,7 @@ export abstract class BaseEditStrategy extends BeanStub {
                     ? editSvc.stopEditing(undefined, {
                           cancel: shouldCancel,
                           source: isFocusCleared && shouldRevert ? 'api' : undefined,
+                          event: sourceEvent as unknown as EditInputEvents,
                       })
                     : true;
 
@@ -131,7 +134,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         return (column as AgColumn).isColumnFunc(rowNode, column.getColDef().editable);
     }
 
-    public stop(cancel?: boolean): boolean {
+    public stop(cancel?: boolean, event?: Event | null): boolean {
         const editingCells = this.model.getEditPositions();
 
         const results: EditValidationResult = { all: [], pass: [], fail: [] };
@@ -162,7 +165,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         if (actions.destroy.length > 0) {
             actions.destroy.forEach((cell) => {
-                _destroyEditor(this.beans, cell);
+                _destroyEditor(this.beans, cell, { event });
                 this.model.stop(cell);
             });
         }
