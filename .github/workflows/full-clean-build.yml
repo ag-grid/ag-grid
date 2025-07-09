@@ -203,7 +203,6 @@ jobs:
         uses: ./.github/actions/slack-integration
         with:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
-          WORKFLOW_NAME: 'Full Clean Build'
           PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
           CURRENT_COMMIT_SHA: ${{ github.sha }}
 

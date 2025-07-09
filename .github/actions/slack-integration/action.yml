@@ -8,9 +8,6 @@ inputs:
   CTRF_REPORT_FILE:
     description: 'Path to the CTRF report file'
     required: false
-  WORKFLOW_NAME:
-    description: 'Workflow job name'
-    required: true
   CURRENT_COMMIT_SHA:
     description: 'Current/Variant commit SHA being tested'
     required: false
@@ -32,7 +29,7 @@ runs:
     - name: Convert ctrf output to Slack message blocks
       env:
         CTRF_REPORT_FILE: ${{ inputs.CTRF_REPORT_FILE }}
-        WORKFLOW_NAME: ${{ inputs.WORKFLOW_NAME }}
+        WORKFLOW_NAME: ${{ github.workflow }}
         JOB_ID: ${{ github.run_id }}
         CURRENT_COMMIT_SHA: ${{ inputs.CURRENT_COMMIT_SHA }}
         PREV_COMMIT_SHA: ${{ inputs.PREV_COMMIT_SHA }}

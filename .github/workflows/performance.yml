@@ -1,4 +1,4 @@
-name: Benchmark
+name: Performance Tests
 
 on:
   issue_comment:
@@ -11,7 +11,7 @@ on:
         default: false
         required: true
       force_scheduled:
-        description: 'Run the workflow as if it was scheduled'
+        description: 'Run the scheduled set of benchmarks'
         type: boolean
         default: false
       force_pr_id:
@@ -19,7 +19,7 @@ on:
         type: number
         required: false
       force_jira_ticket:
-        description: 'Force create a Jira ticket even if the run is not scheduled'
+        description: 'Force create a Jira ticket even'
         type: boolean
         default: false
         required: true
@@ -36,9 +36,8 @@ env:
   PR_ID: ${{ inputs.force_pr_id || github.event.issue.number }}
   COMMENT_FILE: ./comment.md
   SLACK_FILE: ./slack.json
-  JIRA_DESCRIPTION_FILE: ./jira-description.txt
-  JIRA_FINGERPRINT_FILE: ./jira-fingerprint.json
-  DEFAULT_RETENTION_DAYS: 30
+  PW_REPORT_PATH: ./reports/playwright
+  PREV_COMMIT_SHA_FILE: ./commit-sha.txt
 
 permissions:
   contents: read
@@ -62,7 +61,7 @@ jobs:
           result-encoding: string
           script: |
             const { data: comment } = await github.rest.issues.createComment({
-              issue_number: process.env.PR_ID ? parseInt(process.env.PR_ID, 10) : context.issue.number,
+              issue_number: parseInt(process.env.PR_ID, 10),
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `🛎 Started a benchmarking job: ${process.env.JOB_URL}`
@@ -73,7 +72,6 @@ jobs:
         id: get-branch
         env:
           REPO: ${{ github.repository }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo PR_ID=$PR_ID
           echo github.event.issue.number=${{ github.event.issue.number }}
@@ -98,6 +96,20 @@ jobs:
         run: |
           git fetch origin --depth 1 latest
           git fetch origin --depth 1 tag latest-success
+
+      - name: Get previous run commit SHA
+        if: ${{ github.event_name == 'schedule' || inputs.notify }}
+        id: prev-commit-sha
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.PREV_COMMIT_SHA_FILE }}
+          key: doc-tests-prev-commit
+
+      - name: Set commit SHA
+        if: ${{ steps.prev-commit-sha.outputs.cache-hit != 'true' }}
+        id: set-commit-sha
+        run: |
+          echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
 
       - name: Notify Progress
         uses: actions/github-script@v7
@@ -177,6 +189,7 @@ jobs:
         if: ${{ steps.install-browsers.outcome == 'success' }}
         env:
           IS_SCHEDULED: ${{ github.event_name == 'schedule' || inputs.force_scheduled }}
+          PW_REPORT_PATH: ${{ env.PW_REPORT_PATH }}
         run: |
           if [[ "$IS_SCHEDULED" == "true" ]] ; then
             npx playwright test -c ./testing/performance/playwright.config.ts -g ".*cron.spec.ts" ./testing/performance/e2e
@@ -184,64 +197,72 @@ jobs:
             npx playwright test -c ./testing/performance/playwright.config.ts -gv ".*cron.spec.ts" ./testing/performance/e2e
           fi
 
-      - name: Prepare messages
-        id: prepare-messages
-        env:
-          SLACK_CHANNEL: '#ci-grid-gate'
-          SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
-          SLACK_USERNAME: 'ag-grid CI'
-          IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
-          SLACK_FILE: ${{ env.SLACK_FILE }}
-          COMMENT_FILE: ${{ env.COMMENT_FILE }}
-          JIRA_DESCRIPTION_FILE: ${{ env.JIRA_DESCRIPTION_FILE }}
-          JIRA_FINGERPRINT_FILE: ${{ env.JIRA_FINGERPRINT_FILE }}
-          JOB_URL: ${{ env.JOB_URL }}
-        run: |
-          node ./scripts/ci/convert-playwright-output-to-slack-msg.mjs
-          
-          {
-            echo 'JIRA_FINGERPRINT<<EOF'
-            cat $JIRA_FINGERPRINT_FILE
-            echo 'EOF'
-          } >> $GITHUB_ENV
-          {
-            echo 'JIRA_DESCRIPTION<<EOF'
-            cat $JIRA_DESCRIPTION_FILE
-            echo 'EOF'
-          } >> $GITHUB_ENV
-          {
-            echo 'SLACK_MESSAGE_BLOCKS<<EOF'
-            cat $SLACK_FILE
-            echo 'EOF'
-          } >> $GITHUB_ENV
-
-      - name: Slack Notification
-        continue-on-error: true
-        if: ${{ steps.upload-snippet.outputs.artifact-url && (github.event_name == 'schedule' || inputs.notify) }}
-        uses: ./.github/actions/slack-integration
+      - name: Test Reporter
+        id: ctrf
+        uses: ctrf-io/github-test-reporter@v1.0.17
         with:
-          SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
-          SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
+          report-path: ${{ env.PW_REPORT_PATH }}
+          summary-report: true
+          failed-report: true
+          flaky-report: true
+          skipped-report: true
+          write-ctrf-to-file: ${{ env.CTRF_FILE }}
 
       - name: Create Jira Ticket
         uses: ./.github/actions/jira-integration
         continue-on-error: true
-        if: ${{ steps.attach-snippet.outcome == 'success' && (github.event_name == 'schedule' || inputs.force_jira_ticket) }}
+        if: ${{ github.event_name == 'schedule' || inputs.force_jira_ticket }}
         with:
-          JIRA_FINGERPRINT: ${{ env.JIRA_FINGERPRINT }}
           JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
-          WORKFLOW: ${{ github.workflow }}
-          JIRA_DESCRIPTION: ${{ env.JIRA_DESCRIPTION }}
           JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' has detected a slowdown in grid performance"
-          IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
 
-      - name: Notify End
+      - name: Get previous run commit SHA
+        id: prev-commit-sha
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.PREV_COMMIT_SHA_FILE }}
+          key: full-build-prev-commit
+
+      - name: Load files into environment
+        run: |
+          {
+            if [ -f ${{ env.PREV_COMMIT_SHA_FILE }} ]; then
+              echo 'PREV_COMMIT_SHA<<EOF'
+              cat ${{ env.PREV_COMMIT_SHA_FILE }}
+              echo 'EOF'
+            else
+              echo 'PREV_COMMIT_SHA_FILE not found'
+            fi
+          } >> $GITHUB_ENV
+
+      - name: Slack Notification
+        if: ${{ github.event_name == 'schedule' || inputs.notify }}
+        continue-on-error: true
+        uses: ./.github/actions/slack-integration
+        with:
+          SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
+          PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
+          CURRENT_COMMIT_SHA: ${{ github.sha }}
+
+      - name: Set commit SHA
+        id: set-commit-sha
+        run: |
+          echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
+
+      - name: Save Current Commit Hash
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
+          path: ${{ env.PREV_COMMIT_SHA_FILE }}
+
+      - name: Final Notify Progress
         uses: actions/github-script@v7
         continue-on-error: true
         if: ${{ steps.notify-start.outputs.result }}
         env:
           COMMENT_ID: ${{ steps.notify-start.outputs.result }}
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
+          COMMENT_FILE: ${{ env.COMMENT_FILE }}
         with:
           script: |
             const owner = context.repo.owner;

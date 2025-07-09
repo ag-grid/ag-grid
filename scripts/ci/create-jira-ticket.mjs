@@ -28,7 +28,7 @@ if (!auth) {
     process.exit(1);
 }
 
-const workflowName = process.env.WORKFLOW || 'Unknown';
+const workflowName = process.env.WORKFLOW_NAME || 'Unknown';
 const description = process.env.JIRA_DESCRIPTION || `Please provide a description in workflow file '${workflowName}'`;
 const summary = process.env.JIRA_SUMMARY || `[NR] CI/CD workflow '${workflowName}' has failed`;
 const isSuccess = process.env.IS_SUCCESS;
