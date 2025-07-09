@@ -1,4 +1,10 @@
-import type { AgEvent } from './agStack/interfaces/agEvent';
+import type {
+    AgPropertyChangeSet,
+    AgPropertyChangedEvent,
+    AgPropertyValueChangedEvent,
+    AgPropertyValueChangedListener,
+    IPropertiesService,
+} from './agStack/interfaces/iProperties';
 import { LocalEventService } from './agStack/localEventService';
 import type { GridApi } from './api/gridApi';
 import type { NamedBean } from './context/bean';
@@ -49,43 +55,33 @@ type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptio
     | ((
           params: WithoutGridCommon<ExtractParamsFromCallback<OriginalCallback>>
       ) => ExtractReturnTypeFromCallback<OriginalCallback>);
-export interface PropertyChangeSet {
-    /** Unique id which can be used to link changes of multiple properties that were updated together.
-     * i.e a user updated multiple properties at the same time.
-     */
-    id: number;
-    /** All the properties that have been updated in this change set */
-    properties: (keyof GridOptions)[];
-}
+
 export type PropertyChangedSource = 'api' | 'gridOptionsUpdated';
-export interface PropertyChangedEvent extends AgEvent {
-    type: 'gridPropertyChanged';
-    changeSet: PropertyChangeSet | undefined;
-    source: PropertyChangedSource;
-}
-
-/**
- * For boolean properties the changed value will have been coerced to a boolean, so we do not want the type to include the undefined value.
- */
-type GridOptionsOrBooleanCoercedValue<K extends keyof GridOptions> = K extends BooleanProps ? boolean : GridOptions[K];
-
-export interface PropertyValueChangedEvent<K extends keyof GridOptions> extends AgEvent {
-    type: K;
-    changeSet: PropertyChangeSet | undefined;
-    currentValue: GridOptionsOrBooleanCoercedValue<K>;
-    previousValue: GridOptionsOrBooleanCoercedValue<K>;
-    source: PropertyChangedSource;
-}
-
-export type PropertyChangedListener = (event: PropertyChangedEvent) => void;
-export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void;
+export type PropertyChangedEvent = AgPropertyChangedEvent<GridOptions, 'gridPropertyChanged', PropertyChangedSource>;
+export type PropertyValueChangedEvent<K extends keyof GridOptions> = AgPropertyValueChangedEvent<
+    GridOptions,
+    BooleanProps,
+    PropertyChangedSource,
+    K
+>;
+type PropertyValueChangedListener<K extends keyof GridOptions> = AgPropertyValueChangedListener<
+    GridOptions,
+    BooleanProps,
+    PropertyChangedSource,
+    K
+>;
 
 let changeSetId = 0;
 
 // this is added to the main DOM element
 let gridInstanceSequence = 0;
 
-export class GridOptionsService extends BeanStub implements NamedBean {
+export class GridOptionsService
+    extends BeanStub
+    implements
+        NamedBean,
+        IPropertiesService<GridOptions, typeof GRID_OPTION_DEFAULTS, BooleanProps, PropertyChangedSource>
+{
     beanName = 'gos' as const;
 
     private gridOptions: GridOptions;
@@ -190,7 +186,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         force?: boolean;
         source?: PropertyChangedSource;
     }): void {
-        const changeSet: PropertyChangeSet = { id: changeSetId++, properties: [] };
+        const changeSet: AgPropertyChangeSet<GridOptions> = { id: changeSetId++, properties: [] };
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         const { gridOptions, validation } = this;

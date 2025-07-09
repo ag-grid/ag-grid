@@ -10,8 +10,9 @@ export interface AgCoreBeanCollection<
     TEventType extends string,
     TEventParams extends Record<TEventType, any>,
     TProcessedEvents extends AgEvent,
+    TContext,
 > {
-    context: any;
+    context: TContext;
     eventSvc: AgEventService<TEventType, TEventParams, TProcessedEvents>;
     frameworkOverrides: AgFrameworkOverrides;
     gos: TPropertiesService;

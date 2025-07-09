@@ -73,8 +73,16 @@ export type AgPropertyValueChangedListener<
 export interface IPropertiesService<
     TProperties extends BaseProperties,
     TPropertyDefaults extends BasePropertyDefaults,
+    TBooleanProperties,
+    TEventSource,
 > {
-    addPropertyEventListener(event: any, listener: any): void;
-    removePropertyEventListener(event: any, listener: any): void;
+    addPropertyEventListener<K extends keyof TProperties & string>(
+        event: K,
+        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, TEventSource, K>
+    ): void;
+    removePropertyEventListener<K extends keyof TProperties & string>(
+        event: K,
+        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, TEventSource, K>
+    ): void;
     get<K extends AgPropertyKey<TProperties>>(property: K): AgPropertyValueOrDefault<TProperties, TPropertyDefaults, K>;
 }

@@ -28,7 +28,8 @@ export abstract class AgBeanStub<
             TPropertiesService,
             TGlobalEventType,
             TGlobalEventParams,
-            TProcessedEvents
+            TProcessedEvents,
+            TContext
         >,
         TBean extends AgBaseBean<TBeanCollection>,
         TContext extends AgContext<TBeanName, TBeanCollection>,
@@ -42,7 +43,12 @@ export abstract class AgBeanStub<
         TBooleanProperties,
         TPropertiesEventSource,
         TPropertiesEventType extends string,
-        TPropertiesService extends IPropertiesService<TProperties, TPropertyDefaults>,
+        TPropertiesService extends IPropertiesService<
+            TProperties,
+            TPropertyDefaults,
+            TBooleanProperties,
+            TPropertiesEventSource
+        >,
     >
     implements
         AgBean<

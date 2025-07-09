@@ -1,5 +1,6 @@
 import type { AgContextParams, AgSingletonBeanClass } from '../agStack/agContext';
 import { AgContext } from '../agStack/agContext';
+import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
@@ -28,7 +29,8 @@ import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeSer
 import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
-import type { AgGlobalEventListener } from '../events';
+import type { AgEventType } from '../eventTypes';
+import type { AgEventTypeParams, AgGlobalEventListener, AllEventsWithoutGridCommon } from '../events';
 import type { ColumnFilterService } from '../filter/columnFilterService';
 import type { FilterManager } from '../filter/filterManager';
 import type { FilterValueService } from '../filter/filterValueService';
@@ -80,7 +82,6 @@ import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { IRowNumbersService } from '../interfaces/rowNumbers';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEvents/apiEventService';
-import type { LocaleService } from '../misc/locale/localeService';
 import type { MenuService } from '../misc/menu/menuService';
 import type { StateService } from '../misc/state/stateService';
 import type { TouchService } from '../misc/touchService';
@@ -114,7 +115,6 @@ import type { ExpressionService } from '../valueService/expressionService';
 import type { ValueCache } from '../valueService/valueCache';
 import type { ValueService } from '../valueService/valueService';
 import type { PopupService } from '../widgets/popupService';
-import type { IEventService } from './overrides';
 
 export interface ContextParams extends AgContextParams<BeanName, BeanCollection> {
     gridId: string;
@@ -218,14 +218,18 @@ export type ComponentMeta = ClassImp | ComponentMetaWithParams | ComponentMetaFu
 
 export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
 
-export interface CoreBeanCollection {
-    context: Context;
+export interface CoreBeanCollection
+    extends AgCoreBeanCollection<
+        GridOptionsService,
+        AgEventType,
+        AgEventTypeParams,
+        AllEventsWithoutGridCommon,
+        Context
+    > {
     pageBoundsListener: PageBoundsListener;
-    gos: GridOptionsService;
     environment: Environment;
     rowRenderer: RowRenderer;
     valueSvc: ValueService;
-    eventSvc: IEventService;
     colModel: ColumnModel;
     colViewport: ColumnViewportService;
     colNames: ColumnNameService;
@@ -255,7 +259,6 @@ export interface CoreBeanCollection {
     rowModel: IRowModel;
     ctrlsSvc: CtrlsService;
     valueCache?: ValueCache;
-    localeSvc?: LocaleService;
     syncSvc: SyncService;
     ariaAnnounce: AriaAnnouncementService;
     rangeSvc?: IRangeService;
