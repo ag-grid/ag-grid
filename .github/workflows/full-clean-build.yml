@@ -252,12 +252,14 @@ jobs:
         env:
           WORKFLOW_ID: 'doc-tests.yml'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHOULD_NOTIFY: ${{ inputs.notify }}
         with:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const ref = context.ref;
             const workflow_id = process.env.WORKFLOW_ID;
+            const notify = process.env.SHOULD_NOTIFY;
 
             await github.rest.actions.createWorkflowDispatch({
               owner,
@@ -273,7 +275,7 @@ jobs:
                 skip_vue3: false,
                 skip_demo_smoke: false,
                 skip_recipes: false,
-                notify: true,
+                notify,
                 force_jira_ticket: true,
               }
             });
