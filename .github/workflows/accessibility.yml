@@ -13,11 +13,6 @@ on:
         type: boolean
         default: false
         required: true
-      fast_build:
-        description: 'Run a fast build, useful for debugging reporting'
-        type: boolean
-        default: false
-        required: true
       force_jira_ticket:
         description: 'Force create a Jira ticket even if the run is not scheduled'
         type: boolean
