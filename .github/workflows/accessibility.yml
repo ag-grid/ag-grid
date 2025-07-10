@@ -13,6 +13,11 @@ on:
         type: boolean
         default: false
         required: true
+      fast_build:
+        description: 'Run a fast build, useful for debugging reporting'
+        type: boolean
+        default: false
+        required: true
       force_jira_ticket:
         description: 'Force create a Jira ticket even if the run is not scheduled'
         type: boolean
@@ -30,6 +35,7 @@ env:
   CI: true
   REPORTS_PATH: ./reports/*.xml
   CTRF_FILE: ./reports/performance.json
+  PREV_COMMIT_SHA_FILE: ./commit-sha.txt
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -172,6 +178,26 @@ jobs:
               }
             }
 
+      - name: Get previous run commit SHA
+        id: prev-commit-sha
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.PREV_COMMIT_SHA_FILE }}
+          key: full-build-prev-commit-${{ github.ref }}
+
+      - name: Load files into environment
+        continue-on-error: true
+        run: |
+          {
+            if [ -f ${{ env.PREV_COMMIT_SHA_FILE }} ]; then
+              echo 'PREV_COMMIT_SHA<<EOF'
+              cat ${{ env.PREV_COMMIT_SHA_FILE }}
+              echo 'EOF'
+            else
+              echo 'PREV_COMMIT_SHA_FILE not found'
+            fi
+          } >> $GITHUB_ENV
+
       - name: Slack Notification
         if: ${{ github.event_name == 'schedule' || inputs.notify }}
         continue-on-error: true
@@ -179,6 +205,19 @@ jobs:
         with:
           CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
+          PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
+          CURRENT_COMMIT_SHA: ${{ github.sha }}
+
+      - name: Set commit SHA
+        id: set-commit-sha
+        run: |
+          echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
+
+      - name: Save Current Commit Hash
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
+          path: ${{ env.PREV_COMMIT_SHA_FILE }}
 
       - name: Output Report URL
         run: |
