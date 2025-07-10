@@ -125,7 +125,7 @@ jobs:
           uses: actions/cache/restore@v4
           with:
             path: ${{ env.PREV_COMMIT_SHA_FILE }}
-            key: doc-tests-prev-commit-${{ github.ref }}
+            key: security-prev-commit-${{ github.ref }}
 
         - name: Load files into environment
           continue-on-error: true
