@@ -151,7 +151,7 @@
             left: 95px;
             top: 20px;
             width: 2px;
-            height: calc(100% - 40px);
+            height: calc(100% - 100px);
             background: var(--color-button-tertiary-border);
             opacity: 0.2;
             z-index: 0;
@@ -468,7 +468,7 @@
 
     .resourceTitle {
         font-weight: 600;
-        color: var(--ag-text-color, #222);
+        color: var(--color-fg-primary);
         font-size: 17px;
         margin-bottom: 2px;
     }
@@ -542,6 +542,16 @@
 }
 
 .principleIcon {
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
+
+        path {
+            fill: var(--color-link);
+        }
+    }
+}
+
+.resourceIcon {
     #{$selector-darkmode} & {
         background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
 
