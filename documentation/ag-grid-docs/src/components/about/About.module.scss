@@ -132,6 +132,16 @@
         svg {
             fill: var(--color-brand-500);
         }
+
+        .timelineLine {
+            position: absolute;
+            left: 92px;
+            top: 20px;
+            width: 2px;
+            height: calc(100% - 40px);
+            background: var(--color-border-secondary);
+            z-index: 0;
+        }
     }
 
     .timelineItem {
@@ -144,11 +154,11 @@
     .timelineYear {
         color: var(--color-text-secondary);
         opacity: 0.5;
-        font-size: 18px;
+        font-size: var(--text-fs-sm);
         min-width: 48px;
         text-align: right;
         margin-right: 24px;
-        margin-top: 4px;
+        margin-top: $spacing-size-3;
         font-family: var(--text-monospace-font-family);
     }
 
@@ -165,18 +175,22 @@
         margin-right: 24px;
         background-color: var(--color-util-brand-50);
         padding: 4px;
-    }
 
+        #{$selector-darkmode} {
+            background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
+        }
+    }
     .timelineLine {
         position: absolute;
-        left: 15px;
-        top: 32px;
+        left: 50%;
+        top: 100%;
+        transform: translateX(-50%);
         width: 2px;
-        height: calc(100% - 32px);
-        background: #e0e6ed;
+        height: calc(100% + 40px); // 40px = icon height, adjust as needed
+        background: red;
         z-index: 0;
+        content: '';
     }
-
     .timelineContent {
         flex: 1;
         min-width: 200px;
@@ -185,8 +199,8 @@
     .timelineTitle {
         font-weight: 600;
         color: var(--color-fg-primary);
-        font-size: 17px;
-        margin-bottom: 2px;
+        font-size: var(--text-fs-lg);
+        margin-bottom: $spacing-size-2;
     }
     .timelineDesc {
         color: var(--color-text-secondary);
@@ -275,12 +289,14 @@
 .footnote {
     max-width: 500px;
     text-align: center;
-
+    font-weight: var(--text-semibold);
+    color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 60%);
+    line-height: 1.6;
     margin: 0 auto;
     padding-top: $spacing-size-20;
 
     span {
-        font-weight: 600;
+        color: var(--color-fg-primary);
     }
 }
 

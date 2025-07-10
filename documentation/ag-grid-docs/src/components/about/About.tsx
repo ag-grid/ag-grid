@@ -32,9 +32,10 @@ export const About = () => {
                 </div>
                 <section className={styles.customerLogos}>
                     <CustomerLogos />
-
                     <p className={styles.footnote}>
-                        <span>Our work impacts thousands of companies</span> and millions of developers
+                        <span>Built by developers for developers</span>,AG Grid was born out of frustration with the
+                        performance limitations of existing solutions. Our grid and charts products are now trusted by
+                        developers worldwide when building their applications.
                     </p>
                 </section>
 
@@ -61,33 +62,104 @@ export const About = () => {
 
                 <section className={styles.historySection}>
                     <div className={styles.historyContent}>
-                        <h2>The history</h2>
-                        <p>A datagrid was born out of a gap in the market, enter AG Grid</p>
+                        <h2>Our history</h2>
+                        <p>
+                            Born from a gap in the market, now providing world-class data-grids and charts to millions
+                            of users.
+                        </p>
                     </div>
                     <div className={styles.timeline}>
-                        <div className={styles.timelineItem}>
-                            <div className={styles.timelineYear}>2015</div>
-                            <div className={styles.timelineIcon}>
-                                <Icon name="github" />
-                            </div>
-                            <div className={styles.timelineContent}>
-                                <div className={styles.timelineTitle}>Niall fixes his own problem</div>
-                                <div className={styles.timelineDesc}>Finds a need for a data grid in the market</div>
-                            </div>
-                            <div className={styles.timelineLine}></div>
-                        </div>
+                        <div className={styles.timelineLine}></div>
                         <div className={styles.timelineItem}>
                             <div className={styles.timelineYear}>2016</div>
                             <div className={styles.timelineIcon}>
                                 <Icon name="github" />
                             </div>
                             <div className={styles.timelineContent}>
-                                <div className={styles.timelineTitle}>AG Grid's first customer</div>
+                                <div className={styles.timelineTitle}>AG Grid is born</div>
                                 <div className={styles.timelineDesc}>
-                                    Finds product market fit and a product is born
+                                    <a href="">Niall Crosby</a> creates AG Grid as an open-source data grid solution to
+                                    address a gap in the market
                                 </div>
                             </div>
-                            <div className={styles.timelineLine}></div>
+                        </div>
+                        <div className={styles.timelineItem}>
+                            <div className={styles.timelineYear}>2017</div>
+                            <div className={styles.timelineIcon}>
+                                <Icon name="github" />
+                            </div>
+                            <div className={styles.timelineContent}>
+                                <div className={styles.timelineTitle}>Commercial launch</div>
+                                <div className={styles.timelineDesc}>
+                                    <a href="">AG Grid Enterprise</a> is launched to widespread adoption within the
+                                    developer community.
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.timelineItem}>
+                            <div className={styles.timelineYear}>2018</div>
+                            <div className={styles.timelineIcon}>
+                                <Icon name="github" />
+                            </div>
+                            <div className={styles.timelineContent}>
+                                <div className={styles.timelineTitle}>AG Grid Conf</div>
+                                <div className={styles.timelineDesc}>
+                                    Dedicated AG Grid conferences delivered in London & New York, engaging us with our
+                                    growing developer community.
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.timelineItem}>
+                            <div className={styles.timelineYear}>2019</div>
+                            <div className={styles.timelineIcon}>
+                                <Icon name="github" />
+                            </div>
+                            <div className={styles.timelineContent}>
+                                <div className={styles.timelineTitle}>Integrated Charting</div>
+                                <div className={styles.timelineDesc}>
+                                    <a href="ic-docs-page-link">Integrated Charts</a> is launched within AG Grid. The
+                                    first JS data-grid to contain built-in charting.
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.timelineItem}>
+                            <div className={styles.timelineYear}>2020</div>
+                            <div className={styles.timelineIcon}>
+                                <Icon name="github" />
+                            </div>
+                            <div className={styles.timelineContent}>
+                                <div className={styles.timelineTitle}>AG Charts</div>
+                                <div className={styles.timelineDesc}>
+                                    <a href="https://charts.ag-grid.com">AG Charts</a> is released as a standalone
+                                    library with both community and enterprise versions.
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.timelineItem}>
+                            <div className={styles.timelineYear}>2021</div>
+                            <div className={styles.timelineIcon}>
+                                <Icon name="github" />
+                            </div>
+                            <div className={styles.timelineContent}>
+                                <div className={styles.timelineTitle}>Self-service licensing</div>
+                                <div className={styles.timelineDesc}>
+                                    <a href="e-com-link">eCommerce platform</a> is launched to allow customers to
+                                    self-service.
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.timelineItem}>
+                            <div className={styles.timelineYear}>2022</div>
+                            <div className={styles.timelineIcon}>
+                                <Icon name="github" />
+                            </div>
+                            <div className={styles.timelineContent}>
+                                <div className={styles.timelineTitle}>Mass adoption</div>
+                                <div className={styles.timelineDesc}>
+                                    <a href="npm-grid-link">AG Grid Community</a> breaks one million downloads per month
+                                    on NPM.
+                                </div>
+                            </div>
                         </div>
                         <div className={styles.timelineItem}>
                             <div className={styles.timelineYear}>2023</div>
@@ -95,10 +167,25 @@ export const About = () => {
                                 <Icon name="github" />
                             </div>
                             <div className={styles.timelineContent}>
-                                <div className={styles.timelineTitle}>AG Charts was born</div>
-                                <div className={styles.timelineDesc}>Our suite of products expands to charting</div>
+                                <div className={styles.timelineTitle}>Accelerating Charts</div>
+                                <div className={styles.timelineDesc}>
+                                    <a href="npm-charts-link">AG Charts Community</a> hits 500k downloads per month
+                                    across all frameworks.
+                                </div>
                             </div>
-                            <div className={styles.timelineLine}></div>
+                        </div>
+                        <div className={styles.timelineItem}>
+                            <div className={styles.timelineYear}>2024</div>
+                            <div className={styles.timelineIcon}>
+                                <Icon name="github" />
+                            </div>
+                            <div className={styles.timelineContent}>
+                                <div className={styles.timelineTitle}>Leadership updates</div>
+                                <div className={styles.timelineDesc}>
+                                    <a href="leadership-section-anchor-link">John Masterson</a> appointed CEO, a new
+                                    board is formed.
+                                </div>
+                            </div>
                         </div>
                         <div className={styles.timelineItem}>
                             <div className={`${styles.timelineYear} ${styles.timelineNow}`}>Now</div>
