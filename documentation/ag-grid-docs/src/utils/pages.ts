@@ -20,7 +20,7 @@ export interface InternalFrameworkExample {
     internalFramework: InternalFramework;
     pageName: string;
     exampleName: string;
-    supportedFrameworks: Set<InternalFramework> | undefined;
+    supportedFrameworks?: Set<InternalFramework>;
 }
 
 export interface ExtraFileRoute {
