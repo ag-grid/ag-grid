@@ -10,6 +10,11 @@ on:
         type: boolean
         default: true
         required: true
+      fast_build:
+        description: 'Run a fast build'
+        type: boolean
+        default: false
+        required: true
 
 env:
   PREV_COMMIT_SHA_FILE: ./commit-sha.txt
@@ -40,60 +45,71 @@ jobs:
           echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.production
 
       - name: Version Modules
+        if: ${{ !inputs.fast_build }}
         run: |
           node ./scripts/deployments/versionModules.js "$(node ./scripts/calculate-next-version.js)" $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])") local
 
       - name: Bootstrap
+        if: ${{ !inputs.fast_build }}
         run: |
           npm run bootstrap
 
       - name: Sanity Check Grid & Charts Versions
+        if: ${{ !inputs.fast_build }}
         run: |
           node ./scripts/deployments/sanityCheckPackages.js $(node -e "console.log(require('./package.json').version)") $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])")
 
       - name: Update Base Url
+        if: ${{ !inputs.fast_build }}
         run: |
           node ./scripts/deployments/prep_and_archive/updateBaseUrl.js staging
 
       - name: Validate Grid Modules
+        if: ${{ !inputs.fast_build }}
         run: |
           node ./scripts/deployments/validateGridModulesList.js
 
       - name: Sync Readmes
+        if: ${{ !inputs.fast_build }}
         run: |
           yarn nx sync-readmes
 
       - name: Build
+        if: ${{ !inputs.fast_build }}
         id: build
         run: |
           NODE_ENV=production yarn nx pack:verify --prod
 
       - name: Test
+        if: ${{ !inputs.fast_build }}
         run: |
           yarn nx test:modules
 
       - name: Validate Dist Folders
+        if: ${{ !inputs.fast_build }}
         continue-on-error: true
         run: |
           ./scripts/deployments/validateDistFolders.sh
 
       - name: Publish Packages
-        if: ${{ github.ref == 'refs/heads/latest' && steps.build.outputs.success == 'true' }}
+        if: ${{ github.ref == 'refs/heads/latest' && steps.build.outputs.success == 'true' && !inputs.fast_build }}
         run: |
           ./scripts/publishGridPackages.sh .
 
       - name: Sanity Check Base Url
+        if: ${{ !inputs.fast_build }}
         run: |
           node ./scripts/deployments/sanityCheckBaseUrl.js staging
 
       - name: Build Docs For Staging
+        if: ${{ !inputs.fast_build }}
         id: build_docs_staging
         run: |
           CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
 
       - name: Deploy to Staging
         id: deploy_to_staging
-        if: ${{ github.ref == 'refs/heads/latest' && steps.build_docs_staging.outputs.success == 'true' && steps.build.outputs.success == 'true' }}
+        if: ${{ github.ref == 'refs/heads/latest' && steps.build_docs_staging.outputs.success == 'true' && steps.build.outputs.success == 'true' && !inputs.fast_build }}
         env:
           SSH_PRIVATE_KEY: |
             ${{ secrets.STAGING_SSH_KEY }}
@@ -140,6 +156,7 @@ jobs:
 
       - name: SonarQube Analysis Community
         uses: SonarSource/sonarqube-scan-action@v5.2.0
+        if: ${{ !inputs.fast_build }}
         env:
           SONAR_HOST_URL: https://sonarcloud.io
           SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
@@ -157,6 +174,7 @@ jobs:
 
       - name: SonarQube Analysis Enterprise
         uses: SonarSource/sonarqube-scan-action@v5.2.0
+        if: ${{ !inputs.fast_build }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
           SONAR_HOST_URL: https://sonarcloud.io
@@ -173,6 +191,7 @@ jobs:
             -Dsonar.coverage.exclusions=**/*
 
       - name: Update Algolia Dev
+        if: ${{ !inputs.fast_build }}
         run: |
           echo ALGOLIA_ADMIN_KEY=${{ secrets.ALGOLIA_ADMIN_KEY }} > documentation/update-algolia-indices/.env
           echo PUBLIC_ALGOLIA_APP_ID=${{ env.PUBLIC_ALGOLIA_APP_ID }} >> documentation/update-algolia-indices/.env
