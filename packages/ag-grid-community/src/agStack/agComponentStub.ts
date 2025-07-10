@@ -6,7 +6,7 @@ import type { AgComponentEvent, AgComponentSelector, VisibleChangedEvent } from 
 import { RefPlaceholder } from './interfaces/iComponent';
 import type { AgBaseContext, AgCoreBeanCollection } from './interfaces/iContext';
 import type { IEventListener } from './interfaces/iEventEmitter';
-import type { BaseProperties, BasePropertyDefaults, IPropertiesService } from './interfaces/iProperties';
+import type { BaseProperties, IPropertiesService } from './interfaces/iProperties';
 import type { AgElementParams } from './utils/domUtils';
 import {
     DataRefAttribute,
@@ -31,8 +31,7 @@ export abstract class AgComponentStub<
         TGlobalEvents,
         TProcessedEvents extends AgEvent,
         TProperties extends BaseProperties,
-        TPropertyDefaults extends BasePropertyDefaults,
-        TPropertiesService extends IPropertiesService<TProperties, TPropertyDefaults>,
+        TPropertiesService extends IPropertiesService<TProperties>,
         TComponentSelectorType extends string,
     >
     extends AgBeanStub<
@@ -42,18 +41,9 @@ export abstract class AgComponentStub<
         TGlobalEvents,
         TProcessedEvents,
         TProperties,
-        TPropertyDefaults,
         TPropertiesService
     >
-    implements
-        AgComponent<
-            TBeanCollection,
-            TLocalEventListener,
-            TLocalEventType,
-            TGlobalEvents,
-            TProperties,
-            TPropertyDefaults
-        >
+    implements AgComponent<TBeanCollection, TLocalEventListener, TLocalEventType, TGlobalEvents, TProperties>
 {
     private eGui: HTMLElement;
     private componentSelectors: Map<
@@ -71,7 +61,7 @@ export abstract class AgComponentStub<
     private css: string[] | undefined;
 
     protected parentComponent:
-        | AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties, TPropertyDefaults>
+        | AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties>
         | undefined;
 
     // unique id for this row component. this is used for getting a reference to the HTML dom.
@@ -202,24 +192,18 @@ export abstract class AgComponentStub<
     private createComponentFromElement(
         element: HTMLElement,
         afterPreCreateCallback?: (
-            comp: AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties, TPropertyDefaults>
+            comp: AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties>
         ) => void,
         paramsMap?: { [key: string]: any }
-    ): AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties, TPropertyDefaults> | null {
+    ): AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties> | null {
         const key = element.nodeName;
 
         const elementRef = this.getDataRefAttribute(element);
 
         const isAgGridComponent = key.indexOf('AG-') === 0;
         const componentSelector = isAgGridComponent ? this.componentSelectors.get(key as TComponentSelectorType) : null;
-        let newComponent: AgComponent<
-            TBeanCollection,
-            TLocalEventListener,
-            any,
-            TGlobalEvents,
-            TProperties,
-            TPropertyDefaults
-        > | null = null;
+        let newComponent: AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties> | null =
+            null;
         if (componentSelector) {
             const componentParams = paramsMap && elementRef ? paramsMap[elementRef] : undefined;
             newComponent = new componentSelector.component(componentParams) as AgComponent<
@@ -227,18 +211,10 @@ export abstract class AgComponentStub<
                 TLocalEventListener,
                 any,
                 TGlobalEvents,
-                TProperties,
-                TPropertyDefaults
+                TProperties
             >;
             newComponent.setParentComponent(
-                this as unknown as AgComponent<
-                    TBeanCollection,
-                    TLocalEventListener,
-                    any,
-                    TGlobalEvents,
-                    TProperties,
-                    TPropertyDefaults
-                >
+                this as unknown as AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties>
             );
 
             this.createBean(newComponent, null, afterPreCreateCallback);
@@ -321,13 +297,13 @@ export abstract class AgComponentStub<
     }
 
     public setParentComponent(
-        component: AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties, TPropertyDefaults>
+        component: AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties>
     ) {
         this.parentComponent = component;
     }
 
     public getParentComponent<
-        T extends AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties, TPropertyDefaults>,
+        T extends AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties>,
     >(): T | undefined {
         return this.parentComponent as T;
     }

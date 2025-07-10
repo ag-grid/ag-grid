@@ -197,6 +197,13 @@ type AllTypeValid = Exclude<AllTypesValid, 'V'> extends never ? 'V' : false;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const allValidValues: AllTypeValid = 'V';
 
-export type GridOptionOrDefault<K extends keyof GridOptions> = K extends keyof typeof GRID_OPTION_DEFAULTS
+type GridOptionDefaultsKeys = keyof typeof GRID_OPTION_DEFAULTS;
+
+export type GridOptionOrDefault<K extends keyof GridOptions> = K extends GridOptionDefaultsKeys
     ? NonNullable<GridOptions[K]>
     : GridOptions[K];
+
+type PartialGridOptionsWithDefaults = { [K in keyof GridOptions]: GridOptionOrDefault<K> };
+
+export type GridOptionsWithDefaults = Required<Pick<PartialGridOptionsWithDefaults, GridOptionDefaultsKeys>> &
+    Omit<PartialGridOptionsWithDefaults, GridOptionDefaultsKeys>;

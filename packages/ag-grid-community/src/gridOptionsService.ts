@@ -15,7 +15,7 @@ import type { ColDef, ColGroupDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { AgEventType, AgPublicEventType } from './eventTypes';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
-import type { GridOptionOrDefault } from './gridOptionsDefault';
+import type { GridOptionOrDefault, GridOptionsWithDefaults } from './gridOptionsDefault';
 import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { ModuleName, ValidationModuleName } from './interfaces/iModule';
@@ -56,15 +56,13 @@ type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptio
           params: WithoutGridCommon<ExtractParamsFromCallback<OriginalCallback>>
       ) => ExtractReturnTypeFromCallback<OriginalCallback>);
 
-export type PropertyChangedEvent = AgPropertyChangedEvent<GridOptions>;
+export type PropertyChangedEvent = AgPropertyChangedEvent<GridOptionsWithDefaults>;
 export type PropertyValueChangedEvent<K extends keyof GridOptions> = AgPropertyValueChangedEvent<
-    GridOptions,
-    typeof GRID_OPTION_DEFAULTS,
+    GridOptionsWithDefaults,
     K
 >;
 type PropertyValueChangedListener<K extends keyof GridOptions> = AgPropertyValueChangedListener<
-    GridOptions,
-    typeof GRID_OPTION_DEFAULTS,
+    GridOptionsWithDefaults,
     K
 >;
 
@@ -73,10 +71,7 @@ let changeSetId = 0;
 // this is added to the main DOM element
 let gridInstanceSequence = 0;
 
-export class GridOptionsService
-    extends BeanStub
-    implements NamedBean, IPropertiesService<GridOptions, typeof GRID_OPTION_DEFAULTS>
-{
+export class GridOptionsService extends BeanStub implements NamedBean, IPropertiesService<GridOptionsWithDefaults> {
     beanName = 'gos' as const;
 
     private gridOptions: GridOptions;

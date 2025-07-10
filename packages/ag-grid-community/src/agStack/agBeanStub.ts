@@ -10,7 +10,6 @@ import type {
     AgPropertyValueChangedEvent,
     AgPropertyValueChangedListener,
     BaseProperties,
-    BasePropertyDefaults,
     IPropertiesService,
 } from './interfaces/iProperties';
 import { LocalEventService } from './localEventService';
@@ -34,11 +33,10 @@ export abstract class AgBeanStub<
         TGlobalEvents,
         TProcessedEvents extends AgEvent,
         TProperties extends BaseProperties,
-        TPropertyDefaults extends BasePropertyDefaults,
-        TPropertiesService extends IPropertiesService<TProperties, TPropertyDefaults>,
+        TPropertiesService extends IPropertiesService<TProperties>,
     >
     implements
-        AgBean<TBeanCollection, TLocalEventListener, TLocalEventType, TGlobalEvents, TProperties, TPropertyDefaults>,
+        AgBean<TBeanCollection, TLocalEventListener, TLocalEventType, TGlobalEvents, TProperties>,
         IEventEmitter<AgEventOrDestroyed<TLocalEventType>>
 {
     protected localEventService?: LocalEventService<AgEventOrDestroyed<TLocalEventType>>;
@@ -197,7 +195,7 @@ export abstract class AgBeanStub<
      */
     private setupPropertyListener<K extends keyof TProperties & string>(
         event: K,
-        listener: AgPropertyValueChangedListener<TProperties, TPropertyDefaults, K>
+        listener: AgPropertyValueChangedListener<TProperties, K>
     ): () => null {
         const { gos } = this;
         gos.addPropertyEventListener(event, listener);
@@ -222,7 +220,7 @@ export abstract class AgBeanStub<
      */
     public addManagedPropertyListener<K extends keyof TProperties & string>(
         event: K,
-        listener: AgPropertyValueChangedListener<TProperties, TPropertyDefaults, K>
+        listener: AgPropertyValueChangedListener<TProperties, K>
     ): () => null {
         if (this.destroyed) {
             return () => null;
@@ -254,7 +252,7 @@ export abstract class AgBeanStub<
         // Ensure each set of events can run for the same changeSetId
         const eventsKey = events.join('-') + this.propertyListenerId++;
 
-        const wrappedListener = (event: AgPropertyValueChangedEvent<TProperties, TPropertyDefaults, any>) => {
+        const wrappedListener = (event: AgPropertyValueChangedEvent<TProperties, any>) => {
             if (event.changeSet) {
                 // ChangeSet is only set when the property change is part of a group of changes from ComponentUtils
                 // Direct api calls should always be run as

@@ -1,9 +1,8 @@
 import { AgComponentStub } from '../agStack/agComponentStub';
 import type { AgComponentEvent, AgComponentSelector } from '../agStack/interfaces/iComponent';
 import type { BeanCollection } from '../context/context';
-import type { GridOptions } from '../entities/gridOptions';
 import type { AgEventListener, AgEventTypeParams, AllEventsWithoutGridCommon } from '../events';
-import type { GRID_OPTION_DEFAULTS } from '../gridOptionsDefault';
+import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
 
 export type ComponentEvent = AgComponentEvent;
@@ -53,8 +52,7 @@ export class Component<TLocalEvent extends string = AgComponentEvent> extends Ag
     TLocalEvent,
     AgEventTypeParams,
     AllEventsWithoutGridCommon,
-    GridOptions,
-    typeof GRID_OPTION_DEFAULTS,
+    GridOptionsWithDefaults,
     GridOptionsService,
     AgComponentSelectorType
 > {}

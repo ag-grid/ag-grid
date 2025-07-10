@@ -26,24 +26,12 @@ export interface AgPropertyChangedEvent<TProperties extends BaseProperties> exte
 
 export type AgPropertyKey<TProperties extends BaseProperties> = keyof TProperties & string;
 
-export type AgPropertyValue<TProperties extends BaseProperties, K extends AgPropertyKey<TProperties>> = TProperties[K];
-
-export type AgPropertyValueOrDefault<
-    TProperties extends BaseProperties,
-    TPropertyDefaults extends BasePropertyDefaults,
-    K extends AgPropertyKey<TProperties>,
-> = K extends keyof TPropertyDefaults & string
-    ? NonNullable<AgPropertyValue<TProperties, K>>
-    : AgPropertyValue<TProperties, K>;
-export interface AgPropertyValueChangedEvent<
-    TProperties extends BaseProperties,
-    TPropertyDefaults extends BasePropertyDefaults,
-    K extends AgPropertyKey<TProperties>,
-> extends AgEvent {
+export interface AgPropertyValueChangedEvent<TProperties extends BaseProperties, K extends AgPropertyKey<TProperties>>
+    extends AgEvent {
     type: K;
     changeSet: AgPropertyChangeSet<TProperties> | undefined;
-    currentValue: AgPropertyValueOrDefault<TProperties, TPropertyDefaults, K>;
-    previousValue: AgPropertyValueOrDefault<TProperties, TPropertyDefaults, K>;
+    currentValue: TProperties[K];
+    previousValue: TProperties[K];
     source: AgPropertyChangedSource;
 }
 
@@ -51,23 +39,18 @@ export type AgPropertyChangedListener<TProperties extends BaseProperties> = (
     event: AgPropertyChangedEvent<TProperties>
 ) => void;
 
-export type AgPropertyValueChangedListener<
-    TProperties extends BaseProperties,
-    TPropertyDefaults extends BasePropertyDefaults,
-    K extends AgPropertyKey<TProperties>,
-> = (event: AgPropertyValueChangedEvent<TProperties, TPropertyDefaults, K>) => void;
+export type AgPropertyValueChangedListener<TProperties extends BaseProperties, K extends AgPropertyKey<TProperties>> = (
+    event: AgPropertyValueChangedEvent<TProperties, K>
+) => void;
 
-export interface IPropertiesService<
-    TProperties extends BaseProperties,
-    TPropertyDefaults extends BasePropertyDefaults,
-> {
+export interface IPropertiesService<TProperties extends BaseProperties> {
     addPropertyEventListener<K extends keyof TProperties & string>(
         event: K,
-        listener: AgPropertyValueChangedListener<TProperties, TPropertyDefaults, K>
+        listener: AgPropertyValueChangedListener<TProperties, K>
     ): void;
     removePropertyEventListener<K extends keyof TProperties & string>(
         event: K,
-        listener: AgPropertyValueChangedListener<TProperties, TPropertyDefaults, K>
+        listener: AgPropertyValueChangedListener<TProperties, K>
     ): void;
-    get<K extends AgPropertyKey<TProperties>>(property: K): AgPropertyValueOrDefault<TProperties, TPropertyDefaults, K>;
+    get<K extends AgPropertyKey<TProperties>>(property: K): TProperties[K];
 }
