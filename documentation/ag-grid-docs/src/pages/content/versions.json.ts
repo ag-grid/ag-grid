@@ -1,7 +1,5 @@
-import { getArchiveUrl } from '@ag-website-shared/utils/getArchiveUrl';
+import { getContentApiArchiveUrl } from '@ag-website-shared/utils/content-api/urlPaths';
 import { type CollectionEntry, getEntry } from 'astro:content';
-
-const site = 'grid';
 
 function parseDateString(dateString: string): string {
     if (!dateString) {
@@ -29,7 +27,7 @@ export async function GET() {
     const lastVersion = {
         version: lastVersionData.version,
         releaseData: parseDateString(lastVersionData.date!),
-        url: getArchiveUrl({ version: lastVersionData.version, site }) + '/',
+        url: getContentApiArchiveUrl({ version: lastVersionData.version }),
         isLatest: true,
     };
 
@@ -44,7 +42,7 @@ export async function GET() {
             return {
                 version,
                 releaseData: parseDateString(versionData.date),
-                url: getArchiveUrl({ version, site }) + '/',
+                url: getContentApiArchiveUrl({ version }),
             };
         })
         .filter((v) => Boolean(v));

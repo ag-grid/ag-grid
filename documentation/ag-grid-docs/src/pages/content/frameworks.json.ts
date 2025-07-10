@@ -1,3 +1,4 @@
+import { getContentApiFrameworkUrl } from '@ag-website-shared/utils/content-api/urlPaths';
 import { getFrameworkPath } from '@components/docs/utils/urlPaths';
 import { FRAMEWORKS } from '@constants';
 import { getInternalFramework } from '@utils/framework';
@@ -17,6 +18,7 @@ export async function GET() {
         return {
             framework,
             slug: getFrameworkPath(framework),
+            url: getContentApiFrameworkUrl({ framework }),
             types,
         };
     });
