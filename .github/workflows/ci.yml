@@ -563,7 +563,7 @@ jobs:
       - name: SlackBot
         if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
         env:
-          GRID_TEAM_CITY_CHANNEL: ${{ secrets.GRID_TEAM_CITY_CHANNEL }}
+          CI_GRID_GATE_CHANNEL: '#ci-grid-gate'
           CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.CHARTS_TEAM_CITY_CHANNEL }}
           WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
@@ -594,7 +594,7 @@ jobs:
             }
         run: |
           npx ts-node ./scripts/agBotSlackMessage.ts --auth-token "$SLACK_BOT_OAUTH_TOKEN" \
-            --grid-channel "$GRID_TEAM_CITY_CHANNEL" \
+            --grid-channel "$CI_GRID_GATE_CHANNEL" \
             --charts-channel "$CHARTS_TEAM_CITY_CHANNEL" \
             --website-status-channel "$WEBSITE_STATUS_CHANNEL" \
             --debug-channel "$SLACK_DEBUG_CHANNEL" \
