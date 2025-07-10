@@ -77,8 +77,8 @@ export class ValueService extends BeanStub implements NamedBean {
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
         const listener = (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event);
-        this.eventSvc.addEventListener('cellValueChanged', listener, true);
-        this.addDestroyFunc(() => this.eventSvc.removeEventListener('cellValueChanged', listener, true));
+        this.eventSvc.addListener('cellValueChanged', listener, true);
+        this.addDestroyFunc(() => this.eventSvc.removeListener('cellValueChanged', listener, true));
 
         this.addManagedPropertyListener('treeData', (propChange) => (this.isTreeData = propChange.currentValue));
     }

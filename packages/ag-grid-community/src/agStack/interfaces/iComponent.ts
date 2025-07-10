@@ -1,7 +1,6 @@
 import type { AgBeanStubEvent } from '../agBeanStub';
 import type { AgEvent } from './agEvent';
 import type { AgBaseBean, AgBean } from './iBean';
-import type { IEventListener } from './iEventEmitter';
 import type { BaseProperties } from './iProperties';
 
 export interface AgBaseComponent<TBeanCollection> extends AgBaseBean<TBeanCollection> {
@@ -10,25 +9,20 @@ export interface AgBaseComponent<TBeanCollection> extends AgBaseBean<TBeanCollec
 
 export interface AgComponent<
     TBeanCollection,
-    TLocalEventListener extends IEventListener<TLocalEventType>,
-    TLocalEventType extends string,
-    TGlobalEvents,
     TProperties extends BaseProperties,
+    TGlobalEvents,
+    TLocalEventType extends string,
 > extends AgBaseComponent<TBeanCollection>,
-        AgBean<TBeanCollection, TLocalEventListener, TLocalEventType, TGlobalEvents, TProperties> {
+        AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType> {
     getCompId(): number;
 
     getFocusableElement(): HTMLElement;
 
     getAriaElement(): Element;
 
-    setParentComponent(
-        component: AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties>
-    ): void;
+    setParentComponent(component: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>): void;
 
-    getParentComponent<T extends AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties>>():
-        | T
-        | undefined;
+    getParentComponent<T extends AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>>(): T | undefined;
 
     prependChild(newChild: HTMLElement | AgBaseComponent<TBeanCollection>, container?: HTMLElement): void;
 

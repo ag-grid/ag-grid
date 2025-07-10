@@ -216,14 +216,14 @@ export class GridOptionsService extends BeanStub implements NamedBean, IProperti
         key: K,
         listener: PropertyValueChangedListener<K>
     ): void {
-        this.propEventSvc.addEventListener(key, listener as any);
+        this.propEventSvc.addEventListener(key, listener);
     }
 
     public removePropertyEventListener<K extends keyof GridOptions>(
         key: K,
         listener: PropertyValueChangedListener<K>
     ): void {
-        this.propEventSvc.removeEventListener(key, listener as any);
+        this.propEventSvc.removeEventListener(key, listener);
     }
 
     // responsible for calling the onXXX functions on gridOptions

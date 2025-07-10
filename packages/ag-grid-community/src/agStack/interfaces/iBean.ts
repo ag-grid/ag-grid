@@ -28,14 +28,21 @@ export interface AgSingletonBean<TBeanCollection> extends AgBaseBean<TBeanCollec
 
 export interface AgBean<
     TBeanCollection,
-    TLocalEventListener extends IEventListener<TLocalEventType>,
-    TLocalEventType extends string,
-    TGlobalEvents,
     TProperties extends BaseProperties,
+    TGlobalEvents,
+    TLocalEventType extends string,
 > extends AgBaseBean<TBeanCollection> {
-    addEventListener<T extends TLocalEventType>(eventType: T, listener: TLocalEventListener, async?: boolean): void;
+    addEventListener<T extends TLocalEventType>(
+        eventType: T,
+        listener: IEventListener<TLocalEventType>,
+        async?: boolean
+    ): void;
 
-    removeEventListener<T extends TLocalEventType>(eventType: T, listener: TLocalEventListener, async?: boolean): void;
+    removeEventListener<T extends TLocalEventType>(
+        eventType: T,
+        listener: IEventListener<TLocalEventType>,
+        async?: boolean
+    ): void;
 
     dispatchLocalEvent<TEvent extends AgEvent<TLocalEventType>>(event: TEvent): void;
 
@@ -97,12 +104,7 @@ export interface AgBean<
      * Destroys a bean and returns undefined to support destruction and clean up in a single line.
      * this.dateComp = this.context.destroyBean(this.dateComp);
      */
-    destroyBean<
-        T extends
-            | AgBean<TBeanCollection, TLocalEventListener, TLocalEventType, TGlobalEvents, TProperties>
-            | null
-            | undefined,
-    >(
+    destroyBean<T extends AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType> | null | undefined>(
         bean: T,
         context?: AgBaseContext<TBeanCollection>
     ): undefined;

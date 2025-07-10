@@ -1,17 +1,14 @@
-import type { IEventEmitter } from './agStack/interfaces/iEventEmitter';
 import { LocalEventService } from './agStack/localEventService';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import type { IEventService } from './context/iEventService';
 import type { AgEventType } from './eventTypes';
 import type { AgEventListener, AgGlobalEventListener, AllEventsWithoutGridCommon } from './events';
 import { _addGridCommonParams } from './gridOptionsUtils';
+import type { IEventService } from './interfaces/iEventService';
 
-export class EventService
-    extends BeanStub<AgEventType>
-    implements NamedBean, IEventEmitter<AgEventType>, IEventService
-{
+export class EventService extends BeanStub<AgEventType> implements NamedBean, IEventService {
     beanName = 'eventSvc' as const;
+    public eventServiceType = 'global' as const;
 
     private readonly globalSvc: LocalEventService<AgEventType> = new LocalEventService();
 
@@ -26,7 +23,7 @@ export class EventService
         }
     }
 
-    public override addEventListener<TEventType extends AgEventType>(
+    public addListener<TEventType extends AgEventType>(
         eventType: TEventType,
         listener: AgEventListener<any, any, TEventType>,
         async?: boolean
@@ -34,7 +31,7 @@ export class EventService
         this.globalSvc.addEventListener(eventType, listener as any, async);
     }
 
-    public override removeEventListener<TEventType extends AgEventType>(
+    public removeListener<TEventType extends AgEventType>(
         eventType: TEventType,
         listener: AgEventListener<any, any, TEventType>,
         async?: boolean
@@ -48,11 +45,6 @@ export class EventService
 
     public removeGlobalListener(listener: AgGlobalEventListener, async = false): void {
         this.globalSvc.removeGlobalListener(listener, async);
-    }
-
-    /** @deprecated DO NOT FIRE LOCAL EVENTS OFF THE EVENT SERVICE */
-    public override dispatchLocalEvent(): void {
-        // only the destroy event from BeanStub should flow through here
     }
 
     public dispatchEvent(event: AllEventsWithoutGridCommon): void {

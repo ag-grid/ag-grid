@@ -28,15 +28,14 @@ export abstract class AgBeanStub<
             TProcessedEvents,
             AgBaseContext<TBeanCollection>
         >,
-        TLocalEventListener extends IEventListener<AgEventOrDestroyed<TLocalEventType>>,
-        TLocalEventType extends string, // TODO move to end and add default
+        TProperties extends BaseProperties,
         TGlobalEvents,
         TProcessedEvents extends AgEvent,
-        TProperties extends BaseProperties,
         TPropertiesService extends IPropertiesService<TProperties>,
+        TLocalEventType extends string, // TODO move to end and add default
     >
     implements
-        AgBean<TBeanCollection, TLocalEventListener, TLocalEventType, TGlobalEvents, TProperties>,
+        AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType>,
         IEventEmitter<AgEventOrDestroyed<TLocalEventType>>
 {
     protected localEventService?: LocalEventService<AgEventOrDestroyed<TLocalEventType>>;
@@ -93,7 +92,7 @@ export abstract class AgBeanStub<
     /** Add a local event listener against this BeanStub */
     public addEventListener<T extends TLocalEventType>(
         eventType: T,
-        listener: TLocalEventListener,
+        listener: IEventListener<T>,
         async?: boolean
     ): void {
         if (!this.localEventService) {
@@ -105,7 +104,7 @@ export abstract class AgBeanStub<
     /** Remove a local event listener from this BeanStub */
     public removeEventListener<T extends TLocalEventType>(
         eventType: T,
-        listener: TLocalEventListener,
+        listener: IEventListener<T>,
         async?: boolean
     ): void {
         this.localEventService?.removeEventListener(eventType, listener, async);
@@ -127,14 +126,18 @@ export abstract class AgBeanStub<
         return this._setupListeners<keyof TGlobalEvents & string>(this.eventSvc, handlers);
     }
     public addManagedListeners<TEvent extends string>(
-        object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent>,
+        object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | AgEventService<TGlobalEvents, TProcessedEvents>,
         handlers: EventHandlers<TEvent>
     ) {
         return this._setupListeners<TEvent>(object, handlers);
     }
 
     private _setupListeners<TEvent extends string>(
-        object: HTMLElement | IEventEmitter<TEvent> | IAgEventEmitter<TEvent>,
+        object:
+            | HTMLElement
+            | IEventEmitter<TEvent>
+            | IAgEventEmitter<TEvent>
+            | AgEventService<TGlobalEvents, TProcessedEvents>,
         handlers: EventHandlers<TEvent>
     ) {
         const destroyFuncs: (() => null)[] = [];
@@ -148,7 +151,12 @@ export abstract class AgBeanStub<
     }
 
     private _setupListener<const T extends string>(
-        object: Window | HTMLElement | IEventEmitter<T> | IAgEventEmitter<T>,
+        object:
+            | Window
+            | HTMLElement
+            | IEventEmitter<T>
+            | IAgEventEmitter<T>
+            | AgEventService<TGlobalEvents, TProcessedEvents>,
         event: T,
         listener: (event?: any) => void
     ): () => null {
@@ -165,16 +173,24 @@ export abstract class AgBeanStub<
                 return null;
             };
         } else {
+            const objIsEventService = isEventService<TGlobalEvents, TProcessedEvents>(object);
             if (object instanceof HTMLElement) {
                 _addSafePassiveEventListener(this.beans.frameworkOverrides, object, event, listener);
+            } else if (objIsEventService) {
+                object.addListener(event as any, listener);
             } else {
                 object.addEventListener(event, listener);
             }
 
-            destroyFunc = () => {
-                (object as any).removeEventListener(event, listener);
-                return null;
-            };
+            destroyFunc = objIsEventService
+                ? () => {
+                      object.removeListener(event as any, listener);
+                      return null;
+                  }
+                : () => {
+                      (object as any).removeEventListener(event, listener);
+                      return null;
+                  };
         }
 
         this.destroyFunctions.push(destroyFunc);
@@ -339,7 +355,13 @@ export abstract class AgBeanStub<
 
 // type guard for IAgEventEmitter
 function isAgEventEmitter<TEvent extends string>(
-    object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent>
+    object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | AgEventService<any, any>
 ): object is IAgEventEmitter<TEvent> {
     return (object as IAgEventEmitter<TEvent>).__addEventListener !== undefined;
+}
+
+function isEventService<TEventParams, TProcessedEvents extends AgEvent>(
+    object: any
+): object is AgEventService<TEventParams, TProcessedEvents> {
+    return (object as AgEventService<TEventParams, TProcessedEvents>).eventServiceType === 'global';
 }

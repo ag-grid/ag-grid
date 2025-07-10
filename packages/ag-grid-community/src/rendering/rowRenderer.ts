@@ -330,17 +330,17 @@ export class RowRenderer extends BeanStub implements NamedBean {
         };
 
         const addCellSelectionListeners = () => {
-            this.eventSvc.addEventListener('cellSelectionChanged', onCellSelectionChanged);
-            this.eventSvc.addEventListener('columnMoved', onColumnMovedPinnedVisible);
-            this.eventSvc.addEventListener('columnPinned', onColumnMovedPinnedVisible);
-            this.eventSvc.addEventListener('columnVisible', onColumnMovedPinnedVisible);
+            this.eventSvc.addListener('cellSelectionChanged', onCellSelectionChanged);
+            this.eventSvc.addListener('columnMoved', onColumnMovedPinnedVisible);
+            this.eventSvc.addListener('columnPinned', onColumnMovedPinnedVisible);
+            this.eventSvc.addListener('columnVisible', onColumnMovedPinnedVisible);
         };
 
         const removeCellSelectionListeners = () => {
-            this.eventSvc.removeEventListener('cellSelectionChanged', onCellSelectionChanged);
-            this.eventSvc.removeEventListener('columnMoved', onColumnMovedPinnedVisible);
-            this.eventSvc.removeEventListener('columnPinned', onColumnMovedPinnedVisible);
-            this.eventSvc.removeEventListener('columnVisible', onColumnMovedPinnedVisible);
+            this.eventSvc.removeListener('cellSelectionChanged', onCellSelectionChanged);
+            this.eventSvc.removeListener('columnMoved', onColumnMovedPinnedVisible);
+            this.eventSvc.removeListener('columnPinned', onColumnMovedPinnedVisible);
+            this.eventSvc.removeListener('columnVisible', onColumnMovedPinnedVisible);
         };
         this.addDestroyFunc(() => removeCellSelectionListeners());
         this.addManagedPropertyListeners(['enableRangeSelection', 'cellSelection'], () => {

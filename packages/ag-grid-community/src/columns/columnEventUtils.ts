@@ -1,7 +1,7 @@
-import type { IEventService } from '../context/iEventService';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IEventService } from '../interfaces/iEventService';
 
 function getCommonValue<T>(cols: AgColumn[], valueGetter: (col: AgColumn) => T): T | undefined {
     if (!cols || cols.length == 0) {

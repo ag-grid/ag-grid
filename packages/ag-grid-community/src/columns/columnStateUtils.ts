@@ -1,6 +1,5 @@
 import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { BeanCollection } from '../context/context';
-import type { IEventService } from '../context/iEventService';
 import type { AgColumn } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType, ColumnsResetEvent } from '../events';
@@ -8,6 +7,7 @@ import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IEventService } from '../interfaces/iEventService';
 import { _areEqual, _removeFromArray } from '../utils/array';
 import { _exists, _missing } from '../utils/generic';
 import { _warn } from '../validation/logging';
