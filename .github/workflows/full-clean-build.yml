@@ -247,7 +247,7 @@ jobs:
         if: (success() && github.ref == 'refs/heads/latest' && steps.build_docs_staging.outputs.success == 'true' && steps.build.outputs.success == 'true') || inputs.force_dispatch_docs_tests
         uses: actions/github-script@v7
         env:
-          WORKFLOW_ID: 'docs-tests.yml'
+          WORKFLOW_ID: 'doc-tests.yml'
         with:
           script: |
             const owner = context.repo.owner;
