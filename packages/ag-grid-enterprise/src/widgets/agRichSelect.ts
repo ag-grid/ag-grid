@@ -758,8 +758,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     protected override onKeyDown(e: KeyboardEvent): void {
         const { key, isComposing } = e;
 
-        const { isPickerDisplayed, config, listComponent, pickerComponent } = this;
-        const { allowTyping, multiSelect, suppressDeselectAll } = config;
+        const {
+            isPickerDisplayed,
+            config: { allowTyping, multiSelect, suppressDeselectAll },
+            listComponent,
+            pickerComponent,
+        } = this;
 
         switch (key) {
             case KeyCode.LEFT:
@@ -820,7 +824,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
                 break;
             case KeyCode.SPACE:
-                e.preventDefault();
+                if (!allowTyping || isComposing) {
+                    e.preventDefault();
+                }
 
                 if (!isComposing && isPickerDisplayed && multiSelect && listComponent) {
                     const lastItemHovered = listComponent.getLastItemHovered();

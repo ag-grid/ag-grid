@@ -172,7 +172,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         const prevCell = _getCellCtrl(this.beans, prev);
 
+        const isBlock = this.gos.get('invalidEditValueMode') === 'block';
+
         if (
+            isBlock &&
             prevCell &&
             (this.model.getCellValidationModel().getCellValidation(prevCell) ||
                 this.model.getRowValidationModel().getRowValidation(prevCell))
