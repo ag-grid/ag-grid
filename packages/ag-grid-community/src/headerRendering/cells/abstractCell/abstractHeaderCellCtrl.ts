@@ -1,3 +1,4 @@
+import { _addOrRemoveAttribute } from '../../../agStack/utils/domUtils';
 import type { HorizontalDirection } from '../../../constants/direction';
 import { BeanStub } from '../../../context/beanStub';
 import type { DragSource } from '../../../dragAndDrop/dragAndDropService';
@@ -8,7 +9,7 @@ import type { HeaderClassParams, HeaderStyle, SuppressHeaderKeyboardEventParams 
 import { _addGridCommonParams, _getActiveDomElement, _getDocument, _setDomData } from '../../../gridOptionsUtils';
 import type { BrandedType } from '../../../interfaces/brandedType';
 import { _setAriaColIndex } from '../../../utils/aria';
-import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../../utils/dom';
+import { _getElementSize, _observeResize } from '../../../utils/dom';
 import { _isHeaderFocusSuppressed } from '../../../utils/focus';
 import { _batchCall } from '../../../utils/function';
 import { _exists } from '../../../utils/generic';

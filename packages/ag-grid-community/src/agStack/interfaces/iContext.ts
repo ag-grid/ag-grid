@@ -22,7 +22,7 @@ export interface AgCoreBeanCollection<
 
 export type AgEventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
 
-export interface AgContext<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
+export interface AgBaseContext<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
     createBean<T extends AgBaseBean<TBeanCollection>>(
         bean: T,
         afterPreCreateCallback?: (bean: AgBaseBean<TBeanCollection>) => void

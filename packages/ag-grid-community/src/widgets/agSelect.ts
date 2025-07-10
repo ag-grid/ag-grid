@@ -1,5 +1,5 @@
 import { KeyCode } from '../constants/keyCode';
-import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
+import type { AgPickerFieldParams } from '../interfaces/agPickerFieldParams';
 import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
 import { _setAriaControlsAndLabel } from '../utils/aria';
 import { _isElementOverflowingCallback } from '../utils/dom';

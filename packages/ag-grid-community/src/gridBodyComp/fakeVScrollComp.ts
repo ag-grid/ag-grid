@@ -1,6 +1,7 @@
+import { _setFixedWidth } from '../agStack/utils/domUtils';
 import type { CtrlsService } from '../ctrlsService';
 import type { ElementParams } from '../utils/dom';
-import { _isVisible, _setFixedWidth } from '../utils/dom';
+import { _isVisible } from '../utils/dom';
 import type { ComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { SetHeightFeature } from './rowContainer/setHeightFeature';

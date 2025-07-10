@@ -1,8 +1,9 @@
 import { RefPlaceholder } from '../agStack/agComponent';
+import { _setFixedWidth } from '../agStack/utils/domUtils';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { BeanCollection } from '../context/context';
 import type { ElementParams } from '../utils/dom';
-import { _getScrollLeft, _isVisible, _setFixedHeight, _setFixedWidth, _setScrollLeft } from '../utils/dom';
+import { _getScrollLeft, _isVisible, _setFixedHeight, _setScrollLeft } from '../utils/dom';
 import type { ComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp } from './abstractFakeScrollComp';
 import { CenterWidthFeature } from './centerWidthFeature';

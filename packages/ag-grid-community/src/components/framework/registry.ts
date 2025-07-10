@@ -5,7 +5,7 @@ import type { DynamicBeanName, ProcessParamsFunc, UserComponentName } from '../.
 import type { Module } from '../../interfaces/iModule';
 import type { IconName, IconValue } from '../../utils/icon';
 import { _errMsg } from '../../validation/logging';
-import type { AgComponentSelector, ComponentSelector } from '../../widgets/component';
+import type { AgComponentSelectorType, ComponentSelector } from '../../widgets/component';
 
 export class Registry extends BeanStub implements NamedBean {
     beanName = 'registry' as const;
@@ -20,7 +20,7 @@ export class Registry extends BeanStub implements NamedBean {
 
     private dynamicBeans: { [K in DynamicBeanName]?: new (args?: any[]) => object };
 
-    private selectors: { [name in AgComponentSelector]?: ComponentSelector } = {};
+    private selectors: { [name in AgComponentSelectorType]?: ComponentSelector } = {};
 
     private icons: { [K in IconName]?: IconValue } = {};
 
@@ -142,7 +142,7 @@ export class Registry extends BeanStub implements NamedBean {
         return new BeanClass(...args) as any;
     }
 
-    public getSelector(name: AgComponentSelector): ComponentSelector | undefined {
+    public getSelector(name: AgComponentSelectorType): ComponentSelector | undefined {
         return this.selectors[name];
     }
 

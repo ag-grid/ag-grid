@@ -1,10 +1,10 @@
-import { _createAgElement } from '../agStack/utils/domUtils';
+import { _createAgElement, _formatSize } from '../agStack/utils/domUtils';
 import type { AgElementParams } from '../agStack/utils/domUtils';
 import type { BeanCollection } from '../context/context';
 import type { CellStyle, HeaderStyle } from '../entities/colDef';
 import type { RowStyle } from '../entities/gridOptions';
 import { _getRootNode, _getWindow } from '../gridOptionsUtils';
-import type { AgComponentSelector } from '../widgets/component';
+import type { AgComponentSelectorType } from '../widgets/component';
 import { _isBrowserFirefox, _isBrowserSafari } from './browser';
 
 /**
@@ -43,20 +43,6 @@ export function _isFocusableFormField(element: HTMLElement): boolean {
     const focusable = isFocusable && !isNotFocusable && isElementVisible;
 
     return focusable;
-}
-
-export function _setDisabled(element: HTMLElement, disabled: boolean) {
-    const attributeName = 'disabled';
-    const addOrRemoveDisabledAttribute = disabled
-        ? (e: HTMLElement) => e.setAttribute(attributeName, '')
-        : (e: HTMLElement) => e.removeAttribute(attributeName);
-
-    addOrRemoveDisabledAttribute(element);
-
-    const inputs = element.querySelectorAll('input') ?? [];
-    for (const input of inputs) {
-        addOrRemoveDisabledAttribute(input as HTMLElement);
-    }
 }
 
 export function _isElementChildOfClass(
@@ -209,12 +195,6 @@ export function _setScrollLeft(element: HTMLElement, value: number, rtl: boolean
     element.scrollLeft = value;
 }
 
-export function _clearElement(el: HTMLElement): void {
-    while (el && el.firstChild) {
-        el.removeChild(el.firstChild);
-    }
-}
-
 export function _removeFromParent(node: Element | null) {
     if (node && node.parentNode) {
         node.parentNode.removeChild(node);
@@ -337,41 +317,11 @@ export function _isVerticalScrollShowing(element: HTMLElement): boolean {
     return element.clientHeight < element.scrollHeight;
 }
 
-export function _setElementWidth(element: HTMLElement, width: string | number) {
-    if (width === 'flex') {
-        element.style.removeProperty('width');
-        element.style.removeProperty('minWidth');
-        element.style.removeProperty('maxWidth');
-        element.style.flex = '1 1 auto';
-    } else {
-        _setFixedWidth(element, width);
-    }
-}
-
-export function _setFixedWidth(element: HTMLElement, width: string | number) {
-    width = _formatSize(width);
-    element.style.width = width;
-    element.style.maxWidth = width;
-    element.style.minWidth = width;
-}
-
 export function _setFixedHeight(element: HTMLElement, height: string | number) {
     height = _formatSize(height);
     element.style.height = height;
     element.style.maxHeight = height;
     element.style.minHeight = height;
-}
-
-export function _formatSize(size: number | string) {
-    return typeof size === 'number' ? `${size}px` : size;
-}
-
-export function _addOrRemoveAttribute(element: HTMLElement, name: string, value: string | number | null | undefined) {
-    if (value == null || value === '') {
-        element.removeAttribute(name);
-    } else {
-        element.setAttribute(name, value.toString());
-    }
 }
 
 export function _observeResize(
@@ -438,8 +388,10 @@ export function _requestAnimationFrame(beans: BeanCollection, callback: any) {
     }
 }
 
-export type ElementParams = AgElementParams<AgComponentSelector>;
+export type ElementParams = AgElementParams<AgComponentSelectorType>;
 
-export function _createElement<T extends HTMLElement = HTMLElement>(params: AgElementParams<AgComponentSelector>): T {
+export function _createElement<T extends HTMLElement = HTMLElement>(
+    params: AgElementParams<AgComponentSelectorType>
+): T {
     return _createAgElement(params);
 }

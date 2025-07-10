@@ -1,6 +1,6 @@
 import type { AgEvent } from './interfaces/agEvent';
 import type { AgBaseBean, AgBean } from './interfaces/iBean';
-import type { AgContext, AgCoreBeanCollection } from './interfaces/iContext';
+import type { AgBaseContext, AgCoreBeanCollection } from './interfaces/iContext';
 import type { AgEventService } from './interfaces/iEvent';
 import type { IAgEventEmitter, IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
 import type { LocaleTextFunc } from './interfaces/iLocaleService';
@@ -32,7 +32,7 @@ export abstract class AgBeanStub<
             TContext
         >,
         TBean extends AgBaseBean<TBeanCollection>,
-        TContext extends AgContext<TBeanName, TBeanCollection>,
+        TContext extends AgBaseContext<TBeanName, TBeanCollection>,
         TLocalEventListener extends IEventListener<AgEventOrDestroyed<TLocalEventType>>,
         TLocalEventType extends string, // TODO move to end and add default
         TGlobalEventType extends string,

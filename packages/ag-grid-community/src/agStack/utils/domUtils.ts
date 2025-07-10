@@ -16,6 +16,26 @@ export function _setVisible(element: HTMLElement, visible: boolean, options: { s
     }
 }
 
+export function _setDisabled(element: HTMLElement, disabled: boolean) {
+    const attributeName = 'disabled';
+    const addOrRemoveDisabledAttribute = disabled
+        ? (e: HTMLElement) => e.setAttribute(attributeName, '')
+        : (e: HTMLElement) => e.removeAttribute(attributeName);
+
+    addOrRemoveDisabledAttribute(element);
+
+    const inputs = element.querySelectorAll('input') ?? [];
+    for (const input of inputs) {
+        addOrRemoveDisabledAttribute(input as HTMLElement);
+    }
+}
+
+export function _clearElement(el: HTMLElement): void {
+    while (el && el.firstChild) {
+        el.removeChild(el.firstChild);
+    }
+}
+
 /**
  * Loads the template and returns it as an element.
  * NOTE: Prefer _createElement
@@ -30,8 +50,38 @@ export function _loadTemplate(template: string | undefined | null): HTMLElement 
     return tempDiv.firstChild as HTMLElement;
 }
 
+export function _setElementWidth(element: HTMLElement, width: string | number) {
+    if (width === 'flex') {
+        element.style.removeProperty('width');
+        element.style.removeProperty('minWidth');
+        element.style.removeProperty('maxWidth');
+        element.style.flex = '1 1 auto';
+    } else {
+        _setFixedWidth(element, width);
+    }
+}
+
+export function _setFixedWidth(element: HTMLElement, width: string | number) {
+    width = _formatSize(width);
+    element.style.width = width;
+    element.style.maxWidth = width;
+    element.style.minWidth = width;
+}
+
+export function _formatSize(size: number | string) {
+    return typeof size === 'number' ? `${size}px` : size;
+}
+
 export function _isNodeOrElement(o: any): o is Node | Element {
     return o instanceof Node || o instanceof HTMLElement;
+}
+
+export function _addOrRemoveAttribute(element: HTMLElement, name: string, value: string | number | null | undefined) {
+    if (value == null || value === '') {
+        element.removeAttribute(name);
+    } else {
+        element.setAttribute(name, value.toString());
+    }
 }
 
 export type Attributes = { [key: string]: string };

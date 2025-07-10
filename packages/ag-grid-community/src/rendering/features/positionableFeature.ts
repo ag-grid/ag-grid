@@ -1,3 +1,4 @@
+import { _setFixedWidth } from '../../agStack/utils/domUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
@@ -9,7 +10,6 @@ import {
     _isVisible,
     _observeResize,
     _setFixedHeight,
-    _setFixedWidth,
 } from '../../utils/dom';
 import type { PopupService } from '../../widgets/popupService';
 

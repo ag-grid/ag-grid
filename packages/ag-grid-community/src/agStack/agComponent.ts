@@ -3,7 +3,8 @@ import type { AgBeanStubEvent } from './agBeanStub';
 import { CssClassManager } from './cssClassManager';
 import type { AgEvent } from './interfaces/agEvent';
 import type { AgBaseBean } from './interfaces/iBean';
-import type { AgContext, AgCoreBeanCollection } from './interfaces/iContext';
+import type { AgBaseComponent, AgComponent } from './interfaces/iComponent';
+import type { AgBaseContext, AgCoreBeanCollection } from './interfaces/iContext';
 import type { IEventListener } from './interfaces/iEventEmitter';
 import type { BaseProperties, BasePropertyDefaults, IPropertiesService } from './interfaces/iProperties';
 import type { AgElementParams } from './utils/domUtils';
@@ -33,35 +34,61 @@ export interface VisibleChangedEvent extends AgEvent<'displayChanged'> {
     visible: boolean;
 }
 
-export type AgComponentSelectorParams<
-    TComponent extends AgComponent<
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        TComponentSelectorType
-    >,
-    TComponentSelectorType extends string,
-> = {
-    component: { new (params?: any): TComponent };
+export type AgComponentSelector<TComponentSelectorType extends string, TBeanCollection = any> = {
+    component: { new (params?: any): AgBaseComponent<TBeanCollection> };
     selector: TComponentSelectorType;
 };
 
-export abstract class AgComponent<
-    TComponent extends AgComponent<
-        TComponent,
+export abstract class AgComponentStub<
+        TComponent extends AgComponentStub<
+            TComponent,
+            TBeanName,
+            TBeanCollection,
+            TBean,
+            TContext,
+            TLocalEventListener,
+            TLocalEventType | AgComponentEvent,
+            TGlobalEventType,
+            TGlobalEventParams,
+            TProcessedEvents,
+            TProperties,
+            TPropertyDefaults,
+            TBooleanProperties,
+            TPropertiesEventSource,
+            TPropertiesEventType,
+            TPropertiesService,
+            TComponentSelectorType
+        > &
+            TBean,
+        TBeanName extends string,
+        TBeanCollection extends AgCoreBeanCollection<
+            TPropertiesService,
+            TGlobalEventType,
+            TGlobalEventParams,
+            TProcessedEvents,
+            TContext
+        >,
+        TBean extends AgBaseBean<TBeanCollection>,
+        TContext extends AgBaseContext<TBeanName, TBeanCollection>,
+        TLocalEventListener extends IEventListener<TLocalEventType>,
+        TLocalEventType extends string, // TODO move to end and add default
+        TGlobalEventType extends string,
+        TGlobalEventParams extends Record<TGlobalEventType, any>,
+        TProcessedEvents extends AgEvent,
+        TProperties extends BaseProperties,
+        TPropertyDefaults extends BasePropertyDefaults,
+        TBooleanProperties,
+        TPropertiesEventSource,
+        TPropertiesEventType extends string,
+        TPropertiesService extends IPropertiesService<
+            TProperties,
+            TPropertyDefaults,
+            TBooleanProperties,
+            TPropertiesEventSource
+        >,
+        TComponentSelectorType extends string,
+    >
+    extends AgBeanStub<
         TBeanName,
         TBeanCollection,
         TBean,
@@ -76,58 +103,29 @@ export abstract class AgComponent<
         TBooleanProperties,
         TPropertiesEventSource,
         TPropertiesEventType,
-        TPropertiesService,
-        TComponentSelectorType
-    > &
-        TBean,
-    TBeanName extends string,
-    TBeanCollection extends AgCoreBeanCollection<
-        TPropertiesService,
-        TGlobalEventType,
-        TGlobalEventParams,
-        TProcessedEvents,
-        TContext
-    >,
-    TBean extends AgBaseBean<TBeanCollection>,
-    TContext extends AgContext<TBeanName, TBeanCollection>,
-    TLocalEventListener extends IEventListener<TLocalEventType>,
-    TLocalEventType extends string, // TODO move to end and add default
-    TGlobalEventType extends string,
-    TGlobalEventParams extends Record<TGlobalEventType, any>,
-    TProcessedEvents extends AgEvent,
-    TProperties extends BaseProperties,
-    TPropertyDefaults extends BasePropertyDefaults,
-    TBooleanProperties,
-    TPropertiesEventSource,
-    TPropertiesEventType extends string,
-    TPropertiesService extends IPropertiesService<
-        TProperties,
-        TPropertyDefaults,
-        TBooleanProperties,
-        TPropertiesEventSource
-    >,
-    TComponentSelectorType extends string,
-> extends AgBeanStub<
-    TBeanName,
-    TBeanCollection,
-    TBean,
-    TContext,
-    TLocalEventListener,
-    TLocalEventType | AgComponentEvent,
-    TGlobalEventType,
-    TGlobalEventParams,
-    TProcessedEvents,
-    TProperties,
-    TPropertyDefaults,
-    TBooleanProperties,
-    TPropertiesEventSource,
-    TPropertiesEventType,
-    TPropertiesService
-> {
+        TPropertiesService
+    >
+    implements
+        AgComponent<
+            TComponent,
+            TBeanName,
+            TBeanCollection,
+            TBean,
+            TContext,
+            TLocalEventListener,
+            TLocalEventType,
+            TGlobalEventType,
+            TGlobalEventParams,
+            TProperties,
+            TBooleanProperties,
+            TPropertiesEventSource,
+            TPropertiesEventType
+        >
+{
     private eGui: HTMLElement;
     private componentSelectors: Map<
         TComponentSelectorType,
-        AgComponentSelectorParams<TComponent, TComponentSelectorType>
+        AgComponentSelector<TComponentSelectorType, TBeanCollection>
     >;
     private suppressDataRefValidation: boolean = false;
 
@@ -150,7 +148,7 @@ export abstract class AgComponent<
 
     constructor(
         templateOrParams?: string | AgElementParams<TComponentSelectorType>,
-        componentSelectors?: AgComponentSelectorParams<TComponent, TComponentSelectorType>[]
+        componentSelectors?: AgComponentSelector<TComponentSelectorType, TBeanCollection>[]
     ) {
         super();
 
@@ -280,7 +278,7 @@ export abstract class AgComponent<
         let newComponent: TComponent | null = null;
         if (componentSelector) {
             const componentParams = paramsMap && elementRef ? paramsMap[elementRef] : undefined;
-            newComponent = new componentSelector.component(componentParams);
+            newComponent = new componentSelector.component(componentParams) as TComponent;
             newComponent.setParentComponent(this as unknown as TComponent);
 
             this.createBean(newComponent, null, afterPreCreateCallback);
@@ -314,9 +312,9 @@ export abstract class AgComponent<
         elements.forEach((el) => el.setAttribute('tabindex', tabIndex.toString()));
     }
 
-    public setTemplate(
+    protected setTemplate(
         templateOrParams: AgElementParams<TComponentSelectorType> | string | null | undefined,
-        componentSelectors?: AgComponentSelectorParams<TComponent, TComponentSelectorType>[],
+        componentSelectors?: AgComponentSelector<TComponentSelectorType, TBeanCollection>[],
         paramsMap?: { [key: string]: any }
     ): void {
         let eGui: HTMLElement;
@@ -329,9 +327,9 @@ export abstract class AgComponent<
         this.setTemplateFromElement(eGui, componentSelectors, paramsMap);
     }
 
-    public setTemplateFromElement(
+    protected setTemplateFromElement(
         element: HTMLElement,
-        components?: AgComponentSelectorParams<TComponent, TComponentSelectorType>[],
+        components?: AgComponentSelector<TComponentSelectorType, TBeanCollection>[],
         paramsMap?: { [key: string]: any },
         suppressDataRefValidation = false
     ): void {
@@ -362,8 +360,8 @@ export abstract class AgComponent<
         this.parentComponent = component;
     }
 
-    public getParentComponent(): TComponent | undefined {
-        return this.parentComponent;
+    public getParentComponent<T extends TComponent>(): T | undefined {
+        return this.parentComponent as T;
     }
 
     // this method is for older code, that wants to provide the gui element,

@@ -1,9 +1,9 @@
+import { _clearElement } from '../../agStack/utils/domUtils';
 import type { BeanCollection } from '../../context/context';
 import type { PaginationChangedEvent } from '../../events';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _areEqual } from '../../utils/array';
 import type { ElementParams } from '../../utils/dom';
-import { _clearElement } from '../../utils/dom';
 import { _warn } from '../../validation/logging';
 import type { ListOption } from '../../widgets/agList';
 import { AgSelect } from '../../widgets/agSelect';

@@ -1,3 +1,4 @@
+import { _addOrRemoveAttribute } from '../../agStack/utils/domUtils';
 import { isColumnSelectionCol, isRowNumberCol } from '../../columns/columnUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
@@ -36,7 +37,7 @@ import type { CheckboxSelectionComponent } from '../../selection/checkboxSelecti
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _setAriaColIndex } from '../../utils/aria';
-import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../utils/dom';
+import { _requestAnimationFrame } from '../../utils/dom';
 import { _getCtrlForEventTarget } from '../../utils/event';
 import { _findFocusableElements, _isCellFocusSuppressed } from '../../utils/focus';
 import { _makeNull } from '../../utils/generic';

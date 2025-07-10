@@ -1,10 +1,11 @@
 import { RefPlaceholder } from '../agStack/agComponent';
+import { _formatSize, _setElementWidth } from '../agStack/utils/domUtils';
 import { KeyCode } from '../constants/keyCode';
 import { _isNothingFocused } from '../gridOptionsUtils';
-import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
+import type { AgPickerFieldParams } from '../interfaces/agPickerFieldParams';
 import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
 import type { ElementParams } from '../utils/dom';
-import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/dom';
+import { _getAbsoluteWidth, _getInnerHeight } from '../utils/dom';
 import type { IconName } from '../utils/icon';
 import { _createIconNoSpan } from '../utils/icon';
 import type { AgAbstractFieldEvent } from './agAbstractField';

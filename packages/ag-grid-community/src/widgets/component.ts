@@ -1,5 +1,5 @@
-import type { AgComponentEvent, AgComponentSelectorParams } from '../agStack/agComponent';
-import { AgComponent } from '../agStack/agComponent';
+import type { AgComponentEvent, AgComponentSelector } from '../agStack/agComponent';
+import { AgComponentStub } from '../agStack/agComponent';
 import type { Bean } from '../context/bean';
 import type { BeanCollection, BeanName, Context } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
@@ -10,10 +10,10 @@ import type { BooleanProps, GridOptionsService, PropertyChangedSource } from '..
 
 export type ComponentEvent = AgComponentEvent;
 
-export type ComponentSelector = AgComponentSelectorParams<Component<any>, AgComponentSelector>;
+export type ComponentSelector = AgComponentSelector<AgComponentSelectorType, BeanCollection>;
 
 /** All the AG Grid components that are used within internal templates via <ag-autocomplete> syntax */
-export type AgComponentSelector =
+export type AgComponentSelectorType =
     | 'AG-AUTOCOMPLETE'
     | 'AG-CHECKBOX'
     | 'AG-COLOR-INPUT'
@@ -49,7 +49,7 @@ export type AgComponentSelector =
     | 'AG-TOGGLE-BUTTON'
     | 'AG-WATERMARK';
 
-export class Component<TLocalEvent extends string = AgComponentEvent> extends AgComponent<
+export class Component<TLocalEvent extends string = AgComponentEvent> extends AgComponentStub<
     Component<any>,
     BeanName,
     BeanCollection,
@@ -66,7 +66,7 @@ export class Component<TLocalEvent extends string = AgComponentEvent> extends Ag
     PropertyChangedSource,
     'gridPropertyChanged',
     GridOptionsService,
-    AgComponentSelector
+    AgComponentSelectorType
 > {
     protected override propertiesChangedEventType = 'gridPropertyChanged' as const;
 }

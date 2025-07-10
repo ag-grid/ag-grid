@@ -1,4 +1,5 @@
 import { CssClassManager } from '../../agStack/cssClassManager';
+import { _clearElement } from '../../agStack/utils/domUtils';
 import { _getLocaleTextFunc } from '../../agStack/utils/localeUtils';
 import type { BeanCollection } from '../../context/context';
 import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapper';
@@ -10,7 +11,7 @@ import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellE
 import type { PopupPositionParams } from '../../interfaces/iPopup';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
-import { _addStylesToElement, _clearElement, _createElement, _removeFromParent } from '../../utils/dom';
+import { _addStylesToElement, _createElement, _removeFromParent } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
 import { _toString } from '../../utils/string';
 import { _warn } from '../../validation/logging';

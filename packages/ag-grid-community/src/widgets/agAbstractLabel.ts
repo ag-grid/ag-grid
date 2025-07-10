@@ -1,13 +1,13 @@
-import { _setDisplayed } from '../agStack/utils/domUtils';
+import type { AgComponentEvent, AgComponentSelector } from '../agStack/agComponent';
+import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../agStack/utils/domUtils';
 import type { AgLabelParams, LabelAlignment } from '../interfaces/agFieldParams';
 import { _setAriaRole } from '../utils/aria';
 import type { ElementParams } from '../utils/dom';
-import { _clearElement, _setDisabled, _setElementWidth } from '../utils/dom';
 import { agAbstractLabelCSS } from './agAbstractLabel.css-GENERATED';
-import type { ComponentEvent, ComponentSelector } from './component';
+import type { AgComponentSelectorType } from './component';
 import { Component } from './component';
 
-export type AgAbstractLabelEvent = ComponentEvent;
+export type AgAbstractLabelEvent = AgComponentEvent;
 export abstract class AgAbstractLabel<
     TConfig extends AgLabelParams = AgLabelParams,
     TEventType extends string = AgAbstractLabelEvent,
@@ -20,7 +20,11 @@ export abstract class AgAbstractLabel<
     protected disabled: boolean = false;
     private label: HTMLElement | string = '';
 
-    constructor(config?: TConfig, template?: string | ElementParams, components?: ComponentSelector[]) {
+    constructor(
+        config?: TConfig,
+        template?: string | ElementParams,
+        components?: AgComponentSelector<AgComponentSelectorType>[]
+    ) {
         super(template, components);
 
         this.config = config || ({} as any);

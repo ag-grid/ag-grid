@@ -1,7 +1,7 @@
+import { _setFixedWidth } from '../agStack/utils/domUtils';
 import type { AgFieldParams } from '../interfaces/agFieldParams';
 import { _getAriaLabel, _setAriaLabel, _setAriaLabelledBy } from '../utils/aria';
 import type { ElementParams } from '../utils/dom';
-import { _setFixedWidth } from '../utils/dom';
 import { AgAbstractLabel } from './agAbstractLabel';
 import type { ComponentSelector } from './component';
 

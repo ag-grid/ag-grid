@@ -1,4 +1,4 @@
-import type { AgPickerFieldParams } from './agFieldParams';
+import type { AgPickerFieldParams } from './agPickerFieldParams';
 import type { ICellEditorParams } from './iCellEditor';
 import type { ICellEditorRendererParams } from './iCellEditorRenderer';
 

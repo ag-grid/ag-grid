@@ -1,5 +1,5 @@
+import { _addOrRemoveAttribute } from '../agStack/utils/domUtils';
 import { _getActiveDomElement } from '../gridOptionsUtils';
-import { _addOrRemoveAttribute } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';

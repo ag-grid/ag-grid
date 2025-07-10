@@ -1,8 +1,8 @@
 import { RefPlaceholder } from '../agStack/agComponent';
+import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../agStack/utils/domUtils';
 import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaLabel } from '../utils/aria';
 import type { ElementParams } from '../utils/dom';
-import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/dom';
 import type { AgAbstractFieldEvent, FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
 

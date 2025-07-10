@@ -1,6 +1,7 @@
 import { RefPlaceholder } from '../../agStack/agComponent';
+import { _clearElement } from '../../main';
 import type { ElementParams } from '../../utils/dom';
-import { _clearElement, _createElement } from '../../utils/dom';
+import { _createElement } from '../../utils/dom';
 import { _exists, _missing } from '../../utils/generic';
 import { Component } from '../../widgets/component';
 import { animateSlideCellRendererCSS } from './animateSlideCellRenderer.css-GENERATED';

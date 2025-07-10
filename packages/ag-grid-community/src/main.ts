@@ -58,7 +58,7 @@ export { IRenderStatusService } from './interfaces/renderStatusService';
 
 // components
 export { EmptyBean as _EmptyBean } from './components/emptyBean';
-export { ComponentSelector, AgComponentSelector, ComponentEvent } from './widgets/component';
+export { ComponentSelector, AgComponentSelectorType, ComponentEvent } from './widgets/component';
 
 export type { Registry } from './components/framework/registry';
 export { UserCompDetails, ComponentType } from './interfaces/iUserCompDetails';
@@ -83,7 +83,15 @@ export { VisibleChangedEvent, RefPlaceholder } from './agStack/agComponent';
 export { AgEvent } from './agStack/interfaces/agEvent';
 export { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
 export { _setAriaHidden } from './agStack/utils/ariaUtils';
-export { _setDisplayed, _loadTemplate, _setVisible, _isNodeOrElement } from './agStack/utils/domUtils';
+export {
+    _setDisplayed,
+    _loadTemplate,
+    _setVisible,
+    _isNodeOrElement,
+    _clearElement,
+    _setFixedWidth,
+    _setDisabled,
+} from './agStack/utils/domUtils';
 export { _getLocaleTextFunc, _translate } from './agStack/utils/localeUtils';
 export { LocaleTextFunc } from './agStack/interfaces/iLocaleService';
 export { CssClassManager } from './agStack/cssClassManager';
@@ -595,8 +603,8 @@ export {
     AgLabelParams,
     LabelAlignment,
     AgInputFieldParams,
-    AgPickerFieldParams,
 } from './interfaces/agFieldParams';
+export { AgPickerFieldParams } from './interfaces/agPickerFieldParams';
 export { RichSelectParams } from './interfaces/iRichCellEditorParams';
 export { AgAbstractInputField } from './widgets/agAbstractInputField';
 export { AgCheckbox, AgCheckboxSelector } from './widgets/agCheckbox';
@@ -1101,13 +1109,10 @@ export { _serialiseDate, _getDateParts, _parseDateTimeFromString } from './utils
 export {
     _getAbsoluteHeight,
     _getAbsoluteWidth,
-    _clearElement,
     _removeFromParent,
     _radioCssClass,
     ElementParams,
     _isVisible,
-    _setFixedWidth,
-    _setDisabled,
     _getInnerHeight,
     _getInnerWidth,
     _observeResize,

@@ -1,9 +1,9 @@
+import { _clearElement } from '../agStack/utils/domUtils';
 import type { AgColumn } from '../entities/agColumn';
 import type { FilterDestroyedEvent } from '../events';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { IFilterComp } from '../interfaces/iFilter';
 import type { ElementParams } from '../utils/dom';
-import { _clearElement } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { _warn } from '../validation/logging';

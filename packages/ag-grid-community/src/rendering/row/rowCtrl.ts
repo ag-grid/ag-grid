@@ -1,3 +1,4 @@
+import { _addOrRemoveAttribute } from '../../agStack/utils/domUtils';
 import { setupCompBean } from '../../components/emptyBean';
 import {
     _getFullWidthCellRendererDetails,
@@ -38,7 +39,7 @@ import { calculateRowLevel } from '../../styling/rowStyleService';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _setAriaExpanded, _setAriaRowIndex } from '../../utils/aria';
 import { _isBrowserSafari } from '../../utils/browser';
-import { _addOrRemoveAttribute, _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
+import { _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _findNextFocusableElement } from '../../utils/focus';
 import { _batchCall } from '../../utils/function';

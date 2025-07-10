@@ -1,7 +1,7 @@
+import { _addOrRemoveAttribute } from '../agStack/utils/domUtils';
 import { _getActiveDomElement } from '../gridOptionsUtils';
 import { _isBrowserSafari } from '../utils/browser';
 import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
-import { _addOrRemoveAttribute } from '../utils/dom';
 import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
 import type { ComponentSelector } from './component';
