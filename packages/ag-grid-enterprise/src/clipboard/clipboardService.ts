@@ -31,6 +31,7 @@ import {
     _last,
     _removeFromArray,
     _warn,
+    isColumnSelectionCol,
     isSpecialCol,
 } from 'ag-grid-community';
 
@@ -353,6 +354,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             columns: AgColumn[],
             index: number
         ) => {
+            // remove the selection column (paste into selection is not supported)
+            const selectionColIdx = columns.findIndex(isColumnSelectionCol);
+            if (selectionColIdx !== -1) {
+                columns.splice(selectionColIdx, 1);
+            }
+
             const atEndOfClipboardData = index - indexOffset >= clipboardData.length;
 
             if (atEndOfClipboardData) {
@@ -372,35 +379,34 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
             const processCellFromClipboardFunc = this.gos.getCallback('processCellFromClipboard');
 
-            columns.forEach((column, idx) => {
+            for (let idx = 0; idx < columns.length; idx++) {
+                const column = columns[idx];
                 if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
-                    return;
+                    continue;
                 }
 
                 // repeat data for columns we don't have data for - happens when to range is bigger than copied data range
+                let calculatedIdx = idx;
                 if (idx >= currentRowData.length) {
-                    idx = idx % currentRowData.length;
+                    calculatedIdx = idx % currentRowData.length;
                 }
 
                 const newValue = this.processCell(
                     rowNode,
                     column,
-                    currentRowData[idx],
+                    currentRowData[calculatedIdx],
                     EXPORT_TYPE_DRAG_COPY,
                     processCellFromClipboardFunc,
                     true
                 );
 
                 rowNode.setDataValue(column, newValue, SOURCE_PASTE);
-
-                if (changedPath) {
-                    changedPath.addParentNode(rowNode.parent, [column]);
-                }
+                changedPath?.addParentNode(rowNode.parent, [column]);
 
                 const { rowIndex, rowPinned } = currentRow;
                 const cellId = _createCellId({ rowIndex, column, rowPinned });
                 cellsToFlash[cellId] = true;
-            });
+            }
 
             dataRowIndex++;
         };

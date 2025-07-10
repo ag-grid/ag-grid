@@ -2,34 +2,68 @@ name: jira-integration
 author: sdwvit
 description: Creates a Jira ticket based on the test results.
 inputs:
-  JIRA_FINGERPRINT:
-    description: 'Jira fingerprint for creating unique tickets'
-    required: true
   JIRA_API_AUTH:
     description: 'Jira API authentication header'
     required: true
-  WORKFLOW:
-    description: 'Workflow name to be used in the Jira ticket'
-    required: false
-  JIRA_DESCRIPTION:
-    description: 'Description of the Jira ticket'
-    required: false
   JIRA_SUMMARY:
-    description: 'Title/Summary of the Jira ticket'
+    description: 'Jira ticket title, should be more descriptive than the workflow name'
+    required: true
+  CTRF_REPORT_FILE:
+    description: 'Path to the CTRF report file'
     required: false
-  IS_SUCCESS:
-    description: "Whether the tests were successful"
+  CURRENT_COMMIT_SHA:
+    description: 'Current/Variant commit SHA being tested'
+    required: false
+  PREV_COMMIT_SHA:
+    description: 'Base/Control commit SHA to compare against'
     required: false
 runs:
   using: composite
   steps:
+    - name: Get last failed step
+      id: last-failed-step
+      if: ${{ failure() }}
+      continue-on-error: true
+      uses: ./.github/actions/get-last-failed-step
+      with:
+        JOB_ID: ${{ github.run_id }}
+        REPO_NAME: ${{ github.repository }}
+
+    - name: Generate JIRA files
+      shell: bash
+      env:
+        JIRA_DESCRIPTION_FILE: './jira-description.txt'
+        JIRA_FINGERPRINT_FILE: './jira-fingerprint.txt'
+        CTRF_REPORT_FILE: ${{ inputs.CTRF_REPORT_FILE }}
+        WORKFLOW_NAME: ${{ github.workflow }}
+        JOB_ID: ${{ github.run_id }}
+        CURRENT_COMMIT_SHA: ${{ inputs.CURRENT_COMMIT_SHA }}
+        PREV_COMMIT_SHA: ${{ inputs.PREV_COMMIT_SHA }}
+        REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+        BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+        IS_SUCCESS: ${{ !steps.last-failed-step.outputs.failed_step }}
+        LAST_FAILED_STEP: ${{ steps.last-failed-step.outputs.failed_step }}
+      run: |
+        node ./scripts/ci/gen-jira-files.mjs        
+        {
+          echo 'JIRA_FINGERPRINT<<EOF'
+          cat $JIRA_FINGERPRINT_FILE
+          echo 'EOF'
+        } >> $GITHUB_ENV
+        {
+          echo 'JIRA_DESCRIPTION<<EOF'
+          cat $JIRA_DESCRIPTION_FILE
+          echo 'EOF'
+        } >> $GITHUB_ENV
+
     - name: Create Jira Ticket
       env:
-        JIRA_FINGERPRINT: ${{ inputs.JIRA_FINGERPRINT }}
+        JIRA_FINGERPRINT: ${{ env.JIRA_FINGERPRINT }}
+        JIRA_DESCRIPTION: ${{ env.JIRA_DESCRIPTION }}
         JIRA_API_AUTH: ${{ inputs.JIRA_API_AUTH }}
-        WORKFLOW: ${{ inputs.WORKFLOW }}
-        JIRA_DESCRIPTION: ${{ inputs.JIRA_DESCRIPTION }}
+        WORKFLOW_NAME: ${{ github.workflow }}
         JIRA_SUMMARY: ${{ inputs.JIRA_SUMMARY }}
-        IS_SUCCESS: ${{ inputs.IS_SUCCESS }}
+        IS_SUCCESS: ${{ !steps.last-failed-step.outputs.failed_step }}
       shell: bash
-      run: node ./scripts/test/create-jira-ticket.mjs
+      run: |
+        node ./scripts/ci/create-jira-ticket.mjs
