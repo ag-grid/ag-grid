@@ -6,7 +6,7 @@ import { getFrameworkDisplayText } from '@utils/framework';
 import type { Framework } from '@ag-grid-types';
 import { getDocsPages } from '@components/docs/utils/pageData';
 import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
-import { getFirstParagraphText } from '@utils/markdoc/getFirstParagraphText';
+import { getPageDescription } from '@ag-website-shared/utils/getPageDescription';
 import { DOCS_TAB_ITEM_ID_PREFIX, MIGRATION_DOCUMENTATION_NAV_DATA } from '@ag-website-shared/constants';
 import { getHeadings } from '@utils/markdoc/getHeadings';
 import { isApiMenuPath } from '@utils/apiMenuPath';
@@ -31,9 +31,11 @@ const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) 
 const version = versionsData[0]?.version;
 const frameworkDisplayText = getFrameworkDisplayText(currentFramework);
 const seoTagline = `Download AG Grid v${version} today: The best ${frameworkDisplayText} Table & ${frameworkDisplayText} Data Grid in the world.`;
-const description = page.data.description
-    ? page.data.description.replaceAll('$framework', frameworkDisplayText) // Use front-matter description
-    : getFirstParagraphText(page.body, currentFramework); // Default to 1st paragraph text
+const description = getPageDescription({
+    framework: currentFramework,
+    pageDescription: page.data.description,
+    body: page.body
+})
 const descriptionWithSeoTagline = `${description ? `${description} ` : ''}${seoTagline}`;
 
 const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
