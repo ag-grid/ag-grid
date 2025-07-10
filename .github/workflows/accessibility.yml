@@ -17,6 +17,8 @@ env:
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
   YARN_REGISTRY: "http://52.50.158.57:4873"
   CI: true
+  REPORTS_PATH: ./reports/*.xml
+  CTRF_FILE: ./reports/performance.json
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -133,15 +135,39 @@ jobs:
             yarn exec -s jrm reports/${name} "test-results/**/${name}"
           done)
 
-      - name: Test Report
-        uses: dorny/test-reporter@v1
+      - name: Test Reporter
+        id: ctrf
+        uses: ctrf-io/github-test-reporter@v1.0.17
         if: needs.e2e_accessibility.result == 'success' || needs.e2e_accessibility.result == 'failure'
-        id: testReport
-        continue-on-error: true
+        env:
+          REPORTS_PATH: ${{ env.REPORTS_PATH }}
         with:
-          name: 'Accessibility Results'
-          path: reports/*.xml
-          reporter: java-junit
+          report-path: ${{ env.REPORTS_PATH }}
+          summary-report: true
+          failed-report: true
+          flaky-report: true
+          skipped-report: true
+          write-ctrf-to-file: ${{ env.CTRF_FILE }}
+          integrations-config: |
+            {
+              "junit-to-ctrf": {
+                "enabled": true,
+                "action": "convert",
+                "options": {
+                  "output": ${{ env.CTRF_FILE }},
+                  "toolname": "junit-to-ctrf",
+                  "useSuiteName": false,
+                }
+              }
+            }
+
+      - name: Slack Notification
+        if: ${{ github.event_name == 'schedule' || inputs.notify }}
+        continue-on-error: true
+        uses: ./.github/actions/slack-integration
+        with:
+          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+          SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
 
       - name: Output Report URL
         run: |
