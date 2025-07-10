@@ -1,4 +1,4 @@
-import fs, { link } from 'node:fs';
+import fs from 'node:fs';
 
 import { getGitDiffLinks, getHeader, getStats, parseCtrfReport } from './_utils.mjs';
 
