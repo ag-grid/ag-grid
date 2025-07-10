@@ -2,7 +2,6 @@ import { AgBeanStub } from './agBeanStub';
 import type { AgBeanStubEvent } from './agBeanStub';
 import { CssClassManager } from './cssClassManager';
 import type { AgEvent } from './interfaces/agEvent';
-import type { AgBaseBean } from './interfaces/iBean';
 import type { AgBaseComponent, AgComponent } from './interfaces/iComponent';
 import type { AgBaseContext, AgCoreBeanCollection } from './interfaces/iContext';
 import type { IEventListener } from './interfaces/iEventEmitter';
@@ -43,7 +42,6 @@ export abstract class AgComponentStub<
         TComponent extends AgComponentStub<
             TComponent,
             TBeanCollection,
-            TBean,
             TLocalEventListener,
             TLocalEventType | AgComponentEvent,
             TGlobalEvents,
@@ -53,15 +51,13 @@ export abstract class AgComponentStub<
             TBooleanProperties,
             TPropertiesService,
             TComponentSelectorType
-        > &
-            TBean,
+        >,
         TBeanCollection extends AgCoreBeanCollection<
             TPropertiesService,
             TGlobalEvents,
             TProcessedEvents,
             AgBaseContext<TBeanCollection>
         >,
-        TBean extends AgBaseBean<TBeanCollection>,
         TLocalEventListener extends IEventListener<TLocalEventType>,
         TLocalEventType extends string, // TODO move to end and add default
         TGlobalEvents,
@@ -74,7 +70,6 @@ export abstract class AgComponentStub<
     >
     extends AgBeanStub<
         TBeanCollection,
-        TBean,
         TLocalEventListener,
         TLocalEventType | AgComponentEvent,
         TGlobalEvents,
@@ -88,7 +83,6 @@ export abstract class AgComponentStub<
         AgComponent<
             TComponent,
             TBeanCollection,
-            TBean,
             TLocalEventListener,
             TLocalEventType,
             TGlobalEvents,

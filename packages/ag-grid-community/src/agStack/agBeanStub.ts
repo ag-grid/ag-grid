@@ -29,7 +29,6 @@ export abstract class AgBeanStub<
             TProcessedEvents,
             AgBaseContext<TBeanCollection>
         >,
-        TBean extends AgBaseBean<TBeanCollection>,
         TLocalEventListener extends IEventListener<AgEventOrDestroyed<TLocalEventType>>,
         TLocalEventType extends string, // TODO move to end and add default
         TGlobalEvents,
@@ -40,15 +39,7 @@ export abstract class AgBeanStub<
         TPropertiesService extends IPropertiesService<TProperties, TPropertyDefaults, TBooleanProperties>,
     >
     implements
-        AgBean<
-            TBeanCollection,
-            TBean,
-            TLocalEventListener,
-            TLocalEventType,
-            TGlobalEvents,
-            TProperties,
-            TBooleanProperties
-        >,
+        AgBean<TBeanCollection, TLocalEventListener, TLocalEventType, TGlobalEvents, TProperties, TBooleanProperties>,
         IEventEmitter<AgEventOrDestroyed<TLocalEventType>>
 {
     protected localEventService?: LocalEventService<AgEventOrDestroyed<TLocalEventType>>;
@@ -302,23 +293,26 @@ export abstract class AgBeanStub<
     }
 
     /** doesn't throw an error if `bean` is undefined */
-    public createOptionalManagedBean<T extends TBean | null | undefined>(
+    public createOptionalManagedBean<T extends AgBaseBean<TBeanCollection> | null | undefined>(
         bean: T,
         context?: AgBaseContext<TBeanCollection>
     ): T | undefined {
         return bean ? this.createManagedBean(bean, context) : undefined;
     }
 
-    public createManagedBean<T extends TBean>(bean: T, context?: AgBaseContext<TBeanCollection>): T {
+    public createManagedBean<T extends AgBaseBean<TBeanCollection>>(
+        bean: T,
+        context?: AgBaseContext<TBeanCollection>
+    ): T {
         const res = this.createBean(bean, context);
         this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
         return res;
     }
 
-    public createBean<T extends TBean>(
+    public createBean<T extends AgBaseBean<TBeanCollection>>(
         bean: T,
         context?: AgBaseContext<TBeanCollection> | null,
-        afterPreCreateCallback?: (bean: TBean) => void
+        afterPreCreateCallback?: (bean: AgBaseBean<TBeanCollection>) => void
     ): T {
         return (context || this.stubContext).createBean(bean, afterPreCreateCallback);
     }
@@ -327,8 +321,8 @@ export abstract class AgBeanStub<
      * Destroys a bean and returns undefined to support destruction and clean up in a single line.
      * this.dateComp = this.context.destroyBean(this.dateComp);
      */
-    public destroyBean<T extends TBean | null | undefined>(
-        bean: T,
+    public destroyBean(
+        bean: AgBaseBean<TBeanCollection> | null | undefined,
         context?: AgBaseContext<TBeanCollection>
     ): undefined {
         return (context || this.stubContext).destroyBean(bean);
@@ -338,8 +332,8 @@ export abstract class AgBeanStub<
      * Destroys an array of beans and returns an empty array to support destruction and clean up in a single line.
      * this.dateComps = this.context.destroyBeans(this.dateComps);
      */
-    protected destroyBeans<T extends TBean | null | undefined>(
-        beans: T[],
+    protected destroyBeans<T extends AgBaseBean<TBeanCollection>>(
+        beans: (T | null | undefined)[],
         context?: AgBaseContext<TBeanCollection>
     ): T[] {
         return (context || this.stubContext).destroyBeans(beans);

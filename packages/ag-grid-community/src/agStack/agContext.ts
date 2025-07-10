@@ -1,4 +1,4 @@
-import type { AgSingletonBean } from './interfaces/iBean';
+import type { AgBaseBean, AgSingletonBean } from './interfaces/iBean';
 
 type BeanComparator<TBeanCollection> = (
     bean1: AgSingletonBean<TBeanCollection>,
@@ -81,17 +81,17 @@ export class AgContext<TBeanCollection> {
         return Object.values(this.beans as Record<string, AgSingletonBean<TBeanCollection>>);
     }
 
-    public createBean<T extends AgSingletonBean<TBeanCollection>>(
+    public createBean<T extends AgBaseBean<TBeanCollection>>(
         bean: T,
-        afterPreCreateCallback?: (bean: AgSingletonBean<TBeanCollection>) => void
+        afterPreCreateCallback?: (bean: AgBaseBean<TBeanCollection>) => void
     ): T {
         this.initBeans([bean], afterPreCreateCallback);
         return bean;
     }
 
     private initBeans(
-        beanInstances: AgSingletonBean<TBeanCollection>[],
-        afterPreCreateCallback?: (bean: AgSingletonBean<TBeanCollection>) => void
+        beanInstances: AgBaseBean<TBeanCollection>[],
+        afterPreCreateCallback?: (bean: AgBaseBean<TBeanCollection>) => void
     ): void {
         const beans = this.beans;
         beanInstances.forEach((instance) => {
@@ -145,7 +145,7 @@ export class AgContext<TBeanCollection> {
      * Destroys a bean and returns undefined to support destruction and clean up in a single line.
      * this.dateComp = this.context.destroyBean(this.dateComp);
      */
-    public destroyBean(bean: AgSingletonBean<TBeanCollection> | null | undefined): undefined {
+    public destroyBean(bean: AgBaseBean<TBeanCollection> | null | undefined): undefined {
         bean?.destroy?.();
     }
 
@@ -153,7 +153,7 @@ export class AgContext<TBeanCollection> {
      * Destroys an array of beans and returns an empty array to support destruction and clean up in a single line.
      * this.dateComps = this.context.destroyBeans(this.dateComps);
      */
-    public destroyBeans(beans: (AgSingletonBean<TBeanCollection> | null | undefined)[]): [] {
+    public destroyBeans<T extends AgBaseBean<TBeanCollection>>(beans: (T | null | undefined)[]): T[] {
         if (beans) {
             for (let i = 0; i < beans.length; i++) {
                 this.destroyBean(beans[i]);

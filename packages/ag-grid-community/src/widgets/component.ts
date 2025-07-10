@@ -1,6 +1,5 @@
 import type { AgComponentEvent, AgComponentSelector } from '../agStack/agComponent';
 import { AgComponentStub } from '../agStack/agComponent';
-import type { Bean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { AgEventListener, AgEventTypeParams, AllEventsWithoutGridCommon } from '../events';
@@ -51,7 +50,6 @@ export type AgComponentSelectorType =
 export class Component<TLocalEvent extends string = AgComponentEvent> extends AgComponentStub<
     Component<any>,
     BeanCollection,
-    Bean,
     AgEventListener<any, any, any>,
     TLocalEvent,
     AgEventTypeParams,

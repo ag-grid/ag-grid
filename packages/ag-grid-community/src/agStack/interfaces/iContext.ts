@@ -26,5 +26,5 @@ export interface AgBaseContext<TBeanCollection> {
 
     destroyBean(bean: AgBaseBean<TBeanCollection> | null | undefined): undefined;
 
-    destroyBeans(beans: (AgBaseBean<TBeanCollection> | null | undefined)[]): [];
+    destroyBeans<T extends AgBaseBean<TBeanCollection>>(beans: (T | null | undefined)[]): T[];
 }
