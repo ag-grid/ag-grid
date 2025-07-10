@@ -473,7 +473,8 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         this.suppressAria = !!suppressAria;
 
         if (!this.suppressAria) {
-            _setAriaRole(eGui, 'menuitem');
+            const hasCheck = this.params.checked != null;
+            _setAriaRole(eGui, hasCheck ? 'menuitemcheckbox' : 'menuitem');
             if (this.params.subMenu) {
                 _setAriaHasPopup(eGui, this.params.subMenuRole ?? 'menu');
             }
