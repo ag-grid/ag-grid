@@ -312,8 +312,11 @@ export const About = () => {
                                 <div className={styles.leaderName}>Rob Grubb</div>
                                 <div className={styles.leaderTitle}>CFO</div>
                                 <div className={styles.leaderDesc}>
-                                    Rob manages the financial actions of the company. He brings strategic insight and a
-                                    strong focus on sustainable growth.
+                                    Experienced financial professional, qualifying as a chartered accountant with Big
+                                    Four in 2005 and focusing solely on software businesses since. Extensive experience
+                                    leading strategic, financial, and commercial initiatives and teams at managerial,
+                                    executive, and PLC Board levels. Holds a current practicing certificate with the
+                                    Institute of Chartered Accountants of Scotland.
                                 </div>
                             </div>
                         </div>
@@ -327,8 +330,15 @@ export const About = () => {
                                 <div className={styles.leaderName}>Jon Williams</div>
                                 <div className={styles.leaderTitle}>VP Sales</div>
                                 <div className={styles.leaderDesc}>
-                                    Jon leads the sales team with a customer-first approach. He is committed to building
-                                    lasting relationships and driving business success.
+                                    Jon is an experienced commercial leader having spent the past 25 years in the
+                                    software industry across a range of companies from very small start-ups to large
+                                    global organisations. Recent roles include Boxever, a Dublin based SaaS
+                                    personalisation engine platform where he developed the go-to-market strategy that
+                                    ultimately led to the company being acquired by Sitecore, a large player in the CMS
+                                    market. At Sitecore Jon then led the integration of the Boxever business as well as
+                                    ran the global new name SaaS business unit. Prior to Boxever Jon was the Senior Vice
+                                    President at Aprimo, a US based SaaS marketing platform, where he ran all of their
+                                    non-US operations.
                                 </div>
                             </div>
                         </div>
@@ -343,8 +353,12 @@ export const About = () => {
                                 <div className={styles.leaderName}>Jason Osmond</div>
                                 <div className={styles.leaderTitle}>Chair of the Board</div>
                                 <div className={styles.leaderDesc}>
-                                    Jason provides strategic guidance and oversight. His leadership ensures the company
-                                    remains focused on its mission and values.
+                                    Jason is a seasoned technology executive with over 25 years of experience driving
+                                    growth, scaling operations, and building high-performing, commercially focused
+                                    organisations. He brings a strong track record of value creation through strategic
+                                    leadership, operational discipline, and a focus on sustainable, recurring revenue
+                                    models. As Chairman, Jason works closely with AG Grid’s leadership team to support
+                                    long-term growth and market expansion.
                                 </div>
                             </div>
                         </div>

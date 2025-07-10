@@ -135,7 +135,7 @@
 
         .timelineLine {
             position: absolute;
-            left: 92px;
+            left: 95px;
             top: 20px;
             width: 2px;
             height: calc(100% - 40px);
@@ -163,8 +163,8 @@
     }
 
     .timelineIcon {
-        width: 40px;
-        height: 40px;
+        width: 48px;
+        height: 48px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -174,14 +174,9 @@
         z-index: 1;
         margin-right: 24px;
         background-color: var(--color-util-brand-50);
-        padding: 4px;
-
+        padding: $spacing-size-3;
         path {
             fill: var(--color-brand-500);
-        }
-
-        #{$selector-darkmode} {
-            background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
         }
     }
     .timelineLine {
@@ -374,6 +369,7 @@
         color: var(--color-text-secondary);
         font-size: 15px;
         line-height: 1.5;
+        opacity: 0, 8;
     }
 }
 
@@ -493,5 +489,15 @@
     @media (max-width: 900px) {
         margin-left: 0;
         min-width: 0;
+    }
+}
+
+#{$selector-darkmode} {
+    .timelineIcon {
+        background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
+
+        path {
+            fill: var(--color-link);
+        }
     }
 }
