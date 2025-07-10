@@ -180,6 +180,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
           PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
           CURRENT_COMMIT_SHA: ${{ github.sha }}
+          IS_SUCCESS: ${{ needs.e2e_accessibility.result == 'success' }}
 
       - name: Set commit SHA
         id: set-commit-sha
