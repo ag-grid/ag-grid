@@ -21,7 +21,7 @@ export const About = () => {
             <div className="layout-max-width-small">
                 <section className={styles.introSection}>
                     <h2>
-                        Open source heart, <br /> enterprise muscle.
+                        Open source heart, <br /> <span>enterprise muscle.</span>
                     </h2>
                     <p>
                         Our community versions remain true to our roots, offering free, open-source grids and charts
@@ -43,7 +43,7 @@ export const About = () => {
                 <section className={styles.customerLogos}>
                     <CustomerLogos />
                     <p className={styles.footnote}>
-                        <span>Built by developers for developers</span>,AG Grid was born out of frustration with the
+                        <span>Built by developers for developers</span>, AG Grid was born out of frustration with the
                         performance limitations of existing solutions. Our grid and charts products are now trusted by
                         developers worldwide when building their applications.
                     </p>
@@ -187,7 +187,7 @@ export const About = () => {
                         <div className={styles.timelineItem}>
                             <div className={styles.timelineYear}>2024</div>
                             <div className={styles.timelineIcon}>
-                                <CeoIcon />
+                                <ConferenceIcon />
                             </div>
                             <div className={styles.timelineContent}>
                                 <div className={styles.timelineTitle}>Leadership updates</div>
@@ -200,7 +200,7 @@ export const About = () => {
                         <div className={styles.timelineItem}>
                             <div className={`${styles.timelineYear} ${styles.timelineNow}`}>Now</div>
                             <div className={styles.timelineIcon}>
-                                <Question />
+                                <RocketIcon />
                             </div>
                             <div className={styles.timelineContent}>
                                 <div className={styles.timelineTitle}>What's next</div>
@@ -220,7 +220,7 @@ export const About = () => {
                     <div className={styles.principlesList}>
                         <div className={styles.principleItem}>
                             <div className={styles.principleIcon}>
-                                <Icon name="github" />
+                                <RocketIcon />
                             </div>
                             <div className={styles.principleText}>
                                 <div className={styles.principleTitle}>Excellence and innovation</div>
@@ -231,7 +231,7 @@ export const About = () => {
                         </div>
                         <div className={styles.principleItem}>
                             <div className={styles.principleIcon}>
-                                <Icon name="github" />
+                                <ConferenceIcon />
                             </div>
                             <div className={styles.principleText}>
                                 <div className={styles.principleTitle}>We're customer obsessed</div>
@@ -242,7 +242,7 @@ export const About = () => {
                         </div>
                         <div className={styles.principleItem}>
                             <div className={styles.principleIcon}>
-                                <Icon name="github" />
+                                <BarChart />
                             </div>
                             <div className={styles.principleText}>
                                 <div className={styles.principleTitle}>We're growing</div>
@@ -254,7 +254,7 @@ export const About = () => {
                         </div>
                         <div className={styles.principleItem}>
                             <div className={styles.principleIcon}>
-                                <Icon name="github" />
+                                <DonutAcceleratingIcon />
                             </div>
                             <div className={styles.principleText}>
                                 <div className={styles.principleTitle}>Expand our global footprint</div>

@@ -23,6 +23,10 @@
     padding-top: $spacing-size-20;
     padding-bottom: $spacing-size-20;
 
+    span {
+        color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 70%);
+    }
+
     p {
         max-width: 600px;
         padding-top: $spacing-size-3;
@@ -114,6 +118,15 @@
         top: 200px;
         align-self: flex-start;
         z-index: 2;
+
+        p {
+            font-weight: var(--text-semibold);
+            color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 60%);
+            line-height: 1.6;
+            max-width: 400px;
+            padding-top: $spacing-size-4;
+        }
+
         @media (max-width: 900px) {
             position: static;
             top: auto;
@@ -139,7 +152,8 @@
             top: 20px;
             width: 2px;
             height: calc(100% - 40px);
-            background: var(--color-border-secondary);
+            background: var(--color-button-tertiary-border);
+            opacity: 0.2;
             z-index: 0;
         }
     }
@@ -152,14 +166,15 @@
     }
 
     .timelineYear {
-        color: var(--color-text-secondary);
+        color: var(--color-button-tertiary-fg);
         opacity: 0.5;
         font-size: var(--text-fs-sm);
         min-width: 48px;
         text-align: right;
         margin-right: 24px;
-        margin-top: $spacing-size-3;
+        margin-top: $spacing-size-4;
         font-family: var(--text-monospace-font-family);
+        font-weight: var(--text-semibold);
     }
 
     .timelineIcon {
@@ -202,12 +217,9 @@
         margin-bottom: $spacing-size-2;
     }
     .timelineDesc {
-        color: var(--color-text-secondary);
+        color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 75%);
         font-size: 15px;
         line-height: 1.5;
-    }
-    .timelineNow {
-        color: var(--color-brand-500);
     }
 }
 
@@ -229,6 +241,15 @@
         top: 200px;
         align-self: flex-start;
         z-index: 2;
+
+        p {
+            font-weight: var(--text-semibold);
+            color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 60%);
+            line-height: 1.6;
+            max-width: 400px;
+            padding-top: $spacing-size-4;
+        }
+
         @media (max-width: 900px) {
             position: static;
             top: auto;
@@ -260,10 +281,14 @@
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
+
+        path {
+            fill: var(--color-brand-500);
+        }
+
         svg {
             width: 28px;
             height: 28px;
-            fill: var(--color-brand-500);
         }
     }
 
@@ -275,12 +300,12 @@
 
     .principleTitle {
         font-weight: 600;
-        color: var(--ag-text-color, #222);
-        font-size: 17px;
+        color: var(--color-fg-primary);
+        font-size: var(--text-fs-lg);
         margin-bottom: 2px;
     }
     .principleDesc {
-        color: var(--color-text-secondary);
+        color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 75%);
         font-size: 15px;
         line-height: 1.5;
     }
@@ -317,6 +342,15 @@
         top: 200px;
         align-self: flex-start;
         z-index: 2;
+
+        p {
+            font-weight: var(--text-semibold);
+            color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 60%);
+            line-height: 1.6;
+            max-width: 400px;
+            padding-top: $spacing-size-4;
+        }
+
         @media (max-width: 900px) {
             position: static;
             top: auto;
@@ -355,21 +389,26 @@
     }
 
     .leaderName {
-        font-weight: 600;
-        color: var(--ag-text-color, #222);
-        font-size: 17px;
+        font-weight: var(--text-semibold);
+        color: var(--color-fg-primary);
+        font-size: var(--text-fs-lg);
+
         margin-bottom: 2px;
     }
+
     .leaderTitle {
-        color: var(--color-text-secondary);
-        font-size: 15px;
+        color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 60%);
+        font-size: var(--text-fs-base);
         margin-bottom: 6px;
+        font-weight: var(--text-semibold);
     }
+
     .leaderDesc {
         color: var(--color-text-secondary);
         font-size: 15px;
         line-height: 1.5;
-        opacity: 0, 8;
+        opacity: 0.8;
+        padding-top: $spacing-size-2;
     }
 }
 
@@ -495,6 +534,16 @@
 #{$selector-darkmode} {
     .timelineIcon {
         background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
+
+        path {
+            fill: var(--color-link);
+        }
+    }
+}
+
+.principleIcon {
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
 
         path {
             fill: var(--color-link);

@@ -19,6 +19,8 @@
         width: 600px;
         margin: 0 auto;
         text-align: center;
+        font-weight: var(--text-semibold);
+        color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 60%);
     }
 }
 
