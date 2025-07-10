@@ -354,7 +354,7 @@ export function _isElementOverflowingCallback(getElement: () => HTMLElement | un
             // defaults to true
             return true;
         }
-        return _isHorizontalScrollShowing(element);
+        return _isHorizontalScrollShowing(element) || _isVerticalScrollShowing(element);
     };
 }
 
