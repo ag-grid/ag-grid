@@ -1,6 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 import path from 'node:path';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const ROOT = path.join(__dirname, '../../');
 const reportPath = path.resolve(ROOT, process.env['PW_REPORT_PATH'] ?? './reports/ag-accessibility-e2e.json');
 /**
