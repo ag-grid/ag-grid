@@ -22,7 +22,8 @@ on:
         required: true
 permissions:
   contents: write
-
+  actions: write
+  
 env:
   PREV_COMMIT_SHA_FILE: ./commit-sha.txt
   SLACK_FILE: ./slack.json
