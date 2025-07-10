@@ -332,21 +332,7 @@ export const About = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className={styles.leaderItem}>
-                            <img
-                                src={urlWithBaseUrl('images/about/5.png')}
-                                className={styles.leaderPhoto}
-                                alt="Kiril Matev"
-                            />
-                            <div className={styles.leaderText}>
-                                <div className={styles.leaderName}>Kiril Matev</div>
-                                <div className={styles.leaderTitle}>VP TPA</div>
-                                <div className={styles.leaderDesc}>
-                                    Kiril is responsible for third-party alliances. He excels at forging partnerships
-                                    and expanding the company's reach.
-                                </div>
-                            </div>
-                        </div>
+
                         <div className={styles.leaderItem}>
                             <img
                                 src={urlWithBaseUrl('images/about/6.png')}
