@@ -4,6 +4,16 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 import styles from './About.module.scss';
 import LifeAtAgGridCarousel from './LifeAtAgGridCarousel';
+import AdoptionIcon from './svgs/adoption.svg?react';
+import BarChart from './svgs/bar-chart.svg?react';
+import BornIcon from './svgs/born.svg?react';
+import CeoIcon from './svgs/ceo.svg?react';
+import ChartIcon from './svgs/chart.svg?react';
+import ConferenceIcon from './svgs/conference.svg?react';
+import DonutAcceleratingIcon from './svgs/donut-accelerating.svg?react';
+import LicenseIcon from './svgs/license.svg?react';
+import Question from './svgs/question.svg?react';
+import RocketIcon from './svgs/rocket.svg?react';
 
 export const About = () => {
     return (
@@ -73,7 +83,7 @@ export const About = () => {
                         <div className={styles.timelineItem}>
                             <div className={styles.timelineYear}>2016</div>
                             <div className={styles.timelineIcon}>
-                                <Icon name="github" />
+                                <BornIcon />
                             </div>
                             <div className={styles.timelineContent}>
                                 <div className={styles.timelineTitle}>AG Grid is born</div>
@@ -86,7 +96,7 @@ export const About = () => {
                         <div className={styles.timelineItem}>
                             <div className={styles.timelineYear}>2017</div>
                             <div className={styles.timelineIcon}>
-                                <Icon name="github" />
+                                <RocketIcon />
                             </div>
                             <div className={styles.timelineContent}>
                                 <div className={styles.timelineTitle}>Commercial launch</div>
@@ -99,7 +109,7 @@ export const About = () => {
                         <div className={styles.timelineItem}>
                             <div className={styles.timelineYear}>2018</div>
                             <div className={styles.timelineIcon}>
-                                <Icon name="github" />
+                                <ConferenceIcon />
                             </div>
                             <div className={styles.timelineContent}>
                                 <div className={styles.timelineTitle}>AG Grid Conf</div>
@@ -112,7 +122,7 @@ export const About = () => {
                         <div className={styles.timelineItem}>
                             <div className={styles.timelineYear}>2019</div>
                             <div className={styles.timelineIcon}>
-                                <Icon name="github" />
+                                <BarChart />
                             </div>
                             <div className={styles.timelineContent}>
                                 <div className={styles.timelineTitle}>Integrated Charting</div>
@@ -125,7 +135,7 @@ export const About = () => {
                         <div className={styles.timelineItem}>
                             <div className={styles.timelineYear}>2020</div>
                             <div className={styles.timelineIcon}>
-                                <Icon name="github" />
+                                <ChartIcon />
                             </div>
                             <div className={styles.timelineContent}>
                                 <div className={styles.timelineTitle}>AG Charts</div>
@@ -138,7 +148,7 @@ export const About = () => {
                         <div className={styles.timelineItem}>
                             <div className={styles.timelineYear}>2021</div>
                             <div className={styles.timelineIcon}>
-                                <Icon name="github" />
+                                <LicenseIcon />
                             </div>
                             <div className={styles.timelineContent}>
                                 <div className={styles.timelineTitle}>Self-service licensing</div>
@@ -151,7 +161,7 @@ export const About = () => {
                         <div className={styles.timelineItem}>
                             <div className={styles.timelineYear}>2022</div>
                             <div className={styles.timelineIcon}>
-                                <Icon name="github" />
+                                <AdoptionIcon />
                             </div>
                             <div className={styles.timelineContent}>
                                 <div className={styles.timelineTitle}>Mass adoption</div>
@@ -164,7 +174,7 @@ export const About = () => {
                         <div className={styles.timelineItem}>
                             <div className={styles.timelineYear}>2023</div>
                             <div className={styles.timelineIcon}>
-                                <Icon name="github" />
+                                <DonutAcceleratingIcon />
                             </div>
                             <div className={styles.timelineContent}>
                                 <div className={styles.timelineTitle}>Accelerating Charts</div>
@@ -177,7 +187,7 @@ export const About = () => {
                         <div className={styles.timelineItem}>
                             <div className={styles.timelineYear}>2024</div>
                             <div className={styles.timelineIcon}>
-                                <Icon name="github" />
+                                <CeoIcon />
                             </div>
                             <div className={styles.timelineContent}>
                                 <div className={styles.timelineTitle}>Leadership updates</div>
@@ -190,7 +200,7 @@ export const About = () => {
                         <div className={styles.timelineItem}>
                             <div className={`${styles.timelineYear} ${styles.timelineNow}`}>Now</div>
                             <div className={styles.timelineIcon}>
-                                <Icon name="github" />
+                                <Question />
                             </div>
                             <div className={styles.timelineContent}>
                                 <div className={styles.timelineTitle}>What's next</div>

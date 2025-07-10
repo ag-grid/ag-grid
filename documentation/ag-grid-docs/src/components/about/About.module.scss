@@ -176,6 +176,10 @@
         background-color: var(--color-util-brand-50);
         padding: 4px;
 
+        path {
+            fill: var(--color-brand-500);
+        }
+
         #{$selector-darkmode} {
             background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
         }
