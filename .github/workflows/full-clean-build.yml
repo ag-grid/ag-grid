@@ -186,6 +186,7 @@ jobs:
           key: full-build-prev-commit-${{ github.ref }}
 
       - name: Load files into environment
+        continue-on-error: true
         run: |
           {
             if [ -f ${{ env.PREV_COMMIT_SHA_FILE }} ]; then
