@@ -231,6 +231,8 @@ jobs:
         fail-fast: false
       steps:
         - uses: actions/checkout@v4
+        - name: Install Dependencies
+          run: yarn bootstrap
         - name: Run Public Testing Recipes
           run: yarn nx run ag-grid-public-e2e-testing-recipes:test:recipes -c staging
 
