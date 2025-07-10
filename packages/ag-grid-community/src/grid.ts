@@ -55,6 +55,9 @@ export interface Params {
     modules?: Module[];
 }
 
+const _gridApiCache = new WeakMap<Element, GridApi>();
+const _gridElementCache = new WeakMap<GridApi, Element>();
+
 // **NOTE** If updating this JsDoc please also update the re-exported createGrid in main-umd-shared.ts
 /**
  * Creates a grid inside the provided HTML element.
@@ -74,7 +77,10 @@ export function createGrid<TData>(
         return {} as GridApi;
     }
     const gridParams: GridParams | undefined = params;
-    let destroyCallback: (() => void) | undefined;
+    let destroyCallback = () => {
+        _gridElementCache.delete(api);
+        _gridApiCache.delete(eGridDiv);
+    };
     if (!gridParams?.setThemeOnGridDiv) {
         // frameworks already create an element owned by our code, so we can set
         // the theme class on it. JS users calling createGrid directly are
@@ -84,7 +90,11 @@ export function createGrid<TData>(
         newGridDiv.style.height = '100%';
         eGridDiv.appendChild(newGridDiv);
         eGridDiv = newGridDiv;
-        destroyCallback = () => eGridDiv.remove();
+        destroyCallback = () => {
+            _gridApiCache.delete(eGridDiv);
+            _gridElementCache.delete(api);
+            eGridDiv.remove();
+        };
     }
     const api = new GridCoreCreator().create(
         eGridDiv,
@@ -97,6 +107,9 @@ export function createGrid<TData>(
         params,
         destroyCallback
     );
+
+    _gridApiCache.set(eGridDiv, api);
+    _gridElementCache.set(api, eGridDiv);
 
     return api;
 }
@@ -147,9 +160,7 @@ export class GridCoreCreator {
 
         context.getBean('syncSvc').start();
 
-        if (acceptChanges) {
-            acceptChanges(context);
-        }
+        acceptChanges?.(context);
 
         return context.getBean('gridApi');
     }
@@ -281,4 +292,29 @@ export class GridCoreCreator {
 
 function getDefaultRowModelType(passedRowModelType?: RowModelType): RowModelType {
     return passedRowModelType ?? 'clientSide';
+}
+
+/**
+ * Returns a `GridApi` instance that is associated with the grid rendered in `gridElement`.
+ *
+ * The `gridElement` argument can be a DOM node or a CSS selector string. It is recommended
+ * to use the selector string argument. This selector must refer to the element passed to `createGrid`.
+ *
+ * If passing a DOM node as an argument, this DOM node must be an immediate child of the element passed
+ * to `createGrid`. This is to support the case where multiple grids are instantiated in a single element.
+ */
+export function getGridApi(gridElement: Element | string | null | undefined): GridApi | undefined {
+    if (typeof gridElement === 'string') {
+        gridElement =
+            document.querySelector(gridElement)?.firstElementChild ??
+            document.getElementById(gridElement)?.firstElementChild;
+    }
+    return gridElement ? _gridApiCache.get(gridElement) : undefined;
+}
+
+/**
+ * Returns the `Element` instance associated with the grid instance referred to by `GridApi`
+ */
+export function getGridElement(api: GridApi): Element | undefined {
+    return _gridElementCache.get(api);
 }

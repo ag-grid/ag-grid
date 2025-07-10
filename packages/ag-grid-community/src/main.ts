@@ -680,7 +680,7 @@ export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export type { CellNavigationService } from './navigation/cellNavigationService';
 export { KeyCode } from './constants/keyCode';
 export { Direction } from './constants/direction';
-export { GridParams, Params, GridCoreCreator, createGrid } from './grid';
+export { GridParams, Params, GridCoreCreator, createGrid, getGridApi, getGridElement } from './grid';
 export { provideGlobalGridOptions, GlobalGridOptionsMergeStrategy, _getGlobalGridOption } from './globalGridOptions';
 export {
     GridApi,
