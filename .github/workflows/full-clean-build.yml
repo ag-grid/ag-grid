@@ -216,3 +216,24 @@ jobs:
         with:
           key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
           path: ${{ env.PREV_COMMIT_SHA_FILE }}
+
+        # only if run is successful
+      - name: Dispatch docs-tests Workflow
+        if: success() && github.ref == 'refs/heads/latest' && steps.build_docs_staging.outputs.success == 'true' && steps.build.outputs.success == 'true'
+        uses: actions/github-script@v7
+        env:
+          WORKFLOW_ID: 'docs-tests.yml'
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const ref = context.ref;
+            const workflow_id = process.env.WORKFLOW_ID;
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner,
+              repo,
+              workflow_id,
+              ref,
+            });
+

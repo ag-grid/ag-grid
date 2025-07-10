@@ -55,8 +55,8 @@ on:
                 type: boolean
                 default: true
                 required: true
-    schedule:
-        - cron: '30 2 * * *' # Run daily at 2:30am UTC
+    #schedule:
+    #    - cron: '30 2 * * *' # Run daily at 2:30am UTC
 
 jobs:
     # Run all framework tasks in parallel
