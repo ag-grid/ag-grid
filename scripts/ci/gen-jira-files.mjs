@@ -10,7 +10,6 @@ const ctrfReportFile = process.env.CTRF_REPORT_FILE || '../../reports/performanc
 const workflowName = process.env.WORKFLOW_NAME || '';
 const jobId = process.env.JOB_ID || '';
 const isSuccess = process.env.IS_SUCCESS === 'true';
-const jobID = process.env.JOB_ID || '';
 const repoUrl = process.env.REPO_URL || 'https://github.com/ag-grid/ag-grid';
 const branchName = process.env.BRANCH_NAME || '';
 const currentCommitSha = process.env.CURRENT_COMMIT_SHA || '';
@@ -25,7 +24,7 @@ const header = getHeader(
     isSuccess,
     jiraLink,
     workflowName,
-    jobID,
+    jobId,
     jobUrl,
     branchName,
     bold,
@@ -78,7 +77,7 @@ function jiraLink(text, url) {
  *
  * @type {string}
  */
-const uniqueFingerprint = generateHash(diffLinks);
+const uniqueFingerprint = generateHash(JSON.stringify(diffLinks));
 
 fs.writeFileSync(jiraDescriptionFile, content + '\n');
 fs.writeFileSync(jiraFingerprintFile, uniqueFingerprint + '\n');
