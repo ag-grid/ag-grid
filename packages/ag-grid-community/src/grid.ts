@@ -108,8 +108,10 @@ export function createGrid<TData>(
         destroyCallback
     );
 
-    _gridApiCache.set(eGridDiv, api);
-    _gridElementCache.set(api, eGridDiv);
+    if (api) {
+        _gridApiCache.set(eGridDiv, api);
+        _gridElementCache.set(api, eGridDiv);
+    }
 
     return api;
 }
