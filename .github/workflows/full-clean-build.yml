@@ -20,6 +20,8 @@ on:
         type: boolean
         default: false
         required: true
+permissions:
+  contents: write
 
 env:
   PREV_COMMIT_SHA_FILE: ./commit-sha.txt
