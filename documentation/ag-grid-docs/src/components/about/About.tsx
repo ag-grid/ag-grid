@@ -14,14 +14,22 @@ export const About = () => {
                         Open source heart, <br /> enterprise muscle.
                     </h2>
                     <p>
-                        Built by developers for developers, AG Grid was born out of frustration with the performance
-                        limitations of existing solutions. Our grid and charts products are now trusted by developers
-                        worldwide when building their applications.
+                        Our community versions remain true to our roots, offering free, open-source grids and charts
+                        delivering world-class performance. Our enterprise products deliver powerful features and direct
+                        developer technical support.
                     </p>
                 </section>
 
-                <img src={urlWithBaseUrl(`images/about/about-us.png`)} className={styles.aboutHeaderImage} />
-
+                <div>
+                    <img
+                        src={urlWithBaseUrl(`images/about/about-us.png`)}
+                        className={`${styles.aboutHeaderImage} ${styles.aboutHeaderImageLight}`}
+                    />
+                    <img
+                        src={urlWithBaseUrl(`images/about/dark-mode-about.png`)}
+                        className={`${styles.aboutHeaderImage} ${styles.aboutHeaderImageDark}`}
+                    />
+                </div>
                 <section className={styles.customerLogos}>
                     <CustomerLogos />
 
