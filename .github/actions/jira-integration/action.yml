@@ -17,12 +17,16 @@ inputs:
   PREV_COMMIT_SHA:
     description: 'Base/Control commit SHA to compare against'
     required: false
+  IS_SUCCESS:
+    description: 'Indicates if the workflow run was successful'
+    required: false
+    default: 'true'
 runs:
   using: composite
   steps:
     - name: Get last failed step
       id: last-failed-step
-      if: ${{ failure() }}
+      if: ${{ failure() && !inputs.IS_SUCCESS }}
       continue-on-error: true
       uses: ./.github/actions/get-last-failed-step
       with:
@@ -41,7 +45,7 @@ runs:
         PREV_COMMIT_SHA: ${{ inputs.PREV_COMMIT_SHA }}
         REPO_URL: ${{ github.server_url }}/${{ github.repository }}
         BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-        IS_SUCCESS: ${{ !steps.last-failed-step.outputs.failed_step }}
+        IS_SUCCESS: ${{ !steps.last-failed-step.outputs.failed_step || inputs.IS_SUCCESS }}
         LAST_FAILED_STEP: ${{ steps.last-failed-step.outputs.failed_step }}
       run: |
         node ./scripts/ci/gen-jira-files.mjs        

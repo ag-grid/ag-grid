@@ -149,6 +149,7 @@ jobs:
             SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
             PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
             CURRENT_COMMIT_SHA: ${{ github.sha }}
+            IS_SUCCESS: ${{ jobs.code-dependency-scan.result == 'success' && jobs.sast-code-scan.result == 'success' }}
 
         - name: Set commit SHA
           id: set-commit-sha
