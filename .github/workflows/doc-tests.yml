@@ -55,6 +55,11 @@ on:
                 type: boolean
                 default: true
                 required: true
+            force_jira_ticket:
+                description: 'Force create a Jira ticket even'
+                type: boolean
+                default: false
+                required: true
     #schedule:
     #    - cron: '30 2 * * *' # Run daily at 2:30am UTC
 
@@ -230,6 +235,8 @@ jobs:
         fail-fast: false
       steps:
         - uses: actions/checkout@v4
+        - name: Bootstrap
+          run: npm run bootstrap
         - name: Run Public Testing Recipes
           run: yarn nx run ag-grid-public-e2e-testing-recipes:test:recipes -c staging
 
@@ -294,6 +301,17 @@ jobs:
             SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
             PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
             CURRENT_COMMIT_SHA: ${{ github.sha }}
+
+        - name: Create Jira Ticket
+          uses: ./.github/actions/jira-integration
+          continue-on-error: true
+          if: ${{ github.event_name == 'schedule' || inputs.force_jira_ticket }}
+          with:
+              JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
+              JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' is failing."
+              CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+              PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
+              CURRENT_COMMIT_SHA: ${{ github.sha }}
 
         - name: Set commit SHA
           id: set-commit-sha

@@ -124,7 +124,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             rowGroupOpened: handler,
             pinnedRowsChanged: handler,
             displayedRowsChanged: handler,
-            rowDataUpdated: stopInvalidEdits,
             sortChanged: stopInvalidEdits,
             filterChanged: stopInvalidEdits,
             cellFocused: this.onCellFocused.bind(this),
