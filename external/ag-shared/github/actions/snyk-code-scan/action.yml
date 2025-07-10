@@ -17,4 +17,5 @@ runs:
               SNYK_TOKEN: ${{ inputs.snyk_token }}
           with:
               command: code test
+              json: true
               args: --severity-threshold=${{ inputs.severity_threshold }}
