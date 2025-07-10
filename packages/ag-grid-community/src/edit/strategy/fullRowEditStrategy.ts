@@ -266,21 +266,32 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             }
         }
 
+        const suppressEditNextOnTab = this.gos.get('suppressEditNextOnTab');
+
         if (nextEditable && !preventNavigation) {
-            if (!nextCell.comp?.getCellEditor()) {
-                // editor missing because it was outside the viewport during creating phase,
-                // create it now
-                _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true });
+            if (suppressEditNextOnTab) {
+                nextCell.focusCell(true, event);
+            } else {
+                if (!nextCell.comp?.getCellEditor()) {
+                    // editor missing because it was outside the viewport during creating phase,
+                    // create it now
+                    _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true });
+                }
+                this.setFocusInOnEditor(nextCell);
+                nextCell.focusCell(false, event);
             }
-            this.setFocusInOnEditor(nextCell);
-            nextCell.focusCell(false, event);
         } else {
             nextCell.focusCell(true, event);
         }
 
         if (!rowsMatch && !preventNavigation) {
             this.cleanupEditors(nextCell, true);
-            this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
+
+            if (suppressEditNextOnTab) {
+                nextCell.focusCell(true, event);
+            } else {
+                this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
+            }
         }
 
         prevCell.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
