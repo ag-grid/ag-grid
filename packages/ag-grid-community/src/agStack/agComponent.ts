@@ -42,84 +42,58 @@ export type AgComponentSelector<TComponentSelectorType extends string, TBeanColl
 export abstract class AgComponentStub<
         TComponent extends AgComponentStub<
             TComponent,
-            TBeanName,
             TBeanCollection,
             TBean,
-            TContext,
             TLocalEventListener,
             TLocalEventType | AgComponentEvent,
-            TGlobalEventType,
-            TGlobalEventParams,
+            TGlobalEvents,
             TProcessedEvents,
             TProperties,
             TPropertyDefaults,
             TBooleanProperties,
-            TPropertiesEventSource,
-            TPropertiesEventType,
             TPropertiesService,
             TComponentSelectorType
         > &
             TBean,
-        TBeanName extends string,
         TBeanCollection extends AgCoreBeanCollection<
             TPropertiesService,
-            TGlobalEventType,
-            TGlobalEventParams,
+            TGlobalEvents,
             TProcessedEvents,
-            TContext
+            AgBaseContext<TBeanCollection>
         >,
         TBean extends AgBaseBean<TBeanCollection>,
-        TContext extends AgBaseContext<TBeanName, TBeanCollection>,
         TLocalEventListener extends IEventListener<TLocalEventType>,
         TLocalEventType extends string, // TODO move to end and add default
-        TGlobalEventType extends string,
-        TGlobalEventParams extends Record<TGlobalEventType, any>,
+        TGlobalEvents,
         TProcessedEvents extends AgEvent,
         TProperties extends BaseProperties,
         TPropertyDefaults extends BasePropertyDefaults,
         TBooleanProperties,
-        TPropertiesEventSource,
-        TPropertiesEventType extends string,
-        TPropertiesService extends IPropertiesService<
-            TProperties,
-            TPropertyDefaults,
-            TBooleanProperties,
-            TPropertiesEventSource
-        >,
+        TPropertiesService extends IPropertiesService<TProperties, TPropertyDefaults, TBooleanProperties>,
         TComponentSelectorType extends string,
     >
     extends AgBeanStub<
-        TBeanName,
         TBeanCollection,
         TBean,
-        TContext,
         TLocalEventListener,
         TLocalEventType | AgComponentEvent,
-        TGlobalEventType,
-        TGlobalEventParams,
+        TGlobalEvents,
         TProcessedEvents,
         TProperties,
         TPropertyDefaults,
         TBooleanProperties,
-        TPropertiesEventSource,
-        TPropertiesEventType,
         TPropertiesService
     >
     implements
         AgComponent<
             TComponent,
-            TBeanName,
             TBeanCollection,
             TBean,
-            TContext,
             TLocalEventListener,
             TLocalEventType,
-            TGlobalEventType,
-            TGlobalEventParams,
+            TGlobalEvents,
             TProperties,
-            TBooleanProperties,
-            TPropertiesEventSource,
-            TPropertiesEventType
+            TBooleanProperties
         >
 {
     private eGui: HTMLElement;

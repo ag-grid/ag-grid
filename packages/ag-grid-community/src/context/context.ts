@@ -1,4 +1,4 @@
-import type { AgContextParams, AgSingletonBeanClass } from '../agStack/agContext';
+import type { AgSingletonBeanClass } from '../agStack/agContext';
 import { AgContext } from '../agStack/agContext';
 import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
@@ -29,7 +29,6 @@ import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeSer
 import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
-import type { AgEventType } from '../eventTypes';
 import type { AgEventTypeParams, AgGlobalEventListener, AllEventsWithoutGridCommon } from '../events';
 import type { GridSerializer } from '../export/gridSerializer';
 import type { ColumnFilterService } from '../filter/columnFilterService';
@@ -87,7 +86,6 @@ import type { ApiEventService } from '../misc/apiEvents/apiEventService';
 import type { MenuService } from '../misc/menu/menuService';
 import type { StateService } from '../misc/state/stateService';
 import type { TouchService } from '../misc/touchService';
-import { _unRegisterGridModules } from '../modules/moduleRegistry';
 import type { CellNavigationService } from '../navigation/cellNavigationService';
 import type { HeaderNavigationService } from '../navigation/headerNavigationService';
 import type { NavigationService } from '../navigation/navigationService';
@@ -113,17 +111,13 @@ import type { SyncService } from '../syncService';
 import type { TooltipService } from '../tooltip/tooltipService';
 import type { UndoRedoService } from '../undoRedo/undoRedoService';
 import type { ValidationService } from '../validation/validationService';
+import type { ChangeDetectionService } from '../valueService/changeDetectionService';
 import type { ExpressionService } from '../valueService/expressionService';
 import type { ValueCache } from '../valueService/valueCache';
 import type { ValueService } from '../valueService/valueService';
 import type { PopupService } from '../widgets/popupService';
 
-export interface ContextParams extends AgContextParams<BeanName, BeanCollection> {
-    gridId: string;
-    destroyCallback?: () => void;
-}
-
-export interface SingletonBean extends AgSingletonBeanClass<BeanName, BeanCollection> {}
+export interface SingletonBean extends AgSingletonBeanClass<BeanCollection> {}
 
 export type DynamicBeanName =
     | 'detailCellRendererCtrl'
@@ -221,13 +215,7 @@ export type ComponentMeta = ClassImp | ComponentMetaWithParams | ComponentMetaFu
 export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
 
 export interface CoreBeanCollection
-    extends AgCoreBeanCollection<
-        GridOptionsService,
-        AgEventType,
-        AgEventTypeParams,
-        AllEventsWithoutGridCommon,
-        Context
-    > {
+    extends AgCoreBeanCollection<GridOptionsService, AgEventTypeParams, AllEventsWithoutGridCommon, Context> {
     pageBoundsListener: PageBoundsListener;
     environment: Environment;
     rowRenderer: RowRenderer;
@@ -353,195 +341,27 @@ export interface CoreBeanCollection
     testIdSvc?: ITestIdService;
     gridSerializer?: GridSerializer;
     licenseManager?: IWatermark;
+    changeDetectionSvc?: ChangeDetectionService;
 }
 
-/** Things used in enterprise that we haven't created interfaces for */
-type UntypedBeans =
+/** Things used in enterprise or elsewhere that we haven't created interfaces for */
+type UntypedBeanNames =
     | 'advFilterExpSvc'
     | 'advSettingsMenuFactory'
     | 'agChartsExports'
-    | 'chartCrossFilterSvc'
-    | 'chartMenuItemMapper'
-    | 'chartMenuListFactory'
-    | 'chartMenuSvc'
-    | 'chartTranslation'
-    | 'colChooserFactory'
-    | 'colMenuFactory'
-    | 'colToolPanelFactory'
-    | 'enterpriseChartProxyFactory'
-    | 'lazyBlockLoadingSvc'
-    | 'menuItemMapper'
-    | 'menuUtils'
-    | 'ssrmBlockUtils'
-    | 'ssrmListenerUtils'
-    | 'ssrmNodeManager'
-    | 'ssrmStoreFactory'
-    | 'ssrmStoreUtils'
-    | 'statusBarSvc';
-
-export type BeanCollection = CoreBeanCollection & {
-    // `unknown | undefined` to make sure the type is handled correctly when used
-    [key in UntypedBeans]?: unknown;
-};
-
-export class Context extends AgContext<BeanName, BeanCollection> {
-    private gridId: string;
-    private destroyCallback?: () => void;
-
-    protected override init(params: ContextParams): void {
-        this.gridId = params.gridId;
-
-        this.beans.context = this;
-        this.destroyCallback = params.destroyCallback;
-        super.init(params);
-    }
-
-    public override destroy(): void {
-        super.destroy();
-        _unRegisterGridModules(this.gridId);
-        this.destroyCallback?.();
-    }
-
-    public getGridId(): string {
-        return this.gridId;
-    }
-}
-
-export type BeanName =
-    | 'advFilterExpSvc'
-    | 'advancedFilter'
-    | 'advSettingsMenuFactory'
-    | 'aggFuncSvc'
-    | 'agCompUtils'
-    | 'aggColNameSvc'
-    | 'aggStage'
-    | 'alignedGridsSvc'
-    | 'animationFrameSvc'
-    | 'apiFunctionSvc'
-    | 'ariaAnnounce'
-    | 'apiEventSvc'
-    | 'autoColSvc'
-    | 'autoWidthCalc'
-    | 'beans'
-    | 'cellFlashSvc'
-    | 'cellNavigation'
-    | 'cellStyles'
-    | 'changeDetectionSvc'
     | 'chartColSvc'
     | 'chartCrossFilterSvc'
     | 'chartMenuItemMapper'
     | 'chartMenuListFactory'
     | 'chartMenuSvc'
     | 'chartTranslation'
-    | 'chartSvc'
-    | 'agChartsExports'
-    | 'clipboardSvc'
-    | 'colAnimation'
-    | 'colAutosize'
     | 'colChooserFactory'
-    | 'colDefFactory'
-    | 'colFilter'
-    | 'colFlex'
-    | 'colGroupSvc'
-    | 'colHover'
     | 'colMenuFactory'
-    | 'colModel'
-    | 'colMoves'
-    | 'colNames'
-    | 'colResize'
     | 'colToolPanelFactory'
-    | 'colViewport'
-    | 'pivotResultCols'
-    | 'context'
-    | 'contextMenuSvc'
-    | 'selectionColSvc'
-    | 'ctrlsSvc'
-    | 'csvCreator'
-    | 'dataTypeSvc'
-    | 'visibleCols'
-    | 'dragAndDrop'
-    | 'dragSvc'
-    | 'editSvc'
-    | 'editModelSvc'
-    | 'excelCreator'
-    | 'enterpriseMenuFactory'
-    | 'environment'
-    | 'eventSvc'
-    | 'eGridDiv'
     | 'enterpriseChartProxyFactory'
-    | 'expansionSvc'
-    | 'expressionSvc'
-    | 'filterAggStage'
-    | 'filterManager'
-    | 'filterMenuFactory'
-    | 'filterPanelSvc'
-    | 'filterStage'
-    | 'filterValueSvc'
-    | 'findSvc'
-    | 'flashCellSvc'
-    | 'flattenStage'
-    | 'focusSvc'
-    | 'footerSvc'
-    | 'funcColsSvc'
-    | 'rowNumbersSvc'
-    | 'pivotColsSvc'
-    | 'rowGroupColsSvc'
-    | 'valueColsSvc'
-    | 'frameworkCompWrapper'
-    | 'frameworkOverrides'
-    | 'globalListener'
-    | 'globalSyncListener'
-    | 'gridApi'
-    | 'gridDestroySvc'
-    | 'gridOptions'
-    | 'gos'
-    | 'gridOptionsWrapper'
-    | 'gridSerializer'
-    | 'groupFilter'
-    | 'groupStage'
-    | 'headerNavigation'
-    | 'horizontalResizeSvc'
     | 'lazyBlockLoadingSvc'
-    | 'licenseManager'
-    | 'localeSvc'
-    | 'masterDetailSvc'
     | 'menuItemMapper'
-    | 'menuSvc'
     | 'menuUtils'
-    | 'multiFilter'
-    | 'navigation'
-    | 'overlays'
-    | 'paginationAutoPageSizeSvc'
-    | 'pagination'
-    | 'pinnedRowModel'
-    | 'pinnedCols'
-    | 'pivotColDefSvc'
-    | 'pivotStage'
-    | 'popupSvc'
-    | 'quickFilter'
-    | 'rangeSvc'
-    | 'pageBoundsListener'
-    | 'pageBounds'
-    | 'registry'
-    | 'renderStatus'
-    | 'rowAutoHeight'
-    | 'rowChildrenSvc'
-    | 'rowContainerHeight'
-    | 'rowDragSvc'
-    | 'rowEditSvc'
-    | 'rowModel'
-    | 'rowNodeBlockLoader'
-    | 'rowNodeSorter'
-    | 'rowRenderer'
-    | 'rowStyleSvc'
-    | 'scrollVisibleSvc'
-    | 'selectableFilter'
-    | 'selectionController'
-    | 'selectionSvc'
-    | 'showRowGroupCols'
-    | 'sideBar'
-    | 'sortSvc'
-    | 'sortStage'
     | 'ssrmBlockUtils'
     | 'ssrmExpandListener'
     | 'ssrmFilterListener'
@@ -550,23 +370,14 @@ export type BeanName =
     | 'ssrmSortSvc'
     | 'ssrmStoreFactory'
     | 'ssrmStoreUtils'
-    | 'ssrmTxnManager'
-    | 'stateSvc'
     | 'statusBarSvc'
-    | 'stickyRowSvc'
-    | 'syncSvc'
-    | 'tooltipSvc'
-    | 'touchSvc'
-    | 'undoRedo'
-    | 'userCompFactory'
-    | 'valueCache'
-    | 'valueSvc'
-    | 'validationLogger'
-    | 'validation'
-    | 'csrmNodeSvc'
-    | 'csrmChildrenTreeNodeSvc'
-    | 'rowSpanSvc'
-    | 'spannedRowRenderer'
-    | 'showRowGroupColValueSvc'
-    | 'rowDropHighlightSvc'
     | 'testIdSvc';
+
+export type BeanCollection = CoreBeanCollection & {
+    // `unknown | undefined` to make sure the type is handled correctly when used
+    [key in UntypedBeanNames]?: unknown;
+};
+
+export class Context extends AgContext<BeanCollection> {}
+
+export type BeanName = keyof BeanCollection;

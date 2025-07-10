@@ -1,33 +1,39 @@
 import type { AgSingletonBean } from './interfaces/iBean';
 
-type BeanComparator<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> = (
-    bean1: AgSingletonBean<TBeanName, TBeanCollection>,
-    bean2: AgSingletonBean<TBeanName, TBeanCollection>
+type BeanComparator<TBeanCollection> = (
+    bean1: AgSingletonBean<TBeanCollection>,
+    bean2: AgSingletonBean<TBeanCollection>
 ) => number;
 
-export interface AgContextParams<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
-    providedBeanInstances: Partial<{ [key in TBeanName]: AgSingletonBean<TBeanName, TBeanCollection> }>;
-    beanClasses: AgSingletonBeanClass<TBeanName, TBeanCollection>[];
-    derivedBeans?: ((context: AgContext<TBeanName, TBeanCollection>) => {
-        beanName: TBeanName;
-        bean: TBeanCollection[TBeanName];
-    })[];
-    beanInitComparator?: BeanComparator<TBeanName, TBeanCollection>;
-    beanDestroyComparator?: BeanComparator<TBeanName, TBeanCollection>;
+interface DerivedBean<TBeanCollection, K extends keyof TBeanCollection> {
+    beanName: K;
+    bean: TBeanCollection[K] & AgSingletonBean<TBeanCollection>;
 }
 
-export interface AgSingletonBeanClass<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
-    new (): AgSingletonBean<TBeanName, TBeanCollection>;
+export interface AgContextParams<TBeanCollection> {
+    providedBeanInstances: Partial<TBeanCollection>;
+    beanClasses: AgSingletonBeanClass<TBeanCollection>[];
+    derivedBeans?: ((context: AgContext<TBeanCollection>) => DerivedBean<TBeanCollection, keyof TBeanCollection>)[];
+    beanInitComparator?: BeanComparator<TBeanCollection>;
+    beanDestroyComparator?: BeanComparator<TBeanCollection>;
+    id: string;
+    destroyCallback?: () => void;
 }
 
-export class AgContext<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
+export interface AgSingletonBeanClass<TBeanCollection> {
+    new (): AgSingletonBean<TBeanCollection>;
+}
+
+export class AgContext<TBeanCollection> {
     protected beans: TBeanCollection = {} as TBeanCollection;
-    private createdBeans: AgSingletonBean<TBeanName, TBeanCollection>[] = [];
-    private beanDestroyComparator?: BeanComparator<TBeanName, TBeanCollection>;
+    private createdBeans: AgSingletonBean<TBeanCollection>[] = [];
+    private beanDestroyComparator?: BeanComparator<TBeanCollection>;
+    private id: string;
+    private destroyCallback?: () => void;
 
     private destroyed = false;
 
-    constructor(params: AgContextParams<TBeanName, TBeanCollection>) {
+    constructor(params: AgContextParams<TBeanCollection>) {
         if (!params || !params.beanClasses) {
             return;
         }
@@ -37,8 +43,12 @@ export class AgContext<TBeanName extends string, TBeanCollection extends { [key 
         this.init(params);
     }
 
-    protected init(params: AgContextParams<TBeanName, TBeanCollection>): void {
-        for (const beanName of Object.keys(params.providedBeanInstances) as TBeanName[]) {
+    protected init(params: AgContextParams<TBeanCollection>): void {
+        this.id = params.id;
+        (this.beans as any).context = this; // TODO - can we type TBeanCollection to extend CoreBeanCollection easily here?
+        this.destroyCallback = params.destroyCallback;
+
+        for (const beanName of Object.keys(params.providedBeanInstances) as (keyof TBeanCollection)[]) {
             this.beans[beanName] = params.providedBeanInstances[beanName] as any;
         }
 
@@ -67,21 +77,21 @@ export class AgContext<TBeanName extends string, TBeanCollection extends { [key 
         this.initBeans(this.createdBeans);
     }
 
-    private getBeanInstances(): AgSingletonBean<TBeanName, TBeanCollection>[] {
-        return Object.values(this.beans);
+    private getBeanInstances(): AgSingletonBean<TBeanCollection>[] {
+        return Object.values(this.beans as Record<string, AgSingletonBean<TBeanCollection>>);
     }
 
-    public createBean<T extends AgSingletonBean<TBeanName, TBeanCollection>>(
+    public createBean<T extends AgSingletonBean<TBeanCollection>>(
         bean: T,
-        afterPreCreateCallback?: (bean: AgSingletonBean<TBeanName, TBeanCollection>) => void
+        afterPreCreateCallback?: (bean: AgSingletonBean<TBeanCollection>) => void
     ): T {
         this.initBeans([bean], afterPreCreateCallback);
         return bean;
     }
 
     private initBeans(
-        beanInstances: AgSingletonBean<TBeanName, TBeanCollection>[],
-        afterPreCreateCallback?: (bean: AgSingletonBean<TBeanName, TBeanCollection>) => void
+        beanInstances: AgSingletonBean<TBeanCollection>[],
+        afterPreCreateCallback?: (bean: AgSingletonBean<TBeanCollection>) => void
     ): void {
         const beans = this.beans;
         beanInstances.forEach((instance) => {
@@ -102,8 +112,12 @@ export class AgContext<TBeanName extends string, TBeanCollection extends { [key 
         return this.beans;
     }
 
-    public getBean<T extends TBeanName>(name: T): TBeanCollection[T] {
+    public getBean<T extends keyof TBeanCollection>(name: T): TBeanCollection[T] {
         return this.beans[name];
+    }
+
+    public getId(): string {
+        return this.id;
     }
 
     public destroy(): void {
@@ -123,13 +137,15 @@ export class AgContext<TBeanName extends string, TBeanCollection extends { [key 
 
         this.beans = {} as TBeanCollection;
         this.createdBeans = [];
+
+        this.destroyCallback?.();
     }
 
     /**
      * Destroys a bean and returns undefined to support destruction and clean up in a single line.
      * this.dateComp = this.context.destroyBean(this.dateComp);
      */
-    public destroyBean(bean: AgSingletonBean<TBeanName, TBeanCollection> | null | undefined): undefined {
+    public destroyBean(bean: AgSingletonBean<TBeanCollection> | null | undefined): undefined {
         bean?.destroy?.();
     }
 
@@ -137,7 +153,7 @@ export class AgContext<TBeanName extends string, TBeanCollection extends { [key 
      * Destroys an array of beans and returns an empty array to support destruction and clean up in a single line.
      * this.dateComps = this.context.destroyBeans(this.dateComps);
      */
-    public destroyBeans(beans: (AgSingletonBean<TBeanName, TBeanCollection> | null | undefined)[]): [] {
+    public destroyBeans(beans: (AgSingletonBean<TBeanCollection> | null | undefined)[]): [] {
         if (beans) {
             for (let i = 0; i < beans.length; i++) {
                 this.destroyBean(beans[i]);

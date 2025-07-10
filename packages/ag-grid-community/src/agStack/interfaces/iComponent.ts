@@ -1,5 +1,4 @@
 import type { AgBaseBean, AgBean } from './iBean';
-import type { AgBaseContext } from './iContext';
 import type { IEventListener } from './iEventEmitter';
 import type { BaseProperties } from './iProperties';
 
@@ -10,45 +9,30 @@ export interface AgBaseComponent<TBeanCollection> extends AgBaseBean<TBeanCollec
 export interface AgComponent<
     TComponent extends AgComponent<
         TComponent,
-        TBeanName,
         TBeanCollection,
         TBean,
-        TContext,
         TLocalEventListener,
         TLocalEventType,
-        TGlobalEventType,
-        TGlobalEventParams,
+        TGlobalEvents,
         TProperties,
-        TBooleanProperties,
-        TPropertiesEventSource,
-        TPropertiesEventType
+        TBooleanProperties
     >,
-    TBeanName extends string,
     TBeanCollection,
     TBean extends AgBaseBean<TBeanCollection>,
-    TContext extends AgBaseContext<TBeanName, TBeanCollection>,
     TLocalEventListener extends IEventListener<TLocalEventType>,
     TLocalEventType extends string,
-    TGlobalEventType extends string,
-    TGlobalEventParams extends Record<TGlobalEventType, any>,
+    TGlobalEvents,
     TProperties extends BaseProperties,
     TBooleanProperties,
-    TPropertiesEventSource,
-    TPropertiesEventType extends string,
 > extends AgBaseComponent<TBeanCollection>,
         AgBean<
-            TBeanName,
             TBeanCollection,
             TBean,
-            TContext,
             TLocalEventListener,
             TLocalEventType,
-            TGlobalEventType,
-            TGlobalEventParams,
+            TGlobalEvents,
             TProperties,
-            TBooleanProperties,
-            TPropertiesEventSource,
-            TPropertiesEventType
+            TBooleanProperties
         > {
     getCompId(): number;
 

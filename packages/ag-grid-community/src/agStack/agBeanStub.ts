@@ -23,55 +23,37 @@ export type AgEventOrDestroyed<TEventType extends string> = TEventType | AgBeanS
 type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
 
 export abstract class AgBeanStub<
-        TBeanName extends string,
         TBeanCollection extends AgCoreBeanCollection<
             TPropertiesService,
-            TGlobalEventType,
-            TGlobalEventParams,
+            TGlobalEvents,
             TProcessedEvents,
-            TContext
+            AgBaseContext<TBeanCollection>
         >,
         TBean extends AgBaseBean<TBeanCollection>,
-        TContext extends AgBaseContext<TBeanName, TBeanCollection>,
         TLocalEventListener extends IEventListener<AgEventOrDestroyed<TLocalEventType>>,
         TLocalEventType extends string, // TODO move to end and add default
-        TGlobalEventType extends string,
-        TGlobalEventParams extends Record<TGlobalEventType, any>,
+        TGlobalEvents,
         TProcessedEvents extends AgEvent,
         TProperties extends BaseProperties,
         TPropertyDefaults extends BasePropertyDefaults,
         TBooleanProperties,
-        TPropertiesEventSource,
-        TPropertiesEventType extends string,
-        TPropertiesService extends IPropertiesService<
-            TProperties,
-            TPropertyDefaults,
-            TBooleanProperties,
-            TPropertiesEventSource
-        >,
+        TPropertiesService extends IPropertiesService<TProperties, TPropertyDefaults, TBooleanProperties>,
     >
     implements
         AgBean<
-            TBeanName,
             TBeanCollection,
             TBean,
-            TContext,
             TLocalEventListener,
             TLocalEventType,
-            TGlobalEventType,
-            TGlobalEventParams,
+            TGlobalEvents,
             TProperties,
-            TBooleanProperties,
-            TPropertiesEventSource,
-            TPropertiesEventType
+            TBooleanProperties
         >,
         IEventEmitter<AgEventOrDestroyed<TLocalEventType>>
 {
     protected localEventService?: LocalEventService<AgEventOrDestroyed<TLocalEventType>>;
 
-    protected abstract propertiesChangedEventType: TPropertiesEventType;
-
-    private stubContext: TContext; // not named context to allow children to use 'context' as a variable name
+    private stubContext: AgBaseContext<TBeanCollection>; // not named context to allow children to use 'context' as a variable name
     private destroyFunctions: (() => void)[] = [];
     private destroyed = false;
 
@@ -80,7 +62,7 @@ export abstract class AgBeanStub<
     public __v_skip = true;
 
     protected beans: TBeanCollection;
-    protected eventSvc: AgEventService<TGlobalEventType, TGlobalEventParams, TProcessedEvents>;
+    protected eventSvc: AgEventService<TGlobalEvents, TProcessedEvents>;
     protected gos: TPropertiesService;
 
     public preWireBeans(beans: TBeanCollection): void {
@@ -151,8 +133,10 @@ export abstract class AgBeanStub<
     ) {
         return this._setupListeners<keyof HTMLElementEventMap>(object, handlers);
     }
-    public addManagedEventListeners(handlers: { [K in TGlobalEventType]?: (event: TGlobalEventParams[K]) => void }) {
-        return this._setupListeners<TGlobalEventType>(this.eventSvc, handlers);
+    public addManagedEventListeners(handlers: {
+        [K in keyof TGlobalEvents]?: (event: TGlobalEvents[K]) => void;
+    }) {
+        return this._setupListeners<keyof TGlobalEvents & string>(this.eventSvc, handlers);
     }
     public addManagedListeners<TEvent extends string>(
         object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent>,
@@ -223,7 +207,7 @@ export abstract class AgBeanStub<
      */
     private setupPropertyListener<K extends keyof TProperties & string>(
         event: K,
-        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, TPropertiesEventSource, K>
+        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, K>
     ): () => null {
         const { gos } = this;
         gos.addPropertyEventListener(event, listener);
@@ -248,7 +232,7 @@ export abstract class AgBeanStub<
      */
     public addManagedPropertyListener<K extends keyof TProperties & string>(
         event: K,
-        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, TPropertiesEventSource, K>
+        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, K>
     ): () => null {
         if (this.destroyed) {
             return () => null;
@@ -271,7 +255,7 @@ export abstract class AgBeanStub<
      */
     public addManagedPropertyListeners(
         events: (keyof TProperties)[],
-        listener: AgPropertyChangedListener<TProperties, TPropertiesEventType, TPropertiesEventSource>
+        listener: AgPropertyChangedListener<TProperties>
     ): void {
         if (this.destroyed) {
             return;
@@ -280,9 +264,7 @@ export abstract class AgBeanStub<
         // Ensure each set of events can run for the same changeSetId
         const eventsKey = events.join('-') + this.propertyListenerId++;
 
-        const wrappedListener = (
-            event: AgPropertyValueChangedEvent<TProperties, TBooleanProperties, TPropertiesEventSource, any>
-        ) => {
+        const wrappedListener = (event: AgPropertyValueChangedEvent<TProperties, TBooleanProperties, any>) => {
             if (event.changeSet) {
                 // ChangeSet is only set when the property change is part of a group of changes from ComponentUtils
                 // Direct api calls should always be run as
@@ -293,12 +275,8 @@ export abstract class AgBeanStub<
                 this.lastChangeSetIdLookup[eventsKey] = event.changeSet.id;
             }
             // Don't expose the underlying event value changes to the group listener.
-            const propertiesChangeEvent: AgPropertyChangedEvent<
-                TProperties,
-                TPropertiesEventType,
-                TPropertiesEventSource
-            > = {
-                type: this.propertiesChangedEventType,
+            const propertiesChangeEvent: AgPropertyChangedEvent<TProperties> = {
+                type: 'propertyChanged',
                 changeSet: event.changeSet,
                 source: event.source,
             };
@@ -324,11 +302,14 @@ export abstract class AgBeanStub<
     }
 
     /** doesn't throw an error if `bean` is undefined */
-    public createOptionalManagedBean<T extends TBean | null | undefined>(bean: T, context?: TContext): T | undefined {
+    public createOptionalManagedBean<T extends TBean | null | undefined>(
+        bean: T,
+        context?: AgBaseContext<TBeanCollection>
+    ): T | undefined {
         return bean ? this.createManagedBean(bean, context) : undefined;
     }
 
-    public createManagedBean<T extends TBean>(bean: T, context?: TContext): T {
+    public createManagedBean<T extends TBean>(bean: T, context?: AgBaseContext<TBeanCollection>): T {
         const res = this.createBean(bean, context);
         this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
         return res;
@@ -336,7 +317,7 @@ export abstract class AgBeanStub<
 
     public createBean<T extends TBean>(
         bean: T,
-        context?: TContext | null,
+        context?: AgBaseContext<TBeanCollection> | null,
         afterPreCreateCallback?: (bean: TBean) => void
     ): T {
         return (context || this.stubContext).createBean(bean, afterPreCreateCallback);
@@ -346,7 +327,10 @@ export abstract class AgBeanStub<
      * Destroys a bean and returns undefined to support destruction and clean up in a single line.
      * this.dateComp = this.context.destroyBean(this.dateComp);
      */
-    public destroyBean<T extends TBean | null | undefined>(bean: T, context?: TContext): undefined {
+    public destroyBean<T extends TBean | null | undefined>(
+        bean: T,
+        context?: AgBaseContext<TBeanCollection>
+    ): undefined {
         return (context || this.stubContext).destroyBean(bean);
     }
 
@@ -354,7 +338,10 @@ export abstract class AgBeanStub<
      * Destroys an array of beans and returns an empty array to support destruction and clean up in a single line.
      * this.dateComps = this.context.destroyBeans(this.dateComps);
      */
-    protected destroyBeans<T extends TBean | null | undefined>(beans: T[], context?: TContext): T[] {
+    protected destroyBeans<T extends TBean | null | undefined>(
+        beans: T[],
+        context?: AgBaseContext<TBeanCollection>
+    ): T[] {
         return (context || this.stubContext).destroyBeans(beans);
     }
 }

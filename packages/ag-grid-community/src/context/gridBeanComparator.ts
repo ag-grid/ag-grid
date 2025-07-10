@@ -84,7 +84,6 @@ const orderedCoreBeans: BeanName[] = [
     'pivotColsSvc',
     'valueColsSvc',
     'rowGroupColsSvc',
-    'funcColsSvc',
     'colNames',
     'colViewport',
     'pivotResultCols',
@@ -97,8 +96,8 @@ const beanNamePosition: { [key in BeanName]?: number } = Object.fromEntries(
 );
 
 export function gridBeanInitComparator(
-    bean1: AgSingletonBean<BeanName, BeanCollection>,
-    bean2: AgSingletonBean<BeanName, BeanCollection>
+    bean1: AgSingletonBean<BeanCollection>,
+    bean2: AgSingletonBean<BeanCollection>
 ): number {
     // if the beans are not in the ordered list, just ensure they are after the ordered beans and stable to provided order
     const index1 = (bean1.beanName ? beanNamePosition[bean1.beanName] : undefined) ?? Number.MAX_SAFE_INTEGER;
@@ -107,9 +106,9 @@ export function gridBeanInitComparator(
 }
 
 export function gridBeanDestroyComparator(
-    bean1: AgSingletonBean<BeanName, BeanCollection>,
+    bean1: AgSingletonBean<BeanCollection>,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    bean2: AgSingletonBean<BeanName, BeanCollection>
+    bean2: AgSingletonBean<BeanCollection>
 ): number {
     if (bean1?.beanName === 'gridDestroySvc') {
         return -1;

@@ -1,3 +1,4 @@
+import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -5,7 +6,6 @@ import type { BeanCollection, DynamicBeanName, UserComponentName } from '../cont
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
-import type { PropertyChangedSource } from '../gridOptionsService';
 import type { RowNodeEventType } from '../interfaces/iRowNode';
 import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
@@ -32,7 +32,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         provideValidationServiceLogger(this);
     }
 
-    public warnOnInitialPropertyUpdate(source: PropertyChangedSource, key: string): void {
+    public warnOnInitialPropertyUpdate(source: AgPropertyChangedSource, key: string): void {
         if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
             _warn(22, { key });
         }
@@ -102,7 +102,7 @@ export class ValidationService extends BeanStub implements NamedBean {
                 reasonOrId: `icon '${iconName}'`,
                 moduleName,
                 gridScoped: _areModulesGridScoped(),
-                gridId: this.beans.context.getGridId(),
+                gridId: this.beans.context.getId(),
                 rowModelType: this.gos.get('rowModelType'),
                 additionalText: 'Alternatively, use the CSS icon name directly.',
             });

@@ -1,7 +1,8 @@
+import type { AgContextParams } from './agStack/agContext';
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
-import type { ContextParams, SingletonBean } from './context/context';
+import type { BeanCollection, SingletonBean } from './context/context';
 import { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import type { GridOptions } from './entities/gridOptions';
@@ -23,6 +24,7 @@ import {
     _hasUserRegistered,
     _isModuleRegistered,
     _registerModule,
+    _unRegisterGridModules,
 } from './modules/moduleRegistry';
 import { _createElement } from './utils/dom';
 import { _missing } from './utils/generic';
@@ -130,14 +132,17 @@ export class GridCoreCreator {
             return undefined as any;
         }
 
-        const contextParams: ContextParams = {
+        const contextParams: AgContextParams<BeanCollection> = {
             providedBeanInstances,
             beanClasses,
-            gridId,
+            id: gridId,
             beanInitComparator: gridBeanInitComparator,
             beanDestroyComparator: gridBeanDestroyComparator,
             derivedBeans: [createGridApi],
-            destroyCallback,
+            destroyCallback: () => {
+                _unRegisterGridModules(gridId);
+                destroyCallback?.();
+            },
         };
 
         const context = new Context(contextParams);

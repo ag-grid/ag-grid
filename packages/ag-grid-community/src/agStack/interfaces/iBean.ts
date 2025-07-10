@@ -21,24 +21,19 @@ export interface AgBaseBean<TBeanCollection> {
     destroy?(): void;
 }
 
-export interface AgSingletonBean<TBeanName, TBeanCollection> extends AgBaseBean<TBeanCollection> {
+export interface AgSingletonBean<TBeanCollection> extends AgBaseBean<TBeanCollection> {
     /** AG Grid internal - do not use */
-    beanName?: TBeanName;
+    beanName?: keyof TBeanCollection & string;
 }
 
 export interface AgBean<
-    TBeanName extends string,
     TBeanCollection,
     TBean extends AgBaseBean<TBeanCollection>,
-    TContext extends AgBaseContext<TBeanName, TBeanCollection>,
     TLocalEventListener extends IEventListener<TLocalEventType>,
     TLocalEventType extends string,
-    TGlobalEventType extends string,
-    TGlobalEventParams extends Record<TGlobalEventType, any>,
+    TGlobalEvents,
     TProperties extends BaseProperties,
     TBooleanProperties,
-    TPropertiesEventSource,
-    TPropertiesEventType extends string,
 > extends AgBaseBean<TBeanCollection> {
     addEventListener<T extends TLocalEventType>(eventType: T, listener: TLocalEventListener, async?: boolean): void;
 
@@ -52,7 +47,7 @@ export interface AgBean<
     ): (() => null)[];
 
     addManagedEventListeners(handlers: {
-        [K in TGlobalEventType]?: (event: TGlobalEventParams[K]) => void;
+        [K in keyof TGlobalEvents]?: (event: TGlobalEvents[K]) => void;
     }): (() => null)[];
 
     addManagedListeners<TEvent extends string>(
@@ -67,7 +62,7 @@ export interface AgBean<
      */
     addManagedPropertyListener<K extends keyof TProperties & string>(
         event: K,
-        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, TPropertiesEventSource, K>
+        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, K>
     ): () => null;
 
     /**
@@ -78,10 +73,7 @@ export interface AgBean<
      * @param events Array of GridOption properties to listen for changes too.
      * @param listener Shared listener to run if any of the properties change
      */
-    addManagedPropertyListeners(
-        events: (keyof TProperties)[],
-        listener: AgPropertyChangedListener<TProperties, TPropertiesEventType, TPropertiesEventSource>
-    ): void;
+    addManagedPropertyListeners(events: (keyof TProperties)[], listener: AgPropertyChangedListener<TProperties>): void;
 
     isAlive(): boolean;
 
@@ -90,15 +82,22 @@ export interface AgBean<
     addDestroyFunc(func: () => void): void;
 
     /** doesn't throw an error if `bean` is undefined */
-    createOptionalManagedBean<T extends TBean | null | undefined>(bean: T, context?: TContext): T | undefined;
+    createOptionalManagedBean<T extends TBean | null | undefined>(
+        bean: T,
+        context?: AgBaseContext<TBeanCollection>
+    ): T | undefined;
 
-    createManagedBean<T extends TBean>(bean: T, context?: TContext): T;
+    createManagedBean<T extends TBean>(bean: T, context?: AgBaseContext<TBeanCollection>): T;
 
-    createBean<T extends TBean>(bean: T, context?: TContext | null, afterPreCreateCallback?: (bean: TBean) => void): T;
+    createBean<T extends TBean>(
+        bean: T,
+        context?: AgBaseContext<TBeanCollection> | null,
+        afterPreCreateCallback?: (bean: TBean) => void
+    ): T;
 
     /**
      * Destroys a bean and returns undefined to support destruction and clean up in a single line.
      * this.dateComp = this.context.destroyBean(this.dateComp);
      */
-    destroyBean<T extends TBean | null | undefined>(bean: T, context?: TContext): undefined;
+    destroyBean<T extends TBean | null | undefined>(bean: T, context?: AgBaseContext<TBeanCollection>): undefined;
 }

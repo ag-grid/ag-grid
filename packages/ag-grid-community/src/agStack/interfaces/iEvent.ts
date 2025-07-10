@@ -1,19 +1,19 @@
 import type { AgEvent } from './agEvent';
 import type { IEventEmitter } from './iEventEmitter';
 
-type GlobalEventListener<TEventType extends string, TEventParams extends Record<TEventType, any>> = (
+type GlobalEventListener<TEventType extends string, TEvents extends Record<TEventType, any>> = (
     eventType: TEventType,
-    event: TEventParams[TEventType]
+    event: TEvents[TEventType]
 ) => void;
 
-export interface AgEventService<
-    TEventType extends string,
-    TEventParams extends Record<TEventType, any>,
-    TProcessedEvents extends AgEvent,
-> extends IEventEmitter<TEventType> {
-    addGlobalListener(listener: GlobalEventListener<TEventType, TEventParams>, async?: boolean): void;
+export interface AgEventService<TEventParams, TProcessedEvents extends AgEvent>
+    extends IEventEmitter<keyof TEventParams & string> {
+    addGlobalListener(listener: GlobalEventListener<keyof TEventParams & string, TEventParams>, async?: boolean): void;
 
-    removeGlobalListener(listener: GlobalEventListener<TEventType, TEventParams>, async?: boolean): void;
+    removeGlobalListener(
+        listener: GlobalEventListener<keyof TEventParams & string, TEventParams>,
+        async?: boolean
+    ): void;
 
     dispatchEvent(event: TProcessedEvents): void;
 

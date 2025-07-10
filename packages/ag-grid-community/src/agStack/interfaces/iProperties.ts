@@ -8,6 +8,8 @@ export interface BasePropertyDefaults {
     tabIndex: number;
 }
 
+export type AgPropertyChangedSource = 'api' | 'optionsUpdated';
+
 export interface AgPropertyChangeSet<TProperties extends BaseProperties> {
     /** Unique id which can be used to link changes of multiple properties that were updated together.
      * i.e a user updated multiple properties at the same time.
@@ -16,11 +18,10 @@ export interface AgPropertyChangeSet<TProperties extends BaseProperties> {
     /** All the properties that have been updated in this change set */
     properties: (keyof TProperties)[];
 }
-export interface AgPropertyChangedEvent<TProperties extends BaseProperties, TEventType extends string, TEventSource>
-    extends AgEvent {
-    type: TEventType;
+export interface AgPropertyChangedEvent<TProperties extends BaseProperties> extends AgEvent {
+    type: 'propertyChanged';
     changeSet: AgPropertyChangeSet<TProperties> | undefined;
-    source: TEventSource;
+    source: AgPropertyChangedSource;
 }
 
 export type AgPropertyKey<TProperties extends BaseProperties> = keyof TProperties & string;
@@ -47,42 +48,37 @@ type PropertiesOrBooleanCoercedValue<
 export interface AgPropertyValueChangedEvent<
     TProperties extends BaseProperties,
     TBooleanProperties,
-    TEventSource,
     K extends AgPropertyKey<TProperties>,
 > extends AgEvent {
     type: K;
     changeSet: AgPropertyChangeSet<TProperties> | undefined;
     currentValue: PropertiesOrBooleanCoercedValue<TProperties, TBooleanProperties, K>;
     previousValue: PropertiesOrBooleanCoercedValue<TProperties, TBooleanProperties, K>;
-    source: TEventSource;
+    source: AgPropertyChangedSource;
 }
 
-export type AgPropertyChangedListener<
-    TProperties extends BaseProperties,
-    TPropertiesEventType extends string,
-    TEventSource,
-> = (event: AgPropertyChangedEvent<TProperties, TPropertiesEventType, TEventSource>) => void;
+export type AgPropertyChangedListener<TProperties extends BaseProperties> = (
+    event: AgPropertyChangedEvent<TProperties>
+) => void;
 
 export type AgPropertyValueChangedListener<
     TProperties extends BaseProperties,
     TBooleanProperties,
-    TEventSource,
     K extends AgPropertyKey<TProperties>,
-> = (event: AgPropertyValueChangedEvent<TProperties, TBooleanProperties, TEventSource, K>) => void;
+> = (event: AgPropertyValueChangedEvent<TProperties, TBooleanProperties, K>) => void;
 
 export interface IPropertiesService<
     TProperties extends BaseProperties,
     TPropertyDefaults extends BasePropertyDefaults,
     TBooleanProperties,
-    TEventSource,
 > {
     addPropertyEventListener<K extends keyof TProperties & string>(
         event: K,
-        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, TEventSource, K>
+        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, K>
     ): void;
     removePropertyEventListener<K extends keyof TProperties & string>(
         event: K,
-        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, TEventSource, K>
+        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, K>
     ): void;
     get<K extends AgPropertyKey<TProperties>>(property: K): AgPropertyValueOrDefault<TProperties, TPropertyDefaults, K>;
 }

@@ -39,7 +39,7 @@ export class GridCtrl extends BeanStub {
         this.eGridHostDiv = eGridDiv;
         this.eGui = eGui;
 
-        this.eGui.setAttribute('grid-id', this.beans.context.getGridId());
+        this.eGui.setAttribute('grid-id', this.beans.context.getId());
 
         const { dragAndDrop, ctrlsSvc } = this.beans;
 

@@ -1,6 +1,7 @@
 import type {
     AgPropertyChangeSet,
     AgPropertyChangedEvent,
+    AgPropertyChangedSource,
     AgPropertyValueChangedEvent,
     AgPropertyValueChangedListener,
     IPropertiesService,
@@ -56,18 +57,15 @@ type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptio
           params: WithoutGridCommon<ExtractParamsFromCallback<OriginalCallback>>
       ) => ExtractReturnTypeFromCallback<OriginalCallback>);
 
-export type PropertyChangedSource = 'api' | 'gridOptionsUpdated';
-export type PropertyChangedEvent = AgPropertyChangedEvent<GridOptions, 'gridPropertyChanged', PropertyChangedSource>;
+export type PropertyChangedEvent = AgPropertyChangedEvent<GridOptions>;
 export type PropertyValueChangedEvent<K extends keyof GridOptions> = AgPropertyValueChangedEvent<
     GridOptions,
     BooleanProps,
-    PropertyChangedSource,
     K
 >;
 type PropertyValueChangedListener<K extends keyof GridOptions> = AgPropertyValueChangedListener<
     GridOptions,
     BooleanProps,
-    PropertyChangedSource,
     K
 >;
 
@@ -78,9 +76,7 @@ let gridInstanceSequence = 0;
 
 export class GridOptionsService
     extends BeanStub
-    implements
-        NamedBean,
-        IPropertiesService<GridOptions, typeof GRID_OPTION_DEFAULTS, BooleanProps, PropertyChangedSource>
+    implements NamedBean, IPropertiesService<GridOptions, typeof GRID_OPTION_DEFAULTS, BooleanProps>
 {
     beanName = 'gos' as const;
 
@@ -93,7 +89,7 @@ export class GridOptionsService
         this.gridOptions = beans.gridOptions;
         this.validation = beans.validation;
         this.api = beans.gridApi;
-        this.gridId = beans.context.getGridId();
+        this.gridId = beans.context.getId();
     }
     private domDataKey = '__AG_' + Math.random().toString();
 
@@ -123,7 +119,7 @@ export class GridOptionsService
 
         this.addManagedEventListeners({
             gridOptionsChanged: ({ options }) => {
-                this.updateGridOptions({ options, force: true, source: 'gridOptionsUpdated' });
+                this.updateGridOptions({ options, force: true, source: 'optionsUpdated' });
             },
         });
     }
@@ -184,7 +180,7 @@ export class GridOptionsService
     }: {
         options: Partial<GridOptions>;
         force?: boolean;
-        source?: PropertyChangedSource;
+        source?: AgPropertyChangedSource;
     }): void {
         const changeSet: AgPropertyChangeSet<GridOptions> = { id: changeSetId++, properties: [] };
         // all events are fired after grid options has finished updating.

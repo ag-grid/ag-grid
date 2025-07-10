@@ -1,10 +1,10 @@
+import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { isColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../events';
-import type { PropertyChangedSource } from '../gridOptionsService';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
 import { _areEqual } from '../utils/array';
 import { _exists } from '../utils/generic';
@@ -107,9 +107,9 @@ export function _updateColsMap(cols: ColumnCollections): void {
     cols.list.forEach((col) => (cols.map[col.getId()] = col));
 }
 
-export function _convertColumnEventSourceType(source: PropertyChangedSource): ColumnEventType {
+export function _convertColumnEventSourceType(source: AgPropertyChangedSource): ColumnEventType {
     // unfortunately they do not match so need to perform conversion
-    return source === 'gridOptionsUpdated' ? 'gridOptionsChanged' : source;
+    return source === 'optionsUpdated' ? 'gridOptionsChanged' : source;
 }
 
 export function _columnsMatch(column: AgColumn, key: ColKey): boolean {

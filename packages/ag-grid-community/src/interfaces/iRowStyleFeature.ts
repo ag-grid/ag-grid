@@ -1,6 +1,6 @@
 import type { AgSingletonBean } from '../agStack/interfaces/iBean';
-import type { BeanCollection, BeanName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 
-export interface IRowStyleFeature extends AgSingletonBean<BeanName, BeanCollection> {
+export interface IRowStyleFeature extends AgSingletonBean<BeanCollection> {
     applyRowStyles(): void;
 }
