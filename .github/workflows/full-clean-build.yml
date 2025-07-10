@@ -264,5 +264,16 @@ jobs:
               repo,
               workflow_id,
               ref,
+              inputs: {
+                skip_vanilla: false,
+                skip_typescript: false,
+                skip_reactFunctional: false,
+                skip_reactFunctionalTs: false,
+                skip_angular: false,
+                skip_vue3: false,
+                skip_demo_smoke: false,
+                skip_recipes: false,
+                notify: true,
+                force_jira_ticket: true,
+              }
             });
-

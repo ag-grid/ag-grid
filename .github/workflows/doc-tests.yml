@@ -56,7 +56,7 @@ on:
                 default: true
                 required: true
             force_jira_ticket:
-                description: 'Force create a Jira ticket even'
+                description: 'Force create a Jira ticket even if the run is not scheduled'
                 type: boolean
                 default: false
                 required: true
