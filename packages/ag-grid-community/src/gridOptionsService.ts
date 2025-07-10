@@ -42,7 +42,6 @@ type GetKeys<T, U> = {
  */
 type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 
-export type BooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
 type NoArgFuncs = KeysOfType<() => any>;
 type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
 type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any, any>) => any>, NoArgFuncs | AnyArgFuncs>;
@@ -60,12 +59,12 @@ type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptio
 export type PropertyChangedEvent = AgPropertyChangedEvent<GridOptions>;
 export type PropertyValueChangedEvent<K extends keyof GridOptions> = AgPropertyValueChangedEvent<
     GridOptions,
-    BooleanProps,
+    typeof GRID_OPTION_DEFAULTS,
     K
 >;
 type PropertyValueChangedListener<K extends keyof GridOptions> = AgPropertyValueChangedListener<
     GridOptions,
-    BooleanProps,
+    typeof GRID_OPTION_DEFAULTS,
     K
 >;
 
@@ -76,7 +75,7 @@ let gridInstanceSequence = 0;
 
 export class GridOptionsService
     extends BeanStub
-    implements NamedBean, IPropertiesService<GridOptions, typeof GRID_OPTION_DEFAULTS, BooleanProps>
+    implements NamedBean, IPropertiesService<GridOptions, typeof GRID_OPTION_DEFAULTS>
 {
     beanName = 'gos' as const;
 

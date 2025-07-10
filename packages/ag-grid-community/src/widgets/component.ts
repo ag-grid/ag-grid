@@ -4,7 +4,7 @@ import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { AgEventListener, AgEventTypeParams, AllEventsWithoutGridCommon } from '../events';
 import type { GRID_OPTION_DEFAULTS } from '../gridOptionsDefault';
-import type { BooleanProps, GridOptionsService } from '../gridOptionsService';
+import type { GridOptionsService } from '../gridOptionsService';
 
 export type ComponentEvent = AgComponentEvent;
 
@@ -48,7 +48,6 @@ export type AgComponentSelectorType =
     | 'AG-WATERMARK';
 
 export class Component<TLocalEvent extends string = AgComponentEvent> extends AgComponentStub<
-    Component<any>,
     BeanCollection,
     AgEventListener<any, any, any>,
     TLocalEvent,
@@ -56,7 +55,6 @@ export class Component<TLocalEvent extends string = AgComponentEvent> extends Ag
     AllEventsWithoutGridCommon,
     GridOptions,
     typeof GRID_OPTION_DEFAULTS,
-    BooleanProps,
     GridOptionsService,
     AgComponentSelectorType
 > {}

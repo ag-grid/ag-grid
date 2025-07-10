@@ -2,43 +2,38 @@ import type { AgBeanStubEvent } from '../agBeanStub';
 import type { AgEvent } from './agEvent';
 import type { AgBaseBean, AgBean } from './iBean';
 import type { IEventListener } from './iEventEmitter';
-import type { BaseProperties } from './iProperties';
+import type { BaseProperties, BasePropertyDefaults } from './iProperties';
 
 export interface AgBaseComponent<TBeanCollection> extends AgBaseBean<TBeanCollection> {
     getGui(): HTMLElement;
 }
 
 export interface AgComponent<
-    TComponent extends AgComponent<
-        TComponent,
-        TBeanCollection,
-        TLocalEventListener,
-        TLocalEventType,
-        TGlobalEvents,
-        TProperties,
-        TBooleanProperties
-    >,
     TBeanCollection,
     TLocalEventListener extends IEventListener<TLocalEventType>,
     TLocalEventType extends string,
     TGlobalEvents,
     TProperties extends BaseProperties,
-    TBooleanProperties,
+    TPropertyDefaults extends BasePropertyDefaults,
 > extends AgBaseComponent<TBeanCollection>,
-        AgBean<TBeanCollection, TLocalEventListener, TLocalEventType, TGlobalEvents, TProperties, TBooleanProperties> {
+        AgBean<TBeanCollection, TLocalEventListener, TLocalEventType, TGlobalEvents, TProperties, TPropertyDefaults> {
     getCompId(): number;
 
     getFocusableElement(): HTMLElement;
 
     getAriaElement(): Element;
 
-    setParentComponent(component: TComponent): void;
+    setParentComponent(
+        component: AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties, TPropertyDefaults>
+    ): void;
 
-    getParentComponent<T extends TComponent>(): T | undefined;
+    getParentComponent<
+        T extends AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties, TPropertyDefaults>,
+    >(): T | undefined;
 
-    prependChild(newChild: HTMLElement | TComponent, container?: HTMLElement): void;
+    prependChild(newChild: HTMLElement | AgBaseComponent<TBeanCollection>, container?: HTMLElement): void;
 
-    appendChild(newChild: HTMLElement | TComponent, container?: HTMLElement): void;
+    appendChild(newChild: HTMLElement | AgBaseComponent<TBeanCollection>, container?: HTMLElement): void;
 
     isDisplayed(): boolean;
 

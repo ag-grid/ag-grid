@@ -2,7 +2,12 @@ import type { AgEvent } from './agEvent';
 import type { AgBaseContext, AgEventHandlers } from './iContext';
 import type { IAgEventEmitter, IEventEmitter, IEventListener } from './iEventEmitter';
 import type { LocaleTextFunc } from './iLocaleService';
-import type { AgPropertyChangedListener, AgPropertyValueChangedListener, BaseProperties } from './iProperties';
+import type {
+    AgPropertyChangedListener,
+    AgPropertyValueChangedListener,
+    BaseProperties,
+    BasePropertyDefaults,
+} from './iProperties';
 
 export interface AgBaseBean<TBeanCollection> {
     /** AG Grid internal - do not call */
@@ -32,7 +37,7 @@ export interface AgBean<
     TLocalEventType extends string,
     TGlobalEvents,
     TProperties extends BaseProperties,
-    TBooleanProperties,
+    TPropertyDefaults extends BasePropertyDefaults,
 > extends AgBaseBean<TBeanCollection> {
     addEventListener<T extends TLocalEventType>(eventType: T, listener: TLocalEventListener, async?: boolean): void;
 
@@ -61,7 +66,7 @@ export interface AgBean<
      */
     addManagedPropertyListener<K extends keyof TProperties & string>(
         event: K,
-        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, K>
+        listener: AgPropertyValueChangedListener<TProperties, TPropertyDefaults, K>
     ): () => null;
 
     /**
@@ -106,7 +111,7 @@ export interface AgBean<
                   TLocalEventType,
                   TGlobalEvents,
                   TProperties,
-                  TBooleanProperties
+                  TPropertyDefaults
               >
             | null
             | undefined,

@@ -1,7 +1,7 @@
 import { AgBeanStub } from './agBeanStub';
 import { CssClassManager } from './cssClassManager';
 import type { AgEvent } from './interfaces/agEvent';
-import type { AgComponent } from './interfaces/iComponent';
+import type { AgBaseComponent, AgComponent } from './interfaces/iComponent';
 import type { AgComponentEvent, AgComponentSelector, VisibleChangedEvent } from './interfaces/iComponent';
 import { RefPlaceholder } from './interfaces/iComponent';
 import type { AgBaseContext, AgCoreBeanCollection } from './interfaces/iContext';
@@ -20,19 +20,6 @@ import {
 let compIdSequence = 0;
 
 export abstract class AgComponentStub<
-        TComponent extends AgComponentStub<
-            TComponent,
-            TBeanCollection,
-            TLocalEventListener,
-            TLocalEventType | AgComponentEvent,
-            TGlobalEvents,
-            TProcessedEvents,
-            TProperties,
-            TPropertyDefaults,
-            TBooleanProperties,
-            TPropertiesService,
-            TComponentSelectorType
-        >,
         TBeanCollection extends AgCoreBeanCollection<
             TPropertiesService,
             TGlobalEvents,
@@ -45,8 +32,7 @@ export abstract class AgComponentStub<
         TProcessedEvents extends AgEvent,
         TProperties extends BaseProperties,
         TPropertyDefaults extends BasePropertyDefaults,
-        TBooleanProperties,
-        TPropertiesService extends IPropertiesService<TProperties, TPropertyDefaults, TBooleanProperties>,
+        TPropertiesService extends IPropertiesService<TProperties, TPropertyDefaults>,
         TComponentSelectorType extends string,
     >
     extends AgBeanStub<
@@ -57,18 +43,16 @@ export abstract class AgComponentStub<
         TProcessedEvents,
         TProperties,
         TPropertyDefaults,
-        TBooleanProperties,
         TPropertiesService
     >
     implements
         AgComponent<
-            TComponent,
             TBeanCollection,
             TLocalEventListener,
             TLocalEventType,
             TGlobalEvents,
             TProperties,
-            TBooleanProperties
+            TPropertyDefaults
         >
 {
     private eGui: HTMLElement;
@@ -86,7 +70,9 @@ export abstract class AgComponentStub<
 
     private css: string[] | undefined;
 
-    protected parentComponent: TComponent | undefined;
+    protected parentComponent:
+        | AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties, TPropertyDefaults>
+        | undefined;
 
     // unique id for this row component. this is used for getting a reference to the HTML dom.
     // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
@@ -140,7 +126,7 @@ export abstract class AgComponentStub<
         element: Element,
         elementRef?: string | null,
         paramsMap?: { [key: string]: any },
-        newComponent: TComponent | null = null
+        newComponent: AgBaseComponent<TBeanCollection> | null = null
     ) {
         if (elementRef === undefined) {
             elementRef = this.getDataRefAttribute(element);
@@ -215,20 +201,45 @@ export abstract class AgComponentStub<
 
     private createComponentFromElement(
         element: HTMLElement,
-        afterPreCreateCallback?: (comp: TComponent) => void,
+        afterPreCreateCallback?: (
+            comp: AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties, TPropertyDefaults>
+        ) => void,
         paramsMap?: { [key: string]: any }
-    ): TComponent | null {
+    ): AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties, TPropertyDefaults> | null {
         const key = element.nodeName;
 
         const elementRef = this.getDataRefAttribute(element);
 
         const isAgGridComponent = key.indexOf('AG-') === 0;
         const componentSelector = isAgGridComponent ? this.componentSelectors.get(key as TComponentSelectorType) : null;
-        let newComponent: TComponent | null = null;
+        let newComponent: AgComponent<
+            TBeanCollection,
+            TLocalEventListener,
+            any,
+            TGlobalEvents,
+            TProperties,
+            TPropertyDefaults
+        > | null = null;
         if (componentSelector) {
             const componentParams = paramsMap && elementRef ? paramsMap[elementRef] : undefined;
-            newComponent = new componentSelector.component(componentParams) as TComponent;
-            newComponent.setParentComponent(this as unknown as TComponent);
+            newComponent = new componentSelector.component(componentParams) as AgComponent<
+                TBeanCollection,
+                TLocalEventListener,
+                any,
+                TGlobalEvents,
+                TProperties,
+                TPropertyDefaults
+            >;
+            newComponent.setParentComponent(
+                this as unknown as AgComponent<
+                    TBeanCollection,
+                    TLocalEventListener,
+                    any,
+                    TGlobalEvents,
+                    TProperties,
+                    TPropertyDefaults
+                >
+            );
 
             this.createBean(newComponent, null, afterPreCreateCallback);
         } else if (isAgGridComponent) {
@@ -240,7 +251,11 @@ export abstract class AgComponentStub<
         return newComponent;
     }
 
-    private swapComponentForNode(newComponent: TComponent, parentNode: Element, childNode: Node): void {
+    private swapComponentForNode(
+        newComponent: AgBaseComponent<TBeanCollection>,
+        parentNode: Element,
+        childNode: Node
+    ): void {
         const eComponent = newComponent.getGui();
         parentNode.replaceChild(eComponent, childNode);
         parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
@@ -305,11 +320,15 @@ export abstract class AgComponentStub<
         return this.getFocusableElement();
     }
 
-    public setParentComponent(component: TComponent) {
+    public setParentComponent(
+        component: AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties, TPropertyDefaults>
+    ) {
         this.parentComponent = component;
     }
 
-    public getParentComponent<T extends TComponent>(): T | undefined {
+    public getParentComponent<
+        T extends AgComponent<TBeanCollection, TLocalEventListener, any, TGlobalEvents, TProperties, TPropertyDefaults>,
+    >(): T | undefined {
         return this.parentComponent as T;
     }
 
@@ -324,7 +343,7 @@ export abstract class AgComponentStub<
     }
 
     private getContainerAndElement(
-        newChild: TComponent | HTMLElement,
+        newChild: AgBaseComponent<TBeanCollection> | HTMLElement,
         container?: HTMLElement
     ): { element: HTMLElement; parent: HTMLElement } | null {
         let parent = container;
@@ -350,7 +369,7 @@ export abstract class AgComponentStub<
         };
     }
 
-    public prependChild(newChild: HTMLElement | TComponent, container?: HTMLElement) {
+    public prependChild(newChild: HTMLElement | AgBaseComponent<TBeanCollection>, container?: HTMLElement) {
         const { element, parent } = this.getContainerAndElement(newChild, container) || {};
 
         if (!element || !parent) {
@@ -360,7 +379,7 @@ export abstract class AgComponentStub<
         parent.insertAdjacentElement('afterbegin', element);
     }
 
-    public appendChild(newChild: HTMLElement | TComponent, container?: HTMLElement): void {
+    public appendChild(newChild: HTMLElement | AgBaseComponent<TBeanCollection>, container?: HTMLElement): void {
         const { element, parent } = this.getContainerAndElement(newChild, container) || {};
 
         if (!element || !parent) {

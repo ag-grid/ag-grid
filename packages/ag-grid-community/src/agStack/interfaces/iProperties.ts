@@ -35,25 +35,15 @@ export type AgPropertyValueOrDefault<
 > = K extends keyof TPropertyDefaults & string
     ? NonNullable<AgPropertyValue<TProperties, K>>
     : AgPropertyValue<TProperties, K>;
-
-/**
- * For boolean properties the changed value will have been coerced to a boolean, so we do not want the type to include the undefined value.
- */
-type PropertiesOrBooleanCoercedValue<
-    TProperties extends BaseProperties,
-    TBooleanProperties,
-    K extends AgPropertyKey<TProperties>,
-> = K extends TBooleanProperties ? boolean : AgPropertyValue<TProperties, K>;
-
 export interface AgPropertyValueChangedEvent<
     TProperties extends BaseProperties,
-    TBooleanProperties,
+    TPropertyDefaults extends BasePropertyDefaults,
     K extends AgPropertyKey<TProperties>,
 > extends AgEvent {
     type: K;
     changeSet: AgPropertyChangeSet<TProperties> | undefined;
-    currentValue: PropertiesOrBooleanCoercedValue<TProperties, TBooleanProperties, K>;
-    previousValue: PropertiesOrBooleanCoercedValue<TProperties, TBooleanProperties, K>;
+    currentValue: AgPropertyValueOrDefault<TProperties, TPropertyDefaults, K>;
+    previousValue: AgPropertyValueOrDefault<TProperties, TPropertyDefaults, K>;
     source: AgPropertyChangedSource;
 }
 
@@ -63,22 +53,21 @@ export type AgPropertyChangedListener<TProperties extends BaseProperties> = (
 
 export type AgPropertyValueChangedListener<
     TProperties extends BaseProperties,
-    TBooleanProperties,
+    TPropertyDefaults extends BasePropertyDefaults,
     K extends AgPropertyKey<TProperties>,
-> = (event: AgPropertyValueChangedEvent<TProperties, TBooleanProperties, K>) => void;
+> = (event: AgPropertyValueChangedEvent<TProperties, TPropertyDefaults, K>) => void;
 
 export interface IPropertiesService<
     TProperties extends BaseProperties,
     TPropertyDefaults extends BasePropertyDefaults,
-    TBooleanProperties,
 > {
     addPropertyEventListener<K extends keyof TProperties & string>(
         event: K,
-        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, K>
+        listener: AgPropertyValueChangedListener<TProperties, TPropertyDefaults, K>
     ): void;
     removePropertyEventListener<K extends keyof TProperties & string>(
         event: K,
-        listener: AgPropertyValueChangedListener<TProperties, TBooleanProperties, K>
+        listener: AgPropertyValueChangedListener<TProperties, TPropertyDefaults, K>
     ): void;
     get<K extends AgPropertyKey<TProperties>>(property: K): AgPropertyValueOrDefault<TProperties, TPropertyDefaults, K>;
 }
