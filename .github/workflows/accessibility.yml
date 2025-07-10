@@ -7,6 +7,17 @@ on:
 #  issue_comment:
 #    types: [created]
   workflow_dispatch:
+    inputs:
+      notify:
+        description: 'Notify Slack channel'
+        type: boolean
+        default: false
+        required: true
+      force_jira_ticket:
+        description: 'Force create a Jira ticket even if the run is not scheduled'
+        type: boolean
+        default: false
+        required: true
 #  schedule:
 #    - cron: '0 0 * * *' # Run daily at midnight UTC
 
