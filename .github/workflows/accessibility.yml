@@ -33,7 +33,7 @@ env:
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
   YARN_REGISTRY: "http://52.50.158.57:4873"
   CI: true
-  REPORTS_PATH: ./reports/*.xml
+  REPORTS_PATH: ./reports
   CTRF_FILE: ./reports/performance.json
   PREV_COMMIT_SHA_FILE: ./commit-sha.txt
 
@@ -106,6 +106,8 @@ jobs:
 
       - name: nx test:e2e:accessibility
         id: tests
+        env:
+          PW_REPORT_PATH: '${{ env.REPORTS_PATH }}/ag-accessibility-e2e.json'
         run: yarn nx run ag-grid-accessibility:test:e2e:accessibility --shard=${{ matrix.shard }}/$((${{ strategy.job-total }}))
 
       - name: Persist test results
@@ -113,8 +115,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results-e2e-accessiblity-shard-${{matrix.shard}}
-          path: |
-            reports/
+          path: ${{ env.REPORTS_PATH }}
 
   report:
     runs-on: ubuntu-24.04
@@ -139,51 +140,28 @@ jobs:
         with:
           cache_mode: ro
 
-      - uses: actions/download-artifact@v4
+      - name: Download all test reports
+        uses: actions/download-artifact@v4
         with:
-          path: test-results/
+          path: ${{ env.REPORTS_PATH }}/
 
-      - name: Merge JUnit Report XMLs
-        run: |
-          yarn global add junit-report-merger
-          reports=$(find test-results/ -name \*.xml -type f -exec basename \{\} \; | sort | uniq)
-          mkdir -p reports/
-          echo "$reports" | (while read name ; do
-            yarn exec -s jrm reports/${name} "test-results/**/${name}"
-          done)
-
-      - name: Test Reporter
+      - name: Publish Combined Test Report
         id: ctrf
         uses: ctrf-io/github-test-reporter@v1.0.17
-        if: needs.e2e_accessibility.result == 'success' || needs.e2e_accessibility.result == 'failure'
-        env:
-          REPORTS_PATH: ${{ env.REPORTS_PATH }}
         with:
-          report-path: ${{ env.REPORTS_PATH }}
+          report-path: '${{ env.REPORTS_PATH }}/**/*.json'
           summary-report: true
           failed-report: true
           flaky-report: true
           skipped-report: true
           write-ctrf-to-file: ${{ env.CTRF_FILE }}
-          integrations-config: |
-            {
-              "junit-to-ctrf": {
-                "enabled": true,
-                "action": "convert",
-                "options": {
-                  "output": ${{ env.CTRF_FILE }},
-                  "toolname": "junit-to-ctrf",
-                  "useSuiteName": false,
-                }
-              }
-            }
 
       - name: Get previous run commit SHA
         id: prev-commit-sha
         uses: actions/cache/restore@v4
         with:
           path: ${{ env.PREV_COMMIT_SHA_FILE }}
-          key: full-build-prev-commit-${{ github.ref }}
+          key: aceessibility-prev-commit-${{ github.ref }}
 
       - name: Load files into environment
         continue-on-error: true
