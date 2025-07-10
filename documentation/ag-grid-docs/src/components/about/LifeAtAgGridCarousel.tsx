@@ -1,15 +1,23 @@
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React, { useEffect, useRef } from 'react';
 
 import styles from './LifeAtAgGridCarousel.module.scss';
 
 const images = [
-    'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80',
+    urlWithBaseUrl('images/about/carousel/carousel-1.png'),
+    urlWithBaseUrl('images/about/carousel/carousel-17.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-7.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-18.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-8.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-5.png'),
+    urlWithBaseUrl('images/about/carousel/carousel-6.png'),
+    urlWithBaseUrl('images/about/carousel/carousel-9.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-2.png'),
+    urlWithBaseUrl('images/about/carousel/carousel-10.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-11.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-12.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-16.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-3.png'),
 ];
 
 export const LifeAtAgGridCarousel = () => {
