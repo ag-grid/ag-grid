@@ -183,7 +183,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ${{ env.PREV_COMMIT_SHA_FILE }}
-          key: full-build-prev-commit
+          key: full-build-prev-commit-${{ github.ref }}
 
       - name: Load files into environment
         run: |
