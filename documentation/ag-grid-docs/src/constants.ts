@@ -1,6 +1,6 @@
 import corePackageJson from '../../../packages/ag-grid-community/package.json';
 import gridEnterprisePackageJson from '../../../packages/ag-grid-enterprise/package.json';
-import type { Framework, InternalFramework } from './types/ag-grid';
+import type { Framework, FrameworkType, InternalFramework } from './types/ag-grid';
 
 const isTruthy = (val: string | boolean) => ['1', 'true', true].includes(val);
 
@@ -11,6 +11,22 @@ export const QUICK_BUILD_PAGES: string[] = quickBuildPages ? quickBuildPages.spl
 export const FRAMEWORKS: readonly Framework[] = ['react', 'angular', 'vue', 'javascript'] as const;
 export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];
 export const DEFAULT_INTERNAL_FRAMEWORK: InternalFramework = 'reactFunctional';
+export const FRAMEWORK_TYPES: Record<Framework, Partial<Record<FrameworkType, InternalFramework>>> = {
+    javascript: {
+        javascript: 'vanilla',
+        typescript: 'typescript',
+    },
+    react: {
+        javascript: 'reactFunctional',
+        typescript: 'reactFunctionalTs',
+    },
+    angular: {
+        typescript: 'angular',
+    },
+    vue: {
+        typescript: 'vue3',
+    },
+} as const;
 
 export const USE_PACKAGES = true; // process.env?.USE_PACKAGES ?? false;
 
@@ -112,6 +128,8 @@ export const CHARTS_ROBOTS_DISALLOW_JSON_URL = import.meta.env?.CHARTS_ROBOTS_DI
 export const PRODUCTION_CHARTS_SITE_URL = 'https://www.ag-grid.com/charts';
 export const LEGACY_CHARTS_SITE_URL = 'https://charts.ag-grid.com';
 
+export const LIBRARY = 'grid';
+
 /*
  * Charts URL
  */
@@ -141,3 +159,5 @@ function calculateGridUrl() {
 }
 
 export const GRID_URL = calculateGridUrl();
+
+export const PRODUCTION_CHANGELOG_JSON_URL = 'https://www.ag-grid.com/changelog/changelog.json';

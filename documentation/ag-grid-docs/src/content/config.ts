@@ -127,10 +127,23 @@ const errors = defineCollection({
     }),
 });
 
+const contentApi = defineCollection({
+    schema: z.object({
+        supportedVersionFrom: z.string(),
+        root: z.array(
+            z.object({
+                id: z.string(),
+                url: z.string(),
+            })
+        ),
+    }),
+});
+
 export const collections = {
     docs,
     menu,
     'matrix-table': matrixTable,
     'module-mappings': moduleMappings,
     errors,
+    'content-api': contentApi,
 };

@@ -51,7 +51,26 @@ export const getFolderPath = ({ pageName, exampleName }: { pageName: string; exa
     return new URL(exampleFolderPath, import.meta.url);
 };
 
-export const getInternalFrameworkExamples = async ({
+export const getSupportedFrameworks = async ({ pageName, exampleName }: { pageName: string; exampleName: string }) => {
+    const exampleDir = await readdir(getFolderPath({ pageName, exampleName }));
+    const hasExampleConfig = exampleDir.includes('exampleConfig.json');
+
+    let supportedFrameworks: Set<InternalFramework> | undefined = undefined;
+    if (hasExampleConfig) {
+        const exampleConfig = await readFile(
+            path.join(getExamplesPath({ pageName }), exampleName, 'exampleConfig.json'),
+            'utf-8'
+        );
+        const exampleConfigJson = JSON.parse(exampleConfig);
+        supportedFrameworks = exampleConfigJson.supportedFrameworks
+            ? new Set(exampleConfigJson.supportedFrameworks)
+            : undefined;
+    }
+
+    return supportedFrameworks;
+};
+
+export const getAllInternalFrameworkExamples = async ({
     pages,
 }: {
     pages: DocsPage[];
@@ -91,6 +110,40 @@ export const getInternalFrameworkExamples = async ({
         });
 
         return (await Promise.all(exampleDirs)).flat();
+    });
+    const examples = (await Promise.all(examplePromises)).flat();
+    return examples;
+};
+
+export const getInternalFrameworkExamples = async ({
+    pages,
+    internalFramework,
+}: {
+    pages: DocsPage[];
+    internalFramework: InternalFramework;
+}): Promise<InternalFrameworkExample[]> => {
+    const examplePromises = pages.map(async (page) => {
+        const pageName = page.id;
+        const docsExamplesPath = getExamplesPath({
+            pageName,
+        });
+        const examples = await getFolders(docsExamplesPath);
+
+        const exampleDirs = examples.map(async (exampleName) => {
+            const supportedFrameworks = await getSupportedFrameworks({ pageName, exampleName });
+
+            if (supportedFrameworks && !supportedFrameworks.has(internalFramework)) {
+                return undefined;
+            }
+
+            return {
+                internalFramework,
+                pageName,
+                exampleName,
+            };
+        });
+
+        return (await Promise.all(exampleDirs)).filter(Boolean) as InternalFrameworkExample[];
     });
     const examples = (await Promise.all(examplePromises)).flat();
     return examples;
