@@ -79,7 +79,7 @@ export type { Context } from './context/context';
 export { BeanName, SingletonBean, BeanCollection } from './context/context';
 
 // AG Stack
-export { VisibleChangedEvent, RefPlaceholder } from './agStack/agComponent';
+export { VisibleChangedEvent, RefPlaceholder } from './agStack/interfaces/iComponent';
 export { AgEvent } from './agStack/interfaces/agEvent';
 export { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
 export { _setAriaHidden } from './agStack/utils/ariaUtils';

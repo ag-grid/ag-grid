@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../../agStack/agComponent';
+import { RefPlaceholder } from '../../../agStack/interfaces/iComponent';
 import { _setDisplayed } from '../../../agStack/utils/domUtils';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';

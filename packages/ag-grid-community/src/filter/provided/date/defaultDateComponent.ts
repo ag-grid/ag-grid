@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../../agStack/agComponent';
+import { RefPlaceholder } from '../../../agStack/interfaces/iComponent';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _isBrowserSafari } from '../../../utils/browser';

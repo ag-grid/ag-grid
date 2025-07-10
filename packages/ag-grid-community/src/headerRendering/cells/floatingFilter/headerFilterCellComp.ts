@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../../agStack/agComponent';
+import { RefPlaceholder } from '../../../agStack/interfaces/iComponent';
 import { _setDisplayed } from '../../../agStack/utils/domUtils';
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';

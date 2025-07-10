@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../agStack/agComponent';
+import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _getAriaCheckboxStateName } from '../../utils/aria';
 import type { ElementParams } from '../../utils/dom';

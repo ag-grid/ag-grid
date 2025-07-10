@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../agStack/agComponent';
+import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
 import { KeyCode } from '../../constants/keyCode';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';

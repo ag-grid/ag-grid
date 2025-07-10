@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../agStack/agComponent';
+import { RefPlaceholder } from '../agStack/interfaces/iComponent';
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
 import { GridHeaderSelector } from '../headerRendering/gridHeaderComp';
 import { LayoutCssClasses } from '../styling/layoutFeature';

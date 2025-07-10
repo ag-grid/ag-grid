@@ -1,4 +1,4 @@
-import type { AgComponentEvent, AgComponentSelector } from '../agStack/agComponent';
+import type { AgComponentEvent, AgComponentSelector } from '../agStack/interfaces/iComponent';
 import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../agStack/utils/domUtils';
 import type { AgLabelParams, LabelAlignment } from '../interfaces/agFieldParams';
 import { _setAriaRole } from '../utils/aria';

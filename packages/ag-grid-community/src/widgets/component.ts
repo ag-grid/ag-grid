@@ -1,5 +1,5 @@
-import type { AgComponentEvent, AgComponentSelector } from '../agStack/agComponent';
-import { AgComponentStub } from '../agStack/agComponent';
+import { AgComponentStub } from '../agStack/agComponentStub';
+import type { AgComponentEvent, AgComponentSelector } from '../agStack/interfaces/iComponent';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { AgEventListener, AgEventTypeParams, AllEventsWithoutGridCommon } from '../events';

@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../agStack/agComponent';
+import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
 import { KeyCode } from '../../constants/keyCode';
 import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isBrowserSafari } from '../../utils/browser';

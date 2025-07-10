@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../agStack/agComponent';
+import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
 import type { BeanCollection } from '../../context/context';
 import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';

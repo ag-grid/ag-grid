@@ -1,8 +1,9 @@
 import { AgBeanStub } from './agBeanStub';
-import type { AgBeanStubEvent } from './agBeanStub';
 import { CssClassManager } from './cssClassManager';
 import type { AgEvent } from './interfaces/agEvent';
-import type { AgBaseComponent, AgComponent } from './interfaces/iComponent';
+import type { AgComponent } from './interfaces/iComponent';
+import type { AgComponentEvent, AgComponentSelector, VisibleChangedEvent } from './interfaces/iComponent';
+import { RefPlaceholder } from './interfaces/iComponent';
 import type { AgBaseContext, AgCoreBeanCollection } from './interfaces/iContext';
 import type { IEventListener } from './interfaces/iEventEmitter';
 import type { BaseProperties, BasePropertyDefaults, IPropertiesService } from './interfaces/iProperties';
@@ -17,26 +18,6 @@ import {
 } from './utils/domUtils';
 
 let compIdSequence = 0;
-
-/** The RefPlaceholder is used to control when data-ref attribute should be applied to the component
- * There are hanging data-refs in the DOM that are not being used internally by the component which we don't want to apply to the component.
- * There is also the case where data-refs are solely used for passing parameters to the component and should not be applied to the component.
- * It also enables validation to catch typo errors in the data-ref attribute vs component name.
- * The value is `null` so that it can be identified in the component and distinguished from just missing with undefined.
- * The `null` value also allows for existing falsy checks to work as expected when code can be run before the template is setup.
- */
-
-export const RefPlaceholder: any = null;
-
-export type AgComponentEvent = 'displayChanged' | AgBeanStubEvent;
-export interface VisibleChangedEvent extends AgEvent<'displayChanged'> {
-    visible: boolean;
-}
-
-export type AgComponentSelector<TComponentSelectorType extends string, TBeanCollection = any> = {
-    component: { new (params?: any): AgBaseComponent<TBeanCollection> };
-    selector: TComponentSelectorType;
-};
 
 export abstract class AgComponentStub<
         TComponent extends AgComponentStub<

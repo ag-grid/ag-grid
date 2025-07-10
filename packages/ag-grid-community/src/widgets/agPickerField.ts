@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../agStack/agComponent';
+import { RefPlaceholder } from '../agStack/interfaces/iComponent';
 import { _formatSize, _setElementWidth } from '../agStack/utils/domUtils';
 import { KeyCode } from '../constants/keyCode';
 import { _isNothingFocused } from '../gridOptionsUtils';
