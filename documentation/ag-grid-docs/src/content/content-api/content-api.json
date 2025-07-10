@@ -1,0 +1,13 @@
+{
+    "root": [
+        {
+            "id": "versions",
+            "url": "./content/versions.json"
+        },
+        {
+            "id": "frameworks",
+            "url": "./content/frameworks.json"
+        }
+    ],
+    "previousVersions": []
+}
