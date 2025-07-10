@@ -4,7 +4,6 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 import styles from './About.module.scss';
 import LifeAtAgGridCarousel from './LifeAtAgGridCarousel';
-import AdoptionIcon from './svgs/adoption.svg?react';
 import BarChart from './svgs/bar-chart.svg?react';
 import BornIcon from './svgs/born.svg?react';
 import CeoIcon from './svgs/ceo.svg?react';
@@ -12,7 +11,6 @@ import ChartIcon from './svgs/chart.svg?react';
 import ConferenceIcon from './svgs/conference.svg?react';
 import DonutAcceleratingIcon from './svgs/donut-accelerating.svg?react';
 import LicenseIcon from './svgs/license.svg?react';
-import Question from './svgs/question.svg?react';
 import RocketIcon from './svgs/rocket.svg?react';
 
 export const About = () => {
@@ -161,7 +159,7 @@ export const About = () => {
                         <div className={styles.timelineItem}>
                             <div className={styles.timelineYear}>2022</div>
                             <div className={styles.timelineIcon}>
-                                <AdoptionIcon />
+                                <ConferenceIcon />
                             </div>
                             <div className={styles.timelineContent}>
                                 <div className={styles.timelineTitle}>Mass adoption</div>
@@ -220,12 +218,23 @@ export const About = () => {
                     <div className={styles.principlesList}>
                         <div className={styles.principleItem}>
                             <div className={styles.principleIcon}>
-                                <RocketIcon />
+                                <BornIcon />
                             </div>
                             <div className={styles.principleText}>
-                                <div className={styles.principleTitle}>Excellence and innovation</div>
+                                <div className={styles.principleTitle}>Developer-first</div>
                                 <div className={styles.principleDesc}>
-                                    from within and building market leading products
+                                    Our approach to create innovative, market-leading products
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.principleItem}>
+                            <div className={styles.principleIcon}>
+                                <ChartIcon />
+                            </div>
+                            <div className={styles.principleText}>
+                                <div className={styles.principleTitle}>Technical excellence</div>
+                                <div className={styles.principleDesc}>
+                                    Deliver consistent quality and exceptional end-user experiences
                                 </div>
                             </div>
                         </div>
@@ -234,9 +243,9 @@ export const About = () => {
                                 <ConferenceIcon />
                             </div>
                             <div className={styles.principleText}>
-                                <div className={styles.principleTitle}>We're customer obsessed</div>
+                                <div className={styles.principleTitle}>Deep understanding</div>
                                 <div className={styles.principleDesc}>
-                                    and passionate about our users, building the best solutions for our early users
+                                    Forging a deep understanding of our customers' problems
                                 </div>
                             </div>
                         </div>
@@ -245,21 +254,31 @@ export const About = () => {
                                 <BarChart />
                             </div>
                             <div className={styles.principleText}>
-                                <div className={styles.principleTitle}>We're growing</div>
+                                <div className={styles.principleTitle}>Measurable value</div>
                                 <div className={styles.principleDesc}>
-                                    and eager to build our team with the best developers, marketers and product builders
-                                    alike
+                                    Testable solutions that compare favourably to any industry benchmarks
                                 </div>
                             </div>
                         </div>
                         <div className={styles.principleItem}>
                             <div className={styles.principleIcon}>
-                                <DonutAcceleratingIcon />
+                                <ConferenceIcon />
                             </div>
                             <div className={styles.principleText}>
-                                <div className={styles.principleTitle}>Expand our global footprint</div>
+                                <div className={styles.principleTitle}>Exceptional talent</div>
                                 <div className={styles.principleDesc}>
-                                    in team and reach the world's leading developers and teams
+                                    We attract and develop world-class developer and operations talent.
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.principleItem}>
+                            <div className={styles.principleIcon}>
+                                <RocketIcon />
+                            </div>
+                            <div className={styles.principleText}>
+                                <div className={styles.principleTitle}>Culture of innovation</div>
+                                <div className={styles.principleDesc}>
+                                    Cultivate a culture of innovation, excellence, and success
                                 </div>
                             </div>
                         </div>
