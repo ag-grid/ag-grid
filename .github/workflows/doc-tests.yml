@@ -273,16 +273,17 @@ jobs:
             key: doc-tests-prev-commit-${{ github.ref }}
 
         - name: Load files into environment
+          continue-on-error: true
           run: |
+            if [ -f ${{ env.PREV_COMMIT_SHA_FILE }} ]; then
             {
-              if [ -f ${{ env.PREV_COMMIT_SHA_FILE }} ]; then
-                echo 'PREV_COMMIT_SHA<<EOF'
-                cat ${{ env.PREV_COMMIT_SHA_FILE }}
-                echo 'EOF'
-              else
-                echo 'PREV_COMMIT_SHA_FILE not found'
-              fi
+               echo 'PREV_COMMIT_SHA<<EOF'
+               cat ${{ env.PREV_COMMIT_SHA_FILE }}
+               echo 'EOF'
             } >> $GITHUB_ENV
+            else
+              echo 'PREV_COMMIT_SHA_FILE not found'
+            fi
 
         - name: Slack Notification
           if: ${{ github.event_name == 'schedule' || inputs.notify }}
