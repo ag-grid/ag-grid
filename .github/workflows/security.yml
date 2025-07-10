@@ -2,11 +2,26 @@ name: Security
 
 on:
     workflow_dispatch:
+      inputs:
+        notify:
+          description: 'Notify Slack channel'
+          type: boolean
+          default: false
+          required: true
+        force_jira_ticket:
+          description: 'Force create a Jira ticket even if the run is not scheduled'
+          type: boolean
+          default: false
+          required: true
     schedule:
         - cron: '0 0 * * *' # Run daily at midnight UTC
 
 permissions:
   contents: read
+
+env:
+    CTRF_FILE: ./reports/report.json
+    PREV_COMMIT_SHA_FILE: ./commit-sha.txt
 
 jobs:
     code-dependency-scan:
@@ -23,6 +38,13 @@ jobs:
               with:
                   snyk_token: ${{ secrets.SNYK_TOKEN }}
 
+            - name: Persist scan results
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                name: snyk-scan-workspaces
+                path: snyk.json
+
     sast-code-scan:
         runs-on: ubuntu-latest
         steps:
@@ -36,3 +58,100 @@ jobs:
               uses: ./external/ag-shared/github/actions/snyk-code-scan
               with:
                   snyk_token: ${{ secrets.SNYK_TOKEN }}
+
+            - name: Persist scan results
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                name: snyk-code-scan
+                path: snyk.json
+
+    combine-scan-results:
+      needs: [code-dependency-scan, sast-code-scan]
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/download-artifact@v4
+          with:
+            path: test-results/
+
+        - name: Combine JSON files
+          uses: actions/github-script@v7
+          if: ${{ github.event_name == 'schedule' || inputs.notify }}
+          with:
+            script: |
+              const fs = require('fs');
+              const path = require('path');
+              // read all json files nested under /test-results/**/*.json 
+              const files = fs.readdirSync('test-results', { withFileTypes: true })
+                .flatMap(dir => {
+                  if (dir.isDirectory()) {
+                    return fs.readdirSync(path.join('test-results', dir.name))
+                      .filter(file => file.endsWith('.json'))
+                      .map(file => path.join('test-results', dir.name, file));
+                  } 
+                  if (dir.isFile() && dir.name.endsWith('.json')) {
+                    return [path.join('test-results', dir.name)];
+                  }
+                  return [];
+                });
+              const combinedResults = [];
+  
+              for (const file of files) {
+                  if (fs.existsSync(file)) {
+                    const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+                    if (Array.isArray(data)) {
+                        combinedResults.push(...data);
+                    } else {
+                        combinedResults.push(data);
+                    }
+                  }
+              }
+              const totalProjects = combinedResults.length;
+              const vulnerableProjects = combinedResults
+                .filter(project => project.summary.includes("high") || project.summary.includes("critical"))
+                .length;
+              
+              const report = {
+                 results: { summary: { failed: vulnerableProjects, passed: totalProjects - vulnerableProjects, skipped: 0 } }
+              }
+              fs.writeFileSync(path.join('.', '${{ env.CTRF_FILE }}'), JSON.stringify(report));
+
+        - name: Get previous run commit SHA
+          id: prev-commit-sha
+          uses: actions/cache/restore@v4
+          with:
+            path: ${{ env.PREV_COMMIT_SHA_FILE }}
+            key: doc-tests-prev-commit-${{ github.ref }}
+
+        - name: Load files into environment
+          continue-on-error: true
+          run: |
+            if [ -f ${{ env.PREV_COMMIT_SHA_FILE }} ]; then
+            {
+               echo 'PREV_COMMIT_SHA<<EOF'
+               cat ${{ env.PREV_COMMIT_SHA_FILE }}
+               echo 'EOF'
+            } >> $GITHUB_ENV
+            else
+              echo 'PREV_COMMIT_SHA_FILE not found'
+            fi
+
+        - name: Slack Notification
+          if: ${{ github.event_name == 'schedule' || inputs.notify }}
+          continue-on-error: true
+          uses: ./.github/actions/slack-integration
+          with:
+            CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+            SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
+            PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
+            CURRENT_COMMIT_SHA: ${{ github.sha }}
+
+        - name: Set commit SHA
+          id: set-commit-sha
+          run: echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
+
+        - name: Save this run commit SHA
+          uses: actions/cache/save@v4
+          with:
+            path: ${{ env.PREV_COMMIT_SHA_FILE }}
+            key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
