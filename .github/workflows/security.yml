@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 env:
-    CTRF_FILE: ./reports/report.json
+    CTRF_FILE: ./test-results/report.json
     PREV_COMMIT_SHA_FILE: ./commit-sha.txt
 
 jobs:
