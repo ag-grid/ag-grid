@@ -4,7 +4,7 @@ import type { AgEvent } from './interfaces/agEvent';
 import type { AgBaseComponent, AgComponent } from './interfaces/iComponent';
 import type { AgComponentEvent, AgComponentSelector, VisibleChangedEvent } from './interfaces/iComponent';
 import { RefPlaceholder } from './interfaces/iComponent';
-import type { AgBaseContext, AgCoreBeanCollection } from './interfaces/iContext';
+import type { AgCoreBeanCollection } from './interfaces/iContext';
 import type { BaseProperties, IPropertiesService } from './interfaces/iProperties';
 import type { AgElementParams } from './utils/domUtils';
 import {
@@ -19,15 +19,10 @@ import {
 let compIdSequence = 0;
 
 export abstract class AgComponentStub<
-        TBeanCollection extends AgCoreBeanCollection<
-            TPropertiesService,
-            TGlobalEvents,
-            TProcessedEvents,
-            AgBaseContext<TBeanCollection>
-        >,
+        TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TRawEvents>,
         TProperties extends BaseProperties,
         TGlobalEvents,
-        TProcessedEvents extends AgEvent,
+        TRawEvents extends AgEvent,
         TPropertiesService extends IPropertiesService<TProperties>,
         TComponentSelectorType extends string,
         TLocalEventType extends string,
@@ -36,7 +31,7 @@ export abstract class AgComponentStub<
         TBeanCollection,
         TProperties,
         TGlobalEvents,
-        TProcessedEvents,
+        TRawEvents,
         TPropertiesService,
         TLocalEventType | AgComponentEvent
     >

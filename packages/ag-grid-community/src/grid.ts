@@ -1,9 +1,10 @@
+import { AgContext } from './agStack/agContext';
 import type { AgContextParams } from './agStack/agContext';
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
 import type { BeanCollection, SingletonBean } from './context/context';
-import { Context } from './context/context';
+import type { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import type { GridOptions } from './entities/gridOptions';
 import { GlobalGridOptions } from './globalGridOptions';
@@ -145,7 +146,7 @@ export class GridCoreCreator {
             },
         };
 
-        const context = new Context(contextParams);
+        const context = new AgContext<BeanCollection>(contextParams);
         this.registerModuleFeatures(context, registeredModules);
 
         createUi(context);

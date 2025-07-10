@@ -1,5 +1,5 @@
 import type { AgEvent } from './agEvent';
-import type { AgBaseContext, AgEventHandlers } from './iContext';
+import type { AgEventHandlers, IContext } from './iContext';
 import type { IAgEventEmitter, IEventEmitter, IEventListener } from './iEventEmitter';
 import type { LocaleTextFunc } from './iLocaleService';
 import type { AgPropertyChangedListener, AgPropertyValueChangedListener, BaseProperties } from './iProperties';
@@ -89,14 +89,14 @@ export interface AgBean<
     /** doesn't throw an error if `bean` is undefined */
     createOptionalManagedBean<T extends AgBaseBean<TBeanCollection> | null | undefined>(
         bean: T,
-        context?: AgBaseContext<TBeanCollection>
+        context?: IContext<TBeanCollection>
     ): T | undefined;
 
-    createManagedBean<T extends AgBaseBean<TBeanCollection>>(bean: T, context?: AgBaseContext<TBeanCollection>): T;
+    createManagedBean<T extends AgBaseBean<TBeanCollection>>(bean: T, context?: IContext<TBeanCollection>): T;
 
     createBean<T extends AgBaseBean<TBeanCollection>>(
         bean: T,
-        context?: AgBaseContext<TBeanCollection> | null,
+        context?: IContext<TBeanCollection> | null,
         afterPreCreateCallback?: (bean: AgBaseBean<TBeanCollection>) => void
     ): T;
 
@@ -106,6 +106,6 @@ export interface AgBean<
      */
     destroyBean<T extends AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType> | null | undefined>(
         bean: T,
-        context?: AgBaseContext<TBeanCollection>
+        context?: IContext<TBeanCollection>
     ): undefined;
 }

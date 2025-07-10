@@ -1,6 +1,5 @@
 import type { AgSingletonBeanClass } from '../agStack/agContext';
-import { AgContext } from '../agStack/agContext';
-import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
+import type { AgCoreBeanCollection, IContext } from '../agStack/interfaces/iContext';
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
@@ -215,7 +214,7 @@ export type ComponentMeta = ClassImp | ComponentMetaWithParams | ComponentMetaFu
 export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
 
 export interface CoreBeanCollection
-    extends AgCoreBeanCollection<GridOptionsService, AgEventTypeParams, AllEventsWithoutGridCommon, Context> {
+    extends AgCoreBeanCollection<BeanCollection, GridOptionsService, AgEventTypeParams, AllEventsWithoutGridCommon> {
     pageBoundsListener: PageBoundsListener;
     environment: Environment;
     rowRenderer: RowRenderer;
@@ -378,6 +377,6 @@ export type BeanCollection = CoreBeanCollection & {
     [key in UntypedBeanNames]?: unknown;
 };
 
-export class Context extends AgContext<BeanCollection> {}
+export type Context = IContext<BeanCollection>;
 
 export type BeanName = keyof BeanCollection;

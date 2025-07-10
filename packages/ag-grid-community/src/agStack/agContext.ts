@@ -1,4 +1,5 @@
 import type { AgBaseBean, AgSingletonBean } from './interfaces/iBean';
+import type { IContext } from './interfaces/iContext';
 
 type BeanComparator<TBeanCollection> = (
     bean1: AgSingletonBean<TBeanCollection>,
@@ -24,7 +25,7 @@ export interface AgSingletonBeanClass<TBeanCollection> {
     new (): AgSingletonBean<TBeanCollection>;
 }
 
-export class AgContext<TBeanCollection> {
+export class AgContext<TBeanCollection> implements IContext<TBeanCollection> {
     protected beans: TBeanCollection = {} as TBeanCollection;
     private createdBeans: AgSingletonBean<TBeanCollection>[] = [];
     private beanDestroyComparator?: BeanComparator<TBeanCollection>;

@@ -5,9 +5,9 @@ import type { IEnvironment } from './iEnvironment';
 import type { AgEventService } from './iEvent';
 import type { ILocaleService } from './iLocaleService';
 
-export interface AgCoreBeanCollection<TPropertiesService, TEventParams, TProcessedEvents extends AgEvent, TContext> {
-    context: TContext;
-    eventSvc: AgEventService<TEventParams, TProcessedEvents>;
+export interface AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TRawEvents extends AgEvent> {
+    context: IContext<TBeanCollection>;
+    eventSvc: AgEventService<TGlobalEvents, TRawEvents>;
     frameworkOverrides: AgFrameworkOverrides;
     gos: TPropertiesService;
     localeSvc?: ILocaleService;
@@ -16,7 +16,7 @@ export interface AgCoreBeanCollection<TPropertiesService, TEventParams, TProcess
 
 export type AgEventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
 
-export interface AgBaseContext<TBeanCollection> {
+export interface IContext<TBeanCollection> {
     createBean<T extends AgBaseBean<TBeanCollection>>(
         bean: T,
         afterPreCreateCallback?: (bean: AgBaseBean<TBeanCollection>) => void
@@ -27,4 +27,10 @@ export interface AgBaseContext<TBeanCollection> {
     destroyBean(bean: AgBaseBean<TBeanCollection> | null | undefined): undefined;
 
     destroyBeans<T extends AgBaseBean<TBeanCollection>>(beans: (T | null | undefined)[]): T[];
+
+    getId(): string;
+
+    destroy(): void;
+
+    isDestroyed(): boolean;
 }

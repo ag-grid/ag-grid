@@ -1,6 +1,6 @@
 import type { AgEvent } from './interfaces/agEvent';
 import type { AgBaseBean, AgBean } from './interfaces/iBean';
-import type { AgBaseContext, AgCoreBeanCollection } from './interfaces/iContext';
+import type { AgCoreBeanCollection, IContext } from './interfaces/iContext';
 import type { AgEventService } from './interfaces/iEvent';
 import type { IAgEventEmitter, IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
 import type { LocaleTextFunc } from './interfaces/iLocaleService';
@@ -22,15 +22,10 @@ export type AgEventOrDestroyed<TEventType extends string> = TEventType | AgBeanS
 type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
 
 export abstract class AgBeanStub<
-        TBeanCollection extends AgCoreBeanCollection<
-            TPropertiesService,
-            TGlobalEvents,
-            TProcessedEvents,
-            AgBaseContext<TBeanCollection>
-        >,
+        TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TRawEvents>,
         TProperties extends BaseProperties,
         TGlobalEvents,
-        TProcessedEvents extends AgEvent,
+        TRawEvents extends AgEvent,
         TPropertiesService extends IPropertiesService<TProperties>,
         TLocalEventType extends string, // TODO move to end and add default
     >
@@ -40,7 +35,7 @@ export abstract class AgBeanStub<
 {
     protected localEventService?: LocalEventService<AgEventOrDestroyed<TLocalEventType>>;
 
-    private stubContext: AgBaseContext<TBeanCollection>; // not named context to allow children to use 'context' as a variable name
+    private stubContext: IContext<TBeanCollection>; // not named context to allow children to use 'context' as a variable name
     private destroyFunctions: (() => void)[] = [];
     private destroyed = false;
 
@@ -49,7 +44,7 @@ export abstract class AgBeanStub<
     public __v_skip = true;
 
     protected beans: TBeanCollection;
-    protected eventSvc: AgEventService<TGlobalEvents, TProcessedEvents>;
+    protected eventSvc: AgEventService<TGlobalEvents, TRawEvents>;
     protected gos: TPropertiesService;
 
     public preWireBeans(beans: TBeanCollection): void {
@@ -126,7 +121,7 @@ export abstract class AgBeanStub<
         return this._setupListeners<keyof TGlobalEvents & string>(this.eventSvc, handlers);
     }
     public addManagedListeners<TEvent extends string>(
-        object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | AgEventService<TGlobalEvents, TProcessedEvents>,
+        object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | AgEventService<TGlobalEvents, TRawEvents>,
         handlers: EventHandlers<TEvent>
     ) {
         return this._setupListeners<TEvent>(object, handlers);
@@ -137,7 +132,7 @@ export abstract class AgBeanStub<
             | HTMLElement
             | IEventEmitter<TEvent>
             | IAgEventEmitter<TEvent>
-            | AgEventService<TGlobalEvents, TProcessedEvents>,
+            | AgEventService<TGlobalEvents, TRawEvents>,
         handlers: EventHandlers<TEvent>
     ) {
         const destroyFuncs: (() => null)[] = [];
@@ -156,7 +151,7 @@ export abstract class AgBeanStub<
             | HTMLElement
             | IEventEmitter<T>
             | IAgEventEmitter<T>
-            | AgEventService<TGlobalEvents, TProcessedEvents>,
+            | AgEventService<TGlobalEvents, TRawEvents>,
         event: T,
         listener: (event?: any) => void
     ): () => null {
@@ -173,7 +168,7 @@ export abstract class AgBeanStub<
                 return null;
             };
         } else {
-            const objIsEventService = isEventService<TGlobalEvents, TProcessedEvents>(object);
+            const objIsEventService = isEventService<TGlobalEvents, TRawEvents>(object);
             if (object instanceof HTMLElement) {
                 _addSafePassiveEventListener(this.beans.frameworkOverrides, object, event, listener);
             } else if (objIsEventService) {
@@ -308,15 +303,12 @@ export abstract class AgBeanStub<
     /** doesn't throw an error if `bean` is undefined */
     public createOptionalManagedBean<T extends AgBaseBean<TBeanCollection> | null | undefined>(
         bean: T,
-        context?: AgBaseContext<TBeanCollection>
+        context?: IContext<TBeanCollection>
     ): T | undefined {
         return bean ? this.createManagedBean(bean, context) : undefined;
     }
 
-    public createManagedBean<T extends AgBaseBean<TBeanCollection>>(
-        bean: T,
-        context?: AgBaseContext<TBeanCollection>
-    ): T {
+    public createManagedBean<T extends AgBaseBean<TBeanCollection>>(bean: T, context?: IContext<TBeanCollection>): T {
         const res = this.createBean(bean, context);
         this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
         return res;
@@ -324,7 +316,7 @@ export abstract class AgBeanStub<
 
     public createBean<T extends AgBaseBean<TBeanCollection>>(
         bean: T,
-        context?: AgBaseContext<TBeanCollection> | null,
+        context?: IContext<TBeanCollection> | null,
         afterPreCreateCallback?: (bean: AgBaseBean<TBeanCollection>) => void
     ): T {
         return (context || this.stubContext).createBean(bean, afterPreCreateCallback);
@@ -336,7 +328,7 @@ export abstract class AgBeanStub<
      */
     public destroyBean(
         bean: AgBaseBean<TBeanCollection> | null | undefined,
-        context?: AgBaseContext<TBeanCollection>
+        context?: IContext<TBeanCollection>
     ): undefined {
         return (context || this.stubContext).destroyBean(bean);
     }
@@ -347,7 +339,7 @@ export abstract class AgBeanStub<
      */
     protected destroyBeans<T extends AgBaseBean<TBeanCollection>>(
         beans: (T | null | undefined)[],
-        context?: AgBaseContext<TBeanCollection>
+        context?: IContext<TBeanCollection>
     ): T[] {
         return (context || this.stubContext).destroyBeans(beans);
     }
@@ -360,8 +352,8 @@ function isAgEventEmitter<TEvent extends string>(
     return (object as IAgEventEmitter<TEvent>).__addEventListener !== undefined;
 }
 
-function isEventService<TEventParams, TProcessedEvents extends AgEvent>(
+function isEventService<TGlobalEvents, TRawEvents extends AgEvent>(
     object: any
-): object is AgEventService<TEventParams, TProcessedEvents> {
-    return (object as AgEventService<TEventParams, TProcessedEvents>).eventServiceType === 'global';
+): object is AgEventService<TGlobalEvents, TRawEvents> {
+    return (object as AgEventService<TGlobalEvents, TRawEvents>).eventServiceType === 'global';
 }
