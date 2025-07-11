@@ -1,4 +1,4 @@
-import type { Framework, Library } from '@ag-grid-types';
+import type { Framework, FrameworkType, Library } from '@ag-grid-types';
 import { getArchiveUrl } from '@ag-website-shared/utils/getArchiveUrl';
 import { LIBRARY, SITE_URL } from '@constants';
 import { pathJoin } from '@utils/pathJoin';
@@ -25,4 +25,15 @@ export function getContentApiDocsUrl({ framework, url }: { framework: Framework;
             framework,
         })
     );
+}
+
+export function getContentApiExamplesUrl({
+    framework,
+    frameworkType,
+}: {
+    framework: Framework;
+    frameworkType: FrameworkType;
+}) {
+    const contentApiExamplesUrl = pathJoin('examples', framework, frameworkType, 'index.json');
+    return getContentApiPrefix(contentApiExamplesUrl);
 }
