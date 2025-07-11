@@ -1,5 +1,9 @@
 import type { FrameworkType } from '@ag-grid-types';
-import { getContentApiExamplesUrl, getContentApiFrameworkUrl } from '@ag-website-shared/utils/content-api/urlPaths';
+import {
+    getContentApiExamplesUrl,
+    getContentApiFrameworkUrl,
+    getContentApiMigrationsUrl,
+} from '@ag-website-shared/utils/content-api/urlPaths';
 import { getFrameworkPath } from '@components/docs/utils/urlPaths';
 import { FRAMEWORKS } from '@constants';
 import { getInternalFramework } from '@utils/framework';
@@ -29,6 +33,7 @@ export async function GET() {
             slug: getFrameworkPath(framework),
             url: getContentApiFrameworkUrl({ framework }),
             examples,
+            migrations: getContentApiMigrationsUrl({ framework }),
         };
     });
 
