@@ -77,7 +77,7 @@ function jiraLink(text, url) {
  *
  * @type {string}
  */
-const uniqueFingerprint = generateHash(JSON.stringify(diffLinks));
+const uniqueFingerprint = generateHash(`${JSON.stringify(diffLinks)}${workflowName}`);
 
 fs.writeFileSync(jiraDescriptionFile, content + '\n');
 fs.writeFileSync(jiraFingerprintFile, uniqueFingerprint + '\n');
