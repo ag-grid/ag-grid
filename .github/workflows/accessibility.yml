@@ -188,7 +188,7 @@ jobs:
         if: ${{ github.event_name == 'schedule' || inputs.force_jira_ticket }}
         with:
           JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
-          JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' has detected a slowdown in grid performance"
+          JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' is failing."
           CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
           IS_SUCCESS: ${{ needs.e2e_accessibility.result == 'success' }}
           PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
