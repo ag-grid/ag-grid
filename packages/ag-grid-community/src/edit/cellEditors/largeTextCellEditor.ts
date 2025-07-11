@@ -87,15 +87,16 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
     }
 
     public afterGuiAttached(): void {
+        const { eEditor, focusAfterAttached, highlightAllOnFocus } = this;
         const translate = this.getLocaleTextFunc();
 
-        this.eEditor.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
+        eEditor.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
 
-        if (this.focusAfterAttached) {
-            this.eEditor.getFocusableElement().focus();
+        if (focusAfterAttached) {
+            eEditor.getFocusableElement().focus();
 
-            if (this.highlightAllOnFocus) {
-                this.eEditor.getInputElement().select();
+            if (highlightAllOnFocus) {
+                eEditor.getInputElement().select();
             }
         }
     }
