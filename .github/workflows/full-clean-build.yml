@@ -247,7 +247,7 @@ jobs:
 
         # only if run is successful
       - name: Dispatch docs-tests Workflow
-        if: (success() && github.ref == 'refs/heads/latest' && steps.build_docs_staging.outputs.success == 'true' && steps.build.outputs.success == 'true') || inputs.force_dispatch_docs_tests
+        if: (success() && github.ref == 'refs/heads/latest' && github.event_name == 'schedule') || inputs.force_dispatch_docs_tests
         uses: actions/github-script@v7
         env:
           WORKFLOW_ID: 'doc-tests.yml'

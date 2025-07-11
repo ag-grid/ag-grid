@@ -20,8 +20,9 @@ permissions:
   contents: read
 
 env:
-    CTRF_FILE: ./test-results/report.json
-    PREV_COMMIT_SHA_FILE: ./commit-sha.txt
+  CTRF_FILE: ./test-results/report.json
+  PREV_COMMIT_SHA_FILE: ./commit-sha.txt
+  REPO_URL: ${{ github.server_url }}/${{ github.repository }}
 
 jobs:
     code-dependency-scan:
@@ -37,6 +38,7 @@ jobs:
               uses: ./external/ag-shared/github/actions/snyk-scan-workspaces
               with:
                   snyk_token: ${{ secrets.SNYK_TOKEN }}
+                  remote_repo_url: ${{env.REPO_URL}}
 
             - name: Persist scan results
               if: always()

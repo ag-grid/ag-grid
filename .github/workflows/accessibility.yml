@@ -7,6 +7,17 @@ on:
 #  issue_comment:
 #    types: [created]
   workflow_dispatch:
+    inputs:
+      notify:
+        description: 'Notify Slack channel'
+        type: boolean
+        default: false
+        required: true
+      force_jira_ticket:
+        description: 'Force create a Jira ticket even if the run is not scheduled'
+        type: boolean
+        default: false
+        required: true
 #  schedule:
 #    - cron: '0 0 * * *' # Run daily at midnight UTC
 
@@ -17,6 +28,9 @@ env:
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
   YARN_REGISTRY: "http://52.50.158.57:4873"
   CI: true
+  REPORTS_PATH: ./reports
+  CTRF_FILE: ./reports/ctrf.json
+  PREV_COMMIT_SHA_FILE: ./commit-sha.txt
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -87,6 +101,8 @@ jobs:
 
       - name: nx test:e2e:accessibility
         id: tests
+        env:
+          PW_REPORT_PATH: '${{ env.REPORTS_PATH }}/ag-accessibility-e2e.json'
         run: yarn nx run ag-grid-accessibility:test:e2e:accessibility --shard=${{ matrix.shard }}/$((${{ strategy.job-total }}))
 
       - name: Persist test results
@@ -94,8 +110,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results-e2e-accessiblity-shard-${{matrix.shard}}
-          path: |
-            reports/
+          path: ${{ env.REPORTS_PATH }}
 
   report:
     runs-on: ubuntu-24.04
@@ -120,28 +135,63 @@ jobs:
         with:
           cache_mode: ro
 
-      - uses: actions/download-artifact@v4
+      - name: Download all test reports
+        uses: actions/download-artifact@v4
         with:
-          path: test-results/
+          path: ${{ env.REPORTS_PATH }}/
 
-      - name: Merge JUnit Report XMLs
-        run: |
-          yarn global add junit-report-merger
-          reports=$(find test-results/ -name \*.xml -type f -exec basename \{\} \; | sort | uniq)
-          mkdir -p reports/
-          echo "$reports" | (while read name ; do
-            yarn exec -s jrm reports/${name} "test-results/**/${name}"
-          done)
+      - name: Publish Combined Test Report
+        id: ctrf
+        uses: ctrf-io/github-test-reporter@v1.0.17
+        with:
+          report-path: '${{ env.REPORTS_PATH }}/**/*.json'
+          summary-report: true
+          failed-report: true
+          flaky-report: true
+          skipped-report: true
+          write-ctrf-to-file: ${{ env.CTRF_FILE }}
 
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: needs.e2e_accessibility.result == 'success' || needs.e2e_accessibility.result == 'failure'
-        id: testReport
+      - name: Get previous run commit SHA
+        id: prev-commit-sha
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.PREV_COMMIT_SHA_FILE }}
+          key: aceessibility-prev-commit-${{ github.ref }}
+
+      - name: Load files into environment
         continue-on-error: true
+        run: |
+          {
+            if [ -f ${{ env.PREV_COMMIT_SHA_FILE }} ]; then
+              echo 'PREV_COMMIT_SHA<<EOF'
+              cat ${{ env.PREV_COMMIT_SHA_FILE }}
+              echo 'EOF'
+            else
+              echo 'PREV_COMMIT_SHA_FILE not found'
+            fi
+          } >> $GITHUB_ENV
+
+      - name: Slack Notification
+        if: ${{ github.event_name == 'schedule' || inputs.notify }}
+        continue-on-error: true
+        uses: ./.github/actions/slack-integration
         with:
-          name: 'Accessibility Results'
-          path: reports/*.xml
-          reporter: java-junit
+          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+          SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
+          PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
+          CURRENT_COMMIT_SHA: ${{ github.sha }}
+          IS_SUCCESS: ${{ needs.e2e_accessibility.result == 'success' }}
+
+      - name: Set commit SHA
+        id: set-commit-sha
+        run: |
+          echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
+
+      - name: Save Current Commit Hash
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
+          path: ${{ env.PREV_COMMIT_SHA_FILE }}
 
       - name: Output Report URL
         run: |
