@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 env:
-  REPO_URL: https://github.com/ag-grid/ag-grid
+  REPO_URL: ${{ github.server_url }}/${{ github.repository }}
 
 jobs:
     code-dependency-scan:
