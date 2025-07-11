@@ -29,7 +29,7 @@ env:
   YARN_REGISTRY: "http://52.50.158.57:4873"
   CI: true
   REPORTS_PATH: ./reports
-  CTRF_FILE: ./reports/performance.json
+  CTRF_FILE: ./reports/ctrf.json
   PREV_COMMIT_SHA_FILE: ./commit-sha.txt
 
 concurrency:
