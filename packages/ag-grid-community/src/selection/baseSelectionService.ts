@@ -1,3 +1,4 @@
+import { _getActiveDomElement } from '../agStack/utils/beanUtils';
 import { isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
@@ -6,7 +7,6 @@ import type { RowNode } from '../entities/rowNode';
 import { _createGlobalRowEvent } from '../entities/rowNodeUtils';
 import type { SelectionEventSourceType } from '../events';
 import {
-    _getActiveDomElement,
     _getCheckboxes,
     _getEnableDeselection,
     _getEnableSelection,

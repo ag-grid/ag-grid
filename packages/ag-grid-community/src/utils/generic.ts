@@ -1,3 +1,5 @@
+import { _exists } from '../agStack/utils/genericUtils';
+
 /**
  * If value is undefined, null or blank, returns null, otherwise returns the value
  * @param {T} value
@@ -8,12 +10,6 @@ export function _makeNull<T>(value?: T): T | null {
         return null;
     }
     return value;
-}
-
-export function _exists(value: string | null | undefined): value is string;
-export function _exists<T>(value: T): value is NonNullable<T>;
-export function _exists(value: any): boolean {
-    return value != null && value !== '';
 }
 
 export function _missing<T>(value: T | null | undefined): value is Exclude<undefined | null, T>;

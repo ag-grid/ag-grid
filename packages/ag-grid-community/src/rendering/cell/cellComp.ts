@@ -1,4 +1,5 @@
 import { CssClassManager } from '../../agStack/cssClassManager';
+import { _getActiveDomElement } from '../../agStack/utils/beanUtils';
 import { _clearElement } from '../../agStack/utils/domUtils';
 import { _getLocaleTextFunc } from '../../agStack/utils/localeUtils';
 import type { BeanCollection } from '../../context/context';
@@ -6,7 +7,6 @@ import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapp
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
-import { _getActiveDomElement } from '../../gridOptionsUtils';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { PopupPositionParams } from '../../interfaces/iPopup';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';

@@ -1,11 +1,13 @@
 import { RefPlaceholder } from '../../../agStack/interfaces/iComponent';
+import { _isBrowserSafari } from '../../../agStack/utils/browserUtils';
+import { _parseDateTimeFromString } from '../../../agStack/utils/dateUtils';
+import { _serialiseDate } from '../../../agStack/utils/dateUtils';
+import { AgInputTextFieldSelector } from '../../../agStack/widgets/agInputTextField';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import { _isBrowserSafari } from '../../../utils/browser';
-import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
+import { _dateToFormattedString } from '../../../utils/date';
 import type { ElementParams } from '../../../utils/dom';
 import { _warn } from '../../../validation/logging';
-import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { Component } from '../../../widgets/component';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 

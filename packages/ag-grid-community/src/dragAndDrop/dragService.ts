@@ -1,12 +1,13 @@
+import { _getRootNode } from '../agStack/utils/beanUtils';
+import { _isBrowserSafari } from '../agStack/utils/browserUtils';
+import { _exists } from '../agStack/utils/genericUtils';
 import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { _isEventFromThisGrid } from '../gridBodyComp/mouseEventUtils';
-import { _getDocument, _getRootNode } from '../gridOptionsUtils';
+import { _getDocument } from '../gridOptionsUtils';
 import { _removeFromArray } from '../utils/array';
-import { _isBrowserSafari } from '../utils/browser';
 import { _isFocusableFormField } from '../utils/dom';
-import { _exists } from '../utils/generic';
 import { _areEventsNear } from '../utils/mouse';
 
 /** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,

@@ -1,13 +1,13 @@
-import { AgComponentStub } from '../agStack/agComponentStub';
-import type { AgComponentEvent, AgComponentSelector } from '../agStack/interfaces/iComponent';
-import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
-import type { BaseEvents } from '../agStack/interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
-import type { AgElementParams } from '../agStack/utils/domUtils';
-import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../agStack/utils/domUtils';
-import type { AgLabelParams, LabelAlignment } from '../interfaces/agFieldParams';
-import { _setAriaRole } from '../utils/aria';
+import { AgComponentStub } from '../agComponentStub';
+import type { AgComponentEvent, AgComponentSelector } from '../interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { BaseEvents } from '../interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
+import { _setAriaRole } from '../utils/ariaUtils';
+import type { AgElementParams } from '../utils/domUtils';
+import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../utils/domUtils';
 import { agAbstractLabelCSS } from './agAbstractLabel.css-GENERATED';
+import type { AgLabelParams, LabelAlignment } from './agFieldParams';
 
 export type AgAbstractLabelEvent = AgComponentEvent;
 export abstract class AgAbstractLabel<

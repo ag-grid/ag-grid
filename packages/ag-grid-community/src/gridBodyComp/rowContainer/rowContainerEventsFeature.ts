@@ -1,3 +1,4 @@
+import { _isEventFromPrintableCharacter } from '../../agStack/utils/keyboardUtils';
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
@@ -10,7 +11,7 @@ import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { DOM_DATA_KEY_ROW_CTRL } from '../../rendering/row/rowCtrl';
 import type { UndoRedoService } from '../../undoRedo/undoRedoService';
 import { _getCtrlForEventTarget, _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
-import { _isEventFromPrintableCharacter, _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
+import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
 import { _selectAllCells } from '../../utils/selection';
 import { _isEventFromThisGrid } from '../mouseEventUtils';
 

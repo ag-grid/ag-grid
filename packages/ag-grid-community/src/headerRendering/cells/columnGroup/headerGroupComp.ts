@@ -1,5 +1,6 @@
 import { RefPlaceholder } from '../../../agStack/interfaces/iComponent';
 import { _setDisplayed } from '../../../agStack/utils/domUtils';
+import { _exists } from '../../../agStack/utils/genericUtils';
 import { _getInnerHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { BeanCollection } from '../../../context/context';
@@ -9,7 +10,6 @@ import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
 import type { ElementParams } from '../../../utils/dom';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../../utils/event';
-import { _exists } from '../../../utils/generic';
 import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _toString } from '../../../utils/string';

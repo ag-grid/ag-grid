@@ -1,11 +1,11 @@
 import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
+import { _getActiveDomElement } from '../../agStack/utils/beanUtils';
+import { AgCheckboxSelector } from '../../agStack/widgets/agCheckbox';
 import { GROUP_AUTO_COLUMN_ID } from '../../columns/columnUtils';
 import { KeyCode } from '../../constants/keyCode';
-import { _getActiveDomElement } from '../../gridOptionsUtils';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
 import type { ElementParams } from '../../utils/dom';
 import { _stopPropagationForAgGrid } from '../../utils/event';
-import { AgCheckboxSelector } from '../../widgets/agCheckbox';
 import { Component } from '../../widgets/component';
 import type { GridCheckbox } from '../../widgets/gridWidgetTypes';
 import { checkboxCellRendererCSS } from './checkboxCellRenderer.css-GENERATED';

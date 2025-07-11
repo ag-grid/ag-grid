@@ -1,13 +1,13 @@
-import { RefPlaceholder } from '../agStack/interfaces/iComponent';
-import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
-import type { BaseEvents } from '../agStack/interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
-import type { AgElementParams } from '../agStack/utils/domUtils';
-import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../agStack/utils/domUtils';
-import type { AgInputFieldParams } from '../interfaces/agFieldParams';
-import { _setAriaLabel } from '../utils/aria';
+import { RefPlaceholder } from '../interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { BaseEvents } from '../interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
+import { _setAriaLabel } from '../utils/ariaUtils';
+import type { AgElementParams } from '../utils/domUtils';
+import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/domUtils';
 import type { AgAbstractFieldEvent, FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
+import type { AgInputFieldParams } from './agFieldParams';
 
 function buildTemplate<TComponentSelectorType extends string>(
     displayFieldTag: keyof HTMLElementTagNameMap

@@ -82,7 +82,7 @@ export { BeanName, SingletonBean, BeanCollection } from './context/context';
 export { VisibleChangedEvent, RefPlaceholder } from './agStack/interfaces/iComponent';
 export { AgEvent } from './agStack/interfaces/agEvent';
 export { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
-export { _setAriaHidden } from './agStack/utils/ariaUtils';
+export { _setAriaHidden, _setAriaRole, _setAriaLabel, _setAriaLabelledBy } from './agStack/utils/ariaUtils';
 export {
     _setDisplayed,
     _loadTemplate,
@@ -92,11 +92,15 @@ export {
     _setFixedWidth,
     _setDisabled,
 } from './agStack/utils/domUtils';
+export { _exists } from './agStack/utils/genericUtils';
+export { _serialiseDate, _parseDateTimeFromString } from './agStack/utils/dateUtils';
 export { _getLocaleTextFunc, _translate } from './agStack/utils/localeUtils';
+export { _getActiveDomElement, _getRootNode } from './agStack/utils/beanUtils';
 export { LocaleTextFunc } from './agStack/interfaces/iLocaleService';
 export { CssClassManager } from './agStack/cssClassManager';
 export { LocalEventService } from './agStack/localEventService';
 export { IEventEmitter, IEventListener } from './agStack/interfaces/iEventEmitter';
+export { _isEventFromPrintableCharacter } from './agStack/utils/keyboardUtils';
 
 // excel
 export {
@@ -603,17 +607,21 @@ export {
     AgLabelParams,
     LabelAlignment,
     AgInputFieldParams,
-} from './interfaces/agFieldParams';
+} from './agStack/widgets/agFieldParams';
 export { AgPickerFieldParams } from './interfaces/agPickerFieldParams';
 export { RichSelectParams } from './interfaces/iRichCellEditorParams';
-export { AgAbstractInputField } from './widgets/agAbstractInputField';
-export { AgCheckbox, AgCheckboxSelector } from './widgets/agCheckbox';
-export { AgRadioButton, AgRadioButtonParams } from './widgets/agRadioButton';
-export { AgToggleButton, AgToggleButtonParams, AgToggleButtonSelector } from './widgets/agToggleButton';
-export { AgInputTextField, AgInputTextFieldParams, AgInputTextFieldSelector } from './widgets/agInputTextField';
-export { AgInputTextArea } from './widgets/agInputTextArea';
-export { AgInputNumberField, AgInputNumberFieldSelector, AgInputNumberFieldParams } from './widgets/agInputNumberField';
-export { AgInputDateField } from './widgets/agInputDateField';
+export { AgAbstractInputField } from './agStack/widgets/agAbstractInputField';
+export { AgCheckbox, AgCheckboxSelector } from './agStack/widgets/agCheckbox';
+export { AgRadioButton, AgRadioButtonParams } from './agStack/widgets/agRadioButton';
+export { AgToggleButton, AgToggleButtonParams, AgToggleButtonSelector } from './agStack/widgets/agToggleButton';
+export { AgInputTextField, AgInputTextFieldParams, AgInputTextFieldSelector } from './agStack/widgets/agInputTextField';
+export { AgInputTextArea } from './agStack/widgets/agInputTextArea';
+export {
+    AgInputNumberField,
+    AgInputNumberFieldSelector,
+    AgInputNumberFieldParams,
+} from './agStack/widgets/agInputNumberField';
+export { AgInputDateField } from './agStack/widgets/agInputDateField';
 export { AgSelect, AgSelectParams, AgSelectSelector } from './widgets/agSelect';
 export { ListOption } from './widgets/agList';
 export { Component } from './widgets/component';
@@ -632,7 +640,7 @@ export { TouchListener, TapEvent, LongTapEvent, TouchListenerEvent } from './wid
 export { FocusableContainer } from './interfaces/iFocusableContainer';
 export * from './widgets/gridWidgetTypes';
 
-export { AgAbstractLabel } from './widgets/agAbstractLabel';
+export { AgAbstractLabel } from './agStack/widgets/agAbstractLabel';
 export { AgPickerField } from './widgets/agPickerField';
 
 // range
@@ -755,12 +763,10 @@ export {
     _canSkipShowingRowGroup,
     _getRowHeightAsNumber,
     _shouldUpdateColVisibilityAfterGroup,
-    _getActiveDomElement,
     _isNothingFocused,
     _getDocument,
     _getPageBody,
     _anchorElementToMouseMoveEvent,
-    _getRootNode,
     _getGroupAggFiltering,
     _isRowSelection,
     _isGetRowHeightFunction,
@@ -1079,14 +1085,11 @@ export { IStickyRowFeature, IStickyRowService } from './interfaces/iStickyRows';
 export {
     ColumnSortState,
     _setAriaLevel,
-    _setAriaLabel,
     _setAriaDescribedBy,
     _setAriaExpanded,
-    _setAriaLabelledBy,
     _setAriaChecked,
     _setAriaControls,
     _setAriaControlsAndLabel,
-    _setAriaRole,
     _setAriaColIndex,
     _setAriaColSpan,
     _setAriaRowIndex,
@@ -1107,7 +1110,7 @@ export {
 export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './utils/array';
 export { _isIOSUserAgent } from './utils/browser';
 export { ChangedPath } from './utils/changedPath';
-export { _serialiseDate, _getDateParts, _parseDateTimeFromString } from './utils/date';
+export { _getDateParts } from './utils/date';
 export {
     _getAbsoluteHeight,
     _getAbsoluteWidth,
@@ -1130,8 +1133,7 @@ export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
 export { _interpretAsRightClick } from './utils/mouse';
 export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
-export { _exists, _missing, _jsonEquals, _toStringOrNull, _makeNull, _defaultComparator } from './utils/generic';
-export { _isEventFromPrintableCharacter } from './utils/keyboard';
+export { _missing, _jsonEquals, _toStringOrNull, _makeNull, _defaultComparator } from './utils/generic';
 export { _formatNumberCommas } from './utils/number';
 export { _mergeDeep } from './utils/object';
 export { _escapeString, _toString } from './utils/string';

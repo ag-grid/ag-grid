@@ -1,8 +1,9 @@
 import { RefPlaceholder } from '../agStack/interfaces/iComponent';
+import { _setAriaRole } from '../agStack/utils/ariaUtils';
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
 import { GridHeaderSelector } from '../headerRendering/gridHeaderComp';
 import { LayoutCssClasses } from '../styling/layoutFeature';
-import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRole, _setAriaRowCount } from '../utils/aria';
+import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
 import type { ElementParams } from '../utils/dom';
 import { _observeResize } from '../utils/dom';
 import type { ComponentSelector } from '../widgets/component';

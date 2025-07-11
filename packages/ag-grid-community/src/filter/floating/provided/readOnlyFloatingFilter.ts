@@ -1,8 +1,8 @@
 import { RefPlaceholder } from '../../../agStack/interfaces/iComponent';
+import { AgInputTextFieldSelector } from '../../../agStack/widgets/agInputTextField';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { IFilter } from '../../../interfaces/iFilter';
 import type { ElementParams } from '../../../utils/dom';
-import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { Component } from '../../../widgets/component';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type {

@@ -1,11 +1,13 @@
+import { _getRootNode } from '../agStack/utils/beanUtils';
+import { _isBrowserSafari } from '../agStack/utils/browserUtils';
 import { _createAgElement, _formatSize } from '../agStack/utils/domUtils';
 import type { AgElementParams } from '../agStack/utils/domUtils';
 import type { BeanCollection } from '../context/context';
 import type { CellStyle, HeaderStyle } from '../entities/colDef';
 import type { RowStyle } from '../entities/gridOptions';
-import { _getRootNode, _getWindow } from '../gridOptionsUtils';
+import { _getWindow } from '../gridOptionsUtils';
 import type { AgComponentSelectorType } from '../widgets/component';
-import { _isBrowserFirefox, _isBrowserSafari } from './browser';
+import { _isBrowserFirefox } from './browser';
 
 /**
  * This method adds a class to an element and remove that class from all siblings.

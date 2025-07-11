@@ -1,3 +1,4 @@
+import { _getRootNode } from '../agStack/utils/beanUtils';
 import { _getDragAndDropImageCompDetails } from '../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import type { HorizontalDirection, VerticalDirection } from '../constants/direction';
@@ -7,7 +8,7 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Environment } from '../environment';
 import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
-import { _addGridCommonParams, _anchorElementToMouseMoveEvent, _getPageBody, _getRootNode } from '../gridOptionsUtils';
+import { _addGridCommonParams, _anchorElementToMouseMoveEvent, _getPageBody } from '../gridOptionsUtils';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { DragItem } from '../interfaces/iDragItem';
 import { _removeFromArray } from '../utils/array';

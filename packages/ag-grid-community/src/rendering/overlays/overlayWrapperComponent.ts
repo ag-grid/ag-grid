@@ -1,8 +1,9 @@
 import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
+import { _getActiveDomElement } from '../../agStack/utils/beanUtils';
 import { _clearElement } from '../../agStack/utils/domUtils';
 import { KeyCode } from '../../constants/keyCode';
 import type { GridOptions } from '../../entities/gridOptions';
-import { _addGridCommonParams, _getActiveDomElement, _isNothingFocused } from '../../gridOptionsUtils';
+import { _addGridCommonParams, _isNothingFocused } from '../../gridOptionsUtils';
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _last } from '../../utils/array';

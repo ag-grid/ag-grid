@@ -1,13 +1,13 @@
-import type { AgComponentSelector } from '../agStack/interfaces/iComponent';
-import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
-import type { BaseEvents } from '../agStack/interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
-import type { AgInputFieldParams } from '../interfaces/agFieldParams';
-import { _exists } from '../utils/generic';
-import { _isEventFromPrintableCharacter } from '../utils/keyboard';
+import type { AgComponentSelector } from '../interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { BaseEvents } from '../interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
+import { _exists } from '../utils/genericUtils';
+import { _isEventFromPrintableCharacter } from '../utils/keyboardUtils';
 import type { AgAbstractInputFieldEvent } from './agAbstractInputField';
 import { AgAbstractInputField } from './agAbstractInputField';
-import type { AgComponentSelectorType } from './component';
+import type { AgInputFieldParams } from './agFieldParams';
+import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 export interface AgInputTextFieldParams<TComponentSelectorType extends string>
     extends AgInputFieldParams<TComponentSelectorType> {
@@ -87,7 +87,7 @@ export class AgInputTextField<
         });
     }
 }
-export const AgInputTextFieldSelector: AgComponentSelector<AgComponentSelectorType> = {
+export const AgInputTextFieldSelector: AgComponentSelector<AgWidgetSelectorType> = {
     selector: 'AG-INPUT-TEXT-FIELD',
     component: AgInputTextField,
 };

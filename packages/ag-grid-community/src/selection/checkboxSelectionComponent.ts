@@ -1,4 +1,5 @@
 import { RefPlaceholder } from '../agStack/interfaces/iComponent';
+import { AgCheckboxSelector } from '../agStack/widgets/agCheckbox';
 import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
@@ -7,7 +8,6 @@ import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRend
 import { _getAriaCheckboxStateName } from '../utils/aria';
 import type { ElementParams } from '../utils/dom';
 import { _stopPropagationForAgGrid } from '../utils/event';
-import { AgCheckboxSelector } from '../widgets/agCheckbox';
 import { Component } from '../widgets/component';
 import type { GridCheckbox } from '../widgets/gridWidgetTypes';
 

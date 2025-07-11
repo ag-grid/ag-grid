@@ -1,5 +1,6 @@
 import { AgComponentStub } from '../agStack/agComponentStub';
 import type { AgComponentEvent, AgComponentSelector } from '../agStack/interfaces/iComponent';
+import type { AgWidgetSelectorType } from '../agStack/widgets/agWidgetSelectorType';
 import type { BeanCollection } from '../context/context';
 import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
@@ -12,8 +13,8 @@ export type ComponentSelector = AgComponentSelector<AgComponentSelectorType, Bea
 
 /** All the AG Grid components that are used within internal templates via <ag-autocomplete> syntax */
 export type AgComponentSelectorType =
+    | AgWidgetSelectorType
     | 'AG-AUTOCOMPLETE'
-    | 'AG-CHECKBOX'
     | 'AG-COLOR-INPUT'
     | 'AG-COLOR-PICKER'
     | 'AG-FAKE-HORIZONTAL-SCROLL'
@@ -25,11 +26,7 @@ export type AgComponentSelectorType =
     | 'AG-GRID-HEADER-DROP-ZONES'
     | 'AG-GROUP-COMPONENT'
     | 'AG-HEADER-ROOT'
-    | 'AG-INPUT-DATE-FIELD'
-    | 'AG-INPUT-NUMBER-FIELD'
     | 'AG-INPUT-RANGE'
-    | 'AG-INPUT-TEXT-AREA'
-    | 'AG-INPUT-TEXT-FIELD'
     | 'AG-NAME-VALUE'
     | 'AG-OVERLAY-WRAPPER'
     | 'AG-PAGE-SIZE-SELECTOR'
@@ -44,7 +41,6 @@ export type AgComponentSelectorType =
     | 'AG-SLIDER'
     | 'AG-SORT-INDICATOR'
     | 'AG-STATUS-BAR'
-    | 'AG-TOGGLE-BUTTON'
     | 'AG-WATERMARK';
 
 export class Component<TLocalEvent extends string = AgComponentEvent> extends AgComponentStub<

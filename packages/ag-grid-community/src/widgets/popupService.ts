@@ -1,17 +1,20 @@
+import { _setAriaLabel } from '../agStack/utils/ariaUtils';
+import { _setAriaRole } from '../agStack/utils/ariaUtils';
+import { _getActiveDomElement } from '../agStack/utils/beanUtils';
+import { _exists } from '../agStack/utils/genericUtils';
 import { Direction } from '../constants/direction';
 import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { CssVariablesChanged } from '../events';
 import type { GridCtrl } from '../gridComp/gridCtrl';
-import { _getActiveDomElement, _getDocument } from '../gridOptionsUtils';
+import { _getDocument } from '../gridOptionsUtils';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { PostProcessPopupParams } from '../interfaces/iCallbackParams';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { PopupEventParams, PopupPositionParams } from '../interfaces/iPopup';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _setAriaLabel, _setAriaRole } from '../utils/aria';
 import {
     _createElement,
     _getAbsoluteHeight,
@@ -20,7 +23,6 @@ import {
     _observeResize,
 } from '../utils/dom';
 import { _isElementInEventPath, _isStopPropagationForAgGrid } from '../utils/event';
-import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 import { _warn } from '../validation/logging';
 

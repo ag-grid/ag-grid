@@ -1,9 +1,9 @@
+import type { AgAbstractField } from '../agStack/widgets/agAbstractField';
 import type { BeanCollection } from '../context/context';
 import type { AgEventTypeParams, AllEventsWithoutGridCommon } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { ICellEditorComp, ICellEditorParams } from '../interfaces/iCellEditor';
-import type { AgAbstractField } from './agAbstractField';
 import type { AgComponentSelectorType } from './component';
 import { PopupComponent } from './popupComponent';
 

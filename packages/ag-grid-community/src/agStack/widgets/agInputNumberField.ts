@@ -1,13 +1,13 @@
-import type { AgComponentSelector } from '../agStack/interfaces/iComponent';
-import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
-import type { BaseEvents } from '../agStack/interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
-import { _addOrRemoveAttribute } from '../agStack/utils/domUtils';
-import { _getActiveDomElement } from '../gridOptionsUtils';
-import { _exists } from '../utils/generic';
+import type { AgComponentSelector } from '../interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { BaseEvents } from '../interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
+import { _getActiveDomElement } from '../utils/beanUtils';
+import { _addOrRemoveAttribute } from '../utils/domUtils';
+import { _exists } from '../utils/genericUtils';
 import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
-import type { AgComponentSelectorType } from './component';
+import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 export interface AgInputNumberFieldParams<TComponentSelectorType extends string>
     extends AgInputTextFieldParams<TComponentSelectorType> {
@@ -210,7 +210,7 @@ export class AgInputNumberField<
     }
 }
 
-export const AgInputNumberFieldSelector: AgComponentSelector<AgComponentSelectorType> = {
+export const AgInputNumberFieldSelector: AgComponentSelector<AgWidgetSelectorType> = {
     selector: 'AG-INPUT-NUMBER-FIELD',
     component: AgInputNumberField,
 };

@@ -1,4 +1,4 @@
-import type { AgElementParams } from '../agStack/utils/domUtils';
+import type { AgElementParams } from '../utils/domUtils';
 
 export type LabelAlignment = 'left' | 'right' | 'top';
 

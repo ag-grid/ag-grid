@@ -1,7 +1,7 @@
+import { _getRootNode } from '../agStack/utils/beanUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
-import { _getRootNode } from '../gridOptionsUtils';
 import type { ITestIdService } from '../interfaces/iTestIdService';
 import { agTestIdFor } from './testIdUtils';
 

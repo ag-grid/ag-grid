@@ -1,11 +1,11 @@
-import type { AgComponentSelector } from '../agStack/interfaces/iComponent';
-import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
-import type { BaseEvents } from '../agStack/interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
-import type { AgCheckboxParams } from '../interfaces/agFieldParams';
+import type { AgComponentSelector } from '../interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { BaseEvents } from '../interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
 import { AgCheckbox } from './agCheckbox';
+import type { AgCheckboxParams } from './agFieldParams';
 import { agToggleButtonCSS } from './agToggleButton.css-GENERATED';
-import type { AgComponentSelectorType } from './component';
+import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 export interface AgToggleButtonParams<TComponentSelectorType extends string>
     extends AgCheckboxParams<TComponentSelectorType> {}
@@ -39,7 +39,7 @@ export class AgToggleButton<
         return this;
     }
 }
-export const AgToggleButtonSelector: AgComponentSelector<AgComponentSelectorType> = {
+export const AgToggleButtonSelector: AgComponentSelector<AgWidgetSelectorType> = {
     selector: 'AG-TOGGLE-BUTTON',
     component: AgToggleButton,
 };

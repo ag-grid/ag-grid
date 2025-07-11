@@ -1,9 +1,9 @@
 import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
+import { _isBrowserSafari } from '../../agStack/utils/browserUtils';
+import { _exists } from '../../agStack/utils/genericUtils';
+import { AgInputNumberFieldSelector } from '../../agStack/widgets/agInputNumberField';
 import { KeyCode } from '../../constants/keyCode';
-import { _isBrowserSafari } from '../../utils/browser';
 import type { ElementParams } from '../../utils/dom';
-import { _exists } from '../../utils/generic';
-import { AgInputNumberFieldSelector } from '../../widgets/agInputNumberField';
 import type { GridInputNumberField } from '../../widgets/gridWidgetTypes';
 import type { CellEditorInput } from './iCellEditorInput';
 import type { INumberCellEditorParams } from './iNumberCellEditor';

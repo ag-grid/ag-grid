@@ -1,12 +1,14 @@
-import type { AgComponentSelector } from '../agStack/interfaces/iComponent';
-import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
-import type { BaseEvents } from '../agStack/interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
-import type { AgElementParams } from '../agStack/utils/domUtils';
-import { _setFixedWidth } from '../agStack/utils/domUtils';
-import type { AgFieldParams } from '../interfaces/agFieldParams';
-import { _getAriaLabel, _setAriaLabel, _setAriaLabelledBy } from '../utils/aria';
+import type { AgComponentSelector } from '../interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { BaseEvents } from '../interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
+import { _setAriaLabelledBy } from '../utils/ariaUtils';
+import { _setAriaLabel } from '../utils/ariaUtils';
+import { _getAriaLabel } from '../utils/ariaUtils';
+import type { AgElementParams } from '../utils/domUtils';
+import { _setFixedWidth } from '../utils/domUtils';
 import { AgAbstractLabel } from './agAbstractLabel';
+import type { AgFieldParams } from './agFieldParams';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export type AgAbstractFieldEvent = 'fieldValueChanged';

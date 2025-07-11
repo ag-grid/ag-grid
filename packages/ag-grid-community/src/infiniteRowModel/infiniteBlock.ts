@@ -1,9 +1,10 @@
+import { _exists } from '../agStack/utils/genericUtils';
 import { BeanStub } from '../context/beanStub';
 import { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { IGetRowsParams } from '../interfaces/iDatasource';
 import type { LoadSuccessParams } from '../interfaces/iServerSideRowModel';
-import { _exists, _missing } from '../utils/generic';
+import { _missing } from '../utils/generic';
 import { _warn } from '../validation/logging';
 import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 

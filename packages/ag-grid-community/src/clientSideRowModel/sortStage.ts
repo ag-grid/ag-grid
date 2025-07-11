@@ -1,3 +1,4 @@
+import { _exists } from '../agStack/utils/genericUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -11,7 +12,7 @@ import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeSt
 import type { SortOption } from '../interfaces/iSortOption';
 import type { RowNodeSorter, SortedRowNode } from '../sort/rowNodeSorter';
 import type { ChangedPath } from '../utils/changedPath';
-import { _exists, _missing } from '../utils/generic';
+import { _missing } from '../utils/generic';
 
 function updateChildIndexes(rowNode: RowNode): void {
     if (_missing(rowNode.childrenAfterSort)) {

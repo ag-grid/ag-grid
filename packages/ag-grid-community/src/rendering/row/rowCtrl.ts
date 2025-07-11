@@ -1,4 +1,7 @@
+import { _getActiveDomElement } from '../../agStack/utils/beanUtils';
+import { _isBrowserSafari } from '../../agStack/utils/browserUtils';
 import { _addOrRemoveAttribute } from '../../agStack/utils/domUtils';
+import { _exists } from '../../agStack/utils/genericUtils';
 import { setupCompBean } from '../../components/emptyBean';
 import {
     _getFullWidthCellRendererDetails,
@@ -16,7 +19,6 @@ import type { CellFocusedEvent, RowEvent, VirtualRowRemovedEvent } from '../../e
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import {
     _addGridCommonParams,
-    _getActiveDomElement,
     _getRowHeightForNode,
     _isAnimateRows,
     _isDomLayout,
@@ -38,12 +40,11 @@ import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _setAriaExpanded, _setAriaRowIndex } from '../../utils/aria';
-import { _isBrowserSafari } from '../../utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _findNextFocusableElement } from '../../utils/focus';
 import { _batchCall } from '../../utils/function';
-import { _exists, _makeNull } from '../../utils/generic';
+import { _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import type { Component } from '../../widgets/component';
 import { CellCtrl } from '../cell/cellCtrl';

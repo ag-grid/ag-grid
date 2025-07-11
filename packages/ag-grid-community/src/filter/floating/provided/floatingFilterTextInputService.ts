@@ -1,7 +1,7 @@
 import { RefPlaceholder } from '../../../agStack/interfaces/iComponent';
+import type { AgInputTextFieldParams } from '../../../agStack/widgets/agInputTextField';
+import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
 import { BeanStub } from '../../../context/beanStub';
-import type { AgInputTextFieldParams } from '../../../widgets/agInputTextField';
-import { AgInputTextField } from '../../../widgets/agInputTextField';
 import type { AgComponentSelectorType } from '../../../widgets/component';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FloatingFilterInputService } from './iFloatingFilterInputService';

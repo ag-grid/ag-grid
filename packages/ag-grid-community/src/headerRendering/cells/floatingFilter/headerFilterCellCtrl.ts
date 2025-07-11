@@ -1,3 +1,5 @@
+import { _setAriaLabel } from '../../../agStack/utils/ariaUtils';
+import { _getActiveDomElement } from '../../../agStack/utils/beanUtils';
 import { setupCompBean } from '../../../components/emptyBean';
 import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
@@ -5,10 +7,9 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
 import { _getFilterModel } from '../../../filter/columnFilterUtils';
-import { _addGridCommonParams, _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
-import { _setAriaLabel } from '../../../utils/aria';
 import { _isElementChildOfClass } from '../../../utils/dom';
 import { _stopPropagationForAgGrid } from '../../../utils/event';
 import { _findNextFocusableElement, _focusInto } from '../../../utils/focus';

@@ -1,6 +1,7 @@
+import { _getActiveDomElement } from '../agStack/utils/beanUtils';
 import { KeyCode } from '../constants/keyCode';
 import type { BeanCollection } from '../context/context';
-import { _getActiveDomElement, _getDocument } from '../gridOptionsUtils';
+import { _getDocument } from '../gridOptionsUtils';
 import type { Component } from '../widgets/component';
 import { _last } from './array';
 import { _getTabIndex } from './browser';

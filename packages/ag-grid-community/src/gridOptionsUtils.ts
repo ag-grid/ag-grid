@@ -1,4 +1,7 @@
 import type { AgCoreBeanCollection } from './agStack/interfaces/iContext';
+import { _getRootNode } from './agStack/utils/beanUtils';
+import { _getActiveDomElement } from './agStack/utils/beanUtils';
+import { _exists } from './agStack/utils/genericUtils';
 import type { GridApi } from './api/gridApi';
 import type { BeanCollection } from './context/context';
 import type {
@@ -38,7 +41,7 @@ import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
 import { _getElementRectWithOffset } from './utils/dom';
 import { _doOnce } from './utils/function';
-import { _exists, _missing } from './utils/generic';
+import { _missing } from './utils/generic';
 import { _warn } from './validation/logging';
 
 function isRowModelType(gos: GridOptionsService, rowModelType: RowModelType): boolean {
@@ -197,14 +200,6 @@ export function _getDocument(beans: AgCoreBeanCollection<any, any, any, any>): D
 export function _getWindow(beans: AgCoreBeanCollection<any, any, any, any>) {
     const eDocument = _getDocument(beans);
     return eDocument.defaultView || window;
-}
-
-export function _getRootNode(beans: AgCoreBeanCollection<any, any, any, any>): Document | ShadowRoot {
-    return beans.eRootDiv.getRootNode() as Document | ShadowRoot;
-}
-
-export function _getActiveDomElement(beans: AgCoreBeanCollection<any, any, any, any>): Element | null {
-    return _getRootNode(beans).activeElement;
 }
 
 export function _getPageBody(beans: BeanCollection): HTMLElement | ShadowRoot {

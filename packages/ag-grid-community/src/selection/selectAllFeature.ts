@@ -1,3 +1,6 @@
+import { _setAriaRole } from '../agStack/utils/ariaUtils';
+import { _getActiveDomElement } from '../agStack/utils/beanUtils';
+import { AgCheckbox } from '../agStack/widgets/agCheckbox';
 import { isColumnGroupAutoCol, isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -6,7 +9,6 @@ import type { GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { DisplayedColumnsChangedEvent, SelectionEventSourceType } from '../events';
 import {
     _addGridCommonParams,
-    _getActiveDomElement,
     _getCheckboxLocation,
     _getHeaderCheckbox,
     _getSelectAll,
@@ -15,9 +17,7 @@ import {
     _isServerSideRowModel,
 } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
-import { _setAriaRole } from '../utils/aria';
 import { _warn } from '../validation/logging';
-import { AgCheckbox } from '../widgets/agCheckbox';
 import type { GridCheckbox } from '../widgets/gridWidgetTypes';
 
 export class SelectAllFeature extends BeanStub {

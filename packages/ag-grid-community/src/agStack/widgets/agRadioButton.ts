@@ -1,8 +1,8 @@
-import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
-import type { AgCheckboxChangedEvent, BaseEvents } from '../agStack/interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
-import type { AgCheckboxParams } from '../interfaces/agFieldParams';
+import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { AgCheckboxChangedEvent, BaseEvents } from '../interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
 import { AgCheckbox } from './agCheckbox';
+import type { AgCheckboxParams } from './agFieldParams';
 
 export interface AgRadioButtonParams<TComponentSelectorType extends string>
     extends AgCheckboxParams<TComponentSelectorType> {}

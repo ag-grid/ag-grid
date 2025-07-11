@@ -1,3 +1,4 @@
+import { _getActiveDomElement } from '../../../agStack/utils/beanUtils';
 import { _setDisplayed } from '../../../agStack/utils/domUtils';
 import type { ResizeFeature } from '../../../columnResize/resizeFeature';
 import { setupCompBean } from '../../../components/emptyBean';
@@ -6,7 +7,7 @@ import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams, SortDirection } from '../../../entities/colDef';
-import { _addGridCommonParams, _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';

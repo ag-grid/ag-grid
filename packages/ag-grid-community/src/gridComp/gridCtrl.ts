@@ -1,7 +1,7 @@
+import { _getActiveDomElement } from '../agStack/utils/beanUtils';
 import { Direction } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
 import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
-import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';

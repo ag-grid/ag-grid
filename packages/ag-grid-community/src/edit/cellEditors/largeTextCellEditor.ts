@@ -1,9 +1,9 @@
 import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
+import { _exists } from '../../agStack/utils/genericUtils';
+import { AgInputTextAreaSelector } from '../../agStack/widgets/agInputTextArea';
 import { KeyCode } from '../../constants/keyCode';
 import type { ElementParams } from '../../utils/dom';
-import { _exists } from '../../utils/generic';
 import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
-import { AgInputTextAreaSelector } from '../../widgets/agInputTextArea';
 import type { GridInputTextArea } from '../../widgets/gridWidgetTypes';
 import type { ILargeTextEditorParams } from './iLargeTextCellEditor';
 

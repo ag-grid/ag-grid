@@ -1,3 +1,4 @@
+import { _getActiveDomElement } from '../../agStack/utils/beanUtils';
 import { _addOrRemoveAttribute } from '../../agStack/utils/domUtils';
 import { isColumnSelectionCol, isRowNumberCol } from '../../columns/columnUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
@@ -13,7 +14,6 @@ import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../ev
 import type { GridOptionsService } from '../../gridOptionsService';
 import {
     _addGridCommonParams,
-    _getActiveDomElement,
     _getCheckboxLocation,
     _getCheckboxes,
     _isCellSelectionEnabled,

@@ -1,9 +1,9 @@
+import { _isBrowserSafari } from '../../agStack/utils/browserUtils';
 import { isRowNumberCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellClickedEvent, CellDoubleClickedEvent } from '../../events';
-import { _isBrowserSafari } from '../../utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _interpretAsRightClick } from '../../utils/mouse';

@@ -1,10 +1,10 @@
-import type { AgComponentSelector } from '../agStack/interfaces/iComponent';
-import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
-import type { BaseEvents } from '../agStack/interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
-import type { AgInputFieldParams } from '../interfaces/agFieldParams';
+import type { AgComponentSelector } from '../interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { BaseEvents } from '../interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
 import { AgAbstractInputField } from './agAbstractInputField';
-import type { AgComponentSelectorType } from './component';
+import type { AgInputFieldParams } from './agFieldParams';
+import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 export class AgInputTextArea<
     TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
@@ -48,7 +48,7 @@ export class AgInputTextArea<
     }
 }
 
-export const AgInputTextAreaSelector: AgComponentSelector<AgComponentSelectorType> = {
+export const AgInputTextAreaSelector: AgComponentSelector<AgWidgetSelectorType> = {
     selector: 'AG-INPUT-TEXT-AREA',
     component: AgInputTextArea,
 };

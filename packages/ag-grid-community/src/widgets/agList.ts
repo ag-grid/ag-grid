@@ -1,6 +1,7 @@
+import { _setAriaRole } from '../agStack/utils/ariaUtils';
 import { KeyCode } from '../constants/keyCode';
 import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
-import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
+import { _setAriaPosInSet, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
 import { _createElement, _isVisible, _removeFromParent } from '../utils/dom';
 import { Component } from './component';
 

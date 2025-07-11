@@ -1,0 +1,7 @@
+export type AgWidgetSelectorType =
+    | 'AG-CHECKBOX'
+    | 'AG-INPUT-DATE-FIELD'
+    | 'AG-INPUT-NUMBER-FIELD'
+    | 'AG-INPUT-TEXT-AREA'
+    | 'AG-INPUT-TEXT-FIELD'
+    | 'AG-TOGGLE-BUTTON';

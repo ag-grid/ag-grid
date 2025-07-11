@@ -1,10 +1,11 @@
+import { _getActiveDomElement } from '../agStack/utils/beanUtils';
+import { _exists } from '../agStack/utils/genericUtils';
 import { _getTooltipCompDetails } from '../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { _addGridCommonParams, _getActiveDomElement, _getDocument } from '../gridOptionsUtils';
+import { _addGridCommonParams, _getDocument } from '../gridOptionsUtils';
 import { _isIOSUserAgent } from '../utils/browser';
-import { _exists } from '../utils/generic';
 import type { PopupService } from '../widgets/popupService';
 import type { ITooltipComp, ITooltipParams } from './tooltipComponent';
 import type { ITooltipCtrl } from './tooltipFeature';

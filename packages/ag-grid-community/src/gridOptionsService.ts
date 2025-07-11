@@ -7,6 +7,7 @@ import type {
     IPropertiesService,
 } from './agStack/interfaces/iProperties';
 import { LocalEventService } from './agStack/localEventService';
+import { _exists } from './agStack/utils/genericUtils';
 import type { GridApi } from './api/gridApi';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
@@ -24,7 +25,6 @@ import { _areModulesGridScoped, _isModuleRegistered, _isUmd } from './modules/mo
 import type { AnyGridOptions } from './propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 import { _logIfDebug } from './utils/function';
-import { _exists } from './utils/generic';
 import type { MissingModuleErrors } from './validation/errorMessages/errorText';
 import { _error } from './validation/logging';
 import { COLUMN_DEFINITION_MOD_VALIDATIONS } from './validation/rules/colDefValidations';

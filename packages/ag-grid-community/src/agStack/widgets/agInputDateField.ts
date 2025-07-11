@@ -1,14 +1,15 @@
-import type { AgComponentSelector } from '../agStack/interfaces/iComponent';
-import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
-import type { BaseEvents } from '../agStack/interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
-import { _addOrRemoveAttribute } from '../agStack/utils/domUtils';
-import { _getActiveDomElement } from '../gridOptionsUtils';
-import { _isBrowserSafari } from '../utils/browser';
-import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
+import type { AgComponentSelector } from '../interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { BaseEvents } from '../interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
+import { _getActiveDomElement } from '../utils/beanUtils';
+import { _isBrowserSafari } from '../utils/browserUtils';
+import { _parseDateTimeFromString } from '../utils/dateUtils';
+import { _serialiseDate } from '../utils/dateUtils';
+import { _addOrRemoveAttribute } from '../utils/domUtils';
 import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
-import type { AgComponentSelectorType } from './component';
+import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 export class AgInputDateField<
     TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
@@ -124,7 +125,7 @@ export class AgInputDateField<
     }
 }
 
-export const AgInputDateFieldSelector: AgComponentSelector<AgComponentSelectorType> = {
+export const AgInputDateFieldSelector: AgComponentSelector<AgWidgetSelectorType> = {
     selector: 'AG-INPUT-DATE-FIELD',
     component: AgInputDateField,
 };

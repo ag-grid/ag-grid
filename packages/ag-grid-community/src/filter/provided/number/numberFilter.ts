@@ -1,8 +1,8 @@
+import { AgInputNumberField } from '../../../agStack/widgets/agInputNumberField';
+import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/dom';
 import { _makeNull } from '../../../utils/generic';
-import { AgInputNumberField } from '../../../widgets/agInputNumberField';
-import { AgInputTextField } from '../../../widgets/agInputTextField';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';

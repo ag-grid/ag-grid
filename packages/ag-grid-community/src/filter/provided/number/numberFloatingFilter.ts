@@ -1,6 +1,6 @@
+import { AgInputNumberField } from '../../../agStack/widgets/agInputNumberField';
+import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
 import { BeanStub } from '../../../context/beanStub';
-import { AgInputNumberField } from '../../../widgets/agInputNumberField';
-import { AgInputTextField } from '../../../widgets/agInputTextField';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';

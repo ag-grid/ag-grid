@@ -1,16 +1,9 @@
 import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
+import { _setAriaLabelledBy } from '../agStack/utils/ariaUtils';
 import { _removeAriaAttribute, _setAriaAttribute, _toggleAriaAttribute } from '../agStack/utils/ariaUtils';
 import type { SortDirection } from '../entities/colDef';
 
 export type ColumnSortState = 'ascending' | 'descending' | 'other' | 'none';
-
-export function _setAriaRole(element: Element, role?: string | null) {
-    if (role) {
-        element.setAttribute('role', role);
-    } else {
-        element.removeAttribute('role');
-    }
-}
 
 export function _getAriaSortState(sortDirection: SortDirection | 'mixed'): ColumnSortState {
     let sort: ColumnSortState;
@@ -37,19 +30,7 @@ export function _getAriaPosInSet(element: Element): number {
     return parseInt(element.getAttribute('aria-posinset')!, 10);
 }
 
-export function _getAriaLabel(element: Element): string | null {
-    return element.getAttribute('aria-label');
-}
-
 // ARIA ATTRIBUTE SETTERS
-export function _setAriaLabel(element: Element, label?: string | null): void {
-    _toggleAriaAttribute(element, 'label', label);
-}
-
-export function _setAriaLabelledBy(element: Element, labelledBy?: string): void {
-    _toggleAriaAttribute(element, 'labelledby', labelledBy);
-}
-
 export function _setAriaDescribedBy(element: Element, describedby?: string): void {
     _toggleAriaAttribute(element, 'describedby', describedby);
 }

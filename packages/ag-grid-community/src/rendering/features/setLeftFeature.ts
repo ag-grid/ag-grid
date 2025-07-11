@@ -1,3 +1,4 @@
+import { _exists } from '../../agStack/utils/genericUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
@@ -6,7 +7,6 @@ import { isColumnGroup } from '../../entities/agColumnGroup';
 import { _isDomLayout } from '../../gridOptionsUtils';
 import { _setAriaColSpan } from '../../utils/aria';
 import { _last } from '../../utils/array';
-import { _exists } from '../../utils/generic';
 
 export class SetLeftFeature extends BeanStub {
     private ariaEl: HTMLElement;

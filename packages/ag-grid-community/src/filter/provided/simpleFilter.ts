@@ -1,4 +1,6 @@
 import { _setDisabled, _setDisplayed } from '../../agStack/utils/domUtils';
+import { AgAbstractInputField } from '../../agStack/widgets/agAbstractInputField';
+import { AgRadioButton } from '../../agStack/widgets/agRadioButton';
 import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayParams } from '../../interfaces/iFilter';
 import { _areEqual } from '../../utils/array';
@@ -6,9 +8,7 @@ import type { ElementParams } from '../../utils/dom';
 import { _createElement, _removeFromParent } from '../../utils/dom';
 import { AgPromise } from '../../utils/promise';
 import { _warn } from '../../validation/logging';
-import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
 import type { ListOption } from '../../widgets/agList';
-import { AgRadioButton } from '../../widgets/agRadioButton';
 import { AgSelect } from '../../widgets/agSelect';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';

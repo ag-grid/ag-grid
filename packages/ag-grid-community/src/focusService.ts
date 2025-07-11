@@ -1,3 +1,4 @@
+import { _getActiveDomElement } from './agStack/utils/beanUtils';
 import type { ColumnModel } from './columns/columnModel';
 import type { VisibleColsService } from './columns/visibleColsService';
 import { KeyCode } from './constants/keyCode';
@@ -9,7 +10,7 @@ import type { AgColumnGroup } from './entities/agColumnGroup';
 import { _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
-import { _getActiveDomElement, _getDomData } from './gridOptionsUtils';
+import { _getDomData } from './gridOptionsUtils';
 import { DOM_DATA_KEY_HEADER_CTRL } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
 import { getFocusHeaderRowCount } from './headerRendering/headerUtils';

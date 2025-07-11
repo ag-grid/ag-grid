@@ -1,3 +1,4 @@
+import { _exists } from '../agStack/utils/genericUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
@@ -11,7 +12,6 @@ import type { GridHeaderCtrl } from '../headerRendering/gridHeaderCtrl';
 import type { CellMouseListenerFeature } from '../rendering/cell/cellMouseListenerFeature';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _isEventSupported } from '../utils/event';
-import { _exists } from '../utils/generic';
 import type { LongTapEvent, TapEvent, TouchListenerEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
 
