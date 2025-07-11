@@ -1,12 +1,12 @@
-import { AgComponentStub } from '../agStack/agComponentStub';
-import { KeyCode } from '../agStack/constants/keyCode';
-import type { AgCoreBean } from '../agStack/interfaces/iBean';
-import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
-import type { BaseEvents } from '../agStack/interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
-import type { BaseTooltipCtrl, ITooltipFeature } from '../agStack/interfaces/iTooltip';
-import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../agStack/utils/ariaUtils';
-import { _createAgElement, _isVisible, _removeFromParent } from '../agStack/utils/domUtils';
+import { AgComponentStub } from '../agComponentStub';
+import { KeyCode } from '../constants/keyCode';
+import type { AgCoreBean } from '../interfaces/iBean';
+import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { BaseEvents } from '../interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
+import type { BaseTooltipCtrl, ITooltipFeature } from '../interfaces/iTooltip';
+import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/ariaUtils';
+import { _createAgElement, _isVisible, _removeFromParent } from '../utils/domUtils';
 
 export interface ListOption<TValue = string> {
     value: TValue;

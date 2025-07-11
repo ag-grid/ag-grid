@@ -1,18 +1,18 @@
-import type { AgComponentStub } from '../agStack/agComponentStub';
-import { KeyCode } from '../agStack/constants/keyCode';
-import { RefPlaceholder } from '../agStack/interfaces/iComponent';
-import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
-import type { BaseEvents } from '../agStack/interfaces/iEvent';
-import type { AddPopupParams } from '../agStack/interfaces/iPopup';
-import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
-import { _setAriaExpanded, _setAriaRole } from '../agStack/utils/ariaUtils';
-import { _isNothingFocused } from '../agStack/utils/beanUtils';
-import type { AgElementParams } from '../agStack/utils/domUtils';
-import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../agStack/utils/domUtils';
-import type { AgAbstractFieldEvent } from '../agStack/widgets/agAbstractField';
-import { AgAbstractField } from '../agStack/widgets/agAbstractField';
-import type { AgPickerFieldParams } from '../agStack/widgets/agPickerFieldParams';
+import type { AgComponentStub } from '../agComponentStub';
+import { KeyCode } from '../constants/keyCode';
+import { RefPlaceholder } from '../interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { BaseEvents } from '../interfaces/iEvent';
+import type { AddPopupParams } from '../interfaces/iPopup';
+import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
+import { _setAriaExpanded, _setAriaRole } from '../utils/ariaUtils';
+import { _isNothingFocused } from '../utils/beanUtils';
+import type { AgElementParams } from '../utils/domUtils';
+import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../utils/domUtils';
+import type { AgAbstractFieldEvent } from './agAbstractField';
+import { AgAbstractField } from './agAbstractField';
 import { agPickerFieldCSS } from './agPickerField.css-GENERATED';
+import type { AgPickerFieldParams } from './agPickerFieldParams';
 
 export type AgPickerFieldEvent = AgAbstractFieldEvent | 'pickerHidden';
 

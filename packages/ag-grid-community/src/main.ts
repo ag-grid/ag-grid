@@ -119,6 +119,7 @@ export { IEventEmitter, IEventListener } from './agStack/interfaces/iEventEmitte
 export { _isEventFromPrintableCharacter } from './agStack/utils/keyboardUtils';
 export { PopupEventParams } from './agStack/interfaces/iPopup';
 export { ScrollDirection } from './agStack/interfaces/iEvent';
+export { KeyCode } from './agStack/constants/keyCode';
 
 // AG Stack Widgets
 export {
@@ -141,6 +142,10 @@ export {
 } from './agStack/widgets/agInputNumberField';
 export { AgInputDateField } from './agStack/widgets/agInputDateField';
 export { AgAbstractLabel } from './agStack/widgets/agAbstractLabel';
+export { AgSelect, AgSelectParams, AgSelectSelector } from './agStack/widgets/agSelect';
+export { ListOption } from './agStack/widgets/agList';
+export { AgPickerField } from './agStack/widgets/agPickerField';
+export { AgPickerFieldParams } from './agStack/widgets/agPickerFieldParams';
 
 // excel
 export {
@@ -475,7 +480,7 @@ export {
     GetCellEditorInstancesParams,
     EditingCellPosition,
 } from './interfaces/iCellEditor';
-export { AgAbstractCellEditor } from './widgets/agAbstractCellEditor';
+export { AgAbstractCellEditor } from './edit/cellEditors/agAbstractCellEditor';
 export { ILargeTextEditorParams } from './edit/cellEditors/iLargeTextCellEditor';
 export type { LargeTextCellEditor } from './edit/cellEditors/largeTextCellEditor';
 export type { PopupEditorWrapper } from './edit/cellEditors/popupEditorWrapper';
@@ -641,11 +646,7 @@ export type { RowRangeSelectionContext } from './selection/rowRangeSelectionCont
 export type { CellStyleService } from './styling/cellStyleService';
 
 // widgets
-
-export { AgPickerFieldParams } from './agStack/widgets/agPickerFieldParams';
 export { RichSelectParams } from './interfaces/iRichCellEditorParams';
-export { AgSelect, AgSelectParams, AgSelectSelector } from './widgets/agSelect';
-export { ListOption } from './widgets/agList';
 export { Component } from './widgets/component';
 export {
     ManagedFocusFeature,
@@ -661,8 +662,6 @@ export { PopupPositionParams } from './interfaces/iPopupPositionParams';
 export { TouchListener, TapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
 export { FocusableContainer } from './interfaces/iFocusableContainer';
 export * from './widgets/gridWidgetTypes';
-
-export { AgPickerField } from './widgets/agPickerField';
 
 // range
 export {
@@ -727,7 +726,6 @@ export { ICsvCreator } from './interfaces/iCsvCreator';
 export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export type { CellNavigationService } from './navigation/cellNavigationService';
-export { KeyCode } from './agStack/constants/keyCode';
 export { Direction } from './constants/direction';
 export { GridParams, Params, GridCoreCreator, createGrid } from './grid';
 export { provideGlobalGridOptions, GlobalGridOptionsMergeStrategy, _getGlobalGridOption } from './globalGridOptions';

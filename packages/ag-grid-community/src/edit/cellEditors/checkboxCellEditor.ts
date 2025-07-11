@@ -3,8 +3,8 @@ import { AgCheckboxSelector } from '../../agStack/widgets/agCheckbox';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _getAriaCheckboxStateName } from '../../utils/aria';
 import type { ElementParams } from '../../utils/dom';
-import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
 import type { GridCheckbox } from '../../widgets/gridWidgetTypes';
+import { AgAbstractCellEditor } from './agAbstractCellEditor';
 
 const CheckboxCellEditorElement: ElementParams = {
     tag: 'div',

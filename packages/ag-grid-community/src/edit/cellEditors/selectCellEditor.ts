@@ -1,5 +1,7 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
 import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
+import type { ListOption } from '../../agStack/widgets/agList';
+import { AgSelectSelector } from '../../agStack/widgets/agSelect';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
@@ -7,10 +9,8 @@ import type { ElementParams } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
 import { _warn } from '../../validation/logging';
 import type { ValueService } from '../../valueService/valueService';
-import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
-import type { ListOption } from '../../widgets/agList';
-import { AgSelectSelector } from '../../widgets/agSelect';
 import type { GridSelect } from '../../widgets/gridWidgetTypes';
+import { AgAbstractCellEditor } from './agAbstractCellEditor';
 import type { ISelectCellEditorParams } from './iSelectCellEditor';
 
 interface SelectCellEditorParams<TData = any, TValue = any, TContext = any>

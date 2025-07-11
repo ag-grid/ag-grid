@@ -9,12 +9,12 @@ import type {
     AgInputTextFieldParams,
 } from '../agStack/widgets/agInputTextField';
 import type { AgRadioButton } from '../agStack/widgets/agRadioButton';
+import type { AgSelect } from '../agStack/widgets/agSelect';
 import type { AgToggleButton } from '../agStack/widgets/agToggleButton';
 import type { BeanCollection } from '../context/context';
 import type { AgEventTypeParams, AllEventsWithoutGridCommon } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
-import type { AgSelect } from './agSelect';
 import type { AgComponentSelectorType } from './component';
 
 export type GridInputTextArea = AgInputTextArea<

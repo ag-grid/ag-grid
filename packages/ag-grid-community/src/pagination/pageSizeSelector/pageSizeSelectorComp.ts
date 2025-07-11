@@ -1,12 +1,12 @@
 import { _clearElement } from '../../agStack/utils/domUtils';
+import type { ListOption } from '../../agStack/widgets/agList';
+import { AgSelect } from '../../agStack/widgets/agSelect';
 import type { BeanCollection } from '../../context/context';
 import type { PaginationChangedEvent } from '../../events';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _areEqual } from '../../utils/array';
 import type { ElementParams } from '../../utils/dom';
 import { _warn } from '../../validation/logging';
-import type { ListOption } from '../../widgets/agList';
-import { AgSelect } from '../../widgets/agSelect';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import type { GridSelect } from '../../widgets/gridWidgetTypes';
