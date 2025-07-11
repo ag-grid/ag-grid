@@ -1,6 +1,37 @@
 ---
 import Layout from '@layouts/Layout.astro';
-import { About } from '@components/about/About';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import styles from '@pages-styles/about.module.scss';
+
+import BornSvg from '../images/about-icons/born.svg';
+import RocketSvg from '../images/about-icons/rocket.svg';
+import ConferenceSvg from '../images/about-icons/conference.svg';
+import BarChartSvg from '../images/about-icons/bar-chart.svg';
+import ChartSvg from '../images/about-icons/chart.svg';
+import LicenseSvg from '../images/about-icons/license.svg';
+import DonutAcceleratingSvg from '../images/about-icons/donut-accelerating.svg';
+
+const carouselImages = [
+    urlWithBaseUrl('images/about/carousel/carousel-1.png'),
+    urlWithBaseUrl('images/about/carousel/carousel-17.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-7.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-18.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-8.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-5.png'),
+    urlWithBaseUrl('images/about/carousel/carousel-6.png'),
+    urlWithBaseUrl('images/about/carousel/carousel-9.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-2.png'),
+    urlWithBaseUrl('images/about/carousel/carousel-10.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-11.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-12.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-16.jpg'),
+    urlWithBaseUrl('images/about/carousel/carousel-3.png'),
+];
+
+const allCarouselImages = [...carouselImages, ...carouselImages];
 ---
 
 <Layout
@@ -9,5 +40,455 @@ import { About } from '@components/about/About';
     showSearchBar={true}
     showDocsNav={false}
 >
-    <About client:load />
+    <div class={styles.aboutPage}>
+        <div class="layout-max-width-small">
+            <section class={styles.introSection}>
+                <h2>
+                    Open source heart, <br />
+                    <span>enterprise muscle.</span>
+                </h2>
+                <p>
+                    Our community versions remain true to our roots, offering free, open-source grids and charts
+                    delivering world-class performance. Our enterprise products deliver powerful features and direct
+                    developer technical support.
+                </p>
+            </section>
+
+            <div>
+                <img
+                    src={urlWithBaseUrl('images/about/about-us.png')}
+                    class={`${styles.aboutHeaderImage} ${styles.aboutHeaderImageLight}`}
+                />
+                <img
+                    src={urlWithBaseUrl('images/about/dark-mode-about.png')}
+                    class={`${styles.aboutHeaderImage} ${styles.aboutHeaderImageDark}`}
+                />
+            </div>
+            <section class={styles.customerLogos}>
+                <CustomerLogos client:load />
+                <p class={styles.footnote}>
+                    <span>Built by developers for developers</span>, AG Grid was born out of frustration with the
+                    performance limitations of existing solutions. Our grid and charts products are now trusted by
+                    developers worldwide when building their applications.
+                </p>
+            </section>
+
+            <section class={styles.memoriumSection}>
+                <div class={styles.content}>
+                    <img src={urlWithBaseUrl('images/about/niall.png')} class={styles.aboutHeaderImage} />
+                    <div>
+                        <h2>In memory of our amazing founder Niall Crosby</h2>
+                        <p>
+                            AG Grid's success has a lot to do with Niall's ingenunity, craft and commitment to building
+                        </p>
+                        <a class="button-tertiary" href="https://github.com/ag-grid/ag-grid-demos/tree/main/finance">
+                            <span>Read Niall's story</span>
+                            <Icon name="chevronRight" />
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section class={styles.historySection}>
+                <div class={styles.historyContent}>
+                    <h2>Our history</h2>
+                    <p>
+                        Born from a gap in the market, now providing world-class data-grids and charts to millions of
+                        users.
+                    </p>
+                </div>
+                <div class={styles.timeline}>
+                    <div class={styles.timelineLine}></div>
+                    <div class={styles.timelineItem}>
+                        <div class={styles.timelineYear}>2016</div>
+                        <div class={styles.timelineIcon}>
+                            <BornSvg alt="Born icon" />
+                        </div>
+                        <div class={styles.timelineContent}>
+                            <div class={styles.timelineTitle}>AG Grid is born</div>
+                            <div class={styles.timelineDesc}>
+                                <a href="">Niall Crosby</a> creates AG Grid as an open-source data grid solution to address
+                                a gap in the market
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.timelineItem}>
+                        <div class={styles.timelineYear}>2017</div>
+                        <div class={styles.timelineIcon}>
+                            <RocketSvg alt="Rocket icon" />
+                        </div>
+                        <div class={styles.timelineContent}>
+                            <div class={styles.timelineTitle}>Commercial launch</div>
+                            <div class={styles.timelineDesc}>
+                                <a href="">AG Grid Enterprise</a> is launched to widespread adoption within the developer
+                                community.
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.timelineItem}>
+                        <div class={styles.timelineYear}>2018</div>
+                        <div class={styles.timelineIcon}>
+                            <ConferenceSvg alt="Conference icon" />
+                        </div>
+                        <div class={styles.timelineContent}>
+                            <div class={styles.timelineTitle}>AG Grid Conf</div>
+                            <div class={styles.timelineDesc}>
+                                Dedicated AG Grid conferences delivered in London & New York, engaging us with our
+                                growing developer community.
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.timelineItem}>
+                        <div class={styles.timelineYear}>2019</div>
+                        <div class={styles.timelineIcon}>
+                            <BarChartSvg alt="Bar chart icon" />
+                        </div>
+                        <div class={styles.timelineContent}>
+                            <div class={styles.timelineTitle}>Integrated Charting</div>
+                            <div class={styles.timelineDesc}>
+                                <a href="ic-docs-page-link">Integrated Charts</a> is launched within AG Grid. The first JS
+                                data-grid to contain built-in charting.
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.timelineItem}>
+                        <div class={styles.timelineYear}>2020</div>
+                        <div class={styles.timelineIcon}>
+                            <ChartSvg alt="Chart icon" />
+                        </div>
+                        <div class={styles.timelineContent}>
+                            <div class={styles.timelineTitle}>AG Charts</div>
+                            <div class={styles.timelineDesc}>
+                                <a href="https://charts.ag-grid.com">AG Charts</a> is released as a standalone library with
+                                both community and enterprise versions.
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.timelineItem}>
+                        <div class={styles.timelineYear}>2021</div>
+                        <div class={styles.timelineIcon}>
+                            <LicenseSvg alt="License icon" />
+                        </div>
+                        <div class={styles.timelineContent}>
+                            <div class={styles.timelineTitle}>Self-service licensing</div>
+                            <div class={styles.timelineDesc}>
+                                <a href="e-com-link">eCommerce platform</a> is launched to allow customers to self-service.
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.timelineItem}>
+                        <div class={styles.timelineYear}>2022</div>
+                        <div class={styles.timelineIcon}>
+                            <ConferenceSvg alt="Conference icon" />
+                        </div>
+                        <div class={styles.timelineContent}>
+                            <div class={styles.timelineTitle}>Mass adoption</div>
+                            <div class={styles.timelineDesc}>
+                                <a href="npm-grid-link">AG Grid Community</a> breaks one million downloads per month on NPM.
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.timelineItem}>
+                        <div class={styles.timelineYear}>2023</div>
+                        <div class={styles.timelineIcon}>
+                            <DonutAcceleratingSvg alt="Donut accelerating icon" />
+                        </div>
+                        <div class={styles.timelineContent}>
+                            <div class={styles.timelineTitle}>Accelerating Charts</div>
+                            <div class={styles.timelineDesc}>
+                                <a href="npm-charts-link">AG Charts Community</a> hits 500k downloads per month across all
+                                frameworks.
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.timelineItem}>
+                        <div class={styles.timelineYear}>2024</div>
+                        <div class={styles.timelineIcon}>
+                            <ConferenceSvg alt="Conference icon" />
+                        </div>
+                        <div class={styles.timelineContent}>
+                            <div class={styles.timelineTitle}>Leadership updates</div>
+                            <div class={styles.timelineDesc}>
+                                <a href="leadership-section-anchor-link">John Masterson</a> appointed CEO, a new board is
+                                formed.
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.timelineItem}>
+                        <div class={`${styles.timelineYear} ${styles.timelineNow}`}>Now</div>
+                        <div class={styles.timelineIcon}>
+                            <RocketSvg alt="Rocket icon" />
+                        </div>
+                        <div class={styles.timelineContent}>
+                            <div class={styles.timelineTitle}>What's next</div>
+                            <div class={styles.timelineDesc}>
+                                We're always on the look out for the next exciting product, stay tuned
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class={styles.principlesSection}>
+                <div class={styles.principlesContent}>
+                    <h2>Our principles</h2>
+                    <p>The values that define the world's best data grid</p>
+                </div>
+                <div class={styles.principlesList}>
+                    <div class={styles.principleItem}>
+                        <div class={styles.principleIcon}>
+                            <BornSvg alt="Born icon" />
+                        </div>
+                        <div class={styles.principleText}>
+                            <div class={styles.principleTitle}>Developer-first</div>
+                            <div class={styles.principleDesc}>
+                                Our approach to create innovative, market-leading products
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.principleItem}>
+                        <div class={styles.principleIcon}>
+                            <ChartSvg alt="Chart icon" />
+                        </div>
+                        <div class={styles.principleText}>
+                            <div class={styles.principleTitle}>Technical excellence</div>
+                            <div class={styles.principleDesc}>
+                                Deliver consistent quality and exceptional end-user experiences
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.principleItem}>
+                        <div class={styles.principleIcon}>
+                            <ConferenceSvg alt="Conference icon" />
+                        </div>
+                        <div class={styles.principleText}>
+                            <div class={styles.principleTitle}>Deep understanding</div>
+                            <div class={styles.principleDesc}>
+                                Forging a deep understanding of our customers' problems
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.principleItem}>
+                        <div class={styles.principleIcon}>
+                            <BarChartSvg alt="Bar chart icon" />
+                        </div>
+                        <div class={styles.principleText}>
+                            <div class={styles.principleTitle}>Measurable value</div>
+                            <div class={styles.principleDesc}>
+                                Testable solutions that compare favourably to any industry benchmarks
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.principleItem}>
+                        <div class={styles.principleIcon}>
+                            <ConferenceSvg alt="Conference icon" />
+                        </div>
+                        <div class={styles.principleText}>
+                            <div class={styles.principleTitle}>Exceptional talent</div>
+                            <div class={styles.principleDesc}>
+                                We attract and develop world-class developer and operations talent.
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.principleItem}>
+                        <div class={styles.principleIcon}>
+                            <RocketSvg alt="Rocket icon" />
+                        </div>
+                        <div class={styles.principleText}>
+                            <div class={styles.principleTitle}>Culture of innovation</div>
+                            <div class={styles.principleDesc}>
+                                Cultivate a culture of innovation, excellence, and success
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class={styles.leadershipSection}>
+                <div class={styles.leadershipContent}>
+                    <h2>Leadership</h2>
+                    <p>Decades of experience, that you can count on</p>
+                </div>
+                <div class={styles.leadershipList}>
+                    <div class={styles.leaderItem}>
+                        <img
+                            src={urlWithBaseUrl('images/about/1.png')}
+                            class={styles.leaderPhoto}
+                            alt="John Matterson"
+                        />
+                        <div class={styles.leaderText}>
+                            <div class={styles.leaderName}>John Matterson</div>
+                            <div class={styles.leaderTitle}>CEO</div>
+                            <div class={styles.leaderDesc}>
+                                John brings a wealth of experience in technology leadership. He is passionate about
+                                building high-performing teams and delivering innovative solutions.
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.leaderItem}>
+                        <img src={urlWithBaseUrl('images/about/2.png')} class={styles.leaderPhoto} alt="Rob Clarke" />
+                        <div class={styles.leaderText}>
+                            <div class={styles.leaderName}>Rob Clarke</div>
+                            <div class={styles.leaderTitle}>CTO</div>
+                            <div class={styles.leaderDesc}>
+                                Rob oversees all technical aspects of the company. He is dedicated to driving innovation
+                                and ensuring technical excellence across the organization.
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.leaderItem}>
+                        <img src={urlWithBaseUrl('images/about/3.png')} class={styles.leaderPhoto} alt="Rob Grubb" />
+                        <div class={styles.leaderText}>
+                            <div class={styles.leaderName}>Rob Grubb</div>
+                            <div class={styles.leaderTitle}>CFO</div>
+                            <div class={styles.leaderDesc}>
+                                Experienced financial professional, qualifying as a chartered accountant with Big Four
+                                in 2005 and focusing solely on software businesses since. Extensive experience leading
+                                strategic, financial, and commercial initiatives and teams at managerial, executive, and
+                                PLC Board levels. Holds a current practicing certificate with the Institute of Chartered
+                                Accountants of Scotland.
+                            </div>
+                        </div>
+                    </div>
+                    <div class={styles.leaderItem}>
+                        <img src={urlWithBaseUrl('images/about/4.png')} class={styles.leaderPhoto} alt="Jon Williams" />
+                        <div class={styles.leaderText}>
+                            <div class={styles.leaderName}>Jon Williams</div>
+                            <div class={styles.leaderTitle}>VP Sales</div>
+                            <div class={styles.leaderDesc}>
+                                Jon is an experienced commercial leader having spent the past 25 years in the software
+                                industry across a range of companies from very small start-ups to large global
+                                organisations. Recent roles include Boxever, a Dublin based SaaS personalisation engine
+                                platform where he developed the go-to-market strategy that ultimately led to the company
+                                being acquired by Sitecore, a large player in the CMS market. At Sitecore Jon then led
+                                the integration of the Boxever business as well as ran the global new name SaaS business
+                                unit. Prior to Boxever Jon was the Senior Vice President at Aprimo, a US based SaaS
+                                marketing platform, where he ran all of their non-US operations.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class={styles.leaderItem}>
+                        <img src={urlWithBaseUrl('images/about/6.png')} class={styles.leaderPhoto} alt="Jason Osmond" />
+                        <div class={styles.leaderText}>
+                            <div class={styles.leaderName}>Jason Osmond</div>
+                            <div class={styles.leaderTitle}>Chair of the Board</div>
+                            <div class={styles.leaderDesc}>
+                                Jason is a seasoned technology executive with over 25 years of experience driving
+                                growth, scaling operations, and building high-performing, commercially focused
+                                organisations. He brings a strong track record of value creation through strategic
+                                leadership, operational discipline, and a focus on sustainable, recurring revenue
+                                models. As Chairman, Jason works closely with AG Grid's leadership team to support
+                                long-term growth and market expansion.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class={styles.lifeSectionWrapper}>
+            <h2 class={styles.lifeHeading}>Life at AG Grid</h2>
+            <p>
+                We are headquartered in London, with a team of 60 professionals obsessed about building our products,
+                bringing them to market and ensuring our customers are successful with them.
+            </p>
+            <div class={styles.carouselOuter}>
+                <div class={styles.blurLeft}></div>
+                <div class={styles.carouselTrack} id="carousel-track">
+                    {
+                        allCarouselImages.map((src, idx) => (
+                            <div class={styles.carouselImageWrapper} key={idx}>
+                                <img src={src} alt={`Life at AG Grid ${idx + 1}`} class={styles.carouselImage} />
+                            </div>
+                        ))
+                    }
+                </div>
+                <div class={styles.blurRight}></div>
+            </div>
+        </div>
+
+        <div class="layout-max-width-small">
+            <section class={styles.resourcesSection}>
+                <div class={styles.resourcesContent}>
+                    <h2>Resources</h2>
+                    <p>How to find us, common resources</p>
+                </div>
+                <div class={styles.resourcesList}>
+                    <div class={styles.resourceItem}>
+                        <div class={styles.resourceIcon}>
+                            <Icon name="lightBulb" />
+                        </div>
+                        <div class={styles.resourceText}>
+                            <div class={styles.resourceTitle}>Blog</div>
+                            <div class={styles.resourceDesc}>Some content goes here</div>
+                        </div>
+                    </div>
+                    <div class={styles.resourceItem}>
+                        <div class={styles.resourceIcon}>
+                            <Icon name="lightBulb" />
+                        </div>
+                        <div class={styles.resourceText}>
+                            <div class={styles.resourceTitle}>Press Kit</div>
+                            <div class={styles.resourceDesc}>Some content goes here</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class={styles.contactSection}>
+                <div class={styles.contactContent}>
+                    <h2>Get in touch</h2>
+                    <p>We are here to help with licenses, developer support and any other queries.</p>
+                </div>
+                <div class={styles.contactOffice}>
+                    <strong>Our office</strong>
+                    <br />
+                    Bank Chambers
+                    <br />
+                    6 Borough High Street
+                    <br />
+                    London
+                    <br />
+                    SE1 9QQ
+                </div>
+                <div class={styles.contactEmail}>
+                    Contact us over email
+                    <br />
+                    <span class={styles.contactEmailDesc}>
+                        We can be also reached at <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>
+                    </span>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const track = document.getElementById('carousel-track');
+            if (!track) return;
+            let animationFrame: number;
+            let start: number | null = null;
+            let scrollLeft = 0;
+            const speed = 1.5; // px per ms (increased speed)
+
+            const animate = (timestamp: number) => {
+                if (start === null) start = timestamp;
+                scrollLeft += speed;
+                if (scrollLeft >= track.scrollWidth / 2) {
+                    scrollLeft = 0;
+                }
+                track.scrollLeft = scrollLeft;
+                animationFrame = requestAnimationFrame(animate);
+            };
+            animationFrame = requestAnimationFrame(animate);
+
+            // Cleanup when the user navigates away
+            window.addEventListener('beforeunload', () => {
+                if (animationFrame) {
+                    cancelAnimationFrame(animationFrame);
+                }
+            });
+        });
+    </script>
 </Layout>
