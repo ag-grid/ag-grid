@@ -92,7 +92,7 @@ async function createIssue() {
         fields: {
             project: { key: PROJECT_ID },
             summary: summary,
-            description: description + `\n\n${AUTOMATED_MESSAGE}`,
+            description: description + `\n\nNo QA needed\n\n${AUTOMATED_MESSAGE}`,
             issuetype: { name: 'Bug' },
             assignee: {
                 accountId: PERFORMANCE_CHAMP_USER_IDS[Math.floor(Math.random() * PERFORMANCE_CHAMP_USER_IDS.length)],
