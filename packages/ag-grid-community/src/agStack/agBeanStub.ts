@@ -1,7 +1,7 @@
 import type { AgEvent } from './interfaces/agEvent';
 import type { AgBaseBean, AgBean } from './interfaces/iBean';
 import type { AgCoreBeanCollection, IContext } from './interfaces/iContext';
-import type { AgEventService } from './interfaces/iEvent';
+import type { AgEventService, BaseEvents } from './interfaces/iEvent';
 import type { IAgEventEmitter, IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
 import type { LocaleTextFunc } from './interfaces/iLocaleService';
 import type {
@@ -22,10 +22,10 @@ export type AgEventOrDestroyed<TEventType extends string> = TEventType | AgBeanS
 type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
 
 export abstract class AgBeanStub<
-        TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TRawEvents>,
+        TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
         TProperties extends BaseProperties,
-        TGlobalEvents,
-        TRawEvents extends AgEvent,
+        TGlobalEvents extends BaseEvents,
+        TCommon,
         TPropertiesService extends IPropertiesService<TProperties>,
         TLocalEventType extends string, // TODO move to end and add default
     >
@@ -44,7 +44,7 @@ export abstract class AgBeanStub<
     public __v_skip = true;
 
     protected beans: TBeanCollection;
-    protected eventSvc: AgEventService<TGlobalEvents, TRawEvents>;
+    protected eventSvc: AgEventService<TGlobalEvents, TCommon>;
     protected gos: TPropertiesService;
 
     public preWireBeans(beans: TBeanCollection): void {
@@ -115,24 +115,26 @@ export abstract class AgBeanStub<
     ) {
         return this._setupListeners<keyof HTMLElementEventMap>(object, handlers);
     }
-    public addManagedEventListeners(handlers: {
-        [K in keyof TGlobalEvents]?: (event: TGlobalEvents[K]) => void;
-    }) {
+    public addManagedEventListeners(
+        handlers:
+            | {
+                  [K in keyof TGlobalEvents]?: (event: TGlobalEvents[K]) => void;
+              }
+            | {
+                  [K in keyof BaseEvents]?: (event: BaseEvents[K]) => void;
+              }
+    ) {
         return this._setupListeners<keyof TGlobalEvents & string>(this.eventSvc, handlers);
     }
     public addManagedListeners<TEvent extends string>(
-        object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | AgEventService<TGlobalEvents, TRawEvents>,
+        object: IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | AgEventService<TGlobalEvents, TCommon>,
         handlers: EventHandlers<TEvent>
     ) {
         return this._setupListeners<TEvent>(object, handlers);
     }
 
     private _setupListeners<TEvent extends string>(
-        object:
-            | HTMLElement
-            | IEventEmitter<TEvent>
-            | IAgEventEmitter<TEvent>
-            | AgEventService<TGlobalEvents, TRawEvents>,
+        object: HTMLElement | IEventEmitter<TEvent> | IAgEventEmitter<TEvent> | AgEventService<TGlobalEvents, TCommon>,
         handlers: EventHandlers<TEvent>
     ) {
         const destroyFuncs: (() => null)[] = [];
@@ -146,12 +148,7 @@ export abstract class AgBeanStub<
     }
 
     private _setupListener<const T extends string>(
-        object:
-            | Window
-            | HTMLElement
-            | IEventEmitter<T>
-            | IAgEventEmitter<T>
-            | AgEventService<TGlobalEvents, TRawEvents>,
+        object: Window | HTMLElement | IEventEmitter<T> | IAgEventEmitter<T> | AgEventService<TGlobalEvents, TCommon>,
         event: T,
         listener: (event?: any) => void
     ): () => null {
@@ -168,7 +165,7 @@ export abstract class AgBeanStub<
                 return null;
             };
         } else {
-            const objIsEventService = isEventService<TGlobalEvents, TRawEvents>(object);
+            const objIsEventService = isEventService<TGlobalEvents, TCommon>(object);
             if (object instanceof HTMLElement) {
                 _addSafePassiveEventListener(this.beans.frameworkOverrides, object, event, listener);
             } else if (objIsEventService) {
@@ -352,8 +349,8 @@ function isAgEventEmitter<TEvent extends string>(
     return (object as IAgEventEmitter<TEvent>).__addEventListener !== undefined;
 }
 
-function isEventService<TGlobalEvents, TRawEvents extends AgEvent>(
+function isEventService<TGlobalEvents extends BaseEvents, TCommon>(
     object: any
-): object is AgEventService<TGlobalEvents, TRawEvents> {
-    return (object as AgEventService<TGlobalEvents, TRawEvents>).eventServiceType === 'global';
+): object is AgEventService<TGlobalEvents, TCommon> {
+    return (object as AgEventService<TGlobalEvents, TCommon>).eventServiceType === 'global';
 }

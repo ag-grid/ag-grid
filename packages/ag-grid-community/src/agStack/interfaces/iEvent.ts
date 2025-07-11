@@ -9,7 +9,23 @@ type AgEventServiceListener<TGlobalEvents, TEventType extends keyof TGlobalEvent
     params: TGlobalEvents[TEventType]
 ) => void;
 
-export interface AgEventService<TGlobalEvents, TRawEvents extends AgEvent> {
+export type WithoutCommon<TCommon, T> = Omit<T, keyof TCommon>;
+
+export interface AgCheckboxChangedEvent extends AgEvent<'checkboxChanged'> {
+    id: string;
+    name: string;
+    selected?: boolean;
+    previousValue: boolean | undefined;
+}
+export interface BaseEvents {
+    checkboxChanged: AgCheckboxChangedEvent;
+}
+
+export type AgRawEvents<TGlobalEvents extends BaseEvents, TCommon> = {
+    [K in keyof TGlobalEvents]: WithoutCommon<TCommon, TGlobalEvents[K]>;
+}[keyof TGlobalEvents];
+
+export interface AgEventService<TGlobalEvents extends BaseEvents, TCommon> {
     readonly eventServiceType: 'global';
 
     addListener<TEventType extends keyof TGlobalEvents & string>(
@@ -34,7 +50,7 @@ export interface AgEventService<TGlobalEvents, TRawEvents extends AgEvent> {
         async?: boolean
     ): void;
 
-    dispatchEvent(event: TRawEvents): void;
+    dispatchEvent(event: AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]): void;
 
-    dispatchEventOnce(event: TRawEvents): void;
+    dispatchEventOnce(event: AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]): void;
 }

@@ -1,10 +1,10 @@
 import { AgBeanStub } from './agBeanStub';
 import { CssClassManager } from './cssClassManager';
-import type { AgEvent } from './interfaces/agEvent';
 import type { AgBaseComponent, AgComponent } from './interfaces/iComponent';
 import type { AgComponentEvent, AgComponentSelector, VisibleChangedEvent } from './interfaces/iComponent';
 import { RefPlaceholder } from './interfaces/iComponent';
 import type { AgCoreBeanCollection } from './interfaces/iContext';
+import type { BaseEvents } from './interfaces/iEvent';
 import type { BaseProperties, IPropertiesService } from './interfaces/iProperties';
 import type { AgElementParams } from './utils/domUtils';
 import {
@@ -19,10 +19,10 @@ import {
 let compIdSequence = 0;
 
 export abstract class AgComponentStub<
-        TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TRawEvents>,
+        TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
         TProperties extends BaseProperties,
-        TGlobalEvents,
-        TRawEvents extends AgEvent,
+        TGlobalEvents extends BaseEvents,
+        TCommon,
         TPropertiesService extends IPropertiesService<TProperties>,
         TComponentSelectorType extends string,
         TLocalEventType extends string,
@@ -31,7 +31,7 @@ export abstract class AgComponentStub<
         TBeanCollection,
         TProperties,
         TGlobalEvents,
-        TRawEvents,
+        TCommon,
         TPropertiesService,
         TLocalEventType | AgComponentEvent
     >

@@ -1,5 +1,6 @@
 import type {
     AgCheckboxParams,
+    AgComponentSelectorType,
     AgFieldParams,
     AgInputNumberFieldParams,
     AgSelectParams,
@@ -56,8 +57,8 @@ export class ChartMenuParamsFactory extends BeanStub {
             min?: number;
             max?: number;
         }
-    ): AgInputNumberFieldParams {
-        return this.addValueParams<AgInputNumberFieldParams>(
+    ): AgInputNumberFieldParams<AgComponentSelectorType> {
+        return this.addValueParams<AgInputNumberFieldParams<AgComponentSelectorType>>(
             expression,
             {
                 label: this.chartTranslation.translate(labelKey),
@@ -117,9 +118,9 @@ export class ChartMenuParamsFactory extends BeanStub {
             readOnly?: boolean;
             passive?: boolean;
         }
-    ): AgCheckboxParams {
+    ): AgCheckboxParams<AgComponentSelectorType> {
         const value = this.chartOptionsProxy.getValue<boolean>(expression);
-        const params: AgCheckboxParams = {
+        const params: AgCheckboxParams<AgComponentSelectorType> = {
             label: this.chartTranslation.translate(labelKey),
             value,
             readOnly: options?.readOnly,
@@ -138,9 +139,9 @@ export class ChartMenuParamsFactory extends BeanStub {
             readOnly?: boolean;
             passive?: boolean;
         }
-    ): AgToggleButtonParams {
+    ): AgToggleButtonParams<AgComponentSelectorType> {
         const value = this.chartOptionsProxy.getValue<boolean>(expression);
-        const params: AgCheckboxParams = {
+        const params: AgCheckboxParams<AgComponentSelectorType> = {
             label: this.chartTranslation.translate(labelKey),
             labelAlignment: 'left',
             labelWidth: 'flex',

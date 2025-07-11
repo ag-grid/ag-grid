@@ -1,25 +1,43 @@
+import type { AgComponentSelector } from '../agStack/interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
+import type { BaseEvents } from '../agStack/interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
+import type { AgElementParams } from '../agStack/utils/domUtils';
 import { _setFixedWidth } from '../agStack/utils/domUtils';
 import type { AgFieldParams } from '../interfaces/agFieldParams';
 import { _getAriaLabel, _setAriaLabel, _setAriaLabelledBy } from '../utils/aria';
-import type { ElementParams } from '../utils/dom';
 import { AgAbstractLabel } from './agAbstractLabel';
-import type { ComponentSelector } from './component';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export type AgAbstractFieldEvent = 'fieldValueChanged';
 
 export abstract class AgAbstractField<
+    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties>,
+    TComponentSelectorType extends string,
     TValue,
     TConfig extends AgFieldParams = AgFieldParams,
     TEventType extends string = AgAbstractFieldEvent,
-> extends AgAbstractLabel<TConfig, TEventType | AgAbstractFieldEvent> {
+> extends AgAbstractLabel<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
+    TConfig,
+    TEventType | AgAbstractFieldEvent
+> {
     protected previousValue: TValue | null | undefined;
     protected value: TValue | null | undefined;
 
     constructor(
         config?: TConfig,
-        template?: ElementParams,
-        components?: ComponentSelector[],
+        template?: AgElementParams<TComponentSelectorType>,
+        components?: AgComponentSelector<TComponentSelectorType>[],
         protected readonly className?: string
     ) {
         super(config, template, components);

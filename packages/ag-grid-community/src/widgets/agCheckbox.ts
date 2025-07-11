@@ -1,8 +1,26 @@
+import type { AgComponentSelector } from '../agStack/interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
+import type { BaseEvents } from '../agStack/interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
 import type { AgCheckboxParams, LabelAlignment } from '../interfaces/agFieldParams';
 import { AgAbstractInputField } from './agAbstractInputField';
-import type { ComponentSelector } from './component';
+import type { AgComponentSelectorType } from './component';
 
-export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> extends AgAbstractInputField<
+export class AgCheckbox<
+    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties>,
+    TComponentSelectorType extends string,
+    TConfig extends AgCheckboxParams<TComponentSelectorType> = AgCheckboxParams<TComponentSelectorType>,
+> extends AgAbstractInputField<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
     HTMLInputElement,
     boolean,
     TConfig
@@ -139,7 +157,7 @@ export class AgCheckbox<TConfig extends AgCheckboxParams = AgCheckboxParams> ext
     }
 }
 
-export const AgCheckboxSelector: ComponentSelector = {
+export const AgCheckboxSelector: AgComponentSelector<AgComponentSelectorType> = {
     selector: 'AG-CHECKBOX',
     component: AgCheckbox,
 };

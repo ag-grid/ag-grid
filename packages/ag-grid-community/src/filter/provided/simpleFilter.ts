@@ -7,12 +7,12 @@ import { _createElement, _removeFromParent } from '../../utils/dom';
 import { AgPromise } from '../../utils/promise';
 import { _warn } from '../../validation/logging';
 import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
-import type { AgInputTextField } from '../../widgets/agInputTextField';
 import type { ListOption } from '../../widgets/agList';
 import { AgRadioButton } from '../../widgets/agRadioButton';
 import { AgSelect } from '../../widgets/agSelect';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
+import type { GridInputTextField, GridRadioButton } from '../../widgets/gridWidgetTypes';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import type {
     ICombinedSimpleModel,
@@ -49,7 +49,7 @@ type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterPara
 export abstract class SimpleFilter<
         M extends ISimpleFilterModel,
         V,
-        E = AgInputTextField,
+        E = GridInputTextField,
         P extends SimpleFilterDisplayParams<M> = SimpleFilterDisplayParams<M>,
     >
     extends ProvidedFilter<M | ICombinedSimpleModel<M>, V, P>
@@ -59,8 +59,8 @@ export abstract class SimpleFilter<
 
     protected readonly eTypes: AgSelect[] = [];
     protected readonly eJoinPanels: HTMLElement[] = [];
-    protected readonly eJoinAnds: AgRadioButton[] = [];
-    protected readonly eJoinOrs: AgRadioButton[] = [];
+    protected readonly eJoinAnds: GridRadioButton[] = [];
+    protected readonly eJoinOrs: GridRadioButton[] = [];
     protected readonly eConditionBodies: HTMLElement[] = [];
     private readonly listener = () => this.onUiChanged();
 
@@ -342,11 +342,11 @@ export abstract class SimpleFilter<
     }
 
     private createJoinOperator(
-        eJoinOperators: AgRadioButton[],
+        eJoinOperators: GridRadioButton[],
         eJoinOperatorPanel: HTMLElement,
         andOr: string
-    ): AgRadioButton {
-        const eJoinOperator = this.createManagedBean(new AgRadioButton());
+    ): GridRadioButton {
+        const eJoinOperator = this.createManagedBean<GridRadioButton>(new AgRadioButton());
         eJoinOperators.push(eJoinOperator);
         const baseClass = 'ag-filter-condition-operator';
         eJoinOperator.addCss(baseClass);
@@ -785,7 +785,7 @@ export abstract class SimpleFilter<
             .setDisabled(this.isReadOnly() || this.filterListOptions.length <= 1);
     }
 
-    private resetJoinOperatorAnd(eJoinOperatorAnd: AgRadioButton, index: number, uniqueGroupId: number): void {
+    private resetJoinOperatorAnd(eJoinOperatorAnd: GridRadioButton, index: number, uniqueGroupId: number): void {
         this.resetJoinOperator(
             eJoinOperatorAnd,
             index,
@@ -795,7 +795,7 @@ export abstract class SimpleFilter<
         );
     }
 
-    private resetJoinOperatorOr(eJoinOperatorOr: AgRadioButton, index: number, uniqueGroupId: number): void {
+    private resetJoinOperatorOr(eJoinOperatorOr: GridRadioButton, index: number, uniqueGroupId: number): void {
         this.resetJoinOperator(
             eJoinOperatorOr,
             index,
@@ -806,7 +806,7 @@ export abstract class SimpleFilter<
     }
 
     private resetJoinOperator(
-        eJoinOperator: AgRadioButton,
+        eJoinOperator: GridRadioButton,
         index: number,
         value: boolean,
         label: string,
@@ -822,13 +822,13 @@ export abstract class SimpleFilter<
     }
 
     private updateJoinOperatorsDisabled(): void {
-        const updater = (eJoinOperator: AgRadioButton, index: number) =>
+        const updater = (eJoinOperator: GridRadioButton, index: number) =>
             this.updateJoinOperatorDisabled(eJoinOperator, index);
         this.eJoinAnds.forEach(updater);
         this.eJoinOrs.forEach(updater);
     }
 
-    private updateJoinOperatorDisabled(eJoinOperator: AgRadioButton, index: number): void {
+    private updateJoinOperatorDisabled(eJoinOperator: GridRadioButton, index: number): void {
         eJoinOperator.setDisabled(this.isReadOnly() || index > 0);
     }
 

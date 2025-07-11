@@ -201,6 +201,7 @@ export class GridCoreCreator {
         const seed = {
             gridOptions: gridOptions,
             eGridDiv: eGridDiv,
+            eRootDiv: eGridDiv,
             globalListener: params ? params.globalListener : null,
             globalSyncListener: params ? params.globalSyncListener : null,
             frameworkOverrides: frameworkOverrides,

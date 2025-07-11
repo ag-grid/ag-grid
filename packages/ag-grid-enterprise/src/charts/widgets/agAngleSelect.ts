@@ -1,9 +1,14 @@
 import type {
-    AgInputNumberField,
+    AgComponentSelectorType,
+    AgEventTypeParams,
     AgLabelParams,
+    AllEventsWithoutGridCommon,
     BeanCollection,
     DragListenerParams,
     DragService,
+    GridInputNumberField,
+    GridOptionsService,
+    GridOptionsWithDefaults,
 } from 'ag-grid-community';
 import {
     AgAbstractLabel,
@@ -20,7 +25,16 @@ export interface AgAngleSelectParams extends AgLabelParams {
 }
 
 export type AgAngleSelectEvent = 'fieldValueChanged';
-export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams, AgAngleSelectEvent> {
+export class AgAngleSelect extends AgAbstractLabel<
+    BeanCollection,
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    AllEventsWithoutGridCommon,
+    GridOptionsService,
+    AgComponentSelectorType,
+    AgAngleSelectParams,
+    AgAngleSelectEvent
+> {
     protected dragSvc?: DragService;
 
     public wireBeans(beans: BeanCollection) {
@@ -30,7 +44,7 @@ export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams, AgAngleS
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eParentCircle: HTMLElement = RefPlaceholder;
     private readonly eChildCircle: HTMLElement = RefPlaceholder;
-    private readonly eAngleValue: AgInputNumberField = RefPlaceholder;
+    private readonly eAngleValue: GridInputNumberField = RefPlaceholder;
 
     private parentCircleRect: ClientRect | DOMRect;
     private degrees: number;

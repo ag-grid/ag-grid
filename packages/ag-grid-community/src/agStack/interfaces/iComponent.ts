@@ -1,6 +1,7 @@
 import type { AgBeanStubEvent } from '../agBeanStub';
 import type { AgEvent } from './agEvent';
 import type { AgBaseBean, AgBean } from './iBean';
+import type { BaseEvents } from './iEvent';
 import type { BaseProperties } from './iProperties';
 
 export interface AgBaseComponent<TBeanCollection> extends AgBaseBean<TBeanCollection> {
@@ -10,7 +11,7 @@ export interface AgBaseComponent<TBeanCollection> extends AgBaseBean<TBeanCollec
 export interface AgComponent<
     TBeanCollection,
     TProperties extends BaseProperties,
-    TGlobalEvents,
+    TGlobalEvents extends BaseEvents,
     TLocalEventType extends string,
 > extends AgBaseComponent<TBeanCollection>,
         AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType> {

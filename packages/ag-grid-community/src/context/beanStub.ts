@@ -1,15 +1,16 @@
 import type { AgBeanStubEvent } from '../agStack/agBeanStub';
 import { AgBeanStub } from '../agStack/agBeanStub';
-import type { AgEventTypeParams, AllEventsWithoutGridCommon } from '../events';
+import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
+import type { AgGridCommon } from '../interfaces/iCommon';
 import type { BeanCollection } from './context';
 
 export abstract class BeanStub<TEventType extends string = AgBeanStubEvent> extends AgBeanStub<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AllEventsWithoutGridCommon,
+    AgGridCommon<any, any>,
     GridOptionsService,
     TEventType
 > {}

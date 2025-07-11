@@ -1,3 +1,4 @@
+import type { AgCoreBeanCollection } from './agStack/interfaces/iContext';
 import type { GridApi } from './api/gridApi';
 import type { BeanCollection } from './context/context';
 import type {
@@ -174,16 +175,16 @@ export function _setDomData(gos: GridOptionsService, element: Element, key: stri
     domData[key] = value;
 }
 
-export function _getDocument(beans: BeanCollection): Document {
+export function _getDocument(beans: AgCoreBeanCollection<any, any, any, any>): Document {
     // if user is providing document, we use the users one,
     // otherwise we use the document on the global namespace.
-    const { gos, eGridDiv } = beans;
+    const { gos, eRootDiv } = beans;
     let result: Document | null = null;
     const gridOptionsGetDocument = gos.get('getDocument');
     if (gridOptionsGetDocument && _exists(gridOptionsGetDocument)) {
         result = gridOptionsGetDocument();
-    } else if (eGridDiv) {
-        result = eGridDiv.ownerDocument;
+    } else if (eRootDiv) {
+        result = eRootDiv.ownerDocument;
     }
 
     if (result && _exists(result)) {
@@ -193,16 +194,16 @@ export function _getDocument(beans: BeanCollection): Document {
     return document;
 }
 
-export function _getWindow(beans: BeanCollection) {
+export function _getWindow(beans: AgCoreBeanCollection<any, any, any, any>) {
     const eDocument = _getDocument(beans);
     return eDocument.defaultView || window;
 }
 
-export function _getRootNode(beans: BeanCollection): Document | ShadowRoot {
-    return beans.eGridDiv.getRootNode() as Document | ShadowRoot;
+export function _getRootNode(beans: AgCoreBeanCollection<any, any, any, any>): Document | ShadowRoot {
+    return beans.eRootDiv.getRootNode() as Document | ShadowRoot;
 }
 
-export function _getActiveDomElement(beans: BeanCollection): Element | null {
+export function _getActiveDomElement(beans: AgCoreBeanCollection<any, any, any, any>): Element | null {
     return _getRootNode(beans).activeElement;
 }
 

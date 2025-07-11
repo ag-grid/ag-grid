@@ -1,4 +1,4 @@
-import type { ElementParams } from '../utils/dom';
+import type { AgElementParams } from '../agStack/utils/domUtils';
 
 export type LabelAlignment = 'left' | 'right' | 'top';
 
@@ -16,13 +16,14 @@ export interface AgFieldParams extends AgLabelParams {
     onValueChange?: (value?: any) => void;
 }
 
-export interface AgInputFieldParams extends AgFieldParams {
+export interface AgInputFieldParams<TComponentSelectorType extends string> extends AgFieldParams {
     inputName?: string;
     inputWidth?: number | 'flex';
-    template?: ElementParams;
+    template?: AgElementParams<TComponentSelectorType>;
 }
 
-export interface AgCheckboxParams extends AgInputFieldParams {
+export interface AgCheckboxParams<TComponentSelectorType extends string>
+    extends AgInputFieldParams<TComponentSelectorType> {
     readOnly?: boolean;
     passive?: boolean;
 }

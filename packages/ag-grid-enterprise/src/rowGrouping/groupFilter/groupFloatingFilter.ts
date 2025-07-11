@@ -4,6 +4,7 @@ import type {
     ElementParams,
     FilterChangedEvent,
     FloatingFilterDisplayParams,
+    GridInputTextField,
     IFloatingFilterComp,
     IFloatingFilterParams,
 } from 'ag-grid-community';
@@ -30,7 +31,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     private readonly eFloatingFilter: HTMLElement = RefPlaceholder;
 
     private params: IFloatingFilterParams<GroupFilter>;
-    private eFloatingFilterText: AgInputTextField;
+    private eFloatingFilterText: GridInputTextField;
     private parentFilterInstance: GroupFilter;
     private underlyingFloatingFilter: IFloatingFilterComp | undefined;
     private showingUnderlyingFloatingFilter: boolean;

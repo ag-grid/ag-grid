@@ -1,4 +1,10 @@
-import type { BeanCollection, ChartDataPanel as ChartDataPanelType, ChartType, IChartService } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    ChartDataPanel as ChartDataPanelType,
+    ChartType,
+    GridToggleButton,
+    IChartService,
+} from 'ag-grid-community';
 import { AgToggleButton, Component, _getDocument, _setDisplayed, _warn } from 'ag-grid-community';
 
 import type { ChartController } from '../../chartController';
@@ -36,7 +42,7 @@ export class ChartDataPanel extends Component {
     private seriesDataPanel?: SeriesDataPanel;
     private seriesChartTypePanel?: SeriesChartTypePanel;
     private chartSpecificPanel?: ChartSpecificDataPanel;
-    private switchCategorySeriesToggle: AgToggleButton;
+    private switchCategorySeriesToggle: GridToggleButton;
     private restoreSwitchCategorySeriesToggleFocus = false;
     private panels: Component[] = [];
 
@@ -222,7 +228,7 @@ export class ChartDataPanel extends Component {
     }
 
     private createSwitchCategorySeriesToggle(): void {
-        this.switchCategorySeriesToggle = this.createManagedBean(
+        this.switchCategorySeriesToggle = this.createManagedBean<GridToggleButton>(
             new AgToggleButton({
                 label: this.chartTranslation.translate('switchCategorySeries'),
                 labelAlignment: 'left',

@@ -1,10 +1,10 @@
 import type {
-    AgCheckbox,
     AgColumn,
     AgEvent,
     ColDef,
     ElementParams,
     FilterDisplayParams,
+    GridCheckbox,
     ICellRendererComp,
     ISetFilterCellRendererParams,
     ISetFilterParams,
@@ -94,7 +94,7 @@ const SetFilterElement: ElementParams = {
 };
 
 export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
-    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
+    private readonly eCheckbox: GridCheckbox = RefPlaceholder;
 
     private readonly eGroupOpenedIcon: HTMLElement = RefPlaceholder;
     private readonly eGroupClosedIcon: HTMLElement = RefPlaceholder;

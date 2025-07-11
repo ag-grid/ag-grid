@@ -3,8 +3,8 @@ import { KeyCode } from '../../constants/keyCode';
 import { _isBrowserSafari } from '../../utils/browser';
 import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
-import type { AgInputNumberField } from '../../widgets/agInputNumberField';
 import { AgInputNumberFieldSelector } from '../../widgets/agInputNumberField';
+import type { GridInputNumberField } from '../../widgets/gridWidgetTypes';
 import type { CellEditorInput } from './iCellEditorInput';
 import type { INumberCellEditorParams } from './iNumberCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
@@ -14,8 +14,8 @@ const NumberCellElement: ElementParams = {
     ref: 'eEditor',
     cls: 'ag-cell-editor',
 };
-class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, AgInputNumberField> {
-    private eEditor: AgInputNumberField;
+class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, GridInputNumberField> {
+    private eEditor: GridInputNumberField;
     private params: INumberCellEditorParams;
 
     constructor(private getLocaleTextFunc: () => LocaleTextFunc) {}
@@ -27,7 +27,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         return [AgInputNumberFieldSelector];
     }
 
-    public init(eEditor: AgInputNumberField, params: INumberCellEditorParams): void {
+    public init(eEditor: GridInputNumberField, params: INumberCellEditorParams): void {
         this.eEditor = eEditor;
         this.params = params;
         const { max, min, precision, step } = params;
@@ -130,7 +130,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
     }
 }
 
-export class NumberCellEditor extends SimpleCellEditor<number, INumberCellEditorParams, AgInputNumberField> {
+export class NumberCellEditor extends SimpleCellEditor<number, INumberCellEditorParams, GridInputNumberField> {
     constructor() {
         super(new NumberCellEditorInput(() => this.getLocaleTextFunc()));
     }

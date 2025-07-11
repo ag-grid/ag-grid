@@ -1,4 +1,5 @@
 import type { AgEventService } from '../agStack/interfaces/iEvent';
-import type { AgEventTypeParams, AllEventsWithoutGridCommon } from '../events';
+import type { AgEventTypeParams } from '../events';
+import type { AgGridCommon } from './iCommon';
 
-export type IEventService = AgEventService<AgEventTypeParams, AllEventsWithoutGridCommon>;
+export type IEventService = AgEventService<AgEventTypeParams, AgGridCommon<any, any>>;

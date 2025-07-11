@@ -5,9 +5,9 @@ import { _isBrowserSafari } from '../../../utils/browser';
 import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import type { ElementParams } from '../../../utils/dom';
 import { _warn } from '../../../validation/logging';
-import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { Component } from '../../../widgets/component';
+import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 
 const DefaultDateElement: ElementParams = {
     tag: 'div',
@@ -21,7 +21,7 @@ const DefaultDateElement: ElementParams = {
     ],
 };
 export class DefaultDateComponent extends Component implements IDateComp {
-    private readonly eDateInput: AgInputTextField = RefPlaceholder;
+    private readonly eDateInput: GridInputTextField = RefPlaceholder;
 
     constructor() {
         super(DefaultDateElement, [AgInputTextFieldSelector]);

@@ -1,6 +1,10 @@
 import { RefPlaceholder } from '../agStack/interfaces/iComponent';
 import { _formatSize, _setElementWidth } from '../agStack/utils/domUtils';
 import { KeyCode } from '../constants/keyCode';
+import type { BeanCollection } from '../context/context';
+import type { AgEventTypeParams, AllEventsWithoutGridCommon } from '../events';
+import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
+import type { GridOptionsService } from '../gridOptionsService';
 import { _isNothingFocused } from '../gridOptionsUtils';
 import type { AgPickerFieldParams } from '../interfaces/agPickerFieldParams';
 import { _setAriaExpanded, _setAriaRole } from '../utils/aria';
@@ -11,7 +15,7 @@ import { _createIconNoSpan } from '../utils/icon';
 import type { AgAbstractFieldEvent } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
 import { agPickerFieldCSS } from './agPickerField.css-GENERATED';
-import type { Component } from './component';
+import type { AgComponentSelectorType, Component } from './component';
 import type { AddPopupParams } from './popupService';
 
 export type AgPickerFieldEvent = AgAbstractFieldEvent | 'pickerHidden';
@@ -39,7 +43,17 @@ export abstract class AgPickerField<
     TConfig extends AgPickerFieldParams = AgPickerFieldParams,
     TEventType extends string = AgPickerFieldEvent,
     TComponent extends Component<TEventType | AgPickerFieldEvent> = Component<TEventType | AgPickerFieldEvent>,
-> extends AgAbstractField<TValue, TConfig, TEventType | AgPickerFieldEvent> {
+> extends AgAbstractField<
+    BeanCollection,
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    AllEventsWithoutGridCommon,
+    GridOptionsService,
+    AgComponentSelectorType,
+    TValue,
+    TConfig,
+    TEventType | AgPickerFieldEvent
+> {
     protected abstract createPickerComponent(): TComponent;
 
     protected pickerComponent: TComponent | undefined;

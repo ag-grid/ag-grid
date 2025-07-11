@@ -1,11 +1,29 @@
-import type { CheckboxChangedEvent } from '../events';
+import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
+import type { AgCheckboxChangedEvent, BaseEvents } from '../agStack/interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
 import type { AgCheckboxParams } from '../interfaces/agFieldParams';
 import { AgCheckbox } from './agCheckbox';
 
-export interface AgRadioButtonParams extends AgCheckboxParams {}
+export interface AgRadioButtonParams<TComponentSelectorType extends string>
+    extends AgCheckboxParams<TComponentSelectorType> {}
 
-export class AgRadioButton extends AgCheckbox<AgRadioButtonParams> {
-    constructor(config?: AgRadioButtonParams) {
+export class AgRadioButton<
+    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties>,
+    TComponentSelectorType extends string,
+> extends AgCheckbox<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
+    AgRadioButtonParams<TComponentSelectorType>
+> {
+    constructor(config?: AgRadioButtonParams<TComponentSelectorType>) {
         super(config, 'ag-radio-button', 'radio');
     }
 
@@ -36,7 +54,7 @@ export class AgRadioButton extends AgCheckbox<AgRadioButtonParams> {
      * elements are styled correctly in IE11, and the DOM 'changed' event is only fired when a button is selected,
      * not deselected, so we need to use our own event.
      */
-    private onChange(event: CheckboxChangedEvent) {
+    private onChange(event: AgCheckboxChangedEvent) {
         const eInput = this.eInput;
         if (
             event.selected &&

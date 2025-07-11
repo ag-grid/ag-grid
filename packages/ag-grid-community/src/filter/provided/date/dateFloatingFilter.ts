@@ -5,8 +5,8 @@ import type { IDateParams } from '../../../interfaces/dateComponent';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import type { ElementParams } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';
-import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
+import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FloatingFilterDisplayParams, IFloatingFilterParams } from '../../floating/floatingFilter';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import type { ISimpleFilterModel } from '../iSimpleFilter';
@@ -31,7 +31,7 @@ const DateFloatingFilterElement: ElementParams = {
 };
 
 export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterParams<DateFilter>> {
-    private readonly eReadOnlyText: AgInputTextField = RefPlaceholder;
+    private readonly eReadOnlyText: GridInputTextField = RefPlaceholder;
     private readonly eDateWrapper: HTMLInputElement = RefPlaceholder;
 
     protected readonly FilterModelFormatterClass = DateFilterModelFormatter;

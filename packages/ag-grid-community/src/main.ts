@@ -630,6 +630,7 @@ export type { PopupService } from './widgets/popupService';
 export { PopupPositionParams, PopupEventParams } from './interfaces/iPopup';
 export { TouchListener, TapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
 export { FocusableContainer } from './interfaces/iFocusableContainer';
+export * from './widgets/gridWidgetTypes';
 
 export { AgAbstractLabel } from './widgets/agAbstractLabel';
 export { AgPickerField } from './widgets/agPickerField';
@@ -979,6 +980,7 @@ export {
 } from './entities/gridOptions';
 export type { RowNumbersOptions, IRowNumbersRowResizeFeature } from './interfaces/rowNumbers';
 export type { ManagedGridOptionKey, ManagedGridOptions } from './gridOptionsInitial';
+export type { GridOptionsWithDefaults } from './gridOptionsDefault';
 
 export {
     FillOperationParams,

@@ -3,13 +3,13 @@ import { KeyCode } from '../../constants/keyCode';
 import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _isBrowserSafari } from '../../utils/browser';
 import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
-import type { AgInputTextField } from '../../widgets/agInputTextField';
+import type { GridInputTextField } from '../../widgets/gridWidgetTypes';
 import type { CellEditorInput } from './iCellEditorInput';
 
 export class SimpleCellEditor<
     TValue,
     P extends ICellEditorParams & DefaultProvidedCellEditorParams,
-    I extends AgInputTextField,
+    I extends GridInputTextField,
 > extends AgAbstractCellEditor<ICellEditorParams, TValue> {
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;

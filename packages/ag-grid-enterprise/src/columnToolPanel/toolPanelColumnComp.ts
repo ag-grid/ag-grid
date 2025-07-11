@@ -1,9 +1,9 @@
 import type {
-    AgCheckbox,
     AgColumn,
     DragItem,
     DragSource,
     ElementParams,
+    GridCheckbox,
     ITooltipCtrl,
     TooltipFeature,
 } from 'ag-grid-community';
@@ -36,7 +36,7 @@ const ToolPanelColumnElement: ElementParams = {
 };
 export class ToolPanelColumnComp extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
-    private readonly cbSelect: AgCheckbox = RefPlaceholder;
+    private readonly cbSelect: GridCheckbox = RefPlaceholder;
 
     public readonly column: AgColumn;
     public readonly columnDepth: number;

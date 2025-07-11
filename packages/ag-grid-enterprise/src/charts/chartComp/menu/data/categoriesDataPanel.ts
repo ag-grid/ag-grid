@@ -1,4 +1,4 @@
-import type { IAggFunc } from 'ag-grid-community';
+import type { GridToggleButton, IAggFunc } from 'ag-grid-community';
 import { AgSelect, AgToggleButton } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
@@ -12,7 +12,7 @@ type AggFuncPreset = 'count' | 'sum' | 'min' | 'max' | 'avg' | 'first' | 'last';
 const DEFAULT_AGG_FUNC: AggFuncPreset = 'sum';
 
 export class CategoriesDataPanel extends DragDataPanel {
-    private aggFuncToggle?: AgToggleButton;
+    private aggFuncToggle?: GridToggleButton;
     private aggFuncSelect?: AgSelect;
 
     constructor(

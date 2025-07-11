@@ -1,12 +1,17 @@
 import { RefPlaceholder } from '../agStack/interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
+import type { BaseEvents } from '../agStack/interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
+import type { AgElementParams } from '../agStack/utils/domUtils';
 import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../agStack/utils/domUtils';
 import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _setAriaLabel } from '../utils/aria';
-import type { ElementParams } from '../utils/dom';
 import type { AgAbstractFieldEvent, FieldElement } from './agAbstractField';
 import { AgAbstractField } from './agAbstractField';
 
-function buildTemplate(displayFieldTag: keyof HTMLElementTagNameMap): ElementParams {
+function buildTemplate<TComponentSelectorType extends string>(
+    displayFieldTag: keyof HTMLElementTagNameMap
+): AgElementParams<TComponentSelectorType> {
     return {
         tag: 'div',
         role: 'presentation',
@@ -25,11 +30,27 @@ function buildTemplate(displayFieldTag: keyof HTMLElementTagNameMap): ElementPar
 
 export type AgAbstractInputFieldEvent = AgAbstractFieldEvent;
 export abstract class AgAbstractInputField<
+    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties>,
+    TComponentSelectorType extends string,
     TElement extends FieldElement,
     TValue,
-    TConfig extends AgInputFieldParams = AgInputFieldParams,
+    TConfig extends AgInputFieldParams<TComponentSelectorType> = AgInputFieldParams<TComponentSelectorType>,
     TEventType extends string = AgAbstractInputFieldEvent,
-> extends AgAbstractField<TValue, TConfig, AgAbstractInputFieldEvent | TEventType> {
+> extends AgAbstractField<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
+    TValue,
+    TConfig,
+    AgAbstractInputFieldEvent | TEventType
+> {
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     protected readonly eWrapper: HTMLElement = RefPlaceholder;
     protected readonly eInput: TElement = RefPlaceholder;

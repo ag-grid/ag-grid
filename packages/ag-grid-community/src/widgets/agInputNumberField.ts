@@ -1,24 +1,44 @@
+import type { AgComponentSelector } from '../agStack/interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
+import type { BaseEvents } from '../agStack/interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
 import { _addOrRemoveAttribute } from '../agStack/utils/domUtils';
 import { _getActiveDomElement } from '../gridOptionsUtils';
 import { _exists } from '../utils/generic';
 import type { AgInputTextFieldParams } from './agInputTextField';
 import { AgInputTextField } from './agInputTextField';
-import type { ComponentSelector } from './component';
+import type { AgComponentSelectorType } from './component';
 
-export interface AgInputNumberFieldParams extends AgInputTextFieldParams {
+export interface AgInputNumberFieldParams<TComponentSelectorType extends string>
+    extends AgInputTextFieldParams<TComponentSelectorType> {
     precision?: number;
     step?: number;
     min?: number;
     max?: number;
 }
 
-export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParams> {
+export class AgInputNumberField<
+    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties>,
+    TComponentSelectorType extends string,
+> extends AgInputTextField<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
+    AgInputNumberFieldParams<TComponentSelectorType>
+> {
     private precision?: number;
     private step?: number;
     private min?: number;
     private max?: number;
 
-    constructor(config?: AgInputNumberFieldParams) {
+    constructor(config?: AgInputNumberFieldParams<TComponentSelectorType>) {
         super(config, 'ag-number-field', 'number');
     }
 
@@ -190,7 +210,7 @@ export class AgInputNumberField extends AgInputTextField<AgInputNumberFieldParam
     }
 }
 
-export const AgInputNumberFieldSelector: ComponentSelector = {
+export const AgInputNumberFieldSelector: AgComponentSelector<AgComponentSelectorType> = {
     selector: 'AG-INPUT-NUMBER-FIELD',
     component: AgInputNumberField,
 };

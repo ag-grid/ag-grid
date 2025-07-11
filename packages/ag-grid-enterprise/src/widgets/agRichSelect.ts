@@ -1,10 +1,10 @@
 import type {
-    AgInputTextField,
     AgPromise,
     AriaAnnouncementService,
     BeanCollection,
     ElementParams,
     FieldPickerValueSelectedEvent,
+    GridInputTextField,
     ICellRendererComp,
     IRichCellEditorRendererParams,
     ITooltipCtrl,
@@ -90,7 +90,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     protected values: TValue[];
 
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
-    private readonly eInput: AgInputTextField = RefPlaceholder;
+    private readonly eInput: GridInputTextField = RefPlaceholder;
     private readonly eDeselect: HTMLSpanElement = RefPlaceholder;
 
     private ariaToggleSelection: string;

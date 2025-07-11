@@ -28,7 +28,7 @@ import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeSer
 import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
-import type { AgEventTypeParams, AgGlobalEventListener, AllEventsWithoutGridCommon } from '../events';
+import type { AgEventTypeParams, AgGlobalEventListener } from '../events';
 import type { GridSerializer } from '../export/gridSerializer';
 import type { ColumnFilterService } from '../filter/columnFilterService';
 import type { FilterManager } from '../filter/filterManager';
@@ -50,6 +50,7 @@ import type { IClientSideNodeManager } from '../interfaces/iClientSideNodeManage
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColsService } from '../interfaces/iColsService';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
+import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import type { IEditModelService } from '../interfaces/iEditModelService';
@@ -214,7 +215,7 @@ export type ComponentMeta = ClassImp | ComponentMetaWithParams | ComponentMetaFu
 export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
 
 export interface CoreBeanCollection
-    extends AgCoreBeanCollection<BeanCollection, GridOptionsService, AgEventTypeParams, AllEventsWithoutGridCommon> {
+    extends AgCoreBeanCollection<BeanCollection, GridOptionsService, AgEventTypeParams, AgGridCommon<any, any>> {
     pageBoundsListener: PageBoundsListener;
     environment: Environment;
     rowRenderer: RowRenderer;
@@ -255,6 +256,7 @@ export interface CoreBeanCollection
     gridApi: GridApi;
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
+    eRootDiv: HTMLElement;
     pivotResultCols?: IPivotResultColsService;
     autoColSvc?: IColumnCollectionService;
     selectionColSvc?: SelectionColService;

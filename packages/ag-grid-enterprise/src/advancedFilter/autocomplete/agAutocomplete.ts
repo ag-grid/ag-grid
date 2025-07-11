@@ -1,9 +1,9 @@
 import type {
     AgEvent,
-    AgInputTextField,
     BeanCollection,
     ComponentSelector,
     ElementParams,
+    GridInputTextField,
     PopupPositionParams,
     PopupService,
 } from 'ag-grid-community';
@@ -66,7 +66,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
         this.popupSvc = beans.popupSvc!;
     }
 
-    private eAutocompleteInput: AgInputTextField = RefPlaceholder;
+    private eAutocompleteInput: GridInputTextField = RefPlaceholder;
 
     private isListOpen = false;
     private autocompleteList: AgAutocompleteList | null;

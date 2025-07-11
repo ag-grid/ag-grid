@@ -1,18 +1,40 @@
+import type { AgComponentSelector } from '../agStack/interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
+import type { BaseEvents } from '../agStack/interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
 import type { AgInputFieldParams } from '../interfaces/agFieldParams';
 import { _exists } from '../utils/generic';
 import { _isEventFromPrintableCharacter } from '../utils/keyboard';
 import type { AgAbstractInputFieldEvent } from './agAbstractInputField';
 import { AgAbstractInputField } from './agAbstractInputField';
-import type { ComponentSelector } from './component';
+import type { AgComponentSelectorType } from './component';
 
-export interface AgInputTextFieldParams extends AgInputFieldParams {
+export interface AgInputTextFieldParams<TComponentSelectorType extends string>
+    extends AgInputFieldParams<TComponentSelectorType> {
     allowedCharPattern?: string;
 }
 export type AgInputTextFieldEvent = AgAbstractInputFieldEvent;
 export class AgInputTextField<
-    TConfig extends AgInputTextFieldParams = AgInputTextFieldParams,
+    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties>,
+    TComponentSelectorType extends string,
+    TConfig extends AgInputTextFieldParams<TComponentSelectorType> = AgInputTextFieldParams<TComponentSelectorType>,
     TEventType extends string = AgInputTextFieldEvent,
-> extends AgAbstractInputField<HTMLInputElement, string, TConfig, AgInputTextFieldEvent | TEventType> {
+> extends AgAbstractInputField<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
+    HTMLInputElement,
+    string,
+    TConfig,
+    AgInputTextFieldEvent | TEventType
+> {
     constructor(config?: TConfig, className = 'ag-text-field', inputType = 'text') {
         super(config, className, inputType);
     }
@@ -65,7 +87,7 @@ export class AgInputTextField<
         });
     }
 }
-export const AgInputTextFieldSelector: ComponentSelector = {
+export const AgInputTextFieldSelector: AgComponentSelector<AgComponentSelectorType> = {
     selector: 'AG-INPUT-TEXT-FIELD',
     component: AgInputTextField,
 };

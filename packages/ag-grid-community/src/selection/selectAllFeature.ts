@@ -18,13 +18,14 @@ import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellC
 import { _setAriaRole } from '../utils/aria';
 import { _warn } from '../validation/logging';
 import { AgCheckbox } from '../widgets/agCheckbox';
+import type { GridCheckbox } from '../widgets/gridWidgetTypes';
 
 export class SelectAllFeature extends BeanStub {
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;
     private headerCellCtrl: HeaderCellCtrl;
 
-    private cbSelectAll: AgCheckbox;
+    private cbSelectAll: GridCheckbox;
 
     constructor(private readonly column: AgColumn) {
         super();
@@ -45,7 +46,7 @@ export class SelectAllFeature extends BeanStub {
 
     public setComp(ctrl: HeaderCellCtrl): void {
         this.headerCellCtrl = ctrl;
-        const cbSelectAll = this.createManagedBean(new AgCheckbox());
+        const cbSelectAll = this.createManagedBean<GridCheckbox>(new AgCheckbox());
         this.cbSelectAll = cbSelectAll;
         cbSelectAll.addCss('ag-header-select-all');
         _setAriaRole(cbSelectAll.getGui(), 'presentation');

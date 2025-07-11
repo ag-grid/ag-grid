@@ -1,17 +1,17 @@
-import type { AgEvent } from './agEvent';
 import type { AgFrameworkOverrides } from './agFrameworkOverrides';
 import type { AgBaseBean } from './iBean';
 import type { IEnvironment } from './iEnvironment';
-import type { AgEventService } from './iEvent';
+import type { AgEventService, BaseEvents } from './iEvent';
 import type { ILocaleService } from './iLocaleService';
 
-export interface AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TRawEvents extends AgEvent> {
+export interface AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents extends BaseEvents, TCommon> {
     context: IContext<TBeanCollection>;
-    eventSvc: AgEventService<TGlobalEvents, TRawEvents>;
+    eventSvc: AgEventService<TGlobalEvents, TCommon>;
     frameworkOverrides: AgFrameworkOverrides;
     gos: TPropertiesService;
     localeSvc?: ILocaleService;
     environment: IEnvironment;
+    eRootDiv: HTMLElement;
 }
 
 export type AgEventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };

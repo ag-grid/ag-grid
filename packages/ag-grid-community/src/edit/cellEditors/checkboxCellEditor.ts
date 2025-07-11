@@ -3,8 +3,8 @@ import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _getAriaCheckboxStateName } from '../../utils/aria';
 import type { ElementParams } from '../../utils/dom';
 import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
-import type { AgCheckbox } from '../../widgets/agCheckbox';
 import { AgCheckboxSelector } from '../../widgets/agCheckbox';
+import type { GridCheckbox } from '../../widgets/gridWidgetTypes';
 
 const CheckboxCellEditorElement: ElementParams = {
     tag: 'div',
@@ -22,7 +22,7 @@ export class CheckboxCellEditor extends AgAbstractCellEditor<ICellEditorParams<a
         super(CheckboxCellEditorElement, [AgCheckboxSelector]);
     }
 
-    protected readonly eEditor: AgCheckbox = RefPlaceholder;
+    protected readonly eEditor: GridCheckbox = RefPlaceholder;
 
     public initialiseEditor(params: ICellEditorParams<any, boolean>): void {
         const isSelected = params.value ?? undefined;

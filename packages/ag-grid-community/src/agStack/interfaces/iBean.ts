@@ -1,5 +1,6 @@
 import type { AgEvent } from './agEvent';
 import type { AgEventHandlers, IContext } from './iContext';
+import type { BaseEvents } from './iEvent';
 import type { IAgEventEmitter, IEventEmitter, IEventListener } from './iEventEmitter';
 import type { LocaleTextFunc } from './iLocaleService';
 import type { AgPropertyChangedListener, AgPropertyValueChangedListener, BaseProperties } from './iProperties';
@@ -29,7 +30,7 @@ export interface AgSingletonBean<TBeanCollection> extends AgBaseBean<TBeanCollec
 export interface AgBean<
     TBeanCollection,
     TProperties extends BaseProperties,
-    TGlobalEvents,
+    TGlobalEvents extends BaseEvents,
     TLocalEventType extends string,
 > extends AgBaseBean<TBeanCollection> {
     addEventListener<T extends TLocalEventType>(

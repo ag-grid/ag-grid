@@ -1,8 +1,8 @@
 import type {
     AgColumn,
-    AgInputTextField,
     ElementParams,
     FloatingFilterDisplayParams,
+    GridInputTextField,
     IFloatingFilter,
     IFloatingFilterParams,
     SetFilterModel,
@@ -25,7 +25,7 @@ const SetFloatingFilterElement: ElementParams = {
 };
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
-    private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
+    private readonly eFloatingFilterText: GridInputTextField = RefPlaceholder;
 
     private params: IFloatingFilterParams;
     private listenerAdded = false;

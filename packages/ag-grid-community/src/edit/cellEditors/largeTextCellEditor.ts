@@ -3,8 +3,8 @@ import { KeyCode } from '../../constants/keyCode';
 import type { ElementParams } from '../../utils/dom';
 import { _exists } from '../../utils/generic';
 import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
-import type { AgInputTextArea } from '../../widgets/agInputTextArea';
 import { AgInputTextAreaSelector } from '../../widgets/agInputTextArea';
+import type { GridInputTextArea } from '../../widgets/gridWidgetTypes';
 import type { ILargeTextEditorParams } from './iLargeTextCellEditor';
 
 const LargeTextCellElement: ElementParams = {
@@ -19,7 +19,7 @@ const LargeTextCellElement: ElementParams = {
     ],
 };
 export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorParams> {
-    protected readonly eEditor: AgInputTextArea = RefPlaceholder;
+    protected readonly eEditor: GridInputTextArea = RefPlaceholder;
     private focusAfterAttached: boolean;
 
     constructor() {

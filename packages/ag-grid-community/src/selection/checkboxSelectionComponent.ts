@@ -7,9 +7,9 @@ import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRend
 import { _getAriaCheckboxStateName } from '../utils/aria';
 import type { ElementParams } from '../utils/dom';
 import { _stopPropagationForAgGrid } from '../utils/event';
-import type { AgCheckbox } from '../widgets/agCheckbox';
 import { AgCheckboxSelector } from '../widgets/agCheckbox';
 import { Component } from '../widgets/component';
+import type { GridCheckbox } from '../widgets/gridWidgetTypes';
 
 const CheckboxSelectionComponentElement: ElementParams = {
     tag: 'div',
@@ -25,7 +25,7 @@ const CheckboxSelectionComponentElement: ElementParams = {
 };
 
 export class CheckboxSelectionComponent extends Component {
-    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
+    private readonly eCheckbox: GridCheckbox = RefPlaceholder;
 
     private rowNode: RowNode;
     private column: AgColumn | undefined;

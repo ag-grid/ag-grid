@@ -5,9 +5,9 @@ import { _getActiveDomElement } from '../../gridOptionsUtils';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
 import type { ElementParams } from '../../utils/dom';
 import { _stopPropagationForAgGrid } from '../../utils/event';
-import type { AgCheckbox } from '../../widgets/agCheckbox';
 import { AgCheckboxSelector } from '../../widgets/agCheckbox';
 import { Component } from '../../widgets/component';
+import type { GridCheckbox } from '../../widgets/gridWidgetTypes';
 import { checkboxCellRendererCSS } from './checkboxCellRenderer.css-GENERATED';
 import type { ICellRenderer, ICellRendererParams } from './iCellRenderer';
 
@@ -31,7 +31,7 @@ const CheckboxCellRendererElement: ElementParams = {
 };
 
 export class CheckboxCellRenderer extends Component implements ICellRenderer {
-    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
+    private readonly eCheckbox: GridCheckbox = RefPlaceholder;
     private params: ICheckboxCellRendererParams;
 
     constructor() {

@@ -1,6 +1,6 @@
 import type { AgCartesianAxisOptions } from 'ag-charts-types';
 
-import type { AgSelect, AgSelectParams, BeanCollection, ListOption } from 'ag-grid-community';
+import type { AgSelect, AgSelectParams, BeanCollection, GridCheckbox, ListOption } from 'ag-grid-community';
 import {
     AgCheckbox,
     AgSelectSelector,
@@ -402,7 +402,7 @@ export class CartesianAxisPanel extends Component {
         const rotation = getLabelRotationValue();
         const autoRotate = typeof rotation === 'number' ? false : getLabelAutoRotateValue();
 
-        const autoRotateCheckbox = this.createBean(
+        const autoRotateCheckbox = this.createBean<GridCheckbox>(
             new AgCheckbox({
                 label: this.translate('autoRotate'),
                 value: autoRotate,

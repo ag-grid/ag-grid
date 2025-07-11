@@ -1,17 +1,33 @@
+import { AgComponentStub } from '../agStack/agComponentStub';
 import type { AgComponentEvent, AgComponentSelector } from '../agStack/interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
+import type { BaseEvents } from '../agStack/interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
+import type { AgElementParams } from '../agStack/utils/domUtils';
 import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../agStack/utils/domUtils';
 import type { AgLabelParams, LabelAlignment } from '../interfaces/agFieldParams';
 import { _setAriaRole } from '../utils/aria';
-import type { ElementParams } from '../utils/dom';
 import { agAbstractLabelCSS } from './agAbstractLabel.css-GENERATED';
-import type { AgComponentSelectorType } from './component';
-import { Component } from './component';
 
 export type AgAbstractLabelEvent = AgComponentEvent;
 export abstract class AgAbstractLabel<
+    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties>,
+    TComponentSelectorType extends string,
     TConfig extends AgLabelParams = AgLabelParams,
     TEventType extends string = AgAbstractLabelEvent,
-> extends Component<TEventType | AgAbstractLabelEvent> {
+> extends AgComponentStub<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
+    TEventType | AgAbstractLabelEvent
+> {
     protected abstract eLabel: HTMLElement;
 
     protected readonly config: TConfig;
@@ -22,8 +38,8 @@ export abstract class AgAbstractLabel<
 
     constructor(
         config?: TConfig,
-        template?: string | ElementParams,
-        components?: AgComponentSelector<AgComponentSelectorType>[]
+        template?: string | AgElementParams<TComponentSelectorType>,
+        components?: AgComponentSelector<TComponentSelectorType>[]
     ) {
         super(template, components);
 
