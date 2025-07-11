@@ -14,6 +14,13 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     private rowHeight: number;
     private datasource: IViewportDatasource;
 
+    /**
+     * Used to see if setRowData has been called inside of the viewportChanged event context,
+     * if so the new rows are already being calculated, and the model does not need updated
+     * otherwise, a new model event needs to fire as rows have changed externally.
+     */
+    private viewportChangedContext: boolean = false;
+
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(
         _startPixel: number,
@@ -110,7 +117,9 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
             this.firstRow = newFirst;
             this.lastRow = newLast;
             this.purgeRowsNotInViewport();
+            this.viewportChangedContext = true;
             this.datasource?.setViewportRange(this.firstRow, this.lastRow);
+            this.viewportChangedContext = false;
         }
     }
 
@@ -306,13 +315,15 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
             this.rowNodesByIndex[i] = row;
         }
 
-        this.eventSvc.dispatchEvent({
-            type: 'modelUpdated',
-            newData: false,
-            newPage: false,
-            keepRenderedRows: true,
-            animate: false,
-        });
+        if (!this.viewportChangedContext) {
+            this.eventSvc.dispatchEvent({
+                type: 'modelUpdated',
+                newData: false,
+                newPage: false,
+                keepRenderedRows: true,
+                animate: false,
+            });
+        }
     }
 
     private createBlankRowNode(rowIndex: number): RowNode {
