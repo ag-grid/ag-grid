@@ -88,7 +88,7 @@ interface User {
 
 type UserDisplayType = 'slack' | 'name' | 'debug';
 
-let slackGithubMapping;
+let slackGithubMapping: GH_MAPPING[];
 function getSlackGithubMapping(): GH_MAPPING[] {
     if (slackGithubMapping === undefined) {
         slackGithubMapping = [];
