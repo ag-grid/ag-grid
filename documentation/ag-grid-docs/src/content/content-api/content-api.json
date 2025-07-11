@@ -7,6 +7,10 @@
         {
             "id": "frameworks",
             "url": "./content/frameworks.json"
+        },
+        {
+            "id": "modules",
+            "url": "./content/modules.json"
         }
     ],
     "previousVersions": []
