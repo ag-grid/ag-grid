@@ -11,6 +11,9 @@ inputs:
     severity_threshold:
         description: 'Severity threshold of the snyk scan'
         default: 'high'
+    remote_repo_url:
+        description: 'Public remote repository url'
+        required: true
 
 runs:
     using: 'composite'
@@ -20,4 +23,4 @@ runs:
           env:
               SNYK_TOKEN: ${{ inputs.snyk_token }}
           with:
-              args: --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=${{ inputs.severity_threshold }} --exclude=${{ inputs.exclude }}
+              args: --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=${{ inputs.severity_threshold }} --exclude=${{ inputs.exclude }} --remote-repo-url=${{ inputs.remote_repo_url }}

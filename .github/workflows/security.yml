@@ -8,6 +8,9 @@ on:
 permissions:
   contents: read
 
+env:
+  REPO_URL: https://github.com/ag-grid/ag-grid
+
 jobs:
     code-dependency-scan:
         runs-on: ubuntu-latest
@@ -22,6 +25,7 @@ jobs:
               uses: ./external/ag-shared/github/actions/snyk-scan-workspaces
               with:
                   snyk_token: ${{ secrets.SNYK_TOKEN }}
+                  remote_repo_url: ${{env.REPO_URL}}
 
     sast-code-scan:
         runs-on: ubuntu-latest
