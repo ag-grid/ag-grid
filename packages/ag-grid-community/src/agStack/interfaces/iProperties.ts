@@ -2,10 +2,8 @@ import type { AgEvent } from './agEvent';
 
 export interface BaseProperties {
     tabIndex?: number;
-}
-
-export interface BasePropertyDefaults {
-    tabIndex: number;
+    suppressScrollWhenPopupsAreOpen?: boolean;
+    enableRtl?: boolean;
 }
 
 export type AgPropertyChangedSource = 'api' | 'optionsUpdated';

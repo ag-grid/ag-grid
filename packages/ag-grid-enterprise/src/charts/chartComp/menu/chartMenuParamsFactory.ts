@@ -160,7 +160,7 @@ export class ChartMenuParamsFactory extends BeanStub {
         expression: string,
         labelKey: ChartTranslationKey,
         dropdownOptions: Array<ListOption>
-    ): AgSelectParams {
+    ): AgSelectParams<AgComponentSelectorType> {
         return this.getDefaultSelectParamsWithoutValueParams(
             labelKey,
             dropdownOptions,
@@ -176,7 +176,7 @@ export class ChartMenuParamsFactory extends BeanStub {
         options: Array<ListOption>,
         value: any,
         onValueChange: (value: any) => void
-    ): AgSelectParams {
+    ): AgSelectParams<AgComponentSelectorType> {
         return {
             label: this.chartTranslation.translate(labelKey),
             labelAlignment: 'top',

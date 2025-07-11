@@ -290,7 +290,7 @@ export function _anchorElementToMouseMoveEvent(
     element.style.top = `${top}px`;
 }
 
-export function _isNothingFocused(beans: BeanCollection): boolean {
+export function _isNothingFocused(beans: AgCoreBeanCollection<any, any, any, any>): boolean {
     const activeEl = _getActiveDomElement(beans);
 
     return activeEl === null || activeEl === _getDocument(beans).body;

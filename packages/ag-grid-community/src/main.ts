@@ -101,6 +101,30 @@ export { CssClassManager } from './agStack/cssClassManager';
 export { LocalEventService } from './agStack/localEventService';
 export { IEventEmitter, IEventListener } from './agStack/interfaces/iEventEmitter';
 export { _isEventFromPrintableCharacter } from './agStack/utils/keyboardUtils';
+export { PopupEventParams } from './agStack/interfaces/iPopup';
+export { ScrollDirection } from './agStack/interfaces/iEvent';
+
+// AG Stack Widgets
+export {
+    AgFieldParams,
+    AgCheckboxParams,
+    AgLabelParams,
+    LabelAlignment,
+    AgInputFieldParams,
+} from './agStack/widgets/agFieldParams';
+export { AgAbstractInputField } from './agStack/widgets/agAbstractInputField';
+export { AgCheckbox, AgCheckboxSelector } from './agStack/widgets/agCheckbox';
+export { AgRadioButton, AgRadioButtonParams } from './agStack/widgets/agRadioButton';
+export { AgToggleButton, AgToggleButtonParams, AgToggleButtonSelector } from './agStack/widgets/agToggleButton';
+export { AgInputTextField, AgInputTextFieldParams, AgInputTextFieldSelector } from './agStack/widgets/agInputTextField';
+export { AgInputTextArea } from './agStack/widgets/agInputTextArea';
+export {
+    AgInputNumberField,
+    AgInputNumberFieldSelector,
+    AgInputNumberFieldParams,
+} from './agStack/widgets/agInputNumberField';
+export { AgInputDateField } from './agStack/widgets/agInputDateField';
+export { AgAbstractLabel } from './agStack/widgets/agAbstractLabel';
 
 // excel
 export {
@@ -601,27 +625,9 @@ export type { RowRangeSelectionContext } from './selection/rowRangeSelectionCont
 export type { CellStyleService } from './styling/cellStyleService';
 
 // widgets
-export {
-    AgFieldParams,
-    AgCheckboxParams,
-    AgLabelParams,
-    LabelAlignment,
-    AgInputFieldParams,
-} from './agStack/widgets/agFieldParams';
+
 export { AgPickerFieldParams } from './interfaces/agPickerFieldParams';
 export { RichSelectParams } from './interfaces/iRichCellEditorParams';
-export { AgAbstractInputField } from './agStack/widgets/agAbstractInputField';
-export { AgCheckbox, AgCheckboxSelector } from './agStack/widgets/agCheckbox';
-export { AgRadioButton, AgRadioButtonParams } from './agStack/widgets/agRadioButton';
-export { AgToggleButton, AgToggleButtonParams, AgToggleButtonSelector } from './agStack/widgets/agToggleButton';
-export { AgInputTextField, AgInputTextFieldParams, AgInputTextFieldSelector } from './agStack/widgets/agInputTextField';
-export { AgInputTextArea } from './agStack/widgets/agInputTextArea';
-export {
-    AgInputNumberField,
-    AgInputNumberFieldSelector,
-    AgInputNumberFieldParams,
-} from './agStack/widgets/agInputNumberField';
-export { AgInputDateField } from './agStack/widgets/agInputDateField';
 export { AgSelect, AgSelectParams, AgSelectSelector } from './widgets/agSelect';
 export { ListOption } from './widgets/agList';
 export { Component } from './widgets/component';
@@ -635,12 +641,11 @@ export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from './widgets/tabGuardC
 export { TabGuardFeature } from './widgets/tabGuardFeature';
 export { PopupComponent } from './widgets/popupComponent';
 export type { PopupService } from './widgets/popupService';
-export { PopupPositionParams, PopupEventParams } from './interfaces/iPopup';
+export { PopupPositionParams } from './interfaces/iPopupPositionParams';
 export { TouchListener, TapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
 export { FocusableContainer } from './interfaces/iFocusableContainer';
 export * from './widgets/gridWidgetTypes';
 
-export { AgAbstractLabel } from './agStack/widgets/agAbstractLabel';
 export { AgPickerField } from './widgets/agPickerField';
 
 // range

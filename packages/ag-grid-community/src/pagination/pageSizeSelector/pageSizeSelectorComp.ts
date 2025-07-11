@@ -9,6 +9,7 @@ import type { ListOption } from '../../widgets/agList';
 import { AgSelect } from '../../widgets/agSelect';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
+import type { GridSelect } from '../../widgets/gridWidgetTypes';
 import type { PaginationService } from '../paginationService';
 
 const paginationPageSizeSelector = 'paginationPageSizeSelector';
@@ -20,7 +21,7 @@ export class PageSizeSelectorComp extends Component {
         this.pagination = beans.pagination!;
     }
 
-    private selectPageSizeComp: AgSelect | undefined;
+    private selectPageSizeComp: GridSelect | undefined;
     private hasEmptyOption = false;
     private pageSizeOptions?: (string | number)[];
 
@@ -175,7 +176,7 @@ export class PageSizeSelectorComp extends Component {
         const localisedLabel = localeTextFunc('pageSizeSelectorLabel', 'Page Size:');
         const localisedAriaLabel = localeTextFunc('ariaPageSizeSelectorLabel', 'Page Size');
 
-        this.selectPageSizeComp = this.createManagedBean(new AgSelect())
+        this.selectPageSizeComp = this.createManagedBean<GridSelect>(new AgSelect())
             .addOptions(this.createPageSizeSelectOptions(pageSizeOptions))
             .setValue(value)
             .setAriaLabel(localisedAriaLabel)

@@ -35,7 +35,6 @@ export type AgComponentSelectorType =
     | 'AG-PRIMARY-COLS-LIST'
     | 'AG-PRIMARY-COLS'
     | 'AG-ROW-CONTAINER'
-    | 'AG-SELECT'
     | 'AG-SIDE-BAR'
     | 'AG-SIDE-BAR-BUTTONS'
     | 'AG-SLIDER'

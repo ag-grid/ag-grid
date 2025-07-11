@@ -14,6 +14,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgEventTypeParams, AllEventsWithoutGridCommon } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
+import type { AgSelect } from './agSelect';
 import type { AgComponentSelectorType } from './component';
 
 export type GridInputTextArea = AgInputTextArea<
@@ -85,4 +86,14 @@ export type GridToggleButton = AgToggleButton<
     AllEventsWithoutGridCommon,
     GridOptionsService,
     AgComponentSelectorType
+>;
+
+export type GridSelect<TValue = string | null> = AgSelect<
+    BeanCollection,
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    AllEventsWithoutGridCommon,
+    GridOptionsService,
+    AgComponentSelectorType,
+    TValue
 >;

@@ -1,10 +1,15 @@
 import type {
+    AgComponentSelectorType,
+    AgEventTypeParams,
     AgPromise,
+    AllEventsWithoutGridCommon,
     AriaAnnouncementService,
     BeanCollection,
     ElementParams,
     FieldPickerValueSelectedEvent,
     GridInputTextField,
+    GridOptionsService,
+    GridOptionsWithDefaults,
     ICellRendererComp,
     IRichCellEditorRendererParams,
     ITooltipCtrl,
@@ -68,6 +73,12 @@ const AgRichSelectElement: ElementParams = {
     ],
 };
 export class AgRichSelect<TValue = any> extends AgPickerField<
+    BeanCollection,
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    AllEventsWithoutGridCommon,
+    GridOptionsService,
+    AgComponentSelectorType,
     TValue[] | TValue,
     RichSelectParams<TValue>,
     AgRichSelectEvent,

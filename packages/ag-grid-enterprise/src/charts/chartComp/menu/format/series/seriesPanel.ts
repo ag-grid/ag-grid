@@ -1,6 +1,6 @@
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-types';
 
-import type { BeanCollection, ListOption } from 'ag-grid-community';
+import type { BeanCollection, GridSelect, ListOption } from 'ag-grid-community';
 import { AgSelect, Component, RefPlaceholder, _error, _removeFromParent } from 'ag-grid-community';
 
 import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
@@ -181,7 +181,7 @@ export class SeriesPanel extends Component {
     }
 
     private initSeriesSelect() {
-        const seriesSelect = this.createBean(
+        const seriesSelect = this.createBean<GridSelect>(
             new AgSelect(
                 this.chartMenuUtils.getDefaultSelectParamsWithoutValueParams(
                     'seriesType',
@@ -276,7 +276,7 @@ export class SeriesPanel extends Component {
                     { value: 'inside', text: this.translate('inside') },
                     { value: 'outside', text: this.translate('outside') },
                 ];
-                const placementSelect = labelPanelComp.createManagedBean(
+                const placementSelect = labelPanelComp.createManagedBean<GridSelect>(
                     new AgSelect(
                         this.chartMenuUtils.getDefaultSelectParams('label.placement', 'labelPlacement', options)
                     )
@@ -330,7 +330,7 @@ export class SeriesPanel extends Component {
         return new AgSlider(params);
     }
 
-    private initShape(): AgSelect {
+    private initShape(): GridSelect {
         return new AgSelect(
             this.chartMenuUtils.getDefaultSelectParams('shape', 'shape', getShapeSelectOptions(this.chartTranslation))
         );

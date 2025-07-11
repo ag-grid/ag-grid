@@ -12,7 +12,7 @@ import type { ListOption } from '../../widgets/agList';
 import { AgSelect } from '../../widgets/agSelect';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
-import type { GridInputTextField, GridRadioButton } from '../../widgets/gridWidgetTypes';
+import type { GridInputTextField, GridRadioButton, GridSelect } from '../../widgets/gridWidgetTypes';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import type {
     ICombinedSimpleModel,
@@ -57,7 +57,7 @@ export abstract class SimpleFilter<
 {
     public abstract override readonly filterType: 'number' | 'text' | 'date';
 
-    protected readonly eTypes: AgSelect[] = [];
+    protected readonly eTypes: GridSelect[] = [];
     protected readonly eJoinPanels: HTMLElement[] = [];
     protected readonly eJoinAnds: GridRadioButton[] = [];
     protected readonly eJoinOrs: GridRadioButton[] = [];
@@ -305,7 +305,7 @@ export abstract class SimpleFilter<
 
     private createOption(): void {
         const eGui = this.getGui();
-        const eType = this.createManagedBean(new AgSelect());
+        const eType = this.createManagedBean<GridSelect>(new AgSelect());
         this.eTypes.push(eType);
         eType.addCss('ag-filter-select');
         eGui.appendChild(eType.getGui());
@@ -361,7 +361,7 @@ export abstract class SimpleFilter<
         );
     }
 
-    private putOptionsIntoDropdown(eType: AgSelect): void {
+    private putOptionsIntoDropdown(eType: GridSelect): void {
         const { filterListOptions } = this;
         // Add specified options to condition drop-down.
         filterListOptions.forEach((listOption) => {
@@ -776,7 +776,7 @@ export abstract class SimpleFilter<
         }
     }
 
-    private resetType(eType: AgSelect): void {
+    private resetType(eType: GridSelect): void {
         const translate = this.getLocaleTextFunc();
         const filteringLabel = translate('ariaFilteringOperator', 'Filtering operator');
         eType
@@ -857,7 +857,7 @@ export abstract class SimpleFilter<
         });
     }
 
-    private addChangedListeners(eType: AgSelect, position: number) {
+    private addChangedListeners(eType: GridSelect, position: number) {
         if (this.isReadOnly()) {
             return;
         }

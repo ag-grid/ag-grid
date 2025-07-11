@@ -1,4 +1,4 @@
-import type { GridToggleButton, IAggFunc } from 'ag-grid-community';
+import type { GridSelect, GridToggleButton, IAggFunc } from 'ag-grid-community';
 import { AgSelect, AgToggleButton } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
@@ -13,7 +13,7 @@ const DEFAULT_AGG_FUNC: AggFuncPreset = 'sum';
 
 export class CategoriesDataPanel extends DragDataPanel {
     private aggFuncToggle?: GridToggleButton;
-    private aggFuncSelect?: AgSelect;
+    private aggFuncSelect?: GridSelect;
 
     constructor(
         chartController: ChartController,
@@ -79,8 +79,8 @@ export class CategoriesDataPanel extends DragDataPanel {
             ))
         );
         this.groupComp.addItem(
-            (this.aggFuncSelect = this.createBean(
-                new AgSelect<AggFuncPreset>({
+            (this.aggFuncSelect = this.createBean<GridSelect<AggFuncPreset>>(
+                new AgSelect({
                     options: [
                         { value: 'sum', text: this.chartTranslation.translate('sum') },
                         { value: 'first', text: this.chartTranslation.translate('first') },

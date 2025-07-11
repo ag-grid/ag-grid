@@ -1,3 +1,4 @@
+import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
 import { _isNodeOrElement, _loadTemplate } from '../agStack/utils/domUtils';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -217,7 +218,7 @@ export function _createIcon(iconName: IconName, beans: BeanCollection, column: A
  */
 export function _createIconNoSpan(
     iconName: IconName,
-    beans: BeanCollection,
+    beans: AgCoreBeanCollection<any, any, any, any>,
     column?: AgColumn | null
 ): Element | undefined {
     let userProvidedIcon: ((...args: any[]) => any) | string | null = null;
@@ -269,7 +270,7 @@ export function _createIconNoSpan(
         _warn(133, { iconName });
         return undefined;
     } else {
-        const iconValue = beans.registry.getIcon(iconName as IconName);
+        const iconValue = beans.registry.getIcon(iconName);
         if (!iconValue) {
             beans.validation?.validateIcon(iconName);
         }

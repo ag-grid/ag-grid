@@ -17,8 +17,18 @@ export interface AgCheckboxChangedEvent extends AgEvent<'checkboxChanged'> {
     selected?: boolean;
     previousValue: boolean | undefined;
 }
+
+export type ScrollDirection = 'horizontal' | 'vertical';
+
+export interface AgBodyScrollEvent extends AgEvent<'bodyScroll'> {
+    direction: ScrollDirection;
+    left: number;
+    top: number;
+}
+
 export interface BaseEvents {
     checkboxChanged: AgCheckboxChangedEvent;
+    bodyScroll: AgBodyScrollEvent;
 }
 
 export type AgRawEvents<TGlobalEvents extends BaseEvents, TCommon> = {

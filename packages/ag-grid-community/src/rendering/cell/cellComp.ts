@@ -8,7 +8,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
-import type { PopupPositionParams } from '../../interfaces/iPopup';
+import type { PopupPositionParams } from '../../interfaces/iPopupPositionParams';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _addStylesToElement, _createElement, _removeFromParent } from '../../utils/dom';

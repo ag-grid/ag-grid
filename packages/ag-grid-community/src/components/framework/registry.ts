@@ -1,13 +1,14 @@
+import type { IRegistry } from '../../agStack/interfaces/iRegistry';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import { isComponentMetaFunc } from '../../context/context';
-import type { DynamicBeanName, ProcessParamsFunc, UserComponentName } from '../../context/context';
+import type { BeanCollection, DynamicBeanName, ProcessParamsFunc, UserComponentName } from '../../context/context';
 import type { Module } from '../../interfaces/iModule';
 import type { IconName, IconValue } from '../../utils/icon';
 import { _errMsg } from '../../validation/logging';
 import type { AgComponentSelectorType, ComponentSelector } from '../../widgets/component';
 
-export class Registry extends BeanStub implements NamedBean {
+export class Registry extends BeanStub implements NamedBean, IRegistry<BeanCollection, DynamicBeanName> {
     beanName = 'registry' as const;
 
     private agGridDefaults: { [key in UserComponentName]?: any } = {};

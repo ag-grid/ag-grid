@@ -1,16 +1,25 @@
+import type { AgCoreBean } from '../agStack/interfaces/iBean';
+import type { AgComponentSelector } from '../agStack/interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
+import type { BaseEvents } from '../agStack/interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
+import type { ITooltipFeature } from '../agStack/interfaces/iTooltip';
+import type { AgWidgetSelectorType } from '../agStack/widgets/agWidgetSelectorType';
 import { KeyCode } from '../constants/keyCode';
 import type { AgPickerFieldParams } from '../interfaces/agPickerFieldParams';
-import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
+import type { ITooltipCtrl } from '../tooltip/tooltipFeature';
 import { _setAriaControlsAndLabel } from '../utils/aria';
 import { _isElementOverflowingCallback } from '../utils/dom';
 import type { ListOption } from './agList';
 import { AgList } from './agList';
 import { AgPickerField } from './agPickerField';
 import { agSelectCSS } from './agSelect.css-GENERATED';
-import type { ComponentSelector } from './component';
 
-export interface AgSelectParams<TValue = string>
-    extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
+export interface AgSelectParams<TComponentSelectorType extends string, TValue = string>
+    extends Omit<
+        AgPickerFieldParams<TComponentSelectorType>,
+        'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'
+    > {
     options?: ListOption<TValue>[];
     pickerType?: string;
     pickerAriaLabelKey?: string;
@@ -18,16 +27,50 @@ export interface AgSelectParams<TValue = string>
     placeholder?: string;
 }
 export type AgSelectEvent = 'selectedItem';
-export class AgSelect<TValue = string | null> extends AgPickerField<
+export class AgSelect<
+    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties>,
+    TComponentSelectorType extends string,
+    TValue = string | null,
+> extends AgPickerField<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
     TValue,
-    AgSelectParams<TValue> & AgPickerFieldParams,
+    AgSelectParams<TComponentSelectorType, TValue> & AgPickerFieldParams<TComponentSelectorType>,
     AgSelectEvent,
-    AgList<AgSelectEvent, TValue>
+    AgList<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType,
+        AgSelectEvent,
+        TValue
+    >
 > {
-    protected listComponent: AgList<AgSelectEvent, TValue> | undefined;
-    private tooltipFeature?: TooltipFeature;
+    protected listComponent:
+        | AgList<
+              TBeanCollection,
+              TProperties,
+              TGlobalEvents,
+              TCommon,
+              TPropertiesService,
+              TComponentSelectorType,
+              AgSelectEvent,
+              TValue
+          >
+        | undefined;
+    private tooltipFeature?: ITooltipFeature;
 
-    constructor(config?: AgSelectParams<TValue>) {
+    constructor(config?: AgSelectParams<TComponentSelectorType, TValue>) {
         super({
             pickerAriaLabelKey: 'ariaLabelSelectField',
             pickerAriaLabelValue: 'Select Field',
@@ -42,14 +85,18 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
 
     public override postConstruct(): void {
         this.tooltipFeature = this.createOptionalManagedBean(
-            this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
-                shouldDisplayTooltip: _isElementOverflowingCallback(() => this.eDisplayField),
-                getGui: () => this.getGui(),
-            } as ITooltipCtrl)
+            this.beans.registry.createDynamicBean<ITooltipFeature & AgCoreBean<TBeanCollection>>(
+                'tooltipFeature',
+                false,
+                {
+                    shouldDisplayTooltip: _isElementOverflowingCallback(() => this.eDisplayField),
+                    getGui: () => this.getGui(),
+                } as ITooltipCtrl
+            )
         );
         super.postConstruct();
         this.createListComponent();
-        this.eWrapper.tabIndex = this.gos.get('tabIndex');
+        this.eWrapper.tabIndex = this.gos.get('tabIndex')!;
 
         const { options, value, placeholder } = this.config;
         if (options != null) {
@@ -73,7 +120,18 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
     }
 
     private createListComponent(): void {
-        const listComponent = this.createBean(new AgList<AgSelectEvent, TValue>('select', true));
+        const listComponent = this.createBean(
+            new AgList<
+                TBeanCollection,
+                TProperties,
+                TGlobalEvents,
+                TCommon,
+                TPropertiesService,
+                TComponentSelectorType,
+                AgSelectEvent,
+                TValue
+            >('select', true)
+        );
         this.listComponent = listComponent;
         listComponent.setParentComponent(this);
 
@@ -213,7 +271,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
     }
 }
 
-export const AgSelectSelector: ComponentSelector = {
+export const AgSelectSelector: AgComponentSelector<AgWidgetSelectorType> = {
     selector: 'AG-SELECT',
     component: AgSelect,
 };

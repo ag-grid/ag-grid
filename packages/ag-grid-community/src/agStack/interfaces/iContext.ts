@@ -3,6 +3,10 @@ import type { AgBaseBean } from './iBean';
 import type { IEnvironment } from './iEnvironment';
 import type { AgEventService, BaseEvents } from './iEvent';
 import type { ILocaleService } from './iLocaleService';
+import type { BasePopupPositionParams } from './iPopup';
+import type { IPopupService } from './iPopupService';
+import type { IRegistry } from './iRegistry';
+import type { IValidationService } from './iValidationService';
 
 export interface AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents extends BaseEvents, TCommon> {
     context: IContext<TBeanCollection>;
@@ -12,6 +16,9 @@ export interface AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlob
     localeSvc?: ILocaleService;
     environment: IEnvironment;
     eRootDiv: HTMLElement;
+    popupSvc?: IPopupService<BasePopupPositionParams>;
+    registry: IRegistry<TBeanCollection, 'tooltipFeature'>;
+    validation?: IValidationService;
 }
 
 export type AgEventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };

@@ -4,4 +4,5 @@ export type AgWidgetSelectorType =
     | 'AG-INPUT-NUMBER-FIELD'
     | 'AG-INPUT-TEXT-AREA'
     | 'AG-INPUT-TEXT-FIELD'
+    | 'AG-SELECT'
     | 'AG-TOGGLE-BUTTON';

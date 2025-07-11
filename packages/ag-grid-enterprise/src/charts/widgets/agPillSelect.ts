@@ -1,4 +1,4 @@
-import type { DragAndDropIcon, DragItem, DraggingEvent, DropTarget, ListOption } from 'ag-grid-community';
+import type { DragAndDropIcon, DragItem, DraggingEvent, DropTarget, GridSelect, ListOption } from 'ag-grid-community';
 import {
     AgSelect,
     Component,
@@ -32,7 +32,7 @@ export interface AgPillSelectChangeParams<TValue> {
 
 export class AgPillSelect<TValue = string | null> extends Component {
     private dropZonePanel: PillSelectDropZonePanel<TValue>;
-    private eSelect?: AgSelect<TValue>;
+    private eSelect?: GridSelect<TValue>;
 
     private readonly config: AgPillSelectParams<TValue>;
     private valueList: TValue[];

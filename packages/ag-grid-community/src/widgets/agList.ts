@@ -1,9 +1,14 @@
+import { AgComponentStub } from '../agStack/agComponentStub';
+import type { AgCoreBean } from '../agStack/interfaces/iBean';
+import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
+import type { BaseEvents } from '../agStack/interfaces/iEvent';
+import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
+import type { ITooltipFeature } from '../agStack/interfaces/iTooltip';
 import { _setAriaRole } from '../agStack/utils/ariaUtils';
 import { KeyCode } from '../constants/keyCode';
-import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
+import type { ITooltipCtrl } from '../tooltip/tooltipFeature';
 import { _setAriaPosInSet, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
 import { _createElement, _isVisible, _removeFromParent } from '../utils/dom';
-import { Component } from './component';
 
 export interface ListOption<TValue = string> {
     value: TValue;
@@ -12,7 +17,22 @@ export interface ListOption<TValue = string> {
 
 export type AgListEvent = 'fieldValueChanged' | 'selectedItem';
 
-export class AgList<TEventType extends string = AgListEvent, TValue = string> extends Component<
+export class AgList<
+    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties>,
+    TComponentSelectorType extends string,
+    TEventType extends string = AgListEvent,
+    TValue = string,
+> extends AgComponentStub<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
     TEventType | AgListEvent
 > {
     private readonly activeClass = 'ag-active-item';
@@ -184,13 +204,17 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
         });
 
         this.createOptionalManagedBean(
-            this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
-                getTooltipValue: () => text,
-                getGui: () => itemEl,
-                getLocation: () => 'UNKNOWN',
-                // only show tooltips for items where the text cannot be fully displayed
-                shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth,
-            } as ITooltipCtrl)
+            this.beans.registry.createDynamicBean<ITooltipFeature & AgCoreBean<TBeanCollection>>(
+                'tooltipFeature',
+                false,
+                {
+                    getTooltipValue: () => text,
+                    getGui: () => itemEl,
+                    getLocation: () => 'UNKNOWN',
+                    // only show tooltips for items where the text cannot be fully displayed
+                    shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth,
+                } as ITooltipCtrl
+            )
         );
 
         this.getGui().appendChild(itemEl);

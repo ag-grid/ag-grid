@@ -1,27 +1,26 @@
+import type { AgComponentStub } from '../agStack/agComponentStub';
 import { RefPlaceholder } from '../agStack/interfaces/iComponent';
+import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
+import type { BaseEvents } from '../agStack/interfaces/iEvent';
+import type { AddPopupParams } from '../agStack/interfaces/iPopup';
+import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
 import { _setAriaRole } from '../agStack/utils/ariaUtils';
+import type { AgElementParams } from '../agStack/utils/domUtils';
 import { _formatSize, _setElementWidth } from '../agStack/utils/domUtils';
 import type { AgAbstractFieldEvent } from '../agStack/widgets/agAbstractField';
 import { AgAbstractField } from '../agStack/widgets/agAbstractField';
 import { KeyCode } from '../constants/keyCode';
-import type { BeanCollection } from '../context/context';
-import type { AgEventTypeParams, AllEventsWithoutGridCommon } from '../events';
-import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
-import type { GridOptionsService } from '../gridOptionsService';
 import { _isNothingFocused } from '../gridOptionsUtils';
 import type { AgPickerFieldParams } from '../interfaces/agPickerFieldParams';
 import { _setAriaExpanded } from '../utils/aria';
-import type { ElementParams } from '../utils/dom';
 import { _getAbsoluteWidth, _getInnerHeight } from '../utils/dom';
 import type { IconName } from '../utils/icon';
 import { _createIconNoSpan } from '../utils/icon';
 import { agPickerFieldCSS } from './agPickerField.css-GENERATED';
-import type { AgComponentSelectorType, Component } from './component';
-import type { AddPopupParams } from './popupService';
 
 export type AgPickerFieldEvent = AgAbstractFieldEvent | 'pickerHidden';
 
-const AgPickerFieldElement: ElementParams = {
+const AgPickerFieldElement: AgElementParams<any> = {
     tag: 'div',
     cls: 'ag-picker-field',
     role: 'presentation',
@@ -40,17 +39,39 @@ const AgPickerFieldElement: ElementParams = {
 };
 
 export abstract class AgPickerField<
+    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties>,
+    TComponentSelectorType extends string,
     TValue,
-    TConfig extends AgPickerFieldParams = AgPickerFieldParams,
+    TConfig extends AgPickerFieldParams<TComponentSelectorType> = AgPickerFieldParams<TComponentSelectorType>,
     TEventType extends string = AgPickerFieldEvent,
-    TComponent extends Component<TEventType | AgPickerFieldEvent> = Component<TEventType | AgPickerFieldEvent>,
+    TComponent extends AgComponentStub<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType,
+        TEventType | AgPickerFieldEvent
+    > = AgComponentStub<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType,
+        TEventType | AgPickerFieldEvent
+    >,
 > extends AgAbstractField<
-    BeanCollection,
-    GridOptionsWithDefaults,
-    AgEventTypeParams,
-    AllEventsWithoutGridCommon,
-    GridOptionsService,
-    AgComponentSelectorType,
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
     TValue,
     TConfig,
     TEventType | AgPickerFieldEvent
@@ -142,7 +163,7 @@ export abstract class AgPickerField<
     protected setupAria(): void {
         const ariaEl = this.getAriaElement();
 
-        ariaEl.setAttribute('tabindex', this.gos.get('tabIndex').toString());
+        ariaEl.setAttribute('tabindex', this.gos.get('tabIndex')!.toString());
 
         _setAriaExpanded(ariaEl, false);
 
@@ -243,7 +264,7 @@ export abstract class AgPickerField<
             eWrapper,
         } = this;
 
-        const popupParams: AddPopupParams = {
+        const popupParams: AddPopupParams<string> = {
             modal: modalPicker,
             eChild: ePicker,
             closeOnEsc: true,

@@ -1,4 +1,5 @@
 import { RefPlaceholder } from '../agStack/interfaces/iComponent';
+import type { BodyScrollEvent } from '../events';
 import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
 import type { ElementParams } from '../utils/dom';
 import { _isVisible, _requestAnimationFrame } from '../utils/dom';
@@ -78,7 +79,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
 
     protected hideAndShowInvisibleScrollAsNeeded(): void {
         this.addManagedEventListeners({
-            bodyScroll: (params) => {
+            bodyScroll: (params: BodyScrollEvent) => {
                 if (params.direction === this.direction) {
                     if (this.hideTimeout) {
                         window.clearTimeout(this.hideTimeout);

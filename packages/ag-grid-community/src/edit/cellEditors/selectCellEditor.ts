@@ -9,8 +9,8 @@ import { _warn } from '../../validation/logging';
 import type { ValueService } from '../../valueService/valueService';
 import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
 import type { ListOption } from '../../widgets/agList';
-import type { AgSelect } from '../../widgets/agSelect';
 import { AgSelectSelector } from '../../widgets/agSelect';
+import type { GridSelect } from '../../widgets/gridWidgetTypes';
 import type { ISelectCellEditorParams } from './iSelectCellEditor';
 
 interface SelectCellEditorParams<TData = any, TValue = any, TContext = any>
@@ -36,7 +36,7 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
         this.valueSvc = beans.valueSvc;
     }
 
-    protected readonly eEditor: AgSelect = RefPlaceholder;
+    protected readonly eEditor: GridSelect = RefPlaceholder;
     private startedByEnter: boolean = false;
 
     constructor() {

@@ -1,6 +1,6 @@
 import type { AgTooltipMode } from 'ag-charts-types';
 
-import type { AgSelect } from 'ag-grid-community';
+import type { GridSelect } from 'ag-grid-community';
 import { AgSelectSelector, Component, RefPlaceholder } from 'ag-grid-community';
 
 import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
@@ -13,7 +13,7 @@ function _capitalise<T extends string>(str: T): Capitalize<T> {
 }
 
 export class TooltipPanel extends Component {
-    private tooltipMode: AgSelect = RefPlaceholder;
+    private tooltipMode: GridSelect = RefPlaceholder;
 
     constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {
         super();

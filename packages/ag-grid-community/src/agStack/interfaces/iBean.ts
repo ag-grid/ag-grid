@@ -27,12 +27,41 @@ export interface AgSingletonBean<TBeanCollection> extends AgBaseBean<TBeanCollec
     beanName?: keyof TBeanCollection & string;
 }
 
+export interface AgCoreBean<TBeanCollection> extends AgBaseBean<TBeanCollection> {
+    isAlive(): boolean;
+
+    addDestroyFunc(func: () => void): void;
+
+    /** doesn't throw an error if `bean` is undefined */
+    createOptionalManagedBean<T extends AgBaseBean<TBeanCollection> | null | undefined>(
+        bean: T,
+        context?: IContext<TBeanCollection>
+    ): T | undefined;
+
+    createManagedBean<T extends AgBaseBean<TBeanCollection>>(bean: T, context?: IContext<TBeanCollection>): T;
+
+    createBean<T extends AgBaseBean<TBeanCollection>>(
+        bean: T,
+        context?: IContext<TBeanCollection> | null,
+        afterPreCreateCallback?: (bean: AgBaseBean<TBeanCollection>) => void
+    ): T;
+
+    /**
+     * Destroys a bean and returns undefined to support destruction and clean up in a single line.
+     * this.dateComp = this.context.destroyBean(this.dateComp);
+     */
+    destroyBean<T extends AgBaseBean<TBeanCollection> | null | undefined>(
+        bean: T,
+        context?: IContext<TBeanCollection>
+    ): undefined;
+}
+
 export interface AgBean<
     TBeanCollection,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TLocalEventType extends string,
-> extends AgBaseBean<TBeanCollection> {
+> extends AgCoreBean<TBeanCollection> {
     addEventListener<T extends TLocalEventType>(
         eventType: T,
         listener: IEventListener<TLocalEventType>,
@@ -81,32 +110,5 @@ export interface AgBean<
      */
     addManagedPropertyListeners(events: (keyof TProperties)[], listener: AgPropertyChangedListener<TProperties>): void;
 
-    isAlive(): boolean;
-
     getLocaleTextFunc(): LocaleTextFunc;
-
-    addDestroyFunc(func: () => void): void;
-
-    /** doesn't throw an error if `bean` is undefined */
-    createOptionalManagedBean<T extends AgBaseBean<TBeanCollection> | null | undefined>(
-        bean: T,
-        context?: IContext<TBeanCollection>
-    ): T | undefined;
-
-    createManagedBean<T extends AgBaseBean<TBeanCollection>>(bean: T, context?: IContext<TBeanCollection>): T;
-
-    createBean<T extends AgBaseBean<TBeanCollection>>(
-        bean: T,
-        context?: IContext<TBeanCollection> | null,
-        afterPreCreateCallback?: (bean: AgBaseBean<TBeanCollection>) => void
-    ): T;
-
-    /**
-     * Destroys a bean and returns undefined to support destruction and clean up in a single line.
-     * this.dateComp = this.context.destroyBean(this.dateComp);
-     */
-    destroyBean<T extends AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType> | null | undefined>(
-        bean: T,
-        context?: IContext<TBeanCollection>
-    ): undefined;
 }

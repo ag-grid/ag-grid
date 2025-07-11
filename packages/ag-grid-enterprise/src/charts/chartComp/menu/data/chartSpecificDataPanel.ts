@@ -1,4 +1,4 @@
-import type { BeanCollection, GridToggleButton, IChartService } from 'ag-grid-community';
+import type { BeanCollection, GridSelect, GridToggleButton, IChartService } from 'ag-grid-community';
 import { AgSelect, AgToggleButton, Component, RefPlaceholder } from 'ag-grid-community';
 
 import type { AgGroupComponent, AgGroupComponentParams } from '../../../../widgets/agGroupComponent';
@@ -24,9 +24,9 @@ export class ChartSpecificDataPanel extends Component {
 
     private readonly chartSpecificGroup: AgGroupComponent = RefPlaceholder;
 
-    private directionSelect?: AgSelect;
+    private directionSelect?: GridSelect;
     private reverseToggle?: GridToggleButton;
-    private groupTypeSelect?: AgSelect;
+    private groupTypeSelect?: GridSelect;
     private hasContent = false;
 
     constructor(
@@ -74,7 +74,7 @@ export class ChartSpecificDataPanel extends Component {
         return this.chartTranslation.translate(getFullChartNameTranslationKey(chartType));
     }
 
-    private createDirectionSelect(): AgSelect[] {
+    private createDirectionSelect(): GridSelect[] {
         if (!this.chartSvc.isEnterprise()) {
             return [];
         }
@@ -119,7 +119,7 @@ export class ChartSpecificDataPanel extends Component {
         this.updateDisplayed(this.directionSelect, isDisplayed);
     }
 
-    private createGroupTypeSelect(): AgSelect {
+    private createGroupTypeSelect(): GridSelect {
         const { chartController, chartMenuParamsFactory } = this.chartMenuContext;
         this.groupTypeSelect = this.createManagedBean(
             new AgSelect(
@@ -145,7 +145,7 @@ export class ChartSpecificDataPanel extends Component {
         this.updateDisplayed(this.groupTypeSelect, isDisplayed);
     }
 
-    private updateDisplayed(select: AgSelect | GridToggleButton | undefined, isDisplayed: boolean): void {
+    private updateDisplayed(select: GridSelect | GridToggleButton | undefined, isDisplayed: boolean): void {
         select?.setDisplayed(isDisplayed);
         if (select) {
             this.hasContent = this.hasContent || isDisplayed;

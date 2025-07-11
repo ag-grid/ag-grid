@@ -1,4 +1,4 @@
-import type { AgSelectParams, BeanCollection, ListOption } from 'ag-grid-community';
+import type { AgComponentSelectorType, AgSelectParams, BeanCollection, ListOption } from 'ag-grid-community';
 import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
 
 import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
@@ -49,7 +49,7 @@ export class SeriesItemsPanel extends Component {
         this.initSeriesControls();
     }
 
-    private getSeriesItemsParams(): AgSelectParams {
+    private getSeriesItemsParams(): AgSelectParams<AgComponentSelectorType> {
         const options: ListOption<SeriesItemType>[] = [
             { value: 'positive', text: this.chartTranslation.translate('seriesItemPositive') },
             { value: 'negative', text: this.chartTranslation.translate('seriesItemNegative') },

@@ -1,5 +1,6 @@
 import type {
     BeanCollection,
+    ContainerType,
     DefaultChartMenuItem,
     IAfterGuiAttachedParams,
     IconName,
@@ -68,7 +69,7 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
 
         const eGui = chartMenuList.getGui();
 
-        this.popupSvc.addPopup({
+        this.popupSvc.addPopup<ContainerType>({
             modal: true,
             eChild: eGui,
             closeOnEsc: true,

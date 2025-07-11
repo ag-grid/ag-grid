@@ -1,3 +1,5 @@
+import type { AddPopupParams, AddPopupResult, PopupEventParams } from '../agStack/interfaces/iPopup';
+import type { IPopupService } from '../agStack/interfaces/iPopupService';
 import { _setAriaLabel } from '../agStack/utils/ariaUtils';
 import { _setAriaRole } from '../agStack/utils/ariaUtils';
 import { _getActiveDomElement } from '../agStack/utils/beanUtils';
@@ -9,11 +11,10 @@ import { BeanStub } from '../context/beanStub';
 import type { CssVariablesChanged } from '../events';
 import type { GridCtrl } from '../gridComp/gridCtrl';
 import { _getDocument } from '../gridOptionsUtils';
-import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { PostProcessPopupParams } from '../interfaces/iCallbackParams';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { PopupEventParams, PopupPositionParams } from '../interfaces/iPopup';
+import type { PopupPositionParams } from '../interfaces/iPopupPositionParams';
 import type { IRowNode } from '../interfaces/iRowNode';
 import {
     _createElement,
@@ -38,41 +39,7 @@ interface AgPopup {
 
 let instanceIdSeq = 0;
 
-export interface AddPopupParams {
-    // if true then listens to background checking for clicks, so that when the background is clicked,
-    // the child is removed again, giving a model look to popups.
-    modal?: boolean;
-    // the element to place in the popup
-    eChild: HTMLElement;
-    // if hitting ESC should close the popup
-    closeOnEsc?: boolean;
-    // a callback that gets called when the popup is closed
-    closedCallback?: (e?: MouseEvent | TouchEvent | KeyboardEvent) => void;
-    // if a clicked caused the popup (eg click a button) then the click that caused it
-    click?: MouseEvent | Touch | null;
-    alwaysOnTop?: boolean;
-    afterGuiAttached?: (params: IAfterGuiAttachedParams) => void;
-    // this gets called after the popup is created. the called could just call positionCallback themselves,
-    // however it needs to be called first before anchorToElement is called, so must provide this callback
-    // here if setting anchorToElement
-    positionCallback?: () => void;
-    // if the underlying anchorToElement moves, the popup will follow it. for example if context menu
-    // showing, and the whole grid moves (browser is scrolled down) then we want the popup to stay above
-    // the cell it appeared on. make sure though if setting, don't anchor to a temporary or moving element,
-    // eg if cellComp element is passed, what happens if row moves (sorting, filtering etc)? best anchor against
-    // the grid, not the cell.
-    anchorToElement?: HTMLElement;
-
-    // an aria label should be added to provided context to screen readers
-    ariaLabel: string;
-}
-
-export interface AddPopupResult {
-    hideFunc: (params?: PopupEventParams) => void;
-}
-
 const WAIT_FOR_POPUP_CONTENT_RESIZE: number = 200;
-
 interface Position {
     initialDiff: number;
     lastDiff: number;
@@ -81,7 +48,7 @@ interface Position {
     direction: Direction;
 }
 
-export class PopupService extends BeanStub implements NamedBean {
+export class PopupService extends BeanStub implements NamedBean, IPopupService<PopupPositionParams> {
     beanName = 'popupSvc' as const;
 
     private gridCtrl: GridCtrl;
@@ -462,7 +429,7 @@ export class PopupService extends BeanStub implements NamedBean {
         return Math.min(Math.max(position, 0), Math.abs(max));
     }
 
-    public addPopup(params: AddPopupParams): AddPopupResult {
+    public addPopup<TContainerType extends string>(params: AddPopupParams<TContainerType>): AddPopupResult {
         const eDocument = _getDocument(this.beans);
         const { eChild, ariaLabel, alwaysOnTop, positionCallback, anchorToElement } = params;
 
@@ -546,7 +513,7 @@ export class PopupService extends BeanStub implements NamedBean {
     }
 
     private addEventListenersToPopup(
-        params: AddPopupParams & { wrapperEl: HTMLElement }
+        params: AddPopupParams<string> & { wrapperEl: HTMLElement }
     ): (popupParams?: PopupEventParams) => void {
         const beans = this.beans;
         const eDocument = _getDocument(beans);
