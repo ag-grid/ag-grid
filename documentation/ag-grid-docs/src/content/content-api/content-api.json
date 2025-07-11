@@ -11,6 +11,10 @@
         {
             "id": "modules",
             "url": "./content/modules.json"
+        },
+        {
+            "id": "changelog",
+            "url": "./content/changelog.json"
         }
     ],
     "previousVersions": []

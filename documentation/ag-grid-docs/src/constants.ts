@@ -172,6 +172,8 @@ export const TRIAL_LICENCE_FORM_URL = import.meta.env?.PUBLIC_TRIAL_LICENCE_FORM
 
 export const EXAMPLE_STYLE_FILE_NAME = 'ag-example-styles.css';
 
+export const PRODUCTION_CHANGELOG_JSON_URL = 'https://www.ag-grid.com/changelog/changelog.json';
+
 export const ZI_FORM_ID = 'aad0527d-5af6-4263-8dcd-60f3ac998d5d';
 export type TrialLicenceFormType = 'emailOnly' | 'allFields' | 'original';
 export const DEFAULT_TRIAL_LICENSE_FORM: TrialLicenceFormType = 'allFields';
