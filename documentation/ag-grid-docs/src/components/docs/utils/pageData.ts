@@ -6,7 +6,7 @@ import { pathJoin } from '@utils/pathJoin';
 
 import { getIsDev } from '../../../utils/env';
 import { type GeneratedExampleParams, getGeneratedContentsFileList } from '../../example-generator';
-import { getInternalFrameworkExamples, getPagesList } from './filesData';
+import { getAllInternalFrameworkExamples, getPagesList } from './filesData';
 
 interface Example {
     internalFramework: InternalFramework;
@@ -76,7 +76,7 @@ export function getDocsFrameworkPages() {
 }
 
 async function getDocsExampleNameParts({ pages }: { pages: DocsPage[] }): Promise<Example[]> {
-    const internalFrameworkExamples = await getInternalFrameworkExamples({ pages });
+    const internalFrameworkExamples = await getAllInternalFrameworkExamples({ pages });
     const filteredInternalFrameworkExamples = isQuickBuild
         ? internalFrameworkExamples.filter(({ pageName }) => {
               return QUICK_BUILD_PAGES.includes(pageName);
