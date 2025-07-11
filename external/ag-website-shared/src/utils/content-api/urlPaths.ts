@@ -5,7 +5,7 @@ import { pathJoin } from '@utils/pathJoin';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
-function getContentApiPrefix(url: string) {
+export function getContentApiPrefix(url: string) {
     return pathJoin(SITE_URL, urlWithBaseUrl(`/content`), url);
 }
 

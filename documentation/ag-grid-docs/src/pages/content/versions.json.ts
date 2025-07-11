@@ -1,4 +1,4 @@
-import { getContentApiArchiveUrl } from '@ag-website-shared/utils/content-api/urlPaths';
+import { getContentApiArchiveUrl, getContentApiPrefix } from '@ag-website-shared/utils/content-api/urlPaths';
 import { type CollectionEntry, getEntry } from 'astro:content';
 
 function parseDateString(dateString: string): string {
@@ -27,7 +27,7 @@ export async function GET() {
     const lastVersion = {
         version: lastVersionData.version,
         releaseData: parseDateString(lastVersionData.date!),
-        url: getContentApiArchiveUrl({ version: lastVersionData.version }),
+        url: getContentApiPrefix('index.json'),
         isLatest: true,
     };
 
