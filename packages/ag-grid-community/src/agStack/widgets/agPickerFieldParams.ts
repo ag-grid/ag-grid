@@ -1,6 +1,6 @@
-import type { AgComponentSelector } from '../agStack/interfaces/iComponent';
-import type { AgElementParams } from '../agStack/utils/domUtils';
-import type { AgFieldParams } from '../agStack/widgets/agFieldParams';
+import type { AgComponentSelector } from '../interfaces/iComponent';
+import type { AgElementParams } from '../utils/domUtils';
+import type { AgFieldParams } from './agFieldParams';
 
 export interface AgPickerFieldParams<TComponentSelectorType extends string> extends AgFieldParams {
     pickerType: string;

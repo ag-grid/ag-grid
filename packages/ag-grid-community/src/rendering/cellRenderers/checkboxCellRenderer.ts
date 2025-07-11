@@ -1,8 +1,8 @@
+import { KeyCode } from '../../agStack/constants/keyCode';
 import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
 import { _getActiveDomElement } from '../../agStack/utils/beanUtils';
 import { AgCheckboxSelector } from '../../agStack/widgets/agCheckbox';
 import { GROUP_AUTO_COLUMN_ID } from '../../columns/columnUtils';
-import { KeyCode } from '../../constants/keyCode';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
 import type { ElementParams } from '../../utils/dom';
 import { _stopPropagationForAgGrid } from '../../utils/event';

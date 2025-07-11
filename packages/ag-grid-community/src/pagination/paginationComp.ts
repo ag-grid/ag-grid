@@ -1,5 +1,5 @@
+import { KeyCode } from '../agStack/constants/keyCode';
 import { RefPlaceholder } from '../agStack/interfaces/iComponent';
-import { KeyCode } from '../constants/keyCode';
 import type { BeanCollection } from '../context/context';
 import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';

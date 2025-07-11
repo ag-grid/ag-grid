@@ -1,21 +1,17 @@
 import type { AgComponentStub } from '../agStack/agComponentStub';
+import { KeyCode } from '../agStack/constants/keyCode';
 import { RefPlaceholder } from '../agStack/interfaces/iComponent';
 import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
 import type { BaseEvents } from '../agStack/interfaces/iEvent';
 import type { AddPopupParams } from '../agStack/interfaces/iPopup';
 import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
-import { _setAriaRole } from '../agStack/utils/ariaUtils';
+import { _setAriaExpanded, _setAriaRole } from '../agStack/utils/ariaUtils';
+import { _isNothingFocused } from '../agStack/utils/beanUtils';
 import type { AgElementParams } from '../agStack/utils/domUtils';
-import { _formatSize, _setElementWidth } from '../agStack/utils/domUtils';
+import { _formatSize, _getAbsoluteWidth, _getInnerHeight, _setElementWidth } from '../agStack/utils/domUtils';
 import type { AgAbstractFieldEvent } from '../agStack/widgets/agAbstractField';
 import { AgAbstractField } from '../agStack/widgets/agAbstractField';
-import { KeyCode } from '../constants/keyCode';
-import { _isNothingFocused } from '../gridOptionsUtils';
-import type { AgPickerFieldParams } from '../interfaces/agPickerFieldParams';
-import { _setAriaExpanded } from '../utils/aria';
-import { _getAbsoluteWidth, _getInnerHeight } from '../utils/dom';
-import type { IconName } from '../utils/icon';
-import { _createIconNoSpan } from '../utils/icon';
+import type { AgPickerFieldParams } from '../agStack/widgets/agPickerFieldParams';
 import { agPickerFieldCSS } from './agPickerField.css-GENERATED';
 
 export type AgPickerFieldEvent = AgAbstractFieldEvent | 'pickerHidden';
@@ -149,7 +145,7 @@ export abstract class AgPickerField<
         const { pickerIcon, inputWidth } = this.config;
 
         if (pickerIcon) {
-            const icon = _createIconNoSpan(pickerIcon as IconName, this.beans);
+            const icon = this.beans.iconSvc.createIconNoSpan(pickerIcon);
             if (icon) {
                 this.eIcon.appendChild(icon);
             }

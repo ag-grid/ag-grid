@@ -1,4 +1,4 @@
-import { KeyCode } from '../../constants/keyCode';
+import { KeyCode } from '../../agStack/constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';

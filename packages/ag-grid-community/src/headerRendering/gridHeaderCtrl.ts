@@ -1,6 +1,6 @@
+import { KeyCode } from '../agStack/constants/keyCode';
 import { _getActiveDomElement } from '../agStack/utils/beanUtils';
 import { _exists } from '../agStack/utils/genericUtils';
-import { KeyCode } from '../constants/keyCode';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { HeaderNavigationDirection } from '../navigation/headerNavigationService';

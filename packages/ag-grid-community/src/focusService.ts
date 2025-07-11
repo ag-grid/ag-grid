@@ -1,7 +1,7 @@
+import { KeyCode } from './agStack/constants/keyCode';
 import { _getActiveDomElement } from './agStack/utils/beanUtils';
 import type { ColumnModel } from './columns/columnModel';
 import type { VisibleColsService } from './columns/visibleColsService';
-import { KeyCode } from './constants/keyCode';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';

@@ -82,7 +82,18 @@ export { BeanName, SingletonBean, BeanCollection } from './context/context';
 export { VisibleChangedEvent, RefPlaceholder } from './agStack/interfaces/iComponent';
 export { AgEvent } from './agStack/interfaces/agEvent';
 export { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
-export { _setAriaHidden, _setAriaRole, _setAriaLabel, _setAriaLabelledBy } from './agStack/utils/ariaUtils';
+export {
+    _setAriaHidden,
+    _setAriaRole,
+    _setAriaLabel,
+    _setAriaLabelledBy,
+    _setAriaExpanded,
+    _setAriaControls,
+    _setAriaControlsAndLabel,
+    _setAriaSelected,
+    _setAriaPosInSet,
+    _setAriaSetSize,
+} from './agStack/utils/ariaUtils';
 export {
     _setDisplayed,
     _loadTemplate,
@@ -91,11 +102,16 @@ export {
     _clearElement,
     _setFixedWidth,
     _setDisabled,
+    _getAbsoluteWidth,
+    _removeFromParent,
+    _isVisible,
+    _getInnerHeight,
+    _isElementOverflowingCallback,
 } from './agStack/utils/domUtils';
 export { _exists } from './agStack/utils/genericUtils';
 export { _serialiseDate, _parseDateTimeFromString } from './agStack/utils/dateUtils';
 export { _getLocaleTextFunc, _translate } from './agStack/utils/localeUtils';
-export { _getActiveDomElement, _getRootNode } from './agStack/utils/beanUtils';
+export { _getActiveDomElement, _getRootNode, _isNothingFocused, _getDocument } from './agStack/utils/beanUtils';
 export { LocaleTextFunc } from './agStack/interfaces/iLocaleService';
 export { CssClassManager } from './agStack/cssClassManager';
 export { LocalEventService } from './agStack/localEventService';
@@ -626,7 +642,7 @@ export type { CellStyleService } from './styling/cellStyleService';
 
 // widgets
 
-export { AgPickerFieldParams } from './interfaces/agPickerFieldParams';
+export { AgPickerFieldParams } from './agStack/widgets/agPickerFieldParams';
 export { RichSelectParams } from './interfaces/iRichCellEditorParams';
 export { AgSelect, AgSelectParams, AgSelectSelector } from './widgets/agSelect';
 export { ListOption } from './widgets/agList';
@@ -711,7 +727,7 @@ export { ICsvCreator } from './interfaces/iCsvCreator';
 export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export type { CellNavigationService } from './navigation/cellNavigationService';
-export { KeyCode } from './constants/keyCode';
+export { KeyCode } from './agStack/constants/keyCode';
 export { Direction } from './constants/direction';
 export { GridParams, Params, GridCoreCreator, createGrid } from './grid';
 export { provideGlobalGridOptions, GlobalGridOptionsMergeStrategy, _getGlobalGridOption } from './globalGridOptions';
@@ -768,8 +784,6 @@ export {
     _canSkipShowingRowGroup,
     _getRowHeightAsNumber,
     _shouldUpdateColVisibilityAfterGroup,
-    _isNothingFocused,
-    _getDocument,
     _getPageBody,
     _anchorElementToMouseMoveEvent,
     _getGroupAggFiltering,
@@ -1091,10 +1105,7 @@ export {
     ColumnSortState,
     _setAriaLevel,
     _setAriaDescribedBy,
-    _setAriaExpanded,
     _setAriaChecked,
-    _setAriaControls,
-    _setAriaControlsAndLabel,
     _setAriaColIndex,
     _setAriaColSpan,
     _setAriaRowIndex,
@@ -1106,9 +1117,6 @@ export {
     _setAriaColCount,
     _setAriaRowCount,
     _setAriaActiveDescendant,
-    _setAriaSelected,
-    _setAriaPosInSet,
-    _setAriaSetSize,
     _getAriaPosInSet,
     _setAriaInvalid,
 } from './utils/aria';
@@ -1118,17 +1126,12 @@ export { ChangedPath } from './utils/changedPath';
 export { _getDateParts } from './utils/date';
 export {
     _getAbsoluteHeight,
-    _getAbsoluteWidth,
-    _removeFromParent,
     _radioCssClass,
     ElementParams,
-    _isVisible,
-    _getInnerHeight,
     _getInnerWidth,
     _observeResize,
     _preserveRangesWhile,
     _requestAnimationFrame,
-    _isElementOverflowingCallback,
     _createElement,
 } from './utils/dom';
 export { _selectAllCells } from './utils/selection';

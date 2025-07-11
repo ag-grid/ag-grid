@@ -1,5 +1,5 @@
+import { KeyCode } from '../agStack/constants/keyCode';
 import { _exists } from '../agStack/utils/genericUtils';
-import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';

@@ -1,3 +1,4 @@
+import { _isElementOverflowingCallback } from '../agStack/utils/domUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -5,7 +6,6 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { GridOptionsService } from '../gridOptionsService';
-import { _isElementOverflowingCallback } from '../utils/dom';
 import type { TooltipLocation } from './tooltipComponent';
 import { TooltipStateManager } from './tooltipStateManager';
 

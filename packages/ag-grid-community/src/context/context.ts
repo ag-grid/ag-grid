@@ -83,6 +83,7 @@ import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { IRowNumbersService } from '../interfaces/rowNumbers';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEvents/apiEventService';
+import type { IconService } from '../misc/iconService';
 import type { MenuService } from '../misc/menu/menuService';
 import type { StateService } from '../misc/state/stateService';
 import type { TouchService } from '../misc/touchService';
@@ -343,6 +344,7 @@ export interface CoreBeanCollection
     gridSerializer?: GridSerializer;
     licenseManager?: IWatermark;
     changeDetectionSvc?: ChangeDetectionService;
+    iconSvc: IconService;
 }
 
 /** Things used in enterprise or elsewhere that we haven't created interfaces for */

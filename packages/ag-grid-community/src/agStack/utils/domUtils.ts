@@ -30,10 +30,104 @@ export function _setDisabled(element: HTMLElement, disabled: boolean) {
     }
 }
 
+// returns back sizes as doubles instead of strings. similar to
+// getBoundingClientRect, however getBoundingClientRect does not:
+// a) work with fractions (eg browser is zooming)
+// b) has CSS transitions applied (eg CSS scale, browser zoom), which we don't want, we want the un-transitioned values
+export function _getElementSize(el: HTMLElement): {
+    height: number;
+    width: number;
+    borderTopWidth: number;
+    borderRightWidth: number;
+    borderBottomWidth: number;
+    borderLeftWidth: number;
+    paddingTop: number;
+    paddingRight: number;
+    paddingBottom: number;
+    paddingLeft: number;
+    marginTop: number;
+    marginRight: number;
+    marginBottom: number;
+    marginLeft: number;
+    boxSizing: string;
+} {
+    const {
+        height,
+        width,
+        borderTopWidth,
+        borderRightWidth,
+        borderBottomWidth,
+        borderLeftWidth,
+        paddingTop,
+        paddingRight,
+        paddingBottom,
+        paddingLeft,
+        marginTop,
+        marginRight,
+        marginBottom,
+        marginLeft,
+        boxSizing,
+    } = window.getComputedStyle(el);
+
+    return {
+        height: parseFloat(height || '0'),
+        width: parseFloat(width || '0'),
+        borderTopWidth: parseFloat(borderTopWidth || '0'),
+        borderRightWidth: parseFloat(borderRightWidth || '0'),
+        borderBottomWidth: parseFloat(borderBottomWidth || '0'),
+        borderLeftWidth: parseFloat(borderLeftWidth || '0'),
+        paddingTop: parseFloat(paddingTop || '0'),
+        paddingRight: parseFloat(paddingRight || '0'),
+        paddingBottom: parseFloat(paddingBottom || '0'),
+        paddingLeft: parseFloat(paddingLeft || '0'),
+        marginTop: parseFloat(marginTop || '0'),
+        marginRight: parseFloat(marginRight || '0'),
+        marginBottom: parseFloat(marginBottom || '0'),
+        marginLeft: parseFloat(marginLeft || '0'),
+        boxSizing,
+    };
+}
+
+export function _getInnerHeight(el: HTMLElement): number {
+    const size = _getElementSize(el);
+
+    if (size.boxSizing === 'border-box') {
+        return size.height - size.paddingTop - size.paddingBottom;
+    }
+
+    return size.height;
+}
+
+export function _getAbsoluteWidth(el: HTMLElement): number {
+    const { width, marginLeft, marginRight } = _getElementSize(el);
+
+    return Math.floor(width + marginLeft + marginRight);
+}
+
 export function _clearElement(el: HTMLElement): void {
     while (el && el.firstChild) {
         el.removeChild(el.firstChild);
     }
+}
+
+export function _removeFromParent(node: Element | null) {
+    if (node && node.parentNode) {
+        node.parentNode.removeChild(node);
+    }
+}
+
+export function _isInDOM(element: HTMLElement): boolean {
+    return !!element.offsetParent;
+}
+
+export function _isVisible(element: HTMLElement) {
+    const el = element as any;
+    if (el.checkVisibility) {
+        return el.checkVisibility({ checkVisibilityCSS: true });
+    }
+
+    const isHidden = !_isInDOM(element) || window.getComputedStyle(element).visibility !== 'visible';
+    return !isHidden;
 }
 
 /**
@@ -48,6 +142,25 @@ export function _loadTemplate(template: string | undefined | null): HTMLElement 
     tempDiv.innerHTML = (template || '').trim();
 
     return tempDiv.firstChild as HTMLElement;
+}
+
+export function _isElementOverflowingCallback(getElement: () => HTMLElement | undefined): () => boolean {
+    return () => {
+        const element = getElement();
+        if (!element) {
+            // defaults to true
+            return true;
+        }
+        return _isHorizontalScrollShowing(element);
+    };
+}
+
+export function _isHorizontalScrollShowing(element: HTMLElement): boolean {
+    return element.clientWidth < element.scrollWidth;
+}
+
+export function _isVerticalScrollShowing(element: HTMLElement): boolean {
+    return element.clientHeight < element.scrollHeight;
 }
 
 export function _setElementWidth(element: HTMLElement, width: string | number) {

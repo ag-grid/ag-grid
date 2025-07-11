@@ -1,14 +1,12 @@
 import { AgComponentStub } from '../agStack/agComponentStub';
+import { KeyCode } from '../agStack/constants/keyCode';
 import type { AgCoreBean } from '../agStack/interfaces/iBean';
 import type { AgCoreBeanCollection } from '../agStack/interfaces/iContext';
 import type { BaseEvents } from '../agStack/interfaces/iEvent';
 import type { BaseProperties, IPropertiesService } from '../agStack/interfaces/iProperties';
-import type { ITooltipFeature } from '../agStack/interfaces/iTooltip';
-import { _setAriaRole } from '../agStack/utils/ariaUtils';
-import { KeyCode } from '../constants/keyCode';
-import type { ITooltipCtrl } from '../tooltip/tooltipFeature';
-import { _setAriaPosInSet, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
-import { _createElement, _isVisible, _removeFromParent } from '../utils/dom';
+import type { BaseTooltipCtrl, ITooltipFeature } from '../agStack/interfaces/iTooltip';
+import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../agStack/utils/ariaUtils';
+import { _createAgElement, _isVisible, _removeFromParent } from '../agStack/utils/domUtils';
 
 export interface ListOption<TValue = string> {
     value: TValue;
@@ -174,13 +172,13 @@ export class AgList<
     }
 
     private renderOption(value: TValue, text: string): void {
-        const itemEl = _createElement({
+        const itemEl = _createAgElement({
             tag: 'div',
             cls: `ag-list-item ag-${this.cssIdentifier}-list-item`,
             attrs: { role: 'option' },
         });
 
-        const span = _createElement({
+        const span = _createAgElement({
             tag: 'span',
             children: text,
         });
@@ -213,7 +211,7 @@ export class AgList<
                     getLocation: () => 'UNKNOWN',
                     // only show tooltips for items where the text cannot be fully displayed
                     shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth,
-                } as ITooltipCtrl
+                } as BaseTooltipCtrl<'UNKNOWN'>
             )
         );
 

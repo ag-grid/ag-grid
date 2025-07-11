@@ -1,3 +1,4 @@
+import { _setAriaSelected } from '../agStack/utils/ariaUtils';
 import { _getActiveDomElement } from '../agStack/utils/beanUtils';
 import { isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
@@ -22,7 +23,6 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { ISetNodesSelectedParams } from '../interfaces/iSelectionService';
 import { _isManualPinnedRow } from '../pinnedRowModel/pinnedRowUtils';
 import type { RowCtrl, RowGui } from '../rendering/row/rowCtrl';
-import { _setAriaSelected } from '../utils/aria';
 import type { ChangedPath } from '../utils/changedPath';
 import { CheckboxSelectionComponent } from './checkboxSelectionComponent';
 import { RowRangeSelectionContext } from './rowRangeSelectionContext';

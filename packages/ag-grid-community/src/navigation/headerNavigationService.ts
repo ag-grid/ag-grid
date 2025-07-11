@@ -1,10 +1,10 @@
+import { _getDocument } from '../agStack/utils/beanUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { isColumnGroup } from '../entities/agColumnGroup';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
-import { _getDocument } from '../gridOptionsUtils';
 import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { HeaderRowType } from '../headerRendering/row/headerRowComp';
 import type { Column, ColumnGroup } from '../interfaces/iColumn';

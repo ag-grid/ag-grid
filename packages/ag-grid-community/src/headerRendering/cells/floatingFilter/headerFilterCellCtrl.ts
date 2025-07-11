@@ -1,7 +1,7 @@
+import { KeyCode } from '../../../agStack/constants/keyCode';
 import { _setAriaLabel } from '../../../agStack/utils/ariaUtils';
 import { _getActiveDomElement } from '../../../agStack/utils/beanUtils';
 import { setupCompBean } from '../../../components/emptyBean';
-import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams } from '../../../entities/colDef';

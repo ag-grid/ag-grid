@@ -1,5 +1,5 @@
+import { _getDocument } from '../agStack/utils/beanUtils';
 import { BeanStub } from '../context/beanStub';
-import { _getDocument } from '../gridOptionsUtils';
 import { _findFocusableElements, _findNextFocusableElement } from '../utils/focus';
 import { ManagedFocusFeature } from './managedFocusFeature';
 

@@ -1,6 +1,6 @@
+import { KeyCode } from '../agStack/constants/keyCode';
 import type { AgEvent } from '../agStack/interfaces/agEvent';
 import { _clearElement, _setDisabled } from '../agStack/utils/domUtils';
-import { KeyCode } from '../constants/keyCode';
 import type { FilterAction } from '../interfaces/iFilter';
 import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
 import type { ElementParams } from '../utils/dom';

@@ -1,3 +1,4 @@
+import { _isVerticalScrollShowing } from '../agStack/utils/domUtils';
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -10,7 +11,7 @@ import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _isInvisibleScrollbar } from '../utils/browser';
-import { _isElementChildOfClass, _isVerticalScrollShowing, _requestAnimationFrame } from '../utils/dom';
+import { _isElementChildOfClass, _requestAnimationFrame } from '../utils/dom';
 import type { PopupService } from '../widgets/popupService';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import { _isEventFromThisGrid } from './mouseEventUtils';

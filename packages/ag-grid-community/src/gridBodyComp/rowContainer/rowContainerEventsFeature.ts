@@ -1,5 +1,5 @@
+import { KeyCode } from '../../agStack/constants/keyCode';
 import { _isEventFromPrintableCharacter } from '../../agStack/utils/keyboardUtils';
-import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';

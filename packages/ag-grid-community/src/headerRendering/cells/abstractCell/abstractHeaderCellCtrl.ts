@@ -1,5 +1,6 @@
-import { _getActiveDomElement } from '../../../agStack/utils/beanUtils';
-import { _addOrRemoveAttribute } from '../../../agStack/utils/domUtils';
+import { KeyCode } from '../../../agStack/constants/keyCode';
+import { _getActiveDomElement, _getDocument } from '../../../agStack/utils/beanUtils';
+import { _addOrRemoveAttribute, _getElementSize } from '../../../agStack/utils/domUtils';
 import { _exists } from '../../../agStack/utils/genericUtils';
 import type { HorizontalDirection } from '../../../constants/direction';
 import { BeanStub } from '../../../context/beanStub';
@@ -8,13 +9,12 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
 import type { HeaderClassParams, HeaderStyle, SuppressHeaderKeyboardEventParams } from '../../../entities/colDef';
-import { _addGridCommonParams, _getDocument, _setDomData } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _setDomData } from '../../../gridOptionsUtils';
 import type { BrandedType } from '../../../interfaces/brandedType';
 import { _setAriaColIndex } from '../../../utils/aria';
-import { _getElementSize, _observeResize } from '../../../utils/dom';
+import { _observeResize } from '../../../utils/dom';
 import { _isHeaderFocusSuppressed } from '../../../utils/focus';
 import { _batchCall } from '../../../utils/function';
-import { KeyCode } from '../.././../constants/keyCode';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import { refreshFirstAndLastStyles } from '../cssClassApplier';
 

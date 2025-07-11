@@ -1,4 +1,4 @@
-import { KeyCode } from '../constants/keyCode';
+import { KeyCode } from '../agStack/constants/keyCode';
 import { BeanStub } from '../context/beanStub';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../utils/event';
 import { _findNextFocusableElement } from '../utils/focus';

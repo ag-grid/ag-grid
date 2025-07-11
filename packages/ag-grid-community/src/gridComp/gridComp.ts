@@ -1,4 +1,5 @@
 import { RefPlaceholder } from '../agStack/interfaces/iComponent';
+import { _isVisible } from '../agStack/utils/domUtils';
 import type { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import { GridBodySelector } from '../gridBodyComp/gridBodyComp';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
@@ -6,7 +7,6 @@ import type { ISideBar } from '../interfaces/iSideBar';
 import type { UpdateLayoutClassesParams } from '../styling/layoutFeature';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import type { ElementParams } from '../utils/dom';
-import { _isVisible } from '../utils/dom';
 import { _logIfDebug } from '../utils/function';
 import type { ComponentSelector } from '../widgets/component';
 import type { Component } from '../widgets/component';

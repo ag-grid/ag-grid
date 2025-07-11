@@ -1,5 +1,4 @@
 import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties';
-import type { IValidationService } from '../agStack/interfaces/iValidationService';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -23,7 +22,7 @@ import { DEPRECATED_ICONS_V33, ICON_MODULES, ICON_VALUES } from './rules/iconVal
 import { USER_COMP_MODULES } from './rules/userCompValidations';
 import type { DependentValues, OptionsValidator, RequiredOptions } from './validationTypes';
 
-export class ValidationService extends BeanStub implements NamedBean, IValidationService {
+export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validation' as const;
 
     private gridOptions: GridOptions;

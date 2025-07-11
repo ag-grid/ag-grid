@@ -6,6 +6,4 @@ export interface IRegistry<TBeanCollection, TDynamicBeanName extends string> {
         mandatory: boolean,
         ...args: any[]
     ): T | undefined;
-
-    getIcon(name: string): string | undefined;
 }

@@ -1,6 +1,6 @@
+import { KeyCode } from '../../agStack/constants/keyCode';
 import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
 import { _isBrowserSafari } from '../../agStack/utils/browserUtils';
-import { KeyCode } from '../../constants/keyCode';
 import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
 import type { GridInputTextField } from '../../widgets/gridWidgetTypes';

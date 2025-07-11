@@ -1,6 +1,5 @@
 import { RefPlaceholder } from '../../../agStack/interfaces/iComponent';
-import { _parseDateTimeFromString } from '../../../agStack/utils/dateUtils';
-import { _serialiseDate } from '../../../agStack/utils/dateUtils';
+import { _parseDateTimeFromString, _serialiseDate } from '../../../agStack/utils/dateUtils';
 import { _setDisplayed } from '../../../agStack/utils/domUtils';
 import { AgInputTextFieldSelector } from '../../../agStack/widgets/agInputTextField';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';

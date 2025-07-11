@@ -1,11 +1,11 @@
-import { _getActiveDomElement } from '../agStack/utils/beanUtils';
-import { KeyCode } from '../constants/keyCode';
+import { KeyCode } from '../agStack/constants/keyCode';
+import { _getActiveDomElement, _getDocument } from '../agStack/utils/beanUtils';
+import { _isVisible } from '../agStack/utils/domUtils';
 import type { BeanCollection } from '../context/context';
-import { _getDocument } from '../gridOptionsUtils';
 import type { Component } from '../widgets/component';
 import { _last } from './array';
 import { _getTabIndex } from './browser';
-import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, _isVisible } from './dom';
+import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR } from './dom';
 
 let keyboardModeActive: boolean = false;
 let instanceCount: number = 0;

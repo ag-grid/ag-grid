@@ -1,28 +1,21 @@
+import { KeyCode } from '../agStack/constants/keyCode';
 import type { AddPopupParams, AddPopupResult, PopupEventParams } from '../agStack/interfaces/iPopup';
 import type { IPopupService } from '../agStack/interfaces/iPopupService';
-import { _setAriaLabel } from '../agStack/utils/ariaUtils';
-import { _setAriaRole } from '../agStack/utils/ariaUtils';
-import { _getActiveDomElement } from '../agStack/utils/beanUtils';
+import { _setAriaLabel, _setAriaRole } from '../agStack/utils/ariaUtils';
+import { _getActiveDomElement, _getDocument } from '../agStack/utils/beanUtils';
+import { _getAbsoluteWidth } from '../agStack/utils/domUtils';
 import { _exists } from '../agStack/utils/genericUtils';
 import { Direction } from '../constants/direction';
-import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { CssVariablesChanged } from '../events';
 import type { GridCtrl } from '../gridComp/gridCtrl';
-import { _getDocument } from '../gridOptionsUtils';
 import type { PostProcessPopupParams } from '../interfaces/iCallbackParams';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { PopupPositionParams } from '../interfaces/iPopupPositionParams';
 import type { IRowNode } from '../interfaces/iRowNode';
-import {
-    _createElement,
-    _getAbsoluteHeight,
-    _getAbsoluteWidth,
-    _getElementRectWithOffset,
-    _observeResize,
-} from '../utils/dom';
+import { _createElement, _getAbsoluteHeight, _getElementRectWithOffset, _observeResize } from '../utils/dom';
 import { _isElementInEventPath, _isStopPropagationForAgGrid } from '../utils/event';
 import { AgPromise } from '../utils/promise';
 import { _warn } from '../validation/logging';

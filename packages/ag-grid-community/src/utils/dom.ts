@@ -1,7 +1,7 @@
 import { _getRootNode } from '../agStack/utils/beanUtils';
 import { _isBrowserSafari } from '../agStack/utils/browserUtils';
-import { _createAgElement, _formatSize } from '../agStack/utils/domUtils';
 import type { AgElementParams } from '../agStack/utils/domUtils';
+import { _createAgElement, _formatSize, _getElementSize, _isVisible } from '../agStack/utils/domUtils';
 import type { BeanCollection } from '../context/context';
 import type { CellStyle, HeaderStyle } from '../entities/colDef';
 import type { RowStyle } from '../entities/gridOptions';
@@ -73,74 +73,6 @@ export function _isElementChildOfClass(
     return false;
 }
 
-// returns back sizes as doubles instead of strings. similar to
-// getBoundingClientRect, however getBoundingClientRect does not:
-// a) work with fractions (eg browser is zooming)
-// b) has CSS transitions applied (eg CSS scale, browser zoom), which we don't want, we want the un-transitioned values
-export function _getElementSize(el: HTMLElement): {
-    height: number;
-    width: number;
-    borderTopWidth: number;
-    borderRightWidth: number;
-    borderBottomWidth: number;
-    borderLeftWidth: number;
-    paddingTop: number;
-    paddingRight: number;
-    paddingBottom: number;
-    paddingLeft: number;
-    marginTop: number;
-    marginRight: number;
-    marginBottom: number;
-    marginLeft: number;
-    boxSizing: string;
-} {
-    const {
-        height,
-        width,
-        borderTopWidth,
-        borderRightWidth,
-        borderBottomWidth,
-        borderLeftWidth,
-        paddingTop,
-        paddingRight,
-        paddingBottom,
-        paddingLeft,
-        marginTop,
-        marginRight,
-        marginBottom,
-        marginLeft,
-        boxSizing,
-    } = window.getComputedStyle(el);
-
-    return {
-        height: parseFloat(height || '0'),
-        width: parseFloat(width || '0'),
-        borderTopWidth: parseFloat(borderTopWidth || '0'),
-        borderRightWidth: parseFloat(borderRightWidth || '0'),
-        borderBottomWidth: parseFloat(borderBottomWidth || '0'),
-        borderLeftWidth: parseFloat(borderLeftWidth || '0'),
-        paddingTop: parseFloat(paddingTop || '0'),
-        paddingRight: parseFloat(paddingRight || '0'),
-        paddingBottom: parseFloat(paddingBottom || '0'),
-        paddingLeft: parseFloat(paddingLeft || '0'),
-        marginTop: parseFloat(marginTop || '0'),
-        marginRight: parseFloat(marginRight || '0'),
-        marginBottom: parseFloat(marginBottom || '0'),
-        marginLeft: parseFloat(marginLeft || '0'),
-        boxSizing,
-    };
-}
-
-export function _getInnerHeight(el: HTMLElement): number {
-    const size = _getElementSize(el);
-
-    if (size.boxSizing === 'border-box') {
-        return size.height - size.paddingTop - size.paddingBottom;
-    }
-
-    return size.height;
-}
-
 export function _getInnerWidth(el: HTMLElement): number {
     const size = _getElementSize(el);
 
@@ -155,12 +87,6 @@ export function _getAbsoluteHeight(el: HTMLElement): number {
     const { height, marginBottom, marginTop } = _getElementSize(el);
 
     return Math.floor(height + marginBottom + marginTop);
-}
-
-export function _getAbsoluteWidth(el: HTMLElement): number {
-    const { width, marginLeft, marginRight } = _getElementSize(el);
-
-    return Math.floor(width + marginLeft + marginRight);
 }
 
 export function _getElementRectWithOffset(el: HTMLElement): {
@@ -195,26 +121,6 @@ export function _setScrollLeft(element: HTMLElement, value: number, rtl: boolean
         value *= -1;
     }
     element.scrollLeft = value;
-}
-
-export function _removeFromParent(node: Element | null) {
-    if (node && node.parentNode) {
-        node.parentNode.removeChild(node);
-    }
-}
-
-export function _isInDOM(element: HTMLElement): boolean {
-    return !!element.offsetParent;
-}
-
-export function _isVisible(element: HTMLElement) {
-    const el = element as any;
-    if (el.checkVisibility) {
-        return el.checkVisibility({ checkVisibilityCSS: true });
-    }
-
-    const isHidden = !_isInDOM(element) || window.getComputedStyle(element).visibility !== 'visible';
-    return !isHidden;
 }
 
 export function _ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement | null): void {
@@ -298,25 +204,6 @@ export function _addStylesToElement(eElement: any, styles: RowStyle | CellStyle 
 
         eElement.style.setProperty(parsedKey, parsedValue, priority);
     }
-}
-
-export function _isElementOverflowingCallback(getElement: () => HTMLElement | undefined): () => boolean {
-    return () => {
-        const element = getElement();
-        if (!element) {
-            // defaults to true
-            return true;
-        }
-        return _isHorizontalScrollShowing(element);
-    };
-}
-
-export function _isHorizontalScrollShowing(element: HTMLElement): boolean {
-    return element.clientWidth < element.scrollWidth;
-}
-
-export function _isVerticalScrollShowing(element: HTMLElement): boolean {
-    return element.clientHeight < element.scrollHeight;
 }
 
 export function _setFixedHeight(element: HTMLElement, height: string | number) {

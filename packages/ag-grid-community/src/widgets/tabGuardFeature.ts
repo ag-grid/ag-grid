@@ -1,8 +1,7 @@
 import { _setAriaRole } from '../agStack/utils/ariaUtils';
-import { _clearElement, _isNodeOrElement } from '../agStack/utils/domUtils';
+import { _getDocument } from '../agStack/utils/beanUtils';
+import { _clearElement, _isNodeOrElement, _removeFromParent } from '../agStack/utils/domUtils';
 import { BeanStub } from '../context/beanStub';
-import { _getDocument } from '../gridOptionsUtils';
-import { _removeFromParent } from '../utils/dom';
 import type { Component } from './component';
 import type { ITabGuard } from './tabGuardCtrl';
 import { TabGuardClassNames, TabGuardCtrl } from './tabGuardCtrl';

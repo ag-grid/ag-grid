@@ -1,4 +1,5 @@
-import { KeyCode } from '../constants/keyCode';
+import { KeyCode } from '../agStack/constants/keyCode';
+import { _isVisible } from '../agStack/utils/domUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -8,7 +9,7 @@ import { _isColumnMenuAnchoringEnabled, _isLegacyMenuEnabled } from '../gridOpti
 import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import { _setColMenuVisible } from '../misc/menu/menuService';
-import { _createElement, _isVisible } from '../utils/dom';
+import { _createElement } from '../utils/dom';
 import { _findNextFocusableElement, _findTabbableParent, _focusInto } from '../utils/focus';
 import { _error } from '../validation/logging';
 import type { PopupService } from '../widgets/popupService';

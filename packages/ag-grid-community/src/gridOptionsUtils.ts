@@ -1,7 +1,5 @@
 import type { AgCoreBeanCollection } from './agStack/interfaces/iContext';
-import { _getRootNode } from './agStack/utils/beanUtils';
-import { _getActiveDomElement } from './agStack/utils/beanUtils';
-import { _exists } from './agStack/utils/genericUtils';
+import { _getDocument, _getRootNode } from './agStack/utils/beanUtils';
 import type { GridApi } from './api/gridApi';
 import type { BeanCollection } from './context/context';
 import type {
@@ -178,25 +176,6 @@ export function _setDomData(gos: GridOptionsService, element: Element, key: stri
     domData[key] = value;
 }
 
-export function _getDocument(beans: AgCoreBeanCollection<any, any, any, any>): Document {
-    // if user is providing document, we use the users one,
-    // otherwise we use the document on the global namespace.
-    const { gos, eRootDiv } = beans;
-    let result: Document | null = null;
-    const gridOptionsGetDocument = gos.get('getDocument');
-    if (gridOptionsGetDocument && _exists(gridOptionsGetDocument)) {
-        result = gridOptionsGetDocument();
-    } else if (eRootDiv) {
-        result = eRootDiv.ownerDocument;
-    }
-
-    if (result && _exists(result)) {
-        return result;
-    }
-
-    return document;
-}
-
 export function _getWindow(beans: AgCoreBeanCollection<any, any, any, any>) {
     const eDocument = _getDocument(beans);
     return eDocument.defaultView || window;
@@ -288,12 +267,6 @@ export function _anchorElementToMouseMoveEvent(
 
     element.style.left = `${left}px`;
     element.style.top = `${top}px`;
-}
-
-export function _isNothingFocused(beans: AgCoreBeanCollection<any, any, any, any>): boolean {
-    const activeEl = _getActiveDomElement(beans);
-
-    return activeEl === null || activeEl === _getDocument(beans).body;
 }
 
 export function _isAnimateRows(gos: GridOptionsService) {

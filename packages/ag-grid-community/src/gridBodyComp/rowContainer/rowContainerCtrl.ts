@@ -1,3 +1,4 @@
+import { _isHorizontalScrollShowing, _isInDOM } from '../../agStack/utils/domUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { StickyTopOffsetChangedEvent } from '../../events';
 import { _isDomLayout } from '../../gridOptionsUtils';
@@ -5,14 +6,7 @@ import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { RowRenderer } from '../../rendering/rowRenderer';
 import type { SpannedRowRenderer } from '../../rendering/spanning/spannedRowRenderer';
-import {
-    _getInnerWidth,
-    _getScrollLeft,
-    _isHorizontalScrollShowing,
-    _isInDOM,
-    _observeResize,
-    _setScrollLeft,
-} from '../../utils/dom';
+import { _getInnerWidth, _getScrollLeft, _observeResize, _setScrollLeft } from '../../utils/dom';
 import { CenterWidthFeature } from '../centerWidthFeature';
 import type { ScrollPartner } from '../gridBodyScrollFeature';
 import { ViewportSizeFeature } from '../viewportSizeFeature';
