@@ -1030,7 +1030,22 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         const processRowGroupCallback = ({ node, column }: ProcessRowGroupForExportParams) => {
             const { value, valueFormatted } = this.beans.valueSvc.getValueForDisplay(column as AgColumn, node, true);
-            return valueFormatted ?? value ?? '';
+
+            const val = valueFormatted ?? value ?? '';
+            const cb = gos.getCallback('processCellForClipboard');
+            if (!cb) {
+                return val;
+            }
+            return cb({
+                column: column!,
+                node,
+                value: val,
+                type: EXPORT_TYPE_CLIPBOARD,
+                formatValue: (valueToFormat: any) =>
+                    this.beans.valueSvc.formatValue(column as AgColumn, node, valueToFormat) ?? valueToFormat,
+                parseValue: (valueToParse: any) =>
+                    this.beans.valueSvc.parseValue(column as AgColumn, node, valueToParse, value) ?? valueToParse,
+            });
         };
         const exportParams: CsvExportParams = {
             columnKeys: columns,
