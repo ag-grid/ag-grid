@@ -35,6 +35,8 @@ export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
 export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> {
     /** The list of values to be selected from. */
     values: TValue[] | RichCellEditorValuesCallback<TData, TValue>;
+    /** If `true` the picker showing the values will be automatically displayed once the RichSelect is created */
+    autoExpand?: boolean;
     /** The row height, in pixels, of each value. */
     cellHeight?: number;
     /** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */
