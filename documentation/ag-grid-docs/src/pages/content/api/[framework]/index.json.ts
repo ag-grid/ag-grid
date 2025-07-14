@@ -19,7 +19,7 @@ export async function getStaticPaths() {
 }
 
 export const GET: APIRoute<Params> = async ({ params }) => {
-    const { data: navData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
+    const { data: navData } = (await getEntry('apiNav', 'nav')) as CollectionEntry<'apiNav'>;
     const { framework } = params;
     const docs = await getDocsEntries({ framework: framework as Framework, navData });
 
