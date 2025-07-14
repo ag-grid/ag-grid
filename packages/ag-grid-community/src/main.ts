@@ -1040,7 +1040,7 @@ export {
     GetGroupIncludeTotalRowParams,
     IMenuActionParams,
 } from './interfaces/iCallbackParams';
-export { WithoutGridCommon } from './interfaces/iCommon';
+export { WithoutGridCommon, AgGridCommon } from './interfaces/iCommon';
 
 export { _GET_ALL_GRID_OPTIONS, _BOOLEAN_MIXED_GRID_OPTIONS } from './propertyKeys';
 export { IPivotColDefService } from './interfaces/iPivotColDefService';

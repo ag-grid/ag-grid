@@ -1,8 +1,8 @@
 import type {
     AgComponentSelectorType,
     AgEventTypeParams,
+    AgGridCommon,
     AgLabelParams,
-    AllEventsWithoutGridCommon,
     BeanCollection,
     ComponentSelector,
     GridInputNumberField,
@@ -29,7 +29,7 @@ export class AgSlider extends AgAbstractLabel<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AllEventsWithoutGridCommon,
+    AgGridCommon<any, any>,
     GridOptionsService,
     AgComponentSelectorType,
     AgSliderParams,

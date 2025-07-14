@@ -1,8 +1,8 @@
 import type {
     AgComponentSelectorType,
     AgEventTypeParams,
+    AgGridCommon,
     AgPickerFieldParams,
-    AllEventsWithoutGridCommon,
     BeanCollection,
     ComponentSelector,
     GridOptionsService,
@@ -28,7 +28,7 @@ export class AgColorPicker extends AgPickerField<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AllEventsWithoutGridCommon,
+    AgGridCommon<any, any>,
     GridOptionsService,
     AgComponentSelectorType,
     string,

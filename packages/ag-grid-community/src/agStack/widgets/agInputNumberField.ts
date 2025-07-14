@@ -22,7 +22,7 @@ export class AgInputNumberField<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
 > extends AgInputTextField<
     TBeanCollection,

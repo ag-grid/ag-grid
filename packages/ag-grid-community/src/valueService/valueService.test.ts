@@ -19,8 +19,8 @@ describe('formatValue', () => {
         column = mock<AgColumn>('getColDef');
         column.getColDef.mockReturnValue(colDef);
 
-        gos = mock<GridOptionsService>('get', 'addGridCommonParams');
-        gos.addGridCommonParams.mockImplementation((params) => params as any);
+        gos = mock<GridOptionsService>('get', 'addCommon');
+        gos.addCommon.mockImplementation((params) => params as any);
         expressionSvc = mock<ExpressionService>('evaluate');
         valueSvc = new ValueService();
         (valueSvc as any).gos = gos;

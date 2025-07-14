@@ -39,7 +39,7 @@ export abstract class AgPickerField<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
     TValue,
     TConfig extends AgPickerFieldParams<TComponentSelectorType> = AgPickerFieldParams<TComponentSelectorType>,

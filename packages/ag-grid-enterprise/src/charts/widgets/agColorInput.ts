@@ -3,8 +3,8 @@ import type { IColor, _IUtil } from 'ag-charts-types';
 import type {
     AgComponentSelectorType,
     AgEventTypeParams,
+    AgGridCommon,
     AgInputTextFieldParams,
-    AllEventsWithoutGridCommon,
     BeanCollection,
     ComponentSelector,
     ElementParams,
@@ -39,7 +39,7 @@ export class AgColorInput extends AgInputTextField<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AllEventsWithoutGridCommon,
+    AgGridCommon<any, any>,
     GridOptionsService,
     AgComponentSelectorType,
     AgInputTextFieldParams<AgComponentSelectorType>,

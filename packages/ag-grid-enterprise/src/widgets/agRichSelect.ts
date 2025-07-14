@@ -1,8 +1,8 @@
 import type {
     AgComponentSelectorType,
     AgEventTypeParams,
+    AgGridCommon,
     AgPromise,
-    AllEventsWithoutGridCommon,
     AriaAnnouncementService,
     BeanCollection,
     ElementParams,
@@ -76,7 +76,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AllEventsWithoutGridCommon,
+    AgGridCommon<any, any>,
     GridOptionsService,
     AgComponentSelectorType,
     TValue[] | TValue,

@@ -1,4 +1,5 @@
 import type { AgEvent } from './agEvent';
+import type { WithoutCommon } from './iEvent';
 
 export interface BaseProperties {
     tabIndex?: number;
@@ -41,14 +42,18 @@ export type AgPropertyValueChangedListener<TProperties extends BaseProperties, K
     event: AgPropertyValueChangedEvent<TProperties, K>
 ) => void;
 
-export interface IPropertiesService<TProperties extends BaseProperties> {
+export interface IPropertiesService<TProperties extends BaseProperties, TCommon> {
     addPropertyEventListener<K extends keyof TProperties & string>(
         event: K,
         listener: AgPropertyValueChangedListener<TProperties, K>
     ): void;
+
     removePropertyEventListener<K extends keyof TProperties & string>(
         event: K,
         listener: AgPropertyValueChangedListener<TProperties, K>
     ): void;
+
     get<K extends AgPropertyKey<TProperties>>(property: K): TProperties[K];
+
+    addCommon<T extends TCommon>(params: WithoutCommon<TCommon, T>): T;
 }

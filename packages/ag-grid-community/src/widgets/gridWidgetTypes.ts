@@ -12,16 +12,17 @@ import type { AgRadioButton } from '../agStack/widgets/agRadioButton';
 import type { AgSelect } from '../agStack/widgets/agSelect';
 import type { AgToggleButton } from '../agStack/widgets/agToggleButton';
 import type { BeanCollection } from '../context/context';
-import type { AgEventTypeParams, AllEventsWithoutGridCommon } from '../events';
+import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
+import type { AgGridCommon } from '../interfaces/iCommon';
 import type { AgComponentSelectorType } from './component';
 
 export type GridInputTextArea = AgInputTextArea<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AllEventsWithoutGridCommon,
+    AgGridCommon<any, any>,
     GridOptionsService,
     AgComponentSelectorType
 >;
@@ -33,7 +34,7 @@ export type GridInputTextField<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AllEventsWithoutGridCommon,
+    AgGridCommon<any, any>,
     GridOptionsService,
     AgComponentSelectorType,
     TConfig,
@@ -44,7 +45,7 @@ export type GridInputNumberField = AgInputNumberField<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AllEventsWithoutGridCommon,
+    AgGridCommon<any, any>,
     GridOptionsService,
     AgComponentSelectorType
 >;
@@ -53,7 +54,7 @@ export type GridInputDateField = AgInputDateField<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AllEventsWithoutGridCommon,
+    AgGridCommon<any, any>,
     GridOptionsService,
     AgComponentSelectorType
 >;
@@ -64,7 +65,7 @@ export type GridCheckbox<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AllEventsWithoutGridCommon,
+    AgGridCommon<any, any>,
     GridOptionsService,
     AgComponentSelectorType,
     TConfig
@@ -74,7 +75,7 @@ export type GridRadioButton = AgRadioButton<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AllEventsWithoutGridCommon,
+    AgGridCommon<any, any>,
     GridOptionsService,
     AgComponentSelectorType
 >;
@@ -83,7 +84,7 @@ export type GridToggleButton = AgToggleButton<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AllEventsWithoutGridCommon,
+    AgGridCommon<any, any>,
     GridOptionsService,
     AgComponentSelectorType
 >;
@@ -92,7 +93,7 @@ export type GridSelect<TValue = string | null> = AgSelect<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AllEventsWithoutGridCommon,
+    AgGridCommon<any, any>,
     GridOptionsService,
     AgComponentSelectorType,
     TValue

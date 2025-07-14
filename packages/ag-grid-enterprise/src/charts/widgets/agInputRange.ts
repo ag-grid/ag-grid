@@ -1,8 +1,8 @@
 import type {
     AgComponentSelectorType,
     AgEventTypeParams,
+    AgGridCommon,
     AgInputFieldParams,
-    AllEventsWithoutGridCommon,
     BeanCollection,
     ComponentSelector,
     GridOptionsService,
@@ -20,7 +20,7 @@ export class AgInputRange extends AgAbstractInputField<
     BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
-    AllEventsWithoutGridCommon,
+    AgGridCommon<any, any>,
     GridOptionsService,
     AgComponentSelectorType,
     HTMLInputElement,

@@ -696,7 +696,7 @@ export function _addGridCommonParams<T extends AgGridCommon<TData, TContext>, TD
     gos: GridOptionsService,
     params: WithoutGridCommon<T>
 ): T {
-    return gos.addGridCommonParams(params);
+    return gos.addCommon(params);
 }
 
 export type GroupingApproach = 'group' | 'treeSelfRef' | 'treeNested' | 'treePath';

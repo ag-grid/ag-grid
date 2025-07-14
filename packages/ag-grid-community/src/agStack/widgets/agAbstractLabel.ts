@@ -15,7 +15,7 @@ export abstract class AgAbstractLabel<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
     TConfig extends AgLabelParams = AgLabelParams,
     TEventType extends string = AgAbstractLabelEvent,

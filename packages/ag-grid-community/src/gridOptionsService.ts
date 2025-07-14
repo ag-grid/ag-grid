@@ -71,7 +71,10 @@ let changeSetId = 0;
 // this is added to the main DOM element
 let gridInstanceSequence = 0;
 
-export class GridOptionsService extends BeanStub implements NamedBean, IPropertiesService<GridOptionsWithDefaults> {
+export class GridOptionsService
+    extends BeanStub
+    implements NamedBean, IPropertiesService<GridOptionsWithDefaults, AgGridCommon<any, any>>
+{
     beanName = 'gos' as const;
 
     private gridOptions: GridOptions;
@@ -160,7 +163,7 @@ export class GridOptionsService extends BeanStub implements NamedBean, IProperti
     ): ((params: WithoutGridCommon<P>) => T) | undefined {
         if (callback) {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
-                return callback(this.addGridCommonParams(callbackParams));
+                return callback(this.addCommon(callbackParams));
             };
             return wrapped;
         }
@@ -276,7 +279,7 @@ export class GridOptionsService extends BeanStub implements NamedBean, IProperti
     }
 
     /** Prefer _addGridCommonParams from gridOptionsUtils for bundle size savings */
-    public addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(
+    public addCommon<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(
         params: WithoutGridCommon<T>
     ): T {
         (params as T).api = this.api;

@@ -1,11 +1,11 @@
 import type { AgEvent } from './agEvent';
 
-type GlobalEventListener<TEventType extends string, TEvents extends Record<TEventType, any>> = (
-    eventType: TEventType,
-    event: TEvents[TEventType]
-) => void;
+export type AgEventServiceGlobalListener<
+    TEventType extends keyof TGlobalEvents & string,
+    TGlobalEvents extends BaseEvents,
+> = (eventType: TEventType, event: TGlobalEvents[TEventType] & AgEvent<TEventType>) => void;
 
-type AgEventServiceListener<TGlobalEvents, TEventType extends keyof TGlobalEvents & string> = (
+export type AgEventServiceListener<TGlobalEvents, TEventType extends keyof TGlobalEvents & string> = (
     params: TGlobalEvents[TEventType]
 ) => void;
 
@@ -51,12 +51,12 @@ export interface AgEventService<TGlobalEvents extends BaseEvents, TCommon> {
     ): void;
 
     addGlobalListener(
-        listener: GlobalEventListener<keyof TGlobalEvents & string, TGlobalEvents>,
+        listener: AgEventServiceGlobalListener<keyof TGlobalEvents & string, TGlobalEvents>,
         async?: boolean
     ): void;
 
     removeGlobalListener(
-        listener: GlobalEventListener<keyof TGlobalEvents & string, TGlobalEvents>,
+        listener: AgEventServiceGlobalListener<keyof TGlobalEvents & string, TGlobalEvents>,
         async?: boolean
     ): void;
 

@@ -26,7 +26,7 @@ export abstract class AgBeanStub<
         TProperties extends BaseProperties,
         TGlobalEvents extends BaseEvents,
         TCommon,
-        TPropertiesService extends IPropertiesService<TProperties>,
+        TPropertiesService extends IPropertiesService<TProperties, TCommon>,
         TLocalEventType extends string, // TODO move to end and add default
     >
     implements

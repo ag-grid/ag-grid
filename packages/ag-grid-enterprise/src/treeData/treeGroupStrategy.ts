@@ -388,7 +388,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             return groupDefaultExpanded === -1 || level < groupDefaultExpanded;
         }
         const { field, key, rowGroupColumn } = rowNode;
-        const params = gos.addGridCommonParams<IsGroupOpenByDefaultParams>({
+        const params = gos.addCommon<IsGroupOpenByDefaultParams>({
             rowNode,
             field: field!,
             key: key!,

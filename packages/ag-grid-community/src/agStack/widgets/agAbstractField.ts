@@ -18,7 +18,7 @@ export abstract class AgAbstractField<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
-    TPropertiesService extends IPropertiesService<TProperties>,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
     TValue,
     TConfig extends AgFieldParams = AgFieldParams,
