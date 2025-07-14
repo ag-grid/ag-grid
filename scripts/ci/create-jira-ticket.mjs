@@ -28,7 +28,7 @@ if (!auth) {
     process.exit(1);
 }
 
-const workflowName = process.env.WORKFLOW || 'Unknown';
+const workflowName = process.env.WORKFLOW_NAME || 'Unknown';
 const description = process.env.JIRA_DESCRIPTION || `Please provide a description in workflow file '${workflowName}'`;
 const summary = process.env.JIRA_SUMMARY || `[NR] CI/CD workflow '${workflowName}' has failed`;
 const isSuccess = process.env.IS_SUCCESS;
@@ -37,7 +37,7 @@ if (isSuccess) {
     await findExistingIssue(fingerprint).then(async (existingIssue) => {
         if (!existingIssue) {
             console.log('No existing issue found. Nothing to do...');
-            return;
+            process.exit(0);
         }
         console.log(`IS_SUCCESS is true, transitioning issue ${existingIssue.key} to QA...`);
         await transitionIssue(existingIssue, COLUMN_QA_ID);
@@ -92,7 +92,7 @@ async function createIssue() {
         fields: {
             project: { key: PROJECT_ID },
             summary: summary,
-            description: description + `\n\n${AUTOMATED_MESSAGE}`,
+            description: description + `\n\nNo QA needed\n\n${AUTOMATED_MESSAGE}`,
             issuetype: { name: 'Bug' },
             assignee: {
                 accountId: PERFORMANCE_CHAMP_USER_IDS[Math.floor(Math.random() * PERFORMANCE_CHAMP_USER_IDS.length)],

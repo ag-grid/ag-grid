@@ -122,7 +122,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         };
     }
 
-    public override stop(cancel?: boolean): boolean {
+    public override stop(cancel?: boolean, event?: Event | null): boolean {
         const { rowNode } = this;
         if (rowNode && !this.model.hasRowEdits(rowNode)) {
             return false;
@@ -151,7 +151,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             return false;
         }
 
-        super.stop(cancel);
+        super.stop(cancel, event);
 
         changedRows.forEach((rowNode) => this.dispatchRowEvent({ rowNode }, 'rowValueChanged'));
 
@@ -243,20 +243,55 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.setFocusOutOnEditor(prevCell);
         }
 
-        if (nextEditable && !preventNavigation) {
-            if (!nextCell.comp?.getCellEditor()) {
-                // editor missing because it was outside the viewport during creating phase, attempt to create it now
-                _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true });
+        if (preventNavigation && !rowsMatch) {
+            // check all cells that should had an editor have one - in the case of small viewports,
+            // editors might have been destroyed along with their corresponding cellCtrl
+            const prevRowNode = prevCell.rowNode;
+            const rowEdits = this.model.getEditRow(prevRowNode);
+            if (rowEdits) {
+                rowEdits.forEach(({ state }, column) => {
+                    if (state !== 'editing') {
+                        return;
+                    }
+
+                    const cellCtrl = _getCellCtrl(this.beans, {
+                        rowNode: prevRowNode,
+                        column,
+                    });
+
+                    if (cellCtrl && !cellCtrl.comp?.getCellEditor()) {
+                        _setupEditor(this.beans, cellCtrl, { silent: true });
+                    }
+                });
             }
-            this.setFocusInOnEditor(nextCell);
-            nextCell.focusCell(false, event);
+        }
+
+        const suppressEditNextOnTab = this.gos.get('suppressEditNextOnTab');
+
+        if (nextEditable && !preventNavigation) {
+            if (suppressEditNextOnTab) {
+                nextCell.focusCell(true, event);
+            } else {
+                if (!nextCell.comp?.getCellEditor()) {
+                    // editor missing because it was outside the viewport during creating phase,
+                    // create it now
+                    _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true });
+                }
+                this.setFocusInOnEditor(nextCell);
+                nextCell.focusCell(false, event);
+            }
         } else {
             nextCell.focusCell(true, event);
         }
 
         if (!rowsMatch && !preventNavigation) {
             this.cleanupEditors(nextCell, true);
-            this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
+
+            if (suppressEditNextOnTab) {
+                nextCell.focusCell(true, event);
+            } else {
+                this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
+            }
         }
 
         prevCell.rowCtrl?.refreshRow({ suppressFlash: true, force: true });

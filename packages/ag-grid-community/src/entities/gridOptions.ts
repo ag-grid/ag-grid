@@ -521,6 +521,11 @@ export interface GridOptions<TData = any> {
     editType?: EditStrategyType;
 
     /**
+     * Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
+     */
+    suppressEditNextOnTab?: boolean;
+
+    /**
      * Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */

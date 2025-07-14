@@ -1,4 +1,4 @@
-name: Benchmark
+name: Performance Tests
 
 on:
   issue_comment:
@@ -11,7 +11,7 @@ on:
         default: false
         required: true
       force_scheduled:
-        description: 'Run the workflow as if it was scheduled'
+        description: 'Run the scheduled set of benchmarks'
         type: boolean
         default: false
       force_pr_id:
@@ -35,11 +35,8 @@ env:
   CI: true
   PR_ID: ${{ inputs.force_pr_id || github.event.issue.number }}
   COMMENT_FILE: ./comment.md
-  SLACK_FILE: ./slack.json
-  SLACK_FILE_SNIPPET: ./slack-snippet.md
-  JIRA_DESCRIPTION_FILE: ./jira-description.txt
-  JIRA_FINGERPRINT_FILE: ./jira-fingerprint.json
-  DEFAULT_RETENTION_DAYS: 30
+  PW_REPORT_PATH: ./reports/playwright.json
+  CTRF_FILE: ./reports/performance.json
 
 permissions:
   contents: read
@@ -63,7 +60,7 @@ jobs:
           result-encoding: string
           script: |
             const { data: comment } = await github.rest.issues.createComment({
-              issue_number: process.env.PR_ID ? parseInt(process.env.PR_ID, 10) : context.issue.number,
+              issue_number: parseInt(process.env.PR_ID, 10),
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `🛎 Started a benchmarking job: ${process.env.JOB_URL}`
@@ -178,6 +175,7 @@ jobs:
         if: ${{ steps.install-browsers.outcome == 'success' }}
         env:
           IS_SCHEDULED: ${{ github.event_name == 'schedule' || inputs.force_scheduled }}
+          PW_REPORT_PATH: ${{ env.PW_REPORT_PATH }}
         run: |
           if [[ "$IS_SCHEDULED" == "true" ]] ; then
             npx playwright test -c ./testing/performance/playwright.config.ts -g ".*cron.spec.ts" ./testing/performance/e2e
@@ -185,109 +183,50 @@ jobs:
             npx playwright test -c ./testing/performance/playwright.config.ts -gv ".*cron.spec.ts" ./testing/performance/e2e
           fi
 
-      - name: Upload Benchmark Report
-        id: upload-report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+      - name: Test Reporter
+        id: ctrf
+        uses: ctrf-io/github-test-reporter@v1.0.17
         with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
-
-      - name: Prepare messages
-        id: prepare-messages
-        if: ${{ steps.upload-report.outputs.artifact-url }}
-        env:
-          REPORT_URL: ${{ steps.upload-report.outputs.artifact-url }}
-          SLACK_CHANNEL: '#ci-grid-gate'
-          SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
-          SLACK_USERNAME: 'ag-grid CI'
-          IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
-          SLACK_FILE: ${{ env.SLACK_FILE }}
-          SLACK_FILE_SNIPPET: ${{ env.SLACK_FILE_SNIPPET }}
-          COMMENT_FILE: ${{ env.COMMENT_FILE }}
-          JIRA_DESCRIPTION_FILE: ${{ env.JIRA_DESCRIPTION_FILE }}
-          JIRA_FINGERPRINT_FILE: ${{ env.JIRA_FINGERPRINT_FILE }}
-          JOB_URL: ${{ env.JOB_URL }}
-        run: |
-          node ./scripts/test/convert-playwright-output-to-slack-msg.mjs
-          
-          {
-            echo 'JIRA_FINGERPRINT<<EOF'
-            cat $JIRA_FINGERPRINT_FILE
-            echo 'EOF'
-          } >> $GITHUB_ENV
-          {
-            echo 'JIRA_DESCRIPTION<<EOF'
-            cat $JIRA_DESCRIPTION_FILE
-            echo 'EOF'
-          } >> $GITHUB_ENV
-
-      - name: Upload Snippet
-        id: upload-snippet
-        uses: actions/upload-artifact@v4
-        if: ${{ steps.prepare-messages.outcome == 'success' }}
-        with:
-          name: slack-snippet
-          path: ${{ env.SLACK_FILE_SNIPPET }}
-          retention-days: ${{ env.DEFAULT_RETENTION_DAYS }}
-
-      - name: Attach snippet
-        id: attach-snippet
-        if: ${{ steps.upload-snippet.outputs.artifact-url }}
-        env:
-          SNIPPET_URL: ${{ steps.upload-snippet.outputs.artifact-url }}
-          JIRA_DESCRIPTION_FILE: ${{ env.JIRA_DESCRIPTION_FILE }}
-          SLACK_FILE: ${{ env.SLACK_FILE }}
-          COMMENT_FILE: ${{ env.COMMENT_FILE }}
-        run: |
-          node ./scripts/test/attach-snippet.mjs
-          echo 'JIRA_DESCRIPTION_FILE:'
-          cat $JIRA_DESCRIPTION_FILE
-          echo ':JIRA_DESCRIPTION_FILE'
-          {
-            echo 'JIRA_DESCRIPTION<<EOF'
-            cat $JIRA_DESCRIPTION_FILE
-            echo 'EOF'
-          } >> $GITHUB_ENV
-          echo 'SLACK_FILE:'
-          cat $SLACK_FILE
-          echo ':SLACK_FILE'
-          {
-            echo 'SLACK_MESSAGE_BLOCKS<<EOF'
-            cat $SLACK_FILE
-            echo 'EOF'
-          } >> $GITHUB_ENV
-
-      - name: Slack Notification
-        continue-on-error: true
-        if: ${{ steps.upload-snippet.outputs.artifact-url && (github.event_name == 'schedule' || inputs.notify) }}
-        uses: ./.github/actions/slack-integration
-        with:
-          SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
-          SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
+          report-path: ${{ env.PW_REPORT_PATH }}
+          summary-report: true
+          failed-report: true
+          flaky-report: true
+          skipped-report: true
+          write-ctrf-to-file: ${{ env.CTRF_FILE }}
 
       - name: Create Jira Ticket
         uses: ./.github/actions/jira-integration
         continue-on-error: true
-        if: ${{ steps.attach-snippet.outcome == 'success' && (github.event_name == 'schedule' || inputs.force_jira_ticket) }}
+        if: ${{ github.event_name == 'schedule' || inputs.force_jira_ticket }}
         with:
-          JIRA_FINGERPRINT: ${{ env.JIRA_FINGERPRINT }}
           JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
-          WORKFLOW: ${{ github.workflow }}
-          JIRA_DESCRIPTION: ${{ env.JIRA_DESCRIPTION }}
           JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' has detected a slowdown in grid performance"
-          IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
+          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
 
-      - name: Notify End
+      - name: Slack Notification
+        if: ${{ github.event_name == 'schedule' || inputs.notify }}
+        continue-on-error: true
+        uses: ./.github/actions/slack-integration
+        with:
+          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+          SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
+
+      - name: Final Notify Progress
         uses: actions/github-script@v7
         continue-on-error: true
-        if: ${{ steps.notify-start.outputs.result && steps.attach-snippet.outcome == 'success' }}
+        if: ${{ steps.notify-start.outputs.result }}
         env:
           COMMENT_ID: ${{ steps.notify-start.outputs.result }}
           IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
+          COMMENT_FILE: ${{ env.COMMENT_FILE }}
+          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          JOB_ID: ${{ github.run_id }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          BRANCH_NAME: ${{ steps.get-branch.outputs.branch }}
         with:
           script: |
+            require('./scripts/ci/gen-gh-comment.mjs');
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             const comment_id = process.env.COMMENT_ID;

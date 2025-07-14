@@ -10,9 +10,22 @@ on:
         type: boolean
         default: true
         required: true
-
+      fast_build:
+        description: 'Run a fast build'
+        type: boolean
+        default: false
+        required: true
+      force_dispatch_docs_tests:
+        description: 'Force dispatch docs-tests workflow'
+        type: boolean
+        default: false
+        required: true
+permissions:
+  contents: write
+  actions: write
+  
 env:
-  COMMIT_SHA_FILE: ./commit-sha.txt
+  PREV_COMMIT_SHA_FILE: ./commit-sha.txt
   SLACK_FILE: ./slack.json
   BUILD_DIRECTORY: ./.builds
   WWW_ROOT_DIR: /var/www
@@ -34,74 +47,77 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Get previous run commit SHA
-        id: prev-commit-sha
-        uses: actions/cache/restore@v4
-        with:
-          path: ${{ env.COMMIT_SHA_FILE }}
-          key: full-build-prev-commit
-
       - name: Init env files
         run: |
-          echo ${{ github.sha }} > ${{ env.COMMIT_SHA_FILE }}
           echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.archive
           echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.production
 
       - name: Version Modules
+        if: ${{ !inputs.fast_build }}
         run: |
           node ./scripts/deployments/versionModules.js "$(node ./scripts/calculate-next-version.js)" $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])") local
 
       - name: Bootstrap
+        if: ${{ !inputs.fast_build }}
         run: |
           npm run bootstrap
 
       - name: Sanity Check Grid & Charts Versions
+        if: ${{ !inputs.fast_build }}
         run: |
           node ./scripts/deployments/sanityCheckPackages.js $(node -e "console.log(require('./package.json').version)") $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])")
 
       - name: Update Base Url
+        if: ${{ !inputs.fast_build }}
         run: |
           node ./scripts/deployments/prep_and_archive/updateBaseUrl.js staging
 
       - name: Validate Grid Modules
+        if: ${{ !inputs.fast_build }}
         run: |
           node ./scripts/deployments/validateGridModulesList.js
 
       - name: Sync Readmes
+        if: ${{ !inputs.fast_build }}
         run: |
           yarn nx sync-readmes
 
       - name: Build
+        if: ${{ !inputs.fast_build }}
         id: build
         run: |
           NODE_ENV=production yarn nx pack:verify --prod
 
       - name: Test
+        if: ${{ !inputs.fast_build }}
         run: |
           yarn nx test:modules
 
       - name: Validate Dist Folders
+        if: ${{ !inputs.fast_build }}
         continue-on-error: true
         run: |
           ./scripts/deployments/validateDistFolders.sh
 
       - name: Publish Packages
-        if: ${{ github.ref == 'refs/heads/latest' && steps.build.outputs.success == 'true' }}
+        if: ${{ github.ref == 'refs/heads/latest' && steps.build.outputs.success == 'true' && !inputs.fast_build }}
         run: |
           ./scripts/publishGridPackages.sh .
 
       - name: Sanity Check Base Url
+        if: ${{ !inputs.fast_build }}
         run: |
           node ./scripts/deployments/sanityCheckBaseUrl.js staging
 
       - name: Build Docs For Staging
+        if: ${{ !inputs.fast_build }}
         id: build_docs_staging
         run: |
           CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
 
       - name: Deploy to Staging
         id: deploy_to_staging
-        if: ${{ github.ref == 'refs/heads/latest' && steps.build_docs_staging.outputs.success == 'true' && steps.build.outputs.success == 'true' }}
+        if: ${{ github.ref == 'refs/heads/latest' && steps.build_docs_staging.outputs.success == 'true' && steps.build.outputs.success == 'true' && !inputs.fast_build }}
         env:
           SSH_PRIVATE_KEY: |
             ${{ secrets.STAGING_SSH_KEY }}
@@ -148,6 +164,7 @@ jobs:
 
       - name: SonarQube Analysis Community
         uses: SonarSource/sonarqube-scan-action@v5.2.0
+        if: ${{ !inputs.fast_build }}
         env:
           SONAR_HOST_URL: https://sonarcloud.io
           SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
@@ -165,6 +182,7 @@ jobs:
 
       - name: SonarQube Analysis Enterprise
         uses: SonarSource/sonarqube-scan-action@v5.2.0
+        if: ${{ !inputs.fast_build }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
           SONAR_HOST_URL: https://sonarcloud.io
@@ -181,57 +199,94 @@ jobs:
             -Dsonar.coverage.exclusions=**/*
 
       - name: Update Algolia Dev
+        if: ${{ !inputs.fast_build }}
         run: |
           echo ALGOLIA_ADMIN_KEY=${{ secrets.ALGOLIA_ADMIN_KEY }} > documentation/update-algolia-indices/.env
           echo PUBLIC_ALGOLIA_APP_ID=${{ env.PUBLIC_ALGOLIA_APP_ID }} >> documentation/update-algolia-indices/.env
           yarn nx run ag-grid-docs:update-algolia -c staging
 
-      - name: Get last failed step
-        id: last-failed-step
-        if: ${{ failure() }}
-        continue-on-error: true
-        uses: ./.github/actions/get-last-failed-step
+      - name: Get previous run commit SHA
+        id: prev-commit-sha
+        uses: actions/cache/restore@v4
         with:
-          JOB_ID: ${{ github.run_id }}
-          REPO_NAME: ${{ github.repository }}
+          path: ${{ env.PREV_COMMIT_SHA_FILE }}
+          key: full-build-prev-commit-${{ github.ref }}
 
-      - name: Create Slack Blocks
-        id: create-slack-blocks
-        if: ${{ github.event_name == 'schedule' || inputs.notify }}
+      - name: Load files into environment
         continue-on-error: true
-        env:
-          IS_SUCCESS: ${{ !steps.last-failed-step.outputs.failed_step }}
-          JOB_NAME: 'Full Clean Build'
-          JOB_ID: ${{ github.run_id }}
-          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-          COMMIT_SHA: ${{ github.sha }}
-          COMMIT_SHA_FILE: ${{ env.COMMIT_SHA_FILE }}
-          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
-          SLACK_CHANNEL: '#ci-grid-gate'
-          SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
-          SLACK_USERNAME: 'ag-grid CI'
-          LAST_FAILED_STEP: ${{ steps.last-failed-step.outputs.failed_step || 'Unknown' }}
         run: |
-          node ./.github/actions/slack-integration/simple-to-slack-blocks.mjs
-          echo 'SLACK_FILE:'
-          cat $SLACK_FILE
-          echo ':SLACK_FILE'
-          {
-            echo 'SLACK_MESSAGE_BLOCKS<<EOF'
-            cat $SLACK_FILE
-            echo 'EOF'
-          } >> $GITHUB_ENV
+          if [ -f ${{ env.PREV_COMMIT_SHA_FILE }} ]; then
+            {
+                echo 'PREV_COMMIT_SHA<<EOF'
+                cat ${{ env.PREV_COMMIT_SHA_FILE }}
+                echo 'EOF'
+            } >> $GITHUB_ENV
+          else
+            echo 'PREV_COMMIT_SHA_FILE not found'
+          fi
 
       - name: Slack Notification
-        if: ${{ (github.event_name == 'schedule' || inputs.notify) && steps.create-slack-blocks.outcome == 'success' }}
+        if: ${{ github.event_name == 'schedule' || inputs.notify }}
         continue-on-error: true
         uses: ./.github/actions/slack-integration
         with:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
-          SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
+          PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
+          CURRENT_COMMIT_SHA: ${{ github.sha }}
+
+      - name: Create Jira Ticket
+        uses: ./.github/actions/jira-integration
+        continue-on-error: true
+        if: ${{ github.event_name == 'schedule' || inputs.force_jira_ticket }}
+        with:
+          JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
+          JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' is failing."
+          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+          PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
+          CURRENT_COMMIT_SHA: ${{ github.sha }}
+
+      - name: Set commit SHA
+        id: set-commit-sha
+        run: |
+          echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
 
       - name: Save Current Commit Hash
         uses: actions/cache/save@v4
         with:
           key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
-          path: ${{ env.COMMIT_SHA_FILE }}
+          path: ${{ env.PREV_COMMIT_SHA_FILE }}
+
+        # only if run is successful
+      - name: Dispatch docs-tests Workflow
+        if: (success() && github.ref == 'refs/heads/latest' && github.event_name == 'schedule') || inputs.force_dispatch_docs_tests
+        uses: actions/github-script@v7
+        env:
+          WORKFLOW_ID: 'doc-tests.yml'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHOULD_NOTIFY: ${{ inputs.notify }}
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const ref = context.ref;
+            const workflow_id = process.env.WORKFLOW_ID;
+            const notify = process.env.SHOULD_NOTIFY;
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner,
+              repo,
+              workflow_id,
+              ref,
+              inputs: {
+                skip_vanilla: false,
+                skip_typescript: false,
+                skip_reactFunctional: false,
+                skip_reactFunctionalTs: false,
+                skip_angular: false,
+                skip_vue3: false,
+                skip_demo_smoke: false,
+                skip_recipes: false,
+                notify,
+                force_jira_ticket: true,
+              }
+            });

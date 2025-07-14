@@ -31,7 +31,10 @@
     margin-left: calc(var(--ag-spacing) * 2);
     margin-right: var(--ag-spacing);
     cursor: pointer;
-    color: var(--ag-panel-title-bar-icon-color);
+
+    :where(.ag-icon) {
+        color: var(--ag-panel-title-bar-icon-color);
+    }
 }
 
 .ag-panel-title-bar-title {

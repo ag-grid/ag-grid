@@ -7,7 +7,7 @@ interface TestingModuleParams {
 }
 
 type TestingModuleType = {
-    with: (params: TestingModuleParams) => _ModuleWithoutApi;
+    with: (params?: TestingModuleParams) => _ModuleWithoutApi;
 } & _ModuleWithoutApi;
 
 /**
@@ -18,7 +18,7 @@ export const TestingModule: TestingModuleType = {
     moduleName: 'Testing',
     version: VERSION,
     beans: [TestIdService],
-    with({ testIdAttribute }) {
+    with({ testIdAttribute } = {}) {
         if (testIdAttribute) {
             setTestIdAttribute(testIdAttribute);
         }

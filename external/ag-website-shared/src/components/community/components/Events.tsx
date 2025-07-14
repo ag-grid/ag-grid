@@ -1,6 +1,7 @@
 import ScrollingGallery from '@ag-website-shared/components/community/components/events/ScrollingGallery';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { useEffect, useState } from 'react';
 
 import styles from './Events.module.scss';
 
@@ -43,6 +44,13 @@ const separateEventsByDate = (events: Event[]): { upcomingEvents: Event[]; pastE
 
 const EventItem = ({ event }: { event: Event }) => {
     const [darkMode] = useDarkmode();
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        const url = urlWithBaseUrl(darkMode || !event.logoLight ? event.logo : event.logoLight);
+        setImageUrl(url);
+    }, [darkMode]);
+
     return (
         <div className={styles.linkWrapper}>
             <div className={styles.eventItemContainer}>
@@ -101,11 +109,7 @@ const EventItem = ({ event }: { event: Event }) => {
                             alt={`${event.collage}`}
                         />
                     ) : (
-                        <img
-                            className={styles.eventLogo}
-                            src={urlWithBaseUrl(darkMode || !event.logoLight ? event.logo : event.logoLight)}
-                            alt={`${event.eventLogo}`}
-                        />
+                        imageUrl && <img className={styles.eventLogo} src={imageUrl} alt={`${event.eventLogo}`} />
                     )}
                 </div>
             </div>

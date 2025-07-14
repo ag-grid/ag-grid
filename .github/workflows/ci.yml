@@ -134,7 +134,7 @@ jobs:
             count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
           fi
           
-          matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
+          matrix=$(node ./scripts/ci/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
           echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
           echo "test_count=${count}" >> $GITHUB_OUTPUT
           echo "Test matrix determined to be: ${matrix}"
@@ -154,7 +154,7 @@ jobs:
           # 3 is optimal atm for bundle tests
           bundle_count=3
           
-          bundle_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
+          bundle_matrix=$(node ./scripts/ci/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
           echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
           echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
           echo "bundle Test matrix determined to be: ${bundle_matrix}"
@@ -563,11 +563,12 @@ jobs:
       - name: SlackBot
         if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
         env:
-          GRID_TEAM_CITY_CHANNEL: ${{ secrets.GRID_TEAM_CITY_CHANNEL }}
+          CI_GRID_GATE_CHANNEL: '#ci-grid-gate'
           CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.CHARTS_TEAM_CITY_CHANNEL }}
           WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
+          SLACK_GITHUB_MAPPING: ${{ secrets.SLACK_GITHUB_MAPPING }}
           RUN_CONTEXT: >
             {
               "workflow": "${{ github.workflow }}",
@@ -594,7 +595,7 @@ jobs:
             }
         run: |
           npx ts-node ./scripts/agBotSlackMessage.ts --auth-token "$SLACK_BOT_OAUTH_TOKEN" \
-            --grid-channel "$GRID_TEAM_CITY_CHANNEL" \
+            --grid-channel "$CI_GRID_GATE_CHANNEL" \
             --charts-channel "$CHARTS_TEAM_CITY_CHANNEL" \
             --website-status-channel "$WEBSITE_STATUS_CHANNEL" \
             --debug-channel "$SLACK_DEBUG_CHANNEL" \

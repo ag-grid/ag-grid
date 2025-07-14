@@ -1,12 +1,11 @@
-name: Doc Tests
-description: Testing of AG Grid Examples
+name: Documentation Tests
+# Testing of AG Grid Examples
 
 env:
     NX_NO_CLOUD: true
     CI: true
     DEFAULT_RETENTION_DAYS: 30
-    COMMIT_SHA_FILE: ./commit-sha.txt
-    SLACK_FILE: ./slack.json
+    PREV_COMMIT_SHA_FILE: ./commit-sha.txt
     CTRF_FILE: ./ctrf-report.json
 on:
     workflow_dispatch:
@@ -56,8 +55,13 @@ on:
                 type: boolean
                 default: true
                 required: true
-    schedule:
-        - cron: '30 2 * * *' # Run daily at 2:30am UTC
+            force_jira_ticket:
+                description: 'Force create a Jira ticket even if the run is not scheduled'
+                type: boolean
+                default: false
+                required: true
+    #schedule:
+    #    - cron: '30 2 * * *' # Run daily at 2:30am UTC
 
 jobs:
     # Run all framework tasks in parallel
@@ -231,6 +235,8 @@ jobs:
         fail-fast: false
       steps:
         - uses: actions/checkout@v4
+        - name: Bootstrap
+          run: npm run bootstrap
         - name: Run Public Testing Recipes
           run: yarn nx run ag-grid-public-e2e-testing-recipes:test:recipes -c staging
 
@@ -244,8 +250,14 @@ jobs:
         - test-typescript
         - test-vanilla
         - test-vue3
+      env:
+        IS_SUCCESS: ${{ needs.test-angular.result == 'success' && needs.test-react-functional.result == 'success' && needs.test-react-functional-ts.result == 'success' && needs.test-typescript.result == 'success' && needs.test-vanilla.result == 'success' && needs.test-vue3.result == 'success' && needs.test-demos-smoke.result == 'success' }}
       runs-on: ubuntu-latest
       steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+
         - name: Download all test reports
           uses: actions/download-artifact@v4
           with:
@@ -262,53 +274,56 @@ jobs:
             skipped-report: true
             write-ctrf-to-file: ${{ env.CTRF_FILE }}
 
-        - uses: actions/checkout@v4
-          with:
-            fetch-depth: 1
-
         - name: Get previous run commit SHA
-          if: ${{ github.event_name == 'schedule' || inputs.notify }}
           id: prev-commit-sha
           uses: actions/cache/restore@v4
           with:
-            path: ${{ env.COMMIT_SHA_FILE }}
-            key: doc-tests-prev-commit
+            path: ${{ env.PREV_COMMIT_SHA_FILE }}
+            key: doc-tests-prev-commit-${{ github.ref }}
 
-        - name: Convert ctrf output to Slack message blocks and write git sha
-          if: ${{ github.event_name == 'schedule' || inputs.notify }}
-          env:
-            CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
-            JOB_NAME: 'Documentation Tests'
-            JOB_ID: ${{ github.run_id }}
-            BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-            COMMIT_SHA: ${{ github.sha }}
-            COMMIT_SHA_FILE: ${{ env.COMMIT_SHA_FILE }}
-            REPO_URL: ${{ github.server_url }}/${{ github.repository }}
-            SLACK_CHANNEL: '#ci-grid-gate'
-            SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
-            SLACK_USERNAME: 'ag-grid CI'
+        - name: Load files into environment
+          continue-on-error: true
           run: |
-            node ./.github/actions/slack-integration/ctrf-report-to-slack-blocks.mjs
-            echo 'SLACK_FILE:'
-            cat $SLACK_FILE
-            echo ':SLACK_FILE'
+            if [ -f ${{ env.PREV_COMMIT_SHA_FILE }} ]; then
             {
-              echo 'SLACK_MESSAGE_BLOCKS<<EOF'
-              cat $SLACK_FILE
-              echo 'EOF'
+               echo 'PREV_COMMIT_SHA<<EOF'
+               cat ${{ env.PREV_COMMIT_SHA_FILE }}
+               echo 'EOF'
             } >> $GITHUB_ENV
-            echo ${{ github.sha }} > ${{ env.COMMIT_SHA_FILE }}
+            else
+              echo 'PREV_COMMIT_SHA_FILE not found'
+            fi
 
         - name: Slack Notification
           if: ${{ github.event_name == 'schedule' || inputs.notify }}
           continue-on-error: true
           uses: ./.github/actions/slack-integration
           with:
+            CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
             SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
-            SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
+            PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
+            CURRENT_COMMIT_SHA: ${{ github.sha }}
+            IS_SUCCESS: ${{ env.IS_SUCCESS }}
+
+        - name: Create Jira Ticket
+          uses: ./.github/actions/jira-integration
+          continue-on-error: true
+          if: ${{ github.event_name == 'schedule' || inputs.force_jira_ticket }}
+          with:
+              JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
+              JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' is failing."
+              CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+              PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
+              CURRENT_COMMIT_SHA: ${{ github.sha }}
+              IS_SUCCESS: ${{ env.IS_SUCCESS }}
+
+        - name: Set commit SHA
+          id: set-commit-sha
+          run: |
+            echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
 
         - name: Save this run commit SHA
           uses: actions/cache/save@v4
           with:
-            path: ${{ env.COMMIT_SHA_FILE }}
+            path: ${{ env.PREV_COMMIT_SHA_FILE }}
             key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}

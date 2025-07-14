@@ -1,7 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// const PUBLIC_SITE_URL = process.env.PUBLIC_SITE_URL!;
-const baseURL = 'https://localhost:4610';
+const baseURL = process.env['PUBLIC_SITE_URL'] || 'https://localhost:4610';
 
 console.log(`Using base URL: ${baseURL}`);
 
@@ -11,7 +10,7 @@ console.log(`Using base URL: ${baseURL}`);
 export default defineConfig({
     testDir: './src',
     /* Fail the build on CI if you accidentally left test.only in the source code. */
-    forbidOnly: !!process.env.CI,
+    forbidOnly: !!process.env['CI'],
     workers: 1,
     use: {
         /* Base URL to use in actions like `await page.goto('/')`. */

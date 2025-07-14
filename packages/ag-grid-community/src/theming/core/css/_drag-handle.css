@@ -1,4 +1,8 @@
 .ag-drag-handle {
     cursor: grab;
     color: var(--ag-drag-handle-color);
+
+    :where(.ag-icon) {
+        color: var(--ag-drag-handle-color);
+    }
 }

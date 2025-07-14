@@ -29,7 +29,7 @@ mkcert
         app.use('/', (req, res, next) => {
             if (req.url === '/healthcheck') {
                 // used by Playwright to check if the server is running
-                res.send('OK', 200);
+                res.status(200).send('OK');
                 return next();
             }
             return express.static(staticTestFiles)(req, res, next);
