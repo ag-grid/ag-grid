@@ -255,16 +255,11 @@ const reactLandingPage = defineCollection({
 const contentApi = defineCollection({
     loader: glob({ base: './src/content/content-api', pattern: 'content-api.json' }),
     schema: z.object({
+        supportedVersionFrom: z.string(),
         root: z.array(
             z.object({
                 id: z.string(),
                 url: z.string(),
-            })
-        ),
-        // Previous versions supported by the content API
-        previousVersions: z.array(
-            z.object({
-                version: z.string(),
             })
         ),
     }),

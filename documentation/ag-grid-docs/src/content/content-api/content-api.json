@@ -1,4 +1,5 @@
 {
+    "supportedVersionFrom": "34.0.1",
     "root": [
         {
             "id": "versions",
@@ -20,6 +21,5 @@
             "id": "changelog",
             "url": "./content/changelog.json"
         }
-    ],
-    "previousVersions": []
+    ]
 }

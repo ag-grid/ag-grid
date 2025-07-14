@@ -1,4 +1,5 @@
 import { getContentApiArchiveUrl, getContentApiPrefix } from '@ag-website-shared/utils/content-api/urlPaths';
+import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { type CollectionEntry, getEntry } from 'astro:content';
 
 function parseDateString(dateString: string): string {
@@ -20,20 +21,40 @@ function parseDateString(dateString: string): string {
 
 export async function GET() {
     const { data } = (await getEntry('contentApi', 'content-api')) as CollectionEntry<'contentApi'>;
+    const supportedVersionFrom = parseVersion(data.supportedVersionFrom);
     const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
 
-    // Get first version with a date
     const lastVersionData = versionsData.find((version) => version.date)!;
-    const lastVersion = {
-        version: lastVersionData.version,
-        releaseDate: parseDateString(lastVersionData.date!),
-        url: getContentApiPrefix('index.json'),
-        isLatest: true,
-    };
+    const versions = versionsData
+        .filter(({ version }) => {
+            const parsedVersion = parseVersion(version);
 
-    const previousVersionsData = data.previousVersions || [];
-    const previousVersions = previousVersionsData
-        .map(({ version }) => {
+            if (parsedVersion.major < supportedVersionFrom.major) {
+                return false;
+            } else if (
+                parsedVersion.major === supportedVersionFrom.major &&
+                parsedVersion.minor < supportedVersionFrom.minor
+            ) {
+                return false;
+            } else if (
+                parsedVersion.major === supportedVersionFrom.major &&
+                parsedVersion.minor === supportedVersionFrom.minor &&
+                parsedVersion.patch < supportedVersionFrom.patch
+            ) {
+                return false;
+            }
+
+            return true;
+        })
+        .map((data) => {
+            const latestData: any = { ...data };
+            if (latestData.version === lastVersionData.version) {
+                latestData.isLatest = true;
+            }
+
+            return latestData;
+        })
+        .map(({ version, isLatest }) => {
             const versionData = versionsData.find((v) => version === v.version);
             if (!versionData || !versionData.date || versionData.noDocs) {
                 return;
@@ -42,12 +63,11 @@ export async function GET() {
             return {
                 version,
                 releaseDate: parseDateString(versionData.date),
-                url: getContentApiArchiveUrl({ version }),
+                url: isLatest ? getContentApiPrefix('index.json') : getContentApiArchiveUrl({ version }),
+                isLatest,
             };
         })
         .filter((v) => Boolean(v));
-
-    const versions = [lastVersion, ...previousVersions];
 
     return new Response(JSON.stringify(versions), {
         status: 200,
