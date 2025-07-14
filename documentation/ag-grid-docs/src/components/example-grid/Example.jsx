@@ -856,7 +856,13 @@ const ExampleInner = ({ darkMode }) => {
             .fill(0)
             .map((_, i) => 10 ** (i + 1))
             .map((i) => [i, 10]);
-        newRowsCols = newRowsCols.concat(newRowsCols).map(([a, b], i, arr) => (i >= arr.length / 2 ? [a, b] : [b, a]));
+        newRowsCols = [
+            ...new Set(
+                newRowsCols
+                    .concat(newRowsCols)
+                    .map(([a, b], i, arr) => (i >= arr.length / 2 ? [a, b].join() : [b, a].join()))
+            ),
+        ].map((_) => _.split(','));
 
         setDataSize(createDataSizeValue(newRowsCols[0][0], newRowsCols[0][1]));
         setRowCols(newRowsCols);
