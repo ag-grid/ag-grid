@@ -77,10 +77,7 @@ export function createGrid<TData>(
         return {} as GridApi;
     }
     const gridParams: GridParams | undefined = params;
-    let destroyCallback = () => {
-        _gridElementCache.delete(api);
-        _gridApiCache.delete(eGridDiv);
-    };
+    let destroyCallback: (() => void) | undefined;
     if (!gridParams?.setThemeOnGridDiv) {
         // frameworks already create an element owned by our code, so we can set
         // the theme class on it. JS users calling createGrid directly are
@@ -90,11 +87,7 @@ export function createGrid<TData>(
         newGridDiv.style.height = '100%';
         eGridDiv.appendChild(newGridDiv);
         eGridDiv = newGridDiv;
-        destroyCallback = () => {
-            _gridApiCache.delete(eGridDiv);
-            _gridElementCache.delete(api);
-            eGridDiv.remove();
-        };
+        destroyCallback = () => eGridDiv.remove();
     }
     const api = new GridCoreCreator().create(
         eGridDiv,
@@ -107,11 +100,6 @@ export function createGrid<TData>(
         params,
         destroyCallback
     );
-
-    if (api) {
-        _gridApiCache.set(eGridDiv, api);
-        _gridElementCache.set(api, eGridDiv);
-    }
 
     return api;
 }
@@ -127,7 +115,7 @@ export class GridCoreCreator {
         createUi: (context: Context) => void,
         acceptChanges?: (context: Context) => void,
         params?: GridParams,
-        destroyCallback?: () => void
+        _destroyCallback?: () => void
     ): GridApi {
         // Returns a shallow copy of the provided options, with global options merged in
         const gridOptions = GlobalGridOptions.applyGlobalGridOptions(providedOptions);
@@ -144,6 +132,12 @@ export class GridCoreCreator {
             // Break typing so that the normal return type does not have to handle undefined.
             return undefined as any;
         }
+
+        const destroyCallback = () => {
+            _gridElementCache.delete(api);
+            _gridApiCache.delete(eGridDiv);
+            _destroyCallback?.();
+        };
 
         const contextParams: ContextParams = {
             providedBeanInstances,
@@ -164,7 +158,14 @@ export class GridCoreCreator {
 
         acceptChanges?.(context);
 
-        return context.getBean('gridApi');
+        const api = context.getBean('gridApi');
+
+        if (api) {
+            _gridApiCache.set(eGridDiv, api);
+            _gridElementCache.set(api, eGridDiv);
+        }
+
+        return api;
     }
 
     private getRegisteredModules(
@@ -307,9 +308,18 @@ function getDefaultRowModelType(passedRowModelType?: RowModelType): RowModelType
  */
 export function getGridApi(gridElement: Element | string | null | undefined): GridApi | undefined {
     if (typeof gridElement === 'string') {
-        gridElement =
-            document.querySelector(gridElement)?.firstElementChild ??
-            document.getElementById(gridElement)?.firstElementChild;
+        try {
+            gridElement =
+                document.querySelector(`[grid-id="${gridElement}"]`)?.parentElement ??
+                document.querySelector(gridElement)?.firstElementChild ??
+                document.getElementById(gridElement)?.firstElementChild;
+        } catch {
+            try {
+                gridElement = document.querySelector(`[grid-id="${gridElement}"]`)?.parentElement;
+            } catch {
+                gridElement = null;
+            }
+        }
     }
     return gridElement ? _gridApiCache.get(gridElement) : undefined;
 }

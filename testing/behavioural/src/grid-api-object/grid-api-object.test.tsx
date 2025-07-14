@@ -1,3 +1,5 @@
+import { cleanup, render } from '@testing-library/react';
+import React from 'react';
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
@@ -10,6 +12,7 @@ import {
     getGridApi,
     getGridElement,
 } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
 
 describe('ag-grid overlays state', () => {
     let consoleWarnSpy: MockInstance | undefined;
@@ -226,5 +229,27 @@ describe('ag-grid overlays state', () => {
         // destroy first grid
         api.destroy();
         expect(getGridApi('#myGrid')).toBeUndefined();
+    });
+
+    test('can get gridApi reference from DOM node (React)', () => {
+        cleanup();
+
+        let ref: any | null = null;
+
+        const page = render(
+            <AgGridReact
+                ref={(e) => {
+                    ref = e;
+                }}
+                gridId="myGrid"
+            />
+        );
+
+        const apiFromDOM = getGridApi('myGrid');
+
+        const elementFromApi = getGridElement(ref.api);
+
+        expect(apiFromDOM).toBe(ref.api);
+        expect(elementFromApi?.parentElement).toBe(page.container);
     });
 });
