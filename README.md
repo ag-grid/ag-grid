@@ -494,7 +494,7 @@ Initially built to power [Integrated Charts](https://www.ag-grid.com/javascript-
 </a>
 </div>
 
-<div align="center">
+<div align="center"> 
     
 <hr/>
 
