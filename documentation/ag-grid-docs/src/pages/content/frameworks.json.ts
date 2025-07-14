@@ -1,8 +1,8 @@
 import type { FrameworkType } from '@ag-grid-types';
 import {
     getContentApiApiUrl,
+    getContentApiDocsIndexUrl,
     getContentApiExamplesUrl,
-    getContentApiFrameworkUrl,
     getContentApiMigrationsUrl,
 } from '@ag-website-shared/utils/content-api/urlPaths';
 import { getFrameworkPath } from '@components/docs/utils/urlPaths';
@@ -32,7 +32,7 @@ export async function GET() {
         return {
             framework,
             slug: getFrameworkPath(framework),
-            url: getContentApiFrameworkUrl({ framework }),
+            docs: getContentApiDocsIndexUrl({ framework }),
             examples,
             migrations: getContentApiMigrationsUrl({ framework }),
             api: getContentApiApiUrl({ framework }),

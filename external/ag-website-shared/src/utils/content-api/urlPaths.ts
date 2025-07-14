@@ -14,7 +14,7 @@ export function getContentApiArchiveUrl({ version, site = LIBRARY }: { version: 
     return getArchiveUrl({ version, site }) + '/';
 }
 
-export function getContentApiFrameworkUrl({ framework }: { framework: Framework }) {
+export function getContentApiDocsIndexUrl({ framework }: { framework: Framework }) {
     return getContentApiPrefix(`/docs/${framework}/index.json`);
 }
 
