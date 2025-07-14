@@ -422,15 +422,10 @@ const chartThemeOverrides = {
 };
 
 const ExampleInner = ({ darkMode }) => {
+    // grab query params from the URL to set settings
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
     const [gridTheme, setGridTheme] = useState('quartz');
-    useEffect(() => {
-        const themeFromURL = new URLSearchParams(window.location.search).get('theme');
-        if (themeFromURL) {
-            setGridTheme(themeFromURL);
-        }
-    }, []);
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
     const [isSmall, setIsSmall] = useState(false);
@@ -442,7 +437,19 @@ const ExampleInner = ({ darkMode }) => {
     const [rowCols, setRowCols] = useState([]);
     const [dataSize, setDataSize] = useState();
     const [initialLoad, setInitialLoad] = useState(true);
+    useEffect(() => {
+        const themeFromURL = new URLSearchParams(window.location.search).get('theme');
+        if (themeFromURL) {
+            setGridTheme(themeFromURL);
+        }
 
+        const params = new URLSearchParams(window.location.search);
+        const rows = params.get('rows');
+        const cols = params.get('cols');
+        if (rows && cols) {
+            setDataSize(parseInt(rows), parseInt(cols));
+        }
+    }, []);
     const modules = useMemo(
         () => [
             AllCommunityModule,
