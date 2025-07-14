@@ -136,7 +136,7 @@ const GridComp = ({ context }: GridCompProps) => {
             focusableContainersRef.current.push(sideBarComp);
         }
 
-        const addComponentToDom = (component: ComponentSelector['component']) => {
+        const addComponentToDom = (component: ComponentSelector<Component>['component']) => {
             const comp = context.createBean(new component());
             const eGui = comp.getGui();
             eRootWrapper.insertAdjacentElement('beforeend', eGui);

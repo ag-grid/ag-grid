@@ -1,5 +1,5 @@
 import { AgComponentStub } from '../agStack/agComponentStub';
-import type { AgComponentEvent, AgComponentSelector } from '../agStack/interfaces/iComponent';
+import type { AgBaseComponent, AgComponentEvent, AgComponentSelector } from '../agStack/interfaces/iComponent';
 import type { AgWidgetSelectorType } from '../agStack/widgets/agWidgetSelectorType';
 import type { BeanCollection } from '../context/context';
 import type { AgEventTypeParams } from '../events';
@@ -9,7 +9,8 @@ import type { AgGridCommon } from '../interfaces/iCommon';
 
 export type ComponentEvent = AgComponentEvent;
 
-export type ComponentSelector = AgComponentSelector<AgComponentSelectorType, BeanCollection>;
+export type ComponentSelector<TComponent extends AgBaseComponent<BeanCollection> = AgBaseComponent<BeanCollection>> =
+    AgComponentSelector<AgComponentSelectorType, BeanCollection, TComponent>;
 
 /** All the AG Grid components that are used within internal templates via <ag-autocomplete> syntax */
 export type AgComponentSelectorType =

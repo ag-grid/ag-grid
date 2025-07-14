@@ -31,6 +31,8 @@ export interface IContext<TBeanCollection> {
 
     getBean<T extends keyof TBeanCollection>(name: T): TBeanCollection[T];
 
+    getBeans(): TBeanCollection;
+
     destroyBean(bean: AgBaseBean<TBeanCollection> | null | undefined): undefined;
 
     destroyBeans<T extends AgBaseBean<TBeanCollection>>(beans: (T | null | undefined)[]): T[];

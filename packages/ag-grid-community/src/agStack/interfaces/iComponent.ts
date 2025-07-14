@@ -59,7 +59,11 @@ export interface VisibleChangedEvent extends AgEvent<'displayChanged'> {
     visible: boolean;
 }
 
-export type AgComponentSelector<TComponentSelectorType extends string, TBeanCollection = any> = {
-    component: { new (params?: any): AgBaseComponent<TBeanCollection> };
+export type AgComponentSelector<
+    TComponentSelectorType extends string,
+    TBeanCollection = any,
+    TComponent extends AgBaseComponent<TBeanCollection> = AgBaseComponent<TBeanCollection>,
+> = {
+    component: { new (params?: any): TComponent };
     selector: TComponentSelectorType;
 };

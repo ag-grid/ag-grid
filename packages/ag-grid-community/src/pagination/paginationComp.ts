@@ -11,7 +11,7 @@ import type { ElementParams } from '../utils/dom';
 import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/focus';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';
-import type { ComponentSelector } from '../widgets/component';
+import type { Component, ComponentSelector } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 import type { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
 import { PageSizeSelectorSelector } from './pageSizeSelector/pageSizeSelectorComp';
@@ -412,7 +412,7 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
     }
 }
 
-export const PaginationSelector: ComponentSelector = {
+export const PaginationSelector: ComponentSelector<Component> = {
     selector: 'AG-PAGINATION',
     component: PaginationComp,
 };

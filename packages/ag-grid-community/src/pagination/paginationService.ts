@@ -2,7 +2,7 @@ import { _exists } from '../agStack/utils/genericUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { IEditService } from '../interfaces/iEditService';
-import type { ComponentSelector } from '../widgets/component';
+import type { Component, ComponentSelector } from '../widgets/component';
 import { PaginationSelector } from './paginationComp';
 
 export class PaginationService extends BeanStub implements NamedBean {
@@ -42,7 +42,7 @@ export class PaginationService extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('paginationPageSize', this.onPageSizeGridOptionChanged.bind(this));
     }
 
-    public getPaginationSelector(): ComponentSelector {
+    public getPaginationSelector(): ComponentSelector<Component> {
         return PaginationSelector;
     }
 

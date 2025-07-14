@@ -1,5 +1,5 @@
-import type { ComponentSelector } from '../widgets/component';
+import type { Component, ComponentSelector } from '../widgets/component';
 
 export interface IWatermark {
-    getWatermarkSelector(): ComponentSelector;
+    getWatermarkSelector(): ComponentSelector<Component>;
 }

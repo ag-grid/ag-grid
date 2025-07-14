@@ -1,10 +1,10 @@
-import type { ComponentSelector } from '../widgets/component';
+import type { Component, ComponentSelector } from '../widgets/component';
 import type { SideBarState } from './gridState';
 import type { IToolPanel } from './iToolPanel';
 
 export interface ISideBarService {
     comp: ISideBar;
-    getSelector(): ComponentSelector;
+    getSelector(): ComponentSelector<Component>;
 }
 
 export interface ISideBar {

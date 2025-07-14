@@ -1,3 +1,4 @@
+import type { AgBaseComponent } from '../../agStack/interfaces/iComponent';
 import type { IRegistry } from '../../agStack/interfaces/iRegistry';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
@@ -21,7 +22,7 @@ export class Registry extends BeanStub implements NamedBean, IRegistry<BeanColle
 
     private dynamicBeans: { [K in DynamicBeanName]?: new (args?: any[]) => object };
 
-    private selectors: { [name in AgComponentSelectorType]?: ComponentSelector } = {};
+    private selectors: { [name in AgComponentSelectorType]?: ComponentSelector<any> } = {};
 
     private icons: { [K in IconName]?: IconValue } = {};
 
@@ -143,7 +144,9 @@ export class Registry extends BeanStub implements NamedBean, IRegistry<BeanColle
         return new BeanClass(...args) as any;
     }
 
-    public getSelector(name: AgComponentSelectorType): ComponentSelector | undefined {
+    public getSelector<TComponent extends AgBaseComponent<BeanCollection>>(
+        name: AgComponentSelectorType
+    ): ComponentSelector<TComponent> | undefined {
         return this.selectors[name];
     }
 

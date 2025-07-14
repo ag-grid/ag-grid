@@ -8,7 +8,7 @@ import { LayoutFeature } from '../styling/layoutFeature';
 import { _last } from '../utils/array';
 import { _observeResize } from '../utils/dom';
 import { _findTabbableParent, _focusInto, _isCellFocusSuppressed, _isHeaderFocusSuppressed } from '../utils/focus';
-import type { ComponentSelector } from '../widgets/component';
+import type { Component, ComponentSelector } from '../widgets/component';
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
@@ -20,11 +20,11 @@ export interface IGridComp extends LayoutView {
 }
 
 export interface OptionalGridComponents {
-    paginationSelector?: ComponentSelector;
-    gridHeaderDropZonesSelector?: ComponentSelector;
-    sideBarSelector?: ComponentSelector;
-    statusBarSelector?: ComponentSelector;
-    watermarkSelector?: ComponentSelector;
+    paginationSelector?: ComponentSelector<Component>;
+    gridHeaderDropZonesSelector?: ComponentSelector<Component>;
+    sideBarSelector?: ComponentSelector<Component>;
+    statusBarSelector?: ComponentSelector<Component>;
+    watermarkSelector?: ComponentSelector<Component>;
 }
 
 export class GridCtrl extends BeanStub {
