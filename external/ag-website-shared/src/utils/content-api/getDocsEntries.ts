@@ -6,9 +6,9 @@ import { type CollectionEntry, getEntry } from 'astro:content';
 
 export async function getDocsEntries({ framework, navData }: { framework: Framework; navData: any }) {
     const docsNavPages = await getFlattenedNavPages({ navData });
-    return Promise.all(
-        docsNavPages
-            .map(async ({ path }) => {
+    return (
+        await Promise.all(
+            docsNavPages.map(async ({ path }) => {
                 const {
                     id,
                     body,
@@ -37,6 +37,6 @@ export async function getDocsEntries({ framework, navData }: { framework: Framew
                     mimeType: 'text/html',
                 };
             })
-            .filter(Boolean)
-    );
+        )
+    ).filter(Boolean);
 }
