@@ -1,6 +1,6 @@
 import type { FrameworkType } from '@ag-grid-types';
 import {
-    getContentApiApiUrl,
+    getContentApiApiDocsUrl,
     getContentApiDocsIndexUrl,
     getContentApiExamplesUrl,
     getContentApiMigrationsUrl,
@@ -35,7 +35,7 @@ export async function GET() {
             docs: getContentApiDocsIndexUrl({ framework }),
             examples,
             migrations: getContentApiMigrationsUrl({ framework }),
-            api: getContentApiApiUrl({ framework }),
+            api: getContentApiApiDocsUrl({ framework }),
         };
     });
 

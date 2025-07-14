@@ -44,7 +44,7 @@ export function getContentApiMigrationsUrl({ framework }: { framework: Framework
     return getContentApiPrefix(contentApiExamplesUrl);
 }
 
-export function getContentApiApiUrl({ framework }: { framework: Framework }) {
+export function getContentApiApiDocsUrl({ framework }: { framework: Framework }) {
     const contentApiExamplesUrl = pathJoin('api', framework, 'index.json');
     return getContentApiPrefix(contentApiExamplesUrl);
 }
