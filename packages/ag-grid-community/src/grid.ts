@@ -298,26 +298,25 @@ function getDefaultRowModelType(passedRowModelType?: RowModelType): RowModelType
 /**
  * Returns a `GridApi` instance that is associated with the grid rendered in `gridElement`.
  *
- * The `gridElement` argument can be a DOM node or a CSS selector string. It is recommended
- * to use the selector string argument. This selector must refer to the element passed to `createGrid`.
+ * The `gridElement` argument can be one of the following:
+ * - a DOM node
+ * - the grid ID as determined by the `gridId` grid option.
+ * - CSS selector string
+ *
+ * When using a CSS selector, it must refer to the element passed to `createGrid`.
  *
  * If passing a DOM node as an argument, this DOM node must be an immediate child of the element passed
  * to `createGrid`. This is to support the case where multiple grids are instantiated in a single element.
  */
 export function getGridApi(gridElement: Element | string | null | undefined): GridApi | undefined {
     if (typeof gridElement === 'string') {
-        const gridIdSelector = `[grid-id="${gridElement}"]`;
         try {
             gridElement =
-                document.querySelector(gridIdSelector)?.parentElement ??
+                document.querySelector(`[grid-id="${gridElement}"]`)?.parentElement ??
                 document.querySelector(gridElement)?.firstElementChild ??
                 document.getElementById(gridElement)?.firstElementChild;
         } catch {
-            try {
-                gridElement = document.querySelector(gridIdSelector)?.parentElement;
-            } catch {
-                gridElement = null;
-            }
+            gridElement = null;
         }
     }
     return gridElement ? _gridApiCache.get(gridElement) : undefined;
