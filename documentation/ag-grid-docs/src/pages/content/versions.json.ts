@@ -26,7 +26,7 @@ export async function GET() {
     const lastVersionData = versionsData.find((version) => version.date)!;
     const lastVersion = {
         version: lastVersionData.version,
-        releaseData: parseDateString(lastVersionData.date!),
+        releaseDate: parseDateString(lastVersionData.date!),
         url: getContentApiPrefix('index.json'),
         isLatest: true,
     };
@@ -41,7 +41,7 @@ export async function GET() {
 
             return {
                 version,
-                releaseData: parseDateString(versionData.date),
+                releaseDate: parseDateString(versionData.date),
                 url: getContentApiArchiveUrl({ version }),
             };
         })
