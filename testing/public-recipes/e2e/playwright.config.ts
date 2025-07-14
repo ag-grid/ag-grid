@@ -16,7 +16,16 @@ export default defineConfig({
         /* Base URL to use in actions like `await page.goto('/')`. */
         baseURL,
     },
-    reporter: [['line']],
+    reporter: [
+        ['line'],
+        [
+            'playwright-ctrf-json-reporter',
+            {
+                outputDir: '../../../reports',
+                outputFile: 'ag-grid-public-e2e-testing-recipes.json',
+            },
+        ],
+    ],
     outputDir: '../../reports/ag-grid-public-e2e-testing-recipes/',
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     expect: {
