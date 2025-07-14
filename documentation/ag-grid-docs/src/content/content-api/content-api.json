@@ -13,6 +13,10 @@
             "url": "./content/modules.json"
         },
         {
+            "id": "types",
+            "url": "./content/types.json"
+        },
+        {
             "id": "changelog",
             "url": "./content/changelog.json"
         }

@@ -1,6 +1,7 @@
 import type { Framework, FrameworkType, Library } from '@ag-grid-types';
 import { getArchiveUrl } from '@ag-website-shared/utils/getArchiveUrl';
 import { LIBRARY, SITE_URL } from '@constants';
+import { getExtraFileUrl } from '@utils/extraFileUrl';
 import { pathJoin } from '@utils/pathJoin';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
@@ -46,4 +47,9 @@ export function getContentApiMigrationsUrl({ framework }: { framework: Framework
 export function getContentApiApiUrl({ framework }: { framework: Framework }) {
     const contentApiExamplesUrl = pathJoin('api', framework, 'index.json');
     return getContentApiPrefix(contentApiExamplesUrl);
+}
+
+export function getContentApiExtraFileUrl({ filePath }: { filePath: string }) {
+    const contentApiExtraFileUrl = getExtraFileUrl({ filePath });
+    return pathJoin(SITE_URL, contentApiExtraFileUrl);
 }
