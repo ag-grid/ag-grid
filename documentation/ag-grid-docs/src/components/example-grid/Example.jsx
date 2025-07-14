@@ -442,13 +442,6 @@ const ExampleInner = ({ darkMode }) => {
         if (themeFromURL) {
             setGridTheme(themeFromURL);
         }
-
-        const params = new URLSearchParams(window.location.search);
-        const rows = params.get('rows');
-        const cols = params.get('cols');
-        if (rows && cols) {
-            setDataSize(parseInt(rows), parseInt(cols));
-        }
     }, []);
     const modules = useMemo(
         () => [
@@ -871,7 +864,14 @@ const ExampleInner = ({ darkMode }) => {
             ),
         ].map((_) => _.split(','));
 
-        setDataSize(createDataSizeValue(newRowsCols[0][0], newRowsCols[0][1]));
+        const params = new URLSearchParams(window.location.search);
+        const rows = params.get('rows');
+        const cols = params.get('cols');
+        if (rows && cols) {
+            setDataSize(createDataSizeValue(parseInt(rows), parseInt(cols)));
+        } else {
+            setDataSize(createDataSizeValue(newRowsCols[0][0], newRowsCols[0][1]));
+        }
         setRowCols(newRowsCols);
     }, []);
 
