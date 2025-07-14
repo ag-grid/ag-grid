@@ -306,14 +306,15 @@ function getDefaultRowModelType(passedRowModelType?: RowModelType): RowModelType
  */
 export function getGridApi(gridElement: Element | string | null | undefined): GridApi | undefined {
     if (typeof gridElement === 'string') {
+        const gridIdSelector = `[grid-id="${gridElement}"]`;
         try {
             gridElement =
-                document.querySelector(`[grid-id="${gridElement}"]`)?.parentElement ??
+                document.querySelector(gridIdSelector)?.parentElement ??
                 document.querySelector(gridElement)?.firstElementChild ??
                 document.getElementById(gridElement)?.firstElementChild;
         } catch {
             try {
-                gridElement = document.querySelector(`[grid-id="${gridElement}"]`)?.parentElement;
+                gridElement = document.querySelector(gridIdSelector)?.parentElement;
             } catch {
                 gridElement = null;
             }
