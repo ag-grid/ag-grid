@@ -17,6 +17,7 @@ export interface IHeaderRowComp {
     setHeight(height: string): void;
     setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean): void;
     setWidth(width: string): void;
+    setRowIndex(rowIndex: number): void;
 }
 
 let instanceIdSequence = 0;
@@ -36,19 +37,25 @@ export class HeaderRowCtrl extends BeanStub {
     private isEnsureDomOrder: boolean;
 
     constructor(
-        public readonly rowIndex: number,
+        public rowIndex: number,
         public readonly pinned: ColumnPinnedType,
         public readonly type: HeaderRowType
     ) {
         super();
 
-        const typeClass =
-            type == 'group'
-                ? `ag-header-row-column-group`
-                : type == 'filter'
-                  ? `ag-header-row-column-filter`
-                  : `ag-header-row-column`;
+        let typeClass = 'ag-header-row-column';
+        if (type === 'group') {
+            typeClass = 'ag-header-row-group';
+        } else if (type === 'filter') {
+            typeClass = 'ag-header-row-filter';
+        }
         this.headerRowClass = `ag-header-row ${typeClass}`;
+    }
+
+    public setRowIndex(rowIndex: number): void {
+        this.rowIndex = rowIndex;
+        this.comp.setRowIndex(rowIndex);
+        this.onRowHeightChanged();
     }
 
     public postConstruct(): void {
@@ -76,7 +83,7 @@ export class HeaderRowCtrl extends BeanStub {
         compBean = setupCompBean(this, this.beans.context, compBean);
 
         if (initCompState) {
-            this.onRowHeightChanged();
+            this.setRowIndex(this.rowIndex);
             this.onVirtualColumnsChanged();
         }
         // width is managed directly regardless of framework and so is not included in initCompState
@@ -157,28 +164,24 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public getTopAndHeight() {
-        const { filterManager } = this.beans;
-        const sizes: number[] = [];
-
-        const groupHeadersHeight = getGroupRowsHeight(this.beans);
-        const headerHeight = getColumnHeaderRowHeight(this.beans);
-
-        sizes.push(...groupHeadersHeight);
-        sizes.push(headerHeight);
-
-        if (filterManager?.hasFloatingFilters()) {
-            sizes.push(getFloatingFiltersHeight(this.beans) as number);
-        }
-
         let topOffset = 0;
 
-        for (let i = 0; i < this.rowIndex; i++) {
-            topOffset += sizes[i];
+        const groupHeadersHeight = getGroupRowsHeight(this.beans);
+        for (let i = 0; i < groupHeadersHeight.length; i++) {
+            if (i === this.rowIndex && this.type === 'group') {
+                return { topOffset, rowHeight: groupHeadersHeight[i] };
+            }
+            topOffset += groupHeadersHeight[i];
         }
 
-        const rowHeight = sizes[this.rowIndex];
+        const headerHeight = getColumnHeaderRowHeight(this.beans);
+        if (this.type === 'column') {
+            return { topOffset, rowHeight: headerHeight };
+        }
+        topOffset += headerHeight;
 
-        return { topOffset, rowHeight };
+        const filterHeight = getFloatingFiltersHeight(this.beans) as number;
+        return { topOffset, rowHeight: filterHeight };
     }
 
     private onVirtualColumnsChanged(afterScroll: boolean = false): void {
@@ -296,34 +299,29 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getColumnsInViewport(): (AgColumn | AgColumnGroup)[] {
-        return this.isPrintLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
-    }
+        // default virtualisation scenario
+        if (!this.isPrintLayout) {
+            return this.getComponentsToRender();
+        }
 
-    private getColumnsInViewportPrintLayout(): (AgColumn | AgColumnGroup)[] {
-        // for print layout, we add all columns into the center
-        if (this.pinned != null) {
+        // if print layout, all cols in center. Not sure why this isn't handled by the columnViewportService.
+        if (this.pinned) {
             return [];
         }
 
-        let viewportColumns: (AgColumn | AgColumnGroup)[] = [];
-        const actualDepth = this.getActualDepth();
-        const { colViewport } = this.beans;
-
+        // return pinned left, center and right columns in print layout
+        const viewportColumns: (AgColumn | AgColumnGroup)[] = [];
         (['left', null, 'right'] as ColumnPinnedType[]).forEach((pinned) => {
-            const items = colViewport.getHeadersToRender(pinned, actualDepth);
-            viewportColumns = viewportColumns.concat(items);
+            viewportColumns.push(...this.getComponentsToRender(pinned));
         });
-
         return viewportColumns;
     }
 
-    private getActualDepth(): number {
-        return this.type == 'filter' ? this.rowIndex - 1 : this.rowIndex;
-    }
-
-    private getColumnsInViewportNormalLayout(): (AgColumn | AgColumnGroup)[] {
-        // when in normal layout, we add the columns for that container only
-        return this.beans.colViewport.getHeadersToRender(this.pinned, this.getActualDepth());
+    private getComponentsToRender(pinned: ColumnPinnedType = this.pinned): (AgColumn | AgColumnGroup)[] {
+        if (this.type === 'group') {
+            return this.beans.colViewport.getHeadersToRender(pinned, this.rowIndex);
+        }
+        return this.beans.colViewport.getColumnHeadersToRender(pinned);
     }
 
     public focusHeader(column: AgColumn | AgColumnGroup, event?: KeyboardEvent): boolean {

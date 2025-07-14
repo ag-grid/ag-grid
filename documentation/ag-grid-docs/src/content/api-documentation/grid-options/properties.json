@@ -243,6 +243,12 @@
                 "name": "Header Height",
                 "url": "./column-headers/#header-height"
             }
+        },
+        "hidePaddedHeaderRows": {
+            "more": {
+                "name": "Hiding Additional Header Rows",
+                "url": "./column-headers/#hide-padded-column-headers"
+            }
         }
     },
     "columnMoving": {

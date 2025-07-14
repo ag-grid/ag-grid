@@ -28,6 +28,7 @@ export class HeaderRowComp extends Component {
             setTop: (top) => (this.getGui().style.top = top),
             setHeaderCtrls: (ctrls, forceOrder) => this.setHeaderCtrls(ctrls, forceOrder),
             setWidth: (width) => (this.getGui().style.width = width),
+            setRowIndex: (rowIndex) => _setAriaRowIndex(this.getGui(), rowIndex),
         };
 
         this.ctrl.setComp(compProxy, undefined);

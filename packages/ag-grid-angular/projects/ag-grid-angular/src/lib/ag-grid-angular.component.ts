@@ -572,6 +572,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.
      */
     @Input() public pivotGroupHeaderHeight: number | undefined = undefined;
+    /** Hide any column header rows that would only contain padded groups.
+     */
+    @Input({ transform: booleanAttribute }) public hidePaddedHeaderRows: boolean | undefined = undefined;
     /** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid.
      * @default false
      * @agModule `ColumnsToolPanelModule`

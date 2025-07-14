@@ -423,6 +423,10 @@ export interface GridOptions<TData = any> {
      * The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.
      */
     pivotGroupHeaderHeight?: number;
+    /**
+     * Hide any column header rows that would only contain padded groups.
+     */
+    hidePaddedHeaderRows?: boolean;
 
     // *** Column Moving *** //
     /**

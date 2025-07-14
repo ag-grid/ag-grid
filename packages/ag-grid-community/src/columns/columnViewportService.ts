@@ -1,7 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { isColumn } from '../entities/agColumn';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
@@ -31,9 +30,15 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
 
     // all columns & groups to be rendered, index by row.
     // used by header rows to get all items to render for that row.
-    private rowsOfHeadersToRenderLeft: { [row: number]: (AgColumn | AgColumnGroup)[] } = {};
-    private rowsOfHeadersToRenderRight: { [row: number]: (AgColumn | AgColumnGroup)[] } = {};
-    private rowsOfHeadersToRenderCenter: { [row: number]: (AgColumn | AgColumnGroup)[] } = {};
+    private rowsOfHeadersToRenderLeft: { [row: number]: AgColumnGroup[] } = {};
+    private rowsOfHeadersToRenderRight: { [row: number]: AgColumnGroup[] } = {};
+    private rowsOfHeadersToRenderCenter: { [row: number]: AgColumnGroup[] } = {};
+
+    public headerGroupRowCount: number = 0; // used for header row count, when not using padding
+
+    private columnsToRenderLeft: AgColumn[] = [];
+    private columnsToRenderRight: AgColumn[] = [];
+    private columnsToRenderCenter: AgColumn[] = [];
 
     private scrollWidth: number;
     private scrollPosition: number;
@@ -77,8 +82,25 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         }
     }
 
-    public getHeadersToRender(type: ColumnPinnedType, depth: number): (AgColumn | AgColumnGroup)[] {
-        let result: (AgColumn | AgColumnGroup)[];
+    /**
+     * Returns the columns that are currently rendered in the viewport.
+     */
+    public getColumnHeadersToRender(type: ColumnPinnedType): AgColumn[] {
+        switch (type) {
+            case 'left':
+                return this.columnsToRenderLeft;
+            case 'right':
+                return this.columnsToRenderRight;
+            default:
+                return this.columnsToRenderCenter;
+        }
+    }
+
+    /**
+     * Returns the column groups that are currently rendered in the viewport at a specific header row index.
+     */
+    public getHeadersToRender(type: ColumnPinnedType, depth: number): AgColumnGroup[] {
+        let result: AgColumnGroup[];
 
         switch (type) {
             case 'left':
@@ -92,7 +114,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
                 break;
         }
 
-        return result || [];
+        return result ?? [];
     }
 
     private extractViewportColumns(): void {
@@ -114,13 +136,11 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         return this.suppressColumnVirtualisation || this.viewportRight === 0;
     }
 
-    public clear(suppressHashClear?: boolean): void {
+    public clear(): void {
         this.rowsOfHeadersToRenderLeft = {};
         this.rowsOfHeadersToRenderRight = {};
         this.rowsOfHeadersToRenderCenter = {};
-        if (!suppressHashClear) {
-            this.colsWithinViewportHash = '';
-        }
+        this.colsWithinViewportHash = '';
     }
 
     private isColumnInHeaderViewport(col: AgColumn): boolean {
@@ -200,57 +220,47 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     }
 
     private calculateHeaderRows(): void {
-        // go through each group, see if any of it's cols are displayed, and if yes,
-        // then this group is included
-        this.clear(true);
+        const { leftCols, rightCols } = this.visibleCols;
 
-        // for easy lookup when building the groups.
-        const renderedColIds: { [key: string]: boolean } = {};
+        this.headerGroupRowCount = this.beans.gos.get('hidePaddedHeaderRows') ? 0 : this.colModel.cols!.treeDepth;
+        this.columnsToRenderLeft = leftCols;
+        this.columnsToRenderRight = rightCols;
+        this.columnsToRenderCenter = this.colsWithinViewport;
 
-        const { leftCols, rightCols, treeLeft, treeRight, treeCenter } = this.visibleCols;
-        const allRenderedCols = this.headerColsWithinViewport.concat(leftCols).concat(rightCols);
+        const workOutGroupsToRender = (cols: AgColumn[]) => {
+            const groupsToRenderSet = new Set<AgColumnGroup>();
+            const groupsToRender: { [row: number]: AgColumnGroup[] } = {};
 
-        allRenderedCols.forEach((col) => (renderedColIds[col.getId()] = true));
+            for (const col of cols) {
+                let parent = col.getParent();
+                const displayingFillerGroups = col.getColDef().suppressSpanHeaderHeight;
 
-        const testGroup = (
-            children: (AgColumn | AgColumnGroup)[],
-            result: { [row: number]: (AgColumn | AgColumnGroup)[] },
-            depth: number
-        ): boolean => {
-            let returnValue = false;
-
-            for (let i = 0; i < children.length; i++) {
-                // see if this item is within viewport
-                const child = children[i];
-                let addThisItem = false;
-
-                if (isColumn(child)) {
-                    // for column, test if column is included
-                    addThisItem = renderedColIds[child.getId()] === true;
-                } else {
-                    // if group, base decision on children
-                    const columnGroup = child as AgColumnGroup;
-                    const displayedChildren = columnGroup.getDisplayedChildren();
-
-                    if (displayedChildren) {
-                        addThisItem = testGroup(displayedChildren, result, depth + 1);
+                while (parent) {
+                    const skipFillerGroup = !displayingFillerGroups && parent.isPadding();
+                    if (skipFillerGroup || groupsToRenderSet.has(parent)) {
+                        parent = parent.getParent();
+                        continue;
                     }
-                }
 
-                if (addThisItem) {
-                    returnValue = true;
-                    if (!result[depth]) {
-                        result[depth] = [];
+                    const level = parent.getProvidedColumnGroup().getLevel();
+
+                    if (level + 1 > this.headerGroupRowCount && !parent.isPadding()) {
+                        this.headerGroupRowCount = level + 1;
                     }
-                    result[depth].push(child);
+
+                    groupsToRender[level] ??= [];
+                    groupsToRender[level].push(parent);
+                    groupsToRenderSet.add(parent);
+                    parent = parent.getParent();
                 }
             }
-            return returnValue;
+
+            return groupsToRender;
         };
 
-        testGroup(treeLeft, this.rowsOfHeadersToRenderLeft, 0);
-        testGroup(treeRight, this.rowsOfHeadersToRenderRight, 0);
-        testGroup(treeCenter, this.rowsOfHeadersToRenderCenter, 0);
+        this.rowsOfHeadersToRenderLeft = workOutGroupsToRender(leftCols);
+        this.rowsOfHeadersToRenderRight = workOutGroupsToRender(rightCols);
+        this.rowsOfHeadersToRenderCenter = workOutGroupsToRender(this.headerColsWithinViewport);
     }
 
     private extractViewport(): boolean {

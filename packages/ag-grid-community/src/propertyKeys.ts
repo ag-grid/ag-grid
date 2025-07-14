@@ -322,6 +322,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressSetFilterByDefault',
     'enableFilterHandlers',
     'suppressEditNextOnTab',
+    'hidePaddedHeaderRows',
 ];
 
 // Used in example generation

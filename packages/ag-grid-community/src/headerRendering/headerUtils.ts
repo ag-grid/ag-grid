@@ -1,10 +1,15 @@
 import type { ColumnModel } from '../columns/columnModel';
+import type { ColumnViewportService } from '../columns/columnViewportService';
 import type { BeanCollection } from '../context/context';
 import type { HeaderRowCtrl } from './row/headerRowCtrl';
 
 // + gridPanel -> for resizing the body and setting top margin
-export function getHeaderRowCount(colModel: ColumnModel): number {
-    return colModel.cols ? colModel.cols.treeDepth + 1 : -1;
+export function getHeaderRowCount(colModel: ColumnModel, columnViewportService?: ColumnViewportService): number {
+    if (!colModel.cols) {
+        return -1;
+    }
+
+    return (columnViewportService?.headerGroupRowCount ?? colModel.cols.treeDepth) + 1;
 }
 
 export function getFocusHeaderRowCount(beans: BeanCollection): number {

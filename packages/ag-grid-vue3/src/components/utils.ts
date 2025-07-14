@@ -404,6 +404,9 @@ export interface Props<TData> {
     /** The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.
          */
     pivotGroupHeaderHeight?: number | undefined,
+    /** Hide any column header rows that would only contain padded groups.
+         */
+    hidePaddedHeaderRows?: boolean | undefined,
     /** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid.
          * @default false
          * @agModule `ColumnsToolPanelModule`
@@ -1933,6 +1936,7 @@ export function getProps() {
         floatingFiltersHeight: undefined,
         pivotHeaderHeight: undefined,
         pivotGroupHeaderHeight: undefined,
+        hidePaddedHeaderRows: undefined,
         allowDragFromColumnsToolPanel: undefined,
         suppressMovableColumns: undefined,
         suppressColumnMoveAnimation: undefined,

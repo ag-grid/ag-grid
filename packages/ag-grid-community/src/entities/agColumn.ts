@@ -530,6 +530,17 @@ export class AgColumn<TValue = any>
         return !colDef.suppressSpanHeaderHeight;
     }
 
+    /**
+     * Returns the first parent that is not a padding group.
+     */
+    public getFirstRealParent(): AgProvidedColumnGroup | null {
+        let parent = this.getOriginalParent();
+        while (parent && parent.isPadding()) {
+            parent = parent.getOriginalParent();
+        }
+        return parent;
+    }
+
     public getColumnGroupPaddingInfo(): { numberOfParents: number; isSpanningTotal: boolean } {
         let parent = this.getParent();
 

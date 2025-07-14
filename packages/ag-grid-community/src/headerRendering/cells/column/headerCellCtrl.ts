@@ -552,8 +552,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
         comp.toggleCss('ag-header-span-total', isSpanningTotal);
 
+        // span to this level
+        const indexToStartSpanning = (this.column.getFirstRealParent()?.getLevel() ?? -1) + 1;
+        const rowsToSpan = groupHeaderHeight.length - indexToStartSpanning;
         let extraHeight = 0;
-        for (let i = 0; i < numberOfParents; i++) {
+        for (let i = 0; i < rowsToSpan; i++) {
             extraHeight += groupHeaderHeight[groupHeaderHeight.length - 1 - i];
         }
 
