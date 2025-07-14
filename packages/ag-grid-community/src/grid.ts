@@ -160,10 +160,8 @@ export class GridCoreCreator {
 
         const api = context.getBean('gridApi');
 
-        if (api) {
-            _gridApiCache.set(eGridDiv, api);
-            _gridElementCache.set(api, eGridDiv);
-        }
+        _gridApiCache.set(eGridDiv, api);
+        _gridElementCache.set(api, eGridDiv);
 
         return api;
     }
