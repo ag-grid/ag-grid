@@ -852,14 +852,11 @@ const ExampleInner = ({ darkMode }) => {
         setDefaultCols(defaultCols);
         setDefaultColCount(defaultColCount);
 
-        const newRowsCols = [
-            [100, defaultColCount],
-            [1000, defaultColCount],
-        ];
-
-        if (!small) {
-            newRowsCols.push([10000, 100], [50000, defaultColCount], [100000, defaultColCount]);
-        }
+        let newRowsCols = new Array(5)
+            .fill(0)
+            .map((_, i) => 10 ** (i + 1))
+            .map((i) => [i, 10]);
+        newRowsCols = newRowsCols.concat(newRowsCols).map(([a, b], i, arr) => (i >= arr.length / 2 ? [a, b] : [b, a]));
 
         setDataSize(createDataSizeValue(newRowsCols[0][0], newRowsCols[0][1]));
         setRowCols(newRowsCols);
