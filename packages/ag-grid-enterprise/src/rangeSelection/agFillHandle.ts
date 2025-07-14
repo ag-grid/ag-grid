@@ -1,5 +1,6 @@
 import type {
     AgColumn,
+    BeanCollection,
     CellCtrl,
     CellPosition,
     CellRange,
@@ -19,6 +20,7 @@ import {
     _isRowBefore,
     _isSameRow,
     _last,
+    _stopPropagationForAgGrid,
     _toStringOrNull,
     _warn,
     isRowNumberCol,
@@ -50,7 +52,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     private markedCells: CellCtrl[] = [];
     private cellValues: FillValues[][] = [];
 
-    private dragAxis: FillDirection;
+    private dragAxis?: FillDirection;
     private isUp: boolean = false;
     private isLeft: boolean = false;
     private isReduce: boolean = false;
@@ -59,6 +61,23 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
     constructor() {
         super(FillHandleElement);
+    }
+
+    public override postConstruct(): void {
+        super.postConstruct();
+
+        this.addManagedElementListeners(this.getGui(), {
+            dblclick: this.onDblClick.bind(this),
+        });
+    }
+
+    private onDblClick(e: MouseEvent) {
+        // Stop propagation here, we don't want other services (e.g. editing) reacting to this event
+        // TODO: Do we still want "cellClicked", "rowClicked" and similar events to be dispatched for the
+        //       end user?
+        _stopPropagationForAgGrid(e);
+
+        propagateCellRangeValues(this.beans, this.cellRange);
     }
 
     protected override updateValuesOnMove(e: MouseEvent) {
@@ -114,6 +133,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
             return;
         }
 
+        this.doFill(e);
+    }
+
+    private doFill(e: MouseEvent) {
         const isX = this.dragAxis === 'x';
         const { cellRange: initialRange, rangeStartRow, rangeEndRow, beans } = this;
         const colLen = initialRange.columns.length;
@@ -670,5 +693,43 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         super.refresh(cellCtrl);
+    }
+}
+
+// TODO: cover the pinned row case
+function propagateCellRangeValues(beans: BeanCollection, cellRange: CellRange): void {
+    if (!cellRange.startRow || !cellRange.endRow) {
+        // TODO: is this right?
+        return;
+    }
+
+    const template: any[][] = [];
+    const { rowModel, valueSvc } = beans;
+
+    for (let i = cellRange.startRow.rowIndex; i <= cellRange.endRow.rowIndex; i++) {
+        const rowNode = rowModel.getRow(i);
+        const rowValues: any[] = [];
+        template.push(rowValues);
+
+        for (const col of cellRange.columns) {
+            const value = valueSvc.getValue(col as AgColumn, rowNode);
+            rowValues.push(value);
+        }
+    }
+
+    let rowPosition = _getRowBelow(beans, cellRange.endRow);
+    let rowIndex = 0;
+
+    while (rowPosition) {
+        const rowNode = rowModel.getRow(rowPosition.rowIndex);
+
+        for (let colIndex = 0; colIndex < cellRange.columns.length; colIndex++) {
+            const newValue = template[rowIndex][colIndex];
+            rowNode?.setDataValue(cellRange.columns[colIndex] as AgColumn, newValue, 'rangeSvc');
+        }
+
+        rowPosition = _getRowBelow(beans, rowPosition);
+
+        rowIndex = (rowIndex + 1) % template.length;
     }
 }
