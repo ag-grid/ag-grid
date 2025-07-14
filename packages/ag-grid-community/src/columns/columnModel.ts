@@ -21,6 +21,8 @@ import {
     _destroyColumnTree,
     _getColumnsFromTree,
     isColumnGroupAutoCol,
+    isColumnSelectionCol,
+    isRowNumberCol,
 } from './columnUtils';
 
 export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
@@ -256,16 +258,24 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return [];
         }
         // pivot mode is on, but we are not pivoting, so we only
-        // show columns we are aggregating on
+        // show columns we are aggregating on and possibly the selection/row numbers column
 
+        const { valueColsSvc, selectionColSvc, gos } = this.beans;
         const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.showingPivotResult;
-        const valueColumns = this.beans.valueColsSvc?.columns;
+        const showSelectionColumn = selectionColSvc?.isSelectionColumnEnabled();
+        const showRowNumbers = gos.get('rowNumbers');
+        const valueColumns = valueColsSvc?.columns;
 
         const res = this.cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
             if (showAutoGroupAndValuesOnly) {
                 const isValueCol = valueColumns?.includes(col);
-                return isAutoGroupCol || isValueCol;
+                return (
+                    isAutoGroupCol ||
+                    isValueCol ||
+                    (showSelectionColumn && isColumnSelectionCol(col)) ||
+                    (showRowNumbers && isRowNumberCol(col))
+                );
             } else {
                 // keep col if a) it's auto-group or b) it's visible
                 return isAutoGroupCol || col.isVisible();
