@@ -676,3 +676,74 @@
     background: linear-gradient(to left, var(--color-bg-primary) 40%, var(--color-bg-primary) 60%, transparent 100%);
     filter: blur(8px);
 }
+
+.nialHeaderImage {
+    width: 100%;
+    max-width: 800px;
+    display: block;
+    margin: 0 auto 24px auto;
+    user-select: none;
+    margin-top: $spacing-size-2;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.niallCaption {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+.niallSectionContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.niallTextBlock {
+    text-align: left;
+    width: 100%;
+}
+
+.niallHeading {
+    margin-bottom: 0.5em;
+    text-align: center;
+}
+
+.headerSection {
+    span {
+        color: var(--color-text-secondary);
+        opacity: 0.6;
+    }
+
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contentSection {
+    padding-top: $spacing-size-12;
+    max-width: 600px;
+    padding-bottom: $spacing-size-12;
+    display: flex;
+    margin: 0 auto;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(32px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fadeInUp {
+    animation: fadeInUp 0.7s ease;
+}

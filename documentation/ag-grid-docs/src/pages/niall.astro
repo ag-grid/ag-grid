@@ -1,0 +1,83 @@
+---
+import Layout from '../layouts/Layout.astro';
+import styles from '../pages-styles/about.module.scss';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+---
+
+<Layout
+    title="Niall Crosby: Our Amazing Founder"
+    description="The story and legacy of Niall Crosby, founder of AG Grid."
+    showSearchBar={true}
+    showDocsNav={false}
+>
+    <div class="layout-max-width-small">
+        <section class={styles.introSection}>
+            <h2>Our Amazing Founder</h2>
+            <p>
+                We are proud to be the leading Javascript datagrid on the market, with thousands of customers globally.
+                Our ethos and culture derive from the creative force of one person. Our founder Niall Crosby.
+            </p>
+        </section>
+
+        <div class={styles.headerSection}>
+            <img src={urlWithBaseUrl('images/niall.jpg')} alt="Photo of Niall Crosby" class={styles.nialHeaderImage} />
+            <span>Niall Crosby 1977-2024</span>
+        </div>
+
+        <section class={styles.contentSection}>
+            <div class={styles.niallSectionContent}>
+                <div class={styles.niallTextBlock}>
+                    <p>
+                        A lover of tech, travel and adventure, Niall was a fiercely independent thinker. He had been
+                        coding since a young age and delighted in seeing patterns, trends and solutions that others
+                        could not.
+                    </p>
+                    <p>
+                        He had an enormous curiosity for how things work, and this drove him fearlessly and
+                        entrepreneurially into the world of software development.
+                    </p>
+                    <p>
+                        While working as a freelance developer around 2014 / 2015, Niall felt a deep frustration with
+                        what was available in the market to handle large data sets in browser-based applications. He
+                        decided to do something about it.
+                    </p>
+                    <p>
+                        What he developed was so functional, reliable, stable – an apparently simple solution to a
+                        fiendishly complex issue. Niall recognised that what he had created didn’t just sort his problem
+                        – it had the potential to scale and solve the problems of companies throughout the world.
+                    </p>
+                    <p>This was the beginning of AG Grid.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class={styles.contentSection}>
+            <div class={styles.niallSectionContent}>
+                <div class={styles.niallTextBlock}>
+                    <p>Niall sadly lost his life in a helicopter crash in July 2024 in his native Ireland.</p>
+                    <p>
+                        His legacy however lives on in the ambition and creativity he instilled in everyone at AG Grid.
+                        It is evident in the inspiration and generous support he provided to countless young developers
+                        and start-ups throughout his career.
+                    </p>
+                    <p>
+                        And it lives on in the memories of his friends and his young family who were central to his
+                        life.
+                    </p>
+                    <p>
+                        At AG Grid we are proud to continue that legacy. Many of us have been on the journey with Niall
+                        since the start.
+                    </p>
+                    <p>
+                        As Niall’s friends and work family we are committed to pushing the boundaries of Javascript
+                        datagrids, constantly developing new features and products to show the world what is possible.
+                    </p>
+                    <p>
+                        AG Grid is about fearlessly tackling big challenges, supporting our clients, inspiring each
+                        other and having fun along the way – attributes Niall was a big believer in.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+</Layout>
