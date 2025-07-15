@@ -69,8 +69,6 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
      * Note: This feature does not work with `allowTyping=true`.
      */
     multiSelect?: boolean;
-    /** If `true` the picker showing the values will be not be automatically displayed once the RichSelect is created. */
-    suppressAutoExpand?: boolean;
     /**
      * If `true` the option to remove all selected options will not be displayed.
      * Note: This feature only works when `multiSelect=true`.
