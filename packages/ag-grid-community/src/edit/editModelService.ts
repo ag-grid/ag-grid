@@ -156,7 +156,8 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     public setEdit(position: Required<EditPosition>, edit: Partial<EditValue>): void {
         (this.edits.size === 0 || !this.edits.has(position.rowNode)) && this.edits.set(position.rowNode, new Map());
 
-        const currentEdit: EditValue = Object.assign({}, this._getEdit(position));
+        const existingEdit = this._getEdit(position);
+        const currentEdit: EditValue = Object.assign({}, existingEdit);
         Object.keys(edit).forEach((key) => {
             const value = (edit as any)[key];
             // don't copy unset keys
@@ -176,11 +177,13 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
                 if (edit) {
                     edit.newValue = edit.oldValue;
                     edit.state = 'changed';
+                    edit.editCount = 0;
                 }
             } else {
                 this.getEditRow(rowNode)?.forEach((cellData) => {
                     cellData.newValue = cellData.oldValue;
                     cellData.state = 'changed';
+                    cellData.editCount = 0;
                 });
             }
         }
@@ -203,7 +206,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
                 editRow = new Map<Column, EditValue>();
                 this.edits.set(rowNode, editRow);
             }
-            editRow.set(column, { newValue: undefined, oldValue: undefined, state });
+            editRow.set(column, { newValue: undefined, oldValue: undefined, state, editCount: 0 });
         }
     }
 
@@ -296,6 +299,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
                 newValue: UNEDITED,
                 oldValue: this.beans.valueSvc.getValue(column as AgColumn, rowNode, true, 'api'),
                 state: 'editing',
+                editCount: 0,
             });
         }
         this.edits.set(rowNode, map);

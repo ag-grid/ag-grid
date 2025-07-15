@@ -862,7 +862,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     }
 
                     if (this.isCellEditable({ rowNode, column }, 'api')) {
-                        const oldValue = valueSvc.getValue(column as AgColumn, rowNode, true, 'api');
+                        const { oldValue, editCount = 0 } = editRow.get(column) ?? {};
                         let newValue = valueSvc.parseValue(column as AgColumn, rowNode ?? null, editValue, oldValue);
 
                         if (Number.isNaN(newValue)) {
@@ -874,6 +874,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                             newValue,
                             oldValue,
                             state: 'changed',
+                            editCount: editCount + 1,
                         });
                     }
                 }
@@ -953,7 +954,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 newValue = UNEDITED;
             }
 
-            editRow.set(col, { newValue, oldValue, state: state ?? 'changed' });
+            editRow.set(col, { newValue, oldValue, state: state ?? 'changed', editCount: 0 });
         });
 
         this.setEditMap(edits, params);

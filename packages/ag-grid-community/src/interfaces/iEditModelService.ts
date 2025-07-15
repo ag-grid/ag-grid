@@ -12,6 +12,7 @@ export type EditValue = {
     newValue: any;
     oldValue: any;
     state: EditState;
+    editCount: number;
 };
 
 export type EditPositionValue = Required<EditPosition> & EditValue;
