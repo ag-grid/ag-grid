@@ -7,6 +7,10 @@ function formatTestId(name: string, attributes: Record<string, string | number |
 }
 
 export const agTestIdFor = {
+    root(gridId: string): string {
+        return formatTestId('ag-grid-root', { ['grid-id']: gridId });
+    },
+
     /** Headers */
 
     headerGroupCell(colId: string | null): string {
@@ -201,7 +205,3 @@ export const agTestIdFor = {
         return formatTestId('ag-paging-page-summary-panel-total-page', { value });
     },
 };
-
-export function getGridRootNode(id: string): Element | null {
-    return document.querySelector(`[grid-id="${id}"]`)?.parentElement ?? null;
-}
