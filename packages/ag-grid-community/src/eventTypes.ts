@@ -160,7 +160,6 @@ export const _INTERNAL_EVENTS = [
     'recalculateRowBounds',
     'stickyTopOffsetChanged',
     'overlayExclusiveChanged',
-    'beforeRefreshModel',
     'rowNodeDataChanged',
     'cellEditValuesChanged',
     'filterSwitched',

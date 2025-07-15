@@ -53,8 +53,8 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
         this.enabled = enabled;
 
         const gos = this.gos;
-        const isRowMaster = gos.get('isRowMaster');
         const groupDefaultExpanded = gos.get('groupDefaultExpanded');
+        const isRowMaster = gos.get('isRowMaster');
         const treeData = gos.get('treeData');
 
         const setMaster = (row: RowNode, created: boolean, updated: boolean) => {
