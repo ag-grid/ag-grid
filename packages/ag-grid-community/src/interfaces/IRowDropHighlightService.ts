@@ -1,3 +1,4 @@
+import type { DraggingEvent } from '../dragAndDrop/dragAndDropService';
 import type { RowNode } from '../entities/rowNode';
 import type { IRowNode } from './iRowNode';
 
@@ -19,4 +20,5 @@ export interface IRowDropHighlightService {
 
     clear(): void;
     set(row: RowNode, dropIndicatorPosition: Exclude<DropIndicatorPosition, 'none'>): void;
+    fromDrag(draggingEvent: DraggingEvent, drop: boolean): void;
 }

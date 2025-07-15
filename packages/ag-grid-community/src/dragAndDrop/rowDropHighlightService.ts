@@ -2,11 +2,13 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { RowNode } from '../entities/rowNode';
 import type { DropIndicatorPosition, IRowDropHighlightService } from '../interfaces/IRowDropHighlightService';
+import type { DraggingEvent } from './dragAndDropService';
 
 export class RowDropHighlightService extends BeanStub implements NamedBean, IRowDropHighlightService {
     beanName = 'rowDropHighlightSvc' as const;
 
     private uiLevel = 0;
+    private dragging = false;
     public row: RowNode | null = null;
     public position: DropIndicatorPosition = 'none';
 
@@ -18,11 +20,13 @@ export class RowDropHighlightService extends BeanStub implements NamedBean, IRow
 
     private onModelUpdated(): void {
         const row = this.row;
+        const oldDragging = this.dragging;
         if (!row || row.rowIndex === null || this.position === 'none') {
             this.clear();
         } else {
             this.set(row, this.position);
         }
+        this.dragging = oldDragging;
     }
 
     public override destroy(): void {
@@ -32,6 +36,7 @@ export class RowDropHighlightService extends BeanStub implements NamedBean, IRow
 
     public clear(): void {
         const last = this.row;
+        this.dragging = false;
         if (last) {
             this.uiLevel = 0;
             this.position = 'none';
@@ -45,6 +50,7 @@ export class RowDropHighlightService extends BeanStub implements NamedBean, IRow
         const uiLevel = row.uiLevel;
         const highlightChanged = dropIndicatorPosition !== this.position;
         const uiLevelChanged = uiLevel !== this.uiLevel;
+        this.dragging = false;
         if (nodeChanged || highlightChanged || uiLevelChanged) {
             if (nodeChanged) {
                 this.clear();
@@ -53,6 +59,27 @@ export class RowDropHighlightService extends BeanStub implements NamedBean, IRow
             this.position = dropIndicatorPosition;
             this.row = row;
             row.dispatchRowEvent('rowHighlightChanged');
+        }
+    }
+
+    public fromDrag(draggingEvent: DraggingEvent, clear: boolean): void {
+        const rowsDrop = draggingEvent.rowsDrop;
+        if (!clear && rowsDrop) {
+            const { sameGrid, rowDragManaged, suppressMoveWhenRowDragging, target, rows, position } = rowsDrop;
+            if (
+                target &&
+                rows.length !== 0 &&
+                position !== 'none' &&
+                (!sameGrid || (rowDragManaged && suppressMoveWhenRowDragging)) &&
+                this.beans.dragAndDrop?.isDropZoneWithinThisGrid(draggingEvent)
+            ) {
+                this.set(target as RowNode, position);
+                this.dragging = true;
+                return;
+            }
+        }
+        if (this.dragging) {
+            this.clear();
         }
     }
 }

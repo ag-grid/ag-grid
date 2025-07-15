@@ -10,6 +10,7 @@ import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
 import type { DragSource, DraggingEvent } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
+import { rowDragNodeToShow } from './rowDragFeature/rowDragNodeToShow';
 
 const RowDragElement: ElementParams = {
     tag: 'div',
@@ -104,40 +105,29 @@ export class RowDragComp extends Component {
     }
 
     private getDragItemName(translate: LocaleTextFunc, draggingEvent?: DraggingEvent | null): string {
-        const rowsDrop = draggingEvent?.rowsDrop;
         const dragItem = draggingEvent?.dragItem ?? this.getDragItem();
-        const dragItemCount = dragItem.rowNodes?.length ?? 1;
-
-        let rowCount = dragItemCount;
-
-        const useRowsDrop =
-            !!rowsDrop?.sameGrid && (!this.gos.get('rowDragManaged') || this.gos.get('suppressMoveWhenRowDragging'));
-
-        if (useRowsDrop) {
-            rowCount = rowsDrop.rows.length;
-        }
+        const { row, count } = rowDragNodeToShow(draggingEvent, dragItem);
 
         // Check for custom row drag text first
         const rowDragText = this.getRowDragText(this.column);
         if (rowDragText) {
-            return rowDragText(dragItem as IRowDragItem, rowCount);
+            return rowDragText(dragItem as IRowDragItem, count);
         }
 
-        // Show source cell value for single row
-        if (dragItemCount === 1 && (!useRowsDrop || rowCount === 0 || rowsDrop?.withSource)) {
-            return this.cellValueFn();
-        }
-
-        // Sow the first cell in the rowsDrop.rows when the source is not included
-        if (useRowsDrop && rowCount === 1 && !rowsDrop.withSource) {
-            const targetValue = this.getCellValueForRow(rowsDrop.rows[0]);
+        if (count === 1 && row) {
+            // Show source cell value for single row
+            if (row === this.rowNode) {
+                return this.cellValueFn();
+            }
+            // Show the first cell in the rowsDrop.rows when the source is not included
+            const targetValue = this.getCellValueForRow(row);
             if (targetValue) {
                 return targetValue;
             }
         }
 
         // Default: show row count
-        return `${rowCount} ${translate('rowDragRows', 'rows')}`;
+        return `${count} ${translate('rowDragRows', 'rows')}`;
     }
 
     private addDragSource(dragStartPixels: number = 4): void {
