@@ -109,12 +109,19 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 
     ensureColumnVisible(beans, colKey);
 
+    let newValue = key;
+
+    if (isEditing(beans, cellPosition) && !newValue) {
+        // if already editing, and no new value provided, use editing value
+        newValue = beans.editModelSvc?.getEdit(cellPosition)?.newValue;
+    }
+
     editSvc?.setEditingCells(
         [
             {
                 ...cellPosition,
                 colId: column.getColId(),
-                newValue: key,
+                newValue,
                 state: 'editing',
             },
         ],
