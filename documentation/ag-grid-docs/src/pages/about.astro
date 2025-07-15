@@ -186,15 +186,15 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
             <div>
                 <img
                     src={urlWithBaseUrl('images/about/about-us.png')}
-                    class={`${styles.aboutHeaderImage} ${styles.aboutHeaderImageLight}`}
+                    class={`${styles.aboutHeaderImage} ${styles.aboutHeaderImageLight} ${styles.fadeInUp}`}
                 />
                 <img
                     src={urlWithBaseUrl('images/about/dark-mode-about.png')}
-                    class={`${styles.aboutHeaderImage} ${styles.aboutHeaderImageDark}`}
+                    class={`${styles.aboutHeaderImage} ${styles.aboutHeaderImageDark} ${styles.fadeInUp}`}
                 />
             </div>
 
-            <section class={styles.customerLogos}>
+            <section class={`${styles.customerLogos} ${styles.fadeInUpDelayed}`}>
                 <CustomerLogos client:load />
                 <p class={styles.footnote}>
                     <span>Built by developers for developers</span>, AG Grid was born out of frustration with the
@@ -310,7 +310,7 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                 <div class={styles.carouselTrack} id="carousel-track">
                     {
                         allCarouselImages.map((src, idx) => (
-                            <div class={styles.carouselImageWrapper} key={idx}>
+                            <div class={styles.carouselImageWrapper}>
                                 <img src={src} alt={`Life at AG Grid ${idx + 1}`} class={styles.carouselImage} />
                             </div>
                         ))

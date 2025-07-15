@@ -747,3 +747,9 @@
 .fadeInUp {
     animation: fadeInUp 0.7s ease;
 }
+
+.fadeInUpDelayed {
+    animation: fadeInUp 0.7s ease;
+    animation-delay: 0.5s;
+    animation-fill-mode: both;
+}
