@@ -242,36 +242,36 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         direction: 'Before' | 'After',
         event: KeyboardEvent
     ): boolean {
-        const currentIndex = focusedHeader.headerRowIndex;
-        let nextPosition: HeaderPosition | null = null;
-        let nextRowIndex: number;
         const beans = this.beans;
+        const currentIndex = focusedHeader.headerRowIndex;
 
+        let nextFocusedCol: AgColumn | null = null;
+        let nextRowIndex: number;
+
+        const headerRowCount = getFocusHeaderRowCount(beans);
+        const allVisibleCols = this.beans.visibleCols.allCols;
         if (direction === 'Before') {
-            if (currentIndex > 0) {
-                nextRowIndex = currentIndex - 1;
-                this.currentHeaderRowWithoutSpan -= 1;
-                nextPosition = this.findColAtEdgeForHeaderRow(nextRowIndex, 'end')!;
+            if (currentIndex <= 0) {
+                return false; // no previous row to focus
             }
+            nextFocusedCol = _last(allVisibleCols);
+            nextRowIndex = currentIndex - 1;
+            this.currentHeaderRowWithoutSpan -= 1;
         } else {
+            nextFocusedCol = allVisibleCols[0];
             nextRowIndex = currentIndex + 1;
-            if (this.currentHeaderRowWithoutSpan < getFocusHeaderRowCount(beans)) {
+            if (this.currentHeaderRowWithoutSpan < headerRowCount) {
                 this.currentHeaderRowWithoutSpan += 1;
             } else {
                 this.currentHeaderRowWithoutSpan = -1;
             }
-            nextPosition = this.findColAtEdgeForHeaderRow(nextRowIndex, 'start')!;
         }
 
-        if (!nextPosition) {
-            return false;
+        let { column, headerRowIndex } = getHeaderIndexToFocus(this.beans, nextFocusedCol, nextRowIndex);
+        // if index is greater than the header row count, then row -1 to move to next container
+        if (headerRowIndex >= headerRowCount) {
+            headerRowIndex = -1;
         }
-
-        const { column, headerRowIndex } = getHeaderIndexToFocus(
-            this.beans,
-            nextPosition.column as AgColumn,
-            nextPosition?.headerRowIndex
-        );
 
         return beans.focusSvc.focusHeaderPosition({
             headerPosition: { column, headerRowIndex },
@@ -352,33 +352,6 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         if (centerHeaderContainer) {
             return centerHeaderContainer.getRowType(rowIndex);
         }
-    }
-
-    private findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition | undefined {
-        const { visibleCols, ctrlsSvc, colGroupSvc } = this.beans;
-        const displayedColumns = visibleCols.allCols;
-        const column = displayedColumns[position === 'start' ? 0 : displayedColumns.length - 1];
-
-        if (!column) {
-            return;
-        }
-
-        const childContainer = ctrlsSvc.getHeaderRowContainerCtrl(column.getPinned());
-        const type = childContainer?.getRowType(level);
-
-        if (type == 'group') {
-            const columnGroup = colGroupSvc?.getColGroupAtLevel(column, level);
-            return {
-                headerRowIndex: level,
-                column: columnGroup!,
-            };
-        }
-
-        return {
-            // if type==null, means the header level didn't exist
-            headerRowIndex: type == null ? -1 : level,
-            column,
-        };
     }
 }
 
