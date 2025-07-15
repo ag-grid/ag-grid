@@ -1,0 +1,17 @@
+---
+interface Props {
+    googleTagManagerId: string;
+    googleTagManagerAuth: string;
+    googleTagManagerPreview: string;
+}
+
+const { googleTagManagerId, googleTagManagerAuth, googleTagManagerPreview } = Astro.props as Props;
+---
+
+<noscript>
+    <iframe
+        src={`https://www.googletagmanager.com/ns.html?id=${googleTagManagerId}&gtm_auth=${googleTagManagerAuth}&gtm_preview=${googleTagManagerPreview}&gtm_cookies_win=x`}
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"></iframe>
+</noscript>
