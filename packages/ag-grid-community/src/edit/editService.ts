@@ -298,22 +298,21 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         ) {
             const key = event.key;
 
+            // in batch editing, we only permit esc to revert during the first edit.
+            const allowRevert = position && this.model.getEdit(position)?.editCount === 0;
+
             const isEnter = key === KeyCode.ENTER;
             const isEscape = key === KeyCode.ESCAPE;
 
             if (isEnter || isEscape) {
                 if (isEnter) {
                     _syncFromEditors(beans, { event });
-                } else if (isEscape) {
+                } else if (isEscape && allowRevert) {
                     // only if ESC is pressed while in the editor for this cell
                     this.revertSingleCellEdit(cellCtrl!, false);
                 }
 
-                if (this.isBatchEditing()) {
-                    this.strategy?.cleanupEditors();
-                } else {
-                    _destroyEditors(beans, model.getEditPositions(), { event });
-                }
+                this.strategy?.cleanupEditors();
 
                 event.preventDefault();
 
