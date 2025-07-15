@@ -173,7 +173,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             }
 
             const richSelect = this.eEditor;
-            const { allowTyping, eventKey, autoExpand } = params;
+            const { allowTyping, eventKey, suppressAutoExpand } = params;
 
             if (focusAfterAttached) {
                 const focusableEl = richSelect.getFocusableElement() as HTMLInputElement;
@@ -184,7 +184,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                 }
             }
 
-            if (autoExpand) {
+            if (!suppressAutoExpand) {
                 richSelect.showPicker();
             }
 
