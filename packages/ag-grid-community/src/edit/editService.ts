@@ -299,7 +299,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             const key = event.key;
 
             // in batch editing, we only permit esc to revert during the first edit.
-            const allowRevert = position && this.model.getEdit(position)?.editCount === 0;
+            const allowRevert = position && (this.model.getEdit(position)?.editCount ?? 0) === 0;
 
             const isEnter = key === KeyCode.ENTER;
             const isEscape = key === KeyCode.ESCAPE;
