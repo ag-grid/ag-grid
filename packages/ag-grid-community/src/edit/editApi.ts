@@ -113,7 +113,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 
     if (isEditing(beans, cellPosition) && !newValue) {
         // if already editing, and no new value provided, use editing value
-        newValue = beans.editModelSvc?.getEdit(cellPosition)?.newValue;
+        newValue = beans.editModelSvc?.getEdit({ rowNode, column })?.newValue;
     }
 
     editSvc?.setEditingCells(
