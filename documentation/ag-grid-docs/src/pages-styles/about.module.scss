@@ -715,8 +715,10 @@
 
 .headerSection {
     span {
-        color: var(--color-text-secondary);
-        opacity: 0.6;
+        color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 90%);
+        line-height: 1.6;
+        font-weight: var(--text-semibold);
+        opacity: 0.7;
     }
 
     display: flex;
@@ -731,6 +733,10 @@
     padding-bottom: $spacing-size-12;
     display: flex;
     margin: 0 auto;
+
+    h2 {
+        padding-bottom: $spacing-size-8;
+    }
 }
 
 @keyframes fadeInUp {
