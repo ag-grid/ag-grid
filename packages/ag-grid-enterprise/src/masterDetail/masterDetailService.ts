@@ -25,7 +25,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
     private enabled: boolean;
 
     private isEnabled(): boolean {
-        return this.gos.get('masterDetail');
+        return !!this.gos.get('masterDetail');
     }
 
     public postConstruct(): void {
