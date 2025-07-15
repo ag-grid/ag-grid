@@ -640,11 +640,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             this.colModel.changeEventsDispatching ||
             this.isSuppressModelUpdateAfterUpdateTransaction(params)
         ) {
-            this.beforeRefreshModel(params);
             return;
         }
 
         this.isRefreshingModel = true;
+
+        this.beans.masterDetailSvc?.refreshModel(params);
 
         if (params.step !== 'group') {
             this.beforeRefreshModel(params);

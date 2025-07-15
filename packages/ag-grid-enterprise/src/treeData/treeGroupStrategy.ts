@@ -1,10 +1,4 @@
-import type {
-    ChangedPath,
-    GroupingApproach,
-    IChangedRowNodes,
-    IsGroupOpenByDefaultParams,
-    StageExecuteParams,
-} from 'ag-grid-community';
+import type { ChangedPath, GroupingApproach, IChangedRowNodes, StageExecuteParams } from 'ag-grid-community';
 import { RowNode, _ROW_ID_PREFIX_ROW_GROUP, _removeFromArray } from 'ag-grid-community';
 import { BeanStub, _EmptyArray, _warn } from 'ag-grid-community';
 
@@ -304,9 +298,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         // Update group state and children markers
         if (row.group !== !!len) {
             setRowNodeGroup(row, this.beans, !!len);
-            if (!len && !row.expanded) {
-                row.treeNodeFlags &= ~FLAG_EXPANDED_INITIALIZED;
-            }
             flags |= FLAG_CHANGED;
         } else if (row.hasChildren() !== !!len) {
             row.updateHasChildren();
@@ -317,7 +308,15 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             activeChangedPath?.addParentNode(row);
         }
 
-        if (len && (flags & FLAG_EXPANDED_INITIALIZED) === 0) {
+        const canBeExpanded = len !== 0 || row.master;
+        if (!canBeExpanded) {
+            if (row.expanded) {
+                row.expanded = false;
+            }
+            if ((flags & FLAG_EXPANDED_INITIALIZED) !== 0) {
+                row.treeNodeFlags &= ~FLAG_EXPANDED_INITIALIZED;
+            }
+        } else if ((flags & FLAG_EXPANDED_INITIALIZED) === 0) {
             row.treeNodeFlags |= FLAG_EXPANDED_INITIALIZED;
             row.expanded = this.getRowDefaultExpanded(row, level); // Initialize the expanded state
         }
@@ -381,20 +380,21 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     private getRowDefaultExpanded(rowNode: GroupingRowNode<TData>, level: number): boolean {
-        const gos = this.gos;
-        const isGroupOpenByDefault = gos.getCallback('isGroupOpenByDefault');
+        const { gos, beans } = this;
+        const isGroupOpenByDefault = gos.get('isGroupOpenByDefault');
         if (!isGroupOpenByDefault) {
             const groupDefaultExpanded = gos.get('groupDefaultExpanded');
             return groupDefaultExpanded === -1 || level < groupDefaultExpanded;
         }
-        const { field, key, rowGroupColumn } = rowNode;
-        const params = gos.addGridCommonParams<IsGroupOpenByDefaultParams>({
+        const params = {
+            api: beans.gridApi,
+            context: beans.gridOptions.context,
             rowNode,
-            field: field!,
-            key: key!,
+            field: rowNode.field!,
+            key: rowNode.key!,
             level,
-            rowGroupColumn: rowGroupColumn!,
-        });
+            rowGroupColumn: rowNode.rowGroupColumn!,
+        };
         return isGroupOpenByDefault(params) == true;
     }
 
