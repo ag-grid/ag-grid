@@ -1,4 +1,5 @@
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
+import { ModuleRegistry } from '../modules/moduleRegistry';
 import { VERSION } from '../version';
 import { TestIdService, setTestIdAttribute } from './testIdService';
 
@@ -30,3 +31,7 @@ export const TestingModule: TestingModuleType = {
         };
     },
 };
+
+export function setupAgTestIds(params?: TestingModuleParams): void {
+    ModuleRegistry.registerModules([TestingModule.with(params)]);
+}

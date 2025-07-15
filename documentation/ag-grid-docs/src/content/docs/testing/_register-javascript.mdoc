@@ -9,13 +9,12 @@ import '@testing-library/jest-dom';
 
 import { 
     createGrid, 
-    GridOptions, 
-    TestingModule, 
-    ModuleRegistry, 
-    getTestIdForCell 
+    GridOptions,
+    agTestIdFor,
+    setupAgTestIds,
 } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([TestingModule]);
+setupAgTestIds()
 
 function createAgGrid() {
     const div = document.createElement('div');
@@ -46,7 +45,7 @@ test('examples of some things', async () => {
     const { div, api } = createAgGrid();
 
     // Get a cell value
-    expect(getByTestId(div, getTestIdForCell('ford-mondeo', 'make'))).toHaveTextContent('Ford');
+    expect(getByTestId(div, agTestIdFor.cell('ford-mondeo', 'make'))).toHaveTextContent('Ford');
 
     // Test the value formatter by searching for the correct price string
     expect(getByText(div, '$72,000')).toBeDefined();
