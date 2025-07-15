@@ -26,33 +26,32 @@ runs:
           uses: actions/github-script@v7
           if: ${{ inputs.ctrf_file != '' }}
           env:
-            CTRF_FILE: ${{ inputs.ctrf_file }}
-            SEVERITY_THRESHOLD: ${{ inputs.severity_threshold }}
+              CTRF_FILE: ${{ inputs.ctrf_file }}
+              SEVERITY_THRESHOLD: ${{ inputs.severity_threshold }}
           with:
-            script: |
-              const fs = require('fs');
-              const path = require('path');
-              const file = 'snyk.json';
-              
-              let combinedResults = {};
-              
-              if (fs.existsSync(file)) {
-                combinedResults = JSON.parse(fs.readFileSync(file, 'utf8'));
-              }
-              
-              const passed = combinedResults.runs.reduce((mem, run) =>
-                mem + run.properties.coverage.reduce((mem2, cov) =>
-                  mem2 + (cov.isSupported ? cov.files : 0),
-                0),
-              0);
-              const failed = combinedResults.runs.reduce((mem, run) => mem + run.results.length, 0)
-              const skipped = combinedResults.runs.reduce((mem, run) =>
-                mem + run.properties.coverage.reduce((mem2, cov) =>
-                  mem2 + (cov.isSupported ? 0 : cov.files),
-                0),
-              0);
-              
-              const report = { results: { summary: { failed, passed, skipped } } };
-              fs.mkdirSync(path.dirname(path.join('.', '${{ env.CTRF_FILE }}')), { recursive: true });
-              fs.writeFileSync(path.join('.', '${{ env.CTRF_FILE }}'), JSON.stringify(report));
+              script: |
+                  const fs = require('fs');
+                  const path = require('path');
+                  const file = 'snyk.json';
 
+                  let combinedResults = {};
+
+                  if (fs.existsSync(file)) {
+                    combinedResults = JSON.parse(fs.readFileSync(file, 'utf8'));
+                  }
+
+                  const passed = combinedResults.runs.reduce((mem, run) =>
+                    mem + run.properties.coverage.reduce((mem2, cov) =>
+                      mem2 + (cov.isSupported ? cov.files : 0),
+                    0),
+                  0);
+                  const failed = combinedResults.runs.reduce((mem, run) => mem + run.results.length, 0)
+                  const skipped = combinedResults.runs.reduce((mem, run) =>
+                    mem + run.properties.coverage.reduce((mem2, cov) =>
+                      mem2 + (cov.isSupported ? 0 : cov.files),
+                    0),
+                  0);
+
+                  const report = { results: { summary: { failed, passed, skipped } } };
+                  fs.mkdirSync(path.dirname(path.join('.', '${{ env.CTRF_FILE }}')), { recursive: true });
+                  fs.writeFileSync(path.join('.', '${{ env.CTRF_FILE }}'), JSON.stringify(report));

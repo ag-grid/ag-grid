@@ -40,14 +40,14 @@ runs:
                   const path = require('path');
                   const file = 'snyk.json';
                   const combinedResults = [];
-                  
+
                   if (fs.existsSync(file)) {
                     combinedResults.push(...JSON.parse(fs.readFileSync(file, 'utf8')));
                   }
-                  
+
                   const passed = combinedResults.filter(project => project.ok).length;
                   const vulnerabilities = combinedResults.flatMap(project => project.vulnerabilities);
-                  
+
                   const report = {
                     results: { summary: { failed: vulnerabilities.length, passed, skipped: 0 } }
                   }
