@@ -46,7 +46,7 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                 name: snyk-scan-workspaces
-                path: snyk.json
+                path: test-results/
 
     sast-code-scan:
         runs-on: ubuntu-latest
@@ -68,7 +68,7 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                 name: snyk-code-scan
-                path: snyk.json
+                path: test-results/
 
     combine-scan-results:
       needs: [code-dependency-scan, sast-code-scan]
