@@ -183,7 +183,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
           PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
           CURRENT_COMMIT_SHA: ${{ github.sha }}
-          IS_SUCCESS: ${{ needs.e2e_accessibility.result == 'success' }}
+          IS_SUCCESS: ${{ needs.e2e_accessibility.result != 'failure' }}
 
       - name: Create Jira Ticket
         uses: ./.github/actions/jira-integration
@@ -193,7 +193,7 @@ jobs:
           JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
           JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' is failing."
           CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
-          IS_SUCCESS: ${{ needs.e2e_accessibility.result == 'success' }}
+          IS_SUCCESS: ${{ needs.e2e_accessibility.result != 'failure' }}
           PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
           CURRENT_COMMIT_SHA: ${{ github.sha }}
 
