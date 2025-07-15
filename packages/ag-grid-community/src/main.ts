@@ -1235,7 +1235,7 @@ export { LocaleModule } from './misc/locale/localeModule';
 export { RowAutoHeightModule } from './rendering/row/rowAutoHeightModule';
 export { SharedExportModule as _SharedExportModule } from './export/exportModule';
 export { AllCommunityModule } from './allCommunityModule';
-export { setupAgTestIds } from './testing/testingModule';
+export { setupAgTestIds, TestingModule } from './testing/testingModule';
 
 //  events
 export * from './events';
