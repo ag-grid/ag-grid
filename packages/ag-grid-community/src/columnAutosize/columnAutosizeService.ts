@@ -24,6 +24,16 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered() });
+
+        this.beans.hiddenLayoutSvc?.registerHiddenLayoutRequirement(() => {
+            const strategy = this.gos.get('autoSizeStrategy');
+            if (strategy == null || (strategy.type === 'fitCellContents' && !strategy.delayRender)) {
+                // If no autoSizeStrategy is set, or if the strategy is 'fitCellContents' and does not require a delay,
+                // we do not need to delay rendering cells.
+                return false;
+            }
+            return true;
+        });
     }
 
     public autoSizeCols(params: {
@@ -137,6 +147,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             this.autoSizeColumnGroupsByColumns(colKeys, source, stopAtGroup);
         }
 
+        this.beans.hiddenLayoutSvc?.revealCells();
         dispatchColumnResizedEvent(this.eventSvc, columnsAutoSized, true, 'autosizeColumns');
     }
 
@@ -438,6 +449,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         const visibleCols = this.beans.visibleCols;
         visibleCols.setLeftValues(source);
         visibleCols.updateBodyWidths();
+
+        this.beans.hiddenLayoutSvc?.revealCells();
 
         if (silent) {
             return;

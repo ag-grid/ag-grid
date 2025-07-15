@@ -95,6 +95,7 @@ import type { PinnedColumnService } from '../pinnedColumns/pinnedColumnService';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import type { CellFlashService } from '../rendering/cell/cellFlashService';
+import type { HiddenLayoutService } from '../rendering/hiddenLayoutService';
 import type { OverlayService } from '../rendering/overlays/overlayService';
 import type { RowAutoHeightService } from '../rendering/row/rowAutoHeightService';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
@@ -346,6 +347,7 @@ export interface CoreBeanCollection {
     filterPanelSvc?: IFilterPanelService;
     selectableFilter?: ISelectableFilterService;
     testIdSvc?: ITestIdService;
+    hiddenLayoutSvc?: HiddenLayoutService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -469,6 +471,7 @@ export type BeanName =
     | 'groupFilter'
     | 'groupStage'
     | 'headerNavigation'
+    | 'hiddenLayoutSvc'
     | 'horizontalResizeSvc'
     | 'lazyBlockLoadingSvc'
     | 'licenseManager'

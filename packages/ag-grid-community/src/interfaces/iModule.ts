@@ -84,6 +84,7 @@ export type InternalModuleName =
     | 'FindCore'
     | 'GroupCellRenderer'
     | 'GroupColumn'
+    | 'HiddenLayout'
     | 'HorizontalResize'
     | 'InfiniteRowModelCore'
     | 'KeyboardNavigation'

@@ -69,6 +69,8 @@ export interface SizeColumnsToContentStrategy {
     defaultMaxWidth?: number;
     /** Provide to limit specific column widths when sizing. */
     columnLimits?: SizeColumnsToContentColumnLimits[];
+
+    delayRender?: boolean;
 }
 
 export interface ISizeAllColumnsToContentParams {
