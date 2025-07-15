@@ -30,7 +30,6 @@ const gridOptions: GridOptions = {
         flex: 1,
     },
     columnDefs: columnDefs,
-    sideBar: true,
 };
 
 function toggleOption() {

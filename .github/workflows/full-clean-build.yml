@@ -209,8 +209,11 @@ jobs:
         id: prev-commit-sha
         uses: actions/cache/restore@v4
         with:
+          restore-keys: |
+            - full-clean-build-prev-commit-
+            - full-clean-build-prev-commit-${{ github.ref }}
           path: ${{ env.PREV_COMMIT_SHA_FILE }}
-          key: full-build-prev-commit-${{ github.ref }}
+          key: full-clean-build-prev-commit-${{ github.ref }}-${{ github.sha }}
 
       - name: Load files into environment
         continue-on-error: true
@@ -253,7 +256,7 @@ jobs:
       - name: Save Current Commit Hash
         uses: actions/cache/save@v4
         with:
-          key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
+          key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}-${{ github.sha }}
           path: ${{ env.PREV_COMMIT_SHA_FILE }}
 
         # only if run is successful
