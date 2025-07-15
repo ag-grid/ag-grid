@@ -120,8 +120,8 @@ jobs:
           uses: actions/cache/restore@v4
           with:
             restore-keys: |
-              - security-prev-commit-
-              - security-prev-commit-${{ github.ref }}
+              security-prev-commit-
+              security-prev-commit-${{ github.ref }}
             path: ${{ env.PREV_COMMIT_SHA_FILE }}
             key: security-prev-commit-${{ github.ref }}-${{ github.sha }}
 
