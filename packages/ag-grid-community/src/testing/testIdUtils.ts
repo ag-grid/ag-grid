@@ -201,3 +201,7 @@ export const agTestIdFor = {
         return formatTestId('ag-paging-page-summary-panel-total-page', { value });
     },
 };
+
+export function getGridRootNode(id: string): Element | null {
+    return document.querySelector(`[grid-id="${id}"]`)?.parentElement ?? null;
+}

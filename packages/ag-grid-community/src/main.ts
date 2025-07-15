@@ -1304,4 +1304,4 @@ export type {
 
 // Testing
 
-export { agTestIdFor } from './testing/testIdUtils';
+export { agTestIdFor, getGridRootNode } from './testing/testIdUtils';
