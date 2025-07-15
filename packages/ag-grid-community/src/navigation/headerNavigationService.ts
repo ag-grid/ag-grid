@@ -126,26 +126,24 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
      * @return {boolean} true to preventDefault on the event that caused this navigation.
      */
     public navigateVertically(direction: HeaderNavigationDirection, event: KeyboardEvent): boolean {
-        const focusSvc = this.beans.focusSvc;
-        const fromHeader = focusSvc.focusedHeader;
+        const { focusSvc, visibleCols } = this.beans;
+        const { focusedHeader } = focusSvc;
 
-        if (!fromHeader) {
+        if (!focusedHeader) {
             return false;
         }
 
-        const { headerRowIndex } = fromHeader;
-        const column = fromHeader.column as AgColumn;
+        const { headerRowIndex } = focusedHeader;
+        const column = focusedHeader.column as AgColumn;
         const rowLen = getFocusHeaderRowCount(this.beans);
-        const isUp = direction === 'UP';
-
         const currentRowType = this.getHeaderRowType(headerRowIndex);
+        const columnHeaderRowIndex = visibleCols.headerGroupRowCount;
 
-        const columnHeaderRowIndex = this.beans.visibleCols.headerGroupRowCount;
         let {
             headerRowIndex: nextRow,
             column: nextFocusColumn,
             headerRowIndexWithoutSpan,
-        } = isUp
+        } = direction === 'UP'
             ? getColumnVisibleParent(currentRowType, column, headerRowIndex)
             : getColumnVisibleChild(column, headerRowIndex, columnHeaderRowIndex);
 
