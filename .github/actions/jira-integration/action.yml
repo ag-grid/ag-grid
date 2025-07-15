@@ -45,7 +45,7 @@ runs:
         PREV_COMMIT_SHA: ${{ inputs.PREV_COMMIT_SHA }}
         REPO_URL: ${{ github.server_url }}/${{ github.repository }}
         BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-        IS_SUCCESS: ${{ !steps.last-failed-step.outputs.failed_step || inputs.IS_SUCCESS }}
+        IS_SUCCESS: ${{ inputs.IS_SUCCESS == 'true' && !steps.last-failed-step.outputs.failed_step }}
         LAST_FAILED_STEP: ${{ steps.last-failed-step.outputs.failed_step }}
       run: |
         node ./scripts/ci/gen-jira-files.mjs        

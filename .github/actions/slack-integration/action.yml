@@ -23,7 +23,7 @@ runs:
   steps:
     - name: Get last failed step
       id: last-failed-step
-      if: ${{ failure() && !inputs.IS_SUCCESS }}
+      if: ${{ failure() }}
       continue-on-error: true
       uses: ./.github/actions/get-last-failed-step
       with:
@@ -43,7 +43,7 @@ runs:
         SLACK_CHANNEL: '#ci-grid-gate'
         SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
         SLACK_USERNAME: 'ag-grid CI'
-        IS_SUCCESS: ${{ !steps.last-failed-step.outputs.failed_step || inputs.IS_SUCCESS }}
+        IS_SUCCESS: ${{ inputs.IS_SUCCESS == 'true' && !steps.last-failed-step.outputs.failed_step }}
         LAST_FAILED_STEP: ${{ steps.last-failed-step.outputs.failed_step }}
       shell: bash
       run: |
