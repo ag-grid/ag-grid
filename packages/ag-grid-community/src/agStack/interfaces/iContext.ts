@@ -1,7 +1,8 @@
 import type { AgFrameworkOverrides } from './agFrameworkOverrides';
+import type { BaseEvents } from './baseEvents';
 import type { AgBaseBean } from './iBean';
 import type { IEnvironment } from './iEnvironment';
-import type { AgEventService, BaseEvents } from './iEvent';
+import type { AgEventService } from './iEvent';
 import type { IIconService } from './iIconService';
 import type { ILocaleService } from './iLocaleService';
 import type { BasePopupPositionParams } from './iPopup';

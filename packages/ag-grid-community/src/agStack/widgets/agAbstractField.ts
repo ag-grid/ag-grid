@@ -1,7 +1,8 @@
+import type { BaseEvents } from '../interfaces/baseEvents';
+import type { BaseProperties } from '../interfaces/baseProperties';
 import type { AgComponentSelector } from '../interfaces/iComponent';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
-import type { BaseEvents } from '../interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
+import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaLabelledBy } from '../utils/ariaUtils';
 import { _setAriaLabel } from '../utils/ariaUtils';
 import { _getAriaLabel } from '../utils/ariaUtils';

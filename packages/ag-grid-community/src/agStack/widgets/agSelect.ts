@@ -1,9 +1,10 @@
 import { KeyCode } from '../constants/keyCode';
+import type { BaseEvents } from '../interfaces/baseEvents';
+import type { BaseProperties } from '../interfaces/baseProperties';
 import type { AgCoreBean } from '../interfaces/iBean';
 import type { AgComponentSelector } from '../interfaces/iComponent';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
-import type { BaseEvents } from '../interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
+import type { IPropertiesService } from '../interfaces/iProperties';
 import type { BaseTooltipCtrl, ITooltipFeature } from '../interfaces/iTooltip';
 import { _setAriaControlsAndLabel } from '../utils/ariaUtils';
 import { _isElementOverflowingCallback } from '../utils/domUtils';

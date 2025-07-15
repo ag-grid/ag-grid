@@ -1,8 +1,8 @@
 import type { AgBeanStubEvent } from '../agBeanStub';
 import type { AgEvent } from './agEvent';
+import type { BaseEvents } from './baseEvents';
+import type { BaseProperties } from './baseProperties';
 import type { AgBaseBean, AgBean } from './iBean';
-import type { BaseEvents } from './iEvent';
-import type { BaseProperties } from './iProperties';
 
 export interface AgBaseComponent<TBeanCollection> extends AgBaseBean<TBeanCollection> {
     getGui(): HTMLElement;

@@ -1,8 +1,9 @@
 import { AgComponentStub } from '../agComponentStub';
+import type { BaseEvents } from '../interfaces/baseEvents';
+import type { BaseProperties } from '../interfaces/baseProperties';
 import type { AgComponentEvent, AgComponentSelector } from '../interfaces/iComponent';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
-import type { BaseEvents } from '../interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
+import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaRole } from '../utils/ariaUtils';
 import type { AgElementParams } from '../utils/domUtils';
 import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../utils/domUtils';

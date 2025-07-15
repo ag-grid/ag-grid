@@ -1,7 +1,9 @@
 import type { AgEvent } from './interfaces/agEvent';
+import type { BaseEvents } from './interfaces/baseEvents';
+import type { BaseProperties } from './interfaces/baseProperties';
 import type { AgBaseBean, AgBean } from './interfaces/iBean';
 import type { AgCoreBeanCollection, IContext } from './interfaces/iContext';
-import type { AgEventService, BaseEvents } from './interfaces/iEvent';
+import type { AgEventService } from './interfaces/iEvent';
 import type { IAgEventEmitter, IEventEmitter, IEventListener } from './interfaces/iEventEmitter';
 import type { LocaleTextFunc } from './interfaces/iLocaleService';
 import type {
@@ -9,7 +11,6 @@ import type {
     AgPropertyChangedListener,
     AgPropertyValueChangedEvent,
     AgPropertyValueChangedListener,
-    BaseProperties,
     IPropertiesService,
 } from './interfaces/iProperties';
 import { LocalEventService } from './localEventService';
@@ -27,7 +28,7 @@ export abstract class AgBeanStub<
         TGlobalEvents extends BaseEvents,
         TCommon,
         TPropertiesService extends IPropertiesService<TProperties, TCommon>,
-        TLocalEventType extends string, // TODO move to end and add default
+        TLocalEventType extends string = AgBeanStubEvent,
     >
     implements
         AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType>,
@@ -167,7 +168,7 @@ export abstract class AgBeanStub<
         } else {
             const objIsEventService = isEventService<TGlobalEvents, TCommon>(object);
             if (object instanceof HTMLElement) {
-                _addSafePassiveEventListener(this.beans.frameworkOverrides, object, event, listener);
+                _addSafePassiveEventListener(object, event, listener);
             } else if (objIsEventService) {
                 object.addListener(event as any, listener);
             } else {

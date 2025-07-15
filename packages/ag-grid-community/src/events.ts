@@ -1,7 +1,7 @@
 import type { AgChartThemeOverrides } from 'ag-charts-types';
 
 import type { AgEvent } from './agStack/interfaces/agEvent';
-import type { ScrollDirection } from './agStack/interfaces/iEvent';
+import type { ScrollDirection } from './agStack/interfaces/baseEvents';
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';

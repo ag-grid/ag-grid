@@ -1,5 +1,4 @@
 import type { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
-import { getPassiveStateForEvent } from './agStack/utils/eventUtils';
 import { BASE_URL } from './baseUrl';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import { AgPromise } from './utils/promise';
@@ -20,32 +19,6 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
         return new AgPromise((resolve) => {
             resolve(window.setInterval(action, timeout));
         });
-    }
-
-    // for Vanilla JS, we just add the event to the element
-    public addEventListener(
-        element: HTMLElement,
-        type: string,
-        listener: EventListenerOrEventListenerObject,
-        options?: boolean | AddEventListenerOptions
-    ): void {
-        let eventListenerOptions: AddEventListenerOptions = {};
-
-        if (typeof options === 'object') {
-            eventListenerOptions = options;
-        } else if (typeof options === 'boolean') {
-            eventListenerOptions = { capture: options };
-        }
-
-        if (eventListenerOptions.passive == null) {
-            const passive = getPassiveStateForEvent(type);
-
-            if (passive != null) {
-                eventListenerOptions.passive = passive;
-            }
-        }
-
-        element.addEventListener(type, listener, eventListenerOptions);
     }
 
     wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = (callback) => callback();

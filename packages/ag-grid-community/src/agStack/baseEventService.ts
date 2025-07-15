@@ -1,13 +1,14 @@
 import { AgBeanStub } from './agBeanStub';
+import type { BaseEvents } from './interfaces/baseEvents';
+import type { BaseProperties } from './interfaces/baseProperties';
 import type { AgCoreBeanCollection } from './interfaces/iContext';
 import type {
     AgEventService,
     AgEventServiceGlobalListener,
     AgEventServiceListener,
     AgRawEvents,
-    BaseEvents,
 } from './interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from './interfaces/iProperties';
+import type { IPropertiesService } from './interfaces/iProperties';
 import { LocalEventService } from './localEventService';
 
 export class BaseEventService<
@@ -27,7 +28,7 @@ export class BaseEventService<
     >
     implements AgEventService<TGlobalEvents, TCommon>
 {
-    beanName = 'eventSvc' as const;
+    public beanName = 'eventSvc' as const;
     public eventServiceType = 'global' as const;
 
     private readonly globalSvc: LocalEventService<keyof TGlobalEvents & string> = new LocalEventService();

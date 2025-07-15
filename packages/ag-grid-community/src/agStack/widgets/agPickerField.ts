@@ -1,10 +1,11 @@
 import type { AgComponentStub } from '../agComponentStub';
 import { KeyCode } from '../constants/keyCode';
+import type { BaseEvents } from '../interfaces/baseEvents';
+import type { BaseProperties } from '../interfaces/baseProperties';
 import { RefPlaceholder } from '../interfaces/iComponent';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
-import type { BaseEvents } from '../interfaces/iEvent';
 import type { AddPopupParams } from '../interfaces/iPopup';
-import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
+import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaExpanded, _setAriaRole } from '../utils/ariaUtils';
 import { _isNothingFocused } from '../utils/beanUtils';
 import type { AgElementParams } from '../utils/domUtils';

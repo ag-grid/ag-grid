@@ -1,7 +1,8 @@
+import type { BaseEvents } from '../interfaces/baseEvents';
+import type { BaseProperties } from '../interfaces/baseProperties';
 import { RefPlaceholder } from '../interfaces/iComponent';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
-import type { BaseEvents } from '../interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
+import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaLabel } from '../utils/ariaUtils';
 import type { AgElementParams } from '../utils/domUtils';
 import { _addOrRemoveAttribute, _setDisabled, _setElementWidth } from '../utils/domUtils';

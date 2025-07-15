@@ -1,9 +1,10 @@
 import { AgComponentStub } from '../agComponentStub';
 import { KeyCode } from '../constants/keyCode';
+import type { BaseEvents } from '../interfaces/baseEvents';
+import type { BaseProperties } from '../interfaces/baseProperties';
 import type { AgCoreBean } from '../interfaces/iBean';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
-import type { BaseEvents } from '../interfaces/iEvent';
-import type { BaseProperties, IPropertiesService } from '../interfaces/iProperties';
+import type { IPropertiesService } from '../interfaces/iProperties';
 import type { BaseTooltipCtrl, ITooltipFeature } from '../interfaces/iTooltip';
 import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/ariaUtils';
 import { _createAgElement, _isVisible, _removeFromParent } from '../utils/domUtils';

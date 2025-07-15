@@ -1,9 +1,13 @@
 import type {
+    AgCallbackProps,
+    AgExtractParamsFromCallback,
+    AgExtractReturnTypeFromCallback,
     AgPropertyChangeSet,
     AgPropertyChangedEvent,
     AgPropertyChangedSource,
     AgPropertyValueChangedEvent,
     AgPropertyValueChangedListener,
+    AgWrappedCallback,
     IPropertiesService,
 } from './agStack/interfaces/iProperties';
 import { LocalEventService } from './agStack/localEventService';
@@ -22,7 +26,6 @@ import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { ModuleName, ValidationModuleName } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { _areModulesGridScoped, _isModuleRegistered, _isUmd } from './modules/moduleRegistry';
-import type { AnyGridOptions } from './propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 import { _logIfDebug } from './utils/function';
 import type { MissingModuleErrors } from './validation/errorMessages/errorText';
@@ -32,29 +35,19 @@ import { GRID_OPTIONS_MODULES } from './validation/rules/gridOptionsValidations'
 import type { ValidationService } from './validation/validationService';
 import type { ModuleValidation, RequiredModule } from './validation/validationTypes';
 
-type GetKeys<T, U> = {
-    [K in keyof T]: T[K] extends U | undefined ? K : never;
-}[keyof T];
+type CallbackProps = AgCallbackProps<GridOptions, AgGridCommon<any, any>>;
 
-/**
- * Get all the GridOption properties that strictly contain the provided type.
- * Does not include `any` properties.
- */
-type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
-
-type NoArgFuncs = KeysOfType<() => any>;
-type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
-type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any, any>) => any>, NoArgFuncs | AnyArgFuncs>;
-
-export type ExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
-export type ExtractReturnTypeFromCallback<TCallback> = TCallback extends (params: AgGridCommon<any, any>) => infer RT
-    ? RT
-    : never;
-type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptions[K]> =
-    | undefined
-    | ((
-          params: WithoutGridCommon<ExtractParamsFromCallback<OriginalCallback>>
-      ) => ExtractReturnTypeFromCallback<OriginalCallback>);
+export type ExtractParamsFromCallback<TCallback> = AgExtractParamsFromCallback<TCallback>;
+export type ExtractReturnTypeFromCallback<TCallback> = AgExtractReturnTypeFromCallback<
+    AgGridCommon<any, any>,
+    TCallback
+>;
+type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptions[K]> = AgWrappedCallback<
+    GridOptions,
+    AgGridCommon<any, any>,
+    K,
+    OriginalCallback
+>;
 
 export type PropertyChangedEvent = AgPropertyChangedEvent<GridOptionsWithDefaults>;
 export type PropertyValueChangedEvent<K extends keyof GridOptions> = AgPropertyValueChangedEvent<

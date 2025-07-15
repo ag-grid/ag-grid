@@ -118,7 +118,7 @@ export { LocalEventService } from './agStack/localEventService';
 export { IEventEmitter, IEventListener } from './agStack/interfaces/iEventEmitter';
 export { _isEventFromPrintableCharacter } from './agStack/utils/keyboardUtils';
 export { PopupEventParams } from './agStack/interfaces/iPopup';
-export { ScrollDirection } from './agStack/interfaces/iEvent';
+export { ScrollDirection } from './agStack/interfaces/baseEvents';
 export { KeyCode } from './agStack/constants/keyCode';
 
 // AG Stack Widgets

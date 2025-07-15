@@ -1,9 +1,10 @@
 import type { AgEvent } from './agEvent';
+import type { BaseEvents } from './baseEvents';
+import type { BaseProperties } from './baseProperties';
 import type { AgEventHandlers, IContext } from './iContext';
-import type { BaseEvents } from './iEvent';
 import type { IAgEventEmitter, IEventEmitter, IEventListener } from './iEventEmitter';
 import type { LocaleTextFunc } from './iLocaleService';
-import type { AgPropertyChangedListener, AgPropertyValueChangedListener, BaseProperties } from './iProperties';
+import type { AgPropertyChangedListener, AgPropertyValueChangedListener } from './iProperties';
 
 export interface AgBaseBean<TBeanCollection> {
     /** AG Grid internal - do not call */

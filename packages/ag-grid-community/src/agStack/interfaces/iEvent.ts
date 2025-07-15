@@ -1,4 +1,5 @@
 import type { AgEvent } from './agEvent';
+import type { BaseEvents } from './baseEvents';
 
 export type AgEventServiceGlobalListener<
     TEventType extends keyof TGlobalEvents & string,
@@ -11,32 +12,13 @@ export type AgEventServiceListener<TGlobalEvents, TEventType extends keyof TGlob
 
 export type WithoutCommon<TCommon, T> = Omit<T, keyof TCommon>;
 
-export interface AgCheckboxChangedEvent extends AgEvent<'checkboxChanged'> {
-    id: string;
-    name: string;
-    selected?: boolean;
-    previousValue: boolean | undefined;
-}
-
-export type ScrollDirection = 'horizontal' | 'vertical';
-
-export interface AgBodyScrollEvent extends AgEvent<'bodyScroll'> {
-    direction: ScrollDirection;
-    left: number;
-    top: number;
-}
-
-export interface BaseEvents {
-    checkboxChanged: AgCheckboxChangedEvent;
-    bodyScroll: AgBodyScrollEvent;
-}
-
 export type AgRawEvents<TGlobalEvents extends BaseEvents, TCommon> = {
     [K in keyof TGlobalEvents]: WithoutCommon<TCommon, TGlobalEvents[K]>;
 }[keyof TGlobalEvents];
 
 export interface AgEventService<TGlobalEvents extends BaseEvents, TCommon> {
     readonly eventServiceType: 'global';
+    readonly beanName: 'eventSvc';
 
     addListener<TEventType extends keyof TGlobalEvents & string>(
         eventType: TEventType,

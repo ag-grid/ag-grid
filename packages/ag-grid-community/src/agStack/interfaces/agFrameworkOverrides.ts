@@ -1,13 +1,6 @@
 export type FrameworkOverridesIncomingSource = 'resize-observer' | 'ensureVisible' | 'popupPositioning';
 
 export interface AgFrameworkOverrides {
-    addEventListener(
-        element: HTMLElement,
-        type: string,
-        listener: EventListenerOrEventListenerObject,
-        options?: boolean | AddEventListenerOptions
-    ): void;
-
     /**
      * This method is to cater for Angular's change detection.
      * Angular uses Zones, we want to run internal AG Grid outside of Zone JS so that we do not kick off
