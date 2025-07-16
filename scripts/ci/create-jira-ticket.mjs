@@ -31,7 +31,7 @@ if (!auth) {
 const workflowName = process.env.WORKFLOW_NAME || 'Unknown';
 const description = process.env.JIRA_DESCRIPTION || `Please provide a description in workflow file '${workflowName}'`;
 const summary = process.env.JIRA_SUMMARY || `[NR] CI/CD workflow '${workflowName}' has failed`;
-const isSuccess = process.env.IS_SUCCESS;
+const isSuccess = process.env.IS_SUCCESS === 'true';
 
 if (isSuccess) {
     await findExistingIssue(fingerprint).then(async (existingIssue) => {

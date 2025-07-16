@@ -39,13 +39,14 @@ jobs:
               with:
                   snyk_token: ${{ secrets.SNYK_TOKEN }}
                   remote_repo_url: ${{env.REPO_URL}}
+                  ctrf_file: ${{ env.CTRF_FILE }}
 
             - name: Persist scan results
               if: always()
               uses: actions/upload-artifact@v4
               with:
                 name: snyk-scan-workspaces
-                path: snyk.json
+                path: test-results/
 
     sast-code-scan:
         runs-on: ubuntu-latest
@@ -60,13 +61,14 @@ jobs:
               uses: ./external/ag-shared/github/actions/snyk-code-scan
               with:
                   snyk_token: ${{ secrets.SNYK_TOKEN }}
+                  ctrf_file: ${{ env.CTRF_FILE }}
 
             - name: Persist scan results
               if: always()
               uses: actions/upload-artifact@v4
               with:
                 name: snyk-code-scan
-                path: snyk.json
+                path: test-results/
 
     combine-scan-results:
       needs: [code-dependency-scan, sast-code-scan]
@@ -80,7 +82,7 @@ jobs:
           with:
             path: test-results/
 
-        - name: Combine JSON files
+        - name: Combine reports
           uses: actions/github-script@v7
           if: ${{ github.event_name == 'schedule' || inputs.notify }}
           with:
@@ -100,26 +102,17 @@ jobs:
                   }
                   return [];
                 });
-              const combinedResults = [];
-  
+              const report = { results: { summary: { failed: 0, passed: 0, skipped: 0 } } };
               for (const file of files) {
                   if (fs.existsSync(file)) {
                     const data = JSON.parse(fs.readFileSync(file, 'utf8'));
-                    if (Array.isArray(data)) {
-                        combinedResults.push(...data);
-                    } else {
-                        combinedResults.push(data);
-                    }
+                    report.results.summary.failed += data.results.summary.failed || 0;
+                    report.results.summary.passed += data.results.summary.passed || 0;
+                    report.results.summary.skipped += data.results.summary.skipped || 0;
                   }
               }
-              const totalProjects = combinedResults.length;
-              const vulnerableProjects = combinedResults
-                .filter(project => project.summary.includes("high") || project.summary.includes("critical"))
-                .length;
-              
-              const report = {
-                 results: { summary: { failed: vulnerableProjects, passed: totalProjects - vulnerableProjects, skipped: 0 } }
-              }
+          
+              fs.mkdirSync(path.dirname(path.join('.', '${{ env.CTRF_FILE }}')), { recursive: true });
               fs.writeFileSync(path.join('.', '${{ env.CTRF_FILE }}'), JSON.stringify(report));
 
         - name: Get previous run commit SHA
@@ -127,8 +120,8 @@ jobs:
           uses: actions/cache/restore@v4
           with:
             restore-keys: |
-              - security-prev-commit-
-              - security-prev-commit-${{ github.ref }}
+              security-prev-commit-
+              security-prev-commit-${{ github.ref }}
             path: ${{ env.PREV_COMMIT_SHA_FILE }}
             key: security-prev-commit-${{ github.ref }}-${{ github.sha }}
 
@@ -154,7 +147,7 @@ jobs:
             SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
             PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
             CURRENT_COMMIT_SHA: ${{ github.sha }}
-            IS_SUCCESS: ${{ needs.code-dependency-scan.result == 'success' && needs.sast-code-scan.result == 'success' }}
+            IS_SUCCESS: ${{ needs.code-dependency-scan.result != 'failure' && needs.sast-code-scan.result != 'failure' }}
 
         - name: Create Jira Ticket
           uses: ./.github/actions/jira-integration
@@ -164,7 +157,7 @@ jobs:
             JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
             JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' is failing."
             CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
-            IS_SUCCESS: ${{ needs.code-dependency-scan.result == 'success' && needs.sast-code-scan.result == 'success' }}
+            IS_SUCCESS: ${{ needs.code-dependency-scan.result != 'failure' && needs.sast-code-scan.result != 'failure' }}
             PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
             CURRENT_COMMIT_SHA: ${{ github.sha }}
 

@@ -14,6 +14,9 @@ inputs:
     remote_repo_url:
         description: 'Public remote repository url'
         required: true
+    ctrf_file:
+        description: 'Path to the output file in CTRF format'
+        default: ''
 
 runs:
     using: 'composite'
@@ -24,3 +27,29 @@ runs:
               SNYK_TOKEN: ${{ inputs.snyk_token }}
           with:
               args: --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=${{ inputs.severity_threshold }} --exclude=${{ inputs.exclude }} --remote-repo-url=${{ inputs.remote_repo_url }} --json-file-output=snyk.json
+
+        - name: To CTRF format
+          uses: actions/github-script@v7
+          if: ${{ inputs.ctrf_file != '' }}
+          env:
+              CTRF_FILE: ${{ inputs.ctrf_file }}
+              SEVERITY_THRESHOLD: ${{ inputs.severity_threshold }}
+          with:
+              script: |
+                  const fs = require('fs');
+                  const path = require('path');
+                  const file = 'snyk.json';
+                  const combinedResults = [];
+
+                  if (fs.existsSync(file)) {
+                    combinedResults.push(...JSON.parse(fs.readFileSync(file, 'utf8')));
+                  }
+
+                  const passed = combinedResults.filter(project => project.ok).length;
+                  const vulnerabilities = combinedResults.flatMap(project => project.vulnerabilities);
+
+                  const report = {
+                    results: { summary: { failed: vulnerabilities.length, passed, skipped: 0 } }
+                  }
+                  fs.mkdirSync(path.dirname(path.join('.', '${{ env.CTRF_FILE }}')), { recursive: true });
+                  fs.writeFileSync(path.join('.', '${{ env.CTRF_FILE }}'), JSON.stringify(report));
