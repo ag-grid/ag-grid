@@ -6,6 +6,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
 import {
+    _getGrandTotalRow,
     _getGroupSelectsDescendants,
     _getGroupingApproach,
     _getRowHeightForNode,
@@ -458,7 +459,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         // we use the childrenAfterSort as postSortRows is occasionally used to reduce row count.
         const filteredChildren = rootNode.childrenAfterSort;
-        const totalFooterInc = rootNode.sibling ? 1 : 0;
+        const grandTotalRow = _getGrandTotalRow(this.gos);
+        // const totalFooterInc = rootNode.sibling ? 1 : 0;
+        const totalFooterInc =
+            rootNode.sibling && grandTotalRow != 'pinnedBottom' && grandTotalRow != 'pinnedTop' ? 1 : 0;
         return (filteredChildren ? filteredChildren.length : 0) + totalFooterInc;
     }
 
