@@ -19,18 +19,12 @@ const data = [
 ```
 In the above hierarchy, the 'A' row is the parent of 'B', and 'B' is the parent of 'C'.
 
-{% note %}
-Each path is a unique identifier which the grid uses to determine the hierarchy of the data.
-
-Refer to [Displayed Values](./tree-data-paths/#providing-group-values) to learn how to represent identical siblings.
-{% /note %}
-
 ## Providing Group Values
 
-The Group Column cells are populated by the path keys as a default. As these keys must be unique, it can be preferable to display a different value.
+The Group Column cells are populated by the path keys as a default. It is possible to display a different value.
 This can be overridden by providing a `field` or `valueGetter` in the `autoGroupColumnDef` grid option.
 
-{% gridExampleRunner title="Displayed Values" name="duplicate-paths" exampleHeight=250 /%}
+{% gridExampleRunner title="Displayed Values" name="displayed-values" exampleHeight=250 /%}
 
 The above example uses the following configuration to show two 'Bob Stevens' working within the same team, where the path is comprised of unique employee IDs:
 ```{% frameworkTransform=true %}
@@ -107,6 +101,14 @@ const gridOptions = {
 ```
 
 Refer to the [Aggregation](./aggregation/) page for more details.
+
+## Duplicate Paths
+
+The grid supports rows with duplicate paths, which can be useful in scenarios where the same path is used for different data.
+When there are duplicate parent paths, the order of the rows in the data determines which parent a child belongs to - children will be added to the most recently encountered parent with that path.
+
+{% gridExampleRunner title="Duplicate Paths" name="duplicate-paths" exampleHeight=500 /%}
+
 
 ## Next Up
 Continue to the next section to learn how to provide [Nested Records](./tree-data-nesting/).
