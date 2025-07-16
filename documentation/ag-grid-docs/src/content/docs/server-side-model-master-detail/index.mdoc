@@ -110,6 +110,51 @@ const gridOptions = {
 }
 ```
 
+## Combining Tree Data with Master Detail
+
+It is possible to combine [Tree Data](./server-side-model-tree-data/) with Master Detail in the Server-Side Row Model.
+This allows to display hierarchical (tree-structured) data, where each master row can expand to show a detail grid.
+
+To enable this, set both `treeData: true` and `masterDetail: true` in your grid options. You will also need to provide the required callbacks for tree data:
+
+* **isServerSideGroup(dataItem):** Returns `true` if the row is a group (has children).
+* **getServerSideGroupKey(dataItem):** Returns the key for the group node (e.g., an ID).
+
+The detail grid is configured using `detailCellRendererParams`, just as in other Master Detail scenarios.
+
+Example configuration:
+
+```js
+const gridOptions = {
+    columnDefs: [
+        { field: 'employeeName', cellRenderer: 'agGroupCellRenderer' },
+        { field: 'jobTitle' },
+        { field: 'employmentType' }
+    ],
+    rowModelType: 'serverSide',
+    treeData: true,
+    masterDetail: true,
+    isServerSideGroup: dataItem => !!dataItem.children,
+    getServerSideGroupKey: dataItem => dataItem.employeeId,
+    detailCellRendererParams: {
+        detailGridOptions: {
+            columnDefs: [
+                { field: 'project' },
+                { field: 'duration' }
+            ]
+        },
+        getDetailRowData: params => {
+            params.successCallback(params.data.projects || []);
+        }
+    }
+};
+```
+
+## Example: Tree Data with Master Detail
+
+{% gridExampleRunner title="Tree Data with Master Detail" name="tree-data-master-detail" exampleHeight=590 /%}
+
+
 ## Detail Row Height
 
 The height of detail rows can be configured in one of the following ways:
@@ -185,7 +230,3 @@ See [Master Detail Auto Height](./master-detail-height/#auto-height) for more de
 In the examples above, the data for the detail grid was returned with the master row. However it is also possible to lazy-load data for the detail row, see: [Providing Rows](./master-detail-grids/#providing-rows).
 
 However note that detail rows will be purged once the master row is closed, or if the detail row leaves the viewport through scrolling. In both cases data will need to be fetched again.
-
-## Next Up
-
-Continue to the next section to learn how to work with [Tree Data](./server-side-model-tree-data/).

@@ -30,7 +30,8 @@ export class ExpandListener extends BeanStub implements NamedBean {
         if (rowNode.expanded) {
             if (rowNode.master) {
                 this.createDetailNode(rowNode);
-            } else if (_missing(rowNode.childStore)) {
+            }
+            if (_missing(rowNode.childStore)) {
                 const storeParams = this.serverSideRowModel.getParams();
                 rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
             }

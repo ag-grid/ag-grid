@@ -1512,14 +1512,14 @@
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Master Detail",
-                                    "path": "server-side-model-master-detail",
+                                    "title": "Tree Data",
+                                    "path": "server-side-model-tree-data",
                                     "isEnterprise": true
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Tree Data",
-                                    "path": "server-side-model-tree-data",
+                                    "title": "Master Detail",
+                                    "path": "server-side-model-master-detail",
                                     "isEnterprise": true
                                 },
                                 {
