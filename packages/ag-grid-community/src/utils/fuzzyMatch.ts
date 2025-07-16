@@ -11,7 +11,7 @@ export function _fuzzySuggestions(params: {
 
     let thisSuggestions: { value: string; relevance: number; idx: number }[] = allSuggestions.map((text, idx) => ({
         value: text,
-        relevance: getLevenshteinSimilarityDistance(inputValue, text),
+        relevance: _getLevenshteinSimilarityDistance(inputValue, text),
         idx,
     }));
 
@@ -43,7 +43,7 @@ export function _fuzzySuggestions(params: {
  * This uses Levenshtein Distance to match strings.
  * Lower values mean more similar strings.
  */
-function getLevenshteinSimilarityDistance(inputText: string, suggestion: string): number {
+export function _getLevenshteinSimilarityDistance(inputText: string, suggestion: string): number {
     // Always use the shorter string for columns to reduce space
     if (inputText.length < suggestion.length) {
         [inputText, suggestion] = [suggestion, inputText];
