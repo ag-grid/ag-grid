@@ -5,24 +5,9 @@ on:
     types: [ created, edited ]
   issues:
     types: [ opened, edited ]
-  workflow_dispatch:
-    inputs:
-      comment_id:
-        description: 'ID of the comment to process'
-        type: string
-        required: false
-      issue_id:
-        description: 'ID of the issue to process'
-        type: string
-        required: false
-      comment_body:
-        description: 'Body of the comment to process'
-        type: string
-        required: false
-      issue_body:
-        description: 'Body of the issue to process'
-        type: string
-        required: false
+
+permissions:
+  contents: read
 
 jobs:
   expand-jira-links:
@@ -30,7 +15,6 @@ jobs:
     permissions:
       pull-requests: write
       issues: write
-      contents: write
     steps:
       - name: Replace mention with jira link
         id: notify-start
