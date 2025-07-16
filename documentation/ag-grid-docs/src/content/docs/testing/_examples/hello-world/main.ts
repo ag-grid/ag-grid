@@ -8,7 +8,6 @@ import {
     TextFilterModule,
     ValidationModule,
     createGrid,
-    setupAgTestIds,
 } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -20,8 +19,6 @@ import {
     SideBarModule,
     StatusBarModule,
 } from 'ag-grid-enterprise';
-
-setupAgTestIds();
 
 ModuleRegistry.registerModules([
     ColumnsToolPanelModule,

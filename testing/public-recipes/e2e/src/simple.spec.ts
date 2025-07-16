@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 import { agTestIdFor } from 'ag-grid-community';
 
 async function loadE2ETestingExample(page: Page, framework: string): Promise<Page> {
-    await page.goto(`/examples/testing/hello-world/${framework}`);
+    await page.goto(`/examples/testing/hello-world/${framework}?enableTestIds=true`);
     await page.waitForLoadState('domcontentloaded');
     await page.waitForLoadState('load');
     await page.waitForLoadState('networkidle');
