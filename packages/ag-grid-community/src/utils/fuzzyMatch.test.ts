@@ -78,8 +78,8 @@ describe('fuzzyMatch.ts', () => {
         describe('performance', () => {
             it('should handle long strings efficiently', async () => {
                 // run in a worker
-                // @ts-nocheck worker code
                 const measure = function exe(len1: number, len2: number) {
+                    // eslint-disable-next-line @typescript-eslint/no-var-requires
                     const { _getLevenshteinSimilarityDistance } = require('./fuzzyMatch');
 
                     const longString1 = 'a'.repeat(len1) + 'b';
