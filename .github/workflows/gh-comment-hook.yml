@@ -5,6 +5,8 @@ on:
     types: [ created, edited ]
   issues:
     types: [ opened, edited ]
+  pull_request:
+    types: [ opened, edited, synchronize ]
 
 permissions:
   contents: read
@@ -23,8 +25,8 @@ jobs:
         env:
           COMMENT_ID: ${{ github.event.comment.id }}
           COMMENT_BODY: ${{ github.event.comment.body }}
-          ISSUE_BODY: ${{ github.event.issue.body }}
-          ISSUE_ID: ${{ github.event.issue.number }}
+          ISSUE_BODY: ${{ github.event.issue.body || github.event.pull_request.body }}
+          ISSUE_ID: ${{ github.event.issue.number || github.event.pull_request.number }}
         with:
           result-encoding: string
           script: |
