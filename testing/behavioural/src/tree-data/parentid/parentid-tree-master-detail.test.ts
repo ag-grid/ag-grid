@@ -9,11 +9,7 @@ describe('ag-grid parentId tree with master detail', () => {
         // Tree: A (group)
         //   └─ B (group)
         //        └─ C (master/leaf)
-        const rowData = [
-            { id: 'A' },
-            { id: 'B', parentId: 'A' },
-            { id: 'C', parentId: 'B', records: [{ name: 'X' }] },
-        ];
+        const rowData = [{ id: 'A' }, { id: 'B', parentId: 'A' }, { id: 'C', parentId: 'B', records: [{ name: 'X' }] }];
         const callbackCalls: { key: string; level: number }[] = [];
         const api = gridsManager.createGrid('nestedGroups', {
             columnDefs: [{ field: 'id' }],
