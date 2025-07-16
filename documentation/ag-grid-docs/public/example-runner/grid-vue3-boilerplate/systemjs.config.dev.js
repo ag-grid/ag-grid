@@ -35,7 +35,7 @@
             typescript: 'npm:typescript@5.4.5/lib/typescript.min.js',
 
             vue: `npm:vue@${VUE_VERSION}/dist/vue.esm-browser.js`,
-            '@vue/reactivity': `npm:@vue/reactivity@${VUE_VERSION}/dist/reactivity.esm-browser.prod.js`,
+            '@vue/reactivity': `npm:@vue/reactivity@${VUE_VERSION}/dist/reactivity.esm-browser.js`,
             // vue class component
             'vue-class-component': 'npm:vue-class-component@^8.0.0-beta.3/dist/vue-class-component.cjs.js',
 
