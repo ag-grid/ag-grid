@@ -50,15 +50,27 @@ export default defineConfig({
             name: 'chromium',
             use: { ...devices['Desktop Chrome'] },
         },
-
         {
             name: 'firefox',
             use: { ...devices['Desktop Firefox'] },
+            testIgnore: [
+                // We test Vanilla and React rendering across all browsers, but to reduce duplication we only test the other variants in Chromium
+                '**/frameworks/angular-examples.spec.ts',
+                '**/frameworks/vue3-examples.spec.ts',
+                '**/frameworks/reactFunctional-examples.spec.ts',
+                '**/frameworks/typescript-examples.spec.ts',
+            ],
         },
-
         {
             name: 'webkit',
             use: { ...devices['Desktop Safari'] },
+            testIgnore: [
+                // We test Vanilla and React rendering across all browsers, but to reduce duplication we only test the other variants in Chromium
+                '**/frameworks/angular-examples.spec.ts',
+                '**/frameworks/vue3-examples.spec.ts',
+                '**/frameworks/reactFunctional-examples.spec.ts',
+                '**/frameworks/typescript-examples.spec.ts',
+            ],
         },
 
         /* Test against mobile viewports. */

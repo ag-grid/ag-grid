@@ -139,8 +139,8 @@ jobs:
         strategy:
           fail-fast: false
           matrix:
-            shardIndex: [1]
-            shardTotal: [1]
+            shardIndex: [1, 2]
+            shardTotal: [2]
         steps:
           - uses: actions/checkout@v4
           - uses: ./.github/actions/test-framework-examples
@@ -187,8 +187,8 @@ jobs:
         strategy:
           fail-fast: false
           matrix:
-            shardIndex: [1]
-            shardTotal: [1]
+            shardIndex: [1, 2]
+            shardTotal: [2]
         steps:
           - uses: actions/checkout@v4
           - uses: ./.github/actions/test-framework-examples
@@ -203,8 +203,8 @@ jobs:
         strategy:
           fail-fast: false
           matrix:
-            shardIndex: [1, 2]
-            shardTotal: [2]
+            shardIndex: [1]
+            shardTotal: [1]
         steps:
           - uses: actions/checkout@v4
           - uses: ./.github/actions/test-framework-examples
@@ -219,8 +219,8 @@ jobs:
         strategy:
           fail-fast: false
           matrix:
-            shardIndex: [1, 2, 3, 4]
-            shardTotal: [4]
+            shardIndex: [1, 2]
+            shardTotal: [2]
         steps:
           - uses: actions/checkout@v4
           - uses: ./.github/actions/test-framework-examples
