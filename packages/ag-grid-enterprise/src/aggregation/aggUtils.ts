@@ -1,5 +1,6 @@
 import type { AgColumn, BeanCollection, IAggFunc, IAggFuncParams, RowNode } from 'ag-grid-community';
-import { _addGridCommonParams, _error } from 'ag-grid-community';
+import { _warn } from 'ag-grid-community';
+import { _addGridCommonParams } from 'ag-grid-community';
 
 export function _aggregateValues(
     beans: BeanCollection,
@@ -13,7 +14,7 @@ export function _aggregateValues(
         typeof aggFuncOrString === 'string' ? beans.aggFuncSvc!.getAggFunc(aggFuncOrString) : aggFuncOrString;
 
     if (typeof aggFunc !== 'function') {
-        _error(109, { aggFuncOrString });
+        _warn(109, { inputValue: aggFuncOrString.toString(), allSuggestions: beans.aggFuncSvc!.getFuncNames(column) });
         return null;
     }
 

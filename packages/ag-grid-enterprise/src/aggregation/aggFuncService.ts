@@ -75,7 +75,9 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
             return;
         }
         for (const key of Object.keys(aggFuncs)) {
-            this.aggFuncsMap[key] = aggFuncs[key];
+            if (aggFuncs[key]) {
+                this.aggFuncsMap[key] = aggFuncs[key];
+            }
         }
     }
 
