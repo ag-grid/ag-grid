@@ -17,6 +17,8 @@ import {
     _observeResize,
 } from 'ag-grid-community';
 
+import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
+
 export class MasterDetailService extends BeanStub implements NamedBean, IMasterDetailService {
     beanName: BeanName = 'masterDetailSvc' as const;
 
@@ -53,7 +55,6 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
         this.enabled = enabled;
 
         const gos = this.gos;
-        const groupDefaultExpanded = gos.get('groupDefaultExpanded');
         const isRowMaster = gos.get('isRowMaster');
         const treeData = gos.get('treeData');
 
@@ -74,19 +75,13 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
             }
 
             if (!treeData) {
-                // If not treeData, as With treeData the initialization of the expansed state is delegated to the tree strategy
+                // Note that with treeData the initialization of the expansed state is delegated to treeGroupStrategy
                 if (newMaster && created) {
-                    // TODO: AG-11476 isGroupOpenByDefault callback doesn't apply to master/detail grid
-
-                    if (groupDefaultExpanded === -1) {
-                        row.expanded = true;
-                    } else {
-                        // need to take row group into account when determining level
-                        const masterRowLevel = this.beans.rowGroupColsSvc?.columns.length ?? 0;
-                        row.expanded = masterRowLevel < groupDefaultExpanded;
-                    }
+                    const level = this.beans.rowGroupColsSvc?.columns.length ?? 0;
+                    row.expanded = _getRowDefaultExpanded(this.beans, row, level, false);
                 } else if (!newMaster && oldMaster) {
-                    row.expanded = false; // if changing AWAY from master, then un-expand, otherwise next time it's shown it is expanded again
+                    // if changing AWAY from master, then un-expand, otherwise next time it's shown it is expanded again
+                    row.expanded = false;
                 }
             }
 

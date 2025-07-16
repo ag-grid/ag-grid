@@ -82,9 +82,16 @@ export function _getGroupValue(
     return null;
 }
 
-export const _getRowDefaultExpanded = (beans: BeanCollection, rowNode: IRowNode, level: number): boolean => {
+export const _getRowDefaultExpanded = (
+    beans: BeanCollection,
+    rowNode: IRowNode,
+    level: number,
+    group = rowNode.group
+): boolean => {
     const gos = beans.gos;
-    const isGroupOpenByDefault = gos.get('isGroupOpenByDefault');
+    // see AG-11476 isGroupOpenByDefault callback doesn't apply to master/detail grid
+    // We call isGroupOpenByDefault only for group nodes and not for master/detail leafs
+    const isGroupOpenByDefault = group && gos.get('isGroupOpenByDefault');
     if (!isGroupOpenByDefault) {
         const groupDefaultExpanded = gos.get('groupDefaultExpanded');
         return groupDefaultExpanded === -1 || level < groupDefaultExpanded;

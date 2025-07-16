@@ -5,6 +5,52 @@ import { GridRows, TestGridsManager } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
 describe('ag-grid parentId tree with master detail', () => {
+    test('nested groups expansion and callback calls', async () => {
+        // Tree: A (group)
+        //   └─ B (group)
+        //        └─ C (master/leaf)
+        const rowData = [
+            { id: 'A' },
+            { id: 'B', parentId: 'A' },
+            { id: 'C', parentId: 'B', records: [{ name: 'X' }] },
+        ];
+        const callbackCalls: { key: string; level: number }[] = [];
+        const api = gridsManager.createGrid('nestedGroups', {
+            columnDefs: [{ field: 'id' }],
+            treeData: true,
+            treeDataParentIdField: 'parentId',
+            groupDefaultExpanded: 0,
+            rowData,
+            getRowId: (params) => params.data.id,
+            masterDetail: true,
+            detailCellRendererParams: {
+                detailGridOptions: {
+                    columnDefs: [{ field: 'name' }],
+                    getRowId: ({ data }) => data.name,
+                },
+                getDetailRowData: (params) => {
+                    params.successCallback(params.data.records);
+                },
+            },
+            isRowMaster: (dataItem) => !!dataItem?.records?.length,
+            isGroupOpenByDefault: (params) => {
+                callbackCalls.push({ key: params.key, level: params.level });
+                // Expand only top-level group
+                return params.level === 0;
+            },
+        });
+        // Only top-level group 'A' should be expanded, nested group 'B' and leaf/master 'C' should not
+        expect(api.getRowNode('A')?.expanded).toBe(true); // top-level group
+        expect(api.getRowNode('B')?.expanded).toBe(false); // nested group
+        expect(api.getRowNode('C')?.expanded).toBe(false); // leaf/master
+
+        // Verify callback was called for the correct nodes and levels
+        // Should be called for 'A' (level 0) and 'B' (level 1), not for leaf/master 'C'
+        expect(callbackCalls).toEqual([
+            { key: 'A', level: 0 },
+            { key: 'B', level: 1 },
+        ]);
+    });
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, TreeDataModule, MasterDetailModule],
     });
@@ -17,7 +63,7 @@ describe('ag-grid parentId tree with master detail', () => {
         gridsManager.reset();
     });
 
-    test('tree grouping', async () => {
+    test('tree master-detail', async () => {
         let isRowMasterCallCount = 0;
         const rowData = [
             { id: 'F1', parentId: 'F' },
@@ -183,5 +229,87 @@ describe('ag-grid parentId tree with master detail', () => {
         `);
 
         expect(isRowMasterCallCount).toBe(22);
+    });
+
+    test('leaf master details use groupDefaultExpanded', async () => {
+        const rowData = [
+            { id: 'A', records: [{ name: 'X' }] },
+            { id: 'B', parentId: 'A' },
+        ];
+        const api = gridsManager.createGrid('leafGrid', {
+            columnDefs: [{ field: 'id' }],
+            treeData: true,
+            treeDataParentIdField: 'parentId',
+            groupDefaultExpanded: 0,
+            rowData,
+            getRowId: (params) => params.data.id,
+            masterDetail: true,
+            detailCellRendererParams: {
+                detailGridOptions: {
+                    columnDefs: [{ field: 'name' }],
+                    getRowId: ({ data }) => data.name,
+                },
+                getDetailRowData: (params) => {
+                    params.successCallback(params.data.records);
+                },
+            },
+            isRowMaster: (dataItem) => !!dataItem?.records?.length,
+        });
+        // With groupDefaultExpanded: 0, all groups are collapsed by default
+        expect(api.getRowNode('A')?.expanded).toBe(false); // group/root 'A'
+        expect(api.getRowNode('B')?.expanded).toBe(false); // leaf/master 'B'
+    });
+
+    test('group nodes use isGroupOpenByDefault callback', async () => {
+        const rowData = [{ id: 'A' }, { id: 'B', parentId: 'A', records: [{ name: 'X' }] }];
+        const api = gridsManager.createGrid('groupGrid', {
+            columnDefs: [{ field: 'id' }],
+            treeData: true,
+            treeDataParentIdField: 'parentId',
+            groupDefaultExpanded: 0,
+            rowData,
+            getRowId: (params) => params.data.id,
+            masterDetail: true,
+            detailCellRendererParams: {
+                detailGridOptions: {
+                    columnDefs: [{ field: 'name' }],
+                    getRowId: ({ data }) => data.name,
+                },
+                getDetailRowData: (params) => {
+                    params.successCallback(params.data.records);
+                },
+            },
+            isRowMaster: (dataItem) => !!dataItem?.records?.length,
+            isGroupOpenByDefault: ({ key }) => key === 'A',
+        });
+        // Group node 'A' should be expanded by callback, leaf/master 'B' should not
+        expect(api.getRowNode('A')?.expanded).toBe(true); // group 'A'
+        expect(api.getRowNode('B')?.expanded).toBe(false); // leaf/master 'B'
+    });
+
+    test('group nodes fallback to groupDefaultExpanded if no callback', async () => {
+        const rowData = [{ id: 'A' }, { id: 'B', parentId: 'A', records: [{ name: 'X' }] }];
+        const api = gridsManager.createGrid('groupGridDefault', {
+            columnDefs: [{ field: 'id' }],
+            treeData: true,
+            treeDataParentIdField: 'parentId',
+            groupDefaultExpanded: 1,
+            rowData,
+            getRowId: (params) => params.data.id,
+            masterDetail: true,
+            detailCellRendererParams: {
+                detailGridOptions: {
+                    columnDefs: [{ field: 'name' }],
+                    getRowId: ({ data }) => data.name,
+                },
+                getDetailRowData: (params) => {
+                    params.successCallback(params.data.records);
+                },
+            },
+            isRowMaster: (dataItem) => !!dataItem?.records?.length,
+        });
+        // With groupDefaultExpanded: 1, only top-level group is expanded, leaf/master is not
+        expect(api.getRowNode('A')?.expanded).toBe(true); // group 'A'
+        expect(api.getRowNode('B')?.expanded).toBe(false); // leaf/master 'B'
     });
 });
