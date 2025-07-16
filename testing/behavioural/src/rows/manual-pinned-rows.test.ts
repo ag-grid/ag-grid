@@ -2,8 +2,7 @@ import { ClientSideRowModelModule, PaginationModule } from 'ag-grid-community';
 import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { GridRowsDiagramTree } from '../test-utils/gridRows/gridRowsDiagramTree';
+import { TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 function assertPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>, ids: any[]): void {
     const pinnedNodes: RowNode[] = [];
