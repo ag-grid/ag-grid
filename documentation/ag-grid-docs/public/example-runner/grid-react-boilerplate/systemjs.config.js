@@ -8,7 +8,7 @@
 
     process = { env: { NODE_ENV: 'development' } };
     const REACT_VERSION = config.version;
-    const filePart = config.isProd ? 'production.min' : 'development';
+    const filePart = config.prod ? 'production.min' : 'development';
     const reactConfig = !config.version.startsWith('19')
         ? {
               map: {
