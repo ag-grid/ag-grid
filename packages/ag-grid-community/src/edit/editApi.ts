@@ -109,23 +109,15 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 
     ensureColumnVisible(beans, colKey);
 
-    let newValue = key;
-
-    if (isEditing(beans, cellPosition) && !newValue) {
-        // if already editing, and no new value provided, use editing value
-        newValue = beans.editModelSvc?.getEdit({ rowNode, column })?.newValue;
-    }
-
-    editSvc?.setEditingCells(
-        [
-            {
-                ...cellPosition,
-                colId: column.getColId(),
-                newValue,
-                state: 'editing',
-            },
-        ],
-        { update: true }
+    editSvc?.startEditing(
+        {
+            rowNode,
+            column,
+        },
+        {
+            event: key ? new KeyboardEvent('keydown', { key }) : undefined,
+            source: 'api',
+        }
     );
 }
 
