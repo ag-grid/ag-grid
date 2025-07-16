@@ -15,7 +15,12 @@ export interface AgBodyScrollEvent extends AgEvent<'bodyScroll'> {
     top: number;
 }
 
+export interface AgDragStartedEvent extends AgEvent<'dragStarted'> {
+    target: Element;
+}
+
 export interface BaseEvents {
     checkboxChanged: AgCheckboxChangedEvent;
     bodyScroll: AgBodyScrollEvent;
+    dragStarted: AgDragStartedEvent;
 }

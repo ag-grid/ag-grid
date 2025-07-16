@@ -1,11 +1,8 @@
 import type { AgFrameworkOverrides } from '../agStack/interfaces/agFrameworkOverrides';
 import type { LocalEventService } from '../agStack/localEventService';
-import type { AgPromise } from '../utils/promise';
 import type { IFrameworkEventListenerService } from './iFrameworkEventListenerService';
 
 export interface IFrameworkOverrides extends AgFrameworkOverrides {
-    setInterval(action: any, interval?: any): AgPromise<number>;
-
     /**
      * This method is to cater for Angular's change detection.
      * This is currently used for events that the user provides either via the component or via registration with the grid api.

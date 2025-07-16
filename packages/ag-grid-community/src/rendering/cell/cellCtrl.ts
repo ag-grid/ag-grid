@@ -1,5 +1,6 @@
 import { _getActiveDomElement } from '../../agStack/utils/beanUtils';
 import { _addOrRemoveAttribute } from '../../agStack/utils/domUtils';
+import { AgPromise } from '../../agStack/utils/promise';
 import { isColumnSelectionCol, isRowNumberCol } from '../../columns/columnUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
@@ -41,7 +42,6 @@ import { _requestAnimationFrame } from '../../utils/dom';
 import { _getCtrlForEventTarget } from '../../utils/event';
 import { _findFocusableElements, _isCellFocusSuppressed } from '../../utils/focus';
 import { _makeNull } from '../../utils/generic';
-import { AgPromise } from '../../utils/promise';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';

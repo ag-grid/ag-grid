@@ -1,12 +1,12 @@
+import { Direction } from '../agStack/constants/direction';
 import { _getActiveDomElement } from '../agStack/utils/beanUtils';
-import { Direction } from '../constants/direction';
+import { _observeResize } from '../agStack/utils/domUtils';
 import { BeanStub } from '../context/beanStub';
 import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _last } from '../utils/array';
-import { _observeResize } from '../utils/dom';
 import { _findTabbableParent, _focusInto, _isCellFocusSuppressed, _isHeaderFocusSuppressed } from '../utils/focus';
 import type { Component, ComponentSelector } from '../widgets/component';
 

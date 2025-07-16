@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     AgEvent,
     BeanCollection,
     Component,
@@ -239,8 +240,8 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
                 eventSource,
                 ePopup,
                 event: event instanceof MouseEvent ? event : undefined,
-                column,
-                node,
+                column: column as AgColumn | null,
+                rowNode: node,
             });
         };
 

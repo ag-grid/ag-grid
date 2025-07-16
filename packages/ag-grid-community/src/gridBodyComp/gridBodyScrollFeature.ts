@@ -1,6 +1,6 @@
+import { Direction } from '../agStack/constants/direction';
 import { _getInnerHeight } from '../agStack/utils/domUtils';
 import type { VisibleColsService } from '../columns/visibleColsService';
-import { Direction } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';

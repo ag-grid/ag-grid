@@ -1,4 +1,4 @@
-import { Direction } from '../constants/direction';
+import { Direction } from '../agStack/constants/direction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { DragListenerParams } from './dragService';

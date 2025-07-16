@@ -1,3 +1,4 @@
+import { AgPromise } from '../../agStack/utils/promise';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection, ProcessParamsFunc } from '../../context/context';
@@ -8,7 +9,6 @@ import type { IComponent } from '../../interfaces/iComponent';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _mergeDeep } from '../../utils/object';
-import { AgPromise } from '../../utils/promise';
 import { _error } from '../../validation/logging';
 import type { AgComponentUtils } from './agComponentUtils';
 import type { FrameworkComponentWrapper } from './frameworkComponentWrapper';

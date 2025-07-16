@@ -33,3 +33,8 @@ export function _isNothingFocused(beans: AgCoreBeanCollection<any, any, any, any
 
     return activeEl === null || activeEl === _getDocument(beans).body;
 }
+
+export function _getWindow(beans: AgCoreBeanCollection<any, any, any, any>) {
+    const eDocument = _getDocument(beans);
+    return eDocument.defaultView || window;
+}

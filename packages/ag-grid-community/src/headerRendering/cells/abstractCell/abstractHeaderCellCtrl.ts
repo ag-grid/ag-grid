@@ -1,6 +1,6 @@
 import { KeyCode } from '../../../agStack/constants/keyCode';
 import { _getActiveDomElement, _getDocument } from '../../../agStack/utils/beanUtils';
-import { _addOrRemoveAttribute, _getElementSize } from '../../../agStack/utils/domUtils';
+import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../../agStack/utils/domUtils';
 import { _exists } from '../../../agStack/utils/genericUtils';
 import type { HorizontalDirection } from '../../../constants/direction';
 import { BeanStub } from '../../../context/beanStub';
@@ -12,7 +12,6 @@ import type { HeaderClassParams, HeaderStyle, SuppressHeaderKeyboardEventParams 
 import { _addGridCommonParams, _setDomData } from '../../../gridOptionsUtils';
 import type { BrandedType } from '../../../interfaces/brandedType';
 import { _setAriaColIndex } from '../../../utils/aria';
-import { _observeResize } from '../../../utils/dom';
 import { _isHeaderFocusSuppressed } from '../../../utils/focus';
 import { _batchCall } from '../../../utils/function';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';

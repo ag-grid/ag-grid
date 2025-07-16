@@ -1,5 +1,5 @@
-import type { AgCoreBeanCollection } from './agStack/interfaces/iContext';
 import { _getDocument, _getRootNode } from './agStack/utils/beanUtils';
+import { _getElementRectWithOffset } from './agStack/utils/domUtils';
 import type { GridApi } from './api/gridApi';
 import type { BeanCollection } from './context/context';
 import type {
@@ -37,7 +37,6 @@ import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
-import { _getElementRectWithOffset } from './utils/dom';
 import { _doOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _warn } from './validation/logging';
@@ -174,11 +173,6 @@ export function _setDomData(gos: GridOptionsService, element: Element, key: stri
         (element as any)[domDataKey] = domData;
     }
     domData[key] = value;
-}
-
-export function _getWindow(beans: AgCoreBeanCollection<any, any, any, any>) {
-    const eDocument = _getDocument(beans);
-    return eDocument.defaultView || window;
 }
 
 export function _getPageBody(beans: BeanCollection): HTMLElement | ShadowRoot {

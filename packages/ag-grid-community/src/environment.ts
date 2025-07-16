@@ -1,4 +1,5 @@
 import type { IEnvironment } from './agStack/interfaces/iEnvironment';
+import { _observeResize } from './agStack/utils/domUtils';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
@@ -11,7 +12,7 @@ import {
     _unregisterGridUsingThemingAPI,
 } from './theming/inject';
 import { themeQuartz } from './theming/parts/theme/themes';
-import { _createElement, _observeResize } from './utils/dom';
+import { _createElement } from './utils/dom';
 import { _error, _warn } from './validation/logging';
 
 const CELL_HORIZONTAL_PADDING: Variable = {

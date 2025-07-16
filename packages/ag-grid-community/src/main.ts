@@ -107,11 +107,15 @@ export {
     _isVisible,
     _getInnerHeight,
     _isElementOverflowingCallback,
+    _getAbsoluteHeight,
+    _observeResize,
 } from './agStack/utils/domUtils';
 export { _exists } from './agStack/utils/genericUtils';
 export { _serialiseDate, _parseDateTimeFromString } from './agStack/utils/dateUtils';
 export { _getLocaleTextFunc, _translate } from './agStack/utils/localeUtils';
 export { _getActiveDomElement, _getRootNode, _isNothingFocused, _getDocument } from './agStack/utils/beanUtils';
+export { _isElementInEventPath } from './agStack/utils/eventUtils';
+export { AgPromise, _isPromise } from './agStack/utils/promise';
 export { LocaleTextFunc } from './agStack/interfaces/iLocaleService';
 export { CssClassManager } from './agStack/cssClassManager';
 export { LocalEventService } from './agStack/localEventService';
@@ -146,6 +150,7 @@ export { AgSelect, AgSelectParams, AgSelectSelector } from './agStack/widgets/ag
 export { ListOption } from './agStack/widgets/agList';
 export { AgPickerField } from './agStack/widgets/agPickerField';
 export { AgPickerFieldParams } from './agStack/widgets/agPickerFieldParams';
+export { Direction } from './agStack/constants/direction';
 
 // excel
 export {
@@ -726,7 +731,6 @@ export { ICsvCreator } from './interfaces/iCsvCreator';
 export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export type { CellNavigationService } from './navigation/cellNavigationService';
-export { Direction } from './constants/direction';
 export { GridParams, Params, GridCoreCreator, createGrid } from './grid';
 export { provideGlobalGridOptions, GlobalGridOptionsMergeStrategy, _getGlobalGridOption } from './globalGridOptions';
 export {
@@ -1123,17 +1127,15 @@ export { _isIOSUserAgent } from './utils/browser';
 export { ChangedPath } from './utils/changedPath';
 export { _getDateParts } from './utils/date';
 export {
-    _getAbsoluteHeight,
     _radioCssClass,
     ElementParams,
     _getInnerWidth,
-    _observeResize,
     _preserveRangesWhile,
     _requestAnimationFrame,
     _createElement,
 } from './utils/dom';
 export { _selectAllCells } from './utils/selection';
-export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
+export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid } from './utils/event';
 export { _warnOnce, _debounce, _doOnce, _waitUntil, _batchCall } from './utils/function';
 export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
 export { _interpretAsRightClick } from './utils/mouse';
@@ -1144,7 +1146,6 @@ export { _formatNumberCommas } from './utils/number';
 export { _mergeDeep } from './utils/object';
 export { _escapeString, _toString } from './utils/string';
 
-export { AgPromise, _isPromise } from './utils/promise';
 export {
     _addFocusableContainerListener,
     _findFocusableElements,

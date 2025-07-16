@@ -1,4 +1,6 @@
+import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import { _setAriaHidden } from './ariaUtils';
+import { _getWindow } from './beanUtils';
 
 export function _setDisplayed(element: Element, displayed: boolean, options: { skipAriaHidden?: boolean } = {}) {
     const { skipAriaHidden } = options;
@@ -104,6 +106,29 @@ export function _getAbsoluteWidth(el: HTMLElement): number {
     return Math.floor(width + marginLeft + marginRight);
 }
 
+export function _getAbsoluteHeight(el: HTMLElement): number {
+    const { height, marginBottom, marginTop } = _getElementSize(el);
+
+    return Math.floor(height + marginBottom + marginTop);
+}
+
+export function _getElementRectWithOffset(el: HTMLElement): {
+    top: number;
+    left: number;
+    right: number;
+    bottom: number;
+} {
+    const offsetElementRect = el.getBoundingClientRect();
+    const { borderTopWidth, borderLeftWidth, borderRightWidth, borderBottomWidth } = _getElementSize(el);
+
+    return {
+        top: offsetElementRect.top + (borderTopWidth || 0),
+        left: offsetElementRect.left + (borderLeftWidth || 0),
+        right: offsetElementRect.right + (borderRightWidth || 0),
+        bottom: offsetElementRect.bottom + (borderBottomWidth || 0),
+    };
+}
+
 export function _clearElement(el: HTMLElement): void {
     while (el && el.firstChild) {
         el.removeChild(el.firstChild);
@@ -195,6 +220,17 @@ export function _addOrRemoveAttribute(element: HTMLElement, name: string, value:
     } else {
         element.setAttribute(name, value.toString());
     }
+}
+export function _observeResize(
+    beans: AgCoreBeanCollection<any, any, any, any>,
+    element: HTMLElement,
+    callback: ResizeObserverCallback
+): () => void {
+    const win = _getWindow(beans);
+    const ResizeObserverImpl = win.ResizeObserver;
+    const resizeObserver = ResizeObserverImpl ? new ResizeObserverImpl(callback) : null;
+    resizeObserver?.observe(element);
+    return () => resizeObserver?.disconnect();
 }
 
 export type Attributes = { [key: string]: string };

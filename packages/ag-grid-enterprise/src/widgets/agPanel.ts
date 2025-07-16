@@ -159,9 +159,9 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
 
         let postProcessCallback: (() => void) | undefined;
         if (postProcessPopupParams) {
-            const { type, eventSource, column, mouseEvent, rowNode } = postProcessPopupParams;
+            const { type, eventSource, mouseEvent } = postProcessPopupParams;
             postProcessCallback = () =>
-                beans.popupSvc?.callPostProcessPopup(type, eGui, eventSource, mouseEvent, column, rowNode);
+                beans.popupSvc?.callPostProcessPopup(postProcessPopupParams, type, eGui, eventSource, mouseEvent);
         }
         positionableFeature.initialisePosition(postProcessCallback);
         this.eContentWrapper.style.height = '0';

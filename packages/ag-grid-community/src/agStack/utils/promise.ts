@@ -6,6 +6,12 @@ export function _isPromise<T>(fn: any): fn is Promise<T> {
     return false;
 }
 
+export function _wrapInterval(action: any, timeout?: any): AgPromise<number> {
+    return new AgPromise((resolve) => {
+        resolve(window.setInterval(action, timeout));
+    });
+}
+
 export type ResolveAndRejectCallback<T> = (resolve: (value: T | null) => void, reject: (params: any) => void) => void;
 
 enum AgPromiseStatus {

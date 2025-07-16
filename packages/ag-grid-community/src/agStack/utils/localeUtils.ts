@@ -21,3 +21,38 @@ export function _translate<T extends Record<string, string | ((variableValues: s
         variableValues
     );
 }
+
+export function _getLocaleTextFromFunc(
+    getLocaleText: (params: { key: string; defaultValue: string; variableValues?: string[] }) => string
+): LocaleTextFunc {
+    return (key, defaultValue, variableValues) => {
+        return getLocaleText({
+            key,
+            defaultValue,
+            variableValues,
+        });
+    };
+}
+
+export function _getLocaleTextFromMap(localeText?: { [key: string]: string }): LocaleTextFunc {
+    return (key: string, defaultValue: string, variableValues?: string[]) => {
+        let localisedText = localeText && localeText[key];
+
+        if (localisedText && variableValues && variableValues.length) {
+            let found = 0;
+            while (true) {
+                if (found >= variableValues.length) {
+                    break;
+                }
+                const idx = localisedText.indexOf('${variable}');
+                if (idx === -1) {
+                    break;
+                }
+
+                localisedText = localisedText.replace('${variable}', variableValues[found++]);
+            }
+        }
+
+        return localisedText ?? defaultValue;
+    };
+}

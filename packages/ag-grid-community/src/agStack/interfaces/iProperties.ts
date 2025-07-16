@@ -37,47 +37,6 @@ export type AgPropertyValueChangedListener<TProperties extends BaseProperties, K
     event: AgPropertyValueChangedEvent<TProperties, K>
 ) => void;
 
-/**
- *  Get the properties that are of type `any`.
- *  Works by finding the properties that can extend a non existing string.
- *  This will only be the properties of type `any`.
- */
-export type AnyProperties<TProperties extends BaseProperties> = {
-    [K in keyof TProperties]: TProperties[K] extends 'NO_MATCH' ? K : never;
-}[keyof TProperties];
-
-type GetKeys<T, U> = {
-    [K in keyof T]: T[K] extends U | undefined ? K : never;
-}[keyof T];
-
-/**
- * Get all the properties that strictly contain the provided type.
- * Does not include `any` properties.
- */
-type KeysOfType<TProperties extends BaseProperties, U> = Exclude<GetKeys<TProperties, U>, AnyProperties<TProperties>>;
-
-type NoArgFuncs<TProperties extends BaseProperties> = KeysOfType<TProperties, () => any>;
-type AnyArgFuncs<TProperties extends BaseProperties> = KeysOfType<TProperties, (arg: 'NO_MATCH') => any>;
-export type AgCallbackProps<TProperties extends BaseProperties, TCommon> = Exclude<
-    KeysOfType<TProperties, (params: TCommon) => any>,
-    NoArgFuncs<TProperties> | AnyArgFuncs<TProperties>
->;
-
-export type AgExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
-export type AgExtractReturnTypeFromCallback<TCommon, TCallback> = TCallback extends (params: TCommon) => infer RT
-    ? RT
-    : never;
-export type AgWrappedCallback<
-    TProperties extends BaseProperties,
-    TCommon,
-    K extends AgCallbackProps<TProperties, TCommon>,
-    OriginalCallback extends TProperties[K],
-> =
-    | undefined
-    | ((
-          params: WithoutCommon<TCommon, AgExtractParamsFromCallback<OriginalCallback>>
-      ) => AgExtractReturnTypeFromCallback<TCommon, OriginalCallback>);
-
 export interface IPropertiesService<TProperties extends BaseProperties, TCommon> {
     readonly beanName: 'gos';
 
@@ -92,10 +51,6 @@ export interface IPropertiesService<TProperties extends BaseProperties, TCommon>
     ): void;
 
     get<K extends AgPropertyKey<TProperties>>(property: K): TProperties[K];
-
-    getCallback<K extends AgCallbackProps<TProperties, TCommon>>(
-        property: K
-    ): AgWrappedCallback<TProperties, TCommon, K, TProperties[K]>;
 
     addCommon<T extends TCommon>(params: WithoutCommon<TCommon, T>): T;
 }

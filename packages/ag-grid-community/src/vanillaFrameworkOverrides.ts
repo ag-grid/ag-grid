@@ -1,7 +1,6 @@
 import type { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
 import { BASE_URL } from './baseUrl';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
-import { AgPromise } from './utils/promise';
 import { setValidationDocLink } from './validation/logging';
 
 /** The base frameworks, eg React & Angular, override this bean with implementations specific to their requirement. */
@@ -13,12 +12,6 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     constructor(private frameworkName: 'javascript' | 'angular' | 'react' | 'vue' = 'javascript') {
         this.baseDocLink = `${BASE_URL}/${this.frameworkName}-data-grid`;
         setValidationDocLink(this.baseDocLink);
-    }
-
-    public setInterval(action: any, timeout?: any): AgPromise<number> {
-        return new AgPromise((resolve) => {
-            resolve(window.setInterval(action, timeout));
-        });
     }
 
     wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = (callback) => callback();

@@ -1,11 +1,11 @@
 import { _clearElement } from '../agStack/utils/domUtils';
 import { _exists } from '../agStack/utils/genericUtils';
+import { AgPromise } from '../agStack/utils/promise';
 import type { AgColumn } from '../entities/agColumn';
 import type { FilterDestroyedEvent } from '../events';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { IFilterComp } from '../interfaces/iFilter';
 import type { ElementParams } from '../utils/dom';
-import { AgPromise } from '../utils/promise';
 import { _warn } from '../validation/logging';
 import { Component } from '../widgets/component';
 import type { FilterDisplayWrapper } from './columnFilterService';

@@ -1,6 +1,6 @@
+import type { AgPromise } from '../../../agStack/utils/promise';
 import type { IFloatingFilter } from '../../../filter/floating/floatingFilter';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import type { AgPromise } from '../../../utils/promise';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {

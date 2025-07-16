@@ -1,5 +1,6 @@
 import type { AgEvent } from '../agStack/interfaces/agEvent';
 import { _exists } from '../agStack/utils/genericUtils';
+import { AgPromise } from '../agStack/utils/promise';
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import {
     _getFilterCompKeys,
@@ -45,7 +46,6 @@ import type {
 } from '../interfaces/iFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { _jsonEquals } from '../utils/generic';
-import { AgPromise } from '../utils/promise';
 import { _error, _warn } from '../validation/logging';
 import type { FilterHandlerName, FilterUi, FilterWrapper, LegacyFilterWrapper } from './columnFilterUtils';
 import {

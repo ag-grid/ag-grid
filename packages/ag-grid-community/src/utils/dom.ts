@@ -1,11 +1,10 @@
-import { _getRootNode } from '../agStack/utils/beanUtils';
+import { _getRootNode, _getWindow } from '../agStack/utils/beanUtils';
 import { _isBrowserSafari } from '../agStack/utils/browserUtils';
 import type { AgElementParams } from '../agStack/utils/domUtils';
 import { _createAgElement, _formatSize, _getElementSize, _isVisible } from '../agStack/utils/domUtils';
 import type { BeanCollection } from '../context/context';
 import type { CellStyle, HeaderStyle } from '../entities/colDef';
 import type { RowStyle } from '../entities/gridOptions';
-import { _getWindow } from '../gridOptionsUtils';
 import type { AgComponentSelectorType } from '../widgets/component';
 import { _isBrowserFirefox } from './browser';
 
@@ -81,29 +80,6 @@ export function _getInnerWidth(el: HTMLElement): number {
     }
 
     return size.width;
-}
-
-export function _getAbsoluteHeight(el: HTMLElement): number {
-    const { height, marginBottom, marginTop } = _getElementSize(el);
-
-    return Math.floor(height + marginBottom + marginTop);
-}
-
-export function _getElementRectWithOffset(el: HTMLElement): {
-    top: number;
-    left: number;
-    right: number;
-    bottom: number;
-} {
-    const offsetElementRect = el.getBoundingClientRect();
-    const { borderTopWidth, borderLeftWidth, borderRightWidth, borderBottomWidth } = _getElementSize(el);
-
-    return {
-        top: offsetElementRect.top + (borderTopWidth || 0),
-        left: offsetElementRect.left + (borderLeftWidth || 0),
-        right: offsetElementRect.right + (borderRightWidth || 0),
-        bottom: offsetElementRect.bottom + (borderBottomWidth || 0),
-    };
 }
 
 export function _getScrollLeft(element: HTMLElement, rtl: boolean): number {
@@ -211,18 +187,6 @@ export function _setFixedHeight(element: HTMLElement, height: string | number) {
     element.style.height = height;
     element.style.maxHeight = height;
     element.style.minHeight = height;
-}
-
-export function _observeResize(
-    beans: BeanCollection,
-    element: HTMLElement,
-    callback: ResizeObserverCallback
-): () => void {
-    const win = _getWindow(beans);
-    const ResizeObserverImpl = win.ResizeObserver;
-    const resizeObserver = ResizeObserverImpl ? new ResizeObserverImpl(callback) : null;
-    resizeObserver?.observe(element);
-    return () => resizeObserver?.disconnect();
 }
 
 function _getTextSelectionRanges(beans: BeanCollection): { selection: Selection | null; ranges: Range[] } {
