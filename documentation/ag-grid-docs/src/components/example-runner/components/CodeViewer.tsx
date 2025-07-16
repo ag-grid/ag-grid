@@ -48,6 +48,12 @@ export function stripOutExampleGeneratorCode(files: FileContents) {
                 files[mainFile]
                     ?.replace(/\/\*\* TEAR DOWN START \*\*\/([\s\S]*?)\/\*\* TEAR DOWN END \*\*\//g, '')
                     .trim() + '\n';
+
+            // Hide the test id setup code
+            files[mainFile] =
+                files[mainFile]
+                    ?.replace(/\/\*\* ENABLE AG-TEST-ID START \*\*\/([\s\S]*?)\/\*\* ENABLE AG-TEST-ID END \*\*\//g, '')
+                    .trim() + '\n';
         }
     });
 }

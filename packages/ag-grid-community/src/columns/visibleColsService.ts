@@ -44,6 +44,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     // all three lists above combined
     public allCols: AgColumn[] = [];
 
+    public headerGroupRowCount: number = 0; // number of header rows to render
+
     public autoHeightCols: AgColumn[];
 
     // used by:
@@ -77,6 +79,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.joinColsAriaOrder(colModel);
         this.joinCols();
 
+        this.headerGroupRowCount = this.getHeaderRowCount();
+
         this.setLeftValues(source);
         this.autoHeightCols = this.allCols.filter((col) => col.isAutoHeight());
         colFlex?.refreshFlexedColumns();
@@ -88,6 +92,30 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             type: 'displayedColumnsChanged',
             source,
         });
+    }
+
+    private getHeaderRowCount(): number {
+        if (!this.gos.get('hidePaddedHeaderRows')) {
+            return this.beans.colModel.cols!.treeDepth;
+        }
+
+        let headerGroupRowCount = 0;
+        for (const col of this.allCols) {
+            let parent = col.getParent();
+            while (parent) {
+                if (!parent.isPadding()) {
+                    const level = parent.getProvidedColumnGroup().getLevel() + 1;
+                    if (level > headerGroupRowCount) {
+                        headerGroupRowCount = level;
+                    }
+                    break;
+                }
+
+                parent = parent.getParent();
+            }
+        }
+
+        return headerGroupRowCount;
     }
 
     // after setColumnWidth or updateGroupsAndPresentedCols

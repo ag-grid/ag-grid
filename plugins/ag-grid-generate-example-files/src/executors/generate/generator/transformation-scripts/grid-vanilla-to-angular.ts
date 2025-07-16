@@ -9,6 +9,7 @@ import {
     addLicenseManager,
     convertFunctionToProperty,
     findLocaleImport,
+    getEnableAGTestIdLogic,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
     handleRowGenericInterface,
@@ -82,6 +83,8 @@ function addModuleImports(
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, true);
     }
+
+    imports.push(getEnableAGTestIdLogic());
 
     if (bindings.moduleRegistration) {
         imports.push(bindings.moduleRegistration);

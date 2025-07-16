@@ -5,6 +5,7 @@ import type {
     Column,
     GridOptionsService,
     GroupingApproach,
+    IRowNode,
     RowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
@@ -80,3 +81,29 @@ export function _getGroupValue(
     }
     return null;
 }
+
+export const _getRowDefaultExpanded = (
+    beans: BeanCollection,
+    rowNode: IRowNode,
+    level: number,
+    group = rowNode.group
+): boolean => {
+    const gos = beans.gos;
+    // see AG-11476 isGroupOpenByDefault callback doesn't apply to master/detail grid
+    // We call isGroupOpenByDefault only for group nodes and not for master/detail leafs
+    const isGroupOpenByDefault = group && gos.get('isGroupOpenByDefault');
+    if (!isGroupOpenByDefault) {
+        const groupDefaultExpanded = gos.get('groupDefaultExpanded');
+        return groupDefaultExpanded === -1 || level < groupDefaultExpanded;
+    }
+    const params = {
+        api: beans.gridApi,
+        context: beans.gridOptions.context,
+        rowNode,
+        field: rowNode.field!,
+        key: rowNode.key!,
+        level,
+        rowGroupColumn: rowNode.rowGroupColumn!,
+    };
+    return isGroupOpenByDefault(params) == true;
+};

@@ -5,10 +5,10 @@ import {
     ModuleRegistry,
     NumberFilterModule,
     RowSelectionModule,
-    TestingModule,
     TextFilterModule,
     ValidationModule,
     createGrid,
+    setupAgTestIds,
 } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -21,6 +21,8 @@ import {
     StatusBarModule,
 } from 'ag-grid-enterprise';
 
+setupAgTestIds();
+
 ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
     ColumnAutoSizeModule,
@@ -30,7 +32,6 @@ ModuleRegistry.registerModules([
     CellSelectionModule,
     StatusBarModule,
     NumberFilterModule,
-    TestingModule,
     ColumnMenuModule,
     PaginationModule,
     SideBarModule,

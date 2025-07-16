@@ -298,22 +298,21 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         ) {
             const key = event.key;
 
+            // in batch editing, we only permit esc to revert during the first edit.
+            const allowRevert = position && (this.model.getEdit(position)?.editCount ?? 0) === 0;
+
             const isEnter = key === KeyCode.ENTER;
             const isEscape = key === KeyCode.ESCAPE;
 
             if (isEnter || isEscape) {
                 if (isEnter) {
                     _syncFromEditors(beans, { event });
-                } else if (isEscape) {
+                } else if (isEscape && allowRevert) {
                     // only if ESC is pressed while in the editor for this cell
                     this.revertSingleCellEdit(cellCtrl!, false);
                 }
 
-                if (this.isBatchEditing()) {
-                    this.strategy?.cleanupEditors();
-                } else {
-                    _destroyEditors(beans, model.getEditPositions(), { event });
-                }
+                this.strategy?.cleanupEditors();
 
                 event.preventDefault();
 
@@ -862,7 +861,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     }
 
                     if (this.isCellEditable({ rowNode, column }, 'api')) {
-                        const oldValue = valueSvc.getValue(column as AgColumn, rowNode, true, 'api');
+                        const { oldValue, editCount = 0 } = editRow.get(column) ?? {};
                         let newValue = valueSvc.parseValue(column as AgColumn, rowNode ?? null, editValue, oldValue);
 
                         if (Number.isNaN(newValue)) {
@@ -874,6 +873,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                             newValue,
                             oldValue,
                             state: 'changed',
+                            editCount: editCount + 1,
                         });
                     }
                 }
@@ -953,7 +953,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 newValue = UNEDITED;
             }
 
-            editRow.set(col, { newValue, oldValue, state: state ?? 'changed' });
+            editRow.set(col, { newValue, oldValue, state: state ?? 'changed', editCount: 0 });
         });
 
         this.setEditMap(edits, params);

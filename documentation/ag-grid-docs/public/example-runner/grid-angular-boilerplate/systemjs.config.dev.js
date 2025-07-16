@@ -1,7 +1,13 @@
 (function (global) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const config = {
+        version: urlParams.get('version') ?? '20.0.0',
+        prod: urlParams.get('prod') ?? false,
+    };
+
     process = { env: { NODE_ENV: 'development' } };
-    var ANGULAR_VERSION = '20.0.0';
-    window.ENABLE_PROD_MODE = false;
+    var ANGULAR_VERSION = config.version;
+    window.ENABLE_PROD_MODE = config.prod;
 
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER

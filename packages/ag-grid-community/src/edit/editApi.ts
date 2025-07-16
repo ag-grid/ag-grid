@@ -109,16 +109,15 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 
     ensureColumnVisible(beans, colKey);
 
-    editSvc?.setEditingCells(
-        [
-            {
-                ...cellPosition,
-                colId: column.getColId(),
-                newValue: key,
-                state: 'editing',
-            },
-        ],
-        { update: true }
+    editSvc?.startEditing(
+        {
+            rowNode,
+            column,
+        },
+        {
+            event: key ? new KeyboardEvent('keydown', { key }) : undefined,
+            source: 'api',
+        }
     );
 }
 

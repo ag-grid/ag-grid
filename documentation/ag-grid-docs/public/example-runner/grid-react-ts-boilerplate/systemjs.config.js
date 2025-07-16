@@ -1,46 +1,51 @@
 (function (global) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const config = {
+        // Suggested defaults: 19.1.0 or 18.2.0
+        version: urlParams.get('version') ?? '19.1.0',
+        prod: urlParams.get('prod') ?? true,
+    };
+
     process = { env: { NODE_ENV: 'development' } };
 
-    // Valid versions (18/19)
-    const config = { version: 19, isProd: true };
+    const REACT_VERSION = config.version;
 
     const filePart = config.isProd ? 'production.min' : 'development';
-    const reactConfig =
-        config.version == 18
-            ? {
-                  map: {
-                      react: 'npm:react@18.2.0',
-                      'react-dom': 'npm:react-dom@18.2.0',
-                      'react-dom/client': 'npm:react-dom@18.2.0',
+    const reactConfig = !config.version.startsWith('19')
+        ? {
+              map: {
+                  react: `npm:react@${REACT_VERSION}`,
+                  'react-dom': `npm:react-dom@${REACT_VERSION}`,
+                  'react-dom/client': `npm:react-dom@${REACT_VERSION}`,
+              },
+              packages: {
+                  react: {
+                      main: `./umd/react.${filePart}.js`,
                   },
-                  packages: {
-                      react: {
-                          main: `./umd/react.${filePart}.js`,
-                      },
-                      'react-dom': {
-                          main: `./umd/react-dom.${filePart}.js`,
-                      },
+                  'react-dom': {
+                      main: `./umd/react-dom.${filePart}.js`,
                   },
-              }
-            : {
-                  map: {
-                      react: `npm:react@19.1.0/cjs/react.${filePart}.js`,
-                      'react-dom': `npm:react-dom@19.1.0/cjs/react-dom.${filePart}.js`,
-                      'react-dom/client': `npm:react-dom@19.1.0/cjs/react-dom-client.${filePart}.js`,
-                      scheduler: `npm:scheduler@0.26.0/cjs/scheduler.${filePart}.js`,
+              },
+          }
+        : {
+              map: {
+                  react: `npm:react@${REACT_VERSION}/cjs/react.${filePart}.js`,
+                  'react-dom': `npm:react-dom@${REACT_VERSION}/cjs/react-dom.${filePart}.js`,
+                  'react-dom/client': `npm:react-dom@${REACT_VERSION}/cjs/react-dom-client.${filePart}.js`,
+                  scheduler: `npm:scheduler@0.26.0/cjs/scheduler.${filePart}.js`,
+              },
+              packages: {
+                  react: {
+                      format: 'cjs',
                   },
-                  packages: {
-                      react: {
-                          format: 'cjs',
-                      },
-                      'react-dom': {
-                          format: 'cjs',
-                      },
-                      scheduler: {
-                          format: 'cjs',
-                      },
+                  'react-dom': {
+                      format: 'cjs',
                   },
-              };
+                  scheduler: {
+                      format: 'cjs',
+                  },
+              },
+          };
 
     System.config({
         transpiler: 'ts',

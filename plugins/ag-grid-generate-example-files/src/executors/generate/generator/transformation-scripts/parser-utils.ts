@@ -765,3 +765,19 @@ export function wrapTearDownExample(method: string) {
 
     return `${tearDownStart}${method}${tearDownEnd}`;
 }
+
+export function getEnableAGTestIdLogic(isUmd: boolean = false): string {
+    const enableStart = '/** ENABLE AG-TEST-ID START **/';
+    const enableEnd = '/** ENABLE AG-TEST-ID END **/';
+    const setupCode = isUmd ? 'agGrid.setupAgTestIds();' : 'setupAgTestIds();';
+    const importCode = isUmd ? '' : "import { setupAgTestIds } from 'ag-grid-community';";
+
+    const method = `
+        ${importCode}
+        const enableTestIds = new URLSearchParams(window.location.search).get('enableTestIds');
+        if (enableTestIds) {
+            ${setupCode}
+        }
+    `;
+    return `${enableStart}${method}${enableEnd}`;
+}

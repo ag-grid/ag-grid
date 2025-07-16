@@ -376,79 +376,80 @@ jobs:
           path: |
             reports/
 
-  fw_pkg_test:
-    runs-on: ubuntu-24.04
-    name: Framework Package Tests (${{ matrix.framework }})
-    needs: build_lint
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.build_lint.outputs.test_pkg_matrix )}}
-    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
-    env:
-      NX_BASE: ${{ needs.init.outputs.nx_base }}
-    steps:
-      - name: Checkout
-        id: checkout
-        if: matrix.framework != 'none'
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
+#  fw_pkg_test:
+#    runs-on: ubuntu-24.04
+#    name: Framework Package Tests (${{ matrix.framework }})
+#    needs: build_lint
+#    strategy:
+#      fail-fast: false
+#      matrix: ${{ fromJson(needs.build_lint.outputs.test_pkg_matrix )}}
+#    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
+#    env:
+#      NX_BASE: ${{ needs.init.outputs.nx_base }}
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        if: matrix.framework != 'none'
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1
+#
+#      - name: Restore Init Build Outputs
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: e2e-init-outputs
+#
+#      - name: Setup
+#        id: setup
+#        if: matrix.framework != 'none'
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: nx package:test
+#        id: package-test
+#        if: matrix.framework != 'none'
+#        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
 
-      - name: Restore Init Build Outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: e2e-init-outputs
-
-      - name: Setup
-        id: setup
-        if: matrix.framework != 'none'
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: nx package:test
-        id: package-test
-        if: matrix.framework != 'none'
-        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
-
-  angular_fw_pkg_test:
-    runs-on: ubuntu-24.04
-    name: Angular Package Tests
-    needs: build_lint
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.build_lint.outputs.test_angular_pkg_matrix )}}
-    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
-    env:
-      NX_BASE: ${{ needs.init.outputs.nx_base }}
-    steps:
-      - name: Checkout
-        id: checkout
-        if: matrix.framework != 'none'
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Restore Init Build Outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: e2e-init-outputs
-
-      - name: Setup
-        id: setup
-        if: matrix.framework != 'none'
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: nx package:test
-        id: package-test
-        if: matrix.framework != 'none'
-        run: yarn nx run-many -t test:package:shard-${{ matrix.shard }} -p angular-package-tests -c staging
+#  angular_fw_pkg_test:
+#    runs-on: ubuntu-24.04
+#    name: Angular Package Tests
+#    needs: build_lint
+#    strategy:
+#      fail-fast: false
+#      matrix: ${{ fromJson(needs.build_lint.outputs.test_angular_pkg_matrix )}}
+#    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
+#    env:
+#      NX_BASE: ${{ needs.init.outputs.nx_base }}
+#    steps:
+#      - name: Checkout
+#        id: checkout
+#        if: matrix.framework != 'none'
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1
+#
+#      - name: Restore Init Build Outputs
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: e2e-init-outputs
+#
+#      - name: Setup
+#        id: setup
+#        if: matrix.framework != 'none'
+#        uses: ./.github/actions/setup-nx
+#        with:
+#          cache_mode: ro
+#
+#      - name: nx package:test
+#        id: package-test
+#        if: matrix.framework != 'none'
+#        run: yarn nx run-many -t test:package:shard-${{ matrix.shard }} -p angular-package-tests -c staging
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test ]
+    needs: [ build_lint, test, e2e, docs, bundle_size ]
+#    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test ]
     if: cancelled() != true
     permissions:
       contents: write

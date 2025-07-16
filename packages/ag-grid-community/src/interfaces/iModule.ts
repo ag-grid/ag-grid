@@ -108,7 +108,8 @@ export type InternalModuleName =
     | 'Sort'
     | 'SsrmInfiniteSharedApi'
     | 'StickyRow'
-    | 'Touch';
+    | 'Touch'
+    | 'Testing';
 
 export type CommunityModuleName =
     | 'AlignedGrids'
@@ -147,7 +148,6 @@ export type CommunityModuleName =
     | 'RowStyle'
     | 'ScrollApi'
     | 'SelectEditor'
-    | 'Testing'
     | 'TextEditor'
     | 'TextFilter'
     | 'Tooltip'
@@ -235,7 +235,6 @@ export type AgModuleName =
     | 'ValidationModule'
     | 'ValueCacheModule'
     | 'CellSpanModule'
-    | 'TestingModule'
     // Enterprise
     | 'AdvancedFilterModule'
     | 'AllEnterpriseModule'

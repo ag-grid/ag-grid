@@ -210,8 +210,8 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           restore-keys: |
-            - full-clean-build-prev-commit-
-            - full-clean-build-prev-commit-${{ github.ref }}
+            full-clean-build-prev-commit-
+            full-clean-build-prev-commit-${{ github.ref }}
           path: ${{ env.PREV_COMMIT_SHA_FILE }}
           key: full-clean-build-prev-commit-${{ github.ref }}-${{ github.sha }}
 

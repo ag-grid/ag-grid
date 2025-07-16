@@ -7,6 +7,7 @@ import {
     addRelativeImports,
     convertFunctionToConstPropertyTs,
     findLocaleImport,
+    getEnableAGTestIdLogic,
     getFunctionName,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
@@ -186,6 +187,8 @@ function getImports(
     imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets));
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
+
+    imports.push(getEnableAGTestIdLogic());
 
     if (bindings.moduleRegistration) {
         imports.push(bindings.moduleRegistration);

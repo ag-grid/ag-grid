@@ -148,12 +148,6 @@ export class ColumnFilterService
     public postConstruct(): void {
         this.addManagedEventListeners({
             gridColumnsChanged: this.onColumnsChanged.bind(this),
-            beforeRefreshModel: ({ params, groupsChanged }) => {
-                // We listen to both row data updated and treeData changed as the SetFilter needs it
-                if (groupsChanged || params.rowDataUpdated) {
-                    this.onNewRowsLoaded('rowDataUpdated');
-                }
-            },
             dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
         });
 
@@ -168,6 +162,11 @@ export class ColumnFilterService
         if (!gos.get('enableFilterHandlers')) {
             delete this.handlerMap['agMultiColumnFilter'];
         }
+    }
+
+    public refreshModel() {
+        // We listen to both row data updated and treeData changed as the SetFilter needs it
+        this.onNewRowsLoaded('rowDataUpdated');
     }
 
     public setModel(model: FilterModel | null, source: FilterChangedEventSourceType = 'api'): void {

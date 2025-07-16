@@ -1,3 +1,5 @@
+import { cleanup, render } from '@testing-library/react';
+import React from 'react';
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
@@ -7,14 +9,17 @@ import {
     RowApiModule,
     ValidationModule,
     createGrid,
+    getGridApi,
+    getGridElement,
 } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
 
 describe('ag-grid overlays state', () => {
     let consoleWarnSpy: MockInstance | undefined;
     let consoleErrorSpy: MockInstance | undefined;
 
-    function createMyGrid(gridOptions: GridOptions = {}) {
-        return createGrid(document.getElementById('myGrid')!, gridOptions);
+    function createMyGrid(gridOptions: GridOptions = {}, element = document.getElementById('myGrid')!) {
+        return createGrid(element, gridOptions);
     }
 
     function resetGrids() {
@@ -192,5 +197,59 @@ describe('ag-grid overlays state', () => {
         );
 
         expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+    });
+
+    test('can get gridApi reference from DOM node', () => {
+        const element = document.getElementById('myGrid')!;
+
+        const api = createMyGrid(undefined, element);
+
+        const apiFromDOM = getGridApi('#myGrid');
+
+        const elementFromApi = getGridElement(api);
+
+        expect(elementFromApi?.parentElement).toBe(element);
+        expect(apiFromDOM).toBe(api);
+
+        // create a second grid in the same parent element
+        const api2 = createMyGrid(undefined, element);
+
+        const api2FromDOM = getGridApi(element.children[1]);
+        const element2FromApi = getGridElement(api2);
+
+        expect(api2FromDOM).toBe(api2);
+        expect(element2FromApi?.parentElement).toBe(element);
+
+        // destroy second grid
+        api2.destroy();
+
+        expect(getGridApi(element.children[1])).toBeUndefined();
+        expect(getGridApi('#myGrid')).toBe(api);
+
+        // destroy first grid
+        api.destroy();
+        expect(getGridApi('#myGrid')).toBeUndefined();
+    });
+
+    test('can get gridApi reference from DOM node (React)', () => {
+        cleanup();
+
+        let ref: any | null = null;
+
+        const page = render(
+            <AgGridReact
+                ref={(e) => {
+                    ref = e;
+                }}
+                gridId="myGrid"
+            />
+        );
+
+        const apiFromDOM = getGridApi('myGrid');
+
+        const elementFromApi = getGridElement(ref.api);
+
+        expect(apiFromDOM).toBe(ref.api);
+        expect(elementFromApi?.parentElement).toBe(page.container);
     });
 });
