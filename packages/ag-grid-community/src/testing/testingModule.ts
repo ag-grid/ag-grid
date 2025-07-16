@@ -12,8 +12,9 @@ type TestingModuleType = {
 } & _ModuleWithoutApi;
 
 /**
+ * Internal module. Not for direct use. Use `setupAgTestIds` instead.
+ *
  * @feature Testing
- * @gridOptions testIds
  */
 export const TestingModule: TestingModuleType = {
     moduleName: 'Testing',
