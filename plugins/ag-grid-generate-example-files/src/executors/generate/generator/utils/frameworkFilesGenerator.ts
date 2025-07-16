@@ -6,6 +6,7 @@ import { vanillaToReactFunctionalTs } from '../transformation-scripts/grid-vanil
 import { vanillaToTypescript } from '../transformation-scripts/grid-vanilla-to-typescript';
 import { vanillaToVue3 } from '../transformation-scripts/grid-vanilla-to-vue3';
 import {
+    getEnableAGTestIdLogic,
     getIntegratedDarkModeCode,
     readAsJsFile,
     removeModuleRegistration,
@@ -82,6 +83,8 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         if (transformEntryFile) {
             mainJs = transformEntryFile({ entryFile: mainJs });
         }
+
+        mainJs = getEnableAGTestIdLogic(true) + '\n\n' + mainJs;
 
         // remove any leading new lines
         mainJs = mainJs.replace(/^\s*[\r\n]/, '');

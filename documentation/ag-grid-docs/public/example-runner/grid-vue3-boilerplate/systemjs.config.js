@@ -1,4 +1,10 @@
 (function (global) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const config = {
+        version: urlParams.get('version') ?? '3.5.17',
+    };
+
+    var VUE_VERSION = config.version;
     process = { env: { NODE_ENV: 'development' } };
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
@@ -25,8 +31,8 @@
             tslib: 'npm:tslib@2.3.1/tslib.js',
             typescript: 'npm:typescript@5.4.5/lib/typescript.min.js',
 
-            vue: 'npm:vue@3.5.0/dist/vue.esm-browser.js',
-            '@vue/reactivity': 'npm:@vue/reactivity@3.0.0/dist/reactivity.esm-browser.prod.js',
+            vue: `npm:vue@${VUE_VERSION}/dist/vue.esm-browser.js`,
+            '@vue/reactivity': `npm:@vue/reactivity@${VUE_VERSION}/dist/reactivity.esm-browser.prod.js`,
 
             // vue class component
             'vue-class-component': 'npm:vue-class-component@^8.0.0-beta.3/dist/vue-class-component.cjs.js',

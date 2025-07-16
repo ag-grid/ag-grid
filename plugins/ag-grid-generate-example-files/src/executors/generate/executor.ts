@@ -8,6 +8,7 @@ import { SOURCE_ENTRY_FILE_NAME } from './generator/constants';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
 import {
     DARK_INTEGRATED_START,
+    getEnableAGTestIdLogic,
     getIntegratedDarkModeCode,
     getInterfaceFileContents,
     removeModuleRegistration,
@@ -399,6 +400,13 @@ async function processProvidedFiles(
                 providedPlaceholder,
                 code
             );
+        }
+
+        if (writeToFileName === mainFileName) {
+            // Add testId setup to the main file for provided examples
+            const isUmd = internalFramework === 'vanilla';
+            const testIdSetup = getEnableAGTestIdLogic(isUmd);
+            provideFrameworkFiles[writeToFileName] = testIdSetup + '\n\n' + provideFrameworkFiles[writeToFileName];
         }
     }
 
