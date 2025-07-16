@@ -6,7 +6,6 @@ import type { GridOptions } from '../entities/gridOptions';
 import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
 import {
-    _getGrandTotalRow,
     _getGroupSelectsDescendants,
     _getGroupingApproach,
     _getRowHeightForNode,
