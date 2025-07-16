@@ -1,4 +1,6 @@
 ---
+import { getIsStaging } from '@utils/env';
+
 interface Props {
     googleTagManagerId: string;
     googleTagManagerAuth: string;
@@ -6,11 +8,12 @@ interface Props {
 }
 
 const { googleTagManagerId, googleTagManagerAuth, googleTagManagerPreview } = Astro.props as Props;
+const extraParams = getIsStaging() ? `&gtm_auth=${googleTagManagerAuth}&gtm_preview=${googleTagManagerPreview}` : '';
 ---
 
 <noscript>
     <iframe
-        src={`https://www.googletagmanager.com/ns.html?id=${googleTagManagerId}&gtm_auth=${googleTagManagerAuth}&gtm_preview=${googleTagManagerPreview}&gtm_cookies_win=x`}
+        src={`https://www.googletagmanager.com/ns.html?id=${googleTagManagerId}${extraParams}&gtm_cookies_win=x`}
         height="0"
         width="0"
         style="display:none;visibility:hidden"></iframe>
