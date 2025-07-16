@@ -63,7 +63,7 @@ const GridComp = ({ context }: GridCompProps) => {
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
 
         const compProxy: IGridComp = {
-            destroyGridUi: () => { }, // do nothing, as framework users destroy grid by removing the comp
+            destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
             setRtlClass,
             forceFocusOutOfContainer: (up?: boolean) => {
                 if (!up && paginationCompRef.current?.isDisplayed()) {
