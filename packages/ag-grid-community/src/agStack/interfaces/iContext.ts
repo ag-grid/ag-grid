@@ -44,3 +44,5 @@ export interface IContext<TBeanCollection> {
 
     isDestroyed(): boolean;
 }
+
+export type ClassImp = new (...args: []) => object;

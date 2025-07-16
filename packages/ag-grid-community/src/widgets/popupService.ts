@@ -1,4 +1,4 @@
-import { BasePopupService } from '../agStack/basePopupService';
+import { BasePopupService } from '../agStack/baseServices/basePopupService';
 import { Direction } from '../agStack/constants/direction';
 import type { BasePopupPositionParams } from '../agStack/interfaces/iPopup';
 import type { NamedBean } from '../context/bean';

@@ -1,5 +1,5 @@
-import type { AgBaseBean, AgSingletonBean } from './interfaces/iBean';
-import type { IContext } from './interfaces/iContext';
+import type { AgBaseBean, AgSingletonBean } from '../interfaces/iBean';
+import type { IContext } from '../interfaces/iContext';
 
 type BeanComparator<TBeanCollection> = (
     bean1: AgSingletonBean<TBeanCollection>,

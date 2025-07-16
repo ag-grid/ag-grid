@@ -1,5 +1,5 @@
-import type { AgSingletonBeanClass } from '../agStack/agContext';
-import type { AgCoreBeanCollection, IContext } from '../agStack/interfaces/iContext';
+import type { AgSingletonBeanClass } from '../agStack/baseServices/agContext';
+import type { AgCoreBeanCollection, ClassImp, IContext } from '../agStack/interfaces/iContext';
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
@@ -191,8 +191,6 @@ export type UserComponentName =
     | 'agFilteredRowCountComponent'
     | 'agTotalAndFilteredRowCountComponent'
     | 'agFindCellRenderer';
-
-export type ClassImp = new (...args: []) => object;
 
 interface ComponentMetaWithParams {
     classImp: ClassImp;

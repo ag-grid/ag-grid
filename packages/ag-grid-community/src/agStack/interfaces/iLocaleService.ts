@@ -1,4 +1,6 @@
 export interface ILocaleService {
+    readonly beanName: 'localeSvc';
+
     getLocaleTextFunc(): LocaleTextFunc;
 }
 

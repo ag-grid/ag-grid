@@ -1,5 +1,5 @@
-import { AgContext } from './agStack/agContext';
-import type { AgContextParams } from './agStack/agContext';
+import { AgContext } from './agStack/baseServices/agContext';
+import type { AgContextParams } from './agStack/baseServices/agContext';
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';

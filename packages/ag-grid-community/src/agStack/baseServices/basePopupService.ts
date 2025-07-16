@@ -1,24 +1,24 @@
-import { AgBeanStub } from './agBeanStub';
-import { Direction } from './constants/direction';
-import { KeyCode } from './constants/keyCode';
-import type { BaseEvents } from './interfaces/baseEvents';
-import type { BaseProperties } from './interfaces/baseProperties';
-import type { AgCoreBeanCollection } from './interfaces/iContext';
-import type { AddPopupParams, AddPopupResult, BasePopupPositionParams, PopupEventParams } from './interfaces/iPopup';
-import type { IPopupService } from './interfaces/iPopupService';
-import type { IPropertiesService } from './interfaces/iProperties';
-import { _setAriaLabel, _setAriaRole } from './utils/ariaUtils';
-import { _getActiveDomElement, _getDocument } from './utils/beanUtils';
+import { AgBeanStub } from '../agBeanStub';
+import { Direction } from '../constants/direction';
+import { KeyCode } from '../constants/keyCode';
+import type { BaseEvents } from '../interfaces/baseEvents';
+import type { BaseProperties } from '../interfaces/baseProperties';
+import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { AddPopupParams, AddPopupResult, BasePopupPositionParams, PopupEventParams } from '../interfaces/iPopup';
+import type { IPopupService } from '../interfaces/iPopupService';
+import type { IPropertiesService } from '../interfaces/iProperties';
+import { _setAriaLabel, _setAriaRole } from '../utils/ariaUtils';
+import { _getActiveDomElement, _getDocument } from '../utils/beanUtils';
 import {
     _createAgElement,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
     _getElementRectWithOffset,
     _observeResize,
-} from './utils/domUtils';
-import { _isElementInEventPath } from './utils/eventUtils';
-import { _exists } from './utils/genericUtils';
-import { AgPromise, _wrapInterval } from './utils/promise';
+} from '../utils/domUtils';
+import { _isElementInEventPath } from '../utils/eventUtils';
+import { _exists } from '../utils/genericUtils';
+import { AgPromise, _wrapInterval } from '../utils/promise';
 
 interface AgPopup {
     element: HTMLElement;
