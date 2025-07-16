@@ -124,6 +124,7 @@ export { _isEventFromPrintableCharacter } from './agStack/utils/keyboardUtils';
 export { PopupEventParams } from './agStack/interfaces/iPopup';
 export { ScrollDirection } from './agStack/interfaces/baseEvents';
 export { KeyCode } from './agStack/constants/keyCode';
+export { createApp } from './agStack/app/app';
 
 // AG Stack Widgets
 export {

@@ -26,7 +26,7 @@ export abstract class AgComponentStub<
         TCommon,
         TPropertiesService extends IPropertiesService<TProperties, TCommon>,
         TComponentSelectorType extends string,
-        TLocalEventType extends string,
+        TLocalEventType extends string = AgComponentEvent,
     >
     extends AgBeanStub<
         TBeanCollection,
