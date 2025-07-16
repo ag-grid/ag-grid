@@ -1,15 +1,12 @@
 // Create a temporary file for the worker
 import fs from 'fs';
 import path from 'path';
-import { performance } from 'perf_hooks';
 import { Worker } from 'worker_threads';
 
 import { _getLevenshteinSimilarityDistance } from './fuzzyMatch';
 
-const tmpDir = path.dirname(__filename);
-
 async function runInWorker<T extends any[], R>(func: (...args: T) => R, ...args: T) {
-    const workerPath = path.join(tmpDir, `worker-${Date.now()}.js`);
+    const workerPath = path.join(__dirname, `worker-${Date.now()}.js`);
     try {
         const workerOutput = await new Promise<string>((resolve, reject) => {
             // Create a temporary worker file (simplified example)
@@ -29,7 +26,7 @@ async function runInWorker<T extends any[], R>(func: (...args: T) => R, ...args:
               });
             `;
 
-            fs.mkdirSync(tmpDir, { recursive: true });
+            fs.mkdirSync(__dirname, { recursive: true });
 
             fs.writeFileSync(workerPath, workerCode);
 
@@ -81,10 +78,9 @@ describe('fuzzyMatch.ts', () => {
         describe('performance', () => {
             it('should handle long strings efficiently', async () => {
                 // run in a worker
-                const measure = function exe(len1: number, len2: number, cwd: string) {
-                    const { performance } = require('perf_hooks');
-                    const path = require('path');
-                    const { _getLevenshteinSimilarityDistance } = require(path.join(cwd, 'fuzzyMatch.ts'));
+                // @ts-nocheck worker code
+                const measure = function exe(len1: number, len2: number) {
+                    const { _getLevenshteinSimilarityDistance } = require('./fuzzyMatch');
 
                     const longString1 = 'a'.repeat(len1) + 'b';
                     const longString2 = 'a'.repeat(len2) + 'c';
@@ -97,8 +93,8 @@ describe('fuzzyMatch.ts', () => {
                 };
 
                 const [result, result2] = await Promise.all([
-                    runInWorker(measure, 1e8, 1, __dirname), // 100 MB string
-                    runInWorker(measure, 1e3, 1, __dirname), // 1 KB string
+                    runInWorker(measure, 1e8, 1), // 100 MB string
+                    runInWorker(measure, 1e3, 1), // 1 KB string
                 ]);
                 expect(result2 - result).toBeLessThan(2 * 1024 * 1024); // Less than 2MB difference
             }, 10000);
