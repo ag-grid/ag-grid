@@ -1,6 +1,12 @@
 import { test } from '@playwright/test';
 
-import { getExampleConfig, getFrameworkExamples, runExampleSpec, setupConsoleExpectations } from '../exampleTestRunner';
+import {
+    getExampleConfig,
+    getFrameworkExamples,
+    runExampleSpec,
+    setupConsoleExpectations,
+    setupExampleAssetRouting,
+} from '../exampleTestRunner';
 
 const framework = 'angular';
 
@@ -12,6 +18,7 @@ test.describe(framework, async () => {
 
         let errors: string[];
         test.beforeEach(async ({ page }) => {
+            await setupExampleAssetRouting(page);
             errors = setupConsoleExpectations(page);
         });
 

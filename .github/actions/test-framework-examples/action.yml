@@ -28,7 +28,9 @@ runs:
       working-directory: testing/ag-grid-docs
       env:
         FRAMEWORK: ${{ inputs.framework }}
-      run: npx playwright test frameworks/${{ inputs.framework }}-examples.spec.ts --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      run: |
+        npx playwright test prime-example-assets-cache.spec.ts 
+        npx playwright test frameworks/${{ inputs.framework }}-examples.spec.ts --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       shell: bash
 
     - name: Upload Test Report

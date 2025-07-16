@@ -75,6 +75,14 @@ const excludeErrors = [
     'Request to access cookie or storage on “<URL>” was blocked because it came from a tracker and Enhanced Tracking Protection is enabled.',
 ];
 
+export async function setupExampleAssetRouting(page) {
+    await page.routeFromHAR('./e2e/.cache/example-assets.har', {
+        url: 'https://www.ag-grid.com/example-assets/*.json',
+        update: false,
+        notFound: 'abort',
+    });
+}
+
 export function setupConsoleExpectations(page) {
     const errors: string[] = [];
 

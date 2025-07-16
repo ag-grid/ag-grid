@@ -59,6 +59,7 @@ export default defineConfig({
                 '**/frameworks/vue3-examples.spec.ts',
                 '**/frameworks/reactFunctional-examples.spec.ts',
                 '**/frameworks/typescript-examples.spec.ts',
+                '**/prime-example-assets-cache.spec.ts',
             ],
         },
         {
@@ -70,6 +71,7 @@ export default defineConfig({
                 '**/frameworks/vue3-examples.spec.ts',
                 '**/frameworks/reactFunctional-examples.spec.ts',
                 '**/frameworks/typescript-examples.spec.ts',
+                '**/prime-example-assets-cache.spec.ts',
             ],
         },
 
