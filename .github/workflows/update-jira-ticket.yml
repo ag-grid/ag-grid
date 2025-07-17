@@ -1,4 +1,4 @@
-name: Utility Comment Hook
+name: Update JIRA Ticket on PR Merge
 
 on:
   pull_request:
