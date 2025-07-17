@@ -480,23 +480,50 @@
 }
 
 .contactSection {
+    position: relative;
     padding-top: $spacing-size-20;
     padding-bottom: $spacing-size-20;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at 50% 100%, #0e44917d 0%, var(--color-bg-primary) 80%);
+        opacity: 0.18;
+    }
+
+    > * {
+        position: relative;
+        z-index: 1;
+    }
+
     .contactContent {
         max-width: 600px;
         margin-bottom: 32px;
+        text-align: center;
     }
     .contactOffice {
-        margin-bottom: 24px;
         font-size: 16px;
         line-height: 1.6;
         strong {
-            font-weight: 600;
+            opacity: 0.7;
+            font-weight: 500;
         }
     }
     .contactEmail {
         font-size: 16px;
-        margin-top: 16px;
+
         a {
             font-weight: bold;
             color: var(--color-brand-500);
@@ -834,4 +861,32 @@
     display: flex;
     gap: $spacing-size-3;
     margin-left: $spacing-size-4;
+}
+
+.socialLinksColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.contactOffice {
+    color: var(--color-link);
+    font-weight: var(--text-semibold);
+}
+
+.socialLinkRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.contactFlex {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-24;
+    padding-top: $spacing-size-12;
+    padding-bottom: $spacing-size-12;
+    justify-content: center;
+    align-items: center;
 }

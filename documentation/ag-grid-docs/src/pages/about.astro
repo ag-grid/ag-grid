@@ -349,45 +349,6 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                             <div class={styles.resourceDesc}>View our upcoming and past events</div>
                         </div>
                     </a>
-
-                    <div class={styles.resourceItem}>
-                        <div class={styles.resourceText}>
-                            <div class={styles.socialLinks}>
-                                <a
-                                    href="https://github.com/ag-grid/ag-grid"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label="GitHub"
-                                >
-                                    <Icon name="github" />
-                                </a>
-                                <a
-                                    href="https://x.com/ag_grid"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label="X (Twitter)"
-                                >
-                                    <Icon name="xLogo" />
-                                </a>
-                                <a
-                                    href="https://youtube.com/c/aggrid"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label="YouTube"
-                                >
-                                    <Icon name="youtube" />
-                                </a>
-                                <a
-                                    href="https://linkedin.com/company/ag-grid"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label="LinkedIn"
-                                >
-                                    <Icon name="linkedin" />
-                                </a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </section>
 
@@ -396,23 +357,70 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                     <h2>Get in touch</h2>
                     <p>We are here to help with licenses, developer support and any other queries.</p>
                 </div>
-                <div class={styles.contactOffice}>
-                    <strong>Our office</strong>
-                    <br />
-                    Bank Chambers
-                    <br />
-                    6 Borough High Street
-                    <br />
-                    London
-                    <br />
-                    SE1 9QQ
-                </div>
-                <div class={styles.contactEmail}>
-                    Contact us over email
-                    <br />
-                    <span class={styles.contactEmailDesc}>
-                        We can be also reached at <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>
-                    </span>
+                <div class={styles.contactFlex}>
+                    <div class={styles.contactOffice}>
+                        <a href="https://maps.app.goo.gl/ApgTiVA3rLMooa6o7">
+                            <br />
+                            Bank Chambers
+                            <br />
+                            6 Borough High Street
+                            <br />
+                            London
+                            <br />
+                            SE1 9QQ
+                        </a>
+                    </div>
+                    <div class={styles.contactEmail}>
+                        <span class={styles.contactEmailDesc}>
+                            <a class="button-tertiary" href="mailto:info@ag-grid.com">info@ag-grid.com</a>
+                        </span>
+                    </div>
+                    <div class={styles.resourceItem}>
+                        <div class={styles.resourceText}>
+                            <div class={styles.socialLinksColumn}>
+                                <a
+                                    href="https://github.com/ag-grid/ag-grid"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="GitHub"
+                                    class={styles.socialLinkRow}
+                                >
+                                    <Icon name="github" />
+                                    <span>GitHub</span>
+                                </a>
+                                <a
+                                    href="https://x.com/ag_grid"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="X (Twitter)"
+                                    class={styles.socialLinkRow}
+                                >
+                                    <Icon name="xLogo" />
+                                    <span>X</span>
+                                </a>
+                                <a
+                                    href="https://youtube.com/c/aggrid"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="YouTube"
+                                    class={styles.socialLinkRow}
+                                >
+                                    <Icon name="youtube" />
+                                    <span>YouTube</span>
+                                </a>
+                                <a
+                                    href="https://linkedin.com/company/ag-grid"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="LinkedIn"
+                                    class={styles.socialLinkRow}
+                                >
+                                    <Icon name="linkedin" />
+                                    <span>LinkedIn</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>
