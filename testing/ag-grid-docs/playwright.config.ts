@@ -98,7 +98,7 @@ export default defineConfig({
 
     /* Run your local dev server before starting the tests */
     webServer: {
-        command: './node_modules/nx/bin/nx.js dev',
+        command: 'yarn nx dev',
         url: 'https://localhost:4610',
         reuseExistingServer: !process.env.CI,
         cwd: '../../',
