@@ -97,12 +97,12 @@ export default defineConfig({
     ],
 
     /* Run your local dev server before starting the tests */
-    webServer: {
-        command: 'yarn nx dev',
-        url: 'https://localhost:4610',
-        reuseExistingServer: !process.env.CI,
-        cwd: '../../',
-        ignoreHTTPSErrors: true,
-        timeout: 180 * 1000, // 3 minutes
-    },
+    // webServer: {
+    //     command: 'yarn nx dev',
+    //     url: 'https://localhost:4610',
+    //     reuseExistingServer: !process.env.CI,
+    //     cwd: '../../',
+    //     ignoreHTTPSErrors: true,
+    //     timeout: 180 * 1000, // 3 minutes
+    // },
 });
