@@ -103,5 +103,6 @@ export default defineConfig({
         reuseExistingServer: !process.env.CI,
         cwd: '../../',
         ignoreHTTPSErrors: true,
+        timeout: 180 * 1000, // 3 minutes
     },
 });
