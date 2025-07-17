@@ -45,7 +45,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     TextFilterModule: 120.09,
     TooltipModule: 23.68,
     UndoRedoEditModule: 64.89,
-    ValidationModule: 69.88,
+    ValidationModule: 72.17,
     ValueCacheModule: 0.65,
     CellSpanModule: 8.08,
 };
