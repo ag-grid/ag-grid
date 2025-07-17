@@ -98,7 +98,7 @@ export default defineConfig({
 
     /* Run your local dev server before starting the tests */
     webServer: {
-        command: 'nx dev',
+        command: './node_modules/nx/bin/nx.js dev',
         url: 'https://localhost:4610',
         reuseExistingServer: !process.env.CI,
         cwd: '../../',
