@@ -60,6 +60,8 @@ export function _getLevenshteinSimilarityDistance(inputText: string, suggestion:
         previousRow[j] = j;
     }
 
+    let secondaryScore = 0;
+
     for (let i = 1; i <= sourceLength; i++) {
         currentRow[0] = i;
 
@@ -67,7 +69,20 @@ export function _getLevenshteinSimilarityDistance(inputText: string, suggestion:
             const sourceChar = inputText[i - 1];
             const targetChar = suggestion[j - 1];
 
-            if (sourceChar === targetChar) {
+            if (sourceChar.toLocaleLowerCase() === targetChar.toLocaleLowerCase()) {
+                ++secondaryScore; // Favor case-insensitive matches;
+                if (sourceChar === targetChar) {
+                    ++secondaryScore; // Favor exact matches
+                }
+                if (i > 1 && j > 1) {
+                    if (inputText[i - 2].toLocaleLowerCase() === suggestion[j - 2].toLocaleLowerCase()) {
+                        ++secondaryScore; // Favor case-insensitive consecutive matches
+                        if (inputText[i - 2] === suggestion[j - 2]) {
+                            ++secondaryScore; // Favor case-sensitive consecutive matches
+                        }
+                    }
+                }
+                if (i < sourceLength / 2 - 10) ++secondaryScore; // Favor matches at the start of the string
                 currentRow[j] = previousRow[j - 1]; // No cost
             } else {
                 const insertCost = currentRow[j - 1];
@@ -82,5 +97,5 @@ export function _getLevenshteinSimilarityDistance(inputText: string, suggestion:
         [previousRow, currentRow] = [currentRow, previousRow];
     }
 
-    return previousRow[targetLength];
+    return previousRow[targetLength] / (secondaryScore + 1); // negatives divided by positives, ensure no division by zero
 }
