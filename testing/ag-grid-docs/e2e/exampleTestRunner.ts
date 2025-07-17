@@ -77,11 +77,11 @@ const excludeErrors = [
 ];
 
 export async function setupExampleAssetRouting(page) {
-    // await page.routeFromHAR('./e2e/.cache/example-assets.har', {
-    //     url: 'https://www.ag-grid.com/example-assets/*.json',
-    //     update: false,
-    //     notFound: 'abort',
-    // });
+    await page.routeFromHAR('./e2e/.cache/example-assets.har', {
+        url: 'https://www.ag-grid.com/example-assets/*.json',
+        update: false,
+        notFound: 'abort',
+    });
 }
 
 export function setupConsoleExpectations(page) {
