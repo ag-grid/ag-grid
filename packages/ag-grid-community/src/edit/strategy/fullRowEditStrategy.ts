@@ -245,10 +245,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         this.restoreEditors();
 
-        const suppressEditNextOnTab = this.gos.get('suppressEditNextOnTab');
+        const suppressEditingNextOnTab = this.gos.get('suppressEditingNextOnTab');
 
         if (nextEditable && !preventNavigation) {
-            if (suppressEditNextOnTab) {
+            if (suppressEditingNextOnTab) {
                 nextCell.focusCell(true, event);
             } else {
                 if (!nextCell.comp?.getCellEditor()) {
@@ -266,7 +266,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         if (!rowsMatch && !preventNavigation) {
             this.cleanupEditors(nextCell, true);
 
-            if (suppressEditNextOnTab) {
+            if (suppressEditingNextOnTab) {
                 nextCell.focusCell(true, event);
             } else {
                 this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });

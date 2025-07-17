@@ -321,7 +321,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'enableStrictPivotColumnOrder',
     'suppressSetFilterByDefault',
     'enableFilterHandlers',
-    'suppressEditNextOnTab',
+    'suppressEditingNextOnTab',
     'hidePaddedHeaderRows',
 ];
 
