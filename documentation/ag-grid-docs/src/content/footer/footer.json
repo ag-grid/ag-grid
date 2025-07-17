@@ -36,6 +36,10 @@
                 "name": "Support via Zendesk",
                 "url": "https://ag-grid.zendesk.com/",
                 "newTab": true
+            },
+            {
+                "name": "Security",
+                "url": "/data-grid/security"
             }
         ]
     },
