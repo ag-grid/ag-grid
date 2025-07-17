@@ -38,4 +38,19 @@ test.describe('Prime Example assets', () => {
             expect(response && response.status()).toBe(200);
         }
     });
+
+    //load all frameworks and cache the assets from jsdeliver
+    // test(`should cache example assets from jsdeliver`, async ({ page }) => {
+    //     await page.routeFromHAR('./e2e/.cache/jsdeliver.har', {
+    //         url: 'https://cdn.jsdelivr.net/npm/**/*',
+    //         update: true,
+    //     });
+
+    //     for (const file of assetFiles) {
+    //         const url = `https://cdn.jsdelivr.net/npm/ag-grid-docs-example-assets@latest/${file}`;
+    //         const response = await page.goto(url);
+    //         // Check that the file loads successfully (status 200)
+    //         expect(response && response.status()).toBe(200);
+    //     }
+    // });
 });
