@@ -9,11 +9,13 @@ export function _fuzzySuggestions(params: {
 }): { values: string[]; indices: number[] } {
     const { inputValue, allSuggestions, hideIrrelevant, filterByPercentageOfBestMatch } = params;
 
-    let thisSuggestions: { value: string; relevance: number; idx: number }[] = allSuggestions.map((text, idx) => ({
-        value: text,
-        relevance: _getLevenshteinSimilarityDistance(inputValue, text),
-        idx,
-    }));
+    let thisSuggestions: { value: string; relevance: number; idx: number }[] = (allSuggestions ?? []).map(
+        (text, idx) => ({
+            value: text,
+            relevance: _getLevenshteinSimilarityDistance(inputValue, text),
+            idx,
+        })
+    );
 
     /** Lower values mean more similar strings. */
     thisSuggestions.sort((a, b) => a.relevance - b.relevance);
