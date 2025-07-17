@@ -184,12 +184,12 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         }
 
         // Don't start editing the next cell, focus only
-        const suppressEditNextOnTab = this.gos.get('suppressEditNextOnTab');
+        const suppressEditingNextOnTab = this.gos.get('suppressEditingNextOnTab');
 
         if (!rowsMatch && !preventNavigation) {
             super.cleanupEditors(nextCell, true);
 
-            if (suppressEditNextOnTab) {
+            if (suppressEditingNextOnTab) {
                 nextCell.focusCell(true, event);
             } else {
                 this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
@@ -199,7 +199,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         if (nextEditable && !preventNavigation) {
             // need to focus the cell before setting the editor, otherwise the focus handler won't cause previous editor cleanups
             nextCell.focusCell(false, event);
-            if (suppressEditNextOnTab) {
+            if (suppressEditingNextOnTab) {
                 nextCell.focusCell(true, event);
             } else if (!nextCell.comp?.getCellEditor()) {
                 // editor missing because it was outside the viewport during creating phase, attempt to create it now

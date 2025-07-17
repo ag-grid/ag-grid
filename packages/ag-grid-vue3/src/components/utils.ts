@@ -478,7 +478,7 @@ export interface Props<TData> {
     editType?: EditStrategyType | undefined,
     /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
          */
-    suppressEditNextOnTab?: boolean | undefined,
+    suppressEditingNextOnTab?: boolean | undefined,
     /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
@@ -1952,7 +1952,7 @@ export function getProps() {
         autoSizeStrategy: undefined,
         components: undefined,
         editType: undefined,
-        suppressEditNextOnTab: undefined,
+        suppressEditingNextOnTab: undefined,
         getFullRowEditValidationErrors: undefined,
         invalidEditValueMode: undefined,
         singleClickEdit: undefined,
