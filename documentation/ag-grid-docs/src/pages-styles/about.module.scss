@@ -759,3 +759,13 @@
     animation-delay: 0.5s;
     animation-fill-mode: both;
 }
+
+.resourceItem {
+    .resourceTitle {
+        font-size: var(--text-fs-lg);
+    }
+
+    svg path {
+        fill: var(--color-brand-500);
+    }
+}

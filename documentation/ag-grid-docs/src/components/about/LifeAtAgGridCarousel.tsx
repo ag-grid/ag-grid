@@ -5,18 +5,13 @@ import styles from './LifeAtAgGridCarousel.module.scss';
 
 const images = [
     urlWithBaseUrl('images/about/carousel/carousel-1.png'),
-    urlWithBaseUrl('images/about/carousel/carousel-17.jpg'),
-    urlWithBaseUrl('images/about/carousel/carousel-7.jpg'),
     urlWithBaseUrl('images/about/carousel/carousel-18.jpg'),
     urlWithBaseUrl('images/about/carousel/carousel-8.jpg'),
     urlWithBaseUrl('images/about/carousel/carousel-5.png'),
     urlWithBaseUrl('images/about/carousel/carousel-6.png'),
     urlWithBaseUrl('images/about/carousel/carousel-9.jpg'),
     urlWithBaseUrl('images/about/carousel/carousel-2.png'),
-    urlWithBaseUrl('images/about/carousel/carousel-10.jpg'),
     urlWithBaseUrl('images/about/carousel/carousel-11.jpg'),
-    urlWithBaseUrl('images/about/carousel/carousel-12.jpg'),
-    urlWithBaseUrl('images/about/carousel/carousel-16.jpg'),
     urlWithBaseUrl('images/about/carousel/carousel-3.png'),
 ];
 

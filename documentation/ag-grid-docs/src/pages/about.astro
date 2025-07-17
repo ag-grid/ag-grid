@@ -13,6 +13,7 @@ import BarChartSvg from '../images/about-icons/bar-chart.svg';
 import ChartSvg from '../images/about-icons/chart.svg';
 import LicenseSvg from '../images/about-icons/license.svg';
 import DonutAcceleratingSvg from '../images/about-icons/donut-accelerating.svg';
+import BlogSvg from '../images/about-icons/blog.svg';
 
 const timeline = [
     {
@@ -145,18 +146,13 @@ const leadershipTeam = [
 
 const carouselImages = [
     urlWithBaseUrl('images/about/carousel/carousel-1.png'),
-    urlWithBaseUrl('images/about/carousel/carousel-17.jpg'),
-    urlWithBaseUrl('images/about/carousel/carousel-7.jpg'),
     urlWithBaseUrl('images/about/carousel/carousel-18.jpg'),
     urlWithBaseUrl('images/about/carousel/carousel-8.jpg'),
     urlWithBaseUrl('images/about/carousel/carousel-5.png'),
     urlWithBaseUrl('images/about/carousel/carousel-6.png'),
     urlWithBaseUrl('images/about/carousel/carousel-9.jpg'),
     urlWithBaseUrl('images/about/carousel/carousel-2.png'),
-    urlWithBaseUrl('images/about/carousel/carousel-10.jpg'),
     urlWithBaseUrl('images/about/carousel/carousel-11.jpg'),
-    urlWithBaseUrl('images/about/carousel/carousel-12.jpg'),
-    urlWithBaseUrl('images/about/carousel/carousel-16.jpg'),
     urlWithBaseUrl('images/about/carousel/carousel-3.png'),
 ];
 
@@ -206,7 +202,6 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
             <section class={styles.memoriumSection}>
                 <div class={styles.content}>
                     <img src={urlWithBaseUrl('images/about/niall.png')} class={styles.aboutHeaderImage} />
-
                     <div>
                         <h2>In memory of our amazing founder Niall Crosby</h2>
                         <p>
@@ -324,25 +319,26 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
             <section class={styles.resourcesSection}>
                 <div class={styles.resourcesContent}>
                     <h2>Resources</h2>
-                    <p>How to find us, common resources</p>
+                    <p>How to find us online, common resources</p>
                 </div>
                 <div class={styles.resourcesList}>
                     <div class={styles.resourceItem}>
                         <div class={styles.resourceIcon}>
-                            <Icon name="lightBulb" />
+                            <BlogSvg />
                         </div>
                         <div class={styles.resourceText}>
                             <div class={styles.resourceTitle}>Blog</div>
-                            <div class={styles.resourceDesc}>Some content goes here</div>
+                            <div class={styles.resourceDesc}>See our latest articles</div>
                         </div>
                     </div>
+
                     <div class={styles.resourceItem}>
                         <div class={styles.resourceIcon}>
-                            <Icon name="lightBulb" />
+                            <BlogSvg />
                         </div>
                         <div class={styles.resourceText}>
-                            <div class={styles.resourceTitle}>Press Kit</div>
-                            <div class={styles.resourceDesc}>Some content goes here</div>
+                            <div class={styles.resourceTitle}>Community</div>
+                            <div class={styles.resourceDesc}>View our upcoming and past events</div>
                         </div>
                     </div>
                 </div>
