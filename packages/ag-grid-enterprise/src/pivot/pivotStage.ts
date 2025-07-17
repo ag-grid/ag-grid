@@ -3,7 +3,6 @@ import type {
     BeanCollection,
     ChangedPath,
     ClientSideRowModelStage,
-    ColDef,
     ColumnModel,
     GridOptions,
     IColsService,

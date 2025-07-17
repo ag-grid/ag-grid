@@ -374,24 +374,29 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
      * Recreate a pivot colDef to update from a changed valueColumn colDef
      */
     public recreateColDef(colDef: ColDef): ColDef {
-        if (!colDef.pivotValueColumn) {
+        const {
+            pivotValueColumn,
+            headerName,
+            pivotKeys,
+            pivotTotalColumnIds,
+            columnGroupShow,
+            colId,
+            valueGetter,
+            aggFunc,
+        } = colDef;
+
+        if (!pivotValueColumn) {
             // if this is not a pivot value column, then we don't need to recreate it
             return colDef;
         }
 
-        const newColDef = this.createColDef(
-            colDef.pivotValueColumn as AgColumn,
-            colDef.headerName,
-            colDef.pivotKeys,
-            !!colDef.pivotTotalColumnIds
-        );
+        const newColDef = this.createColDef(pivotValueColumn as AgColumn, headerName, pivotKeys, !!pivotTotalColumnIds);
 
         // don't overwrite these
-        newColDef.columnGroupShow = colDef.columnGroupShow;
-        newColDef.colId = colDef.colId;
-        newColDef.valueGetter = colDef.valueGetter;
-        newColDef.aggFunc = colDef.aggFunc;
-        newColDef.valueGetter = colDef.valueGetter;
+        newColDef.columnGroupShow = columnGroupShow;
+        newColDef.colId = colId;
+        newColDef.valueGetter = valueGetter;
+        newColDef.aggFunc = aggFunc;
 
         this.gos.get('processPivotResultColDef')?.(newColDef);
 
