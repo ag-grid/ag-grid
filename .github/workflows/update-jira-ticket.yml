@@ -74,7 +74,7 @@ jobs:
               3: 'REVIEWED',
             };
             // Move the JIRA ticket to 'the next column' if the PR is merged
-            const availableTransitions = await utils.getTransitions(issue);
+            const availableTransitions = await utils.getTransitions(issueKey);
             if (!availableTransitions || availableTransitions.length === 0) {
               throw new Error(`No available transitions found for JIRA ticket ${issueKey}.`);
             }
