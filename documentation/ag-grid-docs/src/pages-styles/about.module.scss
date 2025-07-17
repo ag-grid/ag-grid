@@ -23,6 +23,10 @@
     padding-top: $spacing-size-20;
     padding-bottom: $spacing-size-20;
 
+    h2 {
+        font-size: 40px;
+    }
+
     span {
         color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 70%);
     }
@@ -276,15 +280,11 @@
         width: 48px;
         height: 48px;
         border-radius: 12px;
-        background: var(--color-util-brand-50);
+
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-
-        path {
-            fill: var(--color-brand-500);
-        }
 
         svg {
             width: 28px;
@@ -768,4 +768,70 @@
     svg path {
         fill: var(--color-brand-500);
     }
+}
+
+.principleColor1 {
+    background: rgba(244, 63, 94, 0.05);
+    path {
+        fill: rgb(244, 63, 94);
+    }
+    #{$selector-darkmode} & {
+        background: rgba(244, 63, 94, 0.22);
+    }
+}
+
+.principleColor2 {
+    background: rgba(245, 158, 11, 0.05);
+    path {
+        fill: rgb(245, 158, 11);
+    }
+    #{$selector-darkmode} & {
+        background: rgba(245, 158, 11, 0.22);
+    }
+}
+
+.principleColor3 {
+    background: rgba(16, 185, 129, 0.05);
+    path {
+        fill: rgb(16, 185, 129);
+    }
+    #{$selector-darkmode} & {
+        background: rgba(16, 185, 129, 0.22);
+    }
+}
+
+.principleColor4 {
+    background: rgba(139, 92, 246, 0.05);
+    path {
+        fill: rgb(139, 92, 246);
+    }
+    #{$selector-darkmode} & {
+        background: rgba(139, 92, 246, 0.22);
+    }
+}
+
+.principleColor5 {
+    background: rgba(59, 130, 246, 0.05);
+    path {
+        fill: rgb(59, 130, 246);
+    }
+    #{$selector-darkmode} & {
+        background: rgba(59, 130, 246, 0.22);
+    }
+}
+
+.principleColor6 {
+    background: rgba(20, 184, 166, 0.05);
+    path {
+        fill: rgb(20, 184, 166);
+    }
+    #{$selector-darkmode} & {
+        background: rgba(20, 184, 166, 0.22);
+    }
+}
+
+.socialLinks {
+    display: flex;
+    gap: $spacing-size-3;
+    margin-left: $spacing-size-4;
 }

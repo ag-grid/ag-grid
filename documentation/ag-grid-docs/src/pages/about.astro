@@ -14,6 +14,9 @@ import ChartSvg from '../images/about-icons/chart.svg';
 import LicenseSvg from '../images/about-icons/license.svg';
 import DonutAcceleratingSvg from '../images/about-icons/donut-accelerating.svg';
 import BlogSvg from '../images/about-icons/blog.svg';
+import CodeSvg from '../images/about-icons/code.svg';
+import StarSvg from '../images/about-icons/star.svg';
+import BrainSvg from '../images/about-icons/brain.svg';
 
 const timeline = [
     {
@@ -80,17 +83,17 @@ const timeline = [
 
 const principles = [
     {
-        icon: BornSvg,
+        icon: CodeSvg,
         title: 'Developer-first',
         description: 'Our approach to create innovative, market-leading products',
     },
     {
-        icon: ChartSvg,
+        icon: StarSvg,
         title: 'Technical excellence',
         description: 'Deliver consistent quality and exceptional end-user experiences',
     },
     {
-        icon: ConferenceSvg,
+        icon: BrainSvg,
         title: 'Deep understanding',
         description: "Forging a deep understanding of our customers' problems",
     },
@@ -252,9 +255,9 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
 
                 <div class={styles.principlesList}>
                     {
-                        principles.map(({ icon: PrincipleIcon, title, description }) => (
+                        principles.map(({ icon: PrincipleIcon, title, description }, idx) => (
                             <div class={styles.principleItem}>
-                                <div class={styles.principleIcon}>
+                                <div class={`${styles.principleIcon} ${styles[`principleColor${idx + 1}`]}`}>
                                     <PrincipleIcon />
                                 </div>
                                 <div class={styles.principleText}>
@@ -322,7 +325,12 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                     <p>How to find us online, common resources</p>
                 </div>
                 <div class={styles.resourcesList}>
-                    <div class={styles.resourceItem}>
+                    <a
+                        href="https://blog.ag-grid.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class={styles.resourceItem}
+                    >
                         <div class={styles.resourceIcon}>
                             <BlogSvg />
                         </div>
@@ -330,15 +338,54 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                             <div class={styles.resourceTitle}>Blog</div>
                             <div class={styles.resourceDesc}>See our latest articles</div>
                         </div>
-                    </div>
+                    </a>
 
-                    <div class={styles.resourceItem}>
+                    <a href={urlWithBaseUrl('/community')} class={styles.resourceItem}>
                         <div class={styles.resourceIcon}>
-                            <BlogSvg />
+                            <ConferenceSvg />
                         </div>
                         <div class={styles.resourceText}>
                             <div class={styles.resourceTitle}>Community</div>
                             <div class={styles.resourceDesc}>View our upcoming and past events</div>
+                        </div>
+                    </a>
+
+                    <div class={styles.resourceItem}>
+                        <div class={styles.resourceText}>
+                            <div class={styles.socialLinks}>
+                                <a
+                                    href="https://github.com/ag-grid/ag-grid"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="GitHub"
+                                >
+                                    <Icon name="github" />
+                                </a>
+                                <a
+                                    href="https://x.com/ag_grid"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="X (Twitter)"
+                                >
+                                    <Icon name="xLogo" />
+                                </a>
+                                <a
+                                    href="https://youtube.com/c/aggrid"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="YouTube"
+                                >
+                                    <Icon name="youtube" />
+                                </a>
+                                <a
+                                    href="https://linkedin.com/company/ag-grid"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="LinkedIn"
+                                >
+                                    <Icon name="linkedin" />
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -369,34 +416,34 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                 </div>
             </section>
         </div>
-    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const track = document.getElementById('carousel-track');
-            if (!track) return;
-            let animationFrame: number;
-            let start: number | null = null;
-            let scrollLeft = 0;
-            const speed = 1.5; // px per ms (increased speed)
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const track = document.getElementById('carousel-track');
+                if (!track) return;
+                let animationFrame: number;
+                let start: number | null = null;
+                let scrollLeft = 0;
+                const speed = 1.5; // px per ms (increased speed)
 
-            const animate = (timestamp: number) => {
-                if (start === null) start = timestamp;
-                scrollLeft += speed;
-                if (scrollLeft >= track.scrollWidth / 2) {
-                    scrollLeft = 0;
-                }
-                track.scrollLeft = scrollLeft;
+                const animate = (timestamp: number) => {
+                    if (start === null) start = timestamp;
+                    scrollLeft += speed;
+                    if (scrollLeft >= track.scrollWidth / 2) {
+                        scrollLeft = 0;
+                    }
+                    track.scrollLeft = scrollLeft;
+                    animationFrame = requestAnimationFrame(animate);
+                };
                 animationFrame = requestAnimationFrame(animate);
-            };
-            animationFrame = requestAnimationFrame(animate);
 
-            // Cleanup when the user navigates away
-            window.addEventListener('beforeunload', () => {
-                if (animationFrame) {
-                    cancelAnimationFrame(animationFrame);
-                }
+                // Cleanup when the user navigates away
+                window.addEventListener('beforeunload', () => {
+                    if (animationFrame) {
+                        cancelAnimationFrame(animationFrame);
+                    }
+                });
             });
-        });
-    </script>
+        </script>
+    </div>
 </Layout>
