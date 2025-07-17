@@ -21,7 +21,9 @@ export function _fuzzySuggestions(params: {
     thisSuggestions.sort((a, b) => a.relevance - b.relevance);
 
     if (hideIrrelevant) {
-        thisSuggestions = thisSuggestions.filter((suggestion) => suggestion.relevance !== 0);
+        thisSuggestions = thisSuggestions.filter(
+            (suggestion) => suggestion.relevance < Math.max(suggestion.value.length, inputValue.length)
+        );
     }
 
     if (thisSuggestions.length > 0 && filterByPercentageOfBestMatch && filterByPercentageOfBestMatch > 0) {

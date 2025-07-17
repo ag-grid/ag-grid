@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { Worker } from 'worker_threads';
 
-import { _getLevenshteinSimilarityDistance } from './fuzzyMatch';
+import { _fuzzySuggestions, _getLevenshteinSimilarityDistance } from './fuzzyMatch';
 
 async function runInWorker<T extends any[], R>(func: (...args: T) => R, ...args: T) {
     const workerPath = path.join(__dirname, `worker-${Date.now()}.js`);
@@ -52,6 +52,17 @@ async function runInWorker<T extends any[], R>(func: (...args: T) => R, ...args:
 }
 
 describe('fuzzyMatch.ts', () => {
+    describe('_fuzzySuggestions', () => {
+        it("shouldn't filter out exact matches", () => {
+            const suggestions = _fuzzySuggestions({
+                inputValue: 'test',
+                allSuggestions: ['test', 'tst', 'tst str'],
+                hideIrrelevant: true,
+            });
+            expect(suggestions.values).toEqual(['test', 'tst', 'tst str']);
+        });
+    });
+
     describe('_getLevenshteinSimilarityDistance', () => {
         it('should return 0 for exact match', () => {
             expect(_getLevenshteinSimilarityDistance('test', 'test')).toBe(0);
