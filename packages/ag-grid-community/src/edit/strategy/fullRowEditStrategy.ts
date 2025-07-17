@@ -243,28 +243,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.setFocusOutOnEditor(prevCell);
         }
 
-        if (preventNavigation && !rowsMatch) {
-            // check all cells that should had an editor have one - in the case of small viewports,
-            // editors might have been destroyed along with their corresponding cellCtrl
-            const prevRowNode = prevCell.rowNode;
-            const rowEdits = this.model.getEditRow(prevRowNode);
-            if (rowEdits) {
-                rowEdits.forEach(({ state }, column) => {
-                    if (state !== 'editing') {
-                        return;
-                    }
-
-                    const cellCtrl = _getCellCtrl(this.beans, {
-                        rowNode: prevRowNode,
-                        column,
-                    });
-
-                    if (cellCtrl && !cellCtrl.comp?.getCellEditor()) {
-                        _setupEditor(this.beans, cellCtrl, { silent: true });
-                    }
-                });
-            }
-        }
+        this.restoreEditors();
 
         const suppressEditNextOnTab = this.gos.get('suppressEditNextOnTab');
 
@@ -297,6 +276,27 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         prevCell.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
 
         return true;
+    }
+
+    private restoreEditors(): void {
+        // check all cells that should have an editor have one - in the case of small viewports,
+        // editors might have been destroyed along with their corresponding cellCtrl
+        this.model.getEditMap().forEach((rowEdits, rowNode) =>
+            rowEdits.forEach(({ state }, column) => {
+                if (state !== 'editing') {
+                    return;
+                }
+
+                const cellCtrl = _getCellCtrl(this.beans, {
+                    rowNode,
+                    column,
+                });
+
+                if (cellCtrl && !cellCtrl.comp?.getCellEditor()) {
+                    _setupEditor(this.beans, cellCtrl, { silent: true });
+                }
+            })
+        );
     }
 
     public override destroy(): void {
