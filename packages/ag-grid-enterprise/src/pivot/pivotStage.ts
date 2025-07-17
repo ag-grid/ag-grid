@@ -57,8 +57,6 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
 
     private uniqueValues: Map<string, any> = new Map();
 
-    private pivotColumnDefs: ColDef[];
-
     private aggregationColumnsHashLastTime: string | null;
     private aggregationFuncsHashLastTime: string;
 
@@ -159,10 +157,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
             aggregationFuncsChanged ||
             anyGridOptionsChanged
         ) {
-            const { pivotColumnGroupDefs, pivotColumnDefs } = this.pivotColDefSvc.createPivotColumnDefs(
-                this.uniqueValues
-            );
-            this.pivotColumnDefs = pivotColumnDefs;
+            const pivotColumnGroupDefs = this.pivotColDefSvc.createPivotColumnDefs(this.uniqueValues);
             this.pivotResultCols.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
             // because the secondary columns have changed, then the aggregation needs to visit the whole
             // tree again, so we make the changedPath not active, to force aggregation to visit all paths.
@@ -281,9 +276,5 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         }
 
         return result;
-    }
-
-    public getPivotColumnDefs(): ColDef[] {
-        return this.pivotColumnDefs;
     }
 }

@@ -11,11 +11,6 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
-export interface PivotColDefServiceResult {
-    pivotColumnGroupDefs: (ColDef | ColGroupDef)[];
-    pivotColumnDefs: ColDef[];
-}
-
 const PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 
 const headerNameComparator = (
@@ -74,7 +69,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         });
     }
 
-    public createPivotColumnDefs(uniqueValues: Map<string, any>): PivotColDefServiceResult {
+    public createPivotColumnDefs(uniqueValues: Map<string, any>): (ColDef | ColGroupDef)[] {
         // this is passed to the colModel, to configure the columns and groups we show
 
         const pivotColumnGroupDefs: (ColDef | ColGroupDef)[] = this.createPivotColumnsFromUniqueValues(uniqueValues);
@@ -100,10 +95,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         // additional group columns that contain an aggregated total across all child columns
         this.addPivotTotalsToGroups(pivotColumnGroupDefs, pivotColumnDefs);
 
-        return {
-            pivotColumnGroupDefs: pivotColumnGroupDefs,
-            pivotColumnDefs: pivotColumnDefs,
-        };
+        return pivotColumnGroupDefs;
     }
 
     private createPivotColumnsFromUniqueValues(uniqueValues: Map<string, any>): (ColDef | ColGroupDef)[] {
@@ -401,8 +393,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         newColDef.aggFunc = colDef.aggFunc;
         newColDef.valueGetter = colDef.valueGetter;
 
-        const process = this.gos.get('processPivotResultColDef');
-        process?.(colDef);
+        this.gos.get('processPivotResultColDef')?.(colDef);
 
         return newColDef;
     }
