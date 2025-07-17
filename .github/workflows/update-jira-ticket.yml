@@ -34,7 +34,7 @@ jobs:
         uses: actions/github-script@v7
         continue-on-error: true
         env:
-          PR_ID: ${{ github.event.pull_request.number || github.event.inputs.debug_pr_id }}
+          PR_ID: ${{ github.event.inputs.debug_pr_id || github.event.pull_request.number }}
           DEBUG_JIRA_TICKET: ${{ github.event.inputs.debug_jira_ticket }}
           JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
         with:
