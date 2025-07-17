@@ -54,7 +54,7 @@ jobs:
               return;
             }
             const prefixes = ['fix', 'fix', 'close', 'resolve'];
-            const regex = new RegExp(`(${prefixes.join('|')})\\w*\\s*\\[?(AG-[\\d]{3,})`, 'i');
+            const regex = new RegExp(`(${prefixes.join('|')})\\w*\\s*\\[?((AG|RTI)-[\\d]{3,})`, 'i');
             const utils = require('./scripts/ci/_utils.mjs');
             const transitions = {
               131: 'QA',
