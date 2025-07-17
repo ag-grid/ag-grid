@@ -329,6 +329,14 @@ export function _syncFromEditor(
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
     editModelSvc.setEdit(position, { newValue, oldValue, state: hasEditor ? 'editing' : 'changed' });
 
+    // re-read the value once it's been through all the formatting and parsing
+    const { value } = valueSvc.getValueForDisplay(column as AgColumn, rowNode, true);
+
+    newValue = value;
+
+    // persist newly formatted value
+    editModelSvc.setEdit(position, { newValue });
+
     if (newValue === oldValue || hasEditor) {
         // If the value hasn't changed or the editor is currently open, we don't need to dispatch an event
         return;
@@ -371,12 +379,6 @@ export function _destroyEditor(
         return;
     }
 
-    const wasEditing = editModelSvc?.getEdit(position)?.state === 'editing';
-
-    if (editModelSvc?.hasEdits(position) && rowNode && column) {
-        editModelSvc?.setState(position, 'changed');
-    }
-
     const { comp } = cellCtrl;
 
     if (comp && !comp.getCellEditor()) {
@@ -393,6 +395,12 @@ export function _destroyEditor(
         cellValidationModel?.clearCellValidation(position);
     }
 
+    const wasEditing = editModelSvc?.getEdit(position)?.state === 'editing';
+
+    if (editModelSvc?.hasEdits(position) && rowNode && column) {
+        editModelSvc?.setState(position, 'changed');
+    }
+
     comp?.setEditDetails(); // passing nothing stops editing
     comp?.refreshEditStyles(false, false);
 
@@ -400,15 +408,8 @@ export function _destroyEditor(
     const edit = editModelSvc?.getEdit(position);
 
     if (wasEditing && edit?.state === 'changed' && !params?.silent) {
-        const differ = _valuesDiffer(edit);
-
-        if (differ) {
-            // if the value has changed, we need to update the edit count
-            editModelSvc?.setEdit(position, { editCount: (edit?.editCount ?? 0) + 1 });
-        }
-
         editSvc?.dispatchCellEvent(position, params?.event, 'cellEditingStopped', {
-            valueChanged: edit && differ,
+            valueChanged: edit && _valuesDiffer(edit),
             newValue: edit?.newValue,
             oldValue: edit?.oldValue,
         });

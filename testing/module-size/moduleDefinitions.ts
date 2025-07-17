@@ -1,4 +1,4 @@
-import type {
+import {
     CommunityModuleName,
     EnterpriseModuleName,
     ModuleName,
@@ -70,7 +70,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     NewFiltersToolPanelModule: 169.77,
     PivotModule: 93.6,
     RangeSelectionModule: 53,
-    RichSelectModule: 120.09,
+    RichSelectModule: 116.59,
     RowNumbersModule: 30,
     RowGroupingModule: 79.85,
     RowGroupingPanelModule: 71,
