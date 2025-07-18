@@ -314,7 +314,10 @@ export class SetFilterHandler<TValue = string>
                 params.onModelChange(null, additionalEventAttributes);
                 return;
             }
-            const allSelected = numNewValues === existingFormattedKeys.size;
+            const clearOnAllSelected =
+                this.valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ||
+                !params.filterParams.suppressClearModelOnRefreshValues;
+            const allSelected = clearOnAllSelected && numNewValues === existingFormattedKeys.size;
 
             if (updated || !model.filterType || allSelected) {
                 // if all values selected, remove model

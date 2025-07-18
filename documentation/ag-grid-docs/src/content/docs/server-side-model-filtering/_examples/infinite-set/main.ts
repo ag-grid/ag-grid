@@ -40,6 +40,7 @@ const columnDefs: ColDef[] = [
             keyCreator: countryCodeKeyCreator,
             valueFormatter: countryValueFormatter,
             comparator: countryComparator,
+            suppressClearModelOnRefreshValues: true,
         },
     },
     {
@@ -57,6 +58,7 @@ const columnDefs: ColDef[] = [
                     filter: 'agSetColumnFilter',
                     filterParams: {
                         values: getSportValuesAsync,
+                        suppressClearModelOnRefreshValues: true,
                     },
                 },
             ],
