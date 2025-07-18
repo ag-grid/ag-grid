@@ -90,11 +90,11 @@ export function getStats(parsedReport, context) {
 const JIRA_API_URL = 'https://ag-grid.atlassian.net/rest/api/2';
 
 // Transition an issue to a new status
-export async function transitionIssue(issue, transitionId) {
+export async function transitionJiraIssue(issue, transitionId) {
     const url = `${JIRA_API_URL}/issue/${issue.key}/transitions`;
     try {
         await commonFetch(url, { method: 'POST', body: JSON.stringify({ transition: { id: transitionId } }) });
-        await updateIssue(issue.key, { fields: { assignee: { accountId: issue.fields.assignee.accountId } } });
+        await updateJiraIssue(issue.key, { fields: { assignee: { accountId: issue.fields.assignee.accountId } } });
         console.log(`Issue ${issue.key} transitioned successfully`);
     } catch (error) {
         console.error('Error transitioning issue:', error.message);
@@ -102,7 +102,7 @@ export async function transitionIssue(issue, transitionId) {
     }
 }
 
-export async function updateIssue(issueKey, body) {
+export async function updateJiraIssue(issueKey, body) {
     const url = `${JIRA_API_URL}/issue/${issueKey}`;
     try {
         await commonFetch(url, { method: 'PUT', body: JSON.stringify(body) });
@@ -131,7 +131,7 @@ export async function commonFetch(url, options) {
     });
 }
 
-export async function getTransitions(issueKey) {
+export async function getJiraTransitions(issueKey) {
     const url = `${JIRA_API_URL}/issue/${issueKey}/transitions`;
     try {
         const data = await commonFetch(url, { method: 'GET' });
@@ -142,7 +142,7 @@ export async function getTransitions(issueKey) {
     }
 }
 
-export async function getIssue(issueKey) {
+export async function getJiraIssue(issueKey) {
     const url = `${JIRA_API_URL}/issue/${issueKey}`;
     try {
         return await commonFetch(url, { method: 'GET' });
@@ -150,4 +150,20 @@ export async function getIssue(issueKey) {
         console.error('Error fetching issue:', error.message);
         throw error;
     }
+}
+// Add a comment to an issue
+export async function addJiraComment(issueKey, body) {
+    const url = `${JIRA_API_URL}/issue/${issueKey}/comment`;
+
+    try {
+        await commonFetch(url, { method: 'POST', body: JSON.stringify({ body }) });
+        console.log(`Added comment to issue ${issueKey}`);
+    } catch (error) {
+        console.error('Error adding comment:', error.message);
+        throw error;
+    }
+}
+
+export function jiraLink(text, url) {
+    return `[${text}|${url}]`;
 }

@@ -1,9 +1,5 @@
 #!/usr/bin/env node
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-import { commonFetch, transitionIssue } from './_utils.mjs';
+import { addJiraComment, commonFetch, jiraLink, transitionJiraIssue } from './_utils.mjs';
 
 const COLUMN_BACKLOG_ID = '21';
 const COLUMN_BACKLOG_NAME = 'TODO';
@@ -36,22 +32,22 @@ const summary = process.env.JIRA_SUMMARY || `[NR] CI/CD workflow '${workflowName
 const isSuccess = process.env.IS_SUCCESS === 'true';
 
 if (isSuccess) {
-    await findExistingIssue(fingerprint).then(async (existingIssue) => {
+    await findExistingJiraIssue(fingerprint).then(async (existingIssue) => {
         if (!existingIssue) {
             console.log('No existing issue found. Nothing to do...');
             process.exit(0);
         }
         console.log(`IS_SUCCESS is true, transitioning issue ${existingIssue.key} to QA...`);
-        await transitionIssue(existingIssue, COLUMN_QA_ID);
+        await transitionJiraIssue(existingIssue, COLUMN_QA_ID);
         process.exit(0);
     });
 }
 
-await findExistingIssue(fingerprint).then(async (existingIssue) => {
+await findExistingJiraIssue(fingerprint).then(async (existingIssue) => {
     if (!existingIssue) {
         // If no existing issue is found, create a new one
         console.log('No existing issue found. Creating a new issue...');
-        return createIssue();
+        return createJiraIssue();
     }
     // If an existing issue is found, add a comment and reopen it
     console.log(`Duplicate issue found: ${existingIssue.key}. Adding comment...`);
@@ -61,7 +57,7 @@ await findExistingIssue(fingerprint).then(async (existingIssue) => {
     const shouldAddComment = status === COLUMN_QA_NAME;
     const promises = [
         // Step 1: Add a comment to the issue
-        addComment(
+        addJiraComment(
             existingIssue.key,
             `New failure detected${shouldAddComment ? ', reopening this issue' : ''}:\n\n${description}\n\n${AUTOMATED_MESSAGE}`
         ),
@@ -69,7 +65,7 @@ await findExistingIssue(fingerprint).then(async (existingIssue) => {
 
     if (shouldAddComment) {
         console.log(`Reopening issue ${existingIssue.key} from status "${status}" to "${COLUMN_BACKLOG_NAME}"`);
-        promises.push(transitionIssue(existingIssue, COLUMN_BACKLOG_ID));
+        promises.push(transitionJiraIssue(existingIssue, COLUMN_BACKLOG_ID));
     }
     await Promise.all(promises).catch((error) => {
         console.error('Error processing existing issue:', error);
@@ -78,7 +74,7 @@ await findExistingIssue(fingerprint).then(async (existingIssue) => {
     process.exit(0);
 });
 
-async function createIssue() {
+async function createJiraIssue() {
     const body = {
         fields: {
             project: { key: PROJECT_ID },
@@ -98,7 +94,7 @@ async function createIssue() {
         .catch((error) => console.error('Error creating issue:', error));
 }
 
-async function findExistingIssue(hash) {
+async function findExistingJiraIssue(hash) {
     // Search for existing issues with the given fingerprint
     const jqlQuery = `"Fingerprint[Short text]" ~ '${hash}' AND type = Bug AND project = ${PROJECT_ID} AND fixVersion is EMPTY`;
 
@@ -111,21 +107,4 @@ async function findExistingIssue(hash) {
         console.error('Error searching JIRA for duplicates:', error.message);
         return null; // Fail-safe: proceed to create if search fails
     }
-}
-
-// Add a comment to an issue
-async function addComment(issueKey, body) {
-    const url = `${JIRA_API_URL}/issue/${issueKey}/comment`;
-
-    try {
-        await commonFetch(url, { method: 'POST', body: JSON.stringify({ body }) });
-        console.log(`Added comment to issue ${issueKey}`);
-    } catch (error) {
-        console.error('Error adding comment:', error.message);
-        throw error;
-    }
-}
-
-function jiraLink(text, url) {
-    return `[${text}|${url}]`;
 }

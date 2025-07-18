@@ -37,62 +37,106 @@ jobs:
           PR_ID: ${{ github.event.inputs.debug_pr_id || github.event.pull_request.number }}
           DEBUG_JIRA_TICKET: ${{ github.event.inputs.debug_jira_ticket }}
           JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
+          GH_USER_JIRA_MAPPING: ${{ secrets.GH_USER_JIRA_MAPPING }}
         with:
           result-encoding: string
           script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
+            const {
+                jiraLink,
+                addJiraComment,
+                getJiraTransitions,
+                getJiraIssue,
+                transitionJiraIssue
+            } = require('./scripts/ci/_utils.mjs');
+            
+            const txt = text => ({text, "type": "text"});
+            const ownerRepo = { owner: context.repo.owner, repo: context.repo.repo };
             const pr_number = process.env.PR_ID || '';
             if (!pr_number && !process.env.DEBUG_JIRA_TICKET) {
-              throw new Error('Must provide a PR ID or a JIRA ticket.');
+                throw new Error('Must provide a PR ID or a JIRA ticket.');
             }
             let issueKey = process.env.DEBUG_JIRA_TICKET || '';
             if (!issueKey) {
-              const pr = context.payload.pull_request || await github.rest.pulls.get({
-                owner,
-                repo,
-                pull_number: pr_number
-              });
-              const is_merged = !!pr.merged_at;
-              if (!is_merged) {
-                console.log(`PR #${pr_number} is not merged, skipping JIRA ticket update.`);
-                return;
-              }
-              const prefixes = ['fix', 'fix', 'close', 'resolve'];
-              const regex = new RegExp(`(${prefixes.join('|')})\\w*\\s*\\[?((AG|RTI)-[\\d]{3,})`, 'i');
-              const matches = pr.body.match(regex);
-              if (matches) {
-                issueKey = matches[2];
-              }
+                /** @type {import('@octokit/openapi-types').components['schemas']['pull-request-simple']} */
+                const pr = context.payload.pull_request || (await github.rest.pulls.get({ ...ownerRepo, pull_number: pr_number })).data;
+                const is_merged = !!pr.merged_at;
+                if (!is_merged) {
+                    console.log(`PR #${pr_number} is not merged, skipping JIRA ticket update.`);
+                    return;
+                }
+                const prefixes = ['fix', 'fix', 'close', 'resolve'];
+                const regex = new RegExp(`(${prefixes.join('|')})\\w*\\s*\\[?((AG|RTI)-[\\d]{3,})`, 'i');
+                if (!pr.body) {
+                    console.log('PR body is empty, cannot find JIRA ticket.');
+                } else {
+                    const matches = pr.body.match(regex);
+                    if (matches) {
+                        issueKey = matches[2];
+                    }
+                }
             }
             if (!issueKey) {
-              throw new Error('No JIRA ticket found in PR body.');
+                throw new Error('No JIRA ticket found in PR body.');
             }
-            const utils = require('./scripts/ci/_utils.mjs');
             const transitions = {
-              131: 'QA',
-              3: 'REVIEWED',
+                131: 'QA',
+                3: 'REVIEWED'
             };
             // Move the JIRA ticket to 'the next column' if the PR is merged
-            const availableTransitions = await utils.getTransitions(issueKey);
+            const availableTransitions = await getJiraTransitions(issueKey);
             if (!availableTransitions || availableTransitions.length === 0) {
-              throw new Error(`No available transitions found for JIRA ticket ${issueKey}.`);
+                throw new Error(`No available transitions found for JIRA ticket ${issueKey}.`);
             }
             const nextTransition = Object
-              .keys(transitions)
-              .find(key => availableTransitions
-                .find(tr => 
-                  tr.id === key &&
-                  tr.name.toLowerCase() === transitions[key].toLowerCase()
-                )
-              );
-            const issue = await utils.getIssue(issueKey);
-            await utils.transitionIssue(issue, nextTransition);
+                .keys(transitions)
+                .find(key => availableTransitions
+                    .find(tr =>
+                        tr.id === key &&
+                        tr.name.toLowerCase() === transitions[key].toLowerCase()
+                    )
+                );
+            const issue = await getJiraIssue(issueKey);
+            await transitionJiraIssue(issue, nextTransition);
+            
+            // blocks section
+            const blocks = [];
+            
+            // Reviewers
+            const gh_user_jira_mapping = JSON.parse(process.env.GH_USER_JIRA_MAPPING || '{}');
+            const reviews = await github.rest.pulls.listReviews({ ...ownerRepo, pull_number: pr_number });
+            if (reviews.data.length) {
+                blocks.push(...reviews.data.map(r => ({
+                    "type": "mention",
+                    "attrs": {
+                        "id": gh_user_jira_mapping[r.user.login][0],
+                        "text": `@${gh_user_jira_mapping[r.user.login][1]}`,
+                        "userType": "APP"
+                    }
+                })).filter(r => r.attrs.id && r.attrs.text));
+            }
+            
+            const mergedBy = pr.data.merged_by?.login;
+            if (mergedBy) {
+                blocks.push(txt(`Merged by @${mergedBy}. `));
+            }
+            blocks.push({
+                "text": `[This issue/comment was ${jiraLink('automatically created', 'https://github.com/ag-grid/ag-grid/.github/workflows/update-jira-ticket.yml')} by the AG Grid CI workflow]`,
+                "type": "text"
+            });
+            await addJiraComment(issueKey, {
+                "content": [
+                    {
+                        "content": blocks,
+                        "type": "paragraph"
+                    }
+                ],
+                "type": "doc",
+                "version": 1
+            });
             if (pr_number) {
-              await github.rest.issues.createComment({
-                issue_number: pr_number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: `Transitioned JIRA ticket ${issueKey} to ${transitions[nextTransition]}.`
-              });
+                await github.rest.issues.createComment({
+                    issue_number: pr_number,
+                    ...ownerRepo,
+                    body: `Transitioned JIRA ticket ${issueKey} to ${transitions[nextTransition]}.`
+                });
             }
