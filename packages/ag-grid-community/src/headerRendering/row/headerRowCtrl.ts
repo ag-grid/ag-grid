@@ -54,7 +54,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     public setRowIndex(rowIndex: number): void {
         this.rowIndex = rowIndex;
-        this.comp.setRowIndex(this.getAriaRowIndex());
+        this.comp?.setRowIndex(this.getAriaRowIndex());
         this.onRowHeightChanged();
     }
 
@@ -157,6 +157,9 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private onRowHeightChanged(): void {
+        if (!this.comp) {
+            return;
+        }
         const { topOffset, rowHeight } = this.getTopAndHeight();
 
         this.comp.setTop(topOffset + 'px');
