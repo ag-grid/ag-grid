@@ -5,6 +5,7 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import { _getAllRegisteredModules } from './modules/moduleRegistry';
 import { ThemeImpl } from './theming/Theme';
+import { coreCSS } from './theming/core/core.css-GENERATED';
 import {
     IS_SSR,
     _injectCoreAndModuleCSS,
@@ -341,6 +342,7 @@ export class Environment extends BeanStub implements NamedBean, IEnvironment {
         }
         if (newGridTheme !== oldGridTheme) {
             const additionalCss: Map<string, string[]> = new Map();
+            additionalCss.set('core', [coreCSS]);
             Array.from(_getAllRegisteredModules())
                 .sort((a, b) => a.moduleName.localeCompare(b.moduleName))
                 .forEach((module) => {

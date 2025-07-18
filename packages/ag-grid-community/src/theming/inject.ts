@@ -1,6 +1,6 @@
 import type { IEnvironment } from '../agStack/interfaces/iEnvironment';
 import { FORCE_LEGACY_THEMES } from './Theme';
-import { coreCSS } from './core/core.css-GENERATED';
+import { sharedCSS } from './core/shared.css-GENERATED';
 
 export const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.forEach;
 
@@ -61,7 +61,7 @@ export const _injectCoreAndModuleCSS = (
     nonce: string | undefined,
     moduleCss: Map<string, string[]> | undefined
 ) => {
-    _injectGlobalCSS(coreCSS, styleContainer, 'core', layer, 0, nonce);
+    _injectGlobalCSS(sharedCSS, styleContainer, 'shared', layer, 0, nonce);
     moduleCss?.forEach((css, debugId) =>
         css.forEach((singleCss) => _injectGlobalCSS(singleCss, styleContainer, debugId, layer, 0, nonce))
     );

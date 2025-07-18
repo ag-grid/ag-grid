@@ -20,8 +20,6 @@ import {
     foregroundMix,
 } from '../theme-utils';
 
-export { coreCSS } from './core.css-GENERATED';
-
 /**
  * All possible theme param types - the actual params available will be a subset of this type depending on the parts in use by the theme.
  */

@@ -95,14 +95,14 @@ export class ThemeImpl {
      * the theme's parts into document head, or the shadow DOM if the provided
      * container is within a shadow root.
      */
-    _startUse({ styleContainer, cssLayer, nonce, loadThemeGoogleFonts, moduleCss: additionalCss }: themeUseArgs): void {
+    _startUse({ styleContainer, cssLayer, nonce, loadThemeGoogleFonts, moduleCss }: themeUseArgs): void {
         if (IS_SSR) return;
 
         if (FORCE_LEGACY_THEMES) return;
 
         uninstallLegacyCSS();
 
-        _injectCoreAndModuleCSS(styleContainer, cssLayer, nonce, additionalCss);
+        _injectCoreAndModuleCSS(styleContainer, cssLayer, nonce, moduleCss);
 
         const googleFontsUsed = getGoogleFontsUsed(this);
         if (googleFontsUsed.length > 0) {
