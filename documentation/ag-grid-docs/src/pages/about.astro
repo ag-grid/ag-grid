@@ -265,7 +265,9 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                                     <TimelineIcon />
                                 </div>
                                 <div class={styles.timelineContent}>
-                                    <div class={styles.timelineTitle}>{title}</div>
+                                    <div class={styles.timelineTitle}>
+                                        <span class={styles.mobileYear}>{year}:</span> {title}
+                                    </div>
                                     <div class={styles.timelineDesc} set:html={description} />
                                 </div>
                             </div>

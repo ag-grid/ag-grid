@@ -58,8 +58,9 @@
     align-items: center;
     margin: 0 auto;
     user-select: none;
+
     @media (max-width: 900px) {
-        width: 400px;
+        width: 100%;
         max-width: 100vw;
     }
 }
@@ -149,8 +150,11 @@
         flex-direction: column;
         align-items: flex-start;
         position: relative;
-        min-width: 320px;
-        margin-left: $spacing-size-12;
+
+        @media screen and (min-width: 900px) {
+            min-width: 320px;
+            margin-left: $spacing-size-12;
+        }
 
         svg {
             fill: var(--color-brand-500);
@@ -158,13 +162,17 @@
 
         .timelineLine {
             position: absolute;
-            left: 95px;
+            left: 23px;
             top: 20px;
             width: 2px;
             height: calc(100% - 100px);
             background: var(--color-button-tertiary-border);
             opacity: 0.2;
             z-index: 0;
+
+            @media screen and (min-width: 600px) {
+                left: 95px;
+            }
         }
     }
 
@@ -176,6 +184,7 @@
     }
 
     .timelineYear {
+        display: none;
         color: var(--color-button-tertiary-fg);
         opacity: 0.5;
         font-size: var(--text-fs-sm);
@@ -185,6 +194,10 @@
         margin-top: $spacing-size-4;
         font-family: var(--text-monospace-font-family);
         font-weight: var(--text-semibold);
+
+        @media screen and (min-width: 600px) {
+            display: block;
+        }
     }
 
     .timelineIcon {
@@ -200,10 +213,18 @@
         margin-right: 24px;
         background-color: var(--color-util-brand-50);
         padding: $spacing-size-3;
+
         path {
             fill: var(--color-brand-500);
         }
     }
+
+    .mobileYear {
+        @media screen and (min-width: 600px) {
+            display: none;
+        }
+    }
+
     .timelineLine {
         position: absolute;
         left: 50%;
@@ -215,9 +236,13 @@
         z-index: 0;
         content: '';
     }
+
     .timelineContent {
         flex: 1;
-        min-width: 200px;
+
+        @media screen and (min-width: 600px) {
+            min-width: 200px;
+        }
     }
 
     .timelineTitle {
@@ -231,6 +256,13 @@
         font-size: 15px;
         line-height: 1.5;
     }
+}
+
+.principlesContent,
+.historyContent,
+.leadershipContent,
+.resourcesContent {
+    margin-bottom: $spacing-size-8;
 }
 
 .principlesSection {
@@ -271,8 +303,11 @@
         display: flex;
         flex-direction: column;
         gap: 32px;
-        min-width: 320px;
         margin-left: $spacing-size-12;
+
+        @media screen and (min-width: 600px) {
+            min-width: 320px;
+        }
     }
 
     .principleItem {
@@ -380,12 +415,17 @@
     }
 
     .leaderPhoto {
-        width: 64px;
-        height: 64px;
+        width: $spacing-size-12;
+        height: $spacing-size-12;
         border-radius: 12px;
         background: var(--color-util-brand-50);
         object-fit: cover;
         flex-shrink: 0;
+
+        @media screen and (min-width: 600px) {
+            width: $spacing-size-16;
+            height: $spacing-size-16;
+        }
     }
 
     .leaderText {
@@ -601,11 +641,8 @@
 }
 
 .lifeSectionWrapper {
-    width: 100vw;
-    max-width: 100vw;
-
     margin: 0 auto;
-    padding: 0;
+    padding: 0 $spacing-size-4;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -616,7 +653,7 @@
     padding-bottom: $spacing-size-16;
 
     p {
-        width: 600px;
+        max-width: 58ch;
         margin: 0 auto;
         text-align: center;
         font-weight: var(--text-semibold);
