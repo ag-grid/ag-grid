@@ -52,7 +52,9 @@ If a group is also a master row, the detail grid will be shown before the childr
 
 {% note %}
 Master / Detail will by default show the details for every row, even tree parents.
-If you want to only show details for leaf nodes, then you can use the `isRowMaster` callback to return true for leaf nodes only.
+To only show details for leaf nodes, provide the `isRowMaster` callback to return true for leaf nodes only.
+
+When using [Tree Data Paths](.//tree-data-paths), filler nodes cannot be master rows and isRowMaster will not be called for them.
 {% /note %}
 
 {% gridExampleRunner title="Tree Data with Master Detail" name="tree-data-master-detail"  exampleHeight=550 /%}
