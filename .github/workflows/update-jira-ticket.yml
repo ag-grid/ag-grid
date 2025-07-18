@@ -94,7 +94,7 @@ jobs:
                 if (!pr.body && !pr.title) {
                     console.log('PR title and body are empty, cannot find JIRA ticket.');
                 } else {
-                    const matches = pr.title.match(regex) || pr.body.match(regex) || pr.head.ref
+                    const matches = pr.body?.match(regex) || pr.title.match(regex) ||  pr.head.ref
                     if (matches) {
                         issue_keys.push(...matches.map(m => m.match(/(AG|RTI)-\d{3,}/i)[0].toUpperCase()));
                     }
