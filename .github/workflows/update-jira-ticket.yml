@@ -75,14 +75,15 @@ jobs:
                     }
                 });
             };
-            const ownerRepo = {owner: context.repo.owner, repo: context.repo.repo};
+            const owner = context.repo.owner; 
+            const repo = context.repo.repo;
             const pr_number = process.env.PR_ID || '';
             const issue_keys = [process.env.DEBUG_JIRA_TICKET || ''].filter(Boolean);
             const runUrl = process.env.JOB_URL || '#';
             if (!pr_number && !issue_keys) {
                 throw new Error('Must provide a PR ID or a JIRA ticket.');
             }
-            const pr = (await github.rest.pulls.get({...ownerRepo, pull_number: pr_number})).data;
+            const pr = (await github.rest.pulls.get({ owner, repo, pull_number: pr_number })).data;
             if (!issue_keys.length) {
                 const is_merged = !!pr.merged_at;
                 if (!is_merged) {
@@ -135,12 +136,12 @@ jobs:
                     await transitionJiraIssue(issue, nextTransition);
                 }
             
-            // blocks section
+                // blocks section
                 const blocks = [];
             
                 if (pr_number) {
                     // Reviewers
-                    const reviews = await github.rest.pulls.listReviews({...ownerRepo, pull_number: pr_number});
+                    const reviews = await github.rest.pulls.listReviews({ owner, repo, pull_number: pr_number});
                     if (reviews.data.length) {
                         blocks.push(txt(`Reviewed by `));
                         reviews.data
@@ -163,12 +164,11 @@ jobs:
                     }
                 }
                 const content = [paragraph(blocks), paragraph([
-                    txt(`[This issue was `, {type: 'em'}),
-                    link(
-                        'transitioned',
-                        'https://github.com/ag-grid/ag-grid/.github/workflows/update-jira-ticket.yml'
-                    ),
-                    txt(` from '${transitions[issue_key].from}' to '${transitions[issue_key].to}' column by the AG Grid CI workflow.]`, {type: 'em'}),
+                    txt(`[This issue was `),
+                    link('transitioned', `https://github.com/${owner}/${repo}/pull/${pr_number}`),
+                    txt(` from '${transitions[issue_key].from}' to '${transitions[issue_key].to}' column by `),
+                    link('the AG Grid CI workflow', runUrl),
+                    txt('.]')
                 ])];
                 await addJiraComment(issue_key, {content, "type": "doc", "version": 1});
             });
@@ -176,7 +176,8 @@ jobs:
             if (transitioned_at_least_one) {
                 await github.rest.issues.createComment({
                     issue_number: pr_number,
-                    ...ownerRepo,
+                    owner, 
+                    repo,
                     body: `[Transitioned](${runUrl}) JIRA ticket(s) ${issue_keys.map((issue_key) => `[${issue_key}](https://ag-grid.atlassian.net/browse/${issue_key}) to ${transitions[issue_key]}`)}.`
                 });
             }
