@@ -90,11 +90,11 @@ jobs:
                     return;
                 }
                 const prefixes = ['fix', 'fix', 'close', 'resolve'];
-                const regex = new RegExp(`(${prefixes.join('|')})\w*\s*\[?((AG|RTI)-\d{3,})`, 'gi');
-                if (!pr.body) {
-                    console.log('PR body is empty, cannot find JIRA ticket.');
+                const regex = new RegExp(`(${prefixes.join('|')})?\w*\s*\[?((AG|RTI)-\d{3,})`, 'gi');
+                if (!pr.body && !pr.title) {
+                    console.log('PR title and body are empty, cannot find JIRA ticket.');
                 } else {
-                    const matches = pr.body.match(regex);
+                    const matches = pr.title.match(regex) || pr.body.match(regex) || pr.head.ref
                     if (matches) {
                         issue_keys.push(...matches.map(m => m.match(/(AG|RTI)-\d{3,}/i)[0].toUpperCase()));
                     }
