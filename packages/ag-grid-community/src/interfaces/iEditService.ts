@@ -1,7 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
 import type { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
-import { AgColumn } from '../entities/agColumn';
 import type { AgEventType } from '../eventTypes';
 import type { CellFocusedEvent } from '../events';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
