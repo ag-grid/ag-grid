@@ -18,60 +18,61 @@ import CodeSvg from '../images/about-icons/code.svg';
 import StarSvg from '../images/about-icons/star.svg';
 import BrainSvg from '../images/about-icons/brain.svg';
 
+// TODO: Replace `/react-data-grid/` with dynamic framework urls (urlWithPrefix)
 const timeline = [
     {
         year: '2016',
         icon: BornSvg,
-        title: 'AG Grid is born',
-        description: `Niall Crosby creates AG Grid as an open-source data grid solution to address a gap in the market`,
+        title: 'First commit',
+        description: `<a href="${urlWithBaseUrl('/niall/')}">Niall Crosby</a> makes his <a href="https://github.com/ag-grid/ag-grid/blob/3a276fa22a328aed53e1b3bebe45c83f78bf9d98/src/angularGrid.js">first commit for AG Grid</a>, creating an open-source data grid solution to address a gap in the market`,
     },
     {
         year: '2017',
         icon: RocketSvg,
         title: 'Commercial launch',
-        description: `AG Grid Enterprise is launched to widespread adoption within the developer community.`,
+        description: `<a href="${urlWithBaseUrl('/react-data-grid/community-vs-enterprise/')}">AG Grid Enterprise</a> is launched to widespread adoption within the developer community.`,
     },
     {
         year: '2018',
         icon: ConferenceSvg,
         title: 'AG Grid Conf',
-        description: `Dedicated AG Grid conferences delivered in London & New York, engaging us with our growing developer community.`,
+        description: `Dedicated <a href="${urlWithBaseUrl('community/events/')}">AG Grid conferences</a> delivered in London & New York, engaging us with our growing developer community.`,
     },
     {
         year: '2019',
         icon: BarChartSvg,
         title: 'Integrated Charting',
-        description: `Integrated Charts is launched within AG Grid. The first JS data-grid to contain built-in charting.`,
+        description: `<a href="${urlWithBaseUrl('/react-data-grid/integrated-charts/')}">Integrated Charts</a> is launched within AG Grid. The first JS data-grid to contain built-in charting.`,
     },
     {
         year: '2020',
         icon: ChartSvg,
         title: 'AG Charts',
-        description: `AG Charts community is released as a standalone library`,
+        description: `<a href="https://ag-grid.com/charts/">AG Charts community</a> is released as a standalone library`,
     },
     {
         year: '2021',
         icon: LicenseSvg,
         title: 'Self-service licensing',
-        description: `eCommerce platform is launched to allow customers to self-service.`,
+        description: `<a href="${urlWithBaseUrl('/license-pricing/')}">eCommerce platform</a> is launched to allow customers to self-service.`,
     },
     {
         year: '2022',
         icon: ConferenceSvg,
         title: 'Mass adoption',
-        description: `AG Grid Community breaks one million downloads per month on NPM.`,
+        description: `<a href="https://www.npmjs.com/package/ag-grid-community">AG Grid Community</a> breaks one million downloads per month on NPM.`,
     },
     {
         year: '2023',
         icon: DonutAcceleratingSvg,
         title: 'AG Chart Enterprise',
-        description: `AG Chart Enterprise is launched in response to strong user demand.`,
+        description: `<a href="${urlWithBaseUrl('/react-data-grid/community-vs-enterprise/')}">AG Chart Enterprise</a> is launched in response to strong user demand.`,
     },
     {
         year: '2024',
         icon: ConferenceSvg,
         title: 'Leadership updates',
-        description: `John Masterson appointed CEO, a new board is formed.`,
+        description: `<a href="#leadership-section">John Masterson</a> appointed CEO, a new board is formed.`,
     },
     {
         year: 'Now',
@@ -265,7 +266,7 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                                 </div>
                                 <div class={styles.timelineContent}>
                                     <div class={styles.timelineTitle}>{title}</div>
-                                    <div class={styles.timelineDesc}>{description}</div>
+                                    <div class={styles.timelineDesc} set:html={description} />
                                 </div>
                             </div>
                         ))
@@ -273,7 +274,7 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                 </div>
             </section>
 
-            <section class={styles.leadershipSection}>
+            <section class={styles.leadershipSection} id="leadership-section">
                 <div class={styles.leadershipContent}>
                     <h2>Leadership</h2>
                     <p>Decades of experience, that you can count on</p>
