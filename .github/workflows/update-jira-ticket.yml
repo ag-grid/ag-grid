@@ -178,6 +178,6 @@ jobs:
                     issue_number: pr_number,
                     owner, 
                     repo,
-                    body: `[Transitioned](${runUrl}) JIRA ticket(s) ${issue_keys.map((issue_key) => `[${issue_key}](https://ag-grid.atlassian.net/browse/${issue_key}) to ${transitions[issue_key]}`)}.`
+                    body: `[Transitioned](${runUrl}) JIRA ticket(s): ${issue_keys.map((issue_key) => `- [${issue_key}](https://ag-grid.atlassian.net/browse/${issue_key}) to ${transitions[issue_key]}`).join(',\n')}.`
                 });
             }
