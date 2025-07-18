@@ -42,15 +42,23 @@ jobs:
           result-encoding: string
           script: |
             const {
-                jiraLink,
                 addJiraComment,
                 getJiraTransitions,
                 getJiraIssue,
                 transitionJiraIssue
             } = require('./scripts/ci/_utils.mjs');
             
-            const txt = text => ({text, "type": "text"});
-            const mention = (gh_user) =>{
+            const paragraph = content => ({
+                "type": "paragraph",
+                "content": content
+            });
+            const txt = (text, marks = []) => ({ text, type: 'text', marks });
+            const link = (text, url, marks = []) => ({
+                type: 'text',
+                text: text,
+                marks: [{ type: 'link', attrs: { href: url, title: text }, marks}]
+            });
+            const mention = (gh_user) => {
                 const gh_user_jira_mapping = JSON.parse(process.env.GH_USER_JIRA_MAPPING || '{}');
                 return ({
                     "type": "mention",
@@ -61,14 +69,14 @@ jobs:
                     }
                 });
             };
-            const ownerRepo = { owner: context.repo.owner, repo: context.repo.repo };
+            const ownerRepo = {owner: context.repo.owner, repo: context.repo.repo};
             const pr_number = process.env.PR_ID || '';
-            let issueKey = process.env.DEBUG_JIRA_TICKET || '';
-            if (!pr_number && !issueKey) {
+            let issue_key = process.env.DEBUG_JIRA_TICKET || '';
+            if (!pr_number && !issue_key) {
                 throw new Error('Must provide a PR ID or a JIRA ticket.');
             }
-            const pr = (await github.rest.pulls.get({ ...ownerRepo, pull_number: pr_number })).data;
-            if (!issueKey) {
+            const pr = (await github.rest.pulls.get({...ownerRepo, pull_number: pr_number})).data;
+            if (!issue_key) {
                 const is_merged = !!pr.merged_at;
                 if (!is_merged) {
                     console.log(`PR #${pr_number} is not merged, skipping JIRA ticket update.`);
@@ -81,11 +89,11 @@ jobs:
                 } else {
                     const matches = pr.body.match(regex);
                     if (matches) {
-                        issueKey = matches[2];
+                        issue_key = matches[2];
                     }
                 }
             }
-            if (!issueKey) {
+            if (!issue_key) {
                 throw new Error('No JIRA ticket found in PR body.');
             }
             const transitions = {
@@ -93,9 +101,9 @@ jobs:
                 3: 'REVIEWED'
             };
             // Move the JIRA ticket to 'the next column' if the PR is merged
-            const availableTransitions = await getJiraTransitions(issueKey);
+            const availableTransitions = await getJiraTransitions(issue_key);
             if (!availableTransitions || availableTransitions.length === 0) {
-                throw new Error(`No available transitions found for JIRA ticket ${issueKey}.`);
+                throw new Error(`No available transitions found for JIRA ticket ${issue_key}.`);
             }
             const nextTransition = Object
                 .keys(transitions)
@@ -105,7 +113,7 @@ jobs:
                         tr.name.toLowerCase() === transitions[key].toLowerCase()
                     )
                 );
-            const issue = await getJiraIssue(issueKey);
+            const issue = await getJiraIssue(issue_key);
             await transitionJiraIssue(issue, nextTransition);
             
             // blocks section
@@ -113,17 +121,17 @@ jobs:
             
             if (pr_number) {
                 // Reviewers
-                const reviews = await github.rest.pulls.listReviews({ ...ownerRepo, pull_number: pr_number });
+                const reviews = await github.rest.pulls.listReviews({...ownerRepo, pull_number: pr_number});
                 if (reviews.data.length) {
                     blocks.push(txt(`Reviewed by `));
                     reviews.data
                         .map(r => mention(r.user.login))
                         .filter(r => r.attrs.id && r.attrs.text)
-                        .forEach((b, i, arr) => {
+                        .forEach((m, i, arr) => {
                             if (i > 0 && i < arr.length - 1) {
                                 blocks.push(txt(`, `));
                             }
-                            blocks.push(b);
+                            blocks.push(m);
                         });
                     blocks.push(txt(`. `));
                 }
@@ -137,22 +145,22 @@ jobs:
                 await github.rest.issues.createComment({
                     issue_number: pr_number,
                     ...ownerRepo,
-                    body: `Transitioned JIRA ticket #${issueKey} to ${transitions[nextTransition]}.`
+                    body: `Transitioned JIRA ticket [${issue_key}](https://ag-grid.atlassian.net/browse/${issue_key}) to ${transitions[nextTransition]}.`
                 });
             }
             
-            await addJiraComment(issueKey, {
+            await addJiraComment(issue_key, {
                 "content": [
-                    {
-                        "content": [
-                            ...blocks, 
-                            {
-                                "text": `[This issue/comment was ${jiraLink('automatically created', 'https://github.com/ag-grid/ag-grid/.github/workflows/update-jira-ticket.yml')} by the AG Grid CI workflow.]`,
-                                "type": "text"
-                            }
-                        ],
-                        "type": "paragraph"
-                    }
+                    paragraph(blocks),
+                    paragraph([
+                        txt(`[This issue/comment was `, { type: 'em' }),
+                        link(
+                            'automatically created',
+                            'https://github.com/ag-grid/ag-grid/.github/workflows/update-jira-ticket.yml',
+                            { type: 'em' }
+                        ),
+                        txt(` by the AG Grid CI workflow.]`, { type: 'em' }),
+                    ])
                 ],
                 "type": "doc",
                 "version": 1
