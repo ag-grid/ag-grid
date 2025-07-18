@@ -51,13 +51,13 @@ jobs:
             
             const paragraph = content => ({
                 "type": "paragraph",
-                "content": content
+                "content": Array.isArray(content) ? content : [content]
             });
             const txt = (text, marks = []) => {
                 if (marks.length) {
-                  return ({text, type: 'text', marks});
+                    return { text, type: 'text', marks };
                 }
-                return ({text, type: 'text' });                
+                return { text, type: 'text' };
             };
             const link = (text, url) => ({
                 type: 'text',
@@ -70,7 +70,7 @@ jobs:
                     "type": "mention",
                     "attrs": {
                         "id": gh_user_jira_mapping[gh_user][0],
-                        "text": `@${gh_user_jira_mapping[gh_user][1]}`,
+                        "text": gh_user_jira_mapping[gh_user][1],
                         "userType": "APP"
                     }
                 });
@@ -168,12 +168,12 @@ jobs:
             const content = [paragraph(blocks)];
             if (needToTransition) {
                 content.push(paragraph([
-                    txt(`[This issue was `, {type: 'em'}),
+                    txt(`[This issue/comment was `, { type: 'em' }),
                     link(
-                        `automatically`,
-                        'https://github.com/ag-grid/ag-grid/.github/workflows/update-jira-ticket.yml',
+                        'automatically created',
+                        'https://github.com/ag-grid/ag-grid/.github/workflows/update-jira-ticket.yml'
                     ),
-                    txt(` transitioned to '${transitions[nextTransition]}' column by the AG Grid CI workflow.]`, {type: 'em'}),
+                    txt(` by the AG Grid CI workflow.]`, { type: 'em' }),
                 ]));
             }
             await addJiraComment(issue_key, {content, "type": "doc", "version": 1});
