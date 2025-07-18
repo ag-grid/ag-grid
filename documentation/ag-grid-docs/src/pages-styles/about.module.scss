@@ -33,8 +33,8 @@
         font-size: 40px;
     }
 
-    span {
-        color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 70%);
+    b {
+        color: var(--color-fg-primary);
     }
 
     p {
