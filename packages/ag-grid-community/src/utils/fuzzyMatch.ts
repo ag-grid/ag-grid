@@ -47,7 +47,7 @@ export function _fuzzySuggestions(params: {
  * This uses Levenshtein Distance to match strings.
  * Lower values mean more similar strings.
  */
-function _getLevenshteinSimilarityDistance(inputText: string, suggestion: string): number {
+export function _getLevenshteinSimilarityDistance(inputText: string, suggestion: string): number {
     // Always use the shorter string for columns to reduce space
     if (inputText.length < suggestion.length) {
         [inputText, suggestion] = [suggestion, inputText];
