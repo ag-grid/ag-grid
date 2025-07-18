@@ -133,10 +133,6 @@ export class AgFillHandle extends AbstractSelectionHandle {
             return;
         }
 
-        this.doFill(e);
-    }
-
-    private doFill(e: MouseEvent) {
         const isX = this.dragAxis === 'x';
         const { cellRange: initialRange, rangeStartRow, rangeEndRow, beans } = this;
         const colLen = initialRange.columns.length;
