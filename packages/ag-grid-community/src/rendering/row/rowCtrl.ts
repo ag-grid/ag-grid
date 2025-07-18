@@ -82,7 +82,7 @@ interface CellCtrlListAndMap {
 
 export const DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
 
-export type RowCtrlEvent = RenderedRowEvent;
+type RowCtrlEvent = RenderedRowEvent;
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public readonly instanceId: RowCtrlInstanceId;
 

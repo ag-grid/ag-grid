@@ -82,16 +82,6 @@ export function _getCellCtrl(beans: BeanCollection, inputs: ResolveControllerTyp
     return undefined;
 }
 
-export function _getCtrls(beans: BeanCollection, inputs: ResolveControllerType = {}): ResolvedControllersType {
-    const rowCtrl = _getRowCtrl(beans, inputs);
-    const cellCtrl = _getCellCtrl(beans, inputs);
-
-    return {
-        rowCtrl,
-        cellCtrl,
-    };
-}
-
 function _stopEditing(beans: BeanCollection): void {
     const { editSvc } = beans;
     if (editSvc?.isBatchEditing()) {

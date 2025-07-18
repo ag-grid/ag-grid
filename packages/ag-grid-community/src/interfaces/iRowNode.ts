@@ -26,7 +26,7 @@ export type RowNodeEventType =
     | 'mouseLeave'
     | 'draggingChanged';
 
-export type RowNodeEventTypeMap<TData = any> = BuildEventTypeMap<
+type RowNodeEventTypeMap<TData = any> = BuildEventTypeMap<
     RowNodeEventType,
     {
         rowSelected: RowNodeSelectedEvent<TData>;

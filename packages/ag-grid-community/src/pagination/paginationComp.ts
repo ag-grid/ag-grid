@@ -18,7 +18,7 @@ import { PageSizeSelectorSelector } from './pageSizeSelector/pageSizeSelectorCom
 import { paginationCompCSS } from './paginationComp.css-GENERATED';
 import type { PaginationService } from './paginationService';
 
-export class PaginationComp extends TabGuardComp implements FocusableContainer {
+class PaginationComp extends TabGuardComp implements FocusableContainer {
     private rowModel: IRowModel;
     private pagination: PaginationService;
     private ariaAnnounce?: AriaAnnouncementService;

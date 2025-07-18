@@ -13,7 +13,7 @@ import type { Component } from './component';
 import { RefPlaceholder } from './component';
 import type { AddPopupParams } from './popupService';
 
-export type AgPickerFieldEvent = AgAbstractFieldEvent | 'pickerHidden';
+type AgPickerFieldEvent = AgAbstractFieldEvent | 'pickerHidden';
 
 const AgPickerFieldElement: ElementParams = {
     tag: 'div',

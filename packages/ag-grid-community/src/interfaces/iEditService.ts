@@ -52,13 +52,6 @@ export interface _SetEditingCellsParams {
     update?: boolean;
 }
 
-export function _isEditPosition(pos: any): pos is EditPosition {
-    return pos && typeof pos.rowNode === 'object' && (pos.column === undefined || pos.column instanceof AgColumn);
-}
-
-export function _isEditRowPosition(pos: any): pos is EditRowPosition {
-    return pos && typeof pos.rowNode === 'object';
-}
 export interface IEditService extends NamedBean {
     shouldStartEditing(
         position: Required<EditPosition>,

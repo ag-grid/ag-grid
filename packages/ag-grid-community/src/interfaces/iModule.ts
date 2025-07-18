@@ -5,7 +5,7 @@ import type { IconName, IconValue } from '../utils/icon';
 import type { ComponentSelector } from '../widgets/component';
 import type { RowModelType } from './iRowModel';
 
-export type ModuleValidationValidResult = {
+type ModuleValidationValidResult = {
     isValid: true;
 };
 
@@ -55,7 +55,7 @@ export type _ModuleWithoutApi = Module & {
     apiFunctions?: never;
 };
 
-export type InternalModuleName =
+type InternalModuleName =
     | 'Aggregation'
     | 'AnimationFrame'
     | 'Aria'

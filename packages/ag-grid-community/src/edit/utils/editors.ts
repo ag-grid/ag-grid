@@ -11,7 +11,7 @@ import type {
     ICellEditorParams,
     ICellEditorValidationError,
 } from '../../interfaces/iCellEditor';
-import type { EditMap, EditValue } from '../../interfaces/iEditModelService';
+import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
@@ -22,7 +22,7 @@ import { _getCellCtrl } from './controllers';
 
 export const UNEDITED = Symbol('unedited');
 
-export function getCellEditorInstanceMap<TData = any>(
+function getCellEditorInstanceMap<TData = any>(
     beans: BeanCollection,
     params: GetCellEditorInstancesParams<TData> = {}
 ): { ctrl: CellCtrl; editor: ICellEditor }[] {
@@ -416,8 +416,6 @@ export function _destroyEditor(
     }
 }
 
-export type MappedValidationErrors = EditMap | undefined;
-
 export function _populateModelValidationErrors(beans: BeanCollection): void {
     const mappedEditors = getCellEditorInstanceMap(beans);
     const cellValidationModel = new EditCellValidationModel();
@@ -489,7 +487,7 @@ export function _populateModelValidationErrors(beans: BeanCollection): void {
     }
 }
 
-export const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationModel => {
+const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationModel => {
     const rowValidationModel = new EditRowValidationModel();
     const getFullRowEditValidationErrors = beans.gos.get('getFullRowEditValidationErrors');
     // populate row-level errors

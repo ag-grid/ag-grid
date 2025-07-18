@@ -22,7 +22,7 @@ export const NoModulesRegisteredError = () =>
     ModuleRegistry.registerModules([ AllCommunityModule ]);
     ` as const;
 
-export const moduleImportMsg = (moduleNames: ModuleName[]) => {
+const moduleImportMsg = (moduleNames: ModuleName[]) => {
     const imports = moduleNames.map(
         (moduleName) =>
             `import { ${convertToUserModuleName(moduleName)} } from '${ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] ? 'ag-grid-enterprise' : 'ag-grid-community'}';`
@@ -135,6 +135,7 @@ const clipboardApiError = (method: string) =>
  * 2. Returning an array enables the console to log actual objects / numbers / booleans nicely as this will be spread to the underlying console call instead of being cast to a string.
  * 3. Each entry should be followed by as const so that the IDE hover shows the actual message to aid devs
  */
+// ts-prune-ignore-next
 export const AG_GRID_ERRORS = {
     1: () => '`rowData` must be an array' as const,
     2: ({ nodeId }: { nodeId: string | undefined }) =>
@@ -736,7 +737,7 @@ export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId
     return Array.isArray(errorBody) ? (errorBody.concat(errorSuffix) as string[]) : [errorBody, errorSuffix];
 }
 
-export const MISSING_MODULE_REASONS = {
+const MISSING_MODULE_REASONS = {
     1: 'Charting Aggregation',
     2: 'pivotResultFields',
     3: 'setTooltip',
