@@ -155,8 +155,8 @@ describe('Edit API', () => {
             editMap!.set(
                 rowNode1,
                 new Map([
-                    [column1, { newValue: 'new1', oldValue: 'old1', state: 'editing', editCount: 0 }],
-                    [column2, { newValue: 'new2', oldValue: 'old2', state: 'changed', editCount: 0 }],
+                    [column1, { newValue: 'new1', oldValue: 'old1', state: 'editing' }],
+                    [column2, { newValue: 'new2', oldValue: 'old2', state: 'changed' }],
                 ])
             );
 
@@ -188,15 +188,15 @@ describe('Edit API', () => {
             editMap!.set(
                 rowNode1,
                 new Map([
-                    [column1, { newValue: 'new1', oldValue: 'old1', state: 'editing', editCount: 0 }],
-                    [column2, { newValue: 'new2', oldValue: 'old2', state: 'changed', editCount: 0 }],
+                    [column1, { newValue: 'new1', oldValue: 'old1', state: 'editing' }],
+                    [column2, { newValue: 'new2', oldValue: 'old2', state: 'changed' }],
                 ])
             );
             editMap!.set(
                 rowNode2,
                 new Map([
-                    [column1, { newValue: 'new3', oldValue: 'old3', state: 'editing', editCount: 0 }],
-                    [column2, { newValue: 'new4', oldValue: 'old4', state: 'changed', editCount: 0 }],
+                    [column1, { newValue: 'new3', oldValue: 'old3', state: 'editing' }],
+                    [column2, { newValue: 'new4', oldValue: 'old4', state: 'changed' }],
                 ])
             );
 
@@ -248,8 +248,8 @@ describe('Edit API', () => {
             editMap!.set(
                 rowNode1,
                 new Map([
-                    [column1, { newValue: UNEDITED, oldValue: 'old1', state: 'editing', editCount: 0 }],
-                    [column2, { newValue: 'new2', oldValue: 'old2', state: 'changed', editCount: 0 }],
+                    [column1, { newValue: UNEDITED, oldValue: 'old1', state: 'editing' }],
+                    [column2, { newValue: 'new2', oldValue: 'old2', state: 'changed' }],
                 ])
             );
 
@@ -301,7 +301,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new1', oldValue: 'old1', state: 'editing', editCount: 0 },
+                                { newValue: 'new1', oldValue: 'old1', state: 'editing' },
                             ],
                         ]),
                     ],
@@ -328,7 +328,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new1', oldValue: 'old1', state: 'editing', editCount: 0 },
+                                { newValue: 'new1', oldValue: 'old1', state: 'editing' },
                             ],
                         ]),
                     ],
@@ -342,7 +342,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new2', oldValue: 'old2', state: 'changed', editCount: 0 },
+                                { newValue: 'new2', oldValue: 'old2', state: 'changed' },
                             ],
                         ]),
                     ],
@@ -369,7 +369,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new1', oldValue: 'old1', state: 'editing', editCount: 0 },
+                                { newValue: 'new1', oldValue: 'old1', state: 'editing' },
                             ],
                         ]),
                     ],
@@ -383,7 +383,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new2', oldValue: 'old2', state: 'changed', editCount: 0 },
+                                { newValue: 'new2', oldValue: 'old2', state: 'changed' },
                             ],
                         ]),
                     ],
@@ -410,7 +410,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new1', oldValue: 'old1', state: 'editing', editCount: 0 },
+                                { newValue: 'new1', oldValue: 'old1', state: 'editing' },
                             ],
                         ]),
                     ],
@@ -424,7 +424,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new2', oldValue: 'old2', state: 'changed', editCount: 0 },
+                                { newValue: 'new2', oldValue: 'old2', state: 'changed' },
                             ],
                         ]),
                     ],
@@ -451,7 +451,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new1', oldValue: 'old1', state: 'editing', editCount: 0 },
+                                { newValue: 'new1', oldValue: 'old1', state: 'editing' },
                             ],
                         ]),
                     ],
@@ -465,7 +465,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new2', oldValue: 'old2', state: 'changed', editCount: 0 },
+                                { newValue: 'new2', oldValue: 'old2', state: 'changed' },
                             ],
                         ]),
                     ],
@@ -508,7 +508,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new1', oldValue: 'old1', state: 'editing', editCount: 0 },
+                                { newValue: 'new1', oldValue: 'old1', state: 'editing' },
                             ],
                         ]),
                     ],
@@ -522,7 +522,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new2', oldValue: 'old2', state: 'changed', editCount: 0 },
+                                { newValue: 'new2', oldValue: 'old2', state: 'changed' },
                             ],
                         ]),
                     ],
@@ -548,7 +548,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new2', oldValue: 'old2', state: 'changed', editCount: 0 },
+                                { newValue: 'new2', oldValue: 'old2', state: 'changed' },
                             ],
                         ]) as unknown as EditRow,
                     ],
@@ -558,10 +558,7 @@ describe('Edit API', () => {
 
         test('updates existing edits when update flag is true (replace)', () => {
             editSvc!.isBatchEditing = jest.fn().mockReturnValue(true);
-            editMap!.set(
-                rowNode1,
-                new Map([[column1, { newValue: 'old1', oldValue: UNEDITED, state: 'editing', editCount: 0 }]])
-            );
+            editMap!.set(rowNode1, new Map([[column1, { newValue: 'old1', oldValue: UNEDITED, state: 'editing' }]]));
             const cells = [
                 { colId: 'col1', rowIndex: 0, rowPinned: undefined, newValue: 'new1', state: 'editing' },
             ] as EditingCellPosition[];
@@ -578,7 +575,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new1', oldValue: 'old1', state: 'editing', editCount: 0 },
+                                { newValue: 'new1', oldValue: 'old1', state: 'editing' },
                             ],
                         ]) as unknown as EditRow,
                     ],

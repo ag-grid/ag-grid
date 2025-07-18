@@ -400,7 +400,7 @@ export class LicenseManager {
         this.centerPadAndOutput(` ${currentLicenseName} License `);
         this.centerPadAndOutput(' Incompatible Software Version ');
         this.padAndOutput(
-            `* Your license key works with versions of ${suppliedLicenseName} released before ${formattedExpiryDate}.`,
+            `* Your license key works with versions${suppliedLicenseName == '' ? '' : ` of ${suppliedLicenseName}`} released before ${formattedExpiryDate}.`,
             ' ',
             '*'
         );

@@ -86,3 +86,68 @@ export function getStats(parsedReport, context) {
           )
         : '';
 }
+
+const JIRA_API_URL = 'https://ag-grid.atlassian.net/rest/api/2';
+
+// Transition an issue to a new status
+export async function transitionIssue(issue, transitionId) {
+    const url = `${JIRA_API_URL}/issue/${issue.key}/transitions`;
+    try {
+        await commonFetch(url, { method: 'POST', body: JSON.stringify({ transition: { id: transitionId } }) });
+        await updateIssue(issue.key, { fields: { assignee: { accountId: issue.fields.assignee.accountId } } });
+        console.log(`Issue ${issue.key} transitioned successfully`);
+    } catch (error) {
+        console.error('Error transitioning issue:', error.message);
+        throw error;
+    }
+}
+
+export async function updateIssue(issueKey, body) {
+    const url = `${JIRA_API_URL}/issue/${issueKey}`;
+    try {
+        await commonFetch(url, { method: 'PUT', body: JSON.stringify(body) });
+        console.log(`Issue ${issueKey} updated successfully`);
+    } catch (error) {
+        console.error('Error updating issue:', error.message);
+        throw error;
+    }
+}
+
+export async function commonFetch(url, options) {
+    const response = await fetch(url, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${process.env.JIRA_API_AUTH}`,
+        },
+        ...options,
+    });
+    if (!response.ok) {
+        throw new Error(`HTTP error ${response.status} ${response.statusText} ${await response.text()}`);
+    }
+    return response.json().catch((e) => {
+        if (e.message === 'Unexpected end of JSON input') {
+            return {};
+        }
+    });
+}
+
+export async function getTransitions(issueKey) {
+    const url = `${JIRA_API_URL}/issue/${issueKey}/transitions`;
+    try {
+        const data = await commonFetch(url, { method: 'GET' });
+        return data.transitions;
+    } catch (error) {
+        console.error('Error fetching transitions:', error.message);
+        throw error;
+    }
+}
+
+export async function getIssue(issueKey) {
+    const url = `${JIRA_API_URL}/issue/${issueKey}`;
+    try {
+        return await commonFetch(url, { method: 'GET' });
+    } catch (error) {
+        console.error('Error fetching issue:', error.message);
+        throw error;
+    }
+}

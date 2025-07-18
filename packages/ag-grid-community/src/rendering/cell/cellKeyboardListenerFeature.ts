@@ -162,7 +162,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
             // re-run ALL validations, Enter key is used to commit the edit, so we want to ensure it's valid
             _populateModelValidationErrors(beans);
 
-            if (editSvc?.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
+            if (editSvc?.checkNavWithValidation(undefined, event) === 'block-stop') {
                 return;
             }
 

@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { commonFetch, transitionIssue } from './_utils.mjs';
+
 const COLUMN_BACKLOG_ID = '21';
 const COLUMN_BACKLOG_NAME = 'TODO';
 const COLUMN_QA_ID = '5';
@@ -76,17 +78,6 @@ await findExistingIssue(fingerprint).then(async (existingIssue) => {
     process.exit(0);
 });
 
-async function updateIssue(issueKey, body) {
-    const url = `${JIRA_API_URL}/issue/${issueKey}`;
-    try {
-        await commonFetch(url, { method: 'PUT', body: JSON.stringify(body) });
-        console.log(`Issue ${issueKey} updated successfully`);
-    } catch (error) {
-        console.error('Error updating issue:', error.message);
-        throw error;
-    }
-}
-
 async function createIssue() {
     const body = {
         fields: {
@@ -133,49 +124,6 @@ async function addComment(issueKey, body) {
         console.error('Error adding comment:', error.message);
         throw error;
     }
-}
-
-// Transition an issue to a new status
-async function transitionIssue(issue, transitionId) {
-    const url = `${JIRA_API_URL}/issue/${issue.key}/transitions`;
-    try {
-        await commonFetch(url, { method: 'POST', body: JSON.stringify({ transition: { id: transitionId } }) });
-        await updateIssue(issue.key, { fields: { assignee: { accountId: issue.fields.assignee.accountId } } });
-        console.log(`Issue ${issue.key} transitioned successfully`);
-    } catch (error) {
-        console.error('Error transitioning issue:', error.message);
-        throw error;
-    }
-}
-
-/*// Debugging function to get available transitions for an issue
-async function _getTransitions(issueKey) {
-    const url = `${jiraBaseUrl}/issue/${issueKey}/transitions`;
-    try {
-        const data = await commonFetch(url, { method: 'GET' });
-        return data.transitions;
-    } catch (error) {
-        console.error('Error fetching transitions:', error.message);
-        throw error;
-    }
-}*/
-
-async function commonFetch(url, options) {
-    const response = await fetch(url, {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Basic ${auth}`,
-        },
-        ...options,
-    });
-    if (!response.ok) {
-        throw new Error(`HTTP error ${response.status} ${response.statusText} ${await response.text()}`);
-    }
-    return response.json().catch((e) => {
-        if (e.message === 'Unexpected end of JSON input') {
-            return {};
-        }
-    });
 }
 
 function jiraLink(text, url) {
