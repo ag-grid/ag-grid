@@ -16,7 +16,6 @@ import { MenuUtils } from './menuUtils';
 /**
  * @internal
  */
-// ts-prune-ignore-next
 export const MenuCoreModule: _ModuleWithoutApi = {
     moduleName: 'MenuCore',
     version: VERSION,

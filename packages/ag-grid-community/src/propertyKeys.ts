@@ -325,7 +325,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'hidePaddedHeaderRows',
 ];
 
-// ts-prune-ignore-next Used in example generation
 export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'doesExternalFilterPass',
     'processPivotResultColDef',

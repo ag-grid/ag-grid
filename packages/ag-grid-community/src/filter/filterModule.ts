@@ -43,7 +43,6 @@ import { QuickFilterService } from './quickFilterService';
 /**
  * @internal
  */
-// ts-prune-ignore-next
 export const ClientSideRowModelFilterModule: _ModuleWithoutApi = {
     moduleName: 'ClientSideRowModelFilter',
     version: VERSION,
