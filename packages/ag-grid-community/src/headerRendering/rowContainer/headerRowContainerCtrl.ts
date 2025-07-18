@@ -74,12 +74,14 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public refresh(keepColumns = false): void {
-        const { focusSvc, filterManager, colViewport } = this.beans;
+        const { focusSvc, filterManager, visibleCols } = this.beans;
         let sequence = 0;
         const focusedHeaderPosition = focusSvc.getFocusHeaderToUseAfterRefresh();
 
         const refreshColumnGroups = () => {
-            const groupRowCount = colViewport.headerGroupRowCount;
+            const groupRowCount = visibleCols.headerGroupRowCount;
+
+            sequence = groupRowCount;
 
             const currentGroupCount = this.groupsRowCtrls.length;
             if (currentGroupCount === groupRowCount) {
@@ -95,13 +97,13 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             }
 
             for (let i = currentGroupCount; i < groupRowCount; i++) {
-                const ctrl = this.createBean(new HeaderRowCtrl((sequence = i), this.pinned, 'group'));
+                const ctrl = this.createBean(new HeaderRowCtrl(i, this.pinned, 'group'));
                 this.groupsRowCtrls.push(ctrl);
             }
         };
 
         const refreshColumns = () => {
-            const rowIndex = ++sequence;
+            const rowIndex = sequence++;
             if (this.hidden) {
                 this.columnsRowCtrl = this.destroyBean(this.columnsRowCtrl);
                 return;

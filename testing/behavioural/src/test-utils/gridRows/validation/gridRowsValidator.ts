@@ -240,7 +240,9 @@ export class GridRowsValidator {
         if (!children) {
             if (gridRows.treeData) {
                 if (!gridRows.isDuplicateIdRow(parentRow) && name !== 'allLeafChildren') {
-                    this.errors.get(parentRow).add(`${name} is missing`);
+                    if (!parentRow.detail) {
+                        this.errors.get(parentRow).add(`${name} is missing`);
+                    }
                 }
             } else if (parentRow.group && (name === 'childrenAfterGroup' || name === 'allLeafChildren')) {
                 this.errors.get(parentRow).add(`${name} is missing`);
@@ -341,14 +343,13 @@ export class GridRowsValidator {
             if (parent.footer) {
                 ++level;
             }
-            if (parent.master) {
-                break;
-            }
             parent = parent.parent;
             ++level;
         }
         if (row.footer) {
             ++level;
+        } else if (row.detail) {
+            --level;
         }
         if (level <= 0) {
             return 0;

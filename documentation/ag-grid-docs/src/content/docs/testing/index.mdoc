@@ -28,22 +28,20 @@ The e2e examples all target the following example:
 ## Test IDs
 
 Many testing libraries allow targeting the `data-testid` attribute to locate elements on the page to use for assertions or actions. 
-AG Grid provides support for attaching this attribute to many of the interactive elements in the grid. This is achieved by registering the `TestingModule`. This module should only be used in a test or development environment, not in production.
+AG Grid provides support for attaching this attribute to many of the interactive elements in the grid. This is achieved by calling the `setupAgTestIds` function. This module should only be used in a test or development environment, not in production.
 
 ```js
-import { TestingModule, ModuleRegistry } from 'ag-grid-community'
+import { setupAgTestIds } from 'ag-grid-community'
 
-ModuleRegistry.registerModules([TestingModule]);
+setupAgTestIds();
 ```
 
 The test ID attribute that is targeted by this module can be optionally customised using the following module method:
 
 ```js
-import { TestingModule, ModuleRegistry } from 'ag-grid-community'
+import { setupAgTestIds } from 'ag-grid-community'
 
-ModuleRegistry.registerModules([
-    TestingModule.with({ testIdAttribute: 'data-customattr' })
-]);
+setupAgTestIds({ testIdAttribute: 'data-customattr' })
 ```
 
 In addition, utility functions are provided to avoid users having to manually construct the IDs:

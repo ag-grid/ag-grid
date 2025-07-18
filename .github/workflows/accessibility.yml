@@ -206,7 +206,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: ${{ env.PREV_COMMIT_SHA_FILE }}
-          key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}-${{ github.sha }}
+          key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
 
       - name: Output Report URL
         run: |

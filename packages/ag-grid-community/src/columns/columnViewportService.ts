@@ -34,8 +34,6 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     private rowsOfHeadersToRenderRight: { [row: number]: AgColumnGroup[] } = {};
     private rowsOfHeadersToRenderCenter: { [row: number]: AgColumnGroup[] } = {};
 
-    public headerGroupRowCount: number = 0; // used for header row count, when not using padding
-
     private columnsToRenderLeft: AgColumn[] = [];
     private columnsToRenderRight: AgColumn[] = [];
     private columnsToRenderCenter: AgColumn[] = [];
@@ -222,7 +220,6 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     private calculateHeaderRows(): void {
         const { leftCols, rightCols } = this.visibleCols;
 
-        this.headerGroupRowCount = this.beans.gos.get('hidePaddedHeaderRows') ? 0 : this.colModel.cols!.treeDepth;
         this.columnsToRenderLeft = leftCols;
         this.columnsToRenderRight = rightCols;
         this.columnsToRenderCenter = this.colsWithinViewport;
@@ -243,10 +240,6 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
                     }
 
                     const level = parent.getProvidedColumnGroup().getLevel();
-
-                    if (level + 1 > this.headerGroupRowCount && !parent.isPadding()) {
-                        this.headerGroupRowCount = level + 1;
-                    }
 
                     groupsToRender[level] ??= [];
                     groupsToRender[level].push(parent);

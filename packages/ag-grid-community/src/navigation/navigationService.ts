@@ -12,7 +12,7 @@ import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { NavigateToNextCellParams, TabToNextCellParams } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { VerticalScrollPosition } from '../interfaces/iRowNode';
+import type { RowPinnedType, VerticalScrollPosition } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { RowCtrl } from '../rendering/row/rowCtrl';
@@ -32,6 +32,7 @@ interface NavigateParams {
     focusIndex: number;
     focusColumn: AgColumn;
     isAsync?: boolean;
+    rowPinned?: RowPinnedType;
 }
 
 export type FindNextCellToFocusOnParams = {
@@ -125,8 +126,15 @@ export class NavigationService extends BeanStub implements NamedBean {
         return true;
     }
 
-    private navigateTo(navigateParams: NavigateParams): void {
-        const { scrollIndex, scrollType, scrollColumn, focusIndex, focusColumn } = navigateParams;
+    private navigateTo({
+        scrollIndex,
+        scrollType,
+        scrollColumn,
+        focusIndex,
+        focusColumn,
+        isAsync,
+        rowPinned,
+    }: NavigateParams): void {
         const { scrollFeature } = this.gridBodyCon;
 
         if (_exists(scrollColumn) && !scrollColumn.isPinned()) {
@@ -141,7 +149,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         // however, this behavior will cause the cell border to be cut off, or if we have sticky rows, the
         // cell will be completely hidden, so we call ensureIndexVisible without a position to guarantee
         // minimal scroll to get the row into view.
-        if (!navigateParams.isAsync) {
+        if (!isAsync) {
             scrollFeature.ensureIndexVisible(focusIndex);
         }
 
@@ -152,11 +160,11 @@ export class NavigationService extends BeanStub implements NamedBean {
         focusSvc.setFocusedCell({
             rowIndex: focusIndex,
             column: focusColumn,
-            rowPinned: null,
+            rowPinned,
             forceBrowserFocus: true,
         });
 
-        rangeSvc?.setRangeToCell({ rowIndex: focusIndex, rowPinned: null, column: focusColumn });
+        rangeSvc?.setRangeToCell({ rowIndex: focusIndex, rowPinned, column: focusColumn });
     }
 
     // this method is throttled, see the `constructor`
@@ -340,7 +348,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     private onCtrlUpDownLeftRight(key: string, gridCell: CellPosition): void {
         const cellToFocus = this.beans.cellNavigation!.getNextCellToFocus(key, gridCell, true)!;
-        const { rowIndex } = cellToFocus;
+        const { rowIndex, rowPinned } = cellToFocus;
         const column = cellToFocus.column as AgColumn;
 
         this.navigateTo({
@@ -349,6 +357,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             scrollColumn: column,
             focusIndex: rowIndex,
             focusColumn: column,
+            rowPinned,
         });
     }
 

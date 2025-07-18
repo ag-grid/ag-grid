@@ -7,6 +7,10 @@ function formatTestId(name: string, attributes: Record<string, string | number |
 }
 
 export const agTestIdFor = {
+    root(gridId: string): string {
+        return formatTestId('ag-grid-root', { ['grid-id']: gridId });
+    },
+
     /** Headers */
 
     headerGroupCell(colId: string | null): string {
