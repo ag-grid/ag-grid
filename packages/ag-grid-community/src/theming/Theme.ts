@@ -1,4 +1,4 @@
-import { _error, _logPreInitErr } from '../validation/logging';
+import { _agError, _agLogPreInitErr } from '../agStack/utils/logUtils';
 import type { Part } from './Part';
 import { PartImpl, createPart, defaultModeName } from './Part';
 import type { CoreParams } from './core/core-css';
@@ -57,11 +57,12 @@ export const _asThemeImpl = <TParams>(theme: Theme<TParams>): ThemeImpl => {
 export const createTheme = (): Theme<CoreParams & ButtonStyleParams & BatchEditStyleParams> =>
     new ThemeImpl().withPart(buttonStyleQuartz).withPart(columnDropStyleBordered).withPart(batchEditStyleBase);
 
-type GridThemeUseArgs = {
+type themeUseArgs = {
     loadThemeGoogleFonts: boolean | undefined;
     styleContainer: HTMLElement;
     cssLayer: string | undefined;
     nonce: string | undefined;
+    moduleCss: Map<string, string[]> | undefined;
 };
 
 export class ThemeImpl {
@@ -71,7 +72,7 @@ export class ThemeImpl {
         if (typeof part === 'function') part = part();
         if (!(part instanceof PartImpl)) {
             // Can't use validation service as this is API is designed to be used before modules are registered
-            _logPreInitErr(259, { part }, 'Invalid part');
+            _agLogPreInitErr(259, { part }, 'Invalid part');
             return this;
         }
         return new ThemeImpl([...this.parts, part]);
@@ -94,14 +95,14 @@ export class ThemeImpl {
      * the theme's parts into document head, or the shadow DOM if the provided
      * container is within a shadow root.
      */
-    _startUse({ styleContainer, cssLayer, nonce, loadThemeGoogleFonts }: GridThemeUseArgs): void {
+    _startUse({ styleContainer, cssLayer, nonce, loadThemeGoogleFonts, moduleCss: additionalCss }: themeUseArgs): void {
         if (IS_SSR) return;
 
         if (FORCE_LEGACY_THEMES) return;
 
         uninstallLegacyCSS();
 
-        _injectCoreAndModuleCSS(styleContainer, cssLayer, nonce);
+        _injectCoreAndModuleCSS(styleContainer, cssLayer, nonce, additionalCss);
 
         const googleFontsUsed = getGoogleFontsUsed(this);
         if (googleFontsUsed.length > 0) {
@@ -189,7 +190,7 @@ export class ThemeImpl {
      *
      * @param className a unique class name on the grid wrapper used to scope the returned CSS to the grid instance
      */
-    _getPerGridCss(className: string): string {
+    _getPerInstanceCss(className: string): string {
         const selectorPlaceholder = '##SELECTOR##';
         let innerParamsCss = this._paramsCssCache;
         if (!innerParamsCss) {
@@ -221,7 +222,7 @@ export class ThemeImpl {
                     const value = params[key];
                     const cssValue = paramValueToCss(key, value);
                     if (cssValue === false) {
-                        _error(107, { key, value });
+                        _agError(107, { key, value });
                     } else {
                         const cssName = paramToVariableName(key);
                         const inheritedName = cssName.replace('--ag-', '--ag-inherited-');

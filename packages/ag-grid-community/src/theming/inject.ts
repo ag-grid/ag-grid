@@ -1,5 +1,4 @@
-import type { Environment } from '../environment';
-import { _getAllRegisteredModules } from '../modules/moduleRegistry';
+import type { IEnvironment } from '../agStack/interfaces/iEnvironment';
 import { FORCE_LEGACY_THEMES } from './Theme';
 import { coreCSS } from './core/core.css-GENERATED';
 
@@ -59,22 +58,19 @@ export const _injectGlobalCSS = (
 export const _injectCoreAndModuleCSS = (
     styleContainer: HTMLElement,
     layer: string | undefined,
-    nonce: string | undefined
+    nonce: string | undefined,
+    moduleCss: Map<string, string[]> | undefined
 ) => {
     _injectGlobalCSS(coreCSS, styleContainer, 'core', layer, 0, nonce);
-    Array.from(_getAllRegisteredModules())
-        .sort((a, b) => a.moduleName.localeCompare(b.moduleName))
-        .forEach((module) =>
-            module.css?.forEach((css) =>
-                _injectGlobalCSS(css, styleContainer, `module-${module.moduleName}`, layer, 0, nonce)
-            )
-        );
+    moduleCss?.forEach((css, debugId) =>
+        css.forEach((singleCss) => _injectGlobalCSS(singleCss, styleContainer, debugId, layer, 0, nonce))
+    );
 };
 
-export const _registerGridUsingThemingAPI = (environment: Environment) => {
+export const _registerInstanceUsingThemingAPI = (environment: IEnvironment) => {
     injectionState.grids.add(environment);
 };
-export const _unregisterGridUsingThemingAPI = (environment: Environment) => {
+export const _unregisterInstanceUsingThemingAPI = (environment: IEnvironment) => {
     injectionState.grids.delete(environment);
     if (injectionState.grids.size === 0) {
         injectionState.map = new WeakMap();

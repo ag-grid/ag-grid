@@ -3,13 +3,14 @@ import { _observeResize } from './agStack/utils/domUtils';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
+import { _getAllRegisteredModules } from './modules/moduleRegistry';
 import { ThemeImpl } from './theming/Theme';
 import {
     IS_SSR,
     _injectCoreAndModuleCSS,
     _injectGlobalCSS,
-    _registerGridUsingThemingAPI,
-    _unregisterGridUsingThemingAPI,
+    _registerInstanceUsingThemingAPI,
+    _unregisterInstanceUsingThemingAPI,
 } from './theming/inject';
 import { themeQuartz } from './theming/parts/theme/themes';
 import { _createElement } from './utils/dom';
@@ -106,7 +107,7 @@ export class Environment extends BeanStub implements NamedBean, IEnvironment {
         this.getSizeEl(PINNED_BORDER_WIDTH);
         this.refreshRowBorderWidthVariable();
 
-        this.addDestroyFunc(() => _unregisterGridUsingThemingAPI(this));
+        this.addDestroyFunc(() => _unregisterInstanceUsingThemingAPI(this));
 
         this.mutationObserver = new MutationObserver(() => {
             this.fireGridStylesChangedEvent('themeChanged');
@@ -339,9 +340,18 @@ export class Environment extends BeanStub implements NamedBean, IEnvironment {
             }
         }
         if (newGridTheme !== oldGridTheme) {
+            const additionalCss: Map<string, string[]> = new Map();
+            Array.from(_getAllRegisteredModules())
+                .sort((a, b) => a.moduleName.localeCompare(b.moduleName))
+                .forEach((module) => {
+                    const moduleCss = module.css;
+                    if (moduleCss) {
+                        additionalCss.set(`module-${module.moduleName}`, moduleCss);
+                    }
+                });
             if (newGridTheme) {
-                _registerGridUsingThemingAPI(this);
-                _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce);
+                _registerInstanceUsingThemingAPI(this);
+                _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce, additionalCss);
                 for (const [css, debugId] of globalCSS) {
                     _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
                 }
@@ -353,6 +363,7 @@ export class Environment extends BeanStub implements NamedBean, IEnvironment {
                 styleContainer: this.eStyleContainer,
                 cssLayer: this.cssLayer,
                 nonce: this.styleNonce,
+                moduleCss: additionalCss,
             });
             let eParamsStyle = this.eParamsStyle;
             if (!eParamsStyle) {
@@ -364,7 +375,7 @@ export class Environment extends BeanStub implements NamedBean, IEnvironment {
                 eGridDiv.appendChild(eParamsStyle);
             }
             if (!IS_SSR) {
-                eParamsStyle.textContent = newGridTheme?._getPerGridCss(this.paramsClass) || '';
+                eParamsStyle.textContent = newGridTheme?._getPerInstanceCss(this.paramsClass) || '';
             }
 
             this.applyThemeClasses(eGridDiv);

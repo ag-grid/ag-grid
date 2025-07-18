@@ -1,4 +1,4 @@
-import { _error } from '../validation/logging';
+import { _agError } from '../agStack/utils/logUtils';
 import { clamp, memoize, paramToVariableExpression } from './theme-utils';
 
 export type Feature = 'colorScheme' | 'iconSet' | 'checkboxStyle' | 'inputStyle' | 'tabStyle';
@@ -377,7 +377,7 @@ export const durationValueToCss = (value: DurationValue, param: string): string 
     if (typeof value === 'string') return value;
     if (typeof value === 'number') {
         if (value >= 10) {
-            _error(104, { value, param });
+            _agError(104, { value, param });
         }
         return `${value}s`;
     }

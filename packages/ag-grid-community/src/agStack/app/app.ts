@@ -1,3 +1,4 @@
+import type { Theme } from '../../theming/Theme';
 import type { AgBeanStubEvent } from '../agBeanStub';
 import { AgBeanStub } from '../agBeanStub';
 import { AgComponentStub } from '../agComponentStub';
@@ -26,6 +27,7 @@ import type { AgWidgetSelectorType } from '../widgets/agWidgetSelectorType';
 interface AppProperties extends BaseProperties {
     localeText?: { [key: string]: string };
     getLocaleText: (params: { key: string; defaultValue: string; variableValues?: string[] }) => string;
+    theme?: Theme;
 }
 
 const APP_PROPERTY_DEFAULTS = {
