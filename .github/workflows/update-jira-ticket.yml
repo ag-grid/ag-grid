@@ -112,7 +112,7 @@ jobs:
             };
             let transitioned_at_least_one = false;
             const transitions = {};
-            issue_keys.forEach(async (issue_key) => {
+            [...new Set(issue_keys)].forEach(async (issue_key) => {
                 // Move the JIRA ticket to 'the next column' if the PR is merged
                 const availableTransitions = await getJiraTransitions(issue_key);
                 if (!availableTransitions || availableTransitions.length === 0) {
