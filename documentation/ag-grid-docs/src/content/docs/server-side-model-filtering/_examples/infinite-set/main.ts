@@ -41,6 +41,7 @@ const columnDefs: ColDef[] = [
             valueFormatter: countryValueFormatter,
             comparator: countryComparator,
             suppressClearModelOnRefreshValues: true,
+            buttons: ['apply'],
         },
     },
     {
