@@ -163,7 +163,7 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
 ---
 
 <Layout
-    title="Our Mission, Our Principles and Our Team at AG Grid"
+    title="About AG grid: Our Mission, Principles Team"
     description="AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are."
     showSearchBar={true}
     showDocsNav={false}
@@ -171,6 +171,8 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
     <div class={styles.aboutPage}>
         <div class="layout-max-width-small">
             <section class={styles.introSection}>
+                <h1 class={`${styles.miniHeader} text-lg`}>About AG Grid</h1>
+
                 <h2>
                     Open source heart, <br />
                     <span>enterprise muscle.</span>
@@ -197,7 +199,8 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                 <CustomerLogos client:load />
                 <p class={styles.footnote}>
                     <span>Built by developers for developers</span>, AG Grid was born out of frustration with the
-                    performance limitations of existing solutions. Our grid and charts products are now trusted by
+                    performance limitations of existing solutions. Today, AG Grid is a self-funded, bootstrapped company
+                    with thousands of customers globally. Our data grid and charting products are now trusted by
                     developers worldwide when building their applications.
                 </p>
             </section>
@@ -215,6 +218,29 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                             <Icon name="chevronRight" />
                         </a>
                     </div>
+                </div>
+            </section>
+
+            <section class={styles.principlesSection}>
+                <div class={styles.principlesContent}>
+                    <h2>Our principles</h2>
+                    <p>Empowering developers to build world-class applications for their users</p>
+                </div>
+
+                <div class={styles.principlesList}>
+                    {
+                        principles.map(({ icon: PrincipleIcon, title, description }, idx) => (
+                            <div class={styles.principleItem}>
+                                <div class={`${styles.principleIcon} ${styles[`principleColor${idx + 1}`]}`}>
+                                    <PrincipleIcon />
+                                </div>
+                                <div class={styles.principleText}>
+                                    <div class={styles.principleTitle}>{title}</div>
+                                    <div class={styles.principleDesc}>{description}</div>
+                                </div>
+                            </div>
+                        ))
+                    }
                 </div>
             </section>
 
@@ -240,29 +266,6 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                                 <div class={styles.timelineContent}>
                                     <div class={styles.timelineTitle}>{title}</div>
                                     <div class={styles.timelineDesc}>{description}</div>
-                                </div>
-                            </div>
-                        ))
-                    }
-                </div>
-            </section>
-
-            <section class={styles.principlesSection}>
-                <div class={styles.principlesContent}>
-                    <h2>Our principles</h2>
-                    <p>Empowering developers to build world-class applications for their users</p>
-                </div>
-
-                <div class={styles.principlesList}>
-                    {
-                        principles.map(({ icon: PrincipleIcon, title, description }, idx) => (
-                            <div class={styles.principleItem}>
-                                <div class={`${styles.principleIcon} ${styles[`principleColor${idx + 1}`]}`}>
-                                    <PrincipleIcon />
-                                </div>
-                                <div class={styles.principleText}>
-                                    <div class={styles.principleTitle}>{title}</div>
-                                    <div class={styles.principleDesc}>{description}</div>
                                 </div>
                             </div>
                         ))

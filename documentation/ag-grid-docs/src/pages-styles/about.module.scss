@@ -10,6 +10,11 @@
     }
 }
 
+.miniHeader {
+    color: var(--color-brand-400);
+    text-align: center;
+}
+
 .eyebrow {
     font-size: var(--text-fs-base);
     font-weight: var(--text-semibold);
@@ -312,7 +317,7 @@
     }
 }
 .footnote {
-    max-width: 500px;
+    max-width: 65ch;
     text-align: center;
     font-weight: var(--text-semibold);
     color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 60%);
@@ -741,18 +746,22 @@
     text-align: center;
 }
 
-.headerSection {
+.photoSection {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+
     span {
         color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 90%);
         line-height: 1.6;
         font-weight: var(--text-semibold);
         opacity: 0.7;
     }
+}
 
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
+.photoSectionTwo {
+    margin-top: $spacing-size-16;
 }
 
 .contentSection {
@@ -761,6 +770,10 @@
     padding-bottom: $spacing-size-12;
     display: flex;
     margin: 0 auto;
+
+    &:last-child {
+        margin-bottom: $spacing-size-24;
+    }
 
     h2 {
         padding-bottom: $spacing-size-8;

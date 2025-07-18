@@ -20,8 +20,12 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
             </p>
         </section>
 
-        <div class={styles.headerSection}>
-            <img src={urlWithBaseUrl('images/niall.jpg')} alt="Photo of Niall Crosby" class={styles.nialHeaderImage} />
+        <div class={styles.photoSection}>
+            <img
+                src={urlWithBaseUrl('images/ag-grid-founder-niall-crosby.jpg')}
+                alt="AG Grid founder Niall Crosby"
+                class={styles.nialHeaderImage}
+            />
             <span>Niall Crosby 1977-2024</span>
         </div>
 
@@ -52,6 +56,14 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
                 </div>
             </div>
         </section>
+
+        <div class={`${styles.photoSection} ${styles.photoSectionTwo}`}>
+            <img
+                src={urlWithBaseUrl('images/niall-crosby-finjs-2022.jpg')}
+                alt="Niall Crosby speaking at Fin.js 2022 conference"
+                class={styles.nialHeaderImage}
+            />
+        </div>
 
         <section class={styles.contentSection}>
             <div class={styles.niallSectionContent}>
