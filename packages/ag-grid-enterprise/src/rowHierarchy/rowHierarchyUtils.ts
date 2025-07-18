@@ -1,8 +1,6 @@
-import { _getLocaleTextFunc } from 'ag-grid-community';
 import type {
     Bean,
     BeanCollection,
-    Column,
     GridOptionsService,
     GroupingApproach,
     IRowNode,
