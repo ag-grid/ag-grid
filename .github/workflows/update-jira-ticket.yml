@@ -90,7 +90,7 @@ jobs:
                     return;
                 }
                 const prefixes = ['fix', 'fix', 'close', 'resolve'];
-                const regex = new RegExp(`(${prefixes.join('|')})?\w*\s*\[?((AG|RTI)-\d{3,})`, 'gi');
+                const regex = new RegExp(`(${prefixes.join('|')})?\\w*\\s*\\[?((AG|RTI)-\\d{3,})`, 'gi');
                 if (!pr.body && !pr.title) {
                     console.log('PR title and body are empty, cannot find JIRA ticket.');
                 } else {
