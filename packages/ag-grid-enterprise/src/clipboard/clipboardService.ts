@@ -64,7 +64,7 @@ enum CellClearType {
 }
 
 // This will parse a delimited string into an array of arrays.
-export function stringToArray(strData: string, delimiter = ','): string[][] {
+function stringToArray(strData: string, delimiter = ','): string[][] {
     const data: string[][] = [];
     const isNewline = (char: string) => char === '\r' || char === '\n';
 

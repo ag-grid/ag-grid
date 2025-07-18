@@ -380,7 +380,7 @@ function cleanup(model: ChartModel) {
     return model;
 }
 
-export function heuristicVersionDetection(model: ChartModel) {
+function heuristicVersionDetection(model: ChartModel) {
     const modelAny = model as any;
 
     if (model.version != null) {

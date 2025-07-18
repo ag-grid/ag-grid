@@ -59,29 +59,6 @@ export function _isHiddenParent(node: RowNode, ancestor: RowNode, gos: GridOptio
     return currentNode === ancestor;
 }
 
-export function _getGroupValue(
-    column: Column | null | undefined,
-    node: RowNode,
-    displayedNode: RowNode,
-    beans: BeanCollection
-): string | null {
-    const isCellBlankValue = displayedNode.key === '';
-    const isGroupColForNode =
-        !!displayedNode.rowGroupColumn &&
-        (!column || // full width row
-            column?.isRowGroupDisplayed(displayedNode.rowGroupColumn.getId())); // correct column cell
-    // if value is empty and correct column
-    if (isCellBlankValue && isGroupColForNode) {
-        const isHiddenParent = _isHiddenParent(node, displayedNode, beans.gos);
-        // ensure node is unchanged or hidden parent
-        if (displayedNode === node || isHiddenParent) {
-            const localeTextFunc = _getLocaleTextFunc(beans.localeSvc);
-            return localeTextFunc('blanks', '(Blanks)');
-        }
-    }
-    return null;
-}
-
 export const _getRowDefaultExpanded = (
     beans: BeanCollection,
     rowNode: IRowNode,

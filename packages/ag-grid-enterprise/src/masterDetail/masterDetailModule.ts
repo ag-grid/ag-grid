@@ -17,6 +17,7 @@ import { MasterDetailService } from './masterDetailService';
 /**
  * @internal
  */
+// ts-prune-ignore-next
 export const SharedMasterDetailModule: _ModuleWithApi<_MasterDetailGridApi> = {
     moduleName: 'SharedMasterDetail',
     version: VERSION,

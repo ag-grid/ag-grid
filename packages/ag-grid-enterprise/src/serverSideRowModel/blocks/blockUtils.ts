@@ -24,7 +24,7 @@ import type { ServerSideExpansionService } from '../services/serverSideExpansion
 import type { LazyStore } from '../stores/lazy/lazyStore';
 import type { StoreFactory } from '../stores/storeFactory';
 
-export const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey' as const;
+const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey' as const;
 
 export class BlockUtils extends BeanStub implements NamedBean {
     beanName = 'ssrmBlockUtils' as const;

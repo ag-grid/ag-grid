@@ -13,7 +13,7 @@ export interface AgSliderParams extends AgLabelParams {
     onValueChange?: (newValue: number) => void;
 }
 
-export type AgSliderEvent = 'fieldValueChanged';
+type AgSliderEvent = 'fieldValueChanged';
 export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eSlider: AgInputRange = RefPlaceholder;

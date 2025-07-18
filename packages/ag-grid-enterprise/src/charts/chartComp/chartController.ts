@@ -34,7 +34,7 @@ import {
 
 export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
 
-export type ChartControllerEvent =
+type ChartControllerEvent =
     | 'chartUpdated'
     | 'chartApiUpdate'
     | 'chartModelUpdate'

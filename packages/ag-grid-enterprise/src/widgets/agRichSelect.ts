@@ -41,7 +41,7 @@ import { agRichSelectCSS } from './agRichSelect.css-GENERATED';
 import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';
 
-export type AgRichSelectEvent = AgRichSelectListEvent;
+type AgRichSelectEvent = AgRichSelectListEvent;
 
 const AgRichSelectElement: ElementParams = {
     tag: 'div',

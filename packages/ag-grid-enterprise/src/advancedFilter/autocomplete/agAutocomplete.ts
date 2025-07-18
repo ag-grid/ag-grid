@@ -41,11 +41,7 @@ export interface AutocompleteValidChangedEvent extends AgEvent<'eventValidChange
     validationMessage: string | null;
 }
 
-export type AgAutocompleteEvent =
-    | 'eventValueChanged'
-    | 'eventValueConfirmed'
-    | 'eventOptionSelected'
-    | 'eventValidChanged';
+type AgAutocompleteEvent = 'eventValueChanged' | 'eventValueConfirmed' | 'eventOptionSelected' | 'eventValidChanged';
 
 const AgAutocompleteElement: ElementParams = {
     tag: 'div',

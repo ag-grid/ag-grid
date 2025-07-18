@@ -7,7 +7,7 @@ import type { AdvancedFilterExpressionService } from './advancedFilterExpression
 import { AdvancedFilterHeaderComp } from './advancedFilterHeaderComp';
 import { AdvancedFilterBuilderComp } from './builder/advancedFilterBuilderComp';
 
-export type AdvancedFilterCtrlEvent = 'advancedFilterBuilderClosed';
+type AdvancedFilterCtrlEvent = 'advancedFilterBuilderClosed';
 export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implements IAdvancedFilterCtrl {
     private ctrlsSvc: CtrlsService;
     private popupSvc: PopupService;

@@ -24,6 +24,7 @@ function isValidMajorVersion({
     return gridMajorDifference === chartsMajorDifference && isFirstOrAfterVersion;
 }
 
+// ts-prune-ignore-next
 export function gridChartVersion(gridVersion: string):
     | {
           gridMajorMinor: string;
@@ -54,6 +55,7 @@ export function gridChartVersion(gridVersion: string):
     };
 }
 
+// ts-prune-ignore-next
 export function validGridChartsVersionErrorMessage({
     type,
     gridVersion,

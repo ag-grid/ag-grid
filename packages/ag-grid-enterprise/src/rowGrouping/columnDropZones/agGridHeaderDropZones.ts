@@ -4,7 +4,7 @@ import { Component, _createElement } from 'ag-grid-community';
 import { PivotDropZonePanel } from './pivotDropZonePanel';
 import { RowGroupDropZonePanel } from './rowGroupDropZonePanel';
 
-export class AgGridHeaderDropZones extends Component {
+class AgGridHeaderDropZones extends Component {
     private rowGroupComp: Component;
     private pivotComp: Component;
 

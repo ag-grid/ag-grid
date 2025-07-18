@@ -29,7 +29,7 @@ import { SetFilterAppliedModel } from './setFilterAppliedModel';
 import { processDataPath, translateForSetFilter } from './setFilterUtils';
 import SetFilterModelValuesType, { SetValueModel } from './setValueModel';
 
-export type SetFilterHandlerEventType = 'anyFilterChanged' | 'dataChanged' | 'destroyed';
+type SetFilterHandlerEventType = 'anyFilterChanged' | 'dataChanged' | 'destroyed';
 
 export class SetFilterHandler<TValue = string>
     extends BeanStub<SetFilterHandlerEventType>

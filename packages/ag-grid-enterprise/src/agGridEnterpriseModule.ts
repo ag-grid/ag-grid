@@ -3,8 +3,6 @@ import type { _ModuleWithoutApi } from 'ag-grid-community';
 import { GridLicenseManager as LicenseManager } from './license/gridLicenseManager';
 import { VERSION } from './version';
 
-export { AgWatermark } from './license/watermark';
-
 /**
  * @internal
  */
