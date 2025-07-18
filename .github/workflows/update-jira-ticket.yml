@@ -111,7 +111,7 @@ jobs:
             };
             let transitioned_at_least_one = false;
             const transitions = {};
-            issue_keys.forEach(async issue_key => {
+            issue_keys.forEach(async (issue_key) => {
                 // Move the JIRA ticket to 'the next column' if the PR is merged
                 const availableTransitions = await getJiraTransitions(issue_key);
                 if (!availableTransitions || availableTransitions.length === 0) {
@@ -130,8 +130,8 @@ jobs:
                     throw new Error(`JIRA ticket ${issue_key} not found.`);
                 }
                 transitioned_at_least_one ||= !known_transitions[issue.fields.status.name.toUpperCase()];
+                transitions[issue_key] = { from: issue.fields.status.name, to: known_transitions[nextTransition] };
                 if (transitioned_at_least_one) {
-                    transitions[issue_key] = { from: issue.fields.status.name, to: known_transitions[nextTransition] };
                     await transitionJiraIssue(issue, nextTransition);
                 }
             
