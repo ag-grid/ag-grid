@@ -4,6 +4,7 @@ import { AgBeanStub } from '../agBeanStub';
 import { AgComponentStub } from '../agComponentStub';
 import type { AgSingletonBeanClass } from '../baseServices/agContext';
 import { AgContext } from '../baseServices/agContext';
+import { BaseEnvironment } from '../baseServices/baseEnvironment';
 import { BaseEventService } from '../baseServices/baseEventService';
 import { BasePopupService } from '../baseServices/basePopupService';
 import { BaseRegistry } from '../baseServices/baseRegistry';
@@ -169,6 +170,41 @@ class AppRegistry extends BaseRegistry<
     }
 }
 
+class AppIconService implements IIconService<string, any> {
+    beanName = 'iconSvc' as const;
+
+    public createIconNoSpan(iconName: string): Element | undefined {
+        return _createAgElement({
+            tag: 'span',
+            cls: `ag-icon ag-icon-${iconName}`,
+            role: 'presentation',
+            attrs: { unselectable: 'on' },
+        });
+    }
+}
+
+class AppEnvironment extends BaseEnvironment<
+    AppBeanCollection,
+    AppPropertiesWithDefaults,
+    AppEvents,
+    AppCommon,
+    AppPropertiesService
+> {
+    protected override initVariables(): void {
+        // do nothing
+    }
+    protected override fireStylesChangedEvent(): void {
+        // do nothing
+    }
+    protected override getAdditionalCss(): Map<string, string[]> {
+        // TODO add new styles
+        return new Map();
+    }
+    protected override postProcessThemeChange(): void {
+        // do nothing
+    }
+}
+
 class AppRootComp extends AgComponentStub<
     AppBeanCollection,
     AppPropertiesWithDefaults,
@@ -216,19 +252,6 @@ class AppRootComp extends AgComponentStub<
     }
 }
 
-class AppIconService implements IIconService<string, any> {
-    beanName = 'iconSvc' as const;
-
-    public createIconNoSpan(iconName: string): Element | undefined {
-        return _createAgElement({
-            tag: 'span',
-            cls: `ag-icon ag-icon-${iconName}`,
-            role: 'presentation',
-            attrs: { unselectable: 'on' },
-        });
-    }
-}
-
 export function createApp(eRootDiv: HTMLElement, options: AppProperties) {
     if (!options) {
         return;
@@ -237,11 +260,6 @@ export function createApp(eRootDiv: HTMLElement, options: AppProperties) {
         eRootDiv,
         frameworkOverrides: {
             wrapIncoming: (callback) => callback(),
-        },
-        environment: {
-            beanName: 'environment' as const,
-            addGlobalCSS: () => {},
-            applyThemeClasses: () => {},
         },
         options,
     };
@@ -253,6 +271,7 @@ export function createApp(eRootDiv: HTMLElement, options: AppProperties) {
         AppPopupService,
         AppRegistry,
         AppIconService,
+        AppEnvironment,
     ];
 
     const context = new AgContext<AppBeanCollection>({

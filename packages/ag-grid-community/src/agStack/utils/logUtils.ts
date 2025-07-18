@@ -3,6 +3,8 @@ const AG_ERROR_MAP = {
         `Invalid value for theme param ${key} - ${value}` as const,
     104: ({ value, param }: { value: number; param: string }) =>
         `Numeric value ${value} passed to ${param} param will be interpreted as ${value} seconds. If this is intentional use "${value}s" to silence this warning.` as const,
+    240: ({ theme }: { theme: any }) =>
+        `theme grid option must be a Theming API theme object or the string "legacy", received: ${theme}` as const,
     259: ({ part }: { part: any }) =>
         `the argument to theme.withPart must be a Theming API part object, received: ${part}` as const,
 };

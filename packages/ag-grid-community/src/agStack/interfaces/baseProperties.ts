@@ -6,4 +6,8 @@ export interface BaseProperties {
     enableRtl?: boolean;
     popupParent?: HTMLElement | null;
     theme?: Theme | 'legacy';
+    loadThemeGoogleFonts?: boolean;
+    themeCssLayer?: string;
+    styleNonce?: string;
+    themeStyleContainer?: HTMLElement;
 }
