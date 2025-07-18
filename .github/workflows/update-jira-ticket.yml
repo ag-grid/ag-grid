@@ -67,8 +67,7 @@ jobs:
             if (!pr_number && !issueKey) {
                 throw new Error('Must provide a PR ID or a JIRA ticket.');
             }
-            /** @type {import('@octokit/openapi-types').components['schemas']['pull-request-simple']} */
-            const pr = context.payload.pull_request || (await github.rest.pulls.get({ ...ownerRepo, pull_number: pr_number })).data;
+            const pr = (await github.rest.pulls.get({ ...ownerRepo, pull_number: pr_number })).data;
             if (!issueKey) {
                 const is_merged = !!pr.merged_at;
                 if (!is_merged) {
@@ -129,7 +128,7 @@ jobs:
                     blocks.push(txt(`. `));
                 }
             
-                const mergedBy = pr.data.merged_by?.login;
+                const mergedBy = pr.merged_by?.login;
                 if (mergedBy) {
                     blocks.push(txt(`Merged by `));
                     blocks.push(mention(mergedBy));
