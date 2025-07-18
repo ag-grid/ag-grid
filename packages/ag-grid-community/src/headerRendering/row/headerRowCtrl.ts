@@ -26,7 +26,7 @@ export type HeaderRowCtrlInstanceId = BrandedType<number, 'HeaderRowCtrlInstance
 export class HeaderRowCtrl extends BeanStub {
     public readonly instanceId: HeaderRowCtrlInstanceId = instanceIdSequence++ as HeaderRowCtrlInstanceId;
 
-    private comp: IHeaderRowComp;
+    private comp: IHeaderRowComp | null = null;
     public headerRowClass: string;
 
     // Maintain a map and corresponding array of the header cell ctrls for performance
@@ -133,6 +133,9 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private setWidth(): void {
+        if (!this.comp) {
+            return;
+        }
         const width = this.getWidthForRow();
         this.comp.setWidth(`${width}px`);
     }
@@ -188,6 +191,9 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private onVirtualColumnsChanged(afterScroll: boolean = false): void {
+        if (!this.comp) {
+            return;
+        }
         const ctrlsToDisplay = this.getUpdatedHeaderCtrls();
         const forceOrder = this.isEnsureDomOrder || this.isPrintLayout;
         this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder, afterScroll);
@@ -342,6 +348,7 @@ export class HeaderRowCtrl extends BeanStub {
     public override destroy(): void {
         this.allCtrls = this.destroyBeans(this.allCtrls);
         this.ctrlsById = undefined;
+        this.comp = null;
         super.destroy();
     }
 }
