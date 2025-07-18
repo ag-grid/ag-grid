@@ -165,15 +165,12 @@ jobs:
                     });
                 }
             }
-            const content = [paragraph(blocks)];
-            if (needToTransition) {
-                content.push(paragraph([
-                    txt(`[This issue/comment was `, { type: 'em' }),
-                    link(
-                        'automatically created',
-                        'https://github.com/ag-grid/ag-grid/.github/workflows/update-jira-ticket.yml'
-                    ),
-                    txt(` by the AG Grid CI workflow.]`, { type: 'em' }),
-                ]));
-            }
+            const content = [paragraph(blocks), paragraph([
+                txt(`[This issue/comment was `, { type: 'em' }),
+                link(
+                    'automatically created',
+                    'https://github.com/ag-grid/ag-grid/.github/workflows/update-jira-ticket.yml'
+                ),
+                txt(` by the AG Grid CI workflow.]`, { type: 'em' }),
+            ])];
             await addJiraComment(issue_key, {content, "type": "doc", "version": 1});
