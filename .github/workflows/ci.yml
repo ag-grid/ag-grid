@@ -218,11 +218,11 @@ jobs:
         id: pack-verify
         run: |
           yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify --prod
-      - name: andrew checker
+      - name: Assert No Debugger
         if: matrix.shard == 0
-        id: andrew
+        id: assertNoDebugger
         run: |
-          ./scripts/andrewChecker.sh
+          ./scripts/assertNoDebugger.sh
       - name: Persist test results
         if: always() && matrix.shard != 0
         uses: actions/upload-artifact@v4
