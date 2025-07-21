@@ -131,9 +131,7 @@ jobs:
                 }
                 transitioned_at_least_one ||= !known_transitions[issue.fields.status.name.toUpperCase()];
                 transitions[issue_key] = { from: issue.fields.status.name, to: known_transitions[nextTransition] };
-                if (transitioned_at_least_one) {
-                    await transitionJiraIssue(issue, nextTransition);
-                }
+
             
                 // blocks section
                 const blocks = [];
@@ -169,7 +167,10 @@ jobs:
                     link('the AG Grid CI workflow', runUrl),
                     txt('.]')
                 ])];
-                await addJiraComment(issue_key, {content, "type": "doc", "version": 1});
+                if (!known_transitions[issue.fields.status.name.toUpperCase()]) {
+                    await transitionJiraIssue(issue, nextTransition);
+                    await addJiraComment(issue_key, {content, "type": "doc", "version": 1});
+                }
             });
             
             if (transitioned_at_least_one) {
