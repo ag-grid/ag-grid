@@ -90,12 +90,11 @@ jobs:
                     console.log(`PR #${pr_number} is not merged, skipping JIRA ticket update.`);
                     return;
                 }
-                const prefixes = ['fix', 'fix', 'close', 'resolve'];
-                const regex = new RegExp(`(${prefixes.join('|')})?\\w*\\s*\\[?((AG|RTI)-\\d{3,})`, 'gi');
                 if (!pr.body && !pr.title) {
                     console.log('PR title and body are empty, cannot find JIRA ticket.');
                 } else {
-                    const matches = pr.body?.match(regex) || pr.title.match(regex) || pr.head.ref;
+                    const regex = /fix(es)? \[?((AG|RTI)-\d{3,})/gi;
+                    const matches = pr.body?.match(regex);
                     if (matches) {
                         issue_keys.push(...matches.map(m => m.match(/(AG|RTI)-\d{3,}/i)[0].toUpperCase()));
                     }
