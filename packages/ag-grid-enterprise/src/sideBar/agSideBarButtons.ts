@@ -13,7 +13,7 @@ export interface SideBarButtonClickedEvent extends AgEvent<'sideBarButtonClicked
     toolPanelId: string;
 }
 
-export type AgSideBarButtonsEvent = 'sideBarButtonClicked';
+type AgSideBarButtonsEvent = 'sideBarButtonClicked';
 
 const SideBarElement: ElementParams = { tag: 'div', cls: 'ag-side-buttons', role: 'tablist' };
 export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {

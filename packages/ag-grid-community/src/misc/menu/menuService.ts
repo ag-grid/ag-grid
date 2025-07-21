@@ -37,10 +37,10 @@ interface AutoShowMenuParams {
     positionBy: 'auto';
 }
 
-export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) &
+type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) &
     BaseShowColumnMenuParams;
 
-export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) &
+type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) &
     BaseShowFilterMenuParams;
 
 export class MenuService extends BeanStub implements NamedBean {

@@ -1,0 +1,11 @@
+{
+    "entry": ["./src/main.ts", "./src/main-umd-noStyles.ts"],
+    "project": ["./src/**"],
+    "ignore": ["./src/charts/chartComp/menu/settings/miniCharts/**", "./src/excelExport/**/*.ts"],
+    "rules": {
+        "unlisted": "off",
+        "unresolved": "off",
+        "dependencies": "off"
+    },
+    "tags": ["-knipIgnore"]
+}

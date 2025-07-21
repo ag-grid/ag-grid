@@ -1,6 +1,9 @@
 function formatTestId(name: string, attributes: Record<string, string | number | null | undefined> = {}): string {
-    const params = Object.entries(attributes)
-        .map(([k, v]) => (v != null ? `${k}=${v}` : null))
+    const params = Object.keys(attributes)
+        .map((k) => {
+            const v = attributes[k];
+            return v != null ? `${k}=${v}` : null;
+        })
         .filter(Boolean)
         .join(';');
     return [name, params].filter((s) => s.length > 0).join(':');

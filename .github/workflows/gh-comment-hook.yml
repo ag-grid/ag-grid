@@ -1,10 +1,6 @@
-name: Utility Comment Hook
+name: Expand JIRA Links in PR descriptions
 
 on:
-  issue_comment:
-    types: [ created, edited ]
-  issues:
-    types: [ opened, edited ]
   pull_request:
     types: [ opened, edited, synchronize ]
 
@@ -23,22 +19,17 @@ jobs:
         uses: actions/github-script@v7
         continue-on-error: true
         env:
-          COMMENT_ID: ${{ github.event.comment.id }}
-          COMMENT_BODY: ${{ github.event.comment.body }}
-          ISSUE_BODY: ${{ github.event.issue.body || github.event.pull_request.body }}
-          ISSUE_ID: ${{ github.event.issue.number || github.event.pull_request.number }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_ID: ${{ github.event.pull_request.number }}
         with:
           result-encoding: string
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const comment_id = process.env.COMMENT_ID;
-            const comment_body = process.env.COMMENT_BODY;
-            const issue_body = process.env.ISSUE_BODY;
-            const issue_number = process.env.ISSUE_ID;
-
-            if (comment_id && comment_body) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id, body: comment_body.replace(/\#(AG-[\d]{3,})/g, `[$1](https://ag-grid.atlassian.net/browse/$1)`) });
-            } else if (issue_body && issue_number) {
-              await github.rest.issues.update({ owner, repo, issue_number, body: issue_body.replace(/\#(AG-[\d]{3,})/g, `[$1](https://ag-grid.atlassian.net/browse/$1)`) });
+            const old_body = process.env.PR_BODY || '';
+            const issue_number = process.env.PR_ID;
+            
+            const body = old_body.replace(/#(AG-\d{3,})/g, `[$1](https://ag-grid.atlassian.net/browse/$1)`);
+            if (body !== old_body) {
+                await github.rest.issues.update({ owner, repo, issue_number, body });
             }

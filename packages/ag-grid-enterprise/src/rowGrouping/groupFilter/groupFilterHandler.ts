@@ -9,7 +9,7 @@ import { BeanStub, _warn } from 'ag-grid-community';
 
 import type { GroupFilterService } from './groupFilterService';
 
-export type GroupFilterHandlerEventType = 'sourceColumnsChanged' | 'selectedColumnChanged' | 'destroyed';
+type GroupFilterHandlerEventType = 'sourceColumnsChanged' | 'selectedColumnChanged' | 'destroyed';
 export class GroupFilterHandler
     extends BeanStub<GroupFilterHandlerEventType>
     implements FilterHandler<any, any, null, IFilterParams>

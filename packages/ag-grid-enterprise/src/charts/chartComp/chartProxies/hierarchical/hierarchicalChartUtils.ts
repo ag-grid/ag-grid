@@ -1,7 +1,7 @@
 export type CATEGORY_LABEL_KEY = 'AG-GRID-DEFAULT-LABEL-KEY';
 export const CATEGORY_LABEL_KEY: CATEGORY_LABEL_KEY = 'AG-GRID-DEFAULT-LABEL-KEY';
 
-export type CategoryItem<T extends object> = {
+type CategoryItem<T extends object> = {
     [CATEGORY_LABEL_KEY]: string | null;
     children?: Array<CategoryItem<T>>;
 } & T;

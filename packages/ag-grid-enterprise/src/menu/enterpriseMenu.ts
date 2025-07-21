@@ -38,7 +38,7 @@ import type { ColumnChooserFactory } from './columnChooserFactory';
 import type { ColumnMenuFactory } from './columnMenuFactory';
 import type { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
 
-export interface TabSelectedEvent extends AgEvent<'tabSelected'> {
+interface TabSelectedEvent extends AgEvent<'tabSelected'> {
     key: string;
 }
 

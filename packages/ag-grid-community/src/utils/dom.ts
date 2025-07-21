@@ -298,25 +298,6 @@ export function _setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTM
     }
 }
 
-export function _insertWithDomOrder(
-    eContainer: HTMLElement,
-    eToInsert: HTMLElement,
-    eChildBefore: HTMLElement | null
-): void {
-    if (eChildBefore) {
-        // if previous element exists, just slot in after the previous element
-        eChildBefore.insertAdjacentElement('afterend', eToInsert);
-    } else {
-        if (eContainer.firstChild) {
-            // insert it at the first location
-            eContainer.insertAdjacentElement('afterbegin', eToInsert);
-        } else {
-            // otherwise eContainer is empty, so just append it
-            eContainer.appendChild(eToInsert);
-        }
-    }
-}
-
 /**
  * Converts a camelCase string into hyphenated string
  * @param {string} camelCase
@@ -471,7 +452,7 @@ export function _requestAnimationFrame(beans: BeanCollection, callback: any) {
     }
 }
 
-export type Attributes = { [key: string]: string };
+type Attributes = { [key: string]: string };
 type TagName = keyof HTMLElementTagNameMap | Lowercase<AgComponentSelector>;
 /** Type to help avoid typos, add new roles as required. */
 type RoleType =

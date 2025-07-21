@@ -5,7 +5,7 @@ import { _removeFromArray } from '../utils/array';
 import { _debounce, _logIfDebug } from '../utils/function';
 import type { InfiniteBlock } from './infiniteBlock';
 
-export type RowNodeBlockLoaderEvent = 'blockLoaded';
+type RowNodeBlockLoaderEvent = 'blockLoaded';
 export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implements NamedBean {
     beanName = 'rowNodeBlockLoader' as const;
 

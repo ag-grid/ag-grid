@@ -5,7 +5,7 @@ import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
 import type { ChartOptionsProxy } from '../../services/chartOptionsService';
 import type { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
 
-export interface ToggleablePanelParams {
+interface ToggleablePanelParams {
     tag: string;
     title?: string;
     suppressEnabledCheckbox?: boolean;

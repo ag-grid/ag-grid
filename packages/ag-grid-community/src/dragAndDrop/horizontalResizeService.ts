@@ -3,7 +3,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { DragListenerParams } from './dragService';
 
-export interface HorizontalResizeParams {
+interface HorizontalResizeParams {
     eResizeBar: HTMLElement;
     dragStartPixels?: number;
     onResizeStart: (shiftKey: boolean) => void;

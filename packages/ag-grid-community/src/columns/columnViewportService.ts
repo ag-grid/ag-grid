@@ -229,22 +229,28 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
             const groupsToRender: { [row: number]: AgColumnGroup[] } = {};
 
             for (const col of cols) {
-                let parent = col.getParent();
-                const displayingFillerGroups = col.getColDef().suppressSpanHeaderHeight;
+                let group = col.getParent();
+                const skipFillers = col.isSpanHeaderHeight();
 
-                while (parent) {
-                    const skipFillerGroup = !displayingFillerGroups && parent.isPadding();
-                    if (skipFillerGroup || groupsToRenderSet.has(parent)) {
-                        parent = parent.getParent();
+                while (group) {
+                    if (groupsToRenderSet.has(group)) {
+                        // if we already have this group, then we don't need to add it again
+                        // or traverse up the tree
+                        break;
+                    }
+
+                    const skipFillerGroup = skipFillers && group.isPadding();
+                    if (skipFillerGroup) {
+                        group = group.getParent();
                         continue;
                     }
 
-                    const level = parent.getProvidedColumnGroup().getLevel();
+                    const level = group.getProvidedColumnGroup().getLevel();
 
                     groupsToRender[level] ??= [];
-                    groupsToRender[level].push(parent);
-                    groupsToRenderSet.add(parent);
-                    parent = parent.getParent();
+                    groupsToRender[level].push(group);
+                    groupsToRenderSet.add(group);
+                    group = group.getParent();
                 }
             }
 

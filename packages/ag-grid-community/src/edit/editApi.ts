@@ -121,10 +121,6 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
     );
 }
 
-export function cancelEdits({ editSvc }: BeanCollection): void {
-    editSvc?.stopEditing(undefined, { cancel: true, source: editSvc?.isBatchEditing() ? 'ui' : 'api' });
-}
-
 export function validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {
     return beans.editSvc?.validateEdit() || null;
 }

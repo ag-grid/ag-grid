@@ -659,10 +659,6 @@ export function _isColumnMenuAnchoringEnabled(gos: GridOptionsService): boolean 
     return !_isLegacyMenuEnabled(gos);
 }
 
-export function _areAdditionalColumnMenuItemsEnabled(gos: GridOptionsService): boolean {
-    return gos.get('columnMenu') === 'new';
-}
-
 export function _getCallbackForEvent(eventName: string): string {
     if (!eventName || eventName.length < 2) {
         return eventName;

@@ -66,7 +66,7 @@ export interface SetFilterListItemParams<V> {
     hasIndeterminateExpandState?: boolean;
 }
 
-export type SetFilterListItemEvent = 'selectionChanged' | 'expandedChanged';
+type SetFilterListItemEvent = 'selectionChanged' | 'expandedChanged';
 /** @param V type of value in the Set Filter */
 
 const SetFilterGroupElement: ElementParams = {

@@ -21,15 +21,6 @@ import { updateSomeColumnState } from './columnFactoryUtils';
 import type { ColumnCollections, ColumnModel } from './columnModel';
 import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree, getValueFactory, isColumnSelectionCol } from './columnUtils';
 
-export interface ModifyColumnsNoEventsCallbacks {
-    addGroupCol(col: AgColumn): void;
-    removeGroupCol(col: AgColumn): void;
-    addPivotCol(col: AgColumn): void;
-    removePivotCol(col: AgColumn): void;
-    addValueCol(col: AgColumn): void;
-    removeValueCol(col: AgColumn): void;
-}
-
 export interface ColumnStateParams {
     /** True if the column is hidden */
     hide?: boolean | null;
