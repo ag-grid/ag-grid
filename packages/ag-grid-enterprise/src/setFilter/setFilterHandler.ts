@@ -14,7 +14,6 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    GROUP_AUTO_COLUMN_ID,
     _addGridCommonParams,
     _debounce,
     _error,
@@ -102,12 +101,11 @@ export class SetFilterHandler<TValue = string>
     private updateParams(params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
         this.params = params;
         const {
-            column,
             colDef,
             filterParams: { caseSensitive, treeList, keyCreator, valueFormatter },
         } = params;
         this.caseSensitive = !!caseSensitive;
-        const isGroupCol = column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
+        const isGroupCol = !!colDef.showRowGroup;
         this.treeDataTreeList = this.gos.get('treeData') && !!treeList && isGroupCol;
         this.groupingTreeList = !!this.beans.rowGroupColsSvc?.columns.length && !!treeList && isGroupCol;
         const resolvedKeyCreator = keyCreator ?? colDef.keyCreator;
@@ -316,7 +314,10 @@ export class SetFilterHandler<TValue = string>
                 params.onModelChange(null, additionalEventAttributes);
                 return;
             }
-            const allSelected = numNewValues === existingFormattedKeys.size;
+            const clearOnAllSelected =
+                this.valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ||
+                !params.filterParams.suppressClearModelOnRefreshValues;
+            const allSelected = clearOnAllSelected && numNewValues === existingFormattedKeys.size;
 
             if (updated || !model.filterType || allSelected) {
                 // if all values selected, remove model

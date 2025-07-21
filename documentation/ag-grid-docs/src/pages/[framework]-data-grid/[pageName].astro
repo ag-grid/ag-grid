@@ -34,8 +34,8 @@ const seoTagline = `Download AG Grid v${version} today: The best ${frameworkDisp
 const description = getPageDescription({
     framework: currentFramework,
     pageDescription: page.data.description,
-    body: page.body
-})
+    body: page.body,
+});
 const descriptionWithSeoTagline = `${description ? `${description} ` : ''}${seoTagline}`;
 
 const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;

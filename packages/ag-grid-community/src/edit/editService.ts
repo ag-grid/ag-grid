@@ -58,14 +58,24 @@ type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };
 const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo']);
 
 // stop editing sources that we treat as UI-originated so we follow standard processing.
-const SOURCE_TRANSFORM: Record<string, EditSource> = {
+const STOP_EDIT_SOURCE_TRANSFORM: Record<string, EditSource> = {
     paste: 'ui',
     rangeSvc: 'ui',
     fillHandle: 'api',
     cellClear: 'api',
 };
 
-const SOURCE_TRANSFORM_KEYS: Set<string> = new Set(Object.keys(SOURCE_TRANSFORM));
+const STOP_EDIT_SOURCE_TRANSFORM_KEYS: Set<string> = new Set(Object.keys(STOP_EDIT_SOURCE_TRANSFORM));
+
+// These are sources that we treat as API-originated so we presume API behaviour.
+const SET_DATA_SOURCE_AS_API: Set<string | undefined> = new Set([
+    'paste',
+    'rangeSvc',
+    'renderer',
+    'cellClear',
+    'redo',
+    'undo',
+]);
 
 const CANCEL_PARAMS: StopEditParams = { cancel: true, source: 'api' };
 
@@ -251,14 +261,14 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const { event, cancel, source = 'ui', suppressNavigateAfterEdit } = params || {};
         const { beans, model } = this;
 
-        if (SOURCE_TRANSFORM_KEYS.has(source)) {
+        if (STOP_EDIT_SOURCE_TRANSFORM_KEYS.has(source)) {
             if (this.isBatchEditing()) {
                 // if we are in batch editing, we do not stop editing on paste
                 this.bulkRefresh(position);
                 return false;
             }
 
-            return this.stopEditing(position, { ...params, source: SOURCE_TRANSFORM[source] });
+            return this.stopEditing(position, { ...params, source: STOP_EDIT_SOURCE_TRANSFORM[source] });
         }
 
         if (!this.isEditing() || !this.strategy) {
@@ -298,21 +308,22 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         ) {
             const key = event.key;
 
-            // in batch editing, we only permit esc to revert during the first edit.
-            const allowRevert = position && (this.model.getEdit(position)?.editCount ?? 0) === 0;
-
             const isEnter = key === KeyCode.ENTER;
             const isEscape = key === KeyCode.ESCAPE;
 
             if (isEnter || isEscape) {
                 if (isEnter) {
                     _syncFromEditors(beans, { event });
-                } else if (isEscape && allowRevert) {
+                } else if (isEscape) {
                     // only if ESC is pressed while in the editor for this cell
                     this.revertSingleCellEdit(cellCtrl!, false);
                 }
 
-                this.strategy?.cleanupEditors();
+                if (this.isBatchEditing()) {
+                    this.strategy?.cleanupEditors();
+                } else {
+                    _destroyEditors(beans, model.getEditPositions(), { event });
+                }
 
                 event.preventDefault();
 
@@ -689,13 +700,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     public setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined {
-        if (
-            (!this.isEditing() || eventSource === 'commit') &&
-            eventSource !== 'paste' &&
-            eventSource !== 'rangeSvc' &&
-            eventSource !== 'renderer' &&
-            eventSource !== 'cellClear'
-        ) {
+        if ((!this.isEditing() || eventSource === 'commit') && !SET_DATA_SOURCE_AS_API.has(eventSource)) {
             return;
         }
 
@@ -861,7 +866,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     }
 
                     if (this.isCellEditable({ rowNode, column }, 'api')) {
-                        const { oldValue, editCount = 0 } = editRow.get(column) ?? {};
+                        const oldValue = valueSvc.getValue(column as AgColumn, rowNode, true, 'api');
                         let newValue = valueSvc.parseValue(column as AgColumn, rowNode ?? null, editValue, oldValue);
 
                         if (Number.isNaN(newValue)) {
@@ -873,7 +878,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                             newValue,
                             oldValue,
                             state: 'changed',
-                            editCount: editCount + 1,
                         });
                     }
                 }
@@ -953,7 +957,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 newValue = UNEDITED;
             }
 
-            editRow.set(col, { newValue, oldValue, state: state ?? 'changed', editCount: 0 });
+            editRow.set(col, { newValue, oldValue, state: state ?? 'changed' });
         });
 
         this.setEditMap(edits, params);

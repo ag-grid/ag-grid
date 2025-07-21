@@ -194,6 +194,8 @@ export class AgColumn<TValue = any>
         this.initTooltip();
 
         this.initRowSpan();
+
+        this.addPivotListener();
     }
 
     private initDotNotation(): void {
@@ -221,6 +223,21 @@ export class AgColumn<TValue = any>
         if (this.colDef.spanRows) {
             this.beans.rowSpanSvc?.register(this);
         }
+    }
+
+    private addPivotListener(): void {
+        const pivotColDefSvc = this.beans.pivotColDefSvc;
+        const pivotValueColumn = this.colDef.pivotValueColumn;
+        if (!pivotColDefSvc || !pivotValueColumn) {
+            return;
+        }
+
+        this.addManagedListeners(pivotValueColumn, {
+            colDefChanged: (evt) => {
+                const colDef = pivotColDefSvc.recreateColDef(this.colDef);
+                this.setColDef(colDef, colDef, evt.source);
+            },
+        });
     }
 
     public resetActualWidth(source: ColumnEventType): void {

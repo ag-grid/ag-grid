@@ -244,7 +244,7 @@ jobs:
           uses: actions/upload-artifact@v4
           if: ${{ !cancelled() }}
           with:
-            name: playwright-report-demos
+            name: playwright-report-recipes
             path: reports/
             retention-days: ${{env.DEFAULT_RETENTION_DAYS}}  
 
@@ -338,4 +338,4 @@ jobs:
           uses: actions/cache/save@v4
           with:
             path: ${{ env.PREV_COMMIT_SHA_FILE }}
-            key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}-${{ github.sha }}
+            key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}

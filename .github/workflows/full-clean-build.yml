@@ -256,7 +256,7 @@ jobs:
       - name: Save Current Commit Hash
         uses: actions/cache/save@v4
         with:
-          key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}-${{ github.sha }}
+          key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
           path: ${{ env.PREV_COMMIT_SHA_FILE }}
 
         # only if run is successful

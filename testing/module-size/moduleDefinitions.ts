@@ -1,4 +1,4 @@
-import type {
+import {
     CommunityModuleName,
     EnterpriseModuleName,
     ModuleName,
@@ -45,7 +45,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     TextFilterModule: 120.09,
     TooltipModule: 23.68,
     UndoRedoEditModule: 64.89,
-    ValidationModule: 69.88,
+    ValidationModule: 72.17,
     ValueCacheModule: 0.65,
     CellSpanModule: 8.08,
 };
@@ -70,7 +70,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     NewFiltersToolPanelModule: 169.77,
     PivotModule: 93.6,
     RangeSelectionModule: 53,
-    RichSelectModule: 120.09,
+    RichSelectModule: 116.59,
     RowNumbersModule: 30,
     RowGroupingModule: 79.85,
     RowGroupingPanelModule: 71,
