@@ -12,6 +12,7 @@ on:
       - 'next'
       - 'b[0-9][0-9]?.[0-9][0-9]?.[0-9][0-9]?'
       - 'seanlandsman-patch-9'
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
     inputs:
       run_docs:
@@ -64,6 +65,7 @@ permissions:
 jobs:
   build_lint:
     name: Build & Lint
+    if: github.event.pull_request.draft == false
     outputs:
       nx_base: ${{ steps.setup.outputs.base }}
       build: ${{ steps.build.outcome || '' }}
