@@ -2,7 +2,7 @@ name: Expand JIRA Links in PR descriptions
 
 on:
   pull_request:
-    types: [ opened, edited, synchronize ]
+    types: [ opened, edited ]
 
 permissions:
   contents: read
