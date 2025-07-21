@@ -165,7 +165,14 @@
         "archive": {}
       }
     },
+    "lint:knip": {
+      "command": "knip",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
     "lint": {
+      "dependsOn": ["lint:knip"],
       "command": "eslint && stylelint './src/**/*css'",
       "options": {
         "cwd": "{projectRoot}"
