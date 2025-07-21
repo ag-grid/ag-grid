@@ -1,6 +1,5 @@
 import type {
     AgColumn,
-    BeanCollection,
     CellCtrl,
     CellPosition,
     CellRange,
@@ -13,6 +12,7 @@ import {
     _addGridCommonParams,
     _getCellByPosition,
     _getFillHandle,
+    _getLastRow,
     _getNormalisedMousePosition,
     _getRowAbove,
     _getRowBelow,
@@ -73,11 +73,44 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
     private onDblClick(e: MouseEvent) {
         // Stop propagation here, we don't want other services (e.g. editing) reacting to this event
-        // TODO: Do we still want "cellClicked", "rowClicked" and similar events to be dispatched for the
-        //       end user?
         _stopPropagationForAgGrid(e);
 
-        propagateCellRangeValues(this.beans, this.cellRange);
+        const { cellRange: initialRange, rangeStartRow, beans } = this;
+        const { rangeSvc, eventSvc } = beans;
+        const lastRow = _getLastRow(beans);
+
+        if (!lastRow) {
+            return;
+        }
+
+        const finalRange = rangeSvc?.createCellRangeFromCellRangeParams({
+            rowStartIndex: rangeStartRow.rowIndex,
+            rowStartPinned: rangeStartRow.rowPinned,
+            columnStart: initialRange.columns[0],
+            rowEndIndex: lastRow.rowIndex,
+            rowEndPinned: lastRow.rowPinned,
+            columnEnd: _last(initialRange.columns),
+        });
+
+        this.dragAxis = 'y';
+        this.isUp = false;
+        this.isLeft = false;
+
+        if (finalRange) {
+            // raising fill events for undo / redo
+            eventSvc.dispatchEvent({
+                type: 'fillStart',
+            });
+
+            this.handleValueChanged(initialRange, finalRange, e);
+
+            eventSvc.dispatchEvent({
+                type: 'fillEnd',
+                initialRange: initialRange,
+                finalRange: finalRange,
+            });
+        }
+        this.dragAxis = undefined;
     }
 
     protected override updateValuesOnMove(e: MouseEvent) {
@@ -689,43 +722,5 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         super.refresh(cellCtrl);
-    }
-}
-
-// TODO: cover the pinned row case
-function propagateCellRangeValues(beans: BeanCollection, cellRange: CellRange): void {
-    if (!cellRange.startRow || !cellRange.endRow) {
-        // TODO: is this right?
-        return;
-    }
-
-    const template: any[][] = [];
-    const { rowModel, valueSvc } = beans;
-
-    for (let i = cellRange.startRow.rowIndex; i <= cellRange.endRow.rowIndex; i++) {
-        const rowNode = rowModel.getRow(i);
-        const rowValues: any[] = [];
-        template.push(rowValues);
-
-        for (const col of cellRange.columns) {
-            const value = valueSvc.getValue(col as AgColumn, rowNode);
-            rowValues.push(value);
-        }
-    }
-
-    let rowPosition = _getRowBelow(beans, cellRange.endRow);
-    let rowIndex = 0;
-
-    while (rowPosition) {
-        const rowNode = rowModel.getRow(rowPosition.rowIndex);
-
-        for (let colIndex = 0; colIndex < cellRange.columns.length; colIndex++) {
-            const newValue = template[rowIndex][colIndex];
-            rowNode?.setDataValue(cellRange.columns[colIndex] as AgColumn, newValue, 'rangeSvc');
-        }
-
-        rowPosition = _getRowBelow(beans, rowPosition);
-
-        rowIndex = (rowIndex + 1) % template.length;
     }
 }
