@@ -1,21 +1,33 @@
 #!/usr/bin/env node
 import { addJiraComment, commonFetch, jiraLink, transitionJiraIssue } from './_utils.mjs';
 
-const COLUMN_BACKLOG_ID = '21';
-const COLUMN_BACKLOG_NAME = 'TODO';
-const COLUMN_QA_ID = '5';
-const COLUMN_QA_NAME = 'READY TO VERIFY';
+const TRANSITIONS = [
+    { id: '21', name: 'TODO' },
+    { id: '31', name: 'IN PROGRESS' },
+    { id: '51', name: 'READY TO REVIEW' },
+    { id: '3', name: 'REVIEWED' },
+    // { id: '6', name: 'Reviewed to Pending RC' }, // unused
+    { id: '4', name: 'PENDING RC' },
+    { id: '5', name: 'READY TO VERIFY' },
+    { id: '8', name: 'TESTS PASSED' },
+    { id: '11', name: 'POST RELEASE' },
+];
+const QA_INDEX = TRANSITIONS.findIndex((tr) => tr.name === 'READY TO VERIFY');
+const TRANSITIONS_MAP = TRANSITIONS.reduce(
+    (acc, el) => Object.assign(acc, { [el.name.toUpperCase()]: el, [el.id]: el }),
+    {}
+);
 const PROJECT_ID = 'RTI';
 const CUSTOM_FIELD_FINGERPRINT = 'customfield_10708'; // Fingerprint[Short text]
 const JIRA_API_URL = 'https://ag-grid.atlassian.net/rest/api/2';
 const ACTION_URL = 'https://github.com/ag-grid/ag-grid/blob/latest/.github/actions/jira-integration/action.yml';
 const AUTOMATED_MESSAGE = `[This issue/comment was ${jiraLink('automatically created', ACTION_URL)} by the AG Grid CI workflow]`;
-const PERFORMANCE_CHAMP_USER_IDS = [
+const AUTOMATED_REGRESSION_CHAMP_USER_IDS = [
     /** Victor */ '712020:d433cc4b-4581-4385-8e04-7d11157ef90d',
     /** Stephen */ '60e4746bcf1849006a2c3141',
 ];
 
-const fingerprint = process.env.JIRA_FINGERPRINT;
+const fingerprint = process.env.JIRA_FINGERPRINT || '4a8da5fd76b2261183ddb2a8a05081ad1628d6f6';
 const auth = process.env.JIRA_API_AUTH;
 if (!fingerprint) {
     console.error('JIRA_FINGERPRINT environment variable must be set.');
@@ -37,42 +49,52 @@ if (isSuccess) {
             console.log('No existing issue found. Nothing to do...');
             process.exit(0);
         }
-        console.log(`IS_SUCCESS is true, transitioning issue ${existingIssue.key} to QA...`);
-        await transitionJiraIssue(existingIssue, COLUMN_QA_ID);
+        if (TRANSITIONS.findIndex((tr) => existingIssue.fields.status.name.toUpperCase() === tr.name) < QA_INDEX) {
+            console.log(`IS_SUCCESS is true, transitioning issue ${existingIssue.key} to QA...`);
+            await transitionJiraIssue(existingIssue, TRANSITIONS_MAP['READY TO VERIFY'].id);
+            await addJiraComment(
+                existingIssue.key,
+                `Transitioned to ${TRANSITIONS_MAP['READY TO VERIFY'].name}.\n\n${AUTOMATED_MESSAGE}`
+            );
+        } else {
+            console.log(`IS_SUCCESS is true, but issue ${existingIssue.key} is already in QA or beyond.`);
+        }
+        process.exit(0);
+    });
+} else {
+    await findExistingJiraIssue(fingerprint).then(async (existingIssue) => {
+        if (!existingIssue) {
+            // If no existing issue is found, create a new one
+            console.log('No existing issue found. Creating a new issue...');
+            return createJiraIssue();
+        }
+        // If an existing issue is found, add a comment and reopen it
+        console.log(`Duplicate issue found: ${existingIssue.key}. Adding comment...`);
+
+        // Step 2: Reopen the issue if it's not already open
+        const status = existingIssue.fields.status.name.toUpperCase();
+        const shouldAddComment = status === TRANSITIONS_MAP['READY TO VERIFY'].name;
+        const promises = [
+            // Step 1: Add a comment to the issue
+            addJiraComment(
+                existingIssue.key,
+                `New failure detected${shouldAddComment ? ', reopening this issue' : ''}:\n\n${description}\n\n${AUTOMATED_MESSAGE}`
+            ),
+        ];
+
+        if (shouldAddComment) {
+            console.log(
+                `Reopening issue ${existingIssue.key} from status "${status}" to "${TRANSITIONS_MAP['TODO'].name}"`
+            );
+            promises.push(transitionJiraIssue(existingIssue, TRANSITIONS_MAP['TODO'].id));
+        }
+        await Promise.all(promises).catch((error) => {
+            console.error('Error processing existing issue:', error);
+            throw error;
+        });
         process.exit(0);
     });
 }
-
-await findExistingJiraIssue(fingerprint).then(async (existingIssue) => {
-    if (!existingIssue) {
-        // If no existing issue is found, create a new one
-        console.log('No existing issue found. Creating a new issue...');
-        return createJiraIssue();
-    }
-    // If an existing issue is found, add a comment and reopen it
-    console.log(`Duplicate issue found: ${existingIssue.key}. Adding comment...`);
-
-    // Step 2: Reopen the issue if it's not already open
-    const status = existingIssue.fields.status.name.toUpperCase();
-    const shouldAddComment = status === COLUMN_QA_NAME;
-    const promises = [
-        // Step 1: Add a comment to the issue
-        addJiraComment(
-            existingIssue.key,
-            `New failure detected${shouldAddComment ? ', reopening this issue' : ''}:\n\n${description}\n\n${AUTOMATED_MESSAGE}`
-        ),
-    ];
-
-    if (shouldAddComment) {
-        console.log(`Reopening issue ${existingIssue.key} from status "${status}" to "${COLUMN_BACKLOG_NAME}"`);
-        promises.push(transitionJiraIssue(existingIssue, COLUMN_BACKLOG_ID));
-    }
-    await Promise.all(promises).catch((error) => {
-        console.error('Error processing existing issue:', error);
-        throw error;
-    });
-    process.exit(0);
-});
 
 async function createJiraIssue() {
     const body = {
@@ -82,10 +104,12 @@ async function createJiraIssue() {
             description: description + `\n\nNo QA needed\n\n${AUTOMATED_MESSAGE}`,
             issuetype: { name: 'Bug' },
             assignee: {
-                accountId: PERFORMANCE_CHAMP_USER_IDS[Math.floor(Math.random() * PERFORMANCE_CHAMP_USER_IDS.length)],
+                accountId:
+                    AUTOMATED_REGRESSION_CHAMP_USER_IDS[
+                        Math.floor(Math.random() * AUTOMATED_REGRESSION_CHAMP_USER_IDS.length)
+                    ],
             },
             [CUSTOM_FIELD_FINGERPRINT]: fingerprint,
-            labels: ['in_kanban'],
         },
     };
     console.log('Creating JIRA issue...', body);
