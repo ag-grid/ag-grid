@@ -400,16 +400,6 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
             this.ariaAnnounce?.announceValue(ariaPageStatus, 'paginationPage');
         }
     }
-
-    private setTotalLabelsToZero() {
-        const strZero = this.formatNumber(0);
-        this.lbFirstRowOnPage.textContent = strZero;
-        this.lbCurrent.textContent = strZero;
-        this.lbLastRowOnPage.textContent = strZero;
-        this.lbTotal.textContent = strZero;
-        this.lbRecordCount.textContent = strZero;
-        this.announceAriaStatus(strZero, strZero, strZero, strZero, strZero);
-    }
 }
 
 export const PaginationSelector: ComponentSelector = {
