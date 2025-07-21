@@ -31,7 +31,7 @@ import { _error, _logPreInitErr } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
 export interface GridParams {
-    // INTERNAL - used by Web Components TEST_COMMIT
+    // INTERNAL - used by Web Components
     globalListener?: (...args: any[]) => any;
     // INTERNAL - Always sync - for events such as gridPreDestroyed
     globalSyncListener?: (...args: any[]) => any;
