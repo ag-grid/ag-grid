@@ -273,13 +273,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         nextRowTop: { value: number },
         uiLevel: number
     ): void {
-        // At the moment there is not a better way to understand if a node is unbalanced or not
-        // The issue is that tree data with paths supports possibly empty keys, as empty paths parts,
-        // and if we don't check treeData is false we will end up treating it as an unbalanced group.
-        // If we have to implement treeData + row grouping for ssrm we will need a better way (a flag)
-        // to identify unbalanced groups more reliably.
-        const isUnbalancedGroup =
-            this.gos.get('groupAllowUnbalanced') && rowNode.group && rowNode.key === '' && !this.gos.get('treeData');
+        const isUnbalancedGroup = this.gos.get('groupAllowUnbalanced') && rowNode.group && rowNode.key === '';
         const isHiddenOpenGroup = this.gos.get('groupHideOpenParents') && rowNode.group && rowNode.expanded;
         if (isHiddenOpenGroup || isUnbalancedGroup) {
             rowNode.setRowIndex(null);
