@@ -53,10 +53,12 @@ export class GridRowsDomValidator {
             }
             this.validatedRows.add(row);
 
-            const id = String(row.id);
-            const rowElement = gridRows.getRowHtmlElement(id);
+            const stringId = String(row.id);
+            const rowElement = gridRows.getRowHtmlElement(stringId);
             if (!rowElement) {
-                this.errors.get(row).add('Row HTMLElement row-id=' + JSON.stringify(id) + ' not found');
+                if (row.id !== undefined) {
+                    this.errors.get(row).add('Row HTMLElement row-id=' + JSON.stringify(stringId) + ' not found');
+                }
                 continue;
             }
 
@@ -64,7 +66,7 @@ export class GridRowsDomValidator {
                 if (
                     rowElementsIdsInOrder &&
                     rowElementsIdsInOrderIdx < rowElementsIdsInOrder.length &&
-                    rowElementsIdsInOrder[rowElementsIdsInOrderIdx] !== id
+                    rowElementsIdsInOrder[rowElementsIdsInOrderIdx] !== stringId
                 ) {
                     gridRows.errors
                         .get(row)

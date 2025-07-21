@@ -228,7 +228,7 @@ export class GridRowsDiagramTree {
         } else if (selectionState === undefined) {
             result += 'indeterminate ';
         }
-        if (row.level >= 0 && !row.expanded && (row.group || row.master)) {
+        if (row.level >= 0 && !row.expanded && (row.group || row.master || row.isExpandable())) {
             result += 'collapsed ';
         }
         if (!gridRows.isRowDisplayed(row) && row !== gridRows.rootRowNode) {
