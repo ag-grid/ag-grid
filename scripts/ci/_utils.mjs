@@ -153,7 +153,7 @@ export async function getJiraIssue(issueKey) {
 }
 // Add a comment to an issue
 export async function addJiraComment(issueKey, body) {
-    const url = `https://ag-grid.atlassian.net/rest/api/2/issue/${issueKey}/comment`;
+    const url = `https://ag-grid.atlassian.net/rest/api/3/issue/${issueKey}/comment`;
 
     try {
         await commonFetch(url, { method: 'POST', body: JSON.stringify({ body }) });
@@ -162,8 +162,4 @@ export async function addJiraComment(issueKey, body) {
         console.error('Error adding comment:', error.message);
         throw error;
     }
-}
-
-export function jiraLink(text, url) {
-    return `[${text}|${url}]`;
 }

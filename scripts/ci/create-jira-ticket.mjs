@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { addJiraComment, commonFetch, jiraLink, transitionJiraIssue } from './_utils.mjs';
+import { addJiraComment, commonFetch, transitionJiraIssue } from './_utils.mjs';
 
 const TRANSITIONS = [
     { id: '21', name: 'TODO' },
@@ -21,7 +21,6 @@ const PROJECT_ID = 'RTI';
 const CUSTOM_FIELD_FINGERPRINT = 'customfield_10708'; // Fingerprint[Short text]
 const JIRA_API_URL = 'https://ag-grid.atlassian.net/rest/api/2';
 const ACTION_URL = 'https://github.com/ag-grid/ag-grid/blob/latest/.github/actions/jira-integration/action.yml';
-const AUTOMATED_MESSAGE = `[This issue/comment was ${jiraLink('automatically created', ACTION_URL)} by the AG Grid CI workflow]`;
 const AUTOMATED_REGRESSION_CHAMP_USER_IDS = [
     /** Victor */ '712020:d433cc4b-4581-4385-8e04-7d11157ef90d',
     /** Stephen */ '60e4746bcf1849006a2c3141',
@@ -37,7 +36,28 @@ if (!auth) {
     console.error('JIRA_API_AUTH environment variable must be set.');
     process.exit(1);
 }
-
+const paragraph = (content) => ({
+    type: 'paragraph',
+    content: Array.isArray(content) ? content : [content],
+});
+const txt = (text, marks = []) => {
+    if (marks.length) {
+        return { text, type: 'text', marks };
+    }
+    return { text, type: 'text' };
+};
+const link = (text, url) => ({
+    type: 'text',
+    text: text,
+    marks: [{ type: 'link', attrs: { href: url, title: text } }],
+});
+const AUTOMATED_MESSAGE = [
+    paragraph([
+        txt(`[This issue/comment was `),
+        link('automatically created', ACTION_URL),
+        txt(' by the AG Grid CI workflow.]'),
+    ]),
+];
 const workflowName = process.env.WORKFLOW_NAME || 'Unknown';
 const description = process.env.JIRA_DESCRIPTION || `Please provide a description in workflow file '${workflowName}'`;
 const summary = process.env.JIRA_SUMMARY || `[NR] CI/CD workflow '${workflowName}' has failed`;
@@ -52,10 +72,14 @@ if (isSuccess) {
         if (TRANSITIONS.findIndex((tr) => existingIssue.fields.status.name.toUpperCase() === tr.name) < QA_INDEX) {
             console.log(`IS_SUCCESS is true, transitioning issue ${existingIssue.key} to QA...`);
             await transitionJiraIssue(existingIssue, TRANSITIONS_MAP['READY TO VERIFY'].id);
-            await addJiraComment(
-                existingIssue.key,
-                `Transitioned to ${TRANSITIONS_MAP['READY TO VERIFY'].name}.\n\n${AUTOMATED_MESSAGE}`
-            );
+            await addJiraComment(existingIssue.key, {
+                content: [
+                    paragraph([txt(`Transitioned to ${TRANSITIONS_MAP['READY TO VERIFY'].name}.`)]),
+                    AUTOMATED_MESSAGE,
+                ],
+                type: 'doc',
+                version: 1,
+            });
         } else {
             console.log(`IS_SUCCESS is true, but issue ${existingIssue.key} is already in QA or beyond.`);
         }
@@ -76,10 +100,18 @@ if (isSuccess) {
         const shouldAddComment = status === TRANSITIONS_MAP['READY TO VERIFY'].name;
         const promises = [
             // Step 1: Add a comment to the issue
-            addJiraComment(
-                existingIssue.key,
-                `New failure detected${shouldAddComment ? ', reopening this issue' : ''}:\n\n${description}\n\n${AUTOMATED_MESSAGE}`
-            ),
+            addJiraComment(existingIssue.key, {
+                content: [
+                    paragraph([
+                        txt(
+                            `New failure detected${shouldAddComment ? ', reopening this issue' : ''}:\n\n${description}`
+                        ),
+                    ]),
+                    AUTOMATED_MESSAGE,
+                ],
+                type: 'doc',
+                version: 1,
+            }),
         ];
 
         if (shouldAddComment) {
