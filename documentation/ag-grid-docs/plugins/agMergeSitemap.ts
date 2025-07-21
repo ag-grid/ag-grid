@@ -43,7 +43,8 @@ export default function createPlugin(options: Options): AstroIntegration {
                     logger.error(otherSitemapIndex.toString());
 
                     throw new Error('Sitemap index not found');
-                } else if (Array.isArray(gridSitemapParsed.sitemapindex.sitemap)) {
+                }
+                if (Array.isArray(gridSitemapParsed.sitemapindex.sitemap)) {
                     gridSitemapParsed.sitemapindex.sitemap = gridSitemapParsed.sitemapindex.sitemap.concat(
                         otherSitemapParsed.sitemapindex.sitemap
                     );
