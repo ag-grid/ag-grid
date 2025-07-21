@@ -14,7 +14,7 @@ export interface VegetableNode {
     children?: VegetableNode[];
 }
 
-export const rowData: VegetableNode[] = [
+export const vegetablesData: VegetableNode[] = [
     {
         id: '1',
         name: 'Root Vegetables',

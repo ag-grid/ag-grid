@@ -12,6 +12,7 @@ import {
     ContextMenuModule,
     FiltersToolPanelModule,
     MasterDetailModule,
+    RowGroupingModule,
     SetFilterModule,
 } from 'ag-grid-enterprise';
 
@@ -21,6 +22,7 @@ import { accountsData } from './data';
 ModuleRegistry.registerModules([
     RowApiModule,
     ClientSideRowModelModule,
+    RowGroupingModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
     MasterDetailModule,

@@ -13,17 +13,19 @@ import {
     FiltersToolPanelModule,
     MasterDetailModule,
     SetFilterModule,
+    TreeDataModule,
 } from 'ag-grid-enterprise';
 
 import type { Fact, VegetableNode } from './data';
-import { rowData } from './data';
+import { vegetablesData } from './data';
 
 ModuleRegistry.registerModules([
     RowApiModule,
     ClientSideRowModelModule,
+    TreeDataModule,
+    MasterDetailModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
-    MasterDetailModule,
     ColumnMenuModule,
     ContextMenuModule,
     SetFilterModule,
@@ -34,7 +36,7 @@ let gridApi: GridApi<VegetableNode>;
 
 const gridOptions: GridOptions<VegetableNode> = {
     columnDefs: [{ field: 'origin' }],
-    rowData,
+    rowData: vegetablesData,
     treeData: true,
     treeDataChildrenField: 'children',
     autoGroupColumnDef: {
