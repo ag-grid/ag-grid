@@ -422,15 +422,10 @@ const chartThemeOverrides = {
 };
 
 const ExampleInner = ({ darkMode }) => {
+    // grab query params from the URL to set settings
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
     const [gridTheme, setGridTheme] = useState('quartz');
-    useEffect(() => {
-        const themeFromURL = new URLSearchParams(window.location.search).get('theme');
-        if (themeFromURL) {
-            setGridTheme(themeFromURL);
-        }
-    }, []);
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
     const [isSmall, setIsSmall] = useState(false);
@@ -442,7 +437,12 @@ const ExampleInner = ({ darkMode }) => {
     const [rowCols, setRowCols] = useState([]);
     const [dataSize, setDataSize] = useState();
     const [initialLoad, setInitialLoad] = useState(true);
-
+    useEffect(() => {
+        const themeFromURL = new URLSearchParams(window.location.search).get('theme');
+        if (themeFromURL) {
+            setGridTheme(themeFromURL);
+        }
+    }, []);
     const modules = useMemo(
         () => [
             AllCommunityModule,
@@ -852,16 +852,26 @@ const ExampleInner = ({ darkMode }) => {
         setDefaultCols(defaultCols);
         setDefaultColCount(defaultColCount);
 
-        const newRowsCols = [
-            [100, defaultColCount],
-            [1000, defaultColCount],
-        ];
+        let newRowsCols = new Array(5)
+            .fill(0)
+            .map((_, i) => 10 ** (i + 1))
+            .map((i) => [i, 10]);
+        newRowsCols = [
+            ...new Set(
+                newRowsCols
+                    .concat(newRowsCols)
+                    .map(([a, b], i, arr) => (i >= arr.length / 2 ? [a, b].join() : [b, a].join()))
+            ),
+        ].map((_) => _.split(','));
 
-        if (!small) {
-            newRowsCols.push([10000, 100], [50000, defaultColCount], [100000, defaultColCount]);
+        const params = new URLSearchParams(window.location.search);
+        const rows = params.get('rows');
+        const cols = params.get('cols');
+        if (rows && cols) {
+            setDataSize(createDataSizeValue(parseInt(rows), parseInt(cols)));
+        } else {
+            setDataSize(createDataSizeValue(newRowsCols[0][0], newRowsCols[0][1]));
         }
-
-        setDataSize(createDataSizeValue(newRowsCols[0][0], newRowsCols[0][1]));
         setRowCols(newRowsCols);
     }, []);
 
