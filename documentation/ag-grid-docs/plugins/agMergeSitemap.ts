@@ -35,6 +35,15 @@ export default function createPlugin(options: Options): AstroIntegration {
                 const gridSitemapParsed = parser.parse(gridSitemapIndex);
                 const otherSitemapParsed = parser.parse(otherSitemapIndex);
 
+                if (!gridSitemapParsed.sitemapindex || !otherSitemapParsed.sitemapindex) {
+                    logger.error('Sitemap index not found in either grid or other sitemap index');
+                    logger.error(`gridSitemapIndex (${GRID_SITEMAP_INDEX_FILE}):`);
+                    logger.error(gridSitemapIndex.toString());
+                    logger.error(`otherSitemapIndex (${options.sitemapIndexUrl}):`);
+                    logger.error(otherSitemapIndex.toString());
+
+                    throw new Error('Sitemap index not found');
+                }
                 if (Array.isArray(gridSitemapParsed.sitemapindex.sitemap)) {
                     gridSitemapParsed.sitemapindex.sitemap = gridSitemapParsed.sitemapindex.sitemap.concat(
                         otherSitemapParsed.sitemapindex.sitemap

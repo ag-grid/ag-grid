@@ -67,7 +67,7 @@ runs:
         JIRA_API_AUTH: ${{ inputs.JIRA_API_AUTH }}
         WORKFLOW_NAME: ${{ github.workflow }}
         JIRA_SUMMARY: ${{ inputs.JIRA_SUMMARY }}
-        IS_SUCCESS: ${{ !steps.last-failed-step.outputs.failed_step || inputs.IS_SUCCESS }}
+        IS_SUCCESS: ${{ inputs.IS_SUCCESS == 'true' && !steps.last-failed-step.outputs.failed_step }}
       shell: bash
       run: |
         node ./scripts/ci/create-jira-ticket.mjs

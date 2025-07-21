@@ -65,7 +65,7 @@ export interface AddPopupParams {
     ariaLabel: string;
 }
 
-export interface AddPopupResult {
+interface AddPopupResult {
     hideFunc: (params?: PopupEventParams) => void;
 }
 

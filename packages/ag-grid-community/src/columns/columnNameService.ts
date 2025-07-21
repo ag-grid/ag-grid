@@ -11,7 +11,7 @@ import { _addGridCommonParams } from '../gridOptionsUtils';
  * @param {string} camelCase
  * @returns {string}
  */
-export function _camelCaseToHumanText(camelCase: string | undefined): string | null {
+function _camelCaseToHumanText(camelCase: string | undefined): string | null {
     if (!camelCase || camelCase == null) {
         return null;
     }

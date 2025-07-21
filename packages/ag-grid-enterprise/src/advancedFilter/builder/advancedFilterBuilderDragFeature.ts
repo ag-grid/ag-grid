@@ -12,9 +12,7 @@ export interface AdvancedFilterBuilderDragStartedEvent extends AgEvent<'advanced
     item: AdvancedFilterBuilderItem;
 }
 
-export type AdvancedFilterBuilderDragFeatureEvent =
-    | 'advancedFilterBuilderDragStarted'
-    | 'advancedFilterBuilderDragEnded';
+type AdvancedFilterBuilderDragFeatureEvent = 'advancedFilterBuilderDragStarted' | 'advancedFilterBuilderDragEnded';
 export class AdvancedFilterBuilderDragFeature extends BeanStub<AdvancedFilterBuilderDragFeatureEvent> {
     constructor(
         private readonly comp: AdvancedFilterBuilderComp,

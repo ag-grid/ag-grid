@@ -49,10 +49,6 @@ export function _getAriaSortState(sortDirection: SortDirection | 'mixed'): Colum
 }
 
 // ARIA ATTRIBUTE GETTERS
-export function _getAriaLevel(element: Element): number {
-    return parseInt(element.getAttribute('aria-level')!, 10);
-}
-
 export function _getAriaPosInSet(element: Element): number {
     return parseInt(element.getAttribute('aria-posinset')!, 10);
 }

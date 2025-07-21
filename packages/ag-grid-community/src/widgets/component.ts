@@ -413,7 +413,6 @@ export type AgComponentSelector =
     | 'AG-PAGINATION'
     | 'AG-PRIMARY-COLS-HEADER'
     | 'AG-PRIMARY-COLS-LIST'
-    | 'AG-PRIMARY-COLS'
     | 'AG-ROW-CONTAINER'
     | 'AG-SELECT'
     | 'AG-SIDE-BAR'

@@ -19,7 +19,7 @@ import type { BeanCollection, Context } from './context';
 import type { BaseBean } from './genericContext';
 
 export type BeanStubEvent = 'destroyed';
-export type EventOrDestroyed<TEventType extends string> = TEventType | BeanStubEvent;
+type EventOrDestroyed<TEventType extends string> = TEventType | BeanStubEvent;
 
 type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
 

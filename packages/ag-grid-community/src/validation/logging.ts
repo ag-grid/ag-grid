@@ -9,7 +9,6 @@ const MIN_PARAM_LENGTH = 100;
 const VERSION_PARAM_NAME = '_version_';
 
 let validation: ValidationService | null = null;
-let suppressAllLogging = false;
 export let baseDocLink = `${BASE_URL}/javascript-data-grid`;
 /**
  * The ValidationService passes itself in if it has been included.
@@ -18,9 +17,7 @@ export let baseDocLink = `${BASE_URL}/javascript-data-grid`;
 export function provideValidationServiceLogger(logger: ValidationService) {
     validation = logger;
 }
-export function suppressAllLogs() {
-    suppressAllLogging = true;
-}
+
 /** Set by the Framework override to give us accurate links for the framework  */
 export function setValidationDocLink(docLink: string) {
     baseDocLink = docLink;
@@ -38,7 +35,6 @@ function getMsgOrDefault<TId extends ErrorId>(
     args: GetErrorParams<TId>,
     defaultMessage?: string
 ) {
-    if (suppressAllLogging) return;
     logger(`error #${id}`, ...getErrorParts(id, args, defaultMessage));
 }
 

@@ -35,7 +35,7 @@ interface NavigateParams {
     rowPinned?: RowPinnedType;
 }
 
-export type FindNextCellToFocusOnParams = {
+type FindNextCellToFocusOnParams = {
     backwards: boolean;
     startEditing: boolean;
     skipToNextEditableCell?: boolean;

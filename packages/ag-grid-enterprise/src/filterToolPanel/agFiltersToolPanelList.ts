@@ -26,7 +26,7 @@ import { ToolPanelFilterComp } from './toolPanelFilterComp';
 import type { ToolPanelFilterItem } from './toolPanelFilterGroupComp';
 import { ToolPanelFilterGroupComp } from './toolPanelFilterGroupComp';
 
-export type AgFiltersToolPanelListEvent = 'filterExpanded' | 'groupExpanded';
+type AgFiltersToolPanelListEvent = 'filterExpanded' | 'groupExpanded';
 export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEvent> {
     private colModel: ColumnModel;
 

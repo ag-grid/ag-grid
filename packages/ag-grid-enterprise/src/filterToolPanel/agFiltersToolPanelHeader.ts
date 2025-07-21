@@ -15,7 +15,7 @@ export enum EXPAND_STATE {
     COLLAPSED,
     INDETERMINATE,
 }
-export type AgFiltersToolPanelHeaderEvent = 'collapseAll' | 'expandAll' | 'searchChanged';
+type AgFiltersToolPanelHeaderEvent = 'collapseAll' | 'expandAll' | 'searchChanged';
 
 const AgFiltersToolPanelHeaderElement: ElementParams = {
     tag: 'div',

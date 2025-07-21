@@ -11,7 +11,7 @@ import {
 import type { PanelOptions } from './agPanel';
 import { AgPanel } from './agPanel';
 
-export interface DialogOptions extends PanelOptions {
+interface DialogOptions extends PanelOptions {
     eWrapper?: HTMLElement;
     modal?: boolean;
     movable?: boolean;

@@ -151,7 +151,7 @@ interface MenuItemDefWithKey<MenuItemKey extends string = any> extends MenuItemD
     subMenu?: MenuItemDefWithKey<MenuItemKey>[];
 }
 
-export type PivotMenuOptionName =
+type PivotMenuOptionName =
     | 'pivotChart'
     | 'pivotColumnChart'
     | 'pivotGroupedColumn'
@@ -373,7 +373,7 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
     }
 }
 
-export type RangeMenuOptionName =
+type RangeMenuOptionName =
     | 'chartRange'
     | 'rangeColumnChart'
     | 'rangeGroupedColumn'

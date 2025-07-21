@@ -8,7 +8,7 @@ import { _warn } from '../validation/logging';
 import { Component } from '../widgets/component';
 import type { ComponentSelector } from '../widgets/component';
 
-export interface FilterButtonCompParams {
+interface FilterButtonCompParams {
     className?: string;
 }
 

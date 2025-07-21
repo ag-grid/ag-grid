@@ -7,7 +7,7 @@ import { _addGridCommonParams } from '../gridOptionsUtils';
 import { _exists } from '../utils/generic';
 import { _warn } from '../validation/logging';
 
-export type QuickFilterServiceEvent = 'quickFilterChanged';
+type QuickFilterServiceEvent = 'quickFilterChanged';
 export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implements NamedBean {
     beanName = 'quickFilter' as const;
 
