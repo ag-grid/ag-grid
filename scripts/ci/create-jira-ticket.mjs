@@ -27,7 +27,7 @@ const AUTOMATED_REGRESSION_CHAMP_USER_IDS = [
     /** Stephen */ '60e4746bcf1849006a2c3141',
 ];
 
-const fingerprint = process.env.JIRA_FINGERPRINT || '4a8da5fd76b2261183ddb2a8a05081ad1628d6f6';
+const fingerprint = process.env.JIRA_FINGERPRINT;
 const auth = process.env.JIRA_API_AUTH;
 if (!fingerprint) {
     console.error('JIRA_FINGERPRINT environment variable must be set.');
