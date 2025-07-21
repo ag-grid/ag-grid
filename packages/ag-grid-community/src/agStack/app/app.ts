@@ -1,4 +1,5 @@
 import type { Theme } from '../../theming/Theme';
+import { themeQuartz } from '../../theming/parts/theme/themes';
 import type { AgBeanStubEvent } from '../agBeanStub';
 import { AgBeanStub } from '../agBeanStub';
 import { AgComponentStub } from '../agComponentStub';
@@ -202,6 +203,10 @@ class AppEnvironment extends BaseEnvironment<
     }
     protected override postProcessThemeChange(): void {
         // do nothing
+    }
+
+    protected override getDefaultTheme(): Theme {
+        return themeQuartz;
     }
 }
 

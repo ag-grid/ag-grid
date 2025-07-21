@@ -1,5 +1,5 @@
 import { createPart } from '../../Part';
-import { defaultLightColorSchemeParams } from '../../core/core-css';
+import { defaultLightColorSchemeParams } from '../../core/shared-css';
 import { accentMix, backgroundColor, foregroundBackgroundMix, foregroundColor } from '../../theme-utils';
 import { baseDarkBatchEditParams } from '../batch-edit/batch-edit-styles';
 

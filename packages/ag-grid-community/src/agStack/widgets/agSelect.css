@@ -33,3 +33,23 @@
         align-items: center;
     }
 }
+
+.ag-select-list {
+    background-color: var(--ag-picker-list-background-color);
+    overflow: hidden auto;
+    border-radius: var(--ag-border-radius);
+    border: var(--ag-picker-list-border);
+    box-shadow: var(--ag-dropdown-shadow);
+}
+
+.ag-select-list-item {
+    padding-left: calc(var(--ag-cell-horizontal-padding) / 2);
+    user-select: none;
+    cursor: default;
+
+    :where(span) {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+}

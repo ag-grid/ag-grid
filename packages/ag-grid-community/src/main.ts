@@ -1263,7 +1263,8 @@ export * from './events';
 // theming
 export { createPart } from './theming/Part';
 export type { Part } from './theming/Part';
-export { createTheme, _asThemeImpl } from './theming/Theme';
+export { _asThemeImpl } from './theming/Theme';
+export { createTheme } from './theming/createTheme';
 export type { Theme } from './theming/Theme';
 export type { CoreParams } from './theming/core/core-css';
 export { checkboxStyleDefault } from './theming/parts/checkbox-style/checkbox-styles';

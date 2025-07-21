@@ -8,6 +8,7 @@ import type { IPropertiesService } from '../interfaces/iProperties';
 import type { BaseTooltipCtrl, ITooltipFeature } from '../interfaces/iTooltip';
 import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/ariaUtils';
 import { _createAgElement, _isVisible, _removeFromParent } from '../utils/domUtils';
+import { agListCSS } from './agList.css-GENERATED';
 
 export interface ListOption<TValue = string> {
     value: TValue;
@@ -47,6 +48,7 @@ export class AgList<
         private readonly unFocusable: boolean = false
     ) {
         super({ tag: 'div', cls: `ag-list ag-${cssIdentifier}-list` });
+        this.registerCSS(agListCSS);
     }
 
     public postConstruct(): void {

@@ -1,7 +1,7 @@
 import { createPart } from '../../Part';
-import { createTheme } from '../../Theme';
 import type { Theme } from '../../Theme';
 import type { CoreParams } from '../../core/core-css';
+import { createTheme } from '../../createTheme';
 import type { ColorValue } from '../../theme-types';
 import {
     accentColor,

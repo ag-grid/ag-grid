@@ -1,13 +1,7 @@
-/* @import url('./css/_general.css'); */
-
-/* @import url('./css/_popup.css'); */
-
+@import url('./shared/_reset.css');
+@import url('./shared/_general.css');
+@import url('./shared/_popup.css');
 @import url('./shared/_inputs.css');
-
-/* @import url('./css/_root.css'); */
-
-/* @import url('./css/_lists.css'); */
-
-/* @import url('./css/_icons.css'); */
-
-/* @import url('./css/_resizer.css'); */
+@import url('./shared/_root.css');
+@import url('./shared/_icons.css');
+@import url('./shared/_resizer.css');

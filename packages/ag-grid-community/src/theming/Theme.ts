@@ -1,14 +1,9 @@
 import { _agError, _agLogPreInitErr } from '../agStack/utils/logUtils';
 import type { Part } from './Part';
 import { PartImpl, createPart, defaultModeName } from './Part';
-import type { CoreParams } from './core/core-css';
-import { coreDefaults } from './core/core-css';
+import { sharedDefaults } from './core/shared-css';
+import type { SharedThemeParams } from './core/shared-css';
 import { IS_SSR, _injectCoreAndModuleCSS, _injectGlobalCSS } from './inject';
-import type { BatchEditStyleParams } from './parts/batch-edit/batch-edit-styles';
-import { batchEditStyleBase } from './parts/batch-edit/batch-edit-styles';
-import { buttonStyleQuartz } from './parts/button-style/button-styles';
-import type { ButtonStyleParams } from './parts/button-style/button-styles';
-import { columnDropStyleBordered } from './parts/column-drop-style/column-drop-styles';
 import type { WithParamTypes } from './theme-types';
 import { paramValueToCss } from './theme-types';
 import { paramToVariableName } from './theme-utils';
@@ -48,14 +43,7 @@ export const _asThemeImpl = <TParams>(theme: Theme<TParams>): ThemeImpl => {
     return theme;
 };
 
-/**
- * Create a custom theme containing core grid styles but no parts.
- */
-// TODO button and column drop styles were split out into a part in 33.1 and
-// must be bundled by default to avoid a breaking change for people using
-// createTheme(). In v34 the withPart calls can be removed.
-export const createTheme = (): Theme<CoreParams & ButtonStyleParams & BatchEditStyleParams> =>
-    new ThemeImpl().withPart(buttonStyleQuartz).withPart(columnDropStyleBordered).withPart(batchEditStyleBase);
+export const createSharedTheme = <TParams extends SharedThemeParams>(): Theme<TParams> => new ThemeImpl();
 
 type themeUseArgs = {
     loadThemeGoogleFonts: boolean | undefined;
@@ -140,7 +128,7 @@ export class ThemeImpl {
                 // NOTE: defining the default mode here is important, it ensures
                 // that the default mode is first in iteration order, which puts
                 // it first in outputted CSS, allowing other modes to override it
-                [defaultModeName]: { ...coreDefaults },
+                [defaultModeName]: { ...sharedDefaults },
             };
             for (const part of deduplicatePartsByFeature(this.parts)) {
                 for (const partMode of Object.keys(part.modeParams)) {

@@ -1,0 +1,7 @@
+.ag-hidden {
+    display: none !important;
+}
+
+.ag-invisible {
+    visibility: hidden !important;
+}

@@ -9,6 +9,7 @@ import type { AgGridCommon } from './interfaces/iCommon';
 import { _getAllRegisteredModules } from './modules/moduleRegistry';
 import type { Theme, ThemeImpl } from './theming/Theme';
 import { coreCSS } from './theming/core/core.css-GENERATED';
+import { themeQuartz } from './theming/parts/theme/themes';
 import { _createElement } from './utils/dom';
 import { _error, _warn } from './validation/logging';
 
@@ -73,6 +74,7 @@ export class Environment
 {
     private sizeEls = new Map<Variable, HTMLElement>();
     private lastKnownValues = new Map<Variable, number>();
+    private eMeasurementContainer: HTMLElement | undefined;
     public sizesMeasured = false;
 
     protected override initVariables(): void {
@@ -180,6 +182,15 @@ export class Environment
         return newSize;
     }
 
+    private getMeasurementContainer(): HTMLElement {
+        let container = this.eMeasurementContainer;
+        if (!container) {
+            container = this.eMeasurementContainer = _createElement({ tag: 'div', cls: 'ag-measurement-container' });
+            this.eRootDiv.appendChild(container);
+        }
+        return container;
+    }
+
     private getSizeEl(variable: Variable): HTMLElement {
         let sizeEl = this.sizeEls.get(variable);
         if (sizeEl) {
@@ -224,7 +235,7 @@ export class Environment
         return sizeEl;
     }
 
-    protected fireStylesChangedEvent(change: ChangeKey): void {
+    protected override fireStylesChangedEvent(change: ChangeKey): void {
         if (change === 'rowBorderWidthChanged') {
             this.refreshRowBorderWidthVariable();
         }
@@ -239,7 +250,10 @@ export class Environment
         this.eRootDiv.style.setProperty('--ag-internal-row-border-width', `${width}px`);
     }
 
-    protected postProcessThemeChange(newGridTheme: ThemeImpl | undefined, themeGridOption?: Theme | 'legacy'): void {
+    protected override postProcessThemeChange(
+        newGridTheme: ThemeImpl | undefined,
+        themeGridOption?: Theme | 'legacy'
+    ): void {
         // --ag-legacy-styles-loaded is defined on .ag-measurement-container by the
         // legacy themes which shouldn't be used at the same time as Theming API
         if (
@@ -266,6 +280,10 @@ export class Environment
                 }
             });
         return additionalCss;
+    }
+
+    protected override getDefaultTheme(): Theme {
+        return themeQuartz;
     }
 }
 

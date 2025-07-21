@@ -7,12 +7,3 @@
         box-shadow: var(--ag-popup-shadow);
     }
 }
-
-.ag-popup-editor {
-    position: absolute;
-    user-select: none;
-}
-
-.ag-large-text-input {
-    display: block;
-}

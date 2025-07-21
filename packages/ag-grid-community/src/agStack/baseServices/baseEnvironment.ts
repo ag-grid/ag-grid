@@ -7,7 +7,6 @@ import {
     _registerInstanceUsingThemingAPI,
     _unregisterInstanceUsingThemingAPI,
 } from '../../theming/inject';
-import { themeQuartz } from '../../theming/parts/theme/themes';
 import { AgBeanStub } from '../agBeanStub';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
@@ -47,8 +46,6 @@ export abstract class BaseEnvironment<
     private eParamsStyle: HTMLStyleElement | undefined;
     private globalCSS: [string, string][] = [];
 
-    private eMeasurementContainer: HTMLElement | undefined;
-
     protected abstract initVariables(): void;
 
     protected abstract fireStylesChangedEvent(change: TChangeKey): void;
@@ -56,6 +53,8 @@ export abstract class BaseEnvironment<
     protected abstract getAdditionalCss(): Map<string, string[]>;
 
     protected abstract postProcessThemeChange(newTheme: ThemeImpl | undefined, themeProperty?: Theme | 'legacy'): void;
+
+    protected abstract getDefaultTheme(): Theme;
 
     public postConstruct(): void {
         const { gos, eRootDiv } = this;
@@ -123,15 +122,6 @@ export abstract class BaseEnvironment<
         }
     }
 
-    protected getMeasurementContainer(): HTMLElement {
-        let container = this.eMeasurementContainer;
-        if (!container) {
-            container = this.eMeasurementContainer = _createAgElement({ tag: 'div', cls: 'ag-measurement-container' });
-            this.eRootDiv.appendChild(container);
-        }
-        return container;
-    }
-
     private handleThemeChange(): void {
         const { gos, eRootDiv, globalCSS, theme: oldTheme } = this;
         const themeProperty = gos.get('theme');
@@ -139,7 +129,7 @@ export abstract class BaseEnvironment<
         if (themeProperty === 'legacy') {
             newTheme = undefined;
         } else {
-            const themeOrDefault = themeProperty ?? themeQuartz;
+            const themeOrDefault = themeProperty ?? this.getDefaultTheme();
             if (themeOrDefault instanceof ThemeImpl) {
                 newTheme = themeOrDefault;
             } else {
