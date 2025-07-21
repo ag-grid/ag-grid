@@ -1,4 +1,5 @@
 import { BaseEnvironment } from './agStack/baseServices/baseEnvironment';
+import type { Theme, ThemeImpl } from './agStack/theming/Theme';
 import { _observeResize } from './agStack/utils/domUtils';
 import type { NamedBean } from './context/bean';
 import type { BeanCollection } from './context/context';
@@ -7,7 +8,6 @@ import type { GridOptionsWithDefaults } from './gridOptionsDefault';
 import type { GridOptionsService } from './gridOptionsService';
 import type { AgGridCommon } from './interfaces/iCommon';
 import { _getAllRegisteredModules } from './modules/moduleRegistry';
-import type { Theme, ThemeImpl } from './theming/Theme';
 import { coreCSS } from './theming/core/core.css-GENERATED';
 import { themeQuartz } from './theming/parts/theme/themes';
 import { _createElement } from './utils/dom';

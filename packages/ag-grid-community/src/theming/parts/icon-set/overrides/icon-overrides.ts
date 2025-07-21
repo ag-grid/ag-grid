@@ -1,6 +1,11 @@
-import { createPart } from '../../../Part';
-import { colorValueToCss, fontFamilyValueToCss, fontWeightValueToCss, imageValueToCss } from '../../../theme-types';
-import type { ColorValue, FontFamilyValue, FontWeightValue, ImageValue } from '../../../theme-types';
+import { createPart } from '../../../../agStack/theming/Part';
+import {
+    colorValueToCss,
+    fontFamilyValueToCss,
+    fontWeightValueToCss,
+    imageValueToCss,
+} from '../../../../agStack/theming/theme-types';
+import type { ColorValue, FontFamilyValue, FontWeightValue, ImageValue } from '../../../../agStack/theming/theme-types';
 
 type IconSetOverridesImage = {
     type: 'image';

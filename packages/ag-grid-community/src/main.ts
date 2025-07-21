@@ -153,6 +153,26 @@ export { AgPickerField } from './agStack/widgets/agPickerField';
 export { AgPickerFieldParams } from './agStack/widgets/agPickerFieldParams';
 export { Direction } from './agStack/constants/direction';
 
+// AG Stack Theming
+export { createPart } from './agStack/theming/Part';
+export type { Part } from './agStack/theming/Part';
+export { _asThemeImpl } from './agStack/theming/Theme';
+export type { Theme } from './agStack/theming/Theme';
+export type {
+    ColorValue,
+    ImageValue,
+    ScaleValue,
+    BorderValue,
+    LengthValue,
+    ShadowValue,
+    DurationValue,
+    FontFamilyValue,
+    FontWeightValue,
+    BorderStyleValue,
+    ColorSchemeValue,
+    WithParamTypes,
+} from './agStack/theming/theme-types';
+
 // excel
 export {
     ColumnWidthCallbackParams,
@@ -1261,11 +1281,7 @@ export { AllCommunityModule } from './allCommunityModule';
 export * from './events';
 
 // theming
-export { createPart } from './theming/Part';
-export type { Part } from './theming/Part';
-export { _asThemeImpl } from './theming/Theme';
 export { createTheme } from './theming/createTheme';
-export type { Theme } from './theming/Theme';
 export type { CoreParams } from './theming/core/core-css';
 export { checkboxStyleDefault } from './theming/parts/checkbox-style/checkbox-styles';
 export type { CheckboxStyleParams } from './theming/parts/checkbox-style/checkbox-styles';
@@ -1308,20 +1324,6 @@ export { columnDropStyleBordered, columnDropStylePlain } from './theming/parts/c
 export { styleMaterial, themeAlpine, themeBalham, themeMaterial, themeQuartz } from './theming/parts/theme/themes';
 export type { ThemeDefaultParams } from './theming/parts/theme/themes';
 export type { StyleMaterialParams } from './theming/parts/theme/themes';
-export type {
-    ColorValue,
-    ImageValue,
-    ScaleValue,
-    BorderValue,
-    LengthValue,
-    ShadowValue,
-    DurationValue,
-    FontFamilyValue,
-    FontWeightValue,
-    BorderStyleValue,
-    ColorSchemeValue,
-    WithParamTypes,
-} from './theming/theme-types';
 
 // Testing
 

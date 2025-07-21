@@ -1,5 +1,5 @@
-import type { Theme } from './Theme';
-import { createSharedTheme } from './Theme';
+import type { Theme } from '../agStack/theming/Theme';
+import { createSharedTheme } from '../agStack/theming/Theme';
 import type { CoreParams } from './core/core-css';
 import { coreDefaults } from './core/core-css';
 import type { BatchEditStyleParams } from './parts/batch-edit/batch-edit-styles';

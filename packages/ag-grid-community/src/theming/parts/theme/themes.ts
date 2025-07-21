@@ -1,8 +1,6 @@
-import { createPart } from '../../Part';
-import type { Theme } from '../../Theme';
-import type { CoreParams } from '../../core/core-css';
-import { createTheme } from '../../createTheme';
-import type { ColorValue } from '../../theme-types';
+import { createPart } from '../../../agStack/theming/Part';
+import type { Theme } from '../../../agStack/theming/Theme';
+import type { ColorValue } from '../../../agStack/theming/theme-types';
 import {
     accentColor,
     accentMix,
@@ -10,7 +8,9 @@ import {
     foregroundBackgroundMix,
     foregroundColor,
     foregroundMix,
-} from '../../theme-utils';
+} from '../../../agStack/theming/theme-utils';
+import type { CoreParams } from '../../core/core-css';
+import { createTheme } from '../../createTheme';
 import type { BatchEditStyleParams } from '../batch-edit/batch-edit-styles';
 import type { ButtonStyleParams } from '../button-style/button-styles';
 import { buttonStyleAlpine, buttonStyleBalham, buttonStyleBase } from '../button-style/button-styles';

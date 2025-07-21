@@ -1,9 +1,9 @@
-import { _agError, _agLogPreInitErr } from '../agStack/utils/logUtils';
+import { _agError, _agLogPreInitErr } from '../utils/logUtils';
 import type { Part } from './Part';
 import { PartImpl, createPart, defaultModeName } from './Part';
-import { sharedDefaults } from './core/shared-css';
-import type { SharedThemeParams } from './core/shared-css';
 import { IS_SSR, _injectCoreAndModuleCSS, _injectGlobalCSS } from './inject';
+import { sharedDefaults } from './shared/shared-css';
+import type { SharedThemeParams } from './shared/shared-css';
 import type { WithParamTypes } from './theme-types';
 import { paramValueToCss } from './theme-types';
 import { paramToVariableName } from './theme-utils';

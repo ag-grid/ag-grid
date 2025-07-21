@@ -1,7 +1,7 @@
-import { createPart } from '../../Part';
-import type { Part } from '../../Part';
-import type { BorderValue, ColorValue, DurationValue, LengthValue } from '../../theme-types';
-import { accentColor, backgroundColor, foregroundMix } from '../../theme-utils';
+import { createPart } from '../../../agStack/theming/Part';
+import type { Part } from '../../../agStack/theming/Part';
+import type { BorderValue, ColorValue, DurationValue, LengthValue } from '../../../agStack/theming/theme-types';
+import { accentColor, backgroundColor, foregroundMix } from '../../../agStack/theming/theme-utils';
 import { tabStyleBaseCSS } from './tab-style-base.css-GENERATED';
 import { tabStyleRolodexCSS } from './tab-style-rolodex.css-GENERATED';
 

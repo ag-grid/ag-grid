@@ -1,4 +1,3 @@
-import type { Theme } from '../../theming/Theme';
 import { themeQuartz } from '../../theming/parts/theme/themes';
 import type { AgBeanStubEvent } from '../agBeanStub';
 import { AgBeanStub } from '../agBeanStub';
@@ -18,6 +17,7 @@ import type { ILocaleService, LocaleTextFunc } from '../interfaces/iLocaleServic
 import type { BasePopupPositionParams } from '../interfaces/iPopup';
 import type { AgPropertyKey, AgPropertyValueChangedListener, IPropertiesService } from '../interfaces/iProperties';
 import { LocalEventService } from '../localEventService';
+import type { Theme } from '../theming/Theme';
 import { _createAgElement } from '../utils/domUtils';
 import { _getLocaleTextFromFunc, _getLocaleTextFromMap } from '../utils/localeUtils';
 import type { AgInputTextFieldParams } from '../widgets/agInputTextField';
@@ -174,10 +174,15 @@ class AppRegistry extends BaseRegistry<
 class AppIconService implements IIconService<string, any> {
     beanName = 'iconSvc' as const;
 
+    icons: Record<string, string> = {
+        selectOpen: 'small-down',
+    };
+
     public createIconNoSpan(iconName: string): Element | undefined {
+        const iconValue = this.icons[iconName] ?? iconName;
         return _createAgElement({
             tag: 'span',
-            cls: `ag-icon ag-icon-${iconName}`,
+            cls: `ag-icon ag-icon-${iconValue}`,
             role: 'presentation',
             attrs: { unselectable: 'on' },
         });
@@ -238,6 +243,7 @@ class AppRootComp extends AgComponentStub<
             {
                 eInput: {
                     label: 'Test',
+                    labelAlignment: 'top',
                     // eslint-disable-next-line no-console
                     onValueChange: (value) => console.log('input', value),
                 } as AgInputTextFieldParams<AgWidgetSelectorType>,
@@ -248,6 +254,7 @@ class AppRootComp extends AgComponentStub<
                         },
                     ],
                     label: 'Select',
+                    labelAlignment: 'top',
                     // eslint-disable-next-line no-console
                     onValueChange: (value) => console.log('select', value),
                 } as AgSelectParams<AgWidgetSelectorType>,

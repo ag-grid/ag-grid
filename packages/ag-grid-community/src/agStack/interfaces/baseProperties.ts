@@ -1,4 +1,4 @@
-import type { Theme } from '../../theming/Theme';
+import type { Theme } from '../theming/Theme';
 
 export interface BaseProperties {
     tabIndex?: number;

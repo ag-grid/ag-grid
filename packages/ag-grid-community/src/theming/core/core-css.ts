@@ -1,3 +1,4 @@
+import type { SharedThemeParams } from '../../agStack/theming/shared/shared-css';
 import type {
     BorderStyleValue,
     BorderValue,
@@ -8,7 +9,7 @@ import type {
     LengthValue,
     ScaleValue,
     ShadowValue,
-} from '../theme-types';
+} from '../../agStack/theming/theme-types';
 import {
     accentColor,
     accentMix,
@@ -17,8 +18,7 @@ import {
     foregroundColor,
     foregroundHeaderBackgroundMix,
     foregroundMix,
-} from '../theme-utils';
-import type { SharedThemeParams } from './shared-css';
+} from '../../agStack/theming/theme-utils';
 
 /**
  * All possible theme param types - the actual params available will be a subset of this type depending on the parts in use by the theme.

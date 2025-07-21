@@ -1,4 +1,4 @@
-import { _agError } from '../agStack/utils/logUtils';
+import { _agError } from '../utils/logUtils';
 import { clamp, memoize, paramToVariableExpression } from './theme-utils';
 
 export type Feature = 'colorScheme' | 'iconSet' | 'checkboxStyle' | 'inputStyle' | 'tabStyle';

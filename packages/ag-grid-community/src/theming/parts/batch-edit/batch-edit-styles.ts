@@ -1,6 +1,6 @@
-import { createPart } from '../../Part';
-import type { Part } from '../../Part';
-import type { ColorValue } from '../../theme-types';
+import { createPart } from '../../../agStack/theming/Part';
+import type { Part } from '../../../agStack/theming/Part';
+import type { ColorValue } from '../../../agStack/theming/theme-types';
 import { batchEditStyleDefaultCSS } from './batch-edit-style-default.css-GENERATED';
 
 export type BatchEditStyleParams = {

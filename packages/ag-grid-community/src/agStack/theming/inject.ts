@@ -1,6 +1,6 @@
-import type { IEnvironment } from '../agStack/interfaces/iEnvironment';
+import type { IEnvironment } from '../interfaces/iEnvironment';
 import { FORCE_LEGACY_THEMES } from './Theme';
-import { sharedCSS } from './core/shared.css-GENERATED';
+import { sharedCSS } from './shared/shared.css-GENERATED';
 
 export const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.forEach;
 

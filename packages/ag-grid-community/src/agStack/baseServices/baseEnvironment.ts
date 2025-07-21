@@ -1,18 +1,18 @@
-import type { Theme } from '../../theming/Theme';
-import { ThemeImpl } from '../../theming/Theme';
-import {
-    IS_SSR,
-    _injectCoreAndModuleCSS,
-    _injectGlobalCSS,
-    _registerInstanceUsingThemingAPI,
-    _unregisterInstanceUsingThemingAPI,
-} from '../../theming/inject';
 import { AgBeanStub } from '../agBeanStub';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import type { IEnvironment } from '../interfaces/iEnvironment';
 import type { IPropertiesService } from '../interfaces/iProperties';
+import type { Theme } from '../theming/Theme';
+import { ThemeImpl } from '../theming/Theme';
+import {
+    IS_SSR,
+    _injectCoreAndModuleCSS,
+    _injectGlobalCSS,
+    _registerInstanceUsingThemingAPI,
+    _unregisterInstanceUsingThemingAPI,
+} from '../theming/inject';
 import { _createAgElement } from '../utils/domUtils';
 import { _agError } from '../utils/logUtils';
 
