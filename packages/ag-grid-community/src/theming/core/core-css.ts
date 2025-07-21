@@ -20,6 +20,7 @@ import {
     foregroundMix,
 } from '../theme-utils';
 
+/** @knipIgnore */
 export { coreCSS } from './core.css-GENERATED';
 
 /**
