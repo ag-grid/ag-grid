@@ -403,7 +403,7 @@
         "suppressEditingNextOnTab": {
             "more": {
                 "name": "Stop cell editing",
-                "url": "./cell-editing-start-stop/#stop-editing-when-cell-loses-focus"
+                "url": "./cell-editing-start-stop/#prevent-start-editing-when-cells-lose-focus"
             }
         },
         "enterNavigatesVertically": {
