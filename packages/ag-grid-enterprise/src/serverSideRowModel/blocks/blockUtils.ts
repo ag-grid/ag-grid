@@ -111,7 +111,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
         if (!hasChildren && rowNode.childStore != null) {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
-            rowNode.expanded = false;
+            if (!rowNode.master) {
+                rowNode.expanded = false;
+            }
         }
     }
 
@@ -200,14 +202,14 @@ export class BlockUtils extends BeanStub implements NamedBean {
         rowNode.setDataAndId(data, defaultId);
         const group = rowNode.group;
 
+        if ((treeData || !group) && this.gos.get('masterDetail')) {
+            this.setMasterDetailInfo(rowNode);
+        }
+
         if (treeData) {
             this.setTreeGroupInfo(rowNode);
         } else if (group) {
             this.setRowGroupInfo(rowNode);
-        }
-
-        if ((treeData || !group) && this.gos.get('masterDetail')) {
-            this.setMasterDetailInfo(rowNode);
         }
 
         if (treeData || group) {
