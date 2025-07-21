@@ -590,10 +590,11 @@ jobs:
                     "e2e": "${{ needs.e2e.result }}",
                     "Docs": "${{ needs.docs.result }}",
                     "Bundle": "${{ needs.bundle_size.result }}",
-                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
-                    "Angular_Pkg": "${{ needs.angular_fw_pkg_test.result }}"
                 }
             }
+# TODO: Add back into `jobStatuses` when package tests are enabled again
+#                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
+#                    "Angular_Pkg": "${{ needs.angular_fw_pkg_test.result }}"
         run: |
           npx ts-node ./scripts/agBotSlackMessage.ts --auth-token "$SLACK_BOT_OAUTH_TOKEN" \
             --grid-channel "$CI_GRID_GATE_CHANNEL" \
