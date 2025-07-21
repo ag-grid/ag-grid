@@ -39,6 +39,14 @@ on:
         options:
           - 'true'
           - 'false'
+      force_run_on_draft_pr:
+        description: 'Force run on draft PR'
+        type: 'choice'
+        required: true
+        default: 'false'
+        options:
+          - 'true'
+          - 'false'
       nx_command:
         type: 'choice'
         required: true
@@ -65,7 +73,7 @@ permissions:
 jobs:
   build_lint:
     name: Build & Lint
-    if: github.event.pull_request.draft == false
+    if: github.event.pull_request.draft == false || github.event.inputs.force_run_on_draft_pr == 'true'
     outputs:
       nx_base: ${{ steps.setup.outputs.base }}
       build: ${{ steps.build.outcome || '' }}
@@ -452,7 +460,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: [ build_lint, test, e2e, docs, bundle_size ]
 #    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test ]
-    if: cancelled() != true && github.event.pull_request.draft == false
+    if: cancelled() != true && github.event.pull_request.draft == false || github.event.inputs.force_run_on_draft_pr == 'true'
     permissions:
       contents: write
       actions: read
