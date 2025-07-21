@@ -452,7 +452,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: [ build_lint, test, e2e, docs, bundle_size ]
 #    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test ]
-    if: cancelled() != true
+    if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write
       actions: read
