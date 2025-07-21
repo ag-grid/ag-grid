@@ -3,8 +3,9 @@ import type { GridApi } from 'ag-grid-community';
 import { asyncSetTimeout } from './utils';
 
 export function countLoadingRows(api: GridApi): number {
+    if (api.isDestroyed?.()) return 0;
     let loadingRows = 0;
-    api.forEachNode((node) => {
+    api.forEachNode?.((node) => {
         if (node.id === undefined && !node.data) {
             ++loadingRows;
         }
@@ -12,40 +13,20 @@ export function countLoadingRows(api: GridApi): number {
     return loadingRows;
 }
 
-export function waitForNoLoadingRows(api: GridApi): Promise<boolean> {
-    let didLoad = false;
-    return new Promise((resolve) => {
-        let timer: ReturnType<typeof setTimeout> | null = null;
-        const checkNoLoadingTimer = () => {
-            timer = null;
-            checkNoLoadingRows();
-        };
-        const checkNoLoadingRows = () => {
-            if (countLoadingRows(api) === 0) {
-                if (timer) {
-                    clearTimeout(timer);
-                    timer = null;
-                }
-                api.removeEventListener('modelUpdated', checkNoLoadingRows);
-                resolve(didLoad);
-                return true;
-            }
-            didLoad = true;
-            timer ??= setTimeout(checkNoLoadingTimer, 2);
-            return false;
-        };
-        if (!checkNoLoadingRows()) {
-            api.addEventListener('modelUpdated', checkNoLoadingRows);
-        }
-    });
+export async function waitForNoLoadingRows(api: GridApi) {
+    await asyncSetTimeout(0);
+    while (countLoadingRows(api) > 0) {
+        await asyncSetTimeout(1);
+    }
 }
 
 export async function ssrmExpandAndLoadAll(api: GridApi) {
     function expandAllGroupsFromNodes() {
+        if (api.isDestroyed?.()) return false;
         let result = false;
-        api.forEachNode((node) => {
+        api.forEachNode?.((node) => {
             if ((node.group || node.master || node.isExpandable()) && !node.expanded) {
-                node.setExpanded(true, undefined, true);
+                node.setExpanded(true);
                 result = true;
             }
         }, false);
@@ -58,7 +39,8 @@ export async function ssrmExpandAndLoadAll(api: GridApi) {
             continue;
         }
 
-        if (await waitForNoLoadingRows(api)) {
+        if (countLoadingRows(api) > 0) {
+            await asyncSetTimeout(1);
             continue;
         }
 

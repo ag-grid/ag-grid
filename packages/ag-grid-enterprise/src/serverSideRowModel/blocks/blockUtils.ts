@@ -26,22 +26,6 @@ import type { StoreFactory } from '../stores/storeFactory';
 
 export const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey' as const;
 
-const extractRowBounds = (currentRowNode: RowNode): RowBounds => ({
-    rowHeight: currentRowNode.rowHeight!,
-    rowTop: currentRowNode.rowTop!,
-});
-
-function mergeRowBounds(a: RowBounds | undefined, b: RowBounds | undefined): RowBounds | undefined {
-    if (!a || !b) {
-        return a || b;
-    }
-    const rowTop = Math.min(a.rowTop, b.rowTop);
-    return {
-        rowTop: rowTop,
-        rowHeight: Math.max(a.rowTop + a.rowHeight, b.rowTop + b.rowHeight) - rowTop,
-    };
-}
-
 export class BlockUtils extends BeanStub implements NamedBean {
     beanName = 'ssrmBlockUtils' as const;
 
@@ -338,26 +322,25 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     public extractRowBounds(rowNode: RowNode, index: number): RowBounds | undefined {
+        const extractRowBounds = (currentRowNode: RowNode): RowBounds => ({
+            rowHeight: currentRowNode.rowHeight!,
+            rowTop: currentRowNode.rowTop!,
+        });
+
         if (rowNode.rowIndex === index) {
             return extractRowBounds(rowNode);
-        }
-
-        let result: RowBounds | undefined;
-
-        if (rowNode.master && rowNode.expanded && rowNode.detailNode) {
-            if (rowNode.detailNode.rowIndex === index) {
-                result = extractRowBounds(rowNode.detailNode);
-            }
         }
 
         if (rowNode.hasChildren() && rowNode.expanded && !!rowNode.childStore) {
             const childStore = rowNode.childStore as LazyStore;
             if (childStore.isDisplayIndexInStore(index)) {
-                result = mergeRowBounds(result, childStore.getRowBounds(index)!);
+                return childStore.getRowBounds(index)!;
+            }
+        } else if (rowNode.master && rowNode.expanded && rowNode.detailNode) {
+            if (rowNode.detailNode.rowIndex === index) {
+                return extractRowBounds(rowNode.detailNode);
             }
         }
-
-        return result;
     }
 
     private isPixelInNodeRange(node: RowNode, pixel: number): boolean {
