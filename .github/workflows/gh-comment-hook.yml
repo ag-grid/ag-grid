@@ -33,3 +33,6 @@ jobs:
             if (body !== old_body) {
                 await github.rest.issues.update({ owner, repo, issue_number, body });
             }
+
+            // Exit silently to avoid showing as a status check
+            process.exit(0);
