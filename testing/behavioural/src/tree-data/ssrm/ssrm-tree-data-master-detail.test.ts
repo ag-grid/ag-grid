@@ -90,24 +90,24 @@ describe('ag-grid SSRM treeData with master detail', () => {
         const gridRows = new GridRows(api, '', gridRowsOptions);
         await gridRows.check(`
             ROOT id:<no-id>
-            ├─┬ A LEAF id:A ag-Grid-AutoColumn:"A" id:"A"
+            ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" id:"A"
             │ ├─┬ master id:B ag-Grid-AutoColumn:"B" id:"B"
             │ │ └─┬ detail id:detail_B ag-Grid-AutoColumn:"B" id:"B"
             │ │ · └─┬ ROOT id:ROOT_NODE_ID
             │ │ · · ├── LEAF id:X0 name:"X0"
             │ │ · · └── LEAF id:Y0 name:"Y0"
             │ └── LEAF id:C ag-Grid-AutoColumn:"C" id:"C"
-            └─┬ D master id:D ag-Grid-AutoColumn:"D" id:"D"
+            └─┬ D master-GROUP id:D ag-Grid-AutoColumn:"D" id:"D"
             · ├─┬ detail collapsed id:detail_D ag-Grid-AutoColumn:"D" id:"D"
             · │ └─┬ ROOT id:ROOT_NODE_ID
             · │ · ├── LEAF id:X1 name:"X1"
             · │ · └── LEAF id:Y1 name:"Y1"
-            · └─┬ E master id:E ag-Grid-AutoColumn:"E" id:"E"
+            · └─┬ E master-GROUP id:E ag-Grid-AutoColumn:"E" id:"E"
             · · ├─┬ detail collapsed id:detail_E ag-Grid-AutoColumn:"E" id:"E"
             · · │ └─┬ ROOT id:ROOT_NODE_ID
             · · │ · ├── LEAF id:X2 name:"X2"
             · · │ · └── LEAF id:Y2 name:"Y2"
-            · · ├─┬ F master id:F ag-Grid-AutoColumn:"F" id:"F"
+            · · ├─┬ F master-GROUP id:F ag-Grid-AutoColumn:"F" id:"F"
             · · │ ├─┬ detail collapsed id:detail_F ag-Grid-AutoColumn:"F" id:"F"
             · · │ │ └─┬ ROOT id:ROOT_NODE_ID
             · · │ │ · └── LEAF id:X3 name:"X3"
