@@ -7,7 +7,6 @@ import { _getActiveDomElement } from '../../gridOptionsUtils';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { PopupPositionParams } from '../../interfaces/iPopup';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _addStylesToElement, _clearElement, _createElement, _removeFromParent } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
@@ -488,7 +487,7 @@ export class CellComp extends Component {
     }
 
     private addPopupCellEditor(params: ICellEditorParams, position?: 'over' | 'under'): void {
-        const { gos, context, popupSvc, localeSvc, editSvc } = this.beans;
+        const { gos, context, popupSvc, editSvc } = this.beans;
         if (gos.get('editType') === 'fullRow') {
             //popup cellEditor does not work with fullRowEdit
             _warn(98);
@@ -499,8 +498,10 @@ export class CellComp extends Component {
         // if a popup, then we wrap in a popup editor and return the popup
         this.cellEditorPopupWrapper = context.createBean(editSvc!.createPopupEditorWrapper(params));
         const ePopupGui = this.cellEditorPopupWrapper.getGui();
-        if (this.cellEditorGui) {
-            ePopupGui.appendChild(this.cellEditorGui);
+        const cellEditorGui = this.cellEditorGui;
+
+        if (cellEditorGui) {
+            ePopupGui.appendChild(cellEditorGui);
         }
 
         const useModelPopup = gos.get('stopEditingWhenCellsLoseFocus');
@@ -523,8 +524,6 @@ export class CellComp extends Component {
 
         const positionCallback = popupSvc!.positionPopupByComponent.bind(popupSvc, positionParams);
 
-        const translate = _getLocaleTextFunc(localeSvc);
-
         const addPopupRes = popupSvc!.addPopup({
             modal: useModelPopup,
             eChild: ePopupGui,
@@ -534,7 +533,7 @@ export class CellComp extends Component {
             },
             anchorToElement: this.eCell,
             positionCallback,
-            ariaLabel: translate('ariaLabelCellEditor', 'Cell Editor'),
+            ariaLabel: this.eCell,
         });
         if (addPopupRes) {
             this.hideEditorPopup = addPopupRes.hideFunc;

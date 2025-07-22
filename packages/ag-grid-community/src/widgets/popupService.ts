@@ -11,7 +11,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { PopupEventParams, PopupPositionParams } from '../interfaces/iPopup';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _setAriaLabel, _setAriaRole } from '../utils/aria';
+import { _setAriaLabel, _setAriaOwns, _setAriaRole } from '../utils/aria';
 import {
     _createElement,
     _getAbsoluteHeight,
@@ -62,7 +62,7 @@ export interface AddPopupParams {
     anchorToElement?: HTMLElement;
 
     // an aria label should be added to provided context to screen readers
-    ariaLabel: string;
+    ariaLabel: string | HTMLElement;
 }
 
 interface AddPopupResult {
@@ -504,7 +504,11 @@ export class PopupService extends BeanStub implements NamedBean {
         }
     }
 
-    private createPopupWrapper(element: HTMLElement, ariaLabel: string, alwaysOnTop: boolean): HTMLElement {
+    private createPopupWrapper(
+        element: HTMLElement,
+        ariaLabel: string | HTMLElement,
+        alwaysOnTop: boolean
+    ): HTMLElement {
         const ePopupParent = this.getPopupParent();
 
         // add env CSS class to child, in case user provided a popup parent, which means
@@ -520,7 +524,12 @@ export class PopupService extends BeanStub implements NamedBean {
             _setAriaRole(element, 'dialog');
         }
 
-        _setAriaLabel(element, ariaLabel);
+        if (typeof ariaLabel === 'string') {
+            _setAriaLabel(element, ariaLabel);
+        } else {
+            element.id ||= `popup-component-${instanceIdSeq}`;
+            _setAriaOwns(ariaLabel, element.id);
+        }
 
         eWrapper.appendChild(element);
         ePopupParent.appendChild(eWrapper);
@@ -633,13 +642,15 @@ export class PopupService extends BeanStub implements NamedBean {
             element: element,
             wrapper: wrapperEl,
             hideFunc: removeListeners,
-            instanceId: instanceIdSeq++,
+            instanceId: instanceIdSeq,
             isAnchored: !!anchorToElement,
         });
 
         if (anchorToElement) {
             this.setPopupPositionRelatedToElement(element, anchorToElement);
         }
+
+        instanceIdSeq = instanceIdSeq + 1;
     }
 
     private getPopupIndex(el: HTMLElement): number {

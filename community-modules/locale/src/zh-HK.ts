@@ -602,7 +602,6 @@ export const AG_GRID_LOCALE_HK = {
     ariaLabelSelectField: '選擇欄位',
 
     // Cell Editor
-    ariaLabelCellEditor: '單元編輯器',
     ariaValidationErrorPrefix: '單元編輯器驗證',
     ariaLabelLoadingContextMenu: '加載上下文選單',
 

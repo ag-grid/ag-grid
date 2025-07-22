@@ -603,7 +603,6 @@ export const AG_GRID_LOCALE_IR = {
     ariaLabelSelectField: 'انتخاب فیلد',
 
     // Cell Editor
-    ariaLabelCellEditor: 'ویرایشگر سلول',
     ariaValidationErrorPrefix: 'اعتبارسنجی ویرایشگر سلول',
     ariaLabelLoadingContextMenu: 'در حال بارگذاری فهرست زمینه',
 

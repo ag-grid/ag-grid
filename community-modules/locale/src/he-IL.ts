@@ -602,7 +602,6 @@ export const AG_GRID_LOCALE_IL = {
     ariaLabelSelectField: 'שדה בחירה',
 
     // Cell Editor
-    ariaLabelCellEditor: 'עורך תא',
     ariaValidationErrorPrefix: 'אימות עורך תא',
     ariaLabelLoadingContextMenu: 'טוען תפריט קיצור דרך',
 
