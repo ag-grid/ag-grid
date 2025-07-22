@@ -30,4 +30,22 @@ ignore:
                   developer machines
               expires: 2025-09-21T12:00:00.000Z
               created: 2025-06-25T15:10:07.411Z
+    SNYK-JS-ESLINTPLUGINKIT-8340627:
+        - eslint@9.14.0 > @eslint/plugin-kit@0.2.5:
+              reason: >-
+                  Only used for testing packages, so ReDos attack would only affect developer machines and CI
+              expires: 2025-09-21T12:00:00.000Z
+              created: 2025-07-22T10:35:00.007Z
+    SNYK-JS-ESLINTPLUGINKIT-10847878:
+        - eslint@9.18.0 > @eslint/plugin-kit@0.2.5:
+              reason: >-
+                  Only used for testing packages, so ReDos attack would only affect developer machines and CI
+              expires: 2025-09-21T12:00:00.000Z
+              created: 2025-07-22T10:35:00.007Z
+    SNYK-JS-FORMDATA-10841150:
+        - request@2.88.2 > form-data@2.3.3:
+              reason: >-
+                  Only used for building and getting changelog/pipeline data
+              expires: 2025-09-21T12:00:00.000Z
+              created: 2025-06-25T14:14:23.307Z
 patch: {}
