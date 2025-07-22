@@ -33,6 +33,7 @@ jobs:
               uses: actions/checkout@v4
               with:
                   fetch-depth: 1
+
             - name: Snyk scan workspaces
               id: snyk-scan-workspaces
               uses: ./external/ag-shared/github/actions/snyk-scan-workspaces
@@ -56,6 +57,7 @@ jobs:
               uses: actions/checkout@v4
               with:
                   fetch-depth: 1
+
             - name: Snyk code scan
               id: snyk-code-scan
               uses: ./external/ag-shared/github/actions/snyk-code-scan
@@ -73,6 +75,7 @@ jobs:
     combine-scan-results:
       needs: [code-dependency-scan, sast-code-scan]
       runs-on: ubuntu-latest
+      if: ${{ always() }}
       steps:
         - uses: actions/checkout@v4
           with:

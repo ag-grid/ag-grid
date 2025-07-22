@@ -26,7 +26,7 @@ runs:
           env:
               SNYK_TOKEN: ${{ inputs.snyk_token }}
           with:
-              args: --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=${{ inputs.severity_threshold }} --exclude=${{ inputs.exclude }} --remote-repo-url=${{ inputs.remote_repo_url }} --json-file-output=snyk.json
+              args: --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=${{ inputs.severity_threshold }} --exclude=${{ inputs.exclude }} --remote-repo-url=${{ inputs.remote_repo_url }} --json > snyk.json
 
         - name: To CTRF format
           uses: actions/github-script@v7
