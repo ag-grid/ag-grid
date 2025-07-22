@@ -17,7 +17,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ColumnHoverModule: 1.58,
     CsvExportModule: 11.3,
     CustomEditorModule: 59.13,
-    CustomFilterModule: 70.29,
+    CustomFilterModule: 72,
     DateEditorModule: 65.42,
     DateFilterModule: 126.13,
     DragAndDropModule: 1,
