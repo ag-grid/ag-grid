@@ -5,7 +5,7 @@ import type { EditPosition, EditRowPosition } from '../../interfaces/iEditServic
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
-import { _populateModelValidationErrors, _setupEditor, _valuesDiffer } from '../utils/editors';
+import { _populateModelValidationErrors, _setupEditor, _sourceAndPendingDiffer } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
@@ -136,7 +136,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 }
 
                 for (const edit of rowEdits.values()) {
-                    if (_valuesDiffer(edit)) {
+                    if (_sourceAndPendingDiffer(edit)) {
                         changedRows.push(rowNode);
                         // early return, we only need to know if there are any edits
                         break;

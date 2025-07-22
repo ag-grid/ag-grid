@@ -7,7 +7,7 @@ import type { EditingCellPosition, ICellEditorValidationError } from '../interfa
 import type { CellPosition } from '../interfaces/iCellPosition';
 import { _warn } from '../validation/logging';
 import { _getCellCtrl } from './utils/controllers';
-import { UNEDITED, _destroyEditors, _syncFromEditors, _valuesDiffer } from './utils/editors';
+import { UNEDITED, _destroyEditors, _sourceAndPendingDiffer, _syncFromEditors } from './utils/editors';
 
 export function undoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.undo('api');
@@ -22,8 +22,11 @@ export function getEditingCells(beans: BeanCollection): EditingCellPosition[] {
     const positions: EditingCellPosition[] = [];
     edits?.forEach((editRow, rowNode) => {
         const { rowIndex, rowPinned } = rowNode as RowNode;
-        editRow.forEach(({ newValue, oldValue, state }, column) => {
-            const diff = _valuesDiffer({ newValue, oldValue });
+        editRow.forEach((editValue, column) => {
+            const { editorValue, pendingValue, sourceValue: oldValue, state } = editValue;
+            const diff = _sourceAndPendingDiffer(editValue);
+
+            let newValue = editorValue ?? pendingValue;
 
             if (newValue === UNEDITED) {
                 newValue = undefined;
@@ -43,9 +46,7 @@ export function getEditingCells(beans: BeanCollection): EditingCellPosition[] {
             const changed = state === 'changed' && diff;
             const editing = state === 'editing';
 
-            if (editing) {
-                positions.push(edit);
-            } else if (changed) {
+            if (editing || changed) {
                 positions.push(edit);
             }
         });
@@ -63,7 +64,7 @@ export function stopEditing(beans: BeanCollection, cancel: boolean = false): voi
                 }
             });
         } else {
-            _syncFromEditors(beans);
+            _syncFromEditors(beans, true);
         }
         _destroyEditors(beans);
     } else {
