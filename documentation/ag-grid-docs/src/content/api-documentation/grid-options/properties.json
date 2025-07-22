@@ -400,7 +400,7 @@
                 "url": "./cell-editing-start-stop/#stop-editing-when-grid-loses-focus"
             }
         },
-        "suppressEditingNextOnTab": {
+        "suppressStartEditOnTab": {
             "more": {
                 "name": "Stop cell editing",
                 "url": "./cell-editing-start-stop/#prevent-start-editing-when-cells-lose-focus"

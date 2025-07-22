@@ -390,6 +390,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public modules: Module[] | undefined;
 
     // @START@
+    @Input() public suppressEditingNextOnTab: any = undefined;
     /** Specifies the status bar components to use in the status bar.
      * @agModule `StatusBarModule`
      */
@@ -651,9 +652,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input() public editType: EditStrategyType | undefined = undefined;
-    /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
-     */
-    @Input({ transform: booleanAttribute }) public suppressEditingNextOnTab: boolean | undefined = undefined;
     /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */

@@ -527,7 +527,7 @@ export interface GridOptions<TData = any> {
     /**
      * Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
      */
-    suppressEditingNextOnTab?: boolean;
+    suppressStartEditOnTab?: boolean;
 
     /**
      * Validates the Full Row Edit. Only relevant when `editType="fullRow"`.

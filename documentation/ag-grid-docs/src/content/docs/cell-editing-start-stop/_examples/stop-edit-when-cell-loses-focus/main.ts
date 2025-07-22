@@ -42,7 +42,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
         editable: true,
     },
-    suppressEditingNextOnTab: true, // prevent editing next cell when tabbing out
+    suppressStartEditOnTab: true, // prevent editing next cell when tabbing out
 };
 
 // setup the grid after the page has finished loading
