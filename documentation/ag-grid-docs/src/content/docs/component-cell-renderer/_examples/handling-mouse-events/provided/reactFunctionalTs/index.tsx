@@ -69,7 +69,7 @@ const GridExample = () => {
                     <button onClick={toggleRowSelection}>{rowSelection ? 'Disable' : 'Enable'} Row Selection</button>
                 </div>
 
-                <div style={gridStyle} className="ag-theme-quartz">
+                <div style={gridStyle}>
                     <AgGridReact
                         rowData={rowData}
                         columnDefs={columnDefs}
