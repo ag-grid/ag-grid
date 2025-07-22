@@ -273,7 +273,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
     }
 
     private setupFilters(root: Document | ShadowRoot | Element): void {
-        root.querySelectorAll('.ag-filter-menu').forEach((menu) => {
+        const attachToFilterMenu = (menu: HTMLElement) => {
             menu.querySelectorAll('.ag-filter-select .ag-picker-field-display').forEach((fieldDisplay) => {
                 setTestId(fieldDisplay, agTestIdFor.columnFilterPickerDisplay());
             });
@@ -307,7 +307,10 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                     agTestIdFor.filterConditionRadioButton(label)
                 );
             });
-        });
+        };
+
+        root.querySelectorAll('.ag-filter-menu').forEach(attachToFilterMenu);
+        root.querySelectorAll('.ag-filter-wrapper').forEach(attachToFilterMenu);
 
         /** Advanced Filter */
 
