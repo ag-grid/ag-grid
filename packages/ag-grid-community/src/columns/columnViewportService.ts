@@ -26,7 +26,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     private headerColsWithinViewport: AgColumn[] = [];
 
     // A hash key to keep track of changes in viewport columns
-    private colsWithinViewportHash: string = '';
+    public colsWithinViewportHash: string = '';
 
     // all columns & groups to be rendered, index by row.
     // used by header rows to get all items to render for that row.
@@ -45,10 +45,6 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     private viewportRight: number;
 
     private suppressColumnVirtualisation: boolean;
-
-    // when column groups change, the hash is insufficient to determine if the viewport columns have changed,
-    // so we force a refresh of the viewport columns.
-    public forceRefreshNextRender = false;
 
     public postConstruct(): void {
         this.suppressColumnVirtualisation = this.gos.get('suppressColumnVirtualisation');
@@ -271,10 +267,9 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
 
         this.extractViewportColumns();
         const newHash = this.getViewportColumns().map(hashColumn).join('#');
-        const changed = this.forceRefreshNextRender || this.colsWithinViewportHash !== newHash;
+        const changed = this.colsWithinViewportHash !== newHash;
 
         if (changed) {
-            this.forceRefreshNextRender = false;
             this.colsWithinViewportHash = newHash;
             this.calculateHeaderRows();
         }
