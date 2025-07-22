@@ -90,12 +90,11 @@ jobs:
                     console.log(`PR #${pr_number} is not merged, skipping JIRA ticket update.`);
                     return;
                 }
-                const prefixes = ['fix', 'fix', 'close', 'resolve'];
-                const regex = new RegExp(`(${prefixes.join('|')})?\\w*\\s*\\[?((AG|RTI)-\\d{3,})`, 'gi');
                 if (!pr.body && !pr.title) {
                     console.log('PR title and body are empty, cannot find JIRA ticket.');
                 } else {
-                    const matches = pr.body?.match(regex) || pr.title.match(regex) || pr.head.ref;
+                    const regex = /fix(es)? \[?((AG|RTI)-\d{3,})/gi;
+                    const matches = pr.body?.match(regex);
                     if (matches) {
                         issue_keys.push(...matches.map(m => m.match(/(AG|RTI)-\d{3,}/i)[0].toUpperCase()));
                     }
@@ -132,9 +131,7 @@ jobs:
                 }
                 transitioned_at_least_one ||= !known_transitions[issue.fields.status.name.toUpperCase()];
                 transitions[issue_key] = { from: issue.fields.status.name, to: known_transitions[nextTransition] };
-                if (transitioned_at_least_one) {
-                    await transitionJiraIssue(issue, nextTransition);
-                }
+
             
                 // blocks section
                 const blocks = [];
@@ -170,7 +167,10 @@ jobs:
                     link('the AG Grid CI workflow', runUrl),
                     txt('.]')
                 ])];
-                await addJiraComment(issue_key, {content, "type": "doc", "version": 1});
+                if (!known_transitions[issue.fields.status.name.toUpperCase()]) {
+                    await transitionJiraIssue(issue, nextTransition);
+                    await addJiraComment(issue_key, {content, "type": "doc", "version": 1});
+                }
             });
             
             if (transitioned_at_least_one) {

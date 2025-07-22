@@ -124,6 +124,9 @@
   },
   "packageManager": "yarn@1.22.21",
   "resolutions": {
+    "**/axios/form-data": "4.0.4",
+    "**/jsdom/form-data": "4.0.4",
+    "**/node-fetch/form-data": "3.0.4",
     "undici": "6.21.3"
   }
 }

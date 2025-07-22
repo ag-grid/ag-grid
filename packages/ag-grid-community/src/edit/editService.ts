@@ -340,6 +340,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.model.removeEdits(position);
         }
 
+        // Suppress navigation is required for bulk activities like pasting or fill handle via setDataValue,
+        // otherwise navigateAfterEdit will cause the grid to redundantly scan for the next available cell
+        // to edit, which causes focus and rendering changes, for each cell in the bulk operation
         if (!suppressNavigateAfterEdit && cellCtrl) {
             this.navigateAfterEdit(event instanceof KeyboardEvent && event.shiftKey, cellCtrl.cellPosition);
         }
@@ -725,7 +728,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             if (existing.oldValue !== newValue) {
                 _syncFromEditor(beans, position, newValue, eventSource);
-                this.stopEditing(position, { source });
+                this.stopEditing(position, { source, suppressNavigateAfterEdit: true });
                 return true;
             }
 
@@ -742,7 +745,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
 
         _syncFromEditor(beans, position, newValue, eventSource);
-        this.stopEditing(position, { source });
+        this.stopEditing(position, { source, suppressNavigateAfterEdit: true });
 
         return true;
     }
