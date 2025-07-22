@@ -271,7 +271,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return this.stopEditing(position, { ...params, source: STOP_EDIT_SOURCE_TRANSFORM[source] });
         }
 
-        if (!this.isEditing() || !this.strategy) {
+        const isEditingOrBatchWithEdits =
+            this.isEditing(position) || (this.isBatchEditing() && model.hasEdits(position, CHECK_SIBLING));
+
+        if (!isEditingOrBatchWithEdits || !this.strategy) {
             return false;
         }
 
@@ -317,7 +320,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     _syncFromEditors(beans, true);
                 } else if (isEscape) {
                     // only if ESC is pressed while in the editor for this cell
-                    this.revertSingleCellEdit(cellCtrl!, false);
+                    this.revertSingleCellEdit(cellCtrl!);
                 }
 
                 if (this.isBatchEditing()) {
@@ -592,7 +595,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return;
         }
 
-        this.model.clearEditValue(cellPosition);
+        if (!this.batch) {
+            this.model.clearEditValue(cellPosition);
+        }
 
         _destroyEditors(this.beans, [cellPosition], { silent: true });
 
@@ -667,7 +672,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return res;
     }
 
-    public getCellDataValue({ rowNode, column }: Required<EditPosition>): any {
+    public getCellDataValue({ rowNode, column }: Required<EditPosition>, preferEditor = true): any {
         if (!rowNode || !column) {
             return undefined;
         }
@@ -682,7 +687,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             }
         }
 
-        const newValue = edit?.editorValue ?? edit?.pendingValue;
+        const newValue = preferEditor ? edit?.editorValue ?? edit?.pendingValue : edit?.pendingValue;
 
         return newValue === UNEDITED || !edit
             ? this.valueSvc.getValue(column as AgColumn, rowNode, true, 'api')

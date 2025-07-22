@@ -76,7 +76,7 @@ export function _setupEditors(
 
                 const newValue =
                     cellStartValue ??
-                    editSvc?.getCellDataValue(cellPosition) ??
+                    editSvc?.getCellDataValue(cellPosition, false) ??
                     valueSvc.getValueForDisplay(cellColumn as AgColumn, cellRowNode)?.value ??
                     oldValue ??
                     UNEDITED;
@@ -218,7 +218,8 @@ function _createEditorParams(
     const agColumn = beans.colModel.getCol(position.column.getId())!;
     const { rowNode, column } = position;
 
-    const initialNewValue = editSvc?.getCellDataValue(position) ?? _valueFromEditor(false, cellCtrl?.comp)?.editorValue;
+    const initialNewValue =
+        editSvc?.getCellDataValue(position, false) ?? _valueFromEditor(false, cellCtrl?.comp)?.editorValue;
     const value =
         initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
 
