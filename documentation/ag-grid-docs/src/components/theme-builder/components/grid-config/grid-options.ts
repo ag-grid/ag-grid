@@ -56,6 +56,9 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         }
     }
 
+    const rowData = defaultRowData();
+    const allSports = [...new Set(rowData.map((row) => row.sport))];
+
     const defaultColDef: ColDef = {
         sortable: true,
         resizable: config.columnResizing,
@@ -66,7 +69,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         filter: true,
         aggFunc: 'sum',
     };
-    const columnDefs = buildSimpleColumnDefs();
+    const columnDefs = buildSimpleColumnDefs(allSports);
     const sideBar: string[] = [];
     const options: GridOptions = {
         defaultColDef,
@@ -76,7 +79,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         cellSelection: {
             enableHeaderHighlight: config.cellSelectionHeaderHighlight,
         },
-        rowData: defaultRowData(),
+        rowData,
         columnDefs: config.columnGroupsDeep
             ? buildDeepGroupColumnDefs(columnDefs)
             : config.columnGroups
@@ -159,9 +162,15 @@ const cashFormatter = (params: any) => {
     return '$' + params.value.toLocaleString();
 };
 
-const buildSimpleColumnDefs = (): ColDef[] => [
+const buildSimpleColumnDefs = (allSports: string[]): ColDef[] => [
     { field: 'country' },
-    { field: 'sport', cellEditor: 'agRichSelectCellEditor' },
+    {
+        field: 'sport',
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            values: allSports,
+        },
+    },
     { field: 'name' },
     {
         field: 'winningsTotal',
