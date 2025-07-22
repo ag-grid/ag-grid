@@ -26,7 +26,6 @@ export function getData(): any[] {
             change: [
                 ['X', 33.93],
                 ['Q', -80.1],
-
                 ['Z', -42.4],
                 ['I', -89.4],
                 ['K', -8.98],
