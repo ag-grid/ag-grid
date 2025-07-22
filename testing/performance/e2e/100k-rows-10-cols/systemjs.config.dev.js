@@ -73,7 +73,6 @@
             app: appLocation,
             // systemJsMap comes from index.html
             ...systemJsMap,
-            '@': 'documentation/ag-grid-docs/src/',
         },
 
         packages: {

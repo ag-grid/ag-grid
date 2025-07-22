@@ -36,12 +36,7 @@ mkcert
         });
         const staticRoot = express.static(__root, {
             extensions: ['js', 'jsx', 'ts', 'tsx', 'css', 'scss'],
-            setHeaders: (res, path) => {
-                // set content type for .ts and .tsx files
-                if (path.endsWith('.ts') || path.endsWith('.tsx')) {
-                    res.setHeader('Content-Type', 'application/typescript');
-                }
-            },
+            setHeaders: (res, path) => {},
         });
         app.use('/', staticRoot);
         const server = https.createServer(options.server.https, app);
