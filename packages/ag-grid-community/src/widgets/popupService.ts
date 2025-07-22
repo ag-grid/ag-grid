@@ -36,7 +36,11 @@ interface AgPopup {
 
 let instanceIdSeq = 0;
 
-export interface AddPopupParams {
+type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
+type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
+
+// Apply the at-least-one constraint to ariaLabel | ariaOwns
+export type AddPopupParams = {
     // if true then listens to background checking for clicks, so that when the background is clicked,
     // the child is removed again, giving a model look to popups.
     modal?: boolean;
@@ -60,10 +64,12 @@ export interface AddPopupParams {
     // eg if cellComp element is passed, what happens if row moves (sorting, filtering etc)? best anchor against
     // the grid, not the cell.
     anchorToElement?: HTMLElement;
-
+} & XOR<
     // an aria label should be added to provided context to screen readers
-    ariaLabel: string | HTMLElement;
-}
+    { ariaLabel: string },
+    // an element that will be marked as owner of the popup element
+    { ariaOwns: HTMLElement }
+>;
 
 interface AddPopupResult {
     hideFunc: (params?: PopupEventParams) => void;
@@ -462,7 +468,7 @@ export class PopupService extends BeanStub implements NamedBean {
 
     public addPopup(params: AddPopupParams): AddPopupResult {
         const eDocument = _getDocument(this.beans);
-        const { eChild, ariaLabel, alwaysOnTop, positionCallback, anchorToElement } = params;
+        const { eChild, ariaLabel, ariaOwns, alwaysOnTop, positionCallback, anchorToElement } = params;
 
         if (!eDocument) {
             _warn(122);
@@ -478,7 +484,7 @@ export class PopupService extends BeanStub implements NamedBean {
 
         this.initialisePopupPosition(eChild);
 
-        const wrapperEl = this.createPopupWrapper(eChild, ariaLabel, !!alwaysOnTop);
+        const wrapperEl = this.createPopupWrapper(eChild, !!alwaysOnTop, ariaLabel, ariaOwns);
         const removeListeners = this.addEventListenersToPopup({ ...params, wrapperEl });
 
         if (positionCallback) {
@@ -506,8 +512,9 @@ export class PopupService extends BeanStub implements NamedBean {
 
     private createPopupWrapper(
         element: HTMLElement,
-        ariaLabel: string | HTMLElement,
-        alwaysOnTop: boolean
+        alwaysOnTop: boolean,
+        ariaLabel?: string,
+        ariaOwns?: HTMLElement
     ): HTMLElement {
         const ePopupParent = this.getPopupParent();
 
@@ -524,11 +531,11 @@ export class PopupService extends BeanStub implements NamedBean {
             _setAriaRole(element, 'dialog');
         }
 
-        if (typeof ariaLabel === 'string') {
+        if (ariaLabel) {
             _setAriaLabel(element, ariaLabel);
-        } else {
+        } else if (ariaOwns) {
             element.id ||= `popup-component-${instanceIdSeq}`;
-            _setAriaOwns(ariaLabel, element.id);
+            _setAriaOwns(ariaOwns, element.id);
         }
 
         eWrapper.appendChild(element);

@@ -58,7 +58,7 @@ const PopupEditorComp = (props: {
             },
             anchorToElement: eParentCell,
             positionCallback,
-            ariaLabel: eParentCell,
+            ariaOwns: eParentCell,
         });
 
         const hideEditorPopup: (() => void) | undefined = addPopupRes ? addPopupRes.hideFunc : undefined;

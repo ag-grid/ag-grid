@@ -533,7 +533,7 @@ export class CellComp extends Component {
             },
             anchorToElement: this.eCell,
             positionCallback,
-            ariaLabel: this.eCell,
+            ariaOwns: this.eCell,
         });
         if (addPopupRes) {
             this.hideEditorPopup = addPopupRes.hideFunc;
