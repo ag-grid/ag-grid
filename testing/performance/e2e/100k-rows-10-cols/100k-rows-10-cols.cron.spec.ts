@@ -1,7 +1,7 @@
-import type { TestCase } from '../benchmarking';
-import { getUrl } from '../benchmarking';
-import test from '../benchmarking';
-import { waitFor } from '../playwright.utils';
+import type { TestCase } from '../../benchmarking';
+import { getUrl } from '../../benchmarking';
+import test from '../../benchmarking';
+import { waitFor } from '../../playwright.utils';
 
 const athleteCheck = () => document.body.textContent!.includes('Tony Smith');
 test(`Performance Test - `, {
@@ -18,8 +18,8 @@ test(`Performance Test - `, {
                 version: 'staging',
                 url: getUrl({ url: 'https://grid-staging.ag-grid.com/example/?rows=100000&cols=10' }),
             },
-            setupPreActions: async (page) => {
-                await waitFor(athleteCheck, page);
+            preSetup: async (page) => {
+                page.addScriptTag({ content });
             },
             actions: async (page) => {
                 await waitFor(athleteCheck, page);

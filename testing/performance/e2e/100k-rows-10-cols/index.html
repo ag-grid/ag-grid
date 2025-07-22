@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>React Example - Getting Started - Quick Start Example</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="noindex" />
+        <meta http-equiv="last-modified" content="Tue Jul 22 2025 15:10:30 GMT+0100 (British Summer Time)" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&amp;display=swap"
+            rel="stylesheet"
+        />
+        <style media="only screen">
+            :root,
+            body,
+            #root {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                box-sizing: border-box;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            html {
+                position: absolute;
+                top: 0;
+                left: 0;
+                padding: 0;
+                overflow: auto;
+                font-family: -apple-system, 'system-ui', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+                    'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+                    'Noto Color Emoji';
+            }
+
+            body {
+                padding: 16px;
+                overflow: auto;
+                background-color: transparent;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script>
+            var appLocation = '';
+            var boilerplatePath = '';
+            var startFile = 'index.tsx';
+            var systemJsMap = {
+                'ag-grid-community': 'https://localhost:4610/files/ag-grid-community',
+                'ag-grid-enterprise': 'https://localhost:4610/files/ag-grid-enterprise',
+                'ag-grid-react': 'https://localhost:4610/files/ag-grid-react',
+            };
+            var systemJsPaths = {
+                '@ag-grid-community/locale':
+                    'https://cdn.jsdelivr.net/npm/@ag-grid-community/locale@34.0.2/dist/package/main.cjs.js',
+                'ag-charts-community':
+                    'https://cdn.jsdelivr.net/npm/ag-charts-community@12.0.2/dist/package/main.cjs.js',
+                'ag-charts-core': 'https://cdn.jsdelivr.net/npm/ag-charts-core@12.0.2/dist/package/main.cjs.js',
+                'ag-charts-enterprise':
+                    'https://cdn.jsdelivr.net/npm/ag-charts-enterprise@12.0.2/dist/package/main.cjs.js',
+                'ag-charts-react': 'https://cdn.jsdelivr.net/npm/ag-charts-react@12.0.2/',
+                'ag-charts-types': 'https://cdn.jsdelivr.net/npm/ag-charts-types@12.0.2/',
+                'classnames': 'https://cdn.jsdelivr.net/npm/classnames/',
+            };
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/systemjs@0.19.47/dist/system.js"></script>
+        <script src="systemjs.config.dev.js"></script>
+    </body>
+</html>

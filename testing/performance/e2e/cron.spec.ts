@@ -4,7 +4,7 @@ import { waitFor } from '../playwright.utils';
 
 const noRowsCheck = () => document.body.textContent!.includes('No Rows To Show');
 const athleteCheck = () => document.body.textContent!.includes('Athlete');
-const localLotsOfCells = `/lots-of-cells.html`;
+const localLotsOfCells = `/e2e/lots-of-cells.html`;
 
 const frameworks = ['typescript', 'reactFunctionalTs', 'angular', 'vue3'];
 

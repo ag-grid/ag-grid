@@ -24,7 +24,7 @@ mkcert
                 app.use(`/${path.join('files', project, 'styles')}`, express.static(path.join(projectPath, 'styles')));
             }
         });
-        const staticTestFiles = path.join(__root, 'testing', 'performance', 'e2e');
+        const staticTestFiles = path.join(__root, 'testing', 'performance');
         console.log('Adding route', staticTestFiles);
         app.use('/', (req, res, next) => {
             if (req.url === '/healthcheck') {
@@ -34,6 +34,16 @@ mkcert
             }
             return express.static(staticTestFiles)(req, res, next);
         });
+        const staticRoot = express.static(__root, {
+            extensions: ['js', 'jsx', 'ts', 'tsx', 'css', 'scss'],
+            setHeaders: (res, path) => {
+                // set content type for .ts and .tsx files
+                if (path.endsWith('.ts') || path.endsWith('.tsx')) {
+                    res.setHeader('Content-Type', 'application/typescript');
+                }
+            },
+        });
+        app.use('/', staticRoot);
         const server = https.createServer(options.server.https, app);
         server.listen(PORT, () => {
             console.log(`App listening on https://${HOST}:${PORT}`);
