@@ -32,6 +32,7 @@ import {
     _getCellCtrlForEventTarget,
     _getRowAbove,
     _getRowBelow,
+    _getRowCtrlForEventTarget,
     _getRowNode,
     _getSuppressMultiRanges,
     _isCellSelectionEnabled,
@@ -42,6 +43,7 @@ import {
     _last,
     _makeNull,
     _missing,
+    _suppressCellMouseEvent,
     _warn,
     isRowNumberCol,
 } from 'ag-grid-community';
@@ -128,15 +130,29 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     // Drag And Drop Target Methods
     public onDragStart(mouseEvent: MouseEvent): void {
-        if (!_isCellSelectionEnabled(this.gos)) {
+        const gos = this.gos;
+        if (!_isCellSelectionEnabled(gos)) {
             return;
+        }
+
+        const eventTarget = mouseEvent.target;
+        const cellCtrl = _getCellCtrlForEventTarget(gos, eventTarget);
+        if (cellCtrl) {
+            if (_suppressCellMouseEvent(gos, cellCtrl.column, cellCtrl.rowNode, mouseEvent)) {
+                return;
+            }
+        } else {
+            const rowCtrl = _getRowCtrlForEventTarget(gos, eventTarget);
+            if (rowCtrl?.isSuppressFullWidthMouseEvent(mouseEvent)) {
+                return;
+            }
         }
 
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
 
         // ctrlKey for windows, metaKey for Apple
         const isMultiKey = ctrlKey || metaKey;
-        const allowMulti = !_getSuppressMultiRanges(this.gos);
+        const allowMulti = !_getSuppressMultiRanges(gos);
         const isMultiSelect = allowMulti ? isMultiKey : false;
         const extendRange = shiftKey && !!this.cellRanges?.length;
 

@@ -19,9 +19,8 @@ import type { HeaderPosition } from './interfaces/iHeaderPosition';
 import type { RowPinnedType } from './interfaces/iRowNode';
 import { getHeaderIndexToFocus } from './navigation/headerNavigationService';
 import type { NavigationService } from './navigation/navigationService';
-import { DOM_DATA_KEY_CELL_CTRL } from './rendering/cell/cellCtrl';
 import type { OverlayService } from './rendering/overlays/overlayService';
-import { DOM_DATA_KEY_ROW_CTRL } from './rendering/row/rowCtrl';
+import { DOM_DATA_KEY_CELL_CTRL, DOM_DATA_KEY_ROW_CTRL } from './rendering/renderUtils';
 import type { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
 import {

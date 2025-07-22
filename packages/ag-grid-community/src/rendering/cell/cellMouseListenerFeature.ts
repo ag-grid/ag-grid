@@ -5,8 +5,9 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { CellClickedEvent, CellDoubleClickedEvent } from '../../events';
 import { _isBrowserSafari } from '../../utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../utils/dom';
-import { _isStopPropagationForAgGrid } from '../../utils/event';
+import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../utils/event';
 import { _interpretAsRightClick } from '../../utils/mouse';
+import { _suppressCellMouseEvent } from '../renderUtils';
 import type { CellCtrl } from './cellCtrl';
 
 export class CellMouseListenerFeature extends BeanStub {
@@ -52,12 +53,13 @@ export class CellMouseListenerFeature extends BeanStub {
             return;
         }
 
-        const { eventSvc, rangeSvc, editSvc, editModelSvc, frameworkOverrides } = this.beans;
+        const { eventSvc, rangeSvc, editSvc, editModelSvc, frameworkOverrides, gos } = this.beans;
         const isMultiKey = event.ctrlKey || event.metaKey;
         const { cellCtrl } = this;
-        const { column, cellPosition } = cellCtrl;
+        const { column, cellPosition, rowNode } = cellCtrl;
+        const suppressMouseEvent = _suppressCellMouseEvent(gos, column, rowNode, event);
 
-        if (rangeSvc && isMultiKey) {
+        if (rangeSvc && isMultiKey && !suppressMouseEvent) {
             // the mousedown event has created the range already, so we only intersect if there is more than one
             // range on this cell
             if (rangeSvc.getCellRangeCount(cellPosition) > 1) {
@@ -79,6 +81,11 @@ export class CellMouseListenerFeature extends BeanStub {
             }, 0);
         }
 
+        if (suppressMouseEvent) {
+            _stopPropagationForAgGrid(event);
+            return;
+        }
+
         if (editModelSvc?.getState(cellCtrl) !== 'editing') {
             const editing = editSvc?.isEditing();
             const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
@@ -97,7 +104,7 @@ export class CellMouseListenerFeature extends BeanStub {
 
     public onCellDoubleClicked(event: MouseEvent) {
         const { column, beans, cellCtrl } = this;
-        const { eventSvc, frameworkOverrides, editSvc, editModelSvc } = beans;
+        const { eventSvc, frameworkOverrides, editSvc, editModelSvc, gos } = beans;
 
         const colDef = column.getColDef();
         // always dispatch event to eventService
@@ -112,6 +119,10 @@ export class CellMouseListenerFeature extends BeanStub {
                     (colDef.onCellDoubleClicked as any)(cellDoubleClickedEvent);
                 });
             }, 0);
+        }
+        if (_suppressCellMouseEvent(gos, cellCtrl.column, cellCtrl.rowNode, event)) {
+            _stopPropagationForAgGrid(event);
+            return;
         }
 
         if (
@@ -134,6 +145,12 @@ export class CellMouseListenerFeature extends BeanStub {
         const target = mouseEvent.target as HTMLElement;
         const { cellCtrl, beans } = this;
         const { eventSvc, rangeSvc, rowNumbersSvc, focusSvc, gos, editSvc } = beans;
+        const { column, rowNode, cellPosition } = cellCtrl;
+
+        if (_suppressCellMouseEvent(gos, column, rowNode, mouseEvent)) {
+            _stopPropagationForAgGrid(mouseEvent);
+            return;
+        }
 
         // do not change the range for right-clicks inside an existing range
         if (this.isRightClickInExistingRange(mouseEvent)) {
@@ -142,7 +159,6 @@ export class CellMouseListenerFeature extends BeanStub {
 
         const hasRanges = rangeSvc && !rangeSvc.isEmpty();
         const containsWidget = this.containsWidget(target);
-        const { cellPosition, column } = cellCtrl;
 
         const isRowNumberColumn = isRowNumberCol(column);
 
