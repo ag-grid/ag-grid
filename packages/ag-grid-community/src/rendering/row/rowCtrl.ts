@@ -1512,8 +1512,19 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const { rowNode, beans, gos } = this;
         // step 1 - add listener, to set flag on row node
         compBean.addManagedListeners(element, {
-            mouseenter: () => rowNode.dispatchRowEvent('mouseEnter'),
-            mouseleave: () => rowNode.dispatchRowEvent('mouseLeave'),
+            // We use pointer events here instead of mouse events, as pointer events
+            // are more reliable for hover detection, especially with touch devices
+            // or hybrid touch + mouse devices.
+            pointerenter: (e: PointerEvent) => {
+                if (e.pointerType === 'mouse') {
+                    rowNode.dispatchRowEvent('mouseEnter');
+                }
+            },
+            pointerleave: (e: PointerEvent) => {
+                if (e.pointerType === 'mouse') {
+                    rowNode.dispatchRowEvent('mouseLeave');
+                }
+            },
         });
 
         // step 2 - listen for changes on row node (which any element can trigger)
