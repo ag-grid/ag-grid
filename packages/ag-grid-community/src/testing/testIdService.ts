@@ -272,6 +272,41 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         });
 
         setTestId(root.querySelector('.ag-fill-handle'), agTestIdFor.fillHandle());
+
+        /** Column Chooser */
+
+        root.querySelectorAll('.ag-panel[aria-label="Choose Columns"]').forEach((panel) => {
+            setTestId(panel.querySelector('.ag-panel-title-bar-button-icon'), agTestIdFor.columnChooserCloseButton());
+            setTestId(
+                panel.querySelector('.ag-column-select-header-checkbox input[type="checkbox"]'),
+                agTestIdFor.columnChooserSearchBarCheckbox()
+            );
+            setTestId(
+                panel.querySelector('.ag-column-select-header-filter-wrapper input[type="text"]'),
+                agTestIdFor.columnChooserSearchBarFilter()
+            );
+            panel.querySelectorAll('.ag-column-select-list').forEach((list) => {
+                setTimeout(() => {
+                    list.querySelectorAll('.ag-column-select-virtual-list-item').forEach((item) => {
+                        const label = item.getAttribute('aria-label');
+                        setTestId(
+                            item.querySelector('.ag-column-group-closed-icon'),
+                            agTestIdFor.columnChooserListItemGroupClosedIcon(label)
+                        );
+
+                        setTestId(
+                            item.querySelector('.ag-column-select-checkbox input[type=checkbox]'),
+                            agTestIdFor.columnChooserListItemCheckbox(label)
+                        );
+
+                        setTestId(
+                            item.querySelector('.ag-drag-handle'),
+                            agTestIdFor.columnChooserListItemDragHandle(label)
+                        );
+                    });
+                }, 0);
+            });
+        });
     }
 
     private setupFilters(root: Document | ShadowRoot | Element): void {

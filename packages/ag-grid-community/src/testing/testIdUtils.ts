@@ -212,4 +212,24 @@ export const agTestIdFor = {
     fillHandle(): string {
         return formatTestId('ag-fill-handle');
     },
+
+    /** Column Chooser */
+    columnChooserCloseButton(): string {
+        return formatTestId('ag-column-chooser-close-button');
+    },
+    columnChooserSearchBarCheckbox(): string {
+        return formatTestId('ag-column-chooser-header-checkbox');
+    },
+    columnChooserSearchBarFilter(): string {
+        return formatTestId('ag-column-chooser-searchbar-filter');
+    },
+    columnChooserListItemGroupClosedIcon(label: string | null): string {
+        return formatTestId('ag-column-chooser-list-item-group-closed-icon', { label });
+    },
+    columnChooserListItemCheckbox(label: string | null): string {
+        return formatTestId('ag-column-chooser-list-item-checkbox', { label });
+    },
+    columnChooserListItemDragHandle(label: string | null): string {
+        return formatTestId('ag-column-chooser-list-item-drag-handle', { label });
+    },
 };
