@@ -566,7 +566,7 @@ export class PopupService extends BeanStub implements NamedBean {
         const eDocument = _getDocument(beans);
         const ePopupParent = this.getPopupParent();
 
-        const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal } = params;
+        const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal, ariaOwns } = params;
 
         let popupHidden = false;
 
@@ -613,8 +613,7 @@ export class PopupService extends BeanStub implements NamedBean {
             if (closedCallback) {
                 closedCallback(mouseEvent || touchEvent || keyboardEvent);
             }
-
-            this.removePopupFromPopupList(popupEl);
+            this.removePopupFromPopupList(popupEl, ariaOwns);
         };
 
         if (afterGuiAttached) {
@@ -701,9 +700,13 @@ export class PopupService extends BeanStub implements NamedBean {
         return destroyPositionTracker;
     }
 
-    private removePopupFromPopupList(element: HTMLElement): void {
+    private removePopupFromPopupList(element: HTMLElement, ariaOwns?: HTMLElement): void {
         this.setAlignedStyles(element, null);
         this.setPopupPositionRelatedToElement(element, null);
+
+        if (ariaOwns) {
+            _setAriaOwns(ariaOwns, null);
+        }
 
         this.popupList = this.popupList.filter((p) => p.element !== element);
     }
