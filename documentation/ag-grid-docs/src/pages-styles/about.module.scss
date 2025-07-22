@@ -11,8 +11,12 @@
 }
 
 .miniHeader {
-    color: var(--color-brand-400);
+    color: var(--color-brand-500);
     text-align: center;
+
+    #{$selector-darkmode} & {
+        color: var(--color-link);
+    }
 }
 
 .eyebrow {
@@ -606,6 +610,19 @@
         border-color: var(--color-brand-400);
         color: var(--color-brand-700);
     }
+
+    #{$selector-darkmode} & {
+        background: var(--color-button-tertiary-bg-hover);
+        color: var(--color-button-tertiary-fg);
+        border-color: var(--color-button-tertiary-fg);
+
+        &:hover,
+        &:focus {
+            background: var(--color-button-tertiary-bg-active);
+            color: var(--color-button-tertiary-fg);
+            border-color: var(--color-button-tertiary-fg);
+        }
+    }
 }
 
 .socialLinks {
@@ -641,6 +658,10 @@
     &:focus {
         color: var(--color-brand-700);
         text-decoration: underline;
+    }
+
+    #{$selector-darkmode} & {
+        color: var(--color-link);
     }
 }
 
@@ -1010,7 +1031,6 @@
 }
 
 .contactOffice {
-    color: var(--color-link);
     font-weight: var(--text-semibold);
 }
 
