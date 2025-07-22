@@ -76,6 +76,7 @@ jobs:
                     }
                 });
             };
+            mention('sdwvit');
             const owner = context.repo.owner; 
             const repo = context.repo.repo;
             const pr_number = process.env.PR_ID || '';
