@@ -571,6 +571,10 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         parent: AgColumnGroup | null
     ): void {
         columnsOrGroups!.forEach((columnsOrGroup) => {
+            if (columnsOrGroup.parent !== parent) {
+                // parent has explicitly changed - force visibleCols now needed.
+                this.beans.colViewport.forceRefreshNextRender = true;
+            }
             columnsOrGroup.parent = parent;
             if (isColumnGroup(columnsOrGroup)) {
                 const columnGroup = columnsOrGroup;

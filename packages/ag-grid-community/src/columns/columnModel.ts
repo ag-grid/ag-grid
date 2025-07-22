@@ -134,7 +134,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.refreshCols(true);
 
         visibleCols.refresh(source);
-        colViewport.checkViewportColumns();
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
         // in case applications use it
