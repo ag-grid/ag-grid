@@ -207,4 +207,9 @@ export const agTestIdFor = {
     paginationSummaryPanelTotalPage(value?: string | null): string {
         return formatTestId('ag-paging-page-summary-panel-total-page', { value });
     },
+
+    /** Fill Handle */
+    fillHandle(): string {
+        return formatTestId('ag-fill-handle');
+    },
 };

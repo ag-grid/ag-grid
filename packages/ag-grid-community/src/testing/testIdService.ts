@@ -270,6 +270,8 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                 }
             });
         });
+
+        setTestId(root.querySelector('.ag-fill-handle'), agTestIdFor.fillHandle());
     }
 
     private setupFilters(root: Document | ShadowRoot | Element): void {
