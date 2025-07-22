@@ -1,13 +1,7 @@
 @use 'design-system' as *;
 
 .aboutPage {
-    h2 {
-        font-size: 40px;
-        font-weight: var(--text-bold);
-        letter-spacing: -1px;
-
-        width: auto;
-    }
+    display: block;
 }
 
 .miniHeader {
@@ -27,14 +21,17 @@
 
 .introSection {
     display: flex;
-    align-items: center;
     flex-direction: column;
+    align-items: center;
     text-align: center;
     padding-top: $spacing-size-20;
     padding-bottom: $spacing-size-20;
 
     h2 {
-        font-size: 40px;
+        font-size: var(--text-fs-3xl);
+        font-weight: var(--text-bold);
+        letter-spacing: -1px;
+        width: auto;
     }
 
     b {
@@ -48,18 +45,16 @@
         font-weight: var(--text-semibold);
         opacity: 0.7;
     }
-}
 
-#{$selector-darkmode} {
-    .introSection p {
+    #{$selector-darkmode} & p {
         opacity: 1;
     }
 }
 
 .aboutHeaderImage {
-    max-width: 800px;
     display: flex;
     align-items: center;
+    max-width: 800px;
     margin: 0 auto;
     user-select: none;
 
@@ -71,16 +66,16 @@
 
 .aboutHeaderImageLight {
     display: block;
-}
-.aboutHeaderImageDark {
-    display: none;
-}
 
-#{$selector-darkmode} {
-    .aboutHeaderImageLight {
+    #{$selector-darkmode} & {
         display: none;
     }
-    .aboutHeaderImageDark {
+}
+
+.aboutHeaderImageDark {
+    display: none;
+
+    #{$selector-darkmode} & {
         display: block;
     }
 }
@@ -98,37 +93,42 @@
         display: flex;
         flex-direction: row;
         gap: $spacing-size-12;
+        align-items: center;
 
+        img {
+            max-width: 200px;
+        }
+        div {
+            max-width: 500px;
+        }
         p {
             max-width: 600px;
             padding-top: $spacing-size-3;
             line-height: 1.6;
         }
+    }
 
-        div {
-            max-width: 500px;
-        }
-
-        img {
-            max-width: 200px;
+    @media (max-width: 900px) {
+        .content {
+            flex-direction: column;
+            gap: 0;
         }
     }
 }
 
 .historySection {
-    padding-top: $spacing-size-20;
-    padding-bottom: $spacing-size-20;
     display: flex;
     flex-direction: row;
-    gap: $spacing-size-12;
     align-items: flex-start;
+    gap: $spacing-size-12;
+    padding-top: $spacing-size-20;
+    padding-bottom: $spacing-size-20;
 
     .historyContent {
-        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        position: -webkit-sticky;
+        flex: 1;
         position: sticky;
         top: $spacing-size-32;
         align-self: flex-start;
@@ -149,10 +149,10 @@
     }
 
     .timeline {
-        flex: 1;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+        flex: 1;
         position: relative;
 
         @media screen and (min-width: 900px) {
@@ -184,7 +184,7 @@
         display: flex;
         align-items: flex-start;
         position: relative;
-        margin-bottom: 40px;
+        margin-bottom: $spacing-size-10;
     }
 
     .timelineYear {
@@ -194,7 +194,7 @@
         font-size: var(--text-fs-sm);
         min-width: 48px;
         text-align: right;
-        margin-right: 24px;
+        margin-right: $spacing-size-6;
         margin-top: $spacing-size-4;
         font-family: var(--text-monospace-font-family);
         font-weight: var(--text-semibold);
@@ -205,18 +205,18 @@
     }
 
     .timelineIcon {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        margin-right: $spacing-size-6;
+        background-color: var(--color-util-brand-50);
+        padding: $spacing-size-3;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         position: relative;
         z-index: 1;
-        margin-right: 24px;
-        background-color: var(--color-util-brand-50);
-        padding: $spacing-size-3;
 
         path {
             fill: var(--color-brand-500);
@@ -235,7 +235,7 @@
         top: 100%;
         transform: translateX(-50%);
         width: 2px;
-        height: calc(100% + 40px); // 40px = icon height, adjust as needed
+        height: calc(100% + 40px);
         background: red;
         z-index: 0;
         content: '';
@@ -243,7 +243,6 @@
 
     .timelineContent {
         flex: 1;
-
         @media screen and (min-width: 600px) {
             min-width: 200px;
         }
@@ -255,6 +254,7 @@
         font-size: var(--text-fs-lg);
         margin-bottom: $spacing-size-2;
     }
+
     .timelineDesc {
         color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 75%);
         font-size: 15px;
