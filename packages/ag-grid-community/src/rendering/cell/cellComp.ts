@@ -493,12 +493,13 @@ export class CellComp extends Component {
             _warn(98);
         }
 
-        const cellEditor = this.cellEditor!;
-
         // if a popup, then we wrap in a popup editor and return the popup
-        this.cellEditorPopupWrapper = context.createBean(editSvc!.createPopupEditorWrapper(params));
-        const ePopupGui = this.cellEditorPopupWrapper.getGui();
-        const cellEditorGui = this.cellEditorGui;
+        const cellEditorPopupWrapper = (this.cellEditorPopupWrapper = context.createBean(
+            editSvc!.createPopupEditorWrapper(params)
+        ));
+
+        const { cellEditor, cellEditorGui, eCell, rowNode, column, cellCtrl } = this;
+        const ePopupGui = cellEditorPopupWrapper.getGui();
 
         if (cellEditorGui) {
             ePopupGui.appendChild(cellEditorGui);
@@ -508,15 +509,15 @@ export class CellComp extends Component {
 
         // see if position provided by colDef, if not then check old way of method on cellComp
         const positionToUse: 'over' | 'under' | undefined =
-            position != null ? position : cellEditor.getPopupPosition?.() ?? 'over';
+            position != null ? position : cellEditor!.getPopupPosition?.() ?? 'over';
         const isRtl = gos.get('enableRtl');
 
         const positionParams: PopupPositionParams & { type: string; eventSource: HTMLElement } = {
             ePopup: ePopupGui,
-            column: this.column,
-            rowNode: this.rowNode,
+            column,
+            rowNode,
             type: 'popupCellEditor',
-            eventSource: this.eCell,
+            eventSource: eCell,
             position: positionToUse,
             alignSide: isRtl ? 'right' : 'left',
             keepWithinBounds: true,
@@ -529,11 +530,11 @@ export class CellComp extends Component {
             eChild: ePopupGui,
             closeOnEsc: true,
             closedCallback: () => {
-                this.cellCtrl.onPopupEditorClosed();
+                cellCtrl.onPopupEditorClosed();
             },
-            anchorToElement: this.eCell,
+            anchorToElement: eCell,
             positionCallback,
-            ariaOwns: this.eCell,
+            ariaOwns: eCell,
         });
         if (addPopupRes) {
             this.hideEditorPopup = addPopupRes.hideFunc;
