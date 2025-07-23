@@ -24,7 +24,7 @@ export type FilterSpec =
       };
 
 export const agTestIdFor = {
-    root(gridId: string): string {
+    grid(gridId: string): string {
         return formatTestId('ag-grid-root', { gridId });
     },
 

@@ -51,7 +51,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         const gridId = getGridId(this.beans);
         const gridWrapper = root.querySelector(`[grid-id="${gridId}"]`);
-        setTestId(gridWrapper, agTestIdFor.root(gridId));
+        setTestId(gridWrapper, agTestIdFor.grid(gridId));
 
         /** Headers */
 
