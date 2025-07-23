@@ -9,11 +9,10 @@ const INIT_RANDOM_SEED = (internalFramework: InternalFramework) => `
 Math.seedrandom('${EXAMPLE_RANDOM_SEED}');${internalFramework.includes('react') ? '' : 'Math.random();Math.random();'};
 `;
 
-
 /**
  * Inject the seedrandom library and initialise the random number generator with a seed.
  */
-export const SeedRandom = ({ nonce, internalFramework }: { nonce?: string, internalFramework: InternalFramework }) => {
+export const SeedRandom = ({ nonce, internalFramework }: { nonce?: string; internalFramework: InternalFramework }) => {
     return (
         <>
             <script nonce={nonce} src={SEEDRANDOM_CDN_URL} />
