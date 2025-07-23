@@ -1,4 +1,6 @@
+import { _addAdditionalCss } from '../../environment';
 import { themeQuartz } from '../../theming/parts/theme/themes';
+import { TooltipModule } from '../../tooltip/tooltipModule';
 import type { AgBeanStubEvent } from '../core/agBeanStub';
 import { AgBeanStub } from '../core/agBeanStub';
 import { AgComponentStub } from '../core/agComponentStub';
@@ -23,7 +25,6 @@ import { AgTooltipComponent } from '../tooltip/agTooltipComponent';
 import { AgTooltipFeature } from '../tooltip/agTooltipFeature';
 import type { BaseTooltipParams } from '../tooltip/baseTooltipStateManager';
 import { BaseTooltipStateManager } from '../tooltip/baseTooltipStateManager';
-import { tooltipCSS } from '../tooltip/tooltip.css-GENERATED';
 import { _createAgElement } from '../utils/domUtils';
 import { _getLocaleTextFromFunc, _getLocaleTextFromMap } from '../utils/localeUtils';
 import type { AgInputTextFieldParams } from '../widgets/agInputTextField';
@@ -244,8 +245,9 @@ class AppEnvironment extends BaseEnvironment<
         // do nothing
     }
     protected override getAdditionalCss(): Map<string, string[]> {
-        // TODO add new styles
-        return new Map([['module-Tooltip', [tooltipCSS]]]);
+        const cssMap = new Map();
+        _addAdditionalCss(cssMap, [TooltipModule]);
+        return cssMap;
     }
     protected override postProcessThemeChange(): void {
         // do nothing

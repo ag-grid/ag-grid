@@ -7,6 +7,7 @@ import type { AgEventTypeParams } from './events';
 import type { GridOptionsWithDefaults } from './gridOptionsDefault';
 import type { GridOptionsService } from './gridOptionsService';
 import type { AgGridCommon } from './interfaces/iCommon';
+import type { Module } from './interfaces/iModule';
 import { _getAllRegisteredModules } from './modules/moduleRegistry';
 import { coreCSS } from './theming/core/core.css-GENERATED';
 import { themeQuartz } from './theming/parts/theme/themes';
@@ -60,6 +61,17 @@ const PINNED_BORDER_WIDTH: Variable = {
     defaultValue: 1,
     border: true,
 };
+
+export function _addAdditionalCss(cssMap: Map<string, string[]>, modules: Module[]): void {
+    modules
+        .sort((a, b) => a.moduleName.localeCompare(b.moduleName))
+        .forEach((module) => {
+            const moduleCss = module.css;
+            if (moduleCss) {
+                cssMap.set(`module-${module.moduleName}`, moduleCss);
+            }
+        });
+}
 
 export class Environment
     extends BaseEnvironment<
@@ -271,14 +283,7 @@ export class Environment
     protected override getAdditionalCss(): Map<string, string[]> {
         const additionalCss: Map<string, string[]> = new Map();
         additionalCss.set('core', [coreCSS]);
-        Array.from(_getAllRegisteredModules())
-            .sort((a, b) => a.moduleName.localeCompare(b.moduleName))
-            .forEach((module) => {
-                const moduleCss = module.css;
-                if (moduleCss) {
-                    additionalCss.set(`module-${module.moduleName}`, moduleCss);
-                }
-            });
+        _addAdditionalCss(additionalCss, Array.from(_getAllRegisteredModules()));
         return additionalCss;
     }
 

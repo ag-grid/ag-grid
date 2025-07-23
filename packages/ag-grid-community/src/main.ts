@@ -78,7 +78,7 @@ export { Bean, NamedBean } from './context/bean';
 export type { Context } from './context/context';
 export { BeanName, SingletonBean, BeanCollection } from './context/context';
 
-// AG Stack
+// AG Stack (public)
 export { VisibleChangedEvent, RefPlaceholder } from './agStack/interfaces/agComponent';
 export { AgEvent } from './agStack/interfaces/agEvent';
 export { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
@@ -176,6 +176,34 @@ export type {
     ColorSchemeValue,
     WithParamTypes,
 } from './agStack/theming/theme-types';
+
+// AG Stack (private)
+export { AgBeanStub as _AgBeanStub, AgBeanStubEvent as _AgBeanStubEvent } from './agStack/core/agBeanStub';
+export { AgComponentStub as _AgComponentStub } from './agStack/core/agComponentStub';
+export { AgSingletonBeanClass as _AgSingletonBeanClass, AgContext as _AgContext } from './agStack/core/agContext';
+export { BaseEnvironment as _BaseEnvironment } from './agStack/core/baseEnvironment';
+export { BaseRegistry as _BaseRegistry } from './agStack/core/baseRegistry';
+export { BaseEventService as _BaseEventService } from './agStack/events/baseEventService';
+export { BaseEvents as _BaseEvents } from './agStack/interfaces/baseEvents';
+export { BaseProperties as _BaseProperties } from './agStack/interfaces/baseProperties';
+export { AgCoreBeanCollection as _AgCoreBeanCollection } from './agStack/interfaces/iContext';
+export { WithoutCommon as _WithoutCommon } from './agStack/interfaces/iEvent';
+export { IIconService as _IIconService } from './agStack/interfaces/iIconService';
+export { ILocaleService as _ILocaleService } from './agStack/interfaces/iLocaleService';
+export { BasePopupPositionParams as _BasePopupPositionParams } from './agStack/interfaces/iPopup';
+export {
+    AgPropertyKey as _AgPropertyKey,
+    AgPropertyValueChangedListener as _AgPropertyValueChangedListener,
+    IPropertiesService as _IPropertiesService,
+} from './agStack/interfaces/iProperties';
+export { BasePopupService as _BasePopupService } from './agStack/popup/basePopupService';
+export { AgTooltipComponent as _AgTooltipComponent } from './agStack/tooltip/agTooltipComponent';
+export { AgTooltipFeature as _AgTooltipFeature } from './agStack/tooltip/agTooltipFeature';
+export { BaseTooltipParams as _BaseTooltipParams } from './agStack/tooltip/baseTooltipStateManager';
+export { BaseTooltipStateManager as _BaseTooltipStateManager } from './agStack/tooltip/baseTooltipStateManager';
+export { _createAgElement } from './agStack/utils/domUtils';
+export { _getLocaleTextFromFunc, _getLocaleTextFromMap } from './agStack/utils/localeUtils';
+export { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
 
 // excel
 export {
@@ -1112,6 +1140,7 @@ export {
 export { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 export { IFrameworkEventListenerService } from './interfaces/iFrameworkEventListenerService';
 export type { Environment } from './environment';
+export { _addAdditionalCss } from './environment';
 export { ITooltipComp, ITooltipParams, TooltipLocation } from './tooltip/tooltipComponent';
 export {
     TooltipFeature,
