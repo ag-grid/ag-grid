@@ -6,7 +6,7 @@ const SEEDRANDOM_CDN_URL = `${NPM_CDN}/seedrandom@3.0.5/seedrandom.min.js`;
 // React calls Math.random internally, so we mimic this for the other frameworks to ensure the examples start with the same random seed.
 const INIT_RANDOM_SEED = (internalFramework: InternalFramework) => `
 // Seed random number generator for predictable tests and examples
-Math.seedrandom('${EXAMPLE_RANDOM_SEED}')${internalFramework.includes('react') ? '' : 'Math.random();Math.random();'};
+Math.seedrandom('${EXAMPLE_RANDOM_SEED}');${internalFramework.includes('react') ? '' : 'Math.random();Math.random();'};
 `;
 
 
