@@ -10,6 +10,7 @@ import { BaseEventService } from '../events/baseEventService';
 import { LocalEventService } from '../events/localEventService';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
+import type { IComponent } from '../interfaces/iComponent';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import type { WithoutCommon } from '../interfaces/iEvent';
 import type { IIconService } from '../interfaces/iIconService';
@@ -18,6 +19,11 @@ import type { BasePopupPositionParams } from '../interfaces/iPopup';
 import type { AgPropertyKey, AgPropertyValueChangedListener, IPropertiesService } from '../interfaces/iProperties';
 import { BasePopupService } from '../popup/basePopupService';
 import type { Theme } from '../theming/Theme';
+import { AgTooltipComponent } from '../tooltip/agTooltipComponent';
+import { AgTooltipFeature } from '../tooltip/agTooltipFeature';
+import type { BaseTooltipParams } from '../tooltip/baseTooltipStateManager';
+import { BaseTooltipStateManager } from '../tooltip/baseTooltipStateManager';
+import { tooltipCSS } from '../tooltip/tooltip.css-GENERATED';
 import { _createAgElement } from '../utils/domUtils';
 import { _getLocaleTextFromFunc, _getLocaleTextFromMap } from '../utils/localeUtils';
 import type { AgInputTextFieldParams } from '../widgets/agInputTextField';
@@ -34,6 +40,8 @@ interface AppProperties extends BaseProperties {
 
 const APP_PROPERTY_DEFAULTS = {
     tabIndex: 0,
+    tooltipShowDelay: 2000,
+    tooltipHideDelay: 10000,
 } as const;
 
 interface AppEvents extends BaseEvents {}
@@ -154,6 +162,36 @@ class AppPopupService extends BasePopupService<
 
 type AppDynamicBeanName = 'tooltipFeature' | 'tooltipStateManager';
 
+type AppTooltipLocation = 'UNKNOWN';
+
+class AppTooltipStateManager extends BaseTooltipStateManager<
+    AppBeanCollection,
+    AppPropertiesWithDefaults,
+    AppEvents,
+    AppCommon,
+    AppPropertiesService,
+    BaseTooltipParams<AppTooltipLocation>,
+    never,
+    AppTooltipLocation
+> {
+    protected override createTooltipComp(
+        params: BaseTooltipParams<'UNKNOWN', any>,
+        callback: (comp: IComponent<BaseTooltipParams<'UNKNOWN', any>>) => void
+    ): void {
+        const comp = new AgTooltipComponent();
+        comp.init(params);
+        callback(comp);
+    }
+
+    protected override setEventHandlers(): void {
+        // do nothing
+    }
+
+    protected override clearEventHandlers(): void {
+        // do nothing
+    }
+}
+
 class AppRegistry extends BaseRegistry<
     AppBeanCollection,
     AppPropertiesWithDefaults,
@@ -163,7 +201,10 @@ class AppRegistry extends BaseRegistry<
     AppDynamicBeanName
 > {
     public postConstruct(): void {
-        this.registerDynamicBeans({});
+        this.registerDynamicBeans({
+            tooltipFeature: AgTooltipFeature as any,
+            tooltipStateManager: AppTooltipStateManager as any,
+        });
     }
 
     protected override getDynamicError(): string {
@@ -204,7 +245,7 @@ class AppEnvironment extends BaseEnvironment<
     }
     protected override getAdditionalCss(): Map<string, string[]> {
         // TODO add new styles
-        return new Map();
+        return new Map([['module-Tooltip', [tooltipCSS]]]);
     }
     protected override postProcessThemeChange(): void {
         // do nothing
@@ -224,10 +265,11 @@ class AppRootComp extends AgComponentStub<
     AgWidgetSelectorType
 > {
     public postConstruct(): void {
+        const enableRtl = this.gos.get('enableRtl');
         this.setTemplate(
             {
                 tag: 'div',
-                cls: 'ag-app-root',
+                cls: `ag-app-root ag-root-wrapper ${enableRtl ? 'ag-rtl' : 'ag-ltr'}`,
                 children: [
                     {
                         tag: 'ag-input-text-field',
@@ -250,7 +292,7 @@ class AppRootComp extends AgComponentStub<
                 eSelect: {
                     options: [
                         {
-                            value: 'value1',
+                            value: 'value1 value1 value1 value1 value1 value1',
                         },
                     ],
                     label: 'Select',

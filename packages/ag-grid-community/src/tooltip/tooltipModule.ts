@@ -1,9 +1,9 @@
 import { AgTooltipComponent } from '../agStack/tooltip/agTooltipComponent';
 import { AgTooltipFeature } from '../agStack/tooltip/agTooltipFeature';
+import { tooltipCSS } from '../agStack/tooltip/tooltip.css-GENERATED';
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';
-import { tooltipCSS } from './tooltip.css-GENERATED';
 import { TooltipService } from './tooltipService';
 import { TooltipStateManager } from './tooltipStateManager';
 
