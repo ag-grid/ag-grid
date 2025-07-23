@@ -1,13 +1,13 @@
 import { themeQuartz } from '../../theming/parts/theme/themes';
-import type { AgBeanStubEvent } from '../agBeanStub';
-import { AgBeanStub } from '../agBeanStub';
-import { AgComponentStub } from '../agComponentStub';
-import type { AgSingletonBeanClass } from '../baseServices/agContext';
-import { AgContext } from '../baseServices/agContext';
-import { BaseEnvironment } from '../baseServices/baseEnvironment';
-import { BaseEventService } from '../baseServices/baseEventService';
-import { BasePopupService } from '../baseServices/basePopupService';
-import { BaseRegistry } from '../baseServices/baseRegistry';
+import type { AgBeanStubEvent } from '../core/agBeanStub';
+import { AgBeanStub } from '../core/agBeanStub';
+import { AgComponentStub } from '../core/agComponentStub';
+import type { AgSingletonBeanClass } from '../core/agContext';
+import { AgContext } from '../core/agContext';
+import { BaseEnvironment } from '../core/baseEnvironment';
+import { BaseRegistry } from '../core/baseRegistry';
+import { BaseEventService } from '../events/baseEventService';
+import { LocalEventService } from '../events/localEventService';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
@@ -16,7 +16,7 @@ import type { IIconService } from '../interfaces/iIconService';
 import type { ILocaleService, LocaleTextFunc } from '../interfaces/iLocaleService';
 import type { BasePopupPositionParams } from '../interfaces/iPopup';
 import type { AgPropertyKey, AgPropertyValueChangedListener, IPropertiesService } from '../interfaces/iProperties';
-import { LocalEventService } from '../localEventService';
+import { BasePopupService } from '../popup/basePopupService';
 import type { Theme } from '../theming/Theme';
 import { _createAgElement } from '../utils/domUtils';
 import { _getLocaleTextFromFunc, _getLocaleTextFromMap } from '../utils/localeUtils';
@@ -152,7 +152,7 @@ class AppPopupService extends BasePopupService<
     }
 }
 
-type AppDynamicBeanName = 'tooltipFeature';
+type AppDynamicBeanName = 'tooltipFeature' | 'tooltipStateManager';
 
 class AppRegistry extends BaseRegistry<
     AppBeanCollection,

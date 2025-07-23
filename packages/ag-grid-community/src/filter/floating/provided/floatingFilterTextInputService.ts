@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
 import type { AgInputTextFieldParams } from '../../../agStack/widgets/agInputTextField';
 import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
 import { BeanStub } from '../../../context/beanStub';

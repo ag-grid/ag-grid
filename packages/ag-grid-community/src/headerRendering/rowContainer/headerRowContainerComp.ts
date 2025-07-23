@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { ElementParams } from '../../utils/dom';
 import { _ensureDomOrder } from '../../utils/dom';

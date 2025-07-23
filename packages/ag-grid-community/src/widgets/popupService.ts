@@ -1,6 +1,6 @@
-import { BasePopupService } from '../agStack/baseServices/basePopupService';
 import { Direction } from '../agStack/constants/direction';
 import type { BasePopupPositionParams } from '../agStack/interfaces/iPopup';
+import { BasePopupService } from '../agStack/popup/basePopupService';
 import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -116,32 +116,6 @@ export class PopupService
                     event instanceof MouseEvent ? event : undefined
                 ),
         });
-    }
-
-    public positionPopupUnderMouseEvent(
-        params: PopupPositionParams & { type: string; mouseEvent: MouseEvent | Touch }
-    ): void {
-        const { ePopup, nudgeX, nudgeY, skipObserver } = params;
-
-        this.positionPopup({
-            ePopup: ePopup,
-            nudgeX,
-            nudgeY,
-            keepWithinBounds: true,
-            skipObserver,
-            updatePosition: () => this.calculatePointerAlign(params.mouseEvent),
-            postProcessCallback: () =>
-                this.callPostProcessPopup(params, params.type, params.ePopup, null, params.mouseEvent),
-        });
-    }
-
-    private calculatePointerAlign(e: MouseEvent | Touch): { x: number; y: number } {
-        const parentRect = this.getParentRect();
-
-        return {
-            x: e.clientX - parentRect.left,
-            y: e.clientY - parentRect.top,
-        };
     }
 
     public callPostProcessPopup(

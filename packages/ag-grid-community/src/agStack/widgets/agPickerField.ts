@@ -1,8 +1,8 @@
-import type { AgComponentStub } from '../agComponentStub';
 import { KeyCode } from '../constants/keyCode';
+import type { AgComponentStub } from '../core/agComponentStub';
+import { RefPlaceholder } from '../interfaces/agComponent';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import { RefPlaceholder } from '../interfaces/iComponent';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import type { AddPopupParams } from '../interfaces/iPopup';
 import type { IPropertiesService } from '../interfaces/iProperties';

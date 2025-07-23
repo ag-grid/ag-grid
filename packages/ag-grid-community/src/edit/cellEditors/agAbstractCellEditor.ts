@@ -1,3 +1,4 @@
+import { AgPopupComponent } from '../../agStack/popup/agPopupComponent';
 import type { AgAbstractField } from '../../agStack/widgets/agAbstractField';
 import type { BeanCollection } from '../../context/context';
 import type { AgEventTypeParams } from '../../events';
@@ -6,10 +7,16 @@ import type { GridOptionsService } from '../../gridOptionsService';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { AgComponentSelectorType } from '../../widgets/component';
-import { PopupComponent } from '../../widgets/popupComponent';
 
 export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TValue = any>
-    extends PopupComponent
+    extends AgPopupComponent<
+        BeanCollection,
+        GridOptionsWithDefaults,
+        AgEventTypeParams,
+        AgGridCommon<any, any>,
+        GridOptionsService,
+        AgComponentSelectorType
+    >
     implements ICellEditorComp
 {
     protected abstract eEditor: AgAbstractField<

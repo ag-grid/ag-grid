@@ -1,6 +1,6 @@
+import type { AgComponentSelector } from '../interfaces/agComponent';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import type { AgComponentSelector } from '../interfaces/iComponent';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _getActiveDomElement } from '../utils/beanUtils';

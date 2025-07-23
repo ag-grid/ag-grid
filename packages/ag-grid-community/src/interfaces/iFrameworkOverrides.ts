@@ -1,5 +1,5 @@
+import type { LocalEventService } from '../agStack/events/localEventService';
 import type { AgFrameworkOverrides } from '../agStack/interfaces/agFrameworkOverrides';
-import type { LocalEventService } from '../agStack/localEventService';
 import type { IFrameworkEventListenerService } from './iFrameworkEventListenerService';
 
 export interface IFrameworkOverrides extends AgFrameworkOverrides {

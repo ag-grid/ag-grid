@@ -1,4 +1,4 @@
-import { AgBeanStub } from '../agBeanStub';
+import { AgBeanStub } from '../core/agBeanStub';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
@@ -9,7 +9,7 @@ import type {
     AgRawEvents,
 } from '../interfaces/iEvent';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import { LocalEventService } from '../localEventService';
+import { LocalEventService } from './localEventService';
 
 export class BaseEventService<
         TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,

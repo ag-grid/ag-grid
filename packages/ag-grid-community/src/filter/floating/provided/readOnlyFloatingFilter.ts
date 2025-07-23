@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
 import { AgInputTextFieldSelector } from '../../../agStack/widgets/agInputTextField';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { IFilter } from '../../../interfaces/iFilter';

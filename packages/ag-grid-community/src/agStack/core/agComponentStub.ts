@@ -1,13 +1,11 @@
-import { AgBeanStub } from './agBeanStub';
-import { CssClassManager } from './cssClassManager';
-import type { BaseEvents } from './interfaces/baseEvents';
-import type { BaseProperties } from './interfaces/baseProperties';
-import type { AgBaseComponent, AgComponent } from './interfaces/iComponent';
-import type { AgComponentEvent, AgComponentSelector, VisibleChangedEvent } from './interfaces/iComponent';
-import { RefPlaceholder } from './interfaces/iComponent';
-import type { AgCoreBeanCollection } from './interfaces/iContext';
-import type { IPropertiesService } from './interfaces/iProperties';
-import type { AgElementParams } from './utils/domUtils';
+import type { AgBaseComponent, AgComponent } from '../interfaces/agComponent';
+import type { AgComponentEvent, AgComponentSelector, VisibleChangedEvent } from '../interfaces/agComponent';
+import { RefPlaceholder } from '../interfaces/agComponent';
+import type { BaseEvents } from '../interfaces/baseEvents';
+import type { BaseProperties } from '../interfaces/baseProperties';
+import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { IPropertiesService } from '../interfaces/iProperties';
+import type { AgElementParams } from '../utils/domUtils';
 import {
     DataRefAttribute,
     _createAgElement,
@@ -15,7 +13,9 @@ import {
     _loadTemplate,
     _setDisplayed,
     _setVisible,
-} from './utils/domUtils';
+} from '../utils/domUtils';
+import { AgBeanStub } from './agBeanStub';
+import { CssClassManager } from './cssClassManager';
 
 let compIdSequence = 0;
 

@@ -1,7 +1,8 @@
-import { RefPlaceholder } from '../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../agStack/interfaces/agComponent';
+import { _isIOSUserAgent } from '../agStack/utils/browserUtils';
 import { _isVisible } from '../agStack/utils/domUtils';
 import type { BodyScrollEvent } from '../events';
-import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
+import { _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
 import type { ElementParams } from '../utils/dom';
 import { _requestAnimationFrame } from '../utils/dom';
 import { _waitUntil } from '../utils/function';

@@ -79,7 +79,7 @@ export type { Context } from './context/context';
 export { BeanName, SingletonBean, BeanCollection } from './context/context';
 
 // AG Stack
-export { VisibleChangedEvent, RefPlaceholder } from './agStack/interfaces/iComponent';
+export { VisibleChangedEvent, RefPlaceholder } from './agStack/interfaces/agComponent';
 export { AgEvent } from './agStack/interfaces/agEvent';
 export { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
 export {
@@ -114,17 +114,21 @@ export { _exists } from './agStack/utils/genericUtils';
 export { _serialiseDate, _parseDateTimeFromString } from './agStack/utils/dateUtils';
 export { _getLocaleTextFunc, _translate } from './agStack/utils/localeUtils';
 export { _getActiveDomElement, _getRootNode, _isNothingFocused, _getDocument } from './agStack/utils/beanUtils';
+export { _isIOSUserAgent } from './agStack/utils/browserUtils';
 export { _isElementInEventPath } from './agStack/utils/eventUtils';
+export { _toString } from './agStack/utils/stringUtils';
 export { AgPromise, _isPromise } from './agStack/utils/promise';
 export { LocaleTextFunc } from './agStack/interfaces/iLocaleService';
-export { CssClassManager } from './agStack/cssClassManager';
-export { LocalEventService } from './agStack/localEventService';
+export { CssClassManager } from './agStack/core/cssClassManager';
+export { LocalEventService } from './agStack/events/localEventService';
 export { IEventEmitter, IEventListener } from './agStack/interfaces/iEventEmitter';
 export { _isEventFromPrintableCharacter } from './agStack/utils/keyboardUtils';
 export { PopupEventParams } from './agStack/interfaces/iPopup';
 export { ScrollDirection } from './agStack/interfaces/baseEvents';
 export { KeyCode } from './agStack/constants/keyCode';
 export { createApp } from './agStack/app/app';
+export { AgPopupComponent } from './agStack/popup/agPopupComponent';
+export { IComponent } from './agStack/interfaces/iComponent';
 
 // AG Stack Widgets
 export {
@@ -682,7 +686,6 @@ export {
 export { TabGuardComp } from './widgets/tabGuardComp';
 export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from './widgets/tabGuardCtrl';
 export { TabGuardFeature } from './widgets/tabGuardFeature';
-export { PopupComponent } from './widgets/popupComponent';
 export type { PopupService } from './widgets/popupService';
 export { PopupPositionParams } from './interfaces/iPopupPositionParams';
 export { TouchListener, TapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
@@ -1082,7 +1085,6 @@ export type { IRowNodeStage, IRowGroupStage, StageExecuteParams } from './interf
 export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
-export { IComponent } from './interfaces/iComponent';
 export { HeaderComp as _HeaderComp } from './headerRendering/cells/column/headerComp';
 export { IHeaderParams, IHeaderComp, IHeader, IInnerHeaderComponent } from './interfaces/iHeader';
 export {
@@ -1105,6 +1107,7 @@ export {
     ITooltipCtrl,
     _getShouldDisplayTooltip,
     _isShowTooltipWhenTruncated,
+    ITooltipCtrlParams,
 } from './tooltip/tooltipFeature';
 export { IFooterService } from './interfaces/iFooterService';
 export {
@@ -1144,7 +1147,6 @@ export {
     _setAriaInvalid,
 } from './utils/aria';
 export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './utils/array';
-export { _isIOSUserAgent } from './utils/browser';
 export { ChangedPath } from './utils/changedPath';
 export { _getDateParts } from './utils/date';
 export {
@@ -1165,7 +1167,7 @@ export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export { _missing, _jsonEquals, _toStringOrNull, _makeNull, _defaultComparator } from './utils/generic';
 export { _formatNumberCommas } from './utils/number';
 export { _mergeDeep } from './utils/object';
-export { _escapeString, _toString } from './utils/string';
+export { _escapeString } from './utils/string';
 
 export {
     _addFocusableContainerListener,

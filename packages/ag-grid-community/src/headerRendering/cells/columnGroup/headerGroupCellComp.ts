@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
 import { _setDisplayed } from '../../../agStack/utils/domUtils';
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';

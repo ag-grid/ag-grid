@@ -1,4 +1,4 @@
-import type { AgCoreBean } from './iBean';
+import type { AgCoreBean } from './agBean';
 
 export interface IRegistry<TBeanCollection, TDynamicBeanName extends string> {
     readonly beanName: 'registry';

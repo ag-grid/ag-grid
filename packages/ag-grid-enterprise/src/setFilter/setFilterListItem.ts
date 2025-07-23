@@ -9,6 +9,7 @@ import type {
     ISetFilterCellRendererParams,
     ISetFilterParams,
     ITooltipCtrl,
+    ITooltipCtrlParams,
     SetFilterModel,
     TooltipFeature,
     ValueFormatterParams,
@@ -145,12 +146,20 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
                 getGui: () => this.getGui(),
-                getColDef: () => this.params.colDef,
-                getColumn: () => this.params.column as AgColumn,
                 getLocation: () => 'setFilterValue',
                 shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
-                getValueFormatted: () => this.formattedValue,
-                getAdditionalParams: () => (this.isTree ? { level: this.depth } : {}),
+                getAdditionalParams: () => {
+                    const { colDef, column } = this.params;
+                    const additionalParams: ITooltipCtrlParams = {
+                        colDef,
+                        column: column as AgColumn,
+                        valueFormatted: this.formattedValue ?? undefined,
+                    };
+                    if (this.isTree) {
+                        (additionalParams as any).level = this.depth;
+                    }
+                    return additionalParams;
+                },
             } as ITooltipCtrl)
         );
 

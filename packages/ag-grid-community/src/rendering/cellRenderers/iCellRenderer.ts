@@ -1,8 +1,8 @@
+import type { IComponent } from '../../agStack/interfaces/iComponent';
 import type { ColDef } from '../../entities/colDef';
 import type { GetCellsParams } from '../../interfaces/iCellsParams';
 import type { Column } from '../../interfaces/iColumn';
 import type { AgGridCommon } from '../../interfaces/iCommon';
-import type { IComponent } from '../../interfaces/iComponent';
 import type { IRowNode } from '../../interfaces/iRowNode';
 
 export interface ICellRendererParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {

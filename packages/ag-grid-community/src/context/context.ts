@@ -1,4 +1,4 @@
-import type { AgSingletonBeanClass } from '../agStack/baseServices/agContext';
+import type { AgSingletonBeanClass } from '../agStack/core/agContext';
 import type { AgCoreBeanCollection, ClassImp, IContext } from '../agStack/interfaces/iContext';
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
@@ -129,6 +129,7 @@ export type DynamicBeanName =
     | 'headerGroupCellCtrl'
     | 'rangeHandle'
     | 'tooltipFeature'
+    | 'tooltipStateManager'
     | 'groupStrategy'
     | 'treeGroupStrategy'
     | EditStrategyType

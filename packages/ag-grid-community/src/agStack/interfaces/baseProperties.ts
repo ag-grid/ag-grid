@@ -10,4 +10,10 @@ export interface BaseProperties {
     themeCssLayer?: string;
     styleNonce?: string;
     themeStyleContainer?: HTMLElement;
+    enableBrowserTooltips?: boolean;
+    tooltipTrigger?: 'hover' | 'focus';
+    tooltipShowDelay?: number;
+    tooltipHideDelay?: number;
+    tooltipMouseTrack?: boolean;
+    tooltipInteraction?: boolean;
 }

@@ -1,4 +1,4 @@
-import { BaseEnvironment } from './agStack/baseServices/baseEnvironment';
+import { BaseEnvironment } from './agStack/core/baseEnvironment';
 import type { Theme, ThemeImpl } from './agStack/theming/Theme';
 import { _observeResize } from './agStack/utils/domUtils';
 import type { NamedBean } from './context/bean';

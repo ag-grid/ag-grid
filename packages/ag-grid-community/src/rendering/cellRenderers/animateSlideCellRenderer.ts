@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
 import { _exists } from '../../agStack/utils/genericUtils';
 import { _clearElement } from '../../main';
 import type { ElementParams } from '../../utils/dom';

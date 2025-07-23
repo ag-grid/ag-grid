@@ -1,6 +1,6 @@
+import { LocalEventService } from '../agStack/events/localEventService';
 import type { AgEvent } from '../agStack/interfaces/agEvent';
 import type { IAgEventEmitter } from '../agStack/interfaces/iEventEmitter';
-import { LocalEventService } from '../agStack/localEventService';
 import { _exists } from '../agStack/utils/genericUtils';
 import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';

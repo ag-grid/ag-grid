@@ -1,69 +1,13 @@
-import type { AgBeanStubEvent } from '../agBeanStub';
-import type { AgEvent } from './agEvent';
-import type { BaseEvents } from './baseEvents';
-import type { BaseProperties } from './baseProperties';
-import type { AgBaseBean, AgBean } from './iBean';
+import type { AgPromise } from '../utils/promise';
 
-export interface AgBaseComponent<TBeanCollection> extends AgBaseBean<TBeanCollection> {
+/** This is for User Components only, do not implement this for internal components. */
+export interface IComponent<T> {
+    /** Return the DOM element of your component, this is what the grid puts into the DOM */
     getGui(): HTMLElement;
+
+    /** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */
+    destroy?(): void;
+
+    /** The init(params) method is called on the component once. */
+    init?(params: T): AgPromise<void> | void;
 }
-
-export interface AgComponent<
-    TBeanCollection,
-    TProperties extends BaseProperties,
-    TGlobalEvents extends BaseEvents,
-    TLocalEventType extends string,
-> extends AgBaseComponent<TBeanCollection>,
-        AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType> {
-    getCompId(): number;
-
-    getFocusableElement(): HTMLElement;
-
-    getAriaElement(): Element;
-
-    setParentComponent(component: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>): void;
-
-    getParentComponent<T extends AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>>(): T | undefined;
-
-    prependChild(newChild: HTMLElement | AgBaseComponent<TBeanCollection>, container?: HTMLElement): void;
-
-    appendChild(newChild: HTMLElement | AgBaseComponent<TBeanCollection>, container?: HTMLElement): void;
-
-    isDisplayed(): boolean;
-
-    setVisible(visible: boolean, options?: { skipAriaHidden?: boolean }): void;
-
-    setDisplayed(displayed: boolean, options?: { skipAriaHidden?: boolean }): void;
-
-    addGuiEventListener(event: string, listener: (event: any) => void, options?: AddEventListenerOptions): void;
-
-    addCss(className: string): void;
-
-    removeCss(className: string): void;
-
-    toggleCss(className: string, addOrRemove: boolean): void;
-}
-
-/** The RefPlaceholder is used to control when data-ref attribute should be applied to the component
- * There are hanging data-refs in the DOM that are not being used internally by the component which we don't want to apply to the component.
- * There is also the case where data-refs are solely used for passing parameters to the component and should not be applied to the component.
- * It also enables validation to catch typo errors in the data-ref attribute vs component name.
- * The value is `null` so that it can be identified in the component and distinguished from just missing with undefined.
- * The `null` value also allows for existing falsy checks to work as expected when code can be run before the template is setup.
- */
-
-export const RefPlaceholder: any = null;
-
-export type AgComponentEvent = 'displayChanged' | AgBeanStubEvent;
-export interface VisibleChangedEvent extends AgEvent<'displayChanged'> {
-    visible: boolean;
-}
-
-export type AgComponentSelector<
-    TComponentSelectorType extends string,
-    TBeanCollection = any,
-    TComponent extends AgBaseComponent<TBeanCollection> = AgBaseComponent<TBeanCollection>,
-> = {
-    component: { new (params?: any): TComponent };
-    selector: TComponentSelectorType;
-};

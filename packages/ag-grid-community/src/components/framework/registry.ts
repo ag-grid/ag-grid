@@ -1,5 +1,5 @@
-import { BaseRegistry } from '../../agStack/baseServices/baseRegistry';
-import type { AgBaseComponent } from '../../agStack/interfaces/iComponent';
+import { BaseRegistry } from '../../agStack/core/baseRegistry';
+import type { AgBaseComponent } from '../../agStack/interfaces/agComponent';
 import type { NamedBean } from '../../context/bean';
 import { isComponentMetaFunc } from '../../context/context';
 import type { BeanCollection, DynamicBeanName, ProcessParamsFunc, UserComponentName } from '../../context/context';

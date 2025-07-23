@@ -1,4 +1,3 @@
-import { AgBeanStub } from '../agBeanStub';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
@@ -15,6 +14,7 @@ import {
 } from '../theming/inject';
 import { _createAgElement } from '../utils/domUtils';
 import { _agError } from '../utils/logUtils';
+import { AgBeanStub } from './agBeanStub';
 
 let paramsId = 0;
 

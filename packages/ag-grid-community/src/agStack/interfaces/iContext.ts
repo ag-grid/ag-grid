@@ -1,6 +1,6 @@
+import type { AgBaseBean } from './agBean';
 import type { AgFrameworkOverrides } from './agFrameworkOverrides';
 import type { BaseEvents } from './baseEvents';
-import type { AgBaseBean } from './iBean';
 import type { IEnvironment } from './iEnvironment';
 import type { AgEventService } from './iEvent';
 import type { IIconService } from './iIconService';
@@ -18,7 +18,7 @@ export interface AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlob
     environment: IEnvironment;
     eRootDiv: HTMLElement;
     popupSvc?: IPopupService<BasePopupPositionParams>;
-    registry: IRegistry<TBeanCollection, 'tooltipFeature'>;
+    registry: IRegistry<TBeanCollection, 'tooltipFeature' | 'tooltipStateManager'>;
     iconSvc: IIconService<string, any>;
 }
 

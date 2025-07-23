@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _isVisible, _setFixedWidth } from '../agStack/utils/domUtils';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { BeanCollection } from '../context/context';

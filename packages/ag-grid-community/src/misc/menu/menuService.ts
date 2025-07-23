@@ -1,3 +1,4 @@
+import { _isIOSUserAgent } from '../../agStack/utils/browserUtils';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -10,7 +11,6 @@ import type { HeaderCellCtrl } from '../../headerRendering/cells/column/headerCe
 import type { ContainerType } from '../../interfaces/iAfterGuiAttachedParams';
 import type { Column } from '../../interfaces/iColumn';
 import type { IMenuFactory } from '../../interfaces/iMenuFactory';
-import { _isIOSUserAgent } from '../../utils/browser';
 import { _requestAnimationFrame } from '../../utils/dom';
 
 interface BaseShowColumnMenuParams {

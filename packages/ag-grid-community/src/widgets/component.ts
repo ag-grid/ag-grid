@@ -1,5 +1,5 @@
-import { AgComponentStub } from '../agStack/agComponentStub';
-import type { AgBaseComponent, AgComponentEvent, AgComponentSelector } from '../agStack/interfaces/iComponent';
+import { AgComponentStub } from '../agStack/core/agComponentStub';
+import type { AgBaseComponent, AgComponentEvent, AgComponentSelector } from '../agStack/interfaces/agComponent';
 import type { AgWidgetSelectorType } from '../agStack/widgets/agWidgetSelectorType';
 import type { BeanCollection } from '../context/context';
 import type { AgEventTypeParams } from '../events';

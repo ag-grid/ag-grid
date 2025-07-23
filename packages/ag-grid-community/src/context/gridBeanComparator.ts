@@ -1,4 +1,4 @@
-import type { AgSingletonBean } from '../agStack/interfaces/iBean';
+import type { AgSingletonBean } from '../agStack/interfaces/agBean';
 import type { BeanCollection, BeanName } from './context';
 
 /**

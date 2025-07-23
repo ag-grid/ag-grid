@@ -19,8 +19,20 @@ export interface AgDragStartedEvent extends AgEvent<'dragStarted'> {
     target: Element;
 }
 
+interface AgTooltipEvent<TEventType extends 'tooltipShow' | 'tooltipHide'> extends AgEvent<TEventType> {
+    parentGui: HTMLElement;
+}
+
+export interface AgTooltipShowEvent extends AgTooltipEvent<'tooltipShow'> {
+    tooltipGui: HTMLElement;
+}
+
+export interface AgTooltipHideEvent extends AgTooltipEvent<'tooltipHide'> {}
+
 export interface BaseEvents {
     checkboxChanged: AgCheckboxChangedEvent;
     bodyScroll: AgBodyScrollEvent;
     dragStarted: AgDragStartedEvent;
+    tooltipShow: AgTooltipShowEvent;
+    tooltipHide: AgTooltipHideEvent;
 }

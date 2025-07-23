@@ -1,11 +1,12 @@
-import { AgComponentStub } from '../agComponentStub';
 import { KeyCode } from '../constants/keyCode';
+import { AgComponentStub } from '../core/agComponentStub';
+import type { AgCoreBean } from '../interfaces/agBean';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import type { AgCoreBean } from '../interfaces/iBean';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import type { BaseTooltipCtrl, ITooltipFeature } from '../interfaces/iTooltip';
+import type { TooltipCtrl } from '../interfaces/iTooltip';
+import type { ITooltipFeature } from '../interfaces/iTooltip';
 import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/ariaUtils';
 import { _createAgElement, _isVisible, _removeFromParent } from '../utils/domUtils';
 import { agListCSS } from './agList.css-GENERATED';
@@ -214,7 +215,7 @@ export class AgList<
                     getLocation: () => 'UNKNOWN',
                     // only show tooltips for items where the text cannot be fully displayed
                     shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth,
-                } as BaseTooltipCtrl<'UNKNOWN'>
+                } as TooltipCtrl<'UNKNOWN', any>
             )
         );
 

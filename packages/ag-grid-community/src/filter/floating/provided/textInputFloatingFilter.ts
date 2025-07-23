@@ -1,5 +1,5 @@
 import { KeyCode } from '../../../agStack/constants/keyCode';
-import { RefPlaceholder } from '../../../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
 import { _clearElement } from '../../../agStack/utils/domUtils';
 import type { ElementParams } from '../../../utils/dom';
 import { _debounce } from '../../../utils/function';

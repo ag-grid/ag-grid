@@ -1,11 +1,12 @@
 import { KeyCode } from '../constants/keyCode';
+import type { AgCoreBean } from '../interfaces/agBean';
+import type { AgComponentSelector } from '../interfaces/agComponent';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import type { AgCoreBean } from '../interfaces/iBean';
-import type { AgComponentSelector } from '../interfaces/iComponent';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import type { BaseTooltipCtrl, ITooltipFeature } from '../interfaces/iTooltip';
+import type { TooltipCtrl } from '../interfaces/iTooltip';
+import type { ITooltipFeature } from '../interfaces/iTooltip';
 import { _setAriaControlsAndLabel } from '../utils/ariaUtils';
 import { _isElementOverflowingCallback } from '../utils/domUtils';
 import type { ListOption } from './agList';
@@ -91,7 +92,7 @@ export class AgSelect<
                 {
                     shouldDisplayTooltip: _isElementOverflowingCallback(() => this.eDisplayField),
                     getGui: () => this.getGui(),
-                } as BaseTooltipCtrl<string>
+                } as TooltipCtrl<string, any>
             )
         );
         super.postConstruct();

@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { AgCheckboxSelector } from '../agStack/widgets/agCheckbox';
 import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';

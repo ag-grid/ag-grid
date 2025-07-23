@@ -5,7 +5,6 @@
 let isChrome: boolean;
 let isFirefox: boolean;
 let isMacOs: boolean;
-let isIOS: boolean;
 let invisibleScrollbar: boolean;
 let browserScrollbarWidth: number;
 let maxDivHeight: number;
@@ -38,16 +37,6 @@ export function _isMacOsUserAgent(): boolean {
     }
 
     return isMacOs;
-}
-
-export function _isIOSUserAgent(): boolean {
-    if (isIOS === undefined) {
-        isIOS =
-            /iPad|iPhone|iPod/.test(navigator.platform) ||
-            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    }
-
-    return isIOS;
 }
 
 export function _getTabIndex(el: HTMLElement | null): string | null {

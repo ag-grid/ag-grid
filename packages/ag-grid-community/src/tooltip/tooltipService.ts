@@ -12,7 +12,7 @@ import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import { _getValueUsingField } from '../utils/object';
-import type { ITooltipCtrl, TooltipFeature } from './tooltipFeature';
+import type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltipFeature';
 import { _isShowTooltipWhenTruncated } from './tooltipFeature';
 
 const getEditErrorsForPosition = (
@@ -54,8 +54,6 @@ export class TooltipService extends BeanStub implements NamedBean {
         }
 
         const tooltipCtrl: ITooltipCtrl = {
-            getColumn: () => column,
-            getColDef: () => column.getColDef(),
             getGui: () => eGui,
             getLocation: () => 'header',
             getTooltipValue: () => {
@@ -67,6 +65,10 @@ export class TooltipService extends BeanStub implements NamedBean {
                 return res;
             },
             shouldDisplayTooltip,
+            getAdditionalParams: () => ({
+                column,
+                colDef: column.getColDef(),
+            }),
         };
 
         let tooltipFeature = this.createTooltipFeature(tooltipCtrl);
@@ -98,16 +100,20 @@ export class TooltipService extends BeanStub implements NamedBean {
         }
 
         const tooltipCtrl: ITooltipCtrl = {
-            getColumn: () => column,
             getGui: () => eGui,
             getLocation: () => 'headerGroup',
             getTooltipValue: () => value ?? (colGroupDef && colGroupDef.headerTooltip),
             shouldDisplayTooltip,
+            getAdditionalParams: () => {
+                const additionalParams: ITooltipCtrlParams = {
+                    column,
+                };
+                if (colGroupDef) {
+                    additionalParams.colDef = colGroupDef;
+                }
+                return additionalParams;
+            },
         };
-
-        if (colGroupDef) {
-            tooltipCtrl.getColDef = () => colGroupDef;
-        }
 
         const tooltipFeature = this.createTooltipFeature(tooltipCtrl);
         return tooltipFeature ? ctrl.createBean(tooltipFeature) : tooltipFeature;
@@ -195,17 +201,18 @@ export class TooltipService extends BeanStub implements NamedBean {
         }
 
         const tooltipCtrl: ITooltipCtrl = {
-            getColumn: () => column,
-            getColDef: () => column.getColDef(),
-            getRowIndex: () => ctrl.cellPosition.rowIndex,
-            getRowNode: () => rowNode,
             getGui: () => ctrl.eGui,
             getLocation: () => location,
             getTooltipValue: value != null ? () => value : getTooltipValue,
-
-            // this makes no sense, why is the cell formatted value passed to the tooltip???
-            getValueFormatted: () => ctrl.valueFormatted,
             shouldDisplayTooltip,
+            getAdditionalParams: () => ({
+                column,
+                colDef: column.getColDef(),
+                rowIndex: ctrl.cellPosition.rowIndex,
+                node: rowNode,
+                data: rowNode.data,
+                valueFormatted: ctrl.valueFormatted,
+            }),
         };
 
         return this.createTooltipFeature(tooltipCtrl, beans);

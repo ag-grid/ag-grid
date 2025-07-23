@@ -1,5 +1,5 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
-import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
 import { _exists } from '../../agStack/utils/genericUtils';
 import { AgInputTextAreaSelector } from '../../agStack/widgets/agInputTextArea';
 import type { ElementParams } from '../../utils/dom';

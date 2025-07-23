@@ -1,4 +1,4 @@
-import type { AgComponentSelector } from '../interfaces/iComponent';
+import type { AgComponentSelector } from '../interfaces/agComponent';
 import type { AgElementParams } from '../utils/domUtils';
 import type { AgFieldParams } from './agFieldParams';
 

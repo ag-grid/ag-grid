@@ -1,5 +1,5 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
-import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
 import type { ListOption } from '../../agStack/widgets/agList';
 import { AgSelectSelector } from '../../agStack/widgets/agSelect';
 import type { BeanCollection } from '../../context/context';

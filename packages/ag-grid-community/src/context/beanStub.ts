@@ -1,5 +1,5 @@
-import type { AgBeanStubEvent } from '../agStack/agBeanStub';
-import { AgBeanStub } from '../agStack/agBeanStub';
+import type { AgBeanStubEvent } from '../agStack/core/agBeanStub';
+import { AgBeanStub } from '../agStack/core/agBeanStub';
 import type { AgEventTypeParams } from '../events';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';

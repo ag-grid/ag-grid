@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _setAriaRole } from '../agStack/utils/ariaUtils';
 import { _observeResize } from '../agStack/utils/domUtils';
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';

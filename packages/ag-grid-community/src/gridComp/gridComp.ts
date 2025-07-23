@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _isVisible } from '../agStack/utils/domUtils';
 import type { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import { GridBodySelector } from '../gridBodyComp/gridBodyComp';

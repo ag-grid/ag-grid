@@ -8,4 +8,6 @@ export interface IPopupService<TPopupPositionParams extends BasePopupPositionPar
     addPopup<TContainerType extends string>(params: AddPopupParams<TContainerType>): AddPopupResult;
 
     positionPopupByComponent(params: TPopupPositionParams & { type: string; eventSource: HTMLElement }): void;
+
+    positionPopupUnderMouseEvent(params: TPopupPositionParams & { type: string; mouseEvent: MouseEvent | Touch }): void;
 }

@@ -1,3 +1,4 @@
+import { LocalEventService } from './agStack/events/localEventService';
 import type {
     AgPropertyChangeSet,
     AgPropertyChangedEvent,
@@ -6,7 +7,6 @@ import type {
     AgPropertyValueChangedListener,
     IPropertiesService,
 } from './agStack/interfaces/iProperties';
-import { LocalEventService } from './agStack/localEventService';
 import { _exists } from './agStack/utils/genericUtils';
 import type { GridApi } from './api/gridApi';
 import type { NamedBean } from './context/bean';

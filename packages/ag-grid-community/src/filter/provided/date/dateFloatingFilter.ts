@@ -1,4 +1,4 @@
-import { RefPlaceholder } from '../../../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../agStack/utils/dateUtils';
 import { _setDisplayed } from '../../../agStack/utils/domUtils';
 import { AgInputTextFieldSelector } from '../../../agStack/widgets/agInputTextField';

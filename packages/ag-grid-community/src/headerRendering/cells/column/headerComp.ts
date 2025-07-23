@@ -1,5 +1,6 @@
-import { RefPlaceholder } from '../../../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
 import { _removeFromParent, _setDisplayed } from '../../../agStack/utils/domUtils';
+import { _toString } from '../../../agStack/utils/stringUtils';
 import { _getInnerHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -10,7 +11,6 @@ import type { ElementParams } from '../../../utils/dom';
 import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _mergeDeep } from '../../../utils/object';
-import { _toString } from '../../../utils/string';
 import { Component } from '../../../widgets/component';
 
 function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParams {

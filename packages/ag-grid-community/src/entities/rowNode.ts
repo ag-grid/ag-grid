@@ -1,5 +1,5 @@
+import { LocalEventService } from '../agStack/events/localEventService';
 import type { IAgEventEmitter, IEventEmitter } from '../agStack/interfaces/iEventEmitter';
-import { LocalEventService } from '../agStack/localEventService';
 import type { DetailGridInfo } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
 import type { SelectionEventSourceType } from '../events';

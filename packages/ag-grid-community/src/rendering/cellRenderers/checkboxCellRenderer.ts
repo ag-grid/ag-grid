@@ -1,5 +1,5 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
-import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
 import { _getActiveDomElement } from '../../agStack/utils/beanUtils';
 import { AgCheckboxSelector } from '../../agStack/widgets/agCheckbox';
 import { GROUP_AUTO_COLUMN_ID } from '../../columns/columnUtils';

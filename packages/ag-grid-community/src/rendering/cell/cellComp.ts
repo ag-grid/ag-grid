@@ -1,7 +1,8 @@
-import { CssClassManager } from '../../agStack/cssClassManager';
+import { CssClassManager } from '../../agStack/core/cssClassManager';
 import { _getActiveDomElement } from '../../agStack/utils/beanUtils';
 import { _clearElement, _removeFromParent } from '../../agStack/utils/domUtils';
 import { _getLocaleTextFunc } from '../../agStack/utils/localeUtils';
+import { _toString } from '../../agStack/utils/stringUtils';
 import type { BeanCollection } from '../../context/context';
 import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapper';
 import type { AgColumn } from '../../entities/agColumn';
@@ -13,7 +14,6 @@ import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _addStylesToElement, _createElement } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
-import { _toString } from '../../utils/string';
 import { _warn } from '../../validation/logging';
 import { Component } from '../../widgets/component';
 import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';

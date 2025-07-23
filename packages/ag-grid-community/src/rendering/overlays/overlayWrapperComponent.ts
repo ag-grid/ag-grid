@@ -1,5 +1,5 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
-import { RefPlaceholder } from '../../agStack/interfaces/iComponent';
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
 import { _getActiveDomElement, _isNothingFocused } from '../../agStack/utils/beanUtils';
 import { _clearElement } from '../../agStack/utils/domUtils';
 import type { AgPromise } from '../../agStack/utils/promise';

@@ -1,6 +1,6 @@
-import { AgBeanStub } from '../agBeanStub';
 import { Direction } from '../constants/direction';
 import { KeyCode } from '../constants/keyCode';
+import { AgBeanStub } from '../core/agBeanStub';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { AgCoreBeanCollection } from '../interfaces/iContext';
@@ -67,6 +67,32 @@ export abstract class BasePopupService<
     }
 
     protected abstract getDefaultPopupParent(): HTMLElement;
+
+    public positionPopupUnderMouseEvent(
+        params: TPopupPositionParams & { type: string; mouseEvent: MouseEvent | Touch }
+    ): void {
+        const { ePopup, nudgeX, nudgeY, skipObserver } = params;
+
+        this.positionPopup({
+            ePopup: ePopup,
+            nudgeX,
+            nudgeY,
+            keepWithinBounds: true,
+            skipObserver,
+            updatePosition: () => this.calculatePointerAlign(params.mouseEvent),
+            postProcessCallback: () =>
+                this.callPostProcessPopup(params, params.type, params.ePopup, null, params.mouseEvent),
+        });
+    }
+
+    private calculatePointerAlign(e: MouseEvent | Touch): { x: number; y: number } {
+        const parentRect = this.getParentRect();
+
+        return {
+            x: e.clientX - parentRect.left,
+            y: e.clientY - parentRect.top,
+        };
+    }
 
     public positionPopupByComponent(params: TPopupPositionParams & { type: string; eventSource: HTMLElement }) {
         const {
