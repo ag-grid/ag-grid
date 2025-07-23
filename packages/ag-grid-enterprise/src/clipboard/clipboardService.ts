@@ -36,7 +36,7 @@ import {
     isSpecialCol,
 } from 'ag-grid-community';
 
-import { ServerSideRowModel } from '../serverSideRowModel/serverSideRowModel';
+import type { ServerSideRowModel } from '../serverSideRowModel/serverSideRowModel';
 
 interface RowCallback {
     (
