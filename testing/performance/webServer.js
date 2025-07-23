@@ -24,26 +24,37 @@ mkcert
                 app.use(`/${path.join('files', project, 'styles')}`, express.static(path.join(projectPath, 'styles')));
             }
         });
-        const staticTestFiles = path.join(__root, 'testing', 'performance');
-        console.log('Adding route', staticTestFiles);
-        app.use('/', (req, res, next) => {
-            if (req.url === '/healthcheck') {
-                // used by Playwright to check if the server is running
-                res.status(200).send('OK');
-                return next();
-            }
-            return express.static(staticTestFiles)(req, res, next);
-        });
-        const staticRoot = express.static(__root, {
+        const extensions = {
             extensions: ['js', 'jsx', 'ts', 'tsx', 'css', 'scss'],
             setHeaders: (res, path) => {
-                // Set cache control for static files
-                if (['js', 'jsx', 'ts', 'tsx', 'css', 'scss'].some((ex) => path.endsWith(`.${ex}`))) {
+                // transpile tsx on the fly
+                if (path.endsWith('.tsx')) {
+                    res.setHeader('Content-type', 'text/typescript-jsx');
+                } else if (path.endsWith('.ts')) {
+                    res.setHeader('Content-type', 'text/typescript');
+                } else if (path.endsWith('.css')) {
+                    res.setHeader('Content-type', 'text/css');
+                } else if (path.endsWith('.js')) {
                     res.setHeader('Content-type', 'text/javascript');
+                } else if (path.endsWith('.jsx')) {
+                    res.setHeader('Content-type', 'text/javascript-jsx');
+                } else if (path.endsWith('.html')) {
+                    res.setHeader('Content-type', 'text/html');
+                } else if (path.endsWith('.json')) {
+                    res.setHeader('Content-type', 'application/json');
                 }
             },
+        };
+        const staticTestFiles = express.static(path.join(__root, 'testing', 'performance'), extensions);
+        const staticRoot = express.static(__root, extensions);
+        app.use('/healthcheck', (req, res, next) => {
+            // used by Playwright to check if the server is running
+            res.status(200).send('OK');
+            return next();
         });
-        app.use('/', staticRoot);
+
+        app.use('/', (req, res, next) => {});
+
         const server = https.createServer(options.server.https, app);
         server.listen(PORT, () => {
             console.log(`App listening on https://${HOST}:${PORT}`);
