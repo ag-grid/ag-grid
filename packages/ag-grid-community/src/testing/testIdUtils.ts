@@ -9,21 +9,35 @@ function formatTestId(name: string, attributes: Record<string, string | number |
     return [name, params].filter((s) => s.length > 0).join(':');
 }
 
+export type FilterSpec =
+    | {
+          source: 'filter-toolpanel';
+          colLabel?: string | null;
+      }
+    | {
+          source: 'column-filter';
+          colId?: string | null;
+      }
+    | {
+          source: 'floating-filter';
+          colId?: string | null;
+      };
+
 export const agTestIdFor = {
     root(gridId: string): string {
-        return formatTestId('ag-grid-root', { ['grid-id']: gridId });
+        return formatTestId('ag-grid-root', { gridId });
     },
 
     /** Headers */
 
     headerGroupCell(colId: string | null): string {
-        return formatTestId('ag-header-group-cell', { ['col-id']: colId });
+        return formatTestId('ag-header-group-cell', { colId });
     },
     headerCell(colId: string | null): string {
-        return formatTestId('ag-header-cell', { ['col-id']: colId });
+        return formatTestId('ag-header-cell', { colId });
     },
     headerCheckbox(colId: string | null): string {
-        return formatTestId('ag-header-selection-checkbox', { ['col-id']: colId });
+        return formatTestId('ag-header-selection-checkbox', { colId });
     },
     headerFilterButton(colId: string | null): string {
         return formatTestId('ag-header-cell-filter-button', { colId });
@@ -32,34 +46,67 @@ export const agTestIdFor = {
         return formatTestId('ag-floating-filter-button', { colId });
     },
     headerCellMenuButton(colId: string | null): string {
-        return formatTestId('ag-header-cell-menu-button', { ['col-id']: colId });
+        return formatTestId('ag-header-cell-menu-button', { colId });
+    },
+    headerResizeHandle(colId?: string | null): string {
+        return formatTestId('ag-header-cell-resize', { colId });
     },
 
     /** Column Filters */
 
-    columnFilterPickerDisplay(): string {
-        return formatTestId('ag-column-filter-picker-display');
+    filterInstancePickerDisplay(spec: FilterSpec): string {
+        return formatTestId(
+            `ag-${spec.source}-picker-display`,
+            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : { colId: spec.colId }
+        );
     },
-    columnNumberFilterInput(): string {
-        return formatTestId('ag-column-number-filter-number-input');
+    numberFilterInstanceInput(spec: FilterSpec): string {
+        return formatTestId(
+            `ag-${spec.source}-number-input`,
+            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : { colId: spec.colId }
+        );
     },
-    columnTextFilterInput(): string {
-        return formatTestId('ag-column-number-filter-text-input');
+    textFilterInstanceInput(spec: FilterSpec): string {
+        return formatTestId(
+            `ag-${spec.source}-text-input`,
+            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : { colId: spec.colId }
+        );
     },
-    columnDateFilterInput(): string {
-        return formatTestId('ag-column-number-filter-date-input');
+    dateFilterInstanceInput(spec: FilterSpec): string {
+        return formatTestId(
+            `ag-${spec.source}-date-input`,
+            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : { colId: spec.colId }
+        );
     },
-    setFilterMiniFilterInput(): string {
-        return formatTestId('ag-column-set-filter-mini-filter-input');
+    setFilterInstanceMiniFilterInput(spec: FilterSpec): string {
+        return formatTestId(
+            `ag-${spec.source}-set-filter-mini-filter-input`,
+            spec.source === 'filter-toolpanel' ? { label: spec.colLabel } : { colId: spec.colId }
+        );
     },
-    setFilterItem(label?: string | null): string {
-        return formatTestId('ag-column-set-filter-item', { label });
+    setFilterInstanceItem(spec: FilterSpec, itemLabel?: string | null): string {
+        return formatTestId(
+            `ag-${spec.source}-set-filter-item`,
+            spec.source === 'filter-toolpanel'
+                ? { colLabel: spec.colLabel, itemLabel }
+                : { colId: spec.colId, itemLabel }
+        );
     },
-    setFilterApplyPanelButton(label?: string | null): string {
-        return formatTestId('ag-column-set-filter-apply-panel-button', { label });
+    setFilterApplyPanelButton(spec: FilterSpec, buttonLabel?: string | null): string {
+        return formatTestId(
+            `ag-${spec.source}-set-filter-apply-panel-button`,
+            spec.source === 'filter-toolpanel'
+                ? { colLabel: spec.colLabel, buttonLabel }
+                : { colId: spec.colId, buttonLabel }
+        );
     },
-    filterConditionRadioButton(label?: string | null): string {
-        return formatTestId('ag-column-filter-condition-radio-button', { label });
+    filterConditionRadioButton(spec: FilterSpec, buttonLabel?: string | null): string {
+        return formatTestId(
+            `ag-${spec.source}-filter-condition-radio-button`,
+            spec.source === 'filter-toolpanel'
+                ? { colLabel: spec.colLabel, buttonLabel }
+                : { colId: spec.colId, buttonLabel }
+        );
     },
 
     /** Advanced Filter */
@@ -94,19 +141,19 @@ export const agTestIdFor = {
     /** Cells */
 
     cell(rowId: string | null, colId: string | null): string {
-        return formatTestId('ag-cell', { ['row-id']: rowId, ['col-id']: colId });
+        return formatTestId('ag-cell', { ['row-id']: rowId, colId });
     },
     checkbox(rowId: string | null, colId: string | null): string {
-        return formatTestId('ag-selection-checkbox', { ['row-id']: rowId, ['col-id']: colId });
+        return formatTestId('ag-selection-checkbox', { ['row-id']: rowId, colId });
     },
     dragHandle(rowId: string | null, colId: string | null): string {
-        return formatTestId('ag-drag-handle', { ['row-id']: rowId, ['col-id']: colId });
+        return formatTestId('ag-drag-handle', { ['row-id']: rowId, colId });
     },
     groupContracted(rowId: string | null, colId: string | null): string {
-        return formatTestId('ag-group-contracted', { ['row-id']: rowId, ['col-id']: colId });
+        return formatTestId('ag-group-contracted', { ['row-id']: rowId, colId });
     },
     groupExpanded(rowId: string | null, colId: string | null): string {
-        return formatTestId('ag-group-expanded', { ['row-id']: rowId, ['col-id']: colId });
+        return formatTestId('ag-group-expanded', { ['row-id']: rowId, colId });
     },
 
     /** Menu */
@@ -153,8 +200,14 @@ export const agTestIdFor = {
     columnDropCellDragHandle(label?: string | null): string {
         return formatTestId('ag-column-drop-cell-drag-handle', { label });
     },
+    columnDropCellCancelButton(label?: string | null): string {
+        return formatTestId('ag-column-drop-cell-cancel', { label });
+    },
+    columnDropArea(name?: string | null): string {
+        return formatTestId('ag-column-drop-area', { name });
+    },
 
-    /** Filter Tool Panel */
+    /** Filter Tool Panel (New) */
 
     filterToolPanel(): string {
         return formatTestId('ag-filter-panel');
@@ -164,6 +217,18 @@ export const agTestIdFor = {
     },
     filterToolPanelFilterTypeSelector(colLabel?: string | null): string {
         return formatTestId('ag-filter-panel-filter-type-selector', { colLabel });
+    },
+
+    /** Filter Tool Panel (Old) */
+
+    filterToolPanelSearchInput(): string {
+        return formatTestId('ag-filter-toolpanel-search-input');
+    },
+    filterToolPanelGroup(title?: string | null): string {
+        return formatTestId('ag-filter-toolpanel-group', { title });
+    },
+    filterToolPanelGroupCollapsedIcon(title?: string | null): string {
+        return formatTestId('ag-filter-toolpanel-group-collapsed-icon', { title });
     },
 
     /** Status Bar */
@@ -231,5 +296,10 @@ export const agTestIdFor = {
     },
     columnChooserListItemDragHandle(label: string | null): string {
         return formatTestId('ag-column-chooser-list-item-drag-handle', { label });
+    },
+
+    /** Overlay */
+    overlay(): string {
+        return formatTestId('ag-overlay');
     },
 };
