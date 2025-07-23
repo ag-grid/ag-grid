@@ -303,3 +303,39 @@ export const agTestIdFor = {
         return formatTestId('ag-overlay');
     },
 };
+
+type AgTestIds = typeof agTestIdFor;
+type Locators<TLocator> = {
+    [P in keyof AgTestIds]: (...args: Parameters<AgTestIds[P]>) => TLocator;
+};
+
+/**
+ * Utility function to wrap the agTestIdFor functions to a specific testing framework to reduce code duplication and improve readability.
+ *
+ * @param fn - A function that takes a string and returns a locator for that string.
+ * @returns Same functions as agTestIdFor, but returning a locator instead of a string.
+ *
+ * @example
+ * // Playwright
+ * // Before
+ * await expect(page.getByTestId(agTestIdFor.rowNode('0'))).toBeVisible();
+ * await expect(page.getByTestId(agTestIdFor.cell('0', 'color'))).toBeVisible();
+ *
+ * // After
+ * const agIdFor = wrapAgTestIdFor((testId) => page.getByTestId(testId));
+ *
+ * await expect(agIdFor.rowNode('0')).toBeVisible();
+ * await expect(agIdFor.cell('0', 'color')).toBeVisible();
+ */
+export const wrapAgTestIdFor = <TLocator>(fn: (str: string) => TLocator): Locators<TLocator> => {
+    const locators: Partial<Locators<TLocator>> = {};
+
+    const keys = Object.keys(agTestIdFor) as (keyof AgTestIds)[];
+    keys.forEach((k) => {
+        locators[k] = (...args: any[]) => {
+            return fn((agTestIdFor[k] as any)(...args));
+        };
+    });
+
+    return locators as Locators<TLocator>;
+};
