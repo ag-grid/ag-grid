@@ -221,29 +221,6 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                 </div>
             </section>
 
-            <section class={styles.principlesSection}>
-                <div class={styles.principlesContent}>
-                    <h2>Our principles</h2>
-                    <p>Empowering developers to build world-class applications for their users</p>
-                </div>
-
-                <div class={styles.principlesList}>
-                    {
-                        principles.map(({ icon: PrincipleIcon, title, description }, idx) => (
-                            <div class={styles.principleItem}>
-                                <div class={`${styles.principleIcon} ${styles[`principleColor${idx + 1}`]}`}>
-                                    <PrincipleIcon />
-                                </div>
-                                <div class={styles.principleText}>
-                                    <div class={styles.principleTitle}>{title}</div>
-                                    <div class={styles.principleDesc}>{description}</div>
-                                </div>
-                            </div>
-                        ))
-                    }
-                </div>
-            </section>
-
             <section class={styles.historySection}>
                 <div class={styles.historyContent}>
                     <h2>Our history</h2>
@@ -268,6 +245,29 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                                         <span class={styles.mobileYear}>{year}:</span> {title}
                                     </div>
                                     <div class={styles.timelineDesc} set:html={description} />
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
+
+            <section class={styles.principlesSection}>
+                <div class={styles.principlesContent}>
+                    <h2>Our principles</h2>
+                    <p>Empowering developers to build world-class applications for their users</p>
+                </div>
+
+                <div class={styles.principlesList}>
+                    {
+                        principles.map(({ icon: PrincipleIcon, title, description }, idx) => (
+                            <div class={styles.principleItem}>
+                                <div class={`${styles.principleIcon} ${styles[`principleColor${idx + 1}`]}`}>
+                                    <PrincipleIcon />
+                                </div>
+                                <div class={styles.principleText}>
+                                    <div class={styles.principleTitle}>{title}</div>
+                                    <div class={styles.principleDesc}>{description}</div>
                                 </div>
                             </div>
                         ))
