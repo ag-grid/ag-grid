@@ -21,10 +21,6 @@ export function _getAriaSortState(sortDirection: SortDirection | 'mixed'): Colum
 }
 
 // ARIA ATTRIBUTE GETTERS
-export function _getAriaLevel(element: Element): number {
-    return parseInt(element.getAttribute('aria-level')!, 10);
-}
-
 export function _getAriaPosInSet(element: Element): number {
     return parseInt(element.getAttribute('aria-posinset')!, 10);
 }
@@ -107,6 +103,10 @@ export function _removeAriaSort(element: Element): void {
 
 export function _setAriaChecked(element: Element, checked?: boolean) {
     _setAriaAttribute(element, 'checked', checked === undefined ? 'mixed' : checked);
+}
+
+export function _setAriaOwns(ownerElement: Element, ownedId?: string | null) {
+    _toggleAriaAttribute(ownerElement, 'owns', ownedId);
 }
 
 export function _setAriaHasPopup(

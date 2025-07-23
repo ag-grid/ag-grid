@@ -20,7 +20,7 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
-export type PillDragCompEvent = 'columnRemove';
+type PillDragCompEvent = 'columnRemove';
 
 const PillDragCompElement: ElementParams = {
     tag: 'span',

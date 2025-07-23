@@ -8,6 +8,7 @@ import {
     addLicenseManager,
     convertFunctionToConstPropertyTs,
     findLocaleImport,
+    getEnableAGTestIdLogic,
     getFunctionName,
     getPropertyInterfaces,
     handleRowGenericInterface,
@@ -61,6 +62,8 @@ function getModuleImports(
     }
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
+
+    imports.push(getEnableAGTestIdLogic());
 
     if (bindings.moduleRegistration) {
         imports.push(bindings.moduleRegistration);

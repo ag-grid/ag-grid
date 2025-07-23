@@ -602,7 +602,6 @@ export const AG_GRID_LOCALE_SK = {
     ariaLabelSelectField: 'Vyberte pole',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Editor bunky',
     ariaValidationErrorPrefix: 'Validácia editora bunky',
     ariaLabelLoadingContextMenu: 'Načítava sa kontextová ponuka',
 

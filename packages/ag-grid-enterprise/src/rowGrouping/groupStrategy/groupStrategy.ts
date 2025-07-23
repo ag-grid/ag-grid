@@ -24,6 +24,7 @@ import {
     _warn,
 } from 'ag-grid-community';
 
+import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
 import type { GroupingRowNode, IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
 import { setRowNodeGroup } from '../rowGroupingUtils';
 import { BatchRemover } from './batchRemover';
@@ -39,7 +40,6 @@ interface GroupInfo {
 
 interface GroupingDetails {
     pivotMode: boolean;
-    expandByDefault: number;
     changedPath: ChangedPath;
     rootNode: RowNode;
     groupedCols: AgColumn[];
@@ -143,7 +143,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         const groupedCols = this.rowGroupColsSvc?.columns;
 
         const details: GroupingDetails = {
-            expandByDefault: this.gos.get('groupDefaultExpanded'),
             groupedCols: groupedCols!,
             rootNode: rowNode,
             pivotMode: this.colModel.isPivotMode(),
@@ -643,28 +642,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             return;
         }
 
-        // use callback if exists
-        const userCallback = details.isGroupOpenByDefault;
-        if (userCallback) {
-            const params: WithoutGridCommon<IsGroupOpenByDefaultParams> = {
-                rowNode: groupNode,
-                field: groupNode.field!,
-                key: groupNode.key!,
-                level: groupNode.level,
-                rowGroupColumn: groupNode.rowGroupColumn!,
-            };
-            groupNode.expanded = userCallback(params) == true;
-            return;
-        }
-
-        // use expandByDefault if exists
-        if (details.expandByDefault === -1) {
-            groupNode.expanded = true;
-            return;
-        }
-
-        // otherwise
-        groupNode.expanded = groupNode.level < details.expandByDefault;
+        groupNode.expanded = _getRowDefaultExpanded(this.beans, groupNode, groupNode.level);
     }
 
     private getGroupInfo(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {

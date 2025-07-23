@@ -28,7 +28,7 @@ interface FilterColumnPair {
     column: AgColumn;
 }
 
-export type GroupFilterEvent = 'columnsChanged';
+type GroupFilterEvent = 'columnsChanged';
 
 const GroupFilterElement: ElementParams = {
     tag: 'div',

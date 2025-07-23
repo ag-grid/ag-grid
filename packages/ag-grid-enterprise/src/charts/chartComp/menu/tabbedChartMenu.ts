@@ -12,7 +12,7 @@ import { ChartSettingsPanel } from './settings/chartSettingsPanel';
 const TAB_DATA = 'data';
 const TAB_FORMAT = 'format';
 
-export type TabbedChartMenuEvent = 'closed';
+type TabbedChartMenuEvent = 'closed';
 export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
     private chartTranslation: ChartTranslationService;
 

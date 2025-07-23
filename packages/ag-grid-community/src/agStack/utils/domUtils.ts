@@ -233,7 +233,7 @@ export function _observeResize(
     return () => resizeObserver?.disconnect();
 }
 
-export type Attributes = { [key: string]: string };
+type Attributes = { [key: string]: string };
 type TagName<SelectorType extends string> = keyof HTMLElementTagNameMap | Lowercase<SelectorType>;
 /** Type to help avoid typos, add new roles as required. */
 type RoleType =

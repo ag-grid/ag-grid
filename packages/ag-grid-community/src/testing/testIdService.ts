@@ -1,4 +1,5 @@
 import { _getRootNode } from '../agStack/utils/beanUtils';
+import { getGridId } from '../api/coreApi';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
@@ -37,6 +38,12 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
     public setupAllTestIds(): void {
         const root = _getRootNode(this.beans);
+
+        /** Grid wrapper */
+
+        const gridId = getGridId(this.beans);
+        const gridWrapper = root.querySelector(`[grid-id="${gridId}"]`);
+        setTestId(gridWrapper, agTestIdFor.root(gridId));
 
         /** Headers */
 

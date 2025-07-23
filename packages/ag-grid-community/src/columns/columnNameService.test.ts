@@ -1,4 +1,5 @@
-import { _camelCaseToHumanText } from './columnNameService';
+import { AgColumn } from '../entities/agColumn';
+import { ColumnNameService } from './columnNameService';
 
 describe('_camelCaseToHumanText', () => {
     it.each([
@@ -11,6 +12,11 @@ describe('_camelCaseToHumanText', () => {
         ['person.address.town', 'Person Address Town'],
         ['person_address.town', 'Person_address Town'],
     ])('Value: %s', (field, expected) => {
-        expect(_camelCaseToHumanText(field)).toBe(expected);
+        const column = new AgColumn({ field }, null, field, false);
+
+        const columnNameService = new ColumnNameService();
+        (columnNameService as any).beans = {} as any; // Mock beans
+        const result = columnNameService.getDisplayNameForColumn(column, 'header');
+        expect(result).toBe(expected);
     });
 });

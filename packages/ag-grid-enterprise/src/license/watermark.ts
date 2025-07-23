@@ -9,7 +9,7 @@ const WatermarkElement: ElementParams = {
     cls: 'ag-watermark',
     children: [{ tag: 'div', ref: 'eLicenseTextRef', cls: 'ag-watermark-text' }],
 };
-export class AgWatermark extends Component {
+class AgWatermark extends Component {
     licenseManager: LicenseManager;
 
     public wireBeans(beans: BeanCollection): void {

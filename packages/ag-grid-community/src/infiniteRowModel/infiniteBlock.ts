@@ -10,7 +10,7 @@ import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 
 type RowNodeBlockState = 'needsLoading' | 'loading' | 'loaded' | 'failed';
 
-export type RowNodeBlockEvent = 'loadComplete';
+type RowNodeBlockEvent = 'loadComplete';
 
 export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
     public state: RowNodeBlockState = 'needsLoading';

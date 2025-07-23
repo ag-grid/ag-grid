@@ -17,7 +17,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ColumnHoverModule: 1.58,
     CsvExportModule: 11.3,
     CustomEditorModule: 59.13,
-    CustomFilterModule: 70.29,
+    CustomFilterModule: 72,
     DateEditorModule: 65.42,
     DateFilterModule: 126.13,
     DragAndDropModule: 1,
@@ -48,7 +48,6 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ValidationModule: 69.88,
     ValueCacheModule: 0.65,
     CellSpanModule: 8.08,
-    TestingModule: 11.54,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 200,

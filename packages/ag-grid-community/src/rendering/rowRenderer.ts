@@ -1632,7 +1632,7 @@ class RowCtrlCache {
     }
 }
 
-export interface RefreshViewParams {
+interface RefreshViewParams {
     recycleRows?: boolean;
     animate?: boolean;
     onlyBody?: boolean;

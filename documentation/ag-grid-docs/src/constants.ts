@@ -1,6 +1,6 @@
 import corePackageJson from '../../../packages/ag-grid-community/package.json';
 import gridEnterprisePackageJson from '../../../packages/ag-grid-enterprise/package.json';
-import type { Framework, InternalFramework } from './types/ag-grid';
+import type { Framework, FrameworkType, InternalFramework } from './types/ag-grid';
 
 const isTruthy = (val: string | boolean) => ['1', 'true', true].includes(val);
 
@@ -11,6 +11,22 @@ export const QUICK_BUILD_PAGES: string[] = quickBuildPages ? quickBuildPages.spl
 export const FRAMEWORKS: readonly Framework[] = ['react', 'angular', 'vue', 'javascript'] as const;
 export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];
 export const DEFAULT_INTERNAL_FRAMEWORK: InternalFramework = 'reactFunctional';
+export const FRAMEWORK_TYPES: Record<Framework, Partial<Record<FrameworkType, InternalFramework>>> = {
+    javascript: {
+        javascript: 'vanilla',
+        typescript: 'typescript',
+    },
+    react: {
+        javascript: 'reactFunctional',
+        typescript: 'reactFunctionalTs',
+    },
+    angular: {
+        typescript: 'angular',
+    },
+    vue: {
+        typescript: 'vue3',
+    },
+} as const;
 
 export const USE_PACKAGES = true; // process.env?.USE_PACKAGES ?? false;
 
@@ -171,6 +187,8 @@ export const EXAMPLE_RANDOM_SEED = 'AG Grid Random Seed';
 export const TRIAL_LICENCE_FORM_URL = import.meta.env?.PUBLIC_TRIAL_LICENCE_FORM_URL;
 
 export const EXAMPLE_STYLE_FILE_NAME = 'ag-example-styles.css';
+
+export const PRODUCTION_CHANGELOG_JSON_URL = 'https://www.ag-grid.com/changelog/changelog.json';
 
 export const ZI_FORM_ID = 'aad0527d-5af6-4263-8dcd-60f3ac998d5d';
 export type TrialLicenceFormType = 'emailOnly' | 'allFields' | 'original';

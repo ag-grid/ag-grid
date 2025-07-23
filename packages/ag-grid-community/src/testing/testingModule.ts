@@ -1,32 +1,27 @@
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
+import { ModuleRegistry } from '../modules/moduleRegistry';
 import { VERSION } from '../version';
 import { TestIdService, setTestIdAttribute } from './testIdService';
 
-interface TestingModuleParams {
-    testIdAttribute?: string;
-}
-
-type TestingModuleType = {
-    with: (params?: TestingModuleParams) => _ModuleWithoutApi;
-} & _ModuleWithoutApi;
-
 /**
+ * Internal module. Not for direct use. Use `setupAgTestIds` instead.
+ *
  * @feature Testing
- * @gridOptions testIds
  */
-export const TestingModule: TestingModuleType = {
+const TestingModule: _ModuleWithoutApi = {
     moduleName: 'Testing',
     version: VERSION,
     beans: [TestIdService],
-    with({ testIdAttribute } = {}) {
-        if (testIdAttribute) {
-            setTestIdAttribute(testIdAttribute);
-        }
-
-        return {
-            moduleName: 'Testing',
-            version: VERSION,
-            beans: [TestIdService],
-        };
-    },
 };
+
+interface TestIdSetupParams {
+    testIdAttribute?: string;
+}
+
+export function setupAgTestIds({ testIdAttribute }: TestIdSetupParams = {}): void {
+    if (testIdAttribute) {
+        setTestIdAttribute(testIdAttribute);
+    }
+
+    ModuleRegistry.registerModules([TestingModule]);
+}

@@ -15,7 +15,7 @@ import { AgAbstractField } from './agAbstractField';
 import { agPickerFieldCSS } from './agPickerField.css-GENERATED';
 import type { AgPickerFieldParams } from './agPickerFieldParams';
 
-export type AgPickerFieldEvent = AgAbstractFieldEvent | 'pickerHidden';
+type AgPickerFieldEvent = AgAbstractFieldEvent | 'pickerHidden';
 
 const AgPickerFieldElement: AgElementParams<any> = {
     tag: 'div',

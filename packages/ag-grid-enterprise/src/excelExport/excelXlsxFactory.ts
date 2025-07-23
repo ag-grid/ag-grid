@@ -58,7 +58,7 @@ export const XLSX_WORKSHEET_IMAGE_IDS: Map<number, ImageIdMap> = new Map();
 /** Maps all sheet tables to unique Ids */
 export const XLSX_WORKSHEET_DATA_TABLES: Map<number, ExcelDataTable> = new Map();
 /** Default name to be used for tables when no name is provided */
-export const DEFAULT_TABLE_DISPLAY_NAME = 'AG-GRID-TABLE';
+const DEFAULT_TABLE_DISPLAY_NAME = 'AG-GRID-TABLE';
 
 let XLSX_FACTORY_MODE: ExcelFactoryMode = 'SINGLE_SHEET';
 
@@ -83,7 +83,7 @@ export function createXlsxExcel(
     // Table export is not compatible with pivot mode nor master/detail features
     if (config.exportAsExcelTable) {
         if (config.colModel.isPivotActive()) {
-            showExcelTableNonCompatibleFeaturesWarning('pivot mode');
+            _warn(163, { featureName: 'pivot mode' });
             newConfig.exportAsExcelTable = false;
         }
     }
@@ -92,18 +92,14 @@ export function createXlsxExcel(
     return createWorksheet(worksheet, newConfig);
 }
 
-export function showExcelTableNonCompatibleFeaturesWarning(featureName: string) {
-    _warn(163, { featureName });
-}
-
-export function getXlsxSanitizedTableName(name: string) {
+function getXlsxSanitizedTableName(name: string) {
     return name
         .replace(/^[^a-zA-Z_]+/, '_')
         .replace(/\s/g, '_')
         .replace(/[^a-zA-Z0-9_]/g, '_');
 }
 
-export function addXlsxTableToSheet(sheetIndex: number, table: ExcelDataTable): void {
+function addXlsxTableToSheet(sheetIndex: number, table: ExcelDataTable): void {
     if (XLSX_WORKSHEET_DATA_TABLES.has(sheetIndex)) {
         _warn(164);
         return;

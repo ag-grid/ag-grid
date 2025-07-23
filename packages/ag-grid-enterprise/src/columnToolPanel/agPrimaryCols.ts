@@ -1,4 +1,4 @@
-import type { ColDef, ColGroupDef, ColumnEventType, ComponentSelector, ElementParams } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, ColumnEventType, ElementParams } from 'ag-grid-community';
 import { Component, PositionableFeature, RefPlaceholder } from 'ag-grid-community';
 
 import { agPrimaryColsCSS } from './agPrimaryCols.css-GENERATED';
@@ -86,8 +86,3 @@ export class AgPrimaryCols extends Component {
         return this.primaryColsListPanel.getExpandedGroups();
     }
 }
-
-export const AgPrimaryColsSelector: ComponentSelector = {
-    selector: 'AG-PRIMARY-COLS',
-    component: AgPrimaryCols,
-};

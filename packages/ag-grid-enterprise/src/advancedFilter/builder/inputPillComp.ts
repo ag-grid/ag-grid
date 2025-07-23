@@ -23,7 +23,7 @@ import {
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 
-export type InputPillCompEvent = 'fieldValueChanged';
+type InputPillCompEvent = 'fieldValueChanged';
 
 type SupportedComponent =
     | typeof AgInputTextField<any, any, any, any, any, any>

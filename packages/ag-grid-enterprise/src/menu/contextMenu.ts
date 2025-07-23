@@ -449,7 +449,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     }
 }
 
-export type ContextMenuEvent = 'closeMenu';
+type ContextMenuEvent = 'closeMenu';
 
 class ContextMenu extends Component<ContextMenuEvent> {
     private menuList: AgMenuList | null = null;

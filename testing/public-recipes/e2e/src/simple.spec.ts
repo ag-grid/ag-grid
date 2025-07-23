@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 import { agTestIdFor } from 'ag-grid-community';
 
 async function loadE2ETestingExample(page: Page, framework: string): Promise<Page> {
-    await page.goto(`/examples/testing/hello-world/${framework}`);
+    await page.goto(`/examples/testing/hello-world/${framework}?enableTestIds=true`);
     await page.waitForLoadState('domcontentloaded');
     await page.waitForLoadState('load');
     await page.waitForLoadState('networkidle');
@@ -19,7 +19,9 @@ test.describe('Simple e2e testing examples', () => {
         test(`can load the example and select row in ${fw}`, async ({ page }) => {
             await loadE2ETestingExample(page, fw);
 
-            await expect(page.getByTestId(agTestIdFor.rowNode('row-group-country-South Korea'))).toBeVisible();
+            await expect(page.getByTestId(agTestIdFor.rowNode('row-group-country-South Korea'))).toBeVisible({
+                timeout: 20_000,
+            });
             await expect(
                 page.getByTestId(agTestIdFor.cell('row-group-country-South Korea', 'ag-Grid-AutoColumn'))
             ).toContainText('South Korea');

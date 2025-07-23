@@ -28,22 +28,20 @@ The e2e examples all target the following example:
 ## Test IDs
 
 Many testing libraries allow targeting the `data-testid` attribute to locate elements on the page to use for assertions or actions. 
-AG Grid provides support for attaching this attribute to many of the interactive elements in the grid. This is achieved by registering the `TestingModule`. This module should only be used in a test or development environment, not in production.
+AG Grid provides support for attaching this attribute to many of the interactive elements in the grid. This is achieved by calling the `setupAgTestIds` function. This module should only be used in a test or development environment, not in production.
 
 ```js
-import { TestingModule, ModuleRegistry } from 'ag-grid-community'
+import { setupAgTestIds } from 'ag-grid-community'
 
-ModuleRegistry.registerModules([TestingModule]);
+setupAgTestIds();
 ```
 
 The test ID attribute that is targeted by this module can be optionally customised using the following module method:
 
 ```js
-import { TestingModule, ModuleRegistry } from 'ag-grid-community'
+import { setupAgTestIds } from 'ag-grid-community'
 
-ModuleRegistry.registerModules([
-    TestingModule.with({ testIdAttribute: 'data-customattr' })
-]);
+setupAgTestIds({ testIdAttribute: 'data-customattr' })
 ```
 
 In addition, utility functions are provided to avoid users having to manually construct the IDs:
@@ -86,6 +84,33 @@ Object.defineProperty(Element.prototype, 'innerText', {
 });
 ```
 Where you implement this polyfill may vary depending on your testing setup.
+
+## Retrieving References to Grid API and Grid Container Element
+
+The following two utility functions are made available for convenience during testing:
+
+```
+import { getGridApi, getGridElement } from 'ag-grid-community'
+
+// Retrieve a GridApi instance from a DOM node/selector
+const api = getGridApi('#myGrid');
+
+// Retrieve a Grid `Element` instance from a GridApi instance
+const element = getGridElement(api);
+```
+
+The `getGridApi` function returns a `GridApi` instance that is associated with the grid rendered in `gridElement`. 
+The `gridElement` argument can be one of the following: the grid ID as determined by the `gridId` grid option, a DOM node, or a CSS selector string.
+{% if isFramework("angular", "react", "vue") %}
+It is reccommended to use the `gridId` as the argument.
+{% /if %}
+{% if isFramework("javascript") %}
+When using a CSS selector, it must refer to the element passed to `createGrid`.
+If passing a DOM node as an argument, this DOM node must be an immediate child of the element passed to `createGrid`. 
+This is to support the case where multiple grids are instantiated in a single element.
+{% /if %}
+
+The `getGridElement` function returns the `Element` instance associated with the grid instance referred to by `GridApi`.
 
 {% if isFramework("angular") %}
 

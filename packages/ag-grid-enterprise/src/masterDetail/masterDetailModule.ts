@@ -17,7 +17,7 @@ import { MasterDetailService } from './masterDetailService';
 /**
  * @internal
  */
-export const SharedMasterDetailModule: _ModuleWithApi<_MasterDetailGridApi> = {
+const SharedMasterDetailModule: _ModuleWithApi<_MasterDetailGridApi> = {
     moduleName: 'SharedMasterDetail',
     version: VERSION,
     beans: [MasterDetailService],

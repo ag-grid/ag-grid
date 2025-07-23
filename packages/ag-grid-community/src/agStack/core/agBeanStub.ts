@@ -18,7 +18,7 @@ import { _addSafePassiveEventListener } from '../utils/eventUtils';
 import { _getLocaleTextFunc } from '../utils/localeUtils';
 
 export type AgBeanStubEvent = 'destroyed';
-export type AgEventOrDestroyed<TEventType extends string> = TEventType | AgBeanStubEvent;
+type AgEventOrDestroyed<TEventType extends string> = TEventType | AgBeanStubEvent;
 
 type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
 

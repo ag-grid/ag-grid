@@ -7,7 +7,7 @@ import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import { _warn } from '../validation/logging';
 
-export type QuickFilterServiceEvent = 'quickFilterChanged';
+type QuickFilterServiceEvent = 'quickFilterChanged';
 export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implements NamedBean {
     beanName = 'quickFilter' as const;
 

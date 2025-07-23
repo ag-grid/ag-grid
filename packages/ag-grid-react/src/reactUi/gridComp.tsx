@@ -99,7 +99,7 @@ const GridComp = ({ context }: GridCompProps) => {
     useEffect(() => {
         const gridCtrl = gridCtrlRef.current;
         const eRootWrapper = eRootWrapperRef.current;
-        if (!tabGuardReady || !beans || !gridCtrl || !eGridBodyParent || !eRootWrapper) {
+        if (!tabGuardReady || !beans || !gridCtrl || !eGridBodyParent || !eRootWrapper || context.isDestroyed()) {
             return;
         }
 

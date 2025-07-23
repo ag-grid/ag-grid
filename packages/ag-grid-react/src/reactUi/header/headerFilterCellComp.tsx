@@ -105,7 +105,9 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
 
     const reactiveCustomComponents = useMemo(() => gos.get('reactiveCustomComponents'), []);
     const enableFilterHandlers = useMemo(() => gos.get('enableFilterHandlers'), []);
-    const floatingFilterCompProxy = useRef<FloatingFilterComponentProxy | FloatingFilterDisplayComponentProxy>();
+    const [floatingFilterCompProxy, setFloatingFilterCompProxy] = useState<
+        FloatingFilterComponentProxy | FloatingFilterDisplayComponentProxy
+    >();
     useEffect(() => {
         if (userCompDetails?.componentFromFramework) {
             if (reactiveCustomComponents) {
@@ -114,13 +116,13 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
                     : FloatingFilterComponentProxy;
                 const compProxy = new ProxyClass(userCompDetails!.params, () => setRenderKey((prev) => prev + 1));
                 userCompRef(compProxy as IFloatingFilter);
-                floatingFilterCompProxy.current = compProxy;
+                setFloatingFilterCompProxy(compProxy);
             } else {
                 warnReactiveCustomComponents();
             }
         }
     }, [userCompDetails]);
-    const floatingFilterProps = floatingFilterCompProxy.current?.getProps();
+    const floatingFilterProps = floatingFilterCompProxy?.getProps();
 
     const reactUserComp = userCompDetails?.componentFromFramework;
     const UserCompClass = userCompDetails?.componentClass;
@@ -134,7 +136,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
                             <CustomContext.Provider
                                 value={{
                                     setMethods: (methods: CustomFloatingFilterCallbacks) =>
-                                        floatingFilterCompProxy.current!.setMethods(methods),
+                                        floatingFilterCompProxy!.setMethods(methods),
                                 }}
                             >
                                 <UserCompClass {...floatingFilterProps} />

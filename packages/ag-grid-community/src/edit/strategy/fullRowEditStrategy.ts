@@ -5,7 +5,7 @@ import type { EditPosition, EditRowPosition } from '../../interfaces/iEditServic
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
-import { _populateModelValidationErrors, _setupEditor, _valuesDiffer } from '../utils/editors';
+import { _populateModelValidationErrors, _setupEditor, _sourceAndPendingDiffer } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
@@ -136,7 +136,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 }
 
                 for (const edit of rowEdits.values()) {
-                    if (_valuesDiffer(edit)) {
+                    if (_sourceAndPendingDiffer(edit)) {
                         changedRows.push(rowNode);
                         // early return, we only need to know if there are any edits
                         break;
@@ -243,33 +243,12 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             this.setFocusOutOnEditor(prevCell);
         }
 
-        if (preventNavigation && !rowsMatch) {
-            // check all cells that should had an editor have one - in the case of small viewports,
-            // editors might have been destroyed along with their corresponding cellCtrl
-            const prevRowNode = prevCell.rowNode;
-            const rowEdits = this.model.getEditRow(prevRowNode);
-            if (rowEdits) {
-                rowEdits.forEach(({ state }, column) => {
-                    if (state !== 'editing') {
-                        return;
-                    }
+        this.restoreEditors();
 
-                    const cellCtrl = _getCellCtrl(this.beans, {
-                        rowNode: prevRowNode,
-                        column,
-                    });
-
-                    if (cellCtrl && !cellCtrl.comp?.getCellEditor()) {
-                        _setupEditor(this.beans, cellCtrl, { silent: true });
-                    }
-                });
-            }
-        }
-
-        const suppressEditNextOnTab = this.gos.get('suppressEditNextOnTab');
+        const suppressStartEditOnTab = this.gos.get('suppressStartEditOnTab');
 
         if (nextEditable && !preventNavigation) {
-            if (suppressEditNextOnTab) {
+            if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else {
                 if (!nextCell.comp?.getCellEditor()) {
@@ -287,7 +266,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         if (!rowsMatch && !preventNavigation) {
             this.cleanupEditors(nextCell, true);
 
-            if (suppressEditNextOnTab) {
+            if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else {
                 this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
@@ -297,6 +276,27 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         prevCell.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
 
         return true;
+    }
+
+    private restoreEditors(): void {
+        // check all cells that should have an editor have one - in the case of small viewports,
+        // editors might have been destroyed along with their corresponding cellCtrl
+        this.model.getEditMap().forEach((rowEdits, rowNode) =>
+            rowEdits.forEach(({ state }, column) => {
+                if (state !== 'editing') {
+                    return;
+                }
+
+                const cellCtrl = _getCellCtrl(this.beans, {
+                    rowNode,
+                    column,
+                });
+
+                if (cellCtrl && !cellCtrl.comp?.getCellEditor()) {
+                    _setupEditor(this.beans, cellCtrl, { silent: true });
+                }
+            })
+        );
     }
 
     public override destroy(): void {

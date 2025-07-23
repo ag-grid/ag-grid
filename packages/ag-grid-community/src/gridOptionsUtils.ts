@@ -205,7 +205,7 @@ export function _getPageBody(beans: BeanCollection): HTMLElement | ShadowRoot {
 
 function _getBodyWidth(beans: BeanCollection): number {
     const body = _getPageBody(beans) as HTMLElement;
-    return body?.clientWidth ?? (window.innerHeight || -1);
+    return body?.clientWidth ?? (window.innerWidth || -1);
 }
 
 function _getBodyHeight(beans: BeanCollection): number {
@@ -620,10 +620,6 @@ export function _isLegacyMenuEnabled(gos: GridOptionsService): boolean {
 
 export function _isColumnMenuAnchoringEnabled(gos: GridOptionsService): boolean {
     return !_isLegacyMenuEnabled(gos);
-}
-
-export function _areAdditionalColumnMenuItemsEnabled(gos: GridOptionsService): boolean {
-    return gos.get('columnMenu') === 'new';
 }
 
 export function _getCallbackForEvent(eventName: string): string {

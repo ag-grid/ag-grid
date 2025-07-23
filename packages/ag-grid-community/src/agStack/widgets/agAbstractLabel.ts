@@ -10,7 +10,7 @@ import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '..
 import { agAbstractLabelCSS } from './agAbstractLabel.css-GENERATED';
 import type { AgLabelParams, LabelAlignment } from './agFieldParams';
 
-export type AgAbstractLabelEvent = AgComponentEvent;
+type AgAbstractLabelEvent = AgComponentEvent;
 export abstract class AgAbstractLabel<
     TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
     TProperties extends BaseProperties,

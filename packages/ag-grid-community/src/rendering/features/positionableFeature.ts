@@ -80,7 +80,7 @@ interface MappedResizer {
     dragSource?: DragListenerParams;
 }
 
-export type PositionableFeatureEvent = 'resize';
+type PositionableFeatureEvent = 'resize';
 export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
     protected popupSvc?: PopupService;
     private dragSvc?: DragService;

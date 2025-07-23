@@ -237,6 +237,15 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * This will be an empty array if the node is at the root level.
      */
     treeListFormatter?: (pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string;
+    /**
+     * By default, if using provided filter values and there is an active filter model,
+     * when the filter values are refreshed such that every value is in the filter model,
+     * the filter model will be cleared (reset to `null`).
+     *
+     * To prevent this behaviour, set this property to `true`.
+     * This is useful if using SSRM and updating the filter values based on other column filters.
+     */
+    suppressClearModelOnRefreshValues?: boolean;
 }
 
 /**

@@ -18,7 +18,7 @@ import { PageSizeSelectorSelector } from './pageSizeSelector/pageSizeSelectorCom
 import { paginationCompCSS } from './paginationComp.css-GENERATED';
 import type { PaginationService } from './paginationService';
 
-export class PaginationComp extends TabGuardComp implements FocusableContainer {
+class PaginationComp extends TabGuardComp implements FocusableContainer {
     private rowModel: IRowModel;
     private pagination: PaginationService;
     private ariaAnnounce?: AriaAnnouncementService;
@@ -399,16 +399,6 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
             this.ariaPageStatus = ariaPageStatus;
             this.ariaAnnounce?.announceValue(ariaPageStatus, 'paginationPage');
         }
-    }
-
-    private setTotalLabelsToZero() {
-        const strZero = this.formatNumber(0);
-        this.lbFirstRowOnPage.textContent = strZero;
-        this.lbCurrent.textContent = strZero;
-        this.lbLastRowOnPage.textContent = strZero;
-        this.lbTotal.textContent = strZero;
-        this.lbRecordCount.textContent = strZero;
-        this.announceAriaStatus(strZero, strZero, strZero, strZero, strZero);
     }
 }
 

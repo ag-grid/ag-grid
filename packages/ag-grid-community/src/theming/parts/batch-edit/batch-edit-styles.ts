@@ -50,13 +50,3 @@ const makeBatchEditStyleBaseTreeShakeable = () =>
     });
 
 export const batchEditStyleBase: Part<BatchEditStyleParams> = /*#__PURE__*/ makeBatchEditStyleBaseTreeShakeable();
-
-const makeDarkBatchEditStyleBaseTreeShakeable = () =>
-    createPart<BatchEditStyleParams>({
-        feature: 'batchEditStyle',
-        params: baseDarkBatchEditParams,
-        css: batchEditStyleDefaultCSS,
-    });
-
-export const darkBatchEditStyleBase: Part<BatchEditStyleParams> =
-    /*#__PURE__*/ makeDarkBatchEditStyleBaseTreeShakeable();

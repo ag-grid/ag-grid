@@ -7,9 +7,9 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     RowSelectionModule,
-    TestingModule,
     ValidationModule,
     agTestIdFor,
+    setupAgTestIds,
 } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -30,13 +30,14 @@ describe('Test Ids', () => {
     let consoleWarnSpy: MockInstance;
 
     beforeAll(() => {
+        setupAgTestIds();
+
         ModuleRegistry.registerModules([
             ColumnsToolPanelModule,
             RowSelectionModule,
             ClientSideRowModelModule,
             CellSelectionModule,
             StatusBarModule,
-            TestingModule,
             ColumnMenuModule,
             PaginationModule,
             SideBarModule,

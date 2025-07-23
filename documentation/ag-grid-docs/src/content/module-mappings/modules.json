@@ -7,11 +7,6 @@
                     "moduleName": "ValidationModule",
                     "name": "Validation (Dev Mode)",
                     "path": "modules/#development-validations"
-                },
-                {
-                    "moduleName": "TestingModule",
-                    "name": "Testing (Dev Mode)",
-                    "path": "modules/#testing"
                 }
             ]
         },

@@ -27,7 +27,7 @@ export interface AgSelectParams<TComponentSelectorType extends string, TValue = 
     pickerAriaLabelValue?: string;
     placeholder?: string;
 }
-export type AgSelectEvent = 'selectedItem';
+type AgSelectEvent = 'selectedItem';
 export class AgSelect<
     TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
     TProperties extends BaseProperties,

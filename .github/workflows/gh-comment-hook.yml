@@ -1,0 +1,35 @@
+name: Expand JIRA Links in PR descriptions
+
+on:
+  pull_request:
+    types: [ opened, edited ]
+
+permissions:
+  contents: read
+
+jobs:
+  expand-jira-links:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Replace mention with jira link
+        id: notify-start
+        uses: actions/github-script@v7
+        continue-on-error: true
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_ID: ${{ github.event.pull_request.number }}
+        with:
+          result-encoding: string
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const old_body = process.env.PR_BODY || '';
+            const issue_number = process.env.PR_ID;
+            
+            const body = old_body.replace(/#(AG-\d{3,})/g, `[$1](https://ag-grid.atlassian.net/browse/$1)`);
+            if (body !== old_body) {
+                await github.rest.issues.update({ owner, repo, issue_number, body });
+            }

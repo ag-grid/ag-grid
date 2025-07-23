@@ -1,0 +1,17 @@
+{
+    "entry": ["./src/main.ts"],
+    "project": ["./src/**"],
+    "ignore": [
+        "./src/interfaces/iAgChartOptions.ts",
+        "./src/theming/param-docs.ts",
+        "./src/theming/private-theming-api.ts",
+        "./src/utils/debug.ts",
+        "./src/theming/theme-types.ts"
+    ],
+    "rules": {
+        "unlisted": "off",
+        "unresolved": "off",
+        "dependencies": "off"
+    },
+    "tags": ["-knipIgnore"]
+}

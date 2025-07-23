@@ -1,4 +1,4 @@
-import type { IRowNode, RowNode } from 'ag-grid-community';
+import type { Column, IRowNode, RowNode } from 'ag-grid-community';
 
 import type { GridRows } from '../gridRows';
 import type { GridRowErrors, GridRowsErrors } from '../gridRowsErrors';
@@ -53,10 +53,12 @@ export class GridRowsDomValidator {
             }
             this.validatedRows.add(row);
 
-            const id = String(row.id);
-            const rowElement = gridRows.getRowHtmlElement(id);
+            const stringId = String(row.id);
+            const rowElement = gridRows.getRowHtmlElement(stringId);
             if (!rowElement) {
-                this.errors.get(row).add('Row HTMLElement row-id=' + JSON.stringify(id) + ' not found');
+                if (row.id !== undefined) {
+                    this.errors.get(row).add('Row HTMLElement row-id=' + JSON.stringify(stringId) + ' not found');
+                }
                 continue;
             }
 
@@ -64,7 +66,7 @@ export class GridRowsDomValidator {
                 if (
                     rowElementsIdsInOrder &&
                     rowElementsIdsInOrderIdx < rowElementsIdsInOrder.length &&
-                    rowElementsIdsInOrder[rowElementsIdsInOrderIdx] !== id
+                    rowElementsIdsInOrder[rowElementsIdsInOrderIdx] !== stringId
                 ) {
                     gridRows.errors
                         .get(row)
@@ -108,47 +110,74 @@ export class GridRowsDomValidator {
             }
         }
 
-        if (!row.detail && !row.master) {
-            this.checkRowDomCellValues(gridRows, row, rowElement, rowErrors);
+        if (!row.detail) {
+            this.checkRowDomCells(gridRows, row, rowElement, rowErrors);
         }
     }
 
-    private checkRowDomCellValues(
+    private checkRowDomCells(
         gridRows: GridRows<any>,
         row: RowNode<any>,
         rowElement: HTMLElement,
         rowErrors: GridRowErrors<any>
     ) {
         // Check for cell values
-        const columns = gridRows.api.getColumns() ?? [];
+        const columns = gridRows.api.getAllGridColumns() ?? [];
         for (let columnIndex = 0; columnIndex < columns.length; ++columnIndex) {
             const column = columns[columnIndex];
 
             const columnId = column.getColId();
             const cellElement = rowElement.querySelector(`[col-id="${CSS.escape(columnId)}"]`);
+
             if (!cellElement) {
-                if (column.isVisible()) {
-                    rowErrors.add(`Missing cell element for column id:"${columnId}" index:${columnIndex}`);
+                if (column.isVisible() && !row.master && columnId !== 'ag-Grid-SelectionColumn') {
+                    rowErrors.add(`Missing cell element for column id:"${columnId}"`);
                 }
                 continue;
             }
 
-            let cellValue = gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
-            if (cellValue === null) {
-                cellValue = '';
-            }
+            this.checkRowDomCell(cellElement, gridRows, row, column, rowErrors);
+        }
+    }
 
-            if (cellElement.textContent !== cellValue) {
-                if (row.group && gridRows.api.getGridOption('groupTotalRow')) {
-                    // TODO: HACK: we are disabling checking the cell value due to AG-12716
-                    // if group footers are visible, api.getCellValue return the aggregate value, but HTML cells shows the row data value
-                    continue;
-                }
+    private checkRowDomCell(
+        cellElement: Element,
+        gridRows: GridRows<any>,
+        row: RowNode<any>,
+        column: Column<any>,
+        rowErrors: GridRowErrors<any>
+    ) {
+        const columnId = column.getColId();
+        const textContent = cellElement.textContent?.trim() ?? '';
 
-                rowErrors.add(
-                    `HTML cell value mismatch for column id:"${columnId}" index:${columnIndex}, expected ${JSON.stringify(cellValue)}, got ${JSON.stringify(cellElement.textContent)}`
-                );
+        if (!textContent && columnId === 'ag-Grid-AutoColumn') {
+            return; // Skip empty auto column as it might not have text content
+        }
+
+        let cellValue = gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
+        if (cellValue === null) {
+            cellValue = '';
+        }
+        cellValue = String(cellValue).trim();
+
+        if (columnId === 'ag-Grid-AutoColumn') {
+            let childCountText = '';
+            const suppressCount = gridRows.api.getGridOption('autoGroupColumnDef')?.cellRenderer?.suppressCount;
+            const childCount = suppressCount ? 0 : row.allChildrenCount;
+            if (childCount) {
+                childCountText += `(${childCount})`;
             }
+            if (textContent === childCountText) {
+                cellValue = childCountText; // Is fine, it contains just the child count
+            } else {
+                cellValue = cellValue ? `${cellValue} ${childCountText}` : childCountText;
+            }
+        }
+
+        if (textContent !== cellValue) {
+            rowErrors.add(
+                `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(cellValue)}, got ${JSON.stringify(textContent)}`
+            );
         }
     }
 }

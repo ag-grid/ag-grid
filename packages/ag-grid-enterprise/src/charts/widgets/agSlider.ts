@@ -24,7 +24,7 @@ export interface AgSliderParams extends AgLabelParams {
     onValueChange?: (newValue: number) => void;
 }
 
-export type AgSliderEvent = 'fieldValueChanged';
+type AgSliderEvent = 'fieldValueChanged';
 export class AgSlider extends AgAbstractLabel<
     BeanCollection,
     GridOptionsWithDefaults,

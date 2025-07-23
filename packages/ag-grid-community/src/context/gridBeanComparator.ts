@@ -107,7 +107,6 @@ export function gridBeanInitComparator(
 
 export function gridBeanDestroyComparator(
     bean1: AgSingletonBean<BeanCollection>,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     bean2: AgSingletonBean<BeanCollection>
 ): number {
     if (bean1?.beanName === 'gridDestroySvc') {

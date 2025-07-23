@@ -572,6 +572,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.
      */
     @Input() public pivotGroupHeaderHeight: number | undefined = undefined;
+    /** Hide any column header rows that would only contain padded groups.
+     */
+    @Input({ transform: booleanAttribute }) public hidePaddedHeaderRows: boolean | undefined = undefined;
     /** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid.
      * @default false
      * @agModule `ColumnsToolPanelModule`
@@ -650,7 +653,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public editType: EditStrategyType | undefined = undefined;
     /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
      */
-    @Input({ transform: booleanAttribute }) public suppressEditNextOnTab: boolean | undefined = undefined;
+    @Input({ transform: booleanAttribute }) public suppressStartEditOnTab: boolean | undefined = undefined;
     /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */

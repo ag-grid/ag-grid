@@ -12,7 +12,7 @@ export function _wrapInterval(action: any, timeout?: any): AgPromise<number> {
     });
 }
 
-export type ResolveAndRejectCallback<T> = (resolve: (value: T | null) => void, reject: (params: any) => void) => void;
+type ResolveAndRejectCallback<T> = (resolve: (value: T | null) => void, reject: (params: any) => void) => void;
 
 enum AgPromiseStatus {
     IN_PROGRESS,

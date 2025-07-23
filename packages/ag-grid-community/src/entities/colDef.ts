@@ -964,7 +964,7 @@ export interface BaseColDefParams<TData = any, TValue = any, TContext = any> ext
     colDef: ColDef<TData, TValue>;
 }
 
-export interface BaseColDefOptionalDataParams<TData = any, TValue = any, TContext = any>
+interface BaseColDefOptionalDataParams<TData = any, TValue = any, TContext = any>
     extends AgGridCommon<TData, TContext> {
     /** Row node for the given row */
     node: IRowNode<TData> | null;

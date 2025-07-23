@@ -31,8 +31,8 @@ export interface AgGroupComponentParams {
     suppressKeyboardNavigation?: boolean;
 }
 
-export type AgGroupComponentEvent = 'expanded' | 'collapsed' | 'enableChange';
-export type ExpandedChangedEventType = 'expandedChanged';
+type AgGroupComponentEvent = 'expanded' | 'collapsed' | 'enableChange';
+type ExpandedChangedEventType = 'expandedChanged';
 
 interface ExpandChangedEvent extends AgEvent<ExpandedChangedEventType> {
     expanded?: boolean;

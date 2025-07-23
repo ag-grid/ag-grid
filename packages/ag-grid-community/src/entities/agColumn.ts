@@ -196,6 +196,8 @@ export class AgColumn<TValue = any>
         this.initTooltip();
 
         this.initRowSpan();
+
+        this.addPivotListener();
     }
 
     private initDotNotation(): void {
@@ -223,6 +225,21 @@ export class AgColumn<TValue = any>
         if (this.colDef.spanRows) {
             this.beans.rowSpanSvc?.register(this);
         }
+    }
+
+    private addPivotListener(): void {
+        const pivotColDefSvc = this.beans.pivotColDefSvc;
+        const pivotValueColumn = this.colDef.pivotValueColumn;
+        if (!pivotColDefSvc || !pivotValueColumn) {
+            return;
+        }
+
+        this.addManagedListeners(pivotValueColumn, {
+            colDefChanged: (evt) => {
+                const colDef = pivotColDefSvc.recreateColDef(this.colDef);
+                this.setColDef(colDef, colDef, evt.source);
+            },
+        });
     }
 
     public resetActualWidth(source: ColumnEventType): void {
@@ -530,6 +547,17 @@ export class AgColumn<TValue = any>
     public isSpanHeaderHeight(): boolean {
         const colDef = this.getColDef();
         return !colDef.suppressSpanHeaderHeight;
+    }
+
+    /**
+     * Returns the first parent that is not a padding group.
+     */
+    public getFirstRealParent(): AgProvidedColumnGroup | null {
+        let parent = this.getOriginalParent();
+        while (parent && parent.isPadding()) {
+            parent = parent.getOriginalParent();
+        }
+        return parent;
     }
 
     public getColumnGroupPaddingInfo(): { numberOfParents: number; isSpanningTotal: boolean } {

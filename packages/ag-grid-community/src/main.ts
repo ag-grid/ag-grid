@@ -202,6 +202,8 @@ export {
     ExcelSheetPageSetup,
     ExcelFont,
     ExcelFreezeRowsGetter,
+    ExcelFreezeRowsGetterParams,
+    ExcelFreezeColumnsGetterParams,
     ExcelFreezeColumnsGetter,
     ExcelInterior,
     ExcelNumberFormat,
@@ -260,6 +262,7 @@ export {
     RowPinnedType,
     IRowNode,
     RowNodeSelectedEvent,
+    RowNodePinnedEvent,
     MouseEnterEvent,
     MouseLeaveEvent,
     HeightChangedEvent,
@@ -392,7 +395,12 @@ export {
     ITextFloatingFilterParams,
 } from './filter/provided/text/iTextFilter';
 export type { TextFilter } from './filter/provided/text/textFilter';
-export { IDateFilterParams, DateFilterParams, DateFilterModel } from './filter/provided/date/iDateFilter';
+export {
+    IDateFilterParams,
+    IDateComparatorFunc,
+    DateFilterParams,
+    DateFilterModel,
+} from './filter/provided/date/iDateFilter';
 export type { DateFilter } from './filter/provided/date/dateFilter';
 
 export {
@@ -688,7 +696,7 @@ export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from './widgets/tabGuardC
 export { TabGuardFeature } from './widgets/tabGuardFeature';
 export type { PopupService } from './widgets/popupService';
 export { PopupPositionParams } from './interfaces/iPopupPositionParams';
-export { TouchListener, TapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
+export { TouchListener, TapEvent, DoubleTapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
 export { FocusableContainer } from './interfaces/iFocusableContainer';
 export * from './widgets/gridWidgetTypes';
 
@@ -748,14 +756,14 @@ export {
     ShouldRowBeSkippedParams,
     BaseExportParams,
 } from './interfaces/exportParams';
-export { HeaderElement, PrefixedXmlAttributes, XmlElement } from './interfaces/iXmlFactory';
+export { HeaderElement, PrefixedXmlAttributes, XmlElement, XmlAttributes } from './interfaces/iXmlFactory';
 export { ICsvCreator } from './interfaces/iCsvCreator';
 
 // root
 export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export type { CellNavigationService } from './navigation/cellNavigationService';
-export { GridParams, Params, GridCoreCreator, createGrid } from './grid';
+export { GridParams, Params, GridCoreCreator, createGrid, getGridApi, getGridElement } from './grid';
 export { provideGlobalGridOptions, GlobalGridOptionsMergeStrategy, _getGlobalGridOption } from './globalGridOptions';
 export {
     GridApi,
@@ -867,6 +875,8 @@ export {
     GridState,
     PaginationState,
     PivotState,
+    CellSelectionState,
+    CellSelectionCellState,
     RangeSelectionCellState,
     RangeSelectionState,
     RowGroupExpansionState,
@@ -996,6 +1006,7 @@ export {
     SelectAllMode,
     SelectionColumnDef,
     CellSelectionOptions,
+    RangeHandleOptions,
     RowSelectionOptions,
     RowSelectionMode,
     IsApplyServerSideTransaction,
@@ -1276,8 +1287,8 @@ export { TooltipModule } from './tooltip/tooltipModule';
 export { LocaleModule } from './misc/locale/localeModule';
 export { RowAutoHeightModule } from './rendering/row/rowAutoHeightModule';
 export { SharedExportModule as _SharedExportModule } from './export/exportModule';
-export { TestingModule } from './testing/testingModule';
 export { AllCommunityModule } from './allCommunityModule';
+export { setupAgTestIds } from './testing/testingModule';
 
 //  events
 export * from './events';
