@@ -1,4 +1,5 @@
 import type { ExecutorContext, TaskGraph } from '@nx/devkit';
+import { execSync } from 'child_process';
 import { readFileSync } from 'fs';
 import * as fs from 'fs/promises';
 import * as glob from 'glob';
@@ -51,15 +52,43 @@ export async function deleteFile(filePath: string) {
     }
 }
 
-export function parseFile(filePath: string) {
-    const contents = readFileSync(filePath, 'utf8');
+export function parseFileContents(contents: string) {
     return ts.createSourceFile('tempFile.ts', contents, ts.ScriptTarget.Latest, true);
+}
+
+export function parseFile(filePath: string) {
+    return parseFileContents(readFileSync(filePath, 'utf8'));
 }
 
 export function inputGlob(fullPath: string) {
     return glob.sync(`${fullPath}/**/*.ts`, {
         ignore: [`${fullPath}/**/*.test.ts`, `${fullPath}/**/*.spec.ts`],
     });
+}
+
+export function gitCurrentBranch() {
+    return execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf-8' }).trim();
+}
+
+export function gitFiles(fullPath: string, commit: string) {
+    return execSync(
+        [
+            `git ls-tree -r --name-only ${commit}`,
+            `grep -E '^${fullPath}/[^:]*\\.ts$'`,
+            `grep -vE '\\.(test|spec)\\.ts$'`,
+        ].join(' | '),
+        { encoding: 'utf-8' }
+    )
+        .split('\n')
+        .filter(Boolean);
+}
+
+export function gitShow(file: string, commit: string) {
+    return execSync(`git show ${commit}:${file}`, { encoding: 'utf-8' });
+}
+
+export function readGitFiles(fullPath: string, commit: string) {
+    return gitFiles(fullPath, commit).map((file) => gitShow(file, commit));
 }
 
 export async function ensureDirectory(dirPath: string) {
