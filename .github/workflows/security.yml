@@ -20,9 +20,12 @@ permissions:
   contents: read
 
 env:
-  CTRF_FILE: ./test-results/report.json
-  PREV_COMMIT_SHA_FILE: ./commit-sha.txt
-  REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+    OUTPUT_DIR: test-results/
+    REPORT_FILE: report.json
+    PREV_COMMIT_SHA_FILE: ./commit-sha.txt
+    REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+    SLACK_CHANNEL: '#ci-grid-gate'
+    AG_LIBRARY: grid
 
 jobs:
     code-dependency-scan:
@@ -40,14 +43,15 @@ jobs:
               with:
                   snyk_token: ${{ secrets.SNYK_TOKEN }}
                   remote_repo_url: ${{env.REPO_URL}}
-                  ctrf_file: ${{ env.CTRF_FILE }}
+                  output_dir: ${{ env.OUTPUT_DIR }}
+                  report_file: ${{ env.REPORT_FILE }}
 
             - name: Persist scan results
               if: always()
               uses: actions/upload-artifact@v4
               with:
-                name: snyk-scan-workspaces
-                path: test-results/
+                  name: snyk-scan-workspaces
+                  path: ${{ env.OUTPUT_DIR }}
 
     sast-code-scan:
         runs-on: ubuntu-latest
@@ -63,14 +67,15 @@ jobs:
               uses: ./external/ag-shared/github/actions/snyk-code-scan
               with:
                   snyk_token: ${{ secrets.SNYK_TOKEN }}
-                  ctrf_file: ${{ env.CTRF_FILE }}
+                  output_dir: ${{ env.OUTPUT_DIR }}
+                  report_file: ${{ env.REPORT_FILE }}
 
             - name: Persist scan results
               if: always()
               uses: actions/upload-artifact@v4
               with:
-                name: snyk-code-scan
-                path: test-results/
+                  name: snyk-code-scan
+                  path: ${{ env.OUTPUT_DIR }}
 
     combine-scan-results:
       needs: [code-dependency-scan, sast-code-scan]
@@ -83,7 +88,7 @@ jobs:
 
         - uses: actions/download-artifact@v4
           with:
-            path: test-results/
+            path: ${{ env.OUTPUT_DIR }}
 
         - name: Combine reports
           uses: actions/github-script@v7
@@ -92,16 +97,16 @@ jobs:
             script: |
               const fs = require('fs');
               const path = require('path');
-              // read all json files nested under /test-results/**/*.json 
-              const files = fs.readdirSync('test-results', { withFileTypes: true })
+              // read all json files nested under ${{ env.OUTPUT_DIR }}/**/${{ env.REPORT_FILE }} 
+              const files = fs.readdirSync('${{ env.OUTPUT_DIR }}', { withFileTypes: true })
                 .flatMap(dir => {
                   if (dir.isDirectory()) {
-                    return fs.readdirSync(path.join('test-results', dir.name))
-                      .filter(file => file.endsWith('.json'))
-                      .map(file => path.join('test-results', dir.name, file));
+                    return fs.readdirSync(path.join('${{ env.OUTPUT_DIR }}', dir.name))
+                      .filter(file => file === '${{ env.REPORT_FILE }}')
+                      .map(file => path.join('${{ env.OUTPUT_DIR }}', dir.name, file));
                   } 
-                  if (dir.isFile() && dir.name.endsWith('.json')) {
-                    return [path.join('test-results', dir.name)];
+                  if (dir.isFile() && dir.name === '${{ env.REPORT_FILE }}') {
+                    return [path.join('${{ env.OUTPUT_DIR }}', dir.name)];
                   }
                   return [];
                 });
@@ -114,9 +119,8 @@ jobs:
                     report.results.summary.skipped += data.results.summary.skipped || 0;
                   }
               }
-          
-              fs.mkdirSync(path.dirname(path.join('.', '${{ env.CTRF_FILE }}')), { recursive: true });
-              fs.writeFileSync(path.join('.', '${{ env.CTRF_FILE }}'), JSON.stringify(report));
+
+              fs.writeFileSync('${{ env.REPORT_FILE }}', JSON.stringify(report));
 
         - name: Get previous run commit SHA
           id: prev-commit-sha
@@ -144,13 +148,15 @@ jobs:
         - name: Slack Notification
           if: ${{ github.event_name == 'schedule' || inputs.notify }}
           continue-on-error: true
-          uses: ./.github/actions/slack-integration
+          uses: ./external/ag-shared/github/actions/slack-integration
           with:
-            CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
-            SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
-            PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
-            CURRENT_COMMIT_SHA: ${{ github.sha }}
-            IS_SUCCESS: ${{ needs.code-dependency-scan.result != 'failure' && needs.sast-code-scan.result != 'failure' }}
+              AG_LIBRARY: ${{ env.AG_LIBRARY }}
+              CTRF_REPORT_FILE: ${{ env.REPORT_FILE }}
+              SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+              SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
+              PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
+              CURRENT_COMMIT_SHA: ${{ github.sha }}
+              IS_SUCCESS: ${{ needs.code-dependency-scan.result != 'failure' && needs.sast-code-scan.result != 'failure' }}
 
         - name: Create Jira Ticket
           uses: ./.github/actions/jira-integration
@@ -159,7 +165,7 @@ jobs:
           with:
             JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
             JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' is failing."
-            CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+            CTRF_REPORT_FILE: ${{ env.REPORT_FILE }}
             IS_SUCCESS: ${{ needs.code-dependency-scan.result != 'failure' && needs.sast-code-scan.result != 'failure' }}
             PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
             CURRENT_COMMIT_SHA: ${{ github.sha }}

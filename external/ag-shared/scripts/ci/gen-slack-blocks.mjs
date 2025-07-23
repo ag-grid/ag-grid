@@ -2,7 +2,7 @@ import fs from 'node:fs';
 
 import { getGitDiffLinks, getHeader, getStats, parseCtrfReport } from './_utils.mjs';
 
-const ctrfReportFile = process.env.CTRF_REPORT_FILE || '../../../../reports/performance.json';
+const ctrfReportFile = process.env.CTRF_REPORT_FILE;
 const workflowName = process.env.WORKFLOW_NAME || '';
 const jobId = process.env.JOB_ID || '';
 const repoUrl = process.env.REPO_URL || 'https://github.com/ag-grid/ag-grid';

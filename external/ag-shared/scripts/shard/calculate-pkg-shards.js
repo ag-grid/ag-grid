@@ -6,7 +6,7 @@ const LIBRARIES = ['grid', 'charts'];
 const library = process.env.AG_LIBRARY;
 
 if (!LIBRARIES.includes(library)) {
-    console.error(`AG_LIBRARY environment variable is not set. Valide values are: ${LIBRARIES.join(', ')}`);
+    console.error(`AG_LIBRARY environment variable is not set. Valid values are: ${LIBRARIES.join(', ')}`);
     process.exit(1);
 }
 

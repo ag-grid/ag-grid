@@ -168,3 +168,7 @@ export async function addJiraComment(issueKey, body) {
         throw error;
     }
 }
+
+export function jiraLink(text, url) {
+    return `[${text}|${url}]`;
+}
