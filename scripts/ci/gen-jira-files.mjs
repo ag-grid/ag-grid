@@ -2,7 +2,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 
-import { getGitDiffLinks, getHeader, getStats, parseCtrfReport } from './_utils.mjs';
+import { getGitDiffLinks, getHeader, getStats, jiraLink, parseCtrfReport } from './_utils.mjs';
 
 const ctrfReportFile = process.env.CTRF_REPORT_FILE || '../../reports/performance.json';
 const workflowName = process.env.WORKFLOW_NAME || '';
@@ -60,10 +60,6 @@ function inlineCode(text) {
 function section(text) {
     const TAB = '  ';
     return `\n${TAB}${text.trim().replace(/\n+/g, `\n${TAB}`)}\n`;
-}
-
-function jiraLink(text, url) {
-    return `[${text}|${url}]`;
 }
 
 /**
