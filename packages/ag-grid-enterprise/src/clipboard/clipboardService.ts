@@ -28,12 +28,15 @@ import {
     _getRowNode,
     _isClientSideRowModel,
     _isSameRow,
+    _isServerSideRowModel,
     _last,
     _removeFromArray,
     _warn,
     isColumnSelectionCol,
     isSpecialCol,
 } from 'ag-grid-community';
+
+import { ServerSideRowModel } from '../serverSideRowModel/serverSideRowModel';
 
 interface RowCallback {
     (
@@ -952,10 +955,19 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const cellsToFlash: CellsToFlashType = {};
         const startRow = rangeSvc.getRangeStartRow(range);
         const lastRow = rangeSvc.getRangeEndRow(range);
-
+        const isSSRM = _isServerSideRowModel(this.gos, this.beans.rowModel);
+        const isInCache = (rowPosition: RowPosition | null): rowPosition is RowPosition => {
+            if (isSSRM && rowPosition) {
+                return !!(this.beans.rowModel as ServerSideRowModel)
+                    .getRootStore()
+                    ?.getCache()
+                    .getNodes()
+                    .getBy('index', rowPosition.rowIndex);
+            }
+            return !!rowPosition;
+        };
         let node: RowPosition | null = startRow;
-
-        while (node) {
+        while (isInCache(node)) {
             rowPositions.push(node);
             range.columns.forEach((column) => {
                 const { rowIndex, rowPinned } = node!;
