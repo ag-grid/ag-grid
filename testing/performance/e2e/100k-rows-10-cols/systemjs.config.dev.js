@@ -53,7 +53,7 @@
     System.config({
         transpiler: 'ts',
         typescriptOptions: {
-            target: 'es2020',
+            target: 'esnext',
             jsx: 'react',
         },
         paths: {
@@ -68,7 +68,7 @@
             ...reactConfig.map,
 
             ts: 'npm:plugin-typescript@8.0.0/lib/plugin.js',
-            typescript: 'npm:typescript@5.4.5/lib/typescript.min.js',
+            typescript: 'npm:typescript@5.8.3/lib/typescript.min.js',
 
             app: appLocation,
             // systemJsMap comes from index.html

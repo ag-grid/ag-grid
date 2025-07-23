@@ -36,7 +36,12 @@ mkcert
         });
         const staticRoot = express.static(__root, {
             extensions: ['js', 'jsx', 'ts', 'tsx', 'css', 'scss'],
-            setHeaders: (res, path) => {},
+            setHeaders: (res, path) => {
+                // Set cache control for static files
+                if (['js', 'jsx', 'ts', 'tsx', 'css', 'scss'].some((ex) => path.endsWith(`.${ex}`))) {
+                    res.setHeader('Content-type', 'text/javascript');
+                }
+            },
         });
         app.use('/', staticRoot);
         const server = https.createServer(options.server.https, app);
