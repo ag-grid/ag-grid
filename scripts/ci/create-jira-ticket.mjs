@@ -133,7 +133,11 @@ async function createJiraIssue() {
         fields: {
             project: { key: PROJECT_ID },
             summary: summary,
-            description: description + `\n\nNo QA needed\n\n${AUTOMATED_MESSAGE}`,
+            description: {
+                content: [paragraph([txt(description)]), paragraph([txt('No QA needed')]), AUTOMATED_MESSAGE],
+                type: 'doc',
+                version: 1,
+            },
             issuetype: { name: 'Bug' },
             assignee: {
                 accountId:
