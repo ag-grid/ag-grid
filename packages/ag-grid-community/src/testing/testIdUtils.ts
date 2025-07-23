@@ -197,14 +197,14 @@ export const agTestIdFor = {
     columnSelectListItemDragHandle(label?: string | null): string {
         return formatTestId('ag-column-select-list-item-drag-handle', { label });
     },
-    columnDropCellDragHandle(label?: string | null): string {
-        return formatTestId('ag-column-drop-cell-drag-handle', { label });
+    columnDropCellDragHandle(source: 'panel' | 'toolbar', area?: string | null, label?: string | null): string {
+        return formatTestId('ag-column-drop-cell-drag-handle', { source, area, label });
     },
-    columnDropCellCancelButton(label?: string | null): string {
-        return formatTestId('ag-column-drop-cell-cancel', { label });
+    columnDropCellCancelButton(source: 'panel' | 'toolbar', area?: string | null, label?: string | null): string {
+        return formatTestId('ag-column-drop-cell-cancel', { source, area, label });
     },
-    columnDropArea(name?: string | null): string {
-        return formatTestId('ag-column-drop-area', { name });
+    columnDropArea(source: 'panel' | 'toolbar', name?: string | null): string {
+        return formatTestId('ag-column-drop-area', { source, name });
     },
 
     /** Filter Tool Panel (New) */

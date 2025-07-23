@@ -212,7 +212,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                     });
                 });
 
-                this.setupColumnDropArea(panel);
+                this.setupColumnDropArea(panel, 'toolbar');
             });
 
             /** Filter Tool Panel (New) */
@@ -378,7 +378,8 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         setTestId(root.querySelector('.ag-overlay-wrapper'), agTestIdFor.overlay());
 
         /** Row Group Panel */
-        this.setupColumnDropArea(root);
+
+        this.setupColumnDropArea(root, 'panel');
     }
 
     private setupFilterInstance(filterRoot: Element | null, spec: FilterSpec): void {
@@ -423,20 +424,23 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         });
     }
 
-    private setupColumnDropArea(root: ParentNode): void {
+    private setupColumnDropArea(root: ParentNode, source: 'panel' | 'toolbar'): void {
         root.querySelectorAll('.ag-column-drop').forEach((columnDrop) => {
             const dropAreaName = columnDrop.querySelector('.ag-column-drop-list')?.getAttribute('aria-label');
             setTestId(
                 columnDrop.querySelector('.ag-column-drop-empty-message'),
-                agTestIdFor.columnDropArea(dropAreaName)
+                agTestIdFor.columnDropArea(source, dropAreaName)
             );
             columnDrop.querySelectorAll('.ag-column-drop-cell').forEach((columnDropCell) => {
                 const label = columnDropCell.querySelector('.ag-column-drop-cell-text')?.textContent;
-                setTestId(columnDropCell.querySelector('.ag-drag-handle'), agTestIdFor.columnDropCellDragHandle(label));
+                setTestId(
+                    columnDropCell.querySelector('.ag-drag-handle'),
+                    agTestIdFor.columnDropCellDragHandle(source, dropAreaName, label)
+                );
 
                 setTestId(
                     columnDropCell.querySelector('.ag-column-drop-cell-button .ag-icon-cancel'),
-                    agTestIdFor.columnDropCellCancelButton(label)
+                    agTestIdFor.columnDropCellCancelButton(source, dropAreaName, label)
                 );
             });
         });
