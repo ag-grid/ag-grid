@@ -1,7 +1,6 @@
 import { CssClassManager } from '../../agStack/core/cssClassManager';
 import { _getActiveDomElement } from '../../agStack/utils/beanUtils';
 import { _clearElement, _removeFromParent } from '../../agStack/utils/domUtils';
-import { _getLocaleTextFunc } from '../../agStack/utils/localeUtils';
 import { _toString } from '../../agStack/utils/stringUtils';
 import type { BeanCollection } from '../../context/context';
 import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapper';

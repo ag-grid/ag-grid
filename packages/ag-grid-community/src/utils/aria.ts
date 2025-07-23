@@ -105,10 +105,6 @@ export function _setAriaChecked(element: Element, checked?: boolean) {
     _setAriaAttribute(element, 'checked', checked === undefined ? 'mixed' : checked);
 }
 
-export function _setAriaOwns(ownerElement: Element, ownedId?: string | null) {
-    _toggleAriaAttribute(ownerElement, 'owns', ownedId);
-}
-
 export function _setAriaHasPopup(
     element: Element,
     hasPopup: 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | boolean

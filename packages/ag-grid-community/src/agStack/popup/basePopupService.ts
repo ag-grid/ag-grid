@@ -7,7 +7,7 @@ import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import type { AddPopupParams, AddPopupResult, BasePopupPositionParams, PopupEventParams } from '../interfaces/iPopup';
 import type { IPopupService } from '../interfaces/iPopupService';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import { _setAriaLabel, _setAriaRole } from '../utils/ariaUtils';
+import { _setAriaLabel, _setAriaOwns, _setAriaRole } from '../utils/ariaUtils';
 import { _getActiveDomElement, _getDocument } from '../utils/beanUtils';
 import {
     _createAgElement,
@@ -318,7 +318,7 @@ export abstract class BasePopupService<
     }
 
     public addPopup<TContainerType extends string>(params: AddPopupParams<TContainerType>): AddPopupResult {
-        const { eChild, ariaLabel, alwaysOnTop, positionCallback, anchorToElement } = params;
+        const { eChild, ariaLabel, ariaOwns, alwaysOnTop, positionCallback, anchorToElement } = params;
 
         const pos = this.getPopupIndex(eChild);
 
@@ -329,7 +329,7 @@ export abstract class BasePopupService<
 
         this.initialisePopupPosition(eChild);
 
-        const wrapperEl = this.createPopupWrapper(eChild, ariaLabel, !!alwaysOnTop);
+        const wrapperEl = this.createPopupWrapper(eChild, !!alwaysOnTop, ariaLabel, ariaOwns);
         const removeListeners = this.addEventListenersToPopup({ ...params, wrapperEl });
 
         if (positionCallback) {
@@ -355,7 +355,12 @@ export abstract class BasePopupService<
         }
     }
 
-    private createPopupWrapper(element: HTMLElement, ariaLabel: string, alwaysOnTop: boolean): HTMLElement {
+    private createPopupWrapper(
+        element: HTMLElement,
+        alwaysOnTop: boolean,
+        ariaLabel?: string,
+        ariaOwns?: HTMLElement
+    ): HTMLElement {
         const ePopupParent = this.getPopupParent();
 
         // add env CSS class to child, in case user provided a popup parent, which means
@@ -371,7 +376,12 @@ export abstract class BasePopupService<
             _setAriaRole(element, 'dialog');
         }
 
-        _setAriaLabel(element, ariaLabel);
+        if (ariaLabel) {
+            _setAriaLabel(element, ariaLabel);
+        } else if (ariaOwns) {
+            element.id ||= `popup-component-${instanceIdSeq}`;
+            _setAriaOwns(ariaOwns, element.id);
+        }
 
         eWrapper.appendChild(element);
         ePopupParent.appendChild(eWrapper);
@@ -394,7 +404,7 @@ export abstract class BasePopupService<
         const eDocument = _getDocument(beans);
         const ePopupParent = this.getPopupParent();
 
-        const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal } = params;
+        const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal, ariaOwns } = params;
 
         let popupHidden = false;
 
@@ -442,7 +452,7 @@ export abstract class BasePopupService<
                 closedCallback(mouseEvent || touchEvent || keyboardEvent);
             }
 
-            this.removePopupFromPopupList(popupEl);
+            this.removePopupFromPopupList(popupEl, ariaOwns);
         };
 
         if (afterGuiAttached) {
@@ -477,13 +487,15 @@ export abstract class BasePopupService<
             element: element,
             wrapper: wrapperEl,
             hideFunc: removeListeners,
-            instanceId: instanceIdSeq++,
+            instanceId: instanceIdSeq,
             isAnchored: !!anchorToElement,
         });
 
         if (anchorToElement) {
             this.setPopupPositionRelatedToElement(element, anchorToElement);
         }
+
+        instanceIdSeq = instanceIdSeq + 1;
     }
 
     private getPopupIndex(el: HTMLElement): number {
@@ -527,9 +539,13 @@ export abstract class BasePopupService<
         return destroyPositionTracker;
     }
 
-    private removePopupFromPopupList(element: HTMLElement): void {
+    private removePopupFromPopupList(element: HTMLElement, ariaOwns?: HTMLElement): void {
         this.setAlignedStyles(element, null);
         this.setPopupPositionRelatedToElement(element, null);
+
+        if (ariaOwns) {
+            _setAriaOwns(ariaOwns, null);
+        }
 
         this.popupList = this.popupList.filter((p) => p.element !== element);
     }

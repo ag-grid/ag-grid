@@ -14,7 +14,7 @@ export interface AgInputTextFieldParams<TComponentSelectorType extends string>
     extends AgInputFieldParams<TComponentSelectorType> {
     allowedCharPattern?: string;
 }
-type AgInputTextFieldEvent = AgAbstractInputFieldEvent;
+export type AgInputTextFieldEvent = AgAbstractInputFieldEvent;
 export class AgInputTextField<
     TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
     TProperties extends BaseProperties,

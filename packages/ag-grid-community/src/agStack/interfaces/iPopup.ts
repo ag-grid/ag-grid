@@ -1,6 +1,9 @@
 import type { AfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 
-export interface AddPopupParams<TContainerType extends string> {
+export type AddPopupParams<TContainerType extends string> =
+    | LabelAddPopupParams<TContainerType>
+    | OwnsAddPopupParams<TContainerType>;
+interface BaseAddPopupParams<TContainerType extends string> {
     // if true then listens to background checking for clicks, so that when the background is clicked,
     // the child is removed again, giving a model look to popups.
     modal?: boolean;
@@ -24,9 +27,18 @@ export interface AddPopupParams<TContainerType extends string> {
     // eg if cellComp element is passed, what happens if row moves (sorting, filtering etc)? best anchor against
     // the grid, not the cell.
     anchorToElement?: HTMLElement;
+}
 
+interface LabelAddPopupParams<TContainerType extends string> extends BaseAddPopupParams<TContainerType> {
     // an aria label should be added to provided context to screen readers
     ariaLabel: string;
+    ariaOwns?: never;
+}
+
+interface OwnsAddPopupParams<TContainerType extends string> extends BaseAddPopupParams<TContainerType> {
+    ariaLabel?: never;
+    // an element that will be marked as owner of the popup element
+    ariaOwns: HTMLElement;
 }
 
 export interface PopupEventParams {

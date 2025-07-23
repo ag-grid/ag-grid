@@ -69,3 +69,7 @@ export function _setAriaControlsAndLabel(controllerElement: Element, controlledE
     _setAriaControls(controllerElement, controlledElement.id);
     _setAriaLabelledBy(controlledElement, controllerElement.id);
 }
+
+export function _setAriaOwns(ownerElement: Element, ownedId?: string | null) {
+    _toggleAriaAttribute(ownerElement, 'owns', ownedId);
+}
