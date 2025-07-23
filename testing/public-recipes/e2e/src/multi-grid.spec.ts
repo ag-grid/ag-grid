@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/test';
 import { agTestIdFor } from 'ag-grid-community';
 
 async function loadE2ETestingExample(page: Page, framework: string): Promise<Page> {
+    // https://www.ag-grid.com/javascript-data-grid/excel-export-multiple-sheets/#example-excel-export-multiple-sheets-multiple-grids
     await page.goto(
         `/examples/excel-export-multiple-sheets/excel-export-multiple-sheets-multiple-grids/${framework}?enableTestIds=true`
     );
@@ -22,8 +23,8 @@ test.describe('Multiple grids e2e testing examples', () => {
             test.slow();
             await loadE2ETestingExample(page, fw);
 
-            const leftGrid = page.getByTestId(agTestIdFor.root('1'));
-            const rightGrid = page.getByTestId(agTestIdFor.root('2'));
+            const leftGrid = page.getByTestId(agTestIdFor.grid('1'));
+            const rightGrid = page.getByTestId(agTestIdFor.grid('2'));
 
             await expect(leftGrid).toBeVisible();
             await expect(rightGrid).toBeVisible();

@@ -17,41 +17,67 @@ e2e tests are recommended so that AG Grid is run inside a real browser. Mocked b
 
 ## End to End (e2e) Testing Examples
 
-Some examples for how to write end-to-end tests are provided in the [AG Grid repo](https://github.com/ag-grid/ag-grid/tree/latest/testing/public-recipes). 
-
-While these examples depend on [Playwright](https://playwright.dev), we do not necessarily recommend one e2e framework over another.
-
-The e2e examples all target the following example:
-
-{% gridExampleRunner title="Hello World" name="hello-world"  exampleHeight=560 /%}
+There are a number of end-to-end test examples available in the [AG Grid repo](https://github.com/ag-grid/ag-grid/tree/latest/testing/public-recipes/e2e/src) which demonstrate how to use Test Ids to test AG Grid. While these tests use [Playwright](https://playwright.dev), we do not necessarily recommend one e2e framework over another.
 
 ## Test IDs
 
+### Enabling Test IDs
+
 Many testing libraries allow targeting the `data-testid` attribute to locate elements on the page to use for assertions or actions. 
-AG Grid provides support for attaching this attribute to many of the interactive elements in the grid. This is achieved by calling the `setupAgTestIds` function. This module should only be used in a test or development environment, not in production.
+AG Grid provides support for attaching this attribute to many of the interactive elements in the grid. This is achieved by calling the `setupAgTestIds` function. This should only be used in a test or development environment, not in production.
 
 ```js
+// Application code
 import { setupAgTestIds } from 'ag-grid-community'
 
-setupAgTestIds();
+if(process.env.NODE_ENV !== "production"){
+    // Setup test IDs for all instances of AG Grid that are created after this call.
+    setupAgTestIds();
+}
 ```
 
-The test ID attribute that is targeted by this module can be optionally customised using the following module method:
+By default the test ID attribute will be `data-testid` but this can be customised via the `testIdAttribute` option. This is useful if you want to use a different attribute name, for example `data-customattr`.
 
 ```js
-import { setupAgTestIds } from 'ag-grid-community'
-
+// Application code
 setupAgTestIds({ testIdAttribute: 'data-customattr' })
 ```
 
-In addition, utility functions are provided to avoid users having to manually construct the IDs:
+### Using Test IDs
+
+WIth Test IDs enabled on your application's grids it is then possible to query elements via the `agTestIdFor` helper methods. 
 ```js
+// Test code
 import { agTestIdFor } from 'ag-grid-community';
 
-// ...in your test case:
-const rowId = 'toyota-celica';
-const colId = 'ag-Grid-SelectionColumn';
-expect(findByTestId(agTestIdFor.checkbox(rowId, colId))).toBeVisible();
+// in your test case 
+const rowId = 'toyota';
+const colId = 'make';
+const cellTestId = agTestIdFor.cell(rowId, colId);
+
+// Using Playwright
+const checkbox = page.getByTestId(cellTestId);
+
+// Testing Library 
+const checkbox = findByTestId(cellTestId);
+```
+
+### Using Test Id Wrapper
+
+When writing tests using Test IDs, the code can become verbose. To reduce boilerplate use the `wrapAgTestIdFor` function to create a wrapper around the `agTestIdFor` methods for the given test context.
+
+```js
+// Test code
+import { agTestIdFor, wrapAgTestIdFor } from 'ag-grid-community';   
+
+ // Before
+ await expect(page.getByTestId(agTestIdFor.headerCell('toyota'))).toBeVisible();
+ await expect(page.getByTestId(agTestIdFor.cell('toyota', 'make'))).toBeVisible();
+
+ const agIdFor = wrapAgTestIdFor((testId) => page.getByTestId(testId));
+ // After
+ await expect(agIdFor.headerCell('toyota')).toBeVisible();
+ await expect(agIdFor.cell('toyota', 'make')).toBeVisible();
 ```
 
 {% partial file="./_register-javascript.mdoc" /%}
