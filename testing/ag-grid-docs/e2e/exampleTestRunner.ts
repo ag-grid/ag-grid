@@ -37,8 +37,9 @@ export async function getFrameworkExamples(framework: InternalFramework) {
         examples = JSON.parse(readFileSync(filePath, 'utf-8'));
     }
 
-    return (examples as ExampleTestCase[]).filter((e) => e.internalFramework === framework && !matchesExclusion(e));
-    //.splice(0, 10); // Limit to 10 examples per framework for testing purposes
+    return (examples as ExampleTestCase[])
+        .filter((e) => e.internalFramework === framework && !matchesExclusion(e))
+        .splice(0, 10); // Limit to 10 examples per framework for testing purposes
 }
 
 export function getExampleConfig(e) {
