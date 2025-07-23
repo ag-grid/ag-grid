@@ -224,7 +224,6 @@ export interface Props<TData> {
     modules?: Module[] | undefined;
 
 // @START_PROPS@
-    suppressEditingNextOnTab?: any,
     /** Specifies the status bar components to use in the status bar.
          * @agModule `StatusBarModule`
          */
@@ -477,6 +476,9 @@ export interface Props<TData> {
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
     editType?: EditStrategyType | undefined,
+    /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
+         */
+    suppressStartEditOnTab?: boolean | undefined,
     /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
@@ -1897,7 +1899,6 @@ export function getProps() {
         modules: [] as any,
 
 // @START_DEFAULTS@
-        suppressEditingNextOnTab: undefined,
         statusBar: undefined,
         sideBar: undefined,
         suppressContextMenu: undefined,
@@ -1951,6 +1952,7 @@ export function getProps() {
         autoSizeStrategy: undefined,
         components: undefined,
         editType: undefined,
+        suppressStartEditOnTab: undefined,
         getFullRowEditValidationErrors: undefined,
         invalidEditValueMode: undefined,
         singleClickEdit: undefined,
