@@ -18,10 +18,7 @@ function _iterateObject<T>(
         return;
     }
 
-    for (const key of Object.keys(object)) {
-        if (SKIP_JS_BUILTINS.has(key)) {
-            continue;
-        }
+    for (const key of Object.keys(object).filter((key) => !SKIP_JS_BUILTINS.has(key))) {
         callback(key, object[key]);
     }
 }
