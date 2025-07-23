@@ -70,6 +70,8 @@ jobs:
     download-examples:
       name: Download all-examples.json
       runs-on: ubuntu-latest
+      outputs:
+        cache-key: ${{ steps.cache-key.outputs.key }}
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -81,11 +83,19 @@ jobs:
             mkdir -p ./testing/ag-grid-docs/e2e/.cache
             curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
 
+        - name: Generate cache key
+          id: cache-key
+          run: |
+            CACHE_KEY="all-examples-$(sha256sum ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json | cut -d' ' -f1)"
+            echo "key=${CACHE_KEY}" >> $GITHUB_OUTPUT
+            echo "Generated cache key: ${CACHE_KEY}"
+
         - name: Cache all-examples-cached.json
           uses: actions/cache@v4
           with:
             path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
-            key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
+            key: ${{ steps.cache-key.outputs.key }}
+
     
     test-demos-smoke:
         if: ${{ github.event.inputs.skip_demo_smoke != 'true' }}
@@ -102,7 +112,7 @@ jobs:
               uses: actions/cache@v4
               with:
                 path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
-                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
+                key: ${{ needs.download-examples.outputs.cache-key }}
 
             - name: Install Playwright Browsers
               working-directory: testing/ag-grid-docs
@@ -146,6 +156,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: vanilla
+              cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
     test-typescript:
         if: ${{ github.event.inputs.skip_typescript != 'true' }}
@@ -162,6 +173,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: typescript
+              cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
     test-react-functional:
         if: ${{ github.event.inputs.skip_reactFunctional != 'true' }}
@@ -178,6 +190,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: reactFunctional
+              cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
     test-react-functional-ts:
         if: ${{ github.event.inputs.skip_reactFunctionalTs != 'true' }}
@@ -194,6 +207,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: reactFunctionalTs
+              cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
     test-vue3:
         if: ${{ github.event.inputs.skip_vue3 != 'true' }}
@@ -210,6 +224,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: vue3
+              cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
     test-angular:
         if: ${{ github.event.inputs.skip_angular != 'true' }}
@@ -226,6 +241,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: angular
+              cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
     test-recipes:
       if: ${{ github.event.inputs.skip_recipes != 'true' }}
