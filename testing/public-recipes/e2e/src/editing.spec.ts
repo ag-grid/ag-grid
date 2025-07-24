@@ -1,26 +1,18 @@
-import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { wrapAgTestIdFor } from 'ag-grid-community';
 
-async function loadE2ETestingExample(page: Page, framework: string): Promise<Page> {
-    // https://www.ag-grid.com/javascript-data-grid/provided-cell-editors-text/#example-text-editor
-    await page.goto(`examples/provided-cell-editors-text/text-editor/${framework}?enableTestIds=true&prod=true`);
-    await page.waitForLoadState('domcontentloaded');
-    await page.waitForLoadState('load');
-    await page.waitForLoadState('networkidle');
+import { FRAMEWORKS, createPageLoader } from './utils';
 
-    return page;
-}
-
-const FRAMEWORKS = ['typescript', 'reactFunctional', 'angular', 'vue3'] as const;
+// https://www.ag-grid.com/javascript-data-grid/provided-cell-editors-text/#example-text-editor
+const loadPage = createPageLoader('examples/provided-cell-editors-text/text-editor');
 
 test.describe('Edit e2e testing examples', () => {
     for (const fw of FRAMEWORKS) {
         test(`can load the example and edit a row in ${fw}`, async ({ page }) => {
             const agIdFor = wrapAgTestIdFor((testId) => page.getByTestId(testId));
 
-            await loadE2ETestingExample(page, fw);
+            await loadPage(page, fw);
 
             await expect(agIdFor.overlay()).toBeHidden();
 

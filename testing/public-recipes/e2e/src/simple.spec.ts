@@ -1,25 +1,17 @@
-import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { wrapAgTestIdFor } from 'ag-grid-community';
 import { agTestIdFor } from 'ag-grid-community';
 
-async function loadE2ETestingExample(page: Page, framework: string): Promise<Page> {
-    // https://ag-grid.com/javascript-data-grid/row-ids/#example-get-row-id
-    await page.goto(`/examples/row-ids/get-row-id/${framework}?enableTestIds=true`);
-    await page.waitForLoadState('domcontentloaded');
-    await page.waitForLoadState('load');
-    await page.waitForLoadState('networkidle');
+import { FRAMEWORKS, createPageLoader } from './utils';
 
-    return page;
-}
-
-const FRAMEWORKS = ['typescript', 'reactFunctional', 'angular', 'vue3'] as const;
+// https://ag-grid.com/javascript-data-grid/row-ids/#example-get-row-id
+const loadPage = createPageLoader('/examples/row-ids/get-row-id');
 
 test.describe('Simple e2e testing examples', () => {
     for (const fw of FRAMEWORKS) {
         test(`can load the example and validate row data in ${fw}`, async ({ page }) => {
-            await loadE2ETestingExample(page, fw);
+            await loadPage(page, fw);
 
             const agIdFor = wrapAgTestIdFor((testId) => page.getByTestId(testId));
 
