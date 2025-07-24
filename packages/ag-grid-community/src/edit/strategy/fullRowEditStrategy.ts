@@ -259,6 +259,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 this.setFocusInOnEditor(nextCell);
                 nextCell.focusCell(false, event);
             }
+        } else if (nextEditable && preventNavigation) {
+            this.setFocusInOnEditor(nextCell);
+            nextCell.focusCell(false, event);
         } else {
             nextCell.focusCell(true, event);
         }
