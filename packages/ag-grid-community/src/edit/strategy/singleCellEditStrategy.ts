@@ -106,11 +106,9 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         prevCell: CellCtrl,
         backwards: boolean,
         event?: KeyboardEvent,
-        source: 'api' | 'ui' = 'ui'
+        source: 'api' | 'ui' = 'ui',
+        preventNavigation = false
     ): boolean | null {
-        // check for all cell-level validation errors
-        const preventNavigation = this.editSvc.checkNavWithValidation(undefined, event) === 'block-stop';
-
         const prevPos = prevCell.cellPosition;
 
         // find the next cell to start editing

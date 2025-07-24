@@ -652,9 +652,14 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     ): boolean | null {
         let res: boolean | null | undefined;
 
-        if (prev instanceof CellCtrl && this.isEditing()) {
+        const editing = this.isEditing();
+
+        // check for validation errors
+        const preventNavigation = editing && this.checkNavWithValidation(undefined, event) === 'block-stop';
+
+        if (prev instanceof CellCtrl && editing) {
             // if we are editing, we know it's not a Full Width Row (RowComp)
-            res = this.strategy?.moveToNextEditingCell(prev, backwards, event, source);
+            res = this.strategy?.moveToNextEditingCell(prev, backwards, event, source, preventNavigation);
         }
 
         if (res === null) {
@@ -664,7 +669,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         // if a cell wasn't found, it's possible that focus was moved to the header
         res = res || !!this.beans.focusSvc.focusedHeader;
 
-        if (res === false) {
+        if (res === false && !preventNavigation) {
             // not a header and not the table
             this.stopEditing();
         }
