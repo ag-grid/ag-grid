@@ -225,7 +225,7 @@
       "command": "./scripts/removeLocalDeps.sh"
     },
     "snykIgnore": {
-      "command": "node ./external/ag-shared/scripts/snyk/getSnykIgnore.js",
+      "command": "node ./external/ag-shared/scripts/snyk/getSnykIgnore.mjs",
       "options": {
         "cwd": "{workspaceRoot}"
       }

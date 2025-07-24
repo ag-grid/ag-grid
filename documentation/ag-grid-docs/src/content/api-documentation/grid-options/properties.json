@@ -402,8 +402,8 @@
         },
         "suppressStartEditOnTab": {
             "more": {
-                "name": "Stop cell editing",
-                "url": "./cell-editing-start-stop/#prevent-start-editing-when-cells-lose-focus"
+                "name": "Cell Editing",
+                "url": "./cell-editing/"
             }
         },
         "enterNavigatesVertically": {

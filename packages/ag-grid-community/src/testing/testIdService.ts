@@ -4,6 +4,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import { _getRootNode } from '../gridOptionsUtils';
 import type { ITestIdService } from '../interfaces/iTestIdService';
+import { _debounce } from '../utils/function';
 import { agTestIdFor } from './testIdUtils';
 import type { FilterSpec } from './testIdUtils';
 
@@ -21,7 +22,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
     beanName: BeanName = 'testIdSvc';
 
     public postConstruct(): void {
-        const setup = () => this.setupAllTestIds();
+        const setup = _debounce(this, () => this.setupAllTestIds(), 0);
         this.addManagedEventListeners({
             firstDataRendered: setup,
             displayedRowsChanged: setup,
@@ -351,25 +352,23 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                 agTestIdFor.columnChooserSearchBarFilter()
             );
             panel.querySelectorAll('.ag-column-select-list').forEach((list) => {
-                setTimeout(() => {
-                    list.querySelectorAll('.ag-column-select-virtual-list-item').forEach((item) => {
-                        const label = item.getAttribute('aria-label');
-                        setTestId(
-                            item.querySelector('.ag-column-group-closed-icon'),
-                            agTestIdFor.columnChooserListItemGroupClosedIcon(label)
-                        );
+                list.querySelectorAll('.ag-column-select-virtual-list-item').forEach((item) => {
+                    const label = item.getAttribute('aria-label');
+                    setTestId(
+                        item.querySelector('.ag-column-group-closed-icon'),
+                        agTestIdFor.columnChooserListItemGroupClosedIcon(label)
+                    );
 
-                        setTestId(
-                            item.querySelector('.ag-column-select-checkbox input[type=checkbox]'),
-                            agTestIdFor.columnChooserListItemCheckbox(label)
-                        );
+                    setTestId(
+                        item.querySelector('.ag-column-select-checkbox input[type=checkbox]'),
+                        agTestIdFor.columnChooserListItemCheckbox(label)
+                    );
 
-                        setTestId(
-                            item.querySelector('.ag-drag-handle'),
-                            agTestIdFor.columnChooserListItemDragHandle(label)
-                        );
-                    });
-                }, 0);
+                    setTestId(
+                        item.querySelector('.ag-drag-handle'),
+                        agTestIdFor.columnChooserListItemDragHandle(label)
+                    );
+                });
             });
         });
 
@@ -403,13 +402,11 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         const setMiniFilterInput = filterRoot.querySelector('.ag-mini-filter input[type="text"]');
         setTestId(setMiniFilterInput, agTestIdFor.setFilterInstanceMiniFilterInput(spec));
 
-        setTimeout(() => {
-            filterRoot.querySelectorAll('.ag-set-filter-list .ag-set-filter-item').forEach((item) => {
-                const label = item.querySelector('.ag-checkbox-label')?.textContent;
-                const checkbox = item.querySelector('input[type="checkbox"]');
-                setTestId(checkbox, agTestIdFor.setFilterInstanceItem(spec, label));
-            });
-        }, 0);
+        filterRoot.querySelectorAll('.ag-set-filter-list .ag-set-filter-item').forEach((item) => {
+            const label = item.querySelector('.ag-checkbox-label')?.textContent;
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            setTestId(checkbox, agTestIdFor.setFilterInstanceItem(spec, label));
+        });
 
         filterRoot.querySelectorAll('.ag-filter-apply-panel button').forEach((button) => {
             setTestId(button, agTestIdFor.setFilterApplyPanelButton(spec, button.textContent));

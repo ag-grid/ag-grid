@@ -34,6 +34,8 @@ env:
   GRID_ROOT_DIR: /var/www/html
   FULL_BUILD_FOLDER: /var/www/fullClean
   ARTEFACT_TESTS_FOLDER: /var/www/ag-artefact-tests
+  SLACK_CHANNEL: '#ci-grid-gate'
+  AG_LIBRARY: grid
 
 jobs:
   full-clean-build:
@@ -231,9 +233,11 @@ jobs:
       - name: Slack Notification
         if: ${{ github.event_name == 'schedule' || inputs.notify }}
         continue-on-error: true
-        uses: ./.github/actions/slack-integration
+        uses: ./external/ag-shared/github/actions/slack-integration
         with:
-          SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
+          AG_LIBRARY: ${{ env.AG_LIBRARY }}
+          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+          SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
           PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
           CURRENT_COMMIT_SHA: ${{ github.sha }}
 
