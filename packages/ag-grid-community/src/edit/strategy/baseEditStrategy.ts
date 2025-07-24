@@ -127,7 +127,8 @@ export abstract class BaseEditStrategy extends BeanStub {
         previousCell: CellCtrl,
         backwards: boolean,
         event?: KeyboardEvent,
-        source?: EditSource
+        source?: EditSource,
+        preventNavigation?: boolean
     ): boolean | null;
 
     public isCellEditable({ rowNode, column }: Required<EditPosition>, _source: 'api' | 'ui' = 'ui'): boolean {

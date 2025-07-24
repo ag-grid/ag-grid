@@ -7,6 +7,8 @@ env:
     DEFAULT_RETENTION_DAYS: 30
     PREV_COMMIT_SHA_FILE: ./commit-sha.txt
     CTRF_FILE: ./ctrf-report.json
+    SLACK_CHANNEL: '#ci-grid-gate'
+    AG_LIBRARY: grid
 on:
     workflow_dispatch:
         inputs:
@@ -325,10 +327,12 @@ jobs:
         - name: Slack Notification
           if: ${{ github.event_name == 'schedule' || inputs.notify }}
           continue-on-error: true
-          uses: ./.github/actions/slack-integration
+          uses: ./external/ag-shared/github/actions/slack-integration
           with:
+            AG_LIBRARY: ${{ env.AG_LIBRARY }}
             CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
-            SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
+            SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+            SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
             PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
             CURRENT_COMMIT_SHA: ${{ github.sha }}
             IS_SUCCESS: ${{ env.IS_SUCCESS }}

@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-export function getHeader(
+export function getHeader({
     isSuccess,
     link,
     workflowName,
@@ -10,13 +10,14 @@ export function getHeader(
     bold,
     inlineCode,
     lastFailedStep,
-    section
-) {
+    section,
+    title,
+}) {
     const emoji = isSuccess ? '✅' : '❌';
     const jobLink = link(`${workflowName} #${jobId}`, jobUrl);
     const atStep = lastFailedStep ? ` at step ${inlineCode(lastFailedStep)}` : '';
     const status = isSuccess ? bold('is successful') : `${bold('failed')}${atStep}`;
-    return section(`${emoji} AgGrid / ${jobLink} run (on ${branchName}) ${status}`);
+    return section(`${emoji} ${title} / ${jobLink} run (on ${branchName}) ${status}`);
 }
 
 export function getGitDiffLinks(repoUrl, currentCommitSha, previousCommitSha, context, section, link, parsedReport) {
@@ -33,7 +34,10 @@ export function getGitDiffLinks(repoUrl, currentCommitSha, previousCommitSha, co
                 return;
             }
             links.add(getDiffUrl(controlGitHash, variantGitHash, repoUrl));
-        } catch (e) {}
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+            // Ignore error
+        }
     });
 
     if (links.size === 0) {
@@ -65,6 +69,7 @@ export function parseCtrfReport(ctrfReportFile) {
             console.warn(`Report file ${ctrfReportFile} is empty. Continuing without it.`);
         }
         return JSON.parse(rawReport);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
         console.warn(`Failed to read CTRF report from ${ctrfReportFile}. Continuing without it.`);
     }

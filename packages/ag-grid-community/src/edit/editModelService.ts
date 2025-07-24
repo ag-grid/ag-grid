@@ -157,14 +157,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     public setEdit(position: Required<EditPosition>, edit: Partial<EditValue>): Readonly<EditValue> {
         (this.edits.size === 0 || !this.edits.has(position.rowNode)) && this.edits.set(position.rowNode, new Map());
 
-        const currentEdit: EditValue = Object.assign({}, this._getEdit(position));
-        Object.keys(edit).forEach((key) => {
-            const value = (edit as any)[key];
-            // don't copy unset keys
-            if (value !== undefined) {
-                (currentEdit as any)[key] = value;
-            }
-        });
+        const currentEdit = { ...this._getEdit(position), ...edit } as EditValue;
 
         this.getEditRow(position.rowNode)!.set(position.column, currentEdit);
 

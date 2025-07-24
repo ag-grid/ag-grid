@@ -933,6 +933,7 @@ export {
     _createCellId,
     _isRowBefore,
     _isSameRow,
+    _getLastRow,
     _getRowNode,
     _getCellByPosition,
     _getRowAbove,
@@ -1316,7 +1317,6 @@ export { LocaleModule } from './misc/locale/localeModule';
 export { RowAutoHeightModule } from './rendering/row/rowAutoHeightModule';
 export { SharedExportModule as _SharedExportModule } from './export/exportModule';
 export { AllCommunityModule } from './allCommunityModule';
-export { setupAgTestIds } from './testing/testingModule';
 
 //  events
 export * from './events';
@@ -1367,5 +1367,5 @@ export type { ThemeDefaultParams } from './theming/parts/theme/themes';
 export type { StyleMaterialParams } from './theming/parts/theme/themes';
 
 // Testing
-
-export { agTestIdFor } from './testing/testIdUtils';
+export { setupAgTestIds } from './testing/testingModule';
+export { agTestIdFor, wrapAgTestIdFor } from './testing/testIdUtils';

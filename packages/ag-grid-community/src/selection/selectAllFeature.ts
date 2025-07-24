@@ -17,6 +17,7 @@ import {
     _isServerSideRowModel,
 } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
+import { _getAriaCheckboxStateName } from '../utils/aria';
 import { _warn } from '../validation/logging';
 import type { GridCheckbox } from '../widgets/gridWidgetTypes';
 
@@ -126,7 +127,7 @@ export class SelectAllFeature extends BeanStub {
         const translate = this.getLocaleTextFunc();
         const { headerCellCtrl, cbSelectAll, cbSelectAllVisible } = this;
         const checked = cbSelectAll.getValue();
-        const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
+        const ariaStatus = _getAriaCheckboxStateName(translate, checked);
         const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');
 
         headerCellCtrl.setAriaDescriptionProperty(

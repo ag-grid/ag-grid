@@ -2,7 +2,7 @@ import fs from 'node:fs';
 
 import { getGitDiffLinks, getHeader, getStats, parseCtrfReport } from './_utils.mjs';
 
-const ctrfReportFile = process.env.CTRF_REPORT_FILE || '../../reports/performance.json';
+const ctrfReportFile = process.env.CTRF_REPORT_FILE;
 const workflowName = process.env.WORKFLOW_NAME || '';
 const jobId = process.env.JOB_ID || '';
 const repoUrl = process.env.REPO_URL || 'https://github.com/ag-grid/ag-grid';
@@ -15,14 +15,16 @@ const previousCommitSha = process.env.PREV_COMMIT_SHA || '';
 const slackFile = process.env.SLACK_FILE || './slack.json';
 const isSuccess = process.env.IS_SUCCESS === 'true';
 const lastFailedStep = process.env.LAST_FAILED_STEP || '';
+const library = process.env.AG_LIBRARY;
 
 const jobUrl = `${repoUrl}/actions/runs/${jobId}`;
 
 const parsedReport = parseCtrfReport(ctrfReportFile);
 
-const header = getHeader(
+const title = library === 'grid' ? 'AgGrid' : 'AgCharts';
+const header = getHeader({
     isSuccess,
-    slackLink,
+    link: slackLink,
     workflowName,
     jobId,
     jobUrl,
@@ -30,8 +32,9 @@ const header = getHeader(
     bold,
     inlineCode,
     lastFailedStep,
-    section
-);
+    section,
+    title,
+});
 const diffLinks = getGitDiffLinks(
     repoUrl,
     currentCommitSha,

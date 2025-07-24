@@ -1,15 +1,43 @@
 [
     {
+        "version": "34.1.0",
+        "date": "29th June 2025",
+        "landingPageHighlight": "Tree Data with Master Detail, Test IDs, Compact Column Headers, Adding New Rows, Accessibility Improvements",
+        "highlights": [
+            {
+                "text": "Tree Data with Master Detail",
+                "path": "./master-detail-other/#tree-data"
+            },
+            {
+                "text": "Test IDs",
+                "path": "./testing/#test-ids"
+            },
+            {
+                "text": "Compact Column Headers",
+                "path": "./column-headers/#hide-padded-column-headers"
+            },
+            {
+                "text": "Adding New Rows",
+                "path": "./data-update-row-data/"
+            },
+            {
+                "text": "Accessibility Improvements"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-34-1",
+        "hideBlogPostLink": false
+    },
+    {
         "version": "34.0.2",
-        "date": "July 15th, 2025"
+        "date": "15th July 2025"
     },
     {
         "version": "34.0.1",
-        "date": "July 8th, 2025"
+        "date": "8th July 2025"
     },
     {
         "version": "34.0.0",
-        "date": "June 25th, 2025",
+        "date": "25th June 2025",
         "landingPageHighlight": "New Filters Tool Panel, Cell Editor Validation, Batch Editing, Date Picker Time Support, Tree Data Row Dragging",
         "highlights": [
             {
@@ -38,7 +66,7 @@
     },
     {
         "version": "33.3.0",
-        "date": "May 13th, 2025",
+        "date": "13th May 2025",
         "landingPageHighlight": "Row Pinning, Row Height Resizing, Grand Total Row Pinning, Scroll Column Into View, Feature Highlights",
         "highlights": [
             {
@@ -65,23 +93,23 @@
     },
     {
         "version": "33.2.4",
-        "date": "April 17th, 2025"
+        "date": "17th April 2025"
     },
     {
         "version": "33.2.3",
-        "date": "April 11th, 2025"
+        "date": "11th April 2025"
     },
     {
         "version": "33.2.2",
-        "date": "April 9th, 2025"
+        "date": "9th April 2025"
     },
     {
         "version": "33.2.1",
-        "date": "March 24th, 2025"
+        "date": "24th March 2025"
     },
     {
         "version": "33.2.0",
-        "date": "March 24th, 2025",
+        "date": "24th March 2025",
         "landingPageHighlight": "Find, Tree Data Self-Referencing Records, Status Bar Value Formatting, Row Spanning Pagination Support",
         "highlights": [
             {
@@ -109,11 +137,11 @@
     },
     {
         "version": "33.1.1",
-        "date": "February 20th, 2025"
+        "date": "20th February 2025"
     },
     {
         "version": "33.1.0",
-        "date": "February 12th, 2025",
+        "date": "12th February 2025",
         "landingPageHighlight": "Row Numbers, Row Spanning, Master/Detail Selection, Tree Data Children",
         "highlights": [
             {
@@ -141,24 +169,24 @@
     },
     {
         "version": "33.0.4",
-        "date": "January 15th, 2025"
+        "date": "15th January 2025"
     },
     {
         "version": "33.0.3",
-        "date": "December 19th, 2024"
+        "date": "19th December 2024"
     },
     {
         "version": "33.0.2",
-        "date": "December 13th, 2024"
+        "date": "13th December 2024"
     },
     {
         "version": "33.0.1",
-        "date": "December 11th, 2024",
+        "date": "11th December 2024",
         "noDocs": true
     },
     {
         "version": "33.0.0",
-        "date": "December 11th, 2024",
+        "date": "11th December 2024",
         "landingPageHighlight": "Bundle Size Improvements, Context Menu Async Support, Default Column Header Customisation",
         "highlights": [
             {
@@ -185,35 +213,35 @@
     },
     {
         "version": "32.3.7",
-        "date": "April 28th, 2025"
+        "date": "28th April 2025"
     },
     {
         "version": "32.3.6",
-        "date": "April 11th, 2025"
+        "date": "11th April 2025"
     },
     {
         "version": "32.3.5",
-        "date": "April 9th, 2025"
+        "date": "9th April 2025"
     },
     {
         "version": "32.3.4",
-        "date": "March 10th, 2025"
+        "date": "10th March 2025"
     },
     {
         "version": "32.3.3",
-        "date": "November 13th, 2024"
+        "date": "13th November 2024"
     },
     {
         "version": "32.3.2",
-        "date": "October 30th, 2024"
+        "date": "30th October 2024"
     },
     {
         "version": "32.3.1",
-        "date": "October 28th, 2024"
+        "date": "28th October 2024"
     },
     {
         "version": "32.3.0",
-        "date": "October 22nd, 2024",
+        "date": "22nd October 2024",
         "landingPageHighlight": "Quality Improvements",
         "highlights": [
             {
@@ -225,15 +253,15 @@
     },
     {
         "version": "32.2.2",
-        "date": "October 7th, 2024"
+        "date": "7th October 2024"
     },
     {
         "version": "32.2.1",
-        "date": "September 26th, 2024"
+        "date": "26th September 2024"
     },
     {
         "version": "32.2.0",
-        "date": "September 17th, 2024",
+        "date": "17th September 2024",
         "landingPageHighlight": "React 19 Support, new Theming API & Custom Drag & Drop Image",
         "highlights": [
             {
@@ -261,7 +289,7 @@
     },
     {
         "version": "32.1.0",
-        "date": "August 8th, 2024",
+        "date": "8th August 2024",
         "landingPageHighlight": "New SSRM, Column Group & Excel Export Features",
         "highlights": [
             {
@@ -288,15 +316,15 @@
     },
     {
         "version": "32.0.2",
-        "date": "July 12th, 2024"
+        "date": "12th July 2024"
     },
     {
         "version": "32.0.1",
-        "date": "July 9th, 2024"
+        "date": "9th July 2024"
     },
     {
         "version": "32.0.0",
-        "date": "July 1st, 2024",
+        "date": "1st July 2024",
         "highlights": [
             {
                 "text": "Rich Select Editor Multi Selection Support",
@@ -322,15 +350,15 @@
     },
     {
         "version": "31.3.4",
-        "date": "July 16th, 2024"
+        "date": "16th July 2024"
     },
     {
         "version": "31.3.2",
-        "date": "May 15th, 2024"
+        "date": "15th May 2024"
     },
     {
         "version": "31.3.1",
-        "date": "April 30th, 2024",
+        "date": "30th April 2024",
         "highlights": [
             {
                 "text": "Sticky Group Total and Grand Total Rows",
@@ -358,16 +386,16 @@
     },
     {
         "version": "31.3.0",
-        "date": "April 30th, 2024"
+        "date": "30th April 2024"
     },
     {
         "version": "31.2.1",
-        "date": "April 10th, 2024",
+        "date": "10th April 2024",
         "noDocs": true
     },
     {
         "version": "31.2.0",
-        "date": "March 20th, 2024",
+        "date": "20th March 2024",
         "highlights": [
             {
                 "text": "Integrated Enterprise Charts Menu Redesign",
@@ -394,12 +422,12 @@
     },
     {
         "version": "31.1.1",
-        "date": "February 22nd, 2024",
+        "date": "22nd February 2024",
         "noDocs": true
     },
     {
         "version": "31.1.0",
-        "date": "February 20th, 2024",
+        "date": "20th February 2024",
         "highlights": [
             {
                 "text": "Integrated Charts Use All AG Charts Enterprise Features",
@@ -426,20 +454,20 @@
     },
     {
         "version": "31.0.3",
-        "date": "January 25th, 2024",
+        "date": "25th January 2024",
         "noDocs": true
     },
     {
         "version": "31.0.2",
-        "date": "January 16th, 2024"
+        "date": "16th January 2024"
     },
     {
         "version": "31.0.1",
-        "date": "December 11th, 2023"
+        "date": "11th December 2023"
     },
     {
         "version": "31.0.0",
-        "date": "November 29th, 2023",
+        "date": "29th November 2023",
         "highlights": [
             {
                 "text": "Save/Restore the Initial Grid State as a Single Object",
@@ -466,12 +494,12 @@
     },
     {
         "version": "30.2.1",
-        "date": "November 2nd, 2023",
+        "date": "2nd November 2023",
         "noDocs": true
     },
     {
         "version": "30.2.0",
-        "date": "September 26th, 2023",
+        "date": "26th September 2023",
         "highlights": [
             {
                 "text": "Advanced Filter Builder UI for Building Filter Expressions",
@@ -522,30 +550,30 @@
     },
     {
         "version": "30.0.6",
-        "date": "July 31st, 2023"
+        "date": "31st July 2023"
     },
     {
         "version": "30.0.5",
-        "date": "July 18th, 2023"
+        "date": "18th July 2023"
     },
     {
         "version": "30.0.3",
-        "date": "July 4th, 2023",
+        "date": "4th July 2023",
         "noDocs": true
     },
     {
         "version": "30.0.2",
-        "date": "June 19th, 2023",
+        "date": "19th June 2023",
         "noDocs": true
     },
     {
         "version": "30.0.1",
-        "date": "June 16th, 2023",
+        "date": "16th June 2023",
         "noDocs": true
     },
     {
         "version": "30.0.0",
-        "date": "June 19th, 2023",
+        "date": "19th June 2023",
         "highlights": [
             {
                 "text": "Cell Data Types With Automatic Type Inference",
@@ -571,28 +599,28 @@
     },
     {
         "version": "29.3.5",
-        "date": "May 15th, 2023"
+        "date": "15th May 2023"
     },
     {
         "version": "29.3.4",
-        "date": "May 4th, 2023"
+        "date": "4th May 2023"
     },
     {
         "version": "29.3.3",
-        "date": "April 25th, 2023"
+        "date": "25th April 2023"
     },
     {
         "version": "29.3.2",
-        "date": "April 21st, 2023",
+        "date": "21st April 2023",
         "noDocs": true
     },
     {
         "version": "29.3.1",
-        "date": "April 21st, 2023"
+        "date": "21st April 2023"
     },
     {
         "version": "29.3.0",
-        "date": "April 20th, 2023",
+        "date": "20th April 2023",
         "highlights": [
             {
                 "text": "Sticky Group Rows for Master-Detail, Tree Data and Server-Side Row Model",
@@ -615,7 +643,7 @@
     },
     {
         "version": "29.2.0",
-        "date": "March 21st, 2023",
+        "date": "21st March 2023",
         "highlights": [
             {
                 "text": "Header Checkbox and Group Selection when Using Server-Side Row Model",
@@ -639,265 +667,265 @@
     },
     {
         "version": "29.1.0",
-        "date": "February 17th, 2023"
+        "date": "17th February 2023"
     },
     {
         "version": "29.0.0",
-        "date": "January 13th, 2023",
+        "date": "13th January 2023",
         "notesPath": "./upgrading-to-ag-grid-29"
     },
     {
         "version": "28.2.1",
-        "date": "November 2nd, 2022"
+        "date": "2nd November 2022"
     },
     {
         "version": "28.2.0",
-        "date": "October 4th, 2022",
+        "date": "4th October 2022",
         "noDocs": true
     },
     {
         "version": "28.1.1",
-        "date": "August 23rd, 2022"
+        "date": "23rd August 2022"
     },
     {
         "version": "28.1.0",
-        "date": "August 3rd, 2022"
+        "date": "3rd August 2022"
     },
     {
         "version": "28.0.2",
-        "date": "July 8th, 2022",
+        "date": "8th July 2022",
         "noDocs": true
     },
     {
         "version": "28.0.1",
-        "date": "July 8th, 2022",
+        "date": "8th July 2022",
         "noDocs": true
     },
     {
         "version": "28.0.0",
-        "date": "July 6th, 2022",
+        "date": "6th July 2022",
         "notesPath": "./upgrading-to-ag-grid-28"
     },
     {
         "version": "27.3.0",
-        "date": "May 17th, 2022"
+        "date": "17th May 2022"
     },
     {
         "version": "27.2.1",
-        "date": "April 20th, 2022",
+        "date": "20th April 2022",
         "noDocs": true
     },
     {
         "version": "27.2.0",
-        "date": "April 19th, 2022"
+        "date": "19th April 2022"
     },
     {
         "version": "27.1.0",
-        "date": "March 15th, 2022"
+        "date": "15th March 2022"
     },
     {
         "version": "27.0.1",
-        "date": "February 22nd, 2022"
+        "date": "22nd February 2022"
     },
     {
         "version": "27.0.0",
-        "date": "February 8th, 2022",
+        "date": "8th February 2022",
         "notesPath": "./upgrading-to-ag-grid-27"
     },
     {
         "version": "26.2.1",
-        "date": "December 17th, 2021",
+        "date": "17th December 2021",
         "noDocs": true
     },
     {
         "version": "26.2.0",
-        "date": "November 17th, 2021"
+        "date": "17th November 2021"
     },
     {
         "version": "26.1.0",
-        "date": "October 1st, 2021"
+        "date": "1st October 2021"
     },
     {
         "version": "26.0.0",
-        "date": "August 18th, 2021",
+        "date": "18th August 2021",
         "notesPath": "./upgrading-to-ag-grid-26"
     },
     {
         "version": "25.3.0",
-        "date": "July 14th, 2021"
+        "date": "14th July 2021"
     },
     {
         "version": "25.2.1",
-        "date": "May 4th, 2021",
+        "date": "4th May 2021",
         "noDocs": true
     },
     {
         "version": "25.2.0",
-        "date": "April 30th, 2021"
+        "date": "30th April 2021"
     },
     {
         "version": "25.1.0",
-        "date": "February 25th, 2021"
+        "date": "25th February 2021"
     },
     {
         "version": "25.0.1",
-        "date": "January 15th, 2021",
+        "date": "15th January 2021",
         "noDocs": true
     },
     {
         "version": "25.0.0",
-        "date": "January 6th, 2021"
+        "date": "6th January 2021"
     },
     {
         "version": "24.1.0",
-        "date": "October 13th, 2020"
+        "date": "13th October 2020"
     },
     {
         "version": "24.0.0",
-        "date": "September 9th, 2020"
+        "date": "9th September 2020"
     },
     {
         "version": "23.2.1",
-        "date": "June 18th, 2020",
+        "date": "18th June 2020",
         "noDocs": true
     },
     {
         "version": "23.2.0",
-        "date": "June 5th, 2020"
+        "date": "5th June 2020"
     },
     {
         "version": "23.1.1",
-        "date": "May 14th, 2020"
+        "date": "14th May 2020"
     },
     {
         "version": "23.1.0",
-        "date": "May 1st, 2020"
+        "date": "1st May 2020"
     },
     {
         "version": "23.0.2",
-        "date": "March 25th, 2020"
+        "date": "25th March 2020"
     },
     {
         "version": "23.0.1",
-        "date": "March 17th, 2020",
+        "date": "17th March 2020",
         "noDocs": true
     },
     {
         "version": "23.0.0",
-        "date": "March 17th, 2020"
+        "date": "17th March 2020"
     },
     {
         "version": "22.1.1",
-        "date": "December 16th, 2019"
+        "date": "16th December 2019"
     },
     {
         "version": "22.1.0",
-        "date": "December 6th, 2019"
+        "date": "6th December 2019"
     },
     {
         "version": "22.0.0",
-        "date": "November 11th, 2019"
+        "date": "11th November 2019"
     },
     {
         "version": "21.2.2",
-        "date": "September 27th, 2019"
+        "date": "27th September 2019"
     },
     {
         "version": "21.2.1",
-        "date": "September 6th, 2019"
+        "date": "6th September 2019"
     },
     {
         "version": "21.2.0",
-        "date": "August 30th, 2019"
+        "date": "30th August 2019"
     },
     {
         "version": "21.1.1",
-        "date": "July 31st, 2019",
+        "date": "31st July 2019",
         "noDocs": true
     },
     {
         "version": "21.1.0",
-        "date": "July 18th, 2019"
+        "date": "18th July 2019"
     },
     {
         "version": "21.0.1",
-        "date": "June 7th, 2019"
+        "date": "7th June 2019"
     },
     {
         "version": "21.0.0",
-        "date": "June 4th, 2019"
+        "date": "4th June 2019"
     },
     {
         "version": "20.2.0",
-        "date": "March 22nd, 2019"
+        "date": "22nd March 2019"
     },
     {
         "version": "20.1.0",
-        "date": "February 22nd, 2019"
+        "date": "22nd February 2019"
     },
     {
         "version": "20.0.0",
-        "date": "January 11th, 2019"
+        "date": "11th January 2019"
     },
     {
         "version": "19.1.4",
-        "date": "November 23rd, 2018"
+        "date": "23rd November 2018"
     },
     {
         "version": "19.1.3",
-        "date": "November 20th, 2018",
+        "date": "20th November 2018",
         "noDocs": true
     },
     {
         "version": "19.1.2",
-        "date": "November 9th, 2018",
+        "date": "9th November 2018",
         "noDocs": true
     },
     {
         "version": "19.1.1",
-        "date": "October 31st, 2018",
+        "date": "31st October 2018",
         "noDocs": true
     },
     {
         "version": "19.1.0",
-        "date": "October 31st, 2018",
+        "date": "31st October 2018",
         "noDocs": true
     },
     {
         "version": "19.0.0",
-        "date": "September 7th, 2018"
+        "date": "7th September 2018"
     },
     {
         "version": "18.1.2",
-        "date": "August 21st, 2018",
+        "date": "21st August 2018",
         "noDocs": true
     },
     {
         "version": "18.1.0",
-        "date": "July 4th, 2018"
+        "date": "4th July 2018"
     },
     {
         "version": "17.1.1",
-        "date": "April 17th, 2018"
+        "date": "17th April 2018"
     },
     {
         "version": "17.0.0",
-        "date": "March 8th, 2018"
+        "date": "8th March 2018"
     },
     {
         "version": "16.0.0",
-        "date": "January 29th, 2018"
+        "date": "29th January 2018"
     },
     {
         "version": "15.0.0",
-        "date": "December 13th, 2017"
+        "date": "13th December 2017"
     },
     {
         "version": "14.1.0",
-        "date": "November 8th, 2017"
+        "date": "8th November 2017"
     },
     {
         "version": "14.0.0",
-        "date": "November 2nd, 2017"
+        "date": "2nd November 2017"
     }
 ]

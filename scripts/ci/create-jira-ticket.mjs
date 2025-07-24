@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { addJiraComment, commonFetch, transitionJiraIssue } from './_utils.mjs';
+import { addJiraComment, commonFetch, jiraLink, transitionJiraIssue } from './_utils.mjs';
 
 const TRANSITIONS = [
     { id: '21', name: 'TODO' },
@@ -51,7 +51,8 @@ const link = (text, url) => ({
     text: text,
     marks: [{ type: 'link', attrs: { href: url, title: text } }],
 });
-const AUTOMATED_MESSAGE = [
+const AUTOMATED_MESSAGE = `[This issue/comment was ${jiraLink('automatically created', ACTION_URL)} by the AG Grid CI workflow.]`;
+const AUTOMATED_MESSAGE_BLOCKS = [
     paragraph([
         txt(`[This issue/comment was `),
         link('automatically created', ACTION_URL),
@@ -75,7 +76,7 @@ if (isSuccess) {
             await addJiraComment(existingIssue.key, {
                 content: [
                     paragraph([txt(`Transitioned to ${TRANSITIONS_MAP['READY TO VERIFY'].name}.`)]),
-                    AUTOMATED_MESSAGE,
+                    AUTOMATED_MESSAGE_BLOCKS,
                 ],
                 type: 'doc',
                 version: 1,
@@ -107,7 +108,7 @@ if (isSuccess) {
                             `New failure detected${shouldAddComment ? ', reopening this issue' : ''}:\n\n${description}`
                         ),
                     ]),
-                    AUTOMATED_MESSAGE,
+                    AUTOMATED_MESSAGE_BLOCKS,
                 ],
                 type: 'doc',
                 version: 1,
@@ -133,11 +134,7 @@ async function createJiraIssue() {
         fields: {
             project: { key: PROJECT_ID },
             summary: summary,
-            description: {
-                content: [paragraph([txt(description)]), paragraph([txt('No QA needed')]), AUTOMATED_MESSAGE],
-                type: 'doc',
-                version: 1,
-            },
+            description: description + `\n\nNo QA needed\n\n${AUTOMATED_MESSAGE}`,
             issuetype: { name: 'Bug' },
             assignee: {
                 accountId:

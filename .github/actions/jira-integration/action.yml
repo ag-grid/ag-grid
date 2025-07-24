@@ -28,7 +28,7 @@ runs:
       id: last-failed-step
       if: ${{ failure() && !inputs.IS_SUCCESS }}
       continue-on-error: true
-      uses: ./.github/actions/get-last-failed-step
+      uses: ./external/ag-shared/github/actions/get-last-failed-step
       with:
         JOB_ID: ${{ github.run_id }}
         REPO_NAME: ${{ github.repository }}
