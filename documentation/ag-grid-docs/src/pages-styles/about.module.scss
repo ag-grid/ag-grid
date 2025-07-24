@@ -101,6 +101,10 @@
         gap: $spacing-size-12;
         align-items: center;
 
+        svg {
+            width: 24px;
+            height: 24px;
+        }
         img {
             max-width: 200px;
         }
@@ -678,6 +682,9 @@
 
     #{$selector-darkmode} & {
         color: var(--color-link);
+        &:hover {
+            color: var(--color-link);
+        }
     }
 }
 
