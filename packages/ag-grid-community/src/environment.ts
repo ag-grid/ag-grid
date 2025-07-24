@@ -290,6 +290,10 @@ export class Environment
     protected override getDefaultTheme(): Theme {
         return themeQuartz;
     }
+
+    protected override themeError(theme: Theme | 'legacy'): void {
+        _error(240, { theme });
+    }
 }
 
 type Variable = {

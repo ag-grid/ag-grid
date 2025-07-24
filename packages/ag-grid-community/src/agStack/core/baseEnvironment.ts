@@ -13,7 +13,6 @@ import {
     _unregisterInstanceUsingThemingAPI,
 } from '../theming/inject';
 import { _createAgElement } from '../utils/domUtils';
-import { _agError } from '../utils/logUtils';
 import { AgBeanStub } from './agBeanStub';
 
 let paramsId = 0;
@@ -55,6 +54,8 @@ export abstract class BaseEnvironment<
     protected abstract postProcessThemeChange(newTheme: ThemeImpl | undefined, themeProperty?: Theme | 'legacy'): void;
 
     protected abstract getDefaultTheme(): Theme;
+
+    protected abstract themeError(theme: Theme | 'legacy'): void;
 
     public postConstruct(): void {
         const { gos, eRootDiv } = this;
@@ -133,7 +134,7 @@ export abstract class BaseEnvironment<
             if (themeOrDefault instanceof ThemeImpl) {
                 newTheme = themeOrDefault;
             } else {
-                _agError(240, { theme: themeOrDefault });
+                this.themeError(themeOrDefault);
             }
         }
         if (newTheme !== oldTheme) {

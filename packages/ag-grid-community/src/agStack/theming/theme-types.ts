@@ -1,5 +1,5 @@
-import { _agError } from '../utils/logUtils';
 import { clamp, memoize, paramToVariableExpression } from './theme-utils';
+import type { ThemeLogger } from './themeLogger';
 
 export type Feature = 'colorScheme' | 'iconSet' | 'checkboxStyle' | 'inputStyle' | 'tabStyle';
 
@@ -373,11 +373,11 @@ export const imageValueToCss = (value: ImageValue): string | false => {
  */
 export type DurationValue = number | string | { ref: string };
 
-export const durationValueToCss = (value: DurationValue, param: string): string | false => {
+export const durationValueToCss = (value: DurationValue, param: string, themeLogger: ThemeLogger): string | false => {
     if (typeof value === 'string') return value;
     if (typeof value === 'number') {
         if (value >= 10) {
-            _agError(104, { value, param });
+            themeLogger.warn(104, { value, param });
         }
         return `${value}s`;
     }
@@ -385,21 +385,22 @@ export const durationValueToCss = (value: DurationValue, param: string): string 
     return false;
 };
 
-const paramValidators: Record<ParamType, (value: unknown, param: string) => string | false> = {
-    color: colorValueToCss,
-    colorScheme: colorSchemeValueToCss,
-    length: lengthValueToCss,
-    scale: scaleValueToCss,
-    border: borderValueToCss,
-    borderStyle: borderStyleValueToCss,
-    shadow: shadowValueToCss,
-    image: imageValueToCss,
-    fontFamily: fontFamilyValueToCss,
-    fontWeight: fontWeightValueToCss,
-    duration: durationValueToCss,
-};
+const paramValidators: Record<ParamType, (value: unknown, param: string, themeLogger: ThemeLogger) => string | false> =
+    {
+        color: colorValueToCss,
+        colorScheme: colorSchemeValueToCss,
+        length: lengthValueToCss,
+        scale: scaleValueToCss,
+        border: borderValueToCss,
+        borderStyle: borderStyleValueToCss,
+        shadow: shadowValueToCss,
+        image: imageValueToCss,
+        fontFamily: fontFamilyValueToCss,
+        fontWeight: fontWeightValueToCss,
+        duration: durationValueToCss,
+    };
 
-export const paramValueToCss = (param: string, value: unknown): string | false => {
+export const paramValueToCss = (param: string, value: unknown, themeLogger: ThemeLogger): string | false => {
     const type = getParamType(param);
-    return paramValidators[type](value, param);
+    return paramValidators[type](value, param, themeLogger);
 };

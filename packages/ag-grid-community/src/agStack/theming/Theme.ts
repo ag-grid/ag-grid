@@ -1,4 +1,3 @@
-import { _agError, _agLogPreInitErr } from '../utils/logUtils';
 import type { Part } from './Part';
 import { PartImpl, createPart, defaultModeName } from './Part';
 import { IS_SSR, _injectCoreAndModuleCSS, _injectGlobalCSS } from './inject';
@@ -7,6 +6,7 @@ import type { SharedThemeParams } from './shared/shared-css';
 import type { WithParamTypes } from './theme-types';
 import { paramValueToCss } from './theme-types';
 import { paramToVariableName } from './theme-utils';
+import type { ThemeLogger } from './themeLogger';
 
 // For testing, if true, only Vanilla examples will work and they will use legacy themes.
 export const FORCE_LEGACY_THEMES = false;
@@ -43,7 +43,8 @@ export const _asThemeImpl = <TParams>(theme: Theme<TParams>): ThemeImpl => {
     return theme;
 };
 
-export const createSharedTheme = <TParams extends SharedThemeParams>(): Theme<TParams> => new ThemeImpl();
+export const createSharedTheme = <TParams extends SharedThemeParams>(themeLogger: ThemeLogger): Theme<TParams> =>
+    new ThemeImpl(themeLogger);
 
 type themeUseArgs = {
     loadThemeGoogleFonts: boolean | undefined;
@@ -54,16 +55,19 @@ type themeUseArgs = {
 };
 
 export class ThemeImpl {
-    constructor(readonly parts: PartImpl[] = []) {}
+    constructor(
+        private readonly themeLogger: ThemeLogger,
+        readonly parts: PartImpl[] = []
+    ) {}
 
     withPart(part: Part | (() => Part)): ThemeImpl {
         if (typeof part === 'function') part = part();
         if (!(part instanceof PartImpl)) {
             // Can't use validation service as this is API is designed to be used before modules are registered
-            _agLogPreInitErr(259, { part }, 'Invalid part');
+            this.themeLogger.preInitErr(259, 'Invalid part', { part });
             return this;
         }
-        return new ThemeImpl([...this.parts, part]);
+        return new ThemeImpl(this.themeLogger, [...this.parts, part]);
     }
 
     withoutPart(feature: string): ThemeImpl {
@@ -208,9 +212,9 @@ export class ThemeImpl {
                 }
                 for (const key of Object.keys(params).sort()) {
                     const value = params[key];
-                    const cssValue = paramValueToCss(key, value);
+                    const cssValue = paramValueToCss(key, value, this.themeLogger);
                     if (cssValue === false) {
-                        _agError(107, { key, value });
+                        this.themeLogger.error(107, { key, value });
                     } else {
                         const cssName = paramToVariableName(key);
                         const inheritedName = cssName.replace('--ag-', '--ag-inherited-');
