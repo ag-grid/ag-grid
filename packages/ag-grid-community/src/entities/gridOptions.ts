@@ -423,6 +423,10 @@ export interface GridOptions<TData = any> {
      * The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.
      */
     pivotGroupHeaderHeight?: number;
+    /**
+     * Hide any column header rows that would only contain padded groups.
+     */
+    hidePaddedHeaderRows?: boolean;
 
     // *** Column Moving *** //
     /**
@@ -519,6 +523,11 @@ export interface GridOptions<TData = any> {
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     editType?: EditStrategyType;
+
+    /**
+     * Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
+     */
+    suppressStartEditOnTab?: boolean;
 
     /**
      * Validates the Full Row Edit. Only relevant when `editType="fullRow"`.

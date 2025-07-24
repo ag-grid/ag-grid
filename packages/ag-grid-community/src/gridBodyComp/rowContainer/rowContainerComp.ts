@@ -43,7 +43,7 @@ function getElementParams(name: RowContainerName, options: RowContainerOptions, 
     return eContainerElement;
 }
 
-export class RowContainerComp extends Component {
+class RowContainerComp extends Component {
     private readonly eViewport: HTMLElement = RefPlaceholder;
     private readonly eContainer: HTMLElement = RefPlaceholder;
     private readonly eSpannedContainer: HTMLElement = RefPlaceholder;

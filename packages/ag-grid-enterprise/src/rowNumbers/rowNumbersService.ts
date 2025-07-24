@@ -47,13 +47,19 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     private isSuppressCellSelectionIntegration: boolean;
 
     private rowNumberOverrides: RowNumbersOptions;
+    private lastColumnResized: number = 0;
 
     public postConstruct(): void {
-        const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this, false, true), 10);
+        const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this), 10);
         this.addManagedEventListeners({
-            modelUpdated: refreshCells_debounced,
+            columnResized: () => {
+                this.lastColumnResized = Date.now();
+            },
+            modelUpdated: (params) => {
+                refreshCells_debounced(false, !params.keepRenderedRows);
+            },
             rangeSelectionChanged: () => this.refreshCells(true),
-            pinnedRowsChanged: refreshCells_debounced,
+            pinnedRowsChanged: () => refreshCells_debounced(false, true),
         });
 
         this.addManagedPropertyListeners(['rowNumbers', 'cellSelection'], (e: PropertyValueChangedEvent<any>) => {
@@ -247,8 +253,12 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         _selectAllCells(this.beans);
     }
 
-    private onHeaderClick(): void {
-        if (!this.isIntegratedWithSelection) {
+    private onHeaderClick(_e: MouseEvent): void {
+        if (
+            Date.now() - this.lastColumnResized < 100 ||
+            !this.isIntegratedWithSelection ||
+            this.getColumn()?.resizing
+        ) {
             return;
         }
         _selectAllCells(this.beans);

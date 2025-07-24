@@ -1,9 +1,14 @@
 {
     "groups": [
         {
-            "moduleName": "ValidationModule",
-            "name": "Validation (Dev Mode)",
-            "path": "modules/#validation"
+            "name": "Development and Testing",
+            "children": [
+                {
+                    "moduleName": "ValidationModule",
+                    "name": "Validation (Dev Mode)",
+                    "path": "modules/#development-validations"
+                }
+            ]
         },
         {
             "name": "Columns",

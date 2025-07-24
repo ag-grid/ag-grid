@@ -1,4 +1,4 @@
-import { Component, _getRowNode } from 'ag-grid-community';
+import { Component, Direction, _getRowNode } from 'ag-grid-community';
 import type { CellCtrl, ElementParams, RowNode } from 'ag-grid-community';
 
 const RowNumbersRowResizerElement: ElementParams = {
@@ -29,6 +29,8 @@ export class AgRowNumbersRowResizer extends Component {
             onDragging: this.onDragging.bind(this),
             onDragStop: this.onDragStop.bind(this),
             onDragCancel: this.onDragCancel.bind(this),
+            includeTouch: true,
+            stopPropagationForTouch: true,
         });
 
         const rowPosition = cellCtrl.getRowPosition();
@@ -41,9 +43,16 @@ export class AgRowNumbersRowResizer extends Component {
             return;
         }
 
+        const {
+            beans: { ctrlsSvc, eventSvc },
+        } = this;
+
+        const ctrl = ctrlsSvc.get('gridCtrl');
+        ctrl.setResizeCursor(Direction.Vertical);
+
         this.dragging = true;
         this.initialHeight = this.node.rowHeight as number;
-        this.beans.eventSvc.dispatchEvent({
+        eventSvc.dispatchEvent({
             type: 'rowResizeStarted',
             node: this.node,
             event: mouseEvent,
@@ -52,7 +61,11 @@ export class AgRowNumbersRowResizer extends Component {
     }
 
     private onDragging(mouseEvent: MouseEvent | Touch): void {
-        const { clientY } = mouseEvent;
+        let { clientY } = mouseEvent;
+
+        if (this.cellCtrl.rowNode.rowPinned === 'bottom') {
+            clientY *= -1;
+        }
 
         if (this.initialYPosition === -1 || !this.dragging) {
             this.initialYPosition = clientY;
@@ -93,21 +106,26 @@ export class AgRowNumbersRowResizer extends Component {
             rowHeight: this.node?.rowHeight as number,
         });
 
-        this.clearDragDetails();
+        this.clearDragDetails(true);
     }
 
     private onDragCancel(): void {
-        this.clearDragDetails();
+        this.clearDragDetails(true);
     }
 
-    private clearDragDetails(): void {
+    private clearDragDetails(fromDragEvent: boolean): void {
         this.initialYPosition = -1;
         this.initialHeight = null;
         this.dragging = false;
+
+        if (fromDragEvent) {
+            const ctrl = this.beans.ctrlsSvc.get('gridCtrl');
+            ctrl.setResizeCursor(false);
+        }
     }
 
     public override destroy(): void {
-        this.clearDragDetails();
+        this.clearDragDetails(false);
         this.node = undefined;
         super.destroy();
     }

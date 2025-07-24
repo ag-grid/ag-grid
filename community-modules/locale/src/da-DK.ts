@@ -603,7 +603,6 @@ export const AG_GRID_LOCALE_DK = {
     ariaLabelSelectField: 'Vælg felt',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Celleditor',
     ariaValidationErrorPrefix: 'Celleditorvalidering',
     ariaLabelLoadingContextMenu: 'Indlæser kontekstmenu',
 

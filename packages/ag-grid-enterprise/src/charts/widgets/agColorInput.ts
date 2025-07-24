@@ -6,7 +6,7 @@ import { AgInputTextField, RefPlaceholder } from 'ag-grid-community';
 import type { AgChartsExports } from '../agChartsExports';
 import type { ChartTranslationService } from '../chartComp/services/chartTranslationService';
 
-export type AgColorInputEvent = 'colorChanged';
+type AgColorInputEvent = 'colorChanged';
 const AgColorInputElement: ElementParams = {
     tag: 'div',
     cls: 'ag-color-input',

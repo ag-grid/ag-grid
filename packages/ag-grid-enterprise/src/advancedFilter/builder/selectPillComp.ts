@@ -9,7 +9,7 @@ import {
 import { AgRichSelect } from '../../widgets/agRichSelect';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 
-export interface SelectPillParams extends RichSelectParams<AutocompleteEntry> {
+interface SelectPillParams extends RichSelectParams<AutocompleteEntry> {
     getEditorParams: () => { values?: any[] };
     wrapperClassName: string;
     ariaLabel: string;

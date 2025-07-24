@@ -253,6 +253,8 @@ const gridOptions = {
 
 When you refresh the values, any values that were selected in the filter that still exist in the new values will stay selected, but any other selected values will be discarded.
 
+Additionally, if all the new values are selected (and the filter was previously active), the filter model will be cleared (reset to `null`). This behaviour can be prevented by setting the filter param `suppressClearModelOnRefreshValues = true`. This can be useful if using [Server-Side Row Model Filtering](./server-side-model-filtering/#set-filtering) and updating the filter values based on other column filters
+
 The following example demonstrates refreshing values. Note the following:
 
 * The Values Array column has values provided as an array. Clicking the buttons to change the values will update the values in the array provided to the filter and call `refreshFilterValues()` to immediately refresh the filter for the column.

@@ -6,11 +6,6 @@ import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import { _normalisePinnedValue } from './spannedRowRenderer';
 
-export const _doesColumnSpan = (column: AgColumn) => {
-    // todo replace with new row spanning
-    return column.colDef.rowSpan;
-};
-
 export class CellSpan {
     // used for distinguishing between types
     public readonly cellSpan = true;

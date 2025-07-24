@@ -37,13 +37,27 @@ Below shows a simple Master / Detail setup which has filtering and sorting enabl
 
 {% gridExampleRunner title="Filtering with Sort" name="filtering-with-sort"  exampleHeight=550 /%}
 
-## Supported Modes
+## Grouping
 
-The Master / Detail feature organises the grid in a way which overlaps with other features. For this reason, Master / Detail does not work with certain grid configurations. These configurations are as follows:
+The Master / Detail is supported with [Row Grouping](./grouping/).
+Only leaf nodes can be master rows.
 
-### Tree Data
+{% gridExampleRunner title="Grouping with Master Detail" name="grouping-master-detail"  exampleHeight=550 /%}
 
-Master / Detail is not supported with [Tree Data](./tree-data/). This is because the concept of tree data conflicts with Master / Detail, in that in tree data, any row can expand to show child rows, which would result in a clash when a row has child rows in addition to having Master / Detail at the same row.
+## Tree Data
+
+The Master / Detail is supported with [Tree Data](./tree-data/).
+Both leaf nodes and parents can be master rows.
+If a group is also a master row, the detail grid will be shown before the children of the parent.
+
+{% note %}
+Master / Detail will by default show the details for every row, even tree parents.
+To only show details for leaf nodes, provide the `isRowMaster` callback to return true for leaf nodes only.
+
+When using [Tree Data Paths](.//tree-data-paths), filler nodes cannot be master rows and isRowMaster will not be called for them.
+{% /note %}
+
+{% gridExampleRunner title="Tree Data with Master Detail" name="tree-data-master-detail"  exampleHeight=550 /%}
 
 ### Layouts
 

@@ -603,7 +603,6 @@ export const AG_GRID_LOCALE_HR = {
     ariaLabelSelectField: 'Odaberi polje',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Uređivač ćelija',
     ariaValidationErrorPrefix: 'Validacija Uređivača ćelija',
     ariaLabelLoadingContextMenu: 'Učitavanje kontekstnog izbornika',
 

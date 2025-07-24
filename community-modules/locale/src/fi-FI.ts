@@ -602,7 +602,6 @@ export const AG_GRID_LOCALE_FI = {
     ariaLabelSelectField: 'Valitse kenttä',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Solumuokkain',
     ariaValidationErrorPrefix: 'Solumuokkaimen vahvistus',
     ariaLabelLoadingContextMenu: 'Ladataan kontekstivalikkoa',
 

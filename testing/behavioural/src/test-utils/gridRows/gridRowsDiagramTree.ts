@@ -1,4 +1,4 @@
-import type { Column, IRowNode, RowNode } from 'ag-grid-community';
+import type { Column, RowNode } from 'ag-grid-community';
 
 import { optionalEscapeString, rowIdAndIndexToString, rowIdToString } from '../grid-test-utils';
 import type { GridRows } from './gridRows';
@@ -52,26 +52,30 @@ export class GridRowsDiagramTree {
         }
     }
 
-    public getNodeType(gridRows: GridRows, row: IRowNode): string {
+    public getNodeType(gridRows: GridRows, row: RowNode): string {
         if (row.level === -1 && row === gridRows.rootRowNode) {
             return 'ROOT';
         }
         if (row.footer) {
             return 'footer';
         }
-        if (!row.data) {
-            return 'filler';
+        const values: string[] = [];
+        if (row.master) {
+            values.push('master');
         }
         if (row.detail) {
-            return 'detail';
+            values.push('detail');
+        } else {
+            if (row.group && !row.data) {
+                values.push('filler');
+            } else if (row.group || row.childrenAfterGroup?.length || row.hasChildren()) {
+                values.push('GROUP');
+            }
         }
-        if (row.master) {
-            return 'master';
+        if (values.length > 0) {
+            return values.join('-');
         }
-        if (row.childrenAfterGroup?.length) {
-            return 'GROUP';
-        }
-        return 'LEAF';
+        return row.data ? 'LEAF' : 'filler';
     }
 
     public getDiagramRoot(gridRows: GridRows): GridRowsDiagramNode {
@@ -228,7 +232,7 @@ export class GridRowsDiagramTree {
         } else if (selectionState === undefined) {
             result += 'indeterminate ';
         }
-        if (row.level >= 0 && !row.expanded && (row.group || row.master)) {
+        if (row.level >= 0 && !row.expanded && (row.group || row.master || row.isExpandable())) {
             result += 'collapsed ';
         }
         if (!gridRows.isRowDisplayed(row) && row !== gridRows.rootRowNode) {

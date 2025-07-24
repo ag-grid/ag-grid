@@ -389,11 +389,11 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                 let currentPaddedGroup: AgProvidedColumnGroup | undefined;
 
                 // this for loop will NOT run any loops if no padded column groups are needed
-                for (let j = columnDepth - 1; j >= currentDepth; j--) {
+                for (let j = currentDepth; j < columnDepth; j++) {
                     const newColId = columnKeyCreator.getUniqueKey(null, null);
                     const colGroupDefMerged = createMergedColGroupDef(this.beans, null, newColId);
 
-                    const paddedGroup = new AgProvidedColumnGroup(colGroupDefMerged, newColId, true, currentDepth);
+                    const paddedGroup = new AgProvidedColumnGroup(colGroupDefMerged, newColId, true, j);
                     this.createBean(paddedGroup);
 
                     if (currentPaddedGroup) {
@@ -571,6 +571,10 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         parent: AgColumnGroup | null
     ): void {
         columnsOrGroups!.forEach((columnsOrGroup) => {
+            if (columnsOrGroup.parent !== parent) {
+                // parent has explicitly changed - force viewport headers now needed.
+                this.beans.colViewport.colsWithinViewportHash = '';
+            }
             columnsOrGroup.parent = parent;
             if (isColumnGroup(columnsOrGroup)) {
                 const columnGroup = columnsOrGroup;

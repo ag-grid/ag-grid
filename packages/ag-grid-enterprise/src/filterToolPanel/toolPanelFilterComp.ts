@@ -11,7 +11,7 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
-export type ToolPanelFilterCompEvent = 'filterChanged';
+type ToolPanelFilterCompEvent = 'filterChanged';
 
 const ToolPanelFilterElement: ElementParams = {
     tag: 'div',

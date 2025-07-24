@@ -602,7 +602,6 @@ export const AG_GRID_LOCALE_PT = {
     ariaLabelSelectField: 'Selecionar Campo',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Editor de Célula',
     ariaValidationErrorPrefix: 'Validação do Editor de Célula',
     ariaLabelLoadingContextMenu: 'Carregando Menu de Contexto',
 

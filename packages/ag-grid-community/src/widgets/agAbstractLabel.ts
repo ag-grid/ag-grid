@@ -6,7 +6,7 @@ import { agAbstractLabelCSS } from './agAbstractLabel.css-GENERATED';
 import type { ComponentEvent, ComponentSelector } from './component';
 import { Component } from './component';
 
-export type AgAbstractLabelEvent = ComponentEvent;
+type AgAbstractLabelEvent = ComponentEvent;
 export abstract class AgAbstractLabel<
     TConfig extends AgLabelParams = AgLabelParams,
     TEventType extends string = AgAbstractLabelEvent,

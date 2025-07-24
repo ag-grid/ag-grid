@@ -602,7 +602,6 @@ export const AG_GRID_LOCALE_KR = {
     ariaLabelSelectField: '필드 선택',
 
     // Cell Editor
-    ariaLabelCellEditor: '셀 편집기',
     ariaValidationErrorPrefix: '셀 편집기 유효성 검사',
     ariaLabelLoadingContextMenu: '로드 중인 컨텍스트 메뉴',
 

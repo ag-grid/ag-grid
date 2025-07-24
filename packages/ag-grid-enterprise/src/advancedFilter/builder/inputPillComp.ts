@@ -21,7 +21,7 @@ import {
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 
-export type InputPillCompEvent = 'fieldValueChanged';
+type InputPillCompEvent = 'fieldValueChanged';
 
 type SupportedComponent = typeof AgInputTextField | typeof AgInputNumberField | typeof AgInputDateField;
 type SupportedInstances = InstanceType<SupportedComponent>;

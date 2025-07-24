@@ -34,6 +34,7 @@ export {
     isRowNumberCol,
     isColumnSelectionCol,
     isColumnGroupAutoCol,
+    isSpecialCol,
     _destroyColumnTree,
     _getColumnsFromTree,
     _areColIdsEqual,
@@ -102,6 +103,8 @@ export {
     ExcelSheetPageSetup,
     ExcelFont,
     ExcelFreezeRowsGetter,
+    ExcelFreezeRowsGetterParams,
+    ExcelFreezeColumnsGetterParams,
     ExcelFreezeColumnsGetter,
     ExcelInterior,
     ExcelNumberFormat,
@@ -160,6 +163,7 @@ export {
     RowPinnedType,
     IRowNode,
     RowNodeSelectedEvent,
+    RowNodePinnedEvent,
     MouseEnterEvent,
     MouseLeaveEvent,
     HeightChangedEvent,
@@ -292,7 +296,12 @@ export {
     ITextFloatingFilterParams,
 } from './filter/provided/text/iTextFilter';
 export type { TextFilter } from './filter/provided/text/textFilter';
-export { IDateFilterParams, DateFilterParams, DateFilterModel } from './filter/provided/date/iDateFilter';
+export {
+    IDateFilterParams,
+    IDateComparatorFunc,
+    DateFilterParams,
+    DateFilterModel,
+} from './filter/provided/date/iDateFilter';
 export type { DateFilter } from './filter/provided/date/dateFilter';
 
 export {
@@ -608,7 +617,7 @@ export { TabGuardFeature } from './widgets/tabGuardFeature';
 export { PopupComponent } from './widgets/popupComponent';
 export type { PopupService } from './widgets/popupService';
 export { PopupPositionParams, PopupEventParams } from './interfaces/iPopup';
-export { TouchListener, TapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
+export { TouchListener, TapEvent, DoubleTapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
 export { FocusableContainer } from './interfaces/iFocusableContainer';
 
 export { AgAbstractLabel } from './widgets/agAbstractLabel';
@@ -670,7 +679,7 @@ export {
     ShouldRowBeSkippedParams,
     BaseExportParams,
 } from './interfaces/exportParams';
-export { HeaderElement, PrefixedXmlAttributes, XmlElement } from './interfaces/iXmlFactory';
+export { HeaderElement, PrefixedXmlAttributes, XmlElement, XmlAttributes } from './interfaces/iXmlFactory';
 export { ICsvCreator } from './interfaces/iCsvCreator';
 
 // root
@@ -678,7 +687,8 @@ export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export type { CellNavigationService } from './navigation/cellNavigationService';
 export { KeyCode } from './constants/keyCode';
-export { GridParams, Params, GridCoreCreator, createGrid } from './grid';
+export { Direction } from './constants/direction';
+export { GridParams, Params, GridCoreCreator, createGrid, getGridApi, getGridElement } from './grid';
 export { provideGlobalGridOptions, GlobalGridOptionsMergeStrategy, _getGlobalGridOption } from './globalGridOptions';
 export {
     GridApi,
@@ -711,7 +721,7 @@ export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from 
 export { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 export type { FocusService } from './focusService';
 export type { GridOptionsService, PropertyValueChangedEvent } from './gridOptionsService';
-export { PropertyChangedEvent } from './gridOptionsService';
+export { PropertyChangedEvent, PropertyChangeSet } from './gridOptionsService';
 export {
     _addGridCommonParams,
     _getCallbackForEvent,
@@ -796,6 +806,8 @@ export {
     GridState,
     PaginationState,
     PivotState,
+    CellSelectionState,
+    CellSelectionCellState,
     RangeSelectionCellState,
     RangeSelectionState,
     RowGroupExpansionState,
@@ -825,6 +837,7 @@ export {
     _createCellId,
     _isRowBefore,
     _isSameRow,
+    _getLastRow,
     _getRowNode,
     _getCellByPosition,
     _getRowAbove,
@@ -925,6 +938,7 @@ export {
     SelectAllMode,
     SelectionColumnDef,
     CellSelectionOptions,
+    RangeHandleOptions,
     RowSelectionOptions,
     RowSelectionMode,
     IsApplyServerSideTransaction,
@@ -1298,3 +1312,7 @@ export type {
     ColorSchemeValue,
     WithParamTypes,
 } from './theming/theme-types';
+
+// Testing
+export { setupAgTestIds } from './testing/testingModule';
+export { agTestIdFor, wrapAgTestIdFor } from './testing/testIdUtils';

@@ -6,7 +6,7 @@ export function _isPromise<T>(fn: any): fn is Promise<T> {
     return false;
 }
 
-export type ResolveAndRejectCallback<T> = (resolve: (value: T | null) => void, reject: (params: any) => void) => void;
+type ResolveAndRejectCallback<T> = (resolve: (value: T | null) => void, reject: (params: any) => void) => void;
 
 enum AgPromiseStatus {
     IN_PROGRESS,

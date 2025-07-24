@@ -1,4 +1,4 @@
-import {
+import type {
     CommunityModuleName,
     EnterpriseModuleName,
     ModuleName,
@@ -17,7 +17,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ColumnHoverModule: 1.58,
     CsvExportModule: 11.3,
     CustomEditorModule: 59.13,
-    CustomFilterModule: 70.29,
+    CustomFilterModule: 72,
     DateEditorModule: 65.42,
     DateFilterModule: 126.13,
     DragAndDropModule: 1,
@@ -45,13 +45,13 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     TextFilterModule: 120.09,
     TooltipModule: 23.68,
     UndoRedoEditModule: 64.89,
-    ValidationModule: 69.88,
+    ValidationModule: 72.17,
     ValueCacheModule: 0.65,
     CellSpanModule: 8.08,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 217.72,
-    AllEnterpriseModule: 1464.86,
+    AllEnterpriseModule: 1469.94,
     BatchEditModule: 76.37,
     CellSelectionModule: 53,
     ClipboardModule: 46.04,
@@ -70,8 +70,8 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     NewFiltersToolPanelModule: 169.77,
     PivotModule: 93.6,
     RangeSelectionModule: 53,
-    RichSelectModule: 116.59,
-    RowNumbersModule: 29,
+    RichSelectModule: 120.23,
+    RowNumbersModule: 30,
     RowGroupingModule: 79.85,
     RowGroupingPanelModule: 71,
     ServerSideRowModelApiModule: 19,

@@ -269,7 +269,7 @@ export class ValidationService extends BeanStub implements NamedBean {
     }
 }
 
-export function _fuzzyCheckStrings<V extends string>(
+function _fuzzyCheckStrings<V extends string>(
     inputValues: V[],
     validValues: string[],
     allSuggestions: string[]

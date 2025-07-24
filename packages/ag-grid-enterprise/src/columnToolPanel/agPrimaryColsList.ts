@@ -40,7 +40,7 @@ class UIColumnModel implements VirtualListModel {
 
 const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
 
-export type AgPrimaryColsListEvent = 'groupExpanded' | 'selectionChanged';
+type AgPrimaryColsListEvent = 'groupExpanded' | 'selectionChanged';
 export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private colModel: ColumnModel;
 

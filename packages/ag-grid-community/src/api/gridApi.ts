@@ -1013,6 +1013,12 @@ export interface _ColumnFilterGridApi {
     showColumnFilter(colKey: string | Column): void;
 
     /**
+     * Hide the filter popup if it is open.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
+     */
+    hideColumnFilter(): void;
+
+    /**
      * Perform the provided filter action for the column specified, or all columns.
      * Requires `enableFilterHandlers = true`.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`

@@ -8,7 +8,6 @@ import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
 import type { ChartType } from './interfaces/iChartOptions';
-import type { RefreshModelParams } from './interfaces/iClientSideRowModel';
 import type { Column, ColumnEventName, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { BuildEventTypeMap } from './interfaces/iEventEmitter';
@@ -128,7 +127,6 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowResizeStarted: RowResizeStartedEvent<TData, TContext>;
         rowResizeEnded: RowResizeEndedEvent<TData, TContext>;
         // Internal events
-        beforeRefreshModel: BeforeRefreshModelEvent<TData, TContext>;
         scrollbarWidthChanged: ScrollbarWidthChangedEvent<TData, TContext>;
         keyShortcutChangedCellStart: KeyShortcutChangedCellStartEvent<TData, TContext>;
         keyShortcutChangedCellEnd: KeyShortcutChangedCellEndEvent<TData, TContext>;
@@ -184,6 +182,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         batchEditingStopped: BatchEditingStoppedEvent<TData, TContext>;
         bulkEditingStarted: BulkEditingStartedEvent<TData, TContext>;
         bulkEditingStopped: BulkEditingStoppedEvent<TData, TContext>;
+        headerRowsChanged: AgEvent<'headerRowsChanged'>;
     }
 >;
 
@@ -221,8 +220,8 @@ export type AgGlobalEventListener<TData = any, TContext = any, T extends AgEvent
 export interface ModelUpdatedEvent<TData = any, TContext = any> extends AgGlobalEvent<'modelUpdated', TData, TContext> {
     /** If true, the grid will try and animate the rows to the new positions */
     animate: boolean | undefined;
-    /** If true, the grid has new data loaded, eg user called setRowData(), otherwise
-     * it's the same data but sorted or filtered, in which case this is true, and rows
+    /** If the grid has new data loaded, eg user called setRowData(), this will be false,
+     * otherwise it's the same data but sorted or filtered, in which case this is true, and rows
      * can animate around (eg rowNode id 24 is the same row node as last time). */
     keepRenderedRows: boolean | undefined;
     /** If true, then this update was a result of setRowData() getting called. This
@@ -293,13 +292,6 @@ export interface DisplayedColumnsChangedEvent<TData = any, TContext = any>
 export interface RowDataUpdatedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowDataUpdated', TData, TContext> {}
 
-/** Raised by ClientSideRowModel */
-export interface BeforeRefreshModelEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'beforeRefreshModel', TData, TContext> {
-    params: RefreshModelParams<TData>;
-    groupsChanged: boolean;
-}
-
 export interface RowDataUpdateStartedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowDataUpdateStarted', TData, TContext> {
     firstRowData: TData | null;
@@ -354,7 +346,7 @@ export interface SelectionChangedEvent<TData = any, TContext = any>
     /** The source that triggered the selection change event. */
     source: SelectionEventSourceType;
     /** The row nodes that are selected at the time the event is generated. When selecting all nodes in SSRM or when group selecting in SSRM, this will be `null`. */
-    selectedNodes: IRowNode[] | null;
+    selectedNodes: IRowNode<TData>[] | null;
     /** The SSRM selection state. This can be referred to when `selectedNodes` is `null`. This will be `null` when using a row model other than SSRM. */
     serverSideState: IServerSideSelectionState | IServerSideGroupSelectionState | null;
 }

@@ -5,7 +5,7 @@ import { INCH_TO_EMU } from './excelConstants';
 import type { ExcelCalculatedImage } from './excelInterfaces';
 import { createXml, createXmlHeader } from './xmlFactory';
 
-export const pointsToPixel = (points: number): number => {
+const pointsToPixel = (points: number): number => {
     return Math.round((points * 96) / 72);
 };
 

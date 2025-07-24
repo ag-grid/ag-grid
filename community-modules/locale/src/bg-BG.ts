@@ -603,7 +603,6 @@ export const AG_GRID_LOCALE_BG = {
     ariaLabelSelectField: 'Избор на поле',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Редактор на клетки',
     ariaValidationErrorPrefix: 'Валидиране на редактор на клетки',
     ariaLabelLoadingContextMenu: 'Зареждане на контекстно меню',
 

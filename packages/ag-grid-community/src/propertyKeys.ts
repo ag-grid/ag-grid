@@ -321,9 +321,11 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'enableStrictPivotColumnOrder',
     'suppressSetFilterByDefault',
     'enableFilterHandlers',
+    'suppressStartEditOnTab',
+    'hidePaddedHeaderRows',
 ];
 
-// Used in example generation
+/** @knipIgnore Used in example generation */
 export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'doesExternalFilterPass',
     'processPivotResultColDef',

@@ -208,7 +208,7 @@ import type {
 
 import type { GridOptions, Module } from 'ag-grid-community';
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
-import {isProxy, isReactive, isRef, toRaw} from 'vue';
+import { isProxy, isReactive, isRef, toRaw } from 'vue';
 
 export interface Properties {
     [propertyName: string]: any;
@@ -404,6 +404,9 @@ export interface Props<TData> {
     /** The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.
          */
     pivotGroupHeaderHeight?: number | undefined,
+    /** Hide any column header rows that would only contain padded groups.
+         */
+    hidePaddedHeaderRows?: boolean | undefined,
     /** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid.
          * @default false
          * @agModule `ColumnsToolPanelModule`
@@ -473,6 +476,9 @@ export interface Props<TData> {
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
     editType?: EditStrategyType | undefined,
+    /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
+         */
+    suppressStartEditOnTab?: boolean | undefined,
     /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
@@ -1930,6 +1936,7 @@ export function getProps() {
         floatingFiltersHeight: undefined,
         pivotHeaderHeight: undefined,
         pivotGroupHeaderHeight: undefined,
+        hidePaddedHeaderRows: undefined,
         allowDragFromColumnsToolPanel: undefined,
         suppressMovableColumns: undefined,
         suppressColumnMoveAnimation: undefined,
@@ -1945,6 +1952,7 @@ export function getProps() {
         autoSizeStrategy: undefined,
         components: undefined,
         editType: undefined,
+        suppressStartEditOnTab: undefined,
         getFullRowEditValidationErrors: undefined,
         invalidEditValueMode: undefined,
         singleClickEdit: undefined,

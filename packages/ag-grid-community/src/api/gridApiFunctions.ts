@@ -249,6 +249,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getColumnFilterModel: 0,
         setColumnFilterModel: 0,
         showColumnFilter: 0,
+        hideColumnFilter: 0,
         getColumnFilterHandler: 0,
         doFilterAction: 0,
     }),

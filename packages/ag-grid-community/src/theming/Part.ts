@@ -18,7 +18,7 @@ type AnyString = string & {};
 // This utility type is a no-op (Expand<T> === T) but it changes the display of
 // the type in the IDE so that it shows something like Part<{myColor: ColorValue}>
 // instead of something like Part<WithParamTypes<InputStyleParams>>
-export type ExpandTypeKeys<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
+type ExpandTypeKeys<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
 
 type CreatePartArgs<T> = {
     /**

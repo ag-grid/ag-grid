@@ -24,7 +24,7 @@ import type { ServerSideExpansionService } from '../services/serverSideExpansion
 import type { LazyStore } from '../stores/lazy/lazyStore';
 import type { StoreFactory } from '../stores/storeFactory';
 
-export const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey' as const;
+const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey' as const;
 
 export class BlockUtils extends BeanStub implements NamedBean {
     beanName = 'ssrmBlockUtils' as const;
@@ -111,7 +111,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
         if (!hasChildren && rowNode.childStore != null) {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
-            rowNode.expanded = false;
+            if (!rowNode.master) {
+                rowNode.expanded = false;
+            }
         }
     }
 
@@ -198,16 +200,19 @@ export class BlockUtils extends BeanStub implements NamedBean {
         const treeData = this.gos.get('treeData');
 
         rowNode.setDataAndId(data, defaultId);
+        const group = rowNode.group;
 
-        if (treeData) {
-            this.setTreeGroupInfo(rowNode);
-        } else if (rowNode.group) {
-            this.setRowGroupInfo(rowNode);
-        } else if (this.gos.get('masterDetail')) {
+        if ((treeData || !group) && this.gos.get('masterDetail')) {
             this.setMasterDetailInfo(rowNode);
         }
 
-        if (treeData || rowNode.group) {
+        if (treeData) {
+            this.setTreeGroupInfo(rowNode);
+        } else if (group) {
+            this.setRowGroupInfo(rowNode);
+        }
+
+        if (treeData || group) {
             this.setGroupDataIntoRowNode(rowNode);
             this.setChildCountIntoRowNode(rowNode);
         }

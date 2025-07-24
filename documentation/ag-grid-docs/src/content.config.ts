@@ -108,7 +108,6 @@ const metadata = defineCollection({
     schema: z.object({
         title: z.string(),
         description: z.string(),
-        googleTagManagerId: z.string().optional(),
         canonicalUrlBase: z.string(),
         socialImage: z.string(),
     }),
@@ -253,6 +252,19 @@ const reactLandingPage = defineCollection({
     ),
 });
 
+const contentApi = defineCollection({
+    loader: glob({ base: './src/content/content-api', pattern: 'content-api.json' }),
+    schema: z.object({
+        supportedVersionFrom: z.string(),
+        root: z.array(
+            z.object({
+                id: z.string(),
+                url: z.string(),
+            })
+        ),
+    }),
+});
+
 export const collections = {
     docs,
     apiDocumentation,
@@ -270,4 +282,5 @@ export const collections = {
     siteHeader,
     seedProjects,
     reactLandingPage,
+    contentApi,
 };

@@ -8,6 +8,7 @@ import type { AgEventType } from '../../eventTypes';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { EditMap, EditValue, IEditModelService } from '../../interfaces/iEditModelService';
 import type {
+    EditInputEvents,
     EditPosition,
     EditRowPosition,
     EditSource,
@@ -68,6 +69,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         let cellCtrl: CellCtrl | undefined;
         const previous = (event as any)['previousParams']! as CommonCellFocusParams;
         const { editSvc, beans } = this;
+        const sourceEvent = event.type === 'cellFocused' ? event.sourceEvent : null;
 
         if (previous) {
             cellCtrl = _getCellCtrl(beans, previous);
@@ -86,15 +88,23 @@ export abstract class BaseEditStrategy extends BeanStub {
                 rowNode: _getRowNode(beans, { rowIndex: rowIndex!, rowPinned })!,
             };
             const isBlock = gos.get('invalidEditValueMode') === 'block';
-            const hasError =
-                isBlock && !!editModelSvc?.getCellValidationModel().hasCellValidation(cellPositionFromEvent);
+
+            if (isBlock) {
+                // if we are blocking on invalid edits, focus changes don't stop current editing
+                return;
+            }
+
+            const shouldRevert = !isBlock;
+            const hasError = !!editModelSvc?.getCellValidationModel().hasCellValidation(cellPositionFromEvent);
+            const shouldCancel = shouldRevert && hasError;
 
             // if we don't have a previous cell, we don't need to force stopEditing
             const result =
                 previous || isFocusCleared
                     ? editSvc.stopEditing(undefined, {
-                          cancel: hasError,
-                          source: isFocusCleared ? 'api' : undefined,
+                          cancel: shouldCancel,
+                          source: isFocusCleared && shouldRevert ? 'api' : undefined,
+                          event: sourceEvent as unknown as EditInputEvents,
                       })
                     : true;
 
@@ -124,7 +134,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         return (column as AgColumn).isColumnFunc(rowNode, column.getColDef().editable);
     }
 
-    public stop(cancel?: boolean): boolean {
+    public stop(cancel?: boolean, event?: Event | null): boolean {
         const editingCells = this.model.getEditPositions();
 
         const results: EditValidationResult = { all: [], pass: [], fail: [] };
@@ -155,7 +165,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         if (actions.destroy.length > 0) {
             actions.destroy.forEach((cell) => {
-                _destroyEditor(this.beans, cell);
+                _destroyEditor(this.beans, cell, { event });
                 this.model.stop(cell);
             });
         }
@@ -176,7 +186,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     protected abstract processValidationResults(results: EditValidationResult): EditValidationAction;
 
     public cleanupEditors({ rowNode }: EditRowPosition = {}, includeEditing?: boolean): void {
-        _syncFromEditors(this.beans);
+        _syncFromEditors(this.beans, false);
 
         const positions = this.model.getEditPositions();
 
@@ -200,11 +210,6 @@ export abstract class BaseEditStrategy extends BeanStub {
         _destroyEditors(this.beans, discard);
 
         _purgeUnchangedEdits(this.beans, includeEditing);
-    }
-
-    public stopAllEditing(): void {
-        _syncFromEditors(this.beans);
-        this.stop();
     }
 
     public setFocusOutOnEditor(cellCtrl: CellCtrl): void {
@@ -380,7 +385,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         if (cells.length > 0) {
             const cell = cells.at(-1)!;
-            const key = cell.newValue === UNEDITED ? undefined : cell.newValue;
+            const key = cell.pendingValue === UNEDITED ? undefined : cell.pendingValue;
             this.start(cell, new KeyboardEvent('keydown', { key }), 'api');
 
             const cellCtrl = _getCellCtrl(this.beans, cell);

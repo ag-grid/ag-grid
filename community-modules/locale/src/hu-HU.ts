@@ -603,7 +603,6 @@ export const AG_GRID_LOCALE_HU = {
     ariaLabelSelectField: 'Mező kiválasztása',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Cella szerkesztő',
     ariaValidationErrorPrefix: 'Cella szerkesztő érvényesítés',
     ariaLabelLoadingContextMenu: 'Kontextusmenü betöltése',
 

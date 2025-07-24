@@ -55,6 +55,9 @@ export interface Params {
     modules?: Module[];
 }
 
+const _gridApiCache = new WeakMap<Element, GridApi>();
+const _gridElementCache = new WeakMap<GridApi, Element>();
+
 // **NOTE** If updating this JsDoc please also update the re-exported createGrid in main-umd-shared.ts
 /**
  * Creates a grid inside the provided HTML element.
@@ -112,7 +115,7 @@ export class GridCoreCreator {
         createUi: (context: Context) => void,
         acceptChanges?: (context: Context) => void,
         params?: GridParams,
-        destroyCallback?: () => void
+        _destroyCallback?: () => void
     ): GridApi {
         // Returns a shallow copy of the provided options, with global options merged in
         const gridOptions = GlobalGridOptions.applyGlobalGridOptions(providedOptions);
@@ -129,6 +132,12 @@ export class GridCoreCreator {
             // Break typing so that the normal return type does not have to handle undefined.
             return undefined as any;
         }
+
+        const destroyCallback = () => {
+            _gridElementCache.delete(api);
+            _gridApiCache.delete(eGridDiv);
+            _destroyCallback?.();
+        };
 
         const contextParams: ContextParams = {
             providedBeanInstances,
@@ -147,11 +156,14 @@ export class GridCoreCreator {
 
         context.getBean('syncSvc').start();
 
-        if (acceptChanges) {
-            acceptChanges(context);
-        }
+        acceptChanges?.(context);
 
-        return context.getBean('gridApi');
+        const api = context.getBean('gridApi');
+
+        _gridApiCache.set(eGridDiv, api);
+        _gridElementCache.set(api, eGridDiv);
+
+        return api;
     }
 
     private getRegisteredModules(
@@ -281,4 +293,38 @@ export class GridCoreCreator {
 
 function getDefaultRowModelType(passedRowModelType?: RowModelType): RowModelType {
     return passedRowModelType ?? 'clientSide';
+}
+
+/**
+ * Returns a `GridApi` instance that is associated with the grid rendered in `gridElement`.
+ *
+ * The `gridElement` argument can be one of the following:
+ * - a DOM node
+ * - the grid ID as determined by the `gridId` grid option.
+ * - CSS selector string
+ *
+ * When using a CSS selector, it must refer to the element passed to `createGrid`.
+ *
+ * If passing a DOM node as an argument, this DOM node must be an immediate child of the element passed
+ * to `createGrid`. This is to support the case where multiple grids are instantiated in a single element.
+ */
+export function getGridApi(gridElement: Element | string | null | undefined): GridApi | undefined {
+    if (typeof gridElement === 'string') {
+        try {
+            gridElement =
+                document.querySelector(`[grid-id="${gridElement}"]`)?.parentElement ??
+                document.querySelector(gridElement)?.firstElementChild ??
+                document.getElementById(gridElement)?.firstElementChild;
+        } catch {
+            gridElement = null;
+        }
+    }
+    return gridElement ? _gridApiCache.get(gridElement) : undefined;
+}
+
+/**
+ * Returns the `Element` instance associated with the grid instance referred to by `GridApi`
+ */
+export function getGridElement(api: GridApi): Element | undefined {
+    return _gridElementCache.get(api);
 }

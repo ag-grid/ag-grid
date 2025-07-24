@@ -84,14 +84,4 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         this.headerGroupComp = headerGroupComp;
         this.ctrl.setDragSource(eGui);
     }
-
-    private addOrRemoveHeaderWrapperStyle(style: string, value: string | null): void {
-        const { eHeaderCompWrapper } = this;
-
-        if (value) {
-            eHeaderCompWrapper.style.setProperty(style, value);
-        } else {
-            eHeaderCompWrapper.style.removeProperty(style);
-        }
-    }
 }

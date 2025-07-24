@@ -41,5 +41,5 @@ export interface AgChartActual extends AgChartInstance {
     waitForUpdate(): Promise<void>;
 }
 
-export type AgChartAxis = NonNullable<AgChartActual['axes']>[number];
+type AgChartAxis = NonNullable<AgChartActual['axes']>[number];
 export type AgChartAxisType = AgChartAxis['type'];

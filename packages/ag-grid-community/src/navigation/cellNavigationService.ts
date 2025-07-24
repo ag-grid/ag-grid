@@ -42,9 +42,21 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         let column: AgColumn | undefined;
         let rowIndex: number;
 
-        const { pageBounds, gos, visibleCols } = this.beans;
+        const { pageBounds, gos, visibleCols, pinnedRowModel } = this.beans;
+        const { rowPinned } = focusedCell;
         if (upKey || downKey) {
-            rowIndex = upKey ? pageBounds.getFirstRow() : pageBounds.getLastRow();
+            if (rowPinned && pinnedRowModel) {
+                if (upKey) {
+                    rowIndex = 0;
+                } else {
+                    rowIndex =
+                        rowPinned === 'top'
+                            ? pinnedRowModel.getPinnedTopRowCount() - 1
+                            : pinnedRowModel.getPinnedBottomRowCount() - 1;
+                }
+            } else {
+                rowIndex = upKey ? pageBounds.getFirstRow() : pageBounds.getLastRow();
+            }
             column = focusedCell.column as AgColumn;
         } else {
             const isRtl = gos.get('enableRtl');
@@ -63,7 +75,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         return column
             ? {
                   rowIndex,
-                  rowPinned: null,
+                  rowPinned,
                   column,
               }
             : null;

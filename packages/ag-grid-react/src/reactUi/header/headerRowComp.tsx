@@ -20,7 +20,7 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
     const { context } = useContext(BeansContext);
 
     const { topOffset, rowHeight } = useMemo(() => ctrl.getTopAndHeight(), []);
-    const ariaRowIndex = ctrl.getAriaRowIndex();
+    const [ariaRowIndex, setAriaRowIndex] = useState(ctrl.getAriaRowIndex());
     const className = ctrl.headerRowClass;
 
     const [height, setHeight] = useState<string>(() => rowHeight + 'px');
@@ -54,6 +54,9 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
                 if (eGui.current) {
                     eGui.current.style.width = width;
                 }
+            },
+            setRowIndex: (rowIndex: number) => {
+                setAriaRowIndex(rowIndex);
             },
         };
 

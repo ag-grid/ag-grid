@@ -96,7 +96,9 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             // will be visible again. otherwise a group with three columns (but only two visible) could
             // be dragged out, then when it's dragged in again, all three are visible. this stops that.
             const visibleState = dragItem.visibleState;
-            const visibleColumns: AgColumn[] = (columns || []).filter((column) => visibleState![column.getId()]);
+            const visibleColumns: AgColumn[] = (columns || []).filter(
+                (column) => visibleState![column.getId()] && !column.isVisible()
+            );
             this.setColumnsVisible(visibleColumns, true, 'uiColumnDragged');
         }
 
@@ -168,11 +170,14 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     public setColumnsVisible(columns: AgColumn[] | null | undefined, visible: boolean, source: ColumnEventType) {
-        if (!columns) {
+        if (!columns?.length) {
             return;
         }
 
         const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
+        if (!allowedCols.length) {
+            return;
+        }
         this.beans.colModel.setColsVisible(allowedCols, visible, source);
     }
 

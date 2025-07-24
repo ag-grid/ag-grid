@@ -1,10 +1,9 @@
-import { _getLocaleTextFunc } from 'ag-grid-community';
 import type {
     Bean,
     BeanCollection,
-    Column,
     GridOptionsService,
     GroupingApproach,
+    IRowNode,
     RowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
@@ -58,25 +57,28 @@ export function _isHiddenParent(node: RowNode, ancestor: RowNode, gos: GridOptio
     return currentNode === ancestor;
 }
 
-export function _getGroupValue(
-    column: Column | null | undefined,
-    node: RowNode,
-    displayedNode: RowNode,
-    beans: BeanCollection
-): string | null {
-    const isCellBlankValue = displayedNode.key === '';
-    const isGroupColForNode =
-        !!displayedNode.rowGroupColumn &&
-        (!column || // full width row
-            column?.isRowGroupDisplayed(displayedNode.rowGroupColumn.getId())); // correct column cell
-    // if value is empty and correct column
-    if (isCellBlankValue && isGroupColForNode) {
-        const isHiddenParent = _isHiddenParent(node, displayedNode, beans.gos);
-        // ensure node is unchanged or hidden parent
-        if (displayedNode === node || isHiddenParent) {
-            const localeTextFunc = _getLocaleTextFunc(beans.localeSvc);
-            return localeTextFunc('blanks', '(Blanks)');
-        }
+export const _getRowDefaultExpanded = (
+    beans: BeanCollection,
+    rowNode: IRowNode,
+    level: number,
+    group = rowNode.group
+): boolean => {
+    const gos = beans.gos;
+    // see AG-11476 isGroupOpenByDefault callback doesn't apply to master/detail grid
+    // We call isGroupOpenByDefault only for group nodes and not for master/detail leafs
+    const isGroupOpenByDefault = group && gos.get('isGroupOpenByDefault');
+    if (!isGroupOpenByDefault) {
+        const groupDefaultExpanded = gos.get('groupDefaultExpanded');
+        return groupDefaultExpanded === -1 || level < groupDefaultExpanded;
     }
-    return null;
-}
+    const params = {
+        api: beans.gridApi,
+        context: beans.gridOptions.context,
+        rowNode,
+        field: rowNode.field!,
+        key: rowNode.key!,
+        level,
+        rowGroupColumn: rowNode.rowGroupColumn!,
+    };
+    return isGroupOpenByDefault(params) == true;
+};
