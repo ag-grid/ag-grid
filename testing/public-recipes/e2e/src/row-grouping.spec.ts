@@ -4,15 +4,13 @@ import { agTestIdFor } from 'ag-grid-community';
 
 import { FRAMEWORKS, loadPage } from './utils';
 
-test.describe('Simple e2e testing examples', () => {
+test.describe('Row Grouping selection e2e testing examples', () => {
     for (const fw of FRAMEWORKS) {
         test(`can load the example and select row in ${fw}`, async ({ page }) => {
             // https://ag-grid.com/react-data-grid/grouping-row-selection/#example-group-cell-checkboxes
             await loadPage(page, '/examples/grouping-row-selection/group-cell-checkboxes', fw);
 
-            await expect(page.getByTestId(agTestIdFor.rowNode('row-group-country-United States'))).toBeVisible({
-                timeout: 20_000,
-            });
+            await expect(page.getByTestId(agTestIdFor.rowNode('row-group-country-United States'))).toBeVisible();
             await expect(page.getByTestId(agTestIdFor.autoGroupCell('row-group-country-United States'))).toContainText(
                 'United States'
             );
@@ -24,7 +22,7 @@ test.describe('Simple e2e testing examples', () => {
     }
 });
 
-test.describe('Interactive e2e testing examples', () => {
+test.describe('Row Grouping expansion e2e testing examples', () => {
     for (const fw of FRAMEWORKS) {
         test(`can expand a group row in ${fw}`, async ({ page }) => {
             // https://ag-grid.com/react-data-grid/grouping-row-selection/#example-group-cell-checkboxes
