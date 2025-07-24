@@ -632,7 +632,7 @@
     }
 
     #{$selector-darkmode} & {
-        background: var(--color-button-tertiary-bg-hover);
+        background: var(--color-bg-primary);
         color: var(--color-button-tertiary-fg);
         border-color: var(--color-button-tertiary-fg);
 
