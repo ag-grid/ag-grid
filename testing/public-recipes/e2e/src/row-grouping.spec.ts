@@ -13,11 +13,11 @@ test.describe('Simple e2e testing examples', () => {
             await expect(page.getByTestId(agTestIdFor.rowNode('row-group-country-United States'))).toBeVisible({
                 timeout: 20_000,
             });
-            await expect(
-                page.getByTestId(agTestIdFor.cell('row-group-country-United States', 'ag-Grid-AutoColumn'))
-            ).toContainText('United States');
+            await expect(page.getByTestId(agTestIdFor.autoGroupCell('row-group-country-United States'))).toContainText(
+                'United States'
+            );
 
-            const checkbox = page.getByTestId(agTestIdFor.checkbox('row-group-country-Norway', 'ag-Grid-AutoColumn'));
+            const checkbox = page.getByTestId(agTestIdFor.autoGroupColumnCheckbox('row-group-country-Norway'));
             await checkbox.click();
             await expect(checkbox).toBeChecked();
         });
@@ -30,17 +30,13 @@ test.describe('Interactive e2e testing examples', () => {
             // https://ag-grid.com/react-data-grid/grouping-row-selection/#example-group-cell-checkboxes
             await loadPage(page, '/examples/grouping-row-selection/group-cell-checkboxes', fw);
 
-            await page
-                .getByTestId(agTestIdFor.groupContracted('row-group-country-United States', 'ag-Grid-AutoColumn'))
-                .click();
+            await page.getByTestId(agTestIdFor.autoGroupContracted('row-group-country-United States')).click();
 
             await page
-                .getByTestId(
-                    agTestIdFor.groupContracted('row-group-country-United States-sport-Swimming', 'ag-Grid-AutoColumn')
-                )
+                .getByTestId(agTestIdFor.autoGroupContracted('row-group-country-United States-sport-Swimming'))
                 .click();
 
-            await expect(page.getByTestId(agTestIdFor.cell('6', 'ag-Grid-AutoColumn'))).toContainText('Missy Franklin');
+            await expect(page.getByTestId(agTestIdFor.autoGroupCell('6'))).toContainText('Missy Franklin');
         });
     }
 });

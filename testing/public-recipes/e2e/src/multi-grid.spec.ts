@@ -24,7 +24,7 @@ test.describe('Multiple grids e2e testing examples', () => {
             await expect(leftGrid.getByTestId(agTestIdFor.rowNode('Aleksey Nemov'))).toBeVisible();
             await expect(rightGrid.getByTestId(agTestIdFor.rowNode('Sun Yang'))).toBeVisible();
 
-            const checkbox = leftGrid.getByTestId(agTestIdFor.checkbox('Aleksey Nemov', 'ag-Grid-SelectionColumn'));
+            const checkbox = leftGrid.getByTestId(agTestIdFor.selectionColumnCheckbox('Aleksey Nemov'));
             await expect(checkbox).toBeVisible();
             await checkbox.click();
             await expect(checkbox).toBeChecked();
