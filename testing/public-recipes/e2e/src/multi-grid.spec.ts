@@ -2,16 +2,18 @@ import { expect, test } from '@playwright/test';
 
 import { agTestIdFor } from 'ag-grid-community';
 
-import { FRAMEWORKS, createPageLoader } from './utils';
-
-// https://www.ag-grid.com/javascript-data-grid/excel-export-multiple-sheets/#example-excel-export-multiple-sheets-multiple-grids
-const loadPage = createPageLoader('/examples/excel-export-multiple-sheets/excel-export-multiple-sheets-multiple-grids');
+import { FRAMEWORKS, loadPage } from './utils';
 
 test.describe('Multiple grids e2e testing examples', () => {
     for (const fw of FRAMEWORKS) {
         test(`can load the example and select row in ${fw}`, async ({ page }) => {
             test.slow();
-            await loadPage(page, fw);
+            // https://www.ag-grid.com/javascript-data-grid/excel-export-multiple-sheets/#example-excel-export-multiple-sheets-multiple-grids
+            await loadPage(
+                page,
+                '/examples/excel-export-multiple-sheets/excel-export-multiple-sheets-multiple-grids',
+                fw
+            );
 
             const leftGrid = page.getByTestId(agTestIdFor.grid('1'));
             const rightGrid = page.getByTestId(agTestIdFor.grid('2'));

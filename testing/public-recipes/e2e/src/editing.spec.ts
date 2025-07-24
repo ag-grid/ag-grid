@@ -2,17 +2,15 @@ import { expect, test } from '@playwright/test';
 
 import { wrapAgTestIdFor } from 'ag-grid-community';
 
-import { FRAMEWORKS, createPageLoader } from './utils';
-
-// https://www.ag-grid.com/javascript-data-grid/provided-cell-editors-text/#example-text-editor
-const loadPage = createPageLoader('examples/provided-cell-editors-text/text-editor');
+import { FRAMEWORKS, loadPage } from './utils';
 
 test.describe('Edit e2e testing examples', () => {
     for (const fw of FRAMEWORKS) {
         test(`can load the example and edit a row in ${fw}`, async ({ page }) => {
             const agIdFor = wrapAgTestIdFor((testId) => page.getByTestId(testId));
 
-            await loadPage(page, fw);
+            // https://www.ag-grid.com/javascript-data-grid/provided-cell-editors-text/#example-text-editor
+            await loadPage(page, 'examples/provided-cell-editors-text/text-editor', fw);
 
             await expect(agIdFor.overlay()).toBeHidden();
 
