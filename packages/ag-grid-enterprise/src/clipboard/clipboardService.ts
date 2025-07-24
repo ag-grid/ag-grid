@@ -956,16 +956,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const startRow = rangeSvc.getRangeStartRow(range);
         const lastRow = rangeSvc.getRangeEndRow(range);
         const isSSRM = _isServerSideRowModel(this.gos, this.beans.rowModel);
-        const isInCache = (rowPosition: RowPosition | null): rowPosition is RowPosition => {
-            if (isSSRM && rowPosition) {
-                return !!(this.beans.rowModel as ServerSideRowModel)
-                    .getRootStore()
-                    ?.getCache()
-                    .getNodes()
-                    .getBy('index', rowPosition.rowIndex);
-            }
-            return !!rowPosition;
-        };
+        const startRowNode = (this.beans.rowModel as ServerSideRowModel)
+            .getRootStore()
+            ?.getCache()
+            .getNodes()
+            .getBy('index', startRow.rowIndex);
+        /*
         let node: RowPosition | null = startRow;
         while (isInCache(node)) {
             rowPositions.push(node);
@@ -979,7 +975,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             }
             node = _getRowBelow(this.beans, node);
         }
-
+*/
         return { rowPositions, cellsToFlash };
     }
 
@@ -1234,5 +1230,13 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         return startRangeIndex - endRangeIndex + 1;
+    }
+}
+
+function lazyIntersection<T>(iterator1: Iterable<T>, iterator2: Iterable<T>) {
+    const result = new Set<T>();
+
+    for (const iterator of iterator1) {
+        result.add(iterator);
     }
 }
