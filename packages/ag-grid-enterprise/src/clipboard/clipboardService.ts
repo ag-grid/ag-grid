@@ -961,7 +961,17 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             ?.getCache()
             .getNodes()
             .getBy('index', startRow.rowIndex);
-        /*
+        const isInCache = (node: RowPosition | null): node is RowPosition => {
+            return !!(
+                node &&
+                (this.beans.rowModel as ServerSideRowModel)
+                    .getRootStore()
+                    ?.getCache()
+                    .getNodes()
+                    .getBy('index', node.rowIndex)
+            );
+        };
+        console.log({ startRow, lastRow, isSSRM, startRowNode });
         let node: RowPosition | null = startRow;
         while (isInCache(node)) {
             rowPositions.push(node);
@@ -975,7 +985,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             }
             node = _getRowBelow(this.beans, node);
         }
-*/
+
         return { rowPositions, cellsToFlash };
     }
 
