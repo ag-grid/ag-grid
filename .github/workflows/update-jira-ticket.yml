@@ -86,9 +86,7 @@ jobs:
                 if (process.env.DEBUG_JIRA_TICKET) {
                     issue_keys.push(process.env.DEBUG_JIRA_TICKET);
                 }
-                const pr = pull_number ? (await github.rest.pulls.get({ owner,
-                    repo,
-                    pull_number: pull_number })).data : {};
+                const pr = pull_number ? (await github.rest.pulls.get({ owner, repo, pull_number })).data : {};
                 const is_merged = !!pr.merged_at;
                 if (!is_merged) {
                     console.log(`PR #${pull_number} is not merged, skipping JIRA ticket update.`);
