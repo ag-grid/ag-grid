@@ -3,11 +3,12 @@ import type { AgColumn } from '../../entities/agColumn';
 import { _getRowNode } from '../../entities/positionUtils';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
+import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getColId } from '../utils/controllers';
-import { _populateModelValidationErrors, _setupEditor } from '../utils/editors';
+import { _setupEditor } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
@@ -63,6 +64,26 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         _type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged'
     ): void {
         // NOP - single cell edit strategy does not dispatch row events
+    }
+
+    protected override processValidationResults(
+        results: EditValidationResult<Required<EditPosition> & EditValue>
+    ): EditValidationAction {
+        const anyFailed = results.fail.length > 0;
+
+        // if any of the cells failed, keep those editors
+        if (anyFailed && this.editSvc.cellEditingInvalidCommitBlocks()) {
+            return {
+                destroy: [],
+                keep: results.all,
+            };
+        }
+
+        // if no cells failed, we destroy all editors
+        return {
+            destroy: results.all,
+            keep: [],
+        };
     }
 
     public override stop(cancel?: boolean, event?: Event | null): boolean {
@@ -165,18 +186,6 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         const rowsMatch = nextPos && prevPos.rowIndex === nextPos.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
 
-        if (!rowsMatch) {
-            // run validation to gather row-level validation errors
-            _populateModelValidationErrors(this.beans);
-
-            if ((this.model.getRowValidationModel().getRowValidationMap().size ?? 0) === 0) {
-                const rowPreventNavigation = this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop';
-                if (rowPreventNavigation) {
-                    return true;
-                }
-            }
-        }
-
         if (prevEditable && !preventNavigation) {
             this.setFocusOutOnEditor(prevCell);
         }
@@ -214,24 +223,6 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         prevCell.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
 
         return true;
-    }
-
-    protected override processValidationResults(results: EditValidationResult): EditValidationAction {
-        const anyFailed = results.fail.length > 0;
-
-        // if any of the cells failed, we keep all editors
-        if (anyFailed && this.editSvc.cellEditingInvalidCommitBlocks()) {
-            return {
-                destroy: [],
-                keep: results.all,
-            };
-        }
-
-        // if no cells failed, we destroy all editors
-        return {
-            destroy: results.all,
-            keep: [],
-        };
     }
 
     public override destroy(): void {
