@@ -140,7 +140,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         let groupColsChanged = false;
         const cols = this.beans.rowGroupColsSvc?.columns;
         let groupCols = this.groupCols;
-        if (!groupCols || (!changedRowNodes && groupColumnsChanged(groupCols, cols))) {
+        if (!groupCols || groupColumnsChanged(groupCols, cols)) {
             groupColsChanged = !!groupCols;
             this.groupCols = groupCols = makeGroupColumns(cols);
         }
@@ -148,7 +148,11 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         let showGroupColsChanged = false;
         const showCols = this.showRowGroupCols.getShowRowGroupCols();
         const showGroupCols = this.showGroupCols;
-        if (!showGroupCols || (!changedRowNodes && groupColumnsChanged(showGroupCols, showCols))) {
+        if (
+            !showGroupCols ||
+            ((groupColsChanged || afterColumnsChanged || !changedRowNodes) &&
+                groupColumnsChanged(showGroupCols, showCols))
+        ) {
             showGroupColsChanged = !!showGroupCols;
             this.showGroupCols = makeGroupColumns(showCols);
         }
