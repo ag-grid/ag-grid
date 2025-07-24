@@ -1,4 +1,4 @@
-import { GROUP_AUTO_COLUMN_ID, SELECTION_COLUMN_ID } from '../columns/columnUtils';
+import { GROUP_AUTO_COLUMN_ID, ROW_NUMBERS_COLUMN_ID, SELECTION_COLUMN_ID } from '../columns/columnUtils';
 
 function formatTestId(name: string, attributes: Record<string, string | number | null | undefined> = {}): string {
     const params = Object.keys(attributes)
@@ -171,6 +171,9 @@ export const agTestIdFor = {
     },
     autoGroupExpanded(rowId: string | null): string {
         return agTestIdFor.groupExpanded(rowId, GROUP_AUTO_COLUMN_ID);
+    },
+    rowNumber(rowId: string | null): string {
+        return agTestIdFor.cell(rowId, ROW_NUMBERS_COLUMN_ID);
     },
 
     /** Menu */
