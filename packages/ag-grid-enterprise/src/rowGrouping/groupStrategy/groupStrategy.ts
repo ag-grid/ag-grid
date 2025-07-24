@@ -644,7 +644,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private getGroupInfo(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {
         const res: GroupInfo[] = [];
-        for (const { col } of details.groupCols) {
+        for (const { col, field } of details.groupCols) {
             let key: string = this.valueSvc.getKeyForNode(col, rowNode);
             let keyExists = key !== null && key !== undefined && key !== '';
 
@@ -660,7 +660,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             if (keyExists) {
                 const item = {
                     key: key,
-                    field: col.getColDef().field,
+                    field,
                     rowGroupColumn: col,
                     leafNode: rowNode,
                 } as GroupInfo;
