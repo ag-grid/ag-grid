@@ -1,5 +1,5 @@
 // Prevents the risk of prototype pollution
-export const SKIP_JS_BUILTINS = new Set<string>(['__proto__', 'constructor', 'prototype']);
+const SKIP_JS_BUILTINS = new Set<string>(['__proto__', 'constructor', 'prototype']);
 
 export function get(source: any, expression: string, defaultValue: any): any {
     if (source == null) {
