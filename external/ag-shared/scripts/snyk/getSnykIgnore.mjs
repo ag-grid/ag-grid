@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const fs = require('fs');
-const yaml = require('js-yaml');
-const path = require('path');
+import fs from 'fs';
+import yaml from 'js-yaml';
+import path from 'path';
 
 function getSnykFiles({ dir, found = [], ignore = ['node_modules', '.git'] }) {
     const files = fs.readdirSync(dir);

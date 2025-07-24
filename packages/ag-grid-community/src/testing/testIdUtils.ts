@@ -1,3 +1,5 @@
+import { GROUP_AUTO_COLUMN_ID, ROW_NUMBERS_COLUMN_ID, SELECTION_COLUMN_ID } from '../columns/columnUtils';
+
 function formatTestId(name: string, attributes: Record<string, string | number | null | undefined> = {}): string {
     const params = Object.keys(attributes)
         .map((k) => {
@@ -143,8 +145,17 @@ export const agTestIdFor = {
     cell(rowId: string | null, colId: string | null): string {
         return formatTestId('ag-cell', { ['row-id']: rowId, colId });
     },
+    autoGroupCell(rowId: string | null): string {
+        return agTestIdFor.cell(rowId, GROUP_AUTO_COLUMN_ID);
+    },
     checkbox(rowId: string | null, colId: string | null): string {
         return formatTestId('ag-selection-checkbox', { ['row-id']: rowId, colId });
+    },
+    selectionColumnCheckbox(rowId: string | null): string {
+        return agTestIdFor.checkbox(rowId, SELECTION_COLUMN_ID);
+    },
+    autoGroupColumnCheckbox(rowId: string | null): string {
+        return agTestIdFor.checkbox(rowId, GROUP_AUTO_COLUMN_ID);
     },
     dragHandle(rowId: string | null, colId: string | null): string {
         return formatTestId('ag-drag-handle', { ['row-id']: rowId, colId });
@@ -154,6 +165,15 @@ export const agTestIdFor = {
     },
     groupExpanded(rowId: string | null, colId: string | null): string {
         return formatTestId('ag-group-expanded', { ['row-id']: rowId, colId });
+    },
+    autoGroupContracted(rowId: string | null): string {
+        return agTestIdFor.groupContracted(rowId, GROUP_AUTO_COLUMN_ID);
+    },
+    autoGroupExpanded(rowId: string | null): string {
+        return agTestIdFor.groupExpanded(rowId, GROUP_AUTO_COLUMN_ID);
+    },
+    rowNumber(rowId: string | null): string {
+        return agTestIdFor.cell(rowId, ROW_NUMBERS_COLUMN_ID);
     },
 
     /** Menu */

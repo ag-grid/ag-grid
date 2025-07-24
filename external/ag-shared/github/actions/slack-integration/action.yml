@@ -1,0 +1,74 @@
+name: slack-integration
+description: Creates a Slack message based on the test results.
+inputs:
+    AG_LIBRARY:
+        description: 'AG library'
+        required: true
+        type: choice
+        options:
+            - grid
+            - charts
+    SLACK_BOT_OAUTH_TOKEN:
+        description: 'Slack OAuth token for sending messages'
+        required: true
+    SLACK_CHANNEL:
+        description: 'Slack channel to send messages'
+        required: true
+    CTRF_REPORT_FILE:
+        description: 'Path to the CTRF report file'
+        required: false
+    CURRENT_COMMIT_SHA:
+        description: 'Current/Variant commit SHA being tested'
+        required: false
+    PREV_COMMIT_SHA:
+        description: 'Base/Control commit SHA to compare against'
+        required: false
+    IS_SUCCESS:
+        description: 'Indicates if the workflow run was successful'
+        required: false
+        default: 'true'
+runs:
+    using: composite
+    steps:
+        - name: Get last failed step
+          id: last-failed-step
+          if: ${{ failure() }}
+          continue-on-error: true
+          uses: ./external/ag-shared/github/actions/get-last-failed-step
+          with:
+              JOB_ID: ${{ github.run_id }}
+              REPO_NAME: ${{ github.repository }}
+
+        - name: Convert ctrf output to Slack message blocks
+          env:
+              AG_LIBRARY: ${{ inputs.AG_LIBRARY }}
+              CTRF_REPORT_FILE: ${{ inputs.CTRF_REPORT_FILE }}
+              WORKFLOW_NAME: ${{ github.workflow }}
+              JOB_ID: ${{ github.run_id }}
+              CURRENT_COMMIT_SHA: ${{ inputs.CURRENT_COMMIT_SHA }}
+              PREV_COMMIT_SHA: ${{ inputs.PREV_COMMIT_SHA }}
+              SLACK_FILE: /tmp/slack.json
+              REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+              BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+              SLACK_CHANNEL: ${{ inputs.SLACK_CHANNEL }}
+              SLACK_ICON: 'https://avatars.slack-edge.com/2020-11-25/1527503386626_319578f21381f9641cd8_192.png'
+              SLACK_USERNAME: 'ag-grid CI'
+              IS_SUCCESS: ${{ inputs.IS_SUCCESS == 'true' && !steps.last-failed-step.outputs.failed_step }}
+              LAST_FAILED_STEP: ${{ steps.last-failed-step.outputs.failed_step }}
+          shell: bash
+          run: |
+              node ./external/ag-shared/scripts/ci/gen-slack-blocks.mjs
+              cat $SLACK_FILE
+              {
+                echo 'SLACK_MESSAGE_BLOCKS<<EOF'
+                cat $SLACK_FILE
+                echo 'EOF'
+              } >> $GITHUB_ENV
+
+        - name: Create Slack Message
+          shell: bash
+          env:
+              SLACK_BOT_OAUTH_TOKEN: ${{ inputs.SLACK_BOT_OAUTH_TOKEN }}
+              SLACK_MESSAGE_BLOCKS: ${{ env.SLACK_MESSAGE_BLOCKS }}
+          run: |
+              node ./external/ag-shared/scripts/slack/send-slack-message-command.mjs
