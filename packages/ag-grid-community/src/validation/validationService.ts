@@ -12,7 +12,6 @@ import { _warnOnce } from '../utils/function';
 import { _fuzzySuggestions } from '../utils/fuzzyMatch';
 import type { IconName, IconValue } from '../utils/icon';
 import { validateApiFunction } from './apiFunctionValidator';
-import type { ErrorId, GetErrorParams } from './errorMessages/errorText';
 import { getError } from './errorMessages/errorText';
 import { _errMsg, _error, _warn, provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
@@ -29,7 +28,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
-        provideValidationServiceLogger(this);
+        provideValidationServiceLogger(getError);
     }
 
     public warnOnInitialPropertyUpdate(source: AgPropertyChangedSource, key: string): void {
@@ -262,10 +261,6 @@ export class ValidationService extends BeanStub implements NamedBean {
             const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
             _warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
         }
-    }
-
-    public getConsoleMessage<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>): any[] {
-        return getError(id, args);
     }
 }
 
