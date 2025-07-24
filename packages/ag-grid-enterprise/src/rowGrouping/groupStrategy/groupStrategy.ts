@@ -136,12 +136,11 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
         const { rowNode, changedPath, rowNodesOrderChanged, afterColumnsChanged, changedRowNodes } = params;
-        const maybeColsChanged = afterColumnsChanged || !changedRowNodes;
 
         let groupColsChanged = false;
         const cols = this.beans.rowGroupColsSvc?.columns;
         let groupCols = this.groupCols;
-        if (!groupCols || (maybeColsChanged && groupColumnsChanged(groupCols, cols))) {
+        if (!groupCols || (!changedRowNodes && groupColumnsChanged(groupCols, cols))) {
             groupColsChanged = !!groupCols;
             this.groupCols = groupCols = makeGroupColumns(cols);
         }
@@ -149,7 +148,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         let showGroupColsChanged = false;
         const showCols = this.showRowGroupCols.getShowRowGroupCols();
         const showGroupCols = this.showGroupCols;
-        if (!showGroupCols || (maybeColsChanged && groupColumnsChanged(showGroupCols, showCols))) {
+        if (!showGroupCols || (!changedRowNodes && groupColumnsChanged(showGroupCols, showCols))) {
             showGroupColsChanged = !!showGroupCols;
             this.showGroupCols = makeGroupColumns(showCols);
         }
@@ -641,7 +640,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private getGroupInfo(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {
         const res: GroupInfo[] = [];
-        for (const { field, col } of details.groupCols) {
+        for (const { col } of details.groupCols) {
             let key: string = this.valueSvc.getKeyForNode(col, rowNode);
             let keyExists = key !== null && key !== undefined && key !== '';
 
@@ -657,7 +656,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             if (keyExists) {
                 const item = {
                     key: key,
-                    field,
+                    field: col.getColDef().field,
                     rowGroupColumn: col,
                     leafNode: rowNode,
                 } as GroupInfo;
