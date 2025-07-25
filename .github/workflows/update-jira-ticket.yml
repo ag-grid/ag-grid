@@ -130,12 +130,7 @@ jobs:
                         const blocks = [];
                         if (reviewers.length) {
                             blocks.push(txt(reviewedByText));
-                            blocks.push(
-                                ...reviewers
-                                    .map(r => mention(r))
-                                    .filter(r => r.attrs.id && r.attrs.text)
-                                    .join(', ')
-                            );
+                            blocks.push(...reviewers.map((r) => mention(r)).filter((r) => r.attrs.id && r.attrs.text));
                             blocks.push(txt(`. `));
                         }
                         if (mergedBy && !samePerson) {
