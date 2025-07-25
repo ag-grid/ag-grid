@@ -1,4 +1,6 @@
 ---
+import { getEntry, type CollectionEntry } from 'astro:content';
+
 import Layout from '@layouts/Layout.astro';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
@@ -18,140 +20,96 @@ import CodeSvg from '../images/about-icons/code.svg';
 import StarSvg from '../images/about-icons/star.svg';
 import BrainSvg from '../images/about-icons/brain.svg';
 
+const aboutIcons = {
+    born: BornSvg,
+    rocket: RocketSvg,
+    conference: ConferenceSvg,
+    barChart: BarChartSvg,
+    chart: ChartSvg,
+    license: LicenseSvg,
+    donutAccelerating: DonutAcceleratingSvg,
+    blog: BlogSvg,
+    code: CodeSvg,
+    star: StarSvg,
+    brain: BrainSvg,
+};
+
 const timeline = [
     {
         year: '2015',
-        icon: BornSvg,
+        icon: aboutIcons.born,
         title: 'First commit',
         description: `<a href="${urlWithBaseUrl('/niall/')}">Niall Crosby</a> makes his <a href="https://github.com/ag-grid/ag-grid/blob/3a276fa22a328aed53e1b3bebe45c83f78bf9d98/src/angularGrid.js">first commit for AG Grid</a>, creating an open-source data grid solution to address a gap in the market`,
     },
     {
         year: '2016',
-        icon: RocketSvg,
+        icon: aboutIcons.rocket,
         title: 'Commercial launch',
         description: `<a href="${urlWithBaseUrl('/data-grid/community-vs-enterprise/')}">AG Grid Enterprise</a> is launched to widespread adoption within the developer community.`,
     },
     {
         year: '2017',
-        icon: BarChartSvg,
+        icon: aboutIcons.barChart,
         title: 'Enterprise momentum',
         description: `AG Grid signs its 1,000th enterprise customer, proving the commercial model's success.`,
     },
     {
         year: '2018',
-        icon: ConferenceSvg,
+        icon: aboutIcons.conference,
         title: 'AG Grid Conf',
         description: `Dedicated <a href="${urlWithBaseUrl('community/events/')}">AG Grid conferences</a> delivered in London & New York, engaging us with our growing developer community.`,
     },
     {
         year: '2019',
-        icon: BarChartSvg,
+        icon: aboutIcons.barChart,
         title: 'Integrated Charting',
         description: `<a href="${urlWithBaseUrl('/data-grid/integrated-charts/')}">Integrated Charts</a> is launched within AG Grid. The first JS data-grid to contain built-in charting.`,
     },
     {
         year: '2020',
-        icon: ChartSvg,
+        icon: aboutIcons.chart,
         title: 'AG Charts',
         description: `<a href="https://ag-grid.com/charts/">AG Charts community</a> is released as a standalone library`,
     },
     {
         year: '2021',
-        icon: LicenseSvg,
+        icon: aboutIcons.license,
         title: 'Self-service licensing',
         description: `<a href="${urlWithBaseUrl('/license-pricing/')}">eCommerce platform</a> is launched to allow customers to self-service.`,
     },
     {
         year: '2022',
-        icon: ConferenceSvg,
+        icon: aboutIcons.conference,
         title: 'Mass adoption',
         description: `<a href="https://www.npmjs.com/package/ag-grid-community">AG Grid Community</a> breaks one million downloads per month on NPM.`,
     },
     {
         year: '2023',
-        icon: DonutAcceleratingSvg,
+        icon: aboutIcons.donutAccelerating,
         title: 'AG Chart Enterprise',
         description: `<a href="${urlWithBaseUrl('/data-grid/community-vs-enterprise/')}">AG Chart Enterprise</a> is launched in response to strong user demand.`,
     },
     {
         year: '2024',
-        icon: ConferenceSvg,
+        icon: aboutIcons.conference,
         title: 'Leadership updates',
         description: `<a href="#leadership-section">John Masterson</a> appointed CEO, a new board is formed.`,
     },
     {
         year: 'Now',
-        icon: RocketSvg,
+        icon: aboutIcons.rocket,
         title: "What's next",
         description: `We're always on the look out for the next exciting product, stay tuned`,
     },
 ];
 
-const principles = [
-    {
-        icon: CodeSvg,
-        title: 'Developer-first',
-        description: 'Our approach to create innovative, market-leading products',
-    },
-    {
-        icon: StarSvg,
-        title: 'Technical excellence',
-        description: 'Deliver consistent quality and exceptional end-user experiences',
-    },
-    {
-        icon: BrainSvg,
-        title: 'Deep understanding',
-        description: "Forging a deep understanding of our customers' problems",
-    },
-    {
-        icon: BarChartSvg,
-        title: 'Measurable value',
-        description: 'Testable solutions that compare favourably to any industry benchmarks',
-    },
-    {
-        icon: ConferenceSvg,
-        title: 'Exceptional talent',
-        description: 'We attract and develop world-class developer and operations talent.',
-    },
-    {
-        icon: RocketSvg,
-        title: 'Culture of innovation',
-        description: 'Cultivate a culture of innovation, excellence, and success',
-    },
-];
+const { data: aboutContent } = (await getEntry('aboutPage', 'about')) as CollectionEntry<'aboutPage'>;
 
-const leadershipTeam = [
-    {
-        name: 'John Masterson',
-        role: 'CEO',
-        bio: `One of the original AG Grid team in 2016, John has over 20 years' of experience across software development, product management, commercial strategy, and executive management. He has a strong track record of scaling developer-focused businesses and leading high-performing teams in fast-growing SaaS and enterprise software environments. As CEO of AG Grid, John is responsible for defining the company's strategic direction, driving innovation, and supporting long-term, sustainable growth. He works closely with customers and the leadership team to ensure AG Grid remains the trusted standard for enterprise-grade JavaScript development products.`,
-        imageSrc: 'images/about/john-masterson.webp',
-    },
-    {
-        name: 'Rob Clarke',
-        role: 'CTO',
-        bio: `Rob is a technology leader with more than 20 years' experience transforming engineering teams and driving product innovation. He has led initiatives in telecommunications, financial services, and enterprise software, joining AG Grid in 2017 after serving as a technical lead and architect at RBS. Rob has since scaled the engineering team and broadened the product portfolio. As CTO, he shapes technical strategy and product development across all products, most recently spearheading the launch of AG Charts Enterprise for enterprise-grade data visualisation.`,
-        imageSrc: 'images/about/rob-clarke.webp',
-    },
-    {
-        name: 'Jon Williams',
-        role: 'SVP Commercial',
-        bio: `Jon has over 25 years' experience leading commercial teams from start-ups to global organisations. Honing his skills at companies such as Aprimo, Boxever, and Sitecore. Jon now brings a wealth of experience delivering go-to-market strategies, business integration, and delivering B2B sales success to AG Grid.`,
-        imageSrc: 'images/about/jon-williams.webp',
-    },
-    {
-        name: 'Rob Grubb',
-        role: 'CFO',
-        bio: `Experienced financial professional, qualifying as a chartered accountant with Big Four in 2005 and focusing solely on software businesses since. Extensive experience leading strategic, financial, and commercial initiatives and teams at managerial, executive, and PLC Board levels. Holds a current practicing certificate with the Institute of Chartered Accountants of Scotland.`,
-        imageSrc: 'images/about/rob-grubb.webp',
-    },
-    {
-        name: 'Jason Osmond',
-        role: 'Chair of the Board',
-        bio: `Jason is a seasoned technology executive with over 25 years' of experience driving growth, scaling operations, and building high-performing, commercially focused organisations. He brings a strong track record of value creation through strategic leadership, operational discipline, and a focus on sustainable, recurring revenue models. As Chairman, Jason works closely with AG Grid's leadership team to support long-term growth and market expansion.`,
-        imageSrc: 'images/about/jason-osmond.webp',
-    },
-];
+const principles = aboutContent.principles.map(({ icon, title, description }) => ({
+    icon: aboutIcons[icon],
+    title,
+    description,
+}));
 
 const carouselImages = [
     urlWithBaseUrl('images/about/carousel/carousel-1.webp'),
@@ -288,7 +246,7 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
 
                 <div class={styles.leadershipList}>
                     {
-                        leadershipTeam.map(({ name, role, bio, imageSrc }) => (
+                        aboutContent.leadershipTeam.map(({ name, role, bio, imageSrc }) => (
                             <div class={styles.leaderItem}>
                                 <img
                                     src={urlWithBaseUrl(imageSrc)}
