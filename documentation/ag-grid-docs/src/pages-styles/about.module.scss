@@ -50,10 +50,10 @@
         font-weight: var(--text-semibold);
         color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 60%);
         line-height: 1.6;
-    }
 
-    #{$selector-darkmode} & p {
-        opacity: 1;
+        #{$selector-darkmode} & {
+            opacity: 1;
+        }
     }
 }
 
@@ -64,7 +64,7 @@
     margin: 0 auto;
     user-select: none;
 
-    @media (max-width: 900px) {
+    @media (max-width: $breakpoint-about-large) {
         width: 100%;
         max-width: 100vw;
     }
@@ -116,10 +116,8 @@
             padding-top: $spacing-size-3;
             line-height: 1.6;
         }
-    }
 
-    @media (max-width: 900px) {
-        .content {
+        @media (max-width: $breakpoint-about-large) {
             flex-direction: column;
             gap: 0;
         }
@@ -143,7 +141,7 @@
         padding-top: $spacing-size-4;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: $breakpoint-about-large) {
         position: static;
         top: auto;
     }
@@ -165,28 +163,13 @@
     flex: 1;
     position: relative;
 
-    @media screen and (min-width: 900px) {
-        min-width: 320px;
-        margin-left: $spacing-size-12;
-    }
-
     svg {
         fill: var(--color-brand-500);
     }
 
-    .timelineLine {
-        position: absolute;
-        left: 23px;
-        top: 20px;
-        width: 2px;
-        height: calc(100% - 100px);
-        background: var(--color-button-tertiary-border);
-        opacity: 0.2;
-        z-index: 0;
-
-        @media screen and (min-width: 600px) {
-            left: 95px;
-        }
+    @media screen and (min-width: $breakpoint-about-large) {
+        min-width: 320px;
+        margin-left: $spacing-size-12;
     }
 }
 
@@ -209,7 +192,7 @@
     font-family: var(--text-monospace-font-family);
     font-weight: var(--text-semibold);
 
-    @media screen and (min-width: 600px) {
+    @media screen and (min-width: $breakpoint-about-small) {
         display: block;
     }
 }
@@ -231,29 +214,42 @@
     path {
         fill: var(--color-brand-500);
     }
+
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
+
+        path {
+            fill: var(--color-link);
+        }
+    }
 }
 
 .mobileYear {
-    @media screen and (min-width: 600px) {
+    @media screen and (min-width: $breakpoint-about-small) {
         display: none;
     }
 }
 
 .timelineLine {
     position: absolute;
-    left: 50%;
-    top: 100%;
-    transform: translateX(-50%);
+    left: 23px;
+    top: 20px;
     width: 2px;
-    height: calc(100% + 40px);
-    background: red;
+    height: calc(100% - 100px);
+    background: var(--color-button-tertiary-border);
+    opacity: 0.2;
     z-index: 0;
-    content: '';
+    transform: translateX(-50%);
+
+    @media screen and (min-width: $breakpoint-about-small) {
+        left: 95px;
+    }
 }
 
 .timelineContent {
     flex: 1;
-    @media screen and (min-width: 600px) {
+
+    @media screen and (min-width: $breakpoint-about-small) {
         min-width: 200px;
     }
 }
@@ -297,6 +293,7 @@
     padding-top: $spacing-size-20;
     padding-bottom: $spacing-size-20;
 }
+
 .principlesContent {
     flex: 1;
     display: flex;
@@ -316,7 +313,7 @@
         padding-top: $spacing-size-4;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: $breakpoint-about-large) {
         position: static;
         top: auto;
     }
@@ -329,7 +326,7 @@
     gap: 32px;
     margin-left: $spacing-size-12;
 
-    @media screen and (min-width: 600px) {
+    @media screen and (min-width: $breakpoint-about-small) {
         min-width: 320px;
     }
 }
@@ -342,18 +339,25 @@
 }
 
 .principleIcon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
 
     svg {
         width: 28px;
         height: 28px;
+    }
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
+
+        path {
+            fill: var(--color-link);
+        }
     }
 }
 
@@ -369,6 +373,7 @@
     font-size: var(--text-fs-lg);
     margin-bottom: 2px;
 }
+
 .principleDesc {
     color: color-mix(in srgb, var(--color-bg-primary), var(--color-text-secondary) 75%);
     font-size: 15px;
@@ -417,7 +422,7 @@
         padding-top: $spacing-size-4;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: $breakpoint-about-large) {
         position: static;
         top: auto;
     }
@@ -447,7 +452,7 @@
     object-fit: cover;
     flex-shrink: 0;
 
-    @media screen and (min-width: 600px) {
+    @media screen and (min-width: $breakpoint-about-small) {
         width: $spacing-size-16;
         height: $spacing-size-16;
     }
@@ -512,6 +517,10 @@
     flex-direction: row;
     align-items: flex-start;
     gap: 16px;
+
+    svg path {
+        fill: var(--color-brand-500);
+    }
 }
 
 .resourceIcon {
@@ -524,10 +533,19 @@
     justify-content: center;
     flex-shrink: 0;
     margin-top: 2px;
+
     svg {
         width: 18px;
         height: 18px;
         fill: var(--color-brand-500);
+    }
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
+
+        path {
+            fill: var(--color-link);
+        }
     }
 }
 
@@ -543,6 +561,7 @@
     font-size: 17px;
     margin-bottom: 2px;
 }
+
 .resourceDesc {
     color: var(--color-text-secondary);
     font-size: 15px;
@@ -569,7 +588,7 @@
         opacity: 0.13;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: $breakpoint-about-small) {
         padding-left: 8px;
         padding-right: 8px;
     }
@@ -586,7 +605,7 @@
     margin: 0 auto;
     box-sizing: border-box;
 
-    @media (max-width: 900px) {
+    @media (max-width: $breakpoint-about-large) {
         flex-direction: column;
         gap: $spacing-size-12;
         align-items: stretch;
@@ -620,10 +639,7 @@
     word-break: break-all;
     max-width: 100%;
     text-align: center;
-    @media (max-width: 400px) {
-        font-size: 15px;
-        padding: 10px 8px;
-    }
+
     &:hover,
     &:focus {
         background: var(--color-brand-50);
@@ -643,6 +659,11 @@
             border-color: var(--color-button-tertiary-fg);
         }
     }
+
+    @media (max-width: 400px) {
+        font-size: 15px;
+        padding: 10px 8px;
+    }
 }
 
 .socialLinks {
@@ -652,7 +673,8 @@
     margin-left: 0;
     margin-top: 24px;
     flex-wrap: wrap;
-    @media (max-width: 600px) {
+
+    @media (max-width: $breakpoint-about-small) {
         gap: 12px;
         margin-top: 16px;
         justify-content: flex-start;
@@ -670,10 +692,7 @@
     text-decoration: none;
     transition: color 0.15s;
     min-width: 0;
-    @media (max-width: 400px) {
-        font-size: 14px;
-        gap: 4px;
-    }
+
     &:hover,
     &:focus {
         color: var(--color-brand-700);
@@ -682,9 +701,15 @@
 
     #{$selector-darkmode} & {
         color: var(--color-link);
+
         &:hover {
             color: var(--color-link);
         }
+    }
+
+    @media (max-width: 400px) {
+        font-size: 14px;
+        gap: 4px;
     }
 }
 
@@ -703,6 +728,7 @@
         color: var(--color-brand-500);
     }
 }
+
 .contactEmailDesc {
     color: var(--color-text-secondary);
     font-size: 15px;
@@ -713,7 +739,7 @@
 .leadershipSection,
 .resourcesSection,
 .memoriumSection .content {
-    @media (max-width: 900px) {
+    @media (max-width: $breakpoint-about-large) {
         flex-direction: column;
         gap: 0;
     }
@@ -725,39 +751,9 @@
 .principlesSection .principlesList,
 .leadershipSection .leadershipList,
 .resourcesSection .resourcesList {
-    @media (max-width: 900px) {
+    @media (max-width: $breakpoint-about-large) {
         margin-left: 0;
         min-width: 0;
-    }
-}
-
-#{$selector-darkmode} {
-    .timelineIcon {
-        background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
-
-        path {
-            fill: var(--color-link);
-        }
-    }
-}
-
-.principleIcon {
-    #{$selector-darkmode} & {
-        background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
-
-        path {
-            fill: var(--color-link);
-        }
-    }
-}
-
-.resourceIcon {
-    #{$selector-darkmode} & {
-        background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
-
-        path {
-            fill: var(--color-link);
-        }
     }
 }
 
@@ -807,7 +803,7 @@
     height: 260px;
     min-height: 260px;
 
-    @media (max-width: 900px) {
+    @media (max-width: $breakpoint-about-large) {
         height: 140px;
         min-height: 140px;
     }
@@ -824,6 +820,7 @@
     width: 100vw;
     max-width: 100vw;
     height: 100%;
+
     &::-webkit-scrollbar {
         display: none;
     }
@@ -833,7 +830,8 @@
     flex: 0 0 260px;
     margin: 0 20px;
     transition: transform 0.3s;
-    @media (max-width: 900px) {
+
+    @media (max-width: $breakpoint-about-large) {
         flex-basis: 120px;
         margin: 0 8px;
     }
@@ -846,7 +844,8 @@
     border-radius: 18px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     background: #f5f7fa;
-    @media (max-width: 900px) {
+
+    @media (max-width: $breakpoint-about-large) {
         height: 80px;
         border-radius: 10px;
     }
@@ -860,15 +859,18 @@
     height: 100%;
     z-index: 2;
     pointer-events: none;
-    @media (max-width: 900px) {
+
+    @media (max-width: $breakpoint-about-large) {
         width: 60px;
     }
 }
+
 .blurLeft {
     left: -10px;
     background: linear-gradient(to right, var(--color-bg-primary) 40%, var(--color-bg-primary) 60%, transparent 100%);
     filter: blur(8px);
 }
+
 .blurRight {
     right: -10px;
     background: linear-gradient(to left, var(--color-bg-primary) 40%, var(--color-bg-primary) 60%, transparent 100%);
@@ -967,11 +969,6 @@
     animation-fill-mode: both;
 }
 
-.resourceItem {
-    svg path {
-        fill: var(--color-brand-500);
-    }
-}
 .resourceTitle {
     font-size: var(--text-fs-lg);
 }
@@ -1054,7 +1051,8 @@
     gap: 24px;
     margin-left: 0;
     margin-top: 24px;
-    @media (max-width: 900px) {
+
+    @media (max-width: $breakpoint-about-large) {
         margin-top: 12px;
         gap: 16px;
     }
@@ -1097,7 +1095,7 @@
     justify-content: center;
     align-items: flex-start;
 
-    @media (max-width: 900px) {
+    @media (max-width: $breakpoint-about-large) {
         flex-direction: column;
         gap: $spacing-size-12;
         align-items: stretch;
