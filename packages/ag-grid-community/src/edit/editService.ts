@@ -700,7 +700,13 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     getRowDataValue(rowNode: IRowNode, params?: GetEditsParams | undefined) {
-        return this.model.getEditRowDataValue(rowNode, params);
+        if (this.batch) {
+            return this.model.getEditRowDataValue(rowNode, params);
+        }
+
+        // Outside of batch editing, we won't have long-lived pending values so complex
+        // renders referencing other columns' pending values aren't relevant.
+        return rowNode.data;
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
