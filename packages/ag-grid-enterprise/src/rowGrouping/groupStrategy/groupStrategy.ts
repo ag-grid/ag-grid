@@ -439,11 +439,10 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         // groups are about to get disposed, so need to deselect any that are selected
         this.selectionSvc?.filterFromSelection?.((node) => !node.group);
 
-        const { groupCols: groupedCols } = details;
         const rootNode: GroupRow = details.rootNode;
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
-        rootNode.leafGroup = groupedCols.length === 0;
+        rootNode.leafGroup = details.groupCols.length === 0;
 
         // we are doing everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
         rootNode.childrenAfterGroup = [];
