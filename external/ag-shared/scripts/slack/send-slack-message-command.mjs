@@ -8,8 +8,7 @@ if (!SLACK_BOT_OAUTH_TOKEN) {
     process.exit(1);
 }
 
-(async () => {
-    const data = JSON.parse(SLACK_MESSAGE_BLOCKS);
+export async function exec(data) {
     const results = await sendSlackMessage({
         authToken: SLACK_BOT_OAUTH_TOKEN,
         data,
@@ -21,4 +20,10 @@ if (!SLACK_BOT_OAUTH_TOKEN) {
     } else {
         console.log('Slack message sent successfully:', results.results);
     }
-})();
+}
+
+if (SLACK_MESSAGE_BLOCKS) {
+    await exec(JSON.parse(SLACK_MESSAGE_BLOCKS));
+} else {
+    console.error('Error: SLACK_MESSAGE_BLOCKS environment variable is not set.');
+}

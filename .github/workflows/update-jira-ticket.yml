@@ -39,6 +39,7 @@ jobs:
           JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
           GH_USER_JIRA_MAPPING: ${{ secrets.GH_USER_JIRA_MAPPING }}
           JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
         with:
           result-encoding: string
           script: |

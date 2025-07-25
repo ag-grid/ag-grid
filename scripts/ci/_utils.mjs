@@ -151,6 +151,11 @@ export async function getJiraIssue(issueKey) {
         throw error;
     }
 }
+
+function slackMessage(text) {
+    return { blocks: [{ type: 'section', text: { type: 'mrkdwn', text } }] };
+}
+
 // Add a comment to an issue
 export async function addJiraComment(issueKey, body) {
     const url = `https://ag-grid.atlassian.net/rest/api/3/issue/${issueKey}/comment`;
@@ -160,6 +165,13 @@ export async function addJiraComment(issueKey, body) {
         console.log(`Added comment to issue ${issueKey}`);
     } catch (error) {
         console.error('Error adding comment:', error.message);
+        try {
+            const { exec } = await import('../../external/ag-shared/scripts/slack/send-slack-message-command.mjs');
+            const info = JSON.stringify({ issueKey, pr: process.env.PR_ID, job: process.env.JOB_URL, body }, null, 2);
+            await exec(slackMessage(`Error adding comment to JIRA issue: \`\`\`${info}\`\`\``));
+        } catch (e) {
+            console.error('Cannot report error to slack:', e.message);
+        }
         throw error;
     }
 }
