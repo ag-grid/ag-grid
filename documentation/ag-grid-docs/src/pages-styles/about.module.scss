@@ -800,7 +800,6 @@
     position: relative;
     width: 100vw;
     max-width: 100vw;
-    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -822,7 +821,6 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
     width: 100vw;
-    max-width: 100vw;
     height: 100%;
 
     &::-webkit-scrollbar {
@@ -859,7 +857,7 @@
 .blurRight {
     position: absolute;
     top: 0;
-    width: 180px;
+    width: 220px;
     height: 100%;
     z-index: 2;
     pointer-events: none;
@@ -870,13 +868,13 @@
 }
 
 .blurLeft {
-    left: -10px;
+    left: -50px;
     background: linear-gradient(to right, var(--color-bg-primary) 40%, var(--color-bg-primary) 60%, transparent 100%);
     filter: blur(8px);
 }
 
 .blurRight {
-    right: -10px;
+    right: -50px;
     background: linear-gradient(to left, var(--color-bg-primary) 40%, var(--color-bg-primary) 60%, transparent 100%);
     filter: blur(8px);
 }
