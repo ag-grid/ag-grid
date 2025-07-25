@@ -679,6 +679,10 @@
         margin-top: 16px;
         justify-content: flex-start;
     }
+
+    @media screen and (max-width: 400px) {
+        justify-content: center;
+    }
 }
 
 .socialLinkRow {
