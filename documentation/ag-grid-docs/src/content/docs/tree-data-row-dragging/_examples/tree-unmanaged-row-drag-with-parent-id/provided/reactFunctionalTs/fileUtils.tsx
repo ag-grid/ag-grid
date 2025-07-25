@@ -98,6 +98,10 @@ export function moveFiles(files: IFile[], { source, target, parentId, position }
         }
     }
 
+    if (!inserted) {
+        result.push(source);
+    }
+
     return result;
 }
 
