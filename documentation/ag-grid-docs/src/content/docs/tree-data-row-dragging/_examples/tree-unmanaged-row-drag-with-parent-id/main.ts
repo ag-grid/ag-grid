@@ -57,7 +57,7 @@ function onRowDragMove(event: any) {
         // Find the row node by file reference
         let rowNode = null;
         gridApi.forEachNode((node) => {
-            if (node.data === indicator.file) {
+            if (node.data === indicator.target) {
                 rowNode = node;
             }
         });
