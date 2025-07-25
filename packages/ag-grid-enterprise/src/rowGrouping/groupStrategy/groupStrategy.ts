@@ -26,9 +26,9 @@ import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
 import type { GroupingRowNode, IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
 import { setRowNodeGroup } from '../rowGroupingUtils';
 import { BatchRemover } from './batchRemover';
+import type { GroupColumn } from './groupColumns';
+import { groupColumnsChanged, makeGroupColumns } from './groupColumns';
 import type { GroupRow } from './groupRow';
-import type { GroupColumn } from './groupedColumnts';
-import { groupColumnsChanged, makeGroupColumns } from './groupedColumnts';
 import { sortGroupChildren } from './sortGroupChildren';
 
 interface GroupInfo {
@@ -43,10 +43,8 @@ interface GroupingDetails {
     changedPath: ChangedPath;
     rootNode: RowNode;
     groupCols: GroupColumn[];
-    rowNodesOrderChanged: boolean;
-    afterColumnsChanged: boolean;
     groupColsChanged: boolean;
-    showGroupColsChanged: boolean;
+    rowNodesOrderChanged: boolean;
     groupAllowUnbalanced: boolean;
     isGroupOpenByDefault: (params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean;
     initialGroupOrderComparator: (params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => number;
@@ -71,8 +69,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     // rowNode.childrenMapped: string=>RowNode = children mapped by group key (when groups) or an empty map if leaf group (this is then used by pivot)
     // for leaf groups, rowNode.childrenAfterGroup = rowNode.allLeafChildren;
 
-    private groupCols: GroupColumn[] | null = null;
-    private showGroupCols: GroupColumn[] | null = null;
+    private prevGroupCols: GroupColumn[] | null = null;
+    private prevShowGroupCols: GroupColumn[] | null = null;
 
     public getNode(id: string): RowNode | undefined {
         // only one users complained about getRowNode not working for groups, after years of
@@ -95,7 +93,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         if (changedRowNodes) {
             this.handleDeltaUpdate(details, changedRowNodes);
         } else {
-            this.shotgunResetEverything(details);
+            this.shotgunResetEverything(details, !!params.afterColumnsChanged);
         }
 
         const changedPath = params.changedPath!;
@@ -135,26 +133,14 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
-        const { rowNode, changedPath, rowNodesOrderChanged, afterColumnsChanged, changedRowNodes } = params;
+        const { rowNode, changedPath, rowNodesOrderChanged } = params;
 
         let groupColsChanged = false;
         const cols = this.beans.rowGroupColsSvc?.columns;
-        let groupCols = this.groupCols;
+        let groupCols = this.prevGroupCols;
         if (!groupCols || groupColumnsChanged(groupCols, cols)) {
             groupColsChanged = !!groupCols;
-            this.groupCols = groupCols = makeGroupColumns(cols);
-        }
-
-        let showGroupColsChanged = false;
-        const showCols = this.showRowGroupCols.getShowRowGroupCols();
-        const showGroupCols = this.showGroupCols;
-        if (
-            !showGroupCols ||
-            ((groupColsChanged || afterColumnsChanged || !changedRowNodes) &&
-                groupColumnsChanged(showGroupCols, showCols))
-        ) {
-            showGroupColsChanged = !!showGroupCols;
-            this.showGroupCols = makeGroupColumns(showCols);
+            this.prevGroupCols = groupCols = makeGroupColumns(cols);
         }
 
         const details: GroupingDetails = {
@@ -162,9 +148,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             rootNode: rowNode,
             pivotMode: this.colModel.isPivotMode(),
             rowNodesOrderChanged: !!rowNodesOrderChanged,
-            afterColumnsChanged: !!afterColumnsChanged,
             groupColsChanged,
-            showGroupColsChanged: showGroupColsChanged,
             // if no transaction and not immutable row data set, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath!,
             groupAllowUnbalanced: this.gos.get('groupAllowUnbalanced'),
@@ -447,8 +431,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         recurse(details.rootNode.childrenAfterGroup);
     }
 
-    private shotgunResetEverything(details: GroupingDetails): void {
-        if (this.noChangeInGroupingColumns(details)) {
+    private shotgunResetEverything(details: GroupingDetails, afterColumnsChanged: boolean): void {
+        if (this.noChangeInGroupingColumns(details, afterColumnsChanged)) {
             return;
         }
 
@@ -475,12 +459,20 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         this.insertNodes(rootNode.allLeafChildren!, details);
     }
 
-    private noChangeInGroupingColumns(details: GroupingDetails): boolean {
-        if (!details.afterColumnsChanged || details.groupColsChanged) {
+    private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
+        let showGroupColsChanged = false;
+        const showGroupCols = this.prevShowGroupCols;
+        const showCols = this.showRowGroupCols.getShowRowGroupCols();
+        if (!showGroupCols || groupColumnsChanged(showGroupCols, showCols)) {
+            showGroupColsChanged = !!showGroupCols;
+            this.prevShowGroupCols = makeGroupColumns(showCols);
+        }
+
+        if (!afterColumnsChanged || details.groupColsChanged) {
             return false; // We need the full grouping stage
         }
 
-        if (details.showGroupColsChanged) {
+        if (showGroupColsChanged) {
             // if the group display cols have changed, then we need to update rowNode.groupData
             this.checkAllGroupDataAfterColsChanged(details);
         }
