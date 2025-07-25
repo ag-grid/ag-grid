@@ -18,5 +18,5 @@ export function getCellValue<TValue = any>(beans: BeanCollection, params: GetCel
     if (useFormatter) {
         return result.valueFormatted ?? _toString(result.value);
     }
-    return _toString(result.value);
+    return result.value;
 }

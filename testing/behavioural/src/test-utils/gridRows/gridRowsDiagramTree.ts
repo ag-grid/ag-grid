@@ -250,7 +250,7 @@ export class GridRowsDiagramTree {
         if (columns) {
             for (const column of columns) {
                 const value = gridRows.api.getCellValue({ rowNode: row, colKey: column });
-                if (value !== undefined || row.data) {
+                if (value != undefined || row.data) {
                     result += column.getColId() + ':' + JSON.stringify(value) + ' ';
                 }
             }
