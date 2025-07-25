@@ -7,9 +7,13 @@ import type { BeanCollection, SingletonBean } from './context/context';
 import type { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import type { GridOptions } from './entities/gridOptions';
+import type { AgEventTypeParams } from './events';
 import { GlobalGridOptions } from './globalGridOptions';
 import { GridComp } from './gridComp/gridComp';
 import { CommunityCoreModule } from './gridCoreModule';
+import type { GridOptionsWithDefaults } from './gridOptionsDefault';
+import type { GridOptionsService } from './gridOptionsService';
+import type { AgGridCommon } from './interfaces/iCommon';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type {
     CommunityModuleName,
@@ -143,7 +147,13 @@ export class GridCoreCreator {
             _destroyCallback?.();
         };
 
-        const contextParams: AgContextParams<BeanCollection> = {
+        const contextParams: AgContextParams<
+            BeanCollection,
+            GridOptionsWithDefaults,
+            AgEventTypeParams,
+            AgGridCommon<any, any>,
+            GridOptionsService
+        > = {
             providedBeanInstances,
             beanClasses,
             id: gridId,
@@ -153,7 +163,13 @@ export class GridCoreCreator {
             destroyCallback,
         };
 
-        const context = new AgContext<BeanCollection>(contextParams);
+        const context = new AgContext<
+            BeanCollection,
+            GridOptionsWithDefaults,
+            AgEventTypeParams,
+            AgGridCommon<any, any>,
+            GridOptionsService
+        >(contextParams);
         this.registerModuleFeatures(context, registeredModules);
 
         createUi(context);

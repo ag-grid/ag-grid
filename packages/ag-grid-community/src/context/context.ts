@@ -346,6 +346,15 @@ interface CoreBeanCollection
     iconSvc: IconService;
 }
 
+export type BeanCollection = CoreBeanCollection & {
+    // `unknown | undefined` to make sure the type is handled correctly when used
+    [key in UntypedBeanNames]?: unknown;
+};
+
+export type Context = IContext<BeanCollection>;
+
+export type BeanName = keyof BeanCollection;
+
 /** Things used in enterprise or elsewhere that we haven't created interfaces for */
 type UntypedBeanNames =
     | 'advFilterExpSvc'
@@ -374,12 +383,3 @@ type UntypedBeanNames =
     | 'ssrmStoreUtils'
     | 'statusBarSvc'
     | 'testIdSvc';
-
-export type BeanCollection = CoreBeanCollection & {
-    // `unknown | undefined` to make sure the type is handled correctly when used
-    [key in UntypedBeanNames]?: unknown;
-};
-
-export type Context = IContext<BeanCollection>;
-
-export type BeanName = keyof BeanCollection;

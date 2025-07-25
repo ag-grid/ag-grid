@@ -1,20 +1,26 @@
 import type { AgBaseBean, AgSingletonBean } from '../interfaces/agBean';
-import type { IContext } from '../interfaces/iContext';
+import type { BaseEvents } from '../interfaces/baseEvents';
+import type { BaseProperties } from '../interfaces/baseProperties';
+import type { AgCoreBeanCollection, IContext } from '../interfaces/iContext';
+import type { IPropertiesService } from '../interfaces/iProperties';
 
 type BeanComparator<TBeanCollection> = (
     bean1: AgSingletonBean<TBeanCollection>,
     bean2: AgSingletonBean<TBeanCollection>
 ) => number;
 
-interface DerivedBean<TBeanCollection, K extends keyof TBeanCollection> {
-    beanName: K;
-    bean: TBeanCollection[K] & AgSingletonBean<TBeanCollection>;
-}
-
-export interface AgContextParams<TBeanCollection> {
+export interface AgContextParams<
+    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+> {
     providedBeanInstances: Partial<TBeanCollection>;
     beanClasses: AgSingletonBeanClass<TBeanCollection>[];
-    derivedBeans?: ((context: AgContext<TBeanCollection>) => DerivedBean<TBeanCollection, keyof TBeanCollection>)[];
+    derivedBeans?: ((
+        context: AgContext<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    ) => DerivedBean<TBeanCollection, keyof TBeanCollection>)[];
     beanInitComparator?: BeanComparator<TBeanCollection>;
     beanDestroyComparator?: BeanComparator<TBeanCollection>;
     id: string;
@@ -25,7 +31,19 @@ export interface AgSingletonBeanClass<TBeanCollection> {
     new (): AgSingletonBean<TBeanCollection>;
 }
 
-export class AgContext<TBeanCollection> implements IContext<TBeanCollection> {
+interface DerivedBean<TBeanCollection, K extends keyof TBeanCollection> {
+    beanName: K;
+    bean: TBeanCollection[K] & AgSingletonBean<TBeanCollection>;
+}
+
+export class AgContext<
+    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+> implements IContext<TBeanCollection>
+{
     protected beans: TBeanCollection = {} as TBeanCollection;
     private createdBeans: AgSingletonBean<TBeanCollection>[] = [];
     private beanDestroyComparator?: BeanComparator<TBeanCollection>;
@@ -34,7 +52,7 @@ export class AgContext<TBeanCollection> implements IContext<TBeanCollection> {
 
     private destroyed = false;
 
-    constructor(params: AgContextParams<TBeanCollection>) {
+    constructor(params: AgContextParams<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>) {
         if (!params || !params.beanClasses) {
             return;
         }
@@ -44,9 +62,11 @@ export class AgContext<TBeanCollection> implements IContext<TBeanCollection> {
         this.init(params);
     }
 
-    protected init(params: AgContextParams<TBeanCollection>): void {
+    protected init(
+        params: AgContextParams<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    ): void {
         this.id = params.id;
-        (this.beans as any).context = this; // TODO - can we type TBeanCollection to extend CoreBeanCollection easily here?
+        this.beans.context = this;
         this.destroyCallback = params.destroyCallback;
 
         for (const beanName of Object.keys(params.providedBeanInstances) as (keyof TBeanCollection)[]) {
@@ -79,7 +99,7 @@ export class AgContext<TBeanCollection> implements IContext<TBeanCollection> {
     }
 
     private getBeanInstances(): AgSingletonBean<TBeanCollection>[] {
-        return Object.values(this.beans as Record<string, AgSingletonBean<TBeanCollection>>);
+        return Object.values(this.beans);
     }
 
     public createBean<T extends AgBaseBean<TBeanCollection>>(
