@@ -28,15 +28,12 @@ import {
     _getRowNode,
     _isClientSideRowModel,
     _isSameRow,
-    _isServerSideRowModel,
     _last,
     _removeFromArray,
     _warn,
     isColumnSelectionCol,
     isSpecialCol,
 } from 'ag-grid-community';
-
-import type { ServerSideRowModel } from '../serverSideRowModel/serverSideRowModel';
 
 interface RowCallback {
     (
