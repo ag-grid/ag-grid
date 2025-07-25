@@ -893,10 +893,22 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const allRowPositions: RowPosition[] = [];
         const allCellsToFlash: CellsToFlashType = {};
 
+        const isClientSideRowModel = _isClientSideRowModel(this.gos, this.beans.rowModel);
+        const flatCache = new Set();
+        if (!isClientSideRowModel) {
+            this.beans.rowModel.forEachNode((node) => {
+                flatCache.add(node.rowIndex);
+            });
+        }
+
         ranges.forEach((range) => {
             range.columns.forEach((col: AgColumn) => columnsSet.add(col));
             const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(rangeSvc, range);
             rowPositions.forEach((rowPosition) => {
+                const isInCache = flatCache.has(rowPosition.rowIndex);
+                if (!isClientSideRowModel && !isInCache) {
+                    return; // skip rows that are not in the flat cache
+                }
                 const rowPositionAsString = `${rowPosition.rowIndex}-${rowPosition.rowPinned || 'null'}`;
                 if (!rowPositionsMap.get(rowPositionAsString)) {
                     rowPositionsMap.set(rowPositionAsString, true);

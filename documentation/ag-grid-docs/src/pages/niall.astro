@@ -1,0 +1,91 @@
+---
+import Layout from '../layouts/Layout.astro';
+import styles from '../pages-styles/about.module.scss';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+---
+
+<Layout
+    title="Niall Crosby: Our Amazing Founder"
+    description="The story and legacy of Niall Crosby, founder of AG Grid."
+    showSearchBar={true}
+    showDocsNav={false}
+>
+    <div class="layout-max-width-small">
+        <section class={styles.introSection}>
+            <span class={styles.eyebrow}>In memory of Niall Crosby</span>
+            <h2>Our Amazing Founder</h2>
+
+            <p>
+                AG Grid would not be where we are today without our founder Niall Crosby - a truly inspiring and unique
+                individual who left his mark on the world, indelibly on his friends and colleagues at AG Grid. Niall was
+                different to other founders from the start, the company was a reflection of his personality. Excessive
+                noise and overheads were removed leaving a singular focus on building the best grid. This was essential
+                in our early days and the spirit of this lives on to this day. He had an ability to break things down to
+                the absolute fundamentals which brought great clarity to our mission.
+            </p>
+        </section>
+
+        <div class={styles.photoSection}>
+            <img
+                src={urlWithBaseUrl('images/ag-grid-founder-niall-crosby.jpg')}
+                alt="AG Grid founder Niall Crosby"
+                class={styles.niallHeaderImage}
+            />
+            <span>Niall Crosby 1977-2024</span>
+        </div>
+
+        <section class={styles.contentSection}>
+            <div class={styles.niallSectionContent}>
+                <div class={styles.niallTextBlock}>
+                    <p>
+                        Those of us present for the early days also fondly remember his wicked sense of humour and the
+                        genuine joy he took from seeing the success of the company as we achieved remarkable things. He
+                        retained a refreshing incredulity to this success and having tried his hand at a few startups,
+                        he knew that there was a fine line separating us from a different outcome. As the company grew
+                        and our client base with it, Niall built our culture of delivering high quality output and
+                        surrounded himself with likeminded people to share in the success. He was also brave and stuck
+                        firmly to principles he held under pressure. These principles remain to this day.
+                    </p>
+                    <p>
+                        A lover of tech, travel and adventure, Niall was a fiercely independent thinker. He had been
+                        coding since a young age and delighted in seeing patterns, trends and solutions that others
+                        could not. He had an enormous curiosity for how things work which led him to the world of
+                        software development. Niall had an incredible technical mind and his career blossomed with his
+                        talent quickly coming to the fore as he developed enterprise applications. He also had an
+                        entrepreneurial streak and was on the lookout for an opportunity to start his own business.
+                        While working as a freelance developer, Niall felt a deep frustration with the quality of
+                        JavaScript datagrids. He decided to do something about it. This was the origin of AG Grid, it
+                        quickly gained traction as other developers faced similar frustrations.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <div class={`${styles.photoSection} ${styles.photoSectionTwo}`}>
+            <img
+                src={urlWithBaseUrl('images/niall-crosby-finjs-2022.jpg')}
+                alt="Niall Crosby speaking at Fin.js 2022 conference"
+                class={styles.niallHeaderImage}
+            />
+        </div>
+
+        <section class={styles.contentSection}>
+            <div class={styles.niallSectionContent}>
+                <div class={styles.niallTextBlock}>
+                    <p>
+                        Niall sadly lost his life in a helicopter crash in July 2024 in his native Ireland. His legacy
+                        however lives on in the ambition and creativity he instilled in everyone at AG Grid. It is
+                        evident in the inspiration and generous support he provided to countless young developers and
+                        start-ups throughout his career. And it lives on in the memories of his friends and his young
+                        family who were central to his life.
+                    </p>
+                    <p>
+                        At AG Grid we are proud to continue that legacy. Many of us have been on the journey with Niall
+                        since the start. As Niall's friends and work family we are committed to pushing the boundaries,
+                        constantly developing new features and products to show the world what is possible.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+</Layout>

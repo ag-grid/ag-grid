@@ -37,6 +37,8 @@ env:
   COMMENT_FILE: ./comment.md
   PW_REPORT_PATH: ./reports/playwright.json
   CTRF_FILE: ./reports/performance.json
+  SLACK_CHANNEL: '#ci-grid-gate'
+  AG_LIBRARY: grid
 
 permissions:
   contents: read
@@ -206,10 +208,12 @@ jobs:
       - name: Slack Notification
         if: ${{ github.event_name == 'schedule' || inputs.notify }}
         continue-on-error: true
-        uses: ./.github/actions/slack-integration
+        uses: ./external/ag-shared/github/actions/slack-integration
         with:
+          AG_LIBRARY: ${{ env.AG_LIBRARY }}
           CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
-          SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
+          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+          SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
 
       - name: Final Notify Progress
         uses: actions/github-script@v7

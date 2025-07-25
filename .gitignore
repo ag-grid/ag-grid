@@ -70,3 +70,4 @@ vite.config.*.timestamp*
 # Snyk
 .dccache
 /snyk.json
+.tmp

@@ -1,13 +1,417 @@
 ---
+import { getEntry, type CollectionEntry } from 'astro:content';
+
 import Layout from '@layouts/Layout.astro';
-import { About } from '@components/about/About';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
+import styles from '@pages-styles/about.module.scss';
+
+import BornSvg from '../images/about-icons/born.svg';
+import RocketSvg from '../images/about-icons/rocket.svg';
+import ConferenceSvg from '../images/about-icons/conference.svg';
+import BarChartSvg from '../images/about-icons/bar-chart.svg';
+import ChartSvg from '../images/about-icons/chart.svg';
+import LicenseSvg from '../images/about-icons/license.svg';
+import DonutAcceleratingSvg from '../images/about-icons/donut-accelerating.svg';
+import BlogSvg from '../images/about-icons/blog.svg';
+import CodeSvg from '../images/about-icons/code.svg';
+import StarSvg from '../images/about-icons/star.svg';
+import BrainSvg from '../images/about-icons/brain.svg';
+
+const aboutIcons = {
+    born: BornSvg,
+    rocket: RocketSvg,
+    conference: ConferenceSvg,
+    barChart: BarChartSvg,
+    chart: ChartSvg,
+    license: LicenseSvg,
+    donutAccelerating: DonutAcceleratingSvg,
+    blog: BlogSvg,
+    code: CodeSvg,
+    star: StarSvg,
+    brain: BrainSvg,
+};
+
+const timeline = [
+    {
+        year: '2015',
+        icon: aboutIcons.born,
+        title: 'First commit',
+        description: `<a href="${urlWithBaseUrl('/niall/')}">Niall Crosby</a> makes his <a href="https://github.com/ag-grid/ag-grid/blob/3a276fa22a328aed53e1b3bebe45c83f78bf9d98/src/angularGrid.js">first commit for AG Grid</a>, creating an open-source data grid solution to address a gap in the market`,
+    },
+    {
+        year: '2016',
+        icon: aboutIcons.rocket,
+        title: 'Commercial launch',
+        description: `<a href="${urlWithBaseUrl('/data-grid/community-vs-enterprise/')}">AG Grid Enterprise</a> is launched to widespread adoption within the developer community.`,
+    },
+    {
+        year: '2017',
+        icon: aboutIcons.barChart,
+        title: 'Enterprise momentum',
+        description: `AG Grid signs its 1,000th enterprise customer, proving the commercial model's success.`,
+    },
+    {
+        year: '2018',
+        icon: aboutIcons.conference,
+        title: 'AG Grid Conf',
+        description: `Dedicated <a href="${urlWithBaseUrl('community/events/')}">AG Grid conferences</a> delivered in London & New York, engaging us with our growing developer community.`,
+    },
+    {
+        year: '2019',
+        icon: aboutIcons.barChart,
+        title: 'Integrated Charting',
+        description: `<a href="${urlWithBaseUrl('/data-grid/integrated-charts/')}">Integrated Charts</a> is launched within AG Grid. The first JS data-grid to contain built-in charting.`,
+    },
+    {
+        year: '2020',
+        icon: aboutIcons.chart,
+        title: 'AG Charts',
+        description: `<a href="https://ag-grid.com/charts/">AG Charts community</a> is released as a standalone library`,
+    },
+    {
+        year: '2021',
+        icon: aboutIcons.license,
+        title: 'Self-service licensing',
+        description: `<a href="${urlWithBaseUrl('/license-pricing/')}">eCommerce platform</a> is launched to allow customers to self-service.`,
+    },
+    {
+        year: '2022',
+        icon: aboutIcons.conference,
+        title: 'Mass adoption',
+        description: `<a href="https://www.npmjs.com/package/ag-grid-community">AG Grid Community</a> breaks one million downloads per month on NPM.`,
+    },
+    {
+        year: '2023',
+        icon: aboutIcons.donutAccelerating,
+        title: 'AG Chart Enterprise',
+        description: `<a href="${urlWithBaseUrl('/data-grid/community-vs-enterprise/')}">AG Chart Enterprise</a> is launched in response to strong user demand.`,
+    },
+    {
+        year: '2024',
+        icon: aboutIcons.conference,
+        title: 'Leadership updates',
+        description: `<a href="#leadership-section">John Masterson</a> appointed CEO, a new board is formed.`,
+    },
+    {
+        year: 'Now',
+        icon: aboutIcons.rocket,
+        title: "What's next",
+        description: `We're always on the look out for the next exciting product, stay tuned`,
+    },
+];
+
+const { data: aboutContent } = (await getEntry('aboutPage', 'about')) as CollectionEntry<'aboutPage'>;
+
+const principles = aboutContent.principles.map(({ icon, title, description }) => ({
+    icon: aboutIcons[icon],
+    title,
+    description,
+}));
+
+const carouselImages = [
+    urlWithBaseUrl('images/about/carousel/carousel-1.webp'),
+    urlWithBaseUrl('images/about/carousel/carousel-18.webp'),
+    urlWithBaseUrl('images/about/carousel/carousel-8.webp'),
+    urlWithBaseUrl('images/about/carousel/carousel-5.webp'),
+    urlWithBaseUrl('images/about/carousel/carousel-6.webp'),
+    urlWithBaseUrl('images/about/carousel/carousel-9.webp'),
+    urlWithBaseUrl('images/about/carousel/carousel-2.webp'),
+    urlWithBaseUrl('images/about/carousel/carousel-11.webp'),
+    urlWithBaseUrl('images/about/carousel/carousel-3.webp'),
+];
+
+const allCarouselImages = [...carouselImages, ...carouselImages];
 ---
 
 <Layout
-    title="Our Mission, Our Principles and Our Team at AG Grid"
+    title="About AG grid: Our Mission, Principles Team"
     description="AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are."
     showSearchBar={true}
     showDocsNav={false}
 >
-    <About client:load />
+    <div class={styles.aboutPage}>
+        <div class="layout-max-width-small">
+            <section class={styles.introSection}>
+                <h1 class={`${styles.miniHeader} text-lg`}>About Us</h1>
+
+                <h2>
+                    Open source heart, <br />
+                    <span>enterprise muscle.</span>
+                </h2>
+                <p>
+                    <b>Built by developers for developers</b>, AG Grid is a self-funded, bootstrapped company with
+                    thousands of customers globally. Our data grid and charting products are now trusted by developers
+                    worldwide when building their applications.
+                </p>
+            </section>
+
+            <div>
+                <img
+                    src={urlWithBaseUrl('images/about/about-us.webp')}
+                    class={`${styles.aboutHeaderImage} ${styles.aboutHeaderImageLight} ${styles.fadeInUp}`}
+                />
+                <img
+                    src={urlWithBaseUrl('images/about/dark-mode-about.webp')}
+                    class={`${styles.aboutHeaderImage} ${styles.aboutHeaderImageDark} ${styles.fadeInUp}`}
+                />
+            </div>
+
+            <section class={`${styles.customerLogos} ${styles.fadeInUpDelayed}`}>
+                <CustomerLogos client:load />
+                <p class={styles.footnote}>
+                    Our community versions remain true to our roots, offering free, open-source grids and charts
+                    delivering world-class performance. Our enterprise products deliver powerful features and direct
+                    developer technical support.
+                </p>
+            </section>
+
+            <section class={styles.memoriumSection}>
+                <div class={styles.content}>
+                    <img src={urlWithBaseUrl('images/about/niall-crosby.webp')} class={styles.aboutHeaderImage} />
+                    <div>
+                        <h2>In memory of our amazing founder Niall Crosby</h2>
+                        <p>
+                            AG Grid's success has a lot to do with Niall's ingenuity, craft and commitment to building
+                        </p>
+                        <a class="button-tertiary" href="/niall">
+                            <span>Read Niall's story</span>
+                            <Icon name="chevronRight" />
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section class={styles.historySection}>
+                <div class={styles.historyContent}>
+                    <h2>Our history</h2>
+                    <p>
+                        Born from a gap in the market, now providing world-class data-grids and charts to millions of
+                        users.
+                    </p>
+                </div>
+
+                <div class={styles.timeline}>
+                    <div class={styles.timelineLine}></div>
+
+                    {
+                        timeline.map(({ year, icon: TimelineIcon, title, description }) => (
+                            <div class={styles.timelineItem}>
+                                <div class={styles.timelineYear}>{year}</div>
+                                <div class={styles.timelineIcon}>
+                                    <TimelineIcon />
+                                </div>
+                                <div class={styles.timelineContent}>
+                                    <div class={styles.timelineTitle}>
+                                        <span class={styles.mobileYear}>{year}:</span> {title}
+                                    </div>
+                                    <div class={styles.timelineDesc} set:html={description} />
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
+
+            <section class={styles.principlesSection}>
+                <div class={styles.principlesContent}>
+                    <h2>Our principles</h2>
+                    <p>Empowering developers to build world-class applications for their users</p>
+                </div>
+
+                <div class={styles.principlesList}>
+                    {
+                        principles.map(({ icon: PrincipleIcon, title, description }, idx) => (
+                            <div class={styles.principleItem}>
+                                <div class={`${styles.principleIcon} ${styles[`principleColor${idx + 1}`]}`}>
+                                    <PrincipleIcon />
+                                </div>
+                                <div class={styles.principleText}>
+                                    <div class={styles.principleTitle}>{title}</div>
+                                    <div class={styles.principleDesc}>{description}</div>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
+
+            <section class={styles.leadershipSection} id="leadership-section">
+                <div class={styles.leadershipContent}>
+                    <h2>Leadership</h2>
+                    <p>Decades of experience, that you can count on</p>
+                </div>
+
+                <div class={styles.leadershipList}>
+                    {
+                        aboutContent.leadershipTeam.map(({ name, role, bio, imageSrc }) => (
+                            <div class={styles.leaderItem}>
+                                <img
+                                    src={urlWithBaseUrl(imageSrc)}
+                                    class={styles.leaderPhoto}
+                                    alt={`AG Grid ${name} - ${role}`}
+                                />
+                                <div class={styles.leaderText}>
+                                    <div class={styles.leaderName}>{name}</div>
+                                    <div class={styles.leaderTitle}>{role}</div>
+                                    <div class={styles.leaderDesc}>{bio}</div>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
+        </div>
+
+        <div class={styles.lifeSectionWrapper}>
+            <h2 class={styles.lifeHeading}>Life at AG Grid</h2>
+            <p>
+                We are headquartered in London, with a team of 60 professionals obsessed about building our products,
+                bringing them to market, and ensuring our customers are successful with them.
+            </p>
+            <div class={styles.carouselOuter}>
+                <div class={styles.blurLeft}></div>
+                <div class={styles.carouselTrack} id="carousel-track">
+                    {
+                        allCarouselImages.map((src, idx) => (
+                            <div class={styles.carouselImageWrapper}>
+                                <img src={src} alt={`Life at AG Grid ${idx + 1}`} class={styles.carouselImage} />
+                            </div>
+                        ))
+                    }
+                </div>
+                <div class={styles.blurRight}></div>
+            </div>
+        </div>
+
+        <div class="layout-max-width-small">
+            <section class={styles.resourcesSection}>
+                <div class={styles.resourcesContent}>
+                    <h2>Resources</h2>
+                    <p>How to find us online, common resources</p>
+                </div>
+                <div class={styles.resourcesList}>
+                    <a
+                        href="https://blog.ag-grid.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class={styles.resourceItem}
+                    >
+                        <div class={styles.resourceIcon}>
+                            <BlogSvg />
+                        </div>
+                        <div class={styles.resourceText}>
+                            <div class={styles.resourceTitle}>Blog</div>
+                            <div class={styles.resourceDesc}>See our latest articles</div>
+                        </div>
+                    </a>
+
+                    <a href={urlWithBaseUrl('/community')} class={styles.resourceItem}>
+                        <div class={styles.resourceIcon}>
+                            <ConferenceSvg />
+                        </div>
+                        <div class={styles.resourceText}>
+                            <div class={styles.resourceTitle}>Community</div>
+                            <div class={styles.resourceDesc}>View our upcoming and past events</div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+
+            <section class={styles.contactSection}>
+                <div class={styles.contactFlex}>
+                    <div>
+                        <h2>Get in touch</h2>
+                        <p>We are here to help with licenses, developer support and any other queries.</p>
+                        <a class={`${styles.emailButton}`} href="mailto:info@ag-grid.com"
+                            >Contact us at info@ag-grid.com</a
+                        >
+                    </div>
+                    <div>
+                        <h3>Where to find us</h3>
+                        <div class={styles.contactOffice}>
+                            <strong>Our office</strong><br />
+                            Bank Chambers<br />
+                            6 Borough High Street<br />
+                            London<br />
+                            SE1 9QQ
+                        </div>
+                        <div class={styles.socialLinks}>
+                            <a
+                                href="https://github.com/ag-grid/ag-grid"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="GitHub"
+                                class={styles.socialLinkRow}
+                            >
+                                <Icon name="github" />
+                                <span>GitHub</span>
+                            </a>
+                            <a
+                                href="https://x.com/ag_grid"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="X (Twitter)"
+                                class={styles.socialLinkRow}
+                            >
+                                <Icon name="xLogo" />
+                                <span>X</span>
+                            </a>
+                            <a
+                                href="https://youtube.com/c/aggrid"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="YouTube"
+                                class={styles.socialLinkRow}
+                            >
+                                <Icon name="youtube" />
+                                <span>YouTube</span>
+                            </a>
+                            <a
+                                href="https://linkedin.com/company/ag-grid"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="LinkedIn"
+                                class={styles.socialLinkRow}
+                            >
+                                <Icon name="linkedin" />
+                                <span>LinkedIn</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const track = document.getElementById('carousel-track');
+                if (!track) return;
+                let animationFrame: number;
+                let start: number | null = null;
+                let scrollLeft = 0;
+                const speed = 1.5; // px per ms (increased speed)
+
+                const animate = (timestamp: number) => {
+                    if (start === null) start = timestamp;
+                    scrollLeft += speed;
+                    if (scrollLeft >= track.scrollWidth / 2) {
+                        scrollLeft = 0;
+                    }
+                    track.scrollLeft = scrollLeft;
+                    animationFrame = requestAnimationFrame(animate);
+                };
+                animationFrame = requestAnimationFrame(animate);
+
+                // Cleanup when the user navigates away
+                window.addEventListener('beforeunload', () => {
+                    if (animationFrame) {
+                        cancelAnimationFrame(animationFrame);
+                    }
+                });
+            });
+        </script>
+    </div>
 </Layout>
