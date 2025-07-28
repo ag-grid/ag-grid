@@ -65,6 +65,8 @@ const gridOptions = {
 }
 ```
 
+{% apiDocumentation source="column-properties/properties.json" section="columns" names=["equals"] /%}
+
 ### Triggering Value Change Detection
 
 The following operations will **automatically** trigger change detection on all visible cells:
@@ -81,6 +83,8 @@ doing some time intensive calculations, you may want limit the number of times t
 control over when refreshing is done.
 
 To **manually** run Value Change Detection to refresh all visible cells call [api.refreshCells()](./view-refresh/).
+
+{% apiDocumentation source="grid-api/api.json" section="refresh" names=["refreshCells"] /%}
 
 ## 2. Aggregation Change Detection
 
@@ -111,6 +115,8 @@ The following operations will **automatically** trigger aggregation change detec
 1. Using the `api.applyTransaction(transaction)` API method.
 
 To **manually** run aggregation change detection to re-compute the aggregated values, then call [api.refreshClientSideRowModel('aggregate')](./grid-api/#reference-data-refreshClientSideRowModel).
+
+{% apiDocumentation source="grid-api/api.json" section="data" names=["refreshClientSideRowModel"] /%}
 
 ## Change Detection and Sorting, Filtering, Grouping
 
@@ -161,9 +167,9 @@ If you are sure that a value change impacts that one column only, then you can s
 
 ## Example: Tree Path & Column Path Selection
 
-Consider the example below and you edit a cell value under under the groups "Bottom" -> "Group B2" and column "Column C". The grid will only recompute column C aggregations for "Group B2" and "Bottom". It will not recompute any aggregates for any other groups or for any other columns.
+Consider the example below. When you edit a cell value under under the groups "Bottom" -> "Group B2" and column "Column C". The grid will only recompute column C aggregations for "Group B2" and "Bottom". It will not recompute any aggregates for any other groups or for any other columns.
 
-The tree path selection (ie not updating anything in the group "Top") is active always in the grid and the column selection (only updating column "Column C") is active because of the grid property `aggregateOnlyChangedColumns=true`.
+The tree path selection (ie not updating anything in the group "Top") is always active in the grid and the column selection (only updating column "Column C") is active because of the grid property `aggregateOnlyChangedColumns=true`.
 
 The path selections ensure only the minimal amount of recalculations are done.
 
