@@ -59,6 +59,16 @@ html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-'])
     background-color: rgba(0,0,0, 0.1);
 }
 
+html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-']):disabled {
+    background-color: var(--background-100);
+    opacity: 0.75
+}
+
+html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-']):disabled:hover {
+    background-color: var(--background-100);
+    opacity: 0.75
+}
+
 html[data-color-scheme='light'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']),
 html[data-color-scheme='dark'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']) {
     appearance: none;
