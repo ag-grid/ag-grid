@@ -200,7 +200,7 @@ function getNextStickyPosition(beans: BeanCollection, rowNode?: RowNode, up = fa
     const stickyRowCtrls = isStickyTop ? stickyTopCtrls : stickyBottomCtrls;
 
     // invert for sticky top, as the order is flipped for rendering.
-    const increment = (up ? -1 : 1) * (isStickyTop ? 1 : -1);
+    const increment = (up ? -1 : 1) * (isStickyTop ? -1 : 1);
     let nextCtrl: RowCtrl | undefined;
     for (let i = 0; i < stickyRowCtrls.length; i++) {
         if (stickyRowCtrls[i].rowNode.rowIndex === rowNode.rowIndex) {
