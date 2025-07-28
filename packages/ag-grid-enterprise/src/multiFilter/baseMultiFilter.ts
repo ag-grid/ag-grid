@@ -65,7 +65,9 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
 
                 if (filterDef.display === 'subMenu' && container !== 'toolPanel') {
                     // prevent sub-menu being used in tool panel
-                    filterGuiPromise = this.insertFilterMenu(comp, filterTitle).then((menuItem) => menuItem!.getGui());
+                    filterGuiPromise = this.insertFilterMenu(comp, filter, filterTitle).then((menuItem) =>
+                        menuItem!.getGui()
+                    );
                 } else if (filterDef.display === 'subMenu' || filterDef.display === 'accordion') {
                     // sub-menus should appear as groups in the tool panel
                     const group = this.insertFilterGroup(filter, comp, filterTitle);
@@ -99,10 +101,24 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
         this.filterGuis.length = 0;
     }
 
-    private insertFilterMenu(comp: BaseFilterComponent, name: string): AgPromise<AgMenuItemComponent> {
+    private insertFilterMenu(
+        comp: BaseFilterComponent,
+        filter: SharedFilterUi,
+        name: string
+    ): AgPromise<AgMenuItemComponent> {
         const eGui = comp.getGui();
         _setAriaRole(eGui, 'dialog');
         const menuItem = this.createBean(new AgMenuItemComponent());
+        const childComponent = {
+            getGui: () => comp.getGui(),
+            afterGuiAttached: (params?: IAfterGuiAttachedParams) => {
+                (comp as any).afterGuiAttached?.(params);
+                if (comp !== filter) {
+                    // need to ensure that filter also gets called if comp was wrapper
+                    filter.afterGuiAttached?.(params);
+                }
+            },
+        };
         return menuItem
             .init({
                 menuItemDef: {
@@ -118,7 +134,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
                 },
                 level: 0,
                 isAnotherSubMenuOpen: () => false,
-                childComponent: comp,
+                childComponent,
                 contextParams: {
                     column: null,
                     node: null,
