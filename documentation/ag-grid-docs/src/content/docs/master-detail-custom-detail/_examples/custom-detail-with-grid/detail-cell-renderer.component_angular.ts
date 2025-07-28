@@ -12,15 +12,16 @@ import type { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-gr
             <div class="full-width-detail"><b>Name: </b>{{ params.data.name }}</div>
             <div class="full-width-detail"><b>Account: </b>{{ params.data.account }}</div>
         </div>
-        <ag-grid-angular
-            #agGrid
-            style="height: 100%;"
-            class="full-width-grid"
-            [columnDefs]="colDefs"
-            [defaultColDef]="defaultColDef"
-            [rowData]="rowData"
-            (gridReady)="onGridReady($event)"
-        />
+        <div class="full-width-grid">
+            <ag-grid-angular
+                #agGrid
+                style="height: 100%;"
+                [columnDefs]="colDefs"
+                [defaultColDef]="defaultColDef"
+                [rowData]="rowData"
+                (gridReady)="onGridReady($event)"
+            />
+        </div>
     </div>`,
 })
 export class DetailCellRenderer implements ICellRendererAngularComp {
