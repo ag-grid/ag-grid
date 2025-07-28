@@ -314,9 +314,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             const isEnter = key === KeyCode.ENTER;
             const isEscape = key === KeyCode.ESCAPE;
+            const isTab = key === KeyCode.TAB;
 
-            if (isEnter || isEscape) {
-                if (isEnter) {
+            if (isEnter || isTab || isEscape) {
+                if (isEnter || isTab) {
                     _syncFromEditors(beans, true);
                 } else if (isEscape) {
                     // only if ESC is pressed while in the editor for this cell

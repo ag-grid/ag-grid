@@ -336,15 +336,15 @@ export function _syncFromEditor(
         // sourceValue not set means sync called without corresponding startEdit - from API call
         edit = editModelSvc.setEdit(position, {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
+            pendingValue: UNEDITED,
             state: hasEditor ? 'editing' : 'changed',
         });
     }
 
-    const parsedValue = valueSvc.parseValue(position.column as AgColumn, rowNode, editorValue, cellCtrl?.value);
-
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
+    // Note: editorValue should be in the correct target format already, so no need to parse it again - this is done in the editor, via the colDef parseValue function.
     editModelSvc.setEdit(position, {
-        editorValue: parsedValue,
+        editorValue,
         state: hasEditor ? 'editing' : 'changed',
     });
 
