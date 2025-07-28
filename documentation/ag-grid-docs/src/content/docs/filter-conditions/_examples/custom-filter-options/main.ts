@@ -86,16 +86,15 @@ const containsFilterParams: ITextFilterParams = {
             displayKey: 'regexp',
             displayName: 'Regular Expression',
             predicate: ([fv1]: any[], cellValue) => {
-                if (cellValue === null) return false;
+                if (cellValue === null) return true;
 
                 try {
-                    var regex = new RegExp(fv1, 'gi');
+                    let regex = new RegExp(fv1, 'gi');
+                    return regex.test(cellValue);
                 } catch {
                     // Invalid RegExp, default to showing everything
                     return true;
                 }
-
-                return regex.test(cellValue);
             },
 
             numberOfInputs: 1,
