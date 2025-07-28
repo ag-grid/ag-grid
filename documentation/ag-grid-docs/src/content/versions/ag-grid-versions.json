@@ -2,7 +2,7 @@
     {
         "version": "34.1.0",
         "date": "29th July 2025",
-        "landingPageHighlight": "Tree Data with Master Detail, Test IDs, Compact Column Headers, Adding New Rows, Accessibility Improvements",
+        "landingPageHighlight": "Tree Data with Master Detail, Test IDs, Compact Column Headers, Grid Context in Integrated Charts, Accessibility Improvements",
         "highlights": [
             {
                 "text": "Tree Data with Master Detail",
@@ -17,8 +17,8 @@
                 "path": "./column-headers/#hide-padded-column-headers"
             },
             {
-                "text": "Adding New Rows",
-                "path": "./data-update-row-data/#adding-new-rows"
+                "text": "Grid Context in Integrated Charts",
+                "path": "./integrated-charts-customisation/#accessing-grid-context-in-formatters"
             },
             {
                 "text": "Accessibility Improvements"
