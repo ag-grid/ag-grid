@@ -80,6 +80,9 @@ const TYPE_LINKS: Record<string, string> = {
     IRowNode: './row-object/',
     ServerSideTransaction: './server-side-model-transactions/#transaction-api',
     Touch: 'https://developer.mozilla.org/en-US/docs/Web/API/Touch',
+    TData: './typescript-generics/#row-data-tdata',
+    TContext: './typescript-generics/#context-tcontext',
+    TValue: './typescript-generics/#cell-value-tvalue',
 } as const;
 
 export function getTypeLink(type: string | PropertyType | undefined) {
