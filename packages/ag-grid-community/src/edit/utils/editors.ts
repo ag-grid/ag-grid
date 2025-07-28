@@ -14,7 +14,7 @@ import type {
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
-import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
+import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _setAriaInvalid } from '../../utils/aria';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
