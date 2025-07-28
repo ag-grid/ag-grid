@@ -4,7 +4,7 @@ export interface IDateStringCellEditorParams<TData = any, TContext = any>
     extends ICellEditorParams<TData, string, TContext> {
     /** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */
     min?: string | Date;
-    /** Max allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */
+    /** Max allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. By default, it is set to 9999-12-31 */
     max?: string | Date;
     /**
      * Size of the value change when stepping up/down, starting from `min` or the initial value if provided.

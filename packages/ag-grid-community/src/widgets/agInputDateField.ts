@@ -32,6 +32,7 @@ export class AgInputDateField extends AgInputTextField {
             },
         });
         this.eInput.step = 'any';
+        this.eInput.max = '9999-12-31'; // max date for date/datetime-local input type
     }
 
     private onWheel(e: WheelEvent) {
