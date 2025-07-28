@@ -525,14 +525,17 @@ const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationM
                 continue;
             }
 
+            const { editorValue, pendingValue, sourceValue } = editValue;
+
+            const newValue = editorValue ?? (pendingValue === UNEDITED ? undefined : pendingValue) ?? sourceValue;
+
             editorsState.push({
                 column,
                 colId: column.getColId(),
                 rowIndex: rowIndex!,
                 rowPinned,
-                ...editValue,
-                // don't expose this implementation detail
-                newValue: editValue.pendingValue === UNEDITED ? undefined : editValue.pendingValue,
+                oldValue: sourceValue,
+                newValue,
             });
         }
 
