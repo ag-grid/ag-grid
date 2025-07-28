@@ -23,7 +23,7 @@ new records, giving an almost seamless experience to the user.
 {% /note %}
 
 Below shows a grid demonstrating the Value Cache. The column on the right has a Value Getter
-that has a `console.log()` statement. This will allow us to see exactly when the Value Getter is called. So it is best to open this example in a new tab and open up the development console. From the example, the following can be noted:
+that has a `console.log()` statement. This will allow us to see exactly when the Value Getter is called. From the example, the following can be noted:
 
 * When the grid is initially loaded, the **value getter is called over 100 times**. This is for the following reasons:
   * The aggregation requires each value for the group total.
@@ -71,7 +71,7 @@ As before, we focus on the Value Getter of the **'Total'** column and can see ho
   * For inserting the value into the DOM (i.e. what's visible in the cell).
   * For calculating the group total for the total column (ie the figure 870,400 is a sum of the 5 values below it).
   * For calculating the **'Total x 10'** column, as that value getter also references the values in the **'Total'** column.
-* Despite the values getting used multiple times, each value getter is executed exactly once. This can be observed by opening the development console and observing the log message the value getter prints.
+* Despite the values getting used multiple times, each value getter is executed exactly once. This can be observed observing the log message the value getter prints.
 * If you close and then re-open a group, the value getters are not re-executed, even though the values are needed to re-create the DOM elements that represent the cells.
 * Hitting **'Refresh Cells'** will refresh all the cells, but again the value getters will not get re-executed.
 * Hitting **'Invalidate Cache'** and then **'Refresh Cells'** will result in the value getters getting re-executed, as the cell refresh operation requires the values and the cache was invalidated. You will notice invalidating and then refreshing doesn't do anything noticeable to the grid, the data is the same, the only hint that anything happened is the value getter's console messages.
