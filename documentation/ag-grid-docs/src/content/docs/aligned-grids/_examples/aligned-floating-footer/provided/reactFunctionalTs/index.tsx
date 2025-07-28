@@ -1,10 +1,11 @@
-import React, { StrictMode, useMemo, useRef, useState } from 'react';
+import React, { StrictMode, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, GridReadyEvent, SizeColumnsToContentStrategy } from 'ag-grid-community';
+import type { ColDef, SizeColumnsToContentStrategy } from 'ag-grid-community';
 import {
     AlignedGridsModule,
     ClientSideRowModelModule,
+    ColumnApiModule,
     ColumnAutoSizeModule,
     ModuleRegistry,
     NumberFilterModule,
@@ -19,6 +20,7 @@ import './styles.css';
 ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
+    ColumnApiModule,
     ColumnAutoSizeModule,
     RowStyleModule,
     AlignedGridsModule,
