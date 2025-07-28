@@ -317,6 +317,7 @@ const isUseMemoProp = (propName) =>
         'defaultColDef',
         'defaultColGroupDef',
         'defaultExcelExportParams',
+        'defaultCsvExportParams',
         'excelStyles',
         'popupParent',
         'cellSelection',
