@@ -302,11 +302,7 @@ export function _syncFromEditors(beans: BeanCollection, persist: boolean): void 
 
         const { editorValue, editorValueExists } = _valueFromEditor(false, cellCtrl.comp);
 
-        if (!editorValueExists) {
-            return;
-        }
-
-        _syncFromEditor(beans, cellId, persist, editorValue, undefined);
+        _syncFromEditor(beans, cellId, persist, editorValue, undefined, !editorValueExists);
     });
 }
 
@@ -315,7 +311,8 @@ export function _syncFromEditor(
     position: Required<EditPosition>,
     persist: boolean,
     editorValue?: any,
-    _source?: string
+    _source?: string,
+    valueSameAsSource?: boolean
 ): void {
     const { editModelSvc, valueSvc } = beans;
     if (!editModelSvc) {
@@ -344,7 +341,7 @@ export function _syncFromEditor(
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
     // Note: editorValue should be in the correct target format already, so no need to parse it again - this is done in the editor, via the colDef parseValue function.
     editModelSvc.setEdit(position, {
-        editorValue,
+        editorValue: valueSameAsSource ? edit.sourceValue : editorValue,
         state: hasEditor ? 'editing' : 'changed',
     });
 
