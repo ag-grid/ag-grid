@@ -177,19 +177,8 @@ export function _setupEditor(
     return;
 }
 
-function _valueFromEditor(cancel: boolean, cellComp?: ICellComp): { editorValue?: any; editorValueExists: boolean } {
+function _valueFromEditor(cellEditor: ICellEditor): { editorValue?: any; editorValueExists: boolean } {
     const noValueResult = { editorValueExists: false };
-
-    if (cancel) {
-        return noValueResult;
-    }
-
-    const cellEditor = cellComp?.getCellEditor();
-
-    if (!cellEditor) {
-        return noValueResult;
-    }
-
     const validationErrors = cellEditor.getValidationErrors?.();
 
     if ((validationErrors?.length ?? 0) > 0) {
@@ -218,8 +207,9 @@ function _createEditorParams(
     const agColumn = beans.colModel.getCol(position.column.getId())!;
     const { rowNode, column } = position;
 
+    const editor = cellCtrl.comp?.getCellEditor();
     const initialNewValue =
-        editSvc?.getCellDataValue(position, false) ?? _valueFromEditor(false, cellCtrl?.comp)?.editorValue;
+        editSvc?.getCellDataValue(position, false) ?? (editor ? _valueFromEditor(editor)?.editorValue : undefined);
     const value =
         initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
 
@@ -300,7 +290,13 @@ export function _syncFromEditors(beans: BeanCollection, persist: boolean): void 
             return;
         }
 
-        const { editorValue, editorValueExists } = _valueFromEditor(false, cellCtrl.comp);
+        const editor = cellCtrl.comp.getCellEditor();
+
+        if (!editor) {
+            return;
+        }
+
+        const { editorValue, editorValueExists } = _valueFromEditor(editor);
 
         _syncFromEditor(beans, cellId, persist, editorValue, undefined, !editorValueExists);
     });
