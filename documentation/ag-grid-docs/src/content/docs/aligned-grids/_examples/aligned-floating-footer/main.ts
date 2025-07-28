@@ -2,6 +2,7 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     AlignedGridsModule,
     ClientSideRowModelModule,
+    ColumnApiModule,
     ColumnAutoSizeModule,
     ModuleRegistry,
     NumberFilterModule,
@@ -14,6 +15,7 @@ import {
 ModuleRegistry.registerModules([
     TextFilterModule,
     NumberFilterModule,
+    ColumnApiModule,
     ColumnAutoSizeModule,
     RowStyleModule,
     AlignedGridsModule,
