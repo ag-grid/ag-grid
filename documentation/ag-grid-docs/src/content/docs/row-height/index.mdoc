@@ -7,7 +7,7 @@ individually to give each row a different height.
 
 {% note %}
 You cannot use variable row height when using either the [Viewport Row Model](./viewport/) or [Infinite Row Model](./infinite-scrolling/).
-This is because this row model needs to work out the position of rows that are not loaded and hence needs to assume the row height is fixed.
+This is because these row models need to work out the position of rows that are not loaded and hence need to assume the row height is fixed.
 {% /note %}
 
 ## rowHeight Property
@@ -21,7 +21,7 @@ const gridOptions = {
 }
 ```
 
-Changing the property will set a new row height for all rows, including pinned rows top and bottom.
+Changing the property will set a new row height for all rows, including [Pinned Rows](./row-pinning).
 
 ## getRowHeight Callback
 
@@ -53,14 +53,14 @@ using a combination of `api.resetRowHeights()`, `rowNode.setRowHeight(height)` a
 Call this API to have the grid clear all the row
 heights and work them all out again from scratch - if you provide a `getRowHeight(params)`
 callback, it will be called again for each row. The grid will then resize and
-reposition all rows again. This is the shotgun approach.
+reposition all rows again.
 
 {% apiDocumentation source="grid-api/api.json" section="rendering" names=["resetRowHeights"] /%}
 
 ### rowNode.setRowHeight(height) and api.onRowHeightChanged()
 
 You can call `rowNode.setRowHeight(height)` directly
-on the rowNode to set its height. The grid will resize the row but will NOT
+on the row node to set its height. The grid will resize the row but will NOT
 reposition the rows (i.e. if you make a row shorter, a space will appear between
 it and the next row - the next row will not be moved up). When you have set the
 row height (potentially on many rows) you need to call `api.onRowHeightChanged()`
@@ -68,7 +68,7 @@ to tell the grid to reposition the rows. It is intended that you can call
 `rowNode.setRowHeight(height)` many times and then call `api.onRowHeightChanged()`
 once at the end.
 
-When calling `rowNode.setRowHeight(height)`, you can either pass in a new height
+When calling `rowNode.setRowHeight(height)`, you can either pass in a new height,
 or `null` or `undefined`. If you pass a height, that height will be used for the row.
 If you pass in `null` or `undefined`, the grid will then calculate the row height in the
 usual way, either using the provided `rowHeight` property or `getRowHeight(params)`
@@ -78,16 +78,16 @@ callback.
 
 {% apiDocumentation source="grid-api/api.json" section="rendering" names=["onRowHeightChanged"] /%}
 
-### Example Changing Row Height
+### Example: Changing Row Height
 
 The example below changes the row height in the different ways described above.
 
 * **Top Level Groups:** The row height for the groups is changed by calling `api.resetRowHeights()`. This gets the grid to call `gridOptions.getRowHeight(params)` again for each row.
 * **Swimming Leaf Rows:** Same technique is used here as above. You will need to expand a group with swimming (e.g. United States) and the grid works out all row heights again.
-* **United States Leaf Rows:** The row height is set directly on the `rowNode`, and then the grid is told to reposition all rows again by calling `api.onRowHeightChanged()`.
+* **United States Leaf Rows:** The row height is set directly on the row node, and then the grid is told to reposition all rows again by calling `api.onRowHeightChanged()`.
 
 Note that this example uses AG Grid Enterprise as it uses grouping. Setting the row
-height is an AG Grid Community feature, we just demonstrate it against groups and normal
+height is an AG Grid Community feature; we just demonstrate it against groups and normal
 rows below.
 
 {% gridExampleRunner title="Changing Row Height" name="row-height-change"  exampleHeight=590 /%}
