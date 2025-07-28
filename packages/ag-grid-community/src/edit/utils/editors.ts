@@ -336,6 +336,7 @@ export function _syncFromEditor(
         // sourceValue not set means sync called without corresponding startEdit - from API call
         edit = editModelSvc.setEdit(position, {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
+            pendingValue: UNEDITED,
             state: hasEditor ? 'editing' : 'changed',
         });
     }
