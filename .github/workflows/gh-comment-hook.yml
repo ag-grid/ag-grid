@@ -29,7 +29,7 @@ jobs:
             const old_body = process.env.PR_BODY || '';
             const issue_number = process.env.PR_ID;
             
-            const body = old_body.replace(/#(AG-\d{3,})/g, `[$1](https://ag-grid.atlassian.net/browse/$1)`);
+            const body = old_body.replace(/#((AG|RTI)-\d{3,})/g, `[$1](https://ag-grid.atlassian.net/browse/$1)`);
             if (body !== old_body) {
                 await github.rest.issues.update({ owner, repo, issue_number, body });
             }
