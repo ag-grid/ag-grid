@@ -596,11 +596,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return;
         }
 
-        if (!this.batch) {
-            this.model.clearEditValue(cellPosition);
-        }
-
         _destroyEditors(this.beans, [cellPosition], { silent: true });
+
+        this.model.clearEditValue(cellPosition);
 
         _setupEditor(this.beans, cellPosition, { silent: true });
 
