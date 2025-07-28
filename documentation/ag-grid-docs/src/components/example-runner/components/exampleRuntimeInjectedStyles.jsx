@@ -60,13 +60,8 @@ html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-'])
 }
 
 html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-']):disabled {
-    background-color: var(--background-100);
-    opacity: 0.75
-}
-
-html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-']):disabled:hover {
-    background-color: var(--background-100);
-    opacity: 0.75
+    opacity: 0.66;
+    pointer-events: none;
 }
 
 html[data-color-scheme='light'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']),
