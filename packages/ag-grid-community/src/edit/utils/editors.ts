@@ -340,11 +340,10 @@ export function _syncFromEditor(
         });
     }
 
-    const parsedValue = valueSvc.parseValue(position.column as AgColumn, rowNode, editorValue, cellCtrl?.value);
-
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
+    // Note: editorValue should be in the correct target format already, so no need to parse it again - this is done in the editor, via the colDef parseValue function.
     editModelSvc.setEdit(position, {
-        editorValue: parsedValue,
+        editorValue,
         state: hasEditor ? 'editing' : 'changed',
     });
 
