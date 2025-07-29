@@ -1694,15 +1694,19 @@ export class ColumnFilterService
 
     public updateModel(column: AgColumn, action: FilterAction, additionalEventAttributes?: any): void {
         const colId = column.getColId();
+        const filterWrapper = this.cachedFilter(column);
         const getFilterUi = () =>
-            this.cachedFilter(column)?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined;
+            filterWrapper?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined;
         _updateFilterModel(
             action,
             getFilterUi,
             () => _getFilterModel(this.model, colId),
             () => this.state.get(colId),
             (state) => this.updateState(column, state),
-            (model) => getFilterUi()?.filterParams?.onModelChange(model, additionalEventAttributes)
+            (model) => getFilterUi()?.filterParams?.onModelChange(model, additionalEventAttributes),
+            filterWrapper?.isHandler
+                ? filterWrapper.handler.processModelToApply?.bind(filterWrapper.handler)
+                : undefined
         );
     }
 
@@ -1725,7 +1729,8 @@ export class ColumnFilterService
                             action,
                         });
                         promises.push(this.refreshHandlerAndUi(column, model, 'ui'));
-                    }
+                    },
+                    filter?.isHandler ? filter.handler.processModelToApply?.bind(filter.handler) : undefined
                 );
             }
         });
