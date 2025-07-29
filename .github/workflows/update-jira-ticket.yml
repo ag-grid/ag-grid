@@ -47,7 +47,9 @@ jobs:
                     addJiraComment,
                     getJiraTransitions,
                     getJiraIssue,
-                    transitionJiraIssue
+                    transitionJiraIssue,
+                    unwatchJiraIssue,
+                    getCurrentJiraUser
                 } = require('./scripts/ci/_utils.mjs');
                 
                 const gh_user_jira_mapping = JSON.parse(process.env.GH_USER_JIRA_MAPPING || '{}');
@@ -158,7 +160,12 @@ jobs:
                         ghCommentBody ||= `[Transitioned](${runUrl}) JIRA ticket(s): `;
                         ghCommentBody += `- [${issue_key}](https://ag-grid.atlassian.net/browse/${issue_key}) to ${to}\n`
                     }
+                    const isWatchingAlready = issue.fields.watches?.isWatching || false;
                     await addJiraComment(issue_key, { content, "type": "doc", "version": 1 });
+                    if (!isWatchingAlready) {
+                        const self = await getCurrentJiraUser();
+                        await unwatchJiraIssue(issue_key, self);
+                    }
                 }));
                 if (ghCommentBody) {
                     ghCommentBody += `\n\nThis comment was added by the [AG Grid CI workflow](${runUrl}).`;
