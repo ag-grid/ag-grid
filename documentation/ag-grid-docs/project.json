@@ -147,7 +147,7 @@
     },
     "test:e2e": {
       "executor": "nx:run-commands",
-      "dependsOn": ["test:e2e:setup", "ag-grid-community:build", "ag-grid-enterprise:build"],
+      "dependsOn": ["test:e2e:setup"],
       "options": {
         "commands": ["npx playwright test"],
         "parallel": false,
