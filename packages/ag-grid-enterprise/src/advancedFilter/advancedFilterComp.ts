@@ -162,7 +162,10 @@ export class AdvancedFilterComp extends Component {
 
     public setInputDisabled(disabled: boolean): void {
         this.eAutocomplete.setInputDisabled(disabled);
-        this.eButtons?.updateValidity(disabled || this.isApplyDisabled);
+
+        this.eButtons.updateValidity(
+            !disabled && !this.isApplyDisabled && !this.advancedFilter.isCurrentExpressionApplied()
+        );
     }
 
     private setupButtons(actions: FilterAction[]): void {
@@ -253,7 +256,7 @@ export class AdvancedFilterComp extends Component {
 
     private onValidChanged(isValid: boolean, validationMessage: string | null): void {
         this.isApplyDisabled = !isValid || this.advancedFilter.isCurrentExpressionApplied();
-        this.eButtons?.updateValidity(!this.isApplyDisabled);
+        this.eButtons.updateValidity(!this.isApplyDisabled);
         this.tooltipFeature?.setTooltipAndRefresh(validationMessage);
     }
 

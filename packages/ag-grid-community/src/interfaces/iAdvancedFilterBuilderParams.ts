@@ -42,7 +42,7 @@ export interface IAdvancedFilterBuilderParams {
      */
     buttons?: FilterAction[];
     /**
-     * Whether to hide the Full Screen button in the Advanced Filter Builder:
+     * Whether to hide the Full Screen button in the Advanced Filter Builder.
      * @default false
      */
     suppressFullScreenButton?: boolean;
