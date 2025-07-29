@@ -147,11 +147,22 @@
     },
     "test:e2e": {
       "executor": "nx:run-commands",
-      "dependsOn": ["test:e2e:setup"],
+      "dependsOn": ["test:e2e:setup", "ag-grid-community:build"],
       "options": {
         "commands": ["npx playwright test"],
         "parallel": false,
         "cwd": "documentation/ag-grid-docs"
+      },
+      "configurations": {
+        "production": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.production"
+        },
+        "staging": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
+        },
+        "dev": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.dev"
+        }
       }
     },
     "generate-examples": {
