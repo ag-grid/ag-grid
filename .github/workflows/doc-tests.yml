@@ -270,24 +270,18 @@ jobs:
         fail-fast: false
       steps:
         - uses: actions/checkout@v4
-        - name: Install Playwright Browsers
-          working-directory: documentation/ag-grid-docs
-          run: npm install && npx playwright install chromium firefox webkit --with-deps --only-shell
-          shell: bash
-
-        - name: Run Interactive Examples Tests
-          working-directory: documentation/ag-grid-docs
-          run: npx playwright test
-          shell: bash
-
+        - name: Bootstrap
+          run: npm run bootstrap
+        - name: Run Interactive Examples
+          run: yarn nx run ag-grid-docs:test:e2e
         - name: Upload Test Report
-          id: upload-report
+          id: upload-interactive-report
           uses: actions/upload-artifact@v4
           if: ${{ !cancelled() }}
           with:
-            name: playwright-report-interactive-examples
+            name: playwright-report-interactive
             path: reports/
-            retention-days: ${{env.DEFAULT_RETENTION_DAYS}} 
+            retention-days: ${{env.DEFAULT_RETENTION_DAYS}}  
 
     publish-reports:
       if: always()
