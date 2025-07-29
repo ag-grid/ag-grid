@@ -164,16 +164,14 @@ Functions are recommended for most use cases, unless there is a specific need fo
 
 ## Style Refresh
 
-If you refresh a cell, or a cell is updated due to editing, the cellStyle,
-cellClass and cellClassRules are all applied again. This has the following
-effect:
+If you refresh a cell, or a cell is updated due to editing, the `cellStyle`, `cellClass` and `cellClassRules` are all applied again. This has the following effect:
 
 * `cellStyle`: All new styles are applied. If a new style is the same as an old style, the new style overwrites the old style. If a new style is not present, the old style is left (the grid will NOT remove styles).
 * `cellClass`: All new classes are applied. Old classes are not removed so be aware that classes will accumulate. If you want to remove old classes, then use cellClassRules.
 * `cellClassRules`: Unlike `cellClass` and `cellStyle`, `cellClassRules` dynamically adds or removes CSS classes every time the callback runs. Rules are re-evaluated whenever any column in the `rowNode` updates. This is useful for styling a cell based on another cell's value but may impact performance due to frequent executions.
 
 {% note %}
-If you are using cellStyle to highlight changing data, then please take note that grid will not remove styles. For example if you are setting text color to 'red' for a condition, then you should explicitly set it back to default eg 'black' when the condition is not met. Otherwise the highlight will remain once it's first applied.
+If you are using `cellStyle` to highlight changing data, then please take note that grid will not remove styles. For example, if you are setting text color to 'red' for a condition, then you should explicitly set it back to default eg 'black' when the condition is not met. Otherwise the highlight will remain once it's first applied.
 {% /note %}
 
 ```js
@@ -182,23 +180,23 @@ cellStyle: params => params.value > 80 ? { color: 'red' } : null
 ```
 
 ```js
-// safe, to black will override the red when the condition is not true
+// safe, the black will override the red when the condition is not true
 cellStyle: params => params.value > 80 ? { color: 'red' } : { color: 'black' }
 ```
 
 ## Combined Example
 
-Below shows both cssClassRules snippets above in a full working example. The example demonstrates the following:
+Below shows both `cssClassRules` snippets above in a full working example. The example demonstrates the following:
 
 * Age uses `cellClassRules` with expressions (strings instead of functions). Editing the cell will update the style.
 * Year uses `cellClassRules` with functions. Editing the cell will update the style.
-* Date and Sport use `cellClass`, Date sets explicitly, Sport sets using a function. Because a function is used for Sport, it can select class based on data value. Editing Sport will have undetermined results as the class values will accumulate.
+* Date and Sport use `cellClass`. Date sets it explicitly, Sport sets it using a function. Because a function is used for Sport, it can select class based on data value. Editing Sport will have undetermined results as the class values will accumulate.
 * Gold sets `cellStyle` implicitly. It is not dependent on the cell value.
-* Silver and Bronze set `cellStyle` using a function and depends on the value. Editing will update the cellStyle.
+* Silver and Bronze set `cellStyle` using a function that depends on the value. Editing will update the cellStyle.
 
 {% gridExampleRunner title="Cell Styling" name="cell-styling" /%}
 
-## First & Last Columns
+## First and Last Columns
 
 It's possible to style the cells in the first and last columns using CSS by targeting the `.ag-column-first` and `.ag-column-last` selectors as follows:
 

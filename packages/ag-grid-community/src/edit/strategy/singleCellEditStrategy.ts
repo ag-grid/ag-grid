@@ -152,7 +152,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             // has editable function (eg colDef.editable=func() ) and it depends on the
             // result of this cell, so need to save updates from the first edit, in case
             // the value is referenced in the function.
-            prevCell.stopEditing();
+            this.editSvc?.stopEditing(prevCell, { source: this.editSvc?.isBatchEditing() ? 'ui' : 'api', event });
         }
 
         try {

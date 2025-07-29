@@ -36,6 +36,9 @@ const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     rowModelType: 'viewport',
     viewportDatasource: createViewportDatasource(),
+    defaultColDef: {
+        sortable: false,
+    },
 };
 
 // setup the grid after the page has finished loading
