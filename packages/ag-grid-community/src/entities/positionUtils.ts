@@ -185,19 +185,26 @@ export function _getRowBelow(beans: BeanCollection, rowPosition: RowPosition): R
     return getNextStickyPosition(beans, rowNode) ?? { rowIndex: index + 1, rowPinned: pinned };
 }
 
-function getNextStickyPosition(beans: BeanCollection, rowNode?: RowNode, up?: boolean): RowPosition | undefined {
+function getNextStickyPosition(beans: BeanCollection, rowNode?: RowNode, up = false): RowPosition | undefined {
     const { gos, rowRenderer } = beans;
 
     if (!rowNode?.sticky || !_isGroupRowsSticky(gos)) {
         return;
     }
 
-    const stickyRowCtrls = up ? rowRenderer.getStickyTopRowCtrls() : rowRenderer.getStickyBottomRowCtrls();
+    const stickyTopCtrls = rowRenderer.getStickyTopRowCtrls();
+    const stickyBottomCtrls = rowRenderer.getStickyBottomRowCtrls();
 
+    // check isStickyBottom as it theoretically has less rows.
+    const isStickyTop = !stickyBottomCtrls.some((ctrl) => ctrl.rowNode.rowIndex === rowNode.rowIndex);
+    const stickyRowCtrls = isStickyTop ? stickyTopCtrls : stickyBottomCtrls;
+
+    // invert for sticky top, as the order is flipped for rendering.
+    const increment = (up ? -1 : 1) * (isStickyTop ? -1 : 1);
     let nextCtrl: RowCtrl | undefined;
     for (let i = 0; i < stickyRowCtrls.length; i++) {
         if (stickyRowCtrls[i].rowNode.rowIndex === rowNode.rowIndex) {
-            nextCtrl = stickyRowCtrls[i + (up ? -1 : 1)];
+            nextCtrl = stickyRowCtrls[i + increment];
             break;
         }
     }

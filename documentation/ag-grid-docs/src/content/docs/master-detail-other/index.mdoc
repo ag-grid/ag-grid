@@ -47,14 +47,13 @@ Only leaf nodes can be master rows.
 ## Tree Data
 
 The Master / Detail is supported with [Tree Data](./tree-data/).
-Both leaf nodes and parents can be master rows.
-If a group is also a master row, the detail grid will be shown before the children of the parent.
+Both leaf nodes and groups can be master rows. If a group is also a master row, the detail grid will be shown before its children.
 
 {% note %}
-Master / Detail will by default show the details for every row, even tree parents.
-To only show details for leaf nodes, provide the `isRowMaster` callback to return true for leaf nodes only.
+Master / Detail will by default show detail grids for every row, including groups.
+To show detail grids for leaf nodes only, provide the `isRowMaster` callback and return `true` for leaf nodes only.
 
-When using [Tree Data Paths](.//tree-data-paths), filler nodes cannot be master rows and isRowMaster will not be called for them.
+When using [Tree Data Paths](.//tree-data-paths), filler groups cannot be master rows and `isRowMaster` will not be called.
 {% /note %}
 
 {% gridExampleRunner title="Tree Data with Master Detail" name="tree-data-master-detail"  exampleHeight=550 /%}

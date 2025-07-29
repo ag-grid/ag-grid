@@ -78,7 +78,13 @@ else
     project_dir=$(readlink -f $(dirname $0))
     project_script=$(basename $0)
 
-    project=$(mktemp -d)
+    mkdir -p $(pwd)/.tmp
+    if [[ $(uname) == "Darwin" ]] ; then
+        project=$(mktemp -d $(pwd)/.tmp/tmp.XXXXXXXX)
+    else
+        project=$(mktemp -d -p $(pwd)/.tmp)
+    fi
+
 
     cp -R ${project_dir}/../shared/* $project/
     cp -R ${project_dir}/* $project/

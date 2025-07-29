@@ -14,7 +14,7 @@ import type {
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
-import type { CellCtrl, ICellComp } from '../../rendering/cell/cellCtrl';
+import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _setAriaInvalid } from '../../utils/aria';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
@@ -177,19 +177,8 @@ export function _setupEditor(
     return;
 }
 
-function _valueFromEditor(cancel: boolean, cellComp?: ICellComp): { editorValue?: any; editorValueExists: boolean } {
+function _valueFromEditor(cellEditor: ICellEditor): { editorValue?: any; editorValueExists: boolean } {
     const noValueResult = { editorValueExists: false };
-
-    if (cancel) {
-        return noValueResult;
-    }
-
-    const cellEditor = cellComp?.getCellEditor();
-
-    if (!cellEditor) {
-        return noValueResult;
-    }
-
     const validationErrors = cellEditor.getValidationErrors?.();
 
     if ((validationErrors?.length ?? 0) > 0) {
@@ -218,8 +207,9 @@ function _createEditorParams(
     const agColumn = beans.colModel.getCol(position.column.getId())!;
     const { rowNode, column } = position;
 
+    const editor = cellCtrl.comp?.getCellEditor();
     const initialNewValue =
-        editSvc?.getCellDataValue(position, false) ?? _valueFromEditor(false, cellCtrl?.comp)?.editorValue;
+        editSvc?.getCellDataValue(position, false) ?? (editor ? _valueFromEditor(editor)?.editorValue : undefined);
     const value =
         initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
 
@@ -300,13 +290,15 @@ export function _syncFromEditors(beans: BeanCollection, persist: boolean): void 
             return;
         }
 
-        const { editorValue, editorValueExists } = _valueFromEditor(false, cellCtrl.comp);
+        const editor = cellCtrl.comp.getCellEditor();
 
-        if (!editorValueExists) {
+        if (!editor) {
             return;
         }
 
-        _syncFromEditor(beans, cellId, persist, editorValue, undefined);
+        const { editorValue, editorValueExists } = _valueFromEditor(editor);
+
+        _syncFromEditor(beans, cellId, persist, editorValue, undefined, !editorValueExists);
     });
 }
 
@@ -315,7 +307,8 @@ export function _syncFromEditor(
     position: Required<EditPosition>,
     persist: boolean,
     editorValue?: any,
-    _source?: string
+    _source?: string,
+    valueSameAsSource?: boolean
 ): void {
     const { editModelSvc, valueSvc } = beans;
     if (!editModelSvc) {
@@ -336,15 +329,15 @@ export function _syncFromEditor(
         // sourceValue not set means sync called without corresponding startEdit - from API call
         edit = editModelSvc.setEdit(position, {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
+            pendingValue: UNEDITED,
             state: hasEditor ? 'editing' : 'changed',
         });
     }
 
-    const parsedValue = valueSvc.parseValue(position.column as AgColumn, rowNode, editorValue, cellCtrl?.value);
-
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
+    // Note: editorValue should be in the correct target format already, so no need to parse it again - this is done in the editor, via the colDef parseValue function.
     editModelSvc.setEdit(position, {
-        editorValue: parsedValue,
+        editorValue: valueSameAsSource ? edit.sourceValue : editorValue,
         state: hasEditor ? 'editing' : 'changed',
     });
 
@@ -525,14 +518,17 @@ const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationM
                 continue;
             }
 
+            const { editorValue, pendingValue, sourceValue } = editValue;
+
+            const newValue = editorValue ?? (pendingValue === UNEDITED ? undefined : pendingValue) ?? sourceValue;
+
             editorsState.push({
                 column,
                 colId: column.getColId(),
                 rowIndex: rowIndex!,
                 rowPinned,
-                ...editValue,
-                // don't expose this implementation detail
-                newValue: editValue.pendingValue === UNEDITED ? undefined : editValue.pendingValue,
+                oldValue: sourceValue,
+                newValue,
             });
         }
 
