@@ -5,7 +5,7 @@ import type {
 } from '../../packages/ag-grid-community/src/interfaces/iModule';
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
-    AlignedGridsModule: 3.06,
+    AlignedGridsModule: 6.88,
     AllCommunityModule: 470.87,
     CellApiModule: 0.28,
     CellStyleModule: 2.24,

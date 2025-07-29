@@ -88,13 +88,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
     );
     const selectedSeedRepos = useMemo(
         () =>
-            seedRepos
-                .filter(({ licenseType }) => {
-                    return isIntegratedCharts ? licenseType === 'enterprise-bundle' : licenseType === 'enterprise';
-                })
-                .filter((seedRepo) => {
-                    return seedRepo.framework === framework;
-                }),
+            seedRepos.filter((seedRepo) => {
+                return seedRepo.framework === framework;
+            }),
         [seedRepos, isIntegratedCharts, framework]
     );
     const productName = 'AG Grid';
