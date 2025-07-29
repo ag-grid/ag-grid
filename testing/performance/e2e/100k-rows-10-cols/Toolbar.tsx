@@ -18,13 +18,14 @@ export const Toolbar = ({
     setDataSize,
     rowCols,
     gridTheme,
+    toggle,
+    show,
     setGridTheme,
     setCountryColumnPopupEditor,
 }) => {
-    function onDataSizeChanged(newValue) {
-        const { value } = newValue;
-        setDataSize(value);
-    }
+    const [cols, setCols] = useState(18);
+    const [rows, setRows] = useState(0.01);
+    useEffect(() => setDataSize(`${rows}x${cols}`), [cols, rows]);
 
     function onThemeChanged(newValue) {
         const newTheme = newValue.value || 'ag-theme-none';
@@ -92,7 +93,8 @@ export const Toolbar = ({
         <div className={'toolbar'}>
             <div className={'controlsContainer'}>
                 <div className={'controls'}>
-                    <button onClick={() => setDataSize('0x0')}>Reset row cols</button>
+                    <label htmlFor="show">Show grid</label>
+                    <input id="show" type="checkbox" checked={show} onChange={() => toggle(!show)} />
 
                     <label htmlFor="cols">Manual cols:</label>
                     <input
@@ -101,10 +103,10 @@ export const Toolbar = ({
                         min="1"
                         max="1000"
                         name="cols"
-                        defaultValue={dataSizeOption?.value.split('x')[1]}
-                        onChange={(e) => setDataSize(dataSizeOption?.value.split('x')[0] + 'x' + e.target.value)}
+                        value={cols}
+                        onChange={(e) => setCols(e.target.value)}
                     />
-                    <label htmlFor="rows">Manual rows:</label>
+                    <label htmlFor="rows">Manual rows (x1000):</label>
                     {dataSizeOption && (
                         <input
                             id="rows"
@@ -112,42 +114,16 @@ export const Toolbar = ({
                             min="0"
                             max="100000"
                             name="rows"
-                            defaultValue={parseFloat(dataSizeOption?.value.split('x')[0] || 0) * 1000}
-                            onChange={(e) =>
-                                setDataSize(
-                                    parseFloat(e.target.value) / 1000 + 'x' + dataSizeOption?.value.split('x')[1]
-                                )
-                            }
+                            value={rows}
+                            onChange={(e) => setRows(e.target.value)}
                             step="1"
                         />
                     )}
 
-                    <span className={'filterLabel'}>Data Size:</span>
-
-                    {dataSizeOption && (
-                        <select
-                            value={dataSizeOptions.indexOf(dataSizeOption)}
-                            onChange={(i) => {
-                                console.log(dataSizeOption);
-                                onDataSizeChanged(dataSizeOptions[i.target.value]);
-                            }}
-                        >
-                            {dataSizeOptions.map((o, i) => (
-                                <option value={i} selected={i === dataSizeOptions.indexOf(o)}>
-                                    {o.label}
-                                </option>
-                            ))}
-                        </select>
-                    )}
-
                     <span className={'filterLabel'}>Theme:</span>
-
                     <select
                         value={themeOptions.indexOf(themeOption)}
-                        onChange={(i) => {
-                            console.log(i.target.value);
-                            onThemeChanged(themeOptions[i.target.value]);
-                        }}
+                        onChange={(i) => onThemeChanged(themeOptions[i.target.value])}
                     >
                         {themeOptions.map((o, i) => (
                             <option value={i} selected={i === themeOptions.indexOf(o)}>
@@ -167,6 +143,16 @@ export const Toolbar = ({
                         id="global-filter"
                         style={{ flex: 1 }}
                     />
+
+                    <button
+                        style={{ marginLeft: '20px' }}
+                        onClick={() => {
+                            setCols(1);
+                            setRows(0.001);
+                        }}
+                    >
+                        Reset row cols
+                    </button>
                 </div>
             </div>
             <div className={'scrollIndicator'}></div>

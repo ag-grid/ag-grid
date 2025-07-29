@@ -32,12 +32,15 @@
     display: flex;
 }
 
-
+.controls {
+    label, input {
+        margin: 10px;
+    }
+}
 
 .trigger.large {
     height: 36px;
 }
-
 span {
     font-size: var(--text-fs-base);
 }

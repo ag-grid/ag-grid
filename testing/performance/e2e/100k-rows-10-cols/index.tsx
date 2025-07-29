@@ -1181,10 +1181,9 @@ const ExampleInner = ({ darkMode }) => {
     return (
         <>
             <div className="exampleWrapper">
-                <label htmlFor="show">Show grid</label>
-                <input id="show" type="checkbox" checked={show} onChange={() => toggle(!show)} />
-
                 <Toolbar
+                    show={show}
+                    toggle={toggle}
                     gridRef={gridRef}
                     dataSize={dataSize}
                     setDataSize={setDataSize}
