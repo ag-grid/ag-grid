@@ -320,6 +320,7 @@ export const Changelog = () => {
                 sort: 'desc',
                 filterParams: {
                     suppressSorting: true,
+                    comparator: compareSemver,
                 },
                 comparator: compareSemver,
             },
