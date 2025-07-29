@@ -14,8 +14,8 @@ const url = 'https://localhost:4610/testing/performance/e2e/100k-rows-10-cols/in
 const athleteCheck = () => document.body.textContent!.includes('Tony Smith');
 test(`Performance Test - `, {
     timeout: 10 * 60_000,
-    minIterations: 5,
-    maxIterations: 10,
+    minIterations: 200,
+    maxIterations: 300,
     warmupIterations: 5,
     testCases: [
         {
