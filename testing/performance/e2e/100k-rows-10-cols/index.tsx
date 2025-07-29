@@ -36,6 +36,8 @@ import {
 } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
+import { GridOptions } from '../../../../packages/ag-grid-community/src/entities/gridOptions';
+import { FirstDataRenderedEvent } from '../../../../packages/ag-grid-community/src/events';
 import { Toolbar } from './Toolbar';
 import {
     axisLabelFormatter,
@@ -724,209 +726,213 @@ const ExampleInner = ({ darkMode }) => {
     );
 
     const gridOptions = useMemo(
-        () => ({
-            statusBar: {
-                statusPanels: [
-                    {
-                        statusPanel: 'agTotalAndFilteredRowCountComponent',
-                        key: 'totalAndFilter',
-                        align: 'left',
-                    },
-                    {
-                        statusPanel: 'agSelectedRowCountComponent',
-                        align: 'left',
-                    },
-                    { statusPanel: 'agAggregationComponent', align: 'right' },
-                ],
-            },
-            components: {
-                countryCellRenderer: CountryCellRendererJs,
-                booleanCellRenderer: booleanCellRenderer,
-                ratingRenderer: ratingRenderer,
-            },
-            defaultColDef: {
-                minWidth: 50,
-                editable: true,
-                filter: true,
-                floatingFilter: !isSmall,
-                enableCellChangeFlash: true,
-            },
-            rowDragManaged: true,
-            rowDragMultiRow: true,
-            rowGroupPanelShow: isSmall ? undefined : 'always',
-            pivotPanelShow: 'always',
-            suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
-            enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
-            enableCharts: true,
-            undoRedoCellEditing: true,
-            undoRedoCellEditingLimit: 50,
-            quickFilterText: null,
-            autoGroupColumnDef: groupColumn,
-            rowNumbers: true,
-            cellSelection: {
-                enableHeaderHighlight: true,
-                handle: {
-                    mode: 'fill',
+        () =>
+            ({
+                statusBar: {
+                    statusPanels: [
+                        {
+                            statusPanel: 'agTotalAndFilteredRowCountComponent',
+                            key: 'totalAndFilter',
+                            align: 'left',
+                        },
+                        {
+                            statusPanel: 'agSelectedRowCountComponent',
+                            align: 'left',
+                        },
+                        { statusPanel: 'agAggregationComponent', align: 'right' },
+                    ],
                 },
-            },
-            rowSelection: {
-                mode: 'multiRow',
-            },
-            sideBar: {
-                toolPanels: ['columns', 'filters'],
-                position: 'right',
-                defaultToolPanel: 'columns',
-                hiddenByDefault: isSmall,
-            },
-            dataTypeDefinitions: {
-                currency: {
-                    extendsDataType: 'number',
-                    baseDataType: 'number',
-                    valueFormatter: currencyFormatter,
-                    valueParser: (params) => {
-                        if (params.newValue == null) {
-                            return null;
-                        }
-                        let newValue = String(params.newValue)?.trim?.();
-                        if (newValue === '') {
-                            return null;
-                        }
-                        newValue = newValue.replace('$', '').replace(',', '');
-                        if (newValue.includes('(')) {
-                            newValue = newValue.replace('(').replace(')');
-                            newValue = '-' + newValue;
-                        }
-                        return Number(newValue);
+                components: {
+                    countryCellRenderer: CountryCellRendererJs,
+                    booleanCellRenderer: booleanCellRenderer,
+                    ratingRenderer: ratingRenderer,
+                },
+                defaultColDef: {
+                    minWidth: 50,
+                    editable: true,
+                    filter: true,
+                    floatingFilter: !isSmall,
+                    enableCellChangeFlash: true,
+                },
+                rowDragManaged: true,
+                rowDragMultiRow: true,
+                rowGroupPanelShow: isSmall ? undefined : 'always',
+                pivotPanelShow: 'always',
+                suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
+                enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
+                enableCharts: true,
+                undoRedoCellEditing: true,
+                undoRedoCellEditingLimit: 50,
+                quickFilterText: null,
+                autoGroupColumnDef: groupColumn,
+                rowNumbers: true,
+                cellSelection: {
+                    enableHeaderHighlight: true,
+                    handle: {
+                        mode: 'fill',
                     },
-                    columnTypes: ['currencyType', 'numericColumn'],
                 },
-            },
-            columnTypes: {
-                currencyType: {
-                    useValueFormatterForExport: false,
-                    valueFormatter: currencyFormatter,
+                rowSelection: {
+                    mode: 'multiRow',
                 },
-            },
-            getBusinessKeyForNode: (node) => (node.data ? node.data.name : ''),
-            initialGroupOrderComparator: ({ nodeA, nodeB }) => {
-                if (nodeA.key < nodeB.key) {
-                    return -1;
-                }
-                if (nodeA.key > nodeB.key) {
-                    return 1;
-                }
+                sideBar: {
+                    toolPanels: ['columns', 'filters'],
+                    position: 'right',
+                    defaultToolPanel: 'columns',
+                    hiddenByDefault: isSmall,
+                },
+                dataTypeDefinitions: {
+                    currency: {
+                        extendsDataType: 'number',
+                        baseDataType: 'number',
+                        valueFormatter: currencyFormatter,
+                        valueParser: (params) => {
+                            if (params.newValue == null) {
+                                return null;
+                            }
+                            let newValue = String(params.newValue)?.trim?.();
+                            if (newValue === '') {
+                                return null;
+                            }
+                            newValue = newValue.replace('$', '').replace(',', '');
+                            if (newValue.includes('(')) {
+                                newValue = newValue.replace('(').replace(')');
+                                newValue = '-' + newValue;
+                            }
+                            return Number(newValue);
+                        },
+                        columnTypes: ['currencyType', 'numericColumn'],
+                    },
+                },
+                columnTypes: {
+                    currencyType: {
+                        useValueFormatterForExport: false,
+                        valueFormatter: currencyFormatter,
+                    },
+                },
+                getBusinessKeyForNode: (node) => (node.data ? node.data.name : ''),
+                initialGroupOrderComparator: ({ nodeA, nodeB }) => {
+                    if (nodeA.key < nodeB.key) {
+                        return -1;
+                    }
+                    if (nodeA.key > nodeB.key) {
+                        return 1;
+                    }
 
-                return 0;
-            },
-            onGridReady: (event) => {
-                if (!IS_SSR && document.documentElement.clientWidth <= 1024) {
-                    event.api.closeToolPanel();
-                }
-            },
-            chartThemeOverrides: chartThemeOverrides,
-            excelStyles: [
-                {
-                    id: 'v-align',
-                    alignment: {
-                        vertical: 'Center',
-                    },
+                    return 0;
                 },
-                {
-                    id: 'alphabet',
-                    alignment: {
-                        vertical: 'Center',
-                    },
+                onGridReady: (event) => {
+                    if (!IS_SSR && document.documentElement.clientWidth <= 1024) {
+                        event.api.closeToolPanel();
+                    }
                 },
-                {
-                    id: 'good-score',
-                    alignment: {
-                        horizontal: 'Center',
-                        vertical: 'Center',
-                    },
-                    interior: {
-                        color: '#C6EFCE',
-                        pattern: 'Solid',
-                    },
-                    numberFormat: {
-                        format: '[$$-409]#,##0',
-                    },
-                },
-                {
-                    id: 'bad-score',
-                    alignment: {
-                        horizontal: 'Center',
-                        vertical: 'Center',
-                    },
-                    interior: {
-                        color: '#FFC7CE',
-                        pattern: 'Solid',
-                    },
-                    numberFormat: {
-                        format: '[$$-409]#,##0',
-                    },
-                },
-                {
-                    id: 'header',
-                    font: {
-                        color: '#44546A',
-                        size: 16,
-                    },
-                    interior: {
-                        color: '#F2F2F2',
-                        pattern: 'Solid',
-                    },
-                    alignment: {
-                        horizontal: 'Center',
-                        vertical: 'Center',
-                    },
-                    borders: {
-                        borderTop: {
-                            lineStyle: 'Continuous',
-                            weight: 0,
-                            color: '#8EA9DB',
-                        },
-                        borderRight: {
-                            lineStyle: 'Continuous',
-                            weight: 0,
-                            color: '#8EA9DB',
-                        },
-                        borderBottom: {
-                            lineStyle: 'Continuous',
-                            weight: 0,
-                            color: '#8EA9DB',
-                        },
-                        borderLeft: {
-                            lineStyle: 'Continuous',
-                            weight: 0,
-                            color: '#8EA9DB',
+                chartThemeOverrides: chartThemeOverrides,
+                excelStyles: [
+                    {
+                        id: 'v-align',
+                        alignment: {
+                            vertical: 'Center',
                         },
                     },
-                },
-                {
-                    id: 'currency-cell',
-                    alignment: {
-                        horizontal: 'Center',
-                        vertical: 'Center',
+                    {
+                        id: 'alphabet',
+                        alignment: {
+                            vertical: 'Center',
+                        },
                     },
-                    numberFormat: {
-                        format: '[$$-409]#,##0',
+                    {
+                        id: 'good-score',
+                        alignment: {
+                            horizontal: 'Center',
+                            vertical: 'Center',
+                        },
+                        interior: {
+                            color: '#C6EFCE',
+                            pattern: 'Solid',
+                        },
+                        numberFormat: {
+                            format: '[$$-409]#,##0',
+                        },
                     },
-                },
-                {
-                    id: 'boolean-type',
-                    dataType: 'boolean',
-                    alignment: {
-                        vertical: 'Center',
+                    {
+                        id: 'bad-score',
+                        alignment: {
+                            horizontal: 'Center',
+                            vertical: 'Center',
+                        },
+                        interior: {
+                            color: '#FFC7CE',
+                            pattern: 'Solid',
+                        },
+                        numberFormat: {
+                            format: '[$$-409]#,##0',
+                        },
                     },
-                },
-                {
-                    id: 'country-cell',
-                    alignment: {
-                        indent: 4,
+                    {
+                        id: 'header',
+                        font: {
+                            color: '#44546A',
+                            size: 16,
+                        },
+                        interior: {
+                            color: '#F2F2F2',
+                            pattern: 'Solid',
+                        },
+                        alignment: {
+                            horizontal: 'Center',
+                            vertical: 'Center',
+                        },
+                        borders: {
+                            borderTop: {
+                                lineStyle: 'Continuous',
+                                weight: 0,
+                                color: '#8EA9DB',
+                            },
+                            borderRight: {
+                                lineStyle: 'Continuous',
+                                weight: 0,
+                                color: '#8EA9DB',
+                            },
+                            borderBottom: {
+                                lineStyle: 'Continuous',
+                                weight: 0,
+                                color: '#8EA9DB',
+                            },
+                            borderLeft: {
+                                lineStyle: 'Continuous',
+                                weight: 0,
+                                color: '#8EA9DB',
+                            },
+                        },
                     },
+                    {
+                        id: 'currency-cell',
+                        alignment: {
+                            horizontal: 'Center',
+                            vertical: 'Center',
+                        },
+                        numberFormat: {
+                            format: '[$$-409]#,##0',
+                        },
+                    },
+                    {
+                        id: 'boolean-type',
+                        dataType: 'boolean',
+                        alignment: {
+                            vertical: 'Center',
+                        },
+                    },
+                    {
+                        id: 'country-cell',
+                        alignment: {
+                            indent: 4,
+                        },
+                    },
+                ],
+                onFirstDataRendered(event: FirstDataRenderedEvent<any>) {
+                    performance.measure('renderTime', 'renderClicked');
                 },
-            ],
-        }),
+            }) as GridOptions,
         [isSmall]
     );
 
@@ -1183,7 +1189,10 @@ const ExampleInner = ({ darkMode }) => {
             <div className="exampleWrapper">
                 <Toolbar
                     show={show}
-                    toggle={toggle}
+                    toggle={(v) => {
+                        performance.mark('renderClicked');
+                        toggle(v);
+                    }}
                     gridRef={gridRef}
                     dataSize={dataSize}
                     setDataSize={setDataSize}

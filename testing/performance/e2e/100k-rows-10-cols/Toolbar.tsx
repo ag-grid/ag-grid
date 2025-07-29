@@ -145,6 +145,7 @@ export const Toolbar = ({
                     />
 
                     <button
+                        id="reset"
                         style={{ marginLeft: '20px' }}
                         onClick={() => {
                             setCols(1);

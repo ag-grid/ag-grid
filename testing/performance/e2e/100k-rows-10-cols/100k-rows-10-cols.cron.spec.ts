@@ -6,6 +6,7 @@ import test from '../../benchmarking';
 import { waitFor } from '../../playwright.utils';
 
 let showBtn: ElementHandle<HTMLButtonElement>;
+let resetBtn: ElementHandle<HTMLButtonElement>;
 let cols: ElementHandle<HTMLInputElement>;
 let rows: ElementHandle<HTMLInputElement>;
 
@@ -27,12 +28,14 @@ test(`Performance Test - `, {
             },
             preSetup: async (page) => {
                 showBtn = (await page.waitForSelector('#show')) as ElementHandle<HTMLButtonElement>;
+                resetBtn = (await page.waitForSelector('#reset')) as ElementHandle<HTMLButtonElement>;
                 cols = (await page.waitForSelector('#cols')) as ElementHandle<HTMLInputElement>;
                 rows = (await page.waitForSelector('#rows')) as ElementHandle<HTMLInputElement>;
+                await resetBtn.click();
+                await cols.fill('100');
+                await rows.fill('100');
             },
             actions: async (page) => {
-                await Promise.all([cols.fill('0'), rows.fill('0')]);
-                await Promise.all([cols.fill('10'), rows.fill('100000')]);
                 await Promise.all([showBtn.click(), waitFor(athleteCheck, page)]);
             },
         } as TestCase,
