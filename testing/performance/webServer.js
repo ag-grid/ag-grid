@@ -29,15 +29,15 @@ mkcert
             setHeaders: (res, path) => {
                 // transpile tsx on the fly
                 if (path.endsWith('.tsx')) {
-                    res.setHeader('Content-type', 'text/typescript-jsx');
+                    res.setHeader('Content-type', 'application/javascript');
                 } else if (path.endsWith('.ts')) {
-                    res.setHeader('Content-type', 'text/typescript');
+                    res.setHeader('Content-type', 'application/javascript');
                 } else if (path.endsWith('.css')) {
                     res.setHeader('Content-type', 'text/css');
                 } else if (path.endsWith('.js')) {
-                    res.setHeader('Content-type', 'text/javascript');
+                    res.setHeader('Content-type', 'application/javascript');
                 } else if (path.endsWith('.jsx')) {
-                    res.setHeader('Content-type', 'text/javascript-jsx');
+                    res.setHeader('Content-type', 'application/javascript');
                 } else if (path.endsWith('.html')) {
                     res.setHeader('Content-type', 'text/html');
                 } else if (path.endsWith('.json')) {
@@ -45,7 +45,6 @@ mkcert
                 }
             },
         };
-        const staticTestFiles = express.static(path.join(__root, 'testing', 'performance'), extensions);
         const staticRoot = express.static(__root, extensions);
         app.use('/healthcheck', (req, res, next) => {
             // used by Playwright to check if the server is running
@@ -53,7 +52,7 @@ mkcert
             return next();
         });
 
-        app.use('/', (req, res, next) => {});
+        app.use('/', staticRoot);
 
         const server = https.createServer(options.server.https, app);
         server.listen(PORT, () => {
