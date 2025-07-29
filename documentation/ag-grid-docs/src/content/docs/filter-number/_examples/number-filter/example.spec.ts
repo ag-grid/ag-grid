@@ -23,10 +23,14 @@ test.describe(pageExampleUrl, () => {
 
             const filterInput = agIdFor.numberFilterInstanceInput({ source: 'column-filter' });
 
-            await filterInput.fill('70000');
+            await filterInput.fill('900');
 
             // close the filter by clicking outside
             await agIdFor.cell('1', 'price').click();
+
+            expect(agIdFor.cell('0', 'price')).toHaveText('947.75');
+            expect(agIdFor.cell('1', 'price')).toHaveText('978.05');
+            expect(agIdFor.cell('2', 'price')).toHaveText('920.24');
         });
     }
 });
