@@ -271,9 +271,10 @@ jobs:
       steps:
         - uses: actions/checkout@v4
         - name: Bootstrap
-          run: npx playwright install chromium --with-deps --only-shell
           working-directory: documentation/ag-grid-docs
+          run: npx playwright install chromium --with-deps --only-shell
         - name: Run Interactive Examples
+          working-directory: documentation/ag-grid-docs
           run: npx playwright test
         - name: Upload Test Report
           id: upload-interactive-report
