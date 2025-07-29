@@ -861,14 +861,7 @@ const ExampleInner = ({ darkMode }) => {
             newRowsCols.push([10000, 100], [50000, defaultColCount], [100000, defaultColCount]);
         }
 
-        const params = new URLSearchParams(window.location.search);
-        const rows = params.get('rows');
-        const cols = params.get('cols');
-        if (rows && cols) {
-            setDataSize(createDataSizeValue(parseInt(rows), parseInt(cols)));
-        } else {
-            setDataSize(createDataSizeValue(newRowsCols[0][0], newRowsCols[0][1]));
-        }
+        setDataSize(createDataSizeValue(newRowsCols[0][0], newRowsCols[0][1]));
         setRowCols(newRowsCols);
     }, []);
 
