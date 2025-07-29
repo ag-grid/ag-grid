@@ -7,12 +7,13 @@ import {
     createGrid,
     themeQuartz,
 } from 'ag-grid-community';
-import { ContextMenuModule } from 'ag-grid-enterprise';
+import { ClipboardModule, ContextMenuModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     PinnedRowModule,
     ClientSideRowModelModule,
     ContextMenuModule,
+    ClipboardModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 

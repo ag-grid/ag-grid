@@ -196,7 +196,7 @@ function getDetailsId(id: string) {
 function CollapsibleButton({ name, isExpanded, onClick }: { name: string; isExpanded?: boolean; onClick: () => void }) {
     return (
         <button
-            className={classnames(styles.seeMore, 'button-style-none', {
+            className={classnames(styles.seeMore, 'button-tertiary', {
                 [styles.isExpanded]: isExpanded,
             })}
             onClick={onClick}
