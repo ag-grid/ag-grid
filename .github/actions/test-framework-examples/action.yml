@@ -24,7 +24,7 @@ runs:
 
     - name: Install Playwright Browsers
       working-directory: testing/ag-grid-docs
-      run: npx playwright install chromium firefox webkit --with-deps --only-shell
+      run: npm install @playwright/test && npx playwright install chromium firefox webkit --with-deps --only-shell
       shell: bash
 
     - name: ${{ inputs.framework }}
