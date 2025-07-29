@@ -571,6 +571,10 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         parent: AgColumnGroup | null
     ): void {
         columnsOrGroups!.forEach((columnsOrGroup) => {
+            if (columnsOrGroup.parent !== parent) {
+                // parent has explicitly changed - force viewport headers now needed.
+                this.beans.colViewport.colsWithinViewportHash = '';
+            }
             columnsOrGroup.parent = parent;
             if (isColumnGroup(columnsOrGroup)) {
                 const columnGroup = columnsOrGroup;

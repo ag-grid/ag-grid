@@ -188,7 +188,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
             // if the row is editing, we want to return the new value, if available
             if (editSvc.isEditing()) {
-                const newValue = editSvc.getCellDataValue({ rowNode, column });
+                const newValue = editSvc.getCellDataValue({ rowNode, column }, true);
                 if (newValue !== undefined) {
                     return newValue;
                 }

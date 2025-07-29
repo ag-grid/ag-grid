@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions, IDetailCellRendererParams, IServerSideDatasource } from 'ag-grid-community';
+import type { GridApi, GridOptions, IDetailCellRendererParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -15,8 +15,7 @@ import {
     ServerSideRowModelModule,
 } from 'ag-grid-enterprise';
 
-import { fakeData } from './data';
-import { FakeServer } from './fakeServer';
+import { MyServerSideDatasource } from './myServerSideDataSource';
 
 ModuleRegistry.registerModules([
     RowApiModule,
@@ -31,77 +30,45 @@ ModuleRegistry.registerModules([
 ]);
 
 let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
-    columnDefs: [{ field: 'info' }],
-    defaultColDef: {
-        flex: 1,
-    },
-
-    // use the server-side row model
     rowModelType: 'serverSide',
+    serverSideDatasource: new MyServerSideDatasource(),
 
-    // enable tree data
+    columnDefs: [{ field: 'info' }],
+    defaultColDef: { flex: 1 },
+
     treeData: true,
     isServerSideGroup: (dataItem) => !!dataItem.children,
     getServerSideGroupKey: (dataItem) => dataItem.id,
 
-    // enable master detail
-    masterDetail: true,
-    isRowMaster: (data) => Array.isArray(data.details) && data.details.length > 0,
     autoGroupColumnDef: {
         headerName: 'Name',
         field: 'name',
     },
+
+    masterDetail: true,
+    detailRowHeight: 220,
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [{ field: 'label' }, { field: 'value' }],
-            defaultColDef: {
-                flex: 1,
-            },
+            defaultColDef: { flex: 1 },
         },
         getDetailRowData: (params) => {
             params.successCallback(params.data.details || []);
         },
     } as IDetailCellRendererParams<any, any>,
-    detailRowHeight: 200,
+    isRowMaster: (data) => !!data.details?.length,
+
     onGridReady: (params) => {
         setTimeout(() => {
-            // Expand some nodes
-            const nodeToExpand = params.api.getRowNode('2');
-            if (nodeToExpand) {
-                nodeToExpand.setExpanded(true);
-            }
+            params.api.getRowNode('1')?.setExpanded(true);
         }, 500);
     },
 };
-
-function getServerSideDatasource(server: any): IServerSideDatasource {
-    return {
-        getRows: (params) => {
-            console.log('[Datasource] - rows requested by grid: ', params.request);
-
-            const response = server.getData(params.request);
-
-            // adding delay to simulate real server call
-            setTimeout(() => {
-                if (response.success) {
-                    // call the success callback
-                    params.success({ rowData: response.rows, rowCount: response.lastRow });
-                } else {
-                    // inform the grid request failed
-                    params.fail();
-                }
-            }, 200);
-        },
-    };
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-
-    const fakeServer = FakeServer(fakeData);
-    const datasource = getServerSideDatasource(fakeServer);
-    gridApi!.setGridOption('serverSideDatasource', datasource);
 });

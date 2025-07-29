@@ -7,6 +7,8 @@ env:
     DEFAULT_RETENTION_DAYS: 30
     PREV_COMMIT_SHA_FILE: ./commit-sha.txt
     CTRF_FILE: ./ctrf-report.json
+    SLACK_CHANNEL: '#ci-grid-gate'
+    AG_LIBRARY: grid
 on:
     workflow_dispatch:
         inputs:
@@ -70,6 +72,8 @@ jobs:
     download-examples:
       name: Download all-examples.json
       runs-on: ubuntu-latest
+      outputs:
+        cache-key: ${{ steps.cache-key.outputs.key }}
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -81,11 +85,19 @@ jobs:
             mkdir -p ./testing/ag-grid-docs/e2e/.cache
             curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
 
+        - name: Generate cache key
+          id: cache-key
+          run: |
+            CACHE_KEY="all-examples-$(sha256sum ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json | cut -d' ' -f1)"
+            echo "key=${CACHE_KEY}" >> $GITHUB_OUTPUT
+            echo "Generated cache key: ${CACHE_KEY}"
+
         - name: Cache all-examples-cached.json
           uses: actions/cache@v4
           with:
             path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
-            key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
+            key: ${{ steps.cache-key.outputs.key }}
+
     
     test-demos-smoke:
         if: ${{ github.event.inputs.skip_demo_smoke != 'true' }}
@@ -102,7 +114,7 @@ jobs:
               uses: actions/cache@v4
               with:
                 path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
-                key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
+                key: ${{ needs.download-examples.outputs.cache-key }}
 
             - name: Install Playwright Browsers
               working-directory: testing/ag-grid-docs
@@ -146,6 +158,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: vanilla
+              cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
     test-typescript:
         if: ${{ github.event.inputs.skip_typescript != 'true' }}
@@ -162,6 +175,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: typescript
+              cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
     test-react-functional:
         if: ${{ github.event.inputs.skip_reactFunctional != 'true' }}
@@ -178,6 +192,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: reactFunctional
+              cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
     test-react-functional-ts:
         if: ${{ github.event.inputs.skip_reactFunctionalTs != 'true' }}
@@ -194,6 +209,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: reactFunctionalTs
+              cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
     test-vue3:
         if: ${{ github.event.inputs.skip_vue3 != 'true' }}
@@ -210,6 +226,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: vue3
+              cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
     test-angular:
         if: ${{ github.event.inputs.skip_angular != 'true' }}
@@ -226,6 +243,7 @@ jobs:
           - uses: ./.github/actions/test-framework-examples
             with:
               framework: angular
+              cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
     test-recipes:
       if: ${{ github.event.inputs.skip_recipes != 'true' }}
@@ -309,10 +327,12 @@ jobs:
         - name: Slack Notification
           if: ${{ github.event_name == 'schedule' || inputs.notify }}
           continue-on-error: true
-          uses: ./.github/actions/slack-integration
+          uses: ./external/ag-shared/github/actions/slack-integration
           with:
+            AG_LIBRARY: ${{ env.AG_LIBRARY }}
             CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
-            SLACK_WEBHOOK: ${{ secrets.CI_GATE_WEBHOOK }}
+            SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+            SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
             PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
             CURRENT_COMMIT_SHA: ${{ github.sha }}
             IS_SUCCESS: ${{ env.IS_SUCCESS }}

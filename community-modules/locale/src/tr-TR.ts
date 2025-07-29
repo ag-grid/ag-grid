@@ -603,7 +603,6 @@ export const AG_GRID_LOCALE_TR = {
     ariaLabelSelectField: 'Alan Seç',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Hücre Düzenleyici',
     ariaValidationErrorPrefix: 'Hücre Düzenleyici Doğrulaması',
     ariaLabelLoadingContextMenu: 'Bağlam Menüsü Yükleniyor',
 

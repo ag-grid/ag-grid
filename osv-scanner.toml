@@ -129,46 +129,22 @@ id = "GHSA-9jgg-88mc-972h"
 reason = "We only use the dev server for development/testing - it's not used in the final production build"
 
 [[IgnoredVulns]]
+id = "GHSA-xvf7-4v9q-58w6"
+reason = "We do not use form-data directly and where it is used is only for testing or examples"
+
+[[IgnoredVulns]]
+id = "GHSA-xffm-g5w8-qvg7"
+reason = "eslint is only used in development/testing - it's not used in the final production build"
+
+[[IgnoredVulns]]
 id = "GHSA-4r6h-8v6p-xvw6"
-reason = "x"
+reason = "sheetjs is only used in development/testing - it's not used in the final production build"
 
 [[IgnoredVulns]]
-id = "GHSA-5pgg-2g8v-p4x9" 
-reason = "x"
+id = "GHSA-5pgg-2g8v-p4x9"
+reason = "sheetjs is only used in development/testing - it's not used in the final production build"
 
 [[IgnoredVulns]]
-id = "GHSA-72xf-g2v4-qvf3" 
-reason = "x"
-
-[[IgnoredVulns]]
-id = "GHSA-64vr-g452-qvp3" 
-reason = "x"
-
-[[IgnoredVulns]]
-id = "GHSA-4vvj-4cpr-p986" 
-reason = "x"
-
-[[IgnoredVulns]]
-id = "GHSA-952p-6rrq-rcjv" 
-reason = "x"
-
-[[IgnoredVulns]]
-id = "GHSA-x7hr-w5r2-h6wg" 
-reason = "x"
-
-[[IgnoredVulns]]
-id = "GHSA-968p-4wvh-cqc8" 
-reason = "x"
-
-[[IgnoredVulns]]
-id = "GHSA-grv7-fg5c-xmjg" 
-reason = "x"
-
-[[IgnoredVulns]]
-id = "GHSA-w7q9-p3jq-fmhm" 
-reason = "x"
-
-[[IgnoredVulns]]
-id = "GHSA-xvf7-4v9q-58w6" 
-reason = "x"
+id = "GHSA-grv7-fg5c-xmjg"
+reason = "braces is only used in development/testing - it's not used in the final production build"
 

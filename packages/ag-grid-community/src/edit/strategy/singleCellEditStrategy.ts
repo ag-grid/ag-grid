@@ -3,11 +3,12 @@ import type { AgColumn } from '../../entities/agColumn';
 import { _getRowNode } from '../../entities/positionUtils';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
+import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getColId } from '../utils/controllers';
-import { _populateModelValidationErrors, _setupEditor } from '../utils/editors';
+import { _setupEditor } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
@@ -65,6 +66,26 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         // NOP - single cell edit strategy does not dispatch row events
     }
 
+    protected override processValidationResults(
+        results: EditValidationResult<Required<EditPosition> & EditValue>
+    ): EditValidationAction {
+        const anyFailed = results.fail.length > 0;
+
+        // if any of the cells failed, keep those editors
+        if (anyFailed && this.editSvc.cellEditingInvalidCommitBlocks()) {
+            return {
+                destroy: [],
+                keep: results.all,
+            };
+        }
+
+        // if no cells failed, we destroy all editors
+        return {
+            destroy: results.all,
+            keep: [],
+        };
+    }
+
     public override stop(cancel?: boolean, event?: Event | null): boolean {
         super.stop(cancel, event);
 
@@ -106,11 +127,9 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         prevCell: CellCtrl,
         backwards: boolean,
         event?: KeyboardEvent,
-        source: 'api' | 'ui' = 'ui'
+        source: 'api' | 'ui' = 'ui',
+        preventNavigation = false
     ): boolean | null {
-        // check for all cell-level validation errors
-        const preventNavigation = this.editSvc.checkNavWithValidation(undefined, event) === 'block-stop';
-
         const prevPos = prevCell.cellPosition;
 
         // find the next cell to start editing
@@ -133,7 +152,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             // has editable function (eg colDef.editable=func() ) and it depends on the
             // result of this cell, so need to save updates from the first edit, in case
             // the value is referenced in the function.
-            prevCell.stopEditing();
+            this.editSvc?.stopEditing(prevCell, { source: this.editSvc?.isBatchEditing() ? 'ui' : 'api', event });
         }
 
         try {
@@ -167,29 +186,17 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         const rowsMatch = nextPos && prevPos.rowIndex === nextPos.rowIndex && prevPos.rowPinned === nextPos.rowPinned;
 
-        if (!rowsMatch) {
-            // run validation to gather row-level validation errors
-            _populateModelValidationErrors(this.beans);
-
-            if ((this.model.getRowValidationModel().getRowValidationMap().size ?? 0) === 0) {
-                const rowPreventNavigation = this.editSvc.checkNavWithValidation(prevCell, event) === 'block-stop';
-                if (rowPreventNavigation) {
-                    return true;
-                }
-            }
-        }
-
         if (prevEditable && !preventNavigation) {
             this.setFocusOutOnEditor(prevCell);
         }
 
         // Don't start editing the next cell, focus only
-        const suppressEditingNextOnTab = this.gos.get('suppressEditingNextOnTab');
+        const suppressStartEditOnTab = this.gos.get('suppressStartEditOnTab');
 
         if (!rowsMatch && !preventNavigation) {
             super.cleanupEditors(nextCell, true);
 
-            if (suppressEditingNextOnTab) {
+            if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else {
                 this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });
@@ -199,7 +206,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         if (nextEditable && !preventNavigation) {
             // need to focus the cell before setting the editor, otherwise the focus handler won't cause previous editor cleanups
             nextCell.focusCell(false, event);
-            if (suppressEditingNextOnTab) {
+            if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else if (!nextCell.comp?.getCellEditor()) {
                 // editor missing because it was outside the viewport during creating phase, attempt to create it now
@@ -207,30 +214,15 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
                 this.setFocusInOnEditor(nextCell);
             }
         } else {
+            if (nextEditable && preventNavigation) {
+                this.setFocusInOnEditor(nextCell);
+            }
             nextCell.focusCell(true, event);
         }
 
         prevCell.rowCtrl?.refreshRow({ suppressFlash: true, force: true });
 
         return true;
-    }
-
-    protected override processValidationResults(results: EditValidationResult): EditValidationAction {
-        const anyFailed = results.fail.length > 0;
-
-        // if any of the cells failed, we keep all editors
-        if (anyFailed && this.editSvc.cellEditingInvalidCommitBlocks()) {
-            return {
-                destroy: [],
-                keep: results.all,
-            };
-        }
-
-        // if no cells failed, we destroy all editors
-        return {
-            destroy: results.all,
-            keep: [],
-        };
     }
 
     public override destroy(): void {

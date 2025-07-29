@@ -602,7 +602,6 @@ export const AG_GRID_LOCALE_TW = {
     ariaLabelSelectField: '選擇欄位',
 
     // Cell Editor
-    ariaLabelCellEditor: '單元格編輯器',
     ariaValidationErrorPrefix: '單元格編輯器驗證',
     ariaLabelLoadingContextMenu: '正在載入內容選單',
 

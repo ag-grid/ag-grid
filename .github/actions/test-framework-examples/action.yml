@@ -5,6 +5,9 @@ inputs:
     description: 'Framework to use'
     required: true
     default: 'invalid-framework'
+  cache-key:
+    description: 'Cache key for all-examples-cached.json'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -17,7 +20,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
-        key: all-examples-${{ hashFiles('./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json') }}
+        key: ${{ inputs.cache-key }}
 
     - name: Install Playwright Browsers
       working-directory: testing/ag-grid-docs

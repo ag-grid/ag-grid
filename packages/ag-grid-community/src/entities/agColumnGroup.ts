@@ -289,7 +289,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
         // colDef.columnGroupShow set.
         this.children!.forEach((child) => {
             // never add empty groups
-            const emptyGroup = isColumnGroup(child) && (!child.displayedChildren || !child.displayedChildren.length);
+            const emptyGroup = isColumnGroup(child) && !child.displayedChildren?.length;
             if (emptyGroup) {
                 return;
             }

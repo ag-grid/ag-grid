@@ -174,6 +174,10 @@ export function _setAriaControlsAndLabel(controllerElement: Element, controlledE
     _setAriaLabelledBy(controlledElement, controllerElement.id);
 }
 
+export function _setAriaOwns(ownerElement: Element, ownedId?: string | null) {
+    _toggleAriaAttribute(ownerElement, 'owns', ownedId);
+}
+
 export function _setAriaHasPopup(
     element: Element,
     hasPopup: 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | boolean

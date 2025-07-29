@@ -653,7 +653,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public editType: EditStrategyType | undefined = undefined;
     /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
      */
-    @Input({ transform: booleanAttribute }) public suppressEditingNextOnTab: boolean | undefined = undefined;
+    @Input({ transform: booleanAttribute }) public suppressStartEditOnTab: boolean | undefined = undefined;
     /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
@@ -1413,7 +1413,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public isRowPinnable: IsRowPinnable<TData> | undefined = undefined;
     /** Called for every row in the grid.
      *
-     * Return `true` if the row should be pinned initially. Return `false` otherwise.
+     * Return "top", "bottom" if the row should be initially pinned to the top or bottom respectively.
+     * Return `null` or `undefined` otherwise.
      * User interactions can subsequently still change the pinned state of a row.
      * @agModule `PinnedRowModule`
      */

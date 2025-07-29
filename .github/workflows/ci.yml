@@ -50,6 +50,8 @@ env:
   NX_NO_CLOUD: true
   NX_BRANCH: ${{ github.ref }}
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  SLACK_CHANNEL: '#ci-grid-gate'
+  AG_LIBRARY: grid
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
   YARN_REGISTRY: "http://52.50.158.57:4873"
   CI: true
@@ -566,7 +568,7 @@ jobs:
       - name: SlackBot
         if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
         env:
-          CI_GRID_GATE_CHANNEL: '#ci-grid-gate'
+          CI_GRID_GATE_CHANNEL: ${{ env.SLACK_CHANNEL }}
           CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.CHARTS_TEAM_CITY_CHANNEL }}
           WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}

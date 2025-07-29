@@ -602,7 +602,6 @@ export const AG_GRID_LOCALE_NO = {
     ariaLabelSelectField: 'Velg Felt',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Celle redigerer',
     ariaValidationErrorPrefix: 'Celle redigerer validering',
     ariaLabelLoadingContextMenu: 'Laster inn kontekstmeny',
 

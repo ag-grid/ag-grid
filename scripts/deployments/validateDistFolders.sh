@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -Eeuo pipefail
+
 excluded=("ag-grid-react" "ag-grid-vue3" "ag-grid-angular" "styles" "locale")
 frameworks=("ag-grid-react" "ag-grid-vue3" "ag-grid-angular")
 
@@ -177,7 +179,7 @@ validateExpectedDirs "dist/artifacts/contents/community-modules" 2
 validateExpectedDirs "dist/artifacts/contents/packages" 6
 
 validateExpectedDirs "dist/artifacts/community-modules" 2
-validateExpectedDirs "dist/artifacts/packages" 6
+validateExpectedDirs "dist/artifacts/packages" 7
 
 validateModules "dist/artifacts/contents/community-modules"
 validatePackages "dist/artifacts/contents/packages"

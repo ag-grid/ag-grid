@@ -603,7 +603,6 @@ export const AG_GRID_LOCALE_UA = {
     ariaLabelSelectField: 'Виберіть поле',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Редактор комірки',
     ariaValidationErrorPrefix: 'Валідація редактора комірки',
     ariaLabelLoadingContextMenu: 'Завантаження контекстного меню',
 

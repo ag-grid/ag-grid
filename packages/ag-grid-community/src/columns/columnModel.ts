@@ -93,16 +93,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // called from SyncService, when grid has finished initialising
     private createColsFromColDefs(source: ColumnEventType): void {
         const { beans } = this;
-        const {
-            valueCache,
-            colAutosize,
-            rowGroupColsSvc,
-            pivotColsSvc,
-            valueColsSvc,
-            visibleCols,
-            colViewport,
-            eventSvc,
-        } = beans;
+        const { valueCache, colAutosize, rowGroupColsSvc, pivotColsSvc, valueColsSvc, visibleCols, eventSvc } = beans;
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = this.colDefs ? _compareColumnStatesAndDispatchEvents(beans, source) : undefined;
 
@@ -134,7 +125,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.refreshCols(true);
 
         visibleCols.refresh(source);
-        colViewport.checkViewportColumns();
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
         // in case applications use it

@@ -9,57 +9,56 @@ export interface IFile {
     size?: number;
 }
 
-export interface FileDropIndicator {
+export interface FileDropPosition {
     parentId: string | undefined;
-    index: number;
-    file: IFile | null | undefined;
-    dropIndicatorPosition: DropIndicatorPosition;
+    source: IFile;
+    target: IFile;
+    position: DropIndicatorPosition;
 }
 
-export function getFileDropIndicator(
+const indexOfFile = (files: IFile[], file: IFile): number => files.findIndex((f) => f.id === file.id);
+
+export function getFileDropPosition(
     files: IFile[],
     source: IFile | null | undefined,
     target: IFile | null | undefined,
     reorderOnly: boolean
-): FileDropIndicator | null {
-    if (!source || target === source) {
+): FileDropPosition | null {
+    if (!source) {
         return null;
     }
 
-    let file = target ?? source;
-    let index = 0;
-    let parentId: string | undefined;
-    let dropIndicatorPosition: DropIndicatorPosition = 'none';
-
     if (!target) {
-        // Append in the root
-        index = files.length;
-        dropIndicatorPosition = 'none';
-    } else if (target.type === 'folder') {
-        parentId = target.id;
-        const children = files.filter((f) => f.parentId === target.id);
-        if (children.length > 0) {
-            file = children[0]; // above first child
-            dropIndicatorPosition = 'above';
-            index = 0;
-        } else {
-            dropIndicatorPosition = 'inside'; // No children, drop inside the folder
-            index = 0;
-        }
-    } else {
-        parentId = getNewParentId(source, target, reorderOnly);
-        const filtered = files.filter((f) => f.id !== source.id);
-        const siblings = filtered.filter((f) => f.parentId === parentId);
-        index = siblings.findIndex((f) => f.id === target.id);
-        if (index === -1) {
-            index = siblings.length;
-        } else {
-            index = index + 1; // always insert after target
-        }
-        dropIndicatorPosition = 'below';
+        target = files.findLast((f) => f.parentId === undefined) ?? source;
     }
 
-    return { parentId, index, file, dropIndicatorPosition };
+    if (target === source) {
+        return null;
+    }
+
+    let parentId = getNewParentId(source, target, reorderOnly);
+
+    let dropIndicatorPosition: DropIndicatorPosition = 'inside';
+
+    if (parentId === undefined || target.id !== parentId) {
+        let indexOfTarget = indexOfFile(files, target);
+        const indexOfSource = indexOfFile(files, source);
+
+        const direction = indexOfSource > indexOfTarget ? 1 : -1;
+        dropIndicatorPosition = direction === 1 ? 'above' : 'below';
+
+        for (let i = 0; i < files.length; i++) {
+            const index = Math.abs(indexOfTarget + direction * i) % files.length;
+            const item = files[index];
+            if (item !== source && item.parentId === parentId) {
+                indexOfTarget = index;
+                target = item;
+                break;
+            }
+        }
+    }
+
+    return { parentId, source, target, position: dropIndicatorPosition };
 }
 
 /**
@@ -68,49 +67,41 @@ export function getFileDropIndicator(
  * - Handles reordering among siblings and moving to a new parent.
  * - Returns a new array, does not mutate the input.
  */
-export function moveFiles(
-    files: IFile[],
-    source: IFile | null | undefined,
-    target: IFile | null | undefined,
-    reorderOnly: boolean
-): IFile[] {
-    if (source === target || !source) {
-        return files;
-    }
+export function moveFiles(files: IFile[], { source, target, parentId, position }: FileDropPosition): IFile[] {
     if (target && isDescendant(source, target, files)) {
         return files; // Prevent moving a folder into itself or its descendants
     }
-    const ctx = getFileDropIndicator(files, source, target, reorderOnly);
-    if (!ctx) {
-        // Insert at root (parentId undefined), at the end
-        const filtered = files.filter((f) => f.id !== source.id);
-        const newFile: IFile = { ...source, parentId: undefined };
-        const result: IFile[] = [];
-        for (const file of filtered) {
+
+    if (source.parentId !== parentId) {
+        source = { ...source, parentId }; // Update parentId if it has changed
+    }
+
+    const above = position === 'above';
+
+    const result: IFile[] = [];
+    let inserted = false;
+    for (const file of files) {
+        const shouldInsert = !inserted && file.id === target.id;
+
+        if (shouldInsert && above) {
+            result.push(source);
+            inserted = true;
+        }
+
+        if (file.id !== source.id) {
             result.push(file);
         }
-        // Always insert at the end of root
-        result.push(newFile);
-        return result;
-    }
-    const filtered = files.filter((f) => f.id !== source.id);
-    const newFile: IFile = { ...source, parentId: ctx.parentId };
-    const result: IFile[] = [];
-    let siblingIdx = 0;
-    let inserted = false;
-    for (const file of filtered) {
-        if (file.parentId === ctx.parentId) {
-            if (siblingIdx === ctx.index && !inserted) {
-                result.push(newFile);
-                inserted = true;
-            }
-            siblingIdx++;
+
+        if (shouldInsert && !above) {
+            result.push(source);
+            inserted = true;
         }
-        result.push(file);
     }
+
     if (!inserted) {
-        result.push(newFile);
+        result.push(source);
     }
+
     return result;
 }
 
@@ -136,11 +127,10 @@ function getNewParentId(source: IFile, target: IFile | null | undefined, reorder
         return source.parentId;
     }
     if (!target) {
-        return undefined;
+        return reorderOnly ? source.parentId : undefined;
     }
     if (target.type === 'folder') {
         return target.id;
-    } else {
-        return target.parentId;
     }
+    return target.parentId;
 }

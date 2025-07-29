@@ -52,13 +52,14 @@ const DetailCellRenderer = ({ data, node, api }: CustomCellRendererProps) => {
                     {data.account}
                 </div>
             </div>
-            <AgGridReact
-                className="full-width-grid"
-                columnDefs={colDefs}
-                defaultColDef={defaultColDef}
-                rowData={data.callRecords}
-                onGridReady={onGridReady}
-            />
+            <div className="full-width-grid">
+                <AgGridReact
+                    columnDefs={colDefs}
+                    defaultColDef={defaultColDef}
+                    rowData={data.callRecords}
+                    onGridReady={onGridReady}
+                />
+            </div>
         </div>
     );
 };

@@ -77,7 +77,6 @@ export interface IEditService extends NamedBean {
     isRowEditing(rowNode?: IRowNode | null, params?: IsEditingParams | null): boolean;
     startEditing(position: Required<EditPosition>, params: StartEditParams): void;
     stopEditing(position?: EditPosition, params?: StopEditParams): boolean;
-    stopAllEditing(cancel?: boolean, source?: EditSource): void;
     setEditMap(updates: EditMap, params?: _SetEditingCellsParams): void;
     isCellEditable(position: Required<EditPosition>, source?: EditSource): boolean;
     moveToNextCell(
@@ -86,7 +85,7 @@ export interface IEditService extends NamedBean {
         event?: KeyboardEvent,
         source?: EditSource
     ): boolean | null;
-    getCellDataValue(position: Required<EditPosition>): any;
+    getCellDataValue(position: Required<EditPosition>, preferEditor: boolean): any;
     getRowDataValue(rowNode: IRowNode, params?: GetEditsParams): any;
     addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void;
     createPopupEditorWrapper(params: ICellEditorParams): PopupEditorWrapper;

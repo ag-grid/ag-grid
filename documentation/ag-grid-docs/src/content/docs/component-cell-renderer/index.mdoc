@@ -39,7 +39,7 @@ The example below shows adding images, hyperlinks, and buttons to a cell using C
 
 The grid comes with some built in Cell Components that cover some common cell rendering requirements.
 
-* [Group Cell Component](./grouping-single-group-column/#cell-component): For showing group details with expand & collapse functionality when using any of [Row Grouping](./grouping/), [Master Detail](./master-detail/) or [Tree Data](./tree-data/).
+* [Group Cell Component](./grouping-single-group-column/#cell-component): For showing group details with expand and collapse functionality when using any of [Row Grouping](./grouping/), [Master Detail](./master-detail/) or [Tree Data](./tree-data/).
 
 * [Animate Change Cell Renderers](./change-cell-renderers/#animated-cell-renderers): For animating changes when data is updated.
 
@@ -229,13 +229,6 @@ The example below demonstrates custom methods on Cell Components called by the a
 
 {% gridExampleRunner title="Get Cell Renderer" name="get-cell-renderer" /%}
 
-{% if isFramework("react") %}
-{% note %}
-Note that the hook version of the above example makes use of `useImperativeHandle` to expose methods to the grid (and other components). Please
-refer to the [hook specific](./react-hooks/) documentation for more information.
-{% /note %}
-{% /if %}
-
 ### Custom Props
 
 The `props` passed to the Cell Component can be complemented with custom props. This allows configuring reusable Cell Components - e.g. a component could have buttons that are optionally displayed via additional props.
@@ -312,7 +305,7 @@ The example below demonstrates the use of `deferRender` to defer the rendering o
 
 The grid supports lazy loading of Custom Cell Components by displaying the `loadingCellRenderer` until the custom cell has loaded. 
 
-The example below uses [React.lazy](https://react.dev/reference/react/lazy) to load the cell component for the country column with an artificial delay of 3 seconds.
+The example below uses [React.lazy](https://react.dev/reference/react/lazy) to load the cell component for the Lazy Loaded Renderer column with an artificial delay of 3 seconds.
 
 {% gridExampleRunner title="Lazy Cell Renderer" name="lazy-renderer" /%}
 
