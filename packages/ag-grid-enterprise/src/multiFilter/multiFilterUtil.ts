@@ -64,6 +64,11 @@ export function updateGetValue(
     filterDef: IMultiFilterDef,
     existingGetValue: FilterDisplayParams['getValue']
 ): FilterDisplayParams['getValue'] {
-    const filterValueGetter = filterDef.filterValueGetter;
-    return filterValueGetter ? beans.colFilter!.createGetValue(column, filterValueGetter) : existingGetValue;
+    if (filterDef.valueGetter) {
+        return beans.colFilter!.createGetValue(column, filterDef.valueGetter);
+    }
+    if (filterDef.filterValueGetter) {
+        return beans.colFilter!.createGetValue(column, filterDef.filterValueGetter);
+    }
+    return existingGetValue;
 }

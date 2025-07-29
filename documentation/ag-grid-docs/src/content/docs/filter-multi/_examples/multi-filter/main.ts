@@ -65,6 +65,24 @@ const gridOptions: GridOptions<IOlympicData> = {
                 ],
             } as IMultiFilterParams,
         },
+        {
+            field: 'custom',
+            headerName: 'Kind & Value',
+            filter: 'agMultiColumnFilter',
+            filterParams: {
+                filters: [
+                    {
+                        filter: 'agTextColumnFilter',
+                        valueGetter: params => params.data.kind
+                    },
+                    {
+                        filter: 'agTextColumnFilter',
+                        valueGetter: params => params.data.value
+                    }
+                ]
+            } as IMultiFilterParams,
+            valueGetter: params => ({ kind: params.data.kind, value: params.data.value })
+        },
     ],
     defaultColDef: {
         flex: 1,

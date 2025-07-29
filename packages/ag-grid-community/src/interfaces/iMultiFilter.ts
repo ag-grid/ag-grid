@@ -41,6 +41,11 @@ export interface IMultiFilterDef extends IFilterDef {
     /** Custom parameters to be passed to the floating filter component. */
     floatingFilterComponentParams?: any;
     /**
+     * Function or expression. Gets the value for filtering purposes for this child filter only.
+     * Takes precedence over filterValueGetter if both are provided.
+     */
+    valueGetter?: string | ValueGetterFunc;
+    /**
      * Function or expression. Gets the value for filtering purposes.
      * Allows for different values to be used for child filters
      * instead of using `colDef.filterValueGetter`.

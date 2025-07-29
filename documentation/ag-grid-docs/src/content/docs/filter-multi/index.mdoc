@@ -81,6 +81,15 @@ The example below demonstrates passing parameters to child filters:
 
 {% gridExampleRunner title="Multi Filter Child Params" name="multi-filter-child-params"  exampleHeight=602 /%}
 
+## Filtering on Multiple Properties with valueGetter
+
+You can define a specific `valueGetter` for each child filter in a Multi Filter. This allows you to filter on different properties of a complex object within the same column.
+
+For example, if your data looks like this:
+```
+
+Each child filter then operates on a different property of the column's object.
+
 ## Floating Filters
 
 When [Floating Filters](./floating-filters/) are used, the Floating Filter shown is for the child filter in the Multi Filter that was most recently applied and is still active. If no child filters are active, the Floating Filter for the first child filter in the Multi Filter is shown instead.
