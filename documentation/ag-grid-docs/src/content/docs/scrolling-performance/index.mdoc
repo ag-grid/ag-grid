@@ -24,11 +24,17 @@ The grid can be slowed down by custom [Cell Renderers](./component-cell-renderer
 compare the speed again. If the grid does improve its speed by removing Cell Renderers, introduce the Cell Renderers one by one to find out
 which ones are adding the most overhead.
 
+## Defer Slow Cell Renderers
+
+If a cell renderer is identified as slow then it can be marked for deferred rendering. This is achieved by setting `deferRender: true` on its `cellRendererParams`. The grid will display a skeleton loading cell in place of the cell renderer until the user has stopped scrolling. This improves scrolling performance by not blocking the main thread with expensive calls to the real cell renderer.
+
+For more details see: [Defer Slow Cell Components](./component-cell-renderer/#defer-slow-cell-components).
+
 {% if isFramework("angular") %}
 
 ## Consider JavaScript Cell Renderers
 
-The grid's rendering uses AG Grid's own internal rendering engine which does not use Angular. As such, each time an Angular Cell Renderer is used,
+If deferring a cell renderer is not appropriate then it is worth noting that the grid uses AG Grid's own internal rendering engine which does not use Angular. As such, each time an Angular Cell Renderer is used,
 the grid switches context into an Angular application. This context switching can be time consuming when done multiple times (i.e. each cell).
 
 Consider using JavaScript Cell Renderers instead of Angular Cell Renderers to see if it makes your rendering faster.
@@ -47,7 +53,7 @@ Angular supports coalescing of multiple change detection cycles into a single cy
 
 ## Consider JavaScript Cell Renderers
 
-The grid's rendering uses AG Grid's own internal rendering engine which does not use Vue. As such, each time a Vue Cell Renderer is used, the grid
+If deferring a cell renderer is not appropriate then it is worth noting that the grid uses AG Grid's own internal rendering engine which does not use Vue. As such, each time a Vue Cell Renderer is used, the grid
 switches context into a Vue application. This context switching can be time consuming when done multiple times (i.e. each cell).
 
 Consider using JavaScript Cell Renderers instead of Vue Cell Renderers to see if it makes your rendering faster.

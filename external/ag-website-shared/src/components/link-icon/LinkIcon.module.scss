@@ -31,6 +31,7 @@
     }
 
     &:hover,
+    &:focus-visible,
     &.active {
         opacity: 1;
     }
