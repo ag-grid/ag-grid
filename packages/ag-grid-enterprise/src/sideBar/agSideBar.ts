@@ -196,7 +196,11 @@ class AgSideBar extends Component implements ISideBar {
 
         this.sideBar = sideBarDef;
 
-        if (!!sideBarDef && !!sideBarDef.toolPanels) {
+        if (sideBarDef) {
+            const shouldHideSideButtons = sideBarDef.hideSideButtons ?? !this.sideBarButtons.isDisplayed();
+            this.sideBarButtons.setDisplayed(!shouldHideSideButtons);
+        }
+        if (sideBarDef?.toolPanels) {
             const toolPanelDefs = sideBarDef.toolPanels as ToolPanelDef[];
             this.createToolPanelsAndSideButtons(toolPanelDefs, sideBarState, existingToolPanelWrappers);
             if (!this.toolPanelWrappers.length) {
@@ -252,14 +256,6 @@ class AgSideBar extends Component implements ISideBar {
         options?: { skipAriaHidden?: boolean | undefined } | undefined
     ): void {
         super.setDisplayed(displayed, options);
-        this.dispatchSideBarUpdated();
-    }
-
-    public setSideButtonsDisplayed(
-        show: boolean,
-        options?: { skipAriaHidden?: boolean | undefined } | undefined
-    ): void {
-        this.sideBarButtons.setDisplayed(show, options);
         this.dispatchSideBarUpdated();
     }
 
