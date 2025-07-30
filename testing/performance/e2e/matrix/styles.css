@@ -21,7 +21,6 @@
     display: none;
 }
 
-
 .show {
     display: inline;
 }
@@ -33,7 +32,8 @@
 }
 
 .controls {
-    label, input {
+    label,
+    input {
         margin: 10px;
     }
 }
@@ -62,22 +62,11 @@ span {
         color: var(--color-fg-primary);
         background-color: var(--color-bg-primary);
         border: 1px solid var(--color-input-border-hover);
-
-        #{$selector-darkmode} & {
-            border: 1px solid var(--color-brand-200);
-        }
-    }
-    &:focus-visible {
-        #{$selector-darkmode} & {
-            box-shadow:
-                    0 0 0 4px color-mix(in srgb, var(--color-brand-200), var(--color-bg-primary) 60%),
-                    var(--shadow-xs);
-        }
     }
 }
 
 .content.large {
-    min-width: 150px; // TODO: refactor to fit content, currently used in just framework selector
+    min-width: 150px;
 }
 
 .content {
@@ -88,15 +77,10 @@ span {
     border: 1px solid var(--color-border-primary);
     border-radius: 6px;
     box-shadow:
-            0px 10px 38px -10px rgba(22, 23, 24, 0.35),
-            0px 10px 20px -15px rgba(22, 23, 24, 0.2);
+        0px 10px 38px -10px rgba(22, 23, 24, 0.35),
+        0px 10px 20px -15px rgba(22, 23, 24, 0.2);
     z-index: 1000;
     padding: 6px;
-
-    #{$selector-darkmode} & {
-        background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 12%);
-        border: 1px solid color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 22%);
-    }
 
     .SelectScrollButton {
         display: flex;
@@ -130,8 +114,6 @@ span {
     user-select: none;
     cursor: pointer;
     justify-content: space-between;
-
-
 }
 
 .item[data-disabled] {
@@ -164,10 +146,7 @@ span {
     font-size: 14px;
     line-height: 25px;
     font-weight: 600;
-
 }
-
-
 
 @keyframes fadeIn {
     from {
@@ -197,4 +176,3 @@ span {
         transform: translateY(0px) scale(1);
     }
 }
-
