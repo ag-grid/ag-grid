@@ -6,7 +6,7 @@
         "./src/theming/param-docs.ts",
         "./src/theming/private-theming-api.ts",
         "./src/utils/debug.ts",
-        "./src/theming/theme-types.ts"
+        "./src/agStack/theming/theme-types.ts"
     ],
     "rules": {
         "unlisted": "off",

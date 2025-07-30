@@ -25,7 +25,7 @@ import {
  */
 export type CoreParams = CoreThemeParams;
 
-export interface CoreThemeParams extends SharedThemeParams {
+interface CoreThemeParams extends SharedThemeParams {
     /**
      * Color of the dividing line above the buttons in the advanced filter builder
      */

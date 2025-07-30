@@ -9,13 +9,13 @@ export interface AgCheckboxChangedEvent extends AgEvent<'checkboxChanged'> {
 
 export type ScrollDirection = 'horizontal' | 'vertical';
 
-export interface AgBodyScrollEvent extends AgEvent<'bodyScroll'> {
+interface AgBodyScrollEvent extends AgEvent<'bodyScroll'> {
     direction: ScrollDirection;
     left: number;
     top: number;
 }
 
-export interface AgDragStartedEvent extends AgEvent<'dragStarted'> {
+interface AgDragStartedEvent extends AgEvent<'dragStarted'> {
     target: Element;
 }
 
@@ -23,11 +23,11 @@ interface AgTooltipEvent<TEventType extends 'tooltipShow' | 'tooltipHide'> exten
     parentGui: HTMLElement;
 }
 
-export interface AgTooltipShowEvent extends AgTooltipEvent<'tooltipShow'> {
+interface AgTooltipShowEvent extends AgTooltipEvent<'tooltipShow'> {
     tooltipGui: HTMLElement;
 }
 
-export interface AgTooltipHideEvent extends AgTooltipEvent<'tooltipHide'> {}
+interface AgTooltipHideEvent extends AgTooltipEvent<'tooltipHide'> {}
 
 export interface BaseEvents {
     checkboxChanged: AgCheckboxChangedEvent;
