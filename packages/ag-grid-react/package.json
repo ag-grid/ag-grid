@@ -38,7 +38,7 @@
     "@types/react-dom": "~18.2.0",
     "babel-preset-react-app": "^10.0.0",
     "react": "^16.9.0",
-    "react-app-polyfill": "^2.0.0",
+    "react-app-polyfill": "^3.0.0",
     "react-dom": "^16.9.0",
     "typescript": "~5.2.2"
   },
