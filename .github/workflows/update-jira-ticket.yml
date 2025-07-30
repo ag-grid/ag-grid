@@ -157,7 +157,7 @@ jobs:
                             txt('.]')
                         ]));
                         await transitionJiraIssue(issue, nextTransition.id);
-                        ghCommentBody ||= `[Transitioned](${runUrl}) JIRA ticket(s): `;
+                        ghCommentBody ||= `Transitioned JIRA ticket(s): `;
                         ghCommentBody += `- [${issue_key}](https://ag-grid.atlassian.net/browse/${issue_key}) to ${to}\n`
                     }
                     const isWatchingAlready = issue.fields.watches?.isWatching || false;
