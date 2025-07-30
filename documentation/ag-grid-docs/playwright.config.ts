@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 const baseURL = process.env['PUBLIC_SITE_URL'] || 'https://localhost:4610';
 
+// eslint-disable-next-line no-console
 console.log(`Using base URL: ${baseURL}`);
 
 /**
