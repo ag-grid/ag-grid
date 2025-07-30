@@ -130,11 +130,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     // Drag And Drop Target Methods
     public onDragStart(mouseEvent: MouseEvent): void {
         const gos = this.gos;
-        if (!_isCellSelectionEnabled(gos)) {
-            return;
-        }
-
-        if (_getRowCtrlForEventTarget(gos, mouseEvent.target)?.isSuppressMouseEvent(mouseEvent)) {
+        if (
+            !_isCellSelectionEnabled(gos) ||
+            _getRowCtrlForEventTarget(gos, mouseEvent.target)?.isSuppressMouseEvent(mouseEvent)
+        ) {
             return;
         }
 
