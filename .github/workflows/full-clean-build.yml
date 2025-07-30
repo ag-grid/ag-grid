@@ -1,8 +1,11 @@
 name: Full Clean Build
 
+# disabling this until we can verify steps that fail are reported correctly
+# so far I've found that the validateDistFolders step has been failing but is not reported correctly
+
 on:
-  schedule:
-    - cron: '0 0 * * *' # Daily at midnight UTC against the latest branch
+  #  schedule:
+  #    - cron: '0 0 * * *' # Daily at midnight UTC against the latest branch
   workflow_dispatch:
     inputs:
       notify:
@@ -20,23 +23,24 @@ on:
         type: boolean
         default: false
         required: true
-permissions:
-  contents: write
-  actions: write
-  
-env:
-  PREV_COMMIT_SHA_FILE: ./commit-sha.txt
-  SLACK_FILE: ./slack.json
-  BUILD_DIRECTORY: ./.builds
-  WWW_ROOT_DIR: /var/www
-  PUBLIC_ALGOLIA_APP_ID: O1K1ESGB5K
-  LTS_VERSION: b32.3.7
-  GRID_ROOT_DIR: /var/www/html
-  FULL_BUILD_FOLDER: /var/www/fullClean
-  ARTEFACT_TESTS_FOLDER: /var/www/ag-artefact-tests
-  SLACK_CHANNEL: '#ci-grid-gate'
-  AG_LIBRARY: grid
 
+permissions:
+  contents: read
+  actions: read
+
+#env:
+#  PREV_COMMIT_SHA_FILE: ./commit-sha.txt
+#  SLACK_FILE: ./slack.json
+#  BUILD_DIRECTORY: ./.builds
+#  WWW_ROOT_DIR: /var/www
+#  PUBLIC_ALGOLIA_APP_ID: O1K1ESGB5K
+#  LTS_VERSION: b32.3.7
+#  GRID_ROOT_DIR: /var/www/html
+#  FULL_BUILD_FOLDER: /var/www/fullClean
+#  ARTEFACT_TESTS_FOLDER: /var/www/ag-artefact-tests
+#  SLACK_CHANNEL: '#ci-grid-gate'
+#  AG_LIBRARY: grid
+#
 jobs:
   full-clean-build:
     name: Full Clean Build
@@ -44,256 +48,265 @@ jobs:
     timeout-minutes: 120
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Init env files
+      - name: Placeholder
         run: |
-          echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.archive
-          echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.production
+          echo "Test"
 
-      - name: Version Modules
-        if: ${{ !inputs.fast_build }}
-        run: |
-          node ./scripts/deployments/versionModules.js "$(node ./scripts/calculate-next-version.js)" $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])") local
-
-      - name: Bootstrap
-        if: ${{ !inputs.fast_build }}
-        run: |
-          npm run bootstrap
-
-      - name: Sanity Check Grid & Charts Versions
-        if: ${{ !inputs.fast_build }}
-        run: |
-          node ./scripts/deployments/sanityCheckPackages.js $(node -e "console.log(require('./package.json').version)") $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])")
-
-      - name: Update Base Url
-        if: ${{ !inputs.fast_build }}
-        run: |
-          node ./scripts/deployments/prep_and_archive/updateBaseUrl.js staging
-
-      - name: Validate Grid Modules
-        if: ${{ !inputs.fast_build }}
-        run: |
-          node ./scripts/deployments/validateGridModulesList.js
-
-      - name: Sync Readmes
-        if: ${{ !inputs.fast_build }}
-        run: |
-          yarn nx sync-readmes
-
-      - name: Build
-        if: ${{ !inputs.fast_build }}
-        id: build
-        run: |
-          NODE_ENV=production yarn nx pack:verify --prod
-
-      - name: Test
-        if: ${{ !inputs.fast_build }}
-        run: |
-          yarn nx test:modules
-
-      - name: Validate Dist Folders
-        if: ${{ !inputs.fast_build }}
-        continue-on-error: true
-        run: |
-          ./scripts/deployments/validateDistFolders.sh
-
-      - name: Publish Packages
-        if: ${{ github.ref == 'refs/heads/latest' && steps.build.outputs.success == 'true' && !inputs.fast_build }}
-        run: |
-          ./scripts/publishGridPackages.sh .
-
-      - name: Sanity Check Base Url
-        if: ${{ !inputs.fast_build }}
-        run: |
-          node ./scripts/deployments/sanityCheckBaseUrl.js staging
-
-      - name: Build Docs For Staging
-        if: ${{ !inputs.fast_build }}
-        id: build_docs_staging
-        run: |
-          CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
-
-      - name: Deploy to Staging
-        id: deploy_to_staging
-        if: ${{ github.ref == 'refs/heads/latest' && steps.build_docs_staging.outputs.success == 'true' && steps.build.outputs.success == 'true' && !inputs.fast_build }}
-        env:
-          SSH_PRIVATE_KEY: |
-            ${{ secrets.STAGING_SSH_KEY }}
-          SSH_HOST: ${{ secrets.STAGING_HOST }}
-          SSH_USER: ubuntu
-          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
-          WWW_ROOT_DIR: ${{ env.WWW_ROOT_DIR }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
-          chmod 400 $SSH_KEY_LOCATION
-          ./scripts/deployments/createAndDeployDocsToTCGH.sh
-
-# Skipped for now, as it requires extra setup
-#      - name: Test Build Artefacts
-#        run: |
-#          cd ${{ env.ARTEFACT_TESTS_FOLDER }}
-#          git reset --hard
-#          git checkout main
-#          git pull
-#          npm run update-seed
-#          git clean -fdx
-#          npm i
-#          ./update.sh ${{ env.FULL_BUILD_FOLDER }}
-#          npm run clean
-#          npm run build
-#          npm run start-server
-#          npm test
-#          killall http-server || true
+#      - name: Checkout Code
+#        uses: actions/checkout@v4
+#        with:
+#          fetch-depth: 1
 #
-#      - name: Test Build LTS Artefacts
+#      - name: Init env files
 #        run: |
-#          cd ${{ env.ARTEFACT_TESTS_FOLDER }}
-#          git reset --hard
-#          git pull
-#          git clean -fdx
-#          git checkout ${{ env.LTS_VERSION }}
-#          npm i
-#          ./update.sh ${{ env.BUILD_DIRECTORY }}/archive/${{ env.LTS_VERSION }}
-#          npm run clean
-#          npm run build
-#          npm run start-server
-#          npm test
-#          killall http-server || true
-
-      - name: SonarQube Analysis Community
-        uses: SonarSource/sonarqube-scan-action@v5.2.0
-        if: ${{ !inputs.fast_build }}
-        env:
-          SONAR_HOST_URL: https://sonarcloud.io
-          SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
-        with:
-          projectBaseDir: ./packages/
-          args: >
-            -Dsonar.javascript.node.maxspace=8192
-            -Dsonar.organization=ag-grid
-            -Dsonar.sources=./ag-grid-community,./ag-grid-angular/projects/ag-grid-angular,./ag-grid-react,./ag-grid-vue3
-            -Dsonar.typescript.tsconfigPaths=./ag-grid-community/tsconfig.lib.json,./ag-grid-angular/projects/ag-grid-angular/tsconfig.lib.prod.json,./ag-grid-react/tsconfig.json,./ag-grid-vue3/tsconfig.json
-            -Dsonar.projectKey=ag-grid_community_latest
-            -Dsonar.exclusions=**/__tests__/*,**/test.ts,**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
-            -Dsonar.scanner.force-deprecated-java-version=true
-            -Dsonar.coverage.exclusions=**/*
-
-      - name: SonarQube Analysis Enterprise
-        uses: SonarSource/sonarqube-scan-action@v5.2.0
-        if: ${{ !inputs.fast_build }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
-          SONAR_HOST_URL: https://sonarcloud.io
-        with:
-          projectBaseDir: ./packages/
-          args: >
-            -Dsonar.javascript.node.maxspace=8192
-            -Dsonar.organization=ag-grid
-            -Dsonar.sources=./ag-grid-enterprise
-            -Dsonar.typescript.tsconfigPaths=./ag-grid-enterprise/tsconfig.lib.json
-            -Dsonar.projectKey=ag-grid-enterprise-latest
-            -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
-            -Dsonar.scanner.force-deprecated-java-version=true
-            -Dsonar.coverage.exclusions=**/*
-
-      - name: Update Algolia Dev
-        if: ${{ !inputs.fast_build }}
-        run: |
-          echo ALGOLIA_ADMIN_KEY=${{ secrets.ALGOLIA_ADMIN_KEY }} > documentation/update-algolia-indices/.env
-          echo PUBLIC_ALGOLIA_APP_ID=${{ env.PUBLIC_ALGOLIA_APP_ID }} >> documentation/update-algolia-indices/.env
-          yarn nx run ag-grid-docs:update-algolia -c staging
-
-      - name: Get previous run commit SHA
-        id: prev-commit-sha
-        uses: actions/cache/restore@v4
-        with:
-          restore-keys: |
-            full-clean-build-prev-commit-
-            full-clean-build-prev-commit-${{ github.ref }}
-          path: ${{ env.PREV_COMMIT_SHA_FILE }}
-          key: full-clean-build-prev-commit-${{ github.ref }}-${{ github.sha }}
-
-      - name: Load files into environment
-        continue-on-error: true
-        run: |
-          if [ -f ${{ env.PREV_COMMIT_SHA_FILE }} ]; then
-            {
-                echo 'PREV_COMMIT_SHA<<EOF'
-                cat ${{ env.PREV_COMMIT_SHA_FILE }}
-                echo 'EOF'
-            } >> $GITHUB_ENV
-          else
-            echo 'PREV_COMMIT_SHA_FILE not found'
-          fi
-
-      - name: Slack Notification
-        if: ${{ github.event_name == 'schedule' || inputs.notify }}
-        continue-on-error: true
-        uses: ./external/ag-shared/github/actions/slack-integration
-        with:
-          AG_LIBRARY: ${{ env.AG_LIBRARY }}
-          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-          SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
-          PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
-          CURRENT_COMMIT_SHA: ${{ github.sha }}
-
-      - name: Create Jira Ticket
-        uses: ./.github/actions/jira-integration
-        continue-on-error: true
-        if: ${{ github.event_name == 'schedule' || inputs.force_jira_ticket }}
-        with:
-          JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
-          JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' is failing."
-          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
-          PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
-          CURRENT_COMMIT_SHA: ${{ github.sha }}
-
-      - name: Set commit SHA
-        id: set-commit-sha
-        run: |
-          echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
-
-      - name: Save Current Commit Hash
-        uses: actions/cache/save@v4
-        with:
-          key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
-          path: ${{ env.PREV_COMMIT_SHA_FILE }}
-
-        # only if run is successful
-      - name: Dispatch docs-tests Workflow
-        if: (success() && github.ref == 'refs/heads/latest' && github.event_name == 'schedule') || inputs.force_dispatch_docs_tests
-        uses: actions/github-script@v7
-        env:
-          WORKFLOW_ID: 'doc-tests.yml'
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SHOULD_NOTIFY: ${{ inputs.notify }}
-        with:
-          script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const ref = context.ref;
-            const workflow_id = process.env.WORKFLOW_ID;
-            const notify = process.env.SHOULD_NOTIFY;
-
-            await github.rest.actions.createWorkflowDispatch({
-              owner,
-              repo,
-              workflow_id,
-              ref,
-              inputs: {
-                skip_vanilla: false,
-                skip_typescript: false,
-                skip_reactFunctional: false,
-                skip_reactFunctionalTs: false,
-                skip_angular: false,
-                skip_vue3: false,
-                skip_demo_smoke: false,
-                skip_recipes: false,
-                notify,
-                force_jira_ticket: true,
-              }
-            });
+#          echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.archive
+#          echo `node -e "console.log(\"BUILD_GRID_VERSION=\" + require('./package.json').version)"` > .env.production
+#
+#      - name: Version Modules
+#        if: ${{ !inputs.fast_build }}
+#        run: |
+#          node ./scripts/deployments/versionModules.js "$(node ./scripts/calculate-next-version.js)" $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])") local
+#
+#      - name: Bootstrap
+#        if: ${{ !inputs.fast_build }}
+#        run: |
+#          npm run bootstrap
+#
+#      - name: Sanity Check Grid & Charts Versions
+#        if: ${{ !inputs.fast_build }}
+#        run: |
+#          node ./scripts/deployments/sanityCheckPackages.js $(node -e "console.log(require('./package.json').version)") $(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])")
+#
+#      - name: Update Base Url
+#        if: ${{ !inputs.fast_build }}
+#        run: |
+#          node ./scripts/deployments/prep_and_archive/updateBaseUrl.js staging
+#
+#      - name: Validate Grid Modules
+#        if: ${{ !inputs.fast_build }}
+#        run: |
+#          node ./scripts/deployments/validateGridModulesList.js
+#
+#      - name: Sync Readmes
+#        if: ${{ !inputs.fast_build }}
+#        run: |
+#          yarn nx sync-readmes
+#
+#      - name: Build
+#        if: ${{ !inputs.fast_build }}
+#        id: build
+#        run: |
+#          NODE_ENV=production yarn nx pack:verify --prod
+#
+#      - name: Test
+#        if: ${{ !inputs.fast_build }}
+#        run: |
+#          yarn nx test:modules
+#
+#      - name: Generate SBOM
+#        if: ${{ !inputs.fast_build }}
+#        run: |
+#          npx --yes @cyclonedx/cyclonedx-npm -o ./dist/artifacts/packages/sbom.json --ignore-npm-errors --omit dev --omit peer --omit optional
+#
+#      - name: Validate Dist Folders
+#        if: ${{ !inputs.fast_build }}
+#        continue-on-error: true
+#        run: |
+#          ./scripts/deployments/validateDistFolders.sh
+#
+#      - name: Publish Packages
+#        if: ${{ github.ref == 'refs/heads/latest' && steps.build.outputs.success == 'true' && !inputs.fast_build }}
+#        run: |
+#          ./scripts/publishGridPackages.sh .
+#
+#      - name: Sanity Check Base Url
+#        if: ${{ !inputs.fast_build }}
+#        run: |
+#          node ./scripts/deployments/sanityCheckBaseUrl.js staging
+#
+#      - name: Build Docs For Staging
+#        if: ${{ !inputs.fast_build }}
+#        id: build_docs_staging
+#        run: |
+#          CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
+#
+#      - name: Deploy to Staging
+#        id: deploy_to_staging
+#        if: ${{ github.ref == 'refs/heads/latest' && steps.build_docs_staging.outputs.success == 'true' && steps.build.outputs.success == 'true' && !inputs.fast_build }}
+#        env:
+#          SSH_PRIVATE_KEY: |
+#            ${{ secrets.STAGING_SSH_KEY }}
+#          SSH_HOST: ${{ secrets.STAGING_HOST }}
+#          SSH_USER: ubuntu
+#          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+#          WWW_ROOT_DIR: ${{ env.WWW_ROOT_DIR }}
+#        run: |
+#          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+#          chmod 400 $SSH_KEY_LOCATION
+#          ./scripts/deployments/createAndDeployDocsToTCGH.sh
+#
+## Skipped for now, as it requires extra setup
+##      - name: Test Build Artefacts
+##        run: |
+##          cd ${{ env.ARTEFACT_TESTS_FOLDER }}
+##          git reset --hard
+##          git checkout main
+##          git pull
+##          npm run update-seed
+##          git clean -fdx
+##          npm i
+##          ./update.sh ${{ env.FULL_BUILD_FOLDER }}
+##          npm run clean
+##          npm run build
+##          npm run start-server
+##          npm test
+##          killall http-server || true
+##
+##      - name: Test Build LTS Artefacts
+##        run: |
+##          cd ${{ env.ARTEFACT_TESTS_FOLDER }}
+##          git reset --hard
+##          git pull
+##          git clean -fdx
+##          git checkout ${{ env.LTS_VERSION }}
+##          npm i
+##          ./update.sh ${{ env.BUILD_DIRECTORY }}/archive/${{ env.LTS_VERSION }}
+##          npm run clean
+##          npm run build
+##          npm run start-server
+##          npm test
+##          killall http-server || true
+#
+#      - name: SonarQube Analysis Community
+#        uses: SonarSource/sonarqube-scan-action@v5.2.0
+#        if: ${{ !inputs.fast_build }}
+#        env:
+#          SONAR_HOST_URL: https://sonarcloud.io
+#          SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
+#        with:
+#          projectBaseDir: ./packages/
+#          args: >
+#            -Dsonar.javascript.node.maxspace=8192
+#            -Dsonar.organization=ag-grid
+#            -Dsonar.sources=./ag-grid-community,./ag-grid-angular/projects/ag-grid-angular,./ag-grid-react,./ag-grid-vue3
+#            -Dsonar.typescript.tsconfigPaths=./ag-grid-community/tsconfig.lib.json,./ag-grid-angular/projects/ag-grid-angular/tsconfig.lib.prod.json,./ag-grid-react/tsconfig.json,./ag-grid-vue3/tsconfig.json
+#            -Dsonar.projectKey=ag-grid_community_latest
+#            -Dsonar.exclusions=**/__tests__/*,**/test.ts,**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+#            -Dsonar.scanner.force-deprecated-java-version=true
+#            -Dsonar.coverage.exclusions=**/*
+#
+#      - name: SonarQube Analysis Enterprise
+#        uses: SonarSource/sonarqube-scan-action@v5.2.0
+#        if: ${{ !inputs.fast_build }}
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
+#          SONAR_HOST_URL: https://sonarcloud.io
+#        with:
+#          projectBaseDir: ./packages/
+#          args: >
+#            -Dsonar.javascript.node.maxspace=8192
+#            -Dsonar.organization=ag-grid
+#            -Dsonar.sources=./ag-grid-enterprise
+#            -Dsonar.typescript.tsconfigPaths=./ag-grid-enterprise/tsconfig.lib.json
+#            -Dsonar.projectKey=ag-grid-enterprise-latest
+#            -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+#            -Dsonar.scanner.force-deprecated-java-version=true
+#            -Dsonar.coverage.exclusions=**/*
+#
+#      - name: Update Algolia Dev
+#        if: ${{ !inputs.fast_build }}
+#        run: |
+#          echo ALGOLIA_ADMIN_KEY=${{ secrets.ALGOLIA_ADMIN_KEY }} > documentation/update-algolia-indices/.env
+#          echo PUBLIC_ALGOLIA_APP_ID=${{ env.PUBLIC_ALGOLIA_APP_ID }} >> documentation/update-algolia-indices/.env
+#          yarn nx run ag-grid-docs:update-algolia -c staging
+#
+#      - name: Get previous run commit SHA
+#        id: prev-commit-sha
+#        uses: actions/cache/restore@v4
+#        with:
+#          restore-keys: |
+#            full-clean-build-prev-commit-
+#            full-clean-build-prev-commit-${{ github.ref }}
+#          path: ${{ env.PREV_COMMIT_SHA_FILE }}
+#          key: full-clean-build-prev-commit-${{ github.ref }}-${{ github.sha }}
+#
+#      - name: Load files into environment
+#        continue-on-error: true
+#        run: |
+#          if [ -f ${{ env.PREV_COMMIT_SHA_FILE }} ]; then
+#            {
+#                echo 'PREV_COMMIT_SHA<<EOF'
+#                cat ${{ env.PREV_COMMIT_SHA_FILE }}
+#                echo 'EOF'
+#            } >> $GITHUB_ENV
+#          else
+#            echo 'PREV_COMMIT_SHA_FILE not found'
+#          fi
+#
+#      - name: Slack Notification
+#        if: ${{ github.event_name == 'schedule' || inputs.notify }}
+#        continue-on-error: true
+#        uses: ./external/ag-shared/github/actions/slack-integration
+#        with:
+#          AG_LIBRARY: ${{ env.AG_LIBRARY }}
+#          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+#          SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
+#          PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
+#          CURRENT_COMMIT_SHA: ${{ github.sha }}
+#
+#      - name: Create Jira Ticket
+#        uses: ./.github/actions/jira-integration
+#        continue-on-error: true
+#        if: ${{ github.event_name == 'schedule' || inputs.force_jira_ticket }}
+#        with:
+#          JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
+#          JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' is failing."
+#          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+#          PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
+#          CURRENT_COMMIT_SHA: ${{ github.sha }}
+#
+#      - name: Set commit SHA
+#        id: set-commit-sha
+#        run: |
+#          echo ${{ github.sha }} > ${{ env.PREV_COMMIT_SHA_FILE }}
+#
+#      - name: Save Current Commit Hash
+#        uses: actions/cache/save@v4
+#        with:
+#          key: ${{ steps.prev-commit-sha.outputs.cache-primary-key }}
+#          path: ${{ env.PREV_COMMIT_SHA_FILE }}
+#
+#        # only if run is successful
+#      - name: Dispatch docs-tests Workflow
+#        if: (success() && github.ref == 'refs/heads/latest' && github.event_name == 'schedule') || inputs.force_dispatch_docs_tests
+#        uses: actions/github-script@v7
+#        env:
+#          WORKFLOW_ID: 'doc-tests.yml'
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          SHOULD_NOTIFY: ${{ inputs.notify }}
+#        with:
+#          script: |
+#            const owner = context.repo.owner;
+#            const repo = context.repo.repo;
+#            const ref = context.ref;
+#            const workflow_id = process.env.WORKFLOW_ID;
+#            const notify = process.env.SHOULD_NOTIFY;
+#
+#            await github.rest.actions.createWorkflowDispatch({
+#              owner,
+#              repo,
+#              workflow_id,
+#              ref,
+#              inputs: {
+#                skip_vanilla: false,
+#                skip_typescript: false,
+#                skip_reactFunctional: false,
+#                skip_reactFunctionalTs: false,
+#                skip_angular: false,
+#                skip_vue3: false,
+#                skip_demo_smoke: false,
+#                skip_recipes: false,
+#                notify,
+#                force_jira_ticket: true,
+#              }
+#            });

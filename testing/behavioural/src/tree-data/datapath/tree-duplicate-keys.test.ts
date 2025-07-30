@@ -46,7 +46,7 @@ describe('ag-grid tree duplicate keys', () => {
         });
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: error #186',
+            'AG Grid: warning #186',
             'duplicate group keys for row data, keys should be unique',
             rowData[0].id,
             rowData[0],
@@ -96,7 +96,7 @@ describe('ag-grid tree duplicate keys', () => {
         });
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: error #186',
+            'AG Grid: warning #186',
             'duplicate group keys for row data, keys should be unique',
             rowData[0].id,
             rowData[0],
@@ -149,7 +149,7 @@ describe('ag-grid tree duplicate keys', () => {
         });
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: error #186',
+            'AG Grid: warning #186',
             'duplicate group keys for row data, keys should be unique',
             rowData[0].id,
             rowData[0],

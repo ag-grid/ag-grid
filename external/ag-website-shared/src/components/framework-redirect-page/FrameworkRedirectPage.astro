@@ -52,9 +52,9 @@ const redirectUrl = `./${Astro.props.redirectPageName}`;
     const dataAttrFrameworkOverride = data.frameworkOverride;
     const dataAttrUrl = data.redirectUrl;
     const framework = dataAttrFrameworkOverride ?? getFrameworkFromInternalFramework($internalFramework.get());
-    const redirectUrl = urlWithPrefix({ framework, url: dataAttrUrl }) + window.location.hash;
-
     const searchParams = window.location.search;
+    const redirectUrl = urlWithPrefix({ framework, url: dataAttrUrl }) + searchParams + window.location.hash;
+
     const debugSearchParam = new URLSearchParams(searchParams).get('debug');
     if (debugSearchParam === 'true') {
         console.log(`Debug: Redirect to '${redirectUrl}'`);

@@ -143,7 +143,11 @@ export function _getRowById(beans: BeanCollection, rowId: string, rowPinned?: Ro
     return node;
 }
 
-export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition): RowPosition | null {
+/**
+ * Gets the row position above the given row position. Considers pinned and sticky rows for navigation.
+ * RowModel.getRow() is expensive, so it is only called if `checkSticky` is true.
+ */
+export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition, checkSticky = false): RowPosition | null {
     const { rowIndex: index, rowPinned: pinned } = rowPosition;
     const { pageBounds, pinnedRowModel, rowModel } = beans;
 
@@ -161,11 +165,18 @@ export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition): R
             : null;
     }
 
-    const rowNode = pinned ? undefined : rowModel.getRow(index);
-    return getNextStickyPosition(beans, rowNode, true) ?? { rowIndex: index - 1, rowPinned: pinned };
+    if (checkSticky) {
+        const rowNode = pinned ? undefined : rowModel.getRow(index);
+        return getNextStickyPosition(beans, rowNode, true) ?? { rowIndex: index - 1, rowPinned: pinned };
+    }
+    return { rowIndex: index - 1, rowPinned: pinned };
 }
 
-export function _getRowBelow(beans: BeanCollection, rowPosition: RowPosition): RowPosition | null {
+/**
+ * Returns the row position below the given row position. Considers pinned and sticky rows for navigation.
+ * RowModel.getRow() is expensive, so it is only called if `checkSticky` is true.
+ */
+export function _getRowBelow(beans: BeanCollection, rowPosition: RowPosition, checkSticky = false): RowPosition | null {
     const { rowIndex: index, rowPinned: pinned } = rowPosition;
     const { pageBounds, pinnedRowModel, rowModel } = beans;
 
@@ -181,10 +192,17 @@ export function _getRowBelow(beans: BeanCollection, rowPosition: RowPosition): R
         return pinnedRowModel?.isRowsToRender('bottom') ? { rowIndex: 0, rowPinned: 'bottom' } : null;
     }
 
-    const rowNode = pinned ? undefined : rowModel.getRow(index);
-    return getNextStickyPosition(beans, rowNode) ?? { rowIndex: index + 1, rowPinned: pinned };
+    if (checkSticky) {
+        const rowNode = pinned ? undefined : rowModel.getRow(index);
+        return getNextStickyPosition(beans, rowNode) ?? { rowIndex: index + 1, rowPinned: pinned };
+    }
+    return { rowIndex: index + 1, rowPinned: pinned };
 }
 
+/**
+ * Returns the next sticky row position based on the current row node and direction (up or down).
+ * If there are no other sticky rows or the current row is not sticky, it returns undefined.
+ */
 function getNextStickyPosition(beans: BeanCollection, rowNode?: RowNode, up = false): RowPosition | undefined {
     const { gos, rowRenderer } = beans;
 

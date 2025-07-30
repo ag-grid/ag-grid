@@ -52,6 +52,11 @@ export interface FilterHandler<TData = any, TContext = any, TModel = any, TCusto
      * filter.
      */
     getModelAsString?(model: TModel | null, source?: 'floating' | 'filterToolPanel'): string;
+    /**
+     * Optional: When using an apply button with the filter, this method will be called before the apply happens,
+     * The returned model will be applied, allowing for any validation or updates to be performed.
+     */
+    processModelToApply?(model: TModel | null): TModel | null;
     /** Optional: Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */
     destroy?(): void;
 }

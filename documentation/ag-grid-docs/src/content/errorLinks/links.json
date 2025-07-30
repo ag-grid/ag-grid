@@ -425,5 +425,10 @@
         "errorIds": [121],
         "text": "Row Grouping - Grouping Data keyCreator",
         "url": "./grouping-data/#grouping-on-object-data"
+    },
+    {
+        "errorIds": [283, 284, 285, 286],
+        "text": "Upgrading to AG Grid 34",
+        "url": "./upgrading-to-ag-grid-34/#filters"
     }
 ]

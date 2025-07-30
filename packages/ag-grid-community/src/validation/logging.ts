@@ -33,9 +33,10 @@ function getMsgOrDefault<TId extends ErrorId>(
     logger: LogFn,
     id: TId,
     args: GetErrorParams<TId>,
+    isWarning: boolean,
     defaultMessage?: string
 ) {
-    logger(`error #${id}`, ...getErrorParts(id, args, defaultMessage));
+    logger(`${isWarning ? 'warning' : 'error'} #${id}`, ...getErrorParts(id, args, defaultMessage));
 }
 
 /**
@@ -128,7 +129,7 @@ export function _warn<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: undefined extends GetErrorParams<TId> ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    getMsgOrDefault(_warnOnce, args[0], args[1] as any);
+    getMsgOrDefault(_warnOnce, args[0], args[1] as any, true);
 }
 
 export function _error<
@@ -136,7 +137,7 @@ export function _error<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: undefined extends GetErrorParams<TId> ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    getMsgOrDefault(_errorOnce, args[0], args[1] as any);
+    getMsgOrDefault(_errorOnce, args[0], args[1] as any, false);
 }
 
 /** Used for messages before the ValidationService has been created */
@@ -145,7 +146,7 @@ export function _logPreInitErr<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(id: TId, args: GetErrorParams<TId>, defaultMessage: string) {
-    getMsgOrDefault(_errorOnce, id!, args as any, defaultMessage);
+    getMsgOrDefault(_errorOnce, id!, args as any, false, defaultMessage);
 }
 
 function getErrMsg<TId extends ErrorId>(

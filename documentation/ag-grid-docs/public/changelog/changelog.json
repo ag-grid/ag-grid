@@ -42,6 +42,20 @@
         "documentationUrl": null
     },
     {
+        "key": "AG-5844",
+        "issueType": "Bug",
+        "manualEntry": true,
+        "summary": "LTS Ordering Placeholder for 32.3.9",
+        "versions": ["32.3.9"],
+        "status": "Done",
+        "resolution": "Done",
+        "features": null,
+        "moreInformation": null,
+        "deprecationNotes": null,
+        "breakingChangesNotes": null,
+        "documentationUrl": null
+    },
+    {
         "key": "AG-5839",
         "issueType": "Bug",
         "manualEntry": true,

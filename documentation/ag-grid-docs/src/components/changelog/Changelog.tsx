@@ -320,8 +320,9 @@ export const Changelog = () => {
                 sort: 'desc',
                 filterParams: {
                     suppressSorting: true,
+                    comparator: compareSemver,
                 },
-                comparator: compareSemver,
+                comparator: (a, b) => compareSemver(b, a), // Reverse order for descending
             },
             IssueTypeColDef,
             {
