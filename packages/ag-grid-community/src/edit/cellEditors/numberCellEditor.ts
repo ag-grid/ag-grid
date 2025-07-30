@@ -64,12 +64,12 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         let internalErrors: string[] | null = [];
 
         if (typeof value === 'number') {
-            if (min != null && value <= min) {
+            if (min != null && value < min) {
                 internalErrors.push(
                     translate('minValueValidation', `Must be greater than or equal to ${min}.`, [String(min)])
                 );
             }
-            if (max != null && value >= max) {
+            if (max != null && value > max) {
                 internalErrors.push(
                     translate('maxValueValidation', `Must be less than or equal to ${max}.`, [String(max)])
                 );
