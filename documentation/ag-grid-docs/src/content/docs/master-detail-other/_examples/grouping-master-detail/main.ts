@@ -1,4 +1,10 @@
-import type { FirstDataRenderedEvent, GridApi, GridOptions, IDetailCellRendererParams } from 'ag-grid-community';
+import type {
+    FirstDataRenderedEvent,
+    GridApi,
+    GridOptions,
+    IDetailCellRendererParams,
+    IRowNode,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -46,6 +52,7 @@ const gridOptions: GridOptions<IAccount> = {
         headerName: 'Region',
     },
     masterDetail: true,
+    getRowId: (params) => params.data.id,
     isRowMaster: (dataItem: IAccount) => dataItem.callRecords.length > 0,
     detailCellRendererParams: {
         detailGridOptions: {
@@ -69,7 +76,7 @@ const gridOptions: GridOptions<IAccount> = {
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
     // arbitrarily expand a row for presentational purposes
     setTimeout(() => {
-        params.api.getDisplayedRowAtIndex(1)!.setExpanded(true);
+        expandAllParents(params.api.getRowNode('1'));
     }, 0);
 }
 
@@ -78,3 +85,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });
+
+function expandAllParents(row: IRowNode | null | undefined) {
+    let current = row;
+    while (current && current.level >= 0) {
+        current.setExpanded(true);
+        current = current.parent;
+    }
+}

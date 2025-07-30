@@ -20,6 +20,10 @@ on:
     schedule:
         - cron: '30 1 * * *' # Run daily at 1:30am UTC
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
     csp-test:
         runs-on: ubuntu-latest

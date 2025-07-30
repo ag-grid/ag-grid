@@ -151,7 +151,7 @@ describe('ag-grid overlays state', () => {
 
         expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: error #26',
+            'AG Grid: warning #26',
             expect.stringContaining(`Grid API function getRowNode() cannot be called as the grid has been destroyed.
  Either clear local references to the grid api, when it is destroyed, or check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.
  To run logic when the grid is about to be destroyed use the gridPreDestroy event.`),
@@ -189,7 +189,7 @@ describe('ag-grid overlays state', () => {
         expect(api.exportDataAsExcel()).toBeUndefined();
         expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: error #26',
+            'AG Grid: warning #26',
             expect.stringContaining(`Grid API function exportDataAsExcel() cannot be called as the grid has been destroyed.
  Either clear local references to the grid api, when it is destroyed, or check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.
  To run logic when the grid is about to be destroyed use the gridPreDestroy event.`),

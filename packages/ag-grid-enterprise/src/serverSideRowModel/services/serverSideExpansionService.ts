@@ -83,6 +83,11 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
 
     public expandAll(value: boolean): void {
         this.serverSideRowModel.expandAll(value);
+
+        this.beans.eventSvc.dispatchEvent({
+            type: 'expandOrCollapseAll',
+            source: value ? 'expandAll' : 'collapseAll',
+        });
     }
 
     public onGroupExpandedOrCollapsed(): void {

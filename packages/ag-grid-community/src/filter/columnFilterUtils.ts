@@ -151,7 +151,8 @@ export function _updateFilterModel(
     getModel: () => any,
     getState: () => FilterDisplayState | undefined,
     updateState: (state: FilterDisplayState) => void,
-    updateModel: (model: any) => void
+    updateModel: (model: any) => void,
+    processModelToApply?: (model: any) => any
 ): void {
     let state: FilterDisplayState;
     let shouldUpdateModel = false;
@@ -161,6 +162,9 @@ export function _updateFilterModel(
         case 'apply': {
             const oldState = getState();
             model = oldState?.model ?? null;
+            if (processModelToApply) {
+                model = processModelToApply(model);
+            }
             state = {
                 // keep the other UI state
                 state: oldState?.state,

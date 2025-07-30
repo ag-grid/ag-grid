@@ -115,7 +115,7 @@ describe('ag-grid parentId tree data warnings', () => {
         `);
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: error #271',
+            'AG Grid: warning #271',
             "Parent row not found for row with id='hJdDsX3' and parent id='666'. Showing row with id='hJdDsX3' as a root-level node.",
             expect.anything()
         );
@@ -158,7 +158,7 @@ describe('ag-grid parentId tree data warnings', () => {
         `);
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: error #270',
+            'AG Grid: warning #270',
             "Cycle detected for row with id='KjDhf3D1' and parent id='KjDhf3D4'. Resetting the parent for row with id='KjDhf3D1' and showing it as a root-level node.",
             expect.anything()
         );
@@ -212,13 +212,13 @@ describe('ag-grid parentId tree data warnings', () => {
         `);
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: error #270',
+            'AG Grid: warning #270',
             "Cycle detected for row with id='Dj0FPsX0' and parent id='Dj0FPsX0'. Resetting the parent for row with id='Dj0FPsX0' and showing it as a root-level node.",
             expect.anything()
         );
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: error #270',
+            'AG Grid: warning #270',
             "Cycle detected for row with id='Dj0FPsX1' and parent id='Dj0FPsX4'. Resetting the parent for row with id='Dj0FPsX1' and showing it as a root-level node.",
             expect.anything()
         );

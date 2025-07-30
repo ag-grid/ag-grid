@@ -87,12 +87,15 @@ export interface SetFilterHandler<TValue = string> {
     resetFilterValues(): void;
 }
 
-export interface SetFilterUi {
+export interface SetFilterUi<TValue = string> {
     /** Returns the current mini-filter text. */
     getMiniFilter(): string | null;
 
     /** Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup). */
     setMiniFilter(newMiniFilter: string | null): void;
+
+    /** Returns the corresponding Set Filter Handler. */
+    getFilterHandler(): SetFilterHandler<TValue>;
 }
 
 /**

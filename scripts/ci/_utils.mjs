@@ -167,3 +167,35 @@ export async function addJiraComment(issueKey, body) {
 export function jiraLink(text, url) {
     return `[${text}|${url}]`;
 }
+
+export async function getCurrentJiraUser() {
+    const url = `${JIRA_API_URL}/myself`;
+    try {
+        const user = await commonFetch(url, { method: 'GET' });
+        return user.accountId;
+    } catch (error) {
+        console.error('Error fetching current user:', error.message);
+        throw error;
+    }
+}
+
+export async function unwatchJiraIssue(issueKey, userId) {
+    const url = `https://ag-grid.atlassian.net/rest/api/3/issue/${issueKey}/watchers?accountId=${userId}`;
+    try {
+        await commonFetch(url, { method: 'DELETE' });
+        console.log(`Unwatched issue ${issueKey}`);
+    } catch (error) {
+        console.error('Error unwatching issue:', error.message);
+        throw error;
+    }
+}
+
+export async function getJiraWatches(issueKey) {
+    const url = `https://ag-grid.atlassian.net/rest/api/3/issue/${issueKey}/watchers`;
+    try {
+        return await commonFetch(url, { method: 'GET' });
+    } catch (error) {
+        console.error('Error fetching watchers:', error.message);
+        throw error;
+    }
+}

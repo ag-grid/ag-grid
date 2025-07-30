@@ -57,10 +57,6 @@ id = "GHSA-67mh-4wv8-2f99"
 reason = "We do not use the esbuild development server"
 
 [[IgnoredVulns]]
-id = "GHSA-67mh-4wv8-2f99"
-reason = "We do not use the esbuild development server"
-
-[[IgnoredVulns]]
 id = "GHSA-jr5f-v2jv-69x6"
 reason = "We only use axios in examples"
 
@@ -147,4 +143,30 @@ reason = "sheetjs is only used in development/testing - it's not used in the fin
 [[IgnoredVulns]]
 id = "GHSA-grv7-fg5c-xmjg"
 reason = "braces is only used in development/testing - it's not used in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-fjxv-7rqg-78g4"
+reason = "We do not use form-data directly and where it is used is only for testing or examples"
+
+[[IgnoredVulns]]
+id = "GHSA-76c9-3jph-rj3q"
+reason = "We do not use on-headers directly and where it is used is only for testing or examples"
+
+[[IgnoredVulns]]
+id = "GHSA-4vvj-4cpr-p986"
+reason = "Vulnerable versions are only used in webpack-dev-server which is not used in production code"
+
+[[IgnoredVulns]]
+id = "GHSA-mvw6-62qv-vmqf"
+reason = "We do not use koa directly and where it is used is only for testing or dev use"
+
+[[IgnoredVulns]]
+id = "GHSA-jgmv-j7ww-jx2x"
+reason = "We do not use koa directly and where it is used is only for testing or dev use"
+
+[[IgnoredVulns]]
+id = "GHSA-v6h2-p8h4-qcjw"
+reason = "Low risk and determined to not be exploitable in our use case"
+
+
 
