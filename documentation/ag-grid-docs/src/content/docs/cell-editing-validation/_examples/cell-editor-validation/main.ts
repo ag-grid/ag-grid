@@ -52,7 +52,7 @@ const gridOptions: GridOptions<IModifiedOlympicData> = {
         },
         {
             field: 'age',
-            headerName: 'Age (> 0 and <100)',
+            headerName: 'Age (>= 0 and <= 100)',
             cellEditor: 'agNumberCellEditor',
             cellEditorParams: {
                 min: 0,
