@@ -2,7 +2,6 @@ import type { ElementHandle } from '@playwright/test';
 
 import type { TestCase } from '../../benchmarking';
 import { getCdnUrl } from '../../benchmarking';
-import { getUrl } from '../../benchmarking';
 import test from '../../benchmarking';
 import { waitFor } from '../../playwright.utils';
 
@@ -32,11 +31,11 @@ test(`Performance Test - `, {
                 description: 'Scheduled: demo pages',
                 control: {
                     version: 'local',
-                    url: `${url}?enterprise=${getCdnUrl('ag-grid-enterprise', 'local')}&community=${getCdnUrl('ag-grid-community', 'local')}`,
+                    url: `${url}?enterprise=${getCdnUrl('ag-grid-enterprise', 'local', '')}&community=${getCdnUrl('ag-grid-community', 'local', '')}`,
                 },
                 variant: {
                     version: 'staging',
-                    url: `${url}?enterprise=${getCdnUrl('ag-grid-enterprise', 'staging')}&community=${getCdnUrl('ag-grid-community', 'staging')}`,
+                    url: `${url}?enterprise=${getCdnUrl('ag-grid-enterprise', 'staging', '')}&community=${getCdnUrl('ag-grid-community', 'staging', '')}`,
                 },
                 preSetup: async (page) => {
                     showBtn = (await page.waitForSelector('#show')) as ElementHandle<HTMLButtonElement>;
@@ -44,7 +43,7 @@ test(`Performance Test - `, {
                     const cols = (await page.waitForSelector('#cols')) as ElementHandle<HTMLInputElement>;
                     const rows = (await page.waitForSelector('#rows')) as ElementHandle<HTMLInputElement>;
                     await resetBtn.click();
-                    await rows.fill((rowCount / 1000).toFixed(4));
+                    await rows.fill((rowCount / 1000).toFixed(3));
                     await cols.fill(columnCount.toString());
                 },
                 actions: async (page) => {
