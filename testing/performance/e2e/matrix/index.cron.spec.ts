@@ -11,8 +11,8 @@ const url = 'https://localhost:4610/testing/performance/e2e/matrix/index.html';
 const athleteCheck = () => document.body.textContent!.includes('Tony Smith');
 test(`Performance Test - `, {
     timeout: 10 * 60_000,
-    minIterations: 200,
-    maxIterations: 300,
+    minIterations: 300,
+    maxIterations: 500,
     warmupIterations: 5,
     testCases: [
         [10, 10],
@@ -46,6 +46,11 @@ test(`Performance Test - `, {
                     await rows.fill((rowCount / 1000).toFixed(3));
                     await cols.fill(columnCount.toString());
                 },
+                setupPreActions: (page) =>
+                    page.evaluate(() => {
+                        performance.clearMarks();
+                        performance.clearMeasures();
+                    }),
                 actions: async (page) => {
                     await Promise.all([showBtn.click(), waitFor(athleteCheck, page)]);
                 },
