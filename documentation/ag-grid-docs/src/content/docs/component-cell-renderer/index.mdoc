@@ -347,7 +347,7 @@ const gridOptions = {
 
 {% interfaceDocumentation interfaceName="EventCellRendererParams" config={"description":""} /%}
 
-Note that whilst the callback will prevent the grid from performing actions, it will still continue to fire events (e.g. `onCellClicked`).
+Note that whilst the callback will prevent the grid from performing actions, it will still continue to fire events (e.g. `onCellClicked`). These events will have the `isEventHandlingSuppressed` property set to `true` if the callback returns `true`.
 
 The following example demonstrates using `suppressMouseEventHandling` with cell selection, row selection, and editing. Mouse events are suppressed for the Button column.
 

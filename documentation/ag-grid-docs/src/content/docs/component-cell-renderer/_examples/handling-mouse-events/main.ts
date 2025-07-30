@@ -29,12 +29,6 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi;
 
-function onMouseEvent(
-    e: CellClickedEvent | CellDoubleClickedEvent | CellMouseDownEvent | RowClickedEvent | RowDoubleClickedEvent
-) {
-    console.log(e.type, 'isEventHandlingSuppressed', e.isEventHandlingSuppressed);
-}
-
 const gridOptions: GridOptions = {
     rowData: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
     defaultColDef: {
@@ -56,11 +50,21 @@ const gridOptions: GridOptions = {
             } as EventCellRendererParams,
         },
     ],
-    onCellClicked: onMouseEvent,
-    onCellMouseDown: onMouseEvent,
-    onCellDoubleClicked: onMouseEvent,
-    onRowClicked: onMouseEvent,
-    onRowDoubleClicked: onMouseEvent,
+    onCellClicked: (e: CellClickedEvent) => {
+        console.log(e.type, 'isEventHandlingSuppressed', e.isEventHandlingSuppressed);
+    },
+    onCellMouseDown: (e: CellMouseDownEvent) => {
+        console.log(e.type, 'isEventHandlingSuppressed', e.isEventHandlingSuppressed);
+    },
+    onCellDoubleClicked: (e: CellDoubleClickedEvent) => {
+        console.log(e.type, 'isEventHandlingSuppressed', e.isEventHandlingSuppressed);
+    },
+    onRowClicked: (e: RowClickedEvent) => {
+        console.log(e.type, 'isEventHandlingSuppressed', e.isEventHandlingSuppressed);
+    },
+    onRowDoubleClicked: (e: RowDoubleClickedEvent) => {
+        console.log(e.type, 'isEventHandlingSuppressed', e.isEventHandlingSuppressed);
+    },
 };
 
 function toggleCellSelection() {

@@ -95,7 +95,8 @@ export interface EventCellRendererParams<TData = any, TValue = any, TContext = a
      * This will prevent actions performed via the mouse, such as focusing a cell,
      * selecting a row, starting a cell selection, or starting an edit.
      *
-     * This will not prevent the grid from firing events for these mouse events (e.g. `onCellClicked`).
+     * This will not prevent the grid from firing events for these mouse events (e.g. `onCellClicked`),
+     * but the events will have the `isEventHandlingSuppressed` property set to match the return value.
      */
     suppressMouseEventHandling?: (params: SuppressMouseEventHandlingParams<TData, TValue, TContext>) => boolean;
 }
