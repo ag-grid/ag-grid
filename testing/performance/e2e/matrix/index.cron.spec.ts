@@ -27,7 +27,7 @@ test(`Performance Test - `, {
         ([rowCount, columnCount]) =>
             ({
                 name: 'example',
-                description: 'Scheduled: demo pages',
+                description: 'Scheduled: demo pages', // currently only full load, but scrolling, filtering, grouping, etc. will be added later
                 framework: 'reactFunctionalTs',
                 control: {
                     version: 'local',
