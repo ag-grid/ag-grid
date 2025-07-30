@@ -130,7 +130,7 @@
     "webpack-cli": "^5.1.4",
     "terser-webpack-plugin": "^5.3.10",
     "postcss-preset-env": "^9.5.0",
-    "web-streams-polyfill": "^3.3.2",
+    "web-streams-polyfill": "^4.1.0",
     "blob-polyfill": "^7.0.20220408",
     "compression-streams-polyfill": "^0.1.7",
     "text-encoding-polyfill": "^0.6.7",
