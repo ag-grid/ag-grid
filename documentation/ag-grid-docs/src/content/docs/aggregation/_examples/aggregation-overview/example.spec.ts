@@ -4,7 +4,7 @@ import { testAllFrameworks } from '@utils/grid/test-utils';
 import { wrapAgTestIdFor } from 'ag-grid-community';
 
 const pageExampleUrl = 'aggregation/aggregation-overview';
-testAllFrameworks('', pageExampleUrl, async (page) => {
+testAllFrameworks('Example', pageExampleUrl, async ({ page }) => {
     const agIdFor = wrapAgTestIdFor((testId) => page.getByTestId(testId));
 
     await expect(agIdFor.autoGroupCell('row-group-country-Canada')).toContainText('Canada (351)', {

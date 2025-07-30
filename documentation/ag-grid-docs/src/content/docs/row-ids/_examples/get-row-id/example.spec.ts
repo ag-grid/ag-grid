@@ -4,7 +4,7 @@ import { testAllFrameworks } from '@utils/grid/test-utils';
 import { wrapAgTestIdFor } from 'ag-grid-community';
 
 const pageExampleUrl = 'row-ids/get-row-id';
-testAllFrameworks('', pageExampleUrl, async (page) => {
+testAllFrameworks('Example', pageExampleUrl, async ({ page }) => {
     const agIdFor = wrapAgTestIdFor((testId) => page.getByTestId(testId));
 
     await expect(agIdFor.rowNode('c2')).toBeVisible();

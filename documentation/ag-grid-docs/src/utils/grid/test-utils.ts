@@ -11,8 +11,9 @@ export const ALL_FRAMEWORKS = [
     'angular',
     'vue3',
 ] as const;
+type Framework = (typeof ALL_FRAMEWORKS)[number];
 
-export function runForAllFrameworks(testFn: (fw: (typeof ALL_FRAMEWORKS)[number]) => void): void {
+export function runForAllFrameworks(testFn: (fw: Framework) => void): void {
     for (const fw of ALL_FRAMEWORKS) {
         testFn(fw);
     }
@@ -31,16 +32,22 @@ export async function loadPage(
     return page;
 }
 
+/**
+ *
+ * @param testName Names of this test case. Useful if running multiple tests against the same example.
+ * @param exampleUrl Example URL in the format 'page/exampleName'
+ * @param testBody The test body function that will be executed for each framework
+ */
 export function testAllFrameworks(
     testName: string,
     exampleUrl: ExampleUrl,
-    testBody: (page: Page) => Promise<void>
+    testBody: ({ page, framework }: { page: Page; framework: Framework }) => Promise<void>
 ): void {
     test.describe(`${exampleUrl} ${testName}`, () => {
-        for (const fw of ALL_FRAMEWORKS) {
-            test(`${fw}`, async ({ page }) => {
-                await loadPage(page, exampleUrl, fw);
-                await testBody(page);
+        for (const framework of ALL_FRAMEWORKS) {
+            test(`${framework}`, async ({ page }) => {
+                await loadPage(page, exampleUrl, framework);
+                await testBody({ page, framework });
             });
         }
     });

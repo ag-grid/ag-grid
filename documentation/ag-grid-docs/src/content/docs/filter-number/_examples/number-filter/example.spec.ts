@@ -4,7 +4,7 @@ import { testAllFrameworks } from '@utils/grid/test-utils';
 import { wrapAgTestIdFor } from 'ag-grid-community';
 
 const pageExampleUrl = 'filter-number/number-filter';
-testAllFrameworks('', pageExampleUrl, async (page) => {
+testAllFrameworks('Example', pageExampleUrl, async ({ page }) => {
     const agIdFor = wrapAgTestIdFor((testId) => page.getByTestId(testId));
 
     const colFilterIcon = agIdFor.headerFilterButton('price');
