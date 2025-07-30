@@ -2,10 +2,10 @@ import { isRowNumberCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import type { CellClickedEvent, CellDoubleClickedEvent } from '../../events';
+import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseDownEvent } from '../../events';
 import { _isBrowserSafari } from '../../utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../utils/dom';
-import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../utils/event';
+import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _interpretAsRightClick } from '../../utils/mouse';
 import { _suppressCellMouseEvent } from '../renderUtils';
 import type { CellCtrl } from './cellCtrl';
@@ -67,7 +67,8 @@ export class CellMouseListenerFeature extends BeanStub {
             }
         }
 
-        const cellClickedEvent: CellClickedEvent = cellCtrl.createEvent(event, 'cellClicked');
+        const cellClickedEvent: CellClickedEvent = cellCtrl.createEvent(event, 'cellClicked') as CellClickedEvent;
+        cellClickedEvent.isEventHandlingSuppressed = suppressMouseEvent;
         eventSvc.dispatchEvent(cellClickedEvent);
 
         const colDef = column.getColDef();
@@ -82,7 +83,6 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (suppressMouseEvent) {
-            _stopPropagationForAgGrid(event);
             return;
         }
 
@@ -106,9 +106,15 @@ export class CellMouseListenerFeature extends BeanStub {
         const { column, beans, cellCtrl } = this;
         const { eventSvc, frameworkOverrides, editSvc, editModelSvc, gos } = beans;
 
+        const suppressMouseEvent = _suppressCellMouseEvent(gos, cellCtrl.column, cellCtrl.rowNode, event);
+
         const colDef = column.getColDef();
         // always dispatch event to eventService
-        const cellDoubleClickedEvent: CellDoubleClickedEvent = cellCtrl.createEvent(event, 'cellDoubleClicked');
+        const cellDoubleClickedEvent: CellDoubleClickedEvent = cellCtrl.createEvent(
+            event,
+            'cellDoubleClicked'
+        ) as CellDoubleClickedEvent;
+        cellDoubleClickedEvent.isEventHandlingSuppressed = suppressMouseEvent;
         eventSvc.dispatchEvent(cellDoubleClickedEvent);
 
         // check if colDef also wants to handle event
@@ -120,15 +126,11 @@ export class CellMouseListenerFeature extends BeanStub {
                 });
             }, 0);
         }
-        if (_suppressCellMouseEvent(gos, cellCtrl.column, cellCtrl.rowNode, event)) {
-            _stopPropagationForAgGrid(event);
+        if (suppressMouseEvent) {
             return;
         }
 
-        if (
-            editSvc?.shouldStartEditing(this.cellCtrl, event) &&
-            this.beans.editModelSvc?.getState(this.cellCtrl) !== 'editing'
-        ) {
+        if (editSvc?.shouldStartEditing(cellCtrl, event) && editModelSvc?.getState(cellCtrl) !== 'editing') {
             const editing = editSvc?.isEditing();
             const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
             const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
@@ -147,8 +149,16 @@ export class CellMouseListenerFeature extends BeanStub {
         const { eventSvc, rangeSvc, rowNumbersSvc, focusSvc, gos, editSvc } = beans;
         const { column, rowNode, cellPosition } = cellCtrl;
 
-        if (_suppressCellMouseEvent(gos, column, rowNode, mouseEvent)) {
-            _stopPropagationForAgGrid(mouseEvent);
+        const suppressMouseEvent = _suppressCellMouseEvent(gos, column, rowNode, mouseEvent);
+
+        const fireMouseDownEvent = () => {
+            const cellMouseDownEvent = cellCtrl.createEvent(mouseEvent, 'cellMouseDown') as CellMouseDownEvent;
+            cellMouseDownEvent.isEventHandlingSuppressed = suppressMouseEvent;
+            eventSvc.dispatchEvent(cellMouseDownEvent);
+        };
+
+        if (suppressMouseEvent) {
+            fireMouseDownEvent();
             return;
         }
 
@@ -223,7 +233,7 @@ export class CellMouseListenerFeature extends BeanStub {
             if (isRowNumberColumn) {
                 mouseEvent.preventDefault();
             }
-            const hasRightClickedOnRowNumber = _interpretAsRightClick(this.beans, mouseEvent) && isRowNumberColumn;
+            const hasRightClickedOnRowNumber = _interpretAsRightClick(beans, mouseEvent) && isRowNumberColumn;
             if (shiftKey) {
                 rangeSvc.extendLatestRangeToCell(cellPosition);
             } else if (!hasRightClickedOnRowNumber) {
@@ -232,7 +242,7 @@ export class CellMouseListenerFeature extends BeanStub {
             }
         }
 
-        eventSvc.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseDown'));
+        fireMouseDownEvent();
     }
 
     private isRightClickInExistingRange(mouseEvent: MouseEvent): boolean {

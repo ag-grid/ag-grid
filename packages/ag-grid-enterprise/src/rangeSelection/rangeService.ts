@@ -43,7 +43,6 @@ import {
     _last,
     _makeNull,
     _missing,
-    _suppressCellMouseEvent,
     _warn,
     isRowNumberCol,
 } from 'ag-grid-community';
@@ -135,17 +134,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const eventTarget = mouseEvent.target;
-        const cellCtrl = _getCellCtrlForEventTarget(gos, eventTarget);
-        if (cellCtrl) {
-            if (_suppressCellMouseEvent(gos, cellCtrl.column, cellCtrl.rowNode, mouseEvent)) {
-                return;
-            }
-        } else {
-            const rowCtrl = _getRowCtrlForEventTarget(gos, eventTarget);
-            if (rowCtrl?.isSuppressFullWidthMouseEvent(mouseEvent)) {
-                return;
-            }
+        if (_getRowCtrlForEventTarget(gos, mouseEvent.target)?.isSuppressMouseEvent(mouseEvent)) {
+            return;
         }
 
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;

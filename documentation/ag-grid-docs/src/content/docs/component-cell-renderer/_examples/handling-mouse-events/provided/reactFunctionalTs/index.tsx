@@ -4,10 +4,16 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import {
+    type CellClickedEvent,
+    type CellDoubleClickedEvent,
+    type CellMouseDownEvent,
     ClientSideRowModelModule,
     ColDef,
     EventCellRendererParams,
     ModuleRegistry,
+    NumberEditorModule,
+    type RowClickedEvent,
+    type RowDoubleClickedEvent,
     RowSelectionModule,
     RowSelectionOptions,
     SuppressMouseEventHandlingParams,
@@ -16,15 +22,27 @@ import {
 import { CellSelectionModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
-import CustomButtonComponent from './customButtonComponent.tsx';
+import CustomButtonComponent from './customButtonComponent';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CellSelectionModule, RowSelectionModule, TextEditorModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    CellSelectionModule,
+    RowSelectionModule,
+    TextEditorModule,
+    NumberEditorModule,
+]);
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState<any[]>([{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]);
+    const defaultColDef = useMemo(
+        () => ({
+            editable: true,
+        }),
+        []
+    );
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         {
             field: 'id',
@@ -39,7 +57,6 @@ const GridExample = () => {
                     return true;
                 },
             } as EventCellRendererParams,
-            editable: true,
         },
     ]);
 
@@ -60,6 +77,14 @@ const GridExample = () => {
                   }
         );
     }, []);
+    const onMouseEvent = useCallback(
+        (
+            e: CellClickedEvent | CellDoubleClickedEvent | CellMouseDownEvent | RowClickedEvent | RowDoubleClickedEvent
+        ) => {
+            console.log(e.type, 'isEventHandlingSuppressed', e.isEventHandlingSuppressed);
+        },
+        []
+    );
 
     return (
         <div style={containerStyle}>
@@ -72,9 +97,15 @@ const GridExample = () => {
                 <div style={gridStyle}>
                     <AgGridReact
                         rowData={rowData}
+                        defaultColDef={defaultColDef}
                         columnDefs={columnDefs}
                         cellSelection={cellSelection}
                         rowSelection={rowSelection}
+                        onCellClicked={onMouseEvent}
+                        onCellMouseDown={onMouseEvent}
+                        onCellDoubleClicked={onMouseEvent}
+                        onRowClicked={onMouseEvent}
+                        onRowDoubleClicked={onMouseEvent}
                     />
                 </div>
             </div>

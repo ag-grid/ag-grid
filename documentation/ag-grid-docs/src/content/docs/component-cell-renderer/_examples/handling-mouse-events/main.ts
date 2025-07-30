@@ -1,9 +1,15 @@
 import {
+    CellClickedEvent,
+    CellDoubleClickedEvent,
+    CellMouseDownEvent,
     ClientSideRowModelModule,
     EventCellRendererParams,
     GridApi,
     GridOptions,
     ModuleRegistry,
+    NumberEditorModule,
+    RowClickedEvent,
+    RowDoubleClickedEvent,
     RowSelectionModule,
     SuppressMouseEventHandlingParams,
     TextEditorModule,
@@ -13,12 +19,27 @@ import { CellSelectionModule } from 'ag-grid-enterprise';
 
 import { CustomButtonComponent } from './customButtonComponent_typescript';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CellSelectionModule, RowSelectionModule, TextEditorModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    CellSelectionModule,
+    RowSelectionModule,
+    TextEditorModule,
+    NumberEditorModule,
+]);
 
 let gridApi: GridApi;
 
+function onMouseEvent(
+    e: CellClickedEvent | CellDoubleClickedEvent | CellMouseDownEvent | RowClickedEvent | RowDoubleClickedEvent
+) {
+    console.log(e.type, 'isEventHandlingSuppressed', e.isEventHandlingSuppressed);
+}
+
 const gridOptions: GridOptions = {
     rowData: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
+    defaultColDef: {
+        editable: true,
+    },
     columnDefs: [
         {
             field: 'id',
@@ -33,9 +54,13 @@ const gridOptions: GridOptions = {
                     return true;
                 },
             } as EventCellRendererParams,
-            editable: true,
         },
     ],
+    onCellClicked: onMouseEvent,
+    onCellMouseDown: onMouseEvent,
+    onCellDoubleClicked: onMouseEvent,
+    onRowClicked: onMouseEvent,
+    onRowDoubleClicked: onMouseEvent,
 };
 
 function toggleCellSelection() {
