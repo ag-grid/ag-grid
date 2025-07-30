@@ -25,7 +25,7 @@
     "@angular/platform-browser-dynamic": "^17.0.9",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.14.10"
+    "zone.js": "~0.15.1"
   },
   "devDependencies": {
     "ag-grid-community": "34.1.0",
