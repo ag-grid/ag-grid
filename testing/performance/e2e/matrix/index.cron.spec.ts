@@ -28,6 +28,7 @@ test(`Performance Test - `, {
             ({
                 name: 'example',
                 description: 'Scheduled: demo pages',
+                framework: 'reactFunctionalTs',
                 control: {
                     version: 'local',
                     url: `${url}?enterprise=${getCdnUrl('ag-grid-enterprise', 'local', '')}&community=${getCdnUrl('ag-grid-community', 'local', '')}`,
