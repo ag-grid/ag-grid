@@ -4,6 +4,5 @@
     <file url="file://$PROJECT_DIR$" libraries="{@babel/preset-env, @babel/preset-react, @babel/preset-typescript, @babel/standalone, systemjs}" />
     <file url="file://$PROJECT_DIR$/packages/ag-grid-angular/dist" libraries="{@babel/preset-env, @babel/preset-react, @babel/preset-typescript, @babel/standalone, systemjs}" />
     <excludedPredefinedLibrary name="HTML" />
-    <excludedPredefinedLibrary name="tsconfig$paths" />
   </component>
 </project>

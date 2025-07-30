@@ -5,7 +5,7 @@ import type { EditPosition, EditRowPosition } from '../../interfaces/iEditServic
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
-import { _populateModelValidationErrors, _setupEditor, _valuesDiffer } from '../utils/editors';
+import { _populateModelValidationErrors, _setupEditor, _sourceAndPendingDiffer } from '../utils/editors';
 import type { EditValidationAction, EditValidationResult } from './baseEditStrategy';
 import { BaseEditStrategy } from './baseEditStrategy';
 
@@ -136,7 +136,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 }
 
                 for (const edit of rowEdits.values()) {
-                    if (_valuesDiffer(edit)) {
+                    if (_sourceAndPendingDiffer(edit)) {
                         changedRows.push(rowNode);
                         // early return, we only need to know if there are any edits
                         break;
@@ -197,11 +197,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         prevCell: CellCtrl,
         backwards: boolean,
         event?: KeyboardEvent,
-        source: 'api' | 'ui' = 'ui'
+        source: 'api' | 'ui' = 'ui',
+        preventNavigation = false
     ): boolean | null {
-        // check for all cell-level validation errors
-        const preventNavigation = this.editSvc.checkNavWithValidation(undefined, event) === 'block-stop';
-
         const prevPos = prevCell.cellPosition;
 
         // find the next cell to start editing
@@ -245,10 +243,10 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         this.restoreEditors();
 
-        const suppressEditingNextOnTab = this.gos.get('suppressEditingNextOnTab');
+        const suppressStartEditOnTab = this.gos.get('suppressStartEditOnTab');
 
         if (nextEditable && !preventNavigation) {
-            if (suppressEditingNextOnTab) {
+            if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else {
                 if (!nextCell.comp?.getCellEditor()) {
@@ -260,13 +258,16 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 nextCell.focusCell(false, event);
             }
         } else {
+            if (nextEditable && preventNavigation) {
+                this.setFocusInOnEditor(nextCell);
+            }
             nextCell.focusCell(true, event);
         }
 
         if (!rowsMatch && !preventNavigation) {
             this.cleanupEditors(nextCell, true);
 
-            if (suppressEditingNextOnTab) {
+            if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else {
                 this.editSvc.startEditing(nextCell, { startedEdit: true, event, source, ignoreEventKey: true });

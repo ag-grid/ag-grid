@@ -64,7 +64,7 @@ describe('ag-grid hierarchical tree data reset', () => {
         ]);
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: error #268',
+            'AG Grid: warning #268',
             "Transactions aren't supported with tree data when using treeDataChildrenField",
             expect.anything()
         );

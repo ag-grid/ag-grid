@@ -1,11 +1,11 @@
-import {
+import type {
     CommunityModuleName,
     EnterpriseModuleName,
     ModuleName,
 } from '../../packages/ag-grid-community/src/interfaces/iModule';
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
-    AlignedGridsModule: 3.06,
+    AlignedGridsModule: 6.88,
     AllCommunityModule: 470.87,
     CellApiModule: 0.28,
     CellStyleModule: 2.24,
@@ -17,7 +17,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ColumnHoverModule: 1.58,
     CsvExportModule: 11.3,
     CustomEditorModule: 59.13,
-    CustomFilterModule: 70.29,
+    CustomFilterModule: 72,
     DateEditorModule: 65.42,
     DateFilterModule: 126.13,
     DragAndDropModule: 1,
@@ -70,7 +70,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     NewFiltersToolPanelModule: 169.77,
     PivotModule: 93.6,
     RangeSelectionModule: 53,
-    RichSelectModule: 116.59,
+    RichSelectModule: 120.23,
     RowNumbersModule: 30,
     RowGroupingModule: 79.85,
     RowGroupingPanelModule: 71,

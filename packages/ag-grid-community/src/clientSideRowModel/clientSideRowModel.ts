@@ -78,7 +78,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
     private nodeManager: IClientSideNodeManager<any>;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
-    private lastHighlightedRow: RowNode | null = null;
+
+    /** Keep track if row data was updated. Important with suppressModelUpdateAfterUpdateTransaction and refreshModel api is called  */
+    private rowDataUpdatedPending: boolean = false;
+
     private applyAsyncTransactionsTimeout: number | undefined;
     /** Has the start method been called */
     private started: boolean = false;
@@ -625,11 +628,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // console.log('======= start =======');
 
         const beans = this.beans;
-        const changedPath = (params.changedPath ??= this.createChangePath(!params.newData && !!params.rowDataUpdated));
 
-        if (this.started && params.rowDataUpdated) {
+        let rowDataUpdated = !!params.rowDataUpdated;
+        const changedPath = (params.changedPath ??= this.createChangePath(!params.newData && rowDataUpdated));
+
+        if (this.started && rowDataUpdated) {
             this.eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
         }
+
+        this.rowDataUpdatedPending ||= rowDataUpdated;
 
         if (
             !this.started ||
@@ -640,11 +647,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return;
         }
 
+        if (this.rowDataUpdatedPending) {
+            this.rowDataUpdatedPending = false;
+            params.rowDataUpdated = rowDataUpdated = true;
+        }
+
         this.isRefreshingModel = true;
 
         beans.masterDetailSvc?.refreshModel(params);
 
-        if (params.rowDataUpdated && params.step !== 'group') {
+        if (rowDataUpdated && params.step !== 'group') {
             beans.colFilter?.refreshModel();
         }
 
@@ -652,10 +664,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         switch (params.step) {
             case 'group': {
                 const groupingChanged = this.doRowGrouping(params);
-                if (groupingChanged || params.rowDataUpdated) {
+                if (groupingChanged || rowDataUpdated) {
                     beans.colFilter?.refreshModel();
                 }
-                if (params.step === 'group' && this.rowNodesCountReady) {
+                if (!this.rowCountReady && this.rowNodesCountReady) {
                     this.rowCountReady = true; // only if row data has been set
                     this.eventSvc.dispatchEventOnce({ type: 'rowCountReady' });
                 }

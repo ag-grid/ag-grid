@@ -10,8 +10,8 @@ import {
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
-import type { FileDropIndicator, IFile } from './fileUtils';
-import { getFileDropIndicator, moveFiles } from './fileUtils';
+import type { FileDropPosition, IFile } from './fileUtils';
+import { getFileDropPosition, moveFiles } from './fileUtils';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -36,9 +36,12 @@ function onRowDragEnd(event: RowDragEndEvent<IFile>) {
     }
     const reorderOnly = event.event?.shiftKey;
     const rowData = gridApi.getGridOption('rowData') ?? [];
-    const newRowData = moveFiles(rowData, source, target, !!reorderOnly);
-    if (newRowData !== rowData) {
-        gridApi.setGridOption('rowData', newRowData);
+    const indicator = getFileDropPosition(rowData, source, target, !!reorderOnly);
+    if (indicator) {
+        const newRowData = moveFiles(rowData, indicator);
+        if (newRowData !== rowData) {
+            gridApi.setGridOption('rowData', newRowData);
+        }
     }
     gridApi.setRowDropPositionIndicator(null);
 }
@@ -52,19 +55,19 @@ function onRowDragMove(event: any) {
     const target = event.overNode?.data;
     const reorderOnly = event.event?.shiftKey;
     const rowData = gridApi.getGridOption('rowData') ?? [];
-    const indicator: FileDropIndicator | null = getFileDropIndicator(rowData, source, target, !!reorderOnly);
+    const indicator = getFileDropPosition(rowData, source, target, !!reorderOnly);
     if (indicator) {
         // Find the row node by file reference
         let rowNode = null;
         gridApi.forEachNode((node) => {
-            if (node.data === indicator.file) {
+            if (node.data === indicator.target) {
                 rowNode = node;
             }
         });
         if (rowNode) {
             gridApi.setRowDropPositionIndicator({
                 row: rowNode,
-                dropIndicatorPosition: indicator.dropIndicatorPosition,
+                dropIndicatorPosition: indicator.position,
             });
         } else {
             gridApi.setRowDropPositionIndicator(null);

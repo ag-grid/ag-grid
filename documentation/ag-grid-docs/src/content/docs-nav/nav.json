@@ -1512,14 +1512,14 @@
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Master Detail",
-                                    "path": "server-side-model-master-detail",
+                                    "title": "Tree Data",
+                                    "path": "server-side-model-tree-data",
                                     "isEnterprise": true
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Tree Data",
-                                    "path": "server-side-model-tree-data",
+                                    "title": "Master Detail",
+                                    "path": "server-side-model-master-detail",
                                     "isEnterprise": true
                                 },
                                 {
@@ -1688,6 +1688,27 @@
                             "type": "item",
                             "title": "Import Excel",
                             "path": "excel-import"
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "title": "State & Lifecycle",
+                    "children": [
+                        {
+                            "type": "item",
+                            "title": "Grid State",
+                            "path": "grid-state"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Grid Context",
+                            "path": "context"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Grid Lifecycle",
+                            "path": "grid-lifecycle"
                         }
                     ]
                 },

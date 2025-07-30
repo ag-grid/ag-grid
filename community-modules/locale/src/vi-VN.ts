@@ -602,7 +602,6 @@ export const AG_GRID_LOCALE_VN = {
     ariaLabelSelectField: 'Chọn Trường',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Trình chỉnh sửa ô',
     ariaValidationErrorPrefix: 'Xác nhận lỗi trình chỉnh sửa ô',
     ariaLabelLoadingContextMenu: 'Đang tải Menu Ngữ cảnh',
 

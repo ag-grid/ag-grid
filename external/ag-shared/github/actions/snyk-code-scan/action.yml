@@ -7,32 +7,47 @@ inputs:
     severity_threshold:
         description: 'Severity threshold of the snyk scan'
         default: 'high'
-    ctrf_file:
+    report_file:
         description: 'Path to the output file in CTRF format'
-        default: ''
+        default: 'report.json'
+    output_dir:
+        description: 'Output folder'
+        default: 'test-results/'
+    snyk_file:
+        description: 'Snyk output json file'
+        default: 'snyk.json'
 
 runs:
     using: 'composite'
     steps:
+        - name: Create output directory if required
+          uses: actions/github-script@v7
+          env:
+              OUTPUT_DIR: ${{ inputs.output_dir }}
+          with:
+              script: |
+                  const fs = require('fs');
+                  fs.mkdirSync('${{ env.OUTPUT_DIR }}', { recursive: true });
         - name: Run Snyk SAST security code scan
           uses: snyk/actions/node@master
           env:
               SNYK_TOKEN: ${{ inputs.snyk_token }}
           with:
               command: code test
-              args: --severity-threshold=${{ inputs.severity_threshold }} --json > snyk.json
+              args: --severity-threshold=${{ inputs.severity_threshold }} --json > ${{ inputs.output_dir }}${{ inputs.snyk_file }}
 
         - name: To CTRF format
           uses: actions/github-script@v7
-          if: ${{ inputs.ctrf_file != '' }}
+          if: ${{ inputs.report_file != '' }}
           env:
-              CTRF_FILE: ${{ inputs.ctrf_file }}
+              REPORT_FILE: ${{ inputs.report_file }}
+              OUTPUT_DIR: ${{ inputs.output_dir }}
               SEVERITY_THRESHOLD: ${{ inputs.severity_threshold }}
           with:
               script: |
                   const fs = require('fs');
                   const path = require('path');
-                  const file = 'snyk.json';
+                  const file = '${{ inputs.output_dir }}${{ inputs.snyk_file }}';
 
                   let combinedResults = {};
 
@@ -53,5 +68,4 @@ runs:
                   0);
 
                   const report = { results: { summary: { failed, passed, skipped } } };
-                  fs.mkdirSync(path.dirname(path.join('.', '${{ env.CTRF_FILE }}')), { recursive: true });
-                  fs.writeFileSync(path.join('.', '${{ env.CTRF_FILE }}'), JSON.stringify(report));
+                  fs.writeFileSync(path.join('${{ env.OUTPUT_DIR }}', '${{ env.REPORT_FILE }}'), JSON.stringify(report));

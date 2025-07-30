@@ -12,6 +12,7 @@ on:
       - 'next'
       - 'b[0-9][0-9]?.[0-9][0-9]?.[0-9][0-9]?'
       - 'seanlandsman-patch-9'
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
     inputs:
       run_docs:
@@ -49,6 +50,8 @@ env:
   NX_NO_CLOUD: true
   NX_BRANCH: ${{ github.ref }}
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  SLACK_CHANNEL: '#ci-grid-gate'
+  AG_LIBRARY: grid
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
   YARN_REGISTRY: "http://52.50.158.57:4873"
   CI: true
@@ -64,6 +67,7 @@ permissions:
 jobs:
   build_lint:
     name: Build & Lint
+    if: github.event.pull_request.draft == false
     outputs:
       nx_base: ${{ steps.setup.outputs.base }}
       build: ${{ steps.build.outcome || '' }}
@@ -450,7 +454,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: [ build_lint, test, e2e, docs, bundle_size ]
 #    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test ]
-    if: cancelled() != true
+    if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write
       actions: read
@@ -564,7 +568,7 @@ jobs:
       - name: SlackBot
         if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
         env:
-          CI_GRID_GATE_CHANNEL: '#ci-grid-gate'
+          CI_GRID_GATE_CHANNEL: ${{ env.SLACK_CHANNEL }}
           CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.CHARTS_TEAM_CITY_CHANNEL }}
           WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}

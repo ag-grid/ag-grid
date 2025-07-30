@@ -603,7 +603,6 @@ export const AG_GRID_LOCALE_NL = {
     ariaLabelSelectField: 'Selectievak',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Celleditor',
     ariaValidationErrorPrefix: 'Celleditorvalidatie',
     ariaLabelLoadingContextMenu: 'Contextmenu laden',
 

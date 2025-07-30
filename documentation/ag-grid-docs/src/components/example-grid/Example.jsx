@@ -17,10 +17,10 @@ import {
     ColumnsToolPanelModule,
     ContextMenuModule,
     ExcelExportModule,
-    FiltersToolPanelModule,
     IntegratedChartsModule,
     MasterDetailModule,
     MultiFilterModule,
+    NewFiltersToolPanelModule,
     PivotModule,
     RichSelectModule,
     RowGroupingModule,
@@ -451,7 +451,7 @@ const ExampleInner = ({ darkMode }) => {
             ClipboardModule,
             ColumnsToolPanelModule,
             ExcelExportModule,
-            FiltersToolPanelModule,
+            NewFiltersToolPanelModule,
             MasterDetailModule,
             ColumnMenuModule,
             ContextMenuModule,
@@ -541,7 +541,7 @@ const ExampleInner = ({ darkMode }) => {
                 mode: 'multiRow',
             },
             sideBar: {
-                toolPanels: ['columns', 'filters'],
+                toolPanels: ['columns', 'filters-new'],
                 position: 'right',
                 defaultToolPanel: 'columns',
                 hiddenByDefault: isSmall,
@@ -694,6 +694,7 @@ const ExampleInner = ({ darkMode }) => {
                     },
                 },
             ],
+            enableFilterHandlers: true,
         }),
         [isSmall]
     );

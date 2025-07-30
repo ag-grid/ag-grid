@@ -185,7 +185,7 @@ describe('Pinned rows', () => {
             assertPinnedRowData(topData, 'top', ['t-0']);
             expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
             expect(consoleWarnSpy).toHaveBeenLastCalledWith(
-                'AG Grid: error #96',
+                'AG Grid: warning #96',
                 'Duplicate ID',
                 JSON.stringify(topData[0]),
                 'found for pinned row with data',
@@ -349,7 +349,7 @@ describe('Pinned rows', () => {
             assertPinnedRowData(bottomData, 'bottom', ['b-0']);
             expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
             expect(consoleWarnSpy).toHaveBeenLastCalledWith(
-                'AG Grid: error #96',
+                'AG Grid: warning #96',
                 'Duplicate ID',
                 JSON.stringify(bottomData[0]),
                 'found for pinned row with data',

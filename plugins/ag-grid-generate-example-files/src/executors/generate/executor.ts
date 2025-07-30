@@ -411,8 +411,9 @@ async function processProvidedFiles(
     }
 
     // Transform entry file
-    provideFrameworkFiles[entryFileName] = transformEntryFile({
-        entryFile: provideFrameworkFiles[entryFileName],
+    const transformMainFile = internalFramework === 'angular' ? mainFileName : entryFileName;
+    provideFrameworkFiles[transformMainFile] = transformEntryFile({
+        entryFile: provideFrameworkFiles[transformMainFile],
     });
 
     return scriptFiles;

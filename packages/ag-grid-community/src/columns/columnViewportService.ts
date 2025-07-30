@@ -26,7 +26,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     private headerColsWithinViewport: AgColumn[] = [];
 
     // A hash key to keep track of changes in viewport columns
-    private colsWithinViewportHash: string = '';
+    public colsWithinViewportHash: string = '';
 
     // all columns & groups to be rendered, index by row.
     // used by header rows to get all items to render for that row.

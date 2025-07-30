@@ -527,7 +527,7 @@ export interface GridOptions<TData = any> {
     /**
      * Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
      */
-    suppressEditingNextOnTab?: boolean;
+    suppressStartEditOnTab?: boolean;
 
     /**
      * Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
@@ -1489,7 +1489,8 @@ export interface GridOptions<TData = any> {
     /**
      * Called for every row in the grid.
      *
-     * Return `true` if the row should be pinned initially. Return `false` otherwise.
+     * Return "top", "bottom" if the row should be initially pinned to the top or bottom respectively.
+     * Return `null` or `undefined` otherwise.
      * User interactions can subsequently still change the pinned state of a row.
      * @agModule `PinnedRowModule`
      */

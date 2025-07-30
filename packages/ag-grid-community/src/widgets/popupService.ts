@@ -11,7 +11,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { PopupEventParams, PopupPositionParams } from '../interfaces/iPopup';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _setAriaLabel, _setAriaRole } from '../utils/aria';
+import { _setAriaLabel, _setAriaOwns, _setAriaRole } from '../utils/aria';
 import {
     _createElement,
     _getAbsoluteHeight,
@@ -36,7 +36,11 @@ interface AgPopup {
 
 let instanceIdSeq = 0;
 
-export interface AddPopupParams {
+type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
+type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
+
+// Apply the at-least-one constraint to ariaLabel | ariaOwns
+export type AddPopupParams = {
     // if true then listens to background checking for clicks, so that when the background is clicked,
     // the child is removed again, giving a model look to popups.
     modal?: boolean;
@@ -60,10 +64,12 @@ export interface AddPopupParams {
     // eg if cellComp element is passed, what happens if row moves (sorting, filtering etc)? best anchor against
     // the grid, not the cell.
     anchorToElement?: HTMLElement;
-
+} & XOR<
     // an aria label should be added to provided context to screen readers
-    ariaLabel: string;
-}
+    { ariaLabel: string },
+    // an element that will be marked as owner of the popup element
+    { ariaOwns: HTMLElement }
+>;
 
 interface AddPopupResult {
     hideFunc: (params?: PopupEventParams) => void;
@@ -462,7 +468,7 @@ export class PopupService extends BeanStub implements NamedBean {
 
     public addPopup(params: AddPopupParams): AddPopupResult {
         const eDocument = _getDocument(this.beans);
-        const { eChild, ariaLabel, alwaysOnTop, positionCallback, anchorToElement } = params;
+        const { eChild, ariaLabel, ariaOwns, alwaysOnTop, positionCallback, anchorToElement } = params;
 
         if (!eDocument) {
             _warn(122);
@@ -478,7 +484,7 @@ export class PopupService extends BeanStub implements NamedBean {
 
         this.initialisePopupPosition(eChild);
 
-        const wrapperEl = this.createPopupWrapper(eChild, ariaLabel, !!alwaysOnTop);
+        const wrapperEl = this.createPopupWrapper(eChild, !!alwaysOnTop, ariaLabel, ariaOwns);
         const removeListeners = this.addEventListenersToPopup({ ...params, wrapperEl });
 
         if (positionCallback) {
@@ -504,7 +510,12 @@ export class PopupService extends BeanStub implements NamedBean {
         }
     }
 
-    private createPopupWrapper(element: HTMLElement, ariaLabel: string, alwaysOnTop: boolean): HTMLElement {
+    private createPopupWrapper(
+        element: HTMLElement,
+        alwaysOnTop: boolean,
+        ariaLabel?: string,
+        ariaOwns?: HTMLElement
+    ): HTMLElement {
         const ePopupParent = this.getPopupParent();
 
         // add env CSS class to child, in case user provided a popup parent, which means
@@ -520,7 +531,12 @@ export class PopupService extends BeanStub implements NamedBean {
             _setAriaRole(element, 'dialog');
         }
 
-        _setAriaLabel(element, ariaLabel);
+        if (ariaLabel) {
+            _setAriaLabel(element, ariaLabel);
+        } else if (ariaOwns) {
+            element.id ||= `popup-component-${instanceIdSeq}`;
+            _setAriaOwns(ariaOwns, element.id);
+        }
 
         eWrapper.appendChild(element);
         ePopupParent.appendChild(eWrapper);
@@ -550,7 +566,7 @@ export class PopupService extends BeanStub implements NamedBean {
         const eDocument = _getDocument(beans);
         const ePopupParent = this.getPopupParent();
 
-        const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal } = params;
+        const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal, ariaOwns } = params;
 
         let popupHidden = false;
 
@@ -597,8 +613,7 @@ export class PopupService extends BeanStub implements NamedBean {
             if (closedCallback) {
                 closedCallback(mouseEvent || touchEvent || keyboardEvent);
             }
-
-            this.removePopupFromPopupList(popupEl);
+            this.removePopupFromPopupList(popupEl, ariaOwns);
         };
 
         if (afterGuiAttached) {
@@ -633,13 +648,15 @@ export class PopupService extends BeanStub implements NamedBean {
             element: element,
             wrapper: wrapperEl,
             hideFunc: removeListeners,
-            instanceId: instanceIdSeq++,
+            instanceId: instanceIdSeq,
             isAnchored: !!anchorToElement,
         });
 
         if (anchorToElement) {
             this.setPopupPositionRelatedToElement(element, anchorToElement);
         }
+
+        instanceIdSeq = instanceIdSeq + 1;
     }
 
     private getPopupIndex(el: HTMLElement): number {
@@ -683,9 +700,13 @@ export class PopupService extends BeanStub implements NamedBean {
         return destroyPositionTracker;
     }
 
-    private removePopupFromPopupList(element: HTMLElement): void {
+    private removePopupFromPopupList(element: HTMLElement, ariaOwns?: HTMLElement): void {
         this.setAlignedStyles(element, null);
         this.setPopupPositionRelatedToElement(element, null);
+
+        if (ariaOwns) {
+            _setAriaOwns(ariaOwns, null);
+        }
 
         this.popupList = this.popupList.filter((p) => p.element !== element);
     }

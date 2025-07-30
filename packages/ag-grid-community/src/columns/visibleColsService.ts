@@ -85,8 +85,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.autoHeightCols = this.allCols.filter((col) => col.isAutoHeight());
         colFlex?.refreshFlexedColumns();
         this.updateBodyWidths();
-        colViewport.checkViewportColumns(false);
         this.setFirstRightAndLastLeftPinned(colModel, this.leftCols, this.rightCols, source);
+        colViewport.checkViewportColumns(false);
 
         this.eventSvc.dispatchEvent({
             type: 'displayedColumnsChanged',

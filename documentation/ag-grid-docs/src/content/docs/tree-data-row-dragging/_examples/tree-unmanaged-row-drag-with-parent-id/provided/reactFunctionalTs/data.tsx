@@ -45,5 +45,21 @@ export function getData(): IFile[] {
             dateModified: '2016-08-12',
             size: 101,
         },
+        {
+            id: '16',
+            parentId: '14',
+            name: 'temp2.txt',
+            type: 'file',
+            dateModified: '2016-08-12',
+            size: 200,
+        },
+        {
+            id: '17',
+            parentId: '14',
+            name: 'temp3.txt',
+            type: 'file',
+            dateModified: '2016-08-12',
+            size: 200,
+        },
     ];
 }

@@ -124,17 +124,17 @@ describe('ag-grid parentId tree with master detail', () => {
             │ │ · · ├── LEAF id:X0 name:"X0"
             │ │ · · └── LEAF id:Y0 name:"Y0"
             │ └── C LEAF id:C ag-Grid-AutoColumn:"C" id:"C"
-            └─┬ D master id:D ag-Grid-AutoColumn:"D" id:"D"
+            └─┬ D master-GROUP id:D ag-Grid-AutoColumn:"D" id:"D"
             · ├─┬ detail id:detail_D ag-Grid-AutoColumn:undefined id:"D"
             · │ └─┬ ROOT id:ROOT_NODE_ID
             · │ · ├── LEAF id:X1 name:"X1"
             · │ · └── LEAF id:Y1 name:"Y1"
-            · └─┬ E master id:E ag-Grid-AutoColumn:"E" id:"E"
+            · └─┬ E master-GROUP id:E ag-Grid-AutoColumn:"E" id:"E"
             · · ├─┬ detail id:detail_E ag-Grid-AutoColumn:undefined id:"E"
             · · │ └─┬ ROOT id:ROOT_NODE_ID
             · · │ · ├── LEAF id:X2 name:"X2"
             · · │ · └── LEAF id:Y2 name:"Y2"
-            · · ├─┬ F master id:F ag-Grid-AutoColumn:"F" id:"F"
+            · · ├─┬ F master-GROUP id:F ag-Grid-AutoColumn:"F" id:"F"
             · · │ ├─┬ detail id:detail_F ag-Grid-AutoColumn:undefined id:"F"
             · · │ │ └─┬ ROOT id:ROOT_NODE_ID
             · · │ │ · └── LEAF id:X3 name:"X3"
@@ -146,7 +146,7 @@ describe('ag-grid parentId tree with master detail', () => {
 
         api.setGridOption('masterDetail', false);
 
-        gridRows = new GridRows(api, 'master detail false', gridRowsOptions);
+        gridRows = new GridRows(api, 'masterDetail=false', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" id:"A"
@@ -163,7 +163,7 @@ describe('ag-grid parentId tree with master detail', () => {
 
         api.setGridOption('masterDetail', true);
 
-        gridRows = new GridRows(api, 'initial', gridRowsOptions);
+        gridRows = new GridRows(api, 'masterDetail=true', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" id:"A"
@@ -173,17 +173,17 @@ describe('ag-grid parentId tree with master detail', () => {
             │ │ · · ├── LEAF id:X0 name:"X0"
             │ │ · · └── LEAF id:Y0 name:"Y0"
             │ └── C LEAF id:C ag-Grid-AutoColumn:"C" id:"C"
-            └─┬ D master id:D ag-Grid-AutoColumn:"D" id:"D"
+            └─┬ D master-GROUP id:D ag-Grid-AutoColumn:"D" id:"D"
             · ├─┬ detail id:detail_D ag-Grid-AutoColumn:undefined id:"D"
             · │ └─┬ ROOT id:ROOT_NODE_ID
             · │ · ├── LEAF id:X1 name:"X1"
             · │ · └── LEAF id:Y1 name:"Y1"
-            · └─┬ E master id:E ag-Grid-AutoColumn:"E" id:"E"
+            · └─┬ E master-GROUP id:E ag-Grid-AutoColumn:"E" id:"E"
             · · ├─┬ detail id:detail_E ag-Grid-AutoColumn:undefined id:"E"
             · · │ └─┬ ROOT id:ROOT_NODE_ID
             · · │ · ├── LEAF id:X2 name:"X2"
             · · │ · └── LEAF id:Y2 name:"Y2"
-            · · ├─┬ F master id:F ag-Grid-AutoColumn:"F" id:"F"
+            · · ├─┬ F master-GROUP id:F ag-Grid-AutoColumn:"F" id:"F"
             · · │ ├─┬ detail id:detail_F ag-Grid-AutoColumn:undefined id:"F"
             · · │ │ └─┬ ROOT id:ROOT_NODE_ID
             · · │ │ · └── LEAF id:X3 name:"X3"
@@ -209,7 +209,7 @@ describe('ag-grid parentId tree with master detail', () => {
             │ │ · · ├── LEAF id:X0 name:"X0"
             │ │ · · └── LEAF id:Y0 name:"Y0"
             │ └── C LEAF id:C ag-Grid-AutoColumn:"C" id:"C"
-            └─┬ D master id:D ag-Grid-AutoColumn:"D" id:"D"
+            └─┬ D master-GROUP id:D ag-Grid-AutoColumn:"D" id:"D"
             · ├─┬ detail id:detail_D ag-Grid-AutoColumn:undefined id:"D"
             · │ └─┬ ROOT id:ROOT_NODE_ID
             · │ · ├── LEAF id:X1 name:"X1"

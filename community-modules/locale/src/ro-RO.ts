@@ -603,7 +603,6 @@ export const AG_GRID_LOCALE_RO = {
     ariaLabelSelectField: 'Selectează Câmp',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Editor de celule',
     ariaValidationErrorPrefix: 'Validare editor de celule',
     ariaLabelLoadingContextMenu: 'Încărcare Meniu Contextual',
 

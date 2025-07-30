@@ -7,7 +7,6 @@ import { _getActiveDomElement } from '../../gridOptionsUtils';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { PopupPositionParams } from '../../interfaces/iPopup';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _addStylesToElement, _clearElement, _createElement, _removeFromParent } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
@@ -488,34 +487,37 @@ export class CellComp extends Component {
     }
 
     private addPopupCellEditor(params: ICellEditorParams, position?: 'over' | 'under'): void {
-        const { gos, context, popupSvc, localeSvc, editSvc } = this.beans;
+        const { gos, context, popupSvc, editSvc } = this.beans;
         if (gos.get('editType') === 'fullRow') {
             //popup cellEditor does not work with fullRowEdit
             _warn(98);
         }
 
-        const cellEditor = this.cellEditor!;
-
         // if a popup, then we wrap in a popup editor and return the popup
-        this.cellEditorPopupWrapper = context.createBean(editSvc!.createPopupEditorWrapper(params));
-        const ePopupGui = this.cellEditorPopupWrapper.getGui();
-        if (this.cellEditorGui) {
-            ePopupGui.appendChild(this.cellEditorGui);
+        const cellEditorPopupWrapper = (this.cellEditorPopupWrapper = context.createBean(
+            editSvc!.createPopupEditorWrapper(params)
+        ));
+
+        const { cellEditor, cellEditorGui, eCell, rowNode, column, cellCtrl } = this;
+        const ePopupGui = cellEditorPopupWrapper.getGui();
+
+        if (cellEditorGui) {
+            ePopupGui.appendChild(cellEditorGui);
         }
 
         const useModelPopup = gos.get('stopEditingWhenCellsLoseFocus');
 
         // see if position provided by colDef, if not then check old way of method on cellComp
         const positionToUse: 'over' | 'under' | undefined =
-            position != null ? position : cellEditor.getPopupPosition?.() ?? 'over';
+            position != null ? position : cellEditor!.getPopupPosition?.() ?? 'over';
         const isRtl = gos.get('enableRtl');
 
         const positionParams: PopupPositionParams & { type: string; eventSource: HTMLElement } = {
             ePopup: ePopupGui,
-            column: this.column,
-            rowNode: this.rowNode,
+            column,
+            rowNode,
             type: 'popupCellEditor',
-            eventSource: this.eCell,
+            eventSource: eCell,
             position: positionToUse,
             alignSide: isRtl ? 'right' : 'left',
             keepWithinBounds: true,
@@ -523,18 +525,16 @@ export class CellComp extends Component {
 
         const positionCallback = popupSvc!.positionPopupByComponent.bind(popupSvc, positionParams);
 
-        const translate = _getLocaleTextFunc(localeSvc);
-
         const addPopupRes = popupSvc!.addPopup({
             modal: useModelPopup,
             eChild: ePopupGui,
             closeOnEsc: true,
             closedCallback: () => {
-                this.cellCtrl.onPopupEditorClosed();
+                cellCtrl.onPopupEditorClosed();
             },
-            anchorToElement: this.eCell,
+            anchorToElement: eCell,
             positionCallback,
-            ariaLabel: translate('ariaLabelCellEditor', 'Cell Editor'),
+            ariaOwns: eCell,
         });
         if (addPopupRes) {
             this.hideEditorPopup = addPopupRes.hideFunc;
