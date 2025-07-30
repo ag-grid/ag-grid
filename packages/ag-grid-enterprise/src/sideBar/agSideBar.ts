@@ -255,6 +255,14 @@ class AgSideBar extends Component implements ISideBar {
         this.dispatchSideBarUpdated();
     }
 
+    public setSideButtonsDisplayed(
+        show: boolean,
+        options?: { skipAriaHidden?: boolean | undefined } | undefined
+    ): void {
+        this.sideBarButtons.setDisplayed(show, options);
+        this.dispatchSideBarUpdated();
+    }
+
     public getState(): SideBarState {
         const toolPanels: { [id: string]: any } = {};
         this.toolPanelWrappers.forEach((wrapper) => {
