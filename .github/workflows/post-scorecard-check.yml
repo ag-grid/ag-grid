@@ -48,8 +48,8 @@ jobs:
                     process.env.THRESHOLD
                 );
             
-                const passed = result;
-                const failed = !result;
+                const passed = !result;
+                const failed = result;
                 const skipped = 0;
 
                 const report = { results: { summary: { failed, passed, skipped } } };
