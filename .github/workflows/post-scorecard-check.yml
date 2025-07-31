@@ -14,7 +14,7 @@ env:
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
   THRESHOLD: 7.0
-  REPORT_FILE: ./crs-report.json
+  REPORT_FILE: ./crsf-report.json
 
 permissions: read-all
 
@@ -46,13 +46,12 @@ jobs:
                     process.env.THRESHOLD
                 );
             
-            
                 const passed = result;
                 const failed = !result;
                 const skipped = 0;
 
                 const report = { results: { summary: { failed, passed, skipped } } };
-                fs.writeFileSync('${{ env.REPORT_FILE }}'), JSON.stringify(report));
+                fs.writeFileSync('${{ env.REPORT_FILE }}', JSON.stringify(report));
             }
 
             await exec();
