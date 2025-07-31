@@ -73,7 +73,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         ],
         defaultToolPanel: 'filters',
         hiddenByDefault: true,
-        hideButtons: false,
     },
     onToolPanelVisibleChanged: (event: ToolPanelVisibleChangedEvent) => {
         console.log('toolPanelVisibleChanged', event);
