@@ -7,6 +7,7 @@ import { RowGroupColsSvc } from '../rowGrouping/rowGroupColsSvc';
 import { VERSION } from '../version';
 import { AutoColService } from './autoColService';
 import { ClientSideExpansionService } from './clientSideExpansionService';
+import { DateHierarchyColService } from './dateHierarchyColService';
 import { FlattenStage } from './flattenStage';
 import { GroupStage } from './groupStage';
 import { GroupCellRenderer } from './rendering/groupCellRenderer';
@@ -51,6 +52,7 @@ export const GroupColumnModule: _ModuleWithoutApi = {
         RowGroupColsSvc,
         PivotColsSvc,
         ValueColsSvc,
+        DateHierarchyColService,
     ],
     dependsOn: [EnterpriseCoreModule, GroupCellRendererModule],
 };

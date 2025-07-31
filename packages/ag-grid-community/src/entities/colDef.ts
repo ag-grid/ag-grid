@@ -713,8 +713,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * If missing, all installed functions are allowed.
      * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API.
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
-     * */
+     */
     allowedAggFuncs?: string[];
+    /**
+     * rowGroupingHierarchy
+     * @agModule `RowGroupingModule` / `PivotModule`
+     */
+    rowGroupingHierarchy?: (string | ColDef<TData, TValue>)[];
 
     /**
      * Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group.

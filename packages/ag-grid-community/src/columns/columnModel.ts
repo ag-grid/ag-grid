@@ -168,6 +168,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const {
             autoColSvc,
             selectionColSvc,
+            dateHierarchyColSvc,
             rowNumbersSvc,
             quickFilter,
             pivotResultCols,
@@ -180,7 +181,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const cols = this.selectCols(pivotResultCols, this.colDefCols);
 
-        this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc], cols);
+        this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc, dateHierarchyColSvc], cols);
 
         const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
         if (!newColDefs || shouldSortNewColDefs) {
@@ -581,10 +582,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public forAllCols(callback: (column: AgColumn) => void): void {
-        const { pivotResultCols, autoColSvc, selectionColSvc } = this.beans;
+        const { pivotResultCols, autoColSvc, selectionColSvc, dateHierarchyColSvc } = this.beans;
         _forAll(this.colDefCols?.list, callback);
         _forAll(autoColSvc?.columns?.list, callback);
         _forAll(selectionColSvc?.columns?.list, callback);
+        _forAll(dateHierarchyColSvc?.columns?.list, callback);
         _forAll(pivotResultCols?.getPivotResultCols()?.list, callback);
     }
 
@@ -637,6 +639,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
             }
         }
 
-        return this.beans.autoColSvc?.getColumn(key) ?? this.beans.selectionColSvc?.getColumn(key) ?? null;
+        const { autoColSvc, selectionColSvc, dateHierarchyColSvc } = this.beans;
+        return (
+            autoColSvc?.getColumn(key) ?? selectionColSvc?.getColumn(key) ?? dateHierarchyColSvc?.getColumn(key) ?? null
+        );
     }
 }

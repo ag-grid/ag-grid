@@ -346,6 +346,7 @@ interface CoreBeanCollection {
     filterPanelSvc?: IFilterPanelService;
     selectableFilter?: ISelectableFilterService;
     testIdSvc?: ITestIdService;
+    dateHierarchyColSvc?: IColumnCollectionService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -430,6 +431,7 @@ export type BeanName =
     | 'visibleCols'
     | 'dragAndDrop'
     | 'dragSvc'
+    | 'dateHierarchyColSvc'
     | 'editSvc'
     | 'editModelSvc'
     | 'excelCreator'
