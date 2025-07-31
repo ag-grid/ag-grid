@@ -1,4 +1,5 @@
 import type { BeanCollection } from '../../context/context';
+import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapper';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle } from '../../entities/colDef';
@@ -37,7 +38,7 @@ export class CellComp extends Component {
 
     private checkboxSelectionComp: CheckboxSelectionComponent | undefined;
     private dndSourceComp: DndSourceComp | undefined;
-    private rowDraggingComp: Component | undefined;
+    private rowDraggingComp: RowDragComp | undefined;
 
     private hideEditorPopup: ((...args: any[]) => any) | null | undefined;
     private cellEditorPopupWrapper: PopupEditorWrapper | undefined;
@@ -143,29 +144,29 @@ export class CellComp extends Component {
     ): void {
         // this can happen if the users asks for the cell to refresh, but we are not showing the vale as we are editing
         const isInlineEditing = this.cellEditor && !this.cellEditorPopupWrapper;
-        if (isInlineEditing) {
-            return;
-        }
+        if (!isInlineEditing) {
+            // this means firstRender will be true for one pass only, as it's initialised to undefined
+            this.firstRender = this.firstRender == null;
 
-        // this means firstRender will be true for one pass only, as it's initialised to undefined
-        this.firstRender = this.firstRender == null;
+            // if display template has changed, means any previous Cell Renderer is in the wrong location
+            const controlWrapperChanged = this.refreshWrapper(false);
+            this.refreshEditStyles(false);
 
-        // if display template has changed, means any previous Cell Renderer is in the wrong location
-        const controlWrapperChanged = this.refreshWrapper(false);
-        this.refreshEditStyles(false);
-
-        // all of these have dependencies on the eGui, so only do them after eGui is set
-        if (compDetails) {
-            const neverRefresh = forceNewCellRendererInstance || controlWrapperChanged;
-            const cellRendererRefreshSuccessful = neverRefresh ? false : this.refreshCellRenderer(compDetails);
-            if (!cellRendererRefreshSuccessful) {
+            // all of these have dependencies on the eGui, so only do them after eGui is set
+            if (compDetails) {
+                const neverRefresh = forceNewCellRendererInstance || controlWrapperChanged;
+                const cellRendererRefreshSuccessful = neverRefresh ? false : this.refreshCellRenderer(compDetails);
+                if (!cellRendererRefreshSuccessful) {
+                    this.destroyRenderer();
+                    this.createCellRendererInstance(compDetails);
+                }
+            } else {
                 this.destroyRenderer();
-                this.createCellRendererInstance(compDetails);
+                this.insertValueWithoutCellRenderer(valueToDisplay);
             }
-        } else {
-            this.destroyRenderer();
-            this.insertValueWithoutCellRenderer(valueToDisplay);
         }
+
+        this.rowDraggingComp?.refresh();
     }
 
     private setEditDetails(
