@@ -6,6 +6,7 @@ import type {
     NamedBean,
     PropertyChangedEvent,
     PropertyValueChangedEvent,
+    ValueGetterParams,
     _ColumnCollections,
 } from 'ag-grid-community';
 import {
@@ -32,8 +33,15 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, ICol
         if (dateHierarchyCols == null) {
             return;
         }
-        cols.list = dateHierarchyCols.list.concat(cols.list);
-        cols.tree = dateHierarchyCols.tree.concat(cols.tree);
+
+        cols.list = dateHierarchyCols.list
+            .filter((col) => !cols.list.some((c) => c.getColId() === col.getColId()))
+            .concat(cols.list);
+
+        cols.tree = dateHierarchyCols.tree
+            .filter((col) => !cols.tree.some((c) => c.getId() === col.getId()))
+            .concat(cols.list);
+
         _updateColsMap(cols);
     }
 
@@ -111,43 +119,6 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, ICol
         return colDefs;
     }
 
-    private createColDefForPart(part: string, sourceCol: AgColumn, sourceColDef: ColDef): ColDef | null {
-        const { valueSvc } = this.beans;
-        switch (part) {
-            case 'year':
-                return {
-                    colId: `${sourceColDef.colId ?? sourceColDef.field}-year`,
-                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Year)`,
-                    valueGetter: (params) => {
-                        const innerValue = valueSvc.getValue(sourceCol, params.node);
-                        let date: Date | null = null;
-                        if (innerValue instanceof Date) {
-                            date = innerValue;
-                        } else if (typeof innerValue === 'string') {
-                            date = _parseDateTimeFromString(innerValue);
-                        } else {
-                            return innerValue;
-                        }
-                        const parts = _getDateParts(date);
-                        if (parts) {
-                            return parts[0]; // year
-                        }
-
-                        return innerValue;
-                    },
-                    keyCreator: (params) => {
-                        return params.value;
-                    },
-                    enableRowGroup: true,
-                    rowGroup: sourceColDef.rowGroup,
-                    hide: true,
-                };
-
-            default:
-                return null;
-        }
-    }
-
     private createDateHierarchyColumns(cols: _ColumnCollections): AgColumn[] {
         if (!this.isDateHierarchyColsEnabled(cols)) {
             return [];
@@ -165,5 +136,98 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, ICol
         }
 
         return newCols;
+    }
+
+    private createColDefForPart(part: string, sourceCol: AgColumn, sourceColDef: ColDef): ColDef | null {
+        const { valueSvc } = this.beans;
+
+        const base: ColDef = {
+            enableRowGroup: true,
+            rowGroup: sourceColDef.rowGroup,
+            hide: true,
+            keyCreator: (params) => params.value,
+        };
+
+        const getDatePartValueGetter =
+            (index: number, map?: (part: string) => string) => (params: ValueGetterParams) => {
+                const innerValue = valueSvc.getValue(sourceCol, params.node);
+                let date: Date | null = null;
+                if (innerValue instanceof Date) {
+                    date = innerValue;
+                } else if (typeof innerValue === 'string') {
+                    date = _parseDateTimeFromString(innerValue);
+                } else {
+                    return innerValue;
+                }
+                const parts = _getDateParts(date);
+                if (parts) {
+                    return map ? map(parts[index]) : parts[index];
+                }
+
+                return innerValue;
+            };
+
+        switch (part) {
+            case 'year':
+                return {
+                    ...base,
+                    colId: `${sourceColDef.colId ?? sourceColDef.field}-year`,
+                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Year)`,
+                    valueGetter: getDatePartValueGetter(0),
+                };
+
+            case 'quarter':
+                return {
+                    ...base,
+                    colId: `${sourceColDef.colId ?? sourceColDef.field}-quarter`,
+                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Quarter)`,
+                    valueGetter: getDatePartValueGetter(1, (month) => {
+                        return (Math.floor(Number(month) / 4) + 1).toString();
+                    }),
+                };
+
+            case 'month':
+                return {
+                    ...base,
+                    colId: `${sourceColDef.colId ?? sourceColDef.field}-month`,
+                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Month)`,
+                    valueGetter: getDatePartValueGetter(1),
+                };
+
+            case 'day':
+                return {
+                    ...base,
+                    colId: `${sourceColDef.colId ?? sourceColDef.field}-day`,
+                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Day)`,
+                    valueGetter: getDatePartValueGetter(2),
+                };
+
+            case 'hour':
+                return {
+                    ...base,
+                    colId: `${sourceColDef.colId ?? sourceColDef.field}-hour`,
+                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Hour)`,
+                    valueGetter: getDatePartValueGetter(3),
+                };
+
+            case 'minute':
+                return {
+                    ...base,
+                    colId: `${sourceColDef.colId ?? sourceColDef.field}-minute`,
+                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Minute)`,
+                    valueGetter: getDatePartValueGetter(3),
+                };
+
+            case 'second':
+                return {
+                    ...base,
+                    colId: `${sourceColDef.colId ?? sourceColDef.field}-second`,
+                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Second)`,
+                    valueGetter: getDatePartValueGetter(3),
+                };
+
+            default:
+                return null;
+        }
     }
 }
