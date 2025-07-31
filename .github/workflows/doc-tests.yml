@@ -280,7 +280,7 @@ jobs:
       - name: Bootstrap
         run: npm run bootstrap
       - name: Run Interactive Examples
-        run: yarn nx run ag-grid-docs:test:e2e -c staging
+        run: yarn nx run ag-grid-docs:test:interactive -c staging
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4

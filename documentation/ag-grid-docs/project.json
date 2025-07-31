@@ -136,7 +136,7 @@
         }
       }
     },
-    "test:e2e:setup": {
+    "test:interactive:setup": {
       "executor": "nx:run-commands",
       "options": {
         "commands": ["npx playwright install --with-deps chromium"],
@@ -145,9 +145,9 @@
       },
       "cache": true
     },
-    "test:e2e": {
+    "test:interactive": {
       "executor": "nx:run-commands",
-      "dependsOn": ["test:e2e:setup", "ag-grid-community:build"],
+      "dependsOn": ["test:interactive:setup", "ag-grid-community:build"],
       "options": {
         "commands": ["npx playwright test"],
         "parallel": false,
