@@ -115,7 +115,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.updateIndexMap();
 
         const primaryCols = this.colModel.getColDefCols();
-        (primaryCols || []).forEach((column) => {
+        primaryCols?.forEach((column) => {
             const added = masterList.indexOf(column) >= 0;
             columnCallback(column, added, source);
         });
@@ -203,12 +203,12 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         const { setFlagFunc, getIndexFunc, getInitialIndexFunc, getValueFunc, getInitialValueFunc } =
             this.columnExtractors!;
 
-        const primaryCols = this.colModel.getColDefCols() || [];
+        const primaryCols = this.colModel.getColDefCols();
 
         // go though all cols.
         // if value, change
         // if default only, change only if new
-        primaryCols.forEach((col) => {
+        primaryCols?.forEach((col) => {
             const colIsNew = oldProvidedCols.indexOf(col) < 0;
             const colDef = col.getColDef();
 

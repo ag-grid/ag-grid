@@ -82,7 +82,7 @@ export function _applyColumnState(
 
     const providedCols = colModel.getColDefCols() ?? [];
     const selectionCols = selectionColSvc?.getColumns();
-    if (!providedCols?.length && !selectionCols?.length) {
+    if (!providedCols.length && !selectionCols?.length) {
         return false;
     }
 
