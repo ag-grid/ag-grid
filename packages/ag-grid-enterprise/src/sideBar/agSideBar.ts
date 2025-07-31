@@ -19,6 +19,7 @@ import {
     _focusInto,
     _focusNextGridCoreContainer,
     _getActiveDomElement,
+    _isVisible,
     _removeFromParent,
     _setAriaControlsAndLabel,
     _warn,
@@ -120,7 +121,7 @@ class AgSideBar extends Component implements ISideBar {
 
         if (!nextEl) {
             nextEl = sideBarGui.querySelector('.ag-selected button') as HTMLElement;
-            nextEl = nextEl.closest('.ag-hidden') ? null : nextEl;
+            nextEl = _isVisible(nextEl) ? nextEl : null;
         }
 
         if (nextEl && nextEl !== e.target) {
