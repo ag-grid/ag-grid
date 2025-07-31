@@ -144,26 +144,28 @@ export class CellComp extends Component {
     ): void {
         // this can happen if the users asks for the cell to refresh, but we are not showing the vale as we are editing
         const isInlineEditing = this.cellEditor && !this.cellEditorPopupWrapper;
-        if (!isInlineEditing) {
-            // this means firstRender will be true for one pass only, as it's initialised to undefined
-            this.firstRender = this.firstRender == null;
+        if (isInlineEditing) {
+            return;
+        }
 
-            // if display template has changed, means any previous Cell Renderer is in the wrong location
-            const controlWrapperChanged = this.refreshWrapper(false);
-            this.refreshEditStyles(false);
+        // this means firstRender will be true for one pass only, as it's initialised to undefined
+        this.firstRender = this.firstRender == null;
 
-            // all of these have dependencies on the eGui, so only do them after eGui is set
-            if (compDetails) {
-                const neverRefresh = forceNewCellRendererInstance || controlWrapperChanged;
-                const cellRendererRefreshSuccessful = neverRefresh ? false : this.refreshCellRenderer(compDetails);
-                if (!cellRendererRefreshSuccessful) {
-                    this.destroyRenderer();
-                    this.createCellRendererInstance(compDetails);
-                }
-            } else {
+        // if display template has changed, means any previous Cell Renderer is in the wrong location
+        const controlWrapperChanged = this.refreshWrapper(false);
+        this.refreshEditStyles(false);
+
+        // all of these have dependencies on the eGui, so only do them after eGui is set
+        if (compDetails) {
+            const neverRefresh = forceNewCellRendererInstance || controlWrapperChanged;
+            const cellRendererRefreshSuccessful = neverRefresh ? false : this.refreshCellRenderer(compDetails);
+            if (!cellRendererRefreshSuccessful) {
                 this.destroyRenderer();
-                this.insertValueWithoutCellRenderer(valueToDisplay);
+                this.createCellRendererInstance(compDetails);
             }
+        } else {
+            this.destroyRenderer();
+            this.insertValueWithoutCellRenderer(valueToDisplay);
         }
 
         this.rowDraggingComp?.refresh();
