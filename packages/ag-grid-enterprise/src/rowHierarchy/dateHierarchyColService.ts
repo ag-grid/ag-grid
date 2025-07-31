@@ -136,9 +136,10 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, ICol
                         return innerValue;
                     },
                     keyCreator: (params) => {
-                        return params.colDef.colId + '';
+                        return params.value;
                     },
                     enableRowGroup: true,
+                    rowGroup: sourceColDef.rowGroup,
                     hide: true,
                 };
 

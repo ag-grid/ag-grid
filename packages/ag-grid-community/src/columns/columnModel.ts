@@ -93,7 +93,16 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // called from SyncService, when grid has finished initialising
     private createColsFromColDefs(source: ColumnEventType): void {
         const { beans } = this;
-        const { valueCache, colAutosize, rowGroupColsSvc, pivotColsSvc, valueColsSvc, visibleCols, eventSvc } = beans;
+        const {
+            valueCache,
+            colAutosize,
+            rowGroupColsSvc,
+            pivotColsSvc,
+            valueColsSvc,
+            visibleCols,
+            eventSvc,
+            dateHierarchyColSvc,
+        } = beans;
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = this.colDefs ? _compareColumnStatesAndDispatchEvents(beans, source) : undefined;
 
@@ -115,6 +124,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
         list.forEach((col) => (map[col.getId()] = col));
 
         this.colDefCols = { tree, treeDepth, list, map };
+
+        // Must create dateHierarchy columns before rowGroupSvc and pivotSvc run
+        // so that any groupable date columns exist beforehand.
+        this.createColumnsForService([dateHierarchyColSvc], this.colDefCols);
 
         rowGroupColsSvc?.extractCols(source, oldCols);
         pivotColsSvc?.extractCols(source, oldCols);
