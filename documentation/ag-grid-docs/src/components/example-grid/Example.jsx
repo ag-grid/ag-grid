@@ -4,12 +4,20 @@ import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import classnames from 'classnames';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 
-import { AllCommunityModule, ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
-import 'ag-grid-community/styles/ag-theme-balham.css';
-import 'ag-grid-community/styles/ag-theme-material.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
+import {
+    AllCommunityModule,
+    ClientSideRowModelModule,
+    CsvExportModule,
+    themeAlpine,
+    themeBalham,
+    themeMaterial,
+    themeQuartz,
+} from 'ag-grid-community';
+// import 'ag-grid-community/styles/ag-grid.css';
+// import 'ag-grid-community/styles/ag-theme-alpine.css';
+// import 'ag-grid-community/styles/ag-theme-balham.css';
+// import 'ag-grid-community/styles/ag-theme-material.css';
+// import 'ag-grid-community/styles/ag-theme-quartz.css';
 import {
     CellSelectionModule,
     ClipboardModule,
@@ -421,16 +429,27 @@ const chartThemeOverrides = {
     sunburst: hierarchicalSeriesThemeOverrides,
 };
 
+const themeMap = {
+    alpine: themeAlpine,
+    balham: themeBalham,
+    material: themeMaterial,
+    quartz: themeQuartz,
+};
+
 const ExampleInner = ({ darkMode }) => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
-    const [gridTheme, setGridTheme] = useState('quartz');
+    // const [gridTheme, setGridTheme] = useState(themeQuartz);
+    const [gridThemeStr, setGridThemeStr] = useState('quartz');
     useEffect(() => {
         const themeFromURL = new URLSearchParams(window.location.search).get('theme');
         if (themeFromURL) {
-            setGridTheme(themeFromURL);
+            setGridThemeStr(themeFromURL);
         }
     }, []);
+
+    const gridTheme = themeMap[gridThemeStr] || themeQuartz;
+
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
     const [isSmall, setIsSmall] = useState(false);
@@ -954,9 +973,9 @@ const ExampleInner = ({ darkMode }) => {
                 </span>
                 <section className={styles.gridWrapper}>
                     {gridTheme && (
-                        <div id="myGrid" style={{ flex: '1 1 auto', overflow: 'hidden' }} className={themeClass}>
+                        <div id="myGrid" style={{ flex: '1 1 auto', overflow: 'hidden' }}>
                             <AgGridReactMemo
-                                theme="legacy"
+                                theme={gridTheme}
                                 ref={gridRef}
                                 modules={modules}
                                 gridOptions={gridOptions}
