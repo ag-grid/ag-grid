@@ -25,9 +25,9 @@ export class RowDragService extends BeanStub implements NamedBean {
         column?: AgColumn,
         customGui?: HTMLElement,
         dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
+        rowDragEntireRow?: boolean
     ): RowDragComp {
-        return new RowDragComp(cellValueFn, rowNode, column, customGui, dragStartPixels, suppressVisibilityChange);
+        return new RowDragComp(cellValueFn, rowNode, column, customGui, dragStartPixels, rowDragEntireRow);
     }
 
     public createRowDragCompForRow(rowNode: RowNode, element: HTMLElement): RowDragComp | undefined {

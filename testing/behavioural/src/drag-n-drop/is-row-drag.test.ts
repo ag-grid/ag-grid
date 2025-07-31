@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, RowDragModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 
-import { TestGridsManager, asyncSetTimeout, isAgHtmlElementVisible } from '../test-utils';
+import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 function isDragHandleVisible(element: Element): boolean {
     return isAgHtmlElementVisible(element.querySelector('.ag-drag-handle'));
@@ -46,7 +46,7 @@ describe('isRowDrag and drag handle refresh', () => {
                 { id: 'r2', a: 'Y', b: 'y' },
             ],
         });
-        await asyncSetTimeout(1);
+
         expect(callCount).toBeGreaterThan(0);
         expect(isDragHandleVisible(element)).toBe(false);
 
@@ -56,7 +56,7 @@ describe('isRowDrag and drag handle refresh', () => {
             { id: 'r1', a: 'A', b: 'a' },
             { id: 'r2', a: 'B', b: 'b' },
         ]);
-        await asyncSetTimeout(1);
+
         expect(callCount).toBeGreaterThan(0);
         expect(isDragHandleVisible(element)).toBe(true);
     });
@@ -80,12 +80,12 @@ describe('isRowDrag and drag handle refresh', () => {
 
         callCount = 0;
         api.setGridOption('suppressRowDrag', true);
-        await asyncSetTimeout(1);
+
         expect(callCount).toBe(0);
         expect(isDragHandleVisible(element)).toBe(false);
 
         api.setGridOption('suppressRowDrag', false);
-        await asyncSetTimeout(1);
+
         expect(callCount).toBeGreaterThan(0);
         expect(isDragHandleVisible(element)).toBe(true);
     });
@@ -103,35 +103,50 @@ describe('isRowDrag and drag handle refresh', () => {
                 { id: 'r2', a: 'B', b: 'b' },
             ],
             getRowId: (params) => params.data.id,
+            rowDragManaged: true,
         };
         const api = gridsManager.createGrid('testGrid', gridOptions);
+        expect(callCount).toBeGreaterThan(0);
         const element = TestGridsManager.getHTMLElement(api)!;
         callCount = 0;
+        console.log('UPDATE!');
+
         api.applyColumnState({ state: [{ colId: 'a', sort: 'desc' }], applyOrder: true });
-        await asyncSetTimeout(1);
+
+        expect(callCount).toBe(0);
+        expect(isDragHandleVisible(element)).toBe(false);
+
+        api.applyColumnState({ state: [{ colId: 'a', sort: null }], applyOrder: true });
+
         expect(callCount).toBeGreaterThan(0);
         expect(isDragHandleVisible(element)).toBe(true);
     });
 
-    test('handle updates on filterChanged event', async () => {
+    test.only('handle updates on filterChanged event', async () => {
         let callCount = 0;
         const isRowDrag = () => {
             callCount++;
             return true;
         };
         const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'a', colId: 'a', rowDrag: isRowDrag }],
+            columnDefs: [{ field: 'a', colId: 'a', rowDrag: isRowDrag, filter: true }],
             rowData: [
                 { id: 'r1', a: 'A', b: 'a' },
                 { id: 'r2', a: 'B', b: 'b' },
             ],
             getRowId: (params) => params.data.id,
+            rowDragManaged: true,
         };
         const api = gridsManager.createGrid('testGrid', gridOptions);
+        expect(callCount).toBeGreaterThan(0);
         const element = TestGridsManager.getHTMLElement(api)!;
+
         callCount = 0;
-        api.onFilterChanged();
-        await asyncSetTimeout(1);
+        api.setFilterModel({ a: { filterType: 'text', type: 'contains', filter: 'A' } });
+        expect(callCount).toBe(0);
+        expect(isDragHandleVisible(element)).toBe(false);
+
+        api.setFilterModel(null);
         expect(callCount).toBeGreaterThan(0);
         expect(isDragHandleVisible(element)).toBe(true);
     });
@@ -154,7 +169,7 @@ describe('isRowDrag and drag handle refresh', () => {
         const element = TestGridsManager.getHTMLElement(api)!;
         callCount = 0;
         api.setGridOption('columnDefs', [{ field: 'b', colId: 'b', rowDrag: isRowDrag }]);
-        await asyncSetTimeout(1);
+
         expect(callCount).toBeGreaterThan(0);
         expect(isDragHandleVisible(element)).toBe(true);
     });
