@@ -159,6 +159,14 @@ jobs:
                         await transitionJiraIssue(issue, nextTransition.id);
                         ghCommentBody ||= `Transitioned JIRA ticket(s): `;
                         ghCommentBody += `- [${issue_key}](https://ag-grid.atlassian.net/browse/${issue_key}) to ${to}\n`
+                    } else {
+                        content.push(paragraph([
+                            txt(`[Triggered from `),
+                            link(`PR #${pull_number}`, `https://github.com/${owner}/${repo}/pull/${pull_number}`),
+                            txt(' by '),
+                            link('the AG Grid CI workflow', runUrl),
+                            txt('.]')
+                        ]));
                     }
                     const isWatchingAlready = issue.fields.watches?.isWatching || false;
                     await addJiraComment(issue_key, { content, "type": "doc", "version": 1 });
