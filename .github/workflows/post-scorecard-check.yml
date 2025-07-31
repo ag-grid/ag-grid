@@ -58,12 +58,12 @@ jobs:
 
             await exec();
 
-      - name: Test
-        run: |
-          if [ -f "${{ env.REPORT_FILE }}" ]; then
-            echo "Report file exists."
-          else
-            echo "Report file does not exist."
-            exit 1
-          fi
-          cat ${{ env.REPORT_FILE }}
+      - name: Slack Notification
+        uses: ./external/ag-shared/github/actions/slack-integration
+        with:
+          AG_LIBRARY: ${{ env.AG_LIBRARY }}
+          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+          SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
+          IS_SUCCESS: ${{ steps.check_results.result != '0' }}
+
