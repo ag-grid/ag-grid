@@ -120,6 +120,7 @@ class AgSideBar extends Component implements ISideBar {
 
         if (!nextEl) {
             nextEl = sideBarGui.querySelector('.ag-selected button') as HTMLElement;
+            nextEl = nextEl.closest('.ag-hidden') ? null : nextEl;
         }
 
         if (nextEl && nextEl !== e.target) {
