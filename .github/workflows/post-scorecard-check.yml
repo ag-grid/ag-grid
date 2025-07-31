@@ -38,6 +38,4 @@ jobs:
           CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
-#          PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
-#          CURRENT_COMMIT_SHA: ${{ github.sha }}
-          IS_SUCCESS: ${{ check_results.result != '0' }}
+          IS_SUCCESS: ${{ steps.check_results.result != '0' }}
