@@ -75,7 +75,7 @@ export function parseSideBarDef(
         defaultToolPanel: toParse.defaultToolPanel,
         hiddenByDefault: toParse.hiddenByDefault,
         position: toParse.position,
-        hideSideButtons: toParse.hideSideButtons,
+        hideButtons: toParse.hideButtons,
     };
 }
 

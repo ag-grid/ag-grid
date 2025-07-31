@@ -197,7 +197,7 @@ class AgSideBar extends Component implements ISideBar {
         this.sideBar = sideBarDef;
 
         if (sideBarDef) {
-            this.sideBarButtons.setDisplayed(!sideBarDef.hideSideButtons);
+            this.sideBarButtons.setDisplayed(!sideBarDef.hideButtons);
         }
         if (sideBarDef?.toolPanels) {
             const toolPanelDefs = sideBarDef.toolPanels as ToolPanelDef[];
