@@ -37,9 +37,9 @@ jobs:
 
       - name: Test
         run: |
-          echo ${{ steps.check_results.result }}
-          echo ${{ steps.check_results.result != '0' }}
-          echo ${{ steps.check_results.result != 0 }}
+          echo ${{ steps.check_results.outcome }}
+          echo ${{ steps.check_results.outcome != '0' }}
+          echo ${{ steps.check_results.outcome != 0 }}
 
 #      - name: Slack Notification
 #        uses: ./external/ag-shared/github/actions/slack-integration
