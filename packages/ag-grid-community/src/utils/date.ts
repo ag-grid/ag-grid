@@ -179,6 +179,10 @@ export function _parseDateTimeFromString(value?: string | null, bailIfInvalidTim
         return null;
     }
 
+    if (!timeStr && bailIfInvalidTime) {
+        return null;
+    }
+
     if (!timeStr || timeStr === '00:00:00') {
         return date;
     }
