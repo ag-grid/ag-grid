@@ -10,7 +10,6 @@ on:
       - completed
 
 env:
-  CTRF_FILE: ./ctrf-report.json
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
   THRESHOLD: 7.0
