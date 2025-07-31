@@ -162,7 +162,7 @@ jobs:
                             txt('.]')
                         ]));
                         await transitionJiraIssue(issue, nextTransition.id);
-                        ghCommentBody ||= `Transitioned JIRA ticket(s): `;
+                        ghCommentBody ||= `Transitioned JIRA ticket(s):\n`;
                         ghCommentBody += `- [${issue_key}](https://ag-grid.atlassian.net/browse/${issue_key}) to ${to}\n`
                     } else {
                         content.push(paragraph([
