@@ -36,6 +36,8 @@ jobs:
         with:
           result-encoding: string
           script: |
+            const fs = require('fs');
+
             async function exec() {
                 const {
                     belowThreshold
