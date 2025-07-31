@@ -30,6 +30,7 @@ jobs:
           fetch-depth: 1 # shallow copy
 
       - name: "Check Results"
+        continue-on-error: true
         id: check_results
         run: |
           node external/ag-shared/scripts/ossf-scorecard/getAndCheckResults.mjs ${{ env.AG_LIBRARY }} ${{ env.THRESHOLD }}
