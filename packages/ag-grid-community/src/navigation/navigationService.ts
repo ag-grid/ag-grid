@@ -216,7 +216,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
         const rowPixelDiff = up
             ? // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-            currentRowNode?.rowHeight! - pixelsInOnePage - pagingPixelOffset
+              currentRowNode?.rowHeight! - pixelsInOnePage - pagingPixelOffset
             : pixelsInOnePage - pagingPixelOffset;
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
@@ -353,7 +353,6 @@ export class NavigationService extends BeanStub implements NamedBean {
         const normalisedPosition = this.getNormalisedPosition(cellToFocus);
         const { rowIndex, rowPinned, column } = normalisedPosition ?? cellToFocus;
         const col = column as AgColumn;
-
 
         this.navigateTo({
             scrollIndex: rowIndex,
