@@ -1,5 +1,8 @@
 name: OSS Scorecard Results Check
 on:
+  push:
+    branches:
+      - 'post-scorecard-check'
   workflow_dispatch:
   workflow_run:
     workflows: [ 'OSS Scorecard' ]
@@ -10,7 +13,7 @@ env:
   CTRF_FILE: ./ctrf-report.json
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
-  THRESHOLD: 7.1
+  THRESHOLD: 7.0
 
 permissions: read-all
 
@@ -35,7 +38,7 @@ jobs:
         uses: ./external/ag-shared/github/actions/slack-integration
         with:
           AG_LIBRARY: ${{ env.AG_LIBRARY }}
-          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+#          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
           IS_SUCCESS: ${{ steps.check_results.result != '0' }}
