@@ -5,6 +5,7 @@ import { _getRowNode } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { EditingCellPosition, ICellEditorValidationError } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
+import type { GetEditingRowValuesParams } from '../interfaces/iEditModelService';
 import { _warn } from '../validation/logging';
 import { _getCellCtrl } from './utils/controllers';
 import { UNEDITED, _destroyEditors, _sourceAndPendingDiffer, _syncFromEditors } from './utils/editors';
@@ -15,6 +16,13 @@ export function undoCellEditing(beans: BeanCollection): void {
 
 export function redoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.redo('api');
+}
+
+export function getEditRowValues(
+    beans: BeanCollection,
+    params: GetEditingRowValuesParams
+): Record<string, any> | undefined {
+    return beans.editModelSvc?.getEditRowDataValue(params.rowNode, { checkSiblings: true });
 }
 
 export function getEditingCells(beans: BeanCollection): EditingCellPosition[] {

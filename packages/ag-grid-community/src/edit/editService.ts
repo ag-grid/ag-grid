@@ -14,7 +14,7 @@ import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { Column } from '../interfaces/iColumn';
-import type { EditMap, EditRow, EditValue, GetEditsParams, IEditModelService } from '../interfaces/iEditModelService';
+import type { EditMap, EditRow, EditValue, IEditModelService } from '../interfaces/iEditModelService';
 import type {
     EditNavOnValidationResult,
     EditPosition,
@@ -701,10 +701,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return newValue === UNEDITED || !edit
             ? this.valueSvc.getValue(column as AgColumn, rowNode, true, 'api')
             : newValue;
-    }
-
-    getRowDataValue(rowNode: IRowNode, params?: GetEditsParams | undefined) {
-        return this.model.getEditRowDataValue(rowNode, params);
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
