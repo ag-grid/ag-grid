@@ -27,8 +27,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          sparse-checkout:
+          sparse-checkout: |
             'external/ag-shared/scripts/ossf-scorecard/getAndCheckResults.mjs'
+            'external/ag-shared/github/actions/slack-integration'
 
       - name: "Check Results"
         uses: actions/github-script@v7
