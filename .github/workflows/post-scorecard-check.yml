@@ -14,6 +14,7 @@ env:
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
   THRESHOLD: 7.0
+  REPORT_FILE: ./crs-report.json
 
 permissions: read-all
 
@@ -45,7 +46,23 @@ jobs:
                     process.env.THRESHOLD
                 );
             
-                console.log(result);
+            
+                const passed = result;
+                const failed = !result;
+                const skipped = 0;
+
+                const report = { results: { summary: { failed, passed, skipped } } };
+                fs.writeFileSync('${{ env.REPORT_FILE }}'), JSON.stringify(report));
             }
 
             await exec();
+
+      - name: Test
+        run: |
+          if [ -f "${{ env.REPORT_FILE }}" ]; then
+            echo "Report file exists."
+          else
+            echo "Report file does not exist."
+            exit 1
+          fi
+          cat ${{ env.REPORT_FILE }}

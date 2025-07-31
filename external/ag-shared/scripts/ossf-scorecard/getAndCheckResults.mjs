@@ -9,6 +9,5 @@ export async function belowThreshold(project, threshold) {
     const response = await fetch(`https://api.securityscorecards.dev/projects/github.com/ag-grid/ag-${project}`);
     const { score } = await response.json();
 
-    return (score < threshold);
+    return score < threshold;
 }
-
