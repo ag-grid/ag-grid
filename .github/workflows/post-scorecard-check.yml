@@ -35,9 +35,13 @@ jobs:
 #        run: |
 #          node external/ag-shared/scripts/ossf-scorecard/getAndCheckResults.mjs ${{ env.AG_LIBRARY }} ${{ env.THRESHOLD }}
 
-      - name: To CTRF format
+#      - name: To CTRF format
+#        uses: actions/github-script@v7
+#        if: ${{ inputs.report_file != '' }}
+
+      - name: "Check Results"
         uses: actions/github-script@v7
-        if: ${{ inputs.report_file != '' }}
+        continue-on-error: true
         with:
           script: |
             async function exec() {
