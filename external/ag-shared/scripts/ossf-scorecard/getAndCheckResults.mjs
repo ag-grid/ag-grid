@@ -23,4 +23,5 @@ if (!projects.includes(project)) {
         console.error(`Score for project ag-${project} is below threshold: ${score} < ${threshold}`);
         process.exit(1);
     }
+    process.exit(0);
 })();

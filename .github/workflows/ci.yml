@@ -5,13 +5,11 @@ on:
     branches:
       - 'latest'
       - 'b[0-9][0-9]?.[0-9][0-9]?.[0-9][0-9]?'
-      - 'seanlandsman-patch-9'
   pull_request:
     branches:
       - 'latest'
       - 'next'
       - 'b[0-9][0-9]?.[0-9][0-9]?.[0-9][0-9]?'
-      - 'seanlandsman-patch-9'
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
     inputs:
@@ -452,7 +450,7 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ build_lint, test, e2e, docs, bundle_size ]
+    needs: [ build_lint, test, e2e, docs, bundle_size, sonarqube ]
 #    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test ]
     if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
@@ -612,3 +610,29 @@ jobs:
         run: |
             echo "Workflow failed, failing the build."
             exit 1
+
+  sonarqube:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Disabling shallow clones is recommended for improving the relevancy of reporting
+          fetch-depth: 0
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        with:
+          projectBaseDir: app/src
+          args: >
+            args: >
+              -Dsonar.qualitygate.wait=true
+              -Dsonar.organization=my-organization # For SonarQube Cloud only
+              -Dsonar.projectKey=my-projectkey
+              -Dsonar.python.coverage.reportPaths=coverage.xml
+              -Dsonar.sources=lib/
+              -Dsonar.tests=tests/
+              -Dsonar.test.exclusions=tests/**
+              -Dsonar.verbose=true
+      env:
+          SONAR_TOKEN: ${{ secrets.SONAR_LOGIN }}
+          SONAR_HOST_URL: https://sonarcloud.io
