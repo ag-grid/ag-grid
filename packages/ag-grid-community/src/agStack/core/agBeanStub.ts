@@ -83,8 +83,6 @@ export abstract class AgBeanStub<
         this.dispatchLocalEvent({ type: 'destroyed' } as { type: AgBeanStubEvent } as any);
     }
 
-    // The typing of AgEventListener<any, any, any> is not ideal, but it's the best we can do at the moment to enable
-    // eventSvc to have the best typing at the expense of BeanStub local events
     /** Add a local event listener against this BeanStub */
     public addEventListener<T extends TLocalEventType>(
         eventType: T,

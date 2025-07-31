@@ -28,6 +28,7 @@ export interface AgSingletonBean<TBeanCollection> extends AgBaseBean<TBeanCollec
     beanName?: keyof TBeanCollection & string;
 }
 
+/** Includes bean creation and destruction logic */
 export interface AgCoreBean<TBeanCollection> extends AgBaseBean<TBeanCollection> {
     isAlive(): boolean;
 
@@ -57,6 +58,7 @@ export interface AgCoreBean<TBeanCollection> extends AgBaseBean<TBeanCollection>
     ): undefined;
 }
 
+/** Includes bean event and property handling logic */
 export interface AgBean<
     TBeanCollection,
     TProperties extends BaseProperties,
