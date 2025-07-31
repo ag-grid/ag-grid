@@ -1,5 +1,8 @@
 [
     {
+        "version": "34.1.1"
+    },
+    {
         "version": "34.1.0",
         "date": "29th July 2025",
         "landingPageHighlight": "Tree Data with Master Detail, Test IDs, Compact Column Headers, Grid Context in Integrated Charts, Accessibility Improvements",
