@@ -30,6 +30,7 @@ jobs:
           fetch-depth: 1 # shallow copy
 
       - name: "Check Results"
+        id: check_results
         uses: actions/github-script@v7
         continue-on-error: true
         with:
@@ -53,6 +54,8 @@ jobs:
 
                 const report = { results: { summary: { failed, passed, skipped } } };
                 fs.writeFileSync('${{ env.REPORT_FILE }}', JSON.stringify(report));
+                
+                process.exit(result);
             }
 
             await exec();
@@ -61,7 +64,7 @@ jobs:
         uses: ./external/ag-shared/github/actions/slack-integration
         with:
           AG_LIBRARY: ${{ env.AG_LIBRARY }}
-          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+          CTRF_REPORT_FILE: ${{ env.REPORT_FILE }}
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
           IS_SUCCESS: ${{ steps.check_results.result != '0' }}
