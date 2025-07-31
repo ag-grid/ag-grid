@@ -1,5 +1,6 @@
 import type { Theme } from '../theming/Theme';
 
+/** Properties required by AG Stack */
 export interface BaseProperties {
     tabIndex?: number;
     suppressScrollWhenPopupsAreOpen?: boolean;

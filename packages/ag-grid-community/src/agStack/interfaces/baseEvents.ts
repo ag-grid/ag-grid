@@ -29,7 +29,7 @@ interface AgTooltipShowEvent extends AgTooltipEvent<'tooltipShow'> {
 
 interface AgTooltipHideEvent extends AgTooltipEvent<'tooltipHide'> {}
 
-/** Events required by the stack */
+/** Events required by AG Stack */
 export interface BaseEvents {
     checkboxChanged: AgCheckboxChangedEvent;
     bodyScroll: AgBodyScrollEvent;
