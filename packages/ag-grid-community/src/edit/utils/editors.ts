@@ -374,10 +374,6 @@ export function _destroyEditor(
 
     const edit = editModelSvc?.getEdit(position, true);
 
-    if (edit?.state !== 'editing') {
-        return;
-    }
-
     if (!cellCtrl) {
         if (edit) {
             editModelSvc?.setEdit(position, { state: 'changed' });
