@@ -13,11 +13,11 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
     inputs:
-      run_docs:
+      skip_docs:
         description: 'Skip docs build & link checker'
         type: 'choice'
         required: true
-        default: 'true'
+        default: 'false'
         options:
           - 'true'
           - 'false'
@@ -325,7 +325,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
     needs: build_lint
-    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_docs }}
+    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.skip_docs == 'false' }}
     strategy:
       fail-fast: false
     env:
@@ -568,7 +568,7 @@ jobs:
           verify: false
 
       - name: SlackBot
-        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
+#        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
         env:
           CI_GRID_GATE_CHANNEL: ${{ env.SLACK_DEBUG_CHANNEL }}
           CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
