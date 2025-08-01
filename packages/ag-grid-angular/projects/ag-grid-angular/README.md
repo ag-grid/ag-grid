@@ -206,8 +206,6 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     <p>To minimize bundle size, only register the modules you want to use. See the <a href="https://www.ag-grid.com/angular-data-grid/modules/">Modules</a> page for more information.</p>
 </blockquote>
 
----
-
 **1.1 Register Modules (Lazy Loading)**
 
 To take advantage of Angular’s lazy provider loading and reduce bundle size, use the `provideAgGrid` helper as shown below.
