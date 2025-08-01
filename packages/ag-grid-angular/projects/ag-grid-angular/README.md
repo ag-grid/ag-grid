@@ -219,21 +219,24 @@ import { ApplicationConfig, provideAppInitializer, inject } from '@angular/core'
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAgGrid({
-      modules: () => import('ag-grid-community').then(m => [m.AllCommunityModule]),
-      // or only specific modules
-      // modules: () => import('ag-grid-community').then(m => [m.ClientSideRowModelModule, m.CsvExportModule]),
+      modules: async () => {
+        const { AllCommunityModule } = await import('ag-grid-community');
+        // or only specific modules
+        // const { ClientSideRowModelModule, CsvExportModule} = await import('ag-grid-community');
+        return [AllCommunityModule]
+      },
       options: () => Promise.resolve({ domLayout: 'autoHeight' }),
       licenseKey: '-----' // Add your license key for enterprise
     }),
     // angular 18+ uses `provideAppInitializer` to load the grid service
-    provideAppInitializer(() => {
+    provideAppInitializer(async () => {
       const agGridService = inject(AgGridService);
-      agGridService.load();
+      await agGridService.load();
     }),
     // Angular < 18 (Traditional APP_INITIALIZER)
     {
       provide: APP_INITIALIZER,
-      useFactory: (agGridService: AgGridService) => () => agGridService.load(),
+      useFactory: (agGridService: AgGridService) => async () => await agGridService.load(),
       deps: [AgGridService],
       multi: true
     }
