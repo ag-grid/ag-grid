@@ -620,9 +620,14 @@ jobs:
             exit 1
 
   sonar_community:
-    name: Build & Lint
+    name: SonarQube Community
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          # Disabling shallow clones is recommended for improving the relevancy of reporting
+          fetch-depth: 0
+
       - name: SonarQube Analysis Community
         uses: SonarSource/sonarqube-scan-action@v5.2.0
         env:
@@ -641,9 +646,14 @@ jobs:
             -Dsonar.coverage.exclusions=**/*
 
   sonar_enterprise:
-    name: Build & Lint
+    name: SonarQube Enterprise
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          # Disabling shallow clones is recommended for improving the relevancy of reporting
+          fetch-depth: 0
+
         - name: SonarQube Analysis Enterprise
           uses: SonarSource/sonarqube-scan-action@v5.2.0
           env:
