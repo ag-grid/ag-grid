@@ -625,8 +625,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # Disabling shallow clones is recommended for improving the relevancy of reporting
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: SonarQube Analysis Community
         uses: SonarSource/sonarqube-scan-action@v5.2.0
@@ -651,8 +650,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # Disabling shallow clones is recommended for improving the relevancy of reporting
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: SonarQube Analysis Enterprise
         uses: SonarSource/sonarqube-scan-action@v5.2.0
