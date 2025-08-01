@@ -31,22 +31,12 @@ jobs:
         run: |
           node external/ag-shared/scripts/ossf-scorecard/getAndCheckResults.mjs ${{ env.AG_LIBRARY }} ${{ env.THRESHOLD }}
 
-      - name: Test
-        if: success()
-        run: |
-          echo "success" 
-
-      - name: Test2
-        if: failure()
-        run: |
-          echo "not success" 
-
-#      - name: Slack Notification
-#        if: github.event.repository.default_branch == github.ref_name || github.event_name == 'pull_request'
-#        uses: ./external/ag-shared/github/actions/slack-integration
-#        with:
-#          AG_LIBRARY: ${{ env.AG_LIBRARY }}
-#          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
-#          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-#          SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
-#          IS_SUCCESS: ${{ steps.check_results.result == '0' }}
+      - name: Slack Notification
+        if: failure() && (github.event.repository.default_branch == github.ref_name || github.event_name == 'pull_request')
+        uses: ./external/ag-shared/github/actions/slack-integration
+        with:
+          AG_LIBRARY: ${{ env.AG_LIBRARY }}
+          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+          SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
+          IS_SUCCESS: ${{ steps.check_results.result == '0' }}
