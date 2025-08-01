@@ -5,13 +5,11 @@ on:
     branches:
       - 'latest'
       - 'b[0-9][0-9]?.[0-9][0-9]?.[0-9][0-9]?'
-      - 'seanlandsman-patch-9'
   pull_request:
     branches:
       - 'latest'
       - 'next'
       - 'b[0-9][0-9]?.[0-9][0-9]?.[0-9][0-9]?'
-      - 'seanlandsman-patch-9'
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
     inputs:
@@ -612,3 +610,4 @@ jobs:
         run: |
             echo "Workflow failed, failing the build."
             exit 1
+
