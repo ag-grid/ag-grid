@@ -24,7 +24,7 @@ export class RowDragComp extends Component {
         private readonly column?: AgColumn,
         private readonly customGui?: HTMLElement,
         private readonly dragStartPixels?: number,
-        private readonly rowDragEntireRow?: boolean
+        private readonly alwaysVisible: boolean = false
     ) {
         super();
     }
@@ -43,7 +43,7 @@ export class RowDragComp extends Component {
             this.addDragSource();
         }
 
-        if (!this.rowDragEntireRow) {
+        if (!this.alwaysVisible) {
             this.initCellDrag();
         }
     }
@@ -82,6 +82,10 @@ export class RowDragComp extends Component {
     }
 
     public refresh(): void {
+        if (this.alwaysVisible) {
+            return; // Always visible row draggers do not refresh visibility
+        }
+
         const displayedOptions = { skipAriaHidden: true };
         if (this.isNeverDisplayed()) {
             this.setDisplayed(false, displayedOptions);

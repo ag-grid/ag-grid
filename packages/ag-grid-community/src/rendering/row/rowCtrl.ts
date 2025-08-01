@@ -1288,7 +1288,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         rowDraggerElement?: HTMLElement,
         dragStartPixels?: number,
         value: string = '',
-        rowDragEntireRow?: boolean
+        alwaysVisible?: boolean
     ): void {
         const { rowDragSvc, context } = this.beans;
         if (!rowDragSvc || !this.isFullWidth()) {
@@ -1301,7 +1301,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             undefined,
             rowDraggerElement,
             dragStartPixels,
-            rowDragEntireRow
+            alwaysVisible
         );
         this.createBean(rowDragComp, context);
 

@@ -964,18 +964,14 @@ export class CellCtrl extends BeanStub {
         return dndSourceComp;
     }
 
-    public registerRowDragger(
-        customElement: HTMLElement,
-        dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
-    ): void {
+    public registerRowDragger(customElement: HTMLElement, dragStartPixels?: number, alwaysVisible?: boolean): void {
         // if previously existed, then we are only updating
         if (this.customRowDragComp) {
             this.customRowDragComp.setDragElement(customElement, dragStartPixels);
             return;
         }
 
-        const newComp = this.createRowDragComp(customElement, dragStartPixels, suppressVisibilityChange);
+        const newComp = this.createRowDragComp(customElement, dragStartPixels, alwaysVisible);
 
         if (newComp) {
             this.customRowDragComp = newComp;
@@ -989,7 +985,7 @@ export class CellCtrl extends BeanStub {
     public createRowDragComp(
         customElement?: HTMLElement,
         dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
+        alwaysVisible?: boolean
     ): RowDragComp | undefined {
         const rowDragComp = this.beans.rowDragSvc?.createRowDragCompForCell(
             this.rowNode,
@@ -997,7 +993,7 @@ export class CellCtrl extends BeanStub {
             () => this.value,
             customElement,
             dragStartPixels,
-            suppressVisibilityChange
+            alwaysVisible
         );
         if (!rowDragComp) {
             return undefined;
