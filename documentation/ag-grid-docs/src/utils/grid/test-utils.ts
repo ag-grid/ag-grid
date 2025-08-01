@@ -1,6 +1,8 @@
 import type { Page } from '@playwright/test';
 import { test } from '@playwright/test';
 
+import { wrapAgTestIdFor } from 'ag-grid-community';
+
 type ExampleUrl = `${string}/${string}`;
 
 export const ALL_FRAMEWORKS = [
@@ -41,13 +43,22 @@ export async function loadPage(
 export function testAllFrameworks(
     testName: string,
     exampleUrl: ExampleUrl,
-    testBody: ({ page, framework }: { page: Page; framework: Framework }) => Promise<void>
+    testBody: ({
+        page,
+        framework,
+        agIdFor,
+    }: {
+        page: Page;
+        framework: Framework;
+        agIdFor: ReturnType<typeof wrapAgTestIdFor<any>>;
+    }) => Promise<void>
 ): void {
     test.describe(`${exampleUrl} ${testName}`, () => {
         for (const framework of ALL_FRAMEWORKS) {
             test(`${framework}`, async ({ page }) => {
+                const agIdFor = wrapAgTestIdFor((testId: string) => page.getByTestId(testId));
                 await loadPage(page, exampleUrl, framework);
-                await testBody({ page, framework });
+                await testBody({ page, framework, agIdFor });
             });
         }
     });
