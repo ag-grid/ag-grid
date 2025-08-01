@@ -38,7 +38,7 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
     protected beans: TBeanCollection = {} as TBeanCollection;
     private createdBeans: GenericBean<TBeanName, TBeanCollection>[] = [];
     private beanDestroyComparator?: BeanComparator<TBeanName, TBeanCollection>;
-    private readonly contextId: number = contextID++;
+    public readonly contextId: number = contextID++;
     private destroyed = false;
 
     constructor(params: GenericContextParams<TBeanName, TBeanCollection>) {

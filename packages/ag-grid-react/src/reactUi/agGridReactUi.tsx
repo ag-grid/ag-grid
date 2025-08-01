@@ -246,7 +246,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     return (
         <div style={style} className={props.className} ref={setRef}>
             <RenderModeContext.Provider value={renderMode}>
-                {context && !context.isDestroyed() ? <GridComp context={context} /> : null}
+                {context && !context.isDestroyed() ? <GridComp key={context.contextId} context={context} /> : null}
                 {portalManager.current?.getPortals() ?? null}
             </RenderModeContext.Provider>
         </div>
