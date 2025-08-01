@@ -206,6 +206,41 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     <p>To minimize bundle size, only register the modules you want to use. See the <a href="https://www.ag-grid.com/angular-data-grid/modules/">Modules</a> page for more information.</p>
 </blockquote>
 
+---
+
+**1.1 Register Modules (Lazy Loading)**
+
+To take advantage of Angular’s lazy provider loading and reduce bundle size, use the `provideAgGrid` helper as shown below.
+
+```ts
+import { provideAgGrid, AgGridService } from 'ag-grid-angular';
+import { ApplicationConfig, provideAppInitializer, inject } from '@angular/core';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideAgGrid({
+      modules: () => import('ag-grid-community').then(m => [m.AllCommunityModule]),
+      // or only specific modules
+      // modules: () => import('ag-grid-community').then(m => [m.ClientSideRowModelModule, m.CsvExportModule]),
+      options: () => Promise.resolve({ domLayout: 'autoHeight' }),
+      licenseKey: '-----' // Add your license key for enterprise
+    }),
+    // angular 18+ uses `provideAppInitializer` to load the grid service
+    provideAppInitializer(() => {
+      const agGridService = inject(AgGridService);
+      agGridService.load();
+    }),
+    // Angular < 18 (Traditional APP_INITIALIZER)
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (agGridService: AgGridService) => () => agGridService.load(),
+      deps: [AgGridService],
+      multi: true
+    }
+  ]
+};
+```
+
 **2. Import the Angular Data Grid**
 
 ```js
