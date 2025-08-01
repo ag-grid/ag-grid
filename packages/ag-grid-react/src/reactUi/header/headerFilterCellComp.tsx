@@ -56,7 +56,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
         compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef) {
+        if (!eRef || !ctrl.isAlive()) {
             return;
         }
 
@@ -143,7 +143,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
                             </CustomContext.Provider>
                         )
                     ) : (
-                        <UserCompClass {...userCompDetails!.params} ref={userCompStateless ? () => {} : userCompRef} />
+                        <UserCompClass {...userCompDetails!.params} ref={userCompStateless ? () => { } : userCompRef} />
                     )
                 ) : null}
             </div>
