@@ -11,9 +11,17 @@ import type {
 import { BaseExpansionService } from '../../rowHierarchy/baseExpansionService';
 import type { ServerSideRowModel } from '../serverSideRowModel';
 
+interface ExpansionState {
+    /** Base expansion state for all nodes, whether they have been loaded or not */
+    expandAll: boolean;
+    /** RowNode IDs of those nodes whose expansion state differs from the base state */
+    toggledNodes: Set<string>;
+}
+
 export class ServerSideExpansionService extends BaseExpansionService implements NamedBean, IExpansionService {
     beanName = 'expansionSvc' as const;
 
+    private expandedState: ExpansionState = { expandAll: false, toggledNodes: new Set() };
     private serverSideRowModel: ServerSideRowModel;
 
     public wireBeans(beans: BeanCollection) {
