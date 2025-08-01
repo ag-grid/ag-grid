@@ -3,6 +3,7 @@ import type {
     FilterDisplayParams,
     FloatingFilterDisplay,
     FloatingFilterDisplayParams,
+    GridOptions,
     ICellEditor,
     ICellEditorParams,
     ICellEditorRendererParams,
@@ -32,6 +33,7 @@ import type {
     IToolPanel,
     IToolPanelParams,
     ITooltipParams,
+    Module,
 } from 'ag-grid-community';
 
 export interface AgFrameworkComponent<T> {
@@ -94,3 +96,9 @@ export interface IToolPanelAngularComp extends AgFrameworkComponent<IToolPanelPa
 export interface ITooltipAngularComp extends AgFrameworkComponent<ITooltipParams> {}
 
 export interface IMenuItemAngularComp extends AgFrameworkComponent<IMenuItemParams>, IMenuItem {}
+
+export interface AgGridProviderConfig {
+    modules?: () => Promise<Module>[],
+    options?: () => Promise<GridOptions>;
+    licenseKey?: string;
+}
