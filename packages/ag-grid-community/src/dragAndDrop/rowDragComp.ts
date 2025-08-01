@@ -88,14 +88,19 @@ export class RowDragComp extends Component {
             return;
         }
 
+        const column = this.column;
+
         // if shown sometimes, them some rows can have drag handle while other don't,
         // so we use setVisible to keep the handles horizontally aligned (as _setVisible
         // keeps the empty space, whereas setDisplayed looses the space)
-        const shownSometimes = typeof this.column?.getColDef().rowDrag === 'function';
+        let shownSometimes = typeof column?.getColDef().rowDrag === 'function';
+        let visible = !column || this.isCustomGui() || column.isRowDrag(this.rowNode);
+        if (visible && this.rowNode.footer && this.gos.get('rowDragManaged')) {
+            visible = false; // We hide footer rows in row drag managed mode
+            shownSometimes = true;
+        }
 
-        const visible = this.isVisible();
-        const displayed = shownSometimes || visible;
-        this.setDisplayed(displayed, displayedOptions);
+        this.setDisplayed(shownSometimes || visible, displayedOptions);
         this.setVisible(visible, displayedOptions);
     }
 
@@ -114,17 +119,6 @@ export class RowDragComp extends Component {
         }
 
         return false;
-    }
-
-    private isVisible(): boolean {
-        const { column, rowNode } = this;
-        if (rowNode.footer && this.gos.get('rowDragManaged')) {
-            return false; // Footer nodes in row drag managed mode are not visible
-        }
-        if (column) {
-            return this.isCustomGui() || column.isRowDrag(rowNode);
-        }
-        return true;
     }
 
     private getSelectedNodes(): RowNode[] {
