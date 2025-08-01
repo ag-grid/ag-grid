@@ -23,7 +23,6 @@ env:
     OUTPUT_DIR: test-results/
     REPORT_FILE: report.json
     SNYK_FILE: snyk.json
-    CTRF_REPORT_FILE: snyk.ctrf.json
     PREV_COMMIT_SHA_FILE: ./commit-sha.txt
     REPO_URL: ${{ github.server_url }}/${{ github.repository }}
     SLACK_CHANNEL: '#ci-grid-gate'
@@ -50,21 +49,11 @@ jobs:
                   report_file: ${{ env.REPORT_FILE }}
                   snyk_file: ${{ env.SNYK_FILE }}
 
-            - name: Convert snyk report to ctrf report
-              id: convert-snyk-ctrf
-              if: always()
-              shell: bash
-              env:
-                  SNYK_JSON_FILE: '${{ env.OUTPUT_DIR }}${{ env.SNYK_FILE }}'
-                  CTRF_OUTPUT_FILE: '${{ env.OUTPUT_DIR }}${{ env.CTRF_REPORT_FILE }}'
-              run: |
-                  node ./external/ag-shared/scripts/snyk/snyk-to-ctrf-command.mjs
-
-            - name: Publish CSP Report
+            - name: Publish CTRF Report
               uses: ctrf-io/github-test-reporter@v1
               if: always()
               with:
-                report-path: '${{ env.OUTPUT_DIR }}${{ env.CTRF_REPORT_FILE }}'
+                report-path: '${{ env.OUTPUT_DIR }}${{ env.REPORT_FILE }}'
 
             - name: Persist scan results
               if: always()
@@ -73,7 +62,8 @@ jobs:
                   name: code-dependency-scan
                   path: ${{ env.OUTPUT_DIR }}
 
-            - name: Fail job if workflow failed
+            - name: Fail job if scan failed
+              shell: bash
               if: success() && steps.snyk-scan-workspaces.outcome == 'failure'
               run: |
                   echo "Workflow failed, failing the build."
