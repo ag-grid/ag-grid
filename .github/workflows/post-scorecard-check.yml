@@ -32,12 +32,12 @@ jobs:
           node external/ag-shared/scripts/ossf-scorecard/getAndCheckResults.mjs ${{ env.AG_LIBRARY }} ${{ env.THRESHOLD }}
 
       - name: Test
-        if: !success()
+        if: success()
         run: |
           echo "success" 
 
       - name: Test2
-        if: !success()
+        if: failure()
         run: |
           echo "not success" 
 
