@@ -572,9 +572,9 @@ jobs:
       - name: SlackBot
         if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
         env:
-          CI_GRID_GATE_CHANNEL: ${{ env.SLACK_CHANNEL }}
-          CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.CHARTS_TEAM_CITY_CHANNEL }}
-          WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
+          CI_GRID_GATE_CHANNEL: ${{ env.SLACK_DEBUG_CHANNEL }}
+          CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
+          WEBSITE_STATUS_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
           SLACK_GITHUB_MAPPING: ${{ secrets.SLACK_GITHUB_MAPPING }}
