@@ -559,7 +559,7 @@ jobs:
           verify: false
 
       - name: SlackBot
-#        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
+        if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
         env:
           CI_GRID_GATE_CHANNEL: ${{ env.SLACK_DEBUG_CHANNEL }}
           CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
