@@ -32,7 +32,6 @@ jobs:
           node external/ag-shared/scripts/ossf-scorecard/getAndCheckResults.mjs ${{ env.AG_LIBRARY }} ${{ env.THRESHOLD }}
 
       - name: Test
-        id: check_results
         run: |
           echo ${{ steps.check_results.outcome}} 
           echo ${{ steps.check_results.outcome == '0' }} 
