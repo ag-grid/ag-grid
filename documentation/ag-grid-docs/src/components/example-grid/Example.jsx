@@ -939,8 +939,8 @@ const ExampleInner = ({ darkMode }) => {
         }
     }, [dataSize]);
 
-    const isAutoTheme = gridTheme.includes('auto');
-    let themeClass = gridTheme;
+    const isAutoTheme = gridThemeStr.includes('auto');
+    let themeClass = gridThemeStr;
     if (!themeClass.startsWith('ag-theme-')) {
         themeClass = 'ag-theme-' + themeClass;
         if (darkMode) {
@@ -963,8 +963,8 @@ const ExampleInner = ({ darkMode }) => {
                     dataSize={dataSize}
                     setDataSize={setDataSize}
                     rowCols={rowCols}
-                    gridTheme={gridTheme}
-                    setGridTheme={setGridTheme}
+                    gridTheme={gridThemeStr}
+                    setGridTheme={setGridThemeStr}
                     setCountryColumnPopupEditor={setCountryColumnPopupEditor}
                 />
                 <span className={classnames({ [styles.messages]: true, [styles.show]: showMessage })}>
