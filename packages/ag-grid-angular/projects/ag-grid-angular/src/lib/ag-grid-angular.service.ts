@@ -26,7 +26,7 @@ export class AgGridService {
         }
     }
 
-    public load(): void {
-        this.loadAgGridWithModules().then();
+    public async load() {
+        await this.loadAgGridWithModules();
     }
 }
