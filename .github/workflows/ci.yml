@@ -15,28 +15,19 @@ on:
     inputs:
       skip_docs:
         description: 'Skip docs build & link checker'
-        type: 'choice'
+        type: boolean
+        default: false
         required: true
-        default: 'false'
-        options:
-          - 'true'
-          - 'false'
       run_bundle_size:
         description: 'Skip bundle size tests'
-        type: 'choice'
+        type: boolean
+        default: true
         required: true
-        default: 'true'
-        options:
-          - 'true'
-          - 'false'
       clean_checkout:
         description: 'Disable all caching'
-        type: 'choice'
+        type: boolean
+        default: false
         required: true
-        default: 'false'
-        options:
-          - 'true'
-          - 'false'
       nx_command:
         type: 'choice'
         required: true
@@ -97,7 +88,7 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
-          cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+          cache_mode: ${{ github.event.inputs.clean_checkout && 'off' || 'rw' }}
 
       - name: nx format:check
         id: format
@@ -279,7 +270,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Bundle Size Tests
     needs: build_lint
-    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_bundle_size_tests }}
+    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_bundle_size }}
     strategy:
       matrix: ${{ fromJson(needs.build_lint.outputs.bundle_test_matrix )}}
       fail-fast: false
@@ -325,7 +316,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
     needs: build_lint
-    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.skip_docs == 'false' }}
+    if: needs.build_lint.result == 'success' && ${{ !github.event.inputs.skip_docs }}
     strategy:
       fail-fast: false
     env:
