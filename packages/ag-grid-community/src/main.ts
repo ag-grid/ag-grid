@@ -1213,7 +1213,6 @@ export type {
 } from './interfaces/IRowDropHighlightService';
 export type { EditStrategyType } from './interfaces/editStrategyType';
 export type { EditValidationCommitType } from './interfaces/editValidationCommitType';
-export type { GetEditingRowValuesParams } from './interfaces/iEditModelService';
 export {
     RowSelectionModule,
     SharedRowSelectionModule as _SharedRowSelectionModule,

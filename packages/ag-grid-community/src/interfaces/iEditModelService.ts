@@ -29,11 +29,6 @@ export type GetEditsParams = {
     withOpenEditor?: boolean;
 };
 
-export interface GetEditingRowValuesParams {
-    /** The row node to get the editing values from */
-    rowNode: IRowNode;
-}
-
 export interface IEditModelService {
     suspend(suspend: boolean): void;
     removeEdits({ rowNode, column }: EditPosition): void;
