@@ -98,7 +98,7 @@ export interface ITooltipAngularComp extends AgFrameworkComponent<ITooltipParams
 export interface IMenuItemAngularComp extends AgFrameworkComponent<IMenuItemParams>, IMenuItem {}
 
 export interface AgGridProviderConfig {
-    modules?: () => Promise<Module>[],
+    modules?: () => Promise<Module[]>;
     options?: () => Promise<GridOptions>;
     licenseKey?: string;
 }

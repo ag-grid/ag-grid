@@ -11,7 +11,7 @@ export class AgGridService {
         const config = this.config;
         const { ModuleRegistry, provideGlobalGridOptions } = await import('ag-grid-community');
         if (config.modules){
-          const modules = await Promise.all(config.modules());
+          const modules = await config.modules();
           ModuleRegistry.registerModules(modules);
         }
         // If a global grid options function is provided, set it for ag-Grid Community
