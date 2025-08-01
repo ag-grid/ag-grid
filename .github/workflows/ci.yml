@@ -654,19 +654,19 @@ jobs:
           # Disabling shallow clones is recommended for improving the relevancy of reporting
           fetch-depth: 0
 
-        - name: SonarQube Analysis Enterprise
-          uses: SonarSource/sonarqube-scan-action@v5.2.0
-          env:
-            SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
-            SONAR_HOST_URL: https://sonarcloud.io
-          with:
-            projectBaseDir: ./packages/
-            args: >
-              -Dsonar.javascript.node.maxspace=8192
-              -Dsonar.organization=ag-grid
-              -Dsonar.sources=./ag-grid-enterprise
-              -Dsonar.typescript.tsconfigPaths=./ag-grid-enterprise/tsconfig.lib.json
-              -Dsonar.projectKey=ag-grid-enterprise-latest
-              -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
-              -Dsonar.scanner.force-deprecated-java-version=true
-              -Dsonar.coverage.exclusions=**/*
+      - name: SonarQube Analysis Enterprise
+        uses: SonarSource/sonarqube-scan-action@v5.2.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          projectBaseDir: ./packages/
+          args: >
+            -Dsonar.javascript.node.maxspace=8192
+            -Dsonar.organization=ag-grid
+            -Dsonar.sources=./ag-grid-enterprise
+            -Dsonar.typescript.tsconfigPaths=./ag-grid-enterprise/tsconfig.lib.json
+            -Dsonar.projectKey=ag-grid-enterprise-latest
+            -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+            -Dsonar.scanner.force-deprecated-java-version=true
+            -Dsonar.coverage.exclusions=**/*
