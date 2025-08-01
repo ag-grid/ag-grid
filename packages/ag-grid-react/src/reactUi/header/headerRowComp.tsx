@@ -34,10 +34,14 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
-        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef) {
+
+        if (!eRef || !ctrl.isAlive() || context.isDestroyed()) {
+            compBean.current = context.destroyBean(compBean.current);
             return;
         }
+
+        compBean.current = context.createBean(new _EmptyBean());
+
 
         const compProxy: IHeaderRowComp = {
             setHeight: (height: string) => setHeight(height),
@@ -61,7 +65,7 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
         };
 
         ctrl.setComp(compProxy, compBean.current, false);
-    }, []);
+    }, [context]);
 
     const style = useMemo(
         () => ({
@@ -72,6 +76,9 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
     );
 
     const createCellJsx = useCallback((cellCtrl: AbstractHeaderCellCtrl) => {
+        if (!cellCtrl.isAlive()) {
+            return null;
+        }
         switch (ctrl.type) {
             case 'group':
                 return <HeaderGroupCellComp ctrl={cellCtrl as HeaderGroupCellCtrl} key={cellCtrl.instanceId} />;

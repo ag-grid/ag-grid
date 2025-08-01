@@ -273,8 +273,7 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: strin
 
 class ReactFrameworkComponentWrapper
     extends BaseComponentWrapper<WrappableInterface>
-    implements FrameworkComponentWrapper
-{
+    implements FrameworkComponentWrapper {
     constructor(
         private readonly parent: PortalManager,
         private readonly gridOptions: GridOptions
@@ -282,7 +281,7 @@ class ReactFrameworkComponentWrapper
         super();
     }
 
-    protected createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
+    protected createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
         const gridOptions = this.gridOptions;
         const reactiveCustomComponents = _getGridOption(gridOptions, 'reactiveCustomComponents');
         if (reactiveCustomComponents) {
@@ -345,7 +344,6 @@ class ReactFrameworkComponentWrapper
 // Define DetailCellRenderer and ReactFrameworkOverrides here to avoid circular dependency
 const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: any) => {
     const beans = useContext(BeansContext);
-    const { registry, context, gos, rowModel } = beans;
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [gridCssClasses, setGridCssClasses] = useState<CssClasses>(() => new CssClasses());
@@ -378,8 +376,9 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGuiRef.current = eRef;
+        const { registry, context, gos, rowModel } = beans;
 
-        if (!eRef) {
+        if (!eRef || context.isDestroyed()) {
             ctrlRef.current = context.destroyBean(ctrlRef.current);
             resizeObserverDestroyFunc.current?.();
             return;

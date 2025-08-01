@@ -21,13 +21,13 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
 
     const setRef = useCallback((eRef: HTMLDivElement) => {
         eGui.current = eRef;
-        headerRowCtrlRef.current = eRef
-            ? context.createBean(new HeaderRowContainerCtrl(pinned))
-            : context.destroyBean(headerRowCtrlRef.current);
 
-        if (!eRef) {
+        if (!eRef || context.isDestroyed()) {
+            headerRowCtrlRef.current = context.destroyBean(headerRowCtrlRef.current);
             return;
         }
+
+        headerRowCtrlRef.current = context.createBean(new HeaderRowContainerCtrl(pinned));
 
         const compProxy: IHeaderRowContainerComp = {
             setDisplayed,
@@ -56,11 +56,16 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
         };
 
         headerRowCtrlRef.current!.setComp(compProxy, eGui.current);
-    }, []);
+    }, [context]);
 
     const className = !displayed ? 'ag-hidden' : '';
 
-    const insertRowsJsx = () => headerRowCtrls.map((ctrl) => <HeaderRowComp ctrl={ctrl} key={ctrl.instanceId} />);
+    const insertRowsJsx = () => headerRowCtrls.map((ctrl) => {
+        if (!ctrl.isAlive()) {
+            return null;
+        }
+        return <HeaderRowComp ctrl={ctrl} key={ctrl.instanceId} />
+    });
 
     return pinnedLeft ? (
         <div ref={setRef} className={'ag-pinned-left-header ' + className} aria-hidden={!displayed} role="rowgroup">

@@ -1,9 +1,8 @@
 import type { MutableRefObject } from 'react';
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import type { ICellRendererComp } from 'ag-grid-community';
 
-import { BeansContext } from '../beansContext';
 import type { RenderDetails } from './interfaces';
 
 const useJsCellRenderer = (
@@ -14,7 +13,6 @@ const useJsCellRenderer = (
     jsCellRendererRef: MutableRefObject<ICellRendererComp | undefined>,
     eGui: MutableRefObject<any>
 ) => {
-    const { context } = useContext(BeansContext);
 
     const destroyCellRenderer = useCallback(() => {
         const comp = jsCellRendererRef.current;
@@ -28,7 +26,7 @@ const useJsCellRenderer = (
             compGui.parentElement.removeChild(compGui);
         }
 
-        context.destroyBean(comp);
+        comp.destroy?.();
         jsCellRendererRef.current = undefined;
     }, []);
 

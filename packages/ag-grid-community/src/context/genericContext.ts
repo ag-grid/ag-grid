@@ -32,14 +32,17 @@ export interface BaseBean<TBeanCollection> {
     preWireBeans?(beans: TBeanCollection): void;
 }
 
+let contextID = 0;
+
 export class GenericContext<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
     protected beans: TBeanCollection = {} as TBeanCollection;
     private createdBeans: GenericBean<TBeanName, TBeanCollection>[] = [];
     private beanDestroyComparator?: BeanComparator<TBeanName, TBeanCollection>;
-
+    private readonly contextId: number = contextID++;
     private destroyed = false;
 
     constructor(params: GenericContextParams<TBeanName, TBeanCollection>) {
+        console.log(`Creating GenericContext with ID: ${this.contextId}`);
         if (!params || !params.beanClasses) {
             return;
         }
@@ -87,6 +90,10 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
         bean: T,
         afterPreCreateCallback?: (bean: GenericBean<TBeanName, TBeanCollection>) => void
     ): T {
+        if (this.destroyed) {
+            console.error(this.contextId + ' Cannot create bean in a destroyed context');
+            return undefined as any;
+        }
         this.initBeans([bean], afterPreCreateCallback);
         return bean;
     }
@@ -118,6 +125,7 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
     }
 
     public destroy(): void {
+        console.log(`Destroying GenericContext with ID: ${this.contextId}`);
         if (this.destroyed) {
             return;
         }

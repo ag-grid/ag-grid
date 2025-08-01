@@ -29,8 +29,7 @@ const CellComp = ({
     printLayout: boolean;
     editingCell: boolean;
 }) => {
-    const beans = useContext(BeansContext);
-    const { context } = beans;
+    const { context } = useContext(BeansContext);
     const {
         column: { colIdSanitised },
         instanceId,
@@ -236,8 +235,13 @@ const CellComp = ({
     const init = useCallback(() => {
         const spanReady = !cellCtrl.isCellSpanning() || eWrapper.current;
         const eRef = eGui.current;
-        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef || !spanReady || !cellCtrl) {
+
+        if (!eRef || context.isDestroyed()) {
+            compBean.current = context.destroyBean(compBean.current);
+            return;
+        }
+        compBean.current = context.createBean(new _EmptyBean());
+        if (!spanReady || !cellCtrl) {
             // We do NOT add a check for if the cellCtrl is destroyed as when there are lots of updates React
             // can get behind our internal state and call this function after the cellCtrl has been destroyed.
             // If we were to shortcut here then cell values will flash in the first column of the grid as they will

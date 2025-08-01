@@ -22,8 +22,11 @@ const PopupEditorComp = (props: {
     const { editDetails, cellCtrl, eParentCell } = props;
 
     useEffectOnce(() => {
-        const { compDetails } = editDetails;
+        if (context.isDestroyed()) {
+            return;
+        }
 
+        const { compDetails } = editDetails;
         const useModelPopup = gos.get('stopEditingWhenCellsLoseFocus');
 
         const wrapper = context.createBean(editSvc!.createPopupEditorWrapper(compDetails.params));

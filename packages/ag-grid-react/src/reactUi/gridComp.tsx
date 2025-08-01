@@ -52,18 +52,19 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const setRef = useCallback((eRef: HTMLDivElement) => {
         eRootWrapperRef.current = eRef;
-        gridCtrlRef.current = eRef ? context.createBean(new GridCtrl()) : context.destroyBean(gridCtrlRef.current);
 
         if (!eRef || context.isDestroyed()) {
+            gridCtrlRef.current = context.destroyBean(gridCtrlRef.current);
             return;
         }
 
+        gridCtrlRef.current = context.createBean(new GridCtrl());
         const gridCtrl = gridCtrlRef.current!;
 
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
 
         const compProxy: IGridComp = {
-            destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
+            destroyGridUi: () => { }, // do nothing, as framework users destroy grid by removing the comp
             setRtlClass,
             forceFocusOutOfContainer: (up?: boolean) => {
                 if (!up && paginationCompRef.current?.isDisplayed()) {

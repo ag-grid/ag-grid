@@ -24,7 +24,7 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
     forwardRef: any
 ) => {
     const { children, eFocusableElement, onTabKeyDown, gridCtrl, forceFocusOutWhenTabGuardsAreEmpty, isEmpty } = props;
-    const { context } = useContext(BeansContext);
+    const beans = useContext(BeansContext);
 
     const topTabGuardRef = useRef<HTMLDivElement | null>(null);
     const bottomTabGuardRef = useRef<HTMLDivElement | null>(null);
@@ -51,7 +51,8 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
     const setupCtrl = useCallback(() => {
         const topTabGuard = topTabGuardRef.current;
         const bottomTabGuard = bottomTabGuardRef.current;
-        if (!topTabGuard && !bottomTabGuard) {
+        const { context } = beans;
+        if ((!topTabGuard && !bottomTabGuard) || context.isDestroyed()) {
             // Clean up after both refs have been removed
             tabGuardCtrlRef.current = context.destroyBean(tabGuardCtrlRef.current);
             return;

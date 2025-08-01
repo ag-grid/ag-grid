@@ -25,7 +25,6 @@ interface SectionProperties {
 
 const GridBodyComp = () => {
     const beans = useContext(BeansContext);
-    const { context, overlays } = beans;
 
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
     const [topHeight, setTopHeight] = useState<number>(0);
@@ -74,7 +73,13 @@ const GridBodyComp = () => {
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eRoot.current = eRef;
-        if (!eRef) {
+
+        const { context, overlays } = beans;
+        if (!context) {
+            return;
+        }
+
+        if (!eRef || context.isDestroyed()) {
             beansToDestroy.current = context.destroyBeans(beansToDestroy.current);
             destroyFuncs.current.forEach((f) => f());
             destroyFuncs.current = [];
@@ -82,9 +87,6 @@ const GridBodyComp = () => {
             return;
         }
 
-        if (!context) {
-            return;
-        }
 
         const attachToDom = (eParent: HTMLElement, eChild: HTMLElement | Comment) => {
             eParent.appendChild(eChild);

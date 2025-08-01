@@ -81,11 +81,11 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     }
 
     // Setup both approaches to avoid conditionally rendering Hooks even though we don't use both at the same time.
-    const cellsChanged = useRef<any>(() => {});
+    const cellsChanged = useRef<any>(() => { });
     const sub = useCallback((onStoreChange: any) => {
         cellsChanged.current = onStoreChange;
         return () => {
-            cellsChanged.current = () => {};
+            cellsChanged.current = () => { };
         };
     }, []);
     const cellCtrlsUses = agUseSyncExternalStore(
@@ -101,6 +101,12 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
+
+        if (context.isDestroyed()) {
+            compBean.current = context.destroyBean(compBean.current);
+            return;
+        }
+
         compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
 
         if (!eRef) {
