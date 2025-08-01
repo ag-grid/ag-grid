@@ -450,8 +450,8 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ build_lint, test, e2e, docs, bundle_size ]
-#    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test ]
+    needs: [ build_lint, test, e2e, docs, bundle_size, sonar_community, sonar_enterprise ]
+#    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test, sonar_community, sonar_enterprise ]
     if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write
@@ -518,6 +518,12 @@ jobs:
           elif [ "${{ needs.angular_fw_pkg_test.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.bundle_size.result }}" == "failure" ] ; then
+            WORKFLOW_STATUS="failure"
+          fi
+          elif [ "${{ needs.sonar_community.result }}" == "failure" ] ; then
+            WORKFLOW_STATUS="failure"
+          fi
+          elif [ "${{ needs.sonar_enterprise.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           fi
           echo "workflowStatus=${WORKFLOW_STATUS}" >> $GITHUB_OUTPUT
@@ -595,6 +601,8 @@ jobs:
                     "e2e": "${{ needs.e2e.result }}",
                     "Docs": "${{ needs.docs.result }}",
                     "Bundle": "${{ needs.bundle_size.result }}"
+                    "SonarCommunity": "${{ needs.sonar_community.result }}"
+                    "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"
                 }
             }
         run: |
@@ -611,3 +619,38 @@ jobs:
             echo "Workflow failed, failing the build."
             exit 1
 
+  sonar_community:
+    - name: SonarQube Analysis Community
+      uses: SonarSource/sonarqube-scan-action@v5.2.0
+      env:
+        SONAR_HOST_URL: https://sonarcloud.io
+        SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
+      with:
+        projectBaseDir: ./packages/
+        args: >
+          -Dsonar.javascript.node.maxspace=8192
+          -Dsonar.organization=ag-grid
+          -Dsonar.sources=./ag-grid-community,./ag-grid-angular/projects/ag-grid-angular,./ag-grid-react,./ag-grid-vue3
+          -Dsonar.typescript.tsconfigPaths=./ag-grid-community/tsconfig.lib.json,./ag-grid-angular/projects/ag-grid-angular/tsconfig.lib.prod.json,./ag-grid-react/tsconfig.json,./ag-grid-vue3/tsconfig.json
+          -Dsonar.projectKey=ag-grid_community_latest
+          -Dsonar.exclusions=**/__tests__/*,**/test.ts,**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+          -Dsonar.scanner.force-deprecated-java-version=true
+          -Dsonar.coverage.exclusions=**/*
+
+  sonar_enterprise:
+    - name: SonarQube Analysis Enterprise
+      uses: SonarSource/sonarqube-scan-action@v5.2.0
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
+        SONAR_HOST_URL: https://sonarcloud.io
+      with:
+        projectBaseDir: ./packages/
+        args: >
+          -Dsonar.javascript.node.maxspace=8192
+          -Dsonar.organization=ag-grid
+          -Dsonar.sources=./ag-grid-enterprise
+          -Dsonar.typescript.tsconfigPaths=./ag-grid-enterprise/tsconfig.lib.json
+          -Dsonar.projectKey=ag-grid-enterprise-latest
+          -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+          -Dsonar.scanner.force-deprecated-java-version=true
+          -Dsonar.coverage.exclusions=**/*
