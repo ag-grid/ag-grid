@@ -620,28 +620,30 @@ jobs:
             exit 1
 
   sonar_community:
-    runs-on: ubuntu-24.04
-      steps:
-        - name: SonarQube Analysis Community
-          uses: SonarSource/sonarqube-scan-action@v5.2.0
-          env:
-            SONAR_HOST_URL: https://sonarcloud.io
-            SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
-          with:
-            projectBaseDir: ./packages/
-            args: >
-              -Dsonar.javascript.node.maxspace=8192
-              -Dsonar.organization=ag-grid
-              -Dsonar.sources=./ag-grid-community,./ag-grid-angular/projects/ag-grid-angular,./ag-grid-react,./ag-grid-vue3
-              -Dsonar.typescript.tsconfigPaths=./ag-grid-community/tsconfig.lib.json,./ag-grid-angular/projects/ag-grid-angular/tsconfig.lib.prod.json,./ag-grid-react/tsconfig.json,./ag-grid-vue3/tsconfig.json
-              -Dsonar.projectKey=ag-grid_community_latest
-              -Dsonar.exclusions=**/__tests__/*,**/test.ts,**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
-              -Dsonar.scanner.force-deprecated-java-version=true
-              -Dsonar.coverage.exclusions=**/*
+    name: Build & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: SonarQube Analysis Community
+        uses: SonarSource/sonarqube-scan-action@v5.2.0
+        env:
+          SONAR_HOST_URL: https://sonarcloud.io
+          SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
+        with:
+          projectBaseDir: ./packages/
+          args: >
+            -Dsonar.javascript.node.maxspace=8192
+            -Dsonar.organization=ag-grid
+            -Dsonar.sources=./ag-grid-community,./ag-grid-angular/projects/ag-grid-angular,./ag-grid-react,./ag-grid-vue3
+            -Dsonar.typescript.tsconfigPaths=./ag-grid-community/tsconfig.lib.json,./ag-grid-angular/projects/ag-grid-angular/tsconfig.lib.prod.json,./ag-grid-react/tsconfig.json,./ag-grid-vue3/tsconfig.json
+            -Dsonar.projectKey=ag-grid_community_latest
+            -Dsonar.exclusions=**/__tests__/*,**/test.ts,**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+            -Dsonar.scanner.force-deprecated-java-version=true
+            -Dsonar.coverage.exclusions=**/*
 
   sonar_enterprise:
-    runs-on: ubuntu-24.04
-      steps:
+    name: Build & Lint
+    runs-on: ubuntu-latest
+    steps:
         - name: SonarQube Analysis Enterprise
           uses: SonarSource/sonarqube-scan-action@v5.2.0
           env:
