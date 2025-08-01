@@ -316,7 +316,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
     needs: build_lint
-    if: needs.build_lint.result == 'success' && ${{ !inputs.skip_docs }}
+    if: ${{ needs.build_lint.result == 'success' && !inputs.skip_docs }}
     strategy:
       fail-fast: false
     env:
