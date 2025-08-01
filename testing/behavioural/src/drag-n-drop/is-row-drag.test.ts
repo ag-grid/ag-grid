@@ -109,7 +109,6 @@ describe('isRowDrag and drag handle refresh', () => {
         expect(callCount).toBeGreaterThan(0);
         const element = TestGridsManager.getHTMLElement(api)!;
         callCount = 0;
-        console.log('UPDATE!');
 
         api.applyColumnState({ state: [{ colId: 'a', sort: 'desc' }], applyOrder: true });
 
@@ -122,7 +121,7 @@ describe('isRowDrag and drag handle refresh', () => {
         expect(isDragHandleVisible(element)).toBe(true);
     });
 
-    test.only('handle updates on filterChanged event', async () => {
+    test('handle updates on filterChanged event', async () => {
         let callCount = 0;
         const isRowDrag = () => {
             callCount++;
