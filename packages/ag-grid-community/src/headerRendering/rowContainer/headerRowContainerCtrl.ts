@@ -54,9 +54,9 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         const headerType = `${typeof this.pinned === 'string' ? this.pinned : 'center'}Header` as const;
         ctrlsSvc.register(headerType, this);
 
-        // if (colModel.ready) {
-        this.refresh();
-        // }
+        if (colModel.ready) {
+            this.refresh();
+        }
     }
 
     public getAllCtrls(): HeaderRowCtrl[] {
