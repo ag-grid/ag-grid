@@ -103,8 +103,8 @@ export function toExampleUrl(fileUrl: string): { agExampleUrl: AgExampleUrl } {
     return { agExampleUrl: `${page}/${example}` as AgExampleUrl };
 }
 
-export function setAgExampleUrl(url: string) {
-    extended.use(toExampleUrl(url));
+export function setAgExampleUrl(importMeta: ImportMeta) {
+    extended.use(toExampleUrl(importMeta.url));
 }
 
 // Expose call for each framework

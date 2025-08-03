@@ -2,7 +2,7 @@
 import { expect, setAgExampleUrl, test } from '@utils/grid/test-utils';
 
 // Infer test URL from file location
-setAgExampleUrl(import.meta.url);
+setAgExampleUrl(import.meta);
 
 test.describe('Batch Editing', () => {
     // Run through all frameworks
