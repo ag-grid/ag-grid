@@ -4,7 +4,7 @@ import { expect, setAgExampleUrl, test } from '@utils/grid/test-utils';
 // Infer test URL from file location
 setAgExampleUrl(import.meta.url);
 
-test.describe(`Batch Editing`, () => {
+test.describe('Batch Editing', () => {
     // Run through all frameworks
     test.eachFramework('With Batch', async ({ page, agIdFor }) => {
         await page.locator('button', { hasText: 'Start Batch Edit' }).click(); // click the button to start batch editing
@@ -57,8 +57,8 @@ test.describe(`Batch Editing`, () => {
             await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
         });
 
-        test.eachFramework('Test Total1', async ({ agIdFor, framework }) => {
-            test.skip(framework === 'typescript', 'Skipping TypeScript framework for this test');
+        test.eachFramework('Test Total1', async ({ agIdFor, agFramework }) => {
+            test.skip(agFramework === 'typescript', 'Skipping TypeScript framework for this test');
 
             const totalCell = agIdFor.cell('0', 'total');
             await expect(totalCell).toHaveText('6'); // verify the total cell has the new value

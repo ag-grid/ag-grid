@@ -10,14 +10,14 @@ type ExtractFixtures<T> = T extends TestType<infer A, infer O> ? A & O : never;
 type PlaywrightFixtures = ExtractFixtures<typeof base>;
 
 type AgGridFixtures = {
-    framework: Framework;
-    agExampleUrl?: ExampleUrl | null;
+    agFramework: AgFramework;
+    agExampleUrl?: AgExampleUrl;
     agIdFor: ReturnType<typeof wrapAgTestIdFor<any>>;
 };
 
 export type TestFixtures = PlaywrightFixtures & AgGridFixtures;
 
-type ExampleUrl = `${string}/${string}`;
+type AgExampleUrl = `${string}/${string}`;
 
 export const ALL_FRAMEWORKS = [
     'typescript',
@@ -27,14 +27,14 @@ export const ALL_FRAMEWORKS = [
     'angular',
     'vue3',
 ] as const;
-type Framework = (typeof ALL_FRAMEWORKS)[number];
+type AgFramework = (typeof ALL_FRAMEWORKS)[number];
 
 export async function loadPage(
     page: Page,
-    pageExampleUrl: ExampleUrl,
-    framework: (typeof ALL_FRAMEWORKS)[number]
+    agExampleUrl: AgExampleUrl,
+    agFramework: (typeof ALL_FRAMEWORKS)[number]
 ): Promise<Page> {
-    await page.goto(`/examples/${pageExampleUrl}/${framework}?enableTestIds=true`);
+    await page.goto(`/examples/${agExampleUrl}/${agFramework}?enableTestIds=true`);
     await page.waitForLoadState('domcontentloaded');
     await page.waitForLoadState('load');
     await page.waitForLoadState('networkidle');
@@ -44,7 +44,7 @@ export async function loadPage(
 
 const extended = base.extend<TestFixtures>({
     agExampleUrl: [({}, use) => use(undefined), { option: true }],
-    framework: [({}, use) => use(ALL_FRAMEWORKS[0]), { option: true }],
+    agFramework: [({}, use) => use(ALL_FRAMEWORKS[0]), { option: true }],
     agIdFor: [({ page }, use) => use(wrapAgTestIdFor((testId: string) => page.getByTestId(testId))), { option: true }],
 });
 
@@ -55,19 +55,19 @@ const extended = base.extend<TestFixtures>({
  */
 export function testAllFrameworks(
     testName: string,
-    exampleUrl: ExampleUrl | null,
+    agExampleUrl: AgExampleUrl | null,
     testBody: (fixtures: TestFixtures) => Promise<void>
 ): void {
-    if (exampleUrl) {
-        extended.use({ agExampleUrl: exampleUrl });
+    if (agExampleUrl) {
+        extended.use({ agExampleUrl });
     }
     eachFramework(testName, testBody);
 }
 
 const frameworkTest =
-    (framework: Framework) =>
+    (agFramework: AgFramework) =>
     (testName: string | undefined, testBody: (fixtures: TestFixtures) => Promise<void>): void => {
-        extended.use({ framework });
+        extended.use({ agFramework });
         const testWrapper = async ({ page, agExampleUrl, agIdFor }: TestFixtures) => {
             if (!agExampleUrl) {
                 throw new Error(
@@ -75,16 +75,16 @@ const frameworkTest =
                 );
             }
 
-            await loadPage(page, agExampleUrl!, framework);
-            await testBody({ page, agExampleUrl, agIdFor, framework } as TestFixtures);
+            await loadPage(page, agExampleUrl, agFramework);
+            await testBody({ page, agExampleUrl, agIdFor, agFramework } as TestFixtures);
         };
 
         if (testName) {
             extended.describe(testName, () => {
-                extended(`${framework} (only)`, testWrapper);
+                extended(`${agFramework} (only)`, testWrapper);
             });
         } else {
-            extended(`${framework}`, testWrapper);
+            extended(`${agFramework}`, testWrapper);
         }
     };
 
@@ -94,19 +94,20 @@ const eachFramework = (testName: string, testBody: (fixtures: TestFixtures) => P
     );
 };
 
-export function toExampleUrl(fileUrl: string): { agExampleUrl: ExampleUrl } {
+export function toExampleUrl(fileUrl: string): { agExampleUrl: AgExampleUrl } {
     const pSegment = fileUrl.split('/');
 
     const page = pSegment[pSegment.length - 4];
     const example = pSegment[pSegment.length - 2];
 
-    return { agExampleUrl: `${page}/${example}` as ExampleUrl };
+    return { agExampleUrl: `${page}/${example}` as AgExampleUrl };
 }
 
 export function setAgExampleUrl(url: string) {
     extended.use(toExampleUrl(url));
 }
 
+// Expose call for each framework
 const singleFrameworkTests = ALL_FRAMEWORKS.map((fw) => ({ [fw]: frameworkTest(fw) })).reduce(Object.assign);
 
 const agGridTestExtension = {
@@ -116,6 +117,6 @@ const agGridTestExtension = {
 
 type ExternalTestType = typeof extended & typeof agGridTestExtension & typeof singleFrameworkTests;
 
-const test = Object.assign({}, extended, agGridTestExtension, singleFrameworkTests) as ExternalTestType;
+const test = Object.assign(extended, agGridTestExtension, singleFrameworkTests) as ExternalTestType;
 
 export { expect, test };
