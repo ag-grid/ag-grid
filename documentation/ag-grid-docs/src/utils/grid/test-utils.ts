@@ -71,7 +71,7 @@ const frameworkTest =
         const testWrapper = async ({ page, agExampleUrl, agIdFor }: TestFixtures) => {
             if (!agExampleUrl) {
                 throw new Error(
-                    `Missing 'setAgExampleUrl(import.meta.url)' in the test file. This is required to set the example URL for the test.`
+                    `Missing 'setAgExampleUrl(import.meta)' in the test file. This is required to set the example URL for the test.`
                 );
             }
 
