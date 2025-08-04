@@ -1,11 +1,11 @@
-import { createPart } from '../../../agStack/theming/Part';
+import { createPart } from '../../../agStack/theming/partImpl';
 import { defaultLightColorSchemeParams } from '../../../agStack/theming/shared/shared-css';
 import {
     accentMix,
     backgroundColor,
     foregroundBackgroundMix,
     foregroundColor,
-} from '../../../agStack/theming/theme-utils';
+} from '../../../agStack/theming/themeUtils';
 import { baseDarkBatchEditParams } from '../batch-edit/batch-edit-styles';
 
 const makeColorSchemeLightTreeShakeable = () =>

@@ -1,4 +1,4 @@
-import type { ColorValue } from './theme-types';
+import type { ColorValue } from './themeTypes';
 
 const kebabCase = (str: string) => str.replace(/[A-Z]/g, (m) => `-${m}`).toLowerCase();
 

@@ -1,7 +1,7 @@
-import { createPart } from '../../../agStack/theming/Part';
-import type { Part } from '../../../agStack/theming/Part';
-import type { ColorValue, ImageValue, LengthValue } from '../../../agStack/theming/theme-types';
-import { accentColor, backgroundColor, foregroundBackgroundMix } from '../../../agStack/theming/theme-utils';
+import type { Part } from '../../../agStack/theming/part';
+import { createPart } from '../../../agStack/theming/partImpl';
+import type { ColorValue, ImageValue, LengthValue } from '../../../agStack/theming/themeTypes';
+import { accentColor, backgroundColor, foregroundBackgroundMix } from '../../../agStack/theming/themeUtils';
 import { checkboxStyleDefaultCSS } from './checkbox-style-default.css-GENERATED';
 
 export type CheckboxStyleParams = {

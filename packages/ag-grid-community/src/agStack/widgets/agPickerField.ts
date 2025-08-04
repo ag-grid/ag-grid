@@ -1,9 +1,9 @@
 import { KeyCode } from '../constants/keyCode';
 import type { AgComponentStub } from '../core/agComponentStub';
 import { RefPlaceholder } from '../interfaces/agComponent';
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import type { AddPopupParams } from '../interfaces/iPopup';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaExpanded, _setAriaRole } from '../utils/ariaUtils';

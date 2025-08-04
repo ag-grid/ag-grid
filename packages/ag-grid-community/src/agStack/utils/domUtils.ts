@@ -1,4 +1,4 @@
-import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import { _setAriaHidden } from './ariaUtils';
 import { _getWindow } from './beanUtils';
 

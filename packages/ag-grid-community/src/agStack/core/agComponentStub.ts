@@ -1,9 +1,9 @@
 import type { AgBaseComponent, AgComponent } from '../interfaces/agComponent';
 import type { AgComponentEvent, AgComponentSelector, VisibleChangedEvent } from '../interfaces/agComponent';
 import { RefPlaceholder } from '../interfaces/agComponent';
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { AgElementParams } from '../utils/domUtils';
 import {

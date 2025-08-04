@@ -1,30 +1,4 @@
-import { clamp, memoize, paramToVariableExpression } from './theme-utils';
-import type { ThemeLogger } from './themeLogger';
-
 export type Feature = 'colorScheme' | 'iconSet' | 'checkboxStyle' | 'inputStyle' | 'tabStyle';
-
-const paramTypes = [
-    'colorScheme',
-    'color',
-    'length',
-    'scale',
-    'borderStyle',
-    'border',
-    'shadow',
-    'image',
-    'fontFamily',
-    'fontWeight',
-    'duration',
-] as const;
-
-export type ParamType = (typeof paramTypes)[number];
-/**
- * Return the ParamType for a given param name,
- */
-export const getParamType = memoize((param: string): ParamType => {
-    param = param.toLowerCase();
-    return paramTypes.find((type) => param.endsWith(type.toLowerCase())) ?? 'length';
-});
 
 export type WithParamTypes<T> = {
     [K in keyof T]: K extends string ? ParamTypeForLowercaseKey<Lowercase<K>> : LengthValue;
@@ -45,14 +19,8 @@ type ParamTypeForLowercaseKey<K extends string> = K extends `${string}color`
     : K extends `${string}duration` ? DurationValue
     : LengthValue;
 
-const literalToCSS = (value: string | number | { ref: string }): string | false => {
-    if (typeof value === 'object' && value?.ref) return paramToVariableExpression(value.ref);
-    if (typeof value === 'string') return value;
-    if (typeof value === 'number') return String(value);
-    return false;
-};
-
 // string & {} used to preserve auto-complete from string union but allow any string
+// NOSONAR
 // eslint-disable-next-line @typescript-eslint/ban-types
 type AnyString = string & {};
 
@@ -86,19 +54,6 @@ export type ColorValue =
           ontoColor?: string;
       };
 
-export const colorValueToCss = (value: ColorValue): string | false => {
-    if (typeof value === 'string') return value;
-    if (value && 'ref' in value) {
-        const colorExpr: string = paramToVariableExpression(value.ref);
-        if (value.mix == null) {
-            return colorExpr;
-        }
-        const backgroundExpr = value.onto ? paramToVariableExpression(value.onto) : 'transparent';
-        return `color-mix(in srgb, ${backgroundExpr}, ${colorExpr} ${clamp(value.mix * 100, 0, 100)}%)`;
-    }
-    return false;
-};
-
 /**
  * A CSS color-scheme value, e.g. "light", "dark", or "inherit" to use the
  * same setting as the parent application
@@ -106,8 +61,6 @@ export const colorValueToCss = (value: ColorValue): string | false => {
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme
  */
 export type ColorSchemeValue = 'light' | 'dark' | 'inherit' | 'normal' | AnyString | { ref: string };
-
-export const colorSchemeValueToCss = literalToCSS;
 
 /**
  * A CSS dimension value with length units, e.g. "1px" or "2em". Alternatively:
@@ -131,26 +84,10 @@ export type LengthValue =
           ref: string;
       };
 
-export const lengthValueToCss = (value: LengthValue): string | false => {
-    if (typeof value === 'string') return value;
-    if (typeof value === 'number') return `${value}px`;
-    if (value && 'calc' in value) {
-        // ensure a space around operators other than `-` (which can be part of an identifier)
-        const valueWithSpaces = value.calc.replace(/ ?[*/+] ?/g, ' $& ');
-        // convert param names to variable expressions, e.g. "fooBar" -> "var(--ag-foo-bar)",
-        // ignoring words that are part of function names "fooBar()" or variables "--fooBar"
-        return `calc(${valueWithSpaces.replace(/-?\b[a-z][a-z0-9]*\b(?![-(])/gi, (p) => (p[0] === '-' ? p : ` ${paramToVariableExpression(p)} `))})`;
-    }
-    if (value && 'ref' in value) return paramToVariableExpression(value.ref);
-    return false;
-};
-
 /**
  * A number without units.
  */
 export type ScaleValue = number | { ref: 'string' };
-
-export const scaleValueToCss = literalToCSS;
 
 /**
  * A CSS border value e.g. "solid 1px red". Alternatively an object containing optional properties:
@@ -177,20 +114,6 @@ export type BorderValue =
           color?: ColorValue;
       }
     | { ref: string };
-
-export const borderValueToCss = (value: BorderValue, param: string): string => {
-    if (typeof value === 'string') return value;
-    if (value === true) return borderValueToCss({}, param);
-    if (value === false) return param === 'columnBorder' ? borderValueToCss({ color: 'transparent' }, param) : 'none';
-    if (value && 'ref' in value) return paramToVariableExpression(value.ref);
-    return (
-        borderStyleValueToCss(value.style ?? 'solid') +
-        ' ' +
-        lengthValueToCss(value.width ?? { ref: 'borderWidth' }) +
-        ' ' +
-        colorValueToCss(value.color ?? { ref: 'borderColor' })
-    );
-};
 
 /**
  * A CSS box shadow value e.g. "10px 5px 5px red;". Alternatively an object containing optional properties:
@@ -247,19 +170,6 @@ export type ShadowValue =
       }
     | { ref: string };
 
-export const shadowValueToCss = (value: ShadowValue): string | false => {
-    if (typeof value === 'string') return value;
-    if (value === false) return 'none';
-    if (value && 'ref' in value) return paramToVariableExpression(value.ref);
-    return [
-        lengthValueToCss(value.offsetX ?? 0),
-        lengthValueToCss(value.offsetY ?? 0),
-        lengthValueToCss(value.radius ?? 0),
-        lengthValueToCss(value.spread ?? 0),
-        colorValueToCss(value.color ?? { ref: 'foregroundColor' }),
-    ].join(' ');
-};
-
 /**
  * A CSS line-style value e.g. "solid" or "dashed".
  *
@@ -274,8 +184,6 @@ export type BorderStyleValue =
     | 'outset'
     | AnyString
     | { ref: string };
-
-export const borderStyleValueToCss = literalToCSS;
 
 /**
  * A CSS font-family value consisting of a font name or comma-separated list of fonts in order of preference e.g. `"Roboto, -apple-system, 'Segoe UI', sans-serif"`. Alternatively:
@@ -292,43 +200,12 @@ export type FontFamilyValue =
     | Array<string | { googleFont: string }>
     | { ref: string };
 
-export const fontFamilyValueToCss = (value: FontFamilyValue): string | false => {
-    // normally string values are passed through as CSS without modification,
-    // but for fonts this means you need to add internal quotes around font
-    // names like `fontFamily: '"Times New Roman"'` which is a bit awkward. So
-    // we add the quotes, unless a comma is present in which case we assume that
-    // it's a list of correctly quoted font names
-    if (typeof value === 'string') return value.includes(',') ? value : quoteUnsafeChars(value);
-
-    if (value && 'googleFont' in value) return fontFamilyValueToCss(value.googleFont);
-    if (value && 'ref' in value) return paramToVariableExpression(value.ref);
-    if (Array.isArray(value)) {
-        return value
-            .map((font) => {
-                if (typeof font === 'object' && 'googleFont' in font) {
-                    font = font.googleFont;
-                }
-                return quoteUnsafeChars(font);
-            })
-            .join(', ');
-    }
-    return false;
-};
-
-const quoteUnsafeChars = (font: string) =>
-    // don't quote var() expressions or quote safe identifier names, so that
-    // people can specify fonts like sans-serif which are keywords not strings,
-    // or var(--my-var)
-    /^[\w-]+$|\w\(/.test(font) ? font : JSON.stringify(font);
-
 /**
  * A CSS font-weight value e.g. `500` or `"bold"`
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight
  */
 export type FontWeightValue = 'normal' | 'bold' | AnyString | number | { ref: string };
-
-export const fontWeightValueToCss = literalToCSS;
 
 /**
  * A CSS image value e.g. `"url(...image-url...)"`. Alternatively:
@@ -355,14 +232,6 @@ export type ImageValue =
       }
     | { ref: string };
 
-export const imageValueToCss = (value: ImageValue): string | false => {
-    if (typeof value === 'string') return value;
-    if (value && 'url' in value) return `url(${JSON.stringify(value.url)})`;
-    if (value && 'svg' in value) return imageValueToCss({ url: `data:image/svg+xml,${encodeURIComponent(value.svg)}` });
-    if (value && 'ref' in value) return paramToVariableExpression(value.ref);
-    return false;
-};
-
 /**
  * A CSS time value with second or millisecond units e.g. `"0.3s"` or `"300ms"`. Alternatively:
  *
@@ -372,35 +241,3 @@ export const imageValueToCss = (value: ImageValue): string | false => {
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/animation-duration
  */
 export type DurationValue = number | string | { ref: string };
-
-export const durationValueToCss = (value: DurationValue, param: string, themeLogger: ThemeLogger): string | false => {
-    if (typeof value === 'string') return value;
-    if (typeof value === 'number') {
-        if (value >= 10) {
-            themeLogger.warn(104, { value, param });
-        }
-        return `${value}s`;
-    }
-    if (value && 'ref' in value) return paramToVariableExpression(value.ref);
-    return false;
-};
-
-const paramValidators: Record<ParamType, (value: unknown, param: string, themeLogger: ThemeLogger) => string | false> =
-    {
-        color: colorValueToCss,
-        colorScheme: colorSchemeValueToCss,
-        length: lengthValueToCss,
-        scale: scaleValueToCss,
-        border: borderValueToCss,
-        borderStyle: borderStyleValueToCss,
-        shadow: shadowValueToCss,
-        image: imageValueToCss,
-        fontFamily: fontFamilyValueToCss,
-        fontWeight: fontWeightValueToCss,
-        duration: durationValueToCss,
-    };
-
-export const paramValueToCss = (param: string, value: unknown, themeLogger: ThemeLogger): string | false => {
-    const type = getParamType(param);
-    return paramValidators[type](value, param, themeLogger);
-};

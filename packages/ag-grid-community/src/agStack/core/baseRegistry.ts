@@ -1,6 +1,7 @@
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import type { AgCoreBeanCollection, ClassImp } from '../interfaces/iContext';
+import type { ClassImp } from '../interfaces/iContext';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { IRegistry } from '../interfaces/iRegistry';
 import { AgBeanStub } from './agBeanStub';

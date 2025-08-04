@@ -1,9 +1,11 @@
 import { LocalEventService } from '../events/localEventService';
-import type { AgBaseBean, AgBean } from '../interfaces/agBean';
+import type { AgBaseBean } from '../interfaces/agBaseBean';
+import type { AgBean } from '../interfaces/agBean';
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { AgEvent } from '../interfaces/agEvent';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import type { AgCoreBeanCollection, IContext } from '../interfaces/iContext';
+import type { IContext } from '../interfaces/iContext';
 import type { AgEventService } from '../interfaces/iEvent';
 import type { IAgEventEmitter, IEventEmitter, IEventListener } from '../interfaces/iEventEmitter';
 import type { LocaleTextFunc } from '../interfaces/iLocaleService';

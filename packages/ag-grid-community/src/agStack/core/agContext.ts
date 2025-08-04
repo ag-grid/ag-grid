@@ -1,7 +1,9 @@
-import type { AgBaseBean, AgSingletonBean } from '../interfaces/agBean';
+import type { AgBaseBean } from '../interfaces/agBaseBean';
+import type { AgSingletonBean } from '../interfaces/agCoreBean';
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import type { AgCoreBeanCollection, IContext } from '../interfaces/iContext';
+import type { IContext } from '../interfaces/iContext';
 import type { IPropertiesService } from '../interfaces/iProperties';
 
 type BeanComparator<TBeanCollection> = (

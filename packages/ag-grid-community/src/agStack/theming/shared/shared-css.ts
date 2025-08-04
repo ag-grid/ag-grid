@@ -5,7 +5,7 @@ import type {
     FontFamilyValue,
     LengthValue,
     ShadowValue,
-} from '../theme-types';
+} from '../themeTypes';
 import {
     accentColor,
     accentMix,
@@ -13,7 +13,7 @@ import {
     foregroundBackgroundMix,
     foregroundColor,
     foregroundMix,
-} from '../theme-utils';
+} from '../themeUtils';
 
 export interface SharedThemeParams {
     /**

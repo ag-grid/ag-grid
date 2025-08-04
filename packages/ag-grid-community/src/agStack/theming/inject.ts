@@ -1,8 +1,10 @@
 import type { IEnvironment } from '../interfaces/iEnvironment';
-import { FORCE_LEGACY_THEMES } from './Theme';
 import { sharedCSS } from './shared/shared.css-GENERATED';
 
 export const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.forEach;
+
+/** For testing, if true, only Vanilla examples will work and they will use legacy themes. */
+export const FORCE_LEGACY_THEMES = false;
 
 type InjectedStyle = {
     css: string;

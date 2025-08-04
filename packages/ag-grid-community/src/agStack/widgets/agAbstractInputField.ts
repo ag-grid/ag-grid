@@ -1,7 +1,7 @@
 import { RefPlaceholder } from '../interfaces/agComponent';
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaLabel } from '../utils/ariaUtils';
 import type { AgElementParams } from '../utils/domUtils';

@@ -1,4 +1,4 @@
-import type { Theme } from '../theming/Theme';
+import type { Theme } from '../theming/theme';
 
 /** Properties required by AG Stack */
 export interface BaseProperties {

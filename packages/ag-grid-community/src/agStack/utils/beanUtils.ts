@@ -1,4 +1,4 @@
-import type { AgCoreBeanCollection } from '../interfaces/iContext';
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import { _exists } from './genericUtils';
 
 export function _getRootNode(beans: AgCoreBeanCollection<any, any, any, any>): Document | ShadowRoot {

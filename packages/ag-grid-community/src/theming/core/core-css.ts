@@ -9,7 +9,7 @@ import type {
     LengthValue,
     ScaleValue,
     ShadowValue,
-} from '../../agStack/theming/theme-types';
+} from '../../agStack/theming/themeTypes';
 import {
     accentColor,
     accentMix,
@@ -18,7 +18,7 @@ import {
     foregroundColor,
     foregroundHeaderBackgroundMix,
     foregroundMix,
-} from '../../agStack/theming/theme-utils';
+} from '../../agStack/theming/themeUtils';
 
 /**
  * All possible theme param types - the actual params available will be a subset of this type depending on the parts in use by the theme.

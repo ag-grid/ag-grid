@@ -1,5 +1,6 @@
 import { BaseEnvironment } from './agStack/core/baseEnvironment';
-import type { Theme, ThemeImpl } from './agStack/theming/Theme';
+import type { Theme } from './agStack/theming/theme';
+import type { ThemeImpl } from './agStack/theming/themeImpl';
 import { _observeResize } from './agStack/utils/domUtils';
 import type { NamedBean } from './context/bean';
 import type { BeanCollection } from './context/context';

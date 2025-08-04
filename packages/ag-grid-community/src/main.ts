@@ -157,10 +157,10 @@ export { AgPickerFieldParams } from './agStack/widgets/agPickerFieldParams';
 export { Direction } from './agStack/constants/direction';
 
 // AG Stack Theming
-export { createPart } from './agStack/theming/Part';
-export type { Part } from './agStack/theming/Part';
-export { _asThemeImpl } from './agStack/theming/Theme';
-export type { Theme } from './agStack/theming/Theme';
+export { createPart } from './agStack/theming/partImpl';
+export type { Part } from './agStack/theming/part';
+export { _asThemeImpl } from './agStack/theming/themeImpl';
+export type { Theme } from './agStack/theming/theme';
 export type {
     ColorValue,
     ImageValue,
@@ -174,7 +174,7 @@ export type {
     BorderStyleValue,
     ColorSchemeValue,
     WithParamTypes,
-} from './agStack/theming/theme-types';
+} from './agStack/theming/themeTypes';
 
 // AG Stack (private)
 export { AgBeanStub as _AgBeanStub, AgBeanStubEvent as _AgBeanStubEvent } from './agStack/core/agBeanStub';
@@ -185,7 +185,7 @@ export { BaseRegistry as _BaseRegistry } from './agStack/core/baseRegistry';
 export { BaseEventService as _BaseEventService } from './agStack/events/baseEventService';
 export { BaseEvents as _BaseEvents } from './agStack/interfaces/baseEvents';
 export { BaseProperties as _BaseProperties } from './agStack/interfaces/baseProperties';
-export { AgCoreBeanCollection as _AgCoreBeanCollection } from './agStack/interfaces/iContext';
+export { AgCoreBeanCollection as _AgCoreBeanCollection } from './agStack/interfaces/agCoreBeanCollection';
 export { WithoutCommon as _WithoutCommon } from './agStack/interfaces/iEvent';
 export { IIconService as _IIconService } from './agStack/interfaces/iIconService';
 export { ILocaleService as _ILocaleService } from './agStack/interfaces/iLocaleService';

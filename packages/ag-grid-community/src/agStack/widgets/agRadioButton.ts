@@ -1,7 +1,7 @@
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { AgCheckboxChangedEvent } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { AgCheckbox } from './agCheckbox';
 import type { AgCheckboxParams } from './agFieldParams';

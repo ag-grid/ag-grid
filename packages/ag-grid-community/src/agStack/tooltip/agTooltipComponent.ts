@@ -1,7 +1,7 @@
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IComponent } from '../interfaces/iComponent';
-import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { AgPopupComponent } from '../popup/agPopupComponent';
 import { _toString } from '../utils/stringUtils';

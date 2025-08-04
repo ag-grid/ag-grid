@@ -1,7 +1,7 @@
 import { AgBeanStub } from '../core/agBeanStub';
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import type {
     AgEventService,
     AgEventServiceGlobalListener,

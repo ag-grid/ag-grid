@@ -1,10 +1,8 @@
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import type { AgCoreBeanCollection } from '../interfaces/iContext';
 import type { IEnvironment } from '../interfaces/iEnvironment';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import type { Theme } from '../theming/Theme';
-import { ThemeImpl } from '../theming/Theme';
 import {
     IS_SSR,
     _injectCoreAndModuleCSS,
@@ -12,6 +10,8 @@ import {
     _registerInstanceUsingThemingAPI,
     _unregisterInstanceUsingThemingAPI,
 } from '../theming/inject';
+import type { Theme } from '../theming/theme';
+import { ThemeImpl } from '../theming/themeImpl';
 import { _createAgElement } from '../utils/domUtils';
 import { AgBeanStub } from './agBeanStub';
 
@@ -78,30 +78,12 @@ export abstract class BaseEnvironment<
 
     public applyThemeClasses(el: HTMLElement) {
         const { theme } = this;
-        let themeClass = '';
+        let themeClass: string;
         if (theme) {
             // Theming API mode
             themeClass = `${this.paramsClass} ${theme._getCssClass()}`;
         } else {
-            // legacy mode
-            this.mutationObserver.disconnect();
-            let node: HTMLElement | null = this.eRootDiv;
-            while (node) {
-                let isThemeEl = false;
-                for (const className of Array.from(node.classList)) {
-                    if (className.startsWith('ag-theme-')) {
-                        isThemeEl = true;
-                        themeClass = themeClass ? `${themeClass} ${className}` : className;
-                    }
-                }
-                if (isThemeEl) {
-                    this.mutationObserver.observe(node, {
-                        attributes: true,
-                        attributeFilter: ['class'],
-                    });
-                }
-                node = node.parentElement;
-            }
+            themeClass = this.applyLegacyThemeClasses();
         }
 
         for (const className of Array.from(el.classList)) {
@@ -115,6 +97,29 @@ export abstract class BaseEnvironment<
         }
     }
 
+    private applyLegacyThemeClasses(): string {
+        let themeClass = '';
+        this.mutationObserver.disconnect();
+        let node: HTMLElement | null = this.eRootDiv;
+        while (node) {
+            let isThemeEl = false;
+            for (const className of Array.from(node.classList)) {
+                if (className.startsWith('ag-theme-')) {
+                    isThemeEl = true;
+                    themeClass = themeClass ? `${themeClass} ${className}` : className;
+                }
+            }
+            if (isThemeEl) {
+                this.mutationObserver.observe(node, {
+                    attributes: true,
+                    attributeFilter: ['class'],
+                });
+            }
+            node = node.parentElement;
+        }
+        return themeClass;
+    }
+
     public addGlobalCSS(css: string, debugId: string): void {
         if (this.theme) {
             _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
@@ -124,7 +129,7 @@ export abstract class BaseEnvironment<
     }
 
     private handleThemeChange(): void {
-        const { gos, eRootDiv, globalCSS, theme: oldTheme } = this;
+        const { gos, theme: oldTheme } = this;
         const themeProperty = gos.get('theme');
         let newTheme: ThemeImpl | undefined;
         if (themeProperty === 'legacy') {
@@ -138,39 +143,44 @@ export abstract class BaseEnvironment<
             }
         }
         if (newTheme !== oldTheme) {
-            const additionalCss = this.getAdditionalCss();
-            if (newTheme) {
-                _registerInstanceUsingThemingAPI(this);
-                _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce, additionalCss);
-                for (const [css, debugId] of globalCSS) {
-                    _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
-                }
-                globalCSS.length = 0;
-            }
-            this.theme = newTheme;
-            newTheme?._startUse({
-                loadThemeGoogleFonts: gos.get('loadThemeGoogleFonts'),
-                styleContainer: this.eStyleContainer,
-                cssLayer: this.cssLayer,
-                nonce: this.styleNonce,
-                moduleCss: additionalCss,
-            });
-            let eParamsStyle = this.eParamsStyle;
-            if (!eParamsStyle) {
-                eParamsStyle = this.eParamsStyle = _createAgElement<HTMLStyleElement>({ tag: 'style' });
-                const styleNonce = this.gos.get('styleNonce');
-                if (styleNonce) {
-                    eParamsStyle.setAttribute('nonce', styleNonce);
-                }
-                eRootDiv.appendChild(eParamsStyle);
-            }
-            if (!IS_SSR) {
-                eParamsStyle.textContent = newTheme?._getPerInstanceCss(this.paramsClass) || '';
-            }
-
-            this.applyThemeClasses(eRootDiv);
-            this.fireStylesChangedEvent('themeChanged' as TChangeKey);
+            this.handleNewTheme(newTheme);
         }
         this.postProcessThemeChange(newTheme, themeProperty);
+    }
+
+    private handleNewTheme(newTheme: ThemeImpl | undefined): void {
+        const { gos, eRootDiv, globalCSS } = this;
+        const additionalCss = this.getAdditionalCss();
+        if (newTheme) {
+            _registerInstanceUsingThemingAPI(this);
+            _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce, additionalCss);
+            for (const [css, debugId] of globalCSS) {
+                _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
+            }
+            globalCSS.length = 0;
+        }
+        this.theme = newTheme;
+        newTheme?._startUse({
+            loadThemeGoogleFonts: gos.get('loadThemeGoogleFonts'),
+            styleContainer: this.eStyleContainer,
+            cssLayer: this.cssLayer,
+            nonce: this.styleNonce,
+            moduleCss: additionalCss,
+        });
+        let eParamsStyle = this.eParamsStyle;
+        if (!eParamsStyle) {
+            eParamsStyle = this.eParamsStyle = _createAgElement<HTMLStyleElement>({ tag: 'style' });
+            const styleNonce = gos.get('styleNonce');
+            if (styleNonce) {
+                eParamsStyle.setAttribute('nonce', styleNonce);
+            }
+            eRootDiv.appendChild(eParamsStyle);
+        }
+        if (!IS_SSR) {
+            eParamsStyle.textContent = newTheme?._getPerInstanceCss(this.paramsClass) || '';
+        }
+
+        this.applyThemeClasses(eRootDiv);
+        this.fireStylesChangedEvent('themeChanged' as TChangeKey);
     }
 }
