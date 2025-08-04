@@ -1,4 +1,4 @@
-export const DATE_TIME_SEPARATOR = 'T';
+const DATE_TIME_SEPARATOR = 'T';
 
 /**
  * Executing this against date produces the following:
