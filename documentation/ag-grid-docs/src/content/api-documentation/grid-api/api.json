@@ -370,8 +370,14 @@
         "isAnyFilterPresent": {},
         "getColumnFilterInstance": {
             "more": {
-                "name": "Accessing Individual Filter Component Instances",
-                "url": "./filter-api/#accessing-individual-filter-component-instances"
+                "name": "Accessing Individual Filters",
+                "url": "./filter-api/#accessing-individual-filters"
+            }
+        },
+        "getColumnFilterHandler": {
+            "more": {
+                "name": "Accessing Individual Filters",
+                "url": "./filter-api/#accessing-individual-filters"
             }
         },
         "getFilterModel": {

@@ -26,6 +26,10 @@ The filter model contains an array of string values where each item in the array
 
 ## Set Filter API
 
+The Set Filter consists of two parts - the Set Filter UI (the UI component) and the Set Filter Handler (maintains the values and performs the filter logic).
+
+Note that the Set Filter will always use a filter handler, regardless of whether `enableFilterHandlers` is enabled (which controls filter handlers for [Custom Filter Components](./component-filter/)).
+
 The Set Filter values can be updated via the Set Filter Handler:
 
 ```{% frameworkTransform=true %}
@@ -37,16 +41,16 @@ The `SetFilterHandler` interface defines the public API for the Set Filter Handl
 
 {% interfaceDocumentation interfaceName="SetFilterHandler" /%}
 
-The Mini Filter get by interacted with via the Set Filter instance:
+The Mini Filter can be interacted with via the Set Filter UI instance:
 
 ```{% frameworkTransform=true %}
-// get filter instance
+// get filter UI instance
 api.getColumnFilterInstance('country').then(countryFilterComponent => {
-    // use set filter instance
+    // use set filter UI instance
 });
 ```
 
-The `SetFilterUi` interface defines the public API for the Set Filter component.
+The `SetFilterUi` interface defines the public API for the Set Filter UI component.
 
 {% interfaceDocumentation interfaceName="SetFilterUi"  /%}
 
