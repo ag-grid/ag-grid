@@ -82,6 +82,10 @@ The snippet above is demonstrated in the following example:
 
 {% gridExampleRunner title="SideBarDef" name="sideBarDef"  exampleHeight=600 /%}
 
+{% note %}
+Calling `setSideBarVisible(true)` when `sideBarDef.hideButtons` is set to true and no tool panel is open will not display anything.
+{% /note %}
+
 ## Configuration Shortcuts
 
 The `boolean` and `string` configurations are shortcuts for more detailed configurations. When you use a shortcut the grid replaces it with the equivalent long form of the configuration by building the equivalent `SideBarDef`.
@@ -223,10 +227,6 @@ The Side Bar state can be saved and restored as part of [Grid State](./grid-stat
 The list below details all the API methods relevant to the Tool Panel.
 
 {% apiDocumentation source="grid-api/api.json" section="accessories" names=["getSideBar","setSideBarVisible","isSideBarVisible","setSideBarPosition","openToolPanel","closeToolPanel","getOpenedToolPanel","isToolPanelShowing","refreshToolPanel", "getToolPanelInstance"] /%}
-
-{% note %}
-Calling `setSideBarVisible(true)` when `sideBarDef.hideButtons` is set to true and no tool panel is open will not display anything. This is useful if you want to show a tool panel without showing the buttons.
-{% /note %}
 
 The example below demonstrates different usages of the Tool Panel API methods. The following can be noted:
 
