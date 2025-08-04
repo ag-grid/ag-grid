@@ -7,7 +7,7 @@ import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
 import { DOCS_TAB_ITEM_ID_PREFIX } from '@ag-website-shared/constants';
 import { Header } from '@components/docs/components/Header';
 import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
-import { FRAMEWORKS, PRODUCTION_GRID_SITE_URL } from '@constants';
+import { FRAMEWORK_REDIRECT_PATH, FRAMEWORKS, PRODUCTION_GRID_SITE_URL } from '@constants';
 import Layout from '@layouts/Layout.astro';
 import { getIsArchive } from '@utils/env';
 import { getFrameworkDisplayText } from '@utils/framework';
@@ -88,10 +88,7 @@ if (errorLinks.length > 0) {
 }
 
 const isArchive = getIsArchive();
-const migrationUrl = pathJoin(
-    PRODUCTION_GRID_SITE_URL,
-    `/archive/33.0.0/${framework}-data-grid/upgrading-to-ag-grid-33/`
-);
+const migrationUrl = pathJoin(PRODUCTION_GRID_SITE_URL, FRAMEWORK_REDIRECT_PATH, 'migration');
 ---
 
 <Layout
@@ -110,8 +107,8 @@ const migrationUrl = pathJoin(
             {
                 isArchive && (
                     <Warning>
-                        You are using an older version of AG Grid. To upgrade, please see the{' '}
-                        <a href={migrationUrl}>migration guide</a>.
+                        You are using an older version of AG Grid. To upgrade, please see our{' '}
+                        <a href={migrationUrl}>migration guides</a>.
                     </Warning>
                 )
             }
