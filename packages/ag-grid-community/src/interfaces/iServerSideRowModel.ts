@@ -9,7 +9,7 @@ export interface IServerSideRowModel<TData = any> extends IRowModel {
     onRowHeightChanged(): void;
     getStoreState(): ServerSideGroupLevelState[];
     retryLoads(): void;
-    expandAll(value: boolean): void;
+    expandAllTransactional(cb: Parameters<IRowModel['forEachNode']>[0]): void;
     setDatasource(datasource: IServerSideDatasource<TData>): void;
     forEachNodeAfterFilterAndSort(
         callback: (node: IRowNode<TData>, index: number) => void,

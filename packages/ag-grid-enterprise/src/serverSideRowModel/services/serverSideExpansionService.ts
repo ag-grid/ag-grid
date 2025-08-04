@@ -28,12 +28,10 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
     }
 
-    private queuedRowIds: Set<string> = new Set();
-
     public postConstruct(): void {
         this.addManagedEventListeners({
             columnRowGroupChanged: () => {
-                this.queuedRowIds.clear();
+                this.expandedState.toggledNodes.clear();
             },
         });
     }
@@ -43,8 +41,8 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
             return;
         }
 
-        if (this.queuedRowIds.has(rowNode.id!)) {
-            this.queuedRowIds.delete(rowNode.id!);
+        const shouldExpand = this.expandedState.expandAll !== this.expandedState.toggledNodes.has(rowNode.id!);
+        if (shouldExpand) {
             rowNode.setExpanded(true);
             return;
         }
@@ -67,18 +65,15 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     }
 
     public expandRows(rowIdsToExpand: string[], rowIdsToCollapse?: string[]): void {
-        const { serverSideRowModel, queuedRowIds } = this;
         const processNodes = (rowIds: string[], expanded: boolean) => {
             for (const rowId of rowIds) {
-                const rowNode = serverSideRowModel.getRowNode(rowId);
+                const rowNode = this.serverSideRowModel.getRowNode(rowId);
                 if (rowNode) {
                     rowNode.setExpanded(expanded);
                 } else {
-                    if (expanded) {
-                        queuedRowIds.add(rowId);
-                    } else {
-                        queuedRowIds.delete(rowId);
-                    }
+                    this.expandedState.toggledNodes[expanded !== this.expandedState.expandAll ? 'add' : 'delete'](
+                        rowId
+                    );
                 }
             }
         };
@@ -90,8 +85,17 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     }
 
     public expandAll(value: boolean): void {
-        this.serverSideRowModel.expandAll(value);
-
+        this.expandedState.expandAll = value;
+        this.expandedState.toggledNodes.clear();
+        this.serverSideRowModel.expandAllTransactional((node) => {
+            if (node.stub) {
+                this.expandedState.toggledNodes.add(node.id!);
+            } else {
+                if (node.hasChildren()) {
+                    node.setExpanded(value);
+                }
+            }
+        });
         this.beans.eventSvc.dispatchEvent({
             type: 'expandOrCollapseAll',
             source: value ? 'expandAll' : 'collapseAll',
