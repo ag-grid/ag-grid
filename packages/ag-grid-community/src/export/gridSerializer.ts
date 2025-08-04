@@ -437,9 +437,9 @@ export class GridSerializer extends BeanStub implements NamedBean {
                 name = this.beans.colNames.getDisplayNameForColumnGroup(columnGroup, 'header')!;
             }
 
-            const collapsibleGroupRanges = columnGroup
-                .getLeafColumns()
-                .reduce((collapsibleGroups: number[][], currentColumn, currentIdx, arr) => {
+            const columnsToCalculateRange = columnGroup.isExpandable() ? columnGroup.getLeafColumns() : [];
+            const collapsibleGroupRanges = columnsToCalculateRange.reduce(
+                (collapsibleGroups: number[][], currentColumn, currentIdx, arr) => {
                     let lastGroup = _last(collapsibleGroups);
                     const groupShow = currentColumn.getColumnGroupShow() === 'open';
 
@@ -457,7 +457,9 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     }
 
                     return collapsibleGroups;
-                }, []);
+                },
+                []
+            );
 
             gridRowIterator.onColumn(
                 columnGroup,

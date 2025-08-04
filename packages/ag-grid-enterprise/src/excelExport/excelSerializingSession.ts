@@ -144,7 +144,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 header: string,
                 index: number,
                 span: number,
-                collapsibleRanges: number[][]
+                collapsibleGroupRanges: number[][]
             ) => {
                 const styleIds: string[] = this.config.styleLinker({
                     rowType: 'HEADER_GROUPING',
@@ -159,7 +159,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                         header,
                         span
                     ),
-                    collapsibleRanges,
+                    collapsibleRanges: collapsibleGroupRanges,
                 });
             },
         };
