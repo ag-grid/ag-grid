@@ -228,10 +228,6 @@ The list below details all the API methods relevant to the Tool Panel.
 
 {% apiDocumentation source="grid-api/api.json" section="accessories" names=["getSideBar","setSideBarVisible","isSideBarVisible","setSideBarPosition","openToolPanel","closeToolPanel","getOpenedToolPanel","isToolPanelShowing","refreshToolPanel", "getToolPanelInstance"] /%}
 
-{% note %}
-Calling `setSideBarVisible(true)` when `sideBarDef.hideButtons` is set to true and no tool panel is open will not display anything. This is useful if you want to show a tool panel without showing the buttons.
-{% /note %}
-
 The example below demonstrates different usages of the Tool Panel API methods. The following can be noted:
 
 * Initially the Side Bar is not visible as `sideBar.hiddenByDefault=true`.
