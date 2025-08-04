@@ -104,6 +104,12 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
     private setColRowGroupActive(column: AgColumn, rowGroup: boolean, source: ColumnEventType): void {
         if (column.rowGroupActive !== rowGroup) {
             column.rowGroupActive = rowGroup;
+
+            const { dateHierarchyColSvc } = this.beans;
+            if (rowGroup && dateHierarchyColSvc?.isDateHierarchyColsEnabledForCol(column)) {
+                this.columns = (dateHierarchyColSvc.getColumns() ?? []).concat(this.columns);
+            }
+
             column.dispatchColEvent('columnRowGroupChanged', source);
         }
         column.dispatchStateUpdatedEvent('rowGroup');

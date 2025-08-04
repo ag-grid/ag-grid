@@ -50,6 +50,7 @@ import type { IColsService } from '../interfaces/iColsService';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
+import type { IDateHierarchyColService } from '../interfaces/iDateHierarchyColService';
 import type { IEditModelService } from '../interfaces/iEditModelService';
 import type { IEditService } from '../interfaces/iEditService';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
@@ -346,7 +347,7 @@ interface CoreBeanCollection {
     filterPanelSvc?: IFilterPanelService;
     selectableFilter?: ISelectableFilterService;
     testIdSvc?: ITestIdService;
-    dateHierarchyColSvc?: IColumnCollectionService;
+    dateHierarchyColSvc?: IDateHierarchyColService;
 }
 
 export type BeanCollection = CoreBeanCollection & {

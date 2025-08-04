@@ -2,7 +2,8 @@ import type {
     ColDef,
     ColKey,
     GridOptions,
-    IColumnCollectionService,
+    HeaderValueGetterParams,
+    IDateHierarchyColService,
     NamedBean,
     PropertyChangedEvent,
     PropertyValueChangedEvent,
@@ -21,7 +22,7 @@ import {
     _updateColsMap,
 } from 'ag-grid-community';
 
-export class DateHierarchyColService extends BeanStub implements NamedBean, IColumnCollectionService {
+export class DateHierarchyColService extends BeanStub implements NamedBean, IDateHierarchyColService {
     beanName = 'dateHierarchyColSvc' as const;
 
     public columns: _ColumnCollections | null = null;
@@ -49,10 +50,6 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, ICol
         cols: _ColumnCollections,
         updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void
     ): void {
-        if (!this.isDateHierarchyColsEnabled(cols)) {
-            return;
-        }
-
         const list = this.createDateHierarchyColumns(cols);
         const areSame = _areColIdsEqual(list, this.columns?.list ?? []);
 
@@ -85,11 +82,15 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, ICol
         return this.columns?.list ?? null;
     }
 
-    private isDateHierarchyColsEnabled(cols: _ColumnCollections): boolean {
-        return cols.list.some((col) => {
-            const def = col.getColDef();
-            return def.rowGroupingHierarchy != undefined && (def.rowGroup || def.enableRowGroup);
-        });
+    public isDateHierarchyColsEnabled(cols: _ColumnCollections): boolean {
+        return cols.list.some((col) => this.isDateHierarchyColsEnabledForCol(col));
+    }
+
+    public isDateHierarchyColsEnabledForCol(col: AgColumn): boolean {
+        const { dataTypeSvc } = this.beans;
+        const def = col.getColDef();
+        const isDateCol = dataTypeSvc?.getBaseDataType(col)?.includes('date');
+        return !!(def.rowGroupingHierarchy && (def.rowGroup || def.enableRowGroup) && isDateCol);
     }
 
     private createDateHierarchyColDefs(sourceCol: AgColumn): ColDef[] {
@@ -100,9 +101,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, ICol
             return colDefs;
         }
 
-        const { dataTypeSvc } = this.beans;
-        const isDateCol = dataTypeSvc?.getBaseDataType(sourceCol)?.includes('date');
-        if (isDateCol) {
+        if (this.isDateHierarchyColsEnabledForCol(sourceCol)) {
             for (const part of sourceColDef.rowGroupingHierarchy) {
                 let colDef: ColDef | null = null;
                 if (typeof part === 'string') {
@@ -139,7 +138,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, ICol
     }
 
     private createColDefForPart(part: string, sourceCol: AgColumn, sourceColDef: ColDef): ColDef | null {
-        const { valueSvc } = this.beans;
+        const { valueSvc, colNames } = this.beans;
 
         const base: ColDef = {
             enableRowGroup: true,
@@ -167,12 +166,20 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, ICol
                 return innerValue;
             };
 
+        const getHeaderValueGetter = (part: string) => (params: HeaderValueGetterParams) => {
+            const sourceName = colNames.getDisplayNameForColumn(sourceCol, params.location);
+            if (sourceName) {
+                return `${sourceName} (${part})`;
+            }
+            return '';
+        };
+
         switch (part) {
             case 'year':
                 return {
                     ...base,
                     colId: `${sourceColDef.colId ?? sourceColDef.field}-year`,
-                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Year)`,
+                    headerValueGetter: getHeaderValueGetter('Year'),
                     valueGetter: getDatePartValueGetter(0),
                 };
 
@@ -180,17 +187,15 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, ICol
                 return {
                     ...base,
                     colId: `${sourceColDef.colId ?? sourceColDef.field}-quarter`,
-                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Quarter)`,
-                    valueGetter: getDatePartValueGetter(1, (month) => {
-                        return (Math.floor(Number(month) / 4) + 1).toString();
-                    }),
+                    headerValueGetter: getHeaderValueGetter('Quarter'),
+                    valueGetter: getDatePartValueGetter(1, (month) => (Math.floor(Number(month) / 4) + 1).toString()),
                 };
 
             case 'month':
                 return {
                     ...base,
                     colId: `${sourceColDef.colId ?? sourceColDef.field}-month`,
-                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Month)`,
+                    headerValueGetter: getHeaderValueGetter('Month'),
                     valueGetter: getDatePartValueGetter(1),
                 };
 
@@ -198,7 +203,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, ICol
                 return {
                     ...base,
                     colId: `${sourceColDef.colId ?? sourceColDef.field}-day`,
-                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Day)`,
+                    headerValueGetter: getHeaderValueGetter('Day'),
                     valueGetter: getDatePartValueGetter(2),
                 };
 
@@ -206,7 +211,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, ICol
                 return {
                     ...base,
                     colId: `${sourceColDef.colId ?? sourceColDef.field}-hour`,
-                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Hour)`,
+                    headerValueGetter: getHeaderValueGetter('Hour'),
                     valueGetter: getDatePartValueGetter(3),
                 };
 
@@ -214,7 +219,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, ICol
                 return {
                     ...base,
                     colId: `${sourceColDef.colId ?? sourceColDef.field}-minute`,
-                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Minute)`,
+                    headerValueGetter: getHeaderValueGetter('Minute'),
                     valueGetter: getDatePartValueGetter(3),
                 };
 
@@ -222,7 +227,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, ICol
                 return {
                     ...base,
                     colId: `${sourceColDef.colId ?? sourceColDef.field}-second`,
-                    headerName: `${sourceColDef.headerName ?? sourceColDef.field} (Second)`,
+                    headerValueGetter: getHeaderValueGetter('Second'),
                     valueGetter: getDatePartValueGetter(3),
                 };
 
