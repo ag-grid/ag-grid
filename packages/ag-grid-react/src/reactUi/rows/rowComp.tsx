@@ -3,6 +3,7 @@ import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMe
 import type {
     CellCtrl,
     ICellRenderer,
+    ICellRendererParams,
     IRowComp,
     RowContainerType,
     RowCtrl,
@@ -51,6 +52,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
     const eGui = useRef<HTMLDivElement | null>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
+    const fullWidthParamsRef = useRef<ICellRendererParams>();
 
     const autoHeightSetup = useRef<boolean>(false);
     const [autoHeightSetupAttempt, setAutoHeightSetupAttempt] = useState<number>(0);
@@ -144,20 +146,26 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                     }
                 }
             },
-            showFullWidth: (compDetails) => setFullWidthCompDetails(compDetails),
+            showFullWidth: (compDetails) => {
+                fullWidthParamsRef.current = compDetails.params;
+                setFullWidthCompDetails(compDetails);
+            },
             getFullWidthCellRenderer: () => fullWidthCompRef.current,
+            getFullWidthCellRendererParams: () => fullWidthParamsRef.current,
             refreshFullWidth: (getUpdatedParams) => {
+                const fullWidthParams = getUpdatedParams();
+                fullWidthParamsRef.current = fullWidthParams;
                 if (canRefreshFullWidthRef.current) {
                     setFullWidthCompDetails((prevFullWidthCompDetails) => ({
                         ...prevFullWidthCompDetails!,
-                        params: getUpdatedParams(),
+                        params: fullWidthParams,
                     }));
                     return true;
                 } else {
                     if (!fullWidthCompRef.current || !fullWidthCompRef.current.refresh) {
                         return false;
                     }
-                    return fullWidthCompRef.current.refresh(getUpdatedParams());
+                    return fullWidthCompRef.current.refresh(fullWidthParams);
                 }
             },
         };

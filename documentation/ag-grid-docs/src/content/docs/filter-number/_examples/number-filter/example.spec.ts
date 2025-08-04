@@ -1,12 +1,10 @@
-import { expect } from '@playwright/test';
-import { testAllFrameworks } from '@utils/grid/test-utils';
+// Import the test helper from test-utils
+import { expect, setAgExampleUrl, test } from '@utils/grid/test-utils';
 
-import { wrapAgTestIdFor } from 'ag-grid-community';
+// Infer test URL from file location
+setAgExampleUrl(import.meta);
 
-const pageExampleUrl = 'filter-number/number-filter';
-testAllFrameworks('Example', pageExampleUrl, async ({ page }) => {
-    const agIdFor = wrapAgTestIdFor((testId) => page.getByTestId(testId));
-
+test.eachFramework('Example', async ({ page, agIdFor }) => {
     const colFilterIcon = agIdFor.headerFilterButton('price');
     await expect(colFilterIcon).toBeVisible();
     await colFilterIcon.click();

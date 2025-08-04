@@ -3,13 +3,13 @@ version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
     SNYK-JS-JPEGJS-2859218:
-        - gif-frames@1.0.1 > get-pixels-frame-info-update@3.3.2 > jpeg-js@0.3.7:
+        - gif-frames@1.0.1 > get-pixels-frame-info-update@3.3.2 > jpeg-js@0.4.0:
               reason: >-
                   Used by gif-frames, and that is only run during build with gif images
                   that are in our control
               expires: 2025-09-21T12:00:00.000Z
               created: 2025-06-05T14:36:23.503Z
-        - gif-frames@1.0.1 > save-pixels-jpeg-js-upgrade@2.3.4-jpeg-js-upgrade.0 > jpeg-js@0.3.7:
+        - gif-frames@1.0.1 > save-pixels-jpeg-js-upgrade@2.3.4-jpeg-js-upgrade.0 > jpeg-js@0.4.0:
               reason: >-
                   Used by gif-frames, and that is only run during build with gif images
                   that are in our control

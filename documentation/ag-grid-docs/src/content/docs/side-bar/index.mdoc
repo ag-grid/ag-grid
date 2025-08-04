@@ -82,6 +82,10 @@ The snippet above is demonstrated in the following example:
 
 {% gridExampleRunner title="SideBarDef" name="sideBarDef"  exampleHeight=600 /%}
 
+{% note %}
+Calling `setSideBarVisible(true)` when `sideBarDef.hideButtons` is set to true and no tool panel is open will not display anything.
+{% /note %}
+
 ## Configuration Shortcuts
 
 The `boolean` and `string` configurations are shortcuts for more detailed configurations. When you use a shortcut the grid replaces it with the equivalent long form of the configuration by building the equivalent `SideBarDef`.

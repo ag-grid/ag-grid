@@ -79,16 +79,17 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     }
 
     public getEditRowDataValue(rowNode: IRowNode, { checkSiblings }: GetEditsParams = {}): any {
-        if (this.edits.size === 0) {
-            return rowNode.data;
+        if (!rowNode || this.edits.size === 0) {
+            return undefined;
         }
 
+        // don't check siblings via getEditRow parameter, as we want to combine edits from the row and its siblings
         const editRow = this.getEditRow(rowNode);
         const pinnedSibling = (rowNode as RowNode).pinnedSibling;
         const siblingRow = checkSiblings && pinnedSibling && this.getEditRow(pinnedSibling);
 
         if (!editRow && !siblingRow) {
-            return rowNode.data;
+            return undefined;
         }
 
         const data: any = Object.assign({}, rowNode.data);

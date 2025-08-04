@@ -139,7 +139,7 @@ export function _isValidDate(value?: string | null, bailIfInvalidTime = false): 
 
 // check if dateTime is a valid date and has time parts
 export function _isValidDateTime(value?: string | null): boolean {
-    return !!value && _isValidDate(value, true) && !!value.match(DATE_TIME_REGEXP)?.[1]; // matches the 'T14:22:19' part
+    return _isValidDate(value, true);
 }
 
 /**
@@ -152,6 +152,10 @@ export function _isValidDateTime(value?: string | null): boolean {
  */
 export function _parseDateTimeFromString(value?: string | null, bailIfInvalidTime = false): Date | null {
     if (!value) {
+        return null;
+    }
+
+    if (!DATE_TIME_REGEXP.test(value)) {
         return null;
     }
 
@@ -172,6 +176,10 @@ export function _parseDateTimeFromString(value?: string | null, bailIfInvalidTim
 
     if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
         // date was not parsed as expected so must have been invalid
+        return null;
+    }
+
+    if (!timeStr && bailIfInvalidTime) {
         return null;
     }
 

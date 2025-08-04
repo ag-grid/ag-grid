@@ -320,9 +320,6 @@ export function _syncFromEditor(
         return;
     }
 
-    const cellCtrl = _getCellCtrl(beans, position);
-    const hasEditor = !!cellCtrl?.comp?.getCellEditor();
-
     let edit = editModelSvc.getEdit(position, true);
 
     if (!edit?.sourceValue) {
@@ -330,7 +327,6 @@ export function _syncFromEditor(
         edit = editModelSvc.setEdit(position, {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
             pendingValue: UNEDITED,
-            state: hasEditor ? 'editing' : 'changed',
         });
     }
 
@@ -338,7 +334,6 @@ export function _syncFromEditor(
     // Note: editorValue should be in the correct target format already, so no need to parse it again - this is done in the editor, via the colDef parseValue function.
     editModelSvc.setEdit(position, {
         editorValue: valueSameAsSource ? edit.sourceValue : editorValue,
-        state: hasEditor ? 'editing' : 'changed',
     });
 
     if (persist) {
@@ -375,10 +370,12 @@ export function _destroyEditor(
     params?: { event?: Event | null; silent?: boolean }
 ): void {
     const { editSvc, editModelSvc } = beans;
-    const { rowNode, column } = position;
     const cellCtrl = _getCellCtrl(beans, position);
+
+    const edit = editModelSvc?.getEdit(position, true);
+
     if (!cellCtrl) {
-        if (editModelSvc?.hasEdits(position) && rowNode && column) {
+        if (edit) {
             editModelSvc?.setEdit(position, { state: 'changed' });
         }
 
@@ -401,9 +398,7 @@ export function _destroyEditor(
         cellValidationModel?.clearCellValidation(position);
     }
 
-    if (editModelSvc?.getEdit(position)) {
-        editModelSvc?.setEdit(position, { state: 'changed' });
-    }
+    editModelSvc?.setEdit(position, { state: 'changed' });
 
     comp?.setEditDetails(); // passing nothing stops editing
     comp?.refreshEditStyles(false, false);
