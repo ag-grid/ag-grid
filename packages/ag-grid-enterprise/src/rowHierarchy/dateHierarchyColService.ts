@@ -26,7 +26,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
     beanName = 'dateHierarchyColSvc' as const;
 
     public columns: _ColumnCollections | null = null;
-    private sourceColumnMap = new WeakMap<AgColumn, AgColumn[]>();
+    private readonly sourceColumnMap = new WeakMap<AgColumn, AgColumn[]>();
 
     public postConstruct(): void {}
 
@@ -145,7 +145,12 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
     }
 
     private createColDefForPart(part: string, sourceCol: AgColumn, sourceColDef: ColDef): ColDef | null {
-        const { valueSvc, colNames } = this.beans;
+        const { valueSvc, colNames, gos } = this.beans;
+
+        const groupHierarchyConfig = gos.get('groupHierarchyConfig') ?? {};
+        if (part in groupHierarchyConfig) {
+            return groupHierarchyConfig[part];
+        }
 
         const base: ColDef = {
             enableRowGroup: true,
@@ -245,5 +250,5 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
 
 function updateMap<T extends object>(wm: WeakMap<T, T[]>, key: T, value: T): void {
     const existing = wm.get(key);
-    wm.set(key, (existing ? existing : []).concat(value));
+    wm.set(key, (existing ?? []).concat(value));
 }
