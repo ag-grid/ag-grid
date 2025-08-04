@@ -12,14 +12,17 @@ type PlaywrightFixtures = ExtractFixtures<typeof base>;
 type AgGridFixtures = {
     agFramework: AgFramework;
     agExampleUrl?: AgExampleUrl;
+    /**
+     * A locator to get the ag-grid test ID for a specific cell or element.
+     */
     agIdFor: ReturnType<typeof wrapAgTestIdFor<any>>;
 };
 
-export type TestFixtures = PlaywrightFixtures & AgGridFixtures;
+type TestFixtures = PlaywrightFixtures & AgGridFixtures;
 
 type AgExampleUrl = `${string}/${string}`;
 
-export const ALL_FRAMEWORKS = [
+const ALL_FRAMEWORKS = [
     'typescript',
     'vanilla',
     // 'reactFunctional', // These are computed from reactFunctionalTs by Typescript striping the types so very unlikely to result in different errors to the typescript version
@@ -29,7 +32,7 @@ export const ALL_FRAMEWORKS = [
 ] as const;
 type AgFramework = (typeof ALL_FRAMEWORKS)[number];
 
-export async function loadPage(
+async function loadPage(
     page: Page,
     agExampleUrl: AgExampleUrl,
     agFramework: (typeof ALL_FRAMEWORKS)[number]
@@ -48,24 +51,13 @@ const extended = base.extend<TestFixtures>({
     agIdFor: [({ page }, use) => use(wrapAgTestIdFor((testId: string) => page.getByTestId(testId))), { option: true }],
 });
 
-/**
- * @param testName Names of this test case. Useful if running multiple tests against the same example.
- * @param exampleUrlOrTestBody Example URL in the format 'page/exampleName' or the test body function
- * @param testBody The test body function that will be executed for each framework (if exampleUrl was provided)
- */
-export function testAllFrameworks(
-    testName: string,
-    agExampleUrl: AgExampleUrl | null,
-    testBody: (fixtures: TestFixtures) => Promise<void>
-): void {
-    if (agExampleUrl) {
-        extended.use({ agExampleUrl });
-    }
-    eachFramework(testName, testBody);
-}
-
 const frameworkTest =
     (agFramework: AgFramework) =>
+    /**
+     * Run the test against a specific framework.
+     * @param testName Names of this test case. Useful if running multiple tests against the same example.
+     * @param testBody The test body function that will be executed for each framework.
+     */
     (testName: string | undefined, testBody: (fixtures: TestFixtures) => Promise<void>): void => {
         extended.use({ agFramework });
         const testWrapper = async ({ page, agExampleUrl, agIdFor }: TestFixtures) => {
@@ -88,23 +80,28 @@ const frameworkTest =
         }
     };
 
+/**
+ * Run the same test against all frameworks.
+ * @param testName Names of this test case. Useful if running multiple tests against the same example.
+ * @param testBody The test body function that will be executed for each framework.
+ */
 const eachFramework = (testName: string, testBody: (fixtures: TestFixtures) => Promise<void>) => {
     extended.describe(testName, () =>
         ALL_FRAMEWORKS.forEach((framework) => frameworkTest(framework)(undefined, testBody))
     );
 };
 
-export function toExampleUrl(fileUrl: string): { agExampleUrl: AgExampleUrl } {
-    const pSegment = fileUrl.split('/');
+/**
+ * Set the example URL for the tests.
+ * @param importMeta The import.meta object from the module where this function is called.
+ */
+export function setAgExampleUrl(importMeta: ImportMeta) {
+    const pSegment = importMeta.url.split('/');
 
     const page = pSegment[pSegment.length - 4];
     const example = pSegment[pSegment.length - 2];
 
-    return { agExampleUrl: `${page}/${example}` as AgExampleUrl };
-}
-
-export function setAgExampleUrl(importMeta: ImportMeta) {
-    extended.use(toExampleUrl(importMeta.url));
+    extended.use({ agExampleUrl: `${page}/${example}` as AgExampleUrl });
 }
 
 // Expose call for each framework

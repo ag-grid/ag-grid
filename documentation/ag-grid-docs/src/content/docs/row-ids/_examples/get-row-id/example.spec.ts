@@ -1,12 +1,10 @@
-import { expect } from '@playwright/test';
-import { testAllFrameworks } from '@utils/grid/test-utils';
+// Import the test helper from test-utils
+import { expect, setAgExampleUrl, test } from '@utils/grid/test-utils';
 
-import { wrapAgTestIdFor } from 'ag-grid-community';
+// Infer test URL from file location
+setAgExampleUrl(import.meta);
 
-const pageExampleUrl = 'row-ids/get-row-id';
-testAllFrameworks('Example', pageExampleUrl, async ({ page }) => {
-    const agIdFor = wrapAgTestIdFor((testId) => page.getByTestId(testId));
-
+test.eachFramework('Example', async ({ agIdFor }) => {
     await expect(agIdFor.rowNode('c2')).toBeVisible();
 
     await expect(agIdFor.cell('c2', 'make')).toContainText('Ford');
