@@ -32,10 +32,14 @@ export interface BaseBean<TBeanCollection> {
     preWireBeans?(beans: TBeanCollection): void;
 }
 
+let contextId = 0;
+
 export class GenericContext<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
     protected beans: TBeanCollection = {} as TBeanCollection;
     private createdBeans: GenericBean<TBeanName, TBeanCollection>[] = [];
     private beanDestroyComparator?: BeanComparator<TBeanName, TBeanCollection>;
+
+    public readonly id: string = `context-${contextId++}`;
 
     private destroyed = false;
 

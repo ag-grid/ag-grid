@@ -12,7 +12,6 @@ import {
 } from 'ag-grid-community';
 
 import { BeansContext } from './beansContext';
-import GridHeaderComp from './header/gridHeaderComp';
 import useReactCommentEffect from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
 import { classesList } from './utils';
@@ -23,7 +22,11 @@ interface SectionProperties {
     style?: React.CSSProperties;
 }
 
-const GridBodyComp = () => {
+interface GridBodyCompProps {
+    children?: React.ReactNode;
+}
+
+const GridBodyComp = ({ children }: GridBodyCompProps) => {
     const beans = useContext(BeansContext);
     const { context, overlays } = beans;
 
@@ -242,7 +245,7 @@ const GridBodyComp = () => {
 
     return (
         <div ref={setRef} className={rootClasses}>
-            <GridHeaderComp />
+            {children}
             {createSection({
                 section: eTop,
                 className: topClasses,

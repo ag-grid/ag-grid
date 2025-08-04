@@ -1,4 +1,5 @@
 import React from 'react';
+// import React, {useRef, useCallback, useEffect} from 'react';
 import ReactDOM from 'react-dom';
 
 export const classesList = (...list: (string | null | undefined)[]): string => {
@@ -188,3 +189,21 @@ export function getNextValueIfDifferent<T extends { instanceId: string }>(
 
     return [...oldValues, ...newValues];
 }
+
+
+// export function useInitEffect(callback: () => void) {
+//   const calledRef = useRef(false);
+//   const refCallback = useCallback((node: HTMLElement | null) => {
+//     if (node && !calledRef.current) {
+//       calledRef.current = true;
+//       callback();
+//     }
+//   }, [callback]);
+//   useEffect(() => {
+//     if (isReact19() && !calledRef.current) {
+//       calledRef.current = true;
+//       callback();
+//     }
+//   }, [callback]);
+//   return isReact19() ? undefined : refCallback;
+// }

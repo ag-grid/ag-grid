@@ -91,127 +91,274 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
 
     const ready = useRef<boolean>(false);
 
-    const [context, setContext] = useState<Context | undefined>(undefined);
+
+    const contextRef = useRef<Context | undefined>(undefined);
+
+
+    // const [context, setContext] = useState<Context | undefined>(undefined);
+    const [isDestroyed, setIsDestroyed] = useState<boolean>(true);
 
     // Hook to enable Portals to be displayed via the PortalManager
     const [, setPortalRefresher] = useState(0);
 
-    const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        eGui.current = eRef;
-        if (!eRef) {
-            destroyFuncs.current.forEach((f) => f());
-            destroyFuncs.current.length = 0;
-            return;
-        }
+    useEffect(() => {
+        if (eGui.current) {
+            const modules = props.modules || [];
+            const oldERef = eGui.current;
+            const eRef = eGui.current;
 
-        const modules = props.modules || [];
-
-        if (!portalManager.current) {
-            portalManager.current = new PortalManager(
-                () => setPortalRefresher((prev) => prev + 1),
-                props.componentWrappingElement,
-                props.maxComponentCreationTimeMs
-            );
-            destroyFuncs.current.push(() => {
-                portalManager.current?.destroy();
-                portalManager.current = null;
-            });
-        }
-
-        const mergedGridOps = _combineAttributesAndGridOptions(
-            props.gridOptions,
-            props,
-            Object.keys(props).filter((key) => !excludeReactCompProps.has(key))
-        );
-
-        const processQueuedUpdates = () => {
-            if (ready.current) {
-                const getFn = () =>
-                    frameworkOverridesRef.current?.shouldQueueUpdates() ? undefined : whenReadyFuncs.current.shift();
-                let fn = getFn();
-                while (fn) {
-                    fn();
-                    fn = getFn();
-                }
+            if (!portalManager.current) {
+                portalManager.current = new PortalManager(
+                    () => setPortalRefresher((prev) => prev + 1),
+                    props.componentWrappingElement,
+                    props.maxComponentCreationTimeMs
+                );
+                destroyFuncs.current.push(() => {
+                    portalManager.current?.destroy();
+                    portalManager.current = null;
+                });
             }
-        };
 
-        const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates);
-        frameworkOverridesRef.current = frameworkOverrides;
-        const renderStatus = new RenderStatusService();
-        const gridParams: GridParams = {
-            providedBeanInstances: {
-                frameworkCompWrapper: new ReactFrameworkComponentWrapper(portalManager.current, mergedGridOps),
-                renderStatus,
-            },
-            modules,
-            frameworkOverrides,
-            setThemeOnGridDiv: true,
-        };
+            if (!contextRef.current || oldERef !== eRef) {
 
-        const createUiCallback = (context: Context) => {
-            setContext(context);
-            context.createBean(renderStatus);
-
-            destroyFuncs.current.push(() => {
-                context.destroy();
-            });
-
-            // because React is Async, we need to wait for the UI to be initialised before exposing the API's
-            context.getBean('ctrlsSvc').whenReady(
-                {
-                    addDestroyFunc: (func) => {
-                        destroyFuncs.current.push(func);
-                    },
-                },
-                () => {
-                    if (context.isDestroyed()) {
-                        return;
-                    }
-
-                    const api = apiRef.current;
-                    if (api) {
-                        props.passGridApi?.(api);
-                    }
+                if (oldERef !== eRef) {
+                    console.warn('AgGridReactUi: eGui changed, destroying previous context', contextRef.current?.id);
+                    // TODO reset the grid
+                    destroyFuncs.current.forEach((f) => f());
+                    destroyFuncs.current.length = 0;
                 }
-            );
-        };
 
-        // this callback adds to ctrlsSvc.whenReady(), just like above, however because whenReady() executes
-        // funcs in the order they were received, we know adding items here will be AFTER the grid has set columns
-        // and data. this is because GridCoreCreator sets these between calling createUiCallback and acceptChangesCallback
-        const acceptChangesCallback = (context: Context) => {
-            context.getBean('ctrlsSvc').whenReady(
-                {
-                    addDestroyFunc: (func) => {
-                        destroyFuncs.current.push(func);
+                const mergedGridOps = _combineAttributesAndGridOptions(
+                    props.gridOptions,
+                    props,
+                    Object.keys(props).filter((key) => !excludeReactCompProps.has(key))
+                );
+
+                const processQueuedUpdates = () => {
+                    if (ready.current) {
+                        const getFn = () =>
+                            frameworkOverridesRef.current?.shouldQueueUpdates()
+                                ? undefined
+                                : whenReadyFuncs.current.shift();
+                        let fn = getFn();
+                        while (fn) {
+                            fn();
+                            fn = getFn();
+                        }
+                    }
+                };
+
+                const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates);
+                frameworkOverridesRef.current = frameworkOverrides;
+                const renderStatus = new RenderStatusService();
+                const gridParams: GridParams = {
+                    providedBeanInstances: {
+                        frameworkCompWrapper: new ReactFrameworkComponentWrapper(portalManager.current, mergedGridOps),
+                        renderStatus,
                     },
-                },
-                () => {
-                    whenReadyFuncs.current.forEach((f) => f());
-                    whenReadyFuncs.current.length = 0;
-                    ready.current = true;
-                }
-            );
-        };
+                    modules,
+                    frameworkOverrides,
+                    setThemeOnGridDiv: true,
+                };
 
-        const gridCoreCreator = new GridCoreCreator();
-        // We ensure that the gridId is stable even in StrictMode
-        mergedGridOps.gridId ??= gridIdRef.current;
-        apiRef.current = gridCoreCreator.create(
-            eRef,
-            mergedGridOps,
-            createUiCallback,
-            acceptChangesCallback,
-            gridParams
-        );
-        destroyFuncs.current.push(() => {
-            apiRef.current = undefined;
-        });
-        if (apiRef.current) {
-            gridIdRef.current = apiRef.current.getGridId();
+                const createUiCallback = (context: Context) => {
+
+                    console.warn('AgGridReactUi: createUiCallback called', context.id);
+
+                    contextRef.current = context;
+                    setIsDestroyed(false);
+                    context.createBean(renderStatus);
+
+                    destroyFuncs.current.push(() => {
+                        console.warn('AgGridReactUi: destroying called', context.id);
+                        setIsDestroyed(true);
+                        context.destroy();
+                        contextRef.current = undefined;
+                    });
+
+
+                    // because React is Async, we need to wait for the UI to be initialised before exposing the API's
+                    context.getBean('ctrlsSvc').whenReady(
+                        {
+                            addDestroyFunc: (func) => {
+                                destroyFuncs.current.push(func);
+                            },
+                        },
+                        () => {
+                            if (context.isDestroyed()) {
+                                return;
+                            }
+
+                            const api = apiRef.current;
+                            if (api) {
+                                props.passGridApi?.(api);
+                            }
+                        }
+                    );
+                };
+
+                // this callback adds to ctrlsSvc.whenReady(), just like above, however because whenReady() executes
+                // funcs in the order they were received, we know adding items here will be AFTER the grid has set columns
+                // and data. this is because GridCoreCreator sets these between calling createUiCallback and acceptChangesCallback
+                const acceptChangesCallback = (context: Context) => {
+                    context.getBean('ctrlsSvc').whenReady(
+                        {
+                            addDestroyFunc: (func) => {
+                                destroyFuncs.current.push(func);
+                            },
+                        },
+                        () => {
+                            whenReadyFuncs.current.forEach((f) => f());
+                            whenReadyFuncs.current.length = 0;
+                            ready.current = true;
+                        }
+                    );
+                };
+
+                const gridCoreCreator = new GridCoreCreator();
+                // We ensure that the gridId is stable even in StrictMode
+                mergedGridOps.gridId ??= gridIdRef.current;
+                apiRef.current = gridCoreCreator.create(
+                    eRef,
+                    mergedGridOps,
+                    createUiCallback,
+                    acceptChangesCallback,
+                    gridParams
+                );
+                destroyFuncs.current.push(() => {
+                    apiRef.current = undefined;
+                });
+                if (apiRef.current) {
+                    gridIdRef.current = apiRef.current.getGridId();
+                }
+
+
+            }
+
+
         }
+
+        return () => {
+
+        };
     }, []);
+
+    // const setRef = useCallback((eRef: HTMLDivElement | null) => {
+    //     eGui.current = eRef;
+    //     if (!eRef) {
+    //         destroyFuncs.current.forEach((f) => f());
+    //         destroyFuncs.current.length = 0;
+    //         return;
+    //     }
+
+    //     const modules = props.modules || [];
+
+    //     if (!portalManager.current) {
+    //         portalManager.current = new PortalManager(
+    //             () => setPortalRefresher((prev) => prev + 1),
+    //             props.componentWrappingElement,
+    //             props.maxComponentCreationTimeMs
+    //         );
+    //         destroyFuncs.current.push(() => {
+    //             portalManager.current?.destroy();
+    //             portalManager.current = null;
+    //         });
+    //     }
+
+    //     const mergedGridOps = _combineAttributesAndGridOptions(
+    //         props.gridOptions,
+    //         props,
+    //         Object.keys(props).filter((key) => !excludeReactCompProps.has(key))
+    //     );
+
+    //     const processQueuedUpdates = () => {
+    //         if (ready.current) {
+    //             const getFn = () =>
+    //                 frameworkOverridesRef.current?.shouldQueueUpdates() ? undefined : whenReadyFuncs.current.shift();
+    //             let fn = getFn();
+    //             while (fn) {
+    //                 fn();
+    //                 fn = getFn();
+    //             }
+    //         }
+    //     };
+
+    //     const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates);
+    //     frameworkOverridesRef.current = frameworkOverrides;
+    //     const renderStatus = new RenderStatusService();
+    //     const gridParams: GridParams = {
+    //         providedBeanInstances: {
+    //             frameworkCompWrapper: new ReactFrameworkComponentWrapper(portalManager.current, mergedGridOps),
+    //             renderStatus,
+    //         },
+    //         modules,
+    //         frameworkOverrides,
+    //         setThemeOnGridDiv: true,
+    //     };
+
+    //     const createUiCallback = (context: Context) => {
+    //         setContext(context);
+    //         context.createBean(renderStatus);
+
+    //         destroyFuncs.current.push(() => {
+    //             context.destroy();
+    //         });
+
+    //         // because React is Async, we need to wait for the UI to be initialised before exposing the API's
+    //         context.getBean('ctrlsSvc').whenReady(
+    //             {
+    //                 addDestroyFunc: (func) => {
+    //                     destroyFuncs.current.push(func);
+    //                 },
+    //             },
+    //             () => {
+    //                 if (context.isDestroyed()) {
+    //                     return;
+    //                 }
+
+    //                 const api = apiRef.current;
+    //                 if (api) {
+    //                     props.passGridApi?.(api);
+    //                 }
+    //             }
+    //         );
+    //     };
+
+    //     // this callback adds to ctrlsSvc.whenReady(), just like above, however because whenReady() executes
+    //     // funcs in the order they were received, we know adding items here will be AFTER the grid has set columns
+    //     // and data. this is because GridCoreCreator sets these between calling createUiCallback and acceptChangesCallback
+    //     const acceptChangesCallback = (context: Context) => {
+    //         context.getBean('ctrlsSvc').whenReady(
+    //             {
+    //                 addDestroyFunc: (func) => {
+    //                     destroyFuncs.current.push(func);
+    //                 },
+    //             },
+    //             () => {
+    //                 whenReadyFuncs.current.forEach((f) => f());
+    //                 whenReadyFuncs.current.length = 0;
+    //                 ready.current = true;
+    //             }
+    //         );
+    //     };
+
+    //     const gridCoreCreator = new GridCoreCreator();
+    //     // We ensure that the gridId is stable even in StrictMode
+    //     mergedGridOps.gridId ??= gridIdRef.current;
+    //     apiRef.current = gridCoreCreator.create(
+    //         eRef,
+    //         mergedGridOps,
+    //         createUiCallback,
+    //         acceptChangesCallback,
+    //         gridParams
+    //     );
+    //     destroyFuncs.current.push(() => {
+    //         apiRef.current = undefined;
+    //     });
+    //     if (apiRef.current) {
+    //         gridIdRef.current = apiRef.current.getGridId();
+    //     }
+    // }, []);
 
     const style = useMemo(() => {
         return {
@@ -243,10 +390,16 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             ? 'legacy'
             : 'default';
 
+    const beans = contextRef.current?.getBeans() || null;
+
     return (
-        <div style={style} className={props.className} ref={setRef}>
+        <div style={style} className={props.className} ref={eGui}>
             <RenderModeContext.Provider value={renderMode}>
-                {context && !context.isDestroyed() ? <GridComp context={context} /> : null}
+                {!isDestroyed && beans ? (
+                    <BeansContext.Provider value={beans}>
+                        <GridComp />
+                    </BeansContext.Provider>
+                ) : null}
                 {portalManager.current?.getPortals() ?? null}
             </RenderModeContext.Provider>
         </div>
@@ -273,8 +426,7 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: strin
 
 class ReactFrameworkComponentWrapper
     extends BaseComponentWrapper<WrappableInterface>
-    implements FrameworkComponentWrapper
-{
+    implements FrameworkComponentWrapper {
     constructor(
         private readonly parent: PortalManager,
         private readonly gridOptions: GridOptions
@@ -282,7 +434,7 @@ class ReactFrameworkComponentWrapper
         super();
     }
 
-    protected createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
+    protected createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
         const gridOptions = this.gridOptions;
         const reactiveCustomComponents = _getGridOption(gridOptions, 'reactiveCustomComponents');
         if (reactiveCustomComponents) {

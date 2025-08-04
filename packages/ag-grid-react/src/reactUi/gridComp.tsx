@@ -1,9 +1,8 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import type {
     Component,
     ComponentSelector,
-    Context,
     FocusableContainer,
     IGridComp,
     TabGuardComp as JsTabGuardComp,
@@ -12,16 +11,16 @@ import { GridCtrl } from 'ag-grid-community';
 
 import { BeansContext } from './beansContext';
 import GridBodyComp from './gridBodyComp';
+import GridHeaderComp from './header/gridHeaderComp';
 import useReactCommentEffect from './reactComment';
 import type { TabGuardCompCallback } from './tabGuardComp';
 import TabGuardComp from './tabGuardComp';
 import { classesList } from './utils';
 
-interface GridCompProps {
-    context: Context;
-}
+const GridComp = () => {
+    const beans = useContext(BeansContext);
+    const context = beans.context;
 
-const GridComp = ({ context }: GridCompProps) => {
     const [rtlClass, setRtlClass] = useState<string>('');
     const [layoutClass, setLayoutClass] = useState<string>('');
     const [cursor, setCursor] = useState<string | null>(null);
@@ -40,13 +39,6 @@ const GridComp = ({ context }: GridCompProps) => {
     const focusableContainersRef = useRef<Component[]>([]);
 
     const onTabKeyDown = useCallback(() => undefined, []);
-
-    const beans = useMemo(() => {
-        if (context.isDestroyed()) {
-            return null;
-        }
-        return context.getBeans();
-    }, [context]);
 
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
@@ -192,29 +184,35 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const isFocusable = useCallback(() => !gridCtrlRef.current?.isFocusable(), []);
 
+    const memoizedGridHeader = useMemo(() => <GridHeaderComp  key={context.id} />, [context]);
+
+    const memoizedGridBody = useMemo(() => (
+        <GridBodyComp  key={context.id}>
+            {memoizedGridHeader}
+        </GridBodyComp>
+    ), [memoizedGridHeader, context]);
+
     return (
         <div ref={setRef} className={rootWrapperClasses} style={topStyle} role="presentation">
             <div className={rootWrapperBodyClasses} ref={setGridBodyParent} role="presentation">
                 {initialised && eGridBodyParent && beans && (
-                    <BeansContext.Provider value={beans}>
-                        <TabGuardComp
-                            ref={setTabGuardCompRef}
-                            eFocusableElement={eGridBodyParent}
-                            onTabKeyDown={onTabKeyDown}
-                            gridCtrl={gridCtrlRef.current!}
-                            forceFocusOutWhenTabGuardsAreEmpty={true}
-                            isEmpty={isFocusable}
-                        >
-                            {
-                                // we wait for initialised before rending the children, so GridComp has created and registered with it's
-                                // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
-                                // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
-                                // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
-                                // hangs the UI)
-                                <GridBodyComp />
-                            }
-                        </TabGuardComp>
-                    </BeansContext.Provider>
+                    <TabGuardComp
+                        ref={setTabGuardCompRef}
+                        eFocusableElement={eGridBodyParent}
+                        onTabKeyDown={onTabKeyDown}
+                        gridCtrl={gridCtrlRef.current!}
+                        forceFocusOutWhenTabGuardsAreEmpty={true}
+                        isEmpty={isFocusable}
+                    >
+                        {
+                            // we wait for initialised before rending the children, so GridComp has created and registered with it's
+                            // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
+                            // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
+                            // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
+                            // hangs the UI)
+                            memoizedGridBody
+                        }
+                    </TabGuardComp>
                 )}
             </div>
         </div>
