@@ -645,7 +645,10 @@ export interface Props<TData> {
          */
     suppressSetFilterByDefault?: boolean | undefined,
     /** Enable filter handlers for custom filter components.
-         * Requires all custom filters need to be implemented using handlers.
+         * Requires all custom filters to be implemented using handlers.
+         *
+         * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
+         * The Multi Filter will also use a filter handler if this is enabled.
          * @initial
          */
     enableFilterHandlers?: boolean | undefined,
