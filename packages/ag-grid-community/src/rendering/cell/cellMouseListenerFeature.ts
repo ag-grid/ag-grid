@@ -158,6 +158,7 @@ export class CellMouseListenerFeature extends BeanStub {
         };
 
         if (suppressMouseEvent) {
+            // suppress just prevents grid handling. Events are still passed to users (with suppress property value)
             fireMouseDownEvent();
             return;
         }
