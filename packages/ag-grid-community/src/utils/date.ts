@@ -1,15 +1,4 @@
-import {
-    DATE_TIME_SEPARATOR,
-    _padStartWidthZeros,
-    _parseDateTimeFromString,
-    _serialiseDate,
-} from '../agStack/utils/dateUtils';
-
-/**
- * Executing this against date produces the following:
- * ["2008-08-24T21:00:08"," 21:00:08"]
- */
-const DATE_TIME_REGEXP = new RegExp(`^\\d{4}-\\d{2}-\\d{2}(${DATE_TIME_SEPARATOR}\\d{2}:\\d{2}:\\d{2}\\D?)?`);
+import { _padStartWidthZeros, _parseDateTimeFromString, _serialiseDate } from '../agStack/utils/dateUtils';
 
 /**
  * Helper function to get the date parts of a date. Used in set filter.
@@ -114,5 +103,5 @@ export function _isValidDate(value?: string | null, bailIfInvalidTime = false): 
 
 // check if dateTime is a valid date and has time parts
 export function _isValidDateTime(value?: string | null): boolean {
-    return !!value && _isValidDate(value, true) && !!value.match(DATE_TIME_REGEXP)?.[1]; // matches the 'T14:22:19' part
+    return _isValidDate(value, true);
 }

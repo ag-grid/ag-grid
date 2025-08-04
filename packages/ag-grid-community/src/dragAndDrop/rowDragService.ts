@@ -25,9 +25,9 @@ export class RowDragService extends BeanStub implements NamedBean {
         column?: AgColumn,
         customGui?: HTMLElement,
         dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
+        alwaysVisible?: boolean
     ): RowDragComp {
-        return new RowDragComp(cellValueFn, rowNode, column, customGui, dragStartPixels, suppressVisibilityChange);
+        return new RowDragComp(cellValueFn, rowNode, column, customGui, dragStartPixels, alwaysVisible);
     }
 
     public createRowDragCompForRow(rowNode: RowNode, element: HTMLElement): RowDragComp | undefined {
@@ -51,7 +51,7 @@ export class RowDragService extends BeanStub implements NamedBean {
         cellValueFn: () => string,
         element?: HTMLElement,
         dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
+        alwaysVisible?: boolean
     ): RowDragComp | undefined {
         const gos = this.gos;
         if (gos.get('rowDragManaged')) {
@@ -68,7 +68,7 @@ export class RowDragService extends BeanStub implements NamedBean {
             column,
             element,
             dragStartPixels,
-            suppressVisibilityChange
+            alwaysVisible
         );
         return rowDragComp;
     }

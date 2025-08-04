@@ -14,7 +14,7 @@
     },
     "test:recipes": {
       "executor": "nx:run-commands",
-      "dependsOn": ["setup", "ag-grid-community:build", "ag-grid-enterprise:build"],
+      "dependsOn": ["setup", "ag-grid-community:build"],
       "options": {
         "commands": ["npx playwright test"],
         "parallel": false,

@@ -38,7 +38,7 @@ There are no deprecated API removals in AG Grid version {% migrationVersion() %}
 
 ### Filters
 
-- `ISetFilter` interface is deprecated. When retrieving via `api.getColumnFilterInstance(column)`, use `SetFilterUi`. To access the methods that were previously available on `ISetFilter` (but not on `SetFilterUi`), instead retrieve the filter handler via `api.getColumnFilterHandler(column)` and use the `SetFilterHandler` interface.
+- `ISetFilter` interface is deprecated. When retrieving a Set Filter via `api.getColumnFilterInstance(column)`, use `SetFilterUi`. To access the methods that were previously available on `ISetFilter` (but not on `SetFilterUi`), instead retrieve the Set Filter Handler via `api.getColumnFilterHandler(column)` and use the `SetFilterHandler` interface. See [Set Filter API](./filter-set-api/#set-filter-api) for more information.
 
 - `getModel()` and `setModel()` on all grid-provided filter instances are deprecated. Use `api.getColumnFilterModel(column)` and `api.setColumnFilterModel(column)` instead.
 

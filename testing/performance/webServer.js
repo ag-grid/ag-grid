@@ -8,7 +8,8 @@ const mkcert = require('vite-plugin-mkcert');
 const PORT = process.env['PORT'] ?? '4610';
 const HOST = process.env['HOST'] ?? 'localhost';
 const CORS = {
-    setHeaders: (res, path) => {
+    extensions: ['js', 'jsx', 'ts', 'tsx', 'css', 'scss'],
+    setHeaders: (res) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
     },
 };
@@ -31,15 +32,15 @@ mkcert
                 app.use(`/${path.join('files', project, 'styles')}`, express.static(path.join(projectPath, 'styles')));
             }
         });
-        const staticTestFiles = path.join(__root, 'testing', 'performance', 'e2e');
-        console.log('Adding route', staticTestFiles);
+        const staticRoot = express.static(__root, CORS);
+        console.log('Adding route', __root);
         app.use('/', (req, res, next) => {
             if (req.url === '/healthcheck') {
                 // used by Playwright to check if the server is running
                 res.status(200).send('OK');
                 return next();
             }
-            return express.static(staticTestFiles, CORS)(req, res, next);
+            return staticRoot(req, res, next);
         });
         const server = https.createServer(options.server.https, app);
         server.listen(PORT, () => {

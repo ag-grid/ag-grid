@@ -10,6 +10,7 @@ import {
     _createElement,
     _debounce,
     _destroyColumnTree,
+    _getFirstRow,
     _getRowNode,
     _interpretAsRightClick,
     _selectAllCells,
@@ -136,9 +137,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         }
 
         if (!mouseEvent.shiftKey && !_interpretAsRightClick(this.beans, mouseEvent)) {
-            setTimeout(() => {
-                this.focusFirstRenderedCellAtRowPosition(cellPosition);
-            });
+            this.focusFirstRenderedCellAtRowPosition(cellPosition);
         }
 
         return true;
@@ -250,7 +249,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         if (!this.isIntegratedWithSelection || e.key !== KeyCode.SPACE) {
             return;
         }
-        _selectAllCells(this.beans);
+        this.handleFocusAllCellsFromHeader();
     }
 
     private onHeaderClick(_e: MouseEvent): void {
@@ -261,7 +260,12 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         ) {
             return;
         }
+        this.handleFocusAllCellsFromHeader();
+    }
+
+    private handleFocusAllCellsFromHeader(): void {
         _selectAllCells(this.beans);
+        this.focusFirstRenderedCellAtRowPosition();
     }
 
     private refreshCells(force?: boolean, runAutoSize?: boolean): void {
@@ -421,8 +425,15 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     // focus is disabled on the Row Numbers cells, when a click happens on it,
-    // it should focus the first cell of that row.
-    private focusFirstRenderedCellAtRowPosition(rowPosition: RowPosition) {
+    // it should focus the first cell of that row or first cell of the grid (from header).
+    private focusFirstRenderedCellAtRowPosition(rowPosition?: RowPosition | null) {
+        if (!rowPosition) {
+            rowPosition = _getFirstRow(this.beans);
+            if (!rowPosition) {
+                return;
+            }
+        }
+
         const { beans, gos } = this;
         const { visibleCols, colViewport } = beans;
         const pinnedCols = gos.get('enableRtl') ? visibleCols.rightCols : visibleCols.leftCols;
@@ -447,12 +458,15 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
         const { rowPinned, rowIndex } = rowPosition;
 
-        beans.focusSvc.setFocusedCell({
-            rowIndex,
-            rowPinned,
-            column,
-            forceBrowserFocus: true,
-            preventScrollOnBrowserFocus: true,
+        // to avoid conflict with setting the range, add a setTimeout here
+        setTimeout(() => {
+            beans.focusSvc.setFocusedCell({
+                rowIndex,
+                rowPinned,
+                column,
+                forceBrowserFocus: true,
+                preventScrollOnBrowserFocus: true,
+            });
         });
     }
 

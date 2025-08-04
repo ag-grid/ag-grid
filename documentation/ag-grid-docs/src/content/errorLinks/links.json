@@ -428,7 +428,7 @@
     },
     {
         "errorIds": [283, 284, 285, 286],
-        "text": "Upgrading to AG Grid 34",
+        "text": "Upgrading to AG Grid 34 - Filters",
         "url": "./upgrading-to-ag-grid-34/#filters"
     }
 ]

@@ -66,6 +66,7 @@ vite.config.*.timestamp*
 
 /test-results/
 /playwright-report/
+documentation/ag-grid-docs/test-results/.last-run.json
 
 # Snyk
 .dccache

@@ -3,6 +3,7 @@ import { _getActiveDomElement } from '../../agStack/utils/beanUtils';
 import { _clearElement, _removeFromParent } from '../../agStack/utils/domUtils';
 import { _toString } from '../../agStack/utils/stringUtils';
 import type { BeanCollection } from '../../context/context';
+import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapper';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle } from '../../entities/colDef';
@@ -38,7 +39,7 @@ export class CellComp extends Component {
 
     private checkboxSelectionComp: CheckboxSelectionComponent | undefined;
     private dndSourceComp: DndSourceComp | undefined;
-    private rowDraggingComp: Component | undefined;
+    private rowDraggingComp: RowDragComp | undefined;
 
     private hideEditorPopup: ((...args: any[]) => any) | null | undefined;
     private cellEditorPopupWrapper: PopupEditorWrapper | undefined;
@@ -167,6 +168,8 @@ export class CellComp extends Component {
             this.destroyRenderer();
             this.insertValueWithoutCellRenderer(valueToDisplay);
         }
+
+        this.rowDraggingComp?.refresh();
     }
 
     private setEditDetails(

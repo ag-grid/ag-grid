@@ -54,20 +54,25 @@ jobs:
                 
                 const gh_user_jira_mapping = JSON.parse(process.env.GH_USER_JIRA_MAPPING || '{}');
                 const regex = /fix(es)? \[?((AG|RTI)-\d{3,})/gi;
-                const paragraph = content => ({ "type": "paragraph",
-                    "content": Array.isArray(content) ? content : [content] });
-                const txt = (text) => ({ text, type: 'text' });
-                const link = (text, url) => ({ type: 'text',
+                const paragraph = content => ({"type": "paragraph",
+                    "content": Array.isArray(content) ? content : [content]});
+                const txt = (text) => ({text, type: 'text'});
+                const link = (text, url) => ({type: 'text',
                     text: text,
-                    marks: [{ type: 'link', attrs: { href: url, title: text } }] });
-                const mention = (gh_user) => ({
-                    "type": "mention",
-                    "attrs": {
-                        "id": gh_user_jira_mapping[gh_user][0],
-                        "text": gh_user_jira_mapping[gh_user][1],
-                        "userType": "APP"
+                    marks: [{type: 'link', attrs: {href: url, title: text}}]});
+                const mention = (gh_user) => {
+                    if (!gh_user_jira_mapping[gh_user]) {
+                        console.warn(`No JIRA mapping found for GitHub user: ${gh_user}`);
                     }
-                });
+                    return ({
+                        "type": "mention",
+                        "attrs": {
+                            "id": gh_user_jira_mapping[gh_user]?.[0],
+                            "text": gh_user_jira_mapping[gh_user]?.[1],
+                            "userType": "APP"
+                        }
+                    });
+                };
                 const owner = context.repo.owner;
                 const repo = context.repo.repo;
                 const getReviewers = async (pr) => {
@@ -77,7 +82,7 @@ jobs:
                         pull_number
                     })).data?.map(r => r.user.login) || [])];
                     const mergedBy = pr.merged_by?.login || '';
-                    return { reviewers, mergedBy }
+                    return {reviewers, mergedBy}
                 };
                 const pull_number = process.env.PR_ID;
                 const runUrl = process.env.JOB_URL || '#';
@@ -90,7 +95,7 @@ jobs:
                 if (process.env.DEBUG_JIRA_TICKET) {
                     issue_keys.push(process.env.DEBUG_JIRA_TICKET);
                 }
-                const pr = pull_number ? (await github.rest.pulls.get({ owner, repo, pull_number })).data : {};
+                const pr = pull_number ? (await github.rest.pulls.get({owner, repo, pull_number})).data : {};
                 const is_merged = !!pr.merged_at;
                 if (!is_merged) {
                     console.log(`PR #${pull_number} is not merged, skipping JIRA ticket update.`);
@@ -126,7 +131,7 @@ jobs:
                     // blocks section
                     const content = [];
                     if (pull_number) {
-                        const { reviewers, mergedBy } = await getReviewers(pr);
+                        const {reviewers, mergedBy} = await getReviewers(pr);
                         
                         const samePerson = reviewers.length === 1 && reviewers[0] === mergedBy;
                         const reviewedByText = samePerson ? 'Reviewed and merged by ' : 'Reviewed by ';
@@ -157,11 +162,21 @@ jobs:
                             txt('.]')
                         ]));
                         await transitionJiraIssue(issue, nextTransition.id);
-                        ghCommentBody ||= `Transitioned JIRA ticket(s): `;
+                        ghCommentBody ||= `Transitioned JIRA ticket(s):\n`;
                         ghCommentBody += `- [${issue_key}](https://ag-grid.atlassian.net/browse/${issue_key}) to ${to}\n`
+                    } else {
+                        content.push(paragraph([
+                            txt(`[Triggered from `),
+                            link(`PR #${pull_number}`, `https://github.com/${owner}/${repo}/pull/${pull_number}`),
+                            txt(' by '),
+                            link('the AG Grid CI workflow', runUrl),
+                            txt('.]')
+                        ]));
                     }
                     const isWatchingAlready = issue.fields.watches?.isWatching || false;
-                    await addJiraComment(issue_key, { content, "type": "doc", "version": 1 });
+                    await addJiraComment(issue_key, {
+                        content, "type": "doc", "version": 1
+                    });
                     if (!isWatchingAlready) {
                         const self = await getCurrentJiraUser();
                         await unwatchJiraIssue(issue_key, self);
@@ -177,4 +192,5 @@ jobs:
                     })
                 }
             }
+            
             await exec();

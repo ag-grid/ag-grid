@@ -1,5 +1,5 @@
 name: Documentation Tests
-# Testing of AG Grid Examples
+description: Run tests for the documentation examples
 
 env:
   NX_NO_CLOUD: true
@@ -24,11 +24,11 @@ on:
         type: boolean
         required: true
         default: true
-      skip_reactFunctional:
-        description: 'Skip React Functional tests'
-        type: boolean
-        required: true
-        default: true
+      # skip_reactFunctional:
+      #   description: 'Skip React Functional tests'
+      #   type: boolean
+      #   required: true
+      #   default: true
       skip_reactFunctionalTs:
         description: 'Skip React Functional TS tests'
         type: boolean
@@ -49,8 +49,8 @@ on:
         type: boolean
         required: true
         default: true
-      skip_recipes:
-        description: 'Skip Public Recipes tests'
+      skip_interactive:
+        description: 'Skip Recipe / Interactive tests'
         type: boolean
         required: true
         default: true
@@ -180,22 +180,22 @@ jobs:
           framework: typescript
           cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
-  test-react-functional:
-    if: ${{ github.event.inputs.skip_reactFunctional != 'true' }}
-    name: Test React Examples
-    needs: download-examples
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        shardIndex: [1]
-        shardTotal: [1]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/test-framework-examples
-        with:
-          framework: reactFunctional
-          cache-key: ${{ needs.download-examples.outputs.cache-key }}
+  # test-react-functional:
+  #   if: ${{ github.event.inputs.skip_reactFunctional != 'true' }}
+  #   name: Test React Examples
+  #   needs: download-examples
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       shardIndex: [1]
+  #       shardTotal: [1]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: ./.github/actions/test-framework-examples
+  #       with:
+  #         framework: reactFunctional
+  #         cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
   test-react-functional-ts:
     if: ${{ github.event.inputs.skip_reactFunctionalTs != 'true' }}
@@ -249,7 +249,7 @@ jobs:
           cache-key: ${{ needs.download-examples.outputs.cache-key }}
 
   test-recipes:
-    if: ${{ github.event.inputs.skip_recipes != 'true' }}
+    if: ${{ github.event.inputs.skip_interactive != 'true' }}
     name: Test Public Testing Recipes
     runs-on: ubuntu-latest
     strategy:
@@ -268,20 +268,42 @@ jobs:
           name: playwright-report-recipes
           path: reports/
           retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+  
+  test-interactive:
+    if: ${{ github.event.inputs.skip_interactive != 'true' }}
+    name: Test Interactive Examples
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bootstrap
+        run: npm run bootstrap
+      - name: Run Interactive Examples
+        run: yarn nx run ag-grid-docs:test:interactive -c staging
+      - name: Upload Test Report
+        id: upload-recipes-report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-interactive
+          path: reports/
+          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
   publish-reports:
     if: always()
     needs:
       - test-demos-smoke
-      - test-react-functional
+      # - test-react-functional
       - test-react-functional-ts
       - test-angular
       - test-typescript
       - test-vanilla
       - test-vue3
       - test-recipes
+      - test-interactive
     env:
-      IS_SUCCESS: ${{ needs.test-angular.result != 'failure' && needs.test-react-functional.result != 'failure' && needs.test-react-functional-ts.result != 'failure' && needs.test-typescript.result != 'failure' && needs.test-vanilla.result != 'failure' && needs.test-vue3.result != 'failure' && needs.test-demos-smoke.result != 'failure' && needs.test-recipes.result != 'failure' }}
+      IS_SUCCESS: ${{ needs.test-angular.result != 'failure' && needs.test-react-functional-ts.result != 'failure' && needs.test-typescript.result != 'failure' && needs.test-vanilla.result != 'failure' && needs.test-vue3.result != 'failure' && needs.test-demos-smoke.result != 'failure' && needs.test-recipes.result != 'failure' && needs.test-interactive.result != 'failure' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

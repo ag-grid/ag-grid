@@ -15,6 +15,7 @@ import { TextCellEditor } from './cellEditors/textCellEditor';
 import {
     getCurrentRedoSize,
     getCurrentUndoSize,
+    getEditRowValues,
     getEditingCells,
     isEditing,
     redoCellEditing,
@@ -38,6 +39,7 @@ export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
     beans: [EditModelService, EditService],
     apiFunctions: {
         getEditingCells,
+        getEditRowValues,
         getCellEditorInstances,
         startEditingCell,
         stopEditing,

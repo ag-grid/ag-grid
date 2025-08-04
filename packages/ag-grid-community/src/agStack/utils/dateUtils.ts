@@ -1,5 +1,11 @@
 export const DATE_TIME_SEPARATOR = 'T';
 
+/**
+ * Executing this against date produces the following:
+ * ["2008-08-24T21:00:08"," 21:00:08"]
+ */
+const DATE_TIME_REGEXP = new RegExp(`^\\d{4}-\\d{2}-\\d{2}(${DATE_TIME_SEPARATOR}\\d{2}:\\d{2}:\\d{2}\\D?)?`);
+
 export function _padStartWidthZeros(value: number, totalStringSize: number): string {
     return value.toString().padStart(totalStringSize, '0');
 }
@@ -31,7 +37,6 @@ export function _serialiseDate(date: Date | null, includeTime = true, separator 
 
     return serialised;
 }
-
 /**
  * Parses a date and time from a string. Expected format is ISO-compatible `yyyy-MM-dd` or `yyyy-MM-ddTHH:mm:ssZ`.
  *
@@ -40,9 +45,12 @@ export function _serialiseDate(date: Date | null, includeTime = true, separator 
  *   When the time zone offset is absent, **date-only** forms are interpreted as a UTC time and **date-time** forms are interpreted as a local time.
  *   The interpretation as a UTC time is due to a historical spec error that was not consistent with ISO 8601 but could not be changed due to web compatibility.
  */
-
 export function _parseDateTimeFromString(value?: string | null, bailIfInvalidTime = false): Date | null {
     if (!value) {
+        return null;
+    }
+
+    if (!DATE_TIME_REGEXP.test(value)) {
         return null;
     }
 
@@ -63,6 +71,10 @@ export function _parseDateTimeFromString(value?: string | null, bailIfInvalidTim
 
     if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
         // date was not parsed as expected so must have been invalid
+        return null;
+    }
+
+    if (!timeStr && bailIfInvalidTime) {
         return null;
     }
 

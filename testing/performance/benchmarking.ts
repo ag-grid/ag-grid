@@ -69,7 +69,7 @@ export type TestCase = {
     description?: string;
     /** @deprecated don't forget to re-enable your test */
     skip?: boolean;
-    framework: Framework;
+    framework?: Framework;
     control: Variant;
     variant: Variant;
     preSetup?: (page: Page) => Promise<void>;
@@ -162,7 +162,7 @@ const gridToChartsMap: Record<Version, Version> = {
     'v31.2.0': 'v9.2.0',
 } as const;
 
-const getCdnUrl = (pkg: string, version: Version, path: `/${string}` = `/dist/${pkg}.js`) => {
+export const getCdnUrl = (pkg: string, version: Version, path: string = `/dist/${pkg}.js`) => {
     return `${knownUrlsProxy[version]}/files/${pkg}${path}`;
 };
 
@@ -180,11 +180,11 @@ const _getPlnkrCookies = (url: string) => [
  * Get the URL for the test case based on the version field.
  * If custom version is specified, we use prod as base and then inject the correct version
  */
-function getUrl(testCase: TestCase, variant: Variant) {
+export function getUrl(variant: { url?: string; version?: Version }, testCase?: TestCase) {
     if (variant.url) {
         return variant.url;
     }
-    return `${knownUrlsProxy[variant.version]}/${testCase.name}/${testCase.framework}/`;
+    return `${knownUrlsProxy[variant.version!]}/${testCase!.name}/${testCase!.framework ? `${testCase!.framework}/` : ''}`;
 }
 
 const CRITICAL_VALUE = 1.96;
@@ -413,7 +413,7 @@ async function attachScripts(page: Page, version: Version, testCase: InternalTes
 function updatePageTitle(page: Page, testCase: TestCase, variant: Variant) {
     return page.evaluate(
         (title) => (document.title = title),
-        `Running ${variant.version} ${testCase.name} with ${testCase.framework}`
+        `Running ${variant.version} ${testCase.name} with ${testCase?.framework}`
     );
 }
 
@@ -493,7 +493,7 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
         for (const variantName of ['control', 'variant'] as const) {
             const variant = testCase[variantName];
             await attachCookies(context, variant);
-            const lastCommunications = setLastCommunications(await gotoUrl(page, getUrl(testCase, variant)));
+            const lastCommunications = setLastCommunications(await gotoUrl(page, getUrl(variant, testCase)));
             void updatePageTitle(page, testCase, variant);
             if (variant.shouldInjectScript) await attachScripts(page, variant.version, testCase);
             await testCase.preSetup?.(page);
@@ -504,7 +504,7 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
                 await testCase.actions(page);
                 if (i > warmupIter) {
                     const usefulEntries = (await metricsGetter(page, testCase)).slice(noiseSize);
-                    const duration = usefulEntries.pop()!.duration || 0;
+                    const duration = usefulEntries.pop()?.duration || 0;
                     measurements[variantName].push(duration);
                     totalIterations++;
                 }

@@ -1249,8 +1249,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             eParentOfValue: eRow,
             pinned: pinned as any,
             addRenderedRowListener: this.addEventListener.bind(this) as any, // This is not on the type of ICellRendererParams
-            registerRowDragger: (rowDraggerElement, dragStartPixels, value, suppressVisibilityChange) =>
-                this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, suppressVisibilityChange),
+            registerRowDragger: (rowDraggerElement, dragStartPixels, value, rowDragEntireRow) =>
+                this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, rowDragEntireRow),
             setTooltip: (value, shouldDisplayTooltip) => {
                 gos.assertModuleRegistered('Tooltip', 3);
                 this.setupFullWidthRowTooltip(value, shouldDisplayTooltip);
@@ -1291,7 +1291,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         rowDraggerElement?: HTMLElement,
         dragStartPixels?: number,
         value: string = '',
-        suppressVisibilityChange?: boolean
+        alwaysVisible?: boolean
     ): void {
         const { rowDragSvc, context } = this.beans;
         if (!rowDragSvc || !this.isFullWidth()) {
@@ -1304,7 +1304,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             undefined,
             rowDraggerElement,
             dragStartPixels,
-            suppressVisibilityChange
+            alwaysVisible
         );
         this.createBean(rowDragComp, context);
 

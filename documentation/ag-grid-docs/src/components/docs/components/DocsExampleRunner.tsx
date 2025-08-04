@@ -112,6 +112,12 @@ const DocsExampleRunnerInner = ({
                         if (internalFramework.startsWith('vue') || internalFramework.startsWith('react')) {
                             delete json.files['index.html'];
                         }
+
+                        if (json.files['example.spec.ts']) {
+                            // Don't include the example spec file in the example runner for now
+                            delete json.files['example.spec.ts'];
+                        }
+
                         return json;
                     }),
             ]) as Promise<[GeneratedContents]>;

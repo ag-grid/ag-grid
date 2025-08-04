@@ -936,6 +936,7 @@ export {
     _getLastRow,
     _getRowNode,
     _getCellByPosition,
+    _getFirstRow,
     _getRowAbove,
     _getRowBelow,
 } from './entities/positionUtils';

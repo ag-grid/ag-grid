@@ -19,3 +19,6 @@ pnpm-debug.log*
 
 # Temporary files
 tmp
+
+# Testing files
+test-results/

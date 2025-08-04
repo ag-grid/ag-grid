@@ -1,9 +1,10 @@
-import test, { TestCase } from '../benchmarking';
+import type { TestCase } from '../benchmarking';
+import test from '../benchmarking';
 import { waitFor } from '../playwright.utils';
 
 const noRowsCheck = () => document.body.textContent!.includes('No Rows To Show');
 const athleteCheck = () => document.body.textContent!.includes('Athlete');
-const localLotsOfCells = `/lots-of-cells.html`;
+const localLotsOfCells = `/testing/performance/e2e/lots-of-cells.html`;
 
 const frameworks = ['typescript', 'reactFunctionalTs', 'angular', 'vue3'];
 
