@@ -1,8 +1,9 @@
 import type { ColumnCollections } from '../columns/columnModel';
-import type { Column } from './iColumn';
+import type { AgColumn } from '../entities/agColumn';
 import type { IColumnCollectionService } from './iColumnCollectionService';
 
 export interface IDateHierarchyColService extends IColumnCollectionService {
     isDateHierarchyColsEnabled(cols: ColumnCollections): boolean;
-    isDateHierarchyColsEnabledForCol(col: Column): boolean;
+    isDateHierarchyColsEnabledForCol(col: AgColumn): boolean;
+    getVirtualColumnsForColumn(col: AgColumn): AgColumn[];
 }

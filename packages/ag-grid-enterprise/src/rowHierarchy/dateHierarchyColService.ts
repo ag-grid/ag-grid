@@ -26,6 +26,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
     beanName = 'dateHierarchyColSvc' as const;
 
     public columns: _ColumnCollections | null = null;
+    private sourceColumnMap = new WeakMap<AgColumn, AgColumn[]>();
 
     public postConstruct(): void {}
 
@@ -82,6 +83,10 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
         return this.columns?.list ?? null;
     }
 
+    public getVirtualColumnsForColumn(col: AgColumn): AgColumn[] {
+        return this.sourceColumnMap.get(col) ?? [];
+    }
+
     public isDateHierarchyColsEnabled(cols: _ColumnCollections): boolean {
         return cols.list.some((col) => this.isDateHierarchyColsEnabledForCol(col));
     }
@@ -127,10 +132,12 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
 
         for (const col of cols.list) {
             this.createDateHierarchyColDefs(col).forEach((colDef) => {
-                this.gos.validateColDef(colDef, colDef.colId!, true);
-                const newCol = new AgColumn(colDef, null, colDef.colId!, true);
+                const colId = colDef.colId!;
+                this.gos.validateColDef(colDef, colId, true);
+                const newCol = new AgColumn(colDef, null, colId, true);
                 this.createBean(newCol);
                 newCols.push(newCol);
+                updateMap(this.sourceColumnMap, col, newCol);
             });
         }
 
@@ -144,7 +151,6 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
             enableRowGroup: true,
             rowGroup: sourceColDef.rowGroup,
             hide: true,
-            keyCreator: (params) => params.value,
         };
 
         const getDatePartValueGetter =
@@ -235,4 +241,9 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
                 return null;
         }
     }
+}
+
+function updateMap<T extends object>(wm: WeakMap<T, T[]>, key: T, value: T): void {
+    const existing = wm.get(key);
+    wm.set(key, (existing ? existing : []).concat(value));
 }

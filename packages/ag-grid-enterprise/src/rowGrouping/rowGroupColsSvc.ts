@@ -96,7 +96,10 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
 
         this.setColRowGroupActive(column, active, source);
 
-        if (_shouldUpdateColVisibilityAfterGroup(this.gos, active)) {
+        if (
+            _shouldUpdateColVisibilityAfterGroup(this.gos, active) &&
+            !this.beans.dateHierarchyColSvc?.getColumn(column)
+        ) {
             this.colModel.setColsVisible([column], !active, source);
         }
     }
@@ -107,7 +110,7 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
 
             const { dateHierarchyColSvc } = this.beans;
             if (rowGroup && dateHierarchyColSvc?.isDateHierarchyColsEnabledForCol(column)) {
-                this.columns = (dateHierarchyColSvc.getColumns() ?? []).concat(this.columns);
+                this.columns = (dateHierarchyColSvc.getVirtualColumnsForColumn(column) ?? []).concat(this.columns);
             }
 
             column.dispatchColEvent('columnRowGroupChanged', source);
