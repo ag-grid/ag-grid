@@ -348,15 +348,18 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     private onCtrlUpDownLeftRight(key: string, gridCell: CellPosition): void {
         const cellToFocus = this.beans.cellNavigation!.getNextCellToFocus(key, gridCell, true)!;
-        const { rowIndex, rowPinned } = cellToFocus;
-        const column = cellToFocus.column as AgColumn;
+        // in case we have col spanning we get the cellComp and use it to get the
+        // position. This was we always focus the first cell inside the spanning.
+        const normalisedPosition = this.getNormalisedPosition(cellToFocus);
+        const { rowIndex, rowPinned, column } = normalisedPosition ?? cellToFocus;
+        const col = column as AgColumn;
 
         this.navigateTo({
             scrollIndex: rowIndex,
             scrollType: null,
-            scrollColumn: column,
+            scrollColumn: col,
             focusIndex: rowIndex,
-            focusColumn: column,
+            focusColumn: col,
             rowPinned,
         });
     }

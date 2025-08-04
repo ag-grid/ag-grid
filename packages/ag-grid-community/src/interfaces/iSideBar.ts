@@ -65,4 +65,6 @@ export interface SideBarDef {
     hiddenByDefault?: boolean;
     /** Sets the side bar position relative to the grid. */
     position?: 'left' | 'right';
+    /** Allows granular control over the visibility of the side buttons. */
+    hideButtons?: boolean;
 }

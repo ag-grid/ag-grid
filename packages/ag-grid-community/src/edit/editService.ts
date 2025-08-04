@@ -93,6 +93,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     private valueSvc: ValueService;
     private rangeSvc: IRangeService;
     private strategy?: BaseEditStrategy;
+    private stopping = false;
 
     public postConstruct(): void {
         const { beans } = this;
@@ -274,9 +275,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const isEditingOrBatchWithEdits =
             this.isEditing(position) || (this.isBatchEditing() && model.hasEdits(position, CHECK_SIBLING));
 
-        if (!isEditingOrBatchWithEdits || !this.strategy) {
+        if (!isEditingOrBatchWithEdits || !this.strategy || this.stopping) {
             return false;
         }
+
+        this.stopping = true;
 
         const cellCtrl = _getCellCtrl(beans, position);
         if (cellCtrl) {
@@ -372,6 +375,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 this.dispatchBatchEvent('batchEditingStopped', edits);
             }
         }
+
+        this.stopping = false;
 
         return res;
     }

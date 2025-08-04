@@ -70,14 +70,13 @@ export function parseSideBarDef(
         };
     }
 
-    const result: SideBarDef = {
+    return {
         toolPanels: parseComponents(toParse.toolPanels),
         defaultToolPanel: toParse.defaultToolPanel,
         hiddenByDefault: toParse.hiddenByDefault,
         position: toParse.position,
+        hideButtons: toParse.hideButtons,
     };
-
-    return result;
 }
 
 function parseComponents(from?: (ToolPanelDef | string)[]): ToolPanelDef[] {

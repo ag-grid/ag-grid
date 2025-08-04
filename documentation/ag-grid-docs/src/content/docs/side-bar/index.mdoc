@@ -9,12 +9,12 @@ This section covers how to configure the Side Bar which contains Tool Panels.
 
 The Side Bar is configured using the grid property `sideBar`. The property takes multiple forms to allow easy configuration or more advanced configuration. The different forms for the `sideBar` property are as follows:
 
-| Type                         | Description                                                                                        |
-| ---------------------------- | -------------------------------------------------------------------------------------------------- |
-| `undefined` / `null`         | No Side Bar provided.                                                                              |
-| `boolean`                    | Set to `true` to display the Side Bar with default configuration.                       |
-| `string` / `string[]`        | Set to `'columns'`, `'filters'` or `'filters-new'` to display the Side Bar with just one of [Columns](./tool-panel-columns/), [Filters](./tool-panel-filters/) or [New Filters](./tool-panel-filters-new) Tool Panels or an array of some or all of these values. |
-| `SideBarDef`{% br /%}(long form) | An object of type `SideBarDef` (explained below) to allow detailed configuration of the Side Bar. Use this to configure the provided Tool Panels (e.g. pass parameters to the columns or filters panel) or to include custom Tool Panels. |
+| Type                             | Description                                                                                                                                                                                                                                                       |
+|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `undefined` / `null`             | No Side Bar provided.                                                                                                                                                                                                                                             |
+| `boolean`                        | Set to `true` to display the Side Bar with default configuration.                                                                                                                                                                                                 |
+| `string` / `string[]`            | Set to `'columns'`, `'filters'` or `'filters-new'` to display the Side Bar with just one of [Columns](./tool-panel-columns/), [Filters](./tool-panel-filters/) or [New Filters](./tool-panel-filters-new) Tool Panels or an array of some or all of these values. |
+| `SideBarDef`{% br /%}(long form) | An object of type `SideBarDef` (explained below) to allow detailed configuration of the Side Bar. Use this to configure the provided Tool Panels (e.g. pass parameters to the columns or filters panel) or to include custom Tool Panels.                         |
 
 ### Boolean Configuration
 
@@ -73,7 +73,7 @@ const gridOptions = {
             }
         ],
         position: 'left',
-        defaultToolPanel: 'filters'
+        defaultToolPanel: 'filters',
     }
 }
 ```
@@ -223,6 +223,10 @@ The Side Bar state can be saved and restored as part of [Grid State](./grid-stat
 The list below details all the API methods relevant to the Tool Panel.
 
 {% apiDocumentation source="grid-api/api.json" section="accessories" names=["getSideBar","setSideBarVisible","isSideBarVisible","setSideBarPosition","openToolPanel","closeToolPanel","getOpenedToolPanel","isToolPanelShowing","refreshToolPanel", "getToolPanelInstance"] /%}
+
+{% note %}
+Calling `setSideBarVisible(true)` when `sideBarDef.hideButtons` is set to true and no tool panel is open will not display anything. This is useful if you want to show a tool panel without showing the buttons.
+{% /note %}
 
 The example below demonstrates different usages of the Tool Panel API methods. The following can be noted:
 

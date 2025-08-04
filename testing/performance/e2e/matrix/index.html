@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>React Example - Grid Size - Width And Height</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="noindex" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="styles.css" />
+        <style media="only screen">
+            :root,
+            body,
+            #root {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                box-sizing: border-box;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            html {
+                position: absolute;
+                top: 0;
+                left: 0;
+                padding: 0;
+                overflow: auto;
+                font-family: -apple-system, 'system-ui', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+                    'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+                    'Noto Color Emoji';
+            }
+
+            body {
+                padding: 16px;
+                overflow: auto;
+                background-color: transparent;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="root"></div>
+        <script>
+            var appLocation = '';
+            var boilerplatePath = '';
+            const params = new URLSearchParams(window.location.search);
+            const enterprise = params.get('enterprise');
+            const community = params.get('community');
+            var systemJsMap = {
+                '@ag-grid-community/styles': 'https://cdn.jsdelivr.net/npm/@ag-grid-community/styles@34.0.2',
+                'ag-grid-community': community,
+                'ag-grid-enterprise': enterprise,
+                'ag-grid-react': 'https://cdn.jsdelivr.net/npm/ag-grid-react@34.0.2/',
+                classnames: 'https://cdn.jsdelivr.net/npm/classnames',
+                '@carbon': 'https://cdn.jsdelivr.net/npm/@carbon',
+                '@carbon/icons-react': 'https://cdn.jsdelivr.net/npm/@carbon/icons-react',
+                '@carbon/generated': 'https://cdn.jsdelivr.net/npm/@carbon',
+                ...[
+                    'react-dismissable-layer',
+                    '',
+                    'react-primitive',
+                    'react-collection',
+                    'react-visually-hidden',
+                    'number',
+                    'react-popper',
+                    'react-direction',
+                    'react-select',
+                    'primitive',
+                    'react-id',
+                    'react-compose-refs',
+                    'react-use-controllable-state',
+                    'react-use-callback-ref',
+                    'react-use-layout-effect',
+                    'react-use-previous',
+                    'react-slot',
+                    'react-focus-guards',
+                    'react-focus-scope',
+                    'react-portal',
+                    'react-context',
+                    'react-use-size',
+                    'react-use-escape-keydown',
+                    'react-arrow',
+                    'react-use-effect-event',
+                ].reduce((mem, i) => {
+                    mem['@radix-ui/' + i] = 'https://cdn.jsdelivr.net/npm/@radix-ui/' + i;
+                    return mem;
+                }, {}),
+                ...[
+                    'tslib',
+                    '@floating-ui/react-dom',
+                    '@floating-ui/dom',
+                    '@floating-ui/core',
+                    'react-remove-scroll-bar',
+                    'react-style-singleton',
+                    'use-callback-ref',
+                    'use-sidecar',
+                    'lucide-react',
+                    'aria-hidden',
+                ].reduce((mem, i) => {
+                    mem[i] = 'https://cdn.jsdelivr.net/npm/' + i;
+                    return mem;
+                }, {}),
+                'react-remove-scroll': 'consts',
+
+                react: 'https://cdn.jsdelivr.net/npm/react@19.1.0/cjs/react.production.min.js',
+                'react/jsx-runtime': 'https://cdn.jsdelivr.net/npm/jsx-runtime/',
+            };
+            var systemJsPaths = {
+                '@ag-grid-community/locale':
+                    'https://cdn.jsdelivr.net/npm/@ag-grid-community/locale@34.0.2/dist/package/main.cjs.js',
+                'ag-charts-community': 'https://cdn.jsdelivr.net/npm/ag-charts-community@12.0.2/',
+                'ag-charts-enterprise': 'https://cdn.jsdelivr.net/npm/ag-charts-enterprise@12.0.2/',
+                'ag-charts-core': 'https://cdn.jsdelivr.net/npm/ag-charts-core@12.0.2/',
+                'ag-charts-react': 'https://cdn.jsdelivr.net/npm/ag-charts-react@12.0.2/',
+                'ag-charts-types': 'https://cdn.jsdelivr.net/npm/ag-charts-types@12.0.2/',
+            };
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/systemjs@0.19.47/dist/system.js"></script>
+        <script src="systemjs.config.js"></script>
+        <script>
+            System.import('index.tsx').catch(function (err) {
+                document.body.innerHTML =
+                    '<div class="example-error" style="background:#fdb022;padding:1rem;">' +
+                    'Example Error: ' +
+                    err +
+                    '</div>';
+                console.error(err);
+            });
+        </script>
+    </body>
+</html>
