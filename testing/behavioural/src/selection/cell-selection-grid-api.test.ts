@@ -4,8 +4,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { CellSelectionModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
-import { assertSelectedCellRanges } from './utils';
+import { TestGridsManager, assertSelectedCellRanges } from '../test-utils';
 
 describe('Cell Selection Grid API', () => {
     let consoleErrorSpy: MockInstance;

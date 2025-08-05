@@ -6,8 +6,8 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { CellSelectionModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { GridActions, waitForEvent } from './utils';
+import { TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
+import { GridActions } from './utils';
 
 describe('Cell Selection', () => {
     let consoleErrorSpy: MockInstance;
