@@ -109,15 +109,13 @@ const frameworkTest =
      */
     (testName: string | undefined, testBody: (fixtures: TestFixtures) => Promise<void>): void => {
         extended.use({ agFramework });
+        // cachedRoute needs to be destructured in testWrapper for Playwright to initialise it correctly
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const testWrapper = async ({ page, agExampleUrl, agIdFor, cacheRoute }: TestFixtures) => {
             if (!agExampleUrl) {
                 throw new Error(
                     `Missing 'setAgExampleUrl(import.meta)' in the test file. This is required to set the example URL for the test.`
                 );
-            }
-
-            if (cacheRoute) {
-                // NOP - required to ensure cacheRoute is initialized
             }
 
             await loadPage(page, agExampleUrl, agFramework);
