@@ -53,15 +53,15 @@ describe('ag-grid grouping with transactions', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
             │ · └── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
@@ -80,13 +80,13 @@ describe('ag-grid grouping with transactions', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
             │ · └── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · └─┬ filler id:row-group-country-Italy-year-2000
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · · ├── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2000
         `);
@@ -106,15 +106,15 @@ describe('ag-grid grouping with transactions', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
             │ · └── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
@@ -135,16 +135,16 @@ describe('ag-grid grouping with transactions', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
             │ · ├── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
             │ · └── LEAF id:5 name:"Grace Hopper" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · ├── LEAF id:6 name:"xxx" country:"Italy" year:2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
@@ -165,16 +165,16 @@ describe('ag-grid grouping with transactions', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
             │ · ├── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
             │ · └── LEAF id:5 name:"Grace Hopper" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
@@ -194,13 +194,13 @@ describe('ag-grid grouping with transactions', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ └─┬ filler id:row-group-country-Ireland-year-2000
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ · ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ · └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2001
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · │ └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
-            · └─┬ filler id:row-group-country-Italy-year-1940
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-1940
             · · ├── LEAF id:2 name:"Alan M. Turing" country:"Italy" year:1940
             · · ├── LEAF id:5 name:"Grace Brewster Murray Hopper" country:"Italy" year:1940
             · · └── LEAF id:6 name:"unknown" country:"Italy" year:1940
@@ -222,17 +222,17 @@ describe('ag-grid grouping with transactions', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-1940
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-1940
             │ · └── LEAF id:2 name:"Alan M. Turing" country:"Ireland" year:1940
             ├─┬ filler id:row-group-country-Italy
-            │ └─┬ filler id:row-group-country-Italy-year-1940
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-1940
             │ · ├── LEAF id:5 name:"Grace Brewster Murray Hopper" country:"Italy" year:1940
             │ · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:1940
             └─┬ filler id:row-group-country-Germany
-            · └─┬ filler id:row-group-country-Germany-year-1900
+            · └─┬ LEAF_GROUP id:row-group-country-Germany-year-1900
             · · └── LEAF id:6 name:"unknown" country:"Germany" year:1900
         `);
 
@@ -277,15 +277,15 @@ describe('ag-grid grouping with transactions', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
             │ · └── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
@@ -304,15 +304,15 @@ describe('ag-grid grouping with transactions', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Italy
-            │ ├─┬ filler id:row-group-country-Italy-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             │ │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            │ └─┬ filler id:row-group-country-Italy-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             │ · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
             └─┬ filler id:row-group-country-Germany
-            · ├─┬ filler id:row-group-country-Germany-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Germany-year-2000
             · │ ├── LEAF id:0 name:"John Von Neumann" country:"Germany" year:2000
             · │ └── LEAF id:1 name:"Ada Lovelace" country:"Germany" year:2000
-            · └─┬ filler id:row-group-country-Germany-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Germany-year-2001
             · · └── LEAF id:2 name:"Alan Turing" country:"Germany" year:2001
         `);
 
@@ -328,7 +328,7 @@ describe('ag-grid grouping with transactions', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ filler id:row-group-country-Germany
-            · └─┬ filler id:row-group-country-Germany-year-2000
+            · └─┬ LEAF_GROUP id:row-group-country-Germany-year-2000
             · · ├── LEAF id:0 name:"John Von Neumann" country:"Germany" year:2000
             · · └── LEAF id:1 name:"Ada Lovelace" country:"Germany" year:2000
         `);
@@ -346,11 +346,11 @@ describe('ag-grid grouping with transactions', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Germany
-            │ └─┬ filler id:row-group-country-Germany-year-2000
+            │ └─┬ LEAF_GROUP id:row-group-country-Germany-year-2000
             │ · ├── LEAF id:0 name:"John Von Neumann" country:"Germany" year:2000
             │ · └── LEAF id:1 name:"Ada Lovelace" country:"Germany" year:2000
             └─┬ filler id:row-group-country-Italy
-            · └─┬ filler id:row-group-country-Italy-year-2000
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · · └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
         `);
 
@@ -370,10 +370,10 @@ describe('ag-grid grouping with transactions', () => {
         gridRows = new GridRows(api, 'change columns', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Germany
+            ├─┬ LEAF_GROUP id:row-group-country-Germany
             │ ├── LEAF id:0 name:"John Von Neumann" country:"Germany" year:2005
             │ └── LEAF id:1 name:"Ada Lovelace" country:"Germany" year:2005
-            └─┬ filler id:row-group-country-Italy
+            └─┬ LEAF_GROUP id:row-group-country-Italy
             · └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2005
         `);
 
@@ -420,15 +420,15 @@ describe('ag-grid grouping with transactions', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler collapsed id:row-group-country-Ireland
-            │ ├─┬ filler hidden id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF hidden id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF hidden id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler hidden id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2001
             │ · └── LEAF hidden id:2 name:"Alan Turing" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
@@ -447,15 +447,15 @@ describe('ag-grid grouping with transactions', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler collapsed id:row-group-country-Ireland
-            │ ├─┬ filler hidden id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF hidden id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF hidden id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler hidden id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2001
             │ · └── LEAF hidden id:2 name:"Alan Turing" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky the second" country:"Italy" year:2001
         `);
 
@@ -474,13 +474,13 @@ describe('ag-grid grouping with transactions', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler collapsed id:row-group-country-Ireland
-            │ └─┬ filler hidden id:row-group-country-Ireland-year-2000
+            │ └─┬ LEAF_GROUP hidden id:row-group-country-Ireland-year-2000
             │ · ├── LEAF hidden id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ · └── LEAF hidden id:1 name:"Ada Lovelace" country:"Ireland" year:2000
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · ├── LEAF id:4 name:"Marvin Minsky the second" country:"Italy" year:2001
             · · └── LEAF id:2 name:"Alan Turing" country:"Italy" year:2001
         `);

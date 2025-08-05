@@ -128,6 +128,10 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 }
 
                 group.childrenAfterGroup = [...leafNodes, ...groupNodes];
+                const sibling = group.sibling as GroupingRowNode;
+                if (sibling) {
+                    sibling.childrenAfterGroup = group.childrenAfterGroup;
+                }
             }
         }, false);
     }
@@ -402,7 +406,16 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
         if (childrenMapped[mapKey] !== child) {
             childrenMapped[mapKey] = child;
-            (parent.childrenAfterGroup ??= []).push(child);
+            let childrenAfterGroup = parent.childrenAfterGroup;
+            if (!childrenAfterGroup) {
+                parent.childrenAfterGroup = childrenAfterGroup = [];
+                const sibling = parent.sibling;
+                if (sibling) {
+                    sibling.childrenAfterGroup = parent.childrenAfterGroup;
+                }
+            }
+
+            childrenAfterGroup.push(child);
             setRowNodeGroup(parent, this.beans, true); // calls `.updateHasChildren` internally
         }
     }

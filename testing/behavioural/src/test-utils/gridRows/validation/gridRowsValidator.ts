@@ -22,6 +22,9 @@ interface RowAllLeafs {
 interface ValidationState {
     gridRows: GridRows;
     csrm: boolean;
+    pivotMode: boolean;
+    groupHideOpenParents: boolean;
+    groupHideParentOfSingleChild: string | boolean;
 }
 
 export class GridRowsValidator {
@@ -31,9 +34,13 @@ export class GridRowsValidator {
     public constructor(public readonly errors: GridRowsErrors) {}
 
     public validate(gridRows: GridRows): this {
+        const api = gridRows.api;
         const state: ValidationState = {
             gridRows,
-            csrm: gridRows.api.getGridOption('rowModelType') === 'clientSide',
+            csrm: api.getGridOption('rowModelType') === 'clientSide',
+            pivotMode: !!api.getGridOption('pivotMode'),
+            groupHideOpenParents: !!api.getGridOption('groupHideOpenParents'),
+            groupHideParentOfSingleChild: api.getGridOption('groupHideParentOfSingleChild') ?? false,
         };
 
         if (gridRows.rootRowNodes.length > 1) {
@@ -135,7 +142,7 @@ export class GridRowsValidator {
 
             const uiLevel = row.uiLevel;
             if (csrm || !row.detail || uiLevel !== undefined) {
-                rowErrors.expectValueEqual('uiLevel', uiLevel, this.computeUiLevel(row));
+                rowErrors.expectValueEqual('uiLevel', uiLevel, this.computeUiLevel(state, row));
             }
 
             this.validateRow(state, row);
@@ -211,6 +218,16 @@ export class GridRowsValidator {
 
         if (row.level >= 0 && csrm) {
             this.verifyAllLeafChildrenWithChildrenAfterGroup(gridRows, row);
+        }
+
+        // Validate leaf groups (using ag-Grid's built-in leafGroup property)
+        if (row.leafGroup) {
+            this.validateLeafGroup(state, row);
+        }
+
+        // Validate that non-group rows in pivot mode have proper structure
+        if (state.pivotMode && !row.group && row.level >= 0 && row.data) {
+            this.validatePivotLeafRow(state, row);
         }
 
         if (row.detail && gridRows.isRowDisplayed(row)) {
@@ -360,15 +377,38 @@ export class GridRowsValidator {
         }
     }
 
-    private computeUiLevel(row: RowNode): number {
+    private computeUiLevel(state: ValidationState, row: RowNode): number {
         let level = -1;
         let parent = row.parent;
         while (parent) {
             if (parent.footer) {
                 ++level;
             }
+
+            // Check if this parent should be counted based on grouping options
+            let shouldCountParent = true;
+
+            if (!parent.master) {
+                if (state.groupHideOpenParents) {
+                    const isHiddenOpenParent = parent.expanded && !parent.master;
+                    if (isHiddenOpenParent) {
+                        shouldCountParent = false;
+                    }
+                }
+
+                if (state.groupHideParentOfSingleChild && parent.group && parent.childrenAfterGroup?.length === 1) {
+                    if (state.groupHideParentOfSingleChild === true) {
+                        shouldCountParent = false;
+                    } else if (state.groupHideParentOfSingleChild === 'leafGroupsOnly' && parent.leafGroup) {
+                        shouldCountParent = false;
+                    }
+                }
+            }
+
             parent = parent.parent;
-            ++level;
+            if (shouldCountParent) {
+                ++level;
+            }
         }
         if (row.footer) {
             ++level;
@@ -534,6 +574,45 @@ export class GridRowsValidator {
 
         if (row.level >= 0 && row.allLeafChildren?.length === 0) {
             this.errors.get(row).add('allLeafChildren should not be zero, should be null');
+        }
+    }
+
+    private validateLeafGroup(state: ValidationState, row: RowNode): void {
+        const rowErrors = this.errors.get(row);
+
+        // Leaf groups should have aggregation data in pivot mode
+        if (state.pivotMode && row.aggData === undefined) {
+            rowErrors.add('Leaf group in pivot mode should have aggregation data');
+        }
+
+        // Validate allLeafChildren for leaf groups in all grouping modes except tree data
+        const allLeafChildren = row.allLeafChildren;
+        if (!allLeafChildren?.length) {
+            rowErrors.add('Leaf group should have allLeafChildren representing the data it aggregates');
+        } else {
+            for (const child of allLeafChildren) {
+                if (child.group) {
+                    rowErrors.add('allLeafChildren contains a group node: ' + rowIdAndIndexToString(child));
+                }
+                if (child === row) {
+                    rowErrors.add('allLeafChildren contains the group node itself');
+                }
+            }
+        }
+    }
+
+    private validatePivotLeafRow({ gridRows }: ValidationState, row: RowNode): void {
+        // In pivot mode, leaf rows should typically not be displayed directly
+        // They should be aggregated into group rows
+        if (gridRows.isRowDisplayed(row)) {
+            // This might be valid in some pivot configurations, so just a warning-level check
+            // Only flag as error if we have strong indicators this shouldn't happen
+            const hasGroupingOrPivoting =
+                gridRows.api.getRowGroupColumns().length > 0 || gridRows.api.getPivotColumns().length > 0;
+            if (hasGroupingOrPivoting && row.level === 0) {
+                const rowErrors = this.errors.get(row);
+                rowErrors.add('Leaf data row displayed in pivot mode with active grouping/pivoting');
+            }
         }
     }
 }

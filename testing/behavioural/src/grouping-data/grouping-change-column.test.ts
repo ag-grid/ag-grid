@@ -34,7 +34,7 @@ describe('ag-grid grouping simple data', () => {
         let gridRows = new GridRows(api, 'column A', { columns: true, checkDom: true });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-1-bob ag-Grid-AutoColumn:"bob"
+            └─┬ LEAF_GROUP id:row-group-1-bob ag-Grid-AutoColumn:"bob"
             · └── LEAF id:0 ag-Grid-AutoColumn:undefined 1:"bob"
         `);
 
@@ -46,7 +46,7 @@ describe('ag-grid grouping simple data', () => {
         });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-1-cat ag-Grid-AutoColumn:"cat"
+            └─┬ LEAF_GROUP id:row-group-1-cat ag-Grid-AutoColumn:"cat"
             · └── LEAF id:0 ag-Grid-AutoColumn:undefined 1:"cat"
         `);
 
@@ -55,7 +55,7 @@ describe('ag-grid grouping simple data', () => {
         gridRows = new GridRows(api, 'column A (2)', { columns: true, checkDom: true });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-1-bob ag-Grid-AutoColumn:"bob"
+            └─┬ LEAF_GROUP id:row-group-1-bob ag-Grid-AutoColumn:"bob"
             · └── LEAF id:0 ag-Grid-AutoColumn:undefined 1:"bob"
         `);
     });
