@@ -61,6 +61,7 @@ packages/ag-grid-enterprise/coverage
 plugins/ag-grid-generate-example-files/coverage/
 coverage
 reports
+.playwright-network-cache/
 
 vite.config.*.timestamp*
 
