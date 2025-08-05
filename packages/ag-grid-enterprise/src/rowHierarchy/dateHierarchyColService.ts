@@ -83,7 +83,10 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
     }
 
     public getVirtualColumnsForColumn(col: AgColumn): AgColumn[] {
-        return this.sourceColumnMap.get(col) ?? [];
+        if (this.isDateHierarchyColsEnabledForCol(col)) {
+            return this.sourceColumnMap.get(col) ?? [];
+        }
+        return [];
     }
 
     public isDateHierarchyColsEnabled(cols: _ColumnCollections): boolean {

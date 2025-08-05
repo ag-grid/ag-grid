@@ -287,6 +287,12 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         // so we are preserving order of current grouping of columns that simply have rowGroup=true
         previousCols.forEach((col) => {
             if (colsWithValue.indexOf(col) >= 0) {
+                // ...with the exception that if we have columns with associated virtual columns, they need
+                // to come first in the grouping hierarchy
+                const vCols = this.beans.dateHierarchyColSvc?.getVirtualColumnsForColumn(col);
+                if (vCols) {
+                    res.push(...vCols);
+                }
                 res.push(col);
             }
         });
