@@ -14,14 +14,46 @@ import type { ServerSideRowModel } from '../serverSideRowModel';
 interface ExpansionState {
     /** Base expansion state for all nodes, whether they have been loaded or not */
     expandAll: boolean;
+    /** Whether the user has interacted with all nodes */
+    interactedWithAll: boolean;
     /** RowNode IDs of those nodes whose expansion state differs from the base state */
     toggledNodes: Set<string>;
+    /** RowNode IDs of those nodes that have been interacted with by the user */
+    interactedWith: Set<string>;
 }
 
 export class ServerSideExpansionService extends BaseExpansionService implements NamedBean, IExpansionService {
     beanName = 'expansionSvc' as const;
-
-    private expandedState: ExpansionState = { expandAll: false, toggledNodes: new Set() };
+    private expandedState = new Proxy(
+        {
+            expandAll: false,
+            interactedWithAll: false,
+            toggledNodes: new Proxy(new Set<string>(), {
+                get: (target, prop) => {
+                    if (prop === 'add' || prop === 'delete') {
+                        return (value: string) => {
+                            this.expandedState.interactedWith.add(value);
+                            return target[prop](value);
+                        };
+                    }
+                    return target[prop as keyof typeof target];
+                },
+            }),
+            interactedWith: new Set<string>(),
+        } as ExpansionState,
+        {
+            set(target, prop, value) {
+                if (prop === 'expandAll') {
+                    target.toggledNodes.clear();
+                    target.expandAll = value;
+                    target.interactedWith.clear();
+                    target.interactedWithAll = true;
+                    return true;
+                }
+                return false;
+            },
+        }
+    );
     private serverSideRowModel: ServerSideRowModel;
 
     public wireBeans(beans: BeanCollection) {
@@ -36,20 +68,18 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
         });
     }
 
-    public checkOpenByDefault(rowNode: RowNode): void {
+    public checkOpenByDefault(rowNode: RowNode): boolean {
         if (!rowNode.isExpandable()) {
-            return;
+            return false;
         }
 
-        const shouldExpand = this.expandedState.expandAll !== this.expandedState.toggledNodes.has(rowNode.id!);
-        if (shouldExpand) {
-            rowNode.setExpanded(true);
-            return;
+        if (this.expandedState.interactedWith.has(rowNode.id!)) {
+            return this.expandedState.expandAll !== this.expandedState.toggledNodes.has(rowNode.id!);
         }
 
         const userFunc = this.gos.getCallback('isServerSideGroupOpenByDefault');
         if (!userFunc) {
-            return;
+            return false;
         }
 
         const params: WithoutGridCommon<IsServerSideGroupOpenByDefaultParams> = {
@@ -57,24 +87,14 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
             rowNode,
         };
 
-        const userFuncRes = userFunc(params);
-
-        if (userFuncRes) {
-            rowNode.setExpanded(true);
-        }
+        return userFunc(params);
     }
 
     public expandRows(rowIdsToExpand: string[], rowIdsToCollapse?: string[]): void {
         const processNodes = (rowIds: string[], expanded: boolean) => {
             for (const rowId of rowIds) {
                 const rowNode = this.serverSideRowModel.getRowNode(rowId);
-                if (rowNode) {
-                    rowNode.setExpanded(expanded);
-                } else {
-                    this.expandedState.toggledNodes[expanded !== this.expandedState.expandAll ? 'add' : 'delete'](
-                        rowId
-                    );
-                }
+                this.setExpanded(rowNode, expanded, undefined, true, rowId);
             }
         };
         processNodes(rowIdsToExpand, true);
@@ -84,21 +104,30 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
         processNodes(rowIdsToCollapse, false);
     }
 
-    public expandAll(value: boolean): void {
-        this.expandedState.expandAll = value;
-        this.expandedState.toggledNodes.clear();
-        this.serverSideRowModel.expandAllTransactional((node) => {
-            if (node.stub) {
-                this.expandedState.toggledNodes.add(node.id!);
-            } else {
-                if (node.hasChildren()) {
-                    node.setExpanded(value);
-                }
-            }
-        });
+    public override setExpanded(
+        rowNode: RowNode | undefined,
+        expanded: boolean,
+        e?: MouseEvent | KeyboardEvent,
+        _?: boolean,
+        rowId?: string
+    ): void {
+        const rowIdC = rowId || rowNode?.id;
+        const toggleAction =
+            this.expandedState.expandAll !== expanded || (rowNode ? this.checkOpenByDefault(rowNode) : false)
+                ? 'add'
+                : 'delete';
+        this.expandedState.toggledNodes[toggleAction](rowIdC!);
+        if (rowNode) {
+            super.setExpanded(rowNode, expanded, e);
+        }
+    }
+
+    public expandAll(expanded: boolean): void {
+        this.expandedState.expandAll = expanded;
+        this.serverSideRowModel.expandAllTransactional((node) => node.setExpanded(expanded));
         this.beans.eventSvc.dispatchEvent({
             type: 'expandOrCollapseAll',
-            source: value ? 'expandAll' : 'collapseAll',
+            source: expanded ? 'expandAll' : 'collapseAll',
         });
     }
 
