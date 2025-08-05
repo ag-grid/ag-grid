@@ -181,7 +181,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const {
             autoColSvc,
             selectionColSvc,
-            groupHierarchyColSvc,
             rowNumbersSvc,
             quickFilter,
             pivotResultCols,
@@ -194,7 +193,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const cols = this.selectCols(pivotResultCols, this.colDefCols);
 
-        this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc, groupHierarchyColSvc], cols);
+        this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc], cols);
 
         const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
         if (!newColDefs || shouldSortNewColDefs) {
