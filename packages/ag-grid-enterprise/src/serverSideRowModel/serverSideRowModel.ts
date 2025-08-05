@@ -10,7 +10,6 @@ import type {
     IColsService,
     IPivotColDefService,
     IPivotResultColsService,
-    IRowModel,
     IServerSideDatasource,
     IServerSideRowModel,
     LoadSuccessParams,
@@ -465,7 +464,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.pauseStoreUpdateListening = paused;
     }
 
-    public expandAllTransactional(cb: Parameters<IRowModel['forEachNode']>[0]): void {
+    public forEachNodeTransactional(cb: (node: RowNode, index?: number) => void): void {
         // if we don't pause store updating, we are needlessly
         // recalculating row-indexes etc, and also getting rendering
         // engine to re-render (listens on ModelUpdated event)
