@@ -4,15 +4,15 @@ import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
-import { GROUP_ROW_DATA, fakeFetch } from './group-data';
 import {
-    GridActions,
+    TestGridsManager,
     assertSelectedRowElementsById,
     assertSelectedRowNodes,
     assertSelectedRowsByIndex,
     waitForEvent,
-} from './utils';
+} from '../test-utils';
+import { GROUP_ROW_DATA, fakeFetch } from './group-data';
+import { GridActions } from './utils';
 
 describe('Row Selection Grid API', () => {
     let consoleErrorSpy: MockInstance;

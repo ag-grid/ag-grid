@@ -1,6 +1,7 @@
 /* eslint-disable no-empty-pattern */
 import type { Page, TestType } from '@playwright/test';
 import { test as base, expect } from '@playwright/test';
+import { CacheRoute } from 'playwright-network-cache';
 
 import { wrapAgTestIdFor } from 'ag-grid-community';
 
@@ -9,16 +10,23 @@ type ExtractFixtures<T> = T extends TestType<infer A, infer O> ? A & O : never;
 // Extract the fixtures from the base test type as Playwright doesn't export them directly
 type PlaywrightFixtures = ExtractFixtures<typeof base>;
 
+type AgIdFor = ReturnType<typeof wrapAgTestIdFor<any>>;
+
 type AgGridFixtures = {
     agFramework: AgFramework;
     agExampleUrl?: AgExampleUrl;
     /**
      * A locator to get the ag-grid test ID for a specific cell or element.
      */
-    agIdFor: ReturnType<typeof wrapAgTestIdFor<any>>;
+    agIdFor: AgIdFor;
 };
 
-type TestFixtures = PlaywrightFixtures & AgGridFixtures;
+type CacheFixtures = {
+    cacheRoute?: CacheRoute;
+    bypassRequestCache: boolean;
+};
+
+type TestFixtures = PlaywrightFixtures & AgGridFixtures & CacheFixtures;
 
 type AgExampleUrl = `${string}/${string}`;
 
@@ -49,6 +57,47 @@ const extended = base.extend<TestFixtures>({
     agExampleUrl: [({}, use) => use(undefined), { option: true }],
     agFramework: [({}, use) => use(ALL_FRAMEWORKS[0]), { option: true }],
     agIdFor: [({ page }, use) => use(wrapAgTestIdFor((testId: string) => page.getByTestId(testId))), { option: true }],
+    bypassRequestCache: [false, { option: true }],
+
+    cacheRoute: [
+        async ({ page, bypassRequestCache }: TestFixtures, use: (r?: CacheRoute) => Promise<void>) => {
+            if (bypassRequestCache) {
+                await use(undefined);
+                return;
+            }
+
+            const cdnPatterns = bypassRequestCache
+                ? []
+                : [
+                      /* jsdelivr */ /cdn\.jsdelivr\.net/,
+                      /* fonts.googleapis */ /fonts\.googleapis\.com/,
+                      /* fonts.gstatic */ /fonts\.gstatic\.com/,
+                      /* ag-grid */ /www\.ag-grid\.com/,
+
+                      // No localhost caching due to known issues with Playwright and localhost caching
+                      // https://github.com/vitalets/playwright-network-cache/issues/6
+                      // https://github.com/microsoft/playwright/issues/12148
+                  ];
+
+            const cacheRoute = new CacheRoute(page, {
+                baseDir: '.playwright-network-cache',
+                ttlMinutes: 60, // refresh after 60 minutes, long enough for build to complete
+
+                match: (req) => {
+                    try {
+                        return cdnPatterns.some((re) => re.test(new URL(req.url()).hostname));
+                    } catch {
+                        return false;
+                    }
+                },
+            });
+
+            await cacheRoute.ALL('**/*'); // send all requests to cacheRoute handler
+
+            await use(cacheRoute);
+        },
+        { option: true },
+    ],
 });
 
 const frameworkTest =
@@ -60,7 +109,9 @@ const frameworkTest =
      */
     (testName: string | undefined, testBody: (fixtures: TestFixtures) => Promise<void>): void => {
         extended.use({ agFramework });
-        const testWrapper = async ({ page, agExampleUrl, agIdFor }: TestFixtures) => {
+        // cachedRoute needs to be destructured in testWrapper for Playwright to initialise it correctly
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const testWrapper = async ({ page, agExampleUrl, agIdFor, cacheRoute }: TestFixtures) => {
             if (!agExampleUrl) {
                 throw new Error(
                     `Missing 'setAgExampleUrl(import.meta)' in the test file. This is required to set the example URL for the test.`

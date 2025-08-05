@@ -4,16 +4,17 @@ import type { GridApi, GridOptions, Params } from 'ag-grid-community';
 import { ClientSideRowModelModule, PinnedRowModule, isColumnSelectionCol } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { GROUP_ROW_DATA } from './group-data';
 import {
-    GridActions,
-    _isDisplayed,
+    TestGridsManager,
+    assertElementDisplayed,
     assertSelectableByIndex,
     assertSelectedRowElementsById,
     assertSelectedRowsByIndex,
+    asyncSetTimeout,
     waitForEvent,
-} from './utils';
+} from '../test-utils';
+import { GROUP_ROW_DATA } from './group-data';
+import { GridActions } from './utils';
 
 describe('Row Selection Grid Options', () => {
     const columnDefs = [{ field: 'sport' }];
@@ -387,7 +388,7 @@ describe('Row Selection Grid Options', () => {
                     },
                 });
 
-                rowData.map((_, i) => expect(_isDisplayed(actions.getCheckboxByIndex(i)!)).toBe(false));
+                rowData.map((_, i) => expect(assertElementDisplayed(actions.getCheckboxByIndex(i)!)).toBe(false));
             });
 
             describe('Range selection behaviour', () => {

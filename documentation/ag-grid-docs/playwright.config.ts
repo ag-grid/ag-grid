@@ -12,7 +12,7 @@ export default defineConfig({
     testDir: './src/content/docs/',
     /* Run tests in files in parallel */
     fullyParallel: true,
-    timeout: process.env.CI ? 60_000 : 10_000,
+    timeout: process.env.CI ? 60_000 : 20_000,
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
     /* Retry on CI only */
