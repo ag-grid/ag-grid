@@ -109,8 +109,13 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
             column.rowGroupActive = rowGroup;
 
             const { groupHierarchyColSvc } = this.beans;
-            if (rowGroup && groupHierarchyColSvc?.isDateHierarchyColsEnabledForCol(column)) {
-                this.columns = (groupHierarchyColSvc.getVirtualColumnsForColumn(column) ?? []).concat(this.columns);
+            const vCols = groupHierarchyColSvc?.getVirtualColumnsForColumn(column) ?? [];
+            if (rowGroup && vCols.length > 0) {
+                for (let i = vCols.length - 1; i >= 0; i--) {
+                    if (!this.columns.includes(vCols[i])) {
+                        this.columns.unshift(vCols[i]);
+                    }
+                }
             }
 
             column.dispatchColEvent('columnRowGroupChanged', source);
