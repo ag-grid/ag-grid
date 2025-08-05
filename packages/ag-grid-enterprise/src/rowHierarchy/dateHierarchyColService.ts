@@ -15,7 +15,6 @@ import {
     BeanStub,
     _areColIdsEqual,
     _columnsMatch,
-    _convertColumnEventSourceType,
     _destroyColumnTree,
     _getDateParts,
     _parseDateTimeFromString,
@@ -71,8 +70,8 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
         };
     }
 
-    public updateColumns(event: PropertyChangedEvent | PropertyValueChangedEvent<keyof GridOptions>): void {
-        const source = _convertColumnEventSourceType(event.source);
+    public updateColumns(_event: PropertyChangedEvent | PropertyValueChangedEvent<keyof GridOptions>): void {
+        // No-op
     }
 
     public getColumn(key: ColKey): AgColumn | null {
@@ -155,6 +154,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
         const base: ColDef = {
             enableRowGroup: true,
             rowGroup: sourceColDef.rowGroup,
+            enablePivot: sourceColDef.enablePivot,
             hide: true,
         };
 
@@ -171,7 +171,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
                 }
                 const parts = _getDateParts(date);
                 if (parts) {
-                    return map ? map(parts[index]) : parts[index];
+                    return map?.(parts[index]) ?? parts[index];
                 }
 
                 return innerValue;
