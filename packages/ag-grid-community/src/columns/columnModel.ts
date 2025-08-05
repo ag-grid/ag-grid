@@ -101,7 +101,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             valueColsSvc,
             visibleCols,
             eventSvc,
-            dateHierarchyColSvc,
+            groupHierarchyColSvc,
         } = beans;
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = this.colDefs ? _compareColumnStatesAndDispatchEvents(beans, source) : undefined;
@@ -127,7 +127,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         // Must create dateHierarchy columns before rowGroupSvc and pivotSvc run
         // so that any groupable date columns exist beforehand.
-        this.createColumnsForService([dateHierarchyColSvc], this.colDefCols);
+        this.createColumnsForService([groupHierarchyColSvc], this.colDefCols);
 
         rowGroupColsSvc?.extractCols(source, oldCols);
         pivotColsSvc?.extractCols(source, oldCols);
@@ -181,7 +181,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const {
             autoColSvc,
             selectionColSvc,
-            dateHierarchyColSvc,
+            groupHierarchyColSvc,
             rowNumbersSvc,
             quickFilter,
             pivotResultCols,
@@ -194,7 +194,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const cols = this.selectCols(pivotResultCols, this.colDefCols);
 
-        this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc, dateHierarchyColSvc], cols);
+        this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc, groupHierarchyColSvc], cols);
 
         const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
         if (!newColDefs || shouldSortNewColDefs) {
@@ -595,11 +595,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public forAllCols(callback: (column: AgColumn) => void): void {
-        const { pivotResultCols, autoColSvc, selectionColSvc, dateHierarchyColSvc } = this.beans;
+        const { pivotResultCols, autoColSvc, selectionColSvc, groupHierarchyColSvc } = this.beans;
         _forAll(this.colDefCols?.list, callback);
         _forAll(autoColSvc?.columns?.list, callback);
         _forAll(selectionColSvc?.columns?.list, callback);
-        _forAll(dateHierarchyColSvc?.columns?.list, callback);
+        _forAll(groupHierarchyColSvc?.columns?.list, callback);
         _forAll(pivotResultCols?.getPivotResultCols()?.list, callback);
     }
 
@@ -652,9 +652,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
             }
         }
 
-        const { autoColSvc, selectionColSvc, dateHierarchyColSvc } = this.beans;
+        const { autoColSvc, selectionColSvc, groupHierarchyColSvc } = this.beans;
         return (
-            autoColSvc?.getColumn(key) ?? selectionColSvc?.getColumn(key) ?? dateHierarchyColSvc?.getColumn(key) ?? null
+            autoColSvc?.getColumn(key) ??
+            selectionColSvc?.getColumn(key) ??
+            groupHierarchyColSvc?.getColumn(key) ??
+            null
         );
     }
 }

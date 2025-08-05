@@ -98,7 +98,7 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
 
         if (
             _shouldUpdateColVisibilityAfterGroup(this.gos, active) &&
-            !this.beans.dateHierarchyColSvc?.getColumn(column)
+            !this.beans.groupHierarchyColSvc?.getColumn(column)
         ) {
             this.colModel.setColsVisible([column], !active, source);
         }
@@ -108,9 +108,9 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
         if (column.rowGroupActive !== rowGroup) {
             column.rowGroupActive = rowGroup;
 
-            const { dateHierarchyColSvc } = this.beans;
-            if (rowGroup && dateHierarchyColSvc?.isDateHierarchyColsEnabledForCol(column)) {
-                this.columns = (dateHierarchyColSvc.getVirtualColumnsForColumn(column) ?? []).concat(this.columns);
+            const { groupHierarchyColSvc } = this.beans;
+            if (rowGroup && groupHierarchyColSvc?.isDateHierarchyColsEnabledForCol(column)) {
+                this.columns = (groupHierarchyColSvc.getVirtualColumnsForColumn(column) ?? []).concat(this.columns);
             }
 
             column.dispatchColEvent('columnRowGroupChanged', source);

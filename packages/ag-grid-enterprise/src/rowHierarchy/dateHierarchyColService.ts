@@ -3,7 +3,7 @@ import type {
     ColKey,
     GridOptions,
     HeaderValueGetterParams,
-    IDateHierarchyColService,
+    IGroupHierarchyColService,
     IRowNode,
     NamedBean,
     PropertyChangedEvent,
@@ -24,8 +24,8 @@ import {
     _updateColsMap,
 } from 'ag-grid-community';
 
-export class DateHierarchyColService extends BeanStub implements NamedBean, IDateHierarchyColService {
-    beanName = 'dateHierarchyColSvc' as const;
+export class GroupHierarchyColService extends BeanStub implements NamedBean, IGroupHierarchyColService {
+    beanName = 'groupHierarchyColSvc' as const;
 
     public columns: _ColumnCollections | null = null;
     private readonly sourceColumnMap = new WeakMap<AgColumn, AgColumn[]>();

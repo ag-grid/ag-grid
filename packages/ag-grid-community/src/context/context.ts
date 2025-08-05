@@ -50,7 +50,6 @@ import type { IColsService } from '../interfaces/iColsService';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
-import type { IDateHierarchyColService } from '../interfaces/iDateHierarchyColService';
 import type { IEditModelService } from '../interfaces/iEditModelService';
 import type { IEditService } from '../interfaces/iEditService';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
@@ -59,6 +58,7 @@ import type { IFindService } from '../interfaces/iFind';
 import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IGroupFilterService } from '../interfaces/iGroupFilterService';
+import type { IGroupHierarchyColService } from '../interfaces/iGroupHierarchyColService';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IMultiFilterService } from '../interfaces/iMultiFilterService';
 import type { IFilterPanelService, ISelectableFilterService } from '../interfaces/iNewFiltersToolPanel';
@@ -347,7 +347,7 @@ interface CoreBeanCollection {
     filterPanelSvc?: IFilterPanelService;
     selectableFilter?: ISelectableFilterService;
     testIdSvc?: ITestIdService;
-    dateHierarchyColSvc?: IDateHierarchyColService;
+    groupHierarchyColSvc?: IGroupHierarchyColService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -432,7 +432,6 @@ export type BeanName =
     | 'visibleCols'
     | 'dragAndDrop'
     | 'dragSvc'
-    | 'dateHierarchyColSvc'
     | 'editSvc'
     | 'editModelSvc'
     | 'excelCreator'
@@ -455,6 +454,7 @@ export type BeanName =
     | 'focusSvc'
     | 'footerSvc'
     | 'funcColsSvc'
+    | 'groupHierarchyColSvc'
     | 'rowNumbersSvc'
     | 'pivotColsSvc'
     | 'rowGroupColsSvc'

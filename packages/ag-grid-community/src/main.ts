@@ -409,7 +409,7 @@ export { _setColMenuVisible } from './misc/menu/menuService';
 export type { IColsService } from './interfaces/iColsService';
 export type { IColumnCollectionService } from './interfaces/iColumnCollectionService';
 export type { IRowNumbersService } from './interfaces/rowNumbers';
-export type { IDateHierarchyColService } from './interfaces/iDateHierarchyColService';
+export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
 
 // editing / cellEditors
 export {
