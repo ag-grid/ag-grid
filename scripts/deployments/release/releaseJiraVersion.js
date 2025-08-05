@@ -45,9 +45,18 @@ const releaseJiraVersion = async (versionNumber) => {
         .filter((version) => version.name === versionNumber)[0];
 
     if (versionToRelease) {
+        const releaseDate = new Date();
+        const formattedReleaseDate = releaseDate.toISOString().substring(0, 10);
+
+        let startDate = versionToRelease.startDate;
+        if (!versionToRelease.startDate || new Date(versionToRelease.startDate) > releaseDate) {
+            startDate = formattedReleaseDate;
+        }
+
         const bodyData = `{
           "released": true,
-          "releaseDate": "${new Date().toISOString().substring(0, 10)}"
+          "startDate": "${startDate}",
+          "releaseDate": "${formattedReleaseDate}"
         }`;
 
         const response = await fetch(`https://ag-grid.atlassian.net/rest/api/2/version/${versionToRelease.id}`, {
@@ -57,7 +66,7 @@ const releaseJiraVersion = async (versionNumber) => {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: bodyData,
+            body: `${bodyData}`,
         });
 
         if (response.status !== 200) {
