@@ -74,6 +74,7 @@ describe('Cell Selection', () => {
             });
             const gridDiv = getGridElement(api)! as HTMLElement;
 
+            await asyncSetTimeout(1);
             const cell = getByTestId(gridDiv, agTestIdFor.cell('tennis', 'sport'));
 
             const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);

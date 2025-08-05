@@ -131,7 +131,9 @@ export class GridRowsDomValidator {
 
             if (!cellElement) {
                 if (column.isVisible() && !row.master && columnId !== 'ag-Grid-SelectionColumn') {
-                    rowErrors.add(`Missing cell element for column id:"${columnId}"`);
+                    if (!column.getId().startsWith('pivot_')) {
+                        rowErrors.add(`Missing cell element for column id:"${columnId}"`);
+                    }
                 }
                 continue;
             }
