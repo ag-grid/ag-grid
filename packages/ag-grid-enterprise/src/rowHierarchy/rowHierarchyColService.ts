@@ -49,10 +49,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         _updateColsMap(cols);
     }
 
-    public createColumns(
-        cols: _ColumnCollections,
-        updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void
-    ): void {
+    public createColumns(cols: _ColumnCollections): void {
         const list = this.createDateHierarchyColumns(cols);
         const areSame = _areColIdsEqual(list, this.columns?.list ?? []);
 
