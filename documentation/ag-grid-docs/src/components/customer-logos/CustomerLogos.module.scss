@@ -40,6 +40,7 @@
     animation-duration: 1600s;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
+
     @media screen and (min-width: $breakpoint-grid-homepage-medium) {
         animation-duration: 400s;
     }
@@ -47,6 +48,8 @@
     @media screen and (max-width: $breakpoint-hero-small) {
         margin: 0 auto;
         width: 100%;
+        height: 56px;
+        background-size: auto 56px;
         animation-duration: 1100s;
     }
 }

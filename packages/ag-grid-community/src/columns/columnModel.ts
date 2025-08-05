@@ -21,6 +21,8 @@ import {
     _destroyColumnTree,
     _getColumnsFromTree,
     isColumnGroupAutoCol,
+    isColumnSelectionCol,
+    isRowNumberCol,
 } from './columnUtils';
 
 export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
@@ -69,7 +71,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.pivotMode = this.gos.get('pivotMode');
 
         this.addManagedPropertyListeners(
-            ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'],
+            [
+                'groupDisplayType',
+                'treeData',
+                'treeDataDisplayType',
+                'groupHideOpenParents',
+                'rowNumbers',
+                'hidePaddedHeaderRows',
+            ],
             (event) => this.refreshAll(_convertColumnEventSourceType(event.source))
         );
         this.addManagedPropertyListeners(
@@ -84,16 +93,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // called from SyncService, when grid has finished initialising
     private createColsFromColDefs(source: ColumnEventType): void {
         const { beans } = this;
-        const {
-            valueCache,
-            colAutosize,
-            rowGroupColsSvc,
-            pivotColsSvc,
-            valueColsSvc,
-            visibleCols,
-            colViewport,
-            eventSvc,
-        } = beans;
+        const { valueCache, colAutosize, rowGroupColsSvc, pivotColsSvc, valueColsSvc, visibleCols, eventSvc } = beans;
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = this.colDefs ? _compareColumnStatesAndDispatchEvents(beans, source) : undefined;
 
@@ -125,7 +125,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.refreshCols(true);
 
         visibleCols.refresh(source);
-        colViewport.checkViewportColumns();
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
         // in case applications use it
@@ -256,16 +255,24 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return [];
         }
         // pivot mode is on, but we are not pivoting, so we only
-        // show columns we are aggregating on
+        // show columns we are aggregating on and possibly the selection/row numbers column
 
+        const { valueColsSvc, selectionColSvc, gos } = this.beans;
         const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.showingPivotResult;
-        const valueColumns = this.beans.valueColsSvc?.columns;
+        const showSelectionColumn = selectionColSvc?.isSelectionColumnEnabled();
+        const showRowNumbers = gos.get('rowNumbers');
+        const valueColumns = valueColsSvc?.columns;
 
         const res = this.cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
             if (showAutoGroupAndValuesOnly) {
                 const isValueCol = valueColumns?.includes(col);
-                return isAutoGroupCol || isValueCol;
+                return (
+                    isAutoGroupCol ||
+                    isValueCol ||
+                    (showSelectionColumn && isColumnSelectionCol(col)) ||
+                    (showRowNumbers && isRowNumberCol(col))
+                );
             } else {
                 // keep col if a) it's auto-group or b) it's visible
                 return isAutoGroupCol || col.isVisible();

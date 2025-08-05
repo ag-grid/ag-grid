@@ -233,7 +233,7 @@ AG Grid allows you to get a reference to the filter component instances via the 
 AG Grid allows you to get a reference to the filter component instances via `api.getColumnFilterInstance(colKey)`. This returns a wrapper component that matches the provided grid filter components that implement `FilterDisplay`. To get the React custom filter component, the helper function `getInstance` can be used with this. As React components are created asynchronously, it is necessary to use a callback for both methods.
 {% /if %}
 
-Similarly, you can get a reference to the filter evaluator via `api.getColumnFilterEvaluator(colKey)`.
+Similarly, you can get a reference to the filter handler via `api.getColumnFilterHandler(colKey)`.
 
 {% if isFramework("angular") %}
 ```ts

@@ -21,6 +21,12 @@
     cursor: ns-resize;
 }
 
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-floating-bottom .ag-row-numbers-resizer {
+    bottom: unset;
+    top: -2px;
+}
+
 :where(.ag-row-number-header.ag-row-number-selection-enabled) {
     cursor: cell;
 }

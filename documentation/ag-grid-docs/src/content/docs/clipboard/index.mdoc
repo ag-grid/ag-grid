@@ -37,8 +37,10 @@ In order to copy the whole row, enable the `gridOptions.rowSelection.copySelecte
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    mode: 'multiRow',
-    copySelectedRows: true,
+    rowSelection: {
+        mode: 'multiRow',
+        copySelectedRows: true,
+    }
 }
 ```
 

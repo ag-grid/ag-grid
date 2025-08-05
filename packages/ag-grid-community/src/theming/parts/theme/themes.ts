@@ -101,6 +101,11 @@ const makeThemeAlpineTreeShakeable = () =>
             toggleButtonHeight: 18,
             toggleButtonSwitchInset: 1,
             toggleButtonOffBackgroundColor: foregroundBackgroundMix(0.45),
+            colorPickerThumbSize: 13,
+            colorPickerTrackSize: 11,
+            colorPickerThumbBorderWidth: 2,
+            colorPickerTrackBorderRadius: 2,
+            colorPickerColorBorderRadius: 2,
         });
 
 export const themeAlpine: Theme<ThemeDefaultParams> =
@@ -158,6 +163,11 @@ const makeThemeBalhamTreeShakeable = () =>
             statusBarLabelFontWeight: 600,
             statusBarValueFontWeight: 600,
             panelTitleBarIconColor: foregroundColor,
+            colorPickerThumbSize: 13,
+            colorPickerTrackSize: 11,
+            colorPickerThumbBorderWidth: 2,
+            colorPickerTrackBorderRadius: 2,
+            colorPickerColorBorderRadius: 2,
         });
 
 export const themeBalham: Theme<ThemeDefaultParams> =
@@ -228,6 +238,11 @@ const makeStyleMaterialTreeShakeable = () => {
         advancedFilterBuilderButtonBarBorder: false,
         filterPanelApplyButtonColor: { ref: 'buttonTextColor' },
         filterPanelApplyButtonBackgroundColor: { ref: 'buttonBackgroundColor' },
+        colorPickerThumbSize: 13,
+        colorPickerTrackSize: 11,
+        colorPickerThumbBorderWidth: 2,
+        colorPickerTrackBorderRadius: 2,
+        colorPickerColorBorderRadius: 2,
     };
 
     const lightParams = {

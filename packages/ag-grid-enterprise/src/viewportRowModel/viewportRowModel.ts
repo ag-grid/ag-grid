@@ -1,5 +1,5 @@
 import type { IRowModel, IViewportDatasource, NamedBean, RowBounds, RowModelType } from 'ag-grid-community';
-import { BeanStub, RowNode, _getRowHeightAsNumber, _missing, _warn } from 'ag-grid-community';
+import { BeanStub, RowNode, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
 
 export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
@@ -13,6 +13,13 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     private rowNodesByIndex: { [index: number]: RowNode } = {};
     private rowHeight: number;
     private datasource: IViewportDatasource;
+
+    /**
+     * Used to see if setRowData has been called inside of the viewportChanged event context,
+     * if so the new rows are already being calculated, and the model does not need updated
+     * otherwise, a new model event needs to fire as rows have changed externally.
+     */
+    private viewportChangedContext: boolean = false;
 
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(
@@ -110,7 +117,9 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
             this.firstRow = newFirst;
             this.lastRow = newLast;
             this.purgeRowsNotInViewport();
+            this.viewportChangedContext = true;
             this.datasource?.setViewportRange(this.firstRow, this.lastRow);
+            this.viewportChangedContext = false;
         }
     }
 
@@ -119,7 +128,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         Object.keys(rowNodesByIndex).forEach((indexStr) => {
             const index = parseInt(indexStr, 10);
             if (index < this.firstRow || index > this.lastRow) {
-                if (this.isRowFocused(index)) {
+                if (this.isRowFocused(index) || this.beans.editSvc?.isRowEditing(rowNodesByIndex[index])) {
                     return;
                 }
 
@@ -268,28 +277,52 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     }
 
     private setRowData(rowData: { [key: number]: any }): void {
-        const rowNodesByIndex = this.rowNodesByIndex;
-        for (const indexStr of Object.keys(rowData)) {
-            const dataItem = rowData[indexStr as any];
-            const index = parseInt(indexStr, 10);
-            // we should never keep rows that we didn't specifically ask for, this
-            // guarantees the contract we have with the server.
-            if (index >= this.firstRow && index <= this.lastRow) {
-                let rowNode = rowNodesByIndex[index];
-
-                // the abnormal case is we requested a row even though the grid didn't need it
-                // as a result of the paging and buffer (ie the row is off screen), in which
-                // case we need to create a new node now
-                if (_missing(rowNode)) {
-                    rowNode = this.createBlankRowNode(index);
-                    rowNodesByIndex[index] = rowNode;
-                }
-
-                // now we deffo have a row node, so set in the details
-                // if the grid already asked for this row (the normal case), then we would
-                // of put a placeholder node in place.
-                rowNode.setDataAndId(dataItem, index.toString());
+        // see if user is providing the id's
+        const getRowIdFunc = _getRowIdCallback(this.beans.gos);
+        const existingNodesById = new Map<string, RowNode>();
+        if (getRowIdFunc) {
+            for (const row of Object.values(this.rowNodesByIndex)) {
+                existingNodesById.set(row.id!, row);
             }
+        }
+
+        for (let i = this.firstRow; i <= this.lastRow; i++) {
+            const data = rowData[i];
+
+            // the response does not have to include every row - any omitted rows will be left unchanged
+            if (!data) {
+                continue;
+            }
+
+            let rowId: string | undefined;
+            let row: RowNode | undefined;
+            if (getRowIdFunc) {
+                rowId = getRowIdFunc({ data, rowPinned: undefined, level: 0, parentKeys: undefined });
+                row = existingNodesById.get(rowId);
+            } else {
+                row = this.rowNodesByIndex[i];
+            }
+
+            if (row) {
+                row.updateData(data);
+                row.setRowIndex(i);
+                row.setRowTop(this.rowHeight * i);
+            } else {
+                // if we don't have a row, then we create a new one
+                row = this.createBlankRowNode(i);
+                row.setDataAndId(data, rowId ?? i.toString());
+            }
+            this.rowNodesByIndex[i] = row;
+        }
+
+        if (!this.viewportChangedContext) {
+            this.eventSvc.dispatchEvent({
+                type: 'modelUpdated',
+                newData: false,
+                newPage: false,
+                keepRenderedRows: true,
+                animate: false,
+            });
         }
     }
 

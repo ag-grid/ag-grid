@@ -12,7 +12,7 @@ import {
 
 type GroupItem = Component<any> | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';
-type Direction = 'horizontal' | 'vertical';
+type GroupDirection = 'horizontal' | 'vertical';
 
 export interface AgGroupComponentParams {
     title?: string;
@@ -23,7 +23,7 @@ export interface AgGroupComponentParams {
     cssIdentifier?: string;
     items?: GroupItem[];
     alignItems?: Align;
-    direction?: Direction;
+    direction?: GroupDirection;
     onEnableChange?: (enabled: boolean) => void;
     onExpandedChange?: (expanded: boolean) => void;
     expanded?: boolean;
@@ -31,8 +31,8 @@ export interface AgGroupComponentParams {
     suppressKeyboardNavigation?: boolean;
 }
 
-export type AgGroupComponentEvent = 'expanded' | 'collapsed' | 'enableChange';
-export type ExpandedChangedEventType = 'expandedChanged';
+type AgGroupComponentEvent = 'expanded' | 'collapsed' | 'enableChange';
+type ExpandedChangedEventType = 'expandedChanged';
 
 interface ExpandChangedEvent extends AgEvent<ExpandedChangedEventType> {
     expanded?: boolean;
@@ -44,7 +44,7 @@ interface EnableChangeEvent extends AgEvent<'enableChange'> {
 
 function getAgGroupComponentTemplate(params: AgGroupComponentParams): ElementParams {
     const cssIdentifier = params.cssIdentifier || 'default';
-    const direction: Direction = params.direction || 'vertical';
+    const direction: GroupDirection = params.direction || 'vertical';
 
     return {
         tag: 'div',

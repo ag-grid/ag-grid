@@ -26,6 +26,12 @@ To run in watch mode
 nx test ag-behavioural-testing -- -w
 ```
 
+To overwrite the snapshots for snapshot tests
+
+```sh
+nx test ag-behavioural-testing -- --update
+```
+
 To execute benchmarks
 
 ```sh

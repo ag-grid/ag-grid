@@ -19,10 +19,7 @@ const ALL_COLUMN_FILTERS = [
 /**
  * Some of these modules are (for now) included by default in core. For these, we just return AllCommunityModule.
  */
-export const RESOLVABLE_MODULE_NAMES: Record<
-    ResolvableModuleName,
-    readonly (CommunityModuleName | EnterpriseModuleName)[]
-> = {
+const RESOLVABLE_MODULE_NAMES: Record<ResolvableModuleName, readonly (CommunityModuleName | EnterpriseModuleName)[]> = {
     EditCore: [
         'TextEditor',
         'NumberEditor',
@@ -65,7 +62,7 @@ export const RESOLVABLE_MODULE_NAMES: Record<
     SharedTreeData: ['TreeData', 'ServerSideRowModel'],
 };
 
-export const MODULES_FOR_ROW_MODELS: Partial<Record<CommunityModuleName | EnterpriseModuleName, RowModelType>> = {
+const MODULES_FOR_ROW_MODELS: Partial<Record<CommunityModuleName | EnterpriseModuleName, RowModelType>> = {
     InfiniteRowModel: 'infinite',
     ClientSideRowModelApi: 'clientSide',
     ClientSideRowModel: 'clientSide',

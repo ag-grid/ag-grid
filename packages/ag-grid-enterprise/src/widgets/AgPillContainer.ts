@@ -14,7 +14,7 @@ import {
 
 import { AgPill } from './agPill';
 
-export interface PillRendererParams<TValue> {
+interface PillRendererParams<TValue> {
     eWrapper?: HTMLElement;
     announceItemFocus?: () => void;
     onPillMouseDown?: (e: MouseEvent) => void;

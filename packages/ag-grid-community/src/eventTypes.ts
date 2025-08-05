@@ -104,12 +104,16 @@ export const _PUBLIC_EVENTS = [
     'rowResizeStarted',
     'rowResizeEnded',
     'columnsReset',
+    'bulkEditingStarted',
+    'bulkEditingStopped',
+    'batchEditingStarted',
+    'batchEditingStopped',
 ] as const;
 
 // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
 // These events are still available to users via the API if the eventName is cast to any to stop Typescript from complaining, but they are not intended for general use
 /** Exclude the following internal events from code generation to prevent exposing these events via framework components */
-export const _INTERNAL_EVENTS = [
+const _INTERNAL_EVENTS = [
     'scrollbarWidthChanged',
     'keyShortcutChangedCellStart',
     'keyShortcutChangedCellEnd',
@@ -156,13 +160,11 @@ export const _INTERNAL_EVENTS = [
     'recalculateRowBounds',
     'stickyTopOffsetChanged',
     'overlayExclusiveChanged',
-    'beforeRefreshModel',
     'rowNodeDataChanged',
     'cellEditValuesChanged',
     'filterSwitched',
-    'batchEditingStarted',
-    'batchEditingStopped',
     'filterClosed',
+    'headerRowsChanged',
 ] as const;
 
 // We define as a callback to help with tree shaking (esbuild)

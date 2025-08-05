@@ -1,3 +1,4 @@
+import { _escapeString } from 'ag-grid-community';
 import type { ExcelOOXMLTemplate } from 'ag-grid-community';
 
 import type { ExcelDataTable } from '../../assets/excelInterfaces';
@@ -76,7 +77,7 @@ const tableFactory: ExcelOOXMLTemplate = {
                         properties: {
                             rawMap: {
                                 id: (idx + 1).toString(),
-                                name: sanitizeTableName(col),
+                                name: _escapeString(sanitizeTableName(col)),
                                 dataCellStyle: 'Normal',
                             },
                         },

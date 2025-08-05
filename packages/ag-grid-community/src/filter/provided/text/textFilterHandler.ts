@@ -1,11 +1,12 @@
 import type { FilterHandlerParams, IDoesFilterPassParams } from '../../../interfaces/iFilter';
+import { isCombinedFilterModel } from '../iSimpleFilter';
 import type { ICombinedSimpleModel, ISimpleFilterModelType, Tuple } from '../iSimpleFilter';
 import { SimpleFilterHandler } from '../simpleFilterHandler';
 import { isBlank } from '../simpleFilterUtils';
 import type { ITextFilterParams, TextFilterModel, TextFormatter, TextMatcher } from './iTextFilter';
 import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
 import { TextFilterModelFormatter } from './textFilterModelFormatter';
-import { mapValuesFromTextFilterModel } from './textFilterUtils';
+import { mapValuesFromTextFilterModel, trimInputForFilter } from './textFilterUtils';
 
 const defaultMatcher: TextMatcher = ({ filterOption, value, filterText }) => {
     if (filterText == null) {
@@ -48,13 +49,20 @@ export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, stri
     }
 
     protected override updateParams(
-        params: FilterHandlerParams<any, any, TextFilterModel | ICombinedSimpleModel<TextFilterModel>> &
+        params: FilterHandlerParams<
+            any,
+            any,
+            TextFilterModel | ICombinedSimpleModel<TextFilterModel>,
             ITextFilterParams
+        >
     ): void {
         super.updateParams(params);
 
-        this.matcher = params.textMatcher ?? defaultMatcher;
-        this.formatter = params.textFormatter ?? (params.caseSensitive ? defaultFormatter : defaultLowercaseFormatter);
+        const filterParams = params.filterParams;
+
+        this.matcher = filterParams.textMatcher ?? defaultMatcher;
+        this.formatter =
+            filterParams.textFormatter ?? (filterParams.caseSensitive ? defaultFormatter : defaultLowercaseFormatter);
     }
 
     protected override evaluateNullValue(filterType: ISimpleFilterModelType | null) {
@@ -98,5 +106,33 @@ export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, stri
         };
 
         return formattedValues.some((v) => this.matcher({ ...matcherParams, filterText: v }));
+    }
+
+    public processModelToApply(
+        model: TextFilterModel | ICombinedSimpleModel<TextFilterModel> | null
+    ): TextFilterModel | ICombinedSimpleModel<TextFilterModel> | null {
+        if (model && this.params.filterParams.trimInput) {
+            const processCondition = (condition: TextFilterModel) => {
+                const newCondition = {
+                    ...condition,
+                };
+                const { filter, filterTo } = condition;
+                if (filter) {
+                    newCondition.filter = trimInputForFilter(filter) ?? null;
+                }
+                if (filterTo) {
+                    newCondition.filterTo = trimInputForFilter(filterTo) ?? null;
+                }
+                return newCondition;
+            };
+            if (isCombinedFilterModel(model)) {
+                return {
+                    ...model,
+                    conditions: model.conditions.map(processCondition),
+                };
+            }
+            return processCondition(model);
+        }
+        return model;
     }
 }

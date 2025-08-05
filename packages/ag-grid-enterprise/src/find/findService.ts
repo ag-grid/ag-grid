@@ -23,8 +23,7 @@ import {
     _jsonEquals,
     _missing,
     _toString,
-    isColumnSelectionCol,
-    isRowNumberCol,
+    isSpecialCol,
 } from 'ag-grid-community';
 
 import {
@@ -468,7 +467,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 node.parent?.getFirstChild() === node &&
                 !node.parent?.expanded;
             for (const column of allCols) {
-                if (isRowNumberCol(column) || isColumnSelectionCol(column)) {
+                if (isSpecialCol(column)) {
                     continue;
                 }
                 const cellSpan = rowSpanSvc?.getCellSpan(column, node);

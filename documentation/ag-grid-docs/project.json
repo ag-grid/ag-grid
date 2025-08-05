@@ -136,6 +136,35 @@
         }
       }
     },
+    "test:interactive:setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["npx playwright install --with-deps chromium"],
+        "parallel": false,
+        "cwd": "documentation/ag-grid-docs"
+      },
+      "cache": true
+    },
+    "test:interactive": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["test:interactive:setup", "ag-grid-community:build"],
+      "options": {
+        "commands": ["npx playwright test"],
+        "parallel": false,
+        "cwd": "documentation/ag-grid-docs"
+      },
+      "configurations": {
+        "production": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.production"
+        },
+        "staging": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
+        },
+        "dev": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.dev"
+        }
+      }
+    },
     "generate-examples": {
       "executor": "nx:noop",
       "dependsOn": ["^generate-example"],

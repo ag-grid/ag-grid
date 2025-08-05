@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import { _areCellsEqual, _getRowNode, _isSameRow } from '../entities/positionUtils';
-import type { BatchEditingStoppedEvent, CellValueChangedEvent } from '../events';
+import type { BatchEditingStoppedEvent, BulkEditingStoppedEvent, CellValueChangedEvent } from '../events';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import { _isCellSelectionEnabled } from '../gridOptionsUtils';
 import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
@@ -10,6 +10,8 @@ import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import type { CellValueChange, LastFocusedCell } from '../interfaces/iUndoRedo';
 import { RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from './undoRedoStack';
+
+type BigChangeKey = 'bulkEditing' | 'batchEditing';
 
 export class UndoRedoService extends BeanStub implements NamedBean {
     beanName = 'undoRedo' as const;
@@ -27,6 +29,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
     private isPasting = false;
     private isRangeInAction = false;
     private batchEditing = false;
+    private bulkEditing = false;
 
     public postConstruct(): void {
         const { gos, ctrlsSvc } = this.beans;
@@ -322,23 +325,31 @@ export class UndoRedoService extends BeanStub implements NamedBean {
                 this.pushActionsToUndoStack(action);
                 this.isRangeInAction = false;
             },
-            batchEditingStarted: () => {
-                this.batchEditing = true;
-            },
-            batchEditingStopped: (event: BatchEditingStoppedEvent) => {
-                if (!this.batchEditing) {
-                    return;
-                }
-                this.batchEditing = false;
-                if (event.changes?.length === 0) {
-                    return;
-                }
-
-                const action = new UndoRedoAction(event.changes ?? []);
-                this.pushActionsToUndoStack(action);
-                this.cellValueChanges = [];
-            },
+            batchEditingStarted: () => this.startBigChange('batchEditing'),
+            batchEditingStopped: ({ changes }: BatchEditingStoppedEvent) => this.stopBigChange('batchEditing', changes),
+            bulkEditingStarted: () => this.startBigChange('bulkEditing'),
+            bulkEditingStopped: ({ changes }: BulkEditingStoppedEvent) => this.stopBigChange('bulkEditing', changes),
         });
+    }
+
+    private startBigChange(key: BigChangeKey): void {
+        this[key] = true;
+    }
+
+    private stopBigChange(key: BigChangeKey, changes?: CellValueChange[]): void {
+        if (!this[key]) {
+            return;
+        }
+
+        this[key] = false;
+
+        if (changes?.length === 0) {
+            return;
+        }
+
+        const action = new UndoRedoAction(changes ?? []);
+        this.pushActionsToUndoStack(action);
+        this.cellValueChanges = [];
     }
 
     private pushActionsToUndoStack(action: UndoRedoAction) {

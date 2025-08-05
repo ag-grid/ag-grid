@@ -15,6 +15,7 @@ import {
     getColumnFilterInstance,
     getColumnFilterModel,
     getFilterModel,
+    hideColumnFilter,
     isColumnFilterPresent,
     setColumnFilterModel,
     setFilterModel,
@@ -42,7 +43,7 @@ import { QuickFilterService } from './quickFilterService';
 /**
  * @internal
  */
-export const ClientSideRowModelFilterModule: _ModuleWithoutApi = {
+const ClientSideRowModelFilterModule: _ModuleWithoutApi = {
     moduleName: 'ClientSideRowModelFilter',
     version: VERSION,
     rowModels: ['clientSide'],
@@ -96,6 +97,7 @@ export const ColumnFilterModule: _ModuleWithApi<_ColumnFilterGridApi> = {
         getColumnFilterModel,
         setColumnFilterModel,
         showColumnFilter,
+        hideColumnFilter,
         getColumnFilterHandler,
         doFilterAction,
     },

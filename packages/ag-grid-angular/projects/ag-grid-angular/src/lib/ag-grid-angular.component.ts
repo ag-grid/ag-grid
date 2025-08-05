@@ -20,8 +20,12 @@ import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AlignedGrid,
     AsyncTransactionsFlushedEvent,
+    BatchEditingStartedEvent,
+    BatchEditingStoppedEvent,
     BodyScrollEndEvent,
     BodyScrollEvent,
+    BulkEditingStartedEvent,
+    BulkEditingStoppedEvent,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -114,6 +118,7 @@ import type {
     HeaderFocusedEvent,
     HeaderPosition,
     IAdvancedFilterBuilderParams,
+    IAdvancedFilterParams,
     IAggFunc,
     IDatasource,
     IRowDragItem,
@@ -567,6 +572,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.
      */
     @Input() public pivotGroupHeaderHeight: number | undefined = undefined;
+    /** Hide any column header rows that would only contain padded groups.
+     */
+    @Input({ transform: booleanAttribute }) public hidePaddedHeaderRows: boolean | undefined = undefined;
     /** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid.
      * @default false
      * @agModule `ColumnsToolPanelModule`
@@ -643,6 +651,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     @Input() public editType: EditStrategyType | undefined = undefined;
+    /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
+     */
+    @Input({ transform: booleanAttribute }) public suppressStartEditOnTab: boolean | undefined = undefined;
     /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
@@ -795,6 +806,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `AdvancedFilterModule`
      */
     @Input() public advancedFilterBuilderParams: IAdvancedFilterBuilderParams | undefined = undefined;
+    /** Customise the parameters passed to the Advanced Filter
+     * @agModule `AdvancedFilterModule`
+     */
+    @Input() public advancedFilterParams: IAdvancedFilterParams | undefined = undefined;
     /** @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
      * @default true
      * @agModule `AdvancedFilterModule`
@@ -809,7 +824,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public suppressSetFilterByDefault: boolean | undefined = undefined;
     /** Enable filter handlers for custom filter components.
-     * Requires all custom filters need to be implemented using handlers.
+     * Requires all custom filters to be implemented using handlers.
+     *
+     * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
+     * The Multi Filter will also use a filter handler if this is enabled.
      * @initial
      */
     @Input({ transform: booleanAttribute }) public enableFilterHandlers: boolean | undefined = undefined;
@@ -1398,7 +1416,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public isRowPinnable: IsRowPinnable<TData> | undefined = undefined;
     /** Called for every row in the grid.
      *
-     * Return `true` if the row should be pinned initially. Return `false` otherwise.
+     * Return "top", "bottom" if the row should be initially pinned to the top or bottom respectively.
+     * Return `null` or `undefined` otherwise.
      * User interactions can subsequently still change the pinned state of a row.
      * @agModule `PinnedRowModule`
      */
@@ -2146,6 +2165,26 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Output() public rowEditingStopped: EventEmitter<RowEditingStoppedEvent<TData>> = new EventEmitter<
         RowEditingStoppedEvent<TData>
+    >();
+    /** Bulk editing has started.
+     */
+    @Output() public bulkEditingStarted: EventEmitter<BulkEditingStartedEvent<TData>> = new EventEmitter<
+        BulkEditingStartedEvent<TData>
+    >();
+    /** Bulk editing has stopped.
+     */
+    @Output() public bulkEditingStopped: EventEmitter<BulkEditingStoppedEvent<TData>> = new EventEmitter<
+        BulkEditingStoppedEvent<TData>
+    >();
+    /** Batch editing has started (when batch editing is enabled).
+     */
+    @Output() public batchEditingStarted: EventEmitter<BatchEditingStartedEvent<TData>> = new EventEmitter<
+        BatchEditingStartedEvent<TData>
+    >();
+    /** Batch editing has stopped (when batch editing is enabled).
+     */
+    @Output() public batchEditingStopped: EventEmitter<BatchEditingStoppedEvent<TData>> = new EventEmitter<
+        BatchEditingStoppedEvent<TData>
     >();
     /** Undo operation has started.
      */

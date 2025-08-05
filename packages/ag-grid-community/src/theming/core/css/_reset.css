@@ -19,7 +19,7 @@
         outline: none;
         box-shadow: inset var(--ag-focus-shadow);
 
-        &.invalid {
+        &:where(.invalid) {
             box-shadow: inset var(--ag-focus-error-shadow);
         }
     }

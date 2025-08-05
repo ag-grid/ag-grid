@@ -1,15 +1,16 @@
-import test, { TestCase } from '../benchmarking';
+import type { TestCase } from '../benchmarking';
+import test from '../benchmarking';
 import { waitFor } from '../playwright.utils';
 
 const noRowsCheck = () => document.body.textContent!.includes('No Rows To Show');
 const athleteCheck = () => document.body.textContent!.includes('Athlete');
-const localLotsOfCells = `/lots-of-cells.html`;
+const localLotsOfCells = `/testing/performance/e2e/lots-of-cells.html`;
 
 const frameworks = ['typescript', 'reactFunctionalTs', 'angular', 'vue3'];
 
 test(`Performance Test - Compare performance of setting data`, {
     timeout: frameworks.length * 10 * 60_000,
-    minIterations: 100,
+    minIterations: 200,
     maxIterations: 300,
     warmupIterations: 5,
     testCases: frameworks.map(

@@ -8,7 +8,7 @@ import type { ComponentSelector } from './component';
 export interface AgInputTextFieldParams extends AgInputFieldParams {
     allowedCharPattern?: string;
 }
-export type AgInputTextFieldEvent = AgAbstractInputFieldEvent;
+type AgInputTextFieldEvent = AgAbstractInputFieldEvent;
 export class AgInputTextField<
     TConfig extends AgInputTextFieldParams = AgInputTextFieldParams,
     TEventType extends string = AgInputTextFieldEvent,

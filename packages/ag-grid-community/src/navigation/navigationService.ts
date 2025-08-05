@@ -12,7 +12,7 @@ import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { NavigateToNextCellParams, TabToNextCellParams } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { VerticalScrollPosition } from '../interfaces/iRowNode';
+import type { RowPinnedType, VerticalScrollPosition } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { RowCtrl } from '../rendering/row/rowCtrl';
@@ -32,9 +32,10 @@ interface NavigateParams {
     focusIndex: number;
     focusColumn: AgColumn;
     isAsync?: boolean;
+    rowPinned?: RowPinnedType;
 }
 
-export type FindNextCellToFocusOnParams = {
+type FindNextCellToFocusOnParams = {
     backwards: boolean;
     startEditing: boolean;
     skipToNextEditableCell?: boolean;
@@ -125,8 +126,15 @@ export class NavigationService extends BeanStub implements NamedBean {
         return true;
     }
 
-    private navigateTo(navigateParams: NavigateParams): void {
-        const { scrollIndex, scrollType, scrollColumn, focusIndex, focusColumn } = navigateParams;
+    private navigateTo({
+        scrollIndex,
+        scrollType,
+        scrollColumn,
+        focusIndex,
+        focusColumn,
+        isAsync,
+        rowPinned,
+    }: NavigateParams): void {
         const { scrollFeature } = this.gridBodyCon;
 
         if (_exists(scrollColumn) && !scrollColumn.isPinned()) {
@@ -141,7 +149,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         // however, this behavior will cause the cell border to be cut off, or if we have sticky rows, the
         // cell will be completely hidden, so we call ensureIndexVisible without a position to guarantee
         // minimal scroll to get the row into view.
-        if (!navigateParams.isAsync) {
+        if (!isAsync) {
             scrollFeature.ensureIndexVisible(focusIndex);
         }
 
@@ -152,11 +160,11 @@ export class NavigationService extends BeanStub implements NamedBean {
         focusSvc.setFocusedCell({
             rowIndex: focusIndex,
             column: focusColumn,
-            rowPinned: null,
+            rowPinned,
             forceBrowserFocus: true,
         });
 
-        rangeSvc?.setRangeToCell({ rowIndex: focusIndex, rowPinned: null, column: focusColumn });
+        rangeSvc?.setRangeToCell({ rowIndex: focusIndex, rowPinned, column: focusColumn });
     }
 
     // this method is throttled, see the `constructor`
@@ -340,15 +348,19 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     private onCtrlUpDownLeftRight(key: string, gridCell: CellPosition): void {
         const cellToFocus = this.beans.cellNavigation!.getNextCellToFocus(key, gridCell, true)!;
-        const { rowIndex } = cellToFocus;
-        const column = cellToFocus.column as AgColumn;
+        // in case we have col spanning we get the cellComp and use it to get the
+        // position. This was we always focus the first cell inside the spanning.
+        const normalisedPosition = this.getNormalisedPosition(cellToFocus);
+        const { rowIndex, rowPinned, column } = normalisedPosition ?? cellToFocus;
+        const col = column as AgColumn;
 
         this.navigateTo({
             scrollIndex: rowIndex,
             scrollType: null,
-            scrollColumn: column,
+            scrollColumn: col,
             focusIndex: rowIndex,
-            focusColumn: column,
+            focusColumn: col,
+            rowPinned,
         });
     }
 
@@ -865,6 +877,20 @@ export class NavigationService extends BeanStub implements NamedBean {
         if (!gridCell.column.isPinned()) {
             scrollFeature.ensureColumnVisible(gridCell.column);
         }
+    }
+
+    public ensureColumnVisible(column: AgColumn): void {
+        const scrollFeature = this.gridBodyCon.scrollFeature;
+
+        // this scrolls the column into view
+        if (!column.isPinned()) {
+            scrollFeature.ensureColumnVisible(column);
+        }
+    }
+
+    public ensureRowVisible(rowIndex: number): void {
+        const scrollFeature = this.gridBodyCon.scrollFeature;
+        scrollFeature.ensureIndexVisible(rowIndex);
     }
 }
 

@@ -1,5 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
+import path from 'node:path';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ROOT = path.join(__dirname, '../../');
+const reportPath = path.resolve(ROOT, process.env['PW_REPORT_PATH'] ?? './reports/ag-accessibility-e2e.json');
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -8,7 +14,7 @@ export default defineConfig({
     /* Run tests in files in parallel */
     fullyParallel: true,
     /* Fail the build on CI if you accidentally left test.only in the source code. */
-    forbidOnly: !!process.env.CI,
+    forbidOnly: !!process.env['CI'],
     /* Retry on CI only */
     retries: 0,
     // retries: process.env.CI ? 2 : 0,
@@ -19,11 +25,17 @@ export default defineConfig({
         [
             'html',
             {
-                open: process.env.CI ? 'never' : 'on-failure',
+                open: process.env['CI'] ? 'never' : 'on-failure',
                 outputFolder: '../../reports/ag-accessibility-e2e-html/',
             },
         ],
-        ['junit', { outputFile: '../../reports/ag-accessibility-e2e.xml' }],
+        [
+            'playwright-ctrf-json-reporter',
+            {
+                outputDir: path.parse(reportPath).dir,
+                outputFile: path.parse(reportPath).base,
+            },
+        ],
         ['line'], //,
         ['json', { outputFile: '../../reports/ag-accessibility-e2e.json' }],
     ],

@@ -31,10 +31,20 @@ export interface BaseCellEditor {
      */
     focusOut?(): void;
 
-    /** Optional: The element which will contain Edit Validation errors.
-     * This element will display a Tooltip with the validation error.
+    /**
+     * Optional: Returns the element to use for validation feedback.
+     *
+     * Called by the grid in two contexts:
+     * - `tooltip: true` → used as the anchor for validation tooltips.
+     * - `tooltip: false` → receives the `invalid` CSS class for visual feedback.
+     *
+     * If omitted, the grid falls back to the cell element for inline editors.
+     * Popup editors that do not implement this will not show validation styles or tooltips.
+     *
+     * @param tooltip - Whether the element is for a tooltip or direct styling.
+     * @returns An HTML element for feedback, or `null`/`undefined` to use default behavior.
      */
-    getValidationElement?(): HTMLElement;
+    getValidationElement?(tooltip: boolean): HTMLElement;
 
     /**
      * Optional: The error messages associated with the Editor

@@ -1,0 +1,25 @@
+{
+    "supportedVersionFrom": "34.0.1",
+    "root": [
+        {
+            "id": "versions",
+            "url": "./content/versions.json"
+        },
+        {
+            "id": "frameworks",
+            "url": "./content/frameworks.json"
+        },
+        {
+            "id": "modules",
+            "url": "./content/modules.json"
+        },
+        {
+            "id": "types",
+            "url": "./content/types.json"
+        },
+        {
+            "id": "changelog",
+            "url": "./content/changelog.json"
+        }
+    ]
+}

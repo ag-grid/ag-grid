@@ -11,7 +11,7 @@ import {
 import type { PanelOptions } from './agPanel';
 import { AgPanel } from './agPanel';
 
-export interface DialogOptions extends PanelOptions {
+interface DialogOptions extends PanelOptions {
     eWrapper?: HTMLElement;
     modal?: boolean;
     movable?: boolean;
@@ -122,6 +122,12 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
         this.config.closedCallback?.(event);
     }
 
+    public setMaximized(maximized: boolean): void {
+        if (this.isMaximizable && maximized !== this.isMaximized) {
+            this.toggleMaximize();
+        }
+    }
+
     private toggleMaximize() {
         const position = this.positionableFeature.getPosition();
         if (this.isMaximized) {
@@ -191,6 +197,8 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
         if (!eTitleBar || maximizable === this.isMaximizable) {
             return;
         }
+
+        this.isMaximizable = maximizable;
 
         const maximizeButtonComp = this.buildMaximizeAndMinimizeElements();
         this.refreshMaximizeIcon();

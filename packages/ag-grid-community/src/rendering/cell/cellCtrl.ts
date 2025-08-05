@@ -9,7 +9,6 @@ import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entitie
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
-import type { GridOptionsService } from '../../gridOptionsService';
 import {
     _addGridCommonParams,
     _getActiveDomElement,
@@ -37,12 +36,12 @@ import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeatur
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _setAriaColIndex } from '../../utils/aria';
 import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../utils/dom';
-import { _getCtrlForEventTarget } from '../../utils/event';
 import { _findFocusableElements, _isCellFocusSuppressed } from '../../utils/focus';
 import { _makeNull } from '../../utils/generic';
 import { AgPromise } from '../../utils/promise';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from '../dndSourceComp';
+import { DOM_DATA_KEY_CELL_CTRL } from '../renderUtils';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from '../spanning/rowSpanCache';
 import { _createCellEvent } from './cellEvent';
@@ -84,12 +83,6 @@ export interface ICellComp {
         reactiveCustomComponents?: boolean
     ): void;
     refreshEditStyles: (editing: boolean, isPopup: boolean) => void;
-}
-
-export const DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
-
-export function _getCellCtrlForEventTarget(gos: GridOptionsService, eventTarget: EventTarget | null): CellCtrl | null {
-    return _getCtrlForEventTarget(gos, eventTarget, DOM_DATA_KEY_CELL_CTRL);
 }
 
 let instanceIdSequence = 0;
@@ -439,7 +432,7 @@ export class CellCtrl extends BeanStub {
 
     public onPopupEditorClosed(): void {
         const { editSvc } = this.beans;
-        if (!editSvc?.isEditing(this)) {
+        if (!editSvc?.isEditing(this, { withOpenEditor: true })) {
             return;
         }
 
@@ -474,7 +467,7 @@ export class CellCtrl extends BeanStub {
             valueFormatted: valueFormatted,
             getValue: () => valueSvc.getValueForDisplay(column, rowNode).value,
             setValue: (value: any) =>
-                editSvc?.setDataValue({ rowNode, column }, value) || valueSvc.setValue(rowNode, column, value),
+                editSvc?.setDataValue({ rowNode, column }, value) || rowNode.setDataValue(column, value),
             formatValue: this.formatValue.bind(this),
             data: rowNode.data,
             node: rowNode,
@@ -699,6 +692,12 @@ export class CellCtrl extends BeanStub {
     }
 
     public focusCell(forceBrowserFocus = false, sourceEvent?: Event): void {
+        const allowedTarget = this.editSvc?.allowedFocusTargetOnValidation(this);
+        // if allowedTarget is set, then edit mode is active (with potential validation failures) and we should check if we can service the focus request
+        if (allowedTarget && allowedTarget !== this) {
+            return;
+        }
+
         this.beans.focusSvc.setFocusedCell({
             ...this.getFocusedCellPosition(),
             forceBrowserFocus,
@@ -958,18 +957,14 @@ export class CellCtrl extends BeanStub {
         return dndSourceComp;
     }
 
-    public registerRowDragger(
-        customElement: HTMLElement,
-        dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
-    ): void {
+    public registerRowDragger(customElement: HTMLElement, dragStartPixels?: number, alwaysVisible?: boolean): void {
         // if previously existed, then we are only updating
         if (this.customRowDragComp) {
             this.customRowDragComp.setDragElement(customElement, dragStartPixels);
             return;
         }
 
-        const newComp = this.createRowDragComp(customElement, dragStartPixels, suppressVisibilityChange);
+        const newComp = this.createRowDragComp(customElement, dragStartPixels, alwaysVisible);
 
         if (newComp) {
             this.customRowDragComp = newComp;
@@ -983,7 +978,7 @@ export class CellCtrl extends BeanStub {
     public createRowDragComp(
         customElement?: HTMLElement,
         dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
+        alwaysVisible?: boolean
     ): RowDragComp | undefined {
         const rowDragComp = this.beans.rowDragSvc?.createRowDragCompForCell(
             this.rowNode,
@@ -991,7 +986,7 @@ export class CellCtrl extends BeanStub {
             () => this.value,
             customElement,
             dragStartPixels,
-            suppressVisibilityChange
+            alwaysVisible
         );
         if (!rowDragComp) {
             return undefined;

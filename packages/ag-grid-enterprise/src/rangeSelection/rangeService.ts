@@ -32,6 +32,7 @@ import {
     _getCellCtrlForEventTarget,
     _getRowAbove,
     _getRowBelow,
+    _getRowCtrlForEventTarget,
     _getRowNode,
     _getSuppressMultiRanges,
     _isCellSelectionEnabled,
@@ -128,7 +129,11 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     // Drag And Drop Target Methods
     public onDragStart(mouseEvent: MouseEvent): void {
-        if (!_isCellSelectionEnabled(this.gos)) {
+        const gos = this.gos;
+        if (
+            !_isCellSelectionEnabled(gos) ||
+            _getRowCtrlForEventTarget(gos, mouseEvent.target)?.isSuppressMouseEvent(mouseEvent)
+        ) {
             return;
         }
 
@@ -136,7 +141,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         // ctrlKey for windows, metaKey for Apple
         const isMultiKey = ctrlKey || metaKey;
-        const allowMulti = !_getSuppressMultiRanges(this.gos);
+        const allowMulti = !_getSuppressMultiRanges(gos);
         const isMultiSelect = allowMulti ? isMultiKey : false;
         const extendRange = shiftKey && !!this.cellRanges?.length;
 

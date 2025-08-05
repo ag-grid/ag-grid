@@ -108,7 +108,6 @@ export function gridBeanInitComparator(
 
 export function gridBeanDestroyComparator(
     bean1: GenericBean<BeanName, BeanCollection>,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     bean2: GenericBean<BeanName, BeanCollection>
 ): number {
     if (bean1?.beanName === 'gridDestroySvc') {

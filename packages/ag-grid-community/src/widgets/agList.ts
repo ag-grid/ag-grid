@@ -9,7 +9,7 @@ export interface ListOption<TValue = string> {
     text?: string;
 }
 
-export type AgListEvent = 'fieldValueChanged' | 'selectedItem';
+type AgListEvent = 'fieldValueChanged' | 'selectedItem';
 
 export class AgList<TEventType extends string = AgListEvent, TValue = string> extends Component<
     TEventType | AgListEvent

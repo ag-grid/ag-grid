@@ -22,25 +22,20 @@ const COLUMN_DEFS = [
     {
         field: 'status',
         width: 135,
+        minWidth: 180,
         valueGetter: (params) => {
             const fixVersionsArr = params.data.versions;
             const hasFixVersion = fixVersionsArr.length > 0;
             if (hasFixVersion) {
                 const latestFixVersion = fixVersionsArr.length - 1;
                 const fixVersion = fixVersionsArr[latestFixVersion];
-                if (fixVersion === 'Next' && (params.data.status === 'Backlog' || params.data.status === 'Done')) {
-                    return 'Next Release';
+                if (fixVersion.toUpperCase() === 'NEXT') {
+                    return 'Scheduled';
+                } else {
+                    return `Scheduled for ${fixVersion}`;
                 }
             }
-            if (params.data.status === 'Done' && params.data.resolution !== 'Done') {
-                return params.data.resolution;
-            }
-
-            if (params.data.status !== 'Done' && params.data.status !== 'Backlog') {
-                return 'Scheduled';
-            } else {
-                return 'Backlog';
-            }
+            return 'Backlog';
         },
     },
 ];

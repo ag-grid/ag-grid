@@ -34,7 +34,8 @@ export type ExampleProperty =
     | 'isLocale'
     | 'hasExampleConsoleLog'
     | 'hasExampleControls'
-    | 'hasSimpleHtml';
+    | 'hasSimpleHtml'
+    | 'scriptNonce';
 
 export interface Props {
     library: Library;
@@ -124,6 +125,12 @@ const ALL_PROPERTIES: (ColDef & {
     {
         field: 'hasSimpleHtml',
         headerName: 'Simple HTML',
+        enableRowGroup: true,
+        minWidth: 115,
+    },
+    {
+        field: 'scriptNonce',
+        headerName: 'Nonce',
         enableRowGroup: true,
         minWidth: 115,
     },

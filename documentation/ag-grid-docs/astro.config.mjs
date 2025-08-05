@@ -135,6 +135,11 @@ console.log(
     )
 );
 
+const plugins = [svgr(), agHotModuleReload()];
+if (NODE_ENV !== 'test') {
+    plugins.push(mkcert()); // mkcert is not necessary for tests
+}
+
 // https://astro.build/config
 export default defineConfig({
     site: PUBLIC_SITE_URL,
@@ -143,7 +148,7 @@ export default defineConfig({
         enabled: false,
     },
     vite: {
-        plugins: [mkcert(), svgr(), agHotModuleReload()],
+        plugins,
         server: {
             https: !['0', 'false'].includes(PUBLIC_HTTPS_SERVER),
             cors: {

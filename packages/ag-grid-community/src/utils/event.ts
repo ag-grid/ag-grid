@@ -77,7 +77,7 @@ export function _isElementInEventPath(element: HTMLElement, event: Event): boole
     return _getEventPath(event).indexOf(element) >= 0;
 }
 
-export function _createEventPath(event: { target: EventTarget }): EventTarget[] {
+function _createEventPath(event: { target: EventTarget }): EventTarget[] {
     const res: EventTarget[] = [];
     let pointer: any = event.target;
 
@@ -95,7 +95,7 @@ export function _createEventPath(event: { target: EventTarget }): EventTarget[] 
  * @param {Event| { target: EventTarget }} event
  * @returns {EventTarget[]}
  */
-export function _getEventPath(event: Event | { target: EventTarget }): EventTarget[] {
+function _getEventPath(event: Event | { target: EventTarget }): EventTarget[] {
     // This can be called with either a browser event or an AG Grid Event that has a target property.
     const eventNoType = event as any;
 

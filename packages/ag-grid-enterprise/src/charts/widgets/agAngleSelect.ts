@@ -14,12 +14,12 @@ import {
     _setFixedWidth,
 } from 'ag-grid-community';
 
-export interface AgAngleSelectParams extends AgLabelParams {
+interface AgAngleSelectParams extends AgLabelParams {
     value?: number;
     onValueChange?: (value: number) => void;
 }
 
-export type AgAngleSelectEvent = 'fieldValueChanged';
+type AgAngleSelectEvent = 'fieldValueChanged';
 export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams, AgAngleSelectEvent> {
     protected dragSvc?: DragService;
 

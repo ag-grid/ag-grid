@@ -21,6 +21,7 @@ const LargeTextCellElement: ElementParams = {
 export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorParams> {
     protected readonly eEditor: AgInputTextArea = RefPlaceholder;
     private focusAfterAttached: boolean;
+    private highlightAllOnFocus: boolean;
 
     constructor() {
         super(LargeTextCellElement, [AgInputTextAreaSelector]);
@@ -28,7 +29,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
 
     public initialiseEditor(params: ILargeTextEditorParams): void {
         const { eEditor } = this;
-        const { cellStartedEdit, value, maxLength, cols, rows } = params;
+        const { cellStartedEdit, eventKey, value, maxLength, cols, rows } = params;
         this.focusAfterAttached = cellStartedEdit;
 
         // disable initial tooltips added to the input field
@@ -40,8 +41,30 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
             .setCols(cols || 60)
             .setRows(rows || 10);
 
-        if (value != null) {
-            eEditor.setValue(value.toString(), true);
+        let startValue: string | null | undefined;
+
+        // cellStartedEdit is only false if we are doing fullRow editing
+        if (cellStartedEdit) {
+            this.focusAfterAttached = true;
+
+            if (eventKey === KeyCode.BACKSPACE || eventKey === KeyCode.DELETE) {
+                startValue = '';
+            } else if (eventKey && eventKey.length === 1) {
+                startValue = eventKey;
+            } else {
+                startValue = value.toString();
+
+                if (eventKey !== KeyCode.F2) {
+                    this.highlightAllOnFocus = true;
+                }
+            }
+        } else {
+            this.focusAfterAttached = false;
+            startValue = value.toString();
+        }
+
+        if (startValue != null) {
+            eEditor.setValue(startValue, true);
         }
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
@@ -64,12 +87,17 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
     }
 
     public afterGuiAttached(): void {
+        const { eEditor, focusAfterAttached, highlightAllOnFocus } = this;
         const translate = this.getLocaleTextFunc();
 
-        this.eEditor.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
+        eEditor.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));
 
-        if (this.focusAfterAttached) {
-            this.eEditor.getFocusableElement().focus();
+        if (focusAfterAttached) {
+            eEditor.getFocusableElement().focus();
+
+            if (highlightAllOnFocus) {
+                eEditor.getInputElement().select();
+            }
         }
     }
 

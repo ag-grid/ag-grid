@@ -16,7 +16,9 @@ const gridOptions = {
 ```
 
 ## Pinning Rows on First Render
-To have a row appear as pinned when the grid initially renders data, use the `isRowPinned` callback. As an example, the snippet below will pin all rows whose `country` field is `null` in the top container.
+To have a row appear as pinned when the grid initially renders data, use the `isRowPinned` callback.
+Returning "top" or "bottom" from this callback will pin the row to the top or bottom respectively, and returning `null` or `undefined` will leave the row unpinned.
+As an example, the snippet below will pin all rows whose `country` field is `null` in the top container, and all the other rows will be unpinned.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -51,7 +53,7 @@ To see what other parameters are available for the theming of pinned rows, see t
 This approach requires the [Context Menu](./context-menu) which is an Enterprise feature.
 {% /note %}
 
-To pin a row use right-click to bring up the [Context Menu](./context-menu) and select one of the options in the "Pin Row" submenu. In the example below, try the following:
+To pin a row, use right-click to bring up the [Context Menu](./context-menu) and select one of the options in the "Pin Row" submenu. In the example below, try the following:
 1. Pin a row to the top.
 2. Switch the row to being pinned to the bottom.
 3. Unpin the row.

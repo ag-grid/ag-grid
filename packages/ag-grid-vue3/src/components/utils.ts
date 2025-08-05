@@ -35,6 +35,7 @@ import type {
     GridState,
     HeaderPosition,
     IAdvancedFilterBuilderParams,
+    IAdvancedFilterParams,
     IAggFunc,
     IDatasource,
     IRowDragItem,
@@ -96,8 +97,12 @@ import type {
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushedEvent,
+    BatchEditingStartedEvent,
+    BatchEditingStoppedEvent,
     BodyScrollEndEvent,
     BodyScrollEvent,
+    BulkEditingStartedEvent,
+    BulkEditingStoppedEvent,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -203,7 +208,7 @@ import type {
 
 import type { GridOptions, Module } from 'ag-grid-community';
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
-import {isProxy, isReactive, isRef, toRaw} from 'vue';
+import { isProxy, isReactive, isRef, toRaw } from 'vue';
 
 export interface Properties {
     [propertyName: string]: any;
@@ -399,6 +404,9 @@ export interface Props<TData> {
     /** The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.
          */
     pivotGroupHeaderHeight?: number | undefined,
+    /** Hide any column header rows that would only contain padded groups.
+         */
+    hidePaddedHeaderRows?: boolean | undefined,
     /** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid.
          * @default false
          * @agModule `ColumnsToolPanelModule`
@@ -468,6 +476,9 @@ export interface Props<TData> {
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
     editType?: EditStrategyType | undefined,
+    /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
+         */
+    suppressStartEditOnTab?: boolean | undefined,
     /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
@@ -616,6 +627,10 @@ export interface Props<TData> {
          * @agModule `AdvancedFilterModule`
          */
     advancedFilterBuilderParams?: IAdvancedFilterBuilderParams | undefined,
+    /** Customise the parameters passed to the Advanced Filter
+         * @agModule `AdvancedFilterModule`
+         */
+    advancedFilterParams?: IAdvancedFilterParams | undefined,
     /** @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
          * @default true
          * @agModule `AdvancedFilterModule`
@@ -630,7 +645,10 @@ export interface Props<TData> {
          */
     suppressSetFilterByDefault?: boolean | undefined,
     /** Enable filter handlers for custom filter components.
-         * Requires all custom filters need to be implemented using handlers.
+         * Requires all custom filters to be implemented using handlers.
+         *
+         * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
+         * The Multi Filter will also use a filter handler if this is enabled.
          * @initial
          */
     enableFilterHandlers?: boolean | undefined,
@@ -1215,7 +1233,8 @@ export interface Props<TData> {
     isRowPinnable?: IsRowPinnable<TData> | undefined,
     /** Called for every row in the grid.
          *
-         * Return `true` if the row should be pinned initially. Return `false` otherwise.
+         * Return "top", "bottom" if the row should be initially pinned to the top or bottom respectively.
+         * Return `null` or `undefined` otherwise.
          * User interactions can subsequently still change the pinned state of a row.
          * @agModule `PinnedRowModule`
          */
@@ -1800,6 +1819,10 @@ export interface Props<TData> {
    'onCell-editing-stopped'?: CellEditingStoppedEvent<TData>,
    'onRow-editing-started'?: RowEditingStartedEvent<TData>,
    'onRow-editing-stopped'?: RowEditingStoppedEvent<TData>,
+   'onBulk-editing-started'?: BulkEditingStartedEvent<TData>,
+   'onBulk-editing-stopped'?: BulkEditingStoppedEvent<TData>,
+   'onBatch-editing-started'?: BatchEditingStartedEvent<TData>,
+   'onBatch-editing-stopped'?: BatchEditingStoppedEvent<TData>,
    'onUndo-started'?: UndoStartedEvent<TData>,
    'onUndo-ended'?: UndoEndedEvent<TData>,
    'onRedo-started'?: RedoStartedEvent<TData>,
@@ -1917,6 +1940,7 @@ export function getProps() {
         floatingFiltersHeight: undefined,
         pivotHeaderHeight: undefined,
         pivotGroupHeaderHeight: undefined,
+        hidePaddedHeaderRows: undefined,
         allowDragFromColumnsToolPanel: undefined,
         suppressMovableColumns: undefined,
         suppressColumnMoveAnimation: undefined,
@@ -1932,6 +1956,7 @@ export function getProps() {
         autoSizeStrategy: undefined,
         components: undefined,
         editType: undefined,
+        suppressStartEditOnTab: undefined,
         getFullRowEditValidationErrors: undefined,
         invalidEditValueMode: undefined,
         singleClickEdit: undefined,
@@ -1962,6 +1987,7 @@ export function getProps() {
         includeHiddenColumnsInAdvancedFilter: undefined,
         advancedFilterParent: undefined,
         advancedFilterBuilderParams: undefined,
+        advancedFilterParams: undefined,
         suppressAdvancedFilterEval: undefined,
         suppressSetFilterByDefault: undefined,
         enableFilterHandlers: undefined,
@@ -2306,7 +2332,11 @@ export function getProps() {
         'onFind-changed': undefined,
         'onRow-resize-started': undefined,
         'onRow-resize-ended': undefined,
-        'onColumns-reset': undefined
+        'onColumns-reset': undefined,
+        'onBulk-editing-started': undefined,
+        'onBulk-editing-stopped': undefined,
+        'onBatch-editing-started': undefined,
+        'onBatch-editing-stopped': undefined
 // @END_EVENT_PROPS@
 
     };

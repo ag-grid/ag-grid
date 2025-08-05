@@ -80,6 +80,8 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
             return;
         }
 
+        const masterDetailSvc = this.beans.masterDetailSvc;
+
         for (let i = 0; i < rowsToFlatten!.length; i++) {
             const rowNode = rowsToFlatten![i];
 
@@ -126,6 +128,11 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
                         this.addRowNodeToRowsToDisplay(details, rowNode.sibling, result, uiLevelForChildren);
                     }
 
+                    const detailNode = masterDetailSvc?.getDetail(rowNode);
+                    if (detailNode) {
+                        this.addRowNodeToRowsToDisplay(details, detailNode, result, uiLevel);
+                    }
+
                     this.recursivelyAddToRowsToDisplay(
                         details,
                         rowNode.childrenAfterSort,
@@ -140,7 +147,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
                     }
                 }
             } else {
-                const detailNode = this.beans.masterDetailSvc?.getDetail(rowNode);
+                const detailNode = masterDetailSvc?.getDetail(rowNode);
                 if (detailNode) {
                     this.addRowNodeToRowsToDisplay(details, detailNode, result, uiLevel);
                 }

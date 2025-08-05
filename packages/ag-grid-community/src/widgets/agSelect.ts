@@ -17,7 +17,7 @@ export interface AgSelectParams<TValue = string>
     pickerAriaLabelValue?: string;
     placeholder?: string;
 }
-export type AgSelectEvent = 'selectedItem';
+type AgSelectEvent = 'selectedItem';
 export class AgSelect<TValue = string | null> extends AgPickerField<
     TValue,
     AgSelectParams<TValue> & AgPickerFieldParams,

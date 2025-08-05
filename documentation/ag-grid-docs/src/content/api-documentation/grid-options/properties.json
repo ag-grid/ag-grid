@@ -243,6 +243,12 @@
                 "name": "Header Height",
                 "url": "./column-headers/#header-height"
             }
+        },
+        "hidePaddedHeaderRows": {
+            "more": {
+                "name": "Hiding Additional Header Rows",
+                "url": "./column-headers/#hide-padded-column-headers"
+            }
         }
     },
     "columnMoving": {
@@ -392,6 +398,12 @@
             "more": {
                 "name": "Stop cell editing",
                 "url": "./cell-editing-start-stop/#stop-editing-when-grid-loses-focus"
+            }
+        },
+        "suppressStartEditOnTab": {
+            "more": {
+                "name": "Cell Editing",
+                "url": "./cell-editing/"
             }
         },
         "enterNavigatesVertically": {
@@ -562,6 +574,12 @@
             "more": {
                 "name": "Advanced Filter",
                 "url": "./filter-advanced/#configuring-advanced-filter-builder"
+            }
+        },
+        "advancedFilterParams": {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "./filter-advanced/#configuring-advanced-filter"
             }
         },
         "alwaysPassFilter": {},

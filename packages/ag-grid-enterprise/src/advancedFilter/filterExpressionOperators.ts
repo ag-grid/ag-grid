@@ -11,7 +11,7 @@ export interface FilterExpressionEvaluatorParams<ConvertedTValue, TValue = Conve
     valueConverter: (value: TValue, node: IRowNode) => ConvertedTValue;
 }
 
-export type FilterExpressionEvaluator<ConvertedTValue, TValue = ConvertedTValue> = (
+type FilterExpressionEvaluator<ConvertedTValue, TValue = ConvertedTValue> = (
     value: TValue | null | undefined,
     node: IRowNode,
     params: FilterExpressionEvaluatorParams<ConvertedTValue, TValue>,
@@ -83,7 +83,7 @@ function getEntries<ConvertedTValue, TValue = ConvertedTValue>(
     }));
 }
 
-export interface FilterExpressionOperatorsParams {
+interface FilterExpressionOperatorsParams {
     translate: (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) => string;
 }
 
@@ -173,7 +173,7 @@ export class TextFilterExpressionOperators<TValue = string>
     }
 }
 
-export interface ScalarFilterExpressionOperatorsParams<ConvertedTValue> extends FilterExpressionOperatorsParams {
+interface ScalarFilterExpressionOperatorsParams<ConvertedTValue> extends FilterExpressionOperatorsParams {
     equals: (value: ConvertedTValue, operand: ConvertedTValue) => boolean;
 }
 

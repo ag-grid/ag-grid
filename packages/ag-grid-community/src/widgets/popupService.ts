@@ -1,3 +1,4 @@
+import { Direction } from '../constants/direction';
 import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -10,7 +11,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { PopupEventParams, PopupPositionParams } from '../interfaces/iPopup';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _setAriaLabel, _setAriaRole } from '../utils/aria';
+import { _setAriaLabel, _setAriaOwns, _setAriaRole } from '../utils/aria';
 import {
     _createElement,
     _getAbsoluteHeight,
@@ -33,14 +34,13 @@ interface AgPopup {
     stopAnchoringPromise?: AgPromise<() => void>;
 }
 
-enum DIRECTION {
-    vertical,
-    horizontal,
-}
-
 let instanceIdSeq = 0;
 
-export interface AddPopupParams {
+type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
+type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
+
+// Apply the at-least-one constraint to ariaLabel | ariaOwns
+export type AddPopupParams = {
     // if true then listens to background checking for clicks, so that when the background is clicked,
     // the child is removed again, giving a model look to popups.
     modal?: boolean;
@@ -64,12 +64,14 @@ export interface AddPopupParams {
     // eg if cellComp element is passed, what happens if row moves (sorting, filtering etc)? best anchor against
     // the grid, not the cell.
     anchorToElement?: HTMLElement;
-
+} & XOR<
     // an aria label should be added to provided context to screen readers
-    ariaLabel: string;
-}
+    { ariaLabel: string },
+    // an element that will be marked as owner of the popup element
+    { ariaOwns: HTMLElement }
+>;
 
-export interface AddPopupResult {
+interface AddPopupResult {
     hideFunc: (params?: PopupEventParams) => void;
 }
 
@@ -80,7 +82,7 @@ interface Position {
     lastDiff: number;
     initial: number;
     last: number;
-    direction: DIRECTION;
+    direction: Direction;
 }
 
 export class PopupService extends BeanStub implements NamedBean {
@@ -124,7 +126,7 @@ export class PopupService extends BeanStub implements NamedBean {
         let minWidthSet = false;
 
         const updatePosition = () => {
-            const y = this.keepXYWithinBounds(ePopup, sourceRect.top - parentRect.top, DIRECTION.vertical);
+            const y = this.keepXYWithinBounds(ePopup, sourceRect.top - parentRect.top, Direction.Vertical);
 
             const minWidth = ePopup.clientWidth > 0 ? ePopup.clientWidth : 200;
             if (!minWidthSet) {
@@ -383,8 +385,8 @@ export class PopupService extends BeanStub implements NamedBean {
 
             // if popup is overflowing to the bottom, move it up
             if (keepWithinBounds) {
-                x = this.keepXYWithinBounds(ePopup, x, DIRECTION.horizontal);
-                y = this.keepXYWithinBounds(ePopup, y, DIRECTION.vertical);
+                x = this.keepXYWithinBounds(ePopup, x, Direction.Horizontal);
+                y = this.keepXYWithinBounds(ePopup, y, Direction.Vertical);
             }
 
             ePopup.style.left = `${x}px`;
@@ -433,8 +435,8 @@ export class PopupService extends BeanStub implements NamedBean {
         return _getElementRectWithOffset(popupParent);
     }
 
-    private keepXYWithinBounds(ePopup: HTMLElement, position: number, direction: DIRECTION): number {
-        const isVertical = direction === DIRECTION.vertical;
+    private keepXYWithinBounds(ePopup: HTMLElement, position: number, direction: Direction): number {
+        const isVertical = direction === Direction.Vertical;
         const sizeProperty = isVertical ? 'clientHeight' : 'clientWidth';
         const anchorProperty = isVertical ? 'top' : 'left';
         const offsetProperty = isVertical ? 'height' : 'width';
@@ -466,7 +468,7 @@ export class PopupService extends BeanStub implements NamedBean {
 
     public addPopup(params: AddPopupParams): AddPopupResult {
         const eDocument = _getDocument(this.beans);
-        const { eChild, ariaLabel, alwaysOnTop, positionCallback, anchorToElement } = params;
+        const { eChild, ariaLabel, ariaOwns, alwaysOnTop, positionCallback, anchorToElement } = params;
 
         if (!eDocument) {
             _warn(122);
@@ -482,7 +484,7 @@ export class PopupService extends BeanStub implements NamedBean {
 
         this.initialisePopupPosition(eChild);
 
-        const wrapperEl = this.createPopupWrapper(eChild, ariaLabel, !!alwaysOnTop);
+        const wrapperEl = this.createPopupWrapper(eChild, !!alwaysOnTop, ariaLabel, ariaOwns);
         const removeListeners = this.addEventListenersToPopup({ ...params, wrapperEl });
 
         if (positionCallback) {
@@ -508,7 +510,12 @@ export class PopupService extends BeanStub implements NamedBean {
         }
     }
 
-    private createPopupWrapper(element: HTMLElement, ariaLabel: string, alwaysOnTop: boolean): HTMLElement {
+    private createPopupWrapper(
+        element: HTMLElement,
+        alwaysOnTop: boolean,
+        ariaLabel?: string,
+        ariaOwns?: HTMLElement
+    ): HTMLElement {
         const ePopupParent = this.getPopupParent();
 
         // add env CSS class to child, in case user provided a popup parent, which means
@@ -524,7 +531,12 @@ export class PopupService extends BeanStub implements NamedBean {
             _setAriaRole(element, 'dialog');
         }
 
-        _setAriaLabel(element, ariaLabel);
+        if (ariaLabel) {
+            _setAriaLabel(element, ariaLabel);
+        } else if (ariaOwns) {
+            element.id ||= `popup-component-${instanceIdSeq}`;
+            _setAriaOwns(ariaOwns, element.id);
+        }
 
         eWrapper.appendChild(element);
         ePopupParent.appendChild(eWrapper);
@@ -554,7 +566,7 @@ export class PopupService extends BeanStub implements NamedBean {
         const eDocument = _getDocument(beans);
         const ePopupParent = this.getPopupParent();
 
-        const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal } = params;
+        const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal, ariaOwns } = params;
 
         let popupHidden = false;
 
@@ -601,8 +613,7 @@ export class PopupService extends BeanStub implements NamedBean {
             if (closedCallback) {
                 closedCallback(mouseEvent || touchEvent || keyboardEvent);
             }
-
-            this.removePopupFromPopupList(popupEl);
+            this.removePopupFromPopupList(popupEl, ariaOwns);
         };
 
         if (afterGuiAttached) {
@@ -637,13 +648,15 @@ export class PopupService extends BeanStub implements NamedBean {
             element: element,
             wrapper: wrapperEl,
             hideFunc: removeListeners,
-            instanceId: instanceIdSeq++,
+            instanceId: instanceIdSeq,
             isAnchored: !!anchorToElement,
         });
 
         if (anchorToElement) {
             this.setPopupPositionRelatedToElement(element, anchorToElement);
         }
+
+        instanceIdSeq = instanceIdSeq + 1;
     }
 
     private getPopupIndex(el: HTMLElement): number {
@@ -687,9 +700,13 @@ export class PopupService extends BeanStub implements NamedBean {
         return destroyPositionTracker;
     }
 
-    private removePopupFromPopupList(element: HTMLElement): void {
+    private removePopupFromPopupList(element: HTMLElement, ariaOwns?: HTMLElement): void {
         this.setAlignedStyles(element, null);
         this.setPopupPositionRelatedToElement(element, null);
+
+        if (ariaOwns) {
+            _setAriaOwns(ariaOwns, null);
+        }
 
         this.popupList = this.popupList.filter((p) => p.element !== element);
     }
@@ -707,7 +724,7 @@ export class PopupService extends BeanStub implements NamedBean {
         const sourceRect = element.getBoundingClientRect();
 
         const extractFromPixelValue = (pxSize: string) => parseInt(pxSize.substring(0, pxSize.length - 1), 10);
-        const createPosition = (prop: 'top' | 'left', direction: DIRECTION) => {
+        const createPosition = (prop: 'top' | 'left', direction: Direction) => {
             const initialDiff = parentRect[prop] - sourceRect[prop];
             const initial = extractFromPixelValue(ePopup.style[prop]);
             return {
@@ -718,8 +735,8 @@ export class PopupService extends BeanStub implements NamedBean {
                 direction,
             };
         };
-        const topPosition = createPosition('top', DIRECTION.vertical);
-        const leftPosition = createPosition('left', DIRECTION.horizontal);
+        const topPosition = createPosition('top', Direction.Vertical);
+        const leftPosition = createPosition('left', Direction.Horizontal);
 
         const fwOverrides = this.beans.frameworkOverrides;
         return new AgPromise<() => void>((resolve) => {

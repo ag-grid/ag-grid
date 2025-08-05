@@ -6,13 +6,16 @@ import type {
     AgTooltipRendererResult,
 } from 'ag-charts-types';
 
-import { flatMap } from '../../utils/array';
 import type { UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 
-export const HEATMAP_CATEGORY_KEY = 'AG-GRID-DEFAULT-HEATMAP-CATEGORY-KEY';
-export const HEATMAP_SERIES_KEY = 'AG-GRID-DEFAULT-HEATMAP-SERIES-KEY';
-export const HEATMAP_VALUE_KEY = 'AG-GRID-DEFAULT-HEATMAP-VALUE-KEY';
+const HEATMAP_CATEGORY_KEY = 'AG-GRID-DEFAULT-HEATMAP-CATEGORY-KEY';
+const HEATMAP_SERIES_KEY = 'AG-GRID-DEFAULT-HEATMAP-SERIES-KEY';
+const HEATMAP_VALUE_KEY = 'AG-GRID-DEFAULT-HEATMAP-VALUE-KEY';
+
+function flatMap<T, V>(items: T[], iteratee: (item: T, index: number, array: T[]) => V[]): V[] {
+    return items.reduce((acc, item, index, array) => acc.concat(iteratee(item, index, array)), new Array<V>());
+}
 
 export class HeatmapChartProxy extends ChartProxy<AgCartesianChartOptions, 'heatmap'> {
     protected getUpdateOptions(

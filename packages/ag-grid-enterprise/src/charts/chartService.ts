@@ -311,6 +311,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             chartElement: chartComp.getGui(),
             chart: chartComp.getUnderlyingChart(),
             chartId: chartComp.getChartModel().chartId,
+            setMaximized: chartComp.setMaximized.bind(chartComp),
         };
 
         this.activeCharts.add(chartRef);

@@ -42,6 +42,78 @@ function sortColsLikeCols(colsList: AgColumn[], cols: AgColumn[]): void {
     });
 }
 
+/**
+ * If moving all of a groups visible columns, then adds the hidden columns
+ * If marryChildren is true, then brings all the siblings.
+ */
+function getColsToMove(allMovingColumns: AgColumn[]): AgColumn[] {
+    // If the columns we're dragging are the only visible columns of their group, move the hidden ones too
+    const newCols: AgColumn[] = [...allMovingColumns];
+    allMovingColumns.forEach((col) => {
+        let movingGroup: AgColumnGroup | null = null;
+
+        let parent = col.getParent();
+        while (parent != null && parent.getDisplayedLeafColumns().length === 1) {
+            movingGroup = parent;
+            parent = parent.getParent();
+        }
+        if (movingGroup != null) {
+            const isMarryChildren = !!movingGroup.getColGroupDef()?.marryChildren;
+            const columnsToMove = isMarryChildren
+                ? // when marry children is true, we also have to move hidden
+                  // columns within the group, so grab them from the `providedColumnGroup`
+                  movingGroup.getProvidedColumnGroup().getLeafColumns()
+                : movingGroup.getLeafColumns();
+
+            columnsToMove.forEach((newCol) => {
+                if (!newCols.includes(newCol)) {
+                    newCols.push(newCol);
+                }
+            });
+        }
+    });
+    return newCols;
+}
+
+function getLowestFragMove(
+    validMoves: number[],
+    allMovingColumnsOrdered: AgColumn[],
+    colMoves: ColumnMoveService,
+    visibleCols: VisibleColsService
+): { move: number; fragCount: number } | null {
+    // From when we find a move that passes all the rules
+    // Remember what that move would look like in terms of displayed cols
+    // keep going with further moves until we find a different result in displayed output
+    // In this way potentialMoves contains all potential moves over 'hidden' columns
+    const displayedCols = visibleCols.allCols;
+
+    let lowestFragMove: { move: number; fragCount: number } | null = null;
+    let targetOrder: AgColumn[] | null = null;
+
+    for (let i = 0; i < validMoves.length; i++) {
+        const move: number = validMoves[i];
+
+        const order = colMoves.getProposedColumnOrder(allMovingColumnsOrdered, move);
+        if (!colMoves.doesOrderPassRules(order)) {
+            continue;
+        }
+
+        const displayedOrder = order.filter((col) => displayedCols.includes(col));
+        if (targetOrder === null) {
+            targetOrder = displayedOrder;
+        } else if (!_areEqual(displayedOrder, targetOrder)) {
+            break; // Stop looking for potential moves if the displayed result changes from the target
+        }
+
+        const fragCount = groupFragCount(order);
+        if (lowestFragMove === null || fragCount < lowestFragMove.fragCount) {
+            lowestFragMove = { move, fragCount };
+        }
+    }
+
+    return lowestFragMove;
+}
+
 export function getBestColumnMoveIndexFromXPosition(
     params: ColumnMoveParams
 ): { columns: AgColumn[]; toIndex: number } | undefined {
@@ -50,34 +122,8 @@ export function getBestColumnMoveIndexFromXPosition(
 
     let { allMovingColumns } = params;
     if (isFromHeader) {
-        // If the columns we're dragging are the only visible columns of their group, move the hidden ones too
-        const newCols: AgColumn[] = [];
-        allMovingColumns.forEach((col) => {
-            let movingGroup: AgColumnGroup | null = null;
-
-            let parent = col.getParent();
-            while (parent != null && parent.getDisplayedLeafColumns().length === 1) {
-                movingGroup = parent;
-                parent = parent.getParent();
-            }
-            if (movingGroup != null) {
-                const isMarryChildren = !!movingGroup.getColGroupDef()?.marryChildren;
-                const columnsToMove = isMarryChildren
-                    ? // when marry children is true, we also have to move hidden
-                      // columns within the group, so grab them from the `providedColumnGroup`
-                      movingGroup.getProvidedColumnGroup().getLeafColumns()
-                    : movingGroup.getLeafColumns();
-
-                columnsToMove.forEach((newCol) => {
-                    if (!newCols.includes(newCol)) {
-                        newCols.push(newCol);
-                    }
-                });
-            } else if (!newCols.includes(col)) {
-                newCols.push(col);
-            }
-        });
-        allMovingColumns = newCols;
+        // if moving the only visible col of the group, bring siblings and hidden cols
+        allMovingColumns = getColsToMove(allMovingColumns);
     }
 
     // it is important to sort the moving columns as they are in grid columns, as the list of moving columns
@@ -116,12 +162,8 @@ export function getBestColumnMoveIndexFromXPosition(
     // place the column to the RHS even if the mouse is moving left and the column is already on
     // the LHS. otherwise we stick to the rule described above.
 
-    let constrainDirection = oldIndex !== null && !fromEnter;
-
     // don't consider 'fromEnter' when dragging header cells, otherwise group can jump to opposite direction of drag
-    if (isFromHeader) {
-        constrainDirection = oldIndex !== null;
-    }
+    const constrainDirection = oldIndex !== null && (isFromHeader || !fromEnter);
 
     // if the event was faked by a change in column pin state, then the original location of the column
     // is not reliable for dictating where the column may now be placed.
@@ -137,46 +179,19 @@ export function getBestColumnMoveIndexFromXPosition(
         }
     }
 
-    // From when we find a move that passes all the rules
-    // Remember what that move would look like in terms of displayed cols
-    // keep going with further moves until we find a different result in displayed output
-    // In this way potentialMoves contains all potential moves over 'hidden' columns
-    const displayedCols = visibleCols.allCols;
+    const lowestFragMove = getLowestFragMove(validMoves, allMovingColumnsOrdered, colMoves, visibleCols);
 
-    const potentialMoves: { move: number; fragCount: number }[] = [];
-    let targetOrder: AgColumn[] | null = null;
-
-    for (let i = 0; i < validMoves.length; i++) {
-        const move: number = validMoves[i];
-
-        const order = colMoves.getProposedColumnOrder(allMovingColumnsOrdered, move);
-
-        if (!colMoves.doesOrderPassRules(order)) {
-            continue;
-        }
-        const displayedOrder = order.filter((col) => displayedCols.includes(col));
-        if (targetOrder === null) {
-            targetOrder = displayedOrder;
-        } else if (!_areEqual(displayedOrder, targetOrder)) {
-            break; // Stop looking for potential moves if the displayed result changes from the target
-        }
-        const fragCount = groupFragCount(order);
-        potentialMoves.push({ move, fragCount });
-    }
-
-    if (potentialMoves.length === 0) {
+    if (!lowestFragMove) {
+        // No valid moves found
         return;
     }
 
-    // The best move is the move with least group fragmentation
-    potentialMoves.sort((a, b) => a.fragCount - b.fragCount);
-    const toIndex = potentialMoves[0].move;
-
-    if (toIndex > colModel.getCols().length - allMovingColumns.length) {
+    const toIndex = lowestFragMove.move;
+    if (toIndex > colModel.getCols().length - allMovingColumnsOrdered.length) {
         return;
     }
 
-    return { columns: allMovingColumns, toIndex };
+    return { columns: allMovingColumnsOrdered, toIndex };
 }
 
 export function attemptMoveColumns(

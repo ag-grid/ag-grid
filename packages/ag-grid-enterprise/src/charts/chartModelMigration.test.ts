@@ -83,7 +83,7 @@ describe('chartModelMigration', () => {
             const chartModel = loadChartModel(name);
 
             const upgradedChartModel = upgradeChartModel(chartModel);
-            const isCurrentOrNextVersion = [CURRENT_VERSION, ...NEXT_VERSIONS].includes(
+            const isCurrentOrNextVersion = [CURRENT_VERSION, VERSION, ...NEXT_VERSIONS].includes(
                 upgradedChartModel.version ?? ''
             );
             expect(isCurrentOrNextVersion).toEqual(true);

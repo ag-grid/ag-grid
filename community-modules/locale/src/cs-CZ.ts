@@ -602,7 +602,6 @@ export const AG_GRID_LOCALE_CZ = {
     ariaLabelSelectField: 'Vyberte pole',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Editor buňky',
     ariaValidationErrorPrefix: 'Ověření editoru buňky',
     ariaLabelLoadingContextMenu: 'Načítání kontextové nabídky',
 

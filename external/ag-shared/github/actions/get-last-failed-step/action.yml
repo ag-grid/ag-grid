@@ -1,0 +1,46 @@
+name: get-last-failed-step
+description: get-last-failed-step
+inputs:
+    JOB_ID:
+        description: 'Job ID to fetch the last failed step from'
+        required: true
+    REPO_NAME:
+        description: 'Repository name in the format owner/repo'
+        required: true
+outputs:
+    failed_step:
+        description: 'The name of the last failed step in the job'
+        value: ${{ steps.get-failed-step.outputs.failed_step }}
+
+runs:
+    using: composite
+    steps:
+        - name: Get Failed Step Info
+          uses: actions/github-script@v7
+          env:
+              JOB_ID: ${{ inputs.JOB_ID }}
+              REPO_NAME: ${{ inputs.REPO_NAME }}
+          with:
+              script: |
+                  const runId = process.env.JOB_ID;
+                  const repo = process.env.REPO_NAME;
+
+                  try {
+                    // Get the workflow run details
+                    const { data: run } = await github.rest.actions.getWorkflowRun({
+                      owner: repo.split('/')[0],
+                      repo: repo.split('/')[1],
+                      run_id: parseInt(process.env.GITHUB_RUN_ID),
+                    });
+
+                    // Find the last failed step
+                    const steps = run.steps;
+                    const lastFailedStep = steps.find(step => step.conclusion === 'failure');
+                    if (lastFailedStep) {
+                      core.setOutput('failed_step', lastFailedStep.name);
+                    } else {
+                      core.setFailed('No failed steps found.');
+                    }
+                  } catch (error) {
+                    core.setFailed(error.message);
+                  }

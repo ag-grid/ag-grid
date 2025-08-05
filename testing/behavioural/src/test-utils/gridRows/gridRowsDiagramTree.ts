@@ -1,4 +1,4 @@
-import type { Column, IRowNode, RowNode } from 'ag-grid-community';
+import type { Column, RowNode } from 'ag-grid-community';
 
 import { optionalEscapeString, rowIdAndIndexToString, rowIdToString } from '../grid-test-utils';
 import type { GridRows } from './gridRows';
@@ -75,33 +75,30 @@ export class GridRowsDiagramTree {
         }
     }
 
-    public getNodeType(gridRows: GridRows, row: IRowNode): string {
+    public getNodeType(gridRows: GridRows, row: RowNode): string {
         if (row.level === -1 && row === gridRows.rootRowNode) {
             return 'ROOT';
         }
         if (row.footer) {
             return 'footer';
         }
-        if (row.detail) {
-            return 'detail';
-        }
+        const values: string[] = [];
         if (row.master) {
-            return 'master';
+            values.push('master');
         }
-
-        // Check for leaf groups first (works in both pivot and non-pivot modes)
-        if (row.leafGroup) {
-            return 'LEAF_GROUP';
+        if (row.detail) {
+            values.push('detail');
+        } else {
+            if (row.group && !row.data) {
+                values.push('filler');
+            } else if (row.group || row.childrenAfterGroup?.length || row.hasChildren()) {
+                values.push('GROUP');
+            }
         }
-
-        if (!row.data) {
-            return 'filler';
+        if (values.length > 0) {
+            return values.join('-');
         }
-        if (row.childrenAfterGroup?.length) {
-            return 'GROUP';
-        }
-
-        return 'LEAF';
+        return row.data ? 'LEAF' : 'filler';
     }
 
     public getDiagramRoot(gridRows: GridRows): GridRowsDiagramNode {
@@ -295,9 +292,8 @@ export class GridRowsDiagramTree {
         } else if (selectionState === undefined) {
             result += ' indeterminate';
         }
-
-        if (row.level >= 0 && !row.expanded && (row.group || row.master)) {
-            result += ' collapsed';
+        if (row.level >= 0 && !row.expanded && (row.group || row.master || row.isExpandable())) {
+            result += 'collapsed ';
         }
 
         if (!gridRows.isRowDisplayed(row) && row !== gridRows.rootRowNode) {

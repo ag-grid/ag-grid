@@ -853,6 +853,12 @@ export interface _EditGridApi<TData> {
     getEditingCells(): EditingCellPosition[];
 
     /**
+     * If the grid is editing, returns back edit values of the row if any.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
+    getEditRowValues(rowNode: IRowNode<TData>): Record<string, any> | undefined;
+
+    /**
      * If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes).
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
@@ -1011,6 +1017,12 @@ export interface _ColumnFilterGridApi {
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     showColumnFilter(colKey: string | Column): void;
+
+    /**
+     * Hide the filter popup if it is open.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
+     */
+    hideColumnFilter(): void;
 
     /**
      * Perform the provided filter action for the column specified, or all columns.

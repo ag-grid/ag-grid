@@ -8,6 +8,10 @@ import { ignoreConsoleLicenseKeyError } from './utils';
 export interface TestGridManagerOptions {
     /** The modules to register when a grid gets created */
     modules?: Module[] | null | undefined;
+
+    includeDefaultModules?: boolean;
+
+    mockGridLayout?: boolean;
 }
 
 const gridApiHtmlElementsMap = new WeakMap<GridApi, HTMLElement>();
@@ -33,11 +37,18 @@ export class TestGridsManager {
     };
 
     private gridsMap = new Map<HTMLElement, GridApi>();
+    private includeDefaultModules: boolean = true;
     private modulesToRegister: Module[] | null | undefined;
 
     public constructor(options: TestGridManagerOptions = {}) {
         this.modulesToRegister = options.modules;
-        mockGridLayout.init();
+
+        if (options.mockGridLayout !== false) {
+            mockGridLayout.init();
+        }
+        if (options.includeDefaultModules === false) {
+            this.includeDefaultModules = false;
+        }
     }
 
     public getGrid<TData = any>(eGridDiv: HTMLElement): GridApi<TData> | undefined {
@@ -93,9 +104,11 @@ export class TestGridsManager {
 
         ignoreConsoleLicenseKeyError();
 
-        const modules = unique(this.modulesToRegister ?? [])
-            .concat(params?.modules ?? [])
-            .concat([AllCommunityModule, ServerSideRowModelApiModule]);
+        let modules = unique(this.modulesToRegister ?? []).concat(params?.modules ?? []);
+
+        if (this.includeDefaultModules) {
+            modules = modules.concat([AllCommunityModule, ServerSideRowModelApiModule]);
+        }
         const api = createGrid(
             element,
             { ...TestGridsManager.defaultGridOptions, ...gridOptions },

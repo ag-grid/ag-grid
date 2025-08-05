@@ -168,8 +168,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     private refreshFiltersForAggregations() {
-        const isAggFiltering = _getGroupAggFiltering(this.gos);
-        if (isAggFiltering) {
+        if (_getGroupAggFiltering(this.gos) && this.isAnyFilterPresent()) {
             this.onFilterChanged();
         }
     }

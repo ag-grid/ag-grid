@@ -1,0 +1,588 @@
+@use 'design-system' as *;
+
+.rtsHeroGradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 500px;
+    background: var(--color-brand-500);
+
+    #{$selector-darkmode} & {
+        background: var(--color-bg-primary);
+    }
+
+    border-bottom: 1px solid var(--color-border-secondary);
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+
+    @media screen and (max-width: 700px) {
+        height: 700px;
+    }
+}
+
+.rtsHeroSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-size-16 $spacing-size-4;
+    border-radius: var(--radius-lg);
+    max-width: 1200px;
+    gap: $spacing-size-8;
+    position: relative;
+    overflow: visible;
+
+    p {
+        color: var(--color-white);
+        opacity: 0.8;
+    }
+
+    // Ensure content is above the gradient
+    > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    @media screen and (min-width: 900px) {
+        flex-direction: row;
+        padding: $spacing-size-20 $spacing-size-12;
+    }
+}
+.rtsHeroContent {
+    flex: 2;
+
+    max-width: 400px;
+    h2 {
+        font-size: var(--text-fs-2xl);
+        margin-bottom: $spacing-size-4;
+        text-align: left;
+        color: var(--color-white);
+    }
+    p {
+        text-align: left;
+    }
+}
+.rtsFlipClockBox {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-size-4;
+
+    border-radius: var(--radius-md);
+    padding: $spacing-size-8 $spacing-size-4;
+    max-width: 500px;
+    position: static;
+    overflow: visible;
+
+    a {
+        width: 300px;
+        text-align: center;
+        background-color: var(--color-white);
+        color: var(--color-brand-500);
+
+        svg {
+            fill: var(--color-brand-500);
+        }
+        #{$selector-darkmode} & {
+            background-color: var(--color-button-tertiary-fg);
+        }
+
+        &:hover {
+            background-color: var(--color-white);
+            color: var(--color-brand-500);
+        }
+    }
+}
+.rtsFlipClock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: $spacing-size-2;
+}
+.rtsFlipClockTime {
+    display: flex;
+    gap: $spacing-size-2;
+    div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: var(--color-brand-200);
+        color: var(--color-brand-700);
+        border-radius: var(--radius-md);
+        padding: $spacing-size-2 $spacing-size-3;
+        font-size: 1.5rem;
+        min-width: 48px;
+        font-weight: var(--text-bold);
+    }
+}
+.rtsFlipClockLabel {
+    font-size: var(--text-fs-xs);
+    color: var(--color-brand-700);
+    margin-top: 2px;
+    font-weight: var(--text-regular);
+}
+
+.rtsFlipClockEnds {
+    font-size: var(--text-fs-base);
+    color: var(--color-white);
+    margin-top: $spacing-size-2;
+    letter-spacing: 1px;
+    font-family: var(--text-monospace-font-family);
+    padding-bottom: $spacing-size-3;
+    font-weight: 600;
+    opacity: 0.7;
+
+    #{$selector-darkmode} & {
+        color: var(--color-button-tertiary-fg);
+    }
+}
+
+.rtsBenefitsSection {
+    border-radius: var(--radius-md);
+    padding: $spacing-size-16 $spacing-size-12;
+    margin-top: $spacing-size-8;
+    text-align: left;
+
+    @media screen and (max-width: 700px) {
+        padding: $spacing-size-8 0;
+    }
+
+    > h2,
+    > p {
+        text-align: left;
+    }
+    p {
+        margin-bottom: $spacing-size-8;
+    }
+
+    h2 {
+        font-size: var(--text-fs-2xl);
+    }
+}
+.rtsBenefitsTableWrapper {
+    overflow-x: auto;
+    margin-bottom: $spacing-size-6;
+}
+.rtsBenefitsTable {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-bg-primary);
+    box-shadow: var(--shadow-xs);
+    margin-top: $spacing-size-16;
+
+    th,
+    td {
+        padding: $spacing-size-3 $spacing-size-4;
+        text-align: center;
+        border-bottom: none;
+    }
+
+    th {
+        opacity: 0.5;
+        font-weight: 500;
+        border-radius: var(--radius-md);
+    }
+    td:first-child {
+        text-align: left;
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    td {
+        font-weight: 500;
+
+        #{$selector-darkmode} & {
+            color: var(--color-white);
+            opacity: 1;
+        }
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    tr:nth-child(2n) {
+        background-color: var(--color-brand-50);
+        border-radius: var(--radius-md);
+
+        #{$selector-darkmode} & {
+            background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
+        }
+    }
+
+    tr {
+        td {
+            color: var(--color-fg-primary);
+        }
+    }
+
+    tr {
+        border: none;
+    }
+    border: none;
+}
+
+.rtsReleasesSection {
+    margin: $spacing-size-12 auto;
+    max-width: 1100px;
+    text-align: left;
+    > h2,
+    > p {
+        text-align: left;
+    }
+    p {
+        margin-bottom: $spacing-size-4;
+    }
+}
+.rtsReleaseCards {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-6;
+    margin-top: $spacing-size-16;
+
+    @media screen and (min-width: 900px) {
+        flex-direction: row;
+    }
+}
+
+.rtsReleaseCard {
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-md);
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+
+    h3 {
+        font-size: var(--text-fs-lg);
+        margin: $spacing-size-4 0 $spacing-size-2 0;
+    }
+    p {
+        font-size: var(--text-fs-base);
+    }
+
+    a {
+        display: flex;
+        flex-direction: column;
+        color: inherit;
+        font-weight: inherit;
+    }
+}
+
+.rtsReleaseImage {
+    width: 100%;
+
+    background: var(--color-brand-100);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-brand-300);
+    font-size: var(--text-fs-lg);
+    margin-bottom: $spacing-size-4;
+}
+
+.rtsChartsCtaSection {
+    height: 300px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-brand-500);
+    border-radius: var(--radius-lg);
+    margin: $spacing-size-12 auto;
+    padding: $spacing-size-10 $spacing-size-4;
+    max-width: 1100px;
+    gap: $spacing-size-8;
+
+    @media screen and (min-width: 900px) {
+        flex-direction: row;
+        align-items: stretch;
+        padding: $spacing-size-16 $spacing-size-12;
+    }
+
+    .carouselWrapper {
+        width: 400px;
+        height: 400px;
+        top: -66px;
+        position: relative;
+    }
+
+    @media screen and (max-width: 700px) {
+        height: 450px;
+        .carouselWrapper {
+            width: 370px;
+            top: 0px;
+        }
+    }
+}
+
+.rtsChartsCtaContent {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    h2 {
+        font-size: var(--text-fs-2xl);
+        margin-bottom: $spacing-size-4;
+        text-align: left;
+        color: var(--color-white);
+    }
+    p {
+        text-align: left;
+        color: var(--color-white);
+    }
+    a {
+        margin-top: $spacing-size-2;
+        color: var(--color-white);
+    }
+    svg {
+        fill: white;
+    }
+}
+.rtsChartsCtaImage {
+    flex: 1;
+    min-width: 180px;
+    min-height: 120px;
+    background: var(--color-brand-100);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-brand-300);
+    font-size: var(--text-fs-lg);
+    margin-top: $spacing-size-4;
+    @media screen and (min-width: 900px) {
+        margin-top: 0;
+        margin-left: $spacing-size-8;
+    }
+}
+
+.rtsTrustedSection {
+    margin: $spacing-size-12 auto;
+    max-width: 1100px;
+    text-align: center;
+    padding-top: $spacing-size-24;
+    padding-bottom: $spacing-size-24;
+
+    h2 {
+        font-size: var(--text-fs-2xl);
+        margin-bottom: $spacing-size-6;
+        text-align: left;
+    }
+
+    p {
+        text-align: left;
+    }
+}
+.rtsTrustedQuotes {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-6;
+
+    @media screen and (min-width: 900px) {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+.rtsTrustedQuote {
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-md);
+
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+
+    p {
+        --padding: #{$spacing-size-4};
+        display: flex;
+        align-items: center;
+        position: relative;
+        padding-left: 2.2em;
+        font-size: var(--text-fs-lg);
+        margin-bottom: $spacing-size-2;
+        background-color: var(--color-brand-50);
+        padding: var(--padding);
+        height: 120px;
+        border-radius: var(--radius-md);
+        #{$selector-darkmode} & {
+            background: var(--color-bg-secondary);
+        }
+    }
+
+    span {
+        font-size: var(--text-fs-base);
+        font-weight: 400;
+        opacity: 0.7;
+    }
+
+    @media screen and (max-width: 700px) {
+        max-width: none;
+    }
+}
+
+.rtsRenewSection {
+    margin: $spacing-size-24 auto;
+    max-width: 900px;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: $spacing-size-12;
+    padding: $spacing-size-8 0;
+
+    h2 {
+        font-size: var(--text-fs-2xl);
+        margin-bottom: $spacing-size-6;
+        text-align: left;
+    }
+
+    .rtsRenewLeft {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        min-width: 260px;
+        align-self: center;
+    }
+
+    .rtsRenewRight {
+        flex: 2;
+        display: flex;
+        align-items: center;
+        min-width: 0;
+    }
+
+    @media screen and (max-width: 700px) {
+        flex-direction: column;
+        gap: $spacing-size-6;
+        .rtsRenewLeft,
+        .rtsRenewRight {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .rtsRenewRight {
+            justify-content: flex-start;
+        }
+    }
+}
+.rtsRenewContent {
+    font-size: var(--text-fs-base);
+}
+
+.rtsFooter {
+    background: var(--color-brand-100);
+    padding: $spacing-size-8 0;
+    margin-top: $spacing-size-16;
+}
+.rtsFooterContent {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-size-2;
+    color: var(--color-brand-700);
+    font-size: var(--text-fs-sm);
+
+    a {
+        color: var(--color-brand-500);
+        text-decoration: underline;
+        margin: 0 $spacing-size-1;
+    }
+
+    @media screen and (min-width: 600px) {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+.sectionTitle {
+    max-width: 500px;
+    text-align: left;
+
+    h2 {
+        font-size: var(--text-fs-2xl);
+    }
+}
+
+.tick svg {
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+    border-radius: 24px;
+    fill: var(--color-bg-primary);
+    background: rgb(33, 159, 33);
+    #{$selector-darkmode} & {
+        background: var(--color-button-tertiary-fg);
+    }
+
+    transition: all 0.3s;
+    opacity: 1;
+}
+
+.tick span {
+    transition: all 0.3s;
+    opacity: 1;
+}
+
+.cross svg {
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    border-radius: 24px;
+    fill: rgb(212, 19, 19);
+
+    #{$selector-darkmode} & {
+        fill: rgb(242, 71, 71);
+    }
+
+    transition: all 0.3s;
+    opacity: 1;
+}
+
+.tick span {
+    transition: all 0.3s;
+    opacity: 1;
+}
+
+.dash {
+    opacity: 0.4;
+}
+
+.rtsFlipClock {
+    font-family: 'Oswald', sans-serif;
+}
+
+.renewedSupportTitle {
+    color: var(--color-fg-tertiary);
+    opacity: 0.7 !important;
+
+    #{$selector-darkmode} & {
+        color: var(--color-button-tertiary-fg);
+    }
+}
+
+.button {
+    svg {
+        height: 18px;
+        width: 18px;
+    }
+}
+
+.rtsChartsCtaContent {
+    .button {
+        border: 1px solid var(--color-white);
+        padding: 8px 12px;
+        border-radius: var(--radius-md);
+    }
+}

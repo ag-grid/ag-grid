@@ -19,7 +19,7 @@ export enum ExpandState {
 }
 
 const DEBOUNCE_DELAY = 300;
-export type AgPrimaryColsHeaderEvent = 'unselectAll' | 'selectAll' | 'collapseAll' | 'expandAll' | 'filterChanged';
+type AgPrimaryColsHeaderEvent = 'unselectAll' | 'selectAll' | 'collapseAll' | 'expandAll' | 'filterChanged';
 
 const AgPrimaryColsHeaderElement: ElementParams = {
     tag: 'div',

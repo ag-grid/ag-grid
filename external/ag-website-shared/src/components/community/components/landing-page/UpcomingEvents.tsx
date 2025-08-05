@@ -2,6 +2,7 @@ import ScrollingGallery from '@ag-website-shared/components/community/components
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { useEffect, useState } from 'react';
 
 import styles from './UpcomingEvents.module.scss';
 
@@ -14,7 +15,7 @@ const filterEvents = (events) => {
 
 const UpcomingEvents = ({ images, events }) => {
     const [darkMode] = useDarkmode();
-    const currEvents = filterEvents(events);
+    const [currEvents, setCurrEvents] = useState(filterEvents(events));
 
     // Function to format date
     const formatDate = (dateString) => {
@@ -37,6 +38,16 @@ const UpcomingEvents = ({ images, events }) => {
         return formattedDate.replace(/(\d+)(,)/, `$1${suffix},`);
     };
 
+    useEffect(() => {
+        const filteredEventsWithImages = filterEvents(events).map((event) => {
+            return {
+                ...event,
+                image: urlWithBaseUrl(darkMode ? event.logo : event.logoLight),
+            };
+        });
+        setCurrEvents(filteredEventsWithImages);
+    }, [darkMode]);
+
     return (
         <div className={styles.container}>
             <div className={styles.eventDetailsContainer}>
@@ -50,11 +61,9 @@ const UpcomingEvents = ({ images, events }) => {
                                     {event.location}
                                 </span>
                                 <span className={styles.conferenceIcon}>
-                                    <img
-                                        className={styles.organiserLogo}
-                                        src={urlWithBaseUrl(darkMode ? event.logo : event.logoLight)}
-                                        alt={`${event.logo}`}
-                                    />
+                                    {event.image && (
+                                        <img className={styles.organiserLogo} src={event.image} alt={`${event.logo}`} />
+                                    )}
                                 </span>
                                 <span className={styles.title}>{event.title}</span>
                                 <span className={styles.description}>{event.description}</span>

@@ -599,7 +599,6 @@ export const AG_GRID_LOCALE_EG = {
     ariaLabelSelectField: 'اختيار الحقل',
 
     // Cell Editor
-    ariaLabelCellEditor: 'محرر الخلية',
     ariaValidationErrorPrefix: 'تحقق من صحة محرر الخلية',
     ariaLabelLoadingContextMenu: 'تحميل قائمة السياق',
 

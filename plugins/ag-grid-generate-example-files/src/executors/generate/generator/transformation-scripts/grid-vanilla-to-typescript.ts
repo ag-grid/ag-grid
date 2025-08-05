@@ -3,6 +3,7 @@ import {
     addBindingImports,
     addGenericInterfaceImport,
     findLocaleImport,
+    getEnableAGTestIdLogic,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
     wrapTearDownExample,
@@ -36,6 +37,8 @@ function getImports(bindings: ParsedBindings, currFile: string): string[] {
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, false);
     }
+
+    imports.push(getEnableAGTestIdLogic());
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
 

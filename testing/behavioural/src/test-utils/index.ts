@@ -8,4 +8,5 @@ export * from './grid-test-utils';
 export * from './testGridsManager';
 export * from './rows-snapshot';
 export * from './drag-n-drop-utils';
+export * from './ssrm-test-utils';
 export * from './prng';

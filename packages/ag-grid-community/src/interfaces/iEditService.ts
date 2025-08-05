@@ -1,7 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
 import type { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
-import { AgColumn } from '../entities/agColumn';
 import type { AgEventType } from '../eventTypes';
 import type { CellFocusedEvent } from '../events';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
@@ -10,7 +9,7 @@ import type { CellRange } from './IRangeService';
 import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError } from './iCellEditor';
 import type { ICellStyleFeature } from './iCellStyleFeature';
 import type { Column } from './iColumn';
-import type { EditMap, GetEditsParams } from './iEditModelService';
+import type { EditMap } from './iEditModelService';
 import type { IRowNode } from './iRowNode';
 import type { IRowStyleFeature } from './iRowStyleFeature';
 import type { UserCompDetails } from './iUserCompDetails';
@@ -52,13 +51,6 @@ export interface _SetEditingCellsParams {
     update?: boolean;
 }
 
-export function _isEditPosition(pos: any): pos is EditPosition {
-    return pos && typeof pos.rowNode === 'object' && (pos.column === undefined || pos.column instanceof AgColumn);
-}
-
-export function _isEditRowPosition(pos: any): pos is EditRowPosition {
-    return pos && typeof pos.rowNode === 'object';
-}
 export interface IEditService extends NamedBean {
     shouldStartEditing(
         position: Required<EditPosition>,
@@ -85,7 +77,6 @@ export interface IEditService extends NamedBean {
     isRowEditing(rowNode?: IRowNode | null, params?: IsEditingParams | null): boolean;
     startEditing(position: Required<EditPosition>, params: StartEditParams): void;
     stopEditing(position?: EditPosition, params?: StopEditParams): boolean;
-    stopAllEditing(cancel?: boolean, source?: EditSource): void;
     setEditMap(updates: EditMap, params?: _SetEditingCellsParams): void;
     isCellEditable(position: Required<EditPosition>, source?: EditSource): boolean;
     moveToNextCell(
@@ -94,8 +85,7 @@ export interface IEditService extends NamedBean {
         event?: KeyboardEvent,
         source?: EditSource
     ): boolean | null;
-    getCellDataValue(position: Required<EditPosition>): any;
-    getRowDataValue(rowNode: IRowNode, params?: GetEditsParams): any;
+    getCellDataValue(position: Required<EditPosition>, preferEditor: boolean): any;
     addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void;
     createPopupEditorWrapper(params: ICellEditorParams): PopupEditorWrapper;
     setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined;
@@ -111,7 +101,10 @@ export interface IEditService extends NamedBean {
         type?: T,
         payload?: any
     ): void;
-    dispatchRowEvent(position: Required<EditRowPosition>, type: 'rowEditingStarted' | 'rowEditingStopped'): void;
+    dispatchRowEvent(
+        position: Required<EditRowPosition>,
+        type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged'
+    ): void;
     applyBulkEdit(position: Required<EditPosition>, cellRanges: CellRange[]): void;
     validateEdit(): ICellEditorValidationError[] | null;
     createCellStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): ICellStyleFeature;
@@ -121,4 +114,5 @@ export interface IEditService extends NamedBean {
     cellEditingInvalidCommitBlocks(): boolean;
     checkNavWithValidation(position?: EditPosition, event?: Event | CellFocusedEvent): EditNavOnValidationResult;
     revertSingleCellEdit(cellPosition: Required<EditPosition>, focus?: boolean): void;
+    allowedFocusTargetOnValidation(cellPosition: EditPosition): CellCtrl | undefined;
 }

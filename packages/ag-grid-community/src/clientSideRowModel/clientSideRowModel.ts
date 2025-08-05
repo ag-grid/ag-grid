@@ -78,7 +78,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
     private nodeManager: IClientSideNodeManager<any>;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
-    private lastHighlightedRow: RowNode | null = null;
+
+    /** Keep track if row data was updated. Important with suppressModelUpdateAfterUpdateTransaction and refreshModel api is called  */
+    private rowDataUpdatedPending: boolean = false;
+
     private applyAsyncTransactionsTimeout: number | undefined;
     /** Has the start method been called */
     private started: boolean = false;
@@ -458,7 +461,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         // we use the childrenAfterSort as postSortRows is occasionally used to reduce row count.
         const filteredChildren = rootNode.childrenAfterSort;
-        const totalFooterInc = rootNode.sibling ? 1 : 0;
+        const totalFooterInc = rootNode.sibling && rootNode.sibling.displayed ? 1 : 0;
         return (filteredChildren ? filteredChildren.length : 0) + totalFooterInc;
     }
 
@@ -607,14 +610,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return true; // Nothing changed, or only updates with no new rows and no removals
     }
 
-    private beforeRefreshModel(params: RefreshModelParams, groupsChanged: boolean = false): void {
-        this.eventSvc.dispatchEvent({ type: 'beforeRefreshModel', params, groupsChanged });
-
-        if (this.started && params.rowDataUpdated) {
-            this.eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
-        }
-    }
-
     public refreshModel(params: RefreshModelParams): void {
         if (!this.rootNode) {
             return; // Destroyed
@@ -632,7 +627,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // let start: number;
         // console.log('======= start =======');
 
-        const changedPath = (params.changedPath ??= this.createChangePath(!params.newData && !!params.rowDataUpdated));
+        const beans = this.beans;
+
+        let rowDataUpdated = !!params.rowDataUpdated;
+        const changedPath = (params.changedPath ??= this.createChangePath(!params.newData && rowDataUpdated));
+
+        if (this.started && rowDataUpdated) {
+            this.eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
+        }
+
+        this.rowDataUpdatedPending ||= rowDataUpdated;
 
         if (
             !this.started ||
@@ -640,22 +644,30 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             this.colModel.changeEventsDispatching ||
             this.isSuppressModelUpdateAfterUpdateTransaction(params)
         ) {
-            this.beforeRefreshModel(params);
             return;
+        }
+
+        if (this.rowDataUpdatedPending) {
+            this.rowDataUpdatedPending = false;
+            params.rowDataUpdated = rowDataUpdated = true;
         }
 
         this.isRefreshingModel = true;
 
-        if (params.step !== 'group') {
-            this.beforeRefreshModel(params);
+        beans.masterDetailSvc?.refreshModel(params);
+
+        if (rowDataUpdated && params.step !== 'group') {
+            beans.colFilter?.refreshModel();
         }
 
         /* eslint-disable no-fallthrough */
         switch (params.step) {
             case 'group': {
                 const groupingChanged = this.doRowGrouping(params);
-                this.beforeRefreshModel(params, groupingChanged); // Do this after grouping, so the parent field is correct
-                if (params.step === 'group' && this.rowNodesCountReady) {
+                if (groupingChanged || rowDataUpdated) {
+                    beans.colFilter?.refreshModel();
+                }
+                if (!this.rowCountReady && this.rowNodesCountReady) {
                     this.rowCountReady = true; // only if row data has been set
                     this.eventSvc.dispatchEventOnce({ type: 'rowCountReady' });
                 }

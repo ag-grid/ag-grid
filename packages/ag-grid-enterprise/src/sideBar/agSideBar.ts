@@ -19,6 +19,7 @@ import {
     _focusInto,
     _focusNextGridCoreContainer,
     _getActiveDomElement,
+    _isVisible,
     _removeFromParent,
     _setAriaControlsAndLabel,
     _warn,
@@ -42,7 +43,7 @@ const AgSideBarElement: ElementParams = {
         },
     ],
 };
-export class AgSideBar extends Component implements ISideBar {
+class AgSideBar extends Component implements ISideBar {
     private readonly sideBarButtons: AgSideBarButtons = RefPlaceholder;
 
     private toolPanelWrappers: ToolPanelWrapper[] = [];
@@ -120,6 +121,7 @@ export class AgSideBar extends Component implements ISideBar {
 
         if (!nextEl) {
             nextEl = sideBarGui.querySelector('.ag-selected button') as HTMLElement;
+            nextEl = _isVisible(nextEl) ? nextEl : null;
         }
 
         if (nextEl && nextEl !== e.target) {
@@ -196,7 +198,10 @@ export class AgSideBar extends Component implements ISideBar {
 
         this.sideBar = sideBarDef;
 
-        if (!!sideBarDef && !!sideBarDef.toolPanels) {
+        if (sideBarDef) {
+            this.sideBarButtons.setDisplayed(!sideBarDef.hideButtons);
+        }
+        if (sideBarDef?.toolPanels) {
             const toolPanelDefs = sideBarDef.toolPanels as ToolPanelDef[];
             this.createToolPanelsAndSideButtons(toolPanelDefs, sideBarState, existingToolPanelWrappers);
             if (!this.toolPanelWrappers.length) {

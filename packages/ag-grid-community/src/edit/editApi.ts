@@ -1,13 +1,14 @@
 import type { StartEditingCellParams } from '../api/gridApi';
 import { ensureColumnVisible, ensureIndexVisible } from '../api/scrollApi';
 import type { BeanCollection } from '../context/context';
-import { _getCellByPosition } from '../entities/positionUtils';
+import { _getRowNode } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { EditingCellPosition, ICellEditorValidationError } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
+import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
 import { _getCellCtrl } from './utils/controllers';
-import { UNEDITED, _destroyEditors, _syncFromEditors, _valuesDiffer } from './utils/editors';
+import { UNEDITED, _destroyEditors, _sourceAndPendingDiffer, _syncFromEditors } from './utils/editors';
 
 export function undoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.undo('api');
@@ -17,13 +18,20 @@ export function redoCellEditing(beans: BeanCollection): void {
     beans.undoRedo?.redo('api');
 }
 
+export function getEditRowValues(beans: BeanCollection, rowNode: IRowNode): Record<string, any> | undefined {
+    return beans.editModelSvc?.getEditRowDataValue(rowNode, { checkSiblings: true });
+}
+
 export function getEditingCells(beans: BeanCollection): EditingCellPosition[] {
     const edits = beans.editModelSvc?.getEditMap();
     const positions: EditingCellPosition[] = [];
     edits?.forEach((editRow, rowNode) => {
         const { rowIndex, rowPinned } = rowNode as RowNode;
-        editRow.forEach(({ newValue, oldValue, state }, column) => {
-            const diff = _valuesDiffer({ newValue, oldValue });
+        editRow.forEach((editValue, column) => {
+            const { editorValue, pendingValue, sourceValue: oldValue, state } = editValue;
+            const diff = _sourceAndPendingDiffer(editValue);
+
+            let newValue = editorValue ?? pendingValue;
 
             if (newValue === UNEDITED) {
                 newValue = undefined;
@@ -43,9 +51,7 @@ export function getEditingCells(beans: BeanCollection): EditingCellPosition[] {
             const changed = state === 'changed' && diff;
             const editing = state === 'editing';
 
-            if (editing) {
-                positions.push(edit);
-            } else if (changed) {
+            if (editing || changed) {
                 positions.push(edit);
             }
         });
@@ -63,7 +69,7 @@ export function stopEditing(beans: BeanCollection, cancel: boolean = false): voi
                 }
             });
         } else {
-            _syncFromEditors(beans);
+            _syncFromEditors(beans, true);
         }
         _destroyEditors(beans);
     } else {
@@ -92,6 +98,16 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
         column,
     };
 
+    const rowNode = _getRowNode(beans, cellPosition);
+    if (!rowNode) {
+        _warn(290, { rowIndex, rowPinned });
+        return;
+    }
+
+    if (!column.isCellEditable(rowNode)) {
+        return;
+    }
+
     const notPinned = rowPinned == null;
     if (notPinned) {
         ensureIndexVisible(beans, rowIndex);
@@ -99,25 +115,16 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 
     ensureColumnVisible(beans, colKey);
 
-    if (!_getCellByPosition(beans, cellPosition)) {
-        return;
-    }
-
-    editSvc?.setEditingCells(
-        [
-            {
-                ...cellPosition,
-                colId: column.getColId(),
-                newValue: key,
-                state: 'editing',
-            },
-        ],
-        { update: true }
+    editSvc?.startEditing(
+        {
+            rowNode,
+            column,
+        },
+        {
+            event: key ? new KeyboardEvent('keydown', { key }) : undefined,
+            source: 'api',
+        }
     );
-}
-
-export function cancelEdits({ editSvc }: BeanCollection): void {
-    editSvc?.stopEditing(undefined, { cancel: true, source: editSvc?.isBatchEditing() ? 'ui' : 'api' });
 }
 
 export function validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {

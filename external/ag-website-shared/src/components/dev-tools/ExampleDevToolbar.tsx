@@ -4,11 +4,13 @@ import { Select } from '@ag-website-shared/components/select/Select';
 import fwLogos from '@ag-website-shared/images/fw-logos';
 import { getPageNameFromPath } from '@components/docs/utils/urlPaths';
 import { FRAMEWORKS, URL_CONFIG } from '@constants';
+import { getIsArchive } from '@utils/env';
 import { getFrameworkDisplayText } from '@utils/framework';
 import { useStoreSsr } from '@utils/hooks/useStoreSsr';
 import { pathJoin } from '@utils/pathJoin';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classNames from 'classnames';
+import purify from 'dompurify';
 import { type FunctionComponent, useCallback, useMemo } from 'react';
 
 import styles from './ExampleDevToolbar.module.scss';
@@ -67,13 +69,13 @@ export const ExampleDevToolbar: FunctionComponent<Props> = ({ framework, example
                         `#example-${exampleName}`
                     );
 
-                    const isEnv = config.hosts.includes(host);
+                    const isEnv = config.hosts.includes(host) && !getIsArchive();
                     return (
                         <li key={env} className={classNames(styles.exampleLink)}>
                             {isEnv ? (
                                 <>{env}</>
                             ) : (
-                                <a href={url} target={target}>
+                                <a href={purify.sanitize(url)} target={target}>
                                     {env}{' '}
                                 </a>
                             )}

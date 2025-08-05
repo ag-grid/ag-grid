@@ -602,7 +602,6 @@ export const AG_GRID_LOCALE_PK = {
     ariaLabelSelectField: 'فیلڈ منتخب کریں',
 
     // Cell Editor
-    ariaLabelCellEditor: 'سیل ایڈیٹر',
     ariaValidationErrorPrefix: 'سیل ایڈیٹر کی توثیق',
     ariaLabelLoadingContextMenu: 'کنٹیکسٹ مینو لوڈ ہو رہا ہے',
 

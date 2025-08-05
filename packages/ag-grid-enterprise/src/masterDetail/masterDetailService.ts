@@ -1,10 +1,10 @@
 import type {
     BeanName,
-    BeforeRefreshModelEvent,
     DetailGridInfo,
     IChangedRowNodes,
     IMasterDetailService,
     NamedBean,
+    RefreshModelParams,
     RowCtrl,
 } from 'ag-grid-community';
 import {
@@ -17,6 +17,8 @@ import {
     _observeResize,
 } from 'ag-grid-community';
 
+import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
+
 export class MasterDetailService extends BeanStub implements NamedBean, IMasterDetailService {
     beanName: BeanName = 'masterDetailSvc' as const;
 
@@ -25,22 +27,16 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
     private enabled: boolean;
 
     private isEnabled(): boolean {
-        const gos = this.gos;
-        return (
-            gos.get('masterDetail') &&
-            // TODO: AG-1752: [Tree Data] Allow tree data leaf rows to serve as master rows for detail grids (Tree Data hosting Master/Detail)"
-            !gos.get('treeData')
-        );
+        return !!this.gos.get('masterDetail');
     }
 
     public postConstruct(): void {
         if (_isClientSideRowModel(this.gos)) {
             this.enabled = this.isEnabled();
-            this.addManagedEventListeners({ beforeRefreshModel: this.beforeRefreshModel.bind(this) });
         }
     }
 
-    private beforeRefreshModel({ params }: BeforeRefreshModelEvent) {
+    public refreshModel(params: RefreshModelParams) {
         if (params.changedProps) {
             const enabled = this.isEnabled();
             if (this.enabled !== enabled) {
@@ -60,7 +56,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
 
         const gos = this.gos;
         const isRowMaster = gos.get('isRowMaster');
-        const groupDefaultExpanded = gos.get('groupDefaultExpanded');
+        const treeData = gos.get('treeData');
 
         const setMaster = (row: RowNode, created: boolean, updated: boolean) => {
             const oldMaster = row.master;
@@ -78,23 +74,19 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
                 }
             }
 
-            if (newMaster && created) {
-                // TODO: AG-11476 isGroupOpenByDefault callback doesn't apply to master/detail grid
-
-                if (groupDefaultExpanded === -1) {
-                    row.expanded = true;
-                } else {
-                    // need to take row group into account when determining level
-                    const masterRowLevel = this.beans.rowGroupColsSvc?.columns.length ?? 0;
-                    row.expanded = masterRowLevel < groupDefaultExpanded;
+            if (!treeData) {
+                // Note that with treeData the initialization of the expansed state is delegated to treeGroupStrategy
+                if (newMaster && created) {
+                    const level = this.beans.rowGroupColsSvc?.columns.length ?? 0;
+                    row.expanded = _getRowDefaultExpanded(this.beans, row, level, false);
+                } else if (!newMaster && oldMaster) {
+                    // if changing AWAY from master, then un-expand, otherwise next time it's shown it is expanded again
+                    row.expanded = false;
                 }
-            } else if (!newMaster && oldMaster) {
-                row.expanded = false; // if changing AWAY from master, then un-expand, otherwise next time it's shown it is expanded again
             }
 
             if (newMaster !== oldMaster) {
                 row.master = newMaster;
-
                 row.dispatchRowEvent('masterChanged');
             }
         };

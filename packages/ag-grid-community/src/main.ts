@@ -34,6 +34,7 @@ export {
     isRowNumberCol,
     isColumnSelectionCol,
     isColumnGroupAutoCol,
+    isSpecialCol,
     _destroyColumnTree,
     _getColumnsFromTree,
     _areColIdsEqual,
@@ -102,6 +103,8 @@ export {
     ExcelSheetPageSetup,
     ExcelFont,
     ExcelFreezeRowsGetter,
+    ExcelFreezeRowsGetterParams,
+    ExcelFreezeColumnsGetterParams,
     ExcelFreezeColumnsGetter,
     ExcelInterior,
     ExcelNumberFormat,
@@ -160,6 +163,7 @@ export {
     RowPinnedType,
     IRowNode,
     RowNodeSelectedEvent,
+    RowNodePinnedEvent,
     MouseEnterEvent,
     MouseLeaveEvent,
     HeightChangedEvent,
@@ -248,7 +252,8 @@ export {
 export { IMultiFilterService } from './interfaces/iMultiFilterService';
 export { FilterComp } from './filter/filterComp';
 export { FilterWrapperComp } from './filter/filterWrapperComp';
-export { FilterButtonComp } from './filter/filterButtonComp';
+export { FilterButtonComp, FilterButtonEvent, FilterButton, AgFilterButtonSelector } from './filter/filterButtonComp';
+export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
 export { _getFilterParamsForDataType, _getDefaultSimpleFilter } from './filter/filterDataTypeUtils';
 
 export {
@@ -291,7 +296,12 @@ export {
     ITextFloatingFilterParams,
 } from './filter/provided/text/iTextFilter';
 export type { TextFilter } from './filter/provided/text/textFilter';
-export { IDateFilterParams, DateFilterParams, DateFilterModel } from './filter/provided/date/iDateFilter';
+export {
+    IDateFilterParams,
+    IDateComparatorFunc,
+    DateFilterParams,
+    DateFilterModel,
+} from './filter/provided/date/iDateFilter';
 export type { DateFilter } from './filter/provided/date/dateFilter';
 
 export {
@@ -328,6 +338,7 @@ export {
 } from './interfaces/advancedFilterModel';
 export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilderParams';
+export { IAdvancedFilterParams } from './interfaces/iAdvancedFilterParams';
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
 export {
@@ -443,6 +454,8 @@ export {
     ICellRendererParams,
     ISetFilterCellRendererParams,
     GetCellRendererInstancesParams,
+    EventCellRendererParams,
+    SuppressMouseEventHandlingParams,
 } from './rendering/cellRenderers/iCellRenderer';
 export {
     GroupCellRendererParams,
@@ -455,6 +468,7 @@ export {
     GroupCheckboxSelectionCallback,
     GroupCheckboxSelectionCallbackParams,
 } from './interfaces/groupCellRenderer';
+export { _suppressCellMouseEvent } from './rendering/renderUtils';
 
 // status bar components
 export {
@@ -514,7 +528,7 @@ export {
 } from './rendering/features/positionableFeature';
 
 // rendering
-export { _getCellCtrlForEventTarget } from './rendering/cell/cellCtrl';
+export { _getCellCtrlForEventTarget, _getRowCtrlForEventTarget } from './rendering/renderUtils';
 export type { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
 export type { RowCtrl, IRowComp } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
@@ -606,7 +620,7 @@ export { TabGuardFeature } from './widgets/tabGuardFeature';
 export { PopupComponent } from './widgets/popupComponent';
 export type { PopupService } from './widgets/popupService';
 export { PopupPositionParams, PopupEventParams } from './interfaces/iPopup';
-export { TouchListener, TapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
+export { TouchListener, TapEvent, DoubleTapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
 export { FocusableContainer } from './interfaces/iFocusableContainer';
 
 export { AgAbstractLabel } from './widgets/agAbstractLabel';
@@ -668,7 +682,7 @@ export {
     ShouldRowBeSkippedParams,
     BaseExportParams,
 } from './interfaces/exportParams';
-export { HeaderElement, PrefixedXmlAttributes, XmlElement } from './interfaces/iXmlFactory';
+export { HeaderElement, PrefixedXmlAttributes, XmlElement, XmlAttributes } from './interfaces/iXmlFactory';
 export { ICsvCreator } from './interfaces/iCsvCreator';
 
 // root
@@ -676,7 +690,8 @@ export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export type { CellNavigationService } from './navigation/cellNavigationService';
 export { KeyCode } from './constants/keyCode';
-export { GridParams, Params, GridCoreCreator, createGrid } from './grid';
+export { Direction } from './constants/direction';
+export { GridParams, Params, GridCoreCreator, createGrid, getGridApi, getGridElement } from './grid';
 export { provideGlobalGridOptions, GlobalGridOptionsMergeStrategy, _getGlobalGridOption } from './globalGridOptions';
 export {
     GridApi,
@@ -709,7 +724,7 @@ export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from 
 export { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 export type { FocusService } from './focusService';
 export type { GridOptionsService, PropertyValueChangedEvent } from './gridOptionsService';
-export { PropertyChangedEvent } from './gridOptionsService';
+export { PropertyChangedEvent, PropertyChangeSet } from './gridOptionsService';
 export {
     _addGridCommonParams,
     _getCallbackForEvent,
@@ -794,6 +809,8 @@ export {
     GridState,
     PaginationState,
     PivotState,
+    CellSelectionState,
+    CellSelectionCellState,
     RangeSelectionCellState,
     RangeSelectionState,
     RowGroupExpansionState,
@@ -823,8 +840,10 @@ export {
     _createCellId,
     _isRowBefore,
     _isSameRow,
+    _getLastRow,
     _getRowNode,
     _getCellByPosition,
+    _getFirstRow,
     _getRowAbove,
     _getRowBelow,
 } from './entities/positionUtils';
@@ -923,6 +942,7 @@ export {
     SelectAllMode,
     SelectionColumnDef,
     CellSelectionOptions,
+    RangeHandleOptions,
     RowSelectionOptions,
     RowSelectionMode,
     IsApplyServerSideTransaction,
@@ -1296,3 +1316,7 @@ export type {
     ColorSchemeValue,
     WithParamTypes,
 } from './theming/theme-types';
+
+// Testing
+export { setupAgTestIds } from './testing/testingModule';
+export { agTestIdFor, wrapAgTestIdFor } from './testing/testIdUtils';

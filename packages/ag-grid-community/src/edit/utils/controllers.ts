@@ -28,11 +28,6 @@ type ResolveCellControllerType = {
 
 type ResolveControllerType = ResolveRowControllerType & ResolveCellControllerType;
 
-type ResolvedControllersType = {
-    rowCtrl?: RowCtrl;
-    cellCtrl?: CellCtrl;
-};
-
 export function _getRowCtrl(beans: BeanCollection, inputs: ResolveRowControllerType = {}): RowCtrl | undefined {
     const { rowIndex, rowId, rowCtrl, rowPinned } = inputs;
 
@@ -43,7 +38,13 @@ export function _getRowCtrl(beans: BeanCollection, inputs: ResolveRowControllerT
     const { rowModel, rowRenderer } = beans;
 
     let { rowNode } = inputs;
-    rowNode ??= rowId ? _getRowById(beans, rowId, rowPinned) : rowModel.getRow(rowIndex!);
+    if (!rowNode) {
+        if (rowId) {
+            rowNode = _getRowById(beans, rowId, rowPinned);
+        } else if (rowIndex != null) {
+            rowNode = rowModel.getRow(rowIndex);
+        }
+    }
 
     return rowRenderer.getRowCtrls(rowNode ? [rowNode] : [])?.[0];
 }
@@ -74,16 +75,6 @@ export function _getCellCtrl(beans: BeanCollection, inputs: ResolveControllerTyp
     }
 
     return undefined;
-}
-
-export function _getCtrls(beans: BeanCollection, inputs: ResolveControllerType = {}): ResolvedControllersType {
-    const rowCtrl = _getRowCtrl(beans, inputs);
-    const cellCtrl = _getCellCtrl(beans, inputs);
-
-    return {
-        rowCtrl,
-        cellCtrl,
-    };
 }
 
 function _stopEditing(beans: BeanCollection): void {

@@ -13,7 +13,7 @@ import {
 import type { AgMenuItemComponentEvent, CloseMenuEvent, MenuItemActivatedEvent } from './agMenuItemComponent';
 import { AgMenuItemComponent } from './agMenuItemComponent';
 
-export type AgMenuListEvent = AgMenuItemComponentEvent;
+type AgMenuListEvent = AgMenuItemComponentEvent;
 
 export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
     private menuItems: AgMenuItemComponent[] = [];

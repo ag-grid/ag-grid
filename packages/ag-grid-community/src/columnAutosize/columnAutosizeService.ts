@@ -1,6 +1,6 @@
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import type { ColKey, Maybe } from '../columns/columnModel';
-import { getWidthOfColsInList, isColumnSelectionCol, isRowNumberCol } from '../columns/columnUtils';
+import { getWidthOfColsInList, isSpecialCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
@@ -96,11 +96,11 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             const updatedColumns: AgColumn[] = [];
 
             colKeys.forEach((key) => {
-                if (!key || isColumnSelectionCol(key)) {
+                if (!key || isSpecialCol(key)) {
                     return;
                 }
                 const column = colModel.getCol(key);
-                if (!column || isRowNumberCol(column)) {
+                if (!column) {
                     return;
                 }
 

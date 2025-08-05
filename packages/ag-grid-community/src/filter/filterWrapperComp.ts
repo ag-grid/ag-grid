@@ -16,6 +16,7 @@ import type {
 } from './columnFilterService';
 import type { FilterButtonEvent } from './filterButtonComp';
 import { FilterButtonComp } from './filterButtonComp';
+import { translateForFilter } from './filterLocaleText';
 import { _isUseApplyButton } from './provided/providedFilterUtils';
 
 /** Used with filter handlers. This adds filter buttons. */
@@ -66,7 +67,7 @@ export class FilterWrapperComp extends Component {
             },
             filterStateChanged: ({ column, state }: FilterStateChangedEvent) => {
                 if (column === this.column) {
-                    this.eButtons?.updateValidity(state.valid);
+                    this.eButtons?.updateValidity(state.valid !== false);
                 }
             },
             filterAction: ({ column, action, event: keyboardEvent }: FilterActionEvent) => {
@@ -100,15 +101,20 @@ export class FilterWrapperComp extends Component {
         forceUpdate?: boolean
     ): void {
         const { buttons: oldButtons, readOnly: oldReadOnly } = oldParams ?? {};
-        const { buttons, readOnly, useForm } = newParams;
-        if (!forceUpdate && oldReadOnly === readOnly && _jsonEquals(oldButtons, buttons)) {
+        const { buttons: newButtons, readOnly, useForm } = newParams;
+        if (!forceUpdate && oldReadOnly === readOnly && _jsonEquals(oldButtons, newButtons)) {
             return;
         }
 
-        const hasButtons = buttons && buttons.length > 0 && !newParams.readOnly && !this.isGlobalButtons;
+        const hasButtons = newButtons && newButtons.length > 0 && !newParams.readOnly && !this.isGlobalButtons;
 
         let eButtonsPanel = this.eButtons;
         if (hasButtons) {
+            const buttons = newButtons.map((type) => {
+                const localeKey = `${type}Filter` as const;
+                return { type, label: translateForFilter(this, localeKey) };
+            });
+
             this.applyActive = _isUseApplyButton(this.params!);
             if (!eButtonsPanel) {
                 eButtonsPanel = this.createBean(new FilterButtonComp());

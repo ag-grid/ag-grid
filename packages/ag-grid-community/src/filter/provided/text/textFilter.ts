@@ -6,7 +6,7 @@ import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import type { ITextFilterParams, TextFilterModel } from './iTextFilter';
 import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
-import { mapValuesFromTextFilterModel, trimInputForFilter } from './textFilterUtils';
+import { mapValuesFromTextFilterModel } from './textFilterUtils';
 
 /** temporary type until `TextFilterParams` is updated as breaking change */
 type TextFilterDisplayParams = ITextFilterParams &
@@ -32,7 +32,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTex
             type,
         };
 
-        const values = this.getValuesWithSideEffects(position, true);
+        const values = this.getValues(position);
         if (values.length > 0) {
             model.filter = values[0];
         }
@@ -58,19 +58,10 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTex
     }
 
     protected getValues(position: number): Tuple<string> {
-        return this.getValuesWithSideEffects(position, false);
-    }
-
-    private getValuesWithSideEffects(position: number, applySideEffects: boolean): Tuple<string> {
         const result: Tuple<string> = [];
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
             if (index < numberOfInputs) {
-                let value = _makeNull(element.getValue());
-                if (applySideEffects && this.params.trimInput) {
-                    value = trimInputForFilter(value) ?? null;
-                    element.setValue(value, true); // ensure clean value is visible
-                }
-                result.push(value);
+                result.push(_makeNull(element.getValue()));
             }
         });
 

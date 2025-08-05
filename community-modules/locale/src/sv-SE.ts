@@ -602,7 +602,6 @@ export const AG_GRID_LOCALE_SE = {
     ariaLabelSelectField: 'Välj fält',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Celleditor',
     ariaValidationErrorPrefix: 'Celleditorvalidering',
     ariaLabelLoadingContextMenu: 'Laddar kontextmeny',
 

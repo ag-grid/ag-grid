@@ -54,10 +54,10 @@ The logic for managed dragging is simple and has the following constraints:
 * Works with [Client-Side](./row-models/#client-side) row model only; not with the [Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) or [Viewport](./viewport/) row models.
 * Does not work if [Pagination](./row-pagination/) is enabled.
 * Does not work when sorting is applied. This is because the sort order of the rows depends on the data and moving the data would break the sort order.
-* Does not work when filtering is applied. This is because a filter removes rows making it impossible to know what 'real' order of rows when some are missing.
+* Does not work when filtering is applied. This is because a filter removes rows making it impossible to know the 'real' order of rows when some are missing.
 * Does not work when row grouping or pivot is active. This is because moving rows between groups would require a knowledge of the underlying data which only your application knows.
 
-These constraints can be bypassed by using [unmanaged row dragging](#unmanaged-dragging).
+These constraints can be bypassed by using [Unmanaged Row Dragging](#unmanaged-dragging).
 
 ### Suppress Move When Dragging
 
@@ -94,7 +94,7 @@ meets the application's requirements.
 
 ### Row Drag Events
 
-There are four grid events associated with row dragging which are:
+There are five grid events associated with row dragging which are:
 
 * `rowDragEnter`: A drag has started, or dragging already started and the mouse has re-entered the grid having previously left the grid.
 * `rowDragMove`: The mouse has moved while dragging.
@@ -120,7 +120,9 @@ Each of the four row drag events extend the `RowDragEvent` interface.
 
 ### Example Events
 
-The below example demonstrates unmanaged row dragging with no attempt by the application or the grid to re-order the rows - this is on purpose to demonstrate the grid will not attempt to re-order rows unless you set the `rowDragManaged` property. The example also demonstrates all the events that are fired.
+The below example demonstrates unmanaged row dragging with no attempt by the application or the grid to re-order the rows.
+This is on purpose to demonstrate that the grid will not attempt to re-order rows unless the `rowDragManaged` property is set to true.
+The example also demonstrates all the events that are fired.
 
 From the example the following can be noted:
 
@@ -154,7 +156,8 @@ From the example the following can be noted:
 The simple example doesn't add anything that managed dragging gives (the first example on this page).
 
 {% note %}
-Dragging Multiple Rows with unmanaged row dragging, the application is in control of what gets dragged, so it is possible to use the events to drag more than one row at a time, e.g. to move all selected rows in one go if using row selection.
+When dragging Multiple Rows with unmanaged row dragging, the application is in control of what gets dragged.
+It is possible to use the events to drag more than one row at a time, e.g. to move all selected rows in one go if using row selection.
 {% /note %}
 
 ## Entire Row Dragging
@@ -192,21 +195,21 @@ You can hide the draggable area by setting the grid option `suppressRowDrag = tr
 
 The example below is almost identical to the [Managed Dragging](#managed-dragging) example with the following differences:
 
-* Button **Suppress** will hide the drag icons.
-* Button **Remove Suppress** will un-hide the drag icons.
+* The **Suppress** button will hide the drag icons.
+* The **Remove Suppress** button will un-hide the drag icons.
 * Applying a sort or a filter to the grid will also suppress the drag icons.
 
 {% gridExampleRunner title="Suppress Row Drag" name="suppress-row-drag" /%}
 
 ### Preventing Dropping on Certain Rows
 
-The `isRowValidDropPosition` callback allows you to control whether a row drop is allowed during managed row dragging, and optionally override the rows or parent or position for the drop.
+The `isRowValidDropPosition` callback allows you to control whether a row drop is allowed during managed row dragging, and optionally override the rows, parent or position for the drop.
 This is useful for restricting where rows can be dropped or customizing drop behaviour.
-Returning an object allows instead to filter the rows to drop, or, change the parent or the position of the drop.
+Returning an object allows instead to filter the rows to drop, or change the parent or the position of the drop.
 
 {% apiDocumentation source="grid-options/properties.json" section="rowDragging" names=["isRowValidDropPosition"] /%}
 
-## Dragging & Row Grouping
+## Dragging and Row Grouping
 
 [Row Grouping](./grouping/) in the grid allows grouping rows by a particular column. Dragging rows while grouping is possible when doing unmanaged row dragging. The application is responsible for updating the data based on the drag events fired by the grid.
 
@@ -222,13 +225,13 @@ The example below shows row dragging with [Row Grouping](./grouping/) where the 
 
 {% gridExampleRunner title="Dragging with Row Groups" name="dragging-with-row-groups"  exampleHeight=650 /%}
 
-## Row Dragging & Tree Data
+## Row Dragging and Tree Data
 
 See [Row Dragging with Tree Data](./tree-data-row-dragging).
 
 ## Other Row Models
 
-Unmanaged row dragging will work with any of the row models [Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) and [Viewport](./viewport/). With unmanaged dragging, the implementation of what happens when a particular drag happens is up to your application.
+Unmanaged row dragging will work with any of the row models - [Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) and [Viewport](./viewport/). With unmanaged dragging, the implementation of what happens when a particular drag happens is up to your application.
 
 ## Customisation
 
@@ -305,7 +308,7 @@ The example below shows dragging with custom text and multiple column draggers. 
 
 ### Row Dragger inside Custom Cell Renderers
 
-Due to the complexity of some applications, it could be handy to render the Row Drag Component inside of a Custom Cell Renderer. This can be achieved, by using the `registerRowDragger` method in the [ICellRendererParams](./component-cell-renderer/) as follows:
+Due to the complexity of some applications, it could be handy to render the Row Drag Component inside of a Custom Cell Renderer. This can be achieved by using the `registerRowDragger` method in the [ICellRendererParams](./component-cell-renderer/) as follows:
 
 {% if isFramework("javascript") %}
 ```js
@@ -360,7 +363,7 @@ When using `registerRowDragger` you should **not** set the property `rowDrag=tru
 Doing that will cause the cell to have two row draggers.
 {% /warning %}
 
-The example below shows a custom cell renderer, with using the `registerRowDragger` callback to render the Row Dragger inside itself.
+The example below shows a custom cell renderer using the`registerRowDragger` callback to render the Row Dragger inside itself.
 
 * When you hover the cells, an arrow will appear, and this arrow can be used to **drag** the rows.
 
@@ -370,19 +373,16 @@ The example below shows a custom cell renderer, with using the `registerRowDragg
 
 It is possible to drag [Full Width Rows](./full-width-rows/) by registering a [Custom Row Dragger](#row-dragger-inside-custom-cell-renderers).
 
-Note the following:
-
-* Only the Full Width Rows are draggable.
+In the example below, only the full width rows are draggable.
 
 {% gridExampleRunner title="Row Drag with Full Width Rows" name="dragger-inside-full-width-row" /%}
 
 ### Row Dragger with Custom Start Drag Pixels
 
-By default, the drag event only starts after the **Row Drag Element** has been dragged by `4px`, but sometimes it might be useful to start the drag with a different drag threshold, for example, start dragging as soon as the `mousedown` event happens (dragged by `0px`). For that reason, the `registerRowDragger` takes a second parameter to specify the number of pixels that will start the drag event.
+By default, the drag event only starts after the **Row Drag Element** has been dragged by `4px`, but sometimes it might be useful to start the drag with a different drag threshold.
+For example, start dragging as soon as the `mousedown` event happens (dragged by `0px`). For that reason, the `registerRowDragger` takes a second parameter to specify the number of pixels that will start the drag event.
 
-Note the following:
-
-* The drag event starts as soon as `mousedown` is fired.
+In the example below, the drag event starts as soon as mousedown is fired.
 
 {% gridExampleRunner title="Row Drag With Custom Start Drag Pixels" name="dragger-inside-custom-start-drag-pixels" /%}
 

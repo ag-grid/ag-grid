@@ -603,7 +603,6 @@ export const AG_GRID_LOCALE_JP = {
     ariaLabelSelectField: 'フィールドを選択',
 
     // Cell Editor
-    ariaLabelCellEditor: 'セルエディタ',
     ariaValidationErrorPrefix: 'セルエディタの検証',
     ariaLabelLoadingContextMenu: 'コンテキストメニューを読み込んでいます',
 

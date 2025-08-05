@@ -16,7 +16,7 @@ import { MenuUtils } from './menuUtils';
 /**
  * @internal
  */
-export const MenuCoreModule: _ModuleWithoutApi = {
+const MenuCoreModule: _ModuleWithoutApi = {
     moduleName: 'MenuCore',
     version: VERSION,
     beans: [MenuItemMapper, ChartMenuItemMapper, MenuUtils],

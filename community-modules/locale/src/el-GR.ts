@@ -603,7 +603,6 @@ export const AG_GRID_LOCALE_GR = {
     ariaLabelSelectField: 'Επιλογή Πεδίου',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Επεξεργαστής Κελιού',
     ariaValidationErrorPrefix: 'Επιβεβαίωση Επεξεργαστή Κελιού',
     ariaLabelLoadingContextMenu: 'Φόρτωση Μενού Περιβάλλοντος',
 

@@ -1,3 +1,4 @@
+import { load } from 'cheerio';
 import { existsSync, readFileSync, readdirSync } from 'fs';
 import path from 'path';
 import { JsxEmit, ModuleKind, ScriptTarget, transpileModule } from 'typescript';
@@ -191,4 +192,35 @@ export const getHasSimpleHtml = ({ contents }: { contents?: string }) => {
         contents?.includes('<textarea');
 
     return !hasFormElements;
+};
+
+const getNonceValue = ({ cspString, directiveName }: { cspString: string; directiveName: string }) => {
+    return (
+        cspString
+            ?.split(';')
+            .map((directive) => directive.trim())
+            .find((directive) => directive.startsWith(directiveName))
+            ?.split(' ')
+            .map((src) => (src.match(/'nonce-([^']+)'/) || [])[1])
+
+            // Only take the first nonce value
+            .filter(Boolean)[0]
+    );
+};
+
+export const getScriptNonce = (htmlFiles) => {
+    const headHtml = htmlFiles['head.html'];
+    if (headHtml) {
+        const $ = load(headHtml, null, false);
+        const cspString = $('meta[http-equiv="Content-Security-Policy"]').attr('content');
+
+        if (!cspString) {
+            return;
+        }
+
+        const scriptSrcDirective = getNonceValue({ cspString, directiveName: 'script-src' });
+        const defaultSrcDirective = getNonceValue({ cspString, directiveName: 'default-src' });
+
+        return scriptSrcDirective ?? defaultSrcDirective;
+    }
 };

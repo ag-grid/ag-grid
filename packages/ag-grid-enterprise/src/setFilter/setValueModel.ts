@@ -30,7 +30,7 @@ enum SetFilterModelValuesType {
 }
 export default SetFilterModelValuesType;
 
-export interface SetValueModelParams<TValue> {
+interface SetValueModelParams<TValue> {
     handlerParams: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
     usingComplexObjects?: boolean;
 }

@@ -8,6 +8,7 @@ import { SOURCE_ENTRY_FILE_NAME } from './generator/constants';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
 import {
     DARK_INTEGRATED_START,
+    getEnableAGTestIdLogic,
     getIntegratedDarkModeCode,
     getInterfaceFileContents,
     removeModuleRegistration,
@@ -26,6 +27,7 @@ import {
     getMainFileName,
     getProvidedExampleFiles,
     getProvidedExampleFolder,
+    getScriptNonce,
     getTransformTsFileExt,
 } from './generator/utils/fileUtils';
 import { frameworkFilesGenerator } from './generator/utils/frameworkFilesGenerator';
@@ -174,6 +176,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
         const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
         const entryFileName = getEntryFileName(internalFramework)!;
         const mainFileName = getMainFileName(internalFramework)!;
+        const scriptNonce = getScriptNonce(htmlFiles)!;
         const provideFrameworkFiles = getProvidedFrameworkFiles(internalFramework, frameworkProvidedExamples);
 
         const packageJson = getPackageJson({
@@ -276,6 +279,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             isIntegratedCharts,
             hasExampleConsoleLog,
             hasSimpleHtml,
+            scriptNonce,
             entryFileName,
             mainFileName,
             sourceFileList,
@@ -397,11 +401,19 @@ async function processProvidedFiles(
                 code
             );
         }
+
+        if (writeToFileName === mainFileName) {
+            // Add testId setup to the main file for provided examples
+            const isUmd = internalFramework === 'vanilla';
+            const testIdSetup = getEnableAGTestIdLogic(isUmd);
+            provideFrameworkFiles[writeToFileName] = testIdSetup + '\n\n' + provideFrameworkFiles[writeToFileName];
+        }
     }
 
     // Transform entry file
-    provideFrameworkFiles[entryFileName] = transformEntryFile({
-        entryFile: provideFrameworkFiles[entryFileName],
+    const transformMainFile = internalFramework === 'angular' ? mainFileName : entryFileName;
+    provideFrameworkFiles[transformMainFile] = transformEntryFile({
+        entryFile: provideFrameworkFiles[transformMainFile],
     });
 
     return scriptFiles;
