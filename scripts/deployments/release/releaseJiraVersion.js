@@ -7,6 +7,14 @@ if (!JIRA_CREDENTIALS) {
     process.exit(1);
 }
 
+const getFormattedDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+};
+
 const jiraRequest = async (url) => {
     const response = await fetch(url, {
         method: 'GET',
@@ -46,7 +54,7 @@ const releaseJiraVersion = async (versionNumber) => {
 
     if (versionToRelease) {
         const releaseDate = new Date();
-        const formattedReleaseDate = releaseDate.toISOString().substring(0, 10);
+        const formattedReleaseDate = getFormattedDate(releaseDate);
 
         let startDate = versionToRelease.startDate;
         if (!versionToRelease.startDate || new Date(versionToRelease.startDate) > releaseDate) {
