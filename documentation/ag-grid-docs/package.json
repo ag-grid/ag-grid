@@ -79,6 +79,7 @@
     "lucide-react": "^0.343.0",
     "nanostores": "^0.9.5",
     "node-html-parser": "^6.1.5",
+    "playwright-network-cache": "0.2.2",
     "prismjs": "^1.29.0",
     "react": "~18.2.0",
     "react-animate-height": "^3.2.3",
