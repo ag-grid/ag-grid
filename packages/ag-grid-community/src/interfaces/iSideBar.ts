@@ -65,6 +65,6 @@ export interface SideBarDef {
     hiddenByDefault?: boolean;
     /** Sets the side bar position relative to the grid. */
     position?: 'left' | 'right';
-    /** Allows granular control over the visibility of the side buttons. */
+    /** To hide the side bar buttons by default set this to true. If left undefined the side bar will be shown. This is useful if you want to show a tool panel without showing the buttons. */
     hideButtons?: boolean;
 }

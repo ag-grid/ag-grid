@@ -580,6 +580,8 @@ export {
     ICellRendererParams,
     ISetFilterCellRendererParams,
     GetCellRendererInstancesParams,
+    EventCellRendererParams,
+    SuppressMouseEventHandlingParams,
 } from './rendering/cellRenderers/iCellRenderer';
 export {
     GroupCellRendererParams,
@@ -592,6 +594,7 @@ export {
     GroupCheckboxSelectionCallback,
     GroupCheckboxSelectionCallbackParams,
 } from './interfaces/groupCellRenderer';
+export { _suppressCellMouseEvent } from './rendering/renderUtils';
 
 // status bar components
 export {
@@ -651,7 +654,7 @@ export {
 } from './rendering/features/positionableFeature';
 
 // rendering
-export { _getCellCtrlForEventTarget } from './rendering/cell/cellCtrl';
+export { _getCellCtrlForEventTarget, _getRowCtrlForEventTarget } from './rendering/renderUtils';
 export type { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
 export type { RowCtrl, IRowComp } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';

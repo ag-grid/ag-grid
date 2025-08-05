@@ -1,16 +1,17 @@
-import { expect, test } from '@playwright/test';
-import { testAllFrameworks } from '@utils/grid/test-utils';
+// Import the test helper from test-utils
+import { expect, setAgExampleUrl, test } from '@utils/grid/test-utils';
 
-import { wrapAgTestIdFor } from 'ag-grid-community';
+// Infer test URL from file location
+setAgExampleUrl(import.meta);
 
-const pageExampleUrl = 'column-moving/moving-simple';
-testAllFrameworks('Example', pageExampleUrl, async ({ page, framework }) => {
-    test.skip(framework === 'reactFunctionalTs', 'This test is skipped until the issue React Header Focus is resolved');
+test.eachFramework('Example', async ({ page, agFramework, agIdFor }) => {
+    test.skip(
+        agFramework === 'reactFunctionalTs',
+        'This test is skipped until the issue React Header Focus is resolved'
+    );
 
     // force the viewport width to be 800px so that columns are virtualised
     await page.setViewportSize({ width: 800, height: 600 });
-
-    const agIdFor = wrapAgTestIdFor((testId) => page.getByTestId(testId));
 
     // focus the first cell
     await agIdFor.cell('0', 'athlete').click();

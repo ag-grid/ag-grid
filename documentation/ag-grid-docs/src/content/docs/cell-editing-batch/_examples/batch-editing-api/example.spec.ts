@@ -1,49 +1,68 @@
-import { expect } from '@playwright/test';
 // Import the test helper from test-utils
-import { testAllFrameworks } from '@utils/grid/test-utils';
+import { expect, setAgExampleUrl, test } from '@utils/grid/test-utils';
 
-const testUrl = 'cell-editing-batch/batch-editing-api';
+// Infer test URL from file location
+setAgExampleUrl(import.meta);
 
-testAllFrameworks('Edit + Dependent Renderer', testUrl, async ({ page, agIdFor }) => {
-    const cell = agIdFor.cell('0', 'gold');
+test.describe('Batch Editing', () => {
+    // Run through all frameworks
+    test.eachFramework('With Batch', async ({ page, agIdFor }) => {
+        await page.locator('button', { hasText: 'Start Batch Edit' }).click(); // click the button to start batch editing
 
-    // initiate cell editing by double clicking the cell
-    await cell.dblclick();
-    const cellEditor = cell.locator('input');
-    await expect(cellEditor).toBeVisible();
+        const cell = agIdFor.cell('0', 'gold');
 
-    await page.keyboard.type('100'); // type in a new value
-    await page.keyboard.press('Enter'); // press Enter to save the value
+        // initiate cell editing by double clicking the cell
+        await cell.dblclick();
+        const cellEditor = cell.locator('input');
+        await expect(cellEditor).toBeVisible();
 
-    await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
-    await expect(cell).toHaveText('100'); // verify the cell has the new value
-    await expect(cell).not.toHaveClass(/ag-cell-batch-edit/);
+        await page.keyboard.type('100'); // type in a new value
+        await page.keyboard.press('Enter'); // press Enter to save the value
 
-    const totalCell = agIdFor.cell('0', 'total');
-    await expect(totalCell).toHaveText('105'); // verify the total cell has the new value
-    await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
-});
+        await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
+        await expect(cell).toHaveText('100'); // verify the cell has the new value
+        await expect(cell).toHaveClass(/ag-cell-batch-edit/);
 
-testAllFrameworks('Batch Editing + Dependent Renderer', testUrl, async ({ page, agIdFor }) => {
-    const startBatchButton = page.locator('button', { hasText: 'Start Batch Edit' });
+        const totalCell = agIdFor.cell('0', 'total');
+        await expect(totalCell).toHaveText('105'); // verify the total cell has the new value
+        await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
+    });
 
-    await startBatchButton.click(); // click the button to start batch editing
+    // Test only a single framework for a specific issue
+    test.typescript('Without Batch', async ({ page, agIdFor }) => {
+        const cell = agIdFor.cell('0', 'gold');
 
-    const cell = agIdFor.cell('0', 'gold');
+        // initiate cell editing by double clicking the cell
+        await cell.dblclick();
+        const cellEditor = cell.locator('input');
+        await expect(cellEditor).toBeVisible();
 
-    // initiate cell editing by double clicking the cell
-    await cell.dblclick();
-    const cellEditor = cell.locator('input');
-    await expect(cellEditor).toBeVisible();
+        await page.keyboard.type('100'); // type in a new value
+        await page.keyboard.press('Enter'); // press Enter to save the value
 
-    await page.keyboard.type('100'); // type in a new value
-    await page.keyboard.press('Enter'); // press Enter to save the value
+        await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
+        await expect(cell).toHaveText('100'); // verify the cell has the new value
+        await expect(cell).not.toHaveClass(/ag-cell-batch-edit/);
 
-    await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
-    await expect(cell).toHaveText('100'); // verify the cell has the new value
-    await expect(cell).toHaveClass(/ag-cell-batch-edit/);
+        const totalCell = agIdFor.cell('0', 'total');
+        await expect(totalCell).toHaveText('105'); // verify the total cell has the new value
+        await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
+    });
 
-    const totalCell = agIdFor.cell('0', 'total');
-    await expect(totalCell).toHaveText('105'); // verify the total cell has the new value
-    await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
+    // Nested tests for logical test grouping
+    test.describe('Nested Batch Editing', () => {
+        test.eachFramework('Test Total', async ({ agIdFor }) => {
+            const totalCell = agIdFor.cell('0', 'total');
+            await expect(totalCell).toHaveText('6'); // verify the total cell has the new value
+            await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
+        });
+
+        test.eachFramework('Test Total1', async ({ agIdFor, agFramework }) => {
+            test.skip(agFramework === 'typescript', 'Skipping TypeScript framework for this test');
+
+            const totalCell = agIdFor.cell('0', 'total');
+            await expect(totalCell).toHaveText('6'); // verify the total cell has the new value
+            await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
+        });
+    });
 });

@@ -1,12 +1,10 @@
-import { expect } from '@playwright/test';
-import { testAllFrameworks } from '@utils/grid/test-utils';
+// Import the test helper from test-utils
+import { expect, setAgExampleUrl, test } from '@utils/grid/test-utils';
 
-import { wrapAgTestIdFor } from 'ag-grid-community';
+// Infer test URL from file location
+setAgExampleUrl(import.meta);
 
-const pageExampleUrl = 'aggregation/aggregation-overview';
-testAllFrameworks('Example', pageExampleUrl, async ({ page }) => {
-    const agIdFor = wrapAgTestIdFor((testId) => page.getByTestId(testId));
-
+test.eachFramework('Example', async ({ agIdFor }) => {
     await expect(agIdFor.autoGroupCell('row-group-country-Canada')).toContainText('Canada (351)', {
         useInnerText: true,
     });

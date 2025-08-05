@@ -11,7 +11,7 @@ export const ProductCellRenderer: FunctionComponent<CustomCellRendererProps> = (
 }) => (
     <div className={styles.productCell}>
         <div className={styles.image}>
-            <img src={urlWithBaseUrl(`/example/inventory/${image}.png`)} alt={image} />
+            <img src={urlWithBaseUrl(`/example/inventory/${image}`)} alt={image} />
         </div>
         <div>
             <div>{value}</div>

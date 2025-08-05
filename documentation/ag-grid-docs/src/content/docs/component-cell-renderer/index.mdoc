@@ -316,3 +316,45 @@ The example below uses [React.lazy](https://react.dev/reference/react/lazy) to l
 When using custom Cell Components, the custom Cell Component is responsible for implementing support for keyboard navigation among its focusable elements. This is why by default, focusing a grid cell with a custom Cell Component will focus the entire cell instead of any of the elements inside the custom cell renderer.
 
 In order to handle focus in your custom cell component, implement [Custom Cell Component Keyboard Navigation](./keyboard-navigation/#custom-cell-component).
+
+### Handling Mouse Events
+
+By default when a cell is clicked on, the grid will perform actions including:
+
+- Focusing the cell.
+
+- Updating the cell selection, if [Cell Selection](./cell-selection/) is enabled.
+
+- Selecting the row, if [Row Selection](./row-selection/) is enabled.
+
+- Starting editing, if [Editing](./cell-editing/) is enabled.
+
+This behaviour may not be desirable for custom cell components, e.g. if they contain interactive elements. In this situation, the grid can be prevented from handling the mouse event (`'click'`, `'dblclick'`, `'mousedown'` or `'touchstart'`), by passing the `suppressMouseEventHandling` callback to `cellRendererParams`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            colId: 'customButton',
+            cellRenderer: CustomButtonComponent,
+            cellRendererParams: {
+                suppressMouseEventHandling: (params) => true,
+            },
+        },
+    ],
+}
+```
+
+{% interfaceDocumentation interfaceName="EventCellRendererParams" config={"description":""} /%}
+
+Note that whilst the callback will prevent the grid from performing actions, it will still continue to fire events (e.g. `onCellClicked`). These events will have the `isEventHandlingSuppressed` property set to `true` if the callback returns `true`.
+
+The following example demonstrates using `suppressMouseEventHandling` with cell selection, row selection, and editing. Mouse events are suppressed for the Button column.
+
+{% gridExampleRunner title="Handling Mouse Events" name="handling-mouse-events" /%}
+
+It is also possible to stop propagation on mouse events from within a custom cell component, but this must be done for each of the mouse events described above.
+
+{% if isFramework("react") %}
+To manually prevent the grid from handling mouse events, the "capture" versions of event handlers must be used, e.g. `onClickCapture` instead of `onClick`.
+{% /if %}

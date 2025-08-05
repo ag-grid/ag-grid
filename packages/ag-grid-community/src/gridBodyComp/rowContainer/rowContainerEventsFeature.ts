@@ -6,11 +6,10 @@ import { _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
 import type { IEditService } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import { _getCellCtrlForEventTarget } from '../../rendering/cell/cellCtrl';
+import { _getCellCtrlForEventTarget, _getRowCtrlForEventTarget } from '../../rendering/renderUtils';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { DOM_DATA_KEY_ROW_CTRL } from '../../rendering/row/rowCtrl';
 import type { UndoRedoService } from '../../undoRedo/undoRedoService';
-import { _getCtrlForEventTarget, _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
+import { _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
 import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
 import { _selectAllCells } from '../../utils/selection';
 import { _isEventFromThisGrid } from '../mouseEventUtils';
@@ -111,7 +110,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const { gos } = this;
         return {
             cellCtrl: _getCellCtrlForEventTarget(gos, target),
-            rowCtrl: _getCtrlForEventTarget(gos, target, DOM_DATA_KEY_ROW_CTRL),
+            rowCtrl: _getRowCtrlForEventTarget(gos, target),
         };
     }
 
