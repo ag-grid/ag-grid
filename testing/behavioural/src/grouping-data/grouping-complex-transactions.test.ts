@@ -4,8 +4,7 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
 import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager } from '../test-utils';
 
-const gridRowsOptions: GridRowsOptions = {
-};
+const gridRowsOptions: GridRowsOptions = {};
 
 describe('ag-grid grouping complex transactions', () => {
     const gridsManager = new TestGridsManager({
