@@ -3,6 +3,7 @@ import type {
     BeanCollection,
     ElementParams,
     FilterDisplayParams,
+    FilterWrapperParams,
     GridSelect,
     IAfterGuiAttachedParams,
     IFilterComp,
@@ -29,6 +30,16 @@ interface FilterColumnPair {
 }
 
 type GroupFilterEvent = 'columnsChanged';
+
+export function processGroupFilterParams(
+    params: IFilterParams & FilterWrapperParams
+): IFilterParams & FilterWrapperParams {
+    if (params.buttons) {
+        // group filters don't support buttons
+        params.buttons = [];
+    }
+    return params;
+}
 
 const GroupFilterElement: ElementParams = {
     tag: 'div',

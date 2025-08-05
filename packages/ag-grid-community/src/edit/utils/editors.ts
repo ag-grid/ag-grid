@@ -134,8 +134,7 @@ export function _setupEditor(
 
     const previousEdit = beans.editModelSvc?.getEdit(position);
 
-    // if key is a single character, then we treat it as user input
-    let newValue = key?.length === 1 ? key : editorParams.value;
+    let newValue = editorParams.value;
 
     if (newValue === undefined) {
         newValue = previousEdit?.sourceValue;

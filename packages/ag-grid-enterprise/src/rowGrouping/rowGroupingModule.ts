@@ -10,7 +10,7 @@ import {
 } from '../rowHierarchy/rowHierarchyModule';
 import { VERSION } from '../version';
 import { AgGridHeaderDropZonesSelector } from './columnDropZones/agGridHeaderDropZones';
-import { GroupFilter } from './groupFilter/groupFilter';
+import { GroupFilter, processGroupFilterParams } from './groupFilter/groupFilter';
 import { GroupFilterHandler } from './groupFilter/groupFilterHandler';
 import { GroupFilterService } from './groupFilter/groupFilterService';
 import { GroupFloatingFilterComp } from './groupFilter/groupFloatingFilter';
@@ -77,7 +77,13 @@ export const RowGroupingPanelModule: _ModuleWithoutApi = {
 export const GroupFilterModule: _ModuleWithoutApi = {
     moduleName: 'GroupFilter',
     version: VERSION,
-    userComponents: { agGroupColumnFilter: GroupFilter, agGroupColumnFloatingFilter: GroupFloatingFilterComp },
+    userComponents: {
+        agGroupColumnFilter: {
+            classImp: GroupFilter,
+            processParams: processGroupFilterParams,
+        },
+        agGroupColumnFloatingFilter: GroupFloatingFilterComp,
+    },
     beans: [GroupFilterService],
     dynamicBeans: {
         agGroupColumnFilterHandler: GroupFilterHandler,
