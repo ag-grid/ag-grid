@@ -17,20 +17,52 @@ interface ExpansionState {
     /** Whether the user has interacted with all nodes */
     interactedWithAll: boolean;
     /** RowNode IDs of those nodes whose expansion state differs from the base state */
-    toggledNodes: Record<string, boolean>;
+    toggledNodes: Record<string, boolean | undefined>; // in reality this is true | undefined
     /** RowNode IDs of those nodes that have been interacted with by the user */
-    interactedWith: Record<string, boolean>;
+    interactedWith: Record<string, true | undefined>;
+    /**
+     * Returns whether the row with the given ID is expanded.
+     * If `expandAll` is true, it returns true if the node has not been toggled.
+     * If `expandAll` is false, it returns true if the node has been toggled.
+     */
+    isExpanded(rowId: string): boolean;
 }
-const DEFAULT_EXPANDED_STATE: ExpansionState = {
-    expandAll: false,
-    interactedWithAll: false,
-    toggledNodes: {},
-    interactedWith: {},
+
+/**
+ * Using a proxy here allows us to automagically update the `interactedWith` state,
+ * which is used to determine the default expansion state of the nodes. And be memory conscious as well.
+ */
+const getDefaultExpansionState = (defaultOverrides: Partial<ExpansionState> = {}) => {
+    const self = {
+        expandAll: false,
+        interactedWithAll: false,
+        isExpanded: (rowId: string) => self.expandAll !== !!self.toggledNodes[rowId],
+        toggledNodes: new Proxy({} as ExpansionState['toggledNodes'], {
+            set(target, p, newValue) {
+                const rowIdC = p as keyof typeof target;
+                self.interactedWith[rowIdC] = true;
+                return self.expandAll === newValue ? delete target[rowIdC] : (target[rowIdC] = true);
+            },
+        }),
+        interactedWith: new Proxy({} as ExpansionState['interactedWith'], {
+            get: (target, p) => {
+                const rowIdC = p as keyof typeof target;
+                return self.interactedWithAll ? delete target[rowIdC] || true : target[rowIdC];
+            },
+            set: (target, p, value: true) => {
+                const rowIdC = p as keyof typeof target;
+                return self.interactedWithAll ? delete target[rowIdC] : (target[rowIdC] = value);
+            },
+        }),
+        ...defaultOverrides,
+    } as ExpansionState;
+    return self;
 };
+
 export class ServerSideExpansionService extends BaseExpansionService implements NamedBean, IExpansionService {
     beanName = 'expansionSvc' as const;
 
-    private expandedState = { ...DEFAULT_EXPANDED_STATE };
+    private expandedState = getDefaultExpansionState();
     private serverSideRowModel: ServerSideRowModel;
 
     public wireBeans(beans: BeanCollection) {
@@ -40,7 +72,7 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     public postConstruct(): void {
         this.addManagedEventListeners({
             columnRowGroupChanged: () => {
-                this.resetExpandedState();
+                this.expandedState = getDefaultExpansionState();
             },
         });
     }
@@ -50,8 +82,8 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
             return false;
         }
 
-        if (this.expandedState.interactedWithAll || this.expandedState.interactedWith[rowNode.id!]) {
-            return this.expandedState.expandAll !== this.expandedState.toggledNodes[rowNode.id!];
+        if (this.expandedState.interactedWith[rowNode.id!]) {
+            return this.expandedState.isExpanded(rowNode.id!);
         }
 
         const userFunc = this.gos.getCallback('isServerSideGroupOpenByDefault');
@@ -88,22 +120,18 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
         rowId?: string
     ): void {
         const rowIdC = rowId || rowNode!.id!;
-        this.expandedState.toggledNodes[rowIdC] = this.expandedState.expandAll !== expanded;
-        if (!this.expandedState.interactedWithAll) {
-            this.expandedState.interactedWith[rowIdC] = true;
-        }
+        this.expandedState.toggledNodes[rowIdC] = expanded;
         if (rowNode) {
             super.setExpanded(rowNode, expanded, e);
         }
     }
 
     public expandAll(expanded: boolean): void {
-        this.expandedState.expandAll = expanded;
-        this.expandedState.interactedWithAll = true;
+        this.expandedState = getDefaultExpansionState({ expandAll: expanded, interactedWithAll: true });
         this.serverSideRowModel.forEachNodeTransactional((node) => node.setExpanded(expanded));
         this.beans.eventSvc.dispatchEvent({
             type: 'expandOrCollapseAll',
-            source: expanded ? 'expandAll' : 'collapseAll',
+            source: expanded ? 'expandAll' : ' collapseAll',
         });
     }
 
@@ -118,12 +146,5 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
         // values jump between group and footer, because the footer can be callback
         // we refresh regardless as the output of the callback could be a moving target
         this.beans.rowRenderer.refreshCells({ rowNodes: [event.node] });
-    }
-
-    private resetExpandedState(defaultOverrides: Partial<ExpansionState> = {}): void {
-        this.expandedState = {
-            ...DEFAULT_EXPANDED_STATE,
-            ...defaultOverrides,
-        };
     }
 }
