@@ -41,7 +41,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
 
         cols.tree = dateHierarchyCols.tree
             .filter((col) => !cols.tree.some((c) => c.getId() === col.getId()))
-            .concat(cols.list);
+            .concat(cols.tree);
 
         _updateColsMap(cols);
     }
