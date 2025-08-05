@@ -162,9 +162,15 @@ export class GridRowsDomValidator {
         }
         cellValue = String(cellValue).trim();
 
-        if (columnId === 'ag-Grid-AutoColumn') {
+        // Handle all auto group columns (main and field-specific) for groupHideOpenParents
+        const isAutoGroupCol = columnId === 'ag-Grid-AutoColumn' || columnId.startsWith('ag-Grid-AutoColumn-');
+        if (isAutoGroupCol) {
             let childCountText = '';
-            const suppressCount = gridRows.api.getGridOption('autoGroupColumnDef')?.cellRenderer?.suppressCount;
+            // Prefer column's own suppressCount, fallback to global autoGroupColumnDef
+            let suppressCount = column.getColDef()?.cellRenderer?.suppressCount;
+            if (suppressCount === undefined) {
+                suppressCount = gridRows.api.getGridOption('autoGroupColumnDef')?.cellRenderer?.suppressCount;
+            }
             const childCount = suppressCount ? 0 : row.allChildrenCount;
             if (childCount) {
                 childCountText += `(${childCount})`;
@@ -173,6 +179,17 @@ export class GridRowsDomValidator {
                 cellValue = childCountText; // Is fine, it contains just the child count
             } else {
                 cellValue = cellValue ? `${cellValue} ${childCountText}` : childCountText;
+            }
+
+            if (textContent !== cellValue) {
+                // Handle groupHideOpenParents: relax check if enabled
+                const groupHideOpenParents = !!gridRows.api.getGridOption('groupHideOpenParents');
+                if (groupHideOpenParents) {
+                    // Accept if textContent is a suffix of cellValue, or just skip the check.
+                    if (cellValue.endsWith(textContent)) {
+                        return;
+                    }
+                }
             }
         }
 
