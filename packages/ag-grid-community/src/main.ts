@@ -31,6 +31,7 @@ export {
     GROUP_AUTO_COLUMN_ID,
     SELECTION_COLUMN_ID,
     ROW_NUMBERS_COLUMN_ID,
+    GROUP_HIERARCHY_COLUMN_ID_PREFIX,
     isRowNumberCol,
     isColumnSelectionCol,
     isColumnGroupAutoCol,

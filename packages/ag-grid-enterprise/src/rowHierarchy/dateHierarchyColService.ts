@@ -4,6 +4,7 @@ import type {
     GridOptions,
     HeaderValueGetterParams,
     IDateHierarchyColService,
+    IRowNode,
     NamedBean,
     PropertyChangedEvent,
     PropertyValueChangedEvent,
@@ -13,6 +14,8 @@ import type {
 import {
     AgColumn,
     BeanStub,
+    GROUP_HIERARCHY_COLUMN_ID_PREFIX,
+    _addColumnDefaultAndTypes,
     _areColIdsEqual,
     _columnsMatch,
     _destroyColumnTree,
@@ -151,33 +154,46 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
 
         const groupHierarchyConfig = gos.get('groupHierarchyConfig') ?? {};
         if (part in groupHierarchyConfig) {
-            return groupHierarchyConfig[part];
+            const providedDef = groupHierarchyConfig[part];
+            if (!providedDef.colId) {
+                return null;
+            }
+            return _addColumnDefaultAndTypes(this.beans, providedDef, providedDef.colId, true);
         }
 
-        const base: ColDef = {
-            enableRowGroup: true,
-            rowGroup: sourceColDef.rowGroup,
-            enablePivot: sourceColDef.enablePivot,
-            hide: true,
+        const base: ColDef = _addColumnDefaultAndTypes(
+            this.beans,
+            {
+                enableRowGroup: true,
+                rowGroup: sourceColDef.rowGroup,
+                enablePivot: sourceColDef.enablePivot,
+                hide: true,
+                editable: false,
+            },
+            'dummy',
+            true
+        );
+
+        const getDate = (node: IRowNode | null): Date | null => {
+            const innerValue = valueSvc.getValue(sourceCol, node);
+            let date: Date | null = null;
+            if (innerValue instanceof Date) {
+                date = innerValue;
+            } else if (typeof innerValue === 'string') {
+                date = _parseDateTimeFromString(innerValue);
+            }
+
+            return date;
         };
 
         const getDatePartValueGetter =
             (index: number, map?: (part: string) => string) => (params: ValueGetterParams) => {
-                const innerValue = valueSvc.getValue(sourceCol, params.node);
-                let date: Date | null = null;
-                if (innerValue instanceof Date) {
-                    date = innerValue;
-                } else if (typeof innerValue === 'string') {
-                    date = _parseDateTimeFromString(innerValue);
-                } else {
-                    return innerValue;
-                }
+                const date = getDate(params.node);
                 const parts = _getDateParts(date);
-                if (parts) {
-                    return map?.(parts[index]) ?? parts[index];
+                if (!parts) {
+                    return null;
                 }
-
-                return innerValue;
+                return map?.(parts[index]) ?? parts[index];
             };
 
         const getHeaderValueGetter = (part: string) => (params: HeaderValueGetterParams) => {
@@ -188,11 +204,13 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
             return '';
         };
 
+        const getColId = (part: string) => `${GROUP_HIERARCHY_COLUMN_ID_PREFIX}-${sourceCol.getColId()}-${part}`;
+
         switch (part) {
             case 'year':
                 return {
                     ...base,
-                    colId: `${sourceColDef.colId ?? sourceColDef.field}-year`,
+                    colId: getColId(part),
                     headerValueGetter: getHeaderValueGetter('Year'),
                     valueGetter: getDatePartValueGetter(0),
                 };
@@ -200,7 +218,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
             case 'quarter':
                 return {
                     ...base,
-                    colId: `${sourceColDef.colId ?? sourceColDef.field}-quarter`,
+                    colId: getColId(part),
                     headerValueGetter: getHeaderValueGetter('Quarter'),
                     valueGetter: getDatePartValueGetter(1, (month) => (Math.floor(Number(month) / 4) + 1).toString()),
                 };
@@ -208,7 +226,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
             case 'month':
                 return {
                     ...base,
-                    colId: `${sourceColDef.colId ?? sourceColDef.field}-month`,
+                    colId: getColId(part),
                     headerValueGetter: getHeaderValueGetter('Month'),
                     valueGetter: getDatePartValueGetter(1),
                 };
@@ -216,7 +234,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
             case 'day':
                 return {
                     ...base,
-                    colId: `${sourceColDef.colId ?? sourceColDef.field}-day`,
+                    colId: getColId(part),
                     headerValueGetter: getHeaderValueGetter('Day'),
                     valueGetter: getDatePartValueGetter(2),
                 };
@@ -224,7 +242,7 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
             case 'hour':
                 return {
                     ...base,
-                    colId: `${sourceColDef.colId ?? sourceColDef.field}-hour`,
+                    colId: getColId(part),
                     headerValueGetter: getHeaderValueGetter('Hour'),
                     valueGetter: getDatePartValueGetter(3),
                 };
@@ -232,17 +250,17 @@ export class DateHierarchyColService extends BeanStub implements NamedBean, IDat
             case 'minute':
                 return {
                     ...base,
-                    colId: `${sourceColDef.colId ?? sourceColDef.field}-minute`,
+                    colId: getColId(part),
                     headerValueGetter: getHeaderValueGetter('Minute'),
-                    valueGetter: getDatePartValueGetter(3),
+                    valueGetter: getDatePartValueGetter(4),
                 };
 
             case 'second':
                 return {
                     ...base,
-                    colId: `${sourceColDef.colId ?? sourceColDef.field}-second`,
+                    colId: getColId(part),
                     headerValueGetter: getHeaderValueGetter('Second'),
-                    valueGetter: getDatePartValueGetter(3),
+                    valueGetter: getDatePartValueGetter(5),
                 };
 
             default:
