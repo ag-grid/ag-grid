@@ -417,30 +417,86 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return (this.newestRangeStartCell?.column === firstCol ? lastCol : firstCol) as AgColumn;
     }
 
-    public extendLatestRangeRowCountBy(targetCount: number): boolean {
+    public extendRangeRowCountBy(cellRange: CellRange, targetCount: number): void {
         const { beans } = this;
-        const lastRange = _last(this.cellRanges);
 
-        let addCount = 0;
-        let row = lastRange.endRow || null;
-        while (row && addCount < targetCount) {
-            const nextRow = _getRowBelow(beans, row);
+        if (!cellRange.endRow) {
+            return;
+        }
+
+        let stepsMoved = 0;
+        let currentRow = cellRange.endRow;
+
+        const stepFn = targetCount > 0 ? _getRowBelow : _getRowAbove;
+        const stepCount = Math.abs(targetCount);
+
+        while (stepsMoved < stepCount) {
+            const nextRow = stepFn(beans, currentRow);
             if (!nextRow) {
                 break;
             }
-            row = nextRow;
-            addCount++;
+            currentRow = nextRow;
+            stepsMoved++;
         }
 
-        if (addCount !== targetCount || !row) {
-            return false;
+        if (stepsMoved !== stepCount) {
+            return; // Could not move the desired number of rows
         }
 
-        const cellPosition = { ...row, column: this.getRangeLastColumn(lastRange) };
+        const cellPosition = {
+            ...currentRow,
+            column: this.getRangeLastColumn(cellRange),
+        };
 
-        this.extendLatestRangeToCell(cellPosition);
+        this.updateRangeEnd(cellRange, cellPosition);
+    }
 
-        return true;
+    public extendRangeColumnCountBy(cellRange: CellRange, delta: number): void {
+        const { columns, startColumn } = cellRange;
+
+        if (delta === 0) return;
+
+        const allColumns = this.getColumnsFromModel(); // ordered visible columns
+
+        if (!allColumns) {
+            return;
+        }
+
+        const lastColumn = _last(columns);
+        const endColumn = startColumn === columns[0] ? lastColumn! : columns[0];
+
+        if (!lastColumn || !endColumn) {
+            return;
+        }
+
+        const startIdx = allColumns.indexOf(startColumn as AgColumn);
+        const endIdx = allColumns.indexOf(endColumn as AgColumn);
+
+        const direction = endIdx >= startIdx ? 1 : -1;
+        const currentLength = columns.length;
+        const targetLength = currentLength + delta;
+
+        if (targetLength <= 0) {
+            return; // can't shrink to 0 or less
+        }
+
+        const newColumns: AgColumn[] = [];
+        let index = startIdx;
+
+        for (let i = 0; i < targetLength; i++) {
+            const col = allColumns[index];
+            if (!col) {
+                break;
+            }
+            newColumns.push(col);
+            index += direction;
+        }
+
+        // Only update if length actually changed
+        if (newColumns.length === targetLength) {
+            cellRange.columns = newColumns;
+            this.dispatchChangedEvent(true, true, cellRange.id);
+        }
     }
 
     public extendLatestRangeToCell(cellPosition: CellPosition): void {
