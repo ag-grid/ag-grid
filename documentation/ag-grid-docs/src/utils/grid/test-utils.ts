@@ -1,5 +1,5 @@
 /* eslint-disable no-empty-pattern */
-import type { Page, TestType } from '@playwright/test';
+import type { Locator, Page, TestType } from '@playwright/test';
 import { test as base, expect } from '@playwright/test';
 import { CacheRoute } from 'playwright-network-cache';
 
@@ -10,7 +10,7 @@ type ExtractFixtures<T> = T extends TestType<infer A, infer O> ? A & O : never;
 // Extract the fixtures from the base test type as Playwright doesn't export them directly
 type PlaywrightFixtures = ExtractFixtures<typeof base>;
 
-type AgIdFor = ReturnType<typeof wrapAgTestIdFor<any>>;
+type AgIdFor = ReturnType<typeof wrapAgTestIdFor<Locator>>;
 
 type AgGridFixtures = {
     agFramework: AgFramework;
