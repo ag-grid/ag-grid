@@ -30,8 +30,6 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     public columns: _ColumnCollections | null = null;
     private readonly sourceColumnMap = new WeakMap<AgColumn, AgColumn[]>();
 
-    public postConstruct(): void {}
-
     public addColumns(cols: _ColumnCollections): void {
         const dateHierarchyCols = this.columns;
         if (dateHierarchyCols == null) {
