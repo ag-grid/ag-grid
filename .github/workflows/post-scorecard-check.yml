@@ -12,7 +12,7 @@ on:
 env:
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
-  THRESHOLD: 7.0
+  THRESHOLD: 7.5
   REPORT_FILE: ./ctrf-report.json
 
 permissions: read-all
