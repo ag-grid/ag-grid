@@ -129,6 +129,8 @@ export {
     DragSourceType,
     DropTarget,
     DragSource,
+    DragItemNameGetter,
+    DraggingEventType,
     DraggingEvent,
     DragAndDropIcon,
 } from './dragAndDrop/dragAndDropService';

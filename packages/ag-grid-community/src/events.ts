@@ -1,5 +1,6 @@
 import type { AgChartThemeOverrides } from 'ag-charts-types';
 
+import type { RowsDrop } from './dragAndDrop/rowDragFeature';
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
@@ -531,6 +532,9 @@ export interface RowDragEvent<TData = any, TContext = any, T extends AgEventType
      * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?'
      */
     y: number;
+
+    /** Details about the row dragging drop target. */
+    rowsDrop: RowsDrop<TData, TContext> | null;
 }
 
 export interface RowDragEnterEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragEnter'> {}
