@@ -1,10 +1,6 @@
-// Import the test helper from test-utils
-import { expect, setAgExampleUrl, test } from '@utils/grid/test-utils';
+import { expect, test } from '@utils/grid/test-utils';
 
-// Infer test URL from file location
-setAgExampleUrl(import.meta);
-
-test.describe('Cell Editing', () => {
+test.agExample(import.meta, () => {
     test.eachFramework('dblclick', async ({ page, agIdFor }) => {
         const cell = agIdFor.cell('0', 'firstName');
 

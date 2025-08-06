@@ -1,10 +1,6 @@
-// Import the test helper from test-utils
-import { expect, setAgExampleUrl, test } from '@utils/grid/test-utils';
+import { expect, test } from '@utils/grid/test-utils';
 
-// Infer test URL from file location
-setAgExampleUrl(import.meta);
-
-test.describe('Batch Editing', () => {
+test.agExample(import.meta, () => {
     // Run through all frameworks
     test.eachFramework('With Batch', async ({ page, agIdFor }) => {
         await page.locator('button', { hasText: 'Start Batch Edit' }).click(); // click the button to start batch editing
