@@ -115,7 +115,7 @@ const DocsExampleRunnerInner = ({
 
                         // Don't include the example spec files in the example runner for now
                         const specFiles = ['example.spec.ts', 'example.spec.js'];
-                        specFiles.forEach(specFile => {
+                        specFiles.forEach((specFile) => {
                             if (json.files[specFile]) {
                                 delete json.files[specFile];
                             }
