@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 import { getByTestId } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
@@ -59,7 +58,7 @@ describe('Cell Editing Start', () => {
         test.each([
             { field: 'number', input: '1', expected: '1', popup: false },
             { field: 'string1', input: '1', expected: '1', popup: false },
-            // { field: 'string2', input: '1', expected: '1', popup: true },
+            { field: 'string2', input: '1', expected: '1', popup: true },
             { field: 'date', input: '1', expected: null, popup: false },
             { field: 'dateStr', input: '1', expected: null, popup: false },
             { field: 'boolean', input: '1', expected: true, popup: false },
@@ -92,7 +91,7 @@ describe('Cell Editing Start', () => {
         test.each([
             { field: 'number', popup: false, selectionStart: null, selectionEnd: null },
             { field: 'string1', popup: false, selectionStart: 0, selectionEnd: 4 },
-            // { field: 'string2', popup: true, selectionStart: 0, selectionEnd: 4 },
+            { field: 'string2', popup: true, selectionStart: 0, selectionEnd: 4 },
             { field: 'date', popup: false, selectionStart: null, selectionEnd: null },
             { field: 'dateStr', popup: false, selectionStart: null, selectionEnd: null },
             { field: 'boolean', popup: false, selectionStart: null, selectionEnd: null },
@@ -127,7 +126,7 @@ describe('Cell Editing Start', () => {
         test.each([
             { field: 'number', popup: false, selectionStart: null, selectionEnd: null },
             { field: 'string1', popup: false, selectionStart: 4, selectionEnd: 4 },
-            // { field: 'string2', popup: true, selectionStart: 4, selectionEnd: 4 },
+            { field: 'string2', popup: true, selectionStart: 4, selectionEnd: 4 },
             { field: 'date', popup: false, selectionStart: null, selectionEnd: null },
             { field: 'dateStr', popup: false, selectionStart: null, selectionEnd: null },
             { field: 'boolean', popup: false, selectionStart: null, selectionEnd: null },
@@ -160,7 +159,7 @@ describe('Cell Editing Start', () => {
     });
 
     // Regression test for AG-15694
-    describe('Start edit with F2 key after cell editing', () => {
+    describe('when data is null', () => {
         test.each([
             { field: 'string1', expected: '', popup: false },
             { field: 'string2', expected: '', popup: true },
@@ -179,7 +178,7 @@ describe('Cell Editing Start', () => {
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(100);
+            await asyncSetTimeout(1);
 
             const cell = getByTestId(gridDiv, agTestIdFor.cell('1', field!));
             await userEvent.dblClick(cell);
