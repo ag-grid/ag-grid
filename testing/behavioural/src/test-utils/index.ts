@@ -12,3 +12,4 @@ export * from './ssrm-test-utils';
 export * from './prng';
 export * from './test-utils-assertions';
 export * from './test-utils-events';
+export * from './test-utils-edit';
