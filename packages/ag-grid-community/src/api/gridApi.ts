@@ -35,6 +35,7 @@ import type {
     ISizeColumnsToContentParams,
     ISizeColumnsToFitParams,
 } from '../interfaces/autoSize';
+import type { IServerSideRowExpansionState } from '../interfaces/expansionState';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState, GridStateKey } from '../interfaces/gridState';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
@@ -1572,6 +1573,21 @@ export interface _ServerSideRowModelGridApi<TData> {
      * @agModule `ServerSideRowModelApiModule`
      */
     setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
+
+    /**
+     * Returns the current server-side row expansion state.
+     *
+     * @agModule `ServerSideRowModelApiModule`
+     */
+    getServerSideExpandState(): IServerSideRowExpansionState | null;
+
+    /**
+     * Set the server-side row expansion state.
+     *
+     * If the state is not provided, it will clear the current expansion state.
+     * @agModule `ServerSideRowModelApiModule`
+     */
+    setServerSideExpandState(state: IServerSideRowExpansionState): void;
 
     /**
      * Apply transactions to the server side row model.

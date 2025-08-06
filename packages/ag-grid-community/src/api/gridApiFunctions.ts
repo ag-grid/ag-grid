@@ -408,6 +408,8 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     }),
 
     ...mod<_ServerSideRowModelGridApi<any>>('ServerSideRowModelApi', {
+        getServerSideExpandState: 0,
+        setServerSideExpandState: 0,
         getServerSideSelectionState: 0,
         setServerSideSelectionState: 0,
         applyServerSideTransaction: 0,
