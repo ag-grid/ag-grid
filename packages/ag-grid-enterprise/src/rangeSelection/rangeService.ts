@@ -29,6 +29,7 @@ import {
     _areCellsEqual,
     _areEqual,
     _exists,
+    _getAbsoluteRowIndex,
     _getCellCtrlForEventTarget,
     _getRowAbove,
     _getRowBelow,
@@ -354,6 +355,17 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         };
     }
 
+    public getRangeRowCount(cellRange: PartialCellRange): number {
+        const beans = this.beans;
+        const start = this.getRangeStartRow(cellRange);
+        const end = this.getRangeEndRow(cellRange);
+
+        const startIndex = _getAbsoluteRowIndex(beans, start);
+        const endIndex = _getAbsoluteRowIndex(beans, end);
+
+        return endIndex - startIndex + 1;
+    }
+
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
         const { gos } = this;
         if (!_isCellSelectionEnabled(gos)) {
@@ -396,6 +408,39 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.setNewestRangeStartCell(cell);
         this.onDragStop();
         this.dispatchChangedEvent(true, true);
+    }
+
+    private getRangeLastColumn(cellRange: CellRange): AgColumn {
+        const firstCol = cellRange.columns[0];
+        const lastCol = _last(cellRange.columns)!;
+
+        return (this.newestRangeStartCell?.column === firstCol ? lastCol : firstCol) as AgColumn;
+    }
+
+    public extendLatestRangeRowCountBy(targetCount: number): boolean {
+        const { beans } = this;
+        const lastRange = _last(this.cellRanges);
+
+        let addCount = 0;
+        let row = lastRange.endRow || null;
+        while (row && addCount < targetCount) {
+            const nextRow = _getRowBelow(beans, row);
+            if (!nextRow) {
+                break;
+            }
+            row = nextRow;
+            addCount++;
+        }
+
+        if (addCount !== targetCount || !row) {
+            return false;
+        }
+
+        const cellPosition = { ...row, column: this.getRangeLastColumn(lastRange) };
+
+        this.extendLatestRangeToCell(cellPosition);
+
+        return true;
     }
 
     public extendLatestRangeToCell(cellPosition: CellPosition): void {
@@ -449,13 +494,11 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const lastRange = _last(this.cellRanges)!;
         const startCell = this.newestRangeStartCell;
-        const firstCol = lastRange.columns[0];
-        const lastCol = _last(lastRange.columns)!;
 
         // find the cell that is at the furthest away corner from the starting cell
         const endCellIndex = lastRange.endRow!.rowIndex;
         const endCellFloating = lastRange.endRow!.rowPinned;
-        const endCellColumn = startCell.column === firstCol ? lastCol : firstCol;
+        const endCellColumn = this.getRangeLastColumn(lastRange);
 
         const endCell: CellPosition = { column: endCellColumn, rowIndex: endCellIndex, rowPinned: endCellFloating };
         const newEndCell = this.cellNavigation.getNextCellToFocus(key, endCell, ctrlKey);

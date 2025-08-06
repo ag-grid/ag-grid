@@ -257,7 +257,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             this.removeLastLineIfBlank(parsedData);
         }
 
-        const { rangeSvc } = this.beans;
+        const { rangeSvc, editSvc } = this.beans;
 
         const pasteOperation = (
             cellsToFlash: Record<string, boolean>,
@@ -269,12 +269,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             const pasteIntoRange = rangeActive && !this.hasOnlyOneValueToPaste(parsedData!);
 
             if (pasteIntoRange) {
-                this.pasteIntoActiveRange(rangeSvc!, parsedData!, cellsToFlash, updatedRowNodes, changedPath);
+                this.pasteIntoActiveRange(parsedData!, cellsToFlash, updatedRowNodes, changedPath);
             } else {
                 this.pasteStartingFromFocusedCell(parsedData!, cellsToFlash, updatedRowNodes, focusedCell, changedPath);
             }
 
-            this.beans.editSvc?.stopEditing(undefined, { source: SOURCE_PASTE });
+            editSvc?.stopEditing(undefined, { source: SOURCE_PASTE });
         };
 
         this.doPasteOperation(pasteOperation);
@@ -336,14 +336,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private pasteIntoActiveRange(
-        rangeSvc: IRangeService,
         clipboardData: string[][],
         cellsToFlash: Record<string, boolean>,
         updatedRowNodes: RowNode[],
         changedPath: ChangedPath | undefined
     ) {
-        // true if clipboard data can be evenly pasted into range, otherwise false
-        const abortRepeatingPasteIntoRows = this.getRangeSize(rangeSvc) % clipboardData.length != 0;
+        const doRowSizesMatchForPasting = this.adjustAndCheckIfRowSizesMatch(clipboardData);
 
         let indexOffset = 0;
         let dataRowIndex = 0;
@@ -363,7 +361,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             const atEndOfClipboardData = index - indexOffset >= clipboardData.length;
 
             if (atEndOfClipboardData) {
-                if (abortRepeatingPasteIntoRows) {
+                if (!doRowSizesMatchForPasting) {
                     return;
                 }
 
@@ -1222,16 +1220,24 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
     }
 
-    private getRangeSize(rangeSvc: IRangeService): number {
-        const ranges = rangeSvc.getCellRanges();
-        let startRangeIndex = 0;
-        let endRangeIndex = 0;
+    private adjustAndCheckIfRowSizesMatch(clipboardData: string[][]): boolean {
+        const { rangeSvc } = this.beans;
 
-        if (ranges.length > 0) {
-            startRangeIndex = rangeSvc.getRangeStartRow(ranges[0]).rowIndex;
-            endRangeIndex = rangeSvc.getRangeEndRow(ranges[0]).rowIndex;
+        if (!rangeSvc) {
+            return false;
         }
 
-        return startRangeIndex - endRangeIndex + 1;
+        // true if clipboard data can be evenly pasted into range, otherwise false
+        const lastCellRange = _last(rangeSvc.getCellRanges());
+        let rangeRowCount = lastCellRange ? rangeSvc.getRangeRowCount(lastCellRange) : 1;
+        const clipboardRowCount = clipboardData.length;
+
+        if (rangeRowCount < clipboardRowCount) {
+            if (rangeSvc.extendLatestRangeRowCountBy(clipboardRowCount - rangeRowCount)) {
+                rangeRowCount = clipboardRowCount;
+            }
+        }
+
+        return rangeRowCount % clipboardRowCount == 0;
     }
 }

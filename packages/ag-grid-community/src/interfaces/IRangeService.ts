@@ -14,6 +14,7 @@ export interface IRangeService {
     isEmpty(): boolean;
     removeAllCellRanges(silent?: boolean): void;
     getCellRangeCount(cell: CellPosition): number;
+    getRangeRowCount(cellRange: CellRange): number;
     isCellInAnyRange(cell: CellPosition): boolean;
     isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean;
     isRowInRange(rowIndex: number, rowPinned: RowPinnedType, cellRange: CellRange): boolean;
@@ -31,6 +32,7 @@ export interface IRangeService {
     addCellRange(params: CellRangeParams): void;
     extendLatestRangeInDirection(event: KeyboardEvent): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
+    extendLatestRangeRowCountBy(targetCount: number): boolean;
     updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent?: boolean): void;
     getRangeStartRow(cellRange: PartialCellRange): RowPosition;
     getRangeEndRow(cellRange: PartialCellRange): RowPosition;
