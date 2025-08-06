@@ -94,7 +94,8 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     public isDateHierarchyColsEnabledForCol(col: AgColumn): boolean {
         const { dataTypeSvc } = this.beans;
         const def = col.getColDef();
-        const isDateCol = dataTypeSvc?.getBaseDataType(col)?.includes('date');
+        const isDateCol =
+            dataTypeSvc?.isColPendingInference(col.getColId()) || dataTypeSvc?.getBaseDataType(col)?.includes('date');
         return !!(def.rowGroupingHierarchy && (def.rowGroup || def.enableRowGroup) && isDateCol);
     }
 
