@@ -18,7 +18,7 @@ on:
         type: boolean
         default: false
         required: true
-      run_bundle_size:
+      skip_bundle_size:
         description: 'Skip bundle size tests'
         type: boolean
         default: true
@@ -275,7 +275,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Bundle Size Tests
     needs: build_lint
-    if: ${{ needs.build_lint.result == 'success' && inputs.run_bundle_size }}
+    if: ${{ needs.build_lint.result == 'success' && !inputs.skip_bundle_size }}
     strategy:
       matrix: ${{ fromJson(needs.build_lint.outputs.bundle_test_matrix )}}
       fail-fast: false
