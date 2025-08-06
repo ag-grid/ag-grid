@@ -7688,10 +7688,10 @@
   dependencies:
     "@types/istanbul-lib-report" "*"
 
-"@types/jasmine@~4.0.0":
-  version "4.0.3"
-  resolved "http://52.50.158.57:4873/@types/jasmine/-/jasmine-4.0.3.tgz#097ce710d70eb7f3662e96c1f75824dd22c27d5c"
-  integrity sha512-Opp1LvvEuZdk8fSSvchK2mZwhVrsNT0JgJE9Di6MjnaIpmEXM8TLCPPrVtNTYh8+5MPdY8j9bAHMu2SSfwpZJg==
+"@types/jasmine@~4.6.5":
+  version "4.6.5"
+  resolved "http://52.50.158.57:4873/@types/jasmine/-/jasmine-4.6.5.tgz#c9e09bd7a58b11dbf63d996e69dcef1306398981"
+  integrity sha512-QgQkk8QL3vhML6msrckf7olLTwi+qeP5rLtmMeP4573HWlFw13xBX8M7YklKoP/Vu/gIXcwWYirTIa/8XVew9g==
 
 "@types/jest@29.5.14", "@types/jest@^29.5.0":
   version "29.5.14"
