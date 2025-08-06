@@ -786,7 +786,7 @@ export class StateService extends BeanStub implements NamedBean {
         if (!expansionSvc) {
             return undefined;
         }
-
+        // todo call expansionSvc.getState() but maintain backwards compatibility
         const expandedRowGroups: string[] = [];
         rowModel.forEachNode(({ expanded, id }) => {
             if (expanded && id) {
