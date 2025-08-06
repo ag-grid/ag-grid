@@ -20,7 +20,7 @@ const getDefaultExpansionState = () => {
     let expandAll: undefined | boolean = undefined;
 
     const self = {
-        isExpanded: (rowId: string) => (expandAll ? !toggledNodes.has(rowId) : toggledNodes.has(rowId)),
+        isExpanded: (rowId: string) => expandAll !== toggledNodes.has(rowId),
         expandAll: (expanded: boolean) => self.reset(expanded),
         reset: (newExpandAll?: boolean) => {
             expandAll = newExpandAll;
@@ -31,15 +31,14 @@ const getDefaultExpansionState = () => {
          * Toggles the expansion state of a node.
          */
         toggleNode: (rowId: string) => {
-            interactedWith[self.hasInteractedWithAll() ? 'delete' : 'add'](rowId);
+            if (!self.hasInteractedWithAll()) interactedWith.add(rowId);
             return toggledNodes[toggledNodes.has(rowId) ? 'delete' : 'add'](rowId);
         },
         /**
          * Returns true if the user has interacted with the node (by expanding/collapsing it).
          * If we have touched the expand/collapse all button, we return true for all nodes.
          */
-        hasInteractedWith: (rowId: string) =>
-            self.hasInteractedWithAll() ? interactedWith.delete(rowId) || true : interactedWith.has(rowId),
+        hasInteractedWith: (rowId: string) => self.hasInteractedWithAll() || interactedWith.has(rowId),
         /**
          * Returns true if the user has interacted with all nodes in the grid (by using expandAll/collapseAll).
          */
