@@ -389,9 +389,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (sameGrid && target) {
             if (!moved) {
                 if (Math.abs(yDelta) <= 0.5) {
-                    if (rowDragManaged) {
-                        rowsDrop.allowed = false; // Nothing to move
-                    }
+                    rowsDrop.allowed = false; // Nothing to move
                 }
                 targetInRows = true;
             } else {
@@ -463,22 +461,19 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         if (!newParent && targetInRows && (canSetParent || source === target)) {
             // No delta dragging of multiple rows with TreeData or no change, nothing to move
-            if (rowDragManaged) {
-                rowsDrop.allowed = false;
-            }
+            rowsDrop.allowed = false;
         }
 
         rowsDrop.newParent = newParent;
         rowsDrop.position = inside ? 'inside' : above ? 'above' : 'below';
 
-        const isRowValidDropPosition = rowsDrop.allowed && gos.get('isRowValidDropPosition');
+        const isRowValidDropPosition = (!rowDragManaged || rowsDrop.allowed) && gos.get('isRowValidDropPosition');
         if (isRowValidDropPosition) {
             const canDropResult = isRowValidDropPosition(rowsDrop);
             if (!canDropResult) {
                 rowsDrop.allowed = false; // No rows to drop
             } else if (typeof canDropResult === 'object') {
                 // Custom result, override the default values
-
                 if (canDropResult.rows !== undefined) {
                     rowsDrop.rows = canDropResult.rows ?? _EmptyArray;
                 }
@@ -493,6 +488,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 }
                 if (canDropResult.allowed !== undefined) {
                     rowsDrop.allowed = canDropResult.allowed;
+                } else if (!rowDragManaged) {
+                    rowsDrop.allowed = true; // If not managed, we always allow the drop if it was not explicitly disallowed
                 }
                 if (canDropResult.changed) {
                     rowsDrop.changed = true;
