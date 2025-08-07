@@ -16,7 +16,7 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     beanName = 'expansionSvc' as const;
     private readonly interactedWith = new Set<string>();
     private readonly toggledNodes = new Set<string>();
-    private isExpandAll: undefined | boolean = undefined;
+    private isExpandAll: IServerSideRowExpansionState['expandAll'] = 'notInteracted';
     private serverSideRowModel: ServerSideRowModel;
     private useNewBehaviour: boolean;
 
@@ -109,7 +109,7 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     }
 
     public expandAll(expanded: boolean): void {
-        this.reset(expanded);
+        this.reset(expanded ? 'expandAll' : 'collapseAll');
         this.serverSideRowModel.forEachNodeTransactional((node) => {
             if (!this.useNewBehaviour && (node.stub || !node.hasChildren())) {
                 return;
@@ -143,7 +143,7 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     /**
      * Cleans up sets and sets the expandAll state if provided, otherwise resets it too.
      */
-    private reset = (newExpandAll?: boolean) => {
+    private reset = (newExpandAll: IServerSideRowExpansionState['expandAll'] = 'notInteracted') => {
         this.isExpandAll = newExpandAll;
         this.interactedWith.clear();
         this.toggledNodes.clear();

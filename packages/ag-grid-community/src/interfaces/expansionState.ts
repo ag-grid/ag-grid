@@ -1,4 +1,4 @@
 export interface IServerSideRowExpansionState {
-    expandAll?: boolean;
-    toggledNodes?: string[];
+    expandAll: 'notInteracted' | 'expandAll' | 'collapseAll';
+    toggledNodes: string[];
 }
