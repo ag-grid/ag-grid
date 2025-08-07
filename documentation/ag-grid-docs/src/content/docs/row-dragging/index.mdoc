@@ -203,9 +203,11 @@ The example below is almost identical to the [Managed Dragging](#managed-draggin
 
 ### Preventing Dropping on Certain Rows
 
-The `isRowValidDropPosition` callback allows you to control whether a row drop is allowed during managed row dragging, and optionally override the rows, parent or position for the drop.
+The `isRowValidDropPosition` callback allows you to control whether a row drop is allowed during managed or unmanaged row dragging, and optionally override the rows, parent or position for the drop.
 This is useful for restricting where rows can be dropped or customizing drop behaviour.
 Returning an object allows instead to filter the rows to drop, or change the parent or the position of the drop.
+
+This affects also the icon and label shown when dragging a row for both managed and unmanaged row dragging.
 
 {% apiDocumentation source="grid-options/properties.json" section="rowDragging" names=["isRowValidDropPosition"] /%}
 

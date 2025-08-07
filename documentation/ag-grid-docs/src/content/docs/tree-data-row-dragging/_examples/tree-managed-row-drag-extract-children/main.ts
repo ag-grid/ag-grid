@@ -41,18 +41,12 @@ function buildTree(node: IRowNode<Task>): Task {
 }
 
 /** Extract children for each node in the tree */
-function extractRowData(api: GridApi<Task>) {
-    const extractedData: Task[] = [];
-    api.forEachNode((node) => {
-        if (node.level === 0 && node.data) {
-            extractedData.push(buildTree(node));
-        }
-    });
-    return extractedData;
+function extractRowData(rootNode: IRowNode<Task> | undefined) {
+    return rootNode?.childrenAfterGroup?.map(buildTree) ?? [];
 }
 
-function showExtractedRowData(api: GridApi<Task>) {
-    const extractedRowData = extractRowData(api);
+function showExtractedRowData(rootNode: IRowNode<Task> | undefined) {
+    const extractedRowData = extractRowData(rootNode);
     const json = JSON.stringify(extractedRowData, null, 2);
     document.getElementById('extracted-data-content')!.textContent = json;
 }
@@ -75,7 +69,7 @@ const gridOptions: GridOptions<Task> = {
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     onRowDragEnd: (event) => {
-        showExtractedRowData(event.api);
+        showExtractedRowData(event.rowsDrop?.rootNode);
     },
 };
 

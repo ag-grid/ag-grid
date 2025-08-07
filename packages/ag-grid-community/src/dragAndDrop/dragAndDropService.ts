@@ -429,7 +429,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
         this.dragImageCompPromise = promise;
         promise?.then((dragImageComp) => {
-            if (promise !== this.dragImageCompPromise || !this.lastDraggingEvent || !this.isAlive()) {
+            if (promise !== this.dragImageCompPromise || !this.lastMouseEvent || !this.isAlive()) {
                 this.destroyBean(dragImageComp);
                 return; // New promise was started, ignore this old one.
             }
@@ -444,8 +444,8 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             }
 
             if (dragImageComp) {
-                this.updateDragImageComp();
                 this.appendDragImageComp(dragImageComp);
+                this.updateDragImageComp();
             }
         });
     }
