@@ -149,23 +149,24 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             setThemeOnGridDiv: true,
         };
 
-        const createUiCallback = (context: Context) => {
-            setContext(context);
-            context.createBean(renderStatus);
+        const createUiCallback = (ctx: Context) => {
+            setContext(ctx);
+            ctx.createBean(renderStatus);
 
             destroyFuncs.current.push(() => {
-                context.destroy();
+
+                ctx?.destroy();
             });
 
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
-            context.getBean('ctrlsSvc').whenReady(
+            ctx.getBean('ctrlsSvc').whenReady(
                 {
                     addDestroyFunc: (func) => {
                         destroyFuncs.current.push(func);
                     },
                 },
                 () => {
-                    if (context.isDestroyed()) {
+                    if (ctx.isDestroyed()) {
                         return;
                     }
 
@@ -242,11 +243,10 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         !(React as any).useSyncExternalStore || _getGridOption(props, 'renderingMode') === 'legacy'
             ? 'legacy'
             : 'default';
-
     return (
         <div style={style} className={props.className} ref={setRef}>
             <RenderModeContext.Provider value={renderMode}>
-                {context && !context.isDestroyed() ? <GridComp context={context} /> : null}
+                {context && !context.isDestroyed() ? <GridComp key={context.instanceId} context={context} /> : null}
                 {portalManager.current?.getPortals() ?? null}
             </RenderModeContext.Provider>
         </div>
@@ -273,8 +273,7 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: strin
 
 class ReactFrameworkComponentWrapper
     extends BaseComponentWrapper<WrappableInterface>
-    implements FrameworkComponentWrapper
-{
+    implements FrameworkComponentWrapper {
     constructor(
         private readonly parent: PortalManager,
         private readonly gridOptions: GridOptions
@@ -282,7 +281,7 @@ class ReactFrameworkComponentWrapper
         super();
     }
 
-    protected createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
+    protected createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
         const gridOptions = this.gridOptions;
         const reactiveCustomComponents = _getGridOption(gridOptions, 'reactiveCustomComponents');
         if (reactiveCustomComponents) {

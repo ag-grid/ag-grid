@@ -82,7 +82,7 @@ const GridBodyComp = () => {
             return;
         }
 
-        if (!context) {
+        if (!context || context.isDestroyed()) {
             return;
         }
 

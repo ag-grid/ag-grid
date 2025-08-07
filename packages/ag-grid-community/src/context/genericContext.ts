@@ -32,12 +32,17 @@ export interface BaseBean<TBeanCollection> {
     preWireBeans?(beans: TBeanCollection): void;
 }
 
+/** Instance Id used by React to reset the state of a component tree when the context changes. */
+let contextId = 1;
+
 export class GenericContext<TBeanName extends string, TBeanCollection extends { [key in TBeanName]?: any }> {
     protected beans: TBeanCollection = {} as TBeanCollection;
     private createdBeans: GenericBean<TBeanName, TBeanCollection>[] = [];
     private beanDestroyComparator?: BeanComparator<TBeanName, TBeanCollection>;
 
     private destroyed = false;
+
+    public readonly instanceId: number = contextId++;
 
     constructor(params: GenericContextParams<TBeanName, TBeanCollection>) {
         if (!params || !params.beanClasses) {
@@ -87,6 +92,9 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
         bean: T,
         afterPreCreateCallback?: (bean: GenericBean<TBeanName, TBeanCollection>) => void
     ): T {
+        // if (this.destroyed) {
+        //     console.error(`${this.instanceId}:isDestroyed but trying to call createBean!`);
+        // }
         this.initBeans([bean], afterPreCreateCallback);
         return bean;
     }

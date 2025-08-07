@@ -16,6 +16,10 @@ const GridHeaderComp = () => {
     const gridCtrlRef = useRef<GridHeaderCtrl>();
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        if (context.isDestroyed()) {
+            return;
+        }
+
         eGui.current = eRef;
         gridCtrlRef.current = eRef
             ? context.createBean(new GridHeaderCtrl())

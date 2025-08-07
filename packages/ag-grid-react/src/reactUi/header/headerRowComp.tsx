@@ -33,6 +33,10 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
     const eGui = useRef<HTMLDivElement | null>(null);
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
+
+        if (context.isDestroyed()) {
+            return;
+        }
         eGui.current = eRef;
         compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
         if (!eRef) {

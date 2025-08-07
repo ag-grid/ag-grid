@@ -237,7 +237,7 @@ const CellComp = ({
         const spanReady = !cellCtrl.isCellSpanning() || eWrapper.current;
         const eRef = eGui.current;
         compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef || !spanReady || !cellCtrl) {
+        if (!eRef || !spanReady || !cellCtrl || context.isDestroyed() || !cellCtrl.isAlive()) {
             // We do NOT add a check for if the cellCtrl is destroyed as when there are lots of updates React
             // can get behind our internal state and call this function after the cellCtrl has been destroyed.
             // If we were to shortcut here then cell values will flash in the first column of the grid as they will

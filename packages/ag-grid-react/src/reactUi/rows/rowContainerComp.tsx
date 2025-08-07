@@ -56,6 +56,11 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
     }, []);
 
     const setRef = useCallback(() => {
+
+        if (context.isDestroyed()) {
+            return;
+        }
+
         if (areElementsRemoved()) {
             rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
         }
