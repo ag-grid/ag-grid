@@ -1,0 +1,111 @@
+name: check-issue-comment-permissions
+description: Checks if a user has permission to execute commands via issue comments based on their author association
+inputs:
+    command:
+        description: 'The command to check permissions for (e.g., "/benchmarks")'
+        required: true
+    allowed_associations:
+        description: 'Comma-separated list of allowed author associations (default: "OWNER,MEMBER,COLLABORATOR")'
+        required: false
+        default: 'OWNER,MEMBER,COLLABORATOR'
+    post_denial_message:
+        description: 'Whether to post a denial message on the issue (default: true)'
+        required: false
+        default: 'true'
+    denial_message_template:
+        description: 'Template for denial message. Use {user} for username and {command} for command'
+        required: false
+        default: "❌ @{user} Sorry, you don't have permission to run `{command}`. This command is restricted to organization members and collaborators."
+outputs:
+    allowed:
+        description: 'Whether the user is allowed to execute the command'
+        value: ${{ steps.check.outputs.allowed }}
+    association:
+        description: 'The author association of the user'
+        value: ${{ steps.check.outputs.association }}
+runs:
+    using: composite
+    steps:
+        - name: Check user permissions
+          id: check
+          shell: bash
+          run: |
+              # Set error handling
+              set -euo pipefail
+
+              # For non-issue_comment events, always allow
+              if [[ "${{ github.event_name }}" != "issue_comment" ]]; then
+                echo "allowed=true" >> $GITHUB_OUTPUT
+                echo "association=N/A" >> $GITHUB_OUTPUT
+                echo "✅ Non-issue_comment event, proceeding"
+                exit 0
+              fi
+
+              # For issue_comment events, check if it's the specified command
+              if [[ "${{ github.event.comment.body }}" != "${{ inputs.command }}" ]]; then
+                echo "allowed=false" >> $GITHUB_OUTPUT
+                echo "association=${{ github.event.comment.author_association }}" >> $GITHUB_OUTPUT
+                echo "Not the specified command (${{ inputs.command }})"
+                exit 0
+              fi
+
+              # Check author association
+              ASSOCIATION="${{ github.event.comment.author_association }}"
+              ALLOWED_ASSOCIATIONS="${{ inputs.allowed_associations }}"
+
+              # Validate association is not empty
+              if [[ -z "$ASSOCIATION" ]]; then
+                echo "::error::Author association is empty - this is unexpected"
+                echo "allowed=false" >> $GITHUB_OUTPUT
+                echo "association=UNKNOWN" >> $GITHUB_OUTPUT
+                exit 1
+              fi
+
+              # Convert comma-separated list to array
+              IFS=',' read -ra ALLOWED_ARRAY <<< "$ALLOWED_ASSOCIATIONS"
+
+              # Check if current association is in allowed list
+              ALLOWED=false
+              for allowed in "${ALLOWED_ARRAY[@]}"; do
+                # Trim whitespace
+                allowed=$(echo "$allowed" | xargs)
+                if [[ "$ASSOCIATION" == "$allowed" ]]; then
+                  ALLOWED=true
+                  break
+                fi
+              done
+
+              if [[ "$ALLOWED" == "true" ]]; then
+                echo "allowed=true" >> $GITHUB_OUTPUT
+                echo "association=$ASSOCIATION" >> $GITHUB_OUTPUT
+                echo "✅ User has permission to run ${{ inputs.command }} (association: $ASSOCIATION)"
+                exit 0
+              else
+                echo "allowed=false" >> $GITHUB_OUTPUT
+                echo "association=$ASSOCIATION" >> $GITHUB_OUTPUT
+                echo "❌ User does not have permission to run ${{ inputs.command }} (association: $ASSOCIATION)"
+                echo "::error::Unauthorized user attempted to run ${{ inputs.command }} (association: $ASSOCIATION)"
+                # Exit with failure for unauthorized attempts on the target command
+                exit 1
+              fi
+
+        - name: Post denial message
+          if: |
+              github.event_name == 'issue_comment' && 
+              github.event.comment.body == inputs.command && 
+              steps.check.outputs.allowed == 'false' && 
+              inputs.post_denial_message == 'true'
+          uses: actions/github-script@v7
+          with:
+              script: |
+                  const template = `${{ inputs.denial_message_template }}`;
+                  const message = template
+                      .replace('{user}', context.payload.comment.user.login)
+                      .replace('{command}', '${{ inputs.command }}');
+
+                  await github.rest.issues.createComment({
+                      issue_number: context.issue.number,
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      body: message
+                  });
