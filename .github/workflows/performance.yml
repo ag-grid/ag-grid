@@ -1,250 +1,245 @@
 name: Performance Tests
 
 on:
-#  issue_comment:
-#    types: [ created ]
+  issue_comment:
+    types: [ created ]
   workflow_dispatch:
-#    inputs:
-#      notify:
-#        description: 'Notify Slack channel'
-#        type: boolean
-#        default: false
-#        required: true
-#      force_scheduled:
-#        description: 'Run the scheduled set of benchmarks'
-#        type: boolean
-#        default: false
-#      force_pr_id:
-#        description: 'PR ID to update (used for debugging this workflow)'
-#        type: number
-#        required: false
-#      force_jira_ticket:
-#        description: 'Force create a Jira ticket even if the run is not scheduled'
-#        type: boolean
-#        default: false
-#        required: true
-#  schedule:
-#    - cron: '0 0 * * *' # Run daily at midnight UTC
+    inputs:
+      notify:
+        description: 'Notify Slack channel'
+        type: boolean
+        default: false
+        required: true
+      force_scheduled:
+        description: 'Run the scheduled set of benchmarks'
+        type: boolean
+        default: false
+      force_pr_id:
+        description: 'PR ID to update (used for debugging this workflow)'
+        type: number
+        required: false
+      force_jira_ticket:
+        description: 'Force create a Jira ticket even if the run is not scheduled'
+        type: boolean
+        default: false
+        required: true
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight UTC
 
-#env:
-#  NX_NO_CLOUD: true
-#  NX_BRANCH: ${{ github.ref }}
-#  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-#  SHARP_IGNORE_GLOBAL_LIBVIPS: true
-#  YARN_REGISTRY: "http://52.50.158.57:4873"
-#  CI: true
-#  PR_ID: ${{ inputs.force_pr_id || github.event.issue.number }}
-#  COMMENT_FILE: ./comment.md
-#  PW_REPORT_PATH: ./reports/playwright.json
-#  CTRF_FILE: ./reports/performance.json
-#  SLACK_CHANNEL: '#ci-grid-gate'
-#  AG_LIBRARY: grid
+env:
+  NX_NO_CLOUD: true
+  NX_BRANCH: ${{ github.ref }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  SHARP_IGNORE_GLOBAL_LIBVIPS: true
+  YARN_REGISTRY: "http://52.50.158.57:4873"
+  CI: true
+  PR_ID: ${{ inputs.force_pr_id || github.event.issue.number }}
+  COMMENT_FILE: ./comment.md
+  PW_REPORT_PATH: ./reports/playwright.json
+  CTRF_FILE: ./reports/performance.json
+  SLACK_CHANNEL: '#ci-grid-gate'
+  AG_LIBRARY: grid
 
 permissions:
   contents: read
 
 jobs:
-  steps:
-    - name: Placeholder
-      run: |
-        echo "Test"
+  benchmark:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/benchmarks') || github.event_name == 'schedule'
+    env:
+      JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - name: Notify start
+        id: notify-start
+        uses: actions/github-script@v7
+        continue-on-error: true
+        if: ${{ env.PR_ID }}
+        with:
+          result-encoding: string
+          script: |
+            const { data: comment } = await github.rest.issues.createComment({
+              issue_number: parseInt(process.env.PR_ID, 10),
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🛎 Started a benchmarking job: ${process.env.JOB_URL}`
+            })
+            return comment.id;
 
-#  benchmark:
-#    runs-on: ubuntu-latest
-#    permissions:
-#      pull-requests: write
-#      issues: write
-#    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/benchmarks') || github.event_name == 'schedule'
-#    env:
-#      JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-#    steps:
-#      - name: Notify start
-#        id: notify-start
-#        uses: actions/github-script@v7
-#        continue-on-error: true
-#        if: ${{ env.PR_ID }}
-#        with:
-#          result-encoding: string
-#          script: |
-#            const { data: comment } = await github.rest.issues.createComment({
-#              issue_number: parseInt(process.env.PR_ID, 10),
-#              owner: context.repo.owner,
-#              repo: context.repo.repo,
-#              body: `🛎 Started a benchmarking job: ${process.env.JOB_URL}`
-#            })
-#            return comment.id;
-#
-#      - name: Assign correct Branch name
-#        id: get-branch
-#        env:
-#          REPO: ${{ github.repository }}
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        run: |
-#          echo PR_ID=$PR_ID
-#          echo github.event.issue.number=${{ github.event.issue.number }}
-#          if [[ !!"${{ steps.notify-start.outputs.result }}" ]] ; then
-#            # For PR comments, get the branch from the PR
-#            echo "branch=$(gh pr view $PR_ID --repo $REPO --json headRefName --jq '.headRefName')" >> $GITHUB_OUTPUT
-#          elif [[ "${{ github.event_name }}" == "schedule" ]] ; then
-#            # For scheduled workflow dispatch, use the 'latest' branch
-#            echo "branch=latest" >> $GITHUB_OUTPUT
-#          else
-#            # For manual workflow dispatch, use the current branch
-#            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-#          fi
-#
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#        with:
-#          fetch-depth: 1
-#          ref: ${{ steps.get-branch.outputs.branch }}
-#
-#      - name: Fetch Refs
-#        run: |
-#          git fetch origin --depth 1 latest
-#          git fetch origin --depth 1 tag latest-success
-#
-#      - name: Notify Progress
-#        uses: actions/github-script@v7
-#        continue-on-error: true
-#        if: ${{ steps.notify-start.outputs.result }}
-#        with:
-#          script: |
-#            github.rest.issues.updateComment({
-#              owner: context.repo.owner,
-#              repo: context.repo.repo,
-#              comment_id: ${{ steps.notify-start.outputs.result }},
-#              body: `🏗 Running setup: ${process.env.JOB_URL}`
-#            })
-#
-#      - name: Setup
-#        id: setup
-#        uses: ./.github/actions/setup-nx
-#        with:
-#          cache_mode: rw
-#
-#      - name: Notify Progress
-#        uses: actions/github-script@v7
-#        continue-on-error: true
-#        if: ${{ steps.notify-start.outputs.result }}
-#        with:
-#          script: |
-#            github.rest.issues.updateComment({
-#              owner: context.repo.owner,
-#              repo: context.repo.repo,
-#              comment_id: ${{ steps.notify-start.outputs.result }},
-#              body: `🏗 Building umd packages: ${process.env.JOB_URL}`
-#            })
-#
-#      - name: Build umd packages
-#        id: build-umd
-#        if: ${{ steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped' }}
-#        run: |
-#          echo "Building UMD packages..."
-#          npx nx run-many -t build --projects=ag-grid-{enterprise,community}
-#
-#      - name: Notify Progress
-#        uses: actions/github-script@v7
-#        continue-on-error: true
-#        if: ${{ steps.notify-start.outputs.result }}
-#        with:
-#          script: |
-#            github.rest.issues.updateComment({
-#              owner: context.repo.owner,
-#              repo: context.repo.repo,
-#              comment_id: ${{ steps.notify-start.outputs.result }},
-#              body: `🏗 Installing Playwright Browsers: ${process.env.JOB_URL}`
-#            })
-#
-#      - name: Install Playwright Browsers
-#        id: install-browsers
-#        if: ${{ steps.build-umd.outcome == 'success' }}
-#        run: |
-#          git status;
-#          npx playwright install --with-deps
-#
-#      - name: Notify Progress
-#        uses: actions/github-script@v7
-#        continue-on-error: true
-#        if: ${{ steps.notify-start.outputs.result }}
-#        with:
-#          script: |
-#            github.rest.issues.updateComment({
-#              owner: context.repo.owner,
-#              repo: context.repo.repo,
-#              comment_id: ${{ steps.notify-start.outputs.result }},
-#              body: `🏃 Running benchmarks:️ ${process.env.JOB_URL}`
-#            })
-#
-#      - name: playwright test
-#        id: playwright-test
-#        continue-on-error: true
-#        if: ${{ steps.install-browsers.outcome == 'success' }}
-#        env:
-#          IS_SCHEDULED: ${{ github.event_name == 'schedule' || inputs.force_scheduled }}
-#          PW_REPORT_PATH: ${{ env.PW_REPORT_PATH }}
-#        run: |
-#          if [[ "$IS_SCHEDULED" == "true" ]] ; then
-#            npx playwright test -c ./testing/performance/playwright.config.ts -g ".*cron.spec.ts" ./testing/performance/e2e
-#          else
-#            npx playwright test -c ./testing/performance/playwright.config.ts -gv ".*cron.spec.ts" ./testing/performance/e2e
-#          fi
-#
-#      - name: Test Reporter
-#        id: ctrf
-#        uses: ctrf-io/github-test-reporter@v1.0.17
-#        with:
-#          report-path: ${{ env.PW_REPORT_PATH }}
-#          summary-report: true
-#          failed-report: true
-#          flaky-report: true
-#          skipped-report: true
-#          write-ctrf-to-file: ${{ env.CTRF_FILE }}
-#
-#      - name: Create Jira Ticket
-#        uses: ./.github/actions/jira-integration
-#        continue-on-error: true
-#        if: ${{ github.event_name == 'schedule' || inputs.force_jira_ticket }}
-#        with:
-#          JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
-#          JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' has detected a slowdown in grid performance"
-#          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
-#
-#      - name: Slack Notification
-#        if: ${{ github.event_name == 'schedule' || inputs.notify }}
-#        continue-on-error: true
-#        uses: ./external/ag-shared/github/actions/slack-integration
-#        with:
-#          AG_LIBRARY: ${{ env.AG_LIBRARY }}
-#          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
-#          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-#          SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
-#
-#      - name: Final Notify Progress
-#        uses: actions/github-script@v7
-#        continue-on-error: true
-#        if: ${{ steps.notify-start.outputs.result }}
-#        env:
-#          COMMENT_ID: ${{ steps.notify-start.outputs.result }}
-#          IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
-#          COMMENT_FILE: ${{ env.COMMENT_FILE }}
-#          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
-#          WORKFLOW_NAME: ${{ github.workflow }}
-#          JOB_ID: ${{ github.run_id }}
-#          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
-#          BRANCH_NAME: ${{ steps.get-branch.outputs.branch }}
-#        with:
-#          script: |
-#            require('./scripts/ci/gen-gh-comment.mjs');
-#            const owner = context.repo.owner;
-#            const repo = context.repo.repo;
-#            const comment_id = process.env.COMMENT_ID;
-#            const pull_number = process.env.PR_ID;
-#            const body = require('fs').readFileSync(process.env.COMMENT_FILE, 'utf8');
-#
-#            if (process.env.IS_SUCCESS) {
-#              await github.rest.issues.updateComment({ owner, repo, comment_id, body });
-#            } else {
-#              await github.rest.issues.deleteComment({ owner, repo, comment_id });
-#              await github.rest.pulls.createReview({ owner, repo, pull_number, event: "REQUEST_CHANGES", body });
-#            }
+      - name: Assign correct Branch name
+        id: get-branch
+        env:
+          REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo PR_ID=$PR_ID
+          echo github.event.issue.number=${{ github.event.issue.number }}
+          if [[ !!"${{ steps.notify-start.outputs.result }}" ]] ; then
+            # For PR comments, get the branch from the PR
+            echo "branch=$(gh pr view $PR_ID --repo $REPO --json headRefName --jq '.headRefName')" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == "schedule" ]] ; then
+            # For scheduled workflow dispatch, use the 'latest' branch
+            echo "branch=latest" >> $GITHUB_OUTPUT
+          else
+            # For manual workflow dispatch, use the current branch
+            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ steps.get-branch.outputs.branch }}
+
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
+
+      - name: Notify Progress
+        uses: actions/github-script@v7
+        continue-on-error: true
+        if: ${{ steps.notify-start.outputs.result }}
+        with:
+          script: |
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.notify-start.outputs.result }},
+              body: `🏗 Running setup: ${process.env.JOB_URL}`
+            })
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: rw
+
+      - name: Notify Progress
+        uses: actions/github-script@v7
+        continue-on-error: true
+        if: ${{ steps.notify-start.outputs.result }}
+        with:
+          script: |
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.notify-start.outputs.result }},
+              body: `🏗 Building umd packages: ${process.env.JOB_URL}`
+            })
+
+      - name: Build umd packages
+        id: build-umd
+        if: ${{ steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped' }}
+        run: |
+          echo "Building UMD packages..."
+          npx nx run-many -t build --projects=ag-grid-{enterprise,community}
+
+      - name: Notify Progress
+        uses: actions/github-script@v7
+        continue-on-error: true
+        if: ${{ steps.notify-start.outputs.result }}
+        with:
+          script: |
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.notify-start.outputs.result }},
+              body: `🏗 Installing Playwright Browsers: ${process.env.JOB_URL}`
+            })
+
+      - name: Install Playwright Browsers
+        id: install-browsers
+        if: ${{ steps.build-umd.outcome == 'success' }}
+        run: |
+          git status;
+          npx playwright install --with-deps
+
+      - name: Notify Progress
+        uses: actions/github-script@v7
+        continue-on-error: true
+        if: ${{ steps.notify-start.outputs.result }}
+        with:
+          script: |
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.notify-start.outputs.result }},
+              body: `🏃 Running benchmarks:️ ${process.env.JOB_URL}`
+            })
+
+      - name: playwright test
+        id: playwright-test
+        continue-on-error: true
+        if: ${{ steps.install-browsers.outcome == 'success' }}
+        env:
+          IS_SCHEDULED: ${{ github.event_name == 'schedule' || inputs.force_scheduled }}
+          PW_REPORT_PATH: ${{ env.PW_REPORT_PATH }}
+        run: |
+          if [[ "$IS_SCHEDULED" == "true" ]] ; then
+            npx playwright test -c ./testing/performance/playwright.config.ts -g ".*cron.spec.ts" ./testing/performance/e2e
+          else
+            npx playwright test -c ./testing/performance/playwright.config.ts -gv ".*cron.spec.ts" ./testing/performance/e2e
+          fi
+
+      - name: Test Reporter
+        id: ctrf
+        uses: ctrf-io/github-test-reporter@v1.0.17
+        with:
+          report-path: ${{ env.PW_REPORT_PATH }}
+          summary-report: true
+          failed-report: true
+          flaky-report: true
+          skipped-report: true
+          write-ctrf-to-file: ${{ env.CTRF_FILE }}
+
+      - name: Create Jira Ticket
+        uses: ./.github/actions/jira-integration
+        continue-on-error: true
+        if: ${{ github.event_name == 'schedule' || inputs.force_jira_ticket }}
+        with:
+          JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
+          JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' has detected a slowdown in grid performance"
+          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+
+      - name: Slack Notification
+        if: ${{ github.event_name == 'schedule' || inputs.notify }}
+        continue-on-error: true
+        uses: ./external/ag-shared/github/actions/slack-integration
+        with:
+          AG_LIBRARY: ${{ env.AG_LIBRARY }}
+          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+          SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
+
+      - name: Final Notify Progress
+        uses: actions/github-script@v7
+        continue-on-error: true
+        if: ${{ steps.notify-start.outputs.result }}
+        env:
+          COMMENT_ID: ${{ steps.notify-start.outputs.result }}
+          IS_SUCCESS: ${{ steps.playwright-test.outcome == 'success' || '' }}
+          COMMENT_FILE: ${{ env.COMMENT_FILE }}
+          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          JOB_ID: ${{ github.run_id }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          BRANCH_NAME: ${{ steps.get-branch.outputs.branch }}
+        with:
+          script: |
+            require('./scripts/ci/gen-gh-comment.mjs');
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const comment_id = process.env.COMMENT_ID;
+            const pull_number = process.env.PR_ID;
+            const body = require('fs').readFileSync(process.env.COMMENT_FILE, 'utf8');
+
+            if (process.env.IS_SUCCESS) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id, body });
+            } else {
+              await github.rest.issues.deleteComment({ owner, repo, comment_id });
+              await github.rest.pulls.createReview({ owner, repo, pull_number, event: "REQUEST_CHANGES", body });
+            }

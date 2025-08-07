@@ -1,5 +1,5 @@
 /* eslint-disable no-empty-pattern */
-import type { Page, TestType } from '@playwright/test';
+import type { Locator, Page, TestType } from '@playwright/test';
 import { test as base, expect } from '@playwright/test';
 import { CacheRoute } from 'playwright-network-cache';
 
@@ -10,7 +10,7 @@ type ExtractFixtures<T> = T extends TestType<infer A, infer O> ? A & O : never;
 // Extract the fixtures from the base test type as Playwright doesn't export them directly
 type PlaywrightFixtures = ExtractFixtures<typeof base>;
 
-type AgIdFor = ReturnType<typeof wrapAgTestIdFor<any>>;
+type AgIdFor = ReturnType<typeof wrapAgTestIdFor<Locator>>;
 
 type AgGridFixtures = {
     agFramework: AgFramework;
@@ -146,21 +146,29 @@ const eachFramework = (testName: string, testBody: (fixtures: TestFixtures) => P
  * Set the example URL for the tests.
  * @param importMeta The import.meta object from the module where this function is called.
  */
-export function setAgExampleUrl(importMeta: ImportMeta) {
+function setAgExampleUrl(importMeta: ImportMeta): AgExampleUrl {
     const pSegment = importMeta.url.split('/');
 
     const page = pSegment[pSegment.length - 4];
     const example = pSegment[pSegment.length - 2];
 
-    extended.use({ agExampleUrl: `${page}/${example}` as AgExampleUrl });
+    const agExampleUrl = `${page}/${example}` as AgExampleUrl;
+    extended.use({ agExampleUrl });
+    return agExampleUrl;
 }
+
+export const agExample = (importMeta: ImportMeta, callback: () => any) => {
+    base.describe(setAgExampleUrl(importMeta), () => {
+        callback();
+    });
+};
 
 // Expose call for each framework
 const singleFrameworkTests = ALL_FRAMEWORKS.map((fw) => ({ [fw]: frameworkTest(fw) })).reduce(Object.assign);
 
 const agGridTestExtension = {
-    setAgExampleUrl,
     eachFramework,
+    agExample,
 };
 
 type ExternalTestType = typeof extended & typeof agGridTestExtension & typeof singleFrameworkTests;

@@ -847,6 +847,7 @@ export {
     _getFirstRow,
     _getRowAbove,
     _getRowBelow,
+    _getAbsoluteRowIndex,
 } from './entities/positionUtils';
 export { RowPosition } from './interfaces/iRowPosition';
 export { HeaderPosition } from './interfaces/iHeaderPosition';
