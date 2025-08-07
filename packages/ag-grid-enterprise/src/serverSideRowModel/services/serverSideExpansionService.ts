@@ -18,12 +18,11 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     private readonly toggledNodes = new Set<string>();
     private isExpandAll: undefined | boolean = undefined;
     private serverSideRowModel: ServerSideRowModel;
-    private usePre34Behaviour: boolean;
+    private useNewBehaviour: boolean;
 
     /**
      * Returns the current state of the expansion service.
      * Not including the interactedWith state, the implication is that we are prioritizing the isOpenByDefault user function next time user loads the grid.
-     * todo: this can be a flag.
      */
     public getState(): IServerSideRowExpansionState {
         return {
@@ -42,7 +41,7 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
 
     public wireBeans(beans: BeanCollection) {
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
-        this.usePre34Behaviour = !!beans.gridOptions.groupFlags?.usePre34Behaviour;
+        this.useNewBehaviour = !!beans.gridOptions.groupFlags?.useNewBehaviour;
     }
 
     public postConstruct(): void {
@@ -63,7 +62,7 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
             return false;
         }
 
-        if (!this.usePre34Behaviour && this.hasInteractedWith(rowNode.id!)) {
+        if (this.useNewBehaviour && this.hasInteractedWith(rowNode.id!)) {
             return this.isExpanded(rowNode.id!);
         }
 
@@ -112,7 +111,7 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     public expandAll(expanded: boolean): void {
         this.reset(expanded);
         this.serverSideRowModel.forEachNodeTransactional((node) => {
-            if (this.usePre34Behaviour && (node.stub || !node.hasChildren())) {
+            if (!this.useNewBehaviour && (node.stub || !node.hasChildren())) {
                 return;
             }
             node.setExpanded(expanded);
@@ -139,7 +138,7 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     /**
      * expandAll XOR isToggled, since toggleNodes signifies a diff from expandAll.
      */
-    private isExpanded = (rowId: string) => this.isExpandAll !== this.toggledNodes.has(rowId);
+    private isExpanded = (rowId: string) => !!this.isExpandAll !== this.toggledNodes.has(rowId);
 
     /**
      * Cleans up sets and sets the expandAll state if provided, otherwise resets it too.

@@ -157,7 +157,10 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private verifyProps(): void {
         if (_isRowSelection(this.gos) && !this.gos.exists('getRowId')) {
-            _warn(188);
+            _warn(188, { feature: 'selection' });
+        }
+        if (this.gos.get('groupFlags')?.useNewBehaviour && !this.gos.exists('getRowId')) {
+            _warn(188, { feature: 'grouping' });
         }
     }
 

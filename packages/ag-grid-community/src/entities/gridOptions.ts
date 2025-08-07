@@ -2974,7 +2974,7 @@ type GroupFlags = Partial<{
      * Also interacting with the group expansion state won't affect the default group expansion state.
      * todo find better name
      */
-    usePre34Behaviour: boolean;
+    useNewBehaviour: boolean;
 }>;
 
 export type RowSelectionOptions<TData = any, TValue = any, TContext = any> =
