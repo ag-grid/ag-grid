@@ -168,5 +168,7 @@ reason = "We do not use koa directly and where it is used is only for testing or
 id = "GHSA-v6h2-p8h4-qcjw"
 reason = "Low risk and determined to not be exploitable in our use case"
 
-
+[[IgnoredVulns]]
+id = "GHSA-52f5-9888-hmc6"
+reason = "Low risk and determined to not be exploitable in our use case"
 
