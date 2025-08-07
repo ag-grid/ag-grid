@@ -2970,11 +2970,11 @@ export interface FillHandleOptions<TData = any> {
 
 type GroupFlags = Partial<{
     /**
-     * If `true`, expandAll / collapseAll will only affect currently loaded rows.
-     * Also interacting with the group expansion state won't affect the default group expansion state.
-     * todo find better name
+     * If `true`:
+     *  - expandAll / collapseAll affects all rows, not only loaded ones.
+     *  - interacting with the group overrides the default group expansion state set with `isServerSideGroupOpenByDefault`.
      */
-    useNewBehaviour: boolean;
+    useSsrmNewBehaviour: boolean;
 }>;
 
 export type RowSelectionOptions<TData = any, TValue = any, TContext = any> =

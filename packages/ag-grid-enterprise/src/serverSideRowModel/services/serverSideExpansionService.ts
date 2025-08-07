@@ -22,11 +22,11 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     private readonly toggledNodes = new Set<string>();
     private expandAllStatus: IServerSideRowExpansionState['expandAll'] = 'notInteracted';
     private serverSideRowModel: ServerSideRowModel;
-    private useNewBehaviour: boolean;
+    private useSsrmNewBehaviour: boolean;
 
     public wireBeans(beans: BeanCollection) {
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
-        this.useNewBehaviour = !!beans.gridOptions.groupFlags?.useNewBehaviour;
+        this.useSsrmNewBehaviour = !!beans.gridOptions.groupFlags?.useSsrmNewBehaviour;
     }
 
     public postConstruct(): void {
@@ -47,7 +47,7 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
             return false;
         }
 
-        if (this.useNewBehaviour && this.hasInteractedWith(rowNode.id!)) {
+        if (this.useSsrmNewBehaviour && this.hasInteractedWith(rowNode.id!)) {
             return this.isExpanded(rowNode.id!);
         }
 
@@ -96,7 +96,7 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     public expandAll(expanded: boolean): void {
         this.reset(expanded ? 'expandAll' : 'collapseAll');
         this.serverSideRowModel.forEachNodeTransactional((node) => {
-            if (!this.useNewBehaviour && (node.stub || !node.hasChildren())) {
+            if (!this.useSsrmNewBehaviour && (node.stub || !node.hasChildren())) {
                 return;
             }
             node.setExpanded(expanded);
