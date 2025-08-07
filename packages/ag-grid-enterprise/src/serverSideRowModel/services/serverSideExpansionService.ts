@@ -20,7 +20,7 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     beanName = 'expansionSvc' as const;
     private readonly interactedWith = new Set<string>();
     private readonly toggledNodes = new Set<string>();
-    private isExpandAll: IServerSideRowExpansionState['expandAll'] = 'notInteracted';
+    private expandAllStatus: IServerSideRowExpansionState['expandAll'] = 'notInteracted';
     private serverSideRowModel: ServerSideRowModel;
     private useNewBehaviour: boolean;
 
@@ -123,13 +123,13 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     /**
      * expandAll XOR isToggled, since toggleNodes signifies a diff from expandAll.
      */
-    private isExpanded = (rowId: string) => !!this.isExpandAll !== this.toggledNodes.has(rowId);
+    private isExpanded = (rowId: string) => (this.expandAllStatus === 'expandAll') !== this.toggledNodes.has(rowId);
 
     /**
      * Cleans up sets and sets the expandAll state if provided, otherwise resets it too.
      */
     private reset = (newExpandAll: IServerSideRowExpansionState['expandAll'] = 'notInteracted') => {
-        this.isExpandAll = newExpandAll;
+        this.expandAllStatus = newExpandAll;
         this.interactedWith.clear();
         this.toggledNodes.clear();
     };
@@ -151,5 +151,5 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     /**
      * Returns true if the user has interacted with all nodes in the grid (by using expandAll/collapseAll).
      */
-    private hasInteractedWithAll = () => this.isExpandAll !== undefined;
+    private hasInteractedWithAll = () => this.expandAllStatus !== 'notInteracted';
 }
