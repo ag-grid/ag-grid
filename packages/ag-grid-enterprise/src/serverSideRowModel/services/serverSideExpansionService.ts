@@ -20,25 +20,6 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     private serverSideRowModel: ServerSideRowModel;
     private useNewBehaviour: boolean;
 
-    /**
-     * Returns the current state of the expansion service.
-     * Not including the interactedWith state, the implication is that we are prioritizing the isOpenByDefault user function next time user loads the grid.
-     */
-    public getState(): IServerSideRowExpansionState {
-        return {
-            expandAll: this.isExpandAll,
-            toggledNodes: Array.from(this.toggledNodes),
-        };
-    }
-
-    public setState(newState: IServerSideRowExpansionState): void {
-        this.reset(newState.expandAll);
-        newState.toggledNodes?.forEach((rowId) => {
-            this.toggledNodes.add(rowId);
-            this.interactedWith.add(rowId);
-        });
-    }
-
     public wireBeans(beans: BeanCollection) {
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.useNewBehaviour = !!beans.gridOptions.groupFlags?.useNewBehaviour;

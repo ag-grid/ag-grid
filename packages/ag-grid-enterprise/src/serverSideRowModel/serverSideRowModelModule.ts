@@ -23,12 +23,10 @@ import {
     applyServerSideTransaction,
     applyServerSideTransactionAsync,
     flushServerSideAsyncTransactions,
-    getServerSideExpandState,
     getServerSideGroupLevelState,
     getServerSideSelectionState,
     refreshServerSide,
     retryServerSideLoads,
-    setServerSideExpandState,
     setServerSideSelectionState,
 } from './serverSideRowModelApi';
 import { ServerSideExpansionService } from './services/serverSideExpansionService';
@@ -81,8 +79,6 @@ export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGrid
     apiFunctions: {
         getServerSideSelectionState,
         setServerSideSelectionState,
-        getServerSideExpandState,
-        setServerSideExpandState,
         applyServerSideTransaction,
         applyServerSideTransactionAsync,
         applyServerSideRowData,

@@ -1,7 +1,6 @@
 import type {
     BeanCollection,
     IServerSideGroupSelectionState,
-    IServerSideRowExpansionState,
     IServerSideSelectionState,
     LoadSuccessParams,
     RefreshServerSideParams,
@@ -10,8 +9,6 @@ import type {
     ServerSideTransactionResult,
 } from 'ag-grid-community';
 import { _getServerSideRowModel, _warn } from 'ag-grid-community';
-
-import type { ServerSideExpansionService } from './services/serverSideExpansionService';
 
 export function getServerSideSelectionState(
     beans: BeanCollection
@@ -27,14 +24,6 @@ export function setServerSideSelectionState(
     state: IServerSideSelectionState | IServerSideGroupSelectionState
 ) {
     beans.selectionSvc?.setSelectionState(state, 'api');
-}
-
-export function getServerSideExpandState(beans: BeanCollection): IServerSideRowExpansionState | null {
-    return (beans.expansionSvc as ServerSideExpansionService | undefined)?.getState() ?? null;
-}
-
-export function setServerSideExpandState(beans: BeanCollection, newState: IServerSideRowExpansionState) {
-    (beans.expansionSvc as ServerSideExpansionService | undefined)?.setState(newState);
 }
 
 export function applyServerSideTransaction<TData = any>(

@@ -1575,21 +1575,6 @@ export interface _ServerSideRowModelGridApi<TData> {
     setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
 
     /**
-     * Returns the current server-side row expansion state.
-     *
-     * @agModule `ServerSideRowModelApiModule`
-     */
-    getServerSideExpandState(): IServerSideRowExpansionState | null;
-
-    /**
-     * Set the server-side row expansion state.
-     *
-     * If the state is not provided, it will clear the current expansion state.
-     * @agModule `ServerSideRowModelApiModule`
-     */
-    setServerSideExpandState(state: IServerSideRowExpansionState): void;
-
-    /**
      * Apply transactions to the server side row model.
      * @agModule `ServerSideRowModelApiModule`
      */
