@@ -84,7 +84,7 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
     }
 
     public setIcon(iconName: DragAndDropIcon | null, shake: boolean): void {
-        const { eIcon, dragSource, dropIconMap, gos } = this;
+        const { eGhost, eIcon, dragSource, dropIconMap, gos } = this;
 
         _clearElement(eIcon);
 
@@ -95,6 +95,7 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
         }
         eIconChild = dropIconMap[iconName];
 
+        eGhost.classList.toggle('ag-dnd-ghost-not-allowed', iconName === 'notAllowed');
         eIcon.classList.toggle('ag-shake-left-to-right', shake);
 
         if (eIconChild === dropIconMap['hide'] && gos.get('suppressDragLeaveHidesColumns')) {
