@@ -69,7 +69,12 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
         rootNode.allLeafChildren = allLeafChildren;
 
-        const processChild = (parent: RowNode, data: TData) => {
+        const processChild = (parent: RowNode, data: TData | null | undefined) => {
+            if (data === undefined || data === null) {
+                _warn(291); // An element is null or undefined, skipping
+                return;
+            }
+
             let row = processedData.get(data);
             if (row !== undefined) {
                 _error(2, { nodeId: row.id }); // Duplicate node
@@ -135,7 +140,16 @@ export class ClientSideChildrenTreeNodeManager<TData>
             }
         };
 
-        const processChild = (parent: GroupingRowNode<TData>, data: TData, level: number): number => {
+        const processChild = (
+            parent: GroupingRowNode<TData>,
+            data: TData | null | undefined,
+            level: number
+        ): number => {
+            if (data === undefined || data === null) {
+                _warn(291); // An element is null or undefined, skipping
+                return -1;
+            }
+
             let row = processedData.get(data);
             if (row !== undefined) {
                 _warn(2, { nodeId: row.id }); // Duplicate node
