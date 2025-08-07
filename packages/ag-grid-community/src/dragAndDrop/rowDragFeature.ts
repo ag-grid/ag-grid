@@ -477,27 +477,26 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 if (canDropResult.rows !== undefined) {
                     rowsDrop.rows = canDropResult.rows ?? _EmptyArray;
                 }
-
                 if (canDropResult.newParent !== undefined) {
                     rowsDrop.newParent = canDropResult.newParent;
                 }
-
                 if (canDropResult.target !== undefined) {
                     rowsDrop.target = canDropResult.target;
                 }
-
                 if (canDropResult.position) {
                     rowsDrop.position = canDropResult.position;
                 }
-
                 if (canDropResult.changed) {
                     rowsDrop.changed = true;
                 }
-
                 if (canDropResult.allowed !== undefined) {
                     rowsDrop.allowed = canDropResult.allowed;
                 }
             }
+        }
+
+        if (gos.get('rowDragManaged')) {
+            rowsDrop.rows = this.filterRows(rowsDrop);
         }
 
         const suppressMoveWhenRowDragging = gos.get('suppressMoveWhenRowDragging');
@@ -835,20 +834,36 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         });
     }
 
+    private filterRows({ newParent, rows }: RowsDrop): IRowNode[] {
+        const clientSideRowModel = this.clientSideRowModel;
+        let filtered: IRowNode[] | undefined;
+        for (let i = 0, len = rows.length; i < len; ++i) {
+            let valid = true;
+
+            const row = rows[i];
+            if (!row || row.footer || (row.rowTop === null && row !== clientSideRowModel.getRowNode(row.id!))) {
+                valid = false; // This row cannot be dragged, not in allLeafChildren and not a filler
+            } else if (newParent && row.parent !== newParent && wouldFormCycle(row, newParent)) {
+                valid = false; // Cannot move to a parent that would create a cycle
+            } else if (!getLeafRow(row)) {
+                valid = false; // No leaf to move, so nothing to do
+            }
+
+            if (valid) {
+                filtered?.push(row);
+            } else {
+                filtered ??= rows.slice(0, i); // Lazy initialization of the filtered array
+            }
+        }
+        return filtered ?? rows; // If all rows are valid, return the original array
+    }
+
     private moveRows({ position, target, rows, newParent }: RowsDrop): boolean {
         let changed = false;
 
-        const clientSideRowModel = this.clientSideRowModel;
         const leafs = new Set<WritableRowNode>();
         for (const row of rows as WritableRowNode[]) {
-            if (row.footer || (row.rowTop === null && row !== clientSideRowModel.getRowNode(row.id!))) {
-                continue; // This row cannot be dragged, not in allLeafChildren and not a filler
-            }
-
             if (newParent && row.parent !== newParent) {
-                if (wouldFormCycle(row, newParent)) {
-                    continue; // Invalid move.
-                }
                 row.treeParent = newParent as RowNode | null;
                 changed = true;
             }
