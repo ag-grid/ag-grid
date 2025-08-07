@@ -182,7 +182,7 @@ export function _getAbsoluteRowIndex(beans: BeanCollection, rowPosition: RowPosi
         return rowIndex;
     }
 
-    if (rowPosition.rowPinned === 'bottom') {
+    if (rowPinned === 'bottom') {
         return pinnedTopRowCount + unpinnedRowCount + rowIndex;
     }
 

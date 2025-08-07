@@ -43,6 +43,12 @@ interface RangeCallback {
     (callRange: CellRange): void;
 }
 
+interface RangeDimension {
+    clipboardCount: number;
+    rangeCount: number;
+    adjustFn: (range: CellRange, delta: number) => void;
+}
+
 type CellsToFlashType = { [key: string]: boolean };
 type DataForCellRangesType = { data: string; cellsToFlash: CellsToFlashType };
 
@@ -329,6 +335,35 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         });
     }
 
+    private getPreProcessRangeCallback(clipboardData: string[][]): RangeCallback {
+        return (cellRange: CellRange) => {
+            const { rangeSvc } = this.beans;
+
+            if (!rangeSvc) {
+                return;
+            }
+
+            const { extendRangeRowCountBy, extendRangeColumnCountBy } = rangeSvc;
+
+            const rangeDimensions: RangeDimension[] = [
+                {
+                    clipboardCount: clipboardData.length,
+                    rangeCount: rangeSvc.getRangeRowCount(cellRange),
+                    adjustFn: extendRangeRowCountBy.bind(rangeSvc),
+                },
+                {
+                    clipboardCount: clipboardData[0].length,
+                    rangeCount: cellRange.columns.length,
+                    adjustFn: extendRangeColumnCountBy.bind(rangeSvc),
+                },
+            ];
+
+            for (const rangeDimension of rangeDimensions) {
+                this.adjustRangeDimensionForPaste(cellRange, clipboardData, rangeDimension);
+            }
+        };
+    }
+
     private pasteIntoActiveRange(
         clipboardData: string[][],
         cellsToFlash: Record<string, boolean>,
@@ -337,11 +372,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     ) {
         let indexOffset = 0;
         let dataRowIndex = 0;
-
-        const preProcessRange: RangeCallback = (range: CellRange) => {
-            this.adjustRangeRowsForPaste(range, clipboardData);
-            this.adjustRangeColumnsForPaste(range, clipboardData);
-        };
 
         const rowCallback: RowCallback = (
             currentRow: RowPosition,
@@ -409,7 +439,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             dataRowIndex++;
         };
 
-        this.iterateActiveRanges(rowCallback, false, preProcessRange);
+        this.iterateActiveRanges(rowCallback, false, this.getPreProcessRangeCallback(clipboardData));
     }
 
     private getDisplayedColumnsStartingAt(column: AgColumn): AgColumn[] {
@@ -822,18 +852,18 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return;
         }
 
-        const cellRanges = rangeSvc.getCellRanges();
-        const ranges = onlyFirst ? [cellRanges[0]] : cellRanges;
+        const currentCellRanges = rangeSvc.getCellRanges();
+        const cellRanges = onlyFirst ? [currentCellRanges[0]] : currentCellRanges;
 
-        ranges.forEach((range) => this.iterateActiveRange({ range, rowCallback, preProcessRange }));
+        cellRanges.forEach((cellRange) => this.iterateActiveRange({ cellRange, rowCallback, preProcessRange }));
     }
 
     private iterateActiveRange(params: {
-        range: CellRange;
+        cellRange: CellRange;
         rowCallback: RowCallback;
         preProcessRange?: RangeCallback;
     }): void {
-        const { range, preProcessRange, rowCallback } = params;
+        const { cellRange, preProcessRange, rowCallback } = params;
         const { beans } = this;
         const { rangeSvc } = beans;
 
@@ -842,11 +872,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         if (preProcessRange) {
-            preProcessRange(range);
+            preProcessRange(cellRange);
         }
 
-        let currentRow: RowPosition | null = rangeSvc.getRangeStartRow(range);
-        const lastRow = rangeSvc.getRangeEndRow(range);
+        let currentRow: RowPosition | null = rangeSvc.getRangeStartRow(cellRange);
+        const lastRow = rangeSvc.getRangeEndRow(cellRange);
 
         let rangeIndex = 0;
         let isLastRow = false;
@@ -857,7 +887,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             const rowNode = _getRowNode(beans, currentRow)!;
             isLastRow = _isSameRow(currentRow, lastRow);
 
-            rowCallback(currentRow, rowNode, range, rangeIndex++);
+            rowCallback(currentRow, rowNode, cellRange, rangeIndex++);
 
             currentRow = _getRowBelow(beans, currentRow);
         }
@@ -1217,60 +1247,34 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
     }
 
-    private adjustRangeRowsForPaste(cellRange: CellRange, clipboardData: string[][]): void {
+    private adjustRangeDimensionForPaste(
+        cellRange: CellRange,
+        clipboardData: string[][],
+        rangeDimension: RangeDimension
+    ): void {
         const { rangeSvc } = this.beans;
 
-        if (!rangeSvc) {
+        if (!rangeSvc || clipboardData.length === 0 || clipboardData[0].length === 0) {
             return;
         }
 
-        const clipboardRowCount = clipboardData.length;
-        const rangeRowCount = rangeSvc.getRangeRowCount(cellRange);
+        const { clipboardCount, rangeCount, adjustFn } = rangeDimension;
 
-        let targetRowCount: number;
+        let targetCount: number;
 
-        if (rangeRowCount < clipboardRowCount) {
-            // range is too small, extend to fit exactly the clipboard
-            targetRowCount = clipboardRowCount;
-        } else {
-            // range is equal or bigger, shrink to nearest multiple of clipboardRowCount
-            const fitCount = Math.floor(rangeRowCount / clipboardRowCount);
-            targetRowCount = fitCount * clipboardRowCount;
-        }
-
-        const delta = targetRowCount - rangeRowCount;
-
-        if (delta !== 0) {
-            rangeSvc.extendRangeRowCountBy(cellRange, delta);
-        }
-    }
-
-    private adjustRangeColumnsForPaste(cellRange: CellRange, clipboardData: string[][]): void {
-        const { rangeSvc } = this.beans;
-
-        if (!rangeSvc) {
-            return;
-        }
-
-        const clipboardRow = clipboardData[0]; // First row gives us the column count
-        const clipboardColCount = clipboardRow.length;
-        const rangeColCount = cellRange.columns.length;
-
-        let targetColCount: number;
-
-        if (rangeColCount < clipboardColCount) {
-            // Not enough columns, extend to fit clipboard exactly
-            targetColCount = clipboardColCount;
+        if (rangeCount < clipboardCount) {
+            // The range is not big enough, extend to fit clipboard exactly
+            targetCount = clipboardCount;
         } else {
             // Range is equal or larger, shrink to nearest multiple of clipboard
-            const fitCount = Math.floor(rangeColCount / clipboardColCount);
-            targetColCount = fitCount * clipboardColCount;
+            const fitCount = Math.floor(rangeCount / clipboardCount);
+            targetCount = fitCount * clipboardCount;
         }
 
-        const delta = targetColCount - rangeColCount;
+        const delta = targetCount - rangeCount;
 
         if (delta !== 0) {
-            rangeSvc.extendRangeColumnCountBy(cellRange, delta);
+            adjustFn(cellRange, delta);
         }
     }
 }
