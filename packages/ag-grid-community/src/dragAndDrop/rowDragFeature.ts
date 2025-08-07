@@ -486,11 +486,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 if (canDropResult.position) {
                     rowsDrop.position = canDropResult.position;
                 }
-                if (canDropResult.changed) {
-                    rowsDrop.changed = true;
-                }
                 if (canDropResult.allowed !== undefined) {
                     rowsDrop.allowed = canDropResult.allowed;
+                }
+                if (canDropResult.changed) {
+                    rowsDrop.changed = true;
                 }
             }
         }
@@ -1052,22 +1052,13 @@ const getLeafRow = (row: IRowNode | null | undefined): RowNode | undefined => {
     }
 };
 
-const rowsDropChanged = (a: RowsDrop | null | undefined, b: RowsDrop): boolean => {
-    if (a === b) {
-        return false;
-    }
-    if (
-        !a ||
+const rowsDropChanged = (a: RowsDrop | null | undefined, b: RowsDrop): boolean =>
+    a !== b &&
+    (!a ||
         a.sameGrid !== b.sameGrid ||
         a.allowed !== b.allowed ||
         a.position !== b.position ||
         a.target !== b.target ||
         a.source !== b.source ||
         a.newParent !== b.newParent ||
-        !_areEqual(a.rows, b.rows)
-    ) {
-        return true;
-    }
-
-    return false;
-};
+        !_areEqual(a.rows, b.rows));
