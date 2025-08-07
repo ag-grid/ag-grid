@@ -35,7 +35,6 @@ import type {
     ISizeColumnsToContentParams,
     ISizeColumnsToFitParams,
 } from '../interfaces/autoSize';
-import type { IServerSideRowExpansionState } from '../interfaces/expansionState';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState, GridStateKey } from '../interfaces/gridState';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';

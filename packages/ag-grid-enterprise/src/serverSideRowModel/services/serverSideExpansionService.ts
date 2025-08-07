@@ -1,7 +1,6 @@
 import type {
     BeanCollection,
     IExpansionService,
-    IServerSideRowExpansionState,
     IsServerSideGroupOpenByDefaultParams,
     NamedBean,
     RowGroupOpenedEvent,
@@ -11,6 +10,11 @@ import type {
 
 import { BaseExpansionService } from '../../rowHierarchy/baseExpansionService';
 import type { ServerSideRowModel } from '../serverSideRowModel';
+
+export interface IServerSideRowExpansionState {
+    expandAll: 'notInteracted' | 'expandAll' | 'collapseAll';
+    toggledNodes: string[];
+}
 
 export class ServerSideExpansionService extends BaseExpansionService implements NamedBean, IExpansionService {
     beanName = 'expansionSvc' as const;

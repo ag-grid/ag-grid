@@ -827,7 +827,6 @@ export { IRowModel, RowBounds, RowModelType } from './interfaces/iRowModel';
 export { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
 export { IExpansionService } from './interfaces/iExpansionService';
 export { ServerSideRowSelectionState, ServerSideRowGroupSelectionState } from './interfaces/selectionState';
-export { IServerSideRowExpansionState } from './interfaces/expansionState';
 export { IServerSideSelectionState, IServerSideGroupSelectionState } from './interfaces/iServerSideSelection';
 export { IAggFuncService } from './interfaces/iAggFuncService';
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from './interfaces/iClipboardService';
