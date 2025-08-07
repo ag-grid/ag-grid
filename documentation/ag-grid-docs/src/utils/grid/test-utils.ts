@@ -11,6 +11,10 @@ type ExtractFixtures<T> = T extends TestType<infer A, infer O> ? A & O : never;
 type PlaywrightFixtures = ExtractFixtures<typeof base>;
 
 type AgIdFor = ReturnType<typeof wrapAgTestIdFor<Locator>>;
+type LoadPageOptions = {
+    prod: boolean;
+    version: string;
+};
 
 type AgGridFixtures = {
     agFramework: AgFramework;
@@ -19,6 +23,7 @@ type AgGridFixtures = {
      * A locator to get the ag-grid test ID for a specific cell or element.
      */
     agIdFor: AgIdFor;
+    loadPageOptions?: LoadPageOptions;
 };
 
 type CacheFixtures = {
@@ -92,7 +97,8 @@ function setupConsoleExpectations(page: Page) {
 async function loadPage(
     page: Page,
     agExampleUrl: AgExampleUrl,
-    agFramework: (typeof ALL_FRAMEWORKS)[number]
+    agFramework: (typeof ALL_FRAMEWORKS)[number],
+    loadPageOptions: LoadPageOptions | undefined
 ): Promise<Page> {
     const queryOptions: any = {
         enableTestIds: 'true',
@@ -122,7 +128,7 @@ const extended = base.extend<TestFixtures>({
     agFramework: [({}, use) => use(ALL_FRAMEWORKS[0]), { option: true }],
     agIdFor: [({ page }, use) => use(wrapAgTestIdFor((testId: string) => page.getByTestId(testId))), { option: true }],
     bypassRequestCache: [false, { option: true }],
-
+    loadPageOptions: [({}, use) => use(undefined), { option: true }],
     cacheRoute: [
         async ({ page, bypassRequestCache }: TestFixtures, use: (r?: CacheRoute) => Promise<void>) => {
             if (bypassRequestCache) {
@@ -175,15 +181,15 @@ const frameworkTest =
         extended.use({ agFramework });
         // cachedRoute needs to be destructured in testWrapper for Playwright to initialise it correctly
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const testWrapper = async ({ page, agExampleUrl, agIdFor, cacheRoute }: TestFixtures) => {
+        const testWrapper = async ({ page, agExampleUrl, agIdFor, cacheRoute, loadPageOptions }: TestFixtures) => {
             if (!agExampleUrl) {
                 throw new Error(
                     `Missing 'setAgExampleUrl(import.meta)' in the test file. This is required to set the example URL for the test.`
                 );
             }
 
-            await loadPage(page, agExampleUrl, agFramework);
-            await testBody({ page, agExampleUrl, agIdFor, agFramework } as TestFixtures);
+            await loadPage(page, agExampleUrl, agFramework, loadPageOptions);
+            await testBody({ page, agExampleUrl, agIdFor, agFramework, loadPageOptions } as TestFixtures);
         };
 
         if (testName) {
