@@ -64,11 +64,11 @@ export interface IsRowValidDropPositionParams<TData = any, TContext = any> exten
     newParent: IRowNode<TData> | null;
     /** The rows that are being dropped */
     rows: IRowNode<TData>[];
+    /** True if the drop is allowed, false otherwise */
+    allowed: boolean;
 }
 
 export interface RowsDrop<TData = any, TContext = any> extends IsRowValidDropPositionParams<TData, TContext> {
-    /** True if the drop is allowed, false otherwise */
-    allowed: boolean;
     /** True if relevant information about the drop target are changed and the drag ghost need to be updated */
     changed: boolean;
 }
