@@ -1987,7 +1987,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Tells the grid if this row should be rendered as full width.
      */
     @Input() public isFullWidthRow: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined = undefined;
-    /** Called by managed drag and drop when rows are dropped on another row.
+    /** Called by drag and drop when rows are dragged over another row to conditionally prevent dropping the dragged row on the hovered row.
      * The user can cancel the drop by returning `false` or customize the operation by returning a `IsRowValidDropPositionResult`.
      * @agModule `RowDragModule`
      */
