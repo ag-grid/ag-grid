@@ -128,7 +128,7 @@ export function _warn<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
->(...args: undefined extends GetErrorParams<TId> ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
+>(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
     getMsgOrDefault(_warnOnce, args[0], args[1] as any, true);
 }
 
@@ -136,7 +136,7 @@ export function _error<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
->(...args: undefined extends GetErrorParams<TId> ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
+>(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
     getMsgOrDefault(_errorOnce, args[0], args[1] as any, false);
 }
 
@@ -151,7 +151,7 @@ export function _logPreInitErr<
 
 function getErrMsg<TId extends ErrorId>(
     defaultMessage: string | undefined,
-    args: undefined extends GetErrorParams<TId> ? [id: TId] : [id: TId, params: GetErrorParams<TId>]
+    args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]
 ): string {
     const id = args[0];
     return `error #${id} ` + getErrorParts(id, args[1] as any, defaultMessage).join(' ');
@@ -161,7 +161,7 @@ export function _errMsg<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
->(...args: undefined extends GetErrorParams<TId> ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): string {
+>(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): string {
     return getErrMsg(undefined, args);
 }
 
@@ -170,7 +170,7 @@ export function _preInitErrMsg<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
->(...args: undefined extends GetErrorParams<TId> ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): string {
+>(...args: GetErrorParams<TId> extends undefined ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): string {
     // as well as displaying an extra line break, this will remove the part of the message about adding the validation module
     return getErrMsg('\n', args);
 }
