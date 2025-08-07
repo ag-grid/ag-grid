@@ -37,8 +37,6 @@ export interface IsRowValidDropPositionResult<TData = any> {
     newParent?: RowNode<TData> | null;
     /** The target row node where the row is being dropped. */
     target?: IRowNode<TData> | null;
-    /** The number of rows to show in the drag ghost */
-    count?: number;
     /** True if the drop is allowed, false otherwise */
     allowed?: boolean;
     /** True if relevant information about the drop target are changed and the drag ghost need to be updated */
@@ -54,6 +52,8 @@ export interface IsRowValidDropPositionParams<TData = any, TContext = any> exten
     draggingEvent: DraggingEvent<TData, TContext> | null;
     /** True if this rows comes from the same grid, false if is coming from another grid */
     sameGrid: boolean;
+    /** The root row node that contains all the rows */
+    rootNode: IRowNode<TData>;
     /** The position of the rows relative to the target row */
     position: RowDropTargetPosition;
     /** The source row node that was dragged, if any */
@@ -64,8 +64,6 @@ export interface IsRowValidDropPositionParams<TData = any, TContext = any> exten
     newParent: IRowNode<TData> | null;
     /** The rows that are being dropped */
     rows: IRowNode<TData>[];
-    /** The number of rows to show in the drag ghost */
-    count: number;
 }
 
 export interface RowsDrop<TData = any, TContext = any> extends IsRowValidDropPositionParams<TData, TContext> {
@@ -73,6 +71,8 @@ export interface RowsDrop<TData = any, TContext = any> extends IsRowValidDropPos
     allowed: boolean;
     /** True if relevant information about the drop target are changed and the drag ghost need to be updated */
     changed: boolean;
+    /** The number of rows to show in the drag ghost */
+    count: number;
 }
 
 export interface RowDropZoneEvents {
@@ -331,28 +331,29 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         draggingEvent: DraggingEvent,
         canStartMakeGroupTimer = !draggingEvent.fromNudge
     ): RowsDrop | null {
-        const dragItem = draggingEvent.dragItem;
-        const { rowNode, rowNodes: rows } = dragItem;
+        const { rowNode, rowNodes: rows } = draggingEvent.dragItem;
         const rowsLen = rows?.length;
         const source = rowsLen && (rowNode ?? rows[0]);
-        const sameGrid = this.isFromThisGrid(draggingEvent);
 
-        if (!source) {
+        const { beans, gos, clientSideRowModel } = this;
+        const rootNode = clientSideRowModel.rootNode;
+
+        if (!source || !rootNode) {
             this.makeGroupThrottleClear();
             return null; // Nothing to move
         }
 
-        const { beans, gos, clientSideRowModel } = this;
-        const rootNode = clientSideRowModel.rootNode;
         const y = _getNormalisedMousePosition(beans, draggingEvent).y;
         let targetRowIndex = clientSideRowModel.getRowIndexAtPixel(y);
         let target = clientSideRowModel.getRow(targetRowIndex) ?? null;
+        const sameGrid = this.isFromThisGrid(draggingEvent);
 
         const rowsDrop: RowsDrop = {
             api: this.beans.gridApi,
             context: this.beans.gridOptions.context,
             draggingEvent,
             sameGrid,
+            rootNode,
             position: 'below',
             source,
             target,
@@ -495,15 +496,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 if (canDropResult.changed) {
                     rowsDrop.changed = true;
                 }
-
-                rowsDrop.count = canDropResult.count !== undefined ? canDropResult.count : rowsDrop.rows.length;
             }
         }
 
         const suppressMoveWhenRowDragging = gos.get('suppressMoveWhenRowDragging');
-        if (gos.get('rowDragManaged') && suppressMoveWhenRowDragging) {
-            rowsDrop.count = dragItem.rowNodes?.length || 1;
-        } else {
+        if (!gos.get('rowDragManaged') || !suppressMoveWhenRowDragging) {
             rowsDrop.count = rowsDrop.rows.length || 1;
         }
 
