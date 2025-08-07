@@ -364,6 +364,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         draggingEvent.rowsDrop = rowsDrop;
 
         const moved = source !== target;
+        const rowDragManaged = gos.get('rowDragManaged');
 
         let yDelta = target ? (y - target.rowTop! - target.rowHeight! / 2) / target.rowHeight! || 0 : 1;
 
@@ -388,7 +389,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (sameGrid && target) {
             if (!moved) {
                 if (Math.abs(yDelta) <= 0.5) {
-                    rowsDrop.allowed = false; // Nothing to move
+                    if (rowDragManaged) {
+                        rowsDrop.allowed = false; // Nothing to move
+                    }
                 }
                 targetInRows = true;
             } else {
@@ -460,7 +463,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         if (!newParent && targetInRows && (canSetParent || source === target)) {
             // No delta dragging of multiple rows with TreeData or no change, nothing to move
-            rowsDrop.allowed = false;
+            if (rowDragManaged) {
+                rowsDrop.allowed = false;
+            }
         }
 
         rowsDrop.newParent = newParent;
@@ -470,7 +475,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (isRowValidDropPosition) {
             const canDropResult = isRowValidDropPosition(rowsDrop);
             if (!canDropResult) {
-                rowsDrop.rows = _EmptyArray; // Cannot drop, so no rows
+                rowsDrop.allowed = false; // No rows to drop
             } else if (typeof canDropResult === 'object') {
                 // Custom result, override the default values
 
@@ -495,7 +500,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
         }
 
-        if (gos.get('rowDragManaged')) {
+        if (rowDragManaged) {
             rowsDrop.rows = this.filterRows(rowsDrop);
         }
 
