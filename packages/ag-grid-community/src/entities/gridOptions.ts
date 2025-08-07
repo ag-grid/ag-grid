@@ -2968,7 +2968,7 @@ export interface FillHandleOptions<TData = any> {
     setFillValue?: <TContext = any>(params: FillOperationParams<TData, TContext>) => any;
 }
 
-type GroupFlags = Partial<{
+export type GroupFlags = Partial<{
     /**
      * If `true`:
      *  - expandAll / collapseAll affects all rows, not only loaded ones.
