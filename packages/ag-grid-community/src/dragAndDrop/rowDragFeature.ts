@@ -20,7 +20,7 @@ import {
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _EmptyArray, _last } from '../utils/array';
+import { _EmptyArray, _areEqual, _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import type { DragAndDropIcon, DraggingEvent, DropTarget } from './dragAndDropService';
@@ -71,8 +71,6 @@ export interface RowsDrop<TData = any, TContext = any> extends IsRowValidDropPos
     allowed: boolean;
     /** True if relevant information about the drop target are changed and the drag ghost need to be updated */
     changed: boolean;
-    /** The number of rows to show in the drag ghost */
-    count: number;
 }
 
 export interface RowDropZoneEvents {
@@ -359,7 +357,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             target,
             newParent: null,
             rows,
-            count: rowsLen || 1,
             allowed: true,
             changed: false,
         };
@@ -496,19 +493,19 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 if (canDropResult.changed) {
                     rowsDrop.changed = true;
                 }
+
+                if (canDropResult.allowed !== undefined) {
+                    rowsDrop.allowed = canDropResult.allowed;
+                }
             }
         }
 
         const suppressMoveWhenRowDragging = gos.get('suppressMoveWhenRowDragging');
-        if (!gos.get('rowDragManaged') || !suppressMoveWhenRowDragging) {
-            rowsDrop.count = rowsDrop.rows.length || 1;
-        }
-
         if (suppressMoveWhenRowDragging && (rowsDrop.rows.length === 0 || rowsDrop.position === 'none')) {
             rowsDrop.allowed = false;
         }
 
-        if (!rowsDrop.allowed || rowsDrop.position === 'inside') {
+        if ((!rowsDrop.allowed || !rowsDrop.newParent) && rowsDrop.position === 'inside') {
             rowsDrop.position = above ? 'above' : 'below'; // Remove 'inside' if no new parent
         }
 
@@ -1051,24 +1048,10 @@ const rowsDropChanged = (a: RowsDrop | null | undefined, b: RowsDrop): boolean =
         a.position !== b.position ||
         a.target !== b.target ||
         a.source !== b.source ||
-        a.count !== b.count ||
-        a.newParent !== b.newParent
+        a.newParent !== b.newParent ||
+        !_areEqual(a.rows, b.rows)
     ) {
         return true;
-    }
-
-    const aRows = a.rows;
-    const bRows = b.rows;
-    if (aRows !== bRows) {
-        const len = aRows.length;
-        if (len !== bRows.length) {
-            return true;
-        }
-        for (let i = 0; i < len; ++i) {
-            if (aRows[i] !== bRows[i]) {
-                return true;
-            }
-        }
     }
 
     return false;
