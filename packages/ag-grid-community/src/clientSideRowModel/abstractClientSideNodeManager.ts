@@ -121,22 +121,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     }
 
     protected loadNewRowData(rowData: TData[]): void {
-        const rowDataLen = rowData.length;
-        let rowCount = 0;
-        const rows = new Array<ClientSideNodeManagerRowNode<TData>>(rowData.length); // Preallocate
-        for (let i = 0; i < rowDataLen; ++i) {
-            const data: TData | null | undefined = rowData[i];
-            if (data === undefined || data === null) {
-                _warn(291); // An element is null or undefined, skipping
-                continue;
-            }
-            const row = this.createRowNode(data, rowCount);
-            rows[rowCount++] = row;
-        }
-        if (rowCount !== rowDataLen) {
-            rows.length = rowCount; // Trim the array to the actual number of rows if some skipped
-        }
-        this.rootNode!.allLeafChildren = rows;
+        this.rootNode!.allLeafChildren = rowData?.map((dataItem, index) => this.createRowNode(dataItem, index)) ?? [];
     }
 
     public setImmutableRowData(params: RefreshModelParams<TData>, rowData: TData[]): void {
@@ -153,12 +138,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         let nodesUpdated = false;
         let orderChanged = false;
         for (let i = 0, prevSourceRowIndex = -1, len = rowData.length; i < len; i++) {
-            const data: TData | null | undefined = rowData[i];
-            if (data === undefined || data === null) {
-                _warn(291); // An element is null or undefined, skipping
-                continue;
-            }
-
+            const data = rowData[i];
             let node: ClientSideNodeManagerRowNode<TData> | undefined = this.getRowNode(
                 getRowIdFunc({ data, level: 0 })
             );
