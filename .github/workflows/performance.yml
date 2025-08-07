@@ -53,6 +53,19 @@ jobs:
     env:
       JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
+      - name: Check user access
+        uses: actions/github-script@v7
+        id: check-access
+        if: ${{ github.event_name == 'issue_comment' && github.event.comment.body == '/benchmarks' }}
+        env:
+          GH_USER_JIRA_MAPPING: ${{ secrets.GH_USER_JIRA_MAPPING }}
+        with:
+          script: |
+            const gh_user_jira_mapping = JSON.parse(process.env.GH_USER_JIRA_MAPPING || '{}');
+            if (!gh_user_jira_mapping[github.event.comment.user.login]) {
+              throw new Error('This workflow can only be run by the ag-grid org user.');
+            }
+
       - name: Notify start
         id: notify-start
         uses: actions/github-script@v7
