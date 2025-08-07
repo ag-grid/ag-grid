@@ -11,7 +11,7 @@ import type {
 import { BaseExpansionService } from '../../rowHierarchy/baseExpansionService';
 import type { ServerSideRowModel } from '../serverSideRowModel';
 
-export interface IServerSideRowExpansionState {
+interface IServerSideRowExpansionState {
     expandAll: 'notInteracted' | 'expandAll' | 'collapseAll';
     toggledNodes: string[];
 }
