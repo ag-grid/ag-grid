@@ -155,7 +155,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         for (let i = 0, prevSourceRowIndex = -1, len = rowData.length; i < len; i++) {
             const data: TData | null | undefined = rowData[i];
             if (data === undefined || data === null) {
-                _warn(291);
+                _warn(291); // An element is null or undefined, skipping
                 continue;
             }
 
