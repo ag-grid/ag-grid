@@ -68,7 +68,6 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         editable: true,
         flex: 1,
         filter: true,
-        aggFunc: 'sum',
     };
     const columnDefs = buildSimpleColumnDefs(allSports);
     const sideBar: string[] = [];
@@ -180,6 +179,7 @@ const buildSimpleColumnDefs = (allSports: string[]): ColDef[] => [
         type: 'rightAligned',
         valueFormatter: cashFormatter,
         filter: 'agNumberColumnFilter',
+        aggFunc: 'sum',
     },
     {
         field: 'winnings2023',
@@ -190,6 +190,7 @@ const buildSimpleColumnDefs = (allSports: string[]): ColDef[] => [
         cellEditorParams: {
             min: 0,
         },
+        aggFunc: 'sum',
     },
     {
         field: 'winnings2022',
@@ -200,6 +201,7 @@ const buildSimpleColumnDefs = (allSports: string[]): ColDef[] => [
         cellEditorParams: {
             min: 0,
         },
+        aggFunc: 'sum',
     },
 ];
 
