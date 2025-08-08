@@ -36,7 +36,13 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
     } as const;
 
     private modifyColumnsNoEventsCallbacks = {
-        addCol: (column: AgColumn) => this.columns.push(column),
+        addCol: (column: AgColumn) => {
+            // if this column has virtual columns associated to it, ensure those virtual columns are
+            // inserted before it in the list (and therefore the grouping hierarchy)
+            this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
+
+            this.columns.push(column);
+        },
         removeCol: (column: AgColumn) => _removeFromArray(this.columns, column),
     };
 
@@ -109,20 +115,7 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
         if (column.rowGroupActive !== rowGroup) {
             column.rowGroupActive = rowGroup;
 
-            // if enabling grouping on this column and if it also has virtual columns associated to it,
-            // ensure those virtual columns are inserted before it in the list (and therefore the grouping hierarchy)
-            const { groupHierarchyColSvc } = this.beans;
-            const hierarchyCols = groupHierarchyColSvc?.getVirtualColumnsForColumn(column) ?? [];
-            const position = this.columns.findIndex((c) => c === column);
-            if (rowGroup && hierarchyCols.length > 0 && position > -1) {
-                const toInsert: AgColumn[] = [];
-                for (const col of hierarchyCols) {
-                    if (!this.columns.includes(col)) {
-                        toInsert.push(col);
-                    }
-                }
-                this.columns.splice(position, 0, ...toInsert);
-            }
+            this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
 
             column.dispatchColEvent('columnRowGroupChanged', source);
         }

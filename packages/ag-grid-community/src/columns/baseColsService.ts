@@ -11,6 +11,7 @@ import type {
     IColsService,
 } from '../interfaces/iColsService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IGroupHierarchyColService } from '../interfaces/iGroupHierarchyColService';
 import { _removeFromArray } from '../utils/array';
 import { _exists } from '../utils/generic';
 import type { ColumnChangedEventType } from './columnApi';
@@ -23,6 +24,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     protected colModel: ColumnModel;
     protected aggFuncSvc?: IAggFuncService;
     protected visibleCols: VisibleColsService;
+    protected groupHierarchCols?: IGroupHierarchyColService;
     protected dispatchColumnChangedEvent = dispatchColumnChangedEvent;
 
     abstract eventName: ColumnChangedEventType;
@@ -37,10 +39,12 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.colModel = beans.colModel;
         this.aggFuncSvc = beans.aggFuncSvc;
         this.visibleCols = beans.visibleCols;
+        this.groupHierarchCols = beans.groupHierarchyColSvc;
     }
 
-    public sortColumns(compareFn?: (a: AgColumn, b: AgColumn) => number): void {
-        this.columns.sort(compareFn);
+    public sortColumns(compareFn: (a: AgColumn, b: AgColumn) => number): void {
+        const { groupHierarchCols } = this;
+        this.columns.sort((a, b) => groupHierarchCols?.compareVirtualColumns(a, b) ?? compareFn(a, b));
         this.updateIndexMap();
     }
 
@@ -290,7 +294,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 // ...with the exception that if we have columns with associated virtual columns, they need
                 // to come first in the grouping hierarchy. We don't check for uniqueness here because it should
                 // be guaranteed
-                const hierarchyCols = this.beans.groupHierarchyColSvc?.getVirtualColumnsForColumn(col);
+                const hierarchyCols = this.groupHierarchCols?.getVirtualColumnsForColumn(col);
                 if (hierarchyCols) {
                     res.push(...hierarchyCols);
                 }

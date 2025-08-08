@@ -28,7 +28,10 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     beanName = 'groupHierarchyColSvc' as const;
 
     public columns: _ColumnCollections | null = null;
+    /** Map from primary column to virtual (i.e. generated) columns */
     private readonly sourceColumnMap = new WeakMap<AgColumn, AgColumn[]>();
+    /** Inverse of `sourceColumnMap` */
+    private readonly inverseColumnMap = new WeakMap<AgColumn, AgColumn>();
 
     public addColumns(cols: _ColumnCollections): void {
         const groupHierarchyCols = this.columns;
@@ -87,6 +90,36 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         return [];
     }
 
+    public compareVirtualColumns(colA: AgColumn, colB: AgColumn): number | null {
+        const sourceA = this.inverseColumnMap.get(colA);
+        const sourceB = this.inverseColumnMap.get(colB);
+        if (sourceA && sourceA === sourceB) {
+            const hierarchyCols = this.sourceColumnMap.get(sourceA) ?? [];
+            return hierarchyCols?.indexOf(colA) - hierarchyCols?.indexOf(colB);
+        }
+
+        if (this.sourceColumnMap.get(colA)?.includes(colB)) {
+            return 1;
+        }
+
+        if (this.sourceColumnMap.get(colB)?.includes(colA)) {
+            return -1;
+        }
+
+        return null;
+    }
+
+    public insertVirtualColumnsForCol(columns: AgColumn<any>[], col: AgColumn<any>): void {
+        const hierarchyCols = this.beans.groupHierarchyColSvc?.getVirtualColumnsForColumn(col) ?? [];
+        if (hierarchyCols.length > 0) {
+            for (const col of hierarchyCols) {
+                if (!columns.includes(col)) {
+                    columns.push(col);
+                }
+            }
+        }
+    }
+
     public isGroupHierarchyColsEnabled(cols: _ColumnCollections): boolean {
         return cols.list.some((col) => this.isGroupHierarchyColsEnabledForCol(col));
     }
@@ -138,6 +171,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
                 this.createBean(newCol);
                 newCols.push(newCol);
                 updateMap(this.sourceColumnMap, col, newCol);
+                this.inverseColumnMap.set(newCol, col);
             });
         }
 
