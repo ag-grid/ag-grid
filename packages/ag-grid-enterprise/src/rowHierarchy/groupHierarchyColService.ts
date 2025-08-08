@@ -31,16 +31,16 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     private readonly sourceColumnMap = new WeakMap<AgColumn, AgColumn[]>();
 
     public addColumns(cols: _ColumnCollections): void {
-        const dateHierarchyCols = this.columns;
-        if (dateHierarchyCols == null) {
+        const groupHierarchyCols = this.columns;
+        if (groupHierarchyCols == null) {
             return;
         }
 
-        cols.list = dateHierarchyCols.list
+        cols.list = groupHierarchyCols.list
             .filter((col) => !cols.list.some((c) => c.getColId() === col.getColId()))
             .concat(cols.list);
 
-        cols.tree = dateHierarchyCols.tree
+        cols.tree = groupHierarchyCols.tree
             .filter((col) => !cols.tree.some((c) => c.getId() === col.getId()))
             .concat(cols.tree);
 
@@ -48,7 +48,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     }
 
     public createColumns(cols: _ColumnCollections): void {
-        const list = this.createDateHierarchyColumns(cols);
+        const list = this.createGroupHierarchyColumns(cols);
         const areSame = _areColIdsEqual(list, this.columns?.list ?? []);
 
         if (areSame) {
@@ -81,25 +81,22 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     }
 
     public getVirtualColumnsForColumn(col: AgColumn): AgColumn[] {
-        if (this.isDateHierarchyColsEnabledForCol(col)) {
+        if (this.isGroupHierarchyColsEnabledForCol(col)) {
             return this.sourceColumnMap.get(col) ?? [];
         }
         return [];
     }
 
-    public isDateHierarchyColsEnabled(cols: _ColumnCollections): boolean {
-        return cols.list.some((col) => this.isDateHierarchyColsEnabledForCol(col));
+    public isGroupHierarchyColsEnabled(cols: _ColumnCollections): boolean {
+        return cols.list.some((col) => this.isGroupHierarchyColsEnabledForCol(col));
     }
 
-    public isDateHierarchyColsEnabledForCol(col: AgColumn): boolean {
-        const { dataTypeSvc } = this.beans;
+    public isGroupHierarchyColsEnabledForCol(col: AgColumn): boolean {
         const def = col.getColDef();
-        const isDateCol =
-            dataTypeSvc?.isColPendingInference(col.getColId()) || dataTypeSvc?.getBaseDataType(col)?.includes('date');
-        return !!(def.rowGroupingHierarchy && (def.rowGroup || def.enableRowGroup) && isDateCol);
+        return !!(def.rowGroupingHierarchy && (def.rowGroup || def.enableRowGroup));
     }
 
-    private createDateHierarchyColDefs(sourceCol: AgColumn): ColDef[] {
+    private createGroupHierarchyColDefs(sourceCol: AgColumn): ColDef[] {
         const colDefs: ColDef[] = [];
         const sourceColDef = sourceCol.getColDef();
 
@@ -107,32 +104,34 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
             return colDefs;
         }
 
-        if (this.isDateHierarchyColsEnabledForCol(sourceCol)) {
-            for (const part of sourceColDef.rowGroupingHierarchy) {
-                let colDef: ColDef | null = null;
-                if (typeof part === 'string') {
-                    colDef = this.createColDefForPart(part, sourceCol, sourceColDef);
-                } else {
-                    colDef = part;
-                }
-                if (colDef) {
-                    colDefs.push(colDef);
-                }
+        if (!this.isGroupHierarchyColsEnabledForCol(sourceCol)) {
+            return colDefs;
+        }
+
+        for (const part of sourceColDef.rowGroupingHierarchy) {
+            let colDef: ColDef | null = null;
+            if (typeof part === 'string') {
+                colDef = this.createColDefForPart(part, sourceCol, sourceColDef);
+            } else {
+                colDef = part;
+            }
+            if (colDef) {
+                colDefs.push(colDef);
             }
         }
 
         return colDefs;
     }
 
-    private createDateHierarchyColumns(cols: _ColumnCollections): AgColumn[] {
-        if (!this.isDateHierarchyColsEnabled(cols)) {
+    private createGroupHierarchyColumns(cols: _ColumnCollections): AgColumn[] {
+        if (!this.isGroupHierarchyColsEnabled(cols)) {
             return [];
         }
 
         const newCols: AgColumn[] = [];
 
         for (const col of cols.list) {
-            this.createDateHierarchyColDefs(col).forEach((colDef) => {
+            this.createGroupHierarchyColDefs(col).forEach((colDef) => {
                 const colId = colDef.colId!;
                 this.gos.validateColDef(colDef, colId, true);
                 const newCol = new AgColumn(colDef, null, colId, true);

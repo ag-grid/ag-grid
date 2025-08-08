@@ -96,10 +96,11 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
 
         this.setColRowGroupActive(column, active, source);
 
-        if (
-            _shouldUpdateColVisibilityAfterGroup(this.gos, active) &&
-            !this.beans.groupHierarchyColSvc?.getColumn(column)
-        ) {
+        // If this column is a virtual column inserted by the groupHierarchyColSvc, by default we shouldn't make
+        // it visible when being grouped or ungrouped -- these are virtual columns, not user data columns, so they
+        // should only be made visible if the user explicitly wants to see them
+        const isGroupHierarchyCol = this.beans.groupHierarchyColSvc?.getColumn(column);
+        if (_shouldUpdateColVisibilityAfterGroup(this.gos, active) && !isGroupHierarchyCol) {
             this.colModel.setColsVisible([column], !active, source);
         }
     }
@@ -108,14 +109,18 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
         if (column.rowGroupActive !== rowGroup) {
             column.rowGroupActive = rowGroup;
 
+            // if enabling grouping on this column and if it also has virtual columns associated to it,
+            // ensure those virtual columns are inserted before it in the list (and therefore the grouping hierarchy)
             const { groupHierarchyColSvc } = this.beans;
-            const vCols = groupHierarchyColSvc?.getVirtualColumnsForColumn(column) ?? [];
-            if (rowGroup && vCols.length > 0) {
-                for (let i = vCols.length - 1; i >= 0; i--) {
-                    if (!this.columns.includes(vCols[i])) {
-                        this.columns.unshift(vCols[i]);
+            const hierarchyCols = groupHierarchyColSvc?.getVirtualColumnsForColumn(column) ?? [];
+            if (rowGroup && hierarchyCols.length > 0) {
+                const toInsert: AgColumn[] = [];
+                for (let i = hierarchyCols.length - 1; i >= 0; i--) {
+                    if (!this.columns.includes(hierarchyCols[i])) {
+                        toInsert.push(hierarchyCols[i]);
                     }
                 }
+                this.columns.unshift(...toInsert);
             }
 
             column.dispatchColEvent('columnRowGroupChanged', source);

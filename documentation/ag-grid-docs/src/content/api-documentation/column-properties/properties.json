@@ -482,7 +482,12 @@
                 "url": "./grouping-custom-group-columns/"
             }
         },
-        "rowGroupingHierarchy": {}
+        "rowGroupingHierarchy": {
+            "more": {
+                "name": "Grouping by Dates and Times",
+                "url": "./grouping-data/#example-grouping-date-time"
+            }
+        }
     },
     "aggregation": {
         "meta": {

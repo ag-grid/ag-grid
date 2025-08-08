@@ -1463,7 +1463,7 @@ export interface GridOptions<TData = any> {
 
     /**
      * Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
-     * @agModule `RowGroupingModule` / `TreeDataModule`
+     * @agModule `RowGroupingModule`
      */
     groupHierarchyConfig?: { [k: string]: ColDef };
 
