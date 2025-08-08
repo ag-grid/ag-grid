@@ -12,6 +12,7 @@ export const productionConfigFields = [
     'cellSelectionHeaderHighlight',
     'rowNumbers',
     'rowDrag',
+    'rowPinning',
     'rowSelection',
     'rightToLeft',
     'floatingFilters',
@@ -95,6 +96,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
             minWidth: 250,
         },
         rowNumbers: config.rowNumbers,
+        enableRowPinning: config.rowPinning,
         popupParent: config.popupParentIsBody ? document.body : undefined,
         grandTotalRow: config.grandTotalRow ? 'bottom' : undefined,
     };
