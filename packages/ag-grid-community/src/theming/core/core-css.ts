@@ -183,14 +183,19 @@ export type CoreParams = {
     fullRowEditInvalidBackgroundColor: ColorValue;
 
     /**
-     * Background color of the drag and drop image component element when dragging columns
+     * Background color of the drag and drop image component element when dragging columns or rows
      */
     dragAndDropImageBackgroundColor: ColorValue;
 
     /**
-     * Border color of the drag and drop image component element when dragging columns
+     * Border color of the drag and drop image component element when dragging columns or rows
      */
     dragAndDropImageBorder: BorderValue;
+
+    /**
+     * Border color of the drag and drop image component element when dragging columns or rows
+     */
+    dragAndDropImageNotAllowedBorder: BorderValue;
 
     /**
      * Shadow for the drag and drop image component element when dragging columns
@@ -1030,6 +1035,13 @@ export const coreDefaults: Readonly<CoreParams> = {
     dropdownShadow: { ref: 'cardShadow' },
     dragAndDropImageBackgroundColor: backgroundColor,
     dragAndDropImageBorder: true,
+    dragAndDropImageNotAllowedBorder: {
+        color: {
+            ref: 'invalidColor',
+            onto: 'dragAndDropImageBackgroundColor',
+            mix: 0.5,
+        },
+    },
     dragAndDropImageShadow: {
         ref: 'popupShadow',
     },

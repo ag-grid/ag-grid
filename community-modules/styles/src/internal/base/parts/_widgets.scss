@@ -445,6 +445,10 @@
         transform: translateY(calc(var(--ag-grid-size) * 2));
     }
 
+    .ag-dnd-ghost-not-allowed {
+        border-color: color-mix(in srgb, var(--ag-background-color), var(--ag-invalid-color) 50%);
+    }
+
     .ag-dnd-ghost-icon {
         margin-right: var(--ag-grid-size);
         color: var(--ag-foreground-color);
