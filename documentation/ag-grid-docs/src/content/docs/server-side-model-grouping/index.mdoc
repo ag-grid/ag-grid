@@ -135,7 +135,7 @@ api.collapseAll();
 Calling `expandAll()` and `collapseAll()` will impact **all loaded group nodes**, including those not visible due to their containing group been closed. This means there could potentially be a huge number of groups expanded, so this method should be used very wisely to not create massive amount of server requests and loading a large amount of data.
 
 {% note %}
-Calling `expandAll()` and `collapseAll()` will apply to all rows, including those not yet loaded.
+To change the default behaviour of `expandAll()` and `collapseAll()` to expand or collapse **all group nodes**, not only loaded group nodes, set `groupFlags.useSsrmNewBehaviour` flag in `GridOptions` to `true`.
 {% /note %}
 
 To open only specific groups, e.g. only groups at the top level, then use the `forEachNode()` callback and open / close the row using `setExpanded()` as follows:

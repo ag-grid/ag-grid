@@ -11,45 +11,49 @@ import type {
 import { BaseExpansionService } from '../../rowHierarchy/baseExpansionService';
 import type { ServerSideRowModel } from '../serverSideRowModel';
 
-interface ExpansionState {
-    /** Base expansion state for all nodes, whether they have been loaded or not */
-    expandAll: boolean;
-    /** RowNode IDs of those nodes whose expansion state differs from the base state */
-    toggledNodes: Set<string>;
+interface IServerSideRowExpansionState {
+    expandAll: 'notInteracted' | 'expandAll' | 'collapseAll';
+    toggledNodes: string[];
 }
 
 export class ServerSideExpansionService extends BaseExpansionService implements NamedBean, IExpansionService {
     beanName = 'expansionSvc' as const;
-
-    private expandedState: ExpansionState = { expandAll: false, toggledNodes: new Set() };
+    private readonly interactedWith = new Set<string>();
+    private readonly toggledNodes = new Set<string>();
+    private expandAllStatus: IServerSideRowExpansionState['expandAll'] = 'notInteracted';
     private serverSideRowModel: ServerSideRowModel;
+    private useSsrmNewBehaviour: boolean;
 
     public wireBeans(beans: BeanCollection) {
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.useSsrmNewBehaviour = !!beans.gridOptions.groupFlags?.useSsrmNewBehaviour;
     }
 
     public postConstruct(): void {
         this.addManagedEventListeners({
             columnRowGroupChanged: () => {
-                this.expandedState.toggledNodes.clear();
+                this.reset();
             },
         });
     }
 
-    public checkOpenByDefault(rowNode: RowNode): void {
+    /**
+     * This is different from just checking expandedState.isExpanded(rowNode.id),
+     * as this correctly prioritizes user interaction over the user-defined initial state.
+     * Plus sanity checks that the rowNode is actually expandable.
+     */
+    public isRowExpanded(rowNode: RowNode): boolean {
         if (!rowNode.isExpandable()) {
-            return;
+            return false;
         }
 
-        const shouldExpand = this.expandedState.expandAll !== this.expandedState.toggledNodes.has(rowNode.id!);
-        if (shouldExpand) {
-            rowNode.setExpanded(true);
-            return;
+        if (this.useSsrmNewBehaviour && this.hasInteractedWith(rowNode.id!)) {
+            return this.isExpanded(rowNode.id!);
         }
 
         const userFunc = this.gos.getCallback('isServerSideGroupOpenByDefault');
         if (!userFunc) {
-            return;
+            return false;
         }
 
         const params: WithoutGridCommon<IsServerSideGroupOpenByDefaultParams> = {
@@ -57,48 +61,49 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
             rowNode,
         };
 
-        const userFuncRes = userFunc(params);
-
-        if (userFuncRes) {
-            rowNode.setExpanded(true);
-        }
+        return userFunc(params);
     }
 
     public expandRows(rowIdsToExpand: string[], rowIdsToCollapse?: string[]): void {
-        const processNodes = (rowIds: string[], expanded: boolean) => {
-            for (const rowId of rowIds) {
-                const rowNode = this.serverSideRowModel.getRowNode(rowId);
-                if (rowNode) {
-                    rowNode.setExpanded(expanded);
-                } else {
-                    this.expandedState.toggledNodes[expanded !== this.expandedState.expandAll ? 'add' : 'delete'](
-                        rowId
-                    );
-                }
+        const rowIdsToExpandSet = new Set(rowIdsToExpand);
+        const rowIdsToCollapseSet = new Set(rowIdsToCollapse || []);
+        this.serverSideRowModel.forEachNodeTransactional((node) => {
+            if (rowIdsToExpandSet.has(node.id!)) {
+                return node.setExpanded(true);
             }
-        };
-        processNodes(rowIdsToExpand, true);
-        if (!rowIdsToCollapse) {
-            return;
-        }
-        processNodes(rowIdsToCollapse, false);
+            if (rowIdsToCollapseSet.has(node.id!)) {
+                return node.setExpanded(false);
+            }
+        });
     }
 
-    public expandAll(value: boolean): void {
-        this.expandedState.expandAll = value;
-        this.expandedState.toggledNodes.clear();
-        this.serverSideRowModel.expandAllTransactional((node) => {
-            if (node.stub) {
-                this.expandedState.toggledNodes.add(node.id!);
-            } else {
-                if (node.hasChildren()) {
-                    node.setExpanded(value);
-                }
+    public override setExpanded(
+        rowNode: RowNode | undefined,
+        expanded: boolean,
+        e?: MouseEvent | KeyboardEvent,
+        _?: boolean,
+        rowId?: string
+    ): void {
+        const rowIdC = rowId || rowNode!.id!;
+        if (expanded !== this.isExpanded(rowIdC)) {
+            this.toggleNode(rowIdC);
+        }
+        if (rowNode) {
+            super.setExpanded(rowNode, expanded, e);
+        }
+    }
+
+    public expandAll(expanded: boolean): void {
+        this.reset(expanded ? 'expandAll' : 'collapseAll');
+        this.serverSideRowModel.forEachNodeTransactional((node) => {
+            if (!this.useSsrmNewBehaviour && (node.stub || !node.hasChildren())) {
+                return;
             }
+            node.setExpanded(expanded);
         });
         this.beans.eventSvc.dispatchEvent({
             type: 'expandOrCollapseAll',
-            source: value ? 'expandAll' : 'collapseAll',
+            source: expanded ? 'expandAll' : 'collapseAll',
         });
     }
 
@@ -114,4 +119,37 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
         // we refresh regardless as the output of the callback could be a moving target
         this.beans.rowRenderer.refreshCells({ rowNodes: [event.node] });
     }
+
+    /**
+     * expandAll XOR isToggled, since toggleNodes signifies a diff from expandAll.
+     */
+    private isExpanded = (rowId: string) => (this.expandAllStatus === 'expandAll') !== this.toggledNodes.has(rowId);
+
+    /**
+     * Cleans up sets and sets the expandAll state if provided, otherwise resets it too.
+     */
+    private reset = (newExpandAll: IServerSideRowExpansionState['expandAll'] = 'notInteracted') => {
+        this.expandAllStatus = newExpandAll;
+        this.interactedWith.clear();
+        this.toggledNodes.clear();
+    };
+
+    /**
+     * Toggles the expansion state of a node.
+     */
+    private toggleNode = (rowId: string) => {
+        if (!this.hasInteractedWithAll()) this.interactedWith.add(rowId);
+        this.toggledNodes[this.toggledNodes.has(rowId) ? 'delete' : 'add'](rowId);
+    };
+
+    /**
+     * Returns true if the user has interacted with the node (by expanding/collapsing it).
+     * If we have touched the expand/collapse all button, we return true for all nodes.
+     */
+    private hasInteractedWith = (rowId: string) => this.hasInteractedWithAll() || this.interactedWith.has(rowId);
+
+    /**
+     * Returns true if the user has interacted with all nodes in the grid (by using expandAll/collapseAll).
+     */
+    private hasInteractedWithAll = () => this.expandAllStatus !== 'notInteracted';
 }
