@@ -164,15 +164,16 @@ const cashFormatter = (params: any) => {
 };
 
 const buildSimpleColumnDefs = (allSports: string[]): ColDef[] => [
-    { field: 'country' },
+    { field: 'country', enablePivot: true },
     {
         field: 'sport',
+        enablePivot: true,
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             values: allSports,
         },
     },
-    { field: 'name' },
+    { field: 'name', enablePivot: true },
     {
         field: 'winningsTotal',
         headerName: 'Total winnings',
