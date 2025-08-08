@@ -87,6 +87,7 @@ const docs: Record<AllThemeParams, string> = {
     dialogShadow: 'Shadow for popup dialogs such as the integrated charts and the advanced filter builder.',
     dragAndDropImageBackgroundColor: 'Background color of the cover element when dragging grid parts',
     dragAndDropImageBorder: 'Border color of the cover element when dragging grid parts',
+    dragAndDropImageNotAllowedBorder: 'Border color of the cover element when dropping grid parts is not allowed',
     dragAndDropImageShadow: 'Shadow for the drag cover element when dragging grid parts',
     dragHandleColor: 'Color of the drag handle on draggable rows and column markers',
     dropdownShadow: 'Default shadow for dropdown menus',
