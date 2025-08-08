@@ -1,7 +1,7 @@
 import { BaseEnvironment } from './agStack/core/baseEnvironment';
 import type { Theme } from './agStack/theming/theme';
 import type { ThemeImpl } from './agStack/theming/themeImpl';
-import { _observeResize } from './agStack/utils/domUtils';
+import { _observeResize } from './agStack/utils/dom';
 import type { NamedBean } from './context/bean';
 import type { BeanCollection } from './context/context';
 import type { AgEventTypeParams } from './events';
@@ -12,7 +12,7 @@ import type { Module } from './interfaces/iModule';
 import { _getAllRegisteredModules } from './modules/moduleRegistry';
 import { coreCSS } from './theming/core/core.css-GENERATED';
 import { themeQuartz } from './theming/parts/theme/themes';
-import { _createElement } from './utils/dom';
+import { _createElement } from './utils/element';
 import { _error, _warn } from './validation/logging';
 
 const CELL_HORIZONTAL_PADDING: Variable = {

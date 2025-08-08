@@ -1,8 +1,8 @@
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import type { IComponent } from '../agStack/interfaces/iComponent';
-import { _clearElement } from '../agStack/utils/domUtils';
+import { _clearElement } from '../agStack/utils/dom';
 import type { AgGridCommon } from '../interfaces/iCommon';
-import type { ElementParams } from '../utils/dom';
+import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';
 import { _createIcon } from '../utils/icon';
 import { Component } from '../widgets/component';

@@ -1,7 +1,7 @@
 import { KeyCode } from '../../../agStack/constants/keyCode';
 import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
-import { _clearElement } from '../../../agStack/utils/domUtils';
-import type { ElementParams } from '../../../utils/dom';
+import { _clearElement } from '../../../agStack/utils/dom';
+import type { ElementParams } from '../../../utils/element';
 import { _debounce } from '../../../utils/function';
 import type { NumberFilterModel } from '../../provided/number/iNumberFilter';
 import { _isUseApplyButton, getDebounceMs } from '../../provided/providedFilterUtils';

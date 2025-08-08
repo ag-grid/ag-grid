@@ -1,12 +1,12 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
 import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
+import { _missing } from '../../agStack/utils/generic';
 import type { ListOption } from '../../agStack/widgets/agList';
 import { AgSelectSelector } from '../../agStack/widgets/agSelect';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
-import type { ElementParams } from '../../utils/dom';
-import { _missing } from '../../utils/generic';
+import type { ElementParams } from '../../utils/element';
 import { _warn } from '../../validation/logging';
 import type { ValueService } from '../../valueService/valueService';
 import type { GridSelect } from '../../widgets/gridWidgetTypes';

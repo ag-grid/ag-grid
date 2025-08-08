@@ -1,5 +1,6 @@
 import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
-import { _exists } from '../agStack/utils/genericUtils';
+import { _requestAnimationFrame } from '../agStack/utils/dom';
+import { _exists } from '../agStack/utils/generic';
 import type { ColumnModel } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -30,7 +31,6 @@ import type { RowPosition } from '../interfaces/iRowPosition';
 import type { IStickyRowFeature } from '../interfaces/iStickyRows';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import { _removeFromArray } from '../utils/array';
-import { _requestAnimationFrame } from '../utils/dom';
 import { _errMsg } from '../validation/logging';
 import type { CellCtrl } from './cell/cellCtrl';
 import type { RowCtrlInstanceId } from './row/rowCtrl';

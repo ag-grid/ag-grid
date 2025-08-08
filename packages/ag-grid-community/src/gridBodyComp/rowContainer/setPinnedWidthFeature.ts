@@ -1,4 +1,4 @@
-import { _setDisplayed, _setFixedWidth } from '../../agStack/utils/domUtils';
+import { _setDisplayed, _setFixedWidth } from '../../agStack/utils/dom';
 import { BeanStub } from '../../context/beanStub';
 
 export class SetPinnedWidthFeature extends BeanStub {

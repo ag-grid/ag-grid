@@ -4,7 +4,7 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IComponent } from '../interfaces/iComponent';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { AgPopupComponent } from '../popup/agPopupComponent';
-import { _toString } from '../utils/stringUtils';
+import { _toString } from '../utils/string';
 import type { BaseTooltipParams } from './baseTooltipStateManager';
 
 export class AgTooltipComponent<

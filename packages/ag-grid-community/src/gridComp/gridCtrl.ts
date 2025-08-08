@@ -1,6 +1,6 @@
 import { Direction } from '../agStack/constants/direction';
-import { _getActiveDomElement } from '../agStack/utils/beanUtils';
-import { _observeResize } from '../agStack/utils/domUtils';
+import { _getActiveDomElement } from '../agStack/utils/document';
+import { _observeResize } from '../agStack/utils/dom';
 import { BeanStub } from '../context/beanStub';
 import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';

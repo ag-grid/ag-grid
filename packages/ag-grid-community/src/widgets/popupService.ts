@@ -12,7 +12,7 @@ import type { PostProcessPopupParams } from '../interfaces/iCallbackParams';
 import type { AgGridCommon, WithoutGridCommon } from '../interfaces/iCommon';
 import type { PopupPositionParams } from '../interfaces/iPopupPositionParams';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _isStopPropagationForAgGrid } from '../utils/event';
+import { _isStopPropagationForAgGrid } from '../utils/gridEvent';
 
 export class PopupService
     extends BasePopupService<

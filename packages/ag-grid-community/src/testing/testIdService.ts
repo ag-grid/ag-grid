@@ -1,4 +1,4 @@
-import { _getRootNode } from '../agStack/utils/beanUtils';
+import { _getRootNode } from '../agStack/utils/document';
 import { getGridId } from '../api/coreApi';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';

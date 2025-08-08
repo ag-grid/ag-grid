@@ -1,4 +1,4 @@
-import type { AgElementParams } from '../utils/domUtils';
+import type { AgElementParams } from '../utils/dom';
 
 export type LabelAlignment = 'left' | 'right' | 'top';
 

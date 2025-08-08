@@ -1,7 +1,8 @@
 import { CssClassManager } from '../../agStack/core/cssClassManager';
-import { _getActiveDomElement } from '../../agStack/utils/beanUtils';
-import { _clearElement, _removeFromParent } from '../../agStack/utils/domUtils';
-import { _toString } from '../../agStack/utils/stringUtils';
+import { _getActiveDomElement } from '../../agStack/utils/document';
+import { _addStylesToElement, _clearElement, _removeFromParent } from '../../agStack/utils/dom';
+import { _missing } from '../../agStack/utils/generic';
+import { _toString } from '../../agStack/utils/string';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapper';
@@ -12,8 +13,7 @@ import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellE
 import type { PopupPositionParams } from '../../interfaces/iPopupPositionParams';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
-import { _addStylesToElement, _createElement } from '../../utils/dom';
-import { _missing } from '../../utils/generic';
+import { _createElement } from '../../utils/element';
 import { _warn } from '../../validation/logging';
 import { Component } from '../../widgets/component';
 import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';

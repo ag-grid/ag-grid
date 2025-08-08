@@ -1,9 +1,9 @@
+import { _getScrollbarWidth } from '../agStack/utils/browser';
 import type { ColumnAnimationService } from '../columnMove/columnAnimationService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import { _getScrollbarWidth } from '../utils/browser';
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;

@@ -1,5 +1,6 @@
 import { KeyCode } from './agStack/constants/keyCode';
-import { _getActiveDomElement } from './agStack/utils/beanUtils';
+import { _getActiveDomElement } from './agStack/utils/document';
+import { _makeNull } from './agStack/utils/generic';
 import type { ColumnModel } from './columns/columnModel';
 import type { VisibleColsService } from './columns/visibleColsService';
 import type { NamedBean } from './context/bean';
@@ -31,7 +32,6 @@ import {
     _isHeaderFocusSuppressed,
     _registerKeyboardFocusEvents,
 } from './utils/focus';
-import { _makeNull } from './utils/generic';
 
 export class FocusService extends BeanStub implements NamedBean {
     beanName = 'focusSvc' as const;

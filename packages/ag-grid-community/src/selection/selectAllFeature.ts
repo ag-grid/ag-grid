@@ -1,5 +1,5 @@
-import { _setAriaRole } from '../agStack/utils/ariaUtils';
-import { _getActiveDomElement } from '../agStack/utils/beanUtils';
+import { _getAriaCheckboxStateName, _setAriaRole } from '../agStack/utils/aria';
+import { _getActiveDomElement } from '../agStack/utils/document';
 import { AgCheckbox } from '../agStack/widgets/agCheckbox';
 import { isColumnGroupAutoCol, isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
@@ -17,7 +17,6 @@ import {
     _isServerSideRowModel,
 } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
-import { _getAriaCheckboxStateName } from '../utils/aria';
 import { _warn } from '../validation/logging';
 import type { GridCheckbox } from '../widgets/gridWidgetTypes';
 

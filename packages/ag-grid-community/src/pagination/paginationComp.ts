@@ -1,13 +1,13 @@
 import { KeyCode } from '../agStack/constants/keyCode';
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
+import { _setAriaDisabled } from '../agStack/utils/aria';
 import type { BeanCollection } from '../context/context';
 import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
-import { _setAriaDisabled } from '../utils/aria';
-import type { ElementParams } from '../utils/dom';
+import type { ElementParams } from '../utils/element';
 import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/focus';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';

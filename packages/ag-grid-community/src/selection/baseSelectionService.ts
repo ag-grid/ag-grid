@@ -1,5 +1,5 @@
-import { _setAriaSelected } from '../agStack/utils/ariaUtils';
-import { _getActiveDomElement } from '../agStack/utils/beanUtils';
+import { _setAriaSelected } from '../agStack/utils/aria';
+import { _getActiveDomElement } from '../agStack/utils/document';
 import { isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';

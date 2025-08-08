@@ -1,6 +1,6 @@
-import { _setAriaRole } from '../agStack/utils/ariaUtils';
-import { _getDocument } from '../agStack/utils/beanUtils';
-import { _clearElement, _isNodeOrElement, _removeFromParent } from '../agStack/utils/domUtils';
+import { _setAriaRole } from '../agStack/utils/aria';
+import { _getDocument } from '../agStack/utils/document';
+import { _clearElement, _isNodeOrElement, _removeFromParent } from '../agStack/utils/dom';
 import { BeanStub } from '../context/beanStub';
 import type { Component } from './component';
 import type { ITabGuard } from './tabGuardCtrl';

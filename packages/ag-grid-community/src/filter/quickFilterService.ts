@@ -1,4 +1,4 @@
-import { _exists } from '../agStack/utils/genericUtils';
+import { _exists } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';

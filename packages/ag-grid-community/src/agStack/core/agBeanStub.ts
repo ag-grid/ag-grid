@@ -16,8 +16,8 @@ import type {
     AgPropertyValueChangedListener,
     IPropertiesService,
 } from '../interfaces/iProperties';
-import { _addSafePassiveEventListener } from '../utils/eventUtils';
-import { _getLocaleTextFunc } from '../utils/localeUtils';
+import { _addSafePassiveEventListener } from '../utils/event';
+import { _getLocaleTextFunc } from '../utils/locale';
 
 export type AgBeanStubEvent = 'destroyed';
 type AgEventOrDestroyed<TEventType extends string> = TEventType | AgBeanStubEvent;

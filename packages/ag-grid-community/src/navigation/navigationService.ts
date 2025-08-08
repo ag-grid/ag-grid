@@ -1,5 +1,5 @@
 import { KeyCode } from '../agStack/constants/keyCode';
-import { _exists } from '../agStack/utils/genericUtils';
+import { _exists, _missing } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -20,7 +20,6 @@ import { RowCtrl } from '../rendering/row/rowCtrl';
 import { _last } from '../utils/array';
 import { _focusNextGridCoreContainer, _isHeaderFocusSuppressed } from '../utils/focus';
 import { _throttle } from '../utils/function';
-import { _missing } from '../utils/generic';
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */

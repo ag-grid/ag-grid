@@ -1,5 +1,5 @@
-import { _getDocument } from '../../agStack/utils/beanUtils';
-import { _getElementSize, _observeResize } from '../../agStack/utils/domUtils';
+import { _getDocument } from '../../agStack/utils/document';
+import { _getElementSize, _observeResize } from '../../agStack/utils/dom';
 import type { ColumnCollections } from '../../columns/columnModel';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';

@@ -1,5 +1,6 @@
 import { AgContext } from './agStack/core/agContext';
 import type { AgContextParams } from './agStack/core/agContext';
+import { _missing } from './agStack/utils/generic';
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
@@ -31,8 +32,7 @@ import {
     _registerModule,
     _unRegisterGridModules,
 } from './modules/moduleRegistry';
-import { _createElement } from './utils/dom';
-import { _missing } from './utils/generic';
+import { _createElement } from './utils/element';
 import { NoModulesRegisteredError, missingRowModelTypeError } from './validation/errorMessages/errorText';
 import { _error, _logPreInitErr } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';

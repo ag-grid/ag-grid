@@ -1,4 +1,4 @@
-import { _getRootNode } from '../agStack/utils/beanUtils';
+import { _getRootNode } from '../agStack/utils/document';
 import type { AgPromise } from '../agStack/utils/promise';
 import { _getDragAndDropImageCompDetails } from '../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';

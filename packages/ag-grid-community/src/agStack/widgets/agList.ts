@@ -7,8 +7,8 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { TooltipCtrl } from '../interfaces/iTooltip';
 import type { ITooltipFeature } from '../interfaces/iTooltip';
-import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/ariaUtils';
-import { _createAgElement, _isVisible, _removeFromParent } from '../utils/domUtils';
+import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
+import { _createAgElement, _isVisible, _removeFromParent } from '../utils/dom';
 import { agListCSS } from './agList.css-GENERATED';
 
 export interface ListOption<TValue = string> {

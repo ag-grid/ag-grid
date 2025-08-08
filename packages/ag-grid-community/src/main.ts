@@ -82,52 +82,81 @@ export { BeanName, SingletonBean, BeanCollection } from './context/context';
 export { VisibleChangedEvent, RefPlaceholder } from './agStack/interfaces/agComponent';
 export { AgEvent } from './agStack/interfaces/agEvent';
 export { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
-export {
-    _setAriaHidden,
-    _setAriaRole,
-    _setAriaLabel,
-    _setAriaLabelledBy,
-    _setAriaExpanded,
-    _setAriaControls,
-    _setAriaControlsAndLabel,
-    _setAriaSelected,
-    _setAriaPosInSet,
-    _setAriaSetSize,
-} from './agStack/utils/ariaUtils';
-export {
-    _setDisplayed,
-    _loadTemplate,
-    _setVisible,
-    _isNodeOrElement,
-    _clearElement,
-    _setFixedWidth,
-    _setDisabled,
-    _getAbsoluteWidth,
-    _removeFromParent,
-    _isVisible,
-    _getInnerHeight,
-    _isElementOverflowingCallback,
-    _getAbsoluteHeight,
-    _observeResize,
-} from './agStack/utils/domUtils';
-export { _exists } from './agStack/utils/genericUtils';
-export { _serialiseDate, _parseDateTimeFromString } from './agStack/utils/dateUtils';
-export { _getLocaleTextFunc, _translate } from './agStack/utils/localeUtils';
-export { _getActiveDomElement, _getRootNode, _isNothingFocused, _getDocument } from './agStack/utils/beanUtils';
-export { _isIOSUserAgent } from './agStack/utils/browserUtils';
-export { _isElementInEventPath } from './agStack/utils/eventUtils';
-export { _toString } from './agStack/utils/stringUtils';
-export { AgPromise, _isPromise } from './agStack/utils/promise';
 export { LocaleTextFunc } from './agStack/interfaces/iLocaleService';
 export { CssClassManager } from './agStack/core/cssClassManager';
 export { LocalEventService } from './agStack/events/localEventService';
 export { IEventEmitter, IEventListener } from './agStack/interfaces/iEventEmitter';
-export { _isEventFromPrintableCharacter } from './agStack/utils/keyboardUtils';
 export { PopupEventParams } from './agStack/interfaces/iPopup';
 export { ScrollDirection } from './agStack/interfaces/baseEvents';
 export { KeyCode } from './agStack/constants/keyCode';
 export { AgPopupComponent } from './agStack/popup/agPopupComponent';
 export { IComponent } from './agStack/interfaces/iComponent';
+
+// AG Stack Utils (public)
+export {
+    AriaSortState,
+    _setAriaLevel,
+    _setAriaLabel,
+    _setAriaDescribedBy,
+    _setAriaExpanded,
+    _setAriaLabelledBy,
+    _setAriaChecked,
+    _setAriaControls,
+    _setAriaControlsAndLabel,
+    _setAriaRole,
+    _setAriaColIndex,
+    _setAriaColSpan,
+    _setAriaRowIndex,
+    _setAriaDisabled,
+    _setAriaHasPopup,
+    _removeAriaExpanded,
+    _removeAriaSort,
+    _setAriaSort,
+    _setAriaColCount,
+    _setAriaRowCount,
+    _setAriaActiveDescendant,
+    _setAriaSelected,
+    _setAriaPosInSet,
+    _setAriaSetSize,
+    _setAriaHidden,
+    _getAriaPosInSet,
+    _setAriaInvalid,
+} from './agStack/utils/aria';
+export { _isIOSUserAgent, _isBrowserSafari, _isBrowserFirefox } from './agStack/utils/browser';
+export { _serialiseDate, _getDateParts, _parseDateTimeFromString } from './agStack/utils/date';
+export {
+    _getAbsoluteHeight,
+    _getAbsoluteWidth,
+    _setDisplayed,
+    _clearElement,
+    _removeFromParent,
+    _radioCssClass,
+    _loadTemplate,
+    _isVisible,
+    _setFixedWidth,
+    _setDisabled,
+    _setVisible,
+    _getInnerHeight,
+    _getInnerWidth,
+    _isNodeOrElement,
+    _observeResize,
+    _requestAnimationFrame,
+    _isElementOverflowingCallback,
+} from './agStack/utils/dom';
+export { _isElementInEventPath } from './agStack/utils/event';
+export {
+    _exists,
+    _missing,
+    _jsonEquals,
+    _toStringOrNull,
+    _makeNull,
+    _defaultComparator,
+} from './agStack/utils/generic';
+export { _isEventFromPrintableCharacter } from './agStack/utils/keyboard';
+export { _escapeString, _toString } from './agStack/utils/string';
+export { _getActiveDomElement, _getRootNode, _isNothingFocused, _getDocument } from './agStack/utils/document';
+export { _getLocaleTextFunc, _translate } from './agStack/utils/locale';
+export { AgPromise, _isPromise } from './agStack/utils/promise';
 
 // AG Stack Widgets
 export {
@@ -200,8 +229,8 @@ export { AgTooltipComponent as _AgTooltipComponent } from './agStack/tooltip/agT
 export { AgTooltipFeature as _AgTooltipFeature } from './agStack/tooltip/agTooltipFeature';
 export { BaseTooltipParams as _BaseTooltipParams } from './agStack/tooltip/baseTooltipStateManager';
 export { BaseTooltipStateManager as _BaseTooltipStateManager } from './agStack/tooltip/baseTooltipStateManager';
-export { _createAgElement } from './agStack/utils/domUtils';
-export { _getLocaleTextFromFunc, _getLocaleTextFromMap } from './agStack/utils/localeUtils';
+export { _createAgElement } from './agStack/utils/dom';
+export { _getLocaleTextFromFunc, _getLocaleTextFromMap } from './agStack/utils/locale';
 export { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
 
 // excel
@@ -1171,47 +1200,18 @@ export type { AriaAnnouncementService } from './rendering/ariaAnnouncementServic
 export { IStickyRowFeature, IStickyRowService } from './interfaces/iStickyRows';
 
 // utils
-export {
-    ColumnSortState,
-    _setAriaLevel,
-    _setAriaDescribedBy,
-    _setAriaChecked,
-    _setAriaColIndex,
-    _setAriaColSpan,
-    _setAriaRowIndex,
-    _setAriaDisabled,
-    _setAriaHasPopup,
-    _removeAriaExpanded,
-    _removeAriaSort,
-    _setAriaSort,
-    _setAriaColCount,
-    _setAriaRowCount,
-    _setAriaActiveDescendant,
-    _getAriaPosInSet,
-    _setAriaInvalid,
-} from './utils/aria';
 export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './utils/array';
 export { ChangedPath } from './utils/changedPath';
-export { _getDateParts } from './utils/date';
-export {
-    _radioCssClass,
-    ElementParams,
-    _getInnerWidth,
-    _preserveRangesWhile,
-    _requestAnimationFrame,
-    _createElement,
-} from './utils/dom';
+export { ElementParams, _createElement } from './utils/element';
 export { _selectAllCells } from './utils/selection';
-export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid } from './utils/event';
+export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid } from './utils/gridEvent';
 export { _warnOnce, _debounce, _doOnce, _waitUntil, _batchCall } from './utils/function';
 export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
 export { _interpretAsRightClick } from './utils/mouse';
 export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
-export { _missing, _jsonEquals, _toStringOrNull, _makeNull, _defaultComparator } from './utils/generic';
 export { _formatNumberCommas } from './utils/number';
 export { _mergeDeep } from './utils/object';
-export { _escapeString } from './utils/string';
 
 export {
     _addFocusableContainerListener,

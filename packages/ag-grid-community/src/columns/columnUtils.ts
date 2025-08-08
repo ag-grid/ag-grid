@@ -1,5 +1,5 @@
 import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties';
-import { _exists } from '../agStack/utils/genericUtils';
+import { _exists } from '../agStack/utils/generic';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { isColumn } from '../entities/agColumn';

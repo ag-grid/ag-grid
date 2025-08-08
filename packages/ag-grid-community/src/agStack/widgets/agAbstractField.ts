@@ -3,11 +3,9 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import { _setAriaLabelledBy } from '../utils/ariaUtils';
-import { _setAriaLabel } from '../utils/ariaUtils';
-import { _getAriaLabel } from '../utils/ariaUtils';
-import type { AgElementParams } from '../utils/domUtils';
-import { _setFixedWidth } from '../utils/domUtils';
+import { _getAriaLabel, _setAriaLabel, _setAriaLabelledBy } from '../utils/aria';
+import type { AgElementParams } from '../utils/dom';
+import { _setFixedWidth } from '../utils/dom';
 import { AgAbstractLabel } from './agAbstractLabel';
 import type { AgFieldParams } from './agFieldParams';
 

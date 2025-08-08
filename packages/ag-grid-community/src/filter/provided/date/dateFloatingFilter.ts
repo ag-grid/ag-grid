@@ -1,10 +1,10 @@
 import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
-import { _parseDateTimeFromString, _serialiseDate } from '../../../agStack/utils/dateUtils';
-import { _setDisplayed } from '../../../agStack/utils/domUtils';
+import { _parseDateTimeFromString, _serialiseDate } from '../../../agStack/utils/date';
+import { _setDisplayed } from '../../../agStack/utils/dom';
 import { AgInputTextFieldSelector } from '../../../agStack/widgets/agInputTextField';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
-import type { ElementParams } from '../../../utils/dom';
+import type { ElementParams } from '../../../utils/element';
 import { _debounce } from '../../../utils/function';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FloatingFilterDisplayParams, IFloatingFilterParams } from '../../floating/floatingFilter';

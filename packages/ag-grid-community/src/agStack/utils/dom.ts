@@ -1,6 +1,44 @@
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
-import { _setAriaHidden } from './ariaUtils';
-import { _getWindow } from './beanUtils';
+import { _setAriaHidden } from './aria';
+import { _getWindow } from './document';
+
+/**
+ * This method adds a class to an element and remove that class from all siblings.
+ * Useful for toggling state.
+ * @param {HTMLElement} element The element to receive the class
+ * @param {string} elementClass The class to be assigned to the element
+ * @param {boolean} otherElementClass The class to be assigned to siblings of the element, but not the element itself
+ */
+export function _radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null) {
+    const parent = element.parentElement;
+    let sibling = parent && (parent.firstChild as HTMLElement);
+
+    while (sibling) {
+        if (elementClass) {
+            sibling.classList.toggle(elementClass, sibling === element);
+        }
+        if (otherElementClass) {
+            sibling.classList.toggle(otherElementClass, sibling !== element);
+        }
+        sibling = sibling.nextSibling as HTMLElement;
+    }
+}
+
+export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
+export const FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
+
+export function _isFocusableFormField(element: HTMLElement): boolean {
+    const matches: (str: string) => boolean = Element.prototype.matches || (Element as any).prototype.msMatchesSelector;
+
+    const inputSelector = 'input, select, button, textarea';
+    const isFocusable = matches.call(element, inputSelector);
+    const isNotFocusable = matches.call(element, FOCUSABLE_EXCLUDE);
+    const isElementVisible = _isVisible(element);
+
+    const focusable = isFocusable && !isNotFocusable && isElementVisible;
+
+    return focusable;
+}
 
 export function _setDisplayed(element: Element, displayed: boolean, options: { skipAriaHidden?: boolean } = {}) {
     const { skipAriaHidden } = options;
@@ -30,6 +68,32 @@ export function _setDisabled(element: HTMLElement, disabled: boolean) {
     for (const input of inputs) {
         addOrRemoveDisabledAttribute(input as HTMLElement);
     }
+}
+
+export function _isElementChildOfClass(
+    element: HTMLElement | null,
+    cls: string,
+    maxNest?: HTMLElement | number
+): boolean {
+    let counter = 0;
+
+    while (element) {
+        if (element.classList.contains(cls)) {
+            return true;
+        }
+
+        element = element.parentElement;
+
+        if (typeof maxNest == 'number') {
+            if (++counter > maxNest) {
+                break;
+            }
+        } else if (element === maxNest) {
+            break;
+        }
+    }
+
+    return false;
 }
 
 // returns back sizes as doubles instead of strings. similar to
@@ -100,16 +164,26 @@ export function _getInnerHeight(el: HTMLElement): number {
     return size.height;
 }
 
-export function _getAbsoluteWidth(el: HTMLElement): number {
-    const { width, marginLeft, marginRight } = _getElementSize(el);
+export function _getInnerWidth(el: HTMLElement): number {
+    const size = _getElementSize(el);
 
-    return Math.floor(width + marginLeft + marginRight);
+    if (size.boxSizing === 'border-box') {
+        return size.width - size.paddingLeft - size.paddingRight;
+    }
+
+    return size.width;
 }
 
 export function _getAbsoluteHeight(el: HTMLElement): number {
     const { height, marginBottom, marginTop } = _getElementSize(el);
 
     return Math.floor(height + marginBottom + marginTop);
+}
+
+export function _getAbsoluteWidth(el: HTMLElement): number {
+    const { width, marginLeft, marginRight } = _getElementSize(el);
+
+    return Math.floor(width + marginLeft + marginRight);
 }
 
 export function _getElementRectWithOffset(el: HTMLElement): {
@@ -127,6 +201,23 @@ export function _getElementRectWithOffset(el: HTMLElement): {
         right: offsetElementRect.right + (borderRightWidth || 0),
         bottom: offsetElementRect.bottom + (borderBottomWidth || 0),
     };
+}
+
+export function _getScrollLeft(element: HTMLElement, rtl: boolean): number {
+    let scrollLeft = element.scrollLeft;
+
+    if (rtl) {
+        scrollLeft = Math.abs(scrollLeft);
+    }
+
+    return scrollLeft;
+}
+
+export function _setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
+    if (rtl) {
+        value *= -1;
+    }
+    element.scrollLeft = value;
 }
 
 export function _clearElement(el: HTMLElement): void {
@@ -169,6 +260,78 @@ export function _loadTemplate(template: string | undefined | null): HTMLElement 
     return tempDiv.firstChild as HTMLElement;
 }
 
+export function _ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement | null): void {
+    // if already in right order, do nothing
+    if (eChildBefore && eChildBefore.nextSibling === eChild) {
+        return;
+    }
+
+    if (!eContainer.firstChild) {
+        eContainer.appendChild(eChild);
+    } else if (eChildBefore) {
+        if (eChildBefore.nextSibling) {
+            // insert between the eRowBefore and the row after it
+            eContainer.insertBefore(eChild, eChildBefore.nextSibling);
+        } else {
+            // if nextSibling is missing, means other row is at end, so just append new row at the end
+            eContainer.appendChild(eChild);
+        }
+    } else if (eContainer.firstChild && eContainer.firstChild !== eChild) {
+        // otherwise put at start
+        // insert it at the first location
+        eContainer.insertAdjacentElement('afterbegin', eChild);
+    }
+}
+
+export function _setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTMLElement | null)[]): void {
+    for (let i = 0; i < orderedChildren.length; i++) {
+        const correctCellAtIndex = orderedChildren[i];
+        const actualCellAtIndex = eContainer.children[i];
+
+        if (actualCellAtIndex !== correctCellAtIndex) {
+            eContainer.insertBefore(correctCellAtIndex!, actualCellAtIndex);
+        }
+    }
+}
+
+/**
+ * Converts a camelCase string into hyphenated string
+ * @param {string} camelCase
+ * @returns {string}
+ */
+function _camelCaseToHyphenated(camelCase: string): string {
+    return camelCase.replace(/[A-Z]/g, (s) => `-${s.toLocaleLowerCase()}`);
+}
+
+export function _addStylesToElement(
+    eElement: any,
+    styles:
+        | {
+              [cssProperty: string]: string | number;
+          }
+        | null
+        | undefined
+) {
+    if (!styles) {
+        return;
+    }
+
+    for (const key of Object.keys(styles)) {
+        const value = styles[key];
+        if (!key || !key.length || value == null) {
+            continue;
+        }
+
+        // changes the key from camelCase into a hyphenated-string
+        const parsedKey = _camelCaseToHyphenated(key);
+        const valueAsString = value.toString();
+        const parsedValue = valueAsString.replace(/\s*!important/g, '');
+        const priority = parsedValue.length != valueAsString.length ? 'important' : undefined;
+
+        eElement.style.setProperty(parsedKey, parsedValue, priority);
+    }
+}
+
 export function _isElementOverflowingCallback(getElement: () => HTMLElement | undefined): () => boolean {
     return () => {
         const element = getElement();
@@ -206,6 +369,13 @@ export function _setFixedWidth(element: HTMLElement, width: string | number) {
     element.style.minWidth = width;
 }
 
+export function _setFixedHeight(element: HTMLElement, height: string | number) {
+    height = _formatSize(height);
+    element.style.height = height;
+    element.style.maxHeight = height;
+    element.style.minHeight = height;
+}
+
 export function _formatSize(size: number | string) {
     return typeof size === 'number' ? `${size}px` : size;
 }
@@ -221,6 +391,7 @@ export function _addOrRemoveAttribute(element: HTMLElement, name: string, value:
         element.setAttribute(name, value.toString());
     }
 }
+
 export function _observeResize(
     beans: AgCoreBeanCollection<any, any, any, any>,
     element: HTMLElement,
@@ -231,6 +402,18 @@ export function _observeResize(
     const resizeObserver = ResizeObserverImpl ? new ResizeObserverImpl(callback) : null;
     resizeObserver?.observe(element);
     return () => resizeObserver?.disconnect();
+}
+
+export function _requestAnimationFrame(beans: AgCoreBeanCollection<any, any, any, any>, callback: any) {
+    const win = _getWindow(beans);
+
+    if (win.requestAnimationFrame) {
+        win.requestAnimationFrame(callback);
+    } else if ((win as any).webkitRequestAnimationFrame) {
+        (win as any).webkitRequestAnimationFrame(callback);
+    } else {
+        win.setTimeout(callback, 0);
+    }
 }
 
 type Attributes = { [key: string]: string };

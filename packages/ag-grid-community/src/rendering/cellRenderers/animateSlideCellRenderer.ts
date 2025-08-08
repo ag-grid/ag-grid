@@ -1,9 +1,8 @@
 import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
-import { _exists } from '../../agStack/utils/genericUtils';
+import { _exists, _missing } from '../../agStack/utils/generic';
 import { _clearElement } from '../../main';
-import type { ElementParams } from '../../utils/dom';
-import { _createElement } from '../../utils/dom';
-import { _missing } from '../../utils/generic';
+import type { ElementParams } from '../../utils/element';
+import { _createElement } from '../../utils/element';
 import { Component } from '../../widgets/component';
 import { animateSlideCellRendererCSS } from './animateSlideCellRenderer.css-GENERATED';
 import type { ICellRenderer } from './iCellRenderer';

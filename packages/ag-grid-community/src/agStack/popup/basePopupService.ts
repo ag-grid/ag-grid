@@ -7,17 +7,17 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { AddPopupParams, AddPopupResult, BasePopupPositionParams, PopupEventParams } from '../interfaces/iPopup';
 import type { IPopupService } from '../interfaces/iPopupService';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import { _setAriaLabel, _setAriaOwns, _setAriaRole } from '../utils/ariaUtils';
-import { _getActiveDomElement, _getDocument } from '../utils/beanUtils';
+import { _setAriaLabel, _setAriaOwns, _setAriaRole } from '../utils/aria';
+import { _getActiveDomElement, _getDocument } from '../utils/document';
 import {
     _createAgElement,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
     _getElementRectWithOffset,
     _observeResize,
-} from '../utils/domUtils';
-import { _isElementInEventPath } from '../utils/eventUtils';
-import { _exists } from '../utils/genericUtils';
+} from '../utils/dom';
+import { _isElementInEventPath } from '../utils/event';
+import { _exists } from '../utils/generic';
 import { AgPromise, _wrapInterval } from '../utils/promise';
 
 interface AgPopup {

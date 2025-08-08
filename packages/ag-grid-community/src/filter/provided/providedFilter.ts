@@ -8,7 +8,7 @@ import type {
     IFilterComp,
 } from '../../interfaces/iFilter';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
-import type { ElementParams } from '../../utils/dom';
+import type { ElementParams } from '../../utils/element';
 import { _debounce } from '../../utils/function';
 import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';

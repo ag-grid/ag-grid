@@ -1,6 +1,6 @@
 import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
-import { _isElementOverflowingCallback } from '../agStack/utils/domUtils';
-import { _exists } from '../agStack/utils/genericUtils';
+import { _isElementOverflowingCallback } from '../agStack/utils/dom';
+import { _exists } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';

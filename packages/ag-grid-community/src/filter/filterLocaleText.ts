@@ -1,5 +1,5 @@
 import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
-import { _translate } from '../agStack/utils/localeUtils';
+import { _translate } from '../agStack/utils/locale';
 
 const FILTER_LOCALE_TEXT = {
     applyFilter: 'Apply',

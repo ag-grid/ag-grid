@@ -1,8 +1,8 @@
 import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
+import { _getAriaCheckboxStateName } from '../../agStack/utils/aria';
 import { AgCheckboxSelector } from '../../agStack/widgets/agCheckbox';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
-import { _getAriaCheckboxStateName } from '../../utils/aria';
-import type { ElementParams } from '../../utils/dom';
+import type { ElementParams } from '../../utils/element';
 import type { GridCheckbox } from '../../widgets/gridWidgetTypes';
 import { AgAbstractCellEditor } from './agAbstractCellEditor';
 

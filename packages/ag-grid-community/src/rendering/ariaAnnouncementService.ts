@@ -1,8 +1,8 @@
-import { _getDocument } from '../agStack/utils/beanUtils';
-import { _clearElement } from '../agStack/utils/domUtils';
+import { _setAriaAtomic, _setAriaLive, _setAriaRelevant } from '../agStack/utils/aria';
+import { _getDocument } from '../agStack/utils/document';
+import { _clearElement } from '../agStack/utils/dom';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { _setAriaAtomic, _setAriaLive, _setAriaRelevant } from '../utils/aria';
 import { _debounce } from '../utils/function';
 
 export class AriaAnnouncementService extends BeanStub implements NamedBean {

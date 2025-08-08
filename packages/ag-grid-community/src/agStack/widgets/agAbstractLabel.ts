@@ -4,9 +4,9 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import { _setAriaRole } from '../utils/ariaUtils';
-import type { AgElementParams } from '../utils/domUtils';
-import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../utils/domUtils';
+import { _setAriaRole } from '../utils/aria';
+import type { AgElementParams } from '../utils/dom';
+import { _clearElement, _setDisabled, _setDisplayed, _setElementWidth } from '../utils/dom';
 import { agAbstractLabelCSS } from './agAbstractLabel.css-GENERATED';
 import type { AgLabelParams, LabelAlignment } from './agFieldParams';
 

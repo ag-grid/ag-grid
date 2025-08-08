@@ -1,8 +1,8 @@
-import { _isNodeOrElement, _loadTemplate } from '../agStack/utils/domUtils';
+import { _isNodeOrElement, _loadTemplate } from '../agStack/utils/dom';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _warn } from '../validation/logging';
-import { _createElement } from './dom';
+import { _createElement } from './element';
 
 //
 // IMPORTANT NOTE!

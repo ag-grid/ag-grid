@@ -1,11 +1,10 @@
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
-import { _setAriaRole } from '../agStack/utils/ariaUtils';
-import { _observeResize } from '../agStack/utils/domUtils';
+import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRole, _setAriaRowCount } from '../agStack/utils/aria';
+import { _observeResize } from '../agStack/utils/dom';
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
 import { GridHeaderSelector } from '../headerRendering/gridHeaderComp';
 import { LayoutCssClasses } from '../styling/layoutFeature';
-import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
-import type { ElementParams } from '../utils/dom';
+import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
 import { FakeHScrollSelector } from './fakeHScrollComp';

@@ -1,4 +1,4 @@
-import { _getDocument } from '../agStack/utils/beanUtils';
+import { _getDocument } from '../agStack/utils/document';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';

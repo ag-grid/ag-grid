@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import type {
-    ColumnSortState,
+    AriaSortState,
     HeaderCellCtrl,
     HeaderStyle,
     IHeader,
@@ -55,7 +55,7 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
             },
             toggleCss: (name: string, on: boolean) => cssManager.current!.toggleCss(name, on),
             setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
-            setAriaSort: (sort?: ColumnSortState) => {
+            setAriaSort: (sort?: AriaSortState) => {
                 if (eGui.current) {
                     sort ? _setAriaSort(eGui.current, sort) : _removeAriaSort(eGui.current);
                 }

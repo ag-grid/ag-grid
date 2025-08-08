@@ -7,8 +7,8 @@ import type { GridOptionsService } from '../../gridOptionsService';
 import { _setDomData } from '../../gridOptionsUtils';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { AgGridCommon } from '../../interfaces/iCommon';
-import type { ElementParams } from '../../utils/dom';
-import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
+import type { ElementParams } from '../../utils/element';
+import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboardEvent';
 import type { AgComponentSelectorType } from '../../widgets/component';
 
 const PopupEditorElement: ElementParams = { tag: 'div', cls: 'ag-popup-editor', attrs: { tabindex: '-1' } };

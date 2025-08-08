@@ -1,11 +1,16 @@
-import type { AgBaseComponent, AgComponent } from '../interfaces/agComponent';
-import type { AgComponentEvent, AgComponentSelector, VisibleChangedEvent } from '../interfaces/agComponent';
+import type {
+    AgBaseComponent,
+    AgComponent,
+    AgComponentEvent,
+    AgComponentSelector,
+    VisibleChangedEvent,
+} from '../interfaces/agComponent';
 import { RefPlaceholder } from '../interfaces/agComponent';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import type { AgElementParams } from '../utils/domUtils';
+import type { AgElementParams } from '../utils/dom';
 import {
     DataRefAttribute,
     _createAgElement,
@@ -13,7 +18,7 @@ import {
     _loadTemplate,
     _setDisplayed,
     _setVisible,
-} from '../utils/domUtils';
+} from '../utils/dom';
 import { AgBeanStub } from './agBeanStub';
 import { CssClassManager } from './cssClassManager';
 

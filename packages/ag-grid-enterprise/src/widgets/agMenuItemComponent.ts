@@ -25,13 +25,13 @@ import {
     KeyCode,
     _addGridCommonParams,
     _createElement,
-    _preserveRangesWhile,
     _setAriaDisabled,
     _setAriaExpanded,
     _setAriaHasPopup,
     _setAriaRole,
 } from 'ag-grid-community';
 
+import { _preserveRangesWhile } from '../misc/enterpriseDomUtils';
 import { AgMenuList } from './agMenuList';
 import { AgMenuPanel } from './agMenuPanel';
 

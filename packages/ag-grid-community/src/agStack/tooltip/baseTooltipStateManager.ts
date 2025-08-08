@@ -7,9 +7,9 @@ import type { BasePopupPositionParams } from '../interfaces/iPopup';
 import type { IPopupService } from '../interfaces/iPopupService';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { TooltipCtrl } from '../interfaces/iTooltip';
-import { _getActiveDomElement, _getDocument } from '../utils/beanUtils';
-import { _isIOSUserAgent } from '../utils/browserUtils';
-import { _exists } from '../utils/genericUtils';
+import { _isIOSUserAgent } from '../utils/browser';
+import { _getActiveDomElement, _getDocument } from '../utils/document';
+import { _exists } from '../utils/generic';
 
 enum TooltipStates {
     NOTHING,

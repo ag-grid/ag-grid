@@ -1,4 +1,4 @@
-import { _getDocument } from '../agStack/utils/beanUtils';
+import { _getDocument } from '../agStack/utils/document';
 import { BeanStub } from '../context/beanStub';
 import { _findFocusableElements, _findNextFocusableElement } from '../utils/focus';
 import { ManagedFocusFeature } from './managedFocusFeature';

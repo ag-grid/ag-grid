@@ -1,4 +1,4 @@
-import { _exists } from '../agStack/utils/genericUtils';
+import { _exists } from '../agStack/utils/generic';
 
 // Prevents the risk of prototype pollution
 export const SKIP_JS_BUILTINS = new Set<string>(['__proto__', 'constructor', 'prototype']);

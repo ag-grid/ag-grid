@@ -7,7 +7,7 @@ import type {
     AgPropertyValueChangedListener,
     IPropertiesService,
 } from './agStack/interfaces/iProperties';
-import { _exists } from './agStack/utils/genericUtils';
+import { _exists } from './agStack/utils/generic';
 import type { GridApi } from './api/gridApi';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';

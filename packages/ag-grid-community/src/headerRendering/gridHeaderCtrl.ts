@@ -1,10 +1,10 @@
 import { KeyCode } from '../agStack/constants/keyCode';
-import { _getActiveDomElement } from '../agStack/utils/beanUtils';
-import { _exists } from '../agStack/utils/genericUtils';
+import { _getActiveDomElement } from '../agStack/utils/document';
+import { _requestAnimationFrame } from '../agStack/utils/dom';
+import { _exists } from '../agStack/utils/generic';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { HeaderNavigationDirection } from '../navigation/headerNavigationService';
-import { _requestAnimationFrame } from '../utils/dom';
 import { _focusNextGridCoreContainer } from '../utils/focus';
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight } from './headerUtils';

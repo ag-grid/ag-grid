@@ -1,30 +1,31 @@
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel', 'scroll'];
 const NON_PASSIVE_EVENTS = ['wheel'];
+const supports: { [key: string]: boolean } = {};
 
-export function _addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void) {
-    const passive = getPassiveStateForEvent(event);
+export const _isEventSupported = (() => {
+    const tags = {
+        select: 'input',
+        change: 'input',
+        submit: 'form',
+        reset: 'form',
+        error: 'img',
+        load: 'img',
+        abort: 'img',
+    } as any;
 
-    let options: AddEventListenerOptions | undefined;
+    const eventChecker = (eventName: any) => {
+        if (typeof supports[eventName] === 'boolean') {
+            return supports[eventName];
+        }
 
-    if (passive != null) {
-        options = { passive };
-    }
+        const el = document.createElement(tags[eventName] || 'div');
+        eventName = 'on' + eventName;
 
-    eElement.addEventListener(event, listener, options);
-}
+        return (supports[eventName] = eventName in el);
+    };
 
-const getPassiveStateForEvent = (event: string): boolean | undefined => {
-    const isPassive = PASSIVE_EVENTS.includes(event);
-    const isNonPassive = NON_PASSIVE_EVENTS.includes(event);
-
-    if (isPassive) {
-        return true;
-    }
-
-    if (isNonPassive) {
-        return false;
-    }
-};
+    return eventChecker;
+})();
 
 export function _isElementInEventPath(element: HTMLElement, event: Event): boolean {
     if (!event || !element) {
@@ -68,3 +69,28 @@ function _getEventPath(event: Event | { target: EventTarget }): EventTarget[] {
     // If this is an AG Grid event build the path ourselves
     return _createEventPath(eventNoType);
 }
+
+export function _addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void) {
+    const passive = getPassiveStateForEvent(event);
+
+    let options: AddEventListenerOptions | undefined;
+
+    if (passive != null) {
+        options = { passive };
+    }
+
+    eElement.addEventListener(event, listener, options);
+}
+
+const getPassiveStateForEvent = (event: string): boolean | undefined => {
+    const isPassive = PASSIVE_EVENTS.includes(event);
+    const isNonPassive = NON_PASSIVE_EVENTS.includes(event);
+
+    if (isPassive) {
+        return true;
+    }
+
+    if (isNonPassive) {
+        return false;
+    }
+};

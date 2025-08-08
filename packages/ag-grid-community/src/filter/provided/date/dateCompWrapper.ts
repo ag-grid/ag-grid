@@ -1,4 +1,4 @@
-import { _setDisplayed } from '../../../agStack/utils/domUtils';
+import { _setDisplayed } from '../../../agStack/utils/dom';
 import { _getDateCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { Context } from '../../../context/context';

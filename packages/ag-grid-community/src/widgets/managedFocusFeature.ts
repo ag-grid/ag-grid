@@ -1,7 +1,7 @@
 import { KeyCode } from '../agStack/constants/keyCode';
 import { BeanStub } from '../context/beanStub';
-import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../utils/event';
 import { _findNextFocusableElement } from '../utils/focus';
+import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../utils/gridEvent';
 
 export interface ManagedFocusCallbacks {
     shouldStopEventPropagation?: (e: KeyboardEvent) => boolean;

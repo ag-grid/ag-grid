@@ -1,5 +1,5 @@
 import type { AgEvent } from '../agStack/interfaces/agEvent';
-import { _exists } from '../agStack/utils/genericUtils';
+import { _exists, _jsonEquals } from '../agStack/utils/generic';
 import { AgPromise } from '../agStack/utils/promise';
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import {
@@ -25,7 +25,6 @@ import {
 import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import { isColumnFilterComp } from '../interfaces/iFilter';
 import type {
     BaseFilterParams,
     ColumnFilterState,
@@ -44,8 +43,8 @@ import type {
     IFilterDef,
     IFilterParams,
 } from '../interfaces/iFilter';
+import { isColumnFilterComp } from '../interfaces/iFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
-import { _jsonEquals } from '../utils/generic';
 import { _error, _warn } from '../validation/logging';
 import type { FilterHandlerName, FilterUi, FilterWrapper, LegacyFilterWrapper } from './columnFilterUtils';
 import {

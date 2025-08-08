@@ -1,7 +1,7 @@
-import { _toString } from '../agStack/utils/stringUtils';
+import { _missing } from '../agStack/utils/generic';
+import { _toString } from '../agStack/utils/string';
 import type { GetCellValueParams } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
-import { _missing } from '../utils/generic';
 
 export function expireValueCache(beans: BeanCollection): void {
     beans.valueCache?.expire();

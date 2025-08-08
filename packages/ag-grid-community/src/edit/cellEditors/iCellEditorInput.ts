@@ -1,5 +1,5 @@
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
-import type { ElementParams } from '../../utils/dom';
+import type { ElementParams } from '../../utils/element';
 import type { ComponentSelector } from '../../widgets/component';
 import type { GridInputTextField } from '../../widgets/gridWidgetTypes';
 

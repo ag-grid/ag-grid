@@ -1,7 +1,7 @@
 import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
-import { _exists } from '../../agStack/utils/genericUtils';
+import { _exists } from '../../agStack/utils/generic';
 import { AgInputTextFieldSelector } from '../../agStack/widgets/agInputTextField';
-import type { ElementParams } from '../../utils/dom';
+import type { ElementParams } from '../../utils/element';
 import type { GridInputTextField } from '../../widgets/gridWidgetTypes';
 import type { CellEditorInput } from './iCellEditorInput';
 import type { ITextCellEditorParams } from './iTextCellEditor';

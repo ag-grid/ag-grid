@@ -5,11 +5,11 @@ import {
     TabGuardComp,
     _createElement,
     _last,
-    _preserveRangesWhile,
     _stopPropagationForAgGrid,
     _warn,
 } from 'ag-grid-community';
 
+import { _preserveRangesWhile } from '../misc/enterpriseDomUtils';
 import type { AgMenuItemComponentEvent, CloseMenuEvent, MenuItemActivatedEvent } from './agMenuItemComponent';
 import { AgMenuItemComponent } from './agMenuItemComponent';
 

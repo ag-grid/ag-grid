@@ -2,7 +2,7 @@ import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
 import { AgInputTextFieldSelector } from '../../../agStack/widgets/agInputTextField';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { IFilter } from '../../../interfaces/iFilter';
-import type { ElementParams } from '../../../utils/dom';
+import type { ElementParams } from '../../../utils/element';
 import { Component } from '../../../widgets/component';
 import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type {

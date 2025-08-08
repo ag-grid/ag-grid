@@ -1,5 +1,5 @@
 import type { AgComponentSelector } from '../interfaces/agComponent';
-import type { AgElementParams } from '../utils/domUtils';
+import type { AgElementParams } from '../utils/dom';
 import type { AgFieldParams } from './agFieldParams';
 
 export interface AgPickerFieldParams<TComponentSelectorType extends string> extends AgFieldParams {

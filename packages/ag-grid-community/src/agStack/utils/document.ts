@@ -1,5 +1,5 @@
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
-import { _exists } from './genericUtils';
+import { _exists } from './generic';
 
 export function _getRootNode(beans: AgCoreBeanCollection<any, any, any, any>): Document | ShadowRoot {
     return beans.eRootDiv.getRootNode() as Document | ShadowRoot;

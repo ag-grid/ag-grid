@@ -1,7 +1,6 @@
-import { _parseDateTimeFromString } from '../../../agStack/utils/dateUtils';
+import { _dateToFormattedString, _parseDateTimeFromString } from '../../../agStack/utils/date';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SharedFilterParams } from '../../../interfaces/iFilter';
-import { _dateToFormattedString } from '../../../utils/date';
 import type { OptionsFactory } from '../optionsFactory';
 import { SCALAR_FILTER_TYPE_KEYS, SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';

@@ -1,8 +1,7 @@
 import type { GridOptionsService } from '../gridOptionsService';
-import { _addGridCommonParams } from '../gridOptionsUtils';
+import { _addGridCommonParams, _getDomData } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _getCtrlForEventTarget } from '../utils/event';
 import type { CellCtrl } from './cell/cellCtrl';
 import type {
     EventCellRendererParams,
@@ -49,6 +48,22 @@ function suppressMouseEvent(
             event,
         })
     );
+}
+
+function _getCtrlForEventTarget<T>(gos: GridOptionsService, eventTarget: EventTarget | null, type: string): T | null {
+    let sourceElement = eventTarget as HTMLElement;
+
+    while (sourceElement) {
+        const renderedComp = _getDomData(gos, sourceElement, type);
+
+        if (renderedComp) {
+            return renderedComp as T;
+        }
+
+        sourceElement = sourceElement.parentElement!;
+    }
+
+    return null;
 }
 
 export const DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';

@@ -1,7 +1,8 @@
 import { LocalEventService } from '../agStack/events/localEventService';
 import type { AgEvent } from '../agStack/interfaces/agEvent';
 import type { IAgEventEmitter } from '../agStack/interfaces/iEventEmitter';
-import { _exists } from '../agStack/utils/genericUtils';
+import { _exists, _missing } from '../agStack/utils/generic';
+import { _escapeString } from '../agStack/utils/string';
 import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
 import type { ColumnEvent, ColumnEventType } from '../events';
@@ -19,9 +20,7 @@ import type {
 } from '../interfaces/iColumn';
 import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _missing } from '../utils/generic';
 import { _mergeDeep } from '../utils/object';
-import { _escapeString } from '../utils/string';
 import { _warn } from '../validation/logging';
 import type { AgColumnGroup } from './agColumnGroup';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';

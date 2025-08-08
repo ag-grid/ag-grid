@@ -1,6 +1,8 @@
 import { KeyCode } from '../../../agStack/constants/keyCode';
-import { _getActiveDomElement } from '../../../agStack/utils/beanUtils';
-import { _setDisplayed } from '../../../agStack/utils/domUtils';
+import type { AriaSortState } from '../../../agStack/utils/aria';
+import { _getAriaSortState } from '../../../agStack/utils/aria';
+import { _getActiveDomElement } from '../../../agStack/utils/document';
+import { _setDisplayed } from '../../../agStack/utils/dom';
 import type { ResizeFeature } from '../../../columnResize/resizeFeature';
 import { setupCompBean } from '../../../components/emptyBean';
 import { _getHeaderCompDetails } from '../../../components/framework/userCompUtils';
@@ -14,8 +16,6 @@ import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { SelectAllFeature } from '../../../selection/selectAllFeature';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
-import type { ColumnSortState } from '../../../utils/aria';
-import { _getAriaSortState } from '../../../utils/aria';
 import { _isKeyboardMode } from '../../../utils/focus';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils';
@@ -26,7 +26,7 @@ import type { HeaderComp } from './headerComp';
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
-    setAriaSort(sort?: ColumnSortState): void;
+    setAriaSort(sort?: AriaSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeader | undefined;
     refreshSelectAllGui(): void;
