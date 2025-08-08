@@ -1,10 +1,20 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import {
+    ColumnsToolPanelModule,
+    PivotModule,
+    RowGroupingModule,
+    RowGroupingPanelModule,
+    SideBarModule,
+} from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     RowGroupingModule,
+    SideBarModule,
+    ColumnsToolPanelModule,
+    RowGroupingPanelModule,
+    PivotModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -12,7 +22,13 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'date', rowGroup: true, rowGroupingHierarchy: ['year', 'month'] },
+        {
+            field: 'date',
+            rowGroup: true,
+            enableRowGroup: true,
+            enablePivot: true,
+            rowGroupingHierarchy: ['year', 'month'],
+        },
         { field: 'country' },
         { field: 'sport' },
         { field: 'total', aggFunc: 'sum' },
