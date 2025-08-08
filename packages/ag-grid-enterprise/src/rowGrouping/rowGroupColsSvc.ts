@@ -113,14 +113,15 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
             // ensure those virtual columns are inserted before it in the list (and therefore the grouping hierarchy)
             const { groupHierarchyColSvc } = this.beans;
             const hierarchyCols = groupHierarchyColSvc?.getVirtualColumnsForColumn(column) ?? [];
-            if (rowGroup && hierarchyCols.length > 0) {
+            const position = this.columns.findIndex((c) => c === column);
+            if (rowGroup && hierarchyCols.length > 0 && position > -1) {
                 const toInsert: AgColumn[] = [];
-                for (let i = hierarchyCols.length - 1; i >= 0; i--) {
-                    if (!this.columns.includes(hierarchyCols[i])) {
-                        toInsert.push(hierarchyCols[i]);
+                for (const col of hierarchyCols) {
+                    if (!this.columns.includes(col)) {
+                        toInsert.push(col);
                     }
                 }
-                this.columns.unshift(...toInsert);
+                this.columns.splice(position, 0, ...toInsert);
             }
 
             column.dispatchColEvent('columnRowGroupChanged', source);
