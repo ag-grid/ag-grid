@@ -15,6 +15,10 @@ export async function flushFakeTimers() {
     await asyncSetTimeout(2);
 }
 
+export function escapeQuotes(value: string): string {
+    return value.replaceAll(/(['"])/g, '\\$1');
+}
+
 const cachedJSONObjectsMap = new Map<string, any>();
 
 export const cachedJSONObjects = {

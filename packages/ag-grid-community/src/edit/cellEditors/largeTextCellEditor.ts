@@ -29,7 +29,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
 
     public initialiseEditor(params: ILargeTextEditorParams): void {
         const { eEditor } = this;
-        const { cellStartedEdit, eventKey, value, maxLength, cols, rows } = params;
+        const { cellStartedEdit, eventKey, maxLength, cols, rows } = params;
         this.focusAfterAttached = cellStartedEdit;
 
         // disable initial tooltips added to the input field
@@ -52,7 +52,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
             } else if (eventKey && eventKey.length === 1) {
                 startValue = eventKey;
             } else {
-                startValue = value.toString();
+                startValue = this.getStartValue(params);
 
                 if (eventKey !== KeyCode.F2) {
                     this.highlightAllOnFocus = true;
@@ -60,7 +60,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
             }
         } else {
             this.focusAfterAttached = false;
-            startValue = value.toString();
+            startValue = this.getStartValue(params);
         }
 
         if (startValue != null) {
@@ -69,6 +69,11 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
         this.activateTabIndex();
+    }
+
+    private getStartValue(params: ILargeTextEditorParams): string | null | undefined {
+        const { value } = params;
+        return value?.toString() ?? value;
     }
 
     private onKeyDown(event: KeyboardEvent): void {

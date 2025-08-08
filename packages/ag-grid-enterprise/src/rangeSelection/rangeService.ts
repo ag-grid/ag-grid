@@ -29,6 +29,7 @@ import {
     _areCellsEqual,
     _areEqual,
     _exists,
+    _getAbsoluteRowIndex,
     _getCellCtrlForEventTarget,
     _getRowAbove,
     _getRowBelow,
@@ -354,6 +355,17 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         };
     }
 
+    public getRangeRowCount(cellRange: PartialCellRange): number {
+        const beans = this.beans;
+        const start = this.getRangeStartRow(cellRange);
+        const end = this.getRangeEndRow(cellRange);
+
+        const startIndex = _getAbsoluteRowIndex(beans, start);
+        const endIndex = _getAbsoluteRowIndex(beans, end);
+
+        return endIndex - startIndex + 1;
+    }
+
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
         const { gos } = this;
         if (!_isCellSelectionEnabled(gos)) {
@@ -396,6 +408,95 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.setNewestRangeStartCell(cell);
         this.onDragStop();
         this.dispatchChangedEvent(true, true);
+    }
+
+    private getRangeLastColumn(cellRange: CellRange): AgColumn {
+        const firstCol = cellRange.columns[0];
+        const lastCol = _last(cellRange.columns)!;
+
+        return (this.newestRangeStartCell?.column === firstCol ? lastCol : firstCol) as AgColumn;
+    }
+
+    public extendRangeRowCountBy(cellRange: CellRange, targetCount: number): void {
+        const { beans } = this;
+
+        if (!cellRange.endRow) {
+            return;
+        }
+
+        let stepsMoved = 0;
+        let currentRow = cellRange.endRow;
+
+        const stepFn = targetCount > 0 ? _getRowBelow : _getRowAbove;
+        const stepCount = Math.abs(targetCount);
+
+        while (stepsMoved < stepCount) {
+            const nextRow = stepFn(beans, currentRow);
+            if (!nextRow) {
+                break;
+            }
+            currentRow = nextRow;
+            stepsMoved++;
+        }
+
+        if (stepsMoved !== stepCount) {
+            return; // Could not move the desired number of rows
+        }
+
+        const cellPosition = {
+            ...currentRow,
+            column: this.getRangeLastColumn(cellRange),
+        };
+
+        this.updateRangeEnd(cellRange, cellPosition);
+    }
+
+    public extendRangeColumnCountBy(cellRange: CellRange, delta: number): void {
+        const { columns, startColumn } = cellRange;
+
+        if (delta === 0) return;
+
+        const allColumns = this.getColumnsFromModel(); // ordered visible columns
+
+        if (!allColumns) {
+            return;
+        }
+
+        const lastColumn = _last(columns);
+        const endColumn = startColumn === columns[0] ? lastColumn! : columns[0];
+
+        if (!lastColumn || !endColumn) {
+            return;
+        }
+
+        const startIdx = allColumns.indexOf(startColumn as AgColumn);
+        const endIdx = allColumns.indexOf(endColumn as AgColumn);
+
+        const direction = endIdx >= startIdx ? 1 : -1;
+        const currentLength = columns.length;
+        const targetLength = currentLength + delta;
+
+        if (targetLength <= 0) {
+            return; // can't shrink to 0 or less
+        }
+
+        const newColumns: AgColumn[] = [];
+        let index = startIdx;
+
+        for (let i = 0; i < targetLength; i++) {
+            const col = allColumns[index];
+            if (!col) {
+                break;
+            }
+            newColumns.push(col);
+            index += direction;
+        }
+
+        // Only update if length actually changed
+        if (newColumns.length === targetLength) {
+            cellRange.columns = newColumns;
+            this.dispatchChangedEvent(true, true, cellRange.id);
+        }
     }
 
     public extendLatestRangeToCell(cellPosition: CellPosition): void {
@@ -449,13 +550,11 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const lastRange = _last(this.cellRanges)!;
         const startCell = this.newestRangeStartCell;
-        const firstCol = lastRange.columns[0];
-        const lastCol = _last(lastRange.columns)!;
 
         // find the cell that is at the furthest away corner from the starting cell
         const endCellIndex = lastRange.endRow!.rowIndex;
         const endCellFloating = lastRange.endRow!.rowPinned;
-        const endCellColumn = startCell.column === firstCol ? lastCol : firstCol;
+        const endCellColumn = this.getRangeLastColumn(lastRange);
 
         const endCell: CellPosition = { column: endCellColumn, rowIndex: endCellIndex, rowPinned: endCellFloating };
         const newEndCell = this.cellNavigation.getNextCellToFocus(key, endCell, ctrlKey);

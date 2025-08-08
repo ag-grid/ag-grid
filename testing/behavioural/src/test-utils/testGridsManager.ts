@@ -3,6 +3,7 @@ import { AllCommunityModule, createGrid } from 'ag-grid-community';
 import { ServerSideRowModelApiModule } from 'ag-grid-enterprise';
 
 import { mockGridLayout } from './polyfills/mockGridLayout';
+import { waitForEvent } from './test-utils-events';
 import { ignoreConsoleLicenseKeyError } from './utils';
 
 export interface TestGridManagerOptions {
@@ -63,6 +64,7 @@ export class TestGridsManager {
     /** Destroys all created grids, and eventually created html elements */
     public destroyAllGrids(): void {
         for (const grid of this.getAllGrids()) {
+            grid.stopEditing(true);
             grid.destroy();
         }
     }
@@ -137,6 +139,19 @@ export class TestGridsManager {
         };
 
         return api;
+    }
+
+    public async createGridAndWait<TData = any>(
+        eGridDiv: HTMLElement | string | null | undefined,
+        gridOptions: GridOptions,
+        params?: Params
+    ): Promise<GridApi<TData>> {
+        const api = this.createGrid<TData>(eGridDiv, gridOptions, params);
+
+        // Wait for the first data rendered event to ensure the grid is fully initialized
+        await waitForEvent('firstDataRendered', api);
+
+        return Promise.resolve(api);
     }
 
     public static getHTMLElement(api: GridApi | null | undefined): HTMLElement | null {

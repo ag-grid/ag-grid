@@ -4,8 +4,8 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
-import { GridActions, assertSelectedRowsByIndex, pressSpaceKey } from './utils';
+import { TestGridsManager, assertSelectedRowsByIndex } from '../test-utils';
+import { GridActions, pressSpaceKey } from './utils';
 
 describe('Row Selection with Keyboard', () => {
     const columnDefs = [{ field: 'sport' }];

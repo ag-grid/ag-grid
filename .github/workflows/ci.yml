@@ -18,10 +18,15 @@ on:
         type: boolean
         default: false
         required: true
-      run_bundle_size:
+      skip_bundle_size:
         description: 'Skip bundle size tests'
         type: boolean
         default: true
+        required: true
+      run_package_tests:
+        description: 'Run package tests'
+        type: boolean
+        default: false
         required: true
       clean_checkout:
         description: 'Disable all caching'
@@ -270,7 +275,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Bundle Size Tests
     needs: build_lint
-    if: ${{ needs.build_lint.result == 'success' && inputs.run_bundle_size }}
+    if: ${{ needs.build_lint.result == 'success' && !inputs.skip_bundle_size }}
     strategy:
       matrix: ${{ fromJson(needs.build_lint.outputs.bundle_test_matrix )}}
       fail-fast: false
@@ -369,80 +374,44 @@ jobs:
           path: |
             reports/
 
-#  fw_pkg_test:
-#    runs-on: ubuntu-24.04
-#    name: Framework Package Tests (${{ matrix.framework }})
-#    needs: build_lint
-#    strategy:
-#      fail-fast: false
-#      matrix: ${{ fromJson(needs.build_lint.outputs.test_pkg_matrix )}}
-#    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
-#    env:
-#      NX_BASE: ${{ needs.init.outputs.nx_base }}
-#    steps:
-#      - name: Checkout
-#        id: checkout
-#        if: matrix.framework != 'none'
-#        uses: actions/checkout@v4
-#        with:
-#          fetch-depth: 1
-#
-#      - name: Restore Init Build Outputs
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: e2e-init-outputs
-#
-#      - name: Setup
-#        id: setup
-#        if: matrix.framework != 'none'
-#        uses: ./.github/actions/setup-nx
-#        with:
-#          cache_mode: ro
-#
-#      - name: nx package:test
-#        id: package-test
-#        if: matrix.framework != 'none'
-#        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
+  fw_pkg_test:
+    runs-on: ubuntu-24.04
+    name: Framework Package Tests (${{ matrix.framework }})
+    needs: build_lint
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.build_lint.outputs.test_pkg_matrix )}}
+    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release') || inputs.run_package_tests
+    env:
+      NX_BASE: ${{ needs.init.outputs.nx_base }}
+    steps:
+      - name: Checkout
+        id: checkout
+        if: matrix.framework != 'none'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-#  angular_fw_pkg_test:
-#    runs-on: ubuntu-24.04
-#    name: Angular Package Tests
-#    needs: build_lint
-#    strategy:
-#      fail-fast: false
-#      matrix: ${{ fromJson(needs.build_lint.outputs.test_angular_pkg_matrix )}}
-#    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
-#    env:
-#      NX_BASE: ${{ needs.init.outputs.nx_base }}
-#    steps:
-#      - name: Checkout
-#        id: checkout
-#        if: matrix.framework != 'none'
-#        uses: actions/checkout@v4
-#        with:
-#          fetch-depth: 1
-#
-#      - name: Restore Init Build Outputs
-#        uses: actions/download-artifact@v4
-#        with:
-#          name: e2e-init-outputs
-#
-#      - name: Setup
-#        id: setup
-#        if: matrix.framework != 'none'
-#        uses: ./.github/actions/setup-nx
-#        with:
-#          cache_mode: ro
-#
-#      - name: nx package:test
-#        id: package-test
-#        if: matrix.framework != 'none'
-#        run: yarn nx run-many -t test:package:shard-${{ matrix.shard }} -p angular-package-tests -c staging
+      - name: Restore Init Build Outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-init-outputs
+
+      - name: Setup
+        id: setup
+        if: matrix.framework != 'none'
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
+      - name: nx package:test
+        id: package-test
+        if: matrix.framework != 'none'
+        run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ build_lint, test, e2e, docs, bundle_size, sonar_community, sonar_enterprise ]
-#    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test, sonar_community, sonar_enterprise ]
+    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, sonar_community, sonar_enterprise ]
     if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write

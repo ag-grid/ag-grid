@@ -22,7 +22,16 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
     beanName: BeanName = 'testIdSvc';
 
     public postConstruct(): void {
-        const setup = _debounce(this, () => this.setupAllTestIds(), 0);
+        // Add a delayed setup that is also debounced to be more robust with Reacts async rendering.
+        const delayedDebounce = _debounce(this, () => this.setupAllTestIds(), 500);
+        const setup = _debounce(
+            this,
+            () => {
+                this.setupAllTestIds();
+                delayedDebounce();
+            },
+            0
+        );
         this.addManagedEventListeners({
             firstDataRendered: setup,
             displayedRowsChanged: setup,
