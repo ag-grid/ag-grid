@@ -64,6 +64,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     GridChartsModule: 67,
     IntegratedChartsModule: 397.02,
     GroupFilterModule: 111.6,
+    GroupHierarchyModule: 4.5,
     MasterDetailModule: 82,
     MenuModule: 159.93,
     MultiFilterModule: 145.8,

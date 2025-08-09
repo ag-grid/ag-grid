@@ -8,7 +8,6 @@ import { VERSION } from '../version';
 import { AutoColService } from './autoColService';
 import { ClientSideExpansionService } from './clientSideExpansionService';
 import { FlattenStage } from './flattenStage';
-import { GroupHierarchyColService } from './groupHierarchyColService';
 import { GroupStage } from './groupStage';
 import { GroupCellRenderer } from './rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from './rendering/groupCellRendererCtrl';
@@ -52,7 +51,6 @@ export const GroupColumnModule: _ModuleWithoutApi = {
         RowGroupColsSvc,
         PivotColsSvc,
         ValueColsSvc,
-        GroupHierarchyColService,
     ],
     dependsOn: [EnterpriseCoreModule, GroupCellRendererModule],
 };
