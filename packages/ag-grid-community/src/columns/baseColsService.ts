@@ -213,7 +213,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         // if value, change
         // if default only, change only if new
         primaryCols?.forEach((col) => {
-            const colIsNew = oldProvidedCols.indexOf(col) < 0;
+            const colIsNew = !oldProvidedCols.includes(col);
             const colDef = col.getColDef();
 
             const value = getValueFunc(colDef);
@@ -238,7 +238,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 } else {
                     // note that 'null >= 0' evaluates to true which means 'rowGroupIndex = null' would enable row
                     // grouping if the null check didn't exist above.
-                    include = index! >= 0;
+                    include = index >= 0;
                 }
             } else {
                 if (colIsNew) {
@@ -264,28 +264,14 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         });
 
         const getIndexForCol = (col: AgColumn): number => {
-            const index = getIndexFunc(col.getColDef());
-            const defaultIndex = getInitialIndexFunc(col.getColDef());
-
-            return index != null ? index : defaultIndex!;
+            const colDef = col.getColDef();
+            return getIndexFunc(colDef) ?? getInitialIndexFunc(colDef)!;
         };
 
         // sort cols with index, and add these first
-        colsWithIndex.sort((colA, colB) => {
-            const indexA = getIndexForCol(colA);
-            const indexB = getIndexForCol(colB);
+        colsWithIndex.sort((colA, colB) => getIndexForCol(colA) - getIndexForCol(colB));
 
-            if (indexA === indexB) {
-                return 0;
-            }
-            if (indexA < indexB) {
-                return -1;
-            }
-
-            return 1;
-        });
-
-        const res: AgColumn[] = ([] as AgColumn[]).concat(colsWithIndex);
+        const res: AgColumn[] = [...colsWithIndex];
 
         // second add columns that were there before and in the same order as they were before,
         // so we are preserving order of current grouping of columns that simply have rowGroup=true
