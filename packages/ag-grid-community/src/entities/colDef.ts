@@ -719,7 +719,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * rowGroupingHierarchy
      * @agModule `RowGroupingModule` / `PivotModule`
      */
-    rowGroupingHierarchy?: (DateParts | string | ColDef<TData, TValue>)[];
+    rowGroupingHierarchy?: (GroupHierarchyParts | string | ColDef<TData, TValue>)[];
 
     /**
      * Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group.
@@ -1151,4 +1151,12 @@ export interface CellEditorSelectorResult {
 
 export type SortDirection = 'asc' | 'desc' | null;
 
-export type DateParts = 'year' | 'quarter' | 'month' | 'formattedMonth' | 'day' | 'hour' | 'minute' | 'second';
+export type GroupHierarchyParts =
+    | 'year'
+    | 'quarter'
+    | 'month'
+    | 'formattedMonth'
+    | 'day'
+    | 'hour'
+    | 'minute'
+    | 'second';
