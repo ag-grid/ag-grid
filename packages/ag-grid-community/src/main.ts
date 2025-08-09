@@ -918,6 +918,7 @@ export {
     NestedFieldPaths,
     GetFindTextParams,
     GetFindTextFunc,
+    DateParts,
 } from './entities/colDef';
 export {
     DataTypeDefinition,
