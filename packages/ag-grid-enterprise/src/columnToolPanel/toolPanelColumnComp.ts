@@ -92,7 +92,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.tooltipFeature = this.createOptionalManagedBean(
             beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
-                getGui: () => this.getGui(),
+                getGui: () => this.focusWrapper,
                 getLocation: () => 'columnToolPanelColumn',
                 getColDef: () => column.getColDef(),
                 shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),

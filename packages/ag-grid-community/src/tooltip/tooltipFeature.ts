@@ -99,6 +99,14 @@ export class TooltipFeature extends BeanStub {
         }
     }
 
+    public attemptToShowTooltip(): void {
+        this.tooltipManager?.prepareToShowTooltip();
+    }
+
+    public attemptToHideTooltip(): void {
+        this.tooltipManager?.hideTooltip();
+    }
+
     public setTooltipAndRefresh(tooltip: any): void {
         this.tooltip = tooltip;
         this.refreshTooltip();
