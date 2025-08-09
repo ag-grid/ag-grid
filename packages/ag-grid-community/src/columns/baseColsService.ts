@@ -294,11 +294,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 // ...with the exception that if we have columns with associated virtual columns, they need
                 // to come first in the grouping hierarchy. We don't check for uniqueness here because it should
                 // be guaranteed
-                const hierarchyCols = this.groupHierarchCols?.getVirtualColumnsForColumn(col);
-                if (hierarchyCols) {
-                    res.push(...hierarchyCols);
-                }
-                res.push(col);
+                res.push(...(this.groupHierarchCols?.expandColumn(col) ?? [col]));
             }
         });
 

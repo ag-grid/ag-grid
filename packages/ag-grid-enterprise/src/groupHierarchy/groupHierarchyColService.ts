@@ -83,11 +83,8 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         return this.columns?.list ?? null;
     }
 
-    public getVirtualColumnsForColumn(col: AgColumn): AgColumn[] {
-        if (this.isGroupHierarchyColsEnabledForCol(col)) {
-            return this.sourceColumnMap.get(col) ?? [];
-        }
-        return [];
+    public expandColumn(col: AgColumn<any>): AgColumn<any>[] {
+        return this.getVirtualColumnsForColumn(col).concat(col);
     }
 
     public compareVirtualColumns(colA: AgColumn, colB: AgColumn): number | null {
@@ -110,7 +107,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     }
 
     public insertVirtualColumnsForCol(columns: AgColumn<any>[], col: AgColumn<any>): void {
-        const hierarchyCols = this.beans.groupHierarchyColSvc?.getVirtualColumnsForColumn(col) ?? [];
+        const hierarchyCols = this.getVirtualColumnsForColumn(col) ?? [];
         if (hierarchyCols.length > 0) {
             for (const col of hierarchyCols) {
                 if (!columns.includes(col)) {
@@ -120,11 +117,18 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         }
     }
 
-    public isGroupHierarchyColsEnabled(cols: _ColumnCollections): boolean {
+    private getVirtualColumnsForColumn(col: AgColumn): AgColumn[] {
+        if (this.isGroupHierarchyColsEnabledForCol(col)) {
+            return this.sourceColumnMap.get(col) ?? [];
+        }
+        return [];
+    }
+
+    private isGroupHierarchyColsEnabled(cols: _ColumnCollections): boolean {
         return cols.list.some((col) => this.isGroupHierarchyColsEnabledForCol(col));
     }
 
-    public isGroupHierarchyColsEnabledForCol(col: AgColumn): boolean {
+    private isGroupHierarchyColsEnabledForCol(col: AgColumn): boolean {
         const def = col.getColDef();
         return !!(def.rowGroupingHierarchy && (def.rowGroup || def.enableRowGroup));
     }
