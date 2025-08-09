@@ -271,10 +271,10 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     if (typeof part === 'object') {
                         beans.validation?.validateColDef(part);
                         return null;
-                    } else {
-                        if (!GROUP_HIERARCHY_PARTS.has(part) && !(part in groupHierarchyConfig)) {
-                            unrecognisedParts.push(part);
-                        }
+                    }
+
+                    if (!GROUP_HIERARCHY_PARTS.has(part) && !(part in groupHierarchyConfig)) {
+                        unrecognisedParts.push(part);
                     }
                 });
 
