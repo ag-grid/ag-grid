@@ -146,7 +146,13 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
         this.itemEls.forEach((itemEl) => {
             _removeFromParent(itemEl);
         });
+
+        for (const tooltipFeature of this.tooltipFeatures) {
+            tooltipFeature.destroy();
+        }
+
         this.itemEls = [];
+        this.tooltipFeatures = [];
         this.refreshAriaRole();
     }
 
