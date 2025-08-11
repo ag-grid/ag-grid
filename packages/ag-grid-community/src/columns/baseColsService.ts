@@ -273,13 +273,13 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
         const res: AgColumn[] = [...colsWithIndex];
 
-        // second add columns that were there before and in the same order as they were before,
-        // so we are preserving order of current grouping of columns that simply have rowGroup=true
+        // next, add columns that were there before and in the same order as they were before,
+        // so we are preserving order of current grouping of columns that simply have rowGroup=true...
         previousCols.forEach((col) => {
             if (colsWithValue.indexOf(col) >= 0) {
-                // ...with the exception that if we have columns with associated virtual columns, they need
-                // to come first in the grouping hierarchy. We don't check for uniqueness here because it should
-                // be guaranteed
+                // ...with the caveat that each column added also has any associated virtual columns added here
+                // so they appear before it in the group hierarchy. This is purely a matter of ordering; adding the
+                // virtual columns here means they will not be added below when iterating over `colsWithValue`.
                 res.push(...(this.groupHierarchCols?.expandColumn(col) ?? [col]));
             }
         });

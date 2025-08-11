@@ -2,13 +2,10 @@ import type {
     ColDef,
     ColKey,
     GridOptions,
-    HeaderValueGetterParams,
     IGroupHierarchyColService,
-    IRowNode,
     NamedBean,
     PropertyChangedEvent,
     PropertyValueChangedEvent,
-    ValueGetterParams,
     _ColumnCollections,
 } from 'ag-grid-community';
 import {
@@ -19,10 +16,10 @@ import {
     _areColIdsEqual,
     _columnsMatch,
     _destroyColumnTree,
-    _getDateParts,
-    _parseDateTimeFromString,
     _updateColsMap,
 } from 'ag-grid-community';
+
+import { getDatePartValueGetter, getHeaderValueGetter } from './groupHierarchyUtils';
 
 export class GroupHierarchyColService extends BeanStub implements NamedBean, IGroupHierarchyColService {
     beanName = 'groupHierarchyColSvc' as const;
@@ -30,7 +27,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     public columns: _ColumnCollections | null = null;
     /** Map from primary column to virtual (i.e. generated) columns */
     private readonly sourceColumnMap = new WeakMap<AgColumn, AgColumn[]>();
-    /** Inverse of `sourceColumnMap` */
+    /** Map from virtual column to associated primary column. Inverse of `sourceColumnMap` */
     private readonly inverseColumnMap = new WeakMap<AgColumn, AgColumn>();
 
     public addColumns(cols: _ColumnCollections): void {
@@ -108,11 +105,9 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
     public insertVirtualColumnsForCol(columns: AgColumn<any>[], col: AgColumn<any>): void {
         const hierarchyCols = this.getVirtualColumnsForColumn(col) ?? [];
-        if (hierarchyCols.length > 0) {
-            for (const col of hierarchyCols) {
-                if (!columns.includes(col)) {
-                    columns.push(col);
-                }
+        for (const col of hierarchyCols) {
+            if (!columns.includes(col)) {
+                columns.push(col);
             }
         }
     }
@@ -183,7 +178,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     }
 
     private createColDefForPart(part: string, sourceCol: AgColumn, sourceColDef: ColDef): ColDef | null {
-        const { valueSvc, colNames, gos } = this.beans;
+        const { beans, gos } = this;
 
         const groupHierarchyConfig = gos.get('groupHierarchyConfig') ?? {};
         if (part in groupHierarchyConfig) {
@@ -195,7 +190,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         }
 
         const base: ColDef = _addColumnDefaultAndTypes(
-            this.beans,
+            beans,
             {
                 enableRowGroup: true,
                 rowGroup: sourceColDef.rowGroup,
@@ -207,36 +202,6 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
             true
         );
 
-        const getDate = (node: IRowNode | null): Date | null => {
-            const innerValue = valueSvc.getValue(sourceCol, node);
-            let date: Date | null = null;
-            if (innerValue instanceof Date) {
-                date = innerValue;
-            } else if (typeof innerValue === 'string') {
-                date = _parseDateTimeFromString(innerValue);
-            }
-
-            return date;
-        };
-
-        const getDatePartValueGetter =
-            (index: number, map?: (part: string) => string) => (params: ValueGetterParams) => {
-                const date = getDate(params.node);
-                const parts = _getDateParts(date);
-                if (!parts) {
-                    return null;
-                }
-                return map?.(parts[index]) ?? parts[index];
-            };
-
-        const getHeaderValueGetter = (part: string) => (params: HeaderValueGetterParams) => {
-            const sourceName = colNames.getDisplayNameForColumn(sourceCol, params.location);
-            if (sourceName) {
-                return `${sourceName} (${part})`;
-            }
-            return '';
-        };
-
         const getColId = (part: string) => `${GROUP_HIERARCHY_COLUMN_ID_PREFIX}-${sourceCol.getColId()}-${part}`;
 
         switch (part) {
@@ -244,56 +209,58 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
                 return {
                     ...base,
                     colId: getColId(part),
-                    headerValueGetter: getHeaderValueGetter('Year'),
-                    valueGetter: getDatePartValueGetter(0),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Year'),
+                    valueGetter: getDatePartValueGetter(beans, sourceCol, 0),
                 };
 
             case 'quarter':
                 return {
                     ...base,
                     colId: getColId(part),
-                    headerValueGetter: getHeaderValueGetter('Quarter'),
-                    valueGetter: getDatePartValueGetter(1, (month) => (Math.floor(Number(month) / 4) + 1).toString()),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Quarter'),
+                    valueGetter: getDatePartValueGetter(beans, sourceCol, 1, (month) =>
+                        (Math.floor(Number(month) / 4) + 1).toString()
+                    ),
                 };
 
             case 'month':
                 return {
                     ...base,
                     colId: getColId(part),
-                    headerValueGetter: getHeaderValueGetter('Month'),
-                    valueGetter: getDatePartValueGetter(1),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Month'),
+                    valueGetter: getDatePartValueGetter(beans, sourceCol, 1),
                 };
 
             case 'day':
                 return {
                     ...base,
                     colId: getColId(part),
-                    headerValueGetter: getHeaderValueGetter('Day'),
-                    valueGetter: getDatePartValueGetter(2),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Day'),
+                    valueGetter: getDatePartValueGetter(beans, sourceCol, 2),
                 };
 
             case 'hour':
                 return {
                     ...base,
                     colId: getColId(part),
-                    headerValueGetter: getHeaderValueGetter('Hour'),
-                    valueGetter: getDatePartValueGetter(3),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Hour'),
+                    valueGetter: getDatePartValueGetter(beans, sourceCol, 3),
                 };
 
             case 'minute':
                 return {
                     ...base,
                     colId: getColId(part),
-                    headerValueGetter: getHeaderValueGetter('Minute'),
-                    valueGetter: getDatePartValueGetter(4),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Minute'),
+                    valueGetter: getDatePartValueGetter(beans, sourceCol, 4),
                 };
 
             case 'second':
                 return {
                     ...base,
                     colId: getColId(part),
-                    headerValueGetter: getHeaderValueGetter('Second'),
-                    valueGetter: getDatePartValueGetter(5),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Second'),
+                    valueGetter: getDatePartValueGetter(beans, sourceCol, 5),
                 };
 
             default:

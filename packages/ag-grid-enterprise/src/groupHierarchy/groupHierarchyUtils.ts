@@ -1,0 +1,50 @@
+import type { AgColumn, BeanCollection, HeaderValueGetterParams, IRowNode, ValueGetterParams } from 'ag-grid-community';
+import { _getDateParts, _parseDateTimeFromString } from 'ag-grid-community';
+
+export const GROUP_HIERARCHY_PARTS = new Set([
+    'year',
+    'quarter',
+    'month',
+    'formattedMonth',
+    'day',
+    'hour',
+    'minute',
+    'second',
+]);
+
+export function _isBuiltinGroupHierarchyPart(part: string): boolean {
+    return GROUP_HIERARCHY_PARTS.has(part);
+}
+
+const getDate = ({ valueSvc }: BeanCollection, sourceCol: AgColumn, node: IRowNode | null): Date | null => {
+    const innerValue = valueSvc.getValue(sourceCol, node);
+    let date: Date | null = null;
+    if (innerValue instanceof Date) {
+        date = innerValue;
+    } else if (typeof innerValue === 'string') {
+        date = _parseDateTimeFromString(innerValue);
+    }
+
+    return date;
+};
+
+export const getDatePartValueGetter =
+    (beans: BeanCollection, col: AgColumn, index: number, map?: (part: string) => string) =>
+    (params: ValueGetterParams) => {
+        const date = getDate(beans, col, params.node);
+        const parts = _getDateParts(date);
+        if (!parts) {
+            return null;
+        }
+        return map?.(parts[index]) ?? parts[index];
+    };
+
+export const getHeaderValueGetter =
+    ({ colNames }: BeanCollection, col: AgColumn, part: string) =>
+    (params: HeaderValueGetterParams) => {
+        const sourceName = colNames.getDisplayNameForColumn(col, params.location);
+        if (sourceName) {
+            return `${sourceName} (${part})`;
+        }
+        return '';
+    };
