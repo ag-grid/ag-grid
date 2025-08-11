@@ -1,4 +1,5 @@
 import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties';
+import { _fuzzySuggestions } from '../agStack/utils/fuzzyMatch';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -8,9 +9,8 @@ import type { GridOptions } from '../entities/gridOptions';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
 import type { RowNodeEventType } from '../interfaces/iRowNode';
 import { _areModulesGridScoped } from '../modules/moduleRegistry';
-import { _warnOnce } from '../utils/function';
-import { _fuzzySuggestions } from '../utils/fuzzyMatch';
 import type { IconName, IconValue } from '../utils/icon';
+import { _warnOnce } from '../utils/log';
 import { validateApiFunction } from './apiFunctionValidator';
 import { getError } from './errorMessages/errorText';
 import { _errMsg, _error, _warn, provideValidationServiceLogger } from './logging';

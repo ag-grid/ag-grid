@@ -1,6 +1,5 @@
-import { _requestAnimationFrame } from '../agStack/utils/dom';
-import type { BeanCollection } from '../context/context';
-import type { GridOptionsService } from '../gridOptionsService';
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import { _requestAnimationFrame } from './dom';
 
 const doOnceFlags: { [key: string]: boolean } = {};
 
@@ -16,22 +15,6 @@ export function _doOnce(func: () => void, key: string) {
 
     func();
     doOnceFlags[key] = true;
-}
-
-export function _logIfDebug(gos: GridOptionsService, message: string, ...args: any[]) {
-    if (gos.get('debug')) {
-        // eslint-disable-next-line no-console
-        console.log('AG Grid: ' + message, ...args);
-    }
-}
-
-export function _warnOnce(msg: string, ...args: any[]) {
-    // eslint-disable-next-line no-console
-    _doOnce(() => console.warn('AG Grid: ' + msg, ...args), msg + args?.join(''));
-}
-export function _errorOnce(msg: string, ...args: any[]) {
-    // eslint-disable-next-line no-console
-    _doOnce(() => console.error('AG Grid: ' + msg, ...args), msg + args?.join(''));
 }
 
 type BatchedCalls = {
@@ -53,8 +36,12 @@ const batchedCallsRaf: BatchedCalls = {
  * @param {Function} func The function to be batched
  */
 export function _batchCall(func: () => void): void;
-export function _batchCall(func: () => void, mode: 'raf', beans: BeanCollection): void;
-export function _batchCall(func: () => void, mode: 'setTimeout' | 'raf' = 'setTimeout', beans?: BeanCollection): void {
+export function _batchCall(func: () => void, mode: 'raf', beans: AgCoreBeanCollection<any, any, any, any>): void;
+export function _batchCall(
+    func: () => void,
+    mode: 'setTimeout' | 'raf' = 'setTimeout',
+    beans?: AgCoreBeanCollection<any, any, any, any>
+): void {
     const batch = mode === 'raf' ? batchedCallsRaf : batchedCallsSetTimeout;
 
     batch.funcs.push(func);
@@ -130,12 +117,7 @@ export function _throttle(func: (...args: any[]) => void, wait: number): (...arg
     };
 }
 
-export function _waitUntil(
-    condition: () => boolean,
-    callback: () => void,
-    timeout: number = 100,
-    timeoutMessage?: string
-) {
+export function _waitUntil(condition: () => boolean, callback: () => void, timeout: number = 100) {
     const timeStamp = Date.now();
 
     let interval: number | null = null;
@@ -149,10 +131,6 @@ export function _waitUntil(
             if (interval != null) {
                 window.clearInterval(interval);
                 interval = null;
-            }
-
-            if (reachedTimeout && timeoutMessage) {
-                _warnOnce(timeoutMessage);
             }
         }
     };

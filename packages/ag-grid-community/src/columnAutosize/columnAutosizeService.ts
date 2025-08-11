@@ -1,3 +1,4 @@
+import { _removeFromArray } from '../agStack/utils/array';
 import { _getInnerWidth } from '../agStack/utils/dom';
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import type { ColKey, Maybe } from '../columns/columnModel';
@@ -9,7 +10,6 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { IColumnLimit, ISizeColumnsToFitParams, SizeColumnsToContentColumnLimits } from '../interfaces/autoSize';
-import { _removeFromArray } from '../utils/array';
 import { _warn } from '../validation/logging';
 import { TouchListener } from '../widgets/touchListener';
 

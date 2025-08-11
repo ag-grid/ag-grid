@@ -1,8 +1,8 @@
+import { _removeFromArray } from '../agStack/utils/array';
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import { _getGrandTotalRow, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { RowPinnedType } from '../interfaces/iRowNode';
-import { _removeFromArray } from '../utils/array';
 
 export class PinnedRows {
     /** Canonical set of pinned nodes */

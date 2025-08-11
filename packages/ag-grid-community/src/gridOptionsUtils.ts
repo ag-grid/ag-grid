@@ -1,5 +1,6 @@
 import { _getDocument, _getRootNode } from './agStack/utils/document';
 import { _getElementRectWithOffset } from './agStack/utils/dom';
+import { _doOnce } from './agStack/utils/function';
 import { _missing } from './agStack/utils/generic';
 import type { GridApi } from './api/gridApi';
 import type { BeanCollection } from './context/context';
@@ -38,7 +39,6 @@ import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
-import { _doOnce } from './utils/function';
 import { _warn } from './validation/logging';
 
 function isRowModelType(gos: GridOptionsService, rowModelType: RowModelType): boolean {
@@ -714,4 +714,8 @@ export function _getGridOption<K extends keyof GridOptions>(
         _getGlobalGridOption(gridOption) ??
         (GRID_OPTION_DEFAULTS[gridOption as keyof typeof GRID_OPTION_DEFAULTS] as any)
     );
+}
+
+export function _interpretAsRightClick({ gos }: BeanCollection, event: MouseEvent): boolean {
+    return event.button === 2 || (event.ctrlKey && gos.get('allowContextMenuWithControlKey'));
 }

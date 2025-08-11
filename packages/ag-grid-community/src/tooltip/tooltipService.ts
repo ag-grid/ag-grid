@@ -1,6 +1,7 @@
 import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
 import { _isElementOverflowingCallback } from '../agStack/utils/dom';
 import { _exists } from '../agStack/utils/generic';
+import { _getValueUsingField } from '../agStack/utils/value';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -11,7 +12,6 @@ import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/h
 import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
-import { _getValueUsingField } from '../utils/object';
 import type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltipFeature';
 import { _isShowTooltipWhenTruncated } from './tooltipFeature';
 

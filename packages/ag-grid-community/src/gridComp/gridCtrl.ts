@@ -1,13 +1,14 @@
 import { Direction } from '../agStack/constants/direction';
+import { _last } from '../agStack/utils/array';
 import { _getActiveDomElement } from '../agStack/utils/document';
 import { _observeResize } from '../agStack/utils/dom';
+import { _findTabbableParent, _focusInto } from '../agStack/utils/focus';
 import { BeanStub } from '../context/beanStub';
 import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
-import { _last } from '../utils/array';
-import { _findTabbableParent, _focusInto, _isCellFocusSuppressed, _isHeaderFocusSuppressed } from '../utils/focus';
+import { _isCellFocusSuppressed, _isHeaderFocusSuppressed } from '../utils/gridFocus';
 import type { Component, ComponentSelector } from '../widgets/component';
 
 export interface IGridComp extends LayoutView {

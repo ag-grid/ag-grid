@@ -1,3 +1,4 @@
+import { _areEqual, _removeFromArray } from '../agStack/utils/array';
 import { _exists, _missing } from '../agStack/utils/generic';
 import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { BeanCollection } from '../context/context';
@@ -9,7 +10,6 @@ import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IEventService } from '../interfaces/iEventService';
-import { _areEqual, _removeFromArray } from '../utils/array';
 import { _warn } from '../validation/logging';
 import {
     dispatchColumnChangedEvent,

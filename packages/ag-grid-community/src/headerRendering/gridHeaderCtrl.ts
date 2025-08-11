@@ -5,7 +5,7 @@ import { _exists } from '../agStack/utils/generic';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { HeaderNavigationDirection } from '../navigation/headerNavigationService';
-import { _focusNextGridCoreContainer } from '../utils/focus';
+import { _focusNextGridCoreContainer } from '../utils/gridFocus';
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight } from './headerUtils';
 

@@ -1,4 +1,5 @@
 import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties';
+import { _areEqual } from '../agStack/utils/array';
 import { _exists } from '../agStack/utils/generic';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -7,7 +8,6 @@ import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
-import { _areEqual } from '../utils/array';
 import { depthFirstOriginalTreeSearch } from './columnFactoryUtils';
 import type { ColKey, ColumnCollections } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';

@@ -11,7 +11,7 @@ import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterServic
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ColumnFilterState, FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _mergeDeep } from '../utils/object';
+import { _mergeDeep } from '../utils/mergeDeep';
 import { _warn } from '../validation/logging';
 import type { ColumnFilterService } from './columnFilterService';
 import type { QuickFilterService } from './quickFilterService';

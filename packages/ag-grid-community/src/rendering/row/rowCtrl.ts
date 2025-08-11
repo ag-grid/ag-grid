@@ -7,6 +7,8 @@ import {
     _isFocusableFormField,
     _isVisible,
 } from '../../agStack/utils/dom';
+import { _findNextFocusableElement } from '../../agStack/utils/focus';
+import { _batchCall } from '../../agStack/utils/function';
 import { _exists, _makeNull } from '../../agStack/utils/generic';
 import { _escapeString } from '../../agStack/utils/string';
 import { setupCompBean } from '../../components/emptyBean';
@@ -52,8 +54,6 @@ import type { IRowStyleFeature } from '../../interfaces/iRowStyleFeature';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
-import { _findNextFocusableElement } from '../../utils/focus';
-import { _batchCall } from '../../utils/function';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import type { Component } from '../../widgets/component';
 import { CellCtrl } from '../cell/cellCtrl';

@@ -10,7 +10,7 @@ import type { SortIndicatorComp } from '../../../sort/sortIndicatorComp';
 import type { ElementParams } from '../../../utils/element';
 import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
-import { _mergeDeep } from '../../../utils/object';
+import { _mergeDeep } from '../../../utils/mergeDeep';
 import { Component } from '../../../widgets/component';
 
 function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParams {

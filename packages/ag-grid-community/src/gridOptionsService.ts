@@ -24,7 +24,7 @@ import type { RowModelType } from './interfaces/iRowModel';
 import { _areModulesGridScoped, _isModuleRegistered, _isUmd } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
-import { _logIfDebug } from './utils/function';
+import { _logIfDebug } from './utils/log';
 import type { MissingModuleErrors } from './validation/errorMessages/errorText';
 import { _error } from './validation/logging';
 import { COLUMN_DEFINITION_MOD_VALIDATIONS } from './validation/rules/colDefValidations';

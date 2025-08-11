@@ -5,8 +5,8 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseDownEvent } from '../../events';
+import { _interpretAsRightClick } from '../../gridOptionsUtils';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
-import { _interpretAsRightClick } from '../../utils/mouse';
 import { _suppressCellMouseEvent } from '../renderUtils';
 import type { CellCtrl } from './cellCtrl';
 

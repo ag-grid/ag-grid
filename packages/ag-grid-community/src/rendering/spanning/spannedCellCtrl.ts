@@ -4,7 +4,7 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellFocusedEvent } from '../../events';
 import type { CellPosition } from '../../interfaces/iCellPosition';
-import { _isCellFocusSuppressed } from '../../utils/focus';
+import { _isCellFocusSuppressed } from '../../utils/gridFocus';
 import type { ICellComp } from '../cell/cellCtrl';
 import { CellCtrl } from '../cell/cellCtrl';
 import type { RowCtrl } from '../row/rowCtrl';

@@ -1,4 +1,4 @@
-import { _mergeDeep } from './object';
+import { _mergeDeep } from './mergeDeep';
 
 describe('object', () => {
     test('_mergeDeep does not allow prototype pollution', () => {

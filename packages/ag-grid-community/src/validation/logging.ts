@@ -1,5 +1,5 @@
 import { BASE_URL } from '../baseUrl';
-import { _errorOnce, _warnOnce } from '../utils/function';
+import { _errorOnce, _warnOnce } from '../utils/log';
 import { VERSION } from '../version';
 import type { ErrorId, ErrorMap, GetErrorParams } from './errorMessages/errorText';
 

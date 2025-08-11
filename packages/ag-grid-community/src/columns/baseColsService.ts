@@ -1,3 +1,4 @@
+import { _removeFromArray } from '../agStack/utils/array';
 import { _exists } from '../agStack/utils/generic';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -13,7 +14,6 @@ import type {
 } from '../interfaces/iColsService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IGroupHierarchyColService } from '../interfaces/iGroupHierarchyColService';
-import { _removeFromArray } from '../utils/array';
 import type { ColumnChangedEventType } from './columnApi';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';

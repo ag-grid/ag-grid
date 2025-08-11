@@ -123,6 +123,7 @@ export {
     _getAriaPosInSet,
     _setAriaInvalid,
 } from './agStack/utils/aria';
+export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './agStack/utils/array';
 export { _isIOSUserAgent, _isBrowserSafari, _isBrowserFirefox } from './agStack/utils/browser';
 export { _serialiseDate, _getDateParts, _parseDateTimeFromString } from './agStack/utils/date';
 export {
@@ -145,6 +146,8 @@ export {
     _isElementOverflowingCallback,
 } from './agStack/utils/dom';
 export { _isElementInEventPath } from './agStack/utils/event';
+export { _debounce, _doOnce, _waitUntil, _batchCall } from './agStack/utils/function';
+export { _fuzzySuggestions } from './agStack/utils/fuzzyMatch';
 export {
     _exists,
     _missing,
@@ -158,6 +161,13 @@ export { _escapeString, _toString } from './agStack/utils/string';
 export { _getActiveDomElement, _getRootNode, _isNothingFocused, _getDocument } from './agStack/utils/document';
 export { _getLocaleTextFunc, _translate } from './agStack/utils/locale';
 export { AgPromise, _isPromise } from './agStack/utils/promise';
+export {
+    _findFocusableElements,
+    _focusInto,
+    _findNextFocusableElement,
+    _findTabbableParent,
+    _isKeyboardMode,
+} from './agStack/utils/focus';
 
 // AG Stack Widgets
 export {
@@ -903,6 +913,7 @@ export {
     _getGroupingApproach,
     _getGridOption,
     _isSetFilterByDefault,
+    _interpretAsRightClick,
 } from './gridOptionsUtils';
 export type { GroupingApproach } from './gridOptionsUtils';
 export { IEventService } from './interfaces/iEventService';
@@ -1204,29 +1215,16 @@ export type { AriaAnnouncementService } from './rendering/ariaAnnouncementServic
 export { IStickyRowFeature, IStickyRowService } from './interfaces/iStickyRows';
 
 // utils
-export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './utils/array';
 export { ChangedPath } from './utils/changedPath';
 export { ElementParams, _createElement } from './utils/element';
 export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid } from './utils/gridEvent';
-export { _warnOnce, _debounce, _doOnce, _waitUntil, _batchCall } from './utils/function';
+export { _warnOnce } from './utils/log';
 export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
-export { _interpretAsRightClick } from './utils/mouse';
 export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
-export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export { _formatNumberCommas } from './utils/number';
-export { _mergeDeep } from './utils/object';
-
-export {
-    _addFocusableContainerListener,
-    _findFocusableElements,
-    _focusInto,
-    _findNextFocusableElement,
-    _findTabbableParent,
-    _focusGridInnerElement,
-    _isKeyboardMode,
-    _focusNextGridCoreContainer,
-} from './utils/focus';
+export { _mergeDeep } from './utils/mergeDeep';
+export { _addFocusableContainerListener, _focusGridInnerElement, _focusNextGridCoreContainer } from './utils/gridFocus';
 
 // charts
 export * from './interfaces/iChartOptions';

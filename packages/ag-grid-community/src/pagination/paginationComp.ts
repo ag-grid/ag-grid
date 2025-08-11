@@ -8,7 +8,7 @@ import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { ElementParams } from '../utils/element';
-import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/focus';
+import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/gridFocus';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';
 import type { Component, ComponentSelector } from '../widgets/component';

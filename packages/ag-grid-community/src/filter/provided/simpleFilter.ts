@@ -1,3 +1,4 @@
+import { _areEqual } from '../../agStack/utils/array';
 import { _removeFromParent, _setDisabled, _setDisplayed } from '../../agStack/utils/dom';
 import { AgPromise } from '../../agStack/utils/promise';
 import { AgAbstractInputField } from '../../agStack/widgets/agAbstractInputField';
@@ -6,7 +7,6 @@ import { AgRadioButton } from '../../agStack/widgets/agRadioButton';
 import { AgSelect } from '../../agStack/widgets/agSelect';
 import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayParams } from '../../interfaces/iFilter';
-import { _areEqual } from '../../utils/array';
 import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
 import { _warn } from '../../validation/logging';

@@ -7,7 +7,7 @@ import type { ISideBar } from '../interfaces/iSideBar';
 import type { UpdateLayoutClassesParams } from '../styling/layoutFeature';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import type { ElementParams } from '../utils/element';
-import { _logIfDebug } from '../utils/function';
+import { _logIfDebug } from '../utils/log';
 import type { ComponentSelector } from '../widgets/component';
 import type { Component } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';

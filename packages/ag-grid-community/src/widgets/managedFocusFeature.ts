@@ -1,6 +1,6 @@
 import { KeyCode } from '../agStack/constants/keyCode';
+import { _findNextFocusableElement } from '../agStack/utils/focus';
 import { BeanStub } from '../context/beanStub';
-import { _findNextFocusableElement } from '../utils/focus';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../utils/gridEvent';
 
 export interface ManagedFocusCallbacks {

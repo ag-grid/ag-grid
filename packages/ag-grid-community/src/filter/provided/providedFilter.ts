@@ -1,3 +1,4 @@
+import { _debounce } from '../../agStack/utils/function';
 import type { AgPromise } from '../../agStack/utils/promise';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
@@ -9,7 +10,6 @@ import type {
 } from '../../interfaces/iFilter';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import type { ElementParams } from '../../utils/element';
-import { _debounce } from '../../utils/function';
 import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';

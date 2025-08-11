@@ -1,5 +1,7 @@
 import { KeyCode } from './agStack/constants/keyCode';
+import { _last } from './agStack/utils/array';
 import { _getActiveDomElement } from './agStack/utils/document';
+import { _focusInto, _registerKeyboardFocusEvents } from './agStack/utils/focus';
 import { _makeNull } from './agStack/utils/generic';
 import type { ColumnModel } from './columns/columnModel';
 import type { VisibleColsService } from './columns/visibleColsService';
@@ -24,14 +26,7 @@ import type { NavigationService } from './navigation/navigationService';
 import type { OverlayService } from './rendering/overlays/overlayService';
 import { DOM_DATA_KEY_CELL_CTRL, DOM_DATA_KEY_ROW_CTRL } from './rendering/renderUtils';
 import type { RowRenderer } from './rendering/rowRenderer';
-import { _last } from './utils/array';
-import {
-    _focusInto,
-    _focusNextGridCoreContainer,
-    _isCellFocusSuppressed,
-    _isHeaderFocusSuppressed,
-    _registerKeyboardFocusEvents,
-} from './utils/focus';
+import { _focusNextGridCoreContainer, _isCellFocusSuppressed, _isHeaderFocusSuppressed } from './utils/gridFocus';
 
 export class FocusService extends BeanStub implements NamedBean {
     beanName = 'focusSvc' as const;
