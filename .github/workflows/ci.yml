@@ -97,7 +97,7 @@ jobs:
           if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
             yarn nx format:check --all
           else
-            yarn nx format:check --base ${{ steps.setup.outputs.base }}
+            yarn nx format:check --base ${{ steps.setup.outputs.base }} --verbose
           fi
 
       - name: nx lint
