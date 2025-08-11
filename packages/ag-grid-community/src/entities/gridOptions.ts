@@ -2122,10 +2122,12 @@ export interface GridOptions<TData = any> {
      */
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData>) => boolean;
     /**
-     * Controls how groups behave.
-     * @agModule `RowGroupingModule` / `TreeDataModule`
+     * Controls how expand/collapse operations affect all rows and group interactions.
+     * If `true`, expandAll / collapseAll applies to all rows (not just loaded ones),
+     * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
+     * @agModule RowGroupingModule / TreeDataModule
      */
-    groupFlags?: GroupFlags;
+    ssrmExpandAllAffectsAllRows?: boolean | undefined;
     /**
      * Allows default sorting of groups.
      * @agModule `RowGroupingModule`
@@ -2967,15 +2969,6 @@ export interface FillHandleOptions<TData = any> {
      */
     setFillValue?: <TContext = any>(params: FillOperationParams<TData, TContext>) => any;
 }
-
-export type GroupFlags = Partial<{
-    /**
-     * If `true`:
-     *  - expandAll / collapseAll affects all rows, not only loaded ones.
-     *  - interacting with the group overrides the default group expansion state set with `isServerSideGroupOpenByDefault`.
-     */
-    useSsrmNewBehaviour: boolean;
-}>;
 
 export type RowSelectionOptions<TData = any, TValue = any, TContext = any> =
     | SingleRowSelectionOptions<TData, TValue, TContext>

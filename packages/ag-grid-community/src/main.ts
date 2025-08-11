@@ -972,7 +972,6 @@ export {
     UseGroupFooter,
     UseGroupTotalRow,
     GetChartMenuItems,
-    GroupFlags,
 } from './entities/gridOptions';
 export type { RowNumbersOptions, IRowNumbersRowResizeFeature } from './interfaces/rowNumbers';
 export type { ManagedGridOptionKey, ManagedGridOptions } from './gridOptionsInitial';
