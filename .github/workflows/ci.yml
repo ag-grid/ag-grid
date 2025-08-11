@@ -1,0 +1,138 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - 'latest'
+      - 'b[0-9][0-9]?.[0-9][0-9]?.[0-9][0-9]?'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      skip_docs:
+        description: 'Skip docs build & link checker'
+        type: boolean
+        default: false
+        required: true
+      skip_bundle_size:
+        description: 'Skip bundle size tests'
+        type: boolean
+        default: true
+        required: true
+      run_package_tests:
+        description: 'Run package tests'
+        type: boolean
+        default: false
+        required: true
+      clean_checkout:
+        description: 'Disable all caching'
+        type: boolean
+        default: false
+        required: true
+      nx_command:
+        type: 'choice'
+        required: true
+        default: 'affected'
+        options:
+          - 'affected'
+          - 'run-many'
+env:
+  NX_NO_CLOUD: true
+  NX_BRANCH: ${{ github.ref }}
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  SLACK_CHANNEL: '#ci-grid-gate'
+  AG_LIBRARY: grid
+  SHARP_IGNORE_GLOBAL_LIBVIPS: true
+  YARN_REGISTRY: "http://52.50.158.57:4873"
+  CI: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/latest' }}
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build_lint:
+    name: Build & Lint
+    if: github.event.pull_request.draft == false
+    outputs:
+      nx_base: ${{ steps.setup.outputs.base }}
+      build: ${{ steps.build.outcome || '' }}
+      lint: ${{ steps.lint.outcome || '' }}
+      format: ${{ steps.format.outcome || '' }}
+      test_count: ${{ steps.matrix.outputs.test_count }}
+      test_matrix: ${{ steps.matrix.outputs.test_matrix }}
+      test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
+      test_angular_pkg_matrix: ${{ steps.matrix.outputs.angular_pkg_matrix }}
+      e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
+      e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
+      bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
+      bundle_test_matrix: ${{ steps.matrix.outputs.bundle_test_matrix }}
+      build_type: ${{ steps.setup.outputs.type }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
+
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ${{ inputs.clean_checkout && 'off' || 'rw' }}
+
+#      - name: nx format:check
+#        id: format
+#        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+#        run: |
+#          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+#            yarn nx format:check --all
+#          else
+#            yarn nx format:check --base ${{ steps.setup.outputs.base }} --verbose
+#          fi
+
+#      - name: nx lint
+#        id: lint
+#        run: |
+#          yarn nx lint
+
+      - name: nx build
+        id: build
+        run: |
+          NODE_ENV=production yarn nx pack:verify --prod 
+
+  report:
+    runs-on: ubuntu-24.04
+    needs: [ build_lint  ]
+    if: cancelled() != true && github.event.pull_request.draft == false
+    permissions:
+      contents: write
+      actions: read
+      checks: write
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
+
+      - name: Fail job if workflow failed
+        if: success() && steps.lastJobStatus.outputs.workflowStatus == 'failure'
+        run: |
+          echo "Workflow failed, failing the build."
+          exit 1
+
