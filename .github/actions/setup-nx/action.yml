@@ -32,7 +32,7 @@ runs:
           id: nx_config
           shell: bash
           run: |
-            set -x
+            set -x 
             
             branch=$(git branch --show-current)
             if [[ ${branch} == 'latest' ]] ; then
