@@ -36,7 +36,13 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
     } as const;
 
     private modifyColumnsNoEventsCallbacks = {
-        addCol: (column: AgColumn) => this.columns.push(column),
+        addCol: (column: AgColumn) => {
+            // if this column has virtual columns associated to it, ensure those virtual columns are
+            // inserted before it in the list (and therefore the grouping hierarchy)
+            this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
+
+            this.columns.push(column);
+        },
         removeCol: (column: AgColumn) => _removeFromArray(this.columns, column),
     };
 
@@ -96,7 +102,11 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
 
         this.setColRowGroupActive(column, active, source);
 
-        if (_shouldUpdateColVisibilityAfterGroup(this.gos, active)) {
+        // If this column is a virtual column inserted by the groupHierarchyColSvc, by default we shouldn't make
+        // it visible when being grouped or ungrouped -- these are virtual columns, not user data columns, so they
+        // should only be made visible if the user explicitly wants to see them
+        const isGroupHierarchyCol = this.beans.groupHierarchyColSvc?.getColumn(column);
+        if (_shouldUpdateColVisibilityAfterGroup(this.gos, active) && !isGroupHierarchyCol) {
             this.colModel.setColsVisible([column], !active, source);
         }
     }
@@ -104,6 +114,9 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
     private setColRowGroupActive(column: AgColumn, rowGroup: boolean, source: ColumnEventType): void {
         if (column.rowGroupActive !== rowGroup) {
             column.rowGroupActive = rowGroup;
+
+            this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
+
             column.dispatchColEvent('columnRowGroupChanged', source);
         }
         column.dispatchStateUpdatedEvent('rowGroup');

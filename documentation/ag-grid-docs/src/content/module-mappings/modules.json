@@ -290,6 +290,12 @@
                     "path": "grouping-single-group-column/#inherit-row-grouped-columns-filters",
                     "name": "Group Filter",
                     "isEnterprise": true
+                },
+                {
+                    "moduleName": "GroupHierarchyModule",
+                    "path": "grouping-data/#example-grouping-date-time",
+                    "name": "Row Grouping Hierarchy",
+                    "isEnterprise": true
                 }
             ]
         },

@@ -278,6 +278,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 rowSelection: { required: ['multiple'] },
             },
         },
+        groupHierarchyConfig: {
+            validate({ groupHierarchyConfig = {} }, gridOptions, beans) {
+                for (const k of Object.keys(groupHierarchyConfig)) {
+                    beans.validation?.validateColDef(groupHierarchyConfig[k]);
+                }
+                return null;
+            },
+        },
         icons: {
             validate: ({ icons }) => {
                 if (icons) {

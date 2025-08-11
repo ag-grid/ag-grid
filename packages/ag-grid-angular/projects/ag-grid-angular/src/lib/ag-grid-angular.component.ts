@@ -1391,6 +1391,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input({ transform: booleanAttribute }) public suppressGroupRowsSticky: boolean | undefined = undefined;
+    /** Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+     * @agModule `RowGroupingModule` / `TreeDataModule`
+     */
+    @Input() public groupHierarchyConfig: { [k: string]: ColDef } | undefined = undefined;
     /** Data to be displayed as pinned top rows in the grid.
      * @agModule `PinnedRowModule`
      */

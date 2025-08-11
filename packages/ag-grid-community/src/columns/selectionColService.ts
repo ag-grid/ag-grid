@@ -129,7 +129,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
     }
 
     private createSelectionColDef(def?: SelectionColumnDef): ColDef {
-        const { gos } = this.beans;
+        const { gos } = this;
         const selectionColumnDef = def ?? gos.get('selectionColumnDef');
         const enableRTL = gos.get('enableRtl');
 

@@ -484,6 +484,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
         const { dataTypeDefinitions, beans, formatValueFuncs } = this;
         const dataTypeDefinition = dataTypeDefinitions[cellDataType];
+        if (!dataTypeDefinition) {
+            return;
+        }
         beans.colFilter?.setColDefPropsForDataType(colDef, dataTypeDefinition, formatValueFuncs[cellDataType]);
     }
 

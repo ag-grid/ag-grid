@@ -62,6 +62,7 @@ import type { IFindService } from '../interfaces/iFind';
 import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import type { IGroupFilterService } from '../interfaces/iGroupFilterService';
+import type { IGroupHierarchyColService } from '../interfaces/iGroupHierarchyColService';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IMultiFilterService } from '../interfaces/iMultiFilterService';
 import type { IFilterPanelService, ISelectableFilterService } from '../interfaces/iNewFiltersToolPanel';
@@ -345,6 +346,7 @@ interface CoreBeanCollection
     licenseManager?: IWatermark;
     changeDetectionSvc?: ChangeDetectionService;
     iconSvc: IconService;
+    groupHierarchyColSvc?: IGroupHierarchyColService;
 }
 
 export type BeanCollection = CoreBeanCollection & {

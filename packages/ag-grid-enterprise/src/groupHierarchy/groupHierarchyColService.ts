@@ -1,0 +1,275 @@
+import type {
+    ColDef,
+    ColKey,
+    GridOptions,
+    IGroupHierarchyColService,
+    NamedBean,
+    PropertyChangedEvent,
+    PropertyValueChangedEvent,
+    _ColumnCollections,
+} from 'ag-grid-community';
+import {
+    AgColumn,
+    BeanStub,
+    GROUP_HIERARCHY_COLUMN_ID_PREFIX,
+    _addColumnDefaultAndTypes,
+    _areColIdsEqual,
+    _columnsMatch,
+    _destroyColumnTree,
+    _updateColsMap,
+} from 'ag-grid-community';
+
+import { getDatePartValueGetter, getHeaderValueGetter } from './groupHierarchyUtils';
+
+export class GroupHierarchyColService extends BeanStub implements NamedBean, IGroupHierarchyColService {
+    beanName = 'groupHierarchyColSvc' as const;
+
+    public columns: _ColumnCollections | null = null;
+    /** Map from primary column to virtual (i.e. generated) columns */
+    private readonly sourceColumnMap = new WeakMap<AgColumn, AgColumn[]>();
+    /** Map from virtual column to associated primary column. Inverse of `sourceColumnMap` */
+    private readonly inverseColumnMap = new WeakMap<AgColumn, AgColumn>();
+
+    public addColumns(cols: _ColumnCollections): void {
+        const groupHierarchyCols = this.columns;
+        if (groupHierarchyCols == null) {
+            return;
+        }
+
+        cols.list = groupHierarchyCols.list
+            .filter((col) => !cols.list.some((c) => c.getColId() === col.getColId()))
+            .concat(cols.list);
+
+        cols.tree = groupHierarchyCols.tree
+            .filter((col) => !cols.tree.some((c) => c.getId() === col.getId()))
+            .concat(cols.tree);
+
+        _updateColsMap(cols);
+    }
+
+    public createColumns(cols: _ColumnCollections): void {
+        const list = this.createGroupHierarchyColumns(cols);
+        const areSame = _areColIdsEqual(list, this.columns?.list ?? []);
+
+        if (areSame) {
+            return;
+        }
+
+        _destroyColumnTree(this.beans, this.columns?.tree);
+        this.columns = null;
+        const { colGroupSvc } = this.beans;
+        const treeDepth = colGroupSvc?.findDepth(cols.tree) ?? 0;
+        const tree = colGroupSvc?.balanceTreeForAutoCols(list, treeDepth) ?? [];
+        this.columns = {
+            list,
+            tree,
+            treeDepth,
+            map: {},
+        };
+    }
+
+    public updateColumns(_event: PropertyChangedEvent | PropertyValueChangedEvent<keyof GridOptions>): void {
+        // No-op
+    }
+
+    public getColumn(key: ColKey): AgColumn | null {
+        return this.columns?.list.find((col) => _columnsMatch(col, key)) ?? null;
+    }
+
+    public getColumns(): AgColumn[] | null {
+        return this.columns?.list ?? null;
+    }
+
+    public expandColumn(col: AgColumn<any>): AgColumn<any>[] {
+        return this.getVirtualColumnsForColumn(col).concat(col);
+    }
+
+    public compareVirtualColumns(colA: AgColumn, colB: AgColumn): number | null {
+        const sourceA = this.inverseColumnMap.get(colA);
+        const sourceB = this.inverseColumnMap.get(colB);
+        if (sourceA && sourceA === sourceB) {
+            const hierarchyCols = this.sourceColumnMap.get(sourceA) ?? [];
+            return hierarchyCols?.indexOf(colA) - hierarchyCols?.indexOf(colB);
+        }
+
+        if (this.sourceColumnMap.get(colA)?.includes(colB)) {
+            return 1;
+        }
+
+        if (this.sourceColumnMap.get(colB)?.includes(colA)) {
+            return -1;
+        }
+
+        return null;
+    }
+
+    public insertVirtualColumnsForCol(columns: AgColumn<any>[], col: AgColumn<any>): void {
+        const hierarchyCols = this.getVirtualColumnsForColumn(col) ?? [];
+        for (const col of hierarchyCols) {
+            if (!columns.includes(col)) {
+                columns.push(col);
+            }
+        }
+    }
+
+    private getVirtualColumnsForColumn(col: AgColumn): AgColumn[] {
+        if (this.isGroupHierarchyColsEnabledForCol(col)) {
+            return this.sourceColumnMap.get(col) ?? [];
+        }
+        return [];
+    }
+
+    private isGroupHierarchyColsEnabled(cols: _ColumnCollections): boolean {
+        return cols.list.some((col) => this.isGroupHierarchyColsEnabledForCol(col));
+    }
+
+    private isGroupHierarchyColsEnabledForCol(col: AgColumn): boolean {
+        const def = col.getColDef();
+        return !!(def.rowGroupingHierarchy && (def.rowGroup || def.enableRowGroup));
+    }
+
+    private createGroupHierarchyColDefs(sourceCol: AgColumn): ColDef[] {
+        const colDefs: ColDef[] = [];
+        const sourceColDef = sourceCol.getColDef();
+
+        if (!sourceColDef.rowGroupingHierarchy) {
+            return colDefs;
+        }
+
+        if (!this.isGroupHierarchyColsEnabledForCol(sourceCol)) {
+            return colDefs;
+        }
+
+        for (const part of sourceColDef.rowGroupingHierarchy) {
+            let colDef: ColDef | null = null;
+            if (typeof part === 'string') {
+                colDef = this.createColDefForPart(part, sourceCol, sourceColDef);
+            } else {
+                colDef = part;
+            }
+            if (colDef) {
+                colDefs.push(colDef);
+            }
+        }
+
+        return colDefs;
+    }
+
+    private createGroupHierarchyColumns(cols: _ColumnCollections): AgColumn[] {
+        if (!this.isGroupHierarchyColsEnabled(cols)) {
+            return [];
+        }
+
+        const newCols: AgColumn[] = [];
+
+        for (const col of cols.list) {
+            this.createGroupHierarchyColDefs(col).forEach((colDef) => {
+                const colId = colDef.colId!;
+                this.gos.validateColDef(colDef, colId, true);
+                const newCol = new AgColumn(colDef, null, colId, true);
+                this.createBean(newCol);
+                newCols.push(newCol);
+                updateMap(this.sourceColumnMap, col, newCol);
+                this.inverseColumnMap.set(newCol, col);
+            });
+        }
+
+        return newCols;
+    }
+
+    private createColDefForPart(part: string, sourceCol: AgColumn, sourceColDef: ColDef): ColDef | null {
+        const { beans, gos } = this;
+
+        const groupHierarchyConfig = gos.get('groupHierarchyConfig') ?? {};
+        if (part in groupHierarchyConfig) {
+            const providedDef = groupHierarchyConfig[part];
+            if (!providedDef.colId) {
+                return null;
+            }
+            return _addColumnDefaultAndTypes(this.beans, providedDef, providedDef.colId, true);
+        }
+
+        const base: ColDef = _addColumnDefaultAndTypes(
+            beans,
+            {
+                enableRowGroup: true,
+                rowGroup: sourceColDef.rowGroup,
+                enablePivot: sourceColDef.enablePivot,
+                hide: true,
+                editable: false,
+            },
+            'dummy',
+            true
+        );
+
+        const getColId = (part: string) => `${GROUP_HIERARCHY_COLUMN_ID_PREFIX}-${sourceCol.getColId()}-${part}`;
+
+        switch (part) {
+            case 'year':
+                return {
+                    ...base,
+                    colId: getColId(part),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Year'),
+                    valueGetter: getDatePartValueGetter(beans, sourceCol, 0),
+                };
+
+            case 'quarter':
+                return {
+                    ...base,
+                    colId: getColId(part),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Quarter'),
+                    valueGetter: getDatePartValueGetter(beans, sourceCol, 1, (month) =>
+                        (Math.floor(Number(month) / 4) + 1).toString()
+                    ),
+                };
+
+            case 'month':
+                return {
+                    ...base,
+                    colId: getColId(part),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Month'),
+                    valueGetter: getDatePartValueGetter(beans, sourceCol, 1),
+                };
+
+            case 'day':
+                return {
+                    ...base,
+                    colId: getColId(part),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Day'),
+                    valueGetter: getDatePartValueGetter(beans, sourceCol, 2),
+                };
+
+            case 'hour':
+                return {
+                    ...base,
+                    colId: getColId(part),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Hour'),
+                    valueGetter: getDatePartValueGetter(beans, sourceCol, 3),
+                };
+
+            case 'minute':
+                return {
+                    ...base,
+                    colId: getColId(part),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Minute'),
+                    valueGetter: getDatePartValueGetter(beans, sourceCol, 4),
+                };
+
+            case 'second':
+                return {
+                    ...base,
+                    colId: getColId(part),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Second'),
+                    valueGetter: getDatePartValueGetter(beans, sourceCol, 5),
+                };
+
+            default:
+                return null;
+        }
+    }
+}
+
+function updateMap<T extends object>(wm: WeakMap<T, T[]>, key: T, value: T): void {
+    const existing = wm.get(key);
+    wm.set(key, (existing ?? []).concat(value));
+}

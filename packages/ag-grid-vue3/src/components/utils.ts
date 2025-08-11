@@ -1208,6 +1208,10 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     suppressGroupRowsSticky?: boolean | undefined,
+    /** Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+         * @agModule `RowGroupingModule` / `TreeDataModule`
+         */
+    groupHierarchyConfig?: { [k: string]: ColDef } | undefined,
     /** Data to be displayed as pinned top rows in the grid.
          * @agModule `PinnedRowModule`
          */
@@ -2101,6 +2105,7 @@ export function getProps() {
         treeDataParentIdField: undefined,
         rowGroupPanelSuppressSort: undefined,
         suppressGroupRowsSticky: undefined,
+        groupHierarchyConfig: undefined,
         pinnedTopRowData: undefined,
         pinnedBottomRowData: undefined,
         enableRowPinning: undefined,
