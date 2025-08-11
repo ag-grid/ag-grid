@@ -34,16 +34,65 @@ type CacheFixtures = {
 type TestFixtures = PlaywrightFixtures & AgGridFixtures & CacheFixtures;
 
 type AgExampleUrl = `${string}/${string}`;
-
+const reactFunctionalTsDev = 'reactFunctionalTs_Dev' as const;
 const ALL_FRAMEWORKS = [
     'typescript',
     'vanilla',
     // 'reactFunctional', // These are computed from reactFunctionalTs by Typescript striping the types so very unlikely to result in different errors to the typescript version
     'reactFunctionalTs',
+    reactFunctionalTsDev,
     'angular',
     'vue3',
 ] as const;
 type AgFramework = (typeof ALL_FRAMEWORKS)[number];
+
+const licenseTexts = [
+    '****************************************************************************************************************************',
+    '************************************************ AG Grid Enterprise License ************************************************',
+    '************************************************** License Key Not Found ***************************************************',
+    '* All AG Grid Enterprise features are unlocked for trial.                                                                  *',
+    '* If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 *',
+    '***************************************** AG Grid and AG Charts Enterprise License *****************************************',
+    '* All AG Grid and AG Charts Enterprise features are unlocked for trial.                                                    *',
+];
+
+// TEMPORARY: maybe need a cleaner way of ignoring these warnings for specific tests
+// Errors that we want to exclude from the test based on partial text match
+const excludeErrors = [
+    'AG Grid: Using custom components without `reactiveCustomComponents = true` is deprecated.',
+    'ERROR ResizeObserver loop completed with undelivered notifications',
+    // This error is thrown when a favicon is not found which is not relevant to the test
+    'Failed to load resource: the server responded with a status of 404 ()',
+
+    // Firefox specific errors that we want to ignore
+    'InstallTrigger is deprecated and will be removed in the future.',
+    'onmozfullscreenchange is deprecated.',
+    'onmozfullscreenerror is deprecated.',
+    'XML Parsing Error: not well-formed',
+    'XML Parsing Error: syntax error',
+    'Layout was forced before the page was fully loaded. If stylesheets are not yet loaded this may cause a flash of unstyled content.',
+    'Request to access cookie or storage on “<URL>” was blocked because it came from a tracker and Enhanced Tracking Protection is enabled.',
+];
+
+function setupConsoleExpectations(page: Page) {
+    const errors: string[] = [];
+
+    // catch any errors or warnings and fail the test
+    page.on('console', (msg) => {
+        if (msg.type() === 'error' || msg.type() === 'warning') {
+            const text = msg.text();
+            if (!licenseTexts.includes(text)) {
+                if (excludeErrors.some((e) => text.includes(e))) {
+                    test.skip(false, text);
+                } else {
+                    errors.push(text);
+                }
+            }
+        }
+    });
+
+    return errors;
+}
 
 async function loadPage(
     page: Page,
@@ -56,14 +105,17 @@ async function loadPage(
     };
     if (loadPageOptions?.prod) {
         queryOptions.prod = 'true';
+    } else if (loadPageOptions?.prod === false || agFramework === reactFunctionalTsDev) {
+        queryOptions.prod = 'false';
     }
     if (loadPageOptions?.version) {
         queryOptions.version = loadPageOptions.version;
     }
 
     const queryParams = new URLSearchParams(queryOptions);
+    const urlFramework = agFramework === reactFunctionalTsDev ? 'reactFunctionalTs' : agFramework;
 
-    await page.goto(`/examples/${agExampleUrl}/${agFramework}?${queryParams.toString()}`);
+    await page.goto(`/examples/${agExampleUrl}/${urlFramework}?${queryParams.toString()}`);
     await page.waitForLoadState('domcontentloaded');
     await page.waitForLoadState('load');
     await page.waitForLoadState('networkidle');
@@ -142,7 +194,19 @@ const frameworkTest =
 
         if (testName) {
             extended.describe(testName, () => {
+                let errors: string[];
+                extended.beforeEach(async ({ page }) => {
+                    errors = setupConsoleExpectations(page);
+                });
+
                 extended(`${agFramework} (only)`, testWrapper);
+
+                extended.afterEach(async () => {
+                    if (errors.length > 0) {
+                        const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n`;
+                        expect(errors.length, errorMessage).toBe(0);
+                    }
+                });
             });
         } else {
             extended(`${agFramework}`, testWrapper);
