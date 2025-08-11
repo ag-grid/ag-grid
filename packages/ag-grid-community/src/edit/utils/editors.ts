@@ -384,7 +384,8 @@ export function _destroyEditor(
     const { comp } = cellCtrl;
 
     if (comp && !comp.getCellEditor()) {
-        // no editor, nothing to do
+        // editor already cleaned up, refresh cell
+        cellCtrl?.refreshCell();
         return;
     }
 
