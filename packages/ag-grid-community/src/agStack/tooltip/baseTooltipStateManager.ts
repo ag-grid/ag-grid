@@ -16,7 +16,7 @@ enum TooltipStates {
     WAITING_TO_SHOW,
     SHOWING,
 }
-enum TooltipTrigger {
+export enum TooltipTrigger {
     HOVER,
     FOCUS,
 }
@@ -243,7 +243,7 @@ export abstract class BaseTooltipStateManager<
         this.setToDoNothing();
     }
 
-    private prepareToShowTooltip(mouseEvent?: MouseEvent): void {
+    public prepareToShowTooltip(mouseEvent?: MouseEvent): void {
         // every mouseenter should be following by a mouseleave, however for some unknown, it's possible for
         // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
         // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if

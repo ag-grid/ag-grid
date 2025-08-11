@@ -168,6 +168,11 @@ export class AgSelect<
         return this.listComponent!;
     }
 
+    protected override beforeHidePicker(): void {
+        this.listComponent?.hideTooltip();
+        super.beforeHidePicker();
+    }
+
     protected override onKeyDown(e: KeyboardEvent): void {
         const { key } = e;
 

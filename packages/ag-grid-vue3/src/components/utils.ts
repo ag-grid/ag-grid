@@ -1209,7 +1209,7 @@ export interface Props<TData> {
          */
     suppressGroupRowsSticky?: boolean | undefined,
     /** Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
-         * @agModule `RowGroupingModule` / `TreeDataModule`
+         * @agModule `RowGroupingModule`
          */
     groupHierarchyConfig?: { [k: string]: ColDef } | undefined,
     /** Data to be displayed as pinned top rows in the grid.

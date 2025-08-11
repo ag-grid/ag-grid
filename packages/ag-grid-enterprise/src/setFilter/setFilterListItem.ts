@@ -145,7 +145,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     public postConstruct(): void {
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
-                getGui: () => this.getGui(),
+                getGui: () => this.focusWrapper,
                 getLocation: () => 'setFilterValue',
                 shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
                 getAdditionalParams: () => {

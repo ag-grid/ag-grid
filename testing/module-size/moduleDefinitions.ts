@@ -19,7 +19,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     CustomEditorModule: 59.13,
     CustomFilterModule: 72,
     DateEditorModule: 65.42,
-    DateFilterModule: 129.92,
+    DateFilterModule: 130,
     DragAndDropModule: 1,
     EventApiModule: 2.64,
     ExternalFilterModule: 12.67,
@@ -42,7 +42,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ScrollApiModule: 0.7,
     SelectEditorModule: 76.21,
     TextEditorModule: 62.36,
-    TextFilterModule: 123.8,
+    TextFilterModule: 124,
     TooltipModule: 23.68,
     UndoRedoEditModule: 64.89,
     ValidationModule: 72.17,
@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 217.72,
-    AllEnterpriseModule: 1478.41,
+    AllEnterpriseModule: 1478,
     BatchEditModule: 76.37,
     CellSelectionModule: 55,
     ClipboardModule: 46.04,

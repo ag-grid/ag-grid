@@ -7,6 +7,7 @@ import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { TooltipCtrl } from '../interfaces/iTooltip';
 import type { ITooltipFeature } from '../interfaces/iTooltip';
+import { TooltipTrigger } from '../tooltip/baseTooltipStateManager';
 import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
 import { _createAgElement, _isVisible, _removeFromParent } from '../utils/dom';
 import { agListCSS } from './agList.css-GENERATED';
@@ -43,6 +44,9 @@ export class AgList<
     private highlightedEl: HTMLElement | null;
     private value: TValue | null;
     private displayValue: string | null;
+    private tooltipMode: TooltipTrigger;
+    private tooltipFeatures: ITooltipFeature[] = [];
+    private lastDisplayedTooltip?: ITooltipFeature;
 
     constructor(
         private readonly cssIdentifier = 'default',
@@ -55,10 +59,19 @@ export class AgList<
     public postConstruct(): void {
         const eGui = this.getGui();
         this.addManagedElementListeners(eGui, { mouseleave: () => this.clearHighlighted() });
+        this.addManagedPropertyListener('tooltipTrigger', ({ currentValue }) => {
+            this.setTooltipMode(currentValue);
+        });
+        this.setTooltipMode(this.gos.get('tooltipTrigger'));
+
         if (this.unFocusable) {
             return;
         }
         this.addManagedElementListeners(eGui, { keydown: this.handleKeyDown.bind(this) });
+    }
+
+    private setTooltipMode(tooltipTriggerMode: 'focus' | 'hover' = 'focus'): void {
+        this.tooltipMode = tooltipTriggerMode === 'focus' ? TooltipTrigger.FOCUS : TooltipTrigger.HOVER;
     }
 
     public handleKeyDown(e: KeyboardEvent): void {
@@ -156,7 +169,13 @@ export class AgList<
         this.itemEls.forEach((itemEl) => {
             _removeFromParent(itemEl);
         });
+
+        for (const tooltipFeature of this.tooltipFeatures) {
+            tooltipFeature.destroy?.();
+        }
+
         this.itemEls = [];
+        this.tooltipFeatures = [];
         this.refreshAriaRole();
     }
 
@@ -205,7 +224,7 @@ export class AgList<
             },
         });
 
-        this.createOptionalManagedBean(
+        const tooltipFeature = this.createOptionalManagedBean(
             this.beans.registry.createDynamicBean<ITooltipFeature & AgCoreBean<TBeanCollection>>(
                 'tooltipFeature',
                 false,
@@ -218,6 +237,10 @@ export class AgList<
                 } as TooltipCtrl<'UNKNOWN', any>
             )
         );
+
+        if (tooltipFeature) {
+            this.tooltipFeatures.push(tooltipFeature);
+        }
 
         this.getGui().appendChild(itemEl);
     }
@@ -302,6 +325,21 @@ export class AgList<
 
         if (!this.unFocusable) {
             el.focus();
+        } else if (this.tooltipMode === TooltipTrigger.FOCUS) {
+            this.hideTooltip();
+            this.showTooltipForItem(el);
+        }
+    }
+
+    public hideTooltip(): void {
+        this.lastDisplayedTooltip?.attemptToHideTooltip();
+    }
+
+    public showTooltipForItem(el: HTMLElement): void {
+        const idx = this.itemEls.indexOf(el);
+        if (idx !== -1 && this.tooltipFeatures.length) {
+            this.lastDisplayedTooltip = this.tooltipFeatures[idx];
+            this.lastDisplayedTooltip?.attemptToShowTooltip();
         }
     }
 
@@ -324,5 +362,13 @@ export class AgList<
 
     private fireItemSelected(): void {
         this.dispatchLocalEvent({ type: 'selectedItem' });
+    }
+
+    public override destroy(): void {
+        this.hideTooltip();
+        this.lastDisplayedTooltip = null as any;
+        this.tooltipFeatures = [];
+
+        super.destroy();
     }
 }
