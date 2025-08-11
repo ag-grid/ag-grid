@@ -17,8 +17,8 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-let gridApi: GridApi<any>;
-const gridOptions: GridOptions<any> = {
+let gridApi: GridApi;
+const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true },
         { field: 'id', aggFunc: 'sum', hide: true },
@@ -79,7 +79,10 @@ fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then((response) => response.json())
     .then(function (data) {
         // setup the fake server with entire dataset
-        const newData = data.map((e, i) => ({ ...e, id: String(i) + '-' }));
+        const newData = data.map((e: IOlympicData, i: number) => ({
+            ...e,
+            id: `${e.country}-${e.sport}-${e.year}-${i}`,
+        }));
         const fakeServer = new FakeServer(newData);
 
         // create datasource with a reference to the fake server
