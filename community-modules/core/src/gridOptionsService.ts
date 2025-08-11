@@ -288,7 +288,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             const fireEvent = (name: AgEventType, e: any) => {
                 const eventHandler = (this.gridOptions as any)[ComponentUtil.getCallbackForEvent(name)];
                 if (typeof eventHandler === 'function') {
-                    this.frameworkOverrides.wrapOutgoing(() => eventHandler(event));
+                    this.frameworkOverrides.wrapOutgoing(() => eventHandler(e));
                 }
             };
 
