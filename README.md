@@ -10,15 +10,12 @@
         <h4><a href="https://www.ag-grid.com?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">🌐 Website</a> • <a href="https://www.ag-grid.com/javascript-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">📖 Documentation</a> • <a href="https://www.ag-grid.com/community?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github">🏘️ Community</a></h4>
     </div>
     <br>
-
     <a href="https://github.com/ag-grid/ag-grid/releases">
         <img src="https://img.shields.io/github/v/release/ag-grid/ag-grid?style=for-the-badge" alt="GitHub Release">
     </a>
-
     <a href="https://www.npmjs.com/package/ag-grid-community">
         <img src="https://img.shields.io/npm/dm/ag-grid-community?style=for-the-badge" alt="NPM Downloads">
     </a>
-
     <a href="https://github.com/ag-grid/ag-grid">
         <img src="https://img.shields.io/github/stars/ag-grid/ag-grid?style=for-the-badge" alt="GitHub Repo stars">
     </a>
