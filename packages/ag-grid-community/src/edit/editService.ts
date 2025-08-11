@@ -298,9 +298,14 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             const freshEdits = model.getEditMap();
 
-            this.processEdits(freshEdits, cancel);
+            const editsToDelete = this.processEdits(freshEdits, cancel);
 
             this.strategy?.stop(cancel, event);
+
+            // clear any dangling edits, after editor destruction
+            editsToDelete.forEach((position) => {
+                this.model.clearEditValue(position);
+            });
 
             this.bulkRefresh(undefined, edits);
 
@@ -390,7 +395,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
     }
 
-    private processEdits(edits: EditMap, cancel: boolean = false): void {
+    private processEdits(edits: EditMap, cancel: boolean = false): EditPosition[] {
         const rowNodes = Array.from(edits.keys());
         const { beans } = this;
 
@@ -421,9 +426,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             }
         }
 
-        editsToDelete.forEach((position) => {
-            this.model.clearEditValue(position);
-        });
+        return editsToDelete;
     }
 
     private setNodeDataValue(rowNode: IRowNode, column: Column, newValue: any, refreshCell?: boolean): boolean {
