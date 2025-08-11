@@ -44,11 +44,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowGroupPanelShow: 'always',
     groupHierarchyConfig: {
         week: {
-            colId: 'week',
-            enableRowGroup: true,
-            rowGroup: true,
-            hide: true,
-            editable: false,
             headerValueGetter: (params) => {
                 const sourceCol = params.api.getColumns()?.find((col) => col.getColDef().field === 'date');
                 if (!sourceCol) return '';

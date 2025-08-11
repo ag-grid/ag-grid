@@ -180,29 +180,23 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     private createColDefForPart(part: string, sourceCol: AgColumn, sourceColDef: ColDef): ColDef | null {
         const { beans, gos } = this;
 
+        const colId = `${GROUP_HIERARCHY_COLUMN_ID_PREFIX}-${sourceCol.getColId()}-${part}`;
+        const defaults: Partial<ColDef> = {
+            enableRowGroup: true,
+            rowGroup: sourceColDef.rowGroup,
+            enablePivot: sourceColDef.enablePivot,
+            hide: true,
+            editable: false,
+        };
+
         const groupHierarchyConfig = gos.get('groupHierarchyConfig') ?? {};
         if (part in groupHierarchyConfig) {
             const providedDef = groupHierarchyConfig[part];
-            if (!providedDef.colId) {
-                return null;
-            }
-            return _addColumnDefaultAndTypes(this.beans, providedDef, providedDef.colId, true);
+            providedDef.colId ??= colId;
+            return _addColumnDefaultAndTypes(this.beans, { ...defaults, ...providedDef }, providedDef.colId, true);
         }
 
-        const colId = `${GROUP_HIERARCHY_COLUMN_ID_PREFIX}-${sourceCol.getColId()}-${part}`;
-        const base: ColDef = _addColumnDefaultAndTypes(
-            beans,
-            {
-                colId,
-                enableRowGroup: true,
-                rowGroup: sourceColDef.rowGroup,
-                enablePivot: sourceColDef.enablePivot,
-                hide: true,
-                editable: false,
-            },
-            colId,
-            true
-        );
+        const base: ColDef = _addColumnDefaultAndTypes(beans, { colId, ...defaults }, colId, true);
 
         const translate = beans.localeSvc?.getLocaleTextFunc();
 
