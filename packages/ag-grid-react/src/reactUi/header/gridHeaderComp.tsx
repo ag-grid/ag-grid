@@ -16,16 +16,13 @@ const GridHeaderComp = () => {
     const gridCtrlRef = useRef<GridHeaderCtrl>();
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
-        if (context.isDestroyed()) {
+        eGui.current = eRef;
+        if (!eRef || context.isDestroyed()) {
+            gridCtrlRef.current = context.destroyBean(gridCtrlRef.current);
             return;
         }
 
-        eGui.current = eRef;
-        gridCtrlRef.current = eRef
-            ? context.createBean(new GridHeaderCtrl())
-            : context.destroyBean(gridCtrlRef.current);
-
-        if (!eRef) return;
+        gridCtrlRef.current = context.createBean(new GridHeaderCtrl());
 
         const compProxy: IGridHeaderComp = {
             toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),

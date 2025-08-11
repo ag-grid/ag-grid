@@ -22,18 +22,12 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
     const setRef = useCallback((eRef: HTMLDivElement) => {
         eGui.current = eRef;
 
-        if (context.isDestroyed()) {
+        if (!eRef || context.isDestroyed()) {
+            headerRowCtrlRef.current = context.destroyBean(headerRowCtrlRef.current);
             return;
         }
 
-
-        headerRowCtrlRef.current = eRef
-            ? context.createBean(new HeaderRowContainerCtrl(pinned))
-            : context.destroyBean(headerRowCtrlRef.current);
-
-        if (!eRef) {
-            return;
-        }
+        headerRowCtrlRef.current = context.createBean(new HeaderRowContainerCtrl(pinned));
 
         const compProxy: IHeaderRowContainerComp = {
             setDisplayed,

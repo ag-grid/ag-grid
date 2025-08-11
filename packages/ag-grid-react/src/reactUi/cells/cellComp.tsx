@@ -199,7 +199,7 @@ const CellComp = ({
         (eRef: HTMLDivElement | null) => {
             eCellWrapper.current = eRef;
 
-            if (!eRef) {
+            if (!eRef || context.isDestroyed() || !cellCtrl.isAlive()) {
                 cellWrapperDestroyFuncs.current.forEach((f) => f());
                 cellWrapperDestroyFuncs.current = [];
                 return;
@@ -218,8 +218,7 @@ const CellComp = ({
             };
 
             if (includeSelection) {
-                const checkboxSelectionComp = cellCtrl.createSelectionCheckbox();
-                addComp(checkboxSelectionComp);
+                addComp(cellCtrl.createSelectionCheckbox());
             }
 
             if (includeDndSource) {
@@ -236,14 +235,15 @@ const CellComp = ({
     const init = useCallback(() => {
         const spanReady = !cellCtrl.isCellSpanning() || eWrapper.current;
         const eRef = eGui.current;
-        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef || !spanReady || !cellCtrl || context.isDestroyed() || !cellCtrl.isAlive()) {
+        if (!eRef || !spanReady || !cellCtrl || context.isDestroyed()) {
             // We do NOT add a check for if the cellCtrl is destroyed as when there are lots of updates React
             // can get behind our internal state and call this function after the cellCtrl has been destroyed.
             // If we were to shortcut here then cell values will flash in the first column of the grid as they will
             // not have the correct cell position / styles applied as that is set via setComp.
+            compBean.current = context.destroyBean(compBean.current);
             return;
         }
+        compBean.current = context.createBean(new _EmptyBean());
 
         const compProxy: ICellComp = {
             toggleCss: (name, on) => cssManager.current!.toggleCss(name, on),

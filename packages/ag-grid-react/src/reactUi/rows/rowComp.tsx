@@ -83,11 +83,11 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     }
 
     // Setup both approaches to avoid conditionally rendering Hooks even though we don't use both at the same time.
-    const cellsChanged = useRef<any>(() => {});
+    const cellsChanged = useRef<any>(() => { });
     const sub = useCallback((onStoreChange: any) => {
         cellsChanged.current = onStoreChange;
         return () => {
-            cellsChanged.current = () => {};
+            cellsChanged.current = () => { };
         };
     }, []);
     const cellCtrlsUses = agUseSyncExternalStore(
@@ -113,7 +113,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         // because React is asynchronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
-        if (!rowCtrl.isAlive()) {
+        if (!rowCtrl.isAlive() || context.isDestroyed()) {
             return;
         }
 

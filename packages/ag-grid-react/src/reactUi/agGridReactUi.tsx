@@ -154,7 +154,6 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             ctx.createBean(renderStatus);
 
             destroyFuncs.current.push(() => {
-
                 ctx?.destroy();
             });
 
@@ -378,7 +377,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGuiRef.current = eRef;
 
-        if (!eRef) {
+        if (!eRef || context.isDestroyed()) {
             ctrlRef.current = context.destroyBean(ctrlRef.current);
             resizeObserverDestroyFunc.current?.();
             return;

@@ -56,14 +56,13 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
     }, []);
 
     const setRef = useCallback(() => {
-
+        if (areElementsRemoved()) {
+            rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
+        }
         if (context.isDestroyed()) {
             return;
         }
 
-        if (areElementsRemoved()) {
-            rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
-        }
         if (areElementsReady()) {
             const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
                 const next = getNextValueIfDifferent(
