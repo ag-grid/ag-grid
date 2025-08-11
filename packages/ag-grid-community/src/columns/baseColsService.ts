@@ -11,6 +11,7 @@ import type {
     IColsService,
 } from '../interfaces/iColsService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IGroupHierarchyColService } from '../interfaces/iGroupHierarchyColService';
 import { _removeFromArray } from '../utils/array';
 import { _exists } from '../utils/generic';
 import type { ColumnChangedEventType } from './columnApi';
@@ -23,6 +24,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     protected colModel: ColumnModel;
     protected aggFuncSvc?: IAggFuncService;
     protected visibleCols: VisibleColsService;
+    protected groupHierarchCols?: IGroupHierarchyColService;
     protected dispatchColumnChangedEvent = dispatchColumnChangedEvent;
 
     abstract eventName: ColumnChangedEventType;
@@ -37,10 +39,12 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.colModel = beans.colModel;
         this.aggFuncSvc = beans.aggFuncSvc;
         this.visibleCols = beans.visibleCols;
+        this.groupHierarchCols = beans.groupHierarchyColSvc;
     }
 
-    public sortColumns(compareFn?: (a: AgColumn, b: AgColumn) => number): void {
-        this.columns.sort(compareFn);
+    public sortColumns(compareFn: (a: AgColumn, b: AgColumn) => number): void {
+        const { groupHierarchCols } = this;
+        this.columns.sort((a, b) => groupHierarchCols?.compareVirtualColumns(a, b) ?? compareFn(a, b));
         this.updateIndexMap();
     }
 
@@ -115,7 +119,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.updateIndexMap();
 
         const primaryCols = this.colModel.getColDefCols();
-        (primaryCols || []).forEach((column) => {
+        primaryCols?.forEach((column) => {
             const added = masterList.indexOf(column) >= 0;
             columnCallback(column, added, source);
         });
@@ -203,13 +207,13 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         const { setFlagFunc, getIndexFunc, getInitialIndexFunc, getValueFunc, getInitialValueFunc } =
             this.columnExtractors!;
 
-        const primaryCols = this.colModel.getColDefCols() || [];
+        const primaryCols = this.colModel.getColDefCols();
 
         // go though all cols.
         // if value, change
         // if default only, change only if new
-        primaryCols.forEach((col) => {
-            const colIsNew = oldProvidedCols.indexOf(col) < 0;
+        primaryCols?.forEach((col) => {
+            const colIsNew = !oldProvidedCols.includes(col);
             const colDef = col.getColDef();
 
             const value = getValueFunc(colDef);
@@ -234,7 +238,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 } else {
                     // note that 'null >= 0' evaluates to true which means 'rowGroupIndex = null' would enable row
                     // grouping if the null check didn't exist above.
-                    include = index! >= 0;
+                    include = index >= 0;
                 }
             } else {
                 if (colIsNew) {
@@ -260,34 +264,23 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         });
 
         const getIndexForCol = (col: AgColumn): number => {
-            const index = getIndexFunc(col.getColDef());
-            const defaultIndex = getInitialIndexFunc(col.getColDef());
-
-            return index != null ? index : defaultIndex!;
+            const colDef = col.getColDef();
+            return getIndexFunc(colDef) ?? getInitialIndexFunc(colDef)!;
         };
 
         // sort cols with index, and add these first
-        colsWithIndex.sort((colA, colB) => {
-            const indexA = getIndexForCol(colA);
-            const indexB = getIndexForCol(colB);
+        colsWithIndex.sort((colA, colB) => getIndexForCol(colA) - getIndexForCol(colB));
 
-            if (indexA === indexB) {
-                return 0;
-            }
-            if (indexA < indexB) {
-                return -1;
-            }
+        const res: AgColumn[] = [...colsWithIndex];
 
-            return 1;
-        });
-
-        const res: AgColumn[] = ([] as AgColumn[]).concat(colsWithIndex);
-
-        // second add columns that were there before and in the same order as they were before,
-        // so we are preserving order of current grouping of columns that simply have rowGroup=true
+        // next, add columns that were there before and in the same order as they were before,
+        // so we are preserving order of current grouping of columns that simply have rowGroup=true...
         previousCols.forEach((col) => {
             if (colsWithValue.indexOf(col) >= 0) {
-                res.push(col);
+                // ...with the caveat that each column added also has any associated virtual columns added here
+                // so they appear before it in the group hierarchy. This is purely a matter of ordering; adding the
+                // virtual columns here means they will not be added below when iterating over `colsWithValue`.
+                res.push(...(this.groupHierarchCols?.expandColumn(col) ?? [col]));
             }
         });
 

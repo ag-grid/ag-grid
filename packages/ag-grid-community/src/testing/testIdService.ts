@@ -22,7 +22,16 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
     beanName: BeanName = 'testIdSvc';
 
     public postConstruct(): void {
-        const setup = _debounce(this, () => this.setupAllTestIds(), 0);
+        // Add a delayed setup that is also debounced to be more robust with Reacts async rendering.
+        const delayedDebounce = _debounce(this, () => this.setupAllTestIds(), 500);
+        const setup = _debounce(
+            this,
+            () => {
+                this.setupAllTestIds();
+                delayedDebounce();
+            },
+            0
+        );
         this.addManagedEventListeners({
             firstDataRendered: setup,
             displayedRowsChanged: setup,
@@ -380,7 +389,10 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         /** Row Group Panel */
 
-        this.setupColumnDropArea(root, 'panel');
+        const rowGroupPanelWrapper = root.querySelector('.ag-column-drop-wrapper');
+        if (rowGroupPanelWrapper) {
+            this.setupColumnDropArea(rowGroupPanelWrapper, 'panel');
+        }
     }
 
     private setupFilterInstance(filterRoot: Element | null, spec: FilterSpec): void {
@@ -426,10 +438,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
     private setupColumnDropArea(root: ParentNode, source: 'panel' | 'toolbar'): void {
         root.querySelectorAll('.ag-column-drop').forEach((columnDrop) => {
             const dropAreaName = columnDrop.querySelector('.ag-column-drop-list')?.getAttribute('aria-label');
-            setTestId(
-                columnDrop.querySelector('.ag-column-drop-empty-message'),
-                agTestIdFor.columnDropArea(source, dropAreaName)
-            );
+            setTestId(columnDrop, agTestIdFor.columnDropArea(source, dropAreaName));
             columnDrop.querySelectorAll('.ag-column-drop-cell').forEach((columnDropCell) => {
                 const label = columnDropCell.querySelector('.ag-column-drop-cell-text')?.textContent;
                 setTestId(

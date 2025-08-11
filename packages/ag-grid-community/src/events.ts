@@ -1017,10 +1017,16 @@ export interface RowSelectedEvent<TData = any, TContext = any> extends RowEvent<
 export interface VirtualRowRemovedEvent<TData = any, TContext = any>
     extends RowEvent<'virtualRowRemoved', TData, TContext> {}
 
-export interface RowClickedEvent<TData = any, TContext = any> extends RowEvent<'rowClicked', TData, TContext> {}
+interface RowMouseEvent<TEventType extends 'rowClicked' | 'rowDoubleClicked', TData = any, TContext = any>
+    extends RowEvent<TEventType, TData, TContext> {
+    /** `true` if `suppressMouseEventHandling` has been implemented in the corresponding cell renderer params and has returned `true`. */
+    isEventHandlingSuppressed: boolean;
+}
+
+export interface RowClickedEvent<TData = any, TContext = any> extends RowMouseEvent<'rowClicked', TData, TContext> {}
 
 export interface RowDoubleClickedEvent<TData = any, TContext = any>
-    extends RowEvent<'rowDoubleClicked', TData, TContext> {}
+    extends RowMouseEvent<'rowDoubleClicked', TData, TContext> {}
 
 export interface RowEditingStartedEvent<TData = any, TContext = any>
     extends RowEvent<'rowEditingStarted', TData, TContext> {}
@@ -1055,14 +1061,24 @@ interface CellWithDataEvent<T extends AgEventType, TData = any, TValue = any, TC
 export interface CellKeyDownEvent<TData = any, TValue = any, TContext = any>
     extends CellEvent<'cellKeyDown', TData, TValue, TContext> {}
 
+interface CellMouseEvent<
+    TEventType extends 'cellClicked' | 'cellMouseDown' | 'cellDoubleClicked',
+    TData = any,
+    TValue = any,
+    TContext = any,
+> extends CellEvent<TEventType, TData, TValue, TContext> {
+    /** `true` if `suppressMouseEventHandling` has been implemented in the corresponding cell renderer params and has returned `true`. */
+    isEventHandlingSuppressed: boolean;
+}
+
 export interface CellClickedEvent<TData = any, TValue = any, TContext = any>
-    extends CellEvent<'cellClicked', TData, TValue, TContext> {}
+    extends CellMouseEvent<'cellClicked', TData, TValue, TContext> {}
 
 export interface CellMouseDownEvent<TData = any, TValue = any, TContext = any>
-    extends CellEvent<'cellMouseDown', TData, TValue, TContext> {}
+    extends CellMouseEvent<'cellMouseDown', TData, TValue, TContext> {}
 
 export interface CellDoubleClickedEvent<TData = any, TValue = any, TContext = any>
-    extends CellEvent<'cellDoubleClicked', TData, TValue, TContext> {}
+    extends CellMouseEvent<'cellDoubleClicked', TData, TValue, TContext> {}
 
 export interface CellMouseOverEvent<TData = any, TValue = any, TContext = any>
     extends CellEvent<'cellMouseOver', TData, TValue, TContext> {}

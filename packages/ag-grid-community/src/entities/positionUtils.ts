@@ -172,6 +172,23 @@ export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition, ch
     return { rowIndex: index - 1, rowPinned: pinned };
 }
 
+export function _getAbsoluteRowIndex(beans: BeanCollection, rowPosition: RowPosition): number {
+    const { pinnedRowModel, rowModel } = beans;
+    const pinnedTopRowCount = pinnedRowModel?.getPinnedTopRowCount() ?? 0;
+    const unpinnedRowCount = rowModel.getRowCount();
+    const { rowPinned, rowIndex } = rowPosition;
+
+    if (rowPinned === 'top') {
+        return rowIndex;
+    }
+
+    if (rowPinned === 'bottom') {
+        return pinnedTopRowCount + unpinnedRowCount + rowIndex;
+    }
+
+    return pinnedTopRowCount + rowIndex;
+}
+
 /**
  * Returns the row position below the given row position. Considers pinned and sticky rows for navigation.
  * RowModel.getRow() is expensive, so it is only called if `checkSticky` is true.

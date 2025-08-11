@@ -824,7 +824,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public suppressSetFilterByDefault: boolean | undefined = undefined;
     /** Enable filter handlers for custom filter components.
-     * Requires all custom filters need to be implemented using handlers.
+     * Requires all custom filters to be implemented using handlers.
+     *
+     * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
+     * The Multi Filter will also use a filter handler if this is enabled.
      * @initial
      */
     @Input({ transform: booleanAttribute }) public enableFilterHandlers: boolean | undefined = undefined;
@@ -1388,6 +1391,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input({ transform: booleanAttribute }) public suppressGroupRowsSticky: boolean | undefined = undefined;
+    /** Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+     * @agModule `RowGroupingModule`
+     */
+    @Input() public groupHierarchyConfig: { [k: string]: ColDef } | undefined = undefined;
     /** Data to be displayed as pinned top rows in the grid.
      * @agModule `PinnedRowModule`
      */

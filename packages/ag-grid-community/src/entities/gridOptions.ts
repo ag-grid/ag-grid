@@ -1461,6 +1461,12 @@ export interface GridOptions<TData = any> {
      */
     suppressGroupRowsSticky?: boolean;
 
+    /**
+     * Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+     * @agModule `RowGroupingModule`
+     */
+    groupHierarchyConfig?: { [k: string]: ColDef };
+
     // *** Row Pinning *** //
     /**
      * Data to be displayed as pinned top rows in the grid.

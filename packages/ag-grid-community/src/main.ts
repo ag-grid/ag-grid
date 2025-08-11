@@ -31,6 +31,7 @@ export {
     GROUP_AUTO_COLUMN_ID,
     SELECTION_COLUMN_ID,
     ROW_NUMBERS_COLUMN_ID,
+    GROUP_HIERARCHY_COLUMN_ID_PREFIX,
     isRowNumberCol,
     isColumnSelectionCol,
     isColumnGroupAutoCol,
@@ -408,6 +409,7 @@ export { _setColMenuVisible } from './misc/menu/menuService';
 export type { IColsService } from './interfaces/iColsService';
 export type { IColumnCollectionService } from './interfaces/iColumnCollectionService';
 export type { IRowNumbersService } from './interfaces/rowNumbers';
+export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
 
 // editing / cellEditors
 export {
@@ -454,6 +456,8 @@ export {
     ICellRendererParams,
     ISetFilterCellRendererParams,
     GetCellRendererInstancesParams,
+    EventCellRendererParams,
+    SuppressMouseEventHandlingParams,
 } from './rendering/cellRenderers/iCellRenderer';
 export {
     GroupCellRendererParams,
@@ -466,6 +470,7 @@ export {
     GroupCheckboxSelectionCallback,
     GroupCheckboxSelectionCallbackParams,
 } from './interfaces/groupCellRenderer';
+export { _suppressCellMouseEvent } from './rendering/renderUtils';
 
 // status bar components
 export {
@@ -525,7 +530,7 @@ export {
 } from './rendering/features/positionableFeature';
 
 // rendering
-export { _getCellCtrlForEventTarget } from './rendering/cell/cellCtrl';
+export { _getCellCtrlForEventTarget, _getRowCtrlForEventTarget } from './rendering/renderUtils';
 export type { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
 export type { RowCtrl, IRowComp } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
@@ -843,6 +848,7 @@ export {
     _getFirstRow,
     _getRowAbove,
     _getRowBelow,
+    _getAbsoluteRowIndex,
 } from './entities/positionUtils';
 export { RowPosition } from './interfaces/iRowPosition';
 export { HeaderPosition } from './interfaces/iHeaderPosition';
@@ -913,6 +919,7 @@ export {
     NestedFieldPaths,
     GetFindTextParams,
     GetFindTextFunc,
+    GroupHierarchyParts,
 } from './entities/colDef';
 export {
     DataTypeDefinition,

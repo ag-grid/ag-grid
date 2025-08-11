@@ -88,6 +88,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     tooltipField: 'Tooltip',
     tooltipValueGetter: 'Tooltip',
     spanRows: 'CellSpan',
+    rowGroupingHierarchy: 'GroupHierarchy',
 };
 
 const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = () => {
@@ -251,6 +252,41 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 return null;
             },
         },
+        rowGroupingHierarchy: {
+            validate(options, { groupHierarchyConfig = {} }, beans) {
+                const GROUP_HIERARCHY_PARTS = new Set([
+                    'year',
+                    'quarter',
+                    'month',
+                    'formattedMonth',
+                    'day',
+                    'hour',
+                    'minute',
+                    'second',
+                ]);
+
+                const unrecognisedParts: string[] = [];
+
+                options.rowGroupingHierarchy?.forEach((part) => {
+                    if (typeof part === 'object') {
+                        beans.validation?.validateColDef(part);
+                        return null;
+                    }
+
+                    if (!GROUP_HIERARCHY_PARTS.has(part) && !(part in groupHierarchyConfig)) {
+                        unrecognisedParts.push(part);
+                    }
+                });
+
+                if (unrecognisedParts.length > 0) {
+                    const warning = `The following parts of colDef.rowGroupingHierarchy are not recognised: ${unrecognisedParts.map((s) => `"${s}"`).join(', ')}.`;
+                    const suggestions = `Choose one of ${[...GROUP_HIERARCHY_PARTS].map((s) => `"${s}"`).join(', ')}, or define your own parts in gridOptions.groupHierarchyConfig.`;
+                    return `${warning}\n${suggestions}`;
+                }
+
+                return null;
+            },
+        },
     };
     return validations;
 };
@@ -402,6 +438,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     dateComponent: undefined,
     dateComponentParams: undefined,
     getFindText: undefined,
+    rowGroupingHierarchy: undefined,
 };
 const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 

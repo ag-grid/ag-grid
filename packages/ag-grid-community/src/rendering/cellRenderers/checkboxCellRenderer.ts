@@ -95,9 +95,11 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
                     // if we're grouping by this column then the value is a string and we need to parse it
                     isSelected = value == null || (value as any) === '' ? undefined : (value as any) === 'true';
                 } else if (node.aggData && node.aggData[colId] !== undefined) {
-                    isSelected = value ?? undefined;
+                    isSelected = value ?? undefined; // group with aggregation
+                } else if (node.sourceRowIndex >= 0) {
+                    isSelected = value ?? undefined; // tree group with data
                 } else {
-                    displayed = false;
+                    displayed = false; // group without aggregation or tree filler node without aggregation
                 }
             }
         } else {

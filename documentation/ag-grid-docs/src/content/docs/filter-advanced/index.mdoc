@@ -77,7 +77,24 @@ When [Row Grouping](./grouping/), group columns will not appear in the Advanced 
 
 ### Column Names
 
-The name by which columns appear in the Advanced Filter can be configured by using a [Header Value Getter](./value-getters/#header-value-getters) and checking for `location = 'advancedFilter'`.
+All column names that are enabled for filtering must be unique for the Advanced Filter to work correctly.
+
+If columns have the same name by default (e.g. where they appear within different column groups), the name by which they appear in the Advanced Filter can be configured using a [Header Value Getter](./value-getters/#header-value-getters) and checking for `location === 'advancedFilter'`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'gold',
+            headerValueGetter: params => params.location === 'advancedFilter' ? 'Gold 1' : 'Gold',
+        },
+        {
+            field: 'gold',
+            headerValueGetter: params => params.location === 'advancedFilter' ? 'Gold 2' : 'Gold',
+        },
+    ],
+}
+```
 
 ### Filter Parameters
 

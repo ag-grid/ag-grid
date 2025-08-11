@@ -272,6 +272,10 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             }
         }
 
+        // Keep the spec files from the main script files
+        const specFiles = scriptFiles?.filter((file) => file.endsWith('.spec.ts') || file.endsWith('.spec.js')) ?? [];
+        scriptFiles = scriptFiles?.filter((file) => !specFiles.includes(file));
+
         // Replace files with provided examples
         const result: GeneratedContents = {
             isEnterprise,
@@ -284,6 +288,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             mainFileName,
             sourceFileList,
             scriptFiles: scriptFiles!,
+            specFiles,
             styleFiles: styleFilesKeys,
             htmlFiles: Object.keys(htmlFiles),
             files: mergedFiles,

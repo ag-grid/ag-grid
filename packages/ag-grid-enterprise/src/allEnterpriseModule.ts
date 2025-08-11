@@ -11,6 +11,7 @@ import { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule
 import { ExcelExportModule } from './excelExport/excelExportModule';
 import { FiltersToolPanelModule, NewFiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';
 import { FindModule } from './find/findModule';
+import { GroupHierarchyModule } from './groupHierarchy/groupHierarchyModule';
 import { MasterDetailModule } from './masterDetail/masterDetailModule';
 import { ColumnMenuModule, ContextMenuModule } from './menu/menuModule';
 import { MultiFilterModule } from './multiFilter/multiFilterModule';
@@ -46,6 +47,7 @@ const dependsOn = [
     RowGroupingModule,
     RowGroupingPanelModule,
     GroupFilterModule,
+    GroupHierarchyModule,
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
     SetFilterModule,
@@ -88,5 +90,5 @@ export const AllEnterpriseModule: AllEnterpriseModuleType = {
     }),
     moduleName,
     version: VERSION,
-    dependsOn: dependsOn,
+    dependsOn,
 };
