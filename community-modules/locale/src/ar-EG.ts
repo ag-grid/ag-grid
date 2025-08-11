@@ -115,6 +115,9 @@ export const AG_GRID_LOCALE_EG = {
     advancedFilterAnd: 'و',
     advancedFilterOr: 'أو',
     advancedFilterApply: 'تطبيق',
+    advancedFilterReset: 'إعادة تعيين',
+    advancedFilterCancel: 'إلغاء',
+    advancedFilterClear: 'مسح',
     advancedFilterBuilder: 'المنشئ',
     advancedFilterValidationMissingColumn: 'العمود مفقود',
     advancedFilterValidationMissingOption: 'الخيار مفقود',
@@ -133,6 +136,8 @@ export const AG_GRID_LOCALE_EG = {
     advancedFilterValidationMessageAtEnd: 'التعبير يحتوي على خطأ. ${variable} في نهاية التعبير.',
     advancedFilterBuilderTitle: 'عامل تصفية متقدم',
     advancedFilterBuilderApply: 'تطبيق',
+    advancedFilterBuilderClear: 'مسح',
+    advancedFilterBuilderReset: 'إعادة تعيين',
     advancedFilterBuilderCancel: 'إلغاء',
     advancedFilterBuilderAddButtonTooltip: 'إضافة عامل تصفية أو مجموعة',
     advancedFilterBuilderRemoveButtonTooltip: 'إزالة',
@@ -528,6 +533,10 @@ export const AG_GRID_LOCALE_EG = {
     dropOff: 'إسقاط',
     stageLabels: 'تسميات المرحلة',
     reverse: 'عكسي',
+    tooltipMode: 'وضع التلميحات',
+    tooltipModeSingle: 'فردي',
+    tooltipModeShared: 'متعدد',
+    tooltipModeCompact: 'مضغوط',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. المستوى ${variable}. اضغط ENTER لتعديل.',
@@ -580,6 +589,9 @@ export const AG_GRID_LOCALE_EG = {
     ariaSkeletonCellLoadingFailed: 'فشل تحميل الصف',
     ariaSkeletonCellLoading: 'جاري تحميل بيانات الصف',
     ariaDeferSkeletonCellLoading: 'الخلية قيد التحميل',
+
+    // ARIA for Batch Edit
+    ariaPendingChange: 'التغيير قيد الانتظار',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'مجموعات الصفوف',
