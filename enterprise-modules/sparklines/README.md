@@ -2,7 +2,7 @@
 
 > **⚠️ Version Update**
 >
-> For AG Grid versions `>=33.0.0` the `SparklinesModule` is now exported directly from the `ag-grid-enterprise` package. v32 will be the last version of this individual module. See the [v33 migration guide](https://ag-grid.com/javascript-data-grid/upgrading-to-ag-grid-33/) for more details.
+> For AG Grid versions `>=33.0.0` the `SparklinesModule` is now exported directly from the `ag-grid-enterprise` package and has a dependency on either `ag-charts-community` or `ag-charts-enterprise`. v32 will be the last version of this individual module. See the [v33 migration guide](https://ag-grid.com/javascript-data-grid/upgrading-to-ag-grid-33/) for more details.
 
 This project contains AG Grid Enterprise features.
 
