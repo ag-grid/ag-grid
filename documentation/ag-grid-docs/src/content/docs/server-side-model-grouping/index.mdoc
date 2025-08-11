@@ -138,6 +138,8 @@ Calling `expandAll()` and `collapseAll()` will impact **all loaded group nodes**
 To change the default behaviour of `expandAll()` and `collapseAll()` to expand or collapse **all group nodes**, not only loaded group nodes, set `ssrmExpandAllAffectsAllRows` flag in `GridOptions` to `true`.
 {% /note %}
 
+{% gridExampleRunner title="expand-all-affects-all-rows" name="expand-all-affects-all-rows"  exampleHeight=540 /%}
+
 To open only specific groups, e.g. only groups at the top level, then use the `forEachNode()` callback and open / close the row using `setExpanded()` as follows:
 
 ```{% frameworkTransform=true %}
