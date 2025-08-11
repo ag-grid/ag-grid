@@ -60,7 +60,7 @@ let isExpandAll = false;
 function onExpandAll() {
     isExpandAll = !isExpandAll;
     isExpandAll ? gridApi.expandAll() : gridApi.collapseAll();
-    document.getElementById('expand')!.innerText = isExpandAll ? 'Collapse' : 'Expand';
+    document.getElementById('expand')!.innerText = isExpandAll ? 'Collapse rows' : 'Expand rows';
 }
 
 function onOptionChange() {
