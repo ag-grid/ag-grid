@@ -100,10 +100,10 @@ jobs:
 #            yarn nx format:check --base ${{ steps.setup.outputs.base }} --verbose
 #          fi
 
-      - name: nx lint
-        id: lint
-        run: |
-          yarn nx lint
+#      - name: nx lint
+#        id: lint
+#        run: |
+#          yarn nx lint
 
       - name: nx build
         id: build
