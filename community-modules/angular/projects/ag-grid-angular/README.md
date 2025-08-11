@@ -37,9 +37,17 @@
     </a>
     <br><br>
     <!-- START MAIN DESCRIPTION -->
-	<p>AG Grid is a <strong>fully-featured</strong> and <strong>highly customizable</strong> Angular Data Grid. It delivers <strong>outstanding performance</strong> and has <strong>no third-party dependencies</strong>.</p>	
+
+<blockquote>
+    <p><strong>⚠️ Version Notice</strong>: For AG Grid versions <code>>=33.0.0</code> the <code>AgGridAngular</code> component is now exported from the <code>ag-grid-angular</code> package. v32 will be the last version of this individual module. See the <a href="https://ag-grid.com/angular-data-grid/upgrading-to-ag-grid-33/"> V33 migration guide</a> for more details.
+</blockquote>
+
+    <p>AG Grid is a <strong>fully-featured</strong> and <strong>highly customizable</strong> Angular Data Grid. It delivers <strong>outstanding performance</strong> and has <strong>no third-party dependencies</strong>.</p>
+
 <!-- END MAIN DESCRIPTION -->
+
     <br>
+
 </div>
 
 <picture>
@@ -154,7 +162,7 @@ We've created several demos to showcase AG Grid's rich feature set across differ
 <br>
 </details>
 <details>
-    
+
   <summary>🧑‍💼 <b>HR Demo</b></summary>
   <br>
   <p>HR data example showing hierarchical employee data:</p>
@@ -180,7 +188,7 @@ AG Grid is easy to set up - all you need to do is provide your data and define y
 ### Installation
 
 ```sh
-$ npm install --save @ag-grid-community/core @ag-grid-community/angular
+npm install --save @ag-grid-community/core @ag-grid-community/angular
 ```
 
 ### Setup
@@ -453,31 +461,31 @@ AG Grid has a large and active community who have created an [ecosystem of 3rd p
 <div>
     <a href="https://www.ag-grid.com/community/tools-extensions/">
         <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/react.svg?raw=true" align="center" width="16" height="16" alt="React Logo">&nbsp;React</span>
-    </a> • 
+    </a> •
     <a href="https://www.ag-grid.com/community/tools-extensions/">
         <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/angular.svg?raw=true" align="center" width="16" height="16" alt="Angular Logo">&nbsp;Angular</span>
-    </a> • 
+    </a> •
     <a href="https://www.ag-grid.com/community/tools-extensions/">
         <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/typescript.svg?raw=true" align="center" width="16" height="16" alt="TypeScript Logo">&nbsp;TypeScript</span>
-    </a> • 
+    </a> •
     <a href="https://www.ag-grid.com/community/tools-extensions/">
         <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/vue.svg?raw=true" align="center" width="16" height="16" alt="Vue Logo">&nbsp;Vue</span>
-    </a> • 
+    </a> •
     <a href="https://www.ag-grid.com/community/tools-extensions/">
         <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/python.svg?raw=true" align="center" width="16" height="16" alt="Python Logo">&nbsp;Python</span>
-    </a> • 
+    </a> •
     <a href="https://www.ag-grid.com/community/tools-extensions/">
         <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/svelte.svg?raw=true" align="center" width="16" height="16" alt="Svelte Logo">&nbsp;Svelte</span>
-    </a> • 
+    </a> •
     <a href="https://www.ag-grid.com/community/tools-extensions/">
         <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/solidjs.svg?raw=true" align="center" width="16" height="16" alt="SolidJS Logo">&nbsp;SolidJS</span>
-    </a> • 
+    </a> •
     <a href="https://www.ag-grid.com/community/tools-extensions/">
         <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/.net.svg?raw=true" align="center" width="16" height="16" alt=".NET Logo">&nbsp;.NET</span>
-    </a> • 
+    </a> •
     <a href="https://www.ag-grid.com/community/tools-extensions/">
         <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/rust.svg?raw=true" align="center" width="16" height="16" alt="Rust Logo">&nbsp;Rust</span>
-    </a> • 
+    </a> •
     <a href="https://www.ag-grid.com/community/tools-extensions/">
         <span><img src="https://github.com/ag-grid/ag-grid/blob/latest/documentation/ag-grid-docs/public/community/frameworks/laravel.svg?raw=true" align="center" width="16" height="16" alt="Laravel Logo">&nbsp;Laravel</span>
     </a>
@@ -517,7 +525,7 @@ Look for similar problems on [StackOverflow](https://stackoverflow.com/questions
 
 ### Contributing
 
-AG Grid is developed by a team of co-located developers in London. If you want to join the team send your application to info@ag-grid.com.
+AG Grid is developed by a team of co-located developers in London. If you want to join the team send your application to <info@ag-grid.com>.
 
 ## ⚠️ License
 
@@ -547,7 +555,7 @@ Initially built to power [Integrated Charts](https://www.ag-grid.com/angular-dat
 </div>
 
 <div align="center">
-    
+
 <hr/>
 
 <strong>Follow us to keep up to date with all the latest news from AG Grid:</strong>
