@@ -1,21 +1,6 @@
 import type { AgColumn, BeanCollection, HeaderValueGetterParams, IRowNode, ValueGetterParams } from 'ag-grid-community';
 import { _getDateParts, _parseDateTimeFromString } from 'ag-grid-community';
 
-export const GROUP_HIERARCHY_PARTS = new Set([
-    'year',
-    'quarter',
-    'month',
-    'formattedMonth',
-    'day',
-    'hour',
-    'minute',
-    'second',
-]);
-
-export function _isBuiltinGroupHierarchyPart(part: string): boolean {
-    return GROUP_HIERARCHY_PARTS.has(part);
-}
-
 const getDate = ({ valueSvc }: BeanCollection, sourceCol: AgColumn, node: IRowNode | null): Date | null => {
     const innerValue = valueSvc.getValue(sourceCol, node);
     let date: Date | null = null;
