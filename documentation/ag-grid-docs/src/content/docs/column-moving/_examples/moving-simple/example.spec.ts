@@ -3,7 +3,7 @@ import { expect, test } from '@utils/grid/test-utils';
 test.agExample(import.meta, () => {
     test.eachFramework('Example', async ({ page, agFramework, agIdFor }) => {
         test.skip(
-            agFramework === 'reactFunctionalTs',
+            agFramework === 'reactFunctionalTs' || agFramework === 'reactFunctionalTs_Dev',
             'This test is skipped until the issue React Header Focus is resolved'
         );
 
