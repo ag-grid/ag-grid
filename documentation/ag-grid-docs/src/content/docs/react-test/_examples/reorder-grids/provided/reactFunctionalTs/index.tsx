@@ -9,9 +9,10 @@ import React, {
     useEffect,
 } from "react";
 import { createRoot } from "react-dom/client";
-import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
+import { ModuleRegistry } from "ag-grid-community";
 import type { GridReadyEvent, GetRowIdParams, ColDef } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
+import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 // Type definitions
 interface RowData {
@@ -34,7 +35,7 @@ interface GridComponentProps {
     index: number;
 }
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+ModuleRegistry.registerModules([AllEnterpriseModule]);
 const queryParamsFromUrl = new URLSearchParams(window.location.search);
 console.log('React Version', React.version, queryParamsFromUrl.get('version'), 'Prod:', queryParamsFromUrl.get('prod'));
 
@@ -62,7 +63,10 @@ const GridComponent = React.memo<GridComponentProps>(({ id, title, data, index }
             { field: "id", width: 80, headerName: id },
             { field: "name", width: 150 },
             { field: "age", width: 100 },
-            { field: "country", width: 150 },
+            {
+                field: "country", width: 150,
+                cellRenderer: (p: any) => <p style={{ color: 'blue' }}>{p.value}</p>
+            },
         ],
         [title]
     );
@@ -74,6 +78,8 @@ const GridComponent = React.memo<GridComponentProps>(({ id, title, data, index }
             filter: true,
             resizable: true,
             flex: 1,
+            floatingFilter: true,
+            editable: true,
         }),
         []
     );
@@ -100,6 +106,11 @@ const GridComponent = React.memo<GridComponentProps>(({ id, title, data, index }
         console.log(`💥 [${title}] Grid destroying`);
     }, [title]);
 
+    const rowSelection = useMemo(() => {
+        return {
+            mode: 'singleRow'
+        };
+    }, []);
     return (
         <div
             style={{ border: "1px solid #ccc", margin: "10px 0", padding: "10px" }}
@@ -111,6 +122,7 @@ const GridComponent = React.memo<GridComponentProps>(({ id, title, data, index }
                 <AgGridReact
                     ref={gridRef}
                     rowData={data}
+                    rowSelection={rowSelection}
                     columnDefs={colDefs}
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}

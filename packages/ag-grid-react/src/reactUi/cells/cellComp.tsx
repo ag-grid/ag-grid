@@ -153,7 +153,7 @@ const CellComp = ({
 
     useLayoutEffect(() => {
         const doingJsEditor = editDetails && !editDetails.compDetails.componentFromFramework;
-        if (!doingJsEditor) {
+        if (!doingJsEditor || context.isDestroyed()) {
             return;
         }
 
