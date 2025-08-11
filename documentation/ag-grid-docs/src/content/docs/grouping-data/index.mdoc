@@ -67,6 +67,31 @@ const gridOptions = {
 };
 ```
 
+## Grouping by Dates and Times
+
+When grouping by date/time values, the grid can optionally group by components of the date/time. This functionality is only available on columns with a `date`, `dateString`, `dateTime` or `dateTimeString` [Cell Data Type](./cell-data-types).
+
+To enable grouping by parts of the date for a particular column, use the `rowGroupingHierarchy` property of the [Column Definition](./column-properties/#reference-grouping-rowGroupingHierarchy).
+
+{% apiDocumentation source="column-properties/properties.json" section="grouping" names=["rowGroupingHierarchy"] /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'date',
+            rowGroup: true,
+            rowGroupingHierarchy: ['year', 'month']
+        },
+        // ...other column definitions
+    ],
+};
+```
+
+This snippet is illustrated in the example below.
+
+{% gridExampleRunner title="Grouping by Dates and Times" name="grouping-date-time" /%}
+
 ## Grouping on Null and Undefined Data
 
 When grouping `null`, `undefined` or `""` (empty string) values the grid will group these together under the

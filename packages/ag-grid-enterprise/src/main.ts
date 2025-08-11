@@ -29,6 +29,7 @@ export { AggregationModule } from './aggregation/aggregationModule';
 export { PivotModule } from './pivot/pivotModule';
 export { FindModule } from './find/findModule';
 export { BatchEditModule } from './batch-edit/batchEditModule';
+export { GroupHierarchyModule } from './groupHierarchy/groupHierarchyModule';
 
 export { GridChartsModule, IntegratedChartsModule } from './charts/integratedChartsModule';
 

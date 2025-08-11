@@ -426,7 +426,6 @@ export function _getMaxConcurrentDatasourceRequests(gos: GridOptionsService): nu
     return res > 0 ? res : undefined;
 }
 
-/** Get the selection checkbox configuration. Defaults to enabled. */
 export function _shouldUpdateColVisibilityAfterGroup(gos: GridOptionsService, isGrouped: boolean): boolean {
     const preventVisibilityChanges = gos.get('suppressGroupChangesColumnVisibility');
     if (preventVisibilityChanges === true) {

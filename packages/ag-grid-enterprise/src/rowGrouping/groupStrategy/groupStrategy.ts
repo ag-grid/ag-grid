@@ -663,7 +663,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
             if (keyExists) {
                 const item = {
-                    key: key,
+                    key,
                     field,
                     rowGroupColumn: col,
                     leafNode: rowNode,
