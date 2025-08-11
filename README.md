@@ -14,9 +14,11 @@
     <a href="https://github.com/ag-grid/ag-grid/releases">
         <img src="https://img.shields.io/github/v/release/ag-grid/ag-grid?style=for-the-badge" alt="GitHub Release">
     </a>
+
     <a href="https://www.npmjs.com/package/ag-grid-community">
         <img src="https://img.shields.io/npm/dm/ag-grid-community?style=for-the-badge" alt="NPM Downloads">
     </a>
+
     <a href="https://github.com/ag-grid/ag-grid">
         <img src="https://img.shields.io/github/stars/ag-grid/ag-grid?style=for-the-badge" alt="GitHub Repo stars">
     </a>
