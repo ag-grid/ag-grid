@@ -931,6 +931,7 @@ export class ColumnFilterService
     }
 
     private createHandlerFunc(
+        column: AgColumn,
         filterDef: IFilterDef,
         defaultFilter: string
     ):
@@ -961,7 +962,8 @@ export class ColumnFilterService
             }
             return typeof filter === 'string' ? filter : undefined;
         };
-        const providedFilterHandler = gos.get('enableFilterHandlers') ? getFilterHandlerFromDef(filterDef) : undefined;
+        const enableFilterHandlers = gos.get('enableFilterHandlers');
+        const providedFilterHandler = enableFilterHandlers ? getFilterHandlerFromDef(filterDef) : undefined;
 
         const resolveProvidedFilterHandler = (handlerName: FilterHandlerName) => () =>
             this.createBean(registry.createDynamicBean<FilterHandler & BeanStub>(handlerName!, true)!);
@@ -1000,7 +1002,15 @@ export class ColumnFilterService
             }
         }
         if (!filterHandler) {
-            return undefined;
+            if (!enableFilterHandlers) {
+                return undefined;
+            }
+            if (_isClientSideRowModel(gos)) {
+                _warn(277, { colId: column.getColId() });
+            }
+            // create dummy handler for server side,
+            // or to prevent blowing up for CSRM custom with missing props
+            return DUMMY_HANDLER;
         }
         return { filterHandler, handlerNameOrCallback: doesFilterPass ?? handlerName };
     }
@@ -1019,18 +1029,9 @@ export class ColumnFilterService
                   | ((params: DoesFilterPassParams) => boolean);
           }
         | undefined {
-        let handlerFunc = this.createHandlerFunc(filterDef, defaultFilter);
+        const handlerFunc = this.createHandlerFunc(column, filterDef, defaultFilter);
         if (!handlerFunc) {
-            const gos = this.gos;
-            if (!gos.get('enableFilterHandlers')) {
-                return undefined;
-            }
-            if (_isClientSideRowModel(gos)) {
-                _warn(277, { colId: column.getColId() });
-            }
-            // create dummy handler for server side,
-            // or to prevent blowing up for CSRM custom with missing props
-            handlerFunc = DUMMY_HANDLER;
+            return undefined;
         }
         const filterParams = _mergeFilterParamsWithApplicationProvidedParams(
             this.beans.userCompFactory,
@@ -1313,7 +1314,7 @@ export class ColumnFilterService
             : colDef;
 
         const handlerFunc = isFilterAllowed
-            ? this.createHandlerFunc(filterDef, this.getDefaultFilter(column))
+            ? this.createHandlerFunc(column, filterDef, this.getDefaultFilter(column))
             : undefined;
         const isHandler = !!handlerFunc;
         const wasHandler = filterWrapper.isHandler;
