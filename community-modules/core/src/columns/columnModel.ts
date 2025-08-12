@@ -310,16 +310,16 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     public getColsToShow(): AgColumn[] {
         // pivot mode is on, but we are not pivoting, so we only
-        // show columns we are aggregating on
+        // show columns we are aggregating on and possibly the selection column
 
         const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.isShowingPivotResult();
         const valueColumns = this.funcColsService.getValueColumns();
-
+        const showSelectionCol = this.controlsColService?.isControlsColEnabled();
         const res = this.cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
             if (showAutoGroupAndValuesOnly) {
                 const isValueCol = valueColumns && _includes(valueColumns, col);
-                return isAutoGroupCol || isValueCol;
+                return isAutoGroupCol || isValueCol || (showSelectionCol && isColumnControlsCol(col));
             } else {
                 // keep col if a) it's auto-group or b) it's visible
                 return isAutoGroupCol || col.isVisible();
