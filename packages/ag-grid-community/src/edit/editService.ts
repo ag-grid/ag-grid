@@ -304,10 +304,16 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             // clear any dangling edits, after editor destruction
             editsToDelete.forEach((position) => {
-                this.model.clearEditValue(position);
+                model.clearEditValue(position);
             });
 
             this.bulkRefresh(undefined, edits);
+
+            // refresh previously edited cells
+            model.getEditPositions(freshEdits).forEach((pos) => {
+                const cellCtrl = _getCellCtrl(beans, pos);
+                cellCtrl?.refreshCell({ force: true });
+            });
 
             edits = freshEdits;
 
@@ -421,8 +427,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                         editsToDelete.push(position);
                     }
                 }
-
-                cellCtrl?.refreshCell(FORCE_REFRESH);
             }
         }
 
