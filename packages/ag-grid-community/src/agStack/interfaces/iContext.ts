@@ -21,6 +21,8 @@ export interface IContext<TBeanCollection> {
     destroy(): void;
 
     isDestroyed(): boolean;
+
+    readonly instanceId: number;
 }
 
 export type ClassImp = new (...args: []) => object;
