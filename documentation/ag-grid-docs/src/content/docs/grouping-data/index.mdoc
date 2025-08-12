@@ -69,7 +69,7 @@ const gridOptions = {
 
 ## Grouping by Dates and Times
 
-When grouping by date/time values, the grid can optionally group by components of the date/time. This functionality is only available on columns with a `date`, `dateString`, `dateTime` or `dateTimeString` [Cell Data Type](./cell-data-types).
+When grouping by date/time values, the grid can optionally group by components of the date/time.
 
 To enable grouping by parts of the date for a particular column, use the `rowGroupingHierarchy` property of the [Column Definition](./column-properties/#reference-grouping-rowGroupingHierarchy).
 
@@ -91,6 +91,18 @@ const gridOptions = {
 This snippet is illustrated in the example below.
 
 {% gridExampleRunner title="Grouping by Dates and Times" name="grouping-date-time" /%}
+
+## Defining Custom Grouping Hierarchies
+
+When using `rowGroupingHierarchy` as demonstrated in [Grouping by Dates and Times](./grouping-data/#grouping-by-dates-and-times), the grid provides built-in support for several components of a date/time value.
+
+Users may instead provide definitions of their own components via the `groupHierarchyConfig` grid option. These definitions may then be used in the `rowGroupingHierarchy` property of a column definition.
+
+{% apiDocumentation source="grid-options/properties.json" section="rowGrouping" names=["groupHierarchyConfig"] /%}
+
+The following example illustrates this by defining a custom grouping hierarchy component that allows grouping by the week number:
+
+{% gridExampleRunner title="Grouping by Dates and Times" name="grouping-custom-date-time" /%}
 
 ## Grouping on Null and Undefined Data
 

@@ -1409,6 +1409,12 @@
                 "url": "./grouping-group-panel/#prevent-changes-to-group-order"
             }
         },
+        "groupHierarchyConfig": {
+            "more": {
+                "name": "Group Hierarchy Configuration",
+                "url": "./grouping-data/#defining-custom-grouping-hierarchies"
+            }
+        },
         "suppressDragLeaveHidesColumns": {
             "description": "By default, dragging a column out of the grid, i.e. to the [Row Group Panel](./grouping-group-panel/), it will be hidden in the grid. This property prevents the column becoming hidden in the grid. Default: `false`",
             "more": {

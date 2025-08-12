@@ -3,6 +3,7 @@ import { _ColumnFilterModule, _PopupModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { AggregationModule, SharedAggregationModule } from '../aggregation/aggregationModule';
+import { GroupHierarchyModule } from '../groupHierarchy/groupHierarchyModule';
 import {
     ClientSideRowModelHierarchyModule,
     GroupColumnModule,
@@ -36,7 +37,13 @@ export const SharedRowGroupingModule: _ModuleWithApi<_RowGroupingGridApi> = {
         getRowGroupColumns,
         moveRowGroupColumn,
     },
-    dependsOn: [EnterpriseCoreModule, SharedAggregationModule, GroupColumnModule, StickyRowModule],
+    dependsOn: [
+        EnterpriseCoreModule,
+        SharedAggregationModule,
+        GroupColumnModule,
+        StickyRowModule,
+        GroupHierarchyModule,
+    ],
 };
 
 /**

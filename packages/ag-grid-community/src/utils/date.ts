@@ -77,6 +77,23 @@ const calculateOrdinal = (value: number) => {
     return 'th';
 };
 
+export const MONTHS = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+];
+
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
 /**
  * Serialises a Date to a string of format the defined format, does not include time.
  * @param date The date to serialise
@@ -88,36 +105,22 @@ export function _dateToFormattedString(date: Date, format?: string): string {
         return _serialiseDate(date, false)!;
     }
     const fullYear = _padStartWidthZeros(date.getFullYear(), 4);
-    const months = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
-    ];
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
     const replace: { [key: string]: () => string } = {
         YYYY: () => fullYear.slice(fullYear.length - 4, fullYear.length),
         YY: () => fullYear.slice(fullYear.length - 2, fullYear.length),
         Y: () => `${date.getFullYear()}`,
-        MMMM: () => months[date.getMonth()],
-        MMM: () => months[date.getMonth()].slice(0, 3),
+        MMMM: () => MONTHS[date.getMonth()],
+        MMM: () => MONTHS[date.getMonth()].slice(0, 3),
         MM: () => _padStartWidthZeros(date.getMonth() + 1, 2),
         Mo: () => `${date.getMonth() + 1}${calculateOrdinal(date.getMonth() + 1)}`,
         M: () => `${date.getMonth() + 1}`,
         Do: () => `${date.getDate()}${calculateOrdinal(date.getDate())}`,
         DD: () => _padStartWidthZeros(date.getDate(), 2),
         D: () => `${date.getDate()}`,
-        dddd: () => days[date.getDay()],
-        ddd: () => days[date.getDay()].slice(0, 3),
-        dd: () => days[date.getDay()].slice(0, 2),
+        dddd: () => DAYS[date.getDay()],
+        ddd: () => DAYS[date.getDay()].slice(0, 3),
+        dd: () => DAYS[date.getDay()].slice(0, 2),
         do: () => `${date.getDay()}${calculateOrdinal(date.getDay())}`,
         d: () => `${date.getDay()}`,
     };

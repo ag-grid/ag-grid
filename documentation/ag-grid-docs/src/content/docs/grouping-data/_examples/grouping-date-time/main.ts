@@ -2,7 +2,6 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import {
     ColumnsToolPanelModule,
-    GroupHierarchyModule,
     PivotModule,
     RowGroupingModule,
     RowGroupingPanelModule,
@@ -15,7 +14,6 @@ ModuleRegistry.registerModules([
     SideBarModule,
     ColumnsToolPanelModule,
     RowGroupingPanelModule,
-    GroupHierarchyModule,
     PivotModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
