@@ -1,5 +1,7 @@
 import type {
+    BeanCollection,
     ComponentSelector,
+    CtrlsService,
     ElementParams,
     ISideBar,
     IToolPanel,
@@ -45,7 +47,7 @@ const AgSideBarElement: ElementParams = {
 };
 class AgSideBar extends Component implements ISideBar {
     private readonly sideBarButtons: AgSideBarButtons = RefPlaceholder;
-
+    private ctrlsSvc: CtrlsService;
     private toolPanelWrappers: ToolPanelWrapper[] = [];
     private sideBar: SideBarDef | undefined;
     private position: 'left' | 'right';
@@ -55,7 +57,15 @@ class AgSideBar extends Component implements ISideBar {
         this.registerCSS(agSideBarCSS);
     }
 
+    wireBeans(beans: BeanCollection) {
+        this.ctrlsSvc = beans.ctrlsSvc;
+    }
+
     public postConstruct(): void {
+        this.ctrlsSvc.whenReady(this, () => this.setOutsideParent());
+        // todo basically have two routes: one sets the parent and the other stays as it is.
+        //   also need to subscribe to changes and redraw everything
+        //   look at advancedFilterCtrl.ts for clues
         this.sideBarButtons.addEventListener('sideBarButtonClicked', this.onToolPanelButtonClicked.bind(this));
         const { beans, gos } = this;
         const { sideBar: sideBarState } = gos.get('initialState') ?? {};
