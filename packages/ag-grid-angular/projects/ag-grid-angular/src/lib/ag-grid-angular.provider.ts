@@ -1,9 +1,7 @@
-import { APP_INITIALIZER, EnvironmentProviders, InjectionToken, makeEnvironmentProviders } from '@angular/core';
+import { APP_INITIALIZER, EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 
-import { AgGridService } from './ag-grid-angular.service';
+import { AgGridService, AG_GRID_PROVIDER_CONFIG } from './ag-grid-angular.service';
 import type { AgGridProviderConfig } from './interfaces';
-
-export const AG_GRID_PROVIDER_CONFIG = new InjectionToken<AgGridProviderConfig>('AG_GRID_PROVIDER_CONFIG');
 
 export function provideAgGrid(config: AgGridProviderConfig = {}): EnvironmentProviders {
     return makeEnvironmentProviders([

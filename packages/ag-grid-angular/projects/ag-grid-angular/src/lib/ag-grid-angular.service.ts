@@ -1,7 +1,8 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, InjectionToken } from '@angular/core';
 
-import { AG_GRID_PROVIDER_CONFIG } from './ag-grid-angular.provider';
 import { AgGridProviderConfig } from './interfaces';
+
+export const AG_GRID_PROVIDER_CONFIG = new InjectionToken<AgGridProviderConfig>('AG_GRID_PROVIDER_CONFIG');
 
 @Injectable({ providedIn: 'root' })
 export class AgGridService {
