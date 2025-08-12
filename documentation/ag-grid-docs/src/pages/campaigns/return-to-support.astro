@@ -5,7 +5,6 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import FlipCountdown from '@components/campaigns-components/FlipCountdown';
 import RenewNowButton from '@components/campaigns-components/RenewNowButton';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import ImageCarousel from '@components/campaigns-components/ImageCarousel';
 
 // Tracking / Analytics
 const utmSource = 'ag-grid.com';
@@ -32,29 +31,61 @@ const mailto = `mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubje
     showSearchBar={true}
     hidePageFromSearchEngines={true}
 >
+    <script>
+        // Global function to update content when countdown ends
+        window.updateContentOnCountdownEnd = function () {
+            console.log('Global function called - updating content');
+            const heroTitle = document.getElementById('hero-title');
+            const heroDescription = document.getElementById('hero-description');
+            const countdownText = document.getElementById('countdown-text');
+
+            console.log('Elements found:', {
+                heroTitle: !!heroTitle,
+                heroDescription: !!heroDescription,
+                countdownText: !!countdownText,
+            });
+
+            if (heroTitle) {
+                heroTitle.textContent = 'Support renewal policy now in effect';
+                console.log('Updated hero title');
+            }
+            if (heroDescription) {
+                heroDescription.textContent =
+                    'The limited-time offer has ended. Renewing now will require back-pay and reinstatement fees. Contact us to discuss your renewal options.';
+                console.log('Updated hero description');
+            }
+            if (countdownText) {
+                countdownText.style.display = 'none';
+                console.log('Hidden countdown text');
+            }
+        };
+    </script>
+
     <div class={`layout-max-width-small`}>
         <div class={styles.rtsHeroGradient}></div>
+
         <div class={styles.rtsHeroSection}>
             <div class={styles.rtsHeroContent}>
-                <h2>Welcome back to better support & new features</h2>
-                <p>
+                <h2 id="hero-title">Welcome back to better support & new features</h2>
+                <p id="hero-description">
                     Take advantage of our limited-time renewal offer and unlock the full power of AG Grid support before
                     our return to support policy takes effect. Renew today and stay ahead.
                 </p>
+                <div class={styles.rtsFlipClockBox}>
+                    <RenewNowButton
+                        href={mailto}
+                        className={`button ${styles.button}`}
+                        plausibleEventType="renew-header-cta"
+                        text="Renew Now"
+                        client:load
+                    />
+                </div>
             </div>
             <div class={styles.rtsFlipClockBox}>
                 <div class={styles.rtsFlipClock}>
-                    <div class={styles.rtsFlipClockEnds}>OFFER ENDS AUGUST 31ST</div>
-
+                    <div class={styles.rtsFlipClockEnds} id="countdown-text">OFFER ENDS AUGUST 31ST</div>
                     <FlipCountdown client:only days={60} />
                 </div>
-                <RenewNowButton
-                    href={mailto}
-                    className={`button ${styles.button}`}
-                    plausibleEventType="renew-header-cta"
-                    text="Renew Now"
-                    client:load
-                />
             </div>
         </div>
 
