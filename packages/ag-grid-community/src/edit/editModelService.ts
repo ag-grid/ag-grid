@@ -145,7 +145,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
                 // Ensure we copy the cell data to avoid reference issues
                 newEditRow.set(column, { ...cellData })
             );
-           map.set(rowNode, newEditRow);
+            map.set(rowNode, newEditRow);
         });
         return map;
     }
