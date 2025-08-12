@@ -211,8 +211,8 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 To take advantage of Angular’s lazy provider loading and reduce bundle size, use the `provideAgGrid` helper as shown below.
 
 ```ts
-import { provideAgGrid, AgGridService } from 'ag-grid-angular';
-import { ApplicationConfig, provideAppInitializer, inject } from '@angular/core';
+import { provideAgGrid } from 'ag-grid-angular';
+import { ApplicationConfig } from '@angular/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -226,18 +226,6 @@ export const appConfig: ApplicationConfig = {
       options: () => Promise.resolve({ domLayout: 'autoHeight' }),
       licenseKey: '-----' // Add your license key for enterprise
     }),
-    // angular 18+ uses `provideAppInitializer` to load the grid service
-    provideAppInitializer(async () => {
-      const agGridService = inject(AgGridService);
-      await agGridService.load();
-    }),
-    // Angular < 18 (Traditional APP_INITIALIZER)
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (agGridService: AgGridService) => async () => await agGridService.load(),
-      deps: [AgGridService],
-      multi: true
-    }
   ]
 };
 ```
