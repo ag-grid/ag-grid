@@ -40,5 +40,26 @@ test.agExample(import.meta, () => {
 
         // Expand column group to verify
         await headerGroupCell.locator('.ag-header-expand-icon-collapsed').click();
+        expect(
+            agIdFor.headerGroupCell(`pivotGroup_${vcolPrefix}-date-year-${vcolPrefix}-date-month_2000-10_0`)
+        ).toBeVisible();
+
+        // Uncheck all columns
+        await agIdFor.columnSelectListItemCheckbox('Date (Year) Column').click();
+        await agIdFor.columnSelectListItemCheckbox('Date (Month) Column').click();
+        await agIdFor.columnSelectListItemCheckbox('Date Column').click();
+
+        await expect(agIdFor.columnDropArea('toolbar', 'Row Groups').locator('.ag-column-drop-cell')).toHaveCount(0);
+
+        // Recheck all columns
+        // ...in reverse order this time, checking Date should make Month/Year appear immediately, and the other checks are idempotent
+        await agIdFor.columnSelectListItemCheckbox('Date Column').click();
+        await expect(agIdFor.columnDropArea('toolbar', 'Row Groups').locator('.ag-column-drop-cell')).toHaveCount(3);
+
+        await agIdFor.columnSelectListItemCheckbox('Date (Month) Column').click();
+        await expect(agIdFor.columnDropArea('toolbar', 'Row Groups').locator('.ag-column-drop-cell')).toHaveCount(3);
+
+        await agIdFor.columnSelectListItemCheckbox('Date (Year) Column').click();
+        await expect(agIdFor.columnDropArea('toolbar', 'Row Groups').locator('.ag-column-drop-cell')).toHaveCount(3);
     });
 });

@@ -375,7 +375,7 @@ export function _destroyEditor(
 
     if (!cellCtrl) {
         if (edit) {
-            editModelSvc?.setEdit(position, { state: 'changed' });
+            editModelSvc?.clearEditValue(position);
         }
 
         return;
@@ -398,7 +398,7 @@ export function _destroyEditor(
         cellValidationModel?.clearCellValidation(position);
     }
 
-    editModelSvc?.setEdit(position, { state: 'changed' });
+    editModelSvc?.setEdit(position, { state: 'changed', editorValue: undefined, pendingValue: edit?.sourceValue });
 
     comp?.setEditDetails(); // passing nothing stops editing
     comp?.refreshEditStyles(false, false);
@@ -410,7 +410,7 @@ export function _destroyEditor(
     if (latest?.state === 'changed' && !params?.silent) {
         editSvc?.dispatchCellEvent(position, params?.event, 'cellEditingStopped', {
             valueChanged: _sourceAndPendingDiffer(latest),
-            newValue: latest?.pendingValue,
+            newValue: edit?.editorValue ?? edit?.pendingValue,
             oldValue: latest?.sourceValue,
         });
     }

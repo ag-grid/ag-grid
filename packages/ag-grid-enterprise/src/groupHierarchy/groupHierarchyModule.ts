@@ -4,8 +4,7 @@ import { VERSION } from '../version';
 import { GroupHierarchyColService } from './groupHierarchyColService';
 
 /**
- * @feature Group Hierarchy
- * @gridOption groupHierarchyConfig
+ * @internal Group Hierarchy
  */
 export const GroupHierarchyModule: _ModuleWithoutApi = {
     moduleName: 'GroupHierarchy',

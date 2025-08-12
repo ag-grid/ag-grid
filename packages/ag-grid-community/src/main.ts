@@ -125,7 +125,7 @@ export {
 } from './agStack/utils/aria';
 export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './agStack/utils/array';
 export { _isIOSUserAgent, _isBrowserSafari, _isBrowserFirefox } from './agStack/utils/browser';
-export { _serialiseDate, _getDateParts, _parseDateTimeFromString } from './agStack/utils/date';
+export { _serialiseDate, _getDateParts, _parseDateTimeFromString, MONTHS as _MONTHS } from './agStack/utils/date';
 export {
     _getAbsoluteHeight,
     _getAbsoluteWidth,

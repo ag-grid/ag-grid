@@ -88,7 +88,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     tooltipField: 'Tooltip',
     tooltipValueGetter: 'Tooltip',
     spanRows: 'CellSpan',
-    rowGroupingHierarchy: 'GroupHierarchy',
+    rowGroupingHierarchy: 'SharedRowGrouping',
 };
 
 const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = () => {
