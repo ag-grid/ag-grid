@@ -375,7 +375,7 @@ export function _destroyEditor(
 
     if (!cellCtrl) {
         if (edit) {
-            editModelSvc?.clearEditValue(position);
+            editModelSvc?.setEdit(position, { state: 'changed' });
         }
 
         return;
@@ -398,7 +398,7 @@ export function _destroyEditor(
         cellValidationModel?.clearCellValidation(position);
     }
 
-    editModelSvc?.setEdit(position, { state: 'changed', editorValue: undefined, pendingValue: edit?.sourceValue });
+    editModelSvc?.setEdit(position, { state: 'changed' });
 
     comp?.setEditDetails(); // passing nothing stops editing
     comp?.refreshEditStyles(false, false);
