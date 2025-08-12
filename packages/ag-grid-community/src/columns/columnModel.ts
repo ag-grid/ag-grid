@@ -1,3 +1,4 @@
+import { _areEqual, _forAll } from '../agStack/utils/array';
 import { placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -11,7 +12,6 @@ import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
-import { _areEqual, _forAll } from '../utils/array';
 import { _createColumnTree } from './columnFactoryUtils';
 import { _applyColumnState, _compareColumnStatesAndDispatchEvents } from './columnStateUtils';
 import type { ColumnState } from './columnStateUtils';

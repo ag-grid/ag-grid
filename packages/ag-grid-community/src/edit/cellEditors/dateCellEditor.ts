@@ -1,10 +1,10 @@
+import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
+import { _serialiseDate } from '../../agStack/utils/date';
+import { _exists } from '../../agStack/utils/generic';
+import { AgInputDateFieldSelector } from '../../agStack/widgets/agInputDateField';
 import type { DataTypeService } from '../../columns/dataTypeService';
-import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
-import { _serialiseDate } from '../../utils/date';
-import type { ElementParams } from '../../utils/dom';
-import { _exists } from '../../utils/generic';
-import type { AgInputDateField } from '../../widgets/agInputDateField';
-import { AgInputDateFieldSelector } from '../../widgets/agInputDateField';
+import type { ElementParams } from '../../utils/element';
+import type { GridInputDateField } from '../../widgets/gridWidgetTypes';
 import type { CellEditorInput } from './iCellEditorInput';
 import type { IDateCellEditorParams } from './iDateCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
@@ -14,8 +14,8 @@ const DateCellElement: ElementParams = {
     ref: 'eEditor',
     cls: 'ag-cell-editor',
 };
-class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams, AgInputDateField> {
-    private eEditor: AgInputDateField;
+class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams, GridInputDateField> {
+    private eEditor: GridInputDateField;
     private params: IDateCellEditorParams;
     private includeTime: boolean | undefined;
 
@@ -32,7 +32,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         return [AgInputDateFieldSelector];
     }
 
-    public init(eEditor: AgInputDateField, params: IDateCellEditorParams): void {
+    public init(eEditor: GridInputDateField, params: IDateCellEditorParams): void {
         this.eEditor = eEditor;
         this.params = params;
 
@@ -116,7 +116,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     }
 }
 
-export class DateCellEditor extends SimpleCellEditor<Date, IDateCellEditorParams, AgInputDateField> {
+export class DateCellEditor extends SimpleCellEditor<Date, IDateCellEditorParams, GridInputDateField> {
     constructor() {
         super(
             new DateCellEditorInput(

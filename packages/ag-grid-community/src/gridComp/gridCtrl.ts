@@ -1,15 +1,15 @@
-import { Direction } from '../constants/direction';
+import { Direction } from '../agStack/constants/direction';
+import { _last } from '../agStack/utils/array';
+import { _getActiveDomElement } from '../agStack/utils/document';
+import { _observeResize } from '../agStack/utils/dom';
+import { _findTabbableParent, _focusInto } from '../agStack/utils/focus';
 import { BeanStub } from '../context/beanStub';
 import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
-import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
-import type { IWatermark } from '../interfaces/iWatermark';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
-import { _last } from '../utils/array';
-import { _observeResize } from '../utils/dom';
-import { _findTabbableParent, _focusInto, _isCellFocusSuppressed, _isHeaderFocusSuppressed } from '../utils/focus';
-import type { ComponentSelector } from '../widgets/component';
+import { _isCellFocusSuppressed, _isHeaderFocusSuppressed } from '../utils/gridFocus';
+import type { Component, ComponentSelector } from '../widgets/component';
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
@@ -21,11 +21,11 @@ export interface IGridComp extends LayoutView {
 }
 
 export interface OptionalGridComponents {
-    paginationSelector?: ComponentSelector;
-    gridHeaderDropZonesSelector?: ComponentSelector;
-    sideBarSelector?: ComponentSelector;
-    statusBarSelector?: ComponentSelector;
-    watermarkSelector?: ComponentSelector;
+    paginationSelector?: ComponentSelector<Component>;
+    gridHeaderDropZonesSelector?: ComponentSelector<Component>;
+    sideBarSelector?: ComponentSelector<Component>;
+    statusBarSelector?: ComponentSelector<Component>;
+    watermarkSelector?: ComponentSelector<Component>;
 }
 
 export class GridCtrl extends BeanStub {
@@ -40,7 +40,7 @@ export class GridCtrl extends BeanStub {
         this.eGridHostDiv = eGridDiv;
         this.eGui = eGui;
 
-        this.eGui.setAttribute('grid-id', this.beans.context.getGridId());
+        this.eGui.setAttribute('grid-id', this.beans.context.getId());
 
         const { dragAndDrop, ctrlsSvc } = this.beans;
 
@@ -71,7 +71,7 @@ export class GridCtrl extends BeanStub {
             gridHeaderDropZonesSelector: beans.registry?.getSelector('AG-GRID-HEADER-DROP-ZONES'),
             sideBarSelector: beans.sideBar?.getSelector(),
             statusBarSelector: beans.registry?.getSelector('AG-STATUS-BAR'),
-            watermarkSelector: (beans.licenseManager as IWatermark)?.getWatermarkSelector(),
+            watermarkSelector: beans.licenseManager?.getWatermarkSelector(),
         };
     }
 

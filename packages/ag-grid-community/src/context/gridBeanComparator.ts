@@ -1,5 +1,5 @@
+import type { AgSingletonBean } from '../agStack/interfaces/agCoreBean';
 import type { BeanCollection, BeanName } from './context';
-import type { GenericBean } from './genericBean';
 
 /**
  * We know that there is a risk in a change of behaviour if beans are registered in a different order due to the way
@@ -84,7 +84,6 @@ const orderedCoreBeans: BeanName[] = [
     'pivotColsSvc',
     'valueColsSvc',
     'rowGroupColsSvc',
-    'funcColsSvc',
     'colNames',
     'colViewport',
     'pivotResultCols',
@@ -97,8 +96,8 @@ const beanNamePosition: { [key in BeanName]?: number } = Object.fromEntries(
 );
 
 export function gridBeanInitComparator(
-    bean1: GenericBean<BeanName, BeanCollection>,
-    bean2: GenericBean<BeanName, BeanCollection>
+    bean1: AgSingletonBean<BeanCollection>,
+    bean2: AgSingletonBean<BeanCollection>
 ): number {
     // if the beans are not in the ordered list, just ensure they are after the ordered beans and stable to provided order
     const index1 = (bean1.beanName ? beanNamePosition[bean1.beanName] : undefined) ?? Number.MAX_SAFE_INTEGER;
@@ -107,8 +106,8 @@ export function gridBeanInitComparator(
 }
 
 export function gridBeanDestroyComparator(
-    bean1: GenericBean<BeanName, BeanCollection>,
-    bean2: GenericBean<BeanName, BeanCollection>
+    bean1: AgSingletonBean<BeanCollection>,
+    bean2: AgSingletonBean<BeanCollection>
 ): number {
     if (bean1?.beanName === 'gridDestroySvc') {
         return -1;

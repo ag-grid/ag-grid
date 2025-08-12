@@ -1,8 +1,8 @@
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
+import { _addStylesToElement, _setDisplayed } from '../../../agStack/utils/dom';
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import type { ElementParams } from '../../../utils/dom';
-import { _addStylesToElement, _setDisplayed } from '../../../utils/dom';
-import { RefPlaceholder } from '../../../widgets/component';
+import type { ElementParams } from '../../../utils/element';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
 import type { IHeaderGroupComp } from './headerGroupComp';

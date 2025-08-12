@@ -1,10 +1,10 @@
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
+import { _removeAriaSort, _setAriaSort } from '../../../agStack/utils/aria';
+import { _addStylesToElement } from '../../../agStack/utils/dom';
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { IHeaderComp } from '../../../interfaces/iHeader';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
-import type { ElementParams } from '../../../utils/dom';
-import { _addStylesToElement } from '../../../utils/dom';
-import { RefPlaceholder } from '../../../widgets/component';
+import type { ElementParams } from '../../../utils/element';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
 

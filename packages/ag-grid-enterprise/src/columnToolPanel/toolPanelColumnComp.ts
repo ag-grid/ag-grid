@@ -1,9 +1,9 @@
 import type {
-    AgCheckbox,
     AgColumn,
     DragItem,
     DragSource,
     ElementParams,
+    GridCheckbox,
     ITooltipCtrl,
     TooltipFeature,
 } from 'ag-grid-community';
@@ -36,7 +36,7 @@ const ToolPanelColumnElement: ElementParams = {
 };
 export class ToolPanelColumnComp extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
-    private readonly cbSelect: AgCheckbox = RefPlaceholder;
+    private readonly cbSelect: GridCheckbox = RefPlaceholder;
 
     public readonly column: AgColumn;
     public readonly columnDepth: number;
@@ -94,8 +94,10 @@ export class ToolPanelColumnComp extends Component {
             beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
                 getGui: () => this.focusWrapper,
                 getLocation: () => 'columnToolPanelColumn',
-                getColDef: () => column.getColDef(),
                 shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
+                getAdditionalParams: () => ({
+                    colDef: column.getColDef(),
+                }),
             } as ITooltipCtrl)
         );
 

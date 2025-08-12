@@ -1,8 +1,9 @@
+import { _addStylesToElement, _setDomChildOrder } from '../../agStack/utils/dom';
 import type { BeanCollection } from '../../context/context';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _addStylesToElement, _createElement, _setDomChildOrder } from '../../utils/dom';
+import { _createElement } from '../../utils/element';
 import { Component } from '../../widgets/component';
 import { CellComp } from '../cell/cellComp';
 import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';

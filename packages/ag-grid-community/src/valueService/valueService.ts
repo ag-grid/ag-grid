@@ -1,3 +1,5 @@
+import { _exists, _missing } from '../agStack/utils/generic';
+import { _getValueUsingField } from '../agStack/utils/value';
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
 import type { NamedBean } from '../context/bean';
@@ -16,8 +18,6 @@ import type { CellValueChangedEvent } from '../events';
 import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IEditService } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _exists, _missing } from '../utils/generic';
-import { _getValueUsingField } from '../utils/object';
 import { _warn } from '../validation/logging';
 import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
@@ -75,8 +75,8 @@ export class ValueService extends BeanStub implements NamedBean {
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
         const listener = (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event);
-        this.eventSvc.addEventListener('cellValueChanged', listener, true);
-        this.addDestroyFunc(() => this.eventSvc.removeEventListener('cellValueChanged', listener, true));
+        this.eventSvc.addListener('cellValueChanged', listener, true);
+        this.addDestroyFunc(() => this.eventSvc.removeListener('cellValueChanged', listener, true));
 
         this.addManagedPropertyListener('treeData', (propChange) => (this.isTreeData = propChange.currentValue));
     }

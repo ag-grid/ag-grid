@@ -46,12 +46,20 @@ permissions:
 jobs:
   # Check permissions for issue_comment events
   check-permissions:
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      github.event_name == 'schedule' ||
+      (github.event_name == 'issue_comment' && github.event.comment.body == '/benchmarks')
     runs-on: ubuntu-latest
     outputs:
       allowed: ${{ steps.check.outputs.allowed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
+          sparse-checkout:
+            './external/ag-shared/github/actions/check-issue-comment-permissions'
 
       - name: Check user permissions
         id: check
@@ -67,11 +75,7 @@ jobs:
     needs: check-permissions
       # Only run if permissions check passed (success) or was skipped (for non-issue_comment events)
     if: |
-      needs.check-permissions.result == 'success' && (
-          github.event_name == 'workflow_dispatch' || 
-          github.event_name == 'schedule' ||
-          (github.event_name == 'issue_comment' && needs.check-permissions.outputs.allowed == 'true' && github.event.comment.body == '/benchmarks')
-      )
+      needs.check-permissions.result == 'success' && needs.check-permissions.outputs.allowed == 'true'
     env:
       JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:

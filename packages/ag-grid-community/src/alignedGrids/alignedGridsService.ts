@@ -1,3 +1,4 @@
+import type { AgEvent } from '../agStack/interfaces/agEvent';
 import type { GridApi } from '../api/gridApi';
 import { _applyColumnState } from '../columns/columnStateUtils';
 import type { NamedBean } from '../context/bean';
@@ -5,7 +6,6 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type {
-    AgEvent,
     AlignedGridColumnEvent,
     AlignedGridScrollEvent,
     BodyScrollEvent,

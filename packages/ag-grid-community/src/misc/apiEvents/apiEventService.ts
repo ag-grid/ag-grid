@@ -22,7 +22,7 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
         this.wrapSvc = this.beans.frameworkOverrides.createGlobalEventListenerWrapper?.();
     }
 
-    public override addEventListener<T extends AgEventType>(eventType: T, userListener: AgEventListener): void {
+    public addListener<T extends AgEventType>(eventType: T, userListener: AgEventListener): void {
         const listener = this.wrapSvc?.wrap(eventType, userListener) ?? userListener;
 
         const async = !ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);
@@ -31,16 +31,16 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
             listeners.set(eventType, new Set());
         }
         listeners.get(eventType)!.add(listener);
-        this.eventSvc.addEventListener(eventType, listener, async);
+        this.eventSvc.addListener(eventType, listener, async);
     }
-    public override removeEventListener<T extends AgEventType>(eventType: T, userListener: AgEventListener): void {
+    public removeListener<T extends AgEventType>(eventType: T, userListener: AgEventListener): void {
         const listener = this.wrapSvc?.unwrap(eventType, userListener) ?? userListener;
         const asyncListeners = this.asyncListeners.get(eventType);
         const hasAsync = !!asyncListeners?.delete(listener);
         if (!hasAsync) {
             this.syncListeners.get(eventType)?.delete(listener);
         }
-        this.eventSvc.removeEventListener(eventType, listener, hasAsync);
+        this.eventSvc.removeListener(eventType, listener, hasAsync);
     }
 
     public addGlobalListener(userListener: AgGlobalEventListener): void {
@@ -82,7 +82,7 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
 
     private destroyEventListeners(map: Map<AgEventType, Set<AgEventListener>>, async: boolean): void {
         map.forEach((listeners, eventType) => {
-            listeners.forEach((listener) => this.eventSvc.removeEventListener(eventType, listener, async));
+            listeners.forEach((listener) => this.eventSvc.removeListener(eventType, listener, async));
             listeners.clear();
         });
         map.clear();

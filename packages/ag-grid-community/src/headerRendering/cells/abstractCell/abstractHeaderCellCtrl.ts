@@ -1,3 +1,9 @@
+import { KeyCode } from '../../../agStack/constants/keyCode';
+import { _setAriaColIndex } from '../../../agStack/utils/aria';
+import { _getActiveDomElement, _getDocument } from '../../../agStack/utils/document';
+import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../../agStack/utils/dom';
+import { _batchCall } from '../../../agStack/utils/function';
+import { _exists } from '../../../agStack/utils/generic';
 import type { HorizontalDirection } from '../../../constants/direction';
 import { BeanStub } from '../../../context/beanStub';
 import type { DragSource } from '../../../dragAndDrop/dragAndDropService';
@@ -5,14 +11,9 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
 import type { HeaderClassParams, HeaderStyle, SuppressHeaderKeyboardEventParams } from '../../../entities/colDef';
-import { _addGridCommonParams, _getActiveDomElement, _getDocument, _setDomData } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _setDomData } from '../../../gridOptionsUtils';
 import type { BrandedType } from '../../../interfaces/brandedType';
-import { _setAriaColIndex } from '../../../utils/aria';
-import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../../utils/dom';
-import { _isHeaderFocusSuppressed } from '../../../utils/focus';
-import { _batchCall } from '../../../utils/function';
-import { _exists } from '../../../utils/generic';
-import { KeyCode } from '../.././../constants/keyCode';
+import { _isHeaderFocusSuppressed } from '../../../utils/gridFocus';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import { refreshFirstAndLastStyles } from '../cssClassApplier';
 
@@ -195,8 +196,8 @@ export abstract class AbstractHeaderCellCtrl<
 
         const startMeasuring = () => {
             isMeasuring = true;
-            measureHeight(0);
             this.comp.toggleCss('ag-header-cell-auto-height', true);
+            measureHeight(0); // ensure measuring after the class has added, otherwise will measure incorrect height
             stopResizeObserver = _observeResize(this.beans, wrapperElement, () => measureHeight(0));
         };
 

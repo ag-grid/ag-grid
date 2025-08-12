@@ -1,4 +1,4 @@
-import { createPart } from '../../../Part';
+import { createPart } from '../../../../agStack/theming/partImpl';
 import { iconSetMaterialCSS } from './icon-set-material.css-GENERATED';
 
 export const iconSetMaterial = /*#__PURE__*/ createPart({

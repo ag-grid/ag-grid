@@ -1,4 +1,4 @@
-import type { AgColumn, AgEvent, AgInputTextField, ComponentSelector, ElementParams } from 'ag-grid-community';
+import type { AgColumn, AgEvent, ComponentSelector, ElementParams, GridInputTextField } from 'ag-grid-community';
 import {
     AgInputTextFieldSelector,
     Component,
@@ -36,7 +36,7 @@ const AgFiltersToolPanelHeaderElement: ElementParams = {
 };
 export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeaderEvent> {
     private readonly eExpand: Element = RefPlaceholder;
-    private readonly eFilterTextField: AgInputTextField = RefPlaceholder;
+    private readonly eFilterTextField: GridInputTextField = RefPlaceholder;
 
     private eExpandChecked: Element;
     private eExpandUnchecked: Element;

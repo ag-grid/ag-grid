@@ -3,6 +3,8 @@ import type {
     BeanCollection,
     ElementParams,
     FieldValueEvent,
+    GridInputDateField,
+    GridInputTextField,
     WithoutGridCommon,
 } from 'ag-grid-community';
 import {
@@ -23,7 +25,10 @@ import type { AdvancedFilterExpressionService } from '../advancedFilterExpressio
 
 type InputPillCompEvent = 'fieldValueChanged';
 
-type SupportedComponent = typeof AgInputTextField | typeof AgInputNumberField | typeof AgInputDateField;
+type SupportedComponent =
+    | typeof AgInputTextField<any, any, any, any, any, any>
+    | typeof AgInputNumberField<any, any, any, any, any, any>
+    | typeof AgInputDateField<any, any, any, any, any, any>;
 type SupportedInstances = InstanceType<SupportedComponent>;
 const inputComponentDescriptors: {
     [S in BaseCellDataType]: [SupportedComponent] | [SupportedComponent, (instance: SupportedInstances) => void];
@@ -34,8 +39,8 @@ const inputComponentDescriptors: {
     text: [AgInputTextField],
     date: [AgInputDateField],
     dateString: [AgInputDateField],
-    dateTime: [AgInputDateField, (i: AgInputDateField) => i.setIncludeTime(true)],
-    dateTimeString: [AgInputDateField, (i: AgInputDateField) => i.setIncludeTime(true)],
+    dateTime: [AgInputDateField, (i: GridInputDateField) => i.setIncludeTime(true)],
+    dateTimeString: [AgInputDateField, (i: GridInputDateField) => i.setIncludeTime(true)],
 };
 
 const InputPillElement: ElementParams = {
@@ -68,7 +73,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
     private readonly ePill: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
 
-    private eEditor: AgInputTextField | undefined;
+    private eEditor: GridInputTextField | undefined;
     private value: string;
     private displayValue: string;
 
@@ -153,7 +158,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
     /**
      * Responsible for instantiating an InputField and calling some of the setup methods
      */
-    private createEditorComp(type: BaseCellDataType): AgInputTextField {
+    private createEditorComp(type: BaseCellDataType): GridInputTextField {
         const [Comp, postConstruct] = inputComponentDescriptors[type];
         const instance = this.createBean(new Comp());
         if (postConstruct) postConstruct(instance);

@@ -1,3 +1,5 @@
+import { _EmptyArray, _last } from '../agStack/utils/array';
+import { _debounce } from '../agStack/utils/function';
 import type { ColumnModel } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -23,9 +25,7 @@ import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
 import type { IRowGroupStage, IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _EmptyArray, _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
-import { _debounce } from '../utils/function';
 import { _warn } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import { ChangedRowNodes } from './changedRowNodes';

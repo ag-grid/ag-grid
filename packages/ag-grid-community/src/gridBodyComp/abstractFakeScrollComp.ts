@@ -1,8 +1,10 @@
-import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
-import type { ElementParams } from '../utils/dom';
-import { _isVisible, _requestAnimationFrame } from '../utils/dom';
-import { _waitUntil } from '../utils/function';
-import { Component, RefPlaceholder } from '../widgets/component';
+import { RefPlaceholder } from '../agStack/interfaces/agComponent';
+import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../agStack/utils/browser';
+import { _isVisible, _requestAnimationFrame } from '../agStack/utils/dom';
+import { _waitUntil } from '../agStack/utils/function';
+import type { BodyScrollEvent } from '../events';
+import type { ElementParams } from '../utils/element';
+import { Component } from '../widgets/component';
 import type { ScrollPartner } from './gridBodyScrollFeature';
 
 export abstract class AbstractFakeScrollComp extends Component implements ScrollPartner {
@@ -77,7 +79,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
 
     protected hideAndShowInvisibleScrollAsNeeded(): void {
         this.addManagedEventListeners({
-            bodyScroll: (params) => {
+            bodyScroll: (params: BodyScrollEvent) => {
                 if (params.direction === this.direction) {
                     if (this.hideTimeout) {
                         window.clearTimeout(this.hideTimeout);

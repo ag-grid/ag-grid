@@ -1,3 +1,4 @@
+import { _last, _moveInArray, _removeFromArray } from '../agStack/utils/array';
 import type { ColKey } from '../columns/columnModel';
 import type { HorizontalDirection } from '../constants/direction';
 import type { NamedBean } from '../context/bean';
@@ -11,7 +12,6 @@ import type { ColDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
 import type { DragItem } from '../interfaces/iDragItem';
-import { _last, _moveInArray, _removeFromArray } from '../utils/array';
 import { _warn } from '../validation/logging';
 import { BodyDropTarget } from './columnDrag/bodyDropTarget';
 import { doesMovePassMarryChildren } from './columnMoveUtils';

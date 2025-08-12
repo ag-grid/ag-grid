@@ -1,17 +1,18 @@
+import { _areEqual } from '../../agStack/utils/array';
+import { _removeFromParent, _setDisabled, _setDisplayed } from '../../agStack/utils/dom';
+import { AgPromise } from '../../agStack/utils/promise';
+import { AgAbstractInputField } from '../../agStack/widgets/agAbstractInputField';
+import type { ListOption } from '../../agStack/widgets/agList';
+import { AgRadioButton } from '../../agStack/widgets/agRadioButton';
+import { AgSelect } from '../../agStack/widgets/agSelect';
 import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayParams } from '../../interfaces/iFilter';
-import { _areEqual } from '../../utils/array';
-import type { ElementParams } from '../../utils/dom';
-import { _createElement, _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
-import { AgPromise } from '../../utils/promise';
+import type { ElementParams } from '../../utils/element';
+import { _createElement } from '../../utils/element';
 import { _warn } from '../../validation/logging';
-import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
-import type { AgInputTextField } from '../../widgets/agInputTextField';
-import type { ListOption } from '../../widgets/agList';
-import { AgRadioButton } from '../../widgets/agRadioButton';
-import { AgSelect } from '../../widgets/agSelect';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
+import type { GridInputTextField, GridRadioButton, GridSelect } from '../../widgets/gridWidgetTypes';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import type {
     ICombinedSimpleModel,
@@ -48,7 +49,7 @@ type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterPara
 export abstract class SimpleFilter<
         M extends ISimpleFilterModel,
         V,
-        E = AgInputTextField,
+        E = GridInputTextField,
         P extends SimpleFilterDisplayParams<M> = SimpleFilterDisplayParams<M>,
     >
     extends ProvidedFilter<M | ICombinedSimpleModel<M>, V, P>
@@ -56,10 +57,10 @@ export abstract class SimpleFilter<
 {
     public abstract override readonly filterType: 'number' | 'text' | 'date';
 
-    protected readonly eTypes: AgSelect[] = [];
+    protected readonly eTypes: GridSelect[] = [];
     protected readonly eJoinPanels: HTMLElement[] = [];
-    protected readonly eJoinAnds: AgRadioButton[] = [];
-    protected readonly eJoinOrs: AgRadioButton[] = [];
+    protected readonly eJoinAnds: GridRadioButton[] = [];
+    protected readonly eJoinOrs: GridRadioButton[] = [];
     protected readonly eConditionBodies: HTMLElement[] = [];
     private readonly listener = () => this.onUiChanged();
 
@@ -304,7 +305,7 @@ export abstract class SimpleFilter<
 
     private createOption(): void {
         const eGui = this.getGui();
-        const eType = this.createManagedBean(new AgSelect());
+        const eType = this.createManagedBean<GridSelect>(new AgSelect());
         this.eTypes.push(eType);
         eType.addCss('ag-filter-select');
         eGui.appendChild(eType.getGui());
@@ -341,11 +342,11 @@ export abstract class SimpleFilter<
     }
 
     private createJoinOperator(
-        eJoinOperators: AgRadioButton[],
+        eJoinOperators: GridRadioButton[],
         eJoinOperatorPanel: HTMLElement,
         andOr: string
-    ): AgRadioButton {
-        const eJoinOperator = this.createManagedBean(new AgRadioButton());
+    ): GridRadioButton {
+        const eJoinOperator = this.createManagedBean<GridRadioButton>(new AgRadioButton());
         eJoinOperators.push(eJoinOperator);
         const baseClass = 'ag-filter-condition-operator';
         eJoinOperator.addCss(baseClass);
@@ -360,7 +361,7 @@ export abstract class SimpleFilter<
         );
     }
 
-    private putOptionsIntoDropdown(eType: AgSelect): void {
+    private putOptionsIntoDropdown(eType: GridSelect): void {
         const { filterListOptions } = this;
         // Add specified options to condition drop-down.
         filterListOptions.forEach((listOption) => {
@@ -775,7 +776,7 @@ export abstract class SimpleFilter<
         }
     }
 
-    private resetType(eType: AgSelect): void {
+    private resetType(eType: GridSelect): void {
         const translate = this.getLocaleTextFunc();
         const filteringLabel = translate('ariaFilteringOperator', 'Filtering operator');
         eType
@@ -784,7 +785,7 @@ export abstract class SimpleFilter<
             .setDisabled(this.isReadOnly() || this.filterListOptions.length <= 1);
     }
 
-    private resetJoinOperatorAnd(eJoinOperatorAnd: AgRadioButton, index: number, uniqueGroupId: number): void {
+    private resetJoinOperatorAnd(eJoinOperatorAnd: GridRadioButton, index: number, uniqueGroupId: number): void {
         this.resetJoinOperator(
             eJoinOperatorAnd,
             index,
@@ -794,7 +795,7 @@ export abstract class SimpleFilter<
         );
     }
 
-    private resetJoinOperatorOr(eJoinOperatorOr: AgRadioButton, index: number, uniqueGroupId: number): void {
+    private resetJoinOperatorOr(eJoinOperatorOr: GridRadioButton, index: number, uniqueGroupId: number): void {
         this.resetJoinOperator(
             eJoinOperatorOr,
             index,
@@ -805,7 +806,7 @@ export abstract class SimpleFilter<
     }
 
     private resetJoinOperator(
-        eJoinOperator: AgRadioButton,
+        eJoinOperator: GridRadioButton,
         index: number,
         value: boolean,
         label: string,
@@ -821,13 +822,13 @@ export abstract class SimpleFilter<
     }
 
     private updateJoinOperatorsDisabled(): void {
-        const updater = (eJoinOperator: AgRadioButton, index: number) =>
+        const updater = (eJoinOperator: GridRadioButton, index: number) =>
             this.updateJoinOperatorDisabled(eJoinOperator, index);
         this.eJoinAnds.forEach(updater);
         this.eJoinOrs.forEach(updater);
     }
 
-    private updateJoinOperatorDisabled(eJoinOperator: AgRadioButton, index: number): void {
+    private updateJoinOperatorDisabled(eJoinOperator: GridRadioButton, index: number): void {
         eJoinOperator.setDisabled(this.isReadOnly() || index > 0);
     }
 
@@ -856,7 +857,7 @@ export abstract class SimpleFilter<
         });
     }
 
-    private addChangedListeners(eType: AgSelect, position: number) {
+    private addChangedListeners(eType: GridSelect, position: number) {
         if (this.isReadOnly()) {
             return;
         }

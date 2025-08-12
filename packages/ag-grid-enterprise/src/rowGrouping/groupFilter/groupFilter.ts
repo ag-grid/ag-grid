@@ -4,6 +4,7 @@ import type {
     ElementParams,
     FilterDisplayParams,
     FilterWrapperParams,
+    GridSelect,
     IAfterGuiAttachedParams,
     IFilterComp,
     IFilterParams,
@@ -60,7 +61,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
     private groupColumn: AgColumn;
     private selectedFilter: IFilterComp | undefined;
     private filterColumnPairs: FilterColumnPair[] | undefined;
-    private eGroupFieldSelect: AgSelect;
+    private eGroupFieldSelect: GridSelect;
     private afterGuiAttachedParams: IAfterGuiAttachedParams | undefined;
     private filterComp?: FilterComp;
 
@@ -153,7 +154,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
     }
 
     private createGroupFieldSelectElement(sourceColumns: AgColumn[], selectedColumn: AgColumn): void {
-        const eGroupFieldSelect = this.createManagedBean(new AgSelect());
+        const eGroupFieldSelect = this.createManagedBean<GridSelect>(new AgSelect());
         this.eGroupFieldSelect = eGroupFieldSelect;
         const localeTextFunc = this.getLocaleTextFunc();
         eGroupFieldSelect.setLabel(localeTextFunc('groupFilterSelect', 'Select field:'));

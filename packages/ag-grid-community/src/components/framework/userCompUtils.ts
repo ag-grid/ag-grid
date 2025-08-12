@@ -1,3 +1,4 @@
+import type { IComponent } from '../../agStack/interfaces/iComponent';
 import type { IDragAndDropImageComponent, IDragAndDropImageParams } from '../../dragAndDrop/dragAndDropImageComponent';
 import type { ColDef } from '../../entities/colDef';
 import type { IFloatingFilterComp, IFloatingFilterParams } from '../../filter/floating/floatingFilter';
@@ -10,7 +11,6 @@ import type {
 import type { IDateComp, IDateParams } from '../../interfaces/dateComponent';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { AgGridCommon } from '../../interfaces/iCommon';
-import type { IComponent } from '../../interfaces/iComponent';
 import { isColumnFilterComp } from '../../interfaces/iFilter';
 import type {
     IFilterComp,

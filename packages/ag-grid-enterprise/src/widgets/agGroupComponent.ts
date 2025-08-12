@@ -1,4 +1,4 @@
-import type { AgCheckbox, AgEvent, ComponentSelector, ElementParams } from 'ag-grid-community';
+import type { AgEvent, ComponentSelector, ElementParams, GridCheckbox, GridToggleButton } from 'ag-grid-community';
 import {
     AgCheckboxSelector,
     AgToggleButton,
@@ -76,11 +76,11 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     private alignItems: Align | undefined;
     private useToggle: boolean;
 
-    private eToggle?: AgToggleButton;
+    private eToggle?: GridToggleButton;
     private eTitleBar?: DefaultTitleBar;
 
     private readonly eToolbar: HTMLElement = RefPlaceholder;
-    private readonly cbGroupEnabled: AgCheckbox = RefPlaceholder;
+    private readonly cbGroupEnabled: GridCheckbox = RefPlaceholder;
     private readonly eContainer: HTMLElement = RefPlaceholder;
 
     constructor(private readonly params: AgGroupComponentParams = {}) {
@@ -332,8 +332,8 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
         return titleBar;
     }
 
-    private createToggleTitleBar(): AgToggleButton {
-        const eToggle = this.createManagedBean(
+    private createToggleTitleBar(): GridToggleButton {
+        const eToggle = this.createManagedBean<GridToggleButton>(
             new AgToggleButton({
                 value: this.enabled,
                 label: this.params.title,

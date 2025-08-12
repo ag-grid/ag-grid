@@ -1,16 +1,17 @@
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
+import { _removeFromParent, _setDisplayed } from '../../../agStack/utils/dom';
+import { _toString } from '../../../agStack/utils/string';
 import { _getInnerHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { AgColumn } from '../../../entities/agColumn';
 import { _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { IHeaderComp, IHeaderParams, IInnerHeaderComponent } from '../../../interfaces/iHeader';
 import type { SortIndicatorComp } from '../../../sort/sortIndicatorComp';
-import type { ElementParams } from '../../../utils/dom';
-import { _removeFromParent, _setDisplayed } from '../../../utils/dom';
+import type { ElementParams } from '../../../utils/element';
 import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
-import { _mergeDeep } from '../../../utils/object';
-import { _toString } from '../../../utils/string';
-import { Component, RefPlaceholder } from '../../../widgets/component';
+import { _mergeDeep } from '../../../utils/mergeDeep';
+import { Component } from '../../../widgets/component';
 
 function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParams {
     const hiddenAttrs = { 'aria-hidden': 'true' };

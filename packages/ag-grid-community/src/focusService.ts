@@ -1,6 +1,10 @@
+import { KeyCode } from './agStack/constants/keyCode';
+import { _last } from './agStack/utils/array';
+import { _getActiveDomElement } from './agStack/utils/document';
+import { _focusInto, _registerKeyboardFocusEvents } from './agStack/utils/focus';
+import { _makeNull } from './agStack/utils/generic';
 import type { ColumnModel } from './columns/columnModel';
 import type { VisibleColsService } from './columns/visibleColsService';
-import { KeyCode } from './constants/keyCode';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
@@ -8,7 +12,7 @@ import type { AgColumn } from './entities/agColumn';
 import { _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
-import { _getActiveDomElement, _getDomData } from './gridOptionsUtils';
+import { _getDomData } from './gridOptionsUtils';
 import { DOM_DATA_KEY_HEADER_CTRL } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
 import { getFocusHeaderRowCount } from './headerRendering/headerUtils';
@@ -22,15 +26,7 @@ import type { NavigationService } from './navigation/navigationService';
 import type { OverlayService } from './rendering/overlays/overlayService';
 import { DOM_DATA_KEY_CELL_CTRL, DOM_DATA_KEY_ROW_CTRL } from './rendering/renderUtils';
 import type { RowRenderer } from './rendering/rowRenderer';
-import { _last } from './utils/array';
-import {
-    _focusInto,
-    _focusNextGridCoreContainer,
-    _isCellFocusSuppressed,
-    _isHeaderFocusSuppressed,
-    _registerKeyboardFocusEvents,
-} from './utils/focus';
-import { _makeNull } from './utils/generic';
+import { _focusNextGridCoreContainer, _isCellFocusSuppressed, _isHeaderFocusSuppressed } from './utils/gridFocus';
 
 export class FocusService extends BeanStub implements NamedBean {
     beanName = 'focusSvc' as const;

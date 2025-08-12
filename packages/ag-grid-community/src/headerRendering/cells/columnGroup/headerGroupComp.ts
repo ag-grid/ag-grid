@@ -1,19 +1,20 @@
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
+import type { IComponent } from '../../../agStack/interfaces/iComponent';
+import { _setDisplayed } from '../../../agStack/utils/dom';
+import { _exists } from '../../../agStack/utils/generic';
+import { _toString } from '../../../agStack/utils/string';
 import { _getInnerHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnGroup } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
-import type { IComponent } from '../../../interfaces/iComponent';
-import type { ElementParams } from '../../../utils/dom';
-import { _setDisplayed } from '../../../utils/dom';
-import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../../utils/event';
-import { _exists } from '../../../utils/generic';
+import type { ElementParams } from '../../../utils/element';
+import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../../utils/gridEvent';
 import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
-import { _toString } from '../../../utils/string';
 import { _warn } from '../../../validation/logging';
-import { Component, RefPlaceholder } from '../../../widgets/component';
+import { Component } from '../../../widgets/component';
 
 export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column group the header is for. */

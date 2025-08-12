@@ -1,4 +1,4 @@
-import type { BeanCollection } from 'ag-grid-community';
+import type { BeanCollection, GridSelect } from 'ag-grid-community';
 import { AgCheckbox, AgSelect, Component, RefPlaceholder } from 'ag-grid-community';
 
 import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
@@ -27,7 +27,7 @@ export class LegendPanel extends Component {
 
     constructor(
         private readonly options: FormatPanelOptions,
-        private readonly chartMenuContext: ChartMenuContext
+        chartMenuContext: ChartMenuContext
     ) {
         super();
 
@@ -38,7 +38,7 @@ export class LegendPanel extends Component {
 
     public postConstruct() {
         const { chartMenuParamsFactory, isExpandedOnInit: expanded, registerGroupComponent } = this.options;
-        const positionSelect = this.createManagedBean(
+        const positionSelect = this.createManagedBean<GridSelect>(
             new AgSelect(
                 chartMenuParamsFactory.getDefaultSelectParams(
                     `${this.key}.position`,

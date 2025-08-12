@@ -30,6 +30,7 @@ import { GridOptionsService } from './gridOptionsService';
 import { ColumnGroupHeaderCompModule, ColumnHeaderCompModule } from './headerRendering/cells/headerModule';
 import type { _ModuleWithApi } from './interfaces/iModule';
 import { AnimationFrameModule } from './misc/animationFrameModule';
+import { IconService } from './misc/iconService';
 import { TouchModule } from './misc/touchModule';
 import { KeyboardNavigationModule } from './navigation/navigationModule';
 import { PageBoundsListener } from './pagination/pageBoundsListener';
@@ -73,6 +74,7 @@ export const CommunityCoreModule: _ModuleWithApi<_CoreGridApi> = {
         SyncService,
         ColumnNameService,
         ColumnViewportService,
+        IconService,
     ],
     icons: {
         // icon on select dropdowns (select cell editor, charts tool panels)

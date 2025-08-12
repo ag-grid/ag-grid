@@ -1,13 +1,14 @@
+import { _getDocument } from '../../agStack/utils/document';
+import { _getElementSize, _observeResize } from '../../agStack/utils/dom';
+import { _debounce } from '../../agStack/utils/function';
 import type { ColumnCollections } from '../../columns/columnModel';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
-import { _getDocument, _getRowHeightForNode } from '../../gridOptionsUtils';
+import { _getRowHeightForNode } from '../../gridOptionsUtils';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
-import { _getElementSize, _observeResize } from '../../utils/dom';
-import { _debounce } from '../../utils/function';
 import type { CellCtrl } from '../cell/cellCtrl';
 
 export class RowAutoHeightService extends BeanStub implements NamedBean {

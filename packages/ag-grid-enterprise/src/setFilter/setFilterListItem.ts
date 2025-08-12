@@ -1,14 +1,15 @@
 import type {
-    AgCheckbox,
     AgColumn,
     AgEvent,
     ColDef,
     ElementParams,
     FilterDisplayParams,
+    GridCheckbox,
     ICellRendererComp,
     ISetFilterCellRendererParams,
     ISetFilterParams,
     ITooltipCtrl,
+    ITooltipCtrlParams,
     SetFilterModel,
     TooltipFeature,
     ValueFormatterParams,
@@ -94,7 +95,7 @@ const SetFilterElement: ElementParams = {
 };
 
 export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
-    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
+    private readonly eCheckbox: GridCheckbox = RefPlaceholder;
 
     private readonly eGroupOpenedIcon: HTMLElement = RefPlaceholder;
     private readonly eGroupClosedIcon: HTMLElement = RefPlaceholder;
@@ -145,12 +146,20 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
                 getGui: () => this.focusWrapper,
-                getColDef: () => this.params.colDef,
-                getColumn: () => this.params.column as AgColumn,
                 getLocation: () => 'setFilterValue',
                 shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
-                getValueFormatted: () => this.formattedValue,
-                getAdditionalParams: () => (this.isTree ? { level: this.depth } : {}),
+                getAdditionalParams: () => {
+                    const { colDef, column } = this.params;
+                    const additionalParams: ITooltipCtrlParams = {
+                        colDef,
+                        column: column as AgColumn,
+                        valueFormatted: this.formattedValue ?? undefined,
+                    };
+                    if (this.isTree) {
+                        (additionalParams as any).level = this.depth;
+                    }
+                    return additionalParams;
+                },
             } as ITooltipCtrl)
         );
 

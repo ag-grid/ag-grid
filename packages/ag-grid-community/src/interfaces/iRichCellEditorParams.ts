@@ -1,10 +1,11 @@
-import type { AgPickerFieldParams } from './agFieldParams';
+import type { AgPickerFieldParams } from '../agStack/widgets/agPickerFieldParams';
+import type { AgComponentSelectorType } from '../widgets/component';
 import type { ICellEditorParams } from './iCellEditor';
 import type { ICellEditorRendererParams } from './iCellEditorRenderer';
 
 export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRendererParams<TValue> {}
 
-export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
+export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgComponentSelectorType> {
     value?: TValue[] | TValue;
     valueList?: TValue[];
     allowTyping?: boolean;

@@ -1,10 +1,10 @@
+import { _getRootNode } from '../agStack/utils/document';
+import { _debounce } from '../agStack/utils/function';
 import { getGridId } from '../api/coreApi';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
-import { _getRootNode } from '../gridOptionsUtils';
 import type { ITestIdService } from '../interfaces/iTestIdService';
-import { _debounce } from '../utils/function';
 import { agTestIdFor } from './testIdUtils';
 import type { FilterSpec } from './testIdUtils';
 

@@ -5,7 +5,7 @@ import type { ColDef, ColGroupDef, SortDirection } from '../entities/colDef';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
 import type { ColumnEventType } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
-import { _mergeDeep } from '../utils/object';
+import { _mergeDeep } from '../utils/mergeDeep';
 import { _warn } from '../validation/logging';
 import { createMergedColGroupDef } from './columnGroups/columnGroupUtils';
 import type { IColumnKeyCreator } from './columnKeyCreator';

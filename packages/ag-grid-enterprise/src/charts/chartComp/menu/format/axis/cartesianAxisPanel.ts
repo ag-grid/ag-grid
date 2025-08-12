@@ -1,6 +1,13 @@
 import type { AgCartesianAxisOptions } from 'ag-charts-types';
 
-import type { AgSelect, AgSelectParams, BeanCollection, ListOption } from 'ag-grid-community';
+import type {
+    AgComponentSelectorType,
+    AgSelectParams,
+    BeanCollection,
+    GridCheckbox,
+    GridSelect,
+    ListOption,
+} from 'ag-grid-community';
 import {
     AgCheckbox,
     AgSelectSelector,
@@ -31,9 +38,9 @@ const DEFAULT_TIME_AXIS_FORMAT = '%d %B %Y';
 
 export class CartesianAxisPanel extends Component {
     private readonly axisGroup: AgGroupComponent = RefPlaceholder;
-    private readonly axisTypeSelect: AgSelect = RefPlaceholder;
-    private readonly axisPositionSelect: AgSelect = RefPlaceholder;
-    private readonly axisTimeFormatSelect: AgSelect = RefPlaceholder;
+    private readonly axisTypeSelect: GridSelect = RefPlaceholder;
+    private readonly axisPositionSelect: GridSelect = RefPlaceholder;
+    private readonly axisTimeFormatSelect: GridSelect = RefPlaceholder;
 
     private chartTranslation: ChartTranslationService;
     private chartOptionsService: ChartOptionsService;
@@ -150,7 +157,7 @@ export class CartesianAxisPanel extends Component {
     private getAxisTypeSelectParams(
         chartAxisOptions: ChartMenuParamsFactory,
         chartAxisAppliedThemeOverrides: ChartOptionsProxy
-    ): AgSelectParams {
+    ): AgSelectParams<AgComponentSelectorType> {
         const chartOptions = chartAxisOptions.getChartOptions();
         const axisTypeSelectOptions = this.getAxisTypeSelectOptions();
         const params = chartAxisOptions.getDefaultSelectParams('type', 'axisType', axisTypeSelectOptions);
@@ -230,7 +237,9 @@ export class CartesianAxisPanel extends Component {
         return (isHorizontal && this.axisType === 'yAxis') || (!isHorizontal && this.axisType === 'xAxis');
     }
 
-    private getAxisPositionSelectParams(chartAxisOptions: ChartMenuParamsFactory): AgSelectParams | null {
+    private getAxisPositionSelectParams(
+        chartAxisOptions: ChartMenuParamsFactory
+    ): AgSelectParams<AgComponentSelectorType> | null {
         const axisPositionSelectOptions = ((chartType, axisType) => {
             switch (chartType) {
                 // Some chart types do not support configuring the axis position
@@ -257,7 +266,9 @@ export class CartesianAxisPanel extends Component {
         return chartAxisOptions.getDefaultSelectParams('position', 'position', axisPositionSelectOptions);
     }
 
-    private getAxisTimeFormatSelectParams(chartAxisOptions: ChartMenuParamsFactory): AgSelectParams | null {
+    private getAxisTimeFormatSelectParams(
+        chartAxisOptions: ChartMenuParamsFactory
+    ): AgSelectParams<AgComponentSelectorType> | null {
         if (!this.isCategoryAxis()) {
             return null;
         }
@@ -402,7 +413,7 @@ export class CartesianAxisPanel extends Component {
         const rotation = getLabelRotationValue();
         const autoRotate = typeof rotation === 'number' ? false : getLabelAutoRotateValue();
 
-        const autoRotateCheckbox = this.createBean(
+        const autoRotateCheckbox = this.createBean<GridCheckbox>(
             new AgCheckbox({
                 label: this.translate('autoRotate'),
                 value: autoRotate,

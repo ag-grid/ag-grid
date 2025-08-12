@@ -1,3 +1,7 @@
+import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
+import { _removeFromArray } from '../agStack/utils/array';
+import { _requestAnimationFrame } from '../agStack/utils/dom';
+import { _exists } from '../agStack/utils/generic';
 import type { ColumnModel } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -21,16 +25,12 @@ import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RefreshCellsParams, RefreshRowsParams } from '../interfaces/iCellsParams';
 import type { IEditService } from '../interfaces/iEditService';
-import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import type { IStickyRowFeature } from '../interfaces/iStickyRows';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
-import { _removeFromArray } from '../utils/array';
-import { _requestAnimationFrame } from '../utils/dom';
-import { _exists } from '../utils/generic';
 import { _errMsg } from '../validation/logging';
 import type { CellCtrl } from './cell/cellCtrl';
 import type { RowCtrlInstanceId } from './row/rowCtrl';
@@ -330,17 +330,17 @@ export class RowRenderer extends BeanStub implements NamedBean {
         };
 
         const addCellSelectionListeners = () => {
-            this.eventSvc.addEventListener('cellSelectionChanged', onCellSelectionChanged);
-            this.eventSvc.addEventListener('columnMoved', onColumnMovedPinnedVisible);
-            this.eventSvc.addEventListener('columnPinned', onColumnMovedPinnedVisible);
-            this.eventSvc.addEventListener('columnVisible', onColumnMovedPinnedVisible);
+            this.eventSvc.addListener('cellSelectionChanged', onCellSelectionChanged);
+            this.eventSvc.addListener('columnMoved', onColumnMovedPinnedVisible);
+            this.eventSvc.addListener('columnPinned', onColumnMovedPinnedVisible);
+            this.eventSvc.addListener('columnVisible', onColumnMovedPinnedVisible);
         };
 
         const removeCellSelectionListeners = () => {
-            this.eventSvc.removeEventListener('cellSelectionChanged', onCellSelectionChanged);
-            this.eventSvc.removeEventListener('columnMoved', onColumnMovedPinnedVisible);
-            this.eventSvc.removeEventListener('columnPinned', onColumnMovedPinnedVisible);
-            this.eventSvc.removeEventListener('columnVisible', onColumnMovedPinnedVisible);
+            this.eventSvc.removeListener('cellSelectionChanged', onCellSelectionChanged);
+            this.eventSvc.removeListener('columnMoved', onColumnMovedPinnedVisible);
+            this.eventSvc.removeListener('columnPinned', onColumnMovedPinnedVisible);
+            this.eventSvc.removeListener('columnVisible', onColumnMovedPinnedVisible);
         };
         this.addDestroyFunc(() => removeCellSelectionListeners());
         this.addManagedPropertyListeners(['enableRangeSelection', 'cellSelection'], () => {

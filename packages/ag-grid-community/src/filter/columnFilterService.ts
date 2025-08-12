@@ -1,3 +1,6 @@
+import type { AgEvent } from '../agStack/interfaces/agEvent';
+import { _exists, _jsonEquals } from '../agStack/utils/generic';
+import { AgPromise } from '../agStack/utils/promise';
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import {
     _getFilterCompKeys,
@@ -12,7 +15,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueGetterFunc } from '../entities/colDef';
 import type { BaseCellDataType, CoreDataTypeDefinition, DataTypeFormatValueFunc } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
-import type { AgEvent, ColumnEventType, FilterChangedEventSourceType } from '../events';
+import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
 import {
     _addGridCommonParams,
     _getGroupAggFiltering,
@@ -22,7 +25,6 @@ import {
 import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import { isColumnFilterComp } from '../interfaces/iFilter';
 import type {
     BaseFilterParams,
     ColumnFilterState,
@@ -41,9 +43,8 @@ import type {
     IFilterDef,
     IFilterParams,
 } from '../interfaces/iFilter';
+import { isColumnFilterComp } from '../interfaces/iFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
-import { _exists, _jsonEquals } from '../utils/generic';
-import { AgPromise } from '../utils/promise';
 import { _error, _warn } from '../validation/logging';
 import type { FilterHandlerName, FilterUi, FilterWrapper, LegacyFilterWrapper } from './columnFilterUtils';
 import {

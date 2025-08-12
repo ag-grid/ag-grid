@@ -1,3 +1,4 @@
+import { _last } from '../agStack/utils/array';
 import { BeanStub } from '../context/beanStub';
 import type {
     AgColumnGroupEvent,
@@ -7,7 +8,6 @@ import type {
     ColumnPinnedType,
     HeaderColumnId,
 } from '../interfaces/iColumn';
-import { _last } from '../utils/array';
 import type { AgColumn } from './agColumn';
 import { isColumn } from './agColumn';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';

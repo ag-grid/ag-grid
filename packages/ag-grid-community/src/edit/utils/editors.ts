@@ -1,3 +1,5 @@
+import { _setAriaInvalid } from '../../agStack/utils/aria';
+import { _getLocaleTextFunc } from '../../agStack/utils/locale';
 import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import type { BeanCollection } from '../../context/context';
@@ -13,10 +15,8 @@ import type {
 } from '../../interfaces/iCellEditor';
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
-import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { _setAriaInvalid } from '../../utils/aria';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
 import { _getCellCtrl } from './controllers';
 

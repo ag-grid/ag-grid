@@ -1,6 +1,16 @@
 import type { IColor, _IUtil } from 'ag-charts-types';
 
-import type { AgInputTextFieldParams, BeanCollection, ComponentSelector, ElementParams } from 'ag-grid-community';
+import type {
+    AgComponentSelectorType,
+    AgEventTypeParams,
+    AgGridCommon,
+    AgInputTextFieldParams,
+    BeanCollection,
+    ComponentSelector,
+    ElementParams,
+    GridOptionsService,
+    GridOptionsWithDefaults,
+} from 'ag-grid-community';
 import { AgInputTextField, RefPlaceholder } from 'ag-grid-community';
 
 import type { AgChartsExports } from '../agChartsExports';
@@ -25,7 +35,16 @@ const AgColorInputElement: ElementParams = {
         },
     ],
 };
-export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgColorInputEvent> {
+export class AgColorInput extends AgInputTextField<
+    BeanCollection,
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    AgGridCommon<any, any>,
+    GridOptionsService,
+    AgComponentSelectorType,
+    AgInputTextFieldParams<AgComponentSelectorType>,
+    AgColorInputEvent
+> {
     private chartTranslation: ChartTranslationService;
     private color: _IUtil['Color'];
 

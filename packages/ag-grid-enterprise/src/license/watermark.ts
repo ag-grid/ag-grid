@@ -40,7 +40,7 @@ class AgWatermark extends Component {
     }
 }
 
-export const AgWatermarkSelector: ComponentSelector = {
+export const AgWatermarkSelector: ComponentSelector<Component> = {
     selector: 'AG-WATERMARK',
     component: AgWatermark,
 };

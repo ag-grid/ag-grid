@@ -1,7 +1,7 @@
+import { _getInnerHeight, _requestAnimationFrame } from '../agStack/utils/dom';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ScrollVisibleService, SetScrollsVisibleParams } from '../gridBodyComp/scrollVisibleService';
-import { _getInnerHeight, _requestAnimationFrame } from '../utils/dom';
 import type { GridBodyCtrl } from './gridBodyCtrl';
 import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 

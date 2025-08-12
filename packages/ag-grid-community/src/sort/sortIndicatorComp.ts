@@ -1,11 +1,12 @@
+import { RefPlaceholder } from '../agStack/interfaces/agComponent';
+import { _clearElement, _setDisplayed } from '../agStack/utils/dom';
 import type { AgColumn } from '../entities/agColumn';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
-import type { ElementParams } from '../utils/dom';
-import { _clearElement, _setDisplayed } from '../utils/dom';
+import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';
 import { _createIconNoSpan } from '../utils/icon';
 import type { ComponentSelector } from '../widgets/component';
-import { Component, RefPlaceholder } from '../widgets/component';
+import { Component } from '../widgets/component';
 
 const makeIconParams = (dataRefSuffix: string, classSuffix: string): ElementParams => ({
     tag: 'span',
