@@ -92,10 +92,6 @@ export class GenericContext<TBeanName extends string, TBeanCollection extends { 
         bean: T,
         afterPreCreateCallback?: (bean: GenericBean<TBeanName, TBeanCollection>) => void
     ): T {
-        // // Useful for debugging React Strict Mode issues
-        // if (this.destroyed) {
-        //     console.error(`${this.instanceId}:isDestroyed but trying to call createBean!`);
-        // }
         this.initBeans([bean], afterPreCreateCallback);
         return bean;
     }
