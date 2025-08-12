@@ -4,6 +4,10 @@
 [![npm](https://img.shields.io/npm/dm/@ag-grid-community/infinite-row-model.svg)](https://www.npmjs.com/package/@ag-grid-community/infinite-row-model)
 [![npm](https://img.shields.io/npm/dt/@ag-grid-community/infinite-row-model.svg)](https://www.npmjs.com/package/@ag-grid-community/infinite-row-model)
 
+> **⚠️ Version Update**
+>
+> For AG Grid versions `>=33.0.0` the `InfiniteRowModelModule` is now exported directly from the `ag-grid-community` package. v32 will be the last version of this individual module. See the [v33 migration guide](https://ag-grid.com/javascript-data-grid/upgrading-to-ag-grid-33/) for more details.
+
 # AG Grid
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.

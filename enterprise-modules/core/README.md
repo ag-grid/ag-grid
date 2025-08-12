@@ -8,6 +8,10 @@
 
 # AG Grid Enterprise
 
+> **⚠️ Version Update**
+>
+> For AG Grid versions `>=33.0.0` all enterprise features are now exported directly from the `ag-grid-enterprise` package. v32 will be the last version of this individual module. See the [v33 migration guide](https://ag-grid.com/javascript-data-grid/upgrading-to-ag-grid-33/) for more details.
+
 ---
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.

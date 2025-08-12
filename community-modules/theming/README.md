@@ -1,6 +1,8 @@
-# AG Grid Enterprise
+# AG Grid Community Theming
 
-This project contains AG Grid Enterprise features.
+> **⚠️ Version Update**
+>
+> For AG Grid versions `>=33.0.0` themes are now exported directly from the `ag-grid-community` package. v32 will be the last version of this individual module. See the [v33 migration guide](https://ag-grid.com/javascript-data-grid/upgrading-to-ag-grid-33/) for more details.
 
 See [www.ag-grid.com](http://www.ag-grid.com) for an overview and full documentation.
 

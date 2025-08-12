@@ -37,9 +37,17 @@
     </a>
     <br><br>
     <!-- START MAIN DESCRIPTION -->
-	<p>AG Grid is a <strong>fully-featured</strong> and <strong>highly customizable</strong> React Data Grid. It delivers <strong>outstanding performance</strong> and has <strong>no third-party dependencies</strong>.</p>	
+
+<blockquote>
+    <p><strong>⚠️ Version Notice</strong>: For AG Grid versions <code>>=33.0.0</code> the <code>AgGridReact</code> component is now exported from the <code>ag-grid-react</code> package. v32 will be the last version of this individual module. See the <a href="https://ag-grid.com/react-data-grid/upgrading-to-ag-grid-33/"> V33 migration guide</a> for more details.
+</blockquote>
+
+    <p>AG Grid is a <strong>fully-featured</strong> and <strong>highly customizable</strong> React Data Grid. It delivers <strong>outstanding performance</strong> and has <strong>no third-party dependencies</strong>.</p>
+
 <!-- END MAIN DESCRIPTION -->
+
     <br>
+
 </div>
 
 <picture>
