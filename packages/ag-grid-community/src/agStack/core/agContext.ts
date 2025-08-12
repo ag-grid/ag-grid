@@ -38,6 +38,9 @@ interface DerivedBean<TBeanCollection, K extends keyof TBeanCollection> {
     bean: TBeanCollection[K] & AgSingletonBean<TBeanCollection>;
 }
 
+/** Instance Id used by React to reset the state of a component tree when the context changes. */
+let contextId = 1;
+
 export class AgContext<
     TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
     TProperties extends BaseProperties,
@@ -53,6 +56,8 @@ export class AgContext<
     private destroyCallback?: () => void;
 
     private destroyed = false;
+
+    public readonly instanceId: number = contextId++;
 
     constructor(params: AgContextParams<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>) {
         if (!params || !params.beanClasses) {
