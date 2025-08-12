@@ -389,7 +389,10 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         /** Row Group Panel */
 
-        this.setupColumnDropArea(root, 'panel');
+        const rowGroupPanelWrapper = root.querySelector('.ag-column-drop-wrapper');
+        if (rowGroupPanelWrapper) {
+            this.setupColumnDropArea(rowGroupPanelWrapper, 'panel');
+        }
     }
 
     private setupFilterInstance(filterRoot: Element | null, spec: FilterSpec): void {
@@ -435,10 +438,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
     private setupColumnDropArea(root: ParentNode, source: 'panel' | 'toolbar'): void {
         root.querySelectorAll('.ag-column-drop').forEach((columnDrop) => {
             const dropAreaName = columnDrop.querySelector('.ag-column-drop-list')?.getAttribute('aria-label');
-            setTestId(
-                columnDrop.querySelector('.ag-column-drop-empty-message'),
-                agTestIdFor.columnDropArea(source, dropAreaName)
-            );
+            setTestId(columnDrop, agTestIdFor.columnDropArea(source, dropAreaName));
             columnDrop.querySelectorAll('.ag-column-drop-cell').forEach((columnDropCell) => {
                 const label = columnDropCell.querySelector('.ag-column-drop-cell-text')?.textContent;
                 setTestId(

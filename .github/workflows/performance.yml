@@ -44,12 +44,34 @@ permissions:
   contents: read
 
 jobs:
+  # Check permissions for issue_comment events
+  check-permissions:
+    runs-on: ubuntu-latest
+    outputs:
+      allowed: ${{ steps.check.outputs.allowed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check user permissions
+        id: check
+        uses: ./external/ag-shared/github/actions/check-issue-comment-permissions
+        with:
+          command: '/benchmarks'
+
   benchmark:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       issues: write
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.comment.body == '/benchmarks') || github.event_name == 'schedule'
+    needs: check-permissions
+      # Only run if permissions check passed (success) or was skipped (for non-issue_comment events)
+    if: |
+      needs.check-permissions.result == 'success' && (
+          github.event_name == 'workflow_dispatch' || 
+          github.event_name == 'schedule' ||
+          (github.event_name == 'issue_comment' && needs.check-permissions.outputs.allowed == 'true' && github.event.comment.body == '/benchmarks')
+      )
     env:
       JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:

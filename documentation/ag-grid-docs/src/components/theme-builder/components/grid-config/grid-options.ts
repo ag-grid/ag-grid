@@ -12,6 +12,7 @@ export const productionConfigFields = [
     'cellSelectionHeaderHighlight',
     'rowNumbers',
     'rowDrag',
+    'rowPinning',
     'rowSelection',
     'rightToLeft',
     'floatingFilters',
@@ -67,7 +68,6 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         editable: true,
         flex: 1,
         filter: true,
-        aggFunc: 'sum',
     };
     const columnDefs = buildSimpleColumnDefs(allSports);
     const sideBar: string[] = [];
@@ -95,6 +95,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
             minWidth: 250,
         },
         rowNumbers: config.rowNumbers,
+        enableRowPinning: config.rowPinning,
         popupParent: config.popupParentIsBody ? document.body : undefined,
         grandTotalRow: config.grandTotalRow ? 'bottom' : undefined,
     };
@@ -163,21 +164,23 @@ const cashFormatter = (params: any) => {
 };
 
 const buildSimpleColumnDefs = (allSports: string[]): ColDef[] => [
-    { field: 'country' },
+    { field: 'country', enablePivot: true },
     {
         field: 'sport',
+        enablePivot: true,
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             values: allSports,
         },
     },
-    { field: 'name' },
+    { field: 'name', enablePivot: true },
     {
         field: 'winningsTotal',
         headerName: 'Total winnings',
         type: 'rightAligned',
         valueFormatter: cashFormatter,
         filter: 'agNumberColumnFilter',
+        aggFunc: 'sum',
     },
     {
         field: 'winnings2023',
@@ -188,6 +191,7 @@ const buildSimpleColumnDefs = (allSports: string[]): ColDef[] => [
         cellEditorParams: {
             min: 0,
         },
+        aggFunc: 'sum',
     },
     {
         field: 'winnings2022',
@@ -198,6 +202,7 @@ const buildSimpleColumnDefs = (allSports: string[]): ColDef[] => [
         cellEditorParams: {
             min: 0,
         },
+        aggFunc: 'sum',
     },
 ];
 

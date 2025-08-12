@@ -1,5 +1,6 @@
 import { KeyCode } from '../constants/keyCode';
 import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
+import { TooltipTrigger } from '../tooltip/tooltipStateManager';
 import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
 import { _createElement, _isVisible, _removeFromParent } from '../utils/dom';
 import { Component } from './component';
@@ -21,6 +22,9 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
     private highlightedEl: HTMLElement | null;
     private value: TValue | null;
     private displayValue: string | null;
+    private tooltipMode: TooltipTrigger;
+    private tooltipFeatures: TooltipFeature[] = [];
+    private lastDisplayedTooltip?: TooltipFeature;
 
     constructor(
         private readonly cssIdentifier = 'default',
@@ -32,10 +36,19 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
     public postConstruct(): void {
         const eGui = this.getGui();
         this.addManagedElementListeners(eGui, { mouseleave: () => this.clearHighlighted() });
+        this.addManagedPropertyListener('tooltipTrigger', ({ currentValue }) => {
+            this.setTooltipMode(currentValue);
+        });
+        this.setTooltipMode(this.gos.get('tooltipTrigger'));
+
         if (this.unFocusable) {
             return;
         }
         this.addManagedElementListeners(eGui, { keydown: this.handleKeyDown.bind(this) });
+    }
+
+    private setTooltipMode(tooltipTriggerMode: 'focus' | 'hover' = 'focus'): void {
+        this.tooltipMode = tooltipTriggerMode === 'focus' ? TooltipTrigger.FOCUS : TooltipTrigger.HOVER;
     }
 
     public handleKeyDown(e: KeyboardEvent): void {
@@ -133,7 +146,13 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
         this.itemEls.forEach((itemEl) => {
             _removeFromParent(itemEl);
         });
+
+        for (const tooltipFeature of this.tooltipFeatures) {
+            tooltipFeature.destroy();
+        }
+
         this.itemEls = [];
+        this.tooltipFeatures = [];
         this.refreshAriaRole();
     }
 
@@ -182,7 +201,7 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
             },
         });
 
-        this.createOptionalManagedBean(
+        const tooltipFeature = this.createOptionalManagedBean(
             this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
                 getTooltipValue: () => text,
                 getGui: () => itemEl,
@@ -191,6 +210,10 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
                 shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth,
             } as ITooltipCtrl)
         );
+
+        if (tooltipFeature) {
+            this.tooltipFeatures.push(tooltipFeature);
+        }
 
         this.getGui().appendChild(itemEl);
     }
@@ -275,6 +298,21 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
 
         if (!this.unFocusable) {
             el.focus();
+        } else if (this.tooltipMode === TooltipTrigger.FOCUS) {
+            this.hideTooltip();
+            this.showTooltipForItem(el);
+        }
+    }
+
+    public hideTooltip(): void {
+        this.lastDisplayedTooltip?.attemptToHideTooltip();
+    }
+
+    public showTooltipForItem(el: HTMLElement): void {
+        const idx = this.itemEls.indexOf(el);
+        if (idx !== -1 && this.tooltipFeatures.length) {
+            this.lastDisplayedTooltip = this.tooltipFeatures[idx];
+            this.lastDisplayedTooltip?.attemptToShowTooltip();
         }
     }
 
@@ -297,5 +335,13 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
 
     private fireItemSelected(): void {
         this.dispatchLocalEvent({ type: 'selectedItem' });
+    }
+
+    public override destroy(): void {
+        this.hideTooltip();
+        this.lastDisplayedTooltip = null as any;
+        this.tooltipFeatures = [];
+
+        super.destroy();
     }
 }

@@ -31,6 +31,7 @@ export {
     GROUP_AUTO_COLUMN_ID,
     SELECTION_COLUMN_ID,
     ROW_NUMBERS_COLUMN_ID,
+    GROUP_HIERARCHY_COLUMN_ID_PREFIX,
     isRowNumberCol,
     isColumnSelectionCol,
     isColumnGroupAutoCol,
@@ -408,6 +409,7 @@ export { _setColMenuVisible } from './misc/menu/menuService';
 export type { IColsService } from './interfaces/iColsService';
 export type { IColumnCollectionService } from './interfaces/iColumnCollectionService';
 export type { IRowNumbersService } from './interfaces/rowNumbers';
+export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
 
 // editing / cellEditors
 export {
@@ -917,6 +919,7 @@ export {
     NestedFieldPaths,
     GetFindTextParams,
     GetFindTextFunc,
+    GroupHierarchyParts,
 } from './entities/colDef';
 export {
     DataTypeDefinition,
@@ -1107,7 +1110,7 @@ export {
 export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './utils/array';
 export { _isIOSUserAgent } from './utils/browser';
 export { ChangedPath } from './utils/changedPath';
-export { _serialiseDate, _getDateParts, _parseDateTimeFromString } from './utils/date';
+export { _serialiseDate, _getDateParts, _parseDateTimeFromString, MONTHS as _MONTHS } from './utils/date';
 export {
     _getAbsoluteHeight,
     _getAbsoluteWidth,

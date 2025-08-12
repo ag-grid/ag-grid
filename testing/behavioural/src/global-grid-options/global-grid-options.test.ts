@@ -183,4 +183,29 @@ describe('Global Grid Options', () => {
             });
         });
     });
+
+    test('test queued events have correct type and params', async () => {
+        // The viewport event can be fired before the grid is ready.
+        // This means it is queued and only fired after gridReady.
+        const allEventsFired: string[] = [];
+        const promise = new Promise<void>((resolve) => {
+            createMyGrid({
+                onGridReady: (params) => {
+                    expect(params.type).toBe('gridReady');
+                    allEventsFired.push(params.type);
+                },
+                onViewportChanged: (params) => {
+                    expect(params.type).toBe('viewportChanged');
+                    expect(params.firstRow).toBeDefined();
+                    expect(params.lastRow).toBeDefined();
+                    allEventsFired.push(params.type);
+
+                    // Ensure the viewportChanged event is fired after gridReady
+                    expect(allEventsFired).toEqual(['gridReady', 'viewportChanged']);
+                    resolve();
+                },
+            });
+        });
+        await promise;
+    });
 });

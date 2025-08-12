@@ -84,6 +84,7 @@ type InternalModuleName =
     | 'FindCore'
     | 'GroupCellRenderer'
     | 'GroupColumn'
+    | 'GroupHierarchy'
     | 'HorizontalResize'
     | 'InfiniteRowModelCore'
     | 'KeyboardNavigation'
