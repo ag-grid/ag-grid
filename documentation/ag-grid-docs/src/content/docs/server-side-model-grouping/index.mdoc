@@ -128,16 +128,16 @@ Group rows can be expanded or collapsed using the `expandAll()` and `collapseAll
 The example above demonstrates the following configuration:
 
 ```{% frameworkTransform=true %}
-// Button click expands all loaded group rows
+// First button click expands all loaded group rows
 api.expandAll();
 
-// Second click collapses all group rows
+// Click on the second button collapses all group rows
 api.collapseAll();
 
 // Checking the checkbox applies the following:
 api.setGridOptions({ ssrmExpandAllAffectsAllRows: true });
 
-// Now calling the button expands all group rows, including those not yet loaded:
+// Now calling the first button expands all group rows, including those not yet loaded:
 api.expandAll();
 ```
 

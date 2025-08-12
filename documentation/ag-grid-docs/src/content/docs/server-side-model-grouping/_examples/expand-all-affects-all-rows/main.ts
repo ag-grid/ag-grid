@@ -56,20 +56,16 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
     };
 }
 
-let isExpandAll = false;
 function onExpandAll() {
-    isExpandAll = !isExpandAll;
-    isExpandAll ? gridApi.expandAll() : gridApi.collapseAll();
-    document.getElementById('expand')!.innerText = isExpandAll ? 'Collapse rows' : 'Expand rows';
+    gridApi.expandAll();
+}
+function onCollapseAll() {
+    gridApi.collapseAll();
 }
 
 function onOptionChange() {
-    const key = (document.querySelector('#input-display-type') as HTMLSelectElement).value;
-    if (key === 'true' || key === 'false') {
-        gridApi!.setGridOption('ssrmExpandAllAffectsAllRows', key === 'true');
-    } else {
-        gridApi!.setGridOption('ssrmExpandAllAffectsAllRows', undefined);
-    }
+    const key = document.querySelector<HTMLInputElement>('#input-display-type')?.checked;
+    gridApi!.setGridOption('ssrmExpandAllAffectsAllRows', key);
 }
 
 const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

@@ -93,8 +93,9 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
 
     public expandAll(expanded: boolean): void {
         this.reset(expanded);
+        const ssrmExpandAllAffectsAllRows = this.gos.get('ssrmExpandAllAffectsAllRows');
         this.serverSideRowModel.forEachNodeTransactional((node) => {
-            if (!this.gos.get('ssrmExpandAllAffectsAllRows') && (node.stub || !node.hasChildren())) {
+            if (!ssrmExpandAllAffectsAllRows && (node.stub || !node.hasChildren())) {
                 return;
             }
             node.setExpanded(expanded);
