@@ -1429,7 +1429,7 @@
             }
         },
         "ssrmExpandAllAffectsAllRows": {
-            "description": "Controls whether expandAll / collapseAll operations apply to all rows (not just loaded ones), and whether group interactions override the default expansion state set by `isServerSideGroupOpenByDefault`. When true, users must provide a `getRowId` function to ensure proper row identification. Default: `false`.",
+            "description": "(Server-side Row Model only) Controls whether expandAll / collapseAll operations apply to all rows (not just loaded ones), and whether group interactions override the default expansion state set by `isServerSideGroupOpenByDefault`. When true, users must provide a `getRowId` function to ensure proper row identification. Default: `false`.",
             "more": {
                 "name": "Row IDs",
                 "url": "./row-ids/"
