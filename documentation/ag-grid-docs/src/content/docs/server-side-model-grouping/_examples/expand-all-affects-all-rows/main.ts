@@ -28,7 +28,7 @@ const gridOptions: GridOptions = {
         { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
     ],
-    ssrmExpandAllAffectsAllRows: true,
+    ssrmExpandAllAffectsAllRows: (document.querySelector('#input-display-type') as HTMLSelectElement).value === 'true',
     getRowId: (p) => p.data.id, // required when ssrmExpandAllAffectsAllRows is true
     // use the server-side row model
     rowModelType: 'serverSide',
