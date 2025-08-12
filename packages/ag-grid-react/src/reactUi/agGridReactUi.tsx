@@ -154,7 +154,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             ctx.createBean(renderStatus);
 
             destroyFuncs.current.push(() => {
-                ctx?.destroy();
+                ctx.destroy();
             });
 
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
