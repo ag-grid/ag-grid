@@ -3,6 +3,7 @@
     "project": ["./src/**"],
     "ignore": [
         "./src/interfaces/iAgChartOptions.ts",
+        "./src/theming/createTheme.ts",
         "./src/theming/param-docs.ts",
         "./src/theming/private-theming-api.ts",
         "./src/utils/debug.ts",
