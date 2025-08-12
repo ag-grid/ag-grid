@@ -19,6 +19,9 @@ export function _iterateObject<T>(
     }
 
     for (const [key, value] of Object.entries<T>(object)) {
+        if (SKIP_JS_BUILTINS.has(key)) {
+            continue;
+        }
         callback(key, value);
     }
 }
