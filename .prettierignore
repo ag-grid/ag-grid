@@ -34,6 +34,10 @@ external/ag-website-shared/src/components/documentation-archive/DocumentationArc
 
 /.nx/workspace-data
 
+testing/ag-grid-docs/e2e/.cache
+testing/ag-grid-docs/playwright-report/
+testing/ag-grid-docs/test-results/
+
 testing/angular-package-tests/project.base.json
 
 documentation/ag-grid-docs/src/components/ZoomInfo.astro

@@ -219,9 +219,21 @@ const frameworkTest =
  * @param testBody The test body function that will be executed for each framework.
  */
 const eachFramework = (testName: string, testBody: (fixtures: TestFixtures) => Promise<void>) => {
-    extended.describe(testName, () =>
-        ALL_FRAMEWORKS.forEach((framework) => frameworkTest(framework)(undefined, testBody))
-    );
+    extended.describe(testName, () => {
+        let errors: string[];
+        extended.beforeEach(async ({ page }) => {
+            errors = setupConsoleExpectations(page);
+        });
+
+        ALL_FRAMEWORKS.forEach((framework) => frameworkTest(framework)(undefined, testBody));
+
+        extended.afterEach(async () => {
+            if (errors.length > 0) {
+                const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n`;
+                expect(errors.length, errorMessage).toBe(0);
+            }
+        });
+    });
 };
 
 /**
@@ -246,7 +258,14 @@ export const agExample = (importMeta: ImportMeta, callback: () => any) => {
 };
 
 // Expose call for each framework
-const singleFrameworkTests = ALL_FRAMEWORKS.map((fw) => ({ [fw]: frameworkTest(fw) })).reduce(Object.assign);
+const singleFrameworkTests: { [K in AgFramework]: ReturnType<typeof frameworkTest> } = {
+    typescript: frameworkTest('typescript'),
+    vanilla: frameworkTest('vanilla'),
+    reactFunctionalTs: frameworkTest('reactFunctionalTs'),
+    reactFunctionalTs_Dev: frameworkTest('reactFunctionalTs_Dev'),
+    angular: frameworkTest('angular'),
+    vue3: frameworkTest('vue3'),
+} as const;
 
 const agGridTestExtension = {
     eachFramework,
