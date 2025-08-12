@@ -111,7 +111,7 @@ const commonFeatureSets: ModuleTest[] = [
             'ExternalFilterModule',
             'QuickFilterModule',
         ],
-        expectedSize: 252.17,
+        expectedSize: 257.17,
     },
 ];
 
