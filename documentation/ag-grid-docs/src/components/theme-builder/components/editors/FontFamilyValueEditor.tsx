@@ -1,5 +1,5 @@
 import { Select } from '@ag-website-shared/components/select/Select';
-import { type FontFamilyValue, paramValueToCss } from '@components/theme-builder/api';
+import { type FontFamilyValue, gridThemeLogger, paramValueToCss } from '@components/theme-builder/api';
 import styled from '@emotion/styled';
 
 import type { ValueEditorProps } from './ValueEditorProps';
@@ -15,7 +15,7 @@ export const FontFamilyValueEditor = ({ param, value, onChange }: ValueEditorPro
             getKey={(option) => option.label}
             onChange={(newValue) => onChange(newValue.value)}
             renderItem={(o) => {
-                const font = paramValueToCss('fontFamily', o.value);
+                const font = paramValueToCss('fontFamily', o.value, gridThemeLogger);
                 return (
                     <FontItem style={{ fontFamily: typeof font === 'string' ? font : undefined }}>{o.label}</FontItem>
                 );

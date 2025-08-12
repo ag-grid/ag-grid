@@ -10,7 +10,7 @@ import { buttonStyleQuartz } from './parts/button-style/button-styles';
 import type { ButtonStyleParams } from './parts/button-style/button-styles';
 import { columnDropStyleBordered } from './parts/column-drop-style/column-drop-styles';
 
-const gridThemeLogger: ThemeLogger = {
+export const gridThemeLogger: ThemeLogger = {
     warn: (...args) => {
         // temp typing needed here to link theme error type and grid error type
         _warn(args[0] as any as 104, args[1] as any);
