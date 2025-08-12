@@ -235,11 +235,7 @@ const CellComp = ({
     const init = useCallback(() => {
         const spanReady = !cellCtrl.isCellSpanning() || eWrapper.current;
         const eRef = eGui.current;
-        if (!eRef || !spanReady || !cellCtrl || context.isDestroyed()) {
-            // We do NOT add a check for if the cellCtrl is destroyed as when there are lots of updates React
-            // can get behind our internal state and call this function after the cellCtrl has been destroyed.
-            // If we were to shortcut here then cell values will flash in the first column of the grid as they will
-            // not have the correct cell position / styles applied as that is set via setComp.
+        if (!eRef || !spanReady || !cellCtrl || !cellCtrl.isAlive() || context.isDestroyed()) {
             compBean.current = context.destroyBean(compBean.current);
             return;
         }
@@ -443,6 +439,8 @@ const CellComp = ({
 
         return showCellValue();
     };
+
+
 
     const renderCell = () => (
         <div ref={setGuiRef} style={userStyles} role={cellAriaRole} col-id={colIdSanitised}>
