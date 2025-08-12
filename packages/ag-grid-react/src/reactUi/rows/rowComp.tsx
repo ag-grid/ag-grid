@@ -83,11 +83,11 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     }
 
     // Setup both approaches to avoid conditionally rendering Hooks even though we don't use both at the same time.
-    const cellsChanged = useRef<any>(() => { });
+    const cellsChanged = useRef<any>(() => {});
     const sub = useCallback((onStoreChange: any) => {
         cellsChanged.current = onStoreChange;
         return () => {
-            cellsChanged.current = () => { };
+            cellsChanged.current = () => {};
         };
     }, []);
     const cellCtrlsUses = agUseSyncExternalStore(

@@ -145,7 +145,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
                             </CustomContext.Provider>
                         )
                     ) : (
-                        <UserCompClass {...userCompDetails!.params} ref={userCompStateless ? () => { } : userCompRef} />
+                        <UserCompClass {...userCompDetails!.params} ref={userCompStateless ? () => {} : userCompRef} />
                     )
                 ) : null}
             </div>

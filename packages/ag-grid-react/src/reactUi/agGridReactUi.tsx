@@ -272,7 +272,8 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: strin
 
 class ReactFrameworkComponentWrapper
     extends BaseComponentWrapper<WrappableInterface>
-    implements FrameworkComponentWrapper {
+    implements FrameworkComponentWrapper
+{
     constructor(
         private readonly parent: PortalManager,
         private readonly gridOptions: GridOptions
@@ -280,7 +281,7 @@ class ReactFrameworkComponentWrapper
         super();
     }
 
-    protected createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
+    protected createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
         const gridOptions = this.gridOptions;
         const reactiveCustomComponents = _getGridOption(gridOptions, 'reactiveCustomComponents');
         if (reactiveCustomComponents) {

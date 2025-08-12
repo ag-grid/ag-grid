@@ -49,10 +49,9 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
     }));
 
     const setupCtrl = useCallback(() => {
-
         const topTabGuard = topTabGuardRef.current;
         const bottomTabGuard = bottomTabGuardRef.current;
-        if (!topTabGuard && !bottomTabGuard || context.isDestroyed()) {
+        if ((!topTabGuard && !bottomTabGuard) || context.isDestroyed()) {
             // Clean up after both refs have been removed or the context is destroyed
             tabGuardCtrlRef.current = context.destroyBean(tabGuardCtrlRef.current);
             return;

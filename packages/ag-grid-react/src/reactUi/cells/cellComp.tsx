@@ -440,8 +440,6 @@ const CellComp = ({
         return showCellValue();
     };
 
-
-
     const renderCell = () => (
         <div ref={setGuiRef} style={userStyles} role={cellAriaRole} col-id={colIdSanitised}>
             {showCellWrapper ? (

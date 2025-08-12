@@ -1,18 +1,12 @@
-"use client";
+'use client';
 
-import React, {
-    StrictMode,
-    useState,
-    useCallback,
-    useMemo,
-    useRef,
-    useEffect,
-} from "react";
-import { createRoot } from "react-dom/client";
-import { ModuleRegistry } from "ag-grid-community";
-import type { GridReadyEvent, GetRowIdParams, ColDef } from "ag-grid-community";
-import { AgGridReact } from "ag-grid-react";
+import React, { StrictMode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import { ModuleRegistry } from 'ag-grid-community';
+import type { ColDef, GetRowIdParams, GridReadyEvent } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
 // Type definitions
 interface RowData {
@@ -41,14 +35,14 @@ console.log('React Version', React.version, queryParamsFromUrl.get('version'), '
 
 // Sample data - stable references (Best Practice)
 const userData: RowData[] = [
-    { id: 1, name: "John Doe", age: 30, country: "USA" },
-    { id: 2, name: "Jane Smith", age: 25, country: "UK" },
-    { id: 3, name: "Bob Johnson", age: 35, country: "Canada" },
+    { id: 1, name: 'John Doe', age: 30, country: 'USA' },
+    { id: 2, name: 'Jane Smith', age: 25, country: 'UK' },
+    { id: 3, name: 'Bob Johnson', age: 35, country: 'Canada' },
 ];
 
 const customerData: RowData[] = [
-    { id: 4, name: "Alice Brown", age: 28, country: "Australia" },
-    { id: 5, name: "Charlie Wilson", age: 32, country: "Germany" },
+    { id: 4, name: 'Alice Brown', age: 28, country: 'Australia' },
+    { id: 5, name: 'Charlie Wilson', age: 32, country: 'Germany' },
 ];
 
 // GridComponent with all AG Grid React best practices
@@ -60,12 +54,13 @@ const GridComponent = React.memo<GridComponentProps>(({ id, title, data, index }
     // Best Practice: useMemo for column definitions (stable reference)
     const colDefs = useMemo<ColDef[]>(
         () => [
-            { field: "id", width: 80, headerName: id },
-            { field: "name", width: 150 },
-            { field: "age", width: 100 },
+            { field: 'id', width: 80, headerName: id },
+            { field: 'name', width: 150 },
+            { field: 'age', width: 100 },
             {
-                field: "country", width: 150,
-                cellRenderer: (p: any) => <p style={{ color: 'blue' }}>{p.value}</p>
+                field: 'country',
+                width: 150,
+                cellRenderer: (p: any) => <p style={{ color: 'blue' }}>{p.value}</p>,
             },
         ],
         [title]
@@ -98,9 +93,9 @@ const GridComponent = React.memo<GridComponentProps>(({ id, title, data, index }
     useEffect(() => {
         console.log('useEffect for ', title);
         return () => {
-            console.log('useEffect cleanup for ', title)
-        }
-    }, [])
+            console.log('useEffect cleanup for ', title);
+        };
+    }, []);
 
     const onGridPreDestroyed = useCallback(() => {
         console.log(`💥 [${title}] Grid destroying`);
@@ -108,17 +103,15 @@ const GridComponent = React.memo<GridComponentProps>(({ id, title, data, index }
 
     const rowSelection = useMemo(() => {
         return {
-            mode: 'singleRow'
+            mode: 'singleRow',
         };
     }, []);
     return (
-        <div
-            style={{ border: "1px solid #ccc", margin: "10px 0", padding: "10px" }}
-        >
+        <div style={{ border: '1px solid #ccc', margin: '10px 0', padding: '10px' }}>
             <h3>
                 {title} (Position: {index + 1})
             </h3>
-            <div style={{ height: "150px", width: "100%" }}>
+            <div style={{ height: '150px', width: '100%' }}>
                 <AgGridReact
                     ref={gridRef}
                     rowData={data}
@@ -138,16 +131,16 @@ const GridComponent = React.memo<GridComponentProps>(({ id, title, data, index }
 const GridExample = () => {
     // State for managing multiple grids and their order
     const [grids, setGrids] = useState<GridConfig[]>([
-        { id: "users", title: "Users Grid", data: userData },
-        { id: "customers", title: "Customers Grid", data: customerData },
+        { id: 'users', title: 'Users Grid', data: userData },
+        { id: 'customers', title: 'Customers Grid', data: customerData },
     ]);
 
     // make sure strict mode is working
     useEffect(() => {
-        console.log("useEffect callback executed (after render)");
+        console.log('useEffect callback executed (after render)');
 
         return () => {
-            console.log("Cleanup function executed");
+            console.log('Cleanup function executed');
         };
     }, []);
 
@@ -158,10 +151,7 @@ const GridExample = () => {
 
         setGrids((prev) => {
             const newGrids = [...prev];
-            [newGrids[index], newGrids[index - 1]] = [
-                newGrids[index - 1],
-                newGrids[index],
-            ];
+            [newGrids[index], newGrids[index - 1]] = [newGrids[index - 1], newGrids[index]];
             return newGrids;
         });
     }, []);
@@ -173,10 +163,7 @@ const GridExample = () => {
 
             setGrids((prev) => {
                 const newGrids = [...prev];
-                [newGrids[index], newGrids[index + 1]] = [
-                    newGrids[index + 1],
-                    newGrids[index],
-                ];
+                [newGrids[index], newGrids[index + 1]] = [newGrids[index + 1], newGrids[index]];
                 return newGrids;
             });
         },
@@ -184,34 +171,27 @@ const GridExample = () => {
     );
 
     return (
-        <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-
+        <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
             {grids.map((grid, index) => (
                 <div key={grid.id}>
-                    <div style={{ marginBottom: "10px" }}>
+                    <div style={{ marginBottom: '10px' }}>
                         <button
                             onClick={() => moveUp(index)}
                             disabled={index === 0}
-                            style={{ marginRight: "5px", padding: "5px 10px" }}
+                            style={{ marginRight: '5px', padding: '5px 10px' }}
                         >
                             ⬆️ Move Up
                         </button>
                         <button
                             onClick={() => moveDown(index)}
                             disabled={index === grids.length - 1}
-                            style={{ padding: "5px 10px" }}
+                            style={{ padding: '5px 10px' }}
                         >
                             ⬇️ Move Down
                         </button>
                     </div>
 
-                    <GridComponent
-                        key={grid.id}
-                        id={grid.id}
-                        title={grid.title}
-                        data={grid.data}
-                        index={index}
-                    />
+                    <GridComponent key={grid.id} id={grid.id} title={grid.title} data={grid.data} index={index} />
                 </div>
             ))}
         </div>
@@ -219,7 +199,7 @@ const GridExample = () => {
 };
 
 // Render GridExample
-const root = createRoot(document.getElementById("root")!);
+const root = createRoot(document.getElementById('root')!);
 root.render(
     <StrictMode>
         <GridExample />
