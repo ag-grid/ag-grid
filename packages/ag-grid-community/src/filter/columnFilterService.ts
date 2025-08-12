@@ -169,7 +169,11 @@ export class ColumnFilterService
         this.onNewRowsLoaded('rowDataUpdated');
     }
 
-    public setModel(model: FilterModel | null, source: FilterChangedEventSourceType = 'api'): void {
+    public setModel(
+        model: FilterModel | null,
+        source: FilterChangedEventSourceType = 'api',
+        forceUpdateActive?: boolean
+    ): void {
         const { colModel, dataTypeSvc, filterManager } = this.beans;
         if (dataTypeSvc?.isPendingInference) {
             this.modelUpdates.push({ model, source });
@@ -233,6 +237,8 @@ export class ColumnFilterService
 
             if (columns.length > 0) {
                 filterManager?.onFilterChanged({ columns, source });
+            } else if (forceUpdateActive) {
+                this.updateActive('filterChanged');
             }
         });
     }
@@ -281,7 +287,7 @@ export class ColumnFilterService
                 });
             }
         }
-        this.setModel(model, source);
+        this.setModel(model, source, true);
     }
 
     public getState(): ColumnFilterState | undefined {
@@ -600,9 +606,11 @@ export class ColumnFilterService
                 );
             }
         });
-        AgPromise.all(promises)
-            .then(() => this.updateFilterFlagInColumns(source, { afterDataChange: true }))
-            .then(() => this.updateActiveFilters());
+        AgPromise.all(promises).then(() => this.updateActive(source, { afterDataChange: true }));
+    }
+
+    private updateActive(source: ColumnEventType, additionalEventAttributes?: any): void {
+        this.updateFilterFlagInColumns(source, additionalEventAttributes).then(() => this.updateActiveFilters());
     }
 
     public createGetValue(
