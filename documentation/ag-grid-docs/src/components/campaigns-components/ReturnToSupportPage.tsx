@@ -13,7 +13,7 @@ interface ReturnToSupportPageProps {
 }
 
 const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData, utm }) => {
-    const endDate = new Date('2025-07-31T23:59:59');
+    const endDate = new Date('2025-08-31T23:59:59');
 
     // Content states
     const [heroTitle, setHeroTitle] = useState('Welcome back to better support & new features');
