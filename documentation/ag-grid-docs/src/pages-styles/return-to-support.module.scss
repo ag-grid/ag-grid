@@ -18,7 +18,13 @@
     overflow: hidden;
 
     @media screen and (max-width: 890px) {
-        height: 900px;
+        height: 700px;
+    }
+
+    .countdownEnded & {
+        @media screen and (max-width: 890px) {
+            height: 900px;
+        }
     }
 }
 

@@ -49,7 +49,7 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
     };
 
     return (
-        <div className={`layout-max-width-small`}>
+        <div className={`layout-max-width-small ${isCountdownEnded ? styles.countdownEnded : ''}`}>
             <div className={styles.rtsHeroGradient}></div>
 
             <div className={styles.rtsHeroSection}>
