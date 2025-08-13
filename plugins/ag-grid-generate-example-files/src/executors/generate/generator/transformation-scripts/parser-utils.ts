@@ -769,14 +769,16 @@ export function wrapTearDownExample(method: string) {
 export function getEnableAGTestIdLogic(isUmd: boolean = false): string {
     const enableStart = '/** ENABLE AG-TEST-ID START **/';
     const enableEnd = '/** ENABLE AG-TEST-ID END **/';
+    const importCode = isUmd ? '' : "import { setupAgTestIds, getGridApi } from 'ag-grid-community';";
     const setupCode = isUmd ? 'agGrid.setupAgTestIds();' : 'setupAgTestIds();';
-    const importCode = isUmd ? '' : "import { setupAgTestIds } from 'ag-grid-community';";
+    const exposeGridApi = isUmd ? 'window.getGridApi = agGrid.getGridApi;' : 'window.getGridApi = getGridApi;';
 
     const method = `
         ${importCode}
         const enableTestIds = new URLSearchParams(window.location.search).get('enableTestIds');
         if (enableTestIds) {
             ${setupCode}
+            ${exposeGridApi}
         }
     `;
     return `${enableStart}${method}${enableEnd}`;

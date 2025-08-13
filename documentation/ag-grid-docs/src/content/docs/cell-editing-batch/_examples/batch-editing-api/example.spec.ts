@@ -62,8 +62,8 @@ test.agExample(import.meta, () => {
         });
     });
 
-    test.vanilla('GridApi + Styles', async ({ agIdFor, page }) => {
-        const gridApi = remoteGrid(page, '#myGrid');
+    test.eachFramework('GridApi + Styles', async ({ agIdFor, page }) => {
+        const gridApi = remoteGrid(page);
 
         await gridApi.startBatchEdit();
 
