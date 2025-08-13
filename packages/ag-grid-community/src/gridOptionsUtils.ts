@@ -1,7 +1,7 @@
 import { _getDocument, _getRootNode } from './agStack/utils/document';
 import { _getElementRectWithOffset } from './agStack/utils/dom';
 import { _doOnce } from './agStack/utils/function';
-import { _missing } from './agStack/utils/generic';
+import { _exists, _missing } from './agStack/utils/generic';
 import type { GridApi } from './api/gridApi';
 import type { BeanCollection } from './context/context';
 import type {
@@ -175,9 +175,14 @@ export function _setDomData(gos: GridOptionsService, element: Element, key: stri
     domData[key] = value;
 }
 
-export function _getPageBody(beans: BeanCollection): HTMLElement | ShadowRoot {
+export function _getAppRoot(beans: BeanCollection): HTMLElement | ShadowRoot {
     let rootNode: Document | ShadowRoot | HTMLElement | null = null;
     let targetEl: HTMLElement | ShadowRoot | null = null;
+
+    const { appRoot } = beans.gridOptions
+    if (appRoot && _exists(appRoot)) {
+        return appRoot
+    }
 
     try {
         rootNode = _getDocument(beans).fullscreenElement as HTMLElement;
@@ -203,14 +208,14 @@ export function _getPageBody(beans: BeanCollection): HTMLElement | ShadowRoot {
     return targetEl;
 }
 
-function _getBodyWidth(beans: BeanCollection): number {
-    const body = _getPageBody(beans) as HTMLElement;
-    return body?.clientWidth ?? (window.innerWidth || -1);
+function _getAppRootWidth(beans: BeanCollection): number {
+    const appRoot = _getAppRoot(beans) as HTMLElement;
+    return appRoot?.clientWidth ?? (window.innerWidth || -1);
 }
 
-function _getBodyHeight(beans: BeanCollection): number {
-    const body = _getPageBody(beans) as HTMLElement;
-    return body?.clientHeight ?? (window.innerHeight || -1);
+function _getAppRootHeight(beans: BeanCollection): number {
+    const appRoot = _getAppRoot(beans) as HTMLElement;
+    return appRoot?.clientHeight ?? (window.innerHeight || -1);
 }
 
 export function _anchorElementToMouseMoveEvent(
@@ -221,8 +226,8 @@ export function _anchorElementToMouseMoveEvent(
     const eRect = element.getBoundingClientRect();
     const height = eRect.height;
 
-    const browserWidth = _getBodyWidth(beans) - 2; // 2px for 1px borderLeft and 1px borderRight
-    const browserHeight = _getBodyHeight(beans) - 2; // 2px for 1px borderTop and 1px borderBottom
+    const browserWidth = _getAppRootWidth(beans) - 2; // 2px for 1px borderLeft and 1px borderRight
+    const browserHeight = _getAppRootHeight(beans) - 2; // 2px for 1px borderTop and 1px borderBottom
 
     const offsetParent = element.offsetParent;
 
@@ -343,8 +348,8 @@ export function _getRowIdCallback<TData = any>(
     gos: GridOptionsService
 ):
     | ((
-          params: WithoutGridCommon<ExtractParamsFromCallback<GetRowIdFunc<TData>>>
-      ) => ExtractReturnTypeFromCallback<GetRowIdFunc<TData>>)
+        params: WithoutGridCommon<ExtractParamsFromCallback<GetRowIdFunc<TData>>>
+    ) => ExtractReturnTypeFromCallback<GetRowIdFunc<TData>>)
     | undefined {
     const getRowId = gos.getCallback('getRowId');
 

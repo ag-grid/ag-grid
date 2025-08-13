@@ -24,7 +24,7 @@ import {
     _exists,
     _focusInto,
     _getGrandTotalRow,
-    _getPageBody,
+    _getAppRoot,
     _getRootNode,
     _isIOSUserAgent,
     _isKeyboardMode,
@@ -267,7 +267,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         wrapperEl.appendChild(loadingIcon);
 
         const rootNode = _getRootNode(beans);
-        const targetEl = _getPageBody(beans);
+        const targetEl = _getAppRoot(beans);
 
         if (!targetEl) {
             _warn(54);

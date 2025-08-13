@@ -298,6 +298,11 @@ export interface GridOptions<TData = any> {
      * DOM element to use as the popup parent for grid popups (context menu, column menu etc).
      */
     popupParent?: HTMLElement | null;
+    /**
+     * DOM element that is used as the root of the application.
+     */
+    appRoot?: HTMLElement | null;
+
 
     // *** Clipboard *** //
     /**
@@ -506,9 +511,9 @@ export interface GridOptions<TData = any> {
      * @agModule `ColumnAutoSizeModule`
      */
     autoSizeStrategy?:
-        | SizeColumnsToFitGridStrategy
-        | SizeColumnsToFitProvidedWidthStrategy
-        | SizeColumnsToContentStrategy;
+    | SizeColumnsToFitGridStrategy
+    | SizeColumnsToFitProvidedWidthStrategy
+    | SizeColumnsToContentStrategy;
 
     // *** Components *** //
     /**
@@ -2889,7 +2894,7 @@ export interface ChartRef {
     setMaximized: (maximized: boolean) => void;
 }
 
-export interface ChartRefParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, ChartRef {}
+export interface ChartRefParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, ChartRef { }
 
 export interface ServerSideGroupLevelParams {
     /**
@@ -2908,7 +2913,7 @@ export interface ServerSideGroupLevelParams {
 
 /**
  * @deprecated use ServerSideGroupLevelParams instead */
-export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
+export interface ServerSideStoreParams extends ServerSideGroupLevelParams { }
 
 export interface LoadingCellRendererSelectorFunc<TData = any, TValue = any, TContext = any> {
     (params: ILoadingCellRendererParams<TData, TValue, TContext>): LoadingCellRendererSelectorResult | undefined;

@@ -10,7 +10,7 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { Environment } from '../environment';
 import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
-import { _addGridCommonParams, _anchorElementToMouseMoveEvent, _getPageBody } from '../gridOptionsUtils';
+import { _addGridCommonParams, _anchorElementToMouseMoveEvent, _getAppRoot } from '../gridOptionsUtils';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { DragItem } from '../interfaces/iDragItem';
 import { _warn } from '../validation/logging';
@@ -589,7 +589,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         eGui.style.top = '20px';
         eGui.style.left = '20px';
 
-        const targetEl = _getPageBody(this.beans);
+        const targetEl = _getAppRoot(this.beans);
 
         this.dragAndDropImageParent = targetEl;
 

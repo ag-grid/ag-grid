@@ -889,7 +889,7 @@ export {
     _canSkipShowingRowGroup,
     _getRowHeightAsNumber,
     _shouldUpdateColVisibilityAfterGroup,
-    _getPageBody,
+    _getAppRoot,
     _anchorElementToMouseMoveEvent,
     _getGroupAggFiltering,
     _isRowSelection,
