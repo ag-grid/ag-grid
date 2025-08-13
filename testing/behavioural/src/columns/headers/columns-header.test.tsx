@@ -38,10 +38,7 @@ describe('React Jsdom column header ', () => {
             const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
             const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
 
-            const [columnDefs] = useState<ColDef[]>([
-                { field: 'country', pinned: 'left' },
-                { field: 'athlete' },
-            ]);
+            const [columnDefs] = useState<ColDef[]>([{ field: 'country', pinned: 'left' }, { field: 'athlete' }]);
 
             const data = [{ country: 'USA', athlete: 'One' }];
 
@@ -74,7 +71,6 @@ describe('React Jsdom column header ', () => {
         const headers = screen.getAllByRole('columnheader').map((x) => x.textContent?.trim());
         expect(headers).toEqual(['Country', 'Athlete']);
 
-
         // Wait for the onGridReady callback to complete which should have hidden the 'athlete' column
         await waitFor(() => {
             const headers = screen.getAllByRole('columnheader').map((x) => x.textContent?.trim());
@@ -85,8 +81,5 @@ describe('React Jsdom column header ', () => {
             expect(cells).toEqual(['USA']);
             expect(cells).not.toContain('One');
         });
-
-
     });
 });
-
