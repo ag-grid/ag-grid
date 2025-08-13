@@ -145,7 +145,7 @@ validateExpectedDirs "dist/artifacts/contents/packages" 7
 
 validateExpectedDirs "dist/artifacts/community-modules" 11
 validateExpectedDirs "dist/artifacts/enterprise-modules" 21
-validateExpectedDirs "dist/artifacts/packages" 7
+validateExpectedDirs "dist/artifacts/packages" 8
 
 validateModules "dist/artifacts/contents/community-modules"
 validateModules "dist/artifacts/contents/enterprise-modules"
