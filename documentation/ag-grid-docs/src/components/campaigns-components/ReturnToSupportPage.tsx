@@ -16,7 +16,9 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
     const endDate = new Date('2025-08-31T23:59:59');
 
     // Content states
-    const [heroTitle, setHeroTitle] = useState('Welcome back to better support & new features');
+    const [heroTitle, setHeroTitle] = useState<string | React.ReactElement>(
+        'Welcome back to better support & new features'
+    );
     const [heroDescription, setHeroDescription] = useState(
         'Take advantage of our limited-time renewal offer and unlock the full power of AG Grid support before our return to support policy takes effect. Renew today and stay ahead.'
     );
@@ -40,7 +42,13 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
     }, [endDate]);
 
     const updateContentOnCountdownEnd = () => {
-        setHeroTitle('Renewing your support at AG Grid');
+        setHeroTitle(
+            <>
+                Renewing your
+                <br />
+                support at AG Grid
+            </>
+        );
         setHeroDescription(
             'Renew your AG Grid subscription to unlock full support, stay ahead with expert guidance, and ensure uninterrupted access to all updates and resources.'
         );
