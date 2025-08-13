@@ -98,6 +98,22 @@
         max-width: 700px;
     }
 }
+
+.rtsHeroImageLight {
+    display: block;
+
+    #{$selector-darkmode} & {
+        display: none;
+    }
+}
+
+.rtsHeroImageDark {
+    display: none;
+
+    #{$selector-darkmode} & {
+        display: block;
+    }
+}
 .rtsHeroContent {
     flex: 2;
 
