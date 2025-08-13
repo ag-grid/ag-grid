@@ -29,19 +29,28 @@ async function remoteGridApi<T extends keyof GridApi>(
     return page.evaluate(
         ([gridSelector, methodName, ...args]: any[]) => {
             const agGrid = (window as any).agGrid;
+
+            if (!agGrid) {
+                throw new Error(`window.agGrid missing`);
+            }
+
             const getGridApi = agGrid.getGridApi;
-            const api = getGridApi(gridSelector);
-            if (api && typeof api[methodName] === 'function') {
-                return api[methodName](...args);
-            } else if (!agGrid) {
-                throw new Error(`window.gridApi missing`);
-            } else if (!getGridApi) {
+
+            if (!getGridApi) {
                 throw new Error(`grid.getGridApi missing`);
-            } else if (!api) {
+            }
+
+            const api = getGridApi(gridSelector);
+
+            if (!api) {
                 throw new Error(`getGridApi('${gridSelector}') returned null`);
-            } else {
+            }
+
+            if (typeof api[methodName] !== 'function') {
                 throw new Error(`Method ${methodName} not a function on gridApi: ${typeof api[methodName]}`);
             }
+
+            return api[methodName](...args);
         },
         [gridSelector, methodName, ...args]
     );
