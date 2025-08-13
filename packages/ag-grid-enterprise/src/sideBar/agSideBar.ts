@@ -1,6 +1,8 @@
 import type {
+    BeanCollection,
     ComponentSelector,
     ElementParams,
+    Environment,
     ISideBar,
     IToolPanel,
     IToolPanelParams,
@@ -48,10 +50,15 @@ class AgSideBar extends Component implements ISideBar {
     private toolPanelWrappers: ToolPanelWrapper[] = [];
     private sideBar: SideBarDef | undefined;
     private position: 'left' | 'right';
+    private environment: Environment;
 
     constructor() {
         super(AgSideBarElement, [AgSideBarButtonsSelector]);
         this.registerCSS(agSideBarCSS);
+    }
+
+    public wireBeans(beans: BeanCollection): void {
+        this.environment = beans.environment;
     }
 
     public postConstruct(): void {
@@ -114,7 +121,7 @@ class AgSideBar extends Component implements ISideBar {
 
         if (openPanel.contains(activeElement)) {
             nextEl = _findNextFocusableElement(beans, openPanel, undefined, true);
-        } else if (isTargetUnderManagedComponent(openPanel, target) && backwards) {
+        } else if (isTargetUnderManagedComponent(openPanel, target)) {
             nextEl = findFocusableElementBeforeTabGuard(openPanel, target);
         }
 
@@ -331,7 +338,9 @@ class AgSideBar extends Component implements ISideBar {
         wrapper.setDisplayed(false);
 
         const wrapperGui = wrapper.getGui();
-        if (typeof def.parent?.appendChild === 'function') {
+
+        if (def.parent instanceof HTMLElement) {
+            this.environment.applyThemeClasses(def.parent);
             def.parent.appendChild(wrapperGui);
         } else {
             this.appendChild(wrapperGui);
