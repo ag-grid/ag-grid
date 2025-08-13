@@ -122,8 +122,9 @@
         "cwd": "{projectRoot}"
       }
     },
+    "lint:depcruise": {},
     "lint": {
-      "dependsOn": ["lint:knip"],
+      "dependsOn": ["lint:knip", "lint:depcruise"],
       "command": "eslint && stylelint './src/**/*css'",
       "options": {
         "cwd": "{projectRoot}"
