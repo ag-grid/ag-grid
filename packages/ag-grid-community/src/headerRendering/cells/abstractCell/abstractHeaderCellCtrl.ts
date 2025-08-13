@@ -50,6 +50,7 @@ export abstract class AbstractHeaderCellCtrl<
     public lastFocusEvent: KeyboardEvent | null = null;
 
     protected dragSource: DragSource | null = null;
+    protected pendingFocusEvent: KeyboardEvent | null;
 
     protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
     protected abstract getHeaderClassParams(): HeaderClassParams;
@@ -364,7 +365,10 @@ export abstract class AbstractHeaderCellCtrl<
     public focus(event?: KeyboardEvent): boolean {
         const { eGui } = this;
         if (!eGui) {
-            return false;
+            // The component has not been rendered yet, (likely in React)
+            // so we store the event to focus later when setComp is called with the eGui element
+            this.pendingFocusEvent = event || null;
+            return true;
         }
 
         this.lastFocusEvent = event || null;
