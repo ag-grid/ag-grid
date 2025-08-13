@@ -14,20 +14,14 @@ const getTimeLeft = (target: Date) => {
     return { days, hours, minutes, seconds };
 };
 
-const FlipCountdown: React.FC<{
-    days?: number;
+interface FlipCountdownProps {
+    endDate: Date;
     onCountdownEnd?: () => void;
     isEnded?: boolean;
     onEndedChange?: (ended: boolean) => void;
-}> = ({ days = 60, onCountdownEnd, isEnded, onEndedChange }) => {
-    //  Set your end date here
-    // Examples:
-    // const endDate = new Date('2025-01-15T00:00:00Z'); // January 15, 2025 at midnight UTC
-    // const endDate = new Date(Date.UTC(2025, 0, 15, 0, 0, 0)); // January 15, 2025 at midnight UTC
-    // const endDate = new Date('2025-03-31T23:59:59Z'); // March 31, 2025 at 11:59:59 PM UTC
+}
 
-    const endDate = new Date(Date.UTC(2024, 11, 16, 0, 0, 0)); // December 16th, 2024 (yesterday) at midnight UTC
-
+const FlipCountdown: React.FC<FlipCountdownProps> = ({ endDate, onCountdownEnd, isEnded, onEndedChange }) => {
     const [left, setLeft] = useState(() => getTimeLeft(endDate));
     const [hasEnded, setHasEnded] = useState(false);
 
@@ -45,17 +39,11 @@ const FlipCountdown: React.FC<{
                     console.log('Calling onEndedChange with true');
                     onEndedChange?.(true);
                     onCountdownEnd?.();
-
-                    // Call global function to update content
-                    if (typeof window !== 'undefined' && window.updateContentOnCountdownEnd) {
-                        console.log('Calling global function');
-                        window.updateContentOnCountdownEnd();
-                    }
                 }
             }
         }, 1000);
         return () => clearInterval(handle);
-    }, [days, hasEnded, onCountdownEnd, onEndedChange]);
+    }, [endDate, hasEnded, onCountdownEnd, onEndedChange]);
 
     // If countdown has ended, show zeros
     if (hasEnded || isEnded) {
