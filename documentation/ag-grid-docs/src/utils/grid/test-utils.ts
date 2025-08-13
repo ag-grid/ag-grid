@@ -277,3 +277,5 @@ type ExternalTestType = typeof extended & typeof agGridTestExtension & typeof si
 const test = Object.assign(extended, agGridTestExtension, singleFrameworkTests) as ExternalTestType;
 
 export { expect, test };
+
+export { remoteGrid } from './test-remote-gridapi-utils';

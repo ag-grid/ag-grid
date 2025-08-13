@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { expect, remoteGrid, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     // Run through all frameworks
@@ -60,5 +60,32 @@ test.agExample(import.meta, () => {
             await expect(totalCell).toHaveText('6'); // verify the total cell has the new value
             await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
         });
+    });
+
+    test.vanilla('GridApi + Styles', async ({ agIdFor, page }) => {
+        const gridApi = remoteGrid(page, '#myGrid');
+
+        await gridApi.startBatchEdit();
+
+        const result = await gridApi.isBatchEditing();
+        expect(result).toBeTruthy();
+
+        const cell = agIdFor.cell('0', 'gold');
+
+        // initiate cell editing by double clicking the cell
+        await cell.dblclick();
+        const cellEditor = cell.locator('input');
+        await expect(cellEditor).toBeVisible();
+
+        await page.keyboard.type('100'); // type in a new value
+        await page.keyboard.press('Enter'); // press Enter to save the value
+
+        await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
+        await expect(cell).toHaveText('100'); // verify the cell has the new value
+        await expect(cell).toHaveClass(/ag-cell-batch-edit/);
+
+        const totalCell = agIdFor.cell('0', 'total');
+        await expect(totalCell).toHaveText('105'); // verify the total cell has the new value
+        await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
     });
 });
