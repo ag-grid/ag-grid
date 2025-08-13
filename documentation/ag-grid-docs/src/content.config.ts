@@ -183,7 +183,6 @@ const versions = defineCollection({
             version: z.string(),
             date: z.string().optional(),
             landingPageHighlight: z.string().optional(),
-            imageUrl: z.string().optional(),
             highlights: z
                 .array(
                     z.object({

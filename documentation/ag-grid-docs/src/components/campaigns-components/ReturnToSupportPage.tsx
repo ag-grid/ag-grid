@@ -1,5 +1,6 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { ReleasesSection } from '@ag-website-shared/components/releases-section/ReleasesSection';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React, { useEffect, useState } from 'react';
 
 import styles from '../../pages-styles/return-to-support.module.scss';
@@ -9,12 +10,10 @@ import RenewNowButton from './RenewNowButton';
 interface ReturnToSupportPageProps {
     versionsData: any;
     utm: string;
-    mailto: string;
 }
 
-const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData, utm, mailto }) => {
-    // Countdown end date - August 31st
-    const endDate = new Date('2025-08-31T23:59:59');
+const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData, utm }) => {
+    const endDate = new Date('2025-07-31T23:59:59');
 
     // Content states
     const [heroTitle, setHeroTitle] = useState('Welcome back to better support & new features');
@@ -22,6 +21,13 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
         'Take advantage of our limited-time renewal offer and unlock the full power of AG Grid support before our return to support policy takes effect. Renew today and stay ahead.'
     );
     const [showCountdownText, setShowCountdownText] = useState(true);
+    const [isCountdownEnded, setIsCountdownEnded] = useState(false);
+
+    // Generate mailto content based on countdown state
+    const mailtoAddress = 'info@ag-grid.com';
+    const mailtoSubject = isCountdownEnded ? 'Enquire about Renewing' : 'Return To Support Offer';
+    const mailtoBody = '';
+    const mailto = `mailto:${mailtoAddress}?subject=${encodeURIComponent(mailtoSubject)}&body=${encodeURIComponent(mailtoBody)}`;
 
     // Check if countdown has ended on component mount
     useEffect(() => {
@@ -32,11 +38,12 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
     }, []);
 
     const updateContentOnCountdownEnd = () => {
-        setHeroTitle('Support renewal policy now in effect');
+        setHeroTitle('Renewing your support at AG Grid');
         setHeroDescription(
-            'The limited-time offer has ended. Renewing now will require back-pay and reinstatement fees. Contact us to discuss your renewal options.'
+            'Renew your AG Grid subscription to unlock full support, stay ahead with expert guidance, and ensure uninterrupted access to all updates and resources.'
         );
         setShowCountdownText(false);
+        setIsCountdownEnded(true);
     };
 
     return (
@@ -44,28 +51,56 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
             <div className={styles.rtsHeroGradient}></div>
 
             <div className={styles.rtsHeroSection}>
-                <div className={styles.rtsHeroContent}>
-                    <h2 id="hero-title">{heroTitle}</h2>
-                    <p id="hero-description">{heroDescription}</p>
-                    <div className={styles.rtsFlipClockBox}>
-                        <RenewNowButton
-                            href={mailto}
-                            className={`button ${styles.button}`}
-                            plausibleEventType="renew-header-cta"
-                            text="Renew Now"
-                        />
-                    </div>
-                </div>
-                <div className={styles.rtsFlipClockBox}>
-                    <div className={styles.rtsFlipClock}>
-                        {showCountdownText && (
-                            <div className={styles.rtsFlipClockEnds} id="countdown-text">
-                                OFFER ENDS AUGUST 31ST
+                {isCountdownEnded ? (
+                    // Full-width layout when countdown has ended
+                    <div className={styles.rtsHeroEndedLayout}>
+                        <div className={styles.rtsHeroContent}>
+                            <h2 id="hero-title">{heroTitle}</h2>
+                            <p id="hero-description">{heroDescription}</p>
+                            <div className={styles.rtsFlipClockBox}>
+                                <RenewNowButton
+                                    href={mailto}
+                                    className={`button ${styles.button}`}
+                                    plausibleEventType="renew-header-cta"
+                                    text="Renew Now"
+                                />
                             </div>
-                        )}
-                        <FlipCountdown endDate={endDate} onCountdownEnd={updateContentOnCountdownEnd} />
+                        </div>
+                        <div className={styles.rtsHeroImageContainer}>
+                            <img
+                                src={urlWithBaseUrl('images/campaigns/hero-ag-grid.png')}
+                                alt="AG Grid Hero"
+                                className={styles.rtsHeroImage}
+                            />
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    // Original side-by-side layout when countdown is active
+                    <>
+                        <div className={styles.rtsHeroContent}>
+                            <h2 id="hero-title">{heroTitle}</h2>
+                            <p id="hero-description">{heroDescription}</p>
+                            <div className={styles.rtsFlipClockBox}>
+                                <RenewNowButton
+                                    href={mailto}
+                                    className={`button ${styles.button}`}
+                                    plausibleEventType="renew-header-cta"
+                                    text="Renew Now"
+                                />
+                            </div>
+                        </div>
+                        <div className={styles.rtsFlipClockBox}>
+                            <div className={styles.rtsFlipClock}>
+                                {showCountdownText && (
+                                    <div className={styles.rtsFlipClockEnds} id="countdown-text">
+                                        OFFER ENDS AUGUST 31ST
+                                    </div>
+                                )}
+                                <FlipCountdown endDate={endDate} onCountdownEnd={updateContentOnCountdownEnd} />
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
 
             <section className={styles.rtsBenefitsSection}>
@@ -217,7 +252,7 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
                 versionsData={versionsData}
                 utm={utm}
                 title="Recent improvements"
-                subtitle="Here's what you've missed since you've been gone"
+                subtitle="The latest updates and improvements to AG Grid"
                 viewAllButtonText="View recent releases"
                 viewAllButtonUrl="/whats-new"
             />
@@ -253,18 +288,29 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
                 </div>
                 <div className={styles.rtsRenewRight}>
                     <div className={styles.rtsRenewContent}>
-                        <p>
-                            To ensure fairness for customers who maintain continuous support and to help us deliver
-                            consistent, high-quality service and enhancements, we're updating our Support & Maintenance
-                            renewal policy.
-                        </p>
-                        <p>
-                            From 31 August, if you renew your agreement after a break in coverage, you'll be required to
-                            pay the <b>full back-pay for the inactive period</b>, plus a <b>reinstatement fee</b>. This
-                            fee will be <b>15% of your go-forward support fee</b> if the break was <b>under a year</b>,
-                            or
-                            <b> 25% of the back-pay</b> if the break was <b>over a year</b>.
-                        </p>
+                        {isCountdownEnded ? (
+                            <p>
+                                If your support agreement is renewed after a break in coverage, you'll be required to
+                                pay the full back-pay for the inactive period, along with a reinstatement fee - 15% of
+                                your upcoming support fee if the gap was under a year, or 25% of the back-pay if the gap
+                                was over a year.
+                            </p>
+                        ) : (
+                            <>
+                                <p>
+                                    To ensure fairness for customers who maintain continuous support and to help us
+                                    deliver consistent, high-quality service and enhancements, we're updating our
+                                    Support & Maintenance renewal policy.
+                                </p>
+                                <p>
+                                    From 31 August, if you renew your agreement after a break in coverage, you'll be
+                                    required to pay the <b>full back-pay for the inactive period</b>, plus a{' '}
+                                    <b>reinstatement fee</b>. This fee will be <b>15% of your go-forward support fee</b>{' '}
+                                    if the break was <b>under a year</b>, or
+                                    <b> 25% of the back-pay</b> if the break was <b>over a year</b>.
+                                </p>
+                            </>
+                        )}
                     </div>
                 </div>
             </section>
