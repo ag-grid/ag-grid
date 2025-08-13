@@ -80,7 +80,7 @@ export type { Context } from './context/context';
 export { BeanName, SingletonBean, BeanCollection } from './context/context';
 
 // AG Stack (public)
-export { VisibleChangedEvent, RefPlaceholder } from './agStack/interfaces/agComponent';
+export { VisibleChangedEvent, RefPlaceholder, AgBaseComponent, _isComponent } from './agStack/interfaces/agComponent';
 export { AgEvent } from './agStack/interfaces/agEvent';
 export { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
 export { LocaleTextFunc } from './agStack/interfaces/iLocaleService';

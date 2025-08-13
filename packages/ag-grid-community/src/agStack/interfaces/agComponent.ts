@@ -68,3 +68,7 @@ export type AgComponentSelector<
     component: { new (params?: any): TComponent };
     selector: TComponentSelectorType;
 };
+
+export function _isComponent<TBeanCollection>(item: any): item is AgBaseComponent<TBeanCollection> {
+    return typeof (item as AgBaseComponent<TBeanCollection>)?.getGui === 'function';
+}

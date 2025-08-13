@@ -1,4 +1,12 @@
-import type { AgEvent, ComponentSelector, ElementParams, GridCheckbox, GridToggleButton } from 'ag-grid-community';
+import type {
+    AgBaseComponent,
+    AgEvent,
+    BeanCollection,
+    ComponentSelector,
+    ElementParams,
+    GridCheckbox,
+    GridToggleButton,
+} from 'ag-grid-community';
 import {
     AgCheckboxSelector,
     AgToggleButton,
@@ -6,11 +14,12 @@ import {
     KeyCode,
     RefPlaceholder,
     _createIcon,
+    _isComponent,
     _setAriaExpanded,
     _setDisplayed,
 } from 'ag-grid-community';
 
-type GroupItem = Component<any> | HTMLElement;
+type GroupItem = AgBaseComponent<BeanCollection> | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';
 type GroupDirection = 'horizontal' | 'vertical';
 
@@ -217,7 +226,7 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
 
     private insertItem(item: GroupItem, prepend?: boolean) {
         const container = this.eContainer;
-        const el = item instanceof Component ? item.getGui() : item;
+        const el = _isComponent(item) ? item.getGui() : item;
 
         el.classList.add('ag-group-item', `ag-${this.cssIdentifier}-group-item`);
 
@@ -236,7 +245,7 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     }
 
     public getItemIndex(item: GroupItem): number | -1 {
-        const el = item instanceof Component ? item.getGui() : item;
+        const el = _isComponent(item) ? item.getGui() : item;
         return this.items.indexOf(el);
     }
 

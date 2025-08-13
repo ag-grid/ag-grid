@@ -1,3 +1,4 @@
+import { _isComponent } from '../../agStack/interfaces/agComponent';
 import { _areEqual } from '../../agStack/utils/array';
 import { _removeFromParent, _setDisabled, _setDisplayed } from '../../agStack/utils/dom';
 import { AgPromise } from '../../agStack/utils/promise';
@@ -11,7 +12,7 @@ import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
 import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
-import { Component } from '../../widgets/component';
+import type { Component } from '../../widgets/component';
 import type { GridInputTextField, GridRadioButton, GridSelect } from '../../widgets/gridWidgetTypes';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import type {
@@ -640,13 +641,13 @@ export abstract class SimpleFilter<
     }
 
     protected setElementDisplayed(element: E, displayed: boolean): void {
-        if (element instanceof Component) {
+        if (_isComponent(element)) {
             _setDisplayed(element.getGui(), displayed);
         }
     }
 
     protected setElementDisabled(element: E, disabled: boolean): void {
-        if (element instanceof Component) {
+        if (_isComponent(element)) {
             _setDisabled(element.getGui(), disabled);
         }
     }
