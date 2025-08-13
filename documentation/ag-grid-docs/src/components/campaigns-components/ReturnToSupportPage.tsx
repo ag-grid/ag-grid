@@ -31,11 +31,13 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
 
     // Check if countdown has ended on component mount
     useEffect(() => {
+        const searchParams = window.location.search;
+        const hasEndedParam = new URLSearchParams(searchParams).get('hasEnded') === 'true';
         const now = new Date();
-        if (now > endDate) {
+        if (now > endDate || hasEndedParam) {
             updateContentOnCountdownEnd();
         }
-    }, []);
+    }, [endDate]);
 
     const updateContentOnCountdownEnd = () => {
         setHeroTitle('Renewing your support at AG Grid');
