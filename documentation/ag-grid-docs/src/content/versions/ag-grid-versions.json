@@ -29,8 +29,7 @@
             }
         ],
         "notesPath": "./upgrading-to-ag-grid-34-1",
-        "hideBlogPostLink": false,
-        "imageUrl": "https://blog.ag-grid.com/content/images/size/w1600/2025/07/34.1.png"
+        "hideBlogPostLink": false
     },
     {
         "version": "34.0.2",
@@ -67,8 +66,7 @@
             }
         ],
         "notesPath": "./upgrading-to-ag-grid-34",
-        "hideBlogPostLink": false,
-        "imageUrl": "https://blog.ag-grid.com/content/images/2025/06/33.4---800px.png"
+        "hideBlogPostLink": false
     },
     {
         "version": "33.3.0",
@@ -95,8 +93,7 @@
             }
         ],
         "notesPath": "./upgrading-to-ag-grid-33-3",
-        "hideBlogPostLink": false,
-        "imageUrl": "https://blog.ag-grid.com/content/images/size/w1600/2025/05/33.3-1.png"
+        "hideBlogPostLink": false
     },
     {
         "version": "33.2.4",

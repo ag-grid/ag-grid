@@ -8,7 +8,6 @@ interface VersionData {
     version: string;
     date?: string;
     landingPageHighlight?: string;
-    imageUrl?: string;
     highlights?: Array<{
         text: string;
         path?: string;
@@ -56,7 +55,7 @@ export const ReleasesSection: React.FC<ReleasesSectionProps> = ({
                             rel="noopener noreferrer"
                         >
                             <img
-                                src={version.imageUrl || urlWithBaseUrl(`images/campaigns/${version.version}.png`)}
+                                src={urlWithBaseUrl(`images/versions/${version.version}.png`)}
                                 className={styles.rtsReleaseImage}
                                 alt={`AG Grid ${version.version} release`}
                             />
