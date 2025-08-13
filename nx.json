@@ -146,7 +146,7 @@
       "cache": true,
       "options": {
         "cwd": "{projectRoot}",
-        "commands": ["[ -d benchmarks ] && npx depcruise src benchmarks || npx depcruise src"]
+        "commands": ["npx depcruise src"]
       }
     },
     "test": {
