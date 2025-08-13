@@ -52,6 +52,12 @@ export interface ToolPanelDef {
     toolPanel?: any;
     /** Customise the parameters provided to the `toolPanel` component. */
     toolPanelParams?: any;
+
+    /**
+     * DOM element to use as the parent for the tool panel to allow it to appear outside the grid.
+     * Set to `null` or omit the property for tool panel to appear inside the grid.
+     */
+    parent?: HTMLElement | null;
 }
 
 export interface SideBarDef {
