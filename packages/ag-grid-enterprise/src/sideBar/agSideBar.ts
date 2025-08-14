@@ -341,6 +341,9 @@ class AgSideBar extends Component implements ISideBar {
 
         if (def.parent instanceof HTMLElement) {
             this.environment.applyThemeClasses(def.parent);
+            wrapperGui.classList.add(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
+            def.parent.classList.add('ag-external');
+            def.parent.classList.add('ag-tool-panel-external');
             def.parent.appendChild(wrapperGui);
         } else {
             this.appendChild(wrapperGui);
