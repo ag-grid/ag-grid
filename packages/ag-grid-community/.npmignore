@@ -24,3 +24,4 @@ jest.setup.ts
 jest.jsdom-env.cjs
 scripts
 coverage
+.dependency-cruiser.js

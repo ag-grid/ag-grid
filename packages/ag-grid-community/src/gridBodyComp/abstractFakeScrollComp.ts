@@ -100,6 +100,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
     protected attemptSettingScrollPosition(value: number) {
         const viewport = this.eViewport;
         _waitUntil(
+            this,
             () => _isVisible(viewport),
             () => this.setScrollPosition(value),
             100

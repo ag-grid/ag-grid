@@ -1291,8 +1291,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
             // this ensures we fire displayedRowsChanged AFTER all the 'executeInAWhileFuncs' get
             // executed, as we added it to the end of the list.
             executeInAWhileFuncs.push(() => {
-                this.updateAllRowCtrls();
-                this.dispatchDisplayedRowsChanged();
+                if (this.isAlive()) {
+                    this.updateAllRowCtrls();
+                    this.dispatchDisplayedRowsChanged();
+                }
             });
             window.setTimeout(() => executeInAWhileFuncs.forEach((func) => func()), ROW_ANIMATION_TIMEOUT);
         }

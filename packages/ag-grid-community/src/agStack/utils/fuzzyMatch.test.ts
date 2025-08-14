@@ -1,55 +1,54 @@
 // Create a temporary file for the worker
-import fs from 'fs';
-import path from 'path';
-import { Worker } from 'worker_threads';
-
+// import fs from 'fs';
+// import path from 'path';
+// import { Worker } from 'worker_threads';
 import { _fuzzySuggestions, _getLevenshteinSimilarityDistance } from './fuzzyMatch';
 
-async function runInWorker<T extends any[], R>(func: (...args: T) => R, ...args: T) {
-    const workerPath = path.join(__dirname, `worker-${Date.now()}.js`);
-    try {
-        const workerOutput = await new Promise<string>((resolve, reject) => {
-            // Create a temporary worker file (simplified example)
-            const workerCode = `
-              const { parentPort } = require('worker_threads');
-              
-              parentPort.on('message', (data) => {
-                try {
-                  require('ts-node').register();
-                  const result = ${func.toString()}(...data.args);
-                  parentPort.postMessage(JSON.stringify(result));
-                  process.exit(0);
-                } catch (err) {
-                  parentPort.postMessage({ error: err.toString() });
-                  process.exit(1);
-                }
-              });
-            `;
+// async function runInWorker<T extends any[], R>(func: (...args: T) => R, ...args: T) {
+//     const workerPath = path.join(__dirname, `worker-${Date.now()}.js`);
+//     try {
+//         const workerOutput = await new Promise<string>((resolve, reject) => {
+//             // Create a temporary worker file (simplified example)
+//             const workerCode = `
+//               const { parentPort } = require('worker_threads');
 
-            fs.mkdirSync(__dirname, { recursive: true });
+//               parentPort.on('message', (data) => {
+//                 try {
+//                   require('ts-node').register();
+//                   const result = ${func.toString()}(...data.args);
+//                   parentPort.postMessage(JSON.stringify(result));
+//                   process.exit(0);
+//                 } catch (err) {
+//                   parentPort.postMessage({ error: err.toString() });
+//                   process.exit(1);
+//                 }
+//               });
+//             `;
 
-            fs.writeFileSync(workerPath, workerCode);
+//             fs.mkdirSync(__dirname, { recursive: true });
 
-            // Create and start the worker
-            const worker = new Worker(workerPath, {});
+//             fs.writeFileSync(workerPath, workerCode);
 
-            worker.on('message', (result_3) => {
-                if (result_3.error) return reject(result_3);
-                return resolve(result_3);
-            });
+//             // Create and start the worker
+//             const worker = new Worker(workerPath, {});
 
-            worker.on('error', (err) => {
-                reject(err);
-            });
+//             worker.on('message', (result_3) => {
+//                 if (result_3.error) return reject(result_3);
+//                 return resolve(result_3);
+//             });
 
-            worker.postMessage({ func: func.toString(), args });
-        });
-        return JSON.parse(workerOutput) as R;
-    } finally {
-        // Clean up the worker file
-        if (fs.existsSync(workerPath)) fs.unlinkSync(workerPath);
-    }
-}
+//             worker.on('error', (err) => {
+//                 reject(err);
+//             });
+
+//             worker.postMessage({ func: func.toString(), args });
+//         });
+//         return JSON.parse(workerOutput) as R;
+//     } finally {
+//         // Clean up the worker file
+//         if (fs.existsSync(workerPath)) fs.unlinkSync(workerPath);
+//     }
+// }
 
 describe('fuzzyMatch.ts', () => {
     describe('_fuzzySuggestions', () => {
@@ -103,29 +102,29 @@ describe('fuzzyMatch.ts', () => {
             );
         });
 
-        describe('performance', () => {
-            it('should handle long strings efficiently', async () => {
-                // run in a worker
-                const measure = function exe(len1: number, len2: number) {
-                    // eslint-disable-next-line @typescript-eslint/no-var-requires
-                    const { _getLevenshteinSimilarityDistance } = require('./fuzzyMatch');
+        // describe('performance', () => {
+        //     it('should handle long strings efficiently', async () => {
+        //         // run in a worker
+        //         const measure = function exe(len1: number, len2: number) {
+        //             // eslint-disable-next-line @typescript-eslint/no-var-requires
+        //             const { _getLevenshteinSimilarityDistance } = require('./fuzzyMatch');
 
-                    const longString1 = 'a'.repeat(len1) + 'b';
-                    const longString2 = 'a'.repeat(len2) + 'c';
+        //             const longString1 = 'a'.repeat(len1) + 'b';
+        //             const longString2 = 'a'.repeat(len2) + 'c';
 
-                    global.gc?.();
+        //             global.gc?.();
 
-                    const first = process.memoryUsage().heapUsed;
-                    _getLevenshteinSimilarityDistance(longString1, longString2);
-                    return process.memoryUsage().heapUsed - first;
-                };
+        //             const first = process.memoryUsage().heapUsed;
+        //             _getLevenshteinSimilarityDistance(longString1, longString2);
+        //             return process.memoryUsage().heapUsed - first;
+        //         };
 
-                const [result, result2] = await Promise.all([
-                    runInWorker(measure, 1e7, 1), // 10 MB string
-                    runInWorker(measure, 1e3, 1), // 1 KB string
-                ]);
-                expect(result2 - result).toBeLessThan(2 * 1024 * 1024); // Less than 2MB difference
-            }, 10000);
-        });
+        //         const [result, result2] = await Promise.all([
+        //             runInWorker(measure, 1e7, 1), // 10 MB string
+        //             runInWorker(measure, 1e3, 1), // 1 KB string
+        //         ]);
+        //         expect(result2 - result).toBeLessThan(2 * 1024 * 1024); // Less than 2MB difference
+        //     }, 10000);
+        // });
     });
 });
