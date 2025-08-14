@@ -17,8 +17,7 @@ test.agExample(import.meta, () => {
         await expect(agIdFor.headerCell('athlete')).toBeHidden();
 
         await expect(agIdFor.headerCell('total')).toHaveText('Total');
-        await expect(agIdFor.headerCell('total')).toHaveClass(/ag-header-active/);
-        await expect(agIdFor.headerCell('total')).toBeFocused();
+        await expect(agIdFor.floatingFilter('total')).toBeFocused();
 
         // Press tab to focus the first cell again
         await page.keyboard.press('Tab', {
