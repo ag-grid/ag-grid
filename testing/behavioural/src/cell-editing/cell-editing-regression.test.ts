@@ -243,7 +243,7 @@ describe('Cell Editing Regression', () => {
             user = userEvent.setup({ skipHover: true });
         });
 
-        test('dblClick edit should have source=cellValueChanged', async () => {
+        test('dblClick edit should have source=edit', async () => {
             const onCellValueChanged = await testACell(jest.fn(), async (api, gridDiv, cell) => {
                 await user.dblClick(cell);
                 const inputElement = await waitForInput(gridDiv, cell);
@@ -253,7 +253,7 @@ describe('Cell Editing Regression', () => {
             });
 
             expect(onCellValueChanged).toHaveBeenCalledTimes(1);
-            expect(onCellValueChanged).toHaveBeenCalledWith('cellValueChanged');
+            expect(onCellValueChanged).toHaveBeenCalledWith('edit');
         });
 
         test.skip('fillHandle edit should have source=rangeSvc', async () => {
@@ -305,9 +305,11 @@ describe('Cell Editing Regression', () => {
             expect(onCellValueChanged).toHaveBeenCalledWith('paste');
         });
 
-        test('bulk edit should have source=edit', async () => {
+        test('bulk edit should have source=bulk', async () => {
             const onCellValueChanged = await testACell(
-                jest.fn(),
+                jest.fn(() => {
+                    console.log();
+                }),
                 async (api, gridDiv, source) => {
                     const target = getByTestId(gridDiv, agTestIdFor.cell('1', 'field'));
 
@@ -315,7 +317,11 @@ describe('Cell Editing Regression', () => {
                     api.setFocusedCell(0, 'field');
                     api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['field'] });
 
-                    await userEvent.keyboard('15');
+                    await userEvent.keyboard('1');
+                    const input = await waitForInput(gridDiv, source);
+                    await userEvent.type(input, '5');
+                    await asyncSetTimeout(1);
+                    expect(api.getEditingCells()).toHaveLength(1);
                     await userEvent.keyboard('{Control>}{Enter}{/Control}');
                     await asyncSetTimeout(100);
 
@@ -331,8 +337,8 @@ describe('Cell Editing Regression', () => {
             );
 
             expect(onCellValueChanged).toHaveBeenCalledTimes(2);
-            expect(onCellValueChanged).toHaveBeenNthCalledWith(1, 'edit');
-            expect(onCellValueChanged).toHaveBeenNthCalledWith(2, 'edit');
+            expect(onCellValueChanged).toHaveBeenNthCalledWith(1, 'bulk');
+            expect(onCellValueChanged).toHaveBeenNthCalledWith(2, 'bulk');
         });
 
         test('ctrl-d should have source=paste', async () => {
