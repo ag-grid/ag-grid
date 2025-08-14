@@ -126,6 +126,10 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private updateScrollVisibleServiceImpl(): void {
+        if (!this.isAlive()) {
+            return;
+        }
+
         const params: SetScrollsVisibleParams = {
             horizontalScrollShowing: this.centerContainerCtrl.isHorizontalScrollShowing(),
             verticalScrollShowing: this.gridBodyCtrl.isVerticalScrollShowing(),
