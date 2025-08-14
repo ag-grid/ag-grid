@@ -60,7 +60,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private ariaDescriptionProperties = new Map<HeaderAriaDescriptionKey, string>();
     private tooltipFeature: TooltipFeature | undefined;
 
-    public setComp(
+    public override wireComp(
         comp: IHeaderCellComp,
         eGui: HTMLElement,
         eResize: HTMLElement,
@@ -145,8 +145,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             // Make sure this is the last destroy func as it clears the gui and comp
             this.clearComponent();
         });
-
-        this.postSetComp();
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {
