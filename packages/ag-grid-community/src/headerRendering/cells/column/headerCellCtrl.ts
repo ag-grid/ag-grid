@@ -108,7 +108,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         colHover?.createHoverFeature(compBean, [column], eGui);
         rangeSvc?.createRangeHighlightFeature(compBean, column, comp);
         compBean.createManagedBean(new SetLeftFeature(column, eGui, beans));
-        this.setupFocus(compBean, eGui);
+        compBean.createManagedBean(
+            new ManagedFocusFeature(eGui, {
+                shouldStopEventPropagation: (e) => this.shouldStopEventPropagation(e),
+                onTabKeyDown: () => null,
+                handleKeyDown: this.handleKeyDown.bind(this),
+                onFocusIn: this.onFocusIn.bind(this),
+                onFocusOut: this.onFocusOut.bind(this),
+            })
+        );
 
         this.addResizeAndMoveKeyboardListeners(compBean);
 
@@ -137,32 +145,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             // Make sure this is the last destroy func as it clears the gui and comp
             this.clearComponent();
         });
-    }
-
-    private setupFocus(compBean: BeanStub<any>, eGui: HTMLElement) {
-        compBean.createManagedBean(
-            new ManagedFocusFeature(eGui, {
-                shouldStopEventPropagation: (e) => this.shouldStopEventPropagation(e),
-                onTabKeyDown: () => null,
-                handleKeyDown: this.handleKeyDown.bind(this),
-                onFocusIn: this.onFocusIn.bind(this),
-                onFocusOut: this.onFocusOut.bind(this),
-            })
-        );
-        if (this.pendingFocusEvent) {
-            // If there was a focus event before the component was set, we need to focus it now
-            // Important that this is done after the ManagedFocusFeature is created
-            // if (_getActiveDomElement(beans) == null) {
-            // If nothing has focus, we can focus the header cell
-            this.focus(this.pendingFocusEvent);
-            this.pendingFocusEvent = null;
-            // } else {
-            //     console.log(
-            //         'HeaderCellCtrl: focus event ignored as another element already has focus',
-            //         _getActiveDomElement(beans)
-            //     );
-            // }
-        }
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {
