@@ -145,6 +145,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             // Make sure this is the last destroy func as it clears the gui and comp
             this.clearComponent();
         });
+
+        this.postSetComp();
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {

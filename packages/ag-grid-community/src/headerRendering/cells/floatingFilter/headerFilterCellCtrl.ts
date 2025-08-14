@@ -75,6 +75,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             (this.userCompDetails as any) = null;
             this.clearComponent();
         });
+
+        this.postSetComp();
     }
 
     // empty abstract method

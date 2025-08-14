@@ -109,15 +109,16 @@ export abstract class AbstractHeaderCellCtrl<
         compBean.addManagedElementListeners(this.eGui, {
             focus: this.onGuiFocus.bind(this),
         });
-        if (this.reAttemptToFocus) {
-            this.reAttemptToFocus = false;
-            window.setTimeout(() => {
-                this.focus(this.lastFocusEvent ?? undefined);
-            });
-        }
 
         this.onDisplayedColumnsChanged();
         this.refreshTabIndex();
+    }
+
+    protected postSetComp(): void {
+        if (this.reAttemptToFocus) {
+            this.reAttemptToFocus = false;
+            this.focus(this.lastFocusEvent ?? undefined);
+        }
     }
 
     protected refreshHeaderStyles(): void {
