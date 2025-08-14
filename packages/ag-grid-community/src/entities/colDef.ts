@@ -243,6 +243,12 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     valueGetter?: string | ValueGetterFunc<TData, TValue>;
     /** A function or expression to format a value, should return a string. */
     valueFormatter?: string | ValueFormatterFunc<TData, TValue>;
+    /**
+     * Set to `true` to retrieve the DOM node's textContent as the cell value instead of using field/valueGetter.
+     * This is useful when you want to get the rendered text content from the cell's DOM element.
+     * @default false
+     */
+    textContentAsValue?: boolean;
     /** Provided a reference data map to be used to map column values to their respective value from the map. */
     refData?: { [key: string]: string };
     /**

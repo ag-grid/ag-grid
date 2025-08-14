@@ -13,10 +13,12 @@ import type {
     ValueParserParams,
     ValueSetterParams,
 } from '../entities/colDef';
+import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IEditService } from '../interfaces/iEditService';
+import type { CellPosition } from '../interfaces/iCellPosition';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
 import type { ExpressionService } from './expressionService';
@@ -239,6 +241,17 @@ export class ValueService extends BeanStub implements NamedBean {
                 return result;
             }
             result = _getValueUsingField(data, field, column.isFieldContainsDots());
+        } else if (colDef.textContentAsValue && rowNode.rowIndex != null) {
+            const cellPosition: CellPosition = {
+                rowIndex: rowNode.rowIndex,
+                rowPinned: rowNode.rowPinned,
+                column: column,
+            };
+
+            const cellCtrl = _getCellByPosition(this.beans, cellPosition);
+            if (cellCtrl && cellCtrl.eGui && cellCtrl.eGui.textContent !== null) {
+                return cellCtrl.eGui.textContent;
+            }
         }
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
