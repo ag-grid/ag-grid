@@ -50,7 +50,7 @@ export abstract class AbstractHeaderCellCtrl<
     public lastFocusEvent: KeyboardEvent | null = null;
 
     protected dragSource: DragSource | null = null;
-    protected pendingFocusEvent: KeyboardEvent | null;
+    protected reAttemptToFocus: boolean = false;
 
     protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
     protected abstract getHeaderClassParams(): HeaderClassParams;
@@ -109,6 +109,12 @@ export abstract class AbstractHeaderCellCtrl<
         compBean.addManagedElementListeners(this.eGui, {
             focus: this.onGuiFocus.bind(this),
         });
+        if (this.reAttemptToFocus) {
+            this.reAttemptToFocus = false;
+            window.setTimeout(() => {
+                this.focus(this.lastFocusEvent ?? undefined);
+            });
+        }
 
         this.onDisplayedColumnsChanged();
         this.refreshTabIndex();
@@ -363,16 +369,19 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     public focus(event?: KeyboardEvent): boolean {
-        const { eGui } = this;
-        if (!eGui) {
-            // The component has not been rendered yet, (likely in React)
-            // so we store the event to focus later when setComp is called with the eGui element
-            this.pendingFocusEvent = event || null;
-            return true;
+        if (!this.isAlive()) {
+            return false;
         }
 
-        this.lastFocusEvent = event || null;
-        eGui.focus();
+        const { eGui } = this;
+
+        if (!eGui) {
+            this.reAttemptToFocus = true;
+        } else {
+            eGui.focus();
+            this.lastFocusEvent = event || null;
+        }
+
         return true;
     }
 
