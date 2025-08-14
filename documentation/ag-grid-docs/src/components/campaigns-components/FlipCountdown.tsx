@@ -34,9 +34,7 @@ const FlipCountdown: React.FC<FlipCountdownProps> = ({ endDate, onCountdownEnd, 
             // Check if countdown has ended
             if (timeLeft.days === 0 && timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0) {
                 if (!hasEnded) {
-                    console.log('Countdown reached zero - triggering end state');
                     setHasEnded(true);
-                    console.log('Calling onEndedChange with true');
                     onEndedChange?.(true);
                     onCountdownEnd?.();
                 }
