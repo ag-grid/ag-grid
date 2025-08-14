@@ -73,7 +73,10 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         root.querySelectorAll('.ag-header-cell').forEach((cell) => {
             const colId = cell.getAttribute('col-id');
-            setTestId(cell, agTestIdFor.headerCell(colId));
+
+            const isFloatingFilter = cell.classList.contains('ag-floating-filter');
+            const headerCellId = isFloatingFilter ? agTestIdFor.floatingFilter(colId) : agTestIdFor.headerCell(colId);
+            setTestId(cell, headerCellId);
 
             setTestId(cell.querySelector('.ag-header-cell-filter-button'), agTestIdFor.headerFilterButton(colId));
 
