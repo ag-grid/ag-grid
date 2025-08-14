@@ -73,6 +73,31 @@ export abstract class AbstractHeaderCellCtrl<
         });
     }
 
+    public setComp(
+        comp: TComp,
+        eGui: HTMLElement,
+        eResize: HTMLElement,
+        eHeaderCompWrapper: HTMLElement,
+        compBean: BeanStub<any> | undefined
+    ): void {
+        this.wireComp(comp, eGui, eResize, eHeaderCompWrapper, compBean);
+
+        // Post SetComp
+        // Actions that need to be done after the component is setup and all the features and listeners are wired
+        if (this.reAttemptToFocus) {
+            this.reAttemptToFocus = false;
+            this.focus(this.lastFocusEvent ?? undefined);
+        }
+    }
+
+    protected abstract wireComp(
+        comp: TComp,
+        eGui: HTMLElement,
+        eResize: HTMLElement,
+        eHeaderCompWrapper: HTMLElement,
+        compBean: BeanStub<any> | undefined
+    ): void;
+
     protected shouldStopEventPropagation(event: KeyboardEvent): boolean {
         const { headerRowIndex, column } = this.beans.focusSvc.focusedHeader!;
 
@@ -112,13 +137,6 @@ export abstract class AbstractHeaderCellCtrl<
 
         this.onDisplayedColumnsChanged();
         this.refreshTabIndex();
-    }
-
-    protected postSetComp(): void {
-        if (this.reAttemptToFocus) {
-            this.reAttemptToFocus = false;
-            this.focus(this.lastFocusEvent ?? undefined);
-        }
     }
 
     protected refreshHeaderStyles(): void {

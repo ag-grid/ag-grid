@@ -31,7 +31,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private destroySyncListener: () => null;
     private destroyFilterChangedListener: () => null;
 
-    public setComp(
+    public override wireComp(
         comp: IHeaderFilterCellComp,
         eGui: HTMLElement,
         eButtonShowMainFilter: HTMLElement,
@@ -75,8 +75,6 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             (this.userCompDetails as any) = null;
             this.clearComponent();
         });
-
-        this.postSetComp();
     }
 
     // empty abstract method

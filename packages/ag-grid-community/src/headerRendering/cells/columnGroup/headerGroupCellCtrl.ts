@@ -39,7 +39,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private displayName: string | null;
     private tooltipFeature: TooltipFeature | undefined;
 
-    public setComp(
+    public override wireComp(
         comp: IHeaderGroupCellComp,
         eGui: HTMLElement,
         eResize: HTMLElement,
@@ -101,8 +101,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.addResizeAndMoveKeyboardListeners(compBean);
         // Make sure this is the last destroy func as it clears the gui and comp
         compBean.addDestroyFunc(() => this.clearComponent());
-
-        this.postSetComp();
     }
 
     protected getHeaderClassParams(): HeaderClassParams {
