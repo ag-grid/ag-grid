@@ -110,13 +110,7 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
     const UserCompClass = userCompDetails?.componentClass;
 
     return (
-        <div
-            ref={setRef}
-            style={userStyles}
-            className={className}
-            role="columnheader"
-            aria-expanded={ariaExpanded}
-        >
+        <div ref={setRef} style={userStyles} className={className} role="columnheader" aria-expanded={ariaExpanded}>
             <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">
                 {reactUserComp ? (
                     userCompStateless ? (
