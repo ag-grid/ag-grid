@@ -18,7 +18,6 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
     const isAlive = ctrl.isAlive();
 
     const { context } = useContext(BeansContext);
-    const colId = isAlive ? ctrl.column.getColId() : undefined;
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
     const [userStyles, setUserStyles] = useState<HeaderStyle>();
 
@@ -93,7 +92,7 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
     const UserCompClass = userCompDetails?.componentClass;
 
     return (
-        <div ref={setRef} style={userStyles} className="ag-header-cell" col-id={colId} role="columnheader">
+        <div ref={setRef} style={userStyles} className="ag-header-cell" role="columnheader">
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
             <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">
                 {reactUserComp ? (

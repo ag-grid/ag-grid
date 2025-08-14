@@ -80,6 +80,8 @@ export abstract class AbstractHeaderCellCtrl<
         eHeaderCompWrapper: HTMLElement,
         compBean: BeanStub<any> | undefined
     ): void {
+        eGui.setAttribute('col-id', this.column.colIdSanitised);
+
         this.wireComp(comp, eGui, eResize, eHeaderCompWrapper, compBean);
 
         // Post SetComp

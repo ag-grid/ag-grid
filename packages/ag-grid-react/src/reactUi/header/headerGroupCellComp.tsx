@@ -22,7 +22,6 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
     const [resizableAriaHidden, setResizableAriaHidden] = useState<'true' | 'false'>('false');
     const [ariaExpanded, setAriaExpanded] = useState<'true' | 'false' | undefined>();
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
-    const colId = useMemo(() => ctrl.column.getUniqueId(), []);
 
     const compBean = useRef<_EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
@@ -115,7 +114,6 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
             ref={setRef}
             style={userStyles}
             className={className}
-            col-id={colId}
             role="columnheader"
             aria-expanded={ariaExpanded}
         >

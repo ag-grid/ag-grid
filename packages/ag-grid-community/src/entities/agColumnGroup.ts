@@ -1,4 +1,5 @@
 import { _last } from '../agStack/utils/array';
+import { _escapeString } from '../agStack/utils/string';
 import { BeanStub } from '../context/beanStub';
 import type {
     AgColumnGroupEvent,
@@ -24,6 +25,9 @@ export function isColumnGroup(col: Column | ColumnGroup | string): col is AgColu
 export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> implements ColumnGroup<TValue> {
     public readonly isColumn = false as const;
 
+    /** Sanitised version of the column id */
+    public readonly colIdSanitised: string;
+
     // all the children of this group, regardless of whether they are opened or closed
     private children: (AgColumn | AgColumnGroup)[] | null;
     // depends on the open/closed state of the group, only displaying columns are stored here
@@ -45,6 +49,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
         private readonly pinned: ColumnPinnedType
     ) {
         super();
+        this.colIdSanitised = _escapeString(this.getUniqueId())!;
     }
 
     // as the user is adding and removing columns, the groups are recalculated.
