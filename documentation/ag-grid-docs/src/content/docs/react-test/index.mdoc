@@ -26,3 +26,11 @@ When `getRowId` is provided both work as expected, without flashing and without 
 {% /note %}
 
 {% gridExampleRunner title="Updating Row Data without RowIds" name="updating-row-data-without-row-ids" /%}
+
+## Test Cleardown
+
+This example mimics the way that Vitest clears the window as part of its test tear down process. We had issues where `window.setInterval` and `window.setTimeout` were not being cleared correctly, when the grid was destroyed leading to attempted calls to window methods that no longer existed.
+
+There should be no errors in the console when clicking the "Destroy" button.
+
+{% gridExampleRunner title="Test Tear Down" name="test-tear-down" exampleHeight=350 /%}
