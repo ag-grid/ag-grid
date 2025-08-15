@@ -5,6 +5,8 @@ import { CacheRoute } from 'playwright-network-cache';
 
 import { wrapAgTestIdFor } from 'ag-grid-community';
 
+import { type AsyncGridApi, createRemoteGridApiProxy } from './test-remote-gridapi-utils';
+
 type ExtractFixtures<T> = T extends TestType<infer A, infer O> ? A & O : never;
 
 // Extract the fixtures from the base test type as Playwright doesn't export them directly
@@ -16,6 +18,8 @@ type LoadPageOptions = {
     version: string;
 };
 
+type RemoteGrid = ((page: Page, gridId?: string) => AsyncGridApi) & { eventLog: [string, any][] };
+
 type AgGridFixtures = {
     agFramework: AgFramework;
     agExampleUrl?: AgExampleUrl;
@@ -24,6 +28,7 @@ type AgGridFixtures = {
      */
     agIdFor: AgIdFor;
     loadPageOptions?: LoadPageOptions;
+    remoteGrid: RemoteGrid;
 };
 
 type CacheFixtures = {
@@ -168,6 +173,17 @@ const extended = base.extend<TestFixtures>({
         },
         { option: true },
     ],
+    remoteGrid: [
+        ({}, use) => {
+            const eventLog: any[] = [];
+
+            const fn = (page: Page, gridId: string) => createRemoteGridApiProxy(page, gridId, eventLog);
+            fn.eventLog = eventLog;
+
+            use(fn as unknown as RemoteGrid);
+        },
+        { option: true },
+    ],
 });
 
 const frameworkTest =
@@ -180,8 +196,14 @@ const frameworkTest =
     (testName: string | undefined, testBody: (fixtures: TestFixtures) => Promise<void>): void => {
         extended.use({ agFramework });
         // cachedRoute needs to be destructured in testWrapper for Playwright to initialise it correctly
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const testWrapper = async ({ page, agExampleUrl, agIdFor, cacheRoute, loadPageOptions }: TestFixtures) => {
+        const testWrapper = async ({
+            page,
+            agExampleUrl,
+            agIdFor,
+            cacheRoute: _,
+            loadPageOptions,
+            remoteGrid,
+        }: TestFixtures) => {
             if (!agExampleUrl) {
                 throw new Error(
                     `Missing 'setAgExampleUrl(import.meta)' in the test file. This is required to set the example URL for the test.`
@@ -189,7 +211,7 @@ const frameworkTest =
             }
 
             await loadPage(page, agExampleUrl, agFramework, loadPageOptions);
-            await testBody({ page, agExampleUrl, agIdFor, agFramework, loadPageOptions } as TestFixtures);
+            await testBody({ page, agExampleUrl, agIdFor, agFramework, loadPageOptions, remoteGrid } as TestFixtures);
         };
 
         if (testName) {
@@ -278,4 +300,12 @@ const test = Object.assign(extended, agGridTestExtension, singleFrameworkTests) 
 
 export { expect, test };
 
-export { remoteGrid } from './test-remote-gridapi-utils';
+export async function dragOverTo(source: Locator, target: Locator) {
+    const { mouse } = source.page();
+    await source.hover();
+    await source.hover();
+    await mouse.down();
+    await target.hover();
+    await target.hover();
+    await mouse.up();
+}

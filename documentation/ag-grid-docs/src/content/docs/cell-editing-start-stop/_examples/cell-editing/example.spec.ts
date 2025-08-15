@@ -45,4 +45,35 @@ test.agExample(import.meta, () => {
         await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
         await expect(cell).toHaveText('Bob'); // verify the cell has the new value
     });
+
+    test.vanilla('Events', async ({ page, agIdFor, remoteGrid }) => {
+        const remoteApi = remoteGrid(page, '1');
+        await remoteApi.updateGridOptions({
+            columnDefs: [
+                {
+                    field: 'athlete',
+                    editable: true,
+                },
+            ],
+        });
+
+        await remoteApi.logEvent('cellEditingStopped', ['source', 'newValue']);
+
+        const cell = agIdFor.cell('0', 'athlete');
+        await cell.click();
+        await page.keyboard.type('Fred');
+        await page.keyboard.press('Enter');
+
+        const eventLog = remoteGrid.eventLog;
+
+        expect(eventLog.length).toBe(1);
+        expect(eventLog[0]).toEqual([
+            'cellEditingStopped',
+            {
+                newValue: 'Fred',
+                oldValue: 'Natalie Coughlin',
+                source: 'edit',
+            },
+        ]);
+    });
 });
