@@ -554,7 +554,7 @@ export function handleRowGenericInterface(fileTxt: string, tData: string): strin
 
 export function addGenericInterfaceImport(imports: string[], tData: string, bindings) {
     if (tData && !bindings.interfaces.some((i) => i.includes(tData)) && !imports.some((i) => i.includes(tData))) {
-        imports.push(`import { ${tData} } from './interfaces'`);
+        imports.push(`import { ${tData} } from './interfaces';`);
     }
 }
 
