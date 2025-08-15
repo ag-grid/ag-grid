@@ -81,6 +81,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         });
 
         if (!hasFlexItems) {
+            this.beans.hiddenLayoutSvc?.revealCells('flex');
             return [];
         }
 
@@ -198,6 +199,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
             dispatchColumnResizedEvent(this.eventSvc, changedColumns, true, source, flexingColumns);
         }
 
+        this.beans.hiddenLayoutSvc?.revealCells('flex');
         return unconstrainedFlexColumns;
     }
 

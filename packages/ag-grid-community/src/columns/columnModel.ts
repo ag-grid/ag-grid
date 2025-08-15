@@ -88,6 +88,29 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('pivotMode', (event) =>
             this.setPivotMode(this.gos.get('pivotMode'), _convertColumnEventSourceType(event.source))
         );
+
+        this.beans.hiddenLayoutSvc?.registerHiddenLayoutRequirement('flex', () => {
+            // if any columns are flexed, then we need to delay rendering
+            // recurse through any provided column groups to check for flexed columns
+            const colDefsOrGroup = this.gos.get('columnDefs');
+            const hasFlexedCols = (cols: (ColDef | ColGroupDef)[] | undefined | null): boolean => {
+                if (!cols) {
+                    return false;
+                }
+                let res = false;
+                _forAll(cols, (colDef) => {
+                    if ((colDef as ColGroupDef).children) {
+                        res ||= hasFlexedCols((colDef as ColGroupDef).children);
+                    }
+                    const colDefFlex = (colDef as ColDef).flex;
+                    if (colDefFlex != null && colDefFlex > 0) {
+                        res ||= true;
+                    }
+                });
+                return res;
+            };
+            return hasFlexedCols(colDefsOrGroup);
+        });
     }
 
     // called from SyncService, when grid has finished initialising
@@ -103,6 +126,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             eventSvc,
             groupHierarchyColSvc,
         } = beans;
+
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = this.colDefs ? _compareColumnStatesAndDispatchEvents(beans, source) : undefined;
 

@@ -1,3 +1,4 @@
+import { _debounce } from '../agStack/utils/function';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
@@ -9,38 +10,81 @@ export class HiddenLayoutService extends BeanStub implements NamedBean {
 
     private showCellsOnDelay: boolean = false;
 
-    private doesRequireHiddenLayout: (() => boolean)[] = [];
+    // private doesRequireHiddenLayout = new Map<string, () => boolean>();
+    // private readonly activeRequirements = new Set<string>();
+    private firstDataRendered = false;
 
     public postConstruct(): void {
-        this.beans.ctrlsSvc.whenReady(this, () => {
-            let requiresHiddenLayout = false;
-            for (const requirement of this.doesRequireHiddenLayout) {
-                if (requirement()) {
-                    requiresHiddenLayout = true;
-                    break;
-                }
-            }
+        // TODO: Make this conditional on a grid option!!!
 
-            if (requiresHiddenLayout) {
-                console.log('AG Grid: Delaying rendering of cells until the first data is rendered');
-                this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.add('ag-delay-render');
-                this.showCellsOnDelay = true;
+        this.beans.ctrlsSvc.whenReady(this, () => {
+            //     let requiresHiddenLayout = false;
+            //     for (const [key, requirement] of this.doesRequireHiddenLayout) {
+            //         if (requirement()) {
+            //             requiresHiddenLayout = true;
+            //             this.activeRequirements.add(key);
+            //         }
+            //     }
+
+            //     if (requiresHiddenLayout) {
+            //         console.log(
+            //             'AG Grid: Delaying rendering of cells due to',
+            //             [...this.activeRequirements.keys()].join(', ')
+            //         );
+            //         this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.add('ag-delay-render');
+            //         this.showCellsOnDelay = true;
+            //     }
+            this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.add('ag-delay-render');
+            this.showCellsOnDelay = true;
+        });
+
+        const showCells = () => {
+            if (this.showCellsOnDelay) {
+                console.warn('AG Grid: DEBUNCED1 Revealing cells after they were hidden for layout purposes');
+                this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.remove('ag-delay-render');
+                this.showCellsOnDelay = false;
             }
+        };
+        const debouncedShowCells = _debounce(this, showCells, 10);
+
+        this.addManagedEventListeners({
+            firstDataRendered: () => {
+                console.warn('AG Grid: Revealing cells after first data rendered');
+                debouncedShowCells();
+                this.firstDataRendered = true;
+            },
+            scrollVisibilityChanged: () => {
+                console.warn('AG Grid: Revealing cells after scroll visibility changed');
+                if (this.firstDataRendered) {
+                    debouncedShowCells();
+                }
+            },
+            bodyScroll: () => {
+                console.warn('AG Grid: Revealing cells after body scroll');
+                if (this.firstDataRendered) {
+                    debouncedShowCells();
+                }
+            },
         });
     }
 
-    public registerHiddenLayoutRequirement(requirement: () => boolean): void {
-        this.doesRequireHiddenLayout.push(requirement);
+    public registerHiddenLayoutRequirement(key: string, requirement: () => boolean): void {
+        // this.doesRequireHiddenLayout.set(key, requirement);
     }
 
-    public revealCells(): void {
-        if (this.showCellsOnDelay) {
-            // setTimeout(() => {
-            console.log('AG Grid: Revealing cells after they were hidden for layout purposes');
-            this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.remove('ag-delay-render');
-            this.showCellsOnDelay = false;
-            // }, 10);
-        }
+    public revealCells(key: string): void {
+        // if (this.showCellsOnDelay) {
+        //     this.activeRequirements.delete(key);
+        //     this.doesRequireHiddenLayout.delete(key);
+        //     if (this.activeRequirements.size > 0) {
+        //         return; // still have requirements, so don't reveal cells
+        //     }
+        //     setTimeout(() => {
+        //         // console.warn('AG Grid: Revealing cells after they were hidden for layout purposes');
+        //         // this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.remove('ag-delay-render');
+        //         // this.showCellsOnDelay = false;
+        //     }, 0);
+        // }
     }
 }
 
