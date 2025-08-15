@@ -3,13 +3,7 @@ import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridActions } from '../../../selection/utils';
 import type { GridRowsOptions } from '../../../test-utils';
-import {
-    GridRows,
-    TestGridsManager,
-    assertSelectedRowElementsById,
-    assertSelectedRowNodes,
-    cachedJSONObjects,
-} from '../../../test-utils';
+import { GridRows, TestGridsManager, assertSelectedRowElementsById, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid tree selection', () => {
     const gridsManager = new TestGridsManager({
