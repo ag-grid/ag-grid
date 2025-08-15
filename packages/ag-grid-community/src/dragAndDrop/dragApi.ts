@@ -1,9 +1,9 @@
 import type { BeanCollection } from '../context/context';
-import type { RowNode } from '../entities/rowNode';
 import type {
     RowDropPositionIndicator,
     SetRowDropPositionIndicatorParams,
-} from '../interfaces/IRowDropHighlightService';
+} from '../dragAndDrop/rowDropHighlightService';
+import type { RowNode } from '../entities/rowNode';
 import type { RowDropZoneEvents, RowDropZoneParams } from './rowDragFeature';
 
 export function addRowDropZone(beans: BeanCollection, params: RowDropZoneParams): void {

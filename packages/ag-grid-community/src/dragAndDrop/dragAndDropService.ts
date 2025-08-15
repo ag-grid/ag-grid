@@ -140,15 +140,14 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     private lastDropTarget: DropTarget | null = null;
 
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
-        const { onDragStop, onDragging, onDragCancel } = this;
         const entry: DragSourceAndParams = {
             dragSource,
             eElement: dragSource.eElement,
             dragStartPixels: dragSource.dragStartPixels,
             onDragStart: (mouseEvent: MouseEvent) => this.onDragStart(dragSource, mouseEvent),
-            onDragStop,
-            onDragging,
-            onDragCancel,
+            onDragStop: this.onDragStop.bind(this),
+            onDragging: this.onDragging.bind(this),
+            onDragCancel: this.onDragCancel.bind(this),
             includeTouch: allowTouch,
         };
 
@@ -201,7 +200,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.createDragImageComp(dragSource);
     }
 
-    private readonly onDragStop = (mouseEvent: MouseEvent): void => {
+    private onDragStop(mouseEvent: MouseEvent): void {
         const { dragSource, lastDropTarget } = this;
         dragSource?.onDragStopped?.();
         if (lastDropTarget) {
@@ -209,9 +208,9 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             lastDropTarget.onDragStop?.(dragEndEvent);
         }
         this.clearDragAndDropProperties();
-    };
+    }
 
-    private readonly onDragCancel = (): void => {
+    private onDragCancel(): void {
         const { dragSource, lastDropTarget, lastMouseEvent } = this;
         dragSource?.onDragCancelled?.();
 
@@ -220,9 +219,9 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             lastDropTarget.onDragCancel?.(dragCancelEvent);
         }
         this.clearDragAndDropProperties();
-    };
+    }
 
-    private readonly onDragging = (mouseEvent: MouseEvent, fromNudge: boolean = false): void => {
+    private onDragging(mouseEvent: MouseEvent, fromNudge: boolean = false): void {
         this.positionDragImageComp(mouseEvent);
 
         // check if mouseEvent intersects with any of the drop targets
@@ -264,7 +263,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         if (needUpdate) {
             this.updateDragImageComp();
         }
-    };
+    }
 
     private clearDragAndDropProperties(): void {
         this.removeDragImageComp(this.dragImageComp);

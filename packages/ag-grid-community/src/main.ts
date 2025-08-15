@@ -1215,7 +1215,7 @@ export type {
     DropIndicatorPosition,
     SetRowDropPositionIndicatorParams,
     RowDropPositionIndicator,
-} from './interfaces/IRowDropHighlightService';
+} from './dragAndDrop/rowDropHighlightService';
 export type { EditStrategyType } from './interfaces/editStrategyType';
 export type { EditValidationCommitType } from './interfaces/editValidationCommitType';
 export {
