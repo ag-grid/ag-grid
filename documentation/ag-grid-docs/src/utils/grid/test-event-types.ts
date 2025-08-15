@@ -101,17 +101,12 @@ type ___ValidateMapCompleteness = keyof EventInterfaceMap extends MappedEventKey
 type DirectEventKeys<T extends keyof EventInterfaceMap> = keyof EventInterfaceMap[T];
 
 /**
- * Branded string type that allows any string while preserving intellisense for specific values
- */
-type StringWithAutocomplete<T> = T | (string & Record<never, never>);
-
-/**
  * Enhanced event keys that preserve intellisense while allowing string fallback
  * Uses branded string technique to maintain autocomplete suggestions for known properties
  */
 export type TemplateEventKeys<T extends AgPublicEventType> = T extends keyof EventInterfaceMap
-    ? StringWithAutocomplete<DirectEventKeys<T>>
-    : StringWithAutocomplete<keyof AgGridTypes.AgEventTypeParams[T]>;
+    ? DirectEventKeys<T>
+    : keyof AgGridTypes.AgEventTypeParams[T];
 
 /**
  * Utility types for validation and testing

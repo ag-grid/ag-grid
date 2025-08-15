@@ -55,7 +55,7 @@ test.agExample(import.meta, () => {
                 ],
             });
 
-            await remoteApi.logEvent('cellValueChanged', ['source']);
+            await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
 
             const cells = [0, 1, 2, 3].map((i) => agIdFor.cell(`${i}`, 'athlete'));
             const [source, target] = cells;
@@ -80,14 +80,24 @@ test.agExample(import.meta, () => {
 
             const eventLog = remoteGrid.eventLog;
 
-            expect(eventLog.length).toBe(1);
-            expect(eventLog[0]).toEqual([
-                'cellValueChanged',
-                {
-                    newValue: 'Natalie Coughlin',
-                    oldValue: 'Alicia Coutts',
-                    source: 'bulk',
-                },
+            expect(eventLog.length).toBe(2);
+            expect(eventLog).toEqual([
+                [
+                    'cellValueChanged',
+                    {
+                        newValue: 'Natalie Coughlin',
+                        oldValue: 'Alicia Coutts',
+                        source: 'rangeSvc',
+                    },
+                ],
+                [
+                    'cellValueChanged',
+                    {
+                        newValue: 'Aleksey Nemov',
+                        oldValue: 'Missy Franklin',
+                        source: 'rangeSvc',
+                    },
+                ],
             ]);
         });
     });

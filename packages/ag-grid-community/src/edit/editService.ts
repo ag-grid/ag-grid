@@ -55,7 +55,7 @@ import { _refreshEditCells } from './utils/refresh';
 type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };
 
 // these are event sources for setDataValue that will not cause the editors to close
-const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo', 'paste', 'bulk']);
+const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo', 'paste', 'bulk', 'rangeSvc']);
 
 // stop editing sources that we treat as UI-originated so we follow standard processing.
 const STOP_EDIT_SOURCE_TRANSFORM: Record<string, EditSource> = {

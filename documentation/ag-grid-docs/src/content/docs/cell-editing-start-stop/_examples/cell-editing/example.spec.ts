@@ -51,29 +51,41 @@ test.agExample(import.meta, () => {
         await remoteApi.updateGridOptions({
             columnDefs: [
                 {
-                    field: 'athlete',
+                    field: 'firstName',
                     editable: true,
                 },
             ],
         });
 
-        await remoteApi.logEvent('cellEditingStopped', ['source', 'newValue']);
+        await remoteApi.logEvent('cellEditingStarted', []);
+        await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
+        await remoteApi.logEvent('cellEditingStopped', ['newValue', 'oldValue']);
 
-        const cell = agIdFor.cell('0', 'athlete');
+        const cell = agIdFor.cell('0', 'firstName');
         await cell.click();
         await page.keyboard.type('Fred');
         await page.keyboard.press('Enter');
 
         const eventLog = remoteGrid.eventLog;
 
-        expect(eventLog.length).toBe(1);
-        expect(eventLog[0]).toEqual([
-            'cellEditingStopped',
-            {
-                newValue: 'Fred',
-                oldValue: 'Natalie Coughlin',
-                source: 'edit',
-            },
+        expect(eventLog.length).toBe(3);
+        expect(eventLog).toEqual([
+            ['cellEditingStarted', {}],
+            [
+                'cellValueChanged',
+                {
+                    newValue: 'Fred',
+                    oldValue: 'Bob',
+                    source: 'edit',
+                },
+            ],
+            [
+                'cellEditingStopped',
+                {
+                    newValue: 'Fred',
+                    oldValue: 'Bob',
+                },
+            ],
         ]);
     });
 });
