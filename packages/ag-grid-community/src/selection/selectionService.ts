@@ -136,7 +136,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             // trying to set it to true / false. this group will be calculated further on
             // down when we call updateGroupsFromChildrenSelections(). we need to skip it
             // here, otherwise the updatedCount would include it.
-            const skipThisNode = this.groupSelectsFiltered && node.group;
+            const skipThisNode = false; //this.groupSelectsFiltered && node.group;
 
             if (node.rowPinned && !_isManualPinnedRow(node)) {
                 _warn(59);

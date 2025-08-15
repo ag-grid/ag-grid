@@ -1478,6 +1478,7 @@ describe('Row Selection Grid Options', () => {
 
                 // Can un-select child row
                 actions.toggleCheckboxByIndex(4);
+                expect(api.getDisplayedRowAtIndex(0)?.isSelected()).toEqual(undefined);
                 assertSelectedRowsByIndex([2, 3, 5, 6, 7, 8, 9, 10, 11], api);
 
                 // Toggling group row from indeterminate state re-selects all visible children
@@ -1625,6 +1626,20 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11], api);
             });
 
+            test('Can select group rows where `isRowSelectable` returns false and `groupSelects` = "filteredDescendants"', async () => {
+                const [api, actions] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'filteredDescendants',
+                        isRowSelectable: (node) => node.data?.sport === 'Swimming',
+                    },
+                });
+
+                actions.toggleCheckboxByIndex(0);
+                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11], api);
+            });
+
             test('Selection state changes when `isRowSelectable` changes', async () => {
                 const [api, actions] = await createGridAndWait({
                     ...groupGridOptions,
@@ -1694,6 +1709,34 @@ describe('Row Selection Grid Options', () => {
                 actions.toggleCheckboxById('rowGroupFooter_row-group-country-United States-sport-Swimming');
 
                 assertSelectedRowElementsById(['row-group-country-United States-sport-Swimming'], api);
+            });
+
+            test('parent with unselectable children is unselectable when groupSelects: descendants', async () => {
+                const [api] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'descendants',
+                        isRowSelectable: (node) => node.id?.startsWith('row-group') ?? false,
+                    },
+                });
+
+                expect(api.getRowNode('row-group-country-United States')?.selectable).toBe(false);
+                expect(api.getRowNode('row-group-country-United States-sport-Swimming')?.selectable).toBe(false);
+            });
+
+            test('parent with unselectable children is unselectable when groupSelects: filteredDescendants', async () => {
+                const [api] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'filteredDescendants',
+                        isRowSelectable: (node) => node.id?.startsWith('row-group') ?? false,
+                    },
+                });
+
+                expect(api.getRowNode('row-group-country-United States')?.selectable).toBe(false);
+                expect(api.getRowNode('row-group-country-United States-sport-Swimming')?.selectable).toBe(false);
             });
 
             describe('Range selection behaviour', () => {
