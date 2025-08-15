@@ -97,7 +97,6 @@ describe('Cell Editing Start', () => {
             { field: 'dateStr', popup: false, selectionStart: null, selectionEnd: null },
             { field: 'boolean', popup: false, selectionStart: null, selectionEnd: null },
         ])('$field (popup: $popup)', async ({ field, popup, selectionStart, selectionEnd }) => {
-            console.log(`Running Double-click test for field: ${field}`);
             const expected = rowData[0][field!];
 
             const api = await gridMgr.createGridAndWait('myGrid', {
@@ -108,19 +107,15 @@ describe('Cell Editing Start', () => {
                 },
             });
 
-            console.log('Grid initialized:', api);
-
             const gridDiv = getGridElement(api)! as HTMLElement;
             await asyncSetTimeout(1);
 
             const cell = getByTestId(gridDiv, agTestIdFor.cell('0', field!));
-            console.log('Double-clicking cell:', cell);
             await userEvent.dblClick(cell);
 
             await asyncSetTimeout(1);
 
             const inputElement = await waitForInput(gridDiv, cell, { popup });
-            console.log('Input element value:', inputElement.value);
             expect(inputElement).toHaveValue(expected);
 
             expect(inputElement.selectionStart).toEqual(selectionStart);
