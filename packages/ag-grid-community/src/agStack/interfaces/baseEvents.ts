@@ -15,9 +15,14 @@ interface AgBodyScrollEvent extends AgEvent<'bodyScroll'> {
     top: number;
 }
 
-interface AgDragStartedEvent extends AgEvent<'dragStarted'> {
+interface AgBaseDragEvent<TEventType extends 'dragStarted' | 'dragStopped' | 'dragCancelled'>
+    extends AgEvent<TEventType> {
     target: Element;
 }
+
+interface AgDragStartedEvent extends AgBaseDragEvent<'dragStarted'> {}
+interface AgDragStoppedEvent extends AgBaseDragEvent<'dragStopped'> {}
+interface AgDragCancelledEvent extends AgBaseDragEvent<'dragCancelled'> {}
 
 interface AgTooltipEvent<TEventType extends 'tooltipShow' | 'tooltipHide'> extends AgEvent<TEventType> {
     parentGui: HTMLElement;
@@ -34,6 +39,8 @@ export interface BaseEvents {
     checkboxChanged: AgCheckboxChangedEvent;
     bodyScroll: AgBodyScrollEvent;
     dragStarted: AgDragStartedEvent;
+    dragStopped: AgDragStoppedEvent;
+    dragCancelled: AgDragCancelledEvent;
     tooltipShow: AgTooltipShowEvent;
     tooltipHide: AgTooltipHideEvent;
 }

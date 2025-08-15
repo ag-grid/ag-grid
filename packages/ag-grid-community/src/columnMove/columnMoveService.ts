@@ -1,6 +1,6 @@
+import type { HorizontalDirection } from '../agStack/constants/direction';
 import { _last, _moveInArray, _removeFromArray } from '../agStack/utils/array';
 import type { ColKey } from '../columns/columnModel';
-import type { HorizontalDirection } from '../constants/direction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { DragSource } from '../dragAndDrop/dragAndDropService';

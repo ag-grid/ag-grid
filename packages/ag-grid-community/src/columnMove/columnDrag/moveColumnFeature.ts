@@ -1,6 +1,6 @@
+import type { HorizontalDirection } from '../../agStack/constants/direction';
 import { _last } from '../../agStack/utils/array';
 import { _exists, _missing } from '../../agStack/utils/generic';
-import type { HorizontalDirection } from '../../constants/direction';
 import { BeanStub } from '../../context/beanStub';
 import type { DragAndDropIcon, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
@@ -602,7 +602,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.intervalCount = 0;
         this.failedMoveAttempts = 0;
         this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), SCROLL_TIME_INTERVAL);
-        this.beans.dragAndDrop!.getDragAndDropImageComponent()?.setIcon(this.needToMoveLeft ? 'left' : 'right', true);
+        this.beans.dragAndDrop!.setDragDropIcon(this.needToMoveLeft ? 'left' : 'right', true);
     }
 
     private ensureIntervalCleared(): void {
@@ -613,7 +613,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         window.clearInterval(this.movingIntervalId);
         this.movingIntervalId = null;
         this.failedMoveAttempts = 0;
-        this.beans.dragAndDrop!.getDragAndDropImageComponent()?.setIcon(this.getIconName(), false);
+        this.beans.dragAndDrop!.setDragDropIcon(this.getIconName(), false);
     }
 
     private moveInterval(): void {
@@ -649,7 +649,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                 return;
             }
 
-            dragAndDrop!.getDragAndDropImageComponent()?.setIcon('pinned', false);
+            dragAndDrop!.setDragDropIcon('pinned', false);
 
             if (!gos.get('suppressMoveWhenColumnDragging')) {
                 const columns = this.lastDraggingEvent?.dragItem.columns as AgColumn[] | undefined;

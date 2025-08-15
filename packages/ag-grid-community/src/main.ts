@@ -92,6 +92,8 @@ export { ScrollDirection } from './agStack/interfaces/baseEvents';
 export { KeyCode } from './agStack/constants/keyCode';
 export { AgPopupComponent } from './agStack/popup/agPopupComponent';
 export { IComponent } from './agStack/interfaces/iComponent';
+export { DragListenerParams } from './agStack/interfaces/iDrag';
+export { IDragAndDropImage } from './agStack/interfaces/iDragAndDrop';
 
 // AG Stack Utils (public)
 export {
@@ -145,7 +147,7 @@ export {
     _requestAnimationFrame,
     _isElementOverflowingCallback,
 } from './agStack/utils/dom';
-export { _isElementInEventPath } from './agStack/utils/event';
+export { _isElementInEventPath, _anchorElementToMouseMoveEvent } from './agStack/utils/event';
 export { _debounce, _doOnce, _waitUntil, _batchCall } from './agStack/utils/function';
 export { _fuzzySuggestions } from './agStack/utils/fuzzyMatch';
 export {
@@ -158,7 +160,13 @@ export {
 } from './agStack/utils/generic';
 export { _isEventFromPrintableCharacter } from './agStack/utils/keyboard';
 export { _escapeString, _toString } from './agStack/utils/string';
-export { _getActiveDomElement, _getRootNode, _isNothingFocused, _getDocument } from './agStack/utils/document';
+export {
+    _getActiveDomElement,
+    _getRootNode,
+    _isNothingFocused,
+    _getDocument,
+    _getPageBody,
+} from './agStack/utils/document';
 export { _getLocaleTextFunc, _translate } from './agStack/utils/locale';
 export { AgPromise, _isPromise } from './agStack/utils/promise';
 export {
@@ -219,6 +227,7 @@ export type {
 // AG Stack (private)
 export { AgBeanStub as _AgBeanStub, AgBeanStubEvent as _AgBeanStubEvent } from './agStack/core/agBeanStub';
 export { AgComponentStub as _AgComponentStub } from './agStack/core/agComponentStub';
+export { AgComponentSelector as _AgComponentSelector } from './agStack/interfaces/agComponent';
 export { AgSingletonBeanClass as _AgSingletonBeanClass, AgContext as _AgContext } from './agStack/core/agContext';
 export { BaseEnvironment as _BaseEnvironment } from './agStack/core/baseEnvironment';
 export { BaseRegistry as _BaseRegistry } from './agStack/core/baseRegistry';
@@ -243,6 +252,13 @@ export { BaseTooltipStateManager as _BaseTooltipStateManager } from './agStack/t
 export { _createAgElement } from './agStack/utils/dom';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap } from './agStack/utils/locale';
 export { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
+export { IDragService as _IDragService } from './agStack/interfaces/iDrag';
+export {
+    AgDraggingEvent as _AgDraggingEvent,
+    IDragAndDropService as _IDragAndDropService,
+} from './agStack/interfaces/iDragAndDrop';
+export { BaseDragService as _BaseDragService } from './agStack/core/baseDragService';
+export { BaseDragAndDropService as _BaseDragAndDropService } from './agStack/core/baseDragAndDropService';
 
 // excel
 export {
@@ -309,7 +325,6 @@ export type {
 } from './dragAndDrop/rowDragFeature';
 export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { DragService } from './dragAndDrop/dragService';
-export { DragListenerParams } from './dragAndDrop/dragService';
 export { IRowDragItem } from './interfaces/iRowDragItem';
 export type { HorizontalResizeService } from './dragAndDrop/horizontalResizeService';
 
@@ -680,11 +695,7 @@ export {
     ILoadingOverlay,
 } from './rendering/overlays/loadingOverlayComponent';
 export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from './rendering/overlays/noRowsOverlayComponent';
-export {
-    IDragAndDropImageComponent,
-    IDragAndDropImage,
-    IDragAndDropImageParams,
-} from './dragAndDrop/dragAndDropImageComponent';
+export { IDragAndDropImageComponent, IDragAndDropImageParams } from './dragAndDrop/dragAndDropImageComponent';
 
 // features
 export {
@@ -889,8 +900,6 @@ export {
     _canSkipShowingRowGroup,
     _getRowHeightAsNumber,
     _shouldUpdateColVisibilityAfterGroup,
-    _getPageBody,
-    _anchorElementToMouseMoveEvent,
     _getGroupAggFiltering,
     _isRowSelection,
     _isGetRowHeightFunction,

@@ -1,5 +1,6 @@
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { IDragAndDropImage } from '../agStack/interfaces/iDragAndDrop';
 import { _clearElement } from '../agStack/utils/dom';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { ElementParams } from '../utils/element';
@@ -11,11 +12,6 @@ import type { DragAndDropIcon, DragSource } from './dragAndDropService';
 
 export interface IDragAndDropImageParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     dragSource: DragSource;
-}
-
-export interface IDragAndDropImage {
-    setIcon(iconName: string | null, shake: boolean): void;
-    setLabel(label: string): void;
 }
 
 export interface IDragAndDropImageComponent<
