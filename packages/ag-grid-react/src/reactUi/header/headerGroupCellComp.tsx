@@ -22,7 +22,6 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
     const [resizableAriaHidden, setResizableAriaHidden] = useState<'true' | 'false'>('false');
     const [ariaExpanded, setAriaExpanded] = useState<'true' | 'false' | undefined>();
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
-    const colId = useMemo(() => ctrl.column.getUniqueId(), []);
 
     const compBean = useRef<_EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
@@ -32,10 +31,12 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
-        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef || !ctrl.isAlive()) {
+        if (!eRef || !ctrl.isAlive() || context.isDestroyed()) {
+            compBean.current = context.destroyBean(compBean.current);
             return;
         }
+        compBean.current = context.createBean(new _EmptyBean());
+
         const compProxy: IHeaderGroupCellComp = {
             setWidth: (width: string) => {
                 if (eGui.current) {
@@ -109,14 +110,7 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
     const UserCompClass = userCompDetails?.componentClass;
 
     return (
-        <div
-            ref={setRef}
-            style={userStyles}
-            className={className}
-            col-id={colId}
-            role="columnheader"
-            aria-expanded={ariaExpanded}
-        >
+        <div ref={setRef} style={userStyles} className={className} role="columnheader" aria-expanded={ariaExpanded}>
             <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">
                 {reactUserComp ? (
                     userCompStateless ? (

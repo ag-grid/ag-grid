@@ -1,8 +1,9 @@
 import type {
-    AgSelect,
+    AgComponentSelectorType,
     AgSelectParams,
     ElementParams,
     FilterPanelDetailState,
+    GridSelect,
     SelectableFilterDef,
 } from 'ag-grid-community';
 import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
@@ -14,11 +15,11 @@ const FilterDetailElement: ElementParams = {
 };
 
 export class FilterDetailComp extends Component<'filterTypeChanged'> {
-    private eFilterType: AgSelect<SelectableFilterDef> = RefPlaceholder;
+    private eFilterType: GridSelect<SelectableFilterDef> = RefPlaceholder;
     private state?: FilterPanelDetailState;
 
     public postConstruct(): void {
-        const eFilterTypeParams: AgSelectParams = {
+        const eFilterTypeParams: AgSelectParams<AgComponentSelectorType> = {
             onValueChange: (filterDef) => this.dispatchLocalEvent({ type: 'filterTypeChanged', filterDef }),
         };
         this.setTemplate(FilterDetailElement, [AgSelectSelector], { eFilterType: eFilterTypeParams });

@@ -5,7 +5,7 @@ import type {
     IRowNumbersRowResizeFeature,
     RowNode,
 } from 'ag-grid-community';
-import { _warn } from 'ag-grid-community';
+import { _removeFromParent, _warn } from 'ag-grid-community';
 
 import type { AgRowNumbersRowResizer } from './rowNumbersRowResizer';
 
@@ -56,31 +56,32 @@ export class RowNumbersRowResizeFeature implements IRowNumbersRowResizeFeature {
 
         let { rowResizer } = this;
 
-        if (!rowResizer) {
-            rowResizer = beans.registry.createDynamicBean<AgRowNumbersRowResizer>(
-                'rowNumberRowResizer',
-                false,
-                cellCtrl
-            );
-
-            if (!rowResizer) {
-                return;
-            }
-            this.rowResizer = beans.context.createBean(rowResizer);
+        if (rowResizer) {
+            return;
         }
 
+        rowResizer = beans.registry.createDynamicBean<AgRowNumbersRowResizer>('rowNumberRowResizer', false, cellCtrl);
+
+        if (!rowResizer) {
+            return;
+        }
+
+        this.rowResizer = beans.context.createBean(rowResizer);
         eGui.appendChild(rowResizer.getGui());
     }
 
     private removeRowResizerFromCellComp(): void {
-        if (!this.rowResizer) {
+        const {
+            rowResizer,
+            beans: { context },
+        } = this;
+
+        if (!rowResizer) {
             return;
         }
 
-        const { eGui } = this.cellCtrl;
-
-        eGui.removeChild(this.rowResizer.getGui());
-        this.rowResizer = this.beans.context.destroyBean(this.rowResizer);
+        _removeFromParent(rowResizer.getGui());
+        this.rowResizer = context.destroyBean(rowResizer);
     }
 
     public destroy(): void {

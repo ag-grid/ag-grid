@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import type {
-    ColumnSortState,
+    AriaSortState,
     HeaderCellCtrl,
     HeaderStyle,
     IHeader,
@@ -18,7 +18,6 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
     const isAlive = ctrl.isAlive();
 
     const { context } = useContext(BeansContext);
-    const colId = isAlive ? ctrl.column.getColId() : undefined;
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
     const [userStyles, setUserStyles] = useState<HeaderStyle>();
 
@@ -34,10 +33,12 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
     }
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
-        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef || !ctrl.isAlive()) {
+        if (!eRef || !ctrl.isAlive() || context.isDestroyed()) {
+            compBean.current = context.destroyBean(compBean.current);
             return;
         }
+
+        compBean.current = context.createBean(new _EmptyBean());
 
         const refreshSelectAllGui = () => {
             const selectAllGui = ctrl.getSelectAllGui();
@@ -55,7 +56,7 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
             },
             toggleCss: (name: string, on: boolean) => cssManager.current!.toggleCss(name, on),
             setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
-            setAriaSort: (sort?: ColumnSortState) => {
+            setAriaSort: (sort?: AriaSortState) => {
                 if (eGui.current) {
                     sort ? _setAriaSort(eGui.current, sort) : _removeAriaSort(eGui.current);
                 }
@@ -91,7 +92,7 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
     const UserCompClass = userCompDetails?.componentClass;
 
     return (
-        <div ref={setRef} style={userStyles} className="ag-header-cell" col-id={colId} role="columnheader">
+        <div ref={setRef} style={userStyles} className="ag-header-cell" role="columnheader">
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
             <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">
                 {reactUserComp ? (

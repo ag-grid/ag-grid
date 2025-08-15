@@ -1,3 +1,5 @@
+import { _setAriaInvalid } from '../../agStack/utils/aria';
+import { _getLocaleTextFunc } from '../../agStack/utils/locale';
 import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import type { BeanCollection } from '../../context/context';
@@ -13,10 +15,8 @@ import type {
 } from '../../interfaces/iCellEditor';
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
-import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { _setAriaInvalid } from '../../utils/aria';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
 import { _getCellCtrl } from './controllers';
 
@@ -325,7 +325,7 @@ export function _syncFromEditor(
         // sourceValue not set means sync called without corresponding startEdit - from API call
         edit = editModelSvc.setEdit(position, {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
-            pendingValue: UNEDITED,
+            pendingValue: edit ? edit.editorValue : UNEDITED,
         });
     }
 
@@ -384,7 +384,8 @@ export function _destroyEditor(
     const { comp } = cellCtrl;
 
     if (comp && !comp.getCellEditor()) {
-        // no editor, nothing to do
+        // editor already cleaned up, refresh cell
+        cellCtrl?.refreshCell();
         return;
     }
 
@@ -409,7 +410,7 @@ export function _destroyEditor(
     if (latest?.state === 'changed' && !params?.silent) {
         editSvc?.dispatchCellEvent(position, params?.event, 'cellEditingStopped', {
             valueChanged: _sourceAndPendingDiffer(latest),
-            newValue: latest?.pendingValue,
+            newValue: edit?.editorValue ?? edit?.pendingValue,
             oldValue: latest?.sourceValue,
         });
     }

@@ -1,14 +1,16 @@
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
+import type { AgInputTextFieldParams } from '../../../agStack/widgets/agInputTextField';
+import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
 import { BeanStub } from '../../../context/beanStub';
-import type { AgInputTextFieldParams } from '../../../widgets/agInputTextField';
-import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { RefPlaceholder } from '../../../widgets/component';
+import type { AgComponentSelectorType } from '../../../widgets/component';
+import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FloatingFilterInputService } from './iFloatingFilterInputService';
 
 export class FloatingFilterTextInputService extends BeanStub implements FloatingFilterInputService {
-    private eInput: AgInputTextField = RefPlaceholder;
+    private eInput: GridInputTextField = RefPlaceholder;
     private onValueChanged: (e: KeyboardEvent) => void = () => {};
 
-    constructor(private params?: { config?: AgInputTextFieldParams }) {
+    constructor(private params?: { config?: AgInputTextFieldParams<AgComponentSelectorType> }) {
         super();
     }
 

@@ -1,12 +1,13 @@
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
+import { _isBrowserSafari } from '../../../agStack/utils/browser';
+import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../agStack/utils/date';
+import { AgInputTextFieldSelector } from '../../../agStack/widgets/agInputTextField';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import { _isBrowserSafari } from '../../../utils/browser';
-import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
-import type { ElementParams } from '../../../utils/dom';
+import type { ElementParams } from '../../../utils/element';
 import { _warn } from '../../../validation/logging';
-import type { AgInputTextField } from '../../../widgets/agInputTextField';
-import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
-import { Component, RefPlaceholder } from '../../../widgets/component';
+import { Component } from '../../../widgets/component';
+import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 
 const DefaultDateElement: ElementParams = {
     tag: 'div',
@@ -20,7 +21,7 @@ const DefaultDateElement: ElementParams = {
     ],
 };
 export class DefaultDateComponent extends Component implements IDateComp {
-    private readonly eDateInput: AgInputTextField = RefPlaceholder;
+    private readonly eDateInput: GridInputTextField = RefPlaceholder;
 
     constructor() {
         super(DefaultDateElement, [AgInputTextFieldSelector]);

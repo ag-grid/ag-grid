@@ -1,9 +1,9 @@
+import type { IPopupComponent } from '../agStack/interfaces/iPopupComponent';
 import type { ColDef } from '../entities/colDef';
 import type { Column } from '../interfaces/iColumn';
 import type { GetCellsParams } from './iCellsParams';
 import type { AgGridCommon } from './iCommon';
 import type { EditState } from './iEditModelService';
-import type { IPopupComponent } from './iPopupComponent';
 import type { IRowNode } from './iRowNode';
 import type { RowPosition } from './iRowPosition';
 

@@ -1,3 +1,4 @@
+import { _exists } from '../agStack/utils/generic';
 import type { BeanCollection } from '../context/context';
 import { _isGroupRowsSticky } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
@@ -5,7 +6,6 @@ import type { RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
-import { _exists } from '../utils/generic';
 import type { AgColumn } from './agColumn';
 import type { RowNode } from './rowNode';
 

@@ -57,6 +57,7 @@
     "autoprefixer": "^10.4.20",
     "bent": "^7.2.0",
     "cssnano": "^7.0.5",
+    "dependency-cruiser": "^13.1.5",
     "esbuild": "^0.19.2",
     "esbuild-plugin-umd-wrapper": "^2.0.0",
     "eslint": "^9.2.0",
@@ -131,6 +132,7 @@
     "**/@babel/core": "7.27.1",
     "**/prismjs": "1.30.0",
     "**/jpeg-js": "0.4.0",
-    "**/tough-cookie": "^4.1.3"
+    "**/tough-cookie": "^4.1.3",
+    "dependency-cruiser/**/cross-spawn": "7.0.6"
   }
 }

@@ -2,7 +2,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const config = {
         version: urlParams.get('version') ?? '20.0.0',
-        prod: urlParams.get('prod') ?? false,
+        prod: urlParams.get('prod') === 'false' ? false : urlParams.get('prod') ?? false,
     };
 
     process = { env: { NODE_ENV: 'development' } };

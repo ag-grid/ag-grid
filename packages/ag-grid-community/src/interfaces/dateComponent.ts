@@ -1,7 +1,7 @@
+import type { IComponent } from '../agStack/interfaces/iComponent';
 import type { DateFilterParams } from '../filter/provided/date/iDateFilter';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { AgGridCommon } from '../interfaces/iCommon';
-import type { IComponent } from '../interfaces/iComponent';
 
 export interface BaseDate {
     /** Optional: Sets the disabled state of this component */

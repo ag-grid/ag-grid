@@ -3,10 +3,12 @@
     "project": ["./src/**"],
     "ignore": [
         "./src/interfaces/iAgChartOptions.ts",
+        "./src/theming/createTheme.ts",
         "./src/theming/param-docs.ts",
         "./src/theming/private-theming-api.ts",
         "./src/utils/debug.ts",
-        "./src/theming/theme-types.ts"
+        "./src/agStack/theming/themeTypes.ts",
+        "./src/agStack/theming/themeTypeUtils.ts"
     ],
     "rules": {
         "unlisted": "off",

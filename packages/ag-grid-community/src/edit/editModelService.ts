@@ -139,7 +139,14 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         }
 
         const map = new Map<IRowNode, Map<Column, EditValue>>();
-        this.edits.forEach((editRow, rowNode) => map.set(rowNode, new Map<Column, EditValue>(editRow)));
+        this.edits.forEach((editRow, rowNode) => {
+            const newEditRow = new Map<Column, EditValue>();
+            editRow.forEach((cellData, column) =>
+                // Ensure we copy the cell data to avoid reference issues
+                newEditRow.set(column, { ...cellData })
+            );
+            map.set(rowNode, newEditRow);
+        });
         return map;
     }
 

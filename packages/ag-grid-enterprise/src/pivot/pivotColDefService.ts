@@ -397,6 +397,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         newColDef.colId = colId;
         newColDef.valueGetter = valueGetter;
         newColDef.aggFunc = aggFunc;
+        newColDef.pivotTotalColumnIds = pivotTotalColumnIds;
 
         this.gos.get('processPivotResultColDef')?.(newColDef);
 

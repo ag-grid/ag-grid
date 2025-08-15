@@ -1,7 +1,7 @@
+import { _setAriaLabel, _setAriaLabelledBy } from '../../agStack/utils/aria';
 import type { ILoadingCellRendererComp, ILoadingCellRendererParams } from '../../interfaces/iLoadingCellRenderer';
-import { _setAriaLabel, _setAriaLabelledBy } from '../../utils/aria';
-import type { ElementParams } from '../../utils/dom';
-import { _createElement } from '../../utils/dom';
+import type { ElementParams } from '../../utils/element';
+import { _createElement } from '../../utils/element';
 import { Component } from '../../widgets/component';
 
 const SkeletonCellRendererElement: ElementParams = { tag: 'div', cls: 'ag-skeleton-container' };

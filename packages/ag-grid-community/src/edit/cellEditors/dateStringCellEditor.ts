@@ -1,11 +1,11 @@
+import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
+import { _parseDateTimeFromString, _serialiseDate } from '../../agStack/utils/date';
+import { _exists } from '../../agStack/utils/generic';
+import { AgInputDateFieldSelector } from '../../agStack/widgets/agInputDateField';
 import type { DataTypeService } from '../../columns/dataTypeService';
 import type { AgColumn } from '../../entities/agColumn';
-import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
-import { _parseDateTimeFromString, _serialiseDate } from '../../utils/date';
-import type { ElementParams } from '../../utils/dom';
-import { _exists } from '../../utils/generic';
-import type { AgInputDateField } from '../../widgets/agInputDateField';
-import { AgInputDateFieldSelector } from '../../widgets/agInputDateField';
+import type { ElementParams } from '../../utils/element';
+import type { GridInputDateField } from '../../widgets/gridWidgetTypes';
 import type { CellEditorInput } from './iCellEditorInput';
 import type { IDateStringCellEditorParams } from './iDateStringCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
@@ -15,8 +15,8 @@ const DateStringCellElement: ElementParams = {
     ref: 'eEditor',
     cls: 'ag-cell-editor',
 };
-class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCellEditorParams, AgInputDateField> {
-    private eEditor: AgInputDateField;
+class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCellEditorParams, GridInputDateField> {
+    private eEditor: GridInputDateField;
     private params: IDateStringCellEditorParams;
     private includeTime: boolean | undefined;
 
@@ -33,7 +33,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
         return [AgInputDateFieldSelector];
     }
 
-    public init(eEditor: AgInputDateField, params: IDateStringCellEditorParams): void {
+    public init(eEditor: GridInputDateField, params: IDateStringCellEditorParams): void {
         this.eEditor = eEditor;
         this.params = params;
 
@@ -132,7 +132,7 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     }
 }
 
-export class DateStringCellEditor extends SimpleCellEditor<string, IDateStringCellEditorParams, AgInputDateField> {
+export class DateStringCellEditor extends SimpleCellEditor<string, IDateStringCellEditorParams, GridInputDateField> {
     constructor() {
         super(
             new DateStringCellEditorInput(

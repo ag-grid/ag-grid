@@ -1,3 +1,4 @@
+import { _areEqual, _last } from '../agStack/utils/array';
 import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { CtrlsService } from '../ctrlsService';
@@ -6,7 +7,6 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
-import { _areEqual, _last } from '../utils/array';
 import type { ColumnMoveService } from './columnMoveService';
 
 export interface ColumnMoveParams {

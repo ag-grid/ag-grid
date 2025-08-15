@@ -1,10 +1,10 @@
+import { _exists } from '../agStack/utils/generic';
 import type { BeanCollection } from '../context/context';
 import type { DraggingEvent } from '../dragAndDrop/dragAndDropService';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _isDomLayout } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import { _getCellCtrlForEventTarget } from '../rendering/renderUtils';
-import { _exists } from '../utils/generic';
 
 const GRID_DOM_KEY = '__ag_grid_instance';
 

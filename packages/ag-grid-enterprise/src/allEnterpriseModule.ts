@@ -88,5 +88,5 @@ export const AllEnterpriseModule: AllEnterpriseModuleType = {
     }),
     moduleName,
     version: VERSION,
-    dependsOn: dependsOn,
+    dependsOn,
 };

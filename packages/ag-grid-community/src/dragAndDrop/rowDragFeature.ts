@@ -1,3 +1,4 @@
+import { _areEqual } from '../agStack/utils/array';
 import { _getClientSideRowModel } from '../api/rowModelApiUtils';
 import { BeanStub } from '../context/beanStub';
 import { _getCellByPosition } from '../entities/positionUtils';
@@ -15,7 +16,6 @@ import { _getGroupingApproach, _getRowIdCallback } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _EmptyArray, _areEqual } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import type { DragAndDropIcon, DraggingEvent, DropTarget } from './dragAndDropService';
@@ -453,7 +453,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             } else if (typeof canDropResult === 'object') {
                 // Custom result, override the default values
                 if (canDropResult.rows !== undefined) {
-                    rowsDrop.rows = canDropResult.rows ?? _EmptyArray;
+                    rowsDrop.rows = canDropResult.rows ?? [];
                 }
                 if (canSetParent && canDropResult.newParent !== undefined) {
                     rowsDrop.newParent = canDropResult.newParent;

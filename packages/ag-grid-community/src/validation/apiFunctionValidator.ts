@@ -1,7 +1,7 @@
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { BeanCollection } from '../context/context';
 import type { RowModelType } from '../interfaces/iRowModel';
-import { _errorOnce, _warnOnce } from '../utils/function';
+import { _errorOnce, _warnOnce } from '../utils/log';
 
 const clientSide = 'clientSide';
 const serverSide = 'serverSide';

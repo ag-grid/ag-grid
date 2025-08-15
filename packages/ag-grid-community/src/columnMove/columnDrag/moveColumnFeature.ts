@@ -1,3 +1,5 @@
+import { _last } from '../../agStack/utils/array';
+import { _exists, _missing } from '../../agStack/utils/generic';
 import type { HorizontalDirection } from '../../constants/direction';
 import { BeanStub } from '../../context/beanStub';
 import type { DragAndDropIcon, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
@@ -7,8 +9,6 @@ import type { ColumnEventType } from '../../events';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { ColumnHighlightPosition } from '../../interfaces/iColumn';
-import { _last } from '../../utils/array';
-import { _exists, _missing } from '../../utils/generic';
 import type { ColumnMoveParams } from '../internalColumnMoveUtils';
 import { attemptMoveColumns, getBestColumnMoveIndexFromXPosition, normaliseX } from '../internalColumnMoveUtils';
 import type { DropListener } from './bodyDropTarget';

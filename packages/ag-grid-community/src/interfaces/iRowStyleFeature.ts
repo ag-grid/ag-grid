@@ -1,6 +1,6 @@
-import type { BeanCollection, BeanName } from '../context/context';
-import type { GenericBean } from '../context/genericBean';
+import type { AgBaseBean } from '../agStack/interfaces/agBaseBean';
+import type { BeanCollection } from '../context/context';
 
-export interface IRowStyleFeature extends GenericBean<BeanName, BeanCollection> {
+export interface IRowStyleFeature extends AgBaseBean<BeanCollection> {
     applyRowStyles(): void;
 }

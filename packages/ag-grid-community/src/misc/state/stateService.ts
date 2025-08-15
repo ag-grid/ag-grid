@@ -1,3 +1,5 @@
+import { _debounce } from '../../agStack/utils/function';
+import { _jsonEquals } from '../../agStack/utils/generic';
 import { _applyColumnState, _getColumnState } from '../../columns/columnStateUtils';
 import type { ColumnState, ColumnStateParams } from '../../columns/columnStateUtils';
 import type { NamedBean } from '../../context/bean';
@@ -28,8 +30,6 @@ import type {
 } from '../../interfaces/gridState';
 import type { FilterModel } from '../../interfaces/iFilter';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
-import { _debounce } from '../../utils/function';
-import { _jsonEquals } from '../../utils/generic';
 import { migrateGridStateModel } from './stateModelMigration';
 import { _convertColumnGroupState, convertColumnState } from './stateUtils';
 

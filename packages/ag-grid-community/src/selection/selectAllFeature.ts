@@ -1,3 +1,6 @@
+import { _getAriaCheckboxStateName, _setAriaRole } from '../agStack/utils/aria';
+import { _getActiveDomElement } from '../agStack/utils/document';
+import { AgCheckbox } from '../agStack/widgets/agCheckbox';
 import { isColumnGroupAutoCol, isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -6,7 +9,6 @@ import type { GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { DisplayedColumnsChangedEvent, SelectionEventSourceType } from '../events';
 import {
     _addGridCommonParams,
-    _getActiveDomElement,
     _getCheckboxLocation,
     _getHeaderCheckbox,
     _getSelectAll,
@@ -15,16 +17,15 @@ import {
     _isServerSideRowModel,
 } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
-import { _getAriaCheckboxStateName, _setAriaRole } from '../utils/aria';
 import { _warn } from '../validation/logging';
-import { AgCheckbox } from '../widgets/agCheckbox';
+import type { GridCheckbox } from '../widgets/gridWidgetTypes';
 
 export class SelectAllFeature extends BeanStub {
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;
     private headerCellCtrl: HeaderCellCtrl;
 
-    private cbSelectAll: AgCheckbox;
+    private cbSelectAll: GridCheckbox;
 
     constructor(private readonly column: AgColumn) {
         super();
@@ -45,7 +46,7 @@ export class SelectAllFeature extends BeanStub {
 
     public setComp(ctrl: HeaderCellCtrl): void {
         this.headerCellCtrl = ctrl;
-        const cbSelectAll = this.createManagedBean(new AgCheckbox());
+        const cbSelectAll = this.createManagedBean<GridCheckbox>(new AgCheckbox());
         this.cbSelectAll = cbSelectAll;
         cbSelectAll.addCss('ag-header-select-all');
         _setAriaRole(cbSelectAll.getGui(), 'presentation');

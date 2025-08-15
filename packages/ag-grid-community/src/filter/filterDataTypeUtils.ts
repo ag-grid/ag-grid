@@ -1,3 +1,6 @@
+import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
+import { _getDateParts } from '../agStack/utils/date';
+import { _exists } from '../agStack/utils/generic';
 import type { BeanCollection, UserComponentName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ValueFormatterParams, ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
@@ -9,9 +12,6 @@ import type {
     DateStringDataTypeDefinition,
 } from '../entities/dataType';
 import type { ISetFilterParams } from '../interfaces/iSetFilter';
-import type { LocaleTextFunc } from '../misc/locale/localeUtils';
-import { _getDateParts } from '../utils/date';
-import { _exists } from '../utils/generic';
 import type { IDateFilterParams } from './provided/date/iDateFilter';
 import type { ISimpleFilterParams } from './provided/iSimpleFilter';
 import type { INumberFilterParams } from './provided/number/iNumberFilter';

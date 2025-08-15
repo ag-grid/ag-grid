@@ -1,21 +1,22 @@
 import { BASE_URL } from '../baseUrl';
-import { _errorOnce, _warnOnce } from '../utils/function';
+import { _errorOnce, _warnOnce } from '../utils/log';
 import { VERSION } from '../version';
 import type { ErrorId, ErrorMap, GetErrorParams } from './errorMessages/errorText';
-import type { ValidationService } from './validationService';
 
 const MAX_URL_LENGTH = 2000;
 const MIN_PARAM_LENGTH = 100;
 const VERSION_PARAM_NAME = '_version_';
 
-let validation: ValidationService | null = null;
+let getConsoleMessage: (<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>) => any[]) | null = null;
 export let baseDocLink = `${BASE_URL}/javascript-data-grid`;
 /**
  * The ValidationService passes itself in if it has been included.
  * @param logger
  */
-export function provideValidationServiceLogger(logger: ValidationService) {
-    validation = logger;
+export function provideValidationServiceLogger(
+    logger: <TId extends ErrorId>(id: TId, args: GetErrorParams<TId>) => any[]
+) {
+    getConsoleMessage = logger;
 }
 
 /** Set by the Framework override to give us accurate links for the framework  */
@@ -26,7 +27,7 @@ export function setValidationDocLink(docLink: string) {
 type LogFn = (message: string, ...args: any[]) => void;
 
 function getErrorParts<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>, defaultMessage?: string): any[] {
-    return validation?.getConsoleMessage(id, args) ?? [minifiedLog(id, args, defaultMessage)];
+    return getConsoleMessage?.(id, args) ?? [minifiedLog(id, args, defaultMessage)];
 }
 
 function getMsgOrDefault<TId extends ErrorId>(

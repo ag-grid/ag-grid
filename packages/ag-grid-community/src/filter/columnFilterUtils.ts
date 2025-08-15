@@ -1,3 +1,4 @@
+import type { AgPromise } from '../agStack/utils/promise';
 import type { AgColumn } from '../entities/agColumn';
 import type {
     CreateFilterHandlerFunc,
@@ -13,7 +14,6 @@ import type {
     IFilterParams,
 } from '../interfaces/iFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
-import type { AgPromise } from '../utils/promise';
 
 export const FILTER_HANDLER_MAP = {
     agSetColumnFilter: 'agSetColumnFilterHandler',

@@ -13,6 +13,13 @@ export default defineConfig({
     /* Run tests in files in parallel */
     fullyParallel: true,
     timeout: process.env.CI ? 60_000 : 20_000,
+    expect: {
+        /**
+         * Maximum time expect() should wait for the condition to be met.
+         * For example in `await expect(locator).toHaveText('text')`.
+         */
+        timeout: process.env.CI ? 10_000 : 5_000,
+    },
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
     /* Retry on CI only */

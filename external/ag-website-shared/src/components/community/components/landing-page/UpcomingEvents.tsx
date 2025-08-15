@@ -20,7 +20,7 @@ const UpcomingEvents = ({ images, events }) => {
     // Function to format date
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
         const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
 
         // Append 'st', 'nd', 'rd' or 'th' to the day number

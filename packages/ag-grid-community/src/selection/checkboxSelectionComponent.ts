@@ -1,14 +1,15 @@
+import { RefPlaceholder } from '../agStack/interfaces/agComponent';
+import { _getAriaCheckboxStateName } from '../agStack/utils/aria';
+import { AgCheckboxSelector } from '../agStack/widgets/agCheckbox';
 import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _getCheckboxes, _getHideDisabledCheckboxes, _getIsRowSelectable } from '../gridOptionsUtils';
 import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRenderer';
-import { _getAriaCheckboxStateName } from '../utils/aria';
-import type { ElementParams } from '../utils/dom';
-import { _stopPropagationForAgGrid } from '../utils/event';
-import type { AgCheckbox } from '../widgets/agCheckbox';
-import { AgCheckboxSelector } from '../widgets/agCheckbox';
-import { Component, RefPlaceholder } from '../widgets/component';
+import type { ElementParams } from '../utils/element';
+import { _stopPropagationForAgGrid } from '../utils/gridEvent';
+import { Component } from '../widgets/component';
+import type { GridCheckbox } from '../widgets/gridWidgetTypes';
 
 const CheckboxSelectionComponentElement: ElementParams = {
     tag: 'div',
@@ -24,7 +25,7 @@ const CheckboxSelectionComponentElement: ElementParams = {
 };
 
 export class CheckboxSelectionComponent extends Component {
-    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
+    private readonly eCheckbox: GridCheckbox = RefPlaceholder;
 
     private rowNode: RowNode;
     private column: AgColumn | undefined;

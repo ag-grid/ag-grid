@@ -1,13 +1,20 @@
+import { AgContext } from './agStack/core/agContext';
+import type { AgContextParams } from './agStack/core/agContext';
+import { _missing } from './agStack/utils/generic';
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
-import type { ContextParams, SingletonBean } from './context/context';
-import { Context } from './context/context';
+import type { BeanCollection, SingletonBean } from './context/context';
+import type { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import type { GridOptions } from './entities/gridOptions';
+import type { AgEventTypeParams } from './events';
 import { GlobalGridOptions } from './globalGridOptions';
 import { GridComp } from './gridComp/gridComp';
 import { CommunityCoreModule } from './gridCoreModule';
+import type { GridOptionsWithDefaults } from './gridOptionsDefault';
+import type { GridOptionsService } from './gridOptionsService';
+import type { AgGridCommon } from './interfaces/iCommon';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type {
     CommunityModuleName,
@@ -23,9 +30,9 @@ import {
     _hasUserRegistered,
     _isModuleRegistered,
     _registerModule,
+    _unRegisterGridModules,
 } from './modules/moduleRegistry';
-import { _createElement } from './utils/dom';
-import { _missing } from './utils/generic';
+import { _createElement } from './utils/element';
 import { NoModulesRegisteredError, missingRowModelTypeError } from './validation/errorMessages/errorText';
 import { _error, _logPreInitErr } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
@@ -136,20 +143,33 @@ export class GridCoreCreator {
         const destroyCallback = () => {
             _gridElementCache.delete(api);
             _gridApiCache.delete(eGridDiv);
+            _unRegisterGridModules(gridId);
             _destroyCallback?.();
         };
 
-        const contextParams: ContextParams = {
+        const contextParams: AgContextParams<
+            BeanCollection,
+            GridOptionsWithDefaults,
+            AgEventTypeParams,
+            AgGridCommon<any, any>,
+            GridOptionsService
+        > = {
             providedBeanInstances,
             beanClasses,
-            gridId,
+            id: gridId,
             beanInitComparator: gridBeanInitComparator,
             beanDestroyComparator: gridBeanDestroyComparator,
             derivedBeans: [createGridApi],
             destroyCallback,
         };
 
-        const context = new Context(contextParams);
+        const context = new AgContext<
+            BeanCollection,
+            GridOptionsWithDefaults,
+            AgEventTypeParams,
+            AgGridCommon<any, any>,
+            GridOptionsService
+        >(contextParams);
         this.registerModuleFeatures(context, registeredModules);
 
         createUi(context);
@@ -207,6 +227,7 @@ export class GridCoreCreator {
         const seed = {
             gridOptions: gridOptions,
             eGridDiv: eGridDiv,
+            eRootDiv: eGridDiv,
             globalListener: params ? params.globalListener : null,
             globalSyncListener: params ? params.globalSyncListener : null,
             frameworkOverrides: frameworkOverrides,

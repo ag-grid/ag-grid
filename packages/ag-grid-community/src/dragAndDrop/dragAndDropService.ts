@@ -1,13 +1,14 @@
+import { _removeFromArray } from '../agStack/utils/array';
+import { _getRootNode } from '../agStack/utils/document';
+import type { AgPromise } from '../agStack/utils/promise';
 import { _getDragAndDropImageCompDetails } from '../components/framework/userCompUtils';
 import type { HorizontalDirection, VerticalDirection } from '../constants/direction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
-import { _addGridCommonParams, _anchorElementToMouseMoveEvent, _getPageBody, _getRootNode } from '../gridOptionsUtils';
+import { _addGridCommonParams, _anchorElementToMouseMoveEvent, _getPageBody } from '../gridOptionsUtils';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { DragItem } from '../interfaces/iDragItem';
-import { _removeFromArray } from '../utils/array';
-import type { AgPromise } from '../utils/promise';
 import { _warn } from '../validation/logging';
 import type { IDragAndDropImageComponent } from './dragAndDropImageComponent';
 import type { DragListenerParams } from './dragService';

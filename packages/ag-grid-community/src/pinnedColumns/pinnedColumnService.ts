@@ -1,3 +1,4 @@
+import { _getInnerWidth } from '../agStack/utils/dom';
 import { dispatchColumnPinnedEvent } from '../columns/columnEventUtils';
 import type { ColKey } from '../columns/columnModel';
 import { isRowNumberCol } from '../columns/columnUtils';
@@ -13,7 +14,6 @@ import type { HeaderRowContainerCtrl } from '../headerRendering/rowContainer/hea
 import type { ProcessUnpinnedColumnsParams } from '../interfaces/iCallbackParams';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import { _getInnerWidth } from '../utils/dom';
 import { _warn } from '../validation/logging';
 
 export class PinnedColumnService extends BeanStub implements NamedBean {

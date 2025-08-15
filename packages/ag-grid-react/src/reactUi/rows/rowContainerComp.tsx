@@ -59,6 +59,10 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
         if (areElementsRemoved()) {
             rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
         }
+        if (context.isDestroyed()) {
+            return;
+        }
+
         if (areElementsReady()) {
             const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
                 const next = getNextValueIfDifferent(

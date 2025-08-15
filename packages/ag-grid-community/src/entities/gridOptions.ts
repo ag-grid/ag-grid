@@ -3,6 +3,7 @@
  ************************************************************************************************/
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
+import type { Theme } from '../agStack/theming/theme';
 import type { IsRowValidDropPositionCallback } from '../dragAndDrop/rowDragFeature';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
@@ -189,7 +190,6 @@ import type { StatusPanelDef } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
-import type { Theme } from '../theming/Theme';
 import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
 
@@ -1460,6 +1460,12 @@ export interface GridOptions<TData = any> {
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     suppressGroupRowsSticky?: boolean;
+
+    /**
+     * Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+     * @agModule `RowGroupingModule`
+     */
+    groupHierarchyConfig?: { [k: string]: ColDef };
 
     // *** Row Pinning *** //
     /**

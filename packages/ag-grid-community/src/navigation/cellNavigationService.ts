@@ -1,4 +1,6 @@
-import { KeyCode } from '../constants/keyCode';
+import { KeyCode } from '../agStack/constants/keyCode';
+import { _last } from '../agStack/utils/array';
+import { _missing } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -8,8 +10,6 @@ import type { RowNode } from '../entities/rowNode';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { RowSpanService } from '../rendering/spanning/rowSpanService';
-import { _last } from '../utils/array';
-import { _missing } from '../utils/generic';
 import { _warn } from '../validation/logging';
 
 export class CellNavigationService extends BeanStub implements NamedBean {

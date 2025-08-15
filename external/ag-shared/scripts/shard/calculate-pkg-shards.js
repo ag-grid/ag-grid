@@ -31,18 +31,18 @@ if (library === 'grid') {
     affectedProjectsCmd = 'yarn nx show projects --affected -t pack -t test:package';
 }
 
-const result = { framework: [] };
+const result = { framework: new Set() };
 const affectedProjects = execSync(affectedProjectsCmd, { encoding: 'utf-8' }).split('\n');
 
 for (const packageName in matches) {
     if (affectedProjects.includes(packageName)) {
-        result.framework.push(matches[packageName]);
+        result.framework.add(matches[packageName]);
     }
 }
 
-if (result.framework.length === 0) {
+if (result.framework.size === 0) {
     // Avoid failing GHA matrix execution due to zero matrix permutations.
-    result.framework.push('none');
+    result.framework.add('none');
 }
 
-console.log(JSON.stringify(result));
+console.log(JSON.stringify({ framework: Array.from(result.framework) }));

@@ -1,9 +1,10 @@
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
+import { AgInputTextFieldSelector } from '../../../agStack/widgets/agInputTextField';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { IFilter } from '../../../interfaces/iFilter';
-import type { ElementParams } from '../../../utils/dom';
-import type { AgInputTextField } from '../../../widgets/agInputTextField';
-import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
-import { Component, RefPlaceholder } from '../../../widgets/component';
+import type { ElementParams } from '../../../utils/element';
+import { Component } from '../../../widgets/component';
+import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type {
     FloatingFilterDisplayParams,
     IFloatingFilterComp,
@@ -27,7 +28,7 @@ const ReadOnlyFloatingFilterElement: ElementParams = {
 // they can provide a getModelAsString() method on the filter instead. this class just displays
 // the string returned from getModelAsString()
 export class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp<IFilter & IFloatingFilterParent> {
-    private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
+    private readonly eFloatingFilterText: GridInputTextField = RefPlaceholder;
 
     private params: IFloatingFilterParams;
 
