@@ -27,7 +27,7 @@ export class RenderStatusService extends BeanStub implements IRenderStatusServic
         setTimeout(() => {
             colAutosize.processResizeOperations();
         }, 0);
-    };
+    }
 
     public areHeaderCellsRendered(): boolean {
         return this.beans.ctrlsSvc
