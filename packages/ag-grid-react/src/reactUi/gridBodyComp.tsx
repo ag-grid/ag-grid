@@ -74,15 +74,11 @@ const GridBodyComp = () => {
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eRoot.current = eRef;
-        if (!eRef) {
+        if (!eRef || context.isDestroyed()) {
             beansToDestroy.current = context.destroyBeans(beansToDestroy.current);
             destroyFuncs.current.forEach((f) => f());
             destroyFuncs.current = [];
 
-            return;
-        }
-
-        if (!context) {
             return;
         }
 

@@ -4,9 +4,14 @@ import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import {
+    TestGridsManager,
+    assertSelectedRowElementsById,
+    assertSelectedRowsByIndex,
+    waitForEvent,
+} from '../test-utils';
 import { fakeFetch } from './group-data';
-import { GridActions, assertSelectedRowElementsById, assertSelectedRowsByIndex, waitForEvent } from './utils';
+import { GridActions } from './utils';
 
 describe('Row Selection Grid Options', () => {
     const columnDefs = [{ field: 'sport' }];

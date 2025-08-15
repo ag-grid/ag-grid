@@ -1,5 +1,6 @@
 import type {
     AgCheckboxParams,
+    AgComponentSelectorType,
     AgFieldParams,
     AgInputNumberFieldParams,
     AgSelectParams,
@@ -56,8 +57,8 @@ export class ChartMenuParamsFactory extends BeanStub {
             min?: number;
             max?: number;
         }
-    ): AgInputNumberFieldParams {
-        return this.addValueParams<AgInputNumberFieldParams>(
+    ): AgInputNumberFieldParams<AgComponentSelectorType> {
+        return this.addValueParams<AgInputNumberFieldParams<AgComponentSelectorType>>(
             expression,
             {
                 label: this.chartTranslation.translate(labelKey),
@@ -117,9 +118,9 @@ export class ChartMenuParamsFactory extends BeanStub {
             readOnly?: boolean;
             passive?: boolean;
         }
-    ): AgCheckboxParams {
+    ): AgCheckboxParams<AgComponentSelectorType> {
         const value = this.chartOptionsProxy.getValue<boolean>(expression);
-        const params: AgCheckboxParams = {
+        const params: AgCheckboxParams<AgComponentSelectorType> = {
             label: this.chartTranslation.translate(labelKey),
             value,
             readOnly: options?.readOnly,
@@ -138,9 +139,9 @@ export class ChartMenuParamsFactory extends BeanStub {
             readOnly?: boolean;
             passive?: boolean;
         }
-    ): AgToggleButtonParams {
+    ): AgToggleButtonParams<AgComponentSelectorType> {
         const value = this.chartOptionsProxy.getValue<boolean>(expression);
-        const params: AgCheckboxParams = {
+        const params: AgCheckboxParams<AgComponentSelectorType> = {
             label: this.chartTranslation.translate(labelKey),
             labelAlignment: 'left',
             labelWidth: 'flex',
@@ -159,7 +160,7 @@ export class ChartMenuParamsFactory extends BeanStub {
         expression: string,
         labelKey: ChartTranslationKey,
         dropdownOptions: Array<ListOption>
-    ): AgSelectParams {
+    ): AgSelectParams<AgComponentSelectorType> {
         return this.getDefaultSelectParamsWithoutValueParams(
             labelKey,
             dropdownOptions,
@@ -175,7 +176,7 @@ export class ChartMenuParamsFactory extends BeanStub {
         options: Array<ListOption>,
         value: any,
         onValueChange: (value: any) => void
-    ): AgSelectParams {
+    ): AgSelectParams<AgComponentSelectorType> {
         return {
             label: this.chartTranslation.translate(labelKey),
             labelAlignment: 'top',

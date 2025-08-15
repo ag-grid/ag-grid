@@ -208,7 +208,7 @@ import type {
 
 import type { GridOptions, Module } from 'ag-grid-community';
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
-import {isProxy, isReactive, isRef, toRaw} from 'vue';
+import { isProxy, isReactive, isRef, toRaw } from 'vue';
 
 export interface Properties {
     [propertyName: string]: any;
@@ -478,7 +478,7 @@ export interface Props<TData> {
     editType?: EditStrategyType | undefined,
     /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
          */
-    suppressEditingNextOnTab?: boolean | undefined,
+    suppressStartEditOnTab?: boolean | undefined,
     /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
@@ -645,7 +645,10 @@ export interface Props<TData> {
          */
     suppressSetFilterByDefault?: boolean | undefined,
     /** Enable filter handlers for custom filter components.
-         * Requires all custom filters need to be implemented using handlers.
+         * Requires all custom filters to be implemented using handlers.
+         *
+         * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
+         * The Multi Filter will also use a filter handler if this is enabled.
          * @initial
          */
     enableFilterHandlers?: boolean | undefined,
@@ -1205,6 +1208,10 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     suppressGroupRowsSticky?: boolean | undefined,
+    /** Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+         * @agModule `RowGroupingModule`
+         */
+    groupHierarchyConfig?: { [k: string]: ColDef } | undefined,
     /** Data to be displayed as pinned top rows in the grid.
          * @agModule `PinnedRowModule`
          */
@@ -1230,7 +1237,8 @@ export interface Props<TData> {
     isRowPinnable?: IsRowPinnable<TData> | undefined,
     /** Called for every row in the grid.
          *
-         * Return `true` if the row should be pinned initially. Return `false` otherwise.
+         * Return "top", "bottom" if the row should be initially pinned to the top or bottom respectively.
+         * Return `null` or `undefined` otherwise.
          * User interactions can subsequently still change the pinned state of a row.
          * @agModule `PinnedRowModule`
          */
@@ -1952,7 +1960,7 @@ export function getProps() {
         autoSizeStrategy: undefined,
         components: undefined,
         editType: undefined,
-        suppressEditingNextOnTab: undefined,
+        suppressStartEditOnTab: undefined,
         getFullRowEditValidationErrors: undefined,
         invalidEditValueMode: undefined,
         singleClickEdit: undefined,
@@ -2097,6 +2105,7 @@ export function getProps() {
         treeDataParentIdField: undefined,
         rowGroupPanelSuppressSort: undefined,
         suppressGroupRowsSticky: undefined,
+        groupHierarchyConfig: undefined,
         pinnedTopRowData: undefined,
         pinnedBottomRowData: undefined,
         enableRowPinning: undefined,

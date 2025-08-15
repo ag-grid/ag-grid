@@ -1,3 +1,4 @@
+import { _getTabIndex } from '../../agStack/utils/browser';
 import type { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
@@ -7,7 +8,6 @@ import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode, RowPinnedType } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { _getTabIndex } from '../../utils/browser';
 import { _destroyEditors } from './editors';
 
 type ResolveRowControllerType = {

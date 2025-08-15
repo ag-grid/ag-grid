@@ -1,5 +1,7 @@
 import type { AgChartThemeOverrides } from 'ag-charts-types';
 
+import type { AgEvent } from './agStack/interfaces/agEvent';
+import type { ScrollDirection } from './agStack/interfaces/baseEvents';
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
@@ -10,7 +12,6 @@ import type { GridState } from './interfaces/gridState';
 import type { ChartType } from './interfaces/iChartOptions';
 import type { Column, ColumnEventName, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
-import type { BuildEventTypeMap } from './interfaces/iEventEmitter';
 import type { IFilterComp } from './interfaces/iFilter';
 import type { FindMatch } from './interfaces/iFind';
 import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
@@ -20,6 +21,8 @@ import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 import type { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
 
 export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<AgEventType> = new Set(['gridPreDestroyed', 'fillStart', 'pasteStart']);
+
+export type BuildEventTypeMap<TEventTypes extends string, T extends { [K in TEventTypes]: AgEvent<K> }> = T;
 
 export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
     AgPublicEventType | AgInternalEventType,
@@ -195,11 +198,6 @@ export type AllEventsWithoutGridCommon<TData = any, TContext = any> = {
 export type AllEvents<TData = any, TContext = any> = {
     [K in keyof AgEventTypeParams<TData, TContext>]: AgEventTypeParams<TData, TContext>[K];
 }[keyof AgEventTypeParams];
-
-export interface AgEvent<TEventType extends string = string> {
-    /** Event identifier */
-    type: TEventType;
-}
 
 export interface AgGridEvent<TData = any, TContext = any, TEventType extends string = string>
     extends AgGridCommon<TData, TContext>,
@@ -694,8 +692,6 @@ export interface ColumnGroupOpenedEvent<TData = any, TContext = any>
     columnGroups: ProvidedColumnGroup[];
 }
 
-export type ScrollDirection = 'horizontal' | 'vertical';
-
 interface BaseBodyScrollEvent<T extends AgEventType, TData = any, TContext = any>
     extends AgGlobalEvent<T, TData, TContext> {
     direction: ScrollDirection;
@@ -1017,10 +1013,16 @@ export interface RowSelectedEvent<TData = any, TContext = any> extends RowEvent<
 export interface VirtualRowRemovedEvent<TData = any, TContext = any>
     extends RowEvent<'virtualRowRemoved', TData, TContext> {}
 
-export interface RowClickedEvent<TData = any, TContext = any> extends RowEvent<'rowClicked', TData, TContext> {}
+interface RowMouseEvent<TEventType extends 'rowClicked' | 'rowDoubleClicked', TData = any, TContext = any>
+    extends RowEvent<TEventType, TData, TContext> {
+    /** `true` if `suppressMouseEventHandling` has been implemented in the corresponding cell renderer params and has returned `true`. */
+    isEventHandlingSuppressed: boolean;
+}
+
+export interface RowClickedEvent<TData = any, TContext = any> extends RowMouseEvent<'rowClicked', TData, TContext> {}
 
 export interface RowDoubleClickedEvent<TData = any, TContext = any>
-    extends RowEvent<'rowDoubleClicked', TData, TContext> {}
+    extends RowMouseEvent<'rowDoubleClicked', TData, TContext> {}
 
 export interface RowEditingStartedEvent<TData = any, TContext = any>
     extends RowEvent<'rowEditingStarted', TData, TContext> {}
@@ -1055,14 +1057,24 @@ interface CellWithDataEvent<T extends AgEventType, TData = any, TValue = any, TC
 export interface CellKeyDownEvent<TData = any, TValue = any, TContext = any>
     extends CellEvent<'cellKeyDown', TData, TValue, TContext> {}
 
+interface CellMouseEvent<
+    TEventType extends 'cellClicked' | 'cellMouseDown' | 'cellDoubleClicked',
+    TData = any,
+    TValue = any,
+    TContext = any,
+> extends CellEvent<TEventType, TData, TValue, TContext> {
+    /** `true` if `suppressMouseEventHandling` has been implemented in the corresponding cell renderer params and has returned `true`. */
+    isEventHandlingSuppressed: boolean;
+}
+
 export interface CellClickedEvent<TData = any, TValue = any, TContext = any>
-    extends CellEvent<'cellClicked', TData, TValue, TContext> {}
+    extends CellMouseEvent<'cellClicked', TData, TValue, TContext> {}
 
 export interface CellMouseDownEvent<TData = any, TValue = any, TContext = any>
-    extends CellEvent<'cellMouseDown', TData, TValue, TContext> {}
+    extends CellMouseEvent<'cellMouseDown', TData, TValue, TContext> {}
 
 export interface CellDoubleClickedEvent<TData = any, TValue = any, TContext = any>
-    extends CellEvent<'cellDoubleClicked', TData, TValue, TContext> {}
+    extends CellMouseEvent<'cellDoubleClicked', TData, TValue, TContext> {}
 
 export interface CellMouseOverEvent<TData = any, TValue = any, TContext = any>
     extends CellEvent<'cellMouseOver', TData, TValue, TContext> {}

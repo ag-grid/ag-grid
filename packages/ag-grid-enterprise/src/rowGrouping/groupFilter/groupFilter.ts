@@ -3,6 +3,8 @@ import type {
     BeanCollection,
     ElementParams,
     FilterDisplayParams,
+    FilterWrapperParams,
+    GridSelect,
     IAfterGuiAttachedParams,
     IFilterComp,
     IFilterParams,
@@ -29,6 +31,16 @@ interface FilterColumnPair {
 
 type GroupFilterEvent = 'columnsChanged';
 
+export function processGroupFilterParams(
+    params: IFilterParams & FilterWrapperParams
+): IFilterParams & FilterWrapperParams {
+    if (params.buttons) {
+        // group filters don't support buttons
+        params.buttons = [];
+    }
+    return params;
+}
+
 const GroupFilterElement: ElementParams = {
     tag: 'div',
     cls: 'ag-group-filter',
@@ -49,7 +61,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
     private groupColumn: AgColumn;
     private selectedFilter: IFilterComp | undefined;
     private filterColumnPairs: FilterColumnPair[] | undefined;
-    private eGroupFieldSelect: AgSelect;
+    private eGroupFieldSelect: GridSelect;
     private afterGuiAttachedParams: IAfterGuiAttachedParams | undefined;
     private filterComp?: FilterComp;
 
@@ -142,7 +154,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
     }
 
     private createGroupFieldSelectElement(sourceColumns: AgColumn[], selectedColumn: AgColumn): void {
-        const eGroupFieldSelect = this.createManagedBean(new AgSelect());
+        const eGroupFieldSelect = this.createManagedBean<GridSelect>(new AgSelect());
         this.eGroupFieldSelect = eGroupFieldSelect;
         const localeTextFunc = this.getLocaleTextFunc();
         eGroupFieldSelect.setLabel(localeTextFunc('groupFilterSelect', 'Select field:'));

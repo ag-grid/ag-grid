@@ -1,4 +1,7 @@
-import { KeyCode } from '../constants/keyCode';
+import { KeyCode } from '../agStack/constants/keyCode';
+import { _last } from '../agStack/utils/array';
+import { _throttle } from '../agStack/utils/function';
+import { _exists, _missing } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -16,10 +19,7 @@ import type { RowPinnedType, VerticalScrollPosition } from '../interfaces/iRowNo
 import type { RowPosition } from '../interfaces/iRowPosition';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { RowCtrl } from '../rendering/row/rowCtrl';
-import { _last } from '../utils/array';
-import { _focusNextGridCoreContainer, _isHeaderFocusSuppressed } from '../utils/focus';
-import { _throttle } from '../utils/function';
-import { _exists, _missing } from '../utils/generic';
+import { _focusNextGridCoreContainer, _isHeaderFocusSuppressed } from '../utils/gridFocus';
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -348,15 +348,18 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     private onCtrlUpDownLeftRight(key: string, gridCell: CellPosition): void {
         const cellToFocus = this.beans.cellNavigation!.getNextCellToFocus(key, gridCell, true)!;
-        const { rowIndex, rowPinned } = cellToFocus;
-        const column = cellToFocus.column as AgColumn;
+        // in case we have col spanning we get the cellComp and use it to get the
+        // position. This was we always focus the first cell inside the spanning.
+        const normalisedPosition = this.getNormalisedPosition(cellToFocus);
+        const { rowIndex, rowPinned, column } = normalisedPosition ?? cellToFocus;
+        const col = column as AgColumn;
 
         this.navigateTo({
             scrollIndex: rowIndex,
             scrollType: null,
-            scrollColumn: column,
+            scrollColumn: col,
             focusIndex: rowIndex,
-            focusColumn: column,
+            focusColumn: col,
             rowPinned,
         });
     }

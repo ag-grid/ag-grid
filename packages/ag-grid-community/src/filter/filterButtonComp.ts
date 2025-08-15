@@ -1,12 +1,13 @@
-import { KeyCode } from '../constants/keyCode';
-import type { AgEvent } from '../events';
+import { KeyCode } from '../agStack/constants/keyCode';
+import type { AgEvent } from '../agStack/interfaces/agEvent';
+import { _clearElement, _setDisabled } from '../agStack/utils/dom';
 import type { FilterAction } from '../interfaces/iFilter';
 import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
-import type { ElementParams } from '../utils/dom';
-import { _clearElement, _createElement, _setDisabled } from '../utils/dom';
+import type { ElementParams } from '../utils/element';
+import { _createElement } from '../utils/element';
 import { _warn } from '../validation/logging';
-import { Component } from '../widgets/component';
 import type { ComponentSelector } from '../widgets/component';
+import { Component } from '../widgets/component';
 
 interface FilterButtonCompParams {
     className?: string;

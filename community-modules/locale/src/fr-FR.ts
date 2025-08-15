@@ -115,6 +115,9 @@ export const AG_GRID_LOCALE_FR = {
     advancedFilterAnd: 'ET',
     advancedFilterOr: 'OU',
     advancedFilterApply: 'Appliquer',
+    advancedFilterReset: 'Réinitialiser',
+    advancedFilterCancel: 'Annuler',
+    advancedFilterClear: 'Effacer',
     advancedFilterBuilder: 'Constructeur',
     advancedFilterValidationMissingColumn: 'La colonne est manquante',
     advancedFilterValidationMissingOption: "L'option est manquante",
@@ -134,6 +137,8 @@ export const AG_GRID_LOCALE_FR = {
     advancedFilterValidationMessageAtEnd: "L'expression contient une erreur. ${variable} à la fin de l'expression.",
     advancedFilterBuilderTitle: 'Filtre Avancé',
     advancedFilterBuilderApply: 'Appliquer',
+    advancedFilterBuilderClear: 'Effacer',
+    advancedFilterBuilderReset: 'Réinitialiser',
     advancedFilterBuilderCancel: 'Annuler',
     advancedFilterBuilderAddButtonTooltip: 'Ajouter un filtre ou un groupe',
     advancedFilterBuilderRemoveButtonTooltip: 'Supprimer',
@@ -529,6 +534,10 @@ export const AG_GRID_LOCALE_FR = {
     dropOff: 'Abandon',
     stageLabels: 'Étiquettes de Stade',
     reverse: 'Inverser',
+    tooltipMode: "Mode d'info-bulle",
+    tooltipModeSingle: 'Unique',
+    tooltipModeShared: 'Multiple',
+    tooltipModeCompact: 'Compact',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Niveau ${variable}. Appuyez sur ENTER pour éditer.',
@@ -604,7 +613,6 @@ export const AG_GRID_LOCALE_FR = {
     ariaLabelSelectField: 'Champ de sélection',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Éditeur de cellule',
     ariaValidationErrorPrefix: "Validation de l'éditeur de cellule",
     ariaLabelLoadingContextMenu: 'Chargement du menu contextuel',
 

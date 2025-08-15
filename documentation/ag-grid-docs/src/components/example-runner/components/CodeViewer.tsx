@@ -1,6 +1,12 @@
 import type { InternalFramework } from '@ag-grid-types';
 import Code from '@ag-website-shared/components/code/Code';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import {
+    CONSOLE_LOG_REGEX,
+    DARK_INTEGRATED_REGEX,
+    TEAR_DOWN_REGEX,
+    TEST_ID_REGEX,
+} from '@ag-website-shared/utils/extraCodeSnippets';
 import type { FileContents } from '@components/example-generator/types';
 import { doOnEnter } from '@utils/doOnEnter';
 import classnames from 'classnames';
@@ -16,44 +22,20 @@ const ExtensionMap = {
     json: 'js',
 };
 
-export const CONSOLE_LOG_START = '/** CONSOLE LOG START **/';
-export const CONSOLE_LOG_END = '/** CONSOLE LOG END **/';
-
-function getSnippetRegex({ startDelimiter, endDelimiter }: { startDelimiter: string; endDelimiter: string }) {
-    const escapedStart = startDelimiter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const escapedEnd = endDelimiter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`\\s*${escapedStart}[\\s\\S]*?${escapedEnd}\\s*`, 'g');
-
-    return regex;
-}
-
 export function stripOutExampleGeneratorCode(files: FileContents) {
     const mainFiles = ['main.js', 'main.ts', 'index.tsx', 'index.jsx', 'app.component.ts'];
-    const consoleLogRegex = getSnippetRegex({
-        startDelimiter: CONSOLE_LOG_START,
-        endDelimiter: CONSOLE_LOG_END,
-    });
 
     mainFiles.forEach((mainFile) => {
         if (files[mainFile]) {
             // hide integrated theme switcher
             files[mainFile] =
-                files[mainFile]
-                    ?.replace(/\/\*\* DARK INTEGRATED START \*\*\/([\s\S]*?)\/\*\* DARK INTEGRATED END \*\*\//g, '')
-                    .replace(consoleLogRegex, '')
-                    .trim() + '\n';
+                files[mainFile]?.replace(DARK_INTEGRATED_REGEX, '').replace(CONSOLE_LOG_REGEX, '').trim() + '\n';
 
             // Hide the example tear down code use in Documentation tests
-            files[mainFile] =
-                files[mainFile]
-                    ?.replace(/\/\*\* TEAR DOWN START \*\*\/([\s\S]*?)\/\*\* TEAR DOWN END \*\*\//g, '')
-                    .trim() + '\n';
+            files[mainFile] = files[mainFile]?.replace(TEAR_DOWN_REGEX, '').trim() + '\n';
 
             // Hide the test id setup code
-            files[mainFile] =
-                files[mainFile]
-                    ?.replace(/\/\*\* ENABLE AG-TEST-ID START \*\*\/([\s\S]*?)\/\*\* ENABLE AG-TEST-ID END \*\*\//g, '')
-                    .trim() + '\n';
+            files[mainFile] = files[mainFile]?.replace(TEST_ID_REGEX, '').trim() + '\n';
         }
     });
 }

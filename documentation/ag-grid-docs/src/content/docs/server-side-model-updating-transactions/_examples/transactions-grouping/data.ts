@@ -83,7 +83,11 @@ export let data = [
 
 export function deletePortfolioOnServer(portfolio) {
     const oldDataSize = data.length;
-    data = data.filter((record) => record.portfolio !== portfolio);
+    const filteredData = data.filter((record) => record.portfolio !== portfolio);
+    // need to maintain original data reference
+    data.length = 0;
+    data.push(...filteredData);
+
     return {
         success: oldDataSize !== data.length,
     };

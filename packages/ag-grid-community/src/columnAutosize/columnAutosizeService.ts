@@ -1,3 +1,5 @@
+import { _removeFromArray } from '../agStack/utils/array';
+import { _getInnerWidth } from '../agStack/utils/dom';
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import type { ColKey, Maybe } from '../columns/columnModel';
 import { getWidthOfColsInList, isSpecialCol } from '../columns/columnUtils';
@@ -8,8 +10,6 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { IColumnLimit, ISizeColumnsToFitParams, SizeColumnsToContentColumnLimits } from '../interfaces/autoSize';
-import { _removeFromArray } from '../utils/array';
-import { _getInnerWidth } from '../utils/dom';
 import { _warn } from '../validation/logging';
 import { TouchListener } from '../widgets/touchListener';
 
@@ -76,9 +76,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         // hasn't fully drawn out all the cells yet (due to cell renderers in animation frames).
         animationFrameSvc?.flushAllFrames();
 
-        if (this.timesDelayed < 5 && renderStatus && !renderStatus.areHeaderCellsRendered()) {
-            // This is needed for React, as it doesn't render the headers synchronously all the time.
-            // Added a defensive check to avoid infinite loop in case headers are never rendered.
+        if (
+            this.timesDelayed < 5 &&
+            renderStatus &&
+            (!renderStatus.areHeaderCellsRendered() || !renderStatus.areCellsRendered())
+        ) {
+            // This is needed for React, as it doesn't render the headers or cells synchronously all the time.
+            // Added a defensive check to avoid infinite loop in case headers or cells are never rendered.
             this.timesDelayed++;
             setTimeout(() => {
                 if (this.isAlive()) {

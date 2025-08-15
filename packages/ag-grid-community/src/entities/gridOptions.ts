@@ -3,6 +3,7 @@
  ************************************************************************************************/
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
+import type { Theme } from '../agStack/theming/theme';
 import type { IsRowValidDropPositionCallback } from '../dragAndDrop/rowDragFeature';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
@@ -189,7 +190,6 @@ import type { StatusPanelDef } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
-import type { Theme } from '../theming/Theme';
 import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
 
@@ -527,7 +527,7 @@ export interface GridOptions<TData = any> {
     /**
      * Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
      */
-    suppressEditingNextOnTab?: boolean;
+    suppressStartEditOnTab?: boolean;
 
     /**
      * Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
@@ -740,7 +740,10 @@ export interface GridOptions<TData = any> {
     suppressSetFilterByDefault?: boolean;
     /**
      * Enable filter handlers for custom filter components.
-     * Requires all custom filters need to be implemented using handlers.
+     * Requires all custom filters to be implemented using handlers.
+     *
+     * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
+     * The Multi Filter will also use a filter handler if this is enabled.
      * @initial
      */
     enableFilterHandlers?: boolean;
@@ -1458,6 +1461,12 @@ export interface GridOptions<TData = any> {
      */
     suppressGroupRowsSticky?: boolean;
 
+    /**
+     * Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+     * @agModule `RowGroupingModule`
+     */
+    groupHierarchyConfig?: { [k: string]: ColDef };
+
     // *** Row Pinning *** //
     /**
      * Data to be displayed as pinned top rows in the grid.
@@ -1489,7 +1498,8 @@ export interface GridOptions<TData = any> {
     /**
      * Called for every row in the grid.
      *
-     * Return `true` if the row should be pinned initially. Return `false` otherwise.
+     * Return "top", "bottom" if the row should be initially pinned to the top or bottom respectively.
+     * Return `null` or `undefined` otherwise.
      * User interactions can subsequently still change the pinned state of a row.
      * @agModule `PinnedRowModule`
      */

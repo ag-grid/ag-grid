@@ -148,15 +148,15 @@ describe('Edit API', () => {
 
     describe('getEditingCells', () => {
         test('returns empty array when no edits', () => {
-            const result = getEditingCells(beans, {});
+            const result = getEditingCells(beans);
             expect(result).toEqual([]);
         });
         test('returns editing cells with pending edits', () => {
             editMap!.set(
                 rowNode1,
                 new Map([
-                    [column1, { newValue: 'new1', oldValue: 'old1', state: 'editing' }],
-                    [column2, { newValue: 'new2', oldValue: 'old2', state: 'changed' }],
+                    [column1, { editorValue: undefined, pendingValue: 'new1', sourceValue: 'old1', state: 'editing' }],
+                    [column2, { editorValue: undefined, pendingValue: 'new2', sourceValue: 'old2', state: 'changed' }],
                 ])
             );
 
@@ -188,15 +188,15 @@ describe('Edit API', () => {
             editMap!.set(
                 rowNode1,
                 new Map([
-                    [column1, { newValue: 'new1', oldValue: 'old1', state: 'editing' }],
-                    [column2, { newValue: 'new2', oldValue: 'old2', state: 'changed' }],
+                    [column1, { editorValue: undefined, pendingValue: 'new1', sourceValue: 'old1', state: 'editing' }],
+                    [column2, { editorValue: undefined, pendingValue: 'new2', sourceValue: 'old2', state: 'changed' }],
                 ])
             );
             editMap!.set(
                 rowNode2,
                 new Map([
-                    [column1, { newValue: 'new3', oldValue: 'old3', state: 'editing' }],
-                    [column2, { newValue: 'new4', oldValue: 'old4', state: 'changed' }],
+                    [column1, { editorValue: undefined, pendingValue: 'new3', sourceValue: 'old3', state: 'editing' }],
+                    [column2, { editorValue: undefined, pendingValue: 'new4', sourceValue: 'old4', state: 'changed' }],
                 ])
             );
 
@@ -248,8 +248,11 @@ describe('Edit API', () => {
             editMap!.set(
                 rowNode1,
                 new Map([
-                    [column1, { newValue: UNEDITED, oldValue: 'old1', state: 'editing' }],
-                    [column2, { newValue: 'new2', oldValue: 'old2', state: 'changed' }],
+                    [
+                        column1,
+                        { editorValue: undefined, pendingValue: UNEDITED, sourceValue: 'old1', state: 'editing' },
+                    ],
+                    [column2, { editorValue: undefined, pendingValue: 'new2', sourceValue: 'old2', state: 'changed' }],
                 ])
             );
 
@@ -301,7 +304,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new1', oldValue: 'old1', state: 'editing' },
+                                { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
                             ],
                         ]),
                     ],
@@ -328,7 +331,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new1', oldValue: 'old1', state: 'editing' },
+                                { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
                             ],
                         ]),
                     ],
@@ -342,7 +345,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new2', oldValue: 'old2', state: 'changed' },
+                                { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
                             ],
                         ]),
                     ],
@@ -369,7 +372,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new1', oldValue: 'old1', state: 'editing' },
+                                { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
                             ],
                         ]),
                     ],
@@ -383,7 +386,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new2', oldValue: 'old2', state: 'changed' },
+                                { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
                             ],
                         ]),
                     ],
@@ -410,7 +413,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new1', oldValue: 'old1', state: 'editing' },
+                                { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
                             ],
                         ]),
                     ],
@@ -424,7 +427,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new2', oldValue: 'old2', state: 'changed' },
+                                { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
                             ],
                         ]),
                     ],
@@ -451,7 +454,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new1', oldValue: 'old1', state: 'editing' },
+                                { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
                             ],
                         ]),
                     ],
@@ -465,7 +468,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new2', oldValue: 'old2', state: 'changed' },
+                                { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
                             ],
                         ]),
                     ],
@@ -508,7 +511,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new1', oldValue: 'old1', state: 'editing' },
+                                { editorValue: undefined, pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
                             ],
                         ]),
                     ],
@@ -522,7 +525,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new2', oldValue: 'old2', state: 'changed' },
+                                { editorValue: undefined, pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
                             ],
                         ]),
                     ],
@@ -548,7 +551,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new2', oldValue: 'old2', state: 'changed' },
+                                { editorValue: undefined, pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
                             ],
                         ]) as unknown as EditRow,
                     ],
@@ -558,7 +561,15 @@ describe('Edit API', () => {
 
         test('updates existing edits when update flag is true (replace)', () => {
             editSvc!.isBatchEditing = jest.fn().mockReturnValue(true);
-            editMap!.set(rowNode1, new Map([[column1, { newValue: 'old1', oldValue: UNEDITED, state: 'editing' }]]));
+            editMap!.set(
+                rowNode1,
+                new Map([
+                    [
+                        column1,
+                        { editorValue: undefined, pendingValue: 'old1', sourceValue: UNEDITED, state: 'editing' },
+                    ],
+                ])
+            );
             const cells = [
                 { colId: 'col1', rowIndex: 0, rowPinned: undefined, newValue: 'new1', state: 'editing' },
             ] as EditingCellPosition[];
@@ -575,7 +586,7 @@ describe('Edit API', () => {
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
                                 },
-                                { newValue: 'new1', oldValue: 'old1', state: 'editing' },
+                                { editorValue: undefined, pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
                             ],
                         ]) as unknown as EditRow,
                     ],

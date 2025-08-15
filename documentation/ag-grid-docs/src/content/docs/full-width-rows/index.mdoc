@@ -25,7 +25,7 @@ A `fullWidth` (full width) component takes up the entire width of the grid. A fu
 * is not impacted by horizontal scrolling.
 * is the width of the grid, regardless of what columns are present.
 * is not impacted by pinned sections of the grid, will span left and right pinned areas regardless.
-* does not participate in the navigation, rangeSelection (AG Grid Enterprise) or contextMenu (AG Grid Enterprise) of the main grid.
+* does not participate in the navigation, [Cell Selection](./cell-selection) (AG Grid Enterprise) or [Context Menu](./context-menu) (AG Grid Enterprise) of the main grid.
 
 To use `fullWidth`, you must:
 
@@ -39,21 +39,20 @@ To use `fullWidth`, you must:
 The cell renderer can be any AG Grid cell renderer. Refer to
 [Cell Rendering](./component-cell-renderer/) on how to build cell renderers.
 The cell renderer for `fullWidth` has one difference to normal cell renderers: the parameters passed
-are missing the value and column information as the `cellRenderer`, by definition, is not tied to a particular
-column. Instead you should work off the data parameter, which represents the value for the entire row.
+are missing the value and column information as the cell renderer is not tied to a particular
+column. Instead you should use the `data` parameter, which represents the value for the entire row.
 
-The `isFullWidthRow(params)` callback receives a `params` object containing the `rowNode` as its input and should return a boolean
-`true` (use `fullWidth`) or `false` (do not use `fullWidth` and render as normal).
+The `isFullWidthRow(params)` callback receives a `params` object containing the `rowNode` as its input and should return `true` to use `fullWidth` or `false` to render as normal.
 
 ## Sorting and Filtering
 
-Sorting and Filtering are NOT impacted by full width. Full width is a rendering time feature. The sorting
+Sorting and Filtering are NOT impacted by full width; full width is a rendering time feature. The sorting
 and filtering applied to the data is done before rendering and is not impacted.
 
 ## Detailed Full Width Example
 
-Below shows a detailed full width example including pinned rows and columns.
-The example's data is minimalistic to focus on how the full width impacts rows. For demonstration, the pinned rows are shaded blue (with full width a darker shade of blue) and body full width rows are green.
+The example below demonstrates full width with pinned rows and columns.
+The example's data is minimalistic to focus on how full width impacts rows. For demonstration, the pinned rows are shaded blue (with full width a darker shade of blue) and unpinned full width rows are green.
 
 The following points should be noted:
 
@@ -61,9 +60,9 @@ The following points should be noted:
 
 * Full width rows can be of any height, which is specified in the usual way using the `getRowHeight(params)` callback. The example sets body `fullWidth` rows to 55px.
 
-* The pinned full width rows are not impacted by either the vertical or horizontal scrolling.
+* The pinned full width rows are not impacted by either vertical or horizontal scrolling.
 
-* The body full width rows are impacted by vertical scrolling only, and not the horizontal scrolling.
+* The unpinned full width rows are impacted by vertical scrolling only, and not horizontal scrolling.
 
 * The full width rows span the entire grid, including the pinned left and pinned right sections.
 

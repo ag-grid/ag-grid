@@ -1,10 +1,10 @@
+import type { AgEvent } from '../agStack/interfaces/agEvent';
 import type { ApplyColumnStateParams, ColumnState } from '../columns/columnStateUtils';
 import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragFeature';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
 import type { ChartRef, GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
-    AgEvent,
     AgEventListener,
     AgGlobalEventListener,
     ColumnEventType,
@@ -851,6 +851,12 @@ export interface _EditGridApi<TData> {
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     getEditingCells(): EditingCellPosition[];
+
+    /**
+     * If the grid is editing, returns back edit values of the row if any.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
+    getEditRowValues(rowNode: IRowNode<TData>): Record<string, any> | undefined;
 
     /**
      * If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes).

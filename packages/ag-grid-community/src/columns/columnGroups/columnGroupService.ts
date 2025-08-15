@@ -1,3 +1,5 @@
+import { _last } from '../../agStack/utils/array';
+import { _exists } from '../../agStack/utils/generic';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
@@ -8,8 +10,6 @@ import { isProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { ColGroupDef } from '../../entities/colDef';
 import type { ColumnEventType } from '../../events';
 import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
-import { _last } from '../../utils/array';
-import { _exists } from '../../utils/generic';
 import { _recursivelyCreateColumns, depthFirstOriginalTreeSearch } from '../columnFactoryUtils';
 import type { IColumnKeyCreator } from '../columnKeyCreator';
 import type { GroupInstanceIdCreator } from '../groupInstanceIdCreator';
@@ -571,6 +571,10 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         parent: AgColumnGroup | null
     ): void {
         columnsOrGroups!.forEach((columnsOrGroup) => {
+            if (columnsOrGroup.parent !== parent) {
+                // parent has explicitly changed - force viewport headers now needed.
+                this.beans.colViewport.colsWithinViewportHash = '';
+            }
             columnsOrGroup.parent = parent;
             if (isColumnGroup(columnsOrGroup)) {
                 const columnGroup = columnsOrGroup;

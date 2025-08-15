@@ -1,9 +1,9 @@
+import { _exists } from '../agStack/utils/generic';
 import { BeanStub } from '../context/beanStub';
 import type { RowNode } from '../entities/rowNode';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { SortModelItem } from '../interfaces/iSortModelItem';
-import { _logIfDebug } from '../utils/function';
-import { _exists } from '../utils/generic';
+import { _logIfDebug } from '../utils/log';
 import { InfiniteBlock } from './infiniteBlock';
 import type { RowNodeBlockLoader } from './rowNodeBlockLoader';
 

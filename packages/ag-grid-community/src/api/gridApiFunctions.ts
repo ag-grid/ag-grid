@@ -219,6 +219,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     ...mod<_EditGridApi<any>>('EditCore', {
         getCellEditorInstances: 0,
         getEditingCells: 0,
+        getEditRowValues: 0,
         stopEditing: 0,
         startEditingCell: 0,
         isEditing: 0,

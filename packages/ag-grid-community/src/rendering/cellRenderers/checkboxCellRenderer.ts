@@ -1,12 +1,13 @@
+import { KeyCode } from '../../agStack/constants/keyCode';
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
+import { _getAriaCheckboxStateName, _setAriaLive } from '../../agStack/utils/aria';
+import { _getActiveDomElement } from '../../agStack/utils/document';
+import { AgCheckboxSelector } from '../../agStack/widgets/agCheckbox';
 import { GROUP_AUTO_COLUMN_ID } from '../../columns/columnUtils';
-import { KeyCode } from '../../constants/keyCode';
-import { _getActiveDomElement } from '../../gridOptionsUtils';
-import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
-import type { ElementParams } from '../../utils/dom';
-import { _stopPropagationForAgGrid } from '../../utils/event';
-import type { AgCheckbox } from '../../widgets/agCheckbox';
-import { AgCheckboxSelector } from '../../widgets/agCheckbox';
-import { Component, RefPlaceholder } from '../../widgets/component';
+import type { ElementParams } from '../../utils/element';
+import { _stopPropagationForAgGrid } from '../../utils/gridEvent';
+import { Component } from '../../widgets/component';
+import type { GridCheckbox } from '../../widgets/gridWidgetTypes';
 import { checkboxCellRendererCSS } from './checkboxCellRenderer.css-GENERATED';
 import type { ICellRenderer, ICellRendererParams } from './iCellRenderer';
 
@@ -30,7 +31,7 @@ const CheckboxCellRendererElement: ElementParams = {
 };
 
 export class CheckboxCellRenderer extends Component implements ICellRenderer {
-    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
+    private readonly eCheckbox: GridCheckbox = RefPlaceholder;
     private params: ICheckboxCellRendererParams;
 
     constructor() {
@@ -95,9 +96,11 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
                     // if we're grouping by this column then the value is a string and we need to parse it
                     isSelected = value == null || (value as any) === '' ? undefined : (value as any) === 'true';
                 } else if (node.aggData && node.aggData[colId] !== undefined) {
-                    isSelected = value ?? undefined;
+                    isSelected = value ?? undefined; // group with aggregation
+                } else if (node.sourceRowIndex >= 0) {
+                    isSelected = value ?? undefined; // tree group with data
                 } else {
-                    displayed = false;
+                    displayed = false; // group without aggregation or tree filler node without aggregation
                 }
             }
         } else {

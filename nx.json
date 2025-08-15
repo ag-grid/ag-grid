@@ -139,6 +139,16 @@
       "inputs": ["default", "{workspaceRoot}/.eslintrc.json", "{workspaceRoot}/.eslintignore"],
       "cache": true
     },
+    "lint:depcruise": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/src/**", "{projectRoot}/.dependency-cruiser.js"],
+      "outputs": [],
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": ["npx depcruise src"]
+      }
+    },
     "test": {
       "inputs": ["default", "buildOutputExcludes", "^production", "{workspaceRoot}/jest.preset.js"],
       "outputs": [],

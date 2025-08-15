@@ -61,12 +61,15 @@ packages/ag-grid-enterprise/coverage
 plugins/ag-grid-generate-example-files/coverage/
 coverage
 reports
+.playwright-network-cache/
 
 vite.config.*.timestamp*
 
 /test-results/
 /playwright-report/
+documentation/ag-grid-docs/test-results/.last-run.json
 
 # Snyk
 .dccache
 /snyk.json
+.tmp

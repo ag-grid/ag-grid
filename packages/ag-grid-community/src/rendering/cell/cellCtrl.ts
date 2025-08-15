@@ -1,3 +1,9 @@
+import { _setAriaColIndex } from '../../agStack/utils/aria';
+import { _getActiveDomElement } from '../../agStack/utils/document';
+import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../agStack/utils/dom';
+import { _findFocusableElements } from '../../agStack/utils/focus';
+import { _makeNull } from '../../agStack/utils/generic';
+import { AgPromise } from '../../agStack/utils/promise';
 import { isColumnSelectionCol, isRowNumberCol } from '../../columns/columnUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
@@ -9,10 +15,8 @@ import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entitie
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
-import type { GridOptionsService } from '../../gridOptionsService';
 import {
     _addGridCommonParams,
-    _getActiveDomElement,
     _getCheckboxLocation,
     _getCheckboxes,
     _isCellSelectionEnabled,
@@ -35,14 +39,10 @@ import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
-import { _setAriaColIndex } from '../../utils/aria';
-import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../utils/dom';
-import { _getCtrlForEventTarget } from '../../utils/event';
-import { _findFocusableElements, _isCellFocusSuppressed } from '../../utils/focus';
-import { _makeNull } from '../../utils/generic';
-import { AgPromise } from '../../utils/promise';
+import { _isCellFocusSuppressed } from '../../utils/gridFocus';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from '../dndSourceComp';
+import { DOM_DATA_KEY_CELL_CTRL } from '../renderUtils';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from '../spanning/rowSpanCache';
 import { _createCellEvent } from './cellEvent';
@@ -84,12 +84,6 @@ export interface ICellComp {
         reactiveCustomComponents?: boolean
     ): void;
     refreshEditStyles: (editing: boolean, isPopup: boolean) => void;
-}
-
-export const DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
-
-export function _getCellCtrlForEventTarget(gos: GridOptionsService, eventTarget: EventTarget | null): CellCtrl | null {
-    return _getCtrlForEventTarget(gos, eventTarget, DOM_DATA_KEY_CELL_CTRL);
 }
 
 let instanceIdSequence = 0;
@@ -474,7 +468,7 @@ export class CellCtrl extends BeanStub {
             valueFormatted: valueFormatted,
             getValue: () => valueSvc.getValueForDisplay(column, rowNode).value,
             setValue: (value: any) =>
-                editSvc?.setDataValue({ rowNode, column }, value) || valueSvc.setValue(rowNode, column, value),
+                editSvc?.setDataValue({ rowNode, column }, value) || rowNode.setDataValue(column, value),
             formatValue: this.formatValue.bind(this),
             data: rowNode.data,
             node: rowNode,
@@ -964,18 +958,14 @@ export class CellCtrl extends BeanStub {
         return dndSourceComp;
     }
 
-    public registerRowDragger(
-        customElement: HTMLElement,
-        dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
-    ): void {
+    public registerRowDragger(customElement: HTMLElement, dragStartPixels?: number, alwaysVisible?: boolean): void {
         // if previously existed, then we are only updating
         if (this.customRowDragComp) {
             this.customRowDragComp.setDragElement(customElement, dragStartPixels);
             return;
         }
 
-        const newComp = this.createRowDragComp(customElement, dragStartPixels, suppressVisibilityChange);
+        const newComp = this.createRowDragComp(customElement, dragStartPixels, alwaysVisible);
 
         if (newComp) {
             this.customRowDragComp = newComp;
@@ -989,7 +979,7 @@ export class CellCtrl extends BeanStub {
     public createRowDragComp(
         customElement?: HTMLElement,
         dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
+        alwaysVisible?: boolean
     ): RowDragComp | undefined {
         const rowDragComp = this.beans.rowDragSvc?.createRowDragCompForCell(
             this.rowNode,
@@ -997,7 +987,7 @@ export class CellCtrl extends BeanStub {
             () => this.value,
             customElement,
             dragStartPixels,
-            suppressVisibilityChange
+            alwaysVisible
         );
         if (!rowDragComp) {
             return undefined;

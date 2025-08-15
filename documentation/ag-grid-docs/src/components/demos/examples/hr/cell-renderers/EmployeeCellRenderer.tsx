@@ -14,6 +14,6 @@ export const EmployeeCellRenderer: FunctionComponent<CustomCellRendererProps> = 
             <span>{value}</span>
             <span className={styles.description}>{jobTitle}</span>
         </div>
-        <img className={styles.image} src={urlWithBaseUrl(`/example/hr/${image}.png`)} alt={value.toLowerCase()} />
+        <img className={styles.image} src={urlWithBaseUrl(`/example/hr/${image}.webp`)} alt={value.toLowerCase()} />
     </div>
 );

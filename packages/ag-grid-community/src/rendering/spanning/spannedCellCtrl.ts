@@ -1,10 +1,10 @@
+import { _setAriaRowIndex, _setAriaRowSpan } from '../../agStack/utils/aria';
 import type { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellFocusedEvent } from '../../events';
 import type { CellPosition } from '../../interfaces/iCellPosition';
-import { _setAriaRowIndex, _setAriaRowSpan } from '../../utils/aria';
-import { _isCellFocusSuppressed } from '../../utils/focus';
+import { _isCellFocusSuppressed } from '../../utils/gridFocus';
 import type { ICellComp } from '../cell/cellCtrl';
 import { CellCtrl } from '../cell/cellCtrl';
 import type { RowCtrl } from '../row/rowCtrl';

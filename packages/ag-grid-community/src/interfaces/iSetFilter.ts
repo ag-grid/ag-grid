@@ -1,9 +1,9 @@
+import type { AgPromise } from '../agStack/utils/promise';
 import type { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
 import type { FilterUiChangedEvent } from '../events';
 import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
-import type { AgPromise } from '../utils/promise';
 import type { AgGridCommon } from './iCommon';
 import type { IFilterParams } from './iFilter';
 
@@ -87,12 +87,15 @@ export interface SetFilterHandler<TValue = string> {
     resetFilterValues(): void;
 }
 
-export interface SetFilterUi {
+export interface SetFilterUi<TValue = string> {
     /** Returns the current mini-filter text. */
     getMiniFilter(): string | null;
 
     /** Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup). */
     setMiniFilter(newMiniFilter: string | null): void;
+
+    /** Returns the corresponding Set Filter Handler. */
+    getFilterHandler(): SetFilterHandler<TValue>;
 }
 
 /**

@@ -1,5 +1,5 @@
-import { _setAriaRowIndex } from '../../utils/aria';
-import { _setDomChildOrder } from '../../utils/dom';
+import { _setAriaRowIndex } from '../../agStack/utils/aria';
+import { _setDomChildOrder } from '../../agStack/utils/dom';
 import { Component } from '../../widgets/component';
 import type { AbstractHeaderCellComp } from '../cells/abstractCell/abstractHeaderCellComp';
 import type { AbstractHeaderCellCtrl, HeaderCellCtrlInstanceId } from '../cells/abstractCell/abstractHeaderCellCtrl';

@@ -615,7 +615,6 @@ export const AG_GRID_LOCALE_EN = {
     ariaLabelSelectField: 'Select Field',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Cell Editor',
     ariaValidationErrorPrefix: 'Cell Editor Validation',
 
     // aria labels for async context menus

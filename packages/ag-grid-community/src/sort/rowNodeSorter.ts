@@ -1,10 +1,10 @@
+import { _defaultComparator } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import { _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
 import type { SortOption } from '../interfaces/iSortOption';
-import { _defaultComparator } from '../utils/generic';
 
 export interface SortedRowNode {
     currentPos: number;

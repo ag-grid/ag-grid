@@ -1,4 +1,4 @@
-import type { AgCheckbox, ElementParams } from 'ag-grid-community';
+import type { ElementParams, GridCheckbox } from 'ag-grid-community';
 import { AgToggleButtonSelector, Component, RefPlaceholder } from 'ag-grid-community';
 
 const PivotModePanelElement: ElementParams = {
@@ -13,7 +13,7 @@ const PivotModePanelElement: ElementParams = {
     ],
 };
 export class PivotModePanel extends Component {
-    private readonly cbPivotMode: AgCheckbox = RefPlaceholder;
+    private readonly cbPivotMode: GridCheckbox = RefPlaceholder;
 
     public postConstruct(): void {
         this.setTemplate(PivotModePanelElement, [AgToggleButtonSelector]);

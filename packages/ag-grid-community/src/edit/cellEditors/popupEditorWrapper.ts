@@ -1,12 +1,25 @@
+import { AgPopupComponent } from '../../agStack/popup/agPopupComponent';
+import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
+import type { AgEventTypeParams } from '../../events';
+import type { GridOptionsWithDefaults } from '../../gridOptionsDefault';
+import type { GridOptionsService } from '../../gridOptionsService';
 import { _setDomData } from '../../gridOptionsUtils';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
-import type { ElementParams } from '../../utils/dom';
-import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
-import { PopupComponent } from '../../widgets/popupComponent';
+import type { AgGridCommon } from '../../interfaces/iCommon';
+import type { ElementParams } from '../../utils/element';
+import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboardEvent';
+import type { AgComponentSelectorType } from '../../widgets/component';
 
 const PopupEditorElement: ElementParams = { tag: 'div', cls: 'ag-popup-editor', attrs: { tabindex: '-1' } };
-export class PopupEditorWrapper extends PopupComponent {
+export class PopupEditorWrapper extends AgPopupComponent<
+    BeanCollection,
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    AgGridCommon<any, any>,
+    GridOptionsService,
+    AgComponentSelectorType
+> {
     constructor(private readonly params: ICellEditorParams) {
         super(PopupEditorElement);
     }

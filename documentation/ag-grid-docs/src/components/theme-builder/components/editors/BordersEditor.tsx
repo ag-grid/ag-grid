@@ -1,5 +1,5 @@
 import { Checkmark, ChevronDown } from '@carbon/icons-react';
-import { paramValueToCss } from '@components/theme-builder/api';
+import { gridThemeLogger, paramValueToCss } from '@components/theme-builder/api';
 import { ParamModel, useParamAtom } from '@components/theme-builder/model/ParamModel';
 import { useRenderedTheme } from '@components/theme-builder/model/rendered-theme';
 import type { ThemeParam } from '@components/theme-builder/model/utils';
@@ -43,7 +43,7 @@ export const BordersEditor = withErrorBoundary(() => {
 
 const borderEnabled = (paramName: string, border: unknown): boolean => {
     if (!border) return false;
-    const css = paramValueToCss(paramName, border);
+    const css = paramValueToCss(paramName, border, gridThemeLogger);
     return !!(css && css !== 'none' && !css.includes('transparent'));
 };
 

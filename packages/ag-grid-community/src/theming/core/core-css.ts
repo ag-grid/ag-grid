@@ -1,7 +1,7 @@
+import type { SharedThemeParams } from '../../agStack/theming/shared/shared-css';
 import type {
     BorderStyleValue,
     BorderValue,
-    ColorSchemeValue,
     ColorValue,
     DurationValue,
     FontFamilyValue,
@@ -9,7 +9,7 @@ import type {
     LengthValue,
     ScaleValue,
     ShadowValue,
-} from '../theme-types';
+} from '../../agStack/theming/themeTypes';
 import {
     accentColor,
     accentMix,
@@ -18,20 +18,14 @@ import {
     foregroundColor,
     foregroundHeaderBackgroundMix,
     foregroundMix,
-} from '../theme-utils';
-
-/** @knipIgnore */
-export { coreCSS } from './core.css-GENERATED';
+} from '../../agStack/theming/themeUtils';
 
 /**
  * All possible theme param types - the actual params available will be a subset of this type depending on the parts in use by the theme.
  */
-export type CoreParams = {
-    /**
-     * The 'brand color' for the grid, used wherever a non-neutral color is required. Selections, focus outlines and checkboxes use the accent color by default.
-     */
-    accentColor: ColorValue;
+export type CoreParams = CoreThemeParams;
 
+interface CoreThemeParams extends SharedThemeParams {
     /**
      * Color of the dividing line above the buttons in the advanced filter builder
      */
@@ -63,31 +57,6 @@ export type CoreParams = {
     advancedFilterBuilderValuePillColor: ColorValue;
 
     /**
-     * Background color of the grid. Many UI elements are semi-transparent, so their color blends with the background color.
-     */
-    backgroundColor: ColorValue;
-
-    /**
-     * Default color for borders.
-     */
-    borderColor: ColorValue;
-
-    /**
-     * Default width for borders.
-     */
-    borderWidth: LengthValue;
-
-    /**
-     * Default corner radius for many UI elements such as menus, dialogs and form widgets.
-     */
-    borderRadius: LengthValue;
-
-    /**
-     * The CSS color-scheme to apply to the grid, which affects the default appearance of browser scrollbars form inputs unless these have been styled with CSS.
-     */
-    browserColorScheme: ColorSchemeValue;
-
-    /**
      * Padding at the start and end of grid cells and header cells.
      */
     cellHorizontalPadding: LengthValue;
@@ -116,11 +85,6 @@ export type CoreParams = {
      * Width of the chart editing panel for integrated charts
      */
     chartMenuPanelWidth: LengthValue;
-
-    /**
-     * Background color for non-data areas of the grid. Headers, tool panels and menus use this color by default.
-     */
-    chromeBackgroundColor: ColorValue;
 
     /**
      * Vertical borders between columns within the grid only, excluding headers.
@@ -203,11 +167,6 @@ export type CoreParams = {
     dragHandleColor: ColorValue;
 
     /**
-     * Default shadow for dropdown menus
-     */
-    dropdownShadow: ShadowValue;
-
-    /**
      * How much to indent child columns in the filters tool panel relative to their parent
      */
     filterToolPanelGroupIndent: LengthValue;
@@ -253,26 +212,6 @@ export type CoreParams = {
     findActiveMatchBackgroundColor: ColorValue;
 
     /**
-     * Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.
-     */
-    focusShadow: ShadowValue;
-
-    /**
-     * 'Shadow around UI controls that have focus and contain validation errors e.g. text inputs, text-areas. The value must a valid CSS box-shadow.',
-     */
-    focusErrorShadow: ShadowValue;
-
-    /**
-     * Default font family for all text. Can be overridden by more specific parameters like `headerFontFamily`
-     */
-    fontFamily: FontFamilyValue;
-
-    /**
-     * Default font size for text throughout the grid UI
-     */
-    fontSize: LengthValue;
-
-    /**
      * Font size for data in grid rows
      */
     dataFontSize: LengthValue;
@@ -281,16 +220,6 @@ export type CoreParams = {
      * Horizontal borders above footer components like the pagination and status bars
      */
     footerRowBorder: BorderValue;
-
-    /**
-     * Default color for neutral UI elements. Most text, borders and backgrounds are defined as semi-transparent versions of this color, resulting in a blend between the background and foreground colours.
-     */
-    foregroundColor: ColorValue;
-
-    /**
-     * Amount of spacing around and inside UI elements. All padding and margins in the grid are defined as a multiple of this value.
-     */
-    spacing: LengthValue;
 
     /**
      * Background color for header and header-like.
@@ -378,11 +307,6 @@ export type CoreParams = {
     headerVerticalPaddingScale: ScaleValue;
 
     /**
-     * Color for icons, or `inherit` to take on the text color of the containing component
-     */
-    iconColor: ColorValue;
-
-    /**
      * Default color for clickable icons
      */
     iconButtonColor: ColorValue;
@@ -426,21 +350,6 @@ export type CoreParams = {
      * Color of the marker dot shown on icon buttons when styled as active. This is used for the column filter button when a filter is applied to the column.
      */
     iconButtonActiveIndicatorColor: ColorValue;
-
-    /**
-     * The size of square icons and icon-buttons
-     */
-    iconSize: LengthValue;
-
-    /**
-     * The color for inputs and UI controls in an invalid state.
-     */
-    invalidColor: ColorValue;
-
-    /**
-     * Height of items in scrolling lists e.g. dropdown select inputs and column menu set filters.
-     */
-    listItemHeight: LengthValue;
 
     /**
      * Background color for menus e.g. column menu and right-click context menu
@@ -546,16 +455,6 @@ export type CoreParams = {
      * Font-weight for the row in the main viewport that has been pinned to the top or bottom.
      */
     pinnedSourceRowFontWeight: FontWeightValue;
-
-    /**
-     * Default shadow for elements that float above the grid and are intended to appear separated from it e.g. dialogs and menus
-     */
-    popupShadow: ShadowValue;
-
-    /**
-     * Default shadow for elements that float above the grid and are intended to appear elevated byt still attached e.g. dropdowns and cell editors
-     */
-    cardShadow: ShadowValue;
 
     /**
      * Background color of selected cell ranges. Choosing a semi-transparent color ensure that multiple overlapping ranges look correct.
@@ -748,79 +647,9 @@ export type CoreParams = {
     sideButtonVerticalPadding: LengthValue;
 
     /**
-     * Color of text and UI elements that should stand out less than the default.
-     */
-    subtleTextColor: ColorValue;
-
-    /**
-     * Default color for all text
-     */
-    textColor: ColorValue;
-
-    /**
-     * Width of the whole toggle button component
-     */
-    toggleButtonWidth: LengthValue;
-
-    /**
-     * Height of the whole toggle button component
-     */
-    toggleButtonHeight: LengthValue;
-
-    /**
-     * Color of the toggle button background in its 'off' state
-     */
-    toggleButtonOffBackgroundColor: ColorValue;
-
-    /**
-     * Color of the toggle button background in its 'on' state
-     */
-    toggleButtonOnBackgroundColor: ColorValue;
-
-    /**
-     * Background color of the toggle button switch (the bit that slides from left to right)
-     */
-    toggleButtonSwitchBackgroundColor: ColorValue;
-
-    /**
-     * The amount that the toggle switch is inset from the edge of the button
-     */
-    toggleButtonSwitchInset: LengthValue;
-
-    /**
      * The dividing line between sections of menus e.g. column menu and right-click context menu
      */
     toolPanelSeparatorBorder: BorderValue;
-
-    /**
-     * Background color for tooltips
-     */
-    tooltipBackgroundColor: ColorValue;
-
-    /**
-     * Background color for tooltips showing errors
-     */
-    tooltipErrorBackgroundColor: ColorValue;
-
-    /**
-     * Border for tooltips
-     */
-    tooltipBorder: BorderValue;
-
-    /**
-     * Border for tooltips showing errors
-     */
-    tooltipErrorBorder: BorderValue;
-
-    /**
-     * Text color for tooltips
-     */
-    tooltipTextColor: ColorValue;
-
-    /**
-     * Text color for tooltips showing errors
-     */
-    tooltipErrorTextColor: ColorValue;
 
     /**
      * Color to temporarily apply to cell data when its value decreases in an agAnimateShowChangeCellRenderer cell
@@ -886,21 +715,9 @@ export type CoreParams = {
      * Font weight for values in the status bar component
      */
     statusBarValueFontWeight: FontWeightValue;
-};
+}
 
-export const defaultLightColorSchemeParams = {
-    backgroundColor: '#fff',
-    foregroundColor: '#181d1f',
-    borderColor: foregroundMix(0.15),
-    chromeBackgroundColor: foregroundBackgroundMix(0.02),
-    browserColorScheme: 'light',
-} as const;
-
-export const coreDefaults: Readonly<CoreParams> = {
-    ...defaultLightColorSchemeParams,
-    textColor: foregroundColor,
-    accentColor: '#2196f3',
-    invalidColor: '#e02525',
+export const coreDefaults: Readonly<Omit<CoreThemeParams, keyof SharedThemeParams>> = {
     wrapperBorder: true,
     rowBorder: true,
     headerRowBorder: true,
@@ -939,17 +756,6 @@ export const coreDefaults: Readonly<CoreParams> = {
     sideButtonLeftPadding: { ref: 'spacing' },
     sideButtonRightPadding: { ref: 'spacing' },
     sideButtonVerticalPadding: { calc: 'spacing * 3' },
-    fontFamily: [
-        '-apple-system',
-        'BlinkMacSystemFont',
-        'Segoe UI',
-        'Roboto',
-        'Oxygen-Sans',
-        'Ubuntu',
-        'Cantarell',
-        'Helvetica Neue',
-        'sans-serif',
-    ],
     headerBackgroundColor: {
         ref: 'chromeBackgroundColor',
     },
@@ -975,10 +781,6 @@ export const coreDefaults: Readonly<CoreParams> = {
     cellTextColor: {
         ref: 'textColor',
     },
-    subtleTextColor: {
-        ref: 'textColor',
-        mix: 0.5,
-    },
     rangeSelectionBorderStyle: 'solid',
     rangeSelectionBorderColor: accentColor,
     rangeSelectionBackgroundColor: accentMix(0.2),
@@ -995,8 +797,6 @@ export const coreDefaults: Readonly<CoreParams> = {
         mix: 0.66,
     },
     oddRowBackgroundColor: backgroundColor,
-    borderWidth: 1,
-    borderRadius: 4,
     wrapperBorderRadius: 8,
     cellHorizontalPadding: {
         calc: 'spacing * 2 * cellHorizontalPaddingScale',
@@ -1011,8 +811,6 @@ export const coreDefaults: Readonly<CoreParams> = {
     valueChangeDeltaUpColor: '#43a047',
     valueChangeDeltaDownColor: '#e53935',
     valueChangeValueHighlightBackgroundColor: '#16a08580',
-    spacing: 8,
-    fontSize: 14,
     rowHeight: {
         calc: 'max(iconSize, dataFontSize) + spacing * 3.25 * rowVerticalPaddingScale',
     },
@@ -1025,27 +823,12 @@ export const coreDefaults: Readonly<CoreParams> = {
         ref: 'rowHeight',
         calc: 'max(rowHeight, 22px)',
     },
-    popupShadow: '0 0 16px #00000026',
-    cardShadow: '0 1px 4px 1px #00000018',
-    dropdownShadow: { ref: 'cardShadow' },
     dragAndDropImageBackgroundColor: backgroundColor,
     dragAndDropImageBorder: true,
     dragAndDropImageShadow: {
         ref: 'popupShadow',
     },
     dragHandleColor: foregroundMix(0.7),
-    focusShadow: {
-        spread: 3,
-        color: accentMix(0.5),
-    },
-    focusErrorShadow: {
-        spread: 3,
-        color: {
-            ref: 'invalidColor',
-            onto: 'backgroundColor',
-            mix: 0.5,
-        },
-    },
     headerColumnResizeHandleHeight: '30%',
     headerColumnResizeHandleWidth: 2,
     headerColumnResizeHandleColor: {
@@ -1063,11 +846,6 @@ export const coreDefaults: Readonly<CoreParams> = {
     widgetVerticalSpacing: {
         ref: 'spacing',
     },
-    listItemHeight: {
-        calc: 'max(iconSize, dataFontSize) + widgetVerticalSpacing',
-    },
-    iconSize: 16,
-    iconColor: 'inherit',
     iconButtonColor: { ref: 'iconColor' },
     iconButtonBackgroundColor: 'transparent',
     iconButtonBackgroundSpread: 4,
@@ -1077,12 +855,6 @@ export const coreDefaults: Readonly<CoreParams> = {
     iconButtonActiveColor: accentColor,
     iconButtonActiveBackgroundColor: accentMix(0.28),
     iconButtonActiveIndicatorColor: accentColor,
-    toggleButtonWidth: 28,
-    toggleButtonHeight: 18,
-    toggleButtonOnBackgroundColor: accentColor,
-    toggleButtonOffBackgroundColor: foregroundBackgroundMix(0.3),
-    toggleButtonSwitchBackgroundColor: backgroundColor,
-    toggleButtonSwitchInset: 2,
     menuBorder: {
         color: foregroundMix(0.2),
     },
@@ -1132,28 +904,6 @@ export const coreDefaults: Readonly<CoreParams> = {
         ref: 'iconSize',
     },
     toolPanelSeparatorBorder: true,
-    tooltipBackgroundColor: {
-        ref: 'chromeBackgroundColor',
-    },
-    tooltipErrorBackgroundColor: {
-        ref: 'invalidColor',
-        onto: 'backgroundColor',
-        mix: 0.1,
-    },
-    tooltipTextColor: {
-        ref: 'textColor',
-    },
-    tooltipErrorTextColor: {
-        ref: 'invalidColor',
-    },
-    tooltipBorder: true,
-    tooltipErrorBorder: {
-        color: {
-            ref: 'invalidColor',
-            onto: 'backgroundColor',
-            mix: 0.25,
-        },
-    },
     columnDropCellBackgroundColor: foregroundMix(0.07),
     columnDropCellTextColor: {
         ref: 'textColor',

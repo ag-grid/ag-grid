@@ -1,8 +1,8 @@
-import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
-import type { ElementParams } from '../../utils/dom';
-import { _exists } from '../../utils/generic';
-import type { AgInputTextField } from '../../widgets/agInputTextField';
-import { AgInputTextFieldSelector } from '../../widgets/agInputTextField';
+import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
+import { _exists } from '../../agStack/utils/generic';
+import { AgInputTextFieldSelector } from '../../agStack/widgets/agInputTextField';
+import type { ElementParams } from '../../utils/element';
+import type { GridInputTextField } from '../../widgets/gridWidgetTypes';
 import type { CellEditorInput } from './iCellEditorInput';
 import type { ITextCellEditorParams } from './iTextCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
@@ -13,9 +13,9 @@ const TextCellEditorElement: ElementParams = {
     cls: 'ag-cell-editor',
 };
 class TextCellEditorInput<TValue = any>
-    implements CellEditorInput<TValue, ITextCellEditorParams<any, TValue>, AgInputTextField>
+    implements CellEditorInput<TValue, ITextCellEditorParams<any, TValue>, GridInputTextField>
 {
-    private eEditor: AgInputTextField;
+    private eEditor: GridInputTextField;
     private params: ITextCellEditorParams<any, TValue>;
 
     constructor(private getLocaleTextFunc: () => LocaleTextFunc) {}
@@ -28,7 +28,7 @@ class TextCellEditorInput<TValue = any>
         return [AgInputTextFieldSelector];
     }
 
-    public init(eEditor: AgInputTextField, params: ITextCellEditorParams<any, TValue>): void {
+    public init(eEditor: GridInputTextField, params: ITextCellEditorParams<any, TValue>): void {
         this.eEditor = eEditor;
         this.params = params;
         const maxLength = params.maxLength;
@@ -93,7 +93,7 @@ class TextCellEditorInput<TValue = any>
     }
 }
 
-export class TextCellEditor extends SimpleCellEditor<any, ITextCellEditorParams, AgInputTextField> {
+export class TextCellEditor extends SimpleCellEditor<any, ITextCellEditorParams, GridInputTextField> {
     constructor() {
         super(new TextCellEditorInput(() => this.getLocaleTextFunc()));
     }

@@ -1,0 +1,12 @@
+.ag-list-item {
+    height: var(--ag-list-item-height);
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &.ag-active-item {
+        background-color: var(--ag-row-hover-color);
+    }
+}

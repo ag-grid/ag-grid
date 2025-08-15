@@ -1,10 +1,10 @@
-import { KeyCode } from '../../constants/keyCode';
-import type { ElementParams } from '../../utils/dom';
-import { _exists } from '../../utils/generic';
-import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
-import type { AgInputTextArea } from '../../widgets/agInputTextArea';
-import { AgInputTextAreaSelector } from '../../widgets/agInputTextArea';
-import { RefPlaceholder } from '../../widgets/component';
+import { KeyCode } from '../../agStack/constants/keyCode';
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
+import { _exists } from '../../agStack/utils/generic';
+import { AgInputTextAreaSelector } from '../../agStack/widgets/agInputTextArea';
+import type { ElementParams } from '../../utils/element';
+import type { GridInputTextArea } from '../../widgets/gridWidgetTypes';
+import { AgAbstractCellEditor } from './agAbstractCellEditor';
 import type { ILargeTextEditorParams } from './iLargeTextCellEditor';
 
 const LargeTextCellElement: ElementParams = {
@@ -19,7 +19,7 @@ const LargeTextCellElement: ElementParams = {
     ],
 };
 export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorParams> {
-    protected readonly eEditor: AgInputTextArea = RefPlaceholder;
+    protected readonly eEditor: GridInputTextArea = RefPlaceholder;
     private focusAfterAttached: boolean;
     private highlightAllOnFocus: boolean;
 
@@ -29,7 +29,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
 
     public initialiseEditor(params: ILargeTextEditorParams): void {
         const { eEditor } = this;
-        const { cellStartedEdit, eventKey, value, maxLength, cols, rows } = params;
+        const { cellStartedEdit, eventKey, maxLength, cols, rows } = params;
         this.focusAfterAttached = cellStartedEdit;
 
         // disable initial tooltips added to the input field
@@ -52,7 +52,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
             } else if (eventKey && eventKey.length === 1) {
                 startValue = eventKey;
             } else {
-                startValue = value.toString();
+                startValue = this.getStartValue(params);
 
                 if (eventKey !== KeyCode.F2) {
                     this.highlightAllOnFocus = true;
@@ -60,7 +60,7 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
             }
         } else {
             this.focusAfterAttached = false;
-            startValue = value.toString();
+            startValue = this.getStartValue(params);
         }
 
         if (startValue != null) {
@@ -69,6 +69,11 @@ export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorPa
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
         this.activateTabIndex();
+    }
+
+    private getStartValue(params: ILargeTextEditorParams): string | null | undefined {
+        const { value } = params;
+        return value?.toString() ?? value;
     }
 
     private onKeyDown(event: KeyboardEvent): void {

@@ -1,3 +1,4 @@
+import { _areEqual, _forAll } from '../agStack/utils/array';
 import { placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -11,7 +12,6 @@ import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
-import { _areEqual, _forAll } from '../utils/array';
 import { _createColumnTree } from './columnFactoryUtils';
 import { _applyColumnState, _compareColumnStatesAndDispatchEvents } from './columnStateUtils';
 import type { ColumnState } from './columnStateUtils';
@@ -100,8 +100,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
             pivotColsSvc,
             valueColsSvc,
             visibleCols,
-            colViewport,
             eventSvc,
+            groupHierarchyColSvc,
         } = beans;
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = this.colDefs ? _compareColumnStatesAndDispatchEvents(beans, source) : undefined;
@@ -125,6 +125,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.colDefCols = { tree, treeDepth, list, map };
 
+        // Must create dateHierarchy columns before rowGroupSvc and pivotSvc run
+        // so that any groupable date columns exist beforehand.
+        this.createColumnsForService([groupHierarchyColSvc], this.colDefCols);
+
         rowGroupColsSvc?.extractCols(source, oldCols);
         pivotColsSvc?.extractCols(source, oldCols);
         valueColsSvc?.extractCols(source, oldCols);
@@ -134,7 +138,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.refreshCols(true);
 
         visibleCols.refresh(source);
-        colViewport.checkViewportColumns();
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
         // in case applications use it
@@ -591,10 +594,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public forAllCols(callback: (column: AgColumn) => void): void {
-        const { pivotResultCols, autoColSvc, selectionColSvc } = this.beans;
+        const { pivotResultCols, autoColSvc, selectionColSvc, groupHierarchyColSvc } = this.beans;
         _forAll(this.colDefCols?.list, callback);
         _forAll(autoColSvc?.columns?.list, callback);
         _forAll(selectionColSvc?.columns?.list, callback);
+        _forAll(groupHierarchyColSvc?.columns?.list, callback);
         _forAll(pivotResultCols?.getPivotResultCols()?.list, callback);
     }
 
@@ -647,6 +651,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
             }
         }
 
-        return this.beans.autoColSvc?.getColumn(key) ?? this.beans.selectionColSvc?.getColumn(key) ?? null;
+        const { autoColSvc, selectionColSvc, groupHierarchyColSvc } = this.beans;
+        return (
+            autoColSvc?.getColumn(key) ??
+            selectionColSvc?.getColumn(key) ??
+            groupHierarchyColSvc?.getColumn(key) ??
+            null
+        );
     }
 }

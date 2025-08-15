@@ -2,11 +2,11 @@ import type { BeanCollection } from '../../context/context';
 import type { RowNode } from '../../entities/rowNode';
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
-import { _valuesDiffer } from '../utils/editors';
+import { _sourceAndPendingDiffer } from '../utils/editors';
 
 const editHighlightFn = (edit?: EditValue, includeEditing: boolean = false) => {
     if (edit !== undefined) {
-        return _valuesDiffer(edit) || (includeEditing && edit.state === 'editing');
+        return _sourceAndPendingDiffer(edit) || (includeEditing && edit.state === 'editing');
     }
 };
 

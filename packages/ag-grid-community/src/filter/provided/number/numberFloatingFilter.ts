@@ -1,6 +1,7 @@
+import { AgInputNumberField } from '../../../agStack/widgets/agInputNumberField';
+import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
 import { BeanStub } from '../../../context/beanStub';
-import { AgInputNumberField } from '../../../widgets/agInputNumberField';
-import { AgInputTextField } from '../../../widgets/agInputTextField';
+import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import { FloatingFilterTextInputService } from '../../floating/provided/floatingFilterTextInputService';
 import type { FloatingFilterInputService } from '../../floating/provided/iFloatingFilterInputService';
 import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
@@ -10,8 +11,8 @@ import { NumberFilterModelFormatter } from './numberFilterModelFormatter';
 import { getAllowedCharPattern } from './numberFilterUtils';
 
 class FloatingFilterNumberInputService extends BeanStub implements FloatingFilterInputService {
-    private eTextInput: AgInputTextField;
-    private eNumberInput: AgInputNumberField;
+    private eTextInput: GridInputTextField;
+    private eNumberInput: GridInputNumberField;
     private onValueChanged: (e: KeyboardEvent) => void = () => {};
 
     private numberInputActive = true;
@@ -51,7 +52,7 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         this.getActiveInputElement().setValue(value, silent);
     }
 
-    private getActiveInputElement(): AgInputTextField | AgInputNumberField {
+    private getActiveInputElement(): GridInputTextField | GridInputNumberField {
         return this.numberInputActive ? this.eNumberInput : this.eTextInput;
     }
 

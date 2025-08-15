@@ -1,12 +1,13 @@
 import type {
     AgColumn,
-    AgInputTextField,
     AgPromise,
     ComponentSelector,
     ElementParams,
     FilterDisplayParams,
+    GridInputTextField,
     IAfterGuiAttachedParams,
     ISetFilter,
+    SetFilterHandler as ISetFilterHandler,
     ISetFilterParams,
     SetFilterModel,
     SetFilterModelValue,
@@ -46,11 +47,11 @@ import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string>
     extends ProvidedFilter<SetFilterModel, V, ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>>
-    implements ISetFilter<V>, SetFilterUi
+    implements ISetFilter<V>, SetFilterUi<V>
 {
     public readonly filterType = 'set' as const;
 
-    private readonly eMiniFilter: AgInputTextField = RefPlaceholder;
+    private readonly eMiniFilter: GridInputTextField = RefPlaceholder;
     private readonly eFilterLoading: HTMLElement = RefPlaceholder;
     private readonly eFilterLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eSetFilterList: HTMLElement = RefPlaceholder;
@@ -1159,6 +1160,10 @@ export class SetFilter<V = string>
         } else {
             this.selectedKeys = new Set(keys);
         }
+    }
+
+    public getFilterHandler(): ISetFilterHandler<V> {
+        return this.handler;
     }
 
     public override destroy(): void {

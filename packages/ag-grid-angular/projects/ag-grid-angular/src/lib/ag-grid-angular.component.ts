@@ -653,7 +653,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public editType: EditStrategyType | undefined = undefined;
     /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
      */
-    @Input({ transform: booleanAttribute }) public suppressEditingNextOnTab: boolean | undefined = undefined;
+    @Input({ transform: booleanAttribute }) public suppressStartEditOnTab: boolean | undefined = undefined;
     /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
@@ -824,7 +824,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public suppressSetFilterByDefault: boolean | undefined = undefined;
     /** Enable filter handlers for custom filter components.
-     * Requires all custom filters need to be implemented using handlers.
+     * Requires all custom filters to be implemented using handlers.
+     *
+     * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
+     * The Multi Filter will also use a filter handler if this is enabled.
      * @initial
      */
     @Input({ transform: booleanAttribute }) public enableFilterHandlers: boolean | undefined = undefined;
@@ -1388,6 +1391,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input({ transform: booleanAttribute }) public suppressGroupRowsSticky: boolean | undefined = undefined;
+    /** Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+     * @agModule `RowGroupingModule`
+     */
+    @Input() public groupHierarchyConfig: { [k: string]: ColDef } | undefined = undefined;
     /** Data to be displayed as pinned top rows in the grid.
      * @agModule `PinnedRowModule`
      */
@@ -1413,7 +1420,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public isRowPinnable: IsRowPinnable<TData> | undefined = undefined;
     /** Called for every row in the grid.
      *
-     * Return `true` if the row should be pinned initially. Return `false` otherwise.
+     * Return "top", "bottom" if the row should be initially pinned to the top or bottom respectively.
+     * Return `null` or `undefined` otherwise.
      * User interactions can subsequently still change the pinned state of a row.
      * @agModule `PinnedRowModule`
      */

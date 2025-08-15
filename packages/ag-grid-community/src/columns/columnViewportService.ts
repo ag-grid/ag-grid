@@ -1,3 +1,4 @@
+import { _exists } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -5,7 +6,6 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
-import { _exists } from '../utils/generic';
 import type { ColumnModel } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
@@ -26,7 +26,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     private headerColsWithinViewport: AgColumn[] = [];
 
     // A hash key to keep track of changes in viewport columns
-    private colsWithinViewportHash: string = '';
+    public colsWithinViewportHash: string = '';
 
     // all columns & groups to be rendered, index by row.
     // used by header rows to get all items to render for that row.

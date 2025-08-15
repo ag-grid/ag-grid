@@ -111,22 +111,28 @@ The example below shows getting and setting an individual filter model in action
 
 {% gridExampleRunner title="Individual Filter Model" name="filter-model-individual"  exampleHeight=587 /%}
 
-## Accessing Individual Filter Component Instances
+## Accessing Individual Filters
 
-It is also possible to access the filter components directly if you want to interact with a specific filter. This also works for your own custom filters, where you can get a reference to the underlying filtering instance (i.e. what was created when AG Grid called `new` on your filter). Calling `api.getColumnFilterInstance(colKey)` will return a reference to the filter instance for the column with key `colKey`.
+It certain cases, it may be needed to interact directly with a specific filter. For instance, [Refreshing Values](./filter-set-filter-list/#refreshing-values) on the Set Filter.
 
-{% apiDocumentation source="grid-api/api.json" section="filter" names=["getColumnFilterInstance"] /%}
+Grid-provided filters are split into two parts - the filter UI component and the filter handler (which performs the filter logic).
+
+When `enableFilterHandlers = true`, [Custom Filter Components](./component-filter/) are also split into two parts.
+
+Note that the [Multi Filter](./filter-multi/) will only have a filter handler when `enableFilterHandlers = true`.
+
+To access the filter UI component, use `api.getColumnFilterInstance(colKey)`.
+
+To access the filter hander, use `api.getColumnFilterHandler(colKey)`.
+
+{% apiDocumentation source="grid-api/api.json" section="filter" names=["getColumnFilterInstance", "getColumnFilterHandler"] /%}
 
 ```js
-// Get a reference to the 'name' filter instance
+// Get a reference to the 'name' filter UI instance
 const filterInstance = await api.getColumnFilterInstance('name');
 ```
 
-All of the methods of the filter are available on the instance. If using a custom filter, any other methods you have added will also be present, allowing bespoke behaviour to be added to your filter. Both provided and custom filters implement `IFilter` and have the following common methods:
-
-{% interfaceDocumentation interfaceName="IFilter" names=["isFilterActive", "getModel", "setModel"] config={"description":""} /%}
-
-Note that if you call `setModel` on the filter, you will also need to call `onFilterChanged` to re-run filtering, similar to [Re-running Grid Filtering](./filter-api/#re-running-grid-filtering)
+If using a custom filter, any other methods you have added will also be present, allowing bespoke behaviour to be added to your filter.
 
 ### Example: Accessing Individual Filters
 

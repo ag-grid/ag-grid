@@ -1,3 +1,4 @@
+import { _last } from '../agStack/utils/array';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
@@ -7,7 +8,6 @@ import { isColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType } from '../events';
 import type { ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
-import { _last } from '../utils/array';
 import type { ColumnGroupService, CreateGroupsParams } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
 import { getWidthOfColsInList } from './columnUtils';
@@ -85,8 +85,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.autoHeightCols = this.allCols.filter((col) => col.isAutoHeight());
         colFlex?.refreshFlexedColumns();
         this.updateBodyWidths();
-        colViewport.checkViewportColumns(false);
         this.setFirstRightAndLastLeftPinned(colModel, this.leftCols, this.rightCols, source);
+        colViewport.checkViewportColumns(false);
 
         this.eventSvc.dispatchEvent({
             type: 'displayedColumnsChanged',

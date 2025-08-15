@@ -1,4 +1,4 @@
-import type { AgSelectParams, BeanCollection } from 'ag-grid-community';
+import type { AgComponentSelectorType, AgSelectParams, BeanCollection } from 'ag-grid-community';
 import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
 
 import type { AgGroupComponent, AgGroupComponentParams } from '../../../../widgets/agGroupComponent';
@@ -107,7 +107,7 @@ export class FontPanel extends Component {
         this.fontGroup.setEnabled(enabled);
     }
 
-    private getFamilySelectParams(): AgSelectParams {
+    private getFamilySelectParams(): AgSelectParams<AgComponentSelectorType> {
         const families = [
             'Arial, sans-serif',
             'Aria Black, sans-serif',
@@ -161,7 +161,7 @@ export class FontPanel extends Component {
         );
     }
 
-    private getSizeSelectParams(): AgSelectParams {
+    private getSizeSelectParams(): AgSelectParams<AgComponentSelectorType> {
         const sizes = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36];
         const size = this.getInitialFontValue('fontSize');
 
@@ -179,7 +179,7 @@ export class FontPanel extends Component {
         );
     }
 
-    private getWeightStyleSelectParams(): AgSelectParams {
+    private getWeightStyleSelectParams(): AgSelectParams<AgComponentSelectorType> {
         const weight = this.getInitialFontValue('fontWeight') ?? 'normal';
         const style = this.getInitialFontValue('fontStyle') ?? 'normal';
 

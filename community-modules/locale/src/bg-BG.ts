@@ -115,6 +115,9 @@ export const AG_GRID_LOCALE_BG = {
     advancedFilterAnd: 'И',
     advancedFilterOr: 'ИЛИ',
     advancedFilterApply: 'Приложи',
+    advancedFilterReset: 'Нулиране',
+    advancedFilterCancel: 'Отказ',
+    advancedFilterClear: 'Изчисти',
     advancedFilterBuilder: 'Създател',
     advancedFilterValidationMissingColumn: 'Колоната липсва',
     advancedFilterValidationMissingOption: 'Опцията липсва',
@@ -133,6 +136,8 @@ export const AG_GRID_LOCALE_BG = {
     advancedFilterValidationMessageAtEnd: 'Има грешка в израза. ${variable} в края на израза.',
     advancedFilterBuilderTitle: 'Разширен филтър',
     advancedFilterBuilderApply: 'Приложи',
+    advancedFilterBuilderClear: 'Изчисти',
+    advancedFilterBuilderReset: 'Нулиране',
     advancedFilterBuilderCancel: 'Отмени',
     advancedFilterBuilderAddButtonTooltip: 'Добави филтър или група',
     advancedFilterBuilderRemoveButtonTooltip: 'Премахни',
@@ -528,6 +533,10 @@ export const AG_GRID_LOCALE_BG = {
     dropOff: 'Спад',
     stageLabels: 'Етикети на етапи',
     reverse: 'Обратно',
+    tooltipMode: 'Режим на подсказките',
+    tooltipModeSingle: 'Еднократен',
+    tooltipModeShared: 'Многократен',
+    tooltipModeCompact: 'Компактен',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Ниво ${variable}. Натиснете ENTER за редактиране',
@@ -603,7 +612,6 @@ export const AG_GRID_LOCALE_BG = {
     ariaLabelSelectField: 'Избор на поле',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Редактор на клетки',
     ariaValidationErrorPrefix: 'Валидиране на редактор на клетки',
     ariaLabelLoadingContextMenu: 'Зареждане на контекстно меню',
 

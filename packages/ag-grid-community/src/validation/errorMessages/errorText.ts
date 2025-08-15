@@ -1,3 +1,4 @@
+import { _fuzzySuggestions } from '../../agStack/utils/fuzzyMatch';
 import type { DynamicBeanName, UserComponentName } from '../../context/context';
 import type { Column } from '../../interfaces/iColumn';
 import type {
@@ -8,7 +9,6 @@ import type {
 } from '../../interfaces/iModule';
 import type { RowModelType } from '../../interfaces/iRowModel';
 import type { RowNodeEventType, RowPinnedType } from '../../interfaces/iRowNode';
-import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
 import { ENTERPRISE_MODULE_NAMES } from '../enterpriseModuleNames';
 import { baseDocLink, getErrorLink } from '../logging';
 import { resolveModuleNames } from '../resolvableModuleNames';
@@ -703,7 +703,7 @@ export const AG_GRID_ERRORS = {
         `Filter for column '${colId}' does not have 'filterParams.buttons', but the new Filters Tool Panel has buttons configured. Either configure buttons for the filter, or disable buttons on the Filters Tool Panel.` as const,
     282: () => 'New filter tool panel requires `enableFilterHandlers: true`.' as const,
     283: () =>
-        'As of v34, use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.' as const,
+        'As of v34, use the same method on the filter handler (`api.getColumnFilterHandler(colKey)`) instead.' as const,
     284: () =>
         'As of v34, filters are active when they have a model. Use `api.getColumnFilterModel()` instead.' as const,
     285: () => 'As of v34, use (`api.getColumnFilterModel()`) instead.' as const,

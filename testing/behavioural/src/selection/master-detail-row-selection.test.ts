@@ -4,8 +4,8 @@ import type { GetDetailRowDataParams, GridApi, GridOptions } from 'ag-grid-commu
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
-import { GridActions, assertSelectedRowsByIndex, waitForEvent } from './utils';
+import { TestGridsManager, assertSelectedRowsByIndex, waitForEvent } from '../test-utils';
+import { GridActions } from './utils';
 
 describe('Row Selection Grid Options', () => {
     const columnDefs = [{ field: 'sport', cellRenderer: 'agGroupCellRenderer' }];

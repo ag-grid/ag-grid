@@ -265,6 +265,27 @@ const contentApi = defineCollection({
     }),
 });
 
+const aboutPage = defineCollection({
+    loader: glob({ base: './src/content/about', pattern: 'about.json' }),
+    schema: z.object({
+        principles: z.array(
+            z.object({
+                icon: z.string(),
+                title: z.string(),
+                description: z.string(),
+            })
+        ),
+        leadershipTeam: z.array(
+            z.object({
+                name: z.string(),
+                role: z.string(),
+                bio: z.string(),
+                imageSrc: z.string(),
+            })
+        ),
+    }),
+});
+
 export const collections = {
     docs,
     apiDocumentation,
@@ -283,4 +304,5 @@ export const collections = {
     seedProjects,
     reactLandingPage,
     contentApi,
+    aboutPage,
 };

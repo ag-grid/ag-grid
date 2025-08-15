@@ -1,4 +1,4 @@
-import { KeyCode } from '../../constants/keyCode';
+import { KeyCode } from '../../agStack/constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
@@ -127,7 +127,8 @@ export abstract class BaseEditStrategy extends BeanStub {
         previousCell: CellCtrl,
         backwards: boolean,
         event?: KeyboardEvent,
-        source?: EditSource
+        source?: EditSource,
+        preventNavigation?: boolean
     ): boolean | null;
 
     public isCellEditable({ rowNode, column }: Required<EditPosition>, _source: 'api' | 'ui' = 'ui'): boolean {
@@ -186,7 +187,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     protected abstract processValidationResults(results: EditValidationResult): EditValidationAction;
 
     public cleanupEditors({ rowNode }: EditRowPosition = {}, includeEditing?: boolean): void {
-        _syncFromEditors(this.beans);
+        _syncFromEditors(this.beans, false);
 
         const positions = this.model.getEditPositions();
 
@@ -210,11 +211,6 @@ export abstract class BaseEditStrategy extends BeanStub {
         _destroyEditors(this.beans, discard);
 
         _purgeUnchangedEdits(this.beans, includeEditing);
-    }
-
-    public stopAllEditing(): void {
-        _syncFromEditors(this.beans);
-        this.stop();
     }
 
     public setFocusOutOnEditor(cellCtrl: CellCtrl): void {
@@ -390,7 +386,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         if (cells.length > 0) {
             const cell = cells.at(-1)!;
-            const key = cell.newValue === UNEDITED ? undefined : cell.newValue;
+            const key = cell.pendingValue === UNEDITED ? undefined : cell.pendingValue;
             this.start(cell, new KeyboardEvent('keydown', { key }), 'api');
 
             const cellCtrl = _getCellCtrl(this.beans, cell);

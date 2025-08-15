@@ -1,4 +1,5 @@
-import { KeyCode } from '../../constants/keyCode';
+import { KeyCode } from '../../agStack/constants/keyCode';
+import { _isMacOsUserAgent } from '../../agStack/utils/browser';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import { _populateModelValidationErrors } from '../../edit/utils/editors';
@@ -6,7 +7,6 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import { _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
-import { _isMacOsUserAgent } from '../../utils/browser';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { SpannedCellCtrl } from '../spanning/spannedCellCtrl';
 import type { CellCtrl } from './cellCtrl';

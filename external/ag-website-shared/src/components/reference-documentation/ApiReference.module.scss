@@ -346,6 +346,7 @@ button.seeMore {
     align-items: center;
     display: flex;
     gap: $spacing-size-2;
+    padding: unset;
     color: var(--color-link);
     font-weight: 600;
     border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 80%);

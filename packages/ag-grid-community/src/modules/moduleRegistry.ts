@@ -1,6 +1,6 @@
 import type { Module, ModuleName, ModuleValidationInvalidResult } from '../interfaces/iModule';
 import type { RowModelType } from '../interfaces/iRowModel';
-import { _errorOnce } from '../utils/function';
+import { _errorOnce } from '../utils/log';
 
 interface RowModelModuleStore {
     [name: string]: Module;

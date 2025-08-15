@@ -6,6 +6,7 @@ import type {
     GridOptions,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
+    ValueGetterParams,
 } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -29,6 +30,13 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi;
 
+function sumTotalValueGetter(params: ValueGetterParams): number {
+    const { node, data, api } = params;
+    const overlay = node ? api.getEditRowValues(node) : undefined;
+    const row = Object.assign({}, data, overlay);
+    return (row.gold ?? 0) + (row.silver ?? 0) + (row.bronze ?? 0);
+}
+
 const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'athlete', minWidth: 120 },
@@ -39,7 +47,12 @@ const gridOptions: GridOptions = {
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze', minWidth: 100 },
-        { field: 'total', aggFunc: 'sum' },
+        {
+            field: 'total',
+            aggFunc: 'sum',
+            valueGetter: sumTotalValueGetter,
+            editable: false,
+        },
     ],
     defaultColDef: {
         flex: 1,

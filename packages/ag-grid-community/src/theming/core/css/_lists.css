@@ -1,43 +1,7 @@
-.ag-list-item,
 .ag-virtual-list-item {
     height: var(--ag-list-item-height);
-}
-
-.ag-virtual-list-item {
     position: absolute;
     width: 100%;
-}
-
-.ag-select-list {
-    background-color: var(--ag-picker-list-background-color);
-    overflow: hidden auto;
-    border-radius: var(--ag-border-radius);
-    border: var(--ag-picker-list-border);
-    box-shadow: var(--ag-dropdown-shadow);
-}
-
-.ag-list-item {
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    &.ag-active-item {
-        background-color: var(--ag-row-hover-color);
-    }
-}
-
-.ag-select-list-item {
-    padding-left: calc(var(--ag-cell-horizontal-padding) / 2);
-    user-select: none;
-    cursor: default;
-
-    :where(span) {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
 }
 
 .ag-list-item-hovered::after {

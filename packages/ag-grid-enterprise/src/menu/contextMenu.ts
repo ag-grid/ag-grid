@@ -31,10 +31,10 @@ import {
     _isNothingFocused,
     _isPromise,
     _isVisible,
-    _preserveRangesWhile,
     _warn,
 } from 'ag-grid-community';
 
+import { _preserveRangesWhile } from '../misc/enterpriseDomUtils';
 import type { CloseMenuEvent } from '../widgets/agMenuItemComponent';
 import { AgMenuList } from '../widgets/agMenuList';
 import type { MenuItemMapper } from './menuItemMapper';

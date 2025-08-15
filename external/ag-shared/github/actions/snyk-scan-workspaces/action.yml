@@ -14,42 +14,49 @@ inputs:
     remote_repo_url:
         description: 'Public remote repository url'
         required: true
-    ctrf_file:
-        description: 'Path to the output file in CTRF format'
-        default: ''
+    report_file:
+        description: 'Output file in CTRF format'
+        default: 'report.json'
+    output_dir:
+        description: 'Output folder'
+        default: 'test-results/'
+    snyk_file:
+        description: 'Snyk output json file'
+        default: 'snyk.json'
 
 runs:
     using: 'composite'
     steps:
-        - name: Run snyk to check for vulnerabilities on all yarn workspaces
-          uses: snyk/actions/node@master
-          env:
-              SNYK_TOKEN: ${{ inputs.snyk_token }}
-          with:
-              args: --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=${{ inputs.severity_threshold }} --exclude=${{ inputs.exclude }} --remote-repo-url=${{ inputs.remote_repo_url }} --json-file-output=snyk.json
-
-        - name: To CTRF format
+        - name: Create output directory if required
           uses: actions/github-script@v7
-          if: ${{ inputs.ctrf_file != '' }}
           env:
-              CTRF_FILE: ${{ inputs.ctrf_file }}
-              SEVERITY_THRESHOLD: ${{ inputs.severity_threshold }}
+              OUTPUT_DIR: ${{ inputs.output_dir }}
           with:
               script: |
                   const fs = require('fs');
-                  const path = require('path');
-                  const file = 'snyk.json';
-                  const combinedResults = [];
+                  fs.mkdirSync('${{ inputs.output_dir }}', { recursive: true });
 
-                  if (fs.existsSync(file)) {
-                    combinedResults.push(...JSON.parse(fs.readFileSync(file, 'utf8')));
-                  }
+        - name: Run snyk to check for vulnerabilities on all yarn workspaces
+          id: snyk-scan
+          uses: snyk/actions/node@master
+          continue-on-error: true
+          env:
+              SNYK_TOKEN: ${{ inputs.snyk_token }}
+          with:
+              args: --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=${{ inputs.severity_threshold }} --exclude=${{ inputs.exclude }} --remote-repo-url=${{ inputs.remote_repo_url }} --json > ${{ inputs.output_dir }}${{ inputs.snyk_file }}
 
-                  const passed = combinedResults.filter(project => project.ok).length;
-                  const vulnerabilities = combinedResults.flatMap(project => project.vulnerabilities);
+        - name: Convert snyk report to CTRF report
+          shell: bash
+          if: ${{ inputs.report_file != '' }}
+          env:
+              SNYK_JSON_FILE: '${{ inputs.output_dir }}${{ inputs.snyk_file }}'
+              CTRF_OUTPUT_FILE: '${{ inputs.output_dir }}${{ inputs.report_file }}'
+          run: |
+              node ./external/ag-shared/scripts/snyk/snyk-to-ctrf-command.mjs
 
-                  const report = {
-                    results: { summary: { failed: vulnerabilities.length, passed, skipped: 0 } }
-                  }
-                  fs.mkdirSync(path.dirname(path.join('.', '${{ env.CTRF_FILE }}')), { recursive: true });
-                  fs.writeFileSync(path.join('.', '${{ env.CTRF_FILE }}'), JSON.stringify(report));
+        - name: Fail job if scan failed
+          shell: bash
+          if: success() && steps.snyk-scan.outcome == 'failure'
+          run: |
+              echo "Workflow failed, failing the build."
+              exit 1

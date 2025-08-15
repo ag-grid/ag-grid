@@ -9,7 +9,7 @@ import type { CellRange } from './IRangeService';
 import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError } from './iCellEditor';
 import type { ICellStyleFeature } from './iCellStyleFeature';
 import type { Column } from './iColumn';
-import type { EditMap, GetEditsParams } from './iEditModelService';
+import type { EditMap } from './iEditModelService';
 import type { IRowNode } from './iRowNode';
 import type { IRowStyleFeature } from './iRowStyleFeature';
 import type { UserCompDetails } from './iUserCompDetails';
@@ -77,7 +77,6 @@ export interface IEditService extends NamedBean {
     isRowEditing(rowNode?: IRowNode | null, params?: IsEditingParams | null): boolean;
     startEditing(position: Required<EditPosition>, params: StartEditParams): void;
     stopEditing(position?: EditPosition, params?: StopEditParams): boolean;
-    stopAllEditing(cancel?: boolean, source?: EditSource): void;
     setEditMap(updates: EditMap, params?: _SetEditingCellsParams): void;
     isCellEditable(position: Required<EditPosition>, source?: EditSource): boolean;
     moveToNextCell(
@@ -86,8 +85,7 @@ export interface IEditService extends NamedBean {
         event?: KeyboardEvent,
         source?: EditSource
     ): boolean | null;
-    getCellDataValue(position: Required<EditPosition>): any;
-    getRowDataValue(rowNode: IRowNode, params?: GetEditsParams): any;
+    getCellDataValue(position: Required<EditPosition>, preferEditor: boolean): any;
     addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void;
     createPopupEditorWrapper(params: ICellEditorParams): PopupEditorWrapper;
     setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined;

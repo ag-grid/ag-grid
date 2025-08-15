@@ -1,6 +1,6 @@
-import type { AgEvent, SelectionEventSourceType } from '../events';
+import type { AgEvent } from '../agStack/interfaces/agEvent';
+import type { BuildEventTypeMap, SelectionEventSourceType } from '../events';
 import type { Column } from '../interfaces/iColumn';
-import type { BuildEventTypeMap } from './iEventEmitter';
 
 export type RowNodeEventType =
     | 'rowSelected'
@@ -290,8 +290,8 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      * Sets the row height.
      * Call if you want to change the height initially assigned to the row.
      * After calling, you must call `api.onRowHeightChanged()` so the grid knows it needs to work out the placement of the rows.
-     * @param rowHeight - new height of the row
-     * @param estimated - is this an estimated height. Default: `false`
+     * @param rowHeight new height of the row
+     * @param estimated is this an estimated height. Default: `false`
      */
     setRowHeight(rowHeight: number | undefined | null, estimated?: boolean): void;
 

@@ -46,3 +46,19 @@ export function executeTransactionsAsync<TData = any>(
     api.flushAsyncTransactions();
     return Promise.all(promises);
 }
+
+export function isAgHtmlElementVisible(element: Element | null | undefined): boolean {
+    let current = element;
+    while (current && current.role !== 'row') {
+        const classList = current.classList;
+        if (classList.contains('ag-hidden') || classList.contains('ag-invisible')) {
+            return false;
+        }
+        const computedStyle = getComputedStyle(current);
+        if (computedStyle.display === 'none' || computedStyle.visibility === 'hidden') {
+            return false;
+        }
+        current = current.parentElement;
+    }
+    return true;
+}
