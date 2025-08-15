@@ -1,8 +1,6 @@
 import type {
-    BeanCollection,
     ComponentSelector,
     ElementParams,
-    Environment,
     ISideBar,
     IToolPanel,
     IToolPanelParams,
@@ -50,15 +48,10 @@ class AgSideBar extends Component implements ISideBar {
     private toolPanelWrappers: ToolPanelWrapper[] = [];
     private sideBar: SideBarDef | undefined;
     private position: 'left' | 'right';
-    private environment: Environment;
 
     constructor() {
         super(AgSideBarElement, [AgSideBarButtonsSelector]);
         this.registerCSS(agSideBarCSS);
-    }
-
-    public wireBeans(beans: BeanCollection): void {
-        this.environment = beans.environment;
     }
 
     public postConstruct(): void {
@@ -338,16 +331,12 @@ class AgSideBar extends Component implements ISideBar {
         wrapper.setDisplayed(false);
 
         const wrapperGui = wrapper.getGui();
-
-        if (def.parent instanceof HTMLElement) {
-            this.environment.applyThemeClasses(def.parent);
+        const parent = def.parent instanceof HTMLElement ? def.parent : this;
+        if (parent === def.parent) {
+            this.beans.environment.applyThemeClasses(parent, ['ag-external', 'ag-tool-panel-external']);
             wrapperGui.classList.add(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
-            def.parent.classList.add('ag-external');
-            def.parent.classList.add('ag-tool-panel-external');
-            def.parent.appendChild(wrapperGui);
-        } else {
-            this.appendChild(wrapperGui);
         }
+        parent.appendChild(wrapperGui);
 
         this.toolPanelWrappers.push(wrapper);
 
