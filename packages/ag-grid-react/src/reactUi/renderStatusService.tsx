@@ -21,7 +21,7 @@ export class RenderStatusService extends BeanStub implements IRenderStatusServic
         }
     }
 
-    private queueResizeOperationsForTick = () => {
+    private queueResizeOperationsForTick() {
         const colAutosize = this.beans.colAutosize!;
         colAutosize.shouldQueueResizeOperations = true;
         setTimeout(() => {
