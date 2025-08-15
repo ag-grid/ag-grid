@@ -432,39 +432,22 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return;
         }
 
-        let processedParams: RowDropZoneParams = {
-            getContainer: params.getContainer,
-        };
-
-        if (params.fromGrid) {
-            processedParams = params;
-        } else {
-            if (params.onDragEnter) {
-                processedParams.onDragEnter = (e) => {
-                    params.onDragEnter!(this.rowDragEvent('rowDragEnter', e as any));
-                };
-            }
-            if (params.onDragLeave) {
-                processedParams.onDragLeave = (e) => {
-                    params.onDragLeave!(this.rowDragEvent('rowDragLeave', e as any));
-                };
-            }
-            if (params.onDragging) {
-                processedParams.onDragging = (e) => {
-                    params.onDragging!(this.rowDragEvent('rowDragMove', e as any));
-                };
-            }
-            if (params.onDragStop) {
-                processedParams.onDragStop = (e) => {
-                    params.onDragStop!(this.rowDragEvent('rowDragEnd', e as any));
-                };
-            }
-            if (params.onDragCancel) {
-                processedParams.onDragCancel = (e) => {
-                    params.onDragCancel!(this.rowDragEvent('rowDragCancel', e as any));
-                };
-            }
-        }
+        const processedParams: RowDropZoneParams = params.fromGrid
+            ? params
+            : {
+                  getContainer: params.getContainer,
+                  onDragEnter:
+                      params.onDragEnter && ((e) => params.onDragEnter!(this.rowDragEvent('rowDragEnter', e as any))),
+                  onDragLeave:
+                      params.onDragLeave && ((e) => params.onDragLeave!(this.rowDragEvent('rowDragLeave', e as any))),
+                  onDragging:
+                      params.onDragging && ((e) => params.onDragging!(this.rowDragEvent('rowDragMove', e as any))),
+                  onDragStop:
+                      params.onDragStop && ((e) => params.onDragStop!(this.rowDragEvent('rowDragEnd', e as any))),
+                  onDragCancel:
+                      params.onDragCancel &&
+                      ((e) => params.onDragCancel!(this.rowDragEvent('rowDragCancel', e as any))),
+              };
 
         const dropTarget: DropTarget = {
             isInterestedIn: (type: DragSourceType) => type === DragSourceType.RowDrag,
