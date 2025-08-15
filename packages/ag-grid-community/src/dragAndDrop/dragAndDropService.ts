@@ -12,7 +12,7 @@ import type { DragItem } from '../interfaces/iDragItem';
 import { _warn } from '../validation/logging';
 import type { IDragAndDropImageComponent } from './dragAndDropImageComponent';
 import type { DragListenerParams } from './dragService';
-import type { RowDropZoneParams, RowsDrop } from './rowDragFeature';
+import type { RowDropZoneParams, RowsDrop } from './rowDragTypes';
 
 export enum DragSourceType {
     ToolPanel,

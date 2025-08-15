@@ -1,6 +1,6 @@
 import type { AgEvent } from '../agStack/interfaces/agEvent';
 import type { ApplyColumnStateParams, ColumnState } from '../columns/columnStateUtils';
-import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragFeature';
+import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragTypes';
 import type {
     RowDropPositionIndicator,
     SetRowDropPositionIndicatorParams,

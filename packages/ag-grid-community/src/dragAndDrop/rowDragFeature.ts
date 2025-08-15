@@ -3,111 +3,17 @@ import { _getClientSideRowModel } from '../api/rowModelApiUtils';
 import { BeanStub } from '../context/beanStub';
 import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
-import type {
-    RowDragCancelEvent,
-    RowDragEndEvent,
-    RowDragEnterEvent,
-    RowDragEvent,
-    RowDragLeaveEvent,
-    RowDragMoveEvent,
-} from '../events';
+import type { RowDragEvent, RowDragEventType } from '../events';
 import { _getNormalisedMousePosition } from '../gridBodyComp/mouseEventUtils';
 import { _getGroupingApproach, _getRowIdCallback } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import type { DragAndDropIcon, DraggingEvent, DropTarget } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
 import { RowDragFeatureNudger } from './rowDragFeatureNudger';
-
-export type RowDropTargetPosition = 'above' | 'inside' | 'below' | 'none';
-
-export interface IsRowValidDropPositionResult<TData = any> {
-    /** The rows that are being dropped, can be used to filter the rows. If empty, the operation is aborted. */
-    rows?: IRowNode<TData>[] | null;
-    /** The position of the rows relative to the target row. If "none" the drop is not allowed */
-    position?: RowDropTargetPosition;
-    /** The new parent row the rows will have after dropped */
-    newParent?: RowNode<TData> | null;
-    /** The target row node where the row is being dropped. */
-    target?: IRowNode<TData> | null;
-    /** True if the drop is allowed, false otherwise */
-    allowed?: boolean;
-    /**
-     * True if the drop target can be highlighted, matching the `position` value.
-     * Can be set to true during unmanaged row dragging to show the drop position indicator.
-     */
-    highlight?: boolean;
-    /** True if relevant information about the drop target are changed and the drag ghost need to be updated */
-    changed?: boolean;
-}
-
-export type IsRowValidDropPositionCallback<TData = any, TContext = any> = (
-    params: IsRowValidDropPositionParams<TData, TContext>
-) => IsRowValidDropPositionResult<TData> | null | boolean;
-
-export interface IsRowValidDropPositionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** The dragging event that originated this drop operation */
-    draggingEvent: DraggingEvent<TData, TContext> | null;
-    /** True if the grid is managing row dragging, false if using unmanaged row dragging */
-    rowDragManaged: boolean;
-    /** True if the grid is suppressing move when row dragging, false otherwise */
-    suppressMoveWhenRowDragging: boolean;
-    /** True if this rows comes from the same grid, false if is coming from another grid */
-    sameGrid: boolean;
-    /** True if the drop zone is within this grid, false otherwise */
-    withinGrid: boolean;
-    /** The root row node that contains all the rows */
-    rootNode: IRowNode<TData>;
-    /** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.
-     * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.
-     * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.
-     * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?'
-     */
-    y: number;
-    /** True if the current row dragged is not the same as the target row */
-    moved: boolean;
-    /** The row node the mouse is dragging over or undefined if over no row. Might be different than `target`. */
-    overNode: IRowNode<TData> | undefined;
-    /** The row index the mouse is dragging over or -1 if over no row. */
-    overIndex: number;
-    /** The position of the rows relative to the target row */
-    position: RowDropTargetPosition;
-    /** The source row node that was dragged, if any */
-    source: IRowNode<TData>;
-    /** The target row node where the row is being dropped. */
-    target: IRowNode<TData> | null;
-    /** The new parent row the rows will have after dropped */
-    newParent: IRowNode<TData> | null;
-    /** The rows that are being dropped */
-    rows: IRowNode<TData>[];
-    /** True if the drop is allowed, false otherwise */
-    allowed: boolean;
-}
-
-export interface RowsDrop<TData = any, TContext = any> extends IsRowValidDropPositionParams<TData, TContext> {
-    /** True if relevant information about the drop target are changed and the drag ghost need to be updated */
-    changed: boolean;
-    /** True if the drop target can be highlighted while moving, matching the `position` value. */
-    highlight: boolean;
-}
-
-export interface RowDropZoneEvents {
-    /** Callback function that will be executed when the rowDrag enters the target. */
-    onDragEnter?: (params: RowDragEnterEvent) => void;
-    /** Callback function that will be executed when the rowDrag leaves the target */
-    onDragLeave?: (params: RowDragLeaveEvent) => void;
-    /**
-     * Callback function that will be executed when the rowDrag is dragged inside the target.
-     * Note: this gets called multiple times.
-     */
-    onDragging?: (params: RowDragMoveEvent) => void;
-    /** Callback function that will be executed when the rowDrag drops rows within the target. */
-    onDragStop?: (params: RowDragEndEvent) => void;
-    onDragCancel?: (params: RowDragCancelEvent) => void;
-}
+import type { RowDropZoneEvents, RowDropZoneParams, RowsDrop } from './rowDragTypes';
 
 interface WritableRowNode extends RowNode {
     treeParent: RowNode | null;
@@ -139,13 +45,6 @@ interface InternalRowDropZoneParams extends InternalRowDropZoneEvents {
     /** internal flag for identifying params from the grid. */
     fromGrid?: boolean;
 }
-
-export interface RowDropZoneParams extends RowDropZoneEvents {
-    /** A callback method that returns the DropZone HTMLElement. */
-    getContainer: () => HTMLElement;
-}
-
-type RowDragEventType = 'rowDragEnter' | 'rowDragLeave' | 'rowDragMove' | 'rowDragEnd' | 'rowDragCancel';
 
 export class RowDragFeature extends BeanStub implements DropTarget {
     private clientSideRowModel: IClientSideRowModel;
@@ -403,7 +302,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         const y = _getNormalisedMousePosition(beans, draggingEvent).y;
         const overNode = this.getOverNode(y);
-        const rowsDrop: RowsDrop = {
+        return {
             api: beans.gridApi,
             context: beans.gridOptions.context,
             draggingEvent,
@@ -425,8 +324,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             changed: false,
             highlight: !dropping && rowDragManaged && suppressMoveWhenRowDragging && (withinGrid || !sameGrid),
         };
-
-        return rowsDrop;
     }
 
     private validateRowsDrop(
@@ -614,7 +511,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return overIndex >= 0 ? rowModel.getRow(overIndex) : undefined;
     }
 
-    private rowDragEvent<T extends RowDragEventType>(type: T, draggingEvent: DraggingEvent): RowDragEvent<T> {
+    private rowDragEvent<T extends RowDragEventType>(type: T, draggingEvent: DraggingEvent): RowDragEvent<any, any, T> {
         const beans = this.beans;
         const { dragItem, rowsDrop, event, vDirection } = draggingEvent;
         const withRowsDrop = rowsDrop?.rootNode === this.clientSideRowModel.rootNode;
