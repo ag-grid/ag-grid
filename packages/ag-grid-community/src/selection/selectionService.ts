@@ -132,12 +132,6 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             // to the sibling (the parent of the group)
             const node = _normaliseSiblingRef(rowNode);
 
-            // when groupSelectsFiltered, then this node may end up indeterminate despite
-            // trying to set it to true / false. this group will be calculated further on
-            // down when we call updateGroupsFromChildrenSelections(). we need to skip it
-            // here, otherwise the updatedCount would include it.
-            const skipThisNode = false; //this.groupSelectsFiltered && node.group;
-
             if (node.rowPinned && !_isManualPinnedRow(node)) {
                 _warn(59);
                 continue;
@@ -148,12 +142,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 continue;
             }
 
-            if (!skipThisNode) {
-                const thisNodeWasSelected = this.selectRowNode(node, newValue, event, source);
-                if (thisNodeWasSelected) {
-                    this.detailSelection.delete(node.id);
-                    updatedCount++;
-                }
+            const thisNodeWasSelected = this.selectRowNode(node, newValue, event, source);
+            if (thisNodeWasSelected) {
+                this.detailSelection.delete(node.id);
+                updatedCount++;
             }
 
             if (this.groupSelectsDescendants && node.childrenAfterGroup?.length) {
