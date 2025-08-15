@@ -77,14 +77,8 @@ export class RowDropHighlightService extends BeanStub implements NamedBean {
     public fromDrag(draggingEvent: DraggingEvent | null): void {
         const rowsDrop = draggingEvent?.rowsDrop;
         if (rowsDrop) {
-            const { sameGrid, target, rows, position, rowDragManaged, suppressMoveWhenRowDragging } = rowsDrop;
-            if (
-                target &&
-                rows.length !== 0 &&
-                position !== 'none' &&
-                (!sameGrid || (rowDragManaged && suppressMoveWhenRowDragging)) &&
-                this.beans.dragAndDrop?.isDropZoneWithinThisGrid(draggingEvent)
-            ) {
+            const { highlight, target, position } = rowsDrop;
+            if (highlight && target && position !== 'none') {
                 this.set(target as RowNode, position);
                 this.dragging = true;
                 return;

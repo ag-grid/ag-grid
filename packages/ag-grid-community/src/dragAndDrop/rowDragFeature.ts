@@ -35,6 +35,11 @@ export interface IsRowValidDropPositionResult<TData = any> {
     target?: IRowNode<TData> | null;
     /** True if the drop is allowed, false otherwise */
     allowed?: boolean;
+    /**
+     * True if the drop target can be highlighted, matching the `position` value.
+     * Can be set to true during unmanaged row dragging to show the drop position indicator.
+     */
+    highlight?: boolean;
     /** True if relevant information about the drop target are changed and the drag ghost need to be updated */
     changed?: boolean;
 }
@@ -52,6 +57,8 @@ export interface IsRowValidDropPositionParams<TData = any, TContext = any> exten
     suppressMoveWhenRowDragging: boolean;
     /** True if this rows comes from the same grid, false if is coming from another grid */
     sameGrid: boolean;
+    /** True if the drop zone is within this grid, false otherwise */
+    withinGrid: boolean;
     /** The root row node that contains all the rows */
     rootNode: IRowNode<TData>;
     /** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.
@@ -83,6 +90,8 @@ export interface IsRowValidDropPositionParams<TData = any, TContext = any> exten
 export interface RowsDrop<TData = any, TContext = any> extends IsRowValidDropPositionParams<TData, TContext> {
     /** True if relevant information about the drop target are changed and the drag ghost need to be updated */
     changed: boolean;
+    /** True if the drop target can be highlighted while moving, matching the `position` value. */
+    highlight: boolean;
 }
 
 export interface RowDropZoneEvents {
@@ -235,7 +244,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.lastDraggingEvent = draggingEvent;
         const fromNudge = draggingEvent.fromNudge;
 
-        const rowsDrop = this.makeRowsDrop(lastDraggingEvent, draggingEvent, fromNudge);
+        const rowsDrop = this.makeRowsDrop(lastDraggingEvent, draggingEvent, fromNudge, false);
         beans.rowDropHighlightSvc?.fromDrag(draggingEvent);
 
         if (enter) {
@@ -264,10 +273,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private makeRowsDrop(
         lastDraggingEvent: DraggingEvent | null,
         draggingEvent: DraggingEvent,
-        moving: boolean
+        moving: boolean,
+        dropping: boolean
     ): RowsDrop | null {
         const { beans, gos, clientSideRowModel } = this;
-        const rowsDrop = this.newRowsDrop(draggingEvent);
+        const rowsDrop = this.newRowsDrop(draggingEvent, dropping);
         draggingEvent.rowsDrop = rowsDrop;
         if (!rowsDrop) {
             return null;
@@ -361,14 +371,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const aboveOrBelow: 'above' | 'below' = yDelta < 0 ? 'above' : 'below';
         rowsDrop.position = rowsDrop.moved ? (inside ? 'inside' : aboveOrBelow) : 'none';
 
-        this.validateRowsDrop(rowsDrop, canSetParent, aboveOrBelow);
+        this.validateRowsDrop(rowsDrop, canSetParent, aboveOrBelow, dropping);
 
         rowsDrop.changed ||= rowsDropChanged(lastDraggingEvent?.rowsDrop, rowsDrop);
 
         return rowsDrop;
     }
 
-    private newRowsDrop(draggingEvent: DraggingEvent): RowsDrop | null {
+    private newRowsDrop(draggingEvent: DraggingEvent, dropping: boolean): RowsDrop | null {
         const { beans, gos, clientSideRowModel } = this;
         const rootNode = clientSideRowModel.rootNode;
         const rowDragManaged = gos.get('rowDragManaged');
@@ -381,13 +391,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return null;
         }
 
+        const withinGrid = this.beans.dragAndDrop!.isDropZoneWithinThisGrid(draggingEvent);
+
         let allowed = true;
         if (
             rowDragManaged &&
-            (!rows.length ||
-                this.shouldPreventRowMove() ||
-                ((suppressMoveWhenRowDragging || !sameGrid) &&
-                    !this.beans.dragAndDrop!.isDropZoneWithinThisGrid(draggingEvent)))
+            (!rows.length || this.shouldPreventRowMove() || ((suppressMoveWhenRowDragging || !sameGrid) && !withinGrid))
         ) {
             allowed = false;
         }
@@ -401,6 +410,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             rowDragManaged,
             suppressMoveWhenRowDragging,
             sameGrid,
+            withinGrid,
             rootNode,
             moved: source !== overNode,
             y,
@@ -413,12 +423,18 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             rows,
             allowed,
             changed: false,
+            highlight: !dropping && rowDragManaged && suppressMoveWhenRowDragging && (withinGrid || !sameGrid),
         };
 
         return rowsDrop;
     }
 
-    private validateRowsDrop(rowsDrop: RowsDrop, canSetParent: boolean, aboveOrBelow: 'above' | 'below'): void {
+    private validateRowsDrop(
+        rowsDrop: RowsDrop,
+        canSetParent: boolean,
+        aboveOrBelow: 'above' | 'below',
+        dropping: boolean
+    ): void {
         const { rowDragManaged, suppressMoveWhenRowDragging } = rowsDrop;
         if (!canSetParent) {
             rowsDrop.newParent = null;
@@ -455,6 +471,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 }
                 if (canDropResult.changed) {
                     rowsDrop.changed = true;
+                }
+                if (!dropping && canDropResult.highlight !== undefined) {
+                    rowsDrop.highlight = canDropResult.highlight;
                 }
             }
         }
@@ -628,7 +647,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public onDragStop(draggingEvent: DraggingEvent): void {
-        const rowsDrop = this.makeRowsDrop(this.lastDraggingEvent, draggingEvent, false);
+        const rowsDrop = this.makeRowsDrop(this.lastDraggingEvent, draggingEvent, false, true);
         this.dispatchGridEvent('rowDragEnd', draggingEvent);
         if (
             rowsDrop?.allowed &&
