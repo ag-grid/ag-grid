@@ -34,6 +34,14 @@ function getProjectBuildTargets(project) {
             }
 
             buildTargets.push(['ag-grid-community', ['build'], 'watch'], ['ag-grid-enterprise', ['build'], 'watch']);
+
+            // Generate framework properties after the core library is built
+            if (project === 'ag-grid-community') {
+                buildTargets.push(
+                    ['ag-grid-angular', ['updateGridAndColumnProperties']],
+                    ['ag-grid-vue3', ['updateGridAndColumnProperties']]
+                );
+            }
         } else if (project.startsWith('@ag-grid')) {
             // For locale and styles
             buildTargets.push(

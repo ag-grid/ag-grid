@@ -36,11 +36,8 @@
   "scripts": {
     "clean": "rimraf dist lib",
     "dev": "vite",
-    "update-properties": "node updateGridAndColumnProperties.cjs",
-    "build": "run-p update-properties type-check \"build-only {@}\" --",
     "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build --force --declaration --emitDeclarationOnly"
+    "build": "vite build"
   },
   "dependencies": {
     "ag-grid-community": "34.1.1"
