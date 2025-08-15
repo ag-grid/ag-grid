@@ -23,17 +23,9 @@
         "command": "node updateGridAndColumnProperties.cjs"
       }
     },
-    "typeCheck": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "vue-tsc --build --force --declaration --emitDeclarationOnly"
-      }
-    },
     "build": {
       "executor": "nx:run-script",
-      "dependsOn": ["ag-grid-community:build:package", "updateGridAndColumnProperties", "typeCheck"],
+      "dependsOn": ["ag-grid-community:build:package", "updateGridAndColumnProperties"],
       "inputs": [
         "tsDeclarations",
         "{projectRoot}/src/**",

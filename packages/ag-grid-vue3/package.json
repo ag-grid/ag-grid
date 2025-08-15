@@ -37,7 +37,9 @@
     "clean": "rimraf dist lib",
     "dev": "vite",
     "preview": "vite preview",
-    "build": "vite build"
+    "build": "run-p type-check \"build-only {@}\" --",
+    "type-check": "vue-tsc --build --force --declaration --emitDeclarationOnly",
+    "build-only": "vite build"
   },
   "dependencies": {
     "ag-grid-community": "34.1.1"
