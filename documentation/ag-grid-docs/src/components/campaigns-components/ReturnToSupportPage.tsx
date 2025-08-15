@@ -125,8 +125,9 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
                         at a glance
                     </h2>
                     <p>
-                        Pick up where you left off and enjoy the full benefits of AG Grid at today's prices. In future,
-                        renewing once you are out of contract will incur back pay and reinstatement charges.
+                        Avoid future reinstatement charges by keeping your support current and renewing now. To take
+                        advantage of the benefits and security provided by our support and maintenance program, get in
+                        touch today.
                     </p>
                 </div>
 
