@@ -65,7 +65,6 @@ export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
     public clearButtons(): void {
         this.buttonComps = this.destroyBeans(this.buttonComps);
         _clearElement(this.getGui());
-        super.destroy();
     }
 
     public override destroy(): void {
