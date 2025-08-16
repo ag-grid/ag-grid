@@ -1,4 +1,5 @@
 import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
+import { _isBrowserSafari } from '../../agStack/utils/browser';
 import { _exists } from '../../agStack/utils/generic';
 import { AgInputTextFieldSelector } from '../../agStack/widgets/agInputTextField';
 import type { ElementParams } from '../../utils/element';
@@ -79,6 +80,13 @@ class TextCellEditorInput<TValue = any>
     }
 
     public setCaret(): void {
+        if (_isBrowserSafari()) {
+            // If not safari, input is already focused.
+            // For safari we need to focus only for this use case to avoid AG-3238,
+            // but still ensure the input has focus.
+            this.eEditor.getInputElement().focus({ preventScroll: true });
+        }
+
         // when we started editing, we want the caret at the end, not the start.
         // this comes into play in two scenarios:
         //   a) when user hits F2
