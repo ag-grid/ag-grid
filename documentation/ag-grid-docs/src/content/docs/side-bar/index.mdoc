@@ -196,6 +196,32 @@ If you are using the long form (providing a `SideBarDef` object) then it is poss
 
 {% gridExampleRunner title="Side Bar Fine Tuning" name="fine-tuning" /%}
 
+### Tool Panel Parent
+
+By default, Tool Panels are rendered inside the Side Bar. If you want to render Tool Panels in a different location, you can set the [parent](https://localhost:4610/javascript-data-grid/side-bar#reference-ToolPanelDef-parent) property in the `ToolPanelDef`. This is useful if you want to render Tool Panel in a different part of your application, such as a popup window or a separate section of your page.
+
+{% gridExampleRunner title="sadasd" name="tool-panel-parent" exampleHeight=600 /%}
+
+The example above demonstrates how to render the Columns Tool Panel in a different location by setting the `parent` property: 
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    sideBar: {
+        toolPanels: [
+            // ... other tool panels
+             {
+                id: 'filters',
+                labelDefault: 'Outside grid',
+                labelKey: 'filters',
+                iconKey: 'menu',
+                toolPanel: 'agFiltersToolPanel',
+                parent: document.getElementById('toolPanelParent'),
+            },
+        ]
+    }
+}
+```
+
 ## Providing Parameters to Tool Panels
 
 Parameters are passed to Tool Panels via the `toolPanelParams` object. For example, the following code snippet sets `suppressRowGroups: true` and `suppressValues: true` for the [Columns Tool Panel](./tool-panel-columns/).
