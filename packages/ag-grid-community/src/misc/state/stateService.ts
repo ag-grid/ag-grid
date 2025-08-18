@@ -368,8 +368,13 @@ export class StateService extends BeanStub implements NamedBean {
             columnSizing: columnSizingState,
             columnOrder: columnOrderState,
         } = state;
-        const shouldSetState = <TKey extends GridStateKey>(prop: TKey, propState: GridState[TKey]) =>
-            !ignoreSet?.has(prop) && (propState || source === 'api');
+        // if any column state property is provided, or from `setState`, should always apply state even if empty
+        let forceSetState = false;
+        const shouldSetState = <TKey extends GridStateKey>(prop: TKey, propState: GridState[TKey]) => {
+            const shouldSet = !ignoreSet?.has(prop) && !!(propState || source === 'api');
+            forceSetState ||= shouldSet;
+            return shouldSet;
+        };
         const columnStateMap: { [colId: string]: ColumnState } = {};
         const getColumnState = (colId: string) => {
             let columnState = columnStateMap[colId];
@@ -474,7 +479,7 @@ export class StateService extends BeanStub implements NamedBean {
         const applyOrder = !!columns?.length && !ignoreSet?.has('columnOrder');
         const columnStates = applyOrder ? columns.map((colId) => getColumnState(colId)) : Object.values(columnStateMap);
 
-        if (columnStates.length) {
+        if (columnStates.length || forceSetState) {
             this.columnStates = columnStates;
             _applyColumnState(
                 this.beans,
