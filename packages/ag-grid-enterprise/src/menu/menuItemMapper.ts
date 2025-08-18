@@ -322,16 +322,25 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         return null;
                     }
                 case 'paste':
-                    return clipboardSvc
-                        ? {
-                              name: localeTextFunc('paste', 'Paste'),
-                              shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
-                              icon: _createIconNoSpan('clipboardPaste', beans, null),
-                              disabled:
-                                  gos.get('suppressClipboardApi') || !column || !node || !column.isCellEditable(node),
-                              action: () => clipboardSvc.pasteFromClipboard(),
-                          }
-                        : null;
+                    if (clipboardSvc) {
+                        const isPasteBlocked =
+                            gos.get('suppressClipboardApi') ||
+                            gos.get('suppressClipboardPaste') ||
+                            !column ||
+                            !node ||
+                            !column.isCellEditable(node) ||
+                            column.isSuppressPaste(node);
+
+                        return {
+                            name: localeTextFunc('paste', 'Paste'),
+                            shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
+                            icon: _createIconNoSpan('clipboardPaste', beans, null),
+                            disabled: isPasteBlocked,
+                            action: () => clipboardSvc.pasteFromClipboard(),
+                        };
+                    } else {
+                        return null;
+                    }
                 case 'export': {
                     const exportSubMenuItems: string[] = [];
 
