@@ -1,3 +1,4 @@
+import { _exists } from '../agStack/utils/generic';
 import type { BeanCollection } from '../context/context';
 import { _isGroupRowsSticky } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
@@ -5,7 +6,6 @@ import type { RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
-import { _exists } from '../utils/generic';
 import type { AgColumn } from './agColumn';
 import type { RowNode } from './rowNode';
 
@@ -170,6 +170,23 @@ export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition, ch
         return getNextStickyPosition(beans, rowNode, true) ?? { rowIndex: index - 1, rowPinned: pinned };
     }
     return { rowIndex: index - 1, rowPinned: pinned };
+}
+
+export function _getAbsoluteRowIndex(beans: BeanCollection, rowPosition: RowPosition): number {
+    const { pinnedRowModel, rowModel } = beans;
+    const pinnedTopRowCount = pinnedRowModel?.getPinnedTopRowCount() ?? 0;
+    const unpinnedRowCount = rowModel.getRowCount();
+    const { rowPinned, rowIndex } = rowPosition;
+
+    if (rowPinned === 'top') {
+        return rowIndex;
+    }
+
+    if (rowPinned === 'bottom') {
+        return pinnedTopRowCount + unpinnedRowCount + rowIndex;
+    }
+
+    return pinnedTopRowCount + rowIndex;
 }
 
 /**

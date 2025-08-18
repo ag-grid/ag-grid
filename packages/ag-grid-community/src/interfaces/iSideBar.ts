@@ -1,10 +1,10 @@
-import type { ComponentSelector } from '../widgets/component';
+import type { Component, ComponentSelector } from '../widgets/component';
 import type { SideBarState } from './gridState';
 import type { IToolPanel } from './iToolPanel';
 
 export interface ISideBarService {
     comp: ISideBar;
-    getSelector(): ComponentSelector;
+    getSelector(): ComponentSelector<Component>;
 }
 
 export interface ISideBar {
@@ -65,4 +65,6 @@ export interface SideBarDef {
     hiddenByDefault?: boolean;
     /** Sets the side bar position relative to the grid. */
     position?: 'left' | 'right';
+    /** To hide the side bar buttons by default set this to true. If left undefined the buttons will be shown. This is useful if you want to show a tool panel without showing the buttons. */
+    hideButtons?: boolean;
 }

@@ -1,5 +1,5 @@
 import type { GridOptions } from './entities/gridOptions';
-import { _mergeDeep } from './utils/object';
+import { _mergeDeep } from './utils/mergeDeep';
 
 export class GlobalGridOptions {
     static gridOptions: GridOptions | undefined = undefined;

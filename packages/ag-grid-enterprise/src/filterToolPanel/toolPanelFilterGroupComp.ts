@@ -75,8 +75,10 @@ export class ToolPanelFilterGroupComp extends Component {
                     gos,
                     () => filterGroupComp.getGui().querySelector('.ag-group-title') as HTMLElement | undefined
                 ),
-                getColDef: column ? () => column.getColDef() : undefined,
-                getColumn: column ? () => column : undefined,
+                getAdditionalParams: () => ({
+                    colDef: column?.getColDef(),
+                    column,
+                }),
             } as ITooltipCtrl)
         );
 

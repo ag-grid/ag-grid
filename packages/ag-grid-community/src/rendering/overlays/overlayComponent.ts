@@ -1,5 +1,5 @@
+import type { IComponent } from '../../agStack/interfaces/iComponent';
 import type { AgGridCommon } from '../../interfaces/iCommon';
-import type { IComponent } from '../../interfaces/iComponent';
 import { Component } from '../../widgets/component';
 
 export interface IOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}

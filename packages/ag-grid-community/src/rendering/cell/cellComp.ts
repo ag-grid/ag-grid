@@ -1,19 +1,21 @@
+import { CssClassManager } from '../../agStack/core/cssClassManager';
+import { _getActiveDomElement } from '../../agStack/utils/document';
+import { _addStylesToElement, _clearElement, _removeFromParent } from '../../agStack/utils/dom';
+import { _missing } from '../../agStack/utils/generic';
+import { _toString } from '../../agStack/utils/string';
 import type { BeanCollection } from '../../context/context';
+import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapper';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
-import { _getActiveDomElement } from '../../gridOptionsUtils';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
-import type { PopupPositionParams } from '../../interfaces/iPopup';
+import type { PopupPositionParams } from '../../interfaces/iPopupPositionParams';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
-import { _addStylesToElement, _clearElement, _createElement, _removeFromParent } from '../../utils/dom';
-import { _missing } from '../../utils/generic';
-import { _toString } from '../../utils/string';
+import { _createElement } from '../../utils/element';
 import { _warn } from '../../validation/logging';
 import { Component } from '../../widgets/component';
-import { CssClassManager } from '../cssClassManager';
 import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from './../dndSourceComp';
 import type { CellCtrl, ICellComp } from './cellCtrl';
@@ -37,7 +39,7 @@ export class CellComp extends Component {
 
     private checkboxSelectionComp: CheckboxSelectionComponent | undefined;
     private dndSourceComp: DndSourceComp | undefined;
-    private rowDraggingComp: Component | undefined;
+    private rowDraggingComp: RowDragComp | undefined;
 
     private hideEditorPopup: ((...args: any[]) => any) | null | undefined;
     private cellEditorPopupWrapper: PopupEditorWrapper | undefined;
@@ -166,6 +168,8 @@ export class CellComp extends Component {
             this.destroyRenderer();
             this.insertValueWithoutCellRenderer(valueToDisplay);
         }
+
+        this.rowDraggingComp?.refresh();
     }
 
     private setEditDetails(

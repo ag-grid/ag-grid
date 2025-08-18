@@ -1,28 +1,30 @@
-import { expect, test } from '@playwright/test';
-import { testAllFrameworks } from '@utils/grid/test-utils';
+import { expect, test } from '@utils/grid/test-utils';
 
-import { wrapAgTestIdFor } from 'ag-grid-community';
+test.agExample(import.meta, () => {
+    test.eachFramework('Example Tab Focus', async ({ page, agIdFor }) => {
+        // force the viewport width to be 800px so that columns are virtualised
+        await page.setViewportSize({ width: 800, height: 600 });
 
-const pageExampleUrl = 'column-moving/moving-simple';
-testAllFrameworks('Example', pageExampleUrl, async ({ page, framework }) => {
-    test.skip(framework === 'reactFunctionalTs', 'This test is skipped until the issue React Header Focus is resolved');
+        // focus the first cell
+        await agIdFor.cell('0', 'athlete').click();
+        await expect(agIdFor.cell('0', 'athlete')).toHaveClass(/ag-cell-focus/);
 
-    // force the viewport width to be 800px so that columns are virtualised
-    await page.setViewportSize({ width: 800, height: 600 });
+        // Shift tab to the last header
+        await page.keyboard.press('Shift+Tab', {
+            delay: 100,
+        });
 
-    const agIdFor = wrapAgTestIdFor((testId) => page.getByTestId(testId));
+        await expect(agIdFor.headerCell('athlete')).toBeHidden();
 
-    // focus the first cell
-    await agIdFor.cell('0', 'athlete').click();
-    await expect(agIdFor.cell('0', 'athlete')).toHaveClass(/ag-cell-focus/);
+        await expect(agIdFor.headerCell('total')).toHaveText('Total');
+        await expect(agIdFor.headerCell('total')).toHaveClass(/ag-header-active/);
+        await expect(agIdFor.headerCell('total')).toBeFocused();
 
-    // Shift tab to the last header
-    await page.keyboard.press('Shift+Tab', {
-        delay: 100,
+        // Press tab to focus the first cell again
+        await page.keyboard.press('Tab', {
+            delay: 100,
+        });
+        await expect(agIdFor.cell('0', 'athlete')).toHaveClass(/ag-cell-focus/);
+        await expect(agIdFor.cell('0', 'athlete')).toBeFocused();
     });
-
-    await expect(agIdFor.headerCell('athlete')).toBeHidden();
-
-    await expect(agIdFor.headerCell('total')).toHaveText('Total');
-    await expect(agIdFor.headerCell('total')).toHaveClass(/ag-header-active/);
 });

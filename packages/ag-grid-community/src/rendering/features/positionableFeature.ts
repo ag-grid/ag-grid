@@ -1,16 +1,16 @@
-import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection } from '../../context/context';
-import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
-import type { ElementParams } from '../../utils/dom';
 import {
-    _createElement,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
     _isVisible,
     _observeResize,
     _setFixedHeight,
     _setFixedWidth,
-} from '../../utils/dom';
+} from '../../agStack/utils/dom';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
+import type { ElementParams } from '../../utils/element';
+import { _createElement } from '../../utils/element';
 import type { PopupService } from '../../widgets/popupService';
 
 type ResizerRefPrefix =

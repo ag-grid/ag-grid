@@ -1,7 +1,12 @@
-import { createPart } from '../../Part';
-import type { Part } from '../../Part';
-import type { BorderValue, ColorValue, LengthValue, ShadowValue } from '../../theme-types';
-import { accentColor, backgroundColor, foregroundBackgroundMix, foregroundMix } from '../../theme-utils';
+import type { Part } from '../../../agStack/theming/part';
+import { createPart } from '../../../agStack/theming/partImpl';
+import type { BorderValue, ColorValue, LengthValue, ShadowValue } from '../../../agStack/theming/themeTypes';
+import {
+    accentColor,
+    backgroundColor,
+    foregroundBackgroundMix,
+    foregroundMix,
+} from '../../../agStack/theming/themeUtils';
 import { inputStyleBaseCSS } from './input-style-base.css-GENERATED';
 import { inputStyleBorderedCSS } from './input-style-bordered.css-GENERATED';
 import { inputStyleUnderlinedCSS } from './input-style-underlined.css-GENERATED';

@@ -1,11 +1,11 @@
 import type {
-    AgCheckbox,
     AgColumn,
     AgProvidedColumnGroup,
     ColumnEventType,
     DragItem,
     DragSource,
     ElementParams,
+    GridCheckbox,
     IAggFunc,
     ITooltipCtrl,
     TooltipFeature,
@@ -50,7 +50,7 @@ const ToolPanelColumnGroupElement: ElementParams = {
 };
 
 export class ToolPanelColumnGroupComp extends Component {
-    private readonly cbSelect: AgCheckbox = RefPlaceholder;
+    private readonly cbSelect: GridCheckbox = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
 
     private readonly eGroupOpenedIcon: Element = RefPlaceholder;
@@ -103,7 +103,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         this.tooltipFeature = this.createOptionalManagedBean(
             registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
-                getGui: () => this.getGui(),
+                getGui: () => this.focusWrapper,
                 getLocation: () => 'columnToolPanelColumnGroup',
                 shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
             } as ITooltipCtrl)

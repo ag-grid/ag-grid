@@ -108,6 +108,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'selectionColumnDef',
     'findOptions',
     'filterHandlers',
+    'groupHierarchyConfig',
 ];
 
 // only used internally

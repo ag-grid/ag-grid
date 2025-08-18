@@ -1,8 +1,8 @@
+import { _debounce } from '../agStack/utils/function';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { RowContainerCtrl } from '../gridBodyComp/rowContainer/rowContainerCtrl';
 import { _getRowHeightAsNumber } from '../gridOptionsUtils';
-import { _debounce } from '../utils/function';
 
 export class PaginationAutoPageSizeService extends BeanStub implements NamedBean {
     beanName = 'paginationAutoPageSizeSvc' as const;

@@ -3,7 +3,7 @@ import type { ValidationModuleName } from '../../interfaces/iModule';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
-import { _mergeDeep } from '../../utils/object';
+import { _mergeDeep } from '../../utils/mergeDeep';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 
@@ -276,6 +276,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         groupSelectsChildren: {
             dependencies: {
                 rowSelection: { required: ['multiple'] },
+            },
+        },
+        groupHierarchyConfig: {
+            validate({ groupHierarchyConfig = {} }, gridOptions, beans) {
+                for (const k of Object.keys(groupHierarchyConfig)) {
+                    beans.validation?.validateColDef(groupHierarchyConfig[k]);
+                }
+                return null;
             },
         },
         icons: {

@@ -1,5 +1,8 @@
 name: OSS Scorecard Results Check
 on:
+  push:
+    branches:
+      - 'post-scorecard-check'
   workflow_dispatch:
   workflow_run:
     workflows: [ 'OSS Scorecard' ]
@@ -7,10 +10,10 @@ on:
       - completed
 
 env:
-  CTRF_FILE: ./ctrf-report.json
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
-  THRESHOLD: 7.1
+  THRESHOLD: 7.5
+  REPORT_FILE: ./ctrf-report.json
 
 permissions: read-all
 
@@ -20,24 +23,48 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        id: checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 1 # shallow copy
 
       - name: "Check Results"
         id: check_results
-        run: |
-          node external/ag-shared/scripts/ossf-scorecard/getAndCheckResults.mjs ${{ env.AG_LIBRARY }} ${{ env.THRESHOLD }}
+        uses: actions/github-script@v7
+        continue-on-error: true
+        with:
+          result-encoding: string
+          script: |
+            const fs = require('fs');
+
+            async function exec() {
+                const {
+                    belowThreshold
+                } = require('./external/ag-shared/scripts/ossf-scorecard/getAndCheckResults.mjs');
+            
+                const result = await belowThreshold(
+                    process.env.AG_LIBRARY,
+                    process.env.THRESHOLD
+                );
+            
+                const passed = !result;
+                const failed = result;
+                const skipped = 0;
+
+                const report = { results: { summary: { failed, passed, skipped } } };
+                fs.writeFileSync('${{ env.REPORT_FILE }}', JSON.stringify(report));
+                
+                process.exit(result);
+            }
+
+            await exec();
 
       - name: Slack Notification
+        if: failure() && (github.event.repository.default_branch == github.ref_name || github.event_name == 'pull_request')
         uses: ./external/ag-shared/github/actions/slack-integration
         with:
           AG_LIBRARY: ${{ env.AG_LIBRARY }}
-          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
+          CTRF_REPORT_FILE: ${{ env.REPORT_FILE }}
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
-#          PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
-#          CURRENT_COMMIT_SHA: ${{ github.sha }}
-          IS_SUCCESS: ${{ check_results.result != '0' }}
+          IS_SUCCESS: ${{ steps.check_results.outcome != 'failure' }}

@@ -41,13 +41,6 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const onTabKeyDown = useCallback(() => undefined, []);
 
-    const beans = useMemo(() => {
-        if (context.isDestroyed()) {
-            return null;
-        }
-        return context.getBeans();
-    }, [context]);
-
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
     const setRef = useCallback((eRef: HTMLDivElement) => {
@@ -99,7 +92,7 @@ const GridComp = ({ context }: GridCompProps) => {
     useEffect(() => {
         const gridCtrl = gridCtrlRef.current;
         const eRootWrapper = eRootWrapperRef.current;
-        if (!tabGuardReady || !beans || !gridCtrl || !eGridBodyParent || !eRootWrapper || context.isDestroyed()) {
+        if (!tabGuardReady || !gridCtrl || !eGridBodyParent || !eRootWrapper || context.isDestroyed()) {
             return;
         }
 
@@ -136,7 +129,7 @@ const GridComp = ({ context }: GridCompProps) => {
             focusableContainersRef.current.push(sideBarComp);
         }
 
-        const addComponentToDom = (component: ComponentSelector['component']) => {
+        const addComponentToDom = (component: ComponentSelector<Component>['component']) => {
             const comp = context.createBean(new component());
             const eGui = comp.getGui();
             eRootWrapper.insertAdjacentElement('beforeend', eGui);
@@ -165,7 +158,7 @@ const GridComp = ({ context }: GridCompProps) => {
                 el.parentElement?.removeChild(el);
             });
         };
-    }, [tabGuardReady, eGridBodyParent, beans]);
+    }, [tabGuardReady, eGridBodyParent, context]);
 
     const rootWrapperClasses = useMemo(
         () => classesList('ag-root-wrapper', rtlClass, layoutClass),
@@ -195,8 +188,8 @@ const GridComp = ({ context }: GridCompProps) => {
     return (
         <div ref={setRef} className={rootWrapperClasses} style={topStyle} role="presentation">
             <div className={rootWrapperBodyClasses} ref={setGridBodyParent} role="presentation">
-                {initialised && eGridBodyParent && beans && (
-                    <BeansContext.Provider value={beans}>
+                {initialised && eGridBodyParent && !context.isDestroyed() && (
+                    <BeansContext.Provider value={context.getBeans()}>
                         <TabGuardComp
                             ref={setTabGuardCompRef}
                             eFocusableElement={eGridBodyParent}

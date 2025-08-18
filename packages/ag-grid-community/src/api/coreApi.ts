@@ -4,7 +4,7 @@ import type { ManagedGridOptionKey, ManagedGridOptions } from '../gridOptionsIni
 import type { AgModuleName, ModuleName } from '../interfaces/iModule';
 
 export function getGridId(beans: BeanCollection): string {
-    return beans.context.getGridId();
+    return beans.context.getId();
 }
 
 export function destroy(beans: BeanCollection): void {

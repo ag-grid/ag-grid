@@ -1,4 +1,3 @@
 {
-    "extras": ["xlsx-style"],
-    "supportedFrameworks": ["typescript"]
+    "extras": ["xlsx-style"]
 }

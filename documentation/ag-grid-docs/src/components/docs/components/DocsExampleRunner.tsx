@@ -113,10 +113,13 @@ const DocsExampleRunnerInner = ({
                             delete json.files['index.html'];
                         }
 
-                        if (json.files['example.spec.ts']) {
-                            // Don't include the example spec file in the example runner for now
-                            delete json.files['example.spec.ts'];
-                        }
+                        // Don't include the example spec files in the example runner for now
+                        const specFiles = ['example.spec.ts', 'example.spec.js'];
+                        specFiles.forEach((specFile) => {
+                            if (json.files[specFile]) {
+                                delete json.files[specFile];
+                            }
+                        });
 
                         return json;
                     }),

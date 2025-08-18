@@ -1,4 +1,13 @@
-import type { AgPickerFieldParams, ComponentSelector } from 'ag-grid-community';
+import type {
+    AgComponentSelectorType,
+    AgEventTypeParams,
+    AgGridCommon,
+    AgPickerFieldParams,
+    BeanCollection,
+    ComponentSelector,
+    GridOptionsService,
+    GridOptionsWithDefaults,
+} from 'ag-grid-community';
 import { AgPickerField, _createElement } from 'ag-grid-community';
 
 import { AgDialog } from '../../widgets/agDialog';
@@ -6,13 +15,27 @@ import type { AgChartsExports } from '../agChartsExports';
 import { AgColorPanel } from './agColorPanel';
 
 export interface AgColorPickerParams
-    extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {
+    extends Omit<
+        AgPickerFieldParams<AgComponentSelectorType>,
+        'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'
+    > {
     pickerType?: string;
     pickerAriaLabelKey?: string;
     pickerAriaLabelValue?: string;
 }
 
-export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & AgPickerFieldParams, string, AgDialog> {
+export class AgColorPicker extends AgPickerField<
+    BeanCollection,
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    AgGridCommon<any, any>,
+    GridOptionsService,
+    AgComponentSelectorType,
+    string,
+    AgColorPickerParams & AgPickerFieldParams<AgComponentSelectorType>,
+    string,
+    AgDialog
+> {
     private isDestroyingPicker: boolean;
     private eDisplayFieldColor: HTMLElement;
     private eDisplayFieldText: HTMLElement;

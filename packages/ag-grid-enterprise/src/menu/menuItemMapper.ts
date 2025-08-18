@@ -326,8 +326,9 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('paste', 'Paste'),
                               shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
-                              disabled: true,
                               icon: _createIconNoSpan('clipboardPaste', beans, null),
+                              disabled:
+                                  gos.get('suppressClipboardApi') || !column || !node || !column.isCellEditable(node),
                               action: () => clipboardSvc.pasteFromClipboard(),
                           }
                         : null;

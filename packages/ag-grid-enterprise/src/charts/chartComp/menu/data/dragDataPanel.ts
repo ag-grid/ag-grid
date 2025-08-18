@@ -1,4 +1,10 @@
-import type { AgSelectParams, BeanCollection, ListOption } from 'ag-grid-community';
+import type {
+    AgComponentSelectorType,
+    AgSelectParams,
+    BeanCollection,
+    GridSelect,
+    ListOption,
+} from 'ag-grid-community';
 import { AgSelect, Component } from 'ag-grid-community';
 
 import type { AgGroupComponent } from '../../../../widgets/agGroupComponent';
@@ -18,7 +24,7 @@ export abstract class DragDataPanel extends Component {
 
     protected groupComp: AgGroupComponent;
     protected valuePillSelect?: AgPillSelect<ColState>;
-    private valueSelect?: AgSelect<ColState>;
+    private valueSelect?: GridSelect<ColState>;
 
     constructor(
         protected readonly chartController: ChartController,
@@ -55,7 +61,7 @@ export abstract class DragDataPanel extends Component {
             );
             this.groupComp.addItem(this.valuePillSelect);
         } else {
-            const params: AgSelectParams<ColState> = this.createValueSelectParams(columns);
+            const params: AgSelectParams<AgComponentSelectorType, ColState> = this.createValueSelectParams(columns);
             params.onValueChange = (updatedColState: ColState) => {
                 columns.forEach((col) => {
                     col.selected = false;
@@ -67,7 +73,7 @@ export abstract class DragDataPanel extends Component {
                 }
                 this.chartController.updateForPanelChange({ updatedColState, skipAnimation: skipAnimation?.() });
             };
-            this.valueSelect = this.groupComp.createManagedBean(new AgSelect<ColState>(params));
+            this.valueSelect = this.groupComp.createManagedBean(new AgSelect(params));
             this.groupComp.addItem(this.valueSelect);
         }
     }

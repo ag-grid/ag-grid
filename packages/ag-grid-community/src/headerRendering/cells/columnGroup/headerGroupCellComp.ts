@@ -1,8 +1,8 @@
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
+import { _addStylesToElement, _setDisplayed } from '../../../agStack/utils/dom';
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import type { ElementParams } from '../../../utils/dom';
-import { _addStylesToElement, _setDisplayed } from '../../../utils/dom';
-import { RefPlaceholder } from '../../../widgets/component';
+import type { ElementParams } from '../../../utils/element';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerGroupCellCtrl';
 import type { IHeaderGroupComp } from './headerGroupComp';
@@ -32,8 +32,6 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
 
         const setAttribute = (key: string, value: string | undefined) =>
             value != undefined ? eGui.setAttribute(key, value) : eGui.removeAttribute(key);
-
-        eGui.setAttribute('col-id', this.ctrl.column.getUniqueId());
 
         const compProxy: IHeaderGroupCellComp = {
             toggleCss: (cssClassName, on) => this.toggleCss(cssClassName, on),

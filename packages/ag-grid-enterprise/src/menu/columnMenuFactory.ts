@@ -10,7 +10,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
     beanName = 'colMenuFactory' as const;
 
     public createMenu(
-        parent: BeanStub<any>,
+        parent: { createManagedBean(bean: AgMenuList): AgMenuList },
         menuItems: (DefaultMenuItem | MenuItemDef)[],
         column: AgColumn | undefined,
         sourceElement: () => HTMLElement

@@ -46,15 +46,15 @@ describe('ag-grid grouping simple data', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:"2000"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:"2000"
             │ │ ├── LEAF id:0 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2000" athlete:"John Von Neumann"
             │ │ └── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2000" athlete:"Ada Lovelace"
-            │ └─┬ filler id:row-group-country-Ireland-year-2001 ag-Grid-AutoColumn:"2001"
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001 ag-Grid-AutoColumn:"2001"
             │ · └── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2001" athlete:"Alan Turing"
             └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            · ├─┬ filler id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:"2000"
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:"2000"
             · │ └── LEAF id:3 ag-Grid-AutoColumn:undefined country:"Italy" year:"2000" athlete:"Donald Knuth"
-            · └─┬ filler id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:"2001"
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:"2001"
             · · └── LEAF id:4 ag-Grid-AutoColumn:undefined country:"Italy" year:"2001" athlete:"Marvin Minsky"
         `);
 
@@ -419,15 +419,15 @@ describe('ag-grid grouping simple data', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ filler id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
             │ · └── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
@@ -443,15 +443,15 @@ describe('ag-grid grouping simple data', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Germany
-            │ ├─┬ filler id:row-group-country-Germany-year-2000
+            │ ├─┬ LEAF_GROUP id:row-group-country-Germany-year-2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Germany" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Germany" year:2000
-            │ └─┬ filler id:row-group-country-Germany-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Germany-year-2001
             │ · └── LEAF id:2 name:"Alan Turing" country:"Germany" year:2001
             └─┬ filler id:row-group-country-Italy
-            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ filler id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
     });
@@ -584,15 +584,15 @@ describe('ag-grid grouping simple data', () => {
         await new GridRows(api, 'data', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            │ ├─┬ filler id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:"2000"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:"2000"
             │ │ ├── LEAF id:0 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2000" athlete:"John Von Neumann"
             │ │ └── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2000" athlete:"Ada Lovelace"
-            │ └─┬ filler id:row-group-country-Ireland-year-2001 ag-Grid-AutoColumn:"2001"
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001 ag-Grid-AutoColumn:"2001"
             │ · └── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2001" athlete:"Alan Turing"
             └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            · ├─┬ filler id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:"2000"
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:"2000"
             · │ └── LEAF id:3 ag-Grid-AutoColumn:undefined country:"Italy" year:"2000" athlete:"Donald Knuth"
-            · └─┬ filler id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:"2001"
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:"2001"
             · · └── LEAF id:4 ag-Grid-AutoColumn:undefined country:"Italy" year:"2001" athlete:"Marvin Minsky"
         `);
     });
@@ -675,13 +675,13 @@ describe('ag-grid grouping simple data', () => {
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-group-Group1 ag-Grid-AutoColumn:"Group1"
+            ├─┬ LEAF_GROUP id:row-group-group-Group1 ag-Grid-AutoColumn:"Group1"
             │ ├── LEAF id:A ag-Grid-AutoColumn:undefined group:"Group1" x:"a" z:1
             │ └── LEAF id:B ag-Grid-AutoColumn:undefined group:"Group1" x:"a-b" z:2
-            ├─┬ filler id:row-group-group-Group2 ag-Grid-AutoColumn:"Group2"
+            ├─┬ LEAF_GROUP id:row-group-group-Group2 ag-Grid-AutoColumn:"Group2"
             │ ├── LEAF id:C ag-Grid-AutoColumn:undefined group:"Group2" x:"c" z:3
             │ └── LEAF id:D ag-Grid-AutoColumn:undefined group:"Group2" x:"c-d" z:4
-            └─┬ filler id:row-group-group-Group3 ag-Grid-AutoColumn:"Group3"
+            └─┬ LEAF_GROUP id:row-group-group-Group3 ag-Grid-AutoColumn:"Group3"
             · ├── LEAF id:E ag-Grid-AutoColumn:undefined group:"Group3" x:"e" z:5
             · ├── LEAF id:F ag-Grid-AutoColumn:undefined group:"Group3" x:"e-f" z:6
             · ├── LEAF id:G ag-Grid-AutoColumn:undefined group:"Group3" x:"e-f-g" z:7
@@ -694,13 +694,13 @@ describe('ag-grid grouping simple data', () => {
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-group-Group1 ag-Grid-AutoColumn:"Group1"
+            ├─┬ LEAF_GROUP id:row-group-group-Group1 ag-Grid-AutoColumn:"Group1"
             │ ├── LEAF id:A ag-Grid-AutoColumn:"Group1" group:"Group1" x:"a" z:1
             │ └── LEAF id:B ag-Grid-AutoColumn:"Group1" group:"Group1" x:"a-b" z:2
-            ├─┬ filler id:row-group-group-Group2 ag-Grid-AutoColumn:"Group2"
+            ├─┬ LEAF_GROUP id:row-group-group-Group2 ag-Grid-AutoColumn:"Group2"
             │ ├── LEAF id:C ag-Grid-AutoColumn:"Group2" group:"Group2" x:"c" z:3
             │ └── LEAF id:D ag-Grid-AutoColumn:"Group2" group:"Group2" x:"c-d" z:4
-            └─┬ filler id:row-group-group-Group3 ag-Grid-AutoColumn:"Group3"
+            └─┬ LEAF_GROUP id:row-group-group-Group3 ag-Grid-AutoColumn:"Group3"
             · ├── LEAF id:E ag-Grid-AutoColumn:"Group3" group:"Group3" x:"e" z:5
             · ├── LEAF id:F ag-Grid-AutoColumn:"Group3" group:"Group3" x:"e-f" z:6
             · ├── LEAF id:G ag-Grid-AutoColumn:"Group3" group:"Group3" x:"e-f-g" z:7
@@ -713,17 +713,69 @@ describe('ag-grid grouping simple data', () => {
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-group-Group1 ag-Grid-AutoColumn:"Group1"
+            ├─┬ LEAF_GROUP id:row-group-group-Group1 ag-Grid-AutoColumn:"Group1"
             │ ├── LEAF id:A ag-Grid-AutoColumn:1 group:"Group1" x:"a" z:1
             │ └── LEAF id:B ag-Grid-AutoColumn:2 group:"Group1" x:"a-b" z:2
-            ├─┬ filler id:row-group-group-Group2 ag-Grid-AutoColumn:"Group2"
+            ├─┬ LEAF_GROUP id:row-group-group-Group2 ag-Grid-AutoColumn:"Group2"
             │ ├── LEAF id:C ag-Grid-AutoColumn:3 group:"Group2" x:"c" z:3
             │ └── LEAF id:D ag-Grid-AutoColumn:4 group:"Group2" x:"c-d" z:4
-            └─┬ filler id:row-group-group-Group3 ag-Grid-AutoColumn:"Group3"
+            └─┬ LEAF_GROUP id:row-group-group-Group3 ag-Grid-AutoColumn:"Group3"
             · ├── LEAF id:E ag-Grid-AutoColumn:5 group:"Group3" x:"e" z:5
             · ├── LEAF id:F ag-Grid-AutoColumn:6 group:"Group3" x:"e-f" z:6
             · ├── LEAF id:G ag-Grid-AutoColumn:7 group:"Group3" x:"e-f-g" z:7
             · └── LEAF id:H ag-Grid-AutoColumn:8 group:"Group3" x:"e-f-g-h" z:8
+        `);
+    });
+
+    test('deep group hierarchy', async () => {
+        // Create a deep hierarchy: Level1 -> Level2 -> Level3 -> Level4 -> Level5
+        const rowData = [
+            { id: '1', l1: 'A', l2: 'A1', l3: 'A1a', l4: 'A1a1', l5: 'A1a1i', name: 'Deep Item 1' },
+            { id: '2', l1: 'A', l2: 'A1', l3: 'A1a', l4: 'A1a1', l5: 'A1a1ii', name: 'Deep Item 2' },
+            { id: '3', l1: 'A', l2: 'A1', l3: 'A1b', l4: 'A1b1', l5: 'A1b1i', name: 'Deep Item 3' },
+            { id: '4', l1: 'B', l2: 'B1', l3: 'B1a', l4: 'B1a1', l5: 'B1a1i', name: 'Deep Item 4' },
+        ];
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'l1', rowGroup: true, hide: true },
+                { field: 'l2', rowGroup: true, hide: true },
+                { field: 'l3', rowGroup: true, hide: true },
+                { field: 'l4', rowGroup: true, hide: true },
+                { field: 'l5', rowGroup: true, hide: true },
+                { field: 'name' },
+            ],
+            autoGroupColumnDef: { headerName: 'Deep Hierarchy' },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+
+        const gridRowsOptions: GridRowsOptions = {
+            columns: ['name'],
+        };
+
+        await new GridRows(api, 'deep hierarchy', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-l1-A
+            │ └─┬ filler id:row-group-l1-A-l2-A1
+            │ · ├─┬ filler id:row-group-l1-A-l2-A1-l3-A1a
+            │ · │ └─┬ filler id:row-group-l1-A-l2-A1-l3-A1a-l4-A1a1
+            │ · │ · ├─┬ LEAF_GROUP id:row-group-l1-A-l2-A1-l3-A1a-l4-A1a1-l5-A1a1i
+            │ · │ · │ └── LEAF id:1 name:"Deep Item 1"
+            │ · │ · └─┬ LEAF_GROUP id:row-group-l1-A-l2-A1-l3-A1a-l4-A1a1-l5-A1a1ii
+            │ · │ · · └── LEAF id:2 name:"Deep Item 2"
+            │ · └─┬ filler id:row-group-l1-A-l2-A1-l3-A1b
+            │ · · └─┬ filler id:row-group-l1-A-l2-A1-l3-A1b-l4-A1b1
+            │ · · · └─┬ LEAF_GROUP id:row-group-l1-A-l2-A1-l3-A1b-l4-A1b1-l5-A1b1i
+            │ · · · · └── LEAF id:3 name:"Deep Item 3"
+            └─┬ filler id:row-group-l1-B
+            · └─┬ filler id:row-group-l1-B-l2-B1
+            · · └─┬ filler id:row-group-l1-B-l2-B1-l3-B1a
+            · · · └─┬ filler id:row-group-l1-B-l2-B1-l3-B1a-l4-B1a1
+            · · · · └─┬ LEAF_GROUP id:row-group-l1-B-l2-B1-l3-B1a-l4-B1a1-l5-B1a1i
+            · · · · · └── LEAF id:4 name:"Deep Item 4"
         `);
     });
 });

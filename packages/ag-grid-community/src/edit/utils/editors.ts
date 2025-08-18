@@ -1,3 +1,5 @@
+import { _setAriaInvalid } from '../../agStack/utils/aria';
+import { _getLocaleTextFunc } from '../../agStack/utils/locale';
 import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import type { BeanCollection } from '../../context/context';
@@ -13,10 +15,8 @@ import type {
 } from '../../interfaces/iCellEditor';
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
-import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { _setAriaInvalid } from '../../utils/aria';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
 import { _getCellCtrl } from './controllers';
 
@@ -134,8 +134,7 @@ export function _setupEditor(
 
     const previousEdit = beans.editModelSvc?.getEdit(position);
 
-    // if key is a single character, then we treat it as user input
-    let newValue = key?.length === 1 ? key : editorParams.value;
+    let newValue = editorParams.value;
 
     if (newValue === undefined) {
         newValue = previousEdit?.sourceValue;
@@ -320,17 +319,13 @@ export function _syncFromEditor(
         return;
     }
 
-    const cellCtrl = _getCellCtrl(beans, position);
-    const hasEditor = !!cellCtrl?.comp?.getCellEditor();
-
     let edit = editModelSvc.getEdit(position, true);
 
     if (!edit?.sourceValue) {
         // sourceValue not set means sync called without corresponding startEdit - from API call
         edit = editModelSvc.setEdit(position, {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
-            pendingValue: UNEDITED,
-            state: hasEditor ? 'editing' : 'changed',
+            pendingValue: edit ? edit.editorValue : UNEDITED,
         });
     }
 
@@ -338,7 +333,6 @@ export function _syncFromEditor(
     // Note: editorValue should be in the correct target format already, so no need to parse it again - this is done in the editor, via the colDef parseValue function.
     editModelSvc.setEdit(position, {
         editorValue: valueSameAsSource ? edit.sourceValue : editorValue,
-        state: hasEditor ? 'editing' : 'changed',
     });
 
     if (persist) {
@@ -375,10 +369,12 @@ export function _destroyEditor(
     params?: { event?: Event | null; silent?: boolean }
 ): void {
     const { editSvc, editModelSvc } = beans;
-    const { rowNode, column } = position;
     const cellCtrl = _getCellCtrl(beans, position);
+
+    const edit = editModelSvc?.getEdit(position, true);
+
     if (!cellCtrl) {
-        if (editModelSvc?.hasEdits(position) && rowNode && column) {
+        if (edit) {
             editModelSvc?.setEdit(position, { state: 'changed' });
         }
 
@@ -388,7 +384,8 @@ export function _destroyEditor(
     const { comp } = cellCtrl;
 
     if (comp && !comp.getCellEditor()) {
-        // no editor, nothing to do
+        // editor already cleaned up, refresh cell
+        cellCtrl?.refreshCell();
         return;
     }
 
@@ -401,9 +398,7 @@ export function _destroyEditor(
         cellValidationModel?.clearCellValidation(position);
     }
 
-    if (editModelSvc?.getEdit(position)) {
-        editModelSvc?.setEdit(position, { state: 'changed' });
-    }
+    editModelSvc?.setEdit(position, { state: 'changed' });
 
     comp?.setEditDetails(); // passing nothing stops editing
     comp?.refreshEditStyles(false, false);
@@ -415,7 +410,7 @@ export function _destroyEditor(
     if (latest?.state === 'changed' && !params?.silent) {
         editSvc?.dispatchCellEvent(position, params?.event, 'cellEditingStopped', {
             valueChanged: _sourceAndPendingDiffer(latest),
-            newValue: latest?.pendingValue,
+            newValue: edit?.editorValue ?? edit?.pendingValue,
             oldValue: latest?.sourceValue,
         });
     }

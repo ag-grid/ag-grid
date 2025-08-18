@@ -1,8 +1,6 @@
 export function createServerSideDatasource(fakeServer) {
     class ServerSideDatasource {
-        constructor(fakeServer) {
-            this.fakeServer = fakeServer;
-        }
+        constructor(private fakeServer: FakeServer) {}
 
         getRows(params) {
             this.fakeServer.getData(params.request, (resultForGrid, lastRow, pivotFields) => {
@@ -232,7 +230,7 @@ class FakeServer {
         return {
             data: pivotData,
             aggCols: aggColsList,
-            pivotFields: [...pivotFields],
+            pivotFields: Array.from(pivotFields),
         };
     }
 

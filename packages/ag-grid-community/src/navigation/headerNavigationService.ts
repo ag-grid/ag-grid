@@ -1,3 +1,5 @@
+import { _last } from '../agStack/utils/array';
+import { _getDocument } from '../agStack/utils/document';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -5,12 +7,10 @@ import { AgColumn } from '../entities/agColumn';
 import { AgColumnGroup } from '../entities/agColumnGroup';
 import { isColumnGroup } from '../entities/agColumnGroup';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
-import { _getDocument } from '../gridOptionsUtils';
 import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { HeaderRowType } from '../headerRendering/row/headerRowComp';
 import type { Column, ColumnGroup } from '../interfaces/iColumn';
 import type { HeaderPosition } from '../interfaces/iHeaderPosition';
-import { _last } from '../utils/array';
 
 export type HeaderNavigationDirection = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
 

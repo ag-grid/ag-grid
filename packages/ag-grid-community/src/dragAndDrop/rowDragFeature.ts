@@ -1,3 +1,4 @@
+import { _EmptyArray, _last } from '../agStack/utils/array';
 import { AutoScrollService } from '../autoScrollService';
 import { BeanStub } from '../context/beanStub';
 import { _getCellByPosition } from '../entities/positionUtils';
@@ -20,7 +21,6 @@ import {
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _EmptyArray, _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import type { DragAndDropIcon, DraggingEvent, DropTarget } from './dragAndDropService';
@@ -34,7 +34,7 @@ export interface IsRowValidDropPositionResult<TData = any> {
     /** The position of the rows relative to the target row */
     position?: RowDropTargetPosition;
     /** The new parent row the rows will have after dropped */
-    newParent?: RowNode<TData> | null;
+    newParent?: IRowNode<TData> | null;
     /** The target row node where the row is being dropped. */
     target?: IRowNode<TData> | null;
 }

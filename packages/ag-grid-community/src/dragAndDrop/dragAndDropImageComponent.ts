@@ -1,10 +1,11 @@
+import { RefPlaceholder } from '../agStack/interfaces/agComponent';
+import type { IComponent } from '../agStack/interfaces/iComponent';
+import { _clearElement } from '../agStack/utils/dom';
 import type { AgGridCommon } from '../interfaces/iCommon';
-import type { IComponent } from '../interfaces/iComponent';
-import type { ElementParams } from '../utils/dom';
-import { _clearElement } from '../utils/dom';
+import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';
 import { _createIcon } from '../utils/icon';
-import { Component, RefPlaceholder } from '../widgets/component';
+import { Component } from '../widgets/component';
 import { dragAndDropImageComponentCSS } from './dragAndDropImageComponent.css-GENERATED';
 import type { DragAndDropIcon, DragSource } from './dragAndDropService';
 

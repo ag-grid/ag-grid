@@ -1,4 +1,4 @@
-import type { AgInputTextFieldParams, BeanCollection } from 'ag-grid-community';
+import type { AgComponentSelectorType, AgInputTextFieldParams, BeanCollection } from 'ag-grid-community';
 
 import type { AgSliderParams } from '../../../../widgets/agSlider';
 import type { ChartMenuService } from '../../../services/chartMenuService';
@@ -25,7 +25,7 @@ export class ChartTitlePanel extends TitlePanel {
         });
     }
 
-    protected override getTextInputParams(): AgInputTextFieldParams {
+    protected override getTextInputParams(): AgInputTextFieldParams<AgComponentSelectorType> {
         const params = super.getTextInputParams();
         if (this.shouldOverrideTextWithPlaceholder(params.value)) {
             params.value = this.titlePlaceholder;

@@ -4,9 +4,22 @@
   "projectType": "application",
   "sourceRoot": "packages/ag-grid-angular/projects",
   "targets": {
+    "updateGridAndColumnProperties": {
+      "executor": "nx:run-commands",
+      "inputs": [
+        "{projectRoot}/node updateGridAndColumnProperties.js",
+        "{workspaceRoot}/packages/ag-grid-community/src/entities/gridOptions.ts"
+      ],
+      "outputs": ["{projectRoot}/projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts"],
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node updateGridAndColumnProperties.js"
+      }
+    },
     "build": {
       "executor": "nx:run-script",
-      "dependsOn": ["ag-grid-community:build:package"],
+      "dependsOn": ["ag-grid-community:build:package", "updateGridAndColumnProperties"],
       "inputs": [
         "tsDeclarations",
         "{projectRoot}/angular.json",

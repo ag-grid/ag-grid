@@ -1,7 +1,7 @@
+import type { IComponent } from '../agStack/interfaces/iComponent';
 import type { SortDirection } from '../entities/colDef';
 import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
-import type { IComponent } from './iComponent';
 
 export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column the header is for. */

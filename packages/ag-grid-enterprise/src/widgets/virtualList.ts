@@ -388,6 +388,7 @@ export class VirtualList<
         }
         const rowCount = this.model.getRowCount();
         _waitUntil(
+            this,
             () => this.eContainer.clientHeight >= rowCount * this.rowHeight,
             () => {
                 if (!this.isAlive()) {

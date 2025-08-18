@@ -1,6 +1,6 @@
+import { _getDocument } from '../agStack/utils/document';
+import { _findFocusableElements, _findNextFocusableElement } from '../agStack/utils/focus';
 import { BeanStub } from '../context/beanStub';
-import { _getDocument } from '../gridOptionsUtils';
-import { _findFocusableElements, _findNextFocusableElement } from '../utils/focus';
 import { ManagedFocusFeature } from './managedFocusFeature';
 
 export const TabGuardClassNames = {

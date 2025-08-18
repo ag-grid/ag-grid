@@ -1,5 +1,8 @@
+import { Direction } from '../agStack/constants/direction';
+import { _isIOSUserAgent } from '../agStack/utils/browser';
+import { _getInnerHeight, _getScrollLeft, _setScrollLeft } from '../agStack/utils/dom';
+import { _debounce } from '../agStack/utils/function';
 import type { VisibleColsService } from '../columns/visibleColsService';
-import { Direction } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
@@ -9,9 +12,6 @@ import { _isDomLayout } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNode, VerticalScrollPosition } from '../interfaces/iRowNode';
 import type { AnimationFrameService } from '../misc/animationFrameService';
-import { _isIOSUserAgent } from '../utils/browser';
-import { _getInnerHeight, _getScrollLeft, _setScrollLeft } from '../utils/dom';
-import { _debounce } from '../utils/function';
 import { _warn } from '../validation/logging';
 import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 

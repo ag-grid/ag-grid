@@ -10,14 +10,26 @@
         "cwd": "{projectRoot}"
       }
     },
+    "updateGridAndColumnProperties": {
+      "executor": "nx:run-commands",
+      "inputs": [
+        "{projectRoot}/updateGridAndColumnProperties.cjs",
+        "{workspaceRoot}/packages/ag-grid-community/src/entities/gridOptions.ts"
+      ],
+      "outputs": ["{projectRoot}/src/components/utils.ts"],
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node updateGridAndColumnProperties.cjs"
+      }
+    },
     "build": {
       "executor": "nx:run-script",
-      "dependsOn": ["ag-grid-community:build:package"],
+      "dependsOn": ["ag-grid-community:build:package", "updateGridAndColumnProperties"],
       "inputs": [
         "tsDeclarations",
         "{projectRoot}/src/**",
         "{projectRoot}/vite.config.ts",
-        "{projectRoot}/updateGridAndColumnProperties.cjs",
         "!{projectRoot}/dist",
         "{workspaceRoot}/packages/ag-grid-community/src/components/componentUtil.ts",
         "{workspaceRoot}/packages/ag-grid-community/src/propertyKeys.ts"

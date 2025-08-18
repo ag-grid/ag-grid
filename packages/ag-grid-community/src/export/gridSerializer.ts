@@ -1,3 +1,4 @@
+import { _last } from '../agStack/utils/array';
 import type { ColumnModel } from '../columns/columnModel';
 import { isColumnGroupAutoCol, isColumnSelectionCol, isRowNumberCol } from '../columns/columnUtils';
 import { GroupInstanceIdCreator } from '../columns/groupInstanceIdCreator';
@@ -22,7 +23,6 @@ import type {
 } from '../interfaces/exportParams';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
-import { _last } from '../utils/array';
 import type { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from './iGridSerializer';
 
 type ProcessGroupHeaderCallback = (params: ProcessGroupHeaderForExportParams) => string;
@@ -437,9 +437,9 @@ export class GridSerializer extends BeanStub implements NamedBean {
                 name = this.beans.colNames.getDisplayNameForColumnGroup(columnGroup, 'header')!;
             }
 
-            const collapsibleGroupRanges = columnGroup
-                .getLeafColumns()
-                .reduce((collapsibleGroups: number[][], currentColumn, currentIdx, arr) => {
+            const columnsToCalculateRange = columnGroup.isExpandable() ? columnGroup.getLeafColumns() : [];
+            const collapsibleGroupRanges = columnsToCalculateRange.reduce(
+                (collapsibleGroups: number[][], currentColumn, currentIdx, arr) => {
                     let lastGroup = _last(collapsibleGroups);
                     const groupShow = currentColumn.getColumnGroupShow() === 'open';
 
@@ -457,7 +457,9 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     }
 
                     return collapsibleGroups;
-                }, []);
+                },
+                []
+            );
 
             gridRowIterator.onColumn(
                 columnGroup,

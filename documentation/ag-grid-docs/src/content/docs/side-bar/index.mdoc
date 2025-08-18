@@ -9,12 +9,12 @@ This section covers how to configure the Side Bar which contains Tool Panels.
 
 The Side Bar is configured using the grid property `sideBar`. The property takes multiple forms to allow easy configuration or more advanced configuration. The different forms for the `sideBar` property are as follows:
 
-| Type                         | Description                                                                                        |
-| ---------------------------- | -------------------------------------------------------------------------------------------------- |
-| `undefined` / `null`         | No Side Bar provided.                                                                              |
-| `boolean`                    | Set to `true` to display the Side Bar with default configuration.                       |
-| `string` / `string[]`        | Set to `'columns'`, `'filters'` or `'filters-new'` to display the Side Bar with just one of [Columns](./tool-panel-columns/), [Filters](./tool-panel-filters/) or [New Filters](./tool-panel-filters-new) Tool Panels or an array of some or all of these values. |
-| `SideBarDef`{% br /%}(long form) | An object of type `SideBarDef` (explained below) to allow detailed configuration of the Side Bar. Use this to configure the provided Tool Panels (e.g. pass parameters to the columns or filters panel) or to include custom Tool Panels. |
+| Type                             | Description                                                                                                                                                                                                                                                       |
+|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `undefined` / `null`             | No Side Bar provided.                                                                                                                                                                                                                                             |
+| `boolean`                        | Set to `true` to display the Side Bar with default configuration.                                                                                                                                                                                                 |
+| `string` / `string[]`            | Set to `'columns'`, `'filters'` or `'filters-new'` to display the Side Bar with just one of [Columns](./tool-panel-columns/), [Filters](./tool-panel-filters/) or [New Filters](./tool-panel-filters-new) Tool Panels or an array of some or all of these values. |
+| `SideBarDef`{% br /%}(long form) | An object of type `SideBarDef` (explained below) to allow detailed configuration of the Side Bar. Use this to configure the provided Tool Panels (e.g. pass parameters to the columns or filters panel) or to include custom Tool Panels.                         |
 
 ### Boolean Configuration
 
@@ -73,7 +73,7 @@ const gridOptions = {
             }
         ],
         position: 'left',
-        defaultToolPanel: 'filters'
+        defaultToolPanel: 'filters',
     }
 }
 ```
@@ -81,6 +81,10 @@ const gridOptions = {
 The snippet above is demonstrated in the following example:
 
 {% gridExampleRunner title="SideBarDef" name="sideBarDef"  exampleHeight=600 /%}
+
+{% note %}
+Calling `setSideBarVisible(true)` when `sideBarDef.hideButtons` is set to true and no tool panel is open will not display anything.
+{% /note %}
 
 ## Configuration Shortcuts
 

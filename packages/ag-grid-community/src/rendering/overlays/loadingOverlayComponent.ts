@@ -1,5 +1,5 @@
-import type { ElementParams } from '../../utils/dom';
-import { _makeNull } from '../../utils/generic';
+import { _makeNull } from '../../agStack/utils/generic';
+import type { ElementParams } from '../../utils/element';
 import type { IOverlay, IOverlayComp, IOverlayParams } from './overlayComponent';
 import { OverlayComponent } from './overlayComponent';
 

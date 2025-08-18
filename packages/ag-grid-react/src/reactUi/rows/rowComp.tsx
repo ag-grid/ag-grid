@@ -3,6 +3,7 @@ import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMe
 import type {
     CellCtrl,
     ICellRenderer,
+    ICellRendererParams,
     IRowComp,
     RowContainerType,
     RowCtrl,
@@ -51,6 +52,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
     const eGui = useRef<HTMLDivElement | null>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
+    const fullWidthParamsRef = useRef<ICellRendererParams>();
 
     const autoHeightSetup = useRef<boolean>(false);
     const [autoHeightSetupAttempt, setAutoHeightSetupAttempt] = useState<number>(0);
@@ -111,7 +113,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         // because React is asynchronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
-        if (!rowCtrl.isAlive()) {
+        if (!rowCtrl.isAlive() || context.isDestroyed()) {
             return;
         }
 
@@ -144,20 +146,26 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                     }
                 }
             },
-            showFullWidth: (compDetails) => setFullWidthCompDetails(compDetails),
+            showFullWidth: (compDetails) => {
+                fullWidthParamsRef.current = compDetails.params;
+                setFullWidthCompDetails(compDetails);
+            },
             getFullWidthCellRenderer: () => fullWidthCompRef.current,
+            getFullWidthCellRendererParams: () => fullWidthParamsRef.current,
             refreshFullWidth: (getUpdatedParams) => {
+                const fullWidthParams = getUpdatedParams();
+                fullWidthParamsRef.current = fullWidthParams;
                 if (canRefreshFullWidthRef.current) {
                     setFullWidthCompDetails((prevFullWidthCompDetails) => ({
                         ...prevFullWidthCompDetails!,
-                        params: getUpdatedParams(),
+                        params: fullWidthParams,
                     }));
                     return true;
                 } else {
                     if (!fullWidthCompRef.current || !fullWidthCompRef.current.refresh) {
                         return false;
                     }
-                    return fullWidthCompRef.current.refresh(getUpdatedParams());
+                    return fullWidthCompRef.current.refresh(fullWidthParams);
                 }
             },
         };

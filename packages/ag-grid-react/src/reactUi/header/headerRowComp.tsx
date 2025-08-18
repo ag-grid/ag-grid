@@ -20,13 +20,13 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
     const { context } = useContext(BeansContext);
 
     const { topOffset, rowHeight } = useMemo(() => ctrl.getTopAndHeight(), []);
-    const [ariaRowIndex, setAriaRowIndex] = useState(ctrl.getAriaRowIndex());
+    const [ariaRowIndex, setAriaRowIndex] = useState(() => ctrl.getAriaRowIndex());
     const className = ctrl.headerRowClass;
 
     const [height, setHeight] = useState<string>(() => rowHeight + 'px');
     const [top, setTop] = useState<string>(() => topOffset + 'px');
 
-    const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[]>([]);
+    const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>(() => ctrl.getUpdatedHeaderCtrls());
 
     const compBean = useRef<_EmptyBean>();
@@ -34,10 +34,11 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
-        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef) {
+        if (!eRef || !ctrl.isAlive() || context.isDestroyed()) {
+            compBean.current = context.destroyBean(compBean.current);
             return;
         }
+        compBean.current = context.createBean(new _EmptyBean());
 
         const compProxy: IHeaderRowComp = {
             setHeight: (height: string) => setHeight(height),

@@ -31,6 +31,7 @@
 }
 
 .ag-large-text-input {
+    display: block;
     height: auto;
     padding: var(--ag-cell-horizontal-padding);
 }
@@ -45,4 +46,9 @@
 
 :where(.ag-row.ag-row-editing-invalid .ag-cell-inline-editing) {
     opacity: 0.8;
+}
+
+.ag-popup-editor {
+    position: absolute;
+    user-select: none;
 }

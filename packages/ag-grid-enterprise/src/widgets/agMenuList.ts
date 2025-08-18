@@ -1,15 +1,15 @@
-import type { BeanStub, ElementParams, IMenuActionParams, MenuItemDef, WithoutGridCommon } from 'ag-grid-community';
+import type { ElementParams, IMenuActionParams, MenuItemDef, WithoutGridCommon } from 'ag-grid-community';
 import {
     AgPromise,
     KeyCode,
     TabGuardComp,
     _createElement,
     _last,
-    _preserveRangesWhile,
     _stopPropagationForAgGrid,
     _warn,
 } from 'ag-grid-community';
 
+import { _preserveRangesWhile } from '../misc/enterpriseDomUtils';
 import type { AgMenuItemComponentEvent, CloseMenuEvent, MenuItemActivatedEvent } from './agMenuItemComponent';
 import { AgMenuItemComponent } from './agMenuItemComponent';
 
@@ -216,7 +216,7 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
     }
 
     private closeIfIsChild(e?: KeyboardEvent): boolean {
-        const parentItem = this.getParentComponent() as BeanStub;
+        const parentItem = this.getParentComponent() as any;
 
         if (parentItem && parentItem instanceof AgMenuItemComponent) {
             if (e) {

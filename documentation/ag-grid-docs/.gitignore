@@ -3,6 +3,7 @@ dist/
 
 # generated types
 .astro/
+.playwright-network-cache/
 
 # dependencies
 node_modules/

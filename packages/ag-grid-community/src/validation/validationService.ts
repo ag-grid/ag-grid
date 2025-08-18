@@ -1,3 +1,5 @@
+import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties';
+import { _fuzzySuggestions } from '../agStack/utils/fuzzyMatch';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -5,14 +7,11 @@ import type { BeanCollection, DynamicBeanName, UserComponentName } from '../cont
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
-import type { PropertyChangedSource } from '../gridOptionsService';
 import type { RowNodeEventType } from '../interfaces/iRowNode';
 import { _areModulesGridScoped } from '../modules/moduleRegistry';
-import { _warnOnce } from '../utils/function';
-import { _fuzzySuggestions } from '../utils/fuzzyMatch';
 import type { IconName, IconValue } from '../utils/icon';
+import { _warnOnce } from '../utils/log';
 import { validateApiFunction } from './apiFunctionValidator';
-import type { ErrorId, GetErrorParams } from './errorMessages/errorText';
 import { getError } from './errorMessages/errorText';
 import { _errMsg, _error, _warn, provideValidationServiceLogger } from './logging';
 import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
@@ -29,10 +28,10 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.gridOptions = beans.gridOptions;
-        provideValidationServiceLogger(this);
+        provideValidationServiceLogger(getError);
     }
 
-    public warnOnInitialPropertyUpdate(source: PropertyChangedSource, key: string): void {
+    public warnOnInitialPropertyUpdate(source: AgPropertyChangedSource, key: string): void {
         if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
             _warn(22, { key });
         }
@@ -102,7 +101,7 @@ export class ValidationService extends BeanStub implements NamedBean {
                 reasonOrId: `icon '${iconName}'`,
                 moduleName,
                 gridScoped: _areModulesGridScoped(),
-                gridId: this.beans.context.getGridId(),
+                gridId: this.beans.context.getId(),
                 rowModelType: this.gos.get('rowModelType'),
                 additionalText: 'Alternatively, use the CSS icon name directly.',
             });
@@ -262,10 +261,6 @@ export class ValidationService extends BeanStub implements NamedBean {
             const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
             _warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
         }
-    }
-
-    public getConsoleMessage<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>): any[] {
-        return getError(id, args);
     }
 }
 

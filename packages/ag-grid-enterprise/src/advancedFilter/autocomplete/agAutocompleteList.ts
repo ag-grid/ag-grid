@@ -1,5 +1,14 @@
-import type { Component, ElementParams } from 'ag-grid-community';
-import { KeyCode, PopupComponent, RefPlaceholder, _exists, _fuzzySuggestions } from 'ag-grid-community';
+import type {
+    AgComponentSelectorType,
+    AgEventTypeParams,
+    AgGridCommon,
+    BeanCollection,
+    Component,
+    ElementParams,
+    GridOptionsService,
+    GridOptionsWithDefaults,
+} from 'ag-grid-community';
+import { AgPopupComponent, KeyCode, RefPlaceholder, _exists, _fuzzySuggestions } from 'ag-grid-community';
 
 import { VirtualList } from '../../widgets/virtualList';
 import { AgAutocompleteRow } from './agAutocompleteRow';
@@ -16,7 +25,14 @@ const AgAutocompleteListElement: ElementParams = {
         },
     ],
 };
-export class AgAutocompleteList extends PopupComponent {
+export class AgAutocompleteList extends AgPopupComponent<
+    BeanCollection,
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    AgGridCommon<any, any>,
+    GridOptionsService,
+    AgComponentSelectorType
+> {
     private readonly eList: HTMLElement = RefPlaceholder;
 
     private virtualList: VirtualList<any>;

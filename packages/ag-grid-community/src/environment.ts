@@ -1,16 +1,18 @@
+import { BaseEnvironment } from './agStack/core/baseEnvironment';
+import type { Theme } from './agStack/theming/theme';
+import type { ThemeImpl } from './agStack/theming/themeImpl';
+import { _observeResize } from './agStack/utils/dom';
 import type { NamedBean } from './context/bean';
-import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
-import { ThemeImpl } from './theming/Theme';
-import {
-    IS_SSR,
-    _injectCoreAndModuleCSS,
-    _injectGlobalCSS,
-    _registerGridUsingThemingAPI,
-    _unregisterGridUsingThemingAPI,
-} from './theming/inject';
+import type { AgEventTypeParams } from './events';
+import type { GridOptionsWithDefaults } from './gridOptionsDefault';
+import type { GridOptionsService } from './gridOptionsService';
+import type { AgGridCommon } from './interfaces/iCommon';
+import type { Module } from './interfaces/iModule';
+import { _getAllRegisteredModules } from './modules/moduleRegistry';
+import { coreCSS } from './theming/core/core.css-GENERATED';
 import { themeQuartz } from './theming/parts/theme/themes';
-import { _createElement, _observeResize } from './utils/dom';
+import { _createElement } from './utils/element';
 import { _error, _warn } from './validation/logging';
 
 const CELL_HORIZONTAL_PADDING: Variable = {
@@ -61,41 +63,34 @@ const PINNED_BORDER_WIDTH: Variable = {
     border: true,
 };
 
-let paramsId = 0;
+export function _addAdditionalCss(cssMap: Map<string, string[]>, modules: Module[]): void {
+    modules
+        .sort((a, b) => a.moduleName.localeCompare(b.moduleName))
+        .forEach((module) => {
+            const moduleCss = module.css;
+            if (moduleCss) {
+                cssMap.set(`module-${module.moduleName}`, moduleCss);
+            }
+        });
+}
 
-export class Environment extends BeanStub implements NamedBean {
-    beanName = 'environment' as const;
-
-    private eGridDiv: HTMLElement;
-    public eStyleContainer: HTMLElement;
-    public cssLayer: string | undefined;
-    public styleNonce: string | undefined;
-    private mutationObserver: MutationObserver;
-
-    public wireBeans(beans: BeanCollection): void {
-        const { eGridDiv, gridOptions } = beans;
-        this.eGridDiv = eGridDiv;
-        // NOTE: need to use beans.gridOptions because beans.gos not yet initialised
-        this.eStyleContainer =
-            gridOptions.themeStyleContainer ?? (eGridDiv.getRootNode() === document ? document.head : eGridDiv);
-        this.cssLayer = gridOptions.themeCssLayer;
-        this.styleNonce = gridOptions.styleNonce;
-    }
-
+export class Environment
+    extends BaseEnvironment<
+        BeanCollection,
+        GridOptionsWithDefaults,
+        AgEventTypeParams,
+        AgGridCommon<any, any>,
+        GridOptionsService,
+        ChangeKey
+    >
+    implements NamedBean
+{
     private sizeEls = new Map<Variable, HTMLElement>();
     private lastKnownValues = new Map<Variable, number>();
     private eMeasurementContainer: HTMLElement | undefined;
     public sizesMeasured = false;
 
-    private paramsClass = `ag-theme-params-${++paramsId}`;
-    private gridTheme: ThemeImpl | undefined;
-    private eParamsStyle: HTMLStyleElement | undefined;
-    private globalCSS: [string, string][] = [];
-
-    public postConstruct(): void {
-        this.addManagedPropertyListener('theme', () => this.handleThemeGridOptionChange());
-        this.handleThemeGridOptionChange();
-
+    protected override initVariables(): void {
         this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
         this.getSizeEl(ROW_HEIGHT);
         this.getSizeEl(HEADER_HEIGHT);
@@ -103,13 +98,6 @@ export class Environment extends BeanStub implements NamedBean {
         this.getSizeEl(ROW_BORDER_WIDTH);
         this.getSizeEl(PINNED_BORDER_WIDTH);
         this.refreshRowBorderWidthVariable();
-
-        this.addDestroyFunc(() => _unregisterGridUsingThemingAPI(this));
-
-        this.mutationObserver = new MutationObserver(() => {
-            this.fireGridStylesChangedEvent('themeChanged');
-        });
-        this.addDestroyFunc(() => this.mutationObserver.disconnect());
     }
 
     public getPinnedRowBorderWidth(): number {
@@ -158,53 +146,14 @@ export class Environment extends BeanStub implements NamedBean {
         return this.getCSSVariablePixelValue(LIST_ITEM_HEIGHT);
     }
 
-    public applyThemeClasses(el: HTMLElement) {
-        const { gridTheme } = this;
-        let themeClass = '';
-        if (gridTheme) {
-            // Theming API mode
-            themeClass = `${this.paramsClass} ${gridTheme._getCssClass()}`;
-        } else {
-            // legacy mode
-            this.mutationObserver.disconnect();
-            let node: HTMLElement | null = this.eGridDiv;
-            while (node) {
-                let isThemeEl = false;
-                for (const className of Array.from(node.classList)) {
-                    if (className.startsWith('ag-theme-')) {
-                        isThemeEl = true;
-                        themeClass = themeClass ? `${themeClass} ${className}` : className;
-                    }
-                }
-                if (isThemeEl) {
-                    this.mutationObserver.observe(node, {
-                        attributes: true,
-                        attributeFilter: ['class'],
-                    });
-                }
-                node = node.parentElement;
-            }
-        }
-
-        for (const className of Array.from(el.classList)) {
-            if (className.startsWith('ag-theme-')) {
-                el.classList.remove(className);
-            }
-        }
-        if (themeClass) {
-            const oldClass = el.className;
-            el.className = oldClass + (oldClass ? ' ' : '') + themeClass;
-        }
-    }
-
     public refreshRowHeightVariable(): number {
-        const { eGridDiv } = this;
-        const oldRowHeight = eGridDiv.style.getPropertyValue('--ag-line-height').trim();
+        const { eRootDiv } = this;
+        const oldRowHeight = eRootDiv.style.getPropertyValue('--ag-line-height').trim();
         const height = this.gos.get('rowHeight');
 
         if (height == null || isNaN(height) || !isFinite(height)) {
             if (oldRowHeight !== null) {
-                eGridDiv.style.setProperty('--ag-line-height', null);
+                eRootDiv.style.setProperty('--ag-line-height', null);
             }
             return -1;
         }
@@ -212,19 +161,11 @@ export class Environment extends BeanStub implements NamedBean {
         const newRowHeight = `${height}px`;
 
         if (oldRowHeight != newRowHeight) {
-            eGridDiv.style.setProperty('--ag-line-height', newRowHeight);
+            eRootDiv.style.setProperty('--ag-line-height', newRowHeight);
             return height;
         }
 
         return oldRowHeight != '' ? parseFloat(oldRowHeight) : -1;
-    }
-
-    public addGlobalCSS(css: string, debugId: string): void {
-        if (this.gridTheme) {
-            _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
-        } else {
-            this.globalCSS.push([css, debugId]);
-        }
     }
 
     private getCSSVariablePixelValue(variable: Variable): number {
@@ -258,7 +199,7 @@ export class Environment extends BeanStub implements NamedBean {
         let container = this.eMeasurementContainer;
         if (!container) {
             container = this.eMeasurementContainer = _createElement({ tag: 'div', cls: 'ag-measurement-container' });
-            this.eGridDiv.appendChild(container);
+            this.eRootDiv.appendChild(container);
         }
         return container;
     }
@@ -299,7 +240,7 @@ export class Environment extends BeanStub implements NamedBean {
             this.lastKnownValues.set(variable, newMeasurement);
             if (newMeasurement !== lastMeasurement) {
                 lastMeasurement = newMeasurement;
-                this.fireGridStylesChangedEvent(variable.changeKey);
+                this.fireStylesChangedEvent(variable.changeKey);
             }
         });
         this.addDestroyFunc(() => unsubscribe());
@@ -307,7 +248,7 @@ export class Environment extends BeanStub implements NamedBean {
         return sizeEl;
     }
 
-    private fireGridStylesChangedEvent(change: ChangeKey): void {
+    protected override fireStylesChangedEvent(change: ChangeKey): void {
         if (change === 'rowBorderWidthChanged') {
             this.refreshRowBorderWidthVariable();
         }
@@ -319,55 +260,13 @@ export class Environment extends BeanStub implements NamedBean {
 
     private refreshRowBorderWidthVariable(): void {
         const width = this.getCSSVariablePixelValue(ROW_BORDER_WIDTH);
-        this.eGridDiv.style.setProperty('--ag-internal-row-border-width', `${width}px`);
+        this.eRootDiv.style.setProperty('--ag-internal-row-border-width', `${width}px`);
     }
 
-    private handleThemeGridOptionChange(): void {
-        const { gos, eGridDiv, globalCSS, gridTheme: oldGridTheme } = this;
-        const themeGridOption = gos.get('theme');
-        let newGridTheme: ThemeImpl | undefined;
-        if (themeGridOption === 'legacy') {
-            newGridTheme = undefined;
-        } else {
-            const themeOrDefault = themeGridOption ?? themeQuartz;
-            if (themeOrDefault instanceof ThemeImpl) {
-                newGridTheme = themeOrDefault;
-            } else {
-                _error(240, { theme: themeOrDefault });
-            }
-        }
-        if (newGridTheme !== oldGridTheme) {
-            if (newGridTheme) {
-                _registerGridUsingThemingAPI(this);
-                _injectCoreAndModuleCSS(this.eStyleContainer, this.cssLayer, this.styleNonce);
-                for (const [css, debugId] of globalCSS) {
-                    _injectGlobalCSS(css, this.eStyleContainer, debugId, this.cssLayer, 0, this.styleNonce);
-                }
-                globalCSS.length = 0;
-            }
-            this.gridTheme = newGridTheme;
-            newGridTheme?._startUse({
-                loadThemeGoogleFonts: gos.get('loadThemeGoogleFonts'),
-                styleContainer: this.eStyleContainer,
-                cssLayer: this.cssLayer,
-                nonce: this.styleNonce,
-            });
-            let eParamsStyle = this.eParamsStyle;
-            if (!eParamsStyle) {
-                eParamsStyle = this.eParamsStyle = _createElement<HTMLStyleElement>({ tag: 'style' });
-                const styleNonce = this.gos.get('styleNonce');
-                if (styleNonce) {
-                    eParamsStyle.setAttribute('nonce', styleNonce);
-                }
-                eGridDiv.appendChild(eParamsStyle);
-            }
-            if (!IS_SSR) {
-                eParamsStyle.textContent = newGridTheme?._getPerGridCss(this.paramsClass) || '';
-            }
-
-            this.applyThemeClasses(eGridDiv);
-            this.fireGridStylesChangedEvent('themeChanged');
-        }
+    protected override postProcessThemeChange(
+        newGridTheme: ThemeImpl | undefined,
+        themeGridOption?: Theme | 'legacy'
+    ): void {
         // --ag-legacy-styles-loaded is defined on .ag-measurement-container by the
         // legacy themes which shouldn't be used at the same time as Theming API
         if (
@@ -380,6 +279,21 @@ export class Environment extends BeanStub implements NamedBean {
                 _error(239);
             }
         }
+    }
+
+    protected override getAdditionalCss(): Map<string, string[]> {
+        const additionalCss: Map<string, string[]> = new Map();
+        additionalCss.set('core', [coreCSS]);
+        _addAdditionalCss(additionalCss, Array.from(_getAllRegisteredModules()));
+        return additionalCss;
+    }
+
+    protected override getDefaultTheme(): Theme {
+        return themeQuartz;
+    }
+
+    protected override themeError(theme: Theme | 'legacy'): void {
+        _error(240, { theme });
     }
 }
 

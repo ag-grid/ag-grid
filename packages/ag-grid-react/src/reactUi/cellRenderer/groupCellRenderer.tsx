@@ -54,7 +54,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
-        if (!eRef) {
+        if (!eRef || context.isDestroyed()) {
             ctrlRef.current = context.destroyBean(ctrlRef.current);
             return;
         }

@@ -1,6 +1,6 @@
+import { _requestAnimationFrame } from '../agStack/utils/dom';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { _requestAnimationFrame } from '../utils/dom';
 import { _warn } from '../validation/logging';
 
 interface TaskItem {

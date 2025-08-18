@@ -1,7 +1,8 @@
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
+import { _ensureDomOrder } from '../../agStack/utils/dom';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
-import type { ElementParams } from '../../utils/dom';
-import { _ensureDomOrder } from '../../utils/dom';
-import { Component, RefPlaceholder } from '../../widgets/component';
+import type { ElementParams } from '../../utils/element';
+import { Component } from '../../widgets/component';
 import { HeaderRowComp } from '../row/headerRowComp';
 import type { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';
 import type { IHeaderRowContainerComp } from './headerRowContainerCtrl';

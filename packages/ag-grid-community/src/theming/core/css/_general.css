@@ -10,14 +10,6 @@
     white-space: nowrap;
 }
 
-.ag-hidden {
-    display: none !important;
-}
-
-.ag-invisible {
-    visibility: hidden !important;
-}
-
 .ag-unselectable {
     user-select: none;
 }
