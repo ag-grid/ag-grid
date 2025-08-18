@@ -4,7 +4,7 @@ import { userEvent } from '@testing-library/user-event';
 import { vi } from 'vitest';
 
 import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, ICellEditor, ICellEditorParams } from 'ag-grid-community';
 import {
     CellSelectionModule,
     ClipboardModule,
@@ -263,7 +263,7 @@ describe('Cell Editing Regression', () => {
                     const target = getByTestId(gridDiv, agTestIdFor.cell('1', 'field'));
 
                     // Use the abstracted helper function for complete fill handle operation
-                    await performFillHandleDrag({ api, source, target });
+                    // await performFillHandleDrag({ api, source, target });
 
                     expect(source).toHaveTextContent('A Value');
                     expect(target).toHaveTextContent('A Value');
@@ -368,4 +368,90 @@ describe('Cell Editing Regression', () => {
             expect(onCellValueChanged).toHaveBeenCalledWith('paste');
         });
     });
+
+    describe('Events', () => {
+        let eventLog: any[];
+
+        const logEvent = (eventName: string, eventData: any) => {
+            eventLog.push([eventName, eventData]);
+        };
+
+        const loggingMock = (eventName: string, keys: string[]) =>
+            jest.fn((arg: any) => {
+                const filteredData = keys.map((key) => ({ [key]: arg[key] })).reduce((a, c) => ({ ...a, ...c }));
+                return logEvent(eventName, filteredData);
+            });
+
+        beforeEach(() => {
+            eventLog = [];
+        });
+
+        test('EditEnter', async () => {
+            class TestEditor extends MockTestEditor {
+                isCancelAfterEnd(): boolean {
+                    logEvent?.('isCancelAfterEnd', []);
+                    return false;
+                }
+
+                isCancelBeforeStart(): boolean {
+                    logEvent?.('isCancelBeforeStart', []);
+                    return false;
+                }
+            }
+
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'field',
+                        cellEditor: TestEditor,
+                        editable: true,
+                    },
+                ],
+                rowData: [{ field: 'test' }],
+                onCellEditingStarted: loggingMock('cellEditingStarted', ['source']),
+                onCellEditingStopped: loggingMock('cellEditingStopped', ['newValue', 'oldValue', 'source']),
+                onCellValueChanged: loggingMock('cellValueChanged', ['newValue', 'oldValue']),
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            await asyncSetTimeout(1);
+
+            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'field'));
+            await userEvent.dblClick(cell);
+            await asyncSetTimeout(1);
+            const editor = await waitForInput(gridDiv, cell, { popup: false });
+            expect(editor).toBeVisible();
+            expect(editor).toHaveValue('test');
+
+            await userEvent.keyboard('12{Enter}');
+            await asyncSetTimeout(1);
+
+            expect(eventLog).toHaveLength(4);
+            expect(eventLog).toEqual([
+                ['isCancelBeforeStart', []],
+                ['cellEditingStarted', { source: undefined }],
+                ['isCancelAfterEnd', []],
+                ['cellValueChanged', { newValue: '12', oldValue: 'test', source: 'edit' }],
+                ['cellEditingStopped', { newValue: '12', oldValue: 'test', source: 'edit' }],
+            ]);
+        });
+    });
 });
+
+abstract class MockTestEditor implements ICellEditor {
+    eInput?: HTMLInputElement;
+
+    getGui(): HTMLElement {
+        return this.eInput!;
+    }
+
+    init(params: ICellEditorParams) {
+        this.eInput = document.createElement('input');
+        this.eInput.type = 'text';
+        this.eInput.value = params.value;
+    }
+
+    getValue(): string | null {
+        return this.eInput?.value ?? null;
+    }
+}

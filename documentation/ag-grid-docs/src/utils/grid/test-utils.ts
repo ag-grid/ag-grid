@@ -3,9 +3,9 @@ import type { Locator, Page, TestType } from '@playwright/test';
 import { test as base, expect } from '@playwright/test';
 import { CacheRoute } from 'playwright-network-cache';
 
-import { wrapAgTestIdFor } from 'ag-grid-community';
+import { type AgModuleName, wrapAgTestIdFor } from 'ag-grid-community';
 
-import { type AsyncGridApi, createRemoteGridApiProxy } from './test-remote-gridapi-utils';
+import { type AsyncGridApi, type EventLog, createRemoteGridApiProxy } from './test-remote-gridapi-utils';
 
 type ExtractFixtures<T> = T extends TestType<infer A, infer O> ? A & O : never;
 
@@ -18,7 +18,7 @@ type LoadPageOptions = {
     version: string;
 };
 
-type RemoteGrid = ((page: Page, gridId?: string) => AsyncGridApi) & { eventLog: [string, any][] };
+type RemoteGrid = ((page: Page, gridId?: string) => AsyncGridApi) & { eventLog: EventLog };
 
 type AgGridFixtures = {
     agFramework: AgFramework;
@@ -28,6 +28,7 @@ type AgGridFixtures = {
      */
     agIdFor: AgIdFor;
     loadPageOptions?: LoadPageOptions;
+    agModules?: AgModuleName[];
     remoteGrid: RemoteGrid;
 };
 
@@ -103,24 +104,31 @@ async function loadPage(
     page: Page,
     agExampleUrl: AgExampleUrl,
     agFramework: (typeof ALL_FRAMEWORKS)[number],
-    loadPageOptions: LoadPageOptions | undefined
+    loadPageOptions: LoadPageOptions | undefined,
+    agModules: AgModuleName[] | undefined
 ): Promise<Page> {
     const queryOptions: any = {
         enableTestIds: 'true',
     };
+
     if (loadPageOptions?.prod) {
         queryOptions.prod = 'true';
     } else if (loadPageOptions?.prod === false || agFramework === reactFunctionalTsDev) {
         queryOptions.prod = 'false';
     }
+
     if (loadPageOptions?.version) {
         queryOptions.version = loadPageOptions.version;
+    }
+
+    if (agModules && agModules.length > 0) {
+        queryOptions.modules = agModules.join(',');
     }
 
     const queryParams = new URLSearchParams(queryOptions);
     const urlFramework = agFramework === reactFunctionalTsDev ? 'reactFunctionalTs' : agFramework;
 
-    await page.goto(`/examples/${agExampleUrl}/${urlFramework}?${queryParams.toString()}`);
+    await page.goto(`./examples/${agExampleUrl}/${urlFramework}?${queryParams.toString()}`);
     await page.waitForLoadState('domcontentloaded');
     await page.waitForLoadState('load');
     await page.waitForLoadState('networkidle');
@@ -131,9 +139,19 @@ async function loadPage(
 const extended = base.extend<TestFixtures>({
     agExampleUrl: [({}, use) => use(undefined), { option: true }],
     agFramework: [({}, use) => use(ALL_FRAMEWORKS[0]), { option: true }],
-    agIdFor: [({ page }, use) => use(wrapAgTestIdFor((testId: string) => page.getByTestId(testId))), { option: true }],
+    agIdFor: [
+        ({ page }, use) => {
+            const wrap = wrapAgTestIdFor((testId: string) => page.getByTestId(testId));
+            if (process.env.PRE_34_VERSION) {
+                prev34WrapAdapter(wrap, page);
+            }
+            return use(wrap);
+        },
+        { option: true },
+    ],
     bypassRequestCache: [false, { option: true }],
     loadPageOptions: [({}, use) => use(undefined), { option: true }],
+    agModules: [undefined, { option: true }],
     cacheRoute: [
         async ({ page, bypassRequestCache }: TestFixtures, use: (r?: CacheRoute) => Promise<void>) => {
             if (bypassRequestCache) {
@@ -203,6 +221,7 @@ const frameworkTest =
             cacheRoute: _,
             loadPageOptions,
             remoteGrid,
+            agModules,
         }: TestFixtures) => {
             if (!agExampleUrl) {
                 throw new Error(
@@ -210,7 +229,7 @@ const frameworkTest =
                 );
             }
 
-            await loadPage(page, agExampleUrl, agFramework, loadPageOptions);
+            await loadPage(page, agExampleUrl, agFramework, loadPageOptions, agModules);
             await testBody({ page, agExampleUrl, agIdFor, agFramework, loadPageOptions, remoteGrid } as TestFixtures);
         };
 
@@ -258,6 +277,25 @@ const eachFramework = (testName: string, testBody: (fixtures: TestFixtures) => P
     });
 };
 
+function prev34WrapAdapter(wrap: ReturnType<typeof wrapAgTestIdFor<any>>, page: Page) {
+    wrap.cell = (rowId: string | null, colId: string | null) => {
+        const index = parseInt(rowId ?? '') + 1; // pre-34 rowIds were 1-indexed
+
+        const discriminator = `[row-id="${isNaN(index) ? rowId : index}"]`;
+
+        return page.locator(`:nth-match(.ag-row${discriminator} .ag-cell[col-id="${colId}"], 1)`);
+    };
+    wrap.autoGroupCell = (rowId: string | null) => wrap.cell(rowId, 'ag-Grid-AutoColumn');
+    wrap.fillHandle = () => page.locator('.ag-row .ag-cell .ag-fill-handle');
+    wrap.headerCell = (colId: string | null) => page.locator(`.ag-header-cell[col-id="${colId}"]`);
+    wrap.headerFilterButton = (colId: string | null) =>
+        page.locator(`.ag-header-cell[col-id="${colId}"] .ag-header-cell-filter-button`);
+    wrap.filterInstancePickerDisplay = (_: { source: string }) => page.locator(`.ag-picker-field-icon`);
+    wrap.numberFilterInstanceInput = (_: { source: string }) =>
+        page.locator(`.ag-input-field-input.ag-number-field-input[placeholder="Filter..."]`);
+    wrap.rowNode = (rowId: string | null) => page.locator(`.ag-row[row-id="${rowId}"]`);
+}
+
 /**
  * Set the example URL for the tests.
  * @param importMeta The import.meta object from the module where this function is called.
@@ -290,7 +328,7 @@ const singleFrameworkTests: { [K in AgFramework]: ReturnType<typeof frameworkTes
 } as const;
 
 const agGridTestExtension = {
-    eachFramework,
+    eachFramework: process.env.PRE_34_VERSION ? frameworkTest('vanilla') : eachFramework,
     agExample,
 };
 
