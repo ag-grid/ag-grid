@@ -256,6 +256,7 @@ export { IDragService as _IDragService } from './agStack/interfaces/iDrag';
 export {
     AgDraggingEvent as _AgDraggingEvent,
     IDragAndDropService as _IDragAndDropService,
+    AgDragSource as _AgDragSource,
 } from './agStack/interfaces/iDragAndDrop';
 export { BaseDragService as _BaseDragService } from './agStack/core/baseDragService';
 export { BaseDragAndDropService as _BaseDragAndDropService } from './agStack/core/baseDragAndDropService';
