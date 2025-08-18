@@ -1,9 +1,24 @@
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import classnames from 'classnames';
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { CellStyleFunc, ColDef, ColGroupDef, CsvExportParams, ExcelExportParams, ExcelStyle, GridApi, GridOptions, GridReadyEvent, InitialGroupOrderComparatorParams, IRowNode, Theme } from 'ag-grid-community';
+import type {
+    CellSelectionOptions,
+    CellStyleFunc,
+    ColDef,
+    ColGroupDef,
+    CsvExportParams,
+    ExcelExportParams,
+    ExcelStyle,
+    GridApi,
+    GridOptions,
+    GridReadyEvent,
+    IRowNode,
+    InitialGroupOrderComparatorParams,
+    RowSelectionOptions,
+    Theme,
+} from 'ag-grid-community';
 import {
     AllCommunityModule,
     ClientSideRowModelModule,
@@ -13,7 +28,6 @@ import {
     themeMaterial,
     themeQuartz,
 } from 'ag-grid-community';
-
 import {
     CellSelectionModule,
     ClipboardModule,
@@ -38,38 +52,39 @@ import {
 import { AgGridReact } from 'ag-grid-react';
 
 import styles from './Example.module.scss';
+import { CountryCellRenderer, booleanCellRenderer, ratingRenderer } from './Renderers';
 import { Toolbar } from './Toolbar';
 import {
-    colNames,
-    countries,
     COUNTRY_CODES,
     COUNTRY_NAMES,
+    LANGUAGES,
+    type RowItem,
+    colNames,
+    countries,
     createRowItem,
     games,
-    LANGUAGES,
     months,
-    type RowItem
 } from './consts';
 import {
     axisLabelFormatter,
     createDataSizeValue,
     currencyFormatter,
     formatThousands,
-    suppressColumnMoveAnimation
+    suppressColumnMoveAnimation,
 } from './utils';
-import { booleanCellRenderer, CountryCellRenderer, ratingRenderer } from './Renderers';
+import type { SideBarDef } from '../../../../../packages/ag-grid-community/src/main';
 
 const IS_SSR = typeof window === 'undefined';
 
-
 const AgGridReactMemo = memo(AgGridReact);
 
-const groupColumn = {
+const groupColumn: ColDef = {
     headerName: 'Group',
     width: 250,
     field: 'name',
 };
 const defaultChartThemes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
+const defaultChartThemesDark = defaultChartThemes.map((theme) => theme + '-dark');
 const excelStyles: ExcelStyle[] = [
     {
         id: 'v-align',
@@ -177,9 +192,7 @@ const currencyCssFunc: CellStyleFunc = (params) => {
         return { color: 'red', fontWeight: 'bold' };
     }
     return undefined;
-}
-
-
+};
 
 const mobileDefaultCols: ColDef<RowItem>[] = [
     {
@@ -469,17 +482,85 @@ const modules = [
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
     SparklinesModule.with(AgChartsEnterpriseModule),
 ];
+const components = {
+    countryCellRenderer: CountryCellRenderer,
+    booleanCellRenderer: booleanCellRenderer,
+    ratingRenderer: ratingRenderer,
+};
+const statusBar: GridOptions['statusBar'] = {
+    statusPanels: [
+        { statusPanel: 'agTotalAndFilteredRowCountComponent', key: 'totalAndFilter', align: 'left' },
+        { statusPanel: 'agSelectedRowCountComponent', align: 'left' },
+        { statusPanel: 'agAggregationComponent', align: 'right' },
+    ],
+};
+const cellSelection: CellSelectionOptions = {
+    enableHeaderHighlight: true,
+    handle: {
+        mode: 'fill',
+    },
+};
+const rowSelection: RowSelectionOptions = {
+    mode: 'multiRow',
+};
+const suppressColMoveAnimation = suppressColumnMoveAnimation();
 
-const ExampleInner = ({ darkMode, theme }: { darkMode: boolean, theme: string }) => {
+const columnTypes: GridOptions['columnTypes'] = {
+    currencyType: {
+        useValueFormatterForExport: false,
+        valueFormatter: currencyFormatter,
+    },
+};
+
+const dataTypeDefinitions: GridOptions['dataTypeDefinitions'] = {
+    currency: {
+        extendsDataType: 'number',
+        baseDataType: 'number',
+
+        valueFormatter: currencyFormatter,
+        valueParser: (params) => {
+            if (params.newValue == null) {
+                return null;
+            }
+            let newValue = String(params.newValue)?.trim?.();
+            if (newValue === '') {
+                return null;
+            }
+            newValue = newValue.replace('$', '').replace(',', '');
+            if (newValue.includes('(')) {
+                newValue = newValue.replace('(', '').replace(')', '');
+                newValue = '-' + newValue;
+            }
+            return Number(newValue);
+        },
+        columnTypes: ['currencyType', 'numericColumn'],
+    },
+};
+
+const getBusinessKeyForNode = (node: IRowNode) => (node.data ? node.data.name : '');
+const initialGroupOrderComparator = ({ nodeA, nodeB }: InitialGroupOrderComparatorParams) => {
+    const aKey = nodeA.key || '';
+    const bKey = nodeB.key || '';
+    if (aKey < bKey) {
+        return -1;
+    }
+    if (aKey > bKey) {
+        return 1;
+    }
+
+    return 0;
+};
+
+const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: string; isSmall: boolean }) => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
     const [gridThemeStr, setGridThemeStr] = useState(theme);
 
     const gridTheme = themeMap[gridThemeStr] || themeQuartz;
+    const chartThemes = darkMode ? defaultChartThemesDark : defaultChartThemes;
 
     const [base64Flags, setBase64Flags] = useState<Record<string, any>>();
     const [defaultCols, setDefaultCols] = useState<(ColDef | ColGroupDef)[]>();
-    const [isSmall, setIsSmall] = useState(false);
     const [defaultColCount, setDefaultColCount] = useState<number>(0);
     const [columnDefs, setColumnDefs] = useState<(ColDef | ColGroupDef)[]>();
     const [rowData, setRowData] = useState<any[]>();
@@ -516,108 +597,33 @@ const ExampleInner = ({ darkMode, theme }: { darkMode: boolean, theme: string })
         [base64Flags]
     );
 
+    const enableRtl = IS_SSR ? false : /[?&]rtl=true/.test(window.location.search);
 
-    const gridOptions = useMemo<GridOptions>(
+    const defaultColDef = useMemo<ColDef>(
         () => ({
-            components: {
-                countryCellRenderer: CountryCellRenderer,
-                booleanCellRenderer: booleanCellRenderer,
-                ratingRenderer: ratingRenderer,
-            },
-            statusBar: {
-                statusPanels: [
-                    { statusPanel: 'agTotalAndFilteredRowCountComponent', key: 'totalAndFilter', align: 'left' },
-                    { statusPanel: 'agSelectedRowCountComponent', align: 'left' },
-                    { statusPanel: 'agAggregationComponent', align: 'right' },
-                ],
-            },
-            defaultColDef: {
-                minWidth: 50,
-                editable: true,
-                filter: true,
-                floatingFilter: !isSmall,
-                enableCellChangeFlash: true,
-            },
-            rowDragManaged: true,
-            rowDragMultiRow: true,
-            rowGroupPanelShow: isSmall ? undefined : 'always',
-            pivotPanelShow: 'always',
-            suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
-            enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
-            enableCharts: true,
-            undoRedoCellEditing: true,
-            undoRedoCellEditingLimit: 50,
-            quickFilterText: undefined,
-            autoGroupColumnDef: groupColumn,
-            rowNumbers: true,
-            cellSelection: {
-                enableHeaderHighlight: true,
-                handle: {
-                    mode: 'fill',
-                },
-            },
-            rowSelection: {
-                mode: 'multiRow',
-            },
-            sideBar: {
-                toolPanels: ['columns', 'filters-new'],
-                position: 'right',
-                defaultToolPanel: 'columns',
-                hiddenByDefault: isSmall,
-            },
-            dataTypeDefinitions: {
-                currency: {
-                    extendsDataType: 'number',
-                    baseDataType: 'number',
-                    valueFormatter: currencyFormatter,
-                    valueParser: (params) => {
-                        if (params.newValue == null) {
-                            return null;
-                        }
-                        let newValue = String(params.newValue)?.trim?.();
-                        if (newValue === '') {
-                            return null;
-                        }
-                        newValue = newValue.replace('$', '').replace(',', '');
-                        if (newValue.includes('(')) {
-                            newValue = newValue.replace('(', '').replace(')', '');
-                            newValue = '-' + newValue;
-                        }
-                        return Number(newValue);
-                    },
-                    columnTypes: ['currencyType', 'numericColumn'],
-                },
-            },
-            columnTypes: {
-                currencyType: {
-                    useValueFormatterForExport: false,
-                    valueFormatter: currencyFormatter,
-                },
-            },
-            getBusinessKeyForNode: (node: IRowNode) => (node.data ? node.data.name : ''),
-            initialGroupOrderComparator: ({ nodeA, nodeB }: InitialGroupOrderComparatorParams) => {
-                const aKey = nodeA.key || '';
-                const bKey = nodeB.key || '';
-                if (aKey < bKey) {
-                    return -1;
-                }
-                if (aKey > bKey) {
-                    return 1;
-                }
-
-                return 0;
-            },
-            onGridReady: (event: GridReadyEvent) => {
-                if (!IS_SSR && document.documentElement.clientWidth <= 1024) {
-                    event.api.closeToolPanel();
-                }
-            },
-            chartThemeOverrides: chartThemeOverrides,
-            excelStyles,
-            enableFilterHandlers: true,
+            minWidth: 50,
+            editable: true,
+            filter: true,
+            floatingFilter: !isSmall,
+            enableCellChangeFlash: true,
         }),
         [isSmall]
     );
+    const sideBar = useMemo<SideBarDef>(
+        () => ({
+            toolPanels: ['columns', 'filters-new'],
+            position: 'right',
+            defaultToolPanel: 'columns',
+            hiddenByDefault: isSmall,
+        }),
+        [isSmall]
+    );
+
+    const onGridReady = useCallback((event: GridReadyEvent) => {
+        if (!IS_SSR && document.documentElement.clientWidth <= 1024) {
+            event.api.closeToolPanel();
+        }
+    }, []);
 
     const createData = (dataSize: string) => {
         loadInstance.current = loadInstance.current + 1;
@@ -673,17 +679,17 @@ const ExampleInner = ({ darkMode, theme }: { darkMode: boolean, theme: string })
             return;
         }
 
-        const countryColumn: ColDef = (participantGroup as ColGroupDef).children.find((column) => (column as ColDef).field === 'country')!;
+        const countryColumn: ColDef = (participantGroup as ColGroupDef).children.find(
+            (column) => (column as ColDef).field === 'country'
+        )!;
         countryColumn.cellEditorPopup = theme.includes('material');
 
         setColumnDefs(columnDefs);
     };
 
     useEffect(() => {
-        const small = IS_SSR
-            ? false
-            : document.documentElement.clientHeight <= 415 || document.documentElement.clientWidth < 768;
-        setIsSmall(small);
+        let defaultCols: ColDef[];
+        let defaultColCount: number;
 
         //put in the month cols
         const monthGroup: ColGroupDef = {
@@ -707,13 +713,11 @@ const ExampleInner = ({ darkMode, theme }: { darkMode: boolean, theme: string })
                     buttons: ['reset'],
                     inRangeInclusive: true,
                 },
-            }
+            };
             monthGroup.children.push(child);
         });
 
-        let defaultCols: ColDef[];
-        let defaultColCount: number;
-        if (small) {
+        if (isSmall) {
             defaultCols = mobileDefaultCols;
             defaultCols = defaultCols.concat(monthGroup.children);
             defaultColCount = defaultCols.length;
@@ -731,13 +735,13 @@ const ExampleInner = ({ darkMode, theme }: { darkMode: boolean, theme: string })
             [1000, defaultColCount],
         ];
 
-        if (!small) {
+        if (!isSmall) {
             newRowsCols.push([10000, 100], [50000, defaultColCount], [100000, defaultColCount]);
         }
 
         setDataSize(createDataSizeValue(newRowsCols[0][0], newRowsCols[0][1]));
         setRowCols(newRowsCols);
-    }, []);
+    }, [isSmall]);
 
     useEffect(() => {
         const flags: Record<string, any> = {};
@@ -762,10 +766,7 @@ const ExampleInner = ({ darkMode, theme }: { darkMode: boolean, theme: string })
         Promise.all(promiseArray).then(() => setBase64Flags(flags));
     }, []);
 
-
-
     const createCols = (colCount: number) => {
-
         // start with a copy of the default cols
         const columns = defaultCols?.slice(0, colCount) ?? [];
 
@@ -779,7 +780,7 @@ const ExampleInner = ({ darkMode, theme }: { darkMode: boolean, theme: string })
     };
 
     const createDataRef = useRef(createData);
-    // Ensure we always use the latest createData function to avoid stale closures but without 
+    // Ensure we always use the latest createData function to avoid stale closures but without
     // triggering the createData function to be recreated on every render
     createDataRef.current = createData;
 
@@ -789,12 +790,6 @@ const ExampleInner = ({ darkMode, theme }: { darkMode: boolean, theme: string })
             setInitialLoad(false);
         }
     }, [dataSize]);
-
-
-    const [chartThemes, setChartThemes] = useState(defaultChartThemes);
-    useEffect(() => {
-        setChartThemes(darkMode ? defaultChartThemes.map((theme) => theme + '-dark') : defaultChartThemes);
-    }, [darkMode]);
 
     return (
         <>
@@ -823,12 +818,36 @@ const ExampleInner = ({ darkMode, theme }: { darkMode: boolean, theme: string })
                                 theme={gridTheme}
                                 ref={gridRef}
                                 modules={modules}
-                                gridOptions={gridOptions}
                                 columnDefs={columnDefs}
-                                chartThemes={chartThemes}
                                 rowData={rowData}
+                                defaultColDef={defaultColDef}
+                                sideBar={sideBar}
+                                components={components}
+                                columnTypes={columnTypes}
+                                dataTypeDefinitions={dataTypeDefinitions}
+                                statusBar={statusBar}
+                                chartThemes={chartThemes}
+                                chartThemeOverrides={chartThemeOverrides}
+                                excelStyles={excelStyles}
+                                enableFilterHandlers={true}
+                                rowDragManaged={true}
+                                rowDragMultiRow={true}
+                                rowGroupPanelShow={isSmall ? undefined : 'always'}
+                                pivotPanelShow={'always'}
+                                cellSelection={cellSelection}
+                                rowSelection={rowSelection}
+                                enableCharts={true}
+                                undoRedoCellEditing={true}
+                                undoRedoCellEditingLimit={50}
+                                autoGroupColumnDef={groupColumn}
+                                rowNumbers={true}
+                                enableRtl={enableRtl}
+                                suppressColumnMoveAnimation={suppressColMoveAnimation}
                                 defaultCsvExportParams={defaultExportParams as CsvExportParams}
                                 defaultExcelExportParams={defaultExportParams as ExcelExportParams}
+                                getBusinessKeyForNode={getBusinessKeyForNode}
+                                initialGroupOrderComparator={initialGroupOrderComparator}
+                                onGridReady={onGridReady}
                             />
                         </div>
                     )}
@@ -841,8 +860,11 @@ const ExampleInner = ({ darkMode, theme }: { darkMode: boolean, theme: string })
 const Example = () => {
     const [darkMode] = useDarkmode();
     const [gridThemeStr] = useState<string>(() => new URLSearchParams(window.location.search).get('theme') ?? 'quartz');
+    const [small] = useState(() =>
+        IS_SSR ? false : document.documentElement.clientHeight <= 415 || document.documentElement.clientWidth < 768
+    );
 
-    return <ExampleInner darkMode={darkMode ?? false} theme={gridThemeStr} />;
+    return <ExampleInner darkMode={darkMode ?? false} theme={gridThemeStr} isSmall={small} />;
 };
 
 export default memo(Example);

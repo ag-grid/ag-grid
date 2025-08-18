@@ -1,4 +1,3 @@
-import React from 'react';
 import type { ICellRendererParams } from 'ag-grid-community';
 import styles from './Example.module.scss';
 import {
