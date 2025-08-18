@@ -10,6 +10,9 @@ export function scrollspy(
     handler: (slug: string) => void,
     { container, offset }: ScrollSpyOptions = {}
 ) {
+    if (!headings.length) {
+        return () => {};
+    }
     const entries = headings
         .map<[string, HTMLElement | null]>(({ slug }) => [slug, document.getElementById(slug)])
         .filter(<T>(entry: [string, T]): entry is [string, NonNullable<T>] => entry[1] != null);
