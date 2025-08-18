@@ -73,6 +73,6 @@ export const suppressColumnMoveAnimation = () => {
     return isFirefox || isSafari;
 };
 
-export function createDataSizeValue(rows, cols) {
+export function createDataSizeValue(rows: number, cols: number): string {
     return `${rows / 1000}x${cols}`;
 }

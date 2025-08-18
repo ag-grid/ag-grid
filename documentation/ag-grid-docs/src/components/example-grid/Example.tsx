@@ -1,9 +1,9 @@
-/* eslint-disable */
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import classnames from 'classnames';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 
+import type { CellStyleFunc, ColDef, ColGroupDef, CsvExportParams, ExcelExportParams, ExcelStyle, GridApi, GridOptions, GridReadyEvent, InitialGroupOrderComparatorParams, IRowNode, Theme } from 'ag-grid-community';
 import {
     AllCommunityModule,
     ClientSideRowModelModule,
@@ -13,11 +13,7 @@ import {
     themeMaterial,
     themeQuartz,
 } from 'ag-grid-community';
-// import 'ag-grid-community/styles/ag-grid.css';
-// import 'ag-grid-community/styles/ag-theme-alpine.css';
-// import 'ag-grid-community/styles/ag-theme-balham.css';
-// import 'ag-grid-community/styles/ag-theme-material.css';
-// import 'ag-grid-community/styles/ag-theme-quartz.css';
+
 import {
     CellSelectionModule,
     ClipboardModule,
@@ -44,29 +40,27 @@ import { AgGridReact } from 'ag-grid-react';
 import styles from './Example.module.scss';
 import { Toolbar } from './Toolbar';
 import {
-    COUNTRY_CODES,
-    COUNTRY_NAMES,
-    LANGUAGES,
-    booleanValues,
     colNames,
     countries,
-    firstNames,
+    COUNTRY_CODES,
+    COUNTRY_NAMES,
+    createRowItem,
     games,
-    lastNames,
+    LANGUAGES,
     months,
+    type RowItem
 } from './consts';
 import {
     axisLabelFormatter,
     createDataSizeValue,
     currencyFormatter,
     formatThousands,
-    pseudoRandom,
-    suppressColumnMoveAnimation,
+    suppressColumnMoveAnimation
 } from './utils';
+import { booleanCellRenderer, CountryCellRenderer, ratingRenderer } from './Renderers';
 
 const IS_SSR = typeof window === 'undefined';
 
-const helmet = [];
 
 const AgGridReactMemo = memo(AgGridReact);
 
@@ -75,104 +69,119 @@ const groupColumn = {
     width: 250,
     field: 'name',
 };
-
-function currencyCssFunc(params) {
+const defaultChartThemes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
+const excelStyles: ExcelStyle[] = [
+    {
+        id: 'v-align',
+        alignment: {
+            vertical: 'Center',
+        },
+    },
+    {
+        id: 'alphabet',
+        alignment: {
+            vertical: 'Center',
+        },
+    },
+    {
+        id: 'good-score',
+        alignment: {
+            horizontal: 'Center',
+            vertical: 'Center',
+        },
+        interior: {
+            color: '#C6EFCE',
+            pattern: 'Solid',
+        },
+        numberFormat: {
+            format: '[$$-409]#,##0',
+        },
+    },
+    {
+        id: 'bad-score',
+        alignment: {
+            horizontal: 'Center',
+            vertical: 'Center',
+        },
+        interior: {
+            color: '#FFC7CE',
+            pattern: 'Solid',
+        },
+        numberFormat: {
+            format: '[$$-409]#,##0',
+        },
+    },
+    {
+        id: 'header',
+        font: {
+            color: '#44546A',
+            size: 16,
+        },
+        interior: {
+            color: '#F2F2F2',
+            pattern: 'Solid',
+        },
+        alignment: {
+            horizontal: 'Center',
+            vertical: 'Center',
+        },
+        borders: {
+            borderTop: {
+                lineStyle: 'Continuous',
+                weight: 0,
+                color: '#8EA9DB',
+            },
+            borderRight: {
+                lineStyle: 'Continuous',
+                weight: 0,
+                color: '#8EA9DB',
+            },
+            borderBottom: {
+                lineStyle: 'Continuous',
+                weight: 0,
+                color: '#8EA9DB',
+            },
+            borderLeft: {
+                lineStyle: 'Continuous',
+                weight: 0,
+                color: '#8EA9DB',
+            },
+        },
+    },
+    {
+        id: 'currency-cell',
+        alignment: {
+            horizontal: 'Center',
+            vertical: 'Center',
+        },
+        numberFormat: {
+            format: '[$$-409]#,##0',
+        },
+    },
+    {
+        id: 'boolean-type',
+        dataType: 'Boolean',
+        alignment: {
+            vertical: 'Center',
+        },
+    },
+    {
+        id: 'country-cell',
+        alignment: {
+            indent: 4,
+        },
+    },
+];
+const currencyCssFunc: CellStyleFunc = (params) => {
     if (params.value != null && params.value < 0) {
         return { color: 'red', fontWeight: 'bold' };
     }
-    return {};
+    return undefined;
 }
 
-export class CountryCellRendererJs {
-    eGui;
-    currValue;
 
-    init(params) {
-        this.updateFlag(params.value);
-    }
 
-    getGui() {
-        return this.eGui;
-    }
-
-    updateFlag(value) {
-        this.currValue = value;
-        this.eGui = document.createElement('span');
-        this.eGui.style.cursor = 'default';
-        this.eGui.style.overflow = 'hidden';
-        this.eGui.style.textOverflow = 'ellipsis';
-
-        if (value === undefined) {
-            return null;
-        } else if (value == null || value === '' || value === '(Select All)') {
-            this.eGui.innerHTML = value;
-        } else {
-            const img = document.createElement('img');
-            img.border = '0';
-            img.width = 15;
-            img.height = 10;
-            img.alt = `${value} flag`;
-            img.src = `https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[value]}.png`;
-
-            this.eGui.appendChild(img);
-            this.eGui.appendChild(document.createTextNode(' ' + value));
-        }
-    }
-
-    refresh(params) {
-        const value = params.value;
-        if (this.currValue !== value) {
-            this.updateFlag(value);
-        }
-        // We have handled the refresh to return true
-        return true;
-    }
-}
-
-function ratingRenderer(params) {
-    const { value } = params;
-    if (value === '(Select All)') {
-        return value;
-    } else if (params.isFilterRenderer && value === 0) {
-        return '(No stars)';
-    }
-
-    return (
-        <span>
-            {[...Array(5)].map((x, i) => {
-                return value > i ? (
-                    <img
-                        className={styles.starIcon}
-                        key={i}
-                        src="../images/star.svg"
-                        alt={`${value} stars`}
-                        width="12"
-                        height="12"
-                    />
-                ) : null;
-            })}
-        </span>
-    );
-}
-
-const booleanCellRenderer = ({ value, isFilterRenderer }) => {
-    if (value === true) {
-        return <span title="true" className="ag-icon ag-icon-tick content-icon" />;
-    }
-    if (value === false) {
-        return <span title="false" className="ag-icon ag-icon-cross content-icon" />;
-    }
-    if (isFilterRenderer) {
-        if (value === '(Select All)') {
-            return value;
-        }
-        return '(empty)';
-    } else {
-        return null;
-    }
-};
-
-const mobileDefaultCols = [
+const mobileDefaultCols: ColDef<RowItem>[] = [
     {
         rowDrag: true,
         field: 'name',
@@ -233,7 +242,7 @@ const mobileDefaultCols = [
     },
 ];
 
-const desktopDefaultCols = [
+const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
     {
         headerName: 'Participant',
         children: [
@@ -394,7 +403,7 @@ const hierarchicalSeriesThemeOverrides = {
     gradientLegend: {
         scale: {
             label: {
-                formatter: ({ value }) => {
+                formatter: ({ value }: { value: any }) => {
                     const num = Number(value);
                     return isNaN(num) ? value : '$' + formatThousands(num);
                 },
@@ -429,74 +438,64 @@ const chartThemeOverrides = {
     sunburst: hierarchicalSeriesThemeOverrides,
 };
 
-const themeMap = {
+const themeMap: Record<string, Theme> = {
     alpine: themeAlpine,
     balham: themeBalham,
     material: themeMaterial,
     quartz: themeQuartz,
 };
 
-const ExampleInner = ({ darkMode }) => {
+const modules = [
+    AllCommunityModule,
+    ClientSideRowModelModule,
+    CsvExportModule,
+    ClipboardModule,
+    ColumnsToolPanelModule,
+    ExcelExportModule,
+    NewFiltersToolPanelModule,
+    MasterDetailModule,
+    ColumnMenuModule,
+    ContextMenuModule,
+    MultiFilterModule,
+    CellSelectionModule,
+    RichSelectModule,
+    RowGroupingModule,
+    RowGroupingPanelModule,
+    SetFilterModule,
+    SideBarModule,
+    StatusBarModule,
+    PivotModule,
+    RowNumbersModule,
+    IntegratedChartsModule.with(AgChartsEnterpriseModule),
+    SparklinesModule.with(AgChartsEnterpriseModule),
+];
+
+const ExampleInner = ({ darkMode, theme }: { darkMode: boolean, theme: string }) => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
-    // const [gridTheme, setGridTheme] = useState(themeQuartz);
-    const [gridThemeStr, setGridThemeStr] = useState('quartz');
-    useEffect(() => {
-        const themeFromURL = new URLSearchParams(window.location.search).get('theme');
-        if (themeFromURL) {
-            setGridThemeStr(themeFromURL);
-        }
-    }, []);
+    const [gridThemeStr, setGridThemeStr] = useState(theme);
 
     const gridTheme = themeMap[gridThemeStr] || themeQuartz;
 
-    const [base64Flags, setBase64Flags] = useState();
-    const [defaultCols, setDefaultCols] = useState();
+    const [base64Flags, setBase64Flags] = useState<Record<string, any>>();
+    const [defaultCols, setDefaultCols] = useState<(ColDef | ColGroupDef)[]>();
     const [isSmall, setIsSmall] = useState(false);
-    const [defaultColCount, setDefaultColCount] = useState();
-    const [columnDefs, setColumnDefs] = useState();
-    const [rowData, setRowData] = useState();
-    const [message, setMessage] = useState();
+    const [defaultColCount, setDefaultColCount] = useState<number>(0);
+    const [columnDefs, setColumnDefs] = useState<(ColDef | ColGroupDef)[]>();
+    const [rowData, setRowData] = useState<any[]>();
+    const [message, setMessage] = useState<string>();
     const [showMessage, setShowMessage] = useState(false);
-    const [rowCols, setRowCols] = useState([]);
-    const [dataSize, setDataSize] = useState();
+    const [rowCols, setRowCols] = useState<any[]>([]);
+    const [dataSize, setDataSize] = useState<string>();
     const [initialLoad, setInitialLoad] = useState(true);
 
-    const modules = useMemo(
-        () => [
-            AllCommunityModule,
-            ClientSideRowModelModule,
-            CsvExportModule,
-            ClipboardModule,
-            ColumnsToolPanelModule,
-            ExcelExportModule,
-            NewFiltersToolPanelModule,
-            MasterDetailModule,
-            ColumnMenuModule,
-            ContextMenuModule,
-            MultiFilterModule,
-            CellSelectionModule,
-            RichSelectModule,
-            RowGroupingModule,
-            RowGroupingPanelModule,
-            SetFilterModule,
-            SideBarModule,
-            StatusBarModule,
-            PivotModule,
-            RowNumbersModule,
-            IntegratedChartsModule.with(AgChartsEnterpriseModule),
-            SparklinesModule.with(AgChartsEnterpriseModule),
-        ],
-        []
-    );
-
-    const defaultExportParams = useMemo(
+    const defaultExportParams = useMemo<ExcelExportParams | CsvExportParams>(
         () => ({
             headerRowHeight: 40,
             rowHeight: 30,
             fontSize: 14,
             addImageToCell: (rowIndex, column, value) => {
-                if (column.colId === 'country') {
+                if (column.getColId() === 'country' && base64Flags) {
                     return {
                         image: {
                             id: value,
@@ -517,19 +516,20 @@ const ExampleInner = ({ darkMode }) => {
         [base64Flags]
     );
 
-    const gridOptions = useMemo(
+
+    const gridOptions = useMemo<GridOptions>(
         () => ({
+            components: {
+                countryCellRenderer: CountryCellRenderer,
+                booleanCellRenderer: booleanCellRenderer,
+                ratingRenderer: ratingRenderer,
+            },
             statusBar: {
                 statusPanels: [
                     { statusPanel: 'agTotalAndFilteredRowCountComponent', key: 'totalAndFilter', align: 'left' },
                     { statusPanel: 'agSelectedRowCountComponent', align: 'left' },
                     { statusPanel: 'agAggregationComponent', align: 'right' },
                 ],
-            },
-            components: {
-                countryCellRenderer: CountryCellRendererJs,
-                booleanCellRenderer: booleanCellRenderer,
-                ratingRenderer: ratingRenderer,
             },
             defaultColDef: {
                 minWidth: 50,
@@ -547,7 +547,7 @@ const ExampleInner = ({ darkMode }) => {
             enableCharts: true,
             undoRedoCellEditing: true,
             undoRedoCellEditingLimit: 50,
-            quickFilterText: null,
+            quickFilterText: undefined,
             autoGroupColumnDef: groupColumn,
             rowNumbers: true,
             cellSelection: {
@@ -580,7 +580,7 @@ const ExampleInner = ({ darkMode }) => {
                         }
                         newValue = newValue.replace('$', '').replace(',', '');
                         if (newValue.includes('(')) {
-                            newValue = newValue.replace('(').replace(')');
+                            newValue = newValue.replace('(', '').replace(')', '');
                             newValue = '-' + newValue;
                         }
                         return Number(newValue);
@@ -594,188 +594,41 @@ const ExampleInner = ({ darkMode }) => {
                     valueFormatter: currencyFormatter,
                 },
             },
-            getBusinessKeyForNode: (node) => (node.data ? node.data.name : ''),
-            initialGroupOrderComparator: ({ nodeA, nodeB }) => {
-                if (nodeA.key < nodeB.key) {
+            getBusinessKeyForNode: (node: IRowNode) => (node.data ? node.data.name : ''),
+            initialGroupOrderComparator: ({ nodeA, nodeB }: InitialGroupOrderComparatorParams) => {
+                const aKey = nodeA.key || '';
+                const bKey = nodeB.key || '';
+                if (aKey < bKey) {
                     return -1;
                 }
-                if (nodeA.key > nodeB.key) {
+                if (aKey > bKey) {
                     return 1;
                 }
 
                 return 0;
             },
-            onGridReady: (event) => {
+            onGridReady: (event: GridReadyEvent) => {
                 if (!IS_SSR && document.documentElement.clientWidth <= 1024) {
                     event.api.closeToolPanel();
                 }
             },
             chartThemeOverrides: chartThemeOverrides,
-            excelStyles: [
-                {
-                    id: 'v-align',
-                    alignment: {
-                        vertical: 'Center',
-                    },
-                },
-                {
-                    id: 'alphabet',
-                    alignment: {
-                        vertical: 'Center',
-                    },
-                },
-                {
-                    id: 'good-score',
-                    alignment: {
-                        horizontal: 'Center',
-                        vertical: 'Center',
-                    },
-                    interior: {
-                        color: '#C6EFCE',
-                        pattern: 'Solid',
-                    },
-                    numberFormat: {
-                        format: '[$$-409]#,##0',
-                    },
-                },
-                {
-                    id: 'bad-score',
-                    alignment: {
-                        horizontal: 'Center',
-                        vertical: 'Center',
-                    },
-                    interior: {
-                        color: '#FFC7CE',
-                        pattern: 'Solid',
-                    },
-                    numberFormat: {
-                        format: '[$$-409]#,##0',
-                    },
-                },
-                {
-                    id: 'header',
-                    font: {
-                        color: '#44546A',
-                        size: 16,
-                    },
-                    interior: {
-                        color: '#F2F2F2',
-                        pattern: 'Solid',
-                    },
-                    alignment: {
-                        horizontal: 'Center',
-                        vertical: 'Center',
-                    },
-                    borders: {
-                        borderTop: {
-                            lineStyle: 'Continuous',
-                            weight: 0,
-                            color: '#8EA9DB',
-                        },
-                        borderRight: {
-                            lineStyle: 'Continuous',
-                            weight: 0,
-                            color: '#8EA9DB',
-                        },
-                        borderBottom: {
-                            lineStyle: 'Continuous',
-                            weight: 0,
-                            color: '#8EA9DB',
-                        },
-                        borderLeft: {
-                            lineStyle: 'Continuous',
-                            weight: 0,
-                            color: '#8EA9DB',
-                        },
-                    },
-                },
-                {
-                    id: 'currency-cell',
-                    alignment: {
-                        horizontal: 'Center',
-                        vertical: 'Center',
-                    },
-                    numberFormat: {
-                        format: '[$$-409]#,##0',
-                    },
-                },
-                {
-                    id: 'boolean-type',
-                    dataType: 'boolean',
-                    alignment: {
-                        vertical: 'Center',
-                    },
-                },
-                {
-                    id: 'country-cell',
-                    alignment: {
-                        indent: 4,
-                    },
-                },
-            ],
+            excelStyles,
             enableFilterHandlers: true,
         }),
         [isSmall]
     );
 
-    const createRowItem = (row, colCount) => {
-        const rowItem = {};
-
-        //create data for the known columns
-        const countriesToPickFrom = Math.floor(countries.length * (((row % 3) + 1) / 3));
-        const countryData = countries[(row * 19) % countriesToPickFrom];
-        rowItem.country = countryData.country;
-        rowItem.language = countryData.language;
-
-        const firstName = firstNames[row % firstNames.length];
-        const lastName = lastNames[row % lastNames.length];
-        rowItem.name = firstName + ' ' + lastName;
-
-        rowItem.game = {
-            name: games[Math.floor(((row * 13) / 17) * 19) % games.length],
-            bought: booleanValues[row % booleanValues.length],
-        };
-
-        rowItem.bankBalance = Math.round(pseudoRandom() * 100000) - 3000;
-        rowItem.rating = Math.round(pseudoRandom() * 5);
-
-        let totalWinnings = 0;
-        months.forEach((month) => {
-            const value = Math.round(pseudoRandom() * 100000) - 20;
-            rowItem[month.toLocaleLowerCase()] = value;
-            totalWinnings += value;
-        });
-        rowItem.totalWinnings = totalWinnings;
-
-        for (let i = defaultCols.length; i < defaultColCount; i++) {
-            // there was a bug in the old row generation logic which has since been fixed.
-            // However, a side effect of this is that the number of calls to `pseudoRandom` changed,
-            // so we need to call it that many times here to keep the numbers the same.
-            pseudoRandom();
-        }
-
-        //create dummy data for the additional columns
-        for (let col = defaultColCount; col < colCount; col++) {
-            var value;
-            const randomBit = pseudoRandom().toString().substring(2, 5);
-            value = colNames[col % colNames.length] + '-' + randomBit + ' - (' + (row + 1) + ',' + col + ')';
-            rowItem['col' + col] = value;
-        }
-
-        return rowItem;
-    };
-
-    const createData = () => {
+    const createData = (dataSize: string) => {
         loadInstance.current = loadInstance.current + 1;
         const loadInstanceCopy = loadInstance.current;
 
-        const colDefs = createCols();
-
-        const rowCount = getRowCount();
-        const colCount = getColCount();
+        const colCount = parseInt(dataSize?.split('x')[1] ?? '0', 10);
+        const rowCount = parseFloat(dataSize?.split('x')[0] ?? '0') * 1000;
+        const colDefs = createCols(colCount);
 
         let row = 0;
-        const data = [];
+        const data: any[] = [];
 
         // Don't show message on initial load as it causes a spike in CLS
         setShowMessage(!initialLoad);
@@ -791,7 +644,7 @@ const ExampleInner = ({ darkMode }) => {
 
             for (let i = 0; i < loopCount; i++) {
                 if (row < rowCount) {
-                    const rowItem = createRowItem(row, colCount);
+                    const rowItem = createRowItem(row, colCount, defaultCols?.length ?? 0, defaultColCount);
                     data.push(rowItem);
                     row++;
                 } else {
@@ -811,7 +664,7 @@ const ExampleInner = ({ darkMode }) => {
         }, 0);
     };
 
-    const setCountryColumnPopupEditor = (theme, gridApi) => {
+    const setCountryColumnPopupEditor = (theme: string, gridApi: GridApi) => {
         if (!columnDefs) {
             return;
         }
@@ -820,8 +673,8 @@ const ExampleInner = ({ darkMode }) => {
             return;
         }
 
-        const countryColumn = participantGroup.children.find((column) => column.field === 'country');
-        countryColumn['cellEditorPopup'] = theme.includes('material') ? true : false;
+        const countryColumn: ColDef = (participantGroup as ColGroupDef).children.find((column) => (column as ColDef).field === 'country')!;
+        countryColumn.cellEditorPopup = theme.includes('material');
 
         setColumnDefs(columnDefs);
     };
@@ -833,13 +686,13 @@ const ExampleInner = ({ darkMode }) => {
         setIsSmall(small);
 
         //put in the month cols
-        const monthGroup = {
+        const monthGroup: ColGroupDef = {
             headerName: 'Monthly Breakdown',
             children: [],
         };
 
         months.forEach((month) => {
-            monthGroup.children.push({
+            const child: ColDef = {
                 field: month.toLocaleLowerCase(),
                 width: 150,
                 enableValue: true,
@@ -854,11 +707,12 @@ const ExampleInner = ({ darkMode }) => {
                     buttons: ['reset'],
                     inRangeInclusive: true,
                 },
-            });
+            }
+            monthGroup.children.push(child);
         });
 
-        let defaultCols;
-        let defaultColCount;
+        let defaultCols: ColDef[];
+        let defaultColCount: number;
         if (small) {
             defaultCols = mobileDefaultCols;
             defaultCols = defaultCols.concat(monthGroup.children);
@@ -886,7 +740,7 @@ const ExampleInner = ({ darkMode }) => {
     }, []);
 
     useEffect(() => {
-        const flags = {};
+        const flags: Record<string, any> = {};
         const promiseArray = countries.map((country) => {
             const countryCode = COUNTRY_CODES[country.country];
 
@@ -908,20 +762,12 @@ const ExampleInner = ({ darkMode }) => {
         Promise.all(promiseArray).then(() => setBase64Flags(flags));
     }, []);
 
-    const getColCount = () => {
-        return parseInt(dataSize.split('x')[1], 10);
-    };
 
-    const getRowCount = () => {
-        const rows = parseFloat(dataSize.split('x')[0]);
 
-        return rows * 1000;
-    };
+    const createCols = (colCount: number) => {
 
-    const createCols = () => {
-        const colCount = getColCount();
         // start with a copy of the default cols
-        const columns = defaultCols.slice(0, colCount);
+        const columns = defaultCols?.slice(0, colCount) ?? [];
 
         for (let col = defaultColCount; col < colCount; col++) {
             const colName = colNames[col % colNames.length];
@@ -932,24 +778,19 @@ const ExampleInner = ({ darkMode }) => {
         return columns;
     };
 
+    const createDataRef = useRef(createData);
+    // Ensure we always use the latest createData function to avoid stale closures but without 
+    // triggering the createData function to be recreated on every render
+    createDataRef.current = createData;
+
     useEffect(() => {
         if (dataSize) {
-            createData();
+            createDataRef.current(dataSize);
             setInitialLoad(false);
         }
     }, [dataSize]);
 
-    const isAutoTheme = gridThemeStr.includes('auto');
-    let themeClass = gridThemeStr;
-    if (!themeClass.startsWith('ag-theme-')) {
-        themeClass = 'ag-theme-' + themeClass;
-        if (darkMode) {
-            themeClass += '-dark';
-        }
-    }
-    const isDarkTheme = themeClass.includes('dark');
 
-    const defaultChartThemes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
     const [chartThemes, setChartThemes] = useState(defaultChartThemes);
     useEffect(() => {
         setChartThemes(darkMode ? defaultChartThemes.map((theme) => theme + '-dark') : defaultChartThemes);
@@ -973,7 +814,11 @@ const ExampleInner = ({ darkMode }) => {
                 </span>
                 <section className={styles.gridWrapper}>
                     {gridTheme && (
-                        <div id="myGrid" style={{ flex: '1 1 auto', overflow: 'hidden' }}>
+                        <div
+                            id="myGrid"
+                            style={{ flex: '1 1 auto', overflow: 'hidden' }}
+                            data-ag-theme-mode={darkMode ? 'dark-blue' : 'light'}
+                        >
                             <AgGridReactMemo
                                 theme={gridTheme}
                                 ref={gridRef}
@@ -982,8 +827,8 @@ const ExampleInner = ({ darkMode }) => {
                                 columnDefs={columnDefs}
                                 chartThemes={chartThemes}
                                 rowData={rowData}
-                                defaultCsvExportParams={defaultExportParams}
-                                defaultExcelExportParams={defaultExportParams}
+                                defaultCsvExportParams={defaultExportParams as CsvExportParams}
+                                defaultExcelExportParams={defaultExportParams as ExcelExportParams}
                             />
                         </div>
                     )}
@@ -995,8 +840,9 @@ const ExampleInner = ({ darkMode }) => {
 
 const Example = () => {
     const [darkMode] = useDarkmode();
+    const [gridThemeStr] = useState<string>(() => new URLSearchParams(window.location.search).get('theme') ?? 'quartz');
 
-    return <ExampleInner darkMode={darkMode} />;
+    return <ExampleInner darkMode={darkMode ?? false} theme={gridThemeStr} />;
 };
 
-export default Example;
+export default memo(Example);
