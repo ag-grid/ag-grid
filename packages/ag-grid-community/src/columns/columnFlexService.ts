@@ -81,9 +81,9 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         });
 
         if (!hasFlexItems) {
-            this.beans.hiddenLayoutSvc?.revealCells('flex');
             return [];
         }
+        this.beans.hiddenLayoutSvc?.hideCells();
 
         let unfrozenItemCount = items.length;
         let unfrozenFlex = items.reduce((acc, item) => acc + item.flex, 0);

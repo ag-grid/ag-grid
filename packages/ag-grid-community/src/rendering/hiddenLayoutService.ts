@@ -14,6 +14,21 @@ export class HiddenLayoutService extends BeanStub implements NamedBean {
     // private readonly activeRequirements = new Set<string>();
     private firstDataRendered = false;
 
+    private readonly showCells = () => {
+        if (this.showCellsOnDelay) {
+            console.warn('AG Grid: DEBUNCED1 Revealing cells after they were hidden for layout purposes');
+            this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.remove('ag-delay-render');
+            this.showCellsOnDelay = false;
+        }
+    };
+    private readonly debouncedShowCells = _debounce(
+        this,
+        () => {
+            //
+        },
+        100
+    );
+
     public postConstruct(): void {
         // TODO: Make this conditional on a grid option!!!
 
@@ -38,38 +53,47 @@ export class HiddenLayoutService extends BeanStub implements NamedBean {
             this.showCellsOnDelay = true;
         });
 
-        const showCells = () => {
-            if (this.showCellsOnDelay) {
-                console.warn('AG Grid: DEBUNCED1 Revealing cells after they were hidden for layout purposes');
-                this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.remove('ag-delay-render');
-                this.showCellsOnDelay = false;
-            }
-        };
-        const debouncedShowCells = _debounce(this, showCells, 10);
-
         this.addManagedEventListeners({
             firstDataRendered: () => {
                 console.warn('AG Grid: Revealing cells after first data rendered');
-                debouncedShowCells();
+                this.debouncedShowCells();
+                setTimeout(() => {
+                    this.showCells();
+                }, 16); // Ensure the DOM is updated before revealing cells
                 this.firstDataRendered = true;
             },
-            scrollVisibilityChanged: () => {
-                console.warn('AG Grid: Revealing cells after scroll visibility changed');
-                if (this.firstDataRendered) {
-                    debouncedShowCells();
-                }
+            gridReady: () => {
+                console.warn('AG Grid: Revealing cells after grid ready');
+                this.debouncedShowCells();
+                setTimeout(() => {
+                    if (!this.firstDataRendered) {
+                        this.showCells();
+                    }
+                }, 16); // Ensure the DOM is updated before revealing cells
             },
-            bodyScroll: () => {
-                console.warn('AG Grid: Revealing cells after body scroll');
-                if (this.firstDataRendered) {
-                    debouncedShowCells();
-                }
-            },
+            // scrollVisibilityChanged: () => {
+            //     if (this.firstDataRendered) {
+            //         console.warn('AG Grid: Revealing cells after scroll visibility changed');
+            //         this.debouncedShowCells();
+            //     }
+            // },
+            // bodyScroll: () => {
+            //     if (this.firstDataRendered) {
+            //         console.warn('AG Grid: Revealing cells after body scroll');
+            //         this.debouncedShowCells();
+            //     }
+            // },
         });
     }
 
     public registerHiddenLayoutRequirement(key: string, requirement: () => boolean): void {
         // this.doesRequireHiddenLayout.set(key, requirement);
+    }
+
+    public hideCells() {
+        // this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.add('ag-delay-render');
+        // this.showCellsOnDelay = true;
+        this.debouncedShowCells();
     }
 
     public revealCells(key: string): void {
