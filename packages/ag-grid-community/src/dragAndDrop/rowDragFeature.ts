@@ -34,7 +34,7 @@ export interface IsRowValidDropPositionResult<TData = any> {
     /** The position of the rows relative to the target row */
     position?: RowDropTargetPosition;
     /** The new parent row the rows will have after dropped */
-    newParent?: RowNode<TData> | null;
+    newParent?: IRowNode<TData> | null;
     /** The target row node where the row is being dropped. */
     target?: IRowNode<TData> | null;
 }
