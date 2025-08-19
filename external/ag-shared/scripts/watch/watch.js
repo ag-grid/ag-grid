@@ -362,7 +362,7 @@ function respawnError() {
 
 function waitMs(timeMs) {
     let resolveWait;
-    setInterval(() => resolveWait(), timeMs);
+    setTimeout(() => resolveWait(), timeMs);
     return new Promise((r) => (resolveWait = r));
 }
 

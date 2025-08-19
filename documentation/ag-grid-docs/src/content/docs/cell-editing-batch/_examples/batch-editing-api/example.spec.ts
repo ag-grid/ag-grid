@@ -1,4 +1,4 @@
-import { expect, remoteGrid, test } from '@utils/grid/test-utils';
+import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     // Run through all frameworks
@@ -60,7 +60,7 @@ test.agExample(import.meta, () => {
         });
     });
 
-    test.eachFramework('GridApi + Styles', async ({ agIdFor, page }) => {
+    test.eachFramework('GridApi + Styles', async ({ agIdFor, page, remoteGrid }) => {
         const gridApi = remoteGrid(page);
 
         await gridApi.startBatchEdit();

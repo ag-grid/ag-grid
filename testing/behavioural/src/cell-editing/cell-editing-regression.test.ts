@@ -4,7 +4,14 @@ import { userEvent } from '@testing-library/user-event';
 import { vi } from 'vitest';
 
 import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import { RichSelectModule } from 'ag-grid-enterprise';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import {
+    CellSelectionModule,
+    ClipboardModule,
+    DragAndDropModule,
+    RichSelectModule,
+    RowDragModule,
+} from 'ag-grid-enterprise';
 
 import {
     TestGridsManager,
@@ -19,7 +26,7 @@ import { expect } from '../test-utils/matchers';
 describe('Cell Editing Regression', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [RichSelectModule],
+        modules: [RichSelectModule, CellSelectionModule, ClipboardModule, DragAndDropModule, RowDragModule],
     });
 
     beforeAll(() => setupAgTestIds());
@@ -106,17 +113,19 @@ describe('Cell Editing Regression', () => {
         const popup = await waitForPopup(gridDiv);
         const option = await waitFor(() => within(popup).getByRole('option', { name: '1' }));
 
+        const rect = option.getBoundingClientRect();
+
         // agRichSelectCellEditor derives the item clicked from the click event, so we need to simulate a click with clientY
         // to ensure the correct item is selected
         fireEvent(
             option,
             new MouseEvent('click', {
                 bubbles: true,
-                clientY: 24,
+                clientY: rect.height * 2 - 1,
             })
         );
 
-        await userEvent.click(option, {});
+        await userEvent.click(option);
 
         await asyncSetTimeout(1);
 
@@ -199,6 +208,164 @@ describe('Cell Editing Regression', () => {
 
             expect(onCellEditingStopped).toHaveBeenCalledTimes(1);
             expect(onCellEditingStopped).toHaveBeenCalledWith(expected);
+        });
+    });
+
+    describe('AG-15699 - cellValueChange source', () => {
+        let user: ReturnType<typeof userEvent.setup>;
+
+        const testACell = async (
+            onCellValueChanged: jest.Mock<any, any, any>,
+            editAction: (api: GridApi, gridDiv: HTMLElement, cell: HTMLElement) => Promise<void>,
+            extraOptions?: GridOptions
+        ) => {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'field',
+                        cellEditor: 'agTextCellEditor',
+                        editable: true,
+                    },
+                ],
+                rowData: [{ field: 'A Value' }, { field: 'A 2nd Value' }],
+                onCellValueChanged: ({ source }) => onCellValueChanged(source),
+                ...extraOptions,
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            await asyncSetTimeout(1);
+            const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'field'));
+            await editAction(api, gridDiv, cell);
+            return onCellValueChanged;
+        };
+
+        beforeEach(() => {
+            user = userEvent.setup({ skipHover: true });
+        });
+
+        test('dblClick edit should have source=edit', async () => {
+            const onCellValueChanged = await testACell(jest.fn(), async (api, gridDiv, cell) => {
+                await user.dblClick(cell);
+                const inputElement = await waitForInput(gridDiv, cell);
+                await user.type(inputElement, '15');
+                await user.keyboard('{Enter}');
+                expect(cell).toHaveTextContent('15');
+            });
+
+            expect(onCellValueChanged).toHaveBeenCalledTimes(1);
+            expect(onCellValueChanged).toHaveBeenCalledWith('edit');
+        });
+
+        test.skip('fillHandle edit should have source=rangeSvc', async () => {
+            const onCellValueChanged = await testACell(
+                jest.fn(),
+                async (api, gridDiv, source) => {
+                    const target = getByTestId(gridDiv, agTestIdFor.cell('1', 'field'));
+
+                    // Use the abstracted helper function for complete fill handle operation
+                    await performFillHandleDrag({ api, source, target });
+
+                    expect(source).toHaveTextContent('A Value');
+                    expect(target).toHaveTextContent('A Value');
+
+                    expect(api.getCellValue({ rowNode: api.getRowNode('0')!, colKey: 'field' })).toEqual('A Value');
+                    expect(api.getCellValue({ rowNode: api.getRowNode('1')!, colKey: 'field' })).toEqual('A Value');
+                },
+                {
+                    cellSelection: {
+                        handle: {
+                            mode: 'fill',
+                        },
+                    },
+                }
+            );
+
+            expect(onCellValueChanged).toHaveBeenCalledTimes(1);
+        });
+
+        test('copy/paste edit should have source=paste', async () => {
+            const onCellValueChanged = await testACell(jest.fn(), async (api, gridDiv, cell) => {
+                await user.click(cell);
+                const target = getByTestId(gridDiv, agTestIdFor.cell('1', 'field'));
+
+                // Use the grid's built-in selection API, because jsdom's events click event doesn't trigger mouseDown correctly
+                api.setFocusedCell(0, 'field');
+                await user.keyboard('{Control>}c{/Control}');
+
+                api.setFocusedCell(1, 'field');
+                await user.keyboard('{Control>}v{/Control}');
+
+                // give the grid time to re-render
+                await asyncSetTimeout(1);
+
+                expect(target).toHaveTextContent('A Value');
+            });
+
+            expect(onCellValueChanged).toHaveBeenCalledTimes(1);
+            expect(onCellValueChanged).toHaveBeenCalledWith('paste');
+        });
+
+        test('bulk edit should have source=bulk', async () => {
+            const onCellValueChanged = await testACell(
+                jest.fn(() => {
+                    console.log();
+                }),
+                async (api, gridDiv, source) => {
+                    const target = getByTestId(gridDiv, agTestIdFor.cell('1', 'field'));
+
+                    await user.click(source);
+                    api.setFocusedCell(0, 'field');
+                    api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['field'] });
+
+                    await userEvent.keyboard('1');
+                    const input = await waitForInput(gridDiv, source);
+                    await userEvent.type(input, '5');
+                    await asyncSetTimeout(1);
+                    expect(api.getEditingCells()).toHaveLength(1);
+                    await userEvent.keyboard('{Control>}{Enter}{/Control}');
+                    await asyncSetTimeout(100);
+
+                    expect(source).toHaveTextContent('15');
+                    expect(target).toHaveTextContent('15');
+
+                    expect(api.getCellValue({ rowNode: api.getRowNode('0')!, colKey: 'field' })).toEqual('15');
+                    expect(api.getCellValue({ rowNode: api.getRowNode('1')!, colKey: 'field' })).toEqual('15');
+                },
+                {
+                    cellSelection: true,
+                }
+            );
+
+            expect(onCellValueChanged).toHaveBeenCalledTimes(2);
+            expect(onCellValueChanged).toHaveBeenNthCalledWith(1, 'bulk');
+            expect(onCellValueChanged).toHaveBeenNthCalledWith(2, 'bulk');
+        });
+
+        test('ctrl-d should have source=paste', async () => {
+            const onCellValueChanged = await testACell(
+                jest.fn(),
+                async (api, gridDiv, source) => {
+                    const target = getByTestId(gridDiv, agTestIdFor.cell('1', 'field'));
+
+                    api.setFocusedCell(0, 'field');
+                    api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['field'] });
+
+                    await userEvent.keyboard('{Control>}d{/Control}');
+                    await asyncSetTimeout(1);
+
+                    expect(source).toHaveTextContent('A Value');
+                    expect(target).toHaveTextContent('A Value');
+
+                    expect(api.getCellValue({ rowNode: api.getRowNode('0')!, colKey: 'field' })).toEqual('A Value');
+                    expect(api.getCellValue({ rowNode: api.getRowNode('1')!, colKey: 'field' })).toEqual('A Value');
+                },
+                {
+                    cellSelection: true,
+                }
+            );
+
+            expect(onCellValueChanged).toHaveBeenCalledTimes(1);
+            expect(onCellValueChanged).toHaveBeenCalledWith('paste');
         });
     });
 });
