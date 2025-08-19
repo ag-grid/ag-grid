@@ -59,7 +59,12 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
             rowNode,
         };
 
-        return userFunc(params);
+        const userState = userFunc(params);
+        if (this.isExpanded(rowNode.id!) !== userState) {
+            // sync with user defined state
+            this.toggleNode(rowNode.id!);
+        }
+        return userState;
     }
 
     public expandRows(rowIdsToExpand: string[], rowIdsToCollapse?: string[]): void {
@@ -122,7 +127,7 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     /**
      * expandAll XOR isToggled, since toggleNodes signifies a diff from expandAll.
      */
-    private isExpanded = (rowId: string) => this.expandAllStatus !== this.toggledNodes.has(rowId);
+    private isExpanded = (rowId: string) => !!this.expandAllStatus !== this.toggledNodes.has(rowId);
 
     /**
      * Cleans up sets and sets the expandAll state if provided, otherwise resets it too.
