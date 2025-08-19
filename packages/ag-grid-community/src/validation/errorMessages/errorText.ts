@@ -523,7 +523,8 @@ export const AG_GRID_ERRORS = {
             'second instance',
             secondData,
         ] as const,
-    188: () => `getRowId callback must be provided for Server Side Row Model selection to work correctly.` as const,
+    188: (props?: { feature?: string }) =>
+        `getRowId callback must be provided for Server Side Row Model ${props?.feature || 'selection'} to work correctly.` as const,
     189: ({ startRow }: { startRow: number }) =>
         `invalid value ${startRow} for startRow, the value should be >= 0` as const,
     190: ({ rowGroupId, data }: { rowGroupId: string | undefined; data: any }) =>
