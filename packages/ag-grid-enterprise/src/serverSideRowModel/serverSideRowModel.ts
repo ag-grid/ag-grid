@@ -157,7 +157,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private verifyProps(): void {
         if (_isRowSelection(this.gos) && !this.gos.exists('getRowId')) {
-            _warn(188);
+            _warn(188, { feature: 'selection' });
         }
     }
 
@@ -464,20 +464,12 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.pauseStoreUpdateListening = paused;
     }
 
-    public expandAll(value: boolean): void {
+    public forEachNodeTransactional(cb: (node: RowNode, index?: number) => void): void {
         // if we don't pause store updating, we are needlessly
         // recalculating row-indexes etc, and also getting rendering
         // engine to re-render (listens on ModelUpdated event)
         this.pauseStoreUpdateListening = true;
-        this.forEachNode((node) => {
-            if (node.stub) {
-                return;
-            }
-
-            if (node.hasChildren()) {
-                node.setExpanded(value);
-            }
-        });
+        this.forEachNode(cb);
         this.pauseStoreUpdateListening = false;
         this.onStoreUpdated();
     }

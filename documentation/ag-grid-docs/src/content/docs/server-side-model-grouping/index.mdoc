@@ -31,15 +31,14 @@ grouping details.
 The properties relevant to Row Grouping in the request are shown below:
 
 ```ts
-// IServerSideGetRowsRequest
-{
+type IServerSideGetRowsRequest = {
     // row group columns
     rowGroupCols: ColumnVO[];
 
     // what groups the user is viewing
     groupKeys: string[];
-
-    ... // other params
+    
+    // ... // other params
 }
 ```
 
@@ -82,7 +81,7 @@ Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note th
   * **\[United States, Swimming]**
 * Note **\[Zimbabwe]** and **\[Zimbabwe, Swimming]** are visibly open by default.
 * Note **\[United States, Swimming]** is not visibly open by default, as the parent group 'United States' is not open. However when 'United States' is opened, it's 'Swimming' group is opened by default.
-* Selecting a group row and clicking 'Route of Selected' will print the route to the selected node to the developer console.
+* Selecting a group row and clicking 'Route of Selected' prints the route to the selected node to the developer console.
 
 {% gridExampleRunner title="Open by Default" name="open-by-default" /%}
 
@@ -122,19 +121,25 @@ This also means that there will be additional requests and delays in loading the
 
 ## Expand All / Collapse All
 
-It is possible to expand and collapse all group rows using the `expandAll()` and `collapseAll()` grid API's.
+Group rows can be expanded or collapsed using the `expandAll()` and `collapseAll()` grid API's. By default, these operations apply only to **loaded group rows** (not all groups). To expand/collapse **all groups**, including those not yet loaded, set `ssrmExpandAllAffectsAllRows: true` in your grid options.
+
+{% gridExampleRunner title="expand-all-affects-all-rows" name="expand-all-affects-all-rows"  exampleHeight=540 /%}
+
+The example above demonstrates the following configuration:
 
 ```{% frameworkTransform=true %}
-// Expand all group rows
+// First button click expands all loaded group rows
 api.expandAll();
 
-// Collapse all group rows
+// Click on the second button collapses all group rows
 api.collapseAll();
+
+// Checking the checkbox applies the following:
+api.setGridOptions({ ssrmExpandAllAffectsAllRows: true });
+
+// Now calling the first button expands all group rows, including those not yet loaded:
+api.expandAll();
 ```
-
-Calling `expandAll()` and `collapseAll()` will impact **all loaded group nodes**, including those not visible due to their containing group been closed. This means there could potentially be a huge number of groups expanded, so this method should be used very wisely to not create massive amount of server requests and loading a large amount of data.
-
-Calling `expandAll()` and `collapseAll()` will have no impact on rows yet to be loaded.
 
 To open only specific groups, e.g. only groups at the top level, then use the `forEachNode()` callback and open / close the row using `setExpanded()` as follows:
 
@@ -149,17 +154,17 @@ api.forEachNode(node => {
 
 The example below demonstrates these techniques. Note the following:
 
-* Clicking 'Expand All' will expand all loaded group rows. Doing this when the grid initially loads will expand all Year groups. Clicking it a second time (after Year groups have loaded) will cause all Year groups as well as their children Country groups to be expanded - this is a heavier operation with 100's of rows to expand.
+* Clicking 'Expand All' expands all loaded group rows. Doing this when the grid initially loads expands all Year groups. Clicking it a second time (after Year groups have loaded) causes all Year groups as well as their children Country groups to be expanded - this is a heavier operation with 100's of rows to expand.
 
-* Clicking 'Collapse All' will collapse all rows.
+* Clicking 'Collapse All' collapses all rows.
 
-* Clicking 'Expand Top Level Only' will expand Years only, even if more group rows are loaded..
+* Clicking 'Expand Top Level Only' expands Years only, even if more group rows are loaded.
 
 {% gridExampleRunner title="Expand All" name="expand-all" /%}
 
 ## Providing Child Counts
 
-By default, the grid will not show row counts beside the group names. If you do want row counts, you need to implement the `getChildCount(dataItem)` callback for the grid. The callback provides you with the row data; it is your application's responsibility to know what the child row count is. The suggestion is you set this information into the row data item you provide to the grid.
+By default, the grid does not show row counts beside the group names. If you do want row counts, you need to implement the `getChildCount(dataItem)` callback for the grid. The callback provides you with the row data; it is your application's responsibility to know what the child row count is. The suggestion is you set this information into the row data item you provide to the grid.
 
 {% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getChildCount"] /%}
 
@@ -182,7 +187,7 @@ In the example below, all rows are modified so that the rows look something like
 
 ```js
 // sample contents of row data
-{
+const rowData = {
     // country field is complex object
     country: {
         name: 'Ireland',
@@ -206,7 +211,7 @@ Then the columns are set up so that country uses a `valueGetter` that uses the f
 
 ## Filters
 
-By default the grid will fully purge the grid when impacted by the change in filters. The grid can be configured to only refresh when the group has been directly impacted by enabling `serverSideOnlyRefreshFilteredGroups`. Be aware, this can mean your grid may have empty group rows. This is because the grid will not refresh the groups above the groups it deems impacted by the filter.
+By default, changing filters fully purges the grid. Though, it can be configured to only refresh when the group has been directly impacted by enabling `serverSideOnlyRefreshFilteredGroups`. Be aware, this can mean your grid may have empty group rows. This is because the grid does not refresh the groups above the groups it deems impacted by the filter.
 
 In the example below, note the following:
 
