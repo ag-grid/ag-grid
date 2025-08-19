@@ -262,8 +262,12 @@ export class CellCtrl extends BeanStub {
         this.rangeFeature?.setComp(comp);
         this.rowResizeFeature?.refreshRowResizer();
 
-        // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
-        this.showValue(false, true);
+        if (startEditing && this.isCellEditable()) {
+            this.editSvc?.startEditing(this, { startedEdit: false, source: 'api', silent: true });
+        } else {
+            // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
+            this.showValue(false, true);
+        }
 
         if (this.onCompAttachedFuncs.length) {
             this.onCompAttachedFuncs.forEach((func) => func());
