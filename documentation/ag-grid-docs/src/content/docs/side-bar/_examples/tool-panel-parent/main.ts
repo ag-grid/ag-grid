@@ -27,6 +27,7 @@ const toolPanel: ToolPanelDef = {
     labelKey: 'columns',
     iconKey: 'columnsToolPanel',
     toolPanel: 'agColumnsToolPanel',
+    toolPanelParams: { suppressRowGroups: true, suppressValues: true, suppressPivotMode: true },
 };
 
 function passModal() {
@@ -72,21 +73,11 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'athlete', filter: 'agTextColumnFilter', minWidth: 200 },
         { field: 'country', minWidth: 180 },
         { field: 'date', minWidth: 150 },
+        { field: 'gold', minWidth: 150 },
+        { field: 'silver', minWidth: 150 },
     ],
-    defaultColDef: {
-        flex: 1,
-        minWidth: 100,
-        // allow every column to be aggregated
-        enableValue: true,
-        // allow every column to be grouped
-        enableRowGroup: true,
-        // allow every column to be pivoted
-        enablePivot: true,
-        filter: true,
-    },
-    autoGroupColumnDef: {
-        minWidth: 200,
-    },
+    defaultColDef: { flex: 1, minWidth: 100, filter: true },
+    autoGroupColumnDef: { minWidth: 200 },
     sideBar: { toolPanels: [toolPanel], hideButtons: true, hiddenByDefault: true },
 };
 
