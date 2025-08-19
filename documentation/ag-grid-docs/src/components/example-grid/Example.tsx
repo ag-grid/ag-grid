@@ -11,7 +11,6 @@ import type {
     GridApi,
     GridOptions,
     GridReadyEvent,
-    IRowNode,
     InitialGroupOrderComparatorParams,
     RowSelectionOptions,
     SideBarDef,
@@ -19,8 +18,6 @@ import type {
 } from 'ag-grid-community';
 import {
     AllCommunityModule,
-    ClientSideRowModelModule,
-    CsvExportModule,
     themeAlpine,
     themeBalham,
     themeMaterial,
@@ -44,7 +41,6 @@ import {
     RowNumbersModule,
     SetFilterModule,
     SideBarModule,
-    SparklinesModule,
     StatusBarModule,
 } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
@@ -78,8 +74,6 @@ const themeMap: Record<string, Theme> = {
 
 const modules = [
     AllCommunityModule,
-    ClientSideRowModelModule,
-    CsvExportModule,
     ClipboardModule,
     ColumnsToolPanelModule,
     ExcelExportModule,
@@ -98,7 +92,6 @@ const modules = [
     PivotModule,
     RowNumbersModule,
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
-    SparklinesModule.with(AgChartsEnterpriseModule),
 ];
 
 const statusBar: GridOptions['statusBar'] = {
@@ -119,7 +112,6 @@ const rowSelection: RowSelectionOptions = {
 };
 const suppressColMoveAnimation = suppressColumnMoveAnimation();
 
-const getBusinessKeyForNode = (node: IRowNode) => (node.data ? node.data.name : '');
 const initialGroupOrderComparator = ({ nodeA, nodeB }: InitialGroupOrderComparatorParams) => {
     const aKey = nodeA.key || '';
     const bKey = nodeB.key || '';
@@ -371,23 +363,22 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
                                 chartThemes={chartThemes}
                                 chartThemeOverrides={chartThemeOverrides}
                                 excelStyles={excelStyles}
-                                enableFilterHandlers={true}
-                                rowDragManaged={true}
-                                rowDragMultiRow={true}
+                                enableFilterHandlers
+                                rowDragManaged
+                                rowDragMultiRow
                                 rowGroupPanelShow={isSmall ? undefined : 'always'}
                                 pivotPanelShow={'always'}
                                 cellSelection={cellSelection}
                                 rowSelection={rowSelection}
-                                enableCharts={true}
-                                undoRedoCellEditing={true}
+                                enableCharts
+                                undoRedoCellEditing
                                 undoRedoCellEditingLimit={50}
                                 autoGroupColumnDef={autoGroupColDef}
-                                rowNumbers={true}
+                                rowNumbers
                                 enableRtl={enableRtl}
                                 suppressColumnMoveAnimation={suppressColMoveAnimation}
                                 defaultCsvExportParams={defaultExportParams as CsvExportParams}
                                 defaultExcelExportParams={defaultExportParams as ExcelExportParams}
-                                getBusinessKeyForNode={getBusinessKeyForNode}
                                 initialGroupOrderComparator={initialGroupOrderComparator}
                                 onGridReady={onGridReady}
                             />

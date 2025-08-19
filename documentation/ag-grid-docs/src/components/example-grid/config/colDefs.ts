@@ -107,6 +107,9 @@ const mobileDefaultCols: ColDef<RowItem>[] = [
         field: 'country',
         width: 150,
         cellRenderer: CountryCellRenderer,
+        cellRendererParams: {
+            deferRender: true,
+        },
         cellClass: 'v-align',
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
@@ -150,7 +153,7 @@ const mobileDefaultCols: ColDef<RowItem>[] = [
 
 const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
     {
-        headerName: 'Participant 2',
+        headerName: 'Participant',
         children: [
             {
                 rowDrag: true,
@@ -189,6 +192,9 @@ const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
                 field: 'country',
                 width: 150,
                 cellRenderer: CountryCellRenderer,
+                cellRendererParams: {
+                    deferRender: true,
+                },
                 cellClass: ['country-cell', 'v-align'],
                 enableRowGroup: true,
                 enablePivot: true,
@@ -266,7 +272,7 @@ const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
                     'currency-cell': 'typeof x == "number"',
                 },
                 enableValue: true,
-                aggFunc: 'sum',
+                aggFunc: 'avg',
                 cellDataType: 'currency',
                 filter: 'agNumberColumnFilter',
             },
