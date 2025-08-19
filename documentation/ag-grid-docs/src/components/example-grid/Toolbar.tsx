@@ -1,8 +1,9 @@
 import { Select } from '@ag-website-shared/components/select/Select';
 import { trackDemoToolbar, trackOnceDemoToolbar } from '@utils/analytics';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+import type { ChangeEvent, RefObject } from 'react';
+
 import type { GridApi } from 'ag-grid-community';
-import type { RefObject, ChangeEvent } from 'react';
 
 import styles from './Toolbar.module.scss';
 import { createDataSizeValue } from './utils';
@@ -50,7 +51,6 @@ export const Toolbar = ({
     }
 
     function onThemeChanged(newValue: SelectOption) {
-
         if (!gridRef.current?.api) {
             return;
         }
@@ -95,10 +95,9 @@ export const Toolbar = ({
     const dataSizeOptions = useMemo(
         () =>
             rowCols.map(([rows, cols]) => {
-
                 return {
                     label: `${rows.toLocaleString()} Rows, ${cols.toLocaleString()} Cols`,
-                    value: createDataSizeValue(rows, cols)
+                    value: createDataSizeValue(rows, cols),
                 };
             }),
         [rowCols]
@@ -159,7 +158,6 @@ export const Toolbar = ({
                         id="global-filter"
                         style={{ flex: 1 }}
                     />
-
                 </div>
             </div>
             <div className={styles.scrollIndicator}></div>

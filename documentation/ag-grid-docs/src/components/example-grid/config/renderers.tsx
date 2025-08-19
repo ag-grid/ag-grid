@@ -1,8 +1,7 @@
 import type { ICellRendererParams } from 'ag-grid-community';
+
 import styles from '../Example.module.scss';
-import {
-    COUNTRY_CODES
-} from '../data';
+import { COUNTRY_CODES } from '../data';
 
 interface RatingRendererParams extends ICellRendererParams {
     isFilterRenderer?: boolean;
@@ -12,11 +11,7 @@ export const CountryCellRenderer = ({ value }: ICellRendererParams) => {
     if (value === undefined) {
         return <span style={{ cursor: 'default', overflow: 'hidden', textOverflow: 'ellipsis' }} />;
     } else if (value == null || value === '' || value === '(Select All)') {
-        return (
-            <span style={{ cursor: 'default', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {value || ''}
-            </span>
-        );
+        return <span style={{ cursor: 'default', overflow: 'hidden', textOverflow: 'ellipsis' }}>{value || ''}</span>;
     } else {
         return (
             <span style={{ cursor: 'default', overflow: 'hidden', textOverflow: 'ellipsis' }}>

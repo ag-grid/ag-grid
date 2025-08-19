@@ -149,7 +149,7 @@ export const FinanceExample: React.FC<Props> = ({
                         item.price < 10
                             ? item.price * change
                             : // Increase price if it is too low, so it does not hang around 0
-                            Math.random() * 40 + 10;
+                              Math.random() * 40 + 10;
 
                     const timeline = item.timeline.slice(1, item.timeline.length).concat(Number(price.toFixed(2)));
 
@@ -180,16 +180,16 @@ export const FinanceExample: React.FC<Props> = ({
             breakpointConfig.tickerColumnWidth === 'auto'
                 ? { flex: 1 }
                 : {
-                    initialWidth: breakpointConfig.tickerColumnWidth as number,
-                    minWidth: breakpointConfig.tickerColumnWidth as number,
-                };
+                      initialWidth: breakpointConfig.tickerColumnWidth as number,
+                      minWidth: breakpointConfig.tickerColumnWidth as number,
+                  };
         const timelineWidthDefs =
             breakpointConfig.timelineColumnWidth === 'auto'
                 ? { flex: 1 }
                 : {
-                    initialWidth: breakpointConfig.timelineColumnWidth as number,
-                    minWidth: breakpointConfig.timelineColumnWidth as number,
-                };
+                      initialWidth: breakpointConfig.timelineColumnWidth as number,
+                      minWidth: breakpointConfig.timelineColumnWidth as number,
+                  };
         const allColDefs: ColDef[] = [
             {
                 field: 'ticker',

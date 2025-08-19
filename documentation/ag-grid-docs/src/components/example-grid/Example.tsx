@@ -15,7 +15,7 @@ import type {
     InitialGroupOrderComparatorParams,
     RowSelectionOptions,
     SideBarDef,
-    Theme
+    Theme,
 } from 'ag-grid-community';
 import {
     AllCommunityModule,
@@ -52,7 +52,15 @@ import { AgGridReact } from 'ag-grid-react';
 import styles from './Example.module.scss';
 import { Toolbar } from './Toolbar';
 import { chartThemeOverrides, getDefaultChartThemes } from './config/chartOverrides';
-import { autoGroupColDef, columnTypes, dataTypeDefinitions, largeColCount, largeDefaultCols, smallColCount, smallDefaultCols } from './config/colDefs';
+import {
+    autoGroupColDef,
+    columnTypes,
+    dataTypeDefinitions,
+    largeColCount,
+    largeDefaultCols,
+    smallColCount,
+    smallDefaultCols,
+} from './config/colDefs';
 import { excelStyles } from './config/excelStyles';
 import { COUNTRY_CODES, colNames, countries, createRowItem } from './data';
 import { createDataSizeValue, suppressColumnMoveAnimation } from './utils';
@@ -110,8 +118,6 @@ const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
 };
 const suppressColMoveAnimation = suppressColumnMoveAnimation();
-
-
 
 const getBusinessKeyForNode = (node: IRowNode) => (node.data ? node.data.name : '');
 const initialGroupOrderComparator = ({ nodeA, nodeB }: InitialGroupOrderComparatorParams) => {
@@ -348,11 +354,7 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
                 ></Toolbar>
                 <section className={styles.gridWrapper}>
                     {gridTheme && (
-                        <div
-                            id="myGrid"
-                            style={{ flex: '1 1 auto', overflow: 'hidden' }}
-                            className={`${themeClass}`}
-                        >
+                        <div id="myGrid" style={{ flex: '1 1 auto', overflow: 'hidden' }} className={`${themeClass}`}>
                             <AgGridReactMemo
                                 theme={gridTheme}
                                 ref={gridRef}
