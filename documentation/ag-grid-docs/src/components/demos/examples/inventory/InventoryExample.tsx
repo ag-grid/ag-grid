@@ -9,8 +9,6 @@ import type {
     ValueGetterParams,
 } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { ExcelExportModule, MasterDetailModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -192,7 +190,6 @@ export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 </div>
                 <div className={`${themeClass} ${styles.grid}`}>
                     <AgGridReact
-                        theme="legacy"
                         ref={gridRef}
                         columnDefs={colDefs}
                         rowData={rowData}

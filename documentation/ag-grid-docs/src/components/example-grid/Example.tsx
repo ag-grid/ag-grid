@@ -134,6 +134,7 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
 
     const gridTheme = themeMap[gridThemeStr] || themeQuartz;
     const chartThemes = getDefaultChartThemes(darkMode);
+    const themeClass = darkMode ? `ag-theme-${gridThemeStr}-dark` : `ag-theme-${gridThemeStr}`;
 
     const [base64Flags, setBase64Flags] = useState<Record<string, any>>();
     const [defaultCols, setDefaultCols] = useState<(ColDef | ColGroupDef)[]>();
@@ -350,7 +351,7 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
                         <div
                             id="myGrid"
                             style={{ flex: '1 1 auto', overflow: 'hidden' }}
-                            data-ag-theme-mode={darkMode ? 'dark-blue' : 'light'}
+                            className={`${themeClass}`}
                         >
                             <AgGridReactMemo
                                 theme={gridTheme}
