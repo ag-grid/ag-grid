@@ -81,13 +81,16 @@ describe('Cell Editing Regression', () => {
                     field: 'code',
                     cellEditor: 'agRichSelectCellEditor',
                     cellEditorParams: {
-                        values: [0, 1],
+                        values: [0, 1, 2, 3],
                     },
-                    valueGetter: ({ data: { code } }) =>
-                        ({
+                    valueGetter: ({ data: { code } }) => {
+                        return {
                             0: '0 - zero',
                             1: '1 - one',
-                        })[code],
+                            2: '2 - two',
+                            3: '3 - three',
+                        }[code];
+                    },
                     valueSetter: ({ newValue, data }) => {
                         const valueChanged = data.code !== newValue;
                         if (valueChanged) {
@@ -99,41 +102,67 @@ describe('Cell Editing Regression', () => {
                     editable: true,
                 },
             ],
-            rowData: [{ code: 0 }],
+            rowData: [{ code: 0 }, { code: 2 }],
         });
 
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(1);
 
-        const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'code'));
-        await userEvent.dblClick(cell);
+        // FIRST EDIT
+        const cell0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'code'));
+        await userEvent.dblClick(cell0);
 
         await asyncSetTimeout(1);
 
-        const popup = await waitForPopup(gridDiv);
-        const option = await waitFor(() => within(popup).getByRole('option', { name: '1' }));
+        const popup0 = await waitForPopup(gridDiv);
+        const option0 = await waitFor(() => within(popup0).getByRole('option', { name: '1' }));
 
-        const rect = option.getBoundingClientRect();
+        const rect0 = option0.getBoundingClientRect();
 
         // agRichSelectCellEditor derives the item clicked from the click event, so we need to simulate a click with clientY
         // to ensure the correct item is selected
         fireEvent(
-            option,
+            option0,
             new MouseEvent('click', {
                 bubbles: true,
-                clientY: rect.height * 2 - 1,
+                clientY: rect0.height * 2 - 1,
             })
         );
 
-        await userEvent.click(option);
-
+        await userEvent.click(option0);
         await asyncSetTimeout(1);
 
         expect(getAllRows(api)[0].data.code).toBe(1);
+        expect(getAllRows(api)[1].data.code).toBe(2);
+        expect(cell0).toHaveTextContent('1 - one');
 
-        // api.refreshCells();
+        // SECOND EDIT
+        const cell1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'code'));
+        await userEvent.dblClick(cell1);
 
-        expect(cell).toHaveTextContent('1 - one');
+        await asyncSetTimeout(100);
+
+        const popup1 = await waitForPopup(gridDiv);
+        const option1 = await waitFor(() => within(popup1).getByRole('option', { name: '3' }));
+
+        const rect1 = option1.getBoundingClientRect();
+
+        // agRichSelectCellEditor derives the item clicked from the click event, so we need to simulate a click with clientY
+        // to ensure the correct item is selected
+        fireEvent(
+            option1,
+            new MouseEvent('click', {
+                bubbles: true,
+                clientY: rect1.height * 10 - 1,
+            })
+        );
+
+        await userEvent.click(option1);
+        await asyncSetTimeout(100);
+
+        expect(getAllRows(api)[0].data.code).toBe(1);
+        expect(getAllRows(api)[1].data.code).toBe(3);
+        expect(cell1).toHaveTextContent('3 - three');
     });
 
     // Regression test for first cell edit event newValue is Symbol(unedited)
