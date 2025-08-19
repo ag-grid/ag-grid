@@ -16,12 +16,19 @@ export interface StageExecuteParams<TData = any> {
     afterColumnsChanged?: boolean;
 }
 
-export interface IRowNodeStage<TResult = any, TData = any> {
+export interface IRowNodeStage<TData = any> {
     step: ClientSideRowModelStage;
     refreshProps: Set<keyof GridOptions>;
-    execute(params: StageExecuteParams<TData>): TResult;
+    execute(params: StageExecuteParams<TData>): void;
 }
 
-export interface IRowGroupStage<TResult = any, TData = any> extends IRowNodeStage<TResult, TData> {
+export interface IRowGroupStage<TData = any> extends IRowNodeStage<TData> {
     getNode(id: string): RowNode<TData> | undefined;
+}
+
+export interface IRowFlattenStage<TData = any> extends IRowNodeStage<TData> {
+    /** The maximum uiLevel, computed during execute */
+    readonly maxUiLevel: number;
+
+    execute(params: StageExecuteParams<TData>): RowNode<TData>[];
 }

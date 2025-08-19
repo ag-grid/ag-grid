@@ -286,6 +286,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
         rowNode.setUiLevel(uiLevel);
 
+        this.serverSideRowModel.noteMaxUiLevel(uiLevel);
+
         if (rowNode.footer) {
             return;
         }

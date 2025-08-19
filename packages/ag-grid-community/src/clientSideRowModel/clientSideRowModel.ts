@@ -22,7 +22,7 @@ import type {
     RefreshModelParams,
 } from '../interfaces/iClientSideRowModel';
 import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
-import type { IRowGroupStage, IRowNodeStage } from '../interfaces/iRowNodeStage';
+import type { IRowFlattenStage, IRowGroupStage, IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { ChangedPath } from '../utils/changedPath';
@@ -50,7 +50,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     // standard stages
     private filterStage?: IRowNodeStage;
     private sortStage?: IRowNodeStage;
-    private flattenStage?: IRowNodeStage<RowNode[]>;
+    private flattenStage?: IRowFlattenStage;
 
     // enterprise stages
     private groupStage?: IRowGroupStage;
@@ -95,6 +95,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private rowNodesCountReady: boolean = false;
     private rowCountReady: boolean = false;
     private orderedStages: IRowNodeStage[];
+
+    /**
+     * True if there is already a rowNode that has uiLevel > 0
+     * Computed during the flatten stage
+     */
+    public hasHierarchy(): boolean {
+        const flattenStage = this.flattenStage;
+        return (flattenStage?.maxUiLevel || 0) > 0;
+    }
 
     public postConstruct(): void {
         this.orderedStages = [

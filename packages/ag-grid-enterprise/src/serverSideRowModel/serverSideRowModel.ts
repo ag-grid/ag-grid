@@ -93,6 +93,26 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private managingPivotResultColumns = false;
 
+    // Tracks the maximum uiLevel seen during the last display index computation
+    private maxUiLevel: number = -1;
+
+    /**
+     * Internal: record a uiLevel observed during display index computation.
+     */
+    public noteMaxUiLevel(uiLevel: number): void {
+        if (uiLevel > this.maxUiLevel) {
+            this.maxUiLevel = uiLevel;
+        }
+    }
+
+    /**
+     * True if there is already a RowNode with uiLevel > 0.
+     * O(1): based on maxUiLevel computed during setDisplayIndexes.
+     */
+    public hasHierarchy(): boolean {
+        return this.maxUiLevel > 0;
+    }
+
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(): boolean {
         return false;
@@ -267,6 +287,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         }
         this.rootNode.childStore = this.destroyBean(this.rootNode.childStore)!;
         this.nodeManager.clear();
+        // clear cached hierarchy state as the store is gone
+        this.maxUiLevel = -1;
     }
 
     public refreshAfterSort(newSortModel: SortModelItem[], params: StoreRefreshAfterParams): void {
@@ -342,6 +364,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.rootNode = new RowNode(this.beans);
         this.rootNode.group = true;
         this.rootNode.level = -1;
+        // reset cached hierarchy state for a fresh start
+        this.maxUiLevel = -1;
 
         if (this.datasource) {
             this.storeParams = this.createStoreParams();
@@ -437,6 +461,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         if (!rootStore) {
             return;
         }
+        // recompute maxUiLevel for this pass
+        this.maxUiLevel = -1;
         rootStore.setDisplayIndexes({ value: 0 }, { value: 0 }, 0);
     }
 

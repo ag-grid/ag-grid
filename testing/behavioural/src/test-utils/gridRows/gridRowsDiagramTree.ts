@@ -306,6 +306,14 @@ export class GridRowsDiagramTree {
             result += ' rowIndex:' + row.rowIndex;
         }
 
+        if (gridRows.options.printLevel) {
+            result += ' level:' + row.level;
+        }
+
+        if (gridRows.options.printUiLevel) {
+            result += ' uiLevel:' + row.uiLevel;
+        }
+
         if (columns) {
             for (const column of columns) {
                 const value = gridRows.api.getCellValue({ rowNode: row, colKey: column });

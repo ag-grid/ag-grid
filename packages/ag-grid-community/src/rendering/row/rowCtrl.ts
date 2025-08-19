@@ -1,4 +1,4 @@
-import { _setAriaExpanded, _setAriaRowIndex } from '../../agStack/utils/aria';
+import { _setAriaExpanded, _setAriaLevel, _setAriaRowIndex } from '../../agStack/utils/aria';
 import { _isBrowserSafari } from '../../agStack/utils/browser';
 import { _getActiveDomElement } from '../../agStack/utils/document';
 import {
@@ -144,10 +144,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private lastMouseDownOnDragger = false;
 
-    private rowLevel: number;
+    private rowLevel: number = -1;
     public rowStyles: RowStyle;
     private readonly emptyStyle: RowStyle = {};
     private readonly suppressRowTransform: boolean;
+    // Cache to avoid redundant aria-level DOM updates
+    private ariaLevel: number | null = null;
 
     private updateColumnListsPending = false;
 
@@ -176,7 +178,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.initRowBusinessKey();
 
         this.rowFocused = beans.focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
-        this.rowLevel = calculateRowLevel(this.rowNode);
 
         this.setRowType();
         this.setAnimateFlags(animateIn);
@@ -281,12 +282,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const comp = gui.rowComp;
 
+        // Ensure rowLevel is computed correctly and ARIA level is set initially based on uiLevel for accessibility
+        this.onUiLevelChanged();
+
         const initialRowClasses = this.getInitialRowClasses(gui.containerType);
         initialRowClasses.forEach((name) => comp.toggleCss(name, true));
 
         this.executeSlideAndFadeAnimations(gui);
 
-        if (this.rowNode.group) {
+        if (this.rowNode.group || this.rowNode.master) {
             _setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
 
@@ -817,7 +821,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             cellFocused: this.onCellFocusChanged.bind(this),
             cellFocusCleared: this.onCellFocusChanged.bind(this),
             paginationChanged: this.onPaginationChanged.bind(this),
-            modelUpdated: this.refreshFirstAndLastRowStyles.bind(this),
+            modelUpdated: this.onModelUpdated.bind(this),
             columnMoved: () => this.updateColumnLists(),
         });
 
@@ -1351,16 +1355,34 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onUiLevelChanged(): void {
-        const newLevel = calculateRowLevel(this.rowNode);
-        if (this.rowLevel != newLevel) {
+        const { rowNode, allRowGuis, rowLevel } = this;
+
+        const newLevel = calculateRowLevel(rowNode);
+        if (rowLevel != newLevel) {
+            this.rowLevel = newLevel;
+            const classToRemove = 'ag-row-level-' + rowLevel;
             const classToAdd = 'ag-row-level-' + newLevel;
-            const classToRemove = 'ag-row-level-' + this.rowLevel;
-            this.allRowGuis.forEach((gui) => {
-                gui.rowComp.toggleCss(classToAdd, true);
-                gui.rowComp.toggleCss(classToRemove, false);
-            });
+            for (const gui of allRowGuis) {
+                const rowComp = gui.rowComp;
+                rowComp.toggleCss(classToRemove, false);
+                rowComp.toggleCss(classToAdd, true);
+            }
         }
-        this.rowLevel = newLevel;
+
+        this.updateAriaLevel();
+    }
+
+    private updateAriaLevel(): void {
+        const { beans, allRowGuis, rowNode } = this;
+        const uiLevel = rowNode.uiLevel;
+        const ariaLevel: number | null = uiLevel >= 0 && beans.rowModel.hasHierarchy() ? uiLevel + 1 : null;
+        // Skip if nothing changed since last set
+        if (this.ariaLevel !== ariaLevel) {
+            this.ariaLevel = ariaLevel;
+            for (const gui of allRowGuis) {
+                _setAriaLevel(gui.element, ariaLevel);
+            }
+        }
     }
 
     private isFirstRowOnPage(): boolean {
@@ -1383,6 +1405,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             this.lastRowOnPage = newLast;
             this.allRowGuis.forEach((gui) => gui.rowComp.toggleCss('ag-row-last', newLast));
         }
+    }
+
+    protected onModelUpdated(): void {
+        this.refreshFirstAndLastRowStyles();
+        this.updateAriaLevel();
     }
 
     public getAllCellCtrls(): CellCtrl[] {

@@ -9,6 +9,9 @@ export interface RowBounds {
 export type RowModelType = 'infinite' | 'viewport' | 'clientSide' | 'serverSide';
 
 export interface IRowModel {
+    /** True if there is already a rowNode that has uiLevel > 0 */
+    hasHierarchy(): boolean;
+
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode | undefined;
 

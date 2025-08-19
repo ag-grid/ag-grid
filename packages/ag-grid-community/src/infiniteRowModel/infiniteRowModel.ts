@@ -16,6 +16,10 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
     private rowHeight: number;
     private cacheParams: InfiniteCacheParams;
 
+    public hasHierarchy(): boolean {
+        return false;
+    }
+
     public getRowBounds(index: number): RowBounds {
         return {
             rowHeight: this.rowHeight,

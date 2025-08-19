@@ -88,7 +88,7 @@ export function _setAriaInvalid(element: Element, invalid: boolean) {
     _toggleAriaAttribute(element, 'invalid', invalid);
 }
 
-export function _setAriaLevel(element: Element, level: number): void {
+export function _setAriaLevel(element: Element, level: number | null): void {
     _toggleAriaAttribute(element, 'level', level);
 }
 

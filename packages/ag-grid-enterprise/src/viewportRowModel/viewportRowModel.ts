@@ -14,6 +14,10 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     private rowHeight: number;
     private datasource: IViewportDatasource;
 
+    public hasHierarchy(): boolean {
+        return false;
+    }
+
     /**
      * Used to see if setRowData has been called inside of the viewportChanged event context,
      * if so the new rows are already being calculated, and the model does not need updated

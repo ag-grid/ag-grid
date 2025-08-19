@@ -17,8 +17,10 @@ import {
     _shouldRowBeRendered,
 } from './flattenUtils';
 
-export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, NamedBean {
+export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
     beanName = 'flattenStage' as const;
+
+    public maxUiLevel = -1;
 
     public refreshProps: Set<keyof GridOptions<any>> = new Set([
         'groupHideParentOfSingleChild',
@@ -42,6 +44,8 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
         const topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
 
         const details = _getFlattenDetails(this.gos);
+        // Reset max level for this execution before traversing the tree
+        this.maxUiLevel = -1;
 
         this.recursivelyAddToRowsToDisplay(details, topList, result, skipLeafNodes, 0);
 
@@ -168,6 +172,12 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
         } else {
             result.push(rowNode);
         }
-        rowNode.setUiLevel(details.isGroupMultiAutoColumn ? 0 : uiLevel);
+        if (details.isGroupMultiAutoColumn) {
+            uiLevel = 0;
+        }
+        if (uiLevel > this.maxUiLevel) {
+            this.maxUiLevel = uiLevel;
+        }
+        rowNode.setUiLevel(uiLevel);
     }
 }

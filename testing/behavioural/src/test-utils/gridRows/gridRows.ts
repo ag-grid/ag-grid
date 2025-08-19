@@ -30,6 +30,12 @@ export interface GridRowsOptions<TData = any> {
     /** If true, will print row indices. Default is false. */
     printRowIndices?: boolean;
 
+    /** If true, will print the level of each row in the diagram. Default is false. */
+    printLevel?: boolean;
+
+    /** If true, will print the UI level of each row in the diagram. Default is false. */
+    printUiLevel?: boolean;
+
     /** If true, the diagram will show hidden rows, like the children of collapsed groups, also if they do not appear in the displayed rows. Default is true */
     printHiddenRows?: boolean;
 
@@ -54,6 +60,7 @@ export class GridRows<TData = any> {
     #displayedRowsSet: Set<RowNode<TData>> | null = null;
     #rowsHtmlElements: HTMLElement[] | null = null;
     #rowsHtmlElementsMap: Map<string, HTMLElement> | null = null;
+    #maxDisplayedUiLevel: number | null = null;
     readonly #detailGridRows: Map<IRowNode<TData> | GridApi, GridRows<any>>;
 
     public constructor(
@@ -127,7 +134,27 @@ export class GridRows<TData = any> {
     }
 
     public get rowsHtmlElements(): HTMLElement[] {
-        return (this.#rowsHtmlElements ??= Array.from(this.gridHtmlElement?.querySelectorAll('[row-id]') ?? []));
+        return (this.#rowsHtmlElements ??= this.#loadRowsHtmlElements());
+    }
+
+    /**
+     * Lazily computes and caches the maximum uiLevel among all currently displayed (visible) rows.
+     * Returns -1 when there are no displayed rows.
+     */
+    public get maxDisplayedUiLevel(): number {
+        this.#maxDisplayedUiLevel ??= this.#loadMaxDisplayedUiLevel();
+        return this.#maxDisplayedUiLevel;
+    }
+
+    #loadMaxDisplayedUiLevel(): number {
+        let max = -1;
+        for (const row of this.displayedRows) {
+            const lvl = row.uiLevel;
+            if (typeof lvl === 'number' && lvl > max) {
+                max = lvl;
+            }
+        }
+        return max;
     }
 
     public getAllRowNodesData(): (TData | undefined)[] {
@@ -282,6 +309,30 @@ export class GridRows<TData = any> {
         addDiagramToError(error, diagram, this.label);
         Error.captureStackTrace(error, callerFn);
         return error;
+    }
+
+    #loadRowsHtmlElements(): HTMLElement[] {
+        const gridDiv = this.gridHtmlElement;
+        const result: HTMLElement[] = [];
+        if (!gridDiv) {
+            return result;
+        }
+        const rootElement = gridDiv.querySelector('.ag-root');
+        const nodes = gridDiv.querySelectorAll('[row-id]');
+        for (let i = 0, len = nodes.length; i < len; ++i) {
+            const el = nodes[i];
+            if (rootElement) {
+                let p: Element | null = el as HTMLElement;
+                while (p && !p.classList.contains('ag-root')) {
+                    p = p.parentElement;
+                }
+                if (p !== rootElement) {
+                    continue; // belongs to a nested grid
+                }
+            }
+            result.push(el as HTMLElement);
+        }
+        return result;
     }
 }
 

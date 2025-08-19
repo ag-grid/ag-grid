@@ -110,6 +110,13 @@ export class GridRowsDomValidator {
             }
         }
 
+        const uiLevel = row.uiLevel;
+        const ariaLevel = rowElement.getAttribute('aria-level');
+        const expected = uiLevel >= 0 && gridRows.maxDisplayedUiLevel > 0 ? String(uiLevel + 1) : null;
+        if (ariaLevel !== expected) {
+            rowErrors.add(`ARIA level mismatch, expected aria-level=${expected}, got ${ariaLevel}`);
+        }
+
         if (!row.detail) {
             this.checkRowDomCells(gridRows, row, rowElement, rowErrors);
         }

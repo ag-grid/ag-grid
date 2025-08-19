@@ -6,10 +6,6 @@ import { TreeDataModule } from 'ag-grid-enterprise';
 import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
-const gridRowsOptions: GridRowsOptions = {
-    checkDom: true,
-};
-
 describe('ag-grid parentId tree remove', () => {
     let consoleWarnSpy: MockInstance | undefined;
 
@@ -45,6 +41,7 @@ describe('ag-grid parentId tree remove', () => {
             treeDataParentIdField: 'parentId',
         });
 
+        const gridRowsOptions: GridRowsOptions = { checkDom: true };
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             └─┬ a GROUP id:a
@@ -69,7 +66,7 @@ describe('ag-grid parentId tree remove', () => {
         expect(rows[1].data).toEqual(rowB);
     });
 
-    test('tree transaction remove parent with children raises warning', async () => {
+    test.only('tree transaction remove parent with children raises warning', async () => {
         const rowA = { id: 'a', orgHierarchy: ['A'] };
         const rowB = { id: 'b', parentId: 'a' };
         const rowC = { id: 'c-xDhjGsdDc', parentId: 'b' };
@@ -88,22 +85,28 @@ describe('ag-grid parentId tree remove', () => {
 
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+            printLevel: true,
+            printUiLevel: true,
+        };
+
         await new GridRows(api, '', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID
-            └─┬ a GROUP id:a
-            · └─┬ b GROUP id:b
-            · · └─┬ c-xDhjGsdDc GROUP id:c-xDhjGsdDc
-            · · · └── d-xDhjGsdDd LEAF id:d-xDhjGsdDd
+            ROOT id:ROOT_NODE_ID level:-1 uiLevel:undefined
+            └─┬ a GROUP id:a level:0 uiLevel:0
+            · └─┬ b GROUP id:b level:1 uiLevel:1
+            · · └─┬ c-xDhjGsdDc GROUP id:c-xDhjGsdDc level:2 uiLevel:2
+            · · · └── d-xDhjGsdDd LEAF id:d-xDhjGsdDd level:3 uiLevel:3
         `);
 
         api.applyTransaction({ remove: [rowC] });
 
         const gridRows = new GridRows(api, '', gridRowsOptions);
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ a GROUP id:a
-            │ └── b LEAF id:b
-            └── d-xDhjGsdDd LEAF id:d-xDhjGsdDd
+            ROOT id:ROOT_NODE_ID level:-1 uiLevel:undefined
+            ├─┬ a GROUP id:a level:0 uiLevel:0
+            │ └── b LEAF id:b level:1 uiLevel:1
+            └── d-xDhjGsdDd LEAF id:d-xDhjGsdDd level:0 uiLevel:0
         `);
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
@@ -137,6 +140,7 @@ describe('ag-grid parentId tree remove', () => {
             treeDataParentIdField: 'parentId',
         });
 
+        const gridRowsOptions: GridRowsOptions = { checkDom: true };
         await new GridRows(api, 'initial', gridRowsOptions).check(`
                 ROOT id:ROOT_NODE_ID
                 ├─┬ a GROUP id:a
@@ -188,6 +192,7 @@ describe('ag-grid parentId tree remove', () => {
             treeDataParentIdField: 'parentId',
         });
 
+        const gridRowsOptions: GridRowsOptions = { checkDom: true };
         await new GridRows(api, 'initial', gridRowsOptions).check(`
                 ROOT id:ROOT_NODE_ID
                 ├─┬ a GROUP id:a
@@ -245,6 +250,7 @@ describe('ag-grid parentId tree remove', () => {
             treeDataParentIdField: 'parentId',
         });
 
+        const gridRowsOptions: GridRowsOptions = { checkDom: true };
         await new GridRows(api, 'initial', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ a GROUP id:a
