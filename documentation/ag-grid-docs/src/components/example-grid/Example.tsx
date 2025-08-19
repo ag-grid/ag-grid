@@ -16,13 +16,7 @@ import type {
     SideBarDef,
     Theme,
 } from 'ag-grid-community';
-import {
-    AllCommunityModule,
-    themeAlpine,
-    themeBalham,
-    themeMaterial,
-    themeQuartz,
-} from 'ag-grid-community';
+import { AllCommunityModule, themeAlpine, themeBalham, themeMaterial, themeQuartz } from 'ag-grid-community';
 import {
     CellSelectionModule,
     ClipboardModule,
