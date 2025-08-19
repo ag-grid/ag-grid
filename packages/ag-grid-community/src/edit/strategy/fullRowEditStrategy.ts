@@ -69,14 +69,16 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         position: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null | undefined,
         _source: 'api' | 'ui' = 'ui',
-        ignoreEventKey?: boolean
+        ignoreEventKey?: boolean,
+        cellStartedEdit?: boolean,
+        silent?: boolean
     ): void {
         const { rowNode } = position;
         if (this.rowNode !== rowNode) {
             super.cleanupEditors(position);
         }
 
-        this.dispatchRowEvent({ rowNode }, 'rowEditingStarted');
+        this.dispatchRowEvent({ rowNode }, 'rowEditingStarted', silent);
         this.startedRows.push(rowNode);
 
         const columns = this.beans.visibleCols.allCols;
@@ -99,7 +101,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         this.rowNode = rowNode;
 
-        this.setupEditors(cells, position, true, event, ignoreEventKey);
+        this.setupEditors(cells, position, cellStartedEdit, event, ignoreEventKey);
     }
 
     protected override processValidationResults(

@@ -62,7 +62,9 @@ export abstract class BaseEditStrategy extends BeanStub {
         position: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null,
         source?: EditSource,
-        ignoreEventKey?: boolean
+        ignoreEventKey?: boolean,
+        cellStartedEdit?: boolean,
+        silent?: boolean
     ): void;
 
     public onCellFocusChanged(event: CellFocusedEvent | CellFocusClearedEvent): void {
@@ -261,8 +263,13 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     public dispatchRowEvent(
         position: Required<EditRowPosition>,
-        type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged'
+        type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged',
+        silent?: boolean
     ): void {
+        if (silent) {
+            return;
+        }
+
         const rowCtrl = _getRowCtrl(this.beans, position)!;
 
         if (rowCtrl) {

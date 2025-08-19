@@ -262,12 +262,8 @@ export class CellCtrl extends BeanStub {
         this.rangeFeature?.setComp(comp);
         this.rowResizeFeature?.refreshRowResizer();
 
-        if (startEditing && this.isCellEditable()) {
-            this.editSvc?.startEditing(this, { startedEdit: true, source: 'api' });
-        } else {
-            // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
-            this.showValue(false, true);
-        }
+        // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
+        this.showValue(false, true);
 
         if (this.onCompAttachedFuncs.length) {
             this.onCompAttachedFuncs.forEach((func) => func());
@@ -511,6 +507,15 @@ export class CellCtrl extends BeanStub {
             this.rowCtrl?.recreateCell(this);
         } else {
             this.refreshCell(params);
+        }
+
+        if (this.hasEdit && this.editCompDetails) {
+            const { editSvc, comp } = this;
+
+            if (!comp?.getCellEditor() && editSvc!.isEditing(this, { withOpenEditor: true })) {
+                // editor was cleaned up by virtualisation, needs to be re-created
+                editSvc!.startEditing(this, { startedEdit: false, source: 'api', silent: true });
+            }
         }
     }
 
