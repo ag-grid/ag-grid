@@ -1,5 +1,5 @@
+import type { IComponent } from '../agStack/interfaces/iComponent';
 import type { AgGridCommon } from './iCommon';
-import type { IComponent } from './iComponent';
 import type { FilterAction } from './iFilter';
 
 export interface BaseToolPanelParams<TData = any, TContext = any, TState = any> extends AgGridCommon<TData, TContext> {

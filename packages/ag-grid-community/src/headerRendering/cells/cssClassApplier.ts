@@ -1,3 +1,4 @@
+import { _missing } from '../../agStack/utils/generic';
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
@@ -7,7 +8,6 @@ import type { GridOptionsService } from '../../gridOptionsService';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { ICellComp } from '../../rendering/cell/cellCtrl';
-import { _missing } from '../../utils/generic';
 import type { IAbstractHeaderCellComp } from './abstractCell/abstractHeaderCellCtrl';
 
 const CSS_FIRST_COLUMN = 'ag-column-first';

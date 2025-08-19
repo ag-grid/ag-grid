@@ -3,10 +3,11 @@
 import * as matchers from '@testing-library/jest-dom/matchers';
 import { expect } from 'vitest';
 
-function createMessage(tag: string, received: unknown, expected: unknown, pass: boolean): string {
-    return `Expected ${tag} value ${received} ${pass ? 'not ' : ''}to equal ${expected}`;
-}
-
+/**
+ * Extend built-in toHaveValue matcher.
+ * This matcher is used to check the value of form elements like input, select, and textarea.
+ * It handles different input types such as checkbox, radio, number, date, and time.
+ */
 expect.extend({
     ...(matchers as any),
     toHaveValue(received: HTMLElement, expected: unknown) {
@@ -23,8 +24,13 @@ expect.extend({
                 pass = receivedValue === expected;
             } else if (type === 'number' || type === 'range') {
                 receivedValue = (received as HTMLInputElement).valueAsNumber;
-                expectedValue = typeof expected === 'string' ? parseFloat(expected) : expected;
-                pass = receivedValue === expectedValue;
+
+                if (expected !== undefined && receivedValue !== undefined && isNaN(expected as number)) {
+                    pass = isNaN(receivedValue as number);
+                } else {
+                    expectedValue = typeof expected === 'string' ? parseFloat(expected) : expected;
+                    pass = receivedValue === expectedValue;
+                }
             } else if (['date', 'datetime-local', 'time'].includes(type)) {
                 receivedValue = (received as HTMLInputElement).valueAsDate;
                 if (expected instanceof Date) {
@@ -54,5 +60,9 @@ expect.extend({
         return (matchers.toHaveValue as any).bind(this)(received, expected as any);
     },
 });
+
+function createMessage(tag: string, received: unknown, expected: unknown, pass: boolean): string {
+    return `Expected ${tag} value ${received} ${pass ? 'not ' : ''}to equal ${expected}`;
+}
 
 export { expect };

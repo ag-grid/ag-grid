@@ -1,4 +1,4 @@
-import type { Theme } from './Theme';
+import type { Theme } from '../agStack/theming/theme';
 import type { themeQuartz } from './parts/theme/themes';
 
 type ThemeParams<T> = T extends Theme<infer U> ? keyof U : never;

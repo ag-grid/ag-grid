@@ -1,11 +1,11 @@
-import { KeyCode } from '../constants/keyCode';
+import { KeyCode } from '../agStack/constants/keyCode';
+import type { IEventEmitter } from '../agStack/interfaces/iEventEmitter';
+import type { PopupEventParams } from '../agStack/interfaces/iPopup';
+import { _removeFromParent } from '../agStack/utils/dom';
+import { _jsonEquals } from '../agStack/utils/generic';
 import type { AgColumn } from '../entities/agColumn';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { FilterAction, FilterWrapperParams } from '../interfaces/iFilter';
-import type { PopupEventParams } from '../interfaces/iPopup';
-import { _removeFromParent } from '../utils/dom';
-import { _jsonEquals } from '../utils/generic';
 import { Component } from '../widgets/component';
 import type {
     FilterActionEvent,

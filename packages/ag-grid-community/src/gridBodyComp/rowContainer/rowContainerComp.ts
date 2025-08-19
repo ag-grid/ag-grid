@@ -1,10 +1,11 @@
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
+import { _ensureDomOrder } from '../../agStack/utils/dom';
 import type { BeanCollection } from '../../context/context';
 import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
-import type { ElementParams } from '../../utils/dom';
-import { _ensureDomOrder } from '../../utils/dom';
+import type { ElementParams } from '../../utils/element';
 import type { ComponentSelector } from '../../widgets/component';
-import { Component, RefPlaceholder } from '../../widgets/component';
+import { Component } from '../../widgets/component';
 import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
 import {
     RowContainerCtrl,

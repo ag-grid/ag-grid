@@ -27,6 +27,10 @@ const gridOptions = {
 }
 ```
 
+{% note %}
+When using `groupSelects: 'descendants'` or `groupSelects: 'filteredDescendants'`, group nodes will not be returned as part of `api.getSelectedNodes()` or `api.getSelectedRows()`.
+{% /note %}
+
 ## Checkboxes in Group Cells
 
 When using [Row Selection](./row-selection/) with grouping, the grid can be configured to render checkboxes in the group cell, to

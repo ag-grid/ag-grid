@@ -17,11 +17,12 @@ const GridHeaderComp = () => {
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
-        gridCtrlRef.current = eRef
-            ? context.createBean(new GridHeaderCtrl())
-            : context.destroyBean(gridCtrlRef.current);
+        if (!eRef || context.isDestroyed()) {
+            gridCtrlRef.current = context.destroyBean(gridCtrlRef.current);
+            return;
+        }
 
-        if (!eRef) return;
+        gridCtrlRef.current = context.createBean(new GridHeaderCtrl());
 
         const compProxy: IGridHeaderComp = {
             toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),

@@ -1,6 +1,5 @@
 import { BeanStub } from '../context/beanStub';
 import type { ExportParams } from '../interfaces/exportParams';
-import type { GridSerializer } from './gridSerializer';
 import type { GridSerializingSession } from './iGridSerializer';
 
 export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> extends BeanStub {
@@ -20,7 +19,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
 
     protected getData(params: P): string {
         const serializingSession = this.createSerializingSession(params);
-        return (this.beans.gridSerializer as GridSerializer).serialize(serializingSession, params);
+        return this.beans.gridSerializer!.serialize(serializingSession, params);
     }
 
     public getDefaultFileName(): string {

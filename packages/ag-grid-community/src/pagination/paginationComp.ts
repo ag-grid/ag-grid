@@ -1,17 +1,17 @@
-import { KeyCode } from '../constants/keyCode';
+import { KeyCode } from '../agStack/constants/keyCode';
+import { RefPlaceholder } from '../agStack/interfaces/agComponent';
+import { _setAriaDisabled } from '../agStack/utils/aria';
 import type { BeanCollection } from '../context/context';
 import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
-import { _setAriaDisabled } from '../utils/aria';
-import type { ElementParams } from '../utils/dom';
-import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/focus';
+import type { ElementParams } from '../utils/element';
+import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/gridFocus';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';
-import type { ComponentSelector } from '../widgets/component';
-import { RefPlaceholder } from '../widgets/component';
+import type { Component, ComponentSelector } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 import type { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
 import { PageSizeSelectorSelector } from './pageSizeSelector/pageSizeSelectorComp';
@@ -402,7 +402,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
     }
 }
 
-export const PaginationSelector: ComponentSelector = {
+export const PaginationSelector: ComponentSelector<Component> = {
     selector: 'AG-PAGINATION',
     component: PaginationComp,
 };

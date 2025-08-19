@@ -1,5 +1,50 @@
 [
     {
+        "title": "a11y & Interactive Canvases",
+        "link": "https://www.youtube.com/embed/pVtt1NHhWcw",
+        "description": "Thinking of using (canvas) to render your UI? Great idea! But let’s make it accessible. Learn how to leverage the DOM tree structure to allow users to interact with your canvas using the keyboard and a screen reader. Find out about tricky gotchas and how to work around these.",
+        "author": "Oli Legat",
+        "type": "Video",
+        "published": "07/2025",
+        "id": "pVtt1NHhWcw"
+    },
+    {
+        "title": "Efficient Data Visualisation with React and SVG",
+        "link": "https://www.youtube.com/embed/0lcQ-d2oII8",
+        "description": "See how far simple charts in React and SVG can take you, and where their limits start to surface. We'll explore the sweet spot of using React's declarative model with plain SVG elements and a touch of D3 for utility functions like scaling and path generation, before reaching the performance and complexity ceilings that call for something more robust.",
+        "author": "Ido Moshe",
+        "type": "Video",
+        "published": "07/2025",
+        "id": "0lcQ-d2oII8"
+    },
+    {
+        "title": "Build an interactive dashboard in React with AG Grid & AG Charts",
+        "link": "https://www.youtube.com//embed/cMmxeuam_uU",
+        "description": "Join James Swinton-Bland, DevRel Lead at AG Grid, for a hands-on Forge session where you'll build a fully interactive financial dashboard from scratch using React, AG Grid, and AG Charts.",
+        "author": "James Swinton-bland",
+        "type": "Video",
+        "published": "06/2025",
+        "id": "cMmxeuam_uU"
+    },
+    {
+        "title": "Building Framework Agnostic Data Visualisation Libraries",
+        "link": "https://www.youtube.com/embed/UAUJUjfeMT0",
+        "description": "Can data visualization libraries be truly framework agnostic? In this panel session, Stephen Cooper and Jacob Parker from AG Grid dive into the challenges and opportunities of building high-performance data visualization tools that work seamlessly across frameworks like React, Angular, Vue, and more.",
+        "author": "Stephen Cooper & Jacob Parker",
+        "type": "Video",
+        "published": "06/2025",
+        "id": "UAUJUjfeMT0"
+    },
+    {
+        "title": "High Performance Data Visualisation with the M4 Algorithm",
+        "link": "https://www.youtube.com/embed/AZFy0_ldwWc",
+        "description": "Rendering millions of data points in the browser can slow your app down or even crash it. In this lightning talk, Jacob Parker from AG Grid reveals how the M4 algorithm helps you achieve high-performance data visualization by selectively down-sampling and batching draw calls.",
+        "author": "Jacob Parker",
+        "type": "Video",
+        "published": "06/2025",
+        "id": "AZFy0_ldwWc"
+    },
+    {
         "title": "What Refs Can Do for You",
         "link": "https://gitnation.com/contents/what-refs-can-do-for-you",
         "description": "While Refs are considered an escape hatch there are times when you might just need to use them.In this talk, with the help of real world examples, we will look at what Refs can do for us in terms of code clarity and also performance gains. Think along the lines of minimising renders and avoiding flickering UIs. We will cover the restrictions for safe usage and for those of you already using these patterns make sure you are prepared for the changes coming in React 19.",

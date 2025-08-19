@@ -1,4 +1,4 @@
-import type { BeanCollection, ChartType, SeriesChartType } from 'ag-grid-community';
+import type { BeanCollection, ChartType, GridCheckbox, GridSelect, SeriesChartType } from 'ag-grid-community';
 import { AgCheckbox, AgSelect, Component, _areEqual, _clearElement } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
@@ -16,8 +16,8 @@ export class SeriesChartTypePanel extends Component {
 
     private seriesChartTypeGroupComp: AgGroupComponent;
     private selectedColIds: string[] = [];
-    private chartTypeComps: Map<string, AgSelect> = new Map();
-    private secondaryAxisComps: Map<string, AgCheckbox> = new Map();
+    private chartTypeComps: Map<string, GridSelect> = new Map();
+    private secondaryAxisComps: Map<string, GridCheckbox> = new Map();
 
     constructor(
         private readonly chartController: ChartController,
@@ -96,7 +96,7 @@ export class SeriesChartTypePanel extends Component {
             const isSecondaryAxisDisabled = (chartType: ChartType) =>
                 ['groupedColumn', 'stackedColumn', 'stackedArea'].includes(chartType);
 
-            const secondaryAxisComp = this.seriesChartTypeGroupComp.createManagedBean(
+            const secondaryAxisComp = this.seriesChartTypeGroupComp.createManagedBean<GridCheckbox>(
                 new AgCheckbox({
                     label: this.chartTranslation.translate('secondaryAxis'),
                     labelWidth: 'flex',
@@ -116,7 +116,7 @@ export class SeriesChartTypePanel extends Component {
                 })
             );
 
-            const chartTypeComp = seriesItemGroup.createManagedBean(
+            const chartTypeComp = seriesItemGroup.createManagedBean<GridSelect>(
                 new AgSelect({
                     options,
                     value: seriesChartType.chartType,

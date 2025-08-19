@@ -1,4 +1,7 @@
-import { KeyCode } from '../constants/keyCode';
+import { KeyCode } from '../agStack/constants/keyCode';
+import { _last } from '../agStack/utils/array';
+import { _throttle } from '../agStack/utils/function';
+import { _exists, _missing } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -16,10 +19,7 @@ import type { RowPinnedType, VerticalScrollPosition } from '../interfaces/iRowNo
 import type { RowPosition } from '../interfaces/iRowPosition';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { RowCtrl } from '../rendering/row/rowCtrl';
-import { _last } from '../utils/array';
-import { _focusNextGridCoreContainer, _isHeaderFocusSuppressed } from '../utils/focus';
-import { _throttle } from '../utils/function';
-import { _exists, _missing } from '../utils/generic';
+import { _focusNextGridCoreContainer, _isHeaderFocusSuppressed } from '../utils/gridFocus';
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */

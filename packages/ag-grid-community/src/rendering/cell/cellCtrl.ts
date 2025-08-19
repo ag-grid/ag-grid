@@ -1,3 +1,9 @@
+import { _setAriaColIndex } from '../../agStack/utils/aria';
+import { _getActiveDomElement } from '../../agStack/utils/document';
+import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../agStack/utils/dom';
+import { _findFocusableElements } from '../../agStack/utils/focus';
+import { _makeNull } from '../../agStack/utils/generic';
+import { AgPromise } from '../../agStack/utils/promise';
 import { isColumnSelectionCol, isRowNumberCol } from '../../columns/columnUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
@@ -11,7 +17,6 @@ import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
 import {
     _addGridCommonParams,
-    _getActiveDomElement,
     _getCheckboxLocation,
     _getCheckboxes,
     _isCellSelectionEnabled,
@@ -34,11 +39,7 @@ import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
-import { _setAriaColIndex } from '../../utils/aria';
-import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../utils/dom';
-import { _findFocusableElements, _isCellFocusSuppressed } from '../../utils/focus';
-import { _makeNull } from '../../utils/generic';
-import { AgPromise } from '../../utils/promise';
+import { _isCellFocusSuppressed } from '../../utils/gridFocus';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from '../dndSourceComp';
 import { DOM_DATA_KEY_CELL_CTRL } from '../renderUtils';

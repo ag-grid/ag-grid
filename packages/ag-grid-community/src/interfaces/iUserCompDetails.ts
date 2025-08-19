@@ -1,5 +1,5 @@
-import type { AgPromise } from '../utils/promise';
-import type { IComponent } from './iComponent';
+import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { AgPromise } from '../agStack/utils/promise';
 
 export interface UserCompDetails<TComp extends IComponent<any> = any> {
     componentClass: any;

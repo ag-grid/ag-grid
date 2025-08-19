@@ -18,7 +18,7 @@ export type EditInputEvents = KeyboardEvent | MouseEvent | null | undefined;
 
 export type EditNavOnValidationResult = 'block-stop' | 'revert-continue' | 'continue';
 
-export type EditSource = 'api' | 'ui' | 'paste' | 'rangeSvc' | 'fillHandle' | 'cellClear';
+export type EditSource = 'api' | 'ui' | 'paste' | 'rangeSvc' | 'fillHandle' | 'cellClear' | 'edit' | 'bulk';
 
 export type StartEditParams = {
     startedEdit?: boolean | null;
@@ -115,4 +115,6 @@ export interface IEditService extends NamedBean {
     checkNavWithValidation(position?: EditPosition, event?: Event | CellFocusedEvent): EditNavOnValidationResult;
     revertSingleCellEdit(cellPosition: Required<EditPosition>, focus?: boolean): void;
     allowedFocusTargetOnValidation(cellPosition: EditPosition): CellCtrl | undefined;
+    commitNextEdit(): void;
+    committing: boolean;
 }

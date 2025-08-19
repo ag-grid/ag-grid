@@ -44,6 +44,9 @@ export const agTestIdFor = {
     headerFilterButton(colId: string | null): string {
         return formatTestId('ag-header-cell-filter-button', { colId });
     },
+    floatingFilter(colId: string | null): string {
+        return formatTestId('ag-floating-filter', { colId });
+    },
     floatingFilterButton(colId: string | null): string {
         return formatTestId('ag-floating-filter-button', { colId });
     },

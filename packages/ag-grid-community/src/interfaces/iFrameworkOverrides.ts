@@ -1,30 +1,8 @@
-import type { LocalEventService } from '../localEventService';
-import type { AgPromise } from '../utils/promise';
+import type { LocalEventService } from '../agStack/events/localEventService';
+import type { AgFrameworkOverrides } from '../agStack/interfaces/agFrameworkOverrides';
 import type { IFrameworkEventListenerService } from './iFrameworkEventListenerService';
 
-export type FrameworkOverridesIncomingSource = 'resize-observer' | 'ensureVisible' | 'popupPositioning';
-
-export interface IFrameworkOverrides {
-    setInterval(action: any, interval?: any): AgPromise<number>;
-
-    addEventListener(
-        element: HTMLElement,
-        type: string,
-        listener: EventListenerOrEventListenerObject,
-        options?: boolean | AddEventListenerOptions
-    ): void;
-
-    /**
-     * This method is to cater for Angular's change detection.
-     * Angular uses Zones, we want to run internal AG Grid outside of Zone JS so that we do not kick off
-     * Angular change detection. Any event listener or setTimeout() or setInterval() run by our code
-     * would trigger change detection in Angular.
-     *
-     * Before events are returned to the user, those functions are wrapped in Angular's zone
-     * again so that the user's code triggers change detection as normal. See wrapOutgoing() below.
-     */
-    wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T;
-
+export interface IFrameworkOverrides extends AgFrameworkOverrides {
     /**
      * This method is to cater for Angular's change detection.
      * This is currently used for events that the user provides either via the component or via registration with the grid api.

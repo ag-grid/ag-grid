@@ -1,10 +1,10 @@
+import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { AgPromise } from '../agStack/utils/promise';
 import type { ColDef } from '../entities/colDef';
 import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import type { Column } from '../interfaces/iColumn';
-import type { AgPromise } from '../utils/promise';
 import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 import type { AgGridCommon } from './iCommon';
-import type { IComponent } from './iComponent';
 import type { IRowModel } from './iRowModel';
 import type { IRowNode } from './iRowNode';
 

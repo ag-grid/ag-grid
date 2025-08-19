@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     AgEvent,
     BeanCollection,
     Component,
@@ -24,13 +25,13 @@ import {
     KeyCode,
     _addGridCommonParams,
     _createElement,
-    _preserveRangesWhile,
     _setAriaDisabled,
     _setAriaExpanded,
     _setAriaHasPopup,
     _setAriaRole,
 } from 'ag-grid-community';
 
+import { _preserveRangesWhile } from '../misc/enterpriseDomUtils';
 import { AgMenuList } from './agMenuList';
 import { AgMenuPanel } from './agMenuPanel';
 
@@ -239,8 +240,8 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
                 eventSource,
                 ePopup,
                 event: event instanceof MouseEvent ? event : undefined,
-                column,
-                node,
+                column: column as AgColumn | null,
+                rowNode: node,
             });
         };
 

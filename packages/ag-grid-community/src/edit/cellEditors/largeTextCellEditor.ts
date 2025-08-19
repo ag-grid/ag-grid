@@ -1,10 +1,10 @@
-import { KeyCode } from '../../constants/keyCode';
-import type { ElementParams } from '../../utils/dom';
-import { _exists } from '../../utils/generic';
-import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
-import type { AgInputTextArea } from '../../widgets/agInputTextArea';
-import { AgInputTextAreaSelector } from '../../widgets/agInputTextArea';
-import { RefPlaceholder } from '../../widgets/component';
+import { KeyCode } from '../../agStack/constants/keyCode';
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
+import { _exists } from '../../agStack/utils/generic';
+import { AgInputTextAreaSelector } from '../../agStack/widgets/agInputTextArea';
+import type { ElementParams } from '../../utils/element';
+import type { GridInputTextArea } from '../../widgets/gridWidgetTypes';
+import { AgAbstractCellEditor } from './agAbstractCellEditor';
 import type { ILargeTextEditorParams } from './iLargeTextCellEditor';
 
 const LargeTextCellElement: ElementParams = {
@@ -19,7 +19,7 @@ const LargeTextCellElement: ElementParams = {
     ],
 };
 export class LargeTextCellEditor extends AgAbstractCellEditor<ILargeTextEditorParams> {
-    protected readonly eEditor: AgInputTextArea = RefPlaceholder;
+    protected readonly eEditor: GridInputTextArea = RefPlaceholder;
     private focusAfterAttached: boolean;
     private highlightAllOnFocus: boolean;
 

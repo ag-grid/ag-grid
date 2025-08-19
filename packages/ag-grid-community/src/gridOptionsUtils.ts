@@ -1,3 +1,7 @@
+import { _getDocument, _getRootNode } from './agStack/utils/document';
+import { _getElementRectWithOffset } from './agStack/utils/dom';
+import { _doOnce } from './agStack/utils/function';
+import { _missing } from './agStack/utils/generic';
 import type { GridApi } from './api/gridApi';
 import type { BeanCollection } from './context/context';
 import type {
@@ -35,9 +39,6 @@ import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
-import { _getElementRectWithOffset } from './utils/dom';
-import { _doOnce } from './utils/function';
-import { _exists, _missing } from './utils/generic';
 import { _warn } from './validation/logging';
 
 function isRowModelType(gos: GridOptionsService, rowModelType: RowModelType): boolean {
@@ -174,38 +175,6 @@ export function _setDomData(gos: GridOptionsService, element: Element, key: stri
     domData[key] = value;
 }
 
-export function _getDocument(beans: BeanCollection): Document {
-    // if user is providing document, we use the users one,
-    // otherwise we use the document on the global namespace.
-    const { gos, eGridDiv } = beans;
-    let result: Document | null = null;
-    const gridOptionsGetDocument = gos.get('getDocument');
-    if (gridOptionsGetDocument && _exists(gridOptionsGetDocument)) {
-        result = gridOptionsGetDocument();
-    } else if (eGridDiv) {
-        result = eGridDiv.ownerDocument;
-    }
-
-    if (result && _exists(result)) {
-        return result;
-    }
-
-    return document;
-}
-
-export function _getWindow(beans: BeanCollection) {
-    const eDocument = _getDocument(beans);
-    return eDocument.defaultView || window;
-}
-
-export function _getRootNode(beans: BeanCollection): Document | ShadowRoot {
-    return beans.eGridDiv.getRootNode() as Document | ShadowRoot;
-}
-
-export function _getActiveDomElement(beans: BeanCollection): Element | null {
-    return _getRootNode(beans).activeElement;
-}
-
 export function _getPageBody(beans: BeanCollection): HTMLElement | ShadowRoot {
     let rootNode: Document | ShadowRoot | HTMLElement | null = null;
     let targetEl: HTMLElement | ShadowRoot | null = null;
@@ -292,12 +261,6 @@ export function _anchorElementToMouseMoveEvent(
 
     element.style.left = `${left}px`;
     element.style.top = `${top}px`;
-}
-
-export function _isNothingFocused(beans: BeanCollection): boolean {
-    const activeEl = _getActiveDomElement(beans);
-
-    return activeEl === null || activeEl === _getDocument(beans).body;
 }
 
 export function _isAnimateRows(gos: GridOptionsService) {
@@ -722,7 +685,7 @@ export function _addGridCommonParams<T extends AgGridCommon<TData, TContext>, TD
     gos: GridOptionsService,
     params: WithoutGridCommon<T>
 ): T {
-    return gos.addGridCommonParams(params);
+    return gos.addCommon(params);
 }
 
 export type GroupingApproach = 'group' | 'treeSelfRef' | 'treeNested' | 'treePath';
@@ -751,4 +714,8 @@ export function _getGridOption<K extends keyof GridOptions>(
         _getGlobalGridOption(gridOption) ??
         (GRID_OPTION_DEFAULTS[gridOption as keyof typeof GRID_OPTION_DEFAULTS] as any)
     );
+}
+
+export function _interpretAsRightClick({ gos }: BeanCollection, event: MouseEvent): boolean {
+    return event.button === 2 || (event.ctrlKey && gos.get('allowContextMenuWithControlKey'));
 }

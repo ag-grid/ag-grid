@@ -41,7 +41,7 @@ The following is a list of all the default built in menu items with the rules ab
 * `copyWithHeaders`: Copy selected value to clipboard with headers. Shown by default.
 * `copyWithGroupHeaders`: Copy selected value to clipboard with headers and header groups. Shown by default.
 * `cut`: Cut the selected value to clipboard. Not shown by default.
-* `paste`: Always disabled (see note below). Shown by default.
+* `paste`: Paste the clipboard value into the selected cell (see note below). Shown by default.
 * `resetColumns`: Reset all columns. Not shown by default.
 * `export`: Export sub menu (containing csvExport and excelExport). Shown by default.
 * `csvExport`: Export to CSV using all default export values. Shown by default.
@@ -56,13 +56,14 @@ The following is a list of all the default built in menu items with the rules ab
 Menu items also require the relevant [Module](./modules/) to be loaded in order to be displayed.
 
 {% note %}
-The 'paste' operation in the context menu is not possible and hence always disabled.
-It is not possible because of a browser security restriction that JavaScript cannot
-take data from the clipboard without the user explicitly doing a paste command from the browser
-(e.g. {% kbd "^ Ctrl" /%}+{% kbd "V" /%} or from the browser menu). If JavaScript could do this, then websites could steal
-data from the client by accessing the clipboard maliciously. The reason why the grid keeps
-the disabled paste option in the menu is to indicate to the user that paste is possible and it provides
-the keyboard shortcut as a hint to the user.
+The 'paste' operation in the context menu uses the [Clipboard API](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API). This means 
+that if your app is running inside an iframe, or if the Clipboard API is blocked, only **blank data** will be pasted into the cell.
+
+When the Clipboard API is not available, browser security restrictions prevent JavaScript from reading clipboard data without the user explicitly performing 
+a paste action (e.g. {% kbd "^ Ctrl" /%}+{% kbd "V" /%} or selecting Paste from the browser menu).
+These restrictions exist to prevent malicious websites from stealing clipboard data.
+
+This paste option will be disabled if suppressClipboardApi={true} or if the target cell is not editable.
 {% /note %}
 
 ## Default Context Menu

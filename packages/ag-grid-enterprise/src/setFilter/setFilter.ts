@@ -1,10 +1,10 @@
 import type {
     AgColumn,
-    AgInputTextField,
     AgPromise,
     ComponentSelector,
     ElementParams,
     FilterDisplayParams,
+    GridInputTextField,
     IAfterGuiAttachedParams,
     ISetFilter,
     SetFilterHandler as ISetFilterHandler,
@@ -51,7 +51,7 @@ export class SetFilter<V = string>
 {
     public readonly filterType = 'set' as const;
 
-    private readonly eMiniFilter: AgInputTextField = RefPlaceholder;
+    private readonly eMiniFilter: GridInputTextField = RefPlaceholder;
     private readonly eFilterLoading: HTMLElement = RefPlaceholder;
     private readonly eFilterLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eSetFilterList: HTMLElement = RefPlaceholder;

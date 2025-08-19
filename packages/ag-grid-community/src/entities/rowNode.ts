@@ -1,9 +1,10 @@
+import { LocalEventService } from '../agStack/events/localEventService';
+import type { IAgEventEmitter, IEventEmitter } from '../agStack/interfaces/iEventEmitter';
 import type { DetailGridInfo } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
 import type { SelectionEventSourceType } from '../events';
 import { _getRowIdCallback } from '../gridOptionsUtils';
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
-import type { IAgEventEmitter, IEventEmitter } from '../interfaces/iEventEmitter';
 import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type {
     AgRowNodeEventListener,
@@ -14,7 +15,6 @@ import type {
     RowNodeEventType,
     RowPinnedType,
 } from '../interfaces/iRowNode';
-import { LocalEventService } from '../localEventService';
 import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
 
@@ -505,7 +505,7 @@ export class RowNode<TData = any>
             return false;
         }
 
-        if (editSvc) {
+        if (editSvc && !editSvc.committing) {
             const result = editSvc.setDataValue({ rowNode: this, column }, newValue, eventSource);
 
             if (result != null) {

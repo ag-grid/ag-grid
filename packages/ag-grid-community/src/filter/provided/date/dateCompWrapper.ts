@@ -1,10 +1,10 @@
+import { _setDisplayed } from '../../../agStack/utils/dom';
 import { _getDateCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { Context } from '../../../context/context';
 import type { ColDef } from '../../../entities/colDef';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import { _setDisplayed } from '../../../utils/dom';
 
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */

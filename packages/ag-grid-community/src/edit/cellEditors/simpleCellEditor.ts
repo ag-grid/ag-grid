@@ -1,15 +1,15 @@
-import { KeyCode } from '../../constants/keyCode';
+import { KeyCode } from '../../agStack/constants/keyCode';
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
+import { _isBrowserSafari } from '../../agStack/utils/browser';
 import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../../interfaces/iCellEditor';
-import { _isBrowserSafari } from '../../utils/browser';
-import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
-import type { AgInputTextField } from '../../widgets/agInputTextField';
-import { RefPlaceholder } from '../../widgets/component';
+import type { GridInputTextField } from '../../widgets/gridWidgetTypes';
+import { AgAbstractCellEditor } from './agAbstractCellEditor';
 import type { CellEditorInput } from './iCellEditorInput';
 
 export class SimpleCellEditor<
     TValue,
     P extends ICellEditorParams & DefaultProvidedCellEditorParams,
-    I extends AgInputTextField,
+    I extends GridInputTextField,
 > extends AgAbstractCellEditor<ICellEditorParams, TValue> {
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;

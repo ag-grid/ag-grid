@@ -1,7 +1,7 @@
+import type { IComponent } from '../../agStack/interfaces/iComponent';
 import type { FilterChangedEvent } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { AgGridCommon } from '../../interfaces/iCommon';
-import type { IComponent } from '../../interfaces/iComponent';
 import type { FilterHandler, IFilter, IFilterParams } from '../../interfaces/iFilter';
 
 export interface IFloatingFilterParent {

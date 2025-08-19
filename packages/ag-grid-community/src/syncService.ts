@@ -3,7 +3,7 @@ import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { ColDef, ColGroupDef } from './entities/colDef';
 import type { PropertyValueChangedEvent } from './gridOptionsService';
-import { _logIfDebug } from './utils/function';
+import { _logIfDebug } from './utils/log';
 
 export class SyncService extends BeanStub implements NamedBean {
     beanName = 'syncSvc' as const;

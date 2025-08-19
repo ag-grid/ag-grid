@@ -1,4 +1,4 @@
-import type { BeanCollection, ListOption } from 'ag-grid-community';
+import type { BeanCollection, GridSelect, ListOption } from 'ag-grid-community';
 import { AgSelect, Component, RefPlaceholder } from 'ag-grid-community';
 
 import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
@@ -104,7 +104,7 @@ export class PolarAxisPanel extends Component {
         this.axisGroup.addItem(labelPanelComp);
     }
 
-    private createOrientationWidget(): AgSelect {
+    private createOrientationWidget(): GridSelect {
         const options: Array<ListOption> = [
             { value: 'fixed', text: this.translate('fixed') },
             { value: 'parallel', text: this.translate('parallel') },
@@ -172,7 +172,7 @@ export class PolarAxisPanel extends Component {
         labelKey: ChartTranslationKey;
         options: Array<ListOption>;
         property: string;
-    }): AgSelect {
+    }): GridSelect {
         const { labelKey, options, property } = config;
         return this.createManagedBean(
             new AgSelect(this.options.chartAxisMenuParamsFactory.getDefaultSelectParams(property, labelKey, options))

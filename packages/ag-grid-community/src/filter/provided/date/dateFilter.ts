@@ -1,9 +1,9 @@
+import { _parseDateTimeFromString, _serialiseDate } from '../../../agStack/utils/date';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
-import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
-import { _createElement } from '../../../utils/dom';
+import { _createElement } from '../../../utils/element';
 import { _warn } from '../../../validation/logging';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';

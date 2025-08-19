@@ -41,7 +41,7 @@ const renderedThemeInfoAtom = atom((get): RenderedThemeInfo => {
     // globally install the theme CSS, because form widgets use reinterpretCSSValue
     // which requires that the CSS variable values are available
     const stylesheet = new CSSStyleSheet();
-    stylesheet.replaceSync(_asThemeImpl(theme)._getPerGridCss('apply-current-theme-params'));
+    stylesheet.replaceSync(_asThemeImpl(theme)._getPerInstanceCss('apply-current-theme-params'));
     document.adoptedStyleSheets = [stylesheet];
 
     return {

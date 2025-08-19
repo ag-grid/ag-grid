@@ -1,10 +1,10 @@
+import { _debounce } from '../../agStack/utils/function';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { IRowNode } from '../../interfaces/iRowNode';
-import { _debounce } from '../../utils/function';
 import type { CellSpan } from './rowSpanCache';
 import { RowSpanCache } from './rowSpanCache';
 

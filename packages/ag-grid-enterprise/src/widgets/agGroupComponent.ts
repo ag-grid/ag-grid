@@ -1,4 +1,12 @@
-import type { AgCheckbox, AgEvent, ComponentSelector, ElementParams } from 'ag-grid-community';
+import type {
+    AgBaseComponent,
+    AgEvent,
+    BeanCollection,
+    ComponentSelector,
+    ElementParams,
+    GridCheckbox,
+    GridToggleButton,
+} from 'ag-grid-community';
 import {
     AgCheckboxSelector,
     AgToggleButton,
@@ -6,11 +14,12 @@ import {
     KeyCode,
     RefPlaceholder,
     _createIcon,
+    _isComponent,
     _setAriaExpanded,
     _setDisplayed,
 } from 'ag-grid-community';
 
-type GroupItem = Component<any> | HTMLElement;
+type GroupItem = AgBaseComponent<BeanCollection> | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';
 type GroupDirection = 'horizontal' | 'vertical';
 
@@ -76,11 +85,11 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     private alignItems: Align | undefined;
     private useToggle: boolean;
 
-    private eToggle?: AgToggleButton;
+    private eToggle?: GridToggleButton;
     private eTitleBar?: DefaultTitleBar;
 
     private readonly eToolbar: HTMLElement = RefPlaceholder;
-    private readonly cbGroupEnabled: AgCheckbox = RefPlaceholder;
+    private readonly cbGroupEnabled: GridCheckbox = RefPlaceholder;
     private readonly eContainer: HTMLElement = RefPlaceholder;
 
     constructor(private readonly params: AgGroupComponentParams = {}) {
@@ -217,7 +226,7 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
 
     private insertItem(item: GroupItem, prepend?: boolean) {
         const container = this.eContainer;
-        const el = item instanceof Component ? item.getGui() : item;
+        const el = _isComponent(item) ? item.getGui() : item;
 
         el.classList.add('ag-group-item', `ag-${this.cssIdentifier}-group-item`);
 
@@ -236,7 +245,7 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     }
 
     public getItemIndex(item: GroupItem): number | -1 {
-        const el = item instanceof Component ? item.getGui() : item;
+        const el = _isComponent(item) ? item.getGui() : item;
         return this.items.indexOf(el);
     }
 
@@ -332,8 +341,8 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
         return titleBar;
     }
 
-    private createToggleTitleBar(): AgToggleButton {
-        const eToggle = this.createManagedBean(
+    private createToggleTitleBar(): GridToggleButton {
+        const eToggle = this.createManagedBean<GridToggleButton>(
             new AgToggleButton({
                 value: this.enabled,
                 label: this.params.title,

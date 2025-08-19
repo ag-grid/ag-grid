@@ -1,3 +1,4 @@
+import { _fuzzySuggestions } from '../../agStack/utils/fuzzyMatch';
 import type { DynamicBeanName, UserComponentName } from '../../context/context';
 import type { Column } from '../../interfaces/iColumn';
 import type {
@@ -8,7 +9,6 @@ import type {
 } from '../../interfaces/iModule';
 import type { RowModelType } from '../../interfaces/iRowModel';
 import type { RowNodeEventType, RowPinnedType } from '../../interfaces/iRowNode';
-import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
 import { ENTERPRISE_MODULE_NAMES } from '../enterpriseModuleNames';
 import { baseDocLink, getErrorLink } from '../logging';
 import { resolveModuleNames } from '../resolvableModuleNames';

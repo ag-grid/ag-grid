@@ -8,8 +8,8 @@
         "countryIcon": "",
         "startDate": "2025-06-05",
         "eventPage": "https://frontendnation.com/",
-        "collage": "",
-        "recording": ""
+        "collage": "frontend-nation-2025.webp",
+        "recording": "https://www.youtube.com/watch?v=AZFy0_ldwWc"
     },
     {
         "title": "JSNation",
@@ -20,8 +20,8 @@
         "countryIcon": "netherlands.png",
         "startDate": "2025-06-12",
         "eventPage": "https://jsnation.com/",
-        "collage": "",
-        "recording": ""
+        "collage": "jsnation-2025.webp",
+        "recording": "https://www.youtube.com/watch?v=pVtt1NHhWcw"
     },
     {
         "title": "React Summit (Europe)",
@@ -31,8 +31,8 @@
         "logoLight": "/community/events/organiser-logos/react-summit-logo-light.svg",
         "startDate": "2025-06-13",
         "countryIcon": "netherlands.png",
-        "recording": "",
-        "collage": "",
+        "recording": "https://www.youtube.com/watch?v=0lcQ-d2oII8",
+        "collage": "react-summit-amsterdam-2025.webp",
         "eventPage": "https://reactsummit.com/"
     },
     {
@@ -46,6 +46,18 @@
         "eventPage": "https://angularconnect.com/",
         "collage": "",
         "recording": ""
+    },
+    {
+        "title": "React Conf (US)",
+        "description": "For the first time, AG Grid is sponsoring React Conf - the official React conference. We're super excited to share AG Grid with the React community, as well as AG Charts, and how they work seamlessly together. We'll be at the booth, and senior engineer, Stephen Cooper, will be presenting a talk on the work we did to reduce our React bundle size by up to 40%, and how you can do the same in your own applications.",
+        "location": "Nevada, USA",
+        "logo": "/community/events/organiser-logos/react-conf-logo.svg",
+        "logoLight": "/community/events/organiser-logos/react-conf-logo-light.svg",
+        "startDate": "2025-10-07",
+        "countryIcon": "us.png",
+        "recording": "",
+        "collage": "",
+        "eventPage": "https://conf.react.dev"
     },
     {
         "title": "React Summit (US)",

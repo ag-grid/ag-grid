@@ -1,9 +1,9 @@
+import type { AgPromise } from '../agStack/utils/promise';
 import type { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
 import type { FilterUiChangedEvent } from '../events';
 import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
-import type { AgPromise } from '../utils/promise';
 import type { AgGridCommon } from './iCommon';
 import type { IFilterParams } from './iFilter';
 

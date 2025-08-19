@@ -1,4 +1,4 @@
-import { type LengthValue, paramValueToCss } from '@components/theme-builder/api';
+import { type LengthValue, gridThemeLogger, paramValueToCss } from '@components/theme-builder/api';
 import { reinterpretCSSValue, stripFloatingPointErrors } from '@components/theme-builder/model/utils';
 
 import { FormattedInput } from './FormattedInput';
@@ -11,7 +11,7 @@ export const LengthValueEditor = ({
     icon,
     swipeAdjustmentDivisor = 100,
 }: ValueEditorProps<LengthValue>) => {
-    const cssValue = paramValueToCss(param.property, value) || '';
+    const cssValue = paramValueToCss(param.property, value, gridThemeLogger) || '';
     const units = getUnit(cssValue);
     return (
         <FormattedInput

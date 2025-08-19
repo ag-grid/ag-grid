@@ -1,3 +1,5 @@
+import { _debounce } from '../../agStack/utils/function';
+import { _jsonEquals } from '../../agStack/utils/generic';
 import { _applyColumnState, _getColumnState } from '../../columns/columnStateUtils';
 import type { ColumnState, ColumnStateParams } from '../../columns/columnStateUtils';
 import type { NamedBean } from '../../context/bean';
@@ -28,8 +30,6 @@ import type {
 } from '../../interfaces/gridState';
 import type { FilterModel } from '../../interfaces/iFilter';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
-import { _debounce } from '../../utils/function';
-import { _jsonEquals } from '../../utils/generic';
 import { migrateGridStateModel } from './stateModelMigration';
 import { _convertColumnGroupState, convertColumnState } from './stateUtils';
 
@@ -368,8 +368,13 @@ export class StateService extends BeanStub implements NamedBean {
             columnSizing: columnSizingState,
             columnOrder: columnOrderState,
         } = state;
-        const shouldSetState = <TKey extends GridStateKey>(prop: TKey, propState: GridState[TKey]) =>
-            !ignoreSet?.has(prop) && (propState || source === 'api');
+        // if any column state property is provided, or from `setState`, should always apply state even if empty
+        let forceSetState = false;
+        const shouldSetState = <TKey extends GridStateKey>(prop: TKey, propState: GridState[TKey]) => {
+            const shouldSet = !ignoreSet?.has(prop) && !!(propState || source === 'api');
+            forceSetState ||= shouldSet;
+            return shouldSet;
+        };
         const columnStateMap: { [colId: string]: ColumnState } = {};
         const getColumnState = (colId: string) => {
             let columnState = columnStateMap[colId];
@@ -474,7 +479,7 @@ export class StateService extends BeanStub implements NamedBean {
         const applyOrder = !!columns?.length && !ignoreSet?.has('columnOrder');
         const columnStates = applyOrder ? columns.map((colId) => getColumnState(colId)) : Object.values(columnStateMap);
 
-        if (columnStates.length) {
+        if (columnStates.length || forceSetState) {
             this.columnStates = columnStates;
             _applyColumnState(
                 this.beans,
