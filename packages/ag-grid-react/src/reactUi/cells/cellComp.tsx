@@ -1,6 +1,6 @@
 import React, { Suspense, memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
-import {
+import type {
     CellCtrl,
     CellStyle,
     Component,
