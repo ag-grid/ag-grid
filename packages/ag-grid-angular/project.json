@@ -6,6 +6,7 @@
   "targets": {
     "updateGridAndColumnProperties": {
       "executor": "nx:run-commands",
+      "dependsOn": ["ag-grid-community:build:package"],
       "inputs": [
         "{projectRoot}/node updateGridAndColumnProperties.js",
         "{workspaceRoot}/packages/ag-grid-community/src/entities/gridOptions.ts"
