@@ -4,7 +4,7 @@ import type { AgPublicEventType, GridApi } from 'ag-grid-community';
 
 import type { TemplateEventKeys } from './test-event-types';
 
-export const createRemoteGridApiProxy = (page: Page, gridId: string = '1', eventLog: any[]): AsyncGridApi => {
+export const createRemoteGridApiProxy = (page: Page, gridId: string = '1', eventLog: EventLog): AsyncGridApi => {
     let gridReadyPromise: Promise<void> | null = null;
 
     const ensureGridReady = async () => {
@@ -16,8 +16,8 @@ export const createRemoteGridApiProxy = (page: Page, gridId: string = '1', event
         await gridReadyPromise;
     };
 
-    page.exposeFunction('logEvent', (listenerName: string, arg0: any, ...args: any[]) => {
-        eventLog.push([listenerName, arg0, ...args]);
+    page.exposeFunction('logEvent', (listenerName: AgPublicEventType, arg0: any, ...args: any[]) => {
+        eventLog.push([listenerName, arg0, ...args] as LogEntry);
     });
 
     return new Proxy(
@@ -52,7 +52,17 @@ async function callRemoteGridApi<T extends keyof GridApi>(
 ): Promise<ReturnType<GridApi[T]> | null> {
     return page.evaluate(
         ([gridId, methodName, ...args]: any[]) => {
-            const getGridApi = (window as any).getGridApi;
+            let getGridApi = (window as any).getGridApi;
+
+            if (!getGridApi) {
+                // might be running against pre v34 grid
+                const gridContainer = document.querySelector('#myGrid');
+                const cellElement = gridContainer?.querySelector('.ag-cell');
+                const gridKey = Object.keys(cellElement ?? {}).find((key) => key.startsWith('__AG'));
+                const cellCtrl = gridKey && (cellElement as any)?.[gridKey]?.cellCtrl;
+                const beans = cellCtrl?.beans;
+                (window as any)['getGridApi'] = getGridApi = () => beans?.gridApi as GridApi;
+            }
 
             if (!getGridApi) {
                 throw new Error(`window.getGridApi missing`);
@@ -114,3 +124,19 @@ export type AsyncGridApi = {
           ? (...args: P) => Promise<R>
           : never;
 };
+
+/**
+ * Represents a single log entry from the event logging system.
+ * Each entry is a tuple containing the event type and the extracted event data.
+ */
+type LogEntry<TEventType extends AgPublicEventType = AgPublicEventType> = [
+    eventType: TEventType,
+    eventData: Record<TemplateEventKeys<TEventType>, any>,
+    ...additionalArgs: any[],
+];
+
+/**
+ * Type-safe event log accumulator that maintains proper typing for log entries.
+ * Can be used with specific event types or as a general accumulator for all events.
+ */
+export type EventLog<TEventType extends AgPublicEventType = AgPublicEventType> = LogEntry<TEventType>[];
