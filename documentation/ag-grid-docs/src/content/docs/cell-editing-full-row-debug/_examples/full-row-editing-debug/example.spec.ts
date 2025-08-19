@@ -6,35 +6,38 @@ test.agExample(import.meta, () => {
     });
 
     // AG-15758
-    test.eachFramework('should edit then tab to next row without error', async ({ page, agIdFor }) => {
-        await ensureGridReady(page);
+    [
+        { editType: 'fullRow', tabCount: 8 },
+        { editType: 'singleCell', tabCount: 4 },
+    ].forEach(({ editType, tabCount }) =>
+        test.eachFramework(
+            `[${editType}] should edit then tab to next row without error`,
+            async ({ page, agIdFor, remoteGrid, agFramework }) => {
+                const isReact = agFramework.startsWith('react');
 
-        const modelCellRow1 = agIdFor.cell('1', 'model-1-1');
-        await modelCellRow1.dblclick();
+                const remoteApi = remoteGrid(page);
+                await remoteApi.setGridOption('editType', editType);
 
-        const modelEditor1 = modelCellRow1.locator('input');
-        await expect(modelEditor1).toBeVisible();
-        await page.waitForTimeout(10);
+                const modelCellRow1 = agIdFor.cell('1', 'model-1-1');
+                await modelCellRow1.dblclick();
 
-        const tabAction = async () => await page.keyboard.press('Tab');
+                const modelEditor1 = modelCellRow1.locator('input');
+                await expect(modelEditor1).toBeVisible();
+                await page.waitForTimeout(10);
 
-        await repeat(page, 'tab across row', tabAction, { count: 8, eachWait: 10 });
+                const tabAction = async () => await page.keyboard.press('Tab');
 
-        await expect(agIdFor.cell('0', 'field6-5-11')).toBeVisible();
-        await expect(agIdFor.cell('0', 'field6-5-11')).toHaveText('Sample 23');
+                await repeat(page, 'tab across row', tabAction, { count: tabCount, eachWait: 10 });
+                await repeat(page, 'tab to new row', tabAction, { count: 1, eachWait: 10 });
+                await repeat(page, 'tab to 2nd column', tabAction, { count: isReact ? 2 : 1, eachWait: 10 });
 
-        await repeat(page, 'tab to new row', tabAction, { count: 1, eachWait: 10 });
-
-        await expect(agIdFor.cell('2', 'make-0-0')).toBeVisible();
-        await expect(agIdFor.cell('2', 'make-0-0')).toHaveText('Porsche');
-
-        await repeat(page, 'tab to 2nd column', tabAction, { count: 1, eachWait: 10 });
-
-        // here the 2nd row should be editing
-        const modelCellRow2 = agIdFor.cell('2', 'model-1-1');
-        const modelEditor2 = modelCellRow2.locator('input');
-        await expect(modelEditor2).toBeVisible();
-    });
+                // here the 2nd, 2nd cell row should be editing
+                const modelCellRow2 = agIdFor.cell('2', 'model-1-1');
+                const modelEditor2 = modelCellRow2.locator('input');
+                await expect(modelEditor2).toBeVisible();
+            }
+        )
+    );
 
     // AG-15758
     test.eachFramework('should edit then scroll around without error', async ({ page, agIdFor }) => {

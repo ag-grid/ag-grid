@@ -121,10 +121,6 @@ const GridExample = () => {
         });
     }, []);
 
-    const onGridReady = useCallback((params: any) => {
-        gridRef.current = params.api;
-    }, []);
-
     return (
         <div style={containerStyle}>
             <div className="example-wrapper">
@@ -142,8 +138,6 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        editType={'fullRow'}
-                        onGridReady={onGridReady}
                     />
                 </div>
             </div>

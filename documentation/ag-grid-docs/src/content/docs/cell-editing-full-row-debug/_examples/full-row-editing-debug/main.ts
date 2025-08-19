@@ -109,7 +109,7 @@ const gridOptions: GridOptions = {
         cellDataType: false,
         minWidth: 100,
     },
-    editType: 'fullRow',
+    // editType: 'fullRow',
     rowData: getRowData(),
 };
 
