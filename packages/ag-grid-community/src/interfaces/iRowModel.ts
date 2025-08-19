@@ -9,8 +9,11 @@ export interface RowBounds {
 export type RowModelType = 'infinite' | 'viewport' | 'clientSide' | 'serverSide';
 
 export interface IRowModel {
-    /** True if there is already a rowNode that has uiLevel > 0 */
-    hasHierarchy(): boolean;
+    /**
+     * Returns the maximum uiLevel among currently displayed rows.
+     * O(1): maintained during layout; returns -1 when there are no displayed rows.
+     */
+    getMaxUiLevel(): number;
 
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode | undefined;

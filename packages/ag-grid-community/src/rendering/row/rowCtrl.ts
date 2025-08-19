@@ -1375,8 +1375,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private updateAriaLevel(): void {
         const { beans, allRowGuis, rowNode } = this;
         const uiLevel = rowNode.uiLevel;
-        const ariaLevel: number | null = uiLevel >= 0 && beans.rowModel.hasHierarchy() ? uiLevel + 1 : null;
-        // Skip if nothing changed since last set
+        const maxUiLevel = beans.rowModel.getMaxUiLevel();
+        const ariaLevel: number | null = uiLevel >= 0 && maxUiLevel > 0 ? uiLevel + 1 : null;
         if (this.ariaLevel !== ariaLevel) {
             this.ariaLevel = ariaLevel;
             for (const gui of allRowGuis) {

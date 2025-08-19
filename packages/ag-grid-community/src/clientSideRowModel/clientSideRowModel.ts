@@ -97,12 +97,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private orderedStages: IRowNodeStage[];
 
     /**
-     * True if there is already a rowNode that has uiLevel > 0
-     * Computed during the flatten stage
+     * Returns the maximum uiLevel among displayed rows. O(1): maintained in flatten stage. -1 when none.
      */
-    public hasHierarchy(): boolean {
+    public getMaxUiLevel(): number {
         const flattenStage = this.flattenStage;
-        return (flattenStage?.maxUiLevel || 0) > 0;
+        const v = flattenStage?.maxUiLevel;
+        return typeof v === 'number' ? v : -1;
     }
 
     public postConstruct(): void {

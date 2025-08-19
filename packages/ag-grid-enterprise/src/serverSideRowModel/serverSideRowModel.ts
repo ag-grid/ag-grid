@@ -106,11 +106,10 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     /**
-     * True if there is already a RowNode with uiLevel > 0.
-     * O(1): based on maxUiLevel computed during setDisplayIndexes.
+     * Returns the maximum uiLevel among displayed rows. O(1): maintained during setDisplayIndexes; -1 when none.
      */
-    public hasHierarchy(): boolean {
-        return this.maxUiLevel > 0;
+    public getMaxUiLevel(): number {
+        return this.maxUiLevel;
     }
 
     // we don't implement as lazy row heights is not supported in this row model

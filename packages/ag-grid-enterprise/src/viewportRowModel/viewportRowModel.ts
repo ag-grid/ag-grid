@@ -14,8 +14,8 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     private rowHeight: number;
     private datasource: IViewportDatasource;
 
-    public hasHierarchy(): boolean {
-        return false;
+    public getMaxUiLevel(): number {
+        return this.isEmpty() ? -1 : 0;
     }
 
     /**
