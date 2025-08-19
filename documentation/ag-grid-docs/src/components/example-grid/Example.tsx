@@ -1,23 +1,21 @@
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
-import classnames from 'classnames';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type {
     CellSelectionOptions,
-    CellStyleFunc,
     ColDef,
     ColGroupDef,
     CsvExportParams,
     ExcelExportParams,
-    ExcelStyle,
     GridApi,
     GridOptions,
     GridReadyEvent,
     IRowNode,
     InitialGroupOrderComparatorParams,
     RowSelectionOptions,
-    Theme,
+    SideBarDef,
+    Theme
 } from 'ag-grid-community';
 import {
     AllCommunityModule,
@@ -52,404 +50,16 @@ import {
 import { AgGridReact } from 'ag-grid-react';
 
 import styles from './Example.module.scss';
-import { CountryCellRenderer, booleanCellRenderer, ratingRenderer } from './Renderers';
 import { Toolbar } from './Toolbar';
-import {
-    COUNTRY_CODES,
-    COUNTRY_NAMES,
-    LANGUAGES,
-    type RowItem,
-    colNames,
-    countries,
-    createRowItem,
-    games,
-    months,
-} from './consts';
-import {
-    axisLabelFormatter,
-    createDataSizeValue,
-    currencyFormatter,
-    formatThousands,
-    suppressColumnMoveAnimation,
-} from './utils';
-import type { SideBarDef } from '../../../../../packages/ag-grid-community/src/main';
+import { chartThemeOverrides, getDefaultChartThemes } from './config/chartOverrides';
+import { autoGroupColDef, columnTypes, dataTypeDefinitions, largeColCount, largeDefaultCols, smallColCount, smallDefaultCols } from './config/colDefs';
+import { excelStyles } from './config/excelStyles';
+import { COUNTRY_CODES, colNames, countries, createRowItem } from './data';
+import { createDataSizeValue, suppressColumnMoveAnimation } from './utils';
 
 const IS_SSR = typeof window === 'undefined';
 
 const AgGridReactMemo = memo(AgGridReact);
-
-const groupColumn: ColDef = {
-    headerName: 'Group',
-    width: 250,
-    field: 'name',
-};
-const defaultChartThemes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
-const defaultChartThemesDark = defaultChartThemes.map((theme) => theme + '-dark');
-const excelStyles: ExcelStyle[] = [
-    {
-        id: 'v-align',
-        alignment: {
-            vertical: 'Center',
-        },
-    },
-    {
-        id: 'alphabet',
-        alignment: {
-            vertical: 'Center',
-        },
-    },
-    {
-        id: 'good-score',
-        alignment: {
-            horizontal: 'Center',
-            vertical: 'Center',
-        },
-        interior: {
-            color: '#C6EFCE',
-            pattern: 'Solid',
-        },
-        numberFormat: {
-            format: '[$$-409]#,##0',
-        },
-    },
-    {
-        id: 'bad-score',
-        alignment: {
-            horizontal: 'Center',
-            vertical: 'Center',
-        },
-        interior: {
-            color: '#FFC7CE',
-            pattern: 'Solid',
-        },
-        numberFormat: {
-            format: '[$$-409]#,##0',
-        },
-    },
-    {
-        id: 'header',
-        font: {
-            color: '#44546A',
-            size: 16,
-        },
-        interior: {
-            color: '#F2F2F2',
-            pattern: 'Solid',
-        },
-        alignment: {
-            horizontal: 'Center',
-            vertical: 'Center',
-        },
-        borders: {
-            borderTop: {
-                lineStyle: 'Continuous',
-                weight: 0,
-                color: '#8EA9DB',
-            },
-            borderRight: {
-                lineStyle: 'Continuous',
-                weight: 0,
-                color: '#8EA9DB',
-            },
-            borderBottom: {
-                lineStyle: 'Continuous',
-                weight: 0,
-                color: '#8EA9DB',
-            },
-            borderLeft: {
-                lineStyle: 'Continuous',
-                weight: 0,
-                color: '#8EA9DB',
-            },
-        },
-    },
-    {
-        id: 'currency-cell',
-        alignment: {
-            horizontal: 'Center',
-            vertical: 'Center',
-        },
-        numberFormat: {
-            format: '[$$-409]#,##0',
-        },
-    },
-    {
-        id: 'boolean-type',
-        dataType: 'Boolean',
-        alignment: {
-            vertical: 'Center',
-        },
-    },
-    {
-        id: 'country-cell',
-        alignment: {
-            indent: 4,
-        },
-    },
-];
-const currencyCssFunc: CellStyleFunc = (params) => {
-    if (params.value != null && params.value < 0) {
-        return { color: 'red', fontWeight: 'bold' };
-    }
-    return undefined;
-};
-
-const mobileDefaultCols: ColDef<RowItem>[] = [
-    {
-        rowDrag: true,
-        field: 'name',
-        width: 200,
-        cellClass: 'v-align',
-    },
-    {
-        field: 'language',
-        width: 150,
-        filter: 'agSetColumnFilter',
-        cellEditor: 'agRichSelectCellEditor',
-        cellClass: 'v-align',
-        cellEditorParams: {
-            values: LANGUAGES,
-        },
-    },
-    {
-        field: 'country',
-        width: 150,
-        cellRenderer: 'countryCellRenderer',
-        cellClass: 'v-align',
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: {
-            cellRenderer: 'countryCellRenderer',
-            values: COUNTRY_NAMES,
-        },
-    },
-    {
-        field: 'game.name',
-        width: 180,
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: {
-            values: [...games].sort(),
-        },
-        filter: 'agSetColumnFilter',
-        cellClass: () => 'alphabet',
-    },
-    {
-        field: 'bankBalance',
-        width: 180,
-        cellClassRules: {
-            'currency-cell': 'typeof x == "number"',
-        },
-        enableValue: true,
-        cellDataType: 'currency',
-        filter: 'agNumberColumnFilter',
-    },
-    {
-        field: 'totalWinnings',
-        filter: 'agNumberColumnFilter',
-        width: 170,
-        enableValue: true,
-        cellClassRules: {
-            'currency-cell': 'typeof x == "number"',
-        },
-        cellStyle: currencyCssFunc,
-        cellDataType: 'currency',
-    },
-];
-
-const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
-    {
-        headerName: 'Participant',
-        children: [
-            {
-                rowDrag: true,
-                field: 'name',
-                width: 200,
-                enableRowGroup: true,
-                cellClass: 'v-align',
-            },
-            {
-                field: 'language',
-                width: 150,
-                cellEditor: 'agRichSelectCellEditor',
-                cellClass: 'v-align',
-                enableRowGroup: true,
-                enablePivot: true,
-                cellEditorParams: {
-                    values: LANGUAGES,
-                },
-                filter: 'agMultiColumnFilter',
-                filterParams: {
-                    filters: [
-                        {
-                            filter: 'agTextColumnFilter',
-                            display: 'subMenu',
-                        },
-                        {
-                            filter: 'agSetColumnFilter',
-                            filterParams: {
-                                buttons: ['reset'],
-                            },
-                        },
-                    ],
-                },
-            },
-            {
-                field: 'country',
-                width: 150,
-                cellRenderer: 'countryCellRenderer',
-                cellClass: ['country-cell', 'v-align'],
-                enableRowGroup: true,
-                enablePivot: true,
-                cellEditor: 'agRichSelectCellEditor',
-                cellEditorParams: {
-                    cellRenderer: 'countryCellRenderer',
-                    values: COUNTRY_NAMES,
-                },
-                filter: 'agSetColumnFilter',
-                filterParams: {
-                    cellRenderer: 'countryCellRenderer',
-                    buttons: ['reset'],
-                },
-            },
-        ],
-    },
-    {
-        headerName: 'Game of Choice',
-        children: [
-            {
-                field: 'game.name',
-                width: 180,
-                filter: 'agMultiColumnFilter',
-                cellEditor: 'agRichSelectCellEditor',
-                cellEditorParams: {
-                    values: [...games].sort(),
-                    allowTyping: true,
-                    searchType: 'matchAny',
-                    filterList: true,
-                    highlightMatch: true,
-                },
-                tooltipField: 'game.name',
-                cellClass: () => 'alphabet',
-                filterParams: {
-                    filters: [
-                        {
-                            filter: 'agTextColumnFilter',
-                            display: 'subMenu',
-                        },
-                        {
-                            filter: 'agSetColumnFilter',
-                            filterParams: {
-                                buttons: ['reset'],
-                            },
-                        },
-                    ],
-                },
-                enableRowGroup: true,
-                enablePivot: true,
-            },
-            {
-                headerName: 'Bought',
-                field: 'game.bought',
-                filter: 'agSetColumnFilter',
-                width: 150,
-                enableRowGroup: true,
-                enablePivot: true,
-                cellClass: 'boolean-type',
-                cellRenderer: 'booleanCellRenderer',
-                cellStyle: { textAlign: 'center' },
-                filterParams: {
-                    cellRenderer: 'booleanCellRenderer',
-                    cellRendererParams: { isFilterRenderer: true },
-                    buttons: ['reset'],
-                },
-            },
-        ],
-    },
-    {
-        headerName: 'Performance',
-        groupId: 'performance',
-        children: [
-            {
-                field: 'bankBalance',
-                width: 180,
-                cellClassRules: {
-                    'currency-cell': 'typeof x == "number"',
-                },
-                enableValue: true,
-                cellDataType: 'currency',
-                filter: 'agNumberColumnFilter',
-            },
-        ],
-    },
-    {
-        field: 'rating',
-        width: 120,
-        cellRenderer: 'ratingRenderer',
-        cellClass: 'v-align',
-        enableRowGroup: true,
-        enablePivot: true,
-        enableValue: true,
-        chartDataType: 'category',
-        filterParams: { cellRenderer: 'ratingRenderer', cellRendererParams: { isFilterRenderer: true } },
-    },
-    {
-        field: 'totalWinnings',
-        filter: 'agNumberColumnFilter',
-        width: 200,
-        enableValue: true,
-        cellClassRules: {
-            'currency-cell': 'typeof x == "number"',
-        },
-        cellDataType: 'currency',
-        cellStyle: currencyCssFunc,
-    },
-];
-
-const pieSeriesThemeOverrides = {
-    series: {
-        calloutLabel: {
-            enabled: false,
-        },
-    },
-};
-
-const hierarchicalSeriesThemeOverrides = {
-    gradientLegend: {
-        scale: {
-            label: {
-                formatter: ({ value }: { value: any }) => {
-                    const num = Number(value);
-                    return isNaN(num) ? value : '$' + formatThousands(num);
-                },
-            },
-        },
-    },
-};
-
-const chartThemeOverrides = {
-    common: {
-        axes: {
-            number: {
-                label: {
-                    formatter: axisLabelFormatter,
-                },
-            },
-            'angle-number': {
-                label: {
-                    formatter: axisLabelFormatter,
-                },
-            },
-            'radius-number': {
-                label: {
-                    formatter: axisLabelFormatter,
-                },
-            },
-        },
-    },
-    pie: pieSeriesThemeOverrides,
-    donut: pieSeriesThemeOverrides,
-    treemap: hierarchicalSeriesThemeOverrides,
-    sunburst: hierarchicalSeriesThemeOverrides,
-};
 
 const themeMap: Record<string, Theme> = {
     alpine: themeAlpine,
@@ -482,11 +92,7 @@ const modules = [
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
     SparklinesModule.with(AgChartsEnterpriseModule),
 ];
-const components = {
-    countryCellRenderer: CountryCellRenderer,
-    booleanCellRenderer: booleanCellRenderer,
-    ratingRenderer: ratingRenderer,
-};
+
 const statusBar: GridOptions['statusBar'] = {
     statusPanels: [
         { statusPanel: 'agTotalAndFilteredRowCountComponent', key: 'totalAndFilter', align: 'left' },
@@ -505,37 +111,7 @@ const rowSelection: RowSelectionOptions = {
 };
 const suppressColMoveAnimation = suppressColumnMoveAnimation();
 
-const columnTypes: GridOptions['columnTypes'] = {
-    currencyType: {
-        useValueFormatterForExport: false,
-        valueFormatter: currencyFormatter,
-    },
-};
 
-const dataTypeDefinitions: GridOptions['dataTypeDefinitions'] = {
-    currency: {
-        extendsDataType: 'number',
-        baseDataType: 'number',
-
-        valueFormatter: currencyFormatter,
-        valueParser: (params) => {
-            if (params.newValue == null) {
-                return null;
-            }
-            let newValue = String(params.newValue)?.trim?.();
-            if (newValue === '') {
-                return null;
-            }
-            newValue = newValue.replace('$', '').replace(',', '');
-            if (newValue.includes('(')) {
-                newValue = newValue.replace('(', '').replace(')', '');
-                newValue = '-' + newValue;
-            }
-            return Number(newValue);
-        },
-        columnTypes: ['currencyType', 'numericColumn'],
-    },
-};
 
 const getBusinessKeyForNode = (node: IRowNode) => (node.data ? node.data.name : '');
 const initialGroupOrderComparator = ({ nodeA, nodeB }: InitialGroupOrderComparatorParams) => {
@@ -557,18 +133,16 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
     const [gridThemeStr, setGridThemeStr] = useState(theme);
 
     const gridTheme = themeMap[gridThemeStr] || themeQuartz;
-    const chartThemes = darkMode ? defaultChartThemesDark : defaultChartThemes;
+    const chartThemes = getDefaultChartThemes(darkMode);
 
     const [base64Flags, setBase64Flags] = useState<Record<string, any>>();
     const [defaultCols, setDefaultCols] = useState<(ColDef | ColGroupDef)[]>();
     const [defaultColCount, setDefaultColCount] = useState<number>(0);
     const [columnDefs, setColumnDefs] = useState<(ColDef | ColGroupDef)[]>();
     const [rowData, setRowData] = useState<any[]>();
-    const [message, setMessage] = useState<string>();
-    const [showMessage, setShowMessage] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [rowCols, setRowCols] = useState<any[]>([]);
     const [dataSize, setDataSize] = useState<string>();
-    const [initialLoad, setInitialLoad] = useState(true);
 
     const defaultExportParams = useMemo<ExcelExportParams | CsvExportParams>(
         () => ({
@@ -628,18 +202,14 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
     const createData = (dataSize: string) => {
         loadInstance.current = loadInstance.current + 1;
         const loadInstanceCopy = loadInstance.current;
+        const startTime = Date.now(); // Track when message display started
 
         const colCount = parseInt(dataSize?.split('x')[1] ?? '0', 10);
-        const rowCount = parseFloat(dataSize?.split('x')[0] ?? '0') * 1000;
+        const rowCount = parseFloat(dataSize?.split('x')[0] ?? '0');
         const colDefs = createCols(colCount);
 
         let row = 0;
         const data: any[] = [];
-
-        // Don't show message on initial load as it causes a spike in CLS
-        setShowMessage(!initialLoad);
-        setMessage(` Generating rows`);
-
         const loopCount = rowCount > 10000 ? 10000 : 1000;
 
         const intervalId = setInterval(() => {
@@ -658,74 +228,44 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
                 }
             }
 
-            setMessage(` Generating rows ${row}`);
-
             if (row >= rowCount) {
-                setShowMessage(false);
-                setMessage('');
+                const elapsedTime = Date.now() - startTime;
+                const minDisplayTime = 500; // Minimum 500ms display time
+                const remainingTime = Math.max(0, minDisplayTime - elapsedTime);
+
+                setTimeout(() => {
+                    setIsLoading(false);
+                    setColumnDefs(colDefs);
+                    setRowData(data);
+                }, remainingTime);
+
                 clearInterval(intervalId);
-                setColumnDefs(colDefs);
-                setRowData(data);
             }
         }, 0);
     };
 
     const setCountryColumnPopupEditor = (theme: string, gridApi: GridApi) => {
-        if (!columnDefs) {
+        if (!gridApi || !columnDefs) {
             return;
         }
         const participantGroup = columnDefs.find((group) => group.headerName === 'Participant');
-        if (!gridApi || !participantGroup) {
+        if (!participantGroup) {
             return;
         }
 
         const countryColumn: ColDef = (participantGroup as ColGroupDef).children.find(
             (column) => (column as ColDef).field === 'country'
         )!;
+        // Material theme uses a popup editor for the country column as this looks better
         countryColumn.cellEditorPopup = theme.includes('material');
 
-        setColumnDefs(columnDefs);
+        // Ensure a new array is created to trigger a re-render
+        setColumnDefs([...columnDefs]);
     };
 
     useEffect(() => {
-        let defaultCols: ColDef[];
-        let defaultColCount: number;
-
-        //put in the month cols
-        const monthGroup: ColGroupDef = {
-            headerName: 'Monthly Breakdown',
-            children: [],
-        };
-
-        months.forEach((month) => {
-            const child: ColDef = {
-                field: month.toLocaleLowerCase(),
-                width: 150,
-                enableValue: true,
-                cellClassRules: {
-                    'good-score': 'typeof x === "number" && x > 50000',
-                    'bad-score': 'typeof x === "number" && x < 10000',
-                    'currency-cell': 'typeof x === "number" && x >= 10000 && x <= 50000',
-                },
-                cellDataType: 'currency',
-                filter: 'agNumberColumnFilter',
-                filterParams: {
-                    buttons: ['reset'],
-                    inRangeInclusive: true,
-                },
-            };
-            monthGroup.children.push(child);
-        });
-
-        if (isSmall) {
-            defaultCols = mobileDefaultCols;
-            defaultCols = defaultCols.concat(monthGroup.children);
-            defaultColCount = defaultCols.length;
-        } else {
-            defaultCols = desktopDefaultCols;
-            defaultCols.push(monthGroup);
-            defaultColCount = 22;
-        }
+        const defaultCols = isSmall ? smallDefaultCols : largeDefaultCols;
+        const defaultColCount = isSmall ? smallColCount : largeColCount;
 
         setDefaultCols(defaultCols);
         setDefaultColCount(defaultColCount);
@@ -786,8 +326,10 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
 
     useEffect(() => {
         if (dataSize) {
-            createDataRef.current(dataSize);
-            setInitialLoad(false);
+            setIsLoading(true);
+            setTimeout(() => {
+                createDataRef.current(dataSize);
+            }, 10); // Use a timeout to allow the UI to update before starting data generation
         }
     }, [dataSize]);
 
@@ -802,11 +344,7 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
                     gridTheme={gridThemeStr}
                     setGridTheme={setGridThemeStr}
                     setCountryColumnPopupEditor={setCountryColumnPopupEditor}
-                />
-                <span className={classnames({ [styles.messages]: true, [styles.show]: showMessage })}>
-                    {message}
-                    <i className="fa fa-spinner fa-pulse fa-fw margin-bottom" />
-                </span>
+                ></Toolbar>
                 <section className={styles.gridWrapper}>
                     {gridTheme && (
                         <div
@@ -820,9 +358,10 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
                                 modules={modules}
                                 columnDefs={columnDefs}
                                 rowData={rowData}
+                                loading={isLoading}
+                                loadingOverlayComponent={() => 'Generating rows...'}
                                 defaultColDef={defaultColDef}
                                 sideBar={sideBar}
-                                components={components}
                                 columnTypes={columnTypes}
                                 dataTypeDefinitions={dataTypeDefinitions}
                                 statusBar={statusBar}
@@ -839,7 +378,7 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
                                 enableCharts={true}
                                 undoRedoCellEditing={true}
                                 undoRedoCellEditingLimit={50}
-                                autoGroupColumnDef={groupColumn}
+                                autoGroupColumnDef={autoGroupColDef}
                                 rowNumbers={true}
                                 enableRtl={enableRtl}
                                 suppressColumnMoveAnimation={suppressColMoveAnimation}

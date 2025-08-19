@@ -38,13 +38,3 @@
     overflow: hidden;
     display: flex;
 }
-
-.messages {
-    padding-top: $spacing-size-4;
-    padding-left: $spacing-size-4;
-    display: none;
-
-    &.show {
-        display: inline;
-    }
-}

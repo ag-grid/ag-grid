@@ -1,14 +1,10 @@
 import type { ICellRendererParams } from 'ag-grid-community';
-import styles from './Example.module.scss';
+import styles from '../Example.module.scss';
 import {
     COUNTRY_CODES
-} from './consts';
+} from '../data';
 
 interface RatingRendererParams extends ICellRendererParams {
-    isFilterRenderer?: boolean;
-}
-
-interface BooleanCellRendererParams extends ICellRendererParams {
     isFilterRenderer?: boolean;
 }
 
@@ -37,7 +33,7 @@ export const CountryCellRenderer = ({ value }: ICellRendererParams) => {
     }
 };
 
-export function ratingRenderer(params: RatingRendererParams) {
+export function RatingRenderer(params: RatingRendererParams) {
     const { value } = params;
     if (value === '(Select All)') {
         return value;
@@ -64,20 +60,3 @@ export function ratingRenderer(params: RatingRendererParams) {
         </span>
     );
 }
-
-export const booleanCellRenderer = ({ value, isFilterRenderer }: BooleanCellRendererParams) => {
-    if (value === true) {
-        return <span title="true" className="ag-icon ag-icon-tick content-icon" />;
-    }
-    if (value === false) {
-        return <span title="false" className="ag-icon ag-icon-cross content-icon" />;
-    }
-    if (isFilterRenderer) {
-        if (value === '(Select All)') {
-            return value;
-        }
-        return '(empty)';
-    } else {
-        return null;
-    }
-};

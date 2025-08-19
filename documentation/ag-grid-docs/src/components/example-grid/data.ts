@@ -13,7 +13,7 @@ export const colNames = [
 ];
 
 export const countries = [
-    { country: 'Ireland', codecontinent: 'Europe', language: 'English' },
+    { country: 'Ireland', continent: 'Europe', language: 'English' },
     { country: 'Spain', continent: 'Europe', language: 'Spanish' },
     { country: 'United Kingdom', continent: 'Europe', language: 'English' },
     { country: 'France', continent: 'Europe', language: 'French' },
@@ -193,7 +193,7 @@ export const lastNames = [
     'Kobe',
 ];
 
-export const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+export const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 
 export const LANGUAGES = [
     'English',
@@ -270,11 +270,12 @@ export const createRowItem = (row: number, colCount: number, defaultCols: number
     rowItem.rating = Math.round(pseudoRandom() * 5);
 
     let totalWinnings = 0;
-    months.forEach((month) => {
+    for (let i = 0; i < months.length; i++) {
+        const month = months[i];
         const value = Math.round(pseudoRandom() * 100000) - 20;
-        rowItem[month.toLocaleLowerCase()] = value;
+        rowItem[month] = value;
         totalWinnings += value;
-    });
+    }
     rowItem.totalWinnings = totalWinnings;
 
     if (defaultCols) {

@@ -1,11 +1,28 @@
 import { Select } from '@ag-website-shared/components/select/Select';
 import { trackDemoToolbar, trackOnceDemoToolbar } from '@utils/analytics';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+import type { GridApi } from 'ag-grid-community';
+import type { RefObject, ChangeEvent } from 'react';
 
 import styles from './Toolbar.module.scss';
 import { createDataSizeValue } from './utils';
 
 const IS_SSR = typeof window === 'undefined';
+
+interface SelectOption {
+    label: string;
+    value: string;
+}
+
+interface ToolbarProps {
+    gridRef: RefObject<{ api: GridApi }>;
+    dataSize: string | undefined;
+    setDataSize: (size: string) => void;
+    rowCols: [number, number][];
+    gridTheme: string;
+    setGridTheme: (theme: string) => void;
+    setCountryColumnPopupEditor: (theme: string, api: GridApi) => void;
+}
 
 const options: Record<string, string> = {
     quartz: 'Quartz',
@@ -22,8 +39,8 @@ export const Toolbar = ({
     gridTheme,
     setGridTheme,
     setCountryColumnPopupEditor,
-}) => {
-    function onDataSizeChanged(newValue) {
+}: ToolbarProps) => {
+    function onDataSizeChanged(newValue: SelectOption) {
         const { value } = newValue;
         setDataSize(value);
         trackDemoToolbar({
@@ -32,7 +49,12 @@ export const Toolbar = ({
         });
     }
 
-    function onThemeChanged(newValue) {
+    function onThemeChanged(newValue: SelectOption) {
+
+        if (!gridRef.current?.api) {
+            return;
+        }
+
         const newTheme = newValue.value || 'ag-theme-none';
         setCountryColumnPopupEditor(newTheme, gridRef.current.api);
         setGridTheme(newTheme);
@@ -64,29 +86,25 @@ export const Toolbar = ({
         trackOnceDemoToolbar({
             type: 'filterChange',
         });
-    }, [deferredQuickFilterText]);
+    }, [deferredQuickFilterText, gridRef]);
 
-    function onFilterChanged(event) {
+    function onFilterChanged(event: ChangeEvent<HTMLInputElement>) {
         setQuickFilterText(event.target.value);
     }
 
     const dataSizeOptions = useMemo(
         () =>
-            rowCols.map((rowCol) => {
-                const rows = rowCol[0];
-                const cols = rowCol[1];
+            rowCols.map(([rows, cols]) => {
 
-                const value = createDataSizeValue(rows, cols);
-                const text = `${rows} Rows, ${cols} Cols`;
                 return {
-                    label: text,
-                    value,
+                    label: `${rows.toLocaleString()} Rows, ${cols.toLocaleString()} Cols`,
+                    value: createDataSizeValue(rows, cols)
                 };
             }),
         [rowCols]
     );
     const dataSizeOption = useMemo(
-        () => dataSizeOptions.find((o: { value: string }) => o.value === dataSize) || dataSizeOptions[0],
+        () => dataSizeOptions.find((o) => o.value === dataSize) || dataSizeOptions[0],
         [dataSizeOptions, dataSize]
     );
 
@@ -95,9 +113,9 @@ export const Toolbar = ({
             label,
             value: themeName,
         }));
-    }, [options]);
+    }, []);
     const themeOption = useMemo(
-        () => themeOptions.find((o: { value: string }) => gridTheme.includes(o.value)) || dataSizeOptions[0],
+        () => themeOptions.find((o) => gridTheme.includes(o.value)) || themeOptions[0],
         [themeOptions, gridTheme]
     );
 
@@ -113,7 +131,7 @@ export const Toolbar = ({
                             options={dataSizeOptions}
                             value={dataSizeOption}
                             onChange={onDataSizeChanged}
-                            renderItem={(o) => {
+                            renderItem={(o: SelectOption) => {
                                 return <>{o.label}</>;
                             }}
                         />
@@ -125,7 +143,7 @@ export const Toolbar = ({
                         options={themeOptions}
                         value={themeOption}
                         onChange={onThemeChanged}
-                        renderItem={(o) => {
+                        renderItem={(o: SelectOption) => {
                             return <>{o.label}</>;
                         }}
                     />
@@ -141,6 +159,7 @@ export const Toolbar = ({
                         id="global-filter"
                         style={{ flex: 1 }}
                     />
+
                 </div>
             </div>
             <div className={styles.scrollIndicator}></div>
