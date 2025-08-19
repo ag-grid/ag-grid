@@ -1,5 +1,5 @@
 import type { AgColumn, AgProvidedColumnGroup, DefaultMenuItem, MenuItemDef, NamedBean } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _isLegacyMenuEnabled } from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _isClientSideRowModel, _isLegacyMenuEnabled } from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { AgMenuList } from '../widgets/agMenuList';
@@ -10,7 +10,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
     beanName = 'colMenuFactory' as const;
 
     public createMenu(
-        parent: BeanStub<any>,
+        parent: { createManagedBean(bean: AgMenuList): AgMenuList },
         menuItems: (DefaultMenuItem | MenuItemDef)[],
         column: AgColumn | undefined,
         sourceElement: () => HTMLElement
@@ -180,10 +180,15 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
         addColumnItems();
 
+        // only add grouping expand/collapse if grouping in the InMemoryRowModel or ssrmExpandAllAffectsAllRows flag is set
         // if pivoting, we only have expandable groups if grouping by 2 or more columns
         // as the lowest level group is not expandable while pivoting.
         // if not pivoting, then any active row group can be expanded.
-        if (expansionSvc && (gos.get('treeData') || rowGroupCount > (colModel.isPivotMode() ? 1 : 0))) {
+        if (
+            expansionSvc &&
+            (_isClientSideRowModel(gos) || gos.get('ssrmExpandAllAffectsAllRows')) &&
+            (gos.get('treeData') || rowGroupCount > (colModel.isPivotMode() ? 1 : 0))
+        ) {
             result.push('expandAll');
             result.push('contractAll');
         }
