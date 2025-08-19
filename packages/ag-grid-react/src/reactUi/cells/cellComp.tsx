@@ -1,6 +1,6 @@
 import React, { Suspense, memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
-import type {
+import {
     CellCtrl,
     CellStyle,
     Component,
@@ -8,6 +8,7 @@ import type {
     ICellEditor,
     ICellEditorComp,
     ICellRendererComp,
+    RowDragComp,
 } from 'ag-grid-community';
 import { CssClassManager, _EmptyBean, _removeFromParent } from 'ag-grid-community';
 
@@ -65,6 +66,7 @@ const CellComp = ({
 
     const eCellWrapper = useRef<HTMLDivElement | null>();
     const cellWrapperDestroyFuncs = useRef<(() => void)[]>([]);
+    const rowDragCompRef = useRef<RowDragComp>();
 
     // when setting the ref, we also update the state item to force a re-render
     const eCellValue = useRef<HTMLDivElement | null>();
@@ -126,6 +128,8 @@ const CellComp = ({
         ) {
             return;
         }
+
+        rowDragCompRef.current?.refreshVisibility();
 
         const oldCompDetails = oldDetails.compDetails;
         const newCompDetails = newDetails.compDetails;
@@ -200,6 +204,7 @@ const CellComp = ({
             eCellWrapper.current = eRef;
 
             if (!eRef || context.isDestroyed() || !cellCtrl.isAlive()) {
+                rowDragCompRef.current = undefined;
                 cellWrapperDestroyFuncs.current.forEach((f) => f());
                 cellWrapperDestroyFuncs.current = [];
                 return;
@@ -226,7 +231,10 @@ const CellComp = ({
             }
 
             if (includeRowDrag) {
-                addComp(cellCtrl.createRowDragComp());
+                const rowDragComp = cellCtrl.createRowDragComp();
+                addComp(rowDragComp);
+                rowDragCompRef.current = rowDragComp;
+                rowDragComp?.refreshVisibility();
             }
         },
         [cellCtrl, context, includeDndSource, includeRowDrag, includeSelection]

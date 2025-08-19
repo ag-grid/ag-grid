@@ -169,7 +169,7 @@ export class CellComp extends Component {
             this.insertValueWithoutCellRenderer(valueToDisplay);
         }
 
-        this.rowDraggingComp?.refresh();
+        this.rowDraggingComp?.refreshVisibility();
     }
 
     private setEditDetails(

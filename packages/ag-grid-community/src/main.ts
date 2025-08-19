@@ -1259,6 +1259,7 @@ export {
     DragAndDropModule,
     RowDragModule,
 } from './dragAndDrop/dragModule';
+export type { RowDragComp } from './dragAndDrop/rowDragComp';
 export {
     ColumnFilterModule as _ColumnFilterModule,
     FilterCoreModule as _FilterCoreModule,
