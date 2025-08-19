@@ -98,7 +98,7 @@ export function _setupEditors(
             {
                 key: shouldStartEditing ? key : null,
                 event: shouldStartEditing ? event : null,
-                cellStartedEdit: shouldStartEditing,
+                cellStartedEdit: shouldStartEditing && cellStartedEdit,
             }
         );
     }
@@ -130,7 +130,7 @@ export function _setupEditor(
     const cellCtrl = _getCellCtrl(beans, position)!;
     const editorComp = cellCtrl?.comp?.getCellEditor();
 
-    const editorParams = _createEditorParams(beans, position, key, cellStartedEdit);
+    const editorParams = _createEditorParams(beans, position, key, cellStartedEdit && !silent);
 
     const previousEdit = beans.editModelSvc?.getEdit(position);
 
@@ -289,7 +289,7 @@ export function _syncFromEditors(beans: BeanCollection, persist: boolean): void 
             return;
         }
 
-        const editor = cellCtrl.comp.getCellEditor();
+        const editor = cellCtrl.comp?.getCellEditor();
 
         if (!editor) {
             return;

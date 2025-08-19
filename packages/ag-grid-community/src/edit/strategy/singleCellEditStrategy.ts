@@ -4,7 +4,7 @@ import { _getRowNode } from '../../entities/positionUtils';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { EditValue } from '../../interfaces/iEditModelService';
-import type { EditPosition, EditRowPosition } from '../../interfaces/iEditService';
+import type { EditPosition, EditRowPosition, StartEditWithPositionParams } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getColId } from '../utils/controllers';
@@ -41,12 +41,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         return this.model.hasEdits(position);
     }
 
-    public start(
-        position: Required<EditPosition>,
-        event?: KeyboardEvent | MouseEvent | null,
-        _source: 'api' | 'ui' = 'ui',
-        ignoreEventKey?: boolean
-    ): void {
+    public start(params: StartEditWithPositionParams): void {
+        const { position, startedEdit, event, ignoreEventKey } = params;
         if (this.rowNode !== position.rowNode || this.column !== position.column) {
             super.cleanupEditors();
         }
@@ -56,12 +52,13 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         this.model.start(position);
 
-        this.setupEditors([position], position, true, event, ignoreEventKey);
+        this.setupEditors({ cells: [position], position, startedEdit, event, ignoreEventKey });
     }
 
     public override dispatchRowEvent(
         _position: EditRowPosition,
-        _type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged'
+        _type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged',
+        _silent?: boolean
     ): void {
         // NOP - single cell edit strategy does not dispatch row events
     }
@@ -210,8 +207,10 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
                 nextCell.focusCell(true, event);
             } else if (!nextCell.comp?.getCellEditor()) {
                 // editor missing because it was outside the viewport during creating phase, attempt to create it now
-                _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true });
+                _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true, silent: true });
                 this.setFocusInOnEditor(nextCell);
+
+                this.cleanupEditors(nextCell);
             }
         } else {
             if (nextEditable && preventNavigation) {
