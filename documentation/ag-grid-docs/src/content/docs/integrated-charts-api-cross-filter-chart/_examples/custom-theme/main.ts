@@ -202,6 +202,7 @@ function createQuarterlySalesChart(api: GridApi) {
                 },
             },
         },
+        sort: [{ colId: 'quarter', sort: 'asc' }],
         chartContainer: document.querySelector('#columnChart') as any,
     });
 }
@@ -234,6 +235,7 @@ function createSalesByRefChart(api: GridApi) {
                 },
             },
         },
+        sort: false,
         chartContainer: document.querySelector('#pieChart') as any,
     });
 }
@@ -254,6 +256,7 @@ function createHandsetSalesChart(api: GridApi) {
                 padding: { left: 47, right: 80 },
             },
         },
+        sort: [{ colId: 'handset', sort: 'asc' }],
         chartContainer: document.querySelector('#areaChart') as any,
     });
 }
@@ -300,6 +303,7 @@ function createBubbleChart(api: GridApi) {
                 },
             },
         },
+        sort: false,
         chartContainer: document.querySelector('#bubbleChart') as any,
     });
 }

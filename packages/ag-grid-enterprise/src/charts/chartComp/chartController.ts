@@ -125,6 +125,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
                 chartModelParams.switchCategorySeries = false;
                 chartModelParams.aggFunc = params.aggFunc ?? this.model.aggFunc;
                 chartModelParams.crossFiltering = true;
+                chartModelParams.crossFilteringSort = this.model.crossFilteringSort;
                 chartModelParams.suppressChartRanges = params.suppressChartRanges ?? this.model.suppressChartRanges;
                 break;
             case 'pivotChartUpdate':
