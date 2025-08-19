@@ -255,7 +255,14 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.dispatchBatchEvent('batchEditingStarted', new Map());
         }
 
-        this.strategy!.start(position, event, source, ignoreEventKey, startedEdit ?? undefined, silent);
+        this.strategy!.start({
+            position,
+            event,
+            source,
+            ignoreEventKey,
+            startedEdit,
+            silent,
+        });
 
         return;
     }

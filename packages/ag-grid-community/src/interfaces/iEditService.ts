@@ -20,6 +20,10 @@ export type EditNavOnValidationResult = 'block-stop' | 'revert-continue' | 'cont
 
 export type EditSource = 'api' | 'ui' | 'paste' | 'rangeSvc' | 'fillHandle' | 'cellClear' | 'edit' | 'bulk';
 
+export interface StartEditWithPositionParams extends StartEditParams {
+    position: Required<EditPosition>;
+}
+
 export type StartEditParams = {
     startedEdit?: boolean | null;
     event?: EditInputEvents;

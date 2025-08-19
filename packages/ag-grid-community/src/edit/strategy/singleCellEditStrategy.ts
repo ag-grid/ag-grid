@@ -4,7 +4,7 @@ import { _getRowNode } from '../../entities/positionUtils';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { EditValue } from '../../interfaces/iEditModelService';
-import type { EditPosition, EditRowPosition } from '../../interfaces/iEditService';
+import type { EditPosition, EditRowPosition, StartEditWithPositionParams } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getColId } from '../utils/controllers';
@@ -41,13 +41,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         return this.model.hasEdits(position);
     }
 
-    public start(
-        position: Required<EditPosition>,
-        event?: KeyboardEvent | MouseEvent | null,
-        _source: 'api' | 'ui' = 'ui',
-        ignoreEventKey?: boolean,
-        cellStartedEdit?: boolean
-    ): void {
+    public start(params: StartEditWithPositionParams): void {
+        const { position, startedEdit, event, ignoreEventKey } = params;
         if (this.rowNode !== position.rowNode || this.column !== position.column) {
             super.cleanupEditors();
         }
@@ -57,7 +52,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
 
         this.model.start(position);
 
-        this.setupEditors([position], position, cellStartedEdit, event, ignoreEventKey);
+        this.setupEditors({ cells: [position], position, startedEdit, event, ignoreEventKey });
     }
 
     public override dispatchRowEvent(
