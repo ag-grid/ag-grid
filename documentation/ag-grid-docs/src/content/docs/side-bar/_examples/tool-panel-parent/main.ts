@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, ToolPanelDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -21,105 +21,57 @@ ModuleRegistry.registerModules([
 ]);
 
 let gridApi: GridApi<IOlympicData>;
-const toolPanels = [
-    {
-        id: 'columns 1',
-        labelDefault: 'Inside grid',
-        labelKey: 'columns',
-        iconKey: 'columnsToolPanel',
-        toolPanel: 'agColumnsToolPanel',
-    },
-    {
-        id: 'filters 2',
-        labelDefault: 'Outside grid',
-        labelKey: 'filters',
-        iconKey: 'menu',
-        toolPanel: 'agFiltersToolPanel',
-        parent: document.getElementById('toolPanelParent'),
-    },
-    {
-        id: 'columns 3',
-        labelDefault: 'Popup/Modal/Drawer',
-        labelKey: 'columns',
-        iconKey: 'columnsToolPanel',
-        toolPanel: 'agColumnsToolPanel',
-    },
-];
-const sideBar = {
-    toolPanels,
-    defaultToolPanel: 'filters',
+const toolPanel: ToolPanelDef = {
+    id: 'columns',
+    labelDefault: 'Modal',
+    labelKey: 'columns',
+    iconKey: 'columnsToolPanel',
+    toolPanel: 'agColumnsToolPanel',
 };
-window.toggleMode = function toggleMode() {
-    const drawer = document.getElementById('modalDrawer')!;
-    const oldClass = drawer.classList.contains('modal')
-        ? 'modal'
-        : drawer.classList.contains('popup')
-          ? 'popup'
-          : 'drawer';
-    const nextClass = drawer.classList.contains('modal')
-        ? 'popup'
-        : drawer.classList.contains('popup')
-          ? 'drawer'
-          : 'modal';
-    drawer.classList.replace(oldClass, nextClass);
-};
-function createModal() {
+
+function passModal() {
     if (document.getElementById('modalDrawer')) {
         toggleDrawer();
+        gridApi.openToolPanel(toolPanel.id);
         return;
     }
     const modalDrawer = document.createElement('div');
     modalDrawer.innerHTML = `
         <div class="inner ag-theme-params-1">
-            <div>          
-                <p>Modal / Popup / Drawer Content</p>
-                <button onclick="toggleMode()">Toggle style</button>
-                <button onclick="toggleDrawer()">Close</button>
-            </div>
+            <div><button onclick="toggleDrawer()">Close</button></div>
             <div class="content"></div>
         </div>
     `;
-    modalDrawer.onclick = (e) => {
-        if (e.target === modalDrawer) toggleDrawer();
-    };
+    modalDrawer.onclick = (e) => e.target === modalDrawer && toggleDrawer();
     modalDrawer.id = 'modalDrawer';
     modalDrawer.classList.add('modal', 'active');
     document.body.prepend(modalDrawer);
-}
-window.passModal = function passModal() {
-    createModal();
-    const drawer = document.querySelector('#modalDrawer .content');
+    const drawer = document.querySelector('#modalDrawer .content')!;
     gridApi.updateGridOptions({
         sideBar: {
-            ...sideBar,
-            toolPanels: Object.values({
-                ...toolPanels,
-                2: {
-                    ...toolPanels[2],
-                    parent: drawer,
-                },
-            }),
+            hideButtons: true,
+            hiddenByDefault: true,
+            toolPanels: [{ ...toolPanel, parent: drawer }] as ToolPanelDef[],
         },
     });
-    gridApi.openToolPanel(toolPanels[2].id);
-};
-window.toggleDrawer = function toggleDrawer() {
+    gridApi.openToolPanel(toolPanel.id);
+}
+
+function toggleDrawer() {
     const drawer = document.getElementById('modalDrawer')!;
     drawer.classList.toggle('active');
     gridApi.closeToolPanel();
-};
+}
+
+window.passModal = passModal;
+window.toggleDrawer = toggleDrawer;
 
 const gridOptions: GridOptions<IOlympicData> = {
+    popupParent: document.body,
     columnDefs: [
         { field: 'athlete', filter: 'agTextColumnFilter', minWidth: 200 },
-        { field: 'age' },
         { field: 'country', minWidth: 180 },
-        { field: 'year' },
         { field: 'date', minWidth: 150 },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' },
     ],
     defaultColDef: {
         flex: 1,
@@ -135,7 +87,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     autoGroupColumnDef: {
         minWidth: 200,
     },
-    sideBar,
+    sideBar: { toolPanels: [toolPanel], hideButtons: true, hiddenByDefault: true },
 };
 
 // setup the grid after the page has finished loading
