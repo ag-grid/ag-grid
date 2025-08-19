@@ -75,12 +75,17 @@
 
 .ag-column-drop-cell-button {
     cursor: pointer;
+    margin-right: calc(var(--ag-spacing) / 4);
     min-width: 0;
     opacity: 0.75;
 
     &:hover {
         opacity: 1;
     }
+}
+
+.ag-column-drop-cell-drag-handle {
+    margin-left: calc(var(--ag-spacing) / 4);
 }
 
 .ag-column-drop-wrapper {
