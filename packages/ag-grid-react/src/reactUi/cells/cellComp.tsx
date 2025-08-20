@@ -204,7 +204,6 @@ const CellComp = ({
             eCellWrapper.current = eRef;
 
             if (!eRef || context.isDestroyed() || !cellCtrl.isAlive()) {
-                rowDragCompRef.current = undefined;
                 cellWrapperDestroyFuncs.current.forEach((f) => f());
                 cellWrapperDestroyFuncs.current = [];
                 return;
@@ -232,9 +231,18 @@ const CellComp = ({
 
             if (includeRowDrag) {
                 const rowDragComp = cellCtrl.createRowDragComp();
-                addComp(rowDragComp);
-                rowDragCompRef.current = rowDragComp;
-                rowDragComp?.refreshVisibility();
+                if (rowDragComp) {
+                    eRef.insertAdjacentElement('afterbegin', rowDragComp.getGui());
+                    rowDragCompRef.current = rowDragComp;
+                    cellWrapperDestroyFuncs.current.push(() => {
+                        context.destroyBean(rowDragComp);
+                        _removeFromParent(rowDragComp.getGui());
+                        if (rowDragCompRef.current === rowDragComp) {
+                            rowDragCompRef.current = undefined;
+                        }
+                    });
+                    rowDragComp.refreshVisibility();
+                }
             }
         },
         [cellCtrl, context, includeDndSource, includeRowDrag, includeSelection]
