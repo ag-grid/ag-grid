@@ -126,7 +126,13 @@ const staticGridOptions: GridOptions = {
     enableFilterHandlers: true,
     rowDragManaged: true,
     rowDragMultiRow: true,
-    loadingOverlayComponent: () => 'Generating rows...',
+    loadingOverlayComponent: () => (
+        <div className="ag-overlay-loading-center" role="presentation">
+            <div aria-live="polite" aria-atomic="true">
+                Generating rows....
+            </div>
+        </div>
+    ),
 };
 
 const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: string; isSmall: boolean }) => {
@@ -313,7 +319,13 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
 
         for (let col = defaultColCount; col < colCount; col++) {
             const colName = colNames[col % colNames.length];
-            const colDef = { headerName: colName, field: 'col' + col, width: 200, editable: true };
+            const colDef = {
+                headerName: colName,
+                field: 'col' + col,
+                width: 200,
+                editable: true,
+                filter: 'agTextColumnFilter',
+            };
             columns.push(colDef);
         }
 

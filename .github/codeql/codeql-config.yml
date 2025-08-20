@@ -1,0 +1,16 @@
+paths:
+ - 'packages/ag-grid-community'
+ - 'packages/ag-grid-enterprise'
+ - 'packages/ag-grid-angular'
+ - 'packages/ag-grid-react'
+ - 'packages/ag-grid-vue3'
+paths-ignore:
+ - '**/*.test.js'
+ - '**/*.test.ts'
+ - '**/*.test.tsx'
+ - '**/__tests__/**'
+query-filters:
+ - exclude:
+    problem.severity:
+     - warning
+     - recommendation

@@ -58,6 +58,7 @@ export interface UpdateParams {
         id: string;
         name: string;
         chartDataType?: string;
+        convertTime?: (date: string | undefined) => Date | undefined;
     }[];
     fields: FieldDefinition[];
     chartId?: string;

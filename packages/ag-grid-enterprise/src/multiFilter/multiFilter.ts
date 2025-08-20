@@ -245,6 +245,10 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         return this.wrappers[index]?.filter as TFilter;
     }
 
+    public getNumChildFilters(): number {
+        return this.wrappers.length;
+    }
+
     public override destroy(): void {
         this.wrappers.forEach((wrapper) => {
             this.destroyBean(wrapper?.filter);
