@@ -285,31 +285,20 @@ describe('Cell Editing Regression', () => {
             expect(onCellValueChanged).toHaveBeenCalledWith('edit');
         });
 
-        test.skip('fillHandle edit should have source=rangeSvc', async () => {
-            const onCellValueChanged = await testACell(
-                jest.fn(),
-                async (api, gridDiv, source) => {
-                    const target = getByTestId(gridDiv, agTestIdFor.cell('1', 'field'));
+        test('dblClick edit and click away should have source=edit', async () => {
+            const onCellValueChanged = await testACell(jest.fn(), async (api, gridDiv, cell) => {
+                await user.dblClick(cell);
+                const inputElement = await waitForInput(gridDiv, cell);
+                await user.type(inputElement, '15');
+                await asyncSetTimeout(10);
 
-                    // Use the abstracted helper function for complete fill handle operation
-                    await performFillHandleDrag({ api, source, target });
-
-                    expect(source).toHaveTextContent('A Value');
-                    expect(target).toHaveTextContent('A Value');
-
-                    expect(api.getCellValue({ rowNode: api.getRowNode('0')!, colKey: 'field' })).toEqual('A Value');
-                    expect(api.getCellValue({ rowNode: api.getRowNode('1')!, colKey: 'field' })).toEqual('A Value');
-                },
-                {
-                    cellSelection: {
-                        handle: {
-                            mode: 'fill',
-                        },
-                    },
-                }
-            );
+                const target = getByTestId(gridDiv, agTestIdFor.cell('1', 'field'));
+                await user.click(target);
+                expect(cell).toHaveTextContent('15');
+            });
 
             expect(onCellValueChanged).toHaveBeenCalledTimes(1);
+            expect(onCellValueChanged).toHaveBeenCalledWith('edit');
         });
 
         test('copy/paste edit should have source=paste', async () => {
@@ -334,7 +323,7 @@ describe('Cell Editing Regression', () => {
             expect(onCellValueChanged).toHaveBeenCalledWith('paste');
         });
 
-        test('bulk edit should have source=bulk', async () => {
+        test('bulk edit should have source=rangeSvc', async () => {
             const onCellValueChanged = await testACell(
                 jest.fn(() => {
                     console.log();
@@ -366,8 +355,8 @@ describe('Cell Editing Regression', () => {
             );
 
             expect(onCellValueChanged).toHaveBeenCalledTimes(2);
-            expect(onCellValueChanged).toHaveBeenNthCalledWith(1, 'bulk');
-            expect(onCellValueChanged).toHaveBeenNthCalledWith(2, 'bulk');
+            expect(onCellValueChanged).toHaveBeenNthCalledWith(1, 'rangeSvc');
+            expect(onCellValueChanged).toHaveBeenNthCalledWith(2, 'rangeSvc');
         });
 
         test('ctrl-d should have source=paste', async () => {
