@@ -9,3 +9,8 @@ paths-ignore:
  - '**/*.test.ts'
  - '**/*.test.tsx'
  - '**/__tests__/**'
+query-filters:
+ - exclude:
+    problem.severity:
+     - warning
+     - recommendation
