@@ -247,7 +247,7 @@ export { AgTooltipComponent as _AgTooltipComponent } from './agStack/tooltip/agT
 export { AgTooltipFeature as _AgTooltipFeature } from './agStack/tooltip/agTooltipFeature';
 export { BaseTooltipParams as _BaseTooltipParams } from './agStack/tooltip/baseTooltipStateManager';
 export { BaseTooltipStateManager as _BaseTooltipStateManager } from './agStack/tooltip/baseTooltipStateManager';
-export { _createAgElement } from './agStack/utils/dom';
+export { _createAgElement, AgElementParams as _AgElementParams } from './agStack/utils/dom';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap } from './agStack/utils/locale';
 export { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
 
