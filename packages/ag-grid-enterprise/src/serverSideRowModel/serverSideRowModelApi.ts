@@ -59,8 +59,8 @@ export function retryServerSideLoads(beans: BeanCollection): void {
     _getServerSideRowModel(beans)?.retryLoads();
 }
 
-export function resetRowHeights(): void {
-    console.log('resetRowHeights called');
+export function resetRowHeights(beans: BeanCollection): void {
+    _getServerSideRowModel(beans)?.resetRowHeights();
 }
 
 export function flushServerSideAsyncTransactions(beans: BeanCollection): void {

@@ -1,7 +1,7 @@
-import type { IRowModel, IViewportDatasource, NamedBean, RowBounds, RowModelType } from 'ag-grid-community';
+import type { IViewportDatasource, IViewportRowModel, NamedBean, RowBounds, RowModelType } from 'ag-grid-community';
 import { BeanStub, RowNode, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
 
-export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
+export class ViewportRowModel extends BeanStub implements NamedBean, IViewportRowModel {
     beanName = 'rowModel' as const;
 
     // rowRenderer tells us these
@@ -210,7 +210,9 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         };
     }
 
-    resetRowHeights(): void {}
+    resetRowHeights(): void {
+        console.log('resetRowHeights called');
+    }
 
     private updateRowHeights() {
         const rowHeight = this.rowHeight;
