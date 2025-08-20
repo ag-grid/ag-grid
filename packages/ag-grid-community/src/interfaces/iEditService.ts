@@ -18,7 +18,7 @@ export type EditInputEvents = KeyboardEvent | MouseEvent | null | undefined;
 
 export type EditNavOnValidationResult = 'block-stop' | 'revert-continue' | 'continue';
 
-export type EditSource = 'api' | 'ui' | 'paste' | 'rangeSvc' | 'fillHandle' | 'cellClear' | 'edit';
+export type EditSource = 'api' | 'ui' | 'paste' | 'rangeSvc' | 'fillHandle' | 'cellClear' | 'edit' | 'bulk';
 
 export interface StartEditWithPositionParams extends StartEditParams {
     position: Required<EditPosition>;
