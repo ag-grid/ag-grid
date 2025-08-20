@@ -1,4 +1,4 @@
-import type { Component, RichSelectParams } from 'ag-grid-community';
+import type { Component, HighlightTooltipEventType, RichSelectParams } from 'ag-grid-community';
 import {
     KeyCode,
     _createElement,
@@ -17,7 +17,7 @@ const LIST_COMPONENT_NAME = 'ag-rich-select-list';
 const ROW_COMPONENT_NAME = 'ag-rich-select-row';
 
 export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectListEvent> extends VirtualList<
-    Component<TEventType | AgRichSelectListEvent>,
+    Component<TEventType | AgRichSelectListEvent | HighlightTooltipEventType>,
     TValue,
     TEventType | AgRichSelectListEvent
 > {
@@ -290,7 +290,10 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         }
     }
 
-    private createRowComponent(value: TValue, listItemElement: HTMLElement): Component<AgRichSelectListEvent> {
+    private createRowComponent(
+        value: TValue,
+        listItemElement: HTMLElement
+    ): Component<AgRichSelectListEvent | HighlightTooltipEventType> {
         const row = new RichSelectRow<TValue>(this.params);
         listItemElement.setAttribute('id', `${ROW_COMPONENT_NAME}-${row.getCompId()}`);
         row.setParentComponent(this);

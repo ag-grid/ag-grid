@@ -131,6 +131,7 @@ export type DynamicBeanName =
     | 'headerGroupCellCtrl'
     | 'rangeHandle'
     | 'tooltipFeature'
+    | 'highlightTooltipFeature'
     | 'tooltipStateManager'
     | 'groupStrategy'
     | 'treeGroupStrategy'

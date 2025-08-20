@@ -235,6 +235,7 @@ export {
     AgPropertyValueChangedListener as _AgPropertyValueChangedListener,
     IPropertiesService as _IPropertiesService,
 } from './agStack/interfaces/iProperties';
+export { HighlightTooltipEventType } from './agStack/tooltip/agHighlightTooltipFeature';
 export { BasePopupService as _BasePopupService } from './agStack/popup/basePopupService';
 export { AgTooltipComponent as _AgTooltipComponent } from './agStack/tooltip/agTooltipComponent';
 export { AgTooltipFeature as _AgTooltipFeature } from './agStack/tooltip/agTooltipFeature';
@@ -1198,6 +1199,7 @@ export {
     _isShowTooltipWhenTruncated,
     ITooltipCtrlParams,
 } from './tooltip/tooltipFeature';
+
 export { IFooterService } from './interfaces/iFooterService';
 export {
     MenuItemLeafDef,

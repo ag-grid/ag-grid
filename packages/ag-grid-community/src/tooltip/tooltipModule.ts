@@ -1,3 +1,4 @@
+import { AgHighlightTooltipFeature } from '../agStack/tooltip/agHighlightTooltipFeature';
 import { AgTooltipComponent } from '../agStack/tooltip/agTooltipComponent';
 import { AgTooltipFeature } from '../agStack/tooltip/agTooltipFeature';
 import { tooltipCSS } from '../agStack/tooltip/tooltip.css-GENERATED';
@@ -17,6 +18,7 @@ export const TooltipModule: _ModuleWithoutApi = {
     beans: [TooltipService],
     dynamicBeans: {
         tooltipFeature: AgTooltipFeature as any,
+        highlightTooltipFeature: AgHighlightTooltipFeature as any,
         tooltipStateManager: TooltipStateManager as any,
     },
     userComponents: {
