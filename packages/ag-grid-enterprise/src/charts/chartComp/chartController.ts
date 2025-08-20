@@ -189,22 +189,27 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         const fields = selectedCols.map((c) => ({ colId: c.colId, displayName: c.displayName }));
         const data = this.getChartData();
         const selectedDimensions = this.getSelectedDimensions();
+        const model = this.model;
 
         const params: UpdateParams = {
             data,
-            groupData: this.model.groupChartData,
+            groupData: model.groupChartData,
             grouping: this.isGrouping(),
-            categories: selectedDimensions.map((selectedDimension) => ({
-                id: selectedDimension.colId,
-                name: selectedDimension.displayName!,
-                chartDataType: this.model.categoryAxisType ?? this.model.getChartDataType(selectedDimension.colId),
-            })),
+            categories: selectedDimensions.map(({ colId, displayName }) => {
+                const chartDataType = model.categoryAxisType ?? model.getChartDataType(colId);
+                return {
+                    id: colId,
+                    name: displayName!,
+                    chartDataType,
+                    convertTime: chartDataType === 'time' ? model.getConvertTime(colId) : undefined,
+                };
+            }),
             fields,
             chartId: this.getChartId(),
             getCrossFilteringContext: () => ({ lastSelectedChartId: 'xxx' }), //this.params.crossFilteringContext, //TODO
             seriesChartTypes: this.getSeriesChartTypes(),
             updatedOverrides: updatedOverrides,
-            seriesGroupType: this.model.seriesGroupType,
+            seriesGroupType: model.seriesGroupType,
         };
 
         return this.isCategorySeriesSwitched() ? this.invertCategorySeriesParams(params) : params;
