@@ -18,7 +18,6 @@ import type { EditMap, EditRow, EditValue, GetEditsParams, IEditModelService } f
 import type {
     EditNavOnValidationResult,
     EditPosition,
-    EditRowPosition,
     EditSource,
     IEditService,
     IsEditingParams,
@@ -224,7 +223,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     /** @returns whether to prevent default on event */
     public startEditing(position: Required<EditPosition>, params: StartEditParams): void {
-        const { startedEdit = true, event = null, source = 'ui', ignoreEventKey = false } = params;
+        const { startedEdit = true, event = null, source = 'ui', ignoreEventKey = false, silent } = params;
 
         this.strategy ??= this.createStrategy();
 
@@ -255,7 +254,14 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.dispatchBatchEvent('batchEditingStarted', new Map());
         }
 
-        this.strategy!.start(position, event, source, ignoreEventKey);
+        this.strategy!.start({
+            position,
+            event,
+            source,
+            ignoreEventKey,
+            startedEdit,
+            silent,
+        });
 
         return;
     }
@@ -831,13 +837,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         payload?: any
     ): void {
         this.strategy?.dispatchCellEvent(position, event, type, payload);
-    }
-
-    public dispatchRowEvent(
-        position: Required<EditRowPosition>,
-        type: 'rowEditingStarted' | 'rowEditingStopped'
-    ): void {
-        this.strategy?.dispatchRowEvent(position, type);
     }
 
     public dispatchBatchEvent(type: 'batchEditingStarted' | 'batchEditingStopped', edits: EditMap): void {
