@@ -4,12 +4,13 @@ paths:
  - 'packages/ag-grid-angular'
  - 'packages/ag-grid-react'
  - 'packages/ag-grid-vue3'
- - 'dist/artifacts/contents/packages'
 paths-ignore:
  - '**/*.test.js'
  - '**/*.test.ts'
  - '**/*.test.tsx'
  - '**/__tests__/**'
+ - '**/test/**'
+ - '**/test-harness/**'
  - '**/node_modules/**'
 query-filters:
  - exclude:
