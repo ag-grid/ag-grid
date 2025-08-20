@@ -1135,6 +1135,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public resetRowHeights(): void {
+        if (this.beans.rowAutoHeight?.active) {
+            _warn(3);
+            return;
+        }
         const rootNode = this.rootNode;
         if (!rootNode) {
             return;

@@ -1,10 +1,9 @@
-import type { _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
-import type { _ViewportRowModelGridApi } from 'ag-grid-community';
+import { _RowModelSharedApiModule, onRowHeightChanged, resetRowHeights } from 'ag-grid-community';
+import type { _ModuleWithApi, _ModuleWithoutApi, _ViewportRowModelGridApi } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
 import { ViewportRowModel } from './viewportRowModel';
-import { resetRowHeights } from './viewportRowModelApi';
 
 /**
  * @feature Viewport Row Model
@@ -25,6 +24,7 @@ export const ViewportRowModelApiModule: _ModuleWithApi<_ViewportRowModelGridApi>
     version: VERSION,
     apiFunctions: {
         resetRowHeights,
+        onRowHeightChanged,
     },
-    dependsOn: [EnterpriseCoreModule],
+    dependsOn: [EnterpriseCoreModule, _RowModelSharedApiModule],
 };

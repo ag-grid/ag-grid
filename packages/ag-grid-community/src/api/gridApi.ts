@@ -448,7 +448,7 @@ export interface _SortGridApi {
     onSortChanged(): void;
 }
 
-export interface _ClientSideRowModelGridApi<TData> {
+export interface _ClientSideRowModelGridApi<TData> extends _RowModelSharedApi {
     /**
      * Informs the grid that row group expanded state has changed and it needs to rerender the group nodes.
      * Typically called after updating the row node expanded state explicitly, i.e `rowNode.expanded = false`,
@@ -484,12 +484,6 @@ export interface _ClientSideRowModelGridApi<TData> {
      * @agModule `ClientSideRowModelApiModule`
      */
     forEachNodeAfterFilterAndSort(callback: (rowNode: IRowNode<TData>, index: number) => void): void;
-
-    /**
-     * Tells the grid to recalculate the row heights.
-     * @agModule `ClientSideRowModelApiModule`
-     */
-    resetRowHeights(): void;
 
     /**
      * Update row data. Pass a transaction object with lists for `add`, `remove` and `update`.
@@ -533,8 +527,17 @@ export interface _CsrmSsrmSharedGridApi {
 
     /** Collapse all groups. */
     collapseAll(): void;
+}
 
-    /** Tells the grid a row height has changed. To be used after calling `rowNode.setRowHeight(newHeight)`. */
+export interface _RowModelSharedApi {
+    /**
+     * Tells the grid to recalculate the row heights.
+     */
+    resetRowHeights(): void;
+
+    /**
+     * Tells the grid a row height has changed. To be used after calling `rowNode.setRowHeight(newHeight)`.
+     */
     onRowHeightChanged(): void;
 }
 
@@ -1560,7 +1563,7 @@ export interface _CellSelectionGridApi {
     clearCellSelection(): void;
 }
 
-export interface _ServerSideRowModelGridApi<TData> {
+export interface _ServerSideRowModelGridApi<TData> extends _RowModelSharedApi {
     /**
      * Returns an object containing rules matching the selected rows in the SSRM.
      *
@@ -1630,21 +1633,9 @@ export interface _ServerSideRowModelGridApi<TData> {
      * @agModule `ServerSideRowModelApiModule`
      */
     getServerSideGroupLevelState(): ServerSideGroupLevelState[];
-
-    /**
-     * Resets row heights for all rows in the server side row model.
-     * @agModule `ServerSideRowModelApiModule`
-     */
-    resetRowHeights(): void;
 }
 
-export interface _ViewportRowModelGridApi {
-    /**
-     * Resets row heights for all rows in the row model.
-     * @agModule `ViewportRowModelApiModule`
-     */
-    resetRowHeights(): void;
-}
+export interface _ViewportRowModelGridApi extends _RowModelSharedApi {}
 
 export interface _ContextMenuGridApi {
     /**
@@ -1889,6 +1880,7 @@ export interface GridApi<TData = any>
         _QuickFilterGridApi,
         _FindApi<TData>,
         _PaginationGridApi,
+        _RowModelSharedApi,
         _CsrmSsrmSharedGridApi,
         _SsrmInfiniteSharedGridApi,
         _ClientSideRowModelGridApi<TData>,
@@ -1903,6 +1895,7 @@ export interface GridApi<TData = any>
         _ServerSideRowModelGridApi<TData>,
         _ContextMenuGridApi,
         _ColumnChooserGridApi,
+        _ViewportRowModelGridApi,
         _MasterDetailGridApi,
         _ExcelExportGridApi,
         _ClipboardGridApi,

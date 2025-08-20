@@ -1,5 +1,6 @@
 import type { _ClientSideRowModelGridApi } from '../api/gridApi';
-import { CsrmSsrmSharedApiModule } from '../api/sharedApiModule';
+import { onRowHeightChanged, resetRowHeights } from '../api/rowModelSharedApi';
+import { CsrmSsrmSharedApiModule, RowModelSharedApiModule } from '../api/sharedApiModule';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { SortModule } from '../sort/sortModule';
 import { VERSION } from '../version';
@@ -16,7 +17,6 @@ import {
     isRowDataEmpty,
     onGroupExpandedOrCollapsed,
     refreshClientSideRowModel,
-    resetRowHeights,
 } from './clientSideRowModelApi';
 import { SortStage } from './sortStage';
 
@@ -44,11 +44,12 @@ export const ClientSideRowModelApiModule: _ModuleWithApi<_ClientSideRowModelGrid
         forEachLeafNode,
         forEachNodeAfterFilter,
         forEachNodeAfterFilterAndSort,
-        resetRowHeights,
         applyTransaction,
         applyTransactionAsync,
         flushAsyncTransactions,
         getBestCostNodeSelection,
+        resetRowHeights,
+        onRowHeightChanged,
     },
-    dependsOn: [CsrmSsrmSharedApiModule],
+    dependsOn: [CsrmSsrmSharedApiModule, RowModelSharedApiModule],
 };

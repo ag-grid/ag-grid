@@ -7,7 +7,6 @@ import type { ServerSideTransaction, ServerSideTransactionResult } from './serve
 
 export interface IServerSideRowModel<TData = any> extends IRowModel {
     refreshStore(params?: RefreshServerSideParams): void;
-    onRowHeightChanged(): void;
     getStoreState(): ServerSideGroupLevelState[];
     retryLoads(): void;
     forEachNodeTransactional(cb: (rowNode: RowNode, index?: number) => void): void;
@@ -18,7 +17,6 @@ export interface IServerSideRowModel<TData = any> extends IRowModel {
     ): void;
     resetRootStore(): void;
     getBlockStates(): void;
-    resetRowHeights(): void;
     setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void;
     applyRowData(rowDataParams: LoadSuccessParams<TData>, startRow: number, route: string[]): void;
 

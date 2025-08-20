@@ -44,8 +44,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
         includeFooterNodes?: boolean,
         afterSort?: boolean
     ): void;
-    resetRowHeights(): void;
-    onRowHeightChanged(): void;
     batchUpdateRowData(
         rowDataTransaction: RowDataTransaction<TData>,
         callback?: (res: RowNodeTransaction<TData>) => void

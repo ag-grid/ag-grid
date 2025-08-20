@@ -1297,8 +1297,10 @@ export {
 } from './selection/rowSelectionModule';
 export {
     CsrmSsrmSharedApiModule as _CsrmSsrmSharedApiModule,
+    RowModelSharedApiModule as _RowModelSharedApiModule,
     SsrmInfiniteSharedApiModule as _SsrmInfiniteSharedApiModule,
 } from './api/sharedApiModule';
+export { onRowHeightChanged, resetRowHeights } from './api/rowModelSharedApi';
 export { SharedMenuModule as _SharedMenuModule } from './misc/menu/sharedMenuModule';
 export { SortModule as _SortModule } from './sort/sortModule';
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';

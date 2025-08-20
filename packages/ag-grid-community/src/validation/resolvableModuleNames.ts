@@ -40,6 +40,7 @@ const RESOLVABLE_MODULE_NAMES: Record<ResolvableModuleName, readonly (CommunityM
     ColumnResize: ['AllCommunity'],
     CommunityCore: ['AllCommunity'],
     CsrmSsrmSharedApi: ['ClientSideRowModelApi', 'ServerSideRowModelApi'],
+    RowModelSharedApi: ['ClientSideRowModelApi', 'ServerSideRowModelApi'],
     EnterpriseCore: ['AllEnterprise'],
     FilterCore: [...ALL_COLUMN_FILTERS, 'QuickFilter', 'ExternalFilter', 'AdvancedFilter'],
     GroupCellRenderer: ['RowGrouping', 'Pivot', 'TreeData', 'MasterDetail', 'ServerSideRowModel'],
