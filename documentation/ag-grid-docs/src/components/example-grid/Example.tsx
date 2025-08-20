@@ -50,7 +50,7 @@ import {
 } from './config/colDefs';
 import { excelStyles } from './config/excelStyles';
 import { COUNTRY_CODES, colNames, countries, createRowItem } from './data';
-import { createDataSizeValue, suppressColumnMoveAnimation } from './utils';
+import { createDataSizeValue } from './utils';
 
 const IS_SSR = typeof window === 'undefined';
 
