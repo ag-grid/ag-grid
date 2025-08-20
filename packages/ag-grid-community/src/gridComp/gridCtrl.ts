@@ -4,7 +4,6 @@ import { _getActiveDomElement } from '../agStack/utils/document';
 import { _observeResize } from '../agStack/utils/dom';
 import { _findTabbableParent, _focusInto } from '../agStack/utils/focus';
 import { BeanStub } from '../context/beanStub';
-import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
@@ -45,8 +44,6 @@ export class GridCtrl extends BeanStub {
         const { dragAndDrop, ctrlsSvc } = this.beans;
 
         dragAndDrop?.registerGridDropTarget(() => this.eGui, this);
-
-        _stampTopLevelGridCompWithGridInstance(this.gos, eGridDiv);
 
         this.createManagedBean(new LayoutFeature(this.view));
 

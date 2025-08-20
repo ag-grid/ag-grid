@@ -1,12 +1,12 @@
+import type { HorizontalDirection, VerticalDirection } from '../agStack/constants/direction';
 import { _removeFromArray } from '../agStack/utils/array';
-import { _getRootNode } from '../agStack/utils/document';
+import { _getPageBody, _getRootNode } from '../agStack/utils/document';
+import { _anchorElementToMouseMoveEvent } from '../agStack/utils/event';
 import type { AgPromise } from '../agStack/utils/promise';
 import { _getDragAndDropImageCompDetails } from '../components/framework/userCompUtils';
-import type { HorizontalDirection, VerticalDirection } from '../constants/direction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
-import { _addGridCommonParams, _anchorElementToMouseMoveEvent, _getPageBody } from '../gridOptionsUtils';
+import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { DragItem } from '../interfaces/iDragItem';
 import { _warn } from '../validation/logging';
@@ -457,7 +457,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         style.setProperty('position', 'absolute');
         style.setProperty('z-index', '9999');
 
-        _stampTopLevelGridCompWithGridInstance(this.gos, eGui);
+        this.gos.setInstanceDomData(eGui);
         this.beans.environment.applyThemeClasses(eGui);
 
         style.top = '20px';

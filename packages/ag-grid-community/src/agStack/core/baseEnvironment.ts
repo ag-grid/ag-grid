@@ -18,7 +18,13 @@ import { AgBeanStub } from './agBeanStub';
 let paramsId = 0;
 
 export abstract class BaseEnvironment<
-        TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+        TBeanCollection extends AgCoreBeanCollection<
+            TBeanCollection,
+            TProperties,
+            TGlobalEvents,
+            TCommon,
+            TPropertiesService
+        >,
         TProperties extends BaseProperties,
         TGlobalEvents extends BaseEvents,
         TCommon,
@@ -59,6 +65,7 @@ export abstract class BaseEnvironment<
 
     public postConstruct(): void {
         const { gos, eRootDiv } = this;
+        gos.setInstanceDomData(eRootDiv);
         this.eStyleContainer =
             gos.get('themeStyleContainer') ?? (eRootDiv.getRootNode() === document ? document.head : eRootDiv);
         this.cssLayer = gos.get('themeCssLayer');

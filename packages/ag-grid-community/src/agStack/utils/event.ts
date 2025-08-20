@@ -1,3 +1,7 @@
+import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
+import { _getBodyHeight, _getBodyWidth, _getDocument } from './document';
+import { _getElementRectWithOffset } from './dom';
+
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel', 'scroll'];
 const NON_PASSIVE_EVENTS = ['wheel'];
 const supports: { [key: string]: boolean } = {};
@@ -94,3 +98,80 @@ const getPassiveStateForEvent = (event: string): boolean | undefined => {
         return false;
     }
 };
+
+/**
+ * `True` if the event is close to the original event by X pixels either vertically or horizontally.
+ * we only start dragging after X pixels so this allows us to know if we should start dragging yet.
+ * @param {MouseEvent | TouchEvent} e1
+ * @param {MouseEvent | TouchEvent} e2
+ * @param {number} pixelCount
+ * @returns {boolean}
+ */
+export function _areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean {
+    // by default, we wait 4 pixels before starting the drag
+    if (pixelCount === 0) {
+        return false;
+    }
+
+    const diffX = Math.abs(e1.clientX - e2.clientX);
+    const diffY = Math.abs(e1.clientY - e2.clientY);
+
+    return Math.max(diffX, diffY) <= pixelCount;
+}
+
+// walks the path of the event, and returns true if this instance is the first one that it finds. if doing things like
+// master / detail grids, and a child grid is found, then it returns false. this stops things like copy/paste
+// getting executed on many grids at the same time.
+export function _isEventFromThisInstance(beans: UtilBeanCollection, event: UIEvent): boolean {
+    return beans.gos.isElementInThisInstance(event.target as HTMLElement);
+}
+
+export function _anchorElementToMouseMoveEvent(
+    element: HTMLElement,
+    mouseMoveEvent: MouseEvent | Touch,
+    beans: UtilBeanCollection
+): void {
+    const eRect = element.getBoundingClientRect();
+    const height = eRect.height;
+
+    const browserWidth = _getBodyWidth(beans) - 2; // 2px for 1px borderLeft and 1px borderRight
+    const browserHeight = _getBodyHeight(beans) - 2; // 2px for 1px borderTop and 1px borderBottom
+
+    const offsetParent = element.offsetParent;
+
+    if (!offsetParent) {
+        return;
+    }
+
+    const offsetParentSize = _getElementRectWithOffset(element.offsetParent as HTMLElement);
+
+    const { clientY, clientX } = mouseMoveEvent;
+
+    let top = clientY - offsetParentSize.top - height / 2;
+    let left = clientX - offsetParentSize.left - 10;
+
+    const eDocument = _getDocument(beans);
+    const win = eDocument.defaultView || window;
+    const windowScrollY = win.pageYOffset || eDocument.documentElement.scrollTop;
+    const windowScrollX = win.pageXOffset || eDocument.documentElement.scrollLeft;
+
+    // check if the drag and drop image component is not positioned outside of the browser
+    if (browserWidth > 0 && left + element.clientWidth > browserWidth + windowScrollX) {
+        left = browserWidth + windowScrollX - element.clientWidth;
+    }
+
+    if (left < 0) {
+        left = 0;
+    }
+
+    if (browserHeight > 0 && top + element.clientHeight > browserHeight + windowScrollY) {
+        top = browserHeight + windowScrollY - element.clientHeight;
+    }
+
+    if (top < 0) {
+        top = 0;
+    }
+
+    element.style.left = `${left}px`;
+    element.style.top = `${top}px`;
+}

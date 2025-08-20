@@ -1,7 +1,11 @@
-export interface ILocaleService {
+export interface ILocaleService<TKey extends string = string> {
     readonly beanName: 'localeSvc';
 
-    getLocaleTextFunc(): LocaleTextFunc;
+    getLocaleTextFunc(): LocaleTextFunc<TKey>;
 }
 
-export type LocaleTextFunc = (key: string, defaultValue: string, variableValues?: string[]) => string;
+export type LocaleTextFunc<TKey extends string = string> = (
+    key: TKey,
+    defaultValue: string,
+    variableValues?: string[]
+) => string;

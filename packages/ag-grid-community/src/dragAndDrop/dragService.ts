@@ -3,11 +3,10 @@ import { _removeFromArray } from '../agStack/utils/array';
 import { _isBrowserSafari } from '../agStack/utils/browser';
 import { _getDocument, _getRootNode } from '../agStack/utils/document';
 import { _isFocusableFormField } from '../agStack/utils/dom';
+import { _areEventsNear, _isEventFromThisInstance } from '../agStack/utils/event';
 import { _exists } from '../agStack/utils/generic';
-import { _areEventsNear } from '../agStack/utils/mouse';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { _isEventFromThisGrid } from '../gridBodyComp/mouseEventUtils';
 
 /** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
@@ -286,7 +285,7 @@ export class DragService extends BeanStub implements NamedBean {
     }
 
     private shouldPreventMouseEvent(mouseEvent: MouseEvent): boolean {
-        const { gos } = this;
+        const { gos, beans } = this;
         const isEnableCellTextSelect = gos.get('enableCellTextSelection');
         const isMouseMove = mouseEvent.type === 'mousemove';
         const isOverFormFieldElement = (mouseEvent: MouseEvent) => {
@@ -302,7 +301,7 @@ export class DragService extends BeanStub implements NamedBean {
             isEnableCellTextSelect &&
             isMouseMove &&
             mouseEvent.cancelable &&
-            _isEventFromThisGrid(gos, mouseEvent) &&
+            _isEventFromThisInstance(beans, mouseEvent) &&
             !isOverFormFieldElement(mouseEvent)
         );
     }

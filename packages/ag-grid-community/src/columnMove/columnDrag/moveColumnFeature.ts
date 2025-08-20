@@ -1,6 +1,6 @@
+import type { HorizontalDirection } from '../../agStack/constants/direction';
 import { _last } from '../../agStack/utils/array';
 import { _exists, _missing } from '../../agStack/utils/generic';
-import type { HorizontalDirection } from '../../constants/direction';
 import { BeanStub } from '../../context/beanStub';
 import type { DragAndDropIcon, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';

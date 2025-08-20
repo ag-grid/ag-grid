@@ -1,4 +1,4 @@
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
 import { _requestAnimationFrame } from './dom';
 
 const doOnceFlags: { [key: string]: boolean } = {};
@@ -36,11 +36,11 @@ const batchedCallsRaf: BatchedCalls = {
  * @param {Function} func The function to be batched
  */
 export function _batchCall(func: () => void): void;
-export function _batchCall(func: () => void, mode: 'raf', beans: AgCoreBeanCollection<any, any, any, any>): void;
+export function _batchCall(func: () => void, mode: 'raf', beans: UtilBeanCollection): void;
 export function _batchCall(
     func: () => void,
     mode: 'setTimeout' | 'raf' = 'setTimeout',
-    beans?: AgCoreBeanCollection<any, any, any, any>
+    beans?: UtilBeanCollection
 ): void {
     const batch = mode === 'raf' ? batchedCallsRaf : batchedCallsSetTimeout;
 

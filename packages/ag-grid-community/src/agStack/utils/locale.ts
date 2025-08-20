@@ -4,7 +4,9 @@ function defaultLocaleTextFunc(_key: string, defaultValue: string): string {
     return defaultValue;
 }
 
-export function _getLocaleTextFunc(localeSvc?: ILocaleService): LocaleTextFunc {
+export function _getLocaleTextFunc<TKey extends string = string>(
+    localeSvc?: ILocaleService<TKey>
+): LocaleTextFunc<TKey> {
     return localeSvc?.getLocaleTextFunc() ?? defaultLocaleTextFunc;
 }
 
