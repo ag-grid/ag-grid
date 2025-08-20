@@ -16,6 +16,12 @@ interface IServerSideRowExpansionState {
     toggledNodes: string[];
 }
 
+/**
+ * Service for managing row expansion in the server-side row model.
+ * Contains declarative states for interacted with nodes and toggled nodes.
+ * Nodes still maintain their own expanded state, and also there is a user-defined lazy initial state.
+ * This service manages all these states and provides an API for expanding/collapsing rows.
+ */
 export class ServerSideExpansionService extends BaseExpansionService implements NamedBean, IExpansionService {
     beanName = 'expansionSvc' as const;
     private readonly interactedWith = new Set<string>();
@@ -125,6 +131,7 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     }
 
     /**
+     * Internal method for checking service internal state only.
      * expandAll XOR isToggled, since toggleNodes signifies a diff from expandAll.
      */
     private isExpanded = (rowId: string) => !!this.expandAllStatus !== this.toggledNodes.has(rowId);
