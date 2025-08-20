@@ -134,14 +134,15 @@ export class CellKeyboardListenerFeature extends BeanStub {
     private onEnterKeyDown(event: KeyboardEvent): void {
         const { cellCtrl, beans } = this;
         const { editSvc, navigation } = beans;
-        const cellEditing = editSvc?.isEditing(cellCtrl);
+        const cellEditing = editSvc?.isEditing(cellCtrl, { withOpenEditor: true });
         const rowNode = cellCtrl.rowNode;
-        const rowEditing = editSvc?.isRowEditing(rowNode);
+        const rowEditing = editSvc?.isRowEditing(rowNode, { withOpenEditor: true });
 
         const startEditingAction = (cellCtrl: CellCtrl) => {
             const started = editSvc?.startEditing(cellCtrl, {
                 startedEdit: true,
                 event,
+                source: 'edit',
             });
             if (started) {
                 // if we started editing, then we need to prevent default, otherwise the Enter action can get
@@ -169,10 +170,11 @@ export class CellKeyboardListenerFeature extends BeanStub {
             if (editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
                 editSvc?.stopEditing(cellCtrl, {
                     event,
+                    source: 'edit',
                 });
             } else if (rowEditing && !cellCtrl.isCellEditable()) {
                 // must be on a read only cell
-                editSvc?.stopEditing({ rowNode }, { event });
+                editSvc?.stopEditing({ rowNode }, { event, source: 'edit' });
             } else {
                 startEditingAction(cellCtrl);
             }
