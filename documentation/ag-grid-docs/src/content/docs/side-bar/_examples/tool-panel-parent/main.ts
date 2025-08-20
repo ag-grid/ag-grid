@@ -21,7 +21,7 @@ ModuleRegistry.registerModules([
 ]);
 
 let gridApi: GridApi<IOlympicData>;
-const toolPanel: ToolPanelDef = {
+const columnsToolPanel: ToolPanelDef = {
     id: 'columns',
     labelDefault: 'Modal',
     labelKey: 'columns',
@@ -30,10 +30,11 @@ const toolPanel: ToolPanelDef = {
     toolPanelParams: { suppressRowGroups: true, suppressValues: true, suppressPivotMode: true },
 };
 
-function passModal() {
+function passModal(toolPanelId: string = columnsToolPanel.id) {
     if (document.getElementById('modalDrawer')) {
         toggleDrawer();
-        gridApi.openToolPanel(toolPanel.id);
+        const drawer = document.getElementById('modalDrawer')!.querySelector('.content')!;
+        gridApi.openToolPanel(toolPanelId, drawer);
         return;
     }
     const modalDrawer = document.createElement('div');
@@ -47,15 +48,8 @@ function passModal() {
     modalDrawer.id = 'modalDrawer';
     modalDrawer.classList.add('modal', 'active');
     document.body.prepend(modalDrawer);
-    const drawer = document.querySelector('#modalDrawer .content')!;
-    gridApi.updateGridOptions({
-        sideBar: {
-            hideButtons: true,
-            hiddenByDefault: true,
-            toolPanels: [{ ...toolPanel, parent: drawer }] as ToolPanelDef[],
-        },
-    });
-    gridApi.openToolPanel(toolPanel.id);
+    const drawer = modalDrawer.querySelector('.content')!;
+    gridApi.openToolPanel(toolPanelId, drawer);
 }
 
 function toggleDrawer() {
@@ -78,7 +72,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     ],
     defaultColDef: { flex: 1, minWidth: 100, filter: true },
     autoGroupColumnDef: { minWidth: 200 },
-    sideBar: { toolPanels: [toolPanel], hideButtons: true, hiddenByDefault: true },
+    sideBar: { toolPanels: [columnsToolPanel], hideButtons: true, hiddenByDefault: true },
 };
 
 // setup the grid after the page has finished loading

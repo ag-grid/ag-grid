@@ -12,7 +12,11 @@ export interface ISideBar {
     setDisplayed(show: boolean): void;
     setSideBarPosition(position?: 'left' | 'right'): void;
     isToolPanelShowing(): boolean;
-    openToolPanel(key: string, source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void;
+    openToolPanel(
+        key: string,
+        source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api',
+        parent?: Element | null
+    ): void;
     getToolPanelInstance(key: string): IToolPanel | undefined;
     close(source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void;
     openedItem(): string | null;
