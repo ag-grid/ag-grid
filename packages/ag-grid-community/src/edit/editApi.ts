@@ -71,7 +71,7 @@ export function stopEditing(beans: BeanCollection, cancel: boolean = false): voi
         } else {
             _syncFromEditors(beans, true);
         }
-        _destroyEditors(beans);
+        _destroyEditors(beans, undefined, { cancel });
     } else {
         editSvc?.stopEditing(undefined, { cancel, source: 'api' });
     }

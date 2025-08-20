@@ -352,7 +352,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 if (this.isBatchEditing()) {
                     this.strategy?.cleanupEditors();
                 } else {
-                    _destroyEditors(beans, model.getEditPositions(), { event });
+                    _destroyEditors(beans, model.getEditPositions(), { event, cancel: isEscape });
                 }
 
                 event.preventDefault();

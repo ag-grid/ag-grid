@@ -354,7 +354,7 @@ function _persistEditorValue(beans: BeanCollection, position: Required<EditPosit
 export function _destroyEditors(
     beans: BeanCollection,
     edits?: Required<EditPosition>[],
-    params?: { event?: Event; silent?: boolean }
+    params?: { event?: Event; silent?: boolean; cancel?: boolean }
 ): void {
     if (!edits) {
         edits = beans.editModelSvc?.getEditPositions();
@@ -366,7 +366,7 @@ export function _destroyEditors(
 export function _destroyEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
-    params?: { event?: Event | null; silent?: boolean }
+    params?: { event?: Event | null; silent?: boolean; cancel?: boolean }
 ): void {
     const { editSvc, editModelSvc } = beans;
     const cellCtrl = _getCellCtrl(beans, position);
@@ -409,7 +409,7 @@ export function _destroyEditor(
 
     if (latest?.state === 'changed' && !params?.silent) {
         editSvc?.dispatchCellEvent(position, params?.event, 'cellEditingStopped', {
-            valueChanged: _sourceAndPendingDiffer(latest),
+            valueChanged: _sourceAndPendingDiffer(latest) && !params?.cancel,
             newValue: edit?.editorValue ?? edit?.pendingValue,
             oldValue: latest?.sourceValue,
         });

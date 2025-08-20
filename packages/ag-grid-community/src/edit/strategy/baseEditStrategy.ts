@@ -152,7 +152,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         if (cancel) {
             editingCells.forEach((cell) => {
-                _destroyEditor(this.beans, cell);
+                _destroyEditor(this.beans, cell, { cancel });
                 this.model.stop(cell);
             });
             return true;
@@ -162,7 +162,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         if (actions.destroy.length > 0) {
             actions.destroy.forEach((cell) => {
-                _destroyEditor(this.beans, cell, { event });
+                _destroyEditor(this.beans, cell, { event, cancel });
                 this.model.stop(cell);
             });
         }
