@@ -10,6 +10,7 @@ paths-ignore:
  - '**/*.test.ts'
  - '**/*.test.tsx'
  - '**/__tests__/**'
+ - '**/node_modules/**'
 query-filters:
  - exclude:
     problem.severity:
