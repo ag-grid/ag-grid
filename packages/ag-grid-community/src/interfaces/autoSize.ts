@@ -70,7 +70,8 @@ export interface SizeColumnsToContentStrategy {
     /** Provide to limit specific column widths when sizing. */
     columnLimits?: SizeColumnsToContentColumnLimits[];
 
-    delayRender?: boolean;
+    /** Hide column headers until the first data is rendered and they have their correct sizing. */
+    hideColumnsUntilData?: boolean;
 }
 
 export interface ISizeAllColumnsToContentParams {

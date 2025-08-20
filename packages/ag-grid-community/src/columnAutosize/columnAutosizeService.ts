@@ -9,7 +9,12 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-import type { IColumnLimit, ISizeColumnsToFitParams, SizeColumnsToContentColumnLimits } from '../interfaces/autoSize';
+import type {
+    IColumnLimit,
+    ISizeColumnsToFitParams,
+    SizeColumnsToContentColumnLimits,
+    SizeColumnsToContentStrategy,
+} from '../interfaces/autoSize';
 import { _warn } from '../validation/logging';
 import { TouchListener } from '../widgets/touchListener';
 
@@ -22,8 +27,24 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     public shouldQueueResizeOperations: boolean = false;
     private resizeOperationQueue: (() => void)[] = [];
 
+    private shouldHideColumns: boolean = false;
+
     public postConstruct(): void {
-        this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered() });
+        const autoSizeStrategy = this.gos.get('autoSizeStrategy');
+
+        if (autoSizeStrategy) {
+            let shouldHideColumns = false;
+            if (autoSizeStrategy.type === 'fitGridWidth' || autoSizeStrategy.type === 'fitProvidedWidth') {
+                shouldHideColumns = true;
+            } else if (autoSizeStrategy.type === 'fitCellContents') {
+                this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered(autoSizeStrategy) });
+                shouldHideColumns = autoSizeStrategy.hideColumnsUntilData ?? false;
+            }
+            if (shouldHideColumns) {
+                this.shouldHideColumns = true;
+                this.beans.hiddenLayoutSvc?.hideColumns();
+            }
+        }
     }
 
     public autoSizeCols(params: {
@@ -451,15 +472,15 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public applyAutosizeStrategy(): void {
-        const autoSizeStrategy = this.gos.get('autoSizeStrategy');
-        if (!autoSizeStrategy) {
+        const { gos, hiddenLayoutSvc } = this.beans;
+        const autoSizeStrategy = gos.get('autoSizeStrategy');
+        if (!autoSizeStrategy || autoSizeStrategy.type === 'fitCellContents') {
             return;
         }
 
-        const { type } = autoSizeStrategy;
         // ensure things like aligned grids have linked first
         setTimeout(() => {
-            if (type === 'fitGridWidth') {
+            if (autoSizeStrategy.type === 'fitGridWidth') {
                 const { columnLimits: propColumnLimits, defaultMinWidth, defaultMaxWidth } = autoSizeStrategy;
                 const columnLimits = propColumnLimits?.map(({ colId: key, minWidth, maxWidth }) => ({
                     key,
@@ -471,19 +492,17 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                     defaultMaxWidth,
                     columnLimits,
                 });
-            } else if (type === 'fitProvidedWidth') {
+            } else if (autoSizeStrategy.type === 'fitProvidedWidth') {
                 this.sizeColumnsToFit(autoSizeStrategy.width, 'sizeColumnsToFit');
+            }
+            if (this.shouldHideColumns) {
+                hiddenLayoutSvc?.revealColumns();
             }
         });
     }
 
-    private onFirstDataRendered(): void {
-        const autoSizeStrategy = this.gos.get('autoSizeStrategy');
-        if (autoSizeStrategy?.type !== 'fitCellContents') {
-            return;
-        }
-
-        const { colIds: columns, skipHeader, defaultMaxWidth, defaultMinWidth, columnLimits } = autoSizeStrategy;
+    private onFirstDataRendered(strategy: SizeColumnsToContentStrategy): void {
+        const { colIds: columns, skipHeader, defaultMaxWidth, defaultMinWidth, columnLimits } = strategy;
         // ensure render has finished
         setTimeout(() => {
             const params = {
@@ -497,6 +516,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 this.autoSizeCols({ colKeys: columns, ...params });
             } else {
                 this.autoSizeAllColumns(params);
+            }
+            if (this.shouldHideColumns) {
+                this.shouldHideColumns = false;
+                this.beans.hiddenLayoutSvc?.revealColumns();
             }
         });
     }

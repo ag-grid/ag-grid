@@ -9,21 +9,27 @@ export class HiddenLayoutService extends BeanStub implements NamedBean {
 
     private showCellsOnDelay: boolean = false;
 
-    public postConstruct(): void {
-        this.addManagedEventListeners({
-            revealHiddenContent: () => {
-                if (this.showCellsOnDelay) {
-                    console.warn('AG Grid: Revealing cells after they were hidden for layout purposes');
-                    this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.remove('ag-delay-render');
-                    this.showCellsOnDelay = false;
-                }
-            },
+    public hideColumns() {
+        console.info('AG Grid: Request Hiding columns');
+
+        // TODO do we need to wait for ctrlsSvc to be ready?
+        this.beans.ctrlsSvc.whenReady(this, (p) => {
+            this.showCellsOnDelay = true;
+            console.warn('AG Grid: Hiding columns');
+
+            p.gridBodyCtrl.eGridBody.classList.add('ag-delay-render');
         });
     }
+    public revealColumns() {
+        if (!this.showCellsOnDelay) {
+            return;
+        }
 
-    public hideCells() {
-        this.showCellsOnDelay = true;
-        this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.add('ag-delay-render');
+        if (this.showCellsOnDelay) {
+            console.warn('AG Grid: Revealing cells after they were hidden for layout purposes');
+            this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.remove('ag-delay-render');
+            this.showCellsOnDelay = false;
+        }
     }
 }
 
