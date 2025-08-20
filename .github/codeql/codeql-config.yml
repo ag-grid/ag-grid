@@ -1,6 +1,9 @@
 paths:
- - 'packages/ag-grid-community/src'
- - 'packages/ag-grid-enterprise/src'
+ - 'packages/ag-grid-community'
+ - 'packages/ag-grid-enterprise'
+ - 'packages/ag-grid-angular'
+ - 'packages/ag-grid-react'
+ - 'packages/ag-grid-vue3'
 paths-ignore:
  - '**/*.test.js'
  - '**/*.test.ts'
