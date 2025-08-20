@@ -71,7 +71,7 @@ export interface SizeColumnsToContentStrategy {
     columnLimits?: SizeColumnsToContentColumnLimits[];
 
     /** Hide column headers until the first data is rendered and they have their correct sizing. */
-    hideColumnsUntilData?: boolean;
+    hideUntilContent?: boolean;
 }
 
 export interface ISizeAllColumnsToContentParams {

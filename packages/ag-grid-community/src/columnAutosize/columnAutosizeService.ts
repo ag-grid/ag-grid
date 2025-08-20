@@ -38,7 +38,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 shouldHideColumns = true;
             } else if (autoSizeStrategy.type === 'fitCellContents') {
                 this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered(autoSizeStrategy) });
-                shouldHideColumns = autoSizeStrategy.hideColumnsUntilData ?? false;
+                shouldHideColumns = autoSizeStrategy.hideUntilContent ?? false;
             }
             if (shouldHideColumns) {
                 this.shouldHideColumns = true;
