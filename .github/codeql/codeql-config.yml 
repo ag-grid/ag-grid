@@ -1,0 +1,8 @@
+paths:
+ - 'packages/ag-grid-community/src'
+ - 'packages/ag-grid-enterprise/src'
+paths-ignore:
+ - '**/*.test.js'
+ - '**/*.test.ts'
+ - '**/*.test.tsx'
+ - '**/__tests__/**'
