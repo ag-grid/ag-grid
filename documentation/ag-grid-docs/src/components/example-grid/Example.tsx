@@ -88,36 +88,54 @@ const modules = [
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
 ];
 
-const statusBar: GridOptions['statusBar'] = {
-    statusPanels: [
-        { statusPanel: 'agTotalAndFilteredRowCountComponent', key: 'totalAndFilter', align: 'left' },
-        { statusPanel: 'agSelectedRowCountComponent', align: 'left' },
-        { statusPanel: 'agAggregationComponent', align: 'right' },
-    ],
-};
-const cellSelection: CellSelectionOptions = {
-    enableHeaderHighlight: true,
-    handle: {
-        mode: 'fill',
+const staticGridOptions: GridOptions = {
+    statusBar: {
+        statusPanels: [
+            { statusPanel: 'agTotalAndFilteredRowCountComponent', key: 'totalAndFilter', align: 'left' },
+            { statusPanel: 'agSelectedRowCountComponent', align: 'left' },
+            { statusPanel: 'agAggregationComponent', align: 'right' },
+        ],
     },
-};
-const rowSelection: RowSelectionOptions = {
-    mode: 'multiRow',
-};
-const suppressColMoveAnimation = suppressColumnMoveAnimation();
+    cellSelection: {
+        enableHeaderHighlight: true,
+        handle: {
+            mode: 'fill',
+        },
+    },
+    rowSelection: {
+        mode: 'multiRow',
+    },
+    initialGroupOrderComparator: ({ nodeA, nodeB }) => {
+        const aKey = nodeA.key || '';
+        const bKey = nodeB.key || '';
+        if (aKey < bKey) {
+            return -1;
+        }
+        if (aKey > bKey) {
+            return 1;
+        }
+        return 0;
+    },
+    enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
+    suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
+    pivotPanelShow: 'always',
 
-const initialGroupOrderComparator = ({ nodeA, nodeB }: InitialGroupOrderComparatorParams) => {
-    const aKey = nodeA.key || '';
-    const bKey = nodeB.key || '';
-    if (aKey < bKey) {
-        return -1;
-    }
-    if (aKey > bKey) {
-        return 1;
-    }
+    enableCharts: true,
+    undoRedoCellEditing: true,
+    undoRedoCellEditingLimit: 50,
+    rowNumbers: true,
+    autoGroupColumnDef: autoGroupColDef,
+    chartThemeOverrides: chartThemeOverrides,
+    excelStyles: excelStyles,
+    enableFilterHandlers: true,
+    rowDragManaged: true,
+    rowDragMultiRow: true,
+    loadingOverlayComponent: () => 'Generating rows...'
 
-    return 0;
+
+
 };
+
 
 const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: string; isSmall: boolean }) => {
     const gridRef = useRef(null);
@@ -163,8 +181,6 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
         }),
         [base64Flags]
     );
-
-    const enableRtl = IS_SSR ? false : /[?&]rtl=true/.test(window.location.search);
 
     const defaultColDef = useMemo<ColDef>(
         () => ({
@@ -342,38 +358,21 @@ const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: 
                     {gridTheme && (
                         <div id="myGrid" style={{ flex: '1 1 auto', overflow: 'hidden' }} className={`${themeClass}`}>
                             <AgGridReactMemo
-                                theme={gridTheme}
                                 ref={gridRef}
                                 modules={modules}
+                                gridOptions={staticGridOptions}
+                                theme={gridTheme}
+                                chartThemes={chartThemes}
                                 columnDefs={columnDefs}
                                 rowData={rowData}
                                 loading={isLoading}
-                                loadingOverlayComponent={() => 'Generating rows...'}
                                 defaultColDef={defaultColDef}
                                 sideBar={sideBar}
                                 columnTypes={columnTypes}
                                 dataTypeDefinitions={dataTypeDefinitions}
-                                statusBar={statusBar}
-                                chartThemes={chartThemes}
-                                chartThemeOverrides={chartThemeOverrides}
-                                excelStyles={excelStyles}
-                                enableFilterHandlers
-                                rowDragManaged
-                                rowDragMultiRow
                                 rowGroupPanelShow={isSmall ? undefined : 'always'}
-                                pivotPanelShow={'always'}
-                                cellSelection={cellSelection}
-                                rowSelection={rowSelection}
-                                enableCharts
-                                undoRedoCellEditing
-                                undoRedoCellEditingLimit={50}
-                                autoGroupColumnDef={autoGroupColDef}
-                                rowNumbers
-                                enableRtl={enableRtl}
-                                suppressColumnMoveAnimation={suppressColMoveAnimation}
                                 defaultCsvExportParams={defaultExportParams as CsvExportParams}
                                 defaultExcelExportParams={defaultExportParams as ExcelExportParams}
-                                initialGroupOrderComparator={initialGroupOrderComparator}
                                 onGridReady={onGridReady}
                             />
                         </div>
