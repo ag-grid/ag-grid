@@ -7,15 +7,14 @@ import type { TemplateEventKeys } from './test-event-types';
 export const createRemoteGridApiProxy = (page: Page, gridId: string = '1', eventLog: EventLog): AsyncGridApi => {
     let gridReadyPromise: Promise<void> | null = null;
 
-    const ensureGridReady = async () => {
+    const ensureGridReady = async (page: Page, gridId: string) => {
         if (!gridReadyPromise) {
             // Wait for grid to be visible
             const selector = `[grid-id="${gridId}"]`;
             gridReadyPromise = page.locator(selector).waitFor({ state: 'visible' });
         }
         await gridReadyPromise;
-    });
-};
+    };
 
     page.exposeFunction('logEvent', (listenerName: AgPublicEventType, arg0: any, ...args: any[]) => {
         eventLog.push([listenerName, arg0, ...args] as LogEntry);
