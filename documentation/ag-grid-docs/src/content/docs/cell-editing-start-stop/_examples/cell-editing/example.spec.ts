@@ -88,4 +88,49 @@ test.agExample(import.meta, () => {
             ],
         ]);
     });
+
+    test.vanilla('Double-click Edit and click another cell', async ({ page, agIdFor, remoteGrid }) => {
+        const remoteApi = remoteGrid(page, '1');
+        await remoteApi.updateGridOptions({
+            columnDefs: [
+                {
+                    field: 'firstName',
+                    editable: true,
+                },
+            ],
+        });
+
+        await remoteApi.logEvent('cellEditingStarted', []);
+        await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
+        await remoteApi.logEvent('cellEditingStopped', ['newValue', 'oldValue']);
+
+        const cell = agIdFor.cell('0', 'firstName');
+        await cell.dblclick();
+        await page.keyboard.type('Fred');
+
+        const anotherCell = agIdFor.cell('1', 'firstName');
+        await anotherCell.click();
+
+        const eventLog = remoteGrid.eventLog;
+
+        expect(eventLog.length).toBe(3);
+        expect(eventLog).toEqual([
+            ['cellEditingStarted', {}],
+            [
+                'cellValueChanged',
+                {
+                    newValue: 'Fred',
+                    oldValue: 'Bob',
+                    source: 'edit',
+                },
+            ],
+            [
+                'cellEditingStopped',
+                {
+                    newValue: 'Fred',
+                    oldValue: 'Bob',
+                },
+            ],
+        ]);
+    });
 });

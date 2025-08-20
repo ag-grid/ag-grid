@@ -449,12 +449,12 @@ describe('Cell Editing Regression', () => {
             expect(onCellValueChanged).toHaveBeenNthCalledWith(1, {
                 newValue: '15',
                 oldValue: 'A Value',
-                source: 'rangeSvc',
+                source: 'bulk',
             });
             expect(onCellValueChanged).toHaveBeenNthCalledWith(2, {
                 newValue: '15',
                 oldValue: 'A 2nd Value',
-                source: 'rangeSvc',
+                source: 'bulk',
             });
             expect(onCellValueChangedColDef).toHaveBeenCalledTimes(2);
             expect(onCellValueChangedColDef).toHaveBeenNthCalledWith(1, {
