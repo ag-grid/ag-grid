@@ -298,7 +298,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         let res = false;
 
-        const willStop = !cancel && !!this.shouldStopEditing(position, event, treatAsSource);
+        const willStop =
+            !cancel && (!!this.shouldStopEditing(position, event, treatAsSource) || (this.committing && !this.batch));
         const willCancel = cancel && !!this.shouldCancelEditing(position, event, treatAsSource);
 
         if (willStop || willCancel) {
