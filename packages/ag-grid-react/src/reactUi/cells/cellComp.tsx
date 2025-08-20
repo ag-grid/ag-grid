@@ -66,7 +66,7 @@ const CellComp = ({
 
     const eCellWrapper = useRef<HTMLDivElement | null>();
     const cellWrapperDestroyFuncs = useRef<(() => void)[]>([]);
-    const rowDragCompRef = useRef<RowDragComp>();
+    const rowDragCompRef = useRef<RowDragComp | undefined>();
 
     // when setting the ref, we also update the state item to force a re-render
     const eCellValue = useRef<HTMLDivElement | null>();
@@ -204,10 +204,15 @@ const CellComp = ({
             eCellWrapper.current = eRef;
 
             if (!eRef || context.isDestroyed() || !cellCtrl.isAlive()) {
-                cellWrapperDestroyFuncs.current.forEach((f) => f());
+                const callbacks = cellWrapperDestroyFuncs.current;
                 cellWrapperDestroyFuncs.current = [];
+                for (const cb of callbacks) {
+                    cb();
+                }
                 return;
             }
+
+            let rowDragComp: RowDragComp | undefined;
 
             const addComp = (comp: Component | undefined) => {
                 if (comp) {
@@ -215,9 +220,11 @@ const CellComp = ({
                     cellWrapperDestroyFuncs.current.push(() => {
                         _removeFromParent(comp.getGui());
                         context.destroyBean(comp);
+                        if (rowDragCompRef.current === rowDragComp) {
+                            rowDragCompRef.current = undefined;
+                        }
                     });
                 }
-                return comp;
             };
 
             if (includeSelection) {
@@ -229,17 +236,10 @@ const CellComp = ({
             }
 
             if (includeRowDrag) {
-                const rowDragComp = cellCtrl.createRowDragComp();
+                rowDragComp = cellCtrl.createRowDragComp();
+                rowDragCompRef.current = rowDragComp;
                 if (rowDragComp) {
-                    eRef.insertAdjacentElement('afterbegin', rowDragComp.getGui());
-                    rowDragCompRef.current = rowDragComp;
-                    cellWrapperDestroyFuncs.current.push(() => {
-                        _removeFromParent(rowDragComp.getGui());
-                        context.destroyBean(rowDragComp);
-                        if (rowDragCompRef.current === rowDragComp) {
-                            rowDragCompRef.current = undefined;
-                        }
-                    });
+                    addComp(rowDragComp);
                     rowDragComp.refreshVisibility();
                 }
             }
