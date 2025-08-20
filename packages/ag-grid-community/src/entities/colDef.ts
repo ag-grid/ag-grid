@@ -814,7 +814,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * flex value, so a column with `flex: 2` will be twice the size as one with
      * `flex: 1`.
      */
-    flex?: number;
+    flex?: number | null;
     /**
      * Same as `flex`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
