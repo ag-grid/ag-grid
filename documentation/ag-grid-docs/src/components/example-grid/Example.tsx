@@ -3,7 +3,6 @@ import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type {
-    CellSelectionOptions,
     ColDef,
     ColGroupDef,
     CsvExportParams,
@@ -11,8 +10,6 @@ import type {
     GridApi,
     GridOptions,
     GridReadyEvent,
-    InitialGroupOrderComparatorParams,
-    RowSelectionOptions,
     SideBarDef,
     Theme,
 } from 'ag-grid-community';
@@ -130,12 +127,8 @@ const staticGridOptions: GridOptions = {
     enableFilterHandlers: true,
     rowDragManaged: true,
     rowDragMultiRow: true,
-    loadingOverlayComponent: () => 'Generating rows...'
-
-
-
+    loadingOverlayComponent: () => 'Generating rows...',
 };
-
 
 const ExampleInner = ({ darkMode, theme, isSmall }: { darkMode: boolean; theme: string; isSmall: boolean }) => {
     const gridRef = useRef(null);
