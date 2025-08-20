@@ -444,7 +444,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             cellCtrl.suppressRefreshCell = true;
         }
         this.commitNextEdit();
-        const success = rowNode.setDataValue(column, newValue, originalSource);
+        const success = rowNode.setDataValue(column, newValue, originalSource === 'ui' ? 'edit' : originalSource);
         if (cellCtrl) {
             cellCtrl.suppressRefreshCell = false;
         }
