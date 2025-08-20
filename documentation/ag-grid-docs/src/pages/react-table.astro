@@ -16,6 +16,7 @@ import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 const { data: faqData } = (await getEntry('faqs', 'react-landing-page')) as CollectionEntry<'faqs'>;
 const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
 const { data: examples } = (await getEntry('reactLandingPage', 'examples')) as CollectionEntry<'reactLandingPage'>;
+const latestVersionWithHighlightData = versionsData.find((version) => version.landingPageHighlight);
 ---
 
 <Layout
@@ -36,9 +37,10 @@ const { data: examples } = (await getEntry('reactLandingPage', 'examples')) as C
                             'plausible-event-name=react-table-whats-new',
                         ]}
                     >
-                        <span class={styles.heroSectionVersion}>AG Grid v{versionsData[0].version}</span>
+                        <span class={styles.heroSectionVersion}>AG Grid v{latestVersionWithHighlightData?.version}</span
+                        >
                         <span class={styles.heroSectionFeatureHighlight}>
-                            {versionsData[0].landingPageHighlight}
+                            {latestVersionWithHighlightData?.landingPageHighlight}
                             <Icon svgClasses={styles.heroSectionFeatureArrow} name="arrowRight" />
                         </span>
                     </a>

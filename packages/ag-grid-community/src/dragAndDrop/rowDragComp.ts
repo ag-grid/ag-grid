@@ -184,13 +184,13 @@ export class RowDragComp extends Component {
         this.dragSource = {
             type: DragSourceType.RowDrag,
             eElement: eGui,
-            dragItemName: () => {
-                const dragItem = this.getDragItem();
-                const dragItemCount = dragItem.rowNodes?.length || 1;
+            dragItemName: (draggingEvent) => {
+                const dragItem = draggingEvent?.dragItem || this.getDragItem();
+                const dragItemCount = (draggingEvent?.rowsDrop?.rows.length ?? dragItem.rowNodes?.length) || 1;
 
                 const rowDragText = this.getRowDragText(this.column);
                 if (rowDragText) {
-                    return rowDragText(dragItem, dragItemCount);
+                    return rowDragText(dragItem as IRowDragItem, dragItemCount);
                 }
 
                 return dragItemCount === 1

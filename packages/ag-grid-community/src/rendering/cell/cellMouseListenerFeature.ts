@@ -97,7 +97,18 @@ export class CellMouseListenerFeature extends BeanStub {
             if (editSvc?.shouldStartEditing(cellCtrl, event)) {
                 editSvc?.startEditing(cellCtrl, { event });
             } else if (editSvc?.shouldStopEditing(cellCtrl, event)) {
-                editSvc?.stopEditing(cellCtrl);
+                if (this.beans.gos.get('editType') === 'fullRow') {
+                    editSvc?.stopEditing(cellCtrl, {
+                        event,
+                        source: 'edit',
+                    });
+                } else {
+                    // stop all editing
+                    editSvc?.stopEditing(undefined, {
+                        event,
+                        source: 'edit',
+                    });
+                }
             }
         }
     }

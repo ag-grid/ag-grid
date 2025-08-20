@@ -12,6 +12,7 @@
     },
     "updateGridAndColumnProperties": {
       "executor": "nx:run-commands",
+      "dependsOn": ["ag-grid-community:build:package"],
       "inputs": [
         "{projectRoot}/updateGridAndColumnProperties.cjs",
         "{workspaceRoot}/packages/ag-grid-community/src/entities/gridOptions.ts"

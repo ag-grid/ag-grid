@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="file://$PROJECT_DIR$" libraries="{@babel/preset-env, @babel/preset-react, @babel/preset-typescript, @babel/standalone, systemjs}" />
-    <file url="file://$PROJECT_DIR$/packages/ag-grid-angular/dist" libraries="{@babel/preset-env, @babel/preset-react, @babel/preset-typescript, @babel/standalone, systemjs}" />
     <excludedPredefinedLibrary name="HTML" />
+    <excludedPredefinedLibrary name="ag-grid/community-modules/locale/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/community-modules/styles/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/documentation/ag-grid-docs/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/documentation/update-algolia-indices/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/external/ag-shared/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/external/ag-website-shared/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-angular/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-community/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-enterprise/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-react/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-vue3/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/plugins/ag-grid-generate-code-reference-files/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/plugins/ag-grid-generate-example-files/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/plugins/ag-grid-task-autogen/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/testing/accessibility/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/testing/behavioural/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/testing/csp/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/testing/module-size-angular/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/testing/module-size/node_modules" />
   </component>
 </project>

@@ -1,7 +1,7 @@
 import type { BeanName } from '../../context/context';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { EditValue } from '../../interfaces/iEditModelService';
-import type { EditPosition, EditRowPosition } from '../../interfaces/iEditService';
+import type { EditPosition, EditRowPosition, StartEditWithPositionParams } from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getCellCtrl, _getRowCtrl } from '../utils/controllers';
@@ -65,18 +65,14 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         this.model.clearEditValue(position);
     }
 
-    public override start(
-        position: Required<EditPosition>,
-        event?: KeyboardEvent | MouseEvent | null | undefined,
-        _source: 'api' | 'ui' = 'ui',
-        ignoreEventKey?: boolean
-    ): void {
+    public override start(params: StartEditWithPositionParams): void {
+        const { position, silent, startedEdit, event, ignoreEventKey } = params;
         const { rowNode } = position;
         if (this.rowNode !== rowNode) {
             super.cleanupEditors(position);
         }
 
-        this.dispatchRowEvent({ rowNode }, 'rowEditingStarted');
+        this.dispatchRowEvent({ rowNode }, 'rowEditingStarted', silent);
         this.startedRows.push(rowNode);
 
         const columns = this.beans.visibleCols.allCols;
@@ -99,7 +95,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         this.rowNode = rowNode;
 
-        this.setupEditors(cells, position, true, event, ignoreEventKey);
+        this.setupEditors({ cells, position, startedEdit, event, ignoreEventKey });
     }
 
     protected override processValidationResults(

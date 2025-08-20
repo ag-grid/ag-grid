@@ -1,21 +1,23 @@
 import type { Page } from 'playwright/test';
+import { test } from 'playwright/test';
 
 import type { AgPublicEventType, GridApi } from 'ag-grid-community';
 
 import type { TemplateEventKeys } from './test-event-types';
 
-export const createRemoteGridApiProxy = (page: Page, gridId: string = '1', eventLog: any[]): AsyncGridApi => {
-    let gridReadyPromise: Promise<void> | null = null;
-
-    const ensureGridReady = async () => {
+export const ensureGridReady = async (page: Page, gridId: string = '1') => {
+    await test.step(`Ensure grid ${gridId} is ready`, async () => {
+        let gridReadyPromise: Promise<void> | null = null;
         if (!gridReadyPromise) {
             // Wait for grid to be visible
             const selector = `[grid-id="${gridId}"]`;
             gridReadyPromise = page.locator(selector).waitFor({ state: 'visible' });
         }
         await gridReadyPromise;
-    };
+    });
+};
 
+export const createRemoteGridApiProxy = (page: Page, gridId: string = '1', eventLog: any[]): AsyncGridApi => {
     page.exposeFunction('logEvent', (listenerName: string, arg0: any, ...args: any[]) => {
         eventLog.push([listenerName, arg0, ...args]);
     });
@@ -31,7 +33,7 @@ export const createRemoteGridApiProxy = (page: Page, gridId: string = '1', event
                 }
 
                 return async (...args: unknown[]) => {
-                    await ensureGridReady();
+                    await ensureGridReady(page, gridId);
                     return callRemoteGridApi(
                         page,
                         gridId,

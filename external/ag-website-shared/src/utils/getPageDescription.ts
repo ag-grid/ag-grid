@@ -9,6 +9,9 @@ interface Params {
 }
 
 export function getPageDescription({ framework, pageDescription, body }: Params) {
+    if (!body) {
+        return '';
+    }
     const frameworkDisplayText = getFrameworkDisplayText(framework);
     return pageDescription
         ? pageDescription.replaceAll('$framework', frameworkDisplayText) // Use front-matter description

@@ -18,7 +18,6 @@ import type { EditMap, EditRow, EditValue, IEditModelService } from '../interfac
 import type {
     EditNavOnValidationResult,
     EditPosition,
-    EditRowPosition,
     EditSource,
     IEditService,
     IsEditingParams,
@@ -55,7 +54,7 @@ import { _refreshEditCells } from './utils/refresh';
 type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };
 
 // these are event sources for setDataValue that will not cause the editors to close
-const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo', 'paste', 'bulk', 'rangeSvc']);
+const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo', 'paste', 'rangeSvc']);
 
 // stop editing sources that we treat as UI-originated so we follow standard processing.
 const STOP_EDIT_SOURCE_TRANSFORM: Record<string, EditSource> = {
@@ -76,7 +75,6 @@ const SET_DATA_SOURCE_AS_API: Set<string | undefined> = new Set([
     'cellClear',
     'redo',
     'undo',
-    'bulk',
 ]);
 
 const CANCEL_PARAMS: StopEditParams = { cancel: true, source: 'api' };
@@ -225,7 +223,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     /** @returns whether to prevent default on event */
     public startEditing(position: Required<EditPosition>, params: StartEditParams): void {
-        const { startedEdit = true, event = null, source = 'ui', ignoreEventKey = false } = params;
+        const { startedEdit = true, event = null, source = 'ui', ignoreEventKey = false, silent } = params;
 
         this.strategy ??= this.createStrategy();
 
@@ -256,7 +254,14 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.dispatchBatchEvent('batchEditingStarted', new Map());
         }
 
-        this.strategy!.start(position, event, source, ignoreEventKey);
+        this.strategy!.start({
+            position,
+            event,
+            source,
+            ignoreEventKey,
+            startedEdit,
+            silent,
+        });
 
         return;
     }
@@ -295,7 +300,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         let res = false;
 
-        const willStop = !cancel && !!this.shouldStopEditing(position, event, treatAsSource);
+        const willStop =
+            !cancel && (!!this.shouldStopEditing(position, event, treatAsSource) || (this.committing && !this.batch));
         const willCancel = cancel && !!this.shouldCancelEditing(position, event, treatAsSource);
 
         if (willStop || willCancel) {
@@ -841,13 +847,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         this.strategy?.dispatchCellEvent(position, event, type, payload);
     }
 
-    public dispatchRowEvent(
-        position: Required<EditRowPosition>,
-        type: 'rowEditingStarted' | 'rowEditingStopped'
-    ): void {
-        this.strategy?.dispatchRowEvent(position, type);
-    }
-
     public dispatchBatchEvent(type: 'batchEditingStarted' | 'batchEditingStopped', edits: EditMap): void {
         this.eventSvc.dispatchEvent(this.createBatchEditEvent(type, edits));
     }
@@ -946,7 +945,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             }
 
             this.commitNextEdit();
-            this.stopEditing(undefined, { source: 'bulk' });
+            this.stopEditing(undefined, { source: 'rangeSvc' });
 
             this.eventSvc.dispatchEvent({ type: 'bulkEditingStopped', changes: this.toEventChangeList(edits) });
         });

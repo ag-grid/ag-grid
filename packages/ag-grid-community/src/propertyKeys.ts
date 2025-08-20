@@ -324,6 +324,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'enableFilterHandlers',
     'suppressStartEditOnTab',
     'hidePaddedHeaderRows',
+    'ssrmExpandAllAffectsAllRows',
 ];
 
 /** @knipIgnore Used in example generation */

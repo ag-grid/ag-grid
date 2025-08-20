@@ -6,6 +6,7 @@ import {
     getExampleRootFileUrl,
 } from '@utils/pages';
 import type { ImageMetadata } from 'astro';
+import { existsSync } from 'fs';
 import fs, { readFile, readdir } from 'fs/promises';
 import path from 'path';
 
@@ -51,6 +52,12 @@ export const getFolderPath = ({ pageName, exampleName }: { pageName: string; exa
     return new URL(exampleFolderPath, import.meta.url);
 };
 
+export const hasExampleFolder = ({ pageName, exampleName }: { pageName: string; exampleName: string }): boolean => {
+    const exampleFolderPath = getFolderPath({ pageName, exampleName });
+
+    return existsSync(exampleFolderPath);
+};
+
 const getExampleDirFile = async ({
     pageName,
     exampleName,
@@ -60,6 +67,9 @@ const getExampleDirFile = async ({
     exampleName: string;
     fileName: string;
 }): Promise<undefined | string> => {
+    if (!hasExampleFolder({ pageName, exampleName })) {
+        return undefined;
+    }
     const exampleDir = await readdir(getFolderPath({ pageName, exampleName }));
     const hasFile = exampleDir.includes(fileName);
 

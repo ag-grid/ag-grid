@@ -17,3 +17,7 @@
     padding-right: var(--ag-cell-horizontal-padding);
     gap: var(--ag-cell-widget-spacing);
 }
+
+.ag-dnd-ghost-not-allowed {
+    border: var(--ag-drag-and-drop-image-not-allowed-border);
+}

@@ -2,21 +2,17 @@ import { _removeFromArray } from '../agStack/utils/array';
 import { _getRootNode } from '../agStack/utils/document';
 import type { AgPromise } from '../agStack/utils/promise';
 import { _getDragAndDropImageCompDetails } from '../components/framework/userCompUtils';
-import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import type { HorizontalDirection, VerticalDirection } from '../constants/direction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
-import type { CtrlsService } from '../ctrlsService';
-import type { Environment } from '../environment';
 import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
 import { _addGridCommonParams, _anchorElementToMouseMoveEvent, _getPageBody } from '../gridOptionsUtils';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { DragItem } from '../interfaces/iDragItem';
 import { _warn } from '../validation/logging';
 import type { IDragAndDropImageComponent } from './dragAndDropImageComponent';
-import type { DragListenerParams, DragService } from './dragService';
-import type { RowDropZoneParams } from './rowDragFeature';
+import type { DragListenerParams } from './dragService';
+import type { RowDropZoneParams, RowsDrop } from './rowDragTypes';
 
 export enum DragSourceType {
     ToolPanel,
@@ -26,58 +22,34 @@ export enum DragSourceType {
     AdvancedFilterBuilder,
 }
 
+export type DragItemNameGetter = (draggingEvent?: DraggingEvent | null | undefined) => string | null | undefined;
+
 export interface DragSource {
-    /**
-     * The type of the drag source, used by the drop target to know where the
-     * drag originated from.
-     */
+    /** The type of the drag source, used by the drop target to know where the drag originated from. */
     type: DragSourceType;
     /** Can be used to identify a specific component as the source */
     sourceId?: string;
-    /**
-     * Element which, when dragged, will kick off the DnD process
-     */
+    /** Element which, when dragged, will kick off the DnD process */
     eElement: Element;
-    /**
-     * If eElement is dragged, then the dragItem is the object that gets passed around.
-     */
+    /** If eElement is dragged, then the dragItem is the object that gets passed around. */
     getDragItem: () => DragItem;
-    /**
-     * This name appears in the drag and drop image component when dragging.
-     */
-    dragItemName: string | (() => string) | null;
-    /**
-     * Icon to show when not over a drop zone
-     */
+    /** This name appears in the drag and drop image component when dragging. */
+    dragItemName: string | DragItemNameGetter | null;
+    /** Icon to show when not over a drop zone */
     getDefaultIconName?: () => DragAndDropIcon;
-    /**
-     * The drag source DOM Data Key, this is useful to detect if the origin grid is the same
-     * as the target grid.
-     */
+    /** The drag source DOM Data Key, this is useful to detect if the origin grid is the same as the target grid. */
     dragSourceDomDataKey?: string;
-    /**
-     * After how many pixels of dragging should the drag operation start. Default is 4.
-     */
+    /** After how many pixels of dragging should the drag operation start. Default is 4. */
     dragStartPixels?: number;
-    /**
-     * Callback for drag started
-     */
+    /** Callback for drag started */
     onDragStarted?: () => void;
-    /**
-     * Callback for drag stopped
-     */
+    /** Callback for drag stopped */
     onDragStopped?: () => void;
-    /**
-     * Callback for drag cancelled
-     */
+    /** Callback for drag cancelled */
     onDragCancelled?: () => void;
-    /**
-     * Callback for entering the grid
-     */
+    /** Callback for entering the grid */
     onGridEnter?: (dragItem: DragItem | null) => void;
-    /**
-     * Callback for exiting the grid
-     */
+    /** Callback for exiting the grid */
     onGridExit?: (dragItem: DragItem | null) => void;
 }
 
@@ -88,7 +60,7 @@ export interface DropTarget {
      * in the header as well as the body (main rows and pinned rows) of the grid. */
     getSecondaryContainers?(): HTMLElement[][];
     /** Icon to show when drag is over */
-    getIconName?(): DragAndDropIcon | null;
+    getIconName?(draggingEvent?: DraggingEvent | null | undefined): DragAndDropIcon | null | undefined;
 
     isInterestedIn(type: DragSourceType, el: Element): boolean;
 
@@ -113,15 +85,25 @@ export interface DropTarget {
 }
 
 export interface DraggingEvent<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The mouse event that triggered the dragging event */
     event: MouseEvent;
+    /** The X position in pixel relative to the drop target */
     x: number;
+    /** The Y position in pixel relative to the drop target */
     y: number;
+    /** The vertical direction of the drag, can be 'up', 'down' or null */
     vDirection: VerticalDirection | null;
+    /** The horizontal direction of the drag, can be 'left', 'right' or null */
     hDirection: HorizontalDirection | null;
+    /** The drag source that initiated the drag */
     dragSource: DragSource;
+    /** The drag item that is being dragged */
     dragItem: DragItem;
     fromNudge: boolean;
+    /** The target element where the drop is happening */
     dropZoneTarget: HTMLElement;
+    /** Details about the row dragging drop target. */
+    rowsDrop: RowsDrop<TData, TContext> | null;
 }
 
 export type DragAndDropIcon =
@@ -135,74 +117,68 @@ export type DragAndDropIcon =
     | 'notAllowed'
     | 'hide';
 
+interface DragSourceAndParams extends DragListenerParams {
+    dragSource: DragSource;
+}
+
 export class DragAndDropService extends BeanStub implements NamedBean {
     beanName = 'dragAndDrop' as const;
 
-    private ctrlsSvc: CtrlsService;
-    private dragSvc: DragService;
-    private environment: Environment;
-    private userCompFactory: UserComponentFactory;
+    private dragSourceAndParamsList: DragSourceAndParams[] = [];
 
-    public wireBeans(beans: BeanCollection): void {
-        this.ctrlsSvc = beans.ctrlsSvc;
-        this.dragSvc = beans.dragSvc!;
-        this.environment = beans.environment;
-        this.userCompFactory = beans.userCompFactory;
-    }
+    private dragItem: DragItem | null = null;
+    private lastMouseEvent: MouseEvent | null = null;
+    private lastDraggingEvent: DraggingEvent | null = null;
+    private dragSource: DragSource | null = null;
 
-    private dragSourceAndParamsList: { params: DragListenerParams; dragSource: DragSource }[] = [];
-
-    private dragItem: DragItem | null;
-    private eventLastTime: MouseEvent | null;
-    private dragSource: DragSource | null;
-    private dragging: boolean;
-
-    private dragAndDropImageComp: {
-        promise: AgPromise<IDragAndDropImageComponent>;
-        comp?: IDragAndDropImageComponent;
-    } | null;
-    private dragAndDropImageParent: HTMLElement | ShadowRoot;
+    private dragImageParent: HTMLElement | ShadowRoot | null = null;
+    private dragImageCompPromise: AgPromise<IDragAndDropImageComponent> | null = null;
+    private dragImageComp: IDragAndDropImageComponent | null = null;
+    private dragImageLastIcon: DragAndDropIcon | null | undefined = undefined;
+    private dragImageLastLabel: string | null | undefined = undefined;
 
     private dropTargets: DropTarget[] = [];
-    private lastDropTarget: DropTarget | null | undefined;
+    private lastDropTarget: DropTarget | null = null;
 
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
-        const params: DragListenerParams = {
+        const entry: DragSourceAndParams = {
+            dragSource,
             eElement: dragSource.eElement,
             dragStartPixels: dragSource.dragStartPixels,
-            onDragStart: this.onDragStart.bind(this, dragSource),
+            onDragStart: (mouseEvent: MouseEvent) => this.onDragStart(dragSource, mouseEvent),
             onDragStop: this.onDragStop.bind(this),
             onDragging: this.onDragging.bind(this),
             onDragCancel: this.onDragCancel.bind(this),
             includeTouch: allowTouch,
         };
 
-        this.dragSourceAndParamsList.push({ params: params, dragSource: dragSource });
-        this.dragSvc.addDragSource(params);
+        this.dragSourceAndParamsList.push(entry);
+        this.beans.dragSvc!.addDragSource(entry);
     }
 
-    public getDragAndDropImageComponent(): IDragAndDropImageComponent | null {
-        const { dragAndDropImageComp } = this;
-        if (!dragAndDropImageComp || !dragAndDropImageComp.comp) {
-            return null;
+    public setDragImageCompIcon(iconName: DragAndDropIcon | null, shake: boolean = false): void {
+        const component = this.dragImageComp;
+        if (component && (shake || this.dragImageLastIcon !== iconName)) {
+            this.dragImageLastIcon = iconName;
+            component.setIcon(iconName, shake);
         }
-
-        return dragAndDropImageComp.comp;
     }
 
     public removeDragSource(dragSource: DragSource): void {
-        const { dragSourceAndParamsList, dragSvc } = this;
+        const { dragSourceAndParamsList, beans } = this;
         const sourceAndParams = dragSourceAndParamsList.find((item) => item.dragSource === dragSource);
-
         if (sourceAndParams) {
-            dragSvc.removeDragSource(sourceAndParams.params);
+            beans.dragSvc?.removeDragSource(sourceAndParams);
             _removeFromArray(dragSourceAndParamsList, sourceAndParams);
         }
     }
 
     public override destroy(): void {
-        const { dragSourceAndParamsList, dragSvc, dropTargets } = this;
-        dragSourceAndParamsList.forEach((sourceAndParams) => dragSvc.removeDragSource(sourceAndParams.params));
+        const { dragSourceAndParamsList, dropTargets, beans } = this;
+        const dragSvc = beans.dragSvc;
+        for (const sourceAndParams of dragSourceAndParamsList) {
+            dragSvc?.removeDragSource(sourceAndParams);
+        }
         dragSourceAndParamsList.length = 0;
         dropTargets.length = 0;
         this.clearDragAndDropProperties();
@@ -210,96 +186,97 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     }
 
     public nudge(): void {
-        if (this.dragging) {
-            this.onDragging(this.eventLastTime!, true);
+        const lastMouseEvent = this.lastMouseEvent;
+        if (lastMouseEvent) {
+            this.onDragging(lastMouseEvent, true);
         }
     }
 
     private onDragStart(dragSource: DragSource, mouseEvent: MouseEvent): void {
-        this.dragging = true;
+        this.lastMouseEvent = mouseEvent;
         this.dragSource = dragSource;
-        this.eventLastTime = mouseEvent;
         this.dragItem = dragSource.getDragItem();
 
         dragSource.onDragStarted?.();
-        this.createDragAndDropImageComponent();
+        this.createDragImageComp(dragSource);
     }
 
     private onDragStop(mouseEvent: MouseEvent): void {
-        this.dragSource?.onDragStopped?.();
-
-        const { lastDropTarget } = this;
-        if (lastDropTarget?.onDragStop) {
-            const draggingEvent = this.createDropTargetEvent(lastDropTarget, mouseEvent, null, null, false);
-            lastDropTarget.onDragStop(draggingEvent);
+        const { dragSource, lastDropTarget } = this;
+        dragSource?.onDragStopped?.();
+        if (lastDropTarget) {
+            const dragEndEvent = this.dropTargetEvent(lastDropTarget, mouseEvent, false);
+            lastDropTarget.onDragStop?.(dragEndEvent);
         }
-
         this.clearDragAndDropProperties();
     }
 
     private onDragCancel(): void {
-        const { dragSource, lastDropTarget } = this;
+        const { dragSource, lastDropTarget, lastMouseEvent } = this;
         dragSource?.onDragCancelled?.();
 
-        if (lastDropTarget?.onDragCancel) {
-            lastDropTarget.onDragCancel(
-                this.createDropTargetEvent(lastDropTarget, this.eventLastTime!, null, null, false)
-            );
+        if (lastDropTarget && lastMouseEvent) {
+            const dragCancelEvent = this.dropTargetEvent(lastDropTarget, lastMouseEvent, false);
+            lastDropTarget.onDragCancel?.(dragCancelEvent);
         }
         this.clearDragAndDropProperties();
     }
 
-    private clearDragAndDropProperties(): void {
-        this.eventLastTime = null;
-        this.dragging = false;
-        this.lastDropTarget = undefined;
-        this.dragItem = null;
-        this.dragSource = null;
-        this.removeDragAndDropImageComponent();
-    }
-
     private onDragging(mouseEvent: MouseEvent, fromNudge: boolean = false): void {
-        const hDirection = this.getHorizontalDirection(mouseEvent);
-        const vDirection = this.getVerticalDirection(mouseEvent);
-
-        this.eventLastTime = mouseEvent;
-        this.positionDragAndDropImageComp(mouseEvent);
+        this.positionDragImageComp(mouseEvent);
 
         // check if mouseEvent intersects with any of the drop targets
-        const validDropTargets = this.dropTargets.filter((target) => this.isMouseOnDropTarget(mouseEvent, target));
-        const dropTarget: DropTarget | null = this.findCurrentDropTarget(mouseEvent, validDropTargets);
+        const dropTarget: DropTarget | null = this.findCurrentDropTarget(mouseEvent);
 
-        const { lastDropTarget, dragSource, dragAndDropImageComp, dragItem } = this;
+        const { lastDropTarget, dragSource, dragItem } = this;
 
+        let needUpdate = false;
         if (dropTarget !== lastDropTarget) {
-            this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
+            needUpdate = true;
 
-            if (lastDropTarget !== null && dropTarget === null) {
-                dragSource?.onGridExit?.(dragItem);
+            if (lastDropTarget) {
+                const dragLeaveEvent = this.dropTargetEvent(lastDropTarget, mouseEvent, fromNudge);
+                lastDropTarget.onDragLeave?.(dragLeaveEvent);
             }
-            if (lastDropTarget === null && dropTarget !== null) {
+
+            if (lastDropTarget !== null && !dropTarget) {
+                dragSource?.onGridExit?.(dragItem);
+            } else if (lastDropTarget === null && dropTarget) {
                 dragSource?.onGridEnter?.(dragItem);
             }
-            this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
 
-            if (dropTarget && dragAndDropImageComp) {
-                const { comp, promise } = dragAndDropImageComp;
-                if (comp) {
-                    comp.setIcon(dropTarget.getIconName ? dropTarget.getIconName() : null, false);
-                } else {
-                    promise.then((resolvedComponent) => {
-                        if (resolvedComponent) {
-                            resolvedComponent.setIcon(dropTarget.getIconName ? dropTarget.getIconName() : null, false);
-                        }
-                    });
-                }
+            if (dropTarget) {
+                const dragEnterEvent = this.dropTargetEvent(dropTarget, mouseEvent, fromNudge);
+                dropTarget.onDragEnter?.(dragEnterEvent);
             }
 
             this.lastDropTarget = dropTarget;
-        } else if (dropTarget && dropTarget.onDragging) {
-            const draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
-            dropTarget.onDragging(draggingEvent);
+        } else if (dropTarget) {
+            const dragMoveEvent = this.dropTargetEvent(dropTarget, mouseEvent, fromNudge);
+            dropTarget.onDragging?.(dragMoveEvent);
+            if (dragMoveEvent.rowsDrop?.changed) {
+                needUpdate = true;
+            }
         }
+
+        this.lastMouseEvent = mouseEvent;
+
+        if (needUpdate) {
+            this.updateDragImageComp();
+        }
+    }
+
+    private clearDragAndDropProperties(): void {
+        this.removeDragImageComp(this.dragImageComp);
+        this.dragImageCompPromise = null;
+        this.dragImageParent = null;
+        this.dragImageLastIcon = undefined;
+        this.dragImageLastLabel = undefined;
+        this.lastMouseEvent = null;
+        this.lastDraggingEvent = null;
+        this.lastDropTarget = null;
+        this.dragItem = null;
+        this.dragSource = null;
     }
 
     private getAllContainersFromDropTarget(dropTarget: DropTarget): HTMLElement[][] {
@@ -347,7 +324,8 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         return mouseOverTarget && dropTarget.isInterestedIn(type, eElement);
     }
 
-    private findCurrentDropTarget(mouseEvent: MouseEvent, validDropTargets: DropTarget[]): DropTarget | null {
+    private findCurrentDropTarget(mouseEvent: MouseEvent): DropTarget | null {
+        const validDropTargets = this.dropTargets.filter((target) => this.isMouseOnDropTarget(mouseEvent, target));
         const len = validDropTargets.length;
 
         if (len === 0) {
@@ -378,60 +356,6 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         return null;
     }
 
-    private enterDragTargetIfExists(
-        dropTarget: DropTarget | null,
-        mouseEvent: MouseEvent,
-        hDirection: HorizontalDirection | null,
-        vDirection: VerticalDirection | null,
-        fromNudge: boolean
-    ): void {
-        if (!dropTarget) {
-            return;
-        }
-
-        if (dropTarget.onDragEnter) {
-            const dragEnterEvent = this.createDropTargetEvent(
-                dropTarget,
-                mouseEvent,
-                hDirection,
-                vDirection,
-                fromNudge
-            );
-
-            dropTarget.onDragEnter(dragEnterEvent);
-        }
-    }
-
-    private leaveLastTargetIfExists(
-        mouseEvent: MouseEvent,
-        hDirection: HorizontalDirection | null,
-        vDirection: VerticalDirection | null,
-        fromNudge: boolean
-    ): void {
-        const { lastDropTarget } = this;
-        if (!lastDropTarget) {
-            return;
-        }
-
-        if (lastDropTarget.onDragLeave) {
-            const dragLeaveEvent = this.createDropTargetEvent(
-                lastDropTarget,
-                mouseEvent,
-                hDirection,
-                vDirection,
-                fromNudge
-            );
-
-            lastDropTarget.onDragLeave(dragLeaveEvent);
-        }
-
-        const dragAndDropImageComponent = this.getDragAndDropImageComponent();
-
-        if (dragAndDropImageComponent) {
-            dragAndDropImageComponent.setIcon(null, false);
-        }
-    }
-
     public addDropTarget(dropTarget: DropTarget) {
         this.dropTargets.push(dropTarget);
     }
@@ -445,158 +369,126 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     }
 
     public findExternalZone(params: RowDropZoneParams): DropTarget | null {
-        const externalTargets = this.dropTargets.filter((target) => target.external);
-
-        return externalTargets.find((zone) => zone.getContainer() === params.getContainer()) || null;
+        return this.dropTargets.find((zone) => zone.external && zone.getContainer() === params.getContainer()) || null;
     }
 
     public isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
-        const gridBodyCon = this.ctrlsSvc.getGridBodyCtrl();
-        const gridGui = gridBodyCon.eGridBody;
-        const { dropZoneTarget } = draggingEvent;
-
-        return gridGui.contains(dropZoneTarget);
+        return this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.contains(draggingEvent.dropZoneTarget);
     }
 
-    public getHorizontalDirection(event: MouseEvent): HorizontalDirection | null {
-        const clientX = this.eventLastTime?.clientX;
-        const eClientX = event.clientX;
-
-        if (clientX === eClientX) {
-            return null;
-        }
-
-        return clientX! > eClientX ? 'left' : 'right';
-    }
-
-    public getVerticalDirection(event: MouseEvent): VerticalDirection | null {
-        const clientY = this.eventLastTime?.clientY;
-        const eClientY = event.clientY;
-
-        if (clientY === eClientY) {
-            return null;
-        }
-
-        return clientY! > eClientY ? 'up' : 'down';
-    }
-
-    public createDropTargetEvent(
-        dropTarget: DropTarget,
-        event: MouseEvent,
-        hDirection: HorizontalDirection | null,
-        vDirection: VerticalDirection | null,
-        fromNudge: boolean
-    ): DraggingEvent {
-        // localise x and y to the target
+    public dropTargetEvent(dropTarget: DropTarget, mouseEvent: MouseEvent, fromNudge: boolean): DraggingEvent {
+        const { beans, dragSource, dragItem, lastDraggingEvent, lastMouseEvent } = this;
         const dropZoneTarget = dropTarget.getContainer();
         const rect = dropZoneTarget.getBoundingClientRect();
-        const { dragItem, dragSource, gos } = this;
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+        const { clientX, clientY } = mouseEvent;
+        const xDir = clientX - (lastMouseEvent?.clientX || 0);
+        const yDir = clientY - (lastMouseEvent?.clientY || 0);
 
-        return _addGridCommonParams(gos, {
-            event,
-            x,
-            y,
-            vDirection,
-            hDirection,
+        const draggingEvent: DraggingEvent = {
+            api: beans.gridApi,
+            context: beans.gridOptions.context,
+            event: mouseEvent,
+            x: clientX - rect.left, // relative x
+            y: clientY - rect.top, // relative y
+            vDirection: yDir > 0 ? 'down' : yDir < 0 ? 'up' : null,
+            hDirection: xDir < 0 ? 'left' : xDir > 0 ? 'right' : null,
             dragSource: dragSource!,
             fromNudge,
-            dragItem: dragItem as DragItem,
+            dragItem: dragItem!,
             dropZoneTarget,
-        });
-    }
-
-    private positionDragAndDropImageComp(event: MouseEvent): void {
-        const dragAndDropImageComponent = this.getDragAndDropImageComponent();
-
-        if (!dragAndDropImageComponent) {
-            return;
-        }
-
-        _anchorElementToMouseMoveEvent(dragAndDropImageComponent.getGui(), event, this.beans);
-    }
-
-    private removeDragAndDropImageComponent(): void {
-        const { dragAndDropImageComp } = this;
-        if (dragAndDropImageComp) {
-            const { comp } = dragAndDropImageComp;
-            if (comp) {
-                const eGui = comp.getGui();
-                this.dragAndDropImageParent?.removeChild(eGui);
-                this.destroyBean(comp);
-            }
-        }
-
-        this.dragAndDropImageComp = null;
-    }
-
-    private createDragAndDropImageComponent(): void {
-        const { dragSource, gos, userCompFactory } = this;
-
-        if (!dragSource) {
-            return;
-        }
-
-        const userCompDetails = _getDragAndDropImageCompDetails(
-            userCompFactory,
-            _addGridCommonParams(gos, {
-                dragSource,
-            })
-        );
-        if (!userCompDetails) {
-            return;
-        }
-
-        const promise = userCompDetails.newAgStackInstance()!;
-        this.dragAndDropImageComp = {
-            promise,
+            rowsDrop: lastDraggingEvent?.rowsDrop ?? null, // updated by rowDragFeature
         };
+        this.lastDraggingEvent = draggingEvent;
+        return draggingEvent;
+    }
 
-        promise.then((comp) => {
-            if (!comp || !this.isAlive()) {
-                return;
+    private positionDragImageComp(event: MouseEvent): void {
+        const gui = this.dragImageComp?.getGui();
+        if (gui) {
+            _anchorElementToMouseMoveEvent(gui, event, this.beans);
+        }
+    }
+
+    private removeDragImageComp(comp: IDragAndDropImageComponent | null): void {
+        if (this.dragImageComp === comp) {
+            this.dragImageComp = null;
+        }
+        if (comp) {
+            const eGui = comp.getGui();
+            this.dragImageParent?.removeChild(eGui);
+            this.destroyBean(comp);
+        }
+    }
+
+    private createDragImageComp(dragSource: DragSource): void {
+        const promise =
+            _getDragAndDropImageCompDetails(
+                this.beans.userCompFactory,
+                _addGridCommonParams(this.gos, { dragSource })
+            )?.newAgStackInstance() ?? null;
+
+        this.dragImageCompPromise = promise;
+        promise?.then((dragImageComp) => {
+            if (promise !== this.dragImageCompPromise || !this.lastMouseEvent || !this.isAlive()) {
+                this.destroyBean(dragImageComp);
+                return; // New promise was started, ignore this old one.
             }
 
-            this.processDragAndDropImageComponent(comp);
-            this.dragAndDropImageComp!.comp = comp;
+            this.dragImageCompPromise = null;
+            this.dragImageLastIcon = undefined;
+            this.dragImageLastLabel = undefined;
+            const oldDragImageComp = this.dragImageComp;
+            if (oldDragImageComp !== dragImageComp) {
+                this.dragImageComp = dragImageComp;
+                this.removeDragImageComp(oldDragImageComp);
+            }
+
+            if (dragImageComp) {
+                this.appendDragImageComp(dragImageComp);
+                this.updateDragImageComp();
+            }
         });
     }
 
-    private processDragAndDropImageComponent(dragAndDropImageComponent: IDragAndDropImageComponent): void {
-        const { dragSource, environment } = this;
+    private appendDragImageComp(component: IDragAndDropImageComponent): void {
+        const eGui = component.getGui();
+        const style = eGui.style;
 
-        if (!dragSource) {
-            return;
-        }
-        const eGui = dragAndDropImageComponent.getGui();
-
-        eGui.style.setProperty('position', 'absolute');
-        eGui.style.setProperty('z-index', '9999');
+        style.setProperty('position', 'absolute');
+        style.setProperty('z-index', '9999');
 
         _stampTopLevelGridCompWithGridInstance(this.gos, eGui);
-        environment.applyThemeClasses(eGui);
-        dragAndDropImageComponent.setIcon(null, false);
+        this.beans.environment.applyThemeClasses(eGui);
 
-        let { dragItemName } = dragSource;
-
-        if (typeof dragItemName === 'function') {
-            dragItemName = dragItemName();
-        }
-
-        dragAndDropImageComponent.setLabel(dragItemName || '');
-
-        eGui.style.top = '20px';
-        eGui.style.left = '20px';
+        style.top = '20px';
+        style.left = '20px';
 
         const targetEl = _getPageBody(this.beans);
-
-        this.dragAndDropImageParent = targetEl;
-
+        this.dragImageParent = targetEl;
         if (!targetEl) {
             _warn(54);
         } else {
             targetEl.appendChild(eGui);
+        }
+    }
+
+    private updateDragImageComp(): void {
+        const { dragImageComp, dragSource, lastDropTarget, lastDraggingEvent, dragImageLastLabel } = this;
+        if (!dragImageComp) {
+            return;
+        }
+
+        this.setDragImageCompIcon(lastDropTarget?.getIconName?.(lastDraggingEvent) ?? null);
+
+        let label = dragSource?.dragItemName;
+        if (typeof label === 'function') {
+            label = (dragSource!.dragItemName as DragItemNameGetter)(lastDraggingEvent);
+        }
+        label ||= '';
+
+        if (dragImageLastLabel !== label) {
+            this.dragImageLastLabel = label;
+            dragImageComp.setLabel(label);
         }
     }
 
