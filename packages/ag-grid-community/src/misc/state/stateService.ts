@@ -96,27 +96,8 @@ export class StateService extends BeanStub implements NamedBean {
                 firstDataRendered: () => {
                     firstDataRenderedDestroyFunc?.();
                     suppressEventsAndDispatchInitEvent(() => this.setupStateOnFirstDataRendered(initialState));
-                    this.beans.hiddenLayoutSvc?.revealCells('state');
                 },
             });
-
-        this.beans.hiddenLayoutSvc?.registerHiddenLayoutRequirement('state', () => {
-            // if initial state has scroll, we need to delay rendering cells
-            const { scroll, columnSizing, columnOrder, columnGroup, columnPinning, columnVisibility } = initialState;
-            if (
-                scroll?.left != null ||
-                scroll?.top != null ||
-                columnGroup ||
-                columnSizing ||
-                columnOrder ||
-                columnPinning ||
-                columnVisibility
-            ) {
-                // If initial state has scroll, we need to delay rendering cells
-                return true;
-            }
-            return false;
-        });
     }
 
     public override destroy(): void {
@@ -154,7 +135,6 @@ export class StateService extends BeanStub implements NamedBean {
         setTimeout(() => {
             if (this.isAlive()) {
                 this.setFirstDataRenderedState(state, source, ignoreSet);
-                this.beans.hiddenLayoutSvc?.revealCells('state');
             }
             this.stopSuppressEvents(source);
         });
