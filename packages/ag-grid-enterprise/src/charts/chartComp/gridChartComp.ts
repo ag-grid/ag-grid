@@ -16,6 +16,7 @@ import type {
     PartialCellRange,
     PopupService,
     SeriesChartType,
+    SortModelItem,
     UpdateChartParams,
 } from 'ag-grid-community';
 import {
@@ -72,6 +73,7 @@ export interface GridChartParams {
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
     crossFiltering?: boolean;
+    crossFilteringSort?: SortModelItem[] | boolean;
     crossFilteringContext: CrossFilteringContext;
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;

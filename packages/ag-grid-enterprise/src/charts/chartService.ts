@@ -22,6 +22,7 @@ import type {
     PartialCellRange,
     SeriesChartType,
     SeriesGroupType,
+    SortModelItem,
     UpdateChartParams,
     VisibleColsService,
 } from 'ag-grid-community';
@@ -46,6 +47,7 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
     switchCategorySeries?: boolean;
     aggFunc?: string | IAggFunc;
     crossFiltering?: boolean;
+    crossFilteringSort?: SortModelItem[] | boolean;
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes?: SeriesChartType[];
@@ -249,6 +251,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             cellRange,
             suppressChartRanges,
             crossFiltering: true,
+            crossFilteringSort: params.sort,
             focusDialogOnOpen: !fromApi,
         });
     }

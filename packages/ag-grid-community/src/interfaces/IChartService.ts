@@ -10,6 +10,7 @@ import type {
     SeriesChartType,
     SeriesGroupType,
 } from './iChartOptions';
+import type { SortModelItem } from './iSortModelItem';
 
 export interface GetChartImageDataUrlParams {
     /** The id of the created chart. */
@@ -130,6 +131,13 @@ export interface CreateCrossFilterChartParams extends BaseCreateChartParams {
     suppressChartRanges?: boolean;
     /** The aggregation function that should be applied to all series data. */
     aggFunc?: string | IAggFunc;
+    /**
+     * By default (or when `true`), the order in cross filter charts will match grid sorting.
+     * Set to `false` to disable sorting for this chart.
+     * Set to a `SortModelItem[]` to provide a custom sorting for this chart.
+     * @default true
+     */
+    sort?: SortModelItem[] | boolean;
 }
 
 export interface CreatePivotChartParams extends BaseCreateChartParams {}

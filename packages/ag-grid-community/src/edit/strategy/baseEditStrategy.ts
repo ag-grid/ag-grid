@@ -13,6 +13,7 @@ import type {
     EditRowPosition,
     EditSource,
     IEditService,
+    StartEditWithPositionParams,
     _SetEditingCellsParams,
 } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
@@ -58,12 +59,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         this.model.clearEditValue(position);
     }
 
-    public abstract start(
-        position: Required<EditPosition>,
-        event?: KeyboardEvent | MouseEvent | null,
-        source?: EditSource,
-        ignoreEventKey?: boolean
-    ): void;
+    public abstract start(params: StartEditWithPositionParams): void;
 
     public onCellFocusChanged(event: CellFocusedEvent | CellFocusClearedEvent): void {
         let cellCtrl: CellCtrl | undefined;
@@ -235,15 +231,11 @@ export abstract class BaseEditStrategy extends BeanStub {
         }
     }
 
-    public setupEditors(
-        cells: Required<EditPosition>[] = this.model.getEditPositions(),
-        position: Required<EditPosition>,
-        cellStartedEdit?: boolean,
-        event?: Event | null,
-        ignoreEventKey: boolean = false
-    ) {
+    public setupEditors(params: StartEditWithPositionParams & { cells: Required<EditPosition>[] }) {
+        const { event, ignoreEventKey = false, startedEdit, position, cells = this.model.getEditPositions() } = params;
+
         const key = (event instanceof KeyboardEvent && !ignoreEventKey && event.key) || undefined;
-        _setupEditors(this.beans, cells, position, key, event, cellStartedEdit);
+        _setupEditors(this.beans, cells, position, key, event, startedEdit);
     }
 
     public dispatchCellEvent<T extends AgEventType>(
@@ -261,8 +253,13 @@ export abstract class BaseEditStrategy extends BeanStub {
 
     public dispatchRowEvent(
         position: Required<EditRowPosition>,
-        type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged'
+        type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged',
+        silent?: boolean
     ): void {
+        if (silent) {
+            return;
+        }
+
         const rowCtrl = _getRowCtrl(this.beans, position)!;
 
         if (rowCtrl) {
@@ -385,11 +382,11 @@ export abstract class BaseEditStrategy extends BeanStub {
         this.model?.setEditMap(edits);
 
         if (cells.length > 0) {
-            const cell = cells.at(-1)!;
-            const key = cell.pendingValue === UNEDITED ? undefined : cell.pendingValue;
-            this.start(cell, new KeyboardEvent('keydown', { key }), 'api');
+            const position = cells.at(-1)!;
+            const key = position.pendingValue === UNEDITED ? undefined : position.pendingValue;
+            this.start({ position, event: new KeyboardEvent('keydown', { key }), source: 'api' });
 
-            const cellCtrl = _getCellCtrl(this.beans, cell);
+            const cellCtrl = _getCellCtrl(this.beans, position);
             if (cellCtrl) {
                 this.setFocusInOnEditor(cellCtrl);
             }

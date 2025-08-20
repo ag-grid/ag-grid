@@ -309,3 +309,89 @@ export async function dragOverTo(source: Locator, target: Locator) {
     await target.hover();
     await mouse.up();
 }
+
+export { ensureGridReady } from './test-remote-gridapi-utils';
+
+export async function repeat(
+    page: Page,
+    title: string,
+    fn: () => Promise<void>,
+    { count, eachWait, afterAllWait }: { count: number; eachWait?: number; afterAllWait?: number } = { count: 1 }
+) {
+    await test.step(title, async () => {
+        if (count < 2) {
+            await fn();
+            if (eachWait !== undefined) {
+                await page.waitForTimeout(eachWait);
+                return;
+            }
+            if (afterAllWait !== undefined) {
+                await page.waitForTimeout(afterAllWait);
+            }
+        }
+
+        for (let i = 0; i < count; i++) {
+            await fn();
+            if (eachWait !== undefined) {
+                await page.waitForTimeout(eachWait);
+            }
+        }
+        if (afterAllWait !== undefined) {
+            await page.waitForTimeout(afterAllWait);
+        }
+    });
+}
+
+export async function scrollGridRelative(
+    method: 'wheel' | 'element',
+    page: Page,
+    { x, y }: { x?: number; y?: number },
+    waitForTimeout = 10
+) {
+    async function scrollElement() {
+        const verticalView = page.locator('.ag-body-viewport.ag-row-animation.ag-layout-normal');
+        const horizontalView = page.locator('.ag-viewport.ag-center-cols-viewport');
+
+        if (y !== undefined) {
+            await verticalView.evaluate((el, { y }) => (el.scrollTop += y), { y });
+            await page.waitForTimeout(waitForTimeout);
+        }
+
+        if (x !== undefined) {
+            await horizontalView.evaluate((el, { x }) => (el.scrollLeft += x), { x });
+            await page.waitForTimeout(waitForTimeout);
+        }
+    }
+
+    async function scrollWheel() {
+        if (y !== undefined) {
+            await page.mouse.wheel(0, y);
+            await page.waitForTimeout(waitForTimeout);
+        }
+
+        if (x !== undefined) {
+            await page.mouse.wheel(x, 0);
+            await page.waitForTimeout(waitForTimeout);
+        }
+    }
+
+    const directionWord = [];
+
+    if (x !== undefined && x !== 0) {
+        directionWord.push(x > 0 ? 'right' : 'left');
+    }
+
+    if (y !== undefined && y !== 0) {
+        directionWord.push(y > 0 ? 'down' : 'up');
+    }
+
+    await test.step(`Scroll grid ${directionWord.join('-')}`, async () => {
+        if (method === 'element') {
+            await scrollElement();
+        } else if (method === 'wheel') {
+            await scrollWheel();
+        } else {
+            // TODO: implement scrolling with keyboard, and scrollbars
+        }
+    });
+}

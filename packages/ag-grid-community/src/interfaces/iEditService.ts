@@ -20,11 +20,16 @@ export type EditNavOnValidationResult = 'block-stop' | 'revert-continue' | 'cont
 
 export type EditSource = 'api' | 'ui' | 'paste' | 'rangeSvc' | 'fillHandle' | 'cellClear' | 'edit' | 'bulk';
 
+export interface StartEditWithPositionParams extends StartEditParams {
+    position: Required<EditPosition>;
+}
+
 export type StartEditParams = {
     startedEdit?: boolean | null;
     event?: EditInputEvents;
     source?: EditSource;
     ignoreEventKey?: boolean;
+    silent?: boolean;
 };
 
 export type StopEditParams = {
@@ -100,10 +105,6 @@ export interface IEditService extends NamedBean {
         event?: Event | null,
         type?: T,
         payload?: any
-    ): void;
-    dispatchRowEvent(
-        position: Required<EditRowPosition>,
-        type: 'rowEditingStarted' | 'rowEditingStopped' | 'rowValueChanged'
     ): void;
     applyBulkEdit(position: Required<EditPosition>, cellRanges: CellRange[]): void;
     validateEdit(): ICellEditorValidationError[] | null;
