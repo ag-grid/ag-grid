@@ -211,11 +211,10 @@ const CellComp = ({
 
             const addComp = (comp: Component | undefined) => {
                 if (comp) {
-                    const eGui = comp.getGui();
-                    eRef.insertAdjacentElement('afterbegin', eGui);
+                    eRef.insertAdjacentElement('afterbegin', comp.getGui());
                     cellWrapperDestroyFuncs.current.push(() => {
+                        _removeFromParent(comp.getGui());
                         context.destroyBean(comp);
-                        _removeFromParent(eGui);
                     });
                 }
                 return comp;
@@ -235,8 +234,8 @@ const CellComp = ({
                     eRef.insertAdjacentElement('afterbegin', rowDragComp.getGui());
                     rowDragCompRef.current = rowDragComp;
                     cellWrapperDestroyFuncs.current.push(() => {
-                        context.destroyBean(rowDragComp);
                         _removeFromParent(rowDragComp.getGui());
+                        context.destroyBean(rowDragComp);
                         if (rowDragCompRef.current === rowDragComp) {
                             rowDragCompRef.current = undefined;
                         }
