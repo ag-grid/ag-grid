@@ -46,7 +46,7 @@ jobs:
       - name: nx pack:verify
         id: pack-verify
         run: |
-          yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify --prod
+          yarn nx pack:verify --prod 
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
