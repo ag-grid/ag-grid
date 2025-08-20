@@ -114,7 +114,6 @@ const staticGridOptions: GridOptions = {
         return 0;
     },
     enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
-    suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
     pivotPanelShow: 'always',
 
     enableCharts: true,
