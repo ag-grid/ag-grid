@@ -2,6 +2,10 @@ import { type Framework } from '@ag-grid-types';
 import Markdoc from '@markdoc/markdoc';
 
 export function getFirstParagraphText(markdocContent: string, currentFramework: Framework) {
+    if (!markdocContent) {
+        return;
+    }
+
     const root = Markdoc.parse(markdocContent);
 
     function findFirstParagraph(node) {

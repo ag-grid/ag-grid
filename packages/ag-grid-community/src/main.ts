@@ -295,6 +295,7 @@ export {
     DragSourceType,
     DropTarget,
     DragSource,
+    DragItemNameGetter,
     DraggingEvent,
     DragAndDropIcon,
 } from './dragAndDrop/dragAndDropService';
@@ -306,7 +307,7 @@ export type {
     RowDropTargetPosition,
     RowDropZoneParams,
     RowDropZoneEvents,
-} from './dragAndDrop/rowDragFeature';
+} from './dragAndDrop/rowDragTypes';
 export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { DragService } from './dragAndDrop/dragService';
 export { DragListenerParams } from './dragAndDrop/dragService';
@@ -1259,6 +1260,7 @@ export {
     DragAndDropModule,
     RowDragModule,
 } from './dragAndDrop/dragModule';
+export type { RowDragComp } from './dragAndDrop/rowDragComp';
 export {
     ColumnFilterModule as _ColumnFilterModule,
     FilterCoreModule as _FilterCoreModule,
@@ -1285,7 +1287,7 @@ export type {
     DropIndicatorPosition,
     SetRowDropPositionIndicatorParams,
     RowDropPositionIndicator,
-} from './interfaces/IRowDropHighlightService';
+} from './dragAndDrop/rowDropHighlightService';
 export type { EditStrategyType } from './interfaces/editStrategyType';
 export type { EditValidationCommitType } from './interfaces/editValidationCommitType';
 export {

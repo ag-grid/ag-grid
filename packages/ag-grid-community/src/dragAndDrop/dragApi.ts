@@ -1,10 +1,10 @@
 import type { BeanCollection } from '../context/context';
-import type { RowNode } from '../entities/rowNode';
 import type {
     RowDropPositionIndicator,
     SetRowDropPositionIndicatorParams,
-} from '../interfaces/IRowDropHighlightService';
-import type { RowDropZoneEvents, RowDropZoneParams } from './rowDragFeature';
+} from '../dragAndDrop/rowDropHighlightService';
+import type { RowNode } from '../entities/rowNode';
+import type { RowDropZoneEvents, RowDropZoneParams } from './rowDragTypes';
 
 export function addRowDropZone(beans: BeanCollection, params: RowDropZoneParams): void {
     beans.rowDragSvc?.rowDragFeature?.addRowDropZone(params);

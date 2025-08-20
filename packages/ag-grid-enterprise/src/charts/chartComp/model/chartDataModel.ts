@@ -10,6 +10,8 @@ import type {
     PartialCellRange,
     SeriesChartType,
     SeriesGroupType,
+    SortModelItem,
+    SortOption,
 } from 'ag-grid-community';
 import { BeanStub, CellRangeType } from 'ag-grid-community';
 
@@ -39,6 +41,7 @@ export interface ChartModelParams {
     suppressChartRanges?: boolean;
     unlinkChart?: boolean;
     crossFiltering?: boolean;
+    crossFilteringSort?: SortModelItem[] | boolean;
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;
 }
@@ -85,6 +88,7 @@ export class ChartDataModel extends BeanStub {
     public suppliedCellRange: PartialCellRange;
 
     public crossFiltering = false;
+    public crossFilteringSort: SortModelItem[] | boolean = true;
 
     private grouping = false;
 
@@ -109,6 +113,7 @@ export class ChartDataModel extends BeanStub {
             suppressChartRanges,
             unlinkChart,
             crossFiltering,
+            crossFilteringSort,
             seriesGroupType,
         } = params;
         this.chartType = chartType;
@@ -121,6 +126,7 @@ export class ChartDataModel extends BeanStub {
         this.suppressChartRanges = suppressChartRanges ?? false;
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
+        this.crossFilteringSort = crossFilteringSort ?? true;
         this.seriesGroupType = seriesGroupType;
     }
 
@@ -200,6 +206,7 @@ export class ChartDataModel extends BeanStub {
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             crossFiltering: this.crossFiltering,
+            crossFilteringSort: this.getCrossFilteringSort(),
             valueCols: this.getSelectedValueCols(),
             startRow,
             endRow,
@@ -575,5 +582,23 @@ export class ChartDataModel extends BeanStub {
 
     public isComboChart(chartType?: ChartType): boolean {
         return isComboChart(chartType ?? this.chartType);
+    }
+
+    private getCrossFilteringSort(): SortOption[] | boolean {
+        const sort = this.crossFilteringSort;
+        if (typeof sort === 'boolean') {
+            return sort;
+        }
+        const sortOptions: SortOption[] = [];
+        sort.forEach(({ sort, colId }) => {
+            const column = this.chartColSvc.getColumn(colId);
+            if (column) {
+                sortOptions.push({
+                    sort,
+                    column,
+                });
+            }
+        });
+        return sortOptions;
     }
 }

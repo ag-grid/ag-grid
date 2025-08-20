@@ -2,6 +2,7 @@ import type { AgChartThemeOverrides } from 'ag-charts-types';
 
 import type { AgEvent } from './agStack/interfaces/agEvent';
 import type { ScrollDirection } from './agStack/interfaces/baseEvents';
+import type { RowsDrop } from './dragAndDrop/rowDragTypes';
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
@@ -507,7 +508,9 @@ export interface RowResizeStartedEvent<TData = any, TContext = any>
 export interface RowResizeEndedEvent<TData = any, TContext = any>
     extends RowResizeEvent<TData, TContext, 'rowResizeEnded'> {}
 
-export interface RowDragEvent<TData = any, TContext = any, T extends AgEventType = any>
+export type RowDragEventType = 'rowDragEnter' | 'rowDragLeave' | 'rowDragMove' | 'rowDragEnd' | 'rowDragCancel';
+
+export interface RowDragEvent<TData = any, TContext = any, T extends RowDragEventType = RowDragEventType>
     extends AgGlobalEvent<T, TData, TContext> {
     /** The row node getting dragged. Also the node that started the drag when multi-row dragging. */
     node: IRowNode<TData>;
@@ -529,6 +532,9 @@ export interface RowDragEvent<TData = any, TContext = any, T extends AgEventType
      * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?'
      */
     y: number;
+
+    /** Details about the row dragging drop target. */
+    rowsDrop: RowsDrop<TData, TContext> | null;
 }
 
 export interface RowDragEnterEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragEnter'> {}

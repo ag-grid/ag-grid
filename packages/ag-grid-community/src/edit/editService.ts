@@ -18,7 +18,6 @@ import type { EditMap, EditRow, EditValue, IEditModelService } from '../interfac
 import type {
     EditNavOnValidationResult,
     EditPosition,
-    EditRowPosition,
     EditSource,
     IEditService,
     IsEditingParams,
@@ -55,14 +54,15 @@ import { _refreshEditCells } from './utils/refresh';
 type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };
 
 // these are event sources for setDataValue that will not cause the editors to close
-const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo']);
+const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo', 'paste', 'bulk']);
 
 // stop editing sources that we treat as UI-originated so we follow standard processing.
 const STOP_EDIT_SOURCE_TRANSFORM: Record<string, EditSource> = {
-    paste: 'ui',
-    rangeSvc: 'ui',
+    paste: 'api',
+    rangeSvc: 'api',
     fillHandle: 'api',
     cellClear: 'api',
+    bulk: 'api',
 };
 
 const STOP_EDIT_SOURCE_TRANSFORM_KEYS: Set<string> = new Set(Object.keys(STOP_EDIT_SOURCE_TRANSFORM));
@@ -94,6 +94,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     private rangeSvc: IRangeService;
     private strategy?: BaseEditStrategy;
     private stopping = false;
+    public committing = false;
 
     public postConstruct(): void {
         const { beans } = this;
@@ -222,7 +223,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     /** @returns whether to prevent default on event */
     public startEditing(position: Required<EditPosition>, params: StartEditParams): void {
-        const { startedEdit = true, event = null, source = 'ui', ignoreEventKey = false } = params;
+        const { startedEdit = true, event = null, source = 'ui', ignoreEventKey = false, silent } = params;
 
         this.strategy ??= this.createStrategy();
 
@@ -253,7 +254,14 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.dispatchBatchEvent('batchEditingStarted', new Map());
         }
 
-        this.strategy!.start(position, event, source, ignoreEventKey);
+        this.strategy!.start({
+            position,
+            event,
+            source,
+            ignoreEventKey,
+            startedEdit,
+            silent,
+        });
 
         return;
     }
@@ -268,12 +276,14 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 this.bulkRefresh(position);
                 return false;
             }
-
-            return this.stopEditing(position, { ...params, source: STOP_EDIT_SOURCE_TRANSFORM[source] });
         }
 
+        const treatAsSource: EditSource = this.committing ? STOP_EDIT_SOURCE_TRANSFORM[source] : source;
+
         const isEditingOrBatchWithEdits =
-            this.isEditing(position) || (this.isBatchEditing() && model.hasEdits(position, CHECK_SIBLING));
+            this.committing ||
+            this.isEditing(position) ||
+            (this.isBatchEditing() && model.hasEdits(position, CHECK_SIBLING));
 
         if (!isEditingOrBatchWithEdits || !this.strategy || this.stopping) {
             return false;
@@ -290,15 +300,16 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         let res = false;
 
-        const willStop = !cancel && !!this.shouldStopEditing(position, event, source);
-        const willCancel = cancel && !!this.shouldCancelEditing(position, event, source);
+        const willStop =
+            !cancel && (!!this.shouldStopEditing(position, event, treatAsSource) || (this.committing && !this.batch));
+        const willCancel = cancel && !!this.shouldCancelEditing(position, event, treatAsSource);
 
         if (willStop || willCancel) {
             _syncFromEditors(beans, true);
 
             const freshEdits = model.getEditMap();
 
-            const editsToDelete = this.processEdits(freshEdits, cancel);
+            const editsToDelete = this.processEdits(freshEdits, cancel, source);
 
             this.strategy?.stop(cancel, event);
 
@@ -341,7 +352,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 if (this.isBatchEditing()) {
                     this.strategy?.cleanupEditors();
                 } else {
-                    _destroyEditors(beans, model.getEditPositions(), { event });
+                    _destroyEditors(beans, model.getEditPositions(), { event, cancel: isEscape });
                 }
 
                 event.preventDefault();
@@ -401,7 +412,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
     }
 
-    private processEdits(edits: EditMap, cancel: boolean = false): EditPosition[] {
+    private processEdits(edits: EditMap, cancel: boolean = false, source: EditSource): EditPosition[] {
         const rowNodes = Array.from(edits.keys());
         const { beans } = this;
 
@@ -422,7 +433,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 const isCancelAfterEnd = cellCtrl?.comp?.getCellEditor()?.isCancelAfterEnd?.();
 
                 if (!cancel && !isCancelAfterEnd && valueChanged && !hasValidationErrors) {
-                    const success = this.setNodeDataValue(rowNode, column, editValue.pendingValue);
+                    const success = this.setNodeDataValue(rowNode, column, editValue.pendingValue, undefined, source);
                     if (!success) {
                         editsToDelete.push(position);
                     }
@@ -433,7 +444,13 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return editsToDelete;
     }
 
-    private setNodeDataValue(rowNode: IRowNode, column: Column, newValue: any, refreshCell?: boolean): boolean {
+    private setNodeDataValue(
+        rowNode: IRowNode,
+        column: Column,
+        newValue: any,
+        refreshCell?: boolean,
+        originalSource?: string
+    ): boolean {
         const { beans } = this;
         const cellCtrl = _getCellCtrl(beans, { rowNode, column });
 
@@ -444,7 +461,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         if (cellCtrl) {
             cellCtrl.suppressRefreshCell = true;
         }
-        const success = rowNode.setDataValue(column, newValue, 'commit');
+        this.commitNextEdit();
+        const success = rowNode.setDataValue(column, newValue, originalSource === 'ui' ? 'edit' : originalSource);
         if (cellCtrl) {
             cellCtrl.suppressRefreshCell = false;
         }
@@ -720,52 +738,60 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return new PopupEditorWrapper(params);
     }
 
+    public commitNextEdit(): void {
+        this.committing = true;
+    }
+
     public setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined {
-        if ((!this.isEditing() || eventSource === 'commit') && !SET_DATA_SOURCE_AS_API.has(eventSource)) {
-            return;
-        }
-
-        const { beans } = this;
-
-        this.strategy ??= this.createStrategy();
-        const source = this.isBatchEditing() ? 'ui' : 'api';
-
-        if (!eventSource || KEEP_EDITOR_SOURCES.has(eventSource)) {
-            // editApi or undoRedoApi apply change without involving the editor
-            _syncFromEditor(beans, position, true, newValue, eventSource);
-
-            // a truthy return here indicates the operation succeeded, and if invoked from rowNode.setDataValue, will not result in a cell value change event
-            return this.setNodeDataValue(position.rowNode, position.column, newValue, true);
-        }
-
-        const existing = this.model.getEdit(position);
-        if (existing) {
-            if (existing.pendingValue === newValue) {
-                return false;
+        try {
+            if ((!this.isEditing() || this.committing) && !SET_DATA_SOURCE_AS_API.has(eventSource)) {
+                return;
             }
 
-            if (existing.sourceValue !== newValue) {
+            const { beans } = this;
+
+            this.strategy ??= this.createStrategy();
+            const source = this.isBatchEditing() ? 'ui' : this.committing ? eventSource ?? 'api' : 'api';
+
+            if (!eventSource || KEEP_EDITOR_SOURCES.has(eventSource)) {
+                // editApi or undoRedoApi apply change without involving the editor
                 _syncFromEditor(beans, position, true, newValue, eventSource);
-                this.stopEditing(position, { source, suppressNavigateAfterEdit: true });
-                return true;
+
+                // a truthy return here indicates the operation succeeded, and if invoked from rowNode.setDataValue, will not result in a cell value change event
+                return this.setNodeDataValue(position.rowNode, position.column, newValue, true, eventSource);
             }
 
-            if (existing.sourceValue === newValue) {
-                beans.editModelSvc?.removeEdits(position);
+            const existing = this.model.getEdit(position);
+            if (existing) {
+                if (existing.pendingValue === newValue) {
+                    return false;
+                }
 
-                this.dispatchEditValuesChanged(position, {
-                    ...existing,
-                    pendingValue: newValue,
-                });
+                if (existing.sourceValue !== newValue) {
+                    _syncFromEditor(beans, position, true, newValue, eventSource);
+                    this.stopEditing(position, { source: source as any, suppressNavigateAfterEdit: true });
+                    return true;
+                }
 
-                return true;
+                if (existing.sourceValue === newValue) {
+                    beans.editModelSvc?.removeEdits(position);
+
+                    this.dispatchEditValuesChanged(position, {
+                        ...existing,
+                        pendingValue: newValue,
+                    });
+
+                    return true;
+                }
             }
+
+            _syncFromEditor(beans, position, true, newValue, eventSource);
+            this.stopEditing(position, { source: source as any, suppressNavigateAfterEdit: true });
+
+            return true;
+        } finally {
+            this.committing = false;
         }
-
-        _syncFromEditor(beans, position, true, newValue, eventSource);
-        this.stopEditing(position, { source, suppressNavigateAfterEdit: true });
-
-        return true;
     }
 
     public handleColDefChanged(cellCtrl: CellCtrl): void {
@@ -819,13 +845,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         payload?: any
     ): void {
         this.strategy?.dispatchCellEvent(position, event, type, payload);
-    }
-
-    public dispatchRowEvent(
-        position: Required<EditRowPosition>,
-        type: 'rowEditingStarted' | 'rowEditingStopped'
-    ): void {
-        this.strategy?.dispatchRowEvent(position, type);
     }
 
     public dispatchBatchEvent(type: 'batchEditingStarted' | 'batchEditingStopped', edits: EditMap): void {
@@ -925,7 +944,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 return;
             }
 
-            this.stopEditing(undefined, { source: 'api' });
+            this.commitNextEdit();
+            this.stopEditing(undefined, { source: 'bulk' });
 
             this.eventSvc.dispatchEvent({ type: 'bulkEditingStopped', changes: this.toEventChangeList(edits) });
         });

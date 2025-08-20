@@ -310,7 +310,20 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         initialGroupOrderComparator: {
             supportedRowModels: ['clientSide'],
         },
+        ssrmExpandAllAffectsAllRows: {
+            validate: (options) => {
+                if (typeof options.ssrmExpandAllAffectsAllRows === 'boolean') {
+                    if (options.rowModelType !== 'serverSide') {
+                        return "'ssrmExpandAllAffectsAllRows' is only supported with the Server Side Row Model.";
+                    }
+                    if (options.ssrmExpandAllAffectsAllRows && typeof options.getRowId !== 'function') {
+                        return `'getRowId' callback must be provided for Server Side Row Model grouping to work correctly.`;
+                    }
+                }
 
+                return null;
+            },
+        },
         keepDetailRowsCount: {
             validate({ keepDetailRowsCount }) {
                 return toConstrainedNum('keepDetailRowsCount', keepDetailRowsCount, 1);

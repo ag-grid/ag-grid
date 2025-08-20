@@ -10,6 +10,7 @@ import type {
     PartialCellRange,
     RowNode,
     RowNodeSorter,
+    SortOption,
     SortService,
     ValueService,
 } from 'ag-grid-community';
@@ -31,6 +32,7 @@ export interface ChartDatasourceParams {
     grouping: boolean;
     pivoting: boolean;
     crossFiltering: boolean;
+    crossFilteringSort: SortOption[] | boolean;
     valueCols: AgColumn[];
     startRow: number;
     endRow: number;
@@ -86,7 +88,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private extractRowsFromGridRowModel(params: ChartDatasourceParams): IData {
-        const { crossFiltering, startRow, endRow, valueCols, dimensionCols, grouping } = params;
+        const { crossFiltering, startRow, endRow, valueCols, dimensionCols, grouping, crossFilteringSort } = params;
         let extractedRowData: any[] = [];
         const colNames: { [key: string]: string[] } = {};
 
@@ -101,7 +103,7 @@ export class ChartDatasource extends BeanStub {
         let numRows;
         if (crossFiltering) {
             filteredNodes = this.getFilteredRowNodes();
-            allRowNodes = this.getAllRowNodes();
+            allRowNodes = this.getAllRowNodes(crossFilteringSort);
             numRows = allRowNodes.length;
         } else {
             // make sure enough rows in range to chart. if user filters and less rows, then end row will be
@@ -426,6 +428,7 @@ export class ChartDatasource extends BeanStub {
         return labels;
     }
 
+    /** cross filtering only */
     private getFilteredRowNodes() {
         const filteredNodes: { [key: string]: RowNode } = {};
         (this.gridRowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort((rowNode: RowNode) => {
@@ -434,16 +437,18 @@ export class ChartDatasource extends BeanStub {
         return filteredNodes;
     }
 
-    private getAllRowNodes() {
+    /** cross filtering only */
+    private getAllRowNodes(sortModel: SortOption[] | boolean) {
         const allRowNodes: RowNode[] = [];
         this.gridRowModel.forEachNode((rowNode: RowNode) => {
             allRowNodes.push(rowNode);
         });
-        return this.sortRowNodes(allRowNodes);
+        return this.sortRowNodes(allRowNodes, sortModel);
     }
 
-    private sortRowNodes(rowNodes: RowNode[]): RowNode[] {
-        const sortOptions = this.sortSvc?.getSortOptions();
+    /** cross filtering only */
+    private sortRowNodes(rowNodes: RowNode[], sortModel: SortOption[] | boolean): RowNode[] {
+        const sortOptions = sortModel === true ? this.sortSvc?.getSortOptions() : sortModel;
         if (!sortOptions || sortOptions.length == 0 || !this.rowNodeSorter) {
             return rowNodes;
         }

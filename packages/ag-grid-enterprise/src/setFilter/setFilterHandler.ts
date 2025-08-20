@@ -412,6 +412,17 @@ export class SetFilterHandler<TValue = string>
         this.valueFormatter = valueFormatter;
     }
 
+    public getCrossFilterModel(
+        callback: (
+            createKey: (value: TValue | null | undefined) => string | null,
+            availableKeys: Set<string | null>,
+            existingValues: SetFilterModelValue | undefined
+        ) => SetFilterModel
+    ): SetFilterModel {
+        const { createKey, valueModel, params } = this;
+        return callback(createKey, valueModel.availableKeys, params.model?.values);
+    }
+
     public override destroy(): void {
         this.appliedModel.destroy();
         super.destroy();

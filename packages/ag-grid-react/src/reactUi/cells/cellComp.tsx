@@ -8,6 +8,7 @@ import type {
     ICellEditor,
     ICellEditorComp,
     ICellRendererComp,
+    RowDragComp,
 } from 'ag-grid-community';
 import { CssClassManager, _EmptyBean, _removeFromParent } from 'ag-grid-community';
 
@@ -65,6 +66,7 @@ const CellComp = ({
 
     const eCellWrapper = useRef<HTMLDivElement | null>();
     const cellWrapperDestroyFuncs = useRef<(() => void)[]>([]);
+    const rowDragCompRef = useRef<RowDragComp | undefined>();
 
     // when setting the ref, we also update the state item to force a re-render
     const eCellValue = useRef<HTMLDivElement | null>();
@@ -126,6 +128,8 @@ const CellComp = ({
         ) {
             return;
         }
+
+        rowDragCompRef.current?.refreshVisibility();
 
         const oldCompDetails = oldDetails.compDetails;
         const newCompDetails = newDetails.compDetails;
@@ -200,21 +204,27 @@ const CellComp = ({
             eCellWrapper.current = eRef;
 
             if (!eRef || context.isDestroyed() || !cellCtrl.isAlive()) {
-                cellWrapperDestroyFuncs.current.forEach((f) => f());
+                const callbacks = cellWrapperDestroyFuncs.current;
                 cellWrapperDestroyFuncs.current = [];
+                for (const cb of callbacks) {
+                    cb();
+                }
                 return;
             }
 
+            let rowDragComp: RowDragComp | undefined;
+
             const addComp = (comp: Component | undefined) => {
                 if (comp) {
-                    const eGui = comp.getGui();
-                    eRef.insertAdjacentElement('afterbegin', eGui);
+                    eRef.insertAdjacentElement('afterbegin', comp.getGui());
                     cellWrapperDestroyFuncs.current.push(() => {
+                        _removeFromParent(comp.getGui());
                         context.destroyBean(comp);
-                        _removeFromParent(eGui);
+                        if (rowDragCompRef.current === rowDragComp) {
+                            rowDragCompRef.current = undefined;
+                        }
                     });
                 }
-                return comp;
             };
 
             if (includeSelection) {
@@ -226,7 +236,12 @@ const CellComp = ({
             }
 
             if (includeRowDrag) {
-                addComp(cellCtrl.createRowDragComp());
+                rowDragComp = cellCtrl.createRowDragComp();
+                rowDragCompRef.current = rowDragComp;
+                if (rowDragComp) {
+                    addComp(rowDragComp);
+                    rowDragComp.refreshVisibility();
+                }
             }
         },
         [cellCtrl, context, includeDndSource, includeRowDrag, includeSelection]

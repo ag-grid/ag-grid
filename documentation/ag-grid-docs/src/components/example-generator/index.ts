@@ -1,5 +1,6 @@
 import { getIsDev } from '@utils/env';
 import { getExampleRootFileUrl } from '@utils/pages';
+import { existsSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -68,6 +69,10 @@ const readContentJson = async (params: GeneratedExampleParams) => {
     }
 
     return result;
+};
+
+export const hasGeneratedContents = async (params: GeneratedExampleParams) => {
+    return existsSync(getContentJsonPath(params));
 };
 
 export const getGeneratedContentsFileList = async (params: GeneratedExampleParams) => {

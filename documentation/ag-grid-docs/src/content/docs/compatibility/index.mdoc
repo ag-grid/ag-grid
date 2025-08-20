@@ -43,9 +43,13 @@ The table below gives the ranges of compatible versions of AG Grid with Angular 
 
 Future AG Grid versions will provide support for the lowest Angular Long-term (LTS) version at the time of release. See [Angular Support policy and schedule](https://angular.dev/reference/releases#support-policy-and-schedule).
 
-### Migration to AG Grid v28+
+## Zoneless Support
 
-#### Angular v12+
+AG Grid is fully compatible with [Zoneless](https://angular.dev/guide/zoneless) Angular applications with no additional configuration. If migrating to Zoneless and using custom components then these must meet the [requirements for Zoneless compatibility](https://angular.dev/guide/zoneless#requirements-for-zoneless-compatibility).
+
+## Migration to AG Grid v28+
+
+### Angular v12+
 
 To migrate applications on Angular v12+ to AG Grid v28+ requires no dependency changes. There are [breaking changes](https://www.ag-grid.com/changelog/?fixVersion=28.0.0), notably `AgGridModule` no longer supports `.withComponents()` as it is not required any more.
 
@@ -58,9 +62,7 @@ To migrate applications on Angular v12+ to AG Grid v28+ requires no dependency c
 })
 ```
 
-## Notes on Angular 12+
-
-If using Angular 12+ and versions of AG Grid up to v27 the following warning may be present in the build output. To avoid this, upgrade to at least v28 of AG Grid which is published as an Ivy distribution.
+If using Angular v12+ and versions of AG Grid up to v27 the following warning may be present in the build output. To avoid this, upgrade to at least v28 of AG Grid which is published as an Ivy distribution.
 
 ```bash
 Generating browser application bundles (phase: setup)...

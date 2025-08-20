@@ -50,14 +50,14 @@ export class RowDragComp extends Component {
 
     private initCellDrag(): void {
         const { beans, gos, rowNode } = this;
-        const refresh = this.refresh.bind(this);
+        const refreshVisibility = this.refreshVisibility.bind(this);
 
-        this.addManagedPropertyListener('suppressRowDrag', refresh);
+        this.addManagedPropertyListener('suppressRowDrag', refreshVisibility);
 
         // in case data changes, then we need to update visibility of drag item
         this.addManagedListeners(rowNode, {
-            dataChanged: refresh,
-            cellChanged: refresh,
+            dataChanged: refreshVisibility,
+            cellChanged: refreshVisibility,
         });
 
         this.addManagedListeners<AgEventType>(
@@ -65,12 +65,12 @@ export class RowDragComp extends Component {
             // For managed row drag, we do not show the component if sort, filter or grouping is active
             gos.get('rowDragManaged')
                 ? {
-                      sortChanged: refresh,
-                      filterChanged: refresh,
-                      columnRowGroupChanged: refresh,
-                      newColumnsLoaded: refresh,
+                      sortChanged: refreshVisibility,
+                      filterChanged: refreshVisibility,
+                      columnRowGroupChanged: refreshVisibility,
+                      newColumnsLoaded: refreshVisibility,
                   }
-                : { newColumnsLoaded: refresh }
+                : { newColumnsLoaded: refreshVisibility }
         );
     }
 
@@ -81,7 +81,7 @@ export class RowDragComp extends Component {
         this.addDragSource(dragStartPixels);
     }
 
-    public refresh(): void {
+    public refreshVisibility(): void {
         if (this.alwaysVisible) {
             return; // Always visible row draggers do not refresh visibility
         }
@@ -184,13 +184,13 @@ export class RowDragComp extends Component {
         this.dragSource = {
             type: DragSourceType.RowDrag,
             eElement: eGui,
-            dragItemName: () => {
-                const dragItem = this.getDragItem();
-                const dragItemCount = dragItem.rowNodes?.length || 1;
+            dragItemName: (draggingEvent) => {
+                const dragItem = draggingEvent?.dragItem || this.getDragItem();
+                const dragItemCount = (draggingEvent?.rowsDrop?.rows.length ?? dragItem.rowNodes?.length) || 1;
 
                 const rowDragText = this.getRowDragText(this.column);
                 if (rowDragText) {
-                    return rowDragText(dragItem, dragItemCount);
+                    return rowDragText(dragItem as IRowDragItem, dragItemCount);
                 }
 
                 return dragItemCount === 1

@@ -1,7 +1,6 @@
 :global(:root) {
     --layout-grid-header-height: 32px;
     --layout-grid-margin: 32px;
-    --ag-row-border: 1px solid #c41717;
 }
 
 :global(body) {

@@ -1,4 +1,12 @@
-import type { GetRowIdParams, GridApi, GridOptions, RowDragEndEvent, ValueFormatterParams } from 'ag-grid-community';
+import type {
+    GetRowIdParams,
+    GridApi,
+    GridOptions,
+    RowDragCancelEvent,
+    RowDragEndEvent,
+    RowDragLeaveEvent,
+    ValueFormatterParams,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -10,7 +18,7 @@ import {
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
-import type { FileDropPosition, IFile } from './fileUtils';
+import type { IFile } from './fileUtils';
 import { getFileDropPosition, moveFiles } from './fileUtils';
 
 ModuleRegistry.registerModules([
@@ -43,11 +51,11 @@ function onRowDragEnd(event: RowDragEndEvent<IFile>) {
             gridApi.setGridOption('rowData', newRowData);
         }
     }
-    gridApi.setRowDropPositionIndicator(null);
+    event.api.setRowDropPositionIndicator(null);
 }
 
-function onRowDragCancel() {
-    gridApi.setRowDropPositionIndicator(null);
+function onRowDragLeaveOrCancel(event: RowDragLeaveEvent<IFile> | RowDragCancelEvent<IFile>) {
+    event.api.setRowDropPositionIndicator(null);
 }
 
 function onRowDragMove(event: any) {
@@ -56,25 +64,22 @@ function onRowDragMove(event: any) {
     const reorderOnly = event.event?.shiftKey;
     const rowData = gridApi.getGridOption('rowData') ?? [];
     const indicator = getFileDropPosition(rowData, source, target, !!reorderOnly);
+
     if (indicator) {
         // Find the row node by file reference
-        let rowNode = null;
-        gridApi.forEachNode((node) => {
-            if (node.data === indicator.target) {
-                rowNode = node;
-            }
-        });
+        const rowNode = gridApi.getRowNode(indicator.target.id);
         if (rowNode) {
+            // Update the position indicator
             gridApi.setRowDropPositionIndicator({
                 row: rowNode,
                 dropIndicatorPosition: indicator.position,
             });
-        } else {
-            gridApi.setRowDropPositionIndicator(null);
+
+            return;
         }
-    } else {
-        gridApi.setRowDropPositionIndicator(null);
     }
+
+    gridApi.setRowDropPositionIndicator(null);
 }
 
 const gridOptions: GridOptions<IFile> = {
@@ -111,7 +116,8 @@ const gridOptions: GridOptions<IFile> = {
     animateRows: true,
     onRowDragEnd,
     onRowDragMove,
-    onRowDragCancel,
+    onRowDragLeave: onRowDragLeaveOrCancel,
+    onRowDragCancel: onRowDragLeaveOrCancel,
     groupDefaultExpanded: -1,
 };
 

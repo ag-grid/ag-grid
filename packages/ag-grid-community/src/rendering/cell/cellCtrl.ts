@@ -263,7 +263,7 @@ export class CellCtrl extends BeanStub {
         this.rowResizeFeature?.refreshRowResizer();
 
         if (startEditing && this.isCellEditable()) {
-            this.editSvc?.startEditing(this, { startedEdit: true, source: 'api' });
+            this.editSvc?.startEditing(this, { startedEdit: false, source: 'api', silent: true });
         } else {
             // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
             this.showValue(false, true);
@@ -365,6 +365,8 @@ export class CellCtrl extends BeanStub {
         }
 
         this.comp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
+
+        this.customRowDragComp?.refreshVisibility();
 
         // Don't call expensive _requestAnimationFrame if we don't have to
         if (!skipRangeHandleRefresh && rangeFeature) {
@@ -511,6 +513,15 @@ export class CellCtrl extends BeanStub {
             this.rowCtrl?.recreateCell(this);
         } else {
             this.refreshCell(params);
+        }
+
+        if (this.hasEdit && this.editCompDetails) {
+            const { editSvc, comp } = this;
+
+            if (!comp?.getCellEditor() && editSvc!.isEditing(this, { withOpenEditor: true })) {
+                // editor was cleaned up by virtualisation, needs to be re-created
+                editSvc!.startEditing(this, { startedEdit: false, source: 'api', silent: true });
+            }
         }
     }
 
@@ -973,6 +984,7 @@ export class CellCtrl extends BeanStub {
                 this.beans.context.destroyBean(newComp);
                 (this.customRowDragComp as any) = null;
             });
+            newComp.refreshVisibility();
         }
     }
 

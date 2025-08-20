@@ -1,137 +1,155 @@
 import type {
-    AgColumn,
-    BeanCollection,
-    ColumnModel,
-    FilterManager,
-    IClientSideRowModel,
+    FilterModel,
+    IMultiFilterModel,
+    IProvidedFilter,
     NamedBean,
-    RowNode,
-    ValueService,
+    SetFilterModel,
+    SetFilterModelValue,
 } from 'ag-grid-community';
-import { BeanStub, _isClientSideRowModel, _warn } from 'ag-grid-community';
+import { BeanStub, _warn } from 'ag-grid-community';
+
+import type { MultiFilter } from '../../../multiFilter/multiFilter';
+import type { MultiFilterUi } from '../../../multiFilter/multiFilterUi';
+import type { SetFilter } from '../../../setFilter/setFilter';
+import type { SetFilterHandler } from '../../../setFilter/setFilterHandler';
 
 export class ChartCrossFilterService extends BeanStub implements NamedBean {
     beanName = 'chartCrossFilterSvc' as const;
 
-    private colModel: ColumnModel;
-    private valueSvc: ValueService;
-    private filterManager?: FilterManager;
-    private clientSideRowModel?: IClientSideRowModel;
-
-    public wireBeans(beans: BeanCollection) {
-        this.colModel = beans.colModel;
-        this.valueSvc = beans.valueSvc;
-        this.filterManager = beans.filterManager;
-        if (_isClientSideRowModel(this.gos, beans.rowModel)) {
-            this.clientSideRowModel = beans.rowModel;
-        }
-    }
-
     public filter(event: any, reset: boolean = false): void {
-        const filterModel = this.filterManager?.getFilterModel() ?? {};
+        const filterManager = this.beans.filterManager;
+
+        const filterModel = filterManager?.getFilterModel() ?? {};
 
         // filters should be reset when user clicks on canvas background
         if (reset) {
-            this.resetFilters(filterModel);
+            if (Object.keys(filterModel).length > 0) {
+                // only reset filters / charts when necessary to prevent undesirable flickering effect
+                filterManager?.setFilterModel(null);
+            }
             return;
         }
 
-        const colId = this.extractFilterColId(event);
-        if (this.isValidColumnFilter(colId)) {
-            // update filters based on current chart selections
-            this.updateFilters(filterModel, event, colId);
-        } else {
-            _warn(154, { colId });
+        let colId = extractFilterColId(event);
+        if (colId.indexOf('-filtered-out')) {
+            colId = colId.replace('-filtered-out', '');
         }
+        // update filters based on current chart selections
+        this.updateFilters(filterModel, event, colId);
     }
 
-    private resetFilters(filterModel: any) {
-        const filtersExist = Object.keys(filterModel).length > 0;
-        if (filtersExist) {
-            // only reset filters / charts when necessary to prevent undesirable flickering effect
-            this.filterManager?.setFilterModel(null);
-            this.filterManager?.onFilterChanged({ source: 'api' });
-        }
-    }
-
-    private updateFilters(filterModel: any, event: any, colId: string) {
-        const dataKey = this.extractFilterColId(event);
+    private updateFilters(filterModel: FilterModel, event: any, colId: string): void {
+        const dataKey = extractFilterColId(event);
         const rawValue = event.datum[dataKey];
         if (rawValue === undefined) {
             return;
         }
 
-        const selectedValue = rawValue.toString();
+        const filterManager = this.beans.filterManager;
 
-        if (event.event.metaKey || event.event.ctrlKey) {
-            const existingGridValues = this.getCurrentGridValuesForCategory(colId);
-            const valueAlreadyExists = existingGridValues.includes(selectedValue);
-
-            let updatedValues;
-            if (valueAlreadyExists) {
-                updatedValues = existingGridValues.filter((v: any) => v !== selectedValue);
-            } else {
-                updatedValues = existingGridValues;
-                updatedValues.push(selectedValue);
+        filterManager?.getColumnFilterInstance(colId).then((filter) => {
+            const filterType = (filter as IProvidedFilter)?.filterType;
+            let setFilter: SetFilter | undefined;
+            let processModel = (model: any): any => model;
+            if (filterType === 'multi') {
+                const result = extractFromMultiFilter(filter as unknown as MultiFilterUi | MultiFilter);
+                setFilter = result.setFilter;
+                processModel = result.processModel ?? processModel;
+            } else if (filterType === 'set') {
+                setFilter = filter as any;
+            }
+            if (!setFilter) {
+                _warn(154, { colId });
+                return;
             }
 
-            filterModel[colId] = this.getUpdatedFilterModel(colId, updatedValues);
-        } else {
-            const updatedValues = [selectedValue];
-            filterModel = { [colId]: this.getUpdatedFilterModel(colId, updatedValues) };
-        }
+            const update = event.event.metaKey || event.event.ctrlKey;
 
-        this.filterManager?.setFilterModel(filterModel);
+            const setFilterModel = (setFilter.getFilterHandler() as SetFilterHandler).getCrossFilterModel(
+                (createKey, availableKeys, existingValues) =>
+                    getSetFilterModel(update, createKey(rawValue), availableKeys, existingValues)
+            );
+
+            const colFilterModel = processModel(setFilterModel);
+            const newFilterModel = update ? { ...filterModel } : {};
+            newFilterModel[colId] = colFilterModel;
+            filterManager?.setFilterModel(newFilterModel);
+        });
     }
+}
 
-    private getUpdatedFilterModel(colId: any, updatedValues: any[]) {
-        const columnFilterType = this.getColumnFilterType(colId);
-        if (columnFilterType === 'agMultiColumnFilter') {
-            return { filterType: 'multi', filterModels: [null, { filterType: 'set', values: updatedValues }] };
-        }
-        return { filterType: 'set', values: updatedValues };
+function processMultiFilterModel(setFilterModel: any, index: number, numFilters: number): IMultiFilterModel {
+    const filterModels = new Array(numFilters);
+    for (let i = 0; i < numFilters; i++) {
+        filterModels[i] = i === index ? setFilterModel : null;
     }
+    return { filterType: 'multi', filterModels };
+}
 
-    private getCurrentGridValuesForCategory(colId: string) {
-        const filteredValues: any[] = [];
-        const column = this.getColumnById(colId);
-        this.clientSideRowModel?.forEachNodeAfterFilter((rowNode: RowNode) => {
-            if (column && !rowNode.group) {
-                const value = this.valueSvc.getValue(column, rowNode) + '';
-                if (!filteredValues.includes(value)) {
-                    filteredValues.push(value);
+function extractFromMultiFilter(multiFilter: MultiFilterUi | MultiFilter): {
+    setFilter?: SetFilter;
+    processModel?: (model: any) => any;
+} {
+    const numFilters = multiFilter.getNumChildFilters();
+    for (let i = 0; i < numFilters; i++) {
+        const childFilter = multiFilter.getChildFilterInstance(i);
+        if ((childFilter as IProvidedFilter)?.filterType === 'set') {
+            return {
+                setFilter: childFilter as any,
+                processModel: (model) => processMultiFilterModel(model, i, numFilters),
+            };
+        }
+    }
+    return {};
+}
+
+function extractFilterColId(event: any): string {
+    return event.xKey || event.calloutLabelKey;
+}
+
+function getSetFilterModel(
+    update: boolean,
+    key: string | null,
+    availableKeySet: Set<string | null>,
+    existingValues: SetFilterModelValue | undefined
+): SetFilterModel {
+    let values: SetFilterModelValue;
+    if (update) {
+        if (availableKeySet.has(key) && (existingValues == null || existingValues.includes(key))) {
+            // exists in grid, so remove
+            values = [];
+            if (existingValues == null) {
+                for (const availableKey of availableKeySet) {
+                    if (availableKey !== key) {
+                        values.push(availableKey);
+                    }
+                }
+            } else {
+                for (const existingValue of existingValues) {
+                    if (existingValue !== key && availableKeySet.has(existingValue)) {
+                        values.push(existingValue);
+                    }
                 }
             }
-        });
-        return filteredValues;
-    }
-
-    private extractFilterColId(event: any): string {
-        return event.xKey || event.calloutLabelKey;
-    }
-
-    private isValidColumnFilter(colId: any) {
-        if (colId.indexOf('-filtered-out')) {
-            colId = colId.replace('-filtered-out', '');
+        } else {
+            // add
+            if (existingValues == null) {
+                values = Array.from(availableKeySet);
+            } else {
+                values = [];
+                for (const existingValue of existingValues) {
+                    if (availableKeySet.has(existingValue)) {
+                        values.push(existingValue);
+                    }
+                }
+            }
+            values.push(key);
         }
-
-        const filterType = this.getColumnFilterType(colId);
-        if (typeof filterType === 'boolean') {
-            return filterType;
-        }
-
-        return ['agSetColumnFilter', 'agMultiColumnFilter'].includes(filterType);
+    } else {
+        values = [key];
     }
-
-    private getColumnFilterType(colId: any) {
-        const gridColumn = this.getColumnById(colId);
-        if (gridColumn) {
-            const colDef = gridColumn.getColDef();
-            return colDef.filter;
-        }
-    }
-
-    private getColumnById(colId: string) {
-        return this.colModel.getCol(colId) as AgColumn;
-    }
+    return {
+        filterType: 'set',
+        values,
+    };
 }

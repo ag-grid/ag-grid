@@ -505,7 +505,7 @@ export class RowNode<TData = any>
             return false;
         }
 
-        if (editSvc) {
+        if (editSvc && !editSvc.committing) {
             const result = editSvc.setDataValue({ rowNode: this, column }, newValue, eventSource);
 
             if (result != null) {

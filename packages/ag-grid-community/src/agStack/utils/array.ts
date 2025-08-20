@@ -12,20 +12,27 @@ export function _last(arr: any): any {
 }
 
 export function _areEqual<T>(
-    a?: readonly T[] | null,
-    b?: readonly T[] | null,
+    a: readonly T[] | null | undefined,
+    b: readonly T[] | null | undefined,
     comparator?: (a: T, b: T) => boolean
 ): boolean {
-    if (a == null && b == null) {
-        return true;
+    if (a === b) {
+        return true; // Same instance, no need to compare
     }
-
-    return (
-        a != null &&
-        b != null &&
-        a.length === b.length &&
-        a.every((value, index) => (comparator ? comparator(value, b[index]) : b[index] === value))
-    );
+    if (!a || !b) {
+        return a == null && b == null; // True if both are null or undefined, false otherwise
+    }
+    const len = a.length;
+    if (len !== b.length) {
+        return false; // Different lengths, cannot be equal
+    }
+    for (let i = 0; i < len; i++) {
+        // We don't need to invoke the comparator if the values are the same instance
+        if (a[i] !== b[i] && !comparator?.(a[i], b[i])) {
+            return false; // Instances are different and not equal according to the comparator
+        }
+    }
+    return true; // Arrays are equal
 }
 
 /**

@@ -602,7 +602,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.intervalCount = 0;
         this.failedMoveAttempts = 0;
         this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), SCROLL_TIME_INTERVAL);
-        this.beans.dragAndDrop!.getDragAndDropImageComponent()?.setIcon(this.needToMoveLeft ? 'left' : 'right', true);
+        this.beans.dragAndDrop!.setDragImageCompIcon(this.needToMoveLeft ? 'left' : 'right', true);
     }
 
     private ensureIntervalCleared(): void {
@@ -613,7 +613,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         window.clearInterval(this.movingIntervalId);
         this.movingIntervalId = null;
         this.failedMoveAttempts = 0;
-        this.beans.dragAndDrop!.getDragAndDropImageComponent()?.setIcon(this.getIconName(), false);
+        this.beans.dragAndDrop!.setDragImageCompIcon(this.getIconName());
     }
 
     private moveInterval(): void {
@@ -649,7 +649,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                 return;
             }
 
-            dragAndDrop!.getDragAndDropImageComponent()?.setIcon('pinned', false);
+            dragAndDrop!.setDragImageCompIcon('pinned');
 
             if (!gos.get('suppressMoveWhenColumnDragging')) {
                 const columns = this.lastDraggingEvent?.dragItem.columns as AgColumn[] | undefined;

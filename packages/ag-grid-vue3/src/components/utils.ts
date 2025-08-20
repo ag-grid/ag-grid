@@ -1692,6 +1692,12 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     isGroupOpenByDefault?: ((params: IsGroupOpenByDefaultParams<TData>) => boolean) | undefined,
+    /** Controls how expand/collapse operations affect all rows and group interactions.
+         * If `true`, expandAll / collapseAll applies to all rows (not just loaded ones),
+         * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
+         * @agModule RowGroupingModule / TreeDataModule
+         */
+    ssrmExpandAllAffectsAllRows?: boolean | undefined | undefined,
     /** Allows default sorting of groups.
          * @agModule `RowGroupingModule`
          */
@@ -1780,7 +1786,7 @@ export interface Props<TData> {
     /** Tells the grid if this row should be rendered as full width.
          */
     isFullWidthRow?: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined,
-    /** Called by managed drag and drop when rows are dropped on another row.
+    /** Called by drag and drop when rows are dragged over another row to conditionally prevent dropping the dragged row on the hovered row.
          * The user can cancel the drop by returning `false` or customize the operation by returning a `IsRowValidDropPositionResult`.
          * @agModule `RowDragModule`
          */
@@ -2208,6 +2214,7 @@ export function getProps() {
         paginationNumberFormatter: undefined,
         getGroupRowAgg: undefined,
         isGroupOpenByDefault: undefined,
+        ssrmExpandAllAffectsAllRows: undefined,
         initialGroupOrderComparator: undefined,
         processPivotResultColDef: undefined,
         processPivotResultColGroupDef: undefined,

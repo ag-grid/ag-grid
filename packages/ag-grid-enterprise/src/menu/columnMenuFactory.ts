@@ -180,13 +180,13 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
         addColumnItems();
 
-        // only add grouping expand/collapse if grouping in the InMemoryRowModel
+        // only add grouping expand/collapse if grouping in the InMemoryRowModel or ssrmExpandAllAffectsAllRows flag is set
         // if pivoting, we only have expandable groups if grouping by 2 or more columns
         // as the lowest level group is not expandable while pivoting.
         // if not pivoting, then any active row group can be expanded.
         if (
             expansionSvc &&
-            _isClientSideRowModel(gos) &&
+            (_isClientSideRowModel(gos) || gos.get('ssrmExpandAllAffectsAllRows')) &&
             (gos.get('treeData') || rowGroupCount > (colModel.isPivotMode() ? 1 : 0))
         ) {
             result.push('expandAll');

@@ -1,6 +1,10 @@
 import type { AgEvent } from '../agStack/interfaces/agEvent';
 import type { ApplyColumnStateParams, ColumnState } from '../columns/columnStateUtils';
-import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragFeature';
+import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragTypes';
+import type {
+    RowDropPositionIndicator,
+    SetRowDropPositionIndicatorParams,
+} from '../dragAndDrop/rowDropHighlightService';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
 import type { ChartRef, GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { AgPublicEventType } from '../eventTypes';
@@ -24,10 +28,6 @@ import type {
     UpdateChartParams,
 } from '../interfaces/IChartService';
 import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
-import type {
-    RowDropPositionIndicator,
-    SetRowDropPositionIndicatorParams,
-} from '../interfaces/IRowDropHighlightService';
 import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type {
