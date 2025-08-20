@@ -5,6 +5,7 @@ import { _errorOnce, _warnOnce } from '../utils/log';
 
 const clientSide = 'clientSide';
 const serverSide = 'serverSide';
+const viewport = 'viewport';
 const infinite = 'infinite';
 
 const functionRowModels: { [name in ApiFunctionName]?: RowModelType[] } = {
@@ -14,7 +15,7 @@ const functionRowModels: { [name in ApiFunctionName]?: RowModelType[] } = {
     forEachLeafNode: [clientSide],
     forEachNodeAfterFilter: [clientSide],
     forEachNodeAfterFilterAndSort: [clientSide],
-    resetRowHeights: [clientSide],
+    resetRowHeights: [clientSide, serverSide, viewport],
     applyTransaction: [clientSide],
     applyTransactionAsync: [clientSide],
     flushAsyncTransactions: [clientSide],

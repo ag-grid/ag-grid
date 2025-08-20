@@ -418,6 +418,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         flushServerSideAsyncTransactions: 0,
         refreshServerSide: 0,
         getServerSideGroupLevelState: 0,
+        resetRowHeights: 0,
     }),
 
     ...mod<_SideBarGridApi<any>>('SideBar', {

@@ -210,6 +210,8 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         };
     }
 
+    resetRowHeights(): void {}
+
     private updateRowHeights() {
         const rowHeight = this.rowHeight;
         this.forEachNode((node) => {

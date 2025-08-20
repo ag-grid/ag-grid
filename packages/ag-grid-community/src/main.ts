@@ -855,6 +855,7 @@ export {
     _ExcelExportGridApi,
     _ClipboardGridApi,
     _InfiniteRowModelGridApi,
+    _ViewportRowModelGridApi,
     _GridChartsGridApi,
     _MasterDetailGridApi,
     _StatusBarGridApi,
@@ -863,7 +864,7 @@ export {
     _FindApi,
     _BatchEditApi,
 } from './api/gridApi';
-export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
+export { _getClientSideRowModel, _getViewportRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
 export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes';
 export { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 export type { FocusService } from './focusService';

@@ -26,6 +26,7 @@ import {
     getServerSideGroupLevelState,
     getServerSideSelectionState,
     refreshServerSide,
+    resetRowHeights,
     retryServerSideLoads,
     setServerSideSelectionState,
 } from './serverSideRowModelApi';
@@ -83,6 +84,7 @@ export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGrid
         applyServerSideTransactionAsync,
         applyServerSideRowData,
         retryServerSideLoads,
+        resetRowHeights,
         flushServerSideAsyncTransactions,
         refreshServerSide,
         getServerSideGroupLevelState,

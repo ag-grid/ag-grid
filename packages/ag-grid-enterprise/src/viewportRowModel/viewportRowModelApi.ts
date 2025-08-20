@@ -3,12 +3,11 @@ import type {
     IServerSideGroupSelectionState,
     IServerSideSelectionState,
     LoadSuccessParams,
-    RefreshServerSideParams,
-    ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
 } from 'ag-grid-community';
 import { _getServerSideRowModel, _warn } from 'ag-grid-community';
+import { _getViewportRowModel } from 'ag-grid-community';
 
 export function getServerSideSelectionState(
     beans: BeanCollection
@@ -59,18 +58,7 @@ export function retryServerSideLoads(beans: BeanCollection): void {
     _getServerSideRowModel(beans)?.retryLoads();
 }
 
-export function resetRowHeights(): void {
+export function resetRowHeights(beans: BeanCollection): void {
     console.log('resetRowHeights called');
-}
-
-export function flushServerSideAsyncTransactions(beans: BeanCollection): void {
-    return beans.ssrmTxnManager?.flushAsyncTransactions();
-}
-
-export function refreshServerSide(beans: BeanCollection, params?: RefreshServerSideParams): void {
-    _getServerSideRowModel(beans)?.refreshStore(params);
-}
-
-export function getServerSideGroupLevelState(beans: BeanCollection): ServerSideGroupLevelState[] {
-    return _getServerSideRowModel(beans)?.getStoreState() ?? [];
+    _getViewportRowModel(beans)?.resetRowHeights();
 }

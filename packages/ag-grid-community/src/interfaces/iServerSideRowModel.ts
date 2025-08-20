@@ -18,6 +18,7 @@ export interface IServerSideRowModel<TData = any> extends IRowModel {
     ): void;
     resetRootStore(): void;
     getBlockStates(): void;
+    resetRowHeights(): void;
     setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void;
     applyRowData(rowDataParams: LoadSuccessParams<TData>, startRow: number, route: string[]): void;
 

@@ -1630,6 +1630,20 @@ export interface _ServerSideRowModelGridApi<TData> {
      * @agModule `ServerSideRowModelApiModule`
      */
     getServerSideGroupLevelState(): ServerSideGroupLevelState[];
+
+    /**
+     * Resets row heights for all rows in the server side row model.
+     * @agModule `ServerSideRowModelApiModule`
+     */
+    resetRowHeights(): void;
+}
+
+export interface _ViewportRowModelGridApi {
+    /**
+     * Resets row heights for all rows in the row model.
+     * @agModule `ViewportRowModelApiModule`
+     */
+    resetRowHeights(): void;
 }
 
 export interface _ContextMenuGridApi {

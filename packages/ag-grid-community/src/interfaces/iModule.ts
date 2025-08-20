@@ -190,7 +190,8 @@ export type EnterpriseModuleName =
     | 'Sparklines'
     | 'StatusBar'
     | 'TreeData'
-    | 'ViewportRowModel';
+    | 'ViewportRowModel'
+    | 'ViewportRowModelApi';
 
 /** The names of all publicly available AG Grid modules */
 export type AgModuleName =
@@ -269,7 +270,8 @@ export type AgModuleName =
     | 'SparklinesModule'
     | 'StatusBarModule'
     | 'TreeDataModule'
-    | 'ViewportRowModelModule';
+    | 'ViewportRowModelModule'
+    | 'ViewportRowModelApiModule';
 
 // Types to ensure that our AgModuleName type with Module suffix is equivalent to the internal module names based on Community and Enterprise module names
 type AgModuleNameInternal = `${CommunityModuleName | EnterpriseModuleName}Module`;
