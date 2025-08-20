@@ -366,6 +366,8 @@ export class CellCtrl extends BeanStub {
 
         this.comp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
 
+        this.customRowDragComp?.refreshVisibility();
+
         // Don't call expensive _requestAnimationFrame if we don't have to
         if (!skipRangeHandleRefresh && rangeFeature) {
             _requestAnimationFrame(beans, () => rangeFeature?.refreshHandle());
@@ -973,6 +975,7 @@ export class CellCtrl extends BeanStub {
                 this.beans.context.destroyBean(newComp);
                 (this.customRowDragComp as any) = null;
             });
+            newComp.refreshVisibility();
         }
     }
 
