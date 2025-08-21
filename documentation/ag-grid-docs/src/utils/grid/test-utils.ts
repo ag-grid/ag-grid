@@ -30,6 +30,7 @@ type AgGridFixtures = {
     loadPageOptions?: LoadPageOptions;
     agModules?: AgModuleName[];
     remoteGrid: RemoteGrid;
+    cpuThrottle?: number;
 };
 
 type CacheFixtures = {
@@ -202,7 +203,47 @@ const extended = base.extend<TestFixtures>({
         },
         { option: true },
     ],
+    cpuThrottle: [undefined, { option: true }],
 });
+
+// Add CPU throttling hooks when cpuThrottle is specified
+const applyCpuThrottle = async ({ page, cpuThrottle }: any, testInfo: any) => {
+    const envThrottle = process.env.CPU_THROTTLE ? parseInt(process.env.CPU_THROTTLE) : undefined;
+
+    cpuThrottle = cpuThrottle ?? envThrottle;
+
+    if (cpuThrottle && typeof cpuThrottle === 'number') {
+        // Use test.step to make it more visible at the top level
+        await base.step(`cpuThrottle (${cpuThrottle}x slower)`, async () => {
+            const cdpSession = await page.context().newCDPSession(page);
+            await cdpSession.send('Emulation.setCPUThrottlingRate', { rate: cpuThrottle! });
+
+            // Add annotation to test for better visibility in reports
+            testInfo.annotations.push({
+                type: 'cpu-throttle',
+                description: `CPU throttled ${cpuThrottle}x slower than normal`,
+            });
+        });
+    }
+};
+
+const clearCpuThrottle = async ({ page, cpuThrottle }: any) => {
+    const envThrottle = process.env.CPU_THROTTLE ? parseInt(process.env.CPU_THROTTLE) : undefined;
+
+    cpuThrottle = cpuThrottle ?? envThrottle;
+
+    if (cpuThrottle && typeof cpuThrottle === 'number') {
+        await base.step(`cpuThrottle (normal)`, async () => {
+            const cdpSession = await page.context().newCDPSession(page);
+            await cdpSession.send('Emulation.setCPUThrottlingRate', { rate: 1 }); // Reset to normal speed
+            try {
+                await cdpSession.detach();
+            } catch (error) {
+                console.error('Error detaching CDP session:', error);
+            }
+        });
+    }
+};
 
 const frameworkTest =
     (agFramework: AgFramework) =>
@@ -214,15 +255,19 @@ const frameworkTest =
     (testName: string | undefined, testBody: (fixtures: TestFixtures) => Promise<void>): void => {
         extended.use({ agFramework });
         // cachedRoute needs to be destructured in testWrapper for Playwright to initialise it correctly
-        const testWrapper = async ({
-            page,
-            agExampleUrl,
-            agIdFor,
-            cacheRoute: _,
-            loadPageOptions,
-            remoteGrid,
-            agModules,
-        }: TestFixtures) => {
+        const testWrapper = async (
+            {
+                page,
+                agExampleUrl,
+                agIdFor,
+                cacheRoute: _,
+                loadPageOptions,
+                remoteGrid,
+                agModules,
+                cpuThrottle,
+            }: TestFixtures,
+            testInfo: any
+        ) => {
             if (!agExampleUrl) {
                 throw new Error(
                     `Missing 'setAgExampleUrl(import.meta)' in the test file. This is required to set the example URL for the test.`
@@ -230,7 +275,9 @@ const frameworkTest =
             }
 
             await loadPage(page, agExampleUrl, agFramework, loadPageOptions, agModules);
+            await applyCpuThrottle({ page, cpuThrottle }, testInfo);
             await testBody({ page, agExampleUrl, agIdFor, agFramework, loadPageOptions, remoteGrid } as TestFixtures);
+            await clearCpuThrottle({ page, cpuThrottle });
         };
 
         if (testName) {
