@@ -216,10 +216,6 @@ export function _getRowBelow(beans: BeanCollection, rowPosition: RowPosition, ch
     return { rowIndex: index + 1, rowPinned: pinned };
 }
 
-/**
- * Returns the next sticky row position based on the current row node and direction (up or down).
- * If there are no other sticky rows or the current row is not sticky, it returns undefined.
- */
 function getNextStickyPosition(beans: BeanCollection, rowNode?: RowNode, up = false): RowPosition | undefined {
     const { gos, rowRenderer } = beans;
 

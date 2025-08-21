@@ -309,7 +309,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             const freshEdits = model.getEditMap();
 
-            const editsToDelete = this.processEdits(freshEdits, cancel, source);
+            this.processEdits(freshEdits, cancel, source);
 
             this.strategy?.stop(cancel, event);
 
@@ -412,7 +412,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
     }
 
-    private processEdits(edits: EditMap, cancel: boolean = false, source: EditSource): EditPosition[] {
+    private processEdits(edits: EditMap, cancel: boolean = false, source: EditSource): void {
         const rowNodes = Array.from(edits.keys());
         const { beans } = this;
 

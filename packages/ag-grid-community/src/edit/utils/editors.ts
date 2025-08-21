@@ -15,6 +15,7 @@ import type {
 } from '../../interfaces/iCellEditor';
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
+import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
@@ -325,7 +326,8 @@ export function _syncFromEditor(
         // sourceValue not set means sync called without corresponding startEdit - from API call
         edit = editModelSvc.setEdit(position, {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
-            pendingValue: edit ? edit.editorValue : UNEDITED,
+            pendingValue: UNEDITED,
+            state: hasEditor ? 'editing' : 'changed',
         });
     }
 
@@ -333,6 +335,7 @@ export function _syncFromEditor(
     // Note: editorValue should be in the correct target format already, so no need to parse it again - this is done in the editor, via the colDef parseValue function.
     editModelSvc.setEdit(position, {
         editorValue: valueSameAsSource ? edit.sourceValue : editorValue,
+        state: hasEditor ? 'editing' : 'changed',
     });
 
     if (persist) {

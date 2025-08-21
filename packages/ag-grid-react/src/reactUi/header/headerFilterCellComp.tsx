@@ -55,9 +55,8 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
-
-        if (!eRef || !ctrl.isAlive() || context.isDestroyed()) {
-            compBean.current = context.destroyBean(compBean.current);
+        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
+        if (!eRef || !ctrl.isAlive()) {
             return;
         }
         compBean.current = context.createBean(new _EmptyBean());
