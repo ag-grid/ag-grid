@@ -39,7 +39,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
 
         const totalSpace = this.flexViewportWidth;
 
-        const { visibleCols, hiddenLayoutSvc } = this.beans;
+        const { visibleCols, colDelayRenderSvc } = this.beans;
 
         const visibleCenterCols = visibleCols.centerCols;
         let flexAfterDisplayIndex = -1;
@@ -77,7 +77,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         });
         // hide all columns and cells because we are going to flex them after they are displayed
         if (hasFlexItems) {
-            hiddenLayoutSvc?.hideColumns();
+            colDelayRenderSvc?.hideColumns('colFlex');
         }
 
         if (!totalSpace || !hasFlexItems) {
@@ -198,7 +198,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
             dispatchColumnResizedEvent(this.eventSvc, changedColumns, true, source, flexingColumns);
         }
 
-        hiddenLayoutSvc?.revealColumns();
+        colDelayRenderSvc?.revealColumns('colFlex');
 
         return unconstrainedFlexColumns;
     }

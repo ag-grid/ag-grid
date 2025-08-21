@@ -66,27 +66,40 @@ export class StateService extends BeanStub implements NamedBean {
     private staleStateKeys: Set<keyof GridState> = new Set();
 
     public postConstruct(): void {
-        this.isClientSideRowModel = _isClientSideRowModel(this.gos);
+        const { gos, ctrlsSvc, colDelayRenderSvc } = this.beans;
+        this.isClientSideRowModel = _isClientSideRowModel(gos);
 
-        const initialState = migrateGridStateModel(this.gos.get('initialState') ?? {});
+        const initialState = migrateGridStateModel(gos.get('initialState') ?? {});
         const partialColumnState = initialState.partialColumnState;
         delete initialState.partialColumnState;
         this.cachedState = initialState;
 
         const suppressEventsAndDispatchInitEvent = this.suppressEventsAndDispatchInitEvent.bind(this);
 
-        this.beans.ctrlsSvc.whenReady(this, () =>
+        ctrlsSvc.whenReady(this, () =>
             suppressEventsAndDispatchInitEvent(() => this.setupStateOnGridReady(initialState))
         );
+
+        // if there is column state then we hide the columns until the state is applied
+        if (
+            initialState.columnOrder ||
+            initialState.columnVisibility ||
+            initialState.columnSizing ||
+            initialState.columnPinning ||
+            initialState.columnGroup
+        ) {
+            colDelayRenderSvc?.hideColumns('stateService');
+        }
 
         const [newColumnsLoadedDestroyFunc, rowCountReadyDestroyFunc, firstDataRenderedDestroyFunc] =
             this.addManagedEventListeners({
                 newColumnsLoaded: ({ source }) => {
                     if (source === 'gridInitializing') {
                         newColumnsLoadedDestroyFunc();
-                        suppressEventsAndDispatchInitEvent(() =>
-                            this.setupStateOnColumnsInitialised(initialState, !!partialColumnState)
-                        );
+                        suppressEventsAndDispatchInitEvent(() => {
+                            this.setupStateOnColumnsInitialised(initialState, !!partialColumnState);
+                            colDelayRenderSvc?.revealColumns('stateService');
+                        });
                     }
                 },
                 rowCountReady: () => {

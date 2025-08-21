@@ -38,7 +38,7 @@ import { PageBoundsService } from './pagination/pageBoundsService';
 import { PinnedColumnModule } from './pinnedColumns/pinnedColumnModule';
 import { AriaModule } from './rendering/ariaModule';
 import { SkeletonCellRendererModule } from './rendering/cellRenderers/cellRendererModule';
-import { HiddenLayoutModule } from './rendering/hiddenLayoutService';
+import { ColumnDelayRenderModule } from './rendering/columnDelayRenderService';
 import { OverlayModule } from './rendering/overlays/overlayModule';
 import { RowContainerHeightService } from './rendering/rowContainerHeightService';
 import { RowRenderer } from './rendering/rowRenderer';
@@ -130,6 +130,6 @@ export const CommunityCoreModule: _ModuleWithApi<_CoreGridApi> = {
         ColumnFlexModule,
         ExpressionModule,
         SkeletonCellRendererModule,
-        HiddenLayoutModule,
+        ColumnDelayRenderModule,
     ],
 };
