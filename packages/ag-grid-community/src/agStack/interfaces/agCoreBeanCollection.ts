@@ -27,7 +27,7 @@ export interface AgCoreBeanCollection<
     environment: IEnvironment;
     eRootDiv: HTMLElement;
     popupSvc?: IPopupService<BasePopupPositionParams>;
-    registry: IRegistry<TBeanCollection, 'tooltipFeature' | 'tooltipStateManager'>;
+    registry: IRegistry<TBeanCollection, 'tooltipFeature' | 'highlightTooltipFeature' | 'tooltipStateManager'>;
     iconSvc: IIconService<string, any>;
     dragSvc?: IDragService;
 }

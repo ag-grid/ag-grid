@@ -35,29 +35,6 @@ function getRowId(params: GetRowIdParams<IFile>) {
     return params.data.id;
 }
 
-function onRowDragEnd(event: RowDragEndEvent<IFile>) {
-    const source = event.node.data;
-    const target = event.overNode?.data;
-    if (!source || source === target) {
-        gridApi.setRowDropPositionIndicator(null);
-        return;
-    }
-    const reorderOnly = event.event?.shiftKey;
-    const rowData = gridApi.getGridOption('rowData') ?? [];
-    const indicator = getFileDropPosition(rowData, source, target, !!reorderOnly);
-    if (indicator) {
-        const newRowData = moveFiles(rowData, indicator);
-        if (newRowData !== rowData) {
-            gridApi.setGridOption('rowData', newRowData);
-        }
-    }
-    event.api.setRowDropPositionIndicator(null);
-}
-
-function onRowDragLeaveOrCancel(event: RowDragLeaveEvent<IFile> | RowDragCancelEvent<IFile>) {
-    event.api.setRowDropPositionIndicator(null);
-}
-
 function onRowDragMove(event: any) {
     const source = event.node.data;
     const target = event.overNode?.data;
@@ -80,6 +57,33 @@ function onRowDragMove(event: any) {
     }
 
     gridApi.setRowDropPositionIndicator(null);
+}
+
+function onRowDragEnd(event: RowDragEndEvent<IFile>) {
+    const source = event.node.data;
+    const target = event.overNode?.data;
+    if (!source || source === target) {
+        gridApi.setRowDropPositionIndicator(null);
+        return;
+    }
+    const reorderOnly = event.event?.shiftKey;
+    const rowData = gridApi.getGridOption('rowData') ?? [];
+    const indicator = getFileDropPosition(rowData, source, target, !!reorderOnly);
+    if (indicator) {
+        const newRowData = moveFiles(rowData, indicator);
+        if (newRowData !== rowData) {
+            gridApi.setGridOption('rowData', newRowData);
+        }
+    }
+    event.api.setRowDropPositionIndicator(null);
+}
+
+function onRowDragLeave(event: RowDragLeaveEvent<IFile>) {
+    event.api.setRowDropPositionIndicator(null);
+}
+
+function onRowDragCancel(event: RowDragCancelEvent<IFile>) {
+    event.api.setRowDropPositionIndicator(null);
 }
 
 const gridOptions: GridOptions<IFile> = {
@@ -114,10 +118,10 @@ const gridOptions: GridOptions<IFile> = {
     treeDataParentIdField: 'parentId',
     rowData: getData(),
     animateRows: true,
-    onRowDragEnd,
     onRowDragMove,
-    onRowDragLeave: onRowDragLeaveOrCancel,
-    onRowDragCancel: onRowDragLeaveOrCancel,
+    onRowDragEnd,
+    onRowDragLeave,
+    onRowDragCancel,
     groupDefaultExpanded: -1,
 };
 

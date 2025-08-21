@@ -4,15 +4,12 @@ import type {
     BeanCollection,
     ColumnModel,
     ColumnNameService,
-    NamedBean,
     RowNode,
     ValueService,
 } from 'ag-grid-community';
 import { BeanStub, _getRowNode, _warn } from 'ag-grid-community';
 
-export class ChartColumnService extends BeanStub implements NamedBean {
-    beanName = 'chartColSvc' as const;
-
+export class ChartColumnService extends BeanStub {
     private colModel: ColumnModel;
     private colNames: ColumnNameService;
     private valueSvc: ValueService;

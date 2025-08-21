@@ -123,23 +123,15 @@ This also means that there will be additional requests and delays in loading the
 
 Group rows can be expanded or collapsed using the `expandAll()` and `collapseAll()` grid API's. By default, these operations apply only to **loaded group rows** (not all groups). To expand/collapse **all groups**, including those not yet loaded, set `ssrmExpandAllAffectsAllRows: true` in your grid options.
 
+The example below demonstrates this feature, note the following:
+
+- First button expands all loaded group rows
+- Checking the checkbox enables `ssrmExpandAllAffectsAllRows` in the grid options
+- Now clicking the first button expands all group rows, including those not yet loaded
+- Second button collapses all group rows
+
 {% gridExampleRunner title="expand-all-affects-all-rows" name="expand-all-affects-all-rows"  exampleHeight=540 /%}
 
-The example above demonstrates the following configuration:
-
-```{% frameworkTransform=true %}
-// First button click expands all loaded group rows
-api.expandAll();
-
-// Click on the second button collapses all group rows
-api.collapseAll();
-
-// Checking the checkbox applies the following:
-api.setGridOptions({ ssrmExpandAllAffectsAllRows: true });
-
-// Now calling the first button expands all group rows, including those not yet loaded:
-api.expandAll();
-```
 
 To open only specific groups, e.g. only groups at the top level, then use the `forEachNode()` callback and open / close the row using `setExpanded()` as follows:
 

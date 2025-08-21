@@ -137,7 +137,7 @@ export class AgSelect<
                 TComponentSelectorType,
                 AgSelectEvent,
                 TValue
-            >('select', true)
+            >('select')
         );
         this.listComponent = listComponent;
         listComponent.setParentComponent(this);
@@ -175,7 +175,7 @@ export class AgSelect<
     }
 
     protected override beforeHidePicker(): void {
-        this.listComponent?.hideTooltip();
+        this.listComponent?.hideItemTooltip();
         super.beforeHidePicker();
     }
 

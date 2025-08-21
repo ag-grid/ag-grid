@@ -311,7 +311,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Set to `true` for this column to be hidden.
      * @default false
      */
-    hide?: boolean;
+    hide?: boolean | null;
     /**
      * Same as `hide`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
@@ -528,7 +528,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Set to true to pivot by this column.
      * @agModule `PivotModule`
      */
-    pivot?: boolean;
+    pivot?: boolean | null;
     /**
      * Same as `pivot`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
@@ -656,7 +656,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default false
      * @agModule `RowGroupingModule`
      */
-    rowGroup?: boolean;
+    rowGroup?: boolean | null;
     /**
      * Same as `rowGroup`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
@@ -814,7 +814,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * flex value, so a column with `flex: 2` will be twice the size as one with
      * `flex: 1`.
      */
-    flex?: number;
+    flex?: number | null;
     /**
      * Same as `flex`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial

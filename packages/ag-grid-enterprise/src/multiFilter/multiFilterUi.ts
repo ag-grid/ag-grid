@@ -95,6 +95,10 @@ export class MultiFilterUi
         return this.filters[index] ?? undefined;
     }
 
+    public getNumChildFilters(): number {
+        return this.filters.length;
+    }
+
     public override destroy(): void {
         this.filters.forEach((filter) => this.destroyBean(filter));
 
