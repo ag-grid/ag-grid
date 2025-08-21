@@ -54,11 +54,11 @@ function onRowDragEnd(event: RowDragEndEvent<IFile>) {
     event.api.setRowDropPositionIndicator(null);
 }
 
-function onRowDragLeave(event: RowDragLeaveEvent<IFile> | RowDragCancelEvent<IFile>) {
+function onRowDragLeave(event: RowDragLeaveEvent<IFile>) {
     event.api.setRowDropPositionIndicator(null);
 }
 
-function onRowDragCancel(event: RowDragLeaveEvent<IFile> | RowDragCancelEvent<IFile>) {
+function onRowDragCancel(event: RowDragCancelEvent<IFile>) {
     event.api.setRowDropPositionIndicator(null);
 }
 
