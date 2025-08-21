@@ -2,6 +2,7 @@ import type { AgFrameworkOverrides } from './agFrameworkOverrides';
 import type { BaseEvents } from './baseEvents';
 import type { BaseProperties } from './baseProperties';
 import type { IContext } from './iContext';
+import type { IDragService } from './iDrag';
 import type { IEnvironment } from './iEnvironment';
 import type { AgEventService } from './iEvent';
 import type { IIconService } from './iIconService';
@@ -28,6 +29,7 @@ export interface AgCoreBeanCollection<
     popupSvc?: IPopupService<BasePopupPositionParams>;
     registry: IRegistry<TBeanCollection, 'tooltipFeature' | 'tooltipStateManager'>;
     iconSvc: IIconService<string, any>;
+    dragSvc?: IDragService;
 }
 
 /** This is a cut down version to simplify typing for util functions that don't need/want all the generics */

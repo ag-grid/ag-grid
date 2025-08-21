@@ -92,6 +92,8 @@ export { ScrollDirection } from './agStack/interfaces/baseEvents';
 export { KeyCode } from './agStack/constants/keyCode';
 export { AgPopupComponent } from './agStack/popup/agPopupComponent';
 export { IComponent } from './agStack/interfaces/iComponent';
+export { DragListenerParams } from './agStack/interfaces/iDrag';
+export { IDragAndDropImage } from './agStack/interfaces/iDragAndDrop';
 
 // AG Stack Utils (public)
 export {
@@ -250,6 +252,15 @@ export { BaseTooltipStateManager as _BaseTooltipStateManager } from './agStack/t
 export { _createAgElement, AgElementParams as _AgElementParams } from './agStack/utils/dom';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap } from './agStack/utils/locale';
 export { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
+export { IDragService as _IDragService } from './agStack/interfaces/iDrag';
+export {
+    AgDraggingEvent as _AgDraggingEvent,
+    IDragAndDropService as _IDragAndDropService,
+    AgDragSource as _AgDragSource,
+    AgDropTarget as _AgDropTarget,
+} from './agStack/interfaces/iDragAndDrop';
+export { BaseDragService as _BaseDragService } from './agStack/core/baseDragService';
+export { BaseDragAndDropService as _BaseDragAndDropService } from './agStack/core/baseDragAndDropService';
 
 // excel
 export {
@@ -301,9 +312,8 @@ export type { DragAndDropService } from './dragAndDrop/dragAndDropService';
 export {
     DragSourceType,
     DropTarget,
-    DragSource,
-    DragItemNameGetter,
-    DraggingEvent,
+    GridDragSource,
+    GridDraggingEvent,
     DragAndDropIcon,
 } from './dragAndDrop/dragAndDropService';
 export { DragItem } from './interfaces/iDragItem';
@@ -314,10 +324,11 @@ export type {
     RowDropTargetPosition,
     RowDropZoneParams,
     RowDropZoneEvents,
+    DragSource,
+    DraggingEvent,
 } from './dragAndDrop/rowDragTypes';
 export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { DragService } from './dragAndDrop/dragService';
-export { DragListenerParams } from './dragAndDrop/dragService';
 export { IRowDragItem } from './interfaces/iRowDragItem';
 export type { HorizontalResizeService } from './dragAndDrop/horizontalResizeService';
 
@@ -688,11 +699,7 @@ export {
     ILoadingOverlay,
 } from './rendering/overlays/loadingOverlayComponent';
 export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from './rendering/overlays/noRowsOverlayComponent';
-export {
-    IDragAndDropImageComponent,
-    IDragAndDropImage,
-    IDragAndDropImageParams,
-} from './dragAndDrop/dragAndDropImageComponent';
+export { IDragAndDropImageComponent, IDragAndDropImageParams } from './dragAndDrop/dragAndDropImageComponent';
 
 // features
 export {

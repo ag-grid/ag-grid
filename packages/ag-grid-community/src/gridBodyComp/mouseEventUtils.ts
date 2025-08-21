@@ -1,5 +1,4 @@
 import type { BeanCollection } from '../context/context';
-import type { DraggingEvent } from '../dragAndDrop/dragAndDropService';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _isDomLayout } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
@@ -14,7 +13,7 @@ export function _getCellPositionForEvent(
 
 export function _getNormalisedMousePosition(
     beans: BeanCollection,
-    event: MouseEvent | DraggingEvent
+    event: MouseEvent | { x: number; y: number }
 ): { x: number; y: number } {
     const gridPanelHasScrolls = _isDomLayout(beans.gos, 'normal');
     const e = event as MouseEvent;
