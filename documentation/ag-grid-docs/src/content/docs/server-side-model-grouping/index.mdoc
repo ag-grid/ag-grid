@@ -131,14 +131,12 @@ The example above demonstrates the following configuration:
 // First button click expands all loaded group rows
 api.expandAll();
 
-// Click on the second button collapses all group rows
-api.collapseAll();
-
-// Checking the checkbox applies the following:
+// Second button click expands all group rows, even those not yet loaded:
 api.setGridOptions({ ssrmExpandAllAffectsAllRows: true });
-
-// Now calling the first button expands all group rows, including those not yet loaded:
 api.expandAll();
+
+// Click on the third button collapses all group rows
+api.collapseAll();
 ```
 
 To open only specific groups, e.g. only groups at the top level, then use the `forEachNode()` callback and open / close the row using `setExpanded()` as follows:
