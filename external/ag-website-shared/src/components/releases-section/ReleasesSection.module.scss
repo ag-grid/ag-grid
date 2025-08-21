@@ -1,0 +1,111 @@
+@use 'design-system' as *;
+
+.rtsReleasesSection {
+    border-radius: var(--radius-md);
+    padding: $spacing-size-16 $spacing-size-12;
+    margin-top: $spacing-size-8;
+    text-align: left;
+
+    @media screen and (max-width: 700px) {
+        padding: $spacing-size-8 0;
+    }
+
+    > h2,
+    > p {
+        text-align: left;
+    }
+    p {
+        margin-bottom: $spacing-size-8;
+    }
+}
+
+.sectionTitle {
+    text-align: left;
+    margin-bottom: $spacing-size-12;
+
+    h2 {
+        font-size: var(--text-fs-2xl);
+        font-weight: var(--text-bold);
+        margin-bottom: $spacing-size-4;
+        color: var(--color-fg-primary);
+    }
+
+    p {
+        font-size: var(--text-fs-lg);
+        color: var(--color-fg-secondary);
+        margin: 0;
+    }
+}
+
+.rtsReleaseCards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: $spacing-size-6;
+    margin-bottom: $spacing-size-8;
+
+    @media screen and (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: $spacing-size-4;
+    }
+}
+
+.rtsReleaseCard {
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+    a {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        height: 100%;
+    }
+}
+
+.rtsReleaseImage {
+    width: 100%;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-secondary);
+}
+
+.rtsReleaseCardContent {
+    padding-top: $spacing-size-5;
+}
+
+.rtsReleaseCardHeader {
+    h3 {
+        font-size: var(--text-fs-xl);
+        font-weight: var(--text-bold);
+        margin: $spacing-size-2 0 $spacing-size-4 0;
+        color: var(--color-fg-primary);
+    }
+}
+
+.rtsReleaseDate {
+    display: block;
+    font-size: var(--text-fs-sm);
+    color: var(--color-fg-secondary);
+    margin-bottom: $spacing-size-2;
+}
+
+.rtsReleaseDescription {
+    font-size: var(--text-fs-base);
+    color: var(--color-fg-secondary);
+    line-height: 1.5;
+    margin: $spacing-size-3 0 0 0;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+    text-decoration: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+        text-decoration: none;
+    }
+}
