@@ -39,7 +39,7 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
         if (now > END_DATE || hasEndedParam) {
             updateContentOnCountdownEnd();
         }
-    }, [END_DATE]);
+    }, []);
 
     const updateContentOnCountdownEnd = () => {
         setHeroTitle(
