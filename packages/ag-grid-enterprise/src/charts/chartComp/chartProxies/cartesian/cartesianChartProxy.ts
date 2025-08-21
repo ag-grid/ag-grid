@@ -10,6 +10,8 @@ import type {
     AgRangeBarSeriesThemeableOptions,
 } from 'ag-charts-types';
 
+import { _parseDateTimeFromString } from 'ag-grid-community';
+
 import type { UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 
@@ -65,7 +67,7 @@ export abstract class CartesianChartProxy<
             case 'category':
                 return this.transformCategoryData(data, category.id);
             case 'time':
-                return this.transformTimeData(data, category.id);
+                return this.transformTimeData(data, category.id, category.convertTime);
             default:
                 return data;
         }
@@ -101,7 +103,11 @@ export abstract class CartesianChartProxy<
         return isInstance(testDatum[category.id]);
     }
 
-    private transformTimeData(data: any[], categoryKey: string): any[] {
+    private transformTimeData(
+        data: any[],
+        categoryKey: string,
+        convertTime?: (date: string | undefined) => Date | undefined
+    ): any[] {
         const firstValue = data[0]?.[categoryKey];
         if (firstValue instanceof Date) {
             return data;
@@ -112,7 +118,7 @@ export abstract class CartesianChartProxy<
             return typeof value === 'string'
                 ? {
                       ...datum,
-                      [categoryKey]: new Date(value),
+                      [categoryKey]: convertTime ? convertTime(value) : _parseDateTimeFromString(value),
                   }
                 : datum;
         });

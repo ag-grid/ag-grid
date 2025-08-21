@@ -256,6 +256,14 @@ export class ChartDataModel extends BeanStub {
         return column ? column.getColDef().chartDataType : undefined;
     }
 
+    public getConvertTime(colId: string): ((date: string | undefined) => Date | undefined) | undefined {
+        const column = this.chartColSvc.getColumn(colId);
+        if (column?.colDef.cellDataType === 'dateString') {
+            return this.beans.dataTypeSvc?.getDateParserFunction(column);
+        }
+        return undefined;
+    }
+
     private isPivotActive(): boolean {
         return this.chartColSvc.isPivotActive();
     }

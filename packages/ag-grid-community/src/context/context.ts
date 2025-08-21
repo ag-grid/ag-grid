@@ -365,7 +365,6 @@ type UntypedBeanNames =
     | 'advFilterExpSvc'
     | 'advSettingsMenuFactory'
     | 'agChartsExports'
-    | 'chartColSvc'
     | 'chartCrossFilterSvc'
     | 'chartMenuItemMapper'
     | 'chartMenuListFactory'

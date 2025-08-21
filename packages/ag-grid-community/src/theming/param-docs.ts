@@ -83,8 +83,8 @@ const docs: Record<AllThemeParams, string> = {
     columnSelectIndentSize:
         'Amount of indentation for each level of children when selecting grouped columns in the column select widget.',
     dataFontSize: 'Font size for data in grid rows',
-    dialogBorder: 'Border color popup dialogs such as the integrated charts and the advanced filter builder.',
-    dialogShadow: 'Shadow for popup dialogs such as the integrated charts and the advanced filter builder.',
+    dialogBorder: 'Border color popup dialogs such as the integrated charts panel and the advanced filter builder.',
+    dialogShadow: 'Shadow for popup dialogs such as the integrated charts panel and the advanced filter builder.',
     dragAndDropImageBackgroundColor: 'Background color of the cover element when dragging grid parts',
     dragAndDropImageBorder: 'Border color of the cover element when dragging grid parts',
     dragAndDropImageNotAllowedBorder: 'Border color of the cover element when dropping grid parts is not allowed',
@@ -184,17 +184,17 @@ const docs: Record<AllThemeParams, string> = {
     paginationPanelHeight:
         'Height of the pagination panel at the bottom of the grid. Defaults to the higher of rowHeight or 22px.',
     panelBackgroundColor:
-        'Background color for panels and dialogs such as the integrated charts and the advanced filter builder.',
+        'Background color for panels and dialogs such as the the advanced filter builder. Note that for the integrated charts panel, the chart fully fills the panel so no background is visible behind it - set the chart theme to change its background.',
     panelTitleBarBackgroundColor:
-        'Background color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+        'Background color for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarTextColor:
-        'Text color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+        'Text color for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarIconColor:
-        'Icon color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+        'Icon color for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarFontWeight:
-        'Font weight for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+        'Font weight for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarBorder:
-        'Border below the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+        'Border below the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     statusBarLabelColor: 'Text color for labels in the status bar component',
     statusBarLabelFontWeight: 'Font weight for labels in the status bar component',
     statusBarValueColor: 'Text color for values in the status bar component',
