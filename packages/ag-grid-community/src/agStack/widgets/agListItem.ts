@@ -6,7 +6,7 @@ import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { ITooltipFeature, TooltipCtrl } from '../interfaces/iTooltip';
-import type { HighlightTooltipEventType } from '../tooltip/agHighlightTooltipFeature';
+import type { HighlightTooltipEvent, HighlightTooltipEventType } from '../tooltip/agHighlightTooltipFeature';
 import { _setAriaPosInSet, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
 import { _isHorizontalScrollShowing } from '../utils/dom';
 import type { AgElementParams } from '../utils/dom';
@@ -31,13 +31,13 @@ const getAgListElement = <TComponentSelectorType extends string>(
 });
 
 export class AgListItem<
-    TValue,
     TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties, TCommon>,
     TComponentSelectorType extends string,
+    TValue,
 > extends AgComponentStub<
     TBeanCollection,
     TProperties,
@@ -67,7 +67,7 @@ export class AgListItem<
         const eGui = this.getGui();
         eGui.classList.toggle(ACTIVE_CLASS, highlighted);
         _setAriaSelected(eGui, highlighted);
-        this.dispatchLocalEvent({
+        this.dispatchLocalEvent<HighlightTooltipEvent>({
             type: 'itemHighlighted',
             highlighted,
         });

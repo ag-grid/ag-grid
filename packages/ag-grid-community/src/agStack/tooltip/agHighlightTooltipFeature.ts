@@ -10,7 +10,7 @@ import type { BaseTooltipParams } from './baseTooltipStateManager';
 import { TooltipTrigger } from './baseTooltipStateManager';
 
 export type HighlightTooltipEventType = 'itemHighlighted';
-interface HighlightTooltipEvent extends AgEvent<HighlightTooltipEventType> {
+export interface HighlightTooltipEvent extends AgEvent<HighlightTooltipEventType> {
     highlighted: boolean;
 }
 

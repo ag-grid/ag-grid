@@ -38,22 +38,22 @@ export class AgList<
     private options: ListOption<TValue>[] = [];
 
     private listItems: AgListItem<
-        TValue,
         TBeanCollection,
         TProperties,
         TGlobalEvents,
         TCommon,
         TPropertiesService,
-        TComponentSelectorType
+        TComponentSelectorType,
+        TValue
     >[] = [];
     private highlightedItem: AgListItem<
-        TValue,
         TBeanCollection,
         TProperties,
         TGlobalEvents,
         TCommon,
         TPropertiesService,
-        TComponentSelectorType
+        TComponentSelectorType,
+        TValue
     > | null = null;
 
     private value: TValue | null;
@@ -176,13 +176,13 @@ export class AgList<
 
     public highlightItem(
         item: AgListItem<
-            TValue,
             TBeanCollection,
             TProperties,
             TGlobalEvents,
             TCommon,
             TPropertiesService,
-            TComponentSelectorType
+            TComponentSelectorType,
+            TValue
         >
     ): void {
         const itemEl = item.getGui();
@@ -229,13 +229,13 @@ export class AgList<
 
     private renderOption(value: TValue, text: string): void {
         const item = new AgListItem<
-            TValue,
             TBeanCollection,
             TProperties,
             TGlobalEvents,
             TCommon,
             TPropertiesService,
-            TComponentSelectorType
+            TComponentSelectorType,
+            TValue
         >(this.cssIdentifier, text, value);
         item.setParentComponent(this);
         const listItem = this.createManagedBean(item);
