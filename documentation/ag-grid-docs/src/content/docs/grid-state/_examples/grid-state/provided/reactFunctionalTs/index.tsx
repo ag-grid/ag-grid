@@ -28,6 +28,7 @@ import { AgGridReact } from 'ag-grid-react';
 
 import type { IOlympicData } from './interfaces';
 import './styles.css';
+import { useFetchJson } from './useFetchJson';
 
 ModuleRegistry.registerModules([
     NumberFilterModule,
@@ -42,8 +43,6 @@ ModuleRegistry.registerModules([
     PivotModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
-
-import { useFetchJson } from "./useFetchJson";
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact<IOlympicData>>(null);
@@ -81,9 +80,7 @@ const GridExample = () => {
     const [currentState, setCurrentState] = useState<GridState>();
     const [gridVisible, setGridVisible] = useState(true);
 
-    const { data, loading } = useFetchJson<IOlympicData>(
-        "https://www.ag-grid.com/example-assets/olympic-winners.json",
-    );
+    const { data, loading } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     const reloadGrid = useCallback(() => {
         setGridVisible(false);
