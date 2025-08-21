@@ -35,6 +35,30 @@ function getRowId(params: GetRowIdParams<IFile>) {
     return params.data.id;
 }
 
+function onRowDragMove(event: any) {
+    const source = event.node.data;
+    const target = event.overNode?.data;
+    const reorderOnly = event.event?.shiftKey;
+    const rowData = gridApi.getGridOption('rowData') ?? [];
+    const indicator = getFileDropPosition(rowData, source, target, !!reorderOnly);
+
+    if (indicator) {
+        // Find the row node by file reference
+        const rowNode = gridApi.getRowNode(indicator.target.id);
+        if (rowNode) {
+            // Update the position indicator
+            gridApi.setRowDropPositionIndicator({
+                row: rowNode,
+                dropIndicatorPosition: indicator.position,
+            });
+
+            return;
+        }
+    }
+
+    gridApi.setRowDropPositionIndicator(null);
+}
+
 function onRowDragEnd(event: RowDragEndEvent<IFile>) {
     const source = event.node.data;
     const target = event.overNode?.data;
@@ -60,30 +84,6 @@ function onRowDragLeave(event: RowDragLeaveEvent<IFile>) {
 
 function onRowDragCancel(event: RowDragCancelEvent<IFile>) {
     event.api.setRowDropPositionIndicator(null);
-}
-
-function onRowDragMove(event: any) {
-    const source = event.node.data;
-    const target = event.overNode?.data;
-    const reorderOnly = event.event?.shiftKey;
-    const rowData = gridApi.getGridOption('rowData') ?? [];
-    const indicator = getFileDropPosition(rowData, source, target, !!reorderOnly);
-
-    if (indicator) {
-        // Find the row node by file reference
-        const rowNode = gridApi.getRowNode(indicator.target.id);
-        if (rowNode) {
-            // Update the position indicator
-            gridApi.setRowDropPositionIndicator({
-                row: rowNode,
-                dropIndicatorPosition: indicator.position,
-            });
-
-            return;
-        }
-    }
-
-    gridApi.setRowDropPositionIndicator(null);
 }
 
 const gridOptions: GridOptions<IFile> = {
@@ -118,10 +118,10 @@ const gridOptions: GridOptions<IFile> = {
     treeDataParentIdField: 'parentId',
     rowData: getData(),
     animateRows: true,
-    onRowDragEnd,
     onRowDragMove,
-    onRowDragLeave: onRowDragLeave,
-    onRowDragCancel: onRowDragCancel,
+    onRowDragEnd,
+    onRowDragLeave,
+    onRowDragCancel,
     groupDefaultExpanded: -1,
 };
 
