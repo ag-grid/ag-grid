@@ -35,6 +35,17 @@ jobs:
         with:
           fetch-depth: 1 # shallow copy
 
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: 'ro'
+
+      - name: nx pack:verify
+        id: pack-verify
+        run: |
+          yarn nx pack:verify --prod 
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
