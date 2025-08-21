@@ -12,9 +12,9 @@ interface ReturnToSupportPageProps {
     utm: string;
 }
 
-const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData, utm }) => {
-    const endDate = new Date('2025-08-31T23:59:59');
+const END_DATE = new Date('2025-08-31T23:59:59');
 
+const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData, utm }) => {
     // Content states
     const [heroTitle, setHeroTitle] = useState<string | React.ReactElement>(
         'Welcome back to better support & new features'
@@ -36,10 +36,10 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
         const searchParams = window.location.search;
         const hasEndedParam = new URLSearchParams(searchParams).get('hasEnded') === 'true';
         const now = new Date();
-        if (now > endDate || hasEndedParam) {
+        if (now > END_DATE || hasEndedParam) {
             updateContentOnCountdownEnd();
         }
-    }, [endDate]);
+    }, [END_DATE]);
 
     const updateContentOnCountdownEnd = () => {
         setHeroTitle(
@@ -111,7 +111,7 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
                                         OFFER ENDS AUGUST 31ST
                                     </div>
                                 )}
-                                <FlipCountdown endDate={endDate} onCountdownEnd={updateContentOnCountdownEnd} />
+                                <FlipCountdown endDate={END_DATE} onCountdownEnd={updateContentOnCountdownEnd} />
                             </div>
                         </div>
                     </>
