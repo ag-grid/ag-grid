@@ -4,7 +4,6 @@ import { createRoot } from 'react-dom/client';
 import type {
     ColDef,
     GridPreDestroyedEvent,
-    GridReadyEvent,
     GridState,
     RowSelectionOptions,
     StateUpdatedEvent,
@@ -44,11 +43,12 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
+import { useFetchJson } from "./useFetchJson";
+
 const GridExample = () => {
     const gridRef = useRef<AgGridReact<IOlympicData>>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
-    const [rowData, setRowData] = useState<IOlympicData[]>();
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         { field: 'athlete', minWidth: 150 },
         { field: 'age', maxWidth: 90 },
@@ -81,16 +81,13 @@ const GridExample = () => {
     const [currentState, setCurrentState] = useState<GridState>();
     const [gridVisible, setGridVisible] = useState(true);
 
-    const onGridReady = useCallback((params: GridReadyEvent<IOlympicData>) => {
-        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then((resp) => resp.json())
-            .then((data: IOlympicData[]) => setRowData(data));
-    }, []);
+    const { data, loading } = useFetchJson<IOlympicData>(
+        "https://www.ag-grid.com/example-assets/olympic-winners.json",
+    );
 
     const reloadGrid = useCallback(() => {
         setGridVisible(false);
         setTimeout(() => {
-            setRowData(undefined);
             setGridVisible(true);
         });
     }, []);
@@ -123,7 +120,8 @@ const GridExample = () => {
                     {gridVisible && (
                         <AgGridReact<IOlympicData>
                             ref={gridRef}
-                            rowData={rowData}
+                            rowData={data}
+                            loading={loading}
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
                             sideBar={true}
@@ -131,7 +129,6 @@ const GridExample = () => {
                             rowSelection={rowSelection}
                             suppressColumnMoveAnimation={true}
                             initialState={initialState}
-                            onGridReady={onGridReady}
                             onGridPreDestroyed={onGridPreDestroyed}
                             onStateUpdated={onStateUpdated}
                         />
