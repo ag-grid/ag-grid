@@ -30,22 +30,6 @@ const columnsToolPanel: ToolPanelDef = {
     toolPanelParams: { suppressRowGroups: true, suppressValues: true, suppressPivotMode: true },
 };
 
-function passModal(toolPanelId: string = columnsToolPanel.id) {
-    toggleDrawer();
-    gridApi.openToolPanel(toolPanelId, document.querySelector<HTMLElement>('#modalDrawer .content'));
-}
-
-function toggleDrawer(e?: MouseEvent | TouchEvent) {
-    const drawer = document.getElementById('modalDrawer')!;
-    if (e && e.target !== drawer) return;
-    if (!drawer.classList.toggle('active')) {
-        gridApi.closeToolPanel();
-    }
-}
-
-window.passModal = passModal;
-window.toggleDrawer = toggleDrawer;
-
 const gridOptions: GridOptions<IOlympicData> = {
     popupParent: document.body,
     columnDefs: [
@@ -59,6 +43,21 @@ const gridOptions: GridOptions<IOlympicData> = {
     autoGroupColumnDef: { minWidth: 200 },
     sideBar: { toolPanels: [columnsToolPanel], hideButtons: true, hiddenByDefault: true },
 };
+
+function toggleDrawer() {
+    const drawer = document.getElementById('modalDrawer')!;
+    if (!drawer.classList.toggle('active')) {
+        gridApi.closeToolPanel();
+    }
+}
+
+function passModal(toolPanelId: string = columnsToolPanel.id) {
+    const drawer = document.getElementById('modalDrawer')!;
+    if (!drawer.classList.toggle('active')) {
+        gridApi.closeToolPanel();
+    }
+    gridApi.openToolPanel(toolPanelId, drawer.querySelector<HTMLElement>('.content'));
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
