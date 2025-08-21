@@ -103,7 +103,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
             eventSvc,
             groupHierarchyColSvc,
         } = beans;
-
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = this.colDefs ? _compareColumnStatesAndDispatchEvents(beans, source) : undefined;
 
