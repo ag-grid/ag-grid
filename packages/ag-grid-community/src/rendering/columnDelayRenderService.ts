@@ -13,7 +13,7 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
     private alreadyRevealed: boolean = false;
     private timesRetried: number = 0;
 
-    private requesters: Set<string> = new Set();
+    private readonly requesters: Set<string> = new Set();
 
     public hideColumns(key: string) {
         if (this.alreadyRevealed || this.requesters.has(key)) {
