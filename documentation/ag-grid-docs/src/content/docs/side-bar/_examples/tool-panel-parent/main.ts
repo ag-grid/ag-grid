@@ -31,31 +31,16 @@ const columnsToolPanel: ToolPanelDef = {
 };
 
 function passModal(toolPanelId: string = columnsToolPanel.id) {
-    if (document.getElementById('modalDrawer')) {
-        toggleDrawer();
-        const drawer = document.getElementById('modalDrawer')!.querySelector('.content')!;
-        gridApi.openToolPanel(toolPanelId, drawer);
-        return;
-    }
-    const modalDrawer = document.createElement('div');
-    modalDrawer.innerHTML = `
-        <div class="inner ag-theme-params-1">
-            <div><button onclick="toggleDrawer()">Close</button></div>
-            <div class="content"></div>
-        </div>
-    `;
-    modalDrawer.onclick = (e) => e.target === modalDrawer && toggleDrawer();
-    modalDrawer.id = 'modalDrawer';
-    modalDrawer.classList.add('modal', 'active');
-    document.body.prepend(modalDrawer);
-    const drawer = modalDrawer.querySelector('.content')!;
-    gridApi.openToolPanel(toolPanelId, drawer);
+    toggleDrawer();
+    gridApi.openToolPanel(toolPanelId, document.querySelector<HTMLElement>('#modalDrawer .content'));
 }
 
-function toggleDrawer() {
+function toggleDrawer(e?: MouseEvent | TouchEvent) {
     const drawer = document.getElementById('modalDrawer')!;
-    drawer.classList.toggle('active');
-    gridApi.closeToolPanel();
+    if (e && e.target !== drawer) return;
+    if (!drawer.classList.toggle('active')) {
+        gridApi.closeToolPanel();
+    }
 }
 
 window.passModal = passModal;

@@ -15,7 +15,7 @@ export interface ISideBar {
     openToolPanel(
         key: string,
         source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api',
-        parent?: Element | null
+        parent?: HTMLElement | null
     ): void;
     getToolPanelInstance(key: string): IToolPanel | undefined;
     close(source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void;

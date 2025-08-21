@@ -1310,7 +1310,7 @@ export interface _SideBarGridApi<TData> {
      * Optionally, provide a parent element to attach the tool panel to.
      * @agModule `SideBarModule`
      */
-    openToolPanel(key: string, parent?: Element | null): void;
+    openToolPanel(key: string, parent?: HTMLElement | null): void;
 
     /**
      * Closes the currently open tool panel (if any).

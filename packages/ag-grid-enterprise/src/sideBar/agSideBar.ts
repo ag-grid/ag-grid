@@ -352,7 +352,7 @@ class AgSideBar extends Component implements ISideBar {
     public openToolPanel(
         key: string | undefined,
         source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api' = 'api',
-        parent?: Element | null
+        parent?: HTMLElement | null
     ): void {
         if (parent && key) {
             const selfDefOrStr = this.sideBar?.toolPanels?.find((tp) =>

@@ -13,7 +13,7 @@ export function setSideBarPosition(beans: BeanCollection, position: 'left' | 'ri
     beans.sideBar?.comp.setSideBarPosition(position);
 }
 
-export function openToolPanel(beans: BeanCollection, key: string, parent?: Element | null) {
+export function openToolPanel(beans: BeanCollection, key: string, parent?: HTMLElement | null) {
     beans.sideBar?.comp.openToolPanel(key, 'api', parent);
 }
 
