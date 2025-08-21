@@ -1,6 +1,6 @@
 import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import { _getRowNode } from '../../entities/positionUtils';
+import { _getCellByPosition, _getRowNode } from '../../entities/positionUtils';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { EditValue } from '../../interfaces/iEditModelService';
@@ -127,6 +127,16 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         source: 'api' | 'ui' = 'ui',
         preventNavigation = false
     ): boolean | null {
+        const focusedCell = this.beans.focusSvc.getFocusedCell();
+        if (focusedCell) {
+            // When we're tabbing into a virtualised column in an async setting,
+            // prevCell should be the same as focused Cell, but isn't.
+            // Force lookup of the cell.
+            // We can only enter moveToNextEditingCell from a keyboard event
+            // on a focused cell so this is safe to assume
+            prevCell = _getCellByPosition(this.beans, focusedCell) ?? prevCell;
+        }
+
         const prevPos = prevCell.cellPosition;
 
         // find the next cell to start editing
