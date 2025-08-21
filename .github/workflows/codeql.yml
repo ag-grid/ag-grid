@@ -26,25 +26,25 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - language: actions
-          build-mode: none
-        - language: javascript-typescript
-          build-mode: none
+          - language: actions
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 1 # shallow copy
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        config-file: ./.github/codeql/codeql-config.yml
-        languages: ${{ matrix.language }}
-        build-mode: ${{ matrix.build-mode }}
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          config-file: ./.github/codeql/codeql-config.yml
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{matrix.language}}"
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
