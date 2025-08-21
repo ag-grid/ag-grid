@@ -11,7 +11,15 @@ import type {
     RowNode,
     RowSelectedEvent,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _focusInto, _isSameRow, _missing, _warn } from 'ag-grid-community';
+import {
+    BeanStub,
+    _addGridCommonParams,
+    _focusInto,
+    _isSameRow,
+    _missing,
+    _warn,
+    getGridElement,
+} from 'ag-grid-community';
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
     private params: IDetailCellRendererParams;
@@ -133,6 +141,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             return;
         }
         masterGridApi.addDetailGridInfo(rowId, gridInfo);
+        this.environment.detailGridObserver.observe(getGridElement(api)!); // observe the grid for visibility changes
 
         // register with node
         rowNode.detailGridInfo = gridInfo;
@@ -173,6 +182,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             }
             if (!masterGridApi.isDestroyed()) {
                 masterGridApi.removeDetailGridInfo(rowId); // unregister from api
+                this.environment.detailGridObserver.unobserve(getGridElement(api)!); // observe the grid for visibility changes
             }
             rowNode.detailGridInfo = null; // unregister from node
         });

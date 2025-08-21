@@ -90,6 +90,21 @@ export class Environment
     private eMeasurementContainer: HTMLElement | undefined;
     public sizesMeasured = false;
 
+    // Create the observer
+    public detailGridObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                console.log('Element is now visible!', entry);
+                // Element has entered the viewport
+                (entry.target as HTMLElement).style.visibility = 'unset';
+            } else {
+                console.log('Element is no longer visible', entry);
+                // Element has left the viewport
+                (entry.target as HTMLElement).style.visibility = 'hidden';
+            }
+        });
+    });
+
     protected override initVariables(): void {
         this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
         this.getSizeEl(ROW_HEIGHT);
