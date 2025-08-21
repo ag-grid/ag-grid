@@ -29,7 +29,7 @@ import { findFocusableElementBeforeTabGuard, isTargetUnderManagedComponent } fro
 import { agSideBarCSS } from './agSideBar.css-GENERATED';
 import type { AgSideBarButtons, SideBarButtonClickedEvent } from './agSideBarButtons';
 import { AgSideBarButtonsSelector } from './agSideBarButtons';
-import { parseSideBarDef } from './sideBarDefParser';
+import { parseOneComponent, parseSideBarDef } from './sideBarDefParser';
 import type { SideBarService } from './sideBarService';
 import { ToolPanelWrapper } from './toolPanelWrapper';
 
@@ -349,24 +349,27 @@ class AgSideBar extends Component implements ISideBar {
         this.toolPanelWrappers.forEach((wrapper) => wrapper.refresh());
     }
 
+    private renderToolPanelUnderParent(key: string, parent: HTMLElement) {
+        const selfDefOrStr = this.sideBar?.toolPanels?.find((tp) => (typeof tp === 'string' ? tp : tp.id) === key);
+        // toolpanel def should exist, otherwise no way to find it by the key
+        if (selfDefOrStr) {
+            const panelDef = parseOneComponent(selfDefOrStr);
+            if (panelDef) {
+                const state = (this.gos.get('initialState') ?? {}).sideBar?.toolPanels?.[panelDef.id];
+                panelDef.parent = parent;
+                const wrapper = this.toolPanelWrappers.find((wrapper) => wrapper.getToolPanelId() === key);
+                this.createToolPanelAndSideButton(panelDef, state, wrapper);
+            }
+        }
+    }
+
     public openToolPanel(
         key: string | undefined,
         source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api' = 'api',
         parent?: HTMLElement | null
     ): void {
         if (parent && key) {
-            const selfDefOrStr = this.sideBar?.toolPanels?.find((tp) =>
-                typeof tp === 'string' ? tp === key : tp.id === key
-            );
-            const { sideBar: sideBarState } = this.gos.get('initialState') ?? {};
-            const selfDef = (
-                typeof selfDefOrStr === 'string' ? { id: selfDefOrStr, parent } : { ...(selfDefOrStr ?? {}), parent }
-            ) as ToolPanelDef;
-            this.createToolPanelAndSideButton(
-                selfDef,
-                sideBarState?.toolPanels?.[selfDef!.id],
-                this.toolPanelWrappers.find((wrapper) => wrapper.getToolPanelId() === key)
-            );
+            this.renderToolPanelUnderParent(key, parent);
         }
 
         const currentlyOpenedKey = this.openedItem();
