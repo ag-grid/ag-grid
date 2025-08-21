@@ -457,6 +457,9 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         style.setProperty('position', 'absolute');
         style.setProperty('z-index', '9999');
 
+        // Do not intercept pointer events, so mouse wheel works as intended
+        style.setProperty('pointer-events', 'none');
+
         _stampTopLevelGridCompWithGridInstance(this.gos, eGui);
         this.beans.environment.applyThemeClasses(eGui);
 

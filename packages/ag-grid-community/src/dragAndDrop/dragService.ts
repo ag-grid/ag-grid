@@ -15,17 +15,21 @@ export class DragService extends BeanStub implements NamedBean {
     beanName = 'dragSvc' as const;
 
     private currentDragParams: DragListenerParams | null;
-    public dragging: boolean;
-    public startTarget: EventTarget | null;
-    private mouseStartEvent: MouseEvent | null;
-    private touchLastTime: Touch | null;
-    private touchStart: Touch | null;
+    public dragging: boolean = false;
+    public startTarget: EventTarget | null = null;
+    private mouseStartEvent: MouseEvent | null = null;
+    private touchLastTime: Touch | null = null;
+    private touchStart: Touch | null = null;
+    private lastEventWasTouch: boolean = false;
+    private lastEventOrTouch: MouseEvent | Touch | null = null;
+    private nudgeTimer: number = 0;
 
     private dragEndFunctions: ((...args: any[]) => any)[] = [];
 
     private readonly dragSources: DragSourceAndListener[] = [];
 
     public override destroy(): void {
+        this.resetDragProperties();
         const { dragSources } = this;
         dragSources.forEach(this.removeListener.bind(this));
         dragSources.length = 0;
@@ -126,7 +130,7 @@ export class DragService extends BeanStub implements NamedBean {
 
         // see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
-            this.onCommonMove(touch, this.touchStart, params.eElement);
+            this.onCommonMove(touch, params.eElement, true);
         }
     }
 
@@ -226,14 +230,44 @@ export class DragService extends BeanStub implements NamedBean {
         return null;
     }
 
-    private onCommonMove(currentEvent: MouseEvent | Touch, startEvent: MouseEvent | Touch, el: Element): void {
+    private listenScroll(el: Element): void {
+        const nudge = (): void => {
+            this.nudgeTimer = 0;
+            const { dragging, lastEventWasTouch, lastEventOrTouch: lastMove } = this;
+            if (dragging && lastMove) {
+                this.onCommonMove(lastMove, el, lastEventWasTouch);
+            }
+        };
+
+        const scrollEvent = () => {
+            this.nudgeTimer ||= window.setTimeout(nudge, 5);
+        };
+
+        const eRoot = _getRootNode(this.beans);
+        const doc = _getDocument(this.beans);
+        const options = { capture: true };
+        this.addTemporaryEvents([
+            { target: eRoot, type: 'scroll', listener: scrollEvent, options },
+            { target: doc, type: 'scroll', listener: scrollEvent, options },
+            { target: window, type: 'resize', listener: scrollEvent },
+        ]);
+    }
+
+    private onCommonMove(eventOrTouch: MouseEvent | Touch, el: Element, touch: boolean): void {
+        this.clearNudgeTimer();
+        this.lastEventWasTouch = touch;
+        this.lastEventOrTouch = eventOrTouch;
+
         if (!this.dragging) {
+            const startEvent = touch ? this.touchStart! : this.mouseStartEvent!;
             // if mouse hasn't travelled from the start position enough, do nothing
-            if (this.isEventNearStartEvent(currentEvent, startEvent)) {
+            if (this.isEventNearStartEvent(eventOrTouch, startEvent)) {
                 return;
             }
 
             this.dragging = true;
+
+            this.listenScroll(el);
             this.eventSvc.dispatchEvent({
                 type: 'dragStarted',
                 target: el,
@@ -257,7 +291,9 @@ export class DragService extends BeanStub implements NamedBean {
             this.currentDragParams.onDragging(startEvent);
         }
 
-        this.currentDragParams?.onDragging(currentEvent);
+        if (this.dragging) {
+            this.currentDragParams?.onDragging(eventOrTouch);
+        }
     }
 
     private onTouchMove(touchEvent: TouchEvent, el: Element): void {
@@ -265,9 +301,8 @@ export class DragService extends BeanStub implements NamedBean {
         if (!touch) {
             return;
         }
-
-        // this.___statusPanel.setInfoText(Math.random() + ' onTouchMove preventDefault stopPropagation');
-        this.onCommonMove(touch, this.touchStart!, el);
+        this.touchLastTime = touch;
+        this.onCommonMove(touch, el, true);
     }
 
     // only gets called after a mouse down - as this is only added after mouseDown
@@ -282,7 +317,7 @@ export class DragService extends BeanStub implements NamedBean {
             mouseEvent.preventDefault();
         }
 
-        this.onCommonMove(mouseEvent, this.mouseStartEvent!, el);
+        this.onCommonMove(mouseEvent, el, false);
     }
 
     private shouldPreventMouseEvent(mouseEvent: MouseEvent): boolean {
@@ -360,15 +395,24 @@ export class DragService extends BeanStub implements NamedBean {
     }
 
     private resetDragProperties(): void {
+        this.clearNudgeTimer();
         this.mouseStartEvent = null;
         this.startTarget = null;
         this.touchStart = null;
         this.touchLastTime = null;
         this.currentDragParams = null;
+        this.lastEventOrTouch = null;
 
-        const { dragEndFunctions } = this;
-        dragEndFunctions.forEach((func) => func());
+        const dragEndFunctions = this.dragEndFunctions;
+        for (const func of dragEndFunctions) {
+            func();
+        }
         dragEndFunctions.length = 0;
+    }
+
+    private clearNudgeTimer(): void {
+        window.clearTimeout(this.nudgeTimer);
+        this.nudgeTimer = 0;
     }
 }
 
