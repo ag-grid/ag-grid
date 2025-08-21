@@ -1,8 +1,11 @@
 <div class="example-wrapper" style="height: 100vh">
     <div class="example-header" style="height: 10vh">
-        <button onclick="onExpandAll(false)">Expand visible rows</button>
-        <button onclick="onExpandAll(true)">Expand all rows</button>
-        <button onclick="onCollapseAll()">Collapse rows</button>
+        <button id="expand" onclick="onExpandAll()">Expand rows</button>
+        <button id="collapse" onclick="onCollapseAll()">Collapse rows</button>
+        <label>
+            ssrmExpandAllAffectsAllRows:
+            <input type="checkbox" id="ssrmExpandAllAffectsAllRows" onchange="onOptionChange()" />
+        </label>
     </div>
     <div id="myGrid" style="height: 90vh"></div>
 </div>

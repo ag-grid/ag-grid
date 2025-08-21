@@ -49,13 +49,18 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
     };
 }
 
-function onExpandAll(ssrmExpandAllAffectsAllRows: boolean = false) {
-    gridApi.setGridOption('ssrmExpandAllAffectsAllRows', ssrmExpandAllAffectsAllRows);
+function onExpandAll() {
     gridApi.expandAll();
 }
 
 function onCollapseAll() {
     gridApi.collapseAll();
+}
+
+function onOptionChange() {
+    const ssrmExpandAllAffectsAllRows =
+        document.querySelector<HTMLInputElement>('#ssrmExpandAllAffectsAllRows')!.checked;
+    gridApi.setGridOption('ssrmExpandAllAffectsAllRows', ssrmExpandAllAffectsAllRows);
 }
 
 // setup the grid after the page has finished loading
