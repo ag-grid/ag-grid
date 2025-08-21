@@ -20,9 +20,10 @@ export class DragService extends BeanStub implements NamedBean {
     private mouseStartEvent: MouseEvent | null = null;
     private touchLastTime: Touch | null = null;
     private touchStart: Touch | null = null;
-    private lastEventWasTouch: boolean = false;
-    private lastEventOrTouch: MouseEvent | Touch | null = null;
+    private lastWasTouch: boolean = false;
+    private lastMove: MouseEvent | Touch | null = null;
     private nudgeTimer: number = 0;
+    private handledEvents: WeakSet<Event> | null = null;
 
     private dragEndFunctions: ((...args: any[]) => any)[] = [];
 
@@ -92,11 +93,26 @@ export class DragService extends BeanStub implements NamedBean {
         });
     }
 
+    private addHandledEvent(event: Event): boolean {
+        // if there are two elements with parent / child relationship, and both are draggable,
+        // when we drag the child, we should NOT drag the parent. an example of this is row moving
+        // and range selection - row moving should get preference when use drags the rowDrag component.
+        const set = (this.handledEvents ??= new WeakSet());
+        if (set.has(event)) {
+            return false;
+        }
+        set.add(event);
+        return true;
+    }
+
     // gets called whenever mouse down on any drag source
     private onTouchStart(params: DragListenerParams, touchEvent: TouchEvent): void {
         this.currentDragParams = params;
         this.dragging = false;
 
+        if (!this.addHandledEvent(touchEvent)) {
+            return; // Avoid double processing of the same event
+        }
         const touch = touchEvent.touches[0];
 
         this.touchLastTime = touch;
@@ -136,24 +152,16 @@ export class DragService extends BeanStub implements NamedBean {
 
     // gets called whenever mouse down on any drag source
     private onMouseDown(params: DragListenerParams, mouseEvent: MouseEvent): void {
-        const e = mouseEvent as any;
-
-        if (params.skipMouseEvent && params.skipMouseEvent(mouseEvent)) {
+        if (params.skipMouseEvent?.(mouseEvent)) {
             return;
         }
 
-        // if there are two elements with parent / child relationship, and both are draggable,
-        // when we drag the child, we should NOT drag the parent. an example of this is row moving
-        // and range selection - row moving should get preference when use drags the rowDrag component.
-        if (e._alreadyProcessedByDragService) {
-            return;
-        }
-
-        e._alreadyProcessedByDragService = true;
-
-        // only interested in left button clicks
         if (mouseEvent.button !== 0) {
-            return;
+            return; // only interested in left button clicks
+        }
+
+        if (!this.addHandledEvent(mouseEvent)) {
+            return; // Avoid double processing of the same event
         }
 
         if (this.shouldPreventMouseEvent(mouseEvent)) {
@@ -233,9 +241,9 @@ export class DragService extends BeanStub implements NamedBean {
     private listenScroll(el: Element): void {
         const nudge = (): void => {
             this.nudgeTimer = 0;
-            const { dragging, lastEventWasTouch, lastEventOrTouch: lastMove } = this;
+            const { dragging, lastWasTouch, lastMove } = this;
             if (dragging && lastMove) {
-                this.onCommonMove(lastMove, el, lastEventWasTouch);
+                this.onCommonMove(lastMove, el, lastWasTouch);
             }
         };
 
@@ -255,8 +263,8 @@ export class DragService extends BeanStub implements NamedBean {
 
     private onCommonMove(eventOrTouch: MouseEvent | Touch, el: Element, touch: boolean): void {
         this.clearNudgeTimer();
-        this.lastEventWasTouch = touch;
-        this.lastEventOrTouch = eventOrTouch;
+        this.lastWasTouch = touch;
+        this.lastMove = eventOrTouch;
 
         if (!this.dragging) {
             const startEvent = touch ? this.touchStart! : this.mouseStartEvent!;
@@ -401,7 +409,7 @@ export class DragService extends BeanStub implements NamedBean {
         this.touchStart = null;
         this.touchLastTime = null;
         this.currentDragParams = null;
-        this.lastEventOrTouch = null;
+        this.lastMove = null;
 
         const dragEndFunctions = this.dragEndFunctions;
         for (const func of dragEndFunctions) {
