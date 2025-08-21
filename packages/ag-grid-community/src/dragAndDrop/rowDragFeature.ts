@@ -178,6 +178,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const { beans, gos, clientSideRowModel } = this;
         const rowsDrop = this.newRowsDrop(draggingEvent, dropping);
         draggingEvent.dropTarget = rowsDrop;
+        draggingEvent.changed = rowsDrop?.changed;
         if (!rowsDrop) {
             return null;
         }
@@ -273,6 +274,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.validateRowsDrop(rowsDrop, canSetParent, aboveOrBelow, dropping);
 
         rowsDrop.changed ||= rowsDropChanged(lastDraggingEvent?.dropTarget, rowsDrop);
+        draggingEvent.changed = rowsDrop.changed;
 
         return rowsDrop;
     }
