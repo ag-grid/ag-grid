@@ -249,7 +249,7 @@ export { AgTooltipComponent as _AgTooltipComponent } from './agStack/tooltip/agT
 export { AgTooltipFeature as _AgTooltipFeature } from './agStack/tooltip/agTooltipFeature';
 export { BaseTooltipParams as _BaseTooltipParams } from './agStack/tooltip/baseTooltipStateManager';
 export { BaseTooltipStateManager as _BaseTooltipStateManager } from './agStack/tooltip/baseTooltipStateManager';
-export { _createAgElement } from './agStack/utils/dom';
+export { _createAgElement, AgElementParams as _AgElementParams } from './agStack/utils/dom';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap } from './agStack/utils/locale';
 export { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
 export { IDragService as _IDragService } from './agStack/interfaces/iDrag';
@@ -257,6 +257,7 @@ export {
     AgDraggingEvent as _AgDraggingEvent,
     IDragAndDropService as _IDragAndDropService,
     AgDragSource as _AgDragSource,
+    AgDropTarget as _AgDropTarget,
 } from './agStack/interfaces/iDragAndDrop';
 export { BaseDragService as _BaseDragService } from './agStack/core/baseDragService';
 export { BaseDragAndDropService as _BaseDragAndDropService } from './agStack/core/baseDragAndDropService';

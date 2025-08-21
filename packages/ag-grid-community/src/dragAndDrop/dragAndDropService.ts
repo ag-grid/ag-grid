@@ -99,12 +99,10 @@ export class DragAndDropService extends BaseDragAndDropService<
         return gridGui.contains(dropZoneTarget);
     }
 
-    protected override createDragAndDropImageComponent(): AgPromise<IDragAndDropImage & IComponent<any>> | undefined {
-        const { dragSource, gos, beans } = this;
-
-        if (!dragSource) {
-            return;
-        }
+    protected override createDragAndDropImageComponent(
+        dragSource: DragSource
+    ): AgPromise<IDragAndDropImage & IComponent<any>> | undefined {
+        const { gos, beans } = this;
 
         const userCompDetails = _getDragAndDropImageCompDetails(
             beans.userCompFactory,
@@ -112,11 +110,8 @@ export class DragAndDropService extends BaseDragAndDropService<
                 dragSource,
             })
         );
-        if (!userCompDetails) {
-            return;
-        }
 
-        return userCompDetails.newAgStackInstance()!;
+        return userCompDetails?.newAgStackInstance();
     }
 
     public registerGridDropTarget(elementFn: () => HTMLElement, ctrl: BeanStub): void {

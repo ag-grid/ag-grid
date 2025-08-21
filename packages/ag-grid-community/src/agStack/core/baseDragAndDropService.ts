@@ -59,7 +59,9 @@ export abstract class BaseDragAndDropService<
     protected dropTargets: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon>[] = [];
     private lastDropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon> | null | undefined;
 
-    protected abstract createDragAndDropImageComponent(): AgPromise<IDragAndDropImage & IComponent<any>> | undefined;
+    protected abstract createDragAndDropImageComponent(
+        dragSource: TDragSource
+    ): AgPromise<IDragAndDropImage & IComponent<any>> | undefined;
 
     protected abstract warnNoBody(): void;
 
@@ -119,7 +121,7 @@ export abstract class BaseDragAndDropService<
 
         dragSource.onDragStarted?.();
 
-        const promise = this.createDragAndDropImageComponent();
+        const promise = this.createDragAndDropImageComponent(dragSource);
         if (!promise) {
             return;
         }
