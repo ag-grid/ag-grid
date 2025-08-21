@@ -54,7 +54,11 @@ function onRowDragEnd(event: RowDragEndEvent<IFile>) {
     event.api.setRowDropPositionIndicator(null);
 }
 
-function onRowDragLeaveOrCancel(event: RowDragLeaveEvent<IFile> | RowDragCancelEvent<IFile>) {
+function onRowDragLeave(event: RowDragLeaveEvent<IFile> | RowDragCancelEvent<IFile>) {
+    event.api.setRowDropPositionIndicator(null);
+}
+
+function onRowDragCancel(event: RowDragLeaveEvent<IFile> | RowDragCancelEvent<IFile>) {
     event.api.setRowDropPositionIndicator(null);
 }
 
@@ -116,8 +120,8 @@ const gridOptions: GridOptions<IFile> = {
     animateRows: true,
     onRowDragEnd,
     onRowDragMove,
-    onRowDragLeave: onRowDragLeaveOrCancel,
-    onRowDragCancel: onRowDragLeaveOrCancel,
+    onRowDragLeave: onRowDragLeave,
+    onRowDragCancel: onRowDragCancel,
     groupDefaultExpanded: -1,
 };
 
