@@ -327,6 +327,7 @@ export type {
     RowDropZoneEvents,
     DragSource,
     DraggingEvent,
+    RowsDropParams,
 } from './dragAndDrop/rowDragTypes';
 export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { DragService } from './dragAndDrop/dragService';

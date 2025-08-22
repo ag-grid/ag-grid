@@ -142,6 +142,9 @@ export interface RowsDrop<TData = any, TContext = any>
     highlight: boolean;
 }
 
+// This is the external-facing version of `RowsDrop`
+export interface RowsDropParams<TData = any, TContext = any> extends IsRowValidDropPositionParams<TData, TContext> {}
+
 export interface RowDropZoneEvents {
     /** Callback function that will be executed when the rowDrag enters the target. */
     onDragEnter?: (params: RowDragEnterEvent) => void;

@@ -2,7 +2,7 @@ import type { AgChartThemeOverrides } from 'ag-charts-types';
 
 import type { AgEvent } from './agStack/interfaces/agEvent';
 import type { ScrollDirection } from './agStack/interfaces/baseEvents';
-import type { RowsDrop } from './dragAndDrop/rowDragTypes';
+import type { RowsDropParams } from './dragAndDrop/rowDragTypes';
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
@@ -534,7 +534,7 @@ export interface RowDragEvent<TData = any, TContext = any, T extends RowDragEven
     y: number;
 
     /** Details about the row dragging drop target. */
-    rowsDrop: RowsDrop<TData, TContext> | null;
+    rowsDrop: RowsDropParams<TData, TContext> | null;
 }
 
 export interface RowDragEnterEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragEnter'> {}
