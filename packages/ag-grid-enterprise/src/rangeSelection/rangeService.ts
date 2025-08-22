@@ -6,6 +6,7 @@ import type {
     CellNavigationService,
     CellPosition,
     CellRange,
+    CellRangeBoundaryParams,
     CellRangeParams,
     ClearCellRangeParams,
     ColumnModel,
@@ -419,13 +420,21 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public extendRangeRowCountBy(cellRange: CellRange, targetCount: number): void {
         const { beans } = this;
+        const { startRow, endRow } = cellRange;
 
-        if (!cellRange.endRow) {
+        if (!startRow || !endRow) {
             return;
         }
 
         let stepsMoved = 0;
-        let currentRow = cellRange.endRow;
+        let currentRow;
+
+        const isBottomUp = _isRowBefore(endRow, startRow);
+        if (isBottomUp) {
+            currentRow = startRow;
+        } else {
+            currentRow = endRow;
+        }
 
         const stepFn = targetCount > 0 ? _getRowBelow : _getRowAbove;
         const stepCount = Math.abs(targetCount);
@@ -448,7 +457,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             column: this.getRangeLastColumn(cellRange),
         };
 
-        this.updateRangeEnd(cellRange, cellPosition);
+        this.updateRangeRowBoundary({ cellRange, boundary: isBottomUp ? 'start' : 'end', cellPosition });
     }
 
     public extendRangeColumnCountBy(cellRange: CellRange, delta: number): void {
@@ -469,10 +478,16 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const startIdx = allColumns.indexOf(startColumn as AgColumn);
-        const endIdx = allColumns.indexOf(endColumn as AgColumn);
+        let startIdx = allColumns.indexOf(startColumn as AgColumn);
+        let endIdx = allColumns.indexOf(endColumn as AgColumn);
+        const isRtlRange = endIdx < startIdx;
 
-        const direction = endIdx >= startIdx ? 1 : -1;
+        if (isRtlRange) {
+            // if we are anchoring to the left and the range is rtl
+            // then we need to flip the start and end indices
+            [startIdx, endIdx] = [endIdx, startIdx];
+        }
+
         const currentLength = columns.length;
         const targetLength = currentLength + delta;
 
@@ -481,19 +496,24 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
 
         const newColumns: AgColumn[] = [];
-        let index = startIdx;
 
-        for (let i = 0; i < targetLength; i++) {
-            const col = allColumns[index];
+        for (let i = startIdx; i < startIdx + targetLength; i++) {
+            const col = allColumns[i];
             if (!col) {
                 break;
             }
             newColumns.push(col);
-            index += direction;
         }
 
         // Only update if length actually changed
         if (newColumns.length === targetLength) {
+            if (isRtlRange) {
+                // before we add changes to the range, the
+                // new range start should receive focus
+                const newColumnToFocus = _last(newColumns);
+                cellRange.startColumn = newColumnToFocus;
+                this.focusCellOnNewColumn(cellRange, newColumnToFocus);
+            }
             cellRange.columns = newColumns;
             this.dispatchChangedEvent(true, true, cellRange.id);
         }
@@ -507,10 +527,11 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const cellRange = _last(this.cellRanges);
 
         this.setSelectionMode(isRowNumberCol(cellPosition.column));
-        this.updateRangeEnd(cellRange, cellPosition);
+        this.updateRangeRowBoundary({ cellRange, boundary: 'end', cellPosition });
     }
 
-    public updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent = false): void {
+    public updateRangeRowBoundary(params: CellRangeBoundaryParams): void {
+        const { cellRange, boundary, cellPosition, silent = false } = params;
         const endColumn = cellPosition.column as AgColumn;
         const colsToAdd = this.calculateColumnsBetween(cellRange.startColumn as AgColumn, endColumn);
 
@@ -518,8 +539,15 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
+        if (boundary === 'start') {
+            this.focusCellOnNewRow(cellRange, cellPosition);
+        }
+
         cellRange.columns = colsToAdd;
-        cellRange.endRow = { rowIndex: cellPosition.rowIndex, rowPinned: cellPosition.rowPinned };
+        cellRange[boundary === 'start' ? 'startRow' : 'endRow'] = {
+            rowIndex: cellPosition.rowIndex,
+            rowPinned: cellPosition.rowPinned,
+        };
 
         if (!silent) {
             this.dispatchChangedEvent(true, true, cellRange.id);
@@ -1194,6 +1222,42 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
 
         return this.getColumnsFromModel(columns);
+    }
+
+    private focusCellOnNewColumn(currentRange: CellRange, column: AgColumn): void {
+        const { focusSvc } = this.beans;
+        const focusedCell = focusSvc.getFocusedCell();
+
+        if (!focusedCell) {
+            return;
+        }
+
+        if (this.isCellInSpecificRange(focusedCell, currentRange)) {
+            focusSvc.setFocusedCell({
+                ...focusedCell,
+                column,
+                forceBrowserFocus: true,
+                preventScrollOnBrowserFocus: true,
+            });
+        }
+    }
+
+    private focusCellOnNewRow(currentRange: CellRange, row: RowPosition): void {
+        const { focusSvc } = this.beans;
+        const focusedCell = focusSvc.getFocusedCell();
+
+        if (!focusedCell) {
+            return;
+        }
+
+        if (this.isCellInSpecificRange(focusedCell, currentRange)) {
+            focusSvc.setFocusedCell({
+                ...row,
+                column: focusedCell.column,
+                forceBrowserFocus: true,
+                preventScrollOnBrowserFocus: true,
+            });
+        }
     }
 
     public createDragListenerFeature(eContainer: HTMLElement): BeanStub {
