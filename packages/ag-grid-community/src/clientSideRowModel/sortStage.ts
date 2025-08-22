@@ -1,6 +1,5 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
@@ -47,8 +46,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
     public step: ClientSideRowModelStage = 'sort';
 
     public execute(params: StageExecuteParams): void {
-        const beans = this.beans;
-        const sortOptions = beans.sortSvc!.getSortOptions();
+        const sortOptions = this.beans.sortSvc!.getSortOptions();
 
         const deltaSort =
             sortOptions.length > 0 &&
@@ -59,17 +57,16 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
             // rolling out to everyone.
             this.gos.get('deltaSort');
 
-        this.sort(beans, sortOptions, deltaSort, params.changedRowNodes, params.changedPath);
+        this.sort(sortOptions, deltaSort, params.changedRowNodes, params.changedPath);
     }
 
     private sort(
-        beans: BeanCollection,
         sortOptions: SortOption[],
         useDeltaSort: boolean,
         changedRowNodes: IChangedRowNodes | undefined,
         changedPath: ChangedPath | undefined
     ): void {
-        const { gos, colModel, rowGroupColsSvc, rowNodeSorter, rowRenderer, showRowGroupCols } = beans;
+        const { gos, colModel, rowGroupColsSvc, rowNodeSorter, rowRenderer, showRowGroupCols } = this.beans;
         const groupMaintainOrder = gos.get('groupMaintainOrder');
         const groupColumnsPresent = colModel.getCols().some((c) => c.isRowGroupActive());
         const groupCols = rowGroupColsSvc?.columns;
@@ -134,7 +131,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
         // if using group hide open parents and a sort has happened, refresh the group cells as the first child
         // displays the parent grouping - it's cheaper here to refresh all cells in col rather than fire events for every potential
         // child cell
-        if (hasAnyFirstChildChanged && this.gos.get('groupHideOpenParents')) {
+        if (hasAnyFirstChildChanged && gos.get('groupHideOpenParents')) {
             const columns = showRowGroupCols?.getShowRowGroupCols();
             if (columns?.length) {
                 rowRenderer.refreshCells({ columns, force: true });
