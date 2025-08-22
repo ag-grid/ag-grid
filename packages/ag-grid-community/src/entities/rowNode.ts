@@ -82,7 +82,7 @@ export class RowNode<TData = any>
 
     public firstChild: boolean;
     public lastChild: boolean;
-    public childIndex: number;
+    public childIndex: number = -1;
 
     /** The current row index. If the row is filtered out or in a collapsed group, this value is set to `null`. */
     public rowIndex: number | null = null;
@@ -723,13 +723,6 @@ export class RowNode<TData = any>
         }
 
         return res.reverse();
-    }
-
-    public setFirstChild(firstChild: boolean): void {
-        if (this.firstChild !== firstChild) {
-            this.firstChild = firstChild;
-            this.dispatchRowEvent('firstChildChanged');
-        }
     }
 
     private setDisplayed(displayed: boolean): void {

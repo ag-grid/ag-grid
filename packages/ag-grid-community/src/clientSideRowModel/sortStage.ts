@@ -1,4 +1,3 @@
-import { _exists, _missing } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -13,19 +12,24 @@ import type { SortOption } from '../interfaces/iSortOption';
 import type { RowNodeSorter, SortedRowNode } from '../sort/rowNodeSorter';
 import type { ChangedPath } from '../utils/changedPath';
 
-function updateChildIndexes(rowNode: RowNode): void {
-    if (_missing(rowNode.childrenAfterSort)) {
+export const updateRowNodeAfterSort = (rowNode: RowNode): void => {
+    const childrenAfterSort = rowNode.childrenAfterSort;
+    if (rowNode.sibling) {
+        rowNode.sibling.childrenAfterSort = childrenAfterSort;
+    }
+    if (!childrenAfterSort) {
         return;
     }
-
-    const listToSort = rowNode.childrenAfterSort;
-    for (let i = 0; i < listToSort.length; i++) {
-        const child = listToSort[i];
-        const firstChild = i === 0;
-        const lastChild = i === rowNode.childrenAfterSort.length - 1;
-        child.setFirstChild(firstChild);
-        if (child.lastChild !== lastChild) {
-            child.lastChild = lastChild;
+    for (let i = 0, lastIdx = childrenAfterSort.length - 1; i <= lastIdx; i++) {
+        const child = childrenAfterSort[i];
+        const first = i === 0;
+        const last = i === lastIdx;
+        if (child.firstChild !== first) {
+            child.firstChild = first;
+            child.dispatchRowEvent('firstChildChanged');
+        }
+        if (child.lastChild !== last) {
+            child.lastChild = last;
             child.dispatchRowEvent('lastChildChanged');
         }
         if (child.childIndex !== i) {
@@ -33,15 +37,7 @@ function updateChildIndexes(rowNode: RowNode): void {
             child.dispatchRowEvent('childIndexChanged');
         }
     }
-}
-
-export function updateRowNodeAfterSort(rowNode: RowNode): void {
-    if (rowNode.sibling) {
-        rowNode.sibling.childrenAfterSort = rowNode.childrenAfterSort;
-    }
-
-    updateChildIndexes(rowNode);
-}
+};
 
 export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'sortStage' as const;
@@ -53,7 +49,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
         const beans = this.beans;
         const sortOptions: SortOption[] = beans.sortSvc!.getSortOptions();
 
-        const sortActive = _exists(sortOptions) && sortOptions.length > 0;
+        const sortActive = sortOptions && sortOptions.length > 0;
         const deltaSort =
             sortActive &&
             !!params.changedRowNodes &&
@@ -63,22 +59,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
             // rolling out to everyone.
             this.gos.get('deltaSort');
 
-        const sortContainsGroupColumns = sortOptions.some(({ column }) => {
-            const isSortingCoupled = _isColumnsSortingCoupledToGroup(beans.gos);
-            if (isSortingCoupled) {
-                return column.isPrimary() && column.isRowGroupActive();
-            }
-            return !!column.getColDef().showRowGroup;
-        });
-        this.sort(
-            beans,
-            sortOptions,
-            sortActive,
-            deltaSort,
-            params.changedRowNodes,
-            params.changedPath,
-            sortContainsGroupColumns
-        );
+        this.sort(beans, sortOptions, sortActive, deltaSort, params.changedRowNodes, params.changedPath);
     }
 
     private sort(
@@ -87,8 +68,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
         sortActive: boolean,
         useDeltaSort: boolean,
         changedRowNodes: IChangedRowNodes | undefined,
-        changedPath: ChangedPath | undefined,
-        sortContainsGroupColumns: boolean
+        changedPath: ChangedPath | undefined
     ): void {
         const { gos, colModel, rowGroupColsSvc, rowNodeSorter, rowRenderer, showRowGroupCols } = beans;
         const groupMaintainOrder = gos.get('groupMaintainOrder');
@@ -98,32 +78,30 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
         const postSortFunc = gos.getCallback('postSortRows');
 
         let hasAnyFirstChildChanged = false;
+        let sortContainsGroupColumns: boolean | undefined;
+
+        let childIndexComparator: ChildIndexComparer | undefined;
         const callback = (rowNode: RowNode) => {
             // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
             const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
 
-            // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
-            // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
-            // are going to inspect the original array position. This is what sortedRowNodes is for.
-            const skipSortingGroups =
-                groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
+            let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup;
+            if (skipSortingGroups) {
+                sortContainsGroupColumns ??= this.shouldSortContainsGroupCols(sortOptions);
+                skipSortingGroups &&= !sortContainsGroupColumns;
+            }
+
             let newChildrenAfterSort: RowNode[];
             if (skipSortingGroups) {
                 const nextGroup = rowGroupColsSvc?.columns?.[rowNode.level + 1];
                 // if the sort is null, then sort was explicitly removed, so remove sort from this group.
                 const wasSortExplicitlyRemoved = nextGroup?.getSort() === null;
 
-                const childrenToBeSorted = rowNode.childrenAfterAggFilter!.slice(0);
-                if (rowNode.childrenAfterSort && !wasSortExplicitlyRemoved) {
-                    const indexedOrders: { [key: string]: number } = {};
-                    rowNode.childrenAfterSort.forEach((node, idx) => {
-                        indexedOrders[node.id!] = idx;
-                    });
-                    childrenToBeSorted.sort(
-                        (row1, row2) => (indexedOrders[row1.id!] ?? 0) - (indexedOrders[row2.id!] ?? 0)
-                    );
+                newChildrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
+                if (newChildrenAfterSort.length > 0 && !wasSortExplicitlyRemoved) {
+                    // Maintain previous group order when groupMaintainOrder is enabled and no group columns are sorted.
+                    newChildrenAfterSort.sort((childIndexComparator ??= newChildIndexComparer()));
                 }
-                newChildrenAfterSort = childrenToBeSorted;
             } else if (!sortActive || skipSortingPivotLeafs) {
                 // if there's no sort to make, skip this step
                 newChildrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
@@ -140,7 +118,9 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
             updateRowNodeAfterSort(rowNode);
 
             if (postSortFunc) {
-                const params: WithoutGridCommon<PostSortRowsParams> = { nodes: rowNode.childrenAfterSort };
+                const params: WithoutGridCommon<PostSortRowsParams> = {
+                    nodes: rowNode.childrenAfterSort,
+                };
                 postSortFunc(params);
             }
         };
@@ -157,15 +137,39 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
             }
         }
     }
+
+    private shouldSortContainsGroupCols(sortOptions: SortOption[]): boolean {
+        const sortOptionsLen = sortOptions.length;
+        if (!sortOptionsLen) {
+            return false;
+        }
+
+        if (_isColumnsSortingCoupledToGroup(this.gos)) {
+            for (let i = 0; i < sortOptionsLen; ++i) {
+                const column = sortOptions[i].column;
+                if (column.isPrimary() && column.isRowGroupActive()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        for (let i = 0; i < sortOptionsLen; ++i) {
+            if (sortOptions[i].column.getColDef().showRowGroup) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
-function doDeltaSort(
+const doDeltaSort = (
     rowNodeSorter: RowNodeSorter,
     rowNode: RowNode,
     changedRowNodes: IChangedRowNodes,
     changedPath: ChangedPath | undefined,
     sortOptions: SortOption[]
-): RowNode[] {
+): RowNode[] => {
     const unsortedRows = rowNode.childrenAfterAggFilter!;
     const oldSortedRows = rowNode.childrenAfterSort;
     if (!oldSortedRows) {
@@ -190,20 +194,25 @@ function doDeltaSort(
 
     const sortedUntouchedRows = oldSortedRows
         .filter((child) => untouchedRows.has(child.id!))
-        .map((rowNode: RowNode, currentPos: number): SortedRowNode => ({ currentPos, rowNode }));
+        .map(
+            (rowNode: RowNode, currentPos: number): SortedRowNode => ({
+                currentPos,
+                rowNode,
+            })
+        );
 
     touchedRows.sort((a, b) => rowNodeSorter.compareRowNodes(sortOptions, a, b));
 
     return mergeSortedArrays(rowNodeSorter, sortOptions, touchedRows, sortedUntouchedRows);
-}
+};
 
 // Merge two sorted arrays into each other
-function mergeSortedArrays(
+const mergeSortedArrays = (
     rowNodeSorter: RowNodeSorter,
     sortOptions: SortOption[],
     arr1: SortedRowNode[],
     arr2: SortedRowNode[]
-): RowNode[] {
+): RowNode[] => {
     const res: RowNode[] = [];
     let i = 0;
     let j = 0;
@@ -240,4 +249,57 @@ function mergeSortedArrays(
     }
 
     return res;
-}
+};
+
+type ChildIndexComparer = (a: RowNode, b: RowNode) => number;
+
+const newChildIndexComparer = () => {
+    // Keep track of group or filler nodes source indices, as they are the sourceRowIndex of the first child, recursively
+    // This could be simplified / optimize in the future by adding and maintaining a new field `groupSourceIndex` in the RowNode.
+    let groupSourceIndexCache: Map<RowNode, number> | undefined;
+
+    /**
+     * Groups and filler nodes do not have a sourceRowIndex, it is -1.
+     * This finds the first deepest leaf node's sourceRowIndex and caches it.
+     * This keeps sorting deterministic for new nodes.
+     */
+    const getSourceRowIndex = (row: RowNode): number => {
+        const sourceRowIndex = row.sourceRowIndex;
+        if (sourceRowIndex >= 0) {
+            (groupSourceIndexCache ??= new Map()).set(row, sourceRowIndex);
+            return sourceRowIndex;
+        }
+
+        const cached = groupSourceIndexCache?.get(row);
+        if (cached !== undefined) {
+            return cached;
+        }
+
+        groupSourceIndexCache ??= new Map();
+
+        const children = row.childrenAfterGroup;
+        if (!children?.length) {
+            groupSourceIndexCache.set(row, -1);
+            return -1;
+        }
+
+        const child = children[0]!;
+        const result = getSourceRowIndex(child);
+        groupSourceIndexCache.set(row, result);
+        return result;
+    };
+
+    /**
+     * Comparator for maintain-order group sorting:
+     * - primary: previous childIndex (new items get sentinel 0x7fffffff to append)
+     * - tiebreaker: earliest leaf sourceRowIndex to get deterministic order for new items
+     */
+    const compareChildIndex = (a: RowNode, b: RowNode): number => {
+        const ai = a.childIndex;
+        const bi = b.childIndex;
+        const c = (ai >= 0 ? ai : 0x7fffffff) - (bi >= 0 ? bi : 0x7fffffff);
+        return c || getSourceRowIndex(a) - getSourceRowIndex(b);
+    };
+
+    return compareChildIndex;
+};

@@ -174,7 +174,7 @@ export class GridRowsValidator {
         }
 
         if (row === gridRows.rootRowNode) {
-            rowErrors.expectValueEqual('childIndex', row.childIndex, undefined);
+            rowErrors.expectValueEqual('childIndex', row.childIndex, -1);
         }
 
         if (row.footer && (typeof row.id !== 'string' || !row.id?.startsWith('rowGroupFooter_'))) {
