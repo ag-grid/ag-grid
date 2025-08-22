@@ -34,7 +34,6 @@
     "@nx/js": "20.3.1",
     "@nx/react": "20.3.1",
     "@nx/rollup": "20.3.1",
-    "@nx/vite": "20.3.1",
     "@nx/web": "20.3.1",
     "@nx/workspace": "20.3.1",
     "@playwright/test": "^1.52.0",

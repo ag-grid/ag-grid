@@ -11,12 +11,11 @@
       }
     },
     "test": {
-      "executor": "@nx/vite:test",
+      "command": "npx vitest -c vitest.config.ts",
       "outputs": ["{workspaceRoot}/reports/ag-behavioural-testing.xml"],
       "dependsOn": ["ag-grid-community:build:css", "ag-grid-enterprise:build:css"],
       "options": {
-        "cwd": "{projectRoot}",
-        "config": "{projectRoot}/vitest.config.ts"
+        "cwd": "{projectRoot}"
       },
       "configurations": {
         "ci": {
