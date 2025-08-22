@@ -5,6 +5,15 @@
     width: var(--ag-side-bar-panel-width);
 }
 
+.ag-tool-panel-external {
+    display: flex;
+    flex-direction: row;
+}
+
+:where(.ag-tool-panel-external) .ag-tool-panel-wrapper {
+    flex-grow: 1;
+}
+
 .ag-select-agg-func-item {
     position: relative;
     align-items: center;

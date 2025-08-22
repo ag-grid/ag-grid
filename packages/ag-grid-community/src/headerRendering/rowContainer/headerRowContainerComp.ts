@@ -13,9 +13,9 @@ const PinnedRightElement: ElementParams = { tag: 'div', cls: 'ag-pinned-right-he
 const CenterElement: ElementParams = {
     tag: 'div',
     cls: 'ag-header-viewport',
-    role: 'presentation',
+    role: 'rowgroup',
     attrs: { tabindex: '-1' },
-    children: [{ tag: 'div', ref: 'eCenterContainer', cls: 'ag-header-container', role: 'rowgroup' }],
+    children: [{ tag: 'div', ref: 'eCenterContainer', cls: 'ag-header-container', role: 'presentation' }],
 };
 
 export class HeaderRowContainerComp extends Component {

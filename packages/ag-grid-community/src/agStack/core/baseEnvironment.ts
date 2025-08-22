@@ -83,7 +83,7 @@ export abstract class BaseEnvironment<
         this.addDestroyFunc(() => this.mutationObserver.disconnect());
     }
 
-    public applyThemeClasses(el: HTMLElement) {
+    public applyThemeClasses(el: HTMLElement, extraClasses: string[] = []): void {
         const { theme } = this;
         let themeClass: string;
         if (theme) {
@@ -100,7 +100,7 @@ export abstract class BaseEnvironment<
         }
         if (themeClass) {
             const oldClass = el.className;
-            el.className = oldClass + (oldClass ? ' ' : '') + themeClass;
+            el.className = `${oldClass}${oldClass ? ' ' : ''}${themeClass}${extraClasses?.length ? ` ${extraClasses.join(' ')}` : ''}`;
         }
     }
 

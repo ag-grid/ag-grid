@@ -86,6 +86,10 @@ The snippet above is demonstrated in the following example:
 Calling `setSideBarVisible(true)` when `sideBarDef.hideButtons` is set to true and no tool panel is open will not display anything.
 {% /note %}
 
+{% note %}
+The [Popup Parent](./context-menu/#popup-parent) must be set to an element that contains both the tool parent parent and the grid to ensure all popups (e.g., Columns Tool Panel context menus) are fully visible.
+{% /note %}
+
 ## Configuration Shortcuts
 
 The `boolean` and `string` configurations are shortcuts for more detailed configurations. When you use a shortcut the grid replaces it with the equivalent long form of the configuration by building the equivalent `SideBarDef`.
@@ -191,6 +195,19 @@ const gridOptions = {
 If you are using the long form (providing a `SideBarDef` object) then it is possible to customise. The example below changes the filter label and icon.
 
 {% gridExampleRunner title="Side Bar Fine Tuning" name="fine-tuning" /%}
+
+### Tool Panel Parent
+
+By default, Tool Panels are rendered inside the Side Bar. If you want to render Tool Panels in a different location, you can set the [parent](./side-bar#reference-ToolPanelDef-parent) property in the `ToolPanelDef`. This is useful if you want to render Tool Panel in a different part of your application, such as a popup window or a separate section of your page.
+
+It is also possible to call an api method `openToolPanel(toolPanelId, parent)` to open a Tool Panel in a different location. The `parent` parameter is the HTML element where the Tool Panel will be rendered.
+
+The [Popup Parent](./context-menu/#popup-parent) must also be set to an element that contains both the Tool Panel parent and the grid.
+
+The example below demonstrates how to use the `parent` property to render the Columns Tool Panel in a different location. The Side Bar is not visible, and the Columns Tool Panel is rendered in a modal dialog.
+
+{% gridExampleRunner title="Tool Panel Parent" name="tool-panel-parent" exampleHeight=600 /%}
+
 
 ## Providing Parameters to Tool Panels
 

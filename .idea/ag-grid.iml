@@ -167,6 +167,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue3/lib" />
       <excludeFolder url="file://$MODULE_DIR$/testing/shared/packages/ag-grid-community/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/testing/performance/packages/ag-grid-community/dist" />
     </content>
     <content url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />
     <content url="file://$MODULE_DIR$/packages/ag-grid-angular/dist" />

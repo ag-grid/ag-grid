@@ -17,8 +17,14 @@
     pointer-events: none;
     overflow: hidden;
 
-    @media screen and (max-width: 700px) {
+    @media screen and (max-width: 890px) {
         height: 700px;
+    }
+
+    .countdownEnded & {
+        @media screen and (max-width: 890px) {
+            height: 900px;
+        }
     }
 }
 
@@ -50,6 +56,70 @@
         padding: $spacing-size-20 $spacing-size-12;
     }
 }
+
+.rtsHeroEndedLayout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: $spacing-size-8;
+    text-align: center;
+
+    @media screen and (min-width: 900px) {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+    }
+}
+
+.rtsHeroImageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    max-width: 600px;
+    overflow: hidden;
+
+    @media screen and (min-width: 900px) {
+        flex: 1;
+        justify-content: flex-end;
+    }
+}
+
+.rtsHeroImage {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+
+    @media screen and (min-width: 900px) {
+        max-width: 800px;
+        position: absolute;
+        z-index: -2;
+        left: 400px;
+    }
+
+    @media screen and (max-width: 1044px) {
+        max-width: 700px;
+    }
+}
+
+.rtsHeroImageLight {
+    display: block;
+
+    #{$selector-darkmode} & {
+        display: none;
+    }
+}
+
+.rtsHeroImageDark {
+    display: none;
+
+    #{$selector-darkmode} & {
+        display: block;
+    }
+}
 .rtsHeroContent {
     flex: 2;
 
@@ -68,11 +138,10 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: $spacing-size-4;
 
     border-radius: var(--radius-md);
-    padding: $spacing-size-8 $spacing-size-4;
     max-width: 500px;
     position: static;
     overflow: visible;
@@ -507,7 +576,7 @@
 }
 
 .sectionTitle {
-    max-width: 500px;
+    max-width: 52ch;
     text-align: left;
 
     h2 {

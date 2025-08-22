@@ -77,7 +77,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     ServerSideRowModelApiModule: 19,
     ServerSideRowModelModule: 155.08,
     SetFilterModule: 152.16,
-    SideBarModule: 32,
+    SideBarModule: 33.16,
     SparklinesModule: 20,
     StatusBarModule: 27,
     TreeDataModule: 88.17,

@@ -2,8 +2,8 @@
    one then don't forget the other */
 
 /* stylelint-disable-next-line selector-disallowed-list  */
-:where(.ag-root-wrapper, .ag-popup, .ag-dnd-ghost, .ag-chart),
-:where(.ag-root-wrapper, .ag-popup, .ag-dnd-ghost, .ag-chart) :where([class^='ag-']) {
+:where(.ag-root-wrapper, .ag-external, .ag-popup, .ag-dnd-ghost, .ag-chart),
+:where(.ag-root-wrapper, .ag-external, .ag-popup, .ag-dnd-ghost, .ag-chart) :where([class^='ag-']) {
     box-sizing: border-box;
 
     &::after,
@@ -33,6 +33,6 @@
    ::-ms-clear will ignore the whole block if it is placed in the above block */
 
 /* stylelint-disable-next-line selector-disallowed-list */
-:where(.ag-root-wrapper, .ag-popup, .ag-dnd-ghost, .ag-chart) :where([class^='ag-']) ::-ms-clear {
+:where(.ag-root-wrapper, ag-external, .ag-popup, .ag-dnd-ghost, .ag-chart) :where([class^='ag-']) ::-ms-clear {
     display: none;
 }
