@@ -79,7 +79,6 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
 
         let hasAnyFirstChildChanged = false;
         let sortContainsGroupColumns: boolean | undefined;
-        let tempSet: Set<RowNode> | undefined;
 
         const callback = (rowNode: RowNode) => {
             // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
@@ -100,8 +99,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
                 const nextGroup = groupCols && nextGroupIndex < groupCols.length ? groupCols[nextGroupIndex] : null;
                 const wasSortExplicitlyRemoved = nextGroup?.getSort() === null;
                 if (!wasSortExplicitlyRemoved) {
-                    newChildrenAfterSort = preserveGroupOrder(rowNode, (tempSet ??= new Set<RowNode>()));
-                    tempSet.clear();
+                    newChildrenAfterSort = preserveGroupOrder(rowNode);
                 }
             } else if (!sortOptions.length || skipSortingPivotLeafs) {
                 // if there's no sort to make, skip this step
@@ -179,7 +177,7 @@ const doDeltaSort = (
         return rowNodeSorter.doFullSort(unsortedRows, sortOptions);
     }
 
-    const untouchedRows = new Set<string>();
+    const untouchedRows = new Set<RowNode>();
     const touchedRows: SortedRowNode[] = [];
 
     const { updates, adds } = changedRowNodes;
@@ -191,12 +189,12 @@ const doDeltaSort = (
                 rowNode: row,
             });
         } else {
-            untouchedRows.add(row.id!);
+            untouchedRows.add(row);
         }
     }
 
     const sortedUntouchedRows = oldSortedRows
-        .filter((child) => untouchedRows.has(child.id!))
+        .filter((child) => untouchedRows.has(child))
         .map((rowNode: RowNode, currentPos: number): SortedRowNode => ({ currentPos, rowNode }));
 
     touchedRows.sort((a, b) => rowNodeSorter.compareRowNodes(sortOptions, a, b));
@@ -252,7 +250,7 @@ const mergeSortedArrays = (
 /**
  * O(n) merge preserving previous visual order and appending new items in current order.
  */
-const preserveGroupOrder = (node: RowNode, processed: Set<RowNode>): RowNode[] | null => {
+const preserveGroupOrder = (node: RowNode): RowNode[] | null => {
     const childrenAfterSort = node.childrenAfterSort;
     const childrenAfterAggFilter = node.childrenAfterAggFilter;
 
@@ -267,6 +265,7 @@ const preserveGroupOrder = (node: RowNode, processed: Set<RowNode>): RowNode[] |
     let writeIdx = 0;
 
     // Track all present nodes.
+    const processed = new Set<RowNode>();
     for (let i = 0; i < childrenAfterAggFilterLen; ++i) {
         processed.add(childrenAfterAggFilter[i]);
     }
