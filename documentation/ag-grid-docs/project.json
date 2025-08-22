@@ -16,7 +16,7 @@
       "inputs": [
         "^production",
         "production",
-        "!{projectRoot}/vitest.config.mjs",
+        "!{projectRoot}/vitest.config.ts",
         "{workspaceRoot}/external/ag-website-shared/**",
         "charts",
         { "env": "PUBLIC_PACKAGE_VERSION" }
@@ -120,7 +120,7 @@
       "dependsOn": ["ag-grid-community:build:css", "ag-grid-enterprise:build:css", "generate-doc-references"],
       "options": {
         "cwd": "{projectRoot}",
-        "config": "vitest.config.mjs",
+        "config": "vitest.config.ts",
         "watch": false
       },
       "configurations": {
