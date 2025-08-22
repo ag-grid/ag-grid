@@ -272,16 +272,18 @@ const preserveGroupOrder = (node: RowNode): RowNode[] | null => {
 
     // Keep nodes that are still present, in previous visual order.
     for (let i = 0; i < childrenAfterSortLen; ++i) {
-        const p = childrenAfterSort[i];
-        if (processed.delete(p)) {
-            result[writeIdx++] = p;
+        const node = childrenAfterSort[i];
+        if (processed.delete(node)) {
+            result[writeIdx++] = node;
         }
     }
 
-    // Append remaining nodes (new ones) in current order by iterating the Set,
-    // which preserves insertion order matching `current`.
-    for (const c of processed) {
-        result[writeIdx++] = c;
+    // Append remaining new nodes
+    for (let i = 0; i < childrenAfterAggFilterLen; ++i) {
+        const node = childrenAfterAggFilter[i];
+        if (processed.has(node)) {
+            result[writeIdx++] = node;
+        }
     }
 
     if (writeIdx !== childrenAfterAggFilterLen) {
