@@ -82,7 +82,7 @@ export class RowNode<TData = any>
 
     public firstChild: boolean;
     public lastChild: boolean;
-    public childIndex: number = -1;
+    public childIndex: number;
 
     /** The current row index. If the row is filtered out or in a collapsed group, this value is set to `null`. */
     public rowIndex: number | null = null;

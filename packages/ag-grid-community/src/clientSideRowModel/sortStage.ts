@@ -254,9 +254,9 @@ const mergeSortedArrays = (
  */
 const preserveGroupOrder = (node: RowNode, processed: Set<RowNode>): RowNode[] | null => {
     const childrenAfterSort = node.childrenAfterSort;
-    const childrenAfterSortLen = childrenAfterSort?.length;
-
     const childrenAfterAggFilter = node.childrenAfterAggFilter;
+
+    const childrenAfterSortLen = childrenAfterSort?.length;
     const childrenAfterAggFilterLen = childrenAfterAggFilter?.length;
 
     if (!childrenAfterSortLen || !childrenAfterAggFilterLen) {
