@@ -14,8 +14,9 @@ import type { ChangedPath } from '../utils/changedPath';
 
 export const updateRowNodeAfterSort = (rowNode: RowNode): void => {
     const childrenAfterSort = rowNode.childrenAfterSort;
-    if (rowNode.sibling) {
-        rowNode.sibling.childrenAfterSort = childrenAfterSort;
+    const sibling = rowNode.sibling;
+    if (sibling) {
+        sibling.childrenAfterSort = childrenAfterSort;
     }
     if (!childrenAfterSort) {
         return;
@@ -47,11 +48,10 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
 
     public execute(params: StageExecuteParams): void {
         const beans = this.beans;
-        const sortOptions: SortOption[] = beans.sortSvc!.getSortOptions();
+        const sortOptions = beans.sortSvc!.getSortOptions();
 
-        const sortActive = sortOptions && sortOptions.length > 0;
         const deltaSort =
-            sortActive &&
+            sortOptions.length > 0 &&
             !!params.changedRowNodes &&
             // in time we can remove this check, so that delta sort is always
             // on if transactions are present. it's off for now so that we can
@@ -59,13 +59,12 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
             // rolling out to everyone.
             this.gos.get('deltaSort');
 
-        this.sort(beans, sortOptions, sortActive, deltaSort, params.changedRowNodes, params.changedPath);
+        this.sort(beans, sortOptions, deltaSort, params.changedRowNodes, params.changedPath);
     }
 
     private sort(
         beans: BeanCollection,
         sortOptions: SortOption[],
-        sortActive: boolean,
         useDeltaSort: boolean,
         changedRowNodes: IChangedRowNodes | undefined,
         changedPath: ChangedPath | undefined
@@ -102,7 +101,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
                     // Maintain previous group order when groupMaintainOrder is enabled and no group columns are sorted.
                     newChildrenAfterSort.sort((childIndexComparator ??= newChildIndexComparer()));
                 }
-            } else if (!sortActive || skipSortingPivotLeafs) {
+            } else if (!sortOptions.length || skipSortingPivotLeafs) {
                 // if there's no sort to make, skip this step
                 newChildrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
             } else if (useDeltaSort && changedRowNodes) {
