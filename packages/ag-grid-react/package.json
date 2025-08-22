@@ -35,7 +35,7 @@
     "@babel/plugin-proposal-throw-expressions": "^7.27.1",
     "@babel/preset-typescript": "^7.27.1",
     "@types/react": "~18.3.26",
-    "@types/react-dom": "~18.2.0",
+    "@types/react-dom": "~18.3.7",
     "babel-preset-react-app": "^10.0.0",
     "react": "^16.9.0",
     "react-app-polyfill": "^2.0.0",
