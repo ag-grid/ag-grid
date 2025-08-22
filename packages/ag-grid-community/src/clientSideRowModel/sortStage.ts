@@ -72,14 +72,15 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
         const { gos, colModel, rowGroupColsSvc, rowNodeSorter, rowRenderer, showRowGroupCols } = beans;
         const groupMaintainOrder = gos.get('groupMaintainOrder');
         const groupColumnsPresent = colModel.getCols().some((c) => c.isRowGroupActive());
+        const groupCols = rowGroupColsSvc?.columns;
 
         const isPivotMode = colModel.isPivotMode();
         const postSortFunc = gos.getCallback('postSortRows');
 
         let hasAnyFirstChildChanged = false;
         let sortContainsGroupColumns: boolean | undefined;
+        let tempSet: Set<RowNode> | undefined;
 
-        let childIndexComparator: ChildIndexComparer | undefined;
         const callback = (rowNode: RowNode) => {
             // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
             const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
@@ -90,25 +91,28 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
                 skipSortingGroups &&= !sortContainsGroupColumns;
             }
 
-            let newChildrenAfterSort: RowNode[];
+            let newChildrenAfterSort: RowNode[] | null = null;
             if (skipSortingGroups) {
-                const nextGroup = rowGroupColsSvc?.columns?.[rowNode.level + 1];
-                // if the sort is null, then sort was explicitly removed, so remove sort from this group.
-                const wasSortExplicitlyRemoved = nextGroup?.getSort() === null;
+                // Maintain previous visual order in O(n).
 
-                newChildrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
-                if (newChildrenAfterSort.length > 0 && !wasSortExplicitlyRemoved) {
-                    // Maintain previous group order when groupMaintainOrder is enabled and no group columns are sorted.
-                    newChildrenAfterSort.sort((childIndexComparator ??= newChildIndexComparer()));
+                // if the sort is null, then sort was explicitly removed, so remove sort from this group.
+                const nextGroupIndex = rowNode.level + 1;
+                const nextGroup = groupCols && nextGroupIndex < groupCols.length ? groupCols[nextGroupIndex] : null;
+                const wasSortExplicitlyRemoved = nextGroup?.getSort() === null;
+                if (!wasSortExplicitlyRemoved) {
+                    newChildrenAfterSort = preserveGroupOrder(rowNode, (tempSet ??= new Set<RowNode>()));
+                    tempSet.clear();
                 }
             } else if (!sortOptions.length || skipSortingPivotLeafs) {
                 // if there's no sort to make, skip this step
-                newChildrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
+                newChildrenAfterSort = null;
             } else if (useDeltaSort && changedRowNodes) {
                 newChildrenAfterSort = doDeltaSort(rowNodeSorter!, rowNode, changedRowNodes, changedPath, sortOptions);
             } else {
                 newChildrenAfterSort = rowNodeSorter!.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
             }
+
+            newChildrenAfterSort ||= rowNode.childrenAfterAggFilter?.slice(0) ?? [];
 
             hasAnyFirstChildChanged ||= rowNode.childrenAfterSort?.[0] !== newChildrenAfterSort[0];
 
@@ -193,12 +197,7 @@ const doDeltaSort = (
 
     const sortedUntouchedRows = oldSortedRows
         .filter((child) => untouchedRows.has(child.id!))
-        .map(
-            (rowNode: RowNode, currentPos: number): SortedRowNode => ({
-                currentPos,
-                rowNode,
-            })
-        );
+        .map((rowNode: RowNode, currentPos: number): SortedRowNode => ({ currentPos, rowNode }));
 
     touchedRows.sort((a, b) => rowNodeSorter.compareRowNodes(sortOptions, a, b));
 
@@ -250,55 +249,44 @@ const mergeSortedArrays = (
     return res;
 };
 
-type ChildIndexComparer = (a: RowNode, b: RowNode) => number;
+/**
+ * O(n) merge preserving previous visual order and appending new items in current order.
+ */
+const preserveGroupOrder = (node: RowNode, processed: Set<RowNode>): RowNode[] | null => {
+    const childrenAfterSort = node.childrenAfterSort;
+    const childrenAfterSortLen = childrenAfterSort?.length;
 
-const newChildIndexComparer = () => {
-    // Keep track of group or filler nodes source indices, as they are the sourceRowIndex of the first child, recursively
-    // This could be simplified / optimize in the future by adding and maintaining a new field `groupSourceIndex` in the RowNode.
-    let groupSourceIndexCache: Map<RowNode, number> | undefined;
+    const childrenAfterAggFilter = node.childrenAfterAggFilter;
+    const childrenAfterAggFilterLen = childrenAfterAggFilter?.length;
 
-    /**
-     * Groups and filler nodes do not have a sourceRowIndex, it is -1.
-     * This finds the first deepest leaf node's sourceRowIndex and caches it.
-     * This keeps sorting deterministic for new nodes.
-     */
-    const getSourceRowIndex = (row: RowNode): number => {
-        const sourceRowIndex = row.sourceRowIndex;
-        if (sourceRowIndex >= 0) {
-            (groupSourceIndexCache ??= new Map()).set(row, sourceRowIndex);
-            return sourceRowIndex;
+    if (!childrenAfterSortLen || !childrenAfterAggFilterLen) {
+        return null;
+    }
+
+    const result = new Array<RowNode>(childrenAfterAggFilterLen);
+    let writeIdx = 0;
+
+    // Track all present nodes.
+    for (let i = 0; i < childrenAfterAggFilterLen; ++i) {
+        processed.add(childrenAfterAggFilter[i]);
+    }
+
+    // Keep nodes that are still present, in previous visual order.
+    for (let i = 0; i < childrenAfterSortLen; ++i) {
+        const p = childrenAfterSort[i];
+        if (processed.delete(p)) {
+            result[writeIdx++] = p;
         }
+    }
 
-        const cached = groupSourceIndexCache?.get(row);
-        if (cached !== undefined) {
-            return cached;
-        }
+    // Append remaining nodes (new ones) in current order by iterating the Set,
+    // which preserves insertion order matching `current`.
+    for (const c of processed) {
+        result[writeIdx++] = c;
+    }
 
-        groupSourceIndexCache ??= new Map();
-
-        const children = row.childrenAfterGroup;
-        if (!children?.length) {
-            groupSourceIndexCache.set(row, -1);
-            return -1;
-        }
-
-        const child = children[0]!;
-        const result = getSourceRowIndex(child);
-        groupSourceIndexCache.set(row, result);
-        return result;
-    };
-
-    /**
-     * Comparator for maintain-order group sorting:
-     * - primary: previous childIndex (new items get sentinel 0x7fffffff to append)
-     * - tiebreaker: earliest leaf sourceRowIndex to get deterministic order for new items
-     */
-    const compareChildIndex = (a: RowNode, b: RowNode): number => {
-        const ai = a.childIndex;
-        const bi = b.childIndex;
-        const c = (ai >= 0 ? ai : 0x7fffffff) - (bi >= 0 ? bi : 0x7fffffff);
-        return c || getSourceRowIndex(a) - getSourceRowIndex(b);
-    };
-
-    return compareChildIndex;
+    if (writeIdx !== childrenAfterAggFilterLen) {
+        result.length = writeIdx;
+    }
+    return result;
 };

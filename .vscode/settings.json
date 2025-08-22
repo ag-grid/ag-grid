@@ -154,6 +154,5 @@
     "**/.nx/**": true,
     "**/dist/**": true,
     "**/node_modules/**": true
-  },
-  "cmake.ignoreCMakeListsMissing": true
+  }
 }
