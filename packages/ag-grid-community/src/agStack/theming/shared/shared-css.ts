@@ -52,6 +52,26 @@ export interface SharedThemeParams {
     chromeBackgroundColor: ColorValue;
 
     /**
+     * Background color of the drag and drop image component element when dragging columns or rows
+     */
+    dragAndDropImageBackgroundColor: ColorValue;
+
+    /**
+     * Border color of the drag and drop image component element when dragging columns or rows
+     */
+    dragAndDropImageBorder: BorderValue;
+
+    /**
+     * Border color of the drag and drop image component element when dragging columns or rows
+     */
+    dragAndDropImageNotAllowedBorder: BorderValue;
+
+    /**
+     * Shadow for the drag and drop image component element when dragging columns
+     */
+    dragAndDropImageShadow: ShadowValue;
+
+    /**
      * Default shadow for dropdown menus
      */
     dropdownShadow: ShadowValue;
@@ -236,6 +256,18 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
     dropdownShadow: { ref: 'cardShadow' },
     listItemHeight: {
         calc: 'max(iconSize, dataFontSize) + widgetVerticalSpacing',
+    },
+    dragAndDropImageBackgroundColor: backgroundColor,
+    dragAndDropImageBorder: true,
+    dragAndDropImageNotAllowedBorder: {
+        color: {
+            ref: 'invalidColor',
+            onto: 'dragAndDropImageBackgroundColor',
+            mix: 0.5,
+        },
+    },
+    dragAndDropImageShadow: {
+        ref: 'popupShadow',
     },
     iconSize: 16,
     iconColor: 'inherit',

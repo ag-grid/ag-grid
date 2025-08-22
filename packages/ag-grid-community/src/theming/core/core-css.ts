@@ -147,26 +147,6 @@ interface CoreThemeParams extends SharedThemeParams {
     fullRowEditInvalidBackgroundColor: ColorValue;
 
     /**
-     * Background color of the drag and drop image component element when dragging columns or rows
-     */
-    dragAndDropImageBackgroundColor: ColorValue;
-
-    /**
-     * Border color of the drag and drop image component element when dragging columns or rows
-     */
-    dragAndDropImageBorder: BorderValue;
-
-    /**
-     * Border color of the drag and drop image component element when dragging columns or rows
-     */
-    dragAndDropImageNotAllowedBorder: BorderValue;
-
-    /**
-     * Shadow for the drag and drop image component element when dragging columns
-     */
-    dragAndDropImageShadow: ShadowValue;
-
-    /**
      * Color of the drag handle on draggable rows and column markers
      */
     dragHandleColor: ColorValue;
@@ -827,18 +807,6 @@ export const coreDefaults: Readonly<Omit<CoreThemeParams, keyof SharedThemeParam
     paginationPanelHeight: {
         ref: 'rowHeight',
         calc: 'max(rowHeight, 22px)',
-    },
-    dragAndDropImageBackgroundColor: backgroundColor,
-    dragAndDropImageBorder: true,
-    dragAndDropImageNotAllowedBorder: {
-        color: {
-            ref: 'invalidColor',
-            onto: 'dragAndDropImageBackgroundColor',
-            mix: 0.5,
-        },
-    },
-    dragAndDropImageShadow: {
-        ref: 'popupShadow',
     },
     dragHandleColor: foregroundMix(0.7),
     headerColumnResizeHandleHeight: '30%',
