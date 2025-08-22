@@ -1,4 +1,5 @@
 import rootESLint from '../../eslint.config.mjs';
+import noMathRandomRule from '../../utilities/eslint/no-math-random-in-module-context.js';
 
 export default [
     ...rootESLint,
@@ -9,6 +10,13 @@ export default [
                 // loading explicitly here
                 project: ['./tsconfig.lib.json', 'tsconfig.umd.json', './tsconfig.spec.json'],
                 tsconfigRootDir: import.meta.dirname,
+            },
+        },
+        plugins: {
+            'no-math-random': {
+                rules: {
+                    'no-math-random-in-module-context': noMathRandomRule,
+                },
             },
         },
         rules: {
@@ -75,6 +83,7 @@ export default [
             ],
 
             'no-console': 'error',
+            'no-math-random/no-math-random-in-module-context': 'error',
         },
     },
     {
