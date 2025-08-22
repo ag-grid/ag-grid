@@ -94,10 +94,15 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
             if (skipSortingGroups) {
                 // Maintain previous visual order in O(n).
 
-                // if the sort is null, then sort was explicitly removed, so remove sort from this group.
-                const nextGroupIndex = rowNode.level + 1;
-                const nextGroup = groupCols && nextGroupIndex < groupCols.length ? groupCols[nextGroupIndex] : null;
-                const wasSortExplicitlyRemoved = nextGroup?.getSort() === null;
+                let wasSortExplicitlyRemoved = false;
+                if (groupCols) {
+                    const nextGroupIndex = rowNode.level + 1;
+                    if (nextGroupIndex < groupCols.length) {
+                        // if the sort is null, then sort was explicitly removed, so remove sort from this group.
+                        wasSortExplicitlyRemoved = groupCols[nextGroupIndex].getSort() === null;
+                    }
+                }
+
                 if (!wasSortExplicitlyRemoved) {
                     newChildrenAfterSort = preserveGroupOrder(rowNode);
                 }
@@ -119,9 +124,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
             updateRowNodeAfterSort(rowNode);
 
             if (postSortFunc) {
-                const params: WithoutGridCommon<PostSortRowsParams> = {
-                    nodes: rowNode.childrenAfterSort,
-                };
+                const params: WithoutGridCommon<PostSortRowsParams> = { nodes: rowNode.childrenAfterSort };
                 postSortFunc(params);
             }
         };
