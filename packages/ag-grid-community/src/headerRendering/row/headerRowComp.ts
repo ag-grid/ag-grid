@@ -21,6 +21,8 @@ export class HeaderRowComp extends Component {
     }
 
     public postConstruct(): void {
+        const eGui = this.getGui();
+        eGui.setAttribute('tabindex', String(this.gos.get('tabIndex')));
         _setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
 
         const compProxy: IHeaderRowComp = {
