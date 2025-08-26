@@ -65,7 +65,7 @@
     "ag-grid-react": "34.1.2",
     "ag-grid-vue3": "34.1.2",
     "algoliasearch": "^4.18.0",
-    "astro": "5.13.2",
+    "astro": "5.13.3",
     "cheerio": "^1.0.0",
     "classnames": "^2.5.1",
     "codesandbox-import-utils": "2.2.3",
