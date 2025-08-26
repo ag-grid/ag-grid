@@ -772,6 +772,7 @@ export function getEnableAGTestIdLogic(isUmd: boolean = false): string {
     const community = 'agGridCommunity';
     const enterprise = 'agGridEnterprise';
 
+    // Support dynamically adding modules during integration testing
     const agGridCommunityImport = isUmd ? '' : `import * as ${community} from 'ag-grid-community';`;
     const agGridEnterpriseImport = isUmd ? '' : `import * as ${enterprise} from 'ag-grid-enterprise';`;
 

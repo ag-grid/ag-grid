@@ -461,6 +461,7 @@ export class CellComp extends Component {
         const isCancelBeforeStart = cellEditor.isCancelBeforeStart?.();
         if (isCancelBeforeStart) {
             this.beans.editModelSvc?.setEdit(this.cellCtrl, { editorState: { isCancelBeforeStart } });
+            // dispatch this call after a potential startEdit to preserve event sequencing
             setTimeout(() => {
                 context.destroyBean(cellEditor);
                 this.cellCtrl.stopEditing(true);

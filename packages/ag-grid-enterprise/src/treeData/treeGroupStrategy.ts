@@ -36,7 +36,8 @@ const FLAG_EXPANDED_INITIALIZED = 0x10000000;
 /** Mask used to keep track of the number of children in a node */
 const MASK_CHILDREN_LEN = 0x0fffffff; // This equates to 268,435,455 maximum children per parent, more than enough
 
-/** Path key separator used to flatten hierarchical paths. Includes uncommon and randomized characters to avoid collisions and abuse. */
+/** Path key separator used to flatten hierarchical paths. Includes uncommon and randomized characters to avoid collisions and abuse. 
+    This field is set after construction of TreeGroupStrategy to avoid calling Math.random at module load time. */
 let PATH_KEY_SEPARATOR = '';
 
 export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {

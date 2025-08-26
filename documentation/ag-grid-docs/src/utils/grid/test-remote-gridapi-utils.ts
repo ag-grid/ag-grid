@@ -1,17 +1,20 @@
 import type { Page } from 'playwright/test';
+import { test } from 'playwright/test';
 
 import type { AgPublicEventType, GridApi } from 'ag-grid-community';
 
 import type { TemplateEventKeys } from './test-event-types';
 
 export const ensureGridReady = async (page: Page, gridId: string = '1') => {
-    let gridReadyPromise: Promise<void> | null = null;
-    if (!gridReadyPromise) {
-        // Wait for grid to be visible
-        const selector = `[grid-id="${gridId}"]`;
-        gridReadyPromise = page.locator(selector).waitFor({ state: 'visible' });
-    }
-    await gridReadyPromise;
+    await test.step(`Ensure grid ${gridId} is ready`, async () => {
+        let gridReadyPromise: Promise<void> | null = null;
+        if (!gridReadyPromise) {
+            // Wait for grid to be visible
+            const selector = `[grid-id="${gridId}"]`;
+            gridReadyPromise = page.locator(selector).waitFor({ state: 'visible' });
+        }
+        await gridReadyPromise;
+    });
 };
 
 export const createRemoteGridApiProxy = (page: Page, gridId: string = '1', eventLog: EventLog): AsyncGridApi => {
