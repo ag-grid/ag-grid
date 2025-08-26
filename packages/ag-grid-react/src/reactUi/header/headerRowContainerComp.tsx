@@ -71,8 +71,8 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
             {insertRowsJsx()}
         </div>
     ) : centre ? (
-        <div ref={setRef} className={'ag-header-viewport ' + className} role="presentation" tabIndex={-1}>
-            <div ref={eCenterContainer} className={'ag-header-container'} role="rowgroup">
+        <div ref={setRef} className={'ag-header-viewport ' + className} role="rowgroup" tabIndex={-1}>
+            <div ref={eCenterContainer} className={'ag-header-container'} role="presentation">
                 {insertRowsJsx()}
             </div>
         </div>
