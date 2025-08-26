@@ -1,6 +1,11 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
+    if (process.env.PRE_34_VERSION) {
+        test.skip();
+        return;
+    }
+
     // Run through all frameworks
     test.eachFramework('With Batch', async ({ page, agIdFor }) => {
         await page.locator('button', { hasText: 'Start Batch Edit' }).click(); // click the button to start batch editing

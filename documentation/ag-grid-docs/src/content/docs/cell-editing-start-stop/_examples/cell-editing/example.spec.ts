@@ -46,7 +46,7 @@ test.agExample(import.meta, () => {
         await page.keyboard.press('Escape'); // press Enter to save the value
 
         await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
-        await expect(cell).toHaveText('Bob'); // verify the cell has the new value
+        await expect(cell).toHaveText('Mary'); // verify the cell has the new value
     });
 
     test.describe('Events', () => {
@@ -172,8 +172,8 @@ test.agExample(import.meta, () => {
 
             expect(eventLog).toEqual([
                 ['isCancelBeforeStart', []],
-                ['cellEditingStarted', {}],
                 ['cellEditingStopped', { newValue: undefined, oldValue: 'Alice' }],
+                ['cellEditingStarted', {}],
             ]);
 
             expect(cell).toHaveText('Alice');
@@ -281,7 +281,7 @@ test.agExample(import.meta, () => {
                 'cellValueChanged',
                 {
                     newValue: 'Fred',
-                    oldValue: 'Bob',
+                    oldValue: 'Mary',
                     source: 'edit',
                 },
             ],
@@ -289,7 +289,7 @@ test.agExample(import.meta, () => {
                 'cellEditingStopped',
                 {
                     newValue: 'Fred',
-                    oldValue: 'Bob',
+                    oldValue: 'Mary',
                 },
             ],
         ]);

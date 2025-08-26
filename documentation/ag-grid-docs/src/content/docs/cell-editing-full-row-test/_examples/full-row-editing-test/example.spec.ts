@@ -1,6 +1,11 @@
 import { ensureGridReady, expect, repeat, scrollGridRelative, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
+    if (process.env.PRE_34_VERSION) {
+        test.skip();
+        return;
+    }
+
     test.beforeEach(async ({ page }) => {
         await page.setViewportSize({ width: 300, height: 800 });
     });
