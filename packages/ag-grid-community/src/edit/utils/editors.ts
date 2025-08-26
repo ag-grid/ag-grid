@@ -487,7 +487,7 @@ function dispatchEditingStopped(
     }
 }
 
-export function _hasValidationRules(beans: BeanCollection): boolean {
+function _hasValidationRules(beans: BeanCollection): boolean {
     const { gos, colModel } = beans;
     const getFullRowEditValidationErrors = !!gos.get('getFullRowEditValidationErrors');
     const columnsHaveRules = colModel
