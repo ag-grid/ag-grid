@@ -38,7 +38,7 @@ const MASK_CHILDREN_LEN = 0x0fffffff; // This equates to 268,435,455 maximum chi
 
 /** Path key separator used to flatten hierarchical paths. Includes uncommon and randomized characters to avoid collisions and abuse. */
 const PATH_KEY_SEPARATOR = String.fromCharCode(31, 4096 + Math.random() * 61440, 4096 + Math.random() * 61440, 8291);
-/** Fixed separator length (4 code units), avoids recomputing length and makes intent explicit. */
+
 const PATH_KEY_SEPARATOR_LEN = 4;
 
 export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
@@ -607,7 +607,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         nodesByPath: Map<string, GroupingRowNode<TData>>,
         paths: Map<GroupingRowNode, string>
     ): void {
-        const segments = new Array<number>(32); // temporary array to hold the segment positions
+        const segments = new Array<number>(48); // temporary array to hold the segment positions
 
         // Rebuild from scratch the tree structure from the path keys.
         // This approach is generally less expensive, than keeping and maintaining a map of children for each node.
@@ -625,7 +625,8 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             // Collect separators positions, fast string split without allocations
             const segmentsLen = this.splitPathKey(segments, pathKey);
 
-            // Find deepest existing node walking backward.
+            // Fast path: check immediate parent first (common when data is ordered or siblings processed together)
+            // If found, we can skip the backward scan entirely.
             let startLevel = 0;
             let treeParent = rootNode;
             for (let level = segmentsLen - 1; level >= 0; --level) {
@@ -638,7 +639,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
 
             if (startLevel < segmentsLen) {
-                treeParent = this.buildMissingFillerNodes(
+                treeParent = this.buildMissingFillers(
                     nodesByPath,
                     pathKey,
                     segments,
@@ -667,7 +668,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     /** Walk forward from startLevel to segmentsLen creating missing filler nodes and return the final parent. */
-    private buildMissingFillerNodes(
+    private buildMissingFillers(
         nodesByPath: Map<string, GroupingRowNode<TData>>,
         pathKey: string,
         segments: number[],
