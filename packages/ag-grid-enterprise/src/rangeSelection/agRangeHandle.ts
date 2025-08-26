@@ -44,14 +44,15 @@ export class AgRangeHandle extends AbstractSelectionHandle {
 
             if (rowChanged) {
                 // ensure the dimension range is kept in sync with the value range (which has the handle)
-                rangeSvc.updateRangeEnd(
-                    cellRanges[0],
-                    {
+                rangeSvc.updateRangeRowBoundary({
+                    cellRange: cellRanges[0],
+                    boundary: 'end',
+                    cellPosition: {
                         ...this.endPosition,
                         column: cellRanges[0].columns[0],
                     },
-                    true
-                );
+                    silent: true,
+                });
             }
         }
 

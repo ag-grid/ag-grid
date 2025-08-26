@@ -1,23 +1,21 @@
 import { KeyCode } from '../constants/keyCode';
 import { AgComponentStub } from '../core/agComponentStub';
-import type { AgCoreBean } from '../interfaces/agCoreBean';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import type { TooltipCtrl } from '../interfaces/iTooltip';
-import type { ITooltipFeature } from '../interfaces/iTooltip';
-import { TooltipTrigger } from '../tooltip/baseTooltipStateManager';
-import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
-import { _createAgElement, _isVisible, _removeFromParent } from '../utils/dom';
+import { _setAriaRole } from '../utils/aria';
+import { _last } from '../utils/array';
+import { _clearElement, _isVisible } from '../utils/dom';
 import { agListCSS } from './agList.css-GENERATED';
+import { AgListItem } from './agListItem';
 
 export interface ListOption<TValue = string> {
     value: TValue;
     text?: string;
 }
 
-type AgListEvent = 'fieldValueChanged' | 'selectedItem';
+export type AgListEvent = 'fieldValueChanged' | 'selectedItem';
 
 export class AgList<
     TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
@@ -37,21 +35,31 @@ export class AgList<
     TComponentSelectorType,
     TEventType | AgListEvent
 > {
-    private readonly activeClass = 'ag-active-item';
-
     private options: ListOption<TValue>[] = [];
-    private itemEls: HTMLElement[] = [];
-    private highlightedEl: HTMLElement | null;
+
+    private listItems: AgListItem<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType,
+        TValue
+    >[] = [];
+    private highlightedItem: AgListItem<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType,
+        TValue
+    > | null = null;
+
     private value: TValue | null;
     private displayValue: string | null;
-    private tooltipMode: TooltipTrigger;
-    private tooltipFeatures: ITooltipFeature[] = [];
-    private lastDisplayedTooltip?: ITooltipFeature;
 
-    constructor(
-        private readonly cssIdentifier = 'default',
-        private readonly unFocusable: boolean = false
-    ) {
+    constructor(private readonly cssIdentifier = 'default') {
         super({ tag: 'div', cls: `ag-list ag-${cssIdentifier}-list` });
         this.registerCSS(agListCSS);
     }
@@ -59,29 +67,16 @@ export class AgList<
     public postConstruct(): void {
         const eGui = this.getGui();
         this.addManagedElementListeners(eGui, { mouseleave: () => this.clearHighlighted() });
-        this.addManagedPropertyListener('tooltipTrigger', ({ currentValue }) => {
-            this.setTooltipMode(currentValue);
-        });
-        this.setTooltipMode(this.gos.get('tooltipTrigger'));
-
-        if (this.unFocusable) {
-            return;
-        }
-        this.addManagedElementListeners(eGui, { keydown: this.handleKeyDown.bind(this) });
-    }
-
-    private setTooltipMode(tooltipTriggerMode: 'focus' | 'hover' = 'focus'): void {
-        this.tooltipMode = tooltipTriggerMode === 'focus' ? TooltipTrigger.FOCUS : TooltipTrigger.HOVER;
     }
 
     public handleKeyDown(e: KeyboardEvent): void {
         const key = e.key;
         switch (key) {
             case KeyCode.ENTER:
-                if (!this.highlightedEl) {
+                if (!this.highlightedItem) {
                     this.setValue(this.getValue());
                 } else {
-                    const pos = this.itemEls.indexOf(this.highlightedEl);
+                    const pos = this.listItems.indexOf(this.highlightedItem);
                     this.setValueByIndex(pos);
                 }
                 break;
@@ -98,52 +93,6 @@ export class AgList<
                 this.navigateToPage(key);
                 break;
         }
-    }
-
-    private navigate(key: 'ArrowUp' | 'ArrowDown'): void {
-        const isDown = key === KeyCode.DOWN;
-        let itemToHighlight: HTMLElement;
-
-        const { itemEls, highlightedEl } = this;
-        if (!highlightedEl) {
-            itemToHighlight = itemEls[isDown ? 0 : itemEls.length - 1];
-        } else {
-            const currentIdx = itemEls.indexOf(highlightedEl);
-            let nextPos = currentIdx + (isDown ? 1 : -1);
-            nextPos = Math.min(Math.max(nextPos, 0), itemEls.length - 1);
-            itemToHighlight = itemEls[nextPos];
-        }
-        this.highlightItem(itemToHighlight);
-    }
-
-    private navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): void {
-        const { itemEls, highlightedEl } = this;
-        if (!highlightedEl || itemEls.length === 0) {
-            return;
-        }
-
-        const currentIdx = itemEls.indexOf(highlightedEl);
-        const rowCount = this.options.length - 1;
-        const itemHeight = itemEls[0].clientHeight;
-        const pageSize = Math.floor(this.getGui().clientHeight / itemHeight);
-
-        let newIndex = -1;
-
-        if (key === KeyCode.PAGE_HOME) {
-            newIndex = 0;
-        } else if (key === KeyCode.PAGE_END) {
-            newIndex = rowCount;
-        } else if (key === KeyCode.PAGE_DOWN) {
-            newIndex = Math.min(currentIdx + pageSize, rowCount);
-        } else if (key === KeyCode.PAGE_UP) {
-            newIndex = Math.max(currentIdx - pageSize, 0);
-        }
-
-        if (newIndex === -1) {
-            return;
-        }
-
-        this.highlightItem(itemEls[newIndex]);
     }
 
     public addOptions(listOptions: ListOption<TValue>[]): this {
@@ -166,83 +115,14 @@ export class AgList<
     public clearOptions(): void {
         this.options = [];
         this.reset(true);
-        this.itemEls.forEach((itemEl) => {
-            _removeFromParent(itemEl);
+        this.listItems.forEach((item) => {
+            item.destroy();
         });
 
-        for (const tooltipFeature of this.tooltipFeatures) {
-            tooltipFeature.destroy?.();
-        }
+        _clearElement(this.getGui());
 
-        this.itemEls = [];
-        this.tooltipFeatures = [];
+        this.listItems = [];
         this.refreshAriaRole();
-    }
-
-    private refreshAriaRole(): void {
-        const eGui = this.getGui();
-
-        _setAriaRole(eGui, this.options.length === 0 ? 'presentation' : 'listbox');
-    }
-
-    private updateIndices(): void {
-        const options = this.getGui().querySelectorAll('.ag-list-item');
-        this.refreshAriaRole();
-        options.forEach((option: HTMLElement, idx) => {
-            _setAriaPosInSet(option, idx + 1);
-            _setAriaSetSize(option, options.length);
-        });
-    }
-
-    private renderOption(value: TValue, text: string): void {
-        const itemEl = _createAgElement({
-            tag: 'div',
-            cls: `ag-list-item ag-${this.cssIdentifier}-list-item`,
-            attrs: { role: 'option' },
-        });
-
-        const span = _createAgElement({
-            tag: 'span',
-            children: text,
-        });
-        itemEl.appendChild(span);
-
-        if (!this.unFocusable) {
-            itemEl.tabIndex = -1;
-        }
-
-        this.itemEls.push(itemEl);
-
-        this.addManagedListeners(itemEl, {
-            mouseover: () => this.highlightItem(itemEl),
-            mousedown: (e: MouseEvent) => {
-                e.preventDefault();
-                // `setValue` will already close the list popup, without stopPropagation
-                // the mousedown event will close popups that own AgSelect
-                e.stopPropagation();
-                this.setValue(value);
-            },
-        });
-
-        const tooltipFeature = this.createOptionalManagedBean(
-            this.beans.registry.createDynamicBean<ITooltipFeature & AgCoreBean<TBeanCollection>>(
-                'tooltipFeature',
-                false,
-                {
-                    getTooltipValue: () => text,
-                    getGui: () => itemEl,
-                    getLocation: () => 'UNKNOWN',
-                    // only show tooltips for items where the text cannot be fully displayed
-                    shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth,
-                } as TooltipCtrl<'UNKNOWN', any>
-            )
-        );
-
-        if (tooltipFeature) {
-            this.tooltipFeatures.push(tooltipFeature);
-        }
-
-        this.getGui().appendChild(itemEl);
     }
 
     public setValue(value?: TValue | null, silent?: boolean): this {
@@ -263,7 +143,7 @@ export class AgList<
 
             this.value = option.value;
             this.displayValue = option.text!;
-            this.highlightItem(this.itemEls[idx]);
+            this.highlightItem(this.listItems[idx]);
 
             if (!silent) {
                 this.fireChangeEvent();
@@ -290,8 +170,47 @@ export class AgList<
         const idx = this.options.findIndex((option) => option.value === this.value);
 
         if (idx !== -1) {
-            this.highlightItem(this.itemEls[idx]);
+            this.highlightItem(this.listItems[idx]);
         }
+    }
+
+    public highlightItem(
+        item: AgListItem<
+            TBeanCollection,
+            TProperties,
+            TGlobalEvents,
+            TCommon,
+            TPropertiesService,
+            TComponentSelectorType,
+            TValue
+        >
+    ): void {
+        const itemEl = item.getGui();
+        if (!_isVisible(itemEl)) {
+            return;
+        }
+
+        this.clearHighlighted();
+        item.setHighlighted(true);
+        this.highlightedItem = item;
+
+        const eGui = this.getGui();
+
+        const { scrollTop, clientHeight } = eGui;
+        const { offsetTop, offsetHeight } = itemEl;
+
+        if (offsetTop + offsetHeight > scrollTop + clientHeight || offsetTop < scrollTop) {
+            itemEl.scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    public hideItemTooltip(): void {
+        this.highlightedItem?.tooltipFeature?.attemptToHideTooltip();
+    }
+
+    public override destroy(): void {
+        this.hideItemTooltip();
+        super.destroy();
     }
 
     private reset(silent?: boolean): void {
@@ -303,56 +222,87 @@ export class AgList<
         }
     }
 
-    private highlightItem(el: HTMLElement): void {
-        if (!_isVisible(el)) {
-            return;
-        }
-
-        this.clearHighlighted();
-        this.highlightedEl = el;
-
-        el.classList.add(this.activeClass);
-        _setAriaSelected(el, true);
-
-        const eGui = this.getGui();
-
-        const { scrollTop, clientHeight } = eGui;
-        const { offsetTop, offsetHeight } = el;
-
-        if (offsetTop + offsetHeight > scrollTop + clientHeight || offsetTop < scrollTop) {
-            el.scrollIntoView({ block: 'nearest' });
-        }
-
-        if (!this.unFocusable) {
-            el.focus();
-        } else if (this.tooltipMode === TooltipTrigger.FOCUS) {
-            this.hideTooltip();
-            this.showTooltipForItem(el);
-        }
-    }
-
-    public hideTooltip(): void {
-        this.lastDisplayedTooltip?.attemptToHideTooltip();
-    }
-
-    public showTooltipForItem(el: HTMLElement): void {
-        const idx = this.itemEls.indexOf(el);
-        if (idx !== -1 && this.tooltipFeatures.length) {
-            this.lastDisplayedTooltip = this.tooltipFeatures[idx];
-            this.lastDisplayedTooltip?.attemptToShowTooltip();
-        }
-    }
-
     private clearHighlighted(): void {
-        const highlightedEl = this.highlightedEl;
-        if (!highlightedEl || !_isVisible(highlightedEl)) {
+        this.highlightedItem?.setHighlighted(false);
+        this.highlightedItem = null;
+    }
+
+    private renderOption(value: TValue, text: string): void {
+        const item = new AgListItem<
+            TBeanCollection,
+            TProperties,
+            TGlobalEvents,
+            TCommon,
+            TPropertiesService,
+            TComponentSelectorType,
+            TValue
+        >(this.cssIdentifier, text, value);
+        item.setParentComponent(this);
+        const listItem = this.createManagedBean(item);
+
+        this.listItems.push(listItem);
+        this.getGui().appendChild(listItem.getGui());
+    }
+
+    private navigate(key: 'ArrowUp' | 'ArrowDown'): void {
+        const isDown = key === KeyCode.DOWN;
+        let itemToHighlight;
+
+        const { listItems, highlightedItem } = this;
+        if (!highlightedItem) {
+            itemToHighlight = isDown ? listItems[0] : _last(listItems);
+        } else {
+            const currentIdx = listItems.indexOf(highlightedItem);
+            let nextPos = currentIdx + (isDown ? 1 : -1);
+            nextPos = Math.min(Math.max(nextPos, 0), listItems.length - 1);
+            itemToHighlight = listItems[nextPos];
+        }
+        this.highlightItem(itemToHighlight);
+    }
+
+    private navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): void {
+        const { listItems, highlightedItem } = this;
+        if (!highlightedItem || listItems.length === 0) {
             return;
         }
 
-        highlightedEl.classList.remove(this.activeClass);
-        _setAriaSelected(highlightedEl, false);
+        const currentIdx = listItems.indexOf(highlightedItem);
+        const rowCount = this.options.length - 1;
+        const itemHeight = listItems[0].getHeight();
+        const pageSize = Math.floor(this.getGui().clientHeight / itemHeight);
 
-        this.highlightedEl = null;
+        let newIndex = -1;
+
+        if (key === KeyCode.PAGE_HOME) {
+            newIndex = 0;
+        } else if (key === KeyCode.PAGE_END) {
+            newIndex = rowCount;
+        } else if (key === KeyCode.PAGE_DOWN) {
+            newIndex = Math.min(currentIdx + pageSize, rowCount);
+        } else if (key === KeyCode.PAGE_UP) {
+            newIndex = Math.max(currentIdx - pageSize, 0);
+        }
+
+        if (newIndex === -1) {
+            return;
+        }
+
+        this.highlightItem(listItems[newIndex]);
+    }
+
+    private refreshAriaRole(): void {
+        _setAriaRole(this.getGui(), this.options.length === 0 ? 'presentation' : 'listbox');
+    }
+
+    private updateIndices(): void {
+        this.refreshAriaRole();
+
+        const listItems = this.listItems;
+        const len = listItems.length;
+
+        listItems.forEach((item, idx) => {
+            item.setIndex(idx + 1, len);
+        });
     }
 
     private fireChangeEvent(): void {
@@ -362,13 +312,5 @@ export class AgList<
 
     private fireItemSelected(): void {
         this.dispatchLocalEvent({ type: 'selectedItem' });
-    }
-
-    public override destroy(): void {
-        this.hideTooltip();
-        this.lastDisplayedTooltip = null as any;
-        this.tooltipFeatures = [];
-
-        super.destroy();
     }
 }

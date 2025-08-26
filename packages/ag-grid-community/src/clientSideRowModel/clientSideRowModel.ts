@@ -636,20 +636,20 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             this.eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
         }
 
-        this.rowDataUpdatedPending ||= rowDataUpdated;
-
         if (
             !this.started ||
             this.isRefreshingModel ||
             this.colModel.changeEventsDispatching ||
             this.isSuppressModelUpdateAfterUpdateTransaction(params)
         ) {
+            this.rowDataUpdatedPending ||= rowDataUpdated;
             return;
         }
 
         if (this.rowDataUpdatedPending) {
             this.rowDataUpdatedPending = false;
             params.rowDataUpdated = rowDataUpdated = true;
+            params.step = 'group'; // Ensure grouping runs
         }
 
         this.isRefreshingModel = true;

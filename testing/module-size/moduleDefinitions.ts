@@ -40,7 +40,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     RowSelectionModule: 34.59,
     RowStyleModule: 1.24,
     ScrollApiModule: 0.7,
-    SelectEditorModule: 76.21,
+    SelectEditorModule: 78.75,
     TextEditorModule: 66.67,
     TextFilterModule: 124,
     TooltipModule: 23.68,
@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 217.72,
-    AllEnterpriseModule: 1483.45,
+    AllEnterpriseModule: 1488.51,
     BatchEditModule: 78.76,
     CellSelectionModule: 55,
     ClipboardModule: 46.04,
@@ -77,7 +77,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     ServerSideRowModelApiModule: 19,
     ServerSideRowModelModule: 155.08,
     SetFilterModule: 152.16,
-    SideBarModule: 32,
+    SideBarModule: 33.16,
     SparklinesModule: 20,
     StatusBarModule: 27,
     TreeDataModule: 88.17,

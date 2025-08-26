@@ -40,7 +40,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
 
     private updateFilters(filterModel: FilterModel, event: any, colId: string): void {
         const dataKey = extractFilterColId(event);
-        const rawValue = event.datum[dataKey];
+        const rawValue = this.convertRawValue(colId, event.datum[dataKey]);
         if (rawValue === undefined) {
             return;
         }
@@ -75,6 +75,17 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
             newFilterModel[colId] = colFilterModel;
             filterManager?.setFilterModel(newFilterModel);
         });
+    }
+
+    private convertRawValue(colId: string, rawValue: any): any {
+        const { colModel, dataTypeSvc } = this.beans;
+        const column = colModel.getColById(colId);
+        const colDef = column?.colDef;
+        if (colDef && dataTypeSvc && colDef.chartDataType === 'time' && colDef.cellDataType === 'dateString') {
+            // need to convert from `Date` back to `string`
+            return dataTypeSvc.getDateFormatterFunction(column)(rawValue as Date);
+        }
+        return rawValue;
     }
 }
 

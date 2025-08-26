@@ -363,6 +363,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         if (idx != null) {
+            this.tooltipFeature?.attemptToHideTooltip();
             listComponent.highlightIndex(idx);
         } else {
             listComponent.refresh();

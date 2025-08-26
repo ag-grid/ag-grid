@@ -4,6 +4,7 @@
 import { Easing, Group } from '@tweenjs/tween.js';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
+import { colorSchemeDarkBlue, themeQuartz } from 'ag-grid-community';
 import type { ColDef, GridApi, GridOptions, MenuItemDef } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry, createGrid } from 'ag-grid-community';
 import {
@@ -104,7 +105,7 @@ const columnDefs: ColDef[] = [
 ];
 let api: GridApi;
 const gridOptions: GridOptions = {
-    theme: 'legacy',
+    theme: themeQuartz.withPart(colorSchemeDarkBlue),
     columnDefs,
     loading: false,
     suppressNoRowsOverlay: true,

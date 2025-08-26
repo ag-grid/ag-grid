@@ -14,7 +14,6 @@ export interface ILoadingOverlayComp<TData = any, TContext = any>
 const LoadingOverlayElement: ElementParams = {
     tag: 'span',
     cls: 'ag-overlay-loading-center',
-    attrs: { 'aria-live': 'polite', 'aria-atomic': 'true' },
 };
 export class LoadingOverlayComponent
     extends OverlayComponent<any, any, ILoadingOverlayParams>
@@ -27,11 +26,9 @@ export class LoadingOverlayComponent
 
         if (!customTemplate) {
             const localeTextFunc = this.getLocaleTextFunc();
-            // setTimeout is used because some screen readers only announce `aria-live` text when
-            // there is a "text change", so we force a change from empty.
-            setTimeout(() => {
-                this.getGui().textContent = localeTextFunc('loadingOoo', 'Loading...');
-            });
+            const loadingText = localeTextFunc('loadingOoo', 'Loading...');
+            this.getGui().textContent = loadingText;
+            this.beans.ariaAnnounce.announceValue(loadingText, 'overlay');
         }
     }
 }

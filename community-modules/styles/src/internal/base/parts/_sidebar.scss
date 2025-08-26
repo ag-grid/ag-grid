@@ -10,6 +10,15 @@
         background-color: var(--ag-control-panel-background-color);
     }
 
+    .ag-tool-panel-external {
+        display: flex;
+        flex-direction: row;
+    }
+
+    :where(.ag-tool-panel-external) .ag-tool-panel-wrapper {
+        flex-grow: 1;
+    }
+
     .ag-side-buttons {
         padding-top: calc(var(--ag-grid-size) * 4);
         width: calc(var(--ag-icon-size) + 4px);

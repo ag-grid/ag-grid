@@ -1,4 +1,3 @@
-import Tick from '@pqina/flip';
 import '@pqina/flip/dist/flip.min.css';
 import React, { useEffect, useRef } from 'react';
 
@@ -12,8 +11,24 @@ const Flip: React.FC<FlipProps> = ({ value }) => {
 
     // mount
     useEffect(() => {
-        tick.current = Tick.DOM.create(root.current!, { value });
-        return () => tick.current?.destroy();
+        const initTick = async () => {
+            try {
+                const Tick = await import('@pqina/flip');
+                if (root.current) {
+                    tick.current = Tick.default.DOM.create(root.current, { value });
+                }
+            } catch (error) {
+                // Failed to load Tick library
+            }
+        };
+
+        initTick();
+
+        return () => {
+            if (tick.current) {
+                tick.current.destroy();
+            }
+        };
     }, []);
 
     // update

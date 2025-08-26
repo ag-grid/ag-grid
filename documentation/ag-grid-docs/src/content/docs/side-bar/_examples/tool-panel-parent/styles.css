@@ -1,0 +1,57 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 0;
+    width: 100%;
+}
+
+.example-header {
+    margin-bottom: 10px;
+}
+/* Base styles for the container */
+#modalDrawer {
+    display: none; /* Hidden by default */
+    z-index: 1000;
+}
+
+#modalDrawer.active {
+    display: flex;
+}
+
+/* Modal style */
+#modalDrawer.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+#modalDrawer.modal {
+    & .inner {
+        min-width: 300px;
+    }
+
+    & .content {
+        min-height: 200px;
+    }
+}
+
+#modalDrawer .inner {
+    border: 1px solid;
+    padding: 20px;
+    border-radius: 10px;
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--ag-background-color, white);
+    color: var(--ag-text-color, black);
+    color-scheme: var(--ag-browser-color-scheme);
+    font-family: var(--ag-font-family, Arial), sans-serif;
+    flex-direction: column;
+}
