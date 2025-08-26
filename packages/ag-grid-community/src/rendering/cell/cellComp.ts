@@ -264,6 +264,7 @@ export class CellComp extends Component {
         const cellEditorPromise = compDetails.newAgStackInstance();
 
         const { params } = compDetails;
+        cellEditorPromise.then((c) => this.afterCellEditorCreated(versionCopy, c!, params, popup, position));
 
         // if we don't do this, and editor component is async, then there will be a period
         // when the component isn't present and keyboard navigation won't work - so example
@@ -272,9 +273,6 @@ export class CellComp extends Component {
         if (cellEditorAsync && params.cellStartedEdit) {
             this.cellCtrl.focusCell(true);
         }
-
-        // dispatch this call after a potential startEdit to preserve event sequencing
-        cellEditorPromise.then((c) => this.afterCellEditorCreated(versionCopy, c!, params, popup, position));
     }
 
     private insertValueWithoutCellRenderer(valueToDisplay: any): void {
@@ -436,6 +434,13 @@ export class CellComp extends Component {
             return;
         }
 
+        const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
+        if (editingCancelledByUserComp) {
+            context.destroyBean(cellEditor);
+            this.cellCtrl.stopEditing(true);
+            return;
+        }
+
         if (!cellEditor.getGui) {
             _warn(97, { colId: this.column.getId() });
             context.destroyBean(cellEditor);
@@ -457,16 +462,6 @@ export class CellComp extends Component {
         cellEditor.afterGuiAttached?.();
         this.cellCtrl.enableEditorTooltipFeature(cellEditor);
         this.cellCtrl.cellEditorAttached();
-
-        const isCancelBeforeStart = cellEditor.isCancelBeforeStart?.();
-        if (isCancelBeforeStart) {
-            this.beans.editModelSvc?.setEdit(this.cellCtrl, { editorState: { isCancelBeforeStart } });
-            // dispatch this call after a potential startEdit to preserve event sequencing
-            setTimeout(() => {
-                context.destroyBean(cellEditor);
-                this.cellCtrl.stopEditing(true);
-            });
-        }
     }
 
     public refreshEditStyles(editing: boolean, isPopup?: boolean): void {
