@@ -25,6 +25,9 @@
         "watch": {
           "watch": true
         },
+        "run": {
+          "watch": false
+        },
         "update": {
           "update": true
         }
