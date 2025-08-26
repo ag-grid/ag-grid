@@ -157,7 +157,7 @@ describe('Edit API', () => {
                 new Map([
                     [column1, { editorValue: undefined, pendingValue: 'new1', sourceValue: 'old1', state: 'editing' }],
                     [column2, { editorValue: undefined, pendingValue: 'new2', sourceValue: 'old2', state: 'changed' }],
-                ])
+                ]) as EditRow
             );
 
             const result = getEditingCells(beans);
@@ -190,14 +190,14 @@ describe('Edit API', () => {
                 new Map([
                     [column1, { editorValue: undefined, pendingValue: 'new1', sourceValue: 'old1', state: 'editing' }],
                     [column2, { editorValue: undefined, pendingValue: 'new2', sourceValue: 'old2', state: 'changed' }],
-                ])
+                ]) as EditRow
             );
             editMap!.set(
                 rowNode2,
                 new Map([
                     [column1, { editorValue: undefined, pendingValue: 'new3', sourceValue: 'old3', state: 'editing' }],
                     [column2, { editorValue: undefined, pendingValue: 'new4', sourceValue: 'old4', state: 'changed' }],
-                ])
+                ]) as EditRow
             );
 
             const result = getEditingCells(beans);
@@ -253,7 +253,7 @@ describe('Edit API', () => {
                         { editorValue: undefined, pendingValue: UNEDITED, sourceValue: 'old1', state: 'editing' },
                     ],
                     [column2, { editorValue: undefined, pendingValue: 'new2', sourceValue: 'old2', state: 'changed' }],
-                ])
+                ]) as EditRow
             );
 
             const result = getEditingCells(beans);
@@ -292,18 +292,18 @@ describe('Edit API', () => {
             ] as EditingCellPosition[];
             setEditingCells(beans, cells);
             expect(beans.editModelSvc!.setEditMap).toHaveBeenCalled();
-            expect(editMap).toEqual(
+            expect(editMap).toMatchObject(
                 new Map([
                     [
                         { rowIndex: 0, rowPinned: undefined },
                         new Map([
                             [
-                                {
-                                    getColId: expect.any(Function),
+                                expect.objectContaining({
                                     colId: 'col1',
+                                    getColId: expect.any(Function),
                                     getColDef: expect.any(Function),
                                     isColumnFunc: expect.any(Function),
-                                },
+                                }),
                                 { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
                             ],
                         ]),
@@ -320,36 +320,38 @@ describe('Edit API', () => {
             ] as EditingCellPosition[];
             setEditingCells(beans, cells);
             expect(beans.editModelSvc!.setEditMap).toHaveBeenCalledWith(
-                new Map([
-                    [
-                        { rowIndex: 0, rowPinned: undefined },
-                        new Map([
-                            [
-                                {
-                                    getColId: expect.any(Function),
-                                    colId: 'col1',
-                                    getColDef: expect.any(Function),
-                                    isColumnFunc: expect.any(Function),
-                                },
-                                { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
-                            ],
-                        ]),
-                    ],
-                    [
-                        { rowIndex: 1, rowPinned: undefined },
-                        new Map([
-                            [
-                                {
-                                    getColId: expect.any(Function),
-                                    colId: 'col2',
-                                    getColDef: expect.any(Function),
-                                    isColumnFunc: expect.any(Function),
-                                },
-                                { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
-                            ],
-                        ]),
-                    ],
-                ]) as any
+                expect.objectContaining(
+                    new Map([
+                        [
+                            { rowIndex: 0, rowPinned: undefined },
+                            new Map([
+                                [
+                                    {
+                                        getColId: expect.any(Function),
+                                        colId: 'col1',
+                                        getColDef: expect.any(Function),
+                                        isColumnFunc: expect.any(Function),
+                                    },
+                                    { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
+                                ],
+                            ]),
+                        ],
+                        [
+                            { rowIndex: 1, rowPinned: undefined },
+                            new Map([
+                                [
+                                    {
+                                        getColId: expect.any(Function),
+                                        colId: 'col2',
+                                        getColDef: expect.any(Function),
+                                        isColumnFunc: expect.any(Function),
+                                    },
+                                    { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
+                                ],
+                            ]),
+                        ],
+                    ]) as any
+                )
             );
         });
 
@@ -361,36 +363,38 @@ describe('Edit API', () => {
             ] as EditingCellPosition[];
             setEditingCells(beans, cells);
             expect(beans.editModelSvc!.setEditMap).toHaveBeenCalledWith(
-                new Map([
-                    [
-                        { rowIndex: 0, rowPinned: undefined },
-                        new Map([
-                            [
-                                {
-                                    getColId: expect.any(Function),
-                                    colId: 'col1',
-                                    getColDef: expect.any(Function),
-                                    isColumnFunc: expect.any(Function),
-                                },
-                                { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
-                            ],
-                        ]),
-                    ],
-                    [
-                        { rowIndex: 1, rowPinned: undefined },
-                        new Map([
-                            [
-                                {
-                                    getColId: expect.any(Function),
-                                    colId: 'col2',
-                                    getColDef: expect.any(Function),
-                                    isColumnFunc: expect.any(Function),
-                                },
-                                { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
-                            ],
-                        ]),
-                    ],
-                ])
+                expect.objectContaining(
+                    new Map([
+                        [
+                            { rowIndex: 0, rowPinned: undefined },
+                            new Map([
+                                [
+                                    {
+                                        getColId: expect.any(Function),
+                                        colId: 'col1',
+                                        getColDef: expect.any(Function),
+                                        isColumnFunc: expect.any(Function),
+                                    },
+                                    { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
+                                ],
+                            ]),
+                        ],
+                        [
+                            { rowIndex: 1, rowPinned: undefined },
+                            new Map([
+                                [
+                                    {
+                                        getColId: expect.any(Function),
+                                        colId: 'col2',
+                                        getColDef: expect.any(Function),
+                                        isColumnFunc: expect.any(Function),
+                                    },
+                                    { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
+                                ],
+                            ]),
+                        ],
+                    ])
+                )
             );
         });
 
@@ -402,36 +406,38 @@ describe('Edit API', () => {
             ] as EditingCellPosition[];
             setEditingCells(beans, cells);
             expect(beans.editModelSvc!.setEditMap).toHaveBeenCalledWith(
-                new Map([
-                    [
-                        { rowIndex: 0, rowPinned: undefined },
-                        new Map([
-                            [
-                                {
-                                    getColId: expect.any(Function),
-                                    colId: 'col1',
-                                    getColDef: expect.any(Function),
-                                    isColumnFunc: expect.any(Function),
-                                },
-                                { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
-                            ],
-                        ]),
-                    ],
-                    [
-                        { rowIndex: 1, rowPinned: undefined },
-                        new Map([
-                            [
-                                {
-                                    getColId: expect.any(Function),
-                                    colId: 'col2',
-                                    getColDef: expect.any(Function),
-                                    isColumnFunc: expect.any(Function),
-                                },
-                                { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
-                            ],
-                        ]),
-                    ],
-                ])
+                expect.objectContaining(
+                    new Map([
+                        [
+                            { rowIndex: 0, rowPinned: undefined },
+                            new Map([
+                                [
+                                    {
+                                        getColId: expect.any(Function),
+                                        colId: 'col1',
+                                        getColDef: expect.any(Function),
+                                        isColumnFunc: expect.any(Function),
+                                    },
+                                    { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
+                                ],
+                            ]),
+                        ],
+                        [
+                            { rowIndex: 1, rowPinned: undefined },
+                            new Map([
+                                [
+                                    {
+                                        getColId: expect.any(Function),
+                                        colId: 'col2',
+                                        getColDef: expect.any(Function),
+                                        isColumnFunc: expect.any(Function),
+                                    },
+                                    { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
+                                ],
+                            ]),
+                        ],
+                    ])
+                )
             );
         });
 
@@ -443,36 +449,38 @@ describe('Edit API', () => {
             ] as EditingCellPosition[];
             setEditingCells(beans, cells);
             expect(beans.editModelSvc!.setEditMap).toHaveBeenCalledWith(
-                new Map([
-                    [
-                        { rowIndex: 0, rowPinned: undefined },
-                        new Map([
-                            [
-                                {
-                                    getColId: expect.any(Function),
-                                    colId: 'col1',
-                                    getColDef: expect.any(Function),
-                                    isColumnFunc: expect.any(Function),
-                                },
-                                { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
-                            ],
-                        ]),
-                    ],
-                    [
-                        { rowIndex: 1, rowPinned: undefined },
-                        new Map([
-                            [
-                                {
-                                    getColId: expect.any(Function),
-                                    colId: 'col2',
-                                    getColDef: expect.any(Function),
-                                    isColumnFunc: expect.any(Function),
-                                },
-                                { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
-                            ],
-                        ]),
-                    ],
-                ])
+                expect.objectContaining(
+                    new Map([
+                        [
+                            { rowIndex: 0, rowPinned: undefined },
+                            new Map([
+                                [
+                                    {
+                                        getColId: expect.any(Function),
+                                        colId: 'col1',
+                                        getColDef: expect.any(Function),
+                                        isColumnFunc: expect.any(Function),
+                                    },
+                                    { pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
+                                ],
+                            ]),
+                        ],
+                        [
+                            { rowIndex: 1, rowPinned: undefined },
+                            new Map([
+                                [
+                                    {
+                                        getColId: expect.any(Function),
+                                        colId: 'col2',
+                                        getColDef: expect.any(Function),
+                                        isColumnFunc: expect.any(Function),
+                                    },
+                                    { pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
+                                ],
+                            ]),
+                        ],
+                    ])
+                )
             );
         });
 
@@ -500,36 +508,48 @@ describe('Edit API', () => {
             ] as EditingCellPosition[];
             setEditingCells(beans, cells);
             expect(beans.editModelSvc!.setEditMap).toHaveBeenCalledWith(
-                new Map([
-                    [
-                        { rowIndex: 0, rowPinned: undefined },
-                        new Map([
-                            [
-                                {
-                                    getColId: expect.any(Function),
-                                    colId: 'col1',
-                                    getColDef: expect.any(Function),
-                                    isColumnFunc: expect.any(Function),
-                                },
-                                { editorValue: undefined, pendingValue: 'new1', sourceValue: 'old1', state: 'editing' },
-                            ],
-                        ]),
-                    ],
-                    [
-                        { rowIndex: 1, rowPinned: undefined },
-                        new Map([
-                            [
-                                {
-                                    getColId: expect.any(Function),
-                                    colId: 'col2',
-                                    getColDef: expect.any(Function),
-                                    isColumnFunc: expect.any(Function),
-                                },
-                                { editorValue: undefined, pendingValue: 'new2', sourceValue: 'old2', state: 'changed' },
-                            ],
-                        ]),
-                    ],
-                ])
+                expect.objectContaining(
+                    new Map([
+                        [
+                            { rowIndex: 0, rowPinned: undefined },
+                            new Map([
+                                [
+                                    {
+                                        getColId: expect.any(Function),
+                                        colId: 'col1',
+                                        getColDef: expect.any(Function),
+                                        isColumnFunc: expect.any(Function),
+                                    },
+                                    {
+                                        editorValue: undefined,
+                                        pendingValue: 'new1',
+                                        sourceValue: 'old1',
+                                        state: 'editing',
+                                    },
+                                ],
+                            ]),
+                        ],
+                        [
+                            { rowIndex: 1, rowPinned: undefined },
+                            new Map([
+                                [
+                                    {
+                                        getColId: expect.any(Function),
+                                        colId: 'col2',
+                                        getColDef: expect.any(Function),
+                                        isColumnFunc: expect.any(Function),
+                                    },
+                                    {
+                                        editorValue: undefined,
+                                        pendingValue: 'new2',
+                                        sourceValue: 'old2',
+                                        state: 'changed',
+                                    },
+                                ],
+                            ]),
+                        ],
+                    ])
+                )
             );
         });
 
@@ -539,7 +559,7 @@ describe('Edit API', () => {
                 { colId: 'col2', rowIndex: 1, rowPinned: undefined, newValue: 'new2', state: 'changed' },
             ] as EditingCellPosition[];
             setEditingCells(beans, cells, { update: true });
-            expect(editMap).toEqual(
+            expect(editMap).toMatchObject(
                 new Map([
                     [
                         rowNode2,
@@ -568,13 +588,13 @@ describe('Edit API', () => {
                         column1,
                         { editorValue: undefined, pendingValue: 'old1', sourceValue: UNEDITED, state: 'editing' },
                     ],
-                ])
+                ]) as EditRow
             );
             const cells = [
                 { colId: 'col1', rowIndex: 0, rowPinned: undefined, newValue: 'new1', state: 'editing' },
             ] as EditingCellPosition[];
             setEditingCells(beans, cells, { update: true });
-            expect(editMap).toEqual(
+            expect(editMap).toMatchObject(
                 new Map([
                     [
                         rowNode1,

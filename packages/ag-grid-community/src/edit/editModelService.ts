@@ -141,9 +141,9 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         const map = new Map<IRowNode, Map<Column, EditValue>>();
         this.edits.forEach((editRow, rowNode) => {
             const newEditRow = new Map<Column, EditValue>();
-            editRow.forEach((cellData, column) =>
+            editRow.forEach(({ editorState: _, ...cellData }, column) =>
                 // Ensure we copy the cell data to avoid reference issues
-                newEditRow.set(column, { ...cellData })
+                newEditRow.set(column, { ...cellData } as EditValue)
             );
             map.set(rowNode, newEditRow);
         });
@@ -217,11 +217,12 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         const positions: EditPositionValue[] = [];
         (editMap ?? this.edits).forEach((editRow, rowNode) => {
             for (const column of editRow.keys()) {
+                const { editorState: _, ...rest } = editRow.get(column)!;
                 positions.push({
                     rowNode,
                     column,
-                    ...editRow.get(column)!,
-                });
+                    ...rest,
+                } as EditPositionValue);
             }
         });
 
