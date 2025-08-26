@@ -30,14 +30,16 @@ function getElementParams(name: RowContainerName, options: RowContainerOptions, 
             tag: 'div',
             ref: 'eSpannedContainer',
             cls: `ag-spanning-container ${_getRowSpanContainerClass(name)}`,
-            role: 'rowgroup',
+            role: 'presentation',
         };
+
+        eContainerElement.role = 'presentation';
 
         return {
             tag: 'div',
             ref: 'eViewport',
             cls: `ag-viewport ${_getRowViewportClass(name)}`,
-            role: 'presentation',
+            role: 'rowgroup',
             children: [eContainerElement, isCellSpanning ? eSpannedContainerElement : null],
         };
     }

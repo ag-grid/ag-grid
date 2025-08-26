@@ -1049,7 +1049,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public onSuppressCellFocusChanged(suppressCellFocus: boolean): void {
-        const tabIndex = this.isFullWidth() && suppressCellFocus ? undefined : -1;
+        const tabIndex = this.isFullWidth() && suppressCellFocus ? undefined : this.gos.get('tabIndex');
         this.allRowGuis.forEach((gui) => {
             _addOrRemoveAttribute(gui.element, 'tabindex', tabIndex);
         });
