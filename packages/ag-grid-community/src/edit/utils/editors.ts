@@ -199,7 +199,9 @@ function _valueFromEditor(
 
     if (params?.isStopping) {
         const isCancelAfterEnd = cellEditor?.isCancelAfterEnd?.();
-        return { ...noValueResult, isCancelAfterEnd };
+        if (isCancelAfterEnd) {
+            return { ...noValueResult, isCancelAfterEnd };
+        }
     }
 
     const editorValue = cellEditor.getValue();
@@ -459,7 +461,7 @@ export function _destroyEditor(
                 newValue:
                     params?.cancel || latest.editorState.isCancelAfterEnd
                         ? undefined
-                        : edit?.editorValue ?? edit?.pendingValue,
+                        : latest?.editorValue ?? edit?.pendingValue,
                 oldValue: latest?.sourceValue,
             },
             params

@@ -52,12 +52,6 @@ test.agExample(import.meta, () => {
             await expect(totalCell).toHaveText('6'); // verify the total cell has the new value
             await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
         });
-
-        test.eachFramework('Test Total1', async ({ agIdFor }) => {
-            const totalCell = agIdFor.cell('0', 'total');
-            await expect(totalCell).toHaveText('6'); // verify the total cell has the new value
-            await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
-        });
     });
 
     test.eachFramework('GridApi + Styles', async ({ agIdFor, page, remoteGrid }) => {
