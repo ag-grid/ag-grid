@@ -5,7 +5,7 @@ import { _getCellEditorDetails } from '../../components/framework/userCompUtils'
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
-import { CellEditingStoppedEvent } from '../../events';
+import type { CellEditingStoppedEvent } from '../../events';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type {
     DefaultProvidedCellEditorParams,
