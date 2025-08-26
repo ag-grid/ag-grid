@@ -209,39 +209,34 @@ const mergeSortedArrays = (
     arr1: SortedRowNode[],
     arr2: SortedRowNode[]
 ): RowNode[] => {
-    const res: RowNode[] = [];
     let i = 0;
     let j = 0;
     const arr1Length = arr1.length;
     const arr2Length = arr2.length;
+    const res = new Array<RowNode>(arr1Length + arr2Length);
+    let k = 0;
 
-    // Traverse both array, adding them in order
+    // Traverse both arrays, adding them in order
     while (i < arr1Length && j < arr2Length) {
         const a = arr1[i];
         const b = arr2[j];
-        // Check if current element of first array is smaller than current element
-        // of second array. If yes, store first array element and increment first array index.
-        // Otherwise do same with second array
-        const compareResult = rowNodeSorter.compareRowNodes(sortOptions, a, b);
-        let chosen: SortedRowNode;
-        if (compareResult < 0) {
-            chosen = a;
+        if (rowNodeSorter.compareRowNodes(sortOptions, a, b) < 0) {
+            res[k++] = a.rowNode;
             ++i;
         } else {
-            chosen = b;
+            res[k++] = b.rowNode;
             ++j;
         }
-        res.push(chosen.rowNode);
     }
 
     // add remaining from arr1
     while (i < arr1Length) {
-        res.push(arr1[i++].rowNode);
+        res[k++] = arr1[i++].rowNode;
     }
 
     // add remaining from arr2
     while (j < arr2Length) {
-        res.push(arr2[j++].rowNode);
+        res[k++] = arr2[j++].rowNode;
     }
 
     return res;
@@ -262,7 +257,6 @@ const preserveGroupOrder = (node: RowNode): RowNode[] | null => {
     }
 
     const result = new Array<RowNode>(childrenAfterAggFilterLen);
-    let writeIdx = 0;
 
     // Track all present nodes.
     const processed = new Set<RowNode>();
@@ -271,6 +265,7 @@ const preserveGroupOrder = (node: RowNode): RowNode[] | null => {
     }
 
     // Keep nodes that are still present, in previous visual order.
+    let writeIdx = 0;
     for (let i = 0; i < childrenAfterSortLen; ++i) {
         const node = childrenAfterSort[i];
         if (processed.delete(node)) {
@@ -278,16 +273,15 @@ const preserveGroupOrder = (node: RowNode): RowNode[] | null => {
         }
     }
 
-    // Append remaining new nodes
-    for (let i = 0; i < childrenAfterAggFilterLen; ++i) {
-        const node = childrenAfterAggFilter[i];
-        if (processed.has(node)) {
-            result[writeIdx++] = node;
-        }
+    if (processed.size === 0 && writeIdx === childrenAfterSortLen) {
+        return childrenAfterSort; // No change, return the previous array
     }
 
-    if (writeIdx !== childrenAfterAggFilterLen) {
-        result.length = writeIdx;
+    // Add new nodes
+    for (const newNode of processed) {
+        result[writeIdx++] = newNode;
     }
+
+    result.length = writeIdx;
     return result;
 };
