@@ -689,7 +689,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             const subPath = pathKey.slice(0, end);
             let current = nodesByPath.get(subPath);
             if (current !== undefined) {
-                // Existing node: if it's a filler, adopt its id and level as the new prefix; otherwise keep last prefix.
                 if (current.sourceRowIndex < 0) {
                     fillerId = current.id!;
                     fillerLevel = level + 1; // current filler includes segment at 'level'
