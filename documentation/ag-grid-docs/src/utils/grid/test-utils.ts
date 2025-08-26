@@ -239,6 +239,7 @@ const clearCpuThrottle = async ({ page, cpuThrottle }: any) => {
             try {
                 await cdpSession.detach();
             } catch (error) {
+                // eslint-disable-next-line no-console
                 console.error('Error detaching CDP session:', error);
             }
         });
