@@ -651,11 +651,12 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 const subPath = pathKey.slice(0, end);
                 let current = nodesByPath.get(subPath);
                 if (current === undefined) {
-                    current = this.getOrCreateFiller(treeParent, pathKey.slice(start, end), level);
+                    const fillerKey = pathKey.slice(start, end);
+                    const fillerId = this.makeFillerId(treeParent, pathKey, segments, level, fillerKey, SEP_LEN);
+                    current = this.getOrCreateFiller(treeParent, fillerKey, fillerId);
                     nodesByPath.set(subPath, current);
-                } else {
-                    current.treeParent = treeParent;
                 }
+                current.treeParent = treeParent;
                 treeParent = current;
             }
 
@@ -682,14 +683,11 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 
-    private getOrCreateFiller(treeParent: GroupingRowNode<TData>, key: string, level: number): GroupingRowNode<TData> {
-        let id = level + '-' + key;
-        let current = treeParent;
-        while (--level >= 0) {
-            id = level + '-' + current.key + '-' + id;
-            current = current.treeParent!;
-        }
-        id = _ROW_ID_PREFIX_ROW_GROUP + id;
+    private getOrCreateFiller(
+        treeParent: GroupingRowNode<TData> | null,
+        key: string,
+        id: string
+    ): GroupingRowNode<TData> {
         const fillerNodesById = (this.fillerNodesById ??= new Map());
         let node = fillerNodesById.get(id);
         if (node === undefined) {
@@ -703,6 +701,35 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             fillerNodesById.set(id, node);
         }
         return node;
+    }
+
+    /**
+     * Build a stable filler ID directly from the full path, so creation order (child before parent) doesn't affect IDs.
+     * Result format: _ROW_ID_PREFIX_ROW_GROUP + "0-key0-1-key1-...-level-keyLevel"
+     */
+    private makeFillerId(
+        treeParent: GroupingRowNode<TData> | null,
+        pathKey: string,
+        segments: number[],
+        level: number,
+        fillerKey: string,
+        SEP_LEN: number
+    ): string {
+        // Fast path: if parent is an existing filler (not root), reuse its id as prefix and append current segment.
+        if (treeParent?.treeParent && treeParent.sourceRowIndex < 0 && !treeParent.data) {
+            return treeParent.id! + '-' + level + '-' + fillerKey;
+        }
+
+        // Fallback: build id from root for levels [0..level]. Use fillerKey for the last segment.
+        let id = _ROW_ID_PREFIX_ROW_GROUP + '0-';
+        if (level === 0) {
+            return id + fillerKey;
+        }
+        id += pathKey.slice(0, segments[0]);
+        for (let i = 1; i < level; ++i) {
+            id += '-' + i + '-' + pathKey.slice(segments[i - 1] + SEP_LEN, segments[i]);
+        }
+        return id + '-' + level + '-' + fillerKey;
     }
 
     private deselectHiddenNodes(updated: boolean): void {

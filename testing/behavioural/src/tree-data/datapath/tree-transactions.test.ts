@@ -182,4 +182,94 @@ describe('ag-grid tree transactions', () => {
 
         expect(gridRows.rowNodes.map((row) => row.data)).toEqual([row0, row3, undefined, row4, row5b]);
     });
+
+    test.only('filler order is not important', async () => {
+        const rowData = [
+            {
+                id: 'X3',
+                versionPath: {
+                    value: ['filler1', 'X1', 'filler2', 'X2', 'X3'],
+                },
+            },
+            {
+                id: 'X2',
+                versionPath: {
+                    value: ['filler1', 'X1', 'filler2', 'X2'],
+                },
+            },
+            {
+                id: 'X1',
+                versionPath: {
+                    value: ['filler1', 'X1'],
+                },
+            },
+        ];
+
+        let resolveLoaded: () => void;
+        const loadedPromise = new Promise<void>((resolve) => {
+            resolveLoaded = resolve;
+        });
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'id' }],
+            autoGroupColumnDef: { cellRendererParams: { suppressCount: true } },
+            treeData: true,
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+            getDataPath: (data) => data.versionPath.value,
+            onGridReady: () => {
+                api.applyTransaction({ add: rowData });
+                resolveLoaded();
+            },
+        });
+
+        await loadedPromise;
+
+        const gridRows = new GridRows(api, 'data', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler1 filler id:row-group-0-filler1
+            · └─┬ X1 GROUP id:X1
+            · · └─┬ filler2 filler id:row-group-0-filler1-1-X1-2-filler2
+            · · · └─┬ X2 GROUP id:X2
+            · · · · └── X3 LEAF id:X3
+        `);
+
+        // Add more nested data in shuffled order to ensure filler IDs are stable regardless of creation order
+        const more = [
+            {
+                id: 'X2.2',
+                versionPath: { value: ['filler1', 'X1', 'filler2', 'X2', 'X2.1', 'X2.2'] },
+            },
+            {
+                id: 'X4',
+                versionPath: { value: ['filler1', 'X1', 'filler2', 'X2', 'filler3', 'X4'] },
+            },
+            {
+                id: 'X5',
+                versionPath: { value: ['filler1', 'X1', 'filler2', 'X5'] },
+            },
+            {
+                id: 'X2.1',
+                versionPath: { value: ['filler1', 'X1', 'filler2', 'X2', 'X2.1'] },
+            },
+        ];
+
+        api.applyTransaction({ add: [more[0], more[2], more[1]] });
+
+        // Verify filler IDs and structure regardless of insertion order
+        await new GridRows(api, 'more', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler1 filler id:row-group-0-filler1
+            · └─┬ X1 GROUP id:X1
+            · · └─┬ filler2 filler id:row-group-0-filler1-1-X1-2-filler2
+            · · · ├─┬ X2 GROUP id:X2
+            · · · │ ├── X3 LEAF id:X3
+            · · · │ ├─┬ X2.1 filler id:row-group-0-filler1-1-X1-2-filler2-3-X2-4-X2.1
+            · · · │ │ └── X2.2 LEAF id:X2.2
+            · · · │ └─┬ filler3 filler id:row-group-0-filler1-1-X1-2-filler2-3-X2-4-filler3
+            · · · │ · └── X4 LEAF id:X4
+            · · · └── X5 LEAF id:X5
+        `);
+    });
 });
