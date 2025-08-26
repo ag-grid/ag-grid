@@ -607,7 +607,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         nodesByPath: Map<string, GroupingRowNode<TData>>,
         paths: Map<GroupingRowNode, string>
     ): void {
-        const SEP = PATH_KEY_SEPARATOR;
         const segments = new Array<number>(32); // temporary array to hold the segment positions
 
         // Rebuild from scratch the tree structure from the path keys.
@@ -624,14 +623,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
 
             // Collect separators positions, fast string split without allocations
-            let segmentsLen = 0;
-            let scanPos = 0;
-            while (scanPos < pathKey.length) {
-                const sepPos = pathKey.indexOf(SEP, scanPos);
-                if (sepPos === -1) break; // No more separators found
-                segments[segmentsLen++] = sepPos;
-                scanPos = sepPos + PATH_KEY_SEPARATOR_LEN;
-            }
+            const segmentsLen = this.splitPathKey(segments, pathKey);
 
             // Find deepest existing node walking backward.
             let startLevel = 0;
@@ -645,39 +637,74 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 }
             }
 
-            // Maintain a running ID prefix and the next segment index to append.
-            let fillerId = 'row-group';
-            let fillerLevel = 0;
-            if (treeParent?.treeParent && treeParent.sourceRowIndex < 0) {
-                fillerId = treeParent.id!;
-                fillerLevel = startLevel; // segments up to startLevel-1 are already included in the prefix
-            }
-
-            // Walk forward to construct missing nodes
-            for (let level = startLevel; level < segmentsLen; ++level) {
-                const end = segments[level];
-                const start = level === 0 ? 0 : segments[level - 1] + PATH_KEY_SEPARATOR_LEN;
-                const subPath = pathKey.slice(0, end);
-                let current = nodesByPath.get(subPath);
-                if (current !== undefined) {
-                    // Existing node: if it's a filler, adopt its id and level as the new prefix; otherwise keep last prefix.
-                    if (current.sourceRowIndex < 0) {
-                        fillerId = current.id!;
-                        fillerLevel = level + 1; // current filler includes segment at 'level'
-                    }
-                } else {
-                    const fillerKey = pathKey.slice(start, end);
-                    fillerId = this.makeFillerIdBase(pathKey, segments, level, fillerId, fillerLevel) + fillerKey;
-                    current = this.getOrCreateFiller(treeParent, fillerKey, fillerId);
-                    nodesByPath.set(subPath, current);
-                    fillerLevel = level + 1;
-                }
-                current.treeParent = treeParent;
-                treeParent = current;
+            if (startLevel < segmentsLen) {
+                treeParent = this.buildMissingFillerNodes(
+                    nodesByPath,
+                    pathKey,
+                    segments,
+                    segmentsLen,
+                    startLevel,
+                    treeParent
+                );
             }
 
             node.treeParent = treeParent;
         }
+    }
+
+    /** Collect separators positions, fast string split without allocations */
+    private splitPathKey(segments: number[], pathKey: string): number {
+        let segmentsLen = 0;
+        let scanPos = 0;
+        const pathKeyLen = pathKey.length;
+        while (scanPos < pathKeyLen) {
+            const sepPos = pathKey.indexOf(PATH_KEY_SEPARATOR, scanPos);
+            if (sepPos === -1) break; // No more separators found
+            segments[segmentsLen++] = sepPos;
+            scanPos = sepPos + PATH_KEY_SEPARATOR_LEN;
+        }
+        return segmentsLen;
+    }
+
+    /** Walk forward from startLevel to segmentsLen creating missing filler nodes and return the final parent. */
+    private buildMissingFillerNodes(
+        nodesByPath: Map<string, GroupingRowNode<TData>>,
+        pathKey: string,
+        segments: number[],
+        segmentsLen: number,
+        level: number,
+        treeParent: GroupingRowNode<TData>
+    ): GroupingRowNode<TData> {
+        // Maintain a running ID prefix and the next segment index to append.
+        let fillerLevel = 0;
+        let fillerId = 'row-group';
+        if (treeParent.sourceRowIndex < 0 && treeParent.treeParent) {
+            fillerLevel = level;
+            fillerId = treeParent.id!;
+        }
+        do {
+            const start = level === 0 ? 0 : segments[level - 1] + PATH_KEY_SEPARATOR_LEN;
+            const end = segments[level];
+            const subPath = pathKey.slice(0, end);
+            let current = nodesByPath.get(subPath);
+            if (current !== undefined) {
+                // Existing node: if it's a filler, adopt its id and level as the new prefix; otherwise keep last prefix.
+                if (current.sourceRowIndex < 0) {
+                    fillerId = current.id!;
+                    fillerLevel = level + 1; // current filler includes segment at 'level'
+                }
+            } else {
+                const fillerKey = start === 0 ? subPath : pathKey.slice(start, end);
+                fillerId = this.makeFillerIdBase(pathKey, segments, level, fillerId, fillerLevel) + fillerKey;
+                current = this.getOrCreateFiller(fillerKey, fillerId);
+                nodesByPath.set(subPath, current);
+                fillerLevel = level + 1;
+            }
+            current.treeParent = treeParent;
+            treeParent = current;
+            ++level;
+        } while (level < segmentsLen);
+        return treeParent;
     }
 
     private processDuplicatePaths(
@@ -699,11 +726,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 
-    private getOrCreateFiller(
-        treeParent: GroupingRowNode<TData> | null,
-        key: string,
-        id: string
-    ): GroupingRowNode<TData> {
+    private getOrCreateFiller(key: string, id: string): GroupingRowNode<TData> {
         const fillerNodesById = (this.fillerNodesById ??= new Map());
         let node = fillerNodesById.get(id);
         if (node === undefined) {
@@ -713,7 +736,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             node.group = true;
             node.leafGroup = false;
             node.rowGroupIndex = null;
-            node.treeParent = treeParent;
             fillerNodesById.set(id, node);
         }
         return node;
