@@ -1,5 +1,5 @@
 import type { ChangedPath, GroupingApproach, IChangedRowNodes, StageExecuteParams } from 'ag-grid-community';
-import { RowNode, _ROW_ID_PREFIX_ROW_GROUP, _removeFromArray } from 'ag-grid-community';
+import { RowNode, _ROW_ID_PREFIX_ROW_GROUP, _removeFromArray, _safeRandom } from 'ag-grid-community';
 import { BeanStub, _EmptyArray, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
@@ -48,7 +48,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     private nodesToUnselect: GroupingRowNode<TData>[] | null = null;
 
     postConstruct(): void {
-        PATH_KEY_SEPARATOR = String.fromCharCode(31, 4096 + Math.random() * 61440, 4096 + Math.random() * 61440, 8291);
+        PATH_KEY_SEPARATOR = String.fromCharCode(31, 4096 + _safeRandom() * 61440, 4096 + _safeRandom() * 61440, 8291);
     }
 
     public override destroy(): void {
