@@ -35,7 +35,7 @@ const functionRowModels: { [name in ApiFunctionName]?: RowModelType[] } = {
     isLastRowIndexKnown: [infinite, serverSide],
     expandAll: [clientSide, serverSide],
     collapseAll: [clientSide, serverSide],
-    onRowHeightChanged: [clientSide, serverSide],
+    onRowHeightChanged: [clientSide, serverSide, viewport],
     setRowCount: [infinite, serverSide],
     getCacheBlockState: [infinite, serverSide],
 };

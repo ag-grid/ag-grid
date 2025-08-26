@@ -38,7 +38,6 @@ import type {
     _RenderGridApi,
     _RowGridApi,
     _RowGroupingGridApi,
-    _RowModelSharedApi,
     _RowSelectionGridApi,
     _ScrollGridApi,
     _ServerSideRowModelGridApi,
@@ -427,6 +426,8 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         onRowHeightChanged: 0,
         resetRowHeights: 0,
     }),
+
+    ...mod<_ViewportRowModelGridApi>('ViewportRowModelApi', { onRowHeightChanged: 0, resetRowHeights: 0 }),
 
     ...mod<_SideBarGridApi<any>>('SideBar', {
         isSideBarVisible: 0,
