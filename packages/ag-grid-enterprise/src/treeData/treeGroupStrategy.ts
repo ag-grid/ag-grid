@@ -1,6 +1,5 @@
 import type { ChangedPath, GroupingApproach, IChangedRowNodes, StageExecuteParams } from 'ag-grid-community';
-import { RowNode, _removeFromArray } from 'ag-grid-community';
-import { BeanStub, _EmptyArray, _warn } from 'ag-grid-community';
+import { BeanStub, RowNode, _EmptyArray, _removeFromArray, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
