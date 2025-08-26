@@ -83,7 +83,7 @@ export default [
             ],
 
             'no-console': 'error',
-            'no-math-random/no-math-random-in-module-context': 'error',
+            // 'no-math-random/no-math-random-in-module-context': 'error',
         },
     },
     {

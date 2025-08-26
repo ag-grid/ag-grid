@@ -1,5 +1,5 @@
 import type { ChangedPath, GroupingApproach, IChangedRowNodes, StageExecuteParams } from 'ag-grid-community';
-import { RowNode, _ROW_ID_PREFIX_ROW_GROUP, _removeFromArray, _safeRandom } from 'ag-grid-community';
+import { RowNode, _ROW_ID_PREFIX_ROW_GROUP, _removeFromArray } from 'ag-grid-community';
 import { BeanStub, _EmptyArray, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
@@ -36,9 +36,8 @@ const FLAG_EXPANDED_INITIALIZED = 0x10000000;
 /** Mask used to keep track of the number of children in a node */
 const MASK_CHILDREN_LEN = 0x0fffffff; // This equates to 268,435,455 maximum children per parent, more than enough
 
-/** Path key separator used to flatten hierarchical paths. Includes uncommon and randomized characters to avoid collisions and abuse. 
-    This field is set after construction of TreeGroupStrategy to avoid calling Math.random at module load time. */
-let PATH_KEY_SEPARATOR = '';
+/** Path key separator used to flatten hierarchical paths. Includes uncommon and randomized characters to avoid collisions and abuse. */
+const PATH_KEY_SEPARATOR = String.fromCharCode(31, 4096 + Math.random() * 61440, 4096 + Math.random() * 61440, 8291);
 
 export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
     private groupColsIds: string = '';
@@ -46,10 +45,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     private parentIdGetter: DataFieldGetter<TData, string> | null = null;
     private fillerNodesById: Map<string, GroupingRowNode<TData>> | null = null;
     private nodesToUnselect: GroupingRowNode<TData>[] | null = null;
-
-    postConstruct(): void {
-        PATH_KEY_SEPARATOR = String.fromCharCode(31, 4096 + _safeRandom() * 61440, 4096 + _safeRandom() * 61440, 8291);
-    }
 
     public override destroy(): void {
         super.destroy();

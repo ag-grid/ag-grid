@@ -1226,7 +1226,7 @@ export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
 export { _formatNumberCommas } from './utils/number';
 export { _mergeDeep } from './utils/mergeDeep';
 export { _addFocusableContainerListener, _focusGridInnerElement, _focusNextGridCoreContainer } from './utils/gridFocus';
-export { _safeRandom } from './utils/random';
+
 // charts
 export * from './interfaces/iChartOptions';
 

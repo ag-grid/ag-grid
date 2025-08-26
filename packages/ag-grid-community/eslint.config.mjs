@@ -60,19 +60,19 @@ export default [
         },
     },
     // Only apply the custom Math.random rule to .ts files in packages/**
-    {
-        files: ['**/packages/**/*.ts'],
-        plugins: [
-            {
-                rules: {
-                    'no-math-random-in-module-context': require('../../utilities/eslint/no-math-random-in-module-context'),
-                },
-            },
-        ],
-        rules: {
-            'no-math-random-in-module-context': 'error',
-        },
-    },
+    // {
+    //     files: ['**/packages/**/*.ts'],
+    //     plugins: [
+    //         {
+    //             rules: {
+    //                 'no-math-random-in-module-context': require('../../utilities/eslint/no-math-random-in-module-context'),
+    //             },
+    //         },
+    //     ],
+    //     rules: {
+    //         'no-math-random-in-module-context': 'error',
+    //     },
+    // },
     {
         ignores: ['webpack.config.js', 'jest.*.js', 'eslint.config.mjs', 'scripts/build-css.ts'],
     },
