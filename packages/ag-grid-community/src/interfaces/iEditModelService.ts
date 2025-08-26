@@ -1,3 +1,4 @@
+import type { ICellEditor } from './iCellEditor';
 import type { Column } from './iColumn';
 import type { EditPosition, EditRowPosition } from './iEditService';
 import type { IRowNode } from './iRowNode';
@@ -13,6 +14,12 @@ export type EditValue = {
     pendingValue: any;
     sourceValue: any;
     state: EditState;
+    editorState: {
+        cellStartedEditing?: boolean;
+        cellStoppedEditing?: boolean;
+        isCancelAfterEnd?: ReturnType<NonNullable<ICellEditor['isCancelAfterEnd']>> | undefined;
+        isCancelBeforeStart?: ReturnType<NonNullable<ICellEditor['isCancelBeforeStart']>> | undefined;
+    };
 };
 
 export type EditPositionValue = Required<EditPosition> & EditValue;

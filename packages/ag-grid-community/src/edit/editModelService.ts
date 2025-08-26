@@ -165,11 +165,20 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     public setEdit(position: Required<EditPosition>, edit: Partial<EditValue>): Readonly<EditValue> {
         (this.edits.size === 0 || !this.edits.has(position.rowNode)) && this.edits.set(position.rowNode, new Map());
 
-        const currentEdit = { ...this._getEdit(position), ...edit } as EditValue;
+        const currentEdit = this._getEdit(position);
 
-        this.getEditRow(position.rowNode)!.set(position.column, currentEdit);
+        const updatedEdit = Object.assign({
+            editorState: {
+                isCancelAfterEnd: undefined,
+                isCancelBeforeStart: undefined,
+            },
+            ...currentEdit,
+            ...edit,
+        }) as EditValue;
 
-        return currentEdit;
+        this.getEditRow(position.rowNode)!.set(position.column, updatedEdit);
+
+        return updatedEdit;
     }
 
     public clearEditValue(position: EditPosition): void {
@@ -282,6 +291,10 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
                 pendingValue: UNEDITED,
                 sourceValue: this.beans.valueSvc.getValue(column as AgColumn, rowNode, true, 'api'),
                 state: 'editing',
+                editorState: {
+                    isCancelAfterEnd: undefined,
+                    isCancelBeforeStart: undefined,
+                },
             });
         }
         this.edits.set(rowNode, map);
