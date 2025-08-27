@@ -1,6 +1,5 @@
 import type { ChangedPath, GroupingApproach, IChangedRowNodes, StageExecuteParams } from 'ag-grid-community';
-import { RowNode, _ROW_ID_PREFIX_ROW_GROUP, _removeFromArray } from 'ag-grid-community';
-import { BeanStub, _EmptyArray, _warn } from 'ag-grid-community';
+import { BeanStub, RowNode, _EmptyArray, _removeFromArray, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
@@ -38,6 +37,8 @@ const MASK_CHILDREN_LEN = 0x0fffffff; // This equates to 268,435,455 maximum chi
 
 /** Path key separator used to flatten hierarchical paths. Includes uncommon and randomized characters to avoid collisions and abuse. */
 const PATH_KEY_SEPARATOR = String.fromCharCode(31, 4096 + Math.random() * 61440, 4096 + Math.random() * 61440, 8291);
+
+const PATH_KEY_SEPARATOR_LEN = 4;
 
 export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
     private groupColsIds: string = '';
@@ -605,9 +606,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         nodesByPath: Map<string, GroupingRowNode<TData>>,
         paths: Map<GroupingRowNode, string>
     ): void {
-        const SEP = PATH_KEY_SEPARATOR;
-        const SEP_LEN = PATH_KEY_SEPARATOR.length;
-        const segments = new Array<number>(32); // temporary array to hold the segment positions
+        const segments = new Array<number>(48); // temporary array to hold the segment positions
 
         // Rebuild from scratch the tree structure from the path keys.
         // This approach is generally less expensive, than keeping and maintaining a map of children for each node.
@@ -623,16 +622,10 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
 
             // Collect separators positions, fast string split without allocations
-            let segmentsLen = 0;
-            let scanPos = 0;
-            while (scanPos < pathKey.length) {
-                const sepPos = pathKey.indexOf(SEP, scanPos);
-                if (sepPos === -1) break; // No more separators found
-                segments[segmentsLen++] = sepPos;
-                scanPos = sepPos + SEP_LEN;
-            }
+            const segmentsLen = this.splitPathKey(segments, pathKey);
 
-            // Find deepest existing node walking backward.
+            // Fast path: check immediate parent first (common when data is ordered or siblings processed together)
+            // If found, we can skip the backward scan entirely.
             let startLevel = 0;
             let treeParent = rootNode;
             for (let level = segmentsLen - 1; level >= 0; --level) {
@@ -644,23 +637,73 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 }
             }
 
-            // Walk forward to construct missing nodes
-            for (let level = startLevel; level < segmentsLen; ++level) {
-                const end = segments[level];
-                const start = level === 0 ? 0 : segments[level - 1] + SEP_LEN;
-                const subPath = pathKey.slice(0, end);
-                let current = nodesByPath.get(subPath);
-                if (current === undefined) {
-                    current = this.getOrCreateFiller(treeParent, pathKey.slice(start, end), level);
-                    nodesByPath.set(subPath, current);
-                } else {
-                    current.treeParent = treeParent;
-                }
-                treeParent = current;
+            if (startLevel < segmentsLen) {
+                treeParent = this.buildMissingFillers(
+                    nodesByPath,
+                    pathKey,
+                    segments,
+                    segmentsLen,
+                    startLevel,
+                    treeParent
+                );
             }
 
             node.treeParent = treeParent;
         }
+    }
+
+    /** Collect separators positions, fast string split without allocations */
+    private splitPathKey(segments: number[], pathKey: string): number {
+        let segmentsLen = 0;
+        let scanPos = 0;
+        const pathKeyLen = pathKey.length;
+        while (scanPos < pathKeyLen) {
+            const sepPos = pathKey.indexOf(PATH_KEY_SEPARATOR, scanPos);
+            if (sepPos === -1) break; // No more separators found
+            segments[segmentsLen++] = sepPos;
+            scanPos = sepPos + PATH_KEY_SEPARATOR_LEN;
+        }
+        return segmentsLen;
+    }
+
+    /** Walk forward from startLevel to segmentsLen creating missing filler nodes and return the final parent. */
+    private buildMissingFillers(
+        nodesByPath: Map<string, GroupingRowNode<TData>>,
+        pathKey: string,
+        segments: number[],
+        segmentsLen: number,
+        level: number,
+        treeParent: GroupingRowNode<TData>
+    ): GroupingRowNode<TData> {
+        // Maintain a running ID prefix and the next segment index to append.
+        let fillerLevel = 0;
+        let fillerId = 'row-group';
+        if (treeParent.sourceRowIndex < 0 && treeParent.treeParent) {
+            fillerLevel = level;
+            fillerId = treeParent.id!;
+        }
+        do {
+            const start = level === 0 ? 0 : segments[level - 1] + PATH_KEY_SEPARATOR_LEN;
+            const end = segments[level];
+            const subPath = pathKey.slice(0, end);
+            let current = nodesByPath.get(subPath);
+            if (current !== undefined) {
+                if (current.sourceRowIndex < 0) {
+                    fillerId = current.id!;
+                    fillerLevel = level + 1; // current filler includes segment at 'level'
+                }
+            } else {
+                const fillerKey = start === 0 ? subPath : pathKey.slice(start, end);
+                fillerId = this.makeFillerIdBase(pathKey, segments, level, fillerId, fillerLevel) + fillerKey;
+                current = this.getOrCreateFiller(fillerKey, fillerId);
+                nodesByPath.set(subPath, current);
+                fillerLevel = level + 1;
+            }
+            current.treeParent = treeParent;
+            treeParent = current;
+            ++level;
+        } while (level < segmentsLen);
+        return treeParent;
     }
 
     private processDuplicatePaths(
@@ -682,14 +725,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 
-    private getOrCreateFiller(treeParent: GroupingRowNode<TData>, key: string, level: number): GroupingRowNode<TData> {
-        let id = level + '-' + key;
-        let current = treeParent;
-        while (--level >= 0) {
-            id = level + '-' + current.key + '-' + id;
-            current = current.treeParent!;
-        }
-        id = _ROW_ID_PREFIX_ROW_GROUP + id;
+    private getOrCreateFiller(key: string, id: string): GroupingRowNode<TData> {
         const fillerNodesById = (this.fillerNodesById ??= new Map());
         let node = fillerNodesById.get(id);
         if (node === undefined) {
@@ -699,10 +735,34 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             node.group = true;
             node.leafGroup = false;
             node.rowGroupIndex = null;
-            node.treeParent = treeParent;
             fillerNodesById.set(id, node);
         }
         return node;
+    }
+
+    /**
+     * Build the base filler ID up to the given 'level' and include the final level separator prefix.
+     * Caller should append only the 'fillerKey' after this base.
+     * Result format:
+     * - With no prefix and level === 0: _ROW_ID_PREFIX_ROW_GROUP + '0-'
+     * - With no prefix and level > 0: _ROW_ID_PREFIX_ROW_GROUP + '0-key0-1-key1-...-(level-1)-key(level-1)-level-'
+     * - With prefix present: prefixId + '-level-'
+     */
+    private makeFillerIdBase(
+        pathKey: string,
+        segments: number[],
+        level: number,
+        prefix: string,
+        prefixLevel: number
+    ): string {
+        // Append intermediate segments up to level-1 (exclusive)
+        while (prefixLevel < level) {
+            const start = prefixLevel > 0 ? segments[prefixLevel - 1] + PATH_KEY_SEPARATOR_LEN : 0;
+            const end = segments[prefixLevel];
+            prefix += '-' + prefixLevel + '-' + pathKey.slice(start, end);
+            ++prefixLevel;
+        }
+        return prefix + '-' + level + '-';
     }
 
     private deselectHiddenNodes(updated: boolean): void {

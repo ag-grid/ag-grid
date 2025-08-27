@@ -795,6 +795,7 @@ export {
     CellRangeType,
     IRangeService,
     ClearCellRangeParams,
+    CellRangeBoundaryParams,
     PartialCellRange,
 } from './interfaces/IRangeService';
 export { ICellRangeFeature } from './interfaces/iCellRangeFeature';

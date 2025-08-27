@@ -17,9 +17,10 @@ import HeaderFilterCellComp from './headerFilterCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
 
 const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
-    const { context } = useContext(BeansContext);
+    const { gos, context } = useContext(BeansContext);
 
     const { topOffset, rowHeight } = useMemo(() => ctrl.getTopAndHeight(), []);
+    const tabIndex = useMemo(() => gos.get('tabIndex'), []);
     const [ariaRowIndex, setAriaRowIndex] = useState(() => ctrl.getAriaRowIndex());
     const className = ctrl.headerRowClass;
 
@@ -86,7 +87,14 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
     }, []);
 
     return (
-        <div ref={setRef} className={className} role="row" style={style} aria-rowindex={ariaRowIndex}>
+        <div
+            ref={setRef}
+            className={className}
+            role="row"
+            style={style}
+            tabIndex={tabIndex}
+            aria-rowindex={ariaRowIndex}
+        >
             {cellCtrls.map(createCellJsx)}
         </div>
     );
