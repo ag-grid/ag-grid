@@ -208,19 +208,41 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IViewportRo
 
     public getRowIndexAtPixel(pixel: number): number {
         if (this.rowHeight !== 0) {
-            // avoid divide by zero error
-            return Math.floor(pixel / this.rowHeight);
+            // do a binary search to find the row, as rows can be variable heights we
+            // cannot just do a pixel / rowHeight
+
+            let lower = 0;
+            let upper = this.getRowCount() - 1;
+            let mid: number;
+            let rowTop: number;
+            let rowBottom: number;
+            while (lower <= upper) {
+                mid = Math.floor((lower + upper) / 2);
+                rowTop = this.getRowTop(mid);
+                rowBottom = rowTop + this.getRowBounds(mid).rowHeight;
+
+                if (rowTop <= pixel && rowBottom > pixel) {
+                    return mid;
+                } else if (rowTop < pixel) {
+                    lower = mid + 1;
+                } else {
+                    upper = mid - 1;
+                }
+            }
+
+            // if not found, just return last row
+            return this.getRowCount() - 1;
         }
 
         return 0;
     }
 
+    /**
+     * Index is likely out of bounds, so we need to handle this
+     */
     public getRowBounds(index: number): RowBounds {
-        const rowHeight = this.rowHeight;
-        return {
-            rowHeight,
-            rowTop: rowHeight * index,
-        };
+        const node = this.rowNodesByIndex[index];
+        return { rowHeight: node?.rowHeight ?? this.rowHeight, rowTop: node?.rowTop ?? this.getRowTop(index) };
     }
 
     resetRowHeights(): void {
@@ -272,10 +294,11 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IViewportRo
      * For budget reasons we limit the number of entries we keep in the heightsState map using the HEIGHT_STATE_SIZE_LIMIT.
      */
     private getRowTop(rowIndex: number): number {
-        let rowTop = this.rowHeight * rowIndex;
+        const rowHeight = this.rowHeight;
+        let rowTop = rowHeight * rowIndex;
         this.heightsState.forEach((height, index) => {
             if (index < rowIndex) {
-                rowTop += height - this.rowHeight;
+                rowTop += height - rowHeight;
             }
         });
         return rowTop;
