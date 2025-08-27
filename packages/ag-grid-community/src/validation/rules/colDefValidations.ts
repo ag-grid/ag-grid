@@ -94,7 +94,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
 const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = () => {
     const validations: Validations<ColDef | ColGroupDef> = {
         autoHeight: {
-            supportedRowModels: ['clientSide', 'serverSide'],
+            supportedRowModels: ['clientSide', 'serverSide', 'viewport'],
             validate: (_colDef, { paginationAutoPageSize }) => {
                 if (paginationAutoPageSize) {
                     return 'colDef.autoHeight is not supported with paginationAutoPageSize.';

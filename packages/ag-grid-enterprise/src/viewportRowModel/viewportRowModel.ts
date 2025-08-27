@@ -343,6 +343,8 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IViewportRo
         return result;
     }
 
+    public forEachDisplayedNode = this.forEachNode;
+
     public forEachNode(callback: (rowNode: RowNode, index: number, stateIndex: number) => void): void {
         Object.keys(this.rowNodesByIndex).forEach((indexStr, index) => {
             const rowIndex = parseInt(indexStr, 10);
