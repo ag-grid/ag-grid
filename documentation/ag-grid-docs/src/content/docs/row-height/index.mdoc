@@ -6,8 +6,7 @@ By default, the row height in the grid is based on the theme (`42px` for Quartz)
 individually to give each row a different height.
 
 {% note %}
-You cannot use variable row height when using either the [Viewport Row Model](./viewport/) or [Infinite Row Model](./infinite-scrolling/).
-This is because these row models need to work out the position of rows that are not loaded and hence need to assume the row height is fixed.
+Variable row height is not supported when using the [Infinite Row Model](./infinite-scrolling/).
 {% /note %}
 
 ## rowHeight Property
