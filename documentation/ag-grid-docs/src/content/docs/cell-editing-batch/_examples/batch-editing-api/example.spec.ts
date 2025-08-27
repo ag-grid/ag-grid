@@ -1,6 +1,11 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
+    if (process.env.PRE_34_VERSION) {
+        test.skip();
+        return;
+    }
+
     // Run through all frameworks
     test.eachFramework('With Batch', async ({ page, agIdFor }) => {
         await page.locator('button', { hasText: 'Start Batch Edit' }).click(); // click the button to start batch editing
@@ -48,12 +53,6 @@ test.agExample(import.meta, () => {
     // Nested tests for logical test grouping
     test.describe('Nested Batch Editing', () => {
         test.eachFramework('Test Total', async ({ agIdFor }) => {
-            const totalCell = agIdFor.cell('0', 'total');
-            await expect(totalCell).toHaveText('6'); // verify the total cell has the new value
-            await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);
-        });
-
-        test.eachFramework('Test Total1', async ({ agIdFor }) => {
             const totalCell = agIdFor.cell('0', 'total');
             await expect(totalCell).toHaveText('6'); // verify the total cell has the new value
             await expect(totalCell).not.toHaveClass(/ag-cell-batch-edit/);

@@ -54,7 +54,7 @@ import { _refreshEditCells } from './utils/refresh';
 type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };
 
 // these are event sources for setDataValue that will not cause the editors to close
-const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo', 'paste', 'bulk']);
+const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo', 'paste', 'bulk', 'rangeSvc']);
 
 // stop editing sources that we treat as UI-originated so we follow standard processing.
 const STOP_EDIT_SOURCE_TRANSFORM: Record<string, EditSource> = {
@@ -305,7 +305,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const willCancel = cancel && !!this.shouldCancelEditing(position, event, treatAsSource);
 
         if (willStop || willCancel) {
-            _syncFromEditors(beans, true);
+            _syncFromEditors(beans, { persist: true, isCancelling: willCancel || cancel, isStopping: willStop });
 
             const freshEdits = model.getEditMap();
 
@@ -343,7 +343,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             if (isEnter || isTab || isEscape) {
                 if (isEnter || isTab) {
-                    _syncFromEditors(beans, true);
+                    _syncFromEditors(beans, { persist: true });
                 } else if (isEscape) {
                     // only if ESC is pressed while in the editor for this cell
                     this.revertSingleCellEdit(cellCtrl!);
@@ -362,7 +362,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 edits = model.getEditMap();
             }
         } else {
-            _syncFromEditors(beans, true);
+            _syncFromEditors(beans, { persist: true });
             edits = model.getEditMap();
         }
 
@@ -414,7 +414,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     private processEdits(edits: EditMap, cancel: boolean = false, source: EditSource): EditPosition[] {
         const rowNodes = Array.from(edits.keys());
-        const { beans } = this;
 
         const hasValidationErrors =
             this.model.getCellValidationModel().getCellValidationMap().size > 0 ||
@@ -427,12 +426,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             for (const column of editRow.keys()) {
                 const editValue = editRow.get(column)!;
                 const position: Required<EditPosition> = { rowNode, column };
-                const cellCtrl = _getCellCtrl(beans, position);
                 const valueChanged = _sourceAndPendingDiffer(editValue);
 
-                const isCancelAfterEnd = cellCtrl?.comp?.getCellEditor()?.isCancelAfterEnd?.();
-
-                if (!cancel && !isCancelAfterEnd && valueChanged && !hasValidationErrors) {
+                if (!cancel && valueChanged && !hasValidationErrors) {
                     const success = this.setNodeDataValue(rowNode, column, editValue.pendingValue, undefined, source);
                     if (!success) {
                         editsToDelete.push(position);
@@ -755,7 +751,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             if (!eventSource || KEEP_EDITOR_SOURCES.has(eventSource)) {
                 // editApi or undoRedoApi apply change without involving the editor
-                _syncFromEditor(beans, position, true, newValue, eventSource);
+                _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
 
                 // a truthy return here indicates the operation succeeded, and if invoked from rowNode.setDataValue, will not result in a cell value change event
                 return this.setNodeDataValue(position.rowNode, position.column, newValue, true, eventSource);
@@ -768,7 +764,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 }
 
                 if (existing.sourceValue !== newValue) {
-                    _syncFromEditor(beans, position, true, newValue, eventSource);
+                    _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
                     this.stopEditing(position, { source: source as any, suppressNavigateAfterEdit: true });
                     return true;
                 }
@@ -785,7 +781,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 }
             }
 
-            _syncFromEditor(beans, position, true, newValue, eventSource);
+            _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
             this.stopEditing(position, { source: source as any, suppressNavigateAfterEdit: true });
 
             return true;
@@ -882,7 +878,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         const { beans, rangeSvc, valueSvc } = this;
 
-        _syncFromEditors(beans, true);
+        _syncFromEditors(beans, { persist: true });
 
         const edits: EditMap = this.model.getEditMap(true);
         const editValue = edits.get(rowNode)?.get(column!)?.pendingValue;
@@ -924,6 +920,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                             pendingValue,
                             sourceValue,
                             state: 'changed',
+                            editorState: {
+                                isCancelAfterEnd: undefined,
+                                isCancelBeforeStart: undefined,
+                            },
                         });
                     }
                 }
@@ -1009,6 +1009,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 pendingValue,
                 sourceValue,
                 state: state ?? 'changed',
+                editorState: {
+                    isCancelAfterEnd: undefined,
+                    isCancelBeforeStart: undefined,
+                },
             });
         });
 

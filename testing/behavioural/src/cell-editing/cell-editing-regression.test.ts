@@ -244,8 +244,8 @@ describe('Cell Editing Regression', () => {
         );
 
         test.each([
-            { action: undefined, expected: { newValue: 'A Value', valueChanged: false } },
-            { action: 'Test', expected: { newValue: 'Test', valueChanged: false } },
+            { action: undefined, expected: { newValue: undefined, valueChanged: false } },
+            { action: 'Test', expected: { newValue: undefined, valueChanged: false } },
         ])(
             `newValue:$expected.newValue, valueChanged:$expected.valueChanged after Escape`,
             async ({ action, expected }) => {

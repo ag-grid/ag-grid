@@ -1,6 +1,11 @@
 import { ensureGridReady, expect, repeat, scrollGridRelative, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
+    if (process.env.PRE_34_VERSION) {
+        test.skip();
+        return;
+    }
+
     test.beforeEach(async ({ page }) => {
         await page.setViewportSize({ width: 300, height: 800 });
     });
@@ -12,9 +17,7 @@ test.agExample(import.meta, () => {
     ].forEach(({ editType, tabCount }) =>
         test.eachFramework(
             `[${editType}] should edit then tab to next row without error`,
-            async ({ page, agIdFor, remoteGrid, agFramework }) => {
-                const isReact = agFramework.startsWith('react');
-
+            async ({ page, agIdFor, remoteGrid }) => {
                 const remoteApi = remoteGrid(page);
                 await remoteApi.setGridOption('editType', editType);
 
@@ -29,7 +32,7 @@ test.agExample(import.meta, () => {
 
                 await repeat(page, 'tab across row', tabAction, { count: tabCount, eachWait: 10 });
                 await repeat(page, 'tab to new row', tabAction, { count: 1, eachWait: 10 });
-                await repeat(page, 'tab to 2nd column', tabAction, { count: isReact ? 2 : 1, eachWait: 10 });
+                await repeat(page, 'tab to 2nd column', tabAction, { count: 1, eachWait: 10 });
 
                 // here the 2nd, 2nd cell row should be editing
                 const modelCellRow2 = agIdFor.cell('2', 'model-1-1');
