@@ -85,7 +85,7 @@ export interface AgDraggingEvent<
     /** Details about the row dragging drop target. */
     dropTarget: TDrop | null;
     /** True if relevant information about the drop target are changed and the drag ghost need to be updated */
-    changed?: boolean;
+    changed: boolean;
 }
 
 export interface AgDropTarget<

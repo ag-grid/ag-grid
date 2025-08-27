@@ -342,7 +342,7 @@ export abstract class BaseDragAndDropService<
             dragItem: dragItem!,
             dropZoneTarget,
             dropTarget: lastDraggingEvent?.dropTarget ?? null, // updated by rowDragFeature
-            changed: lastDraggingEvent?.changed,
+            changed: !!lastDraggingEvent?.changed,
         });
         this.lastDraggingEvent = draggingEvent;
         return draggingEvent;

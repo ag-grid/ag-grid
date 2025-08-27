@@ -178,7 +178,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const { beans, gos, clientSideRowModel } = this;
         const rowsDrop = this.newRowsDrop(draggingEvent, dropping);
         draggingEvent.dropTarget = rowsDrop;
-        draggingEvent.changed = rowsDrop?.changed;
+        draggingEvent.changed = false;
         if (!rowsDrop) {
             return null;
         }
@@ -273,8 +273,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         this.validateRowsDrop(rowsDrop, canSetParent, aboveOrBelow, dropping);
 
-        rowsDrop.changed ||= rowsDropChanged(lastDraggingEvent?.dropTarget, rowsDrop);
-        draggingEvent.changed = rowsDrop.changed;
+        draggingEvent.changed ||= rowsDropChanged(lastDraggingEvent?.dropTarget, rowsDrop);
 
         return rowsDrop;
     }
@@ -323,7 +322,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             newParent: null,
             rows,
             allowed,
-            changed: false,
             highlight: !dropping && rowDragManaged && suppressMoveWhenRowDragging && (withinGrid || !sameGrid),
         };
     }
@@ -368,8 +366,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 } else if (!rowDragManaged) {
                     rowsDrop.allowed = true; // If not managed, we always allow the drop if it was not explicitly disallowed
                 }
-                if (canDropResult.changed) {
-                    rowsDrop.changed = true;
+                const draggingEvent = rowsDrop.draggingEvent;
+                if (canDropResult.changed && draggingEvent) {
+                    draggingEvent.changed = true;
                 }
                 if (!dropping && canDropResult.highlight !== undefined) {
                     rowsDrop.highlight = canDropResult.highlight;
