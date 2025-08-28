@@ -1,15 +1,7 @@
-import type { IViewportDatasource, IViewportRowModel, NamedBean, RowBounds, RowModelType } from 'ag-grid-community';
+import type { IRowModel, IViewportDatasource, NamedBean, RowBounds, RowModelType } from 'ag-grid-community';
 import { BeanStub, RowNode, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
 
-/**
- * To stop the heightsState getting out of control, we limit the number of entries. If the user
- * has more than this number of rows with non-default heights, then we just drop half the oldest entries.
- *
- * Essentially, this is the max number of rows a user can have with variable heights before we start dropping
- */
-const HEIGHT_STATE_SIZE_LIMIT = 1000;
-
-export class ViewportRowModel extends BeanStub implements NamedBean, IViewportRowModel {
+export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
 
     // rowRenderer tells us these
@@ -21,11 +13,6 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IViewportRo
     private rowNodesByIndex: { [index: number]: RowNode } = {};
     private rowHeight: number;
     private datasource: IViewportDatasource;
-    /**
-     * If a row height is different to the default row height, then we store it here.
-     * This is used to calculate the rowTop's when rows have variable heights.
-     */
-    private heightsState = new Map<number, number>();
 
     /**
      * Used to see if setRowData has been called inside of the viewportChanged event context,
@@ -208,77 +195,32 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IViewportRo
 
     public getRowIndexAtPixel(pixel: number): number {
         if (this.rowHeight !== 0) {
-            // do a binary search to find the row, as rows can be variable heights we
-            // cannot just do a pixel / rowHeight
-
-            let lower = 0;
-            let upper = this.getRowCount() - 1;
-            let mid: number;
-            let rowTop: number;
-            let rowBottom: number;
-            while (lower <= upper) {
-                mid = Math.floor((lower + upper) / 2);
-                rowTop = this.getRowTop(mid);
-                rowBottom = rowTop + this.getRowBounds(mid).rowHeight;
-
-                if (rowTop <= pixel && rowBottom > pixel) {
-                    return mid;
-                } else if (rowTop < pixel) {
-                    lower = mid + 1;
-                } else {
-                    upper = mid - 1;
-                }
-            }
-
-            // if not found, just return last row
-            return this.getRowCount() - 1;
+            // avoid divide by zero error
+            return Math.floor(pixel / this.rowHeight);
         }
 
         return 0;
     }
 
-    /**
-     * Index is likely out of bounds, so we need to handle this
-     */
+    /** Viewport row model does not support dynamic row heights by design and while it is possible to implement this feature, it leads to view-model desync due to data being not isotropic in time */
+    resetRowHeights() {}
+    /** Viewport row model does not support dynamic row heights by design and while it is possible to implement this feature, it leads to view-model desync due to data being not isotropic in time */
+    onRowHeightChanged() {}
+
     public getRowBounds(index: number): RowBounds {
-        const node = this.rowNodesByIndex[index];
-        return { rowHeight: node?.rowHeight ?? this.rowHeight, rowTop: node?.rowTop ?? this.getRowTop(index) };
-    }
-
-    resetRowHeights(): void {
-        this.updateRowHeights();
-    }
-
-    onRowHeightChanged(): void {
-        this.updateRowHeights(false);
-    }
-
-    private updateRowHeights(resetRowHeights = true) {
         const rowHeight = this.rowHeight;
+        return {
+            rowHeight,
+            rowTop: rowHeight * index,
+        };
+    }
 
-        const heightsState = this.heightsState;
+    private updateRowHeights() {
+        const rowHeight = this.rowHeight;
         this.forEachNode((node) => {
-            if (resetRowHeights) {
-                node.setRowHeight(rowHeight);
-                heightsState.clear();
-            } else {
-                if (node.rowHeight === rowHeight) {
-                    heightsState.delete(node.rowIndex!);
-                } else {
-                    heightsState.set(node.rowIndex!, node.rowHeight!);
-                }
-            }
-            node.setRowTop(this.getRowTop(node.rowIndex!));
+            node.setRowHeight(rowHeight);
+            node.setRowTop(rowHeight * node.rowIndex!);
         });
-
-        // keeping it tidy
-        if (heightsState.size > HEIGHT_STATE_SIZE_LIMIT) {
-            heightsState.forEach((entry, index) => {
-                if (index < HEIGHT_STATE_SIZE_LIMIT / 2) {
-                    heightsState.delete(entry);
-                }
-            });
-        }
 
         this.eventSvc.dispatchEvent({
             type: 'modelUpdated',
@@ -287,21 +229,6 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IViewportRo
             keepRenderedRows: true,
             animate: false,
         });
-    }
-
-    /**
-     * Semi-expensive operation to calculate the rowTop of a row, used when rows have dynamic heights.
-     * For budget reasons we limit the number of entries we keep in the heightsState map using the HEIGHT_STATE_SIZE_LIMIT.
-     */
-    private getRowTop(rowIndex: number): number {
-        const rowHeight = this.rowHeight;
-        let rowTop = rowHeight * rowIndex;
-        this.heightsState.forEach((height, index) => {
-            if (index < rowIndex) {
-                rowTop += height - rowHeight;
-            }
-        });
-        return rowTop;
     }
 
     public getTopLevelRowCount(): number {
@@ -343,13 +270,14 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IViewportRo
         return result;
     }
 
-    public forEachDisplayedNode = this.forEachNode;
+    public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
+        let callbackCount = 0;
 
-    public forEachNode(callback: (rowNode: RowNode, index: number, stateIndex: number) => void): void {
-        Object.keys(this.rowNodesByIndex).forEach((indexStr, index) => {
-            const rowIndex = parseInt(indexStr, 10);
-            const rowNode: RowNode = this.rowNodesByIndex[rowIndex];
-            callback(rowNode, index, rowIndex);
+        Object.keys(this.rowNodesByIndex).forEach((indexStr) => {
+            const index = parseInt(indexStr, 10);
+            const rowNode: RowNode = this.rowNodesByIndex[index];
+            callback(rowNode, callbackCount);
+            callbackCount++;
         });
     }
 
@@ -383,7 +311,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IViewportRo
             if (row) {
                 row.updateData(data);
                 row.setRowIndex(i);
-                row.setRowTop(this.getRowTop(i));
+                row.setRowTop(this.rowHeight * i);
             } else {
                 // if we don't have a row, then we create a new one
                 row = this.createBlankRowNode(i);
@@ -407,8 +335,8 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IViewportRo
         const rowNode = new RowNode(this.beans);
 
         const rowHeight = this.rowHeight;
-        rowNode.setRowHeight(this.heightsState.get(rowIndex) ?? rowHeight);
-        rowNode.setRowTop(this.getRowTop(rowIndex));
+        rowNode.setRowHeight(rowHeight);
+        rowNode.setRowTop(rowHeight * rowIndex);
         rowNode.setRowIndex(rowIndex);
 
         return rowNode;
