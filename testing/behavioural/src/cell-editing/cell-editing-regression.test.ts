@@ -165,6 +165,101 @@ describe('Cell Editing Regression', () => {
         expect(cell1).toHaveTextContent('3 - three');
     });
 
+    // AG-15794 - onCellEditRequest source
+    test('onCellEditRequest should have source=edit', async () => {
+        // virtualList doesn't add option elements if the offsetHeight is 0, so we need to fake it
+        fakeElementAttribute('offsetHeight', 100, '.ag-virtual-list-viewport');
+
+        const onCellEditRequest = vi.fn();
+
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    field: 'code',
+                    cellEditor: 'agRichSelectCellEditor',
+                    cellEditorParams: {
+                        values: [0, 1, 2, 3],
+                    },
+                    valueGetter: ({ data: { code } }) => {
+                        return {
+                            0: '0 - zero',
+                            1: '1 - one',
+                            2: '2 - two',
+                            3: '3 - three',
+                        }[code];
+                    },
+                    valueSetter: ({ newValue, data }) => {
+                        const valueChanged = data.code !== newValue;
+                        if (valueChanged) {
+                            data.code = newValue;
+                        }
+
+                        return valueChanged;
+                    },
+                    editable: true,
+                },
+            ],
+            readOnlyEdit: true,
+            rowData: [{ code: 0 }, { code: 2 }],
+            onCellEditRequest: ({ source }) => onCellEditRequest(source),
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        // FIRST EDIT
+        const cell0 = getByTestId(gridDiv, agTestIdFor.cell('0', 'code'));
+        await userEvent.dblClick(cell0);
+
+        await asyncSetTimeout(1);
+
+        const popup0 = await waitForPopup(gridDiv);
+        const option0 = await waitFor(() => within(popup0).getByRole('option', { name: '1' }));
+
+        const rect0 = option0.getBoundingClientRect();
+
+        // agRichSelectCellEditor derives the item clicked from the click event, so we need to simulate a click with clientY
+        // to ensure the correct item is selected
+        fireEvent(
+            option0,
+            new MouseEvent('click', {
+                bubbles: true,
+                clientY: rect0.height * 2 - 1,
+            })
+        );
+
+        await userEvent.click(option0);
+        await asyncSetTimeout(1);
+
+        // // SECOND EDIT
+        const cell1 = getByTestId(gridDiv, agTestIdFor.cell('1', 'code'));
+        await userEvent.dblClick(cell1);
+
+        await asyncSetTimeout(100);
+
+        const popup1 = await waitForPopup(gridDiv);
+        const option1 = await waitFor(() => within(popup1).getByRole('option', { name: '3' }));
+
+        const rect1 = option1.getBoundingClientRect();
+
+        // agRichSelectCellEditor derives the item clicked from the click event, so we need to simulate a click with clientY
+        // to ensure the correct item is selected
+        fireEvent(
+            option1,
+            new MouseEvent('click', {
+                bubbles: true,
+                clientY: rect1.height * 10 - 1,
+            })
+        );
+
+        await userEvent.click(option1);
+        await asyncSetTimeout(100);
+
+        expect(onCellEditRequest).toHaveBeenCalledTimes(2);
+        expect(onCellEditRequest).toHaveBeenNthCalledWith(1, 'edit');
+        expect(onCellEditRequest).toHaveBeenNthCalledWith(2, 'edit');
+    });
+
     // Regression test for first cell edit event newValue is Symbol(unedited)
     test('newValue=Symbol', async () => {
         const onCellEditingStopped = vi.fn();

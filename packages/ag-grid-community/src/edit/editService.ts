@@ -56,6 +56,8 @@ type BatchPrepDetails = { compDetails?: UserCompDetails; valueToDisplay?: any };
 // these are event sources for setDataValue that will not cause the editors to close
 const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo', 'paste', 'bulk', 'rangeSvc']);
 
+const INTERNAL_EDITOR_SOURCES = new Set(['ui', 'api']);
+
 // stop editing sources that we treat as UI-originated so we follow standard processing.
 const STOP_EDIT_SOURCE_TRANSFORM: Record<string, EditSource> = {
     paste: 'api',
@@ -445,10 +447,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         column: Column,
         newValue: any,
         refreshCell?: boolean,
-        originalSource?: string
+        originalSource: string = 'edit'
     ): boolean {
         const { beans } = this;
         const cellCtrl = _getCellCtrl(beans, { rowNode, column });
+        const translatedSource = INTERNAL_EDITOR_SOURCES.has(originalSource) ? 'edit' : originalSource;
 
         // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
         // getting triggered, which results in all cells getting refreshed. we do not want this refresh
@@ -458,7 +461,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             cellCtrl.suppressRefreshCell = true;
         }
         this.commitNextEdit();
-        const success = rowNode.setDataValue(column, newValue, originalSource === 'ui' ? 'edit' : originalSource);
+        const success = rowNode.setDataValue(column, newValue, translatedSource);
         if (cellCtrl) {
             cellCtrl.suppressRefreshCell = false;
         }
