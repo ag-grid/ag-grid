@@ -87,7 +87,7 @@ export interface IDateFilterParams extends IScalarFilterParams {
     includeTime?: boolean;
     /**
      * By default, the `dateFrom` and `dateTo` values in the filter model will be in the format `YYYY-MM-DD hh:mm:ss`.
-     * Set this to `true` to instead use the format `YYYY-MM-DDThh:mm:ss`
+     * Set this to `true` to instead use the format `YYYY-MM-DDThh:mm:ss`.
      */
     useIsoSeparator?: boolean;
 }
