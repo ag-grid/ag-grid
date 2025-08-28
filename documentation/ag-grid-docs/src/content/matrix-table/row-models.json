@@ -46,7 +46,7 @@
         "clientSide": true,
         "infinite": false,
         "serverSide": true,
-        "viewport": true
+        "viewport": false
     },
     {
         "feature": "[Row Grouping](./grouping)",

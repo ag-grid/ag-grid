@@ -1,4 +1,5 @@
 import type { BeanCollection } from '../context/context';
+import { _warn } from '../validation/logging';
 
 export function expandAll(beans: BeanCollection) {
     beans.expansionSvc?.expandAll(true);
@@ -9,6 +10,10 @@ export function collapseAll(beans: BeanCollection) {
 }
 
 export function onRowHeightChanged(beans: BeanCollection) {
+    if (beans.rowAutoHeight?.active) {
+        _warn(3);
+        return;
+    }
     beans.rowModel?.onRowHeightChanged();
 }
 

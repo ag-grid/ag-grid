@@ -16,7 +16,7 @@ export { ExcelExportModule } from './excelExport/excelExportModule';
 export { MultiFilterModule } from './multiFilter/multiFilterModule';
 export { GroupFilterModule, RowGroupingPanelModule, RowGroupingModule } from './rowGrouping/rowGroupingModule';
 export { SideBarModule } from './sideBar/sideBarModule';
-export { ViewportRowModelModule, ViewportRowModelApiModule } from './viewportRowModel/viewportRowModelModule';
+export { ViewportRowModelModule } from './viewportRowModel/viewportRowModelModule';
 export { ClipboardModule } from './clipboard/clipboardModule';
 export { RowNumbersModule } from './rowNumbers/rowNumbersModule';
 export { FiltersToolPanelModule, NewFiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';

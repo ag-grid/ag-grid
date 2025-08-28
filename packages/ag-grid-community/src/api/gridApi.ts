@@ -1635,8 +1635,6 @@ export interface _ServerSideRowModelGridApi<TData> extends _RowModelSharedApi {
     getServerSideGroupLevelState(): ServerSideGroupLevelState[];
 }
 
-export interface _ViewportRowModelGridApi extends _RowModelSharedApi {}
-
 export interface _ContextMenuGridApi {
     /**
      * Displays the AG Grid context menu
@@ -1895,7 +1893,6 @@ export interface GridApi<TData = any>
         _ServerSideRowModelGridApi<TData>,
         _ContextMenuGridApi,
         _ColumnChooserGridApi,
-        _ViewportRowModelGridApi,
         _MasterDetailGridApi,
         _ExcelExportGridApi,
         _ClipboardGridApi,

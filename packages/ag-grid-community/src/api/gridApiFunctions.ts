@@ -1,5 +1,5 @@
 import type { ValidationModuleName } from '../interfaces/iModule';
-import type { _CsrmSsrmSharedGridApi, _FindApi, _ViewportRowModelGridApi } from './gridApi';
+import type { _CsrmSsrmSharedGridApi, _FindApi } from './gridApi';
 import type {
     GridApi,
     _AdvancedFilterGridApi,
@@ -408,11 +408,6 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getPivotResultColumns: 0,
     }),
 
-    ...mod<_ViewportRowModelGridApi>('ViewportRowModel', {
-        resetRowHeights: 0,
-        onRowHeightChanged: 0,
-    }),
-
     ...mod<_ServerSideRowModelGridApi<any>>('ServerSideRowModelApi', {
         getServerSideSelectionState: 0,
         setServerSideSelectionState: 0,
@@ -426,8 +421,6 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         onRowHeightChanged: 0,
         resetRowHeights: 0,
     }),
-
-    ...mod<_ViewportRowModelGridApi>('ViewportRowModelApi', { onRowHeightChanged: 0, resetRowHeights: 0 }),
 
     ...mod<_SideBarGridApi<any>>('SideBar', {
         isSideBarVisible: 0,
