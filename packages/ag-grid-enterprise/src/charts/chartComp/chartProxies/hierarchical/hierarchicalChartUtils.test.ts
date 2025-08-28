@@ -226,25 +226,25 @@ describe(createAutoGroupHierarchy as any, () => {
 
     it('should group items by the correct category value if there are two levels of grouping keys for each item', () => {
         const input = [
-            { 'ag-Grid-AutoColumn': { labels: ['a', 'foo'] }, x: 1, y: 5 },
-            { 'ag-Grid-AutoColumn': { labels: ['b', 'foo'] }, x: 2, y: 6 },
-            { 'ag-Grid-AutoColumn': { labels: ['c', 'foo'] }, x: 3, y: 7 },
-            { 'ag-Grid-AutoColumn': { labels: ['d', 'bar'] }, x: 4, y: 8 },
+            { 'ag-Grid-AutoColumn': { labels: ['foo', 'a'] }, x: 1, y: 5 },
+            { 'ag-Grid-AutoColumn': { labels: ['foo', 'b'] }, x: 2, y: 6 },
+            { 'ag-Grid-AutoColumn': { labels: ['foo', 'c'] }, x: 3, y: 7 },
+            { 'ag-Grid-AutoColumn': { labels: ['bar', 'd'] }, x: 4, y: 8 },
         ];
         const actual = createAutoGroupHierarchy(input, getRowAutoGroupLabels);
         const expected = [
             {
                 'AG-GRID-DEFAULT-LABEL-KEY': 'foo',
                 children: [
-                    { 'AG-GRID-DEFAULT-LABEL-KEY': 'a', 'ag-Grid-AutoColumn': { labels: ['a', 'foo'] }, x: 1, y: 5 },
-                    { 'AG-GRID-DEFAULT-LABEL-KEY': 'b', 'ag-Grid-AutoColumn': { labels: ['b', 'foo'] }, x: 2, y: 6 },
-                    { 'AG-GRID-DEFAULT-LABEL-KEY': 'c', 'ag-Grid-AutoColumn': { labels: ['c', 'foo'] }, x: 3, y: 7 },
+                    { 'AG-GRID-DEFAULT-LABEL-KEY': 'a', 'ag-Grid-AutoColumn': { labels: ['foo', 'a'] }, x: 1, y: 5 },
+                    { 'AG-GRID-DEFAULT-LABEL-KEY': 'b', 'ag-Grid-AutoColumn': { labels: ['foo', 'b'] }, x: 2, y: 6 },
+                    { 'AG-GRID-DEFAULT-LABEL-KEY': 'c', 'ag-Grid-AutoColumn': { labels: ['foo', 'c'] }, x: 3, y: 7 },
                 ],
             },
             {
                 'AG-GRID-DEFAULT-LABEL-KEY': 'bar',
                 children: [
-                    { 'AG-GRID-DEFAULT-LABEL-KEY': 'd', 'ag-Grid-AutoColumn': { labels: ['d', 'bar'] }, x: 4, y: 8 },
+                    { 'AG-GRID-DEFAULT-LABEL-KEY': 'd', 'ag-Grid-AutoColumn': { labels: ['bar', 'd'] }, x: 4, y: 8 },
                 ],
             },
         ];
@@ -253,10 +253,10 @@ describe(createAutoGroupHierarchy as any, () => {
 
     it('should group items by the correct category value if there are multiple levels of grouping keys for each item', () => {
         const input = [
-            { 'ag-Grid-AutoColumn': { labels: ['a', 'foo', 'x'] }, x: 1, y: 5 },
-            { 'ag-Grid-AutoColumn': { labels: ['b', 'foo', 'x'] }, x: 2, y: 6 },
-            { 'ag-Grid-AutoColumn': { labels: ['c', 'foo', 'x'] }, x: 3, y: 7 },
-            { 'ag-Grid-AutoColumn': { labels: ['d', 'bar', 'y'] }, x: 4, y: 8 },
+            { 'ag-Grid-AutoColumn': { labels: ['x', 'foo', 'a'] }, x: 1, y: 5 },
+            { 'ag-Grid-AutoColumn': { labels: ['x', 'foo', 'b'] }, x: 2, y: 6 },
+            { 'ag-Grid-AutoColumn': { labels: ['x', 'foo', 'c'] }, x: 3, y: 7 },
+            { 'ag-Grid-AutoColumn': { labels: ['y', 'bar', 'd'] }, x: 4, y: 8 },
         ];
         const actual = createAutoGroupHierarchy(input, getRowAutoGroupLabels);
         const expected = [
@@ -268,19 +268,19 @@ describe(createAutoGroupHierarchy as any, () => {
                         children: [
                             {
                                 'AG-GRID-DEFAULT-LABEL-KEY': 'a',
-                                'ag-Grid-AutoColumn': { labels: ['a', 'foo', 'x'] },
+                                'ag-Grid-AutoColumn': { labels: ['x', 'foo', 'a'] },
                                 x: 1,
                                 y: 5,
                             },
                             {
                                 'AG-GRID-DEFAULT-LABEL-KEY': 'b',
-                                'ag-Grid-AutoColumn': { labels: ['b', 'foo', 'x'] },
+                                'ag-Grid-AutoColumn': { labels: ['x', 'foo', 'b'] },
                                 x: 2,
                                 y: 6,
                             },
                             {
                                 'AG-GRID-DEFAULT-LABEL-KEY': 'c',
-                                'ag-Grid-AutoColumn': { labels: ['c', 'foo', 'x'] },
+                                'ag-Grid-AutoColumn': { labels: ['x', 'foo', 'c'] },
                                 x: 3,
                                 y: 7,
                             },
@@ -296,7 +296,7 @@ describe(createAutoGroupHierarchy as any, () => {
                         children: [
                             {
                                 'AG-GRID-DEFAULT-LABEL-KEY': 'd',
-                                'ag-Grid-AutoColumn': { labels: ['d', 'bar', 'y'] },
+                                'ag-Grid-AutoColumn': { labels: ['y', 'bar', 'd'] },
                                 x: 4,
                                 y: 8,
                             },
@@ -310,12 +310,12 @@ describe(createAutoGroupHierarchy as any, () => {
 
     it('should group items by the correct category value if there are unequal levels of grouping keys for each item', () => {
         const input = [
-            { 'ag-Grid-AutoColumn': { labels: ['a', 'foo', 'x'] }, x: 1, y: 5 },
-            { 'ag-Grid-AutoColumn': { labels: ['b', 'foo'] }, x: 2, y: 6 },
-            { 'ag-Grid-AutoColumn': { labels: ['c', 'foo', 'x'] }, x: 3, y: 7 },
-            { 'ag-Grid-AutoColumn': { labels: ['d', 'bar', 'y'] }, x: 4, y: 8 },
-            { 'ag-Grid-AutoColumn': { labels: ['foo', 'x'] }, z: 9 },
-            { 'ag-Grid-AutoColumn': { labels: ['baz', 'x'] }, z: 10 },
+            { 'ag-Grid-AutoColumn': { labels: ['x', 'foo', 'a'] }, x: 1, y: 5 },
+            { 'ag-Grid-AutoColumn': { labels: ['foo', 'b'] }, x: 2, y: 6 },
+            { 'ag-Grid-AutoColumn': { labels: ['x', 'foo', 'c'] }, x: 3, y: 7 },
+            { 'ag-Grid-AutoColumn': { labels: ['y', 'bar', 'd'] }, x: 4, y: 8 },
+            { 'ag-Grid-AutoColumn': { labels: ['x', 'foo'] }, z: 9 },
+            { 'ag-Grid-AutoColumn': { labels: ['x', 'baz'] }, z: 10 },
         ];
         const actual = createAutoGroupHierarchy(input, getRowAutoGroupLabels);
         const expected = [
@@ -327,23 +327,23 @@ describe(createAutoGroupHierarchy as any, () => {
                         children: [
                             {
                                 'AG-GRID-DEFAULT-LABEL-KEY': 'a',
-                                'ag-Grid-AutoColumn': { labels: ['a', 'foo', 'x'] },
+                                'ag-Grid-AutoColumn': { labels: ['x', 'foo', 'a'] },
                                 x: 1,
                                 y: 5,
                             },
                             {
                                 'AG-GRID-DEFAULT-LABEL-KEY': 'c',
-                                'ag-Grid-AutoColumn': { labels: ['c', 'foo', 'x'] },
+                                'ag-Grid-AutoColumn': { labels: ['x', 'foo', 'c'] },
                                 x: 3,
                                 y: 7,
                             },
                         ],
-                        'ag-Grid-AutoColumn': { labels: ['foo', 'x'] },
+                        'ag-Grid-AutoColumn': { labels: ['x', 'foo'] },
                         z: 9,
                     },
                     {
                         'AG-GRID-DEFAULT-LABEL-KEY': 'baz',
-                        'ag-Grid-AutoColumn': { labels: ['baz', 'x'] },
+                        'ag-Grid-AutoColumn': { labels: ['x', 'baz'] },
                         z: 10,
                     },
                 ],
@@ -351,7 +351,7 @@ describe(createAutoGroupHierarchy as any, () => {
             {
                 'AG-GRID-DEFAULT-LABEL-KEY': 'foo',
                 children: [
-                    { 'AG-GRID-DEFAULT-LABEL-KEY': 'b', 'ag-Grid-AutoColumn': { labels: ['b', 'foo'] }, x: 2, y: 6 },
+                    { 'AG-GRID-DEFAULT-LABEL-KEY': 'b', 'ag-Grid-AutoColumn': { labels: ['foo', 'b'] }, x: 2, y: 6 },
                 ],
             },
             {
@@ -362,7 +362,7 @@ describe(createAutoGroupHierarchy as any, () => {
                         children: [
                             {
                                 'AG-GRID-DEFAULT-LABEL-KEY': 'd',
-                                'ag-Grid-AutoColumn': { labels: ['d', 'bar', 'y'] },
+                                'ag-Grid-AutoColumn': { labels: ['y', 'bar', 'd'] },
                                 x: 4,
                                 y: 8,
                             },
