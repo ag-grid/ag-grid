@@ -29,7 +29,7 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'athlete', filter: 'agTextColumnFilter', minWidth: 200 },
+        { field: 'athlete', minWidth: 200 },
         { field: 'age' },
         { field: 'country', minWidth: 180 },
         { field: 'year' },
@@ -45,12 +45,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
         // allow every column to be aggregated
         enableValue: true,
-        // allow every column to be grouped
-        enableRowGroup: true,
-        // allow every column to be pivoted
-        enablePivot: true,
-        filter: true,
+        sortable: false,
     },
+    getRowId: (p) => p.data?.id,
     getRowHeight: (p) => {
         return 50 + 30 * Math.sin((p.data?.id ?? 0) / 5 - Math.PI / 2);
     },
