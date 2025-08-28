@@ -19,6 +19,8 @@ export function FakeServer(allData) {
     function executeQuery(request) {
         const sql = buildSql(request);
 
+        console.log('[FakeServer] - about to execute query:', sql);
+
         return alasql(sql, [allData]);
     }
 

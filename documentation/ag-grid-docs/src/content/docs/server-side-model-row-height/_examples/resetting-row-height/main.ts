@@ -74,6 +74,8 @@ gridApi = createGrid(gridDiv, gridOptions);
 function createServerSideDatasource(server) {
     return {
         getRows: (params) => {
+            console.log('[Datasource] - rows requested by grid: ', params.request);
+
             // get data for request from our fake server
             const response = server.getData(params.request);
 
