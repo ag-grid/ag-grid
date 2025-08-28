@@ -23,7 +23,7 @@ ModuleRegistry.registerModules([
 let gridApi: GridApi<IOlympicData>;
 const columnsToolPanel: ToolPanelDef = {
     id: 'columns',
-    labelDefault: 'Modal',
+    labelDefault: 'Popup',
     labelKey: 'columns',
     iconKey: 'columnsToolPanel',
     toolPanel: 'agColumnsToolPanel',
@@ -44,18 +44,16 @@ const gridOptions: GridOptions<IOlympicData> = {
     sideBar: { toolPanels: [columnsToolPanel], hideButtons: true, hiddenByDefault: true },
 };
 
-function toggleDrawer() {
-    const drawer = document.getElementById('modalDrawer')!;
+function close() {
+    const drawer = document.getElementById('popup')!;
     if (!drawer.classList.toggle('active')) {
         gridApi.closeToolPanel();
     }
 }
 
-function passModal(toolPanelId: string = columnsToolPanel.id) {
-    const drawer = document.getElementById('modalDrawer')!;
-    if (!drawer.classList.toggle('active')) {
-        gridApi.closeToolPanel();
-    }
+function open(toolPanelId: string = columnsToolPanel.id) {
+    const drawer = document.getElementById('popup')!;
+    drawer.classList.toggle('active', true);
     gridApi.openToolPanel(toolPanelId, drawer.querySelector<HTMLElement>('.content'));
 }
 

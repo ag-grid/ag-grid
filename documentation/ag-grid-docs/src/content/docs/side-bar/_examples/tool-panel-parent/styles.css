@@ -12,19 +12,16 @@
 .example-header {
     margin-bottom: 10px;
 }
-/* Base styles for the container */
-#modalDrawer {
-    display: none; /* Hidden by default */
-    z-index: 1000;
-}
 
-#modalDrawer.active {
+#popup.active {
     display: flex;
 }
 
-/* Modal style */
-#modalDrawer.modal {
+/* Popup style */
+#popup {
+    display: none; /* Hidden by default */
     position: fixed;
+    z-index: 1000;
     top: 0;
     left: 0;
     right: 0;
@@ -32,9 +29,7 @@
     background-color: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
-}
 
-#modalDrawer.modal {
     & .inner {
         min-width: 300px;
     }
@@ -44,7 +39,7 @@
     }
 }
 
-#modalDrawer .inner {
+#popup .inner {
     border: 1px solid;
     padding: 20px;
     border-radius: 10px;
