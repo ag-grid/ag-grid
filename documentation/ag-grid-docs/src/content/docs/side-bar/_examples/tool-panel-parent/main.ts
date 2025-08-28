@@ -28,6 +28,18 @@ const columnsToolPanel: ToolPanelDef = {
     iconKey: 'columnsToolPanel',
     toolPanel: 'agColumnsToolPanel',
     toolPanelParams: { suppressRowGroups: true, suppressValues: true, suppressPivotMode: true },
+    parent: document.getElementById('popup'),
+};
+const filtersToolPanel: ToolPanelDef = {
+    id: 'filters',
+    labelDefault: 'Drawer',
+    labelKey: 'filters',
+    iconKey: 'filter',
+    toolPanel: 'agFiltersToolPanel',
+};
+const popupDrawers: Record<(typeof columnsToolPanel)['id'] | (typeof filtersToolPanel)['id'], string> = {
+    columns: 'popup',
+    filters: 'drawer',
 };
 
 const gridOptions: GridOptions<IOlympicData> = {
@@ -41,19 +53,22 @@ const gridOptions: GridOptions<IOlympicData> = {
     ],
     defaultColDef: { flex: 1, minWidth: 100, filter: true },
     autoGroupColumnDef: { minWidth: 200 },
-    sideBar: { toolPanels: [columnsToolPanel], hideButtons: true, hiddenByDefault: true },
+    sideBar: { toolPanels: [columnsToolPanel, filtersToolPanel], hideButtons: true, hiddenByDefault: true },
 };
 
-function close() {
+function closePopup() {
     const drawer = document.getElementById('popup')!;
     if (!drawer.classList.toggle('active')) {
         gridApi.closeToolPanel();
     }
+    Object.values(popupDrawers).forEach((c) => drawer.classList.toggle(c, false));
 }
 
-function open(toolPanelId: string = columnsToolPanel.id) {
+function openPopup(toolPanelId: string = columnsToolPanel.id) {
     const drawer = document.getElementById('popup')!;
+    Object.values(popupDrawers).forEach((c) => drawer.classList.toggle(c, false));
     drawer.classList.toggle('active', true);
+    drawer.classList.toggle(popupDrawers[toolPanelId], true);
     gridApi.openToolPanel(toolPanelId, drawer.querySelector<HTMLElement>('.content'));
 }
 
