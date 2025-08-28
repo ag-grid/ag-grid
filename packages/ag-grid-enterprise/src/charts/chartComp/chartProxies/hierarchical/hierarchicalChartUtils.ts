@@ -39,10 +39,7 @@ export function createAutoGroupHierarchy<T extends object>(
 
     function getItemGroupLabel(item: T, groupIndex: number): string | null {
         const labels = getItemLabels(item);
-        if (!labels) return null;
-        // Autogroup label values are ordered from the leaf outwards
-        const labelIndex = labels.length - 1 - groupIndex;
-        return labels[labelIndex];
+        return labels ? labels[groupIndex] : labels;
     }
 }
 
