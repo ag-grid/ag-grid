@@ -5,6 +5,7 @@ import { _errorOnce, _warnOnce } from '../utils/log';
 
 const clientSide = 'clientSide';
 const serverSide = 'serverSide';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const viewport = 'viewport';
 const infinite = 'infinite';
 
@@ -15,7 +16,7 @@ const functionRowModels: { [name in ApiFunctionName]?: RowModelType[] } = {
     forEachLeafNode: [clientSide],
     forEachNodeAfterFilter: [clientSide],
     forEachNodeAfterFilterAndSort: [clientSide],
-    resetRowHeights: [clientSide, serverSide, viewport],
+    resetRowHeights: [clientSide, serverSide],
     applyTransaction: [clientSide],
     applyTransactionAsync: [clientSide],
     flushAsyncTransactions: [clientSide],
@@ -35,7 +36,7 @@ const functionRowModels: { [name in ApiFunctionName]?: RowModelType[] } = {
     isLastRowIndexKnown: [infinite, serverSide],
     expandAll: [clientSide, serverSide],
     collapseAll: [clientSide, serverSide],
-    onRowHeightChanged: [clientSide, serverSide, viewport],
+    onRowHeightChanged: [clientSide, serverSide],
     setRowCount: [infinite, serverSide],
     getCacheBlockState: [infinite, serverSide],
 };

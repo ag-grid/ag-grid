@@ -33,5 +33,4 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     StatusBar: 1,
     TreeData: 1,
     ViewportRowModel: 1,
-    ViewportRowModelApi: 1,
 };

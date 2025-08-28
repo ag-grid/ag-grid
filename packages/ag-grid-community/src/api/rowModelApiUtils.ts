@@ -2,7 +2,7 @@ import type { BeanCollection } from '../context/context';
 import type { InfiniteRowModel } from '../infiniteRowModel/infiniteRowModel';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
-import type { IViewportRowModel } from '../interfaces/iViewportRowModel';
+import type { iViewportRowModel } from '../interfaces/iViewportRowModel';
 
 export function _getClientSideRowModel(beans: BeanCollection): IClientSideRowModel | undefined {
     const rowModel = beans.rowModel;
@@ -19,7 +19,7 @@ export function _getServerSideRowModel(beans: BeanCollection): IServerSideRowMod
     return rowModel.getType() === 'serverSide' ? (rowModel as IServerSideRowModel) : undefined;
 }
 
-export function _getViewportRowModel(beans: BeanCollection): IViewportRowModel | undefined {
+export function _getViewportRowModel(beans: BeanCollection): iViewportRowModel | undefined {
     const rowModel = beans.rowModel;
-    return rowModel.getType() === 'viewport' ? (rowModel as IViewportRowModel) : undefined;
+    return rowModel.getType() === 'viewport' ? (rowModel as iViewportRowModel) : undefined;
 }

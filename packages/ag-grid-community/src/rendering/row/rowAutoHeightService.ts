@@ -9,7 +9,6 @@ import type { RowNode } from '../../entities/rowNode';
 import { _getRowHeightForNode } from '../../gridOptionsUtils';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
-import type { IViewportRowModel } from '../../interfaces/iViewportRowModel';
 import type { CellCtrl } from '../cell/cellCtrl';
 
 export class RowAutoHeightService extends BeanStub implements NamedBean {
@@ -81,7 +80,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         rowModel.forEachDisplayedNode?.(updateDisplayedRowHeights);
 
         if (anyNodeChanged) {
-            (rowModel as IClientSideRowModel | IServerSideRowModel | IViewportRowModel).onRowHeightChanged?.();
+            (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged?.();
         }
     }
 
