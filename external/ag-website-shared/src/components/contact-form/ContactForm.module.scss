@@ -1,0 +1,6 @@
+:global(#ag-contact-form) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--layout-gap);
+    flex-direction: column;
+}
