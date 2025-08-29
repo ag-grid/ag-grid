@@ -28,7 +28,7 @@ const columnsToolPanel: ToolPanelDef = {
     iconKey: 'columnsToolPanel',
     toolPanel: 'agColumnsToolPanel',
     toolPanelParams: { suppressRowGroups: true, suppressValues: true, suppressPivotMode: true },
-    parent: document.getElementById('popup'),
+    parent: document.querySelector('#popup .content'),
 };
 const filtersToolPanel: ToolPanelDef = {
     id: 'filters',
@@ -36,10 +36,6 @@ const filtersToolPanel: ToolPanelDef = {
     labelKey: 'filters',
     iconKey: 'filter',
     toolPanel: 'agFiltersToolPanel',
-};
-const popupDrawers: Record<(typeof columnsToolPanel)['id'] | (typeof filtersToolPanel)['id'], string> = {
-    columns: 'popup',
-    filters: 'drawer',
 };
 
 const gridOptions: GridOptions<IOlympicData> = {
@@ -57,19 +53,36 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function closePopup() {
-    const drawer = document.getElementById('popup')!;
-    if (!drawer.classList.toggle('active')) {
-        gridApi.closeToolPanel();
-    }
-    Object.values(popupDrawers).forEach((c) => drawer.classList.toggle(c, false));
+    const drawer = document.getElementById('popup');
+    drawer.classList.toggle('active', false);
+    gridApi.closeToolPanel();
 }
 
-function openPopup(toolPanelId: string = columnsToolPanel.id) {
-    const drawer = document.getElementById('popup')!;
-    Object.values(popupDrawers).forEach((c) => drawer.classList.toggle(c, false));
+function closeDrawer() {
+    const drawer = document.getElementById('drawer');
+    drawer.classList.toggle('active', false);
+    gridApi.closeToolPanel();
+}
+
+function openPopup() {
+    closeDrawer();
+    const popup = document.getElementById('popup')!;
+    popup.classList.toggle('active', true);
+    gridApi.openToolPanel(columnsToolPanel.id);
+    addStyles(popup);
+}
+
+function openDrawer() {
+    closePopup();
+    const drawer = document.getElementById('drawer')!;
     drawer.classList.toggle('active', true);
-    drawer.classList.toggle(popupDrawers[toolPanelId], true);
-    gridApi.openToolPanel(toolPanelId, drawer.querySelector<HTMLElement>('.content'));
+    gridApi.openToolPanel(filtersToolPanel.id, drawer.querySelector('.content'));
+    addStyles(drawer);
+}
+
+function addStyles(parentEl: HTMLElement) {
+    const contentClassnames = [...parentEl.querySelector('.content').classList].filter((e) => e !== 'content');
+    parentEl.classList.add(...contentClassnames);
 }
 
 // setup the grid after the page has finished loading
