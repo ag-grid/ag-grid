@@ -13,7 +13,8 @@
     margin-bottom: 10px;
 }
 
-#drawer.active, #popup.active {
+#drawer.active,
+#popup.active {
     display: flex;
 }
 
@@ -35,7 +36,6 @@
     }
 }
 
-
 #popup .inner {
     border: 1px solid;
     padding: 20px;
@@ -47,7 +47,6 @@
     font-family: var(--ag-font-family, Arial), sans-serif;
     flex-direction: column;
 }
-
 
 /* Base styles for the container */
 #drawer {
