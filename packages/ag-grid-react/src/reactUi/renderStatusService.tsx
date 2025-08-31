@@ -11,7 +11,7 @@ export class RenderStatusService extends BeanStub implements IRenderStatusServic
         if (this.beans.colAutosize) {
             const queueResizeOperationsForTick = this.queueResizeOperationsForTick.bind(this);
             this.addManagedEventListeners({
-                rowGroupOpened: queueResizeOperationsForTick,
+                rowExpansionStateChanged: queueResizeOperationsForTick,
                 expandOrCollapseAll: queueResizeOperationsForTick,
                 // Enable devs to resize after they updated via the API
                 cellValueChanged: queueResizeOperationsForTick,

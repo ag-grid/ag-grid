@@ -125,6 +125,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             columnPivotModeChanged: refreshEverythingFunc,
             gridStylesChanged: this.onGridStylesChanges.bind(this),
             gridReady: this.onGridReady.bind(this),
+            rowExpansionStateChanged: this.onRowGroupOpened.bind(this),
         });
 
         // doesn't need done if doing full reset
@@ -541,7 +542,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return null;
     }
 
-    public onRowGroupOpened(): void {
+    private onRowGroupOpened(): void {
         const animate = _isAnimateRows(this.gos);
         this.refreshModel({ step: 'map', keepRenderedRows: true, animate: animate });
     }

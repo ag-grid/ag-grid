@@ -133,7 +133,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             columnPinned: handler,
             columnVisible: handler,
             columnRowGroupChanged: handler,
-            rowGroupOpened: handler,
+            rowExpansionStateChanged: handler,
             pinnedRowsChanged: handler,
             displayedRowsChanged: handler,
             sortChanged: stopInvalidEdits,
@@ -855,8 +855,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             type,
             ...(type === 'batchEditingStopped'
                 ? {
-                      changes: this.toEventChangeList(edits),
-                  }
+                    changes: this.toEventChangeList(edits),
+                }
                 : {}),
         });
     }

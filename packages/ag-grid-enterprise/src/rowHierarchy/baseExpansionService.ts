@@ -61,4 +61,8 @@ export abstract class BaseExpansionService extends BeanStub {
             _setAriaExpanded(gui.element, expandable && expanded);
         });
     }
+
+    protected dispatchStateUpdatedEvent() {
+        this.eventSvc.dispatchEvent({ type: 'rowExpansionStateChanged' });
+    }
 }
