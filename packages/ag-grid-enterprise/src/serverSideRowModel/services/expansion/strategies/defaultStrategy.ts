@@ -1,6 +1,12 @@
-import { BeanStub } from "ag-grid-community";
-import type { IRowNode, IsServerSideGroupOpenByDefaultParams, RowGroupExpansionState, WithoutGridCommon } from "ag-grid-community";
-import type { IExpansionStrategy } from "./iExpansionStrategy";
+import { BeanStub } from 'ag-grid-community';
+import type {
+    IRowNode,
+    IsServerSideGroupOpenByDefaultParams,
+    RowGroupExpansionState,
+    WithoutGridCommon,
+} from 'ag-grid-community';
+
+import type { IExpansionStrategy } from './iExpansionStrategy';
 
 export class ExpandStrategy extends BeanStub implements IExpansionStrategy<RowGroupExpansionState> {
     name: string = 'expand';
@@ -86,7 +92,6 @@ export class ExpandStrategy extends BeanStub implements IExpansionStrategy<RowGr
         this.initialState.set(rowId, initial);
         return initial;
     }
-
 
     /**
      * This is different from just checking expandedState.isExpanded(rowNode.id),

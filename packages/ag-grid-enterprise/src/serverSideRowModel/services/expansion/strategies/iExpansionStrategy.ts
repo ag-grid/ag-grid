@@ -1,4 +1,4 @@
-import type { IRowNode, RowGroupBulkExpansionState, RowGroupExpansionState } from "ag-grid-community";
+import type { IRowNode, RowGroupBulkExpansionState, RowGroupExpansionState } from 'ag-grid-community';
 
 export interface IExpansionStrategy<T extends RowGroupExpansionState | RowGroupBulkExpansionState> {
     name: string;

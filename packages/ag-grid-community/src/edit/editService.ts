@@ -855,8 +855,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             type,
             ...(type === 'batchEditingStopped'
                 ? {
-                    changes: this.toEventChangeList(edits),
-                }
+                      changes: this.toEventChangeList(edits),
+                  }
                 : {}),
         });
     }

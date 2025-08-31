@@ -1,6 +1,6 @@
 import type { CellRangeType } from './IRangeService';
 import type { AdvancedFilterModel } from './advancedFilterModel';
-import type { RowGroupExpansionState, RowGroupBulkExpansionState } from './iExpansionService';
+import type { RowGroupBulkExpansionState, RowGroupExpansionState } from './iExpansionService';
 import type { ColumnFilterState, FilterModel } from './iFilter';
 import type { RowPosition } from './iRowPosition';
 import type { SortModelItem } from './iSortModelItem';
@@ -35,7 +35,7 @@ export interface CellSelectionCellState {
 }
 
 /** @deprecated v32.2 Use `CellSelectionCellState` instead. */
-export interface RangeSelectionCellState extends CellSelectionCellState { }
+export interface RangeSelectionCellState extends CellSelectionCellState {}
 
 export interface CellSelectionState {
     cellRanges: CellSelectionCellState[];

@@ -1,6 +1,7 @@
-import { BeanStub } from "ag-grid-community";
-import type { IRowNode, RowGroupBulkExpansionState } from "ag-grid-community";
-import type { IExpansionStrategy } from "./iExpansionStrategy";
+import { BeanStub } from 'ag-grid-community';
+import type { IRowNode, RowGroupBulkExpansionState } from 'ag-grid-community';
+
+import type { IExpansionStrategy } from './iExpansionStrategy';
 
 export class ExpandAllStrategy extends BeanStub implements IExpansionStrategy<RowGroupBulkExpansionState> {
     name: string = 'expandAll';

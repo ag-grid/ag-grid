@@ -11,7 +11,9 @@ export interface RowGroupBulkExpansionState {
     invertedRowGroupIds: string[];
 }
 
-export interface IExpansionService<T extends RowGroupExpansionState | RowGroupBulkExpansionState = RowGroupExpansionState> {
+export interface IExpansionService<
+    T extends RowGroupExpansionState | RowGroupBulkExpansionState = RowGroupExpansionState,
+> {
     addExpandedCss(classes: string[], rowNode: RowNode): void;
 
     getRowExpandedListeners(rowCtrl: RowCtrl): {

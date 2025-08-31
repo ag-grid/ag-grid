@@ -11,7 +11,10 @@ import { _exists } from 'ag-grid-community';
 
 import { BaseExpansionService } from './baseExpansionService';
 
-export class ClientSideExpansionService extends BaseExpansionService implements NamedBean, IExpansionService<RowGroupExpansionState> {
+export class ClientSideExpansionService
+    extends BaseExpansionService
+    implements NamedBean, IExpansionService<RowGroupExpansionState>
+{
     beanName = 'expansionSvc' as const;
 
     private rowModel: IClientSideRowModel;
@@ -94,7 +97,6 @@ export class ClientSideExpansionService extends BaseExpansionService implements 
         if (rootNode) {
             recursiveExpandOrCollapse(rootNode.childrenAfterGroup);
         }
-
 
         this.onGroupExpandedOrCollapsed();
 

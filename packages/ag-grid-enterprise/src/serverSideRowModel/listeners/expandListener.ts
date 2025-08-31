@@ -25,7 +25,7 @@ export class ExpandListener extends BeanStub implements NamedBean {
     }
 
     private onRowExpandStateChanged(): void {
-        this.beans.rowModel.forEachNode(rowNode => {
+        this.beans.rowModel.forEachNode((rowNode) => {
             if (rowNode.expanded) {
                 if (rowNode.master) {
                     this.createDetailNode(rowNode);

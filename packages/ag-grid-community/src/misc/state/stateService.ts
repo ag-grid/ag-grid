@@ -27,7 +27,7 @@ import type {
     SideBarState,
     SortState,
 } from '../../interfaces/gridState';
-import type { RowGroupExpansionState, RowGroupBulkExpansionState } from '../../interfaces/iExpansionService';
+import type { RowGroupBulkExpansionState, RowGroupExpansionState } from '../../interfaces/iExpansionService';
 import type { FilterModel } from '../../interfaces/iFilter';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
 import { migrateGridStateModel } from './stateModelMigration';
@@ -686,9 +686,9 @@ export class StateService extends BeanStub implements NamedBean {
         const { top } = scrollFeature?.getVScrollPosition() ?? { top: 0 };
         return top || left
             ? {
-                top,
-                left,
-            }
+                  top,
+                  left,
+              }
             : undefined;
     }
 
