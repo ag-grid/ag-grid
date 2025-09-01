@@ -45,7 +45,7 @@ const reactFunctionalTsDev = 'reactFunctionalTs_Dev' as const;
 const ALL_FRAMEWORKS = [
     'typescript',
     'vanilla',
-    // 'reactFunctional', // These are computed from reactFunctionalTs by Typescript striping the types so very unlikely to result in different errors to the typescript version
+    // 'reactFunctional', // These are computed from reactFunctionalTs by Typescript stripping the types so very unlikely to result in different errors to the typescript version
     'reactFunctionalTs',
     reactFunctionalTsDev,
     'angular',

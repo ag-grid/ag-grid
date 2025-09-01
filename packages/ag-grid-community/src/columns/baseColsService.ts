@@ -280,7 +280,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 // ...with the caveat that each column added also has any associated virtual columns added here
                 // so they appear before it in the group hierarchy. This is purely a matter of ordering; adding the
                 // virtual columns here means they will not be added below when iterating over `colsWithValue`.
-                res.push(...(this.groupHierarchCols?.expandColumn(col) ?? [col]));
+                this.groupHierarchCols?.expandColumnInto(res, col);
             }
         });
 
