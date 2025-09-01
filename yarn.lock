@@ -20698,6 +20698,11 @@ react-hook-form@^7.62.0:
   resolved "http://52.50.158.57:4873/react-hook-form/-/react-hook-form-7.62.0.tgz#2d81e13c2c6b6d636548e440818341ca753218d0"
   integrity sha512-7KWFejc98xqG/F4bAxpL41NB3o1nnvQO1RWZT3TqRZYL8RryQETGfEdVnJN2fy1crCiBLLjkRBVK05j24FxJGA==
 
+react-hook-form@^7.62.0:
+  version "7.62.0"
+  resolved "http://52.50.158.57:4873/react-hook-form/-/react-hook-form-7.62.0.tgz#2d81e13c2c6b6d636548e440818341ca753218d0"
+  integrity sha512-7KWFejc98xqG/F4bAxpL41NB3o1nnvQO1RWZT3TqRZYL8RryQETGfEdVnJN2fy1crCiBLLjkRBVK05j24FxJGA==
+
 react-instantsearch-core@7.16.2:
   version "7.16.2"
   resolved "http://52.50.158.57:4873/react-instantsearch-core/-/react-instantsearch-core-7.16.2.tgz#93eafc9b5de4ebb9498b34eb9e7d88c24f232778"
