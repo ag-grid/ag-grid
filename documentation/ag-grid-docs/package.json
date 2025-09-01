@@ -86,6 +86,7 @@
     "react-colorful": "^5.6.1",
     "react-dom": "~18.2.0",
     "react-gif-player": "0.5.1",
+    "react-hook-form": "^7.62.0",
     "react-instantsearch": "^7.7.0",
     "react-markdown": "5.0.3",
     "react-shadow": "^20.4.0",
