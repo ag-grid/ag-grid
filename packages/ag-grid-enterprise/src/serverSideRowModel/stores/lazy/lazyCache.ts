@@ -534,11 +534,7 @@ export class LazyCache extends BeanStub {
             const defaultId = this.getPrefixedId(this.store.getIdSequence().value++);
             this.blockUtils.setDataIntoRowNode(newNode, data, defaultId, undefined);
 
-            // don't allow the SSRM to listen to the dispatched row event, as it will
-            // compute extra unnecessary row updates
-            this.serverSideRowModel.setPaused(true);
             this.blockUtils.checkOpenByDefault(newNode);
-            this.serverSideRowModel.setPaused(false);
             this.nodeManager.addRowNode(newNode);
         }
 
