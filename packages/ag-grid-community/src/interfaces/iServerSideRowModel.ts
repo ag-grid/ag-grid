@@ -1,4 +1,3 @@
-import type { RowNode } from '../entities/rowNode';
 import type { ServerSideGroupLevelState } from './IServerSideStore';
 import type { IRowModel } from './iRowModel';
 import type { IRowNode } from './iRowNode';
