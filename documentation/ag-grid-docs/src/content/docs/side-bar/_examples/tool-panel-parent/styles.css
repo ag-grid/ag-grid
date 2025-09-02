@@ -59,7 +59,7 @@
     }
     position: fixed;
     z-index: 1000;
-    top: 0;
+    top: 54px;
     bottom: 0;
     width: 300px;
     display: flex;
