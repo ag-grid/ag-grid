@@ -814,6 +814,22 @@ describe('Row Selection Grid Options', () => {
 
                 assertSelectedRowsByIndex([1, 3], api);
             });
+
+            test('SHIFT-click on row that is already selected is a no-op', () => {
+                const [api, actions] = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: { mode: 'multiRow', enableClickSelection: true },
+                });
+
+                actions.clickRowByIndex(1);
+
+                assertSelectedRowsByIndex([1], api);
+
+                actions.clickRowByIndex(1, { shiftKey: true });
+
+                assertSelectedRowsByIndex([1], api);
+            });
         });
 
         describe('Checkbox selection', () => {
