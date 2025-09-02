@@ -52,8 +52,8 @@ test.agExample(import.meta, () => {
             async ({ page, agIdFor, remoteGrid }) => {
                 const remoteApi = remoteGrid(page);
                 await remoteApi.setGridOption('editType', editType);
-                const colDefs = await remoteApi.getColumnDefs();
-                await remoteApi.setGridOption('columnDefs', colDefs?.slice(0, 3));
+                const colDefs = (await remoteApi.getColumnDefs()) as any[];
+                await remoteApi.setGridOption('columnDefs', colDefs.slice(0, 3));
 
                 const modelCellRow1 = agIdFor.cell('1', 'model-1-1');
                 await modelCellRow1.dblclick();
