@@ -14,8 +14,8 @@ test.describe('Edit e2e testing examples', () => {
 
             await expect(agIdFor.overlay()).toBeHidden();
 
-            await expect(agIdFor.cell('0', 'color')).toContainText('Violet');
-            await expect(agIdFor.cell('0', 'value')).toContainText('£ 118');
+            await expect(agIdFor.cell('0', 'color')).toContainText('PowderBlue');
+            await expect(agIdFor.cell('0', 'value')).toContainText('£ 246');
 
             // Edit the color cell
             const cell = agIdFor.cell('0', 'color');
