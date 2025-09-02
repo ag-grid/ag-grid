@@ -128,7 +128,11 @@ export abstract class BaseEditStrategy extends BeanStub {
     ): boolean | null;
 
     public isCellEditable({ rowNode, column }: Required<EditPosition>, _source: 'api' | 'ui' = 'ui'): boolean {
-        return (column as AgColumn).isColumnFunc(rowNode, column.getColDef().editable);
+        const editable = column.getColDef().editable;
+        return (
+            (column as AgColumn).isColumnFunc(rowNode, editable) ||
+            this.model.hasEdits({ rowNode, column }, { withOpenEditor: true })
+        );
     }
 
     public stop(cancel?: boolean, event?: Event | null): boolean {
