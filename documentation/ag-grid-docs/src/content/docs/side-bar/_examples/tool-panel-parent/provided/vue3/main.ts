@@ -59,7 +59,7 @@ const VueExample = defineComponent({
             <div id="popup" ref="popup">
                 <div class="inner">
                     <button @click="closePopup">Close</button>
-                    <div class="content"></div>
+                    <div class="content" ref="popupContent"></div>
                 </div>
             </div>
 
@@ -67,7 +67,7 @@ const VueExample = defineComponent({
             <div id="drawer" ref="drawer">
                 <div class="inner">
                     <button @click="closeDrawer">Close</button>
-                    <div class="content"></div>
+                    <div class="content" ref="drawerContent"></div>
                 </div>
             </div>
         </div>
@@ -77,7 +77,9 @@ const VueExample = defineComponent({
     },
     setup() {
         const drawerRef = useTemplateRef<HTMLElement>('drawer');
+        const drawerContentRef = useTemplateRef<HTMLElement>('drawerContent');
         const popupRef = useTemplateRef<HTMLElement>('popup');
+        const popupContentRef = useTemplateRef<HTMLElement>('popupContent');
         const gridApi = shallowRef<GridApi<IOlympicData> | null>(null);
         const popupParent = ref<HTMLElement | null>(document.body);
         const columnDefs = ref<ColDef[]>([
@@ -98,7 +100,7 @@ const VueExample = defineComponent({
             iconKey: 'columnsToolPanel',
             toolPanel: 'agColumnsToolPanel',
             toolPanelParams: { suppressRowGroups: true, suppressValues: true, suppressPivotMode: true },
-            parent: popupRef.value?.querySelector('.content') || undefined,
+            parent: popupContentRef.value,
         });
         /*        watchEffect(() => {
             if (input.value) {
@@ -155,8 +157,8 @@ const VueExample = defineComponent({
         };
         onMounted(() => {
             // Assign parents only after refs are resolved
-            columnsToolPanel.value.parent = popupRef.value?.querySelector('.content') || undefined;
-            filtersToolPanel.value.parent = drawerRef.value?.querySelector('.content') || undefined;
+            columnsToolPanel.value.parent = popupContentRef.value;
+            filtersToolPanel.value.parent = drawerContentRef.value;
         });
         return {
             gridApi,

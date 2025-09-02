@@ -50,20 +50,22 @@ ModuleRegistry.registerModules([
         <div id="popup" #popup>
             <div class="inner">
                 <div><button (click)="closePopup()">Close</button></div>
-                <div class="content"></div>
+                <div class="content" #popupContent></div>
             </div>
         </div>
 
         <div id="drawer" #drawer>
             <div class="inner">
                 <div><button (click)="closeDrawer()">Close</button></div>
-                <div class="content"></div>
+                <div class="content" #drawerContent></div>
             </div>
         </div> `,
 })
 export class AppComponent {
     @ViewChild('popup', { read: ElementRef }) public popupRef!: ElementRef<HTMLElement>;
+    @ViewChild('popupContent', { read: ElementRef }) public popupContentRef!: ElementRef<HTMLElement>;
     @ViewChild('drawer', { read: ElementRef }) public drawerRef!: ElementRef<HTMLElement>;
+    @ViewChild('drawerContent', { read: ElementRef }) public drawerContentRef!: ElementRef<HTMLElement>;
 
     columnsToolPanel: ToolPanelDef = {
         id: 'columns',
@@ -101,7 +103,7 @@ export class AppComponent {
     constructor(private http: HttpClient) {}
 
     ngAfterViewInit() {
-        this.columnsToolPanel.parent = this.popupRef?.nativeElement.querySelector('.content') as HTMLElement;
+        this.columnsToolPanel.parent = this.popupContentRef?.nativeElement as HTMLElement;
         this.sideBar.toolPanels = [this.columnsToolPanel, this.filtersToolPanel];
         this.sideBar = { ...this.sideBar };
     }
@@ -130,7 +132,7 @@ export class AppComponent {
         this.closePopup();
         const drawer = this.drawerRef.nativeElement;
         drawer.classList.toggle('active', true);
-        this.gridApi.openToolPanel(this.filtersToolPanel.id, drawer.querySelector('.content'));
+        this.gridApi.openToolPanel(this.filtersToolPanel.id, this.drawerContentRef?.nativeElement as HTMLElement);
         addStyles(drawer);
     }
 

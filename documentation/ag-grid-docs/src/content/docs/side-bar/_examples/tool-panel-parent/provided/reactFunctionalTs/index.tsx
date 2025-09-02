@@ -40,7 +40,9 @@ const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const popupRef = useRef<HTMLElement>(null);
+    const popupContentRef = useRef<HTMLElement>(null);
     const drawerRef = useRef<HTMLElement>(null);
+    const drawerContentRef = useRef<HTMLElement>(null);
     const popupParent = useMemo(() => document.body, []);
     const [columnDefs, setColumnDefs] = useState([
         { field: 'athlete', filter: 'agTextColumnFilter', minWidth: 200 },
@@ -66,9 +68,9 @@ const GridExample = () => {
                 suppressValues: true,
                 suppressPivotMode: true,
             },
-            parent: popupRef.current?.querySelector('.content'),
+            parent: popupContentRef.current,
         };
-    }, [popupRef.current]);
+    }, [popupRef.current, popupContentRef.current]);
 
     const filtersToolPanel = useMemo(
         () => ({
@@ -113,7 +115,7 @@ const GridExample = () => {
         closePopup();
         const drawer = drawerRef.current;
         drawer.classList.toggle('active', true);
-        gridRef.current.api.openToolPanel(filtersToolPanel.id, drawer.querySelector('.content'));
+        gridRef.current.api.openToolPanel(filtersToolPanel.id, drawerContentRef.current);
         addStyles(drawer);
     }, [drawerRef, closePopup, filtersToolPanel]);
 
@@ -144,7 +146,7 @@ const GridExample = () => {
                     <div>
                         <button onClick={closePopup}>Close</button>
                     </div>
-                    <div className="content"></div>
+                    <div className="content" ref={popupContentRef}></div>
                 </div>
             </div>
 
@@ -153,7 +155,7 @@ const GridExample = () => {
                     <div>
                         <button onClick={closeDrawer}>Close</button>
                     </div>
-                    <div className="content"></div>
+                    <div className="content" ref={drawerContentRef}></div>
                 </div>
             </div>
         </div>
