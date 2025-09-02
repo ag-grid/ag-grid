@@ -141,9 +141,9 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         const map = new Map<IRowNode, Map<Column, EditValue>>();
         this.edits.forEach((editRow, rowNode) => {
             const newEditRow = new Map<Column, EditValue>();
-            editRow.forEach((cellData, column) =>
+            editRow.forEach(({ editorState: _, ...cellData }, column) =>
                 // Ensure we copy the cell data to avoid reference issues
-                newEditRow.set(column, { ...cellData })
+                newEditRow.set(column, { ...cellData } as EditValue)
             );
             map.set(rowNode, newEditRow);
         });
@@ -165,11 +165,20 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
     public setEdit(position: Required<EditPosition>, edit: Partial<EditValue>): Readonly<EditValue> {
         (this.edits.size === 0 || !this.edits.has(position.rowNode)) && this.edits.set(position.rowNode, new Map());
 
-        const currentEdit = { ...this._getEdit(position), ...edit } as EditValue;
+        const currentEdit = this._getEdit(position);
 
-        this.getEditRow(position.rowNode)!.set(position.column, currentEdit);
+        const updatedEdit = Object.assign({
+            editorState: {
+                isCancelAfterEnd: undefined,
+                isCancelBeforeStart: undefined,
+            },
+            ...currentEdit,
+            ...edit,
+        }) as EditValue;
 
-        return currentEdit;
+        this.getEditRow(position.rowNode)!.set(position.column, updatedEdit);
+
+        return updatedEdit;
     }
 
     public clearEditValue(position: EditPosition): void {
@@ -208,11 +217,12 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         const positions: EditPositionValue[] = [];
         (editMap ?? this.edits).forEach((editRow, rowNode) => {
             for (const column of editRow.keys()) {
+                const { editorState: _, ...rest } = editRow.get(column)!;
                 positions.push({
                     rowNode,
                     column,
-                    ...editRow.get(column)!,
-                });
+                    ...rest,
+                } as EditPositionValue);
             }
         });
 
@@ -282,6 +292,10 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
                 pendingValue: UNEDITED,
                 sourceValue: this.beans.valueSvc.getValue(column as AgColumn, rowNode, true, 'api'),
                 state: 'editing',
+                editorState: {
+                    isCancelAfterEnd: undefined,
+                    isCancelBeforeStart: undefined,
+                },
             });
         }
         this.edits.set(rowNode, map);

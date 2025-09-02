@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
     DragAndDropService,
-    DragSource,
     ElementParams,
     FieldPickerValueSelectedEvent,
     FieldValueEvent,
+    GridDragSource,
     ITooltipCtrl,
     Registry,
     TooltipFeature,
@@ -432,7 +432,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
     }
 
     private setupDragging(): void {
-        const dragSource: DragSource = {
+        const dragSource: GridDragSource = {
             type: DragSourceType.AdvancedFilterBuilder,
             eElement: this.eDragHandle,
             dragItemName: () => this.ePillWrapper.getDragName(),

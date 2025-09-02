@@ -22,7 +22,7 @@ describe('ServerSideExpansionService', () => {
                 addCommon: (params) => params,
             },
             serverSideRowModel: {
-                forEachNodeTransactional: (cb) => cb(rowNode),
+                forEachNode: (cb) => cb(rowNode),
             },
         };
         expansionService = new ServerSideExpansionService();
@@ -30,6 +30,10 @@ describe('ServerSideExpansionService', () => {
         expansionService['serverSideRowModel'] = beans.serverSideRowModel as any;
         expansionService['eventSvc'] = beans.eventSvc;
         expansionService['beans'] = beans;
+        expansionService['createManagedBean'] = (bean: any) => bean;
+        expansionService['addManagedEventListeners'] = () => [];
+        expansionService['addManagedPropertyListener'] = () => () => null;
+        expansionService.postConstruct();
     });
 
     describe('isRowExpanded()', () => {
@@ -39,52 +43,46 @@ describe('ServerSideExpansionService', () => {
             vitest.spyOn(rowNode, 'isExpandable').mockReturnValue(true);
         });
 
-        it('should return false for non-expandable nodes', () => {
-            vitest.spyOn(rowNode, 'isExpandable').mockReturnValue(false);
-            expect(expansionService.isRowExpanded(rowNode)).toBe(false);
-        });
-
         describe('when collapsed by default', () => {
             beforeEach(() => {
-                expansionService['gos'].getCallback = () => () => false;
-                expect(expansionService.isRowExpanded(rowNode)).toBe(false);
+                rowNode.expanded = false;
             });
 
             it('should stay collapsed', () => {
-                expect(expansionService.isRowExpanded(rowNode)).toBe(false);
+                expect(rowNode.expanded).toBe(false);
             });
             it('should stay expanded, when toggled by user', () => {
                 expansionService.setExpanded(rowNode, true);
-                expect(expansionService.isRowExpanded(rowNode)).toBe(true);
+                expect(rowNode.expanded).toBe(true);
             });
             it('should stay expanded, when expand all clicked', () => {
                 expansionService.expandAll(true);
-                expect(expansionService.isRowExpanded(rowNode)).toBe(true);
+                expect(rowNode.expanded).toBe(true);
             });
             it('should stay collapsed, when collapse all clicked', () => {
-                expect(expansionService.isRowExpanded(rowNode)).toBe(false);
+                expansionService.expandAll(false);
+                expect(rowNode.expanded).toBe(false);
             });
         });
 
         describe('when expanded by default', () => {
             beforeEach(() => {
-                expansionService['gos'].getCallback = () => () => true;
-                expect(expansionService.isRowExpanded(rowNode)).toBe(true);
+                rowNode.expanded = true;
             });
             it('should stay expanded', () => {
-                expect(expansionService.isRowExpanded(rowNode)).toBe(true);
+                expect(rowNode.expanded).toBe(true);
             });
             it('should stay collapsed, when toggled by user', () => {
                 expansionService.setExpanded(rowNode, false);
-                expect(expansionService.isRowExpanded(rowNode)).toBe(false);
+                expect(rowNode.expanded).toBe(false);
             });
             it('should stay expanded, when expand all clicked', () => {
                 expansionService.expandAll(true);
-                expect(expansionService.isRowExpanded(rowNode)).toBe(true);
+                expect(rowNode.expanded).toBe(true);
             });
             it('should stay collapsed, when collapse all clicked', () => {
                 expansionService.expandAll(false);
-                expect(expansionService.isRowExpanded(rowNode)).toBe(false);
+                expect(rowNode.expanded).toBe(false);
             });
         });
     });

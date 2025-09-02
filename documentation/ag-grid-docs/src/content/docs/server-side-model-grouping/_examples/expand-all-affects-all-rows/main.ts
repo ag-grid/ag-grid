@@ -25,6 +25,7 @@ const gridOptions: GridOptions = {
     getRowId: (p) => p.data.id, // required when ssrmExpandAllAffectsAllRows is true
     // use the server-side row model
     rowModelType: 'serverSide',
+    purgeClosedRowNodes: true,
 };
 
 function getServerSideDatasource(server: any): IServerSideDatasource {

@@ -1,4 +1,4 @@
-import type { BeanCollection, NamedBean, RowGroupOpenedEvent } from 'ag-grid-community';
+import type { BeanCollection, NamedBean } from 'ag-grid-community';
 import { BeanStub, RowNode, _exists, _getRowHeightForNode, _isServerSideRowModel, _missing } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
@@ -21,23 +21,23 @@ export class ExpandListener extends BeanStub implements NamedBean {
             return;
         }
 
-        this.addManagedEventListeners({ rowGroupOpened: this.onRowGroupOpened.bind(this) });
+        this.addManagedEventListeners({ rowExpansionStateChanged: this.onRowExpandStateChanged.bind(this) });
     }
 
-    private onRowGroupOpened(event: RowGroupOpenedEvent): void {
-        const rowNode = event.node as RowNode;
-
-        if (rowNode.expanded) {
-            if (rowNode.master) {
-                this.createDetailNode(rowNode);
+    private onRowExpandStateChanged(): void {
+        this.beans.rowModel.forEachNode((rowNode) => {
+            if (rowNode.expanded) {
+                if (rowNode.master) {
+                    this.createDetailNode(rowNode);
+                }
+                if (_missing(rowNode.childStore) && rowNode.hasChildren()) {
+                    const storeParams = this.serverSideRowModel.getParams();
+                    rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
+                }
+            } else if (this.gos.get('purgeClosedRowNodes') && _exists(rowNode.childStore)) {
+                rowNode.childStore = this.destroyBean(rowNode.childStore)!;
             }
-            if (_missing(rowNode.childStore) && rowNode.hasChildren()) {
-                const storeParams = this.serverSideRowModel.getParams();
-                rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
-            }
-        } else if (this.gos.get('purgeClosedRowNodes') && _exists(rowNode.childStore)) {
-            rowNode.childStore = this.destroyBean(rowNode.childStore)!;
-        }
+        });
 
         this.eventSvc.dispatchEvent({ type: 'storeUpdated' });
     }

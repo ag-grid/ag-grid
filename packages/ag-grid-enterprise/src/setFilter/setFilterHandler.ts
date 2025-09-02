@@ -219,14 +219,18 @@ export class SetFilterHandler<TValue = string>
         this.syncAfterDataChange();
     }
 
-    public refreshFilterValues(): void {
+    /**
+     * @param suppressAvailableValuesCheck when refreshing values via the API, the model will be reset if all available values are selected.
+     * When refreshing due to internal changes, set this to `true` to do the reset check based on all values instead.
+     */
+    public refreshFilterValues(suppressAvailableValuesCheck?: boolean): void {
         // the model is still being initialised
         if (!this.valueModel.isInitialised()) {
             return;
         }
         this.valueModel.refreshAll().then(() => {
             this.dispatchLocalEvent({ type: 'dataChanged', hardRefresh: true });
-            this.validateModel(this.params, undefined, true);
+            this.validateModel(this.params, undefined, !suppressAvailableValuesCheck);
         });
     }
 

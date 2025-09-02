@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { RowNode } from '../entities/rowNode';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { DraggingEvent } from './dragAndDropService';
+import type { RowDraggingEvent } from './rowDragTypes';
 
 export type DropIndicatorPosition = 'above' | 'inside' | 'below' | 'none';
 
@@ -74,8 +74,8 @@ export class RowDropHighlightService extends BeanStub implements NamedBean {
         }
     }
 
-    public fromDrag(draggingEvent: DraggingEvent | null): void {
-        const rowsDrop = draggingEvent?.rowsDrop;
+    public fromDrag(draggingEvent: RowDraggingEvent | null): void {
+        const rowsDrop = draggingEvent?.dropTarget;
         if (rowsDrop) {
             const { highlight, target, position } = rowsDrop;
             if (highlight && target && position !== 'none') {

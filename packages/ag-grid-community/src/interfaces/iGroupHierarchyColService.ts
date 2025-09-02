@@ -5,7 +5,7 @@ export interface IGroupHierarchyColService extends IColumnCollectionService {
     /**
      * Returns an array of columns consisting of any virtual columns associated with the given source column, as well as the source column itself (last in the array)
      */
-    expandColumn(col: AgColumn): AgColumn[];
+    expandColumnInto(target: AgColumn[], col: AgColumn): void;
     /**
      * Mutates the `columns` parameter, adding any virtual columns associated with the given source column, _not_ including the source column itself.
      */

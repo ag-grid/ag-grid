@@ -183,7 +183,7 @@ export abstract class BaseEditStrategy extends BeanStub {
     protected abstract processValidationResults(results: EditValidationResult): EditValidationAction;
 
     public cleanupEditors({ rowNode }: EditRowPosition = {}, includeEditing?: boolean): void {
-        _syncFromEditors(this.beans, false);
+        _syncFromEditors(this.beans, { persist: false });
 
         const positions = this.model.getEditPositions();
 

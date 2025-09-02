@@ -1,8 +1,8 @@
+import type { HorizontalDirection } from '../../agStack/constants/direction';
 import { _last } from '../../agStack/utils/array';
 import { _exists, _missing } from '../../agStack/utils/generic';
-import type { HorizontalDirection } from '../../constants/direction';
 import { BeanStub } from '../../context/beanStub';
-import type { DragAndDropIcon, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
+import type { DragAndDropIcon, GridDraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColumnEventType } from '../../events';
@@ -29,7 +29,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
     private isCenterContainer: boolean;
 
-    private lastDraggingEvent: DraggingEvent | null;
+    private lastDraggingEvent: GridDraggingEvent | null;
     private lastHighlightedColumn: { column: AgColumn; position: ColumnHighlightPosition } | null;
     private lastMovedInfo: { columns: AgColumn[]; toIndex: number } | null = null;
 
@@ -80,7 +80,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         return 'notAllowed';
     }
 
-    public onDragEnter(draggingEvent: DraggingEvent): void {
+    public onDragEnter(draggingEvent: GridDraggingEvent): void {
         // we do dummy drag, so make sure column appears in the right location when first placed
 
         const dragItem = draggingEvent.dragItem;
@@ -109,7 +109,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     public onDragging(
-        draggingEvent: DraggingEvent | null = this.lastDraggingEvent,
+        draggingEvent: GridDraggingEvent | null = this.lastDraggingEvent,
         fromEnter = false,
         fakeEvent = false,
         finished = false
@@ -210,7 +210,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private handleColumnDragWhileSuppressingMovement(
-        draggingEvent: DraggingEvent,
+        draggingEvent: GridDraggingEvent,
         fromEnter: boolean,
         fakeEvent: boolean,
         mouseX: number,
@@ -248,7 +248,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private handleColumnDragWhileAllowingMovement(
-        draggingEvent: DraggingEvent,
+        draggingEvent: GridDraggingEvent,
         fromEnter: boolean,
         fakeEvent: boolean,
         mouseX: number,
@@ -273,7 +273,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         }
     }
 
-    private getAllMovingColumns(draggingEvent: DraggingEvent, useSplit: boolean = false): AgColumn[] {
+    private getAllMovingColumns(draggingEvent: GridDraggingEvent, useSplit: boolean = false): AgColumn[] {
         const dragItem = draggingEvent.dragSource.getDragItem();
         let columns: AgColumn[] | null = null;
 

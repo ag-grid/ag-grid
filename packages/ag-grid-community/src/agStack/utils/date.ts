@@ -1,5 +1,8 @@
 const DATE_TIME_SEPARATOR = 'T';
 
+/** Spaces are allowed for legacy reasons to support date filter models */
+const DATE_TIME_SEPARATOR_REGEXP = new RegExp(`[${DATE_TIME_SEPARATOR} ]`);
+
 /**
  * Executing this against date produces the following:
  * ["2008-08-24T21:00:08"," 21:00:08"]
@@ -15,21 +18,21 @@ function _padStartWidthZeros(value: number, totalStringSize: number): string {
  * An alternative separator can be provided to be used instead of hyphens.
  * @param date The date to serialise
  * @param includeTime Whether to include the time in the serialised string
- * @param separator The separator to use between date parts, e.g. 2025-01-01 or 2025/01/01
+ * @param separator The separator to use between date and time parts (default 'T')
  */
 
-export function _serialiseDate(date: Date | null, includeTime = true, separator = '-'): string | null {
+export function _serialiseDate(date: Date | null, includeTime = true, separator = DATE_TIME_SEPARATOR): string | null {
     if (!date) {
         return null;
     }
 
     let serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()]
         .map((part) => _padStartWidthZeros(part, 2))
-        .join(separator);
+        .join('-');
 
     if (includeTime) {
         serialised +=
-            DATE_TIME_SEPARATOR +
+            separator +
             [date.getHours(), date.getMinutes(), date.getSeconds()]
                 .map((part) => _padStartWidthZeros(part, 2))
                 .join(':');
@@ -155,16 +158,20 @@ export function _isValidDateTime(value?: string | null): boolean {
  *   When the time zone offset is absent, **date-only** forms are interpreted as a UTC time and **date-time** forms are interpreted as a local time.
  *   The interpretation as a UTC time is due to a historical spec error that was not consistent with ISO 8601 but could not be changed due to web compatibility.
  */
-export function _parseDateTimeFromString(value?: string | null, bailIfInvalidTime = false): Date | null {
+export function _parseDateTimeFromString(
+    value?: string | null,
+    bailIfInvalidTime = false,
+    skipValidation?: boolean
+): Date | null {
     if (!value) {
         return null;
     }
 
-    if (!DATE_TIME_REGEXP.test(value)) {
+    if (!skipValidation && !DATE_TIME_REGEXP.test(value)) {
         return null;
     }
 
-    const [dateStr, timeStr] = value.split(DATE_TIME_SEPARATOR);
+    const [dateStr, timeStr] = value.split(DATE_TIME_SEPARATOR_REGEXP);
 
     if (!dateStr) {
         return null;

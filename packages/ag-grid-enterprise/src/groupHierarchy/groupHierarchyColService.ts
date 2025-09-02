@@ -26,9 +26,9 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
     public columns: _ColumnCollections | null = null;
     /** Map from primary column to virtual (i.e. generated) columns */
-    private readonly sourceColumnMap = new WeakMap<AgColumn, AgColumn[]>();
+    private sourceColumnMap = new WeakMap<AgColumn, AgColumn[]>();
     /** Map from virtual column to associated primary column. Inverse of `sourceColumnMap` */
-    private readonly inverseColumnMap = new WeakMap<AgColumn, AgColumn>();
+    private inverseColumnMap = new WeakMap<AgColumn, AgColumn>();
 
     public addColumns(cols: _ColumnCollections): void {
         const groupHierarchyCols = this.columns;
@@ -48,6 +48,9 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     }
 
     public createColumns(cols: _ColumnCollections): void {
+        this.sourceColumnMap = new WeakMap();
+        this.inverseColumnMap = new WeakMap();
+
         const list = this.createGroupHierarchyColumns(cols);
         const areSame = _areColIdsEqual(list, this.columns?.list ?? []);
 
@@ -80,8 +83,13 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         return this.columns?.list ?? null;
     }
 
-    public expandColumn(col: AgColumn<any>): AgColumn<any>[] {
-        return this.getVirtualColumnsForColumn(col).concat(col);
+    public expandColumnInto(target: AgColumn[], col: AgColumn): void {
+        const expanded = this.getVirtualColumnsForColumn(col).concat(col);
+        for (const expandedCol of expanded) {
+            if (!target.some((_c) => _columnsMatch(_c, expandedCol) || _c.getColId() === expandedCol.getColId())) {
+                target.push(expandedCol);
+            }
+        }
     }
 
     public compareVirtualColumns(colA: AgColumn, colB: AgColumn): number | null {

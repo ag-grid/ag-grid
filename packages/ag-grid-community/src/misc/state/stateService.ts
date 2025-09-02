@@ -21,13 +21,13 @@ import type {
     GridStateKey,
     PaginationState,
     PivotState,
-    RowGroupExpansionState,
     RowGroupState,
     RowPinningState,
     ScrollState,
     SideBarState,
     SortState,
 } from '../../interfaces/gridState';
+import type { RowGroupBulkExpansionState, RowGroupExpansionState } from '../../interfaces/iExpansionService';
 import type { FilterModel } from '../../interfaces/iFilter';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
 import { migrateGridStateModel } from './stateModelMigration';
@@ -48,7 +48,13 @@ export class StateService extends BeanStub implements NamedBean {
     private onRowGroupOpenedDebounced = _debounce(
         this,
         () => {
-            this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState());
+            if (this.beans.gos.get('ssrmExpandAllAffectsAllRows')) {
+                this.updateCachedState('ssrmRowGroupExpansion', this.getRowGroupExpansionState());
+                this.updateCachedState('rowGroupExpansion', undefined);
+            } else {
+                this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState() as RowGroupExpansionState);
+                this.updateCachedState('ssrmRowGroupExpansion', undefined);
+            }
         },
         0
     );
@@ -215,6 +221,7 @@ export class StateService extends BeanStub implements NamedBean {
         const {
             filter: filterState,
             rowGroupExpansion: rowGroupExpansionState,
+            ssrmRowGroupExpansion,
             rowSelection: rowSelectionState,
             pagination: paginationState,
         } = state;
@@ -225,7 +232,7 @@ export class StateService extends BeanStub implements NamedBean {
             this.setFilterState(filterState);
         }
         if (shouldSetState('rowGroupExpansion', rowGroupExpansionState)) {
-            this.setRowGroupExpansionState(rowGroupExpansionState, source);
+            this.setRowGroupExpansionState(ssrmRowGroupExpansion, rowGroupExpansionState, source);
         }
         if (shouldSetState('rowSelection', rowSelectionState)) {
             this.setRowSelectionState(rowSelectionState, source);
@@ -236,7 +243,14 @@ export class StateService extends BeanStub implements NamedBean {
 
         const updateCachedState = this.updateCachedState.bind(this);
         updateCachedState('filter', this.getFilterState());
-        updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState());
+        if (this.beans.gos.get('ssrmExpandAllAffectsAllRows')) {
+            updateCachedState('ssrmRowGroupExpansion', this.getRowGroupExpansionState());
+            updateCachedState('rowGroupExpansion', undefined);
+        } else {
+            updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState() as RowGroupExpansionState);
+            updateCachedState('ssrmRowGroupExpansion', undefined);
+        }
+
         updateCachedState('rowSelection', this.getRowSelectionState());
         updateCachedState('pagination', this.getPaginationState());
     }
@@ -247,14 +261,20 @@ export class StateService extends BeanStub implements NamedBean {
         const updateCachedState = this.updateCachedState.bind(this);
         const updateRowGroupExpansionState = () => {
             this.updateRowGroupExpansionStateTimer = 0;
-            updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState());
+            if (this.beans.gos.get('ssrmExpandAllAffectsAllRows')) {
+                updateCachedState('ssrmRowGroupExpansion', this.getRowGroupExpansionState());
+                updateCachedState('rowGroupExpansion', undefined);
+            } else {
+                updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState() as RowGroupExpansionState);
+                updateCachedState('ssrmRowGroupExpansion', undefined);
+            }
         };
         const updateFilterState = () => updateCachedState('filter', this.getFilterState());
 
         const { gos, colFilter } = this.beans;
         this.addManagedEventListeners({
             filterChanged: updateFilterState,
-            rowGroupOpened: () => this.onRowGroupOpenedDebounced(),
+            rowExpansionStateChanged: this.onRowGroupOpenedDebounced,
             expandOrCollapseAll: updateRowGroupExpansionState,
             // `groupDefaultExpanded`/`isGroupOpenByDefault` updates expansion state without an expansion event
             columnRowGroupChanged: updateRowGroupExpansionState,
@@ -786,23 +806,13 @@ export class StateService extends BeanStub implements NamedBean {
         this.beans.selectionSvc?.setSelectionState(rowSelectionState, source, source === 'api');
     }
 
-    private getRowGroupExpansionState(): RowGroupExpansionState | undefined {
-        const { expansionSvc, rowModel } = this.beans;
+    private getRowGroupExpansionState(): RowGroupExpansionState | RowGroupBulkExpansionState | undefined {
+        const { expansionSvc } = this.beans;
         if (!expansionSvc) {
             return undefined;
         }
 
-        const expandedRowGroups: string[] = [];
-        rowModel.forEachNode(({ expanded, id }) => {
-            if (expanded && id) {
-                expandedRowGroups.push(id);
-            }
-        });
-        return expandedRowGroups.length
-            ? {
-                  expandedRowGroupIds: expandedRowGroups,
-              }
-            : undefined;
+        return expansionSvc.getExpansionState();
     }
 
     private getRowPinningState(): RowPinningState | undefined {
@@ -819,6 +829,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setRowGroupExpansionState(
+        ssrmRowGroupExpansionState: RowGroupExpansionState | RowGroupBulkExpansionState | undefined,
         rowGroupExpansionState: RowGroupExpansionState | undefined,
         source: 'gridInitializing' | 'api'
     ): void {
@@ -826,19 +837,9 @@ export class StateService extends BeanStub implements NamedBean {
         if (!expansionSvc) {
             return;
         }
-        const rowGroupIdsToExpand = rowGroupExpansionState?.expandedRowGroupIds ?? [];
-        let rowGroupIdsToCollapse: string[] | undefined;
-        if (source === 'api') {
-            const oldExpandedRowGroupIds = this.getRowGroupExpansionState()?.expandedRowGroupIds;
-            if (oldExpandedRowGroupIds?.length) {
-                const oldExpandedRowGroupIdsSet = new Set(oldExpandedRowGroupIds);
-                for (const id of rowGroupIdsToExpand) {
-                    oldExpandedRowGroupIdsSet.delete(id);
-                }
-                rowGroupIdsToCollapse = Array.from(oldExpandedRowGroupIdsSet);
-            }
-        }
-        expansionSvc.expandRows(rowGroupIdsToExpand, rowGroupIdsToCollapse);
+
+        const newExpansionState = rowGroupExpansionState ?? { expandedRowGroupIds: [], collapsedRowGroupIds: [] };
+        expansionSvc.setExpansionState(newExpansionState, source);
     }
 
     private updateColumnState(features: (keyof GridState)[]): void {

@@ -1,3 +1,4 @@
+import type { DragListenerParams } from '../../agStack/interfaces/iDrag';
 import {
     _getAbsoluteHeight,
     _getAbsoluteWidth,
@@ -8,7 +9,7 @@ import {
 } from '../../agStack/utils/dom';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
+import type { DragService } from '../../dragAndDrop/dragService';
 import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
 import type { PopupService } from '../../widgets/popupService';

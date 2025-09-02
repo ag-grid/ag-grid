@@ -1,4 +1,4 @@
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
 import { _last } from './array';
 import { _getTabIndex } from './browser';
 import { _getActiveDomElement, _getDocument } from './document';
@@ -39,7 +39,7 @@ function toggleKeyboardMode(event: KeyboardEvent | MouseEvent | TouchEvent): voi
     keyboardModeActive = isKeyboardEvent;
 }
 
-export function _registerKeyboardFocusEvents(beans: AgCoreBeanCollection<any, any, any, any>): () => void {
+export function _registerKeyboardFocusEvents(beans: UtilBeanCollection): () => void {
     const eDocument = _getDocument(beans);
     addKeyboardModeEvents(eDocument);
 
@@ -107,7 +107,7 @@ export function _focusInto(
 }
 
 export function _findNextFocusableElement(
-    beans: AgCoreBeanCollection<any, any, any, any>,
+    beans: UtilBeanCollection,
     rootNode: HTMLElement,
     onlyManaged?: boolean | null,
     backwards?: boolean

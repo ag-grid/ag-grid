@@ -7,7 +7,13 @@ import type { IPopupComponent } from '../interfaces/iPopupComponent';
 import type { IPropertiesService } from '../interfaces/iProperties';
 
 export class AgPopupComponent<
-        TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+        TBeanCollection extends AgCoreBeanCollection<
+            TBeanCollection,
+            TProperties,
+            TGlobalEvents,
+            TCommon,
+            TPropertiesService
+        >,
         TProperties extends BaseProperties,
         TGlobalEvents extends BaseEvents,
         TCommon,

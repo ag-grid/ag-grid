@@ -200,11 +200,9 @@ If you are using the long form (providing a `SideBarDef` object) then it is poss
 
 By default, Tool Panels are rendered inside the Side Bar. If you want to render Tool Panels in a different location, you can set the [parent](./side-bar#reference-ToolPanelDef-parent) property in the `ToolPanelDef`. This is useful if you want to render Tool Panel in a different part of your application, such as a popup window or a separate section of your page.
 
-It is also possible to call an api method `openToolPanel(toolPanelId, parent)` to open a Tool Panel in a different location. The `parent` parameter is the HTML element where the Tool Panel will be rendered.
-
 The [Popup Parent](./context-menu/#popup-parent) must also be set to an element that contains both the Tool Panel parent and the grid.
 
-The example below demonstrates how to use the `parent` property to render the Columns Tool Panel in a different location. The Side Bar is not visible, and the Columns Tool Panel is rendered in a modal dialog.
+In the example below, the `parent` property in the columns tool panel is set to an element with ID `popup`, while the [openToolPanel](./grid-api/#reference-accessories-openToolPanel) API method uses its second parameter to dynamically assign a custom parent element. Both approaches achieve the same goal of rendering tool panels outside the default side bar. Note that `popupParent` value is set to `document.body` to ensure that Tool Panels with parents set are rendered correctly.
 
 {% gridExampleRunner title="Tool Panel Parent" name="tool-panel-parent" exampleHeight=600 /%}
 

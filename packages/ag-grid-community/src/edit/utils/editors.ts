@@ -4,6 +4,8 @@ import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
+import type { ColDef } from '../../entities/colDef';
+import type { CellEditingStoppedEvent } from '../../events';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type {
     DefaultProvidedCellEditorParams,
@@ -168,20 +170,38 @@ export function _setupEditor(
         cellCtrl.comp?.setEditDetails(compDetails, popup, popupLocation, beans.gos.get('reactiveCustomComponents'));
         cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
 
-        if (!silent) {
+        const edit = beans.editModelSvc?.getEdit(position, true);
+
+        if (!silent && !edit?.editorState?.cellStartedEditing) {
             beans.editSvc?.dispatchCellEvent(position, event, 'cellEditingStarted');
+            beans.editModelSvc?.setEdit(position, { editorState: { cellStartedEditing: true } });
         }
     }
 
     return;
 }
 
-function _valueFromEditor(cellEditor: ICellEditor): { editorValue?: any; editorValueExists: boolean } {
+function _valueFromEditor(
+    position: Required<EditPosition>,
+    cellEditor: ICellEditor,
+    params?: { isCancelling?: boolean; isStopping?: boolean }
+): { editorValue?: any; editorValueExists: boolean; isCancelAfterEnd?: boolean } {
     const noValueResult = { editorValueExists: false };
     const validationErrors = cellEditor.getValidationErrors?.();
 
     if ((validationErrors?.length ?? 0) > 0) {
         return noValueResult;
+    }
+
+    if (params?.isCancelling) {
+        return noValueResult;
+    }
+
+    if (params?.isStopping) {
+        const isCancelAfterEnd = cellEditor?.isCancelAfterEnd?.();
+        if (isCancelAfterEnd) {
+            return { ...noValueResult, isCancelAfterEnd };
+        }
     }
 
     const editorValue = cellEditor.getValue();
@@ -208,7 +228,8 @@ function _createEditorParams(
 
     const editor = cellCtrl.comp?.getCellEditor();
     const initialNewValue =
-        editSvc?.getCellDataValue(position, false) ?? (editor ? _valueFromEditor(editor)?.editorValue : undefined);
+        editSvc?.getCellDataValue(position, false) ??
+        (editor ? _valueFromEditor(position, editor)?.editorValue : undefined);
     const value =
         initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
 
@@ -281,7 +302,10 @@ function checkAndPreventDefault(
     return params;
 }
 
-export function _syncFromEditors(beans: BeanCollection, persist: boolean): void {
+export function _syncFromEditors(
+    beans: BeanCollection,
+    params: { persist: boolean; isCancelling?: boolean; isStopping?: boolean }
+): void {
     beans.editModelSvc?.getEditPositions().forEach((cellId) => {
         const cellCtrl = _getCellCtrl(beans, cellId);
 
@@ -295,19 +319,23 @@ export function _syncFromEditors(beans: BeanCollection, persist: boolean): void 
             return;
         }
 
-        const { editorValue, editorValueExists } = _valueFromEditor(editor);
+        const { editorValue, editorValueExists, isCancelAfterEnd } = _valueFromEditor(cellId, editor, params);
 
-        _syncFromEditor(beans, cellId, persist, editorValue, undefined, !editorValueExists);
+        if (isCancelAfterEnd) {
+            beans.editModelSvc?.setEdit(cellId, { editorState: { isCancelAfterEnd } });
+        }
+
+        _syncFromEditor(beans, cellId, editorValue, undefined, !editorValueExists, params);
     });
 }
 
 export function _syncFromEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
-    persist: boolean,
     editorValue?: any,
     _source?: string,
-    valueSameAsSource?: boolean
+    valueSameAsSource?: boolean,
+    params?: { persist?: boolean; isCancelling?: boolean; isStopping?: boolean }
 ): void {
     const { editModelSvc, valueSvc } = beans;
     if (!editModelSvc) {
@@ -335,7 +363,7 @@ export function _syncFromEditor(
         editorValue: valueSameAsSource ? edit.sourceValue : editorValue,
     });
 
-    if (persist) {
+    if (params?.persist) {
         _persistEditorValue(beans, position);
     }
 }
@@ -363,12 +391,14 @@ export function _destroyEditors(
     edits!.forEach((cellPosition) => _destroyEditor(beans, cellPosition, params));
 }
 
+type DestroyEditorParams = { event?: Event | null; silent?: boolean; cancel?: boolean };
+
 export function _destroyEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
-    params?: { event?: Event | null; silent?: boolean; cancel?: boolean }
+    params?: DestroyEditorParams
 ): void {
-    const { editSvc, editModelSvc } = beans;
+    const { editModelSvc } = beans;
     const cellCtrl = _getCellCtrl(beans, position);
 
     const edit = editModelSvc?.getEdit(position, true);
@@ -386,6 +416,21 @@ export function _destroyEditor(
     if (comp && !comp.getCellEditor()) {
         // editor already cleaned up, refresh cell
         cellCtrl?.refreshCell();
+
+        if (edit) {
+            editModelSvc?.setEdit(position, { state: 'changed' });
+            dispatchEditingStopped(
+                beans,
+                position,
+                {
+                    valueChanged: false,
+                    newValue: undefined,
+                    oldValue: edit.sourceValue,
+                },
+                params
+            );
+        }
+
         return;
     }
 
@@ -407,16 +452,67 @@ export function _destroyEditor(
 
     const latest = editModelSvc?.getEdit(position);
 
-    if (latest?.state === 'changed' && !params?.silent) {
-        editSvc?.dispatchCellEvent(position, params?.event, 'cellEditingStopped', {
-            valueChanged: _sourceAndPendingDiffer(latest) && !params?.cancel,
-            newValue: edit?.editorValue ?? edit?.pendingValue,
-            oldValue: latest?.sourceValue,
-        });
+    if (latest && latest.state === 'changed') {
+        dispatchEditingStopped(
+            beans,
+            position,
+            {
+                valueChanged: _sourceAndPendingDiffer(latest) && !params?.cancel,
+                newValue:
+                    params?.cancel || latest.editorState.isCancelAfterEnd
+                        ? undefined
+                        : latest?.editorValue ?? edit?.pendingValue,
+                oldValue: latest?.sourceValue,
+            },
+            params
+        );
     }
 }
 
+function dispatchEditingStopped(
+    beans: BeanCollection,
+    position: Required<EditPosition>,
+    args: Pick<CellEditingStoppedEvent, 'valueChanged' | 'newValue' | 'oldValue'>,
+    { silent, event }: DestroyEditorParams = {}
+) {
+    const { editSvc, editModelSvc } = beans;
+
+    const latest = editModelSvc?.getEdit(position);
+    const { editorState } = latest || {};
+    const { isCancelBeforeStart } = editorState || {};
+
+    if (!silent && !isCancelBeforeStart) {
+        editSvc?.dispatchCellEvent(position, event, 'cellEditingStopped', args);
+        editModelSvc?.setEdit(position, { editorState: { cellStoppedEditing: true } });
+    }
+}
+
+function _hasValidationRules(beans: BeanCollection): boolean {
+    const { gos, colModel } = beans;
+    const getFullRowEditValidationErrors = !!gos.get('getFullRowEditValidationErrors');
+    const columnsHaveRules = colModel
+        .getColumnDefs()
+        ?.filter((c: ColDef) => c.editable)
+        .some(({ cellEditorParams }: ColDef) => {
+            const { minLength, maxLength, getValidationErrors, min, max } = cellEditorParams || {};
+
+            return (
+                minLength !== undefined ||
+                maxLength !== undefined ||
+                getValidationErrors !== undefined ||
+                min !== undefined ||
+                max !== undefined
+            );
+        });
+
+    return columnsHaveRules || getFullRowEditValidationErrors;
+}
+
 export function _populateModelValidationErrors(beans: BeanCollection): void {
+    if (!_hasValidationRules(beans)) {
+        return;
+    }
+
     const mappedEditors = getCellEditorInstanceMap(beans);
     const cellValidationModel = new EditCellValidationModel();
 
@@ -460,7 +556,7 @@ export function _populateModelValidationErrors(beans: BeanCollection): void {
         }
     }
 
-    _syncFromEditors(beans, false);
+    _syncFromEditors(beans, { persist: false });
 
     // the cellValidationModel should probably be reused to avoid
     // the second loop over mappedEditor below

@@ -69,11 +69,11 @@ export function stopEditing(beans: BeanCollection, cancel: boolean = false): voi
                 }
             });
         } else {
-            _syncFromEditors(beans, true);
+            _syncFromEditors(beans, { persist: true });
         }
         _destroyEditors(beans, undefined, { cancel });
     } else {
-        editSvc?.stopEditing(undefined, { cancel, source: 'api' });
+        editSvc?.stopEditing(undefined, { cancel, source: 'edit' });
     }
 }
 

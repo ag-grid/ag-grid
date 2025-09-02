@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import {
     ColumnsToolPanelModule,
@@ -20,19 +20,21 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi<IOlympicData>;
 
+const COL_DEFS: ColDef<IOlympicData>[] = [
+    {
+        field: 'date',
+        rowGroup: true,
+        enableRowGroup: true,
+        enablePivot: true,
+        rowGroupingHierarchy: ['year', 'month'],
+    },
+    { field: 'country' },
+    { field: 'sport' },
+    { field: 'total', aggFunc: 'sum' },
+];
+
 const gridOptions: GridOptions<IOlympicData> = {
-    columnDefs: [
-        {
-            field: 'date',
-            rowGroup: true,
-            enableRowGroup: true,
-            enablePivot: true,
-            rowGroupingHierarchy: ['year', 'month'],
-        },
-        { field: 'country' },
-        { field: 'sport' },
-        { field: 'total', aggFunc: 'sum' },
-    ],
+    columnDefs: COL_DEFS,
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -61,3 +63,9 @@ document.addEventListener('DOMContentLoaded', function () {
             )
         );
 });
+
+function onChangeFormattedMonth(event: any) {
+    const month = event.target.checked ? 'formattedMonth' : 'month';
+    COL_DEFS[0].rowGroupingHierarchy![1] = month;
+    gridApi.setGridOption('columnDefs', COL_DEFS);
+}

@@ -5,8 +5,9 @@ import type { IRowDragItem } from '../interfaces/iRowDragItem';
 import type { ElementParams } from '../utils/element';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
-import type { DragSource } from './dragAndDropService';
+import type { GridDragSource } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
+import type { RowDraggingEvent } from './rowDragTypes';
 
 const RowDragElement: ElementParams = {
     tag: 'div',
@@ -15,7 +16,7 @@ const RowDragElement: ElementParams = {
 };
 
 export class RowDragComp extends Component {
-    private dragSource: DragSource | null = null;
+    private dragSource: GridDragSource<RowDraggingEvent> | null = null;
     private mouseDownListener: (() => void) | undefined;
 
     constructor(
@@ -186,7 +187,7 @@ export class RowDragComp extends Component {
             eElement: eGui,
             dragItemName: (draggingEvent) => {
                 const dragItem = draggingEvent?.dragItem || this.getDragItem();
-                const dragItemCount = (draggingEvent?.rowsDrop?.rows.length ?? dragItem.rowNodes?.length) || 1;
+                const dragItemCount = (draggingEvent?.dropTarget?.rows.length ?? dragItem.rowNodes?.length) || 1;
 
                 const rowDragText = this.getRowDragText(this.column);
                 if (rowDragText) {

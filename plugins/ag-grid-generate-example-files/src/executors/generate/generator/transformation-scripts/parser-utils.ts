@@ -769,17 +769,39 @@ export function wrapTearDownExample(method: string) {
 export function getEnableAGTestIdLogic(isUmd: boolean = false): string {
     const enableStart = '/** ENABLE AG-TEST-ID START **/';
     const enableEnd = '/** ENABLE AG-TEST-ID END **/';
-    const importCode = isUmd ? '' : "import { setupAgTestIds, getGridApi } from 'ag-grid-community';";
-    const setupCode = isUmd ? 'agGrid.setupAgTestIds();' : 'setupAgTestIds();';
-    const exposeGridApi = isUmd ? 'window.getGridApi = agGrid.getGridApi;' : 'window.getGridApi = getGridApi;';
+    const community = 'agGridCommunity';
+    const enterprise = 'agGridEnterprise';
+
+    // Support dynamically adding modules during integration testing
+    const agGridCommunityImport = isUmd ? '' : `import * as ${community} from 'ag-grid-community';`;
+    const agGridEnterpriseImport = isUmd ? '' : `import * as ${enterprise} from 'ag-grid-enterprise';`;
+
+    const extraModules = isUmd
+        ? ''
+        : `
+    const modulesCSV = url.get('modules');
+    if (modulesCSV) {
+        ${community}.ModuleRegistry.registerModules(
+            modulesCSV.split(',').map(name => ${community}[name] || ${enterprise}[name])
+        );
+    }
+`;
+
+    const setupCode = isUmd ? 'agGrid.setupAgTestIds();' : `${community}.setupAgTestIds();`;
+    const exposeGridApi = isUmd
+        ? 'window.getGridApi = agGrid.getGridApi;'
+        : `window.getGridApi = ${community}.getGridApi;`;
 
     const method = `
-        ${importCode}
-        const enableTestIds = new URLSearchParams(window.location.search).get('enableTestIds');
-        if (enableTestIds) {
-            ${setupCode}
-            ${exposeGridApi}
-        }
+${agGridCommunityImport}
+${agGridEnterpriseImport}
+const url = new URLSearchParams(window.location.search);
+const enableTestIds = url.get('enableTestIds');
+if (enableTestIds) {
+    ${extraModules}
+    ${setupCode}
+    ${exposeGridApi}
+}
     `;
     return `${enableStart}${method}${enableEnd}`;
 }

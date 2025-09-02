@@ -39,6 +39,7 @@ import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
 import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import type { GridDestroyService } from '../gridDestroyService';
+import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { RowNodeBlockLoader } from '../infiniteRowModel/rowNodeBlockLoader';
 import type { IChartService } from '../interfaces/IChartService';
@@ -218,7 +219,13 @@ export type ComponentMeta = ClassImp | ComponentMetaWithParams | ComponentMetaFu
 export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
 
 interface CoreBeanCollection
-    extends AgCoreBeanCollection<BeanCollection, GridOptionsService, AgEventTypeParams, AgGridCommon<any, any>> {
+    extends AgCoreBeanCollection<
+        BeanCollection,
+        GridOptionsWithDefaults,
+        AgEventTypeParams,
+        AgGridCommon<any, any>,
+        GridOptionsService
+    > {
     pageBoundsListener: PageBoundsListener;
     environment: Environment;
     rowRenderer: RowRenderer;

@@ -1,20 +1,18 @@
 import type {
     BeanCollection,
     IExpansionService,
-    IsServerSideGroupOpenByDefaultParams,
     NamedBean,
+    RowGroupBulkExpansionState,
+    RowGroupExpansionState,
     RowGroupOpenedEvent,
     RowNode,
-    WithoutGridCommon,
 } from 'ag-grid-community';
 
 import { BaseExpansionService } from '../../rowHierarchy/baseExpansionService';
 import type { ServerSideRowModel } from '../serverSideRowModel';
-
-interface IServerSideRowExpansionState {
-    expandAll: boolean | undefined; // undefined = 'notInteracted' | true = 'expandAll' | false = 'collapseAll'
-    toggledNodes: string[];
-}
+import { ExpandStrategy } from './expansion/strategies/defaultStrategy';
+import { ExpandAllStrategy } from './expansion/strategies/expandAllStrategy';
+import type { IExpansionStrategy } from './expansion/strategies/iExpansionStrategy';
 
 /**
  * Service for managing row expansion in the server-side row model.
@@ -22,11 +20,13 @@ interface IServerSideRowExpansionState {
  * Nodes still maintain their own expanded state, and also there is a user-defined lazy initial state.
  * This service manages all these states and provides an API for expanding/collapsing rows.
  */
-export class ServerSideExpansionService extends BaseExpansionService implements NamedBean, IExpansionService {
+export class ServerSideExpansionService
+    extends BaseExpansionService
+    implements NamedBean, IExpansionService<RowGroupExpansionState | RowGroupBulkExpansionState>
+{
     beanName = 'expansionSvc' as const;
-    private readonly interactedWith = new Set<string>();
-    private readonly toggledNodes = new Set<string>();
-    private expandAllStatus: IServerSideRowExpansionState['expandAll'];
+
+    private strategy: IExpansionStrategy<RowGroupExpansionState> | IExpansionStrategy<RowGroupBulkExpansionState>;
     private serverSideRowModel: ServerSideRowModel;
 
     public wireBeans(beans: BeanCollection) {
@@ -34,91 +34,89 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     }
 
     public postConstruct(): void {
+        const setDefaultExpand = () => {
+            this.strategy = this.createManagedBean(new ExpandStrategy());
+        };
+
         this.addManagedEventListeners({
-            columnRowGroupChanged: () => {
-                this.reset();
-            },
+            // when row grouping changes, the old expand all state is no longer valid as rows changed
+            columnRowGroupChanged: setDefaultExpand,
         });
+
+        this.addManagedPropertyListener('ssrmExpandAllAffectsAllRows', (p) => {
+            // reset strategy if explicitly disabled, otherwise state is fine to remain until new
+            // select all value is set/removed
+            if (!p.currentValue) {
+                this.strategy = this.createManagedBean(new ExpandStrategy());
+                this.updateAllNodes();
+                this.dispatchStateUpdatedEvent();
+            }
+        });
+
+        setDefaultExpand();
+    }
+
+    public setExpansionState(state: RowGroupExpansionState | RowGroupBulkExpansionState): void {
+        const isExpandAllState = 'expandAll' in state;
+        const isExpandAllStrategy = this.isExpandAllStrategy(this.strategy);
+
+        if (isExpandAllState !== isExpandAllStrategy) {
+            this.strategy = isExpandAllState
+                ? this.createManagedBean(new ExpandAllStrategy())
+                : this.createManagedBean(new ExpandStrategy());
+        }
+        this.strategy.setExpandedState(state as any); // cast to any, as we know the type is correct due to the previous assertion
+        this.dispatchStateUpdatedEvent();
+        this.updateAllNodes();
+    }
+
+    public getExpansionState(): RowGroupExpansionState | RowGroupBulkExpansionState {
+        return this.strategy.getExpandedState();
     }
 
     /**
-     * This is different from just checking expandedState.isExpanded(rowNode.id),
-     * as this correctly prioritizes user interaction over the user-defined initial state.
-     * Plus sanity checks that the rowNode is actually expandable.
+     * Updates all nodes to the correct expanded/collapsed state.
      */
-    public isRowExpanded(rowNode: RowNode): boolean {
-        if (!rowNode.isExpandable()) {
-            return false;
-        }
-
-        if (this.gos.get('ssrmExpandAllAffectsAllRows') && this.hasInteractedWith(rowNode.id!)) {
-            return this.isExpanded(rowNode.id!);
-        }
-
-        const userFunc = this.gos.getCallback('isServerSideGroupOpenByDefault');
-        if (!userFunc) {
-            return false;
-        }
-
-        const params: WithoutGridCommon<IsServerSideGroupOpenByDefaultParams> = {
-            data: rowNode.data,
-            rowNode,
-        };
-
-        const userState = userFunc(params);
-        if (this.isExpanded(rowNode.id!) !== userState) {
-            // sync with user defined state
-            this.toggleNode(rowNode.id!);
-        }
-        return userState;
-    }
-
-    public expandRows(rowIdsToExpand: string[], rowIdsToCollapse?: string[]): void {
-        const rowIdsToExpandSet = new Set(rowIdsToExpand);
-        const rowIdsToCollapseSet = new Set(rowIdsToCollapse || []);
-        this.serverSideRowModel.forEachNodeTransactional((node) => {
-            if (rowIdsToExpandSet.has(node.id!)) {
-                return node.setExpanded(true);
-            }
-            if (rowIdsToCollapseSet.has(node.id!)) {
-                return node.setExpanded(false);
-            }
+    private updateAllNodes() {
+        this.serverSideRowModel.forEachNode((node) => {
+            super.setExpanded(node, this.isNodeExpanded(node));
         });
     }
 
-    public override setExpanded(
-        rowNode: RowNode | undefined,
-        expanded: boolean,
-        e?: MouseEvent | KeyboardEvent,
-        _?: boolean,
-        rowId?: string
-    ): void {
-        const rowIdC = rowId || rowNode!.id!;
-        if (expanded !== this.isExpanded(rowIdC)) {
-            this.toggleNode(rowIdC);
-        }
-        if (rowNode) {
-            super.setExpanded(rowNode, expanded, e);
-        }
+    public isNodeExpanded(node: RowNode): boolean {
+        return this.strategy.isRowExpanded(node);
+    }
+
+    public override setExpanded(node: RowNode, expanded: boolean, e?: MouseEvent | KeyboardEvent, _?: boolean): void {
+        this.strategy.setRowExpanded(node, expanded);
+        super.setExpanded(node, expanded, e);
+        this.dispatchStateUpdatedEvent();
     }
 
     public expandAll(expanded: boolean): void {
-        this.reset(expanded);
-        const ssrmExpandAllAffectsAllRows = this.gos.get('ssrmExpandAllAffectsAllRows');
-        this.serverSideRowModel.forEachNodeTransactional((node) => {
-            if (!ssrmExpandAllAffectsAllRows && (node.stub || !node.hasChildren())) {
-                return;
-            }
-            node.setExpanded(expanded);
-        });
+        const canUseNewExpandAll = this.beans.gos.get('ssrmExpandAllAffectsAllRows');
+        // if allowed, swap to expand all strategy
+        const strategy: IExpansionStrategy<any> =
+            this.isExpandAllStrategy(this.strategy) || !canUseNewExpandAll ? this.strategy : new ExpandAllStrategy();
+        this.strategy = strategy;
+        strategy.expandAll(expanded);
+        this.updateAllNodes();
+        this.dispatchStateUpdatedEvent();
         this.beans.eventSvc.dispatchEvent({
             type: 'expandOrCollapseAll',
             source: expanded ? 'expandAll' : 'collapseAll',
         });
     }
 
+    private isExpandAllStrategy(
+        strategy: IExpansionStrategy<any>
+    ): strategy is IExpansionStrategy<RowGroupBulkExpansionState> {
+        return strategy.name === 'expandAll';
+    }
+
     public onGroupExpandedOrCollapsed(): void {
-        // do nothing
+        // this could be made to work, but the pattern for encouraging .expanded to be explicitly set on nodes
+        // is old, and we should move towards batch APIs
     }
 
     protected override dispatchExpandedEvent(event: RowGroupOpenedEvent): void {
@@ -129,38 +127,4 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
         // we refresh regardless as the output of the callback could be a moving target
         this.beans.rowRenderer.refreshCells({ rowNodes: [event.node] });
     }
-
-    /**
-     * Internal method for checking service internal state only.
-     * expandAll XOR isToggled, since toggleNodes signifies a diff from expandAll.
-     */
-    private isExpanded = (rowId: string) => !!this.expandAllStatus !== this.toggledNodes.has(rowId);
-
-    /**
-     * Cleans up sets and sets the expandAll state if provided, otherwise resets it too.
-     */
-    private reset = (newExpandAll: IServerSideRowExpansionState['expandAll'] = undefined) => {
-        this.expandAllStatus = newExpandAll;
-        this.interactedWith.clear();
-        this.toggledNodes.clear();
-    };
-
-    /**
-     * Toggles the expansion state of a node.
-     */
-    private toggleNode = (rowId: string) => {
-        if (!this.hasInteractedWithAll()) this.interactedWith.add(rowId);
-        this.toggledNodes[this.toggledNodes.has(rowId) ? 'delete' : 'add'](rowId);
-    };
-
-    /**
-     * Returns true if the user has interacted with the node (by expanding/collapsing it).
-     * If we have touched the expand/collapse all button, we return true for all nodes.
-     */
-    private hasInteractedWith = (rowId: string) => this.hasInteractedWithAll() || this.interactedWith.has(rowId);
-
-    /**
-     * Returns true if the user has interacted with all nodes in the grid (by using expandAll/collapseAll).
-     */
-    private hasInteractedWithAll = () => typeof this.expandAllStatus === 'boolean';
 }

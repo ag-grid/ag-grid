@@ -25,7 +25,13 @@ type AgEventOrDestroyed<TEventType extends string> = TEventType | AgBeanStubEven
 type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?: (event?: TEvent) => void };
 
 export abstract class AgBeanStub<
-        TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+        TBeanCollection extends AgCoreBeanCollection<
+            TBeanCollection,
+            TProperties,
+            TGlobalEvents,
+            TCommon,
+            TPropertiesService
+        >,
         TProperties extends BaseProperties,
         TGlobalEvents extends BaseEvents,
         TCommon,

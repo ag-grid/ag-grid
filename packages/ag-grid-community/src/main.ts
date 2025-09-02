@@ -92,6 +92,8 @@ export { ScrollDirection } from './agStack/interfaces/baseEvents';
 export { KeyCode } from './agStack/constants/keyCode';
 export { AgPopupComponent } from './agStack/popup/agPopupComponent';
 export { IComponent } from './agStack/interfaces/iComponent';
+export { DragListenerParams } from './agStack/interfaces/iDrag';
+export { IDragAndDropImage } from './agStack/interfaces/iDragAndDrop';
 
 // AG Stack Utils (public)
 export {
@@ -145,7 +147,7 @@ export {
     _requestAnimationFrame,
     _isElementOverflowingCallback,
 } from './agStack/utils/dom';
-export { _isElementInEventPath } from './agStack/utils/event';
+export { _isElementInEventPath, _anchorElementToMouseMoveEvent } from './agStack/utils/event';
 export { _debounce, _doOnce, _waitUntil, _batchCall } from './agStack/utils/function';
 export { _fuzzySuggestions } from './agStack/utils/fuzzyMatch';
 export {
@@ -158,7 +160,13 @@ export {
 } from './agStack/utils/generic';
 export { _isEventFromPrintableCharacter } from './agStack/utils/keyboard';
 export { _escapeString, _toString } from './agStack/utils/string';
-export { _getActiveDomElement, _getRootNode, _isNothingFocused, _getDocument } from './agStack/utils/document';
+export {
+    _getActiveDomElement,
+    _getRootNode,
+    _isNothingFocused,
+    _getDocument,
+    _getPageBody,
+} from './agStack/utils/document';
 export { _getLocaleTextFunc, _translate } from './agStack/utils/locale';
 export { AgPromise, _isPromise } from './agStack/utils/promise';
 export {
@@ -219,6 +227,7 @@ export type {
 // AG Stack (private)
 export { AgBeanStub as _AgBeanStub, AgBeanStubEvent as _AgBeanStubEvent } from './agStack/core/agBeanStub';
 export { AgComponentStub as _AgComponentStub } from './agStack/core/agComponentStub';
+export { AgComponentSelector as _AgComponentSelector } from './agStack/interfaces/agComponent';
 export { AgSingletonBeanClass as _AgSingletonBeanClass, AgContext as _AgContext } from './agStack/core/agContext';
 export { BaseEnvironment as _BaseEnvironment } from './agStack/core/baseEnvironment';
 export { BaseRegistry as _BaseRegistry } from './agStack/core/baseRegistry';
@@ -241,9 +250,18 @@ export { AgTooltipComponent as _AgTooltipComponent } from './agStack/tooltip/agT
 export { AgTooltipFeature as _AgTooltipFeature } from './agStack/tooltip/agTooltipFeature';
 export { BaseTooltipParams as _BaseTooltipParams } from './agStack/tooltip/baseTooltipStateManager';
 export { BaseTooltipStateManager as _BaseTooltipStateManager } from './agStack/tooltip/baseTooltipStateManager';
-export { _createAgElement } from './agStack/utils/dom';
+export { _createAgElement, AgElementParams as _AgElementParams } from './agStack/utils/dom';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap } from './agStack/utils/locale';
 export { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
+export { IDragService as _IDragService } from './agStack/interfaces/iDrag';
+export {
+    AgDraggingEvent as _AgDraggingEvent,
+    IDragAndDropService as _IDragAndDropService,
+    AgDragSource as _AgDragSource,
+    AgDropTarget as _AgDropTarget,
+} from './agStack/interfaces/iDragAndDrop';
+export { BaseDragService as _BaseDragService } from './agStack/core/baseDragService';
+export { BaseDragAndDropService as _BaseDragAndDropService } from './agStack/core/baseDragAndDropService';
 
 // excel
 export {
@@ -295,9 +313,8 @@ export type { DragAndDropService } from './dragAndDrop/dragAndDropService';
 export {
     DragSourceType,
     DropTarget,
-    DragSource,
-    DragItemNameGetter,
-    DraggingEvent,
+    GridDragSource,
+    GridDraggingEvent,
     DragAndDropIcon,
 } from './dragAndDrop/dragAndDropService';
 export { DragItem } from './interfaces/iDragItem';
@@ -308,10 +325,12 @@ export type {
     RowDropTargetPosition,
     RowDropZoneParams,
     RowDropZoneEvents,
+    DragSource,
+    DraggingEvent,
+    RowsDropParams,
 } from './dragAndDrop/rowDragTypes';
 export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { DragService } from './dragAndDrop/dragService';
-export { DragListenerParams } from './dragAndDrop/dragService';
 export { IRowDragItem } from './interfaces/iRowDragItem';
 export type { HorizontalResizeService } from './dragAndDrop/horizontalResizeService';
 
@@ -682,11 +701,7 @@ export {
     ILoadingOverlay,
 } from './rendering/overlays/loadingOverlayComponent';
 export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from './rendering/overlays/noRowsOverlayComponent';
-export {
-    IDragAndDropImageComponent,
-    IDragAndDropImage,
-    IDragAndDropImageParams,
-} from './dragAndDrop/dragAndDropImageComponent';
+export { IDragAndDropImageComponent, IDragAndDropImageParams } from './dragAndDrop/dragAndDropImageComponent';
 
 // features
 export {
@@ -865,7 +880,7 @@ export {
     _FindApi,
     _BatchEditApi,
 } from './api/gridApi';
-export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
+export { _getClientSideRowModel, _getViewportRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
 export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes';
 export { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 export type { FocusService } from './focusService';
@@ -892,8 +907,6 @@ export {
     _canSkipShowingRowGroup,
     _getRowHeightAsNumber,
     _shouldUpdateColVisibilityAfterGroup,
-    _getPageBody,
-    _anchorElementToMouseMoveEvent,
     _getGroupAggFiltering,
     _isRowSelection,
     _isGetRowHeightFunction,
@@ -954,7 +967,6 @@ export {
     CellSelectionCellState,
     RangeSelectionCellState,
     RangeSelectionState,
-    RowGroupExpansionState,
     RowGroupState,
     RowPinningState,
     ScrollState,
@@ -969,7 +981,7 @@ export { convertColumnGroupState, convertColumnState } from './misc/state/stateU
 // uncatalogued
 export { IRowModel, RowBounds, RowModelType } from './interfaces/iRowModel';
 export { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
-export { IExpansionService } from './interfaces/iExpansionService';
+export { IExpansionService, RowGroupExpansionState, RowGroupBulkExpansionState } from './interfaces/iExpansionService';
 export { ServerSideRowSelectionState, ServerSideRowGroupSelectionState } from './interfaces/selectionState';
 export { IServerSideSelectionState, IServerSideGroupSelectionState } from './interfaces/iServerSideSelection';
 export { IAggFuncService } from './interfaces/iAggFuncService';
@@ -1299,8 +1311,10 @@ export {
 } from './selection/rowSelectionModule';
 export {
     CsrmSsrmSharedApiModule as _CsrmSsrmSharedApiModule,
+    RowModelSharedApiModule as _RowModelSharedApiModule,
     SsrmInfiniteSharedApiModule as _SsrmInfiniteSharedApiModule,
 } from './api/sharedApiModule';
+export { onRowHeightChanged, resetRowHeights } from './api/rowModelSharedApi';
 export { SharedMenuModule as _SharedMenuModule } from './misc/menu/sharedMenuModule';
 export { SortModule as _SortModule } from './sort/sortModule';
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';

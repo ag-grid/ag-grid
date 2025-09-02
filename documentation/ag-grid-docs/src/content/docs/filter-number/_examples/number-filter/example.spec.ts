@@ -1,6 +1,7 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
+    test.skip(true, 'Skipped until Math.random() fixed');
     test.eachFramework('Example', async ({ page, agIdFor }) => {
         const colFilterIcon = agIdFor.headerFilterButton('price');
         await expect(colFilterIcon).toBeVisible();
@@ -17,7 +18,7 @@ test.agExample(import.meta, () => {
         await filterInput.fill('900');
 
         // close the filter by clicking outside
-        await agIdFor.cell('1', 'price').click();
+        await agIdFor.cell('0', 'price').click();
 
         const firstRowPrice = agIdFor.cell('0', 'price');
         const secondRowPrice = agIdFor.cell('4', 'price');

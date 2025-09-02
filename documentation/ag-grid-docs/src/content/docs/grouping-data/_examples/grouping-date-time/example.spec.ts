@@ -62,4 +62,24 @@ test.agExample(import.meta, () => {
         await agIdFor.columnSelectListItemCheckbox('Date (Year) Column').click();
         await expect(agIdFor.columnDropArea('toolbar', 'Row Groups').locator('.ag-column-drop-cell')).toHaveCount(3);
     });
+
+    test.eachFramework('Example with formatted months', async ({ agIdFor, page }) => {
+        const level0GroupRowId = `row-group-${vcolPrefix}-date-year-2008`;
+
+        // Switch to formatted month groups
+        await page.locator('#formatted-month-checkbox').click();
+
+        // Assert there are still only 3 columns being grouped on (2 virtual, one real)
+        await expect(agIdFor.columnDropArea('panel', 'Row Groups').locator('.ag-column-drop-cell')).toHaveCount(3);
+
+        // Let rows re-render
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        // Re-expanding year group shows _formatted_ month group this time
+        await agIdFor.groupContracted(level0GroupRowId, GROUP_AUTO_COLUMN_ID).click();
+        await expect(agIdFor.autoGroupCell(`${level0GroupRowId}-${vcolPrefix}-date-formattedMonth-August`)).toHaveText(
+            'August (5)',
+            { useInnerText: true }
+        );
+    });
 });

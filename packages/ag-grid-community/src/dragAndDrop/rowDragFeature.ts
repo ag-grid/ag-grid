@@ -10,10 +10,10 @@ import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
-import type { DragAndDropIcon, DraggingEvent, DropTarget } from './dragAndDropService';
+import type { DragAndDropIcon, DropTarget } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
 import { RowDragFeatureNudger } from './rowDragFeatureNudger';
-import type { RowDropZoneEvents, RowDropZoneParams, RowsDrop } from './rowDragTypes';
+import type { RowDraggingEvent, RowDropZoneEvents, RowDropZoneParams, RowsDrop } from './rowDragTypes';
 
 interface WritableRowNode extends RowNode {
     treeParent: RowNode | null;
@@ -27,17 +27,17 @@ interface WritableRowNode extends RowNode {
  */
 interface InternalRowDropZoneEvents {
     /** Callback function that will be executed when the rowDrag enters the target. */
-    onDragEnter?: (params: DraggingEvent) => void;
+    onDragEnter?: (params: RowDraggingEvent) => void;
     /** Callback function that will be executed when the rowDrag leaves the target */
-    onDragLeave?: (params: DraggingEvent) => void;
+    onDragLeave?: (params: RowDraggingEvent) => void;
     /**
      * Callback function that will be executed when the rowDrag is dragged inside the target.
      * Note: this gets called multiple times.
      */
-    onDragging?: (params: DraggingEvent) => void;
+    onDragging?: (params: RowDraggingEvent) => void;
     /** Callback function that will be executed when the rowDrag drops rows within the target. */
-    onDragStop?: (params: DraggingEvent) => void;
-    onDragCancel?: (params: DraggingEvent) => void;
+    onDragStop?: (params: RowDraggingEvent) => void;
+    onDragCancel?: (params: RowDraggingEvent) => void;
 }
 interface InternalRowDropZoneParams extends InternalRowDropZoneEvents {
     /** A callback method that returns the DropZone HTMLElement. */
@@ -48,7 +48,7 @@ interface InternalRowDropZoneParams extends InternalRowDropZoneEvents {
 
 export class RowDragFeature extends BeanStub implements DropTarget {
     private clientSideRowModel: IClientSideRowModel;
-    private lastDraggingEvent: DraggingEvent | null = null;
+    private lastDraggingEvent: RowDraggingEvent | null = null;
     private nudger: RowDragFeatureNudger | null = null;
 
     constructor(private eContainer: HTMLElement | null) {
@@ -80,8 +80,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return type === DragSourceType.RowDrag;
     }
 
-    public getIconName(draggingEvent: DraggingEvent | null): DragAndDropIcon {
-        if (draggingEvent?.rowsDrop?.allowed === false) {
+    public getIconName(draggingEvent: RowDraggingEvent | null): DragAndDropIcon {
+        if (draggingEvent?.dropTarget?.allowed === false) {
             return 'notAllowed';
         }
 
@@ -109,7 +109,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return false;
     }
 
-    private getRowNodes(draggingEvent: DraggingEvent): RowNode[] {
+    private getRowNodes(draggingEvent: RowDraggingEvent): RowNode[] {
         if (!this.isFromThisGrid(draggingEvent)) {
             return (draggingEvent.dragItem.rowNodes || []) as RowNode[];
         }
@@ -123,15 +123,15 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return [currentNode];
     }
 
-    public onDragEnter(draggingEvent: DraggingEvent): void {
+    public onDragEnter(draggingEvent: RowDraggingEvent): void {
         this.dragging(draggingEvent, true);
     }
 
-    public onDragging(draggingEvent: DraggingEvent): void {
+    public onDragging(draggingEvent: RowDraggingEvent): void {
         this.dragging(draggingEvent, false);
     }
 
-    private dragging(draggingEvent: DraggingEvent, enter: boolean): void {
+    private dragging(draggingEvent: RowDraggingEvent, enter: boolean): void {
         const { lastDraggingEvent, beans } = this;
 
         if (enter) {
@@ -165,19 +165,20 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.nudger?.autoScroll.check(draggingEvent.event);
     }
 
-    private isFromThisGrid(draggingEvent: DraggingEvent) {
+    private isFromThisGrid(draggingEvent: RowDraggingEvent) {
         return draggingEvent.dragSource.dragSourceDomDataKey === this.gos.getDomDataKey();
     }
 
     private makeRowsDrop(
-        lastDraggingEvent: DraggingEvent | null,
-        draggingEvent: DraggingEvent,
+        lastDraggingEvent: RowDraggingEvent | null,
+        draggingEvent: RowDraggingEvent,
         moving: boolean,
         dropping: boolean
     ): RowsDrop | null {
         const { beans, gos, clientSideRowModel } = this;
         const rowsDrop = this.newRowsDrop(draggingEvent, dropping);
-        draggingEvent.rowsDrop = rowsDrop;
+        draggingEvent.dropTarget = rowsDrop;
+        draggingEvent.changed = false;
         if (!rowsDrop) {
             return null;
         }
@@ -272,12 +273,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         this.validateRowsDrop(rowsDrop, canSetParent, aboveOrBelow, dropping);
 
-        rowsDrop.changed ||= rowsDropChanged(lastDraggingEvent?.rowsDrop, rowsDrop);
+        draggingEvent.changed ||= rowsDropChanged(lastDraggingEvent?.dropTarget, rowsDrop);
 
         return rowsDrop;
     }
 
-    private newRowsDrop(draggingEvent: DraggingEvent, dropping: boolean): RowsDrop | null {
+    private newRowsDrop(draggingEvent: RowDraggingEvent, dropping: boolean): RowsDrop | null {
         const { beans, gos, clientSideRowModel } = this;
         const rootNode = clientSideRowModel.rootNode;
         const rowDragManaged = gos.get('rowDragManaged');
@@ -321,7 +322,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             newParent: null,
             rows,
             allowed,
-            changed: false,
             highlight: !dropping && rowDragManaged && suppressMoveWhenRowDragging && (withinGrid || !sameGrid),
         };
     }
@@ -366,8 +366,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 } else if (!rowDragManaged) {
                     rowsDrop.allowed = true; // If not managed, we always allow the drop if it was not explicitly disallowed
                 }
-                if (canDropResult.changed) {
-                    rowsDrop.changed = true;
+                const draggingEvent = rowsDrop.draggingEvent;
+                if (canDropResult.changed && draggingEvent) {
+                    draggingEvent.changed = true;
                 }
                 if (!dropping && canDropResult.highlight !== undefined) {
                     rowsDrop.highlight = canDropResult.highlight;
@@ -427,7 +428,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         const dragAndDrop = this.beans.dragAndDrop!;
-        if (dragAndDrop.findExternalZone(params)) {
+        if (dragAndDrop.findExternalZone(params.getContainer())) {
             _warn(56);
             return;
         }
@@ -494,9 +495,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return overIndex >= 0 ? rowModel.getRow(overIndex) : undefined;
     }
 
-    private rowDragEvent<T extends RowDragEventType>(type: T, draggingEvent: DraggingEvent): RowDragEvent<any, any, T> {
+    private rowDragEvent<T extends RowDragEventType>(
+        type: T,
+        draggingEvent: RowDraggingEvent
+    ): RowDragEvent<any, any, T> {
         const beans = this.beans;
-        const { dragItem, rowsDrop, event, vDirection } = draggingEvent;
+        const { dragItem, dropTarget: rowsDrop, event, vDirection } = draggingEvent;
         const withRowsDrop = rowsDrop?.rootNode === this.clientSideRowModel.rootNode;
         const y = withRowsDrop ? rowsDrop.y : _getNormalisedMousePosition(beans, draggingEvent).y;
         const overNode = withRowsDrop ? rowsDrop.overNode : this.getOverNode(y);
@@ -516,17 +520,17 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         };
     }
 
-    private dispatchGridEvent(type: RowDragEventType, draggingEvent: DraggingEvent): void {
+    private dispatchGridEvent(type: RowDragEventType, draggingEvent: RowDraggingEvent): void {
         const event = this.rowDragEvent(type, draggingEvent);
         this.eventSvc.dispatchEvent(event);
     }
 
-    public onDragLeave(draggingEvent: DraggingEvent): void {
+    public onDragLeave(draggingEvent: RowDraggingEvent): void {
         this.dispatchGridEvent('rowDragLeave', draggingEvent);
         this.stopDragging(draggingEvent);
     }
 
-    public onDragStop(draggingEvent: DraggingEvent): void {
+    public onDragStop(draggingEvent: RowDraggingEvent): void {
         const rowsDrop = this.makeRowsDrop(this.lastDraggingEvent, draggingEvent, false, true);
         this.dispatchGridEvent('rowDragEnd', draggingEvent);
         if (
@@ -539,12 +543,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.stopDragging(draggingEvent);
     }
 
-    public onDragCancel(draggingEvent: DraggingEvent): void {
+    public onDragCancel(draggingEvent: RowDraggingEvent): void {
         this.dispatchGridEvent('rowDragCancel', draggingEvent);
         this.stopDragging(draggingEvent);
     }
 
-    private stopDragging(draggingEvent: DraggingEvent): void {
+    private stopDragging(draggingEvent: RowDraggingEvent): void {
         this.nudger?.clear();
         this.beans.rowDropHighlightSvc?.fromDrag(null);
         setRowNodesDragging(draggingEvent.dragItem.rowNodes, false);
