@@ -55,7 +55,6 @@ const GridExample = () => {
     const { data, loading } = useFetchJson('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     const columnsToolPanel = useMemo(() => {
-        console.log(popupRef.current?.querySelector('.content') instanceof HTMLElement);
         return {
             id: 'columns',
             labelDefault: 'Popup',

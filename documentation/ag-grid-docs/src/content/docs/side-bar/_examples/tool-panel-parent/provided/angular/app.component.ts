@@ -10,29 +10,11 @@ import {
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-
-/** ENABLE AG-TEST-ID START **/
-import * as agGridCommunity from 'ag-grid-community';
 import { ColumnsToolPanelModule, FiltersToolPanelModule, PivotModule, SetFilterModule } from 'ag-grid-enterprise';
-import * as agGridEnterprise from 'ag-grid-enterprise';
 
 import { IOlympicData } from './interfaces';
 import './styles.css';
 
-const url = new URLSearchParams(window.location.search);
-const enableTestIds = url.get('enableTestIds');
-if (enableTestIds) {
-    const modulesCSV = url.get('modules');
-    if (modulesCSV) {
-        agGridCommunity.ModuleRegistry.registerModules(
-            modulesCSV.split(',').map((name) => agGridCommunity[name] || agGridEnterprise[name])
-        );
-    }
-
-    agGridCommunity.setupAgTestIds();
-    window.getGridApi = agGridCommunity.getGridApi;
-}
-/** ENABLE AG-TEST-ID END **/
 ModuleRegistry.registerModules([
     NumberFilterModule,
     ClientSideRowModelModule,
