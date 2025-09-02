@@ -722,17 +722,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const groupsSelectChildren = _getGroupSelectsDescendants(this.gos);
 
-        // Short-cut if the start and end nodes are the same
-        if (firstInRange === lastInRange) {
-            result.push(firstInRange);
-
-            if (firstInRange.group && groupsSelectChildren) {
-                result.push(...firstInRange.allLeafChildren!);
-            }
-
-            return result;
-        }
-
         this.forEachNodeAfterFilterAndSort((rowNode) => {
             // range has been closed, skip till end
             if (finished) {
@@ -759,6 +748,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     return;
                 }
                 started = true;
+
+                // When the first and last node are the same we're already finished
+                if (lastInRange === firstInRange) {
+                    finished = true;
+                }
             }
 
             // only select leaf nodes if groupsSelectChildren
