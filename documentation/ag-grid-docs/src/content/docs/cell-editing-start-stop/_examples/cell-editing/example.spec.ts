@@ -4,7 +4,6 @@ import type { Page } from 'playwright/test';
 import type { ICellEditorParams } from 'ag-grid-community';
 
 test.agExample(import.meta, () => {
-    test.skip(true, 'Skipped until Math.random() fixed');
     test.eachFramework('dblclick', async ({ page, agIdFor }) => {
         const cell = agIdFor.cell('0', 'firstName');
 
