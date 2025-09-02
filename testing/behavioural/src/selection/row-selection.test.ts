@@ -1593,8 +1593,6 @@ describe('Row Selection Grid Options', () => {
 
                 actions.toggleCheckboxById('row-group-country-United States');
                 assertSelectedRowElementsById([], api);
-
-                draw(api);
             });
 
             test('Cannot select group rows where `isRowSelectable` returns false and `groupSelects` = "self"', async () => {
