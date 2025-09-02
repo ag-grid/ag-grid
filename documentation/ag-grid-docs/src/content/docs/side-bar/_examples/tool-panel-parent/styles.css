@@ -63,7 +63,7 @@
     bottom: 0;
     width: 300px;
     display: flex;
-    transform: translateX(-342px);
+    transform: translateX(-344px);
     transition: transform 0.3s ease-in-out;
 }
 
