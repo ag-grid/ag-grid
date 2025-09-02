@@ -69,6 +69,10 @@ function isServerSideGroupOpenByDefault(params) {
 }
 ```
 
+{% note %}
+Server-Side Open By Default requires [Row IDs](./server-side-model-configuration/#providing-row-ids) to be supplied to the grid.
+{% /note %}
+
 It may also be helpful to use the [Row Node](./row-object/) API `getRoute()` to inspect the route of a row node.
 
 {% apiDocumentation source="row-object/properties.json" section="serverSide" names=["getRoute"] /%}
