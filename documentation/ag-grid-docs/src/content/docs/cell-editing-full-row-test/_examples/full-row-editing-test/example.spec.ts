@@ -43,6 +43,40 @@ test.agExample(import.meta, () => {
     );
 
     // AG-15758
+    [
+        { editType: 'fullRow', tabCount: 8 },
+        // { editType: 'singleCell', tabCount: 4 },
+    ].forEach(({ editType, tabCount }) =>
+        test.eachFramework(
+            `[${editType}] should edit then tab to next row and commit the edit`,
+            async ({ page, agIdFor, remoteGrid }) => {
+                const remoteApi = remoteGrid(page);
+                await remoteApi.setGridOption('editType', editType);
+                const colDefs = (await remoteApi.getColumnDefs()) as any[];
+                await remoteApi.setGridOption('columnDefs', colDefs.slice(0, 3));
+
+                const modelCellRow1 = agIdFor.cell('1', 'model-1-1');
+                await modelCellRow1.dblclick();
+
+                const modelEditor1 = modelCellRow1.locator('input');
+                await expect(modelEditor1).toBeVisible();
+                await expect(modelEditor1).toBeFocused();
+                await page.waitForTimeout(10);
+
+                await page.keyboard.type('XYZ');
+
+                const tabAction = async () => await page.keyboard.press('Tab');
+
+                await repeat(page, 'tab to new row', tabAction, { count: 2, eachWait: 10 });
+
+                // here the 2nd, 2nd cell row should be editing
+                const modelCellRow2 = agIdFor.cell('1', 'model-1-1');
+                await expect(modelCellRow2).toHaveText('XYZ');
+            }
+        )
+    );
+
+    // AG-15758
     test.eachFramework('should edit then scroll around without error', async ({ page, agIdFor }) => {
         await ensureGridReady(page);
 
