@@ -1456,6 +1456,12 @@
                                 },
                                 {
                                     "type": "item",
+                                    "title": "Aggregation",
+                                    "path": "server-side-model-aggregation",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
                                     "title": "Row Selection",
                                     "path": "server-side-model-selection",
                                     "isEnterprise": true
