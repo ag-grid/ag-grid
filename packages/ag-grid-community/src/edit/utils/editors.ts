@@ -182,15 +182,18 @@ export function _setupEditor(
 }
 
 function _valueFromEditor(
-    position: Required<EditPosition>,
+    beans: BeanCollection,
     cellEditor: ICellEditor,
     params?: { isCancelling?: boolean; isStopping?: boolean }
 ): { editorValue?: any; editorValueExists: boolean; isCancelAfterEnd?: boolean } {
     const noValueResult = { editorValueExists: false };
-    const validationErrors = cellEditor.getValidationErrors?.();
 
-    if ((validationErrors?.length ?? 0) > 0) {
-        return noValueResult;
+    if (_hasValidationRules(beans)) {
+        const validationErrors = cellEditor.getValidationErrors?.();
+
+        if ((validationErrors?.length ?? 0) > 0) {
+            return noValueResult;
+        }
     }
 
     if (params?.isCancelling) {
@@ -229,7 +232,7 @@ function _createEditorParams(
     const editor = cellCtrl.comp?.getCellEditor();
     const initialNewValue =
         editSvc?.getCellDataValue(position, false) ??
-        (editor ? _valueFromEditor(position, editor)?.editorValue : undefined);
+        (editor ? _valueFromEditor(beans, editor)?.editorValue : undefined);
     const value =
         initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
 
@@ -319,7 +322,7 @@ export function _syncFromEditors(
             return;
         }
 
-        const { editorValue, editorValueExists, isCancelAfterEnd } = _valueFromEditor(cellId, editor, params);
+        const { editorValue, editorValueExists, isCancelAfterEnd } = _valueFromEditor(beans, editor, params);
 
         if (isCancelAfterEnd) {
             beans.editModelSvc?.setEdit(cellId, { editorState: { isCancelAfterEnd } });
@@ -434,13 +437,15 @@ export function _destroyEditor(
         return;
     }
 
-    const errorMessages = comp?.getCellEditor()?.getValidationErrors?.();
-    const cellValidationModel = editModelSvc?.getCellValidationModel();
+    if (_hasValidationRules(beans)) {
+        const errorMessages = comp?.getCellEditor()?.getValidationErrors?.();
+        const cellValidationModel = editModelSvc?.getCellValidationModel();
 
-    if (errorMessages?.length) {
-        cellValidationModel?.setCellValidation(position, { errorMessages });
-    } else {
-        cellValidationModel?.clearCellValidation(position);
+        if (errorMessages?.length) {
+            cellValidationModel?.setCellValidation(position, { errorMessages });
+        } else {
+            cellValidationModel?.clearCellValidation(position);
+        }
     }
 
     editModelSvc?.setEdit(position, { state: 'changed' });
