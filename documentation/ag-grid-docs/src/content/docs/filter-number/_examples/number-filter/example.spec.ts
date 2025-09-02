@@ -19,9 +19,9 @@ test.agExample(import.meta, () => {
         // close the filter by clicking outside
         await agIdFor.cell('0', 'price').click();
 
-        const firstRowPrice = agIdFor.cell('1', 'price');
-        const secondRowPrice = agIdFor.cell('5', 'price');
-        const thirdRowPrice = agIdFor.cell('19', 'price');
+        const firstRowPrice = agIdFor.cell('0', 'price');
+        const secondRowPrice = agIdFor.cell('4', 'price');
+        const thirdRowPrice = agIdFor.cell('18', 'price');
 
         await expect(firstRowPrice).toHaveText('947.75');
         await expect(secondRowPrice).toHaveText('978.05');
