@@ -25,9 +25,9 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-let gridApi: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicDataWithId>;
 
-const gridOptions: GridOptions<IOlympicData> = {
+const gridOptions: GridOptions<IOlympicDataWithId> = {
     columnDefs: [
         { field: 'athlete', minWidth: 200 },
         { field: 'age' },
@@ -47,7 +47,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         enableValue: true,
         sortable: false,
     },
-    getRowId: (p) => p.data?.id,
+    getRowId: (p) => String(p.data?.id),
     getRowHeight: (p) => {
         return 50 + 30 * Math.sin((p.data?.id ?? 0) / 5 - Math.PI / 2);
     },
