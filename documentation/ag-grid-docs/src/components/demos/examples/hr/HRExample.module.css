@@ -80,11 +80,6 @@
     font-weight: 600;
 }
 
-:global(.ag-theme-quartz .ag-cell:not(:first-child)),
-:global(.ag-theme-quartz-dark .ag-cell:not(:first-child)) {
-    border-left: 1px solid var(--ag-border-color);
-}
-
 :global(.ag-theme-quartz .ag-group-expanded),
 :global(.ag-theme-quartz-dark .ag-group-expanded) {
     opacity: 1;
