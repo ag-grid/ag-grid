@@ -470,6 +470,11 @@ function useAgRandom<T extends string[] | Record<string, string>>(scripts: T): T
     }
 
     Object.keys(scripts).forEach((key) => {
+        if (key === 'dataUpdateWorker.js') {
+            // don't replace in the data update worker as it runs in a web worker and doesn't have access to window.agRandom
+            return;
+        }
+
         const value = scripts[key];
         if (typeof value === 'string') {
             scripts[key] = replacer(value);
