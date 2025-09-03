@@ -276,9 +276,11 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
         const specFiles = scriptFiles?.filter((file) => file.endsWith('.spec.ts') || file.endsWith('.spec.js')) ?? [];
         scriptFiles = scriptFiles?.filter((file) => !specFiles.includes(file));
 
-        // Stable random for tests and examples
-        scriptFiles = useAgRandom(scriptFiles);
-        mergedFiles = useAgRandom(mergedFiles);
+        // Stable random for tests and examples but not for examples that have a web worker as they can't access window.agRandom
+        if (!exampleConfig.usesWebWorker) {
+            scriptFiles = useAgRandom(scriptFiles);
+            mergedFiles = useAgRandom(mergedFiles);
+        }
 
         // Replace files with provided examples
         const result: GeneratedContents = {
@@ -470,11 +472,6 @@ function useAgRandom<T extends string[] | Record<string, string>>(scripts: T): T
     }
 
     Object.keys(scripts).forEach((key) => {
-        if (key === 'dataUpdateWorker.js') {
-            // don't replace in the data update worker as it runs in a web worker and doesn't have access to window.agRandom
-            return;
-        }
-
         const value = scripts[key];
         if (typeof value === 'string') {
             scripts[key] = replacer(value);
