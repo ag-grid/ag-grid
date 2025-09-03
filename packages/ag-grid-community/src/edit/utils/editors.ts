@@ -512,6 +512,7 @@ function _hasValidationRules(beans: BeanCollection): boolean {
 
     const editorsHaveRules = beans.gridApi
         .getCellEditorInstances()
+        // Check if either method was provided in the editor
         .some((editor) => editor.getValidationElement || editor.getValidationErrors);
 
     return columnsHaveRules || getFullRowEditValidationErrors || editorsHaveRules;
