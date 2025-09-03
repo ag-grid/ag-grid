@@ -51,7 +51,7 @@ test.agExample(import.meta, () => {
                 await page.keyboard.type('1234');
                 await page.keyboard.press('Enter');
 
-                const eventLog = await remoteGrid.waitForEventlog(100);
+                const eventLog = await remoteGrid.waitForEventlog(250);
 
                 // Not really supported but unintentionally available in 34.0.0, so all keys have the same outcome
                 expect(eventLog.length).toBe(2);

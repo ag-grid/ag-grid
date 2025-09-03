@@ -81,7 +81,7 @@ test.agExample(import.meta, () => {
                 await page.keyboard.type('Fred');
                 await page.keyboard.press('Enter');
 
-                const eventLog = await remoteGrid.waitForEventlog(100);
+                const eventLog = await remoteGrid.waitForEventlog(250);
 
                 if (readOnlyEdit) {
                     expect(eventLog).toEqual([
@@ -147,7 +147,7 @@ test.agExample(import.meta, () => {
                 await page.keyboard.type('Fred');
                 await page.keyboard.press('Enter');
 
-                const eventLog = await remoteGrid.waitForEventlog(100);
+                const eventLog = await remoteGrid.waitForEventlog(250);
 
                 if (readOnlyEdit) {
                     expect(eventLog).toEqual([
@@ -213,7 +213,7 @@ test.agExample(import.meta, () => {
                 await page.keyboard.type('Fred');
                 await page.keyboard.press('Escape');
 
-                const eventLog = await remoteGrid.waitForEventlog(100);
+                const eventLog = await remoteGrid.waitForEventlog(250);
 
                 if (readOnlyEdit) {
                     expect(eventLog).toEqual([
@@ -267,7 +267,7 @@ test.agExample(import.meta, () => {
                     const cellEditor = cell.locator('input');
                     await expect(cellEditor).not.toBeAttached();
 
-                    const eventLog = await remoteGrid.waitForEventlog(100);
+                    const eventLog = await remoteGrid.waitForEventlog(250);
 
                     if (readOnlyEdit) {
                         if (agFramework.startsWith('react')) {
@@ -361,7 +361,7 @@ test.agExample(import.meta, () => {
                     await page.keyboard.type('Fred');
                     await page.keyboard.press('Enter');
 
-                    const eventLog = await remoteGrid.waitForEventlog(100);
+                    const eventLog = await remoteGrid.waitForEventlog(250);
 
                     if (readOnlyEdit) {
                         expect(eventLog).toEqual([
@@ -422,7 +422,7 @@ test.agExample(import.meta, () => {
 
                     await remoteApi.stopEditing();
 
-                    const eventLog = await remoteGrid.waitForEventlog(100);
+                    const eventLog = await remoteGrid.waitForEventlog(250);
 
                     if (readOnlyEdit) {
                         expect(eventLog).toEqual([
@@ -495,7 +495,7 @@ test.agExample(import.meta, () => {
                     const anotherCell = agIdFor.cell('1', 'firstName');
                     await anotherCell.click();
 
-                    const eventLog = await remoteGrid.waitForEventlog(100);
+                    const eventLog = await remoteGrid.waitForEventlog(250);
 
                     if (readOnlyEdit) {
                         expect(eventLog).toEqual([

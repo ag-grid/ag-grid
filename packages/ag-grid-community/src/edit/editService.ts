@@ -248,7 +248,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return;
         }
 
-        if (!this.batch && this.shouldStopEditing(position, undefined, source)) {
+        if (!this.batch && this.shouldStopEditing(position, undefined, source) && !params.continueEditing) {
             this.stopEditing(undefined, { source });
         }
 

@@ -30,6 +30,7 @@ export type StartEditParams = {
     source?: EditSource;
     ignoreEventKey?: boolean;
     silent?: boolean;
+    continueEditing?: boolean;
 };
 
 export type StopEditParams = {
