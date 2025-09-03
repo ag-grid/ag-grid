@@ -202,7 +202,9 @@ By default, Tool Panels are rendered inside the Side Bar. If you want to render 
 
 The [Popup Parent](./context-menu/#popup-parent) must also be set to an element that contains both the Tool Panel parent and the grid.
 
-In the example below, the `parent` property in the columns tool panel is set to an element with ID `popup`, while the [openToolPanel](./grid-api/#reference-accessories-openToolPanel) API method uses its second parameter to dynamically assign a custom parent element. Both approaches achieve the same goal of rendering tool panels outside the default side bar. Note that `popupParent` value is set to `document.body` to ensure that Tool Panels with parents set are rendered correctly.
+You can also provide a parent for the tool panel in the call to openToolPanel method:
+
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["openToolPanel"] /%}
 
 {% gridExampleRunner title="Tool Panel Parent" name="tool-panel-parent" exampleHeight=600 /%}
 
