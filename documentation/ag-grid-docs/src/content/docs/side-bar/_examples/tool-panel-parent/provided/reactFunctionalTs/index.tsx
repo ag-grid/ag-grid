@@ -6,8 +6,8 @@ import { createRoot } from 'react-dom/client';
 import {
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
-    FiltersToolPanelModule,
     ModuleRegistry,
+    NewFiltersToolPanelModule,
     NumberFilterModule,
     PivotModule,
     SetFilterModule,
@@ -23,7 +23,7 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
-    FiltersToolPanelModule,
+    NewFiltersToolPanelModule,
     SetFilterModule,
     PivotModule,
     TextFilterModule,
@@ -43,7 +43,6 @@ const GridExample = () => {
     const popupContentRef = useRef<HTMLElement>(null);
     const drawerRef = useRef<HTMLElement>(null);
     const drawerContentRef = useRef<HTMLElement>(null);
-    const popupParent = useMemo(() => document.body, []);
     const [columnDefs, setColumnDefs] = useState([
         { field: 'athlete', filter: 'agTextColumnFilter', minWidth: 200 },
         { field: 'country', minWidth: 180 },
@@ -78,7 +77,7 @@ const GridExample = () => {
             labelDefault: 'Drawer',
             labelKey: 'filters',
             iconKey: 'filter',
-            toolPanel: 'agFiltersToolPanel',
+            toolPanel: 'agNewFiltersToolPanel',
         }),
         []
     );
@@ -123,16 +122,17 @@ const GridExample = () => {
         <div style={containerStyle}>
             <div id="wrapper" className="example-wrapper">
                 <div className="example-header">
-                    <button onClick={openPopup}>Open columns panel popup</button>
-                    <button onClick={openDrawer}>Open filters panel drawer</button>
+                    <button onClick={openPopup}>Open Columns Tool Panel</button>
+                    <button onClick={openDrawer}>Open Filters Tool Panel</button>
                 </div>
 
                 <div style={gridStyle}>
                     <AgGridReact
+                        enableFilterHandlers
                         ref={gridRef}
                         rowData={data}
                         loading={loading}
-                        popupParent={popupParent}
+                        popupParent={drawerRef.current}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}

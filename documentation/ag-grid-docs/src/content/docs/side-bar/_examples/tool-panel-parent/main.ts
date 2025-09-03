@@ -7,13 +7,13 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { ColumnsToolPanelModule, FiltersToolPanelModule, PivotModule, SetFilterModule } from 'ag-grid-enterprise';
+import { ColumnsToolPanelModule, NewFiltersToolPanelModule, PivotModule, SetFilterModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     NumberFilterModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
-    FiltersToolPanelModule,
+    NewFiltersToolPanelModule,
     SetFilterModule,
     PivotModule,
     TextFilterModule,
@@ -35,11 +35,11 @@ const filtersToolPanel: ToolPanelDef = {
     labelDefault: 'Drawer',
     labelKey: 'filters',
     iconKey: 'filter',
-    toolPanel: 'agFiltersToolPanel',
+    toolPanel: 'agNewFiltersToolPanel',
 };
 
 const gridOptions: GridOptions<IOlympicData> = {
-    popupParent: document.body,
+    popupParent: document.getElementById('drawer'),
     columnDefs: [
         { field: 'athlete', filter: 'agTextColumnFilter', minWidth: 200 },
         { field: 'country', minWidth: 180 },
@@ -47,6 +47,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'gold', minWidth: 150 },
         { field: 'silver', minWidth: 150 },
     ],
+    enableFilterHandlers: true,
     defaultColDef: { flex: 1, minWidth: 100, filter: true },
     autoGroupColumnDef: { minWidth: 200 },
     sideBar: { toolPanels: [columnsToolPanel, filtersToolPanel], hideButtons: true, hiddenByDefault: true },
