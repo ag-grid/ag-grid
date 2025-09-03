@@ -18,13 +18,7 @@ import { AgBeanStub } from './agBeanStub';
 let paramsId = 0;
 
 export abstract class BaseEnvironment<
-        TBeanCollection extends AgCoreBeanCollection<
-            TBeanCollection,
-            TProperties,
-            TGlobalEvents,
-            TCommon,
-            TPropertiesService
-        >,
+        TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         TProperties extends BaseProperties,
         TGlobalEvents extends BaseEvents,
         TCommon,

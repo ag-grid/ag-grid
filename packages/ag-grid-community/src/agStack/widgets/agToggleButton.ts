@@ -12,13 +12,7 @@ export interface AgToggleButtonParams<TComponentSelectorType extends string>
     extends AgCheckboxParams<TComponentSelectorType> {}
 
 export class AgToggleButton<
-    TBeanCollection extends AgCoreBeanCollection<
-        TBeanCollection,
-        TProperties,
-        TGlobalEvents,
-        TCommon,
-        TPropertiesService
-    >,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,

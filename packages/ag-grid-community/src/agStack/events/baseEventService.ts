@@ -12,13 +12,7 @@ import type { IPropertiesService } from '../interfaces/iProperties';
 import { LocalEventService } from './localEventService';
 
 export class BaseEventService<
-        TBeanCollection extends AgCoreBeanCollection<
-            TBeanCollection,
-            TProperties,
-            TGlobalEvents,
-            TCommon,
-            TPropertiesService
-        >,
+        TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         TProperties extends BaseProperties,
         TGlobalEvents extends BaseEvents,
         TCommon,

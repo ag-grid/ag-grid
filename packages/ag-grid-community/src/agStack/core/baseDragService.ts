@@ -13,13 +13,7 @@ import { _exists } from '../utils/generic';
 import { AgBeanStub } from './agBeanStub';
 
 export class BaseDragService<
-        TBeanCollection extends AgCoreBeanCollection<
-            TBeanCollection,
-            TProperties,
-            TGlobalEvents,
-            TCommon,
-            TPropertiesService
-        >,
+        TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         TProperties extends BaseProperties,
         TGlobalEvents extends BaseEvents,
         TCommon,

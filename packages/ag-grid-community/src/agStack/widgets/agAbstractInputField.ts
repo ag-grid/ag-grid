@@ -31,13 +31,7 @@ function buildTemplate<TComponentSelectorType extends string>(
 
 export type AgAbstractInputFieldEvent = AgAbstractFieldEvent;
 export abstract class AgAbstractInputField<
-    TBeanCollection extends AgCoreBeanCollection<
-        TBeanCollection,
-        TProperties,
-        TGlobalEvents,
-        TCommon,
-        TPropertiesService
-    >,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,

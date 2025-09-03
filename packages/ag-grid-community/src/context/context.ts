@@ -220,7 +220,6 @@ export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
 
 interface CoreBeanCollection
     extends AgCoreBeanCollection<
-        BeanCollection,
         GridOptionsWithDefaults,
         AgEventTypeParams,
         AgGridCommon<any, any>,
