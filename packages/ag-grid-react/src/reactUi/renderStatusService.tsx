@@ -36,10 +36,11 @@ export class RenderStatusService extends BeanStub implements IRenderStatusServic
     }
 
     public areCellsRendered(): boolean {
-        const { rowRenderer } = this.beans;
         // Check that all rows ctrls have a gui
-        // Check that all cells have a GUI.
-        // The guis are only set once React has actually rendered the row / cell.
-        return rowRenderer.getAllRowCtrls().every((row) => row.isRowRendered(true));
+        // Check that all rendered rows that have cells have a GUI.
+        // The guis are only set once React has actually rendered the row / cell via setComp()
+        return this.beans.rowRenderer
+            .getAllRowCtrls()
+            .every((row) => row.isRowRendered() && row.getAllCellCtrls().every((cellCtrl) => !!cellCtrl.eGui));
     }
 }

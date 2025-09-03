@@ -1612,12 +1612,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
     }
 
-    public isRowRendered(checkCells: boolean = false): boolean {
-        const hasRowGuis = this.allRowGuis.length > 0;
-        if (hasRowGuis && checkCells) {
-            return this.getAllCellCtrls().every((cellCtrl) => !!cellCtrl.eGui);
-        }
-        return hasRowGuis;
+    public isRowRendered() {
+        return this.allRowGuis.length > 0;
     }
 
     protected onRowHeightChanged(gui?: RowGui): void {
