@@ -15,8 +15,8 @@ import type { IRegistry } from './iRegistry';
 export interface AgCoreBeanCollection<
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
-    TCommon = object,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon> = IPropertiesService<TProperties, TCommon>,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
 > extends UtilBeanCollection {
     context: IContext<this>;
     eventSvc: AgEventService<TGlobalEvents, TCommon>;
