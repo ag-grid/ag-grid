@@ -205,11 +205,12 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         const model: Partial<DateFilterModel> = {};
 
         const values = this.getValues(position);
+        const separator = this.params.useIsoSeparator ? 'T' : ' ';
         if (values.length > 0) {
-            model.dateFrom = _serialiseDate(values[0]);
+            model.dateFrom = _serialiseDate(values[0], true, separator);
         }
         if (values.length > 1) {
-            model.dateTo = _serialiseDate(values[1]);
+            model.dateTo = _serialiseDate(values[1], true, separator);
         }
 
         return {

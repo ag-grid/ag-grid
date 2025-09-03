@@ -1,4 +1,4 @@
-import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
 import { _setAriaHidden } from './aria';
 import { _getWindow } from './document';
 
@@ -393,7 +393,7 @@ export function _addOrRemoveAttribute(element: HTMLElement, name: string, value:
 }
 
 export function _observeResize(
-    beans: AgCoreBeanCollection<any, any, any, any>,
+    beans: UtilBeanCollection,
     element: HTMLElement,
     callback: ResizeObserverCallback
 ): () => void {
@@ -404,7 +404,7 @@ export function _observeResize(
     return () => resizeObserver?.disconnect();
 }
 
-export function _requestAnimationFrame(beans: AgCoreBeanCollection<any, any, any, any>, callback: any) {
+export function _requestAnimationFrame(beans: UtilBeanCollection, callback: any) {
     const win = _getWindow(beans);
 
     if (win.requestAnimationFrame) {

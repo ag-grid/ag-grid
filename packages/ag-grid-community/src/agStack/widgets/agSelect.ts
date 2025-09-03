@@ -29,7 +29,13 @@ export interface AgSelectParams<TComponentSelectorType extends string, TValue = 
 }
 type AgSelectEvent = 'selectedItem';
 export class AgSelect<
-    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TBeanCollection extends AgCoreBeanCollection<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService
+    >,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -131,7 +137,7 @@ export class AgSelect<
                 TComponentSelectorType,
                 AgSelectEvent,
                 TValue
-            >('select', true)
+            >('select')
         );
         this.listComponent = listComponent;
         listComponent.setParentComponent(this);
@@ -169,7 +175,7 @@ export class AgSelect<
     }
 
     protected override beforeHidePicker(): void {
-        this.listComponent?.hideTooltip();
+        this.listComponent?.hideItemTooltip();
         super.beforeHidePicker();
     }
 

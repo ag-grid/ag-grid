@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "34.1.1",
+  "version": "34.1.2",
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
@@ -13,7 +13,7 @@
   },
   "private": true,
   "engines": {
-    "node": "^20.11.1",
+    "node": "^20.19.4",
     "yarn": "^1.22.21"
   },
   "dependencies": {
@@ -34,7 +34,6 @@
     "@nx/js": "20.3.1",
     "@nx/react": "20.3.1",
     "@nx/rollup": "20.3.1",
-    "@nx/vite": "20.3.1",
     "@nx/web": "20.3.1",
     "@nx/workspace": "20.3.1",
     "@playwright/test": "^1.52.0",
@@ -51,7 +50,6 @@
     "@types/prompts": "^2.4.9",
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@typescript-eslint/parser": "7.18.0",
-    "@vitest/ui": "^1.3.1",
     "@vue/compiler-sfc": "3.5.13",
     "JSONStream": "1.3.5",
     "autoprefixer": "^10.4.20",
@@ -90,7 +88,7 @@
     "typescript": "~5.2.2",
     "typescript-eslint": "^7.9.0",
     "vite": "~5.4.19",
-    "vitest": "2.1.6"
+    "vitest": "2.1.9"
   },
   "workspaces": {
     "packages": [

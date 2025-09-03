@@ -278,4 +278,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
     public setRowCount(rowCount: number, lastRowIndexKnown?: boolean): void {
         this.infiniteCache?.setRowCount(rowCount, lastRowIndexKnown);
     }
+
+    public resetRowHeights(): void {}
+    public onRowHeightChanged(): void {}
 }

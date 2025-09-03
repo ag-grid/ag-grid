@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import type { DragAndDropIcon, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
+import type { DragAndDropIcon, GridDraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { DropListener } from './bodyDropTarget';
@@ -14,7 +14,7 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
     }
 
     /** Callback for when drag enters */
-    public onDragEnter(draggingEvent: DraggingEvent): void {
+    public onDragEnter(draggingEvent: GridDraggingEvent): void {
         this.clearColumnsList();
 
         // in pivot mode, we don't accept any drops if functions are read only
@@ -59,7 +59,7 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
 
     /** Callback for when drag leaves */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public onDragLeave(draggingEvent: DraggingEvent): void {
+    public onDragLeave(draggingEvent: GridDraggingEvent): void {
         // if we are taking columns out of the center, then we remove them from the report
         this.clearColumnsList();
     }
@@ -72,11 +72,11 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
 
     /** Callback for when dragging */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public onDragging(draggingEvent: DraggingEvent): void {}
+    public onDragging(draggingEvent: GridDraggingEvent): void {}
 
     /** Callback for when drag stops */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public onDragStop(draggingEvent: DraggingEvent): void {
+    public onDragStop(draggingEvent: GridDraggingEvent): void {
         const { valueColsSvc, rowGroupColsSvc, pivotColsSvc } = this.beans;
         if (this.columnsToAggregate.length > 0) {
             valueColsSvc?.addColumns(this.columnsToAggregate, 'toolPanelDragAndDrop');

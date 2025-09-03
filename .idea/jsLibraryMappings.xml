@@ -22,5 +22,6 @@
     <excludedPredefinedLibrary name="ag-grid/testing/csp/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/testing/module-size-angular/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/testing/module-size/node_modules" />
+    <excludedPredefinedLibrary name="tsconfig$paths" />
   </component>
 </project>

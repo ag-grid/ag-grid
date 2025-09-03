@@ -53,4 +53,8 @@ export interface IPropertiesService<TProperties extends BaseProperties, TCommon>
     get<K extends AgPropertyKey<TProperties>>(property: K): TProperties[K];
 
     addCommon<T extends TCommon>(params: WithoutCommon<TCommon, T>): T;
+
+    setInstanceDomData(element: HTMLElement): void;
+
+    isElementInThisInstance(element: HTMLElement): boolean;
 }

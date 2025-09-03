@@ -1,3 +1,4 @@
 {
-    "supportedFrameworks": ["typescript"]
+    "supportedFrameworks": ["typescript"],
+    "usesWebWorker": true
 }

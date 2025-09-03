@@ -8,7 +8,13 @@ import type { AgCheckboxParams, LabelAlignment } from './agFieldParams';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 export class AgCheckbox<
-    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TBeanCollection extends AgCoreBeanCollection<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService
+    >,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,

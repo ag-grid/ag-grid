@@ -1,18 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "plugins": [
-    "./plugins/ag-grid-task-autogen",
-    {
-      "plugin": "@nx/vite/plugin",
-      "options": {
-        "buildTargetName": "build",
-        "testTargetName": "vite:test",
-        "serveTargetName": "serve",
-        "previewTargetName": "preview",
-        "serveStaticTargetName": "serve-static"
-      }
-    }
-  ],
+  "plugins": ["./plugins/ag-grid-task-autogen"],
   "affected": {
     "defaultBase": "latest"
   },
@@ -174,10 +162,6 @@
           "ci": true
         }
       }
-    },
-    "@nx/vite:test": {
-      "cache": true,
-      "inputs": ["default", "^production"]
     }
   },
   "defaultProject": "all",

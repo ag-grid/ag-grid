@@ -1,12 +1,12 @@
+import type { HorizontalDirection } from '../../../agStack/constants/direction';
 import { KeyCode } from '../../../agStack/constants/keyCode';
 import { _setAriaColIndex } from '../../../agStack/utils/aria';
 import { _getActiveDomElement, _getDocument } from '../../../agStack/utils/document';
 import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../../agStack/utils/dom';
 import { _batchCall } from '../../../agStack/utils/function';
 import { _exists } from '../../../agStack/utils/generic';
-import type { HorizontalDirection } from '../../../constants/direction';
 import { BeanStub } from '../../../context/beanStub';
-import type { DragSource } from '../../../dragAndDrop/dragAndDropService';
+import type { GridDragSource } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
@@ -49,7 +49,7 @@ export abstract class AbstractHeaderCellCtrl<
 
     public lastFocusEvent: KeyboardEvent | null = null;
 
-    protected dragSource: DragSource | null = null;
+    protected dragSource: GridDragSource | null = null;
     protected reAttemptToFocus: boolean = false;
 
     protected abstract resizeHeader(delta: number, shiftKey: boolean): void;

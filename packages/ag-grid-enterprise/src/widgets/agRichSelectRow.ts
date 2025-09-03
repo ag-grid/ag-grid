@@ -2,6 +2,7 @@ import type {
     AgPromise,
     BeanCollection,
     ElementParams,
+    HighlightTooltipEventType,
     IRichCellEditorRendererParams,
     ITooltipCtrl,
     Registry,
@@ -26,7 +27,7 @@ import type { AgRichSelect } from './agRichSelect';
 import { _bindCellRendererToHtmlElement } from './agRichSelect';
 
 const RichSelectRowElement: ElementParams = { tag: 'div', cls: 'ag-rich-select-row', role: 'presentation' };
-export class RichSelectRow<TValue> extends Component {
+export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> {
     private userCompFactory: UserComponentFactory;
     private registry: Registry;
 
@@ -46,10 +47,15 @@ export class RichSelectRow<TValue> extends Component {
 
     public postConstruct(): void {
         this.tooltipFeature = this.createOptionalManagedBean(
-            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
-                getGui: () => this.getGui(),
-                shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
-            } as ITooltipCtrl)
+            this.registry.createDynamicBean<TooltipFeature>(
+                'highlightTooltipFeature',
+                false,
+                {
+                    getGui: () => this.getGui(),
+                    shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
+                } as ITooltipCtrl,
+                this
+            )
         );
     }
 
@@ -118,6 +124,10 @@ export class RichSelectRow<TValue> extends Component {
 
     public toggleHighlighted(highlighted: boolean): void {
         this.toggleCss('ag-rich-select-row-highlighted', highlighted);
+        this.dispatchLocalEvent({
+            type: 'itemHighlighted',
+            highlighted,
+        });
     }
 
     private populateWithoutRenderer(value: any, valueFormatted: any) {

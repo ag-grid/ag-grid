@@ -72,7 +72,7 @@ const boilerPlateUrl = relativePath
 const timeNow = Date.now();
 const title = `${toTitle(pageName)} - ${toTitle(exampleName)}`;
 
-const usesMathRandom = Object.values(generatedContents?.files).some((file) => file.includes('Math.random()'));
+const usesMathRandom = Object.values(generatedContents?.files).some((file) => file.includes('window.agRandom()'));
 
 const shouldShowTemplate = (framework: InternalFramework) => {
     return internalFramework === framework;
@@ -106,8 +106,8 @@ const shouldShowTemplate = (framework: InternalFramework) => {
             title={title}
             modifiedTimeMs={timeNow}
             isEnterprise={isEnterprise}
-            isIntegratedCharts={isIntegratedCharts}
-            isLocale={isLocale}
+            isIntegratedCharts={!!isIntegratedCharts}
+            isLocale={!!isLocale}
             scriptFiles={scriptFiles}
             styleFiles={styleFiles}
             indexFragment={indexFragment!}

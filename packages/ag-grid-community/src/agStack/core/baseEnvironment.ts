@@ -18,7 +18,13 @@ import { AgBeanStub } from './agBeanStub';
 let paramsId = 0;
 
 export abstract class BaseEnvironment<
-        TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+        TBeanCollection extends AgCoreBeanCollection<
+            TBeanCollection,
+            TProperties,
+            TGlobalEvents,
+            TCommon,
+            TPropertiesService
+        >,
         TProperties extends BaseProperties,
         TGlobalEvents extends BaseEvents,
         TCommon,
@@ -59,6 +65,7 @@ export abstract class BaseEnvironment<
 
     public postConstruct(): void {
         const { gos, eRootDiv } = this;
+        gos.setInstanceDomData(eRootDiv);
         this.eStyleContainer =
             gos.get('themeStyleContainer') ?? (eRootDiv.getRootNode() === document ? document.head : eRootDiv);
         this.cssLayer = gos.get('themeCssLayer');
@@ -76,7 +83,7 @@ export abstract class BaseEnvironment<
         this.addDestroyFunc(() => this.mutationObserver.disconnect());
     }
 
-    public applyThemeClasses(el: HTMLElement) {
+    public applyThemeClasses(el: HTMLElement, extraClasses: string[] = []): void {
         const { theme } = this;
         let themeClass: string;
         if (theme) {
@@ -93,7 +100,7 @@ export abstract class BaseEnvironment<
         }
         if (themeClass) {
             const oldClass = el.className;
-            el.className = oldClass + (oldClass ? ' ' : '') + themeClass;
+            el.className = `${oldClass}${oldClass ? ' ' : ''}${themeClass}${extraClasses?.length ? ` ${extraClasses.join(' ')}` : ''}`;
         }
     }
 

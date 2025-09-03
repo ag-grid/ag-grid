@@ -1,5 +1,3 @@
-import { _getDocument, _getRootNode } from './agStack/utils/document';
-import { _getElementRectWithOffset } from './agStack/utils/dom';
 import { _doOnce } from './agStack/utils/function';
 import { _missing } from './agStack/utils/generic';
 import type { GridApi } from './api/gridApi';
@@ -173,94 +171,6 @@ export function _setDomData(gos: GridOptionsService, element: Element, key: stri
         (element as any)[domDataKey] = domData;
     }
     domData[key] = value;
-}
-
-export function _getPageBody(beans: BeanCollection): HTMLElement | ShadowRoot {
-    let rootNode: Document | ShadowRoot | HTMLElement | null = null;
-    let targetEl: HTMLElement | ShadowRoot | null = null;
-
-    try {
-        rootNode = _getDocument(beans).fullscreenElement as HTMLElement;
-    } catch (e) {
-        // some environments like SalesForce will throw errors
-        // simply by trying to read the fullscreenElement property
-    } finally {
-        if (!rootNode) {
-            rootNode = _getRootNode(beans);
-        }
-        const body = rootNode.querySelector('body');
-        if (body) {
-            targetEl = body;
-        } else if (rootNode instanceof ShadowRoot) {
-            targetEl = rootNode;
-        } else if (rootNode instanceof Document) {
-            targetEl = rootNode?.documentElement;
-        } else {
-            targetEl = rootNode;
-        }
-    }
-
-    return targetEl;
-}
-
-function _getBodyWidth(beans: BeanCollection): number {
-    const body = _getPageBody(beans) as HTMLElement;
-    return body?.clientWidth ?? (window.innerWidth || -1);
-}
-
-function _getBodyHeight(beans: BeanCollection): number {
-    const body = _getPageBody(beans) as HTMLElement;
-    return body?.clientHeight ?? (window.innerHeight || -1);
-}
-
-export function _anchorElementToMouseMoveEvent(
-    element: HTMLElement,
-    mouseMoveEvent: MouseEvent | Touch,
-    beans: BeanCollection
-): void {
-    const eRect = element.getBoundingClientRect();
-    const height = eRect.height;
-
-    const browserWidth = _getBodyWidth(beans) - 2; // 2px for 1px borderLeft and 1px borderRight
-    const browserHeight = _getBodyHeight(beans) - 2; // 2px for 1px borderTop and 1px borderBottom
-
-    const offsetParent = element.offsetParent;
-
-    if (!offsetParent) {
-        return;
-    }
-
-    const offsetParentSize = _getElementRectWithOffset(element.offsetParent as HTMLElement);
-
-    const { clientY, clientX } = mouseMoveEvent;
-
-    let top = clientY - offsetParentSize.top - height / 2;
-    let left = clientX - offsetParentSize.left - 10;
-
-    const eDocument = _getDocument(beans);
-    const win = eDocument.defaultView || window;
-    const windowScrollY = win.pageYOffset || eDocument.documentElement.scrollTop;
-    const windowScrollX = win.pageXOffset || eDocument.documentElement.scrollLeft;
-
-    // check if the drag and drop image component is not positioned outside of the browser
-    if (browserWidth > 0 && left + element.clientWidth > browserWidth + windowScrollX) {
-        left = browserWidth + windowScrollX - element.clientWidth;
-    }
-
-    if (left < 0) {
-        left = 0;
-    }
-
-    if (browserHeight > 0 && top + element.clientHeight > browserHeight + windowScrollY) {
-        top = browserHeight + windowScrollY - element.clientHeight;
-    }
-
-    if (top < 0) {
-        top = 0;
-    }
-
-    element.style.left = `${left}px`;
-    element.style.top = `${top}px`;
 }
 
 export function _isAnimateRows(gos: GridOptionsService) {

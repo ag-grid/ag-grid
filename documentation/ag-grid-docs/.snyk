@@ -15,15 +15,14 @@ ignore:
                   that are in our control
               expires: 2025-09-21T12:00:00.000Z
               created: 2025-06-05T14:36:23.503Z
-    SNYK-JS-VITEST-8688125:
-        - vitest@2.1.6:
+    SNYK-JS-VITE-9653016:
+        - vitest@2.1.9 > vite@5.4.11:
               reason: >-
                   Vitest is only used for development and we do not expose
-                  'browser.api.host'
+                  the dev server to the network
               expires: 2025-09-21T12:00:00.000Z
               created: 2025-06-25T14:14:23.307Z
-    SNYK-JS-VITE-9653016:
-        - vitest@2.1.6:
+        - vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.11:
               reason: >-
                   Vitest is only used for development and we do not expose
                   the dev server to the network

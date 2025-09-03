@@ -316,7 +316,11 @@ export class LazyCache extends BeanStub {
             this.skipDisplayIndexes(numberOfRowsToSkip, displayIndexSeq, nextRowTop);
 
             const isFirstChild = numericIndex === 0;
-            node.setFirstChild(isFirstChild);
+            if (node.firstChild !== isFirstChild) {
+                node.firstChild = isFirstChild;
+                node.dispatchRowEvent('firstChildChanged');
+            }
+
             // if hiding open parents, then the first node should inherit the group values
             if (isFirstChild && this.gos.get('groupHideOpenParents')) {
                 const parentGroupData = this.store.getParentNode().groupData;
@@ -534,11 +538,7 @@ export class LazyCache extends BeanStub {
             const defaultId = this.getPrefixedId(this.store.getIdSequence().value++);
             this.blockUtils.setDataIntoRowNode(newNode, data, defaultId, undefined);
 
-            // don't allow the SSRM to listen to the dispatched row event, as it will
-            // compute extra unnecessary row updates
-            this.serverSideRowModel.setPaused(true);
             this.blockUtils.checkOpenByDefault(newNode);
-            this.serverSideRowModel.setPaused(false);
             this.nodeManager.addRowNode(newNode);
         }
 

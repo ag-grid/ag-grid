@@ -38,7 +38,7 @@ export const getHeaderValueGetter =
 const MONTH_TO_LOCALE_KEY = Object.fromEntries(_MONTHS.map((m) => [m, m.toLowerCase()]));
 
 export const numericalMonthToNamedMonth = (monthStr: string): { month: string; localeKey: string } => {
-    const month = _MONTHS[parseInt(monthStr, 10)] ?? monthStr;
+    const month = _MONTHS[parseInt(monthStr, 10) - 1] ?? monthStr;
     const localeKey = MONTH_TO_LOCALE_KEY[month] ?? monthStr;
     return { month, localeKey };
 };

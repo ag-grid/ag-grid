@@ -12,7 +12,13 @@ type BeanComparator<TBeanCollection> = (
 ) => number;
 
 export interface AgContextParams<
-    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TBeanCollection extends AgCoreBeanCollection<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService
+    >,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
@@ -42,7 +48,13 @@ interface DerivedBean<TBeanCollection, K extends keyof TBeanCollection> {
 let contextId = 1;
 
 export class AgContext<
-    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TBeanCollection extends AgCoreBeanCollection<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService
+    >,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,

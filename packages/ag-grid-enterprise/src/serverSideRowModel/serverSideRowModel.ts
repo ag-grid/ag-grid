@@ -87,8 +87,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private storeParams: SSRMParams;
 
-    private pauseStoreUpdateListening = false;
-
     private started = false;
 
     private managingPivotResultColumns = false;
@@ -417,12 +415,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     private onStoreUpdated(): void {
-        // sometimes if doing a batch update, we do the batch first,
-        // then call onStoreUpdated manually. eg expandAll() method.
-        if (this.pauseStoreUpdateListening) {
-            return;
-        }
-
         this.updateRowIndexesAndBounds();
         this.dispatchModelUpdated();
     }
@@ -455,23 +447,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             return undefined;
         }
         return rootStore.getRowUsingDisplayIndex(index) as RowNode;
-    }
-
-    /**
-     * Pauses the store, to prevent it updating the UI. This is used when doing batch updates to the store.
-     */
-    public setPaused(paused: boolean): void {
-        this.pauseStoreUpdateListening = paused;
-    }
-
-    public forEachNodeTransactional(cb: (node: RowNode, index?: number) => void): void {
-        // if we don't pause store updating, we are needlessly
-        // recalculating row-indexes etc, and also getting rendering
-        // engine to re-render (listens on ModelUpdated event)
-        this.pauseStoreUpdateListening = true;
-        this.forEachNode(cb);
-        this.pauseStoreUpdateListening = false;
-        this.onStoreUpdated();
     }
 
     public refreshAfterFilter(

@@ -148,7 +148,7 @@ export class SetFilter<V = string>
         if (this.displayValueModel instanceof TreeSetDisplayValueModel) {
             this.displayValueModel.updateParams(treeListPathGetter, treeListFormatter);
         }
-        this.handler.refreshFilterValues();
+        this.handler.refreshFilterValues(true);
     }
 
     private updateHandler(handler: SetFilterHandler<V>): SetFilterHandler<V> {

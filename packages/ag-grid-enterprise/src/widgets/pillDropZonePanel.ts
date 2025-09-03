@@ -2,9 +2,9 @@ import type {
     DragAndDropIcon,
     DragItem,
     DragSourceType,
-    DraggingEvent,
     DropTarget,
     ElementParams,
+    GridDraggingEvent,
 } from 'ag-grid-community';
 import {
     Component,
@@ -71,7 +71,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     private positionableFeature: PositionableFeature;
     private resizeEnabled: boolean = false;
 
-    protected abstract isItemDroppable(item: TItem, draggingEvent: DraggingEvent): boolean;
+    protected abstract isItemDroppable(item: TItem, draggingEvent: GridDraggingEvent): boolean;
     protected abstract updateItems(items: TItem[]): void;
     protected abstract getExistingItems(): TItem[];
     protected abstract getIconName(): DragAndDropIcon;
@@ -98,7 +98,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.resizeEnabled = resizable;
     }
 
-    protected isSourceEventFromTarget(draggingEvent: DraggingEvent): boolean {
+    protected isSourceEventFromTarget(draggingEvent: GridDraggingEvent): boolean {
         const { dropZoneTarget, dragSource } = draggingEvent;
         return dropZoneTarget.contains(dragSource.eElement);
     }
@@ -238,7 +238,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         return 0;
     }
 
-    private checkInsertIndex(draggingEvent: DraggingEvent): boolean {
+    private checkInsertIndex(draggingEvent: GridDraggingEvent): boolean {
         const newIndex = this.getNewInsertIndex(draggingEvent);
 
         // <0 happens when drag is no a direction we are interested in, eg drag is up/down but in horizontal panel
@@ -262,7 +262,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         return changed;
     }
 
-    private getNewInsertIndex(draggingEvent: DraggingEvent): number {
+    private getNewInsertIndex(draggingEvent: GridDraggingEvent): number {
         const mouseEvent = draggingEvent.event;
         const mouseLocation = this.horizontal ? mouseEvent.clientX : mouseEvent.clientY;
 
@@ -304,7 +304,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         return hoveredIndex;
     }
 
-    private checkDragStartedBySelf(draggingEvent: DraggingEvent): void {
+    private checkDragStartedBySelf(draggingEvent: GridDraggingEvent): void {
         if (this.state !== 'notDragging') {
             return;
         }
@@ -318,7 +318,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.refreshGui();
     }
 
-    private onDragging(draggingEvent: DraggingEvent): void {
+    private onDragging(draggingEvent: GridDraggingEvent): void {
         this.checkDragStartedBySelf(draggingEvent);
 
         if (this.checkInsertIndex(draggingEvent)) {
@@ -326,9 +326,9 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
     }
 
-    protected handleDragEnterEnd(_: DraggingEvent): void {}
+    protected handleDragEnterEnd(_: GridDraggingEvent): void {}
 
-    private onDragEnter(draggingEvent: DraggingEvent): void {
+    private onDragEnter(draggingEvent: GridDraggingEvent): void {
         // this will contain all items that are potential drops
         const dragItems = this.getItems(draggingEvent.dragSource.getDragItem());
         this.state = 'newItemsIn';
@@ -359,9 +359,9 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         return !!this.potentialDndItems?.length;
     }
 
-    protected handleDragLeaveEnd(_: DraggingEvent): void {}
+    protected handleDragLeaveEnd(_: GridDraggingEvent): void {}
 
-    private onDragLeave(draggingEvent: DraggingEvent): void {
+    private onDragLeave(draggingEvent: GridDraggingEvent): void {
         // if the dragging started from us, we remove the group, however if it started
         // some place else, then we don't, as it was only 'asking'
 
@@ -380,7 +380,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         this.state = 'notDragging';
     }
 
-    private onDragCancel(draggingEvent: DraggingEvent): void {
+    private onDragCancel(draggingEvent: GridDraggingEvent): void {
         if (this.isPotentialDndItems()) {
             if (this.state === 'newItemsIn') {
                 this.handleDragLeaveEnd(draggingEvent);

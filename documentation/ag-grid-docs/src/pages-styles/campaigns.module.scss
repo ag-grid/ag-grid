@@ -180,64 +180,6 @@
     }
 }
 
-.campaignOffer {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: stretch;
-    font-size: var(--text-fs-lg);
-    border-radius: var(--radius-md);
-    background-color: var(--color-util-brand-50);
-    border: 1px solid var(--color-util-brand-100);
-    color: var(--color-util-brand-700);
-    overflow: hidden;
-
-    #{$selector-darkmode} & {
-        background-color: color-mix(in srgb, var(--color-util-brand-50), var(--color-bg-primary) 60%);
-        color: var(--color-white);
-    }
-
-    p {
-        padding: $spacing-size-8 $spacing-size-8 0;
-        margin-bottom: $spacing-size-8;
-        width: 100%;
-    }
-
-    b:last-of-type {
-        padding: 2px $spacing-size-2;
-        background-color: var(--color-brand-200);
-        border: 1px solid var(--color-brand-300);
-        border-radius: 6px;
-
-        #{$selector-darkmode} & {
-            background-color: color-mix(in srgb, var(--color-brand-200) 15%, transparent);
-            border: 1px solid color-mix(in srgb, var(--color-brand-200) 15%, transparent);
-        }
-    }
-
-    svg {
-        position: absolute;
-        width: 112%;
-        height: 112%;
-        top: -6%;
-        left: 6%;
-
-        * {
-            fill: var(--color-util-brand-700);
-        }
-    }
-}
-
-.illustration {
-    position: relative;
-    aspect-ratio: 1 / 1;
-    height: 100%;
-    overflow: hidden;
-
-    @media screen and (max-width: 840px) {
-        display: none;
-    }
-}
-
 .autoICExample {
     width: 100%;
     max-width: 1400px;

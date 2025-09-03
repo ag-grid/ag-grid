@@ -1,9 +1,9 @@
 import type {
     AgColumn,
     DragItem,
-    DragSource,
     ElementParams,
     GridCheckbox,
+    GridDragSource,
     ITooltipCtrl,
     TooltipFeature,
 } from 'ag-grid-community';
@@ -219,7 +219,7 @@ export class ToolPanelColumnComp extends Component {
         const { gos, eventSvc, dragAndDrop } = beans;
 
         let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
-        const dragSource: DragSource = {
+        const dragSource: GridDragSource = {
             type: DragSourceType.ToolPanel,
             eElement: eDragHandle,
             dragItemName: this.displayName,

@@ -2,7 +2,7 @@
   "name": "ag-grid-docs",
   "description": "Documentation for AG Grid",
   "type": "module",
-  "version": "34.1.1",
+  "version": "34.1.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
@@ -34,9 +34,9 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/markdoc": "0.12.10",
+    "@astrojs/markdoc": "0.15.5",
     "@astrojs/react": "4.3.0",
-    "@astrojs/sitemap": "^3.2.1",
+    "@astrojs/sitemap": "^3.5.0",
     "@carbon/icons-react": "^11.33.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
@@ -53,19 +53,19 @@
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "@pqina/flip": "^1.8.4",
-    "ag-charts-angular": "12.1.1-beta.20250820",
-    "ag-charts-community": "12.1.1-beta.20250820",
-    "ag-charts-enterprise": "12.1.1-beta.20250820",
-    "ag-charts-types": "12.1.1-beta.20250820",
-    "ag-charts-react": "12.1.1-beta.20250820",
-    "ag-charts-vue3": "12.1.1-beta.20250820",
-    "ag-grid-angular": "34.1.1",
-    "ag-grid-community": "34.1.1",
-    "ag-grid-enterprise": "34.1.1",
-    "ag-grid-react": "34.1.1",
-    "ag-grid-vue3": "34.1.1",
+    "ag-charts-angular": "12.1.2-beta.20250903",
+    "ag-charts-community": "12.1.2-beta.20250903",
+    "ag-charts-enterprise": "12.1.2-beta.20250903",
+    "ag-charts-types": "12.1.2-beta.20250903",
+    "ag-charts-react": "12.1.2-beta.20250903",
+    "ag-charts-vue3": "12.1.2-beta.20250903",
+    "ag-grid-angular": "34.1.2",
+    "ag-grid-community": "34.1.2",
+    "ag-grid-enterprise": "34.1.2",
+    "ag-grid-react": "34.1.2",
+    "ag-grid-vue3": "34.1.2",
     "algoliasearch": "^4.18.0",
-    "astro": "5.8.2",
+    "astro": "5.13.3",
     "cheerio": "^1.0.0",
     "classnames": "^2.5.1",
     "codesandbox-import-utils": "2.2.3",
@@ -91,7 +91,7 @@
     "react-shadow": "^20.4.0",
     "sass": "^1.77.8",
     "typescript": "~5.4.5",
-    "vite-plugin-svgr": "^4.2.0",
+    "vite-plugin-svgr": "^4.5.0",
     "vue": "^3.5.13"
   },
   "devDependencies": {
@@ -102,6 +102,6 @@
     "@playwright/test": "^1.46.0",
     "prettier-plugin-astro": "^0.12.3",
     "vite-plugin-mkcert": "^1.17.8",
-    "vitest": "2.1.6"
+    "vitest": "2.1.9"
   }
 }

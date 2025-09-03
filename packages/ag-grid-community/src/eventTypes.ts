@@ -165,6 +165,7 @@ const _INTERNAL_EVENTS = [
     'filterSwitched',
     'filterClosed',
     'headerRowsChanged',
+    'rowExpansionStateChanged',
 ] as const;
 
 // We define as a callback to help with tree shaking (esbuild)

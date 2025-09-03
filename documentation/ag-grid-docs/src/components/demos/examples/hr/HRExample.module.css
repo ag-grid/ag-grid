@@ -80,8 +80,8 @@
     font-weight: 600;
 }
 
-:global(.ag-theme-quartz .ag-cell:not(:first-child)),
-:global(.ag-theme-quartz-dark .ag-cell:not(:first-child)) {
+:global(.ag-theme-quartz .ag-cell:not(:first-child, .ag-cell-focus)),
+:global(.ag-theme-quartz-dark .ag-cell:not(:first-child, .ag-cell-focus)) {
     border-left: 1px solid var(--ag-border-color);
 }
 

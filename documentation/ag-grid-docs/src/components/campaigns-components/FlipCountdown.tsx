@@ -14,17 +14,39 @@ const getTimeLeft = (target: Date) => {
     return { days, hours, minutes, seconds };
 };
 
-const FlipCountdown: React.FC<{ days?: number }> = ({ days = 60 }) => {
-    //  00:00 on 1st September 2025 in GMT
-    const endDate = new Date(Date.UTC(2025, 8, 1, 0, 0, 0));
+interface FlipCountdownProps {
+    endDate: Date;
+    onCountdownEnd?: () => void;
+    isEnded?: boolean;
+    onEndedChange?: (ended: boolean) => void;
+}
 
+const FlipCountdown: React.FC<FlipCountdownProps> = ({ endDate, onCountdownEnd, isEnded, onEndedChange }) => {
     const [left, setLeft] = useState(() => getTimeLeft(endDate));
+    const [hasEnded, setHasEnded] = useState(false);
 
     useEffect(() => {
         const target = new Date(endDate);
-        const handle = setInterval(() => setLeft(getTimeLeft(target)), 1000);
+        const handle = setInterval(() => {
+            const timeLeft = getTimeLeft(target);
+            setLeft(timeLeft);
+
+            // Check if countdown has ended
+            if (timeLeft.days === 0 && timeLeft.hours === 0 && timeLeft.minutes === 0 && timeLeft.seconds === 0) {
+                if (!hasEnded) {
+                    setHasEnded(true);
+                    onEndedChange?.(true);
+                    onCountdownEnd?.();
+                }
+            }
+        }, 1000);
         return () => clearInterval(handle);
-    }, [days]);
+    }, [endDate, hasEnded, onCountdownEnd, onEndedChange]);
+
+    // If countdown has ended, show zeros
+    if (hasEnded || isEnded) {
+        return <div className="countdownContainer"></div>;
+    }
 
     return (
         <div className="countdownContainer">

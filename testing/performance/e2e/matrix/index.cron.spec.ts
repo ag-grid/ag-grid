@@ -10,7 +10,7 @@ let showBtn: ElementHandle<HTMLButtonElement>;
 const url = 'https://localhost:4610/testing/performance/e2e/matrix/index.html';
 const athleteCheck = () => document.body.textContent!.includes('Tony Smith');
 test(`Performance Test - `, {
-    timeout: 10 * 60_000,
+    timeout: 20 * 60_000,
     minIterations: 300,
     maxIterations: 500,
     warmupIterations: 5,

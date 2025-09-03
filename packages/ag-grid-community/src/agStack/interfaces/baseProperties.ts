@@ -17,4 +17,6 @@ export interface BaseProperties {
     tooltipHideDelay?: number;
     tooltipMouseTrack?: boolean;
     tooltipInteraction?: boolean;
+    getDocument?: () => Document;
+    suppressTouch?: boolean;
 }

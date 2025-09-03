@@ -17,19 +17,19 @@ nx test ag-behavioural-testing
 To execute a single test file
 
 ```sh
-nx test ag-behavioural-testing -- --testFile=src/folder/filename.test.ts
+nx test ag-behavioural-testing -- src/folder/filename.test.ts
 ```
 
-To run in watch mode
+By default, the tests run in watch mode, but to run without watching
 
 ```sh
-nx test ag-behavioural-testing -- -w
+nx test ag-behavioural-testing -c run
 ```
 
 To overwrite the snapshots for snapshot tests
 
 ```sh
-nx test ag-behavioural-testing -- --update
+nx test ag-behavioural-testing -c update
 ```
 
 To execute benchmarks

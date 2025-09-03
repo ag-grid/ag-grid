@@ -47,6 +47,12 @@ interface IData {
     groupChartData?: any[];
 }
 
+export interface ChartValueWrapper<T = any> {
+    value: T;
+    id: number;
+    toString: () => string;
+}
+
 export class ChartDatasource extends BeanStub {
     private gridRowModel: IRowModel;
     private pivotResultCols?: IPivotResultColsService;
@@ -174,7 +180,7 @@ export class ChartDatasource extends BeanStub {
                         const labels = this.getGroupLabels(rowNode, valueString);
                         const value = labels.slice().reverse();
 
-                        const groupingValue = {
+                        const groupingValue: ChartValueWrapper<string[]> = {
                             value,
                             // this is needed so that standalone can handle animations properly when data updates
                             id: id++,

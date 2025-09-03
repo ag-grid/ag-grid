@@ -9,9 +9,10 @@ export interface DateFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'date'` */
     filterType?: 'date';
     /**
-     * The date value(s) associated with the filter. The type is `string` and format is always
-     * `YYYY-MM-DD hh:mm:ss` e.g. 2019-05-24 00:00:00. Custom filters can have no values (hence both
-     * are optional). Range filter has two values (from and to).
+     * The date value(s) associated with the filter.
+     * The type is `string` and the format is `YYYY-MM-DD hh:mm:ss`, e.g. 2019-05-24 00:00:00.
+     * If `useIsoSeparator = true`, the format is instead `YYYY-MM-DDThh:mm:ss`.
+     * Custom filters can have no values (hence both are optional). Range filter has two values (from and to).
      */
     dateFrom: string | null;
     /**
@@ -84,6 +85,11 @@ export interface IDateFilterParams extends IScalarFilterParams {
      * @default false
      */
     includeTime?: boolean;
+    /**
+     * By default, the `dateFrom` and `dateTo` values in the filter model will be in the format `YYYY-MM-DD hh:mm:ss`.
+     * Set this to `true` to instead use the format `YYYY-MM-DDThh:mm:ss`.
+     */
+    useIsoSeparator?: boolean;
 }
 
 export interface IDateComparatorFunc {

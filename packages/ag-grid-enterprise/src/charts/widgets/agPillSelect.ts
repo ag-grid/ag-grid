@@ -1,4 +1,11 @@
-import type { DragAndDropIcon, DragItem, DraggingEvent, DropTarget, GridSelect, ListOption } from 'ag-grid-community';
+import type {
+    DragAndDropIcon,
+    DragItem,
+    DropTarget,
+    GridDraggingEvent,
+    GridSelect,
+    ListOption,
+} from 'ag-grid-community';
 import {
     AgSelect,
     Component,
@@ -249,7 +256,7 @@ class PillSelectDropZonePanel<TValue> extends PillDropZonePanel<PillSelectDragCo
         super.init();
     }
 
-    protected isItemDroppable(item: TValue, draggingEvent: DraggingEvent): boolean {
+    protected isItemDroppable(item: TValue, draggingEvent: GridDraggingEvent): boolean {
         return (
             this.isSourceEventFromTarget(draggingEvent) ||
             (this.sourceId != null && this.sourceId === draggingEvent.dragSource.sourceId)

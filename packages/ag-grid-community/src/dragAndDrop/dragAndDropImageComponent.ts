@@ -1,5 +1,6 @@
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { IDragAndDropImage } from '../agStack/interfaces/iDragAndDrop';
 import { _clearElement } from '../agStack/utils/dom';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { ElementParams } from '../utils/element';
@@ -7,15 +8,11 @@ import type { IconName } from '../utils/icon';
 import { _createIcon } from '../utils/icon';
 import { Component } from '../widgets/component';
 import { dragAndDropImageComponentCSS } from './dragAndDropImageComponent.css-GENERATED';
-import type { DragAndDropIcon, DragSource } from './dragAndDropService';
+import type { DragAndDropIcon, GridDragSource } from './dragAndDropService';
+import type { DragSource } from './rowDragTypes';
 
 export interface IDragAndDropImageParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     dragSource: DragSource;
-}
-
-export interface IDragAndDropImage {
-    setIcon(iconName: string | null, shake: boolean): void;
-    setLabel(label: string): void;
 }
 
 export interface IDragAndDropImageComponent<
@@ -41,7 +38,7 @@ const DragAndDropElement: ElementParams = {
     ],
 };
 export class DragAndDropImageComponent extends Component implements IDragAndDropImageComponent<any, any> {
-    private dragSource: DragSource | null = null;
+    private dragSource: GridDragSource | null = null;
 
     private readonly eIcon: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;

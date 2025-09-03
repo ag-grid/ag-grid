@@ -13,7 +13,13 @@ import { AgInputTextField } from './agInputTextField';
 import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 export class AgInputDateField<
-    TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+    TBeanCollection extends AgCoreBeanCollection<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService
+    >,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,

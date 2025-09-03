@@ -1,5 +1,5 @@
 import { KeyCode } from '../../agStack/constants/keyCode';
-import { _isEventSupported } from '../../agStack/utils/event';
+import { _isEventFromThisInstance, _isEventSupported } from '../../agStack/utils/event';
 import { _isEventFromPrintableCharacter } from '../../agStack/utils/keyboard';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
@@ -13,7 +13,6 @@ import type { UndoRedoService } from '../../undoRedo/undoRedoService';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboardEvent';
 import { _selectAllCells } from '../../utils/selection';
-import { _isEventFromThisGrid } from '../mouseEventUtils';
 
 const A_KEYCODE = 65;
 const C_KEYCODE = 67;
@@ -83,7 +82,7 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (!_isEventFromThisGrid(this.gos, mouseEvent) || _isStopPropagationForAgGrid(mouseEvent)) {
+        if (!_isEventFromThisInstance(this.beans, mouseEvent) || _isStopPropagationForAgGrid(mouseEvent)) {
             return;
         }
 
@@ -219,7 +218,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
         // for copy / paste, we don't want to execute when the event
         // was from a child grid (happens in master detail)
-        if (!_isEventFromThisGrid(this.gos, keyboardEvent)) {
+        if (!_isEventFromThisInstance(this.beans, keyboardEvent)) {
             return;
         }
 

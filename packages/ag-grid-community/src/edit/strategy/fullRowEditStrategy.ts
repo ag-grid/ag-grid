@@ -261,6 +261,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         if (!rowsMatch && !preventNavigation) {
+            this.editSvc?.stopEditing({ rowNode: prevCell.rowNode }, { event });
             this.cleanupEditors(nextCell, true);
 
             if (suppressStartEditOnTab) {

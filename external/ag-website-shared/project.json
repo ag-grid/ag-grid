@@ -30,7 +30,7 @@
       "dependsOn": [],
       "options": {
         "cwd": "{projectRoot}",
-        "config": "vitest.config.mjs",
+        "config": "vitest.config.ts",
         "watch": false
       },
       "configurations": {

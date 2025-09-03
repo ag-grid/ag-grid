@@ -86,6 +86,10 @@ The snippet above is demonstrated in the following example:
 Calling `setSideBarVisible(true)` when `sideBarDef.hideButtons` is set to true and no tool panel is open will not display anything.
 {% /note %}
 
+{% note %}
+The [Popup Parent](./context-menu/#popup-parent) must be set to an element that contains both the tool parent parent and the grid to ensure all popups (e.g., Columns Tool Panel context menus) are fully visible.
+{% /note %}
+
 ## Configuration Shortcuts
 
 The `boolean` and `string` configurations are shortcuts for more detailed configurations. When you use a shortcut the grid replaces it with the equivalent long form of the configuration by building the equivalent `SideBarDef`.
@@ -191,6 +195,17 @@ const gridOptions = {
 If you are using the long form (providing a `SideBarDef` object) then it is possible to customise. The example below changes the filter label and icon.
 
 {% gridExampleRunner title="Side Bar Fine Tuning" name="fine-tuning" /%}
+
+### Tool Panel Parent
+
+By default, Tool Panels are rendered inside the Side Bar. If you want to render Tool Panels in a different location, you can set the [parent](./side-bar#reference-ToolPanelDef-parent) property in the `ToolPanelDef`. This is useful if you want to render Tool Panel in a different part of your application, such as a popup window or a separate section of your page.
+
+The [Popup Parent](./context-menu/#popup-parent) must also be set to an element that contains both the Tool Panel parent and the grid.
+
+In the example below, the `parent` property in the columns tool panel is set to an element with ID `popup`, while the [openToolPanel](./grid-api/#reference-accessories-openToolPanel) API method uses its second parameter to dynamically assign a custom parent element. Both approaches achieve the same goal of rendering tool panels outside the default side bar. Note that `popupParent` value is set to `document.body` to ensure that Tool Panels with parents set are rendered correctly.
+
+{% gridExampleRunner title="Tool Panel Parent" name="tool-panel-parent" exampleHeight=600 /%}
+
 
 ## Providing Parameters to Tool Panels
 

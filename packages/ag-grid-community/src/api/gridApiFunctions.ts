@@ -1,5 +1,5 @@
 import type { ValidationModuleName } from '../interfaces/iModule';
-import type { _FindApi } from './gridApi';
+import type { _CsrmSsrmSharedGridApi, _FindApi } from './gridApi';
 import type {
     GridApi,
     _AdvancedFilterGridApi,
@@ -19,7 +19,6 @@ import type {
     _CommunityMenuGridApi,
     _ContextMenuGridApi,
     _CoreGridApi,
-    _CsrmSsrmSharedGridApi,
     _CsvExportGridApi,
     _DragGridApi,
     _EditGridApi,
@@ -282,10 +281,10 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         paginationGoToLastPage: 0,
         paginationGoToPage: 0,
     }),
+
     ...mod<_CsrmSsrmSharedGridApi>('CsrmSsrmSharedApi', {
         expandAll: 0,
         collapseAll: 0,
-        onRowHeightChanged: 0,
     }),
     ...mod<_SsrmInfiniteSharedGridApi>('SsrmInfiniteSharedApi', {
         setRowCount: 0,
@@ -300,11 +299,12 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         forEachLeafNode: 0,
         forEachNodeAfterFilter: 0,
         forEachNodeAfterFilterAndSort: 0,
-        resetRowHeights: 0,
         applyTransaction: 0,
         applyTransactionAsync: 0,
         flushAsyncTransactions: 0,
         getBestCostNodeSelection: 0,
+        onRowHeightChanged: 0,
+        resetRowHeights: 0,
     }),
 
     ...mod<_CsvExportGridApi>('CsvExport', {
@@ -418,6 +418,8 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         flushServerSideAsyncTransactions: 0,
         refreshServerSide: 0,
         getServerSideGroupLevelState: 0,
+        onRowHeightChanged: 0,
+        resetRowHeights: 0,
     }),
 
     ...mod<_SideBarGridApi<any>>('SideBar', {

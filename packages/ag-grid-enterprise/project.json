@@ -36,7 +36,7 @@
       "dependsOn": ["@ag-grid-community/styles:build"],
       "inputs": ["{workspaceRoot}/community-modules/styles/*.*css"],
       "outputs": ["{projectRoot}/styles/**/*"],
-      "cache": true,
+      "cache": false,
       "command": "rsync -r ../../community-modules/styles/*.*css --delete styles",
       "options": {
         "cwd": "packages/ag-grid-enterprise"

@@ -1,4 +1,4 @@
-import type { AgColumn, DragAndDropIcon, DraggingEvent } from 'ag-grid-community';
+import type { AgColumn, DragAndDropIcon, GridDraggingEvent } from 'ag-grid-community';
 import { _createIconNoSpan } from 'ag-grid-community';
 
 import { BaseDropZonePanel } from './baseDropZonePanel';
@@ -29,7 +29,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         return label;
     }
 
-    protected isItemDroppable(column: AgColumn, draggingEvent: DraggingEvent): boolean {
+    protected isItemDroppable(column: AgColumn, draggingEvent: GridDraggingEvent): boolean {
         // we never allow grouping of secondary columns or already-grouped columns
         if (this.gos.get('functionsReadOnly') || !column.isPrimary() || column.colDef.showRowGroup) {
             return false;

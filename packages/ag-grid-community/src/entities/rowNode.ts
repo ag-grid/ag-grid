@@ -725,13 +725,6 @@ export class RowNode<TData = any>
         return res.reverse();
     }
 
-    public setFirstChild(firstChild: boolean): void {
-        if (this.firstChild !== firstChild) {
-            this.firstChild = firstChild;
-            this.dispatchRowEvent('firstChildChanged');
-        }
-    }
-
     private setDisplayed(displayed: boolean): void {
         if (this.displayed !== displayed) {
             this.displayed = displayed;

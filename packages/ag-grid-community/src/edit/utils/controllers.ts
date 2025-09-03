@@ -3,7 +3,6 @@ import type { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getRowById } from '../../entities/positionUtils';
-import { _isElementInThisGrid } from '../../gridBodyComp/mouseEventUtils';
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode, RowPinnedType } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
@@ -110,7 +109,7 @@ export function _addStopEditingWhenGridLosesFocus(
             // see if click came from inside the viewports
             viewports.some((viewport) => viewport.contains(elementWithFocus)) &&
             // and also that it's not from a detail grid
-            _isElementInThisGrid(gos, elementWithFocus);
+            gos.isElementInThisInstance(elementWithFocus);
 
         if (!clickInsideGrid) {
             clickInsideGrid =

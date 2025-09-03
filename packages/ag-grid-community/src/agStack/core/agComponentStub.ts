@@ -25,7 +25,13 @@ import { CssClassManager } from './cssClassManager';
 let compIdSequence = 0;
 
 export abstract class AgComponentStub<
-        TBeanCollection extends AgCoreBeanCollection<TBeanCollection, TPropertiesService, TGlobalEvents, TCommon>,
+        TBeanCollection extends AgCoreBeanCollection<
+            TBeanCollection,
+            TProperties,
+            TGlobalEvents,
+            TCommon,
+            TPropertiesService
+        >,
         TProperties extends BaseProperties,
         TGlobalEvents extends BaseEvents,
         TCommon,
