@@ -5,12 +5,6 @@ export interface IDragService {
 
     addDragSource(params: DragListenerParams): void;
 
-    onTouchUp(touchEvent: TouchEvent, el: Element): void;
-
-    onMouseUp(mouseEvent: MouseEvent, el: Element): void;
-
-    onUpCommon(eventOrTouch: MouseEvent | Touch, el: Element): void;
-
     cancelDrag(el: Element): void;
 }
 
@@ -19,8 +13,6 @@ export interface DragListenerParams {
     dragStartPixels?: number;
     /** Dom element to add the drag handling to */
     eElement: Element;
-    /** Some places may wish to ignore certain events, eg range selection ignores shift clicks */
-    skipMouseEvent?: (mouseEvent: MouseEvent) => boolean;
     /** Callback for drag starting */
     onDragStart: (mouseEvent: MouseEvent | Touch) => void;
     /** Callback for drag stopping */
