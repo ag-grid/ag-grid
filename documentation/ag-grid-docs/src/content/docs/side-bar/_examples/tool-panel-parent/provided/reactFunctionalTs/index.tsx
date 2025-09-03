@@ -43,6 +43,7 @@ const GridExample = () => {
     const popupContentRef = useRef<HTMLElement>(null);
     const drawerRef = useRef<HTMLElement>(null);
     const drawerContentRef = useRef<HTMLElement>(null);
+    const [popupParent, setPopupParent] = useState<HTMLElement | null>(document.body);
     const [columnDefs, setColumnDefs] = useState([
         { field: 'athlete', filter: 'agTextColumnFilter', minWidth: 200 },
         { field: 'country', minWidth: 180 },
@@ -106,6 +107,7 @@ const GridExample = () => {
         closeDrawer();
         const popup = popupRef.current;
         popup.classList.toggle('active', true);
+        setPopupParent(popup);
         gridRef.current.api.openToolPanel(columnsToolPanel.id);
         addStyles(popup);
     }, [popupRef.current, closeDrawer, columnsToolPanel]);
@@ -114,6 +116,7 @@ const GridExample = () => {
         closePopup();
         const drawer = drawerRef.current;
         drawer.classList.toggle('active', true);
+        setPopupParent(drawer);
         gridRef.current.api.openToolPanel(filtersToolPanel.id, drawerContentRef.current);
         addStyles(drawer);
     }, [drawerRef, closePopup, filtersToolPanel]);
@@ -132,7 +135,7 @@ const GridExample = () => {
                         ref={gridRef}
                         rowData={data}
                         loading={loading}
-                        popupParent={drawerRef.current}
+                        popupParent={popupParent}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}

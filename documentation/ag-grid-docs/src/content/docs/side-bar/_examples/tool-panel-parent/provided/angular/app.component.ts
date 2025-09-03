@@ -10,7 +10,7 @@ import {
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { ColumnsToolPanelModule, FiltersToolPanelModule, PivotModule, SetFilterModule } from 'ag-grid-enterprise';
+import { ColumnsToolPanelModule, NewFiltersToolPanelModule, PivotModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { IOlympicData } from './interfaces';
 import './styles.css';
@@ -19,7 +19,7 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
-    FiltersToolPanelModule,
+    NewFiltersToolPanelModule,
     SetFilterModule,
     PivotModule,
     TextFilterModule,
@@ -32,12 +32,13 @@ ModuleRegistry.registerModules([
     imports: [AgGridAngular],
     template: `<div id="wrapper" class="example-wrapper">
             <div class="example-header">
-                <button (click)="openPopup()">Open columns panel popup</button>
-                <button (click)="openDrawer()">Open filters panel drawer</button>
+                <button (click)="openPopup()">Open Columns Tool Panel</button>
+                <button (click)="openDrawer()">Open Filters Tool Panel</button>
             </div>
             <ag-grid-angular
                 style="width: 100%; height: 100%;"
                 [popupParent]="popupParent"
+                [enableFilterHandlers]="true"
                 [columnDefs]="columnDefs"
                 [defaultColDef]="defaultColDef"
                 [autoGroupColumnDef]="autoGroupColumnDef"
@@ -80,14 +81,14 @@ export class AppComponent {
         labelDefault: 'Drawer',
         labelKey: 'filters',
         iconKey: 'filter',
-        toolPanel: 'agFiltersToolPanel',
+        toolPanel: 'agNewFiltersToolPanel',
     };
     sideBar: SideBarDef = {
         hideButtons: true,
         hiddenByDefault: true,
     };
     private gridApi!: GridApi<IOlympicData>;
-    popupParent: HTMLElement | null = document.body;
+    popupParent: HTMLElement = document.body;
     columnDefs: ColDef[] = [
         { field: 'athlete', filter: 'agTextColumnFilter', minWidth: 200 },
         { field: 'country', minWidth: 180 },
@@ -124,6 +125,7 @@ export class AppComponent {
         this.closeDrawer();
         const popup = this.popupRef.nativeElement;
         popup.classList.toggle('active', true);
+        this.popupParent = popup;
         this.gridApi.openToolPanel(this.columnsToolPanel.id);
         addStyles(popup);
     }
@@ -132,6 +134,7 @@ export class AppComponent {
         this.closePopup();
         const drawer = this.drawerRef.nativeElement;
         drawer.classList.toggle('active', true);
+        this.popupParent = drawer;
         this.gridApi.openToolPanel(this.filtersToolPanel.id, this.drawerContentRef?.nativeElement as HTMLElement);
         addStyles(drawer);
     }
