@@ -492,11 +492,7 @@ function dispatchEditingStopped(
     }
 }
 
-function _hasValidationRules(beans: BeanCollection, force?: boolean): boolean {
-    if (force) {
-        return true;
-    }
-
+function _hasValidationRules(beans: BeanCollection): boolean {
     const { gos, colModel } = beans;
     const getFullRowEditValidationErrors = !!gos.get('getFullRowEditValidationErrors');
     const columnsHaveRules = colModel
@@ -522,7 +518,7 @@ function _hasValidationRules(beans: BeanCollection, force?: boolean): boolean {
 }
 
 export function _populateModelValidationErrors(beans: BeanCollection, force?: boolean): void {
-    if (!_hasValidationRules(beans, force)) {
+    if (!(force || _hasValidationRules(beans))) {
         return;
     }
 
