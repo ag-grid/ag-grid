@@ -46,7 +46,7 @@ test.agExample(import.meta, () => {
         await page.keyboard.press('Escape'); // press Enter to save the value
 
         await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
-        await expect(cell).toHaveText('Mary'); // verify the cell has the new value
+        await expect(cell).toHaveText('Bob'); // verify the cell has the new value
     });
 
     test.describe('Events', () => {
@@ -81,7 +81,7 @@ test.agExample(import.meta, () => {
                 await page.keyboard.type('Fred');
                 await page.keyboard.press('Enter');
 
-                const eventLog = remoteGrid.eventLog;
+                const eventLog = await remoteGrid.waitForEventlog(100);
 
                 if (readOnlyEdit) {
                     expect(eventLog).toEqual([
@@ -147,7 +147,7 @@ test.agExample(import.meta, () => {
                 await page.keyboard.type('Fred');
                 await page.keyboard.press('Enter');
 
-                const eventLog = remoteGrid.eventLog;
+                const eventLog = await remoteGrid.waitForEventlog(100);
 
                 if (readOnlyEdit) {
                     expect(eventLog).toEqual([
@@ -213,7 +213,7 @@ test.agExample(import.meta, () => {
                 await page.keyboard.type('Fred');
                 await page.keyboard.press('Escape');
 
-                const eventLog = remoteGrid.eventLog;
+                const eventLog = await remoteGrid.waitForEventlog(100);
 
                 if (readOnlyEdit) {
                     expect(eventLog).toEqual([
@@ -243,7 +243,7 @@ test.agExample(import.meta, () => {
                             { newValue: undefined, oldValue: 'Alice', value: 'Alice', valueChanged: false },
                         ],
                     ]);
-                    expect(cell).toHaveText('Alice');
+                    await expect(cell).toHaveText('Alice');
                 }
             });
 
@@ -267,27 +267,48 @@ test.agExample(import.meta, () => {
                     const cellEditor = cell.locator('input');
                     await expect(cellEditor).not.toBeAttached();
 
-                    const eventLog = remoteGrid.eventLog;
+                    const eventLog = await remoteGrid.waitForEventlog(100);
 
                     if (readOnlyEdit) {
-                        expect(eventLog).toEqual([
-                            ['isCancelBeforeStart', []],
-                            [
-                                'cellEditingStopped',
-                                {
-                                    newValue: undefined,
-                                    oldValue: 'Alice',
-                                    value: 'Alice',
-                                    valueChanged: false,
-                                },
-                            ],
-                            [
-                                'cellEditingStarted',
-                                {
-                                    value: 'Alice',
-                                },
-                            ],
-                        ]);
+                        if (agFramework.startsWith('react')) {
+                            expect(eventLog).toEqual([
+                                ['isCancelBeforeStart', []],
+                                [
+                                    'cellEditingStarted',
+                                    {
+                                        value: 'Alice',
+                                    },
+                                ],
+                                [
+                                    'cellEditingStopped',
+                                    {
+                                        newValue: undefined,
+                                        oldValue: 'Alice',
+                                        value: 'Alice',
+                                        valueChanged: false,
+                                    },
+                                ],
+                            ]);
+                        } else {
+                            expect(eventLog).toEqual([
+                                ['isCancelBeforeStart', []],
+                                [
+                                    'cellEditingStopped',
+                                    {
+                                        newValue: undefined,
+                                        oldValue: 'Alice',
+                                        value: 'Alice',
+                                        valueChanged: false,
+                                    },
+                                ],
+                                [
+                                    'cellEditingStarted',
+                                    {
+                                        value: 'Alice',
+                                    },
+                                ],
+                            ]);
+                        }
                     } else {
                         if (agFramework.startsWith('react')) {
                             expect(eventLog).toEqual([
@@ -309,7 +330,7 @@ test.agExample(import.meta, () => {
                             ]);
                         }
 
-                        expect(cell).toHaveText('Alice');
+                        await expect(cell).toHaveText('Alice');
                     }
                 }
             );
@@ -340,7 +361,7 @@ test.agExample(import.meta, () => {
                     await page.keyboard.type('Fred');
                     await page.keyboard.press('Enter');
 
-                    const eventLog = remoteGrid.eventLog;
+                    const eventLog = await remoteGrid.waitForEventlog(100);
 
                     if (readOnlyEdit) {
                         expect(eventLog).toEqual([
@@ -373,7 +394,7 @@ test.agExample(import.meta, () => {
                             ],
                         ]);
 
-                        expect(cell).toHaveText('Alice');
+                        await expect(cell).toHaveText('Alice');
                     }
                 }
             );
@@ -401,7 +422,7 @@ test.agExample(import.meta, () => {
 
                     await remoteApi.stopEditing();
 
-                    const eventLog = remoteGrid.eventLog;
+                    const eventLog = await remoteGrid.waitForEventlog(100);
 
                     if (readOnlyEdit) {
                         expect(eventLog).toEqual([
@@ -474,21 +495,21 @@ test.agExample(import.meta, () => {
                     const anotherCell = agIdFor.cell('1', 'firstName');
                     await anotherCell.click();
 
-                    const eventLog = remoteGrid.eventLog;
+                    const eventLog = await remoteGrid.waitForEventlog(100);
 
                     if (readOnlyEdit) {
                         expect(eventLog).toEqual([
                             [
                                 'cellEditingStarted',
                                 {
-                                    value: 'Mary',
+                                    value: 'Bob',
                                 },
                             ],
                             [
                                 'cellValueChanged',
                                 {
                                     newValue: 'Fred',
-                                    oldValue: 'Mary',
+                                    oldValue: 'Bob',
                                     source: 'edit',
                                 },
                             ],
@@ -496,7 +517,7 @@ test.agExample(import.meta, () => {
                                 'cellEditingStopped',
                                 {
                                     newValue: 'Fred',
-                                    oldValue: 'Mary',
+                                    oldValue: 'Bob',
                                     value: 'Fred',
                                     valueChanged: true,
                                 },
@@ -505,12 +526,12 @@ test.agExample(import.meta, () => {
                     } else {
                         expect(eventLog.length).toBe(3);
                         expect(eventLog).toEqual([
-                            ['cellEditingStarted', { value: 'Mary' }],
+                            ['cellEditingStarted', { value: 'Bob' }],
                             [
                                 'cellValueChanged',
                                 {
                                     newValue: 'Fred',
-                                    oldValue: 'Mary',
+                                    oldValue: 'Bob',
                                     source: 'edit',
                                 },
                             ],
@@ -518,7 +539,7 @@ test.agExample(import.meta, () => {
                                 'cellEditingStopped',
                                 {
                                     newValue: 'Fred',
-                                    oldValue: 'Mary',
+                                    oldValue: 'Bob',
                                     value: 'Fred',
                                     valueChanged: true,
                                 },

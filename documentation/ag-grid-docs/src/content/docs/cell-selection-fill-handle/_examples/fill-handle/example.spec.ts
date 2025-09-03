@@ -78,7 +78,7 @@ test.agExample(import.meta, () => {
             await expect(cells[2]).toHaveText('Natalie Coughlin');
             await expect(cells[3]).toHaveText('Aleksey Nemov');
 
-            const eventLog = remoteGrid.eventLog;
+            const eventLog = await remoteGrid.waitForEventlog(100);
 
             expect(eventLog.length).toBe(2);
             expect(eventLog).toEqual([

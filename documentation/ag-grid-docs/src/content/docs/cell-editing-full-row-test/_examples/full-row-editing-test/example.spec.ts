@@ -85,7 +85,7 @@ test.agExample(import.meta, () => {
         await expect(verticalView).toBeVisible();
 
         const horizontalView = page.locator('.ag-viewport.ag-center-cols-viewport');
-        expect(horizontalView).toBeVisible();
+        await expect(horizontalView).toBeVisible();
 
         const maxY = 20_500;
         const maxX = 1200;
@@ -124,7 +124,7 @@ test.agExample(import.meta, () => {
             const verticalView = page.locator('.ag-body-viewport.ag-row-animation.ag-layout-normal');
             await expect(verticalView).toBeVisible();
             const horizontalView = page.locator('.ag-viewport.ag-center-cols-viewport');
-            expect(horizontalView).toBeVisible();
+            await expect(horizontalView).toBeVisible();
 
             const cell = agIdFor.cell('1', 'model-1-1');
             await cell.dblclick();
