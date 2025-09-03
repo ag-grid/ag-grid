@@ -492,7 +492,11 @@ function dispatchEditingStopped(
     }
 }
 
-function _hasValidationRules(beans: BeanCollection): boolean {
+function _hasValidationRules(beans: BeanCollection, force?: boolean): boolean {
+    if (force) {
+        return true;
+    }
+
     const { gos, colModel } = beans;
     const getFullRowEditValidationErrors = !!gos.get('getFullRowEditValidationErrors');
     const columnsHaveRules = colModel
@@ -517,8 +521,8 @@ function _hasValidationRules(beans: BeanCollection): boolean {
     return columnsHaveRules || getFullRowEditValidationErrors || editorsHaveRules;
 }
 
-export function _populateModelValidationErrors(beans: BeanCollection): void {
-    if (!_hasValidationRules(beans)) {
+export function _populateModelValidationErrors(beans: BeanCollection, force?: boolean): void {
+    if (!_hasValidationRules(beans, force)) {
         return;
     }
 
@@ -648,7 +652,7 @@ const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationM
 };
 
 export function _validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {
-    _populateModelValidationErrors(beans);
+    _populateModelValidationErrors(beans, true);
 
     const map = beans.editModelSvc?.getCellValidationModel().getCellValidationMap();
 
