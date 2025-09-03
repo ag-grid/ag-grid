@@ -510,7 +510,11 @@ function _hasValidationRules(beans: BeanCollection): boolean {
             );
         });
 
-    return columnsHaveRules || getFullRowEditValidationErrors;
+    const editorsHaveRules = beans.gridApi
+        .getCellEditorInstances()
+        .some((editor) => editor.getValidationElement || editor.getValidationErrors);
+
+    return columnsHaveRules || getFullRowEditValidationErrors || editorsHaveRules;
 }
 
 export function _populateModelValidationErrors(beans: BeanCollection): void {
