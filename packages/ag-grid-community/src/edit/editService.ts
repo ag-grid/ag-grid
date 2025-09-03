@@ -325,7 +325,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             // refresh previously edited cells
             model.getEditPositions(freshEdits).forEach((pos) => {
                 const cellCtrl = _getCellCtrl(beans, pos);
-                cellCtrl?.refreshCell({ force: true });
+                const valueChanged = _sourceAndPendingDiffer(pos);
+                cellCtrl?.refreshCell({ force: true, suppressFlash: !valueChanged });
             });
 
             edits = freshEdits;
