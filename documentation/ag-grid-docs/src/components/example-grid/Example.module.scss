@@ -26,6 +26,11 @@
             --ag-grid-size: 6px;
         }
     }
+
+    @media screen and (max-height: 720px) {
+        min-height: 500px !important; // !important fix for darkmode specificity
+        padding-bottom: $spacing-size-6;
+    }
 }
 
 #{$selector-darkmode} .starIcon {

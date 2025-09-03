@@ -29,7 +29,7 @@ $nav-height: 200px;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: $spacing-size-12;
+    gap: $spacing-size-4 $spacing-size-12;
     width: 100%;
     margin: 0 auto $spacing-size-3;
     padding-top: $spacing-size-8;
@@ -110,6 +110,11 @@ $nav-height: 200px;
         left: 50%;
         transform: translate(-60px, -48px);
     }
+
+    @media screen and (max-height: 720px) {
+        min-height: 500px;
+        padding-bottom: $spacing-size-6;
+    }
 }
 
 .layout {
@@ -134,7 +139,6 @@ $nav-height: 200px;
 
 .topHeader {
     @media screen and (max-height: 728px) {
-        height: 100px;
         padding-top: $spacing-size-4;
 
         .headerHeading {
