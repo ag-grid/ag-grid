@@ -1,5 +1,5 @@
 import type { ValidationModuleName } from '../interfaces/iModule';
-import type { _CsrmSsrmSharedGridApi, _FindApi } from './gridApi';
+import type { _CsrmSsrmSharedGridApi, _FindApi, _RowModelSharedApi } from './gridApi';
 import type {
     GridApi,
     _AdvancedFilterGridApi,
@@ -291,7 +291,10 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getCacheBlockState: 0,
         isLastRowIndexKnown: 0,
     }),
-
+    ...mod<_RowModelSharedApi>('RowModelSharedApi', {
+        onRowHeightChanged: 0,
+        resetRowHeights: 0,
+    }),
     ...mod<_ClientSideRowModelGridApi<any>>('ClientSideRowModelApi', {
         onGroupExpandedOrCollapsed: 0,
         refreshClientSideRowModel: 0,
