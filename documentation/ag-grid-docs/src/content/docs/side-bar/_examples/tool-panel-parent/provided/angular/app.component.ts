@@ -125,7 +125,6 @@ export class AppComponent {
         this.closeDrawer();
         const popup = this.popupRef.nativeElement;
         popup.classList.toggle('active', true);
-        this.popupParent = popup;
         this.gridApi.openToolPanel(this.columnsToolPanel.id);
         addStyles(popup);
     }
@@ -134,7 +133,6 @@ export class AppComponent {
         this.closePopup();
         const drawer = this.drawerRef.nativeElement;
         drawer.classList.toggle('active', true);
-        this.popupParent = drawer;
         this.gridApi.openToolPanel(this.filtersToolPanel.id, this.drawerContentRef?.nativeElement as HTMLElement);
         addStyles(drawer);
     }

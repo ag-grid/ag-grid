@@ -39,7 +39,7 @@ const filtersToolPanel: ToolPanelDef = {
 };
 
 const gridOptions: GridOptions<IOlympicData> = {
-    popupParent: document.getElementById('drawer'),
+    popupParent: document.body,
     columnDefs: [
         { field: 'athlete', filter: 'agTextColumnFilter', minWidth: 200 },
         { field: 'country', minWidth: 180 },

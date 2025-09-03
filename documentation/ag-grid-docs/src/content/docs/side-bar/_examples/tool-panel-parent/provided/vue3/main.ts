@@ -132,7 +132,6 @@ const VueExample = defineComponent({
             closeDrawer();
             const popup = popupRef.value!;
             popup.classList.toggle('active', true);
-            popupParent.value = popup;
             gridApi.value!.openToolPanel(columnsToolPanel.value.id);
             addStyles(popup);
         }
@@ -140,7 +139,6 @@ const VueExample = defineComponent({
             closePopup();
             const drawer = drawerRef.value!;
             drawer.classList.toggle('active', true);
-            popupParent.value = drawer;
             gridApi.value!.openToolPanel(filtersToolPanel.value.id, drawer.querySelector<HTMLElement>('.content'));
             addStyles(drawer);
         }

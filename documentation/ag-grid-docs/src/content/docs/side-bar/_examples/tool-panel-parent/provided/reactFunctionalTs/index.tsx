@@ -107,7 +107,6 @@ const GridExample = () => {
         closeDrawer();
         const popup = popupRef.current;
         popup.classList.toggle('active', true);
-        setPopupParent(popup);
         gridRef.current.api.openToolPanel(columnsToolPanel.id);
         addStyles(popup);
     }, [popupRef.current, closeDrawer, columnsToolPanel]);
@@ -116,7 +115,6 @@ const GridExample = () => {
         closePopup();
         const drawer = drawerRef.current;
         drawer.classList.toggle('active', true);
-        setPopupParent(drawer);
         gridRef.current.api.openToolPanel(filtersToolPanel.id, drawerContentRef.current);
         addStyles(drawer);
     }, [drawerRef, closePopup, filtersToolPanel]);

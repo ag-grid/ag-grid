@@ -266,7 +266,6 @@ export abstract class AgPickerField<
             beans,
             eWrapper,
         } = this;
-        const popupParent = this.gos.get('popupParent');
 
         const popupParams: AddPopupParams<string> = {
             modal: modalPicker,
@@ -281,7 +280,7 @@ export abstract class AgPickerField<
                 }
             },
             ariaLabel: translate(pickerAriaLabelKey, pickerAriaLabelValue),
-            anchorToElement: popupParent || eWrapper,
+            anchorToElement: eWrapper,
         };
 
         // need to set position before adding to the dom
