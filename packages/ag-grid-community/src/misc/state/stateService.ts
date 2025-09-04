@@ -344,8 +344,10 @@ export class StateService extends BeanStub implements NamedBean {
         this.setFirstDataRenderedState(initialState, 'gridInitializing');
 
         const updateCachedState = this.updateCachedState.bind(this);
+        const updateFocusState = () => updateCachedState('focusedCell', this.getFocusedCellState());
         this.addManagedEventListeners({
-            cellFocused: () => updateCachedState('focusedCell', this.getFocusedCellState()),
+            cellFocused: updateFocusState,
+            cellFocusCleared: updateFocusState,
             cellSelectionChanged: (event) => {
                 if (event.finished) {
                     const cellSelection = this.getRangeSelectionState();
