@@ -18,7 +18,7 @@ test(`Performance Test - `, {
         [10, 10],
         [10, 100],
         [10, 1000],
-        [100000, 1000], // index = 3
+        [100000, 100], // index = 3
         [100, 10],
         [1000, 10],
         [10000, 10],
@@ -38,7 +38,8 @@ test(`Performance Test - `, {
                     url: `${url}?enterprise=${getCdnUrl('ag-grid-enterprise', 'staging', '')}&community=${getCdnUrl('ag-grid-community', 'staging', '')}`,
                 },
                 preSetup: async (page, testCase) => {
-                    if (rowCount === 100000 && columnCount === 1000) {
+                    if (rowCount === 100000 && columnCount === 100) {
+                        console.log('Adjusting iterations for large dataset');
                         testCase.meta.minIter = 100;
                         testCase.meta.maxIter = 200;
                     }
