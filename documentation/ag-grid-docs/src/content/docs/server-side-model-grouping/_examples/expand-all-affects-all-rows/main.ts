@@ -22,7 +22,15 @@ const gridOptions: GridOptions = {
         { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
     ],
-    getRowId: (p) => String(p.data.id), // required when ssrmExpandAllAffectsAllRows is true
+    getRowId: (params) => {
+        const parentKeysJoined = (params.parentKeys || []).join('-');
+        if (params.data.id != null) {
+            return parentKeysJoined + params.data.id;
+        }
+        const rowGroupCols = params.api.getRowGroupColumns();
+        const thisGroupCol = rowGroupCols[params.level];
+        return parentKeysJoined + params.data[thisGroupCol.getColDef().field!];
+    },
     // use the server-side row model
     rowModelType: 'serverSide',
     purgeClosedRowNodes: true,
