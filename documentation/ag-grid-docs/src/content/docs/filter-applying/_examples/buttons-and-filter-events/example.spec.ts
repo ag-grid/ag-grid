@@ -18,7 +18,6 @@ test.agExample(import.meta, () => {
         async ({ page, agIdFor, remoteGrid, agFramework }) => {
             test.skip(agFramework === 'vanilla', 'Vanilla does not have Enterprise in this example');
 
-
             const miniFilterSearch = await setupTest(remoteGrid, page, agIdFor);
 
             await miniFilterSearch.fill('arm');
