@@ -345,16 +345,16 @@ export abstract class BaseSelectionService extends BeanStub {
             const shouldClear = isRowClicked && (!enableSelectionWithoutKeys || !enableClickSelection);
 
             // Indeterminate states need to be handled differently if `groupSelects: 'filteredDescendants'` in CSRM...
-
             if (groupSelectsFiltered && currentSelection === undefined && _isClientSideRowModel(gos)) {
-                const allFilteredChildrenSelected =
-                    node.childrenAfterFilter?.every((child) => child.isSelected()) ?? false;
-                // Specifically:
+                // ...Specifically:
                 // - when only nodes that pass the filter are selected, clicking the group node should toggle everything _off_ instead of _on_
                 // - when some nodes that don't pass the filter are selected, clicking the group node should toggle everything _on_ instead of _off_
+                // The necessity of this check is signalled to the caller via the `checkFilteredNodes` flag because this class is shared with SSRM selection
+                // so we don't want to add too much CSRM-only code here.
                 return {
                     node,
-                    newValue: !allFilteredChildrenSelected,
+                    newValue: false,
+                    checkFilteredNodes: true,
                     clearSelection: !isMultiSelect || shouldClear,
                 };
             }
@@ -393,6 +393,7 @@ interface SingleNodeSelection {
     newValue: boolean;
     clearSelection: boolean;
     keepDescendants?: boolean;
+    checkFilteredNodes?: boolean;
 }
 
 interface MultiNodeSelection {

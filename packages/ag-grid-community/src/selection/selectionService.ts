@@ -93,9 +93,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             }
             return this.selectRange(selection.select, true, source);
         } else {
+            const newValue = selection.checkFilteredNodes
+                ? recursiveCanNodesBeSelected(selection.node)
+                : selection.newValue;
+
             return this.setNodesSelected({
                 nodes: [selection.node],
-                newValue: selection.newValue,
+                newValue,
                 clearSelection: selection.clearSelection,
                 keepDescendants: selection.keepDescendants,
                 event,
@@ -842,4 +846,10 @@ function isDescendantOf(root: RowNode, child: RowNode): boolean {
         parent = parent.parent;
     }
     return false;
+}
+
+function recursiveCanNodesBeSelected(root: RowNode): boolean {
+    const rootCanBeSelected = root.isSelected() === false;
+    const childrenCanBeSelected = root.childrenAfterFilter?.some(recursiveCanNodesBeSelected) ?? false;
+    return rootCanBeSelected || childrenCanBeSelected;
 }
