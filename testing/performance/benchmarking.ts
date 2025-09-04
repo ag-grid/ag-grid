@@ -72,15 +72,15 @@ export type TestCase = {
     framework?: Framework;
     control: Variant;
     variant: Variant;
-    preSetup?: (page: Page) => Promise<void>;
+    preSetup?: (page: Page, testCase: TestCaseWithMeta) => Promise<void>;
     setupPreActions?: (page: Page) => Promise<void>;
     actions: (page: Page) => Promise<void>;
     expectsPostActions?: (page: Page, comms: BrowserCommunications) => Promise<void>;
     metrics?: Entry<(typeof PerformanceObserver)['supportedEntryTypes']>;
 };
 
-type InternalTestCase = TestCase & {
-    __hidden: {
+type TestCaseWithMeta = TestCase & {
+    meta: {
         error: Error; // used to store the error for friendlier error logs
         maxIter: number;
         minIter: number;
@@ -306,7 +306,7 @@ const computeStats = (times: number[]): Stats => {
 };
 
 const HARD_THRESHOLD = 5; // 5% is the hard threshold for practical confidence
-function computeCommonStats(s1: Stats, s2: Stats, testCase: InternalTestCase) {
+function computeCommonStats(s1: Stats, s2: Stats, testCase: TestCaseWithMeta) {
     const diff = s1.average - s2.average;
     const slower = diff > 0 ? testCase.control.version : testCase.variant.version;
     const faster = diff > 0 ? testCase.variant.version : testCase.control.version;
@@ -351,7 +351,7 @@ function isDiffSignificant(diff: number, moe1: number, moe2: number) {
  * Reports the statistics of the performance test results.
  * Returns true if the results are significant, false otherwise.
  */
-function reportStats(s1: Stats, s2: Stats, testCase: InternalTestCase) {
+function reportStats(s1: Stats, s2: Stats, testCase: TestCaseWithMeta) {
     const { percentDiff, avgMoEPercent, slower, faster, diff, avgMoE, practicalConfidence, isSignificant } =
         computeCommonStats(s1, s2, testCase);
     const numbersDiffString = renderNumbersDiffString(diff, avgMoE);
@@ -379,8 +379,8 @@ function reportStats(s1: Stats, s2: Stats, testCase: InternalTestCase) {
     console.log(detailsFormat(testCase.variant.version, s2));
 }
 
-function benchError(message: string, e: any, testCase: InternalTestCase) {
-    const [_, ...rest] = testCase.__hidden.error.stack!.split('\n') || [];
+function benchError(message: string, e: any, testCase: TestCaseWithMeta) {
+    const [_, ...rest] = testCase.meta.error.stack!.split('\n') || [];
     const [__, ...providedRest] = e.stack!.split('\n');
     e.stack = `${message}\n${providedRest.join('\n')}\n${rest
         .filter((l) => l.includes(thisFilePath) || l.includes(test.info().titlePath[0]))
@@ -389,7 +389,7 @@ function benchError(message: string, e: any, testCase: InternalTestCase) {
     throw e;
 }
 
-async function attachScripts(page: Page, version: Version, testCase: InternalTestCase) {
+async function attachScripts(page: Page, version: Version, testCase: TestCaseWithMeta) {
     const chartsVersion = gridToChartsMap[version] || gridToChartsMap.prod;
 
     const urls = [getCdnUrl('ag-grid-community', version), getCdnUrl('ag-grid-enterprise', version)];
@@ -454,7 +454,7 @@ const testLevelCatch = (e: any, lastCommunications?: BrowserCommunications) => {
  * If the difference between the averages is significant or practical confidence is achieved,
  * it will return true if the faster variant is the control version.
  */
-function shouldFailTest(s1: Stats, s2: Stats, testCase: InternalTestCase) {
+function shouldFailTest(s1: Stats, s2: Stats, testCase: TestCaseWithMeta) {
     const { practicalConfidence, faster, isSignificant } = computeCommonStats(s1, s2, testCase);
     return isSignificant && practicalConfidence && faster === testCase.control.version;
 }
@@ -467,10 +467,9 @@ function renderNumbersDiffString(diff: number, avgMoE: number, unit = 'ms') {
     return `${Math.abs(diff).toFixed(2)}${unit} ± ${avgMoE.toFixed(2)}${unit}`;
 }
 
-const testBody = async (testCase: InternalTestCase, { page, context }: PlaywrightTestArgs, ..._: any[]) => {
+const testBody = async (testCase: TestCaseWithMeta, { page, context }: PlaywrightTestArgs, ..._: any[]) => {
     const measurements = { control: [] as number[], variant: [] as number[] };
     let s1: Stats, s2: Stats;
-    const { minIter, maxIter, warmupIter, setLastCommunications } = testCase.__hidden!;
     let significant = false;
     let needToContinue = true;
     let totalIterations = 0;
@@ -493,16 +492,21 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
         for (const variantName of ['control', 'variant'] as const) {
             const variant = testCase[variantName];
             await attachCookies(context, variant);
-            const lastCommunications = setLastCommunications(await gotoUrl(page, getUrl(variant, testCase)));
+            const lastCommunications = testCase.meta.setLastCommunications(
+                await gotoUrl(page, getUrl(variant, testCase))
+            );
             void updatePageTitle(page, testCase, variant);
             if (variant.shouldInjectScript) await attachScripts(page, variant.version, testCase);
-            await testCase.preSetup?.(page);
-            for (let i = 0; i < Math.max(minIter, 50); i++) {
+            await testCase.preSetup?.(page, testCase);
+            for (let i = 0; i < Math.max(testCase.meta.minIter, 50); i++) {
                 await testCase.setupPreActions?.(page);
-                if (i % 50 === 0) await page.requestGC();
+                if (i % 50 === 0) {
+                    console.log(`Iteration ${i + 1} of ${variantName} (total: ${totalIterations}). Calling GC...`);
+                    await page.requestGC();
+                }
                 const noiseSize = (await metricsGetter(page, testCase)).length;
                 await testCase.actions(page);
-                if (i > warmupIter) {
+                if (i > testCase.meta.warmupIter) {
                     const usefulEntries = (await metricsGetter(page, testCase)).slice(noiseSize);
                     const duration = usefulEntries.pop()?.duration || 0;
                     measurements[variantName].push(duration);
@@ -514,7 +518,9 @@ const testBody = async (testCase: InternalTestCase, { page, context }: Playwrigh
         [s1, s2] = [computeStats(measurements.control), computeStats(measurements.variant)];
         const { percentDiff, avgMoEPercent, isSignificant } = computeCommonStats(s1, s2, testCase);
         significant = isSignificant;
-        needToContinue = (!significant && totalIterations < maxIter) || s1.filteredCount + s2.filteredCount < minIter;
+        needToContinue =
+            (!significant && totalIterations < testCase.meta.maxIter) ||
+            s1.filteredCount + s2.filteredCount < testCase.meta.minIter;
         if (!process.env['CI']) {
             if (significant) reportStats(s1, s2, testCase);
             if (needToContinue) {
@@ -548,11 +554,11 @@ const describeBody = (describe: Describe) => () => {
     describe.testCases.forEach((testCase: TestCase, index, allCases) => {
         let lastCommunications: BrowserCommunications | undefined;
         const setLastCommunications = (comms: BrowserCommunications) => (lastCommunications = comms);
-        const __hidden = { error: new Error(), setLastCommunications, minIter, maxIter, warmupIter };
+        const meta = { error: new Error(), setLastCommunications, minIter, maxIter, warmupIter };
 
         const testTitle = `${testCase.name}${testCase.description ? `/${testCase.description}` : ''} with ${testCase.framework} (${index + 1}/${allCases.length})`;
         (testCase.skip ? test.skip : test)(testTitle, ({ page, context, request }, testInfo) =>
-            testBody({ ...testCase, __hidden }, { page, context, request }, testInfo).catch((e) =>
+            testBody({ ...testCase, meta }, { page, context, request }, testInfo).catch((e) =>
                 testLevelCatch(e, lastCommunications)
             )
         );

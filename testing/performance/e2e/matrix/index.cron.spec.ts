@@ -18,7 +18,7 @@ test(`Performance Test - `, {
         [10, 10],
         [10, 100],
         [10, 1000],
-        [100000, 1000],
+        [100000, 1000], // index = 3
         [100, 10],
         [1000, 10],
         [10000, 10],
@@ -37,7 +37,11 @@ test(`Performance Test - `, {
                     version: 'staging',
                     url: `${url}?enterprise=${getCdnUrl('ag-grid-enterprise', 'staging', '')}&community=${getCdnUrl('ag-grid-community', 'staging', '')}`,
                 },
-                preSetup: async (page) => {
+                preSetup: async (page, testCase) => {
+                    if (rowCount === 100000 && columnCount === 1000) {
+                        testCase.meta.minIter = 100;
+                        testCase.meta.maxIter = 200;
+                    }
                     showBtn = (await page.waitForSelector('#show')) as ElementHandle<HTMLButtonElement>;
                     const resetBtn = (await page.waitForSelector('#reset')) as ElementHandle<HTMLButtonElement>;
                     const cols = (await page.waitForSelector('#cols')) as ElementHandle<HTMLInputElement>;
