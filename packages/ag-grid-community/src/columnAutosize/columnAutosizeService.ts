@@ -478,6 +478,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
         // ensure things like aligned grids have linked first
         setTimeout(() => {
+            if (!this.isAlive()) {
+                return;
+            }
             const type = autoSizeStrategy.type;
             if (type === 'fitGridWidth') {
                 const { columnLimits: propColumnLimits, defaultMinWidth, defaultMaxWidth } = autoSizeStrategy;
@@ -502,6 +505,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         const { type, colIds: columns, skipHeader, defaultMaxWidth, defaultMinWidth, columnLimits } = strategy;
         // ensure render has finished
         setTimeout(() => {
+            if (!this.isAlive()) {
+                return;
+            }
             const params = {
                 skipHeader,
                 source: 'autosizeColumns' as const,
