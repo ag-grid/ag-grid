@@ -298,7 +298,8 @@ export class SetFilter<V = string>
     }
 
     protected setModelIntoUi(model: SetFilterModel | null): AgPromise<void> {
-        this.setMiniFilter(this.params.state.state?.miniFilterValue ?? null);
+        // model is being updated, so set mini filter UI state only
+        this.setMiniFilter(this.params.state.state?.miniFilterValue ?? null, true);
 
         const values = model == null ? null : model.values;
         return this.setModelAndRefresh(values);
@@ -692,8 +693,13 @@ export class SetFilter<V = string>
         // we don't warn here because the multi filter can call this
     }
 
-    private onMiniFilterInput() {
+    private onMiniFilterInput(silent?: boolean) {
         if (!this.doSetMiniFilter(this.eMiniFilter.getValue())) {
+            return;
+        }
+        if (silent) {
+            // update UI state only
+            this.showOrHideResults();
             return;
         }
 
@@ -829,9 +835,9 @@ export class SetFilter<V = string>
         this.focusRowIfAlive(focusedRow);
     }
 
-    public setMiniFilter(newMiniFilter: string | null): void {
-        this.eMiniFilter.setValue(newMiniFilter);
-        this.onMiniFilterInput();
+    public setMiniFilter(newMiniFilter: string | null, silent?: boolean): void {
+        this.eMiniFilter.setValue(newMiniFilter, silent);
+        this.onMiniFilterInput(silent);
     }
 
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
