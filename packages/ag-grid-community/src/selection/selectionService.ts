@@ -117,7 +117,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         source,
         keepDescendants = false,
     }: ISetNodesSelectedParams & { keepDescendants?: boolean }): number {
-        if (!_isRowSelection(this.gos) && newValue) {
+        const { gos } = this;
+        if (!_isRowSelection(gos) && newValue) {
             _warn(132);
             return 0;
         }
@@ -146,10 +147,14 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 continue;
             }
 
-            const thisNodeWasSelected = this.selectRowNode(node, newValue, event, source);
-            if (thisNodeWasSelected) {
-                this.detailSelection.delete(node.id);
-                updatedCount++;
+            const skipThisNode = this.groupSelectsFiltered && node.group && !gos.get('treeData');
+
+            if (!skipThisNode) {
+                const thisNodeWasSelected = this.selectRowNode(node, newValue, event, source);
+                if (thisNodeWasSelected) {
+                    this.detailSelection.delete(node.id);
+                    updatedCount++;
+                }
             }
 
             if (this.groupSelectsDescendants && node.childrenAfterGroup?.length) {
