@@ -224,7 +224,7 @@ export const getPageImages = async ({
     );
 
     if (!images[fullImagePath]) {
-        const errorMsg = `Page "${pageName}" image "${imagePath}" does not exist in glob: "${docsPath}**/*.{jpeg,jpg,png,gif,svg,mp4}" (fullImagePath = ${fullImagePath})`;
+        const errorMsg = `Page "${pageName}" image "${imagePath}" does not exist in glob: "${docsPath}**/*.{jpeg,jpg,png,gif,svg,mp4,webp}" (fullImagePath = ${fullImagePath})`;
         if (getIsDev()) {
             // eslint-disable-next-line no-console
             console.error(errorMsg);
