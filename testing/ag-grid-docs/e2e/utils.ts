@@ -18,7 +18,7 @@ export async function waitForGridReady(page: Page) {
         .or(noRowsToShowLocator)
         .or(fullWidthRow)
         .first()
-        .waitFor({ state: 'visible' });
+        .waitFor({ state: 'visible', timeout: 10_000 });
 }
 
 export async function clickAllButtons(page: Page) {
