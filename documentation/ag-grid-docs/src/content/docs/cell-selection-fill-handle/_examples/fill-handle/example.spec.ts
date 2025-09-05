@@ -26,7 +26,7 @@ test.agExample(import.meta, () => {
 
             const fillHandle = agIdFor.fillHandle();
 
-            await dragOverTo(fillHandle, target);
+            await source.locator(fillHandle).dragTo(target);
 
             await expect(source).toHaveText('Natalie Coughlin');
             await expect(target).toHaveText('Natalie Coughlin');
