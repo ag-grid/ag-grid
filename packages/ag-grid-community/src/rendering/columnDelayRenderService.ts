@@ -28,6 +28,7 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
             // If already requested a hide then no need to do it again, avoid unnecessary whenReady calls
             this.beans.ctrlsSvc.whenReady(this, (p) => {
                 p.gridBodyCtrl.eGridBody.classList.add(HideClass);
+                console.log('ColumnDelayRenderService: columns hidden');
             });
             this.hideRequested = true;
         }
@@ -54,6 +55,7 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
         }
 
         this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.remove(HideClass);
+        console.log('ColumnDelayRenderService: columns revealed');
         this.alreadyRevealed = true;
     }
 }
