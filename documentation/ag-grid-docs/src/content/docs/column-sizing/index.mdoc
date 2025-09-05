@@ -141,8 +141,6 @@ then the calculation is as follows:
 Columns can be resized to fit the contents of the cells. The example below demonstrates the use of `autoSizeStrategy` to size the columns by default. The example
 button can restore this sizing by using the API if the columns are first resized by dragging the resize handle.
 
-The example sets `hideUntilContent: true` to prevent the columns from being rendered until row data is provided and their final width is known. This can prevent a flicker in column headings if row data is provided very soon after the grid is created.
-
 {% gridExampleRunner title="Auto-Size Columns to Fit Cell Contents" name="column-resizing" /%}
 
 Provide the grid option `autoSizeStrategy` with `type = 'fitCellContents'` to size the columns to fit their content when the first data is rendered in the grid.
@@ -151,7 +149,6 @@ Provide the grid option `autoSizeStrategy` with `type = 'fitCellContents'` to si
 const gridOptions = {
     autoSizeStrategy: {
         type: 'fitCellContents',
-        hideUntilContent: true
     }
 }
 ```

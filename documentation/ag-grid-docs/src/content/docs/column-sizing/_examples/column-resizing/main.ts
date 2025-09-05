@@ -45,7 +45,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         type: 'fitCellContents',
         defaultMaxWidth: 150,
         defaultMinWidth: 80,
-        hideUntilContent: true,
     },
 };
 function autoSizeAll(skipHeader: boolean) {

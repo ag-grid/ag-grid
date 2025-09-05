@@ -69,8 +69,6 @@ export interface SizeColumnsToContentStrategy {
     defaultMaxWidth?: number;
     /** Provide to limit specific column widths when sizing. */
     columnLimits?: SizeColumnsToContentColumnLimits[];
-    /** Hide column headers until the first data is rendered and they have their correct sizing. */
-    hideUntilContent?: boolean;
 }
 
 export interface ISizeAllColumnsToContentParams {

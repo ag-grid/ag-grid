@@ -37,7 +37,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 shouldHideColumns = true;
             } else if (type === 'fitCellContents') {
                 this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered(autoSizeStrategy) });
-                shouldHideColumns = autoSizeStrategy.hideUntilContent ?? false;
             }
             if (shouldHideColumns) {
                 this.beans.colDelayRenderSvc?.hideColumns(type);
@@ -502,7 +501,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     private onFirstDataRendered(strategy: SizeColumnsToContentStrategy): void {
-        const { type, colIds: columns, skipHeader, defaultMaxWidth, defaultMinWidth, columnLimits } = strategy;
+        const { colIds: columns, skipHeader, defaultMaxWidth, defaultMinWidth, columnLimits } = strategy;
         // ensure render has finished
         setTimeout(() => {
             if (!this.isAlive()) {
@@ -520,7 +519,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             } else {
                 this.autoSizeAllColumns(params);
             }
-            this.beans.colDelayRenderSvc?.revealColumns(type);
         });
     }
 
