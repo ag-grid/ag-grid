@@ -16,7 +16,6 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
     private readonly requesters: Set<string> = new Set();
 
     public hideColumns(key: string) {
-        console.log('hide: columns', key, this.alreadyRevealed, this.hideRequested, [this.requesters.keys()].join(','));
         if (this.alreadyRevealed || this.requesters.has(key)) {
             // If already revealed then we don't want to hide again
             // Already requested a hide, no need to do it again
@@ -29,15 +28,12 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
             // If already requested a hide then no need to do it again, avoid unnecessary whenReady calls
             this.beans.ctrlsSvc.whenReady(this, (p) => {
                 p.gridBodyCtrl.eGridBody.classList.add(HideClass);
-                console.log('ColumnDelayRenderService: columns hidden', key);
             });
             this.hideRequested = true;
         }
     }
 
     public revealColumns(key: string) {
-        console.log('reveal: columns', key, this.alreadyRevealed, [this.requesters.keys()].join(','), this.isAlive());
-
         if (this.alreadyRevealed || !this.isAlive()) {
             // If already revealed then we don't want to reveal again
             // As calling in a loop with setTimeout need to check if alive
@@ -50,7 +46,7 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
         }
 
         const headersRendered = this.beans.renderStatus?.areHeaderCellsRendered() ?? true;
-        if (headersRendered === false || this.timesRetried > 5) {
+        if (headersRendered === false && this.timesRetried < 5) {
             // If the headers are not rendered then we cannot reveal yet, so try again later. (React only)
             this.timesRetried++;
             setTimeout(() => this.revealColumns(key));
@@ -58,7 +54,7 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
         }
 
         this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.remove(HideClass);
-        console.log('ColumnDelayRenderService: columns revealed');
+        this.timesRetried = 0;
         this.alreadyRevealed = true;
     }
 }
