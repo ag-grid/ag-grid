@@ -408,6 +408,14 @@ jobs:
         id: package-test
         if: matrix.framework != 'none'
         run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
+      
+      - name: Persist test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-fw-pkg-${{ matrix.framework }}
+          path: |
+            test-results/
 
   report:
     runs-on: ubuntu-24.04
