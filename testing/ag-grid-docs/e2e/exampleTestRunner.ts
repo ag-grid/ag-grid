@@ -39,7 +39,7 @@ export async function getFrameworkExamples(framework: InternalFramework) {
 
     return (examples as ExampleTestCase[])
         .filter((e) => e.internalFramework === framework && !matchesExclusion(e))
-        .filter((e) => e.pageName !== 'infinite-scrolling'); // Example uses old method of accessing data
+        .filter((e) => e.pageName == 'infinite-scrolling'); // Example uses old method of accessing data
     //.splice(0, 10); // Limit to 10 examples per framework for testing purposes
 }
 
