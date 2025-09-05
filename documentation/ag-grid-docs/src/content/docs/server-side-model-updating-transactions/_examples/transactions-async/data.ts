@@ -68,7 +68,7 @@ export var data = [];
     }
 })();
 
-export var dataObservers = [];
+export var dataObservers: any[] = [];
 
 export function randomUpdates({ numRemove, numAdd, numUpdate }) {
     // removes

@@ -42,7 +42,7 @@ export default defineConfig({
         baseURL: process.env.CI ? 'https://grid-staging.ag-grid.com' : 'https://localhost:4610',
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-        trace: 'off', // process.env.CI ? 'off' : 'retain-on-first-failure',
+        trace: process.env.CI ? 'off' : 'retain-on-first-failure',
     },
 
     /* Configure projects for major browsers */

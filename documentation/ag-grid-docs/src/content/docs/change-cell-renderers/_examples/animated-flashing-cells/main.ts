@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import {
     CellStyleModule,
     ClientSideRowModelModule,
@@ -40,13 +40,16 @@ const gridOptions: GridOptions = {
         },
     },
     rowData: createRowData(),
-    onGridReady: () => {
+    onGridReady: (params: GridReadyEvent) => {
         const updateValues = () => {
-            const rowCount = gridApi!.getDisplayedRowCount();
+            if (params.api.isDestroyed()) {
+                return;
+            }
+            const rowCount = params.api.getDisplayedRowCount();
             // pick 2 cells at random to update
             for (let i = 0; i < 2; i++) {
                 const row = Math.floor(Math.random() * rowCount);
-                const rowNode = gridApi!.getDisplayedRowAtIndex(row)!;
+                const rowNode = params.api.getDisplayedRowAtIndex(row)!;
                 const col = ['a', 'b', 'c', 'd', 'e', 'f'][Math.floor(Math.random() * 6)];
                 rowNode.setDataValue(col, Math.floor(Math.random() * 10000));
             }

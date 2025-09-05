@@ -79,7 +79,9 @@ const gridOptions: GridOptions = {
 
         // register interest in data changes
         dataObservers.push((t: ServerSideTransaction) => {
-            params.api.applyServerSideTransactionAsync(t);
+            if (!params.api.isDestroyed()) {
+                params.api.applyServerSideTransactionAsync(t);
+            }
         });
     },
     asyncTransactionWaitMillis: 1000,

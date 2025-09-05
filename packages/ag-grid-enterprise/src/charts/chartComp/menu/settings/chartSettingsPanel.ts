@@ -76,7 +76,7 @@ export class ChartSettingsPanel extends Component {
                 return !miniChartsContainers.getGui().classList.contains('ag-hidden');
             };
             const currentMiniChartContainer = this.miniChartsContainers.find(isMiniChartsContainerVisible);
-            const currentChart = currentMiniChartContainer!.getGui().querySelector('.ag-selected') as HTMLElement;
+            const currentChart = currentMiniChartContainer?.getGui().querySelector('.ag-selected') as HTMLElement;
 
             if (currentChart) {
                 const parent = currentChart.offsetParent as HTMLElement;
