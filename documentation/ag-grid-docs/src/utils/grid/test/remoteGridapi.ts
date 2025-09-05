@@ -12,7 +12,7 @@ export const ensureGridReady = async (page: Page, gridId: string = '1') => {
         if (!gridReadyPromise) {
             // Wait for grid to be visible
             const selector = `[grid-id="${gridId}"]`;
-            gridReadyPromise = page.locator(selector).waitFor({ state: 'visible', timeout: 10_000 });
+            gridReadyPromise = page.locator(selector).waitFor({ state: 'visible' });
         }
         await gridReadyPromise;
 
