@@ -415,7 +415,7 @@ jobs:
         with:
           name: test-results-fw-pkg-${{ matrix.framework }}
           path: |
-            test-results/
+            /home/runner/work/ag-grid/ag-grid/.tmp/**/test-results/
 
   report:
     runs-on: ubuntu-24.04
