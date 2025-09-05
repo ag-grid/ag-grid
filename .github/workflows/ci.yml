@@ -460,6 +460,7 @@ jobs:
         uses: dorny/test-reporter@v1
         if: needs.test.result == 'success' || needs.test.result == 'failure' ||
           needs.e2e.result == 'success' || needs.e2e.result == 'failure' ||
+          needs.fw_pkg_test.result == 'success' || needs.fw_pkg_test.result == 'failure' ||
           needs.bundle_size.result == 'success' || needs.bundle_size.result == 'failure'
         id: testReport
         continue-on-error: true
@@ -482,8 +483,6 @@ jobs:
           elif [ "${{ needs.docs.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.angular_fw_pkg_test.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.bundle_size.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
@@ -544,9 +543,6 @@ jobs:
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
           SLACK_GITHUB_MAPPING: ${{ secrets.SLACK_GITHUB_MAPPING }}
-# TODO: Add back into `jobStatuses` when package tests are enabled again
-#                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
-#                    "Angular_Pkg": "${{ needs.angular_fw_pkg_test.result }}"
           RUN_CONTEXT: >
             {
               "workflow": "${{ github.workflow }}",
@@ -567,6 +563,7 @@ jobs:
                     "e2e": "${{ needs.e2e.result }}",
                     "Docs": "${{ needs.docs.result }}",
                     "Bundle": "${{ needs.bundle_size.result }}",
+                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
                     "SonarCommunity": "${{ needs.sonar_community.result }}",
                     "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"
                 }
