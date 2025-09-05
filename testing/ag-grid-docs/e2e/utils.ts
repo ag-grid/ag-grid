@@ -20,7 +20,7 @@ export async function waitForGridReady(page: Page) {
         .first()
         .waitFor({ state: 'attached' });
 
-    if (await cellLocator.first().isHidden()) {
+    if ((await cellLocator.count()) > 0 && (await cellLocator.first().isHidden())) {
         console.log('Cells are hidden, waiting for visible state', new Date());
         await cellLocator.first().waitFor({ state: 'visible' });
         console.warn('Cells are now visible at', new Date());
