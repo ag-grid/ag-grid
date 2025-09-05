@@ -14,6 +14,9 @@ test.describe(`${titleCaseFw} ${variantTitle} ${version}`, () => {
         await page.waitForLoadState('load');
         await page.waitForLoadState('networkidle');
 
+        const cellLocator = page.locator('.ag-cell');
+        await expect(cellLocator.first()).toBeVisible();
+
         await expect(page).toHaveScreenshot(`${fw}-${variantTitle}${version}${subcase}.png`, {
             animations: 'disabled',
             stylePath: 'e2e/basic.css',
