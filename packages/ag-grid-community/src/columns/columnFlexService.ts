@@ -81,6 +81,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         }
 
         if (!totalSpace || !hasFlexItems) {
+            console.log('ColumnFlexService: no flex columns to size', totalSpace, hasFlexItems);
             return [];
         }
 
