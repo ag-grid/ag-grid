@@ -147,6 +147,7 @@ const VueExample = defineComponent({
             columnDefs,
             gridApi,
             defaultColDef,
+            autoGroupColumnDef,
             rowSelection,
             rowData,
             gridVisible,
