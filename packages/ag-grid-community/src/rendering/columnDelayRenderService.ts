@@ -5,6 +5,7 @@ import { VERSION } from '../version';
 import { columnDelayRenderCSS } from './column-delay-render.css-GENERATED';
 
 const HideClass = 'ag-delay-render';
+export type ColumnDelayRenderKey = 'colFlex' | 'columnState' | 'fitGridWidth' | 'fitProvidedWidth' | 'fitCellContents';
 
 export class ColumnDelayRenderService extends BeanStub implements NamedBean {
     beanName = 'colDelayRenderSvc' as const;
@@ -13,9 +14,9 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
     private alreadyRevealed: boolean = false;
     private timesRetried: number = 0;
 
-    private readonly requesters: Set<string> = new Set();
+    private readonly requesters: Set<ColumnDelayRenderKey> = new Set();
 
-    public hideColumns(key: string) {
+    public hideColumns(key: ColumnDelayRenderKey) {
         if (this.alreadyRevealed || this.requesters.has(key)) {
             // If already revealed then we don't want to hide again
             // Already requested a hide, no need to do it again
@@ -33,7 +34,7 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
         }
     }
 
-    public revealColumns(key: string) {
+    public revealColumns(key: ColumnDelayRenderKey) {
         if (this.alreadyRevealed || !this.isAlive()) {
             // If already revealed then we don't want to reveal again
             // As calling in a loop with setTimeout need to check if alive
@@ -45,7 +46,7 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
             return;
         }
 
-        const { renderStatus } = this.beans;
+        const { renderStatus, ctrlsSvc } = this.beans;
         if (renderStatus) {
             // For React, we need to check that the headers are actually rendered before revealing them.
             // We add a fail safe to only try this 5 times, after that we reveal anyway.
@@ -57,7 +58,7 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
             this.timesRetried = 0;
         }
 
-        this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.remove(HideClass);
+        ctrlsSvc.getGridBodyCtrl().eGridBody.classList.remove(HideClass);
         this.alreadyRevealed = true;
     }
 }
