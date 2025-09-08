@@ -86,7 +86,7 @@ jobs:
       - name: Download all-examples-cached.json
         run: |
           mkdir -p ./testing/ag-grid-docs/e2e/.cache
-          curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
+          curl https://ag-grid.com/archive/34.2.0/debug/all-examples.json > ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
 
       - name: Generate cache key
         id: cache-key
