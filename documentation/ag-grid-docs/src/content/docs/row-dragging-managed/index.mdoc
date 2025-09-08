@@ -21,9 +21,11 @@ The logic for managed dragging is simple and has the following constraints:
 * Does not work when filtering is applied. This is because a filter removes rows making it impossible to know the 'real' order of rows when some are missing.
 * Does not work when row grouping or pivot is active. This is because moving rows between groups would require a knowledge of the underlying data which only your application knows.
 
-These constraints can be bypassed by using [Unmanaged Row Dragging](#unmanaged-dragging).
+These constraints can be bypassed by using [Unmanaged Row Dragging](./row-dragging-unmanaged).
 
 See also [Row Dragging with Tree Data](./tree-data-row-dragging) for Tree Data, that supports both managed and unmanaged row dragging.
+
+See also [Row Drag Events](./row-dragging-unmanaged/#row-drag-events).
 
 ### Suppress Move When Dragging
 
@@ -46,7 +48,7 @@ For this example note the following:
 
 You can hide the draggable area by setting the grid option `suppressRowDrag = true`.
 
-The example below is almost identical to the [Managed Dragging](#managed-dragging) example with the following differences:
+The example below is almost identical to the [Managed Dragging](./row-dragging-managed) example with the following differences:
 
 * The **Suppress** button will hide the drag icons.
 * The **Remove Suppress** button will un-hide the drag icons.
@@ -63,3 +65,6 @@ Returning an object allows instead to filter the rows to drop, or change the par
 This affects also the icon and label shown when dragging a row for both managed and unmanaged row dragging.
 
 {% apiDocumentation source="grid-options/properties.json" section="rowDragging" names=["isRowValidDropPosition"] /%}
+
+## Next Up
+Continue to the next section to learn about [Unmanaged Row Dragging](./row-dragging-unmanaged).
