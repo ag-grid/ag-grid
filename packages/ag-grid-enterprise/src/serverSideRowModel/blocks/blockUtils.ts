@@ -393,6 +393,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     public checkOpenByDefault(rowNode: RowNode): void {
-        return rowNode.setExpanded(!!this.expansionSvc?.isNodeExpanded(rowNode));
+        const expanded = !!this.expansionSvc?.isNodeExpanded(rowNode);
+        if (!!rowNode.expanded !== expanded) {
+            rowNode.setExpanded(expanded);
+        }
     }
 }

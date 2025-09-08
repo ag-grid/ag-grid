@@ -538,6 +538,7 @@ export class LazyCache extends BeanStub {
             const defaultId = this.getPrefixedId(this.store.getIdSequence().value++);
             this.blockUtils.setDataIntoRowNode(newNode, data, defaultId, undefined);
 
+            this.blockUtils.checkOpenByDefault(newNode);
             this.nodeManager.addRowNode(newNode);
         }
 
@@ -547,11 +548,6 @@ export class LazyCache extends BeanStub {
             node: newNode,
             index: atStoreIndex,
         });
-
-        if (data != null) {
-            // Now that the node is fully registered in the store, apply default open state.
-            this.blockUtils.checkOpenByDefault(newNode);
-        }
 
         if (createNodeCallback) {
             createNodeCallback(newNode);
