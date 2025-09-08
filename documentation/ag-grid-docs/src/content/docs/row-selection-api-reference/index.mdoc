@@ -35,6 +35,8 @@ To select rows programmatically, use the `node.setSelected(params)` method.
 
 {% apiDocumentation source="row-object/properties.json" section="selection" names=["setSelected", "isSelected"] /%}
 
+For example:
+
 ```{% frameworkTransform=true %}
 // set selected, keep any other selections
 node.setSelected(true);
@@ -48,8 +50,6 @@ node.setSelected(false);
 // check status of node selection
 const selected = node.isSelected();
 ```
-
-The `isSelected()` method returns `true` if the node is selected, or `false` if it is not selected. If the node is a group node and the group selection is set to `'children'`, this will return `true` if all child (and grandchild) nodes are selected, `false` if all unselected, or `undefined` if a mixture.
 
 ## Grid Selection API
 
