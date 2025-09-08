@@ -1,6 +1,6 @@
 import { Direction } from '../agStack/constants/direction';
 import { _isIOSUserAgent } from '../agStack/utils/browser';
-import { _getInnerHeight, _getScrollLeft, _setScrollLeft } from '../agStack/utils/dom';
+import { _getInnerHeight, _getScroll, _getScrollLeft, _setScrollLeft } from '../agStack/utils/dom';
 import { _debounce } from '../agStack/utils/function';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
@@ -393,7 +393,7 @@ export class GridBodyScrollFeature extends BeanStub {
         let hasHorizontalScrollersOutOfSync = false;
         for (const source of HORIZONTAL_SOURCES) {
             const viewport = this.getViewportForSource(source);
-            if (viewport.scrollLeft !== scrollLeft) {
+            if (_getScroll(viewport).left !== scrollLeft) {
                 hasHorizontalScrollersOutOfSync = true;
                 break;
             }

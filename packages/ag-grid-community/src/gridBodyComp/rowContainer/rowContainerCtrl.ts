@@ -1,4 +1,5 @@
 import {
+    _getElementSize,
     _getInnerWidth,
     _getScrollLeft,
     _isHorizontalScrollShowing,
@@ -435,11 +436,11 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public hasHorizontalScrollGap(): boolean {
-        return this.eContainer.clientWidth - this.eViewport.clientWidth < 0;
+        return _getElementSize(this.eContainer).width - _getElementSize(this.eViewport).width < 0;
     }
 
     public hasVerticalScrollGap(): boolean {
-        return this.eContainer.clientHeight - this.eViewport.clientHeight < 0;
+        return _getElementSize(this.eContainer).height - _getElementSize(this.eViewport).height < 0;
     }
 
     public getCenterWidth(): number {

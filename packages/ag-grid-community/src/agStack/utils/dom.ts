@@ -96,13 +96,15 @@ export function _isElementChildOfClass(
     return false;
 }
 
-// returns back sizes as doubles instead of strings. similar to
-// getBoundingClientRect, however getBoundingClientRect does not:
-// a) work with fractions (eg browser is zooming)
-// b) has CSS transitions applied (eg CSS scale, browser zoom), which we don't want, we want the un-transitioned values
-export function _getElementSize(el: HTMLElement): {
+type MeasuredSize = {
     height: number;
     width: number;
+    clientWidth: number;
+    clientHeight: number;
+    scrollWidth: number;
+    scrollHeight: number;
+    offsetWidth: number;
+    offsetHeight: number;
     borderTopWidth: number;
     borderRightWidth: number;
     borderBottomWidth: number;
@@ -116,42 +118,61 @@ export function _getElementSize(el: HTMLElement): {
     marginBottom: number;
     marginLeft: number;
     boxSizing: string;
-} {
-    const {
-        height,
-        width,
-        borderTopWidth,
-        borderRightWidth,
-        borderBottomWidth,
-        borderLeftWidth,
-        paddingTop,
-        paddingRight,
-        paddingBottom,
-        paddingLeft,
-        marginTop,
-        marginRight,
-        marginBottom,
-        marginLeft,
-        boxSizing,
-    } = window.getComputedStyle(el);
+};
 
-    return {
-        height: parseFloat(height || '0'),
-        width: parseFloat(width || '0'),
-        borderTopWidth: parseFloat(borderTopWidth || '0'),
-        borderRightWidth: parseFloat(borderRightWidth || '0'),
-        borderBottomWidth: parseFloat(borderBottomWidth || '0'),
-        borderLeftWidth: parseFloat(borderLeftWidth || '0'),
-        paddingTop: parseFloat(paddingTop || '0'),
-        paddingRight: parseFloat(paddingRight || '0'),
-        paddingBottom: parseFloat(paddingBottom || '0'),
-        paddingLeft: parseFloat(paddingLeft || '0'),
-        marginTop: parseFloat(marginTop || '0'),
-        marginRight: parseFloat(marginRight || '0'),
-        marginBottom: parseFloat(marginBottom || '0'),
-        marginLeft: parseFloat(marginLeft || '0'),
-        boxSizing,
+// returns back sizes as doubles instead of strings. similar to
+// getBoundingClientRect, however getBoundingClientRect does not:
+// a) work with fractions (eg browser is zooming)
+// b) has CSS transitions applied (eg CSS scale, browser zoom), which we don't want, we want the un-transitioned values
+export function _getElementSize(el: HTMLElement & { _agMeasuredSize?: MeasuredSize }): MeasuredSize {
+    if (el._agMeasuredSize) return el._agMeasuredSize;
+
+    const measure = (): MeasuredSize => {
+        const {
+            height,
+            width,
+            borderTopWidth,
+            borderRightWidth,
+            borderBottomWidth,
+            borderLeftWidth,
+            paddingTop,
+            paddingRight,
+            paddingBottom,
+            paddingLeft,
+            marginTop,
+            marginRight,
+            marginBottom,
+            marginLeft,
+            boxSizing,
+        } = window.getComputedStyle(el);
+
+        return (el._agMeasuredSize = {
+            height: parseFloat(height || '0'),
+            width: parseFloat(width || '0'),
+            clientWidth: el.clientWidth,
+            clientHeight: el.clientHeight,
+            scrollWidth: el.scrollWidth,
+            scrollHeight: el.scrollHeight,
+            offsetWidth: el.offsetWidth,
+            offsetHeight: el.offsetHeight,
+            borderTopWidth: parseFloat(borderTopWidth || '0'),
+            borderRightWidth: parseFloat(borderRightWidth || '0'),
+            borderBottomWidth: parseFloat(borderBottomWidth || '0'),
+            borderLeftWidth: parseFloat(borderLeftWidth || '0'),
+            paddingTop: parseFloat(paddingTop || '0'),
+            paddingRight: parseFloat(paddingRight || '0'),
+            paddingBottom: parseFloat(paddingBottom || '0'),
+            paddingLeft: parseFloat(paddingLeft || '0'),
+            marginTop: parseFloat(marginTop || '0'),
+            marginRight: parseFloat(marginRight || '0'),
+            marginBottom: parseFloat(marginBottom || '0'),
+            marginLeft: parseFloat(marginLeft || '0'),
+            boxSizing,
+        });
     };
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return measure();
 }
 
 export function _getInnerHeight(el: HTMLElement): number {
@@ -203,8 +224,28 @@ export function _getElementRectWithOffset(el: HTMLElement): {
     };
 }
 
+type ScrollMeasurement = {
+    top: number;
+    left: number;
+};
+
+export function _getScroll(element: HTMLElement & { _agScrollMeasurement?: ScrollMeasurement }): ScrollMeasurement {
+    if (element._agScrollMeasurement) {
+        return element._agScrollMeasurement;
+    }
+
+    const measure = (): ScrollMeasurement => {
+        return (element._agScrollMeasurement = {
+            top: element.scrollTop,
+            left: element.scrollLeft,
+        });
+    };
+    element.addEventListener('scroll', measure);
+    return measure();
+}
+
 export function _getScrollLeft(element: HTMLElement, rtl: boolean): number {
-    let scrollLeft = element.scrollLeft;
+    let scrollLeft = _getScroll(element).left;
 
     if (rtl) {
         scrollLeft = Math.abs(scrollLeft);
@@ -233,7 +274,14 @@ export function _removeFromParent(node: Element | null) {
 }
 
 export function _isInDOM(element: HTMLElement): boolean {
-    return !!element.offsetParent;
+    let node: Node | null = element;
+    while (node) {
+        if (node.nodeName === '#document') {
+            return true;
+        }
+        node = node.parentNode;
+    }
+    return false;
 }
 
 export function _isVisible(element: HTMLElement) {
@@ -344,11 +392,11 @@ export function _isElementOverflowingCallback(getElement: () => HTMLElement | un
 }
 
 export function _isHorizontalScrollShowing(element: HTMLElement): boolean {
-    return element.clientWidth < element.scrollWidth;
+    return _getElementSize(element).clientWidth < _getElementSize(element).scrollWidth;
 }
 
 export function _isVerticalScrollShowing(element: HTMLElement): boolean {
-    return element.clientHeight < element.scrollHeight;
+    return _getElementSize(element).clientHeight < _getElementSize(element).scrollHeight;
 }
 
 export function _setElementWidth(element: HTMLElement, width: string | number) {
