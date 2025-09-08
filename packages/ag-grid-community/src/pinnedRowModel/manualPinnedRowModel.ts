@@ -42,8 +42,8 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 this.tryToEmptyQueues();
                 this.pinGrandTotalRow();
                 this.forContainers((container) => container.hide(shouldHide));
-                this.refreshRowPositions();
-                if (!keepRenderedRows) {
+                const positionsChanged = this.refreshRowPositions();
+                if (!keepRenderedRows || positionsChanged) {
                     this.dispatchRowPinnedEvents();
                 }
             },
@@ -329,9 +329,19 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         if (this.bottom.has(node)) return this.bottom;
     }
 
-    private refreshRowPositions(floating?: RowPinnedType): void {
+    private refreshRowPositions(floating?: RowPinnedType): boolean {
         const refreshAll = (pinned: PinnedRows) => refreshRowPositions(this.beans, pinned);
-        return floating == null ? this.forContainers(refreshAll) : refreshAll(this.getContainer(floating));
+
+        if (floating) {
+            return refreshAll(this.getContainer(floating));
+        }
+
+        let changed = false;
+        this.forContainers((container) => {
+            const updated = refreshAll(container);
+            changed ||= updated;
+        });
+        return changed;
     }
 
     private forContainers(fn: (container: PinnedRows, floating: NonNullable<RowPinnedType>) => void): void {
@@ -345,16 +355,25 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     }
 }
 
-function refreshRowPositions(beans: BeanCollection, container: PinnedRows) {
+function refreshRowPositions(beans: BeanCollection, container: PinnedRows): boolean {
     let rowTop = 0;
+    let changed = false;
+
     container.forEach((node, index) => {
+        changed ||= node.rowTop !== rowTop;
         node.setRowTop(rowTop);
+
         if (node.rowHeightEstimated || node.rowHeight == null) {
-            node.setRowHeight(_getRowHeightForNode(beans, node).height);
+            const rowHeight = _getRowHeightForNode(beans, node).height;
+            changed ||= node.rowHeight !== rowHeight;
+            node.setRowHeight(rowHeight);
         }
+
         node.setRowIndex(index);
         rowTop += node.rowHeight!;
     });
+
+    return changed;
 }
 
 function _createPinnedSibling(beans: BeanCollection, rowNode: RowNode, floating: NonNullable<RowPinnedType>): RowNode {
