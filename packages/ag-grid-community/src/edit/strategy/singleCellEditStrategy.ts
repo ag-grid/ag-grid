@@ -216,8 +216,13 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
             } else if (!nextCell.comp?.getCellEditor()) {
-                // editor missing because it was outside the viewport during creating phase, attempt to create it now
-                _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true, silent: true });
+                // Two possibilities:
+                // * Editor should be visible (but was destroyed due to column virtualisation)
+                //   = we shouldn't re-emit a startEdit event, so stay silent
+                // * Editor wasn't created because edit came from API and didn't trigger EditService.startEditing
+                //   = shouldn't be silent
+                const alreadyEditing = this.editSvc?.isEditing(nextCell, { withOpenEditor: true });
+                _setupEditor(this.beans, nextCell, { event, cellStartedEdit: true, silent: alreadyEditing });
                 this.setFocusInOnEditor(nextCell);
 
                 this.cleanupEditors(nextCell);
