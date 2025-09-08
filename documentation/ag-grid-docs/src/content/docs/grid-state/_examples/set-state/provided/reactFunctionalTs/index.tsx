@@ -71,6 +71,9 @@ const GridExample = () => {
             enableValue: true,
         };
     }, []);
+    const autoGroupColumnDef = useMemo<ColDef>(() => {
+        return { minWidth: 200 };
+    }, []);
     const rowSelection = useMemo<RowSelectionOptions>(
         () => ({
             mode: 'multiRow',
@@ -139,6 +142,7 @@ const GridExample = () => {
                             rowData={rowData}
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
+                            autoGroupColumnDef={autoGroupColumnDef}
                             sideBar={true}
                             pagination={true}
                             rowSelection={rowSelection}
