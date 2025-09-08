@@ -49,7 +49,7 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
         if (renderStatus) {
             // For React, we need to check that the headers are actually rendered before revealing them.
             // We add a fail safe to only try this 5 times, after that we reveal anyway.
-            if (renderStatus.areHeaderCellsRendered() === false && this.timesRetried < 5) {
+            if (!renderStatus.areHeaderCellsRendered() && this.timesRetried < 5) {
                 this.timesRetried++;
                 setTimeout(() => this.revealColumns(key));
                 return;
