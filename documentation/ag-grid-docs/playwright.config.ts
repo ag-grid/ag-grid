@@ -5,7 +5,8 @@ const PRE_34_VERSION = process.env.PRE_34_VERSION;
 const PREV_URL = PRE_34_VERSION && `https://www.ag-grid.com/archive/${PRE_34_VERSION}/`;
 const PROD_URL = process.env['PUBLIC_SITE_URL'];
 
-const baseURL = PREV_URL || PROD_URL || 'https://localhost:4610';
+// const baseURL = PREV_URL || PROD_URL || 'https://localhost:4610';
+const baseURL = 'https://ag-grid.com';
 
 // eslint-disable-next-line no-console
 console.log(`Using base URL: ${baseURL}`);
