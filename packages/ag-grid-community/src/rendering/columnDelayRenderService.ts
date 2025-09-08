@@ -45,17 +45,20 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
             return;
         }
 
-        const headersRendered = this.beans.renderStatus?.areHeaderCellsRendered() ?? true;
-        if (headersRendered === false && this.timesRetried < 5) {
-            // If the headers are not rendered then we cannot reveal yet, so try again later. (React only)
-            this.timesRetried++;
-            setTimeout(() => this.revealColumns(key));
-            return;
+        const { renderStatus } = this.beans;
+        if (renderStatus) {
+            // For React, we need to check that the headers are actually rendered before revealing them.
+            // We add a fail safe to only try this 5 times, after that we reveal anyway.
+            if (renderStatus.areHeaderCellsRendered() === false && this.timesRetried < 5) {
+                this.timesRetried++;
+                setTimeout(() => this.revealColumns(key));
+                return;
+            }
+            this.timesRetried = 0;
         }
 
         this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody.classList.remove(HideClass);
         this.alreadyRevealed = true;
-        this.timesRetried = 0;
     }
 }
 
