@@ -21,6 +21,7 @@ import { AutomatedRowGrouping } from '@ag-website-shared/components/automated-ex
 import { AutomatedIntegratedCharts } from '@ag-website-shared/components/automated-examples/AutomatedIntegratedCharts';
 import { FrameworkTextAnimation } from '@ag-website-shared/components/framework-text-animation/FrameworkTextAnimation';
 import LogoMark from '@components/logo/LogoMark';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 
 const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
 const { data: faqData } = (await getEntry('faqs', 'homepage')) as CollectionEntry<'faqs'>;
@@ -29,19 +30,31 @@ const { blogPrefix } = whatsNewData['grid'];
 const frameworksData = [
     {
         name: 'react',
-        url: '/react-data-grid/',
+        url: urlWithPrefix({
+            framework: 'react',
+            url: './getting-started',
+        }),
     },
     {
         name: 'angular',
-        url: '/angular-data-grid/',
+        url: urlWithPrefix({
+            framework: 'angular',
+            url: './getting-started',
+        }),
     },
     {
         name: 'vue',
-        url: '/vue-data-grid/',
+        url: urlWithPrefix({
+            framework: 'vue',
+            url: './getting-started',
+        }),
     },
     {
         name: 'javascript',
-        url: '/javascript-data-grid/',
+        url: urlWithPrefix({
+            framework: 'javascript',
+            url: './getting-started',
+        }),
     },
 ];
 ---
