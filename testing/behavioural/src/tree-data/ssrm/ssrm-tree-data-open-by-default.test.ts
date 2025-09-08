@@ -61,12 +61,9 @@ describe('ag-grid SSRM treeData open-by-default loads children', () => {
 
         api!.setGridOption('serverSideDatasource', datasource);
 
-        // const expectedMinLoads = 3;
-        // loadCount < expectedMinLoads &&
-        for (let repeat = 0; repeat < 500; ++repeat) {
-            await asyncSetTimeout(5);
+        for (let repeat = 0; fakeServer.loadsCount < 4 && repeat < 500; ++repeat) {
+            await asyncSetTimeout(1);
         }
-        console.log(fakeServer.loadsCount);
 
         await waitForNoLoadingRows(api);
 

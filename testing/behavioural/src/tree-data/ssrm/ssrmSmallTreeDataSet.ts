@@ -73,7 +73,7 @@ export function createServerSideDatasource(fakeServer: FakeServer): IServerSideD
                 : { rowData: allRows };
             setTimeout(() => {
                 params.success(result);
-            }, 5);
+            }, 1);
         },
     };
 
