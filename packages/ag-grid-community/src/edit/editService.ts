@@ -481,7 +481,15 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         this.bulkRefresh();
 
         // force refresh of all row cells as custom renderers may depend on multiple cell values
-        this.beans.rowRenderer.refreshCells(FORCE_REFRESH);
+        let refreshParams = FORCE_REFRESH;
+        if (params?.forceRefreshOfEditCellsOnly) {
+            // Only refresh the cells for the current edits
+            refreshParams = {
+                ...getRowColumnsFromMap(edits),
+                ...FORCE_REFRESH,
+            };
+        }
+        this.beans.rowRenderer.refreshCells(refreshParams);
     }
 
     private dispatchEditValuesChanged(
@@ -991,8 +999,13 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             }
             const sourceValue = valueSvc.getValue(col as AgColumn, rowNode, true, 'api');
 
-            if (!_sourceAndPendingDiffer({ pendingValue, sourceValue }) && state !== 'editing') {
+            if (
+                !params?.forceRefreshOfEditCellsOnly &&
+                !_sourceAndPendingDiffer({ pendingValue, sourceValue }) &&
+                state !== 'editing'
+            ) {
                 // If the new value is the same as the old value, we don't need to update
+                // Unless forceRefreshOfEditCellsOnly is true, in which case we don't short-circuit
                 return;
             }
 
@@ -1045,4 +1058,13 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     allowedFocusTargetOnValidation(cellPosition: EditPosition): CellCtrl | undefined {
         return _getCellCtrl(this.beans, cellPosition);
     }
+}
+
+function getRowColumnsFromMap(edits: EditMap): { rowNodes: IRowNode[] | undefined; columns: Column[] | undefined } {
+    return {
+        rowNodes: edits ? Array.from(edits.keys()) : undefined,
+        columns: edits
+            ? [...new Set(Array.from(edits.values()).flatMap((er: EditRow) => Array.from(er.keys())))]
+            : undefined,
+    };
 }

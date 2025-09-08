@@ -3000,7 +3000,7 @@ interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
     /**
      * Configure where checkboxes are displayed.
      *
-     * Choosing 'selectionColumn' displays checkboxes in a dedicated selection column. Choosing 'autoGroupColumn'
+     * Choosing `'selectionColumn'` displays checkboxes in a dedicated selection column. Choosing `'autoGroupColumn'`
      * displays checkboxes in the autoGroupColumn. This applies to row checkboxes and header checkboxes.
      *
      * @default 'selectionColumn'
