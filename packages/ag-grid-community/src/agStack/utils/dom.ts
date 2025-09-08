@@ -158,7 +158,7 @@ export function _getInnerHeight(el: HTMLElement): number {
     const size = _getElementSize(el);
 
     if (size.boxSizing === 'border-box') {
-        return size.height - size.paddingTop - size.paddingBottom;
+        return size.height - size.paddingTop - size.paddingBottom - size.borderTopWidth - size.borderBottomWidth;
     }
 
     return size.height;
@@ -168,7 +168,7 @@ export function _getInnerWidth(el: HTMLElement): number {
     const size = _getElementSize(el);
 
     if (size.boxSizing === 'border-box') {
-        return size.width - size.paddingLeft - size.paddingRight;
+        return size.width - size.paddingLeft - size.paddingRight - size.borderLeftWidth - size.borderRightWidth;
     }
 
     return size.width;
