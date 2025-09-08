@@ -5,7 +5,7 @@ import { VERSION } from '../version';
 import { columnDelayRenderCSS } from './column-delay-render.css-GENERATED';
 
 const HideClass = 'ag-delay-render';
-export type ColumnDelayRenderKey = 'colFlex' | 'columnState' | 'fitGridWidth' | 'fitProvidedWidth' | 'fitCellContents';
+type ColumnDelayRenderKey = 'colFlex' | 'columnState' | 'fitGridWidth' | 'fitProvidedWidth' | 'fitCellContents';
 
 export class ColumnDelayRenderService extends BeanStub implements NamedBean {
     beanName = 'colDelayRenderSvc' as const;
