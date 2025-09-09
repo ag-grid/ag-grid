@@ -1,5 +1,4 @@
-import type { ExcelOOXMLTemplate } from 'ag-grid-community';
-import type { XmlElement } from 'ag-grid-community';
+import type { ExcelOOXMLTemplate, XmlElement } from 'ag-grid-community';
 
 import {
     XLSX_WORKBOOK_IMAGE_IDS,

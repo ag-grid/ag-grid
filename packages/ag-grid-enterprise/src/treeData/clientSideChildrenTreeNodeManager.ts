@@ -7,12 +7,11 @@ import type {
     RowDataTransaction,
     RowNode,
 } from 'ag-grid-community';
-import { AbstractClientSideNodeManager } from 'ag-grid-community';
-import { ChangedPath, _error, _getRowIdCallback, _warn } from 'ag-grid-community';
+import { AbstractClientSideNodeManager, ChangedPath, _error, _getRowIdCallback, _warn } from 'ag-grid-community';
 
 import type { GroupingRowNode } from '../rowHierarchy/rowHierarchyUtils';
-import { makeFieldPathGetter } from './fieldAccess';
 import type { DataFieldGetter } from './fieldAccess';
+import { makeFieldPathGetter } from './fieldAccess';
 
 export class ClientSideChildrenTreeNodeManager<TData>
     extends AbstractClientSideNodeManager<TData>
