@@ -56,8 +56,6 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     public activate(rootNode: ClientSideNodeManagerRootNode<TData>): void {
         this.rootNode = rootNode;
 
-        rootNode.group = true;
-        rootNode.level = -1;
         rootNode.id = ROOT_NODE_ID;
         rootNode.allLeafChildren = [];
         rootNode.childrenAfterGroup = [];

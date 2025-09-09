@@ -200,6 +200,9 @@ interface GroupRowNode<TData = any> {
      * - filler nodes when using treeData and getDataPath
      * - group nodes when using grouping
      * - footer nodes
+     *
+     * This property keeps a cache of all the leaf children for performance.
+     * Consider using the methods `getFirstLeafChild().` or `enumerateAllLeafChildren()` instead of using this property directly.
      */
     allLeafChildren: IRowNode<TData>[] | null;
     /** Number of children and grand children. */
@@ -322,4 +325,24 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      * Returns the route of the row node. If the Row Node does not have a key (i.e it's a group) returns undefined
      */
     getRoute(): string[] | undefined;
+
+    /**
+     * Gets the first leaf child of the node.
+     * All the row nodes that have user provided data below this node. Can be null if empty.
+     * This excludes:
+     * - filler nodes when using treeData and getDataPath
+     * - group nodes when using grouping
+     * - footer nodes
+     */
+    getFirstLeafChild(): IRowNode<TData> | undefined;
+
+    /**
+     * Enumerates all the leaf children of the node recursively.
+     * All the row nodes that have user provided data below this node. Can be null if empty.
+     * This excludes:
+     * - filler nodes when using treeData and getDataPath
+     * - group nodes when using grouping
+     * - footer nodes
+     */
+    enumerateAllLeafChildren(): IterableIterator<IRowNode<TData>>;
 }

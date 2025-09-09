@@ -330,55 +330,23 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
         ++level; // Increment level as it is passed down to children
         flags &= FLAG_CHILDREN_CHANGED;
-        let leafsLen = 0;
         for (let i = 0; i < len; ++i) {
             const child = children[i];
             const childFlags = this.traverse(child, level, collapsed, activeChangedPath);
             // Accumulates traversed nodes count and propagates children changed flag
             flags = (flags + (childFlags & ~FLAG_CHILDREN_CHANGED)) | (childFlags & FLAG_CHILDREN_CHANGED);
-            leafsLen += (child.allLeafChildren?.length || 0) + (child.data ? 1 : 0);
         }
 
-        if (this.updateAllLeafChildren(row, leafsLen, (flags & FLAG_CHILDREN_CHANGED) !== 0)) {
-            return (flags | FLAG_CHILDREN_CHANGED) + 1;
+        if ((flags & FLAG_CHILDREN_CHANGED) !== 0) {
+            // Invalidate cached allLeafChildren when children changed and propagate up.
+            row._allLeafChildren = undefined;
+            const sibling = row.sibling;
+            if (sibling) {
+                sibling._allLeafChildren = undefined;
+            }
         }
-        return (flags & ~FLAG_CHILDREN_CHANGED) + 1;
-    }
 
-    private updateAllLeafChildren(row: GroupingRowNode<TData>, len: number, maybeChanged: boolean): boolean {
-        let leafs = row.allLeafChildren;
-        let trulyChanged = (leafs?.length || 0) !== len;
-        if (len === 0) {
-            if (leafs !== null) {
-                row.allLeafChildren = null;
-                const sibling = row.sibling;
-                if (sibling) sibling.allLeafChildren = null;
-            }
-        } else if (trulyChanged || maybeChanged) {
-            if (!leafs) {
-                row.allLeafChildren = leafs = new Array(len);
-                const sibling = row.sibling;
-                if (sibling) sibling.allLeafChildren = leafs;
-            } else if (trulyChanged) {
-                leafs.length = len; // resize
-            }
-            const rows = row.childrenAfterGroup!;
-            for (let i = 0, writeIdx = 0, childrenLen = rows.length; i < childrenLen; ++i) {
-                const child = rows![i];
-                if (child.data) {
-                    if ((trulyChanged ||= leafs[writeIdx] !== child)) leafs[writeIdx] = child;
-                    ++writeIdx;
-                }
-                const childLeafs = child.allLeafChildren;
-                if (childLeafs) {
-                    for (let j = 0, len = childLeafs.length; j < len; ++j, ++writeIdx) {
-                        const leaf = childLeafs![j];
-                        if ((trulyChanged ||= leafs[writeIdx] !== leaf)) leafs[writeIdx] = leaf;
-                    }
-                }
-            }
-        }
-        return trulyChanged;
+        return flags + 1;
     }
 
     /** Handle cycles in a tree. Is not optimal for performance but this is an edge case that shouldn't happen as is a warning. */

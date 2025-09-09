@@ -128,7 +128,7 @@ const resetChildRowGrouping = <TData>(row: GroupingRowNode<TData>): void => {
     row.key = null;
     row.treeNodeFlags = 0;
     row.allChildrenCount = null;
-    row.allLeafChildren = null;
+    row._allLeafChildren = undefined;
     row.childrenAfterGroup = null;
     row.childrenAfterAggFilter = null;
     row.childrenAfterFilter = null;

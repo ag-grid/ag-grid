@@ -5,7 +5,9 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
-import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
+import type { RowNode } from '../entities/rowNode';
+import { ROW_ID_PREFIX_ROW_GROUP } from '../entities/rowNode';
+import { _isLeafChild, _newRootNode } from '../entities/rowNodeUtils';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
 import {
     _getGroupSelectsDescendants,
@@ -132,7 +134,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // Property listeners which call `refreshModel` at different stages
         this.addPropertyListeners();
 
-        this.rootNode = new RowNode(this.beans);
+        this.rootNode = _newRootNode(this.beans);
 
         const nodeManager = this.getNewNodeManager();
         this.nodeManager = nodeManager;
@@ -736,7 +738,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     // if the final node was a group node, and we're doing groupSelectsChildren
                     // make the exception to select all of it's descendants too
                     if (rowNode.group && groupsSelectChildren) {
-                        result.push(...rowNode.allLeafChildren!);
+                        for (const leafChild of rowNode.enumerateAllLeafChildren()) {
+                            result.push(leafChild);
+                        }
                         return;
                     }
                 }
@@ -1220,5 +1224,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      */
     public onRowHeightChangedDebounced(): void {
         this.onRowHeightChanged_debounced();
+    }
+
+    /** Used to compute lazily the list of leaf children for a given node. */
+    loadAllLeafChildren?(node: RowNode): RowNode[] | null {
+        let result: RowNode[] | null = null;
+        for (const leaf of node.enumerateAllLeafChildren()) {
+            (result ??= []).push(leaf);
+        }
+        return result;
     }
 }

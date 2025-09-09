@@ -12,39 +12,17 @@ import type { GroupRow } from './groupRow';
 // in 10,000 groups (2 items per group), then deleting all rows with transaction,
 // it took about 20 seconds to delete. with the BathRemoved, the reduced to less than 1 second.
 
-interface RemoveDetails {
-    fromChildrenAfterGroup: Set<GroupRow> | null;
-    fromAllLeafChildren: Set<GroupRow> | null;
-}
-
 export class BatchRemover {
-    private allSets = new Map<GroupRow, RemoveDetails>();
+    private allSets = new Map<GroupRow, Set<RowNode>>();
 
     public removeFromChildrenAfterGroup(parent: RowNode, child: RowNode): void {
-        const set = this.getSet(parent);
-        (set.fromChildrenAfterGroup ??= new Set()).add(child);
+        this.getSet(parent).add(child);
     }
 
-    public isRemoveFromAllLeafChildren(parent: RowNode, child: RowNode): boolean {
-        return !!this.allSets.get(parent)?.fromAllLeafChildren?.has(child);
-    }
-
-    public preventRemoveFromAllLeafChildren(parent: RowNode, child: RowNode): void {
-        this.allSets.get(parent)?.fromAllLeafChildren?.delete(child);
-    }
-
-    public removeFromAllLeafChildren(parent: RowNode, child: RowNode): void {
-        const set = this.getSet(parent);
-        (set.fromAllLeafChildren ??= new Set()).add(child);
-    }
-
-    private getSet(parent: RowNode): RemoveDetails {
+    private getSet(parent: RowNode): Set<RowNode> {
         let set = this.allSets.get(parent);
         if (!set) {
-            set = {
-                fromChildrenAfterGroup: null,
-                fromAllLeafChildren: null,
-            };
+            set = new Set();
             this.allSets.set(parent, set);
         }
         return set;
@@ -57,16 +35,14 @@ export class BatchRemover {
     public flush(): void {
         const allSets = this.allSets;
         for (const parent of allSets.keys()) {
-            const nodeDetails = allSets.get(parent);
-            if (nodeDetails) {
-                const { fromChildrenAfterGroup, fromAllLeafChildren } = nodeDetails;
-                const { childrenAfterGroup, allLeafChildren } = parent;
+            const fromChildrenAfterGroup = allSets.get(parent);
+            if (fromChildrenAfterGroup) {
+                const { childrenAfterGroup } = parent;
                 if (childrenAfterGroup && fromChildrenAfterGroup) {
-                    filterRowNodesInPlace(childrenAfterGroup, fromChildrenAfterGroup);
-                    parent.updateHasChildren();
-                }
-                if (allLeafChildren && fromAllLeafChildren) {
-                    filterRowNodesInPlace(allLeafChildren, fromAllLeafChildren);
+                    if (filterRowNodesInPlace(childrenAfterGroup, fromChildrenAfterGroup)) {
+                        parent.updateHasChildren();
+                        invalidateAllLeafChildren(parent);
+                    }
                 }
             }
         }
@@ -74,13 +50,33 @@ export class BatchRemover {
     }
 }
 
-function filterRowNodesInPlace(array: GroupRow[], removals: ReadonlySet<GroupRow>): void {
+function filterRowNodesInPlace(array: GroupRow[], removals: ReadonlySet<GroupRow>): boolean {
     let writeIdx = 0;
-    for (let i = 0, len = array.length; i < len; ++i) {
+    const len = array.length;
+    for (let i = 0; i < len; ++i) {
         const item = array[i];
         if (!removals.has(item)) {
             array[writeIdx++] = item;
         }
     }
+    if (len === writeIdx) {
+        return false; // no change
+    }
     array.length = writeIdx;
+    return true;
 }
+
+export const invalidateAllLeafChildren = (start: RowNode | null): void => {
+    let p: RowNode | null = start;
+    while (p && p.parent) {
+        if (p._allLeafChildren === undefined) {
+            break;
+        }
+        p._allLeafChildren = undefined;
+        const sibling = p.sibling;
+        if (sibling) {
+            sibling._allLeafChildren = undefined;
+        }
+        p = p.parent;
+    }
+};

@@ -3,6 +3,7 @@ import type { AgEventType } from '../eventTypes';
 import type { RowEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
+import type { IRowNode } from '../interfaces/iRowNode';
 import { RowNode } from './rowNode';
 
 export function _createGlobalRowEvent<T extends AgEventType>(
@@ -47,3 +48,35 @@ export function _createRowNodeSibling(rowNode: RowNode, beans: BeanCollection): 
 
     return sibling;
 }
+
+export const _isLeafChild = (rowNode: IRowNode): boolean => {
+    return rowNode && (rowNode.sourceRowIndex >= 0 || (rowNode.data && !rowNode.footer && !rowNode.detail));
+};
+
+/**
+ * Returns the first leaf node of the given row node. If the given node is a leaf, it is returned.
+ * @param rowNode The row node to get the first leaf of.
+ * @returns The first leaf node or undefined if not found.
+ */
+export const _getFirstLeaf = <TData = any>(rowNode: IRowNode<TData>): RowNode | undefined => {
+    if (_isLeafChild(rowNode)) {
+        return rowNode as RowNode<TData>;
+    }
+    return rowNode.getFirstLeafChild() as RowNode | undefined;
+};
+
+export const _newRootNode = (beans: BeanCollection): RowNode => {
+    const rootNode = new RowNode(beans);
+
+    // Make allLeafChildren a writable field.
+    Object.defineProperty(rootNode, 'allLeafChildren', {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+    });
+
+    rootNode.group = true;
+    rootNode.level = -1;
+
+    return rootNode;
+};

@@ -17,6 +17,7 @@ import type {
     RefreshServerSideParams,
     RowBounds,
     RowModelType,
+    RowNode,
     RowRenderer,
     ServerSideGroupLevelState,
     SortModelItem,
@@ -25,13 +26,13 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    RowNode,
     _debounce,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
     _isGetRowHeightFunction,
     _isRowSelection,
     _jsonEquals,
+    _newRootNode,
     _warn,
 } from 'ag-grid-community';
 
@@ -337,9 +338,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     public resetRootStore(): void {
         this.destroyRootStore();
 
-        this.rootNode = new RowNode(this.beans);
-        this.rootNode.group = true;
-        this.rootNode.level = -1;
+        this.rootNode = _newRootNode(this.beans);
 
         if (this.datasource) {
             this.storeParams = this.createStoreParams();

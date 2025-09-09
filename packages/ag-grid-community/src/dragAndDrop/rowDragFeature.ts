@@ -3,6 +3,7 @@ import { _getClientSideRowModel } from '../api/rowModelApiUtils';
 import { BeanStub } from '../context/beanStub';
 import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
+import { _getFirstLeaf } from '../entities/rowNodeUtils';
 import type { RowDragEvent, RowDragEventType } from '../events';
 import { _getNormalisedMousePosition } from '../gridBodyComp/mouseEventUtils';
 import { _getGroupingApproach, _getRowIdCallback } from '../gridOptionsUtils';
@@ -591,7 +592,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 valid = false; // This row cannot be dragged, not in allLeafChildren and not a filler
             } else if (newParent && row.parent !== newParent && wouldFormCycle(row, newParent)) {
                 valid = false; // Cannot move to a parent that would create a cycle
-            } else if (!getLeafRow(row)) {
+            } else if (!_getFirstLeaf(row)) {
                 valid = false; // No leaf to move, so nothing to do
             }
 
@@ -614,7 +615,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 changed = true;
             }
 
-            const leafRow = getLeafRow(row);
+            const leafRow = _getFirstLeaf(row);
             if (leafRow) {
                 leafs.add(leafRow);
             }
@@ -779,21 +780,8 @@ const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: IRowNode): boolean
 };
 
 const getLeafSourceRowIndex = (row: IRowNode | null | undefined): number => {
-    const leaf = getLeafRow(row);
-    return leaf !== undefined ? leaf.sourceRowIndex : -1;
-};
-
-const getLeafRow = (row: IRowNode | null | undefined): RowNode | undefined => {
-    while (row) {
-        if (row.sourceRowIndex >= 0) {
-            return row as RowNode;
-        }
-        const childrenAfterGroup = row.childrenAfterGroup;
-        if (!childrenAfterGroup?.length) {
-            return undefined;
-        }
-        row = childrenAfterGroup[0];
-    }
+    const leaf = row && _getFirstLeaf(row);
+    return leaf ? leaf.sourceRowIndex : -1;
 };
 
 const rowsDropChanged = (a: RowsDrop | null | undefined, b: RowsDrop): boolean =>

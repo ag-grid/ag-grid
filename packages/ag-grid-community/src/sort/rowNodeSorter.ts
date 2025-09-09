@@ -121,7 +121,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             // because they're group rows, no display cols exist, so groupData never populated.
             // instead delegate to getting value from leaf child.
             if (isGroupRows) {
-                const leafChild = node.allLeafChildren?.[0];
+                const leafChild = node.getFirstLeafChild();
                 if (leafChild) {
                     return valueSvc.getValue(column, leafChild, false);
                 }

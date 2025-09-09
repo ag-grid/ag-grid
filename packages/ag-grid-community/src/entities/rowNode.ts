@@ -17,6 +17,7 @@ import type {
 } from '../interfaces/iRowNode';
 import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
+import { _isLeafChild } from './rowNodeUtils';
 
 export const ROW_ID_PREFIX_ROW_GROUP = 'row-group-';
 export const ROW_ID_PREFIX_TOP_PINNED = 't-';
@@ -142,17 +143,119 @@ export class RowNode<TData = any>
     public readonly sourceRowIndex: number = -1;
 
     /**
-     * All lowest level nodes beneath this node, no groups.
-     * In the root node, this array contains all rows, and is computed by the ClientSideRowModel.
-     * Do not modify this array directly. The grouping module relies on mutable references to the array.
-     * The array might also br frozen (immutable).
-     *
-     * Generally readonly. It is modified only by:
-     * - ClientSideNodeManager, cast to ClientSideNodeManagerRootNode
-     * - GroupStrategy, cast to GroupRow
-     * - TreeStrategy, cast to TreeRow
+     * Cached allLeafChildren for this node. If undefined is recomputed.
+     * Unused in the root node.
      */
-    public readonly allLeafChildren: RowNode<TData>[] | null;
+    public _allLeafChildren: RowNode<TData>[] | null | undefined = null;
+
+    /**
+     * All lowest level nodes beneath this node, no groups or filler nodes.
+     * This property is lazy loaded once accessed and reset by ClientSideRowModel when children changes.
+     * In the root node, this array contains all rows, and is computed by the ClientSideRowModel, and is not a property but a field.
+     * Do not modify the content of this array directly.
+     *
+     * Prefer enumAllLeafChildren to reduce the cost of keeping _allLeafChildren array cached.
+     */
+    public get allLeafChildren(): RowNode<TData>[] | null {
+        let result = this._allLeafChildren;
+        if (result === undefined) {
+            const sibling = this.sibling;
+            result =
+                (sibling && this.footer
+                    ? sibling?.allLeafChildren
+                    : this.beans.rowModel?.loadAllLeafChildren?.(this)) ?? null;
+            this._allLeafChildren = result;
+        }
+        return result;
+    }
+
+    public set allLeafChildren(value: RowNode<TData>[] | null | undefined) {
+        this._allLeafChildren = value;
+        const sibling = this.sibling;
+        if (sibling && !this.footer) {
+            sibling._allLeafChildren = value;
+        }
+    }
+
+    /**
+     * Returns the first leaf in depth-first order under this node without materialising the full leaf array.
+     */
+    public getFirstLeafChild(): RowNode<TData> | undefined {
+        const children = this.childrenAfterGroup;
+        if (!children || children.length === 0) {
+            return undefined;
+        }
+        if (this.leafGroup) {
+            return children[0];
+        }
+
+        // Walk down breadth of first branch using cached leaf arrays when present
+        let current: RowNode<TData> | null = this as any;
+        while (current) {
+            const childrenAfterGroup = current.childrenAfterGroup;
+            if (!childrenAfterGroup?.length) {
+                return undefined;
+            }
+            const first = childrenAfterGroup[0];
+            if (_isLeafChild(first)) {
+                return first;
+            }
+            const cached = first._allLeafChildren;
+            if (cached?.length) {
+                return cached[0] as RowNode<TData>;
+            }
+            current = first;
+        }
+        return undefined;
+    }
+
+    /**
+     * Recursively enumerates all lowest level nodes beneath this node, no groups or filler nodes.
+     * @returns An iterator for all leaf children.
+     */
+    public *enumerateAllLeafChildren(): IterableIterator<RowNode<TData>> {
+        const cached = this._allLeafChildren;
+        if (cached && cached.length) {
+            // Fast path: cached flattened leaves
+            yield* cached;
+            return;
+        }
+
+        const childrenAfterGroup = this.childrenAfterGroup;
+        if (!childrenAfterGroup || childrenAfterGroup.length === 0) {
+            return;
+        }
+
+        if (this.leafGroup) {
+            // Leaf groups have only leaves as direct children
+            yield* childrenAfterGroup;
+            return;
+        }
+
+        // Depth-first without recursion to avoid deep call stacks
+        const stack: RowNode<TData>[] = [];
+        for (let i = childrenAfterGroup.length - 1; i >= 0; --i) {
+            stack.push(childrenAfterGroup[i]);
+        }
+        while (stack.length) {
+            const node = stack.pop()!;
+            if (_isLeafChild(node)) {
+                yield node;
+            }
+            const cachedChildLeaves = node._allLeafChildren;
+            if (cachedChildLeaves?.length) {
+                // Reuse child's cached flattened leaves when available
+                yield* cachedChildLeaves;
+            } else {
+                const ca = node.childrenAfterGroup;
+                if (ca && ca.length) {
+                    for (let i = ca.length - 1; i >= 0; --i) {
+                        stack.push(ca[i]);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Children of this group. If multi levels of grouping, shows only immediate children.

@@ -106,12 +106,13 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private positionLeafsAndGroups(changedPath: ChangedPath) {
         changedPath.forEachChangedNodeDepthFirst((group: GroupRow) => {
-            if (group.childrenAfterGroup) {
+            const oldChildrenAfterGroup = group.childrenAfterGroup;
+            if (oldChildrenAfterGroup) {
                 const leafNodes: RowNode[] = [];
                 const groupNodes: RowNode[] = [];
                 let unbalancedNode: RowNode | undefined;
 
-                group.childrenAfterGroup.forEach((row) => {
+                oldChildrenAfterGroup.forEach((row) => {
                     if (!row.childrenAfterGroup?.length) {
                         leafNodes.push(row);
                     } else {
@@ -127,10 +128,15 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     groupNodes.push(unbalancedNode);
                 }
 
-                group.childrenAfterGroup = [...leafNodes, ...groupNodes];
-                const sibling = group.sibling as GroupingRowNode;
-                if (sibling) {
-                    sibling.childrenAfterGroup = group.childrenAfterGroup;
+                const newChildrenAfterGroup = leafNodes.concat(groupNodes);
+
+                if (!_areEqual(oldChildrenAfterGroup, newChildrenAfterGroup)) {
+                    group.childrenAfterGroup = newChildrenAfterGroup;
+                    const sibling = group.sibling as GroupingRowNode;
+                    if (sibling) {
+                        sibling.childrenAfterGroup = group.childrenAfterGroup;
+                    }
+                    // Order-only change: no need to invalidate cached allLeafChildren
                 }
             }
         }, false);
@@ -198,6 +204,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 const didSort = sortGroupChildren(node.childrenAfterGroup);
                 if (didSort) {
                     details.changedPath.addParentNode(node);
+                    // Order-only change: do not invalidate cached allLeafChildren
                 }
             },
             false,
@@ -265,7 +272,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private moveNode(childNode: RowNode, details: GroupingDetails, batchRemover: BatchRemover | undefined): void {
         this.removeNodesFromParents([childNode], details, batchRemover);
-        this.insertOneNode(childNode, details, batchRemover);
+        this.insertOneNode(childNode, details);
 
         // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
         // refreshed into the gui.
@@ -315,12 +322,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         for (const nodeToRemove of nodesToRemove) {
             this.removeFromParent(nodeToRemove, batchRemoverToUse);
-
-            // remove from allLeafChildren. we clear down all parents EXCEPT the Root Node, as
-            // the ClientSideNodeManager is responsible for the Root Node.
-            this.forEachParentGroup(details, nodeToRemove.parent!, (parentNode) => {
-                batchRemoverToUse.removeFromAllLeafChildren(parentNode, nodeToRemove);
-            });
         }
 
         if (batchRemoverIsLocal) {
@@ -379,13 +380,15 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     // c) setRowTop(null) - as the rowRenderer uses this to know the RowNode is no longer needed
     // d) setRowIndex(null) - as the rowNode will no longer be displayed.
     private removeFromParent(child: RowNode, batchRemover?: BatchRemover) {
-        if (child.parent) {
+        const parent = child.parent as GroupingRowNode;
+        if (parent) {
             if (batchRemover) {
-                batchRemover.removeFromChildrenAfterGroup(child.parent, child);
+                batchRemover.removeFromChildrenAfterGroup(parent, child);
             } else {
-                _removeFromArray(child.parent.childrenAfterGroup!, child);
-                child.parent.updateHasChildren();
+                _removeFromArray(parent.childrenAfterGroup!, child);
+                parent.updateHasChildren();
             }
+            invalidateAllLeafChildren(parent);
         }
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
         const childParentChildrenMapped = child.parent?.childrenMapped;
@@ -434,7 +437,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     field: rowNode.field,
                     key: rowNode.key!,
                     rowGroupColumn: rowNode.rowGroupColumn,
-                    leafNode: rowNode.allLeafChildren?.[0],
+                    leafNode: rowNode.getFirstLeafChild() ?? undefined,
                 };
                 this.setGroupData(rowNode, groupInfo);
                 recurse(rowNode.childrenAfterGroup);
@@ -501,39 +504,32 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         });
     }
 
-    private insertOneNode(childNode: RowNode, details: GroupingDetails, batchRemover?: BatchRemover): void {
+    private insertOneNode(childNode: RowNode, details: GroupingDetails): void {
         const path: GroupInfo[] = this.getGroupInfo(childNode, details);
 
-        const parentGroup = this.findParentForNode(childNode, path, details, batchRemover);
+        const parentGroup = this.findParentForNode(childNode, path, details);
 
         if (!parentGroup.group) {
             _warn(184, { parentGroupData: parentGroup.data, childNodeData: childNode.data });
         }
+        const oldParent = childNode.parent;
         childNode.parent = parentGroup;
         childNode.level = path.length;
         parentGroup.childrenAfterGroup!.push(childNode);
         parentGroup.updateHasChildren();
+        invalidateAllLeafChildren(oldParent);
+        invalidateAllLeafChildren(parentGroup);
     }
 
-    private findParentForNode(
-        childNode: RowNode,
-        path: GroupInfo[],
-        details: GroupingDetails,
-        batchRemover?: BatchRemover
-    ): RowNode {
+    private findParentForNode(childNode: RowNode, path: GroupInfo[], details: GroupingDetails): RowNode {
         let nextNode: RowNode = details.rootNode;
 
         path.forEach((groupInfo, level) => {
             nextNode = this.getOrCreateNextNode(nextNode, groupInfo, level, details);
             // node gets added to all group nodes.
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
-
-            if (!batchRemover?.isRemoveFromAllLeafChildren(nextNode, childNode)) {
-                nextNode.allLeafChildren!.push(childNode);
-            } else {
-                // if this node is about to be removed, prevent that
-                batchRemover?.preventRemoveFromAllLeafChildren(nextNode, childNode);
-            }
+            // No manual maintenance of allLeafChildren: just invalidate cache upward
+            invalidateAllLeafChildren(nextNode);
         });
 
         return nextNode;
@@ -572,8 +568,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         groupNode.level = level;
         groupNode.leafGroup = level === details.groupCols.length - 1;
-
-        groupNode.allLeafChildren = [];
 
         // why is this done here? we are not updating the children count as we go,
         // i suspect this is updated in the filter stage
@@ -674,3 +668,18 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return res;
     }
 }
+
+const invalidateAllLeafChildren = (node: RowNode | null): void => {
+    while (node) {
+        const parent = node.parent;
+        if (!parent || node._allLeafChildren === undefined) {
+            break;
+        }
+        node._allLeafChildren = undefined;
+        const sibling = node.sibling;
+        if (sibling) {
+            sibling._allLeafChildren = undefined;
+        }
+        node = node.parent;
+    }
+};
