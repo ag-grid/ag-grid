@@ -59,6 +59,53 @@ test.agExample(import.meta, () => {
         });
     });
 
+    test.eachFramework('GridApi + Styles + Enter', async ({ agIdFor, page, remoteGrid }) => {
+        const gridApi = remoteGrid(page);
+
+        await gridApi.startBatchEdit();
+
+        const result = await gridApi.isBatchEditing();
+        expect(result).toBeTruthy();
+
+        const cell1 = agIdFor.cell('0', 'gold');
+        const cell2 = agIdFor.cell('0', 'silver');
+
+        // initiate cell editing by double clicking the cell
+        await test.step('Edit+Change+Enter', async () => {
+            await cell1.dblclick();
+            const cellEditor = cell1.locator('input');
+            await expect(cellEditor).toBeVisible();
+
+            await page.keyboard.type('100'); // type in a new value
+            await page.keyboard.press('Enter'); // press Enter to save the value
+
+            await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
+            await expect(cell1).toHaveText('100'); // verify the cell has the new value
+            await expect(cell1).toHaveClass(/ag-cell-batch-edit/);
+            expect(await gridApi.isBatchEditing()).toBeTruthy();
+        });
+
+        await page.keyboard.press('Tab'); // press Tab to move to the next cell
+        expect(await gridApi.isBatchEditing()).toBeTruthy();
+
+        await page.waitForTimeout(100); // give the grid a moment to update
+
+        await test.step('Edit+NoChange+Enter', async () => {
+            const cellEditor = cell2.locator('input');
+            await expect(cellEditor).toBeVisible();
+
+            await cellEditor.press('Enter'); // press Enter to save the value
+
+            await expect(cell1).toHaveClass(/ag-cell-batch-edit/);
+
+            await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
+            await expect(cell2).toHaveText('2'); // verify the cell has the new value
+            await expect(cell2).not.toHaveClass(/ag-cell-batch-edit/);
+
+            expect(await gridApi.isBatchEditing()).toBeTruthy();
+        });
+    });
+
     test.eachFramework('GridApi + Styles', async ({ agIdFor, page, remoteGrid }) => {
         const gridApi = remoteGrid(page);
 
