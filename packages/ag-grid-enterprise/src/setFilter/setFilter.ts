@@ -105,6 +105,9 @@ export class SetFilter<V = string>
               ) as any);
 
         handler.valueModel.allKeys.then((values) => {
+            if (!this.isAlive()) {
+                return;
+            }
             this.updateDisplayedValues('reload', values ?? []);
             this.resetSelectionState(values ?? []);
         });
