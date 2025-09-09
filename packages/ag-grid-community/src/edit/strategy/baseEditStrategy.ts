@@ -274,7 +274,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             return true;
         }
 
-        if (batch && source === 'ui') {
+        if (batch && (source === 'ui' || source === 'edit')) {
             // we always defer to the UI
             return false;
         }
