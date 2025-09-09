@@ -333,7 +333,7 @@ export class ChartDataModel extends BeanStub {
         let hasSelectedDimension = false;
         let order = 1;
 
-        const aggFuncDimension = this.suppliedCellRange.columns[0]; //TODO
+        const aggFuncDimension = this.suppliedCellRange.columns[0];
 
         dimensionCols.forEach((column) => {
             const isAutoGroupCol = column.getColId() === 'ag-Grid-AutoColumn';
@@ -476,7 +476,7 @@ export class ChartDataModel extends BeanStub {
 
         let selectedDimensionColStates = updatedColState ? [updatedColState] : [];
         if (this.crossFiltering && this.aggFunc) {
-            const aggFuncDimension = this.suppliedCellRange.columns[0]; //TODO
+            const aggFuncDimension = this.suppliedCellRange.columns[0];
             selectedDimensionColStates = this.dimensionColState.filter(
                 (cs) => cs.colId === aggFuncDimension.getColId()
             );
