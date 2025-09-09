@@ -7,7 +7,7 @@ import type {
     RowNode,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _getRowNode, _isLeafChild, _warn } from 'ag-grid-community';
+import { BeanStub, _getRowNode, _warn } from 'ag-grid-community';
 
 export class ChartColumnService extends BeanStub {
     private colModel: ColumnModel;

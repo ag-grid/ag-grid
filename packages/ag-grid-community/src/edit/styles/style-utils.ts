@@ -1,10 +1,7 @@
 import type { BeanCollection } from '../../context/context';
 import type { RowNode } from '../../entities/rowNode';
-import { _isLeafChild } from '../../entities/rowNodeUtils';
-import type { Column } from '../../interfaces/iColumn';
-import type { EditValue, IEditModelService } from '../../interfaces/iEditModelService';
+import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
-import type { IRowNode } from '../../interfaces/iRowNode';
 import { _sourceAndPendingDiffer } from '../utils/editors';
 
 const editHighlightFn = (edit?: EditValue, includeEditing: boolean = false) => {

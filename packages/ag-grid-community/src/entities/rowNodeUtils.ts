@@ -49,17 +49,13 @@ export function _createRowNodeSibling(rowNode: RowNode, beans: BeanCollection): 
     return sibling;
 }
 
-export const _isLeafChild = (rowNode: IRowNode): boolean => {
-    return rowNode && (rowNode.sourceRowIndex >= 0 || (rowNode.data && !rowNode.footer && !rowNode.detail));
-};
-
 /**
  * Returns the first leaf node of the given row node. If the given node is a leaf, it is returned.
  * @param rowNode The row node to get the first leaf of.
  * @returns The first leaf node or undefined if not found.
  */
 export const _getFirstLeaf = <TData = any>(rowNode: IRowNode<TData>): RowNode | undefined => {
-    if (_isLeafChild(rowNode)) {
+    if (rowNode.data) {
         return rowNode as RowNode<TData>;
     }
     return rowNode.getFirstLeafChild() as RowNode | undefined;

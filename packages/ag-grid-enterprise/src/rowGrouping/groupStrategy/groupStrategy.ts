@@ -528,7 +528,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             nextNode = this.getOrCreateNextNode(nextNode, groupInfo, level, details);
             // node gets added to all group nodes.
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
-            // No manual maintenance of allLeafChildren: just invalidate cache upward
             invalidateAllLeafChildren(nextNode);
         });
 

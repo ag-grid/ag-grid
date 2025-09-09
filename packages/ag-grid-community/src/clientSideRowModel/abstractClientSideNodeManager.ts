@@ -114,7 +114,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             sibling.childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
             sibling.childrenAfterSort = rootNode.childrenAfterSort;
             sibling.childrenMapped = rootNode.childrenMapped;
-            sibling.allLeafChildren = rootNode.allLeafChildren;
+            sibling._allLeafChildren = rootNode.allLeafChildren;
         }
     }
 
@@ -201,7 +201,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             rootNode.allLeafChildren = newAllLeafChildren;
             const sibling = rootNode.sibling;
             if (sibling) {
-                sibling.allLeafChildren = newAllLeafChildren;
+                sibling._allLeafChildren = newAllLeafChildren;
             }
             params.rowNodesOrderChanged ||= orderChanged;
         }
@@ -315,7 +315,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         rootNode.allLeafChildren = allLeafChildren;
         const sibling = rootNode.sibling;
         if (sibling) {
-            sibling.allLeafChildren = allLeafChildren;
+            sibling._allLeafChildren = allLeafChildren;
         }
 
         // add new row nodes to the transaction add items
@@ -376,7 +376,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
         const sibling = rootNode.sibling;
         if (sibling) {
-            sibling.allLeafChildren = rootNode.allLeafChildren;
+            sibling._allLeafChildren = rootNode.allLeafChildren;
         }
     }
 

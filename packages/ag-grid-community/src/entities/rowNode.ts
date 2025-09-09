@@ -17,7 +17,6 @@ import type {
 } from '../interfaces/iRowNode';
 import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
-import { _isLeafChild } from './rowNodeUtils';
 
 export const ROW_ID_PREFIX_ROW_GROUP = 'row-group-';
 export const ROW_ID_PREFIX_TOP_PINNED = 't-';
@@ -159,12 +158,11 @@ export class RowNode<TData = any>
     public get allLeafChildren(): RowNode<TData>[] | null {
         let result = this._allLeafChildren;
         if (result === undefined) {
+            this.allLeafChildren = result = this.beans.rowModel?.loadAllLeafChildren?.(this) ?? null;
             const sibling = this.sibling;
-            result =
-                (sibling && this.footer
-                    ? sibling?.allLeafChildren
-                    : this.beans.rowModel?.loadAllLeafChildren?.(this)) ?? null;
-            this._allLeafChildren = result;
+            if (sibling) {
+                sibling._allLeafChildren = result;
+            }
         }
         return result;
     }
@@ -172,7 +170,7 @@ export class RowNode<TData = any>
     public set allLeafChildren(value: RowNode<TData>[] | null | undefined) {
         this._allLeafChildren = value;
         const sibling = this.sibling;
-        if (sibling && !this.footer) {
+        if (sibling) {
             sibling._allLeafChildren = value;
         }
     }
@@ -181,12 +179,13 @@ export class RowNode<TData = any>
      * Returns the first leaf in depth-first order under this node without materialising the full leaf array.
      */
     public getFirstLeafChild(): RowNode<TData> | undefined {
-        const children = this.childrenAfterGroup;
-        if (!children || children.length === 0) {
+        const childrenAfterGroup = this.childrenAfterGroup;
+        if (!childrenAfterGroup || childrenAfterGroup.length === 0) {
             return undefined;
         }
+
         if (this.leafGroup) {
-            return children[0];
+            return childrenAfterGroup[0];
         }
 
         // Walk down breadth of first branch using cached leaf arrays when present
@@ -197,12 +196,8 @@ export class RowNode<TData = any>
                 return undefined;
             }
             const first = childrenAfterGroup[0];
-            if (_isLeafChild(first)) {
+            if (first.data) {
                 return first;
-            }
-            const cached = first._allLeafChildren;
-            if (cached?.length) {
-                return cached[0] as RowNode<TData>;
             }
             current = first;
         }
@@ -214,44 +209,34 @@ export class RowNode<TData = any>
      * @returns An iterator for all leaf children.
      */
     public *enumerateAllLeafChildren(): IterableIterator<RowNode<TData>> {
-        const cached = this._allLeafChildren;
-        if (cached && cached.length) {
-            // Fast path: cached flattened leaves
-            yield* cached;
-            return;
-        }
-
         const childrenAfterGroup = this.childrenAfterGroup;
-        if (!childrenAfterGroup || childrenAfterGroup.length === 0) {
-            return;
+        const childrenAfterGroupLen = childrenAfterGroup && childrenAfterGroup.length;
+        if (!childrenAfterGroupLen) {
+            return; // No children
         }
 
         if (this.leafGroup) {
-            // Leaf groups have only leaves as direct children
-            yield* childrenAfterGroup;
-            return;
+            for (let i = 0; i < childrenAfterGroupLen; ++i) {
+                yield childrenAfterGroup[i];
+            }
+            return; // Leaf groups have only leaves as direct children
         }
 
-        // Depth-first without recursion to avoid deep call stacks
-        const stack: RowNode<TData>[] = [];
-        for (let i = childrenAfterGroup.length - 1; i >= 0; --i) {
-            stack.push(childrenAfterGroup[i]);
+        // Depth-first without recursion
+        let stackSize = 0;
+        const stack = new Array<RowNode<TData>>(childrenAfterGroupLen);
+        for (let i = childrenAfterGroupLen - 1; i >= 0; --i) {
+            stack[stackSize++] = childrenAfterGroup[i];
         }
-        while (stack.length) {
-            const node = stack.pop()!;
-            if (_isLeafChild(node)) {
+        while (stackSize > 0) {
+            const node = stack[--stackSize];
+            if (node.data) {
                 yield node;
             }
-            const cachedChildLeaves = node._allLeafChildren;
-            if (cachedChildLeaves?.length) {
-                // Reuse child's cached flattened leaves when available
-                yield* cachedChildLeaves;
-            } else {
-                const ca = node.childrenAfterGroup;
-                if (ca && ca.length) {
-                    for (let i = ca.length - 1; i >= 0; --i) {
-                        stack.push(ca[i]);
-                    }
+            const children = node.childrenAfterGroup;
+            if (children != null) {
+                for (let i = children.length - 1; i >= 0; --i) {
+                    stack[stackSize++] = children[i];
                 }
             }
         }

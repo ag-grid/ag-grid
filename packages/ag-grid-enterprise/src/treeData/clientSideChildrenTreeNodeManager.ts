@@ -236,7 +236,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
         const sibling = rootNode.sibling;
         if (sibling) {
-            sibling.allLeafChildren = allLeafChildren;
+            sibling._allLeafChildren = allLeafChildren;
         }
 
         if (rowsChanged || orderChanged) {

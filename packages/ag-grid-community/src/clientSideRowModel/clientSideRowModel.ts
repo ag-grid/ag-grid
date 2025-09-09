@@ -7,7 +7,7 @@ import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import { ROW_ID_PREFIX_ROW_GROUP } from '../entities/rowNode';
-import { _isLeafChild, _newRootNode } from '../entities/rowNodeUtils';
+import { _newRootNode } from '../entities/rowNodeUtils';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
 import {
     _getGroupSelectsDescendants,
@@ -1227,7 +1227,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     /** Used to compute lazily the list of leaf children for a given node. */
-    loadAllLeafChildren?(node: RowNode): RowNode[] | null {
+    public loadAllLeafChildren?(node: RowNode): RowNode[] | null {
         let result: RowNode[] | null = null;
         for (const leaf of node.enumerateAllLeafChildren()) {
             (result ??= []).push(leaf);

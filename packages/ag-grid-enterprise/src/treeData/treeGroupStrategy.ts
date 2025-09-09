@@ -208,7 +208,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     private initRowChildrenSize(row: GroupingRowNode<TData>) {
-        let { childrenAfterGroup, allLeafChildren, treeNodeFlags } = row;
+        let { childrenAfterGroup, treeNodeFlags } = row;
         const oldLen = childrenAfterGroup?.length;
         const len = treeNodeFlags & MASK_CHILDREN_LEN;
         row.treeNodeFlags = (treeNodeFlags & ~MASK_CHILDREN_LEN) | ((oldLen || 0) !== len ? FLAG_CHILDREN_CHANGED : 0);
@@ -218,13 +218,20 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 const sibling = row.sibling;
                 if (sibling) sibling.childrenAfterGroup = _EmptyArray;
             }
-        } else if (oldLen !== len || childrenAfterGroup === allLeafChildren) {
-            if (!childrenAfterGroup || childrenAfterGroup === _EmptyArray || childrenAfterGroup === allLeafChildren) {
-                row.childrenAfterGroup = childrenAfterGroup = new Array(len);
-                const sibling = row.sibling;
-                if (sibling) sibling.childrenAfterGroup = childrenAfterGroup;
-            } else {
-                childrenAfterGroup.length = len;
+        } else {
+            const allLeafChildren = row.level < 0 ? row.allLeafChildren : row._allLeafChildren;
+            if (oldLen !== len || childrenAfterGroup === allLeafChildren) {
+                if (
+                    !childrenAfterGroup ||
+                    childrenAfterGroup === _EmptyArray ||
+                    childrenAfterGroup === allLeafChildren
+                ) {
+                    row.childrenAfterGroup = childrenAfterGroup = new Array(len);
+                    const sibling = row.sibling;
+                    if (sibling) sibling.childrenAfterGroup = childrenAfterGroup;
+                } else {
+                    childrenAfterGroup.length = len;
+                }
             }
         }
     }
@@ -766,7 +773,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         row.childrenAfterGroup = _EmptyArray;
         const sibling = row.sibling;
         if (sibling) {
-            sibling.allLeafChildren = null;
             sibling.childrenAfterGroup = _EmptyArray;
         }
         row.updateHasChildren();
