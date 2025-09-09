@@ -4,8 +4,13 @@ import { DndSourceComp } from '../rendering/dndSourceComp';
 import { VERSION } from '../version';
 import { DragAndDropImageComponent } from './dragAndDropImageComponent';
 import { DragAndDropService } from './dragAndDropService';
-import { addRowDropZone, getRowDropZoneParams, removeRowDropZone } from './dragApi';
-import { getRowDropPositionIndicator, setRowDropPositionIndicator } from './dragApi';
+import {
+    addRowDropZone,
+    getRowDropPositionIndicator,
+    getRowDropZoneParams,
+    removeRowDropZone,
+    setRowDropPositionIndicator,
+} from './dragApi';
 import { DragService } from './dragService';
 import { HorizontalResizeService } from './horizontalResizeService';
 import { RowDragService } from './rowDragService';

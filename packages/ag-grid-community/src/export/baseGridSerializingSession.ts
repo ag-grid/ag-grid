@@ -12,8 +12,12 @@ import type {
 } from '../interfaces/exportParams';
 import type { IColsService } from '../interfaces/iColsService';
 import type { ValueService } from '../valueService/valueService';
-import type { RowAccumulator, RowSpanningAccumulator } from './iGridSerializer';
-import type { GridSerializingParams, GridSerializingSession } from './iGridSerializer';
+import type {
+    GridSerializingParams,
+    GridSerializingSession,
+    RowAccumulator,
+    RowSpanningAccumulator,
+} from './iGridSerializer';
 
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public colModel: ColumnModel;
