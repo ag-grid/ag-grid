@@ -175,17 +175,19 @@ export class RowNode<TData = any>
         }
     }
 
-    /**
-     * Returns the first leaf in depth-first order under this node without materialising the full leaf array.
-     */
+    /**  Returns the first leaf in depth-first order under this node without materialising the full leaf array. */
     public getFirstLeafChild(): RowNode<TData> | undefined {
         const childrenAfterGroup = this.childrenAfterGroup;
         if (!childrenAfterGroup || childrenAfterGroup.length === 0) {
             return undefined;
         }
 
-        if (this.leafGroup) {
-            return childrenAfterGroup[0];
+        if (this.level < 0) {
+            const allLeafChildren = this.allLeafChildren;
+            const allLeafChildrenLen = allLeafChildren && allLeafChildren.length;
+            if (allLeafChildrenLen) {
+                return allLeafChildren[0]; // Root node, allLeafChildren contains all leaves
+            }
         }
 
         // Walk down breadth of first branch using cached leaf arrays when present
@@ -209,17 +211,21 @@ export class RowNode<TData = any>
      * @returns An iterator for all leaf children.
      */
     public *enumerateAllLeafChildren(): IterableIterator<RowNode<TData>> {
+        if (this.level < 0) {
+            const allLeafChildren = this.allLeafChildren;
+            const allLeafChildrenLen = allLeafChildren && allLeafChildren.length;
+            if (allLeafChildrenLen) {
+                for (let i = 0; i < allLeafChildrenLen; ++i) {
+                    yield allLeafChildren[i];
+                }
+                return; // Root node, allLeafChildren contains all leaves
+            }
+        }
+
         const childrenAfterGroup = this.childrenAfterGroup;
         const childrenAfterGroupLen = childrenAfterGroup && childrenAfterGroup.length;
         if (!childrenAfterGroupLen) {
             return; // No children
-        }
-
-        if (this.leafGroup) {
-            for (let i = 0; i < childrenAfterGroupLen; ++i) {
-                yield childrenAfterGroup[i];
-            }
-            return; // Leaf groups have only leaves as direct children
         }
 
         // Depth-first without recursion
@@ -234,7 +240,7 @@ export class RowNode<TData = any>
                 yield node;
             }
             const children = node.childrenAfterGroup;
-            if (children != null) {
+            if (children) {
                 for (let i = children.length - 1; i >= 0; --i) {
                     stack[stackSize++] = children[i];
                 }
