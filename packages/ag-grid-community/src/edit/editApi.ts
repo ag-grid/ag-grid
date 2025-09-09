@@ -60,8 +60,6 @@ export function getEditingCells(beans: BeanCollection): EditingCellPosition[] {
 }
 
 export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
-    console.log('editing', cancel);
-
     const { editSvc } = beans;
     if (editSvc?.isBatchEditing()) {
         if (cancel) {
