@@ -269,7 +269,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     public stopEditing(position?: EditPosition, params?: StopEditParams): boolean {
-        const { event, cancel, source = 'ui', suppressNavigateAfterEdit } = params || {};
+        const { event, cancel, source = 'ui', suppressNavigateAfterEdit, forceCancel, forceStop } = params || {};
         const { beans, model } = this;
 
         if (STOP_EDIT_SOURCE_TRANSFORM_KEYS.has(source)) {
@@ -303,8 +303,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         let res = false;
 
         const willStop =
-            !cancel && (!!this.shouldStopEditing(position, event, treatAsSource) || (this.committing && !this.batch));
-        const willCancel = cancel && !!this.shouldCancelEditing(position, event, treatAsSource);
+            (!cancel &&
+                (!!this.shouldStopEditing(position, event, treatAsSource) || (this.committing && !this.batch))) ||
+            (forceStop ?? false);
+        const willCancel =
+            (cancel && !!this.shouldCancelEditing(position, event, treatAsSource)) || (forceCancel ?? false);
 
         if (willStop || willCancel) {
             _syncFromEditors(beans, { persist: true, isCancelling: willCancel || cancel, isStopping: willStop });
