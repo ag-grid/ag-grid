@@ -323,18 +323,30 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     /**
+     * Recursively iterates every loaded node (depth-first).
+     *
+     * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeepAfterFilterAndSort
+     */
+    *iterateNodesDeep(): IterableIterator<RowNode<any>> {
+        for (const lazyNode of this.cache.getNodes().values()) {
+            const node = lazyNode.node as RowNode<any>;
+            yield node;
+            const childStore = node.childStore as LazyStore | undefined;
+            if (childStore?.iterateNodesDeep) {
+                yield* childStore.iterateNodesDeep();
+            }
+        }
+    }
+
+    /**
      * Recursively applies a provided function to every node
      *
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeepAfterFilterAndSort
      */
     forEachNodeDeep(callback: (rowNode: RowNode<any>, index: number) => void, sequence = { value: 0 }): void {
-        this.cache.getNodes().forEach((lazyNode) => {
-            callback(lazyNode.node, sequence.value++);
-            const childCache = lazyNode.node.childStore as LazyStore | undefined;
-            if (childCache) {
-                childCache.forEachNodeDeep(callback, sequence);
-            }
-        });
+        for (const node of this.iterateNodesDeep()) {
+            callback(node, sequence.value++);
+        }
     }
 
     /**

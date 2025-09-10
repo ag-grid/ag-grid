@@ -28,7 +28,7 @@ export function _hasLeafEdits(beans: BeanCollection, position: EditPosition): bo
     }
 
     if (rowNode) {
-        for (const node of rowNode.enumerateAllLeafChildren()) {
+        for (const node of rowNode.iterateAllLeafChildren()) {
             const highlight =
                 editHighlightFn(editModelSvc?.getEdit({ rowNode: node, column })) ||
                 editHighlightFn(editModelSvc?.getEdit({ rowNode: (node as RowNode).pinnedSibling, column }));

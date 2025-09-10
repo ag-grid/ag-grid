@@ -1,5 +1,6 @@
 import { LocalEventService } from '../agStack/events/localEventService';
 import type { IAgEventEmitter, IEventEmitter } from '../agStack/interfaces/iEventEmitter';
+import { _EmptyArray } from '../agStack/utils/array';
 import type { DetailGridInfo } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
 import type { SelectionEventSourceType } from '../events';
@@ -142,23 +143,20 @@ export class RowNode<TData = any>
     public readonly sourceRowIndex: number = -1;
 
     /**
-     * Cached allLeafChildren for this node. If undefined is recomputed.
-     * Unused in the root node.
+     * Cache field for allLeafChildren for this node. If undefined is recomputed.
+     * In the rootNode instance this is unused.
      */
     public _allLeafChildren: RowNode<TData>[] | null | undefined = null;
 
     /**
      * All lowest level nodes beneath this node, no groups or filler nodes.
      * This property is lazy loaded once accessed and reset by ClientSideRowModel when children changes.
-     * In the root node, this array contains all rows, and is computed by the ClientSideRowModel, and is not a property but a field.
-     * Do not modify the content of this array directly.
-     *
-     * Prefer enumAllLeafChildren to reduce the cost of keeping _allLeafChildren array cached.
+     * In the rootMode instance, this is a field and not a property, and the array contains all rows, and is computed by the ClientSideRowModel.
      */
     public get allLeafChildren(): RowNode<TData>[] | null {
         let result = this._allLeafChildren;
         if (result === undefined) {
-            this.allLeafChildren = result = this.beans.rowModel?.loadAllLeafChildren?.(this) ?? null;
+            this._allLeafChildren = result = this.beans.rowModel.loadAllLeafChildren?.(this) ?? null;
             const sibling = this.sibling;
             if (sibling) {
                 sibling._allLeafChildren = result;
@@ -169,83 +167,6 @@ export class RowNode<TData = any>
 
     public set allLeafChildren(value: RowNode<TData>[] | null | undefined) {
         this._allLeafChildren = value;
-        const sibling = this.sibling;
-        if (sibling) {
-            sibling._allLeafChildren = value;
-        }
-    }
-
-    /**  Returns the first leaf in depth-first order under this node without materialising the full leaf array. */
-    public getFirstLeafChild(): RowNode<TData> | undefined {
-        const childrenAfterGroup = this.childrenAfterGroup;
-        if (!childrenAfterGroup || childrenAfterGroup.length === 0) {
-            return undefined;
-        }
-
-        if (this.level < 0) {
-            const allLeafChildren = this.allLeafChildren;
-            const allLeafChildrenLen = allLeafChildren && allLeafChildren.length;
-            if (allLeafChildrenLen) {
-                return allLeafChildren[0]; // Root node, allLeafChildren contains all leaves
-            }
-        }
-
-        // Walk down breadth of first branch using cached leaf arrays when present
-        let current: RowNode<TData> | null = this as any;
-        while (current) {
-            const childrenAfterGroup = current.childrenAfterGroup;
-            if (!childrenAfterGroup?.length) {
-                return undefined;
-            }
-            const first = childrenAfterGroup[0];
-            if (first.data) {
-                return first;
-            }
-            current = first;
-        }
-        return undefined;
-    }
-
-    /**
-     * Recursively enumerates all lowest level nodes beneath this node, no groups or filler nodes.
-     * @returns An iterator for all leaf children.
-     */
-    public *enumerateAllLeafChildren(): IterableIterator<RowNode<TData>> {
-        if (this.level < 0) {
-            const allLeafChildren = this.allLeafChildren;
-            const allLeafChildrenLen = allLeafChildren && allLeafChildren.length;
-            if (allLeafChildrenLen) {
-                for (let i = 0; i < allLeafChildrenLen; ++i) {
-                    yield allLeafChildren[i];
-                }
-                return; // Root node, allLeafChildren contains all leaves
-            }
-        }
-
-        const childrenAfterGroup = this.childrenAfterGroup;
-        const childrenAfterGroupLen = childrenAfterGroup && childrenAfterGroup.length;
-        if (!childrenAfterGroupLen) {
-            return; // No children
-        }
-
-        // Depth-first without recursion
-        let stackSize = 0;
-        const stack = new Array<RowNode<TData>>(childrenAfterGroupLen);
-        for (let i = childrenAfterGroupLen - 1; i >= 0; --i) {
-            stack[stackSize++] = childrenAfterGroup[i];
-        }
-        while (stackSize > 0) {
-            const node = stack[--stackSize];
-            if (node.data) {
-                yield node;
-            }
-            const children = node.childrenAfterGroup;
-            if (children) {
-                for (let i = children.length - 1; i >= 0; --i) {
-                    stack[stackSize++] = children[i];
-                }
-            }
-        }
     }
 
     /**
@@ -852,5 +773,23 @@ export class RowNode<TData = any>
             return this.childStore.getFirstNode() as RowNode<TData>;
         }
         return this.childrenAfterSort?.[0] ?? null;
+    }
+
+    /**
+     * Returns the first leaf under this node (i.e. the first node that is not a group or a filler node).
+     */
+    public getFirstLeafChild(): RowNode<TData> | undefined {
+        return this.beans.rowModel.getFirstLeafChild?.(this);
+    }
+
+    /**
+     * Recursively iterates all lowest level nodes beneath this node, no groups or filler nodes.
+     * Works with:
+     * - Client-Side Row Model: traverses childrenAfterGroup.
+     * - Server-Side Row Model: when a childStore is present, iterates only currently loaded rows without triggering loads.
+     * @returns An iterator for all leaf children.
+     */
+    public iterateAllLeafChildren(): IterableIterator<RowNode<TData>> {
+        return this.beans.rowModel.iterateAllLeafChildren?.(this) ?? _EmptyArray.values();
     }
 }

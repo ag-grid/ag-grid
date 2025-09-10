@@ -769,10 +769,11 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         row.groupData = null;
         row.treeParent = null;
         row.treeNodeFlags = 0;
-        row.allLeafChildren = null;
+        row._allLeafChildren = undefined;
         row.childrenAfterGroup = _EmptyArray;
         const sibling = row.sibling;
         if (sibling) {
+            sibling._allLeafChildren = undefined;
             sibling.childrenAfterGroup = _EmptyArray;
         }
         row.updateHasChildren();

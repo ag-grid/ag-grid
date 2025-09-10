@@ -521,7 +521,9 @@ describe('ag-grid tree data reset', () => {
 
         api.setGridOption('rowData', rowData2);
 
-        await new GridRows(api, 'update 1', gridRowsOptions).check(`
+        const gridRows = new GridRows(api, 'update 1', gridRowsOptions);
+
+        await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A filler id:row-group-0-A
             │ ├── C LEAF id:c label:"c2"
@@ -532,6 +534,16 @@ describe('ag-grid tree data reset', () => {
             · ├── R LEAF id:r label:"r2"
             · └── Q LEAF id:q label:"q2"
         `);
+
+        expect(Array.from(gridRows.rootRowNode!.iterateAllLeafChildren()).map((row) => row.key)).toEqual([
+            'C',
+            'B',
+            'S',
+            'T',
+            'P',
+            'R',
+            'Q',
+        ]);
     });
 
     test('tree data setRowData with id maintains selection and expanded state, and conservative ordering', async () => {

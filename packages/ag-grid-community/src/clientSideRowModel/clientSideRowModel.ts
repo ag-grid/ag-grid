@@ -738,7 +738,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     // if the final node was a group node, and we're doing groupSelectsChildren
                     // make the exception to select all of it's descendants too
                     if (rowNode.group && groupsSelectChildren) {
-                        for (const leafChild of rowNode.enumerateAllLeafChildren()) {
+                        for (const leafChild of rowNode.iterateAllLeafChildren()) {
                             result.push(leafChild);
                         }
                         return;
@@ -1226,10 +1226,48 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.onRowHeightChanged_debounced();
     }
 
+    public *iterateAllLeafChildren(node: RowNode): IterableIterator<RowNode> {
+        // Single-array DFS preserving pre-order: push all children reversed; yield leaves on pop.
+        const children = node.childrenAfterGroup;
+        let childrenLen = children && children.length;
+        if (!childrenLen) {
+            return;
+        }
+        let stackSize = 0;
+        const stack: RowNode[] = [];
+        while (childrenLen > 0) {
+            stack[stackSize++] = children![--childrenLen];
+        }
+        while (stackSize) {
+            const current = stack[--stackSize];
+            if (current.sourceRowIndex >= 0) {
+                yield current;
+            }
+            const currentChildren = current.childrenAfterGroup;
+            if (currentChildren) {
+                let currentChildrenLen = currentChildren.length;
+                while (currentChildrenLen > 0) {
+                    stack[stackSize++] = currentChildren[--currentChildrenLen];
+                }
+            }
+        }
+    }
+
+    public getFirstLeafChild(node: RowNode<any> | undefined): RowNode<any> | undefined {
+        while (node) {
+            const childrenAfterGroup = node.childrenAfterGroup;
+            node = childrenAfterGroup?.length ? childrenAfterGroup[0] : undefined;
+            if (!node || node.sourceRowIndex >= 0) {
+                break;
+            }
+        }
+        return node;
+    }
+
     /** Used to compute lazily the list of leaf children for a given node. */
     public loadAllLeafChildren?(node: RowNode): RowNode[] | null {
         let result: RowNode[] | null = null;
-        for (const leaf of node.enumerateAllLeafChildren()) {
+        for (const leaf of this.iterateAllLeafChildren(node)) {
             (result ??= []).push(leaf);
         }
         return result;

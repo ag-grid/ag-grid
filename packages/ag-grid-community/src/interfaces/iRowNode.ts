@@ -195,14 +195,21 @@ interface GroupRowNode<TData = any> {
     /** `true` if this node is a group and the group is the bottom level in the tree. */
     leafGroup: boolean | undefined;
     /**
-     * All the row nodes that have user provided data below this node. Can be null if empty.
+     * All the row nodes that have user-provided data below this node. Can be null if empty.
      * This excludes:
      * - filler nodes when using treeData and getDataPath
      * - group nodes when using grouping
      * - footer nodes
      *
-     * This property keeps a cache of all the leaf children for performance.
-     * Consider using the methods `getFirstLeafChild().` or `enumerateAllLeafChildren()` instead of using this property directly.
+     * Notes:
+     * - Client-Side Row Model (CSRM): this property is populated lazily (computed on demand).
+     * - Server-Side Row Model (SSRM): this property is not supported and will be `null`.
+     *   Use `iterateAllLeafChildren()` instead; it works with SSRM and iterates only already-loaded rows without triggering loads.
+     *
+     * Prefer `iterateAllLeafChildren()` for:
+     * - compatibility across row models
+     * - obtaining the list of leaf nodes in pre-order, with parents before children.
+     * - less memory pressure
      */
     allLeafChildren: IRowNode<TData>[] | null;
     /** Number of children and grand children. */
@@ -337,12 +344,14 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     getFirstLeafChild(): IRowNode<TData> | undefined;
 
     /**
-     * Enumerates all the leaf children of the node recursively.
+     * Iterates all the leaf children of the node recursively, in depth-first order (pre-order, parents before children).
      * All the row nodes that have user provided data below this node. Can be null if empty.
      * This excludes:
      * - filler nodes when using treeData and getDataPath
      * - group nodes when using grouping
      * - footer nodes
+     *
+     * @returns An iterator for all leaf children.
      */
-    enumerateAllLeafChildren(): IterableIterator<IRowNode<TData>>;
+    iterateAllLeafChildren(): IterableIterator<IRowNode<TData>>;
 }

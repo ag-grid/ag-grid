@@ -81,6 +81,15 @@ export interface IRowModel {
      */
     onRowHeightChanged(): void;
 
+    /**
+     * Iterates, depth-first, all lowest-level nodes under the provided node (no group node without data or filler nodes).
+     * Works with clientSide and serverSide row models.
+     */
+    iterateAllLeafChildren?(node: RowNode): IterableIterator<RowNode>;
+
+    /** Gets the first leaf child under this node. */
+    getFirstLeafChild?(node: RowNode): RowNode | undefined;
+
     /** Used to compute lazily the list of leaf children for a given node. */
     loadAllLeafChildren?(node: RowNode): RowNode[] | null;
 }

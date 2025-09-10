@@ -96,6 +96,14 @@ describe('ag-grid tree transactions', () => {
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row1b, row2, row3, row4]);
 
+        expect(Array.from(gridRows.rootRowNode!.iterateAllLeafChildren()).map((row) => row.key)).toEqual([
+            'A',
+            'Z',
+            'B',
+            'W',
+            'D',
+        ]);
+
         api.applyTransaction(transactions[2]);
 
         gridRows = new GridRows(api, 'Transaction 2', gridRowsOptions);
@@ -113,6 +121,14 @@ describe('ag-grid tree transactions', () => {
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row2, row3, row4, row5a]);
 
+        expect(Array.from(gridRows.rootRowNode!.iterateAllLeafChildren()).map((row) => row.key)).toEqual([
+            'A',
+            'B',
+            'W',
+            'H',
+            'D',
+        ]);
+
         api.applyTransaction(transactions[3]);
 
         gridRows = new GridRows(api, 'final', gridRowsOptions);
@@ -125,6 +141,13 @@ describe('ag-grid tree transactions', () => {
             · └── E LEAF id:5
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row3, row4, row5b]);
+
+        expect(Array.from(gridRows.rootRowNode!.iterateAllLeafChildren()).map((row) => row.key)).toEqual([
+            'A',
+            'B',
+            'D',
+            'E',
+        ]);
     });
 
     test('ag-grid tree async complex transaction', async () => {
@@ -181,6 +204,13 @@ describe('ag-grid tree transactions', () => {
         `);
 
         expect(gridRows.rowNodes.map((row) => row.data)).toEqual([row0, row3, undefined, row4, row5b]);
+
+        expect(Array.from(gridRows.rootRowNode!.iterateAllLeafChildren()).map((row) => row.id)).toEqual([
+            '0',
+            '3',
+            '4',
+            '5',
+        ]);
     });
 
     test('filler order is not important', async () => {
@@ -289,5 +319,17 @@ describe('ag-grid tree transactions', () => {
             · · · │ · └── X2.2 LEAF id:X2.2
             · · · └── X5 LEAF id:X5
         `);
+
+        expect(Array.from(gridRows.rootRowNode!.iterateAllLeafChildren()).map((row) => row.id)).toEqual([
+            'X1',
+            'X2',
+            'X3',
+            'X4',
+            'X2.1',
+            'X6',
+            'X7',
+            'X2.2',
+            'X5',
+        ]);
     });
 });

@@ -229,14 +229,13 @@ export class ClientSideChildrenTreeNodeManager<TData>
         }
 
         rootNode.allLeafChildren = allLeafChildren;
-
-        if (nodesToUnselect.length) {
-            this.deselectNodes(nodesToUnselect);
-        }
-
         const sibling = rootNode.sibling;
         if (sibling) {
             sibling._allLeafChildren = allLeafChildren;
+        }
+
+        if (nodesToUnselect.length) {
+            this.deselectNodes(nodesToUnselect);
         }
 
         if (rowsChanged || orderChanged) {

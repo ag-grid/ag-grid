@@ -166,7 +166,7 @@ export class ChartColumnService extends BeanStub {
             return null;
         }
 
-        for (const childRow of row.enumerateAllLeafChildren()) {
+        for (const childRow of row.iterateAllLeafChildren()) {
             const value = this.valueSvc.getValue(col, childRow);
             if (value != null) {
                 return value;
