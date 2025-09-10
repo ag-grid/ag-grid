@@ -127,7 +127,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         // Must create dateHierarchy columns before rowGroupSvc and pivotSvc run
         // so that any groupable date columns exist beforehand.
-        this.createColumnsForService([groupHierarchyColSvc], this.colDefCols);
+        this.createColumnsForService([groupHierarchyColSvc], this.colDefCols, source);
 
         rowGroupColsSvc?.extractCols(source, oldCols);
         pivotColsSvc?.extractCols(source, oldCols);
@@ -135,7 +135,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.ready = true;
 
-        this.refreshCols(true);
+        this.refreshCols(true, source);
 
         visibleCols.refresh(source);
 
@@ -169,7 +169,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // setPivotMode, applyColumnState,
     // functionColsService.setPrimaryColList, functionColsService.updatePrimaryColList,
     // pivotResultCols.setPivotResultCols
-    public refreshCols(newColDefs: boolean): void {
+    public refreshCols(newColDefs: boolean, source: ColumnEventType): void {
         if (!this.colDefCols) {
             return;
         }
@@ -193,7 +193,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const cols = this.selectCols(pivotResultCols, this.colDefCols);
 
-        this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc], cols);
+        this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc], cols, source);
 
         const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
         if (!newColDefs || shouldSortNewColDefs) {
@@ -222,7 +222,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
     }
 
-    private createColumnsForService(services: (IColumnCollectionService | undefined)[], cols: ColumnCollections): void {
+    private createColumnsForService(services: (IColumnCollectionService | undefined)[], cols: ColumnCollections, source: ColumnEventType): void {
         for (const service of services) {
             if (!service) {
                 continue;
@@ -231,7 +231,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             service.createColumns(cols, (updateOrder) => {
                 this.lastOrder = updateOrder(this.lastOrder);
                 this.lastPivotOrder = updateOrder(this.lastPivotOrder);
-            });
+            }, source);
             service.addColumns(cols);
         }
     }
@@ -300,7 +300,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (!this.ready) {
             return;
         }
-        this.refreshCols(false);
+        this.refreshCols(false, source);
         this.beans.visibleCols.refresh(source);
     }
 
@@ -506,11 +506,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
         return this.colDefCols
             ? this.beans.colDefFactory?.getColumnDefs(
-                  this.colDefCols.list,
-                  this.showingPivotResult,
-                  this.lastOrder,
-                  this.cols?.list ?? []
-              )
+                this.colDefCols.list,
+                this.showingPivotResult,
+                this.lastOrder,
+                this.cols?.list ?? []
+            )
             : undefined;
     }
 
@@ -536,7 +536,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // we need to update grid columns to cover the scenario where user has groupDisplayType = 'custom', as
         // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
         // so need to updateCols() to check it autoGroupCol needs to be added / removed
-        this.refreshCols(false);
+        this.refreshCols(false, source);
         const { visibleCols, eventSvc } = this.beans;
         visibleCols.refresh(source);
 
