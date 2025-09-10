@@ -1,4 +1,5 @@
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { CONTACT_FORM_DATA, RECAPTCHA_SITE_KEY } from '@ag-website-shared/constants';
 import { SITE_BASE_URL, SITE_URL } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
@@ -102,41 +103,55 @@ export const ContactForm: FunctionComponent = () => {
                 </>
             )}
 
-            <div className={classnames('input-field', { 'input-error': errors.first_name })}>
-                <label htmlFor="first_name">First Name</label>
-                <input
-                    id="first_name"
-                    type="text"
-                    {...register('first_name', { required: 'First name is required', maxLength: 40 })}
-                />
-                {errors.first_name && <p className="error">{errors.first_name.message}</p>}
+            <div className={styles.nameRow}>
+                <div className={classnames('input-field', { 'input-error': errors.first_name })}>
+                    <label htmlFor="first_name">First Name</label>
+                    <input
+                        id="first_name"
+                        type="text"
+                        placeholder="First Name"
+                        {...register('first_name', { required: 'First name is required', maxLength: 40 })}
+                    />
+                    {errors.first_name && <p className="error">{errors.first_name.message}</p>}
+                </div>
+                <div className="input-field">
+                    <label htmlFor="last_name">Last Name</label>
+                    <input
+                        id="last_name"
+                        type="text"
+                        placeholder="Last Name"
+                        {...register('last_name', { maxLength: 80 })}
+                    />
+                </div>
             </div>
-            <div className="input-field">
-                <label htmlFor="last_name">Last Name</label>
-                <input id="last_name" type="text" {...register('last_name', { maxLength: 80 })} />
-            </div>
+
             <div className={classnames('input-field', { 'input-error': errors.email })}>
-                <label htmlFor="email">Email</label>
-                <input
-                    id="email"
-                    type="email"
-                    {...register('email', {
-                        required: 'Email is required',
-                        maxLength: 80,
-                        pattern: {
-                            value: /^(?:[a-zA-Z0-9_'^&/+%!-]+(?:\.[a-zA-Z0-9_'^&/+%!-]+)*|"(?:[^"\\]|\\.)+")@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/,
-                            message: 'Enter a valid email',
-                        },
-                    })}
-                />
+                <label htmlFor="email">Work Email</label>
+                <span className={styles.emailInputOuter}>
+                    <Icon name="email" />
+                    <input
+                        id="email"
+                        type="email"
+                        placeholder="Work Email"
+                        {...register('email', {
+                            required: 'Email is required',
+                            maxLength: 80,
+                            pattern: {
+                                value: /^(?:[a-zA-Z0-9_'^&/+%!-]+(?:\.[a-zA-Z0-9_'^&/+%!-]+)*|\"(?:[^\"\\]|\\.)+\")@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/,
+                                message: 'Enter a valid email',
+                            },
+                        })}
+                    />
+                </span>
                 {errors.email && <p className="error">{errors.email.message}</p>}
             </div>
             <div className={classnames('input-field', { 'input-error': errors[textAreaId] })}>
-                <label htmlFor={textAreaId}>Enquiry Message</label>
+                <label htmlFor={textAreaId}>Message</label>
                 <textarea
                     id={textAreaId}
                     rows={3}
                     wrap="soft"
+                    placeholder="Tell us about your interest in AG Grid"
                     {...register(textAreaId as keyof FormValues, { required: 'Message is required' })}
                 ></textarea>
                 {errors[textAreaId] && <p className="error">{(errors as any)[textAreaId]?.message as string}</p>}
@@ -144,7 +159,21 @@ export const ContactForm: FunctionComponent = () => {
 
             {showCaptcha && <div className="g-recaptcha" data-sitekey={RECAPTCHA_SITE_KEY} />}
 
-            <input type="submit" />
+            <input
+                className={classnames('button-primary', styles.submitButton)}
+                type="submit"
+                value="Send us a message"
+            />
+            <a
+                className={classnames('button-tertiary', styles.tertiaryButton)}
+                href="mailto:info@ag-grid.com"
+                role="button"
+            >
+                or email us at info@ag-grid.com
+            </a>
+            <p className={styles.privacyMessage}>
+                By submitting this form you agree to our <a href="/privacy/">Privacy Policy</a>.
+            </p>
         </form>
     );
 };
