@@ -13,7 +13,7 @@ export class FilterExpressionParser {
     private joinExpressionParser: JoinFilterExpressionParser;
     private valid: boolean = false;
 
-    constructor(private params: FilterExpressionParserParams) {}
+    constructor(private readonly params: FilterExpressionParserParams) {}
 
     public parseExpression(): string {
         this.joinExpressionParser = new JoinFilterExpressionParser(this.params, 0);

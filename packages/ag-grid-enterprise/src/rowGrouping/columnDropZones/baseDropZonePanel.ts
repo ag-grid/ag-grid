@@ -10,7 +10,7 @@ export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
     constructor(
         horizontal: boolean,
-        private dropZonePurpose: TDropZone
+        private readonly dropZonePurpose: TDropZone
     ) {
         super(horizontal);
         this.addElementClasses(this.getGui(), this.dropZonePurpose.toLowerCase());

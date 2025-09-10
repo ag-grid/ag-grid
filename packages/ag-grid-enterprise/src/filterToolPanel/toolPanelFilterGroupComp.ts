@@ -22,7 +22,7 @@ import { ToolPanelFilterComp } from './toolPanelFilterComp';
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
 
 export class ToolPanelFilterGroupComp extends Component {
-    private filterGroupComp: AgGroupComponent = RefPlaceholder;
+    private readonly filterGroupComp: AgGroupComponent = RefPlaceholder;
 
     private filterGroupName: string | null;
     private tooltipFeature?: TooltipFeature;

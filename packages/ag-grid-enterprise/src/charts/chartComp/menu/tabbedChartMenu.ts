@@ -21,7 +21,7 @@ export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
     }
 
     private tabbedLayout: TabbedLayout;
-    private tabs: TabbedItem[] = [];
+    private readonly tabs: TabbedItem[] = [];
     private eventSource?: HTMLElement;
 
     constructor(

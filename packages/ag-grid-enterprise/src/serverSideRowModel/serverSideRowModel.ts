@@ -673,7 +673,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         super.destroy();
     }
 
-    private onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
+    private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
     /**
      * @deprecated v33.1
      */

@@ -16,12 +16,12 @@ import { checkAndUpdateExpression, findEndPosition, getSearchString, updateExpre
 class OperatorParser {
     private operators: string[] = [];
     private parsedOperator: 'AND' | 'OR';
-    private operatorStartPositions: number[] = [];
+    private readonly operatorStartPositions: number[] = [];
     private operatorEndPositions: (number | undefined)[] = [];
     private activeOperator: number = 0;
     private validationError: FilterExpressionValidationError | null = null;
 
-    constructor(private params: FilterExpressionParserParams) {}
+    constructor(private readonly params: FilterExpressionParserParams) {}
 
     public parseExpression(i: number): number {
         this.operators.push('');
@@ -173,14 +173,14 @@ class OperatorParser {
 export class JoinFilterExpressionParser {
     private expectingExpression: boolean = true;
     private expectingOperator: boolean = false;
-    private expressionParsers: (JoinFilterExpressionParser | ColFilterExpressionParser)[] = [];
-    private operatorParser: OperatorParser = new OperatorParser(this.params);
+    private readonly expressionParsers: (JoinFilterExpressionParser | ColFilterExpressionParser)[] = [];
+    private readonly operatorParser: OperatorParser = new OperatorParser(this.params);
     private endPosition: number;
     private missingEndBracket: boolean = false;
     private extraEndBracket: boolean = false;
 
     constructor(
-        private params: FilterExpressionParserParams,
+        private readonly params: FilterExpressionParserParams,
         public readonly startPosition: number
     ) {}
 

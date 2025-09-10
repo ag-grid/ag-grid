@@ -45,7 +45,7 @@ export class AgAutocompleteList extends AgPopupComponent<
     private searchString = '';
 
     constructor(
-        private params: {
+        private readonly params: {
             autocompleteEntries: AutocompleteEntry[];
             onConfirmed: () => void;
             useFuzzySearch?: boolean;

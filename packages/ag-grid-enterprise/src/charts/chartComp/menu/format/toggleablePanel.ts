@@ -17,7 +17,7 @@ export class ToggleablePanel extends Component {
     private readonly toggleableGroup: AgGroupComponent = RefPlaceholder;
 
     private readonly chartOptions: ChartOptionsProxy;
-    private activeComps: Component[] = [];
+    private readonly activeComps: Component[] = [];
 
     constructor(private readonly params: ToggleablePanelParams) {
         super();

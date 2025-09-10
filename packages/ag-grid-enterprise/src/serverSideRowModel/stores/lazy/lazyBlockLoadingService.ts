@@ -28,7 +28,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     }
 
     // a map of caches to loading nodes
-    private cacheLoadingNodesMap: Map<LazyCache, Set<number>> = new Map();
+    private readonly cacheLoadingNodesMap: Map<LazyCache, Set<number>> = new Map();
 
     // if a check is queued to happen this cycle
     private isCheckQueued = false;

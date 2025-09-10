@@ -43,16 +43,16 @@ export class CartesianAxisPanel extends Component {
     private readonly axisTimeFormatSelect: GridSelect = RefPlaceholder;
 
     private chartTranslation: ChartTranslationService;
-    private chartOptionsService: ChartOptionsService;
-    private chartController: ChartController;
+    private readonly chartOptionsService: ChartOptionsService;
+    private readonly chartController: ChartController;
 
     public wireBeans(beans: BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
     private readonly chartOptionsSeriesProxy: ChartOptionsProxy;
 
-    private activePanels: Component[] = [];
-    private updateFuncs: ((...args: any[]) => any)[] = [];
+    private readonly activePanels: Component[] = [];
+    private readonly updateFuncs: ((...args: any[]) => any)[] = [];
 
     private prevRotation: number | undefined;
 

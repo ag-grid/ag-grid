@@ -45,7 +45,7 @@ function _isFillHandleEnabled(gos: GridOptionsService): boolean {
 }
 
 export class CellRangeFeature implements ICellRangeFeature {
-    private rangeSvc: IRangeService;
+    private readonly rangeSvc: IRangeService;
     private cellComp: ICellComp;
     private eGui: HTMLElement;
 

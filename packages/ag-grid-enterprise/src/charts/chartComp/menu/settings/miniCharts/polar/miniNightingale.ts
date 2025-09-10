@@ -8,7 +8,7 @@ import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 export class MiniNightingaleClass extends MiniChartWithPolarAxes {
     private readonly series: Group[];
 
-    private data = [
+    private readonly data = [
         [6, 10, 9, 8, 7, 8],
         [4, 6, 5, 4, 5, 5],
         [3, 5, 4, 3, 4, 7],

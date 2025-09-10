@@ -62,7 +62,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
         this.popupSvc = beans.popupSvc!;
     }
 
-    private eAutocompleteInput: GridInputTextField = RefPlaceholder;
+    private readonly eAutocompleteInput: GridInputTextField = RefPlaceholder;
 
     private isListOpen = false;
     private autocompleteList: AgAutocompleteList | null;

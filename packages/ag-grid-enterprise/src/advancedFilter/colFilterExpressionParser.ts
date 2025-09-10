@@ -37,7 +37,7 @@ class ColumnParser implements Parser {
     private colId: string;
 
     constructor(
-        private params: FilterExpressionParserParams,
+        private readonly params: FilterExpressionParserParams,
         public readonly startPosition: number
     ) {}
 
@@ -115,7 +115,7 @@ class OperatorParser implements Parser {
     private parsedOperator: string;
 
     constructor(
-        private params: FilterExpressionParserParams,
+        private readonly params: FilterExpressionParserParams,
         public readonly startPosition: number,
         private readonly baseCellDataType: BaseCellDataType
     ) {}
@@ -187,7 +187,7 @@ class OperandParser implements Parser {
     private modelValue: number | string;
     private validationMessage: string | null = null;
 
-    private filterValidationSetters: Record<BaseCellDataType, (modelValue: string | number | null) => any> = {
+    private readonly filterValidationSetters: Record<BaseCellDataType, (modelValue: string | number | null) => any> = {
         number: () => {
             if (this.quotes || isNaN(this.modelValue as number)) {
                 this.valid = false;
@@ -209,7 +209,7 @@ class OperandParser implements Parser {
     };
 
     constructor(
-        private params: FilterExpressionParserParams,
+        private readonly params: FilterExpressionParserParams,
         public readonly startPosition: number,
         private readonly baseCellDataType: BaseCellDataType,
         private readonly column: AgColumn | null | undefined
@@ -295,7 +295,7 @@ export class ColFilterExpressionParser {
     private operatorParser: OperatorParser | undefined;
     private operandParser: OperandParser | undefined;
 
-    private operandValueGetters: Record<BaseCellDataType, (operand: any) => any> = {
+    private readonly operandValueGetters: Record<BaseCellDataType, (operand: any) => any> = {
         number: Number,
         date: (operand) => this.params.valueSvc.parseValue(this.columnParser!.column!, null, operand, undefined),
         dateString: (...args) => this.operandValueGetters.date(...args),
@@ -307,7 +307,7 @@ export class ColFilterExpressionParser {
     };
 
     constructor(
-        private params: FilterExpressionParserParams,
+        private readonly params: FilterExpressionParserParams,
         public readonly startPosition: number
     ) {}
 

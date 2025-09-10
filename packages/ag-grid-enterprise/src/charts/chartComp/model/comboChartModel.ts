@@ -11,7 +11,7 @@ export class ComboChartModel extends BeanStub {
 
     // this control flag is used to only log warning for the initial user config
     private suppressComboChartWarnings = false;
-    private chartDataModel: ChartDataModel;
+    private readonly chartDataModel: ChartDataModel;
 
     public constructor(chartDataModel: ChartDataModel) {
         super();

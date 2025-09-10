@@ -25,8 +25,8 @@ type ProvidedFilterType = SimpleFilterType | 'agSetColumnFilter' | 'agMultiColum
 export class SelectableFilterService extends BeanStub implements ISelectableFilterService, NamedBean {
     readonly beanName = 'selectableFilter' as const;
 
-    private selectedFilters: Map<string, number> = new Map();
-    private valueGetters: Map<string, string | ValueGetterFunc> = new Map();
+    private readonly selectedFilters: Map<string, number> = new Map();
+    private readonly valueGetters: Map<string, string | ValueGetterFunc> = new Map();
 
     public getFilterValueGetter(colId: string): string | ValueGetterFunc | undefined {
         return this.valueGetters.get(colId);

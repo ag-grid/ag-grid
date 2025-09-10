@@ -33,7 +33,7 @@ export class MultiFilterUi
     private params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>;
     private filters: (FilterDisplayComp | null)[] = [];
     private filterParams: FilterDisplayParams[] = [];
-    private validity: (boolean | undefined)[] = [];
+    private readonly validity: (boolean | undefined)[] = [];
     private allState: FilterDisplayState<IMultiFilterModel, any[]>;
 
     public init(params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>): AgPromise<void> {

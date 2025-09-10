@@ -22,7 +22,7 @@ export interface BaseFilterComponent {
 
 export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
     protected filterDefs: IMultiFilterDef[] = [];
-    private guiDestroyFuncs: (() => void)[] = [];
+    private readonly guiDestroyFuncs: (() => void)[] = [];
     // this could be the accordion/sub menu element depending on the display type
     private filterGuis: (HTMLElement | null)[] = [];
     private lastOpenedInContainer?: ContainerType;

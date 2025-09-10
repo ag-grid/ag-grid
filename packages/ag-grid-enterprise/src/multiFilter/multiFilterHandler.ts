@@ -32,7 +32,7 @@ export class MultiFilterHandler
     public readonly filterType = 'multi' as const;
 
     private params: FilterHandlerParams<any, any, IMultiFilterModel, IMultiFilterParams>;
-    private handlerWrappers: (HandlerWrapper | undefined)[] = [];
+    private readonly handlerWrappers: (HandlerWrapper | undefined)[] = [];
     /** ui active. could still have null model */
     private activeFilterIndices: number[] = [];
     private filterDefs: IMultiFilterDef[] = [];
