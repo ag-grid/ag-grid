@@ -306,7 +306,6 @@ export const Changelog = () => {
                 tooltipField: 'summary',
                 width: 300,
                 minWidth: 200,
-                flex: 1,
                 filter: 'agTextColumnFilter',
                 wrapText: true,
                 autoHeight: true,

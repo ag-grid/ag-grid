@@ -229,7 +229,7 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     /** Returns:
      * - `true` if node is selected.
      * - `false` if the node isn't selected.
-     * - `undefined` if it's partially selected (group where not all children are selected).
+     * - `undefined` if it's partially selected (a group where not all descendants are selected, and `groupSelects` is `'descendants'` or `'filteredDescendants'`).
      */
     isSelected(): boolean | undefined;
 

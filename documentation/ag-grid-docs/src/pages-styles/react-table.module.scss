@@ -142,6 +142,8 @@
 }
 
 .heroSectionFeatureHighlight {
+    display: flex;
+    align-items: center;
     padding: 0px $spacing-size-2;
     font-size: var(--text-fs-sm);
     font-weight: var(--text-base);
@@ -156,9 +158,20 @@
     #{$selector-darkmode} & {
         color: white;
     }
+
+    span {
+        @media screen and (min-width: $breakpoint-landing-page-medium) {
+            display: inline-block;
+            max-width: 66ch;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
 }
 
 .heroSectionFeatureArrow {
+    flex-shrink: 0;
     height: 16px !important;
     width: 16px !important;
     margin-left: $spacing-size-2 !important;

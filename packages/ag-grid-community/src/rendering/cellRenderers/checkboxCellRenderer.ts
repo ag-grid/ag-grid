@@ -140,7 +140,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
                     newValue: value,
                 },
             ],
-            { update: true }
+            { update: true, forceRefreshOfEditCellsOnly: true }
         );
 
         // set new value

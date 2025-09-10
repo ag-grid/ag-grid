@@ -168,6 +168,10 @@ body {
     margin: $spacing-size-4 0 0;
     justify-content: flex-end;
 
+    :global(.button-tertiary):hover {
+        background-color: color-mix(in srgb, var(--color-button-tertiary-bg), transparent 33.3333%);
+    }
+
     a svg {
         --icon-size: #{$spacing-size-6};
 
@@ -491,19 +495,22 @@ body {
 }
 
 .heroSectioncta1 {
-    display: flex;
-    justify-content: center;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    transition: opacity 0.3s;
-}
+    gap: $spacing-size-2;
+    width: fit-content;
+    padding: 0.5em 0.5em 0.5em 1em;
 
-.heroSectioncta1 svg {
-    height: 24px;
-    width: 24px;
-    fill: var(--color-fg-secondary);
-    opacity: 0.8;
-    margin-top: -12px;
+    :global(.icon) {
+        --icon-size: #{$spacing-size-4};
+
+        transform: translate(-3px, 1px);
+        transition: transform $transition-default-timing;
+    }
+
+    &:hover :global(.icon) {
+        transform: translate(4px, 1px);
+    }
 }
 
 .heroButton {

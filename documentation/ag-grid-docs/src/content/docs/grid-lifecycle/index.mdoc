@@ -48,18 +48,13 @@ The `gridPreDestroyed` event fires just before the grid is destroyed and is remo
 * Save grid state.
 * Disconnect other libraries.
 
-In this example, `gridPreDestroyed` saves column widths before grid destruction.
-
-{% gridExampleRunner title="Using Pre-Destroyed Event" name="grid-pre-destroyed" /%}
+The [Grid State Example](./grid-state/#saving-and-restoring-state) demonstrates how `gridPreDestroyed` can be used to save and restore grid state.
 
 {% if isFramework("angular") %}
 ### Angular PreDestroy Setup
 When using Angular, the `gridPreDestroyed` event handler must be registered via grid options instead of as an Output event handler to work correctly.
 
 For example:
-{% /if %}
-
-{% if isFramework("angular") %}
 ```js
 this.gridOptions = {
     onGridPreDestroyed: () => {

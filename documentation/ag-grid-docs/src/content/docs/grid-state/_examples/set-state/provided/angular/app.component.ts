@@ -65,6 +65,7 @@ ModuleRegistry.registerModules([
                     style="width: 100%; height: 100%;"
                     [columnDefs]="columnDefs"
                     [defaultColDef]="defaultColDef"
+                    [autoGroupColumnDef]="autoGroupColumnDef"
                     [sideBar]="true"
                     [pagination]="true"
                     [rowSelection]="rowSelection"
@@ -101,6 +102,7 @@ export class AppComponent {
         enablePivot: true,
         enableValue: true,
     };
+    public autoGroupColumnDef: ColDef = { minWidth: 200 };
     public rowSelection: RowSelectionOptions = {
         mode: 'multiRow',
     };

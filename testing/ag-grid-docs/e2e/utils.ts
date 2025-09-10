@@ -18,13 +18,7 @@ export async function waitForGridReady(page: Page) {
         .or(noRowsToShowLocator)
         .or(fullWidthRow)
         .first()
-        .waitFor({ state: 'attached' });
-
-    if ((await cellLocator.count()) > 0 && (await cellLocator.first().isHidden())) {
-        console.log('Cells are hidden, waiting for visible state', new Date());
-        await cellLocator.first().waitFor({ state: 'visible' });
-        console.warn('Cells are now visible at', new Date());
-    }
+        .waitFor({ state: 'visible' });
 }
 
 export async function clickAllButtons(page: Page) {
