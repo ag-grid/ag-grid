@@ -12,7 +12,7 @@ export interface IColumnCollectionService {
     createColumns(
         cols: ColumnCollections,
         updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void,
-        source: ColumnEventType,
+        source: ColumnEventType
     ): void;
 
     updateColumns(event: PropertyChangedEvent | PropertyValueChangedEvent<keyof GridOptions>): void;

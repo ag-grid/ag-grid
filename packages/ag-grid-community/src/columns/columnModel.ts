@@ -222,16 +222,24 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
     }
 
-    private createColumnsForService(services: (IColumnCollectionService | undefined)[], cols: ColumnCollections, source: ColumnEventType): void {
+    private createColumnsForService(
+        services: (IColumnCollectionService | undefined)[],
+        cols: ColumnCollections,
+        source: ColumnEventType
+    ): void {
         for (const service of services) {
             if (!service) {
                 continue;
             }
 
-            service.createColumns(cols, (updateOrder) => {
-                this.lastOrder = updateOrder(this.lastOrder);
-                this.lastPivotOrder = updateOrder(this.lastPivotOrder);
-            }, source);
+            service.createColumns(
+                cols,
+                (updateOrder) => {
+                    this.lastOrder = updateOrder(this.lastOrder);
+                    this.lastPivotOrder = updateOrder(this.lastPivotOrder);
+                },
+                source
+            );
             service.addColumns(cols);
         }
     }
@@ -506,11 +514,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
         return this.colDefCols
             ? this.beans.colDefFactory?.getColumnDefs(
-                this.colDefCols.list,
-                this.showingPivotResult,
-                this.lastOrder,
-                this.cols?.list ?? []
-            )
+                  this.colDefCols.list,
+                  this.showingPivotResult,
+                  this.lastOrder,
+                  this.cols?.list ?? []
+              )
             : undefined;
     }
 

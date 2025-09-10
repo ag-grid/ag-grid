@@ -49,7 +49,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
     public createColumns(
         cols: _ColumnCollections,
         updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void,
-        source: ColumnEventType,
+        source: ColumnEventType
     ): void {
         const beans = this.beans;
         const { colModel, gos, rowGroupColsSvc, colGroupSvc } = beans;
