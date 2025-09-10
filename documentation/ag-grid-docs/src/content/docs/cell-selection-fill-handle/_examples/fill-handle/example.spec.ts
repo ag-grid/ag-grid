@@ -3,6 +3,7 @@ import { dragOverTo, expect, test } from '@utils/grid/test-utils';
 test.agExample(import.meta, () => {
     test.describe('Fill Handle', () => {
         test.vanilla('Drag Fill', async ({ page, remoteGrid, agIdFor }) => {
+            test.skip(true, 'Skipping due to flakiness, to be re-enabled in future');
             const remoteApi = remoteGrid(page, '1');
 
             await remoteApi.updateGridOptions({

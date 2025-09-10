@@ -4,7 +4,7 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 
-// Set a blue background and red shadows for all menus
+// Set a blue background and red shadows by default
 const myTheme = themeQuartz.withParams({
     menuBackgroundColor: 'cornflowerblue',
     menuShadow: { radius: 10, spread: 5, color: 'red' },

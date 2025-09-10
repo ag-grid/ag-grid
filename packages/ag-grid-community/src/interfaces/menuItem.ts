@@ -63,8 +63,8 @@ export interface IMenuConfigParams {
     /** Suppress handling of mouse down events. */
     suppressMouseDown?: boolean;
     /**
-     * Suppress handling of mouseenter and mouseleave events, If `true`,
-     * The grid will no longer update the active status of the menu item or open sub menus.
+     * Suppress handling of mouseenter and mouseleave events. If `true`,
+     * the grid will no longer update the active status of the menu item or open sub menus.
      */
     suppressMouseOver?: boolean;
     /**

@@ -30,7 +30,7 @@ import { _error } from './validation/logging';
 import { COLUMN_DEFINITION_MOD_VALIDATIONS } from './validation/rules/colDefValidations';
 import { GRID_OPTIONS_MODULES } from './validation/rules/gridOptionsValidations';
 import type { ValidationService } from './validation/validationService';
-import type { ModuleValidation, RequiredModule } from './validation/validationTypes';
+import type { ModuleValidation } from './validation/validationTypes';
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never;
@@ -300,7 +300,7 @@ export class GridOptionsService
                 continue;
             }
 
-            let moduleToCheck: RequiredModule<T> | undefined | null = modValidations[key as keyof T];
+            let moduleToCheck: ModuleValidation<T>[keyof T] | null | undefined = modValidations[key as keyof T];
             if (typeof moduleToCheck === 'function') {
                 moduleToCheck = moduleToCheck(options, this.gridOptions, this.beans);
             }

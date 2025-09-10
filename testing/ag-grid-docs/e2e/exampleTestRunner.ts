@@ -8,6 +8,7 @@ import { clickAllButtons, getRowCountOrError, waitForGridReady } from './utils';
 export type InternalFramework = 'vanilla' | 'typescript' | 'reactFunctional' | 'reactFunctionalTs' | 'angular' | 'vue3';
 
 let examples: any;
+
 interface ExampleTestCase {
     pageName: string;
     exampleName: string;

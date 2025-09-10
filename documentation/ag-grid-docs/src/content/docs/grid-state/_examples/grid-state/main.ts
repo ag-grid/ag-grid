@@ -57,6 +57,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         enablePivot: true,
         enableValue: true,
     },
+    autoGroupColumnDef: {
+        minWidth: 200,
+    },
     sideBar: true,
     pagination: true,
     rowSelection: { mode: 'multiRow' },

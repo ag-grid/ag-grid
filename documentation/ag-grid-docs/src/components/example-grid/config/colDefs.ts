@@ -249,11 +249,10 @@ const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
                 headerName: 'Bought',
                 field: 'game.bought',
                 filter: 'agSetColumnFilter',
-                width: 150,
+                width: 110,
                 enableRowGroup: true,
                 enablePivot: true,
                 cellClass: 'boolean-type',
-                cellStyle: { justifyItems: 'center' },
                 filterParams: {
                     cellRendererParams: { isFilterRenderer: true },
                     buttons: ['reset'],
@@ -267,7 +266,7 @@ const desktopDefaultCols: (ColDef<RowItem> | ColGroupDef<RowItem>)[] = [
         children: [
             {
                 field: 'bankBalance',
-                width: 180,
+                width: 150,
                 cellClassRules: {
                     'currency-cell': 'typeof x == "number"',
                 },

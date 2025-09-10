@@ -2710,6 +2710,14 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-data-grid/licensing/', to: '/angular-data-grid/community-vs-enterprise/' },
     { from: '/javascript-data-grid/licensing/', to: '/javascript-data-grid/community-vs-enterprise/' },
 
+    // AG Charts Flyer QR Code Link Redirects
+    { from: '/ag-charts-flyer-2025-angular-front/', to: 'https://www.ag-grid.com/charts/' },
+    { from: '/ag-charts-flyer-2025-angular-reverse/', to: 'https://www.ag-grid.com/charts/gallery/' },
+    { from: '/ag-charts-flyer-2025-javascript-front/', to: 'https://www.ag-grid.com/charts/' },
+    { from: '/ag-charts-flyer-2025-javascript-reverse/', to: 'https://www.ag-grid.com/charts/gallery/' },
+    { from: '/ag-charts-flyer-2025-react-front/', to: 'https://www.ag-grid.com/charts/' },
+    { from: '/ag-charts-flyer-2025-react-reverse/', to: 'https://www.ag-grid.com/charts/gallery/' },
+
     ...pageForAllFrameworks('range-selection', 'cell-selection'),
     ...pageForAllFrameworks('range-selection-handle', 'cell-selection-handle'),
     ...pageForAllFrameworks('range-selection-fill-handle', 'cell-selection-fill-handle'),

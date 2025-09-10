@@ -367,8 +367,9 @@ type ExternalTestType = typeof extended & typeof agGridTestExtension & typeof si
 const test = Object.assign(extended, agGridTestExtension, singleFrameworkTests) as ExternalTestType;
 
 const expect = shouldBeAsyncGuard<typeof extended.expect>(playwrightExpect);
+const describe = test.describe;
 
-export { expect, test };
+export { expect, describe, test };
 
 export async function dragOverTo(source: Locator, target: Locator) {
     const { mouse } = source.page();
