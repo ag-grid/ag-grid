@@ -1130,6 +1130,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         return csvCreator!.getDataAsCsv(exportParams, true);
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-types
     private dispatchFlashCells(cellsToFlash: {}): void {
         window.setTimeout(() => {
             this.eventSvc.dispatchEvent({
