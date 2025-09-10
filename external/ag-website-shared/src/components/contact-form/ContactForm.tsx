@@ -1,6 +1,5 @@
-import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { CONTACT_FORM_DATA, RECAPTCHA_SITE_KEY } from '@ag-website-shared/constants';
+import { CONTACT_FORM_DATA } from '@ag-website-shared/constants';
 import { SITE_BASE_URL, SITE_URL } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import { pathJoin } from '@utils/pathJoin';
@@ -14,39 +13,13 @@ import styles from './ContactForm.module.scss';
 const { actionUrl, orgId, textAreaId } = getIsProduction() ? CONTACT_FORM_DATA.production : CONTACT_FORM_DATA.default;
 
 const isDev = getIsDev();
-const showCaptcha = !isDev;
 const returnUrl = pathJoin(SITE_URL, SITE_BASE_URL);
-
-const RECAPTCHA_URL = 'https://www.google.com/recaptcha/api.js';
 
 type FormValues = {
     first_name: string;
     last_name: string;
     email: string;
 } & Record<string, string>;
-
-function loadRecaptchaScript(): Promise<void> {
-    return new Promise((resolve, reject) => {
-        if ((window as any).grecaptcha) {
-            return resolve();
-        }
-        const id = 'grecaptcha-script';
-        const existing = document.getElementById(id) as HTMLScriptElement | null;
-        if (existing) {
-            existing.addEventListener('load', () => resolve(), { once: true });
-            existing.addEventListener('error', reject, { once: true });
-            return;
-        }
-        const s = document.createElement('script');
-        s.id = id;
-        s.src = RECAPTCHA_URL;
-        s.async = true;
-        s.defer = true;
-        s.onload = () => resolve();
-        s.onerror = reject;
-        document.head.appendChild(s);
-    });
-}
 
 export const ContactForm: FunctionComponent = () => {
     const formRef = useRef<HTMLFormElement>(null);
@@ -67,12 +40,6 @@ export const ContactForm: FunctionComponent = () => {
             const isDebugFlag = searchParams.get('debug') === 'true';
             setIsDebug(isDebugFlag);
         }
-
-        if (showCaptcha) {
-            loadRecaptchaScript().then(() => {
-                initCaptcha();
-            });
-        }
     }, []);
 
     const onValidSubmit = () => {
@@ -88,11 +55,6 @@ export const ContactForm: FunctionComponent = () => {
             onSubmit={handleSubmit(onValidSubmit)}
             noValidate
         >
-            <input
-                type="hidden"
-                name="captcha_settings"
-                value={`{"keyname":"agGridCom","fallback":"true","orgId":"${orgId}","ts":""}`}
-            />
             <input type="hidden" name="oid" value={orgId} />
             <input type="hidden" name="retURL" value={returnUrl} />
 
@@ -156,8 +118,6 @@ export const ContactForm: FunctionComponent = () => {
                 ></textarea>
                 {errors[textAreaId] && <p className="error">{(errors as any)[textAreaId]?.message as string}</p>}
             </div>
-
-            {showCaptcha && <div className="g-recaptcha" data-sitekey={RECAPTCHA_SITE_KEY} />}
 
             <input
                 className={classnames('button-primary', styles.submitButton)}
