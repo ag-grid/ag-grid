@@ -300,7 +300,7 @@ export class GridOptionsService
                 continue;
             }
 
-            let moduleToCheck: RequiredModule<T> | undefined | null = modValidations[key as keyof T];
+            let moduleToCheck: ModuleValidation<T>[keyof T] | null | undefined = modValidations[key as keyof T];
             if (typeof moduleToCheck === 'function') {
                 moduleToCheck = moduleToCheck(options, this.gridOptions, this.beans);
             }

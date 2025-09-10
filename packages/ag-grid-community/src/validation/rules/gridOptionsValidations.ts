@@ -5,7 +5,7 @@ import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
 import { _mergeDeep } from '../../utils/mergeDeep';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
-import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
+import type { Deprecations, OptionsValidator, RequiredModule, Validations } from '../validationTypes';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -105,7 +105,7 @@ function toConstrainedNum(key: keyof GridOptions, value: any, min: number): stri
     return `${key}: value should be a number`;
 }
 
-export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, ValidationModuleName>> = {
+export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredModule<GridOptions>>> = {
     alignedGrids: 'AlignedGrids',
     allowContextMenuWithControlKey: 'ContextMenu',
     autoSizeStrategy: 'ColumnAutoSize',
@@ -128,7 +128,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, ValidationM
     getRowClass: 'RowStyle',
     getRowStyle: 'RowStyle',
     groupTotalRow: 'SharedRowGrouping',
-    grandTotalRow: 'SharedRowGrouping',
+    grandTotalRow: ['SharedRowGrouping', 'SharedTreeData', 'SharedPivot'],
     initialState: 'GridState',
     isExternalFilterPresent: 'ExternalFilter',
     isRowPinnable: 'PinnedRow',
