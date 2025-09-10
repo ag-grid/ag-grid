@@ -220,7 +220,7 @@ export function _setScrollLeft(element: HTMLElement, value: number, rtl: boolean
     element.scrollLeft = value;
 }
 
-export function _clearElement(el: HTMLElement): void {
+export function _clearElement(el: HTMLElement | null | undefined): void {
     while (el && el.firstChild) {
         el.removeChild(el.firstChild);
     }

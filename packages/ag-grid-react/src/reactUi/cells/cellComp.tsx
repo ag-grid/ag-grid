@@ -179,7 +179,7 @@ const CellComp = ({
                 const parentEl = (forceWrapper ? eCellWrapper : eGui).current;
                 parentEl?.appendChild(compGui);
 
-                cellEditor.afterGuiAttached && cellEditor.afterGuiAttached();
+                cellEditor.afterGuiAttached?.();
             }
 
             setJsEditorComp(cellEditor);
@@ -316,7 +316,7 @@ const CellComp = ({
                     }
                     // start editing
                     setEditDetails({
-                        compDetails: compDetails!,
+                        compDetails,
                         popup,
                         popupPosition,
                         compProxy,
