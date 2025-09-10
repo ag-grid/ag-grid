@@ -11,7 +11,6 @@ export default [
             '@typescript-eslint/no-unused-vars': 'error',
             '@typescript-eslint/ban-types': 'error',
             '@typescript-eslint/no-var-requires': 'error',
-            '@typescript-eslint/prefer-readonly': 'error',
             'no-console': 'error',
         },
     },
