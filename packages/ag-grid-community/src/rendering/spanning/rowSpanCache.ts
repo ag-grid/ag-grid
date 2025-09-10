@@ -83,11 +83,11 @@ export class CellSpan {
  * Only create if spanning is enabled for this column.
  */
 export class RowSpanCache extends BeanStub {
-    private readonly centerValueNodeMap: Map<RowNode, CellSpan>;
+    private centerValueNodeMap: Map<RowNode, CellSpan>;
 
     // pinned rows
-    private readonly topValueNodeMap: Map<RowNode, CellSpan>;
-    private readonly bottomValueNodeMap: Map<RowNode, CellSpan>;
+    private topValueNodeMap: Map<RowNode, CellSpan>;
+    private bottomValueNodeMap: Map<RowNode, CellSpan>;
 
     constructor(private readonly column: AgColumn) {
         super();
@@ -187,15 +187,17 @@ export class RowSpanCache extends BeanStub {
                     }
                     checkNodeForCache(node);
                 });
+                this.centerValueNodeMap = newMap;
                 break;
             case 'top':
                 pinnedRowModel?.forEachPinnedRow('top', checkNodeForCache);
+                this.topValueNodeMap = newMap;
                 break;
             case 'bottom':
                 pinnedRowModel?.forEachPinnedRow('bottom', checkNodeForCache);
+                this.bottomValueNodeMap = newMap;
                 break;
         }
-        this[`${pinned}ValueNodeMap`] = newMap;
     }
 
     public isCellSpanning(node: RowNode): boolean {

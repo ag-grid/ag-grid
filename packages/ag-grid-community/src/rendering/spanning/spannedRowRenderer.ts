@@ -16,9 +16,9 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
         });
     }
 
-    private readonly topCtrls = new Map<RowNode, RowCtrl>();
-    private readonly bottomCtrls = new Map<RowNode, RowCtrl>();
-    private readonly centerCtrls = new Map<RowNode, RowCtrl>();
+    private topCtrls = new Map<RowNode, RowCtrl>();
+    private bottomCtrls = new Map<RowNode, RowCtrl>();
+    private centerCtrls = new Map<RowNode, RowCtrl>();
 
     private createAllCtrls(): void {
         this.createCtrls('top');
@@ -32,8 +32,7 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
     public createCtrls(ctrlsKey: 'top' | 'bottom' | 'center'): void {
         const { rowSpanSvc } = this.beans;
 
-        const ctrlsName = `${ctrlsKey}Ctrls` as const;
-        const previousCtrls = this[ctrlsName];
+        const previousCtrls = this.getCtrlsMap(ctrlsKey);
         const previousCtrlsSize = previousCtrls.size;
 
         // all currently rendered row ctrls which may have spanned cells
@@ -67,7 +66,7 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
         }
 
         // set even if no change, as we've deleted out of previousCtrls
-        this[ctrlsName] = newRowCtrls;
+        this.setCtrlsMap(ctrlsKey, newRowCtrls);
 
         // if no new cells, and size is equal can assume no removals either.
         const sameCount = newRowCtrls.size === previousCtrlsSize;
@@ -115,17 +114,39 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
     }
 
     public getCtrls(container: 'top' | 'bottom' | 'center'): RowCtrl[] {
-        const ctrlsName = `${container}Ctrls` as const;
-        return [...this[ctrlsName].values()];
+        return [...this.getCtrlsMap(container).values()];
     }
 
     private destroyRowCtrls(container: 'top' | 'bottom' | 'center'): void {
-        const ctrlsName = `${container}Ctrls` as const;
-        for (const ctrl of this[ctrlsName].values()) {
+        for (const ctrl of this.getCtrlsMap(container).values()) {
             ctrl.destroyFirstPass(true);
             ctrl.destroySecondPass();
         }
-        this[ctrlsName] = new Map();
+        this.setCtrlsMap(container, new Map());
+    }
+
+    private getCtrlsMap(container: 'top' | 'bottom' | 'center'): Map<RowNode, RowCtrl> {
+        switch (container) {
+            case 'top':
+                return this.topCtrls;
+            case 'bottom':
+                return this.bottomCtrls;
+            case 'center':
+                return this.centerCtrls;
+        }
+    }
+    private setCtrlsMap(container: 'top' | 'bottom' | 'center', map: Map<RowNode, RowCtrl>): void {
+        switch (container) {
+            case 'top':
+                this.topCtrls = map;
+                break;
+            case 'bottom':
+                this.bottomCtrls = map;
+                break;
+            case 'center':
+                this.centerCtrls = map;
+                break;
+        }
     }
 
     public override destroy(): void {
