@@ -128,7 +128,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     getRowClass: 'RowStyle',
     getRowStyle: 'RowStyle',
     groupTotalRow: 'SharedRowGrouping',
-    grandTotalRow: ['SharedRowGrouping', 'SharedTreeData', 'SharedPivot'],
+    grandTotalRow: ['SharedRowGrouping', 'TreeData'],
     initialState: 'GridState',
     isExternalFilterPresent: 'ExternalFilter',
     isRowPinnable: 'PinnedRow',
