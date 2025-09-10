@@ -134,7 +134,7 @@ async function loadPage(
     const queryParams = new URLSearchParams(queryOptions);
     const urlFramework = agFramework === reactFunctionalTsDev ? 'reactFunctionalTs' : agFramework;
 
-    await page.goto(`./archive/34.2.0/examples/${agExampleUrl}/${urlFramework}?${queryParams.toString()}`);
+    await page.goto(`./examples/${agExampleUrl}/${urlFramework}?${queryParams.toString()}`);
     await page.waitForLoadState('domcontentloaded');
     await page.waitForLoadState('load');
     await page.waitForLoadState('networkidle');

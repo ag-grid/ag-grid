@@ -39,7 +39,7 @@ export default defineConfig({
     use: {
         /* Base URL to use in actions like `await page.goto('/')`. */
         // baseURL: 'https://grid-staging.ag-grid.com',
-        baseURL: process.env.CI ? 'https://ag-grid.com' : 'https://localhost:4610',
+        baseURL: process.env.CI ? 'https://grid-staging.ag-grid.com' : 'https://localhost:4610',
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: 'off', // process.env.CI ? 'off' : 'retain-on-first-failure',
     },
