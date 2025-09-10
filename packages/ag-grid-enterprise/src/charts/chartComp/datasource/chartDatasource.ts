@@ -39,6 +39,8 @@ export interface ChartDatasourceParams {
     isScatter: boolean;
     aggFunc?: string | IAggFunc;
     referenceCellRange?: PartialCellRange;
+    /** Used for statistical charts */
+    combineGroupValues?: boolean;
 }
 
 interface IData {
@@ -94,7 +96,16 @@ export class ChartDatasource extends BeanStub {
     }
 
     private extractRowsFromGridRowModel(params: ChartDatasourceParams): IData {
-        const { crossFiltering, startRow, endRow, valueCols, dimensionCols, grouping, crossFilteringSort } = params;
+        const {
+            crossFiltering,
+            startRow,
+            endRow,
+            valueCols,
+            dimensionCols,
+            grouping,
+            crossFilteringSort,
+            combineGroupValues,
+        } = params;
         let extractedRowData: any[] = [];
         const colNames: { [key: string]: string[] } = {};
 
@@ -180,20 +191,26 @@ export class ChartDatasource extends BeanStub {
                         const labels = this.getGroupLabels(rowNode, valueString);
                         const value = labels.slice().reverse();
 
-                        const groupingValue: ChartValueWrapper<string[]> = {
+                        let groupingValue: ChartValueWrapper<string[]> = {
                             value,
                             // this is needed so that standalone can handle animations properly when data updates
                             id: id++,
                             toString: () => value.filter(Boolean).join(' - '),
                         };
 
-                        // Reuse previously created value object if it already exists
-                        const groupingKey = groupingValue.toString();
-                        const cachedGroupingValue = groupingCache[groupingKey];
+                        if (combineGroupValues) {
+                            // Reuse previously created value object if it already exists
+                            const groupingKey = groupingValue.toString();
+                            const cachedGroupingValue = groupingCache[groupingKey];
 
-                        data[colId] = cachedGroupingValue
-                            ? cachedGroupingValue
-                            : (groupingCache[groupingKey] = groupingValue);
+                            if (cachedGroupingValue) {
+                                groupingValue = cachedGroupingValue;
+                            } else {
+                                groupingCache[groupingKey] = groupingValue;
+                            }
+                        }
+
+                        data[colId] = groupingValue;
 
                         // keep track of group node indexes, so they can be padded when other groups are expanded
                         if (rowNode.group) {

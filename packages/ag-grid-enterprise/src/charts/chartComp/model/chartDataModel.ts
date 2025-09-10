@@ -19,7 +19,7 @@ import type { ChartDatasourceParams } from '../datasource/chartDatasource';
 import { ChartDatasource } from '../datasource/chartDatasource';
 import { ChartColumnService } from '../services/chartColumnService';
 import type { ChartTranslationService } from '../services/chartTranslationService';
-import { getMaxNumSeries, getSeriesType, isComboChart, isHierarchical } from '../utils/seriesTypeMapper';
+import { getMaxNumSeries, getSeriesType, isComboChart, isHierarchical, isStatistical } from '../utils/seriesTypeMapper';
 import { ComboChartModel } from './comboChartModel';
 
 export interface ColState {
@@ -211,6 +211,7 @@ export class ChartDataModel extends BeanStub {
             startRow,
             endRow,
             isScatter: ['scatter', 'bubble'].includes(this.chartType),
+            combineGroupValues: isStatistical(getSeriesType(this.chartType)),
         };
 
         const { chartData, colNames, groupChartData } = this.datasource.getData(params);

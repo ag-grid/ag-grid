@@ -59,6 +59,7 @@ interface SeriesParams {
     isRadial?: boolean;
     isHierarchical?: boolean;
     isPie?: boolean;
+    isStatistical?: boolean;
     canInvert?: boolean;
     canSwitchDirection?: boolean;
 }
@@ -123,15 +124,18 @@ const SERIES_TYPES: SeriesTypeParams = {
     },
     'range-bar': {
         isCartesian: true,
+        isStatistical: true,
         isEnterprise: true,
         canSwitchDirection: true,
     },
     'range-area': {
         isCartesian: true,
+        isStatistical: true,
         isEnterprise: true,
     },
     'box-plot': {
         isCartesian: true,
+        isStatistical: true,
         isEnterprise: true,
         canSwitchDirection: true,
     },
@@ -208,6 +212,10 @@ export function isRadial(seriesType: ChartSeriesType): boolean {
 
 export function isHierarchical(seriesType: ChartSeriesType): boolean {
     return doesSeriesHaveProperty(seriesType, 'isHierarchical');
+}
+
+export function isStatistical(seriesType: ChartSeriesType): boolean {
+    return doesSeriesHaveProperty(seriesType, 'isStatistical');
 }
 
 export function getCanonicalChartType(chartType: ChartType): Exclude<ChartType, 'doughnut'> {
