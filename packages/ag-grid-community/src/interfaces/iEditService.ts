@@ -37,6 +37,8 @@ export type StopEditParams = {
     event?: EditInputEvents;
     cancel?: boolean;
     source?: EditSource;
+    forceStop?: boolean;
+    forceCancel?: boolean;
     suppressNavigateAfterEdit?: boolean;
 };
 
@@ -55,6 +57,9 @@ export interface EditPosition extends EditRowPosition {
 export interface _SetEditingCellsParams {
     /** Update existing cells, omit or set `false` to replace currently editing cells. */
     update?: boolean;
+
+    /** Force the cells that are being marked as edited to be refreshed and only these cells not others */
+    forceRefreshOfEditCellsOnly?: boolean;
 }
 
 export interface IEditService extends NamedBean {

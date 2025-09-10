@@ -74,9 +74,13 @@ Top level Master Detail properties available on the Grid Options:
 
 ### Detail Cell Renderer Params
 
-Detail Cell Renderer parameters available on the `detailCellRendererParams` object:
-
+{% if isFramework("javascript", "angular", "vue") %}
 {% interfaceDocumentation interfaceName="IDetailCellRendererParams" names=["detailGridOptions", "getDetailRowData", "template", "refreshStrategy"] /%}
+{% /if %}
+
+{% if isFramework("react") %}
+{% interfaceDocumentation interfaceName="IDetailCellRendererParams" names=["detailGridOptions", "getDetailRowData", "refreshStrategy"] /%}
+{% /if %}
 
 ## Next Up
 

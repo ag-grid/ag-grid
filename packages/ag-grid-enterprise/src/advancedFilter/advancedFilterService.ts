@@ -3,6 +3,7 @@ import type {
     BeanCollection,
     ColumnModel,
     DataTypeService,
+    FilterManager,
     FilterValueService,
     IAdvancedFilterService,
     IRowNode,
@@ -30,6 +31,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     private dataTypeSvc?: DataTypeService;
     private advFilterExpSvc: AdvancedFilterExpressionService;
     private filterValueSvc: FilterValueService;
+    private filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
@@ -37,6 +39,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.dataTypeSvc = beans.dataTypeSvc;
         this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;
         this.filterValueSvc = beans.filterValueSvc!;
+        this.filterManager = beans.filterManager;
     }
 
     private enabled: boolean;
@@ -66,7 +69,12 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.addManagedEventListeners({
             newColumnsLoaded: (event) => this.onNewColumnsLoaded(event),
         });
-        this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => this.updateValidity());
+        this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => {
+            const updatedValidity = this.updateValidity();
+            if (updatedValidity) {
+                this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
+            }
+        });
     }
 
     public isEnabled(): boolean {

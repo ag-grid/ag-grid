@@ -94,7 +94,7 @@ export class StateService extends BeanStub implements NamedBean {
             initialState.columnPinning ||
             initialState.columnGroup
         ) {
-            colDelayRenderSvc?.hideColumns('stateService');
+            colDelayRenderSvc?.hideColumns('columnState');
         }
 
         const [newColumnsLoadedDestroyFunc, rowCountReadyDestroyFunc, firstDataRenderedDestroyFunc] =
@@ -104,7 +104,7 @@ export class StateService extends BeanStub implements NamedBean {
                         newColumnsLoadedDestroyFunc();
                         suppressEventsAndDispatchInitEvent(() => {
                             this.setupStateOnColumnsInitialised(initialState, !!partialColumnState);
-                            colDelayRenderSvc?.revealColumns('stateService');
+                            colDelayRenderSvc?.revealColumns('columnState');
                         });
                     }
                 },

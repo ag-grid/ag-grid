@@ -1,3 +1,4 @@
+import { RowNode, _exists, _getRowHeightForNode } from 'ag-grid-community';
 import type {
     BeanCollection,
     IExpansionService,
@@ -5,11 +6,11 @@ import type {
     RowGroupBulkExpansionState,
     RowGroupExpansionState,
     RowGroupOpenedEvent,
-    RowNode,
 } from 'ag-grid-community';
 
 import { BaseExpansionService } from '../../rowHierarchy/baseExpansionService';
 import type { ServerSideRowModel } from '../serverSideRowModel';
+import type { StoreFactory } from '../stores/storeFactory';
 import { ExpandStrategy } from './expansion/strategies/defaultStrategy';
 import { ExpandAllStrategy } from './expansion/strategies/expandAllStrategy';
 import type { IExpansionStrategy } from './expansion/strategies/iExpansionStrategy';
@@ -28,9 +29,11 @@ export class ServerSideExpansionService
 
     private strategy: IExpansionStrategy<RowGroupExpansionState> | IExpansionStrategy<RowGroupBulkExpansionState>;
     private serverSideRowModel: ServerSideRowModel;
+    private storeFactory: StoreFactory;
 
     public wireBeans(beans: BeanCollection) {
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
+        this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
     }
 
     public postConstruct(): void {
@@ -91,6 +94,7 @@ export class ServerSideExpansionService
         this.strategy.setRowExpanded(node, expanded);
         super.setExpanded(node, expanded, e);
         this.dispatchStateUpdatedEvent();
+        this.updateExpandedState(node);
     }
 
     public expandAll(expanded: boolean): void {
@@ -126,5 +130,42 @@ export class ServerSideExpansionService
         // values jump between group and footer, because the footer can be callback
         // we refresh regardless as the output of the callback could be a moving target
         this.beans.rowRenderer.refreshCells({ rowNodes: [event.node] });
+    }
+
+    public updateExpandedState(rowNode: RowNode): void {
+        const oldChildStore = rowNode.childStore;
+        if (rowNode.expanded) {
+            if (rowNode.master && !rowNode.detailNode) {
+                rowNode.detailNode = this.createDetailNode(rowNode);
+            }
+            if (!oldChildStore && rowNode.hasChildren()) {
+                const storeParams = this.serverSideRowModel.getParams();
+                rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
+            }
+        } else if (oldChildStore && this.gos.get('purgeClosedRowNodes')) {
+            rowNode.childStore = this.destroyBean(oldChildStore)!;
+        }
+    }
+
+    private createDetailNode(masterNode: RowNode): RowNode {
+        const detailNode = new RowNode(this.beans);
+
+        detailNode.detail = true;
+        detailNode.selectable = false;
+        detailNode.parent = masterNode;
+
+        if (_exists(masterNode.id)) {
+            detailNode.id = 'detail_' + masterNode.id;
+        }
+
+        detailNode.data = masterNode.data;
+        detailNode.level = masterNode.level + 1;
+
+        const defaultDetailRowHeight = 200;
+        const rowHeight = _getRowHeightForNode(this.beans, detailNode).height;
+
+        detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
+
+        return detailNode;
     }
 }
