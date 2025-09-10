@@ -798,8 +798,13 @@ export class LazyCache extends BeanStub {
     }
 
     private isNodeCached(node: RowNode): boolean {
+        // expanded groups are preserved as clearing these would cause lower rows to jump up
+        const isExpandedGroup = node.isExpandable() && node.expanded;
+        // unbalanced nodes are preserved as they are always expanded
         const isUnbalancedNode = this.gos.get('groupAllowUnbalanced') && node.key === '';
-        return (node.isExpandable() && node.expanded) || this.isNodeFocused(node) || isUnbalancedNode;
+        // Editing rows remain cached as if they're editing we would lose edit state/context/popups
+        const isEditing = !!this.beans.editSvc?.isRowEditing(node);
+        return isExpandedGroup || this.isNodeFocused(node) || isUnbalancedNode || isEditing;
     }
 
     private extractDuplicateIds(rows: any[]) {
