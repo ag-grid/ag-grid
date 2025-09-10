@@ -68,6 +68,10 @@ export class CellRangeFeature implements ICellRangeFeature {
         this.onCellSelectionChanged();
     }
 
+    public unsetComp(): void {
+        this.beans.context.destroyBean(this.selectionHandle);
+    }
+
     public onCellSelectionChanged(): void {
         const cellComp = this.cellComp;
         // when using reactUi, given UI is async, it's possible this method is called before the comp is registered
@@ -216,14 +220,15 @@ export class CellRangeFeature implements ICellRangeFeature {
     }
 
     public refreshHandle(): void {
-        if (this.beans.context.isDestroyed()) {
+        const { context } = this.beans;
+        if (context.isDestroyed()) {
             return;
         }
 
         const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
 
         if (this.selectionHandle && !shouldHaveSelectionHandle) {
-            this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
+            this.selectionHandle = context.destroyBean(this.selectionHandle);
         }
 
         if (shouldHaveSelectionHandle) {
@@ -291,6 +296,6 @@ export class CellRangeFeature implements ICellRangeFeature {
     }
 
     public destroy(): void {
-        this.beans.context.destroyBean(this.selectionHandle);
+        this.unsetComp();
     }
 }
