@@ -102,7 +102,7 @@ export class CellCtrl extends BeanStub {
     public value: any;
     public valueFormatted: any;
 
-    private rangeFeature: ICellRangeFeature | undefined = undefined;
+    public rangeFeature: ICellRangeFeature | undefined = undefined;
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
