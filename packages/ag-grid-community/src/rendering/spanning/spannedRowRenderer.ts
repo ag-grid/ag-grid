@@ -103,8 +103,7 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
             return undefined;
         }
 
-        const ctrlsName = `${_normalisePinnedValue(cellPosition.rowPinned)}Ctrls` as const;
-        const ctrl = this[ctrlsName].get(cellSpan.firstNode);
+        const ctrl = this.getCtrlsMap(cellPosition.rowPinned).get(cellSpan.firstNode);
 
         if (!ctrl) {
             return undefined;
@@ -125,17 +124,17 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
         this.setCtrlsMap(container, new Map());
     }
 
-    private getCtrlsMap(container: 'top' | 'bottom' | 'center'): Map<RowNode, RowCtrl> {
+    private getCtrlsMap(container: RowPinnedType | 'center'): Map<RowNode, RowCtrl> {
         switch (container) {
             case 'top':
                 return this.topCtrls;
             case 'bottom':
                 return this.bottomCtrls;
-            case 'center':
+            default:
                 return this.centerCtrls;
         }
     }
-    private setCtrlsMap(container: 'top' | 'bottom' | 'center', map: Map<RowNode, RowCtrl>): void {
+    private setCtrlsMap(container: RowPinnedType | 'center', map: Map<RowNode, RowCtrl>): void {
         switch (container) {
             case 'top':
                 this.topCtrls = map;
@@ -143,7 +142,7 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
             case 'bottom':
                 this.bottomCtrls = map;
                 break;
-            case 'center':
+            default:
                 this.centerCtrls = map;
                 break;
         }
@@ -156,7 +155,3 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
         this.destroyRowCtrls('center');
     }
 }
-
-export const _normalisePinnedValue = (pinned: RowPinnedType): 'top' | 'bottom' | 'center' => {
-    return pinned ?? 'center';
-};
