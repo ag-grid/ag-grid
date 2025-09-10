@@ -42,7 +42,11 @@ export class StateService extends BeanStub implements NamedBean {
     private cachedState: GridState;
     private suppressEvents = true;
     private readonly queuedUpdateSources: Set<keyof GridState | 'gridInitializing' | 'api'> = new Set();
-    private readonly dispatchStateUpdateEventDebounced = _debounce(this, () => this.dispatchQueuedStateUpdateEvents(), 0);
+    private readonly dispatchStateUpdateEventDebounced = _debounce(
+        this,
+        () => this.dispatchQueuedStateUpdateEvents(),
+        0
+    );
     // If user is doing a manual expand all node by node, we don't want to process one at a time.
     // EVENT_ROW_GROUP_OPENED is already async, so no impact of making the state async here.
     private readonly onRowGroupOpenedDebounced = _debounce(

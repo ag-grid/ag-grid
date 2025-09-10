@@ -140,9 +140,10 @@ export class ColumnFilterService
     public model: FilterModel;
     /** This contains the UI state for handler columns */
     private readonly state: Map<string, FilterDisplayState> = new Map();
-    private readonly handlerMap: { -readonly [K in keyof typeof FILTER_HANDLER_MAP]?: (typeof FILTER_HANDLER_MAP)[K] } = {
-        ...FILTER_HANDLER_MAP,
-    };
+    private readonly handlerMap: { -readonly [K in keyof typeof FILTER_HANDLER_MAP]?: (typeof FILTER_HANDLER_MAP)[K] } =
+        {
+            ...FILTER_HANDLER_MAP,
+        };
     public isGlobalButtons: boolean = false;
     public activeFilterComps: Set<FilterComp> = new Set();
 
