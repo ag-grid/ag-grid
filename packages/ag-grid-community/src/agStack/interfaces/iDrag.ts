@@ -1,11 +1,13 @@
 export interface IDragService {
     readonly beanName: 'dragSvc';
 
+    readonly startTarget: EventTarget | null;
+
     removeDragSource(params: DragListenerParams): void;
 
     addDragSource(params: DragListenerParams): void;
 
-    cancelDrag(el: Element): void;
+    cancelDrag(el?: Element): void;
 }
 
 export interface DragListenerParams {
