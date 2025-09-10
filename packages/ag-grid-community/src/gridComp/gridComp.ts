@@ -19,7 +19,7 @@ export class GridComp extends TabGuardComp {
     private readonly pagination: TabGuardComp = RefPlaceholder;
     private readonly rootWrapperBody: HTMLElement = RefPlaceholder;
 
-    private eGridDiv: HTMLElement;
+    private readonly eGridDiv: HTMLElement;
 
     constructor(eGridDiv: HTMLElement) {
         super();

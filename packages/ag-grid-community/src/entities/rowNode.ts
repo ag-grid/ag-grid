@@ -262,7 +262,7 @@ export class RowNode<TData = any>
     public __localEventService: LocalEventService<RowNodeEventType> | null;
     private frameworkEventListenerService?: IFrameworkEventListenerService<any, any>;
 
-    private beans: BeanCollection;
+    private readonly beans: BeanCollection;
 
     /** If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES` */
     public __checkAutoHeightsDebounced: () => void;

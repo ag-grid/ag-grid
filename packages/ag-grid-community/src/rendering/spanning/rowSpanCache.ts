@@ -83,11 +83,11 @@ export class CellSpan {
  * Only create if spanning is enabled for this column.
  */
 export class RowSpanCache extends BeanStub {
-    private centerValueNodeMap: Map<RowNode, CellSpan>;
+    private readonly centerValueNodeMap: Map<RowNode, CellSpan>;
 
     // pinned rows
-    private topValueNodeMap: Map<RowNode, CellSpan>;
-    private bottomValueNodeMap: Map<RowNode, CellSpan>;
+    private readonly topValueNodeMap: Map<RowNode, CellSpan>;
+    private readonly bottomValueNodeMap: Map<RowNode, CellSpan>;
 
     constructor(private readonly column: AgColumn) {
         super();

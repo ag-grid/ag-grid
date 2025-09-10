@@ -29,7 +29,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         this._debouncedCalculateRowHeights();
     }
 
-    private _debouncedCalculateRowHeights = _debounce(this, this.calculateRowHeights.bind(this), 1);
+    private readonly _debouncedCalculateRowHeights = _debounce(this, this.calculateRowHeights.bind(this), 1);
     private calculateRowHeights() {
         const { visibleCols, rowModel, rowSpanSvc, pinnedRowModel } = this.beans;
         const displayedAutoHeightCols = visibleCols.autoHeightCols;

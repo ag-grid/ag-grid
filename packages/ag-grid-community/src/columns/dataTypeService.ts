@@ -500,7 +500,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     // using an object here to enforce dev to not forget to implement new types as they are added
-    private columnDefinitionPropsPerDataType: Record<
+    private readonly columnDefinitionPropsPerDataType: Record<
         BaseCellDataType,
         (args: {
             colDef: ColDef;

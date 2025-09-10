@@ -12,7 +12,7 @@ import { BaseEditStrategy } from './baseEditStrategy';
 export class FullRowEditStrategy extends BaseEditStrategy {
     override beanName = 'fullRow' as BeanName | undefined;
     private rowNode?: IRowNode;
-    private startedRows: IRowNode[] = [];
+    private readonly startedRows: IRowNode[] = [];
 
     public override shouldStop(
         position?: EditPosition,

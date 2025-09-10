@@ -57,7 +57,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private lastScrollSource: [VerticalScrollSource | null, HorizontalScrollSource | null] = [null, null];
 
-    private eBodyViewport: HTMLElement;
+    private readonly eBodyViewport: HTMLElement;
 
     private scrollLeft = -1;
     private nextScrollTop = -1;

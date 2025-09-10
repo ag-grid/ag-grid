@@ -97,12 +97,12 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
         y: 0,
     };
 
-    private position = {
+    private readonly position = {
         x: 0,
         y: 0,
     };
 
-    private lastSize = {
+    private readonly lastSize = {
         width: -1,
         height: -1,
     };
@@ -117,9 +117,9 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
     private minHeight?: number;
     private positioned = false;
     private resizersAdded = false;
-    private config: PositionableOptions;
+    private readonly config: PositionableOptions;
 
-    private resizeListeners: DragListenerParams[] = [];
+    private readonly resizeListeners: DragListenerParams[] = [];
     private moveElementDragListener: DragListenerParams | undefined;
 
     private offsetParent: HTMLElement;

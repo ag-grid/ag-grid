@@ -19,11 +19,11 @@ const CenterElement: ElementParams = {
 };
 
 export class HeaderRowContainerComp extends Component {
-    private eCenterContainer: HTMLElement = RefPlaceholder;
+    private readonly eCenterContainer: HTMLElement = RefPlaceholder;
 
     private eRowContainer: HTMLElement;
 
-    private pinned: ColumnPinnedType;
+    private readonly pinned: ColumnPinnedType;
 
     private headerRowComps: { [ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp } = {};
     private rowCompsList: HeaderRowComp[] = [];

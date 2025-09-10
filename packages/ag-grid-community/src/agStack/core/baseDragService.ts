@@ -31,7 +31,7 @@ export class BaseDragService<
     private touchLastTime: Touch | null;
     private touchStart: Touch | null;
 
-    private dragEndFunctions: ((...args: any[]) => any)[] = [];
+    private readonly dragEndFunctions: ((...args: any[]) => any)[] = [];
 
     private readonly dragSources: DragSourceAndListener[] = [];
 

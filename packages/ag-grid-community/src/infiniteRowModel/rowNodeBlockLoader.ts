@@ -14,7 +14,7 @@ export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implem
     private checkBlockToLoadDebounce: () => void;
 
     private activeBlockLoadsCount = 0;
-    private blocks: InfiniteBlock[] = [];
+    private readonly blocks: InfiniteBlock[] = [];
     private active = true;
 
     public postConstruct(): void {

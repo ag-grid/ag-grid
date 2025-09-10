@@ -119,8 +119,8 @@ export class ColumnFilterService
 {
     beanName: BeanName = 'colFilter';
 
-    private allColumnFilters = new Map<string, FilterWrapper>();
-    private allColumnListeners = new Map<string, (() => null) | undefined>();
+    private readonly allColumnFilters = new Map<string, FilterWrapper>();
+    private readonly allColumnListeners = new Map<string, (() => null) | undefined>();
     private activeAggregateFilters: DoesFilterPassWrapper[] = [];
     private activeColumnFilters: DoesFilterPassWrapper[] = [];
 
@@ -139,8 +139,8 @@ export class ColumnFilterService
     /** This may not contain the model for non-handler columns */
     public model: FilterModel;
     /** This contains the UI state for handler columns */
-    private state: Map<string, FilterDisplayState> = new Map();
-    private handlerMap: { -readonly [K in keyof typeof FILTER_HANDLER_MAP]?: (typeof FILTER_HANDLER_MAP)[K] } = {
+    private readonly state: Map<string, FilterDisplayState> = new Map();
+    private readonly handlerMap: { -readonly [K in keyof typeof FILTER_HANDLER_MAP]?: (typeof FILTER_HANDLER_MAP)[K] } = {
         ...FILTER_HANDLER_MAP,
     };
     public isGlobalButtons: boolean = false;

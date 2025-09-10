@@ -9,13 +9,13 @@ import { isColumnGroup } from '../../entities/agColumnGroup';
 import { _isDomLayout } from '../../gridOptionsUtils';
 
 export class SetLeftFeature extends BeanStub {
-    private ariaEl: HTMLElement;
+    private readonly ariaEl: HTMLElement;
 
     private actualLeft: number;
 
     constructor(
         private readonly columnOrGroup: AgColumn | AgColumnGroup,
-        private eCell: HTMLElement,
+        private readonly eCell: HTMLElement,
         beans: BeanCollection,
         private colsSpanning?: AgColumn[]
     ) {

@@ -16,9 +16,9 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
         });
     }
 
-    private topCtrls = new Map<RowNode, RowCtrl>();
-    private bottomCtrls = new Map<RowNode, RowCtrl>();
-    private centerCtrls = new Map<RowNode, RowCtrl>();
+    private readonly topCtrls = new Map<RowNode, RowCtrl>();
+    private readonly bottomCtrls = new Map<RowNode, RowCtrl>();
+    private readonly centerCtrls = new Map<RowNode, RowCtrl>();
 
     private createAllCtrls(): void {
         this.createCtrls('top');

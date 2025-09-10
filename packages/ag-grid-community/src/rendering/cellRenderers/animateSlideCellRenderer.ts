@@ -13,7 +13,7 @@ const AnimateSlideCellRendererElement: ElementParams = {
 };
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
-    private eCurrent: HTMLElement = RefPlaceholder;
+    private readonly eCurrent: HTMLElement = RefPlaceholder;
     private ePrevious: HTMLElement | null;
 
     private lastValue: any;

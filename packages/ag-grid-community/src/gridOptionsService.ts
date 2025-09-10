@@ -93,7 +93,7 @@ export class GridOptionsService
         this.api = beans.gridApi;
         this.gridId = beans.context.getId();
     }
-    private domDataKey = '__AG_' + Math.random().toString();
+    private readonly domDataKey = '__AG_' + Math.random().toString();
 
     /** This is only used for the main DOM element */
     private readonly instanceId = gridInstanceSequence++;
@@ -108,7 +108,7 @@ export class GridOptionsService
         return this.gridOptions['context'];
     }
 
-    private propEventSvc: LocalEventService<keyof GridOptions> = new LocalEventService();
+    private readonly propEventSvc: LocalEventService<keyof GridOptions> = new LocalEventService();
 
     public postConstruct(): void {
         this.validateGridOptions(this.gridOptions);
@@ -238,7 +238,7 @@ export class GridOptionsService
     // It forces events defined in GridOptionsService.alwaysSyncGlobalEvents to be fired synchronously.
     // This is required for events such as GridPreDestroyed.
     // Other events can be fired asynchronously or synchronously depending on config.
-    private globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
+    private readonly globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
         return (eventName: AgEventType, event?: any) => {
             // prevent events from being fired _after_ the grid has been destroyed
             if (!this.isAlive()) {

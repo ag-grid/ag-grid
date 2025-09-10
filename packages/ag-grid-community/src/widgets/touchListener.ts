@@ -17,9 +17,9 @@ export interface LongTapEvent extends AgEvent<'longTap'> {
 
 export type TouchListenerEvent = 'tap' | 'doubleTap' | 'longTap';
 export class TouchListener implements IEventEmitter<TouchListenerEvent> {
-    private DOUBLE_TAP_MILLIS = 500;
+    private readonly DOUBLE_TAP_MILLIS = 500;
 
-    private destroyFuncs: ((...args: any[]) => any)[] = [];
+    private readonly destroyFuncs: ((...args: any[]) => any)[] = [];
 
     private moved: boolean;
 
@@ -28,9 +28,9 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
 
     private lastTapTime: number | null;
 
-    private localEventService: LocalEventService<TouchListenerEvent> = new LocalEventService();
+    private readonly localEventService: LocalEventService<TouchListenerEvent> = new LocalEventService();
 
-    private preventMouseClick: boolean;
+    private readonly preventMouseClick: boolean;
 
     constructor(eElement: Element, preventMouseClick = false) {
         this.preventMouseClick = preventMouseClick;

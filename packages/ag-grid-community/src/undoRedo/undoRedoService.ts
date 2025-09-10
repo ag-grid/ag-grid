@@ -28,8 +28,8 @@ export class UndoRedoService extends BeanStub implements NamedBean {
 
     private isPasting = false;
     private isRangeInAction = false;
-    private batchEditing = false;
-    private bulkEditing = false;
+    private readonly batchEditing = false;
+    private readonly bulkEditing = false;
 
     public postConstruct(): void {
         const { gos, ctrlsSvc } = this.beans;
@@ -73,7 +73,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         });
     }
 
-    private onCellValueChanged = (event: CellValueChangedEvent): void => {
+    private readonly onCellValueChanged = (event: CellValueChangedEvent): void => {
         const eventCell: CellPosition = { column: event.column, rowIndex: event.rowIndex!, rowPinned: event.rowPinned };
         const isCellEditing = this.activeCellEdit !== null && _areCellsEqual(this.activeCellEdit, eventCell);
         const isRowEditing = this.activeRowEdit !== null && _isSameRow(this.activeRowEdit, eventCell);
@@ -97,7 +97,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         this.cellValueChanges.push(cellValueChange);
     };
 
-    private clearStacks = () => {
+    private readonly clearStacks = () => {
         this.undoStack.clear();
         this.redoStack.clear();
     };

@@ -129,8 +129,8 @@ export class CellCtrl extends BeanStub {
     // if cell has been focused, check if it's focused when destroyed
     private hasBeenFocused = false;
 
-    private editSvc?: IEditService;
-    private hasEdit: boolean = false;
+    private readonly editSvc?: IEditService;
+    private readonly hasEdit: boolean = false;
 
     public tooltipFeature: TooltipFeature | undefined = undefined;
     public editorTooltipFeature: TooltipFeature | undefined = undefined;
