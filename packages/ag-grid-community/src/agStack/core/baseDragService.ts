@@ -30,12 +30,13 @@ export class BaseDragService<
 {
     beanName = 'dragSvc' as const;
 
-    private currentDragParams: DragListenerParams | null;
-    public dragging: boolean;
-    public startTarget: EventTarget | null;
-    private mouseStartEvent: MouseEvent | null;
-    private touchLastTime: Touch | null;
-    private touchStart: Touch | null;
+    public dragging: boolean = false;
+    public startTarget: EventTarget | null = null;
+
+    private currentDragParams: DragListenerParams | null = null;
+    private mouseStartEvent: MouseEvent | null = null;
+    private touchLastTime: Touch | null = null;
+    private touchStart: Touch | null = null;
     private pointerId: number | null = null;
     private pointerEl: Element | null = null;
     private prevTouchAction: string | undefined = undefined;
@@ -542,7 +543,6 @@ interface DragSourceAndListener {
 const INTERACTIVE_TAG_REGEX = /^(a|textarea|input|select|button)$/i;
 
 function isOverFormFieldElement(event: Event): boolean {
-    const el = event.target as HTMLElement | null;
-    const tag = el?.tagName;
-    return tag ? INTERACTIVE_TAG_REGEX.test(tag) : false;
+    const tag = (event.target as Element | null)?.tagName;
+    return !!tag && INTERACTIVE_TAG_REGEX.test(tag);
 }
