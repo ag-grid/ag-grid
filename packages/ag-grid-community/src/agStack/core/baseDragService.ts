@@ -258,10 +258,6 @@ export class BaseDragService<
 
         const mouseDrag = new BaseDragging<'mouse', MouseEvent>('mouse', params, mouseEvent);
 
-        if (this.shouldPreventMouseEvent(mouseEvent)) {
-            preventEventDefault(mouseEvent);
-        }
-
         const mouseMoveEvent = (event: MouseEvent) => this.onMouseMove(event);
         const mouseUpEvent = (event: MouseEvent) => this.onUpCommon(event);
 
@@ -380,7 +376,6 @@ export class BaseDragService<
     protected shouldPreventMouseEvent(mouseEvent: MouseEvent): boolean {
         const type = mouseEvent.type;
         const isMouseMove = type === 'mousemove' || type === 'pointermove';
-
         return (
             isMouseMove &&
             mouseEvent.cancelable &&
@@ -469,9 +464,6 @@ class BaseDragging<TKind extends DraggingKind, TEvent extends PointerEvent | Mou
         public readonly dragSource: DragListenerParams,
         public readonly startEvent: TEvent
     ) {
-        this.kind = kind;
-        this.dragSource = dragSource;
-        this.startEvent = startEvent;
         this.eElement = dragSource.eElement;
     }
 
