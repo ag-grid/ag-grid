@@ -30,7 +30,7 @@ import { _error } from './validation/logging';
 import { COLUMN_DEFINITION_MOD_VALIDATIONS } from './validation/rules/colDefValidations';
 import { GRID_OPTIONS_MODULES } from './validation/rules/gridOptionsValidations';
 import type { ValidationService } from './validation/validationService';
-import type { ModuleValidation, RequiredModule } from './validation/validationTypes';
+import type { ModuleValidation } from './validation/validationTypes';
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never;

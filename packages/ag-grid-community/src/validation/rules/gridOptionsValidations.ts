@@ -1,5 +1,4 @@
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
-import type { ValidationModuleName } from '../../interfaces/iModule';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
