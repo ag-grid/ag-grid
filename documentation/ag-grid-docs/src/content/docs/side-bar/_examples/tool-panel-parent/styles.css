@@ -21,7 +21,6 @@
 /* Base styles for the container */
 #popup {
     display: none; /* Hidden by default */
-    z-index: 1000;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -58,12 +57,12 @@
         min-height: 200px;
     }
     position: fixed;
-    z-index: 1000;
-    top: 0;
+    z-index: 2;
+    top: 54px;
     bottom: 0;
     width: 300px;
     display: flex;
-    transform: translateX(-342px);
+    transform: translateX(-344px);
     transition: transform 0.3s ease-in-out;
 }
 

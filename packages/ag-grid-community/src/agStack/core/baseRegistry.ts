@@ -7,13 +7,7 @@ import type { IRegistry } from '../interfaces/iRegistry';
 import { AgBeanStub } from './agBeanStub';
 
 export abstract class BaseRegistry<
-        TBeanCollection extends AgCoreBeanCollection<
-            TBeanCollection,
-            TProperties,
-            TGlobalEvents,
-            TCommon,
-            TPropertiesService
-        >,
+        TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         TProperties extends BaseProperties,
         TGlobalEvents extends BaseEvents,
         TCommon,

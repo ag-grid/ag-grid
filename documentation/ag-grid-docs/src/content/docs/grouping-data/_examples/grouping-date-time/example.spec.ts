@@ -40,7 +40,7 @@ test.agExample(import.meta, () => {
 
         // Expand column group to verify
         await headerGroupCell.locator('.ag-header-expand-icon-collapsed').click();
-        expect(
+        await expect(
             agIdFor.headerGroupCell(`pivotGroup_${vcolPrefix}-date-year-${vcolPrefix}-date-month_2000-10_0`)
         ).toBeVisible();
 

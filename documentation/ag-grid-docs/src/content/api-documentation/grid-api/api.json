@@ -1236,7 +1236,13 @@
                 "url": "./server-side-model-configuration/#debug-info"
             }
         },
-        "isLastRowIndexKnown": {}
+        "isLastRowIndexKnown": {},
+        "resetRowHeights": {
+            "more": {
+                "name": "Changing Row Height",
+                "url": "./row-height/#changing-row-height"
+            }
+        }
     },
     "find": {
         "meta": {

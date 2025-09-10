@@ -1,5 +1,8 @@
 import type { GridApi, IRowNode, RowDataTransaction, RowNode, RowNodeTransaction } from 'ag-grid-community';
 
+import { GridRows } from './gridRows/gridRows';
+import { GridRowsDiagramTree } from './gridRows/gridRowsDiagramTree';
+
 export function optionalEscapeString(s: string): string {
     return /^(?!\d)\w[._-\w]*$|^\d+$/.test(s) ? s : JSON.stringify(s);
 }
@@ -61,4 +64,10 @@ export function isAgHtmlElementVisible(element: Element | null | undefined): boo
         current = current.parentElement;
     }
     return true;
+}
+
+export function drawGrid(api: GridApi): void {
+    const gr = new GridRows(api);
+    const tr = new GridRowsDiagramTree(gr);
+    console.log(tr.diagramToString(false, null));
 }

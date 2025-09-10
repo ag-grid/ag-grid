@@ -66,6 +66,7 @@ type InternalModuleName =
     | 'CheckboxCellRenderer'
     | 'ClientSideRowModelFilter'
     | 'ClientSideRowModelHierarchy'
+    | 'ColumnDelayRender'
     | 'ColumnFilter'
     | 'ColumnFlex'
     | 'ColumnGroupHeaderComp'

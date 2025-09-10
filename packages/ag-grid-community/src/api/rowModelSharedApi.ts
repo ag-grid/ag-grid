@@ -10,13 +10,13 @@ export function collapseAll(beans: BeanCollection) {
 }
 
 export function onRowHeightChanged(beans: BeanCollection) {
-    if (beans.rowAutoHeight?.active) {
-        _warn(3);
-        return;
-    }
     beans.rowModel?.onRowHeightChanged();
 }
 
 export function resetRowHeights(beans: BeanCollection) {
+    if (beans.rowAutoHeight?.active) {
+        _warn(3);
+        return;
+    }
     beans.rowModel?.resetRowHeights();
 }

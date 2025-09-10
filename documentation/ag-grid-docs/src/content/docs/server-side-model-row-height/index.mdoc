@@ -31,18 +31,18 @@ details on these properties.
 Ensure `maxBlocksInCache` is not set when using auto row height.
 {% /note %}
 
-## Setting and restoring Row Height
+## Changing Row Height
 
 To dynamically set or restore row heights in the Server-Side Row Model, use `setRowHeight()` to apply custom heights to specific rows and `resetRowHeights()` to revert all rows to the values calculated by the `getRowHeight()` in Grid Options. See [Changing Row Height](./row-height/#rownodesetrowheightheight-and-apionrowheightchanged) for more.
 
-The following example demonstrates how to set and reset row heights:
+{% apiDocumentation source="grid-api/api.json" section="serverSideRowModel" names=["resetRowHeights"] /%}
+
+The following example demonstrates this functionality:
+
+- Clicking on a row sets its height to `100px` using `setRowHeight()`.
+- Clicking the "Reset Row Heights" button resets all rows to their original heights using `resetRowHeights()`.
 
 {% gridExampleRunner title="Reset Row Height Example" name="resetting-row-height" exampleHeight=630 /%}
-
-Note the following:
-- `getRowHeight()` defines a function to dynamically calculate row heights based on data or conditions.
-- `resetRowHeights()` resets all rows to their original heights, as determined by getRowHeight or default values.
-- `onRowClicked()` and other table interactions can be set up to trigger height adjustments via `setRowHeight()` or resets.
 
 ## Next Up
 

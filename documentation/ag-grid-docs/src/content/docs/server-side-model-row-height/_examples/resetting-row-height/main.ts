@@ -25,9 +25,9 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-let gridApi: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicDataWithId>;
 
-const gridOptions: GridOptions<IOlympicData> = {
+const gridOptions: GridOptions<IOlympicDataWithId> = {
     columnDefs: [
         { field: 'athlete', minWidth: 200 },
         { field: 'age' },
@@ -47,7 +47,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         enableValue: true,
         sortable: false,
     },
-    getRowId: (p) => p.data?.id,
+    getRowId: (p) => String(p.data?.id),
     getRowHeight: (p) => {
         return 50 + 30 * Math.sin((p.data?.id ?? 0) / 5 - Math.PI / 2);
     },
@@ -120,21 +120,24 @@ function getLastRowIndex(request, results) {
     // if on or after the last block, work out the last row, otherwise return 'undefined'
     return currentLastRow < (request.endRow || 0) ? currentLastRow : undefined;
 }
-fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then((response) => response.json())
-    .then(function (data) {
-        // adding row id to data
-        let idSequence = 0;
-        data.forEach(function (item: { id: number }) {
-            item.id = idSequence++;
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then(function (data) {
+            // adding row id to data
+            let idSequence = 0;
+            data.forEach(function (item: { id: number }) {
+                item.id = idSequence++;
+            });
+
+            // setup the fake server with entire dataset
+            const fakeServer = createFakeServer(data);
+
+            // create datasource with a reference to the fake server
+            const datasource = createServerSideDatasource(fakeServer);
+
+            // register the datasource with the grid
+            gridApi.setGridOption('serverSideDatasource', datasource);
         });
-
-        // setup the fake server with entire dataset
-        const fakeServer = createFakeServer(data);
-
-        // create datasource with a reference to the fake server
-        const datasource = createServerSideDatasource(fakeServer);
-
-        // register the datasource with the grid
-        gridApi.setGridOption('serverSideDatasource', datasource);
-    });
+});

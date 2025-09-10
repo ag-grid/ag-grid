@@ -9,7 +9,12 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-import type { IColumnLimit, ISizeColumnsToFitParams, SizeColumnsToContentColumnLimits } from '../interfaces/autoSize';
+import type {
+    IColumnLimit,
+    ISizeColumnsToFitParams,
+    SizeColumnsToContentColumnLimits,
+    SizeColumnsToContentStrategy,
+} from '../interfaces/autoSize';
 import { _warn } from '../validation/logging';
 import { TouchListener } from '../widgets/touchListener';
 
@@ -23,7 +28,20 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private resizeOperationQueue: (() => void)[] = [];
 
     public postConstruct(): void {
-        this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered() });
+        const autoSizeStrategy = this.gos.get('autoSizeStrategy');
+
+        if (autoSizeStrategy) {
+            let shouldHideColumns = false;
+            const type = autoSizeStrategy.type;
+            if (type === 'fitGridWidth' || type === 'fitProvidedWidth') {
+                shouldHideColumns = true;
+            } else if (type === 'fitCellContents') {
+                this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered(autoSizeStrategy) });
+            }
+            if (shouldHideColumns) {
+                this.beans.colDelayRenderSvc?.hideColumns(type);
+            }
+        }
     }
 
     public autoSizeCols(params: {
@@ -451,14 +469,18 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public applyAutosizeStrategy(): void {
-        const autoSizeStrategy = this.gos.get('autoSizeStrategy');
-        if (!autoSizeStrategy) {
+        const { gos, colDelayRenderSvc } = this.beans;
+        const autoSizeStrategy = gos.get('autoSizeStrategy');
+        if (!autoSizeStrategy || autoSizeStrategy.type === 'fitCellContents') {
             return;
         }
 
-        const { type } = autoSizeStrategy;
         // ensure things like aligned grids have linked first
         setTimeout(() => {
+            if (!this.isAlive()) {
+                return;
+            }
+            const type = autoSizeStrategy.type;
             if (type === 'fitGridWidth') {
                 const { columnLimits: propColumnLimits, defaultMinWidth, defaultMaxWidth } = autoSizeStrategy;
                 const columnLimits = propColumnLimits?.map(({ colId: key, minWidth, maxWidth }) => ({
@@ -474,18 +496,17 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             } else if (type === 'fitProvidedWidth') {
                 this.sizeColumnsToFit(autoSizeStrategy.width, 'sizeColumnsToFit');
             }
+            colDelayRenderSvc?.revealColumns(type);
         });
     }
 
-    private onFirstDataRendered(): void {
-        const autoSizeStrategy = this.gos.get('autoSizeStrategy');
-        if (autoSizeStrategy?.type !== 'fitCellContents') {
-            return;
-        }
-
-        const { colIds: columns, skipHeader, defaultMaxWidth, defaultMinWidth, columnLimits } = autoSizeStrategy;
+    private onFirstDataRendered(strategy: SizeColumnsToContentStrategy): void {
+        const { colIds: columns, skipHeader, defaultMaxWidth, defaultMinWidth, columnLimits } = strategy;
         // ensure render has finished
         setTimeout(() => {
+            if (!this.isAlive()) {
+                return;
+            }
             const params = {
                 skipHeader,
                 source: 'autosizeColumns' as const,

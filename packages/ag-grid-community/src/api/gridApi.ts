@@ -532,6 +532,8 @@ export interface _CsrmSsrmSharedGridApi {
 export interface _RowModelSharedApi {
     /**
      * Tells the grid to recalculate the row heights.
+     *
+     * @agModule `ClientSideRowModelApiModule / ServerSideRowModelApiModule`
      */
     resetRowHeights(): void;
 

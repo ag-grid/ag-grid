@@ -202,15 +202,20 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             const modelForFilter = getFilterModelForIndex(model, index);
             const { filter, filterParams, handler, handlerParams, state } = wrapper;
             if (handler) {
+                const newState = {
+                    model: modelForFilter,
+                    state: state?.state,
+                };
                 promises.push(
                     _refreshHandlerAndUi(
                         () => AgPromise.resolve({ filter: filter as any, filterParams: filterParams as any }),
                         handler,
                         handlerParams!,
                         modelForFilter,
-                        state ?? { model: modelForFilter },
+                        newState,
                         'api'
                     ).then(() => {
+                        wrapper.state = newState;
                         wrapper.model = modelForFilter;
                         this.updateActiveListForHandler(index, modelForFilter);
                     })

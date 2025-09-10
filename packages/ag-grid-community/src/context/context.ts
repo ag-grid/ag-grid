@@ -101,6 +101,7 @@ import type { PinnedColumnService } from '../pinnedColumns/pinnedColumnService';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import type { CellFlashService } from '../rendering/cell/cellFlashService';
+import type { ColumnDelayRenderService } from '../rendering/columnDelayRenderService';
 import type { OverlayService } from '../rendering/overlays/overlayService';
 import type { RowAutoHeightService } from '../rendering/row/rowAutoHeightService';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
@@ -220,7 +221,6 @@ export type ProcessParamsFunc<TParams = any> = (params: TParams) => TParams;
 
 interface CoreBeanCollection
     extends AgCoreBeanCollection<
-        BeanCollection,
         GridOptionsWithDefaults,
         AgEventTypeParams,
         AgGridCommon<any, any>,
@@ -350,6 +350,7 @@ interface CoreBeanCollection
     filterPanelSvc?: IFilterPanelService;
     selectableFilter?: ISelectableFilterService;
     testIdSvc?: ITestIdService;
+    colDelayRenderSvc?: ColumnDelayRenderService;
     gridSerializer?: GridSerializer;
     licenseManager?: IWatermark;
     changeDetectionSvc?: ChangeDetectionService;

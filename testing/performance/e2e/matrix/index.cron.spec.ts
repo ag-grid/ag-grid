@@ -10,7 +10,7 @@ let showBtn: ElementHandle<HTMLButtonElement>;
 const url = 'https://localhost:4610/testing/performance/e2e/matrix/index.html';
 const athleteCheck = () => document.body.textContent!.includes('Tony Smith');
 test(`Performance Test - `, {
-    timeout: 10 * 60_000,
+    timeout: 20 * 60_000,
     minIterations: 300,
     maxIterations: 500,
     warmupIterations: 5,
@@ -18,7 +18,7 @@ test(`Performance Test - `, {
         [10, 10],
         [10, 100],
         [10, 1000],
-        [100000, 1000],
+        [100000, 100],
         [100, 10],
         [1000, 10],
         [10000, 10],
@@ -37,7 +37,12 @@ test(`Performance Test - `, {
                     version: 'staging',
                     url: `${url}?enterprise=${getCdnUrl('ag-grid-enterprise', 'staging', '')}&community=${getCdnUrl('ag-grid-community', 'staging', '')}`,
                 },
-                preSetup: async (page) => {
+                preSetup: async (page, testCase) => {
+                    if (rowCount === 100000 && columnCount === 100) {
+                        console.log('Adjusting iterations for large dataset');
+                        testCase.meta.minIter = 100;
+                        testCase.meta.maxIter = 200;
+                    }
                     showBtn = (await page.waitForSelector('#show')) as ElementHandle<HTMLButtonElement>;
                     const resetBtn = (await page.waitForSelector('#reset')) as ElementHandle<HTMLButtonElement>;
                     const cols = (await page.waitForSelector('#cols')) as ElementHandle<HTMLInputElement>;

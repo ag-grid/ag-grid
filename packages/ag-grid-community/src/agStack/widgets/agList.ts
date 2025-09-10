@@ -18,13 +18,7 @@ export interface ListOption<TValue = string> {
 export type AgListEvent = 'fieldValueChanged' | 'selectedItem';
 
 export class AgList<
-    TBeanCollection extends AgCoreBeanCollection<
-        TBeanCollection,
-        TProperties,
-        TGlobalEvents,
-        TCommon,
-        TPropertiesService
-    >,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,

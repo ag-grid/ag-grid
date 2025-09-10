@@ -128,6 +128,7 @@ export function _setupEditor(
         silent?: boolean;
     }
 ): void {
+    const enableGroupEditing = beans.gos.get('enableGroupEdit');
     const { key, event, cellStartedEdit, silent } = params ?? {};
     const cellCtrl = _getCellCtrl(beans, position)!;
     const editorComp = cellCtrl?.comp?.getCellEditor();
@@ -173,7 +174,12 @@ export function _setupEditor(
         const edit = beans.editModelSvc?.getEdit(position, true);
 
         if (!silent && !edit?.editorState?.cellStartedEditing) {
-            beans.editSvc?.dispatchCellEvent(position, event, 'cellEditingStarted');
+            beans.editSvc?.dispatchCellEvent(
+                position,
+                event,
+                'cellEditingStarted',
+                enableGroupEditing ? { value: newValue } : {}
+            );
             beans.editModelSvc?.setEdit(position, { editorState: { cellStartedEditing: true } });
         }
     }
@@ -182,15 +188,18 @@ export function _setupEditor(
 }
 
 function _valueFromEditor(
-    position: Required<EditPosition>,
+    beans: BeanCollection,
     cellEditor: ICellEditor,
     params?: { isCancelling?: boolean; isStopping?: boolean }
 ): { editorValue?: any; editorValueExists: boolean; isCancelAfterEnd?: boolean } {
     const noValueResult = { editorValueExists: false };
-    const validationErrors = cellEditor.getValidationErrors?.();
 
-    if ((validationErrors?.length ?? 0) > 0) {
-        return noValueResult;
+    if (_hasValidationRules(beans)) {
+        const validationErrors = cellEditor.getValidationErrors?.();
+
+        if ((validationErrors?.length ?? 0) > 0) {
+            return noValueResult;
+        }
     }
 
     if (params?.isCancelling) {
@@ -219,6 +228,7 @@ function _createEditorParams(
     cellStartedEdit?: boolean | null
 ): ICellEditorParams {
     const { valueSvc, gos, editSvc } = beans;
+    const enableGroupEditing = beans.gos.get('enableGroupEdit');
     const cellCtrl = _getCellCtrl(beans, position) as CellCtrl;
     const rowIndex = position.rowNode?.rowIndex ?? (undefined as unknown as number);
     const batchEdit = editSvc?.isBatchEditing();
@@ -229,12 +239,12 @@ function _createEditorParams(
     const editor = cellCtrl.comp?.getCellEditor();
     const initialNewValue =
         editSvc?.getCellDataValue(position, false) ??
-        (editor ? _valueFromEditor(position, editor)?.editorValue : undefined);
+        (editor ? _valueFromEditor(beans, editor)?.editorValue : undefined);
     const value =
         initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
 
     return _addGridCommonParams(gos, {
-        value,
+        value: enableGroupEditing ? initialNewValue : value,
         eventKey: key ?? null,
         column,
         colDef: column.getColDef(),
@@ -319,7 +329,7 @@ export function _syncFromEditors(
             return;
         }
 
-        const { editorValue, editorValueExists, isCancelAfterEnd } = _valueFromEditor(cellId, editor, params);
+        const { editorValue, editorValueExists, isCancelAfterEnd } = _valueFromEditor(beans, editor, params);
 
         if (isCancelAfterEnd) {
             beans.editModelSvc?.setEdit(cellId, { editorState: { isCancelAfterEnd } });
@@ -398,6 +408,7 @@ export function _destroyEditor(
     position: Required<EditPosition>,
     params?: DestroyEditorParams
 ): void {
+    const enableGroupEditing = beans.gos.get('enableGroupEdit');
     const { editModelSvc } = beans;
     const cellCtrl = _getCellCtrl(beans, position);
 
@@ -419,28 +430,28 @@ export function _destroyEditor(
 
         if (edit) {
             editModelSvc?.setEdit(position, { state: 'changed' });
-            dispatchEditingStopped(
-                beans,
-                position,
-                {
-                    valueChanged: false,
-                    newValue: undefined,
-                    oldValue: edit.sourceValue,
-                },
-                params
-            );
+            const args = enableGroupEditing
+                ? groupEditOverrides(params, edit)
+                : {
+                      valueChanged: false,
+                      newValue: undefined,
+                      oldValue: edit.sourceValue,
+                  };
+            dispatchEditingStopped(beans, position, args, params);
         }
 
         return;
     }
 
-    const errorMessages = comp?.getCellEditor()?.getValidationErrors?.();
-    const cellValidationModel = editModelSvc?.getCellValidationModel();
+    if (_hasValidationRules(beans)) {
+        const errorMessages = comp?.getCellEditor()?.getValidationErrors?.();
+        const cellValidationModel = editModelSvc?.getCellValidationModel();
 
-    if (errorMessages?.length) {
-        cellValidationModel?.setCellValidation(position, { errorMessages });
-    } else {
-        cellValidationModel?.clearCellValidation(position);
+        if (errorMessages?.length) {
+            cellValidationModel?.setCellValidation(position, { errorMessages });
+        } else {
+            cellValidationModel?.clearCellValidation(position);
+        }
     }
 
     editModelSvc?.setEdit(position, { state: 'changed' });
@@ -453,26 +464,43 @@ export function _destroyEditor(
     const latest = editModelSvc?.getEdit(position);
 
     if (latest && latest.state === 'changed') {
-        dispatchEditingStopped(
-            beans,
-            position,
-            {
-                valueChanged: _sourceAndPendingDiffer(latest) && !params?.cancel,
-                newValue:
-                    params?.cancel || latest.editorState.isCancelAfterEnd
-                        ? undefined
-                        : latest?.editorValue ?? edit?.pendingValue,
-                oldValue: latest?.sourceValue,
-            },
-            params
-        );
+        const args = enableGroupEditing
+            ? groupEditOverrides(params, latest)
+            : {
+                  valueChanged: _sourceAndPendingDiffer(latest) && !params?.cancel,
+                  newValue:
+                      params?.cancel || latest.editorState.isCancelAfterEnd
+                          ? undefined
+                          : latest?.editorValue ?? edit?.pendingValue,
+                  oldValue: latest?.sourceValue,
+              };
+
+        dispatchEditingStopped(beans, position, args, params);
     }
+}
+
+type EditingStoppedArgs = Partial<Pick<CellEditingStoppedEvent, 'valueChanged' | 'newValue' | 'oldValue' | 'value'>>;
+
+function groupEditOverrides(params: DestroyEditorParams | undefined, latest: Readonly<EditValue>): EditingStoppedArgs {
+    return params?.cancel
+        ? {
+              valueChanged: false,
+              oldValue: latest.sourceValue,
+              newValue: undefined,
+              value: latest.sourceValue,
+          }
+        : {
+              valueChanged: false,
+              oldValue: latest.sourceValue,
+              newValue: latest.pendingValue,
+              value: latest.sourceValue,
+          };
 }
 
 function dispatchEditingStopped(
     beans: BeanCollection,
     position: Required<EditPosition>,
-    args: Pick<CellEditingStoppedEvent, 'valueChanged' | 'newValue' | 'oldValue'>,
+    args: EditingStoppedArgs,
     { silent, event }: DestroyEditorParams = {}
 ) {
     const { editSvc, editModelSvc } = beans;
@@ -505,11 +533,16 @@ function _hasValidationRules(beans: BeanCollection): boolean {
             );
         });
 
-    return columnsHaveRules || getFullRowEditValidationErrors;
+    const editorsHaveRules = beans.gridApi
+        .getCellEditorInstances()
+        // Check if either method was provided in the editor
+        .some((editor) => editor.getValidationElement || editor.getValidationErrors);
+
+    return columnsHaveRules || getFullRowEditValidationErrors || editorsHaveRules;
 }
 
-export function _populateModelValidationErrors(beans: BeanCollection): void {
-    if (!_hasValidationRules(beans)) {
+export function _populateModelValidationErrors(beans: BeanCollection, force?: boolean): void {
+    if (!(force || _hasValidationRules(beans))) {
         return;
     }
 
@@ -639,7 +672,7 @@ const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationM
 };
 
 export function _validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {
-    _populateModelValidationErrors(beans);
+    _populateModelValidationErrors(beans, true);
 
     const map = beans.editModelSvc?.getCellValidationModel().getCellValidationMap();
 

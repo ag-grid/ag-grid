@@ -291,7 +291,6 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getCacheBlockState: 0,
         isLastRowIndexKnown: 0,
     }),
-
     ...mod<_ClientSideRowModelGridApi<any>>('ClientSideRowModelApi', {
         onGroupExpandedOrCollapsed: 0,
         refreshClientSideRowModel: 0,

@@ -1,11 +1,13 @@
 /* eslint-disable no-empty-pattern */
 import type { Locator, Page, TestType } from '@playwright/test';
-import { test as base, expect } from '@playwright/test';
+import { test as base, expect as playwrightExpect } from '@playwright/test';
 import { CacheRoute } from 'playwright-network-cache';
 
 import { type AgModuleName, wrapAgTestIdFor } from 'ag-grid-community';
 
-import { type AsyncGridApi, type EventLog, createRemoteGridApiProxy } from './test-remote-gridapi-utils';
+import { applyCpuThrottle, clearCpuThrottle } from './test/applyCpuThrottle';
+import { type AsyncGridApi, type EventLog, createRemoteGridApiProxy } from './test/remoteGridapi';
+import { shouldBeAsyncGuard } from './test/shouldBeAsyncGuard';
 
 type ExtractFixtures<T> = T extends TestType<infer A, infer O> ? A & O : never;
 
@@ -18,7 +20,10 @@ type LoadPageOptions = {
     version: string;
 };
 
-type RemoteGrid = ((page: Page, gridId?: string) => AsyncGridApi) & { eventLog: EventLog };
+type RemoteGrid = ((page: Page, gridId?: string) => AsyncGridApi) & {
+    eventLog: EventLog;
+    waitForEventlog: (timeoutMs: number) => Promise<EventLog>;
+};
 
 type AgGridFixtures = {
     agFramework: AgFramework;
@@ -129,7 +134,7 @@ async function loadPage(
     const queryParams = new URLSearchParams(queryOptions);
     const urlFramework = agFramework === reactFunctionalTsDev ? 'reactFunctionalTs' : agFramework;
 
-    await page.goto(`./examples/${agExampleUrl}/${urlFramework}?${queryParams.toString()}`);
+    await page.goto(`./archive/34.2.0/examples/${agExampleUrl}/${urlFramework}?${queryParams.toString()}`);
     await page.waitForLoadState('domcontentloaded');
     await page.waitForLoadState('load');
     await page.waitForLoadState('networkidle');
@@ -137,7 +142,7 @@ async function loadPage(
     return page;
 }
 
-const extended = base.extend<TestFixtures>({
+export const extended = base.extend<TestFixtures>({
     agExampleUrl: [({}, use) => use(undefined), { option: true }],
     agFramework: [({}, use) => use(ALL_FRAMEWORKS[0]), { option: true }],
     agIdFor: [
@@ -193,11 +198,15 @@ const extended = base.extend<TestFixtures>({
         { option: true },
     ],
     remoteGrid: [
-        ({}, use) => {
+        ({ page }, use) => {
             const eventLog: any[] = [];
 
             const fn = (page: Page, gridId: string) => createRemoteGridApiProxy(page, gridId, eventLog);
             fn.eventLog = eventLog;
+            fn.waitForEventlog = async (timeoutMs: number) => {
+                await page.waitForTimeout(timeoutMs);
+                return eventLog;
+            };
 
             use(fn as unknown as RemoteGrid);
         },
@@ -205,46 +214,6 @@ const extended = base.extend<TestFixtures>({
     ],
     cpuThrottle: [undefined, { option: true }],
 });
-
-// Add CPU throttling hooks when cpuThrottle is specified
-const applyCpuThrottle = async ({ page, cpuThrottle }: any, testInfo: any) => {
-    const envThrottle = process.env.CPU_THROTTLE ? parseInt(process.env.CPU_THROTTLE) : undefined;
-
-    cpuThrottle = cpuThrottle ?? envThrottle;
-
-    if (cpuThrottle && typeof cpuThrottle === 'number') {
-        // Use test.step to make it more visible at the top level
-        await base.step(`cpuThrottle (${cpuThrottle}x slower)`, async () => {
-            const cdpSession = await page.context().newCDPSession(page);
-            await cdpSession.send('Emulation.setCPUThrottlingRate', { rate: cpuThrottle! });
-
-            // Add annotation to test for better visibility in reports
-            testInfo.annotations.push({
-                type: 'cpu-throttle',
-                description: `CPU throttled ${cpuThrottle}x slower than normal`,
-            });
-        });
-    }
-};
-
-const clearCpuThrottle = async ({ page, cpuThrottle }: any) => {
-    const envThrottle = process.env.CPU_THROTTLE ? parseInt(process.env.CPU_THROTTLE) : undefined;
-
-    cpuThrottle = cpuThrottle ?? envThrottle;
-
-    if (cpuThrottle && typeof cpuThrottle === 'number') {
-        await base.step(`cpuThrottle (normal)`, async () => {
-            const cdpSession = await page.context().newCDPSession(page);
-            await cdpSession.send('Emulation.setCPUThrottlingRate', { rate: 1 }); // Reset to normal speed
-            try {
-                await cdpSession.detach();
-            } catch (error) {
-                // eslint-disable-next-line no-console
-                console.error('Error detaching CDP session:', error);
-            }
-        });
-    }
-};
 
 const frameworkTest =
     (agFramework: AgFramework) =>
@@ -266,6 +235,9 @@ const frameworkTest =
                 remoteGrid,
                 agModules,
                 cpuThrottle,
+                baseURL,
+                request,
+                context,
             }: TestFixtures,
             testInfo: any
         ) => {
@@ -277,7 +249,17 @@ const frameworkTest =
 
             await loadPage(page, agExampleUrl, agFramework, loadPageOptions, agModules);
             await applyCpuThrottle({ page, cpuThrottle }, testInfo);
-            await testBody({ page, agExampleUrl, agIdFor, agFramework, loadPageOptions, remoteGrid } as TestFixtures);
+            await testBody({
+                page,
+                agExampleUrl,
+                agIdFor,
+                agFramework,
+                loadPageOptions,
+                remoteGrid,
+                baseURL,
+                request,
+                context,
+            } as TestFixtures);
             await clearCpuThrottle({ page, cpuThrottle });
         };
 
@@ -384,7 +366,10 @@ type ExternalTestType = typeof extended & typeof agGridTestExtension & typeof si
 
 const test = Object.assign(extended, agGridTestExtension, singleFrameworkTests) as ExternalTestType;
 
-export { expect, test };
+const expect = shouldBeAsyncGuard<typeof extended.expect>(playwrightExpect);
+const describe = test.describe;
+
+export { expect, describe, test };
 
 export async function dragOverTo(source: Locator, target: Locator) {
     const { mouse } = source.page();
@@ -396,88 +381,6 @@ export async function dragOverTo(source: Locator, target: Locator) {
     await mouse.up();
 }
 
-export { ensureGridReady } from './test-remote-gridapi-utils';
-
-export async function repeat(
-    page: Page,
-    title: string,
-    fn: () => Promise<void>,
-    { count, eachWait, afterAllWait }: { count: number; eachWait?: number; afterAllWait?: number } = { count: 1 }
-) {
-    await test.step(title, async () => {
-        if (count < 2) {
-            await fn();
-            if (eachWait !== undefined) {
-                await page.waitForTimeout(eachWait);
-                return;
-            }
-            if (afterAllWait !== undefined) {
-                await page.waitForTimeout(afterAllWait);
-            }
-        }
-
-        for (let i = 0; i < count; i++) {
-            await fn();
-            if (eachWait !== undefined) {
-                await page.waitForTimeout(eachWait);
-            }
-        }
-        if (afterAllWait !== undefined) {
-            await page.waitForTimeout(afterAllWait);
-        }
-    });
-}
-
-export async function scrollGridRelative(
-    method: 'wheel' | 'element',
-    page: Page,
-    { x, y }: { x?: number; y?: number },
-    waitForTimeout = 10
-) {
-    async function scrollElement() {
-        const verticalView = page.locator('.ag-body-viewport.ag-row-animation.ag-layout-normal');
-        const horizontalView = page.locator('.ag-viewport.ag-center-cols-viewport');
-
-        if (y !== undefined) {
-            await verticalView.evaluate((el, { y }) => (el.scrollTop += y), { y });
-            await page.waitForTimeout(waitForTimeout);
-        }
-
-        if (x !== undefined) {
-            await horizontalView.evaluate((el, { x }) => (el.scrollLeft += x), { x });
-            await page.waitForTimeout(waitForTimeout);
-        }
-    }
-
-    async function scrollWheel() {
-        if (y !== undefined) {
-            await page.mouse.wheel(0, y);
-            await page.waitForTimeout(waitForTimeout);
-        }
-
-        if (x !== undefined) {
-            await page.mouse.wheel(x, 0);
-            await page.waitForTimeout(waitForTimeout);
-        }
-    }
-
-    const directionWord = [];
-
-    if (x !== undefined && x !== 0) {
-        directionWord.push(x > 0 ? 'right' : 'left');
-    }
-
-    if (y !== undefined && y !== 0) {
-        directionWord.push(y > 0 ? 'down' : 'up');
-    }
-
-    await test.step(`Scroll grid ${directionWord.join('-')}`, async () => {
-        if (method === 'element') {
-            await scrollElement();
-        } else if (method === 'wheel') {
-            await scrollWheel();
-        } else {
-            // TODO: implement scrolling with keyboard, and scrollbars
-        }
-    });
-}
+export { ensureGridReady } from './test/remoteGridapi';
+export { repeat } from './test/repeat';
+export { scrollGridRelative } from './test/scrollGridRelative';

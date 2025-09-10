@@ -39,13 +39,7 @@ export interface BaseTooltipParams<TLocation extends string, TValue = any> {
 }
 
 export abstract class BaseTooltipStateManager<
-    TBeanCollection extends AgCoreBeanCollection<
-        TBeanCollection,
-        TProperties,
-        TGlobalEvents,
-        TCommon,
-        TPropertiesService
-    >,
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,

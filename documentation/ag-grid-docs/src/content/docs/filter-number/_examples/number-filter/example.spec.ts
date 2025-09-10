@@ -1,7 +1,6 @@
 import { expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    test.skip(true, 'Skipped until Math.random() fixed');
     test.eachFramework('Example', async ({ page, agIdFor }) => {
         const colFilterIcon = agIdFor.headerFilterButton('price');
         await expect(colFilterIcon).toBeVisible();

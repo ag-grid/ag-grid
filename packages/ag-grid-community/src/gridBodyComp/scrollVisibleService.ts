@@ -31,6 +31,9 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     public verticalScrollGap: boolean;
 
     public postConstruct(): void {
+        this.horizontalScrollShowing = this.gos.get('alwaysShowHorizontalScroll') === true;
+        this.verticalScrollShowing = this.gos.get('alwaysShowVerticalScroll') === true;
+
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
 

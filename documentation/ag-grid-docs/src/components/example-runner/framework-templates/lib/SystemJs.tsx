@@ -169,7 +169,7 @@ export const SystemJs = ({
         `,
                 }}
             />
-            {usesMathRandom && <SeedRandom nonce={nonce} internalFramework={internalFramework} />}
+            {usesMathRandom && <SeedRandom nonce={nonce} />}
 
             <script nonce={nonce} src={systemJsVersion} />
             <script nonce={nonce} src={systemJsPath} />

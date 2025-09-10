@@ -76,23 +76,25 @@ export class AgFillHandle extends AbstractSelectionHandle {
         _stopPropagationForAgGrid(e);
 
         const { cellRange: initialRange, rangeStartRow, beans } = this;
-        const { rangeSvc } = beans;
+        const { rangeSvc, visibleCols } = beans;
         const lastRow = _getLastRow(beans);
 
         if (!lastRow) {
             return;
         }
 
+        const fillHandleDirection = this.getFillHandleDirection();
+        this.dragAxis = fillHandleDirection === 'xy' ? 'y' : fillHandleDirection;
+
         const finalRange = rangeSvc?.createCellRangeFromCellRangeParams({
             rowStartIndex: rangeStartRow.rowIndex,
             rowStartPinned: rangeStartRow.rowPinned,
             columnStart: initialRange.columns[0],
-            rowEndIndex: lastRow.rowIndex,
-            rowEndPinned: lastRow.rowPinned,
-            columnEnd: _last(initialRange.columns),
+            rowEndIndex: this.dragAxis === 'x' ? initialRange.endRow?.rowIndex ?? null : lastRow.rowIndex,
+            rowEndPinned: this.dragAxis === 'x' ? initialRange.endRow?.rowPinned : lastRow.rowPinned,
+            columnEnd: this.dragAxis === 'x' ? _last(visibleCols.allCols) : _last(initialRange.columns),
         });
 
-        this.dragAxis = 'y';
         this.isUp = false;
         this.isLeft = false;
 

@@ -57,6 +57,7 @@ export class RowNumbersRowResizeFeature implements IRowNumbersRowResizeFeature {
         let { rowResizer } = this;
 
         if (rowResizer) {
+            eGui.appendChild(rowResizer.getGui());
             return;
         }
 

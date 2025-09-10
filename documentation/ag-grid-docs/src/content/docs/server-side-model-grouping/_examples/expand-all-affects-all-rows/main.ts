@@ -14,15 +14,23 @@ ModuleRegistry.registerModules([
 let gridApi: GridApi;
 const gridOptions: GridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true },
+        { field: 'country', rowGroup: true, hide: true },
         { field: 'id', aggFunc: 'sum', hide: true },
-        { field: 'sport', rowGroup: true },
-        { field: 'year', rowGroup: true },
+        { field: 'sport', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
         { field: 'gold', aggFunc: 'sum' },
         { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
     ],
-    getRowId: (p) => p.data.id, // required when ssrmExpandAllAffectsAllRows is true
+    getRowId: (params) => {
+        const parentKeysJoined = (params.parentKeys || []).join('-');
+        if (params.data.id != null) {
+            return parentKeysJoined + params.data.id;
+        }
+        const rowGroupCols = params.api.getRowGroupColumns();
+        const thisGroupCol = rowGroupCols[params.level];
+        return parentKeysJoined + params.data[thisGroupCol.getColDef().field!];
+    },
     // use the server-side row model
     rowModelType: 'serverSide',
     purgeClosedRowNodes: true,
@@ -74,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(function (data) {
             const newData = data.map((e: IOlympicData, i: number) => ({
                 ...e,
-                id: i.toString(),
+                id: i,
             }));
             // setup the fake server with entire dataset
             const fakeServer = FakeServer(newData);

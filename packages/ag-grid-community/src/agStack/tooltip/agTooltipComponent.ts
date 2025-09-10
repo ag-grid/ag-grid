@@ -8,13 +8,7 @@ import { _toString } from '../utils/string';
 import type { BaseTooltipParams } from './baseTooltipStateManager';
 
 export class AgTooltipComponent<
-        TBeanCollection extends AgCoreBeanCollection<
-            TBeanCollection,
-            TProperties,
-            TGlobalEvents,
-            TCommon,
-            TPropertiesService
-        >,
+        TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         TProperties extends BaseProperties,
         TGlobalEvents extends BaseEvents,
         TCommon,

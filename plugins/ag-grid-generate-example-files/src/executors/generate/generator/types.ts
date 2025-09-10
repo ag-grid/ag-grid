@@ -18,6 +18,8 @@ export interface ExampleConfig {
      * Example uses `#myGrid`, which needs to be generated in framework examples
      */
     myGridReference?: boolean;
+
+    usesWebWorker?: boolean;
 }
 
 export interface BindingImport {

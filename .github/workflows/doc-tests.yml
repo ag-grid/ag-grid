@@ -105,7 +105,6 @@ jobs:
   test-demos-smoke:
     if: ${{ github.event.inputs.skip_demo_smoke != 'true' }}
     name: Smoke Test Demos / Examples
-    needs: download-examples
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -113,11 +112,10 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Restore all-examples-cached.json
-        uses: actions/cache@v4
-        with:
-          path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
-          key: ${{ needs.download-examples.outputs.cache-key }}
+      - name: Download all-examples-cached.json
+        run: |
+          mkdir -p ./testing/ag-grid-docs/e2e/.cache
+          curl https://ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
 
       - name: Install Playwright Browsers
         working-directory: testing/ag-grid-docs

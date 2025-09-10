@@ -13,13 +13,12 @@ import type { IPropertiesService } from './iProperties';
 import type { IRegistry } from './iRegistry';
 
 export interface AgCoreBeanCollection<
-    TBeanCollection,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
     TCommon,
     TPropertiesService extends IPropertiesService<TProperties, TCommon>,
 > extends UtilBeanCollection {
-    context: IContext<TBeanCollection>;
+    context: IContext<this>;
     eventSvc: AgEventService<TGlobalEvents, TCommon>;
     frameworkOverrides: AgFrameworkOverrides;
     gos: TPropertiesService;
@@ -27,7 +26,7 @@ export interface AgCoreBeanCollection<
     environment: IEnvironment;
     eRootDiv: HTMLElement;
     popupSvc?: IPopupService<BasePopupPositionParams>;
-    registry: IRegistry<TBeanCollection, 'tooltipFeature' | 'highlightTooltipFeature' | 'tooltipStateManager'>;
+    registry: IRegistry<this, 'tooltipFeature' | 'highlightTooltipFeature' | 'tooltipStateManager'>;
     iconSvc: IIconService<string, any>;
     dragSvc?: IDragService;
 }

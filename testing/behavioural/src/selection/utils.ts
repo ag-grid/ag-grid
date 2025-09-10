@@ -2,7 +2,7 @@ import type { GridApi } from 'ag-grid-community';
 import { KeyCode } from 'ag-grid-community';
 
 import { escapeQuotes } from '../test-utils';
-import { assertSelectedRowsByIndex } from '../test-utils/test-utils-assertions';
+import { assertSelectedRowElementsById, assertSelectedRowsByIndex } from '../test-utils/test-utils-assertions';
 import { waitForEvent } from '../test-utils/test-utils-events';
 
 export class GridActions {
@@ -52,8 +52,19 @@ export class GridActions {
         assertSelectedRowsByIndex(indices, this.api);
     }
 
+    selectRowsById(ids: string[], click: boolean): void {
+        for (const i of ids) {
+            click ? this.clickRowById(i, { ctrlKey: true }) : this.toggleCheckboxById(i);
+        }
+        assertSelectedRowElementsById(ids, this.api);
+    }
+
     clickRowByIndex(index: number, opts?: MouseEventInit): void {
         this.getRowByIndex(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
+    }
+
+    clickRowById(id: string, opts?: MouseEventInit): void {
+        this.getRowById(id)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
     }
 
     toggleCheckboxByIndex(index: number, opts?: MouseEventInit): void {
