@@ -1,7 +1,7 @@
 import { LocalEventService } from '../agStack/events/localEventService';
 import type { AgEvent } from '../agStack/interfaces/agEvent';
 import type { IEventEmitter, IEventListener } from '../agStack/interfaces/iEventEmitter';
-import { _areEventsNear } from '../agStack/utils/event';
+import { _areEventsNear, _getFirstActiveTouch } from '../agStack/utils/event';
 
 export interface TapEvent extends AgEvent<'tap'> {
     touchStart: Touch;
@@ -51,17 +51,6 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         });
     }
 
-    private getActiveTouch(touchList: TouchList): Touch | null {
-        for (let i = 0; i < touchList.length; i++) {
-            const matches = touchList[i].identifier === this.touchStart.identifier;
-            if (matches) {
-                return touchList[i];
-            }
-        }
-
-        return null;
-    }
-
     public addEventListener<T extends TouchListenerEvent>(eventType: T, listener: IEventListener<T>): void {
         this.localEventService.addEventListener(eventType, listener);
     }
@@ -103,7 +92,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             return;
         }
 
-        const touch = this.getActiveTouch(touchEvent.touches);
+        const touch = _getFirstActiveTouch(this.touchStart, touchEvent.touches);
         if (!touch) {
             return;
         }
