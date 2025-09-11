@@ -39,6 +39,27 @@ export class GlobalGridOptions {
 
         return mergedGridOps;
     }
+
+    /**
+     * Apply global grid option for a specific option key.
+     * If the merge strategy is 'deep' and both global and provided values are objects, they will be merged deeply.
+     * Otherwise, the provided value is returned as is.
+     * @param optionKey - The key of the grid option to apply.
+     * @param providedValue - The value provided to the grid instance.
+     * @returns The merged value if applicable, otherwise the provided value.
+     */
+    static applyGlobalGridOption<K extends keyof GridOptions>(
+        optionKey: K,
+        providedValue: GridOptions[K]
+    ): GridOptions[K] {
+        if (GlobalGridOptions.mergeStrategy === 'deep') {
+            const globalValue = _getGlobalGridOption(optionKey);
+            if (globalValue && typeof globalValue === 'object' && typeof providedValue === 'object') {
+                return GlobalGridOptions.applyGlobalGridOptions({ [optionKey]: providedValue })[optionKey];
+            }
+        }
+        return providedValue;
+    }
 }
 
 /**

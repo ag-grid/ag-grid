@@ -16,6 +16,7 @@ import type { ColDef, ColGroupDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { AgEventType, AgPublicEventType } from './eventTypes';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
+import { GlobalGridOptions } from './globalGridOptions';
 import type { GridOptionOrDefault, GridOptionsWithDefaults } from './gridOptionsDefault';
 import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
@@ -189,8 +190,11 @@ export class GridOptionsService
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         const { gridOptions, validation } = this;
 
-        for (const key of Object.keys(options)) {
-            const value = options[key as keyof GridOptions];
+        for (const key of Object.keys(options) as (keyof GridOptions)[]) {
+            // apply global grid options if they exist for this key
+            // Will only apply if the merge strategy is 'deep' and both global and provided values are objects
+            const value = GlobalGridOptions.applyGlobalGridOption(key, options[key]);
+
             validation?.warnOnInitialPropertyUpdate(source, key);
 
             const shouldForce = force || (typeof value === 'object' && source === 'api'); // force objects as they could have been mutated.
