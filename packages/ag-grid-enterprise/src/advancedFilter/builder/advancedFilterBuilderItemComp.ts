@@ -29,8 +29,10 @@ import {
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { AddDropdownComp } from './addDropdownComp';
-import type { AdvancedFilterBuilderDragStartedEvent } from './advancedFilterBuilderDragFeature';
-import type { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
+import type {
+    AdvancedFilterBuilderDragFeature,
+    AdvancedFilterBuilderDragStartedEvent,
+} from './advancedFilterBuilderDragFeature';
 import { AdvancedFilterBuilderItemNavigationFeature } from './advancedFilterBuilderItemNavigationFeature';
 import { getAdvancedFilterBuilderAddButtonParams } from './advancedFilterBuilderUtils';
 import { ConditionPillWrapperComp } from './conditionPillWrapperComp';

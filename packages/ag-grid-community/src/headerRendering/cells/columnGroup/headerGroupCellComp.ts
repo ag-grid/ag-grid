@@ -18,7 +18,7 @@ const HeaderGroupCellCompElement: ElementParams = {
 };
 
 export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellCtrl> {
-    private eResize: HTMLElement = RefPlaceholder;
+    private readonly eResize: HTMLElement = RefPlaceholder;
     private readonly eHeaderCompWrapper: HTMLElement = RefPlaceholder;
 
     private headerGroupComp: IHeaderGroupComp | undefined;

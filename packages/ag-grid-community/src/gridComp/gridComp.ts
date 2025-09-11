@@ -8,8 +8,7 @@ import type { UpdateLayoutClassesParams } from '../styling/layoutFeature';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import type { ElementParams } from '../utils/element';
 import { _logIfDebug } from '../utils/log';
-import type { ComponentSelector } from '../widgets/component';
-import type { Component } from '../widgets/component';
+import type { Component, ComponentSelector } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 import type { IGridComp, OptionalGridComponents } from './gridCtrl';
 import { GridCtrl } from './gridCtrl';
@@ -20,7 +19,7 @@ export class GridComp extends TabGuardComp {
     private readonly pagination: TabGuardComp = RefPlaceholder;
     private readonly rootWrapperBody: HTMLElement = RefPlaceholder;
 
-    private eGridDiv: HTMLElement;
+    private readonly eGridDiv: HTMLElement;
 
     constructor(eGridDiv: HTMLElement) {
         super();

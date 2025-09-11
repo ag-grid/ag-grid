@@ -61,9 +61,9 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     private params: MultiFilterDisplayParams;
     private wrappers: (MultiFilterWrapper | null)[] = [];
     private filterChangedCallback: ((additionalEventAttributes?: any) => void) | null;
-    private activeFilterIndices: number[] = [];
+    private readonly activeFilterIndices: number[] = [];
 
-    private afterFiltersReadyFuncs: (() => void)[] = [];
+    private readonly afterFiltersReadyFuncs: (() => void)[] = [];
 
     public init(params: MultiFilterParams): AgPromise<void> {
         this.params = params as unknown as MultiFilterDisplayParams;

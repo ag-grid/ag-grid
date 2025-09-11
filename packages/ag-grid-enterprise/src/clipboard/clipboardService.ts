@@ -571,7 +571,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 } else {
                     // otherwise we are not the first row, so copy
                     updatedRowNodes.push(rowNode);
-                    columns.forEach((column: AgColumn, index: number) => {
+                    columns.forEach((column: AgColumn, index) => {
                         if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
                             return;
                         }

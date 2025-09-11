@@ -1,8 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { CellClassParams, CellClassRules, ColDef } from '../entities/colDef';
-import type { CellStyle } from '../entities/colDef';
+import type { CellClassParams, CellClassRules, CellStyle, ColDef } from '../entities/colDef';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { ICellStyleFeature } from '../interfaces/iCellStyleFeature';
 import type { CellCtrl, ICellComp } from '../rendering/cell/cellCtrl';

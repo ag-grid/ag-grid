@@ -51,7 +51,7 @@ export class AgContext<
 {
     protected beans: TBeanCollection = {} as TBeanCollection;
     private createdBeans: AgSingletonBean<TBeanCollection>[] = [];
-    private beanDestroyComparator?: BeanComparator<TBeanCollection>;
+    private readonly beanDestroyComparator?: BeanComparator<TBeanCollection>;
     private id: string;
     private destroyCallback?: () => void;
 

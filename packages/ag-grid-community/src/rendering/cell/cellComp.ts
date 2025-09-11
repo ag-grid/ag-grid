@@ -21,21 +21,21 @@ import type { DndSourceComp } from './../dndSourceComp';
 import type { CellCtrl, ICellComp } from './cellCtrl';
 
 export class CellComp extends Component {
-    private eCell: HTMLElement;
+    private readonly eCell: HTMLElement;
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;
 
-    private cellCssManager: CssClassManager;
+    private readonly cellCssManager: CssClassManager;
 
     private readonly column: AgColumn;
     private readonly rowNode: RowNode;
-    private eRow: HTMLElement;
+    private readonly eRow: HTMLElement;
 
     private includeSelection: boolean;
     private includeRowDrag: boolean;
     private includeDndSource: boolean;
 
-    private forceWrapper: boolean;
+    private readonly forceWrapper: boolean;
 
     private checkboxSelectionComp: CheckboxSelectionComponent | undefined;
     private dndSourceComp: DndSourceComp | undefined;

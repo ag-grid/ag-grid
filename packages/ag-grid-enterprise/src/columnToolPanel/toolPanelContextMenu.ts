@@ -105,43 +105,53 @@ export class ToolPanelContextMenu extends Component {
             addIcon: 'ensureColumnVisible',
         });
 
+        const rowGroupAllowed = (col: AgColumn) =>
+            col.isPrimary() && col.isAllowRowGroup() && !isRowGroupColLocked(col, beans);
         menuItemMap.set('rowGroup', {
-            allowedFunction: (col) => col.isPrimary() && col.isAllowRowGroup() && !isRowGroupColLocked(col, beans),
+            allowedFunction: rowGroupAllowed,
             activeFunction: (col) => col.isRowGroupActive(),
             activateLabel: () => `${localeTextFunc('groupBy', 'Group by')} ${displayName}`,
             deactivateLabel: () => `${localeTextFunc('ungroupBy', 'Un-Group by')} ${displayName}`,
             activateFunction: () =>
-                rowGroupColsSvc?.setColumns(this.addColumnsToList(rowGroupColsSvc.columns), 'toolPanelUi'),
+                rowGroupColsSvc?.setColumns(
+                    this.addColumnsToList(rowGroupColsSvc.columns, rowGroupAllowed),
+                    'toolPanelUi'
+                ),
             deActivateFunction: () =>
-                rowGroupColsSvc?.setColumns(this.removeColumnsFromList(rowGroupColsSvc.columns), 'toolPanelUi'),
+                rowGroupColsSvc?.setColumns(
+                    this.removeColumnsFromList(rowGroupColsSvc.columns, rowGroupAllowed),
+                    'toolPanelUi'
+                ),
             addIcon: 'menuAddRowGroup',
             removeIcon: 'menuRemoveRowGroup',
         });
 
+        const valueAllowed = (col: AgColumn) => col.isPrimary() && col.isAllowValue();
         menuItemMap.set('value', {
-            allowedFunction: (col) => col.isPrimary() && col.isAllowValue(),
+            allowedFunction: valueAllowed,
             activeFunction: (col) => col.isValueActive(),
             activateLabel: () => localeTextFunc('addToValues', `Add ${displayName} to values`, [displayName!]),
             deactivateLabel: () =>
                 localeTextFunc('removeFromValues', `Remove ${displayName} from values`, [displayName!]),
             activateFunction: () =>
-                valueColsSvc?.setColumns(this.addColumnsToList(valueColsSvc.columns), 'toolPanelUi'),
+                valueColsSvc?.setColumns(this.addColumnsToList(valueColsSvc.columns, valueAllowed), 'toolPanelUi'),
             deActivateFunction: () =>
-                valueColsSvc?.setColumns(this.removeColumnsFromList(valueColsSvc.columns), 'toolPanelUi'),
+                valueColsSvc?.setColumns(this.removeColumnsFromList(valueColsSvc.columns, valueAllowed), 'toolPanelUi'),
             addIcon: 'valuePanel',
             removeIcon: 'valuePanel',
         });
 
+        const pivotAllowed = (col: AgColumn) => isPivotMode && col.isPrimary() && col.isAllowPivot();
         menuItemMap.set('pivot', {
-            allowedFunction: (col) => isPivotMode && col.isPrimary() && col.isAllowPivot(),
+            allowedFunction: pivotAllowed,
             activeFunction: (col) => col.isPivotActive(),
             activateLabel: () => localeTextFunc('addToLabels', `Add ${displayName} to labels`, [displayName!]),
             deactivateLabel: () =>
                 localeTextFunc('removeFromLabels', `Remove ${displayName} from labels`, [displayName!]),
             activateFunction: () =>
-                pivotColsSvc?.setColumns(this.addColumnsToList(pivotColsSvc.columns), 'toolPanelUi'),
+                pivotColsSvc?.setColumns(this.addColumnsToList(pivotColsSvc.columns, pivotAllowed), 'toolPanelUi'),
             deActivateFunction: () =>
-                pivotColsSvc?.setColumns(this.removeColumnsFromList(pivotColsSvc.columns), 'toolPanelUi'),
+                pivotColsSvc?.setColumns(this.removeColumnsFromList(pivotColsSvc.columns, pivotAllowed), 'toolPanelUi'),
             addIcon: 'pivotPanel',
             removeIcon: 'pivotPanel',
         });
@@ -162,12 +172,12 @@ export class ToolPanelContextMenu extends Component {
         return parent.getDisplayedChildren()?.indexOf(col) !== -1;
     }
 
-    private addColumnsToList(columnList: AgColumn[]): AgColumn[] {
-        return [...columnList].concat(this.columns.filter((col) => columnList.indexOf(col) === -1));
+    private addColumnsToList(columnList: AgColumn[], predicate: (col: AgColumn) => boolean): AgColumn[] {
+        return [...columnList].concat(this.columns.filter((col) => predicate(col) && columnList.indexOf(col) === -1));
     }
 
-    private removeColumnsFromList(columnList: AgColumn[]): AgColumn[] {
-        return columnList.filter((col) => this.columns.indexOf(col) === -1);
+    private removeColumnsFromList(columnList: AgColumn[], predicate: (col: AgColumn) => boolean): AgColumn[] {
+        return columnList.filter((col) => predicate(col) && this.columns.indexOf(col) === -1);
     }
 
     private displayContextMenu(menuItemsMapped: MenuItemDef[]): void {

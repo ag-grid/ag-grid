@@ -3,6 +3,7 @@ import type {
     BeanCollection,
     FilterAction,
     FilterDestroyedEvent,
+    FilterHandler,
     FilterPanelFilterState,
     FilterPanelSummaryState,
     IFilterPanelService,
@@ -13,7 +14,6 @@ import type {
     SelectableFilterDef,
 } from 'ag-grid-community';
 import { BeanStub, FilterComp } from 'ag-grid-community';
-import type { FilterHandler } from 'ag-grid-community';
 
 interface StateWrapper {
     state: FilterPanelFilterState;
@@ -28,8 +28,8 @@ export class FilterPanelService
 {
     readonly beanName = 'filterPanelSvc' as const;
 
-    private states: Map<string, StateWrapper> = new Map();
-    private orderedStates: string[] = [];
+    private readonly states: Map<string, StateWrapper> = new Map();
+    private readonly orderedStates: string[] = [];
     private params?: IToolPanelNewFiltersCompParams;
     private initialStateApplied: boolean = false;
     private initialState?: NewFiltersToolPanelState;

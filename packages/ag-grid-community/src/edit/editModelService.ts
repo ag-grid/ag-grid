@@ -24,7 +24,7 @@ import { UNEDITED } from './utils/editors';
 export class EditModelService extends BeanStub implements NamedBean, IEditModelService {
     beanName = 'editModelSvc' as const;
 
-    private edits: EditMap = new Map();
+    private readonly edits: EditMap = new Map();
     private cellValidations: IEditCellValidationModel = new EditCellValidationModel();
     private rowValidations: IEditRowValidationModel = new EditRowValidationModel();
 

@@ -21,14 +21,14 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     // p1 and p2 are create tasks are to do with row and cell creation.
     // for them we want to execute according to row order, so we use
     // TaskItem so we know what index the item is for.
-    private p1: TaskList = { list: [], sorted: false }; // eg drawing back-ground of rows
-    private p2: TaskList = { list: [], sorted: false }; // eg cell renderers, adding hover functionality
-    private f1: TaskList = { list: [], sorted: false }; // eg framework cell renderers
+    private readonly p1: TaskList = { list: [], sorted: false }; // eg drawing back-ground of rows
+    private readonly p2: TaskList = { list: [], sorted: false }; // eg cell renderers, adding hover functionality
+    private readonly f1: TaskList = { list: [], sorted: false }; // eg framework cell renderers
 
     // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
     // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
     // important.
-    private destroyTasks: (() => void)[] = [];
+    private readonly destroyTasks: (() => void)[] = [];
     private ticking = false;
     public active: boolean;
     private batchFrameworkComps: boolean;

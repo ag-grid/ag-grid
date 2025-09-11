@@ -8,10 +8,10 @@ import type { IFrameworkEventListenerService } from '../../interfaces/iFramework
 export class ApiEventService extends BeanStub<AgEventType> implements NamedBean {
     beanName = 'apiEventSvc' as const;
 
-    private syncListeners: Map<AgEventType, Set<AgEventListener>> = new Map();
-    private asyncListeners: Map<AgEventType, Set<AgEventListener>> = new Map();
-    private syncGlobalListeners: Set<AgGlobalEventListener> = new Set();
-    private globalListenerPairs = new Map<
+    private readonly syncListeners: Map<AgEventType, Set<AgEventListener>> = new Map();
+    private readonly asyncListeners: Map<AgEventType, Set<AgEventListener>> = new Map();
+    private readonly syncGlobalListeners: Set<AgGlobalEventListener> = new Set();
+    private readonly globalListenerPairs = new Map<
         AgGlobalEventListener,
         { syncListener: AgGlobalEventListener; asyncListener: AgGlobalEventListener }
     >();

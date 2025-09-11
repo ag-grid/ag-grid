@@ -54,7 +54,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
     private readonly excelStyles: (ExcelStyle & { quotePrefix?: 1 })[];
 
-    private rows: ExcelRow[] = [];
+    private readonly rows: ExcelRow[] = [];
     private cols: ExcelColumn[];
     private columnsToExport: AgColumn[];
     private frozenRowCount: number = 0;

@@ -1214,7 +1214,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.rowsToDisplay = _EmptyArray;
     }
 
-    private onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
+    private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
     /**
      * @deprecated v33.1
      */

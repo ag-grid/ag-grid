@@ -16,6 +16,7 @@ import type { ColDef, ColGroupDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { AgEventType, AgPublicEventType } from './eventTypes';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
+import { GlobalGridOptions } from './globalGridOptions';
 import type { GridOptionOrDefault, GridOptionsWithDefaults } from './gridOptionsDefault';
 import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
@@ -30,7 +31,7 @@ import { _error } from './validation/logging';
 import { COLUMN_DEFINITION_MOD_VALIDATIONS } from './validation/rules/colDefValidations';
 import { GRID_OPTIONS_MODULES } from './validation/rules/gridOptionsValidations';
 import type { ValidationService } from './validation/validationService';
-import type { ModuleValidation, RequiredModule } from './validation/validationTypes';
+import type { ModuleValidation } from './validation/validationTypes';
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never;
@@ -93,7 +94,7 @@ export class GridOptionsService
         this.api = beans.gridApi;
         this.gridId = beans.context.getId();
     }
-    private domDataKey = '__AG_' + Math.random().toString();
+    private readonly domDataKey = '__AG_' + Math.random().toString();
 
     /** This is only used for the main DOM element */
     private readonly instanceId = gridInstanceSequence++;
@@ -108,7 +109,7 @@ export class GridOptionsService
         return this.gridOptions['context'];
     }
 
-    private propEventSvc: LocalEventService<keyof GridOptions> = new LocalEventService();
+    private readonly propEventSvc: LocalEventService<keyof GridOptions> = new LocalEventService();
 
     public postConstruct(): void {
         this.validateGridOptions(this.gridOptions);
@@ -189,8 +190,11 @@ export class GridOptionsService
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         const { gridOptions, validation } = this;
 
-        for (const key of Object.keys(options)) {
-            const value = options[key as keyof GridOptions];
+        for (const key of Object.keys(options) as (keyof GridOptions)[]) {
+            // apply global grid options if they exist for this key
+            // Will only apply if the merge strategy is 'deep' and both global and provided values are objects
+            const value = GlobalGridOptions.applyGlobalGridOption(key, options[key]);
+
             validation?.warnOnInitialPropertyUpdate(source, key);
 
             const shouldForce = force || (typeof value === 'object' && source === 'api'); // force objects as they could have been mutated.
@@ -238,7 +242,7 @@ export class GridOptionsService
     // It forces events defined in GridOptionsService.alwaysSyncGlobalEvents to be fired synchronously.
     // This is required for events such as GridPreDestroyed.
     // Other events can be fired asynchronously or synchronously depending on config.
-    private globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
+    private readonly globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
         return (eventName: AgEventType, event?: any) => {
             // prevent events from being fired _after_ the grid has been destroyed
             if (!this.isAlive()) {
@@ -300,7 +304,7 @@ export class GridOptionsService
                 continue;
             }
 
-            let moduleToCheck: RequiredModule<T> | undefined | null = modValidations[key as keyof T];
+            let moduleToCheck: ModuleValidation<T>[keyof T] | null | undefined = modValidations[key as keyof T];
             if (typeof moduleToCheck === 'function') {
                 moduleToCheck = moduleToCheck(options, this.gridOptions, this.beans);
             }

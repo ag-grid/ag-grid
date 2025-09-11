@@ -76,6 +76,71 @@ describe('Global Grid Options', () => {
         });
     });
 
+    test('merge global grid options deep persisted with updates', () => {
+        provideGlobalGridOptions(
+            {
+                defaultColDef: {
+                    width: 111,
+                    editable: true,
+                },
+            },
+            'deep'
+        );
+
+        const api = createMyGrid({
+            defaultColDef: {
+                width: 222,
+                flex: 10,
+            },
+        });
+
+        expect(api.getGridOption('defaultColDef')).toEqual({
+            width: 222,
+            editable: true,
+            flex: 10,
+        });
+
+        api.setGridOption('defaultColDef', { cellClass: 'my-class', flex: 5 });
+        // Global config should still be merged in
+        expect(api.getGridOption('defaultColDef')).toEqual({
+            cellClass: 'my-class',
+            width: 111,
+            editable: true,
+            flex: 5,
+        });
+    });
+
+    test('merge global grid options deep persisted with updates', () => {
+        provideGlobalGridOptions(
+            {
+                defaultColDef: {
+                    width: 111,
+                    editable: true,
+                },
+            },
+            'shallow'
+        );
+
+        const api = createMyGrid({
+            defaultColDef: {
+                width: 222,
+                flex: 10,
+            },
+        });
+
+        expect(api.getGridOption('defaultColDef')).toEqual({
+            width: 222,
+            flex: 10,
+        });
+
+        api.setGridOption('defaultColDef', { cellClass: 'my-class', flex: 5 });
+        // Global config should still be merged in
+        expect(api.getGridOption('defaultColDef')).toEqual({
+            cellClass: 'my-class',
+            flex: 5,
+        });
+    });
+
     test('merge global grid options shallow (default)', () => {
         provideGlobalGridOptions({
             autoGroupColumnDef: {
@@ -159,6 +224,12 @@ describe('Global Grid Options', () => {
 
                 // ensure global context reference is not mutated
                 expect(contextGlobal).toEqual({ globalProp: 'global' });
+
+                const newContext = { newProp: 'new' };
+                api.setGridOption('context', newContext);
+                expect(api.getGridOption('context')).toBe(newContext);
+                expect(api.getGridOption('context')).toEqual({ newProp: 'new', globalProp: 'global' });
+                expect(contextGlobal).toEqual({ globalProp: 'global' });
             });
 
             test('strategy: shallow', () => {
@@ -180,6 +251,12 @@ describe('Global Grid Options', () => {
                 expect(api.getGridOption('context')).toBe(context);
                 // with global context properties merged into it
                 expect(api.getGridOption('context')).toEqual({ foo: 'bar' });
+
+                const newContext = { newProp: 'new' };
+                api.setGridOption('context', newContext);
+                expect(api.getGridOption('context')).toBe(newContext);
+                expect(api.getGridOption('context')).toEqual({ newProp: 'new' });
+                expect(contextGlobal).toEqual({ globalProp: 'global' });
             });
         });
     });

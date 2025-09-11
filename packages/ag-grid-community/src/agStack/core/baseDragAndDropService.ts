@@ -35,7 +35,7 @@ export abstract class BaseDragAndDropService<
 > extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
     beanName = 'dragAndDrop' as const;
 
-    private dragSourceAndParamsList: DragSourceAndParams<
+    private readonly dragSourceAndParamsList: DragSourceAndParams<
         TDragSourceType,
         TDragItem,
         TDragAndDropIcon,

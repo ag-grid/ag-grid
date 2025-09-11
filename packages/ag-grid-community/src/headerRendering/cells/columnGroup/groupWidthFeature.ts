@@ -3,8 +3,8 @@ import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { IHeaderGroupCellComp } from './headerGroupCellCtrl';
 
 export class GroupWidthFeature extends BeanStub {
-    private columnGroup: AgColumnGroup;
-    private comp: IHeaderGroupCellComp;
+    private readonly columnGroup: AgColumnGroup;
+    private readonly comp: IHeaderGroupCellComp;
 
     // the children can change, we keep destroy functions related to listening to the children here
     private removeChildListenersFuncs: (() => void)[] = [];

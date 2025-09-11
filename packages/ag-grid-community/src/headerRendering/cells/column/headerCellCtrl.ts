@@ -57,7 +57,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private userCompDetails: UserCompDetails;
 
     private userHeaderClasses: Set<string> = new Set();
-    private ariaDescriptionProperties = new Map<HeaderAriaDescriptionKey, string>();
+    private readonly ariaDescriptionProperties = new Map<HeaderAriaDescriptionKey, string>();
     private tooltipFeature: TooltipFeature | undefined;
 
     public override wireComp(

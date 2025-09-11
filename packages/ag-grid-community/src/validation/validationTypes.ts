@@ -20,9 +20,9 @@ type GetRequiredModule<T extends object> = (
     options: T,
     gridOptions: GridOptions,
     beans: BeanCollection
-) => ValidationModuleName | null;
+) => ValidationModuleName | ValidationModuleName[] | null;
 
-export type RequiredModule<T extends object> = GetRequiredModule<T> | ValidationModuleName;
+export type RequiredModule<T extends object> = GetRequiredModule<T> | ValidationModuleName | ValidationModuleName[];
 
 export type ModuleValidation<T extends object> = {
     [key in keyof T]?: RequiredModule<T>;

@@ -92,7 +92,7 @@ export class TextFilterExpressionOperators<TValue = string>
 {
     public operators: { [operator: string]: FilterExpressionOperator<string, TValue> };
 
-    constructor(private params: FilterExpressionOperatorsParams) {
+    constructor(private readonly params: FilterExpressionOperatorsParams) {
         this.initOperators();
     }
 
@@ -182,7 +182,7 @@ export class ScalarFilterExpressionOperators<ConvertedTValue extends number | Da
 {
     public operators: { [operator: string]: FilterExpressionOperator<ConvertedTValue, TValue> };
 
-    constructor(private params: ScalarFilterExpressionOperatorsParams<ConvertedTValue>) {
+    constructor(private readonly params: ScalarFilterExpressionOperatorsParams<ConvertedTValue>) {
         this.initOperators();
     }
 
@@ -306,7 +306,7 @@ export class ScalarFilterExpressionOperators<ConvertedTValue extends number | Da
 export class BooleanFilterExpressionOperators implements DataTypeFilterExpressionOperators<boolean> {
     public operators: { [operator: string]: FilterExpressionOperator<boolean> };
 
-    constructor(private params: FilterExpressionOperatorsParams) {
+    constructor(private readonly params: FilterExpressionOperatorsParams) {
         this.initOperators();
     }
 

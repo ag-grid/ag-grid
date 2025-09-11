@@ -21,14 +21,14 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
 
     // used by React (and possibly other frameworks) as key for rendering. also used to
     // identify old vs new columns for destroying cols when no longer used.
-    private instanceId = getNextColInstanceId();
+    private readonly instanceId = getNextColInstanceId();
 
     private expandableListenerRemoveCallback: (() => void) | null = null;
 
     constructor(
         private colGroupDef: ColGroupDef | null,
         private readonly groupId: string,
-        private padding: boolean,
+        private readonly padding: boolean,
         private level: number
     ) {
         super();

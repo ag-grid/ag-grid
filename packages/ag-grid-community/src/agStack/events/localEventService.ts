@@ -3,11 +3,11 @@ import type { AgFrameworkOverrides } from '../interfaces/agFrameworkOverrides';
 import type { IEventEmitter, IEventListener, IGlobalEventListener } from '../interfaces/iEventEmitter';
 
 export class LocalEventService<TEventType extends string> implements IEventEmitter<TEventType> {
-    private allSyncListeners = new Map<TEventType, Set<IEventListener<TEventType>>>();
-    private allAsyncListeners = new Map<TEventType, Set<IEventListener<TEventType>>>();
+    private readonly allSyncListeners = new Map<TEventType, Set<IEventListener<TEventType>>>();
+    private readonly allAsyncListeners = new Map<TEventType, Set<IEventListener<TEventType>>>();
 
-    private globalSyncListeners = new Set<IGlobalEventListener<TEventType>>();
-    private globalAsyncListeners = new Set<IGlobalEventListener<TEventType>>();
+    private readonly globalSyncListeners = new Set<IGlobalEventListener<TEventType>>();
+    private readonly globalAsyncListeners = new Set<IGlobalEventListener<TEventType>>();
 
     private frameworkOverrides?: AgFrameworkOverrides;
 

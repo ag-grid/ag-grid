@@ -200,7 +200,7 @@ export function _applyColumnState(
         rowGroupColsSvc?.sortColumns(comparatorByIndex.bind(rowGroupColsSvc, rowGroupIndexes, previousRowGroupCols));
         pivotColsSvc?.sortColumns(comparatorByIndex.bind(pivotColsSvc, pivotIndexes, previousPivotCols));
 
-        colModel.refreshCols(false);
+        colModel.refreshCols(false, source);
 
         const syncColStates = (
             getCol: (colId: string) => AgColumn | null,

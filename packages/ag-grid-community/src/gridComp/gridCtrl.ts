@@ -32,7 +32,7 @@ export class GridCtrl extends BeanStub {
     private eGridHostDiv: HTMLElement;
     private eGui: HTMLElement;
 
-    private additionalFocusableContainers: Set<FocusableContainer> = new Set();
+    private readonly additionalFocusableContainers: Set<FocusableContainer> = new Set();
 
     public setComp(view: IGridComp, eGridDiv: HTMLElement, eGui: HTMLElement): void {
         this.view = view;

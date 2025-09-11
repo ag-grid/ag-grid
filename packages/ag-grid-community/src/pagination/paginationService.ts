@@ -20,7 +20,7 @@ export class PaginationService extends BeanStub implements NamedBean {
     private pageSizeFromPageSizeSelector?: number; // When user selects page size from page size selector.
     private pageSizeFromInitialState?: number; // When the initial grid state is loaded, and a page size rehydrated
     private pageSizeFromGridOptions?: number; // When user sets gridOptions.paginationPageSize.
-    private defaultPageSize: 100; // When nothing else set, default page size is 100.
+    private readonly defaultPageSize: 100; // When nothing else set, default page size is 100.
 
     private totalPages: number;
     private currentPage = 0;
@@ -30,7 +30,7 @@ export class PaginationService extends BeanStub implements NamedBean {
 
     private masterRowCount: number = 0;
 
-    private editSvc?: IEditService;
+    private readonly editSvc?: IEditService;
 
     public postConstruct() {
         const gos = this.gos;

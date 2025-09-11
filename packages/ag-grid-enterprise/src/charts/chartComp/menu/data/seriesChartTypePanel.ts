@@ -16,8 +16,8 @@ export class SeriesChartTypePanel extends Component {
 
     private seriesChartTypeGroupComp: AgGroupComponent;
     private selectedColIds: string[] = [];
-    private chartTypeComps: Map<string, GridSelect> = new Map();
-    private secondaryAxisComps: Map<string, GridCheckbox> = new Map();
+    private readonly chartTypeComps: Map<string, GridSelect> = new Map();
+    private readonly secondaryAxisComps: Map<string, GridCheckbox> = new Map();
 
     constructor(
         private readonly chartController: ChartController,

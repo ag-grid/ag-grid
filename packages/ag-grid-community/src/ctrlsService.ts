@@ -61,7 +61,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
 
     private params: ReadyParams = {} as any;
     private ready = false;
-    private readyCallbacks: ((p: ReadyParams) => void)[] = [];
+    private readonly readyCallbacks: ((p: ReadyParams) => void)[] = [];
 
     public postConstruct() {
         // With React 19 StrictMode, ctrlService can be ready twice.

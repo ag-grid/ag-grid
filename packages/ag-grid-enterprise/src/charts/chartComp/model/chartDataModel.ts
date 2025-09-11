@@ -19,7 +19,7 @@ import type { ChartDatasourceParams } from '../datasource/chartDatasource';
 import { ChartDatasource } from '../datasource/chartDatasource';
 import { ChartColumnService } from '../services/chartColumnService';
 import type { ChartTranslationService } from '../services/chartTranslationService';
-import { getMaxNumSeries, getSeriesType, isComboChart, isHierarchical } from '../utils/seriesTypeMapper';
+import { getMaxNumSeries, getSeriesType, isComboChart, isHierarchical, isStatistical } from '../utils/seriesTypeMapper';
 import { ComboChartModel } from './comboChartModel';
 
 export interface ColState {
@@ -211,6 +211,7 @@ export class ChartDataModel extends BeanStub {
             startRow,
             endRow,
             isScatter: ['scatter', 'bubble'].includes(this.chartType),
+            combineGroupValues: isStatistical(getSeriesType(this.chartType)),
         };
 
         const { chartData, colNames, groupChartData } = this.datasource.getData(params);
@@ -333,7 +334,7 @@ export class ChartDataModel extends BeanStub {
         let hasSelectedDimension = false;
         let order = 1;
 
-        const aggFuncDimension = this.suppliedCellRange.columns[0]; //TODO
+        const aggFuncDimension = this.suppliedCellRange.columns[0];
 
         dimensionCols.forEach((column) => {
             const isAutoGroupCol = column.getColId() === 'ag-Grid-AutoColumn';
@@ -476,7 +477,7 @@ export class ChartDataModel extends BeanStub {
 
         let selectedDimensionColStates = updatedColState ? [updatedColState] : [];
         if (this.crossFiltering && this.aggFunc) {
-            const aggFuncDimension = this.suppliedCellRange.columns[0]; //TODO
+            const aggFuncDimension = this.suppliedCellRange.columns[0];
             selectedDimensionColStates = this.dimensionColState.filter(
                 (cs) => cs.colId === aggFuncDimension.getColId()
             );

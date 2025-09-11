@@ -1,7 +1,6 @@
 import { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 import { RowApiModule, ScrollApiModule } from './api/apiModule';
-import { ClientSideRowModelModule } from './clientSideRowModel/clientSideRowModelModule';
-import { ClientSideRowModelApiModule } from './clientSideRowModel/clientSideRowModelModule';
+import { ClientSideRowModelApiModule, ClientSideRowModelModule } from './clientSideRowModel/clientSideRowModelModule';
 import { ColumnAutoSizeModule } from './columnAutosize/columnAutosizeModule';
 import { ColumnHoverModule } from './columns/columnHover/columnHoverModule';
 import { ColumnApiModule } from './columns/columnModule';

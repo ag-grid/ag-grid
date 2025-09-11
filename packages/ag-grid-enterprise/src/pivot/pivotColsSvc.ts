@@ -29,7 +29,7 @@ export class PivotColsSvc extends BaseColsService implements NamedBean, IColsSer
         getInitialValueFunc: (colDef: ColDef) => colDef.initialPivot,
     } as const;
 
-    private modifyColumnsNoEventsCallbacks = {
+    private readonly modifyColumnsNoEventsCallbacks = {
         addCol: (column: AgColumn) => this.columns.push(column),
         removeCol: (column: AgColumn) => _removeFromArray(this.columns, column),
     };

@@ -31,7 +31,7 @@ export class ChartSpecificDataPanel extends Component {
 
     constructor(
         private readonly chartMenuContext: ChartMenuContext,
-        private isOpen?: boolean
+        private readonly isOpen?: boolean
     ) {
         super();
     }

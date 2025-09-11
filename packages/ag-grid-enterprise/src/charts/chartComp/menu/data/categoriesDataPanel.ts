@@ -19,8 +19,8 @@ export class CategoriesDataPanel extends DragDataPanel {
         chartController: ChartController,
         private readonly title: string,
         allowMultipleSelection: boolean,
-        private dimensionCols: ColState[],
-        private isOpen?: boolean
+        private readonly dimensionCols: ColState[],
+        private readonly isOpen?: boolean
     ) {
         const maxSelection = undefined;
         super(chartController, allowMultipleSelection, maxSelection, /* html */ `<div id="categoriesGroup"></div>`);

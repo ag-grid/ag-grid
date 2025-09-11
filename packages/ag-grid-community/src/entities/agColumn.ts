@@ -65,7 +65,7 @@ export class AgColumn<TValue = any>
 
     // used by React (and possibly other frameworks) as key for rendering. also used to
     // identify old vs new columns for destroying cols when no longer used.
-    private instanceId = getNextColInstanceId();
+    private readonly instanceId = getNextColInstanceId();
     /** Sanitised version of the column id */
     public readonly colIdSanitised: string;
 

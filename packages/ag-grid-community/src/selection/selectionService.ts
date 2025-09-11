@@ -27,7 +27,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     private selectedNodes = new Map<string, RowNode>();
     /** Only used to track detail grid selection state when master/detail is enabled */
-    private detailSelection = new Map<string, Set<string>>();
+    private readonly detailSelection = new Map<string, Set<string>>();
 
     private groupSelectsDescendants: boolean;
     private groupSelectsFiltered: boolean;
@@ -117,13 +117,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         source,
         keepDescendants = false,
     }: ISetNodesSelectedParams & { keepDescendants?: boolean }): number {
+        if (nodes.length === 0) return 0;
+
         const { gos } = this;
         if (!_isRowSelection(gos) && newValue) {
             _warn(132);
             return 0;
         }
-
-        if (nodes.length === 0) return 0;
 
         if (nodes.length > 1 && !this.isMultiSelect()) {
             _warn(130);
