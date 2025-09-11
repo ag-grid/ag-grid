@@ -117,13 +117,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         source,
         keepDescendants = false,
     }: ISetNodesSelectedParams & { keepDescendants?: boolean }): number {
+        if (nodes.length === 0) return 0;
+
         const { gos } = this;
         if (!_isRowSelection(gos) && newValue) {
             _warn(132);
             return 0;
         }
-
-        if (nodes.length === 0) return 0;
 
         if (nodes.length > 1 && !this.isMultiSelect()) {
             _warn(130);
