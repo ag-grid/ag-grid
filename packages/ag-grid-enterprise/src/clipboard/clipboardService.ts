@@ -166,26 +166,24 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     public pasteFromClipboard(): void {
         // Method 1 - native clipboard API, available in modern chrome browsers
         const allowNavigator = !this.gos.get('suppressClipboardApi');
-        // Some browsers (Firefox) do not allow Web Applications to read from
-        // the clipboard so verify if not only the ClipboardAPI is available,
-        // but also if the `readText` method is public.
-
         // Firefox also requires transient user activation for the clipboard API to be available
         // (otherwise it will prompt the user with an annoying "paste" context menu).
         // If we are not in transient user activation state, fallback to legacy paste.
         // See https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API#security_considerations
-        const hasTransientActivationInFirefox = _isBrowserFirefox() && navigator.userActivation?.isActive;
+        if (_isBrowserFirefox() && !navigator.userActivation?.isActive) {
+            return this.pasteFromClipboardLegacy();
+        }
 
-        if (
-            allowNavigator &&
-            !this.navigatorApiFailed &&
-            navigator.clipboard?.readText &&
-            !hasTransientActivationInFirefox
-        ) {
+        // Some browsers (Firefox) do not allow Web Applications to read from
+        // the clipboard so verify if not only the ClipboardAPI is available,
+        // but also if the `readText` method is public.
+        if (allowNavigator && !this.navigatorApiFailed && navigator.clipboard?.readText) {
             navigator.clipboard
                 .readText()
                 .then(this.processClipboardData.bind(this))
                 .catch((e) => {
+                    // Firefox will fail regardless of user activation status if attempting to
+                    // paste cross-origin content.
                     _warn(40, { e, method: 'readText' });
                     this.navigatorApiFailed = true;
                     this.pasteFromClipboardLegacy();
