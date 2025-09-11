@@ -28,8 +28,8 @@ export class UndoRedoService extends BeanStub implements NamedBean {
 
     private isPasting = false;
     private isRangeInAction = false;
-    private readonly batchEditing = false;
-    private readonly bulkEditing = false;
+    private batchEditing = false;
+    private bulkEditing = false;
 
     public postConstruct(): void {
         const { gos, ctrlsSvc } = this.beans;
@@ -333,15 +333,22 @@ export class UndoRedoService extends BeanStub implements NamedBean {
     }
 
     private startBigChange(key: BigChangeKey): void {
-        this[key] = true;
+        this.updateBigChange(key, true);
+    }
+    private updateBigChange(key: BigChangeKey, value: boolean): void {
+        if (key === 'bulkEditing') {
+            this.bulkEditing = value;
+        } else {
+            this.batchEditing = value;
+        }
     }
 
     private stopBigChange(key: BigChangeKey, changes?: CellValueChange[]): void {
-        if (!this[key]) {
+        if ((key === 'bulkEditing' && !this.bulkEditing) || (key === 'batchEditing' && !this.batchEditing)) {
             return;
         }
 
-        this[key] = false;
+        this.updateBigChange(key, false);
 
         if (changes?.length === 0) {
             return;
