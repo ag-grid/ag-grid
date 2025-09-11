@@ -467,7 +467,10 @@ always be 0 and then making a row sticky causes the grid to scroll. */
     z-index: 1;
 }
 
-.ag-sticky-bottom {
+.ag-pinned-left-cols-container,
+.ag-pinned-right-cols-container,
+.ag-full-width-container,
+.ag-sticky-bottom-container {
     box-sizing: content-box !important;
     border-top: var(--ag-row-border);
 }

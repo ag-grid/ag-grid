@@ -144,6 +144,10 @@ class RowContainerComp extends Component {
 
         this.removeOldRows(Object.values(oldRows));
         this.addRowNodes(orderedRows, container);
+
+        // hide the container if no rows, this prevents sticky bottom
+        // container from being rendered with an unnecessary full width border.
+        this.setDisplayed(rowCtrls.length > 0);
     }
 
     private addRowNodes(rows: [rowComp: RowComp, isNew: boolean][], container: HTMLElement): void {

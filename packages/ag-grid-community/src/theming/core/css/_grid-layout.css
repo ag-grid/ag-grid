@@ -100,7 +100,10 @@
     border-bottom-color: transparent;
 }
 
-.ag-sticky-bottom {
+.ag-pinned-left-cols-container,
+.ag-pinned-right-cols-container,
+.ag-full-width-container,
+.ag-sticky-bottom-container {
     border-top: var(--ag-row-border);
     box-sizing: content-box !important;
 }
