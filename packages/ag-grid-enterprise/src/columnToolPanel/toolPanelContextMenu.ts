@@ -101,20 +101,27 @@ export class ToolPanelContextMenu extends Component {
                     this.beans.ctrlsSvc.getScrollFeature().ensureColumnVisible(firstVisibleColumn);
                 }
             },
-            deActivateFunction: () => { },
+            deActivateFunction: () => {},
             addIcon: 'ensureColumnVisible',
         });
 
-        const rowGroupAllowed = (col: AgColumn) => col.isPrimary() && col.isAllowRowGroup() && !isRowGroupColLocked(col, beans);
+        const rowGroupAllowed = (col: AgColumn) =>
+            col.isPrimary() && col.isAllowRowGroup() && !isRowGroupColLocked(col, beans);
         menuItemMap.set('rowGroup', {
             allowedFunction: rowGroupAllowed,
             activeFunction: (col) => col.isRowGroupActive(),
             activateLabel: () => `${localeTextFunc('groupBy', 'Group by')} ${displayName}`,
             deactivateLabel: () => `${localeTextFunc('ungroupBy', 'Un-Group by')} ${displayName}`,
             activateFunction: () =>
-                rowGroupColsSvc?.setColumns(this.addColumnsToList(rowGroupColsSvc.columns, rowGroupAllowed), 'toolPanelUi'),
+                rowGroupColsSvc?.setColumns(
+                    this.addColumnsToList(rowGroupColsSvc.columns, rowGroupAllowed),
+                    'toolPanelUi'
+                ),
             deActivateFunction: () =>
-                rowGroupColsSvc?.setColumns(this.removeColumnsFromList(rowGroupColsSvc.columns, rowGroupAllowed), 'toolPanelUi'),
+                rowGroupColsSvc?.setColumns(
+                    this.removeColumnsFromList(rowGroupColsSvc.columns, rowGroupAllowed),
+                    'toolPanelUi'
+                ),
             addIcon: 'menuAddRowGroup',
             removeIcon: 'menuRemoveRowGroup',
         });
@@ -178,7 +185,7 @@ export class ToolPanelContextMenu extends Component {
         const menuList = this.createBean(new AgMenuList());
         const localeTextFunc = this.getLocaleTextFunc();
 
-        let hideFunc = () => { };
+        let hideFunc = () => {};
 
         eGui.appendChild(menuList.getGui());
         menuList.addMenuItems(menuItemsMapped);
