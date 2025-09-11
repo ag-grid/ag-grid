@@ -1,5 +1,5 @@
+/* eslint no-console: 0 */
 import { LicenseManager } from './licenseManager';
-import { MD5 } from './md5';
 
 describe('LicenseManager', () => {
     const warnLog = console.warn;
