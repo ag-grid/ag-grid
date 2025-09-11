@@ -125,6 +125,10 @@ The pattern of setting components such as Cell Renderers and providing parameter
 
 As with all components, the parameters object (in this case `detailCellRendererParams`) can either be an Object, or it can be a function that returns an Object. The latter allows providing different parameters for each Detail Grid, allowing Detail Grids to be configured differently.
 
+## Styling Detail Grids
+
+Detail grids must have the same theme as their master grid, but you can use CSS to change the style of the detail grid. See [Master / Detail Styling](./theming-master-detail/) for more details.
+
 ## Row Selection
 By default, selecting rows in the Master Grid has no effect on any of the Detail Grids. In order to have the selection state of the Master Grid be reflected in the Detail Grids (and vice-versa), users should use the `rowSelection.masterSelects` grid option:
 
