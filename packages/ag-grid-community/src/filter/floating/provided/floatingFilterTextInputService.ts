@@ -10,7 +10,7 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
     private eInput: GridInputTextField = RefPlaceholder;
     private onValueChanged: (e: KeyboardEvent) => void = () => {};
 
-    constructor(private params?: { config?: AgInputTextFieldParams<AgComponentSelectorType> }) {
+    constructor(private readonly params?: { config?: AgInputTextFieldParams<AgComponentSelectorType> }) {
         super();
     }
 

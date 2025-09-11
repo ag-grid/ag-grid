@@ -21,7 +21,7 @@ import type {
 
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public colModel: ColumnModel;
-    private colNames: ColumnNameService;
+    private readonly colNames: ColumnNameService;
     public rowGroupColsSvc?: IColsService;
     public valueSvc: ValueService;
     public gos: GridOptionsService;

@@ -18,7 +18,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
     private eEditor: GridInputNumberField;
     private params: INumberCellEditorParams;
 
-    constructor(private getLocaleTextFunc: () => LocaleTextFunc) {}
+    constructor(private readonly getLocaleTextFunc: () => LocaleTextFunc) {}
 
     public getTemplate(): ElementParams {
         return NumberCellElement;

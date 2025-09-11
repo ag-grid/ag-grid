@@ -6,16 +6,16 @@ import type { RowPinnedType } from '../interfaces/iRowNode';
 
 export class PinnedRows {
     /** Canonical set of pinned nodes */
-    private all = new Set<RowNode>();
+    private readonly all = new Set<RowNode>();
     /**
      * Set of nodes that should currently be visible given the context of the grid.
      * This is currently used for hiding leaf nodes in pivot mode and filtered nodes.
      */
-    private visible = new Set<RowNode>();
+    private readonly visible = new Set<RowNode>();
     /** Ordering of nodes in the pinned area */
     private order: RowNode[] = [];
     /** IDs of nodes that need to be pinned once they are available from the row model (SSRM) */
-    private queued = new Set<string>();
+    private readonly queued = new Set<string>();
 
     constructor(
         private readonly beans: BeanCollection,

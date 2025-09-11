@@ -79,7 +79,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         this.registry = beans.registry;
     }
 
-    private ACTIVATION_DELAY = 80;
+    private readonly ACTIVATION_DELAY = 80;
 
     private eGui: HTMLElement;
     private params: MenuItemDef;

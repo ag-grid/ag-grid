@@ -40,10 +40,10 @@ export abstract class BaseEnvironment<
         this.eRootDiv = beans.eRootDiv;
     }
 
-    private paramsClass = `ag-theme-params-${++paramsId}`;
+    private readonly paramsClass = `ag-theme-params-${++paramsId}`;
     private theme: ThemeImpl | undefined;
     private eParamsStyle: HTMLStyleElement | undefined;
-    private globalCSS: [string, string][] = [];
+    private readonly globalCSS: [string, string][] = [];
 
     protected abstract initVariables(): void;
 

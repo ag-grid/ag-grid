@@ -20,8 +20,8 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     private includeTime: boolean | undefined;
 
     constructor(
-        private getDataTypeService: () => DataTypeService | undefined,
-        private getLocaleTextFunc: () => LocaleTextFunc
+        private readonly getDataTypeService: () => DataTypeService | undefined,
+        private readonly getLocaleTextFunc: () => LocaleTextFunc
     ) {}
 
     public getTemplate(): ElementParams {

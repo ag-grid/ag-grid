@@ -4,7 +4,7 @@ import { BeanStub, _warn } from 'ag-grid-community';
 export class NodeManager extends BeanStub implements NamedBean {
     beanName = 'ssrmNodeManager' as const;
 
-    private rowNodes: Map<string, RowNode> = new Map();
+    private readonly rowNodes: Map<string, RowNode> = new Map();
 
     public addRowNode(rowNode: RowNode): void {
         const id = rowNode.id!;

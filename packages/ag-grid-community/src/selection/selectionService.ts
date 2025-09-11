@@ -27,7 +27,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     private selectedNodes = new Map<string, RowNode>();
     /** Only used to track detail grid selection state when master/detail is enabled */
-    private detailSelection = new Map<string, Set<string>>();
+    private readonly detailSelection = new Map<string, Set<string>>();
 
     private groupSelectsDescendants: boolean;
     private groupSelectsFiltered: boolean;

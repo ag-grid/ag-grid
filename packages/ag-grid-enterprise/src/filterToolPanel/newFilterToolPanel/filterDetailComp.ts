@@ -15,7 +15,7 @@ const FilterDetailElement: ElementParams = {
 };
 
 export class FilterDetailComp extends Component<'filterTypeChanged'> {
-    private eFilterType: GridSelect<SelectableFilterDef> = RefPlaceholder;
+    private readonly eFilterType: GridSelect<SelectableFilterDef> = RefPlaceholder;
     private state?: FilterPanelDetailState;
 
     public postConstruct(): void {

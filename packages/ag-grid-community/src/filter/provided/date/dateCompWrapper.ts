@@ -13,8 +13,8 @@ export class DateCompWrapper {
     private tempValue: Date | null;
     private disabled: boolean | null;
     private alive = true;
-    private context: Context;
-    private eParent: HTMLElement;
+    private readonly context: Context;
+    private readonly eParent: HTMLElement;
 
     constructor(
         context: Context,

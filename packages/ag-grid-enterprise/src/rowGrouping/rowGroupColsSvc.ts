@@ -35,7 +35,7 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
         getInitialValueFunc: (colDef: ColDef) => colDef.initialRowGroup,
     } as const;
 
-    private modifyColumnsNoEventsCallbacks = {
+    private readonly modifyColumnsNoEventsCallbacks = {
         addCol: (column: AgColumn) => {
             // if this column has virtual columns associated to it, ensure those virtual columns are
             // inserted before it in the list (and therefore the grouping hierarchy)

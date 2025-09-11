@@ -17,7 +17,7 @@ export class CellFlashService extends BeanStub implements NamedBean {
     private nextAnimationTime: number | null = null;
     private nextAnimationCycle: number | null = null;
 
-    private animations: Record<FlashClassName, Map<CellCtrl, AnimationPhase>> = {
+    private readonly animations: Record<FlashClassName, Map<CellCtrl, AnimationPhase>> = {
         highlight: new Map(),
         'data-changed': new Map(),
     };

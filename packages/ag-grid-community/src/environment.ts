@@ -85,8 +85,8 @@ export class Environment
     >
     implements NamedBean
 {
-    private sizeEls = new Map<Variable, HTMLElement>();
-    private lastKnownValues = new Map<Variable, number>();
+    private readonly sizeEls = new Map<Variable, HTMLElement>();
+    private readonly lastKnownValues = new Map<Variable, number>();
     private eMeasurementContainer: HTMLElement | undefined;
     public sizesMeasured = false;
 

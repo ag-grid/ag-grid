@@ -77,13 +77,13 @@ function getAgGroupComponentTemplate(params: AgGroupComponentParams): ElementPar
 
 export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     private items: GroupItem[];
-    private cssIdentifier: string;
+    private readonly cssIdentifier: string;
     private enabled: boolean;
     private expanded: boolean;
     private suppressEnabledCheckbox: boolean = true;
-    private suppressToggleExpandOnEnableChange: boolean = false;
+    private readonly suppressToggleExpandOnEnableChange: boolean = false;
     private alignItems: Align | undefined;
-    private useToggle: boolean;
+    private readonly useToggle: boolean;
 
     private eToggle?: GridToggleButton;
     private eTitleBar?: DefaultTitleBar;
@@ -390,7 +390,7 @@ function getDefaultTitleBarTemplate(params: AgGroupComponentParams): ElementPara
 class DefaultTitleBar extends Component<ExpandedChangedEventType> {
     private title: string | undefined;
     private suppressOpenCloseIcons: boolean = false;
-    private suppressKeyboardNavigation: boolean = false;
+    private readonly suppressKeyboardNavigation: boolean = false;
 
     private readonly eGroupOpenedIcon: HTMLElement = RefPlaceholder;
     private readonly eGroupClosedIcon: HTMLElement = RefPlaceholder;

@@ -60,10 +60,10 @@ export class VirtualList<
 
     private readonly cssIdentifier: string;
     private readonly ariaRole: string;
-    private listName?: string;
+    private readonly listName?: string;
 
     protected model: VirtualListModel;
-    private renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: V }>();
+    private readonly renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: V }>();
     private componentCreator: (value: V, listItemElement: HTMLElement) => C;
     private componentUpdater: (value: V, component: C) => void;
     private rowHeight = 20;
@@ -73,7 +73,7 @@ export class VirtualList<
     private isHeightFromTheme: boolean = true;
     private readonly eContainer: HTMLElement = RefPlaceholder;
     private awaitStableCallbacks: (() => void)[] = [];
-    private moveItemCallback?: (item: C, isUp: boolean) => void;
+    private readonly moveItemCallback?: (item: C, isUp: boolean) => void;
 
     constructor(params?: VirtualListParams<C>) {
         super(getVirtualListTemplate(params?.cssIdentifier || 'default'));

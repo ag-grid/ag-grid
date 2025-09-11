@@ -13,7 +13,7 @@ function _capitalise<T extends string>(str: T): Capitalize<T> {
 }
 
 export class TooltipPanel extends Component {
-    private tooltipMode: GridSelect = RefPlaceholder;
+    private readonly tooltipMode: GridSelect = RefPlaceholder;
 
     constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {
         super();

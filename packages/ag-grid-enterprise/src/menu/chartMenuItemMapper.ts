@@ -188,9 +188,9 @@ type PivotMenuOptionName =
 
 class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
     constructor(
-        private beans: BeanCollection,
-        private chartSvc: IChartService,
-        private getLocaleTextFunc: () => LocaleTextFunc
+        private readonly beans: BeanCollection,
+        private readonly chartSvc: IChartService,
+        private readonly getLocaleTextFunc: () => LocaleTextFunc
     ) {}
 
     getMenuItem(): MenuItemDefWithKey<PivotMenuOptionName> {
@@ -422,9 +422,9 @@ type RangeMenuOptionName =
 
 class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
     constructor(
-        private beans: BeanCollection,
-        private chartSvc: IChartService,
-        private getLocaleTextFunc: () => LocaleTextFunc
+        private readonly beans: BeanCollection,
+        private readonly chartSvc: IChartService,
+        private readonly getLocaleTextFunc: () => LocaleTextFunc
     ) {}
 
     getMenuItem(): MenuItemDefWithKey<RangeMenuOptionName> {

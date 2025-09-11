@@ -120,7 +120,7 @@ export class GridChartComp extends Component {
     private readonly params: GridChartParams;
 
     // function to clean up the 'color-scheme-change' event listener
-    private onDestroyColorSchemeChangeListener: () => void;
+    private readonly onDestroyColorSchemeChangeListener: () => void;
 
     constructor(params: GridChartParams) {
         super(/* html */ `

@@ -85,15 +85,15 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
      */
     private active: boolean = false;
     /** pinned top matches */
-    private topMatches: Matches = new Map();
+    private readonly topMatches: Matches = new Map();
     /** same nodes as keys in `topMatches`, but kept separate for performance when moving backwards and forwards through the matches */
     private topNodes: IRowNode[] = [];
     /** total number of matches in pinned top */
     private topNumMatches: number = 0;
-    private centerMatches: Matches = new Map();
+    private readonly centerMatches: Matches = new Map();
     private centerNodes: IRowNode[] = [];
     private centerNumMatches: number = 0;
-    private bottomMatches: Matches = new Map();
+    private readonly bottomMatches: Matches = new Map();
     private bottomNodes: IRowNode[] = [];
 
     /** switches based on grid options */

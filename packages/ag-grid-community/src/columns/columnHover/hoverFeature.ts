@@ -18,7 +18,7 @@ export class HoverFeature extends BeanStub {
         this.enableFeature();
     }
 
-    private enableFeature = (enabled?: boolean) => {
+    private readonly enableFeature = (enabled?: boolean) => {
         const { beans, gos, element, columns } = this;
         const colHover = beans.colHover!;
         const active = enabled ?? !!gos.get('columnHoverHighlight');

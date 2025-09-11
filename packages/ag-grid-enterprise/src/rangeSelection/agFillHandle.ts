@@ -49,8 +49,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
     private initialPosition: CellPosition | undefined;
     private initialXY: { x: number; y: number } | null;
     private lastCellMarked: CellPosition | undefined;
-    private markedCells: CellCtrl[] = [];
-    private cellValues: FillValues[][] = [];
+    private readonly markedCells: CellCtrl[] = [];
+    private readonly cellValues: FillValues[][] = [];
 
     private dragAxis?: FillDirection;
     private isUp: boolean = false;

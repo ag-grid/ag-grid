@@ -8,7 +8,7 @@ import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 export class MiniRadialColumnClass extends MiniChartWithPolarAxes {
     private readonly series: Group[];
 
-    private data = [
+    private readonly data = [
         [6, 8, 10, 2, 6, 5],
         [4, 4, 3, 6, 4, 4],
         [5, 4, 2, 9, 8, 9],

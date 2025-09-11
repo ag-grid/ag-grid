@@ -33,7 +33,7 @@ export class ChartMenu extends Component {
 
     private readonly chartController: ChartController;
 
-    private buttons: ChartToolbarButtons = {
+    private readonly buttons: ChartToolbarButtons = {
         chartLink: { iconName: 'linked', callback: () => this.chartMenuSvc.toggleLinked(this.chartMenuContext) },
         chartUnlink: {
             iconName: 'unlinked',

@@ -11,7 +11,7 @@ import { RowSpanCache } from './rowSpanCache';
 export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements NamedBean {
     beanName = 'rowSpanSvc' as const;
 
-    private spanningColumns: Map<AgColumn, RowSpanCache> = new Map();
+    private readonly spanningColumns: Map<AgColumn, RowSpanCache> = new Map();
 
     public postConstruct(): void {
         const onRowDataUpdated = this.onRowDataUpdated.bind(this);
@@ -49,8 +49,8 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
     }
 
     // debounced to allow spannedRowRenderer to run first, removing any old spanned rows
-    private debouncePinnedEvent = _debounce(this, this.dispatchCellsUpdatedEvent.bind(this, true), 0);
-    private debounceModelEvent = _debounce(this, this.dispatchCellsUpdatedEvent.bind(this, false), 0);
+    private readonly debouncePinnedEvent = _debounce(this, this.dispatchCellsUpdatedEvent.bind(this, true), 0);
+    private readonly debounceModelEvent = _debounce(this, this.dispatchCellsUpdatedEvent.bind(this, false), 0);
     private dispatchCellsUpdatedEvent(pinned: boolean): void {
         this.dispatchLocalEvent({ type: 'spannedCellsUpdated', pinned });
     }

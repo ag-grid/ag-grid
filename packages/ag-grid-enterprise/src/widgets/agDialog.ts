@@ -31,13 +31,13 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
     private tabGuardFeature: TabGuardFeature;
     private isMaximizable: boolean = false;
     private isMaximized: boolean = false;
-    private maximizeListeners: (() => void)[] = [];
+    private readonly maximizeListeners: (() => void)[] = [];
     private maximizeButtonComp: Component | undefined;
     private maximizeIcon: Element | undefined;
     private minimizeIcon: Element | undefined;
     private resizeListenerDestroy: (() => void) | null | undefined = null;
 
-    private lastPosition = {
+    private readonly lastPosition = {
         x: 0,
         y: 0,
         width: 0,

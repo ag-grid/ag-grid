@@ -44,7 +44,7 @@ export abstract class AgComponentStub<
     implements AgComponent<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType>
 {
     private eGui: HTMLElement;
-    private componentSelectors: Map<
+    private readonly componentSelectors: Map<
         TComponentSelectorType,
         AgComponentSelector<TComponentSelectorType, TBeanCollection>
     >;
@@ -63,9 +63,9 @@ export abstract class AgComponentStub<
     // unique id for this row component. this is used for getting a reference to the HTML dom.
     // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
     // around as we create a new rowComp instance for the same row node).
-    private compId = compIdSequence++;
+    private readonly compId = compIdSequence++;
 
-    private cssManager: CssClassManager;
+    private readonly cssManager: CssClassManager;
 
     constructor(
         templateOrParams?: string | AgElementParams<TComponentSelectorType>,

@@ -87,8 +87,8 @@ export class LazyCache extends BeanStub {
     /**
      * Sibling services - 1-1 relationships.
      */
-    private store: LazyStore;
-    private storeParams: ServerSideGroupLevelParams;
+    private readonly store: LazyStore;
+    private readonly storeParams: ServerSideGroupLevelParams;
 
     /**
      * Grid options properties - stored locally for access speed.

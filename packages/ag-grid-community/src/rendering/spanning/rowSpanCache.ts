@@ -4,7 +4,7 @@ import type { SpanRowsParams } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type { CellPosition } from '../../interfaces/iCellPosition';
-import { _normalisePinnedValue } from './spannedRowRenderer';
+import type { RowPinnedType } from '../../interfaces/iRowNode';
 
 export class CellSpan {
     // used for distinguishing between types
@@ -100,7 +100,7 @@ export class RowSpanCache extends BeanStub {
         } = this;
         const { colDef } = column;
 
-        const oldMap = this[`${pinned}ValueNodeMap`];
+        const oldMap = this.getNodeMap(pinned);
         const newMap = new Map();
 
         const isFullWidthCellFunc = gos.getCallback('isFullWidthRow');
@@ -187,15 +187,17 @@ export class RowSpanCache extends BeanStub {
                     }
                     checkNodeForCache(node);
                 });
+                this.centerValueNodeMap = newMap;
                 break;
             case 'top':
                 pinnedRowModel?.forEachPinnedRow('top', checkNodeForCache);
+                this.topValueNodeMap = newMap;
                 break;
             case 'bottom':
                 pinnedRowModel?.forEachPinnedRow('bottom', checkNodeForCache);
+                this.bottomValueNodeMap = newMap;
                 break;
         }
-        this[`${pinned}ValueNodeMap`] = newMap;
     }
 
     public isCellSpanning(node: RowNode): boolean {
@@ -203,7 +205,17 @@ export class RowSpanCache extends BeanStub {
     }
 
     public getCellSpan(node: RowNode): CellSpan | undefined {
-        const map = this[`${_normalisePinnedValue(node.rowPinned)}ValueNodeMap`];
-        return map.get(node);
+        return this.getNodeMap(node.rowPinned).get(node);
+    }
+
+    private getNodeMap(container: RowPinnedType | 'center'): Map<RowNode, CellSpan> {
+        switch (container) {
+            case 'top':
+                return this.topValueNodeMap;
+            case 'bottom':
+                return this.bottomValueNodeMap;
+            default:
+                return this.centerValueNodeMap;
+        }
     }
 }

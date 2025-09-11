@@ -81,7 +81,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     private cellRanges: CellRange[] = [];
     private lastMouseEvent: MouseEvent | null;
-    private bodyScrollListener = this.onBodyScroll.bind(this);
+    private readonly bodyScrollListener = this.onBodyScroll.bind(this);
 
     private lastCellHovered: CellPosition | undefined;
     private cellHasChanged: boolean;

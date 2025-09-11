@@ -8,7 +8,7 @@ import { MiniChartWithAxes } from '../miniChartWithAxes';
 export class MiniWaterfallClass extends MiniChartWithAxes {
     private readonly bars: Rect[];
 
-    private data = [4, 3, -3, 6, -3];
+    private readonly data = [4, 3, -3, 6, -3];
 
     constructor(
         container: HTMLElement,

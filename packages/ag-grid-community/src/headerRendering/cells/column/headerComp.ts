@@ -56,12 +56,12 @@ const HeaderCompElementNoSort = getHeaderCompElementParams(false);
 
 export class HeaderComp extends Component implements IHeaderComp {
     // All the elements are optional, as they are not guaranteed to be present if the user provides a custom template
-    private eFilter?: HTMLElement = RefPlaceholder;
+    private readonly eFilter?: HTMLElement = RefPlaceholder;
     public eFilterButton?: HTMLElement = RefPlaceholder;
     private eSortIndicator?: SortIndicatorComp = RefPlaceholder;
     public eMenu?: HTMLElement = RefPlaceholder;
-    private eLabel?: HTMLElement = RefPlaceholder;
-    private eText?: HTMLElement = RefPlaceholder;
+    private readonly eLabel?: HTMLElement = RefPlaceholder;
+    private readonly eText?: HTMLElement = RefPlaceholder;
 
     /**
      * Selectors for custom headers templates, i.e when the ag-sort-indicator is not present.

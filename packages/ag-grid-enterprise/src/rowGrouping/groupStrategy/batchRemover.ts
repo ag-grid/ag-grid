@@ -18,7 +18,7 @@ interface RemoveDetails {
 }
 
 export class BatchRemover {
-    private allSets = new Map<GroupRow, RemoveDetails>();
+    private readonly allSets = new Map<GroupRow, RemoveDetails>();
 
     public removeFromChildrenAfterGroup(parent: RowNode, child: RowNode): void {
         const set = this.getSet(parent);

@@ -46,9 +46,9 @@ export class TabbedLayout extends TabGuardComp {
     private eTabHeader: HTMLElement;
     private eCloseButton?: HTMLElement;
 
-    private params: TabbedLayoutParams;
+    private readonly params: TabbedLayoutParams;
     private afterAttachedParams: IAfterGuiAttachedParams;
-    private items: TabbedItemWrapper[] = [];
+    private readonly items: TabbedItemWrapper[] = [];
     private activeItem: TabbedItemWrapper;
     private lastScrollListener: (() => null) | null | undefined;
     private readonly tabbedItemScrollMap = new Map<string, number>();

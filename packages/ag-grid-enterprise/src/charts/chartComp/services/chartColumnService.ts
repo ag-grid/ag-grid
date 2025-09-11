@@ -20,7 +20,7 @@ export class ChartColumnService extends BeanStub {
         this.valueSvc = beans.valueSvc;
     }
 
-    private valueColsWithoutSeriesType: Set<string> = new Set();
+    private readonly valueColsWithoutSeriesType: Set<string> = new Set();
 
     public postConstruct(): void {
         const clearValueCols = () => this.valueColsWithoutSeriesType.clear();
