@@ -1,3 +1,5 @@
+import { _exists, _warn } from 'ag-grid-community';
+
 import { MD5 } from './md5';
 
 const LICENSE_TYPES = {
@@ -283,6 +285,10 @@ export class LicenseManager {
     }
 
     static setLicenseKey(licenseKey: string): void {
+        if (_exists(this.licenseKey) && this.licenseKey !== licenseKey) {
+            _warn(291);
+        }
+
         this.licenseKey = licenseKey;
         this.chartsLicenseManager?.setLicenseKey(licenseKey, true);
     }

@@ -715,6 +715,8 @@ export const AG_GRID_ERRORS = {
         `Row Model '${rowModelType}' is not supported with Batch Editing` as const,
     290: ({ rowIndex, rowPinned }: { rowIndex: number; rowPinned: RowPinnedType }) =>
         `Row with index '${rowIndex}' and pinned state '${rowPinned}' not found` as const,
+    291: () =>
+        'License Key being set multiple times with different values. This can result in an incorrect license key being used,' as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
