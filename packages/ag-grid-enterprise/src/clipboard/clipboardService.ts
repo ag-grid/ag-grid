@@ -26,6 +26,7 @@ import {
     _getDocument,
     _getRowBelow,
     _getRowNode,
+    _isBrowserFirefox,
     _isClientSideRowModel,
     _isSameRow,
     _last,
@@ -168,7 +169,19 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         // Some browsers (Firefox) do not allow Web Applications to read from
         // the clipboard so verify if not only the ClipboardAPI is available,
         // but also if the `readText` method is public.
-        if (allowNavigator && !this.navigatorApiFailed && navigator.clipboard && navigator.clipboard.readText) {
+
+        // Firefox also requires transient user activation for the clipboard API to be available
+        // (otherwise it will prompt the user with an annoying "paste" context menu).
+        // If we are not in transient user activation state, fallback to legacy paste.
+        // See https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API#security_considerations
+        const hasTransientActivationInFirefox = _isBrowserFirefox() && navigator.userActivation?.isActive;
+
+        if (
+            allowNavigator &&
+            !this.navigatorApiFailed &&
+            navigator.clipboard?.readText &&
+            !hasTransientActivationInFirefox
+        ) {
             navigator.clipboard
                 .readText()
                 .then(this.processClipboardData.bind(this))
