@@ -430,20 +430,18 @@ const removeTempEventHandlers = (list: TempEventHandler[]): void => {
     }
 };
 
-type DraggingEvent = PointerEvent | MouseEvent | Touch;
-
 // New class-based drag model replacing prior interfaces
 class Dragging {
     public readonly eElement: Element & Partial<HTMLElement>;
     public readonly handlers: TempEventHandler[] = [];
     public readonly target: EventTarget | null;
-    public lastDrag: DraggingEvent | null = null;
+    public lastDrag: PointerEvent | MouseEvent | Touch | null = null;
     public pointerId: number | null = null;
     private oldTouchAction: string | undefined = undefined;
 
     public constructor(
         public readonly params: DragListenerParams,
-        public readonly start: DraggingEvent
+        public readonly start: PointerEvent | MouseEvent | Touch
     ) {
         this.eElement = params.eElement;
         this.target = start.target;
