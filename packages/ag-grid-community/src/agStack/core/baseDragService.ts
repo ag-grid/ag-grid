@@ -28,7 +28,7 @@ export class BaseDragService<
     public dragging: boolean = false;
     private drag: Dragging | null = null;
     private handledEvents: WeakSet<Event> | null = null;
-    private readonly dragSources: DragSourceAndListener[] = [];
+    private readonly dragSources: DragSourceEntry[] = [];
 
     public get startTarget(): EventTarget | null {
         return this.drag?.target ?? null;
@@ -46,7 +46,7 @@ export class BaseDragService<
     }
 
     public override destroy(): void {
-        const { dragSources } = this;
+        const dragSources = this.dragSources;
         for (const ds of dragSources) {
             removeTempEventHandlers(ds.handlers);
         }
@@ -59,7 +59,7 @@ export class BaseDragService<
         const dragSources = this.dragSources;
         for (let i = 0, len = dragSources.length; i < len; ++i) {
             const item = dragSources[i];
-            if (item.dragSource === params) {
+            if (item.params === params) {
                 dragSources.splice(i, 1);
                 removeTempEventHandlers(item.handlers);
                 break;
@@ -67,15 +67,17 @@ export class BaseDragService<
         }
     }
 
-    public addDragSource(dragSource: DragListenerParams): void {
-        const { eElement, includeTouch, stopPropagationForTouch } = dragSource;
+    public addDragSource(params: DragListenerParams): void {
+        const { eElement, includeTouch } = params;
         const handlers: TempEventHandler[] = [];
+        const dragSource = { handlers, params };
+        this.dragSources.push(dragSource);
 
         // Modern Pointer Events (preferred when supported)
-        const pointerDownListener = (event: PointerEvent) => this.onPointerDown(dragSource, event);
+        const pointerDownListener = (event: PointerEvent) => this.onPointerDown(params, event);
 
         // Fallback to legacy Mouse handler
-        const mouseListener = (event: MouseEvent) => this.onMouseDown(dragSource, event);
+        const mouseListener = (event: MouseEvent) => this.onMouseDown(params, event);
 
         addTempEventHandlers(
             handlers,
@@ -86,21 +88,11 @@ export class BaseDragService<
         const suppressTouch = this.gos.get('suppressTouch');
         if (includeTouch && !suppressTouch) {
             // Fallback to legacy Mouse touch handler
-            const touchListener = (touchEvent: TouchEvent) => {
-                if (_isFocusableFormField(touchEvent.target as HTMLElement)) {
-                    return;
-                }
-                if (stopPropagationForTouch) {
-                    touchEvent.stopPropagation();
-                }
-                this.onTouchStart(dragSource, touchEvent);
-            };
+            const touchListener = (touchEvent: TouchEvent) => this.onTouchStart(params, touchEvent);
 
             // we set passive=false, as we want to prevent default on this event
             addTempEventHandlers(handlers, [eElement, 'touchstart', touchListener, { passive: false }]);
         }
-
-        this.dragSources.push({ dragSource, handlers });
     }
 
     public cancelDrag(eElement?: Element | undefined): void {
@@ -109,7 +101,7 @@ export class BaseDragService<
         if (eElement) {
             this.eventSvc.dispatchEvent({ type: 'dragCancelled', target: eElement });
         }
-        drag?.dragSource.onDragCancel?.();
+        drag?.params.onDragCancel?.();
         this.destroyDrag();
     }
 
@@ -120,7 +112,7 @@ export class BaseDragService<
             isMouseMove &&
             mouseEvent.cancelable &&
             _isEventFromThisInstance(this.beans, mouseEvent) &&
-            !isOverFormFieldElement(mouseEvent)
+            !_isFocusableFormField(getEventTargetElement(mouseEvent))
         );
     }
 
@@ -167,7 +159,7 @@ export class BaseDragService<
             if (params.stopPropagationForTouch) {
                 pointerEvent.stopPropagation();
             }
-            if (_isFocusableFormField(pointerEvent.target as HTMLElement)) {
+            if (_isFocusableFormField(getEventTargetElement(pointerEvent))) {
                 return;
             }
         }
@@ -182,7 +174,7 @@ export class BaseDragService<
 
         this.destroyDrag();
 
-        const pointerDrag = new Dragging('pointer', params, pointerEvent);
+        const pointerDrag = new Dragging(params, pointerEvent);
         if (!pointerDrag.capture(pointerEvent)) {
             return; // capture failed, fallback to normal events
         }
@@ -214,13 +206,20 @@ export class BaseDragService<
             return; // Already handled
         }
 
-        if (this.drag?.kind === 'pointer') {
-            return; // We are handling the pointer events
+        if (this.drag?.pointerId != null) {
+            return; // We are handling the pointer events, ignore this
         }
 
-        this.dragging = false;
+        if (_isFocusableFormField(getEventTargetElement(touchEvent))) {
+            return;
+        }
+        if (params.stopPropagationForTouch) {
+            touchEvent.stopPropagation();
+        }
 
-        const touchDrag = new Dragging('touch', params, touchEvent.touches[0]);
+        this.destroyDrag();
+
+        const touchDrag = new Dragging(params, touchEvent.touches[0]);
 
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e);
@@ -255,8 +254,8 @@ export class BaseDragService<
             return; // Already handled
         }
 
-        if (this.drag?.kind === 'pointer') {
-            return; // We are handling the pointer events
+        if (this.drag?.pointerId != null) {
+            return; // We are handling the pointer events, ignore this
         }
 
         if (mouseEvent.button !== 0) {
@@ -265,7 +264,7 @@ export class BaseDragService<
 
         this.destroyDrag();
 
-        const mouseDrag = new Dragging('mouse', params, mouseEvent);
+        const mouseDrag = new Dragging(params, mouseEvent);
 
         const mouseMoveEvent = (event: MouseEvent) => this.onMouseMove(event);
         const mouseUpEvent = (event: MouseEvent) => this.onUp(event);
@@ -288,7 +287,7 @@ export class BaseDragService<
         const drag = this.drag;
         const lastDrag = drag?.lastDrag;
         if (lastDrag && this.dragging) {
-            drag.dragSource?.onDragging(lastDrag);
+            drag.params?.onDragging(lastDrag);
         }
     }
 
@@ -329,7 +328,7 @@ export class BaseDragService<
 
         drag.lastDrag = currentEvent;
 
-        const dragSource = drag.dragSource;
+        const dragSource = drag.params;
         if (!this.dragging) {
             const start = drag.start;
             const dragStartPixels = dragSource.dragStartPixels;
@@ -387,10 +386,10 @@ export class BaseDragService<
         }
         if (eventOrTouch && this.dragging) {
             this.dragging = false;
-            drag.dragSource.onDragStop(eventOrTouch);
+            drag.params.onDragStop(eventOrTouch);
             this.eventSvc.dispatchEvent({
                 type: 'dragStopped',
-                target: drag.dragSource.eElement,
+                target: drag.params.eElement,
             });
         }
         this.destroyDrag();
@@ -404,9 +403,9 @@ export class BaseDragService<
     }
 }
 
-interface DragSourceAndListener {
-    dragSource: DragListenerParams;
-    handlers: TempEventHandler[];
+interface DragSourceEntry {
+    readonly handlers: TempEventHandler[];
+    readonly params: DragListenerParams;
 }
 
 // Tuple [target, type, listener, options?]
@@ -431,30 +430,34 @@ const removeTempEventHandlers = (list: TempEventHandler[]): void => {
     }
 };
 
-type DraggingKind = 'mouse' | 'touch' | 'pointer';
 type DraggingEvent = PointerEvent | MouseEvent | Touch;
 
 // New class-based drag model replacing prior interfaces
-class Dragging<TKind extends DraggingKind = DraggingKind> {
+class Dragging {
     public readonly eElement: Element & Partial<HTMLElement>;
     public readonly handlers: TempEventHandler[] = [];
     public readonly target: EventTarget | null;
     public lastDrag: DraggingEvent | null = null;
-    private pointerId: number | null = null;
+    public pointerId: number | null = null;
     private oldTouchAction: string | undefined = undefined;
 
     public constructor(
-        public readonly kind: TKind,
-        public readonly dragSource: DragListenerParams,
+        public readonly params: DragListenerParams,
         public readonly start: DraggingEvent
     ) {
-        this.eElement = dragSource.eElement;
+        this.eElement = params.eElement;
         this.target = start.target;
     }
 
-    public capture(event: PointerEvent): boolean {
+    /**
+     * Captures pointer events for the drag operation.
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/setPointerCapture)
+     * @param pointerEvent The pointer event to capture.
+     * @returns True if the capture was successful, false otherwise.
+     */
+    public capture(pointerEvent: PointerEvent): boolean {
         const eElement = this.eElement;
-        const pointerId = event.pointerId;
+        const pointerId = pointerEvent.pointerId;
         if (pointerId == null || !eElement.setPointerCapture) {
             return false; // fallback to legacy handlers
         }
@@ -493,7 +496,7 @@ class Dragging<TKind extends DraggingKind = DraggingKind> {
     }
 }
 
-const isOverFormFieldElement = (event: Event): boolean => {
-    const tag = (event.target as Element | null)?.tagName;
-    return !!tag && /^(a|textarea|input|select|button)$/i.test(tag);
+const getEventTargetElement = (event: Event): Element | null => {
+    const target = event.target;
+    return target instanceof Element ? target : null;
 };
