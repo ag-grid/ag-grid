@@ -212,6 +212,11 @@
                         },
                         {
                             "type": "item",
+                            "title": "Master Detail",
+                            "path": "theming-master-detail"
+                        },
+                        {
+                            "type": "item",
                             "title": "Tool Panels",
                             "path": "theming-tool-panels"
                         },

@@ -58,6 +58,9 @@ const ALL_FRAMEWORKS = [
 ] as const;
 type AgFramework = (typeof ALL_FRAMEWORKS)[number];
 
+const additionalBrowser = ['webkit', 'firefox'];
+const frameworksWithAdditionalBrowser: AgFramework[] = ['reactFunctionalTs', 'typescript'];
+
 const licenseTexts = [
     '****************************************************************************************************************************',
     '************************************************ AG Grid Enterprise License ************************************************',
@@ -84,6 +87,7 @@ const excludeErrors = [
     'XML Parsing Error: syntax error',
     'Layout was forced before the page was fully loaded. If stylesheets are not yet loaded this may cause a flash of unstyled content.',
     'Request to access cookie or storage on “<URL>” was blocked because it came from a tracker and Enhanced Tracking Protection is enabled.',
+    'This site appears to use a scroll-linked positioning effect.',
 ];
 
 function setupConsoleExpectations(page: Page) {
@@ -238,6 +242,7 @@ const frameworkTest =
                 baseURL,
                 request,
                 context,
+                browserName,
             }: TestFixtures,
             testInfo: any
         ) => {
@@ -245,6 +250,11 @@ const frameworkTest =
                 throw new Error(
                     `Missing 'setAgExampleUrl(import.meta)' in the test file. This is required to set the example URL for the test.`
                 );
+            }
+
+            // Would be nice if this logic could be done so that the test is not even created rather than skipped
+            if (additionalBrowser.includes(browserName) && !frameworksWithAdditionalBrowser.includes(agFramework)) {
+                test.skip(true, `Skipping ${agFramework} tests in ${browserName} to reduce duplication.`);
             }
 
             await loadPage(page, agExampleUrl, agFramework, loadPageOptions, agModules);

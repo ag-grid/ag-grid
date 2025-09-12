@@ -67,30 +67,16 @@ export default defineConfig({
             use: { ...devices['Desktop Chrome'] },
             testIgnore: ['**/async-test/provided/angular/app.component.spec.ts'],
         },
-        // {
-        //     name: 'firefox',
-        //     use: { ...devices['Desktop Firefox'] },
-        //     testIgnore: [
-        //         // We test Vanilla and React rendering across all browsers, but to reduce duplication we only test the other variants in Chromium
-        //         '**/async-test/provided/angular/app.component.spec.ts',
-        //         '**/frameworks/angular-examples.spec.ts',
-        //         '**/frameworks/vue3-examples.spec.ts',
-        //         '**/frameworks/reactFunctional-examples.spec.ts',
-        //         '**/frameworks/typescript-examples.spec.ts',
-        //     ],
-        // },
-        // {
-        //     name: 'webkit',
-        //     use: { ...devices['Desktop Safari'] },
-        //     testIgnore: [
-        //         // We test Vanilla and React rendering across all browsers, but to reduce duplication we only test the other variants in Chromium
-        //         '**/async-test/provided/angular/app.component.spec.ts',
-        //         '**/frameworks/angular-examples.spec.ts',
-        //         '**/frameworks/vue3-examples.spec.ts',
-        //         '**/frameworks/reactFunctional-examples.spec.ts',
-        //         '**/frameworks/typescript-examples.spec.ts',
-        //     ],
-        // },
+        {
+            name: 'firefox',
+            use: { ...devices['Desktop Firefox'] },
+            testIgnore: ['**/async-test/provided/angular/app.component.spec.ts'],
+        },
+        {
+            name: 'webkit',
+            use: { ...devices['Desktop Safari'] },
+            testIgnore: ['**/async-test/provided/angular/app.component.spec.ts'],
+        },
 
         /* Test against mobile viewports. */
         // {
