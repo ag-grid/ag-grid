@@ -83,6 +83,10 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
             sequence = groupRowCount;
 
+            if (!keepColumns) {
+                this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
+            }
+
             const currentGroupCount = this.groupsRowCtrls.length;
             if (currentGroupCount === groupRowCount) {
                 return;
