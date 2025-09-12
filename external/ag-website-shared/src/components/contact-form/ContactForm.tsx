@@ -6,7 +6,7 @@ import { pathJoin } from '@utils/pathJoin';
 import classnames from 'classnames';
 import type { FunctionComponent } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Form, useForm } from 'react-hook-form';
 
 import styles from './ContactForm.module.scss';
 
@@ -21,12 +21,56 @@ type FormValues = {
     email: string;
 } & Record<string, string>;
 
-export const ContactForm: FunctionComponent = () => {
+const FormElement = ({ handleSubmit, control, children }) => {
+    const [isClient, setIsClient] = useState(false);
     const formRef = useRef<HTMLFormElement>(null);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    const onValidSubmit = () => {
+        formRef.current?.submit();
+    };
+
+    return (
+        <>
+            {isClient ? (
+                <Form
+                    action={actionUrl}
+                    className={styles.contactForm}
+                    control={control}
+                    onSuccess={(...args) => {
+                        console.log('success', ...args);
+                    }}
+                    onError={(...args) => {
+                        console.log('error', ...args);
+                    }}
+                >
+                    {children}
+                </Form>
+            ) : (
+                <form
+                    ref={formRef}
+                    className={styles.contactForm}
+                    action={actionUrl}
+                    method="POST"
+                    onSubmit={handleSubmit(onValidSubmit)}
+                    noValidate
+                >
+                    {children}
+                </form>
+            )}
+        </>
+    );
+};
+
+export const ContactForm: FunctionComponent = () => {
     const [isDebug, setIsDebug] = useState(isDev);
 
     const {
         register,
+        control,
         handleSubmit,
         formState: { errors },
     } = useForm<FormValues>({
@@ -42,19 +86,8 @@ export const ContactForm: FunctionComponent = () => {
         }
     }, []);
 
-    const onValidSubmit = () => {
-        formRef.current?.submit();
-    };
-
     return (
-        <form
-            ref={formRef}
-            className={styles.contactForm}
-            action={actionUrl}
-            method="POST"
-            onSubmit={handleSubmit(onValidSubmit)}
-            noValidate
-        >
+        <FormElement control={control} handleSubmit={handleSubmit}>
             <input type="hidden" name="oid" value={orgId} />
             <input type="hidden" name="retURL" value={returnUrl} />
 
@@ -134,6 +167,6 @@ export const ContactForm: FunctionComponent = () => {
             <p className={styles.privacyMessage}>
                 By submitting this form you agree to our <a href="/privacy/">Privacy Policy</a>.
             </p>
-        </form>
+        </FormElement>
     );
 };
