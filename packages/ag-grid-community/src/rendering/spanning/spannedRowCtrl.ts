@@ -7,7 +7,13 @@ import { SpannedCellCtrl } from './spannedCellCtrl';
 export class SpannedRowCtrl extends RowCtrl {
     protected override onRowIndexChanged(): void {
         super.onRowIndexChanged();
-        this.getAllCellCtrls().forEach((c) => c.refreshAriaRowIndex());
+        for (const cellCtrl of this.getAllCellCtrls()) {
+            // eGui can be null in react as this event might be called before the cell is rendered
+            // setComp in any case calls refreshAriaRowIndex after the cell is rendered
+            if (cellCtrl.eGui) {
+                cellCtrl.refreshAriaRowIndex();
+            }
+        }
     }
 
     protected override getInitialRowClasses(_rowContainerType: RowContainerType): string[] {
