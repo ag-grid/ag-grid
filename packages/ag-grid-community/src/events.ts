@@ -188,6 +188,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         bulkEditingStopped: BulkEditingStoppedEvent<TData, TContext>;
         headerRowsChanged: AgEvent<'headerRowsChanged'>;
         rowExpansionStateChanged: AgEvent<'rowExpansionStateChanged'>;
+        showRowGroupColumnsChanged: AgEvent<'showRowGroupColumnsChanged'>;
     }
 >;
 
@@ -203,10 +204,10 @@ export type AllEvents<TData = any, TContext = any> = {
 
 export interface AgGridEvent<TData = any, TContext = any, TEventType extends string = string>
     extends AgGridCommon<TData, TContext>,
-        AgEvent<TEventType> {}
+    AgEvent<TEventType> { }
 
 export interface AgGlobalEvent<T extends AgEventType, TData = any, TContext = any>
-    extends AgGridEvent<TData, TContext, T> {}
+    extends AgGridEvent<TData, TContext, T> { }
 
 export type AgEventListener<TData = any, TContext = any, TEventType extends AgEventType = AgEventType> = (
     params: AgEventTypeParams<TData, TContext>[TEventType]
@@ -260,7 +261,7 @@ export interface ToolPanelSizeChangedEvent<TData = any, TContext = any>
 }
 
 export interface ColumnPivotModeChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'columnPivotModeChanged', TData, TContext> {}
+    extends AgGlobalEvent<'columnPivotModeChanged', TData, TContext> { }
 
 export interface VirtualColumnsChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'virtualColumnsChanged', TData, TContext> {
@@ -282,7 +283,7 @@ export interface NewColumnsLoadedEvent<TData = any, TContext = any>
 }
 
 export interface GridColumnsChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'gridColumnsChanged', TData, TContext> {}
+    extends AgGlobalEvent<'gridColumnsChanged', TData, TContext> { }
 
 export interface DisplayedColumnsChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'displayedColumnsChanged', TData, TContext> {
@@ -290,7 +291,7 @@ export interface DisplayedColumnsChangedEvent<TData = any, TContext = any>
 }
 
 export interface RowDataUpdatedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'rowDataUpdated', TData, TContext> {}
+    extends AgGlobalEvent<'rowDataUpdated', TData, TContext> { }
 
 export interface RowDataUpdateStartedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowDataUpdateStarted', TData, TContext> {
@@ -298,12 +299,12 @@ export interface RowDataUpdateStartedEvent<TData = any, TContext = any>
 }
 
 export interface PinnedRowDataChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'pinnedRowDataChanged', TData, TContext> {}
+    extends AgGlobalEvent<'pinnedRowDataChanged', TData, TContext> { }
 export interface PinnedHeightChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'pinnedHeightChanged', TData, TContext> {}
+    extends AgGlobalEvent<'pinnedHeightChanged', TData, TContext> { }
 
 export interface PinnedRowsChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'pinnedRowsChanged', TData, TContext> {}
+    extends AgGlobalEvent<'pinnedRowsChanged', TData, TContext> { }
 
 /**
  * - `api` - from API method
@@ -428,7 +429,7 @@ export interface SortChangedEvent<TData = any, TContext = any> extends AgGlobalE
     columns?: Column[];
 }
 
-export interface GridReadyEvent<TData = any, TContext = any> extends AgGlobalEvent<'gridReady', TData, TContext> {}
+export interface GridReadyEvent<TData = any, TContext = any> extends AgGlobalEvent<'gridReady', TData, TContext> { }
 export interface GridPreDestroyedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'gridPreDestroyed', TData, TContext> {
     /** Current state of the grid */
@@ -436,20 +437,20 @@ export interface GridPreDestroyedEvent<TData = any, TContext = any>
 }
 
 export interface ColumnContainerWidthChanged<TData = any, TContext = any>
-    extends AgGlobalEvent<'columnContainerWidthChanged', TData, TContext> {} // not documented
+    extends AgGlobalEvent<'columnContainerWidthChanged', TData, TContext> { } // not documented
 export interface DisplayedColumnsWidthChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'displayedColumnsWidthChanged', TData, TContext> {} // not documented
+    extends AgGlobalEvent<'displayedColumnsWidthChanged', TData, TContext> { } // not documented
 export interface ColumnHoverChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'columnHoverChanged', TData, TContext> {} // not documented
+    extends AgGlobalEvent<'columnHoverChanged', TData, TContext> { } // not documented
 export interface BodyHeightChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'bodyHeightChanged', TData, TContext> {} // not documented
+    extends AgGlobalEvent<'bodyHeightChanged', TData, TContext> { } // not documented
 
 // this event is 'odd one out' as it should have properties for all the properties
 // in gridOptions that can be bound by the framework. for example, the gridOptions
 // has 'rowData', so this property should have 'rowData' also, so that when the row
 // data changes via the framework bound property, this event has that attribute set.
 export interface ComponentStateChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'componentStateChanged', TData, TContext> {}
+    extends AgGlobalEvent<'componentStateChanged', TData, TContext> { }
 
 export interface ColumnPanelItemDragStartEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'columnPanelItemDragStart', TData, TContext> {
@@ -457,7 +458,7 @@ export interface ColumnPanelItemDragStartEvent<TData = any, TContext = any>
 }
 
 export interface ColumnPanelItemDragEndEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'columnPanelItemDragEnd', TData, TContext> {}
+    extends AgGlobalEvent<'columnPanelItemDragEnd', TData, TContext> { }
 
 export interface AgDragEvent<T extends AgEventType, TData = any, TContext = any>
     extends AgGlobalEvent<T, TData, TContext> {
@@ -465,12 +466,12 @@ export interface AgDragEvent<T extends AgEventType, TData = any, TContext = any>
     target: Element;
 }
 
-export interface DragStartedEvent<TData = any, TContext = any> extends AgDragEvent<'dragStarted', TData, TContext> {}
+export interface DragStartedEvent<TData = any, TContext = any> extends AgDragEvent<'dragStarted', TData, TContext> { }
 
-export interface DragStoppedEvent<TData = any, TContext = any> extends AgDragEvent<'dragStopped', TData, TContext> {}
+export interface DragStoppedEvent<TData = any, TContext = any> extends AgDragEvent<'dragStopped', TData, TContext> { }
 
 export interface DragCancelledEvent<TData = any, TContext = any>
-    extends AgDragEvent<'dragCancelled', TData, TContext> {}
+    extends AgDragEvent<'dragCancelled', TData, TContext> { }
 
 // For internal use only.
 // This event allows us to detect when other inputs in the same named group are changed, so for example we can ensure
@@ -504,10 +505,10 @@ interface RowResizeEvent<TData = any, TContext = any, T extends AgEventType = an
 }
 
 export interface RowResizeStartedEvent<TData = any, TContext = any>
-    extends RowResizeEvent<TData, TContext, 'rowResizeStarted'> {}
+    extends RowResizeEvent<TData, TContext, 'rowResizeStarted'> { }
 
 export interface RowResizeEndedEvent<TData = any, TContext = any>
-    extends RowResizeEvent<TData, TContext, 'rowResizeEnded'> {}
+    extends RowResizeEvent<TData, TContext, 'rowResizeEnded'> { }
 
 export type RowDragEventType = 'rowDragEnter' | 'rowDragLeave' | 'rowDragMove' | 'rowDragEnd' | 'rowDragCancel';
 
@@ -538,16 +539,16 @@ export interface RowDragEvent<TData = any, TContext = any, T extends RowDragEven
     rowsDrop: RowsDropParams<TData, TContext> | null;
 }
 
-export interface RowDragEnterEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragEnter'> {}
+export interface RowDragEnterEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragEnter'> { }
 
-export interface RowDragEndEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragEnd'> {}
+export interface RowDragEndEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragEnd'> { }
 
 export interface RowDragCancelEvent<TData = any, TContext = any>
-    extends RowDragEvent<TData, TContext, 'rowDragCancel'> {}
+    extends RowDragEvent<TData, TContext, 'rowDragCancel'> { }
 
-export interface RowDragMoveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragMove'> {}
+export interface RowDragMoveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragMove'> { }
 
-export interface RowDragLeaveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragLeave'> {}
+export interface RowDragLeaveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragLeave'> { }
 
 export interface CutStartEvent<TData = any, TContext = any> extends AgGlobalEvent<'cutStart', TData, TContext> {
     source: 'api' | 'ui' | 'contextMenu';
@@ -565,7 +566,7 @@ export interface PasteEndEvent<TData = any, TContext = any> extends AgGlobalEven
     source: string;
 }
 
-export interface FillStartEvent<TData = any, TContext = any> extends AgGlobalEvent<'fillStart', TData, TContext> {}
+export interface FillStartEvent<TData = any, TContext = any> extends AgGlobalEvent<'fillStart', TData, TContext> { }
 
 export interface FillEndEvent<TData = any, TContext = any> extends AgGlobalEvent<'fillEnd', TData, TContext> {
     initialRange: CellRange;
@@ -655,7 +656,7 @@ export interface ChartCreatedEvent<TData = any, TContext = any> extends AgGlobal
     chartId: string;
 }
 /** @deprecated v32 Use ChartCreatedEvent instead */
-export interface ChartCreated<TData = any, TContext = any> extends ChartCreatedEvent<TData, TContext> {}
+export interface ChartCreated<TData = any, TContext = any> extends ChartCreatedEvent<TData, TContext> { }
 
 export interface ChartRangeSelectionChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'chartRangeSelectionChanged', TData, TContext> {
@@ -668,7 +669,7 @@ export interface ChartRangeSelectionChangedEvent<TData = any, TContext = any>
 }
 /** @deprecated v32 Use ChartRangeSelectionChangedEvent instead */
 export interface ChartRangeSelectionChanged<TData = any, TContext = any>
-    extends ChartRangeSelectionChangedEvent<TData, TContext> {}
+    extends ChartRangeSelectionChangedEvent<TData, TContext> { }
 
 export interface ChartOptionsChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'chartOptionsChanged', TData, TContext> {
@@ -682,7 +683,7 @@ export interface ChartOptionsChangedEvent<TData = any, TContext = any>
     chartOptions: AgChartThemeOverrides;
 }
 /** @deprecated v32 Use ChartOptionsChangedEvent instead */
-export interface ChartOptionsChanged<TData = any, TContext = any> extends ChartOptionsChangedEvent<TData, TContext> {}
+export interface ChartOptionsChanged<TData = any, TContext = any> extends ChartOptionsChangedEvent<TData, TContext> { }
 
 export interface ChartDestroyedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'chartDestroyed', TData, TContext> {
@@ -691,7 +692,7 @@ export interface ChartDestroyedEvent<TData = any, TContext = any>
 }
 
 /** @deprecated v32 Use ChartDestroyedEvent instead */
-export interface ChartDestroyed<TData = any, TContext = any> extends ChartDestroyedEvent<TData, TContext> {}
+export interface ChartDestroyed<TData = any, TContext = any> extends ChartDestroyedEvent<TData, TContext> { }
 
 export interface ColumnGroupOpenedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'columnGroupOpened', TData, TContext> {
@@ -706,10 +707,10 @@ interface BaseBodyScrollEvent<T extends AgEventType, TData = any, TContext = any
     top: number;
 }
 export interface BodyScrollEvent<TData = any, TContext = any>
-    extends BaseBodyScrollEvent<'bodyScroll', TData, TContext> {}
+    extends BaseBodyScrollEvent<'bodyScroll', TData, TContext> { }
 
 export interface BodyScrollEndEvent<TData = any, TContext = any>
-    extends BaseBodyScrollEvent<'bodyScrollEnd', TData, TContext> {}
+    extends BaseBodyScrollEvent<'bodyScrollEnd', TData, TContext> { }
 
 interface TooltipEvent<T extends 'tooltipShow' | 'tooltipHide', TData = any, TContext = any>
     extends AgGlobalEvent<T, TData, TContext> {
@@ -719,10 +720,10 @@ export interface TooltipShowEvent<TData = any, TContext = any> extends TooltipEv
     tooltipGui: HTMLElement;
 }
 
-export interface TooltipHideEvent<TData = any, TContext = any> extends TooltipEvent<'tooltipHide', TData, TContext> {}
+export interface TooltipHideEvent<TData = any, TContext = any> extends TooltipEvent<'tooltipHide', TData, TContext> { }
 
 export interface PaginationPixelOffsetChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'paginationPixelOffsetChanged', TData, TContext> {}
+    extends AgGlobalEvent<'paginationPixelOffsetChanged', TData, TContext> { }
 
 export interface StickyTopOffsetChangedEvent extends AgEvent<'stickyTopOffsetChanged'> {
     offset: number;
@@ -739,7 +740,7 @@ export interface CommonCellFocusParams {
     isFullWidthCell?: boolean;
 }
 
-export interface CellFocusClearedParams extends CommonCellFocusParams {}
+export interface CellFocusClearedParams extends CommonCellFocusParams { }
 
 export interface CellFocusedParams extends CommonCellFocusParams {
     /** Whether browser focus is also set (false when editing) */
@@ -758,21 +759,21 @@ export interface HeaderFocusedParams {
 
 export interface HeaderFocusedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'headerFocused', TData, TContext>,
-        HeaderFocusedParams {}
+    HeaderFocusedParams { }
 
 export interface CellFocusClearedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'cellFocusCleared', TData, TContext>,
-        CellFocusClearedParams {}
+    CellFocusClearedParams { }
 
 // this does not extent CellEvent as the focus service doesn't keep a reference to
 // the rowNode.
 export interface CellFocusedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'cellFocused', TData, TContext>,
-        CellFocusedParams {}
+    CellFocusedParams { }
 
 export interface FullWidthRowFocusedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'fullWidthRowFocused', TData, TContext>,
-        CellFocusedParams {
+    CellFocusedParams {
     fromBelow: boolean;
 }
 
@@ -780,7 +781,7 @@ export interface FullWidthRowFocusedEvent<TData = any, TContext = any>
  * @deprecated v32 Please use `ExpandOrCollapseAllEvent` instead.
  */
 export interface ExpandCollapseAllEvent<TData = any, TContext = any>
-    extends ExpandOrCollapseAllEvent<TData, TContext> {}
+    extends ExpandOrCollapseAllEvent<TData, TContext> { }
 export interface ExpandOrCollapseAllEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'expandOrCollapseAll', TData, TContext> {
     source: string;
@@ -836,13 +837,13 @@ export interface ColumnResizedEvent<TData = any, TContext = any> extends ColumnE
 }
 
 export interface ColumnPivotChangedEvent<TData = any, TContext = any>
-    extends ColumnEvent<'columnPivotChanged', TData, TContext> {}
+    extends ColumnEvent<'columnPivotChanged', TData, TContext> { }
 
 export interface ColumnRowGroupChangedEvent<TData = any, TContext = any>
-    extends ColumnEvent<'columnRowGroupChanged', TData, TContext> {}
+    extends ColumnEvent<'columnRowGroupChanged', TData, TContext> { }
 
 export interface ColumnValueChangedEvent<TData = any, TContext = any>
-    extends ColumnEvent<'columnValueChanged', TData, TContext> {}
+    extends ColumnEvent<'columnValueChanged', TData, TContext> { }
 
 export interface ColumnMovedEvent<TData = any, TContext = any> extends ColumnEvent<'columnMoved', TData, TContext> {
     /** The position the column was moved to */
@@ -931,13 +932,13 @@ export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any>
      * If using AG Grid Community and `columnMenu = 'legacy'`, will be `'columnMenu'`.
      */
     key:
-        | 'generalMenuTab'
-        | 'filterMenuTab'
-        | 'columnsMenuTab'
-        | 'columnMenu'
-        | 'columnFilter'
-        | 'floatingFilter'
-        | 'columnChooser';
+    | 'generalMenuTab'
+    | 'filterMenuTab'
+    | 'columnsMenuTab'
+    | 'columnMenu'
+    | 'columnFilter'
+    | 'floatingFilter'
+    | 'columnChooser';
     /**
      * Column the menu is opened for. Will be `null` if not launched from a column
      * (e.g. column chooser from the API, or column menu via right-click on a column group or empty header).
@@ -958,10 +959,10 @@ interface BatchEditingEvent<T extends AgEventType, TData = any, TContext = any>
 }
 
 export interface BatchEditingStartedEvent<TData = any, TContext = any>
-    extends BatchEditingEvent<'batchEditingStarted', TData, TContext> {}
+    extends BatchEditingEvent<'batchEditingStarted', TData, TContext> { }
 
 export interface BatchEditingStoppedEvent<TData = any, TContext = any>
-    extends BatchEditingEvent<'batchEditingStopped', TData, TContext> {}
+    extends BatchEditingEvent<'batchEditingStopped', TData, TContext> { }
 
 /**---------------------*/
 /** BULK EDITING EVENTS */
@@ -972,10 +973,10 @@ interface BulkEditingEvent<T extends AgEventType, TData = any, TContext = any>
 }
 
 export interface BulkEditingStartedEvent<TData = any, TContext = any>
-    extends BulkEditingEvent<'bulkEditingStarted', TData, TContext> {}
+    extends BulkEditingEvent<'bulkEditingStarted', TData, TContext> { }
 
 export interface BulkEditingStoppedEvent<TData = any, TContext = any>
-    extends BulkEditingEvent<'bulkEditingStopped', TData, TContext> {}
+    extends BulkEditingEvent<'bulkEditingStopped', TData, TContext> { }
 
 /**------------*/
 /** ROW EVENTS */
@@ -1011,14 +1012,14 @@ export interface RowGroupOpenedEvent<TData = any, TContext = any> extends RowEve
 }
 
 export interface RowValueChangedEvent<TData = any, TContext = any>
-    extends RowEvent<'rowValueChanged', TData, TContext> {}
+    extends RowEvent<'rowValueChanged', TData, TContext> { }
 
 export interface RowSelectedEvent<TData = any, TContext = any> extends RowEvent<'rowSelected', TData, TContext> {
     source: SelectionEventSourceType;
 }
 
 export interface VirtualRowRemovedEvent<TData = any, TContext = any>
-    extends RowEvent<'virtualRowRemoved', TData, TContext> {}
+    extends RowEvent<'virtualRowRemoved', TData, TContext> { }
 
 interface RowMouseEvent<TEventType extends 'rowClicked' | 'rowDoubleClicked', TData = any, TContext = any>
     extends RowEvent<TEventType, TData, TContext> {
@@ -1026,19 +1027,19 @@ interface RowMouseEvent<TEventType extends 'rowClicked' | 'rowDoubleClicked', TD
     isEventHandlingSuppressed: boolean;
 }
 
-export interface RowClickedEvent<TData = any, TContext = any> extends RowMouseEvent<'rowClicked', TData, TContext> {}
+export interface RowClickedEvent<TData = any, TContext = any> extends RowMouseEvent<'rowClicked', TData, TContext> { }
 
 export interface RowDoubleClickedEvent<TData = any, TContext = any>
-    extends RowMouseEvent<'rowDoubleClicked', TData, TContext> {}
+    extends RowMouseEvent<'rowDoubleClicked', TData, TContext> { }
 
 export interface RowEditingStartedEvent<TData = any, TContext = any>
-    extends RowEvent<'rowEditingStarted', TData, TContext> {}
+    extends RowEvent<'rowEditingStarted', TData, TContext> { }
 
 export interface RowEditingStoppedEvent<TData = any, TContext = any>
-    extends RowEvent<'rowEditingStopped', TData, TContext> {}
+    extends RowEvent<'rowEditingStopped', TData, TContext> { }
 
 export interface FullWidthCellKeyDownEvent<TData = any, TContext = any>
-    extends RowEvent<'cellKeyDown', TData, TContext> {}
+    extends RowEvent<'cellKeyDown', TData, TContext> { }
 
 /**------------*/
 
@@ -1062,7 +1063,7 @@ interface CellWithDataEvent<T extends AgEventType, TData = any, TValue = any, TC
 }
 
 export interface CellKeyDownEvent<TData = any, TValue = any, TContext = any>
-    extends CellEvent<'cellKeyDown', TData, TValue, TContext> {}
+    extends CellEvent<'cellKeyDown', TData, TValue, TContext> { }
 
 interface CellMouseEvent<
     TEventType extends 'cellClicked' | 'cellMouseDown' | 'cellDoubleClicked',
@@ -1075,25 +1076,25 @@ interface CellMouseEvent<
 }
 
 export interface CellClickedEvent<TData = any, TValue = any, TContext = any>
-    extends CellMouseEvent<'cellClicked', TData, TValue, TContext> {}
+    extends CellMouseEvent<'cellClicked', TData, TValue, TContext> { }
 
 export interface CellMouseDownEvent<TData = any, TValue = any, TContext = any>
-    extends CellMouseEvent<'cellMouseDown', TData, TValue, TContext> {}
+    extends CellMouseEvent<'cellMouseDown', TData, TValue, TContext> { }
 
 export interface CellDoubleClickedEvent<TData = any, TValue = any, TContext = any>
-    extends CellMouseEvent<'cellDoubleClicked', TData, TValue, TContext> {}
+    extends CellMouseEvent<'cellDoubleClicked', TData, TValue, TContext> { }
 
 export interface CellMouseOverEvent<TData = any, TValue = any, TContext = any>
-    extends CellEvent<'cellMouseOver', TData, TValue, TContext> {}
+    extends CellEvent<'cellMouseOver', TData, TValue, TContext> { }
 
 export interface CellMouseOutEvent<TData = any, TValue = any, TContext = any>
-    extends CellEvent<'cellMouseOut', TData, TValue, TContext> {}
+    extends CellEvent<'cellMouseOut', TData, TValue, TContext> { }
 
 export interface CellContextMenuEvent<TData = any, TValue = any, TContext = any>
-    extends CellEvent<'cellContextMenu', TData, TValue, TContext> {}
+    extends CellEvent<'cellContextMenu', TData, TValue, TContext> { }
 
 export interface CellEditingStartedEvent<TData = any, TValue = any, TContext = any>
-    extends CellEvent<'cellEditingStarted', TData, TValue, TContext> {}
+    extends CellEvent<'cellEditingStarted', TData, TValue, TContext> { }
 
 export interface CellEditingStoppedEvent<TData = any, TValue = any, TContext = any>
     extends CellEvent<'cellEditingStopped', TData, TValue, TContext> {
@@ -1136,7 +1137,7 @@ export interface AsyncTransactionsFlushedEvent<TData = any, TContext = any>
 }
 /** @deprecated v32 Use AsyncTransactionsFlushedEvent */
 export interface AsyncTransactionsFlushed<TData = any, TContext = any>
-    extends AsyncTransactionsFlushedEvent<TData, TContext> {}
+    extends AsyncTransactionsFlushedEvent<TData, TContext> { }
 
 export interface StoreRefreshedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'storeRefreshed', TData, TContext> {
@@ -1156,21 +1157,21 @@ export interface StateUpdatedEvent<TData = any, TContext = any> extends AgGlobal
 }
 
 export interface ScrollVisibilityChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'scrollVisibilityChanged', TData, TContext> {} // not documented
+    extends AgGlobalEvent<'scrollVisibilityChanged', TData, TContext> { } // not documented
 
 export interface ScrollOverflowChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'scrollGapChanged', TData, TContext> {} // not documented
+    extends AgGlobalEvent<'scrollGapChanged', TData, TContext> { } // not documented
 
 export interface StoreUpdatedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'storeUpdated', TData, TContext> {} // not documented
+    extends AgGlobalEvent<'storeUpdated', TData, TContext> { } // not documented
 
 export interface LeftPinnedWidthChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'leftPinnedWidthChanged', TData, TContext> {} // not documented
+    extends AgGlobalEvent<'leftPinnedWidthChanged', TData, TContext> { } // not documented
 export interface RightPinnedWidthChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'rightPinnedWidthChanged', TData, TContext> {} // not documented
+    extends AgGlobalEvent<'rightPinnedWidthChanged', TData, TContext> { } // not documented
 
 export interface RowContainerHeightChanged<TData = any, TContext = any>
-    extends AgGlobalEvent<'rowContainerHeightChanged', TData, TContext> {} // not documented
+    extends AgGlobalEvent<'rowContainerHeightChanged', TData, TContext> { } // not documented
 
 /**-----------------*/
 /** Internal EVENTS */
@@ -1200,7 +1201,7 @@ export interface AdvancedFilterEnabledChangedEvent<TData = any, TContext = any>
 }
 
 export interface DataTypesInferredEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'dataTypesInferred', TData, TContext> {}
+    extends AgGlobalEvent<'dataTypesInferred', TData, TContext> { }
 
 export interface FieldValueEvent<T extends AgEventType = 'fieldValueChanged', TData = any, TContext = any>
     extends AgGlobalEvent<T, TData, TContext> {
@@ -1231,50 +1232,50 @@ export interface GridOptionsChangedEvent<TData = any, TContext = any>
 }
 
 export interface ScrollbarWidthChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'scrollbarWidthChanged', TData, TContext> {}
+    extends AgGlobalEvent<'scrollbarWidthChanged', TData, TContext> { }
 export interface KeyShortcutChangedCellStartEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'keyShortcutChangedCellStart', TData, TContext> {}
+    extends AgGlobalEvent<'keyShortcutChangedCellStart', TData, TContext> { }
 export interface KeyShortcutChangedCellEndEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'keyShortcutChangedCellEnd', TData, TContext> {}
+    extends AgGlobalEvent<'keyShortcutChangedCellEnd', TData, TContext> { }
 export interface HeightScaleChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'heightScaleChanged', TData, TContext> {}
+    extends AgGlobalEvent<'heightScaleChanged', TData, TContext> { }
 export interface SuppressMovableColumnsEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'suppressMovableColumns', TData, TContext> {}
+    extends AgGlobalEvent<'suppressMovableColumns', TData, TContext> { }
 export interface SuppressMenuHideEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'suppressMenuHide', TData, TContext> {}
+    extends AgGlobalEvent<'suppressMenuHide', TData, TContext> { }
 export interface SuppressFieldDotNotationEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'suppressFieldDotNotation', TData, TContext> {}
+    extends AgGlobalEvent<'suppressFieldDotNotation', TData, TContext> { }
 export interface ColumnContainerWidthChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'columnContainerWidthChanged', TData, TContext> {}
+    extends AgGlobalEvent<'columnContainerWidthChanged', TData, TContext> { }
 export interface RowContainerHeightChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'rowContainerHeightChanged', TData, TContext> {}
+    extends AgGlobalEvent<'rowContainerHeightChanged', TData, TContext> { }
 export interface HeaderHeightChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'headerHeightChanged', TData, TContext> {}
+    extends AgGlobalEvent<'headerHeightChanged', TData, TContext> { }
 export interface ColumnHeaderHeightChangedEvent<TData = any, TContext = any>
-    extends ColumnEvent<'columnHeaderHeightChanged', TData, TContext> {}
+    extends ColumnEvent<'columnHeaderHeightChanged', TData, TContext> { }
 export interface ColumnGroupHeaderHeightChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'columnGroupHeaderHeightChanged', TData, TContext> {
     columnGroup: ColumnGroup | null;
     source: 'autosizeColumnGroupHeaderHeight';
 }
 export interface GridStylesChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'gridStylesChanged', TData, TContext> {}
+    extends AgGlobalEvent<'gridStylesChanged', TData, TContext> { }
 export interface RowCountReadyEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'rowCountReady', TData, TContext> {}
+    extends AgGlobalEvent<'rowCountReady', TData, TContext> { }
 export interface FieldValueChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'fieldValueChanged', TData, TContext> {}
+    extends AgGlobalEvent<'fieldValueChanged', TData, TContext> { }
 export interface FieldPickerValueSelectedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'fieldPickerValueSelected', TData, TContext> {}
+    extends AgGlobalEvent<'fieldPickerValueSelected', TData, TContext> { }
 export interface RichSelectListRowSelectedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'richSelectListRowSelected', TData, TContext> {}
+    extends AgGlobalEvent<'richSelectListRowSelected', TData, TContext> { }
 export interface SideBarUpdatedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'sideBarUpdated', TData, TContext> {}
+    extends AgGlobalEvent<'sideBarUpdated', TData, TContext> { }
 export interface ChartTitleEditEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'chartTitleEdit', TData, TContext> {}
+    extends AgGlobalEvent<'chartTitleEdit', TData, TContext> { }
 export interface RecalculateRowBoundsEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'recalculateRowBounds', TData, TContext> {}
+    extends AgGlobalEvent<'recalculateRowBounds', TData, TContext> { }
 export interface StickyTopOffsetChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'stickyTopOffsetChanged', TData, TContext> {}
+    extends AgGlobalEvent<'stickyTopOffsetChanged', TData, TContext> { }
 export interface RowNodeDataChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowNodeDataChanged', TData, TContext> {
     node: RowNode<TData>;

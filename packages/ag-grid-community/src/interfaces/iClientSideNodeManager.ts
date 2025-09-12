@@ -31,4 +31,6 @@ export interface IClientSideNodeManager<TData = any> {
         rowDataTran: RowDataTransaction<TData>,
         changedRowNodes: IChangedRowNodes<TData>
     ): ClientSideNodeManagerUpdateRowDataResult<TData>;
+
+    updateGroupRowData(): void;
 }

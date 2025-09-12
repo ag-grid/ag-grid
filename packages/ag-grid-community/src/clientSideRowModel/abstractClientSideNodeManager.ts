@@ -500,4 +500,6 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
         return rowNode || null;
     }
+
+    public abstract updateGroupRowData(): void;
 }
