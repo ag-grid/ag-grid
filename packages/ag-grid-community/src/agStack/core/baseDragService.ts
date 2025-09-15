@@ -31,7 +31,7 @@ export class BaseDragService<
     private readonly dragSources: DragSourceEntry[] = [];
 
     public get startTarget(): EventTarget | null {
-        return this.drag?.target ?? null;
+        return this.drag?.start.target ?? null;
     }
 
     private addHandledEvent(event: Event): boolean {
@@ -224,7 +224,6 @@ export class BaseDragService<
 
         const drag = this.drag;
         if (drag?.pointer) {
-            drag.touchStart ||= touchEvent;
             return; // We are handling the pointer events, ignore this
         }
 
@@ -449,9 +448,7 @@ const removeTempEventHandlers = (list: TempEventHandler[]): void => {
 class Dragging {
     public readonly eElement: Element & Partial<HTMLElement>;
     public readonly handlers: TempEventHandler[] = [];
-    public readonly target: EventTarget | null;
     public lastDrag: PointerEvent | MouseEvent | Touch | null = null;
-    public touchStart: TouchEvent | null = null;
 
     public constructor(
         public readonly params: DragListenerParams,
@@ -459,7 +456,6 @@ class Dragging {
         public readonly pointer: boolean
     ) {
         this.eElement = params.eElement;
-        this.target = start.target;
     }
 }
 

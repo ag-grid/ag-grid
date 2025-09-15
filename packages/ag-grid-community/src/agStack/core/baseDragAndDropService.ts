@@ -1,3 +1,5 @@
+import type { MouseCapture } from '../events/mouseCapture';
+import { captureMouse, releaseMouseCapture } from '../events/mouseCapture';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
@@ -53,8 +55,7 @@ export abstract class BaseDragAndDropService<
     private dragImageComp: (IComponent<any> & IDragAndDropImage) | null = null;
     private dragImageLastIcon: TDragAndDropIcon | null | undefined = undefined;
     private dragImageLastLabel: string | null | undefined = undefined;
-    private capturedPointerId: number | null = null;
-    private capturedTouchAction: string | null = null;
+    private mouseCapture: MouseCapture | null = null;
 
     private dropTargets: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>[] = [];
     private lastDropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent> | null = null;
@@ -133,7 +134,7 @@ export abstract class BaseDragAndDropService<
         dragSource.onDragStarted?.();
 
         if (typeof PointerEvent !== 'undefined' && mouseEvent instanceof PointerEvent) {
-            this.capturePointer(mouseEvent);
+            this.mouseCapture = captureMouse(this.beans.eRootDiv, mouseEvent);
         }
 
         this.createAndUpdateDragImageComp(dragSource);
@@ -206,7 +207,7 @@ export abstract class BaseDragAndDropService<
     }
 
     private clearDragAndDropProperties(): void {
-        this.releasePointer();
+        this.mouseCapture = releaseMouseCapture(this.mouseCapture);
         this.removeDragImageComp(this.dragImageComp);
         this.dragImageCompPromise = null;
         this.dragImageParent = null;
@@ -217,41 +218,7 @@ export abstract class BaseDragAndDropService<
         this.lastDropTarget = null;
         this.dragItem = null;
         this.dragSource = null;
-        this.capturedPointerId = null;
-        this.capturedTouchAction = null;
-    }
-
-    private capturePointer(pointerEvent: PointerEvent): void {
-        const pointerId = pointerEvent.pointerId;
-        if (pointerId != null) {
-            const eRootDiv = this.beans.eRootDiv;
-            try {
-                eRootDiv.setPointerCapture(pointerId);
-                this.capturedPointerId = pointerId;
-                const style = eRootDiv.style;
-                this.capturedTouchAction = style.touchAction;
-                style.touchAction = 'none'; // stop touch scrolling while dragging
-            } catch {
-                // do nothing, just means pointer capture is not supported
-            }
-        }
-    }
-
-    private releasePointer(): void {
-        const pointerId = this.capturedPointerId;
-        if (pointerId != null) {
-            const eRootDiv = this.beans.eRootDiv;
-            if (eRootDiv) {
-                try {
-                    eRootDiv.releasePointerCapture(pointerId);
-                    if (this.capturedTouchAction != null) {
-                        eRootDiv.style.touchAction = this.capturedTouchAction;
-                    }
-                } catch {
-                    // do nothing, just means pointer capture is not supported
-                }
-            }
-        }
+        this.mouseCapture = null;
     }
 
     private getAllContainersFromDropTarget(
@@ -435,7 +402,7 @@ export abstract class BaseDragAndDropService<
 
         style.position = 'absolute';
         style.zIndex = '9999';
-        if (this.capturedPointerId != null) {
+        if (this.mouseCapture != null) {
             style.pointerEvents = 'none';
         }
 
