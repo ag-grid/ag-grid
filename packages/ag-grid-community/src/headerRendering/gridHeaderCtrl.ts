@@ -72,7 +72,7 @@ export class GridHeaderCtrl extends BeanStub {
             columnHeaderHeightChanged: listener,
             // add this to the animation frame to avoid a feedback loop
             columnGroupHeaderHeightChanged: () => _requestAnimationFrame(this.beans, () => listener()),
-            gridStylesChanged: listener,
+            stylesChanged: listener,
             advancedFilterEnabledChanged: listener,
         });
     }

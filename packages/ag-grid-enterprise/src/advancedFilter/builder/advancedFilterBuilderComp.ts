@@ -11,7 +11,7 @@ import type {
 } from 'ag-grid-community';
 import { Component, FilterButtonComp, RefPlaceholder, _exists, _removeFromParent } from 'ag-grid-community';
 
-import type { VirtualListDragItem } from '../../features/iVirtualListDragFeature';
+import type { VirtualListDragItem } from '../../agStack/iVirtualListDragFeature';
 import { VirtualList } from '../../widgets/virtualList';
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';

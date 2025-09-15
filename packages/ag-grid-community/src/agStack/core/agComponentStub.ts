@@ -10,6 +10,7 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
+import { CssClassManager } from '../rendering/cssClassManager';
 import type { AgElementParams } from '../utils/dom';
 import {
     DataRefAttribute,
@@ -20,7 +21,6 @@ import {
     _setVisible,
 } from '../utils/dom';
 import { AgBeanStub } from './agBeanStub';
-import { CssClassManager } from './cssClassManager';
 
 let compIdSequence = 0;
 

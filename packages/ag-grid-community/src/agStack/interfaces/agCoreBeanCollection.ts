@@ -3,6 +3,7 @@ import type { BaseEvents } from './baseEvents';
 import type { BaseProperties } from './baseProperties';
 import type { IContext } from './iContext';
 import type { IDragService } from './iDrag';
+import type { IDragAndDropService } from './iDragAndDrop';
 import type { IEnvironment } from './iEnvironment';
 import type { AgEventService } from './iEvent';
 import type { IIconService } from './iIconService';
@@ -29,6 +30,7 @@ export interface AgCoreBeanCollection<
     registry: IRegistry<this, 'tooltipFeature' | 'highlightTooltipFeature' | 'tooltipStateManager'>;
     iconSvc: IIconService<string, any>;
     dragSvc?: IDragService;
+    dragAndDrop?: IDragAndDropService<any, any, any, any, any>;
 }
 
 /** This is a cut down version to simplify typing for util functions that don't need/want all the generics */

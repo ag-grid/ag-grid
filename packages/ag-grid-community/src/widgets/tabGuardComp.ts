@@ -1,7 +1,7 @@
+import type { TabGuardParams } from '../agStack/focus/agTabGuardFeature';
 import type { ComponentEvent } from './component';
 import { Component } from './component';
-import type { TabGuardParams } from './tabGuardFeature';
-import { TabGuardFeature } from './tabGuardFeature';
+import { TabGuardFeature } from './tabGuard';
 
 export class TabGuardComp<TLocalEvent extends string = ComponentEvent> extends Component<TLocalEvent> {
     protected tabGuardFeature: TabGuardFeature;

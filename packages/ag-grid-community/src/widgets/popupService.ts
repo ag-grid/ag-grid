@@ -4,7 +4,7 @@ import { BasePopupService } from '../agStack/popup/basePopupService';
 import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { AgEventTypeParams, CssVariablesChanged } from '../events';
+import type { AgEventTypeParams, StylesChangedEvent } from '../events';
 import type { GridCtrl } from '../gridComp/gridCtrl';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
 import type { GridOptionsService } from '../gridOptionsService';
@@ -31,7 +31,7 @@ export class PopupService
         this.beans.ctrlsSvc.whenReady(this, (p) => {
             this.gridCtrl = p.gridCtrl;
         });
-        this.addManagedEventListeners({ gridStylesChanged: this.handleThemeChange.bind(this) });
+        this.addManagedEventListeners({ stylesChanged: this.handleThemeChange.bind(this) });
     }
 
     protected getDefaultPopupParent(): HTMLElement {
@@ -144,7 +144,7 @@ export class PopupService
         return this.popupList.map((popup) => popup.element);
     }
 
-    private handleThemeChange(e: CssVariablesChanged) {
+    private handleThemeChange(e: StylesChangedEvent) {
         if (e.themeChanged) {
             const environment = this.beans.environment;
             for (const popup of this.popupList) {

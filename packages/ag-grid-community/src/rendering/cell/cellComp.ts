@@ -1,4 +1,4 @@
-import { CssClassManager } from '../../agStack/core/cssClassManager';
+import { CssClassManager } from '../../agStack/rendering/cssClassManager';
 import { _getActiveDomElement } from '../../agStack/utils/document';
 import { _addStylesToElement, _clearElement, _removeFromParent } from '../../agStack/utils/dom';
 import { _missing } from '../../agStack/utils/generic';

@@ -1,9 +1,3 @@
-.ag-virtual-list-item {
-    height: var(--ag-list-item-height);
-    position: absolute;
-    width: 100%;
-}
-
 .ag-list-item-hovered::after {
     content: '';
     position: absolute;

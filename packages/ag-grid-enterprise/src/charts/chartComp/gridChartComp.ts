@@ -164,7 +164,7 @@ export class GridChartComp extends Component {
             // don't add the theme if we're in a dialog, since dialogs already
             // add a theme, and legacy themes don't like being applied twice
             this.addManagedEventListeners({
-                gridStylesChanged: this.updateTheme.bind(this),
+                stylesChanged: this.updateTheme.bind(this),
             });
             this.updateTheme();
         }

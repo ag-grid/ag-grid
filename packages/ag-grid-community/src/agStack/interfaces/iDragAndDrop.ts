@@ -11,7 +11,7 @@ export interface IDragAndDropService<
 
     addDragSource(dragSource: TDragSource, allowTouch?: boolean): void;
 
-    setDragDropIcon(iconName: string | null, shake: boolean): void;
+    setDragImageCompIcon(iconName: TDragAndDropIcon | null, shake?: boolean): void;
 
     removeDragSource(dragSource: TDragSource): void;
 

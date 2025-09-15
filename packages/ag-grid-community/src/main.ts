@@ -84,7 +84,7 @@ export { VisibleChangedEvent, RefPlaceholder, AgBaseComponent, _isComponent } fr
 export { AgEvent } from './agStack/interfaces/agEvent';
 export { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
 export { LocaleTextFunc } from './agStack/interfaces/iLocaleService';
-export { CssClassManager } from './agStack/core/cssClassManager';
+export { CssClassManager } from './agStack/rendering/cssClassManager';
 export { LocalEventService } from './agStack/events/localEventService';
 export { IEventEmitter, IEventListener } from './agStack/interfaces/iEventEmitter';
 export { PopupEventParams } from './agStack/interfaces/iPopup';
@@ -94,6 +94,12 @@ export { AgPopupComponent } from './agStack/popup/agPopupComponent';
 export { IComponent } from './agStack/interfaces/iComponent';
 export { DragListenerParams } from './agStack/interfaces/iDrag';
 export { IDragAndDropImage } from './agStack/interfaces/iDragAndDrop';
+export {
+    ManagedFocusCallbacks,
+    FOCUS_MANAGED_CLASS as _FOCUS_MANAGED_CLASS,
+} from './agStack/focus/agManagedFocusFeature';
+export { ITabGuard, TabGuardClassNames } from './agStack/focus/tabGuardCtrl';
+export { AutoScrollService } from './agStack/rendering/autoScrollService';
 
 // AG Stack Utils (public)
 export {
@@ -227,12 +233,19 @@ export type {
 // AG Stack (private)
 export { AgBeanStub as _AgBeanStub, AgBeanStubEvent as _AgBeanStubEvent } from './agStack/core/agBeanStub';
 export { AgComponentStub as _AgComponentStub } from './agStack/core/agComponentStub';
-export { AgComponentSelector as _AgComponentSelector } from './agStack/interfaces/agComponent';
+export {
+    AgComponentSelector as _AgComponentSelector,
+    AgComponent as _AgComponent,
+    AgComponentEvent as _AgComponentEvent,
+} from './agStack/interfaces/agComponent';
 export { AgSingletonBeanClass as _AgSingletonBeanClass, AgContext as _AgContext } from './agStack/core/agContext';
 export { BaseEnvironment as _BaseEnvironment } from './agStack/core/baseEnvironment';
 export { BaseRegistry as _BaseRegistry } from './agStack/core/baseRegistry';
 export { BaseEventService as _BaseEventService } from './agStack/events/baseEventService';
-export { BaseEvents as _BaseEvents } from './agStack/interfaces/baseEvents';
+export {
+    BaseEvents as _BaseEvents,
+    AgStylesChangedEvent as _AgStylesChangedEvent,
+} from './agStack/interfaces/baseEvents';
 export { BaseProperties as _BaseProperties } from './agStack/interfaces/baseProperties';
 export { AgCoreBeanCollection as _AgCoreBeanCollection } from './agStack/interfaces/agCoreBeanCollection';
 export { WithoutCommon as _WithoutCommon } from './agStack/interfaces/iEvent';
@@ -262,6 +275,9 @@ export {
 } from './agStack/interfaces/iDragAndDrop';
 export { BaseDragService as _BaseDragService } from './agStack/core/baseDragService';
 export { BaseDragAndDropService as _BaseDragAndDropService } from './agStack/core/baseDragAndDropService';
+export { AgEventService as _AgEventService } from './agStack/interfaces/iEvent';
+export { AgTabGuardFeature as _AgTabGuardFeature } from './agStack/focus/agTabGuardFeature';
+export { StopPropagationCallbacks as _StopPropagationCallbacks } from './agStack/focus/agManagedFocusFeature';
 
 // excel
 export {
@@ -774,14 +790,9 @@ export type { CellStyleService } from './styling/cellStyleService';
 // widgets
 export { RichSelectParams } from './interfaces/iRichCellEditorParams';
 export { Component } from './widgets/component';
-export {
-    ManagedFocusFeature,
-    ManagedFocusCallbacks,
-    FOCUS_MANAGED_CLASS as _FOCUS_MANAGED_CLASS,
-} from './widgets/managedFocusFeature';
+export { ManagedFocusFeature } from './widgets/managedFocusFeature';
 export { TabGuardComp } from './widgets/tabGuardComp';
-export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from './widgets/tabGuardCtrl';
-export { TabGuardFeature } from './widgets/tabGuardFeature';
+export { TabGuardFeature, TabGuardCtrl } from './widgets/tabGuard';
 export type { PopupService } from './widgets/popupService';
 export { PopupPositionParams } from './interfaces/iPopupPositionParams';
 export { TouchListener, TapEvent, DoubleTapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
@@ -849,7 +860,6 @@ export { HeaderElement, PrefixedXmlAttributes, XmlElement, XmlAttributes } from 
 export { ICsvCreator } from './interfaces/iCsvCreator';
 
 // root
-export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export type { CellNavigationService } from './navigation/cellNavigationService';
 export { GridParams, Params, GridCoreCreator, createGrid, getGridApi, getGridElement } from './grid';

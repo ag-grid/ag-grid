@@ -159,7 +159,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         headerHeightChanged: HeaderHeightChangedEvent<TData, TContext>;
         columnGroupHeaderHeightChanged: ColumnGroupHeaderHeightChangedEvent<TData, TContext>;
         columnHeaderHeightChanged: ColumnHeaderHeightChangedEvent<TData, TContext>;
-        gridStylesChanged: GridStylesChangedEvent<TData, TContext>;
+        stylesChanged: StylesChangedEvent<TData, TContext>;
         storeUpdated: StoreUpdatedEvent<TData, TContext>;
         filterDestroyed: FilterDestroyedEvent<TData, TContext>;
         filterClosed: FilterClosedEvent<TData, TContext>;
@@ -1185,15 +1185,6 @@ export interface DisplayedRowsChangedEvent<TData = any, TContext = any>
     afterScroll: boolean;
 } // not documented
 
-export interface CssVariablesChanged<TData = any, TContext = any>
-    extends AgGlobalEvent<'gridStylesChanged', TData, TContext> {
-    themeChanged?: boolean;
-    headerHeightChanged?: boolean;
-    rowHeightChanged?: boolean;
-    listItemHeightChanged?: boolean;
-    rowBorderWidthChanged?: boolean;
-} // not documented
-
 export interface AdvancedFilterEnabledChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'advancedFilterEnabledChanged', TData, TContext> {
     enabled: boolean;
@@ -1257,8 +1248,14 @@ export interface ColumnGroupHeaderHeightChangedEvent<TData = any, TContext = any
     columnGroup: ColumnGroup | null;
     source: 'autosizeColumnGroupHeaderHeight';
 }
-export interface GridStylesChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'gridStylesChanged', TData, TContext> {}
+export interface StylesChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'stylesChanged', TData, TContext> {
+    themeChanged?: boolean;
+    headerHeightChanged?: boolean;
+    rowHeightChanged?: boolean;
+    listItemHeightChanged?: boolean;
+    rowBorderWidthChanged?: boolean;
+}
 export interface RowCountReadyEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowCountReady', TData, TContext> {}
 export interface FieldValueChangedEvent<TData = any, TContext = any>

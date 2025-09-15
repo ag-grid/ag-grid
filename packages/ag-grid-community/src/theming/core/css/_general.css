@@ -18,30 +18,6 @@
     user-select: text;
 }
 
-.ag-tab-guard {
-    position: absolute;
-    width: 0;
-    height: 0;
-    display: block;
-}
-
-/* special setting for lists to prevent scroll
-     while tabbing out of the container */
-:where(.ag-virtual-list-viewport) .ag-tab-guard {
-    /* this keeps the tabguard within "visible" range
-       while scrolling so focusing the tabguard doesn't
-       scroll the list viewport. */
-    position: sticky;
-}
-
-.ag-tab-guard-top {
-    top: 1px;
-}
-
-.ag-tab-guard-bottom {
-    bottom: 1px;
-}
-
 .ag-shake-left-to-right {
     animation-direction: alternate;
     animation-duration: 0.2s;
@@ -74,7 +50,6 @@
 .ag-floating-bottom-viewport,
 .ag-body-horizontal-scroll-viewport,
 .ag-body-vertical-scroll-viewport,
-.ag-virtual-list-viewport,
 .ag-sticky-top-viewport,
 .ag-sticky-bottom-viewport {
     position: relative;
@@ -146,11 +121,6 @@ always be 0 and then making a row sticky causes the grid to scroll. */
     overflow-y: scroll;
 }
 
-.ag-virtual-list-viewport {
-    overflow: auto;
-    width: 100%;
-}
-
 /**
   ****************************
   * Containers
@@ -167,7 +137,6 @@ always be 0 and then making a row sticky causes the grid to scroll. */
 .ag-body-vertical-scroll-container,
 .ag-full-width-container,
 .ag-floating-bottom-full-width-container,
-.ag-virtual-list-container,
 .ag-sticky-top-container,
 .ag-sticky-bottom-container {
     position: relative;
@@ -230,10 +199,6 @@ always be 0 and then making a row sticky causes the grid to scroll. */
     overflow: hidden;
     height: 100%;
     width: 100%;
-}
-
-.ag-virtual-list-container {
-    overflow: hidden;
 }
 
 /**

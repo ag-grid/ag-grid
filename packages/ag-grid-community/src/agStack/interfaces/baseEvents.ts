@@ -34,6 +34,10 @@ interface AgTooltipShowEvent extends AgTooltipEvent<'tooltipShow'> {
 
 interface AgTooltipHideEvent extends AgTooltipEvent<'tooltipHide'> {}
 
+export interface AgStylesChangedEvent extends AgEvent<'stylesChanged'> {
+    listItemHeightChanged?: boolean;
+}
+
 /** Events required by AG Stack */
 export interface BaseEvents {
     checkboxChanged: AgCheckboxChangedEvent;
@@ -43,4 +47,5 @@ export interface BaseEvents {
     dragCancelled: AgDragCancelledEvent;
     tooltipShow: AgTooltipShowEvent;
     tooltipHide: AgTooltipHideEvent;
+    stylesChanged: AgStylesChangedEvent;
 }

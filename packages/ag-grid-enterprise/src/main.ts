@@ -6,6 +6,15 @@ export type { MultiFilter } from './multiFilter/multiFilter';
 
 export type { SetFilter } from './setFilter/setFilter';
 
+// AG Stack
+export { AgVirtualList as _AgVirtualList } from './agStack/agVirtualList';
+export { AgVirtualListDragFeature as _AgVirtualListDragFeature } from './agStack/agVirtualListDragFeature';
+export { VirtualListModel as _VirtualListModel } from './agStack/iVirtualList';
+export {
+    VirtualListDragItem as _VirtualListDragItem,
+    AgVirtualListDragParams as _AgVirtualListDragParams,
+} from './agStack/iVirtualListDragFeature';
+
 export { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
 export { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';
 export { MenuModule, ColumnMenuModule, ContextMenuModule } from './menu/menuModule';

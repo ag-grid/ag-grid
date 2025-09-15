@@ -6,7 +6,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
-import type { CssVariablesChanged, FilterChangedEvent } from '../events';
+import type { FilterChangedEvent, StylesChangedEvent } from '../events';
 import {
     _getGroupSelectsDescendants,
     _getGroupingApproach,
@@ -123,7 +123,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             filterChanged: this.onFilterChanged.bind(this),
             sortChanged: this.onSortChanged.bind(this),
             columnPivotModeChanged: refreshEverythingFunc,
-            gridStylesChanged: this.onGridStylesChanges.bind(this),
+            stylesChanged: this.onGridStylesChanges.bind(this),
             gridReady: this.onGridReady.bind(this),
             rowExpansionStateChanged: this.onRowGroupOpened.bind(this),
         });
@@ -1181,7 +1181,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return atLeastOne;
     }
 
-    private onGridStylesChanges(e: CssVariablesChanged) {
+    private onGridStylesChanges(e: StylesChangedEvent) {
         if (e.rowHeightChanged) {
             if (this.beans.rowAutoHeight?.active) {
                 return;
