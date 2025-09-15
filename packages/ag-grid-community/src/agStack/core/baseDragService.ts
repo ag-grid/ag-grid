@@ -7,7 +7,14 @@ import type { IPropertiesService } from '../interfaces/iProperties';
 import { _isBrowserSafari } from '../utils/browser';
 import { _getDocument, _getRootNode } from '../utils/document';
 import { _isFocusableFormField } from '../utils/dom';
-import { _areEventsNear, _getFirstActiveTouch, _isEventFromThisInstance } from '../utils/event';
+import type { TempEventHandler } from '../utils/event';
+import {
+    _areEventsNear,
+    _getFirstActiveTouch,
+    _isEventFromThisInstance,
+    addTempEventHandlers,
+    removeTempEventHandlers,
+} from '../utils/event';
 import { _exists } from '../utils/generic';
 import { AgBeanStub } from './agBeanStub';
 
@@ -407,28 +414,6 @@ interface DragSourceEntry {
     readonly handlers: TempEventHandler[];
     readonly params: DragListenerParams;
 }
-
-// Tuple [target, type, listener, options?]
-type TempEventHandler = [
-    target: EventTarget,
-    type: string,
-    listener: (e: Event) => void,
-    options?: boolean | AddEventListenerOptions,
-];
-
-const addTempEventHandlers = (list: TempEventHandler[], ...handlers: TempEventHandler[]): void => {
-    for (const handler of handlers) {
-        const [target, type, eventListener, options] = handler;
-        target.addEventListener(type, eventListener, options);
-        list.push(handler);
-    }
-};
-
-const removeTempEventHandlers = (list: TempEventHandler[]): void => {
-    for (const [target, type, listener, options] of list) {
-        target.removeEventListener(type, listener, options);
-    }
-};
 
 // New class-based drag model replacing prior interfaces
 class Dragging {
