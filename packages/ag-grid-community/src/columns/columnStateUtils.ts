@@ -635,7 +635,7 @@ function normaliseColumnMovedEventForColumnState(
     const movedColumns: AgColumn[] = [];
 
     afterFiltered!.forEach((csAfter: ColumnState, index: number) => {
-        const csBefore = beforeFiltered && beforeFiltered[index];
+        const csBefore = beforeFiltered?.[index];
         if (csBefore && csBefore.colId !== csAfter.colId) {
             const gridCol = colModel.getCol(csBefore.colId!);
             if (gridCol) {

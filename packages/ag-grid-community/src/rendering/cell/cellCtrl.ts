@@ -840,7 +840,7 @@ export class CellCtrl extends BeanStub {
         this.comp.toggleCss(CSS_CELL_FOCUS, cellFocused);
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
-        if (cellFocused && event && event.forceBrowserFocus) {
+        if (cellFocused && event?.forceBrowserFocus) {
             let focusEl = this.comp.getFocusableElement();
 
             if (editing) {

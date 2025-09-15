@@ -434,7 +434,7 @@ export class CellComp extends Component {
             return;
         }
 
-        const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
+        const editingCancelledByUserComp = cellEditor.isCancelBeforeStart?.();
         if (editingCancelledByUserComp) {
             context.destroyBean(cellEditor);
             this.cellCtrl.stopEditing(true);
@@ -450,7 +450,7 @@ export class CellComp extends Component {
         this.cellEditor = cellEditor;
         this.cellEditorGui = cellEditor.getGui();
 
-        const cellEditorInPopup = popup || (cellEditor.isPopup !== undefined && cellEditor.isPopup());
+        const cellEditorInPopup = popup || cellEditor.isPopup?.();
         if (cellEditorInPopup) {
             this.addPopupCellEditor(params, position);
         } else {
