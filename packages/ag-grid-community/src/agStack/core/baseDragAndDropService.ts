@@ -53,6 +53,8 @@ export abstract class BaseDragAndDropService<
     private dragImageComp: (IComponent<any> & IDragAndDropImage) | null = null;
     private dragImageLastIcon: TDragAndDropIcon | null | undefined = undefined;
     private dragImageLastLabel: string | null | undefined = undefined;
+    private capturedPointerId: number | null = null;
+    private capturedTouchAction: string | null = null;
 
     private dropTargets: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>[] = [];
     private lastDropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent> | null = null;
@@ -129,8 +131,12 @@ export abstract class BaseDragAndDropService<
         this.dragItem = dragSource.getDragItem();
 
         dragSource.onDragStarted?.();
-        const pointerCaptured = typeof PointerEvent !== 'undefined' && mouseEvent instanceof PointerEvent;
-        this.createAndUpdateDragImageComp(dragSource, pointerCaptured);
+
+        if (typeof PointerEvent !== 'undefined' && mouseEvent instanceof PointerEvent) {
+            this.capturePointer(mouseEvent);
+        }
+
+        this.createAndUpdateDragImageComp(dragSource);
     }
 
     private onDragStop(mouseEvent: MouseEvent): void {
@@ -200,6 +206,7 @@ export abstract class BaseDragAndDropService<
     }
 
     private clearDragAndDropProperties(): void {
+        this.releasePointer();
         this.removeDragImageComp(this.dragImageComp);
         this.dragImageCompPromise = null;
         this.dragImageParent = null;
@@ -210,6 +217,41 @@ export abstract class BaseDragAndDropService<
         this.lastDropTarget = null;
         this.dragItem = null;
         this.dragSource = null;
+        this.capturedPointerId = null;
+        this.capturedTouchAction = null;
+    }
+
+    private capturePointer(pointerEvent: PointerEvent): void {
+        const pointerId = pointerEvent.pointerId;
+        if (pointerId != null) {
+            const eRootDiv = this.beans.eRootDiv;
+            try {
+                eRootDiv.setPointerCapture(pointerId);
+                this.capturedPointerId = pointerId;
+                const style = eRootDiv.style;
+                this.capturedTouchAction = style.touchAction;
+                style.touchAction = 'none'; // stop touch scrolling while dragging
+            } catch {
+                // do nothing, just means pointer capture is not supported
+            }
+        }
+    }
+
+    private releasePointer(): void {
+        const pointerId = this.capturedPointerId;
+        if (pointerId != null) {
+            const eRootDiv = this.beans.eRootDiv;
+            if (eRootDiv) {
+                try {
+                    eRootDiv.releasePointerCapture(pointerId);
+                    if (this.capturedTouchAction != null) {
+                        eRootDiv.style.touchAction = this.capturedTouchAction;
+                    }
+                } catch {
+                    // do nothing, just means pointer capture is not supported
+                }
+            }
+        }
     }
 
     private getAllContainersFromDropTarget(
@@ -361,7 +403,7 @@ export abstract class BaseDragAndDropService<
         }
     }
 
-    private createAndUpdateDragImageComp(dragSource: TDragSource, pointerCaptured: boolean): void {
+    private createAndUpdateDragImageComp(dragSource: TDragSource): void {
         const promise = this.createDragImageComp(dragSource) ?? null;
 
         this.dragImageCompPromise = promise;
@@ -381,19 +423,19 @@ export abstract class BaseDragAndDropService<
             }
 
             if (dragImageComp) {
-                this.appendDragImageComp(dragImageComp, pointerCaptured);
+                this.appendDragImageComp(dragImageComp);
                 this.updateDragImageComp();
             }
         });
     }
 
-    private appendDragImageComp(component: IComponent<any> & IDragAndDropImage, pointerCaptured: boolean): void {
+    private appendDragImageComp(component: IComponent<any> & IDragAndDropImage): void {
         const eGui = component.getGui();
         const style = eGui.style;
 
         style.position = 'absolute';
         style.zIndex = '9999';
-        if (pointerCaptured) {
+        if (this.capturedPointerId != null) {
             style.pointerEvents = 'none';
         }
 
