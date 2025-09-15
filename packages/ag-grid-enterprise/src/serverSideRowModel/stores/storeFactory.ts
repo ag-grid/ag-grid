@@ -80,9 +80,7 @@ export class StoreFactory extends BeanStub implements NamedBean {
 
     private getBlockSize(userStoreParams?: ServerSideGroupLevelParams): number | undefined {
         const blockSize =
-            userStoreParams?.cacheBlockSize != null
-                ? userStoreParams.cacheBlockSize
-                : this.gos.get('cacheBlockSize');
+            userStoreParams?.cacheBlockSize != null ? userStoreParams.cacheBlockSize : this.gos.get('cacheBlockSize');
 
         if (blockSize != null && blockSize > 0) {
             return blockSize;

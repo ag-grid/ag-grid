@@ -102,7 +102,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         const tooltipCtrl: ITooltipCtrl = {
             getGui: () => eGui,
             getLocation: () => 'headerGroup',
-            getTooltipValue: () => value ?? (colGroupDef?.headerTooltip),
+            getTooltipValue: () => value ?? colGroupDef?.headerTooltip,
             shouldDisplayTooltip,
             getAdditionalParams: () => {
                 const additionalParams: ITooltipCtrlParams = {
