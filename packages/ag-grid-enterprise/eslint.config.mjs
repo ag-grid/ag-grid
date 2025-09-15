@@ -25,6 +25,7 @@ export default [
             '@typescript-eslint/no-unused-vars': 'error',
             '@typescript-eslint/no-var-requires': 'error',
             '@typescript-eslint/prefer-as-const': 'error',
+            '@typescript-eslint/prefer-optional-chain': 'error',
             '@typescript-eslint/ban-ts-comment': 'error',
             '@typescript-eslint/prefer-readonly': 'error',
             '@typescript-eslint/no-non-null-asserted-optional-chain': 'error',

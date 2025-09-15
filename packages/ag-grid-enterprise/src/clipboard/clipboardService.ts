@@ -168,7 +168,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         // Some browsers (Firefox) do not allow Web Applications to read from
         // the clipboard so verify if not only the ClipboardAPI is available,
         // but also if the `readText` method is public.
-        if (allowNavigator && !this.navigatorApiFailed && navigator.clipboard && navigator.clipboard.readText) {
+        if (allowNavigator && !this.navigatorApiFailed && navigator.clipboard?.readText) {
             navigator.clipboard
                 .readText()
                 .then(this.processClipboardData.bind(this))
@@ -1214,7 +1214,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 _warn(41);
             }
 
-            if (focusedElementBefore != null && focusedElementBefore.focus != null) {
+            if (focusedElementBefore?.focus != null) {
                 focusedElementBefore.focus({ preventScroll: true });
             }
         });

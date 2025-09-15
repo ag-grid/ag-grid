@@ -51,7 +51,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
         this.addDestroyFunc(() => {
             this.destroyAdvancedFilterComp();
             this.destroyBean(this.eBuilderComp);
-            if (this.eBuilderDialog && this.eBuilderDialog.isAlive()) {
+            if (this.eBuilderDialog?.isAlive()) {
                 this.destroyBean(this.eBuilderDialog);
             }
         });

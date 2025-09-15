@@ -163,7 +163,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                               }
                             : null
                     )
-                    .filter((x) => x && x.yField && x.sizeField);
+                    .filter((x) => x?.yField && x.sizeField);
             }
             return fields
                 .map((currentXField, i) =>
@@ -174,7 +174,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                           }
                         : null
                 )
-                .filter((x) => x && x.yField);
+                .filter((x) => x?.yField);
         }
 
         const xField = fields[0];
@@ -190,7 +190,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                           }
                         : null
                 )
-                .filter((x) => x && x.sizeField);
+                .filter((x) => x?.sizeField);
         }
 
         return fields.filter((value, i) => i > 0).map((yField) => ({ xField, yField }));

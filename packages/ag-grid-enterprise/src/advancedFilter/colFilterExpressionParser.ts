@@ -534,14 +534,13 @@ export class ColFilterExpressionParser {
 
     private isColumnPosition(position: number): boolean {
         return (
-            !this.columnParser || this.columnParser.endPosition == null || position <= this.columnParser.endPosition + 1
+            this.columnParser?.endPosition == null || position <= this.columnParser.endPosition + 1
         );
     }
 
     private isOperatorPosition(position: number): boolean {
         return (
-            !this.operatorParser ||
-            this.operatorParser.endPosition == null ||
+            this.operatorParser?.endPosition == null ||
             position <= this.operatorParser.endPosition + 1
         );
     }

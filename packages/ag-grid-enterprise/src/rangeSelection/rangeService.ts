@@ -185,7 +185,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
             const columns = this.getColumnsFromModel([this.lastCellHovered.column] as AgColumn[]);
 
-            if (!columns || !columns.length) {
+            if (!columns?.length) {
                 return;
             }
 
@@ -677,7 +677,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 }
                 for (let i = 0; i < cellRange.columns.length; i++) {
                     const column = this.getColumnFromModel(cellRange.columns[i] as AgColumn);
-                    if (!column || !column.isCellEditable(rowNode)) {
+                    if (!column?.isCellEditable(rowNode)) {
                         continue;
                     }
                     const emptyValue = valueSvc.getDeleteValue(column, rowNode);
@@ -848,7 +848,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean {
-        const columnInRange = range.columns !== null && range.columns.includes(cell.column);
+        const columnInRange = range.columns?.includes(cell.column);
         const rowInRange = this.isRowInRange(cell.rowIndex, cell.rowPinned, range);
 
         return columnInRange && rowInRange;
@@ -1035,7 +1035,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         } else if (columnA && columnB) {
             processedColumns = this.calculateColumnsBetween(columnA, columnB);
 
-            if (processedColumns && processedColumns.length) {
+            if (processedColumns?.length) {
                 startsOnTheRight = processedColumns[0] !== this.getColumnFromModel(columnA);
             }
         }

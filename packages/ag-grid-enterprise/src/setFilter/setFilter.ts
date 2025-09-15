@@ -619,7 +619,7 @@ export class SetFilter<V = string>
 
         eMiniFilter.setInputPlaceholder(translateForSetFilter(this, 'searchOoo'));
 
-        if (!params || !params.suppressFocus) {
+        if (!params?.suppressFocus) {
             if (eMiniFilter.isDisplayed()) {
                 eMiniFilter.getFocusableElement().focus();
             } else {

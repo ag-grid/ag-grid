@@ -536,8 +536,9 @@ const worksheetFactory: ExcelOOXMLTemplate = {
 
         const { table } = worksheet;
         const { rows, columns } = table;
-        const mergedCells =
-            columns && columns.length ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline) : [];
+        const mergedCells = columns?.length
+            ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline)
+            : [];
 
         const worksheetExcelTables = XLSX_WORKSHEET_DATA_TABLES.get(currentSheet);
 

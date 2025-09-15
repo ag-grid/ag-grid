@@ -601,14 +601,14 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     private getCellRangeParams(): CellRangeParams {
         const cellRanges = this.getCellRanges();
         const firstCellRange = cellRanges[0];
-        const startRow = (firstCellRange && firstCellRange.startRow) || null;
-        const endRow = (firstCellRange && firstCellRange.endRow) || null;
+        const startRow = firstCellRange?.startRow || null;
+        const endRow = firstCellRange?.endRow || null;
 
         return {
-            rowStartIndex: startRow && startRow.rowIndex,
-            rowStartPinned: startRow && startRow.rowPinned,
-            rowEndIndex: endRow && endRow.rowIndex,
-            rowEndPinned: endRow && endRow.rowPinned,
+            rowStartIndex: startRow?.rowIndex ?? null,
+            rowStartPinned: startRow?.rowPinned,
+            rowEndIndex: endRow?.rowIndex ?? null,
+            rowEndPinned: endRow?.rowPinned,
             columns: cellRanges.reduce(
                 (columns, value) => columns.concat(value.columns.map((c) => c.getId())),
                 [] as string[]

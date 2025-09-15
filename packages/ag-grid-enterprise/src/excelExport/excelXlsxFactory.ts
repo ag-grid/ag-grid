@@ -149,7 +149,7 @@ function processTableConfig(worksheet: ExcelWorksheet, config: ExcelGridSerializ
         );
     }
 
-    if (!tableColumns || !tableColumns.length || !tableRowCount || !tableName) {
+    if (!tableColumns?.length || !tableRowCount || !tableName) {
         _warn(165);
         return;
     }

@@ -965,7 +965,7 @@ export class LazyCache extends BeanStub {
             if (node) {
                 this.nodesToRefresh.delete(node);
             }
-            if (!node || !node.stub) {
+            if (!node?.stub) {
                 if (node && !node.stub) {
                     // if node is not a stub, we destroy it and recreate as nodes can't go from data to stub
                     this.destroyRowAtIndex(i);

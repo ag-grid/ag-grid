@@ -172,7 +172,7 @@ export abstract class ChartProxy<
         // replace the values for the selected category with a complex object to allow for duplicated categories
         return data.map((d, index) => {
             const value = d[categoryKey];
-            const valueString = value && value.toString ? value.toString() : '';
+            const valueString = value?.toString ? value.toString() : '';
             const datum = { ...d };
 
             datum[categoryKey] = { id: index, value, toString: () => valueString };

@@ -303,7 +303,7 @@ export class ChartDatasource extends BeanStub {
         }
 
         const lastCol = _last(dimensionCols);
-        const lastColId = lastCol && lastCol.colId;
+        const lastColId = lastCol?.colId;
         const map: any = {};
         const dataAggregated: any[] = [];
 
