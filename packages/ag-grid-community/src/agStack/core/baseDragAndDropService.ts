@@ -1,3 +1,5 @@
+import type { MouseCapture } from '../events/mouseCapture';
+import { captureMouse, releaseMouseCapture } from '../events/mouseCapture';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
@@ -53,6 +55,7 @@ export abstract class BaseDragAndDropService<
     private dragImageComp: (IComponent<any> & IDragAndDropImage) | null = null;
     private dragImageLastIcon: TDragAndDropIcon | null | undefined = undefined;
     private dragImageLastLabel: string | null | undefined = undefined;
+    private mouseCapture: MouseCapture | null = null;
 
     private dropTargets: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>[] = [];
     private lastDropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent> | null = null;
@@ -129,8 +132,12 @@ export abstract class BaseDragAndDropService<
         this.dragItem = dragSource.getDragItem();
 
         dragSource.onDragStarted?.();
-        const pointerCaptured = typeof PointerEvent !== 'undefined' && mouseEvent instanceof PointerEvent;
-        this.createAndUpdateDragImageComp(dragSource, pointerCaptured);
+
+        if (typeof PointerEvent !== 'undefined' && mouseEvent instanceof PointerEvent) {
+            this.mouseCapture = captureMouse(this.beans.eRootDiv, mouseEvent);
+        }
+
+        this.createAndUpdateDragImageComp(dragSource);
     }
 
     private onDragStop(mouseEvent: MouseEvent): void {
@@ -200,6 +207,7 @@ export abstract class BaseDragAndDropService<
     }
 
     private clearDragAndDropProperties(): void {
+        this.mouseCapture = releaseMouseCapture(this.mouseCapture);
         this.removeDragImageComp(this.dragImageComp);
         this.dragImageCompPromise = null;
         this.dragImageParent = null;
@@ -210,6 +218,7 @@ export abstract class BaseDragAndDropService<
         this.lastDropTarget = null;
         this.dragItem = null;
         this.dragSource = null;
+        this.mouseCapture = null;
     }
 
     private getAllContainersFromDropTarget(
@@ -361,7 +370,7 @@ export abstract class BaseDragAndDropService<
         }
     }
 
-    private createAndUpdateDragImageComp(dragSource: TDragSource, pointerCaptured: boolean): void {
+    private createAndUpdateDragImageComp(dragSource: TDragSource): void {
         const promise = this.createDragImageComp(dragSource) ?? null;
 
         this.dragImageCompPromise = promise;
@@ -381,19 +390,19 @@ export abstract class BaseDragAndDropService<
             }
 
             if (dragImageComp) {
-                this.appendDragImageComp(dragImageComp, pointerCaptured);
+                this.appendDragImageComp(dragImageComp);
                 this.updateDragImageComp();
             }
         });
     }
 
-    private appendDragImageComp(component: IComponent<any> & IDragAndDropImage, pointerCaptured: boolean): void {
+    private appendDragImageComp(component: IComponent<any> & IDragAndDropImage): void {
         const eGui = component.getGui();
         const style = eGui.style;
 
         style.position = 'absolute';
         style.zIndex = '9999';
-        if (pointerCaptured) {
+        if (this.mouseCapture != null) {
             style.pointerEvents = 'none';
         }
 
