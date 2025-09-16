@@ -218,8 +218,7 @@ export class LazyCache extends BeanStub {
 
         // if the node before this node is expanded, this node might be a child of that node
         if (
-            previousNode &&
-            previousNode.node.expanded &&
+            previousNode?.node.expanded &&
             (previousNode.node.childStore as LazyStore | undefined)?.isDisplayIndexInStore(displayIndex)
         ) {
             return (previousNode.node.childStore as LazyStore | undefined)?.getRowUsingDisplayIndex(displayIndex);

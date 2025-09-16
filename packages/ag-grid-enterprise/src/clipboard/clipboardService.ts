@@ -698,13 +698,13 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
     private updateCellValue(
         rowNode: RowNode | null,
-        column: AgColumn,
+        column: AgColumn | null,
         value: string,
         cellsToFlash: Record<string, boolean>,
         type: string,
         changedPath: ChangedPath | undefined
     ) {
-        if (!rowNode || !column || !column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
+        if (!rowNode || !column?.isCellEditable(rowNode) || column?.isSuppressPaste(rowNode)) {
             return;
         }
 

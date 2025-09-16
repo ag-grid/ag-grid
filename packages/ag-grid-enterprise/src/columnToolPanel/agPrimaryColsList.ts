@@ -189,8 +189,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         let movePadding = 0;
 
         if (isUp) {
-            const children = item.columnDepth > 0 && column.getParent()?.getChildren();
-            if (children && children.length && column === children[0]) {
+            const children = item.columnDepth > 0 ? column.getParent()?.getChildren() : null;
+            if (children?.length && column === children[0]) {
                 movePadding = -1;
             }
         } else if (group) {
