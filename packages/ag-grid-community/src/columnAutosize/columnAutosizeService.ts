@@ -162,10 +162,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         dispatchColumnResizedEvent(this.eventSvc, columnsAutoSized, true, 'autosizeColumns');
     }
 
-    public autoSizeColumn(key: Maybe<ColKey>, source: ColumnEventType, skipHeader?: boolean): void {
-        if (key) {
-            this.autoSizeCols({ colKeys: [key], skipHeader, skipHeaderGroups: true, source });
-        }
+    public autoSizeColumn(key: ColKey, source: ColumnEventType, skipHeader?: boolean): void {
+        this.autoSizeCols({ colKeys: [key], skipHeader, skipHeaderGroups: true, source });
     }
 
     private autoSizeColumnGroupsByColumns(
@@ -174,11 +172,11 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         stopAtGroup?: AgColumnGroup
     ): AgColumn[] {
         const { colModel, ctrlsSvc } = this.beans;
-        const columnGroups: Set<AgColumnGroup> = new Set();
+        const columnGroups = new Set<AgColumnGroup>();
         const columns = colModel.getColsForKeys(keys);
 
         columns.forEach((col) => {
-            let parent: AgColumnGroup | null = col.getParent();
+            let parent = col.getParent();
             while (parent && parent != stopAtGroup) {
                 if (!parent.isPadding()) {
                     columnGroups.add(parent);
@@ -200,9 +198,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                     break;
                 }
             }
-            if (headerGroupCtrl) {
-                headerGroupCtrl.resizeLeafColumnsToFit(source);
-            }
+            headerGroupCtrl?.resizeLeafColumnsToFit(source);
         }
 
         return resizedColumns;
@@ -224,7 +220,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.autoSizeCols({ colKeys: allDisplayedColumns, ...params });
     }
 
-    public addColumnAutosize(element: HTMLElement, column: AgColumn): () => void {
+    public addColumnAutosizeListeners(element: HTMLElement, column: AgColumn): () => void {
         const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
 
         const autoSizeColListener = () => {
@@ -232,7 +228,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         };
 
         element.addEventListener('dblclick', autoSizeColListener);
-        const touchListener: TouchListener = new TouchListener(element);
+        const touchListener = new TouchListener(element);
         touchListener.addEventListener('doubleTap', autoSizeColListener);
 
         return () => {
@@ -315,7 +311,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     // called from api
     public sizeColumnsToFit(
-        gridWidth: any,
+        gridWidth: number,
         source: ColumnEventType = 'sizeColumnsToFit',
         silent?: boolean,
         params?: ISizeColumnsToFitParams
@@ -326,11 +322,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
 
         const limitsMap: { [colId: string]: Omit<IColumnLimit, 'key'> } = {};
-        if (params) {
-            params?.columnLimits?.forEach(({ key, ...dimensions }) => {
-                limitsMap[typeof key === 'string' ? key : key.getColId()] = dimensions;
-            });
-        }
+        params?.columnLimits?.forEach(({ key, ...dimensions }) => {
+            limitsMap[typeof key === 'string' ? key : key.getColId()] = dimensions;
+        });
 
         // avoid divide by zero
         const allDisplayedColumns = this.beans.visibleCols.allCols;
