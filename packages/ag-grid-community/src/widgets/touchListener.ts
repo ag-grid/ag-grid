@@ -46,13 +46,15 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         const startListener = this.onTouchStart.bind(this);
         const moveListener = this.onTouchMove.bind(this);
         const endListener = this.onTouchEnd.bind(this);
+        const cancelListener = this.onTouchCancel.bind(this);
 
         addTempEventHandlers(
             this.handlers,
             [eElement, 'touchstart', startListener, { passive: true }],
             [eElement, 'touchmove', moveListener, { passive: true }],
             // we set passive=false, as we want to prevent default on this event
-            [eElement, 'touchend', endListener, { passive: false }]
+            [eElement, 'touchend', endListener, { passive: false }],
+            [eElement, 'touchcancel', cancelListener, { passive: false }]
         );
     }
 
@@ -124,6 +126,12 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         }
 
         this.touchStart = null;
+    }
+
+    private onTouchCancel(_touchEvent: TouchEvent): void {
+        this.clearLongPressTimer();
+        this.touchStart = null;
+        this.moved = false;
     }
 
     private checkForDoubleTap(touchStart: Touch): void {
