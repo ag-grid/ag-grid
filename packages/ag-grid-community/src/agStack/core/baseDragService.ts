@@ -31,7 +31,7 @@ export class BaseDragService<
     private readonly dragSources: DragSourceEntry[] = [];
 
     public get startTarget(): EventTarget | null {
-        return this.drag?.target ?? null;
+        return this.drag?.start.target ?? null;
     }
 
     private addHandledEvent(event: Event): boolean {
@@ -46,13 +46,16 @@ export class BaseDragService<
     }
 
     public override destroy(): void {
+        if (this.drag) {
+            this.cancelDrag();
+        }
         const dragSources = this.dragSources;
         for (const ds of dragSources) {
             removeTempEventHandlers(ds.handlers);
         }
         dragSources.length = 0;
-        this.destroyDrag();
         super.destroy();
+        this.handledEvents = null;
     }
 
     public removeDragSource(params: DragListenerParams): void {
@@ -68,6 +71,9 @@ export class BaseDragService<
     }
 
     public addDragSource(params: DragListenerParams): void {
+        if (!this.isAlive()) {
+            return; // Destroyed
+        }
         const { eElement, includeTouch } = params;
         const handlers: TempEventHandler[] = [];
         const dragSource = { handlers, params };
@@ -78,7 +84,6 @@ export class BaseDragService<
 
         // Fallback to legacy Mouse handler
         const mouseListener = (event: MouseEvent) => this.onMouseDown(params, event);
-
         addTempEventHandlers(
             handlers,
             [eElement, 'pointerdown', pointerDownListener],
@@ -139,7 +144,7 @@ export class BaseDragService<
         const drag = this.drag;
         if (drag) {
             this.drag = null;
-            drag.destroy();
+            removeTempEventHandlers(drag.handlers);
         }
     }
 
@@ -174,21 +179,24 @@ export class BaseDragService<
 
         this.destroyDrag();
 
-        const pointerDrag = new Dragging(params, pointerEvent);
-        if (!pointerDrag.capture(pointerEvent)) {
-            return; // capture failed, fallback to normal events
-        }
+        const eRootDiv = beans.eRootDiv;
+        const pointerDrag = new Dragging(params, pointerEvent, true);
 
         const onMove = (ev: PointerEvent) => this.onMouseMove(ev);
         const onUp = (ev: PointerEvent) => this.onUp(ev);
         const onCancel = () => this.cancelDrag();
-        const eElement = pointerDrag.eElement;
+        const onMouseMove = (mouseEvent: MouseEvent) => {
+            if (this.shouldPreventMouseEvent(mouseEvent)) {
+                preventEventDefault(mouseEvent);
+            }
+        };
         this.initDrag(
             pointerDrag,
-            [eElement, 'pointermove', onMove],
-            [eElement, 'pointerup', onUp],
-            [eElement, 'pointercancel', onCancel],
-            [eElement, 'lostpointercapture', onCancel]
+            [eRootDiv, 'pointermove', onMove],
+            [eRootDiv, 'pointerup', onUp],
+            [eRootDiv, 'pointercancel', onCancel],
+            [eRootDiv, 'lostpointercapture', onCancel],
+            [_getRootNode(beans), 'mousemove', onMouseMove]
         );
 
         // start immediately if threshold is zero
@@ -201,25 +209,32 @@ export class BaseDragService<
 
     // gets called whenever mouse down on any drag source
     private onTouchStart(params: DragListenerParams, touchEvent: TouchEvent): void {
-        const beans = this.beans;
-        if (!this.addHandledEvent(touchEvent)) {
-            return; // Already handled
+        const suppressTouch = this.gos.get('suppressTouch');
+        if (suppressTouch || !params.includeTouch) {
+            return;
         }
 
-        if (this.drag?.pointerId != null) {
-            return; // We are handling the pointer events, ignore this
+        if (!this.addHandledEvent(touchEvent)) {
+            return; // Already handled
         }
 
         if (_isFocusableFormField(getEventTargetElement(touchEvent))) {
             return;
         }
+
+        const drag = this.drag;
+        if (drag?.pointer) {
+            return; // We are handling the pointer events, ignore this
+        }
+
         if (params.stopPropagationForTouch) {
             touchEvent.stopPropagation();
         }
 
         this.destroyDrag();
 
-        const touchDrag = new Dragging(params, touchEvent.touches[0]);
+        const beans = this.beans;
+        const touchDrag = new Dragging(params, touchEvent.touches[0], false);
 
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e);
@@ -246,7 +261,9 @@ export class BaseDragService<
 
     // gets called whenever mouse down on any drag source
     private onMouseDown(params: DragListenerParams, mouseEvent: MouseEvent): void {
-        const beans = this.beans;
+        if (mouseEvent.button !== 0) {
+            return; // only interested in left button clicks
+        }
         // if there are two elements with parent / child relationship, and both are draggable,
         // when we drag the child, we should NOT drag the parent. an example of this is row moving
         // and range selection - row moving should get preference when use drags the rowDrag component.
@@ -254,17 +271,14 @@ export class BaseDragService<
             return; // Already handled
         }
 
-        if (this.drag?.pointerId != null) {
+        if (this.drag?.pointer) {
             return; // We are handling the pointer events, ignore this
         }
 
-        if (mouseEvent.button !== 0) {
-            return; // only interested in left button clicks
-        }
-
+        const beans = this.beans;
         this.destroyDrag();
 
-        const mouseDrag = new Dragging(params, mouseEvent);
+        const mouseDrag = new Dragging(params, mouseEvent, false);
 
         const mouseMoveEvent = (event: MouseEvent) => this.onMouseMove(event);
         const mouseUpEvent = (event: MouseEvent) => this.onUp(event);
@@ -434,63 +448,14 @@ const removeTempEventHandlers = (list: TempEventHandler[]): void => {
 class Dragging {
     public readonly eElement: Element & Partial<HTMLElement>;
     public readonly handlers: TempEventHandler[] = [];
-    public readonly target: EventTarget | null;
     public lastDrag: PointerEvent | MouseEvent | Touch | null = null;
-    public pointerId: number | null = null;
-    private oldTouchAction: string | undefined = undefined;
 
     public constructor(
         public readonly params: DragListenerParams,
-        public readonly start: PointerEvent | MouseEvent | Touch
+        public readonly start: PointerEvent | MouseEvent | Touch,
+        public readonly pointer: boolean
     ) {
         this.eElement = params.eElement;
-        this.target = start.target;
-    }
-
-    /**
-     * Captures pointer events for the drag operation.
-     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Element/setPointerCapture)
-     * @param pointerEvent The pointer event to capture.
-     * @returns True if the capture was successful, false otherwise.
-     */
-    public capture(pointerEvent: PointerEvent): boolean {
-        const eElement = this.eElement;
-        const pointerId = pointerEvent.pointerId;
-        if (pointerId == null || !eElement.setPointerCapture) {
-            return false; // fallback to legacy handlers
-        }
-
-        try {
-            eElement.setPointerCapture(pointerId);
-        } catch {
-            return false; // capture failed, fallback to normal events
-        }
-
-        this.pointerId = pointerId;
-        const style = eElement.style;
-        if (style) {
-            this.oldTouchAction = style.touchAction;
-            style.touchAction = 'none'; // disable touch actions while dragging with pointer events
-        }
-        return true;
-    }
-
-    public destroy(): void {
-        removeTempEventHandlers(this.handlers);
-        const { pointerId, eElement, oldTouchAction } = this;
-        if (pointerId != null) {
-            try {
-                eElement.releasePointerCapture(pointerId);
-            } catch {
-                // ignore exception as releasePointerCapture can throw
-            }
-        }
-        if (oldTouchAction != null) {
-            const style = eElement.style;
-            if (style && style.touchAction === 'none') {
-                style.touchAction = oldTouchAction; // restore old touch action style
-            }
-        }
     }
 }
 
