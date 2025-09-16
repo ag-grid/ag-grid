@@ -1,0 +1,64 @@
+---
+title: 'AG MCP Server'
+---
+
+AG Grid provides an MCP server that can be installed locally and provides version and framework specific documentation and examples to your AI Agent.
+
+{% note %}
+The AG MCP server is currently in beta
+{% /note %}
+
+## Installation
+
+The command to run the AG Grid MCP server is: `npx ag-mcp`
+
+There are many applications that support MCP (Model Context Protocol) integrations. A non exhaustive list is provided on the [Model Context Protocol website](https://modelcontextprotocol.io/clients).
+
+Below are the install commands for some popular applications:
+
+### Claude Code
+
+Inside your application run:
+
+```
+claude mcp add ag-mcp npx ag-mcp
+```
+
+### Cursor (and some other IDEs)
+
+If it doesn't already exist, create the file `mcp.json` in the root of your project. Then add the following:
+
+```
+{
+  "mcpServers": {
+    "ag-mcp": {
+      "command": "npx",
+      "args": ["ag-mcp"],
+    }
+  }
+}
+```
+
+## Usage
+
+The AG MCP Server provides multiple tools, resources and prompts to help aid your development with AG Grid. We've outlined a few of the ways you can interact with the MCP server below. Once installed your LLM can choose to use resources and tools as it sees fit to get the most relevant and accurate documentation and examples.
+
+### Setting your Version and Framework
+
+The AG MCP Server can infer what version of AG Grid you have installed, along with what framework you are using, by checking your `package.json`. This allows the MCP server to provide accurate documentation and examples to your LLM.
+
+In some circumstances, such as monorepos or multi version workspaces, the MCP server may not be able to infer the version and so it must be set by your LLM.
+
+### Documentation Search
+
+The core feature of the AG MCP Server is an LLM optimized search tool which will provide documentation, examples, interface and API definitions. 
+
+Your LLM can choose to use this tool whenever it needs more information on how to implement AG Grid features. The content is provided in a condensed markdown so as to minimise the amount of context used, and not overwhelm the LLM.
+
+### Bootstrapping an AG Grid project
+
+The `bootstrap_grid` prompt can be triggered directly from your LLM client. This creates a list of instructions for you LLM to follow when creating a new AG Grid project or adding AG Grid to an existing project.
+
+### Upgrading AG Grid
+
+The `upgrade_grid` prompt creates a step by step plan to help migrate from your current version to the provided version. This is given to the LLM to execute, calling back to the MCP server as needed. It takes a version by version approach, making sure each version is correct before continuing.
