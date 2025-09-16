@@ -71,6 +71,10 @@ export interface SizeColumnsToContentStrategy {
     columnLimits?: SizeColumnsToContentColumnLimits[];
 }
 
+export interface SizeColumnsToContentAndExpandStrategy extends Omit<SizeColumnsToContentStrategy, 'type'> {
+    type: 'fitCellContentsAndExpand';
+}
+
 export interface ISizeAllColumnsToContentParams {
     /** If true, the header won't be included when calculating the column widths. */
     skipHeader?: boolean;
@@ -86,3 +90,9 @@ export interface ISizeColumnsToContentParams extends ISizeAllColumnsToContentPar
     /** If not provided will auto-size all columns. Otherwise will size the specified columns. */
     colIds?: string[];
 }
+
+export type AutoSizeStrategy =
+    | SizeColumnsToFitGridStrategy
+    | SizeColumnsToFitProvidedWidthStrategy
+    | SizeColumnsToContentStrategy
+    | SizeColumnsToContentAndExpandStrategy;

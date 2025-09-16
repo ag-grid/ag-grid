@@ -117,6 +117,8 @@ import type {
     VirtualRowRemovedEvent,
 } from '../events';
 import type {
+    AutoSizeStrategy,
+    SizeColumnsToContentAndExpandStrategy,
     SizeColumnsToContentStrategy,
     SizeColumnsToFitGridStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
@@ -505,10 +507,7 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `ColumnAutoSizeModule`
      */
-    autoSizeStrategy?:
-        | SizeColumnsToFitGridStrategy
-        | SizeColumnsToFitProvidedWidthStrategy
-        | SizeColumnsToContentStrategy;
+    autoSizeStrategy?: AutoSizeStrategy;
 
     // *** Components *** //
     /**
