@@ -32,6 +32,10 @@
                             "path": "modules"
                         },
                         {
+                            "title": "MCP Server",
+                            "path": "mcp-server"
+                        },
+                        {
                             "title": "Installing Enterprise Licence",
                             "path": "license-install"
                         },
