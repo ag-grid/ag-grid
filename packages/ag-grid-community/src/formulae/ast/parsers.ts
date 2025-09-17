@@ -1,5 +1,6 @@
 import type { BeanCollection } from "../../context/context";
-import { BINARY_PRECEDENCE, BinaryOperator, isBinaryOp } from "./serializer";
+import type { BinaryOperator } from "./serializer";
+import { BINARY_PRECEDENCE, isBinaryOp } from "./serializer";
 import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
 import { FormulaParseError } from './utils';
 
