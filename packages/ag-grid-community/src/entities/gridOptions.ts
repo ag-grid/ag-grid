@@ -116,13 +116,7 @@ import type {
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
 } from '../events';
-import type {
-    AutoSizeStrategy,
-    SizeColumnsToContentAndExpandStrategy,
-    SizeColumnsToContentStrategy,
-    SizeColumnsToFitGridStrategy,
-    SizeColumnsToFitProvidedWidthStrategy,
-} from '../interfaces/autoSize';
+import type { AutoSizeStrategy } from '../interfaces/autoSize';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { EditValidationCommitType } from '../interfaces/editValidationCommitType';
 import type {

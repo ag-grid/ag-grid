@@ -6,7 +6,7 @@ import { getWidthOfColsInList, isColumnSelectionCol, isRowNumberCol, isSpecialCo
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import { AgColumnGroup } from '../entities/agColumnGroup';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type {
