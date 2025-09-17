@@ -71,8 +71,19 @@ export interface SizeColumnsToContentStrategy {
     columnLimits?: SizeColumnsToContentColumnLimits[];
 }
 
-export interface SizeColumnsToContentAndExpandStrategy extends Omit<SizeColumnsToContentStrategy, 'type'> {
+/** Auto-size columns to fit their cell contents and then expand proportionally to fill any remaining space in the grid. */
+export interface SizeColumnsToContentAndExpandStrategy {
     type: 'fitCellContentsAndExpand';
+    /** If true, the header won't be included when calculating the column widths. */
+    skipHeader?: boolean;
+    /** If not provided will auto-size all columns. Otherwise will size the specified columns. */
+    colIds?: string[];
+    /** Default minimum width for every column (does not override the column minimum width). */
+    defaultMinWidth?: number;
+    /** Default maximum width for every column (does not override the column maximum width). */
+    defaultMaxWidth?: number;
+    /** Provide to limit specific column widths when sizing. */
+    columnLimits?: SizeColumnsToContentColumnLimits[];
 }
 
 export interface ISizeAllColumnsToContentParams {
