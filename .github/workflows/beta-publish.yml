@@ -28,6 +28,7 @@ jobs:
               uses: actions/checkout@v4
               with:
                   token: ${{ steps.app-token.outputs.token }}
+                  fetch-depth: 1 # shallow copy
 
             - name: Fetch Refs
               run: git fetch origin --depth 1 latest-success latest
@@ -38,10 +39,6 @@ jobs:
               with:
                   node-version: '20'
                   cache: 'yarn'
-
-            - name: yarn install
-              id: yarn_install
-              run: yarn install --ci
 
             - name: Calculate Next Beta Version
               id: next_version
