@@ -15,11 +15,18 @@ const jiraRequest = (url) => {
     // we keep executing the request with a new startAt until we reach the total number of issues in the set
     const startAt = 0,
         maxResults = 50;
-    const issueData = curlRequest(`${url}&startAt=${startAt}&maxResults=${maxResults}`);
 
-    for (let page = 1; page < Math.ceil(issueData.total / maxResults); page++) {
-        const block = curlRequest(`${url}&startAt=${maxResults * page}&maxResults=${maxResults}`);
+    const issueData = curlRequest(
+        `${url}&fields=summary,components,fixVersions,customfield_10536,customfield_10522,customfield_10520,customfield_10521,customfield_10523,issuetype,resolution,status`
+    );
+    let nextPageToken = issueData.nextPageToken;
+    while (nextPageToken) {
+        const block = curlRequest(
+            `${url}&fields=summary,components,fixVersions,customfield_10536,customfield_10522,customfield_10520,customfield_10521,customfield_10523,issuetype,resolution,status&nextPageToken=${nextPageToken}`
+        );
         issueData.issues = issueData.issues.concat(block.issues);
+
+        nextPageToken = block.nextPageToken;
     }
 
     return issueData.issues;
@@ -97,6 +104,4 @@ module.exports = {
     executeJiraRequest,
     saveDataToFile,
     logger,
-    jiraRequest,
-    curlRequest,
 };
