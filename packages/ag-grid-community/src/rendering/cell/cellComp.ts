@@ -212,7 +212,9 @@ export class CellComp extends Component {
         const usingCellValue = !editing && usingWrapper;
         const putCellValueIn = usingCellValue && this.eCellValue == null;
         if (putCellValueIn) {
-            this.eCellValue = _createElement({ tag: 'span', cls: 'ag-cell-value', role: 'presentation' });
+            const isCheckboxRenderer = this.column.getColDef().cellRenderer === 'agCheckboxCellRenderer';
+            const cls = `ag-cell-value${isCheckboxRenderer ? ' ag-allow-overflow' : ''}`;
+            this.eCellValue = _createElement({ tag: 'span', cls, role: 'presentation' });
             this.eCellWrapper!.appendChild(this.eCellValue);
         }
         const takeCellValueOut = !usingCellValue && this.eCellValue != null;

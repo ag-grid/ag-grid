@@ -81,6 +81,10 @@ const CellComp = ({
         (includeSelection || includeDndSource || includeRowDrag) &&
         (editDetails == null || !!editDetails.popup);
     const showCellWrapper = forceWrapper || showTools;
+    const allowValueOverflow = useMemo(() => {
+        const colDef = cellCtrl.column.getColDef();
+        return colDef.cellRenderer === 'agCheckboxCellRenderer';
+    }, [cellCtrl]);
 
     const setCellEditorRef = useCallback(
         (cellEditor: ICellEditor | undefined) => {
@@ -347,6 +351,7 @@ const CellComp = ({
 
                 const { current } = cssManager;
                 current!.toggleCss('ag-cell-value', !showCellWrapper);
+                current!.toggleCss('ag-allow-overflow', allowValueOverflow);
                 current!.toggleCss('ag-cell-inline-editing', !!editing && !isPopup);
                 current!.toggleCss('ag-cell-popup-editing', !!editing && !!isPopup);
                 current!.toggleCss('ag-cell-not-inline-editing', !editing || !!isPopup);
@@ -390,6 +395,7 @@ const CellComp = ({
 
         const { current } = cssManager;
         current!.toggleCss('ag-cell-value', !showCellWrapper);
+        current!.toggleCss('ag-allow-overflow', allowValueOverflow);
         current!.toggleCss('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
         current!.toggleCss('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
         current!.toggleCss('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
@@ -428,7 +434,12 @@ const CellComp = ({
                 return null;
             }
             return showCellWrapper ? (
-                <span role="presentation" id={`cell-${instanceId}`} className="ag-cell-value" ref={setCellValueRef}>
+                <span
+                    role="presentation"
+                    id={`cell-${instanceId}`}
+                    className={`ag-cell-value${allowValueOverflow ? ' ag-allow-overflow' : ''}`}
+                    ref={setCellValueRef}
+                >
                     {valueOrCellComp()}
                 </span>
             ) : (
