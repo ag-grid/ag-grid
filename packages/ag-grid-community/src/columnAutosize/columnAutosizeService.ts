@@ -79,18 +79,20 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             // during the adjustment.
             let adjustmentBudget = 50;
 
-            let actualWidth = getWidthOfColsInList(visibleCols.allCols);
-            const availableWidth = this.getAvailableWidth();
+            let actualWidth = getWidthOfColsInList(visibleCols.centerCols);
+            const availableGridWidth = this.getAvailableWidth();
+            const leftPinnedWidth = getWidthOfColsInList(visibleCols.leftCols);
+            const rightPinnedWidth = getWidthOfColsInList(visibleCols.rightCols);
+            const availableWidth = availableGridWidth - leftPinnedWidth - rightPinnedWidth;
             const columnLimitsIndex = Object.fromEntries(
                 params.columnLimits?.map(({ colId, maxWidth, minWidth }) => [colId, { maxWidth, minWidth }]) ?? []
             );
 
             while (availableWidth - actualWidth > 0.1 && --adjustmentBudget >= 0) {
                 const remaining = availableWidth - actualWidth;
-                console.log({ remaining });
 
                 let newActualWidth = 0;
-                for (const col of visibleCols.allCols) {
+                for (const col of visibleCols.centerCols) {
                     const newWidth = normaliseColumnWidth(
                         col,
                         col.getActualWidth() + remaining * (col.getActualWidth() / actualWidth),
@@ -103,8 +105,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             }
 
             visibleCols.refresh(source);
-
-            console.log({ availableWidth, actualWidth });
 
             dispatchColumnResizedEvent(this.eventSvc, Array.from(columnsAutoSized), true, 'autosizeColumns');
         });
