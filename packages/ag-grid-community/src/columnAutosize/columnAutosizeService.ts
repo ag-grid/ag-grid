@@ -2,7 +2,7 @@ import { _removeFromArray } from '../agStack/utils/array';
 import { _getInnerWidth } from '../agStack/utils/dom';
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import type { ColKey } from '../columns/columnModel';
-import { getWidthOfColsInList, isSpecialCol } from '../columns/columnUtils';
+import { getWidthOfColsInList, isColumnSelectionCol, isRowNumberCol, isSpecialCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
@@ -79,20 +79,27 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             // during the adjustment.
             let adjustmentBudget = 50;
 
-            let actualWidth = getWidthOfColsInList(visibleCols.centerCols);
+            const colsToScale: AgColumn[] = [];
+            const colsToExclude: AgColumn[] = [];
+            for (const col of visibleCols.centerCols) {
+                (isColumnSelectionCol(col) || isRowNumberCol(col) ? colsToExclude : colsToScale).push(col);
+            }
+
+            let actualWidth = getWidthOfColsInList(colsToScale);
             const availableGridWidth = this.getAvailableWidth();
             const leftPinnedWidth = getWidthOfColsInList(visibleCols.leftCols);
             const rightPinnedWidth = getWidthOfColsInList(visibleCols.rightCols);
-            const availableWidth = availableGridWidth - leftPinnedWidth - rightPinnedWidth;
+            const excludedWidth = getWidthOfColsInList(colsToExclude);
+            const availableWidth = availableGridWidth - leftPinnedWidth - rightPinnedWidth - excludedWidth;
             const columnLimitsIndex = Object.fromEntries(
                 params.columnLimits?.map(({ colId, maxWidth, minWidth }) => [colId, { maxWidth, minWidth }]) ?? []
             );
 
-            while (availableWidth - actualWidth > 0.1 && --adjustmentBudget >= 0) {
+            while (availableWidth - actualWidth > 0.1 && --adjustmentBudget >= 0 && colsToScale.length > 0) {
                 const remaining = availableWidth - actualWidth;
 
                 let newActualWidth = 0;
-                for (const col of visibleCols.centerCols) {
+                for (const col of colsToScale) {
                     const newWidth = normaliseColumnWidth(
                         col,
                         col.getActualWidth() + remaining * (col.getActualWidth() / actualWidth),
