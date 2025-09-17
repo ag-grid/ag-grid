@@ -68,6 +68,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
     }
 
+    /**
+     * Performs the same auto-sizing as autoSizeCols, but additionally expands columns proportionally to take up any extra space,
+     * while respecting column limits.
+     */
     public autoSizeExpandCols(params: AutoSizeColumnParams): void {
         const { visibleCols } = this.beans;
         const source = params.source ?? 'api';
