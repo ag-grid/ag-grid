@@ -185,6 +185,8 @@ const docs: Record<AllThemeParams, string> = {
         'Height of the pagination panel at the bottom of the grid. Defaults to the higher of rowHeight or 22px.',
     panelBackgroundColor:
         'Background color for panels and dialogs such as the the advanced filter builder. Note that for the integrated charts panel, the chart fully fills the panel so no background is visible behind it - set the chart theme to change its background.',
+    panelTitleBarHeight:
+        'The height of the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarBackgroundColor:
         'Background color for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarTextColor:
