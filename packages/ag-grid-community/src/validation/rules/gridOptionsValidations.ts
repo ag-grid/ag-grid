@@ -537,7 +537,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 ];
                 const type = autoSizeStrategy.type;
                 if (type !== 'fitCellContents' && type !== 'fitGridWidth' && type !== 'fitProvidedWidth') {
-                    return `Invalid Auto-size strategy. \`autoSizeStrategy\` must be one of ${validModes.map((m) => `"${m}"`).join(', ')}, currently it's ${type}`;
+                    return `Invalid Auto-size strategy. \`autoSizeStrategy\` must be one of ${validModes.map((m) => '"' + m + '"').join(', ')}, currently it's ${type}`;
                 }
                 return null;
             },
