@@ -23,15 +23,12 @@ export function autoSizeColumns(
     skipHeader?: boolean
 ): void {
     if (Array.isArray(keysOrParams)) {
-        colAutosize?.autoSizeCols({ colKeys: keysOrParams, skipHeader, source: 'api' as const });
+        colAutosize?.autoSizeCols({ colKeys: keysOrParams, skipHeader, source: 'api' });
     } else {
         colAutosize?.autoSizeCols({
+            ...keysOrParams,
             colKeys: keysOrParams.colIds ?? visibleCols.allCols,
-            skipHeader: keysOrParams.skipHeader,
-            defaultMaxWidth: keysOrParams.defaultMaxWidth,
-            defaultMinWidth: keysOrParams.defaultMinWidth,
-            columnLimits: keysOrParams.columnLimits,
-            source: 'api' as const,
+            source: 'api',
         });
     }
 }
