@@ -36,10 +36,7 @@ export class ClientSideNodeManager<TData> extends AbstractClientSideNodeManager<
                 const isRowGroupDisplayed = groupColumn !== null && col.isRowGroupDisplayed(groupColumn.getId());
                 if (isRowGroupDisplayed) {
                     // if maintain group value type, get the value from any leaf node.
-                    node.groupData![col.getColId()] = valueSvc.getValue(
-                        groupColumn,
-                        node.allLeafChildren?.[0]
-                    );
+                    node.groupData![col.getColId()] = valueSvc.getValue(groupColumn, node.allLeafChildren?.[0]);
                 }
             }
         });
