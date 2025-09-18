@@ -2,7 +2,13 @@ import { _removeFromArray } from '../agStack/utils/array';
 import { _getInnerWidth } from '../agStack/utils/dom';
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import type { ColKey } from '../columns/columnModel';
-import { getWidthOfColsInList, isColumnSelectionCol, isRowNumberCol, isSpecialCol } from '../columns/columnUtils';
+import {
+    _columnsMatch,
+    getWidthOfColsInList,
+    isColumnSelectionCol,
+    isRowNumberCol,
+    isSpecialCol,
+} from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -87,7 +93,14 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             const colsToScale: AgColumn[] = [];
             const colsToExclude: AgColumn[] = [];
             for (const col of visibleCols.centerCols) {
-                (isColumnSelectionCol(col) || isRowNumberCol(col) ? colsToExclude : colsToScale).push(col);
+                const colNotInList = !params.colKeys.some((colKey) => _columnsMatch(col, colKey));
+                // We have hardcoded the exclusion of the selection column here because `suppressAutoSize` currently
+                // ONLY applies when double-clicking the column resize handle. This is planned to be changed in AG-4178.
+                // As part of AG-4178, we should change this logic to respect on `suppressAutoSize`, which should default to
+                // true as part of the selection column definition (and should be overridable by the user).
+                (isColumnSelectionCol(col) || isRowNumberCol(col) || colNotInList ? colsToExclude : colsToScale).push(
+                    col
+                );
             }
 
             let actualWidth = getWidthOfColsInList(colsToScale);
