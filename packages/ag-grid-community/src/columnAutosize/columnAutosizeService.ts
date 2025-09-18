@@ -19,7 +19,6 @@ import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/h
 import type {
     IColumnLimit,
     ISizeColumnsToFitParams,
-    SizeColumnsToContentAndExpandStrategy,
     SizeColumnsToContentColumnLimits,
     SizeColumnsToContentStrategy,
 } from '../interfaces/autoSize';
@@ -54,7 +53,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             const type = autoSizeStrategy.type;
             switch (type) {
                 case 'fitCellContents':
-                case 'fitCellContentsAndExpand':
                     this.addManagedEventListeners({
                         firstDataRendered: () => this.onFirstDataRendered(autoSizeStrategy),
                     });
@@ -560,8 +558,14 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         });
     }
 
-    private onFirstDataRendered(strategy: SizeColumnsToContentStrategy | SizeColumnsToContentAndExpandStrategy): void {
-        const { type, colIds: columns, skipHeader, defaultMaxWidth, defaultMinWidth, columnLimits } = strategy;
+    private onFirstDataRendered({
+        colIds: colKeys,
+        skipHeader,
+        defaultMaxWidth,
+        defaultMinWidth,
+        columnLimits,
+        scaleUpToFitGridWidth,
+    }: SizeColumnsToContentStrategy): void {
         // ensure render has finished
         setTimeout(() => {
             if (!this.isAlive()) {
@@ -574,10 +578,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 defaultMinWidth,
                 columnLimits,
             };
-            if (type === 'fitCellContentsAndExpand') {
-                this.autoSizeExpandCols({ ...params, colKeys: this.beans.visibleCols.allCols });
-            } else if (columns) {
-                this.autoSizeCols({ colKeys: columns, ...params });
+            if (scaleUpToFitGridWidth) {
+                this.autoSizeExpandCols({ ...params, colKeys: colKeys ?? this.beans.visibleCols.allCols });
+            } else if (colKeys) {
+                this.autoSizeCols({ ...params, colKeys });
             } else {
                 this.autoSizeAllColumns(params);
             }
