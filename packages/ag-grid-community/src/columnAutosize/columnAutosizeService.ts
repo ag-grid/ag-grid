@@ -456,12 +456,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             if (availablePixels <= 0) {
                 // no width, set everything to minimum
                 colsToSpread.forEach((column) => {
-                    const widthOverride = limitsMap?.[column.getId()]?.minWidth ?? params?.defaultMinWidth;
-                    if (typeof widthOverride === 'number') {
-                        column.setActualWidth(widthOverride, source, true);
-                        return;
-                    }
-                    column.setActualWidth(column.minWidth, source);
+                    const newWidth =
+                        limitsMap?.[column.getId()]?.minWidth ?? params?.defaultMinWidth ?? column.minWidth;
+                    column.setActualWidth(newWidth, source, true);
                 });
             } else {
                 const scale = availablePixels / getWidthOfColsInList(colsToSpread);
