@@ -33,6 +33,7 @@ interface AutoSizeColumnParams {
     defaultMinWidth?: number;
     defaultMaxWidth?: number;
     columnLimits?: SizeColumnsToContentColumnLimits[];
+    scaleUpToFitGridWidth?: boolean;
     source?: ColumnEventType;
 }
 
@@ -72,14 +73,18 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
     }
 
-    /**
-     * Performs the same auto-sizing as autoSizeCols, but additionally expands columns proportionally to take up any extra space,
-     * while respecting column limits.
-     */
-    public autoSizeExpandCols(params: AutoSizeColumnParams): void {
-        const { visibleCols } = this.beans;
+    public autoSizeCols(params: AutoSizeColumnParams): void {
+        const { visibleCols, eventSvc } = this.beans;
         const source = params.source ?? 'api';
+
+        const dispatch = (cols: Set<AgColumn>) =>
+            dispatchColumnResizedEvent(eventSvc, Array.from(cols), true, 'autosizeColumns');
+
         this._autosizeCols(params).then((columnsAutoSized) => {
+            if (!params.scaleUpToFitGridWidth) {
+                return dispatch(columnsAutoSized);
+            }
+
             // We need to apply the expansion (potentially) several times because of column width limits.
             // If the expansion brings a column up to its width limit, we need to apply the remaining budget
             // to the rest of the columns on the next iteration.
@@ -129,13 +134,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
             visibleCols.refresh(source);
 
-            dispatchColumnResizedEvent(this.eventSvc, Array.from(columnsAutoSized), true, 'autosizeColumns');
-        });
-    }
-
-    public autoSizeCols(params: AutoSizeColumnParams): void {
-        this._autosizeCols(params).then((columnsAutoSized) => {
-            dispatchColumnResizedEvent(this.eventSvc, Array.from(columnsAutoSized), true, 'autosizeColumns');
+            dispatch(columnsAutoSized);
         });
     }
 
@@ -558,32 +557,18 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         });
     }
 
-    private onFirstDataRendered({
-        colIds: colKeys,
-        skipHeader,
-        defaultMaxWidth,
-        defaultMinWidth,
-        columnLimits,
-        scaleUpToFitGridWidth,
-    }: SizeColumnsToContentStrategy): void {
+    private onFirstDataRendered({ colIds: colKeys, ...params }: SizeColumnsToContentStrategy): void {
         // ensure render has finished
         setTimeout(() => {
             if (!this.isAlive()) {
                 return;
             }
-            const params = {
-                skipHeader,
-                source: 'autosizeColumns' as const,
-                defaultMaxWidth,
-                defaultMinWidth,
-                columnLimits,
-            };
-            if (scaleUpToFitGridWidth) {
-                this.autoSizeExpandCols({ ...params, colKeys: colKeys ?? this.beans.visibleCols.allCols });
-            } else if (colKeys) {
-                this.autoSizeCols({ ...params, colKeys });
+            const source = 'autosizeColumns';
+
+            if (colKeys) {
+                this.autoSizeCols({ ...params, source, colKeys });
             } else {
-                this.autoSizeAllColumns(params);
+                this.autoSizeAllColumns({ ...params, source });
             }
         });
     }
