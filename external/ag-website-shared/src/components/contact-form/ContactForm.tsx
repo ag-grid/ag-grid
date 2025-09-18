@@ -1,19 +1,17 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { CONTACT_FORM_DATA } from '@ag-website-shared/constants';
-import { SITE_BASE_URL, SITE_URL } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
-import { pathJoin } from '@utils/pathJoin';
 import classnames from 'classnames';
 import type { FunctionComponent } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import styles from './ContactForm.module.scss';
+import { RETURN_URLS } from './constants';
 
 const { actionUrl, orgId, textAreaId } = getIsProduction() ? CONTACT_FORM_DATA.production : CONTACT_FORM_DATA.default;
 
 const isDev = getIsDev();
-const returnUrl = pathJoin(SITE_URL, SITE_BASE_URL);
 
 type FormValues = {
     first_name: string;
@@ -24,6 +22,7 @@ type FormValues = {
 export const ContactForm: FunctionComponent = () => {
     const formRef = useRef<HTMLFormElement>(null);
     const [isDebug, setIsDebug] = useState(isDev);
+    const [returnUrl, setReturnUrl] = useState(RETURN_URLS.success);
 
     const {
         register,
@@ -39,6 +38,18 @@ export const ContactForm: FunctionComponent = () => {
         if (hasDebugFlag) {
             const isDebugFlag = searchParams.get('debug') === 'true';
             setIsDebug(isDebugFlag);
+        }
+
+        // TODO: Failure handling
+        const returnType = searchParams.get('returnType');
+        if (returnType === 'failure') {
+            setReturnUrl(RETURN_URLS.failure);
+        } else {
+            // Add page that the form is on
+            const urlWithCurrentPath = new URL(RETURN_URLS.success);
+            const fromPage = window.location.pathname;
+            urlWithCurrentPath.search = new URLSearchParams({ fromPage }).toString();
+            setReturnUrl(urlWithCurrentPath.toString());
         }
     }, []);
 
