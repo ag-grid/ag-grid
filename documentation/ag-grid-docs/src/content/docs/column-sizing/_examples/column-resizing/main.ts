@@ -27,11 +27,6 @@ const columnDefs: ColDef[] = [
     { field: 'country', width: 120 },
     { field: 'year', width: 90 },
     { field: 'date', width: 110 },
-    { field: 'sport', width: 110 },
-    { field: 'gold', width: 100 },
-    { field: 'silver', width: 100 },
-    { field: 'bronze', width: 100 },
-    { field: 'total', width: 100 },
 ];
 
 let gridApi: GridApi<IOlympicData>;
@@ -47,8 +42,11 @@ const gridOptions: GridOptions<IOlympicData> = {
         defaultMinWidth: 80,
     },
 };
-function autoSizeAll(skipHeader: boolean) {
-    gridApi!.autoSizeColumns({ skipHeader, defaultMaxWidth: 150, defaultMinWidth: 80 });
+
+function autoSizeAll() {
+    const skipHeader = document.querySelector<HTMLInputElement>('#toggle-ignore-headers')?.checked ?? false;
+    const scaleUpToFitGridWidth = document.querySelector<HTMLInputElement>('#toggle-scale-up')?.checked ?? false;
+    gridApi!.autoSizeColumns({ skipHeader, scaleUpToFitGridWidth });
 }
 
 // setup the grid after the page has finished loading

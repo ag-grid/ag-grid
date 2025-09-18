@@ -66,11 +66,10 @@ The example below shows flex in action. Things to note are as follows:
 
 ## Auto-Sizing Columns
 
-Columns can be auto-sized in three main ways:
+Columns can be auto-sized in two main ways:
 
 1. Auto-size columns to fit grid - The columns will scale to fit the available grid width (or a provided width if desired).
 1. Auto-size columns to fit cell contents - The columns will resize to fit their visible cell contents.
-1. Auto-size columns to fit cell contents, then expand to fill up empty space - The columns will resize to fit their visible cell contents and be proportionally further expanded to fill up any empty horizontal space in the grid.
 
 ### Auto-Size Columns to Fit Grid
 
@@ -142,6 +141,8 @@ then the calculation is as follows:
 Columns can be resized to fit the contents of the cells. The example below demonstrates the use of `autoSizeStrategy` to size the columns by default. The example
 button can restore this sizing by using the API if the columns are first resized by dragging the resize handle.
 
+Note that the example also provides controls to toggle on the `skipHeaders` and `scaleUpToFitGridWidth` parameters, which affect the autosizing operation, and are explained below.
+
 {% gridExampleRunner title="Auto-Size Columns to Fit Cell Contents" name="column-resizing" /%}
 
 Provide the grid option `autoSizeStrategy` with `type = 'fitCellContents'` to size the columns to fit their content when the first data is rendered in the grid.
@@ -170,29 +171,8 @@ Just like Excel, each column can also be auto-resized by double clicking the rig
 - The grid works out the best width by considering the virtually rendered rows only. For example, if your grid has 10,000 rows, but only 50 rendered due to virtualisation of rows, then only these 50 will be considered for working out the width to display. The rendered rows are all the rows you can see on the screen through the vertical scroll plus a small buffer (default buffer size is 20).
 - Only rendered cells on the screen are considered, and the grid works out the width based on what it sees. It cannot see the columns that are not rendered due to column virtualisation. Thus it is not possible to auto-size a column that is not visible on the screen.
 - Column Virtualisation is the technique the grid uses to render large amounts of columns without degrading performance by only rendering columns that are visible due to the horizontal scroll positions. For example, the grid can have 1,000 columns with only 10 rendered if the horizontal scroll is only showing 10 columns. To get around this, you can turn off column virtualisation by setting grid property `suppressColumnVirtualisation=true`. The choice is yours to decide whether you want column virtualisation working OR auto-size working using off-screen columns.
+- Note that [Pinned Columns](./column-pinning), the [Selection Column](./row-selection-multi-row/#customising-the-checkbox-column) and the [Row Numbers](./row-numbers) column will not be scaled up to fill any empty space when using `scaleUpToFitGridWidth`.
 {% /note %}
-
-### Auto-Size Columns to Fit Cell Contents and Expand
-
-Columns can be resized to fit the contents of the cells, and then further expanded to take up any empty space that remains in the grid. The example below demonstrates the use of `autoSizeStrategy` to size the columns by default.
-
-{% gridExampleRunner title="Auto-Size Columns to Fit Cell Contents and Expand" name="column-autosize-expand" /%}
-
-Provide the grid option `autoSizeStrategy` with `type = 'fitCellContentsAndExpand'` to size the columns to fit their content when the first data is rendered in the grid.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    autoSizeStrategy: {
-        type: 'fitCellContentsAndExpand',
-    }
-}
-```
-
-{% apiDocumentation source="grid-options/properties.json" section="columnSizing" names=["autoSizeStrategy"] /%}
-
-By default the grid will also resize the column to fit the header. If you do not want the headers to be included in the auto-size calculation, set the grid property `skipHeaderOnAutoSize = true`, or pass `skipHeader = true` to the `autoSizeStrategy` params.
-
-Note that [Pinned Columns](./column-pinning), the [Selection Column](./row-selection-multi-row/#customising-the-checkbox-column) and the [Row Numbers](./row-numbers) column will not be scaled up to fill any empty space.
 
 ## Shift Resizing
 
