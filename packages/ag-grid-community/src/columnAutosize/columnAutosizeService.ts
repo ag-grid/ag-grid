@@ -64,65 +64,37 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public autoSizeCols(params: AutoSizeColumnParams): void {
-        const { visibleCols, eventSvc } = this.beans;
-        const source = params.source ?? 'api';
-
-        const dispatch = (cols: Set<AgColumn>) =>
-            dispatchColumnResizedEvent(eventSvc, Array.from(cols), true, 'autosizeColumns');
+        const { eventSvc, visibleCols } = this.beans;
 
         this._autosizeCols(params).then((columnsAutoSized) => {
+            const dispatch = (cols: Set<AgColumn>) =>
+                dispatchColumnResizedEvent(eventSvc, Array.from(cols), true, 'autosizeColumns');
+
             if (!params.scaleUpToFitGridWidth) {
                 return dispatch(columnsAutoSized);
             }
 
-            // We need to apply the expansion (potentially) several times because of column width limits.
-            // If the expansion brings a column up to its width limit, we need to apply the remaining budget
-            // to the rest of the columns on the next iteration.
-            // Using 50 arbitrarily, but seems reasonable since the error/remaining pixel budget should decrease
-            // fairly fast, though ultimately it's a function of the number of columns that get to their width limits
-            // during the adjustment.
-            let adjustmentBudget = 50;
-
-            const colsToScale: AgColumn[] = [];
-            const colsToExclude: AgColumn[] = [];
-            for (const col of visibleCols.centerCols) {
-                const colNotInList = !params.colKeys.some((colKey) => _columnsMatch(col, colKey));
-                // We have hardcoded the exclusion of the selection column here because `suppressAutoSize` currently
-                // ONLY applies when double-clicking the column resize handle. This is planned to be changed in AG-4178.
-                // As part of AG-4178, we should change this logic to respect on `suppressAutoSize`, which should default to
-                // true as part of the selection column definition (and should be overridable by the user).
-                (isColumnSelectionCol(col) || isRowNumberCol(col) || colNotInList ? colsToExclude : colsToScale).push(
-                    col
-                );
-            }
-
-            let actualWidth = getWidthOfColsInList(colsToScale);
             const availableGridWidth = getAvailableWidth(this.beans);
-            const leftPinnedWidth = getWidthOfColsInList(visibleCols.leftCols);
-            const rightPinnedWidth = getWidthOfColsInList(visibleCols.rightCols);
-            const excludedWidth = getWidthOfColsInList(colsToExclude);
-            const availableWidth = availableGridWidth - leftPinnedWidth - rightPinnedWidth - excludedWidth;
-            const columnLimitsIndex = Object.fromEntries(
-                params.columnLimits?.map(({ colId, maxWidth, minWidth }) => [colId, { maxWidth, minWidth }]) ?? []
+
+            const isLeftCol = (col: ColKey) => visibleCols.leftCols.some((leftCol) => _columnsMatch(leftCol, col));
+            const isRightCol = (col: ColKey) => visibleCols.rightCols.some((rightCol) => _columnsMatch(rightCol, col));
+
+            // We have hardcoded the exclusion of the selection column here because `suppressAutoSize` currently
+            // ONLY applies when double-clicking the column resize handle. This is planned to be changed in AG-4178.
+            // As part of AG-4178, we should change this logic to respect on `suppressAutoSize`, which should default to
+            // true as part of the selection column definition (and should be overridable by the user).
+            // --
+            // We also exclude all pinned columns here, we only want columns in the main viewport to be scaled up
+            const colKeys = params.colKeys.filter(
+                (col) => !isColumnSelectionCol(col) && !isRowNumberCol(col) && !isLeftCol(col) && !isRightCol(col)
             );
 
-            while (availableWidth - actualWidth > 0.1 && --adjustmentBudget >= 0 && colsToScale.length > 0) {
-                const remaining = availableWidth - actualWidth;
-
-                let newActualWidth = 0;
-                for (const col of colsToScale) {
-                    const newWidth = normaliseColumnWidth(
-                        col,
-                        col.getActualWidth() + remaining * (col.getActualWidth() / actualWidth),
-                        columnLimitsIndex
-                    );
-                    col.setActualWidth(newWidth, source);
-                    newActualWidth += newWidth;
-                }
-                actualWidth = newActualWidth;
-            }
-
-            visibleCols.refresh(source);
+            this.sizeColumnsToFit(availableGridWidth, params.source, true, {
+                defaultMaxWidth: params.defaultMaxWidth,
+                defaultMinWidth: params.defaultMinWidth,
+                columnLimits: params.columnLimits?.map((limit) => ({ ...limit, key: limit.colId })),
+                colKeys,
+            });
 
             dispatch(columnsAutoSized);
         });
@@ -370,7 +342,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         gridWidth: number,
         source: ColumnEventType = 'sizeColumnsToFit',
         silent?: boolean,
-        params?: ISizeColumnsToFitParams
+        params?: ISizeColumnsToFitParams & { colKeys?: ColKey[] }
     ): void {
         if (this.shouldQueueResizeOperations) {
             this.pushResizeOperation(() => this.sizeColumnsToFit(gridWidth, source, silent, params));
@@ -411,7 +383,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         const colsToNotSpread: AgColumn[] = [];
 
         allDisplayedColumns.forEach((column) => {
-            if (column.getColDef().suppressSizeToFit === true) {
+            const isIncluded = params?.colKeys?.some((key) => _columnsMatch(column, key)) ?? true;
+            if (column.getColDef().suppressSizeToFit || !isIncluded) {
                 colsToNotSpread.push(column);
             } else {
                 colsToSpread.push(column);
