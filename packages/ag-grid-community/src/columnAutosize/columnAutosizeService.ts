@@ -52,21 +52,11 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         if (autoSizeStrategy) {
             let shouldHideColumns = false;
             const type = autoSizeStrategy.type;
-            switch (type) {
-                case 'fitCellContents':
-                    this.addManagedEventListeners({
-                        firstDataRendered: () => this.onFirstDataRendered(autoSizeStrategy),
-                    });
-                    break;
-                case 'fitProvidedWidth':
-                case 'fitGridWidth':
-                    shouldHideColumns = true;
-                    break;
-
-                default:
-                    break;
+            if (type === 'fitGridWidth' || type === 'fitProvidedWidth') {
+                shouldHideColumns = true;
+            } else if (type === 'fitCellContents') {
+                this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered(autoSizeStrategy) });
             }
-
             if (shouldHideColumns) {
                 this.beans.colDelayRenderSvc?.hideColumns(type);
             }
