@@ -18,7 +18,23 @@ import {
 import { _exists } from '../utils/generic';
 import { AgBeanStub } from './agBeanStub';
 
-const preventEventDefault = (event: Event) => event.preventDefault();
+const preventEventDefault = (event: Event) => {
+    if (event.cancelable) {
+        event.preventDefault();
+    }
+};
+
+let handledDragEvents: WeakSet<Event> | undefined;
+
+const addHandledDragEvent = (event: Event): boolean => {
+    if (!handledDragEvents) {
+        handledDragEvents = new WeakSet<Event>();
+    } else if (handledDragEvents.has(event)) {
+        return false; // Already processed
+    }
+    handledDragEvents.add(event);
+    return true;
+};
 
 export class BaseDragService<
         TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
@@ -41,24 +57,13 @@ export class BaseDragService<
         return this.drag?.start.target ?? null;
     }
 
-    private addHandledEvent(event: Event): boolean {
-        let set = this.handledEvents;
-        if (!set) {
-            this.handledEvents = set = new WeakSet<Event>();
-        } else if (set.has(event)) {
-            return false; // Already processed
-        }
-        set.add(event);
-        return true;
-    }
-
     public override destroy(): void {
         if (this.drag) {
             this.cancelDrag();
         }
         const dragSources = this.dragSources;
-        for (const ds of dragSources) {
-            removeTempEventHandlers(ds.handlers);
+        for (const entry of dragSources) {
+            destroyDragSourceEntry(entry);
         }
         dragSources.length = 0;
         super.destroy();
@@ -68,10 +73,10 @@ export class BaseDragService<
     public removeDragSource(params: DragListenerParams): void {
         const dragSources = this.dragSources;
         for (let i = 0, len = dragSources.length; i < len; ++i) {
-            const item = dragSources[i];
-            if (item.params === params) {
+            const entry = dragSources[i];
+            if (entry.params === params) {
                 dragSources.splice(i, 1);
-                removeTempEventHandlers(item.handlers);
+                destroyDragSourceEntry(entry);
                 break;
             }
         }
@@ -83,7 +88,17 @@ export class BaseDragService<
         }
         const { eElement, includeTouch } = params;
         const handlers: TempEventHandler[] = [];
-        const dragSource = { handlers, params };
+
+        let oldTouchAction: string | undefined;
+        if (includeTouch) {
+            const style = (eElement as Partial<HTMLElement>).style;
+            if (style) {
+                oldTouchAction = style.touchAction;
+                style.touchAction = 'none'; // stop touch scrolling while dragging
+            }
+        }
+
+        const dragSource = { handlers, params, oldTouchAction };
         this.dragSources.push(dragSource);
 
         // Modern Pointer Events (preferred when supported)
@@ -133,11 +148,11 @@ export class BaseDragService<
         const beans = this.beans;
         const onScroll = (event: Event) => this.onScroll(event);
         const keydownEvent = (ev: KeyboardEvent) => this.onKeyDown(ev);
-
         const rootEl = _getRootNode(beans);
         const eDocument = _getDocument(beans);
         addTempEventHandlers(
             drag.handlers,
+            // [drag.eElement, 'contextmenu', preventEventDefault],
             [rootEl, 'contextmenu', preventEventDefault],
             [rootEl, 'keydown', keydownEvent],
             [eDocument, 'scroll', onScroll, { capture: true }],
@@ -186,31 +201,49 @@ export class BaseDragService<
 
         this.destroyDrag();
 
+        const eElement = params.eElement;
         const eRootDiv = beans.eRootDiv;
-        const pointerDrag = new Dragging(params, pointerEvent, true);
+        const pointerDrag: Dragging = {
+            params,
+            start: pointerEvent,
+            pointerId: pointerEvent.pointerId,
+            eElement: params.eElement,
+            handlers: [],
+            lastDrag: null,
+        };
 
-        const onMove = (ev: PointerEvent) => this.onMouseMove(ev);
-        const onUp = (ev: PointerEvent) => this.onUp(ev);
-        const onCancel = () => this.cancelDrag();
-        const onMouseMove = (mouseEvent: MouseEvent) => {
-            if (this.shouldPreventMouseEvent(mouseEvent)) {
-                preventEventDefault(mouseEvent);
+        const onPointerMove = (ev: PointerEvent) => {
+            if (ev.pointerId === pointerDrag.pointerId) {
+                this.onMouseOrPointerMove(ev);
             }
         };
+
+        const onUp = (ev: PointerEvent) => {
+            if (ev.pointerId === pointerDrag.pointerId) {
+                this.onUp(ev);
+            }
+        };
+
+        const onCancel = (ev: PointerEvent) => {
+            if (ev.pointerId === pointerDrag.pointerId) {
+                this.cancelDrag();
+            }
+        };
+
         this.initDrag(
             pointerDrag,
-            [eRootDiv, 'pointermove', onMove],
+            [_getRootNode(beans), 'touchmove', preventEventDefault, { passive: false }],
+            [eElement, 'mousemove', preventEventDefault, { passive: false }],
+            [eRootDiv, 'pointermove', onPointerMove, { passive: false }],
             [eRootDiv, 'pointerup', onUp],
-            [eRootDiv, 'pointercancel', onCancel],
-            [eRootDiv, 'lostpointercapture', onCancel],
-            [_getRootNode(beans), 'mousemove', onMouseMove]
+            [eRootDiv, 'pointercancel', onCancel]
         );
 
         // start immediately if threshold is zero
         if (params.dragStartPixels === 0) {
-            this.onMouseMove(pointerEvent);
+            this.onMouseOrPointerMove(pointerEvent);
         } else {
-            this.addHandledEvent(pointerEvent);
+            addHandledDragEvent(pointerEvent);
         }
     }
 
@@ -221,7 +254,7 @@ export class BaseDragService<
             return;
         }
 
-        if (!this.addHandledEvent(touchEvent)) {
+        if (!addHandledDragEvent(touchEvent)) {
             return; // Already handled
         }
 
@@ -229,32 +262,35 @@ export class BaseDragService<
             return;
         }
 
-        const drag = this.drag;
-        if (drag?.pointer) {
-            return; // We are handling the pointer events, ignore this
-        }
-
         if (params.stopPropagationForTouch) {
             touchEvent.stopPropagation();
+        }
+
+        const drag = this.drag;
+        if (drag?.pointerId != null) {
+            preventEventDefault(touchEvent);
+            return; // Active pointer drag in progress, ignore legacy touch start
         }
 
         this.destroyDrag();
 
         const beans = this.beans;
-        const touchDrag = new Dragging(params, touchEvent.touches[0], false);
+        const touchDrag: Dragging = {
+            params,
+            start: touchEvent.touches[0],
+            pointerId: null,
+            eElement: params.eElement,
+            handlers: [],
+            lastDrag: null,
+        };
 
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e);
-        const documentTouchMove = (e: TouchEvent) => {
-            if (e.cancelable) {
-                preventEventDefault(e);
-            }
-        };
 
         const target = touchEvent.target ?? params.eElement;
         this.initDrag(
             touchDrag,
-            [_getRootNode(beans), 'touchmove', documentTouchMove, { passive: false }],
+            [_getRootNode(beans), 'touchmove', preventEventDefault, { passive: false }],
             [target, 'touchmove', touchMoveEvent, { passive: true }],
             [target, 'touchend', touchEndEvent, { passive: true }],
             [target, 'touchcancel', touchEndEvent, { passive: true }]
@@ -278,16 +314,23 @@ export class BaseDragService<
             return; // Already handled
         }
 
-        if (this.drag?.pointer) {
-            return; // We are handling the pointer events, ignore this
+        if (this.drag?.pointerId != null) {
+            return; // Pointer-based drag in progress, ignore mouse down
         }
 
         const beans = this.beans;
         this.destroyDrag();
 
-        const mouseDrag = new Dragging(params, mouseEvent, false);
+        const mouseDrag: Dragging = {
+            params,
+            start: mouseEvent,
+            pointerId: null,
+            eElement: params.eElement,
+            handlers: [],
+            lastDrag: null,
+        };
 
-        const mouseMoveEvent = (event: MouseEvent) => this.onMouseMove(event);
+        const mouseMoveEvent = (event: MouseEvent) => this.onMouseOrPointerMove(event);
         const mouseUpEvent = (event: MouseEvent) => this.onUp(event);
 
         const target = _getRootNode(beans);
@@ -295,14 +338,14 @@ export class BaseDragService<
 
         //see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
-            this.onMouseMove(mouseEvent);
+            this.onMouseOrPointerMove(mouseEvent);
         } else {
-            this.addHandledEvent(mouseEvent);
+            addHandledDragEvent(mouseEvent);
         }
     }
 
     private onScroll(event: Event): void {
-        if (!this.addHandledEvent(event)) {
+        if (!addHandledDragEvent(event)) {
             return;
         }
         const drag = this.drag;
@@ -312,10 +355,9 @@ export class BaseDragService<
         }
     }
 
-    // only gets called after a mouse down - as this is only added after mouseDown
-    // and is removed when mouseUp happens
-    private onMouseMove(mouseEvent: MouseEvent): void {
-        if (!this.addHandledEvent(mouseEvent)) {
+    /** only gets called after a mouse down - as this is only added after mouseDown and is removed when mouseUp happens */
+    private onMouseOrPointerMove(mouseEvent: MouseEvent): void {
+        if (!addHandledDragEvent(mouseEvent)) {
             return;
         }
 
@@ -332,11 +374,12 @@ export class BaseDragService<
 
     private onTouchMove(touchEvent: TouchEvent): void {
         const drag = this.drag;
-        if (!drag || !this.addHandledEvent(touchEvent)) {
+        if (!drag || !addHandledDragEvent(touchEvent)) {
             return;
         }
         const touch = _getFirstActiveTouch(drag.start as Touch, touchEvent.touches);
         if (touch) {
+            touchEvent.preventDefault();
             this.onMove(touch);
         }
     }
@@ -345,6 +388,11 @@ export class BaseDragService<
         const drag = this.drag;
         if (!drag) {
             return;
+        }
+
+        const pointerId = (currentEvent as Partial<PointerEvent>).pointerId;
+        if (pointerId != null && drag.pointerId != null && pointerId !== drag.pointerId) {
+            return; // Not the active pointer
         }
 
         drag.lastDrag = currentEvent;
@@ -397,13 +445,17 @@ export class BaseDragService<
         }
     }
 
-    private onUp(eventOrTouch: MouseEvent | Touch | null | undefined): void {
+    private onUp(eventOrTouch: PointerEvent | MouseEvent | Touch | null | undefined): void {
         const drag = this.drag;
         if (!drag) {
             return;
         }
         if (!eventOrTouch) {
             eventOrTouch = drag.lastDrag;
+        }
+        const pointerId = (eventOrTouch as Partial<PointerEvent>).pointerId;
+        if (pointerId != null && drag.pointerId != null && pointerId !== drag.pointerId) {
+            return; // Not the active pointer
         }
         if (eventOrTouch && this.dragging) {
             this.dragging = false;
@@ -427,21 +479,27 @@ export class BaseDragService<
 interface DragSourceEntry {
     readonly handlers: TempEventHandler[];
     readonly params: DragListenerParams;
+    readonly oldTouchAction: string | null | undefined;
 }
 
-// New class-based drag model replacing prior interfaces
-class Dragging {
-    public readonly eElement: Element & Partial<HTMLElement>;
-    public readonly handlers: TempEventHandler[] = [];
-    public lastDrag: PointerEvent | MouseEvent | Touch | null = null;
-
-    public constructor(
-        public readonly params: DragListenerParams,
-        public readonly start: PointerEvent | MouseEvent | Touch,
-        public readonly pointer: boolean
-    ) {
-        this.eElement = params.eElement;
+const destroyDragSourceEntry = (dragSource: DragSourceEntry): void => {
+    removeTempEventHandlers(dragSource.handlers);
+    const oldTouchAction = dragSource.oldTouchAction;
+    if (oldTouchAction != null) {
+        const style = (dragSource.params.eElement as Partial<HTMLElement>).style;
+        if (style) {
+            style.touchAction = oldTouchAction;
+        }
     }
+};
+
+interface Dragging {
+    readonly params: DragListenerParams;
+    readonly start: PointerEvent | MouseEvent | Touch;
+    readonly pointerId: number | null;
+    readonly eElement: Element & Partial<HTMLElement>;
+    readonly handlers: TempEventHandler[];
+    lastDrag: PointerEvent | MouseEvent | Touch | null;
 }
 
 const getEventTargetElement = (event: Event): Element | null => {
