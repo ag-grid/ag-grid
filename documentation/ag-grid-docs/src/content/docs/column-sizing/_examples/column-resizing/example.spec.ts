@@ -70,6 +70,18 @@ test.agExample(import.meta, () => {
         }
     );
 
+    test.eachFramework('fitCellToContents + scaleUpToFitGridWidth does not scale down', async ({ agIdFor, page }) => {
+        // need to set the viewport size to less than the column width to test the scale-down
+        await page.setViewportSize({ width: 400, height: 600 });
+
+        await page.locator('#toggle-scale-up').click(); // on
+        await page.locator('button.resize-button').click();
+
+        expect(await getWidth(page.locator('.ag-header-row').filter({ has: agIdFor.headerCell('athlete') }))).toEqual(
+            680
+        );
+    });
+
     test.describe('Example modifications', () => {
         test.use({ agModules: ['RowSelectionModule'] });
 

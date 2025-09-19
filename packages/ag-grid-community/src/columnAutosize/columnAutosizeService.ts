@@ -94,6 +94,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 defaultMinWidth: params.defaultMinWidth,
                 columnLimits: params.columnLimits?.map((limit) => ({ ...limit, key: limit.colId })),
                 colKeys,
+                onlyScaleUp: true,
             });
 
             dispatch(columnsAutoSized);
@@ -342,7 +343,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         gridWidth: number,
         source: ColumnEventType = 'sizeColumnsToFit',
         silent?: boolean,
-        params?: ISizeColumnsToFitParams & { colKeys?: ColKey[] }
+        params?: ISizeColumnsToFitParams & { colKeys?: ColKey[]; onlyScaleUp?: boolean }
     ): void {
         if (this.shouldQueueResizeOperations) {
             this.pushResizeOperation(() => this.sizeColumnsToFit(gridWidth, source, silent, params));
@@ -361,7 +362,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        const doColumnsAlreadyFit = gridWidth === getWidthOfColsInList(allDisplayedColumns);
+        const currentTotalColumnWidth = getWidthOfColsInList(allDisplayedColumns);
+
+        if (params?.onlyScaleUp && currentTotalColumnWidth > gridWidth) {
+            return;
+        }
+
+        const doColumnsAlreadyFit = gridWidth === currentTotalColumnWidth;
         if (doColumnsAlreadyFit) {
             // if all columns fit, check they are within the min and max widths - if so, can quit early.
             const doAllColumnsSatisfyConstraints = allDisplayedColumns.every((column) => {
