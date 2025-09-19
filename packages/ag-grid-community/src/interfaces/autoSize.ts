@@ -58,6 +58,8 @@ export interface SizeColumnsToContentStrategy extends ISizeAllColumnsToContentPa
 export interface ISizeAllColumnsToContentParams extends DefaultWidthLimits {
     /** If true, the header won't be included when calculating the column widths. */
     skipHeader?: boolean;
+    /** If not provided will auto-size all columns. Otherwise will size the specified columns. */
+    colIds?: string[];
     /** Provide to limit specific column widths when sizing. */
     columnLimits?: SizeColumnsToContentColumnLimits[];
     /** Proportionally scale up columns after sizing to fill any empty space remaining in the grid. */
