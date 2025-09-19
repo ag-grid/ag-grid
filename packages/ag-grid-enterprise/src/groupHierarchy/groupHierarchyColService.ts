@@ -201,7 +201,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         if (part in groupHierarchyConfig) {
             const providedDef = groupHierarchyConfig[part];
             providedDef.colId ??= colId;
-            return _addColumnDefaultAndTypes(this.beans, { ...defaults, ...providedDef }, providedDef.colId, true);
+            return _addColumnDefaultAndTypes(beans, { ...defaults, ...providedDef }, providedDef.colId, true);
         }
 
         const base: ColDef = _addColumnDefaultAndTypes(beans, { colId, ...defaults }, colId, true);
@@ -212,14 +212,18 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
             case 'year':
                 return {
                     ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Year'),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translate?.(part, 'Year') ?? 'Year'),
                     valueGetter: getDatePartValueGetter(beans, sourceCol, 0),
                 };
 
             case 'quarter':
                 return {
                     ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Quarter'),
+                    headerValueGetter: getHeaderValueGetter(
+                        beans,
+                        sourceCol,
+                        translate?.(part, 'Quarter') ?? 'Quarter'
+                    ),
                     valueGetter: getDatePartValueGetter(beans, sourceCol, 1, (month) =>
                         (Math.floor(Number(month) / 4) + 1).toString()
                     ),
@@ -228,14 +232,14 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
             case 'month':
                 return {
                     ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Month'),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translate?.(part, 'Month') ?? 'Month'),
                     valueGetter: getDatePartValueGetter(beans, sourceCol, 1),
                 };
 
             case 'formattedMonth':
                 return {
                     ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Month'),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translate?.('month', 'Month') ?? 'Month'),
                     valueGetter: getDatePartValueGetter(beans, sourceCol, 1, (month) => {
                         const nm = numericalMonthToNamedMonth(month);
                         return translate?.(nm.localeKey, nm.month) ?? nm.month;
@@ -245,28 +249,28 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
             case 'day':
                 return {
                     ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Day'),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translate?.(part, 'Day') ?? 'Day'),
                     valueGetter: getDatePartValueGetter(beans, sourceCol, 2),
                 };
 
             case 'hour':
                 return {
                     ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Hour'),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translate?.(part, 'Hour') ?? 'Hour'),
                     valueGetter: getDatePartValueGetter(beans, sourceCol, 3),
                 };
 
             case 'minute':
                 return {
                     ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Minute'),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translate?.(part, 'Minute') ?? 'Minute'),
                     valueGetter: getDatePartValueGetter(beans, sourceCol, 4),
                 };
 
             case 'second':
                 return {
                     ...base,
-                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, 'Second'),
+                    headerValueGetter: getHeaderValueGetter(beans, sourceCol, translate?.(part, 'Second') ?? 'Second'),
                     valueGetter: getDatePartValueGetter(beans, sourceCol, 5),
                 };
 
