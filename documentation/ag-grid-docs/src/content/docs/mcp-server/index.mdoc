@@ -1,20 +1,20 @@
 ---
-title: 'AG MCP Server'
+title: 'AG Grid Model Context Protocol (MCP) Server'
 ---
 
-AG Grid provides an MCP server that can be installed locally and provides version and framework specific documentation and examples to your AI Agent.
+AG Grid's Model Context Protocol (MCP) server provides AI Agents with framework and version specific knowledge to help developers integrate and maintain their AG Grid code.
 
-{% note %}
-The AG MCP server is currently in beta
-{% /note %}
+## Overview
+
+The `ag-mcp` server works with any LLM that supports MCPs, and provides tools to allow LLMS to lookup framework and version specific documentation, examples, and references to help create, modify, maintain, and upgrade your data grid code.
+
+### Architecture Diagram
+
+{% imageCaption imagePath="resources/ag-mcp-architecture.png" alt="AG MCP Architecture" constrained=true enableDarkModeFilter=true /%}
 
 ## Installation
 
-The command to run the AG Grid MCP server is: `npx ag-mcp`
-
-There are many applications that support MCP (Model Context Protocol) integrations. A non exhaustive list is provided on the [Model Context Protocol website](https://modelcontextprotocol.io/clients).
-
-Below are the install commands for some popular applications:
+To install and use `ag-mcp` with your LLM client, simply provide the following command in the normal process for adding an MCP Server: `npx ag-mcp`
 
 ### Claude Code
 
@@ -24,7 +24,27 @@ Inside your application run:
 claude mcp add ag-mcp npx ag-mcp
 ```
 
-### Cursor (and some other IDEs)
+To learn more see the [Claude MCP documentation](https://docs.claude.com/en/docs/claude-code/mcp).
+
+### VS Code (Copilot)
+
+Add the following to your .vscode/mcp.json file in your workspace.
+
+```
+{
+  "mcpServers": {
+    "ag-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["ag-mcp"],
+    }
+  }
+}
+```
+
+To learn more, see the [VS Code MCP documentation](https://code.visualstudio.com/docs/copilot/customization/mcp-servers).
+
+### Cursor
 
 If it doesn't already exist, create the file `mcp.json` in the root of your project. Then add the following:
 
@@ -38,6 +58,8 @@ If it doesn't already exist, create the file `mcp.json` in the root of your proj
   }
 }
 ```
+
+To learn more, see the [Cursor MCP documentation](https://cursor.com/docs/context/mcp).
 
 ## Usage
 
