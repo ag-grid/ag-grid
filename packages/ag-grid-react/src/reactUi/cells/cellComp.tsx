@@ -351,7 +351,6 @@ const CellComp = ({
 
                 const { current } = cssManager;
                 current!.toggleCss('ag-cell-value', !showCellWrapper);
-                current!.toggleCss('ag-allow-overflow', allowValueOverflow);
                 current!.toggleCss('ag-cell-inline-editing', !!editing && !isPopup);
                 current!.toggleCss('ag-cell-popup-editing', !!editing && !!isPopup);
                 current!.toggleCss('ag-cell-not-inline-editing', !editing || !!isPopup);
@@ -395,7 +394,6 @@ const CellComp = ({
 
         const { current } = cssManager;
         current!.toggleCss('ag-cell-value', !showCellWrapper);
-        current!.toggleCss('ag-allow-overflow', allowValueOverflow);
         current!.toggleCss('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
         current!.toggleCss('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
         current!.toggleCss('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
