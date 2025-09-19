@@ -14,18 +14,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     private rowNode?: IRowNode;
     private startedRows: IRowNode[] = [];
 
-    public override isCellEditable(position: Required<EditPosition>, source: 'api' | 'ui' = 'ui'): boolean {
-        const editable = super.isCellEditable(position, source);
-
-        if (editable === true || source === 'ui') {
-            return editable;
-        }
-
-        // check if other cells in row are editable, so starting edit on uneditable cell will still work
-        const columns = this.beans.colModel.getCols();
-        return columns.some((col) => super.isCellEditable({ rowNode: position.rowNode, column: col }, source));
-    }
-
     public override shouldStop(
         position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,

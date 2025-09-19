@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { describe, expect, test } from '@utils/grid/test-utils';
 import type { Page } from 'playwright/test';
 
 import type { ICellEditorParams } from 'ag-grid-community';
@@ -17,6 +17,42 @@ test.agExample(import.meta, () => {
 
         await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
         await expect(cell).toHaveText('Fred'); // verify the cell has the new value
+    });
+
+    describe('edit + stop/cancel', () => {
+        test.eachFramework('dblclick + stop', async ({ page, agIdFor, remoteGrid }) => {
+            const remoteApi = remoteGrid(page);
+            const cell = agIdFor.cell('0', 'firstName');
+
+            // initiate cell editing by double clicking the cell
+            await cell.dblclick();
+            const cellEditor = cell.locator('input');
+            await expect(cellEditor).toBeVisible();
+
+            await page.keyboard.type('Fred'); // type in a new value
+
+            await remoteApi.stopEditing();
+
+            await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
+            await expect(cell).toHaveText('Fred'); // verify the cell has the new value
+        });
+
+        test.eachFramework('dblclick + cancel', async ({ page, agIdFor, remoteGrid }) => {
+            const remoteApi = remoteGrid(page);
+            const cell = agIdFor.cell('0', 'firstName');
+
+            // initiate cell editing by double clicking the cell
+            await cell.dblclick();
+            const cellEditor = cell.locator('input');
+            await expect(cellEditor).toBeVisible();
+
+            await page.keyboard.type('Fred'); // type in a new value
+
+            await remoteApi.stopEditing(true);
+
+            await expect(cellEditor).toHaveCount(0); // verify the cell editor is closed
+            await expect(cell).toHaveText('Bob'); // verify the cell has the new value
+        });
     });
 
     test.eachFramework('click + commit', async ({ page, agIdFor }) => {

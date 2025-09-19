@@ -2,7 +2,6 @@ import { KeyCode } from '../../agStack/constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import type { ColDef } from '../../entities/colDef';
 import { _getRowNode } from '../../entities/positionUtils';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
@@ -126,14 +125,6 @@ export abstract class BaseEditStrategy extends BeanStub {
         source?: EditSource,
         preventNavigation?: boolean
     ): boolean | null;
-
-    public isCellEditable({ rowNode, column }: Required<EditPosition>, _source: 'api' | 'ui' = 'ui'): boolean {
-        const editable = column.getColDef().editable;
-        return (
-            (column as AgColumn).isColumnFunc(rowNode, editable) ||
-            this.model.hasEdits({ rowNode, column }, { withOpenEditor: true })
-        );
-    }
 
     public stop(cancel?: boolean, event?: Event | null): boolean {
         const editingCells = this.model.getEditPositions();
@@ -271,46 +262,6 @@ export abstract class BaseEditStrategy extends BeanStub {
         }
     }
 
-    public shouldStart(
-        { column }: Required<EditPosition>,
-        event?: KeyboardEvent | MouseEvent | null,
-        cellStartedEdit?: boolean | null,
-        source: EditSource = 'ui'
-    ): boolean | null {
-        if (
-            event instanceof KeyboardEvent &&
-            (event.key === KeyCode.TAB ||
-                event.key === KeyCode.ENTER ||
-                event.key === KeyCode.F2 ||
-                (event.key === KeyCode.BACKSPACE && cellStartedEdit))
-        ) {
-            return true;
-        }
-
-        const extendingRange = event?.shiftKey && this.beans.rangeSvc?.getCellRanges().length != 0;
-        if (extendingRange) {
-            return false;
-        }
-
-        const colDef = column?.getColDef();
-        const clickCount = this.deriveClickCount(colDef);
-        const type = event?.type;
-
-        if (type === 'click' && event?.detail === 1 && clickCount === 1) {
-            return true;
-        }
-
-        if (type === 'dblclick' && event?.detail === 2 && clickCount === 2) {
-            return true;
-        }
-
-        if (source === 'api') {
-            return cellStartedEdit ?? false;
-        }
-
-        return false;
-    }
-
     public shouldStop(
         _position?: EditPosition,
         event?: KeyboardEvent | MouseEvent | null | undefined,
@@ -323,7 +274,7 @@ export abstract class BaseEditStrategy extends BeanStub {
             return true;
         }
 
-        if (batch && source === 'ui') {
+        if (batch && (source === 'ui' || source === 'edit')) {
             // we always defer to the UI
             return false;
         }
@@ -395,24 +346,6 @@ export abstract class BaseEditStrategy extends BeanStub {
                 this.setFocusInOnEditor(cellCtrl);
             }
         }
-    }
-
-    private deriveClickCount(colDef?: ColDef): number {
-        const { gos } = this.beans;
-
-        if (gos.get('suppressClickEdit') === true) {
-            return 0;
-        }
-
-        if (gos.get('singleClickEdit') === true) {
-            return 1;
-        }
-
-        if (colDef?.singleClickEdit) {
-            return 1;
-        }
-
-        return 2;
     }
 
     public override destroy(): void {

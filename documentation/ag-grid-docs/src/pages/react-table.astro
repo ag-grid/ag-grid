@@ -40,7 +40,11 @@ const latestVersionWithHighlightData = versionsData.find((version) => version.la
                         <span class={styles.heroSectionVersion}>AG Grid v{latestVersionWithHighlightData?.version}</span
                         >
                         <span class={styles.heroSectionFeatureHighlight}>
-                            {latestVersionWithHighlightData?.landingPageHighlight}
+                            {
+                                latestVersionWithHighlightData?.landingPageHighlight && (
+                                    <span>{latestVersionWithHighlightData?.landingPageHighlight}</span>
+                                )
+                            }
                             <Icon svgClasses={styles.heroSectionFeatureArrow} name="arrowRight" />
                         </span>
                     </a>

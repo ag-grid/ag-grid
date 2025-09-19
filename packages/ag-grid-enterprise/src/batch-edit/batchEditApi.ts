@@ -17,7 +17,7 @@ export function cancelBatchEdit({ editSvc }: BeanCollection): void {
         return;
     }
 
-    editSvc?.stopEditing(undefined, { cancel: true, source: 'api' });
+    editSvc?.stopEditing(undefined, { cancel: true, source: 'api', forceCancel: true });
     editSvc?.setBatchEditing(false);
 }
 
@@ -26,7 +26,7 @@ export function commitBatchEdit({ editSvc }: BeanCollection): void {
         return;
     }
 
-    editSvc?.stopEditing(undefined, { source: 'api' });
+    editSvc?.stopEditing(undefined, { source: 'api', forceStop: true });
     editSvc?.setBatchEditing(false);
 }
 

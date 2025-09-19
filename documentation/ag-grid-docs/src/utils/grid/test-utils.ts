@@ -134,7 +134,7 @@ async function loadPage(
     const queryParams = new URLSearchParams(queryOptions);
     const urlFramework = agFramework === reactFunctionalTsDev ? 'reactFunctionalTs' : agFramework;
 
-    await page.goto(`./examples/${agExampleUrl}/${urlFramework}?${queryParams.toString()}`);
+    await page.goto(`./archive/34.2.0/examples/${agExampleUrl}/${urlFramework}?${queryParams.toString()}`);
     await page.waitForLoadState('domcontentloaded');
     await page.waitForLoadState('load');
     await page.waitForLoadState('networkidle');
@@ -367,8 +367,9 @@ type ExternalTestType = typeof extended & typeof agGridTestExtension & typeof si
 const test = Object.assign(extended, agGridTestExtension, singleFrameworkTests) as ExternalTestType;
 
 const expect = shouldBeAsyncGuard<typeof extended.expect>(playwrightExpect);
+const describe = test.describe;
 
-export { expect, test };
+export { expect, describe, test };
 
 export async function dragOverTo(source: Locator, target: Locator) {
     const { mouse } = source.page();
