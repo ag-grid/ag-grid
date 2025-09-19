@@ -66,7 +66,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     public autoSizeCols(params: AutoSizeColumnParams): void {
         const { eventSvc, visibleCols } = this.beans;
 
-        this._autosizeCols(params).then((columnsAutoSized) => {
+        this.innerAutoSizeCols(params).then((columnsAutoSized) => {
             const dispatch = (cols: Set<AgColumn>) =>
                 dispatchColumnResizedEvent(eventSvc, Array.from(cols), true, 'autosizeColumns');
 
@@ -101,10 +101,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         });
     }
 
-    private _autosizeCols(params: AutoSizeColumnParams): Promise<Set<AgColumn>> {
+    private innerAutoSizeCols(params: AutoSizeColumnParams): Promise<Set<AgColumn>> {
         return new Promise((resolve, reject) => {
             if (this.shouldQueueResizeOperations) {
-                return this.pushResizeOperation(() => this._autosizeCols(params).then(resolve, reject));
+                return this.pushResizeOperation(() => this.innerAutoSizeCols(params).then(resolve, reject));
             }
 
             const {
@@ -143,7 +143,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 this.timesDelayed++;
                 setTimeout(() => {
                     if (this.isAlive()) {
-                        this._autosizeCols(params).then(resolve, reject);
+                        this.innerAutoSizeCols(params).then(resolve, reject);
                     }
                 });
                 return;
