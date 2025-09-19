@@ -536,9 +536,6 @@ jobs:
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
           SLACK_GITHUB_MAPPING: ${{ secrets.SLACK_GITHUB_MAPPING }}
-# TODO: Add back into `jobStatuses` when package tests are enabled again
-#                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
-#                    "Angular_Pkg": "${{ needs.angular_fw_pkg_test.result }}"
           RUN_CONTEXT: >
             {
               "workflow": "${{ github.workflow }}",
@@ -556,6 +553,7 @@ jobs:
                     "Lint": "${{ needs.build_lint.outputs.lint }}",
                     "Format": "${{ needs.build_lint.outputs.format }}",
                     "Test": "${{ needs.test.result }}",
+                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",            
                     "e2e": "${{ needs.e2e.result }}",
                     "Docs": "${{ needs.docs.result }}",
                     "Bundle": "${{ needs.bundle_size.result }}",

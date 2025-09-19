@@ -116,16 +116,10 @@ function processTableConfig(worksheet: ExcelWorksheet, config: ExcelGridSerializ
 
     const tableConfig: Partial<ExcelTableConfig> = typeof exportAsExcelTable === 'boolean' ? {} : exportAsExcelTable;
 
-    const {
-        name: nameFromConfig,
-        showColumnStripes,
-        showRowStripes,
-        showFilterButton,
-        highlightFirstColumn,
-        highlightLastColumn,
-    } = tableConfig;
+    const { name, showColumnStripes, showRowStripes, showFilterButton, highlightFirstColumn, highlightLastColumn } =
+        tableConfig;
 
-    const tableName = getXlsxSanitizedTableName(nameFromConfig || DEFAULT_TABLE_DISPLAY_NAME);
+    const tableName = getXlsxSanitizedTableName(name || DEFAULT_TABLE_DISPLAY_NAME);
 
     const sheetIndex = XLSX_SHEET_NAMES.length - 1;
     const { table } = worksheet;

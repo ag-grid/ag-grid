@@ -1,4 +1,3 @@
-import React from 'react';
 import type { FunctionComponent } from 'react';
 
 import styles from './StyleGuide.module.scss';
@@ -30,6 +29,30 @@ export const Inputs: FunctionComponent = () => {
                     <div>
                         <label>Disabled:</label>
                         <input className="disabled" type="text" defaultValue="joe@ag-grid.com" />
+                    </div>
+                </div>
+
+                <div className={styles.textareaList}>
+                    <div>
+                        <label>Placeholder:</label>
+                        <textarea placeholder="Enter message" />
+                    </div>
+                    <div>
+                        <label>Filled:</label>
+                        <textarea defaultValue="Hello, this is a message." />
+                    </div>
+                    <div>
+                        <label>Hover:</label>
+                        <textarea className="hover" defaultValue="Hello, this is a message." />
+                    </div>
+                    <div>
+                        <label>Focused:</label>
+                        <textarea className="focus" defaultValue="Hello, this is a message." />
+                    </div>
+
+                    <div>
+                        <label>Disabled:</label>
+                        <textarea className="disabled" defaultValue="Hello, this is a message." disabled />
                     </div>
                 </div>
 
@@ -153,6 +176,10 @@ export const Inputs: FunctionComponent = () => {
                             <input type="text" placeholder="Enter email" />
                         </div>
                         <div className="input-field">
+                            <label>Textarea:</label>
+                            <textarea placeholder="Enquiry message" />
+                        </div>
+                        <div className="input-field">
                             <label>Checkbox:</label>
                             <input type="checkbox" />
                         </div>
@@ -182,6 +209,10 @@ export const Inputs: FunctionComponent = () => {
                         <div className="input-field input-error">
                             <label>Text:</label>
                             <input type="text" placeholder="Enter email" />
+                        </div>
+                        <div className="input-field input-error">
+                            <label>Textarea:</label>
+                            <textarea placeholder="Enquiry message" />
                         </div>
                         <div className="input-field input-error">
                             <label>Checkbox:</label>
@@ -219,6 +250,10 @@ export const Inputs: FunctionComponent = () => {
                             <input type="text" placeholder="Enter email" />
                         </div>
                         <div className="input-field inline">
+                            <label>Textarea:</label>
+                            <textarea placeholder="Enquiry message" />
+                        </div>
+                        <div className="input-field inline">
                             <label>Checkbox:</label>
                             <input type="checkbox" />
                         </div>
@@ -249,6 +284,10 @@ export const Inputs: FunctionComponent = () => {
                         <div className="input-field inline input-error">
                             <label>Text:</label>
                             <input type="text" placeholder="Enter email" />
+                        </div>
+                        <div className="input-field inline input-error">
+                            <label>Textarea:</label>
+                            <textarea placeholder="Enquiry message" />
                         </div>
                         <div className="input-field inline input-error">
                             <label>Checkbox:</label>

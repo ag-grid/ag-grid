@@ -46,6 +46,7 @@ input[type='email']#{$selector-exclude-grid},
 input[type='checkbox']#{$selector-exclude-grid},
 input[type='radio']#{$selector-exclude-grid},
 input[type='number']#{$selector-exclude-grid},
+textarea#{$selector-exclude-grid},
 select#{$selector-exclude-grid} {
     color: var(--color-fg-primary);
 
@@ -59,7 +60,8 @@ select#{$selector-exclude-grid} {
 input[type='text'],
 input[type='search'],
 input[type='email'],
-input[type='number'] {
+input[type='number'],
+textarea {
     &#{$selector-exclude-grid} {
         padding: math.div(6em, 16) math.div(12em, 16);
         line-height: var(--text-lh-base);
@@ -369,7 +371,8 @@ input[type='range']#{$selector-exclude-grid} {
 
         input[type='text'],
         input[type='search'],
-        input[type='email'] {
+        input[type='email'],
+        textarea {
             min-width: 280px;
         }
     }
@@ -377,6 +380,7 @@ input[type='range']#{$selector-exclude-grid} {
 
 .input-error {
     input,
+    textarea,
     select {
         --color-border-primary: var(--color-input-error);
         --color-input-border: var(--color-input-error);

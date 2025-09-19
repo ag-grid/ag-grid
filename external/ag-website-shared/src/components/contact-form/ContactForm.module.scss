@@ -1,0 +1,77 @@
+@use 'design-system' as *;
+
+.contactForm {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-4;
+    flex-direction: column;
+}
+
+.nameRow {
+    display: grid;
+    grid-template-columns: 1fr; // mobile: stack
+    gap: $spacing-size-4;
+
+    @media screen and (min-width: 680px) {
+        grid-template-columns: 1fr 1fr; // larger screens: two columns
+    }
+}
+
+.emailInputOuter {
+    position: relative;
+
+    input[type='email'] {
+        width: 100%;
+        padding: 0.375em 0.75em 0.375em 2.75em;
+    }
+
+    :global(.icon) {
+        --icon-size: var(--spacing-6, 1.5rem);
+        --icon-color: var(--color-util-gray-400);
+
+        position: absolute;
+        top: 7px;
+        left: var(--spacing-3, 0.75rem);
+    }
+}
+
+/* Textarea tweaks */
+.contactForm :global(textarea) {
+    min-height: 6rem; /* slightly higher than default */
+    font-family: inherit; /* avoid monospace */
+    line-height: inherit;
+    font-size: var(--text-fs-base);
+}
+
+.contactForm :global(textarea)::placeholder {
+    font-family: inherit;
+}
+
+.privacyMessage {
+    font-size: var(--text-fs-xs);
+    line-height: var(--text-lh-xs);
+    color: color-mix(in srgb, var(--color-text-secondary), var(--color-bg-primary) 30%);
+
+    a {
+        font-weight: var(--text-regular);
+    }
+}
+
+.tertiaryButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Make submit input visually match button heights */
+.submitButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--control-height, 40px);
+    padding: 0 $spacing-size-4;
+    line-height: 1; /* avoid double height from line-height */
+    cursor: pointer;
+}
