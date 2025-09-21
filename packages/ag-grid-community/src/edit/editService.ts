@@ -17,7 +17,6 @@ import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { Column } from '../interfaces/iColumn';
 import type { EditMap, EditRow, EditValue, IEditModelService } from '../interfaces/iEditModelService';
 import type {
-    EditInputEvents,
     EditNavOnValidationResult,
     EditPosition,
     EditSource,
