@@ -217,3 +217,9 @@ export const removeTempEventHandlers = (list: TempEventHandler[] | null | undefi
         list.length = 0;
     }
 };
+
+export const preventEventDefault = (event: Event) => {
+    if (event.cancelable) {
+        event.preventDefault();
+    }
+};

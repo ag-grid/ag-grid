@@ -13,16 +13,11 @@ import {
     _getFirstActiveTouch,
     _isEventFromThisInstance,
     addTempEventHandlers,
+    preventEventDefault,
     removeTempEventHandlers,
 } from '../utils/event';
 import { _exists } from '../utils/generic';
 import { AgBeanStub } from './agBeanStub';
-
-const preventEventDefault = (event: Event) => {
-    if (event.cancelable) {
-        event.preventDefault();
-    }
-};
 
 let handledDragEvents: WeakSet<Event> | undefined;
 
@@ -108,7 +103,7 @@ export class BaseDragService<
         const mouseListener = (event: MouseEvent) => this.onMouseDown(params, event);
         addTempEventHandlers(
             handlers,
-            [eElement, 'pointerdown', pointerDownListener],
+            [eElement, 'pointerdown', pointerDownListener, { passive: false }],
             [eElement, 'mousedown', mouseListener]
         );
 
@@ -152,8 +147,7 @@ export class BaseDragService<
         const eDocument = _getDocument(beans);
         addTempEventHandlers(
             drag.handlers,
-            // [drag.eElement, 'contextmenu', preventEventDefault],
-            [rootEl, 'contextmenu', preventEventDefault],
+            [rootEl, 'contextmenu', preventEventDefault, { passive: false }],
             [rootEl, 'keydown', keydownEvent],
             [eDocument, 'scroll', onScroll, { capture: true }],
             [eDocument.defaultView || window, 'scroll', onScroll],

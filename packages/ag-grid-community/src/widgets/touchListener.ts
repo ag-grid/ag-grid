@@ -5,6 +5,7 @@ import {
     _areEventsNear,
     _getFirstActiveTouch,
     addTempEventHandlers,
+    preventEventDefault,
     removeTempEventHandlers,
 } from '../agStack/utils/event';
 import type { TempEventHandler } from '../agStack/utils/event';
@@ -23,7 +24,11 @@ export interface LongTapEvent extends AgEvent<'longTap'> {
 
 const DOUBLE_TAP_MILLISECONDS = 500;
 
-const LONG_PRESS_MILLISECONDS = 500;
+/**
+ * The delay before a long tap event is fired.
+ * This needs to be bigger than 500 as is the browser long tap for the context menu.
+ */
+const LONG_PRESS_MILLISECONDS = 550;
 
 let handledTouchEvents: WeakSet<Event> | undefined;
 
@@ -96,9 +101,10 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             addTempEventHandlers(
                 tempHandlers,
                 [eElement, 'touchmove', moveListener, { passive: true }],
+                [eElement, 'touchcancel', endListener, { passive: true }],
                 // we set passive=false, as we want to prevent default on this event
                 [eElement, 'touchend', endListener, { passive: false }],
-                [eElement, 'touchcancel', endListener, { passive: true }]
+                [eElement.ownerDocument, 'contextmenu', preventEventDefault, { passive: false }]
             );
         }
 
@@ -112,7 +118,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             this.longPressTimer = 0;
             if (this.touchStart === touchStart && !this.moved) {
                 this.moved = true;
-                const event: LongTapEvent = { type: 'longTap', touchStart, touchEvent: touchEvent };
+                const event: LongTapEvent = { type: 'longTap', touchStart, touchEvent };
                 this.localEventService?.dispatchEvent(event);
             }
         }, LONG_PRESS_MILLISECONDS);
@@ -126,7 +132,6 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         const touchStart = this.touchStart;
         const touch = touchStart && _getFirstActiveTouch(touchStart, touchEvent.touches);
         const eventIsFarAway = touch && !_areEventsNear(touch, touchStart, 4);
-        // debugPanelLog('touch move ' + this.instanceId + ' moved=' + this.moved + ' farAway=' + eventIsFarAway);
         if (eventIsFarAway) {
             this.moved = true;
             this.clearLongPressTimer();

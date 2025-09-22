@@ -5,6 +5,7 @@ import type {
     GridCheckbox,
     GridDragSource,
     ITooltipCtrl,
+    LongTapEvent,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -13,6 +14,7 @@ import {
     DragSourceType,
     KeyCode,
     RefPlaceholder,
+    TouchListener,
     _createIconNoSpan,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
@@ -117,6 +119,12 @@ export class ToolPanelColumnComp extends Component {
             contextmenu: this.onContextMenu.bind(this),
         });
 
+        const touchListener = new TouchListener(focusWrapper);
+        this.addManagedListeners(touchListener, {
+            longTap: (e: LongTapEvent) => this.onContextMenu(e.touchStart),
+        });
+        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
+
         this.addManagedPropertyListener('functionsReadOnly', this.onColumnStateChanged.bind(this));
 
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
@@ -142,7 +150,7 @@ export class ToolPanelColumnComp extends Component {
         this.addManagedEventListeners({ newColumnsLoaded: refresh });
     }
 
-    private onContextMenu(e: MouseEvent): void {
+    private onContextMenu(e: MouseEvent | Touch): void {
         const { column, gos } = this;
 
         if (gos.get('functionsReadOnly')) {

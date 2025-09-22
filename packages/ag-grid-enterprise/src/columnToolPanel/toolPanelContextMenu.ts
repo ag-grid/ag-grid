@@ -28,7 +28,7 @@ export class ToolPanelContextMenu extends Component {
 
     constructor(
         private readonly column: AgColumn | AgProvidedColumnGroup,
-        private readonly mouseEvent: MouseEvent,
+        private readonly mouseEventOrTouch: MouseEvent | Touch,
         private readonly parentEl: HTMLElement
     ) {
         super({ tag: 'div', cls: 'ag-menu' });
@@ -52,7 +52,10 @@ export class ToolPanelContextMenu extends Component {
         this.buildMenuItemMap();
 
         if (this.isActive()) {
-            this.mouseEvent.preventDefault();
+            const mouseEventOrTouch = this.mouseEventOrTouch;
+            if ('preventDefault' in mouseEventOrTouch) {
+                mouseEventOrTouch.preventDefault();
+            }
             const menuItemsMapped: MenuItemDef[] = this.getMappedMenuItems();
             if (menuItemsMapped.length === 0) {
                 return;
@@ -217,7 +220,7 @@ export class ToolPanelContextMenu extends Component {
 
         popupSvc.positionPopupUnderMouseEvent({
             type: 'columnContextMenu',
-            mouseEvent: this.mouseEvent,
+            mouseEvent: this.mouseEventOrTouch,
             ePopup: eGui,
         });
     }

@@ -8,6 +8,7 @@ import type {
     GridDragSource,
     IAggFunc,
     ITooltipCtrl,
+    LongTapEvent,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -114,6 +115,13 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addManagedElementListeners(eLabel, { click: this.onLabelClicked.bind(this) });
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
         this.addManagedListeners(modelItem, { expandedChanged: this.onExpandChanged.bind(this) });
+
+        const touchListener = new TouchListener(this.getGui(), false);
+        this.addManagedListeners(touchListener, {
+            longTap: (e: LongTapEvent) => this.onContextMenu(e.touchStart),
+        });
+        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
+
         this.addManagedListeners(focusWrapper, {
             keydown: this.handleKeyDown.bind(this),
             contextmenu: this.onContextMenu.bind(this),
@@ -168,11 +176,11 @@ export class ToolPanelColumnGroupComp extends Component {
         }
     }
 
-    private onContextMenu(e: MouseEvent): void {
+    private onContextMenu(e: MouseEvent | Touch): boolean {
         const { columnGroup, gos } = this;
 
         if (gos.get('functionsReadOnly')) {
-            return;
+            return false;
         }
 
         const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
@@ -181,6 +189,8 @@ export class ToolPanelColumnGroupComp extends Component {
                 this.destroyBean(contextMenu);
             }
         });
+
+        return true;
     }
 
     private addVisibilityListenersToAllChildren(): void {
