@@ -128,7 +128,7 @@ export class GridCtrl extends BeanStub {
 
     public focusInnerElement(fromBottom?: boolean): boolean {
         const userCallbackFunction = this.gos.getCallback('focusGridInnerElement');
-        if (userCallbackFunction && userCallbackFunction({ fromBottom: !!fromBottom })) {
+        if (userCallbackFunction?.({ fromBottom: !!fromBottom })) {
             return true;
         }
 

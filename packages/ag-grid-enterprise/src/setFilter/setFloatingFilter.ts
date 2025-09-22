@@ -77,7 +77,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
 
     private addAvailableValuesListener(): void {
         const addListener = (handler: SetFilterHandler<V>) => {
-            if (handler == null || !handler.isAlive()) {
+            if (!handler?.isAlive()) {
                 return;
             }
             const valueModel = handler.valueModel;

@@ -590,7 +590,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return;
         }
 
-        const cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);
+        const cellEditable = this.params.column?.isCellEditable(this.params.node);
 
         if (cellEditable) {
             return;

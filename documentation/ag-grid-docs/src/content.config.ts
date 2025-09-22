@@ -286,6 +286,18 @@ const aboutPage = defineCollection({
     }),
 });
 
+const contactResults = defineCollection({
+    loader: glob({ base: '../../external/ag-website-shared/src/content/contact', pattern: 'result.json' }),
+    schema: z.record(
+        z.string(),
+        z.object({
+            name: z.string(),
+            title: z.string(),
+            message: z.string(),
+        })
+    ),
+});
+
 export const collections = {
     docs,
     apiDocumentation,
@@ -305,4 +317,5 @@ export const collections = {
     reactLandingPage,
     contentApi,
     aboutPage,
+    contactResults,
 };

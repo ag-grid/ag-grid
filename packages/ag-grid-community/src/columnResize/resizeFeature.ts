@@ -44,7 +44,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
             destroyResizeFuncs.push(finishedWithResizeFunc);
 
             if (canAutosize && colAutosize) {
-                destroyResizeFuncs.push(colAutosize.addColumnAutosize(this.eResize, this.column));
+                destroyResizeFuncs.push(colAutosize.addColumnAutosizeListeners(this.eResize, this.column));
             }
         };
 

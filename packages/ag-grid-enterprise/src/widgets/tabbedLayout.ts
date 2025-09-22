@@ -288,8 +288,7 @@ export class TabbedLayout extends TabGuardComp {
             }
 
             if (this.params.keepScrollPosition) {
-                const scrollableContainer =
-                    (tabbedItem.getScrollableContainer && tabbedItem.getScrollableContainer()) || body;
+                const scrollableContainer = tabbedItem.getScrollableContainer?.() || body;
                 [this.lastScrollListener] = this.addManagedElementListeners(scrollableContainer, {
                     scroll: () => {
                         this.tabbedItemScrollMap.set(tabbedItem.name, scrollableContainer.scrollTop);

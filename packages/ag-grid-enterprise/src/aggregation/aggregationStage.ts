@@ -199,7 +199,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
                 const secondaryCol = secondaryColumns[i];
                 const colDef = secondaryCol.getColDef();
 
-                if (colDef.pivotTotalColumnIds == null || !colDef.pivotTotalColumnIds.length) {
+                if (!colDef.pivotTotalColumnIds?.length) {
                     continue;
                 }
 

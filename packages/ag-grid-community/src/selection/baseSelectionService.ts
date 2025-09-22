@@ -229,7 +229,7 @@ export abstract class BaseSelectionService extends BeanStub {
         }
 
         const pinnedSibling = rowNode.pinnedSibling;
-        if (pinnedSibling && pinnedSibling.rowPinned && pinnedSibling.__localEventService) {
+        if (pinnedSibling?.rowPinned && pinnedSibling.__localEventService) {
             pinnedSibling.dispatchRowEvent('rowSelected');
         }
 

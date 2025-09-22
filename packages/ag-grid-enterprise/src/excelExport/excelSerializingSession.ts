@@ -454,7 +454,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             return 'f';
         }
 
-        if (style && style.dataType) {
+        if (style?.dataType) {
             switch (style.dataType.toLocaleLowerCase()) {
                 case 'formula':
                     return 'f';
@@ -577,7 +577,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     }
 
     private getStyleId(styleIds?: string[] | null): string | null {
-        if (!styleIds || !styleIds.length) {
+        if (!styleIds?.length) {
             return null;
         }
         if (styleIds.length === 1) {

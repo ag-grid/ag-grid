@@ -35,7 +35,7 @@ export class AgPopupComponent<
 
     public override destroy(): void {
         const parentComp = this.parentComponent;
-        const hasParent = parentComp && parentComp.isAlive();
+        const hasParent = parentComp?.isAlive();
 
         if (hasParent) {
             parentComp!.getGui().classList.remove('ag-has-popup');

@@ -150,8 +150,8 @@ export class FilterWrapperComp extends Component {
             return;
         }
 
-        const keyboardEvent = e as KeyboardEvent;
-        const key = keyboardEvent && keyboardEvent.key;
+        const keyboardEvent = e as KeyboardEvent | undefined;
+        const key = keyboardEvent?.key;
         let params: PopupEventParams;
 
         if (key === KeyCode.ENTER || key === KeyCode.SPACE) {

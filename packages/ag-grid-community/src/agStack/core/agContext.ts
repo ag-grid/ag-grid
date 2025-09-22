@@ -60,7 +60,7 @@ export class AgContext<
     public readonly instanceId: number = contextId++;
 
     constructor(params: AgContextParams<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>) {
-        if (!params || !params.beanClasses) {
+        if (!params?.beanClasses) {
             return;
         }
 

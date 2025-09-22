@@ -717,7 +717,7 @@ export class RowNode<TData = any>
 
         const res: string[] = [];
         let pointer: RowNode | null = this;
-        while (pointer && pointer.key != null) {
+        while (pointer?.key != null) {
             res.push(pointer.key);
             pointer = pointer.parent;
         }

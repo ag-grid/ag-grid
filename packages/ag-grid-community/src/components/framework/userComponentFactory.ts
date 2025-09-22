@@ -252,7 +252,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
         // pull user params from the defObject
         const defObjectAny = defObject as any;
-        const userParams = defObjectAny && defObjectAny[type.name + 'Params'];
+        const userParams = defObjectAny?.[type.name + 'Params'];
 
         if (typeof userParams === 'function') {
             const userParamsFromFunc = userParams(paramsFromGrid);

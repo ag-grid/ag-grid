@@ -40,7 +40,7 @@ export function doesMovePassMarryChildren(
 
         const columnGroup = child;
         const colGroupDef = columnGroup.getColGroupDef();
-        const marryChildren = colGroupDef && colGroupDef.marryChildren;
+        const marryChildren = colGroupDef?.marryChildren;
 
         if (!marryChildren) {
             return;

@@ -38,25 +38,12 @@ export class ChartColumnService extends BeanStub {
         return this.beans.visibleCols.allCols;
     }
 
-    public getColDisplayName(col: AgColumn, includePath?: boolean): string | null {
-        const headerLocation = 'chart';
-        const columnDisplayName = this.colNames.getDisplayNameForColumn(col, headerLocation);
-        if (includePath) {
-            const displayNames = [columnDisplayName];
-            const getDisplayName = (colGroup: AgColumnGroup | null) => {
-                if (!colGroup) {
-                    return;
-                }
-                const colGroupName = this.colNames.getDisplayNameForColumnGroup(colGroup, headerLocation);
-                if (colGroupName?.length) {
-                    displayNames.unshift(colGroupName);
-                    getDisplayName(colGroup.getParent());
-                }
-            };
-            getDisplayName(col.getParent());
-            return displayNames.join(' - ');
-        }
-        return columnDisplayName;
+    public getColDisplayName(col: AgColumn): string | null {
+        return this.colNames.getDisplayNameForColumn(col, 'chart');
+    }
+
+    public getColGroupDisplayName(colGroup: AgColumnGroup): string | null {
+        return this.colNames.getDisplayNameForColumnGroup(colGroup, 'chart');
     }
 
     public getRowGroupColumns(): AgColumn[] {

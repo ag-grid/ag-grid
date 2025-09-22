@@ -64,6 +64,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         const params = this.params;
         const {
             cellRenderer,
+            cellRendererParams,
             cellHeight,
             value,
             values,
@@ -86,6 +87,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         const ret: RichSelectParams = {
             value: value,
             cellRenderer,
+            cellRendererParams,
             cellRowHeight: cellHeight,
             searchDebounceDelay,
             valueFormatter: formatValue,
