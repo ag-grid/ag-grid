@@ -13,8 +13,8 @@ import {
     _getFirstActiveTouch,
     _isEventFromThisInstance,
     addTempEventHandlers,
+    clearTempEventHandlers,
     preventEventDefault,
-    removeTempEventHandlers,
 } from '../utils/event';
 import { _exists } from '../utils/generic';
 import { AgBeanStub } from './agBeanStub';
@@ -160,7 +160,7 @@ export class BaseDragService<
         const drag = this.drag;
         if (drag) {
             this.drag = null;
-            removeTempEventHandlers(drag.handlers);
+            clearTempEventHandlers(drag.handlers);
         }
     }
 
@@ -197,29 +197,23 @@ export class BaseDragService<
 
         const eElement = params.eElement;
         const eRootDiv = beans.eRootDiv;
-        const pointerDrag: Dragging = {
-            params,
-            start: pointerEvent,
-            pointerId: pointerEvent.pointerId,
-            eElement: params.eElement,
-            handlers: [],
-            lastDrag: null,
-        };
+        const pointerId = pointerEvent.pointerId;
+        const pointerDrag = new Dragging(params, pointerEvent, pointerId);
 
         const onPointerMove = (ev: PointerEvent) => {
-            if (ev.pointerId === pointerDrag.pointerId) {
+            if (ev.pointerId === pointerId) {
                 this.onMouseOrPointerMove(ev);
             }
         };
 
         const onUp = (ev: PointerEvent) => {
-            if (ev.pointerId === pointerDrag.pointerId) {
+            if (ev.pointerId === pointerId) {
                 this.onUp(ev);
             }
         };
 
         const onCancel = (ev: PointerEvent) => {
-            if (ev.pointerId === pointerDrag.pointerId) {
+            if (ev.pointerId === pointerId) {
                 this.cancelDrag();
             }
         };
@@ -269,14 +263,7 @@ export class BaseDragService<
         this.destroyDrag();
 
         const beans = this.beans;
-        const touchDrag: Dragging = {
-            params,
-            start: touchEvent.touches[0],
-            pointerId: null,
-            eElement: params.eElement,
-            handlers: [],
-            lastDrag: null,
-        };
+        const touchDrag = new Dragging(params, touchEvent.touches[0]);
 
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e);
@@ -315,14 +302,7 @@ export class BaseDragService<
         const beans = this.beans;
         this.destroyDrag();
 
-        const mouseDrag: Dragging = {
-            params,
-            start: mouseEvent,
-            pointerId: null,
-            eElement: params.eElement,
-            handlers: [],
-            lastDrag: null,
-        };
+        const mouseDrag = new Dragging(params, mouseEvent);
 
         const mouseMoveEvent = (event: MouseEvent) => this.onMouseOrPointerMove(event);
         const mouseUpEvent = (event: MouseEvent) => this.onUp(event);
@@ -477,7 +457,7 @@ interface DragSourceEntry {
 }
 
 const destroyDragSourceEntry = (dragSource: DragSourceEntry): void => {
-    removeTempEventHandlers(dragSource.handlers);
+    clearTempEventHandlers(dragSource.handlers);
     const oldTouchAction = dragSource.oldTouchAction;
     if (oldTouchAction != null) {
         const style = (dragSource.params.eElement as Partial<HTMLElement>).style;
@@ -487,13 +467,18 @@ const destroyDragSourceEntry = (dragSource: DragSourceEntry): void => {
     }
 };
 
-interface Dragging {
-    readonly params: DragListenerParams;
-    readonly start: PointerEvent | MouseEvent | Touch;
-    readonly pointerId: number | null;
-    readonly eElement: Element & Partial<HTMLElement>;
-    readonly handlers: TempEventHandler[];
-    lastDrag: PointerEvent | MouseEvent | Touch | null;
+class Dragging {
+    public readonly eElement: Element & Partial<HTMLElement>;
+    public readonly handlers: TempEventHandler[] = [];
+    public lastDrag: PointerEvent | MouseEvent | Touch | null = null;
+
+    constructor(
+        readonly params: DragListenerParams,
+        readonly start: PointerEvent | MouseEvent | Touch,
+        readonly pointerId: number | null = null
+    ) {
+        this.eElement = params.eElement;
+    }
 }
 
 const getEventTargetElement = (event: Event): Element | null => {

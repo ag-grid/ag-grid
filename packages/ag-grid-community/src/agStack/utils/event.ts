@@ -209,7 +209,7 @@ export const addTempEventHandlers = (list: TempEventHandler[], ...handlers: Temp
     }
 };
 
-export const removeTempEventHandlers = (list: TempEventHandler[] | null | undefined): void => {
+export const clearTempEventHandlers = (list: TempEventHandler[] | null | undefined): void => {
     if (list) {
         for (const [target, type, listener, options] of list) {
             target.removeEventListener(type, listener, options);
