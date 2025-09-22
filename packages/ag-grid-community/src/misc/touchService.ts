@@ -77,9 +77,15 @@ export class TouchService extends BeanStub implements NamedBean {
         const { params, eMenu, eFilterButton } = comp;
 
         const touchListener = new TouchListener(comp.getGui(), true);
+        comp.addDestroyFunc(() => touchListener.destroy());
+
         const suppressMenuHide = comp.shouldSuppressMenuHide();
         const tapMenuButton = suppressMenuHide && _exists(eMenu) && params.enableMenu;
-        const menuTouchListener = tapMenuButton ? new TouchListener(eMenu, true) : touchListener;
+        let menuTouchListener = touchListener;
+        if (tapMenuButton) {
+            menuTouchListener = new TouchListener(eMenu, true);
+            comp.addDestroyFunc(() => menuTouchListener.destroy());
+        }
 
         if (params.enableMenu || menuSvc?.isHeaderContextMenuEnabled(params.column as AgColumn)) {
             const eventType: TouchListenerEvent = tapMenuButton ? 'tap' : 'longTap';
@@ -110,14 +116,6 @@ export class TouchService extends BeanStub implements NamedBean {
                 tap: () => params.showFilter(eFilterButton),
             });
             comp.addDestroyFunc(() => filterButtonTouchListener.destroy());
-        }
-
-        // if tapMenuButton is true `touchListener` and `menuTouchListener` are different
-        // so we need to make sure to destroy both listeners here
-        comp.addDestroyFunc(() => touchListener.destroy());
-
-        if (tapMenuButton) {
-            comp.addDestroyFunc(() => menuTouchListener.destroy());
         }
     }
 

@@ -80,7 +80,7 @@ export class ToolPanelColumnComp extends Component {
         const checkboxGui = cbSelect.getGui();
         const checkboxInput = cbSelect.getInputElement();
 
-        checkboxGui.insertAdjacentElement('afterend', eDragHandle);
+        checkboxGui.after(eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
         eLabel.textContent = displayName;
@@ -136,7 +136,9 @@ export class ToolPanelColumnComp extends Component {
         this.setupTooltip();
 
         const classes = _getToolPanelClassesFromColDef(column.getColDef(), gos, column, null);
-        classes.forEach((c) => this.toggleCss(c, true));
+        for (const c of classes) {
+            this.toggleCss(c, true);
+        }
     }
 
     public getColumn(): AgColumn {

@@ -172,15 +172,15 @@ export class ToolPanelContextMenu extends Component {
             return true;
         }
 
-        return parent.getDisplayedChildren()?.indexOf(col) !== -1;
+        return parent.getDisplayedChildren()?.includes(col) ?? true;
     }
 
     private addColumnsToList(columnList: AgColumn[], predicate: (col: AgColumn) => boolean): AgColumn[] {
-        return [...columnList].concat(this.columns.filter((col) => predicate(col) && columnList.indexOf(col) === -1));
+        return [...columnList].concat(this.columns.filter((col) => predicate(col) && !columnList.includes(col)));
     }
 
     private removeColumnsFromList(columnList: AgColumn[], predicate: (col: AgColumn) => boolean): AgColumn[] {
-        return columnList.filter((col) => predicate(col) && this.columns.indexOf(col) === -1);
+        return columnList.filter((col) => predicate(col) && this.columns.includes(col));
     }
 
     private displayContextMenu(menuItemsMapped: MenuItemDef[]): void {
