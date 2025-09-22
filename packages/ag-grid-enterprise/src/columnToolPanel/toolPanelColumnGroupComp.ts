@@ -176,11 +176,11 @@ export class ToolPanelColumnGroupComp extends Component {
         }
     }
 
-    private onContextMenu(e: MouseEvent | Touch): boolean {
+    private onContextMenu(e: MouseEvent | Touch): void {
         const { columnGroup, gos } = this;
 
         if (gos.get('functionsReadOnly')) {
-            return false;
+            return;
         }
 
         const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
@@ -189,8 +189,6 @@ export class ToolPanelColumnGroupComp extends Component {
                 this.destroyBean(contextMenu);
             }
         });
-
-        return true;
     }
 
     private addVisibilityListenersToAllChildren(): void {
