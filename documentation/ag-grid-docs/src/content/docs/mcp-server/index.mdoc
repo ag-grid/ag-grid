@@ -1,5 +1,45 @@
 ---
 title: 'AG Grid Model Context Protocol (MCP) Server'
+headings:
+    - slug: 'overview'
+      text: 'Overview'
+      depth: 2
+    - slug: 'architecture-diagram'
+      text: 'Architecture Diagram'
+      depth: 3
+    - slug: 'installation'
+      text: 'Installation'
+      depth: 2
+    - slug: 'getting-started'
+      text: 'Getting Started'
+      depth: 2
+    - slug: 'prompts'
+      text: 'Prompts'
+      depth: 2
+    - slug: 'create-a-new-grid'
+      text: 'Create a New Grid'
+      depth: 3
+    - slug: 'migrate-to-a-new-version'
+      text: 'Migrate to a New Version'
+      depth: 3
+    - slug: 'resources-docs-api--example-search'
+      text: 'Resources (Docs, API & Example Search)'
+      depth: 2
+    - slug: 'tools'
+      text: 'Tools'
+      depth: 2
+    - slug: 'search-docs'
+      text: 'Search Docs'
+      depth: 3
+    - slug: 'detect-version'
+      text: 'Detect Version'
+      depth: 3
+    - slug: 'set-version'
+      text: 'Set Version'
+      depth: 3
+    - slug: 'config'
+      text: 'Config'
+      depth: 2
 ---
 
 AG Grid's Model Context Protocol (MCP) server provides AI Agents with framework and version specific knowledge to help developers integrate and maintain their AG Grid code.
@@ -38,7 +78,7 @@ Prompts, resources and tools can also be references inside your prompt. Refer to
 To install and use `ag-mcp` with your LLM client, provide the `npx ag-mcp` command in the normal process for adding an MCP Server.
 
 {% tabs %}
-{% tabItem id="cursor" label="Cursor" %}
+{% tabItem id="install-cursor" label="Cursor" %}
 
 Click [Install in Cursor](https://cursor.com/en/install-mcp?name=ag-mcp&config=eyJjb21tYW5kIjoibnB4IGFnLW1jcCJ9) to open Cursor and automatically add the `ag-mcp` server
 
@@ -60,7 +100,7 @@ To learn more, see the [Cursor MCP documentation](https://cursor.com/docs/contex
 {% /note %}
 
 {% /tabItem %}
-{% tabItem id="VS Code" label="VS Code (CoPilot)" %}
+{% tabItem id="install-vs-code" label="VS Code (CoPilot)" %}
 
 To install manually, create a `.vscode/mcp.json` file in your workspace, and add the following:
 
@@ -81,7 +121,7 @@ To learn more, see the [VS Code MCP documentation](https://code.visualstudio.com
 {% /note %}
 
 {% /tabItem %}
-{% tabItem id="Claude" label="Claude" %}
+{% tabItem id="install-claude" label="Claude" %}
 
 To add `ag-mcp` to Claude code, run the following command:
 
@@ -96,32 +136,76 @@ To learn more, see the [Claude MCP documentation](https://docs.claude.com/en/doc
 {% /tabItem %}
 {% /tabs %}
 
-## Usage
+## Getting Started
 
-Once the MCP is installed, your LLM will automatically take advantage of all the [Tools](#tools) and [Resources](#resources) available. Tools and Resources can also be accessed manually - refer to your LLM documentation for specific instructions.
+Once the MCP is installed, your LLM will automatically take advantage of all the [Tools](#tools) and [Resources](#resources) available. Tools, Prompts and Resources can also be accessed manually. We have included examples for common LLMs below, but refer to your LLM documentation for specific instructions.
 
-### Prompts
+## Prompts
 
 Prompts are pre-configured actions that allow you to perform common actions, such as creating a new grid, or migrating to a later version.
 
 - [`quick-start`](#quick-start) - Get started with AG-Grid in any framework
 - [`upgrade-grid`](#migrations--upgrades) - Migrate to a newer version of AG-Grid
 
-#### Quick Start
+### Create a New Grid
 
 The `quick-start` prompt can be triggered directly from your LLM client. This creates a list of instructions for you LLM to follow when creating a new AG Grid project or adding AG Grid to an existing project.
 
 You can pass additional context, requirements or instructions to your LLM as arguments to this prompt to fine tune the type of data grid you want the LLM to create.
 
-#### Migrations & Upgrades
+{% tabs %}
+{% tabItem id="quick-start-cursor" label="Cursor" %}
+To trigger the `quick-start` prompt, enter the following command in your LLM prompt:
+
+```bash
+/ag-mcp:quick-start {additional-context}
+```
+{% /tabItem %}
+{% tabItem id="quick-start-vs-code" label="VS Code (CoPilot)" %}
+To trigger the `quick-start` prompt, enter the following command in your LLM prompt:
+
+```bash
+mcp.ag-mcp.quick-start {additional-context}
+```
+{% /tabItem %}
+{% tabItem id="quick-start-claude" label="Claude" %}
+To trigger the `quick-start` prompt, enter the following command in your LLM prompt:
+
+```bash
+/ag-mcp:quick-start {additional-context}
+```
+{% /tabItem %}
+{% /tabs %}
+
+### Migrate to a New Version
 
 The `upgrade-grid` prompt creates a step by step plan to help migrate from your current version to the provided version. This is given to the LLM to execute, calling back to the MCP server as needed. It takes a version by version approach, making sure each version is correct before continuing.
 
-### Config
+{% tabs %}
+{% tabItem id="migrate-cursor" label="Cursor" %}
+To trigger the `quick-start` prompt, enter the following command in your LLM prompt:
 
-Config, such as project roots and versions, is stored in your cache folder. For example, in MacOS it will be stored in `~/Library/Preferences/ag-mcp`.
+```bash
+/ag-mcp:quick-start {additional-context}
+```
+{% /tabItem %}
+{% tabItem id="migrate-vs-code" label="VS Code (CoPilot)" %}
+To trigger the `quick-start` prompt, enter the following command in your LLM prompt:
 
-### Resources (Docs, API & Example Search)
+```bash
+mcp.ag-mcp.quick-start {additional-context}
+```
+{% /tabItem %}
+{% tabItem id="migrate-claude" label="Claude" %}
+To trigger the `quick-start` prompt, enter the following command in your LLM prompt:
+
+```bash
+/ag-mcp:quick-start {additional-context}
+```
+{% /tabItem %}
+{% /tabs %}
+
+## Resources (Docs, API & Example Search)
 
 The core feature of the AG MCP Server is an LLM optimized search tool which will provide documentation, examples, and API definitions/interfaces. The content is provided in a condensed markdown so as to minimise the amount of context used, and not overwhelm the LLM.
 
@@ -131,9 +215,37 @@ There are currently three sets of resources available:
 - `definitions` - API definitions and interfaces
 - `examples` - A library of AG Grid implementation examples in your framework.
 
-Your LLM can access these resources whenever it needs more information on how to implement AG Grid features. Refer to your LLM documentation for accessing these resources manually.
+Your LLM can access these resources whenever it needs more information on how to implement AG Grid features. 
 
-### Tools
+{% tabs %}
+{% tabItem id="resources-cursor" label="Cursor" %}
+To access articles, definitions or examples, include the following command in your LLM prompt:
+
+```bash
+TODO
+```
+{% /tabItem %}
+{% tabItem id="resources-vs-code" label="VS Code (CoPilot)" %}
+To access articles, definitions or examples, include the following command in your LLM prompt:
+
+```bash
+TODO
+```
+{% /tabItem %}
+{% tabItem id="resources-claude" label="Claude" %}
+To access articles, definitions or examples, include the following command in your LLM prompt:
+
+```bash
+TODO
+```
+{% /tabItem %}
+{% /tabs %}
+
+{% note %}
+Refer to your LLM documentation for more information on accessing MCP resources.
+{% /note %}
+
+## Tools
 
 Tools are schema-defined interfaces that enable AI models to perform actions. Each tool defines a specific operation with typed inputs and outputs, and the model automatically requests tool execution based on context.
 
@@ -146,35 +258,110 @@ AG-MCP currently provides four tools:
 - [`set_version`](#set-version) - Manually set the version of your repo (useful in monorepos).
 - `list_versions` - List all available AG Grid versions from the API to see what versions are available for migration or reference.
 
-#### Search Docs
+### Search Docs
 
 Search AG Grid documentation for the detected or latest version. Use this to find details on features, APIs, configurations, and troubleshooting. Supports natural language queries.
 
-##### Parameters
+#### Parameters
 
 | Name      | Type   | Required | Description                                                                           |
 | --------- | ------ | -------- | ------------------------------------------------------------------------------------- |
-| query     | string | Yes      | Search term (e.g., `"column sorting"`, `"cell renderers"`, `"data grid performance"`) |
-| version   | string | No       | Override the detected AG Grid version                                                 |
-| framework | string | No       | Override the detected framework                                                       |
+| `query`     | string | Yes      | Search term (e.g., `"column sorting"`, `"cell renderers"`, `"data grid performance"`) |
+| `version`   | string | No       | Override the detected AG Grid version                                                 |
+| `framework` | string | No       | Override the detected framework                                                       |
 
-#### Detect Version
+#### Example
+
+{% tabs %}
+{% tabItem id="search-docs-cursor" label="Cursor" %}
+TODO
+```bash
+TODO
+```
+{% /tabItem %}
+{% tabItem id="search-docs-vs-code" label="VS Code (CoPilot)" %}
+TODO
+```bash
+TODO
+```
+{% /tabItem %}
+{% tabItem id="search-docs-claude" label="Claude" %}
+TODO
+```bash
+TODO
+```
+{% /tabItem %}
+{% /tabs %}
+
+### Detect Version
 
 Detect the AG Grid version and framework in the current project by analyzing package.json and dependencies. Use this to understand the project setup.
 
-##### Parameters
+#### Parameters
 
 | Name | Type   | Required | Description                                                   |
 | ---- | ------ | -------- | ------------------------------------------------------------- |
-| path | string | No       | Path to the project directory (defaults to current workspace) |
+| `path` | string | No       | Path to the project directory (defaults to current workspace) |
 
-#### Set Version
+
+#### Example
+
+{% tabs %}
+{% tabItem id="detect-version-cursor" label="Cursor" %}
+TODO
+```bash
+TODO
+```
+{% /tabItem %}
+{% tabItem id="detect-version-vs-code" label="VS Code (CoPilot)" %}
+TODO
+```bash
+TODO
+```
+{% /tabItem %}
+{% tabItem id="detect-version-claude" label="Claude" %}
+TODO
+```bash
+TODO
+```
+{% /tabItem %}
+{% /tabs %}
+
+### Set Version
 
 Set the AG Grid version and framework to use for documentation searches and resources. Use this when working with a specific version or framework combination.
 
-##### Parameters
+#### Parameters
 
 | Name      | Type   | Required | Description                                                               |
 | --------- | ------ | -------- | ------------------------------------------------------------------------- |
-| version   | string | Yes      | AG Grid version to use (e.g., `"34.1.0"`)                                 |
-| framework | string | Yes      | Framework to use for documentation (`react`, `angular`, `vue`, `vanilla`) |
+| `version`   | string | Yes      | AG Grid version to use (e.g., `"34.1.0"`)                                 |
+| `framework` | string | Yes      | Framework to use for documentation (`react`, `angular`, `vue`, `vanilla`) |
+
+
+#### Example
+
+{% tabs %}
+{% tabItem id="set-version-cursor" label="Cursor" %}
+TODO
+```bash
+TODO
+```
+{% /tabItem %}
+{% tabItem id="set-version-vs-code" label="VS Code (CoPilot)" %}
+TODO
+```bash
+TODO
+```
+{% /tabItem %}
+{% tabItem id="set-version-claude" label="Claude" %}
+TODO
+```bash
+TODO
+```
+{% /tabItem %}
+{% /tabs %}
+
+## Config
+
+Config, such as project roots and versions, is stored in your cache folder. For example, in MacOS it will be stored in `~/Library/Preferences/ag-mcp`.
