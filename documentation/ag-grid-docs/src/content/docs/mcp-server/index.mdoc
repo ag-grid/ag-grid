@@ -48,15 +48,15 @@ AG Grid's Model Context Protocol (MCP) server provides AI Agents with framework 
 
 ## Overview
 
-The `ag-mcp` server works with any LLM that supports MCPs and provides tools to allow LLMs to lookup framework and version specific documentation, examples, and references to help create, modify, maintain, and upgrade your data grid code.
+The core feature of the AG MCP Server is an LLM optimized search tool which will provide additional context, (e.g. version specific documentation, examples, and references), in a condensed markdown format, minimising the amount of context used.
 
-The AG MCP Server is made up of [Tools](#tools), [Prompts](#prompts) and [Resources](#resources):
+More specifically, the AG MCP Server is made up of [Tools](#tools), [Prompts](#prompts) and [Resources](#resources):
 
 - **Tools** - Schema defined interfaces that enable AI models to perform actions, including [searching the docs](#todo) and [detecting & setting the current ag grid version](#setting-the-ag-grid-version).
 - **Prompts** - Pre-configured actions that allow you to perform common actions, such as [creating new grids](#quick-start), or [migrating to later versions](#migrations--upgrades).
 - **Resources** - Documentation, examples, and API definitions/interfaces in condensed markdown.
 
-The core feature of the AG MCP Server is an LLM optimized search tool which will provide documentation, examples, API definitions and references. The content is provided in condensed markdown so as to minimise the amount of context used, and not overwhelm the LLM.
+Each of these components are available to your LLM whenever it needs more information on how to implement AG Grid features, and can also be accessed directly.
 
 ### Architecture Diagram
 
@@ -68,10 +68,6 @@ The following diagram shows how the `ag-mcp` server works:
 4. LLM uses this additional context to provide more accurate responses.
 
 {% imageCaption imagePath="resources/ag-mcp-architecture.png" alt="AG MCP Architecture" constrained=true enableDarkModeFilter=true /%}
-
-{% note %}
-Prompts, resources and tools can also be references inside your prompt. Refer to your LLMs docs for more information on how to do this.
-{% /note %}
 
 ## Installation
 
@@ -138,18 +134,24 @@ To learn more, see the [Claude MCP documentation](https://docs.claude.com/en/doc
 
 ## Getting Started
 
-Once the MCP is installed, your LLM will automatically take advantage of all the [Tools](#tools) and [Resources](#resources) available. Tools, Prompts and Resources can also be accessed manually. We have included examples for common LLMs below, but refer to your LLM documentation for specific instructions.
+Once the MCP is installed, your LLM will automatically leverage the AG MCP Server to access additional context, based on your prompt. [Tools](#tools), [Prompts](#prompts) and [Resources](#resources) can also be accessed directly, as demonstrated below. 
+
+{% note %}
+Refer to your LLM documentation for specific instructions on accessing MCP features.
+{% /note %}
 
 ## Prompts
 
 Prompts are pre-configured actions that allow you to perform common actions, such as creating a new grid, or migrating to a later version.
 
-- [`quick-start`](#quick-start) - Get started with AG-Grid in any framework
-- [`upgrade-grid`](#migrations--upgrades) - Migrate to a newer version of AG-Grid
+AG MCP currently provides two prompts:
+
+- [`quick-start`](#create-a-new-grid) - Get started with AG-Grid in any framework
+- [`upgrade-grid`](#migrate-to-a-new-version) - Migrate to a newer version of AG-Grid
 
 ### Create a New Grid
 
-The `quick-start` prompt can be triggered directly from your LLM client. This creates a list of instructions for you LLM to follow when creating a new AG Grid project or adding AG Grid to an existing project.
+The `quick-start` prompt can be triggered directly from your LLM client. This creates a list of instructions for your LLM to follow when creating a new AG Grid project or adding AG Grid to an existing project.
 
 You can pass additional context, requirements or instructions to your LLM as arguments to this prompt to fine tune the type of data grid you want the LLM to create.
 
@@ -181,26 +183,22 @@ To trigger the `quick-start` prompt, enter the following command in your LLM pro
 
 The `upgrade-grid` prompt creates a step by step plan to help migrate from your current version to the provided version. This is given to the LLM to execute, calling back to the MCP server as needed. It takes a version by version approach, making sure each version is correct before continuing.
 
+To trigger the `upgrade-grid` prompt, enter the following command in your LLM prompt:
+
 {% tabs %}
 {% tabItem id="migrate-cursor" label="Cursor" %}
-To trigger the `quick-start` prompt, enter the following command in your LLM prompt:
-
 ```bash
-/ag-mcp:quick-start {additional-context}
+/ag-mcp:upgrade-grid {additional-context}
 ```
 {% /tabItem %}
 {% tabItem id="migrate-vs-code" label="VS Code (CoPilot)" %}
-To trigger the `quick-start` prompt, enter the following command in your LLM prompt:
-
 ```bash
-mcp.ag-mcp.quick-start {additional-context}
+mcp.ag-mcp.upgrade-grid {additional-context}
 ```
 {% /tabItem %}
 {% tabItem id="migrate-claude" label="Claude" %}
-To trigger the `quick-start` prompt, enter the following command in your LLM prompt:
-
 ```bash
-/ag-mcp:quick-start {additional-context}
+/ag-mcp:upgrade-grid {additional-context}
 ```
 {% /tabItem %}
 {% /tabs %}
@@ -217,33 +215,25 @@ There are currently three sets of resources available:
 
 Your LLM can access these resources whenever it needs more information on how to implement AG Grid features. 
 
+To directly reference articles, definitions or examples, include the following command in your LLM prompt:
+
 {% tabs %}
 {% tabItem id="resources-cursor" label="Cursor" %}
-To access articles, definitions or examples, include the following command in your LLM prompt:
-
 ```bash
 TODO
 ```
 {% /tabItem %}
 {% tabItem id="resources-vs-code" label="VS Code (CoPilot)" %}
-To access articles, definitions or examples, include the following command in your LLM prompt:
-
 ```bash
 TODO
 ```
 {% /tabItem %}
 {% tabItem id="resources-claude" label="Claude" %}
-To access articles, definitions or examples, include the following command in your LLM prompt:
-
 ```bash
 TODO
 ```
 {% /tabItem %}
 {% /tabs %}
-
-{% note %}
-Refer to your LLM documentation for more information on accessing MCP resources.
-{% /note %}
 
 ## Tools
 
