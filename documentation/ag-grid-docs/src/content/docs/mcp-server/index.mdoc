@@ -8,23 +8,39 @@ AG Grid's Model Context Protocol (MCP) server provides AI Agents with framework 
 
 ## Overview
 
-The `ag-mcp` server works with any LLM that supports MCPs, and provides tools to allow LLMs to lookup framework and version specific documentation, examples, and references to help create, modify, maintain, and upgrade your data grid code.
+The `ag-mcp` server works with any LLM that supports MCPs and provides tools to allow LLMs to lookup framework and version specific documentation, examples, and references to help create, modify, maintain, and upgrade your data grid code.
 
-The core feature of the AG MCP Server is an LLM optimized search tool which will provide documentation, examples, API definitions and references. The content is provided in a condensed markdown so as to minimise the amount of context used, and not overwhelm the LLM.
+The AG MCP Server is made up of [Tools](#tools), [Prompts](#prompts) and [Resources](#resources):
 
-AG-MCP also provides pre-built [prompts](#prompts) to simplify the process of [creating new grids](#quick-start), and [migrating to later versions](#migrations--upgrades).
+- **Tools** - Schema defined interfaces that enable AI models to perform actions, including [searching the docs](#todo) and [detecting & setting the current ag grid version](#setting-the-ag-grid-version).
+- **Prompts** - Pre-configured actions that allow you to perform common actions, such as [creating new grids](#quick-start), or [migrating to later versions](#migrations--upgrades).
+- **Resources** - Documentation, examples, and API definitions/interfaces in condensed markdown.
+
+The core feature of the AG MCP Server is an LLM optimized search tool which will provide documentation, examples, API definitions and references. The content is provided in condensed markdown so as to minimise the amount of context used, and not overwhelm the LLM.
 
 ### Architecture Diagram
 
+The following diagram shows how the `ag-mcp` server works:
+
+1. Prompt submitted to LLM client, e.g. Claude, Cursor, CoPilot, ChatGPT, etc...
+2. LLM accesses `ag-mcp` server and requests additional context, via a tool call, pre-built prompt, or by requesting specific resources.
+3. `ag-mcp` uses an LLM optimised search tool to return version-specific information, such as docs, examples, and api refs in condensed markdown.
+4. LLM uses this additional context to provide more accurate responses.
+
 {% imageCaption imagePath="resources/ag-mcp-architecture.png" alt="AG MCP Architecture" constrained=true enableDarkModeFilter=true /%}
+
+{% note %}
+Prompts, resources and tools can also be references inside your prompt. Refer to your LLMs docs for more information on how to do this.
+{% /note %}
 
 ## Installation
 
 To install and use `ag-mcp` with your LLM client, provide the `npx ag-mcp` command in the normal process for adding an MCP Server.
 
-### Cursor
+{% tabs %}
+{% tabItem id="cursor" label="Cursor" %}
 
-To open Cursor and automatically add the `ag-mcp` server, click [Install in Cursor](https://cursor.com/en/install-mcp?name=ag-mcp&config=eyJjb21tYW5kIjoibnB4IGFnLW1jcCJ9)
+Click [Install in Cursor](https://cursor.com/en/install-mcp?name=ag-mcp&config=eyJjb21tYW5kIjoibnB4IGFnLW1jcCJ9) to open Cursor and automatically add the `ag-mcp` server
 
 To install manually, create a `mcp.json` file in the root of your project and add the following:
 
@@ -39,9 +55,12 @@ To install manually, create a `mcp.json` file in the root of your project and ad
 }
 ```
 
+{% note %}
 To learn more, see the [Cursor MCP documentation](https://cursor.com/docs/context/mcp)
+{% /note %}
 
-### VS Code (Copilot)
+{% /tabItem %}
+{% tabItem id="VS Code" label="VS Code (CoPilot)" %}
 
 To install manually, create a `.vscode/mcp.json` file in your workspace, and add the following:
 
@@ -57,9 +76,12 @@ To install manually, create a `.vscode/mcp.json` file in your workspace, and add
 }
 ```
 
+{% note %}
 To learn more, see the [VS Code MCP documentation](https://code.visualstudio.com/docs/copilot/customization/mcp-servers).
+{% /note %}
 
-### Claude Code
+{% /tabItem %}
+{% tabItem id="Claude" label="Claude" %}
 
 To add `ag-mcp` to Claude code, run the following command:
 
@@ -67,7 +89,12 @@ To add `ag-mcp` to Claude code, run the following command:
 claude mcp add ag-mcp npx ag-mcp
 ```
 
+{% note %}
 To learn more, see the [Claude MCP documentation](https://docs.claude.com/en/docs/claude-code/mcp)
+{% /note %}
+
+{% /tabItem %}
+{% /tabs %}
 
 ## Usage
 
