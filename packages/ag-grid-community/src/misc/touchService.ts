@@ -83,9 +83,8 @@ export class TouchService extends BeanStub implements NamedBean {
 
         if (params.enableMenu || menuSvc?.isHeaderContextMenuEnabled(params.column as AgColumn)) {
             const eventType: TouchListenerEvent = tapMenuButton ? 'tap' : 'longTap';
-            const showMenuFn = (event: TapEvent | LongTapEvent) => {
+            const showMenuFn = (event: TapEvent | LongTapEvent) =>
                 params.showColumnMenuAfterMouseClick(event.touchStart);
-            };
             comp.addManagedListeners(menuTouchListener, { [eventType]: showMenuFn });
             comp.addManagedListeners(touchListener, { longTap: showMenuFn });
         }
