@@ -1204,7 +1204,7 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     suppressGroupRowsSticky?: boolean | undefined,
-    /** Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+    /** Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
          * @agModule `RowGroupingModule`
          */
     groupHierarchyConfig?: { [k: string]: ColDef } | undefined,

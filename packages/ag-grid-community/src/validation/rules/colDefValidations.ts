@@ -23,6 +23,10 @@ const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> =
         version: '32.2',
         message: 'Use `rowSelection.hideDisabledCheckboxes = true` in `GridOptions` instead.',
     },
+    rowGroupingHierarchy: {
+        version: '34.3',
+        message: 'Use `colDef.groupHierarchy` instead.',
+    },
 });
 
 export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGroupDef> = {
@@ -88,7 +92,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     tooltipField: 'Tooltip',
     tooltipValueGetter: 'Tooltip',
     spanRows: 'CellSpan',
-    rowGroupingHierarchy: 'SharedRowGrouping',
+    groupHierarchy: 'SharedRowGrouping',
 };
 
 const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = () => {
@@ -252,7 +256,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 return null;
             },
         },
-        rowGroupingHierarchy: {
+        groupHierarchy: {
             validate(options, { groupHierarchyConfig = {} }, beans) {
                 const GROUP_HIERARCHY_PARTS = new Set([
                     'year',
@@ -267,7 +271,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
 
                 const unrecognisedParts: string[] = [];
 
-                options.rowGroupingHierarchy?.forEach((part) => {
+                options.groupHierarchy?.forEach((part) => {
                     if (typeof part === 'object') {
                         beans.validation?.validateColDef(part);
                         return null;
@@ -279,7 +283,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 });
 
                 if (unrecognisedParts.length > 0) {
-                    const warning = `The following parts of colDef.rowGroupingHierarchy are not recognised: ${unrecognisedParts.map((s) => `"${s}"`).join(', ')}.`;
+                    const warning = `The following parts of colDef.groupHierarchy are not recognised: ${unrecognisedParts.map((s) => `"${s}"`).join(', ')}.`;
                     const suggestions = `Choose one of ${[...GROUP_HIERARCHY_PARTS].map((s) => `"${s}"`).join(', ')}, or define your own parts in gridOptions.groupHierarchyConfig.`;
                     return `${warning}\n${suggestions}`;
                 }
@@ -439,6 +443,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     dateComponentParams: undefined,
     getFindText: undefined,
     rowGroupingHierarchy: undefined,
+    groupHierarchy: undefined,
 };
 const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 

@@ -20,7 +20,12 @@ import {
     _updateColsMap,
 } from 'ag-grid-community';
 
-import { getDatePartValueGetter, getHeaderValueGetter, numericalMonthToNamedMonth } from './groupHierarchyUtils';
+import {
+    _getGroupHierarchy,
+    getDatePartValueGetter,
+    getHeaderValueGetter,
+    numericalMonthToNamedMonth,
+} from './groupHierarchyUtils';
 
 export class GroupHierarchyColService extends BeanStub implements NamedBean, IGroupHierarchyColService {
     beanName = 'groupHierarchyColSvc' as const;
@@ -145,14 +150,16 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
     private isGroupHierarchyColsEnabledForCol(col: AgColumn): boolean {
         const def = col.getColDef();
-        return !!(def.rowGroupingHierarchy && (def.rowGroup || def.enableRowGroup));
+        const groupHierarchy = _getGroupHierarchy(def);
+        return !!(groupHierarchy && (def.rowGroup || def.enableRowGroup));
     }
 
     private createGroupHierarchyColDefs(sourceCol: AgColumn): ColDef[] {
         const colDefs: ColDef[] = [];
         const sourceColDef = sourceCol.getColDef();
+        const groupHierarchy = _getGroupHierarchy(sourceColDef);
 
-        if (!sourceColDef.rowGroupingHierarchy) {
+        if (!groupHierarchy) {
             return colDefs;
         }
 
@@ -160,7 +167,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
             return colDefs;
         }
 
-        for (const part of sourceColDef.rowGroupingHierarchy) {
+        for (const part of groupHierarchy) {
             let colDef: ColDef | null = null;
             if (typeof part === 'string') {
                 colDef = this.createColDefForPart(part, sourceCol, sourceColDef);

@@ -34,7 +34,7 @@ const gridOptions: GridOptions<IOlympicData> = {
             rowGroup: true,
             enableRowGroup: true,
             enablePivot: true,
-            rowGroupingHierarchy: ['year', 'week'],
+            groupHierarchy: ['year', 'week'],
         },
         { field: 'country' },
         { field: 'sport' },
