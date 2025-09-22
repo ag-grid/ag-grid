@@ -16,6 +16,7 @@ import {
     _areColIdsEqual,
     _columnsMatch,
     _destroyColumnTree,
+    _removeFromArray,
     _updateColsMap,
 } from 'ag-grid-community';
 
@@ -112,12 +113,23 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     }
 
     public insertVirtualColumnsForCol(columns: AgColumn<any>[], col: AgColumn<any>): void {
-        const hierarchyCols = this.getVirtualColumnsForColumn(col) ?? [];
-        for (const col of hierarchyCols) {
-            if (!columns.includes(col)) {
-                columns.push(col);
-            }
+        const hierarchyCols = this.getVirtualColumnsForColumn(col);
+        if (!hierarchyCols) {
+            return;
         }
+
+        // Index at which to insert the virtual columns
+        let idxCol = columns.indexOf(col);
+        if (idxCol < 0) {
+            idxCol = columns.length - 1;
+        }
+
+        // For simplicity, reset the `columns` array by removing all associated
+        // virtual columns first
+        hierarchyCols.forEach((hCol) => _removeFromArray(columns, hCol));
+
+        // Insert the virtual columns in the given order
+        columns.splice(idxCol, 0, ...hierarchyCols);
     }
 
     private getVirtualColumnsForColumn(col: AgColumn): AgColumn[] {
