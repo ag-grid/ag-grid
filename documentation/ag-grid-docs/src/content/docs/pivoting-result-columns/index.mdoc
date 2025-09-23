@@ -49,6 +49,35 @@ Pivot result columns inherit the properties of the value column from which they 
 default to a [Number Filter](./filter-number/) in the case of a pivot result column. The [Set Filter](./filter-set/) cannot be used for filtering pivot result columns.
 {% /note %}
 
+## Pivoting by Dates and Times
+
+When pivoting by date/time values, the grid can optionally generate pivot group columns based on components of the date/time.
+
+To enable this for a particular column, use the `groupHierarchy` property of the [Column Definition](./column-properties/#reference-grouping-groupHierarchy).
+
+{% apiDocumentation source="column-properties/properties.json" section="grouping" names=["groupHierarchy"] /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'date',
+            rowGroup: true,
+            groupHierarchy: ['year', 'month']
+        },
+        // ...other column definitions
+    ],
+};
+```
+
+This snippet is illustrated in the example below.
+
+{% gridExampleRunner title="Grouping by Dates and Times" name="pivoting-date-time" /%}
+
+{% note %}
+Date values must be formatted as ISO-8601 dates in order to be correctly parsed into their components.
+{% /note %}
+
 ## Best Practices
 
 ### Limiting Column Generation
