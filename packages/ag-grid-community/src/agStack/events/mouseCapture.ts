@@ -1,7 +1,7 @@
 export interface MouseCapture {
     eElement: HTMLElement | null;
     pointerId: number;
-    onPointerLost: ((event: PointerEvent) => void) | null;
+    onLost: ((event: PointerEvent) => void) | null;
 }
 
 const tryPointerCapture = (eElement: HTMLElement | null | undefined, pointerId: number | null | undefined): boolean => {
@@ -26,14 +26,15 @@ export const captureMouse = (eElement: HTMLElement, mouseEvent: MouseEvent): Mou
         return null;
     }
 
-    const onPointerLost = (pointerEvent: PointerEvent) => pointerLostHandler(capture, pointerEvent);
-    const capture: MouseCapture = {
+    const capture = {
         eElement: eElement,
         pointerId,
-        onPointerLost,
-    };
+        onLost(pointerEvent: PointerEvent) {
+            pointerLostHandler(capture, pointerEvent);
+        },
+    } satisfies MouseCapture;
 
-    eElement.addEventListener('lostpointercapture', onPointerLost, { once: true });
+    eElement.addEventListener('lostpointercapture', capture.onLost);
     return capture;
 };
 
@@ -58,16 +59,16 @@ export const releaseMouseCapture = (capture: MouseCapture | null): null => {
 };
 
 const removeLostHandler = (capture: MouseCapture) => {
-    const { eElement, onPointerLost: onLost } = capture;
+    const { eElement, onLost } = capture;
     if (eElement && onLost) {
         eElement.removeEventListener('lostpointercapture', onLost);
-        capture.onPointerLost = null;
+        capture.onLost = null;
     }
 };
 
 /** When using touch, we might receive a lostpointercapture, try to recapture the pointer once */
 const pointerLostHandler = (capture: MouseCapture, pointerEvent: PointerEvent) => {
-    removeLostHandler(capture);
+    removeLostHandler(capture); // Only once
     const { eElement, pointerId } = capture;
     if (eElement && pointerEvent.pointerId === pointerId) {
         tryPointerCapture(eElement, pointerId);
