@@ -86,8 +86,8 @@ export class ClientSideExpansionService
                     return;
                 }
 
-                const isRowGroup = rowNode.group;
-                if (isRowGroup) {
+                const isRowGroupOrMaster = rowNode.group || rowNode.master;
+                if (isRowGroupOrMaster) {
                     actionRow();
                 }
             });
