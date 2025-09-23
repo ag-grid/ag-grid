@@ -342,7 +342,11 @@ export function extractInterfaces(
 
     if (allDefs.length > 1000) {
         // eslint-disable-next-line no-console
-        console.warn('AG Charts - Possible recursion error on type: ', definitionOrArray, allDefs);
+        console.warn(
+            'AG Charts - Possible recursion error on type: ',
+            definitionOrArray,
+            allDefs.map((x) => (typeof x === 'object' ? (x as any).name ?? x : x))
+        );
         return allDefs;
     }
 
