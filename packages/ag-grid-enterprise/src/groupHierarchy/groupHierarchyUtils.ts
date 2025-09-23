@@ -1,13 +1,18 @@
 import type { AgColumn, BeanCollection, HeaderValueGetterParams, IRowNode, ValueGetterParams } from 'ag-grid-community';
 import { _MONTHS, _getDateParts, _parseDateTimeFromString } from 'ag-grid-community';
 
-const getDate = ({ valueSvc }: BeanCollection, sourceCol: AgColumn, node: IRowNode | null): Date | null => {
+const getDate = (
+    { valueSvc, dataTypeSvc }: BeanCollection,
+    sourceCol: AgColumn,
+    node: IRowNode | null
+): Date | null => {
     const innerValue = valueSvc.getValue(sourceCol, node);
     let date: Date | null = null;
     if (innerValue instanceof Date) {
         date = innerValue;
     } else if (typeof innerValue === 'string') {
-        date = _parseDateTimeFromString(innerValue);
+        const parseDate = dataTypeSvc?.getDateParserFunction(sourceCol) ?? _parseDateTimeFromString;
+        date = parseDate(innerValue) ?? null;
     }
 
     return date;
