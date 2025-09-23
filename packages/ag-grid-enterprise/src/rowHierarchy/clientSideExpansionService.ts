@@ -9,6 +9,7 @@ import type {
 } from 'ag-grid-community';
 import { _exists } from 'ag-grid-community';
 
+import { forEachDetailGridInfo, getDetailGridInfo } from '../masterDetail/masterDetailApi';
 import { BaseExpansionService } from './baseExpansionService';
 
 export class ClientSideExpansionService
@@ -59,6 +60,7 @@ export class ClientSideExpansionService
         const rowModel = this.rowModel;
         const usingTreeData = gos.get('treeData');
         const usingPivotMode = colModel.isPivotActive();
+        const masterDetailsToExpandOrCollapse = [] as RowNode[];
 
         const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
             if (!rowNodes) {
@@ -86,9 +88,15 @@ export class ClientSideExpansionService
                     return;
                 }
 
-                const isRowGroupOrMaster = rowNode.group || rowNode.master;
-                if (isRowGroupOrMaster) {
+                const isRowGroup = rowNode.group;
+                if (isRowGroup) {
                     actionRow();
+                }
+
+                const isMasterRow = rowNode.master;
+                if (isMasterRow) {
+                    actionRow();
+                    masterDetailsToExpandOrCollapse.push(rowNode);
                 }
             });
         };
@@ -99,6 +107,17 @@ export class ClientSideExpansionService
         }
 
         this.onGroupExpandedOrCollapsed();
+
+        masterDetailsToExpandOrCollapse.forEach((masterRowNode) => {
+            if (masterRowNode.detailNode?.id) {
+                const detailGridInfo = getDetailGridInfo(this.beans, masterRowNode.detailNode.id)?.api;
+                if (expand) {
+                    detailGridInfo?.expandAll();
+                } else {
+                    detailGridInfo?.collapseAll();
+                }
+            }
+        });
 
         eventSvc.dispatchEvent({
             type: 'expandOrCollapseAll',
