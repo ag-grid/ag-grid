@@ -145,6 +145,8 @@ Similar to [Applying Provided Filters](./filter-applying/), the Multi Filter can
 
 To configure buttons for the Multi Filter, first enable the grid option `enableFilterHandlers`. Note that if you have custom filter components, these will need to have been written to [Support Filter Handlers](./component-filter/#implementing-a-filter-component).
 
+Note that when `enableFilterHandlers = true`, buttons can only be set against the parent Multi Filter parameters; they cannot be set against the individual child filters.
+
 The following options can be specified on the `filterParams`:
 
 {% interfaceDocumentation interfaceName="FilterWrapperParams" names=["buttons", "closeOnApply"] config={ "description": "" } /%}

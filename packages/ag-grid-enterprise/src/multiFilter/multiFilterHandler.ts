@@ -103,6 +103,10 @@ export class MultiFilterHandler
                 this.doesFilterPass({ node, data: node.data, model: this.params.model, handlerParams }, index),
             getValue: updateGetValue(this.beans, params.column as AgColumn, this.filterDefs[index], getValue),
         };
+        if (handlerParams.filterParams.buttons) {
+            _warn(292, { colId: params.column.getColId() });
+            delete handlerParams.filterParams.buttons;
+        }
         return handlerParams;
     }
 
