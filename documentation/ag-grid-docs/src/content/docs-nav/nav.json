@@ -216,11 +216,6 @@
                         },
                         {
                             "type": "item",
-                            "title": "Master Detail",
-                            "path": "theming-master-detail"
-                        },
-                        {
-                            "type": "item",
                             "title": "Tool Panels",
                             "path": "theming-tool-panels"
                         },
@@ -632,6 +627,21 @@
                             "title": "Row Dragging",
                             "path": "row-dragging",
                             "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Managed Row Dragging",
+                                    "path": "row-dragging-managed"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Unmanaged Row Dragging",
+                                    "path": "row-dragging-unmanaged"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Row Dragging Customisation",
+                                    "path": "row-dragging-customisation"
+                                },
                                 {
                                     "type": "item",
                                     "title": "External DropZone",

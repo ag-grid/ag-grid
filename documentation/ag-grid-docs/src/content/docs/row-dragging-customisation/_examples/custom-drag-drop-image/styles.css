@@ -1,0 +1,9 @@
+.my-custom-drag-and-drop-cover {
+    padding: 2rem;
+    color: white;
+    cursor: move;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+}
