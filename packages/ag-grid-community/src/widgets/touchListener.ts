@@ -44,18 +44,18 @@ const addHandledTouchEvent = (event: Event): boolean => {
 
 export type TouchListenerEvent = 'tap' | 'doubleTap' | 'longTap';
 export class TouchListener implements IEventEmitter<TouchListenerEvent> {
-    private touchStartListener: ((e: TouchEvent) => void) | null = null;
-    private readonly tempHandlers: TempEventHandler[] = [];
+    private startListener: ((e: TouchEvent) => void) | null = null;
+    private readonly handlers: TempEventHandler[] = [];
     private eventSvc: LocalEventService<TouchListenerEvent> | null | undefined = undefined;
 
     private touchStart: Touch | null = null;
-    private moved: boolean;
-    private lastTapTime: number = 0;
+    private lastTapTime: number | null = null;
     private longPressTimer: number = 0;
+    private moved: boolean = false;
 
     constructor(
         private eElement: Element,
-        private readonly preventMouseClick = false
+        private readonly preventClick = false
     ) {}
 
     public addEventListener<T extends TouchListenerEvent>(eventType: T, listener: IEventListener<T>): void {
@@ -66,7 +66,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             }
             this.eventSvc = eventSvc = new LocalEventService<TouchListenerEvent>();
             const startListener = this.onTouchStart.bind(this);
-            this.touchStartListener = startListener;
+            this.startListener = startListener;
             this.eElement.addEventListener('touchstart', startListener, { passive: true });
         }
         eventSvc.addEventListener(eventType, listener);
@@ -84,8 +84,8 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         const touchStart = touchEvent.touches[0];
         this.touchStart = touchStart;
 
-        const tempHandlers = this.tempHandlers;
-        if (!tempHandlers.length) {
+        const handlers = this.handlers;
+        if (!handlers.length) {
             const eElement = this.eElement;
             const doc = eElement.ownerDocument;
             const touchMove = this.onTouchMove.bind(this);
@@ -93,7 +93,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             const passiveTrue = { passive: true };
             const passiveFalse = { passive: false };
             addTempEventHandlers(
-                tempHandlers,
+                handlers,
                 [eElement, 'touchmove', touchMove, passiveTrue],
                 [doc, 'touchcancel', touchEnd, passiveTrue],
                 // we set passive=false, as we want to prevent default on this event
@@ -113,12 +113,13 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
     }
 
     private onTouchMove(touchEvent: TouchEvent): void {
-        const { touchStart, moved } = this;
+        const { moved, touchStart } = this;
         if (!moved && touchStart) {
             const touch = _getFirstActiveTouch(touchStart, touchEvent.touches);
             const eventIsFarAway = touch && !_areEventsNear(touch, touchStart, 4);
             if (eventIsFarAway) {
-                this.clearLongPress(true);
+                this.clearLongPress();
+                this.moved = true;
             }
         }
     }
@@ -132,10 +133,10 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         if (touchEvent.type !== 'touchcancel') {
             if (!this.moved) {
                 this.eventSvc?.dispatchEvent<TapEvent>({ type: 'tap', touchStart });
-                this.checkForDoubleTap(touchStart);
+                this.checkDoubleTap(touchStart);
             }
 
-            if (this.preventMouseClick) {
+            if (this.preventClick) {
                 preventEventDefault(touchEvent); // stops the tap from also been processed as a mouse click
             }
         }
@@ -143,41 +144,40 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
         this.cancel();
     }
 
-    private checkForDoubleTap(touchStart: Touch): void {
+    private checkDoubleTap(touchStart: Touch): void {
+        let now: number | null = Date.now();
         const lastTapTime = this.lastTapTime;
-        const now = Date.now();
-        if (lastTapTime > 0) {
-            const interval = now - lastTapTime; // if previous tap, see if duration is short enough to be considered double tap
+        if (lastTapTime) {
+            // if previous tap, see if duration is short enough to be considered double tap
+            const interval = now - lastTapTime;
             if (interval > DOUBLE_TAP_MILLISECONDS) {
                 this.eventSvc?.dispatchEvent<DoubleTapEvent>({ type: 'doubleTap', touchStart });
-                this.lastTapTime = 0; // this stops a triple tap ending up as two double taps
-                return;
+                now = null; // this stops a triple tap ending up as two double taps
             }
         }
-
         this.lastTapTime = now;
     }
 
     private cancel(): void {
         this.clearLongPress();
-        clearTempEventHandlers(this.tempHandlers);
+        clearTempEventHandlers(this.handlers);
         this.touchStart = null;
     }
 
-    private clearLongPress(moved = false): void {
+    private clearLongPress(): void {
         window.clearTimeout(this.longPressTimer);
         this.longPressTimer = 0;
-        this.moved = moved;
+        this.moved = false;
     }
 
     public destroy(): void {
-        this.eventSvc = null;
-        const touchStartListener = this.touchStartListener;
-        if (touchStartListener) {
-            this.touchStartListener = null;
-            this.eElement.removeEventListener('touchstart', touchStartListener);
+        const startListener = this.startListener;
+        if (startListener) {
+            this.startListener = null;
+            this.eElement.removeEventListener('touchstart', startListener);
         }
         this.cancel();
         this.eElement = null!;
+        this.eventSvc = null;
     }
 }
