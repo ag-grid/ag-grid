@@ -51,7 +51,7 @@ export class MultiFilterHandler
             }
             const { handler, handlerParams } = wrapper;
             handler.init?.({
-                ...this.updateHandlerParams(handlerParams!, index),
+                ...this.updateHandlerParams(handlerParams!, index, true),
                 model: getFilterModelForIndex(params.model, index),
                 source: 'init',
             });
@@ -66,14 +66,14 @@ export class MultiFilterHandler
 
         this.handlerWrappers.forEach((wrapper, index) => {
             if (wrapper) {
-                const handlerParams = this.updateHandlerParams(params, index);
+                const handlerParams = this.updateHandlerParams(params, index, false);
                 const originalFilterParams = handlerParams.filterParams;
                 const providedFilterParams = filters?.[index].filterParams;
                 const filterParamsForFilter = providedFilterParams
                     ? { ...originalFilterParams, ...providedFilterParams }
                     : originalFilterParams;
                 const updatedParams = {
-                    ...this.updateHandlerParams(params, index),
+                    ...handlerParams,
                     filterParams: filterParamsForFilter,
                 };
                 wrapper.handlerParams = updatedParams;
@@ -89,7 +89,11 @@ export class MultiFilterHandler
         }
     }
 
-    private updateHandlerParams(params: FilterHandlerBaseParams, index: number): FilterHandlerBaseParams {
+    private updateHandlerParams(
+        params: FilterHandlerBaseParams,
+        index: number,
+        isInit: boolean
+    ): FilterHandlerBaseParams {
         const { onModelChange, doesRowPassOtherFilter, getValue } = params;
         const handlerParams: FilterHandlerBaseParams = {
             ...params!,
@@ -104,7 +108,9 @@ export class MultiFilterHandler
             getValue: updateGetValue(this.beans, params.column as AgColumn, this.filterDefs[index], getValue),
         };
         if (handlerParams.filterParams.buttons) {
-            _warn(292, { colId: params.column.getColId() });
+            if (isInit) {
+                _warn(292, { colId: params.column.getColId() });
+            }
             delete handlerParams.filterParams.buttons;
         }
         return handlerParams;
