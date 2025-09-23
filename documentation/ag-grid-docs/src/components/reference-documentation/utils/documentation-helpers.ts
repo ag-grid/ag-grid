@@ -435,7 +435,9 @@ export function extractInterfaces(
                             })
                             .map(([k, i]) => {
                                 // Extract all the words from the type to handle unions and functions and params cleanly.
-                                const words = [...k.matchAll(typeRegex), ...i.matchAll(typeRegex)].map((ws) => ws[0]);
+                                const words = getAllPotentialTypesFromString(k).concat(
+                                    getAllPotentialTypesFromString(i as string)
+                                );
                                 return words.filter((w) => !getTypeLink(w) && interfaceLookup[w]);
                             })
                             .forEach((s) => {
