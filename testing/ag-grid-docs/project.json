@@ -16,7 +16,9 @@
     "download": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./e2e/config/all-examples.json"],
+        "commands": [
+          "curl https://ag-grid.com/archive/34.2.0/debug/all-examples.json > ./e2e/config/all-examples.json"
+        ],
         "parallel": true,
         "cwd": "testing/ag-grid-docs"
       }

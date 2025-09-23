@@ -61,13 +61,12 @@ test.agExample(import.meta, () => {
                         valueChanged: false,
                     },
                 ],
-                // 33.3.0 only, not applicable in 34.x.0
-                // [
-                //     'cellEditingStarted',
-                //     {
-                //         value: 1,
-                //     },
-                // ],
+                [
+                    'cellEditingStarted',
+                    {
+                        value: 1,
+                    },
+                ],
             ],
         },
     ].forEach(({ editFinishKey, expected }) => {
@@ -247,7 +246,7 @@ test.agExample(import.meta, () => {
 
                 const eventLog = await remoteGrid.waitForEventlog(250);
 
-                expect(eventLog).toMatchObject(eventLog);
+                expect(eventLog).toMatchObject(expected);
             }
         );
     });

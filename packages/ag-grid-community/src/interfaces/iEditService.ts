@@ -37,6 +37,8 @@ export type StopEditParams = {
     event?: EditInputEvents;
     cancel?: boolean;
     source?: EditSource;
+    forceStop?: boolean;
+    forceCancel?: boolean;
     suppressNavigateAfterEdit?: boolean;
 };
 
