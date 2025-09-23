@@ -90,12 +90,13 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             const doc = eElement.ownerDocument;
             const touchMove = this.onTouchMove.bind(this);
             const touchEnd = this.onTouchEnd.bind(this);
+            const touchCancel = this.onTouchCancel.bind(this);
             const passiveTrue = { passive: true };
             const passiveFalse = { passive: false };
             addTempEventHandlers(
                 handlers,
                 [eElement, 'touchmove', touchMove, passiveTrue],
-                [doc, 'touchcancel', touchEnd, passiveTrue],
+                [doc, 'touchcancel', touchCancel, passiveTrue],
                 // we set passive=false, as we want to prevent default on this event
                 [doc, 'touchend', touchEnd, passiveFalse],
                 [doc, 'contextmenu', preventEventDefault, passiveFalse]
@@ -127,20 +128,28 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
     private onTouchEnd(touchEvent: TouchEvent): void {
         const touchStart = this.touchStart;
         if (!touchStart || !_getFirstActiveTouch(touchStart, touchEvent.changedTouches)) {
-            return;
+            return; // touchEnd not for us
         }
 
-        if (touchEvent.type !== 'touchcancel') {
-            if (!this.moved) {
-                this.eventSvc?.dispatchEvent<TapEvent>({ type: 'tap', touchStart });
-                this.checkDoubleTap(touchStart);
-            }
-
-            if (this.preventClick) {
-                preventEventDefault(touchEvent); // stops the tap from also been processed as a mouse click
-            }
+        if (!this.moved) {
+            this.eventSvc?.dispatchEvent<TapEvent>({ type: 'tap', touchStart });
+            this.checkDoubleTap(touchStart);
         }
 
+        if (this.preventClick) {
+            preventEventDefault(touchEvent); // stops the tap from also been processed as a mouse click
+        }
+
+        this.cancel();
+    }
+
+    private onTouchCancel(touchEvent: TouchEvent): void {
+        const touchStart = this.touchStart;
+        if (!touchStart || !_getFirstActiveTouch(touchStart, touchEvent.changedTouches)) {
+            return; // touchCancel not for us
+        }
+
+        this.lastTapTime = null; // clear double tap
         this.cancel();
     }
 
