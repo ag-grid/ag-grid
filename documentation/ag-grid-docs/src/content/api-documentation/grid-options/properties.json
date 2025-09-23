@@ -1259,7 +1259,7 @@
         "dragAndDropImageComponent": {
             "more": {
                 "name": "Custom Drag and Drop Image",
-                "url": "./row-dragging/#custom-drag-and-drop-image"
+                "url": "./row-dragging-customisation/#custom-drag-and-drop-image"
             }
         },
         "dragAndDropImageComponentParams": {
