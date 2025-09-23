@@ -89,15 +89,13 @@ export function getLinkedType(type: string | string[], framework: Framework) {
     }
 
     // Extract all the words to enable support for Union types
-    const typeRegex = /\w+/g;
     const formattedTypes = type
         .filter((t) => typeof t === 'string')
         .map((t) => {
-            const definitionTypes = [...t.matchAll(typeRegex)];
+            const definitionTypes = getAllPotentialTypesFromString(t);
 
             const typesToLink = definitionTypes
-                .map((regMatch) => {
-                    const typeName = regMatch[0];
+                .map((typeName) => {
                     const url = getTypeUrl(typeName, framework);
 
                     return url
@@ -334,9 +332,6 @@ export function writeAllInterfaces(interfacesToWrite: any[], framework: Framewor
     return allLines;
 }
 
-let currentRecurseStack: string[] = [];
-Error.stackTraceLimit = 100;
-
 export function extractInterfaces(
     definitionOrArray: string[],
     interfaceLookup: Record<string, InterfaceEntry>,
@@ -345,154 +340,129 @@ export function extractInterfaces(
 ) {
     if (!definitionOrArray) return [];
 
-    const defxname =
-        typeof definitionOrArray === 'string'
-            ? definitionOrArray
-            : Array.isArray(definitionOrArray)
-              ? definitionOrArray.join('|')
-              : (definitionOrArray as any).name;
-    if (defxname) {
-        currentRecurseStack.push(defxname);
-    }
-
-    if (defxname === 'IPinnedRowModel') {
-        console.log('extractInterfaces xxx', defxname, currentRecurseStack, new Error());
-    }
-
-    try {
-        if (allDefs.length > 1000) {
-            // eslint-disable-next-line no-console
-            // console.warn('AG Charts - Possible recursion error on type: ', definitionOrArray, allDefs);
-            // console.warn('AG Charts - Possible recursion error on type: ', currentRecurseStack);
-            return allDefs;
-        }
-
-        const alreadyIncluded = {};
-        allDefs.forEach((v) => {
-            alreadyIncluded[v.name] = true;
-        });
-
-        const addDef = (def) => {
-            if (!alreadyIncluded[def.name]) {
-                allDefs.push(def);
-                alreadyIncluded[def.name] = true;
-
-                return true;
-            }
-
-            return false;
-        };
-        const recurse = (defs, overrideFn) => {
-            if (Array.isArray(defs)) {
-                defs.forEach((def) => recurse(def, overrideFn));
-                return;
-            }
-
-            if (typeof defs !== 'string') {
-                return;
-            }
-
-            if (alreadyIncluded[defs]) {
-                return;
-            }
-
-            currentRecurseStack.push(defs);
-            extractInterfaces(defs, interfaceLookup, overrideFn, allDefs).forEach(addDef);
-            currentRecurseStack.pop();
-        };
-
-        if (Array.isArray(definitionOrArray)) {
-            definitionOrArray.forEach((def) => {
-                recurse(def, overrideIncludeInterfaceFunc);
-            });
-            return allDefs;
-        }
-        const definition = definitionOrArray;
-
-        if (typeof definition == 'string') {
-            const typeRegex = /\w+/g;
-            getAllPotentialTypesFromString(definition).forEach((type) => {
-                // If we have the actual interface use that definition
-                const interfaceType = interfaceLookup[type];
-                if (!interfaceType) {
-                    return undefined;
-                }
-
-                const isLinkedType = !!getTypeLink(type);
-                const numMembers =
-                    typeof interfaceType.type == 'string'
-                        ? interfaceType.type.split('|').length
-                        : Object.entries(interfaceType.type || {}).length;
-
-                const overrideInclusion = overrideIncludeInterfaceFunc ? overrideIncludeInterfaceFunc(type) : undefined;
-                if (overrideInclusion === false) {
-                    // Override function is false so do not include this interface
-                    return undefined;
-                }
-
-                // Show interface if we have found one.
-                // Do not show an interface if it has lots of properties and is a linked type.
-                // Always show event interfaces
-                if (
-                    (!isLinkedType || (isLinkedType && numMembers < 12) || overrideInclusion === true) &&
-                    !alreadyIncluded[type]
-                ) {
-                    if (!addDef({ name: type, interfaceType })) {
-                        // Previously added - no need to continue.
-                        return;
-                    }
-
-                    // Now if this is a top level interface see if we should include any interfaces for its properties
-                    if (interfaceType.type) {
-                        const interfacesToInclude = {};
-
-                        if (typeof interfaceType.type === 'string') {
-                            interfacesToInclude[interfaceType.type] = true;
-                        } else {
-                            const propertyTypes = Object.entries(interfaceType.type);
-                            propertyTypes
-                                .filter(([, v]) => !!v && typeof v == 'string')
-                                .filter(([k]) => {
-                                    const docs = interfaceType.docs && interfaceType.docs[k];
-                                    return !docs || !docs.includes('@deprecated');
-                                })
-                                .map(([k, i]) => {
-                                    // Extract all the words from the type to handle unions and functions and params cleanly.
-                                    const words = [...k.matchAll(typeRegex), ...i.matchAll(typeRegex)].map(
-                                        (ws) => ws[0]
-                                    );
-                                    return words.filter((w) => !getTypeLink(w) && interfaceLookup[w]);
-                                })
-                                .forEach((s) => {
-                                    s.forEach((v) => {
-                                        interfacesToInclude[v] = true;
-                                    });
-                                });
-                        }
-
-                        const toAdd = Object.keys(interfacesToInclude);
-                        if (toAdd.length > 0) {
-                            toAdd.forEach((v) => recurse(v, overrideIncludeInterfaceFunc));
-                        }
-                    }
-                }
-
-                // If a call signature we unwrap the interface and recurse on the call signature arguments instead.
-                if (interfaceType.meta.isCallSignature) {
-                    const args = interfaceType.type && interfaceType.type.arguments;
-                    Object.values(args ?? {}).forEach((v) => recurse(v, overrideIncludeInterfaceFunc));
-                }
-            });
-            return allDefs;
-        }
-
-        Object.values(definition).forEach((v) => recurse(v, overrideIncludeInterfaceFunc));
+    if (allDefs.length > 1000) {
+        // eslint-disable-next-line no-console
+        console.warn('AG Charts - Possible recursion error on type: ', definitionOrArray, allDefs);
         return allDefs;
-    } finally {
-        if (defxname) {
-            currentRecurseStack.pop();
-        }
     }
+
+    const alreadyIncluded: Record<string, boolean> = {};
+    allDefs.forEach((v) => {
+        alreadyIncluded[v.name] = true;
+    });
+
+    const addDef = (def) => {
+        if (!alreadyIncluded[def.name]) {
+            allDefs.push(def);
+            alreadyIncluded[def.name] = true;
+
+            return true;
+        }
+
+        return false;
+    };
+    const recurse = (defs, overrideFn) => {
+        if (Array.isArray(defs)) {
+            defs.forEach((def) => recurse(def, overrideFn));
+            return;
+        }
+
+        if (typeof defs !== 'string') {
+            return;
+        }
+
+        if (alreadyIncluded[defs]) {
+            return;
+        }
+
+        extractInterfaces(defs, interfaceLookup, overrideFn, allDefs).forEach(addDef);
+    };
+
+    if (Array.isArray(definitionOrArray)) {
+        definitionOrArray.forEach((def) => {
+            recurse(def, overrideIncludeInterfaceFunc);
+        });
+        return allDefs;
+    }
+    const definition = definitionOrArray;
+
+    if (typeof definition == 'string') {
+        const definitionTypes = getAllPotentialTypesFromString(definition);
+        definitionTypes.forEach((type) => {
+            // If we have the actual interface use that definition
+            const interfaceType = interfaceLookup[type];
+            if (!interfaceType) {
+                return undefined;
+            }
+
+            const isLinkedType = !!getTypeLink(type);
+            const numMembers =
+                typeof interfaceType.type == 'string'
+                    ? interfaceType.type.split('|').length
+                    : Object.entries(interfaceType.type || {}).length;
+
+            const overrideInclusion = overrideIncludeInterfaceFunc ? overrideIncludeInterfaceFunc(type) : undefined;
+            if (overrideInclusion === false) {
+                // Override function is false so do not include this interface
+                return undefined;
+            }
+
+            // Show interface if we have found one.
+            // Do not show an interface if it has lots of properties and is a linked type.
+            // Always show event interfaces
+            if (
+                (!isLinkedType || (isLinkedType && numMembers < 12) || overrideInclusion === true) &&
+                !alreadyIncluded[type]
+            ) {
+                if (!addDef({ name: type, interfaceType })) {
+                    // Previously added - no need to continue.
+                    return;
+                }
+
+                // Now if this is a top level interface see if we should include any interfaces for its properties
+                if (interfaceType.type) {
+                    const interfacesToInclude: Record<string, boolean> = {};
+
+                    if (typeof interfaceType.type === 'string') {
+                        interfacesToInclude[interfaceType.type] = true;
+                    } else {
+                        const propertyTypes = Object.entries(interfaceType.type);
+                        propertyTypes
+                            .filter(([, v]) => !!v && typeof v == 'string')
+                            .filter(([k]) => {
+                                const docs = interfaceType.docs && interfaceType.docs[k];
+                                return !docs || !docs.includes('@deprecated');
+                            })
+                            .map(([k, i]) => {
+                                // Extract all the words from the type to handle unions and functions and params cleanly.
+                                const words = [...k.matchAll(typeRegex), ...i.matchAll(typeRegex)].map((ws) => ws[0]);
+                                return words.filter((w) => !getTypeLink(w) && interfaceLookup[w]);
+                            })
+                            .forEach((s) => {
+                                s.forEach((v) => {
+                                    interfacesToInclude[v] = true;
+                                });
+                            });
+                    }
+
+                    const toAdd = Object.keys(interfacesToInclude);
+                    if (toAdd.length > 0) {
+                        toAdd.forEach((v) => recurse(v, overrideIncludeInterfaceFunc));
+                    }
+                }
+            }
+
+            // If a call signature we unwrap the interface and recurse on the call signature arguments instead.
+            if (interfaceType.meta.isCallSignature) {
+                const args = interfaceType.type && interfaceType.type.arguments;
+                Object.values(args ?? {}).forEach((v) => recurse(v, overrideIncludeInterfaceFunc));
+            }
+        });
+        return allDefs;
+    }
+
+    Object.values(definition).forEach((v) => recurse(v, overrideIncludeInterfaceFunc));
+    return allDefs;
 }
 
 export function getLongestNameLength(nameWithBreaks: string) {

@@ -12,8 +12,8 @@
  *   Input:  "Xxx<'Context', TData> | Baz[]"
  *   Output: Set { "Xxx", "TData", "Baz" }
  */
-export function getAllPotentialTypesFromString(type: string): Set<string> {
-    const out = new Set<string>();
+export function getAllPotentialTypesFromString(type: string): string[] {
+    const set = new Set<string>();
     let inString: '"' | "'" | '`' | null = null;
     let escaping = false;
     let token = '';
@@ -37,7 +37,7 @@ export function getAllPotentialTypesFromString(type: string): Set<string> {
         }
 
         if (ch === '"' || ch === "'" || ch === '`') {
-            addType(out, token);
+            addType(set, token);
             inString = ch;
             continue;
         }
@@ -45,11 +45,11 @@ export function getAllPotentialTypesFromString(type: string): Set<string> {
         if (charIsWord(ch)) {
             token += ch;
         } else {
-            addType(out, token);
+            addType(set, token);
         }
     }
-    addType(out, token);
-    return out;
+    addType(set, token);
+    return Array.from(set);
 }
 
 const charIsWord = (ch: string) =>
@@ -101,9 +101,9 @@ const commonTsTypes = new Set<string>([
     'void',
 ]);
 
-function addType(out: Set<string>, token: string) {
+function addType(set: Set<string>, token: string) {
     if (token.length && !charIsNumber(token[0]) && !commonTsTypes.has(token)) {
-        out.add(token);
+        set.add(token);
         token = '';
     }
 }
