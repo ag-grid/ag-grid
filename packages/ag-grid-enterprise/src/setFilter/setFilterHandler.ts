@@ -314,13 +314,15 @@ export class SetFilterHandler<TValue = string>
                 }
             }
             const numNewValues = newValues.length;
-            if (numNewValues === 0 && params.filterParams.excelMode) {
+            const filterParams = params.filterParams;
+            if (numNewValues === 0 && filterParams.excelMode) {
                 params.onModelChange(null, additionalEventAttributes);
                 return;
             }
             const clearOnAllSelected =
-                this.valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ||
-                !params.filterParams.suppressClearModelOnRefreshValues;
+                !filterParams.defaultToNothingSelected &&
+                (this.valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ||
+                    !filterParams.suppressClearModelOnRefreshValues);
             const allSelected = clearOnAllSelected && numNewValues === existingFormattedKeys.size;
 
             if (updated || !model.filterType || allSelected) {
