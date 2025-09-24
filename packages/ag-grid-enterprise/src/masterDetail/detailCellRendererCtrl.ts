@@ -170,7 +170,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
                 const state = masterGridApi.getState();
                 const expandState = state?.ssrmRowGroupExpansion as RowGroupBulkExpansionState;
                 if (expandState?.expandAll) {
-                    masterGridApi.expandAll();
+                    api.expandAll();
                 }
             }
         });
