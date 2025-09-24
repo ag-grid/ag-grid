@@ -551,14 +551,20 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public getFirstLeafChild(node: RowNode<any>): RowNode<any> | undefined {
-        for (const result of this.iterateAllLeafChildren(node)) {
-            return result;
+        // Iterate only loaded nodes using store generator; do not trigger loads; no extra arrays.
+        const childStore = node.childStore as Partial<LazyStore> | undefined;
+        if (childStore?.iterateNodesDeep) {
+            for (const n of childStore.iterateNodesDeep()) {
+                if (n.data) {
+                    return n;
+                }
+            }
         }
     }
 
     public *iterateAllLeafChildren(node: RowNode): IterableIterator<RowNode> {
         // Iterate only loaded nodes using store generator; do not trigger loads; no extra arrays.
-        const childStore = node.childStore as LazyStore | undefined;
+        const childStore = node.childStore as Partial<LazyStore> | undefined;
         if (childStore?.iterateNodesDeep) {
             for (const n of childStore.iterateNodesDeep()) {
                 if (n.data) {
