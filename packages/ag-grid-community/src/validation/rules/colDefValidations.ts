@@ -269,6 +269,10 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     'second',
                 ]);
 
+                function quote(s: string): string {
+                    return `"${s}"`;
+                }
+
                 const unrecognisedParts: string[] = [];
 
                 options.groupHierarchy?.forEach((part) => {
@@ -278,13 +282,13 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     }
 
                     if (!GROUP_HIERARCHY_PARTS.has(part) && !(part in groupHierarchyConfig)) {
-                        unrecognisedParts.push(part);
+                        unrecognisedParts.push(quote(part));
                     }
                 });
 
                 if (unrecognisedParts.length > 0) {
-                    const warning = `The following parts of colDef.groupHierarchy are not recognised: ${unrecognisedParts.map((s) => `"${s}"`).join(', ')}.`;
-                    const suggestions = `Choose one of ${[...GROUP_HIERARCHY_PARTS].map((s) => `"${s}"`).join(', ')}, or define your own parts in gridOptions.groupHierarchyConfig.`;
+                    const warning = `The following parts of colDef.groupHierarchy are not recognised: ${unrecognisedParts.join(', ')}.`;
+                    const suggestions = `Choose one of ${[...GROUP_HIERARCHY_PARTS].map(quote).join(', ')}, or define your own parts in gridOptions.groupHierarchyConfig.`;
                     return `${warning}\n${suggestions}`;
                 }
 
