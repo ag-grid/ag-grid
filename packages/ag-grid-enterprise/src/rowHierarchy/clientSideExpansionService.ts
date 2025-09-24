@@ -108,14 +108,14 @@ export class ClientSideExpansionService
 
         this.onGroupExpandedOrCollapsed();
 
-        masterDetailsToExpandOrCollapse.forEach((masterRowNode) => {
+        for (const masterRowNode of masterDetailsToExpandOrCollapse) {
             if (masterRowNode.detailNode?.id) {
                 const detailGridApi = getDetailGridInfo(this.beans, masterRowNode.detailNode.id)?.api;
                 if (expand) {
                     detailGridApi?.expandAll();
                 }
             }
-        });
+        }
 
         eventSvc.dispatchEvent({
             type: 'expandOrCollapseAll',
