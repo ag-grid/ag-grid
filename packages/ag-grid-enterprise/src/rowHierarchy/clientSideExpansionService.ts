@@ -110,11 +110,9 @@ export class ClientSideExpansionService
 
         masterDetailsToExpandOrCollapse.forEach((masterRowNode) => {
             if (masterRowNode.detailNode?.id) {
-                const detailGridInfo = getDetailGridInfo(this.beans, masterRowNode.detailNode.id)?.api;
+                const detailGridApi = getDetailGridInfo(this.beans, masterRowNode.detailNode.id)?.api;
                 if (expand) {
-                    detailGridInfo?.expandAll();
-                } else {
-                    detailGridInfo?.collapseAll();
+                    detailGridApi?.expandAll();
                 }
             }
         });
