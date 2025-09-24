@@ -9,7 +9,7 @@ import type {
 } from 'ag-grid-community';
 import { _exists } from 'ag-grid-community';
 
-import { forEachDetailGridInfo, getDetailGridInfo } from '../masterDetail/masterDetailApi';
+import { getDetailGridInfo } from '../masterDetail/masterDetailApi';
 import { BaseExpansionService } from './baseExpansionService';
 
 export class ClientSideExpansionService
