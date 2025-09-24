@@ -35,12 +35,9 @@ const FLAG_EXPANDED_INITIALIZED = 0x10000000;
 /** Mask used to keep track of the number of children in a node */
 const MASK_CHILDREN_LEN = 0x0fffffff; // This equates to 268,435,455 maximum children per parent, more than enough
 
-const random = Math.random;
-
-/** Path key separator used to flatten hierarchical paths. Includes uncommon and randomized characters to avoid collisions and abuse. */
-const PATH_KEY_SEPARATOR = String.fromCodePoint(31, (4096 + random() * 61440) | 0, (4096 + random() * 61440) | 0, 8291);
-
-const PATH_KEY_SEPARATOR_LEN = 4;
+/** Path key separator used to flatten hierarchical paths. Includes uncommon characters to reduce the risk of collisions. */
+const PATH_KEY_SEPARATOR = String.fromCodePoint(31, 41150, 8291);
+const PATH_KEY_SEPARATOR_LEN = 3;
 
 export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
     private groupColsIds: string = '';
@@ -136,23 +133,23 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
         const rootAllLeafChildren = rootNode.allLeafChildren!;
         const allLeafChildrenLen = rootAllLeafChildren.length;
-        let treeChanged = false;
+        let parentsChanged = false;
         for (let i = 0; i < allLeafChildrenLen; ++i) {
             if (this.initRowParent(rootAllLeafChildren[i], removedNodes)) {
-                treeChanged = true;
+                parentsChanged = true;
             }
         }
-        return treeChanged;
+        return parentsChanged;
     }
 
     private initRowParent(current: GroupingRowNode<TData>, removedNodes: Set<RowNode> | undefined): boolean {
-        let treeChanged = false;
+        let parentsChanged = false;
         while (true) {
             const oldParent = current.parent;
             const parent = current.treeParent;
             if (parent === null) {
                 if (oldParent) {
-                    treeChanged = true;
+                    parentsChanged = true;
                     this.hideRow(current); // Hide the row if it has no parent
                 }
                 break; // No more parents to process, we are at the root
@@ -163,7 +160,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
             const parentChanged = oldParent !== parent;
             if (parentChanged) {
-                treeChanged = true;
+                parentsChanged = true;
                 parentFlags |= FLAG_CHANGED;
                 current.parent = parent;
             }
@@ -184,7 +181,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             parent.treeNodeFlags = parentFlags | FLAG_MARKED_FILLER | (current.treeNodeFlags & FLAG_CHANGED);
             current = parent;
         }
-        return treeChanged;
+        return parentsChanged;
     }
 
     private destroyFillerRows(): void {
