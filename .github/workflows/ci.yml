@@ -620,6 +620,7 @@ jobs:
             -Dsonar.organization=ag-grid
             -Dsonar.sources=./ag-grid-enterprise
             -Dsonar.typescript.tsconfigPaths=./ag-grid-enterprise/tsconfig.lib.json
+            -Dsonar.branch.name=master
             -Dsonar.projectKey=ag-grid-enterprise-latest
             -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
             -Dsonar.scanner.force-deprecated-java-version=true
