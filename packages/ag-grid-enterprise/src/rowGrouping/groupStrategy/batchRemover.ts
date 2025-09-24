@@ -1,6 +1,6 @@
 import type { RowNode } from 'ag-grid-community';
 
-import { invalidateAllLeafChildren } from '../rowGroupingUtils';
+import { invalidateAllLeafChildrenRecursively } from '../rowGroupingUtils';
 import type { GroupRow } from './groupRow';
 
 // doing _removeFromArray() multiple times on a large list can be a bottleneck.
@@ -43,7 +43,7 @@ export class BatchRemover {
                 if (childrenAfterGroup && fromChildrenAfterGroup) {
                     if (filterRowNodesInPlace(childrenAfterGroup, fromChildrenAfterGroup)) {
                         parent.updateHasChildren();
-                        invalidateAllLeafChildren(parent);
+                        invalidateAllLeafChildrenRecursively(parent);
                     }
                 }
             }
