@@ -171,9 +171,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
 
             if (parentChanged && oldParent) {
-                const removedOldParent = !!removedNodes?.has(oldParent);
-                const shouldInitExpand = removedOldParent && maybeExpandFromRemovedParent(parent, oldParent);
-                if (shouldInitExpand) {
+                if (removedNodes?.has(oldParent) && maybeExpandFromRemovedParent(parent, oldParent)) {
                     parentFlags |= FLAG_EXPANDED_INITIALIZED;
                 }
                 oldParent.treeNodeFlags |= FLAG_CHANGED;
