@@ -117,7 +117,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     public registerDetailWithMaster(api: GridApi): void {
         const {
             params,
-            beans: { selectionSvc, findSvc, gos },
+            beans: { selectionSvc, findSvc },
         } = this;
         const rowId = params.node.id!;
         const masterGridApi = params.api;
@@ -165,7 +165,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             api.addEventListener('selectionChanged', onDetailSelectionChanged);
             masterGridApi.addEventListener('rowSelected', onMasterRowSelected);
 
-            const ssrmExpandAllAffectsAllRows = gos.get('ssrmExpandAllAffectsAllRows');
+            const ssrmExpandAllAffectsAllRows = api.getGridOption('ssrmExpandAllAffectsAllRows');
             if (ssrmExpandAllAffectsAllRows) {
                 const state = masterGridApi.getState();
                 const expandState = state?.ssrmRowGroupExpansion as RowGroupBulkExpansionState;
