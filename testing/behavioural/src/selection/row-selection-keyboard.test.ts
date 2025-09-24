@@ -4,7 +4,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { CellSelectionModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, assertSelectedRowsByIndex, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager, assertSelectedRowsByIndex } from '../test-utils';
 import { GridActions, pressAKey, pressSpaceKey } from './utils';
 
 describe('Row Selection with Keyboard', () => {
