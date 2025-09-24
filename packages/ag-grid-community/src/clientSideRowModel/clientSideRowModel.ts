@@ -1229,15 +1229,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public *iterateAllLeafChildren(node: RowNode): IterableIterator<RowNode> {
         // Single-array DFS preserving pre-order: push all children reversed; yield leaves on pop.
         const children = node.childrenAfterGroup;
-        let childrenLen = children && children.length;
+        let childrenLen = children?.length;
         if (!childrenLen) {
             return;
         }
         let stackSize = 0;
-        const stack: RowNode[] = [];
-        while (childrenLen > 0) {
+        const stack: RowNode[] = new Array(childrenLen + 16);
+        do {
             stack[stackSize++] = children![--childrenLen];
-        }
+        } while (childrenLen > 0);
         while (stackSize) {
             const current = stack[--stackSize];
             if (current.sourceRowIndex >= 0) {
