@@ -8,6 +8,7 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
+    RowGroupBulkExpansionState,
     RowNode,
     RowSelectedEvent,
 } from 'ag-grid-community';
@@ -116,7 +117,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     public registerDetailWithMaster(api: GridApi): void {
         const {
             params,
-            beans: { selectionSvc, findSvc },
+            beans: { selectionSvc, findSvc, gos },
         } = this;
         const rowId = params.node.id!;
         const masterGridApi = params.api;
@@ -155,7 +156,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             selectionSvc?.setDetailSelectionState(masterNode, params.detailGridOptions, api);
         }
 
-        // initialise selection state
+        // initialise selection and expandAll state
         api.addEventListener('firstDataRendered', () => {
             if (api.isDestroyed() || masterGridApi.isDestroyed()) return;
 
@@ -163,6 +164,15 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
             api.addEventListener('selectionChanged', onDetailSelectionChanged);
             masterGridApi.addEventListener('rowSelected', onMasterRowSelected);
+
+            const ssrmExpandAllAffectsAllRows = gos.get('ssrmExpandAllAffectsAllRows');
+            if (ssrmExpandAllAffectsAllRows) {
+                const state = masterGridApi.getState();
+                const expandState = state?.ssrmRowGroupExpansion as RowGroupBulkExpansionState;
+                if (expandState?.expandAll) {
+                    masterGridApi.expandAll();
+                }
+            }
         });
 
         this.addDestroyFunc(() => {
