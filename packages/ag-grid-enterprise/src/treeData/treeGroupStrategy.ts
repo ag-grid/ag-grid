@@ -156,11 +156,11 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                     if (oldParent) {
                         const oldParentFlags = oldParent.treeNodeFlags;
                         if (
-                            removedNodes?.has(oldParent) &&
                             (oldParentFlags & FLAG_EXPANDED_INITIALIZED) !== 0 &&
                             (parentFlags & FLAG_EXPANDED_INITIALIZED) === 0 &&
                             parent.treeParent !== null &&
-                            parent.sourceRowIndex < 0
+                            parent.sourceRowIndex < 0 &&
+                            removedNodes?.has(oldParent)
                         ) {
                             // If parent is a new filler node, copy the expanded flag from old removed parent
                             parent.expanded = oldParent.expanded;
