@@ -32,6 +32,11 @@ export interface FilterHandlerParams<TData = any, TContext = any, TModel = any, 
     extends FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams> {
     model: TModel | null;
     source: FilterHandlerSource;
+    /**
+     * If this refresh was as a result of the filter triggering an update
+     * with additional event attributes, these will be set here
+     */
+    additionalEventAttributes?: any;
 }
 
 export interface FilterHandler<TData = any, TContext = any, TModel = any, TCustomParams = any>
@@ -365,6 +370,11 @@ export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, 
      */
     getHandler: () => FilterHandler<TData, TContext, TModel>;
     source: FilterDisplaySource;
+    /**
+     * If this refresh was as a result of the filter triggering an update
+     * with additional event attributes, these will be set here
+     */
+    additionalEventAttributes?: any;
 }
 
 /**

@@ -87,6 +87,9 @@ export class MultiFilterHandler
         if (params.source !== 'floating' && params.source !== 'ui') {
             this.resetActiveList(params.model);
         }
+        if (params.additionalEventAttributes?.fromButtons) {
+            this.onAnyFilterChanged();
+        }
     }
 
     private updateHandlerParams(
