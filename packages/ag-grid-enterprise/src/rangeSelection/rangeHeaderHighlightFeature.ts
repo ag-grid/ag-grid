@@ -2,11 +2,11 @@ import { BeanStub } from 'ag-grid-community';
 import type { AgColumn, AgColumnGroup, IHeaderCellComp } from 'ag-grid-community';
 
 export class RangeHeaderHighlightFeature extends BeanStub {
-    private columnMap: Map<AgColumn, boolean> = new Map();
+    private readonly columnMap: Map<AgColumn, boolean> = new Map();
     private isActive: boolean = false;
     constructor(
-        private column: AgColumn | AgColumnGroup,
-        private comp: IHeaderCellComp
+        private readonly column: AgColumn | AgColumnGroup,
+        private readonly comp: IHeaderCellComp
     ) {
         super();
         this.resetColumnMap();

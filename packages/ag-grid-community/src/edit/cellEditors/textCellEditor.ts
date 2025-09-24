@@ -19,7 +19,7 @@ class TextCellEditorInput<TValue = any>
     private eEditor: GridInputTextField;
     private params: ITextCellEditorParams<any, TValue>;
 
-    constructor(private getLocaleTextFunc: () => LocaleTextFunc) {}
+    constructor(private readonly getLocaleTextFunc: () => LocaleTextFunc) {}
 
     public getTemplate(): ElementParams {
         return TextCellEditorElement;

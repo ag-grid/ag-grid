@@ -182,7 +182,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        if (!params || !params.suppressFocus) {
+        if (!params?.suppressFocus) {
             this.eDateInput.getInputElement().focus({ preventScroll: true });
         }
     }

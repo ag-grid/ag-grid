@@ -89,7 +89,7 @@ export abstract class AgPickerField<
 
     private hideCurrentPicker: (() => void) | null = null;
     private destroyMouseWheelFunc: (() => null) | undefined;
-    private ariaRole?: string;
+    private readonly ariaRole?: string;
 
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     protected readonly eWrapper: HTMLElement = RefPlaceholder;

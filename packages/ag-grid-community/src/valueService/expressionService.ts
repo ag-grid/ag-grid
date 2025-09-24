@@ -5,7 +5,7 @@ import { _error } from '../validation/logging';
 export class ExpressionService extends BeanStub implements NamedBean {
     beanName = 'expressionSvc' as const;
 
-    private cache = {} as any;
+    private readonly cache = {} as any;
 
     public evaluate(expression: string | undefined, params: any): any {
         if (typeof expression === 'string') {

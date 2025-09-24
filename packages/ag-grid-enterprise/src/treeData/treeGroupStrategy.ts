@@ -2,8 +2,8 @@ import type { ChangedPath, GroupingApproach, IChangedRowNodes, StageExecuteParam
 import { BeanStub, RowNode, _EmptyArray, _removeFromArray, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
-import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
 import type { GroupingRowNode, IRowGroupingStrategy } from '../rowHierarchy/rowHierarchyUtils';
+import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
 import type { DataFieldGetter } from './fieldAccess';
 import { makeFieldPathGetter } from './fieldAccess';
 

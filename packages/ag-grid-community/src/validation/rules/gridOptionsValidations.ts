@@ -1,11 +1,10 @@
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
-import type { ValidationModuleName } from '../../interfaces/iModule';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
 import { _mergeDeep } from '../../utils/mergeDeep';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
-import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
+import type { Deprecations, OptionsValidator, RequiredModule, Validations } from '../validationTypes';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -105,7 +104,7 @@ function toConstrainedNum(key: keyof GridOptions, value: any, min: number): stri
     return `${key}: value should be a number`;
 }
 
-export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, ValidationModuleName>> = {
+export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredModule<GridOptions>>> = {
     alignedGrids: 'AlignedGrids',
     allowContextMenuWithControlKey: 'ContextMenu',
     autoSizeStrategy: 'ColumnAutoSize',
@@ -128,7 +127,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, ValidationM
     getRowClass: 'RowStyle',
     getRowStyle: 'RowStyle',
     groupTotalRow: 'SharedRowGrouping',
-    grandTotalRow: 'SharedRowGrouping',
+    grandTotalRow: 'ClientSideRowModelHierarchy',
     initialState: 'GridState',
     isExternalFilterPresent: 'ExternalFilter',
     isRowPinnable: 'PinnedRow',
@@ -523,6 +522,25 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const validModes: GridOptions['renderingMode'][] = ['default', 'legacy'];
                 if (renderingMode && !validModes.includes(renderingMode)) {
                     return `renderingMode must be one of [${validModes.join()}], currently it's ${renderingMode}`;
+                }
+                return null;
+            },
+        },
+        autoSizeStrategy: {
+            validate: ({ autoSizeStrategy }) => {
+                if (!autoSizeStrategy) return null;
+
+                const validModes: NonNullable<GridOptions['autoSizeStrategy']>['type'][] = [
+                    'fitCellContents',
+                    'fitGridWidth',
+                    'fitProvidedWidth',
+                ];
+                const type = autoSizeStrategy.type;
+                if (type !== 'fitCellContents' && type !== 'fitGridWidth' && type !== 'fitProvidedWidth') {
+                    return `Invalid Auto-size strategy. \`autoSizeStrategy\` must be one of ${validModes.map((m) => '"' + m + '"').join(', ')}, currently it's ${type}`;
+                }
+                if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
+                    return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;
                 }
                 return null;
             },

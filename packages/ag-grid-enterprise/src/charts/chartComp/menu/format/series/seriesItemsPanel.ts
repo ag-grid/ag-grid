@@ -18,7 +18,7 @@ export class SeriesItemsPanel extends Component {
     public wireBeans(beans: BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
-    private activePanels: Component<any>[] = [];
+    private readonly activePanels: Component<any>[] = [];
 
     constructor(private readonly chartMenuUtils: ChartMenuParamsFactory) {
         super();

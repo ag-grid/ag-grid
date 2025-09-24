@@ -314,7 +314,7 @@ export abstract class BasePopupService<
 
         const max = sizeOfParent - offsetSize;
 
-        return Math.min(Math.max(position, 0), Math.abs(max));
+        return Math.min(Math.max(position, 0), Math.max(max, 0));
     }
 
     public addPopup<TContainerType extends string>(params: AddPopupParams<TContainerType>): AddPopupResult {

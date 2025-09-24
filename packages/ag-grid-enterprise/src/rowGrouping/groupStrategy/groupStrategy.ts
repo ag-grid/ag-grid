@@ -24,7 +24,7 @@ import {
 
 import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
 import type { GroupingRowNode, IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
-import { setRowNodeGroup } from '../rowGroupingUtils';
+import { invalidateAllLeafChildrenRecursively, setRowNodeGroup } from '../rowGroupingUtils';
 import { BatchRemover } from './batchRemover';
 import type { GroupColumn } from './groupColumns';
 import { groupColumnsChanged, makeGroupColumns } from './groupColumns';
@@ -388,7 +388,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 _removeFromArray(parent.childrenAfterGroup!, child);
                 parent.updateHasChildren();
             }
-            invalidateAllLeafChildren(parent);
+            invalidateAllLeafChildrenRecursively(parent);
         }
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
         const childParentChildrenMapped = child.parent?.childrenMapped;
@@ -517,8 +517,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         childNode.level = path.length;
         parentGroup.childrenAfterGroup!.push(childNode);
         parentGroup.updateHasChildren();
-        invalidateAllLeafChildren(oldParent);
-        invalidateAllLeafChildren(parentGroup);
+        invalidateAllLeafChildrenRecursively(oldParent);
+        invalidateAllLeafChildrenRecursively(parentGroup);
     }
 
     private findParentForNode(childNode: RowNode, path: GroupInfo[], details: GroupingDetails): RowNode {
@@ -528,7 +528,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             nextNode = this.getOrCreateNextNode(nextNode, groupInfo, level, details);
             // node gets added to all group nodes.
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
-            invalidateAllLeafChildren(nextNode);
+            invalidateAllLeafChildrenRecursively(nextNode);
         });
 
         return nextNode;
@@ -667,18 +667,3 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return res;
     }
 }
-
-const invalidateAllLeafChildren = (node: RowNode | null): void => {
-    while (node) {
-        const parent = node.parent;
-        if (!parent || node._allLeafChildren === undefined) {
-            break;
-        }
-        node._allLeafChildren = undefined;
-        const sibling = node.sibling;
-        if (sibling) {
-            sibling._allLeafChildren = undefined;
-        }
-        node = node.parent;
-    }
-};

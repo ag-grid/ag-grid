@@ -7,8 +7,8 @@ import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { _hasEdits, _hasLeafEdits, _hasPinnedEdits } from './style-utils';
 
 export class RowEditStyleFeature extends BeanStub implements IRowStyleFeature {
-    private editSvc?: IEditService;
-    private editModelSvc?: IEditModelService;
+    private readonly editSvc?: IEditService;
+    private readonly editModelSvc?: IEditModelService;
 
     constructor(
         private readonly rowCtrl: RowCtrl,

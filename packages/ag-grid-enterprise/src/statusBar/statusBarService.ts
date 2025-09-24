@@ -4,7 +4,7 @@ import { BeanStub } from 'ag-grid-community';
 export class StatusBarService extends BeanStub implements NamedBean {
     beanName = 'statusBarSvc' as const;
 
-    private comps: Map<string, IStatusPanelComp> = new Map();
+    private readonly comps: Map<string, IStatusPanelComp> = new Map();
 
     // tslint:disable-next-line
     constructor() {

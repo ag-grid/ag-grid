@@ -11,11 +11,11 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private resizeWithShiftKey: boolean;
 
     constructor(
-        private pinned: ColumnPinnedType,
-        private column: AgColumn,
-        private eResize: HTMLElement,
-        private comp: IHeaderCellComp,
-        private ctrl: HeaderCellCtrl
+        private readonly pinned: ColumnPinnedType,
+        private readonly column: AgColumn,
+        private readonly eResize: HTMLElement,
+        private readonly comp: IHeaderCellComp,
+        private readonly ctrl: HeaderCellCtrl
     ) {
         super();
     }
@@ -44,7 +44,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
             destroyResizeFuncs.push(finishedWithResizeFunc);
 
             if (canAutosize && colAutosize) {
-                destroyResizeFuncs.push(colAutosize.addColumnAutosize(this.eResize, this.column));
+                destroyResizeFuncs.push(colAutosize.addColumnAutosizeListeners(this.eResize, this.column));
             }
         };
 

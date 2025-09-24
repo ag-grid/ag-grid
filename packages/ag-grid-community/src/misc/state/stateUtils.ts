@@ -73,15 +73,25 @@ export function convertColumnState(
     }
 
     return {
-        sort: sortColumns.length ? { sortModel: sortColumns } : undefined,
-        rowGroup: groupColIds.length ? { groupColIds } : undefined,
+        sort: sortColumns.length ? { sortModel: _removeEmptyValues(sortColumns) } : undefined,
+        rowGroup: groupColIds.length ? { groupColIds: _removeEmptyValues(groupColIds) } : undefined,
         aggregation: aggregationColumns.length ? { aggregationModel: aggregationColumns } : undefined,
-        pivot: pivotColIds.length || enablePivotMode ? { pivotMode: enablePivotMode, pivotColIds } : undefined,
+        pivot:
+            pivotColIds.length || enablePivotMode
+                ? { pivotMode: enablePivotMode, pivotColIds: _removeEmptyValues(pivotColIds) }
+                : undefined,
         columnPinning: leftColIds.length || rightColIds.length ? { leftColIds, rightColIds } : undefined,
         columnVisibility: hiddenColIds.length ? { hiddenColIds } : undefined,
         columnSizing: columnSizes.length ? { columnSizingModel: columnSizes } : undefined,
         columnOrder: columns.length ? { orderedColIds: columns } : undefined,
     };
+}
+
+// Removes null or undefined values from an array to catch the case where sortIndex, rowGroupIndex or pivotIndex
+// have invalid values resulting in sparse arrays which will break state persistence/restoration.
+// e.g. [ 'colId1', undefined, 'colId3' ] => [ 'colId1', 'colId3' ]
+function _removeEmptyValues<T>(array: T[]): T[] {
+    return array.filter((a) => a != undefined) as T[];
 }
 
 export function _convertColumnGroupState(

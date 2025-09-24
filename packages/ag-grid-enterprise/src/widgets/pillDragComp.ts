@@ -52,9 +52,9 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     private tooltipFeature?: TooltipFeature;
 
     constructor(
-        private dragSourceDropTarget: DropTarget,
-        private ghost: boolean,
-        private horizontal: boolean,
+        private readonly dragSourceDropTarget: DropTarget,
+        private readonly ghost: boolean,
+        private readonly horizontal: boolean,
         protected template?: ElementParams,
         protected agComponents?: ComponentSelector[]
     ) {

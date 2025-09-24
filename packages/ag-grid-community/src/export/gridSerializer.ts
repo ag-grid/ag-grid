@@ -367,7 +367,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
             return !isRowNumberCol(col) || exportRowNumbers;
         };
 
-        if (columnKeys && columnKeys.length) {
+        if (columnKeys?.length) {
             return colModel.getColsForKeys(columnKeys).filter(filterSpecialColumns);
         }
 

@@ -8,7 +8,7 @@ import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 export class MiniRadarAreaClass extends MiniChartWithPolarAxes {
     private readonly areas: Path[];
 
-    private data = [
+    private readonly data = [
         [8, 10, 5, 7, 4, 1, 5, 8],
         [1, 1, 2, 7, 7, 8, 10, 1],
         [4, 5, 9, 9, 4, 2, 3, 4],

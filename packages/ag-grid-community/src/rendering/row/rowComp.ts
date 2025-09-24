@@ -14,10 +14,10 @@ export class RowComp extends Component {
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
     private fullWidthCellRendererParams: ICellRendererParams | undefined;
 
-    private rowCtrl: RowCtrl;
+    private readonly rowCtrl: RowCtrl;
 
     private domOrder: boolean;
-    private cellComps: Map<CellCtrlInstanceId, CellComp | null> = new Map();
+    private readonly cellComps: Map<CellCtrlInstanceId, CellComp | null> = new Map();
 
     constructor(ctrl: RowCtrl, beans: BeanCollection, containerType: RowContainerType) {
         super();

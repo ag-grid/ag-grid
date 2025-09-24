@@ -33,7 +33,7 @@ export class ChartMenu extends Component {
 
     private readonly chartController: ChartController;
 
-    private buttons: ChartToolbarButtons = {
+    private readonly buttons: ChartToolbarButtons = {
         chartLink: { iconName: 'linked', callback: () => this.chartMenuSvc.toggleLinked(this.chartMenuContext) },
         chartUnlink: {
             iconName: 'unlinked',
@@ -217,11 +217,11 @@ export class ChartMenu extends Component {
     public override destroy() {
         super.destroy();
 
-        if (this.menuPanel && this.menuPanel.isAlive()) {
+        if (this.menuPanel?.isAlive()) {
             this.destroyBean(this.menuPanel);
         }
 
-        if (this.tabbedMenu && this.tabbedMenu.isAlive()) {
+        if (this.tabbedMenu?.isAlive()) {
             this.destroyBean(this.tabbedMenu);
         }
     }

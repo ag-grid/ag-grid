@@ -13,7 +13,7 @@ export class ExpandStrategy extends BeanStub implements IExpansionStrategy<RowGr
 
     private expanded: Set<string> = new Set();
     private collapsed: Set<string> = new Set();
-    private initialState: Map<string, boolean> = new Map();
+    private readonly initialState: Map<string, boolean> = new Map();
 
     /**
      * Set the expanded and collapsed rows.

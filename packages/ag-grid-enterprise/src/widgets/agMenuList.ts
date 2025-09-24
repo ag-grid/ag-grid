@@ -16,9 +16,9 @@ import { AgMenuItemComponent } from './agMenuItemComponent';
 type AgMenuListEvent = AgMenuItemComponentEvent;
 
 export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
-    private menuItems: AgMenuItemComponent[] = [];
+    private readonly menuItems: AgMenuItemComponent[] = [];
     private activeMenuItem: AgMenuItemComponent | null;
-    private params: WithoutGridCommon<IMenuActionParams>;
+    private readonly params: WithoutGridCommon<IMenuActionParams>;
 
     constructor(
         private readonly level = 0,

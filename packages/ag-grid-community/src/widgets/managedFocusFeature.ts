@@ -16,7 +16,7 @@ export const FOCUS_MANAGED_CLASS = 'ag-focus-managed';
 export class ManagedFocusFeature extends BeanStub {
     constructor(
         private readonly eFocusable: HTMLElement,
-        private callbacks: ManagedFocusCallbacks = {}
+        private readonly callbacks: ManagedFocusCallbacks = {}
     ) {
         super();
         this.callbacks = {

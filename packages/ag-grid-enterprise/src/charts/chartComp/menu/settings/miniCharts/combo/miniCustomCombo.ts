@@ -6,12 +6,12 @@ import { MiniChart } from '../miniChart';
 import { createColumnRects, createLinePaths } from '../miniChartHelpers';
 
 export class MiniCustomComboClass extends MiniChart {
-    private columns: Rect[];
-    private lines: Path[];
+    private readonly columns: Rect[];
+    private readonly lines: Path[];
 
-    private columnData = [3, 4];
+    private readonly columnData = [3, 4];
 
-    private lineData = [[5, 4, 6, 5, 4]];
+    private readonly lineData = [[5, 4, 6, 5, 4]];
 
     constructor(container: HTMLElement, agChartsExports: AgChartsExports, fills: string[], strokes: string[]) {
         super(container, agChartsExports, 'customComboTooltip');

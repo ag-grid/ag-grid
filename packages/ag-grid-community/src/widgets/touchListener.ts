@@ -1,7 +1,7 @@
 import { LocalEventService } from '../agStack/events/localEventService';
 import type { AgEvent } from '../agStack/interfaces/agEvent';
 import type { IEventEmitter, IEventListener } from '../agStack/interfaces/iEventEmitter';
-import { _areEventsNear } from '../agStack/utils/event';
+import { _areEventsNear, _getFirstActiveTouch } from '../agStack/utils/event';
 
 export interface TapEvent extends AgEvent<'tap'> {
     touchStart: Touch;
@@ -17,9 +17,9 @@ export interface LongTapEvent extends AgEvent<'longTap'> {
 
 export type TouchListenerEvent = 'tap' | 'doubleTap' | 'longTap';
 export class TouchListener implements IEventEmitter<TouchListenerEvent> {
-    private DOUBLE_TAP_MILLIS = 500;
+    private readonly DOUBLE_TAP_MILLIS = 500;
 
-    private destroyFuncs: ((...args: any[]) => any)[] = [];
+    private readonly destroyFuncs: ((...args: any[]) => any)[] = [];
 
     private moved: boolean;
 
@@ -28,9 +28,9 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
 
     private lastTapTime: number | null;
 
-    private localEventService: LocalEventService<TouchListenerEvent> = new LocalEventService();
+    private readonly localEventService: LocalEventService<TouchListenerEvent> = new LocalEventService();
 
-    private preventMouseClick: boolean;
+    private readonly preventMouseClick: boolean;
 
     constructor(eElement: Element, preventMouseClick = false) {
         this.preventMouseClick = preventMouseClick;
@@ -49,17 +49,6 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             eElement.removeEventListener('touchmove', moveListener, { passive: true } as any);
             eElement.removeEventListener('touchend', endListener, { passive: false } as any);
         });
-    }
-
-    private getActiveTouch(touchList: TouchList): Touch | null {
-        for (let i = 0; i < touchList.length; i++) {
-            const matches = touchList[i].identifier === this.touchStart.identifier;
-            if (matches) {
-                return touchList[i];
-            }
-        }
-
-        return null;
     }
 
     public addEventListener<T extends TouchListenerEvent>(eventType: T, listener: IEventListener<T>): void {
@@ -103,7 +92,7 @@ export class TouchListener implements IEventEmitter<TouchListenerEvent> {
             return;
         }
 
-        const touch = this.getActiveTouch(touchEvent.touches);
+        const touch = _getFirstActiveTouch(this.touchStart, touchEvent.touches);
         if (!touch) {
             return;
         }

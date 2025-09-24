@@ -155,10 +155,10 @@ export class MiniChartsContainer extends Component {
     private readonly fills: AgColorType[];
     private readonly strokes: string[];
     private readonly isCustomTheme: boolean;
-    private wrappers: Map<ChartType, HTMLElement> = new Map();
-    private chartController: ChartController;
+    private readonly wrappers: Map<ChartType, HTMLElement> = new Map();
+    private readonly chartController: ChartController;
 
-    private chartGroups: ChartGroupsDef;
+    private readonly chartGroups: ChartGroupsDef;
 
     constructor(
         chartController: ChartController,

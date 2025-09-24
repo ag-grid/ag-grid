@@ -50,7 +50,7 @@ export class SeriesPanel extends Component {
     }
     private chartMenuUtils: ChartMenuParamsFactory;
 
-    private activePanels: Component<any>[] = [];
+    private readonly activePanels: Component<any>[] = [];
     private seriesType: ChartSeriesType;
 
     private readonly widgetFuncs = {

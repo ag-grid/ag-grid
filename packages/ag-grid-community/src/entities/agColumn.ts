@@ -65,7 +65,7 @@ export class AgColumn<TValue = any>
 
     // used by React (and possibly other frameworks) as key for rendering. also used to
     // identify old vs new columns for destroying cols when no longer used.
-    private instanceId = getNextColInstanceId();
+    private readonly instanceId = getNextColInstanceId();
     /** Sanitised version of the column id */
     public readonly colIdSanitised: string;
 
@@ -553,7 +553,7 @@ export class AgColumn<TValue = any>
      */
     public getFirstRealParent(): AgProvidedColumnGroup | null {
         let parent = this.getOriginalParent();
-        while (parent && parent.isPadding()) {
+        while (parent?.isPadding()) {
             parent = parent.getOriginalParent();
         }
         return parent;
@@ -562,7 +562,7 @@ export class AgColumn<TValue = any>
     public getColumnGroupPaddingInfo(): { numberOfParents: number; isSpanningTotal: boolean } {
         let parent = this.getParent();
 
-        if (!parent || !parent.isPadding()) {
+        if (!parent?.isPadding()) {
             return { numberOfParents: 0, isSpanningTotal: false };
         }
 

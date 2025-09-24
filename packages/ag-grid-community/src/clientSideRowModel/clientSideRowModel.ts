@@ -397,7 +397,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const changedPathActive = changedPath.active;
 
         const clearIfNotDisplayed = (rowNode?: RowNode) => {
-            if (rowNode && rowNode.id != null && !displayedRowsMapped.has(rowNode.id)) {
+            if (rowNode?.id != null && !displayedRowsMapped.has(rowNode.id)) {
                 rowNode.clearRowTopAndRowIndex();
             }
         };
@@ -464,7 +464,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         // we use the childrenAfterSort as postSortRows is occasionally used to reduce row count.
         const filteredChildren = rootNode.childrenAfterSort;
-        const totalFooterInc = rootNode.sibling && rootNode.sibling.displayed ? 1 : 0;
+        const totalFooterInc = rootNode.sibling?.displayed ? 1 : 0;
         return (filteredChildren ? filteredChildren.length : 0) + totalFooterInc;
     }
 
@@ -1218,7 +1218,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.rowsToDisplay = _EmptyArray;
     }
 
-    private onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
+    private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
     /**
      * @deprecated v33.1
      */

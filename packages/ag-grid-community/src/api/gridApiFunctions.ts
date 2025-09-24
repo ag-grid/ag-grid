@@ -1,5 +1,4 @@
 import type { ValidationModuleName } from '../interfaces/iModule';
-import type { _CsrmSsrmSharedGridApi, _FindApi } from './gridApi';
 import type {
     GridApi,
     _AdvancedFilterGridApi,
@@ -19,12 +18,14 @@ import type {
     _CommunityMenuGridApi,
     _ContextMenuGridApi,
     _CoreGridApi,
+    _CsrmSsrmSharedGridApi,
     _CsvExportGridApi,
     _DragGridApi,
     _EditGridApi,
     _EventGridApi,
     _ExcelExportGridApi,
     _FilterGridApi,
+    _FindApi,
     _GridChartsGridApi,
     _HighlightChangesGridApi,
     _InfiniteRowModelGridApi,

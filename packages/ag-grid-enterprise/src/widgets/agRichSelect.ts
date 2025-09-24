@@ -220,6 +220,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         const {
             allowTyping,
             cellRenderer,
+            cellRendererParams,
             initialInputValue,
             multiSelect,
             suppressDeselectAll,
@@ -253,6 +254,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 _addGridCommonParams(this.gos, {
                     value,
                     valueFormatted,
+                    cellRendererParams,
                     getValue: () => this.getValue(),
                     setValue: (value: TValue[] | TValue | null) => {
                         this.setValue(value, true);

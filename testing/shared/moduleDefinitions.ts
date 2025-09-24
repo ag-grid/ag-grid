@@ -13,7 +13,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ClientSideRowModelApiModule: 1.88,
     ClientSideRowModelModule: 29.1,
     ColumnApiModule: 3.6,
-    ColumnAutoSizeModule: 6.34,
+    ColumnAutoSizeModule: 7.6,
     ColumnHoverModule: 1.58,
     CsvExportModule: 11.3,
     CustomEditorModule: 59.13,

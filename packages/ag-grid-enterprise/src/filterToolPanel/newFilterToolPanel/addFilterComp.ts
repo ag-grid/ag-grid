@@ -13,7 +13,7 @@ export class AddFilterComp extends Component<'filterSelected'> {
     private eSelect?: AgRichSelect;
     private removeButton?: () => undefined;
 
-    private options: Map<string, string> = new Map();
+    private readonly options: Map<string, string> = new Map();
 
     constructor(options: { id: string; name: string }[]) {
         super(AddFilterElement);

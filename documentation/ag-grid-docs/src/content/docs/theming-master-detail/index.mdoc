@@ -1,0 +1,67 @@
+---
+title: "Theming: Master / Detail Styling"
+enterprise: true
+---
+
+This section shows how the detail grid can be styled.
+
+## Styling Detail Grids
+
+Detail grids must have the same theme as their master grid. If you omit the `theme` grid option in a detail grid it will default to the same theme as the master grid. If you attempt to set a different theme you'll get an error message in your console.
+
+Instead, use CSS to change the style of the detail grid.
+
+```css
+/* Style the row containing the detail grid */
+.ag-details-row {
+    background: #f442;
+    padding: 5px 5px 5px 40px;
+}
+
+/* Apply styles only to detail grids by wrapping them in .ag-details-grid: */
+.ag-details-grid {
+    --ag-row-height: 20px;
+
+    .ag-header-cell {
+        color: #f80;
+        font-weight: bold;
+    }
+
+    .ag-details-grid {
+        /* If you have nested detail grids, these styles would only apply
+           from the second level down */
+    }
+}
+```
+
+{% gridExampleRunner title="Detail Styling" name="detail-styling" /%}
+
+
+See [Customising the grid with CSS](./theming-css/) for more details on CSS use.
+
+### Limitations of CSS variables on detail grids
+
+You can set CSS variables on detail grids, but be aware of a difference in how they work compared to setting them on a master grid.
+
+Some high-level variables control the behaviour of many lower-level variables by providing default values. This is the case for general colors like --ag-background-color and for --ag-spacing.
+
+In this example we set the background color to red. Normally this would cause the odd row background color to be red too, because the value of --ag-odd-row-background-color defaults to the background color. But the master grid has already set a default value for --ag-odd-row-background-color, and this is inherited by the detail grid.
+
+```css
+.ag-details-grid {
+    --ag-background-color: #f004;
+}
+```
+
+{% gridExampleRunner title="Custom Properties and Detail Grids" name="custom-properties" /%}
+
+In order to avoid this, you need to set the lower-level variable explicitly too:
+
+```css
+.ag-details-grid {
+    --ag-background-color: #f004;
+    --ag-odd-row-background-color: var(--ag-background-color);
+}
+```
+
+{% gridExampleRunner title="Custom Properties and Detail Grids" name="custom-properties-fixed" /%}

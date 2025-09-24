@@ -69,42 +69,10 @@ const detailCellRendererParams = (params) => {
     ]
         .filter(Boolean)
         .join('\n\n');
-    let message = newLinesToBreaks(combinedMessages);
-
-    function makeLinksFunctional(message) {
-        let msgArr = message.split(' ');
-        const linkStrIdx = msgArr.findIndex((word) => word.includes('https://'));
-        if (linkStrIdx > 0) {
-            msgArr = msgArr.map((element) => {
-                if (element.includes('https://')) {
-                    const beginningIndex = element.indexOf('http');
-                    const endIndex = element.indexOf('<', beginningIndex);
-                    const isEndIndex = endIndex >= 0;
-                    let length = 0;
-                    if (isEndIndex) {
-                        length = endIndex - beginningIndex;
-                    }
-
-                    const httpIdx = element.indexOf('http');
-                    const link = length ? element.substring(httpIdx, httpIdx + length) : element.substring(httpIdx);
-                    const htmlLink = isEndIndex
-                        ? `<a class=${styles.link} href="${link}"
-          target="_blank">${link}</a>${element.substring(endIndex)}`
-                        : `<a class=${styles.link} target="_blank" href="${link}">${link}</a>`;
-                    return element.substring(0, beginningIndex) + htmlLink;
-                }
-                return element;
-            });
-            message = msgArr.join(' ');
-        }
-        return message;
-    }
-
-    message = makeLinksFunctional(message);
-    const res = {};
-    res.message = message;
-
-    return res;
+    const message = newLinesToBreaks(combinedMessages);
+    return {
+        message,
+    };
 };
 
 function useSearchQuery() {

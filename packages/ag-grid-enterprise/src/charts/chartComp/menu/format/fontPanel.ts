@@ -40,7 +40,7 @@ export class FontPanel extends Component {
     private readonly fontGroup: AgGroupComponent = RefPlaceholder;
 
     private readonly chartOptions: ChartOptionsProxy;
-    private activeComps: Component[] = [];
+    private readonly activeComps: Component[] = [];
 
     constructor(private readonly params: FontPanelParams) {
         super();

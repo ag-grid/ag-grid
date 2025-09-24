@@ -853,7 +853,7 @@
         flex: 1 1 auto;
     }
 
-    .ag-cell-value,
+    .ag-cell-value:not(.ag-allow-overflow),
     .ag-group-value {
         overflow: hidden;
         text-overflow: ellipsis;

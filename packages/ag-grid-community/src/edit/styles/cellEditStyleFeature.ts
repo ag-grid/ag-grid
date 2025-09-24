@@ -9,8 +9,8 @@ import { _hasEdits, _hasLeafEdits, _hasPinnedEdits } from './style-utils';
 export class CellEditStyleFeature extends BeanStub implements ICellStyleFeature {
     private cellComp: ICellComp;
 
-    private editSvc?: IEditService;
-    private editModelSvc?: IEditModelService;
+    private readonly editSvc?: IEditService;
+    private readonly editModelSvc?: IEditModelService;
 
     constructor(
         private readonly cellCtrl: CellCtrl,

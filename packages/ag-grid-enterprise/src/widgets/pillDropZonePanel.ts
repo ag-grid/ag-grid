@@ -55,18 +55,18 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     // the items to be dropped go in here
     private potentialDndItems: TItem[];
 
-    private guiDestroyFunctions: (() => void)[] = [];
+    private readonly guiDestroyFunctions: (() => void)[] = [];
 
     private params: PillDropZonePanelParams;
 
-    private childPillComponents: TPill[] = [];
+    private readonly childPillComponents: TPill[] = [];
     private insertIndex: number;
 
     // when this component is refreshed, we rip out all DOM elements and build it up
     // again from scratch. one exception is ePillDropList, as we want to maintain the
     // scroll position between the refreshes, so we create one instance of it here and
     // reuse it.
-    private ePillDropList: HTMLElement;
+    private readonly ePillDropList: HTMLElement;
 
     private positionableFeature: PositionableFeature;
     private resizeEnabled: boolean = false;

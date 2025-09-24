@@ -4,3 +4,16 @@ export const MIGRATION_DOCUMENTATION_NAV_DATA = {
     id: 'documentation',
     text: 'Documentation',
 };
+
+export const CONTACT_FORM_DATA = {
+    default: {
+        actionUrl: 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DS9000004CVdh',
+        orgId: '00DS9000004CVdh',
+        textAreaId: '00NS900000A3S21',
+    },
+    production: {
+        actionUrl: 'https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00D1t000000u82X',
+        orgId: '00D1t000000u82X',
+        textAreaId: '00NQ500000B4jZh',
+    },
+};

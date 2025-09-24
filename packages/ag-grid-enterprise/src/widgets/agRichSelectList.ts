@@ -24,7 +24,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     private eLoading: HTMLElement | undefined;
     private lastRowHovered: number = -1;
     private currentList: TValue[] | undefined;
-    private selectedItems: Set<TValue> = new Set<TValue>();
+    private readonly selectedItems: Set<TValue> = new Set<TValue>();
 
     constructor(
         private readonly params: RichSelectParams,

@@ -58,3 +58,33 @@ export function isRowGroupColLocked(column: AgColumn | undefined | null, beans: 
     const colIndex = rowGroupColsSvc.columns.findIndex((groupCol) => groupCol.getColId() === column.getColId());
     return groupLockGroupColumns > colIndex;
 }
+
+export const invalidateAllLeafChildren = (start: RowNode | null): void => {
+    let p: RowNode | null = start;
+    while (p?.parent) {
+        if (p._allLeafChildren === undefined) {
+            break;
+        }
+        p._allLeafChildren = undefined;
+        const sibling = p.sibling;
+        if (sibling) {
+            sibling._allLeafChildren = undefined;
+        }
+        p = p.parent;
+    }
+};
+
+export const invalidateAllLeafChildrenRecursively = (node: RowNode | null): void => {
+    while (node) {
+        const parent = node.parent;
+        if (!parent || node._allLeafChildren === undefined) {
+            break;
+        }
+        node._allLeafChildren = undefined;
+        const sibling = node.sibling;
+        if (sibling) {
+            sibling._allLeafChildren = undefined;
+        }
+        node = node.parent;
+    }
+};

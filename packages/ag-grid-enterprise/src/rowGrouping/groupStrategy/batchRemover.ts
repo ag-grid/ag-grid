@@ -1,5 +1,6 @@
 import type { RowNode } from 'ag-grid-community';
 
+import { invalidateAllLeafChildren } from '../rowGroupingUtils';
 import type { GroupRow } from './groupRow';
 
 // doing _removeFromArray() multiple times on a large list can be a bottleneck.
@@ -13,17 +14,18 @@ import type { GroupRow } from './groupRow';
 // it took about 20 seconds to delete. with the BathRemoved, the reduced to less than 1 second.
 
 export class BatchRemover {
-    private allSets = new Map<GroupRow, Set<RowNode>>();
+    private readonly allSets = new Map<GroupRow, Set<RowNode>>();
 
     public removeFromChildrenAfterGroup(parent: RowNode, child: RowNode): void {
         this.getSet(parent).add(child);
     }
 
     private getSet(parent: RowNode): Set<RowNode> {
-        let set = this.allSets.get(parent);
+        const allSets = this.allSets;
+        let set = allSets.get(parent);
         if (!set) {
             set = new Set();
-            this.allSets.set(parent, set);
+            allSets.set(parent, set);
         }
         return set;
     }
@@ -37,7 +39,7 @@ export class BatchRemover {
         for (const parent of allSets.keys()) {
             const fromChildrenAfterGroup = allSets.get(parent);
             if (fromChildrenAfterGroup) {
-                const { childrenAfterGroup } = parent;
+                const childrenAfterGroup = parent.childrenAfterGroup;
                 if (childrenAfterGroup && fromChildrenAfterGroup) {
                     if (filterRowNodesInPlace(childrenAfterGroup, fromChildrenAfterGroup)) {
                         parent.updateHasChildren();
@@ -65,18 +67,3 @@ function filterRowNodesInPlace(array: GroupRow[], removals: ReadonlySet<GroupRow
     array.length = writeIdx;
     return true;
 }
-
-export const invalidateAllLeafChildren = (start: RowNode | null): void => {
-    let p: RowNode | null = start;
-    while (p && p.parent) {
-        if (p._allLeafChildren === undefined) {
-            break;
-        }
-        p._allLeafChildren = undefined;
-        const sibling = p.sibling;
-        if (sibling) {
-            sibling._allLeafChildren = undefined;
-        }
-        p = p.parent;
-    }
-};

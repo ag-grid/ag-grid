@@ -13,10 +13,10 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     private popupShowing = false;
 
     constructor(
-        private column: AgColumn,
+        private readonly column: AgColumn,
         dragSourceDropTarget: DropTarget,
         ghost: boolean,
-        private dropZonePurpose: TDropZone,
+        private readonly dropZonePurpose: TDropZone,
         horizontal: boolean
     ) {
         super(dragSourceDropTarget, ghost, horizontal);

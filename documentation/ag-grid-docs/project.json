@@ -139,7 +139,7 @@
     "test:interactive:setup": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["npx playwright install --with-deps chromium"],
+        "commands": ["npx playwright install --with-deps chromium firefox webkit"],
         "parallel": false,
         "cwd": "documentation/ag-grid-docs"
       },

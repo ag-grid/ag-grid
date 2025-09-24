@@ -168,6 +168,7 @@ export function _setupEditor(
 
     if (cellCtrl) {
         cellCtrl.editCompDetails = compDetails;
+        cellCtrl.onEditorAttachedFuncs.push(() => cellCtrl.rangeFeature?.unsetComp());
         cellCtrl.comp?.setEditDetails(compDetails, popup, popupLocation, beans.gos.get('reactiveCustomComponents'));
         cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
 

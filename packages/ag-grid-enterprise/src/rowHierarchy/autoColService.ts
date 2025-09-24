@@ -48,7 +48,8 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
 
     public createColumns(
         cols: _ColumnCollections,
-        updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void
+        updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void,
+        source: ColumnEventType
     ): void {
         const beans = this.beans;
         const { colModel, gos, rowGroupColsSvc, colGroupSvc } = beans;
@@ -90,6 +91,14 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         const treeDepthSame = oldTreeDepth == newTreeDepth;
 
         if (autoColsSame && treeDepthSame) {
+            // Some things like header could have changed, ensure this is captured by updating the existing cols.
+            const colsMap = new Map(list.map((col) => [col.getId(), col]));
+            this.columns?.list.forEach((col) => {
+                const newDef = colsMap.get(col.getId());
+                if (newDef) {
+                    col.setColDef(newDef.getColDef(), null, source);
+                }
+            });
             return;
         }
 

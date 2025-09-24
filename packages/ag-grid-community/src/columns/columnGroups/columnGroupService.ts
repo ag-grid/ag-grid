@@ -3,10 +3,8 @@ import { _exists } from '../../agStack/utils/generic';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
-import { createUniqueColumnGroupId, isColumnGroup } from '../../entities/agColumnGroup';
-import { AgColumnGroup } from '../../entities/agColumnGroup';
-import { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
-import { isProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
+import { AgColumnGroup, createUniqueColumnGroupId, isColumnGroup } from '../../entities/agColumnGroup';
+import { AgProvidedColumnGroup, isProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { ColGroupDef } from '../../entities/colDef';
 import type { ColumnEventType } from '../../events';
 import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
@@ -432,7 +430,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         let depth = 0;
         let pointer = balancedColumnTree;
 
-        while (pointer && pointer[0] && isProvidedColumnGroup(pointer[0])) {
+        while (pointer?.[0] && isProvidedColumnGroup(pointer[0])) {
             depth++;
             pointer = (pointer[0] as AgProvidedColumnGroup).getChildren();
         }

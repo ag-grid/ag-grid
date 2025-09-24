@@ -8,8 +8,6 @@ import { clickAllButtons, getRowCountOrError, waitForGridReady } from './utils';
 export type InternalFramework = 'vanilla' | 'typescript' | 'reactFunctional' | 'reactFunctionalTs' | 'angular' | 'vue3';
 
 let examples: any;
-// const rcVersion = '';
-const rcVersion = 'archive/34.2.0';
 
 interface ExampleTestCase {
     pageName: string;
@@ -46,7 +44,7 @@ export async function getFrameworkExamples(framework: InternalFramework) {
 
 export function getExampleConfig(e) {
     const examplePath = `${e.pageName}/${e.exampleName}/${e.internalFramework}`;
-    const url = `${rcVersion}/examples/${examplePath}/`;
+    const url = `/examples/${examplePath}/`;
     return { examplePath, url };
 }
 

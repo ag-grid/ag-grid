@@ -369,8 +369,8 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
     private tabItemGeneral: TabbedItem;
     private tabItemColumns: TabbedItem;
 
-    private tabFactories: { [p: string]: () => TabbedItem } = {};
-    private includeChecks: { [p: string]: () => boolean } = {};
+    private readonly tabFactories: { [p: string]: () => TabbedItem } = {};
+    private readonly includeChecks: { [p: string]: () => boolean } = {};
 
     private filterComp?: FilterComp | null;
 

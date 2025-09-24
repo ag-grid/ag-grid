@@ -27,7 +27,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private movingIntervalId: number | null;
     private intervalCount: number;
 
-    private isCenterContainer: boolean;
+    private readonly isCenterContainer: boolean;
 
     private lastDraggingEvent: GridDraggingEvent | null;
     private lastHighlightedColumn: { column: AgColumn; position: ColumnHighlightPosition } | null;

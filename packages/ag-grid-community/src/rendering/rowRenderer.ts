@@ -72,7 +72,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private gridBodyCtrl: GridBodyCtrl;
 
-    private destroyFuncsForColumnListeners: (() => void)[] = [];
+    private readonly destroyFuncsForColumnListeners: (() => void)[] = [];
 
     public firstRenderedRow: number;
     public lastRenderedRow: number;
@@ -263,7 +263,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
      */
     private onCellFocusChanged(event: CellFocusedEvent) {
         // if the focused cell has not been rendered, need to render cell so focus can be captured.
-        if (event && event.rowIndex != null && !event.rowPinned) {
+        if (event?.rowIndex != null && !event.rowPinned) {
             const col = this.beans.colModel.getCol(event.column) ?? undefined;
             if (!this.isCellBeingRendered(event.rowIndex, col)) {
                 this.redraw();
@@ -320,7 +320,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.addDestroyFunc(this.removeGridColumnListeners.bind(this));
     }
 
-    private setupRangeSelectionListeners = () => {
+    private readonly setupRangeSelectionListeners = () => {
         const onCellSelectionChanged = () => {
             this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellSelectionChanged());
         };
@@ -1570,7 +1570,7 @@ class RowCtrlCache {
     private entriesMap: RowCtrlByRowNodeIdMap = {};
 
     // list for keeping order
-    private entriesList: RowCtrl[] = [];
+    private readonly entriesList: RowCtrl[] = [];
 
     private readonly maxCount: number;
 
@@ -1592,7 +1592,7 @@ class RowCtrlCache {
     }
 
     public getRow(rowNode: RowNode): RowCtrl | null {
-        if (rowNode == null || rowNode.id == null) {
+        if (rowNode?.id == null) {
             return null;
         }
 

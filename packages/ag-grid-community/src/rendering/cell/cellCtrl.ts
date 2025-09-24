@@ -102,7 +102,7 @@ export class CellCtrl extends BeanStub {
     public value: any;
     public valueFormatted: any;
 
-    private rangeFeature: ICellRangeFeature | undefined = undefined;
+    public rangeFeature: ICellRangeFeature | undefined = undefined;
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
@@ -129,8 +129,8 @@ export class CellCtrl extends BeanStub {
     // if cell has been focused, check if it's focused when destroyed
     private hasBeenFocused = false;
 
-    private editSvc?: IEditService;
-    private hasEdit: boolean = false;
+    private readonly editSvc?: IEditService;
+    private readonly hasEdit: boolean = false;
 
     public tooltipFeature: TooltipFeature | undefined = undefined;
     public editorTooltipFeature: TooltipFeature | undefined = undefined;
@@ -398,6 +398,18 @@ export class CellCtrl extends BeanStub {
     public isForceWrapper(): boolean {
         // text selection requires the value to be wrapped in another element
         return this.beans.gos.get('enableCellTextSelection') || this.column.isAutoHeight();
+    }
+
+    public getCellValueClass(): string {
+        const prefix = 'ag-cell-value';
+        const isCheckboxRenderer = this.column.getColDef().cellRenderer === 'agCheckboxCellRenderer';
+        let suffix = '';
+
+        if (isCheckboxRenderer) {
+            suffix = ' ag-allow-overflow';
+        }
+
+        return `${prefix}${suffix}`;
     }
 
     /**
@@ -840,7 +852,7 @@ export class CellCtrl extends BeanStub {
         this.comp.toggleCss(CSS_CELL_FOCUS, cellFocused);
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
-        if (cellFocused && event && event.forceBrowserFocus) {
+        if (cellFocused && event?.forceBrowserFocus) {
             let focusEl = this.comp.getFocusableElement();
 
             if (editing) {

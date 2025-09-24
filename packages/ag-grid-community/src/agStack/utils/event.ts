@@ -119,6 +119,23 @@ export function _areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, p
     return Math.max(diffX, diffY) <= pixelCount;
 }
 
+/**
+ * Returns the first touch in the touch list that matches the identifier of the provided touch.
+ * @param touch The touch to match the identifier against.
+ * @param touchList The list of touches to search.
+ * @returns The matching touch, or null if not found.
+ */
+export const _getFirstActiveTouch = (touch: Touch, touchList: TouchList): Touch | null => {
+    const identifier = touch.identifier;
+    for (let i = 0, len = touchList.length; i < len; ++i) {
+        const item = touchList[i];
+        if (item.identifier === identifier) {
+            return item;
+        }
+    }
+    return null;
+};
+
 // walks the path of the event, and returns true if this instance is the first one that it finds. if doing things like
 // master / detail grids, and a child grid is found, then it returns false. this stops things like copy/paste
 // getting executed on many grids at the same time.

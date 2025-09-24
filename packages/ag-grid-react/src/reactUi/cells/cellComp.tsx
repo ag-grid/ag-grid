@@ -81,6 +81,9 @@ const CellComp = ({
         (includeSelection || includeDndSource || includeRowDrag) &&
         (editDetails == null || !!editDetails.popup);
     const showCellWrapper = forceWrapper || showTools;
+    const cellValueClass = useMemo(() => {
+        return cellCtrl.getCellValueClass();
+    }, [cellCtrl]);
 
     const setCellEditorRef = useCallback(
         (cellEditor: ICellEditor | undefined) => {
@@ -179,7 +182,7 @@ const CellComp = ({
                 const parentEl = (forceWrapper ? eCellWrapper : eGui).current;
                 parentEl?.appendChild(compGui);
 
-                cellEditor.afterGuiAttached && cellEditor.afterGuiAttached();
+                cellEditor.afterGuiAttached?.();
             }
 
             setJsEditorComp(cellEditor);
@@ -316,7 +319,7 @@ const CellComp = ({
                     }
                     // start editing
                     setEditDetails({
-                        compDetails: compDetails!,
+                        compDetails,
                         popup,
                         popupPosition,
                         compProxy,
@@ -428,7 +431,7 @@ const CellComp = ({
                 return null;
             }
             return showCellWrapper ? (
-                <span role="presentation" id={`cell-${instanceId}`} className="ag-cell-value" ref={setCellValueRef}>
+                <span role="presentation" id={`cell-${instanceId}`} className={cellValueClass} ref={setCellValueRef}>
                     {valueOrCellComp()}
                 </span>
             ) : (

@@ -22,7 +22,7 @@ enum AgPromiseStatus {
 export class AgPromise<T> {
     private status: AgPromiseStatus = AgPromiseStatus.IN_PROGRESS;
     private resolution: T | null = null;
-    private waiters: ((value: T | null) => void)[] = [];
+    private readonly waiters: ((value: T | null) => void)[] = [];
 
     static all<T>(promises: AgPromise<T | null>[]): AgPromise<(T | null)[]> {
         return promises.length

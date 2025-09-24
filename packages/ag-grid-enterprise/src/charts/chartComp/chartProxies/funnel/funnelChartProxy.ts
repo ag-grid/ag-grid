@@ -33,7 +33,7 @@ export class FunnelChartProxy extends ChartProxy<AgStandaloneChartOptions, Funne
             [id]: {
                 name: d[id],
                 id: index,
-                toString: () => d[id],
+                toString: () => String(d[id]),
             },
         }));
     }

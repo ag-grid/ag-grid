@@ -19,8 +19,8 @@ const AnimateShowChangeCellRendererElement: ElementParams = {
 export class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
     private lastValue: any;
 
-    private eValue: HTMLElement = RefPlaceholder;
-    private eDelta: HTMLElement = RefPlaceholder;
+    private readonly eValue: HTMLElement = RefPlaceholder;
+    private readonly eDelta: HTMLElement = RefPlaceholder;
 
     private refreshCount = 0;
 

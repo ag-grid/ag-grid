@@ -21,21 +21,21 @@ import type { DndSourceComp } from './../dndSourceComp';
 import type { CellCtrl, ICellComp } from './cellCtrl';
 
 export class CellComp extends Component {
-    private eCell: HTMLElement;
+    private readonly eCell: HTMLElement;
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;
 
-    private cellCssManager: CssClassManager;
+    private readonly cellCssManager: CssClassManager;
 
     private readonly column: AgColumn;
     private readonly rowNode: RowNode;
-    private eRow: HTMLElement;
+    private readonly eRow: HTMLElement;
 
     private includeSelection: boolean;
     private includeRowDrag: boolean;
     private includeDndSource: boolean;
 
-    private forceWrapper: boolean;
+    private readonly forceWrapper: boolean;
 
     private checkboxSelectionComp: CheckboxSelectionComponent | undefined;
     private dndSourceComp: DndSourceComp | undefined;
@@ -212,7 +212,8 @@ export class CellComp extends Component {
         const usingCellValue = !editing && usingWrapper;
         const putCellValueIn = usingCellValue && this.eCellValue == null;
         if (putCellValueIn) {
-            this.eCellValue = _createElement({ tag: 'span', cls: 'ag-cell-value', role: 'presentation' });
+            const cls = this.cellCtrl.getCellValueClass();
+            this.eCellValue = _createElement({ tag: 'span', cls, role: 'presentation' });
             this.eCellWrapper!.appendChild(this.eCellValue);
         }
         const takeCellValueOut = !usingCellValue && this.eCellValue != null;
@@ -434,7 +435,7 @@ export class CellComp extends Component {
             return;
         }
 
-        const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
+        const editingCancelledByUserComp = cellEditor.isCancelBeforeStart?.();
         if (editingCancelledByUserComp) {
             context.destroyBean(cellEditor);
             this.cellCtrl.stopEditing(true);
@@ -450,7 +451,7 @@ export class CellComp extends Component {
         this.cellEditor = cellEditor;
         this.cellEditorGui = cellEditor.getGui();
 
-        const cellEditorInPopup = popup || (cellEditor.isPopup !== undefined && cellEditor.isPopup());
+        const cellEditorInPopup = popup || cellEditor.isPopup?.();
         if (cellEditorInPopup) {
             this.addPopupCellEditor(params, position);
         } else {

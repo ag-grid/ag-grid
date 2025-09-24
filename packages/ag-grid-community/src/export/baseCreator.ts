@@ -10,7 +10,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     protected getFileName(fileName?: string): string {
         const extension = this.getDefaultFileExtension();
 
-        if (fileName == null || !fileName.length) {
+        if (!fileName?.length) {
             fileName = this.getDefaultFileName();
         }
 

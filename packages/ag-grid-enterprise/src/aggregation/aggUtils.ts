@@ -1,6 +1,5 @@
 import type { AgColumn, BeanCollection, IAggFunc, IAggFuncParams, RowNode } from 'ag-grid-community';
-import { _warn } from 'ag-grid-community';
-import { _addGridCommonParams } from 'ag-grid-community';
+import { _addGridCommonParams, _warn } from 'ag-grid-community';
 
 export function _aggregateValues(
     beans: BeanCollection,

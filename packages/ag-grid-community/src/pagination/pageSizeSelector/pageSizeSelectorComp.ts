@@ -37,7 +37,7 @@ export class PageSizeSelectorComp extends Component {
         this.addManagedEventListeners({ paginationChanged: (event) => this.handlePaginationChanged(event) });
     }
 
-    private handlePageSizeItemSelected = (): void => {
+    private readonly handlePageSizeItemSelected = (): void => {
         if (!this.selectPageSizeComp) {
             return;
         }

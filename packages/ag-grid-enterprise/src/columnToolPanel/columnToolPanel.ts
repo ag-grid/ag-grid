@@ -26,7 +26,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private initialised = false;
     private params: ToolPanelColumnCompParams;
 
-    private childDestroyFuncs: (() => void)[] = [];
+    private readonly childDestroyFuncs: (() => void)[] = [];
 
     private pivotModePanel?: PivotModePanel;
     private primaryColsPanel: AgPrimaryCols;

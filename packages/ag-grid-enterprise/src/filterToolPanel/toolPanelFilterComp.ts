@@ -52,7 +52,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     private filterComp?: FilterComp;
 
     constructor(
-        private hideHeader: boolean,
+        private readonly hideHeader: boolean,
         private readonly expandedCallback: () => void
     ) {
         super(ToolPanelFilterElement);

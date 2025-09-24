@@ -234,8 +234,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
                 const shouldShowMenu =
                     // check if there are actual menu items to be displayed
-                    menuItems &&
-                    menuItems.length &&
+                    menuItems?.length &&
                     // check if the element that triggered the context menu was removed from the DOM
                     (isFromFakeEvent || _isVisible(target as HTMLElement)) &&
                     // overlay was displayed
@@ -250,7 +249,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             return true;
         }
 
-        if (menuItems === undefined || !menuItems?.length) {
+        if (!menuItems?.length) {
             return false;
         }
 

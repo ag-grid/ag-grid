@@ -269,7 +269,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private pinnedWidthFeature: SetPinnedWidthFeature | undefined;
     private visible: boolean = true;
     // Maintaining a constant reference enables optimization in React.
-    private EMPTY_CTRLS = [];
+    private readonly EMPTY_CTRLS = [];
 
     constructor(private readonly name: RowContainerName) {
         super();

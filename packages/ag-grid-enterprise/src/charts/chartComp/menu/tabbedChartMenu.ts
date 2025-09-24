@@ -21,7 +21,7 @@ export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
     }
 
     private tabbedLayout: TabbedLayout;
-    private tabs: TabbedItem[] = [];
+    private readonly tabs: TabbedItem[] = [];
     private eventSource?: HTMLElement;
 
     constructor(
@@ -85,7 +85,7 @@ export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
     }
 
     public override getGui(): HTMLElement {
-        return this.tabbedLayout && this.tabbedLayout.getGui();
+        return this.tabbedLayout?.getGui();
     }
 
     public showMenu(eventSource?: HTMLElement, suppressFocus?: boolean): void {
@@ -96,7 +96,7 @@ export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
     }
 
     public override destroy(): void {
-        if (this.parentComponent && this.parentComponent.isAlive()) {
+        if (this.parentComponent?.isAlive()) {
             this.destroyBean(this.parentComponent);
         }
         super.destroy();
