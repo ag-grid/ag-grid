@@ -702,17 +702,15 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             const end = segments[level];
             const subPath = pathKey.slice(0, end);
             let current = nodesByPath.get(subPath);
-            if (current !== undefined) {
-                if (current.sourceRowIndex < 0) {
-                    fillerId = current.id!;
-                    fillerLevel = level + 1; // current filler includes segment at 'level'
-                }
-            } else {
+            if (current === undefined) {
                 const fillerKey = start === 0 ? subPath : pathKey.slice(start, end);
                 fillerId = this.makeFillerIdBase(pathKey, segments, level, fillerId, fillerLevel) + fillerKey;
                 current = this.getOrCreateFiller(fillerKey, fillerId);
                 nodesByPath.set(subPath, current);
                 fillerLevel = level + 1;
+            } else if (current.sourceRowIndex < 0) {
+                fillerId = current.id!;
+                fillerLevel = level + 1; // current filler includes segment at 'level'
             }
             current.treeParent = treeParent;
             treeParent = current;
