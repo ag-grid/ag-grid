@@ -87,7 +87,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
         }
 
-        const parentsChanged = this.initRowsParents(rootNode);
+        const parentsChanged = this.initRowsParents(rootNode, changedRowNodes?.removals);
 
         this.destroyFillerRows();
 
@@ -128,7 +128,10 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         return hasUpdates;
     }
 
-    private initRowsParents(rootNode: GroupingRowNode<TData>): boolean {
+    private initRowsParents(rootNode: GroupingRowNode<TData>, removedNodes: Set<RowNode> | undefined): boolean {
+        if (!removedNodes?.size) {
+            removedNodes = undefined;
+        }
         const rootAllLeafChildren = rootNode.allLeafChildren!;
         const allLeafChildrenLen = rootAllLeafChildren.length;
         let treeChanged = false;
@@ -153,12 +156,14 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                     if (oldParent) {
                         const oldParentFlags = oldParent.treeNodeFlags;
                         if (
+                            removedNodes?.has(oldParent) &&
                             (oldParentFlags & FLAG_EXPANDED_INITIALIZED) !== 0 &&
                             (parentFlags & FLAG_EXPANDED_INITIALIZED) === 0 &&
                             parent.treeParent !== null &&
-                            !parent.data
+                            parent.sourceRowIndex < 0
                         ) {
-                            parent.expanded = oldParent.expanded; // If parent is a new filler node, copy the expanded flag from old parent
+                            // If parent is a new filler node, copy the expanded flag from old removed parent
+                            parent.expanded = oldParent.expanded;
                             parentFlags |= FLAG_EXPANDED_INITIALIZED;
                         }
                         oldParent.treeNodeFlags = oldParentFlags | FLAG_CHANGED;
