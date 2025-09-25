@@ -1,3 +1,4 @@
+import { _EmptyArray } from '../agStack/utils/array';
 import { BeanStub } from '../context/beanStub';
 import type { GetRowIdFunc } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
@@ -456,24 +457,24 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     }
 
     protected lookupRowNode(getRowIdFunc: ((data: any) => string) | undefined, data: TData): RowNode<TData> | null {
-        let rowNode: RowNode | undefined;
         if (getRowIdFunc) {
             // find rowNode using id
             const id = getRowIdFunc({ data, level: 0 });
-            rowNode = this.allNodesMap[id];
-            if (!rowNode) {
-                _error(4, { id });
-                return null;
+            const rowNode = this.allNodesMap[id];
+            if (rowNode) {
+                return rowNode;
             }
-        } else {
-            // find rowNode using object references
-            rowNode = this.rootNode?._leafs?.find((node) => node.data === data);
-            if (!rowNode) {
-                _error(5, { data });
-                return null;
-            }
+            _error(4, { id });
+            return null;
         }
 
-        return rowNode || null;
+        // find rowNode using object references
+        for (const leaf of this.rootNode?._leafs ?? _EmptyArray) {
+            if (leaf.data === data) {
+                return leaf;
+            }
+        }
+        _error(5, { data });
+        return null;
     }
 }

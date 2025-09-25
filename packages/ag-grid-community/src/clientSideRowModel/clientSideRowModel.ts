@@ -1076,19 +1076,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const changedRowNodes = new ChangedRowNodes();
         let orderChanged = false;
-        const rowDataTransactionBatch = this.rowDataTransactionBatch ?? _EmptyArray;
-        for (const tranItem of rowDataTransactionBatch) {
+        for (const { rowDataTransaction, callback } of this.rowDataTransactionBatch ?? _EmptyArray) {
             this.rowNodesCountReady = true;
             const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(
-                tranItem.rowDataTransaction,
+                rowDataTransaction,
                 changedRowNodes
             );
-            if (rowsInserted) {
-                orderChanged = true;
-            }
+            orderChanged ||= rowsInserted;
             rowNodeTrans.push(rowNodeTransaction);
-            if (tranItem.callback) {
-                callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTransaction));
+            if (callback) {
+                callbackFuncsBound.push(callback.bind(null, rowNodeTransaction));
             }
         }
 
