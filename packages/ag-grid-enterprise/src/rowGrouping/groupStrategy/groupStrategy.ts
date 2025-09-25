@@ -105,37 +105,39 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     private positionLeafsAndGroups(changedPath: ChangedPath) {
         changedPath.forEachChangedNodeDepthFirst((group: RowNode) => {
             const oldChildrenAfterGroup = group.childrenAfterGroup;
-            if (oldChildrenAfterGroup) {
-                const leafNodes: RowNode[] = [];
-                const groupNodes: RowNode[] = [];
-                let unbalancedNode: RowNode | undefined;
+            if (!oldChildrenAfterGroup?.length) {
+                return;
+            }
+            const newChildrenAfterGroup: RowNode[] = [];
+            const groupNodes: RowNode[] = [];
+            let unbalancedNode: RowNode | undefined;
 
-                oldChildrenAfterGroup.forEach((row) => {
-                    if (!row.childrenAfterGroup?.length) {
-                        leafNodes.push(row);
-                    } else {
-                        if (row.key === '' && !unbalancedNode) {
-                            unbalancedNode = row;
-                        } else {
-                            groupNodes.push(row);
-                        }
-                    }
-                });
-
-                if (unbalancedNode) {
-                    groupNodes.push(unbalancedNode);
+            for (let i = 0, len = oldChildrenAfterGroup.length; i < len; ++i) {
+                const child = oldChildrenAfterGroup[i];
+                if (!child.childrenAfterGroup?.length) {
+                    newChildrenAfterGroup.push(child); // Leaf
+                } else if (!unbalancedNode && child.key === '') {
+                    unbalancedNode = child;
+                } else {
+                    groupNodes.push(child);
                 }
+            }
 
-                const newChildrenAfterGroup = leafNodes.concat(groupNodes);
+            for (let i = 0, len = groupNodes.length; i < len; ++i) {
+                newChildrenAfterGroup.push(groupNodes[i]);
+            }
 
-                if (!_areEqual(oldChildrenAfterGroup, newChildrenAfterGroup)) {
-                    group.childrenAfterGroup = newChildrenAfterGroup;
-                    const sibling = group.sibling;
-                    if (sibling) {
-                        sibling.childrenAfterGroup = group.childrenAfterGroup;
-                    }
-                    // Order-only change: no need to invalidate cached allLeafChildren
+            if (unbalancedNode) {
+                newChildrenAfterGroup.push(unbalancedNode);
+            }
+
+            if (!_areEqual(oldChildrenAfterGroup, newChildrenAfterGroup)) {
+                group.childrenAfterGroup = newChildrenAfterGroup;
+                const sibling = group.sibling;
+                if (sibling) {
+                    sibling.childrenAfterGroup = group.childrenAfterGroup;
                 }
+                // Order-only change: no need to invalidate cached allLeafChildren
             }
         }, false);
     }
@@ -212,20 +214,26 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private orderGroups(details: GroupingDetails): void {
         const comparator = details.initialGroupOrderComparator;
+        const comparer = (nodeA: RowNode, nodeB: RowNode) => comparator({ nodeA, nodeB });
+
+        const recursiveSort = (rowNode: RowNode): void => {
+            const childrenAfterGroup = rowNode.childrenAfterGroup;
+            if (!childrenAfterGroup) {
+                return;
+            }
+
+            if (rowNode.leafGroup) {
+                return; // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
+            }
+
+            childrenAfterGroup.sort(comparer);
+            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+                recursiveSort(childrenAfterGroup[i]);
+            }
+        };
+
         if (_exists(comparator)) {
             recursiveSort(details.rootNode);
-        }
-
-        function recursiveSort(rowNode: RowNode): void {
-            const doSort =
-                _exists(rowNode.childrenAfterGroup) &&
-                // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
-                !rowNode.leafGroup;
-
-            if (doSort) {
-                rowNode.childrenAfterGroup!.sort((nodeA, nodeB) => comparator!({ nodeA, nodeB }));
-                rowNode.childrenAfterGroup!.forEach((childNode: RowNode) => recursiveSort(childNode));
-            }
         }
     }
 
@@ -351,7 +359,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         while (checkAgain) {
             checkAgain = false;
             const batchRemover = new BatchRemover();
-            possibleEmptyGroups.forEach((possibleEmptyGroup) => {
+            for (const possibleEmptyGroup of possibleEmptyGroups) {
                 // remove empty groups
                 this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
                     if (groupShouldBeRemoved(rowNode)) {
@@ -367,7 +375,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                         });
                     }
                 });
-            });
+            }
             batchRemover.flush();
         }
     }
@@ -421,20 +429,19 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             if (!rowNodes) {
                 return;
             }
-            rowNodes.forEach((rowNode) => {
-                const isLeafNode = !rowNode.group;
-                if (isLeafNode) {
-                    return;
+            for (let i = 0, len = rowNodes.length; i < len; ++i) {
+                const rowNode = rowNodes[i];
+                if (!rowNode.group) {
+                    continue;
                 }
-                const groupInfo: GroupInfo = {
+                this.setGroupData(rowNode, {
                     field: rowNode.field,
                     key: rowNode.key!,
                     rowGroupColumn: rowNode.rowGroupColumn,
                     leafNode: _getFirstLeafChild(rowNode),
-                };
-                this.setGroupData(rowNode, groupInfo);
+                });
                 recurse(rowNode.childrenAfterGroup);
-            });
+            }
         };
 
         recurse(details.rootNode.childrenAfterGroup);
@@ -489,12 +496,15 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private insertNodes(newRowNodes: RowNode[], details: GroupingDetails): void {
-        newRowNodes.forEach((rowNode) => {
+        let activeChangedPath: ChangedPath | null = details.changedPath;
+        if (!activeChangedPath.active) {
+            activeChangedPath = null;
+        }
+        for (let i = 0, len = newRowNodes.length; i < len; ++i) {
+            const rowNode = newRowNodes[i];
             this.insertOneNode(rowNode, details);
-            if (details.changedPath.active) {
-                details.changedPath.addParentNode(rowNode.parent);
-            }
-        });
+            activeChangedPath?.addParentNode(rowNode.parent);
+        }
     }
 
     private insertOneNode(childNode: RowNode, details: GroupingDetails): void {
@@ -504,13 +514,12 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             const groupInfo = path[level];
             parentGroup = this.getOrCreateNextNode(parentGroup, groupInfo, level, details);
         }
-
-        if (!parentGroup.group) {
-            _warn(184, { parentGroupData: parentGroup.data, childNodeData: childNode.data });
-        }
         const oldParent = childNode.parent;
         invalidateAllLeafChildren(oldParent);
         invalidateAllLeafChildren(parentGroup);
+        if (!parentGroup.group) {
+            _warn(184, { parentGroupData: parentGroup.data, childNodeData: childNode.data });
+        }
         childNode.parent = parentGroup;
         childNode.level = path.length;
         parentGroup.childrenAfterGroup!.push(childNode);
@@ -526,13 +535,10 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         const key = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
         const parentChildrenMapped = parentGroup?.childrenMapped;
         let nextNode = parentChildrenMapped?.[key];
-
         if (!nextNode) {
             nextNode = this.createGroup(groupInfo, parentGroup, level, details);
-            // attach the new group to the parent
-            this.addToParent(nextNode, parentGroup);
+            this.addToParent(nextNode, parentGroup); // attach the new group to the parent
         }
-
         return nextNode;
     }
 
@@ -594,7 +600,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         groupNode.groupData = {};
         const groupDisplayCols = this.showRowGroupCols.getShowRowGroupCols();
-        groupDisplayCols.forEach((col) => {
+        for (let i = 0; i < groupDisplayCols.length; ++i) {
+            const col = groupDisplayCols[i];
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
 
@@ -604,7 +611,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 // if maintain group value type, get the value from any leaf node.
                 groupNode.groupData![col.getColId()] = this.valueSvc.getValue(groupColumn, groupInfo.leafNode);
             }
-        });
+        }
     }
 
     private getChildrenMappedKey(key: string, rowGroupColumn: AgColumn | null): string {

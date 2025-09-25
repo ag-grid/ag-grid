@@ -30,17 +30,26 @@ export function _createGlobalRowEvent<T extends AgEventType>(
  */
 const IGNORED_SIBLING_PROPERTIES = new Set<
     keyof RowNode | '__localEventService' | '__autoHeights' | '__checkAutoHeightsDebounced'
->(['__localEventService', '__objectId', 'sticky', '__autoHeights', '__checkAutoHeightsDebounced', 'childStore']);
+>([
+    '__objectId',
+    '__autoHeights',
+    '__localEventService',
+    '__checkAutoHeightsDebounced',
+    'sticky',
+    'childStore',
+    'treeParent',
+    'treeNodeFlags',
+]);
 
 export function _createRowNodeSibling(rowNode: RowNode, beans: BeanCollection): RowNode {
     const sibling = new RowNode(beans);
 
-    Object.keys(rowNode).forEach((key: keyof RowNode) => {
+    for (const key of Object.keys(rowNode) as (keyof RowNode)[]) {
         if (IGNORED_SIBLING_PROPERTIES.has(key)) {
-            return;
+            continue;
         }
         (sibling as any)[key] = (rowNode as any)[key];
-    });
+    }
 
     // manually set oldRowTop to null so we discard any
     // previous information about its position.
@@ -63,20 +72,3 @@ export const _getFirstLeafChild = <TData = any>(
         }
     }
 };
-
-export function* _iterateAllLeafChildren<TData = any>(
-    node: IRowNode<TData> | null | undefined
-): IterableIterator<RowNode<TData>> {
-    const childrenAfterGroup = node?.childrenAfterGroup;
-    if (childrenAfterGroup) {
-        for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
-            const child = childrenAfterGroup[i];
-            if (child.data) {
-                yield child as RowNode<TData>;
-            }
-            if (child.group) {
-                yield* _iterateAllLeafChildren(child);
-            }
-        }
-    }
-}

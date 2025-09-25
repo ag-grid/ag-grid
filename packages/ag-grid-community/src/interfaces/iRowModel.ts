@@ -84,7 +84,6 @@ export interface IRowModel {
     /**
      * This optional method is used to compute the `allLeafChildren` property on a RowNode lazily.
      * It sets `rowNode._leafs` and `sibling._leafs` directly rather than returning the value.
-     * @see RowNode.allLeafChildren
      */
     loadLeafs?(rowNode: RowNode): void;
 

@@ -6,7 +6,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
-import { _iterateAllLeafChildren } from '../entities/rowNodeUtils';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
 import {
     _getGroupSelectsDescendants,
@@ -32,10 +31,6 @@ import type { ValueCache } from '../valueService/valueCache';
 import { ChangedRowNodes } from './changedRowNodes';
 import { updateRowNodeAfterFilter } from './filterStage';
 import { updateRowNodeAfterSort } from './sortStage';
-
-interface ClientSideRowModelRootNode extends RowNode {
-    childrenAfterGroup: RowNode[] | null;
-}
 
 interface BatchTransactionItem<TData = any> {
     rowDataTransaction: RowDataTransaction<TData>;
@@ -406,7 +401,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         };
 
         const recurse = (rowNode: RowNode | null) => {
-            if (rowNode === null) {
+            if (!rowNode) {
                 return;
             }
 
@@ -414,20 +409,28 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             clearIfNotDisplayed(rowNode.detailNode);
             clearIfNotDisplayed(rowNode.sibling);
 
-            if (rowNode.hasChildren()) {
-                if (rowNode.childrenAfterGroup) {
-                    // if a changedPath is active, it means we are here because of a transaction update or
-                    // a change detection. neither of these impacts the open/closed state of groups. so if
-                    // a group is not open this time, it was not open last time. so we know all closed groups
-                    // already have their top positions cleared. so there is no need to traverse all the way
-                    // when changedPath is active and the rowNode is not expanded.
-                    const isRootNode = rowNode.level == -1; // we need to give special consideration for root node,
-                    // as expanded=undefined for root node
-                    const skipChildren = changedPathActive && !isRootNode && !rowNode.expanded;
-                    if (!skipChildren) {
-                        rowNode.childrenAfterGroup.forEach(recurse);
-                    }
-                }
+            if (!rowNode.hasChildren()) {
+                return;
+            }
+
+            const childrenAfterGroup = rowNode.childrenAfterGroup;
+            if (!childrenAfterGroup) {
+                return;
+            }
+            // if a changedPath is active, it means we are here because of a transaction update or
+            // a change detection. neither of these impacts the open/closed state of groups. so if
+            // a group is not open this time, it was not open last time. so we know all closed groups
+            // already have their top positions cleared. so there is no need to traverse all the way
+            // when changedPath is active and the rowNode is not expanded.
+            const isRootNode = rowNode.level == -1; // we need to give special consideration for root node,
+            // as expanded=undefined for root node
+            const skipChildren = changedPathActive && !isRootNode && !rowNode.expanded;
+            if (skipChildren) {
+                return;
+            }
+
+            for (let i = 0, len = childrenAfterGroup.length; i < len; i++) {
+                recurse(childrenAfterGroup[i]);
             }
         };
 
@@ -741,7 +744,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     // if the final node was a group node, and we're doing groupSelectsChildren
                     // make the exception to select all of it's descendants too
                     if (groupsSelectChildren && rowNode.group) {
-                        result.push(..._iterateAllLeafChildren(rowNode));
+                        addAllLeafs(rowNode, result);
                         return;
                     }
                 }
@@ -855,7 +858,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public forEachDisplayedNode(callback: (rowNode: RowNode<any>, index: number) => void): void {
-        this.rowsToDisplay.forEach(callback);
+        const rowsToDisplay = this.rowsToDisplay;
+        for (let i = 0, len = rowsToDisplay.length; i < len; ++i) {
+            callback(rowsToDisplay[i], i);
+        }
     }
 
     public forEachNodeAfterFilter(
@@ -974,7 +980,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private doRowGrouping(params: RefreshModelParams): boolean {
-        const rootNode: ClientSideRowModelRootNode = this.rootNode!;
+        const rootNode = this.rootNode!;
 
         const groupStageExecuted = this.groupStage?.execute({
             rowNode: rootNode,
@@ -988,10 +994,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return groupStageExecuted;
         }
 
-        const sibling: ClientSideRowModelRootNode = rootNode.sibling;
-        rootNode.childrenAfterGroup = rootNode.allLeafChildren;
+        const leafs = (rootNode._leafs ??= []);
+        const sibling = rootNode.sibling;
+        rootNode.childrenAfterGroup = leafs;
         if (sibling) {
-            sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
+            sibling.childrenAfterGroup = leafs;
         }
         rootNode.updateHasChildren();
 
@@ -1056,7 +1063,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const changedRowNodes = new ChangedRowNodes();
         let orderChanged = false;
-        this.rowDataTransactionBatch?.forEach((tranItem) => {
+        const rowDataTransactionBatch = this.rowDataTransactionBatch ?? _EmptyArray;
+        for (const tranItem of rowDataTransactionBatch) {
             this.rowNodesCountReady = true;
             const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(
                 tranItem.rowDataTransaction,
@@ -1069,14 +1077,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             if (tranItem.callback) {
                 callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTransaction));
             }
-        });
+        }
 
         this.commitTransactions(orderChanged, changedRowNodes);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
             window.setTimeout(() => {
-                callbackFuncsBound.forEach((func) => func());
+                for (const func of callbackFuncsBound) {
+                    func();
+                }
             }, 0);
         }
 
@@ -1259,3 +1269,19 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 }
+
+/** Helper to recursively collect all leaf children of a node */
+const addAllLeafs = (node: RowNode, output: RowNode[]): void => {
+    const children = node.childrenAfterGroup;
+    if (children) {
+        for (let i = 0, len = children.length; i < len; ++i) {
+            const child = children[i];
+            if (child.data) {
+                output.push(child);
+            }
+            if (child.group) {
+                addAllLeafs(child, output);
+            }
+        }
+    }
+};

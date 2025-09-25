@@ -7,7 +7,7 @@ import type {
     RowNode,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _getRowNode, _iterateAllLeafChildren, _warn } from 'ag-grid-community';
+import { BeanStub, _getRowNode, _warn } from 'ag-grid-community';
 
 export class ChartColumnService extends BeanStub {
     private colModel: ColumnModel;
@@ -68,7 +68,7 @@ export class ChartColumnService extends BeanStub {
         const dimensionCols = new Set<AgColumn>();
         const valueCols = new Set<AgColumn>();
 
-        gridCols.forEach((col) => {
+        for (const col of gridCols) {
             const colDef = col.getColDef();
             const chartDataType = colDef.chartDataType;
 
@@ -78,12 +78,12 @@ export class ChartColumnService extends BeanStub {
                     case 'category':
                     case 'time':
                         dimensionCols.add(col);
-                        return;
+                        continue;
                     case 'series':
                         valueCols.add(col);
-                        return;
+                        continue;
                     case 'excluded':
-                        return;
+                        continue;
                     default:
                         _warn(153, { chartDataType });
                         break;
@@ -92,17 +92,17 @@ export class ChartColumnService extends BeanStub {
 
             if (colDef.colId === 'ag-Grid-AutoColumn') {
                 dimensionCols.add(col);
-                return;
+                continue;
             }
 
             if (!col.isPrimary()) {
                 valueCols.add(col);
-                return;
+                continue;
             }
 
             // if 'chartDataType' is not provided then infer type based data contained in first row
             (this.isInferredValueCol(col) ? valueCols : dimensionCols).add(col);
-        });
+        }
 
         return { dimensionCols, valueCols };
     }
@@ -149,10 +149,19 @@ export class ChartColumnService extends BeanStub {
     }
 
     private extractLeafData(row: RowNode, col: AgColumn): any {
-        for (const leaf of _iterateAllLeafChildren(row)) {
-            const value = this.valueSvc.getValue(col, leaf);
+        if (row.data != null) {
+            const value = this.valueSvc.getValue(col, row);
             if (value != null) {
                 return value;
+            }
+        }
+        const childrenAfterGroup = row.childrenAfterGroup;
+        if (childrenAfterGroup) {
+            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+                const result = this.extractLeafData(childrenAfterGroup[i], col);
+                if (result != null) {
+                    return result;
+                }
             }
         }
         return null;
