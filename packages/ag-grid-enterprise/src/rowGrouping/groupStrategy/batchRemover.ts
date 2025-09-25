@@ -42,8 +42,8 @@ export class BatchRemover {
                 const childrenAfterGroup = parent.childrenAfterGroup;
                 if (childrenAfterGroup && fromChildrenAfterGroup) {
                     if (filterRowNodesInPlace(childrenAfterGroup, fromChildrenAfterGroup)) {
-                        parent.updateHasChildren();
                         invalidateAllLeafChildren(parent);
+                        parent.updateHasChildren();
                     }
                 }
             }

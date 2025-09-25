@@ -81,10 +81,7 @@ export interface IRowModel {
      */
     onRowHeightChanged(): void;
 
-    /**
-     * This optional method is used to compute the `allLeafChildren` property on a RowNode lazily.
-     * It sets `rowNode._leafs` and `sibling._leafs` directly rather than returning the value.
-     */
+    /** Optional method used by RowNode to compute the `allLeafChildren` lazily, sets `RowNode._leafs`. */
     loadLeafs?(rowNode: RowNode): void;
 
     /** For ClientSideRowModel returns rootNode._leafs, the array of all row nodes that have data */

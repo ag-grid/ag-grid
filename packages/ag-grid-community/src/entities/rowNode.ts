@@ -142,31 +142,14 @@ export class RowNode<TData = any>
     public sourceRowIndex: number = -1;
 
     /**
-     * All lowest level nodes beneath this node, no groups.
-     * In the root node, this array contains all rows, and is computed by the ClientSideRowModel.
-     * Do not modify this array directly. The grouping module relies on mutable references to the array.
-     * The array might also br frozen (immutable).
-     *
-     * If undefined, it means not yet loaded.
-     * If null, it means empty, no leaf children.
-     * If not null is an array containing all the leaf children.
-     *
-     * Backing field for allLeafChildren property, that is exposed to the user.
+     * CSRM only - all lowest level nodes beneath this node, no groups. Backing field for allLeafChildren property.
+     * - undefined if not yet loaded.
+     * - null if there are no no leaf children.
+     * - not empty array containing all the leaf children.
      */
     public _leafs: RowNode<TData>[] | null | undefined = undefined;
 
-    /**
-     * Do not use this property internally, this is exposed to the end user only. Use `_leafs` instead.
-     * All lowest level nodes beneath this node, no groups.
-     * In the root node, this array contains all rows, and is computed by the ClientSideRowModel.
-     * Do not modify this array directly. The grouping module relies on mutable references to the array.
-     * The array might also br frozen (immutable).
-     *
-     * Generally readonly. It is modified only by:
-     * - ClientSideNodeManager, cast to ClientSideNodeManagerRootNode
-     * - GroupStrategy, cast to GroupRow
-     * - TreeStrategy, cast to TreeRow
-     */
+    /** CSRM only - do not use this property internally, this is exposed to the end user only. Use `_leafs` instead. */
     public get allLeafChildren(): RowNode<TData>[] | null {
         let leafs = this._leafs;
         if (leafs === undefined) {
