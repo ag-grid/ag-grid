@@ -139,9 +139,24 @@ export class RowNode<TData = any>
      * - ClientSideNodeManager, cast to ClientSideNodeManagerRowNode
      * - ClientSideRowModel, cast to ClientSideRowModelRowNode
      */
-    public readonly sourceRowIndex: number = -1;
+    public sourceRowIndex: number = -1;
 
     /**
+     * All lowest level nodes beneath this node, no groups.
+     * In the root node, this array contains all rows, and is computed by the ClientSideRowModel.
+     * Do not modify this array directly. The grouping module relies on mutable references to the array.
+     * The array might also br frozen (immutable).
+     *
+     * If undefined, it means not yet loaded.
+     * If null, it means empty, no leaf children.
+     * If not null is an array containing all the leaf children.
+     *
+     * Backing field for allLeafChildren property, that is exposed to the user.
+     */
+    public _leafs: RowNode<TData>[] | null | undefined = undefined;
+
+    /**
+     * Do not use this property internally, this is exposed to the end user only. Use `_leafs` instead.
      * All lowest level nodes beneath this node, no groups.
      * In the root node, this array contains all rows, and is computed by the ClientSideRowModel.
      * Do not modify this array directly. The grouping module relies on mutable references to the array.
@@ -152,7 +167,19 @@ export class RowNode<TData = any>
      * - GroupStrategy, cast to GroupRow
      * - TreeStrategy, cast to TreeRow
      */
-    public readonly allLeafChildren: RowNode<TData>[] | null;
+    public get allLeafChildren(): RowNode<TData>[] | null {
+        let leafs = this._leafs;
+        if (leafs === undefined) {
+            this._leafs = null;
+            this.beans.rowModel.loadLeafs?.(this);
+            leafs = this._leafs;
+        }
+        return leafs;
+    }
+
+    public set allLeafChildren(value: RowNode<TData>[] | null | undefined) {
+        this._leafs = value;
+    }
 
     /**
      * Children of this group. If multi levels of grouping, shows only immediate children.
@@ -163,7 +190,7 @@ export class RowNode<TData = any>
      * - GroupStrategy, cast to GroupRow
      * - TreeStrategy, cast to TreeRow
      */
-    public readonly childrenAfterGroup: RowNode<TData>[] | null;
+    public childrenAfterGroup: RowNode<TData>[] | null;
 
     /** Filtered children of this group. */
     public childrenAfterFilter: RowNode<TData>[] | null;
@@ -185,10 +212,10 @@ export class RowNode<TData = any>
      * When set, the parent node in the hierarchy is updated during Client-Side Row Model (CSRM) grouping.
      * Used by the ClientSideChildrenTreeNodeManager, TreeGroupStrategy, RowDragFeature
      */
-    public readonly treeParent: RowNode<TData> | null = null;
+    public treeParent: RowNode<TData> | null = null;
 
     /** The flags associated to this node. Used only internally within TreeGroupStrategy. */
-    public readonly treeNodeFlags: number = 0;
+    public treeNodeFlags: number = 0;
 
     /** Server Side Row Model Only - the children are in an infinite cache. */
     public childStore: IServerSideStore | null;

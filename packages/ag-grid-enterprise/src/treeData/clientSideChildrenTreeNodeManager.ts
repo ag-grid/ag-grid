@@ -9,7 +9,6 @@ import type {
 } from 'ag-grid-community';
 import { AbstractClientSideNodeManager, ChangedPath, _error, _getRowIdCallback, _warn } from 'ag-grid-community';
 
-import type { GroupingRowNode } from '../rowHierarchy/rowHierarchyUtils';
 import type { DataFieldGetter } from './fieldAccess';
 import { makeFieldPathGetter } from './fieldAccess';
 
@@ -63,10 +62,10 @@ export class ClientSideChildrenTreeNodeManager<TData>
         const rootNode = this.rootNode!;
         const childrenGetter = this.childrenGetter;
 
-        const processedData = new Map<TData, GroupingRowNode<TData>>();
-        const allLeafChildren: GroupingRowNode<TData>[] = [];
+        const processedData = new Map<TData, RowNode<TData>>();
+        const allLeafs: RowNode<TData>[] = [];
 
-        rootNode.allLeafChildren = allLeafChildren;
+        rootNode._leafs = allLeafs;
 
         const processChild = (parent: RowNode, data: TData) => {
             let row = processedData.get(data);
@@ -75,10 +74,10 @@ export class ClientSideChildrenTreeNodeManager<TData>
                 return;
             }
 
-            row = this.createRowNode(data, allLeafChildren.length);
+            row = this.createRowNode(data, allLeafs.length);
             row.treeParent = parent;
             processedData.set(data, row);
-            allLeafChildren.push(row);
+            allLeafs.push(row);
 
             const children = childrenGetter?.(data);
             if (children) {
@@ -102,21 +101,21 @@ export class ClientSideChildrenTreeNodeManager<TData>
         const getRowIdFunc = _getRowIdCallback(gos)!;
         const canReorder = !gos.get('suppressMaintainUnsortedOrder');
 
-        const processedData = new Map<TData, GroupingRowNode<TData>>();
+        const processedData = new Map<TData, RowNode<TData>>();
 
         const changedPath = new ChangedPath(false, rootNode);
         params.changedPath = changedPath;
 
         const changedRowNodes = params.changedRowNodes!;
 
-        const oldAllLeafChildren: GroupingRowNode[] | null = rootNode.allLeafChildren;
-        const allLeafChildren: GroupingRowNode[] = [];
-        const nodesToUnselect: GroupingRowNode<TData>[] = [];
+        const oldAllLeafs = rootNode._leafs;
+        const allLeafs: RowNode[] = [];
+        const nodesToUnselect: RowNode<TData>[] = [];
 
         let orderChanged = false;
         let rowsChanged = false;
 
-        const processChildren = (parent: GroupingRowNode<TData>, children: TData[], childrenLevel: number): void => {
+        const processChildren = (parent: RowNode<TData>, children: TData[], childrenLevel: number): void => {
             const childrenLen = children?.length;
             let inOrder = true;
             let prevIndex = -1;
@@ -134,7 +133,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
             }
         };
 
-        const processChild = (parent: GroupingRowNode<TData>, data: TData, level: number): number => {
+        const processChild = (parent: RowNode<TData>, data: TData, level: number): number => {
             let row = processedData.get(data);
             if (row !== undefined) {
                 _warn(2, { nodeId: row.id }); // Duplicate node
@@ -143,7 +142,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
             const id = getRowIdFunc({ data, level });
 
-            row = this.getRowNode(id) as GroupingRowNode<TData> | undefined;
+            row = this.getRowNode(id) as RowNode<TData> | undefined;
             if (row) {
                 let rowChanged = false;
                 if (row.data !== data) {
@@ -173,7 +172,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
             let oldSourceRowIndex: number;
             if (canReorder) {
                 oldSourceRowIndex = row.sourceRowIndex;
-                row.sourceRowIndex = allLeafChildren.push(row) - 1;
+                row.sourceRowIndex = allLeafs.push(row) - 1;
             } else {
                 oldSourceRowIndex = -1;
             }
@@ -188,11 +187,11 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
         processChildren(rootNode, rowData, 0);
 
-        if (oldAllLeafChildren) {
+        if (oldAllLeafs) {
             const pinnedRowModel = this.beans.pinnedRowModel;
-            for (let i = 0, len = oldAllLeafChildren.length; i < len; ++i) {
-                const row = oldAllLeafChildren[i];
-                if (!processedData.has(row.data)) {
+            for (let i = 0, len = oldAllLeafs.length; i < len; ++i) {
+                const row = oldAllLeafs[i];
+                if (!processedData.has(row.data!)) {
                     row.treeParent = null;
                     row.treeNodeFlags = 0;
                     const pinnedSibling = row.pinnedSibling;
@@ -211,31 +210,30 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
         if (!canReorder) {
             // First append all the old children that weren't removed
-            if (oldAllLeafChildren) {
+            if (oldAllLeafs) {
                 const removals = changedRowNodes.removals;
-                for (let i = 0, len = oldAllLeafChildren.length; i < len; ++i) {
-                    const row = oldAllLeafChildren[i];
+                for (let i = 0, len = oldAllLeafs.length; i < len; ++i) {
+                    const row = oldAllLeafs[i];
                     if (!removals.has(row)) {
-                        row.sourceRowIndex = allLeafChildren.push(row) - 1;
+                        row.sourceRowIndex = allLeafs.push(row) - 1;
                     }
                 }
             }
 
             // Now append all the new children
             for (const row of changedRowNodes.adds) {
-                (row as GroupingRowNode<TData>).sourceRowIndex = allLeafChildren.push(row) - 1;
+                (row as RowNode<TData>).sourceRowIndex = allLeafs.push(row) - 1;
             }
         }
 
-        rootNode.allLeafChildren = allLeafChildren;
+        rootNode._leafs = allLeafs;
+        const sibling = rootNode.sibling;
+        if (sibling) {
+            sibling._leafs = allLeafs;
+        }
 
         if (nodesToUnselect.length) {
             this.deselectNodes(nodesToUnselect);
-        }
-
-        const sibling = rootNode.sibling;
-        if (sibling) {
-            sibling.allLeafChildren = allLeafChildren;
         }
 
         if (rowsChanged || orderChanged) {

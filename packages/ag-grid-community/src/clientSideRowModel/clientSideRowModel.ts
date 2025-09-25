@@ -6,6 +6,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
+import { _iterateAllLeafChildren } from '../entities/rowNodeUtils';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
 import {
     _getGroupSelectsDescendants,
@@ -707,7 +708,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public isEmpty(): boolean {
-        return !this.rootNode?.allLeafChildren?.length || !this.colModel?.ready;
+        return !this.rootNode?._leafs?.length || !this.colModel?.ready;
     }
 
     public isRowsToRender(): boolean {
@@ -735,8 +736,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
                     // if the final node was a group node, and we're doing groupSelectsChildren
                     // make the exception to select all of it's descendants too
-                    if (rowNode.group && groupsSelectChildren) {
-                        result.push(...rowNode.allLeafChildren!);
+                    if (groupsSelectChildren && rowNode.group) {
+                        result.push(..._iterateAllLeafChildren(rowNode));
                         return;
                     }
                 }
@@ -837,7 +838,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public forEachLeafNode(callback: (node: RowNode, index: number) => void): void {
-        this.rootNode?.allLeafChildren?.forEach((rowNode, index) => callback(rowNode, index));
+        const allLeafs = this.rootNode?._leafs;
+        if (allLeafs) {
+            for (let i = 0, len = allLeafs.length; i < len; ++i) {
+                callback(allLeafs[i], i);
+            }
+        }
     }
 
     public forEachNode(callback: (node: RowNode, index: number) => void, includeFooterNodes: boolean = false): void {
@@ -1220,5 +1226,30 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      */
     public onRowHeightChangedDebounced(): void {
         this.onRowHeightChanged_debounced();
+    }
+
+    public loadLeafs(node: RowNode): void {
+        let leafs: RowNode[] | null = null;
+        const childrenAfterGroup = node.childrenAfterGroup;
+        if (childrenAfterGroup) {
+            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+                const childLeafs = childrenAfterGroup[i].allLeafChildren;
+                const childLeafsLen = childLeafs?.length;
+                if (!childLeafsLen) {
+                    continue;
+                }
+                if (leafs === null) {
+                    node._leafs = leafs = [];
+                }
+                for (let j = 0; j < childLeafsLen; ++j) {
+                    leafs.push(childLeafs[j]);
+                }
+            }
+        }
+        node._leafs = leafs;
+        const sibling = node.sibling;
+        if (sibling) {
+            sibling._leafs = leafs;
+        }
     }
 }

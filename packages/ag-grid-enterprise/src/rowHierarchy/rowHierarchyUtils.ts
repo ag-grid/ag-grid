@@ -18,16 +18,6 @@ export interface IRowGroupingStrategy<TData = any> extends Bean {
     getNode(id: string): RowNode<TData> | undefined;
 }
 
-export interface GroupingRowNode<TData = any> extends RowNode<TData> {
-    parent: this | null;
-    allLeafChildren: this[] | null;
-    childrenAfterGroup: this[] | null;
-    treeParent: this | null;
-    treeNodeFlags: number;
-    sibling: this;
-    sourceRowIndex: number;
-}
-
 /**
  * Returns if the node and all of its parents are all firstChild until ancestor node is reached
  * This is to check for [groupHideOpenParents] where we only show the expand controls for first child of a group

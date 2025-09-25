@@ -310,7 +310,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         } else if (this.initialData) {
             return this.initialData;
         } else {
-            const rowNodes = (this.beans.rowModel as IClientSideRowModel).rootNode?.allLeafChildren;
+            const rowNodes = (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs;
             if (rowNodes?.length) {
                 return rowNodes[0].data;
             }

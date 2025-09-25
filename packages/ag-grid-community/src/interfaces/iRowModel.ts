@@ -80,4 +80,11 @@ export interface IRowModel {
      * Tells the grid to reposition the rows after their heights have changed.
      */
     onRowHeightChanged(): void;
+
+    /**
+     * This optional method is used to compute the `allLeafChildren` property on a RowNode lazily.
+     * It sets `rowNode._leafs` and `sibling._leafs` directly rather than returning the value.
+     * @see RowNode.allLeafChildren
+     */
+    loadLeafs?(rowNode: RowNode): void;
 }

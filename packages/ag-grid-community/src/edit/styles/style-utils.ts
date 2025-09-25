@@ -1,5 +1,6 @@
 import type { BeanCollection } from '../../context/context';
 import type { RowNode } from '../../entities/rowNode';
+import { _iterateAllLeafChildren } from '../../entities/rowNodeUtils';
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import { _sourceAndPendingDiffer } from '../utils/editors';
@@ -27,7 +28,7 @@ export function _hasLeafEdits(beans: BeanCollection, position: EditPosition): bo
         return false;
     }
 
-    for (const node of rowNode?.allLeafChildren ?? []) {
+    for (const node of _iterateAllLeafChildren(rowNode)) {
         const highlight =
             editHighlightFn(editModelSvc?.getEdit({ rowNode: node, column })) ||
             editHighlightFn(editModelSvc?.getEdit({ rowNode: (node as RowNode).pinnedSibling, column }));

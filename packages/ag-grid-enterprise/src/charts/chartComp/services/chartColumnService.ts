@@ -7,7 +7,7 @@ import type {
     RowNode,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _getRowNode, _warn } from 'ag-grid-community';
+import { BeanStub, _getRowNode, _iterateAllLeafChildren, _warn } from 'ag-grid-community';
 
 export class ChartColumnService extends BeanStub {
     private colModel: ColumnModel;
@@ -149,19 +149,12 @@ export class ChartColumnService extends BeanStub {
     }
 
     private extractLeafData(row: RowNode, col: AgColumn): any {
-        if (!row.allLeafChildren) {
-            return null;
-        }
-
-        for (let i = 0; i < row.allLeafChildren.length; i++) {
-            const childRow = row.allLeafChildren[i];
-            const value = this.valueSvc.getValue(col, childRow);
-
+        for (const leaf of _iterateAllLeafChildren(row)) {
+            const value = this.valueSvc.getValue(col, leaf);
             if (value != null) {
                 return value;
             }
         }
-
         return null;
     }
 

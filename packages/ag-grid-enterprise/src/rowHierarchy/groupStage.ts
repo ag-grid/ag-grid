@@ -9,7 +9,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _getGroupingApproach } from 'ag-grid-community';
 
-import type { GroupingRowNode, IRowGroupingStrategy } from './rowHierarchyUtils';
+import type { IRowGroupingStrategy } from './rowHierarchyUtils';
 
 export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupStage {
     beanName = 'groupStage' as const;
@@ -92,11 +92,11 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
     }
 }
 
-const resetGrouping = <TData>(rootNode: GroupingRowNode<TData>, canResetTreeNode: boolean): void => {
-    const allLeafChildren = rootNode.allLeafChildren!;
+const resetGrouping = <TData>(rootNode: RowNode<TData>, canResetTreeNode: boolean): void => {
+    const allLeafs = rootNode._leafs!;
     const rootSibling = rootNode.sibling;
     rootNode.treeNodeFlags = 0;
-    rootNode.childrenAfterGroup = allLeafChildren;
+    rootNode.childrenAfterGroup = allLeafs;
     rootNode.childrenMapped = null;
     rootNode.groupData = null;
     if (rootSibling) {
@@ -106,9 +106,10 @@ const resetGrouping = <TData>(rootNode: GroupingRowNode<TData>, canResetTreeNode
         rootSibling.childrenAfterSort = rootNode.childrenAfterSort;
         rootSibling.childrenMapped = null;
     }
-    for (const row of allLeafChildren) {
-        const sibling = row.sibling;
+    for (let i = 0, len = allLeafs.length; i < len; ++i) {
+        const row = allLeafs[i];
         resetChildRowGrouping(row);
+        const sibling = row.sibling;
         if (sibling) {
             resetChildRowGrouping(sibling);
         }
@@ -124,11 +125,11 @@ const resetGrouping = <TData>(rootNode: GroupingRowNode<TData>, canResetTreeNode
     rootNode.updateHasChildren();
 };
 
-const resetChildRowGrouping = <TData>(row: GroupingRowNode<TData>): void => {
+const resetChildRowGrouping = <TData>(row: RowNode<TData>): void => {
     row.key = null;
     row.treeNodeFlags = 0;
     row.allChildrenCount = null;
-    row.allLeafChildren = null;
+    row._leafs = undefined;
     row.childrenAfterGroup = null;
     row.childrenAfterAggFilter = null;
     row.childrenAfterFilter = null;
