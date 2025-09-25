@@ -655,7 +655,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     /** For reorderLeafChildren, returns min index of the rows to move, the target index and the max index of the rows to move. */
     private getMoveRowsBounds(leafs: Iterable<RowNode>, target: IRowNode | null | undefined, above: boolean) {
-        const totalRows = this.clientSideRowModel.rootNode?._leafs!.length ?? 0;
+        const totalRows = this.clientSideRowModel.allLeafs().length;
         let targetPositionIdx = getLeafSourceRowIndex(target);
         if (targetPositionIdx < 0 || targetPositionIdx >= totalRows) {
             targetPositionIdx = totalRows;
@@ -687,19 +687,19 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     ): boolean {
         let orderChanged = false;
 
-        const allLeafChildren: RowNode[] | null | undefined = this.clientSideRowModel.rootNode?._leafs;
-        if (!leafs.size || !allLeafChildren) {
+        if (!leafs.size) {
             return false;
         }
 
         // First partition. Filter from left to right, so the middle can be overwritten
         let writeIdxLeft = firstAffectedLeafIdx;
+        const allLeafs = this.clientSideRowModel.allLeafs();
         for (let readIdx = firstAffectedLeafIdx; readIdx < targetPositionIdx; ++readIdx) {
-            const row = allLeafChildren[readIdx];
+            const row = allLeafs[readIdx];
             if (!leafs.has(row)) {
                 if (row.sourceRowIndex !== writeIdxLeft) {
                     row.sourceRowIndex = writeIdxLeft;
-                    allLeafChildren[writeIdxLeft] = row;
+                    allLeafs[writeIdxLeft] = row;
                     orderChanged = true;
                 }
                 ++writeIdxLeft;
@@ -709,11 +709,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         // Third partition. Filter from right to left, so the middle can be overwritten
         let writeIdxRight = lastAffectedLeafIndex;
         for (let readIdx = lastAffectedLeafIndex; readIdx >= targetPositionIdx; --readIdx) {
-            const row = allLeafChildren[readIdx];
+            const row = allLeafs[readIdx];
             if (!leafs.has(row)) {
                 if (row.sourceRowIndex !== writeIdxRight) {
                     row.sourceRowIndex = writeIdxRight;
-                    allLeafChildren[writeIdxRight] = row;
+                    allLeafs[writeIdxRight] = row;
                     orderChanged = true;
                 }
                 --writeIdxRight;
@@ -724,7 +724,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         for (const row of leafs) {
             if (row.sourceRowIndex !== writeIdxLeft) {
                 row.sourceRowIndex = writeIdxLeft;
-                allLeafChildren[writeIdxLeft] = row;
+                allLeafs[writeIdxLeft] = row;
                 orderChanged = true;
             }
             ++writeIdxLeft;

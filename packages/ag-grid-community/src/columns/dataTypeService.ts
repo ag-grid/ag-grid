@@ -307,13 +307,13 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const rowData = this.gos.get('rowData');
         if (rowData?.length) {
             return rowData[0];
-        } else if (this.initialData) {
+        }
+        if (this.initialData) {
             return this.initialData;
-        } else {
-            const rowNodes = (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs;
-            if (rowNodes?.length) {
-                return rowNodes[0].data;
-            }
+        }
+        const rowNodes = this.beans.rowModel.allLeafs?.();
+        if (rowNodes?.length) {
+            return rowNodes[0].data;
         }
         return null;
     }

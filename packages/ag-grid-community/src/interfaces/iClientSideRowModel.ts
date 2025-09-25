@@ -56,6 +56,8 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
      * @deprecated v33.1.0 - use `gridApi.onRowHeightChanged()` instead
      */
     onRowHeightChangedDebounced(): void;
+
+    allLeafs(): RowNode[];
 }
 
 export type IChangedRowNodes<TData = any> = ChangedRowNodes<TData>;

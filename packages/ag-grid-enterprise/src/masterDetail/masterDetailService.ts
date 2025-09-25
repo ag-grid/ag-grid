@@ -11,7 +11,6 @@ import {
     BeanStub,
     RowNode,
     _exists,
-    _getClientSideRowModel,
     _isClientSideRowModel,
     _isServerSideRowModel,
     _observeResize,
@@ -99,7 +98,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
                 setMaster(node, true, false);
             }
         } else {
-            const allLeafs = _getClientSideRowModel(this.beans)?.rootNode?._leafs;
+            const allLeafs = this.beans.rowModel.allLeafs?.();
             if (allLeafs) {
                 for (let i = 0, len = allLeafs.length; i < len; ++i) {
                     setMaster(allLeafs[i], true, false);

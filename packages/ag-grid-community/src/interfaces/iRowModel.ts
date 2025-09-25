@@ -87,4 +87,7 @@ export interface IRowModel {
      * @see RowNode.allLeafChildren
      */
     loadLeafs?(rowNode: RowNode): void;
+
+    /** For ClientSideRowModel returns rootNode._leafs, the array of all row nodes that have data */
+    allLeafs?(): RowNode[];
 }

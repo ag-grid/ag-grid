@@ -140,6 +140,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         nodeManager.activate(this.rootNode);
     }
 
+    public allLeafs(): RowNode[] {
+        return this.rootNode?._leafs ?? _EmptyArray;
+    }
+
     private getNewNodeManager(): IClientSideNodeManager<any> {
         const { gos, beans } = this;
         return (_getGroupingApproach(gos) === 'treeNested' && beans.csrmChildrenTreeNodeSvc) || beans.csrmNodeSvc!;
