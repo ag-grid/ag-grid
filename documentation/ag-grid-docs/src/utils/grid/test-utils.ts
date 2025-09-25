@@ -282,11 +282,8 @@ const frameworkTest =
 
                 extended(`${agFramework} (only)`, testWrapper);
 
-                extended.afterEach(async () => {
-                    if (errors.length > 0) {
-                        const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n`;
-                        expect(errors.length, errorMessage).toBe(0);
-                    }
+                extended.afterEach(async ({ page }) => {
+                    await checkForErrorsAndTearDownExample(errors, page);
                 });
             });
         } else {
@@ -308,14 +305,39 @@ const eachFramework = (testName: string, testBody: (fixtures: TestFixtures) => P
 
         ALL_FRAMEWORKS.forEach((framework) => frameworkTest(framework)(undefined, testBody));
 
-        extended.afterEach(async () => {
-            if (errors.length > 0) {
-                const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n`;
-                expect(errors.length, errorMessage).toBe(0);
-            }
+        extended.afterEach(async ({ page }) => {
+            await checkForErrorsAndTearDownExample(errors, page);
         });
     });
 };
+
+async function checkForErrorsAndTearDownExample(errors: string[], page: Page) {
+    if (errors.length > 0) {
+        const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n`;
+        expect(errors.length, errorMessage).toBe(0);
+        errors = [];
+    }
+
+    let exampleRemoved = false;
+    await page.evaluate(() => {
+        const win: any = window;
+        if (win.tearDownExample) {
+            win.tearDownExample();
+            exampleRemoved = true;
+        }
+    });
+    if (exampleRemoved) {
+        const root = page.locator('.ag-root-wrapper');
+        await root.waitFor({ state: 'detached' });
+    }
+
+    expect(errors, 'Example Errors during destruction').toEqual([]);
+
+    if (errors.length > 0) {
+        const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n`;
+        expect(errors.length, errorMessage).toBe(0);
+    }
+}
 
 function prev34WrapAdapter(wrap: ReturnType<typeof wrapAgTestIdFor<any>>, page: Page) {
     wrap.cell = (rowId: string | null, colId: string | null) => {
