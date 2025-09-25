@@ -287,7 +287,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.executeSlideAndFadeAnimations(gui);
 
         if (this.rowNode.group) {
-            _setAriaExpanded(gui.element, this.rowNode.expanded == true);
+            _setAriaExpanded(gui.element, this.rowNode.expanded);
         }
 
         this.setRowCompRowId(comp);
@@ -880,7 +880,17 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public refreshRow(params: RefreshRowsParams & { newData?: boolean }): void {
-        // if the row is rendered incorrectly, as the requirements for whether this is a FW row have changed, we force re-render this row.
+        // if we have isRowMaster cb, we need to always refresh, as the result of the function
+        // could have changed, eg row was master and now isn't.
+        const isRowMasterFunc = this.gos.get('isRowMaster');
+        if (isRowMasterFunc && this.gos.get('masterDetail')) {
+            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.refreshCell(params));
+            this.beans.rowRenderer.redrawRow(this.rowNode);
+            //
+            return;
+        }
+
+        // if the row is rendered incorrectly, as the requirements for whether this i s a FW row have changed, we force re-render this row.
         const fullWidthChanged = this.isFullWidth() !== !!this.isNodeFullWidthCell();
         if (fullWidthChanged) {
             this.beans.rowRenderer.redrawRow(this.rowNode);

@@ -151,6 +151,11 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
     }
 
+    public shouldSetMasterDetailFlag(rowNode: RowNode): boolean {
+        const treeData = this.gos.get('treeData');
+        return (treeData || !rowNode.group) && this.gos.get('masterDetail');
+    }
+
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
         rowNode.updateData(data);
 
@@ -165,9 +170,10 @@ export class BlockUtils extends BeanStub implements NamedBean {
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
         } else if (this.gos.get('masterDetail')) {
-            // this should be implemented, however it's not the use case i'm currently
-            // programming, so leaving for another day. to test this, create an example
-            // where whether a master row is expandable or not is dynamic
+            // if we have isRowMaster cb, we need to redraw row, as the result of the function
+            // could have changed, eg row was master and now isn't.
+            // this.setMasterDetailInfo(rowNode);
+            // this.beans.rowRenderer.redrawRow(rowNode);
         }
     }
 
@@ -202,7 +208,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         rowNode.setDataAndId(data, defaultId);
         const group = rowNode.group;
 
-        if ((treeData || !group) && this.gos.get('masterDetail')) {
+        if (this.shouldSetMasterDetailFlag(rowNode)) {
             this.setMasterDetailInfo(rowNode);
         }
 

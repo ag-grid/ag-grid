@@ -296,6 +296,13 @@ export class RowNode<TData = any>
         const oldData = this.data;
 
         this.data = data;
+        const gos = this.beans.gos;
+        const isMasterFunc = gos.get('isRowMaster');
+        if (gos.get('masterDetail') && isMasterFunc) {
+            this.master = isMasterFunc(data);
+        } else {
+            // should have already been set on rowNode creation
+        }
         valueCache?.onDataChanged();
         this.updateDataOnDetailNode();
         this.resetQuickFilterAggregateText();
