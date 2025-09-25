@@ -131,13 +131,9 @@ export class RowNode<TData = any>
     public __needsRefreshWhenVisible: boolean;
 
     /**
-     * The index of the row in the source rowData array including any updates via transactions.
+     * CSRM only - The index of the row in the source rowData array including any updates via transactions.
      * It does not change when sorting, filtering, grouping, pivoting or any other UI related operations.
      * If this is a filler node (a visual row created by AG Grid in tree data or grouping) the value is set to `-1`.
-     *
-     * Generally readonly. It is modified only by:
-     * - ClientSideNodeManager, cast to ClientSideNodeManagerRowNode
-     * - ClientSideRowModel, cast to ClientSideRowModelRowNode
      */
     public sourceRowIndex: number = -1;
 
@@ -167,11 +163,6 @@ export class RowNode<TData = any>
     /**
      * Children of this group. If multi levels of grouping, shows only immediate children.
      * Do not modify this array directly. The grouping module relies on mutable references to the array.
-     *
-     * Generally readonly. It is modified only by:
-     * - ClientSideNodeManager, cast to ClientSideNodeManagerRootNode
-     * - GroupStrategy, cast to GroupRow
-     * - TreeStrategy, cast to TreeRow
      */
     public childrenAfterGroup: RowNode<TData>[] | null;
 
