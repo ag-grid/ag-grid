@@ -58,6 +58,24 @@ const ALL_FRAMEWORKS = [
 ] as const;
 type AgFramework = (typeof ALL_FRAMEWORKS)[number];
 
+// Filter frameworks based on FRAMEWORK environment variable
+function getFilteredFrameworks(): readonly AgFramework[] {
+    const frameworkFilter = process.env.FRAMEWORK;
+    if (frameworkFilter) {
+        const requestedFramework = frameworkFilter as AgFramework;
+        if (ALL_FRAMEWORKS.includes(requestedFramework)) {
+            return [requestedFramework] as const;
+        } else {
+            throw new Error(
+                `Invalid framework specified in FRAMEWORK environment variable: ${frameworkFilter}. Valid options are: ${ALL_FRAMEWORKS.join(', ')}`
+            );
+        }
+    }
+    return ALL_FRAMEWORKS;
+}
+
+const FILTERED_FRAMEWORKS = getFilteredFrameworks();
+
 const additionalBrowser = ['webkit', 'firefox'];
 const frameworksWithAdditionalBrowser: AgFramework[] = ['reactFunctionalTs', 'typescript'];
 
@@ -292,7 +310,7 @@ const frameworkTest =
     };
 
 /**
- * Run the same test against all frameworks.
+ * Run the same test against all frameworks (or filtered frameworks based on FRAMEWORK env var).
  * @param testName Names of this test case. Useful if running multiple tests against the same example.
  * @param testBody The test body function that will be executed for each framework.
  */
@@ -303,7 +321,7 @@ const eachFramework = (testName: string, testBody: (fixtures: TestFixtures) => P
             errors = setupConsoleExpectations(page);
         });
 
-        ALL_FRAMEWORKS.forEach((framework) => frameworkTest(framework)(undefined, testBody));
+        FILTERED_FRAMEWORKS.forEach((framework) => frameworkTest(framework)(undefined, testBody));
 
         extended.afterEach(async ({ page }) => {
             await checkForErrorsAndTearDownExample(errors, page);
