@@ -330,6 +330,12 @@ const eachFramework = (testName: string, testBody: (fixtures: TestFixtures) => P
 };
 
 async function checkForErrorsAndTearDownExample(errors: string[], page: Page) {
+    // If the test was skipped, don't check for errors that might have been logged about a missing example URL
+    // or other errors that are expected when skipping a test
+    if (test.info().status === 'skipped') {
+        return;
+    }
+
     if (errors.length > 0) {
         const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n`;
         expect(errors.length, errorMessage).toBe(0);
