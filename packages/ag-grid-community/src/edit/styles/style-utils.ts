@@ -40,11 +40,11 @@ export function _hasLeafEdits(beans: BeanCollection, position: EditPosition): bo
             const child = childrenAfterGroup[i];
             if (child.data) {
                 query.rowNode = child;
-                if (editHighlightFn(editModelSvc!.getEdit(query))) {
+                if (editHighlightFn(editModelSvc.getEdit(query))) {
                     return true;
                 }
                 query.rowNode = child.pinnedSibling;
-                if (editHighlightFn(editModelSvc!.getEdit(query))) {
+                if (editHighlightFn(editModelSvc.getEdit(query))) {
                     return true;
                 }
             }

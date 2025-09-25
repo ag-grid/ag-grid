@@ -305,18 +305,19 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         nodesToUnselect: RowNode<TData>[]
     ): void {
         const { remove } = rowDataTran;
-
-        if (!remove?.length) {
+        const removeLen = remove?.length;
+        if (!removeLen) {
             return;
         }
 
         const rowIdsRemoved: { [key: string]: boolean } = {};
 
-        remove.forEach((item) => {
+        for (let i = 0; i < removeLen; ++i) {
+            const item = remove[i];
             const rowNode = this.lookupRowNode(getRowIdFunc, item);
 
             if (!rowNode) {
-                return;
+                continue;
             }
 
             if (rowNode.isSelected()) {
@@ -334,12 +335,11 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             // NOTE: were we could remove from _leafs, however removeFromArray() is expensive, especially
             // if called multiple times (eg deleting lots of rows) and if _leafs is a large list
             rowIdsRemoved[rowNode.id!] = true;
-            // removeFromArray(this.rootNode._leafs, rowNode);
             delete this.allNodesMap[rowNode.id!];
 
             rowNodeTransaction.remove.push(rowNode);
             changedRowNodes.remove(rowNode);
-        });
+        }
 
         const rootNode = this.rootNode!;
 
@@ -364,15 +364,16 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         nodesToUnselect: RowNode<TData>[]
     ): void {
         const { update } = rowDataTran;
-        if (!update?.length) {
+        const updateLen = update?.length;
+        if (!updateLen) {
             return;
         }
 
-        update.forEach((item) => {
+        for (let i = 0; i < updateLen; ++i) {
+            const item = update[i];
             const rowNode = this.lookupRowNode(getRowIdFunc, item);
-
             if (!rowNode) {
-                return;
+                continue;
             }
 
             rowNode.updateData(item);
@@ -382,7 +383,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
             rowNodeTransaction.update.push(rowNode);
             changedRowNodes.update(rowNode);
-        });
+        }
     }
 
     protected dispatchRowDataUpdateStartedEvent(rowData?: TData[] | null): void {

@@ -1249,7 +1249,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
                 const child = childrenAfterGroup[i];
                 if (child.sourceRowIndex >= 0) {
-                    (leafs ??= []).push(child);
+                    leafs ??= [];
+                    leafs.push(child);
                 }
                 const childLeafs = child.allLeafChildren;
                 const childLeafsLen = childLeafs?.length;
