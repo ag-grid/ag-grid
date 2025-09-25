@@ -1,15 +1,10 @@
 import type {
     AgColumn,
-    BeanCollection,
     ChangedPath,
-    ColumnModel,
     IChangedRowNodes,
-    ISelectionService,
-    IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
     StageExecuteParams,
-    ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
 import { BeanStub, RowNode, _ROW_ID_PREFIX_ROW_GROUP, _areEqual, _getFirstLeafChild, _warn } from 'ag-grid-community';
@@ -42,18 +37,6 @@ interface GroupingDetails {
 }
 
 export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
-    private colModel: ColumnModel;
-    private valueSvc: ValueService;
-    private selectionSvc?: ISelectionService;
-    private showRowGroupCols: IShowRowGroupColsService;
-
-    public wireBeans(beans: BeanCollection) {
-        this.colModel = beans.colModel;
-        this.valueSvc = beans.valueSvc;
-        this.selectionSvc = beans.selectionSvc;
-        this.showRowGroupCols = beans.showRowGroupCols!;
-    }
-
     // when grouping, these items are of note:
     // rowNode.parent: RowNode: set to the parent
     // rowNode.childrenAfterGroup: RowNode[] = the direct children of this group
@@ -94,7 +77,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             recursiveSort(details.rootNode, (nodeA, nodeB) => comparator({ nodeA, nodeB }));
         }
 
-        this.selectionSvc?.updateSelectableAfterGrouping(changedPath);
+        this.beans.selectionSvc?.updateSelectableAfterGrouping(changedPath);
     }
 
     private positionLeafsAndGroups(changedPath: ChangedPath) {
@@ -150,7 +133,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         const details: GroupingDetails = {
             groupCols,
             rootNode: rowNode,
-            pivotMode: this.colModel.isPivotMode(),
+            pivotMode: this.beans.colModel.isPivotMode(),
             rowNodesOrderChanged: !!rowNodesOrderChanged,
             groupColsChanged,
             // if no transaction and not immutable row data set, then it's shotgun, changed path would be 'not active' at this point anyway
@@ -328,6 +311,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         while (checkAgain) {
             checkAgain = false;
             const batchRemover = new BatchRemover();
+            const selectionSvc = this.beans.selectionSvc;
             for (const possibleEmptyGroup of possibleEmptyGroups) {
                 // remove empty groups
                 this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
@@ -337,7 +321,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                         this.removeFromParent(rowNode, batchRemover);
                         // we remove selection on filler nodes here, as the selection would not be removed
                         // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                        this.selectionSvc?.setNodesSelected({
+                        selectionSvc?.setNodesSelected({
                             nodes: [rowNode],
                             newValue: false,
                             source: 'rowGroupChanged',
@@ -422,7 +406,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
 
         // groups are about to get disposed, so need to deselect any that are selected
-        this.selectionSvc?.filterFromSelection?.((node) => !node.group);
+        this.beans.selectionSvc?.filterFromSelection?.((node) => !node.group);
 
         const rootNode = details.rootNode;
         // because we are not creating the root node each time, we have the logic
@@ -446,7 +430,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
         let showGroupColsChanged = false;
         const showGroupCols = this.prevShowGroupCols;
-        const showCols = this.showRowGroupCols.getShowRowGroupCols();
+        const showCols = this.beans.showRowGroupCols!.getShowRowGroupCols();
         if (!showGroupCols || groupColumnsChanged(showGroupCols, showCols)) {
             showGroupColsChanged = !!showGroupCols;
             this.prevShowGroupCols = makeGroupColumns(showCols);
@@ -561,16 +545,15 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
+        const valueSvc = this.beans.valueSvc;
         const rowGroupCol = groupInfo.rowGroupColumn;
         if (rowGroupCol && groupInfo.leafNode) {
             // for full width rows; preserve the value type
-            groupNode.groupValue = this.valueSvc.getValue(rowGroupCol, groupInfo.leafNode);
+            groupNode.groupValue = valueSvc.getValue(rowGroupCol, groupInfo.leafNode);
         }
 
         groupNode.groupData = {};
-        const groupDisplayCols = this.showRowGroupCols.getShowRowGroupCols();
-        for (let i = 0; i < groupDisplayCols.length; ++i) {
-            const col = groupDisplayCols[i];
+        for (const col of this.beans.showRowGroupCols!.getShowRowGroupCols()) {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
 
@@ -578,7 +561,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             const isRowGroupDisplayed = groupColumn !== null && col.isRowGroupDisplayed(groupColumn.getId());
             if (isRowGroupDisplayed) {
                 // if maintain group value type, get the value from any leaf node.
-                groupNode.groupData![col.getColId()] = this.valueSvc.getValue(groupColumn, groupInfo.leafNode);
+                groupNode.groupData![col.getColId()] = valueSvc.getValue(groupColumn, groupInfo.leafNode);
             }
         }
     }
@@ -600,8 +583,9 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private getGroupInfo(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {
         const res: GroupInfo[] = [];
+        const valueSvc = this.beans.valueSvc;
         for (const { col, field } of details.groupCols) {
-            let key: string = this.valueSvc.getKeyForNode(col, rowNode);
+            let key: string = valueSvc.getKeyForNode(col, rowNode);
             let keyExists = key !== null && key !== undefined && key !== '';
 
             // unbalanced tree and pivot mode don't work together - not because of the grid, it doesn't make
@@ -628,11 +612,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
 const recursiveSort = (rowNode: RowNode, comparer: (nodeA: RowNode, nodeB: RowNode) => number): void => {
     const childrenAfterGroup = rowNode.childrenAfterGroup;
-    if (!childrenAfterGroup) {
-        return;
-    }
-
-    if (rowNode.leafGroup) {
+    if (!childrenAfterGroup || rowNode.leafGroup) {
         return; // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
     }
 
