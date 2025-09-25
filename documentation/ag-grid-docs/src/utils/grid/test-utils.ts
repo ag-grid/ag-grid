@@ -413,6 +413,17 @@ export async function dragOverTo(source: Locator, target: Locator) {
     await mouse.up();
 }
 
+export async function clickAllButtons(page: Page) {
+    // Click all visible buttons in the grid example
+    // Don't use buttons within the ag-root-wrapper as these are not part of the example
+    // and will cause the test to fail if they are clicked
+    const buttons = page.locator('button:visible:not([disabled]):not(.ag-root-wrapper button):not(.ag-chart button)');
+    const buttonCount = await buttons.count();
+    for (let i = 0; i < buttonCount; i++) {
+        await buttons.nth(i).click();
+    }
+}
+
 export { ensureGridReady } from './test/remoteGridapi';
 export { repeat } from './test/repeat';
 export { scrollGridRelative } from './test/scrollGridRelative';
