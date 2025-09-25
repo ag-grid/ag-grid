@@ -12,15 +12,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    RowNode,
-    _ROW_ID_PREFIX_ROW_GROUP,
-    _areEqual,
-    _exists,
-    _getFirstLeafChild,
-    _warn,
-} from 'ag-grid-community';
+import { BeanStub, RowNode, _ROW_ID_PREFIX_ROW_GROUP, _areEqual, _getFirstLeafChild, _warn } from 'ag-grid-community';
 
 import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
@@ -97,7 +89,10 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         const changedPath = params.changedPath!;
 
         this.positionLeafsAndGroups(changedPath);
-        this.orderGroups(details);
+        const comparator = details.initialGroupOrderComparator;
+        if (comparator) {
+            recursiveSort(details.rootNode, (nodeA, nodeB) => comparator({ nodeA, nodeB }));
+        }
 
         this.selectionSvc?.updateSelectableAfterGrouping(changedPath);
     }
@@ -136,7 +131,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 if (sibling) {
                     sibling.childrenAfterGroup = group.childrenAfterGroup;
                 }
-                // Order-only change: no need to invalidate cached allLeafChildren
+                // Order-only change: not calling invalidateAllLeafChildren(node);
             }
         }, false);
     }
@@ -209,31 +204,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             false,
             true
         );
-    }
-
-    private orderGroups(details: GroupingDetails): void {
-        const comparator = details.initialGroupOrderComparator;
-        const comparer = (nodeA: RowNode, nodeB: RowNode) => comparator({ nodeA, nodeB });
-
-        const recursiveSort = (rowNode: RowNode): void => {
-            const childrenAfterGroup = rowNode.childrenAfterGroup;
-            if (!childrenAfterGroup) {
-                return;
-            }
-
-            if (rowNode.leafGroup) {
-                return; // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
-            }
-
-            childrenAfterGroup.sort(comparer);
-            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
-                recursiveSort(childrenAfterGroup[i]);
-            }
-        };
-
-        if (_exists(comparator)) {
-            recursiveSort(details.rootNode);
-        }
     }
 
     private getExistingPathForNode(node: RowNode, details: GroupingDetails): GroupInfo[] {
@@ -655,3 +625,19 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return res;
     }
 }
+
+const recursiveSort = (rowNode: RowNode, comparer: (nodeA: RowNode, nodeB: RowNode) => number): void => {
+    const childrenAfterGroup = rowNode.childrenAfterGroup;
+    if (!childrenAfterGroup) {
+        return;
+    }
+
+    if (rowNode.leafGroup) {
+        return; // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
+    }
+
+    childrenAfterGroup.sort(comparer);
+    for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+        recursiveSort(childrenAfterGroup[i], comparer);
+    }
+};
